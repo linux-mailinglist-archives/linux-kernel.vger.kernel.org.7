@@ -1,97 +1,79 @@
-Return-Path: <linux-kernel+bounces-848361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C90BCD87D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:32:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570ADBCD892
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7050C355BDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C2C1A617F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2738D23C4EA;
-	Fri, 10 Oct 2025 14:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59173258EDF;
+	Fri, 10 Oct 2025 14:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXpCUjjH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0DM+ICi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763082836F;
-	Fri, 10 Oct 2025 14:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EAD1DE8A4;
+	Fri, 10 Oct 2025 14:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760106720; cv=none; b=FqrtE9EOul1z6YH+QYPtUCVdQ/95j5m9AG3mhzDrV58SR8ZhxfUyvHQ4SBJHic2n2Wejv5DEU93I4ziumIfftW+EpKKWTTyAch4cBmNc/cGNsvbVzH21hk2h77vnHB+IIRGcrziJ5tFQQvJ/4vveqOp7xnwelsJ6hkWdt+d3gl8=
+	t=1760106741; cv=none; b=HQE1BrxukQFcKu1m/5QpxtqEwW+mnTTEtv4mnlCNRG9+AYais6F81gOH6P1XroI1GnuNGtueZD+wal/DPU7iA7whR4aTtuGSpOoGeZ5Dg9e7uuaznw/5gLfjuoqivojoKibumZm8qG1Jp4H38cmm0kjba54KxY4pqY7TwmlxvAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760106720; c=relaxed/simple;
-	bh=wEhFTZooq1SoHLK/XSZtmAYLO1RTIgJF4XL0BWpSf6Y=;
+	s=arc-20240116; t=1760106741; c=relaxed/simple;
+	bh=Y13MZLSFH0Wu9ldSZ+acLNvddtlrHdyWJ1rhQK7RQ6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCYmb8yhvaECAA+YMPwHBmD9LRjwUlKl1er48XMT+eTNcjZ0nevIMzGVy01wcNKOWsC31V8R0akvqy+TNkeCmpLIMGkTXf+HGNwPaw/lqJnlTi4tNK7u5mtvAGrXbuzzh4EcMhtHr7Qzag5vz2tVn9ilOHbUDXVeOprWzjTnLIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXpCUjjH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1A4C4CEF1;
-	Fri, 10 Oct 2025 14:31:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gM/JMnRAWIlAuUrUUJCAYCJKe2rYgfVJwuQQ4OeawvYrv5m2XsYAFaT9PuNwCSVaqnktRFBInWZi8WMRX0IqFWeDx7b2LgX7vpDF5EdBLBHdzU8NQ6Et1/SFMik2CLncRD4t8xuSEZafwhcEEZYxCbxNaV120luE/eNsYRY+zDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0DM+ICi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52057C4CEF1;
+	Fri, 10 Oct 2025 14:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760106719;
-	bh=wEhFTZooq1SoHLK/XSZtmAYLO1RTIgJF4XL0BWpSf6Y=;
+	s=k20201202; t=1760106741;
+	bh=Y13MZLSFH0Wu9ldSZ+acLNvddtlrHdyWJ1rhQK7RQ6c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FXpCUjjH9b/60w57JjvE1ZeBOKiZcpafsYdqPVv+0bN4+mCBf8fyZNgsOzG1MSJoT
-	 P81HDDez/i6P/08T6m9e2/P5JQH3TEcTmzHeq5WLMQZj+o6mQhjpEt2rz3wzyj8X3Y
-	 aIR5xPdCs3Zs//fY3zOCHI5xdoI2W7PBp99rvspB1EA9oWBODKnvMveUlLGnkZ+7EZ
-	 iY1Ztt4jHYz/yxJ+Zh/7antlDGDH7v7sm8xIWGkwaB8l4NdZfiZ3qr4SmKa22Yjt1c
-	 mYGuEwetaX1bykkHnzvHQ8/CdGZxgHtqL7kyyDGJWsMRTs2zbz0z7NhQDkAXdiwHTF
-	 2+l8nLEhYJcvg==
-Date: Fri, 10 Oct 2025 15:31:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: phy: imx8mq-usb: add alternate
- reference clock
-Message-ID: <20251010-eldest-padded-98f9852a1248@spud>
-References: <20251010-usb-phy-alt-clk-support-v2-0-af4b78bb4ae8@nxp.com>
- <20251010-usb-phy-alt-clk-support-v2-1-af4b78bb4ae8@nxp.com>
+	b=K0DM+ICir0i7Q2RAddxiar9C1/wPPoy+vlk/h9Y4rlov2EXexkpvpkfdWzZkbsl0H
+	 SYclKJTzLys6HmkeArSuiRrYlL/3AxDha0Epirp2i9kof7u57OttYN14foOe+xb3p8
+	 0q8ibH95OrzKRRX+ffcSIeZB0yMrYyj3wOJEb1BELpU4N87plVZIOz1aspcv7bLdPX
+	 7ZjugNKFVTC8MjrjDzZM16hBiH3KEGQ7lgQhXnbqxGe2+lxFZEZvi4GtHMli2sLIM5
+	 f44y/xXonYOLkNN8RuARkh2DyeI4BoaS0+Oa95dcp8eg/fGkaXYRL0Gpu5bEq7MQQP
+	 Qui8oxOOOCjmA==
+Date: Fri, 10 Oct 2025 09:32:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v5 1/6] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
+ documentation for the PCIe IP on Renesas RZ/G3S
+Message-ID: <20251010143219.GB242024-robh@kernel.org>
+References: <20251007133657.390523-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251007133657.390523-2-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ReRyNSNdhTFV+Mx9"
-Content-Disposition: inline
-In-Reply-To: <20251010-usb-phy-alt-clk-support-v2-1-af4b78bb4ae8@nxp.com>
-
-
---ReRyNSNdhTFV+Mx9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20251007133657.390523-2-claudiu.beznea.uj@bp.renesas.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
---
-pw-bot: not-applicable
+On Tue, Oct 07, 2025 at 04:36:52PM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
+> Base Specification 4.0. It is designed for root complex applications and
+> features a single-lane (x1) implementation. Add documentation for it.
 
---ReRyNSNdhTFV+Mx9
-Content-Type: application/pgp-signature; name="signature.asc"
+Also, for the subject, "Add Renesas RZ/G3S" is sufficient. We already 
+know it is for PCI and is documentation.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOkY2QAKCRB4tDGHoIJi
-0q3mAP9j5GE2F7HQWGUYyOU9k9MhsEyyX3rvlNH5Tnd6R2lBIAD+LQIwhk0KoqWh
-PzUa4lYpWpc9tc/dr16rfSTrs9YE8wk=
-=mQj2
------END PGP SIGNATURE-----
-
---ReRyNSNdhTFV+Mx9--
+Rob
 
