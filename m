@@ -1,87 +1,94 @@
-Return-Path: <linux-kernel+bounces-847987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F56BCC37B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 538CABCC384
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD4D1A6589A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:50:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E011A65962
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6998F25F7BF;
-	Fri, 10 Oct 2025 08:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA3E2676F4;
+	Fri, 10 Oct 2025 08:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AiaG21A4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MlJFNKnR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VRwlNs9r";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MlJFNKnR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VRwlNs9r"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B582459C8
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916BE221277
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760086200; cv=none; b=jm+Dy7HtLyIlejC+3nvzGIEGFn53KQcRB61hslludp2M9VzNY57GrO68DqjMIaxQ+Xt39seo9bBHDFDqoy2usAD1YFtdbqpk2iAKCBiLQYNsvtCYi2I8HvkItV/59vumlPtLB55swNJgNudevhgnzNDbssVM1H3Hz0lyu5As3GQ=
+	t=1760086201; cv=none; b=Nv7zueXypO+35VwRExIQ3QvIEZpNaT90mZnk5LLkxc8emGXOgf+5xp5x3lgHx//2jLxpBJP7Hkkz502wJmMGT2RHw49NxOQjoScahZIgQVvy4boeUyJbELY3j0PmihZmgxqg3wzbogEh4fNQHsnlCiQihZzg5hlXe0pCZDqTDlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760086200; c=relaxed/simple;
-	bh=JSa8dssqMTZFfX2f7rVLTtNC8XakKNEjvuiexVQ4d5E=;
+	s=arc-20240116; t=1760086201; c=relaxed/simple;
+	bh=LPofthVqwqcvLvIwGKcjC4dZKGgicICWrEc+tYy4nL0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AxsMLkoFB4vrwhpPOau7zupY8jxtdh/ViwdqbGIgSmdaFGRTAcSBsGKgI0IXxnWZ932uoX1+3HrqaRalIfaTFfy9zrogF66Sjsm9xvr8ubdn0quVCYg4KZW49SF1/RjCf8qQ9jUGDzgKGCbKlN/Y7M1Eoku2YlKOLJvTYTOxao4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AiaG21A4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6WgYc002272
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:49:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cwh4ZsIqg1G/kV4tcJ1hinaVGiVD/hz+Bz+dzBU2qIo=; b=AiaG21A4/6eEAxS4
-	TwgvOuTTBuQb+RFCwGmITqDkoNzKU46W9v0MuWGXnUhSMy1d4MyOUx2Kc8yI+NIy
-	z69AM1S7FvN7ksz2n38pwKXxKJsVhnH9yFzLxtWsoGxjCLUApaosAqJIGZBogzKy
-	krLmcNFGxxfh0k9iSPMFJ6SO7X78hhiW45ivifFp2iPz6GtTgoaInXHv2Pgq8ABG
-	VK6fPWqg3LDRW4LA4KHH/a1OcVeFBHJeFs78xhNh0QX3MLn4YAaOfQpIwxlz0vBo
-	YVUCPskFm2fedFqdGe6Ld+9AtCTwnlyOs6v0FUrFZZ31lfowrVM/x3nRSx2BqZ+k
-	NwuUDA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49pgdst5u1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:49:57 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-85bb4e88394so58962385a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:49:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760086197; x=1760690997;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cwh4ZsIqg1G/kV4tcJ1hinaVGiVD/hz+Bz+dzBU2qIo=;
-        b=bP1q5CSH/UZJ2weqqSBAhCE+cumyud8nIs8KcwpboOpnphepBWRtDoH8x0vhSB5nlm
-         ZPfeySe/YD+rR5EmmTypTfiyWIcW+AywrxbQVOy3Q4B0TaZ4ht+ZyQiwIrjkmHnMQLbG
-         VXlABjKQ7ITKe6G3N9+ZZ8AcB1P4PhzZmv59oPh8SGEFkovojSVOObqItxn0omdX5COh
-         4TGjKQpuLkxe3vG4sbJBaa9sy66ykY4box6KMFE8PC3V8rGcqz/w9Q+70Ndzmkn40xfz
-         LQm7LUWZp+pBqMg+WoIeMtHAQ69E1jsL1g6SuknmL0QRQLP6H3cWOvhzQYd5e6ajJvCS
-         6B4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWJPRaa0k3/j9VG7uS4OKwfHeqd1yvTVYUKti2AnU8mR1jdzr8tlztQl6OWpcL8+/krdOK/QGLE3dfmHIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvRGrU+019PeWVR/bd7q6WC9xMSSnG5EG7DuFITvolyn/34AI/
-	HxqwqGbUestX6H93n5IIdV1uJPzJtyYbZh2ZFkPqiSMiHWc8NyZFciWHvJslLGOWaXExPf991kE
-	/UIELYcnrdpzZ5sNSRz5zZ8EehlVxmhTsb/gqTvtaNxvSVrZHCadtLo5ndMDT2D51xTc=
-X-Gm-Gg: ASbGnctNqkUvCD7YY5FHtG/XoK7p4YhngtEkS5HoPYZBwPspcPnwKDMxb/urVcalOxd
-	od7Gd8gTFj0O9iLEkPghRfoewv3s7/gos7rrNwIPREU+KLA4P+E6imbuw9RhdbkiuJ3Q8yw1bxl
-	KtRvUOVSEel99OjRPdzSrBwdyVGBBiAX6HQ4XiGPQByC+Qt/shUPYAwelyYNeoSc9KzdkgpQ2sn
-	COuTay7WanAvcslO7JrFbCjdLrRuly73HehyRVwbAomqP5Jwo4SBJZwzXVWcOi0pbPMQ5pvyBGY
-	+JY2hh8zdY7o2Bgnknzc/Lfrukvfun7mQbvVaP5pUsk6LSD1PH+8NTMOBaiBAhvBRgLSIsEeQGi
-	z+r2vbFCilP1/2ks5Qqv8AA==
-X-Received: by 2002:a05:620a:40ce:b0:883:3c5c:9077 with SMTP id af79cd13be357-883543faa58mr1036124985a.13.1760086197124;
-        Fri, 10 Oct 2025 01:49:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEnW/+isTRsgYN2x+tF3lYH+BB+Zvwj6IcISdiTQNK0hXoGC7zcoK1c/76jo+BmMhQiHGuJcw==
-X-Received: by 2002:a05:620a:40ce:b0:883:3c5c:9077 with SMTP id af79cd13be357-883543faa58mr1036122285a.13.1760086196579;
-        Fri, 10 Oct 2025 01:49:56 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63b616d12fesm1034403a12.24.2025.10.10.01.49.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 01:49:56 -0700 (PDT)
-Message-ID: <8c099106-49e6-499a-942e-6349fa96c246@oss.qualcomm.com>
-Date: Fri, 10 Oct 2025 10:49:53 +0200
+	 In-Reply-To:Content-Type; b=YzPbyuSgTYB+TZXJBuv0r5Txan9z5zUiB0VAl4s2yJY8bNm2TQkMtUx44EiU4CbOXMp3tOEB8HOE1y7jixlvAE5HtxQNHHTRIgpXpSZwmeEGXpvUGBWxyDu0QOgnoM2zRYKzqm69IPJCRLBHGHzP6zJm8ejoutUEFA0crORtqxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MlJFNKnR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VRwlNs9r; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MlJFNKnR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VRwlNs9r; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BDA39222F3;
+	Fri, 10 Oct 2025 08:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760086197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2YPFH36RFW1KsX05nepgyydyvLRnC9H/eJhuwKUFkY=;
+	b=MlJFNKnR4fYc26sPNoio8OTamZFf6721D/A5KeMo4eH3FqTv6xIFBz8lb3h1IXLPqw1J+b
+	YiAdC8TSeRxm1wUKi45GebbpG+/5yKCJ/yghxfUpUHwG4hj8XbIh2dL0kgMVwEHOC+tDau
+	VX5YfBMLk2NhAXj9YLEsCnEBraEmb6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760086197;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2YPFH36RFW1KsX05nepgyydyvLRnC9H/eJhuwKUFkY=;
+	b=VRwlNs9rY+/7Fr7INQCa7CofEHu6MFFDlkKCOT/FzyHlk/7takXwcclKEfCNYh0Y10lW8a
+	AIS/egbN2rY5yiAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760086197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2YPFH36RFW1KsX05nepgyydyvLRnC9H/eJhuwKUFkY=;
+	b=MlJFNKnR4fYc26sPNoio8OTamZFf6721D/A5KeMo4eH3FqTv6xIFBz8lb3h1IXLPqw1J+b
+	YiAdC8TSeRxm1wUKi45GebbpG+/5yKCJ/yghxfUpUHwG4hj8XbIh2dL0kgMVwEHOC+tDau
+	VX5YfBMLk2NhAXj9YLEsCnEBraEmb6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760086197;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G2YPFH36RFW1KsX05nepgyydyvLRnC9H/eJhuwKUFkY=;
+	b=VRwlNs9rY+/7Fr7INQCa7CofEHu6MFFDlkKCOT/FzyHlk/7takXwcclKEfCNYh0Y10lW8a
+	AIS/egbN2rY5yiAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7BC7713A40;
+	Fri, 10 Oct 2025 08:49:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8tbKHLXI6GiETAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 10 Oct 2025 08:49:57 +0000
+Message-ID: <79871b84-de1f-461e-b4b0-8fa49fbd74ef@suse.de>
+Date: Fri, 10 Oct 2025 10:49:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,102 +96,196 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] phy: qcom: qmp-combo: get the USB3 & DisplayPort
- lanes mapping from DT
-To: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul
- <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Xilin Wu <sophon@radxa.com>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20251006-topic-x1e80100-hdmi-v5-0-c006311d59d7@linaro.org>
- <20251006-topic-x1e80100-hdmi-v5-2-c006311d59d7@linaro.org>
- <141e33fc-c963-4f58-a69c-e7068c9ec6e8@oss.qualcomm.com>
- <e10594dd-cfc2-4d5e-bc1f-35aca05be027@linaro.org>
+Subject: Re: [PATCH v2] fbcon: Set fb_display[i]->mode to NULL when the mode
+ is released
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: simona@ffwll.ch, deller@gmx.de, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ wangkefeng.wang@huawei.com, zuoze1@huawei.com, sunnanyong@huawei.com
+References: <20251010081659.3609082-1-yanquanmin1@huawei.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <e10594dd-cfc2-4d5e-bc1f-35aca05be027@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: dM37Dd9tFZ8hJfo9mZ22xR5GfIPmecFQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA5MDA5OCBTYWx0ZWRfX9xoPBdqn7GD8
- kxwL2PnooNX1bIi8vU8eE+TJz0ruT48CxqvMLj5VtuRxya7WqS40PZxUwwNBqWqGWy22axBc41s
- 7G4ELEWUF6KDN9sxBLHkjfC1zqmrzOITMTTZtLfzIOuHNii9msWWLLZpzEzyv6+qTkxS+j7odRA
- JfhLCYmUpA/kURV+SX+l0f5wKKJt3BHTBQktsa9axMEYJi5bNHEpmkKaFQejdUn5HYu8D/dRU5L
- ApnChgvvogenW8sfJoTK0Qvy1ko17Z/8oWwvYizuJwtJ1vz/IHTUDRA/Iqk6bEr814jutlxnHKo
- AkfrVktiezUw3FaMc+k4vxyuhfpXmF7WlkxTxF+Z3K2BVUWaNl57MBg2xW46FvQx6aWKwstb883
- ZPbzlKVgc8bCVCi2AdX1dqd2+2BgdA==
-X-Authority-Analysis: v=2.4 cv=DISCIiNb c=1 sm=1 tr=0 ts=68e8c8b5 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=kQruSXXmluR0ARYnVvMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: dM37Dd9tFZ8hJfo9mZ22xR5GfIPmecFQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 spamscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510090098
-
-On 10/9/25 6:42 PM, Neil Armstrong wrote:
-> On 10/8/25 11:31, Konrad Dybcio wrote:
->> On 10/6/25 3:55 PM, Neil Armstrong wrote:
->>> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
->>> of a combo glue to route either lanes to the 4 shared physical lanes.
->>>
->>> The routing of the lanes can be:
->>> - 2 DP + 2 USB3
->>> - 4 DP
->>> - 2 USB3
->>>
->>> Get the lanes mapping from DT and stop registering the USB-C
->>> muxes in favor of a static mode and orientation detemined
->>> by the lanes mapping.
->>>
->>> This allows supporting boards with direct connection of USB3 and
->>> DisplayPort lanes to the QMP Combo PHY lanes, not using the
->>> USB-C Altmode feature.
->>>
->>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>> ---
-
-[...]
-
->>> +err_node_put:
->>> +    of_node_put(ep);
->>
->> __free(device_node)
-> 
-> why ? ep is not allocated, it goes up to:
-> 
-> static struct device_node *__of_get_next_child(const struct device_node *node,
->                         struct device_node *prev)
-> {
->     struct device_node *next;
-> 
->     if (!node)
->         return NULL;
-> 
->     next = prev ? prev->sibling : node->child;
->     of_node_get(next);
->     of_node_put(prev);
->     return next;
-> }
-
-_free(device_node) calls device_node_put() without you having to
-add explicit gotos
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251010081659.3609082-1-yanquanmin1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_CC(0.00)[ffwll.ch,gmx.de,vger.kernel.org,lists.freedesktop.org,huawei.com];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
 
-Konrad
+
+Am 10.10.25 um 10:16 schrieb Quanmin Yan:
+> Recently, we discovered the following issue through syzkaller:
+>
+> BUG: KASAN: slab-use-after-free in fb_mode_is_equal+0x285/0x2f0
+> Read of size 4 at addr ff11000001b3c69c by task syz.xxx
+> ...
+> Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0xab/0xe0
+>   print_address_description.constprop.0+0x2c/0x390
+>   print_report+0xb9/0x280
+>   kasan_report+0xb8/0xf0
+>   fb_mode_is_equal+0x285/0x2f0
+>   fbcon_mode_deleted+0x129/0x180
+>   fb_set_var+0xe7f/0x11d0
+>   do_fb_ioctl+0x6a0/0x750
+>   fb_ioctl+0xe0/0x140
+>   __x64_sys_ioctl+0x193/0x210
+>   do_syscall_64+0x5f/0x9c0
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> Based on experimentation and analysis, during framebuffer unregistration,
+> only the memory of fb_info->modelist is freed, without setting the
+> corresponding fb_display[i]->mode to NULL for the freed modes. This leads
+> to UAF issues during subsequent accesses. Here's an example of reproduction
+> steps:
+> 1. With /dev/fb0 already registered in the system, load a kernel module
+>     to register a new device /dev/fb1;
+> 2. Set fb1's mode to the global fb_display[] array (via FBIOPUT_CON2FBMAP);
+> 3. Switch console from fb to VGA (to allow normal rmmod of the ko);
+> 4. Unload the kernel module, at this point fb1's modelist is freed, leaving
+>     a wild pointer in fb_display[];
+> 5. Trigger the bug via system calls through fb0 attempting to delete a mode
+>     from fb0.
+>
+> Add a check in do_unregister_framebuffer(): if the mode to be freed exists
+> in fb_display[], set the corresponding mode pointer to NULL.
+>
+> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Thanks for fixing the bug.
+
+> ---
+>
+> Changes from v1
+> (https://lore.kernel.org/all/20250923110608.3385083-1-yanquanmin1@huawei.com/)
+> - Focus on fixing the issue specifically in the framebuffer unregistration
+>    path, as other paths do not encounter this problem.
+> - Adjusted according to Thomas's suggestions.
+>
+>   drivers/video/fbdev/core/fbcon.c | 19 +++++++++++++++++++
+>   drivers/video/fbdev/core/fbmem.c |  1 +
+>   include/linux/fbcon.h            |  2 ++
+>   3 files changed, 22 insertions(+)
+>
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+> index 96cc9b389246..9bd3c3814b5c 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -2810,6 +2810,25 @@ int fbcon_mode_deleted(struct fb_info *info,
+>   	return found;
+>   }
+>   
+> +static void fbcon_delete_mode(struct fb_videomode *m)
+> +{
+> +	struct fbcon_display *p;
+> +
+> +	for (int i = first_fb_vc; i <= last_fb_vc; i++) {
+> +		p = &fb_display[i];
+> +		if (p->mode == m)
+> +			p->mode = NULL;
+> +	}
+> +}
+> +
+> +void fbcon_delete_modelist(struct list_head *head)
+> +{
+> +	struct fb_modelist *modelist;
+> +
+> +	list_for_each_entry(modelist, head, list)
+> +		fbcon_delete_mode(&modelist->mode);
+> +}
+> +
+>   #ifdef CONFIG_VT_HW_CONSOLE_BINDING
+>   static void fbcon_unbind(void)
+>   {
+> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+> index 53f1719b1ae1..eff757ebbed1 100644
+> --- a/drivers/video/fbdev/core/fbmem.c
+> +++ b/drivers/video/fbdev/core/fbmem.c
+> @@ -544,6 +544,7 @@ static void do_unregister_framebuffer(struct fb_info *fb_info)
+>   		fb_info->pixmap.addr = NULL;
+>   	}
+>   
+> +	fbcon_delete_modelist(&fb_info->modelist);
+>   	fb_destroy_modelist(&fb_info->modelist);
+>   	registered_fb[fb_info->node] = NULL;
+>   	num_registered_fb--;
+> diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
+> index 81f0e698acbf..f206370060e1 100644
+> --- a/include/linux/fbcon.h
+> +++ b/include/linux/fbcon.h
+> @@ -18,6 +18,7 @@ void fbcon_suspended(struct fb_info *info);
+>   void fbcon_resumed(struct fb_info *info);
+>   int fbcon_mode_deleted(struct fb_info *info,
+>   		       struct fb_videomode *mode);
+> +void fbcon_delete_modelist(struct list_head *head);
+>   void fbcon_new_modelist(struct fb_info *info);
+>   void fbcon_get_requirement(struct fb_info *info,
+>   			   struct fb_blit_caps *caps);
+> @@ -38,6 +39,7 @@ static inline void fbcon_suspended(struct fb_info *info) {}
+>   static inline void fbcon_resumed(struct fb_info *info) {}
+>   static inline int fbcon_mode_deleted(struct fb_info *info,
+>   				     struct fb_videomode *mode) { return 0; }
+> +static inline void fbcon_delete_modelist(struct list_head *head) {}
+>   static inline void fbcon_new_modelist(struct fb_info *info) {}
+>   static inline void fbcon_get_requirement(struct fb_info *info,
+>   					 struct fb_blit_caps *caps) {}
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
