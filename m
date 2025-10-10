@@ -1,134 +1,167 @@
-Return-Path: <linux-kernel+bounces-848833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DF5BCEA83
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:03:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EB5BCEA8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93DEF4EE3AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:03:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D4519E7DB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EA626D4C3;
-	Fri, 10 Oct 2025 22:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805F026AA98;
+	Fri, 10 Oct 2025 22:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McUYnzHj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PZP+/fTc"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B5026A0DB
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0E626AA94
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760133821; cv=none; b=c/aRwAmlNHr4vjeZPIkr7Eb9ZHK4AEfvkEka90rBstb8F24o8NvlDkwqFZunDWL4raoUlOE4Gj2jeR3qtusnT4Irhj2BGyUWZhLiO9IRGSi4ED8Wwft0gWNLaihj//hWc0JaFqnr7/Pd1vK0V2JQMcgoH8ymWu5TQaT4YwKihOk=
+	t=1760133855; cv=none; b=n/Q+1aBI60yUEHf2gZN1JxJdneEs1Td0LwJoeT2A7M56RCfbG9RvdV+9PbONbKQMHKDJTSn1/ZfaZtaT49JNzAxOeBUXv0EEUu8moKLpXG5CiNuLkTRvP3hIiy4b3MQf8pn7l3Oyum1LYejWJFnscyHdFyF/6v/XuCdDoaNfCLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760133821; c=relaxed/simple;
-	bh=TgFISJ1MZntMoH1hi5iZjxgC0obKR62dALr/6ANzGz8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=O1pWDzIlKFor7gsHX5UE7KPpgPWwwifjH+Vp2ozZhLvtdam13l4BliLmcRWAjS1FEUVc5DRbyhaKwt4xSIqbu07Lj8jk0SlqiAGHoqdEBEyACW7uKmLdc8CZVjOnefl/ygAD5wQWiAJawgQemTg/7ZDL817uWMfN5o5DgpHe66c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McUYnzHj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1628C4CEF1;
-	Fri, 10 Oct 2025 22:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760133820;
-	bh=TgFISJ1MZntMoH1hi5iZjxgC0obKR62dALr/6ANzGz8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=McUYnzHj2bdZ8y1YZNNvSmJSFS40sFQs0Ik94NPOkd3bzJ8THdtNU0tyOK4sPvOY2
-	 t2L5HBAdVvB62+UyF+GoepTKtMUUlCcHRtFvrzXjyXAOVlYZeQ8zt0dhCYoj8L/iRq
-	 JuTX3r8r61fEGs20wqnOXFBIj9ovLRyInJzCcZWKKUmjQwfOQlwePxNhtaPsp/8jrE
-	 VkB8T2vlytRiMdq0kZokU0Gp282qC6IzkPDrMKo+aPanLraEQI951P1pzT/QVIGgT2
-	 0UPwVcHzGiACFheo3XEsL9YD6LThSk5U979uowcFQ6ozVq+KGrgbdmOd9qp3AfYUUx
-	 cJY4AuVYgYBDw==
-Date: Fri, 10 Oct 2025 16:03:36 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-cc: Thomas Huth <thuth@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-    Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-    Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-    linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] riscv: Add kprobes KUnit test
-In-Reply-To: <87v7l17e8g.fsf@yellow.woof>
-Message-ID: <e905cf0e-3ac3-46b3-5f9e-1356f8d2a222@kernel.org>
-References: <20250513151631.3520793-1-namcao@linutronix.de> <16b74b63-f223-4f0b-b6e5-31cea5e620b4@redhat.com> <87frc9h0lo.fsf@yellow.woof> <87v7l17e8g.fsf@yellow.woof>
+	s=arc-20240116; t=1760133855; c=relaxed/simple;
+	bh=Qwp0vKBxcofJQSlpmHnot19xGPRqp7ng2EA2LF7B890=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MERN/1H21opgMoF2Kdi9vIUR+QNPoOcAlrC06Q5Zoe1CbXT23/ciX/EMkTXNqKaQsz62eJRrMNzJLVSGP8HTQgLytypFMDGO43+/TkSgAYI7io9LPzABwXSLSd+1NzcZa/UGxoiYbaaE+IOKT1iPePAC4F64t+qq2bDXyvf+Pws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PZP+/fTc; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-28e538b5f23so58396725ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760133853; x=1760738653; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8kxsnh7Lf4PFce86sU0Kf6zmghZZp3Xzf73zLUbJitM=;
+        b=PZP+/fTcO9cgG699RSgA3L01D+qdQ1bUlu8E120UHDGIsVmbKnfn8ZyvgjG2oYnI6I
+         nhAkfnRgt+ZoycZXnpjKoOg+bV0Y15CmDRRSeNHWsHCnaFhmJubg+L2VcIIc03adqbj4
+         cYWfnGfXgwrSwpx5IhZpyKDRf94D/abSo6yhXT149lYK+uivGgCmtPInj54w/+/clXeU
+         22Os1TCTGoJmMwLJIVbMIAJXvs6A71OFfkn0OSRR6Whe/FWgvhuTK+NF9M/reFPMaFDg
+         hjo/z/vp6GRb89q2fRXPm0LHrMyut8CmP7h/ZbMfoaTeuDXRkRoXK935UKYQ86P6kNjq
+         TBVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760133853; x=1760738653;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kxsnh7Lf4PFce86sU0Kf6zmghZZp3Xzf73zLUbJitM=;
+        b=H5Y1qsvJDE2X7btglNALo6ahzcQ2StWP1VR4E+dbOPmwd3ndWmYQ6ABSCI4wvfEYxC
+         Fp2avcDAsg5xld4708JYpeswbMpKEWUC0kE/prM76EO9Gg/jGdrsqaHRpyhbpvMWw8d+
+         jQrQtt71Gm17Oleo1OfR+Ym2S9pazQi+i8eG62ORXTIXBKgNemETasx8KU/h/pqwyrhn
+         tEwRG0XINyaICypI4qYZKfbcspISIe9udt87XQ64XNMyN9/Z2EjMhfSALdyaDs6biuWx
+         mLaBBahjNtVIF9rJF57SHrLS/yn0WxABBTKqNo0txOGlss/ERhNerA0DsmOdyqnL0hhc
+         yDug==
+X-Gm-Message-State: AOJu0YxzjXYBE2yPI6YqulymGGYdx4Rm/x0Jmj64xbq56RkwSxMTXrGR
+	rH0qosW8dPrvGlcZKSbbeAhMEZE06HteWb2jRBs6V8pe2LHs3rUbftJCkkWyKEJs3o4J1UQYZz6
+	wIMYXQQ==
+X-Google-Smtp-Source: AGHT+IF8yU5hLVziWQu1locPXLw/zCrVsnEYJRRBaU69uVPaP6twy1QhZpURLIs5h6V1MrNtkzkKumU4R3U=
+X-Received: from pjbga22.prod.google.com ([2002:a17:90b:396:b0:32f:46d:993b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a8e:b0:32b:dfdb:b27f
+ with SMTP id 98e67ed59e1d1-33b5138e27emr19495508a91.17.1760133853177; Fri, 10
+ Oct 2025 15:04:13 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 10 Oct 2025 15:03:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
+Message-ID: <20251010220403.987927-1-seanjc@google.com>
+Subject: [RFC PATCH 0/4] KVM: x86/tdx: Have TDX handle VMXON during bringup
+From: Sean Christopherson <seanjc@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"Kirill A. Shutemov" <kas@kernel.org>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	kvm@vger.kernel.org, Chao Gao <chao.gao@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Xin Li <xin@zytor.com>, 
+	Kai Huang <kai.huang@intel.com>, Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 29 Sep 2025, Nam Cao wrote:
+This is a sort of middle ground between fully yanking core virtualization
+support out of KVM, and unconditionally doing VMXON during boot[0].
 
-> Nam Cao <namcao@linutronix.de> writes:
-> > Thomas Huth <thuth@redhat.com> writes:
-> >> Could you maybe change that into "__ASSEMBLER__" instead of "__ASSEMBLY__" ? 
-> >> I'm currently trying to get rid of the latter in the kernel sources, see: 
-> >> https://lore.kernel.org/all/20250606070952.498274-1-thuth@redhat.com/
-> >
-> > It's been applied, it's up to riscv's maintainers how we should do this.
-> >
-> > I can send v3, or a follow-up patch.
-> >
-> > Or riscv maintainers can also squash that change into this patch, or
-> > into your patch.
-> >
-> > I'm fine with any options.
-> 
-> Riscv pull request is already created. A follow-up patch it is then.
+I got quite far long on rebasing some internal patches we have to extract the
+core virtualization bits out of KVM x86, but as I paged back in all of the
+things we had punted on (because they were waaay out of scope for our needs),
+I realized more and more that providing truly generic virtualization
+instrastructure is vastly different than providing infrastructure that can be
+shared by multiple instances of KVM (or things very similar to KVM)[1].
 
-I've queued the following for v6.18-rc. 
+So while I still don't want to blindly do VMXON, I also think that trying to
+actually support another in-tree hypervisor, without an imminent user to drive
+the development, is a waste of resources, and would saddle KVM with a pile of
+pointless complexity.
 
-Thomas: have you considered updating checkpatch to scan for instances of 
-__ASSEMBLY__?  Might preempt these sorts of manual fixes going forward.
+The idea here is to extract _only_ VMXON+VMXOFF and EFER.SVME toggling.  AFAIK
+there's no second user of SVM, i.e. no equivalent to TDX, but I wanted to keep
+things as symmetrical as possible.
+
+Emphasis on "only", because leaving VMCS tracking and clearing in KVM is
+another key difference from Xin's series.  The "light bulb" moment on that
+front is that TDX isn't a hypervisor, and isn't trying to be a hypervisor.
+Specifically, TDX should _never_ have it's own VMCSes (that are visible to the
+host; the TDX-Module has it's own VMCSes to do SEAMCALL/SEAMRET), and so there
+is simply no reason to move that functionality out of KVM.
+
+With that out of the way, dealing with VMXON/VMXOFF and EFER.SVME is a fairly
+simple refcounting game.
+
+Oh, and I didn't bother looking to see if it would work, but if TDX only needs
+VMXON during boot, then the TDX use of VMXON could be transient.  I.e. TDX
+could simply blast on_each_cpu() and forego the cpuhp and syscore hooks (a
+non-emergency reboot during init isn't possible).  I don't particuarly care
+what TDX does, as it's a fairly minor detail all things concerned.  I went with
+the "harder" approach, e.g. to validate keeping the VMXON users count elevated
+would do the right thing with respect to CPU offlining, etc.
+
+Lightly tested (see the hacks below to verify the TDX side appears to do what
+it's supposed to do), but it seems to work?  Heavily RFC, e.g. the third patch
+in particular needs to be chunked up, I'm sure there's polishing to be done,
+etc.
+
+[0] https://lore.kernel.org/all/20250909182828.1542362-1-xin@zytor.com
+[1] https://lore.kernel.org/all/aOl5EutrdL_OlVOO@google.com
+
+Sean Christopherson (4):
+  KVM: x86: Move kvm_rebooting to x86
+  KVM: x86: Extract VMXON and EFER.SVME enablement to kernel
+  KVM: x86/tdx: Do VMXON and TDX-Module initialization during tdx_init()
+  KVM: Bury kvm_{en,dis}able_virtualization() in kvm_main.c once more
+
+ Documentation/arch/x86/tdx.rst              |  26 --
+ arch/x86/events/intel/pt.c                  |   1 -
+ arch/x86/include/asm/reboot.h               |   3 -
+ arch/x86/include/asm/tdx.h                  |   4 -
+ arch/x86/include/asm/virt.h                 |  21 ++
+ arch/x86/include/asm/vmx.h                  |  11 +
+ arch/x86/kernel/cpu/common.c                |   2 +
+ arch/x86/kernel/reboot.c                    |  11 -
+ arch/x86/kvm/svm/svm.c                      |  34 +-
+ arch/x86/kvm/svm/vmenter.S                  |  10 +-
+ arch/x86/kvm/vmx/tdx.c                      | 190 +++---------
+ arch/x86/kvm/vmx/vmcs.h                     |  11 -
+ arch/x86/kvm/vmx/vmenter.S                  |   2 +-
+ arch/x86/kvm/vmx/vmx.c                      | 128 +-------
+ arch/x86/kvm/x86.c                          |  18 +-
+ arch/x86/virt/Makefile                      |   2 +
+ arch/x86/virt/hw.c                          | 327 ++++++++++++++++++++
+ arch/x86/virt/vmx/tdx/tdx.c                 | 292 +++++++++--------
+ arch/x86/virt/vmx/tdx/tdx.h                 |   8 -
+ arch/x86/virt/vmx/tdx/tdx_global_metadata.c |  10 +-
+ include/linux/kvm_host.h                    |  10 +-
+ virt/kvm/kvm_main.c                         |  31 +-
+ 22 files changed, 622 insertions(+), 530 deletions(-)
+ create mode 100644 arch/x86/include/asm/virt.h
+ create mode 100644 arch/x86/virt/hw.c
 
 
-- Paul
-
-From: Paul Walmsley <pjw@kernel.org>
-Date: Fri, 10 Oct 2025 15:50:24 -0600
-Subject: [PATCH] riscv: kprobes: convert one final __ASSEMBLY__ to
- __ASSEMBLER__
-
-Per the reasoning in commit f811f58597ac ("riscv: Replace __ASSEMBLY__
-with __ASSEMBLER__ in non-uapi headers"), convert one last remaining
-instance of __ASSEMBLY__ in the arch/riscv kprobes code.  This entered
-the tree from patches that were sent before Thomas' changes; and when
-I reviewed the kprobes patches before queuing them, I missed this
-instance.
-
-Cc: Nam Cao <namcao@linutronix.dev>
-Cc: Thomas Huth <thuth@redhat.com>
-Link: https://lore.kernel.org/linux-riscv/16b74b63-f223-4f0b-b6e5-31cea5e620b4@redhat.com/
-Link: https://lore.kernel.org/linux-riscv/20250606070952.498274-1-thuth@redhat.com/
-Signed-off-by: Paul Walmsley <pjw@kernel.org>
----
- arch/riscv/kernel/tests/kprobes/test-kprobes.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/kernel/tests/kprobes/test-kprobes.h b/arch/riscv/kernel/tests/kprobes/test-kprobes.h
-index 3886ab491ecb..537f44aa9d3f 100644
---- a/arch/riscv/kernel/tests/kprobes/test-kprobes.h
-+++ b/arch/riscv/kernel/tests/kprobes/test-kprobes.h
-@@ -11,7 +11,7 @@
- #define KPROBE_TEST_MAGIC_LOWER    0x0000babe
- #define KPROBE_TEST_MAGIC_UPPER    0xcafe0000
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- 
- /* array of addresses to install kprobes */
- extern void *test_kprobes_addresses[];
-@@ -19,6 +19,6 @@ extern void *test_kprobes_addresses[];
- /* array of functions that return KPROBE_TEST_MAGIC */
- extern long (*test_kprobes_functions[])(void);
- 
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- 
- #endif /* TEST_KPROBES_H */
+base-commit: efcebc8f7aeeba15feb1a5bde70af74d96bf1a76
 -- 
-2.48.1
+2.51.0.740.g6adb054d12-goog
 
 
