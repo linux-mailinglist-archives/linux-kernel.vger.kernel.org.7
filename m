@@ -1,177 +1,112 @@
-Return-Path: <linux-kernel+bounces-847716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24C7BCB7FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824B6BCB801
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027C019E3283
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3C03A37AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85164224B0E;
-	Fri, 10 Oct 2025 03:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AAD224B0E;
+	Fri, 10 Oct 2025 03:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeOWRBSK"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="T2TJglwi"
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC0621C9E5
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CE028F5
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760066422; cv=none; b=MisE8MlKew9NsMCwetFsIF24R5O/VRAgZ1TUsV0VyGTd+15HJjagybuPr4VhM81s1+3P+NyzQ/z9sPoxqR+8MM3i/BBOA6DL4ChWnlRi2E6AnHHQgZGD+EL9SMnuPV9QlEzBm5/OD2iDZrOkeM0DxUZHH4+Uyzh9NfM0Y9WknFw=
+	t=1760066647; cv=none; b=kBpbq0lPqMjsXv9ee+/6hCHHtWCAxfxvalurkVFWN5Pz8CV5imwdKqxw9Zc/AEcL1IFsSYZLi3f9QOI/Et3APoXD/GcAngfdPqcFYB4gyUVLdG7rm5KVzjPBYolEGs779LrUlXMYBCIOR5GqPp2tqkrx7PnMBXV1jXYln6ulsb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760066422; c=relaxed/simple;
-	bh=Ri0MXVh9+wDkxvWMVdi2gj0/08zN30q/5e7xP75X0E4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rZuXG55h5yX3YLmJ34nQZ+mL3TQICszMF34AoolwpVQErLXzPbQYk0n4vodBuhkvByFq45neEvPrj3qbzdPLqdJkmCoC5QY//pbqO8jLxw09GDeeh/maqo/T8Y51Ui5cx9GvqkhHmzXroUhf7f63iFEppnpUqa6q6SFbQfH8irA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeOWRBSK; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-78ed682e9d3so14655276d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 20:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760066420; x=1760671220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nmWw5+Dj1mFyUNTa6/5YxEtv7JkoN4Y3GT6P1fyCsMU=;
-        b=jeOWRBSKo+hvHfD3bTOMmJX23lzgnz509XaIEoN1rkrfbVJCDZrLvh/GLvag40NzJz
-         LoJgQEg3JvywxcbwNeNrPJfAOnihwdX2SRPxzqER5m+fTlWlOcwV0bkuzQW3LSgfEKnt
-         vCv9KemwNPOFjNr5hCHmdY8V8frArpj5DReYCHJZqJGqeU6a7uH0zDr8P3esRhcHZZRO
-         b7EWF2xoX+ogEUqPiFWWLdCGnzHnb6Y2KovqfS4RAuralWPOKIT3WgJJJLdQIExF22dc
-         WmYQds+nJe5wlx0UUOTywiMh1DCUf1zJfARJeW5z/zvkOCaYhTGNJeELz/DJLhqinxv4
-         BYvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760066420; x=1760671220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nmWw5+Dj1mFyUNTa6/5YxEtv7JkoN4Y3GT6P1fyCsMU=;
-        b=RNJyeJrQKUBpwy8FVs9xM1vYxGZm/JfOkAuPDD17oMEvRkkAXGbyTolcIQNmH+qwu8
-         MOZJhINSgBubNbdH35z+RFv/eotxLUCBBBvyxPsypnEPwN4fDg8kKweXtWXcN9plcB9f
-         DXZvNt4zVCnYb+ew0uGQ2Ri1Cd0CnNNxeOsO3yx1hPpqQ4FqS7y60OwfdtpBOJC+DQLx
-         IA4k9ol14YWoTaEeN4KXtOwbZOFUyvXoTGqYAI7FJKPQYs8n1Yx8BxRtgFL6yxCUVWjX
-         fnS/Jpz0zyuPH9c0DEXNh4jGBvm1Dquxjkyzz90STeEKk+Kq8jso+ifQXGsvSfIdGcq7
-         j46w==
-X-Forwarded-Encrypted: i=1; AJvYcCWr0QPKXUMlHCuDBn9Rz2HM5Jk0CAXAp1hidnmX9i4LRwpoJ4O9kXaxHxM+WU2gLARqn+00bjM58FQvQD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkDkmoS6jbWTE2xTv49z4luvE6sRFD9v8vm+mespWRE6os24If
-	/dcWDVVUMEFmOJF/wII2ahrLToyczkIOsKROGUy6EqOzwZY9oSMYnCTVg3ZH3rt8trXSTKRekET
-	w4Gh4Pq43KziNEDUq1G36GhK5W53092I=
-X-Gm-Gg: ASbGncvZTgZBZySX55NxT8auS1wn3Yg/ERjGjxuHr11+jFCNj18+s41+qNj/BOMA1Z7
-	5SXBazEgDN/XmLNIPRBDe00zQrCAGL5+aZZpGBR9tyLULC/HVJhpAN7Q6Vw/+ySYNfHEvYnmYJP
-	BKM804aKZ6vSm91q4ZaWKQJAfg3hoj2eKS02yFUdVHeIRwRCkhGprnK9YVjRxs6ef4KU+njSims
-	blLFqX+nn0rbHYvYvjuvJFqSHG0WVUTgl0Tcg==
-X-Google-Smtp-Source: AGHT+IG/f2JLTSStGduS6XZjeZ+es0r1EhO6WUkmy1NWRrK48A440J2He6YHChg8tiyLaptae0m7b+ub/wDnL1a78ak=
-X-Received: by 2002:a05:6214:19cc:b0:795:67ac:ca5d with SMTP id
- 6a1803df08f44-87b2109283cmr151808406d6.30.1760066420103; Thu, 09 Oct 2025
- 20:20:20 -0700 (PDT)
+	s=arc-20240116; t=1760066647; c=relaxed/simple;
+	bh=KcZsV/BRaqXceNIvABEmbQuxiZVdOSozcLc6PO+2VdI=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cmG7Tf/NbN2aj+xhn+Z2Rc7YGXv437xounufOPTRoRED6qZGN9Fnl5VsqOpDz2aB2p1aci2KK8Mqag8CEwM/On0A41qT8mz93lu9pQUOmiWMYk85WnemotGXSAGq52rYBYSuYhVgcSWVRawxHju3zL4Wke7WYtY+NdeI96vbDeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=T2TJglwi; arc=none smtp.client-ip=113.46.200.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=eL9OBTX7exVlHZ+j/VeoTs13ur7IISJ94UDW65z/ugY=;
+	b=T2TJglwipJVdW3I2L8NtQWg0ImrMa0WZoYoaCvwcf3sJe4MNf/CpS8k0JygHH5IU2yCp4D41d
+	2g21aNpIzf2+oC8H60v/dp6uu6wsa80P3calCu3Y8obvs1c40M0GwPpDDdDLPiUsyEc1z0YPvjm
+	1C1Aol0b2pNB0/mQ56ZqohA=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cjXBM5WGGznTWt;
+	Fri, 10 Oct 2025 11:23:07 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id D13B11800CF;
+	Fri, 10 Oct 2025 11:23:55 +0800 (CST)
+Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 10 Oct 2025 11:23:44 +0800
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 10 Oct 2025 11:23:43 +0800
+CC: <yangyicong@hisilicon.com>, <linux-kernel@vger.kernel.org>,
+	<jonathan.cameron@huawei.com>, <fanghao11@huawei.com>, "Zengtao (B)"
+	<prime.zeng@hisilicon.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>
+Subject: Re: [PATCH] MAINTAINERS: Update HiSilicon PTT driver maintainer
+To: Yang Shen <shenyang39@huawei.com>
+References: <20251010014847.2747140-1-shenyang39@huawei.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <81d63996-41e3-029a-7de4-cb78c9bbfb26@huawei.com>
+Date: Fri, 10 Oct 2025 11:23:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009084416.45542-1-jjm2473@gmail.com> <20251009084416.45542-4-jjm2473@gmail.com>
- <aOe_0EufouURu7R2@shell.armlinux.org.uk>
-In-Reply-To: <aOe_0EufouURu7R2@shell.armlinux.org.uk>
-From: Liangbin Lian <jjm2473@gmail.com>
-Date: Fri, 10 Oct 2025 11:20:08 +0800
-X-Gm-Features: AS18NWCmhVw11nXPu-jU8ygXHImQqmaDaGRECyqzHvDtAZ_V_270USq7PdCB0EY
-Message-ID: <CAP_9mL4MfzagxiMD1VdOu=jBuN_XsOrvPQT=XTVgu2+G=+nD9A@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
-	quentin.schulz@cherry.de, kever.yang@rock-chips.com, naoki@radxa.com, 
-	honyuenkwun@gmail.com, inindev@gmail.com, ivan8215145640@gmail.com, 
-	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org, 
-	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org, 
-	jbx6244@gmail.com, andrew@lunn.ch, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251010014847.2747140-1-shenyang39@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemq200018.china.huawei.com (7.202.195.108)
 
-Russell King (Oracle) <linux@armlinux.org.uk> =E4=BA=8E2025=E5=B9=B410=E6=
-=9C=889=E6=97=A5=E5=91=A8=E5=9B=9B 21:59=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, Oct 09, 2025 at 04:44:16PM +0800, Liangbin Lian wrote:
-> > +&gmac0 {
-> > +     phy-mode =3D "rgmii-id";
-> > +     clock_in_out =3D "input";
-> ...
-> > +&gmac1 {
-> > +     phy-mode =3D "rgmii-id";
-> > +     clock_in_out =3D "input";
->
-> I am fine with what is being proposed here, but I think this
-> clock_in_out property needs fixing. The description for it is thus:
->
->   clock_in_out:
->     description:
->       For RGMII, it must be "input", means main clock(125MHz)
->       is not sourced from SoC's PLL, but input from PHY.
->       For RMII, "input" means PHY provides the reference clock(50MHz),
->       "output" means GMAC provides the reference clock.
->     $ref: /schemas/types.yaml#/definitions/string
->     enum: [input, output]
->     default: input
->
-> The problems that I have here are:
->
-> 1) the description states that the only possible value for this when in
->    RGMII mode is "input" which is reasonable, because it's due to the
->    RGMII specification. The driver code is perfectly able to determine
->    whether RGMII has been specified, and set bsp_priv->clock_input
->    itself, relieving DT of this need.
->
-> 2) bsp_priv->clock_input is only used in gmac_clk_enable() when calling
->    the SoC specific set_clock_selection() method. Only RK3528, RK3576,
->    and RK3588 populate this method. Every other SoC supported by this
->    driver still requires the property:
->
->         ret =3D of_property_read_string(dev->of_node, "clock_in_out", &st=
-rings);
->         if (ret) {
->                 dev_err(dev, "Can not read property: clock_in_out.\n");
->                 bsp_priv->clock_input =3D true;
->         } ...
->
->   If one doesn't provide it, one gets an error print, which is not nice
->   I note that the DT binding doesn't list this property as required, so
->   the code is at odds with the binding.
->
->   (I note that your Rockchip SoC is RK3568, which doesn't implement this
->   method.)
->
-> So, taking both these points together, the code should not be printing
-> an error if "clock_in_out" is missing when either:
->
-> a) RGMII is being used (or maybe only when RMII is being used?)
-> b) the set_clock_selection() method is not present for the SoC variant.
->
-> With the driver fixed as indicated above, I then think clock_in_out in
-> your descriptions becomes unnecessary, and should be removed.
->
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
++cc Suzuki.
 
+as ptt patches are usually kindly processed through coresight tree, many appreciations.
 
->   clock_in_out:
->     description:
->       For RGMII, it must be "input"
+On 2025/10/10 9:48, Yang Shen wrote:
+> Add Yang Shen as the maintainer of the HiSilicon PTT driver,
+> replacing Yicong Yang.
+> 
+> Signed-off-by: Yang Shen <shenyang39@huawei.com>
 
-This description does not match the actual situation,
-there are many dts using 'output':
-https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/=
-rk3568-bpi-r2-pro.dts#L235
-https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/=
-rk3568-evb1-v10.dts#L241
-https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/=
-rk3568-fastrhino-r68s.dts#L33
-https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/=
-rk3568-nanopi-r5s.dts#L78
+good luck :)
+
+Acked-by: Yicong Yang <yangyicong@hisilicon.com>
+
+thanks.
+
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9a6f4ef1cca3..e9a40db0f368 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11278,8 +11278,8 @@ F:	drivers/perf/hisilicon
+>  F:	tools/perf/pmu-events/arch/arm64/hisilicon/
+>  
+>  HISILICON PTT DRIVER
+> -M:	Yicong Yang <yangyicong@hisilicon.com>
+>  M:	Jonathan Cameron <jonathan.cameron@huawei.com>
+> +M:	Yang Shen <shenyang39@huawei.com>
+>  L:	linux-kernel@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/ABI/testing/sysfs-bus-event_source-devices-hisi_ptt
+> 
 
