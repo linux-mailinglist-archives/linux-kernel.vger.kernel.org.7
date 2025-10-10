@@ -1,205 +1,191 @@
-Return-Path: <linux-kernel+bounces-848069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D73FBCC693
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:43:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481ABBCC65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8A2407A58
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:43:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5EB3B4FD218
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463662D0629;
-	Fri, 10 Oct 2025 09:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1C62D0C7D;
+	Fri, 10 Oct 2025 09:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2MNdXQh"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H8b8ePCk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BCC2C178E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD2927B34A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760089400; cv=none; b=WnjquZ+vJ6X5CZtMyO5b8WQrRMDm0IxHd6Z1+hRz4IhRKtUfFCJVndzfKnJV6RfF1OJ/zzqc5FE4lpTD67oZFH5F5uZHYoaRXyCgHCKGFgA7wiBx4uDlV9TF5KcECunlwYzJunNeiL5zriP6RWB7IyHpj8JBkeyeoQJkchNLjlE=
+	t=1760089314; cv=none; b=IEEwySXV1TMIPXevX4uBFYYAV1HC1BM3oP7ou5oefa9KnxSfeYsrNTeBFrdyCKoKJT+CvGI4AAN4GNwMAYCh9Ast2DV8AhlQxoacwLLwEglCmOegOLxr7W2CPLWERqc28/tKTfdNuy4b+0G8jpNSVkwcGbevPvnWBTooJEaA8DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760089400; c=relaxed/simple;
-	bh=tfJwv3nqlpDtjcN28xzwLtu0Ad/Qk3DuNUw19bGFdw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o77E2FSISjTc6s136uQtGqZHDPKQpIa7/eblwSmGXhwmEp10JEZ0onnzo/qrlnTZRY3oOmFxW9OSvc5fgUE7cNQATum+RCxHrlFuL6yrwPADxwt+dXCFoVgT2P73NTOleNpnImbNtQCt2kUGTwBaBIDfEHJ1XIiAVxBpJxshweY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2MNdXQh; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so1575528f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760089394; x=1760694194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kmHzldTWpRVGaYiRV7mqVTmbw8wTd7DjVDHFKbOWCEM=;
-        b=H2MNdXQhBP6UZRIf427UJPOaBPKLw53ezfUFHqraxZPLItmNzxyiaxGWwwZw5KnSVm
-         +coy6QRPj4Ko0vYtaep45sJwuLKzSNfQ8Y7YCUJrEKs40bAzoMrJyBPxlngY0CUhZ2nz
-         MJzzl6pASGIC1HeeEoVEuSZIv11I9yr4Xh6mLzABxM9BoAd7pHlvuaBSm4nxtXKd65x2
-         6Jlmoylazu/vg7ORaRSBTN2JFXA4Gaq+37SnXVMXDrh+yhe/5G/CkVovRVDxmPHYaNOc
-         c2eGNEvTd6/zFDTK1NRsZDPCv590fYmLNC4Jm0tz+g2ZBLExX6OzvFoBW2NiPYvZCllE
-         RaUA==
+	s=arc-20240116; t=1760089314; c=relaxed/simple;
+	bh=TCxe8AKQudXrjI6Ezcpx/IM4UKhmFZ9JhyxcqMdvoqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uzZcazXuBxElrAJ1T4huApqYEmoK/X3qQOWd/SqeW88Fxfc2cZ1hrCpvcnZZeaG7CbWqgZIswe6GWWDLK9LvfGFzCFM8XR/61lnOV/D7ZsfuQGRopXOk6oqo+R4LsKa5LLxB1HqtZ/hszLOLzApnyff1XxQmaaw/731xUvrmudo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H8b8ePCk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760089304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QRU9De0ZG84MmWJ0E/AfuolzoTzmUWqKv+6ReOBq7PQ=;
+	b=H8b8ePCkmRn3O59KXWpVmnNXrya1pscFG0bFMutIKIlcA+WO8rPCXLWnGMSOXBuQG9ch85
+	VqhETGOTpR73jFw+xL90y5ogcPigzUIA48ZLAhC8G2cAqAnPWCTIhwgMoEvgLlsNfIeUjJ
+	8DEeiBLAOFDp+Q+oT5wDKtaGxie6eu4=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-237-zwDpzHXdPQiuuUW-ZLhPjA-1; Fri, 10 Oct 2025 05:41:42 -0400
+X-MC-Unique: zwDpzHXdPQiuuUW-ZLhPjA-1
+X-Mimecast-MFC-AGG-ID: zwDpzHXdPQiuuUW-ZLhPjA_1760089302
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-780d2956a2fso43450777b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:41:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760089394; x=1760694194;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760089302; x=1760694102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kmHzldTWpRVGaYiRV7mqVTmbw8wTd7DjVDHFKbOWCEM=;
-        b=ef7+5R5rE1re93IShE3ZllgxcKIbuPwpatVvKLyfAVdKtmo82VbAJaDWtCZdniuyjP
-         0NxIJlttNkaamP0N2VuP9qym9rkR8rz+InDJTnx7C/9q21Jy8YaZqX3ziJs+pRDopqhV
-         AhEOkTEcOQg20y97jKiLAvptSXKyQc/EFy1GV+w1H3wfn9ObKOIlHcTQf+1wcyDke2Yn
-         suIV/O/cwwMe5G+4RpvuSqAkgZvssJSQfzYxA/zywdNyGRuttqwUW9jHv5MKRxJsfnzX
-         UySLwY8sVzERnRf4GA4ry2HPOHtuLZ/mS0r1LN3dK/AZu/gVFpaAKA3llQoV/pkoJIyK
-         gIWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdoTglRGRiUGgsMZKFl4NeoY0jVFexL8ZNOQqQWk/CHXuTkZuYyv87sdPRb/BxbqhcruUmTQ/4DFK7VDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzsr+0Hatosni88PtONXekQ2tYuJlisOCo7fV5sA5wQ/b4rEoE
-	wqMXk1rrRsdpHgqfL8+iqD1m7I9XYS8BEjDPqKPYUunhiVwkErJ457UE
-X-Gm-Gg: ASbGncu3XrLAGZMGhfRQQMGrUSoJS+w1r1r4PcbEMXGnWKaBeKBz1lDwTKK82bIRCS8
-	Vj9utxbCG2yVAVZ7/3qE7LwydZAAjIkQ5Fnofdf7Wnr4BjKUCF+HqiXasijeG3SraqaLT/D28vE
-	G8O9YrpE4k+hYEVuqu2ieu0VSaD7ZiaFgd9z1BBNIBcJefgKPNFXUhUbebRh5cRrcTyElC8lLhg
-	WSMbMoDM9+kpeR2lbmw3Y9uISUfzTKzhQf2/gacV0YrWldP4vnAK+nGf8UGJfGXKwWgXRZePVlY
-	7tNHXsSbaVch5IrL9wnoPSoXl216Jab4jcBUlEZgTdQoEdtuHSP5Kbr257zlTLNIcgTkLTJsANQ
-	Pv6+IGM3VSfqH0HDoPtjjmCM6onoJkyYEQA7hN6/l27x+xxVh
-X-Google-Smtp-Source: AGHT+IF9s+/76+HLGw2mLZk76tGq6/V4j0p5f2hCMj0ootyyX2pqmy4ieClzRxxY9elYI46O7lbdMg==
-X-Received: by 2002:a05:6000:2dc8:b0:425:6866:6a9e with SMTP id ffacd0b85a97d-4265ef6e5c2mr4984366f8f.0.1760089393527;
-        Fri, 10 Oct 2025 02:43:13 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce5e8309sm3283123f8f.50.2025.10.10.02.43.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 02:43:13 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Art Nikpal <email2tema@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>,
-	Rob Landley <rob@landley.net>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	linux-arch@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	initramfs@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dave Young <dyoung@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Nicolas Schichan <nschichan@freebox.fr>,
-	David Disseldorp <ddiss@suse.de>,
-	patches@lists.linux.dev
-Subject: [PATCH v2 3/3] init: remove /proc/sys/kernel/real-root-dev
-Date: Fri, 10 Oct 2025 09:40:47 +0000
-Message-ID: <20251010094047.3111495-4-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251010094047.3111495-1-safinaskar@gmail.com>
-References: <20251010094047.3111495-1-safinaskar@gmail.com>
+        bh=QRU9De0ZG84MmWJ0E/AfuolzoTzmUWqKv+6ReOBq7PQ=;
+        b=u/gKD+M+0wWxZqVPbR3ciO33rA14QehWpgwbk9nlWrze9od6yG9vlKjeRWAqELGITA
+         GwrNR2rlolTf7/REsOm4zMctvjNmenHle7Wxxe9byyy6zBZfvfAiZeo6oFecVkHU4ZXm
+         AQ7XyD4D+49k7MFfiB/kQHKrxSHNDLutHpPQ0eEgsteJou6/wfgALkGP5or2vKhjpDf6
+         e0Qtumt7Opc3IsRAj1eeCvktW9Za4sAcSnvqkleoprK3HAqmC0yvtYKwfWRnLxwBN2L1
+         Q25tpe1l4qTbPSZ0nrqC+yGPkti64+rNBelYURW4vDll76MHaNq38n/e6q56xHwe4I5g
+         m2uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUYLR3b+274CTWEgpAo82QEXsFxMh/UL8DVaq+/W89CFr7WB7/1Og2UYMD8wHbqnYix+nDBWZibc5HkoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZAAcDgqxJIDj8S8va+qv0x6fzxyl+GzWA1mVyRdrc3vJ6WWxv
+	vOmLXJxOAKqL8GJ3Wv9Ss74NTtma90lflnXVd1eI55o3W+IHXr/s95im3UbyCfW/JIcf5ydAuIM
+	I7nfrSL8fpEawbmdwwYA/OlTug9EgW0MWEhZN7clvZcSlFdmeYZkhvkjEfRPUFq9wHgHpwP1vhW
+	aiNEAvNE53u0aMMHGEU0aCulzQtQav6HwVmiH0qtLi
+X-Gm-Gg: ASbGncvbm0dQ9PvVqR8hCr2g5/hAP2MXM53sTV3fwfY++sALRoKnYoohNQgYSgleKxk
+	xzA5x9AYPV1ZE/6UyEOJw2zetQxq3eDi3glMsUcatWQ6DqABRWguaPruZi7U511BmJB4qM5+jFW
+	7oWLU5xSHbAlwbgNiRy7FDVCXc07DfHT4FLh9+PyruUv86Ud3GjUpVFIyOzm7fKLJ563iybglmY
+	8RMigaa
+X-Received: by 2002:a53:e02a:0:b0:63b:6340:8e64 with SMTP id 956f58d0204a3-63ccb9030ccmr7879076d50.39.1760089301983;
+        Fri, 10 Oct 2025 02:41:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlUiPsiwWpvI3oTDKYUNUVRFCMnRJmvebTbfIc4uDv865d8wTOTnPHEKhrULJ+5FLnqrcuR9Jto3LombTI4u4=
+X-Received: by 2002:a53:e02a:0:b0:63b:6340:8e64 with SMTP id
+ 956f58d0204a3-63ccb9030ccmr7879067d50.39.1760089301559; Fri, 10 Oct 2025
+ 02:41:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251002103537.308717-1-eperezma@redhat.com> <20251002103537.308717-2-eperezma@redhat.com>
+ <59eb64f1-7019-450d-96bb-a9398d2af602@oracle.com>
+In-Reply-To: <59eb64f1-7019-450d-96bb-a9398d2af602@oracle.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Fri, 10 Oct 2025 11:41:05 +0200
+X-Gm-Features: AS18NWCjM5wvi9XlNJHpYwkkr8FMsHSPm7e0O_6hZ2XlqsH_hMhNdnOb8X4OZb4
+Message-ID: <CAJaqyWcxooE69w+P-M24FTkKi37WGthrhhdJ0BC+GBQV0xxngg@mail.gmail.com>
+Subject: Re: [RFC 1/2] vduse: support feature provisioning
+To: Si-Wei Liu <si-wei.liu@oracle.com>
+Cc: mst@redhat.com, Laurent Vivier <lvivier@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Dragos Tatulea DE <dtatulea@nvidia.com>, Cindy Lu <lulu@redhat.com>, 
+	Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, jasowang@redhat.com, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	Jonah Palmer <jonah.palmer@oracle.com>, virtualization@lists.linux.dev, 
+	=?UTF-8?Q?Be=C3=B1at_Gartzia_Arruabarrena?= <bgartzia@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It is not used anymore
+On Fri, Oct 10, 2025 at 6:40=E2=80=AFAM Si-Wei Liu <si-wei.liu@oracle.com> =
+wrote:
+>
+>
+>
+> On 10/2/2025 3:35 AM, Eugenio P=C3=A9rez wrote:
+> > This patch implements features provisioning for vduse devices.  This
+> > allows the device provisioner to clear the features exposed by the
+> > userland device, so the driver never see them.  The intended use case i=
+s
+> > to provision more than one different device with the same feature set,
+> > allowing live migration between them.
+> >
+> > The device addition validates the provisioned features to be a subset o=
+f
+> > the parent features, as the rest of the backends.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> >   drivers/vdpa/vdpa_user/vduse_dev.c | 17 ++++++++++++++---
+> >   1 file changed, 14 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index 6c74282d5721..ef8fc795cfeb 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -121,6 +121,7 @@ struct vduse_dev {
+> >       bool connected;
+> >       u64 api_version;
+> >       u64 device_features;
+> > +     u64 supported_features;
+> >       u64 driver_features;
+> >       u32 device_id;
+> >       u32 vendor_id;
+> > @@ -698,7 +699,7 @@ static u64 vduse_vdpa_get_device_features(struct vd=
+pa_device *vdpa)
+> >   {
+> >       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> >
+> > -     return dev->device_features;
+> > +     return dev->supported_features;
+> >   }
+> >
+> >   static int vduse_vdpa_set_driver_features(struct vdpa_device *vdpa, u=
+64 features)
+> > @@ -2256,13 +2257,22 @@ struct vduse_mgmt_dev {
+> >
+> >   static struct vduse_mgmt_dev *vduse_mgmt;
+> >
+> > -static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name=
+)
+> > +static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name=
+,
+> > +                            const struct vdpa_dev_set_config *config)
+> >   {
+> >       struct vduse_vdpa *vdev;
+> >
+> >       if (dev->vdev)
+> >               return -EEXIST;
+> >
+> > +     if (config->mask & BIT_ULL(VDPA_ATTR_DEV_FEATURES)) {
+> > +             if (config->device_features & ~dev->device_features)
+> > +                     return -EINVAL;
+> > +             dev->supported_features =3D config->device_features;
+> > +     } else {
+> > +             dev->supported_features =3D dev->device_features;
+> > +     }
+> > +
+> Why this feature filter can't be done in the client (library) of vduse
+> itself, similar to other device specific features of the existing vduse
+> client? I thought those vduse clients are never managed by vdpa tool,
+> while the device class can't be bound until client had registered with
+> vduse. What is the point to define the feature bit in one place, but the
+> value of the feature (for e.g. mac, mtu) is still or has to be provided
+> by the client itself? Is it the right behavior to filter features in a
+> separate layer rather than contain all relevant feature bits and
+> attributes in one central location?
+>
 
-Signed-off-by: Askar Safin <safinaskar@gmail.com>
----
- Documentation/admin-guide/sysctl/kernel.rst |  6 ------
- include/uapi/linux/sysctl.h                 |  1 -
- init/do_mounts_initrd.c                     | 20 --------------------
- 3 files changed, 27 deletions(-)
+Maxime can expand on this, but the user of the vdpa command should not
+need to know if the backend device is VDUSE, HW, or other device: It
+should just call the vdpa command the same way, and expect the same
+results.
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 8b49eab937d0..cc958c228bc2 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -1215,12 +1215,6 @@ that support this feature.
- ==  ===========================================================================
- 
- 
--real-root-dev
--=============
--
--See Documentation/admin-guide/initrd.rst.
--
--
- reboot-cmd (SPARC only)
- =======================
- 
-diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
-index 63d1464cb71c..1c7fe0f4dca4 100644
---- a/include/uapi/linux/sysctl.h
-+++ b/include/uapi/linux/sysctl.h
-@@ -92,7 +92,6 @@ enum
- 	KERN_DOMAINNAME=8,	/* string: domainname */
- 
- 	KERN_PANIC=15,		/* int: panic timeout */
--	KERN_REALROOTDEV=16,	/* real root device to mount after initrd */
- 
- 	KERN_SPARC_REBOOT=21,	/* reboot command on Sparc */
- 	KERN_CTLALTDEL=22,	/* int: allow ctl-alt-del to reboot */
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index d4f5f4c60a22..fb0c9d3b722f 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -8,31 +8,11 @@
- 
- unsigned long initrd_start, initrd_end;
- int initrd_below_start_ok;
--static unsigned int real_root_dev;	/* do_proc_dointvec cannot handle kdev_t */
- static int __initdata mount_initrd = 1;
- 
- phys_addr_t phys_initrd_start __initdata;
- unsigned long phys_initrd_size __initdata;
- 
--#ifdef CONFIG_SYSCTL
--static const struct ctl_table kern_do_mounts_initrd_table[] = {
--	{
--		.procname       = "real-root-dev",
--		.data           = &real_root_dev,
--		.maxlen         = sizeof(int),
--		.mode           = 0644,
--		.proc_handler   = proc_dointvec,
--	},
--};
--
--static __init int kernel_do_mounts_initrd_sysctls_init(void)
--{
--	register_sysctl_init("kernel", kern_do_mounts_initrd_table);
--	return 0;
--}
--late_initcall(kernel_do_mounts_initrd_sysctls_init);
--#endif /* CONFIG_SYSCTL */
--
- static int __init no_initrd(char *str)
- {
- 	pr_warn("noinitrd option is deprecated and will be removed soon\n");
--- 
-2.47.3
+That also implies that it should handle the same way if a HW device
+has its own MAC address and then you set a different one with the vdpa
+command, but device_featues just came first in the pending list :).
 
 
