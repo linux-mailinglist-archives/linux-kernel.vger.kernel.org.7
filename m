@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-848155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDD1BCCBFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:24:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F61BCCC22
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA4B24FCAF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:24:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E29344FCD53
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25A52F0661;
-	Fri, 10 Oct 2025 11:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8092F2619;
+	Fri, 10 Oct 2025 11:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="IO8I/tT6"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="vlNOeGig"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA44287268
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3B82EDD63
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760095435; cv=none; b=b05euqclbu6XgQf7nOIETMW9oHpsIvXwZqFlpGbjwZr5OK3DXctyqu0waCS85hSsMWMIUI87ic5vHcQrap6CBWIQsEoFu1pO6v2u48t+hLYqhWebEPxhUF6ZvgETfz+lKTCZcgqJ63eZ5LS8dK3yxy2oNKs4zIr11QcWzCIz+78=
+	t=1760095437; cv=none; b=CIuOZWNMsFjpUXWiPoZN4EvF1j/jm5l/Zev9kxKcTTnVFN3GqRjFe7vdlnGgNw3yihnfYldM6pHOF8kEogYiCPIU99vLklu0yhHMlfgJ+l4HFpIpSe7b1wZDOW8jZcKE/AYEgW3iNlXXCg1GFDHQ4eIU1ddVPyBIlykbsD371iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760095435; c=relaxed/simple;
-	bh=rN2PnqvN06c7mlTMsnkt8Ofc5TQdsHN0zxf8VF8tMcY=;
+	s=arc-20240116; t=1760095437; c=relaxed/simple;
+	bh=rybSxxhw1JotC0EVvnPnvDxaGD0GBvkGpkXdb1a1CO8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZoBTaYf53TUZ2j1YSSPl20n7sfc7JuMfj4CFmD9sxr6uNB+Or//kYBBFwskF/pG4bP7x79A5LBRkWccYoxmf28mDm/s+hQo2wUTJuB3CNhGBp9aEM7p7Llxrl/zLNs7Ab2NTSy4bUzaBS09RnFk+ZBTM+BcjmK9ezZ5GpAWvjdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=IO8I/tT6; arc=none smtp.client-ip=209.85.208.44
+	 In-Reply-To:To:Cc; b=DIv5DUHZIVUDkLg55BTKDydIgrT0p5a4hDMbJFY9RkxXNpzCTBjldWuO655xU8jxspNmfaDiobBfgFDdqwCP/dzGyrTzNAGnea8mW3I/yeoxX/NoNaT6ZjwzU+rSEf0NXpInZ254ycoBW8eaGK7jbVEzxYOu4dr0xdewcjgroc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=vlNOeGig; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-639102bba31so3856674a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:23:53 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b00a9989633so283768366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1760095432; x=1760700232; darn=vger.kernel.org;
+        d=fairphone.com; s=fair; t=1760095433; x=1760700233; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jjZxwkEE9XRYJeGqY5P3ejLLsqggmj8GPN1yD9SWCBg=;
-        b=IO8I/tT677UDmGKAg/r7kbHtMkKKVyUpY6sWKWZd9EcX1j4LEKMio2otyjBDxr5KI6
-         HvAGguJvbwiC5HyyUBLNW1rMqrME7xvin3O7UxbqKO48SFGq4xCAbWwh97SkFhHOITvv
-         Fbd4WGx2flJDFor0BXHg8INIyYvEhthExvfdaZMob7j0XpeasdD9H+mcpG/7FHLCYIrD
-         tVeGm7Ybm7K2oyhBnLXOlnDLy6fcCtDElLlVTzj4axBdqx6PzS1aLP+CYDoz8oB7PHtB
-         q2k9DgZ3WRA06muim7eDprtazKIraT6K9YesmJrJm0a9hWOvdUFtvkMEzsZxZuIIGKz/
-         5jFQ==
+        bh=JR1QbCUpiXRUCwLKLdHPO8x+lkjmFTnSPPaWi/d3ZRE=;
+        b=vlNOeGigQ4qhYttAwAyDs+DLpQsokD7pjZ1ROsEYA/Yy+w/2LIecSmts+rkyT/1cWH
+         kRLa/UX7Z7JUQRNNN7Ormu7dwXDJlJuCgYSSbfpBWDp7HAdiGkkxV4JMOpYOEb14v49O
+         ethk+l/8dEMnnDQavUIyGMDByCbUy+CSlSFtf/GPqMdTaJpWoS+6TGMa9d/50ZqTxdrN
+         W1/DI9HP6Yr2x3Pv7VS7GpWpwskIAwAxzMsboOFWjPp1xnFUuJEzfGbruxeKGQIsS6Hs
+         K367uW091ssZ2ZwzAI+v7tXkiYXlDvXTA0QynKdOqKdW9qo/S2DqkQTWaUodGq/KZ5gq
+         IUEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760095432; x=1760700232;
+        d=1e100.net; s=20230601; t=1760095433; x=1760700233;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jjZxwkEE9XRYJeGqY5P3ejLLsqggmj8GPN1yD9SWCBg=;
-        b=tfquinaq8k32I7x04hOCyVBFbrI7W5cNedT4yyenFc4tN36KbzOYbvq8dKKW5CDsrQ
-         /kk3CkeOsQn2TRyhlnncdqd6KPezeN5VRhJrG/je80oML1IKpLfMiP4IkCNMKyQSs+pY
-         ObaiEZHfRMX+bYYSOxi/yKAJ3nP9qrefqmtxBKjGsqvQ25j8A6UaCP3hvs0BNc/Ieadz
-         mHM0foJYcyNe4UCupwXrRycdTwfBkjEVMXiK574Xu5limw8aax1a7MxxzOZRvKUHxnRE
-         iKqFFIZ8MKzHNasMOq5A0E5W8sJ/6KT+p/ADvTKYhbFbWgYHp0guxmwmxb2Q3SQylJoi
-         LfVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYwzRzSDsK+dGY+Y4Vp2CL+gsb60AcB/2a/TO4FeXigXw1fByiXgBdeNM28Neac4UfVb3o2nOlVf2RCd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTAAbTNraiB2uHyDXxerbmhb9OhC/ds4jFWlD6RhJAjL/soLaZ
-	fH202AtZkW3gYhppu2n+XCu26hWSCZyfc/GHjuIjrrt0YDMPeqjI+RzAcw0C5EJTx38=
-X-Gm-Gg: ASbGncvZZJ5AEOW5ox4Hh/gaQrq4KbP7FeumBo1CPO3ZLOeM9FHO4Zav/c6WznCKxlr
-	qB6S+VKMP1wFSuGCrmYqPov+HbUiLF3nss4V6TltcZblrudShsWNW7HvbEMjeCqIl8EZTDfSMTW
-	t1fPR4u9MORlkf6RxsoJxVXEJGEZOgvlvatmb3rB8cjQJAecVQBpYk2wHuoiqQlYdG/TMNVNJgC
-	OShfOxkTOdIW1qgcvwyB6/AhBPYpekkh3A95QI8DOCY6dYJQxTbVmGfUSGBHY3KNzz6RMRctfie
-	bl36g2CXSxCSrJ0xLlNuwZgpQe6aLTQwOvZgbvIsr4aJ2hWM/uIRBEBWV6royrYSGR1uYEtrakm
-	jYMq5WflsQb49WoxQ6Pth4i1Q0E/Mm6o0L0BMuCAEmKSBxu3pi4KYqyyuX3UDzqc9zeoUk57Drc
-	A2czfD5qsUFgssvKLFJ3BKjoDPMIZPQA==
-X-Google-Smtp-Source: AGHT+IG0l/2slu6V7bbZR48BMoHy5O2kIXbxky/cFnBGBo5QTAKOZtCP/w3ulfdBtRinJ5MOJJg6Yg==
-X-Received: by 2002:a17:907:72c6:b0:b46:8bad:6970 with SMTP id a640c23a62f3a-b50abaa43b4mr1251023966b.36.1760095432092;
-        Fri, 10 Oct 2025 04:23:52 -0700 (PDT)
+        bh=JR1QbCUpiXRUCwLKLdHPO8x+lkjmFTnSPPaWi/d3ZRE=;
+        b=U/k7jNUf/yaTeoXHVLHbqVHIuQ1LchQ+l2tfFA6XSEcM72wlO92F5BwSyvc0N9fBEN
+         /n5YRSgeoKHeY6BydsesIWSyqegbNZWbr1ST4WBo5I8r2qB8jPa23Fw751V3FNRlH7IP
+         2+3y+pmtzoPs55FZ99D/VjLtFKwVe6Rx2XuevehkAbFdtalgpDAzba8okj8XqmQTHwE5
+         J+m43ZZGYo+ZhY3yGXszN3WAiOarRWxog7ejnKRAeOGn/rPRFdznDWXIa62/fgl4WFlV
+         t0zusa11f3H4fs5+FPoc8SpK02SUqc1Ko+4q0eMgX2hRkxiMh1yTJTqIar/s3E8fdHNd
+         zGPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3vfGLKOxjXNDZAmJcGIp1S9ffgE15KSV9yf6sMfdefSDHQo61dBT8+ZSEbW13aqoG+x1x/70JMD/W1nM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjComRLfOV23bcnsAHwg9JLTeIgx0EXdpSz8i/GxIHk6Hrv5bs
+	CWQRKpPqBRjDRTOoG8vkPdWjaU4LPPx7ZLGdcJo7zYu9YGyW0jm1oVCl1+fulj8A1F0=
+X-Gm-Gg: ASbGncvV2GkMaNIRybd6rCsVdoPQKaWJ2bXBPsJihvrQnTR7p73GCnXOjOJLUU6/Pw9
+	y3VmnSohZkaKcTFipXCmSOYcB/JOxdCEjkfMqvILwbQMnyZbQhQy0ew682h8Jeqr4JJt9o+cMEg
+	m+2bXSBlAHFj2V2XB+isES9wXml7b2yHitgTHKPYcvoMWqmBpi6svc1bCB50Kqo8hsAqdcKlZtL
+	wRsae9UtJxV9qVNWS4B2jh7GmYGSBGfRX3k0WmqxERR58gGHqr+J04excljcR7OdmQw2UG96B09
+	A7vKDTzXEMIYfRi5tprwNtXcpyRAJLTGG02/UEtK6+tkpvgZt4P2H6wU7G/Exmo8Q8y070EjMnq
+	YLO2YQ24S4zJ+1//Sdq6ISgb9Hq+uEJj4S0V2ZgU2+OOWHs8J2pIksnpnv1UjhxvK60iLLpfaKm
+	NQFISQYfi01jY8u24qMfc=
+X-Google-Smtp-Source: AGHT+IFLrf/4N+O+0nhBGG1lU67A0rcFh0CE0ABq2ryOs2uijVAnZxJ+WemBal4mL43bCWhHez8qkw==
+X-Received: by 2002:a17:906:794b:b0:b41:8ad3:1b5c with SMTP id a640c23a62f3a-b50bd23ebebmr1530935566b.13.1760095433066;
+        Fri, 10 Oct 2025 04:23:53 -0700 (PDT)
 Received: from [172.16.240.99] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d900bf8csm209905766b.59.2025.10.10.04.23.51
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d900bf8csm209905766b.59.2025.10.10.04.23.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 04:23:51 -0700 (PDT)
+        Fri, 10 Oct 2025 04:23:52 -0700 (PDT)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 10 Oct 2025 13:22:00 +0200
-Subject: [PATCH RFC 2/6] dt-bindings: thermal: generic-adc: Document
- #io-channel-cells
+Date: Fri, 10 Oct 2025 13:22:01 +0200
+Subject: [PATCH RFC 3/6] thermal/drivers/generic-adc: Register as IIO
+ device
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-bat-temp-adc-v1-2-d51ec895dac6@fairphone.com>
+Message-Id: <20251010-bat-temp-adc-v1-3-d51ec895dac6@fairphone.com>
 References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
 In-Reply-To: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
 To: Jonathan Cameron <jic23@kernel.org>, 
@@ -105,43 +105,114 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
  devicetree@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760095429; l=1052;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760095429; l=2769;
  i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=rN2PnqvN06c7mlTMsnkt8Ofc5TQdsHN0zxf8VF8tMcY=;
- b=y9o4c7jCYDMJNFUkH54nnz+m4QRI1hucrIu/e34bCKs0obhf5/NpX3CWg8CXfUXEpdGxzNqsw
- LlijOXkdwZEAyChf4nWCfOadjRUMdruziUetVwQ5wH+z9ndzcBSuFPr
+ bh=rybSxxhw1JotC0EVvnPnvDxaGD0GBvkGpkXdb1a1CO8=;
+ b=3PsVEzygrJHYdPvkcHsM4cNpPtkZ6H6GZeqjAfQBvgyjpuGjMffNHRlKsNnJiWIsW72DwVl+4
+ tJVfZBOE+MdB3TU+4/hGB+hucyEo+AFPGN0Ut3L21wrUf4hpyVs05hK
 X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
  pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Document the property to allow using this sensor with io-channels.
+Register an IIO channel to allow reading the temperature using the IIO
+interface.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/thermal/thermal-generic-adc.c | 56 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
-index 12e6418dc24d..317fc39ed46a 100644
---- a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
-@@ -24,6 +24,9 @@ properties:
-   '#thermal-sensor-cells':
-     const: 0
+diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
+index ee3d0aa31406..14aef682e0fb 100644
+--- a/drivers/thermal/thermal-generic-adc.c
++++ b/drivers/thermal/thermal-generic-adc.c
+@@ -7,6 +7,7 @@
+  * Author: Laxman Dewangan <ldewangan@nvidia.com>
+  */
+ #include <linux/iio/consumer.h>
++#include <linux/iio/iio.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -23,6 +24,10 @@ struct gadc_thermal_info {
+ 	int nlookup_table;
+ };
  
-+  "#io-channel-cells":
-+    const: 0
++struct gadc_iio {
++	struct gadc_thermal_info *gti;
++};
 +
-   io-channels:
-     maxItems: 1
+ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ {
+ 	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
+@@ -115,10 +120,44 @@ static int gadc_thermal_read_linear_lookup_table(struct device *dev,
+ 	return 0;
+ }
  
-@@ -58,6 +61,7 @@ examples:
-     thermal-sensor {
-         compatible = "generic-adc-thermal";
-         #thermal-sensor-cells = <0>;
-+        #io-channel-cells = <0>;
-         io-channels = <&ads1015 1>;
-         io-channel-names = "sensor-channel";
-         temperature-lookup-table = <
++static int gadc_adc_read_raw(struct iio_dev *indio_dev,
++			     struct iio_chan_spec const *chan,
++			     int *val, int *val2, long mask)
++{
++	struct gadc_iio *data = iio_priv(indio_dev);
++	int iio_val;
++	int ret;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_PROCESSED:
++		ret = iio_read_channel_processed(data->gti->channel, &iio_val);
++		if (ret < 0)
++			return ret;
++
++		*val = gadc_thermal_adc_to_temp(data->gti, iio_val);
++		return IIO_VAL_INT;
++	default:
++		return -EINVAL;
++	}
++}
++
++static const struct iio_info gadc_adc_info = {
++	.read_raw = &gadc_adc_read_raw,
++};
++
++static const struct iio_chan_spec gadc_adc_channels[] = {
++	{
++		.type = IIO_TEMP,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
++	},
++};
++
+ static int gadc_thermal_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct gadc_thermal_info *gti;
++	struct iio_dev *indio_dev;
++	struct gadc_iio *data;
+ 	int ret;
+ 
+ 	if (!dev->of_node) {
+@@ -153,6 +192,23 @@ static int gadc_thermal_probe(struct platform_device *pdev)
+ 
+ 	devm_thermal_add_hwmon_sysfs(dev, gti->tz_dev);
+ 
++	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	data = iio_priv(indio_dev);
++	data->gti = gti;
++
++	indio_dev->name = pdev->name;
++	indio_dev->modes = INDIO_DIRECT_MODE;
++	indio_dev->info = &gadc_adc_info;
++	indio_dev->channels = gadc_adc_channels;
++	indio_dev->num_channels = ARRAY_SIZE(gadc_adc_channels);
++
++	ret = devm_iio_device_register(dev, indio_dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to register IIO device\n");
++
+ 	return 0;
+ }
+ 
 
 -- 
 2.51.0
