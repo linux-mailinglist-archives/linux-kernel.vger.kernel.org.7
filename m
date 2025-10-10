@@ -1,70 +1,91 @@
-Return-Path: <linux-kernel+bounces-848223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F79BCCF24
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:39:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED88BCCF30
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6281A6630B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5602E404AC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A672EE274;
-	Fri, 10 Oct 2025 12:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B896A2EF65C;
+	Fri, 10 Oct 2025 12:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gCxelIpC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="M0N0E6SH"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6432D0629;
-	Fri, 10 Oct 2025 12:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8E82EDD62
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760099933; cv=none; b=LwqSOnXCJf6gRmXbheyndDKaShbZBwcAZpjydESEPlEGqWpW+D26zVnHpX5nPJ3GFfOZYRaTErRvKDOTIafFJUgB3bfXYUVwvfX4Shvq+IoJpZyebEd2/ojGgkJTCr7rRb0mukwnz2zsxSehCXT70de0I7tx1ENiBbHffXSC16w=
+	t=1760100166; cv=none; b=XOTaTLNsw3RAOeDQ/e7F+xb42AyikkaQWf9dDH/PTIceUw6dzEtdVU2t0y2f1z93Gyz0w7ThxW5VXYOYdhVv8pnbXXIXuy+qI4p/iUmVyyu4FAgn/I63YixvHSYq36rvrVQo6FCmliVj0KIt5hUrTVoRklkvc2Nm5c4qng3lHxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760099933; c=relaxed/simple;
-	bh=p2dq1+BYCl83wtRQDI4S8QRU072WIE+qdJpzYKgqGwk=;
+	s=arc-20240116; t=1760100166; c=relaxed/simple;
+	bh=au8PLeyI2+Pe4ULs+APkVrpzfMg+hC+ART9veqXOIk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5TOJ/IekRUMTqfFwNJl4edVWp0LCd/8xdN7QzpDDOFZo+sgAg3KrHYWfQPcfFQE67JGeYTBkSkgcJSf03RZzxA8g53LloLmGh6s2UHqlZMhBYqpjgKTnxnBCqrmZwhc+MPnAeLZged0gT7EHGshTTEwI3o9W/2yTVAgcee19XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gCxelIpC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87526C4CEF1;
-	Fri, 10 Oct 2025 12:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760099933;
-	bh=p2dq1+BYCl83wtRQDI4S8QRU072WIE+qdJpzYKgqGwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gCxelIpCywnl2nZ+0zzEYviCt/IR7PSgK9ywEfdoWQn+oAPWP7F11LRUhgwqcpVge
-	 VRUUfQbpTeDkgpT6ATNWtNlJNzpyVp3Ok6k/i3dDGVy/2vxfxa+aX2gebckUC0W++P
-	 daAx7QgJQ2VIKINmVs97v+NZSTJ9hvGWv5Wb1mjk=
-Date: Fri, 10 Oct 2025 14:38:50 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
- device
-Message-ID: <2025101020-tiara-procreate-e56f@gregkh>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-12-aneesh.kumar@kernel.org>
- <20250729181045.0000100b@huawei.com>
- <20250729231948.GJ26511@ziepe.ca>
- <yq5aqzxy9ij1.fsf@kernel.org>
- <20250730113827.000032b8@huawei.com>
- <20250730132333.00006fbf@huawei.com>
- <2025073035-bulginess-rematch-b92e@gregkh>
- <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUB7pPJios6kGluoUyrRcZSHmWoLfy43GHM/R/Si9hkfqZY5sCl3HqQDQoTfG8Un/PfBG1R8wthzXtDFMN5XELgpQJZgmVE+bFd99fQ3yjGsaZx0pAG5nt7ZI6LW2nTtMI4eAmy5TuVfhb3oMcjjJKbLPrjkRkDxqX2Glb/7Bqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=M0N0E6SH; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso1622366f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1760100163; x=1760704963; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ed6VgS5iZMO8gnpHzEOAATrMdAcan5FzzzLKhhlpKCc=;
+        b=M0N0E6SHVT7jEPhWbMedq6miTm4XYWvWPGIQVDSCc35fp3kimxN17v7JZO8yW9mtgS
+         fWyddsnJeqD7IkHnC6E9bRGLpYCaFXuDLeBUKCfNlLsyJZOkalrm+yrWWr8W3KnoSzlh
+         OxdPOELQAJVmGQsVqEc3ytB6J7k5DmZMtmSlf+dgRmXujkY2E+kH6Dqzof8o+zzbuaI1
+         XuZJkY4/T6qXHzxeB14dSnrUzRGVbvYt81Mgfa3dkjRIrTmEEpWmrRtIycPan6PRZKYh
+         tKUXBTxKEST78QQFd+y+uFYEBMGGu8ArGi71fGkQ5RJlA5YtqbVJxeAOcHf9dy2i+z0r
+         25YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760100163; x=1760704963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ed6VgS5iZMO8gnpHzEOAATrMdAcan5FzzzLKhhlpKCc=;
+        b=AMlxW2X9YwYARbSym1YMiN2pC+gtAaWIktwGwNGh/REQUNs8H/spbpLYv98t5UurWP
+         eJFhMyo1UAt44ynR/IUdEZJ133QS7R4zf3EIkfLWVyqXYCAsbFUo43zZrMMs7ikMEx46
+         GbPY/Aokc7z0f/0dj8UZskIhXPRUzFHjVbVvEw/xm4XAOPRE7dMrnhW0rxhER7pmLkkF
+         5Gfnry0eQYkGAS1saanIrszL5s+GnzqfOZEhaIEkfUk5xXxEy7i7V7V20dPZKJhoxo7j
+         qaGrNeUV+DK+zNk23SjbCdqhyXsZA8z/5xrOikR0HzeBGxkWHg5tITA8x536UGUFf7AE
+         qZTg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1tR9Bxvm340aorRSYB1QJ/Bh+68p+abNkvWR4R5eHvruElq8NrQdOrgZVpHuUSDW0IPJEeyL85R00ueo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYoSlz+DgCymJZexcfHf2goztX1hDqACUFZsR1HUmgQTwtpPG0
+	CLZa+/47tXxe7fbApktYBe8PU77RRuI/N2E0fEf6+fX3u3FhoY7B8JSn8ppZY1MsfKU=
+X-Gm-Gg: ASbGncsGauvqF1XMty2nO9Aq0jAJvGlllYdsuKskKld4nLGTzRB/xX30LG8BvUyyegR
+	A26ZrIku4vHzEyU8NABgssuxKJarTph/Qk0RSf5BPB36/JOk1Mz+txy0+EteY/mwp/KYQDS3hje
+	q3+doj17NQUk8MlCJlOmKbtg2fL2PJAp15SlFFZ9hlLzFkXcyuwbVYRl1+BUSV2Ec/dRY/AZd37
+	0XalOWsFarggSEQXpmIT90oSc1mvCsEo+QeQO0wB+BKpZYYXKMZ4NgojaptIjt21UsjkI92r15Y
+	ddu1Xd2FnWzZxAWE3h8pu7I3snZdEtQvCyj53WNra5DzcNDxlP2c0BVA9M/0g4bpI8JW9o7JJLE
+	jA4aSZyMBSnS2Qa/fkYWsH21zMuSnHaQUkqAs
+X-Google-Smtp-Source: AGHT+IE9WPcyJENyMKBqBjIXMdFg1BwYt6/7Sf3fpBe2yXxsdwOSvmD7T9GXrgparUtDBtokYQjs6g==
+X-Received: by 2002:a05:6000:4009:b0:425:86d1:bcc7 with SMTP id ffacd0b85a97d-42586d1c0cdmr8127958f8f.23.1760100162565;
+        Fri, 10 Oct 2025 05:42:42 -0700 (PDT)
+Received: from localhost ([2a09:bac1:2880:f0::3df:2c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb4983053sm43513775e9.8.2025.10.10.05.42.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 05:42:41 -0700 (PDT)
+Date: Fri, 10 Oct 2025 13:42:41 +0100
+From: Matt Fleming <matt@readmodwrite.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: adilger.kernel@dilger.ca, jack@suse.cz, kernel-team@cloudflare.com,
+	libaokun1@huawei.com, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	willy@infradead.org
+Subject: Re: ext4 writeback performance issue in 6.12
+Message-ID: <20251010124241.k4wsjwdcy5svwd36@matt-Precision-5490>
+References: <20251006115615.2289526-1-matt@readmodwrite.com>
+ <20251008150705.4090434-1-matt@readmodwrite.com>
+ <20251008162655.GB502448@mit.edu>
+ <20251009102259.529708-1-matt@readmodwrite.com>
+ <20251009175254.d6djmzn3vk726pao@matt-Precision-5490>
+ <20251010020410.GE354523@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,70 +94,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
+In-Reply-To: <20251010020410.GE354523@mit.edu>
 
-On Fri, Oct 10, 2025 at 07:10:58AM -0500, Jeremy Linton wrote:
-> Hi,
+On Thu, Oct 09, 2025 at 10:04:10PM -0400, Theodore Ts'o wrote:
 > 
+> OK, so that definitely confirms the theory of what's going on.  There
+> have been some changes in the latest kernel that *might* address what
+> you're seeing.  The challenge is that we don't have a easy reproducer
+> that doesn't involve using a large file system running a production
+> workload.  If you can only run this on a production server, it's
+> probably not fair to ask you to try running 6.17.1 and see if it shows
+> up there.
+ 
+FWIW we will likely pick up the next LTS so I can get you an answer but
+it might take a few months :)
+
+> I do think in the long term, we need to augment thy buddy bitmap in
+> fs/ext4/mballoc.c with some data structure which tracks free space in
+> units of stripe blocks, so we can do block allocation in a much more
+> efficient way for RAID systems.  The simplest way would be to add a
+> counter of the number of aligned free stripes in the group info
+> structure, plus a bit array which indicates which aligned stripes are
+> free.  This is not just to improve stripe allocation, but also when
+> doing sub-stripe allocation, we preferentially try allocating out of
+> stripes which are already partially in use.
 > 
-> On 7/30/25 8:07 AM, Greg KH wrote:
-> > On Wed, Jul 30, 2025 at 01:23:33PM +0100, Jonathan Cameron wrote:
-> > > On Wed, 30 Jul 2025 11:38:27 +0100
-> > > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-> > > 
-> > > > On Wed, 30 Jul 2025 14:12:26 +0530
-> > > > "Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
-> > > > 
-> > > > > Jason Gunthorpe <jgg@ziepe.ca> writes:
-> > > > > > On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
-> > > > > > > > +static struct platform_device cca_host_dev = {
-> > > > > > > Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
-> > > > > > > platform devices being registered with no underlying resources etc as glue
-> > > > > > > layers.  Maybe some of that will come later.
-> > > > > > 
-> > > > > > Is faux_device a better choice? I admit to not knowing entirely what
-> > > > > > it is for..
-> > > > 
-> > > > I'll go with a cautious yes to faux_device. This case of a glue device
-> > > > with no resources and no reason to be on a particular bus was definitely
-> > > > the intent but I'm not 100% sure without trying it that we don't run
-> > > > into any problems.
-> > > > 
-> > > > Not that many examples yet, but cpuidle-psci.c looks like a vaguely similar
-> > > > case to this one.
-> > > > 
-> > > > All it really does is move the location of the device and
-> > > > smash together the device registration with probe/remove.
-> > > > That means the device disappears if probe() fails, which is cleaner
-> > > > in many ways than leaving a pointless stub behind.
-> > > > 
-> > > > Maybe it isn't appropriate it if is actually useful to rmmod/modprobe the
-> > > > driver.
-> > > > 
-> > > > +CC Greg on basis I may have wrong end of the stick ;)
-> > > This time with at least one less typo in Greg's email address.
-> > 
-> > Yes, use faux_device if you need/want a struct device to represent
-> > something in the tree and it does NOT have any real platform resources
-> > behind it.  That's explicitly what it was designed for.
-> 
-> Right, but this code is intended to trigger the kmod/userspace module
-> loader.
+> Out of curiosity, are you using the stride parameter because you're
+> using a SSD-based RAID array, or a HDD-based RAID array?
 
-Why?
+We're using SSD-based RAID 0 with 10 disks.
 
-> AFAIK, the faux device is currently missing a faux_device_id in
-> mod_devicetable, alias matching logic in file2alias, and probably a few
-> other things which keeps it from performing this function.
-
-How would a faux device ever expect to get auto-loaded?  That's not what
-is supposed to be happening here at all.
-
-If you have real hardware backing something, then use the real driver
-type.  that is NOT a faux driver, which is, as the name says, for "fake"
-devices that you wish to add to the device/driver tree.
-
-thanks,
-
-greg k-h
+$ sudo dumpe2fs -h /dev/md127| grep -E "stride|stripe"
+dumpe2fs 1.47.0 (5-Feb-2023)
+RAID stride:              128
+RAID stripe width:        1280
 
