@@ -1,122 +1,109 @@
-Return-Path: <linux-kernel+bounces-847673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4187ABCB646
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:00:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F0BBBCB649
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B621D405F61
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:00:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 832984EB90C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68CD21B9E2;
-	Fri, 10 Oct 2025 02:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D250214A8B;
+	Fri, 10 Oct 2025 02:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZ5uhXEo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jh9J+M6Y"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C758528E;
-	Fri, 10 Oct 2025 02:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E061DEFE8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760061618; cv=none; b=LSTDy6fet6piFOeUYy7EVHot5Ua+c+0zSfaW1uP0xDOM17d40d3ShA8MWt9L5VKqOf251KVc4dL0vYH6Lbxhxk6gsW53Y5zIjf6qvsY/hnYHvObOQKWGGw7cnYdCDutbEOL2Nar9imOU8fKPpq8uVjuUumBaRkkZ6xpeXDsrQUc=
+	t=1760061660; cv=none; b=rUW2gZpcsW3cXndUinbFEdECJSBJSbKrEU2J+f+1Kt50Z0xC5CvduQkHB4zWm8BmXH6Fx7J+QFZj5wQbJEvCS5lyHxu8hIsmd+I8gXrRYZvA8ueVUBJZr2/awJxq/KxyyzEtdKPxylcpx+vbFLaL53k8mNsXYijOYP4Ja8od23M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760061618; c=relaxed/simple;
-	bh=bKb2+LWn+9bFo0JvyMz+IuBawvd4IewFiapgoPwhJDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bRTAI2uSE+V6aQGeizoVT+57KXsxZIWxr7UuR/LFQ+7VQSeqmA5lWM903YuQFTwd0G9ahtQM5PeJPnSR0SL5WELDgzLyEPgcsvYjonq1a/9ncLjsMZmP6HAOEs+ahNmrSs1ONN9ak0T3He+1T+97htWNHtxYLQ/LInJskRMtPvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZ5uhXEo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8B2C4CEE7;
-	Fri, 10 Oct 2025 02:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760061617;
-	bh=bKb2+LWn+9bFo0JvyMz+IuBawvd4IewFiapgoPwhJDY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EZ5uhXEoFwIigR89ZDxpuiMJjV9tImylj7s191qm0WMCHwWJEDHZhfwPLEnCSN3QH
-	 FZ0SJJAnIg+OWIdX/eILZaJoD7pLii01fGS49y6IFAwmkjeYjfINwMQVc602rdpWuc
-	 iHVzGw0Yn/yidtKyTbS60g10UkVGEuB4JcGMEzXsN9DdqtrHHljHHetaKWH/6+Y2nq
-	 r7lk1HZoX3yr+9v7/OLDJBG+KRLb0Dru5HkuZiRFYALrjGkPUhNWQx9ONI5G08aVCo
-	 VVbxE02hyMT1h708EIfzLjzHEBXuT38aGZ7Ujk4hjRGj/Xdz2ElziLwTUHHWHNhV6U
-	 CdDWfA6WYsTgg==
-Message-ID: <3791aa93-c1c0-4fc9-9706-91f3f62743a3@kernel.org>
-Date: Fri, 10 Oct 2025 04:00:06 +0200
+	s=arc-20240116; t=1760061660; c=relaxed/simple;
+	bh=ZJ0ZO8tVsX63PTkbuehFWFQ5H5Io+PO6mAdzl1iHsj0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hbOFyWpoIdbdG/ZkBMAZYB5BKrDV/zYO4wt51tIvpCHd0aaJnUB31vkO1smCUBwaOCkJ/KS7N8Bdxms4riGvj+kw73YUGv44YeQfqLIzgXgYMph/myp6P0Peu3764wTSshM0HROHILQQrJFscI6HVsiLVRtlfC/KSpz5uzmIO38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jh9J+M6Y; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3369dcfef12so1970429a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 19:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760061658; x=1760666458; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZJ0ZO8tVsX63PTkbuehFWFQ5H5Io+PO6mAdzl1iHsj0=;
+        b=Jh9J+M6YpttG/NXLy0O4fSWX7tTWnbRmspYGVUp5eIeBG6DJtNTytM5qThCs1ccojr
+         drioEHYjlTeq95wSIB40BsV6j/zczZQCA25o9F3uiijEcpQ8igxl8nhektbJMDtxtH+i
+         cmBvXKU3kO1nvQZ21Q6XfpS4+5z+PnR2SmbQiXwJra2Yt467kByFzGdCxCA7xOo8RhCx
+         1CpqlYutMM9JqyHqV3dhNEpa06pG/eZSFl/brX5E5wvDhbSsiwhRcgiDOOAhiR0iRgeW
+         OgTLMG8IsL0IC2cUTxJC6p58/tq1+t5+SUe+i0IkvfH/5iADUIDlB7kasw/Uz50XBF3p
+         MFlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760061658; x=1760666458;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZJ0ZO8tVsX63PTkbuehFWFQ5H5Io+PO6mAdzl1iHsj0=;
+        b=UveBS4lAqGbM/9oJRd5yzFASgWoMu15N/6XxG4+Gp9y1Q2bQrosO+QE3rY5MK1HKTD
+         iqX+O9bY3RoHopLYGO8iTsuEu50z8NQyaq5JxgmWhStTMuJbelPM/AnUL8wu20xVTSjA
+         xdLqCDZW3W5Qx5FZrYSJ6c4ioYufETWTyfsBWqRl8oDXbn35rTtSw1kT6vHZK/y/ZXFR
+         HyMGvqrqKRMIEHDNGXMlCIqcI1ihohhUdApBnIM90wJSutFF0ZxPYUKcNUwNu2dEb+dR
+         WZd6xCqrvm4U8haNmx4PJ68s4i82oE7JmON/un5SeqYroUw4vKjiwsrD5zhOsmS+2LZF
+         2hwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcK7Wqbh8vPYJA4bAAyXMx2gFP1W2YuqVXoCYpd6fXZzeis8objvcjs06qqxrqsALpE1yIAhTpTv/pQiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQpANqvH+36c4TDsitYkcAwG/Wd7UhOcy58KPX1VGCcjwX4XLA
+	uASpKxdUFRlHbY+bpG8IsJG/8hjU5mOqg9txB8fBmo1OoSGkKWHIVsfG
+X-Gm-Gg: ASbGncsCvnruhCc3QblVzxpkuRUbPoIRsHQP3zqKEG4CjFl/WJjTykVTY9mtBbQK+85
+	IyDGWdjAzQl/9zku1Q8Wr2qhzHDlIuZK0wkk5Z4ZHBLSvq6hKYkPB0ijhM8NheaII7a/0f+9NkB
+	HOXdt3ywqD5BcK1zVuK3a9pkNfZWtxvKr5wdklDWq+Be8j5MIMZAEP9nCsGw6mgbiMxwj5W/j5i
+	bv8Joy1s5AgiVA+1sSSsGqU6sjMcL4DVxZG2xzS13iZpvwaMuaNaVOiaF9z3ryy48AXuWyc3LBP
+	pbRopgmFFjE416+tW3KjUiR/lj6e4RtZwVSYAyld8nEOsQroOJV5ugttuXZiv9HceXM6IJ+9u5e
+	fRwd/qSa7tZ310fdySeNf7Qb4YE862OoAgZDaHIzYhV3UxmRKNE7n/U3L8g86ACFX+WgelGbN54
+	SngFE9pSVCHPwZJxlngFZ9VHH8nCI=
+X-Google-Smtp-Source: AGHT+IF4/vxKx1CP0CXz1kH5ziINSy5FUdO2xGkIxifAZOS1HIvhxqzvJEmlrdJ2EGLNh9neLRf/JA==
+X-Received: by 2002:a17:90b:17c8:b0:329:d8d2:3602 with SMTP id 98e67ed59e1d1-33b513b389fmr13709247a91.17.1760061658518;
+        Thu, 09 Oct 2025 19:00:58 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:cfc5:62ab:555f:ccdc])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992db864c7sm1073619b3a.82.2025.10.09.19.00.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 19:00:57 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: akpm@linux-foundation.org
+Cc: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] ocfs2: clear extent cache after moving/defragmenting extents
+Date: Fri, 10 Oct 2025 07:30:49 +0530
+Message-ID: <20251010020049.523924-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock
- support
-To: Kamal Dasu <kamal.dasu@broadcom.com>, peng.fan@oss.nxp.com,
- andersson@kernel.org, baolin.wang@linux.alibaba.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, florian.fainelli@broadcom.com
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251009212003.2714447-1-kamal.dasu@broadcom.com>
- <20251009212003.2714447-2-kamal.dasu@broadcom.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251009212003.2714447-2-kamal.dasu@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/10/2025 23:20, Kamal Dasu wrote:
-> The broadcom settop SoCs have hardware semaphores as part of "sundry"
-> IP block which has other controls that do not belong anywhere else.
-> e.g. pin/mux controls, SoC identification, drive strength, reset controls,
-> and other misc bits are part of this block.
+Hi Andrew,
 
-This does not explain why this has to be a separate block. Rob comment
-stays valid - this belongs to parent node.
+Thank you for picking this up!
 
-Best regards,
-Krzysztof
+For the Fixes: tag:
+
+Fixes: 53069d4e76954e2e63c1b3c501051c6fbcf7298c ("Ocfs2/move_extents: move/defrag extents within a certain range.")
+
+This commit introduced __ocfs2_move_extents_range() with the while loop that
+calls ocfs2_get_clusters() (which caches extent data) followed by
+ocfs2_move_extent()/ocfs2_defrag_extent() (which modify disk), but without
+invalidating the extent cache afterwards.
+
+Thanks,
+Deepanshu
 
