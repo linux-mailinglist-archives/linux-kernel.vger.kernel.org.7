@@ -1,196 +1,117 @@
-Return-Path: <linux-kernel+bounces-848013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF90FBCC417
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:03:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD9ABCC439
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E4CDB4EB0FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A216219E7701
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2A62638AF;
-	Fri, 10 Oct 2025 09:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7765F26B97E;
+	Fri, 10 Oct 2025 09:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GfFW+YpG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dET5+Qv2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GfFW+YpG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dET5+Qv2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNAvdHiC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C0F217723
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4845217723;
+	Fri, 10 Oct 2025 09:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760086985; cv=none; b=heOwO+gKnJszhAdBXkhoxt76nYtYRgMeKaExrkO4gPFbt8SkdPGa40HqK03A9C4oMH5s65a7Dcypxt9I8SvIyinfyfJB/96p9HF9XX1LW3WeEOSGOg/DDndWflulj6MNpUpRMgIaYUIeXkdTtZfSLf1KujteEVdBAeCKv/vMpqc=
+	t=1760087692; cv=none; b=OdiMYlOKz8XTor5+0zqqkE2Q36OwNKZD/TgAnU9lVv9oGWhT7B1FCAvi/234d5q0McTt8gFqJfSjxvFSkFeG/2jVqZriRSiTetOvb5AjyQ9Ob9SVWfThKaQbXXYyBDmi+u4g0WvZ2sgo/JlIrZ1tI8bL0P5ZtgtsRD/0byBGlfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760086985; c=relaxed/simple;
-	bh=uE+4skj4m3VP2+CPxKRpxzman6xCQ3FqT9RkrihJWas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YnnDz+oWEswzZUXhKapTyqKZFSwCAvBGBbxkWvj5E1XG0fpToCyOMD5Tae9ehvbk9XhVjrE/9YZrJtBkQvYy3tnrBhifQ49u5/IiiMbKB377EJo++veB+qvlPdcFYD3GhZNpBknKZhHvjwQkmKNZAIxtv9mDvdflH8TofrOwhmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GfFW+YpG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dET5+Qv2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GfFW+YpG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dET5+Qv2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 12F8A1F393;
-	Fri, 10 Oct 2025 09:03:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760086982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF7BMpVZThR98Bnp9/4MuMCPLSZwN4/7FLEGXoFhOKI=;
-	b=GfFW+YpGuEBN55+5IYb9P5DfsWcw5oly3QWY3uyqfcA5uMdwz39ze/FqIYd+Y5t/MYq4Qr
-	cienmn2x6D7ADGCacxmnmEofmoLPjfd4BE919IuRkSKNuxB8552cMZUbInjX6Xeezb0MEE
-	zHRXzee8SHZPJiua9ekBfHiu8gsYXZA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760086982;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF7BMpVZThR98Bnp9/4MuMCPLSZwN4/7FLEGXoFhOKI=;
-	b=dET5+Qv2vYZ66/Yg1xFzbvyqKGt/P2l1AJxsGEgNN1qeR0pNAw4ZKUQMi1MYAdhoXZ0023
-	Ck9ey12/zw5UzEAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GfFW+YpG;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dET5+Qv2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760086982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF7BMpVZThR98Bnp9/4MuMCPLSZwN4/7FLEGXoFhOKI=;
-	b=GfFW+YpGuEBN55+5IYb9P5DfsWcw5oly3QWY3uyqfcA5uMdwz39ze/FqIYd+Y5t/MYq4Qr
-	cienmn2x6D7ADGCacxmnmEofmoLPjfd4BE919IuRkSKNuxB8552cMZUbInjX6Xeezb0MEE
-	zHRXzee8SHZPJiua9ekBfHiu8gsYXZA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760086982;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF7BMpVZThR98Bnp9/4MuMCPLSZwN4/7FLEGXoFhOKI=;
-	b=dET5+Qv2vYZ66/Yg1xFzbvyqKGt/P2l1AJxsGEgNN1qeR0pNAw4ZKUQMi1MYAdhoXZ0023
-	Ck9ey12/zw5UzEAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC35513A40;
-	Fri, 10 Oct 2025 09:03:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id K+jSOMXL6GhkWQAAD6G6ig
-	(envelope-from <hare@suse.de>); Fri, 10 Oct 2025 09:03:01 +0000
-Message-ID: <6cd3e802-1137-48b6-85b6-e5db1442ee64@suse.de>
-Date: Fri, 10 Oct 2025 11:03:01 +0200
+	s=arc-20240116; t=1760087692; c=relaxed/simple;
+	bh=vtIRyjcCc6LcebOFxaTxHL4wziQNV8zAxg2EbWDPBRA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hqq2AxsfFXieiJ7XXrcaVrtjwoEoS2k3Lh0ERvqn/xWiL84TgkVDd6v2FWree1Jk8GTnDygOT5ZObcn3Z1SHhStAFjofU2nh4E2RTk2A82ZCt1u0j03t7tADNSg8SPFrjia4EJRuhK8ZOJAut9OZSkOsPVJLtO3htP459BAhhE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNAvdHiC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1302C4CEF1;
+	Fri, 10 Oct 2025 09:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760087692;
+	bh=vtIRyjcCc6LcebOFxaTxHL4wziQNV8zAxg2EbWDPBRA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SNAvdHiCggTSjzJEqcnrJ5ocnUMXSrYN7aKOTF1gzfeQD0Aw/uf9SomcdxK0r0mir
+	 fJCp+rji+RsXmc4pyT+avYO+6TjVZ9ShW/vA5OdyXjQ+zAd9NVgLagM/TSEV1vpfmN
+	 OPoXk9zz8b23YgY3UJeUoutkMPobo5A7q0BrvSUkt0b+GAqZTqSyIqcUbiqcV9Fr3E
+	 85XCyNwIn4JIcUFFie2epDg8YXZPIa6GS82YJGPVna035eL7RCT7AFFT+I0k5L71vN
+	 qroqrCpEvVZ4BHfBWBgxVj4xHIAhErYHRvKD8gIi7xawzVUCVo0afX6Da1kJsi8kKh
+	 m9Zst7jfbEIvg==
+From: Yu Kuai <yukuai@kernel.org>
+To: axboe@kernel.dk,
+	tj@kernel.org,
+	linux-block@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	nilay@linux.ibm.com,
+	bvanassche@acm.org,
+	ming.lei@redhat.com,
+	hch@lst.de
+Cc: linux-kernel@vger.kernel.org,
+	Yu Kuai <yukuai3@huawei.com>
+Subject: [PATCH v2 00/19] blk-cgroup: convert to use blkcg_mutex for protection
+Date: Fri, 10 Oct 2025 17:14:25 +0800
+Message-ID: <20251010091446.3048529-1-yukuai@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] nvme/tcp: handle tls partially sent records in
- write_space()
-To: Wilfred Mallawa <wilfred.opensource@gmail.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Wilfred Mallawa <wilfred.mallawa@wdc.com>
-References: <20251010071939.709063-4-wilfred.opensource@gmail.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20251010071939.709063-4-wilfred.opensource@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 12F8A1F393
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,lists.infradead.org,vger.kernel.org];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
 
-On 10/10/25 09:19, Wilfred Mallawa wrote:
-> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> 
-> With TLS enabled, records that are encrypted and appended to TLS TX
-> list can fail to see a retry if the underlying TCP socket is busy, for
-> example, hitting an EAGAIN from tcp_sendmsg_locked(). This is not known
-> to the NVMe TCP driver, as the TLS layer successfully generated a record.
-> 
-> Typically, the TLS write_space() callback would ensure such records are
-> retried, but in the NVMe TCP Host driver, write_space() invokes
-> nvme_tcp_write_space(). This causes a partially sent record in the TLS TX
-> list to timeout after not being retried.
-> 
-> This patch fixes the above by calling queue->write_space(), which calls
-> into the TLS layer to retry any pending records.
-> 
-> Fixes: be8e82caa685 ("nvme-tcp: enable TLS handshake upcall")
-> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> ---
-> V2->V3: Minor Style Changes
-> ---
-> drivers/nvme/host/tcp.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index 1413788ca7d5..9a96df1a511c 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -1081,6 +1081,9 @@ static void nvme_tcp_write_space(struct sock *sk)
->   	queue = sk->sk_user_data;
->   	if (likely(queue && sk_stream_is_writeable(sk))) {
->   		clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
-> +		/* Ensure pending TLS partial records are retried */
-> +		if (nvme_tcp_queue_tls(queue))
-> +			queue->write_space(sk);
->   		queue_work_on(queue->io_cpu, nvme_tcp_wq, &queue->io_work);
->   	}
->   	read_unlock_bh(&sk->sk_callback_lock);
+From: Yu Kuai <yukuai3@huawei.com>
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Changes in v2:
+ - add patch 2 to delay freeing policy data, otherwise patch 3 is not
+   safe;
+ - add patch 13-19 to cleanup blkcg configuration apis;
 
-Cheers,
+patch 1-8 is prep patches to make sure queue_lock is not nested under
+rcu and other spinlocks in blk-cgroup;
+patch 9 convert blk-cgroup to use blkcg_mutex to protect blkgs;
+patch 10,11 are follow cleanups;
+patch 12 fix deadlock in blk-throttle;
+patch 13-19 cleanup blkcg configuration helpers;
 
-Hannes
+Yu Kuai (19):
+  blk-cgroup: protect iterating blkgs with blkcg->lock in
+    blkcg_print_stat()
+  blk-cgroup: delay freeing policy data after rcu grace period
+  blk-cgroup: don't nest queue_lock under rcu in blkcg_print_blkgs()
+  blk-cgroup: don't nest queue_lock under rcu in blkg_lookup_create()
+  blk-cgroup: don't nest queu_lock under rcu in bio_associate_blkg()
+  blk-cgroup: don't nest queue_lock under blkcg->lock in
+    blkcg_destroy_blkgs()
+  mm/page_io: don't nest queue_lock under rcu in
+    bio_associate_blkg_from_page()
+  block, bfq: don't grab queue_lock to initialize bfq
+  blk-cgroup: convert to protect blkgs with blkcg_mutex
+  blk-cgroup: remove radix_tree_preload()
+  blk-cgroup: remove preallocate blkg for blkg_create()
+  blk-throttle: fix possible deadlock due to queue_lock in timer
+  blk-cgroup: add new blkg configuration helpers
+  blk-cgroup: factor out a helper __blkg_activate_policy()
+  blk-throttle: convert to use blkg_conf_{start, end}
+  block, bfq: convert to use blkg_conf_{start, end}
+  blk-iolatency: convert to use blkg_conf_{start, end}
+  blk-iocost: convert to use blkg_conf_{start, end}
+  blk-cgroup: remove unsed blkg configuration helpers
+
+ block/bfq-cgroup.c        |  27 +-
+ block/bfq-iosched.c       |  13 +-
+ block/blk-cgroup-rwstat.c |   4 +-
+ block/blk-cgroup.c        | 552 +++++++++++---------------------------
+ block/blk-cgroup.h        |  51 +++-
+ block/blk-iocost.c        |  61 +++--
+ block/blk-iolatency.c     |  23 +-
+ block/blk-throttle.c      |  73 +++--
+ mm/page_io.c              |   7 +-
+ 9 files changed, 302 insertions(+), 509 deletions(-)
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.51.0
+
 
