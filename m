@@ -1,304 +1,134 @@
-Return-Path: <linux-kernel+bounces-847812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEE7BCBCA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:32:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 341F0BCBCB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940D43A73E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56CC0189FC28
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42CE23506A;
-	Fri, 10 Oct 2025 06:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF7B239E61;
+	Fri, 10 Oct 2025 06:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="Fz1taVMm"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011040.outbound.protection.outlook.com [52.101.52.40])
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="tCruLc/4"
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EA53F9D2
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8968F22579E
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760077942; cv=fail; b=dGjn5N/coqBHAZktCOeMPp+e1N1PV2OLY/Fjws6qc14+1adVONU5OqKiGlCWBDnhyq5nL1mYVXxU546XTzPuJkzQ7tNBv+GcwlQoIm+dc1Iv+q7F50nRk6bn5YZTQohvB9wJ9F7f60qaS+adLg1xxGO+lpfPoHXAYHLTIwm0pfs=
+	t=1760078107; cv=pass; b=T5jXukpehBxf8tG33iL8ei5KlMoyAVeb9nCJphuOE6fY7d8qaG6sROOY1nUF8JUUb3+DvSF95iCLVsGv5Vel6qha6rAAiY/yQVTEGRUXsI2sVzKcOTqh1Zl1lPnHBPq3BND3orcFVVX3IFkheeFoc+fP/JSip/hMaivdnGvw49o=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760077942; c=relaxed/simple;
-	bh=a83p9dET9/VwfpCMh+pWs/MThOOYCA7jIsGFsfjTBnw=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JxBN30AS2uJ0wao/OSzGCXPc5OMIiox++k6vvCbQPh/XDyIwLaXg+xPIC9LySErRTSEN0wyGDJ8fVM45x1So3SqGmTa1l/ZReF4T4rLTnlQtbf1QlfWguc0nTo6lzyQxnhFYPf5tWMsx2OBQjSfhd/MEv3Vs5jN4Qv9qcpOFDSE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=Fz1taVMm; arc=fail smtp.client-ip=52.101.52.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VcQXngguqmXRAtQeDBophYM9l1BFbaJiXukpQEMrLu4aNEqyTlOV/5F71esChDJTp8QcqEXAJcNb/OccNk5hjS+C19GQ6tRWVVmfUTqbdGKm1lt82446S6A4H/jCNLJ70caSkbFIlUGly1pJI4mVlP4XHxTkIrXx3QmivnLrpA5Q7KimS3lOzabDQLT/9sl1hf7wW8IMZT/kqvW7v4DZSAlUUFo9KjXbUrnS0Lhs9v3JrAie4BPEmajpY++UrCBDx3BZS0NGwEnjhGGwf3fbKnZMS9hlPUgBn8tnWlzvkffZH1nuRHyS4WCZ9ZaGZMImU/vtCN2XqCuW2qiejSv+iQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=osVjU6/3HvPxoKbGOzab4V9/CWq3EJ0SikkkdAGPHyo=;
- b=MlOMKHIfPzNLf+PvFjKNaB35FlqRYADPvs9tWF5c1/MBEQ0GbBXzDrlKLjm1xiyW7jUeuEFWdHEVuMaTjoRv/sRflfyhpzwcBCHlXeeKgkmpxsHUims596j+Qx+xn+AEueD5av+pwuTl7OFI9R7s9hapx9SGZYfEWRMbEGx1RjX+NX4hdtsUbBENPaxTlvBLNS2am7CrAWGBFCa50XS5syBCwVSP5vhWisvM624QH+iJZsYGvWjHelgjKE6y2jN9lhS1s0LhTN4Cj0rcg5WnmrkwRX3QGx29Yz6dXf6mPkIf9asLtuaV4wS6MZkC9Al6s3cKxKiBfgYCIh2kePAQvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=osVjU6/3HvPxoKbGOzab4V9/CWq3EJ0SikkkdAGPHyo=;
- b=Fz1taVMm04QyRGHSC2crRbAHm5mc95hE15aSUq3vHq3yQo8zEvnQVFK4pi246upe5ekFYabOGt8Zs2mXR8KMm48Vx7JwEV6S4xvjnnUbtUTe/YK87oZrTpylroD2qOEmiXB27o00DIb5qGOG8ssekofulKX/dFSIjr07YhaVchiTeqpn63tOMFavYUKX1g0lFraAcn5Ou3XCqQjLTfKWAeMjpGp4/wa54euNtIlfUYbNFpZVQEnb4Evz/ZERtnF6JJ5f1LE+iRWdIxXg+8CaMOAPZTv58cZNCoL6Ypw1FaOQEhtUcd5t0s2wm7ldJy5kOl+pRqv2Jr5pasASlLQmWQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by PH0PR03MB6656.namprd03.prod.outlook.com (2603:10b6:510:b6::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
- 2025 06:32:18 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
- 06:32:18 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	linux-kernel@vger.kernel.org (open list:INTEL STRATIX10 FIRMWARE DRIVERS),
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Subject: [PATCH 1/1] firmware: stratix10-svc: Add definition for voltage and temperature sensor
-Date: Fri, 10 Oct 2025 14:32:14 +0800
-Message-Id: <5797fa3875f39c30ab5c942310abc913344335a6.1759914326.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1759914326.git.khairul.anuar.romli@altera.com>
-References: <cover.1759914326.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0268.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::33) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	s=arc-20240116; t=1760078107; c=relaxed/simple;
+	bh=TfXKfGLIgdyqoC0vLmTK/YGBXyzqSeERAXzUxlk71To=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CO5/474GoOcdZJcdK97dtt0X+Ddeg1rLQIVQ2gvr432KGvZIN2AufBCOvWh2l8/WARKEICA/tVWqmjSNhNUwiOZ4N/DCvkVvdohUDRWl6H0gf1aJsS/6AtRuW41TjBzadRvgJdEf1udtooim2xqXQi5+AG7HYY6dUk3u/2k7Gco=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=tCruLc/4; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from osx.local (ecs-119-8-240-33.compute.hwclouds-dns.com [119.8.240.33] (may be forged))
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59A6YDcH2442651
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 10 Oct 2025 14:34:19 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1760078061; cv=none;
+	b=iyh4uTH33qzmNtoDxOsdakGME2842mUtVmLWN51a/yKyinCxDIxVJmEYQYyEvSGUfOpn4XMNrZqWl6GIEYq4scd9w1p12keduyncuGV3aFV9GKEt3SdbRELp8apI7y+Re53ObPm6xwXldEMQcHmohYLtAQtDqILChXNjP4Mt9JE=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1760078061; c=relaxed/relaxed;
+	bh=mlixuZgziH+wjVJSfwbssxjlyT8K5O91PRYV9CIA+nk=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=w7ZddfkYI4L+Q2EOFZPOE1oRWTDGc8ECcVRnBW7X9/NS/p/rbaTS3++y+x/A0F6Yiw8m0vp/Ce30znLiocO52lMmm4ieL56OSjzHBLQBTFgY6ATAAvJ7kvKPE8/xrcBiKzTjL6hWwUTptGk7GnyGibF+A/ZyqFzi3128WdHyvY8=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1760078061;
+	bh=mlixuZgziH+wjVJSfwbssxjlyT8K5O91PRYV9CIA+nk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tCruLc/4VmyGm6a9MIIxurcOVxwTx/Iel0VnEiWBcsHRHBLAazx26FnqJo9z+w1xl
+	 5qvgVTWRNwFrdeAjjjFL2vNQzoj2ci1LvpaxZ/3SWZ8vJHpUR58JpBYz6YCGFs1nWP
+	 N8tTDQoClniJcd9twSb2tTt7cKNbKmV8UO23vjoM=
+Date: Fri, 10 Oct 2025 14:34:08 +0800
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: fix refcount inconsistency in i3c_master_register
+Message-ID: <aOio4HtjjfXclSW1@osx.local>
+References: <aOYSTX5EA_nRoIY_@osx.local>
+ <aOfgB6UpBha+pvqa@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH0PR03MB6656:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf3ec8ae-88aa-453e-8263-08de07c6c2b1
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PR0MDqTwhr+JTx92FiSoDcWrUkeH8Dq/gj7LlUOmdyGpgSitiykQCOC78Cwy?=
- =?us-ascii?Q?vdPnnCGBgNbxudxtBr8jcp1YpNnvvotX+b92uK6t0dZtMH3KAK0U9ilZN47d?=
- =?us-ascii?Q?A+SrvwO/YLTqiVRSzVdGQdyH26XeBhN3zZj11W/72w/zBHL62aSdYvMd5p0V?=
- =?us-ascii?Q?LvP6ztNoGZYvHeQ4QZBLWI2VzDZKFffLcob8G8Zwd2V4tHtYNHKhPfxR5reO?=
- =?us-ascii?Q?LL+eooutTO2+h2BAl0oJ1V1ZHpovYE3TJL3Sxd2rs7Eqr81jLwJM7dCTA5zO?=
- =?us-ascii?Q?Gn0kaL0FPS/M74kNFMkPNWjn+vSaHpD+bLTABIAGljVIYU0LF/qS3Ve3ioXX?=
- =?us-ascii?Q?Vc6GfhtIX9AZHlLfkLoN7mUrLaR2gR+x1JYRGrSg9rBS4hY6BEfRkygV1OyP?=
- =?us-ascii?Q?flOfDn54Yl3YLaIDMUL9FRXe9OowC9qE5dnjXRuY0m4oy18AXktGG8hneppp?=
- =?us-ascii?Q?UajAULLLas1AXFzL015sjzlAuXum7vVk7qIL2141GDXnK7OAJNwKiSt5AUXx?=
- =?us-ascii?Q?yaNRYHE3liSzcm3a6L0DhZudYaOEizK1SzuEF3DD62gYZomKJrDj3LskQjsR?=
- =?us-ascii?Q?zJ1AwZ9W/+wN0hHCewcsSHGaEnTNUXGjIflXmMQBwazCu0VpjS7VvnlSzCmM?=
- =?us-ascii?Q?/V6suFT1+/XpVMqA5sw73ah0KRpQd08MI5fC5EjQm7CYfZDnbzt7WruA5YGm?=
- =?us-ascii?Q?79x1ZI4+LC3130Hp4bmtCG8C6YxdkKoA/deRCkWd+Rncs+jRXFolRDxexBJI?=
- =?us-ascii?Q?Ghi7EAiU3crBY5MEqIWc/OEta3HOBNHbVi3VanYrM8//um7JCVDYJV9Uk6t8?=
- =?us-ascii?Q?l+Hv1SfUihM/os6MKt9S1HljJ/oIfdaMsO6izPB0QgU2rGLrVg49Pp5MSIT4?=
- =?us-ascii?Q?bkidbZ2ndWvG4gDXsJqXA4keOADMyzK99ISvjeLHcW2NqHflTmFsC0Ankwta?=
- =?us-ascii?Q?wQH2NXo7iGVIzhG3q2K0R8tSoI3czDYCSZgs/ZJlPu1x96uvc/PMNOFcABFY?=
- =?us-ascii?Q?c3Y217l6rOpuvkk07qlF103PF7kWcUhzkYski9V12/kOI/49O5pWjSs7bjK6?=
- =?us-ascii?Q?rz49TVRZveJmnPPkV92vdtcmRZMubm2V9u2hmNStQyYddWwBJ1IoRBcWskOK?=
- =?us-ascii?Q?XIJEgYBkq69MU/RlFmZCtRkUQhlJktg0aBDBF9QdDg8MqoZswEKbTJhSEpiM?=
- =?us-ascii?Q?nKUgpAh7TFWA1/z37MLRIe426QKZnKFQRzxjZlWjIPEBEW3DIW7Oa4X1Ph29?=
- =?us-ascii?Q?OJA9Eq8rLzCyiCtpCM3tsjdSfC/zcdPiAp4AWmYRKnxRkTftVZqmEL8IxHwb?=
- =?us-ascii?Q?lh/0Q8+QlpnqtAOb7LwnF+CUO2jcIEEuifrLdTLArEADnDHkWuoHQxkGJXt1?=
- =?us-ascii?Q?/UG/SiMvzxP18FnB1T+4ygW6WmmY7OxFw9Hk9mGhcB/988erJCoUEc240T4A?=
- =?us-ascii?Q?wghXzl/63IGfGboREdjdretF6Wwl5iHI?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RxueRN/ZAqIKNQxxP/es9F96OvMmtTNqjg/CKCiaPqTjCMrjHnyywFyX29/J?=
- =?us-ascii?Q?tyO6//OgrKVOmla2l3214YYL9FQI2CswCFklwAmx06yNbYRJODuLelshSYck?=
- =?us-ascii?Q?nyqRNkZ+5e5fh3n18UeT+zCgHKaWCTP+nhqKbIOFcj/T9xahUsaeDagxhAsk?=
- =?us-ascii?Q?KOEY5S7Ijmp0dSCMpbrtLU8MpkDXtw399b8826LMIImKRzw3wphVjHTfJDaw?=
- =?us-ascii?Q?3JGLI/qJlP2vipffQyMoLNLR3OkVy8DaHzLLVAjX2q7odaZnlLyMmMxTN/fy?=
- =?us-ascii?Q?S2L35T5B73fYunuIl5e0a00BuEEZeFeQ9KUQ1oNzxElic9iPrWmDsLKt7Jx0?=
- =?us-ascii?Q?4ijy6X81edDOc0Z0b1nronGJxc8QqmbFg4hpX3hp4G6T6MplM6YSUumNIlWX?=
- =?us-ascii?Q?oki9Ue2bdMJ1SEL6RYOhJ7xNc9Wd9e1EXbprGhTf+IQcPYOkHzu/RpjGZXJO?=
- =?us-ascii?Q?9L0qp/CCJk83IA+cVk6OKe1yJrI+IJJNWTo9Pyu3RFed4CzwWTAHwom6A2Q6?=
- =?us-ascii?Q?02Brj9Q+1n2qZC40qI7soVpRNBc2CAqCYZUu0TaO4HKN6kXK5sb5LGxn6bFn?=
- =?us-ascii?Q?/P1pVVH/RIulUkYUwHop9S7wSwPDPZ9Ad1qWpQx62tnx4v4CnFZZU8uArWCz?=
- =?us-ascii?Q?StpgVCsCaTEcICT6rw+ZonlfrMgjJ7P2lzVUzF1UC3oR0hRo+Dn/k9aTSPZC?=
- =?us-ascii?Q?8a3HG5TL7ZfCjJ7OMjS57hhjeHaEECRtRySdDc3AqMssdeCi20X2GS1Jt6Pk?=
- =?us-ascii?Q?RYRLa4VK1B/kVClC3r/7bDfV5z5H4h0FAqJhTUHT1t0zXiRnvfhZHwxWALPk?=
- =?us-ascii?Q?4jT+Ji4kAALNvEzkNfWL7Ma0XzhAAO1Zs648HGEYUfA5lVBVO8xanei7mIPO?=
- =?us-ascii?Q?Xu32I8kopfuB/0olMzwSHPvnMW9DQJRT61SfReLrCX7GoeQ2s2xumRLAlt1O?=
- =?us-ascii?Q?NXKna7fUkdlPjJ2m15yDn5c0VsJgTsx0+RQGK5RStZSCcMJGXfOf2LqpqZpr?=
- =?us-ascii?Q?pxd32NXFXQTA75OIIY6+gOmdAOtTIFBIWggvQioC4fnVqOItIFODcNBvv+eO?=
- =?us-ascii?Q?pPuqFsX1ZH/yQNvcJGF327Tsj0T4BCHlY5knBU6ggFOkaIesrkjY+YrFgjSB?=
- =?us-ascii?Q?31BMj7l4shoh05DP3ePM0vqziYTEx1k/nybRnfj5yITONJ3gctD+5SUXX9gK?=
- =?us-ascii?Q?ZkCzcjRkOe1nXkFItLemtJbffK8tipjQb7SyYuLi0psP4icWX8ZxyEoWgDQq?=
- =?us-ascii?Q?KYS49MJEdw57dYWneIRO9XM/RcpGFXTY4oL+OBGWp0rMjpb/hq+3Vc8kug8w?=
- =?us-ascii?Q?rMEU3romlHX63Aiqgy10VW6R7F0iD0jqKQw94xpQwWQjNKBul4OX5qYNohFo?=
- =?us-ascii?Q?RDAf/AdozAKcPcrLcIALoO4LWKJuFQGP0e+LDHPPdFg2Fu1+TuBoMRGG+mA1?=
- =?us-ascii?Q?QJiSGjxvXxm4nZ/OpeZE45EKyz7K8BvRh54I5e2cp81ydTFswnnBR6uFio/J?=
- =?us-ascii?Q?/1wVv258dSPSVLrauixuEiDWyr9EUYY5LIRlehmgEJ8aWeAZif9TkBjT5/bG?=
- =?us-ascii?Q?5XLX+N62Rz7rDyeEr96fV8HcVxKxeqOPLMws3JtpsRxm/a+RpOy8mkYWoSgA?=
- =?us-ascii?Q?dQ=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf3ec8ae-88aa-453e-8263-08de07c6c2b1
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 06:32:18.7254
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KYgRKbJl5i7BVx+grPojXuj+Aa5EI1NeP7gGMFYjc28Zt5XeROaUF3BD7rQxlPTgJtx5r4FyMYG2P/6AKTPFnhdDFzlioecuIqTOJuCQ8DI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB6656
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOfgB6UpBha+pvqa@lizhi-Precision-Tower-5810>
+X-Env-From: sfual
 
-Add entry in Stratix 10 Service Layer to support temperature and voltage
-sensor.
+On Thu, Oct 09, 2025 at 12:17:11PM -0400, Frank Li wrote:
+> On Wed, Oct 08, 2025 at 03:27:09PM +0800, Shuhao Fu wrote:
+> > In `i3c_master_register`, a possible refcount inconsistency has been
+> > identified, causing possible resource leak.
+> >
+> > Function `of_node_get` increases the refcount of `parent->of_node`. If
+> > function `i3c_bus_init` fails, the function returns immediately without
+> > a corresponding decrease, resulting in an inconsistent refcounter.
+> >
+> > In this patch, an extra goto label is added to ensure the balance of
+> > refcount when `i3c_bus_init` fails.
+> >
+> > Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+> > Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+> > ---
+> >  drivers/i3c/master.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> > index d946db75d..9f4fe98d2 100644
+> > --- a/drivers/i3c/master.c
+> > +++ b/drivers/i3c/master.c
+> > @@ -2885,7 +2885,7 @@ int i3c_master_register(struct i3c_master_controller *master,
+> >
+> >  	ret = i3c_bus_init(i3cbus, master->dev.of_node);
+> >  	if (ret)
+> > -		return ret;
+> > +		goto err_put_of_node;
+> 
+> I think it'd better to set release function for master dev to release
+> of_node because of_node_put() also missed at i3c_master_unregister()
+> 
+> you can refer drivers/base/platform.c
+> 
+> Frank
 
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
----
- drivers/firmware/stratix10-svc.c              | 21 ++++++++++--
- include/linux/firmware/intel/stratix10-smc.h  | 34 +++++++++++++++++++
- .../firmware/intel/stratix10-svc-client.h     |  8 ++++-
- 3 files changed, 60 insertions(+), 3 deletions(-)
+Do you mean that we should do `of_node_release` in
+`platform_device_release`, instead of respecting the refcounting via
+`of_node_put`? 
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index e3f990d888d7..5a32c1054bee 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -34,7 +34,7 @@
-  * timeout is set to 30 seconds (30 * 1000) at Intel Stratix10 SoC.
-  */
- #define SVC_NUM_DATA_IN_FIFO			32
--#define SVC_NUM_CHANNEL				3
-+#define SVC_NUM_CHANNEL				4
- #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
- #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
- #define BYTE_TO_WORD_SIZE              4
-@@ -341,6 +341,8 @@ static void svc_thread_recv_status_ok(struct stratix10_svc_data *p_data,
- 	case COMMAND_RSU_MAX_RETRY:
- 	case COMMAND_RSU_DCMF_STATUS:
- 	case COMMAND_FIRMWARE_VERSION:
-+	case COMMAND_HWMON_READTEMP:
-+	case COMMAND_HWMON_READVOLT:
- 		cb_data->status = BIT(SVC_STATUS_OK);
- 		cb_data->kaddr1 = &res.a1;
- 		break;
-@@ -525,7 +527,17 @@ static int svc_normal_to_secure_thread(void *data)
- 			a1 = (unsigned long)pdata->paddr;
- 			a2 = 0;
- 			break;
--
-+		/* for HWMON */
-+		case COMMAND_HWMON_READTEMP:
-+			a0 = INTEL_SIP_SMC_HWMON_READTEMP;
-+			a1 = pdata->arg[0];
-+			a2 = 0;
-+			break;
-+		case COMMAND_HWMON_READVOLT:
-+			a0 = INTEL_SIP_SMC_HWMON_READVOLT;
-+			a1 = pdata->arg[0];
-+			a2 = 0;
-+			break;
- 		/* for polling */
- 		case COMMAND_POLL_SERVICE_STATUS:
- 			a0 = INTEL_SIP_SMC_SERVICE_COMPLETED;
-@@ -1197,6 +1209,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	chans[2].name = SVC_CLIENT_FCS;
- 	spin_lock_init(&chans[2].lock);
- 
-+	chans[3].scl = NULL;
-+	chans[3].ctrl = controller;
-+	chans[3].name = SVC_CLIENT_HWMON;
-+	spin_lock_init(&chans[3].lock);
-+
- 	list_add_tail(&controller->node, &svc_ctrl);
- 	platform_set_drvdata(pdev, controller);
- 
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index ee80ca4bb0d0..7306dd243b2a 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -620,4 +620,38 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_FCS_GET_PROVISION_DATA \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FCS_GET_PROVISION_DATA)
- 
-+/**
-+ * Request INTEL_SIP_SMC_HWMON_READTEMP
-+ * Sync call to request temperature
-+ *
-+ * Call register usage:
-+ * a0 Temperature Channel
-+ * a1-a7 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ * a1 Temperature Value
-+ * a2-a3 not used
-+ */
-+#define INTEL_SIP_SMC_FUNCID_HWMON_READTEMP 32
-+#define INTEL_SIP_SMC_HWMON_READTEMP \
-+	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_HWMON_READTEMP)
-+
-+/**
-+ * Request INTEL_SIP_SMC_HWMON_READVOLT
-+ * Sync call to request voltage
-+ *
-+ * Call register usage:
-+ * a0 Voltage Channel
-+ * a1-a7 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ * a1 Voltage Value
-+ * a2-a3 not used
-+ */
-+#define INTEL_SIP_SMC_FUNCID_HWMON_READVOLT 33
-+#define INTEL_SIP_SMC_HWMON_READVOLT \
-+	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_HWMON_READVOLT)
-+
- #endif
-diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
-index 60ed82112680..520004a5f15d 100644
---- a/include/linux/firmware/intel/stratix10-svc-client.h
-+++ b/include/linux/firmware/intel/stratix10-svc-client.h
-@@ -11,12 +11,14 @@
-  *
-  * fpga: for FPGA configuration
-  * rsu: for remote status update
-+ * hwmon: for hardware monitoring (voltage and temperature)
-  */
- #define SVC_CLIENT_FPGA			"fpga"
- #define SVC_CLIENT_RSU			"rsu"
- #define SVC_CLIENT_FCS			"fcs"
-+#define SVC_CLIENT_HWMON		"hwmon"
- 
--/*
-+/**
-  * Status of the sent command, in bit number
-  *
-  * SVC_STATUS_OK:
-@@ -70,6 +72,7 @@
- #define SVC_RSU_REQUEST_TIMEOUT_MS              300
- #define SVC_FCS_REQUEST_TIMEOUT_MS		2000
- #define SVC_COMPLETED_TIMEOUT_MS		30000
-+#define SVC_HWMON_REQUEST_TIMEOUT_MS		300
- 
- struct stratix10_svc_chan;
- 
-@@ -171,6 +174,9 @@ enum stratix10_svc_command_code {
- 	COMMAND_MBOX_SEND_CMD = 100,
- 	/* Non-mailbox SMC Call */
- 	COMMAND_SMC_SVC_VERSION = 200,
-+	/* for HWMON */
-+	COMMAND_HWMON_READTEMP,
-+	COMMAND_HWMON_READVOLT
- };
- 
- /**
--- 
-2.35.3
-
+> 
+> >
+> >  	device_initialize(&master->dev);
+> >  	dev_set_name(&master->dev, "i3c-%d", i3cbus->id);
+> > @@ -2973,6 +2973,9 @@ int i3c_master_register(struct i3c_master_controller *master,
+> >  err_put_dev:
+> >  	put_device(&master->dev);
+> >
+> > +err_put_of_node:
+> > +	of_node_put(master->dev.of_node);
+> > +
+> >  	return ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(i3c_master_register);
+> > --
+> > 2.39.5 (Apple Git-154)
+> >
+> >
+> > --
+> > linux-i3c mailing list
+> > linux-i3c@lists.infradead.org
+> > https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-i3c&data=05%7C02%7Csfual%40connect.ust.hk%7Cbfee3f910b654276330508de074f5750%7C6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638956234525799989%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aTeKcQJDC2Av%2FQ1MjtDuoOYrWJ6ZwhbjQbHs%2Fci90jw%3D&reserved=0
 
