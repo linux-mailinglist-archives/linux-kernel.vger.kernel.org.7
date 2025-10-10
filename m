@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-848406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEFECBCDB05
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:03:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76F0BCDAF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE3D34FEA28
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:03:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4C5543553D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D822F7AD3;
-	Fri, 10 Oct 2025 15:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F4C2F8BFA;
+	Fri, 10 Oct 2025 15:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOJWUjGY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpWrckV/"
 Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4332F83BA
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F442F60BC
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108588; cv=none; b=B5WxOgkNO/kgsOkW3nompa+BEBIF45eOGn9B1p87lSinFDJpO9TqIw34I2k7FB7dleg4T4jj2lv02mXn4hLkWgSCKD2mxBBydgDqEDl/6Ed7GEmay82pZnpnwrlL88UxCnGbpGRldmer5U0Csjxdr0Hj/I7OqYB3nkxCL7QW/Ns=
+	t=1760108591; cv=none; b=nngaPbaArDyiaA+D7tBKbb1UwPqoHZR4LLXbX47FxQaHY8DgnfX/MhgCzWhYiDaWtEful8WepP65DtCX3tU5XYWyXxtHob6qUkT5iVBGGhZ6sRAYsHhfQJYxZ8rXIRDnXH2Oxo+oigI7ojC8ApxeUSPIJeGLwbhVz3UM/ynHqq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108588; c=relaxed/simple;
-	bh=BfuWtJpHFnoUxb8s7xJBVcBtioNVHYkElOeeOAD1d8Y=;
+	s=arc-20240116; t=1760108591; c=relaxed/simple;
+	bh=FgQfbLiyDT66S+sNI1wE/oslfO+pvzybNJFnYppNieM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O5v1KA1SESUrkxB0CZUO24yXKrS4FmqZzkcnXvX41weHk4xfyXGOudALGpnd+F1m1Vrq8oVQRjdOsSegPxDZz0f8Bj/+qCc6KVznH3fQ4FkPTvas/ikmqtkFV3ToKoV0jWBlmgBjuPQyPKZHHU1lNq2WhmcrLdAwimHOAXpooSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jOJWUjGY; arc=none smtp.client-ip=209.85.210.178
+	 MIME-Version; b=rTbStsMOTv+BxEPL6ojd1bkUlRIGTtXFLErb5zIBK7By25nbCV3Vc7BUHUeGfyT6EbykV6X/WXLoEr2WSUDgfpJyhrmkaiQfxXQFzKCtbYpwD7YCgKk98SJxVEWxSD8Qez78SrVxQGF3VmopFZuoMwi7wkbyogWumdNNiKMHWMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpWrckV/; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781db5068b8so1854844b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:03:05 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-791c287c10dso2066951b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:03:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760108585; x=1760713385; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760108589; x=1760713389; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rGAsWoT0ij2AF8u7lzQ99aTp0zEqYgQwfONKoWXhuNs=;
-        b=jOJWUjGY7g5vkdEDoSO3DnDTAix7UyGmMzh8e0cJ/t4f9axbWimQr04i3E7aoAoQmh
-         fBeQZnegMtpgC7q+xdRAJaoMK7Y+XxIdLkxoFzLIj4Yrg2t9xf7Saqkgje4gAEU4dHTi
-         r+3wV4FnrKAck7RQp9w1zrtkzvuqAruNl+vs+04ACZFfqzG1uSDnHk6J31jmrhilqf5l
-         Qoaxwi+BhNX8gyn/vYIu/V4gnyDcAF9Kn75IcrxT4d6BZbXzRAQG/+Y4tlkunxWIT4pr
-         9MPxCCqtkwJRW0k9KsfYrtMOOQsVUu5CeBRVJYaPn7OTte78Y1HFMMaMEYH+Di7Fgj/2
-         lF3Q==
+        bh=89KuTptWUmkm9h+FhspeGpsBdyDf36NNXIP8b7hhqek=;
+        b=RpWrckV/JP7K3rBXqLxBCPZ3r+/KHE+Zva9B+hQ/IpZyvb9ML8WbUa8q/esCb2fb4y
+         ymlmTU0QbOJlDRiqXD0JpKBUcDmkrAJ9upSO9ZF6NWWmhx3PrAPRz0Ah3/fsPaoVHi59
+         NK6Pizz6h/bi7LjWTOMf1lSdl/txsUs5vF0zKcEM0JFe2qYLg/eM5lPyM7TZFNMRHhe+
+         A+cwnS4gZ7o7opxLNINSNzjGJlHOxnFUG4cFW/LnEKqvGqV4dfjCSNYhg3zHCJv6ktl1
+         l1Dnju47/ug9Zv7TrKZ/cv9mld/mHDw562LCLoXgSN7COm4MzXa90Ye+NiSn/XGoHy/k
+         ok/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108585; x=1760713385;
+        d=1e100.net; s=20230601; t=1760108589; x=1760713389;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rGAsWoT0ij2AF8u7lzQ99aTp0zEqYgQwfONKoWXhuNs=;
-        b=h9z7KrgTNbqUsH12oLWSSscxkJUb1RukwIp2maB7W9a2htwyyb8ciLMGOu/S0Blfos
-         PKx/NJkv+R8soQD5PcbRMCtzzX4+rL0T5aCyiar/IYx2GkQxSf8Sc13NdWhH5BLipkeD
-         A++EYwfpPW51WYBSRD6iuQT5NrEFvMI1LXaaieCNNLq8Jyl32paj0YjeR8Sq3143XHXX
-         7ci2ueO7Ll8pZj/pATHR39aYskTKmIlQuvo7b71amJJku9tjPkUewaOx/+zFFzR6ERJK
-         TJ6fTQhqSDI0RqydqgcqcFvQ2s8JEeKbdFfzfKY2kFUTFZ39kfIMUNa++GbrwEKi9r/e
-         6NfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+DT43xWQlAjfC6Gs6zKiIc007ZEmngeaSBUL1y9FiD2AznF7agjIZOeX4jT3q4acsDMRG0PAANnU6+7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuq+QpG/nKTxU5ML4ty/dItj4mtHCz7+GRyej9Gte3qquux4Fk
-	vJ9AveOdvZ8iAYeAWLj7zMpOTMaYvUUHF04SwxQLfwtqhG/GfT4DXzt8
-X-Gm-Gg: ASbGncsqRmSPcoGoZObcOhXbmsTo+Nh/lLUELApUDjoYRtWsC57zMHnaoyRuw4C5dcW
-	jrZp/ZQZLHD4Qm0HsSRFlCstk81xof0Ar6oKt1IZdOPreMQK153u7lnpQu8YEggvwH3YsdIqX8i
-	OaprjP5spLHhrtH2TdIhI9zrvYoFzQ6wvsR6vkrDM3sVbVYxkqZYNgOJo2cF7RAKgXe/9oSw9dV
-	QkRkzVTccEEgMrqerEieO44pv0IIkYK5OcuR0WEHxlrOkh+bzNrFOy6jWK4UbkBkp5Z7SjrixO6
-	chVHE7k1u4r7zpDhqHt+4B7tGvmclGtmoczYkvLhve1c6AyxhqiVWvrefQ3Z0B+hHkIP66VXjT2
-	t0fLi7Id3ZCZIDOrT/W4j1ffS9mOlT0iCVkk03mdd48jWo9VNdXsVhl4I98ynZVBYxP6v841+KX
-	ZZV13Q4cM256Z13Q==
-X-Google-Smtp-Source: AGHT+IG6Mclomm9HYyi1FtTvYUfbr3VX3dwyeq2EoCOUrPpK9DPowb6JOh4ejWKRDTNNO57tGjljAA==
-X-Received: by 2002:a05:6a21:50f:b0:32d:a8fd:396c with SMTP id adf61e73a8af0-32da8fd3980mr15458796637.35.1760108584393;
-        Fri, 10 Oct 2025 08:03:04 -0700 (PDT)
+        bh=89KuTptWUmkm9h+FhspeGpsBdyDf36NNXIP8b7hhqek=;
+        b=dbAHE8UAlxg8j9qQLqRrIvXPYmd2SoQWvLhQsWybpbGgfa3frAywl77rLMc7DVf4Lk
+         f6qG3+z3In+agAE4EiQRb1i5A4giJB4u6hebDtlvM067az4RRCr6CyrnMotvl+yjjdTk
+         f0bbp2uXl83Gumce23SXwQNTgl7CDCuEdmLYolTsHR/7/kh9RITkVXKmnHs82wUkHG/Z
+         YvHIcFVtfHDv2vAfZp4Cix/xanGyfn+fZXDc45CweOejv1eGSOYAnSuxjaObg3ozLb4W
+         l08wvaSgvbLOq5z1rwsT7wua6c+zrXLl3GG8Jdxuk38knlT7didnFiKN+C9DAill4XqW
+         UPbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkJIJj7T/sBYlAr9wAsiBjbP+JoCSe+V/kXg6FIc8+gKMqgB9YCmS+UV+HdTgWv1eN2j2I8ug1KIoDr38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHUgBfH6mgux6R+xPzn/7wswVIGlMSKzMxUGQzayMdAikJF0je
+	7wyQR7TXY8LEpfgeC7lwXQycwmbztdxqsjXCrOwDyglVqSycEqmBLNJt
+X-Gm-Gg: ASbGncuj8fzcc122Gh2RFpOmb6fBr0x5TuZMTblTdds/vIXxLXDPMnPAwnUHV9SQpKr
+	nUJ/QTZtLWnwTdFCYdfzMHbqYySobLK0h5h8P+h0xFTbaM9d3f6CYRDCGgRQDIfeK9bG+s1F/F7
+	uFK1CZr9i6mZM+YSombu2zYrysLfxzWLyWVFYD7soYSq7+r2NC/MBjG6iuzonAt0/EqlMLIbBAp
+	DRk4av51rNNY+BeYgJXL92SMKA8bd0UHmyBIWvLY1cfJFXDJz91IOH/1m6+T2EoJY0AUjvaax49
+	tApvxVBiehQDhx7tdOJzjiSbhu6NqUMVB/fnoEhVsRyFZInVqcFI3VxMv96xsB1wzm4hl3nrhxb
+	9PveeLY7d6j/ofp35YFYkQPG2eqIe2spAaIhZfE+MXjgaCL/o7e74S+fAW3ExmIz7TTvjnXL4Xe
+	UCuPI=
+X-Google-Smtp-Source: AGHT+IGEQqV4pmO4XmsOQ15F9bsuz1pxj5V/e0Gc4K06vCx6p2KIreXiVTGYqdNwaxkJG480WOWOvA==
+X-Received: by 2002:a05:6a21:50f:b0:32d:a8fd:396c with SMTP id adf61e73a8af0-32da8fd3980mr15459388637.35.1760108589350;
+        Fri, 10 Oct 2025 08:03:09 -0700 (PDT)
 Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b639cbcsm3266359b3a.18.2025.10.10.08.03.00
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b639cbcsm3266359b3a.18.2025.10.10.08.03.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 08:03:04 -0700 (PDT)
+        Fri, 10 Oct 2025 08:03:09 -0700 (PDT)
 From: Jeongjun Park <aha310510@gmail.com>
 To: stable@vger.kernel.org
 Cc: gregkh@linuxfoundation.org,
@@ -93,9 +93,9 @@ Cc: gregkh@linuxfoundation.org,
 	viresh.kumar@linaro.org,
 	Jacob Keller <jacob.e.keller@intel.com>,
 	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH 6.1.y 01/12] Documentation: Remove bogus claim about del_timer_sync()
-Date: Sat, 11 Oct 2025 00:02:41 +0900
-Message-Id: <20251010150252.1115788-2-aha310510@gmail.com>
+Subject: [PATCH 6.1.y 02/12] ARM: spear: Do not use timer namespace for timer_shutdown() function
+Date: Sat, 11 Oct 2025 00:02:42 +0900
+Message-Id: <20251010150252.1115788-3-aha310510@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251010150252.1115788-1-aha310510@gmail.com>
 References: <20251010150252.1115788-1-aha310510@gmail.com>
@@ -105,60 +105,75 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-[ Upstream commit b0b0aa5d858d4d2fe39a5e4486e0550e858108f6 ]
+[ Upstream commit 80b55772d41d8afec68dbc4ff0368a9fe5d1f390 ]
 
-del_timer_sync() does not return the number of times it tried to delete the
-timer which rearms itself. It's clearly documented:
+A new "shutdown" timer state is being added to the generic timer code. One
+of the functions to change the timer into the state is called
+"timer_shutdown()". This means that there can not be other functions called
+"timer_shutdown()" as the timer code owns the "timer_*" name space.
 
- The function returns whether it has deactivated a pending timer or not.
+Rename timer_shutdown() to spear_timer_shutdown() to avoid this conflict.
 
-This part of the documentation is from 2003 where del_timer_sync() really
-returned the number of deletion attempts for unknown reasons. The code
-was rewritten in 2005, but the documentation was not updated.
-
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Link: https://lore.kernel.org/r/20221123201624.452282769@linutronix.de
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Link: https://lkml.kernel.org/r/20221106212701.822440504@goodmis.org
+Link: https://lore.kernel.org/all/20221105060155.228348078@goodmis.org/
+Link: https://lore.kernel.org/r/20221110064146.810953418@goodmis.org
+Link: https://lore.kernel.org/r/20221123201624.513863211@linutronix.de
 Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
- Documentation/kernel-hacking/locking.rst                    | 3 +--
- Documentation/translations/it_IT/kernel-hacking/locking.rst | 4 +---
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/mach-spear/time.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/kernel-hacking/locking.rst b/Documentation/kernel-hacking/locking.rst
-index 6805ae6e86e6..b26e4a3a9b7e 100644
---- a/Documentation/kernel-hacking/locking.rst
-+++ b/Documentation/kernel-hacking/locking.rst
-@@ -1006,8 +1006,7 @@ Another common problem is deleting timers which restart themselves (by
- calling add_timer() at the end of their timer function).
- Because this is a fairly common case which is prone to races, you should
- use del_timer_sync() (``include/linux/timer.h``) to
--handle this case. It returns the number of times the timer had to be
--deleted before we finally stopped it from adding itself back in.
-+handle this case.
+diff --git a/arch/arm/mach-spear/time.c b/arch/arm/mach-spear/time.c
+index e979e2197f8e..5371c824786d 100644
+--- a/arch/arm/mach-spear/time.c
++++ b/arch/arm/mach-spear/time.c
+@@ -90,7 +90,7 @@ static void __init spear_clocksource_init(void)
+ 		200, 16, clocksource_mmio_readw_up);
+ }
  
- Locking Speed
- =============
-diff --git a/Documentation/translations/it_IT/kernel-hacking/locking.rst b/Documentation/translations/it_IT/kernel-hacking/locking.rst
-index 51af37f2d621..eddfba806e13 100644
---- a/Documentation/translations/it_IT/kernel-hacking/locking.rst
-+++ b/Documentation/translations/it_IT/kernel-hacking/locking.rst
-@@ -1027,9 +1027,7 @@ Un altro problema è l'eliminazione dei temporizzatori che si riavviano
- da soli (chiamando add_timer() alla fine della loro esecuzione).
- Dato che questo è un problema abbastanza comune con una propensione
- alle corse critiche, dovreste usare del_timer_sync()
--(``include/linux/timer.h``) per gestire questo caso. Questa ritorna il
--numero di volte che il temporizzatore è stato interrotto prima che
--fosse in grado di fermarlo senza che si riavviasse.
-+(``include/linux/timer.h``) per gestire questo caso.
+-static inline void timer_shutdown(struct clock_event_device *evt)
++static inline void spear_timer_shutdown(struct clock_event_device *evt)
+ {
+ 	u16 val = readw(gpt_base + CR(CLKEVT));
  
- Velocità della sincronizzazione
- ===============================
+@@ -101,7 +101,7 @@ static inline void timer_shutdown(struct clock_event_device *evt)
+ 
+ static int spear_shutdown(struct clock_event_device *evt)
+ {
+-	timer_shutdown(evt);
++	spear_timer_shutdown(evt);
+ 
+ 	return 0;
+ }
+@@ -111,7 +111,7 @@ static int spear_set_oneshot(struct clock_event_device *evt)
+ 	u16 val;
+ 
+ 	/* stop the timer */
+-	timer_shutdown(evt);
++	spear_timer_shutdown(evt);
+ 
+ 	val = readw(gpt_base + CR(CLKEVT));
+ 	val |= CTRL_ONE_SHOT;
+@@ -126,7 +126,7 @@ static int spear_set_periodic(struct clock_event_device *evt)
+ 	u16 val;
+ 
+ 	/* stop the timer */
+-	timer_shutdown(evt);
++	spear_timer_shutdown(evt);
+ 
+ 	period = clk_get_rate(gpt_clk) / HZ;
+ 	period >>= CTRL_PRESCALER16;
 --
 
