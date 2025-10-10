@@ -1,169 +1,214 @@
-Return-Path: <linux-kernel+bounces-847862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9F9BCBE7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:24:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66C5BCBE88
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A16EF4E290C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 758A93B82E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2822727E6;
-	Fri, 10 Oct 2025 07:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOSW/o8S"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB3B273810;
+	Fri, 10 Oct 2025 07:25:52 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D1024466D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DAD24466D;
+	Fri, 10 Oct 2025 07:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760081085; cv=none; b=jynpR9XacShix0cFMPUMncQf81zgc8TXVdrYpY00YqFTlrS0BGwyqUX6zHlBNUoPV6Wz4EZuhiP8D6F6+1CT0CEbbkqXMrkvdTTVXSy403VBiK6rbgiv7EwjVGqpUcAa+08CTLOXCz6bof4lmxhXhEAVjSkCwaw4+nUG3mArvsE=
+	t=1760081152; cv=none; b=SPnH5ASFa1d3VZtPpPpR6RE0XCf/21YLxV1ORmWEwGgGK+wAVLZ4Y5G0xnNyLN+OXt2wuCP8WpfmSXLtpMD4dhO6GoPsYNDTpnGhXGYuziXlKxJytAJgqz+M0MNHzwmCrlkPPS1ZM68So7BjgZ0bbIpMZka5ggFMQfXohfhfDFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760081085; c=relaxed/simple;
-	bh=ytu0sh6Vnk/ajf2WY1W0doPoS5rmLBL0Qv13X0hEGVk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Wsi0rS9mSfn5mPHKn6bwxKTabIIDsd2nBcN8bvSHi9WSBlq3t5GvGR3VZMMOpk3FAd2LG7T2nc5M6W/YsXQwx0LOHPyesSPDbOQm08BcijvzVqpr+/dleN4z5pkrxhSmQCF2L0afN9LkfPigk5mU5blA8d9wLO2LlWoL4d74SXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOSW/o8S; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33255011eafso1917406a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760081084; x=1760685884; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ft8+GHyPaWE5QNecvMBDFx7PoSv3gOXNdAI64yMkvI4=;
-        b=HOSW/o8SdW5rOQ0RM8qufMs8XZ8r8reX8oVei0o+4w+Tdui1qzIL/F6K73CYTR0LHG
-         F1qnJboJM0XvatdYn8ZCOLjAZaXVF8SF5TT/G+2Hrvjs/ZpUuMMHv8LI5xr7vHJlaANP
-         SJHPX9zVHCPsCwdJwALEHtlb02mbEUKkbxIpNX46pLKcTaoUOmC389pwpgATH+nBh9hU
-         w/viM/b10xn5LmNcVuzIcjIE4rCw3+XHNchGzOxbRjsX5j9uArxBIZZTNGCCS2boPQzW
-         EcMm5dBRm44RW+YIeJqYGhpsPZRkpieC8no2Dm08DM/fXK6rol0tZjxaWG1XkvTCdd5O
-         TrlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760081084; x=1760685884;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ft8+GHyPaWE5QNecvMBDFx7PoSv3gOXNdAI64yMkvI4=;
-        b=C9pH09ItCeDioShX561kPMrG2eh0LZq1UuXvk+LqXRu6qOwWI7VXvhQPFihkf1yBM7
-         AJqCdhERvw26EW0l0svfZrs1OzLS3aZ5r7dNcli4SRRT7/Naxj1q337IBjfv1+VjCqCI
-         FaXh1c50Vn5yUuX6kvdV3eJYQDAnxUY3dFf68gn1MAwY3wtMMFP4PhUVP/dm1Gy4T5vY
-         p+oXW/5OEdvbZbHEJ10rxEQFLx/FFeGzjy1A0WW0plQrVbIyDY4jf2q+Te8WeCqkXiur
-         XBvk9B8VwpYCQGjGGEe9H2j87Z2zDFqzKm9ZCei8gZyYp88FefDo5wKuh4YSAYslgaOn
-         mGLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5elebN7hTu9ggCcVOco30xOAZLXiQ6iG+OxnSeUwO05uuCU74DCsjQw5bdj4o9mYcK2tPXEC5kvvcJBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuYRMI13pIx1tBQo9+FoBnfEzkg94z8XTyotHSdK6OsdTUk/F7
-	HThF2gyYr5SoUErImUXRkREXgY5I6Mn3UCz//H6UzWOMy1wozFD9NPDg
-X-Gm-Gg: ASbGncupYazLeNM2TGR1RY2GSjkpFMSEAjMOGItvi9ekg54gao5JyLwiacnyYrZrUwL
-	A/S9EYNK02mZd7QwqpsUzXprGqThFqJJD98NPOVTBCxj38Ae2Cjj0Xi+EGk7A2+Fktf8ubVE7Oa
-	XLNRo0EYXFnUohjPhMYqpBtbCjQRdJMdJVgBZsxinKPdDlheBK4y/dbpqZHLXo0WCzuVxD7Bmr7
-	gqMUNOGGrMU+32ZBhM8mj8ZOAS0H8Cyz4MXL4RS1iMzHC6AfW22keVP99knZEdCSqn6LYEjdFe7
-	tC+B8Q+VY45cczBDxYj33icyabTC8MMis0r51dHBPUAgIfEnflzSSIxC16sq41NQKv1GfQKiAZN
-	ae5Z9LoGoqt11p0xkf3h3kc8Aygl+fk85ZIaOcRYkq6uNe2XTEsZXP5lq
-X-Google-Smtp-Source: AGHT+IFA9+vMUY6ByW+p1IF2nfK0SeJw3kFZAH0hcme8c+WfP183AXo+6f19C2sWzvxtw6EiZAMrPQ==
-X-Received: by 2002:a17:90b:3e8d:b0:32c:38b0:593e with SMTP id 98e67ed59e1d1-33b5114d3d4mr13407741a91.5.1760081083631;
-        Fri, 10 Oct 2025 00:24:43 -0700 (PDT)
-Received: from [192.168.0.69] ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678ddcc604sm1540479a12.11.2025.10.10.00.24.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 00:24:43 -0700 (PDT)
-Message-ID: <49f098d8cdaecaf05e4e751a71bebaefd62f6fdc.camel@gmail.com>
-Subject: Re: [PATCH v2] nvme/tcp: handle tls partially sent records in
- write_space()
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph
- Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Date: Fri, 10 Oct 2025 17:24:38 +1000
-In-Reply-To: <33dd4088-2a48-4dbd-a374-e2204aff3941@suse.de>
-References: <20251010042514.704249-2-wilfred.opensource@gmail.com>
-	 <33dd4088-2a48-4dbd-a374-e2204aff3941@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760081152; c=relaxed/simple;
+	bh=ErVaIYB7OO/399hP8USL2y0yj6zVoDwaao+2O3iylYk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hyMNsnTjnNpbmNfufYebK2OeTnjPl1opK224zpY/rzWUkYJb6Q7BqXdQtkqONO5Ki+k96ztpB/xeSS/LSe7A7FIQ5xBmFKEqXSZLhrkINy9YSqTGj3N8TAlrJf+ZiD44dfaUre43bqEEkwlWDjUEXXz+e6t9aSHrAz3TQ9M55y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 10 Oct
+ 2025 15:25:40 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 10 Oct 2025 15:25:40 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Brian Masney <bmasney@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Joel Stanley <joel@jms.id.au>,
+	"Andrew Jeffery" <andrew@codeconstruct.com.au>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mo Elbadry
+	<elbadrym@google.com>, "Rom Lemarchand" <romlem@google.com>, William
+ Kennington <wak@google.com>, "Yuxiao Zhang" <yuxiaozhang@google.com>,
+	<wthai@nvidia.com>, <leohu@nvidia.com>, <dkodihalli@nvidia.com>,
+	<spuranik@nvidia.com>
+Subject: [PATCH v15 0/3] Add support for AST2700 clk driver
+Date: Fri, 10 Oct 2025 15:25:37 +0800
+Message-ID: <20251010072540.666673-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, 2025-10-10 at 09:03 +0200, Hannes Reinecke wrote:
-> On 10/10/25 06:25, Wilfred Mallawa wrote:
-> > From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> >=20
-> > With TLS enabled, records that are encrypted and appended to TLS TX
-> > list can fail to see a retry if the underlying TCP socket is busy,
-> > for
-> > example, hitting an EAGAIN from tcp_sendmsg_locked(). This is not
-> > known
-> > to the NVMe TCP driver, as the TLS layer successfully generated a
-> > record.
-> >=20
-> > Typically, the TLS write_space() callback would ensure such records
-> > are
-> > retried, but in the NVMe TCP Host driver, write_space() invokes
-> > nvme_tcp_write_space(). This causes a partially sent record in the
-> > TLS TX
-> > list to timeout after not being retried.
-> >=20
-> > This patch fixes the above by calling queue->write_space(), which
-> > calls
-> > into the TLS layer to retry any pending records.
-> >=20
-> > Fixes: be8e82caa685 ("nvme-tcp: enable TLS handshake upcall")
-> > Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> > ---
-> > V2:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 - Unconditionally invoke TLS write_space(). Th=
-is means we
-> > don't need
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to export tls_is_partially_sent_re=
-cord()
-> > ---
-> > drivers/nvme/host/tcp.c | 5 +++++
-> > =C2=A0 1 file changed, 5 insertions(+)
-> >=20
-> > diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> > index 1413788ca7d5..6016510577bd 100644
-> > --- a/drivers/nvme/host/tcp.c
-> > +++ b/drivers/nvme/host/tcp.c
-> > @@ -1079,8 +1079,13 @@ static void nvme_tcp_write_space(struct sock
-> > *sk)
-> > =C2=A0=20
-> > =C2=A0=C2=A0	read_lock_bh(&sk->sk_callback_lock);
-> > =C2=A0=C2=A0	queue =3D sk->sk_user_data;
-> > +
-> > =C2=A0=C2=A0	if (likely(queue && sk_stream_is_writeable(sk))) {
-> > =C2=A0=C2=A0		clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
-> > +		/* Ensure pending TLS partial records are retried
-> > */
-> > +		if (nvme_tcp_queue_tls(queue))
-> > +			queue->write_space(sk);
-> > +
-> > =C2=A0=C2=A0		queue_work_on(queue->io_cpu, nvme_tcp_wq, &queue-
-> > >io_work);
-> > =C2=A0=C2=A0	}
-> > =C2=A0=C2=A0	read_unlock_bh(&sk->sk_callback_lock);
->=20
-> Minus the whitespace change:
->=20
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+This patch series is add clk driver for AST2700.
 
-Ah only just saw this, sent a V3 with the white-space fixed. Thanks for
-the review!
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
 
-Regards,
-Wilfred
+v15:
+- clk-ast2700.c
+ - remove #include <linux/of_platform.h>.
+ - use inline 12MHZ, 24MHZ, 25MHZ, 192MHZ define.
+ - use clk_hw pointers, index member instead of .fw_name and .name members.
+ - use module_platform_driver().
 
->=20
-> Cheers,
->=20
-> Hannes
+v14:
+- patch (3/3) : remove duplcate Signed-off-by.
+
+v13:
+- clk-ast2700.c
+ - remove unnecessary ().
+ - refine ast2700_soc1_configure_i3c_clk to be easy readable.
+
+v12:
+-fix mistakes commit message Acked-by:Krzysztof Kozlowski
+<krzysztof.kozloski@linaro.org> to Acked-by: Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org>
+
+v11:
+-update patch(1/3) commit message subject prefix dt-binding: to dt-bindings:
+
+v10:
+-aspeed,ast2700-scu.h:
+-add SOC0_CLK_AHBMUX, SOC0_CLK_MPHYSRC, SOC0_CLK_U2PHY_REFCLKSRC,
+ SOC1_CLK_I3C.
+-clk-ast2700.c
+-add #include <linux/auxiliary_bus.h>
+-remove #include <soc/aspeed/reset-aspeed.h>
+-use devm_auxiliary_device_create replace aspeed_reset_controller_register
+-reset-aspeed.c:
+-remove aspeed_reset_unregister_adev, aspeed_reset_adev_release,
+ aspeed_reset_controller_register.
+-compatible name change reset_aspeed.reset0/1 -> clk_ast2700.reset0/1
+-remove reset-aspeed.h
+
+v9:
+-aspeed,ast2700-scu.h: no change.
+add more clear commit description.
+-clk-ast2700.c:
+add inlcude bitfield.h
+remove redundant clk_parent_data soc0_mpll_div8/soc0_ahb/uart13clk/
+uart14clk/uart15clk/uart16clk/soc1_ahb/d_clk_sels
+
+v8:
+-aspeed,ast2700-scu.h: remove no use soc0 clock, add new clock
+-clk-ast2700.c: remove include <linux/auxiliary_bus.h>,
+include <linux/clk-provider.h>, include <linux/of_address.h>
+-clk-ast2700.c: add include <linux/mod_devicetable.h>
+-clk-ast2700.c: modify include <soc/aspeed/reset-aspeed.h> order before
+dt-bindings
+-clk-ast2700.c: modify define to be tabbed out space
+-clk-ast2700.c: add union struct for each clk type
+	union {
+		struct ast2700_clk_fixed_factor_data factor;
+		struct ast2700_clk_fixed_rate_data rate;
+		struct ast2700_clk_gate_data gate;
+		struct ast2700_clk_div_data div;
+		struct ast2700_clk_pll_data pll;
+		struct ast2700_clk_mux_data mux;
+	} data;
+-clk-ast2700.c: modify clk_data = device_get_match_data(dev);
+-clk-ast2700.c: modify builtin_platform_driver_probe to 
+arch_initcall(clk_ast2700_init)
+-clk-ast2700.c: ast2700_clk_hw_register_hpll explain: scu010[4:2],
+scu010[4:2] = 010, hpll force 1.8Ghz
+scu010[4:2] = 011, hpll force 1.7Ghz
+scu010[4:2] = 110, hpll force 1.2Ghz
+scu010[4:2] = 111, hpll force 800Mhz
+others depend on hpll parameter register setting.
+
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
+
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
+
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
+
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
+
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
+
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: clock: ast2700: modify soc0/1 clock define
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver
+
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1055 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  253 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |    4 +
+ 7 files changed, 1329 insertions(+)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+
+-- 
+2.34.1
+
 
