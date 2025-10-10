@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-847824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D6CBCBD21
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CFFBCBD36
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A2A54E464D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7167A54013E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D0270EA5;
-	Fri, 10 Oct 2025 06:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFD92701C3;
+	Fri, 10 Oct 2025 06:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oxlqWe9c"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g93F8CBb"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796FD1E231E;
-	Fri, 10 Oct 2025 06:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78B014286;
+	Fri, 10 Oct 2025 06:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760079111; cv=none; b=R8R2796ZcEYgmn1Lj7F8heZVFDGJojoqnZcb+JLtAQ9/GCcoc+gsW0+jEJ/akP8gvcwv2ImynWQxUyd87MQhvnmXp13iE2spBYe22Eo3/6lhG7AOcuAQIjSar/gOZJCnWhTzoG2vDKSBCZyTPvYcf2h2j9jIPgKRXvAXvy0mSfs=
+	t=1760079193; cv=none; b=b3wfiMPrri5SRJon2ahYTNjZ0BFQM9kA947POvnWR4OO9Wunt1oFgy4fksVDv042spsQkIrsxJt/tVIr2hIib3/NUg3pF/K1UvYdZaG+ksKN6cp6xGoPm5SehCTq+n7AoXRz1aeAMXVA7KiWBoXb3HiXhz6U6fow2UP2vZYhLG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760079111; c=relaxed/simple;
-	bh=EKf4E4d9jYqC85kwDTeHkwcH5/FLvpvYghy4JiDj1tE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KjkZZKaMYCmNgeB9pKFRzbHgdu7PUIVLtJYc/Gfc8OCaE7/UMCX8gK9QplvztkWeTknXU+NKkfznrtjNHG6bPm2vDZoe7jk4izvzmPy+3ACgChdIthceMXcvVuPKeocVl6IWd5pJRmuklWuwS29z1WzLD7mlUJUUjruFklOuB00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oxlqWe9c; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760079099; x=1760683899; i=markus.elfring@web.de;
-	bh=YU+cG4oPGJIlYxkYFyaad4V9zA4pGvWCsGmGwS2HYPM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=oxlqWe9ca47hXbdioAT0cgqZnoXlUhLPQhLdISpRFQ3CbusGiN4cSvXVUKwIQ9lj
-	 PZsQvMvZBc0yHEUuMYO2DetjMFdsWhIOSY9VeLoPW2LHkVPbFUURvvCmmvsz/OHXy
-	 MPUzSvJB3PwgC9JYDhG7/WBv+m//7LzfyY6xS3mDuSNbb9uTWgOe7XRslKz19n1+S
-	 HfSvVYez4NcLMMKayZzieJPnQAuEOgjKOJ3iXgUUnZN7AGlsUKct9bv7BujBQgteX
-	 iiRAkLNrtsa63zKwBWwTHGGFnaOilY7A9i87xBV50Lv5DH6eUHQRtYsjfQGqACklS
-	 wnaDCGHHdl3tb+R+WQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSZI5-1ueoZm2FY1-00PwwR; Fri, 10
- Oct 2025 08:51:39 +0200
-Message-ID: <8f7ac740-e6a8-4c37-a0aa-e0572c87fe9e@web.de>
-Date: Fri, 10 Oct 2025 08:51:38 +0200
+	s=arc-20240116; t=1760079193; c=relaxed/simple;
+	bh=gfwG0aCYhsHTDT+b8VFJnsDeKc74rXvjOdDae94MYuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YsHJg9uKU8ZLoCwYwUAjD4l87Nd0CHaLZYBZ36P7PN2bJUtM7g93/FHMCmyg49ydcSSw5ldQx5js/I/UqtC/j32xzr9y63zKoDVTeHYvO0WekLTLjhV9C9QGvruGIttqXL0lFGzJgCK2FzYyoCdlrKP+mt+7apvy28Zczy7GP0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g93F8CBb; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59A6qxrj631500;
+	Fri, 10 Oct 2025 01:52:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760079179;
+	bh=+HlKS0pc1nxNdLZuPPcuGKiXGG+XftG3oUJq8GFlUqo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=g93F8CBbz0AzYh9EFPxYZoHdA4pOoU09VVophfWWRX4lLM4H/VsdDcUO3r1Jmg5yW
+	 myvysDhbAVTEm7xqPkeOS/sGhr5/D2tyYUumrPgR3bcqGBkZGi35ppfCt6hsSxsT9l
+	 XX1Q+vKO7R00CmEpj+ZHowBGjJdAtfCDrTcCaE0Y=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59A6qwcK869270
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 10 Oct 2025 01:52:58 -0500
+Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 10
+ Oct 2025 01:52:58 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 10 Oct 2025 01:52:58 -0500
+Received: from [10.24.69.191] (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59A6qsej1249086;
+	Fri, 10 Oct 2025 01:52:54 -0500
+Message-ID: <d2ac59ca-5c44-44c0-af9a-cdfda9d4ed1c@ti.com>
+Date: Fri, 10 Oct 2025 12:22:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,132 +64,696 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 3/3] smb: client: Omit a variable initialisation in
- smb311_crypto_shash_allocate()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- Aurelien Aptel <aaptel@suse.com>, Bharath SM <bharathsm@microsoft.com>,
- Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
-Content-Language: en-GB, de-DE
-In-Reply-To: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jTEjJW/ITWRakBkbMB60LMlkxhMS6X0TgKTeGGpPrgOIitDcDWy
- PFScFI8YFp9Q/rKGWoG3pWGG7+vBSSYn849cujWwgCwckSZQhdmas3TcPeHvS+iUttK09CB
- xxvPbavxxNEnVtyXabCwlqjwGd31KffIB9SOHhjoxtErv17RvLrEJPEb6BAxrrs/M8+HZy/
- FUy4PpZpi9V84y8aMzycQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xmpO6l5Gxgw=;PxwRvO0Zg4Sy4ROTRMRJYJsMF5Q
- sp2+TnP3rQWtW/XBe3QEi2HdxClLAaaNb9Ds9zTxZBdC1VWETWRBzXoqzchU+5epwxIGxHa8v
- ulezQ57bmgBscJwcIsi9nLEynNdqIwSt80Ke7jSHJrbxNJ+HeOlB3Czei9YdhgbF77gHfHclP
- X9mNh3QEqywvQRYMA8fMfMEx3qksr7yCxSihO/UE7i72GUQEnTu/UopVjzfedM+Yw1V8rtFRU
- swHc4fqY8KSvwuKuW+xypNwgdGz3lGV3ZBFs2uzyh00teNslkyrRDAIBMoov4Qpj63c45ss1j
- aSqfB/CaxWk/YAlWA+itZSqO9yFcZsm2g6mxxjdZFfasoLxyxnXSX2j7wtRkJsGvYEj1TIktx
- gEX42PmnrJ5+gdnih4G92q/kcGfa4L5N3AZduiXDbNO8SIOQbIvCPnPciZwfLfBnA2TcSquiu
- CUmv/FoPBlJ5P5fS+84M0TSKfdG/X9QKUqG/veNayxVXoKY89J0NRSagTPt+pKom1IC4mDkBS
- p75tn21S8GZNbgzGrSotMPTGGKt879BKajGK4XIje0G3B90w5+kYD/JrpVVJ06NXJ1QshT0qK
- Zdd7Q9hkVRNHqiiCEFI9OAsYYlMN1nwL8KyhDS9Kdxbckx6vvjO94miLUDLQLU5Gum4m7DZS5
- RECaR4aoV3v+KTE8ouqOuBD54MBqLi43owjW+zzUHBGwgOlzIxac+UluyzwTUfqKMG3nwSjBe
- 1Hb+JMKzIH95o9ovbkG6MbqVs0qzHkLqSJ6CLi+A90DD5IP1JnECQS55PSRQ4a/9NRY4XabZw
- GJG5pHvd0XuwK6mF577KGGmJzfbVBxIKjlvvk9R2aRDy2c1xrucNxN4J8vffgl5/WwfzTVHrU
- xG4U6tDR8gaEjLyaAd8dmcpMGh8JwWeN7EtLGxDeOnVG24ZwQD0ZQNmqfYapuPKSPdjee544J
- YJRx+xminI3o5oL9eyPpTDNITf4LlAEPeIaYf8QgyNP36AJqs7u2okNVG8y83HzaQaXP47TjH
- Wp0aHwUyf/EvnrHZw7afa0M+xwv8XTVtR3w1R9s1qxzPBWvNs5CSkoMsyPMbXHg+rW5S7ppMO
- +eB1UeJvg4u+LlykK9bkKbiFASvTx7wkNlNyytmcqAMQgdz8HhlSbso/kQFMqmpjqq4ZalOnb
- UErW7xEaTycPROAXBfT1VUF6M9TZ6nGhT+rPthnrQlvYpD71A7JhhijZfurcE7qxpEwUABVoB
- nbUVT0beNTIgLd/zKgHztE9DBNfN7ZZ//G9Cru7tZ69ljieqbxbu5bEjp1HNFjhuxvyFcqv4E
- C1slZdbKJq6oX43buvTSrIauQZNNUZey2gXf7zFqO3EkthYTU2Gr4m35xJDuzsP0YE3WJjR5c
- lHc39ISIwambeTfWUl2KgZyEYA3PyV4LbT06bdIub64OsBN1LAl+BTzVZj2iYTIFHyN0mSc6V
- B/ymFbMDp6aGq3VE9c3IplvH8FXMpgTE2YebWKF6wpJhzlfntayXAcgzTi6QfDWgn8Wv2LU32
- eWu71wZJs0OoYU0h5WFFLsLOlbAEMbauTuCD4zLmmCGIabahrHvSmQidR0aPx2JqMW5GhWc9Q
- NiNzfuYe0tbqBWa0DyN/NJgFWDEFhjpxcysAhsUct+9fN+7fZ6GE6xAjb8Rw7y58hguNh8FB4
- tndPjVuSD2U0ikWhArLcMkVTWkCSNfeivvC+52BNNSOqj/muQMHDJ5ckzvP5xTWjirH5W83VL
- ucrR3S0jehfd1GfocWbtYy0SAKDLdejZBWAijim5TeVYw7arAyDaFmRJ11y8e2EbDzngBQU9p
- 0d05As0CDC8Mcf4Lzk0Tk3oUmu6ERos9g7fq4CIeXffCif5ybKPkqb2uurHZCLk629odszjua
- 8nEnVJiCSAVrw2U80lryinWO2O3h+HlFWjLkHv0HbiSU3Pb4TBLVAOZuZZJkfUvPUp8ZLlUdl
- gKxpAOtBx9qgiuamBxpx8J3zHP4oOqiw8Sfx0gRLliIZpaN6lqZqWAszr0DpwCFvj4ckREvqT
- taC4t1PJQxY30B703kE7LCZB1mf+BPPOxUg5nxxu/Omi7xI5eOS8G5ILFSzX21oaIXuPReq4k
- yMr4ZQnSxeXRw0ovlVGIFvpcDg+zeHme2Ni7fENQiCbrXhGylxLGv5zyJtgjGb4CriCzc485u
- +Hw7GOlvwpWHyHQZgozaVtkIoA98PCJ7yvcwWtmZuizRTYN0WYGP65/FQyPOM6K/qakDCLXj9
- Z3e4+PCpfS8g7VsHR4M9TgRCghrHzAakKtBH82orU+fho8/LrfX1xFv9Yt4KEF+0a9ZF6lm82
- rBwbott8ZhaHvQ0c3XcqAnRnKVz9j2MMw0x7+8thBjdkWVWKvzfdFubY39ThGIG5t8NzihWUG
- urMnIPH/5zvMNh22mMfKI6sSwHHZIp42iwZ497gLtDtp+HGm2EM2d+bvassb2jgsAbEqEWCCf
- X7kj9EoxYJ94rtmZOKqzepPc/2qES800KtBxJzEnlEFGGoNeo4QNWyKFohmiDSYXmht8F/FzI
- pjzO3OK+6e2KK91IJ630aArE5JaozzS0xBwmQrSaCkWQ8Mdz0fWS6kSxUgndBHan5cvv7snpW
- ldIWRx1kndFnUe2umNdlDJKiNY5wbbB28hrDUlq+YhS1H2ZsB8ZtgarWGROV3a0Q/rqanpvoi
- 2KHKWAAoOsL/whSm8WSPuZ6JbsEYOxZ2Dtn756t58gZ2qnbQp3qsvwP9ilBuVJ85pH+zDWXnv
- BBwZrfw3GvuZwTue+jwcPsuOF3vQJgtnghfxN+CpcLH+Xfw7FlLvA4DDswlEXhsAigyicafyl
- ABQk3Zeq5HDnakuyIeiNcaLRCQCHddhQ+64dGmpuPuUe+G2PSelpOGVyh/wdva+ZzwHtiCqF9
- JwNEo0cMrL1ee2XX2of1HIHKrXa3kOheVaSznj2S9tpwagy4+ryv2/kWLxCmmYo1zya45v2Dd
- d0Zh4b0CIt0Gk8Xku4eNjPvO2stlkL/m55krpI3p8QzAOKyMUr+8A22zaMHs3wLghyzBMIaay
- c0vZu0Rh0W0k+pDMtjBj4rQ782wvB70QvNhFsdt33L3rxinl4buBlCdIqJbEan4fLtp33DVU8
- OZvCqjt5ZBQZxyeaB0xfRG9zAO2tC8gT+1MdTx0WFUl81XnbxporVC0V9vL3Kh9TCJVR3rUAB
- zbPTRjxKGm5xT5wecgFaGfp/jIC84kbRzLIa/8PAC0XfHlS0r9ypjdKmlVXw3qUjbdZQ0x+09
- 8FeusLJgDcrmn6BRap3VPPE0ivsqn422Sp6MHs5Juf++poGqBCsFCDEJd561uYceLNj3+jjku
- BzdEm2uHRveGO9lKpzucSu3Ni/Xs8t2u2wBlHF8WHjst8lJJ6QRd6EP5o+zgVc8uyF5p65Qjn
- GQ5v1OZQjkotZMWFhZooIqKbWXXp6TJI9FM170ClNaAfR6N4pzRmS9NSRwRDaArW6OZBG4zi8
- iL01UQcSeIN/dW2Qe2z07yEdjj3oD2/RCShfeDgEO1Mq4imUf7LnfWmHpyN1XQvyRQTFuqPAC
- lk/aOIO0kVTKPP9KXWa98YZA3FvsdalwYQED88zxWK6oGjTH5LnuvYqdOIfkCesnhg95z9KVU
- QQptOg9b9WSTVUsLO4eoTT9UNzsCyclB0aJevhMQbuSCJkpkCf8mzdmaeYDOnqfB1kun+HMiw
- od86Njy8f0QSFvqArntnBYNdKf+ZOSdJsaSDmldcO7/oym6NVwnM52YQqFrpAjvboySj3m09v
- fUrkQvUYb46fKSX3IRcH7aRl+r46Msgk88jYt3Cy8BrkKVzz82wYijDQr1P5/VSKjKMoBNZ94
- COupjVvRjdexefEwlvIjr+okXXW4T9csTUGp1TFymuZ8IubRX9wueOlERDIbEdvciWOHSWb11
- vaA0I0rdHTJ0x68ZJXXg6mXs37q171D7EH9ltmc+KNuzrNosl+NyNeYkUEznmtt+2s/WJpZkf
- +h+1FPJq6JTIHXSZYGPESMBo7gFDZh++n7I6KHhSknXMeJB2pNDY96jUCSYm5QaB7/1kablMp
- RGnvkL2B5+YGJ9sox3vurcFJDzDqOd6GXY6TwlcKwykFqXjAzrS+BOdGaLgmG6Hs55bKKFQlR
- +zpzSotYHrqsEdC2eZa3B0BNau2Ty+IZIJPgH70ZsDQB41fG8Dq01KXcJhfPRnLz9gWSKP6xA
- c6Q8iPZYnYwK2ABdyISiOg4uUJvxxGDVJmmhRKI3vty0FjxBgqR6dyFN0zSw33Wz0O24FcdwN
- 5SPhexonFgpbO7IUOzohY39n5Y8lGBu6rXtyfunMaGTBIL3HVHpii/F/Fqm0vV8hlOqooyPDl
- Cv1NiLKh8F1fRD0yPPmi6xsNVsLpbzSdguPvT+Ry9t3yaR1Tq8awgKyyrQ2svTZuf13Zdgslo
- SGRRkeHyq1vbXaD3EtJxI4O0yvsSr1oRpmxnWuQVDjwIynD+mfrmcysCADC5GlTBNHjJ1dlR2
- xL7BpIZw/trh1rZSD4DZO1xd0BpHZVDuoBiYi5G7kVa3Fm93tEmvDMikE69Xj110OReCOYaMH
- 8LvsixgeUcsnMJTVl2BQkuTB0qpay84ZU9/1fOUn3r9IZr6aKTf/osK6iCk1pV7jZO0y5EWM3
- qdzxgLhNsOewAlklMxmZStVHJ+tP+tQvajFTu8z7cdvVBa0ImwCsbgEKhLYl9EcDyn+QXHD7y
- 0gItK+oszoSdxtKxGc3rgI+F1rwNOj7iGGNqpX6y0LzvgVcLw6+RlszvPafRnc4jLNCurD1OX
- uFGLgw4IZI1gzhfXyD5QHm51ioGUKGsh1ngBXTBkgV/vO9CFJugSkyff/Rgz0/2vxJPSB++nm
- zUZeEA6dsAaPBG0FnzWD1WjrW4rnug6+AKHa4wjboFG15cump5jEc6b3+iZDkmcB/bC4DR0Cq
- WNJhHK2FpGT7m1mx/Gcr+eWH/t6siTjg+9klRP5D/a6Kz7VP6kGvWbW3IPLRizBUj1ggcO8Jl
- /zFgAmZiJ+JcN6OD3/mre/jt512wkVdS0/On9BwdG/AjhUD0/4CqDSyDoTS9pIaSaNJ4gD3ni
- Vfg3RVmO9OgYU6lunPT0Ib9Lm1xA5qcvqfb/x9FgeBI7EFv52wuQyusEO2UZUd5GdYy1ZvYDO
- AK8lNrK25KVMc9v7I=
+Subject: Re: [PATCH v7 2/4] Add SPAcc ahash support
+To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <herbert@gondor.apana.org.au>,
+        <robh@kernel.org>
+CC: <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <Ruud.Derwig@synopsys.com>,
+        <manjunath.hadli@vayavyalabs.com>, <adityak@vayavyalabs.com>,
+        Bhoomika Kadabi
+	<bhoomikak@vayavyalabs.com>
+References: <20251007065020.495008-1-pavitrakumarm@vayavyalabs.com>
+ <20251007065020.495008-3-pavitrakumarm@vayavyalabs.com>
+Content-Language: en-US
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <20251007065020.495008-3-pavitrakumarm@vayavyalabs.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Oct 2025 08:05:21 +0200
-Subject: [PATCH 3/3] smb: client: Omit a variable initialisation in smb311=
-_crypto_shash_allocate()
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+Hi,
+On 07/10/25 12:20, Pavitrakumar Managutte wrote:
+> Add ahash support to SPAcc driver.
 
-The local variable =E2=80=9Crc=E2=80=9D is immediately reassigned. Thus om=
-it the explicit
-initialisation at the beginning.
+> 
+> diff --git a/drivers/crypto/dwc-spacc/spacc_ahash.c b/drivers/crypto/dwc-spacc/spacc_ahash.c
+> new file mode 100644
+> index 000000000000..99a609f89eaf
+> --- /dev/null
+> +++ b/drivers/crypto/dwc-spacc/spacc_ahash.c
+> @@ -0,0 +1,980 @@
+> +// SPDX-License-Identifier: GPL-2.0
+[...]> +
+> +static int spacc_hash_init_dma(struct device *dev, struct ahash_request *req)
+> +{
+> +	int rc = -1;
+> +	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+> +	struct spacc_crypto_ctx *tctx = crypto_ahash_ctx(tfm);
+> +	struct spacc_crypto_reqctx *ctx = ahash_request_ctx(req);
+> +
+> +	gfp_t mflags = GFP_ATOMIC;
+> +
+> +	if (req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP)
+> +		mflags = GFP_KERNEL;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/smb/client/smb2transport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+GFP_ATOMIC should preferably only be used in contexts which cannot sleep (inside interrupt handlers, spinlocks, etc.). Otherwise prefer GFP_KERNEL.
 
-diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
-index b790f6b970a9..3f8b0509f8c8 100644
-=2D-- a/fs/smb/client/smb2transport.c
-+++ b/fs/smb/client/smb2transport.c
-@@ -50,7 +50,7 @@ int
- smb311_crypto_shash_allocate(struct TCP_Server_Info *server)
- {
- 	struct cifs_secmech *p =3D &server->secmech;
--	int rc =3D 0;
-+	int rc;
-=20
- 	rc =3D cifs_alloc_hash("hmac(sha256)", &p->hmacsha256);
- 	if (rc)
-=2D-=20
-2.51.0
+> +
+> +	ctx->digest_buf = dma_pool_alloc(spacc_hash_pool, mflags,
+> +					 &ctx->digest_dma);
+> +
+> +	if (!ctx->digest_buf)
+> +		return -ENOMEM;
+> +
+> +	rc = pdu_ddt_init(dev, &ctx->dst, 1 | 0x80000000);
+> +	if (rc < 0) {
+> +		dev_err(dev, "ERR: PDU DDT init error\n");
+> +		rc = -EIO;
+> +		goto err_free_digest;
+> +	}
+> +
+> +	pdu_ddt_add(dev, &ctx->dst, ctx->digest_dma, SPACC_MAX_DIGEST_SIZE);
+> +
+> +	if (ctx->total_nents > 0 && ctx->single_shot) {
+> +		/* single shot */
+> +		spacc_ctx_clone_handle(req);
+> +
+> +		if (req->nbytes) {
+> +			rc = spacc_sg_to_ddt(dev, req->src, req->nbytes,
+> +					     &ctx->src, DMA_TO_DEVICE);
+> +		} else {
+> +			memset(tctx->tmp_buffer, '\0', PPP_BUF_SIZE);
+> +			sg_set_buf(&tctx->tmp_sgl[0], tctx->tmp_buffer,
+> +				   PPP_BUF_SIZE);
+> +			rc = spacc_sg_to_ddt(dev, &tctx->tmp_sgl[0],
+> +					     tctx->tmp_sgl[0].length,
+> +					     &ctx->src, DMA_TO_DEVICE);
+> +		}
+> +	} else if (ctx->total_nents == 0 && req->nbytes == 0) {
+> +		spacc_ctx_clone_handle(req);
+> +
+> +		/* zero length case */
+> +		memset(tctx->tmp_buffer, '\0', PPP_BUF_SIZE);
+> +		sg_set_buf(&tctx->tmp_sgl[0], tctx->tmp_buffer, PPP_BUF_SIZE);
+> +		rc = spacc_sg_to_ddt(dev, &tctx->tmp_sgl[0],
+> +				     tctx->tmp_sgl[0].length,
+> +				     &ctx->src, DMA_TO_DEVICE);
+> +	}
+> +
+> +	if (rc < 0)
+> +		goto err_free_dst;
+> +
+> +	ctx->src_nents = rc;
+> +
+> +	return rc;
+> +
+> +err_free_dst:
+> +	pdu_ddt_free(&ctx->dst);
+> +err_free_digest:
+> +	dma_pool_free(spacc_hash_pool, ctx->digest_buf, ctx->digest_dma);
+> +
+> +	return rc;
+> +}
+> +
+[...]> +
+> +static int do_shash(struct device *dev, unsigned char *name,
+> +		    unsigned char *result, const u8 *data1,
+> +		    unsigned int data1_len, const u8 *data2,
+> +		    unsigned int data2_len, const u8 *key,
+> +		    unsigned int key_len)
+> +{
+> +	int rc = 0;
+> +	unsigned int size;
+> +	struct sdesc *sdesc;
+> +	struct crypto_shash *hash;
+> +
+> +	hash = crypto_alloc_shash(name, 0, 0);
+> +	if (IS_ERR(hash)) {
+> +		rc = PTR_ERR(hash);
+> +		dev_err(dev, "ERR: Crypto %s allocation error %d\n", name, rc);
+> +		return rc;
+> +	}
+> +
+> +	size = sizeof(struct shash_desc) + crypto_shash_descsize(hash);
+> +	sdesc = kmalloc(size, GFP_KERNEL);
+> +	if (!sdesc) {
+> +		rc = -ENOMEM;
+> +		goto do_shash_err;
+> +	}
+> +	sdesc->shash.tfm = hash;
+> +
+> +	if (key_len > 0) {
+> +		rc = crypto_shash_setkey(hash, key, key_len);
+> +		if (rc) {
+> +			dev_err(dev, "ERR: Could not setkey %s shash\n", name);
+> +			goto do_shash_err;
+> +		}
+> +	}
+> +
+> +	rc = crypto_shash_init(&sdesc->shash);
+> +	if (rc) {
+> +		dev_err(dev, "ERR: Could not init %s shash\n", name);
+> +		goto do_shash_err;
+> +	}
+> +
+> +	rc = crypto_shash_update(&sdesc->shash, data1, data1_len);
+> +	if (rc) {
+> +		dev_err(dev, "ERR: Could not update1\n");
+> +		goto do_shash_err;
+> +	}
+> +
+> +	if (data2 && data2_len) {
+> +		rc = crypto_shash_update(&sdesc->shash, data2, data2_len);
+> +		if (rc) {
+> +			dev_err(dev, "ERR: Could not update2\n");
+> +			goto do_shash_err;
+> +		}
+> +	}
+> +
+> +	rc = crypto_shash_final(&sdesc->shash, result);
+> +	if (rc)
+> +		dev_err(dev, "ERR: Could not generate %s hash\n", name);
+> +
+> +do_shash_err:
+> +	crypto_free_shash(hash);
+> +	kfree(sdesc);
+> +
+> +	return rc;
+> +}
+> +
+> +static int spacc_hash_setkey(struct crypto_ahash *tfm, const u8 *key,
+> +			     unsigned int keylen)
+> +{
+> +	int rc = 0;
+> +	int ret = 0;
+> +	unsigned int block_size;
+> +	unsigned int digest_size;
+> +	char hash_alg[CRYPTO_MAX_ALG_NAME];
+> +	const struct spacc_alg *salg = spacc_tfm_ahash(&tfm->base);
+> +	struct spacc_crypto_ctx *tctx = crypto_ahash_ctx(tfm);
+> +	struct spacc_priv *priv = dev_get_drvdata(tctx->dev);
+> +
+> +	block_size = crypto_tfm_alg_blocksize(&tfm->base);
+> +	digest_size = crypto_ahash_digestsize(tfm);
+> +
+> +	/*
+> +	 * We will not use the hardware in case of HMACs
+If you are always going to do HMAC in software fallback, maybe don't register them in your driver? Why go through the unnecessary overhead when the users can directly use the software implementation.
+Although, it looks like you are only computing the hashed keys for HMAC here in software, If that is the case, clarify the comments that you are only not doing key pre-processing for HMAC in hardware.
 
+Also, all invocations of do_shash function are only below, and all are passing (NULL, 0) for (key, keylen). You can just not set the key in the software invocation for simple hashing. Same with (data2, data2_len). It is never used. You can change the function signature and remove these arguments (along with, obviously, removing their usage in the function do_shash).
 
+> +	 * This was meant for hashes but it works for cmac/xcbc since we
+> +	 * only intend to support 128-bit keys...
+> +	 */
+> +	if (keylen > block_size && salg->mode->id != CRYPTO_MODE_MAC_CMAC) {
+> +		dev_dbg(salg->dev, "Exceeds keylen: %u\n", keylen);
+> +		dev_dbg(salg->dev, "Req. keylen hashing %s\n",
+> +			salg->calg->cra_name);
+> +
+> +		memset(hash_alg, 0x00, CRYPTO_MAX_ALG_NAME);
+> +		switch (salg->mode->id)	{
+> +		case CRYPTO_MODE_HMAC_SHA224:
+> +			rc = do_shash(salg->dev, "sha224", tctx->ipad, key,
+> +				      keylen, NULL, 0, NULL, 0);
+> +			break;
+> +
+> +		case CRYPTO_MODE_HMAC_SHA256:
+> +			rc = do_shash(salg->dev, "sha256", tctx->ipad, key,
+> +				      keylen, NULL, 0, NULL, 0);
+> +			break;
+> +
+> +		case CRYPTO_MODE_HMAC_SHA384:
+> +			rc = do_shash(salg->dev, "sha384", tctx->ipad, key,
+> +				      keylen, NULL, 0, NULL, 0);
+> +			break;
+> +
+> +		case CRYPTO_MODE_HMAC_SHA512:
+> +			rc = do_shash(salg->dev, "sha512", tctx->ipad, key,
+> +				      keylen, NULL, 0, NULL, 0);
+> +			break;
+> +
+> +		case CRYPTO_MODE_HMAC_MD5:
+> +			rc = do_shash(salg->dev, "md5", tctx->ipad, key,
+> +				      keylen, NULL, 0, NULL, 0);
+> +			break;
+> +
+> +		case CRYPTO_MODE_HMAC_SHA1:
+> +			rc = do_shash(salg->dev, "sha1", tctx->ipad, key,
+> +				      keylen, NULL, 0, NULL, 0);
+> +			break;
+> +		case CRYPTO_MODE_HMAC_SM3:
+> +			rc = do_shash(salg->dev, "sm3", tctx->ipad, key,
+> +				      keylen, NULL, 0, NULL, 0);
+> +			break;
+> +
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (rc < 0) {
+> +			dev_err(salg->dev, "ERR: %d computing shash for %s\n",
+> +				rc, hash_alg);
+> +			return -EIO;
+> +		}
+> +
+> +		keylen = digest_size;
+> +		dev_dbg(salg->dev, "updated keylen: %u\n", keylen);
+> +
+> +		tctx->ctx_valid = false;
+> +
+> +		rc = crypto_ahash_setkey(tctx->fb.hash,
+> +				tctx->ipad, keylen);
+> +		if (rc < 0)
+> +			return rc;
+> +	} else {
+> +		memcpy(tctx->ipad, key, keylen);
+> +		tctx->ctx_valid = false;
+> +
+> +		rc = crypto_ahash_setkey(tctx->fb.hash, key, keylen);
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +
+> +	/* close handle since key size may have changed */
+> +	if (tctx->handle >= 0) {
+> +		spacc_close(&priv->spacc, tctx->handle);
+> +		put_device(tctx->dev);
+> +		tctx->handle = -1;
+> +		tctx->dev = NULL;
+> +	}
+> +
+> +	/* reset priv */
+> +	priv = NULL;
+> +	priv = dev_get_drvdata(salg->dev);
+> +	tctx->dev = get_device(salg->dev);
+> +	ret = spacc_is_mode_keysize_supported(&priv->spacc, salg->mode->id,
+> +					      keylen, 1);
+> +	if (ret) {
+> +		/* Grab the spacc context if no one is waiting */
+> +		tctx->handle = spacc_open(&priv->spacc,
+> +					  CRYPTO_MODE_NULL,
+> +					  salg->mode->id, -1,
+> +					  0, spacc_digest_cb, tfm);
+> +		if (tctx->handle < 0) {
+> +			dev_err(salg->dev, "ERR: Failed to open SPAcc context\n");
+> +			put_device(salg->dev);
+> +			return -EIO;
+> +		}
+> +
+> +	} else {
+> +		dev_err(salg->dev, "Keylen: %d not enabled for algo: %d",
+> +			keylen, salg->mode->id);
+> +	}
+> +
+> +	rc = spacc_set_operation(&priv->spacc, tctx->handle, OP_ENCRYPT,
+> +				 ICV_HASH, IP_ICV_OFFSET, 0, 0, 0);
+> +	if (rc < 0) {
+> +		spacc_close(&priv->spacc, tctx->handle);
+> +		tctx->handle = -1;
+> +		put_device(tctx->dev);
+> +		return -EIO;
+> +	}
+> +
+> +	if (salg->mode->id == CRYPTO_MODE_MAC_XCBC ||
+> +	    salg->mode->id == CRYPTO_MODE_MAC_SM4_XCBC) {
+> +		rc = spacc_compute_xcbc_key(&priv->spacc, salg->mode->id,
+> +					    tctx->handle, tctx->ipad,
+> +					    keylen, tctx->ipad);
+> +		if (rc < 0) {
+> +			dev_err(tctx->dev,
+> +				"Failed to compute XCBC key: %d\n", rc);
+> +			return -EIO;
+> +		}
+> +		rc = spacc_write_context(&priv->spacc, tctx->handle,
+> +					 SPACC_HASH_OPERATION, tctx->ipad,
+> +					 32 + keylen, NULL, 0);
+> +	} else {
+> +		rc = spacc_write_context(&priv->spacc, tctx->handle,
+> +					 SPACC_HASH_OPERATION, tctx->ipad,
+> +					 keylen, NULL, 0);
+> +	}
+> +
+> +	memset(tctx->ipad, 0, sizeof(tctx->ipad));
+> +	if (rc < 0) {
+> +		dev_err(tctx->dev, "ERR: Failed to write SPAcc context\n");
+> +		/* Non-fatal, we continue with the software fallback */
+> +		return 0;
+> +	}
+> +
+> +	tctx->ctx_valid = true;
+> +
+> +	return 0;
+> +}
+> +
+[...]> diff --git a/drivers/crypto/dwc-spacc/spacc_core.c b/drivers/crypto/dwc-spacc/spacc_core.c
+> new file mode 100644
+> index 000000000000..ca9fc032d7c6
+> --- /dev/null
+> +++ b/drivers/crypto/dwc-spacc/spacc_core.c
+> @@ -0,0 +1,1292 @@
+> +// SPDX-License-Identifier: GPL-2.0
+
+> +
+> +int spacc_sg_to_ddt(struct device *dev, struct scatterlist *sg,
+> +		    int nbytes, struct pdu_ddt *ddt, int dma_direction)
+> +{
+> +	int i;
+> +	int nents;
+> +	int rc = 0;
+> +	int orig_nents;
+> +	struct scatterlist *sgl;
+> +	struct scatterlist *sg_entry;
+> +
+> +	orig_nents = sg_nents(sg);
+> +	if (orig_nents > 1) {
+> +		sgl = sg_last(sg, orig_nents);
+> +		if (sgl->length == 0)
+> +			orig_nents--;
+> +	}
+> +
+> +	nents = dma_map_sg(dev, sg, orig_nents, dma_direction);
+> +	if (nents <= 0)
+> +		return -ENOMEM;
+> +
+> +	/* require ATOMIC operations */
+Why? spacc_sg_to_ddt() is only being called from spacc_hash_init_dma(), which in turn is only being called from your crypto_engine's do_one_request callback function. This is not in interrupt context. Crypto engine uses workqueues to schedule these. You don't *NEED* GFP_ATOMIC allocations here.
+  > +	rc = pdu_ddt_init(dev, ddt, nents | 0x80000000);
+> +	if (rc < 0) {
+> +		dma_unmap_sg(dev, sg, nents, dma_direction);
+dma_unmap_sg() should be called with the same number of nents as dma_map_sg() was called, not the mapped nents returned by it.
+
+> +		return -EIO;
+> +	}
+> +
+> +	for_each_sg(sg, sg_entry, nents, i) {
+> +		pdu_ddt_add(dev, ddt, sg_dma_address(sg_entry),
+> +			    sg_dma_len(sg_entry));
+> +	}
+> +
+> +	dma_sync_sg_for_device(dev, sg, nents, dma_direction);
+> +
+> +	return nents;
+
+This return value is set in your ctx->src_nents. You'll also need to correct the dma_unmap_sg() in your cleanup functions.
+
+> +}
+> +
+
+> diff --git a/drivers/crypto/dwc-spacc/spacc_device.c b/drivers/crypto/dwc-spacc/spacc_device.c
+> new file mode 100644
+> index 000000000000..b8b47915f4ca
+> --- /dev/null
+> +++ b/drivers/crypto/dwc-spacc/spacc_device.c
+> @@ -0,0 +1,283 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/module.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/completion.h>
+> +#include <linux/workqueue.h>
+> +#include <crypto/engine.h>
+> +#include "spacc_device.h"
+> +
+> +static void spacc_cmd_process(struct spacc_device *spacc, int x)
+> +{
+> +	struct spacc_priv *priv = container_of(spacc, struct spacc_priv, spacc);
+> +
+> +	if (!work_pending(&priv->pop_jobs))
+> +		queue_work(priv->spacc_wq, &priv->pop_jobs);
+> +}
+> +
+> +static void spacc_stat_process(struct spacc_device *spacc)
+> +{
+> +	struct spacc_priv *priv = container_of(spacc, struct spacc_priv, spacc);
+> +
+> +	if (!work_pending(&priv->pop_jobs))
+> +		queue_work(priv->spacc_wq, &priv->pop_jobs);
+> +}
+> +
+> +static int spacc_init_device(struct platform_device *pdev)
+> +{
+> +	void __iomem *baseaddr;
+> +	struct pdu_info   info;
+> +	struct spacc_priv *priv;
+> +	int err = 0;
+> +	int ret = 0;
+> +	int oldmode;
+> +	int irq_num;
+> +	int irq_ret;
+> +	const u64 oldtimer = SPACC_OLD_TIMER;
+> +
+> +	/* initialize DDT DMA pools based on this device's resources */
+> +	if (pdu_mem_init(&pdev->dev)) {
+> +		dev_err(&pdev->dev, "Could not initialize DMA pools\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv) {
+> +		err = -ENOMEM;
+> +		goto free_ddt_mem_pool;
+> +	}
+> +
+> +	/* default to little-endian */
+> +	priv->spacc.config.big_endian	 = false;
+> +	priv->spacc.config.little_endian = true;
+> +
+> +	priv->spacc.config.oldtimer = oldtimer;
+> +
+> +	/* Set the SPAcc internal counter value from kernel config */
+> +	priv->spacc.config.timer = (u64)CONFIG_CRYPTO_DEV_SPACC_INTERNAL_COUNTER;
+> +	dev_dbg(&pdev->dev, "SPAcc internal counter set to: %llu\n",
+> +		priv->spacc.config.timer);
+> +
+> +	baseaddr = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(baseaddr)) {
+> +		dev_err(&pdev->dev, "Unable to map iomem\n");
+> +		err = PTR_ERR(baseaddr);
+> +		goto free_ddt_mem_pool;
+> +	}
+> +
+> +	pdu_get_version(baseaddr, &info);
+> +
+> +	ret = spacc_init(baseaddr, &priv->spacc, &info);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "Failed to initialize SPAcc device\n");
+> +		err = ret;
+> +		goto free_ddt_mem_pool;
+> +	}
+> +
+> +	/* Set the priority from kernel config */
+> +	priv->spacc.config.priority = CONFIG_CRYPTO_DEV_SPACC_PRIORITY;
+> +	dev_dbg(&pdev->dev, "VSPACC priority set from config: %u\n",
+> +		priv->spacc.config.priority);
+> +
+> +	/* Set the priority for this virtual SPAcc instance */
+> +	spacc_set_priority(&priv->spacc, priv->spacc.config.priority);
+> +
+> +	/* Initialize crypto engine */
+> +	priv->engine = crypto_engine_alloc_init(&pdev->dev, true);
+> +	if (!priv->engine) {
+> +		dev_err(&pdev->dev, "Could not allocate crypto engine\n");
+> +		err = -ENOMEM;
+> +		goto free_spacc_ctx;
+> +	}
+> +
+> +	err = crypto_engine_start(priv->engine);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Could not start crypto engine\n");
+> +		goto free_engine;
+> +	}
+> +
+> +	priv->spacc_wq = alloc_workqueue("spacc_workqueue", WQ_UNBOUND, 0);
+> +	if (!priv->spacc_wq) {
+> +		err = -ENOMEM;
+> +		goto stop_engine;
+> +	}
+> +
+> +	INIT_WORK(&priv->pop_jobs, spacc_pop_jobs);
+> +	spacc_irq_glbl_disable(&priv->spacc);
+> +
+> +	priv->spacc.dptr = &pdev->dev;
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	irq_num = platform_get_irq(pdev, 0);
+> +	if (irq_num < 0) {
+> +		err = irq_num;
+> +		goto free_spacc_workq;
+> +	}
+> +
+> +	/* determine configured maximum message length */
+> +	priv->max_msg_len = priv->spacc.config.max_msg_size;
+> +
+> +	irq_ret = devm_request_irq(&pdev->dev, irq_num, spacc_irq_handler,
+> +			     IRQF_SHARED, dev_name(&pdev->dev),
+> +			     &pdev->dev);
+> +	if (irq_ret) {
+> +		dev_err(&pdev->dev, "Failed to request IRQ : %d\n", irq_ret);
+> +		err = irq_ret;
+> +		goto free_spacc_workq;
+> +	}
+> +
+> +	priv->spacc.irq_cb_stat = spacc_stat_process;
+> +	priv->spacc.irq_cb_cmdx = spacc_cmd_process;
+> +	oldmode			= priv->spacc.op_mode;
+> +	priv->spacc.op_mode     = SPACC_OP_MODE_IRQ;
+> +
+> +	/* Enable STAT and CMD interrupts */
+> +	spacc_irq_stat_enable(&priv->spacc, 1);
+> +	spacc_irq_cmdx_enable(&priv->spacc, 0, 1);
+> +	spacc_irq_stat_wd_disable(&priv->spacc);
+> +	spacc_irq_glbl_enable(&priv->spacc);
+> +
+> +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_AUTODETECT)
+> +
+> +	err = spacc_autodetect(&priv->spacc);
+> +	if (err < 0) {
+> +		spacc_irq_glbl_disable(&priv->spacc);
+> +		goto free_spacc_workq;
+> +	}
+> +#else
+> +	err = spacc_static_config(&priv->spacc);
+> +	if (err < 0) {
+> +		spacc_irq_glbl_disable(&priv->spacc);
+> +		goto free_spacc_workq;
+> +	}
+> +#endif
+> +
+> +	priv->spacc.op_mode = oldmode;
+> +	if (priv->spacc.op_mode == SPACC_OP_MODE_IRQ) {
+> +		priv->spacc.irq_cb_stat = spacc_stat_process;
+> +		priv->spacc.irq_cb_cmdx = spacc_cmd_process;
+> +
+> +		/* Enable STAT and CMD interrupts */
+> +		spacc_irq_stat_enable(&priv->spacc, 1);
+> +		spacc_irq_cmdx_enable(&priv->spacc, 0, 1);
+> +		spacc_irq_glbl_enable(&priv->spacc);
+> +	} else {
+> +		priv->spacc.irq_cb_stat = spacc_stat_process;
+> +		priv->spacc.irq_cb_stat_wd = spacc_stat_process;
+> +
+> +		spacc_irq_stat_enable(&priv->spacc,
+> +				      priv->spacc.config.ideal_stat_level);
+> +
+> +		/* Enable STAT and WD interrupts */
+> +		spacc_irq_cmdx_disable(&priv->spacc, 0);
+> +		spacc_irq_stat_wd_enable(&priv->spacc);
+> +		spacc_irq_glbl_enable(&priv->spacc);
+> +
+> +		/* enable the wd by setting the wd_timer = 100000 */
+> +		spacc_set_wd_count(&priv->spacc,
+> +				   priv->spacc.config.wd_timer =
+> +						priv->spacc.config.timer);
+> +	}
+> +
+> +	/* unlock normal */
+> +	if (priv->spacc.config.is_secure_port) {
+> +		u32 t;
+> +
+> +		t = readl(baseaddr + SPACC_REG_SECURE_CTRL);
+> +		t &= ~(1UL << 31);
+> +		writel(t, baseaddr + SPACC_REG_SECURE_CTRL);
+> +	}
+> +
+> +	/* unlock device by default */
+> +	writel(0, baseaddr + SPACC_REG_SECURE_CTRL);
+> +
+> +	return err;
+> +
+> +free_spacc_workq:
+> +	flush_workqueue(priv->spacc_wq);
+> +	destroy_workqueue(priv->spacc_wq);
+
+destroy_workqueue() calls __flush_workqueue() (through drain_workqueue()). Just use destroy_workqueue().
+
+> +
+> +stop_engine:
+> +	crypto_engine_stop(priv->engine);
+> +
+> +free_engine:
+> +	crypto_engine_exit(priv->engine);
+
+crypto_engine_exit() calls crypto_engine_stop(). Just call crypto_engine_exit()
+
+> +
+> +free_spacc_ctx:
+> +	spacc_fini(&priv->spacc);
+> +
+> +free_ddt_mem_pool:
+> +	pdu_mem_deinit(&pdev->dev);
+> +
+> +	return err;
+> +}
+> +
+> +static void spacc_unregister_algs(void)
+> +{
+> +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_HASH)
+> +	spacc_unregister_hash_algs();
+> +#endif
+> +}
+> +
+> +static int spacc_crypto_probe(struct platform_device *pdev)
+> +{
+> +	int rc = 0;
+> +
+> +	rc = spacc_init_device(pdev);
+> +	if (rc < 0)
+> +		goto err;
+> +
+> +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_HASH)
+> +	rc = spacc_probe_hashes(pdev);
+> +	if (rc < 0)
+> +		goto err;
+> +#endif
+> +
+> +	return 0;
+> +err:
+> +	spacc_unregister_algs();
+> +
+> +	return rc;
+> +}
+> +
+> +static void spacc_crypto_remove(struct platform_device *pdev)
+> +{
+> +	struct spacc_priv *priv = platform_get_drvdata(pdev);
+> +
+> +	if (priv->engine) {
+> +		crypto_engine_stop(priv->engine);
+> +		crypto_engine_exit(priv->engine);
+
+Again, same.
+
+> +	}
+> +
+> +	if (priv->spacc_wq) {
+> +		flush_workqueue(priv->spacc_wq);
+> +		destroy_workqueue(priv->spacc_wq);
+
+Again, same.
+
+> +	}
+> +
+> +	spacc_unregister_algs();
+> +	spacc_remove(pdev);
+> +}
+> +
+> +static const struct of_device_id snps_spacc_id[] = {
+> +	{.compatible = "snps,nsimosci-hs-spacc" },
+> +	{ /* sentinel */        }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, snps_spacc_id);
+> +
+> +static struct platform_driver spacc_driver = {
+> +	.probe  = spacc_crypto_probe,
+> +	.remove = spacc_crypto_remove,
+> +	.driver = {
+> +		.name  = "spacc",
+> +		.of_match_table = snps_spacc_id,
+> +	},
+> +};
+> +
+> +module_platform_driver(spacc_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Synopsys, Inc.");
+> +MODULE_DESCRIPTION("SPAcc Crypto Accelerator Driver");
+
+-- 
+Regards
+T Pratham <t-pratham@ti.com>
 
