@@ -1,193 +1,222 @@
-Return-Path: <linux-kernel+bounces-847888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A802CBCBF56
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:41:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99872BCBF50
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 498B94F983F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0438E403408
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A1D274FF9;
-	Fri, 10 Oct 2025 07:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D582773FB;
+	Fri, 10 Oct 2025 07:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JR5shWlv"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8YEblkX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BCE273D8D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B06274FDF
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760082037; cv=none; b=j084xFhpwrq/hL+VaQkUTBDS4sdnBMPYU8R5TRbgDUx92kZaTvic8wHvEfd86aeoLibftqlpuwqBMCdDF5fEzL4EnWLUdZLSEZNaDZNX1+RDANjnMvPITIsXN8ILA5Bo6Wi7gF7A9jeJX5EskqB/Jif+9Fi+9ZwMbhGJIG+A6AE=
+	t=1760082039; cv=none; b=Y2CRiBGMFeinz4+yiau/0oj97BnwET3NegNiaY8+Qkm6jCEbd+u3tbO7x368YD5e9mrkbDTSV73poGfQ692rRBS9As6hXnHllSJYubLg5M4bv+n/V9wncijEFpkdanJ8KEVVQAg2J8kzUwz/a6pn1pUBB0uNl0S3brVjJwXBQes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760082037; c=relaxed/simple;
-	bh=PPcJCSKMPFXEeL2o4ap2Vo74xeKb6zlrzKO+B3ProxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=giLOeqI1oUNIxAxZGL9k6l6URaetQ0Gg6wKsohuP5JVQsJoiNMyvGO6rD7joUVYmRYnUgMNiGWIS/TIOXLlHYJe9a5Lq8q7wrCHJif7kaAtO8Aomhi0/d49lq6AH/+dkLwjfNohJmSfvKOL1oLBC4EG0k39NoJ/6ELSuCgTNW0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JR5shWlv; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3f5a6e114dso23550766b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760082034; x=1760686834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XPWGr7mjVtDKRHxuAAyeQAtdvhyq7/Khh/BgxfxKBLU=;
-        b=JR5shWlvsFPndjzyC2WzApa69BRod0VGMva3VzBQJ5dPkUZoTInguuVjuP9pCpBM8J
-         OIx0gHLzoaiL/iADHq8dI2iTVqYxJM7hwn+08UWRHKAWIsHjKSKlsttBrK9Y8EJmC9nZ
-         TpP0dGjGIdytM6rUeApNq7ywxMbot2SxxfV2HeS4s4jrdtirP5i5oHfFGGgcktxbHpDW
-         DF0b9ZgwbyrlcxUklTMMxTMnKdMdEzHikIGBgrOGrsaTwaHTOzH0S/GsMefam3S+iJAi
-         86s+tfc0127Dsbk4TGd+JscySZgvABZsHH2uXFVOG8f+CRNCzOtG1ZhEma6HNrvSmWZK
-         c7xg==
+	s=arc-20240116; t=1760082039; c=relaxed/simple;
+	bh=bAjqW3ERl7MASAWOsSr2+cO5+t8F79Wpb3UBkz/DF3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lvoYAs3xXGRqcv7vUSvHagdpEtFbJisFB4vJ9F1D+bKxhi/lybiWgjetbBoUU9j67QdKAvipUUZHCP8hFHmlCscRDzq/DLXb1Z6cxE3XO3SesD9GlC6HUFGC5U9ULFsTYoa41/nWVfv4EQkGTx/kUjsPcVAs7ft4l0hcDkb0j8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8YEblkX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760082036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fwJz/AqNSYJZ9V1C2xBbiX8Uw8ClPqDAnbOwKwUJ1Rc=;
+	b=S8YEblkXSayEzZtLTMXCYUQ2eIP/n8VF+PubZ+i9AUtjh6k+mCoQO+Rv5XqnbMegDu4nsG
+	7FlnAwdBeizokqEpEUbH41PmqNqjp1B0zpXyPckGMK/knxGwSaIrU1dvsX2+2hn+LNpQPB
+	9SpNGjzek+DqwhsrqHVrrMQUldGXZxQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-397-GIEDaeBNMrqYl-kw4uUL5A-1; Fri, 10 Oct 2025 03:40:33 -0400
+X-MC-Unique: GIEDaeBNMrqYl-kw4uUL5A-1
+X-Mimecast-MFC-AGG-ID: GIEDaeBNMrqYl-kw4uUL5A_1760082032
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e4cb3e4deso10202965e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:40:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760082034; x=1760686834;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XPWGr7mjVtDKRHxuAAyeQAtdvhyq7/Khh/BgxfxKBLU=;
-        b=U59odOdL8mtQ3GNCFqhmSpwl6kiU5iqLCA8Ber6cbb4666eD+/X/MZAGonwX+fi6CR
-         L5M8dcdpzFcUKEnfQMMpPs7/3KKhcvB0nzbdmK80HVt3MorQt9c8hgD6hxklmJfE6nP9
-         oUsJXnpSOHeh0mBssAp9nHZug19TUi2AKubCnptKodi/FC/DCE/0oefQc80kpPqE84IW
-         Qsh3WN7+PeUy4t/Bco+jqWMngCBTOZP22kN1SzE5hBXgtTRgYy0gso8a0u7pq9V97/Gf
-         dJiZITxErx7rskag9aagZVfKcUleNVrPTr0ih/+ynyoJD/AH8ZnHOlcvGQTr6hts2yLV
-         5Lyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwsHSwFFMrb3kcsYxPxTKjYlTF4AOb1hGUJeO3t0mqk8x7Qx4L+eQ/QGrpHnqCrw3Kjrcxkwuh3Pf3srg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygeyANe/gCThe36dZj8yfXr6hOwRPHTGYT3zMiP+o0T1pjNEbS
-	JcqIA4SzbEdYWLzXxqkjco/QCsNIjLi4WnZ/BE7Gmmg5RkRHBQc9fc0W3izyAh6eesg=
-X-Gm-Gg: ASbGncuLPvm+wtgxUftyHnVXphmnYCodyvJGAz9ftwlWQtJBHZiqaTzDV7xi0gxdU3a
-	7V7vdwK4FH+SFT654UjPXW69R1a71lHBXZoLz+2uG5I1Rj7wYnaZ6Lb2kcQYcvK6YPwElD1oF4m
-	Wl+ximn37TMPpIPzq/8c3plOdW3tWpR9rMsP41Cmhf78YOGA3egR0I9HAIPaovwDTN1y4t7GEPb
-	/L77CHYvoUtRZTTw9GbHWHYJIoTGCTIEkDXCMOrjaTv4sewYhyvZ1wB2LnS1kioG0t1IRJcRHCy
-	m8welW0GZ58ujYpyZ1o2qcyor+8RPw+ewZQbSUt2i/OUJHKRrm4tO2xHpr/ZuR9AHC/+ZnS/jK6
-	SoPabyV8tLNbXn/EYBxZxEtVF+49h+/7ukE7/ANlBjzCyLY4EgH9E+PqVY3A/Qrw6rw38KYWfHj
-	aKHe0T/2Jx4jF4bvAFLBB2Klel/Xa1UgKI/QuPQkPN/HPiHPg=
-X-Google-Smtp-Source: AGHT+IGrL50wIWH37dDbv7XmmGeiQz5s2tGBdUcjy8KqMAyLeCELYf7p8iYyEnUpPEkgSsZkadMBHQ==
-X-Received: by 2002:a17:906:3794:b0:b55:c837:f6f8 with SMTP id a640c23a62f3a-b55c8380b9cmr104968766b.4.1760082033769;
-        Fri, 10 Oct 2025 00:40:33 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d65d002esm164756466b.26.2025.10.10.00.40.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 00:40:33 -0700 (PDT)
-Date: Fri, 10 Oct 2025 09:40:21 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] x86/tsx: Get the tsx= command line parameter
- with early_param()
-Message-ID: <20251010094021.4c09144c@mordecai.tesarici.cz>
-In-Reply-To: <20251009185134.fb4evjrk76rwxv37@desk>
-References: <cover.1758906115.git.ptesarik@suse.com>
-	<63118e583443490a285fd194baeae874d65eff87.1758906115.git.ptesarik@suse.com>
-	<20251009185134.fb4evjrk76rwxv37@desk>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+        d=1e100.net; s=20230601; t=1760082032; x=1760686832;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fwJz/AqNSYJZ9V1C2xBbiX8Uw8ClPqDAnbOwKwUJ1Rc=;
+        b=KoFisk+8r9I7CTRqRUdmQriE1oDnRCdNMPKEL6cJWyv9JadjSXmDPa1Ly6JwCr2xCn
+         RxdlujzLyAjt4Eeu0D4/o6SJ5jzuvbeq3EsBK181ulpVMzQzLkE/mXFusH6jD5uL9lah
+         XnVGVMd7dWX33EL21TIOlPrK52Z2ZT9IQKL57K43hrBy4ZgiII1G7jz9CU1+YeJH3hV9
+         ugioqZBAYRZGkgv2ALgfw0zs7o7dUtI90dz5Jk1YH3nyLo7uxQQMxtZ6mqrRWZhHllA9
+         If+xOquNzmJRbLtKq9kD7/7tN9q28ykHEBbecBHV5E5iRZiSbzlTx6+zjJ7TOT/5VVKA
+         7bcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfNClY2PbaQ6wng3ML0Vp/8MixpEvgeChOSKvc69Hn6EIvxcIRICzn+eau5n+Z6zbMs1jWE/6/U6D2nSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw4Vm5g9oT4AQJsxp1UwYYXc1ZEBc/AmJXpK3SocEsSLranzhN
+	oq1dfBB26Yam0ymHMO6EqIbCi7a97iOEBsiM5CQ0F0IdVixLyK7D2ESoh7atagzH/7tkzRFOp3g
+	IKMQxG+6j49XQW9qD42kwFzc98pc2ZT/DZGa3ts7Ka7NWIj2JrK2Mpq7Djkw47sbbDQ==
+X-Gm-Gg: ASbGncvmbE6D92Q6TvG8tVoE/yP/gjvsvrD/KD3iEaTMnjbsl7t6ZRgykmRbp/TkMJA
+	GBQGK5C4rw0iqG0DJcZvpjikSvdVVB8XS1jDNuXl1IVwKEgz6X3xMxHgHxI4a8V64ELujz0fzkN
+	uLVI/7sjop6uiNl4f98fVC6OvxICbfyRD/ox9ZLzMO/VRC9f8oSU6Eg4ifdhx4qXvFlF44guyh6
+	O3KxpW8+kvk00UURDwcTzT/eDslBbydZNPJXaX/ydDbrMtPlnVt22td+xdnSTM0D8exYekAXtYF
+	gb5r9SvEKs05mYfpNpw+bwQPLeKVXNecvvW+MgDGzBx/v7hM0tA/EELL/ZLSEj+ehcD+NYMPsGz
+	SRf8=
+X-Received: by 2002:a05:600c:5486:b0:45f:29eb:2148 with SMTP id 5b1f17b1804b1-46fa9e98810mr73730185e9.7.1760082032403;
+        Fri, 10 Oct 2025 00:40:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3lq9nxHi+CEqnziqdMyoKoOLYsWDdxhE4EmiTf95ov9ATpNl2HHkuJv4MfSmlUI8Cd+bijg==
+X-Received: by 2002:a05:600c:5486:b0:45f:29eb:2148 with SMTP id 5b1f17b1804b1-46fa9e98810mr73729925e9.7.1760082031973;
+        Fri, 10 Oct 2025 00:40:31 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3d2c1asm54109495e9.1.2025.10.10.00.40.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 00:40:31 -0700 (PDT)
+Message-ID: <1d7476e6-5c6d-4175-b28d-3622222ea8e6@redhat.com>
+Date: Fri, 10 Oct 2025 09:40:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
+ sysctl"
+To: Gregory Price <gourry@gourry.net>
+Cc: Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, corbet@lwn.net,
+ muchun.song@linux.dev, osalvador@suse.de, akpm@linux-foundation.org,
+ hannes@cmpxchg.org, laoar.shao@gmail.com, brauner@kernel.org,
+ mclapinski@google.com, joel.granados@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
+ Alexandru Moise <00moses.alexander00@gmail.com>,
+ Mike Kravetz <mike.kravetz@oracle.com>, David Rientjes <rientjes@google.com>
+References: <20251007214412.3832340-1-gourry@gourry.net>
+ <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
+ <aOZ8PPWMchRN_t5-@tiehlicka>
+ <271f9af4-695c-4aa5-9249-2d21ad3db76e@redhat.com>
+ <aOaCAG6e5a7BDUxK@tiehlicka>
+ <83e33641-8c42-4341-8e6e-5c75d00f93b9@redhat.com>
+ <aOaR2gXBX_bOpG61@gourry-fedora-PF4VCD3F> <aOdSvriKRoCR5IUs@tiehlicka>
+ <aOfU9YTKMPWzYOta@gourry-fedora-PF4VCD3F>
+ <ac0393c7-9c0c-4b4d-8b35-5e6369e5431b@redhat.com>
+ <aOgpz6no2Jx2-Y8Z@gourry-fedora-PF4VCD3F>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aOgpz6no2Jx2-Y8Z@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 9 Oct 2025 11:51:34 -0700
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
-
-> On Fri, Sep 26, 2025 at 08:01:02PM +0200, Petr Tesarik wrote:
-> > Use early_param() to get the value of the tsx= command line parameter.
-> > Although cmdline_find_option() works fine, the option is later reported
-> > as unknown and passed to user space. The latter is not a real issue, but
-> > the former is confusing and makes people wonder if the tsx= parameter had
-> > any effect and double-check for typos unnecessarily.
-> > 
-> > The behavior changes slightly if "tsx" is given without any argument (which
-> > is invalid syntax). Prior to this patch, the kernel logged an error message
-> > and disabled TSX. With this patch, the parameter is ignored. The new
-> > behavior is consistent with other parameters, e.g. "tsx_async_abort".
-> > 
-> > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> > ---
-> >  arch/x86/kernel/cpu/tsx.c | 41 ++++++++++++++++++++++-----------------
-> >  1 file changed, 23 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
-> > index 167dfd38b87a2..bb407331f64b5 100644
-> > --- a/arch/x86/kernel/cpu/tsx.c
-> > +++ b/arch/x86/kernel/cpu/tsx.c
-> > @@ -20,14 +20,14 @@
-> >  #define pr_fmt(fmt) "tsx: " fmt
-> >  
-> >  enum tsx_ctrl_states {
-> > +	TSC_CTRL_UNSPECIFIED,  
+On 09.10.25 23:31, Gregory Price wrote:
+> On Thu, Oct 09, 2025 at 08:51:54PM +0200, David Hildenbrand wrote:
+>> On 09.10.25 17:29, Gregory Price wrote:
+>> Or would it be sufficient to selectively enable (explicit opt-in) some user
+>> pages to end up on ZONE_MOVABLE? IOW, change the semantics of the zone by an
+>> admin.
+>>
+>> Like, allowing longterm pinning on ZONE_MOVABLE.
+>>
+>> Sure, it would degrade memory hotunplug (until the relevant applications are
+>> shut down) and probably some other things.
+>>
+>> Further, I am not so sure about the value of having ZONE_MOVABLE sprinkled
+>> with small unmovable allocations (same concern regarding any such zone that
+>> allows for unmovable things). Kind of against the whole concept.
+>>
+>> But I mean, if the admin decides to do that (opt in), so he is to blame.
+>>
 > 
-> s/TSC/TSX/
-
-Ouch. Yes. ;-)
-
-> >  	TSX_CTRL_ENABLE,
-> >  	TSX_CTRL_DISABLE,
-> >  	TSX_CTRL_RTM_ALWAYS_ABORT,
-> >  	TSX_CTRL_NOT_SUPPORTED,
-> >  };
-> >  
-> > -static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init =
-> > -	TSX_CTRL_NOT_SUPPORTED;
-> > +static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init;
-> >  
-> >  static void tsx_disable(void)
-> >  {
-> > @@ -164,11 +164,28 @@ static void tsx_dev_mode_disable(void)
-> >  	}
-> >  }
-> >  
-> > -void __init tsx_init(void)
-> > +static int __init tsx_parse_cmdline(char *str)
-> >  {
-> > -	char arg[5] = {};
-> > -	int ret;
-> > +	if (!str)
-> > +		return -EINVAL;
-> > +
-> > +	if (!strcmp(str, "on")) {
-> > +		tsx_ctrl_state = TSX_CTRL_ENABLE;
-> > +	} else if (!strcmp(str, "off")) {
-> > +		tsx_ctrl_state = TSX_CTRL_DISABLE;
-> > +	} else if (!strcmp(str, "auto")) {
-> > +		tsx_ctrl_state = x86_get_tsx_auto_mode();  
+> For what it's worth, this patch (or the new one i posted as an RFC), I
+> was able to allocate gigantic pages and migrate them back and forth
+> between nodes even after they were allocated for KVM instances.
 > 
-> NACK, this introduces a subtle bug. With this change x86_get_tsx_auto_mode()
-> would return TSX_CTRL_ENABLE always, irrespective of whether the CPU has
-> X86_BUG_TAA or not. This is because early_param() is executed before
-> cpu_set_bug_bits().
+> I was surprised this did not cause pinning.
 
-Thank you. I was afraid of some sort of init ordering issues, and I
-could not test on a CPU with X86_BUG_TAA, unfortunately (because I have
-none at hand).
+KVM does not end up longterm-pinning pages (what we care about regarding 
+migration) when mapping stuff into the guest MMU, so KVM in general is 
+not a problem.
 
-> > +	} else {
-> > +		tsx_ctrl_state = TSX_CTRL_DISABLE;
-> > +		pr_err("invalid option, defaulting to off\n");
-> > +	}
-> >  
-> > +	return 0;
-> > +}
-> > +early_param("tsx", tsx_parse_cmdline);  
+The problem shows up once you would try to use something like vfio, 
+liburing fixed buffers etc, where we will longterm-pin pages.
+
 > 
-> Rather, a patch to add a comment would be better.
+> This was all while running the QEMU machine actively eating ~2GB of
+> memory.  So this seems... acceptable?  My primary use case was VM
+> hugepages, but it doesn't even seem like these have been pinned.
+> 
+> I think the confidential-compute / guest_memfd path would have an
+> issue, because those are pinned and/or entirely unmapped from the
+> host, but that just seems like a known quantity and a reason to leave
+> this off by default (make them read the docs :]).
 
-Well, some explanation would also have to go into
-Documentation/admin-guide/kernel-parameters.txt
+guest_memfd allocates folios without GFP_MOVABLE, because they are ... 
+unmovable. So they would never end up on ZONE_MOVABLE.
 
-I'll consider the other proposed approach.
-Thank you!
+There are prototypes / ideas to support migration of guest_memfd pages, 
+so it would be solvable. At least for some scenarios.
 
-Petr T
+> 
+> Seems like this is pretty stable tbh.  Obviously if you hack off the
+> node0 hugepages migration fails - but I feel like you're signing up for
+> that when you turn the bit on.
+
+Right, just needs to be documented thoroughly IMHO.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
