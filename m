@@ -1,139 +1,100 @@
-Return-Path: <linux-kernel+bounces-848725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B5CBCE6F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7A4BCE4FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7774D4E24CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:55:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7282D4FA1C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33073019BA;
-	Fri, 10 Oct 2025 19:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277D030147A;
+	Fri, 10 Oct 2025 18:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoOTehJ8"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDSbhlIG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747D3301718
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 19:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798711DFD8F;
+	Fri, 10 Oct 2025 18:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760126149; cv=none; b=QEqrdhJVCbcHvJA0DyQ6wVGk8IiqWCYxcFkHBOgwWIhUnRoehVvsbYB+THwM6EHiHV+Jk14Z3c7iivY5Dz8Jj2ZbcOS41bt5mL1qw2wsKqU+IzF40OUS/raS9z7LtJpiqYYaYtxoxkX6Z/+fIN2WO7BV6Uqg/vgDUp++7Hy7MZ4=
+	t=1760122618; cv=none; b=qH32J0EuWT91M/+nTUIAkkByuezaA8hbkJYJYHtCRcvgBMtoDP4k46BvKvbGVL6wcCug33TtJNlV2PgLVpAdP7IgXNtMQD/8zYGF3GuTQ6up6z71LOk9bxfRw8YebThJQwwv/uvxn8+2lQAitV8EHt4SC3kVrVRtfNn+ZQN/eY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760126149; c=relaxed/simple;
-	bh=9PS7F/m4n1uAkBYWPryVi2hX01WNFFT8P5czGODVaI0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A8hkTRF623Szyax12iRGJrXpfC24QmvzBIYJ5/6dkj/0XM4Z7BZguxZ9TpQN6UXdZFPD7d7Rft0EZYpm080L5bsiwOxQzk6YjRV6ziJzne+Z4qawdS1ogLjNCZaxTrL4SuozuepP8PjWEOkGmcf+nvDI4tp3E6DjtZmUpYzOhf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoOTehJ8; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so15235415e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760126146; x=1760730946; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WlPTxxGqUeSR2lZkjJtan7WE7z8YmM6/O314vANG+hE=;
-        b=WoOTehJ8ZIkVn5KybLL1WjDwxXHekgqlHfszjSWVfabSv6MMLS1rkll9MqiUPO62bF
-         YG+3c036NgWKmyj2Dh/1XJ+bMuTXoPEKAil+YyNqz9+xH6CLrKa+iSgYVtTKkuCdVRSG
-         99iEMe61IxbDPdpm/6FoQpcMygsb6AF/PicxL501BSRH0oNAgmcfhHF9cq3whuG9s4WW
-         KOUozpokXZlfF4QsWKgehZ/7JW/TnhKvL3uFcCYDsiOXC2wZD4z1HODQbSwHiuA4SqG7
-         wzs+KDzRFKQA8dIwE6gy3JGtuHsDibXGtghO9Iaex8q+V5LKIoslO95B0vtKvMrtMYHa
-         68uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760126146; x=1760730946;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WlPTxxGqUeSR2lZkjJtan7WE7z8YmM6/O314vANG+hE=;
-        b=vY3dOdRxJB1MspSoLeI2UY7GD6cJGXOgedxC0+Z77jyV4vDgwVPhW/x8teVquWpR6T
-         IkDdd4qgNeG709pcUhFfOjAwddNIvhj7tuvRKKuWTCECLIB4i6k9E27Pxf9LmbVVmt12
-         YI4/HFLHfq2o9cKkLVlyCKXTgkuBFSCqV/JPiaoWT6jH08ZcKY8p/Iq1CHWbDi7s64K2
-         rO4kPNKsmAENFto/dOhfJppACXfBkU4wMi/pOqj7SbQlnQP0PK0hRSq5E88Pe9QGljaX
-         PXjhOOKct9id7HskM/gci+hayTzeY4xAPsSL4z6dzVJwbRwWKs+ZfmY+JPjLnKNzL+DW
-         QdQA==
-X-Gm-Message-State: AOJu0YzcdZUs45gZbCrxBXPIlk4faIMY7qG8+ErwZl0G4JDwSsHcybQ2
-	O8eNvDOCIrVOXb50nNqQimr+uaUwIKDSBKayCBRnCz92r8DGSuuZYoI/
-X-Gm-Gg: ASbGncuCxsSiW9tkaB/OjqmbxCEPRAz5xfktMnNT0n4J+AicTUisppPxyGZ58p4MpCL
-	+rBxuWOo9zrSQMowRViIp9mvlm5/JQ86NvYUp06+ay45Nx2RxJpohpLFgNkxdn3CgFsm2+WnkE6
-	DOr3rDv8iPVAz4VYXLoMSEcPOAWXs2iOxTK6gXHg092d4qxzzFBlcyFlHZ5xApT4CSpHgbvqeM7
-	991b/BQVXdKMr4JjKhJiKibOOhCViat9KzhmvN5KWuIHAsPHNOvJ2jC3scN0LsSV/d+frWbARdu
-	0DCf538ORb07qB1eZ9V9dOldd0Hc9lUh8PVU0Ww7nJS4GEes0AaLBJw1/bUQ4C7Hs6ZhI5FX1TX
-	rhiOcrgDyxqibmTT2g7RZEal3o4qLH/qsQWBmBQSSVq+F4qo4Xrk8rk7+bXu9MHdutipHo05hc3
-	TsG/40NWBH+uYHNuu+MDzKVx2V
-X-Google-Smtp-Source: AGHT+IHaWYI9QvKReNHkAaSbov4hjc2gUESetJC4TFK/yM1c7gn97K56ZqGizY/MOi2ZOYx+SBgt6w==
-X-Received: by 2002:a05:600c:529a:b0:46e:3e25:1626 with SMTP id 5b1f17b1804b1-46fa9aefe15mr92408175e9.19.1760126145632;
-        Fri, 10 Oct 2025 12:55:45 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:94c4:fb0e:28f:2a8d? ([2001:818:ea56:d000:94c4:fb0e:28f:2a8d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489af92sm70551775e9.17.2025.10.10.12.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 12:55:45 -0700 (PDT)
-Message-ID: <3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
-Subject: Re: [PATCH] iio:common:ssp_sensors: Fix an error handling path
- ssp_probe()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Jonathan Cameron
-	 <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Kyungmin Park
-	 <kyungmin.park@samsung.com>, Karol Wrona <k.wrona@samsung.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Date: Fri, 10 Oct 2025 19:56:41 +0100
-In-Reply-To: <6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
-References: 
-	<6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760122618; c=relaxed/simple;
+	bh=cdBUSD3I+k/RO6LWHsL0MFySxp8ZU7S3XnCWu70QZ+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjGpEAWSpmkw16wNzivVf6RdPjnidPPB+9v/q2Q3rq+Ylfv7xUo/h0V5Em83uubGb1DGk24YqR6GcdGhHfVHPEcXlW1RI9RujIEeJ0RcicklhStt/4NI764Y/eeGHKMuKYzTRT8P9Nui+kvTHFQ++ADy2DBk4jyxbHbaVCrdhOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDSbhlIG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D15E8C4CEF1;
+	Fri, 10 Oct 2025 18:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760122618;
+	bh=cdBUSD3I+k/RO6LWHsL0MFySxp8ZU7S3XnCWu70QZ+4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EDSbhlIGRbJqZPIRs2W2ss1kLLlsIjei8ZXMtw6XojXU3iSDcxEwyIbG57HSHq6vW
+	 Et0HW/Z6PWxZfvNdWKiPkUaEpDgIUcLSdppjfXCsVOeIirumef7l4mTXalIDl30CLe
+	 lFImCZdFQv5X6gvq07emAcWWoXHuFSGdmJAakusLvgBHcs8iji2Dirvb1YUx8uOiPQ
+	 oKyIDvjk4KDuXp7XoKkukmAI1HJ2CZYj+gcPvBYjV+P4o9JbuAZEeENDYlouumkVFI
+	 tPvHdCrjHMRKfMRMfrX8DZdnztFyYc8BnB5eJcnOyYdvluys8ctYIDnagPV9NSXl8w
+	 g6Op+VVcM/UWQ==
+Date: Fri, 10 Oct 2025 13:56:56 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: devicetree@vger.kernel.org, robinchen@ti.com, will-wang@ti.com,
+	lgirdwood@gmail.com, chinkaiting@google.com, broonie@kernel.org,
+	jim.shil@goertek.com, henry.lo@ti.com, tiwai@suse.de,
+	13916275206@139.com, linux-kernel@vger.kernel.org, jesse-ji@ti.com,
+	conor+dt@kernel.org, shenghao-ding@ti.com,
+	linux-sound@vger.kernel.org, krzk+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com, k-yi@ti.com,
+	toastcheng@google.com
+Subject: Re: [PATCH v6 2/2] ASoC: dt-bindings: ti,tas2781: Add support for
+ TAS5802, TAS5815, and TAS5828
+Message-ID: <176012261542.715803.6759759704259980882.robh@kernel.org>
+References: <20251010022951.51581-1-baojun.xu@ti.com>
+ <20251010022951.51581-2-baojun.xu@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010022951.51581-2-baojun.xu@ti.com>
 
-On Fri, 2025-10-10 at 20:58 +0200, Christophe JAILLET wrote:
-> If an error occurs after a successful mfd_add_devices() call, it should b=
-e
-> undone by a corresponding mfd_remove_devices() call, as already done in t=
-he
-> remove function.
->=20
-> Fixes: 50dd64d57eee ("iio: common: ssp_sensors: Add sensorhub driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+On Fri, 10 Oct 2025 10:29:51 +0800, Baojun Xu wrote:
+> TAS5802, TAS5815, and TAS5828 are in same family with TAS5825, TAS5827,
+> TAS5802 and TAS5815 share same address setting, and TAS5828
+> share same address setting with TAS5827.
+> 
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> 
 > ---
+> v6:
+>  - Change the patch title and the description in more detail
+> v5:
+>  - Change the patch title and the description
+> v4:
+>  - Change the patch title
+>  - Add TAS5802 support in yaml file
+>  - Change description for missed TAS5815
+>  - Change format to keep all lines within 80 bytes in length
+> v3:
+>  - Rewrite the patch title
+>  - Add TAS5815 support in yaml file
+> v2:
+>  - Update description for TAS5828
+>  - Change commit tree to .../tiwai/sound.git
+> ---
+>  .../devicetree/bindings/sound/ti,tas2781.yaml | 43 ++++++++++++++++---
+>  1 file changed, 37 insertions(+), 6 deletions(-)
+> 
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> =C2=A0drivers/iio/common/ssp_sensors/ssp_dev.c | 4 +++-
-> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/common/ssp_sensors/ssp_dev.c
-> b/drivers/iio/common/ssp_sensors/ssp_dev.c
-> index 1e167dc673ca..da09c9f3ceb6 100644
-> --- a/drivers/iio/common/ssp_sensors/ssp_dev.c
-> +++ b/drivers/iio/common/ssp_sensors/ssp_dev.c
-> @@ -503,7 +503,7 @@ static int ssp_probe(struct spi_device *spi)
-> =C2=A0	ret =3D spi_setup(spi);
-> =C2=A0	if (ret < 0) {
-> =C2=A0		dev_err(&spi->dev, "Failed to setup spi\n");
-> -		return ret;
-> +		goto err_setup_spi;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	data->fw_dl_state =3D SSP_FW_DL_STATE_NONE;
-> @@ -568,6 +568,8 @@ static int ssp_probe(struct spi_device *spi)
-> =C2=A0err_setup_irq:
-> =C2=A0	mutex_destroy(&data->pending_lock);
-> =C2=A0	mutex_destroy(&data->comm_lock);
-> +err_setup_spi:
-> +	mfd_remove_devices(&spi->dev);
-> =C2=A0
-> =C2=A0	dev_err(&spi->dev, "Probe failed!\n");
-> =C2=A0
 
