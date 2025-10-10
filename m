@@ -1,176 +1,223 @@
-Return-Path: <linux-kernel+bounces-848327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3940BCD6C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A1BBCD6BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A296C4FE989
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E1233B3170
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD0A2F5479;
-	Fri, 10 Oct 2025 14:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C293F2F7457;
+	Fri, 10 Oct 2025 14:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="elojs4/C"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E9mPsN2Q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1/gLeijh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J2iI3jL7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNeY6Tjj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE4828466A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ED22F6187
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760105491; cv=none; b=Vu1MQX1+ptLUxuIvGtezWA6TsktoHddiN4TXb/DIoRGyhB8cPbboytEezFfUoPhOPm887DuKdGnKOi5S6prjgjFCBri+XxGgxaJqx9utM23gtkmi6Q8WcMhBj6vErJovBy3TnfwGOuA631YmM2sbxXUiS5FhYgQTmHnXGEolE5g=
+	t=1760105500; cv=none; b=j8Fqz31wLRNP12Q/m9XE/swSaT5Gv6DbHSultVRwsu9j8whPvhwVxt4g/kyiltJCu4UR0u43O/gf3Yj8gGjjJzelJIc3WUM6cOVFCD+CygCEeDprMRI2pe9qLqYAA5tv2HA+l7o0zIBLyTEq6D+CR3QJmdzsVS8QWULuvE/ljVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760105491; c=relaxed/simple;
-	bh=JYnBnCWHkef8RyBvi69YmEV68PI6DXCISPx+R2HIFJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tLfQPqgll7WmjmnEP9yMIAUxocQApzYLmsMEpCEqz+lfvyNHw+i8bzfeRZblB23i1OZqgADQixYHBTw9vwnmNI+3r1VMzx98YaYsDxSi0OB6R2QoBh80H0lOnzmSCErlPDT0EzrR7iRwXsMLS/YjvAnQPodzQe57rb4g604q/Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=elojs4/C; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760105489;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wbJHZ97LShKz75F6YVPrIwKeljLc2UX59sgdVUiGzTY=;
-	b=elojs4/CDK4x8fJUMS/IBAbBkTyVu/JjV0ZAgJtWe04Ve/Nvejm3ZN9pyEhD6MKdpR9VOU
-	q4Hbw5DVnx+5XgGYzWQBiOQoy7KvqAdUjVZSyAVzQW5z027bUu46m4lo7HA7lEa45rZxZm
-	JhJ2/5Toxrm5VuJ/wd5HcuZ3xrrRzfE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-456-cwVY5BlsN8ubjPVYZAut-g-1; Fri, 10 Oct 2025 10:11:28 -0400
-X-MC-Unique: cwVY5BlsN8ubjPVYZAut-g-1
-X-Mimecast-MFC-AGG-ID: cwVY5BlsN8ubjPVYZAut-g_1760105487
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e3a049abaso16040935e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:11:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760105487; x=1760710287;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wbJHZ97LShKz75F6YVPrIwKeljLc2UX59sgdVUiGzTY=;
-        b=NkXlnSrglMIox9PAyQNY1GobQSZs1SgTdg2EfE27AQj75YMHdmYsGJYyvBnZswYS6Y
-         ssHpVJk1ko9TLY0E+2ZkQrbHkeRaB6XyIl3VzIvxY4wqVdif1TqJv2zRbEe+VNbZDNsm
-         ba84+LbbfRLK2lAdSGalmZxlnR+cGZ4xwRBwNywryCXzNkXkubX48prd9kemF077hLBF
-         XIz1bImCcK08NCyglNMLKAnBZu1Ib+FxfgRtLjsUOpcrqSWpCs/2139DKvSE6b56Gp9V
-         vbYa2v7RUPZvcYMlQXO+FwkkElcqorwMxJBEKAYxaTsdKHEDWiHP39CzyFIa7zTXznH2
-         A9mg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5183WQR72NatM1fi/498h9XmN1zvNJH6fchk87rAN7MPTWoE4HFqoc2zcKe97HRjp7X9Srj027/szJEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs9eyVqpuEUutnohHVCr6h7OEVURXSxlclgo96IYyq5U9vQ3se
-	sWmfY2kpGbfUG8GYvUaMvqFW2hgSZqojJViPWl5LoYz+XotfA5cYPw+JRQjAO0nlfyhRH0Itf/0
-	tibWeiZyA8sRvkyKaHUiOHdeTtvOYwdPTo94tUxGmOKo4GlRtZyewIC3jCqKlUnaKqQ==
-X-Gm-Gg: ASbGncttoBI0reN+Ksh+4TbyIBwT/dd9CxNx/e6ll+SLtTkv2UC3dYJWkHTpjfiGfir
-	WRzqfkh8ZYTBnRIfb859JVuEozPTYeg3667z51S7rNlM9jJumCbndSkeyocPc22j65aGadWUzzy
-	xkEy55k0BhO/OxC4DVAfAK0GNVzLjcYrJqzPm54ZKlSiNX0fwqPNG3+Xq7NHPuz1mnNTDZ2AuWP
-	Y0Gf5Nlpiwz3JjuQH1EZw9GhG+HmxJQaeC5Cgc0i066IVt4hzsRlhMr6HtiKUxJQkq4kOVXuOKg
-	TdZpl+5e9jL9TwYLcPG180NfoAQlU3zju0tzSNzVzkdUcuqLXZRkwY8V+u5xMoveLVuJwbBDE/m
-	7Tho=
-X-Received: by 2002:a05:600d:8221:b0:46f:aa02:98b1 with SMTP id 5b1f17b1804b1-46faa02ec6emr62953595e9.21.1760105486674;
-        Fri, 10 Oct 2025 07:11:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRROnZFvl2ovceyizR0lS0KdtdpVJX5+dWxkwGf23/+teGdNZWxplYlhTI+5TIKPkXoBbOQQ==
-X-Received: by 2002:a05:600d:8221:b0:46f:aa02:98b1 with SMTP id 5b1f17b1804b1-46faa02ec6emr62953415e9.21.1760105486235;
-        Fri, 10 Oct 2025 07:11:26 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb479c171sm49893295e9.0.2025.10.10.07.11.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 07:11:25 -0700 (PDT)
-Message-ID: <afb2d4f6-cc5a-4aa3-9194-8822060a0552@redhat.com>
-Date: Fri, 10 Oct 2025 16:11:23 +0200
+	s=arc-20240116; t=1760105500; c=relaxed/simple;
+	bh=VdgRS9sXkpX+yIn9B6tsZ5IjxQcYxolhN07Ecu1i2FQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EbTLNAn6VWrfHx2Y93T8VFWJgyfQwmiQVg5uNW6Lq1sG0wIyPZS6Ce848VEclw2GAJi+mpEdu4HJo5c2LuvtJhQBfYhRRQ0+MpsN09df5wnDjYvKZa9rJPKxjyV3WBatKcK2SzsOxOdf8FKcKDxF8lG3rBrGNG6WBjPzh8ChMBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E9mPsN2Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1/gLeijh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J2iI3jL7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNeY6Tjj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 059DC21C67;
+	Fri, 10 Oct 2025 14:11:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760105497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
+	b=E9mPsN2QSf5QrkYU/Nj7Hyw/Yod8+NirXPjg0s8AR3pYs2HXL+WM9vmwGUkSBKqzawleRT
+	ua3tIi1VNMYb6Nj1J2ucGugb5Z9mXh9ogVh/OMroyfYzeZoK43oSaXJd2SwUusO95Gwnyp
+	R7Dfz6xVw6DBOtBAlYoxLjxQU2lcbsM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760105497;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
+	b=1/gLeijh3LCN4fuCRaH6FMJm8eukHA4TztUieATNdpV0NQ5fMcX3IkS3cR3EKObfbHFgKK
+	WjmyqcH5cSmkYQDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760105496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
+	b=J2iI3jL7rtHDqjPUSYfT8z5BI0ztKjcbVhxKsU+YifOHtrHYonxJRmcfPTp6v7VCnedZCq
+	jKw+MfXn8DNbYQ76yJypQuHfEt47alSKQaUVJcpbhjiXL7R2AAPS1AAXtEiWjrz4X2jRdm
+	E6Sduw9lkMD8yzwATQVR51mKd08MNQU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760105496;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
+	b=rNeY6Tjj1HJipj9ELI4Vs4pPmCiuHFITyb8dnzxMgDbiEyvPsqIEMlkpKdFSMxLsBejjVq
+	HpiZ5KFt4Hz5eSAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E00511375D;
+	Fri, 10 Oct 2025 14:11:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FDejNhcU6WgZBwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:11:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6803FA0A58; Fri, 10 Oct 2025 16:11:35 +0200 (CEST)
+Date: Fri, 10 Oct 2025 16:11:35 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v7 06/14] btrfs: use the new ->i_state accessors
+Message-ID: <vcpzljbky5iumhvwawj4aax5mpkmdhwy3qd36u5f3dm4way36c@woucily2haih>
+References: <20251009075929.1203950-1-mjguzik@gmail.com>
+ <20251009075929.1203950-7-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/13] KVM: guest_memfd: Allow mmap() on guest_memfd
- for x86 VMs with private memory
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Fuad Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>
-References: <20251003232606.4070510-1-seanjc@google.com>
- <20251003232606.4070510-6-seanjc@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251003232606.4070510-6-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009075929.1203950-7-mjguzik@gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On 04.10.25 01:25, Sean Christopherson wrote:
-> Allow mmap() on guest_memfd instances for x86 VMs with private memory as
-> the need to track private vs. shared state in the guest_memfd instance is
-> only pertinent to INIT_SHARED.  Doing mmap() on private memory isn't
-> terrible useful (yet!), but it's now possible, and will be desirable when
-> guest_memfd gains support for other VMA-based syscalls, e.g. mbind() to
-> set NUMA policy.
+On Thu 09-10-25 09:59:20, Mateusz Guzik wrote:
+> Change generated with coccinelle and fixed up by hand as appropriate.
 > 
-> Lift the restriction now, before MMAP support is officially released, so
-> that KVM doesn't need to add another capability to enumerate support for
-> mmap() on private memory.
-> 
-> Fixes: 3d3a04fad25a ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
+> 
+> cheat sheet:
+> 
+> If ->i_lock is held, then:
+> 
+> state = inode->i_state          => state = inode_state_read(inode)
+> inode->i_state |= (I_A | I_B)   => inode_state_set(inode, I_A | I_B)
+> inode->i_state &= ~(I_A | I_B)  => inode_state_clear(inode, I_A | I_B)
+> inode->i_state = I_A | I_B      => inode_state_assign(inode, I_A | I_B)
+> 
+> If ->i_lock is not held or only held conditionally:
+> 
+> state = inode->i_state          => state = inode_state_read_once(inode)
+> inode->i_state |= (I_A | I_B)   => inode_state_set_raw(inode, I_A | I_B)
+> inode->i_state &= ~(I_A | I_B)  => inode_state_clear_raw(inode, I_A | I_B)
+> inode->i_state = I_A | I_B      => inode_state_assign_raw(inode, I_A | I_B)
+> 
+>  fs/btrfs/inode.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 3b1b3a0553ee..433ffe231546 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -3884,7 +3884,7 @@ static int btrfs_add_inode_to_root(struct btrfs_inode *inode, bool prealloc)
+>  		ASSERT(ret != -ENOMEM);
+>  		return ret;
+>  	} else if (existing) {
+> -		WARN_ON(!(existing->vfs_inode.i_state & (I_WILL_FREE | I_FREEING)));
+> +		WARN_ON(!(inode_state_read_once(&existing->vfs_inode) & (I_WILL_FREE | I_FREEING)));
+>  	}
+>  
+>  	return 0;
+> @@ -5361,7 +5361,7 @@ static void evict_inode_truncate_pages(struct inode *inode)
+>  	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
+>  	struct rb_node *node;
+>  
+> -	ASSERT(inode->i_state & I_FREEING);
+> +	ASSERT(inode_state_read_once(inode) & I_FREEING);
+>  	truncate_inode_pages_final(&inode->i_data);
+>  
+>  	btrfs_drop_extent_map_range(BTRFS_I(inode), 0, (u64)-1, false);
+> @@ -5799,7 +5799,7 @@ struct btrfs_inode *btrfs_iget_path(u64 ino, struct btrfs_root *root,
+>  	if (!inode)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	if (!(inode->vfs_inode.i_state & I_NEW))
+> +	if (!(inode_state_read_once(&inode->vfs_inode) & I_NEW))
+>  		return inode;
+>  
+>  	ret = btrfs_read_locked_inode(inode, path);
+> @@ -5823,7 +5823,7 @@ struct btrfs_inode *btrfs_iget(u64 ino, struct btrfs_root *root)
+>  	if (!inode)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	if (!(inode->vfs_inode.i_state & I_NEW))
+> +	if (!(inode_state_read_once(&inode->vfs_inode) & I_NEW))
+>  		return inode;
+>  
+>  	path = btrfs_alloc_path();
+> @@ -7480,7 +7480,7 @@ static void btrfs_invalidate_folio(struct folio *folio, size_t offset,
+>  	u64 page_start = folio_pos(folio);
+>  	u64 page_end = page_start + folio_size(folio) - 1;
+>  	u64 cur;
+> -	int inode_evicting = inode->vfs_inode.i_state & I_FREEING;
+> +	int inode_evicting = inode_state_read_once(&inode->vfs_inode) & I_FREEING;
+>  
+>  	/*
+>  	 * We have folio locked so no new ordered extent can be created on this
+> -- 
+> 2.34.1
+> 
 -- 
-Cheers
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
