@@ -1,158 +1,489 @@
-Return-Path: <linux-kernel+bounces-848805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE071BCE9B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:21:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F7ABCE968
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BEC189B708
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:21:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68C874E869D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB8826056C;
-	Fri, 10 Oct 2025 21:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126F9302168;
+	Fri, 10 Oct 2025 21:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KDaNUPsA"
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="is1sJJNg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353BB25A2C9
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E21EEC0;
+	Fri, 10 Oct 2025 21:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760131274; cv=none; b=MklXzOmwn7FfyADAzYd1VR4sKK76R2iepN4y1c/U0OuE6Ah5fvVgoQ5Y6+2DPkaOox0euDtH4AxDktUKUT3q4l1kne6ibZZ0e8W3x6Li20gYqizCERcHBltyQfs6MRGJ9iQ8238KTiuN8QoQtcX2+nBZH23vpUuArEZ8vEdryyQ=
+	t=1760130667; cv=none; b=FmbzT49J7lfxtpPOQwllznRLAJ/FAWmpWfqfJZK4AaR2SfhPFA9cJlsnJoIS1AxUOXMRUUkVXwqid+8luCfEgWOq9LgJ6131MclL/mhKhXY2ILjOstkfQL/a0wqjaYIlayK+dlukbd/+rDYG9EO4GCkTjw9pbPVHC2U8sVnL+eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760131274; c=relaxed/simple;
-	bh=jm07cNqujmJsz6ETfN/ZaqZkj9ZOG1ZyWaAGnftTQOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M99TyHktW4ofDkAjrIJ2/1ykJjp6cyNT/m83pmo7RUY1tWgN0K34smOFagjF00CLc3Hn2ooFMQHhzeDZFC4fW2/08y6pVhvMRjC0FmtfNyIjlzMT2dIIkQL3KboT7FeZ7QzxOoQmCr5GAtfpXEtRVmrHHf4+CtDvyrDCsK6MgZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=KDaNUPsA; arc=none smtp.client-ip=66.163.187.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131271; bh=DLpuuXFqNbqtDCgdc3OpUNFxQzGQ43wi3kmUOA0+q64=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KDaNUPsAIePiDjxg6FdLTVUGIgOgqKqk5IHsBTpz8PWiGdUy+gCRwV+0w7Z19F2x1X4AQVC2XsPiclDMmN3/0pBphT+anwTlr9uedYKy99LINtwyDNfMf2ahZ1e+x1qJLMX9lu3r/3o7Wfr/Pw9MI4RbfkYdF6sCN39QevD30TdfcGAyzIWZQsTvXKOguIzqg/4rgm7UOfLT1ZLInhg7GJ6I0C2J3sKpmfM4/SHCZEHFER/T3X6p6CNObJU5xxDCAo1yAUmin4yN0VBkeLLYHFLRSKkPFs3KFLzLkkPvSQHTB78mMobBkJb4torTJAvzi+LlvvT89t0rA4y5H2ockQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131271; bh=xyE/YIYkpNZzkLwIMYboev9z4AuOCPjy6hfaDKZ1oKi=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jhCQCD76sJXcfLM0ArTvQ944iD2+Oej7r610w5EkrfZgebQrurM9gD3xdMH0NmuBBrngwrhVRcqB/J4w6D3jdZhOUwhcdS1bdHXcafjrfIS21pR5XN9PF2Xpk0nD2+cukEoJ1dN/zTQrVyuPJ5WNiZpz9P4g8uJXyksW7/wfr7+ORotT5pbKVQXm8pmBIRlNWTwn8mrZ3gODMqZJcQX63YQmEe9n0VJEAInMnnznn0caU7u5Bws/EPzhG86L3J6JvjgUrEMjkhwhLVJXknd3vy2LXjMPs1W3APeNO29Za/GiCI/WgwxGiCTqTtNGDPECn+Hlfxc9OUaDo2MdI8+5Yg==
-X-YMail-OSG: 4R.Id2cVM1lqqIxGsyOt7xiKCrc0.kZ.A5NMx1geX4kIovaTZzef9vXcAdUn0Lz
- 4V.VJYH0W7IGwB85ebK5rNYnDxc4RKut4Ry6He2C54MUFnHRUxf0gcp6t1waOpUOcUsn.CsjFohb
- HQnJXbpKrisaRT78sJgIC0aW9ss6ybQVolU0J5.MU0.3T7L7gjrjDt0HSI3nSPTNSuUdeDj.1ksh
- HADxfWEUIy3iKJyG_rfs9a3Wh4uTCU6NDxIMRZPwR4yQr2lNqQRp.WLMkijWwDsGASQY.4cFOlBM
- EfJfWE6ArkmiykiOGX8lqfVagVWSWgV_1hCq3sD0MOP5fmSDmXtTUQcAStNaBuDpwrPYMVApylaM
- G0LvYVjp9jDcLewWGA0xQZGuLHFCW5uu9.m_IxJdPYgsR3rtjXLC3ImQEBtpJHRpabQ2IBYrdjS1
- fOSOVbNHDBLzpdk.tHZG.pausk1v6_aMp2v2k4JVmC38M_mnl3LaVglIGQXEXjhW2BQYUmDZj17u
- oCF3DYxDh.uguB2xwjG0PXQpzryJ1mN1dxaZitu1q89_vz0G1SmnMd0.TxfKlDOJNTBspwvZ7mUb
- RqwuJznRwZLCb5mHF4_dFntgWfyAtzbr5VGrNOzod7zDsX7GUAOPksSxFe8kZmnrZQAvj.DQkDLg
- x9UjCc0ZIaVO9y1mwcM28czLmB96UOZjhOsLuKiQRRfjFESREJps2CXBLYT9cn3zo7OHOjTNap98
- un0vPk1HGF9RJkkQAQ86Cv5UKY7DAlplyiFWsuIak6KGxe1S0MapesiwBo3q3jQOJsDZrKs9KRqa
- JUaDqHyvt_jkg5xg4z550cfEbMlh5Njkl6UiTxg8NmUXm3XaBlJoJULLdueAo2KavGWCtfE4VaEU
- PfoidspaBMdWIAemm7Ynqm_sbAVOCrg9hKbaXgsDwvqIonFCwXYZEuONVmxzXRH4jGZQMIAkNXmx
- zZ851v5gqnHDwPXqZ4B83_1acK4DJpVHGcpc9BVOwBGJfOn.4ategsoyyIwHmW9gpdh8cxkG7grS
- 4p7Y_LrEh.3F2.Sf5PZtWyl2vMCVS.WO.Y_YyFNWpJfrWUs30md9M12wQjui_IzI760azrYTozi9
- Kx6xBNM6aVADvgmwRCMj6U1UEV9snuvk0sLU11Q4cQPz4aPY_DwTRW4TAefH6OGYsDK9VCzHJkIG
- 5vE7zFynCwV0d3rPirjvg6EkMQBmZQwh211ejJSo4pVVoL06V9dtwuZF_sozF.R6wXHABszApiDT
- KyKoO4UP.tRQgLvRQRmIVUcV9L5OKeVo9EoAWqRpxstc61j0yCN1ss_tbJcyQTgXFv_o7lX1FF.A
- CnVdF98TOB_zDU3VM0Np67kJxnGyMJXJXuqE1ZKMtGGOubqafDZXazGSBzL_7_16Fy0o1zGxrQuI
- dgsyof7NJPcvt.xZFgYlrgkqtY.mG6okpY_7DKGVm.mAmaXK3ivJsqLJPewA6UMTMXk0IZWvdI2g
- Vw5HITDrE9RizL_85qKe4eHeCTeUNHKA2nNIAad1maeXR9kwKS_AOU7VuSE4rUx8G4GrebKXUshD
- 6swJWI6lgHMY8kCFzkMh.7I0TKAFuUzaCJTcIZzhHJgZjCLP5u0glwe9S6sIWx2ux6Uih8x_zSSz
- WsrBlOO6CPUZXHtjMltTsoU6_Q7yBQkkLSFQdPn629ryCd1uy1_Nv.31r5GxCheIdjoEiod8dMRU
- FtAQGfX3jYYjFNMTTn5Ph1gjj7jnW1coiqAvgGyOABL8v1pR98KsqsPUodbnsQ45AV8C1NcyNBcY
- XVF5.F4GabUWZRUGGKH_5ZDgsFrmg62c8YEpeom47dKORkDXKSYhszyaEWMncsWfo2McptTDpRtl
- KAvxF.g1mtBvlq02k_g49GhyL4aNvlScrwN3GrYgHxBYycxlKDRckWBWVpmmpVPId6QyIYSlXFhk
- MLOkbWtscO5PEzppF4.JAyK6z9HGiO85zN1NcbgaDkd9xnCvsgkYss9mddLjn27HwGorM7WFP2gd
- x7Rdr.by92xppzFRVur2jgcTkWJLJuC15QtYKotg6DJ3m_KgkOBa.7smlCDZR1XiNW1kdHUoom76
- aZkBS5xbFMcOiIfdtMXC4t7hbJ2rx4PRRbH_MYrULaDH3LxZquIxS3b_0qExz_gJ0L309S67rWzU
- kcqGRxj_h63dfhonCMN2Gg48mrH5gUioen35IX81Ev_175BZhTsI0U3Guc2sBmaGAhZ9XlZkaE4l
- piz8Klhp1vCSf9zEaOVC7EkXl9_VIQX23cY.OaGesJL.xoBulR5DLVGTf2urB8gvqCm1_AczRkqA
- K5iXqHLOONv2eAZ0_3Q--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: aae4a878-c368-4734-8f1c-3e5ebf10e800
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 21:21:11 +0000
-Received: by hermes--production-gq1-66b66ffd5-8qsph (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5ca4e18b572c15992d67a822f1821bda;
-          Fri, 10 Oct 2025 21:11:00 +0000 (UTC)
-Message-ID: <01879779-d529-40f2-8693-257cc598dcd7@schaufler-ca.com>
-Date: Fri, 10 Oct 2025 14:10:57 -0700
+	s=arc-20240116; t=1760130667; c=relaxed/simple;
+	bh=TBIB0hDbTDA+KeeIuVi7Om3tzVvXuZINkksstgyV1hs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=p1/hr7Zu2+eyFrew61WSGdIvsaHDHIwLvkLmQ06oURxQcEpVlTtpBU4Tvv2IB6U1S4u3xBEhD1xri1we6k4qx7elvITHUQF67Q2TH2ZID/pXTo8F5HU+ws+3G4wvqGMNLY12yKVodIfzPIAXBgUH6bExVb4uh7UuVixTpF3M2XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=is1sJJNg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F11C4CEF1;
+	Fri, 10 Oct 2025 21:11:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760130664;
+	bh=TBIB0hDbTDA+KeeIuVi7Om3tzVvXuZINkksstgyV1hs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=is1sJJNgKA4CXmzla/cTDZQh30fnx0sR41KAdUpnfpnpwpofzG4BmhjYMxF7205MK
+	 zW3CjWqxzXIh2eRJ7/H8nkxYu82z1qVrhc8dWj/W3OPanWONeakAz6bmuSzBnXRv9E
+	 W5e9KdzgI69ZOseyc2zAyBKPTZXgpy9uuc4fS4VuiJiBfFkOtp9OuT6JMxvK0yKB6Y
+	 aprKqjxqdWnPCQCUKe9oKAIOlIs8wTq14HzWHL9iMPRLboW9r+o44aa6qH0zyfrvIU
+	 LwUqjKExWkJN1Vr+daO7vwfMXYzotgsBmCbTgo3UeXBRPGg8HZGL44oXptg83ungn9
+	 p31CNwbET3PGA==
+From: SeongJae Park <sj@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	alexandru.elisei@arm.com,
+	peterx@redhat.com,
+	rppt@kernel.org,
+	mhocko@suse.com,
+	corbet@lwn.net,
+	axboe@kernel.dk,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	hch@infradead.org,
+	jack@suse.cz,
+	willy@infradead.org,
+	m.szyprowski@samsung.com,
+	robin.murphy@arm.com,
+	hannes@cmpxchg.org,
+	zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	weixugc@google.com,
+	minchan@kernel.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	Minchan Kim <minchan@google.com>
+Subject: Re: [PATCH 7/8] mm: introduce GCMA
+Date: Fri, 10 Oct 2025 14:11:01 -0700
+Message-Id: <20251010211101.59275-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251010011951.2136980-8-surenb@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
- jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20251001215643.31465-1-casey@schaufler-ca.com>
- <20251001215643.31465-3-casey@schaufler-ca.com>
- <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
- <ec89959d-c3a0-403d-bfb0-7405639eb0cf@schaufler-ca.com>
- <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 10/10/2025 12:53 PM, Stephen Smalley wrote:
-> On Fri, Oct 10, 2025 at 11:09 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 10/9/2025 11:53 AM, Stephen Smalley wrote:
->>> On Wed, Oct 1, 2025 at 5:56 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Allow LSMs to request exclusive access to the netlabel facility.
->>>> Provide mechanism for LSMs to determine if they have access to
->>>> netlabel. Update the current users of netlabel, SELinux and Smack,
->>>> to use and respect the exclusive use of netlabel.
->>>>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> ---
->>>> diff --git a/security/security.c b/security/security.c
->>>> index e59e3d403de6..9eca10844b56 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
->>>>                 else
->>>>                         blob_sizes.lbs_secmark = true;
->>>>         }
->>>> +       if (needed->lbs_netlabel) {
->>>> +               if (blob_sizes.lbs_netlabel)
->>>> +                       needed->lbs_netlabel = false;
->>>> +               else
->>>> +                       blob_sizes.lbs_netlabel = true;
->>>> +
->>> Same principle here - if a LSM wants to use netlabel, it may want to
->>> guarantee that it truly has exclusive access to it no matter what the
->>> LSM order is.
->> And if SELinux and Smack both shout "I gotta have it!" who wins?
->> Does the system fail to boot? Do you assign it to the first requestor,
->> as this patch does explicitly?
->>
->> If LSMs can't be equal in the eyes of the infrastructure, If one (e.g. SELinux)
->> always gets its way regardless of the end user intent, I have a problem with
->> the whole thing.
-> End user intent is unlikely to be expressed as a silent side effect of
-> LSM order.
+Hello Suren,
 
-But that's what we have now with the "first exclusive LSM" rule.
-And the patch doesn't have a "silent" side effect. An LSM is informed
-at initialization whether it can use secmarks. An LSM could even
-decide to use secmarks if it has been told not to. That would be wrong,
-and probably not upstream acceptable, but in security the wild and wacky
-happens all too often.
+On Thu,  9 Oct 2025 18:19:50 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
 
-> If a security module supports its use without the use of secmark
-> and/or netlabel and the end user wants to assign one or both to
-> another security module, that's fine.
+> From: Minchan Kim <minchan@google.com>
+> 
+> This patch introduces GCMA (Guaranteed Contiguous Memory Allocator)
+> cleacache backend which reserves some amount of memory at the boot
+> and then donates it to store clean file-backed pages in the cleancache.
+> GCMA aims to guarantee contiguous memory allocation success as well as
+> low and deterministic allocation latency.
+> 
+> Notes:
+> Originally, the idea was posted by SeongJae Park and Minchan Kim [1].
+> Later Minchan reworked it to be used in Android as a reference for
+> Android vendors to use [2].
+> 
+> [1] https://lwn.net/Articles/619865/
+> [2] https://android-review.googlesource.com/q/topic:%22gcma_6.12%22
+> 
+> Signed-off-by: Minchan Kim <minchan@google.com>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  MAINTAINERS          |   2 +
+>  include/linux/gcma.h |  36 +++++++
+>  mm/Kconfig           |  15 +++
+>  mm/Makefile          |   1 +
+>  mm/gcma.c            | 231 +++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 285 insertions(+)
+>  create mode 100644 include/linux/gcma.h
+>  create mode 100644 mm/gcma.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 441e68c94177..95b5ad26ec11 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16361,6 +16361,7 @@ F:	Documentation/admin-guide/mm/
+>  F:	Documentation/mm/
+>  F:	include/linux/cma.h
+>  F:	include/linux/dmapool.h
+> +F:	include/linux/gcma.h
+>  F:	include/linux/ioremap.h
+>  F:	include/linux/memory-tiers.h
+>  F:	include/linux/page_idle.h
+> @@ -16372,6 +16373,7 @@ F:	mm/dmapool.c
+>  F:	mm/dmapool_test.c
+>  F:	mm/early_ioremap.c
+>  F:	mm/fadvise.c
+> +F:	mm/gcma.c
+>  F:	mm/ioremap.c
+>  F:	mm/mapping_dirty_helpers.c
+>  F:	mm/memory-tiers.c
+> diff --git a/include/linux/gcma.h b/include/linux/gcma.h
+> new file mode 100644
+> index 000000000000..20b2c85de87b
+> --- /dev/null
+> +++ b/include/linux/gcma.h
+> @@ -0,0 +1,36 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __GCMA_H__
+> +#define __GCMA_H__
+> +
+> +#include <linux/types.h>
+> +
+> +#ifdef CONFIG_GCMA
+> +
+> +int gcma_register_area(const char *name,
+> +		       unsigned long start_pfn, unsigned long count);
+> +
+> +/*
+> + * NOTE: allocated pages are still marked reserved and when freeing them
+> + * the caller should ensure they are isolated and not referenced by anyone
+> + * other than the caller.
+> + */
+> +int gcma_alloc_range(unsigned long start_pfn, unsigned long count, gfp_t gfp);
+> +int gcma_free_range(unsigned long start_pfn, unsigned long count);
+> +
+> +#else /* CONFIG_GCMA */
+> +
+> +static inline int gcma_register_area(const char *name,
+> +				     unsigned long start_pfn,
+> +				     unsigned long count)
+> +		{ return -EOPNOTSUPP; }
+> +static inline int gcma_alloc_range(unsigned long start_pfn,
+> +				   unsigned long count, gfp_t gfp)
+> +		{ return -EOPNOTSUPP; }
+> +
+> +static inline int gcma_free_range(unsigned long start_pfn,
+> +				   unsigned long count)
+> +		{ return -EOPNOTSUPP; }
+> +
+> +#endif /* CONFIG_GCMA */
+> +
+> +#endif /* __GCMA_H__ */
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 9f4da8a848f4..41ce5ef8db55 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1013,6 +1013,21 @@ config CMA_AREAS
+>  
+>  	  If unsure, leave the default value "8" in UMA and "20" in NUMA.
+>  
+> +config GCMA
+> +       bool "GCMA (Guaranteed Contiguous Memory Allocator)"
+> +       depends on CLEANCACHE
+> +	help
+> +	  This enables the Guaranteed Contiguous Memory Allocator to allow
+> +	  low latency guaranteed contiguous memory allocations. Memory
+> +	  reserved by GCMA is donated to cleancache to be used as pagecache
+> +	  extension. Once GCMA allocation is requested, necessary pages are
+> +	  taken back from the cleancache and used to satisfy the request.
+> +	  Cleancache guarantees low latency successful allocation as long
+> +	  as the total size of GCMA allocations does not exceed the size of
+> +	  the memory donated to the cleancache.
+> +
+> +	  If unsure, say "N".
+> +
+>  #
+>  # Select this config option from the architecture Kconfig, if available, to set
+>  # the max page order for physically contiguous allocations.
+> diff --git a/mm/Makefile b/mm/Makefile
+> index 845841a140e3..05aee66a8b07 100644
+> --- a/mm/Makefile
+> +++ b/mm/Makefile
+> @@ -149,3 +149,4 @@ obj-$(CONFIG_TMPFS_QUOTA) += shmem_quota.o
+>  obj-$(CONFIG_PT_RECLAIM) += pt_reclaim.o
+>  obj-$(CONFIG_CLEANCACHE) += cleancache.o
+>  obj-$(CONFIG_CLEANCACHE_SYSFS)	+= cleancache_sysfs.o
+> +obj-$(CONFIG_GCMA)	+= gcma.o
+> diff --git a/mm/gcma.c b/mm/gcma.c
+> new file mode 100644
+> index 000000000000..3ee0e1340db3
+> --- /dev/null
+> +++ b/mm/gcma.c
+> @@ -0,0 +1,231 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * GCMA (Guaranteed Contiguous Memory Allocator)
+> + *
+> + */
+> +
+> +#define pr_fmt(fmt) "gcma: " fmt
+> +
+> +#include <linux/cleancache.h>
+> +#include <linux/gcma.h>
+> +#include <linux/hashtable.h>
+> +#include <linux/highmem.h>
+> +#include <linux/idr.h>
+> +#include <linux/slab.h>
+> +#include <linux/xarray.h>
+> +#include "internal.h"
+> +
+> +#define MAX_GCMA_AREAS		64
+> +#define GCMA_AREA_NAME_MAX_LEN	32
+> +
+> +struct gcma_area {
+> +	int pool_id;
+> +	unsigned long start_pfn;
+> +	unsigned long end_pfn;
+> +	char name[GCMA_AREA_NAME_MAX_LEN];
+> +};
+> +
+> +static struct gcma_area areas[MAX_GCMA_AREAS];
+> +static atomic_t nr_gcma_area = ATOMIC_INIT(0);
+> +static DEFINE_SPINLOCK(gcma_area_lock);
+> +
+> +static int free_folio_range(struct gcma_area *area,
+> +			     unsigned long start_pfn, unsigned long end_pfn)
+> +{
+> +	unsigned long scanned = 0;
+> +	struct folio *folio;
+> +	unsigned long pfn;
+> +
+> +	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+> +		int err;
+> +
+> +		if (!(++scanned % XA_CHECK_SCHED))
+> +			cond_resched();
+> +
+> +		folio = pfn_folio(pfn);
+> +		err = cleancache_backend_put_folio(area->pool_id, folio);
 
-That is what this patch implements.
+Why don't you use pfn_folio() directly, like alloc_folio_range() does?
 
-> But some security modules may not function correctly (or at all) if
-> secmark and/or netlabel are silently disabled on them, and the end
-> user needs a better way to express intent.
+> +		if (WARN(err, "PFN %lu: folio is still in use\n", pfn))
+> +			return -EINVAL;
 
-I'm open to suggestions. Would boot options lsm.secmark and lsm.netlabel
-be sufficient to address your concern?
+Why don't you return err, like alloc_folio_range() does?
 
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int alloc_folio_range(struct gcma_area *area,
+> +			      unsigned long start_pfn, unsigned long end_pfn,
+> +			      gfp_t gfp)
+> +{
+> +	unsigned long scanned = 0;
+> +	unsigned long pfn;
+> +
+> +	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+> +		int err;
+> +
+> +		if (!(++scanned % XA_CHECK_SCHED))
+> +			cond_resched();
+> +
+> +		err = cleancache_backend_get_folio(area->pool_id, pfn_folio(pfn));
+> +		if (err) {
+> +			free_folio_range(area, start_pfn, pfn);
+> +			return err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct gcma_area *find_area(unsigned long start_pfn, unsigned long end_pfn)
+> +{
+> +	int nr_area = atomic_read_acquire(&nr_gcma_area);
+> +	int i;
+> +
+> +	for (i = 0; i < nr_area; i++) {
+> +		struct gcma_area *area = &areas[i];
+> +
+> +		if (area->end_pfn <= start_pfn)
+> +			continue;
+> +
+> +		if (area->start_pfn > end_pfn)
+> +			continue;
+> +
+> +		/* The entire range should belong to a single area */
+> +		if (start_pfn < area->start_pfn || end_pfn > area->end_pfn)
+> +			break;
+> +
+> +		/* Found the area containing the entire range */
+> +		return area;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +int gcma_register_area(const char *name,
+> +		       unsigned long start_pfn, unsigned long count)
+> +{
+> +	LIST_HEAD(folios);
+> +	int i, pool_id;
+> +	int nr_area;
+> +	int ret = 0;
+> +
+> +	pool_id = cleancache_backend_register_pool(name);
+> +	if (pool_id < 0)
+> +		return pool_id;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		struct folio *folio;
+> +
+> +		folio = pfn_folio(start_pfn + i);
+> +		folio_clear_reserved(folio);
+> +		folio_set_count(folio, 0);
+> +		list_add(&folio->lru, &folios);
+> +	}
+> +
+> +	cleancache_backend_put_folios(pool_id, &folios);
+> +
+> +	spin_lock(&gcma_area_lock);
+> +
+> +	nr_area = atomic_read(&nr_gcma_area);
+> +	if (nr_area < MAX_GCMA_AREAS) {
+> +		struct gcma_area *area = &areas[nr_area];
+> +
+> +		area->pool_id = pool_id;
+> +		area->start_pfn = start_pfn;
+> +		area->end_pfn = start_pfn + count;
+> +		strscpy(area->name, name);
+> +		/* Ensure above stores complete before we increase the count */
+> +		atomic_set_release(&nr_gcma_area, nr_area + 1);
+> +	} else {
+> +		ret = -ENOMEM;
+> +	}
+> +
+> +	spin_unlock(&gcma_area_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(gcma_register_area);
+> +
+> +int gcma_alloc_range(unsigned long start_pfn, unsigned long count, gfp_t gfp)
+> +{
+> +	unsigned long end_pfn = start_pfn + count;
+> +	struct gcma_area *area;
+> +	struct folio *folio;
+> +	int err, order = 0;
+> +
+> +	gfp = current_gfp_context(gfp);
+> +	if (gfp & __GFP_COMP) {
+> +		if (!is_power_of_2(count))
+> +			return -EINVAL;
+> +
+> +		order = ilog2(count);
+> +		if (order >= MAX_PAGE_ORDER)
+> +			return -EINVAL;
+> +	}
+> +
+> +	area = find_area(start_pfn, end_pfn);
+> +	if (!area)
+> +		return -EINVAL;
+> +
+> +	err = alloc_folio_range(area, start_pfn, end_pfn, gfp);
+> +	if (err)
+> +		return err;
+> +
+> +	/*
+> +	 * GCMA returns pages with refcount 1 and expects them to have
+> +	 * the same refcount 1 when they are freed.
+> +	 */
+> +	if (order) {
+> +		folio = pfn_folio(start_pfn);
+> +		set_page_count(&folio->page, 1);
+> +		prep_compound_page(&folio->page, order);
+> +	} else {
+> +		for (unsigned long pfn = start_pfn; pfn < end_pfn; pfn++) {
+> +			folio = pfn_folio(pfn);
+> +			set_page_count(&folio->page, 1);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(gcma_alloc_range);
+
+I'm wondering if the rule of exporting symbols only for in-tree modules that
+use the symbols should be applied here or not, and why.
+
+> +
+> +int gcma_free_range(unsigned long start_pfn, unsigned long count)
+> +{
+> +	unsigned long end_pfn = start_pfn + count;
+> +	struct gcma_area *area;
+> +	struct folio *folio;
+> +
+> +	area = find_area(start_pfn, end_pfn);
+> +	if (!area)
+> +		return -EINVAL;
+> +
+> +	folio = pfn_folio(start_pfn);
+> +	if (folio_test_large(folio)) {
+> +		int expected = folio_nr_pages(folio);
+
+folio_nr_pages() return 'unsigned long'.  Would it be better to match the type?
+
+> +
+> +		if (WARN(count != expected, "PFN %lu: count %lu != expected %d\n",
+> +			  start_pfn, count, expected))
+> +			return -EINVAL;
+> +
+> +		if (WARN(!folio_ref_dec_and_test(folio),
+> +			 "PFN %lu: invalid folio refcount when freeing\n", start_pfn))
+> +			return -EINVAL;
+> +
+> +		free_pages_prepare(&folio->page, folio_order(folio));
+> +	} else {
+> +		for (unsigned long pfn = start_pfn; pfn < end_pfn; pfn++) {
+> +			folio = pfn_folio(pfn);
+> +			if (folio_nr_pages(folio) == 1)
+> +				count--;
+> +
+> +			if (WARN(!folio_ref_dec_and_test(folio),
+> +				 "PFN %lu: invalid folio refcount when freeing\n", pfn))
+> +				return -EINVAL;
+
+Don't we need to increase the previously decreased folio refcounts?
+
+> +
+> +			free_pages_prepare(&folio->page, 0);
+> +		}
+> +		WARN(count != 0, "%lu pages are still in use!\n", count);
+
+Is WARN() but not returning error here ok?
+
+Also, why don't you warn earlier above if 'folio_nr_pages(folio) != 1' ?
+
+> +	}
+> +
+> +	return free_folio_range(area, start_pfn, end_pfn);
+> +}
+> +EXPORT_SYMBOL_GPL(gcma_free_range);
+
+Like the gcma_alloc_range() case, I'm curious if this symbol exporting is
+somewhat intended and the intention is explained.
+
+> -- 
+> 2.51.0.740.g6adb054d12-goog
+
+
+Thanks,
+SJ
 
