@@ -1,195 +1,100 @@
-Return-Path: <linux-kernel+bounces-848181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EF3BCCD34
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:05:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8354EBCCDB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A36A3B1681
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:05:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A02B4E0374
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DA9288C27;
-	Fri, 10 Oct 2025 12:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09660286D66;
+	Fri, 10 Oct 2025 12:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OxBDD2Lh"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="KZNRGRGf"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C80287512
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D3423D7FC;
+	Fri, 10 Oct 2025 12:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760097931; cv=none; b=kTb/iwdmjdQYdG6mycgYG5ynozzRrBFHEC1PZdnOEOU1JotXg/XdcWyaAtFBogIM+n+xHueGbPA7PTpUBRSp9QFBgIFqm4sGaWymTBXwt4TohLdOD/FqU9zPKEGwSSjEcaamX99ZcpFM4XZFKIqczv2muHmBlCp81FZa04QUllo=
+	t=1760098882; cv=none; b=mhXvlo38va1rCL1GK3+XfQD7OY389LkwujqU8kKIFIIyejIPHWtMgm5KSKy4oXpAYP4HKumdu6kJcLe46QlJqYoTo6Hne0DrYu/8r+8+hWjRNPx2rZqCQwlmawjoj6Qot9q5L56evSAgMzeaKkUODIWiriLysuEUoIP0+XgzelE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760097931; c=relaxed/simple;
-	bh=c6FZUJ87VJV2SHBTZSiSrj04fSF+beoy53iVYqVx7Kw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ENxjKSmGndCZ13wBtuQtDAs7iJWBo7bRTWdlXM0lpiXcefWgzzQskTlKP8BuS77bWC0HWanlsDQXB7r8yBzNcbtMZYpEbZ+x8vwY3xqwIMIl4oXXus87jNhJYMEoIOfxgKN3rb0cGMAyNuw3+rJt+r9GrC2uYv5KNtXaUoUc2EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OxBDD2Lh; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760097925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c6FZUJ87VJV2SHBTZSiSrj04fSF+beoy53iVYqVx7Kw=;
-	b=OxBDD2LhJsyZXu9L/ho5qTLiT68ifM8pf3HU68POPo3jwWfqIWz06A05E/9S04tx1i/yOW
-	NMoQuwa61y7+K1uzP6lXulfDO2XOXX5Vn4PtOD+qX9ZP1Yb6Ntqbdtevu/0KBH7Idr+r/u
-	oy6WGNjQMEcEc9TFA2yEdEA63OH1s3Y=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Eduard Zingerman <eddyz87@gmail.com>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Leon Hwang <hffilwlqm@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
- Menglong Dong <menglong8.dong@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
-Subject:
- Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault to BPF
- stderr
-Date: Fri, 10 Oct 2025 20:05:10 +0800
-Message-ID: <3349652.5fSG56mABF@7950hx>
-In-Reply-To:
- <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
-References:
- <20250927061210.194502-1-menglong.dong@linux.dev>
- <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
- <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
+	s=arc-20240116; t=1760098882; c=relaxed/simple;
+	bh=f9L7zhzAnXXfnNNyUZTA1kqF7B9ZiXQDJUpg7Yma138=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fd/EXa58h7flGC3uMFDBFIEyU0i9S/GKwmvnMuLzLte+FzMspQ4XW6RnRxkaZm46rC0msFD80boJPY2u3SRmzP4gnpFmckpBp2GgAZl7VzLHI6NUIzcqgmT3Cr3W67kz5AXjQv5r9GJAEWCxIEA0N+alskx6irmPOLF+ro+V9Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=KZNRGRGf; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=Content-Type:MIME-Version:Message-ID:Subject:
+	To:From:Date:cc:to:subject:message-id:date:from:content-type:in-reply-to:
+	references:reply-to; bh=UHAG8oD6VlfPwpNIB//e81NoaomE3IWVH+FR9PROA5g=; b=KZNRG
+	RGfLb8oFJwAi8J1YdDf6Bg6C+pNxLSjdvbB8YT9Y1X9Dd4k+o2/BXcvUYpPGdSM4Je3zxWTOSvhqq
+	0PgjR/nYnZV8gTrytFkHawlihPmNaB2jWuVE+qyaDkS+Cr5LVBslarv/hXQkV8bDC+Bfcdu3sGdlp
+	dRxg/9dy64vuLlW5lE0ils1xG/AjoPYtTRxXysfHj8h+63Qs+kTVKMdyPweiqws+2KC44vYkX66Rq
+	9M2XFPBkVkakRMqLB1ZJECGm2+uL/k1UgxaLlkj3W06HP+NiHlxi5kcE2W2OGUENosig8u7wHfXG3
+	rbQ1ufWOeptxAl4FYzYjAWNyWe22g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v7BSe-00Bisf-0k;
+	Fri, 10 Oct 2025 19:39:01 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Oct 2025 19:39:00 +0800
+Date: Fri, 10 Oct 2025 19:39:00 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Fixes for 6.18
+Message-ID: <aOjwVEx6xDDRKiAx@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2025/10/9 04:08, Kumar Kartikeya Dwivedi wrote:
-> On Wed, 8 Oct 2025 at 21:34, Eduard Zingerman <eddyz87@gmail.com> wrote:
-> >
-> > On Wed, 2025-10-08 at 19:08 +0200, Kumar Kartikeya Dwivedi wrote:
-> > > On Wed, 8 Oct 2025 at 18:27, Alexei Starovoitov
-> > > <alexei.starovoitov@gmail.com> wrote:
-> > > >
-> > > > On Wed, Oct 8, 2025 at 7:41=E2=80=AFAM Leon Hwang <hffilwlqm@gmail.=
-com> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > > On 2025/10/7 14:14, Menglong Dong wrote:
-> > > > > > On 2025/10/2 10:03, Alexei Starovoitov wrote:
-> > > > > > > On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <mengl=
-ong8.dong@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > Introduce the function bpf_prog_report_probe_violation(), w=
-hich is used
-> > > > > > > > to report the memory probe fault to the user by the BPF std=
-err.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
-> > > > >
-> > > > > [...]
-> > > > >
-[......]
-> > >
-> > > Yeah, agreed that this would be useful, particularly in this case. I'm
-> > > wondering how we'll end up implementing this.
-> > > Sounds like it needs to be tied to the program's invocation, so it
-> > > cannot be per-cpu per-program, since they nest. Most likely should be
-> > > backed by run_ctx, but that is unavailable in all program types. Next
-> > > best thing that comes to mind is reserving some space in the stack
-> > > frame at a known offset in each subprog that invokes this helper, and
-> > > use that to signal (by finding the program's bp and writing to the
-> > > stack), the downside being it likely becomes yet-another arch-specific
-> > > thing. Any other better ideas?
-> >
-> > Another option is to lower probe_read to a BPF_PROBE_MEM instruction
-> > and generate a special kind of exception handler, that would set r0 to
-> > -EFAULT. (We don't do this already, right? Don't see anything like that
-> > in verifier.c or x86/../bpf_jit_comp.c).
-> >
-> > This would avoid any user-visible changes and address performance
-> > concern. Not so convenient for a chain of dereferences a->b->c->d,
-> > though.
->=20
-> Since we're piling on ideas, one of the other things that I think
-> could be useful in general (and maybe should be done orthogonally to
-> bpf_errno)
-> is making some empty nop function and making it not traceable reliably
-> across arches and invoke it in the bpf exception handler.
-> Then if we expose prog_stream_dump_stack() as a kfunc (should be
-> trivial), the user can write anything to stderr that is relevant to
-> get more information on the fault.
+Hi Linus:
 
-Thanks for all the ideas! So we have following approaches
-on this problem:
+The following changes since commit c0d36727bf39bb16ef0a67ed608e279535ebf0da:
 
-may_goto(Kumar)
-=2D-------------------------
-Hmm......I haven't figure how this work on this problem yet.
+  crypto: rng - Ensure set_ent is always present (2025-10-06 10:17:07 +0800)
 
-"may_goto" is a condition break, does it mean that we introduce
-a "condition_fault"? Will it need the supporting of the compiler?
+are available in the Git repository at:
 
-I'm not sure if this is the right understanding: save the fault
-type(PROBE_FAULT, AREA_READ_FAULT, AREA_WRITE_FAULT) to
-the stack or the run_ctx, and the "if (condition_fault)" will be
-replace with "if (__stack or run_ctx)".
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.18-p3
 
-save errno to r0(Eduard)
-=2D----------------------------------
-Save the errno to r0 in the exception handler of BPF_PROBE_MEM,
-and read r0 with a __kfun in BPF program. (Not sure if I understand
-it correctly).
+for you to fetch changes up to 6bb73db6948c2de23e407fe1b7ef94bf02b7529f:
 
-This sounds effective, but won't this break the usage of r0? I mean,
-the r0 can be used by the BPF program somewhere.
+  crypto: essiv - Check ssize for decryption and in-place encryption (2025-10-09 15:02:35 +0800)
 
-trace error event(Kumar)
-=2D-----------------------------------
-Call a empty and traceable function in the exception handler.
+----------------------------------------------------------------
+This push contains the following changes:
 
-This maybe the simplest way, and I think the only shortcoming
-is that there may be some noise, as the the BPF program can
-receive the fault event from other BPF users.
+- Fix bug in crypto_skcipher that breaks the new ti driver.
+- Check for invalid assoclen in essiv.
+----------------------------------------------------------------
 
-And maybe it's better to pass the bpf prog to the arguments of
-the empty function, therefore users can do some filter. Or, we
-can introduce a tracepoint for this propose.
+Herbert Xu (1):
+      crypto: essiv - Check ssize for decryption and in-place encryption
 
-And I think this is the similar way that Leon suggested later.
+T Pratham (1):
+      crypto: skcipher - Fix reqsize handling
 
-bpf errno(Leon)
-=2D---------------------
-introduce a percpu variable, save the -EFAULT to it in the
-exception handler. Introduce the __kfunc to read, set and
-clear the errno.
+ crypto/essiv.c    | 14 ++++++--------
+ crypto/skcipher.c |  2 ++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-output the error information directly to STDERR(Menglong)
-=2D------------------------------------------------------------------------=
-=2D------------
-As it described.
-
-Ah......it seems we have many approaches here, and most
-of them work. Do we have any ideas on these ideas?
-
-Thanks!
-Menglong Dong
-
->=20
-> It is then up to the user to decide the rate of messages for such
-> faults etc. and get more information if needed.
->=20
-
-
-
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
