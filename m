@@ -1,354 +1,257 @@
-Return-Path: <linux-kernel+bounces-848034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806E1BCC53C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:23:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C77BCC4CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4BAD3C860C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67BA42696C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6242673B0;
-	Fri, 10 Oct 2025 09:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A9D279DA9;
+	Fri, 10 Oct 2025 09:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGveJ0K3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Aw/W2grF"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010020.outbound.protection.outlook.com [52.101.84.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27A428153A;
-	Fri, 10 Oct 2025 09:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760087747; cv=none; b=SF/lkeYZQpxULZVZaYZwtpV/0Tk9lYVdGCrz3UHV4a3/yjH8gT1Z1jmGY0SYl723VrwtIQHyVpocPi/+twSrtLStr1i1St2SpMZt0+N5ByAcxL/3K4Qvb87MQLVMmEQV/Ef39bv8Bzn/P6XS17WDlNSeuTxRea1e8GvsEANKSxY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760087747; c=relaxed/simple;
-	bh=cJvhoPRiXOlxs+zH/XVaJ4God3JTKZGfA+vj8Ps5Zvc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cxFBwBQ997lFr6AXS0cTQT4uQh59+9unSuJf3dcICH1dXowUzs1GErzHqM8YO8T47V0yYbSTT2c1O5/ZSQ/V+8tccYbNPT//vOYMYQHcnyb2VRnSMk6vTKSFYns8HvhX6NsGgxvdKnwSExNecGc4cX8yhHce1OUkh+eRSZyPF+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGveJ0K3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 919E7C4CEF1;
-	Fri, 10 Oct 2025 09:15:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760087746;
-	bh=cJvhoPRiXOlxs+zH/XVaJ4God3JTKZGfA+vj8Ps5Zvc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tGveJ0K3n9rjtc9cLpwOOkTxehk838nZLm/2mI3EY2pKs8/pdEzRwM1lST9GyRequ
-	 Z9Cglgz0UXnPaTS8DNnpXmgjB9nroM3FMi0Ry9OZW61u8ufYcZAVIBfjtU6/URgOHs
-	 BcJJA/xXtUTstv5ota6E0RsByeGbsVF/RDGHfR4UUkvZRmbupT3ebNwZg11P1OKLKf
-	 05QYAz+9Z7mtIkWhUwHFX52gnNTNTD4X/eUaRnhKIXDhiEpgULHajRIvLCCLy2Hid2
-	 hSbjoKqHP86kLB7bvNLzS/8yyqrzGL7eTBuushkecsl0cQUTN0OThYkxiojnv/S6Qz
-	 4vT1hKFRznFiA==
-From: Yu Kuai <yukuai@kernel.org>
-To: axboe@kernel.dk,
-	tj@kernel.org,
-	linux-block@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	nilay@linux.ibm.com,
-	bvanassche@acm.org,
-	ming.lei@redhat.com,
-	hch@lst.de
-Cc: linux-kernel@vger.kernel.org,
-	Yu Kuai <yukuai3@huawei.com>
-Subject: [PATCH v2 19/19] blk-cgroup: remove unsed blkg configuration helpers
-Date: Fri, 10 Oct 2025 17:14:44 +0800
-Message-ID: <20251010091446.3048529-20-yukuai@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251010091446.3048529-1-yukuai@kernel.org>
-References: <20251010091446.3048529-1-yukuai@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C4D26CE0C
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760087723; cv=fail; b=ZEFFj5YjEdnAY6MtCv/CkHKLBODx6ecmXOwuAkIt+w4C0iQVqKdtoDSsoZNLQuz8tFCEL5RAuPSw2qARyas8KAX74nuV+1AQwZDDrR9USUIO084BJWXsml//UPnCIX3i5x8OVa/AxPbty6T0/x+1VqJ6GWBN+9JccUHyjzFt7ak=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760087723; c=relaxed/simple;
+	bh=o+Va6N5cCkkcAjO4UE6bl9ptOa+TBA94q7bqTrBaR5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eVdSQkTWvu8JL4QIRNaY8gsj8gTRPYsEGg90ZxzezIDWLr1Yt+K/ML/e4w/CEiO+6kbsyqWayl4u7a8nHfLVYSxE3TkNeBU1i03wmXwccQ+Ti+aAxDEBBfZT86+fFKVrAi/nAH8/G+NafcC+RULaf+knFU4SpJcQ2Au+hR103FA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Aw/W2grF; arc=fail smtp.client-ip=52.101.84.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EZ8ipVjK3qM0ru+Yc3LXjc7vRrM7WPcmXusxxxb8q8n1Ii1E5f+y5Bx0vcbGnB4ct1YVwKGfc2DY0j2WcWP2AS8RreeJLhAwLgaQajajm848x3R8BrKP7PETEeDZEVqC99efwt2ER+OaVAu3wbdd+4BMXzQbtqQhP4y2gNZu27Kh6W+kSGa6xr5BQazVOHrWa9Yr4ecaZWmsEifadOD7Uzf0g91rG7A+bE4Rmai8ibtgsyG+DUAGa+2HHISVTXOFSfR3ZoPdGabeguEXYUcaDfzJIf9rAOV2lbfKOK8dPSkn2e6jrFYjDWA943D372qajpioS1/TGR8LwjJGLhQ2oQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hkjNMynCHTgrgIQQYMbMWRU9ktKLnigG83pOID98/DU=;
+ b=qhwk1DNJBqokRfTqxKoMhOWEV/x8qOoCwvmi95dmETwcs47Jn+eeK3q0XouhdqT8bhNy8/YD9kdyrM+0hlcRjl+tNjqB4SzrbECLSphIJ7ySHuRymvw1+/3ErlahdY78FSaz4JsALqYjkZ7frQUIOKZh6QWf2JQ1VGl4rL1qbm8T9SkZKlnZBXsvaBCD7lrxRQf4czHh0EjMjIGQ15vJtt5aO4yB3IfSJ1mQjQkFSawT7pGLThjUYyCLQe7p+9jOT56o48UxvDqJFFCMzJGGygcyN0+qtfu3Lyyvh/1JWo9BaqsmagvCQUTZ+wb2c3iSanAQRAu83XTw+A2nWBmsWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hkjNMynCHTgrgIQQYMbMWRU9ktKLnigG83pOID98/DU=;
+ b=Aw/W2grF92x58rhHoBT/dHdPLqDcMXv7kVqxn7XK5ItPk5e/OxsZrrO8fFujdlg1KQTZ1mxmcbFhyzSuhsWfKvEZFdwoVZEwx80wUbwB+CsLyz4ZsX8vIE98pv+jUCCBmw6u0ZwoC59rEPBNjVMCSd9M2nAe0EsRmBBMDv4Ugpwcrah9PhkTC62rRtIwlhlBpUsxSXJmBt/ek4LL3MrrYqQrxox1V6Zs5kMzBtcn78OpE6h5qWCLbiOnkPTSrSDB9jaLt8nPiF4yGVcKmLGAmaYkFkYvmFxsVKc2qBSVgQgU/cr6AGawkudXTe/ecZXMbgW7NMuq922u+8fXN7FGXQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB9PR04MB9627.eurprd04.prod.outlook.com (2603:10a6:10:30a::13)
+ by AM7PR04MB6933.eurprd04.prod.outlook.com (2603:10a6:20b:10d::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 09:15:17 +0000
+Received: from DB9PR04MB9627.eurprd04.prod.outlook.com
+ ([fe80::c5f7:3093:4ebd:1a2]) by DB9PR04MB9627.eurprd04.prod.outlook.com
+ ([fe80::c5f7:3093:4ebd:1a2%6]) with mapi id 15.20.9182.017; Fri, 10 Oct 2025
+ 09:15:17 +0000
+Date: Fri, 10 Oct 2025 17:14:52 +0800
+From: Rain Yang <jiyu.yang@oss.nxp.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: airlied@gmail.com, boris.brezillon@collabora.com,
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, liviu.dudau@arm.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	prabhu.sundararaj@nxp.com, simona@ffwll.ch, steven.price@arm.com,
+	tzimmermann@suse.de, xianzhong.li@nxp.com
+Subject: Re: [PATCH] drm/panthor: attach the driver's multiple power domains
+Message-ID: <aOjOjFVGb8MLjvYI@oss.nxp.com>
+References: <20251009140039.101189-1-jiyu.yang@oss.nxp.com>
+ <20251009160820.74f04ead@fedora>
+ <20251009160929.1b36b9ea@fedora>
+ <aOfPaQWIVzMaWlSl@oss.nxp.com>
+ <20251009172320.6a2cbf55@fedora>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009172320.6a2cbf55@fedora>
+X-ClientProxiedBy: SG2PR02CA0012.apcprd02.prod.outlook.com
+ (2603:1096:3:17::24) To DB9PR04MB9627.eurprd04.prod.outlook.com
+ (2603:10a6:10:30a::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9627:EE_|AM7PR04MB6933:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34d105d0-27d6-465a-70ea-08de07dd8705
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|7416014|376014|52116014|1800799024|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?q5wg0S2FVKqWWLprA27l64rg8FWucFv7DXUgxgUqoVr27842x1oEgEfvFiir?=
+ =?us-ascii?Q?5hOlF2Hqyv3tHrGqTkQxvtqT+ryMXWuDXs1/bYywr9qrmuhI0umk0FpAKgcs?=
+ =?us-ascii?Q?Huct2PMSAdgYSEpv+G4WZlusFRHdBiEYZY1qEvCcx8Qx4qPwO7V0MQfT5DWj?=
+ =?us-ascii?Q?DOhawj/TyeVfHhcU7f9tVRHehkY9P3NRX6rpnCF/3KemS9Ab+gkCW6PvGevu?=
+ =?us-ascii?Q?tGSH9cZbe6aTkmFSoTEg/GIqG+lJGSH5iklTc3EGIzBM8Dl+DBK/3UIk6zXg?=
+ =?us-ascii?Q?h+NnkvtT3f/TawEXcaB8F/oyQ59bzOJVzjnz5qhdkr894Zk8Z4iRTfdZV7Dc?=
+ =?us-ascii?Q?FrCZm6tSLai6OLeSKCDt++pzV0SerdgUES8Whbn42cqlbTKfm0+z+siqTkFR?=
+ =?us-ascii?Q?HQDIivZOW0lZxlTXpZ2nreyObuz1/pO+hTczVzH4qk00Hdra1wes4r5U4Km5?=
+ =?us-ascii?Q?ijexCfyWX5Xe82e9P8a0j/SBiZA9XmRqcLJZahQIL57/7qsRJrrrluFryE9z?=
+ =?us-ascii?Q?c2RBrPpGe10JA9aO6h2FQw3Hp4ByXcJZwZKBqU3DN9i/skJUBEhq62d0OclK?=
+ =?us-ascii?Q?V7HDQOCK4j3PYMckzZVk5NIjU6A7ayJ7DcrcqTzIT8uBImpoUF5qIh6jepc6?=
+ =?us-ascii?Q?uQWHFaWtBaY2s27D6kKhdMVaXGm33UGiYSNan3YFN1rp8R+mkO/cpEBpEA5x?=
+ =?us-ascii?Q?D1cQZgvT4S9MNCaPEdOV4QLcMppiQI3uXFQnCB/GedMDYEDxvbXsLXsHnd17?=
+ =?us-ascii?Q?9tzavb9AobsNbn8OiRIY73lp6F+go53pyGBGArxQSjh+NJBfhofgZzr7C497?=
+ =?us-ascii?Q?XqZXcr+M5mJbh1wpFv/8WqCyJiVV0Lvbd9M9EepZiMF6DXUp/zDOf/zkG+Ug?=
+ =?us-ascii?Q?wxuyInGV4BAE76w3AUOAyYFlx/aO504SMib8ZDcYcMZ/LZhi9TPBqqKUOEM9?=
+ =?us-ascii?Q?nhtqAgq5ZiYXPOemMN5xNtcjdRgqUVhtRb+zSPWsJG6fPUdTNiZ1G4vAbG6W?=
+ =?us-ascii?Q?U/cK1NvDWlL1jqH5WuGssE0joXEQrYv87H2Y0j6G0Fvxm2OadxxUIila51Zu?=
+ =?us-ascii?Q?QV47w5qEgUtGydtWek6ynkt79xIXPBOGtoeHZsAOgYSLObPlFFfIye8bC6bl?=
+ =?us-ascii?Q?g384iCv7VL3wZ6eQeJh4GsiMcFchOQ9XGHzARoGUTIeDP3s/ZnJBVgjQEWXz?=
+ =?us-ascii?Q?zOy9kXa/n671lgIUMsxpEzT3yjd7xhFA2FbUNcEv0aQ9cz3o3J1zf4akoQ7m?=
+ =?us-ascii?Q?0Sq0WeXoGntWaRFisMP556xR91tFZ/PZF8gdKYVLAqDLG/5fbLfZd6o9dyHv?=
+ =?us-ascii?Q?RPTqZaVKKfFgac989f3XYfZ9hXGCz5chFHC3+A2Jarh0L32WtgedgRh7UcEf?=
+ =?us-ascii?Q?kOYzQOLGhjDSOjkGoQQeeNCJLqhnHSXecFKw5Yj//u592Yu2NEbaVLEB3GGM?=
+ =?us-ascii?Q?zUcM+eyGVnKq2iFh0LFUhiXSLhzdk8+LEGmlmL2E8FtFkTqz84cFuC7oAymS?=
+ =?us-ascii?Q?GWsXXLcAoPfN8Iou/xb11D2EwBu4TVQalSsG?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9627.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(7416014)(376014)(52116014)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MQfVVZKZeMkesXFjuZufSsKx1g1m4xY02kqm+izT6FMTdgunESoQlD0DEdDf?=
+ =?us-ascii?Q?MfRI0i9AxAednZkf5Av/6qHapJLESoDh3CD4WCUOwxOQMsOHrv6Sor3p8kZd?=
+ =?us-ascii?Q?LWArJkCbWhmo56+YiKa8zKC9g3GShnuc//GNgAQbn0Yv6JwNdis/Sm6TVdOv?=
+ =?us-ascii?Q?QVTymviKFT6igBlCsxG/xP6DP8uV9GtWCr58a3LQydOjdN0mRsYfDsx9WA/U?=
+ =?us-ascii?Q?MVkzI9t9JCEJ7VK3hG3glCYGjD2ehb6JVqTM5TdSTiVEZV9MsDy0fSioNHdv?=
+ =?us-ascii?Q?Q+KBuLAyqD4KVeLxFYgEC8fySqUDvqVGLpngZgb8CDDgaifk5dtXCu9VRNso?=
+ =?us-ascii?Q?1Y+HZH6uDnXe0jOXnIpI19FMiLcMfvHiUPxl49LApyqltd4t2rhcrSDwGhvc?=
+ =?us-ascii?Q?nDmnuSL+UiyHh0LNvkq9ow8JYQ9reN79UXqWvnFR8eKl2WgKVU55cHWYxUXv?=
+ =?us-ascii?Q?aFtINA08QEBllV4AZhFc3Zw3ANFxwUh1nuAvtJu1Q86FjtBGsXqdPdeLE9ln?=
+ =?us-ascii?Q?Xx5zbIvP5JC8cVSwcSyYfshgqQ6GVBbhyo2Na131HwBx4yxNK4Au7CmietO7?=
+ =?us-ascii?Q?hopZ/zZz95ttXKKafJ0qrrl7B7UD43evRes2uCMKFGIhfC5EHMCAZMpa4NRV?=
+ =?us-ascii?Q?JIZpPqsE79dQtcoQBZxu2XnsTMsKwCwgAl34lapH2iTzf+0RWCG1egvUEduO?=
+ =?us-ascii?Q?LGRcFawxm4qWYRayjM9He7HNHmC6CSHZUM5pw+i4+MvjxMH2c0L/hShsEa5f?=
+ =?us-ascii?Q?LSzn1FaHL2diYQMSQkY3gXneKXn9eoPzOrvsHbfb35cSJwk5pYUR/q72gTkB?=
+ =?us-ascii?Q?CeNwtWMvPqGzUguuy9pwpzVean3vEexRHrJKaMtCKH+jSl++c7Y8ba05BG5S?=
+ =?us-ascii?Q?TDlekhMvW9vDAtEhfKIjBkFABybNowjn47ML06kfYT8XNM8SwkgvVFJ3kctb?=
+ =?us-ascii?Q?r24Cv4NIoyFlaWpO7uCDnWH5ULD5Ds0Iu2gVgNcpcA9pOtRcG9Nv5+sOWQXh?=
+ =?us-ascii?Q?pP+60p+u2DvuRDkDbI5xEaP8lLCblRCIFn24z2BJQdy6ewI5o7A56eSdIjdK?=
+ =?us-ascii?Q?VHVqGb0B1J4Y48k6VWryufByPujH4XpVnqEeYnI67OPTIU/7FlamQ9eLBCnA?=
+ =?us-ascii?Q?IX7ny7cDoW0oXFLBxjONqjDTrnqJ6FZ2RFNQkjdq+jlhljBoHBKXGhlbFrBR?=
+ =?us-ascii?Q?1fARidGcV9gUQc3RH4ZZHQaakrhcA+mFJCzQB9iQ3VfI5/RMvhJVyEQ/UXr4?=
+ =?us-ascii?Q?XDvnSA+X99VZ6BOgHtDUGHSSqBJnylS9IFGV9WcW2eylLnUBF529g4fvrKAg?=
+ =?us-ascii?Q?1eCfkVion7QyteB0UINY/eF1tmVXjfFKq2ExNpLKTWlgsfbISRtOrBEEThGU?=
+ =?us-ascii?Q?rK84wOmh8zLdY2lX9lJUTd4uoi/bbVJI5jysBsQvtZvTge8x0Spj0YmcEoKe?=
+ =?us-ascii?Q?0rUzj5cwiuhe1lZsE5ddN061J+DnW3UKZf6imlxswJWU/pxUSKQ8l1aKnGsC?=
+ =?us-ascii?Q?nPkFRLaZLvLQr/OSB7OrBAXhrkYxjPxXqIkbh+A4vkLvIxY2FMxFTSM7bs+B?=
+ =?us-ascii?Q?3wONilc/ouh6c1XD9YT87so3ll+SLHET8GKXR++E?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34d105d0-27d6-465a-70ea-08de07dd8705
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9627.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 09:15:17.2603
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QEPoLcCl7NPBXBTB61UCu92vhgVWFSj7QtnzlXtJAWHviqqHgShJjhtZGJYFik9YAFptG7UA+RDCzBeYivv5gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6933
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Thu, Oct 09, 2025 at 05:23:20PM +0200, Boris Brezillon wrote:
+>On Thu, 9 Oct 2025 23:06:17 +0800
+>Rain Yang <jiyu.yang@oss.nxp.com> wrote:
+>
+>> On Thu, Oct 09, 2025 at 04:09:29PM +0200, Boris Brezillon wrote:
+>> >On Thu, 9 Oct 2025 16:08:20 +0200
+>> >Boris Brezillon <boris.brezillon@collabora.com> wrote:
+>> >  
+>> >> On Thu,  9 Oct 2025 22:00:39 +0800
+>> >> Rain Yang <jiyu.yang@oss.nxp.com> wrote:
+>> >>   
+>> >> > From: Rain Yang <jiyu.yang@nxp.com>
+>> >> > 
+>> >> > Some platforms, such as i.MX95, utilize multiple power domains that need
+>> >> > to be attached explicitly. This patch ensures that the driver properly
+>> >> > attaches all available power domains using devm_pm_domain_attach_list().
+>> >> > 
+>> >> > Signed-off-by: Prabhu Sundararaj <prabhu.sundararaj@nxp.com>
+>> >> > Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
+>> >> > ---
+>> >> >  drivers/gpu/drm/panthor/panthor_device.c | 6 ++++++
+>> >> >  drivers/gpu/drm/panthor/panthor_device.h | 2 ++
+>> >> >  2 files changed, 8 insertions(+)
+>> >> > 
+>> >> > diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+>> >> > index f0b2da5b2b96..6f40d053b16c 100644
+>> >> > --- a/drivers/gpu/drm/panthor/panthor_device.c
+>> >> > +++ b/drivers/gpu/drm/panthor/panthor_device.c
+>> >> > @@ -218,6 +218,12 @@ int panthor_device_init(struct panthor_device *ptdev)
+>> >> >  	if (ret)
+>> >> >  		return ret;
+>> >> >  
+>> >> > +	ret = devm_pm_domain_attach_list(ptdev->base.dev, NULL, &ptdev->pd_list);
+>> >> > +	if (ret < 0) {
+>> >> > +		drm_err(&ptdev->base, "attach power domains failed, ret=%d", ret);
+>> >> > +		return ret;
+>> >> > +	}
+>> >> > +
+>> >> >  	ret = panthor_devfreq_init(ptdev);
+>> >> >  	if (ret)
+>> >> >  		return ret;
+>> >> > diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+>> >> > index 4fc7cf2aeed5..5ecb541ec67b 100644
+>> >> > --- a/drivers/gpu/drm/panthor/panthor_device.h
+>> >> > +++ b/drivers/gpu/drm/panthor/panthor_device.h
+>> >> > @@ -196,6 +196,8 @@ struct panthor_device {
+>> >> >  		/** @recovery_needed: True when a resume attempt failed. */
+>> >> >  		atomic_t recovery_needed;
+>> >> >  	} pm;    
+>> >> 
+>> >> Add a blank line here.
+>> >>   
+>> >> > +	/** @pm: Power management related data. */  
+>> >
+>> >Also, the comment is wrong, and it would probably make sense to move
+>> >that to the pm sub-struct since this is PM related.  
+>> thanks, will fix it next version.
+>> >  
+>> >> > +	struct dev_pm_domain_list  *pd_list;
+>> >> >      
+>> >> 
+>> >> Do we even need to keep the pd_list in panthor_device if we don't do
+>> >> anything with it?  
+>> The second power domain is typically used for frequency scaling. The driver
+>> works fine when there's only one single power domain. That said, I will update
+>> the implementation to attach multiple power domains only when the domain count
+>> is greater than one.
+>
+>That's not what I meant. What I mean is that the
+>panthor_device::pd_list is never used, because the extra power domains
+>get attached to the struct device directly, and the PM core
+>automatically enables all PDs on resume and disable them on suspend.
+>Because it's a devm_ function, you don't need it to detach the pd_list
+>at ::remove() time either. TLDR; that means you can pass
+>devm_pm_domain_attach_list() a local pd_list instead of ptdev->pd_list
+>and you can thus drop panthor_device::pd_list altogether, I think.
+>
+>If you intend to use the pd_list for manual PD control in panthor in a
+>follow-up patchset, this should be mentioned in the commit message.
+thanks for your suggestion, pd_list will be allocated by devm_kmalloc.
 
-Remove followings helpers that is now unused:
-
-- blkg_conf_open_bdev()
-- blkg_conf_open_bdev_frozen()
-- blkg_conf_prep()
-- blkg_conf_exit()
-- blkg_conf_exit_frozen()
-
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/blk-cgroup.c | 224 +--------------------------------------------
- block/blk-cgroup.h |   6 --
- 2 files changed, 1 insertion(+), 229 deletions(-)
-
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 4b7324c1d0d5..d93654334854 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -729,8 +729,7 @@ EXPORT_SYMBOL_GPL(__blkg_prfill_u64);
-  * @input: input string
-  *
-  * Initialize @ctx which can be used to parse blkg config input string @input.
-- * Once initialized, @ctx can be used with blkg_conf_open_bdev() and
-- * blkg_conf_prep(), and must be cleaned up with blkg_conf_exit().
-+ * Once initialized, @ctx can be used with blkg_conf_start().
-  */
- void blkg_conf_init(struct blkg_conf_ctx *ctx, char *input)
- {
-@@ -738,92 +737,6 @@ void blkg_conf_init(struct blkg_conf_ctx *ctx, char *input)
- }
- EXPORT_SYMBOL_GPL(blkg_conf_init);
- 
--/**
-- * blkg_conf_open_bdev - parse and open bdev for per-blkg config update
-- * @ctx: blkg_conf_ctx initialized with blkg_conf_init()
-- *
-- * Parse the device node prefix part, MAJ:MIN, of per-blkg config update from
-- * @ctx->input and get and store the matching bdev in @ctx->bdev. @ctx->body is
-- * set to point past the device node prefix.
-- *
-- * This function may be called multiple times on @ctx and the extra calls become
-- * NOOPs. blkg_conf_prep() implicitly calls this function. Use this function
-- * explicitly if bdev access is needed without resolving the blkcg / policy part
-- * of @ctx->input. Returns -errno on error.
-- */
--int blkg_conf_open_bdev(struct blkg_conf_ctx *ctx)
--{
--	char *input = ctx->input;
--	unsigned int major, minor;
--	struct block_device *bdev;
--	int key_len;
--
--	if (ctx->bdev)
--		return 0;
--
--	if (sscanf(input, "%u:%u%n", &major, &minor, &key_len) != 2)
--		return -EINVAL;
--
--	input += key_len;
--	if (!isspace(*input))
--		return -EINVAL;
--	input = skip_spaces(input);
--
--	bdev = blkdev_get_no_open(MKDEV(major, minor), false);
--	if (!bdev)
--		return -ENODEV;
--	if (bdev_is_partition(bdev)) {
--		blkdev_put_no_open(bdev);
--		return -ENODEV;
--	}
--
--	mutex_lock(&bdev->bd_queue->rq_qos_mutex);
--	if (!disk_live(bdev->bd_disk)) {
--		blkdev_put_no_open(bdev);
--		mutex_unlock(&bdev->bd_queue->rq_qos_mutex);
--		return -ENODEV;
--	}
--
--	ctx->body = input;
--	ctx->bdev = bdev;
--	return 0;
--}
--/*
-- * Similar to blkg_conf_open_bdev, but additionally freezes the queue,
-- * acquires q->elevator_lock, and ensures the correct locking order
-- * between q->elevator_lock and q->rq_qos_mutex.
-- *
-- * This function returns negative error on failure. On success it returns
-- * memflags which must be saved and later passed to blkg_conf_exit_frozen
-- * for restoring the memalloc scope.
-- */
--unsigned long __must_check blkg_conf_open_bdev_frozen(struct blkg_conf_ctx *ctx)
--{
--	int ret;
--	unsigned long memflags;
--
--	if (ctx->bdev)
--		return -EINVAL;
--
--	ret = blkg_conf_open_bdev(ctx);
--	if (ret < 0)
--		return ret;
--	/*
--	 * At this point, we haven’t started protecting anything related to QoS,
--	 * so we release q->rq_qos_mutex here, which was first acquired in blkg_
--	 * conf_open_bdev. Later, we re-acquire q->rq_qos_mutex after freezing
--	 * the queue and acquiring q->elevator_lock to maintain the correct
--	 * locking order.
--	 */
--	mutex_unlock(&ctx->bdev->bd_queue->rq_qos_mutex);
--
--	memflags = blk_mq_freeze_queue(ctx->bdev->bd_queue);
--	mutex_lock(&ctx->bdev->bd_queue->elevator_lock);
--	mutex_lock(&ctx->bdev->bd_queue->rq_qos_mutex);
--
--	return memflags;
--}
--
- void blkg_conf_end(struct blkg_conf_ctx *ctx)
- {
- 	struct request_queue *q = bdev_get_queue(ctx->bdev);
-@@ -885,141 +798,6 @@ int blkg_conf_start(struct blkcg *blkcg, struct blkg_conf_ctx *ctx)
- }
- EXPORT_SYMBOL_GPL(blkg_conf_start);
- 
--/**
-- * blkg_conf_prep - parse and prepare for per-blkg config update
-- * @blkcg: target block cgroup
-- * @pol: target policy
-- * @ctx: blkg_conf_ctx initialized with blkg_conf_init()
-- *
-- * Parse per-blkg config update from @ctx->input and initialize @ctx
-- * accordingly. On success, @ctx->body points to the part of @ctx->input
-- * following MAJ:MIN, @ctx->bdev points to the target block device and
-- * @ctx->blkg to the blkg being configured.
-- *
-- * blkg_conf_open_bdev() may be called on @ctx beforehand. On success, this
-- * function returns with queue lock held and must be followed by
-- * blkg_conf_exit().
-- */
--int blkg_conf_prep(struct blkcg *blkcg, const struct blkcg_policy *pol,
--		   struct blkg_conf_ctx *ctx)
--	__acquires(&bdev->bd_queue->blkcg_mutex)
--{
--	struct gendisk *disk;
--	struct request_queue *q;
--	struct blkcg_gq *blkg;
--	int ret;
--
--	ret = blkg_conf_open_bdev(ctx);
--	if (ret)
--		return ret;
--
--	disk = ctx->bdev->bd_disk;
--	q = disk->queue;
--
--	/* Prevent concurrent with blkcg_deactivate_policy() */
--	mutex_lock(&q->blkcg_mutex);
--
--	if (!blkcg_policy_enabled(q, pol)) {
--		ret = -EOPNOTSUPP;
--		goto fail_unlock;
--	}
--
--	blkg = blkg_lookup(blkcg, q);
--	if (blkg)
--		goto success;
--
--	/*
--	 * Create blkgs walking down from blkcg_root to @blkcg, so that all
--	 * non-root blkgs have access to their parents.
--	 */
--	while (true) {
--		struct blkcg *pos = blkcg;
--		struct blkcg *parent;
--
--		parent = blkcg_parent(blkcg);
--		while (parent && !blkg_lookup(parent, q)) {
--			pos = parent;
--			parent = blkcg_parent(parent);
--		}
--
--		if (!blkcg_policy_enabled(q, pol)) {
--			ret = -EOPNOTSUPP;
--			goto fail_unlock;
--		}
--
--		blkg = blkg_lookup(pos, q);
--		if (!blkg) {
--			blkg = blkg_create(pos, disk);
--			if (IS_ERR(blkg)) {
--				ret = PTR_ERR(blkg);
--				goto fail_unlock;
--			}
--		}
--
--		if (pos == blkcg)
--			goto success;
--	}
--success:
--	ctx->blkg = blkg;
--	return 0;
--
--fail_unlock:
--	mutex_unlock(&q->blkcg_mutex);
--	/*
--	 * If queue was bypassing, we should retry.  Do so after a
--	 * short msleep().  It isn't strictly necessary but queue
--	 * can be bypassing for some time and it's always nice to
--	 * avoid busy looping.
--	 */
--	if (ret == -EBUSY) {
--		msleep(10);
--		ret = restart_syscall();
--	}
--	return ret;
--}
--EXPORT_SYMBOL_GPL(blkg_conf_prep);
--
--/**
-- * blkg_conf_exit - clean up per-blkg config update
-- * @ctx: blkg_conf_ctx initialized with blkg_conf_init()
-- *
-- * Clean up after per-blkg config update. This function must be called on all
-- * blkg_conf_ctx's initialized with blkg_conf_init().
-- */
--void blkg_conf_exit(struct blkg_conf_ctx *ctx)
--	__releases(&ctx->bdev->bd_queue->blkcg_mutex)
--	__releases(&ctx->bdev->bd_queue->rq_qos_mutex)
--{
--	if (ctx->blkg) {
--		mutex_unlock(&bdev_get_queue(ctx->bdev)->blkcg_mutex);
--		ctx->blkg = NULL;
--	}
--
--	if (ctx->bdev) {
--		mutex_unlock(&ctx->bdev->bd_queue->rq_qos_mutex);
--		blkdev_put_no_open(ctx->bdev);
--		ctx->body = NULL;
--		ctx->bdev = NULL;
--	}
--}
--EXPORT_SYMBOL_GPL(blkg_conf_exit);
--
--/*
-- * Similar to blkg_conf_exit, but also unfreezes the queue and releases
-- * q->elevator_lock. Should be used when blkg_conf_open_bdev_frozen
-- * is used to open the bdev.
-- */
--void blkg_conf_exit_frozen(struct blkg_conf_ctx *ctx, unsigned long memflags)
--{
--	if (ctx->bdev) {
--		struct request_queue *q = ctx->bdev->bd_queue;
--
--		blkg_conf_exit(ctx);
--		mutex_unlock(&q->elevator_lock);
--		blk_mq_unfreeze_queue(q, memflags);
--	}
--}
--
- static void blkg_iostat_add(struct blkg_iostat *dst, struct blkg_iostat *src)
- {
- 	int i;
-diff --git a/block/blk-cgroup.h b/block/blk-cgroup.h
-index c3d16d52c275..aec801255821 100644
---- a/block/blk-cgroup.h
-+++ b/block/blk-cgroup.h
-@@ -221,12 +221,6 @@ struct blkg_conf_ctx {
- };
- 
- void blkg_conf_init(struct blkg_conf_ctx *ctx, char *input);
--int blkg_conf_open_bdev(struct blkg_conf_ctx *ctx);
--unsigned long blkg_conf_open_bdev_frozen(struct blkg_conf_ctx *ctx);
--int blkg_conf_prep(struct blkcg *blkcg, const struct blkcg_policy *pol,
--		   struct blkg_conf_ctx *ctx);
--void blkg_conf_exit(struct blkg_conf_ctx *ctx);
--void blkg_conf_exit_frozen(struct blkg_conf_ctx *ctx, unsigned long memflags);
- void blkg_conf_end(struct blkg_conf_ctx *ctx);
- int blkg_conf_start(struct blkcg *blkcg, struct blkg_conf_ctx *ctx);
- 
--- 
-2.51.0
-
+I have not found a general solution to modify the frequency via SCMI perf
+and OPP framework except the manual PD control, I'd appreciate it if
+there is any idea.
+>
+>> >>   
+>> >> >  	/** @profile_mask: User-set profiling flags for job accounting. */
+>> >> >  	u32 profile_mask;    
+>> >>   
+>> >  
+>
 
