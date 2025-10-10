@@ -1,180 +1,140 @@
-Return-Path: <linux-kernel+bounces-848499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DACBCDE22
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6DBBCDE13
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E466D50008F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:51:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB601886DBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC862EDD76;
-	Fri, 10 Oct 2025 15:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132F22609D9;
+	Fri, 10 Oct 2025 15:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCdjm0MC"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AOuRFJMH"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D38261B8C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364EC261B8C
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760111483; cv=none; b=qnWVUwh8D0QdP/hHqkQ5B8RmUuWgo/8UvW4Gqqghp/8YO3oTKtxCeBM5L8A5EH9oXW9X/zwQdFCTk/D/7S1IbOPd38beHLwGVKf/zZwGaqDMC+ToeqNDpiPCa1nu97TXBZPXx4k+kGkS5twYusi6UIScg4NUF3mlsVZZV/lbyZo=
+	t=1760111494; cv=none; b=IlZHVVdSKhAbMs79J8RFaA1wPn70xXxe+eHnX6JnIgu71035Mar4DdlHxGG7pvsnmc/eMh2tRKHyiJQ96q1WRh2r5zZVaq4hxOKSNEjq6Wx8yS7vGnGscy4VxdbQ3t7CRH7a/Hm03m9EYhhAwYJWZYbfmHhTNHgrxTf0lf/b7c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760111483; c=relaxed/simple;
-	bh=TfNKgAwty2Qn00bV61R/qulEyPoJyzCS7e1xQ1v/Tp0=;
+	s=arc-20240116; t=1760111494; c=relaxed/simple;
+	bh=XDEDQFIBQ5A8m0eHH6XygH67a3FLRj7kfzfNZO/Y+ks=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YcH/EHHezdJ+DhP+2QdVCT4sm5nYbvep79rEzBqB2XV+hZdGoBEB5uwos1echYmQ3u+2e3eB9vYPOiv0ohBydMTqe3KCPqDK7E4PxbgOswpOrTL12IE6+4iUREP8WV8NLkSkKoLOa+pjek5oT3UjFtkcEBIBi0PPzc3dGRwMNH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lCdjm0MC; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3ee18913c0so351794766b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:51:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=luhAGutpJLXwDCg/peeaUiYK+PiwuqVdWUKVvN1xdNIQ/VKAMzfZmbLKXXx+vSRJB+GaJTt1o2782YfAJMxRieARm6GfYQrPttEp6xoFjYpWN3GncMP6CjWLxPyYO0q0jkI8gJYGZs81BRAeUwtHnOfwbtdr2VwzucVXJ+8QNNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AOuRFJMH; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso3769362a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760111479; x=1760716279; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UhH9vWsw8gK9Ns25kQJ5DC4FK/KR5dBSJxG+yxQ1Djk=;
-        b=lCdjm0MCSicT5ohXLnU+1eU4uosnNbe3+T930M/f4sRMs2RHwMBqyjq3JzzRNMWFR1
-         YHE3JeLz3P9jHjdJDIFZLsiScLvsce9q/63KnWKHkCfk7q5TIcB+/L0eJj3rk/gImSbx
-         pKFVSaAyaCSCADkovW4YdjlSMjy22Tt0ZL2XfXyVSOY4PrbXsWupmRfq2Eoqvwnm5AEq
-         AVEISQm1IMYjazjS3gaooCgRRgSqUcG5PV3Ou2x4Y4oDa6jJz6vjRyY22WGBLbUnZpvO
-         4SH17Y/s+f7LQ9a066xc0BoGU/eYBsxJGnRWscpcBKcpH/kLcPftsFMSZ2trN3dHjKzi
-         oPvA==
+        d=linux-foundation.org; s=google; t=1760111490; x=1760716290; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hMHZynW42pdW0SGBO2CIy8IPA/iqePnhTXX2tj/DjpU=;
+        b=AOuRFJMHU6iWvOEDTDSTlrtkIUnbwcS6UimhicjdEJz+O6PQ2P4IbASJv0Sl33HqSa
+         8m1T0xEoBYIqDBOIwmUcioll3DspmXtS5xo/ecQ236WNqSuqDL3Z3hTEKBTymZpvdDQy
+         UZNolJLkHVoUl5n5tI9onDA+5VIv1uTiF8T50=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760111479; x=1760716279;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UhH9vWsw8gK9Ns25kQJ5DC4FK/KR5dBSJxG+yxQ1Djk=;
-        b=nYAyOGFSTOCmKyAWMr73cWf9w4xrE6dAuR3FXsSo+RquZZtVw2/GBxSY+gcrsBDNdH
-         A/n9dC1hE+emPGh1iHmGhx+Dqz3LCC069SKDkHAv5nglu6Qj+UJhnZqvIJ6NPclkoU+t
-         h195/HzUYkRLJEBJqEgWqxGA6HHEkKVGvhQfrlqVB16Lm6hoE4hLhkh/BLmVlZLTP8iV
-         hiR1/Gs83dSeCw80Rl2YVagaq34E0iHrdm9mkqIpujiCPfyVxtybd3cX2pOfR0sAw07e
-         sdkuLtS1v+AJRKb/lru8mRvqb+uTKwofHT9+CyzwI5C/w1ZLTvEsYHvHMhlMATfNKXXs
-         QCPA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1kTdx6PB71/ORJfvnT1QovWJm6OCEq5MarQhWRp/ySqhz60h6Bo7djcUdSdCPsAD3cXh+ojgGqEBngS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDQTlQZ4nLxRzXwDOOF39HkgUZhnftg5zngFs/SYaG9wV3lHy+
-	X4oujILoKsJpjtekdHVYatAqhDrjmxCLZxmrW67/SiFswQhDGl804HCFdPpvith1sqrvnohph42
-	TEjPckMNDbZfYrKIHU4pc7KVYGvWm6Ps=
-X-Gm-Gg: ASbGncsaYSlMXf7T+ifMRosPZklpye5JwtFypWI9MAJMIJVAY0Nwoea4pSDKwj1eAzV
-	24MOP2ihCptD/qjYZpBP7V5QToCqJIwmj82vggGZUYINduhTVLYHKz94eZR/j44B9/al9TY7Nv5
-	FoV1qlJrOnrFqAR83EgizVQ4g2m1ug0QViPEMzagX4UzS4AenUUZP/IhlGSziiCcSoK/2HP0PBU
-	fNiN+7fHVO1O0/qEks7F8KeqWaiiRbzHQvwCUuH+RLv/8DgvGfLkP8p3XkNuamUhAw5
-X-Google-Smtp-Source: AGHT+IE+fpwB+bY36jZhuFvtAiR+1ExrpMDWYUETjZUPwkwAWYTKotWAPrtOsHK68GTsCIaCtcLyUWD8+YiMIbEIYPI=
-X-Received: by 2002:a17:907:3daa:b0:b4a:d0cf:8748 with SMTP id
- a640c23a62f3a-b50a9a6d769mr1349543366b.13.1760111478957; Fri, 10 Oct 2025
- 08:51:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760111490; x=1760716290;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hMHZynW42pdW0SGBO2CIy8IPA/iqePnhTXX2tj/DjpU=;
+        b=mvFksg+CCrfNOqQ9j1yxsGzHplPenvUMXUQHbWRgpieP45pebkdWhAdVfcpqsQyKKq
+         X5upX8B1ECJLdesMOy3QifZQQpOoQWDvcbchCcImIK9rBPKPSTpe23KigcK1G/XrnuNF
+         hWkQS2dFkUgg9sI7xnVctgzUR3kQY7/c5v1ee1K4oZnD1momu91fom2mPhKKmWnK5KPp
+         8KMJQjMqLF+6Ys8QDhBEkNu92Jfoat8hrwIbfqiGF79uXdUef7k7UqQMBfMj2D4Jf0L3
+         0xOr0HDxkcVMLKxRxkk3UEH24HUsQm4Fe7LTM0F2OdFXt2mJPFzCGR0pFNTCp97NX9iV
+         lA6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX2QznV5RDpQbWtze0VGKOgMJFs1jTKBY1KejgHTvF2gq9/hJcfQ7tQWrA922r6ipygq33SJnQ9N3UbEAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsXDy1uCLQZZQAxmAnkavYTHYtYgR1JmTVqgMB9JDsi7DRAxDi
+	0pccY654sS950KQQIRnDGEEPQVnbO0OCghlztMbrNkuTWh5KFeub2GgFdXtKUCg7XHAx/cqkRnL
+	BcPBKTv0=
+X-Gm-Gg: ASbGncvNqelWEfWsVxpe2Yg7DUoO0ljq2j5DY5x6D7dPlHOVI6XO4eq1q32LpVx2VUZ
+	qqxgqn4znW/C76Oq8dTsPcHdPE8cjmh1E+No64EYIaZNO/nbBF7wOt/bimJnURS8N4ILEwmWoIu
+	7f1SapHQ9M2v89MYZGEvyxepbWLhu7v2x46GwUriYccdozIVZn+rMUGz5Nv+gwuYPO2OayupYLn
+	I391KxnBd0SKjrASMAhbZlfsn7XQt347O1WugUN4mcMgs3elGbIPgat6fOfme83NwSVfkDJ/PXE
+	2zqCBAv7KAeo0QW0/FGRFiHpKSBeBjXPMiJxeIpOGdNSpF3uwsAMdun8UBJ9605Y2fgf1YpxqPr
+	/udWrQ6Bo7Ig8awWhFFtD7dtyGpG+Uqghz+PYveZAxtMavshRFGtWp3FhXC2QnSfuiIM2ChC8Wc
+	ZtpX2+z1rHwun9S5Re5V71NlmoNg==
+X-Google-Smtp-Source: AGHT+IHLaslcAYNJ0QNe/GQbHEJ/a3zY+FcQlfGyJG4XodmbG5absTHA7UQCrRjn/ynuXLoz8zwbHA==
+X-Received: by 2002:a05:6402:358c:b0:639:e050:6794 with SMTP id 4fb4d7f45d1cf-639e0506bd2mr8588032a12.11.1760111490323;
+        Fri, 10 Oct 2025 08:51:30 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5235e674sm2542916a12.2.2025.10.10.08.51.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 08:51:27 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so3243861a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:51:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/4pue7DHO1pbE0+6XxWDsgOs7pzijM/2qMpBgB8W8bcqUrsjTxXbqawxf5ro5L3GQs8sd48soTfo9bX8=@vger.kernel.org
+X-Received: by 2002:a05:6402:42c3:b0:639:e7f1:92ef with SMTP id
+ 4fb4d7f45d1cf-639e7f195dbmr9233647a12.19.1760111486075; Fri, 10 Oct 2025
+ 08:51:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009075929.1203950-1-mjguzik@gmail.com> <20251009075929.1203950-4-mjguzik@gmail.com>
- <h2etb4acmmlmcvvfyh2zbwgy7bd4xeuqqyciqjw6k5zd3thmzq@vwhxpsoauli7>
-In-Reply-To: <h2etb4acmmlmcvvfyh2zbwgy7bd4xeuqqyciqjw6k5zd3thmzq@vwhxpsoauli7>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 10 Oct 2025 17:51:06 +0200
-X-Gm-Features: AS18NWAdR8mn7h75Ldgul-s1iHW_YrjMNEOV1VnI-B-ScP1aM5_q24GjzqXvcko
-Message-ID: <CAGudoHFJxFOj=cbxcjmMtkzXCagg4vgfmexTG1e_Fo1M=QXt-g@mail.gmail.com>
-Subject: Re: [PATCH v7 03/14] fs: provide accessors for ->i_state
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
+References: <aOibAOKu_lEsSlC8@kernel.org>
+In-Reply-To: <aOibAOKu_lEsSlC8@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 10 Oct 2025 08:51:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whUUZpENHKMrrVQwqfBgP9Lm=SxW+a3WmoxZR3JObdrUA@mail.gmail.com>
+X-Gm-Features: AS18NWDVmzykydf7s6nuNWo79bD8III-oyk_dOxNA4c_F8d-omvq9FosXPkL62U
+Message-ID: <CAHk-=whUUZpENHKMrrVQwqfBgP9Lm=SxW+a3WmoxZR3JObdrUA@mail.gmail.com>
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18-2
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, 
+	keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 4:44=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Thu, 9 Oct 2025 at 22:35, Jarkko Sakkinen <jarkko@kernel.org> wrote:
 >
-> On Thu 09-10-25 09:59:17, Mateusz Guzik wrote:
-> > +static inline void inode_state_set_raw(struct inode *inode,
-> > +                                    enum inode_state_flags_enum flags)
-> > +{
-> > +     WRITE_ONCE(inode->i_state, inode->i_state | flags);
-> > +}
->
-> I think this shouldn't really exist as it is dangerous to use and if we
-> deal with XFS, nobody will actually need this function.
->
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v6.18-2
 
-That's not strictly true, unless you mean code outside of fs/inode.c
+So I've pulled this, but I'm still unhappy about the explanation.
 
-First, something is still needed to clear out the state in
-inode_init_always_gfp().
+You tried to explain a one-line single-character change in that pull
+request, and even in that explanation you spent most effort on
+dismissing other peoples concerns.
 
-Afterwards there are few spots which further modify it without the
-spinlock held (for example see insert_inode_locked4()).
+That one-liner would have been - and is - sufficiently explained by
+"it performs badly and breaks some configurations". There's absolutely
+no reason to then go on to describe how *you* don't care about those
+configurations.
 
-My take on the situation is that the current I_NEW et al handling is
-crap and the inode hash api is also crap.
+But lookie here:
 
-For starters freshly allocated inodes should not be starting with 0,
-but with I_NEW.
+ 8 files changed, 137 insertions(+), 199 deletions(-)
 
-I can agree after the dust settles there should be no _raw thing for
-filesystems to use, but getting there is beyond the scope of this
-patchset.
+that's the actual meat of the pull request, and it gets not a peep of
+commentary.
 
-> > +static inline void inode_state_set(struct inode *inode,
-> > +                                enum inode_state_flags_enum flags)
-> > +{
-> > +     lockdep_assert_held(&inode->i_lock);
-> > +     inode_state_set_raw(inode, flags);
-> > +}
-> > +
-> > +static inline void inode_state_clear_raw(struct inode *inode,
-> > +                                      enum inode_state_flags_enum flag=
-s)
-> > +{
-> > +     WRITE_ONCE(inode->i_state, inode->i_state & ~flags);
-> > +}
->
-> Ditto here.
->
-> > +static inline void inode_state_clear(struct inode *inode,
-> > +                                  enum inode_state_flags_enum flags)
-> > +{
-> > +     lockdep_assert_held(&inode->i_lock);
-> > +     inode_state_clear_raw(inode, flags);
-> > +}
-> > +
-> > +static inline void inode_state_assign_raw(struct inode *inode,
-> > +                                       enum inode_state_flags_enum fla=
-gs)
-> > +{
-> > +     WRITE_ONCE(inode->i_state, flags);
-> > +}
-> > +
-> > +static inline void inode_state_assign(struct inode *inode,
-> > +                                   enum inode_state_flags_enum flags)
-> > +{
-> > +     lockdep_assert_held(&inode->i_lock);
-> > +     inode_state_assign_raw(inode, flags);
-> > +}
-> > +
-> > +static inline void inode_state_replace_raw(struct inode *inode,
-> > +                                        enum inode_state_flags_enum cl=
-earflags,
-> > +                                        enum inode_state_flags_enum se=
-tflags)
-> > +{
-> > +     enum inode_state_flags_enum flags;
-> > +     flags =3D inode->i_state;
-> > +     flags &=3D ~clearflags;
-> > +     flags |=3D setflags;
-> > +     inode_state_assign_raw(inode, flags);
-> > +}
->
-> Nobody needs this so I'd just provide inode_state_replace().
->
+I'd also like to point out that Microsoft spent *years* trying to do
+the "we require certain typical TPM setups", and people complained
+about their idiocy.
 
-The unused _raw variants are provided for consistency for the time
-being. I do expect some of them to die later.
+For all I know, they still push that crap.
+
+I would certainly are *NOT* that stupid, and we are not going down that path.
+
+So when it comes to TPM, the rule is not "typical cases work".
+
+The rule is "if it causes problems, we acknowledge them and we avoid them".
+
+Thus the whole "disable TCG_TPM2_HMAC" really doesn't merit this kind
+of long explanation.
+
+In contrast, the *other* changes are probably much more interesting than that.
+
+             Linus
 
