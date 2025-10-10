@@ -1,141 +1,90 @@
-Return-Path: <linux-kernel+bounces-847722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73333BCB82A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:30:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587ECBCB838
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 52F8234FD92
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:29:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 510FF4EAC75
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEE5265623;
-	Fri, 10 Oct 2025 03:29:50 +0000 (UTC)
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A5134BA39;
+	Fri, 10 Oct 2025 03:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1DA0GK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE5156237;
-	Fri, 10 Oct 2025 03:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB56268690
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760066989; cv=none; b=PaaEMUgv1QfjxppeDYcZLw4gxX5KtVrO1pXiB/quyDJsfEO8PWGWoFz4BiZFLLs+b+bYt3/77KmhLcrx976tRnJh6aEbjB+EEq+WiaQDpuoYBpgwnjaANvEkq9gHAlLladjMuN4EeF7xpnZwpaAuO1g23gdsvHNBkXDHno+34tQ=
+	t=1760067011; cv=none; b=mjbTRw32qLCZHuh4XaIsFx4d00q1c2ng3/3+eClpMgTK8rmWqt779WUK8nwz68jtvMxN0ALopyQWjyydZtHPNJMPptdlGVtjrGj4tTkDyGj7FDI2uuwgn+oq6hMJddEeK4L5fs27Np01lH37HzurkD/YkVpzLmv1tng/PzkowG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760066989; c=relaxed/simple;
-	bh=2c1nq8EQZfZOPpq72pvGLcklP0BpO4y12HpirU/2WCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q+WBATSR3SpaagroZfDIkF+WLQg/JpHCtJayR3+L8cjNYeG1JCTxY6nGD9AFD7CDYnlXCEjx0jGTayWeRDglnXuWdtvC8lCEqOQ2wzq6cGYk9wWOzEjdQJUZ6ztsoHdXZUNqTUk/aNCOTMpnJGU8zx/EBpb7R62Ygsi5WVELbfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=113.46.200.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cjXK06XChzpSw3;
-	Fri, 10 Oct 2025 11:28:52 +0800 (CST)
-Received: from kwepemr500004.china.huawei.com (unknown [7.202.195.141])
-	by mail.maildlp.com (Postfix) with ESMTPS id 78BF71402C8;
-	Fri, 10 Oct 2025 11:29:38 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemr500004.china.huawei.com
- (7.202.195.141) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 10 Oct
- 2025 11:29:37 +0800
-Message-ID: <0dca2bf6-0f87-422d-a348-5ab33a9683d2@hisilicon.com>
-Date: Fri, 10 Oct 2025 11:29:36 +0800
+	s=arc-20240116; t=1760067011; c=relaxed/simple;
+	bh=UwYI1Y9zzpkLWZonQKLPHrolSHjRGw+LY5fd58IPCws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j2QSsZ8H04XKkKt/fIKQZerUUlQnTD5Jr6I7xdY4znFpGXlCwDOgARPNmW29Gr6EkfyrgBAf1zP7X+dTTDgSHhAf8F3vKmcGfEcqCDeIJ9jDexsETNXn8gMer0uVf/ovK47/uTCpi3aeEHecUcyKc2/yB5WEnbrUgKywUGdZD50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1DA0GK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F32C4CEE7
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760067010;
+	bh=UwYI1Y9zzpkLWZonQKLPHrolSHjRGw+LY5fd58IPCws=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s1DA0GK1N26hb8WWnmFel9nQ94mCRxpbVVZwaFKl5XjMUFFzByJ9g3Zo4JCqloZEW
+	 nCA4RH+l5DfKPp4JIen49URYgB5IfMNC9l/TPyyE2Fblbe9Ajq1eT6GcW76aHmG54O
+	 baNhvQmTwMu4kxAXBm42ITWUEQHPHJ26aZvnDd62Yh7y8gkLZ2JE8b3Ofm0J9qa7mx
+	 Sgpw9n74QFA3bp6SXmFdiaIZux3gtMtAcqEkMPUX9kKf4+ZNBujXffq6w5S8TS2Ixx
+	 TmOPPO1varkTxBTEoq09b44izWYST7a8kB/IUfkmxz2rCCZ8H944W/BkNirMj/DSZV
+	 FYH1bLm+YRzKg==
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4fb8d3a2dbso1188312a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 20:30:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWXtBCsKmrhW4p48HaFO625grgT7LLsh2Rjb2hOk/WlwhtmZM1bFyZhgc503rGa9nWnT7LjgvR/C4s+GL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygN+qVxzP6KOV93vEtEYLqNmie6UnaVqrW7/hKU0Nrf2xgaVik
+	biVc+ErZHPqPW9KALK7orNPaNoxQdXsow0a9ZjEAwjaD+hePNw4Nkaj7/RGKvZ79CcAHYisSKws
+	UxJGRZovs0kCVLZLCvKHQY/GDKvpWLJI=
+X-Google-Smtp-Source: AGHT+IFC8y1COauSn562LCbBBd6ugpsfjo0VIlf7hz5sw+24Aezq7s8KdouhQV3Zdib7V9MkZYqnVr9+gUZV0IfsSLY=
+X-Received: by 2002:a17:902:ef07:b0:288:5d07:8a8f with SMTP id
+ d9443c01a7336-2902724dc52mr130716075ad.24.1760067010423; Thu, 09 Oct 2025
+ 20:30:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/8] cpufreq: CPPC: Add sysfs for min/max_perf and
- perf_limited
-To: Sumit Gupta <sumitg@nvidia.com>, <rafael@kernel.org>,
-	<viresh.kumar@linaro.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<corbet@lwn.net>, <pierre.gondois@arm.com>, <zhenglifeng1@huawei.com>,
-	<rdunlap@infradead.org>, <ray.huang@amd.com>, <gautham.shenoy@amd.com>,
-	<mario.limonciello@amd.com>, <perry.yuan@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
-	<sanjayc@nvidia.com>, <bbasu@nvidia.com>
-References: <20251001150104.1275188-1-sumitg@nvidia.com>
- <20251001150104.1275188-7-sumitg@nvidia.com>
-Content-Language: en-US
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <20251001150104.1275188-7-sumitg@nvidia.com>
+References: <20251009154525.31932-1-bp@kernel.org>
+In-Reply-To: <20251009154525.31932-1-bp@kernel.org>
+From: Fan Wu <wufan@kernel.org>
+Date: Thu, 9 Oct 2025 20:29:58 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkGhdPgtXeCYpxO8p7YjQ8a7CUygUn63P-Aj71zsfP50wQ@mail.gmail.com>
+X-Gm-Features: AS18NWAKOC3o3IQbceKdyO39h8_ejvzlFqnWt_-WVj5xoNLtcyI_W2RGz9u1SM8
+Message-ID: <CAKtyLkGhdPgtXeCYpxO8p7YjQ8a7CUygUn63P-Aj71zsfP50wQ@mail.gmail.com>
+Subject: Re: [PATCH] ipe: Drop a duplicated CONFIG_ prefix in the ifdeffery
+To: Borislav Petkov <bp@kernel.org>
+Cc: Fan Wu <wufan@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"Borislav Petkov (AMD)" <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemr500004.china.huawei.com (7.202.195.141)
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Oct 9, 2025 at 8:45=E2=80=AFAM Borislav Petkov <bp@kernel.org> wrot=
+e:
+>
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+>
+> Looks like it got added by mistake, perhaps editor auto-completion
+> artifact. Drop it.
+>
+> No functional changes.
+>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 
+Thanks, applied to ipe-next.
 
-On 10/1/2025 11:01 PM, Sumit Gupta wrote:
-> Add sysfs interfaces for Minimum Performance, Maximum Performance
-> and Performance Limited Register in the cppc_cpufreq driver.
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../ABI/testing/sysfs-devices-system-cpu      | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> index ab8cd337f43a..82141b45d58c 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> @@ -327,6 +327,49 @@ Description:	Energy performance preference
->  
->  		This file is only present if the cppc-cpufreq driver is in use.
->  
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
-> +Date:		September 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance
-> +
-> +		Read/write a 32 bits value from/to this file. This file
-> +		conveys the minimum performance level at which the platform
-> +		may run. Minimum performance may be set to any performance
-> +		value in the range [Lowest Performance, Highest Performance],
-> +		inclusive but must be set to a value that is less than or
-> +		equal to that specified by the Maximum Performance Register.
-> +
-> +		Writing to this file only has meaning when Autonomous Selection
-> +		is enabled.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
-> +Date:		September 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance
-Not adapted
-> +
-> +		Read/write a 32 bits value from/to this file. This file conveys
-> +		the maximum performance level at which the platform may run.
-> +		Maximum performance may be set to any performance value in the
-> +		range [Lowest Performance, Highest Performance], inclusive.
-> +
-> +		Writing to this file only has meaning when Autonomous Selection is
-> +		enabled.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
-> +Date:		September 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance
-Not adapted
-> +
-> +		Read/write a 32 bits value from/to this file. This file indicates
-> +		to OSPM that an unpredictable event has limited processor
-> +		performance, and the delivered performance may be less than
-> +		desired/minimum performance.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
->  
->  What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
->  Date:		August 2008
+-Fan
 
