@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-848190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9626CBCCD96
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:16:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DC0BCCDA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CD13C7757
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:16:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93C1C4F6919
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F4F286D66;
-	Fri, 10 Oct 2025 12:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AE52868AC;
+	Fri, 10 Oct 2025 12:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eA8120ha"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbUZb0EC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365B08F48;
-	Fri, 10 Oct 2025 12:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D23B1D5ABA;
+	Fri, 10 Oct 2025 12:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760098553; cv=none; b=fE4+z1MTain13CCQSEXdKkVny6aWDnJw+cLeY47aMvvm/XjTNo1QcqaF4uvYIAbufl7E4PaswSoOFowxervqEnzRfuurSbZqH9XoUVHhZRo/7jsMS/TlFpg507hrsSl4O7ArRn5qcM+mijbO4rZC7DOPoxKDcFgkViaoB/j1XcI=
+	t=1760098718; cv=none; b=aEmx97Uipp/blRWsZsNBaLM2Q1dNgivsvcN2lX3M/6chdoe9Eq5+gNWDbOzaNOJvfD5X5mKpiTe2+aVcQK+bWf+QJ887ACkTcDuGHko3CD1ZkUXHNzVbDK5VAvTq1Yf/kpypUmxN/hm6qhlkHr0p9Za7qeTOQp8E+r9nfmvn7uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760098553; c=relaxed/simple;
-	bh=hWBv5TGNZvVjCplP/ev/k4nohO6E6ZrobfMvadwzZhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PnFEv7PzJhQqWmUOF6u8ZEOqZ7aF4F4DDgAg5ED5/4H3n15Gn0LCEqkbQu7Sj1ZHtZ/rNlVWYr100LQbm8JUSuV8v9jYOyWys3VEWnsB+T+iRoGKzAkYJ1gVJcnUlOJ8Pn6/iEbAc005GaqvhnutAFpgy7pUX2LjQAcrCtdMDDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eA8120ha; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65215C4CEF1;
-	Fri, 10 Oct 2025 12:15:45 +0000 (UTC)
+	s=arc-20240116; t=1760098718; c=relaxed/simple;
+	bh=XaAJTzrwKbtCoqFq58OYgCAANIKPdfb9MD4t6CNQYrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uaQhxFFXHc+zqbpfcXyx0vo1N8lF5PQpt0b2umRWjsfqmOKcy2Sd5tqQoMoL7xSBrHrzHZUeZgDoL9TMHmgw0Qd4qfEu9x46X0oigVYFBIvHioQpYH95L4I5DyweKj342Nl9GxDojqF+tHkle3C2SeG2n2ccvYUJpns177l7UkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbUZb0EC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED647C4CEF1;
+	Fri, 10 Oct 2025 12:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760098553;
-	bh=hWBv5TGNZvVjCplP/ev/k4nohO6E6ZrobfMvadwzZhY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eA8120haZolGu2WcpY2s4wKkm7jIqYjmTNsW6RQKUhowq4qQyINP9dOJ+ZniDOlSB
-	 esvPlGsEZRJKcMHu615Aao5qvsXhrR8i3lOj94g+kVpWkaD0BJNvitbXrVIf6JDwfc
-	 nPLSZUIQEP5Y5s1xYp8MG96JJMZbu4kDiT+e+aB7ryAXALV+wUxAzZwoceAe2tbOqM
-	 BNiMMSyNPNZZTpKi77b7T7efoeOsvnNtmPov0/7EoQiVrvz1+WOBhhGIxXkfU2h/h/
-	 nrC4zLTlRR4SHdXAcqTKu6r57v7q0DEuQDq1ASmTt+HX7DlUvDYzBJ4Bg/SioGE01B
-	 4cBdSncQrOx6w==
-Message-ID: <88b1dcda-be2d-4c57-b042-c1809ef1dc97@kernel.org>
-Date: Fri, 10 Oct 2025 13:15:42 +0100
+	s=k20201202; t=1760098717;
+	bh=XaAJTzrwKbtCoqFq58OYgCAANIKPdfb9MD4t6CNQYrc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kbUZb0EC81TpkrcMN8+s2oNQHCdnLmbefEqcbDB6kX6dlNV5H6zgUVlgGjrv6DiAs
+	 FixRWhxLkYo2A2H/ntNxzjDmqlOsDOtQI5Q3bMwvmMYbk3t5SUt925zd4HzLa1syq7
+	 9bHyH74ZV6+vCZybPjWDn8liLr3n4EstPpACWFfkvFrhJh/j5o6+NMY/u0KRRtHO6C
+	 dRVQ/e+APj59qQRzadKT/QcEXAPP1nG5tL7mYOyMVVW08GYS0zYdrrawQyeBroJ0qD
+	 6rBNwG+mjUesHwYxUT/XiV2VHraBLZPFjtkIAdobayOXYJbYKluCRQ9L5NKAxYs2xG
+	 3wP3sgfN9pFLQ==
+Date: Fri, 10 Oct 2025 13:18:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 10
+Message-ID: <aOj5mdv2tExl501B@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 00/17] media: rockchip: add a driver for the rockchip
- camera interface
-To: michael.riesch@collabora.com, Mehdi Djait <mehdi.djait@linux.intel.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Markus Elfring <Markus.Elfring@web.de>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Collabora Kernel Team <kernel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Mehdi Djait <mehdi.djait@bootlin.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <HSTnNzc6MTLHGWih5qjlI2nvVECP8FVdcQVeBON4KlWYLtEaWIlNmEpKTU_vlqitbIIHMpabKnvnmpEQFqHYxQ==@protonmail.internalid>
- <20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="l6M2lPFHchf7A9MS"
+Content-Disposition: inline
 
-On 17/09/2025 16:38, Michael Riesch via B4 Relay wrote:
-> Habidere,
-> 
-> This series introduces support for the Rockchip Camera Interface (CIF),
-> which is featured in many Rockchip SoCs in different variations.
-> For example, the PX30 Video Input Processor (VIP) is able to receive
-> video data via the Digital Video Port (DVP, a parallel data interface)
-> and transfer it into system memory using a double-buffering mechanism
-> called ping-pong mode.
-> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
-> DVP and a MIPI CSI-2 receiver that can receive video data independently
-> (both using the ping-pong scheme).
-> The different variants may have additional features, such as scaling
-> and/or cropping.
-> Finally, the RK3588 VICAP unit constitutes an essential piece of the
-> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
-> units, and a data path multiplexer (to scaler units, to ISP, ...).
-> 
-> The v11 of the series adds a media controller centric V4L2 device driver
-> for the Rockchip CIF with
->   - support for the PX30 VIP (not tested, though, due to the lack of HW)
->   - support for the RK3568 VICAP, including
->      - capturing frames from the DVP
->      - capturing frames from the MIPI CSI-2 receiver
->   - abstraction for the ping-pong scheme to allow for future extensions
->   - abstraction for the INTERFACE and CROP parts to allow for future
->     extensions
->   - initial support for different virtual channels (not tested, though,
->     due to the lack of HW)
-> and a V4L2 subdevice driver for the Rockchip MIPI CSI-2 Receiver.
-> 
-> The driver can be readily extended to provide support for the RK3588
-> VICAP variant. In order to keep things simple, however, this extension
-> shall be submitted separately.
-> 
-> Looking forward to your comments!
-> 
-> To: Mehdi Djait<mehdi.djait@linux.intel.com>
-> To: Maxime Chevallier<maxime.chevallier@bootlin.com>
-> To: Théo Lebrun<theo.lebrun@bootlin.com>
-> To: Thomas Petazzoni<thomas.petazzoni@bootlin.com>
-> To: Gerald Loacker<gerald.loacker@wolfvision.net>
-> To: Bryan O'Donoghue<bryan.odonoghue@linaro.org>
-> To: Markus Elfring<Markus.Elfring@web.de>
-> To: Sakari Ailus<sakari.ailus@iki.fi>
-> To: Laurent Pinchart<laurent.pinchart@ideasonboard.com>
-> To: Mauro Carvalho Chehab<mchehab@kernel.org>
-> To: Rob Herring<robh+dt@kernel.org>
-> To: Krzysztof Kozlowski<krzk+dt@kernel.org>
-> To: Conor Dooley<conor+dt@kernel.org>
-> To: Heiko Stuebner<heiko@sntech.de>
-> To: Kever Yang<kever.yang@rock-chips.com>
-> To: Nicolas Dufresne<nicolas.dufresne@collabora.com>
-> To: Sebastian Reichel<sebastian.reichel@collabora.com>
-> To: Collabora Kernel Team<kernel@collabora.com>
-> To: Paul Kocialkowski<paulk@sys-base.io>
-> To: Alexander Shiyan<eagle.alexander923@gmail.com>
-> To: Val Packett<val@packett.cool>
-> To: Rob Herring<robh@kernel.org>
-> To: Philipp Zabel<p.zabel@pengutronix.de>
-> Cc:linux-media@vger.kernel.org
-> Cc:devicetree@vger.kernel.org
-> Cc:linux-kernel@vger.kernel.org
-> Cc:linux-arm-kernel@lists.infradead.org
-> Cc:linux-rockchip@lists.infradead.org
-> Signed-off-by: Michael Riesch<michael.riesch@wolfvision.net>
-> Signed-off-by: Michael Riesch<michael.riesch@collabora.com>
-> 
-> Changes in v11:
-> - rkcif: split large driver patch (6/13 of v10) into smaller
->    patches (6-11/17 of v11) (Bryan)
-> - rkcsi: replaced devm_reset_control_array_get_exclusive with
->    devm_reset_control_get_exclusive (Philipp)
-> - Link to v10:https://lore.kernel.org/r/20240220-rk3568-vicap- 
-> v10-0-62d8a7b209b4@collabora.com
 
-I believe it is the case and please feel free to correct me if I'm wrong 
-that you've dropped a long list of sob/co-develop-by, I think we 
-discussed that too, because of the level of change, it seems reasonable too.
+--l6M2lPFHchf7A9MS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On question on that, are these people aware of the change and cc'd on 
-the list of recipients/contactable/agreeable to the change ?
+Hi all,
 
----
-bod
+Changes since 20251009:
+
+None!
+
+Non-merge commits (relative to Linus' tree): 717
+ 732 files changed, 16594 insertions(+), 10340 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with an arm64
+defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
+a native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig and
+pseries_le_defconfig and i386, arm64, s390, sparc and sparc64 defconfig
+and htmldocs. And finally, a simple boot test of the powerpc
+pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+
+Below is a summary of the state of the merge.
+
+I am currently merging 407 trees (counting Linus' and 406 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--l6M2lPFHchf7A9MS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjo+ZkACgkQJNaLcl1U
+h9Baygf8DivSMGUfz3hu4lTtlsSbQEafNz2k+JWywfNAH4srF0Ck/FXJc3Uuxa0l
+lcYMUKH0sinjWCyY2i8pbFeAPlkIC+m3peDSdA5K39Dhou4VhgflLCICJ4xIDr1z
+Xq9/i+VLntEfc/YOm/CC90DbDTaSxyL/A6wspl8f+7fwsZxEJwlWn+eymoUxpDyw
+J4FwR5BjwXq6Tf7irnXWaQSoSQnl7bfcUov32vaFzwm+DllgDWk84PM8hrQ0ulWT
+zjuVVBGhkGau1xYsmq/Q8T3TTpPkE3fGXX36lWGr+lBLf7Orb+Kc4eHdy1OuilbT
+9TIxfoy11Das0WuKrKakY6OiAX8Eug==
+=ezF6
+-----END PGP SIGNATURE-----
+
+--l6M2lPFHchf7A9MS--
 
