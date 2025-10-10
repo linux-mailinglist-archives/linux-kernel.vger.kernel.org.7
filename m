@@ -1,204 +1,470 @@
-Return-Path: <linux-kernel+bounces-848299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D0BBCD4FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:43:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884AEBCD51D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E803D4F29DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAB041897F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62772F3C03;
-	Fri, 10 Oct 2025 13:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4682F1FEE;
+	Fri, 10 Oct 2025 13:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fw1MrOLw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jFTeQ5lL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fw1MrOLw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jFTeQ5lL"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aJcHDJr1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FtT9nFNK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A067287268
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6C8748F;
+	Fri, 10 Oct 2025 13:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760103777; cv=none; b=QvhCCBgu9ZR6FLrqZS+VMzgWvg6mecW/lOPTW+fQtNn54xJ1ioCPpmboQsfreiIHflK9d3JSHxl6u6/8MSZw9f0AwNX6GUME+gPaRLUcrMrJls0YbaECYOkNslUgFA63Lj6thl1WdPPxXqZOYZvgeOHJgzzWggX3NGbXChaUWWk=
+	t=1760103981; cv=none; b=O864qx4gy/uYah1n1goCJimHkEmdQz8lmZcdgygZDM8rvYSChWVwkcUKmedDn4C66BTwxKQ3Ut4ZvauJW6aVjTjrhfrte/scW5ahLdHe75ry4XuuBlRfygoz08HolmA127cV4PDsYMifKsckh4lgWsql0BDqIAwwl7OASC4McYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760103777; c=relaxed/simple;
-	bh=7POQ6g50llIdBKqra8f4cvq0CN8MSC7FzYHXu0Qu9SQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=F4chus37/bJaJG62VfD8tdCH037yGI8DQgZZGQ8Y/LRIrZ7dnwlwCZlgMh3q7ChqgkjzN1QZROBWUucZusGejFAUuQ7X2bAtQDnNyrJkgtDfLvJUu8XzH/9WfUEIWr9ntlRKkIMNmoaxT+YwhhI5lSNwmVBm0yqiELRsvH8Q12c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fw1MrOLw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jFTeQ5lL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fw1MrOLw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jFTeQ5lL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 611661F399;
-	Fri, 10 Oct 2025 13:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760103772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=7AHQxGj7m7EZh9mK3E3fwIi/wyZ/+SGDFXyBuhwh9Rk=;
-	b=fw1MrOLwzvEKXzt5CC0f+E4KSAEMq17aeDKfzO7CWJsqiaXjo+u/Byuon+sABT7KEKH3k1
-	k9f60he9mbX4TEsLXBxaNXtBexh9K85fr0DArNH3+HOJC9/Xx1zpz02lSOg7lJmj3w/6TK
-	0yCkF0UbH4FGlswKt5X1BHbWmBxD7wI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760103772;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=7AHQxGj7m7EZh9mK3E3fwIi/wyZ/+SGDFXyBuhwh9Rk=;
-	b=jFTeQ5lL6vKGJPorkk8H46pIY9v6WhsG0NRVTgg6O9FZMPZ4an0C3S/AbpksM1anV2X8pO
-	V6HDt+mquLZ1oQDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=fw1MrOLw;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=jFTeQ5lL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760103772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=7AHQxGj7m7EZh9mK3E3fwIi/wyZ/+SGDFXyBuhwh9Rk=;
-	b=fw1MrOLwzvEKXzt5CC0f+E4KSAEMq17aeDKfzO7CWJsqiaXjo+u/Byuon+sABT7KEKH3k1
-	k9f60he9mbX4TEsLXBxaNXtBexh9K85fr0DArNH3+HOJC9/Xx1zpz02lSOg7lJmj3w/6TK
-	0yCkF0UbH4FGlswKt5X1BHbWmBxD7wI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760103772;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=7AHQxGj7m7EZh9mK3E3fwIi/wyZ/+SGDFXyBuhwh9Rk=;
-	b=jFTeQ5lL6vKGJPorkk8H46pIY9v6WhsG0NRVTgg6O9FZMPZ4an0C3S/AbpksM1anV2X8pO
-	V6HDt+mquLZ1oQDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 355951375D;
-	Fri, 10 Oct 2025 13:42:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5SOqC1wN6WjHagAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 10 Oct 2025 13:42:52 +0000
-Date: Fri, 10 Oct 2025 15:42:51 +0200
-Message-ID: <87zf9yan50.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.18-rc1
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1760103981; c=relaxed/simple;
+	bh=kPNz+wVO35rfTqGmyu2J4j0ZFT6HKfYTFOrvglMjJiE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IB9N/iE9zgY82CEfSZSt/kg1Dri5gQh0/BHSQbED3Ef2dtgLPVA/4vWwpGR7US/Isw0DH/jx3JO+qa+O1krdWxU2lpiNkHNAjKEr6FDoX+plisZA3AnJWWtZKSS3vMVWZMONF/2e4ix6oraGVNpl3qCe3AFYe85oaJE7ELBKv5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aJcHDJr1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FtT9nFNK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760103976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oqNUuPWLIGP8jGR5s0wYFlz1UpDW74k2GWO4cRG27qE=;
+	b=aJcHDJr1qbTFxAaf8TbH4do2Mw2HjqwtRZYZUQnbgtzfJYqjoFADUIiyNF0Ip439/rSblP
+	l9RhOJnvJdEdpDklXoz9w9H5/E3U/GMxMM09O8A1KK4gufQm1CyF4d7BUZ8hTxuo07d/14
+	OVT2FnMKzAS87RGaBvOsD4zaCSEeZ4oBcu91qlz+dNoYd31oZBkcCEMftaOY67WlVgCy+/
+	tYffV1sGHfpU/t5BTeRZ0mHLV9AwBpP/LLTKXGublFPVXz14voQkHF4DJ+eeJtc7qpYl+R
+	0uMa1nrJ8tQIAXBTqpUmpFniYq2lpWgcMNeW91iCCtVLCZ21c1s0aUA1FRwBtQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760103976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oqNUuPWLIGP8jGR5s0wYFlz1UpDW74k2GWO4cRG27qE=;
+	b=FtT9nFNKqbySE5mR/YFeaPYq34jh1KI2bn61tKgZ69yZJCdlg8lQGPukXCyOlK8zLdGExB
+	hwKYMCe/iOVtHvAg==
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
+ Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v2 13/20] Documentation/rv: Add documentation about
+ hybrid automata
+In-Reply-To: <20250919140954.104920-14-gmonaco@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+ <20250919140954.104920-14-gmonaco@redhat.com>
+Date: Fri, 10 Oct 2025 15:46:15 +0200
+Message-ID: <87jz12yimw.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 611661F399
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Linus,
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> Describe theory and implementation of hybrid automata in the dedicated
+> page hybrid_automata.rst
+> Include a section on how to integrate a hybrid automaton in
+> monitor_synthesis.rst
+> Also remove a hanging $ in deterministic_automata.rst
+>
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> ---
+>  .../trace/rv/deterministic_automata.rst       |   2 +-
+>  Documentation/trace/rv/hybrid_automata.rst    | 340 ++++++++++++++++++
+>  Documentation/trace/rv/index.rst              |   1 +
+>  Documentation/trace/rv/monitor_synthesis.rst  | 107 ++++++
+>  4 files changed, 449 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/trace/rv/hybrid_automata.rst
+>
+> diff --git a/Documentation/trace/rv/deterministic_automata.rst b/Documentation/trace/rv/deterministic_automata.rst
+> index d0638f95a455..7a1c2b20ec72 100644
+> --- a/Documentation/trace/rv/deterministic_automata.rst
+> +++ b/Documentation/trace/rv/deterministic_automata.rst
+> @@ -11,7 +11,7 @@ where:
+>  - *E* is the finite set of events;
+>  - x\ :subscript:`0` is the initial state;
+>  - X\ :subscript:`m` (subset of *X*) is the set of marked (or final) states.
+> -- *f* : *X* x *E* -> *X* $ is the transition function. It defines the state
+> +- *f* : *X* x *E* -> *X* is the transition function. It defines the state
+>    transition in the occurrence of an event from *E* in the state *X*. In the
+>    special case of deterministic automata, the occurrence of the event in *E*
+>    in a state in *X* has a deterministic next state from *X*.
+> diff --git a/Documentation/trace/rv/hybrid_automata.rst b/Documentation/trace/rv/hybrid_automata.rst
+> new file mode 100644
+> index 000000000000..ea701114c54d
+> --- /dev/null
+> +++ b/Documentation/trace/rv/hybrid_automata.rst
+> @@ -0,0 +1,340 @@
+> +Hybrid Automata
+> +===============
+> +
+> +Hybrid automata are an extension of deterministic automata, there are several
+> +definitions of hybrid automata in the literature. The adaptation implemented
+> +here is formally denoted by G and defined as a 7-tuple:
+> +
+> +        *G* = { *X*, *E*, *V*, *f*, x\ :subscript:`0`, X\ :subscript:`m`, *i* }
+> +
+> +- *X* is the set of states;
+> +- *E* is the finite set of events;
+> +- *V* is the finite set of environment variables;
+> +- x\ :subscript:`0` is the initial state;
+> +- X\ :subscript:`m` (subset of *X*) is the set of marked (or final) states.
+> +- *f* : *X* x *E* x *C(V)* -> *X* is the transition function.
+> +  It defines the state transition in the occurrence of an event from *E* in the
+> +  state *X*. Unlike deterministic automata, the transition function also
+> +  includes guards from the set of all possible constraints (defined as *C(V)*).
+> +  Guards can be true or false with the valuation of *V* when the event occurs,
+> +  and the transition is possible only when constraints are true. Similarly to
+> +  deterministic automata, the occurrence of the event in *E* in a state in *X*
+> +  has a deterministic next state from *X*, if the guard is true.
+> +- *i* : *X* -> *C'(V)* is the invariant assignment function, this is a
+> +  constraint assigned to each state in *X*, every state in *X* must be left
+> +  before the invariant turns to false. We can omit the representation of
+> +  invariants whose value is true regardless of the valuation of *V*.
 
-please pull sound fixes for v6.18-rc1 from:
+This brings back bad memories from university..
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.18-rc1
+> +
+> +The set of all possible constraints *C(V)* is defined according to the
+> +following grammar:
+> +
+> +        g = v < c | v > c | v <= c | v >= c | v == c | v != c | g && g | true
+> +
+> +With v a variable in *V* and c a numerical value.
+> +
+> +We define the special case of hybrid automata whose variables grow with uniform
+> +rates as timed automata. In this case, the variables are called clocks.
+> +As the name implies, timed automata can be used to describe real time.
+> +Additionally, clocks support another type of guard which always evaluates to true:
+> +
+> +        reset(v)
+> +
+> +The reset constraint is used to set the value of a clock to 0.
+> +
+> +The set of invariant constraints *C'(V)* is a subset of *C(V)* including only
+> +constraint of the form:
+> +
+> +        g = v < c | true
+> +
+> +This simplifies the implementation as a clock expiration is a necessary and
+> +sufficient condition for the violation of invariants while still allowing more
+> +complex constraints to be specified as guards.
+> +
+> +It is important to note that any valid hybrid automaton is a valid
+> +deterministic automaton with additional guards and invariants. Those can only
+> +further constrain what transitions are valid but it is not possible to define
+> +transition functions starting from the same state in *X* and the same event in
+> +*E* but ending up in different states in *X* based on the valuation of *V*.
 
-The topmost commit is ca7a2317993efa26eb2100a1523548f1b3a07af0
+Perhaps remove the double "valid". Usually people use the phrase "any
+valid A is a valid B" to say that B is a superset of A, but it is
+opposite here.
 
-----------------------------------------------------------------
+> +
+> +Examples
+> +--------
+> +
+> +Wip as hybrid automaton
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +The 'wip' (wakeup in preemptive) example introduced as a deterministic automaton
+> +can also be described as:
+> +
+> +- *X* = { ``any_thread_running`` }
+> +- *E* = { ``sched_waking`` }
+> +- *V* = { ``preemptive`` }
+> +- x\ :subscript:`0` = ``any_thread_running``
+> +- X\ :subscript:`m` = {``any_thread_running``}
+> +- *f* =
+> +   - *f*\ (``any_thread_running``, ``sched_waking``, ``preemptive==0``) = ``any_thread_running``
+> +- *i* =
+> +   - *i*\ (``any_thread_running``) = ``true``
+> +
+> +Which can be represented graphically as::
+> +
+> +     |
+> +     |
+> +     v
+> +   #====================#   sched_waking;preemptive==0
+> +   H                    H ------------------------------+
+> +   H any_thread_running H                               |
+> +   H                    H <-----------------------------+
+> +   #====================#
+> +
+> +In this example, by using the preemptive state of the system as an environment
+> +variable, we can assert this constraint on ``sched_waking`` without requiring
+> +preemption events (as we would in a deterministic automaton), which can be
+> +useful in case those events are not available or not reliable on the system.
+> +
+> +Since all the invariants in *i* are true, we can omit them from the representation.
+> +
+> +Stall model with guards (iteration 1)
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +As a sample timed automaton we can define 'stall' as:
+> +
+> +- *X* = { ``dequeued``, ``enqueued``, ``running``}
+> +- *E* = { ``enqueue``, ``dequeue``, ``switch_in``}
+> +- *V* = { ``clk`` }
+> +- x\ :subscript:`0` = ``dequeue``
+> +- X\ :subscript:`m` = {``dequeue``}
+> +- *f* =
+> +   - *f*\ (``enqueued``, ``switch_in``, ``clk < threshold``) = ``running``
+> +   - *f*\ (``running``, ``dequeue``) = ``dequeued``
+> +   - *f*\ (``dequeued``, ``enqueue``, ``reset(clk)``) = ``enqueued``
+> +- *i* = *omitted as all true*
+> +
+> +Graphically represented as::
+> +
+> +       |
+> +       |
+> +       v
+> +     #============================#
+> +     H          dequeued          H <+
+> +     #============================#  |
+> +       |                             |
+> +       | enqueue; reset(clk)         |
+> +       v                             |
+> +     +----------------------------+  |
+> +     |          enqueued          |  | dequeue
+> +     +----------------------------+  |
+> +       |                             |
+> +       | switch_in; clk < threshold  |
+> +       v                             |
+> +     +----------------------------+  |
+> +     |          running           | -+
+> +     +----------------------------+
+> +
+> +This model imposes that the time between when a task is enqueued (it becomes
+> +runnable) and when the task gets to run must be lower than a certain threshold.
+> +A failure in this model means that the task is starving.
+> +One problem in using guards on the edges in this case is that the model will
+> +not report a failure until the ``switch_in`` event occurs. This means that,
+> +according to the model, it is valid for the task never to run.
+> +
+> +Stall model with invariants (iteration 2)
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +The first iteration isn't exactly what was intended, we can change the model as:
+> +
+> +- *X* = { ``dequeued``, ``enqueued``, ``running``}
+> +- *E* = { ``enqueue``, ``dequeue``, ``switch_in``}
+> +- *V* = { ``clk`` }
+> +- x\ :subscript:`0` = ``dequeue``
+> +- X\ :subscript:`m` = {``dequeue``}
+> +- *f* =
+> +   - *f*\ (``enqueued``, ``switch_in``) = ``running``
+> +   - *f*\ (``running``, ``dequeue``) = ``dequeued``
+> +   - *f*\ (``dequeued``, ``enqueue``, ``reset(clk)``) = ``enqueued``
+> +- *i* =
+> +   - *i*\ (``enqueued``) = ``clk < threshold``
+> +
+> +Graphically::
+> +
+> +    |
+> +    |
+> +    v
+> +  #=========================#
+> +  H        dequeued         H <+
+> +  #=========================#  |
+> +    |                          |
+> +    | enqueue; reset(clk)      |
+> +    v                          |
+> +  +-------------------------+  |
+> +  |        enqueued         |  |
+> +  |    clk < threshold      |  | dequeue
+> +  +-------------------------+  |
+> +    |                          |
+> +    | switch_in                |
+> +    v                          |
+> +  +-------------------------+  |
+> +  |         running         | -+
+> +  +-------------------------+
+> +
+> +In this case, we moved the guard as an invariant to the ``enqueued`` state,
+> +this means we not only forbid the occurrence of ``switch_in`` when ``clk`` is
+> +past the threshold but also mark as invalid in case we are *still* in
+> +``enqueued`` after the threshold. This model is effectively in an invalid state
+> +as soon as a task is starving, rather than when the starving task finally runs.
+> +
+> +Hybrid Automaton in C
+> +---------------------
+> +
+> +The definition of hybrid automata in C is heavily based on the deterministic
+> +automata one. Specifically, we add the set of environment variables and the
+> +constraints (both guards on transitions and invariants on states) as follows.
+> +This is a combination of both iterations of the stall example::
+> +
+> +  /* enum representation of X (set of states) to be used as index */
+> +  enum states {
+> +	dequeued = 0,
 
-sound fixes for 6.18-rc1
+I think you already removed this " = 0" in an earlier patch?
 
-A few more small fixes for 6.18-rc1.
-Most of changes are about ASoC Intel and SOF drivers, while a few
-other device-specific fixes are found for HD-audio, USB-audio, ASoC
-RT722VB and Meson.
+> +	enqueued,
+> +	running,
+> +	state_max
+> +  };
+> +
+> +  #define INVALID_STATE state_max
+> +
+> +  /* enum representation of E (set of events) to be used as index */
+> +  enum events {
+> +	dequeue = 0,
+> +	enqueue,
+> +	switch_in,
+> +	event_max
+> +  };
+> +
+> +  /* enum representation of V (set of environment variables) to be used as index */
+> +  enum envs {
+> +	clk = 0,
+> +	env_max,
+> +	env_max_stored = env_max
+> +  };
+> +
+> +  struct automaton {
+> +	char *state_names[state_max];                  // X: the set of states
+> +	char *event_names[event_max];                  // E: the finite set of events
+> +	char *env_names[env_max];                      // V: the finite set of env vars
+> +	unsigned char function[state_max][event_max];  // f: transition function
+> +	unsigned char initial_state;                   // x_0: the initial state
+> +	bool final_states[state_max];                  // X_m: the set of marked states
+> +  };
+> +
+> +  struct automaton aut = {
+> +	.state_names = {
+> +		"dequeued",
+> +		"enqueued",
+> +		"running"
+> +	},
+> +	.event_names = {
+> +		"dequeue",
+> +		"enqueue",
+> +		"switch_in"
+> +	},
+> +	.env_names = {
+> +		"clk"
+> +	},
+> +	.function = {
+> +		{ INVALID_STATE,      enqueued, INVALID_STATE },
+> +		{ INVALID_STATE, INVALID_STATE,       running },
+> +		{      dequeued, INVALID_STATE, INVALID_STATE },
+> +	},
+> +	.initial_state = dequeued,
+> +	.final_states = { 1, 0, 0 },
+> +  };
+> +
+> +  static bool verify_constraint(enum states curr_state, enum events event,
+> +                                enum states next_state)
+> +  {
+> +	bool res = true;
+> +
+> +	/* Validate guards as part of f */
+> +	if (curr_state == enqueued && event == sched_switch_in)
+> +		res = get_env(clk) < threshold;
+> +	else if (curr_state == dequeued && event == sched_wakeup)
+> +		reset_env(clk);
+> +
+> +	/* Validate invariants in i */
+> +    if (next_state == curr_state || !res)
+   ^^^^
+   indentation error ;)
 
-----------------------------------------------------------------
+> +		return res;
+> +	if (next_state == enqueued)
+> +		ha_start_timer_jiffy(ha_mon, clk, threshold_jiffies);
+> +	else if (curr_state == enqueued)
+> +		res = !ha_cancel_timer(ha_mon);
+> +	return res;
+> +  }
+> +
+> +The function ``verify_constraint``, here reported as simplified, checks guards,
+> +performs resets and starts timers to validate invariants according to
+> +specification.
+> +Due to the complex nature of environment variables, the user needs to provide
+> +functions to get and reset environment variables, although we provide some
+> +helpers for common types (e.g. clocks with ns or jiffy granularity).
 
-Adam Holliday (1):
-      ALSA: hda/realtek: Add quirk for ASUS ROG Zephyrus Duo
+Is there theoretical reason that functions to get/set variables cannot
+be generated? Or you just do not have time for it yet?
 
-Bhanu Seshu Kumar Valluri (1):
-      ALSA: emu10k1: Fix typo in docs
+> +Since invariants are only defined as clock expirations (e.g. *clk <
+> +threshold*), the callback for timers armed when entering the state is in fact a
+> +failure in the model and triggers a reaction. Leaving the state stops the timer
+> +and checks for its expiration, in case the callback was late.
 
-Kai Vehmanen (3):
-      ASoC: SOF: ipc4-pcm: fix delay calculation when DSP resamples
-      ASoC: SOF: ipc4-pcm: fix start offset calculation for chain DMA
-      ASoC: SOF: ipc4-pcm: do not report invalid delay values
+"callback for timers armed when entering the state is in fact a failure
+in the model and triggers a reaction." - I have problem parsing this
+sentence. How can "callback for timers" be armed? Or do you mean arming
+timers while entering a state is a failure in the model? What is it a failure?
 
-Pedro Demarchi Gomes (1):
-      ALSA: usb: fpc: replace kmalloc_array followed by copy_from_user with memdup_array_user
+> +It is important to note that timers introduce overhead, if the monitor has
+> +several instances (e.g. all tasks) this can become an issue.
+> +If the monitor is guaranteed to *eventually* leave the state and the incurred
+> +delay to wait for the next event is acceptable, guards can be use to lower the
+> +monitor's overhead.
 
-Peter Ujfalusi (5):
-      ASoC: SOF: ipc4-topology: Correct the minimum host DMA buffer size
-      ASoC: SOF: ipc4-topology: Account for different ChainDMA host buffer size
-      ASoC: SOF: Intel: hda-pcm: Place the constraint on period time instead of buffer time
-      ASoC: SOF: sof-audio: add dev_dbg_ratelimited wrapper
-      ASoC: SOF: Intel: Read the LLP via the associated Link DMA channel
+How about having some sort of a "background task" which periodically
+verifies the invariants?
 
-Ranjani Sridharan (1):
-      ASoC: SOF: ipc3-topology: Fix multi-core and static pipelines tear down
+> +For instance in the stall example, if we are only interested in reporting
+> +stalled tasks, rather than reacting as soon as a task is stalled, and
+> +``switch_in`` is eventually going to occur, we can use the first iteration.
+> +
+> +Graphviz .dot format
+> +--------------------
+> +
+> +Also the Graphviz representation of hybrid automata is an extension of the
+> +deterministic automata one. Specifically, guards can be provided in the event
+> +name separated by ``;``::
+> +
+> +    "state_start" -> "state_dest" [ label = "sched_waking;preemptible==0;reset(clk)" ];
+> +
+> +Invariant can be specified in the state label (not the node name!) separated by ``\n``::
+> +
+> +    "enqueued" [label = "enqueued\nclk < threshold_jiffies"];
+> +
+> +Constraints can be specified as valid C comparisons and allow spaces, the first
+> +element of the comparison must be the clock while the second is a numerical or
+> +parametrised value. Guards allow comparisons to be combined with boolean
+> +operations (``&&`` and ``||``), resets must be separated from other constraints.
+> +
+> +This is the full example of the last version of the 'stall' model in DOT::
+> +
+> +  digraph state_automaton {
+> +      {node [shape = circle] "enqueued"};
+> +      {node [shape = plaintext, style=invis, label=""] "__init_dequeued"};
+> +      {node [shape = doublecircle] "dequeued"};
+> +      {node [shape = circle] "running"};
+> +      "__init_dequeued" -> "dequeued";
+> +      "enqueued" [label = "enqueued\nclk < threshold_jiffies"];
+> +      "running" [label = "running"];
+> +      "dequeued" [label = "dequeued"];
+> +      "enqueued" -> "running" [ label = "switch_in" ];
+> +      "running" -> "dequeued" [ label = "dequeue" ];
+> +      "dequeued" -> "enqueued" [ label = "enqueue;reset(clk)" ];
+> +      { rank = min ;
+> +          "__init_dequeued";
+> +          "dequeued";
+> +      }
 
-Shenghao Ding (1):
-      ALSA: hda/tas2781: Enable init_profile_id for device initialization
+Btw, the last block (rank = min) doesn't seem to serve any purpose. But
+the last time I checked months ago, the parser explodes if it is
+removed, not sure if it still does now. But this is another reason that
+I would like a rewrite.
 
-Shuming Fan (1):
-      ASoC: rt722: add settings for rt722VB
-
-Steven 'Steve' Kendall (1):
-      ALSA: hda/hdmi: Add pin fix for HP ProDesk model
-
-Valerio Setti (1):
-      ASoC: meson: aiu-encoder-i2s: fix bit clock polarity
-
----
- Documentation/sound/cards/emu-mixer.rst        |   2 +-
- sound/hda/codecs/hdmi/hdmi.c                   |   1 +
- sound/hda/codecs/realtek/alc269.c              |  10 +++
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c |  12 +++
- sound/soc/codecs/rt722-sdca-sdw.c              |   2 +-
- sound/soc/codecs/rt722-sdca.c                  |  14 ++++
- sound/soc/codecs/rt722-sdca.h                  |   6 ++
- sound/soc/meson/aiu-encoder-i2s.c              |   9 ++-
- sound/soc/sof/intel/hda-pcm.c                  |  29 +++++--
- sound/soc/sof/intel/hda-stream.c               |  29 ++++++-
- sound/soc/sof/ipc3-topology.c                  |  10 +--
- sound/soc/sof/ipc4-pcm.c                       | 104 +++++++++++++++++++------
- sound/soc/sof/ipc4-topology.c                  |  10 ++-
- sound/soc/sof/ipc4-topology.h                  |   9 ++-
- sound/soc/sof/sof-audio.h                      |   5 ++
- sound/usb/fcp.c                                |   9 +--
- 16 files changed, 206 insertions(+), 55 deletions(-)
-
+Nam
 
