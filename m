@@ -1,190 +1,158 @@
-Return-Path: <linux-kernel+bounces-848496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD17BCDE73
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3B5BCDD1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0AD6580065
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20346406880
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868012FBE00;
-	Fri, 10 Oct 2025 15:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528422FB0B5;
+	Fri, 10 Oct 2025 15:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LljsPOCm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAjzMCP6"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C2C26A0B9
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71AC2FB091
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760111306; cv=none; b=HpDXOo80JFl+/CJpElJxYXKhfSTupLViy1mXWAXYqnieakD9S6PS0UlGASsFdG+FdhMk0Y0OzR3XY+XwvVIqbNJTkm9ls6UtY6kKq/Q6ETLESQrHz9XVedgbL8mdozQeiwo2rA/l8g6cB2kFWZlCAwMNZ7Q59cD6vmqVxbRqPWY=
+	t=1760110864; cv=none; b=k4YPe/jPqciU/+dyV7PPA+QadbGx/YmIsxR3YFBgUonu1xrkImUybFEozO/fFoWNySdlc5TodzIgCgW32l10d9gKsNzg+anqDq3FJQV7U5S2N7/jEfOf1bgv1o8tMVHcXggSXOLSx5y5xG/wYS0dYIxSpuuwM3E0aSkV8nBdGr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760111306; c=relaxed/simple;
-	bh=/vZYtaWzNZHLvAn1E8dpP5gg037nYFmt++kBJSi+VPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K6YaKiE+09xdmp8pEJWpjrBiSzDkkdh6f135oZZtriGA8b58RE1k3U6lzTvP7cLRvYA6dCAAs1gWZZ6AH+BIVZZJ9iY9AZdNOYQBit0/WpWSmdMSwIh8I1KheI/yeyAnzr3MCBj08kfLt0AYgJS5VMg7cj8GSTT90yz8BjUngXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LljsPOCm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760111304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BS3ds8Up0Gh0Vcw12QbhifbfMtExSe/6UKJ7yZRlT/s=;
-	b=LljsPOCmEHkKjC8MCu9oHHMxDJIyWkoDrheYbrKHq89H07Av5GQow6S/rmhNaW8NM/S2xN
-	7moD1G4Juqsy+lYlMSONXEKG95Qlk1/5jW+I/pWRneri+3I4eEbNuiC7JaQGeTOZYKBUIH
-	TIAo89LSoXO2V3MC1RUzESzsDLGCMdo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-227-mm0n-4RTPUCAn9uW9vCAGg-1; Fri,
- 10 Oct 2025 11:48:23 -0400
-X-MC-Unique: mm0n-4RTPUCAn9uW9vCAGg-1
-X-Mimecast-MFC-AGG-ID: mm0n-4RTPUCAn9uW9vCAGg_1760111296
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 566A519560B0;
-	Fri, 10 Oct 2025 15:48:16 +0000 (UTC)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (unknown [10.45.224.29])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F0D471800578;
-	Fri, 10 Oct 2025 15:48:01 +0000 (UTC)
-From: Valentin Schneider <vschneid@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	rcu@vger.kernel.org,
-	x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Han Shen <shenhan@google.com>,
-	Rik van Riel <riel@surriel.com>,
-	Jann Horn <jannh@google.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>,
-	Petr Tesarik <ptesarik@suse.com>
-Subject: [RFC PATCH v6 29/29] x86/entry: Add an option to coalesce TLB flushes
-Date: Fri, 10 Oct 2025 17:38:39 +0200
-Message-ID: <20251010153839.151763-30-vschneid@redhat.com>
-In-Reply-To: <20251010153839.151763-1-vschneid@redhat.com>
-References: <20251010153839.151763-1-vschneid@redhat.com>
+	s=arc-20240116; t=1760110864; c=relaxed/simple;
+	bh=xOJuDOIlas451FiXAAHgBhsNRzt6HStLrb4Y3mKzjBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qBUfvyORGCNUpiqfOcCnjn3xaQgcZK6aTOLsrDNYbDwOwIsqCjtXLJ3rNqvx+RtYBzV0Q6JCbR08Uj7PaKTsbI+ca2eXfxXNDXiUMReW6v/WYI+iXuJJ8pjO0NzlLBoEF0c7tfeBtouCWp7xmoo/+RyD0JADso0QH0ptgdcKCOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAjzMCP6; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-636535e4b1aso4983505a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760110861; x=1760715661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pNrx81VuCOUnlOhs53ChqFbGZmsPkwHURyqTboyD4SA=;
+        b=HAjzMCP6WRFHv/sreS1KWvOy6uXorsCkmnygvRunN2bqmGbBktPhZ9U6HGiqyMP0cZ
+         vcYM6+1DmRsf5UmsVPkExeA4WxM6kbNyB2VNxeu4ENsh3hpq9Wt6RuMc1X8lZ7HSIaWs
+         EqIktZDYJcyX5J8DP6WL/i/WTfjV7NdvFv/trIlSgKJyMxW0Aisbc1WLCgoTmSmzq2tU
+         4rcf7rzcR3yi7nRiW4ojKWvGw1hg2qy38twmbdGmAAtI2oCDGcmLTkDX+d1WAmlwHDBy
+         KkHR6uV/go7sPmZTc+/dBMRFzIs+gbgdJBlT9wfbYDR3m+TfJFt+zxi0ii5lQeVsCD/E
+         0i0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760110861; x=1760715661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pNrx81VuCOUnlOhs53ChqFbGZmsPkwHURyqTboyD4SA=;
+        b=kzts3mySBK7ruv2lVJq8LMp14CgpwvjcaolHD+/gnezvRg044nHvhqBfJ8r5hCWXa5
+         7wiZy8JNMsJu6w1ecK3IU/+wz7iIU8jCz3kc+73JzOcxqJswgZDOSan+ef3yEBH/uIzO
+         07JKiagdcGg2W1jL0C85ddfQwGSrunNSKAxx1ZW5kN094v2ij52yJpXV03yD44wGsthL
+         ImAmP3CxcKAXnruSuRBE3iDmPra8lhybALqTB+4OLhMhAm9coP9vjFBEMlgYlKke4AZ8
+         EsL7jWJ28//2hEy5oD3pxkbPEl/kef8f+LUhC3lRgp9T1+SRBVfTwb9EQG7An0B4wbds
+         28NA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGIOjMIPI9LKlzTiKhfPM7BXZcQAC327r5s8dg26zV74pHs9bsZdTrrgTxDDpoNUps6NeL4fd3Ns9CZ64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6y94SQUlghDGFb/7NLmbg3NaHpP2YXFqfSiBiBdQ4w6re7eBg
+	c4kztNbADzg1q43TiQvG7hFOhV6qaAnJ8PCNCEwdzTeYYGAnEqzky1no7eZ81+NLz/zHzja6siP
+	yfZ1H22UeKGJtRoiE3LJ1rPMd8RID96ldQyUz
+X-Gm-Gg: ASbGncuhptUE3RQFEXWhoPyn02QSoIbfcmOx2EvGnwCryAHsXpT52UbSTrsDs5+RJaz
+	wjM49hh1jJD8hZ0Oo4ueNs7cTyNKUBCFny2AA9yq/B4TL0jnkFf+hBjWrUIZfgqbjhEXwTVLVO/
+	B5z0EYjoQ4eCO9xTVlgXq0Y8203iwhnb0smBD4b3RfTeern2nYzr8ph1CSeRP7YziI/fuG1kgy/
+	JcMkdrPCarxKKUXHTUTK5wDQgIdshnRzSz6sURqtBkRvkCHmIT2plNF/+jkh1f8bCm+
+X-Google-Smtp-Source: AGHT+IFsVwlKz3dpQMSn0djeXDN0dipdKA/kgBAE2NxkawkzYdINOsshggkYLd2MlBJ2D7HcedRqmChtEct9QlvTNTA=
+X-Received: by 2002:a17:907:3e2a:b0:b2a:47c9:8ff5 with SMTP id
+ a640c23a62f3a-b50bd050daemr1405146466b.10.1760110860769; Fri, 10 Oct 2025
+ 08:41:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20251009075929.1203950-1-mjguzik@gmail.com> <20251009075929.1203950-14-mjguzik@gmail.com>
+ <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
+In-Reply-To: <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 10 Oct 2025 17:40:49 +0200
+X-Gm-Features: AS18NWBB3Bmc7XAi8sS7M18NKhoZbvSirs7my7gPJLr4eYk4Rf7Ljkokn3EGE5o
+Message-ID: <CAGudoHGckJHiWN9yCngP1JMGNa1PPNvnpSuriCxSM1mwWhpBUQ@mail.gmail.com>
+Subject: Re: [PATCH v7 13/14] xfs: use the new ->i_state accessors
+To: Jan Kara <jack@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
+	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Previous patches have introduced a mechanism to prevent kernel text updates
-from inducing interference on isolated CPUs. A similar action is required
-for kernel-range TLB flushes in order to silence the biggest remaining
-cause of isolated CPU IPI interference.
+On Fri, Oct 10, 2025 at 4:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 09-10-25 09:59:27, Mateusz Guzik wrote:
+> > Change generated with coccinelle and fixed up by hand as appropriate.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+>
+> ...
+>
+> > @@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
+> >        */
+> >       xfs_setup_iops(tmpfile);
+> >       xfs_finish_inode_setup(tmpfile);
+> > -     VFS_I(tmpfile)->i_state |=3D I_LINKABLE;
+> > +     inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
+> >
+> >       *wip =3D tmpfile;
+> >       return 0;
+> > @@ -2330,7 +2330,7 @@ xfs_rename(
+> >                * flag from the inode so it doesn't accidentally get mis=
+used in
+> >                * future.
+> >                */
+> > -             VFS_I(du_wip.ip)->i_state &=3D ~I_LINKABLE;
+> > +             inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
+> >       }
+> >
+> >  out_commit:
+>
+> These two accesses look fishy (not your fault but when we are doing this
+> i_state exercise better make sure all the places are correct before
+> papering over bugs with _raw function variant). How come they cannot race
+> with other i_state modifications and thus corrupt i_state?
+>
 
-These flushes are mostly caused by vmalloc manipulations - e.g. on x86 with
-CONFIG_VMAP_STACK, spawning enough processes will easily trigger
-flushes. Unfortunately, the newly added context_tracking IPI deferral
-mechanism cannot be leveraged for TLB flushes, as the deferred work would
-be executed too late. Consider the following execution flow:
+I asked about this here:
+https://lore.kernel.org/linux-xfs/CAGudoHEi05JGkTQ9PbM20D98S9fv0hTqpWRd5fWj=
+EwkExSiVSw@mail.gmail.com/
 
-  <userspace>
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index caff0125faea..ad94fbf55014 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -1420,7 +1420,7 @@ xfs_setup_inode(
+> >       bool                    is_meta =3D xfs_is_internal_inode(ip);
+> >
+> >       inode->i_ino =3D ip->i_ino;
+> > -     inode->i_state |=3D I_NEW;
+> > +     inode_state_set_raw(inode, I_NEW);
+> >
+> >       inode_sb_list_add(inode);
+> >       /* make the inode look hashed for the writeback code */
+>
+> Frankly, the XFS i_state handling is kind of messy and I suspect we shoul=
+d
+> be getting i_state =3D=3D 0 here. But we need to confirm with XFS guys. I=
+'m
+> poking into this because this is actually the only case where we need
+> inode_state_set_raw() or inode_state_clear_raw() outside of core VFS and
+> I'd like to get rid of these functions because IMHO they are actively
+> dangerous to use.
+>
 
-  !interrupt!
-
-  SWITCH_TO_KERNEL_CR3 // vmalloc range becomes accessible
-
-  idtentry_func_foo()
-    irqentry_enter()
-      irqentry_enter_from_user_mode()
-	enter_from_user_mode()
-	  [...]
-	    ct_kernel_enter_state()
-	      ct_work_flush() // deferred flush would be done here
-
-Since there is no sane way to assert no stale entry is accessed during
-kernel entry, any code executed between SWITCH_TO_KERNEL_CR3 and
-ct_work_flush() is at risk of accessing a stale entry. Dave had suggested
-hacking up something within SWITCH_TO_KERNEL_CR3 itself, which is what has
-been implemented in the previous patches.
-
-Make kernel-range TLB flush deferral available via CONFIG_COALESCE_TLBI.
-
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
----
- arch/x86/Kconfig | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 3f1557b7acd8f..390e1dbe5d4de 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2188,6 +2188,23 @@ config ADDRESS_MASKING
-	  The capability can be used for efficient address sanitizers (ASAN)
-	  implementation and for optimizations in JITs.
-
-+config COALESCE_TLBI
-+       def_bool n
-+       prompt "Coalesce kernel TLB flushes for NOHZ-full CPUs"
-+       depends on X86_64 && MITIGATION_PAGE_TABLE_ISOLATION && NO_HZ_FULL
-+       help
-+	 TLB flushes for kernel addresses can lead to IPIs being sent to
-+	 NOHZ-full CPUs, thus kicking them out of userspace.
-+
-+	 This option coalesces kernel-range TLB flushes for NOHZ-full CPUs into
-+	 a single flush executed at kernel entry, right after switching to the
-+	 kernel page table. Note that this flush is unconditionnal, even if no
-+	 remote flush was issued during the previous userspace execution window.
-+
-+	 This obviously makes the user->kernel transition overhead even worse.
-+
-+	 If unsure, say N.
-+
- config HOTPLUG_CPU
-	def_bool y
-	depends on SMP
---
-2.51.0
-
+I'm going to address this in the other e-mail.
 
