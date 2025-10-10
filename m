@@ -1,182 +1,126 @@
-Return-Path: <linux-kernel+bounces-847621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1784BCB4BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:37:00 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959AABCB4D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567B4407F54
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:36:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 18E33354ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BF21F4CBF;
-	Fri, 10 Oct 2025 00:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C01320013A;
+	Fri, 10 Oct 2025 00:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rO42QQgp"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WylIKI7F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43AC1DE8A4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD2253A7;
+	Fri, 10 Oct 2025 00:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760056610; cv=none; b=T99dDn9QcaPcKXfP9Dj/WcYIeQ66U8YRKAiRSGe0HFCaoWgN2UNd9g+AT42CSH2dDDRw+R1CwskyQD4xfaRtWH4f2aDoFW/UKVCZLnZgvtWK2LHwjCuTTczJm7y7vREYp/UgKnzsXybzsWqmXhYrOUQTic9hZB+awLqCScjvCJw=
+	t=1760056869; cv=none; b=EMQjNeSD+hCfmWCnScA2qG05PgxM2XNO9713UmxoYE25pc6IupQI3S1iE7JhsL+LAYaPvzb2dD884oTN0S2DAvsclyqK1aWZ4e860nNDyo0WYYe3xnMuMhxjx8tagxJtvuTqO+yPCEpKoh9hNDfM9pk54K0NypI5qy/a9neACQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760056610; c=relaxed/simple;
-	bh=VgIiVYfPPanTe5NtANzBkqzLHFkkV0yvS73sEK/bvBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jrc06k8aiAiX5SvoNVF1VNMHh3ROs/Fa8Nh4hrFuOdaq7oZEUycJqTy0UkOv0hDz2Fq9Anlz11cCds190g71mLSw5wVbMBAGhOw23nhcVPZ4JsE9RT9kyhOxiihDklltEz6WMG1hIenJNQQ83DKdfklXz1uotVDAuBPSB9AMwYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rO42QQgp; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33255011eafso1667558a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 17:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760056607; x=1760661407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3uYueVCnhFig6wd4EAi1d6+7+lqgnd7MHxpQ+CybGP0=;
-        b=rO42QQgp+37nHbrYxbftDewtXDy7DpYyhJn24Vnh5sH8dXxBj8MCcr1jQhz+jMM09G
-         2N+ac3oN+pObcRF2xtEoHqFWero3qJYcZlIQGHzUucOlWhvyOwFelulTr5SmOeyhPRTs
-         tS2LAYmYr9i5bPdTuC9skNf9ptAVEEoXTdAmgnYNtcvqZrSAG/ca/s/c+MwEt/f4Ov/N
-         gY/SjQPSUMntvOrJm97k6so7VERolXVXUAbUBxryjhlA7m0YEO/S9mmgD9fVLbUNON1s
-         prew8aVnuHYdEq4hh3gGqskJOSRWdHBgRQxXbtYZOhJzlDOlDs9VEkhi48blczHoc4qa
-         VPzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760056607; x=1760661407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3uYueVCnhFig6wd4EAi1d6+7+lqgnd7MHxpQ+CybGP0=;
-        b=Oin0GQnB9EWDaDhBD6RpvkQxmeztxmh5DPm3Y6/c/uPDMLaI0tIyjde49NuEIO9QSl
-         VYILoPzfKyXb+bYxlTLu6SspVbNHnxoFrM02Kv6FSG4v9tHfPKYGNE7jyHKyyVAcAF0t
-         8JgVFEl2dzDrAOvkgqaNhGL4xhityTfxEPvBci5fiHYHqEDorh4gRWS71PJl3cwOgt5r
-         7YGfga8ygSgUUlzb7ERZmciNe7SBzLpWl+6fIxsWCaOvALpzICoFM6vHvepkGFSPes1Y
-         iTd7lF+ElOPilBV0G+hsOPCyhG3JOr/jWATOtv4Ba+zrgZ8AAgugwiqVWNUe3ja9cs13
-         hBqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0MP8lvCu6/vuLIH9cpRmKkp0+a93G6OGClBdVf2tF396DUBZqzF9iwP4D1fENAdnPn8BMqcQa0ZyfYgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZYmmz3G/2d4tldqH+rx9qewRCWGStwh7ZeaeN0M9mDm8bRvAM
-	qI67LYhluqfmamIJuxIzrmADor3I4NKNbBhMGF7mqv8DuxuRXthlHMtJjQ5KF1veE4yO2wVXmhh
-	3T3jGWv2dqU+9/K9CjcSN6xgtxm4tQJ5lpfzWlCuO
-X-Gm-Gg: ASbGnct7JuxJf4NTYAcj+2PSTXIGGpng/G0dUuhgZubi81anugX7INi7GX3ZhPKWwCP
-	5dccr9QsGwiU6CeN3Jr6uIsJMUn9HUb5oZzw8ycelkyfHQA8LXVRZnEPlXH88H3mPzMDNw9xU26
-	4fBDZ7GIWc4e/lFZX3pxbL4QDVRJ0AM7Wm1rM7k1Vi2USb12U+VedZJFlQz9nFpWNo83QVDRd4w
-	/K+XndBe4aLONCMl4k7NvoufVOmQ9sq4KHP1J0=
-X-Google-Smtp-Source: AGHT+IGKjXjPSXyUWNxjvvey/PIj1qEWv3CW3/XJrVZRUI28DQ4Y1brYwXDEUls30Lbe70Hr5PouwmW4vqkFNVZptJA=
-X-Received: by 2002:a17:90b:1c0a:b0:32d:e75a:5009 with SMTP id
- 98e67ed59e1d1-33b5114d4f2mr13047772a91.1.1760056606410; Thu, 09 Oct 2025
- 17:36:46 -0700 (PDT)
+	s=arc-20240116; t=1760056869; c=relaxed/simple;
+	bh=BnSjONbuKcjeBcFTrNUoOvLEJVoEpv6o7xyNm2HalOE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bpYQdCzMFTi+CX6e6/4PSKRQtA/y79bLXrCbXCXbbItHuNjJ3xQEMgi3QYQpqYWahcIW1LJJICMkhuw1VJrZ0e0R6+8BCybS2iVq6VG2GxQHmopGGod7gM7i7lQLS0R2GbcKEimHCOP6kUAH7mq4C86T9fnOW7myHLyNKbqsvkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WylIKI7F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB77BC4CEE7;
+	Fri, 10 Oct 2025 00:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1760056869;
+	bh=BnSjONbuKcjeBcFTrNUoOvLEJVoEpv6o7xyNm2HalOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WylIKI7Fy3n3Xh5X9qtDDGCGqoynWEeiLmK+Wz2jHSCH9AHpnuFmGh2Qy231Ih+q4
+	 VtjkQjobmYiowvOQ4zXxVAPVjCu63wYiZRr5aES7Mhf+DkXZN8DlXUmSu5MReC43wl
+	 9OTvy2AqR3jNXvegQt0EloY78lvZmcBIzrQ2BJw4=
+Date: Thu, 9 Oct 2025 17:41:08 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: syzbot <syzbot+8259e1d0e3ae8ed0c490@syzkaller.appspotmail.com>, Johannes
+ Weiner <hannes@cmpxchg.org>, Brendan Jackman <jackmanb@google.com>, LKML
+ <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, Michal Hocko
+ <mhocko@suse.com>, Network Development <netdev@vger.kernel.org>, Suren
+ Baghdasaryan <surenb@google.com>, syzkaller-bugs
+ <syzkaller-bugs@googlegroups.com>, Vlastimil Babka <vbabka@suse.cz>,
+ ziy@nvidia.com, bpf <bpf@vger.kernel.org>
+Subject: Re: [syzbot] [mm?] WARNING: locking bug in __set_page_owner (2)
+Message-Id: <20251009174108.ad6fea5b1e4bb84b8e2e223b@linux-foundation.org>
+In-Reply-To: <CAADnVQK_8bNYEA7TJYgwTYR57=TTFagsvRxp62pFzS_z129eTg@mail.gmail.com>
+References: <68e7e6ad.a70a0220.126b66.0043.GAE@google.com>
+	<20251009165241.4d78dc5d9fa5525d988806b5@linux-foundation.org>
+	<CAADnVQK_8bNYEA7TJYgwTYR57=TTFagsvRxp62pFzS_z129eTg@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251008060000.3136021-1-royluo@google.com> <20251008060000.3136021-2-royluo@google.com>
- <20251008-slider-uncombed-66790ea92ea0@spud> <CA+zupgxnBK_k2X0_KKX9pUMMTwY4VhsyTEEVz6v+__u=2xR8Ow@mail.gmail.com>
- <20251009-lizard-slapstick-4de7dfe2322d@spud>
-In-Reply-To: <20251009-lizard-slapstick-4de7dfe2322d@spud>
-From: Roy Luo <royluo@google.com>
-Date: Thu, 9 Oct 2025 17:36:09 -0700
-X-Gm-Features: AS18NWDGN42gjmrB8C6_VuH2yevkuUM_X9h5rPKcbGr2ZgBfcB7UAfagMIfSoXY
-Message-ID: <CA+zupgwAXQEuhZUqbjxOC+9HbRG3SQ-_fhEX-49NpfCgqO4BZA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Conor Dooley <conor@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 9, 2025 at 10:13=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Wed, Oct 08, 2025 at 09:40:57PM -0700, Roy Luo wrote:
-> > On Wed, Oct 8, 2025 at 1:58=E2=80=AFPM Conor Dooley <conor@kernel.org> =
-wrote:
+On Thu, 9 Oct 2025 17:26:21 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+
+> On Thu, Oct 9, 2025 at 4:52 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Thu, 09 Oct 2025 09:45:33 -0700 syzbot <syzbot+8259e1d0e3ae8ed0c490@syzkaller.appspotmail.com> wrote:
+> >
+> > > Hello,
 > > >
-> > > On Wed, Oct 08, 2025 at 05:59:57AM +0000, Roy Luo wrote:
->
-> > > > +allOf:
-> > > > +  - $ref: snps,dwc3-common.yaml#
-> > > > +
-> > > > +unevaluatedProperties: false
+> > > syzbot found the following issue on:
 > > >
-> > > So every property from snps,dwc3-common.yaml is valid here, with any =
-of
-> > > the permitted values?
+> > > HEAD commit:    2c95a756e0cf net: pse-pd: tps23881: Fix current measuremen..
+> > > git tree:       net
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=16e1852f980000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5bcbbf19237350b5
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=8259e1d0e3ae8ed0c490
+> > > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> > >
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/8272657e4298/disk-2c95a756.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/4e53ba690f28/vmlinux-2c95a756.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/6112d620d6fc/bzImage-2c95a756.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+8259e1d0e3ae8ed0c490@syzkaller.appspotmail.com
 > >
-> > Conor,
+> > At 2c95a756e0cf, page_owner.c hasn't been modified in a couple of years.
 > >
-> > Appreciate the review.
-> > Ack to all the comments, will fix them in the next patch.
-> > And yes, every property from snps,dwc3-common.yaml is valid here.
-> > You can find more context here [1], essentially the dwc3 glue would be
-> > operating on the same platform device as the dwc3 core, hence all
-> > properties are allowed.
+> > How can add_stack_record_to_list()'s spin_lock_irqsave() be "invalid
+> > wait context"?  In NMI, yes, but the trace doesn't indicate that we're
+> > in an NMI.
 > >
-> > [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-0-f015b358722=
-d@oss.qualcomm.com/
->
-> I find it exceedingly hard to believe that every property from that
-> file, with every permitted value, is possible. AFAIU, the tensor g5 is a
-> phone chip that's only used in pixel devices, not something that people
-> can just buy and integrate into whatever device they feel like. There
-> should be a vanishingly small number of possible configurations,
-> possibly exactly one configuration. There are dozens of properties in
-> the dwc3 common binding, of which at least 10 are for "quirks" or other
-> sorts of hardware errata that are not going to be variable from one
-> phone to another.
+> > Confused.  I'm suspecting BPF involvement.  Cc'ed for help, please.
+> 
+> The attached patch should fix it.
+> There are different options, but this one is the simplest.
 
-To my knowledge, the properties in snps,dwc3-common.yaml can generally
-be categorized into two types:
-- Function knobs: These properties translate directly to register writes th=
-at
-  modify the controller's fundamental behavior. Most quirks fall into this
-  category. For example, "snps,gfladj-refclk-lpm-sel-quirk" enables SOF cou=
-nter.
-- Tunable Values: These properties also map to register writes to influence
-  hardware behavior, but they typically adjust performance or interoperabil=
-ity
-  rather than essential function. While the hardware usually works fine wit=
-h
-  default settings, these values allow for optimization. For example,
-  "tx-fifo-max-num" usually affects data throughput.
+Cool, thanks.
 
-For DWC3 hardware errata and workarounds, my understanding is that they
-are typically handled within the dwc3 driver, often involving a DWC3 revisi=
-on
-check (e.g. [1]), instead of in the device tree binding. While you may find
-properties related to errata, they generally serve to enable or disable an
-existing workaround (e.g. [2]).
+> From: Alexei Starovoitov <ast@kernel.org>
+> Subject: mm: don't spin in add_stack_record when gfp flags don't allow
+> Date: Thu, 9 Oct 2025 17:15:13 -0700
+> 
+> syzbot was able to find the following path:
+>   add_stack_record_to_list mm/page_owner.c:182 [inline]
+>   inc_stack_record_count mm/page_owner.c:214 [inline]
+>   __set_page_owner+0x2c3/0x4a0 mm/page_owner.c:333
+>   set_page_owner include/linux/page_owner.h:32 [inline]
+>   post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+>   prep_new_page mm/page_alloc.c:1859 [inline]
+>   get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+>   alloc_pages_nolock_noprof+0x94/0x120 mm/page_alloc.c:7554
+> 
+> Don't spin in add_stack_record_to_list() when it is called
+> from *_nolock() context.
 
-For Pixel devices, it's shipped with a preferred configuration, but the har=
-dware
-is fundamentally capable of supporting other configurations since the prope=
-rties
-are backed by the SNPS DWC3 IP. Whether that's optimal is a different story=
-.
-I haven't tried toggling every single property but I'm not aware of any pro=
-perty
-that obviously does not work on Tensor G5.
+Seems 6.18 will need this.  Do you think it is needed in earlier kernel
+versions?
 
-I hope this addresses your concern.
-
-[1] https://github.com/torvalds/linux/commit/32a4a135847b1e600c64756b7c7c7a=
-91eb2f0aa9
-    (sorry I'm unable to find the kernel lore link for this commit)
-[2] https://lore.kernel.org/all/1509455515-5992-1-git-send-email-rogerq@ti.=
-com/
-
-Regards,
-Roy Luo
 
