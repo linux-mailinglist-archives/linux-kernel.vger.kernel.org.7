@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-848186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5810BCCD78
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC88ABCCD7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C23843C0C17
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF991A621E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C0929BD87;
-	Fri, 10 Oct 2025 12:11:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF86B1F63FF;
-	Fri, 10 Oct 2025 12:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B1128A1F1;
+	Fri, 10 Oct 2025 12:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uBqKlxqz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+bWx8mme"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DB71F63FF;
+	Fri, 10 Oct 2025 12:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760098262; cv=none; b=nRzj0/bPaD+yH5QuWdw/FUgbP6ZhXxrLrBl8Z+uZEb3t2Un3BiY4u6cakbc+jcanBK9CpJeM3erYAQ9bKnqYxV3XBNXGe68jl7WJfYYZbC+UJgb08MBCilWdn9IW8se7EK7nWHlcReZHHW+kCylBipTXik6DjPX1cH2dsFpHKYE=
+	t=1760098337; cv=none; b=kEdqEwNo/w5La6dmblPwn4+dzFLs+F7n9v57/XpKOExNnVKdppHk865lHl//H3Zb2cMyInSorWqFl8vyFJIeBASN8IzXZOXkw2fyRWn912lNH4ThcD4csEaR2tLBh5GNkaIWm/QLvY1IRSylD8hPmiDktxaBZvyHHGdW2IqAShA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760098262; c=relaxed/simple;
-	bh=Rf79rZFiOw6r+O6kn1K8Xn5L0CWlYxIVq8z4Vl++tBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D33292Q+18v6N/IZj4sS8Kc0mBh1luuz7MyxWDUj65vZ7pHulpHl83XGkws++7zye7CCFrF3NcV4pWbyd1GlbOSGpe7k/wkEiwWbCfPt9MIU6wCjU5bDXb9ok68MnGTUQSLIpiKhud0Z7e3kRhs1ixWE+fgvIFc1+PZF3fS7Z94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A1721596;
-	Fri, 10 Oct 2025 05:10:52 -0700 (PDT)
-Received: from [192.168.20.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E04C3F738;
-	Fri, 10 Oct 2025 05:10:59 -0700 (PDT)
-Message-ID: <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
-Date: Fri, 10 Oct 2025 07:10:58 -0500
+	s=arc-20240116; t=1760098337; c=relaxed/simple;
+	bh=dbCHzhJqjQbavP7vJkxUzAhA45knn1zjhLs+4m4r/q0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fIYS6lWcnzj/+yoPTOThuCdk6uaQoRvR60bNTE/+Pic/cBJdADYfXorTaTCwR//Grvv1Dmr5aSeW8jnD2bFY0oWmbV11ntW32dyVmwuHBaDFfkD2baovjK1JooldHOCgTi4fjDlQAfUXOkCc+WOTB6oJHlLTPczKU3Vovns5m20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uBqKlxqz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+bWx8mme; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760098333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbCHzhJqjQbavP7vJkxUzAhA45knn1zjhLs+4m4r/q0=;
+	b=uBqKlxqzZthHxmGyenIQ4h6B8n34iQWNzYNd2mPHPldfA8CUotTspNUiUBJVxyyfLcG6IX
+	cJGk1pZQnS8zNiVYvT3Wzjuswtdue1BTj+f4c7lPlIA2kayGVfqQPBBi8R8PkwSZwhNlJZ
+	hVRvxada7EeSxtHywP8NyQEjSHTYZxMvV4Qb39QcJ4mIZ+PmVls7cFYu3ikh6V9J89dc0p
+	bJGMd/qb7Li1OFgHxDieUDjMyg5j2rAGPa+9ubSWDT7/xa/99qVHJv9mshm60THlhNT2fG
+	mhimf86hM4iQ9IuEvyCdTwnQGUWo9erwPSUidKQPGdiyxNbkot0yE9Q+Tx7zDg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760098333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbCHzhJqjQbavP7vJkxUzAhA45knn1zjhLs+4m4r/q0=;
+	b=+bWx8mme/IJR9plmjdj/rjGCP2E7uuvOm1ey62WgwleG+5D4cLyMtHPk9lcC/1YKsLoPjw
+	K35HZqqB97fZ4XAQ==
+To: Gabriele Monaco <gmonaco@redhat.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <thomas.weissschuh@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] rv: Add signal reactor
+In-Reply-To: <2536a7777eb54ede40a335fa4204e87301b13040.camel@redhat.com>
+References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
+ <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
+ <20250922162900.eNwI7CS0@linutronix.de>
+ <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
+ <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
+ <87ikgxqrna.fsf@yellow.woof>
+ <3c55441187b869b5bb07b74ef88c10bfd51f9fb1.camel@redhat.com>
+ <20251006115555-9822f5f1-fc9d-4d6a-9735-274b242e0eba@linutronix.de>
+ <2536a7777eb54ede40a335fa4204e87301b13040.camel@redhat.com>
+Date: Fri, 10 Oct 2025 14:12:12 +0200
+Message-ID: <87o6qfx8f7.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
- device
-To: Greg KH <gregkh@linuxfoundation.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Dan Williams <dan.j.williams@intel.com>,
- linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
- lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
- Xu Yilun <yilun.xu@linux.intel.com>,
- Suzuki K Poulose <Suzuki.Poulose@arm.com>,
- Steven Price <steven.price@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-12-aneesh.kumar@kernel.org>
- <20250729181045.0000100b@huawei.com> <20250729231948.GJ26511@ziepe.ca>
- <yq5aqzxy9ij1.fsf@kernel.org> <20250730113827.000032b8@huawei.com>
- <20250730132333.00006fbf@huawei.com>
- <2025073035-bulginess-rematch-b92e@gregkh>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <2025073035-bulginess-rematch-b92e@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi,
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> So if I get it correctly, you are both "voting" for removing reactors in favour
+> of tracepoint-only error reporting.
+> Am I getting this right?
 
+No, I just do not use the reactors much myself and wouldn't care if they
+get removed. But if they are useful for you, let's keep it.
 
-On 7/30/25 8:07 AM, Greg KH wrote:
-> On Wed, Jul 30, 2025 at 01:23:33PM +0100, Jonathan Cameron wrote:
->> On Wed, 30 Jul 2025 11:38:27 +0100
->> Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
->>
->>> On Wed, 30 Jul 2025 14:12:26 +0530
->>> "Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
->>>
->>>> Jason Gunthorpe <jgg@ziepe.ca> writes:
->>>>    
->>>>> On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
->>>>>     
->>>>>>> +static struct platform_device cca_host_dev = {
->>>>>> Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
->>>>>> platform devices being registered with no underlying resources etc as glue
->>>>>> layers.  Maybe some of that will come later.
->>>>>
->>>>> Is faux_device a better choice? I admit to not knowing entirely what
->>>>> it is for..
->>>
->>> I'll go with a cautious yes to faux_device. This case of a glue device
->>> with no resources and no reason to be on a particular bus was definitely
->>> the intent but I'm not 100% sure without trying it that we don't run
->>> into any problems.
->>>
->>> Not that many examples yet, but cpuidle-psci.c looks like a vaguely similar
->>> case to this one.
->>>
->>> All it really does is move the location of the device and
->>> smash together the device registration with probe/remove.
->>> That means the device disappears if probe() fails, which is cleaner
->>> in many ways than leaving a pointless stub behind.
->>>
->>> Maybe it isn't appropriate it if is actually useful to rmmod/modprobe the
->>> driver.
->>>
->>> +CC Greg on basis I may have wrong end of the stick ;)
->> This time with at least one less typo in Greg's email address.
-> 
-> Yes, use faux_device if you need/want a struct device to represent
-> something in the tree and it does NOT have any real platform resources
-> behind it.  That's explicitly what it was designed for.
+But I do like Thomas's proposal to build the reactors on top of the
+tracepoints, so that they are decoupled from the monitors.
 
-Right, but this code is intended to trigger the kmod/userspace module 
-loader.
-
-AFAIK, the faux device is currently missing a faux_device_id in 
-mod_devicetable, alias matching logic in file2alias, and probably a few 
-other things which keeps it from performing this function.
-
-thanks,
-
+Nam
 
