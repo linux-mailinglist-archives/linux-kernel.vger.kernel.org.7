@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-848631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815FABCE384
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:26:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702EABCE391
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1EF23BA3FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A653A2272
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16E82FD1B5;
-	Fri, 10 Oct 2025 18:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C442FC881;
+	Fri, 10 Oct 2025 18:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caVYPERi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6O+yOmO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374C080604;
-	Fri, 10 Oct 2025 18:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0F480604;
+	Fri, 10 Oct 2025 18:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760120725; cv=none; b=JfzuvdVK7EaD3ASzgU4gKl5GwPoTLzM0U/c9/t1bnnkuV8a5ST5gNjoawF6sLod3zO3FYcu7vXryuTJH5yGeQBnmAtnKqQ5uj+q+06GvFSdayvvmN4p45h3dGgZFB/zHZHQgvii4ij+z9YuEkrbahtB+wDIfiFx+u2UuSi5iSZ4=
+	t=1760120756; cv=none; b=iFRaf92R25a54zOM+Sa6FHcWkF/gjcCXc02aa2yJBPhvlwqfQLgDW6BtRK60/nUI+cReKirR3tJB5+gSb37ilbz4OsgOGdMg1MJkzz+nY8xBDLZQ3SquJCdEDpJvfpbKoBmy6PkeZzsvq2jUcizhGx7MZ13SG1YinZrGUe7KmPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760120725; c=relaxed/simple;
-	bh=fAmDhQhLpZsbE1XKoeEo/U43tDVbxfYiL5jTe/N8bLg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nPtI2EN45V4kFH542HttbW5VSoJLUnBnYIo79y/CdH3MU5jroCAtECTXwFKwGbP19kibnXbfdn+hY+gfUBSq+728A/zd2w49MsMTQHrcWPJIy1UQ4tRlR23gSp3AtQ7fabgdhFxWsjaMFcYhS+I478ffF+f9fLAJ5Qt8n+BHzQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caVYPERi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16121C4CEFE;
-	Fri, 10 Oct 2025 18:25:25 +0000 (UTC)
+	s=arc-20240116; t=1760120756; c=relaxed/simple;
+	bh=y8fzFnlKunWEVat2RXlybSvQtyQAeDPzKvb7bm0YiXc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FuZThfgr4SaECO1r+O3M2hazehjD6hFWR9H/bEmhwFfY5/KUaynTk+g76mKRSsvaeQm+376nfTN6L2xqOb8eE7+T1u/BV/1RA1tZq3N9jDsbQTqzJ+KA8obDhxD4tX75nimhlmLyhGx+ffSgdolGXjiVvj5KhH0WpQTowyzIwaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6O+yOmO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63A2C4CEF1;
+	Fri, 10 Oct 2025 18:25:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760120725;
-	bh=fAmDhQhLpZsbE1XKoeEo/U43tDVbxfYiL5jTe/N8bLg=;
+	s=k20201202; t=1760120755;
+	bh=y8fzFnlKunWEVat2RXlybSvQtyQAeDPzKvb7bm0YiXc=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=caVYPERi2s/pmptUCFOP8H0RftjN521kdNIGZ3YfKpHBxs9/CJnPwYMBKldf5cief
-	 j32jvcuowcAJ+K4gld8MpoUzoVFXmz1CdJlV1DK93ITFIMlkBXUZUDIvVIKEa9+OIa
-	 siuPtE0BMz98Z3m5/qlkF7a0xkOlGQ3G63rD0SHNn0uPGiQ7//v7O9GJ0ydaHU1QVn
-	 9xfrakZGHcvHQBLL9Kc0X1LmOdJUnaLg1qLCcY+iJpZditK2+nXs9b0L8/4v71C66s
-	 x0jx5ZQrA0NTsqLtJIJ98AmmvTqRY1h6mS46Y/Lrm2cgt8jwENfDQL2sOuSB3jsoWG
-	 HWFL8h9RtH7sA==
+	b=l6O+yOmOKx4iHMva2BFIJpVqz9f3UwLpP4446+ygYKeVWVCFtxZJyDvF8Tieptphl
+	 WSjTpFlMTuMcg59J9+UwUnJj7lBiImyUAuHiJWz1PPhEbQppzZuEfKMjD4djiedEcI
+	 fLPbr+eHQlaOwguOTe2WYKYra4frWWi/m1qex0QQp0H0QJIiVVqJfT9OusDpWp3BIp
+	 ADVFZD+s9UFtoBoYhYOL0j6WdU5XMFxTl5MsQMpzR7hGgkAsLLhTWFh2wFe6Fp0Zu+
+	 Q2DJ42Cl1MyzJrSEEPHBIR+zzLpoMvlFEdroAVYvr8tRbJebwtD/VpObZTcwJjzVU6
+	 8bNR/AhpLa9rA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF6B3809A00;
-	Fri, 10 Oct 2025 18:25:13 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.18
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CB03809A00;
+	Fri, 10 Oct 2025 18:25:44 +0000 (UTC)
+Subject: Re: [GIT PULL] fbdev updates for v6.18-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <aOjwVEx6xDDRKiAx@gondor.apana.org.au>
-References: <aOjwVEx6xDDRKiAx@gondor.apana.org.au>
-X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aOjwVEx6xDDRKiAx@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.18-p3
-X-PR-Tracked-Commit-Id: 6bb73db6948c2de23e407fe1b7ef94bf02b7529f
+In-Reply-To: <aOkKroU5EAorYET0@carbonx1>
+References: <aOkKroU5EAorYET0@carbonx1>
+X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
+ <dri-devel.lists.freedesktop.org>
+X-PR-Tracked-Message-Id: <aOkKroU5EAorYET0@carbonx1>
+X-PR-Tracked-Remote: http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.18-rc1
+X-PR-Tracked-Commit-Id: 15df28699b28d6b49dc305040c4e26a9553df07a
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0ae452440cb9fee9079dc925f40cd824c1a9de2a
-Message-Id: <176012071215.1074429.8699595490890675969.pr-tracker-bot@kernel.org>
-Date: Fri, 10 Oct 2025 18:25:12 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+X-PR-Merge-Commit-Id: 06a88f47990974f1322c2bf2e8c5125f8a2f69fe
+Message-Id: <176012074303.1074429.6013388198844623304.pr-tracker-bot@kernel.org>
+Date: Fri, 10 Oct 2025 18:25:43 +0000
+To: Helge Deller <deller@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 10 Oct 2025 19:39:00 +0800:
+The pull request you sent on Fri, 10 Oct 2025 15:31:26 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.18-p3
+> http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.18-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0ae452440cb9fee9079dc925f40cd824c1a9de2a
+https://git.kernel.org/torvalds/c/06a88f47990974f1322c2bf2e8c5125f8a2f69fe
 
 Thank you!
 
