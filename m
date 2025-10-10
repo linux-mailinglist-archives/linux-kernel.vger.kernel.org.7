@@ -1,170 +1,120 @@
-Return-Path: <linux-kernel+bounces-848852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA13BCEB23
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:30:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72EFBCEB17
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BB3D4EACF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:30:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5EB424E333D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5802777F1;
-	Fri, 10 Oct 2025 22:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5942765ED;
+	Fri, 10 Oct 2025 22:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1eYd7dH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bbt45kRN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C674280604
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B8123A9BD;
+	Fri, 10 Oct 2025 22:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760135425; cv=none; b=O7CML9hpzLiKaOUQxjHQUcIEJVU5v44CprVgiAlDUjcxiYmVjrDBrDLd2/vR5O3II4F2/yvmEL4QXoFdf8zxFLZ1Pod1B2WGiFo1n4cG2hLIPXUrnpFfxIw/YeDtBi8YXSpOOGutMquMOUKJDOfwpKFsamSMaWx2ETWU2TFmBJI=
+	t=1760135417; cv=none; b=kdn1TJd7qE4elDqgqo1V8zQ2419MW9zuQxrqmUEZ1VJ8r//htYHOaR4U+VH3tl6Vi1UtfHeRwXO5SkgUhf8ZW7epQ4BvlpPZV15TwTraYIBYhOSwyIcp9EgkAja/jDGzH+H9dcCusVUc/uIwgnICEkJxXaWyOlo7faHRr6vmqUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760135425; c=relaxed/simple;
-	bh=sx8RlxKZpctnoFBweJS6xvncbNrY1voIIKFf38weEJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QjBQSI4aMZh4ZPKkeM8q/LHxEKzxM/uhjV73CyDJ7VzxCFQTrDl1Cm01uiQEAZaQYFZuJfgJmvvHZH5Mm6fOIt8jWjbBjl/2J/qrmOucmcuOcYq9UqwvSMoD9zr0LhmG4yb9hzVPfQFXPOHacO8CrXh8Cw/7UWV8qhOk+U2Y9y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1eYd7dH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65EADC19425
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:30:25 +0000 (UTC)
+	s=arc-20240116; t=1760135417; c=relaxed/simple;
+	bh=v1njVSr69cHMTMzNsArVH5NqJS79UIgSmB0tW7QwGM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUt4lrzW5xyrr3j1pJasaPFJpimLYG7+ycZ06B8j/pry3ejD5h2JbYDsYzda2QLy3jRDR4+aFDI+xSrToNHrrcvZCIwogi4FdT0NX/uaorYkf/D+caPHUHv3xBo/o0hgZ5TsoxqVjmUvA7hYmXJSvjcNrbPJFui8x2ULEfIGEpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bbt45kRN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D1FC4CEF1;
+	Fri, 10 Oct 2025 22:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760135425;
-	bh=sx8RlxKZpctnoFBweJS6xvncbNrY1voIIKFf38weEJU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=o1eYd7dHZIXngemP67EIzsgbqIA0L3klykBwdyF6/bIPZbplABgEjsmZ/9NcBEvGi
-	 eLJSlaczmFYktWp1kIZKiDYsW+QF1mq/6Ys/PGAfsdOocOXHkB+hZQKlvE9rq3bIjD
-	 kozFm5JTqkqKPLBE9Qtd13pOdxy2b+S/hqmupQsrKSpdDju1gOnbQfS31FNzLXarUO
-	 CyaIrF+/V/dnzgD7jB12p6ZO30rOEXp1U21RphIuuQPFGj/cz3ItnvjHGsyaP+VfYb
-	 fSVwe4lf+k0hZS71b9u5GvZ+3Z13YaPl/ifDug/hdQWwsZeNtFifS+Tkm696qMVGqo
-	 dCtJjv5yakJGQ==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-639fe77bb29so3728904a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:30:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVCwuTRp6jSE0E0t/ibouaia0aDan0egQghHM+iwgsF94N552nZtJqK11UDypdVbopZoviYxshlZItEm4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2OS95cDUCORV/vz1wIiu2D4eqdoEvzyARZ10qIQCnTRWeydKC
-	i9hdgpVPH0aNZmFcDeLsIBvICzmowFurnspfN8eiKMgJ2vs3QZvQUoHyHwDX2r42QpTYXaTBp6O
-	uWKM9/FJgeD9OK9D+vM5Qb9jeaC9OCQ==
-X-Google-Smtp-Source: AGHT+IGdYPfHL1gnUujQzCp8M6WogUc1LbdE4xIMlDxV2yOAQw/4MfeeyPV2JzMy1aQ4kJRIZ9ePrEIFshlr8zpVXxg=
-X-Received: by 2002:a17:907:a909:b0:b3e:5f20:888d with SMTP id
- a640c23a62f3a-b50aa7a1685mr1585501166b.27.1760135423725; Fri, 10 Oct 2025
- 15:30:23 -0700 (PDT)
+	s=k20201202; t=1760135416;
+	bh=v1njVSr69cHMTMzNsArVH5NqJS79UIgSmB0tW7QwGM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bbt45kRNGdxuc71IGTA4+bh1dZDrw6TLSkG8rO8p9XdAVudGAls7Ayr0v3nfaKMD/
+	 jriQowgFzwh4vYkSgF7PS4w7X2SOxxsOpbP0f1b9hjVCla4CGZ7REzLANc43veIkRd
+	 Do6rVFMmMaD7t3HgVLxd1ueEP9PAPTUccxzd0XvaEHGly3OI2Zevh/VsvR/joxOl4O
+	 WLKp8TFYeqiw64mFdAgaoZDxhLn3HbfhL4A9tcOetRChZiaNwiisO9eVOWzPR3uBkS
+	 vdDJI4rp+4wO1wphuyQEptC227KxBbcK2/28JWuNATBhF8BKJm96Do8PyqMv+cTdND
+	 ffaO/xZb8g8LA==
+Date: Fri, 10 Oct 2025 15:30:12 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [tip:x86/core 1/1] vmlinux.o: warning: objtool:
+ rcar_pcie_probe+0x13e: no-cfi indirect call!
+Message-ID: <20251010223012.GA3597090@ax162>
+References: <202510092124.O2IX0Jek-lkp@intel.com>
+ <20251010032001.GA3741500@ax162>
+ <20251010071032.GE4067720@noisy.programming.kicks-ass.net>
+ <20251010074446.GE4068168@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
- <aec0f40a-8346-4194-8b18-1022fe3366bb@arm.com> <0d0560cc-9757-4c7b-8de4-170148d99481@oss.qualcomm.com>
- <ead7cf8b-fbc4-4242-a9da-b313dded1abc@arm.com> <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
- <9d3eeb9f-b8ea-48e5-a1d9-0865f63ef991@arm.com> <fhb4woejzh3r6v5dxvdiopnsbuwstucfuuzbiymxg4wrxrjc7t@dt3z3utq6lwd>
- <c863f6a7-b117-4444-ae6d-1d525b572be2@oss.qualcomm.com>
-In-Reply-To: <c863f6a7-b117-4444-ae6d-1d525b572be2@oss.qualcomm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 10 Oct 2025 17:30:11 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+LPpJxVRUP4b9Gt40t=Wr=2B+697Jv2sjtDqTpqwGezQ@mail.gmail.com>
-X-Gm-Features: AS18NWAgf_96UGCOZLypid2OePxqb7YT8CX9tJwVzXdlzHqYAmMGtDO6SoLnFQ8
-Message-ID: <CAL_Jsq+LPpJxVRUP4b9Gt40t=Wr=2B+697Jv2sjtDqTpqwGezQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
-To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Robin Murphy <robin.murphy@arm.com>, 
-	joro@8bytes.org, will@kernel.org, saravanak@google.com, conor+dt@kernel.org, 
-	mchehab@kernel.org, bod@kernel.org, krzk+dt@kernel.org, 
-	abhinav.kumar@linux.dev, vikash.garodia@oss.qualcomm.com, 
-	dikshita.agarwal@oss.qualcomm.com, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, bjorn.andersson@oss.qualcomm.com, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010074446.GE4068168@noisy.programming.kicks-ass.net>
 
-On Fri, Oct 10, 2025 at 2:53=E2=80=AFPM Charan Teja Kalla
-<charan.kalla@oss.qualcomm.com> wrote:
->
->
->
-> On 10/9/2025 11:55 PM, Dmitry Baryshkov wrote:
-> >>> I really don't like the idea of extending the #iommu-cells. The ARM S=
-MMU
-> >>> has only one cell, which is correct even for our platforms. The fact
-> >>> that we need to identify different IOMMU SIDs (and handle them in a
-> >>> differnt ways) is internal to the video device (and several other
-> >>> devices). There is nothing to be handled on the ARM SMMU side.
-> >> Huh? So if you prefer not to change anything, are you suggesting this =
-series
-> >> doesn't need to exist at all? Now I'm thoroughly confused...
-> > Hmm. We need changes, but I don't feel like adding the FUNCTION_ID to
-> > #iommu-cells is the best idea.
-> >
-> >> If you want to use SMR masks, then you absolutely need #iommu-cells =
-=3D 2,
-> >> because that is the SMMU binding for using SMR masks. It would definit=
-ely
-> > I'm sorry. Yes, we have #iommu-cells =3D <2>.
-> >
-> >> not be OK to have some magic property trying to smuggle
-> >> IOMMU-driver-specific data contrary to what the IOMMU node itself says=
-. As
-> >> for iommu-map, I don't see what would be objectionable about improving=
- the
-> >> parsing to respect a real #iommu-cells value rather than hard-coding a=
-n
-> >> assumption. Yes, we'd probably need to forbid entries with length > 1
-> >> targeting IOMMUs with #iommu-cells > 1, since the notion of a linear
-> > This will break e.g. PCIe on Qualcomm platforms:
-> >
-> >                         iommu-map =3D <0x0   &apps_smmu 0x1400 0x1>,
-> >                                     <0x100 &apps_smmu 0x1401 0x1>;
-> >
-> >
-> > But this seems unlogical anyway wrt. apps_smmu having #iommu-cells =3D
-> > <2>. It depends on ARM SMMU ignoring the second cell when it's not
-> > present.
-> >
-> >> relationship between the input ID and the output specifier falls apart=
- when
-> >> the specifier is complex, but that seems simple enough to implement an=
-d
-> >> document (even if it's too fiddly to describe in the schema itself), a=
-nd
-> >> still certainly no worse than having another property that *is* just
-> >> iommu-map with implicit length =3D 1.
-> >>
-> >> And if you want individual StreamIDs for logical functions to be attac=
-hable
-> >> to distinct contexts then those functions absolutely must be visible t=
-o the
-> >> IOMMU layer and the SMMU driver as independent devices with their own =
-unique
-> >> properties, which means either they come that way from the DT as of_pl=
-atform
-> >> devices in the first place, or you implement a full bus_type abstracti=
-on
->
-> I don't want to dilute what Dmitry is saying here, but the below is what
-> i can make out of Robin comments, please CMIW:
->
-> iommu {
->         #iommu-cells =3D <2>;
-> }
->
-> video {
->    iommu =3D <iommu sid1 mask1>, <iommu sid2 mask2>;
->    #iommu-map-cells =3D 2; /* does it look weird to define here, even if
-> it is SMMU property? */
+On Fri, Oct 10, 2025 at 09:44:46AM +0200, Peter Zijlstra wrote:
+> That's here... and that is indeed broken. Also note how it zeros r11
+> right before calling it.
+> 
+> AFAICT this is:
+> 
+>         host->phy_init_fn = of_device_get_match_data(dev);
+>         err = host->phy_init_fn(host);
+> 
+> Where it has decided that of_device_get_match_data() *will* return NULL
+> and then helpfully emits (*NULL)(); or something like that. And then
 
-No, not weird. interrupt-map similarly requires #interrupt-cells. So
-it would be just #iommu-cells here.
+Oh duh because it will :)
 
->    iommu-map =3D <0 smmu sid3 mask3>,
->                <0 smmu sid4 mask4>;
+  $ rg '^(# )?CONFIG_OF' .config
+  1528:# CONFIG_OF is not set
 
-But you only have 1 cell, not 2 here. The #iommu-cells in this node
-would define the number of cells before 'smmu'. The #iommu-cells in
-the &smmu node is the number of cells after the &smmu phandle.
+which means that of_device_get_match_data() is always NULL:
 
-Rob
+  static inline const void *of_device_get_match_data(const struct device *dev)
+  {
+      return NULL;
+  }
+
+> forgets to add CFI bits on for extra fun and games.
+
+which means this is another instance of what Sami mentioned happening on
+another report of a similar issue
+
+  https://lore.kernel.org/CABCJKue1wCB6jBLYUc-fAEzpyQWHXwbk8R5GBaZCkCao0EQZPA@mail.gmail.com/
+
+which does somewhat make sense because what's the point of setting up
+the CFI call if you know nothing can actually make use of it since we
+will crash when trying to indirectly call a NULL pointer?
+
+Something like this would avoid this issue then.
+
+Cheers,
+Nathan
+
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index 213028052aa5..15514c9c1927 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -981,7 +981,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 		goto err_clk_disable;
+ 
+ 	host->phy_init_fn = of_device_get_match_data(dev);
+-	err = host->phy_init_fn(host);
++	err = host->phy_init_fn ? host->phy_init_fn(host) : -ENODEV;
+ 	if (err) {
+ 		dev_err(dev, "failed to init PCIe PHY\n");
+ 		goto err_clk_disable;
 
