@@ -1,330 +1,162 @@
-Return-Path: <linux-kernel+bounces-847649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3C6BCB59C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:22:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4319BCB5A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2C59D354E7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:22:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A0F7354E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C663E26CE2B;
-	Fri, 10 Oct 2025 01:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE022727F2;
+	Fri, 10 Oct 2025 01:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gsFRymlZ"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="23tNBei7"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE1C26A091
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB05A26CE2F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760059216; cv=none; b=NlgoA2FlDbpf459REcauDJbb9gsynMLaR1Q74HzgKQjkRCkOD/+3tDc6H/pbxPjaCB7gYbuJ6mngSQHSNoeiXHGyx7e7cs50JGn8geuYe/hihHD1iB8ukBL6aZ8Ea6nhZHVR6fHOrCw701t7YVdLXkEmkuLzyC2knGZBKZ8mwvQ=
+	t=1760059217; cv=none; b=Z8ZbI/Ro04Q4Rv/p7h+qouYg1DJzvARoINEN8eHEbTT/iDY4aOAPY5O9upqgaUrYZ0Dw3YrwxR6Da8Q9H60ynUabGzQS/RKaP/5LHOpbpwV9nslAoHSPpUSHk8l2M8Q+VBmWuBlX8f14zADvDqvWHYG/UPZXbLj2jH9i9q2BwEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760059216; c=relaxed/simple;
-	bh=oyemZIe+YmeGtd9SCcDsGnEDPdQlvUm05tKLh3ceOSk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pbMomiuJjRXm9M+mkW3l+nAQs69P97afpcmzGV5NgUSQAJzad77jvcagIOAj4EsecfY665xu+oJYRX3Wxt1IxOE43GACFR3774+4BncMGuXoDdrTNv5RA5OmdUFPmyEeHLtkPLurGNN2dWlmRaw4T9T132j/VAIXDx4p9GIhgA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gsFRymlZ; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1760059217; c=relaxed/simple;
+	bh=zpsFxkYp7i/qFinpxTf4uQvjMjKAkyzUtADOVa7F/Rg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=t2Y+r/GhH1MeSgMKx/5JuFeN2m8zSGLlr/kzCsMS2Thn/bonIVbpLZdOjS2a3VjKP3aacjWajCmFnI9lsc/2tTw8rgqiWdtBwmR9Jeuz1JnG4ZwFPoRW0NpOBT3D5L6I8LWg15Akx+FmUkorUGhTXCoTzolmHu05qmcXV3YVLk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--svv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=23tNBei7; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5509ed1854so1807014a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 18:20:14 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--svv.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-781253de15aso4802971b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 18:20:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760059214; x=1760664014; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vrde2qlU5hqI2CpGGepvHr5s2l9yi26YQf6xU7aW9eE=;
-        b=gsFRymlZ+Y96mJXgowjOaL4nbZn8xqz9wFAIIalnn0mClLRL5KwcCKvSBeZmcHvfV8
-         qh69VoknRSIwt5xeBKRWrS4FRTvpcpUX6f2ki5S0hJlkw5HBJbVRxuYuMLk+IsgeN7rt
-         P23NzJ2EP852ziE0ZUjvcATbQ+rjsWMLKrLgTE7wdPjEiyNkj2/FY2WVfouwV8lDJ+Xt
-         5XdAkrH2+MHWjpzKzp4peTlM/laFk5BluNBjhjfI/jw6ye3lsyY6z/malwM6I3ZEVxgY
-         vB2s5RYvLOoqtJhjq7Hq4MCiKZyzpREyvBAbWpqohAz6W5sIc7pCcYVlbtEROwf3DZng
-         uI8w==
+        d=google.com; s=20230601; t=1760059215; x=1760664015; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Bkwp0xgfZSEd0BSxSFi0SgJuGdtO+jQeRTWHAgDhs58=;
+        b=23tNBei7HNsVrsg5ueaNxPGKbOSl+1Y/5n59Opt0xXH41RZF0U7ZCqMpoilr2gZofN
+         8cgsKL5IxUi+WhQrzZQQpOu52r/g9QNb/iYEd7m9lXE7GLtILXq+OX8wZxYChn0ua6co
+         1DVShrwKEXhUhYDs9rOiW3tw0u4WrjVCS12VFRLXW4DP8AF0sA4adeX8bBKTlLbamuk5
+         LBxXTnPmDuK6romnuz2Q15OkHeIUP0L92XFcxTCMof8/dPJbp/l2Le5KsRUzxUDMzEZ9
+         SW43Yg7fw2PEidYHIZMjlLfaOB4+FWrEveW4TG4xRTHoHyOI5+xGRZehNcCnFsmHjKcM
+         2xcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760059214; x=1760664014;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vrde2qlU5hqI2CpGGepvHr5s2l9yi26YQf6xU7aW9eE=;
-        b=Oi9QPhcajjO0vwp4dA8BBOnGoU2SOT+3rEwfgrd5WHWwb8EhqeJntIxq1daiZoh+wr
-         2igbsa+G3xefUQkVXAbAEyme2A2NtoK9zqnOBfUEC6JfCnYqEiN8+xKDr/gX2A8JPjXZ
-         NS2B/NGEGiT2hd26PqB3bwIIbrwi5MlzGFSK/ysfps9P9FWkEFHiBkQYNJYoDqV3dL04
-         f2NdmAggDvUX+esdS581Fj68hr+YyOpD81Upohk5BgI5HcJBLjyMwrBI/CgTr+Au7Dew
-         2wKkpf1ktOcZEpuiZnYzJy6IHENhyo4rP4Ejp+ZPu1Ybba3Ccws6rbwgppz9AY/SgNdQ
-         GyHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzfLE63CZ1ig/f+giVfFjZX32mlebEJQR0IyhImzoJ7i3+VNbt6M4aqGZwr4M5Q7BiDYO5R42kz9LWBAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIzmmbLiaTFigDhWt3tvECKXqO9TjXDLa2UtI0OaDzDyWlCsRI
-	OBURzZ5uCWYUNj2okJxLlPf9mXSmbxgoS4mPO8iDfaZzM2DTkkDWtCioUMBXzSJ8U5GAnnDqKoi
-	27R+QKg==
-X-Google-Smtp-Source: AGHT+IHv8uHGO40bLuN/jD5N/hL/DXXvgcz7LG4u+TAflEKVP3j7kuuG1LjFXB0Jk3SVlTNaWflJDBbA6Ac=
-X-Received: from pgew27.prod.google.com ([2002:a63:af1b:0:b0:b55:794f:64bb])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:12ce:b0:309:48d8:cf0a
- with SMTP id adf61e73a8af0-32da8462fb2mr12231761637.54.1760059213708; Thu, 09
- Oct 2025 18:20:13 -0700 (PDT)
-Date: Thu,  9 Oct 2025 18:19:51 -0700
-In-Reply-To: <20251010011951.2136980-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1760059215; x=1760664015;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bkwp0xgfZSEd0BSxSFi0SgJuGdtO+jQeRTWHAgDhs58=;
+        b=GHgBQnYehULEbe6IUpFUT/EoCBsYzZjUiX3EAMY2m874U+AsOxMEo+Ru8nagaK8beR
+         JS7BXaI3K86KsU50d+F2lgRr2MbR8OMV1vUyn2aKqVIZDucZZxakmxSlsCZTHw4sH9++
+         SUDg4XXML8tcLcwCrm0G2CfEU4JzUYD6/CF3US381eUxLP0R0mC4t6V2MM8RjXGv5jRg
+         LCBq92qo8boPpOqQVL1/irBhvrH3Uip3GWyXVtvK48h0B4cekBdFPYFe+FkILZ9Q826i
+         7iE838WWTzUzsTLXyP0I5EhWbA7jbQTlOn7CYWc8z4bXQmoVdSm41PbHpFNmNhw0R4Y4
+         PVYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYUc9xLpofJYeE62NN8qtbj6aqDwQm19aJBygrwYqDcoVuAppw/nwQSi6AFZKwlfeYq0LLQWpwckXsgak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSW/dqvNi7T3TckjINJtnSSyPcIuc2XnVbXK7DY0D1DDjA6JMu
+	IXbtAG7yHkxoLIlSUNzxFnYJ7I28qtHEBYx0rLOqHCLaIhvhi6G4SLfSPAbe1+RkX+rlOg==
+X-Google-Smtp-Source: AGHT+IE/oYoGQXxn68i5qfazwIxY7OpJR/DN4zu7YepqEPWGgaKmJJzz1DQpi8EDScfHDcUOIuvIsCs=
+X-Received: from pfx5.prod.google.com ([2002:a05:6a00:a445:b0:77e:468d:c50d])
+ (user=svv job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:9a4:b0:77f:2de7:eef3
+ with SMTP id d2e1a72fcca58-79385324dcamr11417351b3a.5.1760059214953; Thu, 09
+ Oct 2025 18:20:14 -0700 (PDT)
+Date: Fri, 10 Oct 2025 01:20:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251010011951.2136980-1-surenb@google.com>
 X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
-Message-ID: <20251010011951.2136980-9-surenb@google.com>
-Subject: [PATCH 8/8] mm: integrate GCMA with CMA using dt-bindings
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, alexandru.elisei@arm.com, peterx@redhat.com, sj@kernel.org, 
-	rppt@kernel.org, mhocko@suse.com, corbet@lwn.net, axboe@kernel.dk, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, jack@suse.cz, 
-	willy@infradead.org, m.szyprowski@samsung.com, robin.murphy@arm.com, 
-	hannes@cmpxchg.org, zhengqi.arch@bytedance.com, shakeel.butt@linux.dev, 
-	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com, 
-	minchan@kernel.org, surenb@google.com, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	iommu@lists.linux.dev, Minchan Kim <minchan@google.com>
+Message-ID: <20251010012006.2282321-1-svv@google.com>
+Subject: [PATCH] HID: playstation: Remap joystick axes to be centered at 0
+From: Siarhei Vishniakou <svv@google.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	Roderick Colenbrander <roderick.colenbrander@sony.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Siarhei Vishniakou <svv@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Introduce a new "guarantee" property for shared-dma-pool to enable
-GCMA-backed memory pools. Memory allocations from such pools will
-have low latency and will be guaranteed to succeed as long as there
-is contiguous space inside the reservation.
-dt-schema for shared-dma-pool [1] will need to be updated once this
-patch is accepted.
+The joystick axes (ABS_X, ABS_Y, ABS_RX, ABS_RY) for PlayStation
+gamepads report a neutral state of 128 over HID, with a full range of
+[0, 255]. The driver previously mapped this directly, resulting in an
+evdev range of [0, 255] with a resting point of 128.
 
-[1] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/reserved-memory/shared-dma-pool.yaml
+This approach is unconventional for Linux gamepad drivers and has several
+drawbacks: it requires userspace applications to be aware of the
+non-zero resting state, and it is incompatible with the input
+subsystem's 'flat' (deadzone) logic, which assumes a resting point of 0.
 
-Signed-off-by: Minchan Kim <minchan@google.com>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+This patch remaps the four joystick axes to the conventional signed
+8-bit range of [-128, 127], with 0 as the neutral state. This is
+accomplished by changing their evdev range in ps_gamepad_create() and
+translating the incoming hardware value in the report parsing functions
+by subtracting 128.
+
+The analog trigger axes (ABS_Z, ABS_RZ) are handled separately. Their
+resting state is 0 (un-pressed), and their hardware range of [0, 255]
+is already the conventional representation. They are left unmodified by
+this patch.
+
+This makes the joystick behavior consistent with other gamepad drivers
+while preserving the standard behavior for the triggers.
+
+Signed-off-by: Siarhei Vishniakou <svv@google.com>
 ---
- include/linux/cma.h     | 11 +++++++++--
- kernel/dma/contiguous.c | 11 ++++++++++-
- mm/Kconfig              |  2 +-
- mm/cma.c                | 37 +++++++++++++++++++++++++++----------
- mm/cma.h                |  1 +
- mm/cma_sysfs.c          | 10 ++++++++++
- mm/gcma.c               |  2 +-
- 7 files changed, 59 insertions(+), 15 deletions(-)
+ drivers/hid/hid-playstation.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/cma.h b/include/linux/cma.h
-index 62d9c1cf6326..3ec2e76a8666 100644
---- a/include/linux/cma.h
-+++ b/include/linux/cma.h
-@@ -43,10 +43,17 @@ static inline int __init cma_declare_contiguous(phys_addr_t base,
- extern int __init cma_declare_contiguous_multi(phys_addr_t size,
- 			phys_addr_t align, unsigned int order_per_bit,
- 			const char *name, struct cma **res_cma, int nid);
--extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
-+extern int __cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 					unsigned int order_per_bit,
- 					const char *name,
--					struct cma **res_cma);
-+					struct cma **res_cma, bool gcma);
-+static inline int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
-+					unsigned int order_per_bit,
-+					const char *name,
-+					struct cma **res_cma)
-+{
-+	return __cma_init_reserved_mem(base, size, order_per_bit, name, res_cma, false);
-+}
- extern struct page *cma_alloc(struct cma *cma, unsigned long count, unsigned int align,
- 			      bool no_warn);
- extern bool cma_pages_valid(struct cma *cma, const struct page *pages, unsigned long count);
-diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-index d9b9dcba6ff7..73a699ef0377 100644
---- a/kernel/dma/contiguous.c
-+++ b/kernel/dma/contiguous.c
-@@ -461,6 +461,7 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
- 	unsigned long node = rmem->fdt_node;
- 	bool default_cma = of_get_flat_dt_prop(node, "linux,cma-default", NULL);
- 	struct cma *cma;
-+	bool gcma;
- 	int err;
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index 1468fb11e39d..ca5bca9c2654 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -718,11 +718,11 @@ static struct input_dev *ps_gamepad_create(struct hid_device *hdev,
+ 	if (IS_ERR(gamepad))
+ 		return ERR_CAST(gamepad);
  
- 	if (size_cmdline != -1 && default_cma) {
-@@ -478,7 +479,15 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
- 		return -EINVAL;
+-	input_set_abs_params(gamepad, ABS_X, 0, 255, 0, 0);
+-	input_set_abs_params(gamepad, ABS_Y, 0, 255, 0, 0);
++	input_set_abs_params(gamepad, ABS_X, -128, 127, 0, 0);
++	input_set_abs_params(gamepad, ABS_Y, -128, 127, 0, 0);
+ 	input_set_abs_params(gamepad, ABS_Z, 0, 255, 0, 0);
+-	input_set_abs_params(gamepad, ABS_RX, 0, 255, 0, 0);
+-	input_set_abs_params(gamepad, ABS_RY, 0, 255, 0, 0);
++	input_set_abs_params(gamepad, ABS_RX, -128, 127, 0, 0);
++	input_set_abs_params(gamepad, ABS_RY, -128, 127, 0, 0);
+ 	input_set_abs_params(gamepad, ABS_RZ, 0, 255, 0, 0);
+ 
+ 	input_set_abs_params(gamepad, ABS_HAT0X, -1, 1, 0, 0);
+@@ -1349,10 +1349,10 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+ 		return -1;
  	}
  
--	err = cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->name, &cma);
-+	gcma = !!of_get_flat_dt_prop(node, "guarantee", NULL);
-+#ifndef CONFIG_GCMA
-+	if (gcma) {
-+		pr_err("Reserved memory: unable to setup GCMA region, GCMA is not enabled\n");
-+		return -EINVAL;
-+	}
-+#endif
-+	err = __cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->name,
-+				      &cma, gcma);
- 	if (err) {
- 		pr_err("Reserved memory: unable to setup CMA region\n");
- 		return err;
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 41ce5ef8db55..729f150369cc 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1015,7 +1015,7 @@ config CMA_AREAS
+-	input_report_abs(ds->gamepad, ABS_X,  ds_report->x);
+-	input_report_abs(ds->gamepad, ABS_Y,  ds_report->y);
+-	input_report_abs(ds->gamepad, ABS_RX, ds_report->rx);
+-	input_report_abs(ds->gamepad, ABS_RY, ds_report->ry);
++	input_report_abs(ds->gamepad, ABS_X,  ds_report->x - 128);
++	input_report_abs(ds->gamepad, ABS_Y,  ds_report->y - 128);
++	input_report_abs(ds->gamepad, ABS_RX, ds_report->rx - 128);
++	input_report_abs(ds->gamepad, ABS_RY, ds_report->ry - 128);
+ 	input_report_abs(ds->gamepad, ABS_Z,  ds_report->z);
+ 	input_report_abs(ds->gamepad, ABS_RZ, ds_report->rz);
  
- config GCMA
-        bool "GCMA (Guaranteed Contiguous Memory Allocator)"
--       depends on CLEANCACHE
-+       depends on CLEANCACHE && CMA
- 	help
- 	  This enables the Guaranteed Contiguous Memory Allocator to allow
- 	  low latency guaranteed contiguous memory allocations. Memory
-diff --git a/mm/cma.c b/mm/cma.c
-index 813e6dc7b095..71fb494ef2a4 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -28,6 +28,7 @@
- #include <linux/highmem.h>
- #include <linux/io.h>
- #include <linux/kmemleak.h>
-+#include <linux/gcma.h>
- #include <trace/events/cma.h>
- 
- #include "internal.h"
-@@ -161,11 +162,18 @@ static void __init cma_activate_area(struct cma *cma)
- 			count = early_pfn[r] - cmr->base_pfn;
- 			bitmap_count = cma_bitmap_pages_to_bits(cma, count);
- 			bitmap_set(cmr->bitmap, 0, bitmap_count);
-+		} else {
-+			count = 0;
- 		}
- 
--		for (pfn = early_pfn[r]; pfn < cmr->base_pfn + cmr->count;
--		     pfn += pageblock_nr_pages)
--			init_cma_reserved_pageblock(pfn_to_page(pfn));
-+		if (cma->gcma) {
-+			gcma_register_area(cma->name, early_pfn[r],
-+					   cma->count - count);
-+		} else {
-+			for (pfn = early_pfn[r]; pfn < cmr->base_pfn + cmr->count;
-+			     pfn += pageblock_nr_pages)
-+				init_cma_reserved_pageblock(pfn_to_page(pfn));
-+		}
+@@ -2272,10 +2272,10 @@ static int dualshock4_parse_report(struct ps_device *ps_dev, struct hid_report *
+ 		return -1;
  	}
  
- 	spin_lock_init(&cma->lock);
-@@ -252,7 +260,7 @@ static void __init cma_drop_area(struct cma *cma)
- }
+-	input_report_abs(ds4->gamepad, ABS_X,  ds4_report->x);
+-	input_report_abs(ds4->gamepad, ABS_Y,  ds4_report->y);
+-	input_report_abs(ds4->gamepad, ABS_RX, ds4_report->rx);
+-	input_report_abs(ds4->gamepad, ABS_RY, ds4_report->ry);
++	input_report_abs(ds4->gamepad, ABS_X,  ds4_report->x - 128);
++	input_report_abs(ds4->gamepad, ABS_Y,  ds4_report->y - 128);
++	input_report_abs(ds4->gamepad, ABS_RX, ds4_report->rx - 128);
++	input_report_abs(ds4->gamepad, ABS_RY, ds4_report->ry - 128);
+ 	input_report_abs(ds4->gamepad, ABS_Z,  ds4_report->z);
+ 	input_report_abs(ds4->gamepad, ABS_RZ, ds4_report->rz);
  
- /**
-- * cma_init_reserved_mem() - create custom contiguous area from reserved memory
-+ * __cma_init_reserved_mem() - create custom contiguous area from reserved memory
-  * @base: Base address of the reserved area
-  * @size: Size of the reserved area (in bytes),
-  * @order_per_bit: Order of pages represented by one bit on bitmap.
-@@ -260,13 +268,14 @@ static void __init cma_drop_area(struct cma *cma)
-  *        the area will be set to "cmaN", where N is a running counter of
-  *        used areas.
-  * @res_cma: Pointer to store the created cma region.
-+ * @gcma: Flag to reserve guaranteed reserved memory area.
-  *
-  * This function creates custom contiguous area from already reserved memory.
-  */
--int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
--				 unsigned int order_per_bit,
--				 const char *name,
--				 struct cma **res_cma)
-+int __init __cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
-+				   unsigned int order_per_bit,
-+				   const char *name,
-+				   struct cma **res_cma, bool gcma)
- {
- 	struct cma *cma;
- 	int ret;
-@@ -297,6 +306,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 	cma->ranges[0].count = cma->count;
- 	cma->nranges = 1;
- 	cma->nid = NUMA_NO_NODE;
-+	cma->gcma = gcma;
- 
- 	*res_cma = cma;
- 
-@@ -836,7 +846,11 @@ static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
- 		spin_unlock_irq(&cma->lock);
- 
- 		mutex_lock(&cma->alloc_mutex);
--		ret = alloc_contig_range(pfn, pfn + count, ACR_FLAGS_CMA, gfp);
-+		if (cma->gcma)
-+			ret = gcma_alloc_range(pfn, count, gfp);
-+		else
-+			ret = alloc_contig_range(pfn, pfn + count,
-+						 ACR_FLAGS_CMA, gfp);
- 		mutex_unlock(&cma->alloc_mutex);
- 		if (!ret)
- 			break;
-@@ -1009,7 +1023,10 @@ bool cma_release(struct cma *cma, const struct page *pages,
- 	if (r == cma->nranges)
- 		return false;
- 
--	free_contig_range(pfn, count);
-+	if (cma->gcma)
-+		gcma_free_range(pfn, count);
-+	else
-+		free_contig_range(pfn, count);
- 	cma_clear_bitmap(cma, cmr, pfn, count);
- 	cma_sysfs_account_release_pages(cma, count);
- 	trace_cma_release(cma->name, pfn, pages, count);
-diff --git a/mm/cma.h b/mm/cma.h
-index c70180c36559..3b09e8619082 100644
---- a/mm/cma.h
-+++ b/mm/cma.h
-@@ -49,6 +49,7 @@ struct cma {
- 	char name[CMA_MAX_NAME];
- 	int nranges;
- 	struct cma_memrange ranges[CMA_MAX_RANGES];
-+	bool gcma;
- #ifdef CONFIG_CMA_SYSFS
- 	/* the number of CMA page successful allocations */
- 	atomic64_t nr_pages_succeeded;
-diff --git a/mm/cma_sysfs.c b/mm/cma_sysfs.c
-index 97acd3e5a6a5..4ecc36270a4d 100644
---- a/mm/cma_sysfs.c
-+++ b/mm/cma_sysfs.c
-@@ -80,6 +80,15 @@ static ssize_t available_pages_show(struct kobject *kobj,
- }
- CMA_ATTR_RO(available_pages);
- 
-+static ssize_t gcma_show(struct kobject *kobj,
-+			 struct kobj_attribute *attr, char *buf)
-+{
-+	struct cma *cma = cma_from_kobj(kobj);
-+
-+	return sysfs_emit(buf, "%d\n", cma->gcma);
-+}
-+CMA_ATTR_RO(gcma);
-+
- static void cma_kobj_release(struct kobject *kobj)
- {
- 	struct cma *cma = cma_from_kobj(kobj);
-@@ -95,6 +104,7 @@ static struct attribute *cma_attrs[] = {
- 	&release_pages_success_attr.attr,
- 	&total_pages_attr.attr,
- 	&available_pages_attr.attr,
-+	&gcma_attr.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(cma);
-diff --git a/mm/gcma.c b/mm/gcma.c
-index 3ee0e1340db3..8e7d7a829b49 100644
---- a/mm/gcma.c
-+++ b/mm/gcma.c
-@@ -119,7 +119,7 @@ int gcma_register_area(const char *name,
- 		folio_set_count(folio, 0);
- 		list_add(&folio->lru, &folios);
- 	}
--
-+	folio_zone(pfn_folio(start_pfn))->cma_pages += count;
- 	cleancache_backend_put_folios(pool_id, &folios);
- 
- 	spin_lock(&gcma_area_lock);
 -- 
 2.51.0.740.g6adb054d12-goog
 
