@@ -1,175 +1,230 @@
-Return-Path: <linux-kernel+bounces-848642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EF5BCE3E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B57CBCE3DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5EA402330
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:28:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C4319E0662
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E842FE05B;
-	Fri, 10 Oct 2025 18:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B4C2FF65B;
+	Fri, 10 Oct 2025 18:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EixBlhDP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2jFgeA3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDEC2FF15D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E6D2FFDC0;
+	Fri, 10 Oct 2025 18:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760120839; cv=none; b=o8xmElRWqUYg8pNSr4fo6QqFbpl5XjbHIAlI7V1PLQxDwGtanUdHKHTyQd9FYbePgn006nbk2KfIQX0rUE9idy2rUIWtb3CRd00V3g1C+JABsrIbTfY6YQ8rt0WPnW9HEQPJciMRYE9viiaECWWdOmL8TbsTx8eLDSKzun5BrA0=
+	t=1760120855; cv=none; b=QsTTmC4kSpCYyNejb0sE5WATtvWD/7URMC6ji1BaGv3bU3Mi5z1INTcrH02z3oL1uUkws9ul5HSIUPJtyB4curK7rObTeiUPgx0P6eXIax8zV1r1/B3q7vxMGWKphfeqTUZOCSHp9O/FWkEZDL4fiCkbHcsbYkE4c6859421DRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760120839; c=relaxed/simple;
-	bh=r32NymUtrf4fMzYCtgBys+4011+Zu1yQaln2k311rMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S/fU5eWI3XpoC9TUOaTL/o3B0x46WsXNONt6vMJ3S3rUdVxIe2IdLBiwI/9mLwh1EJnSlhcwe+nec3jukMijVoZac3Mb6ccc669nymvA+sUGBwBZiIgAYB+nYUBFOxFpPJLXHOAqCFZMQkMYvAub+884S0DN5CrsiR+8wuXWivA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EixBlhDP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59AFX0h8001798
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:26:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Wux/efAeHzCjaBAhhspzOVq9mish0P7Dal7te3lz2Gw=; b=EixBlhDP/KgaxFaK
-	wMFeMm1eHoIcmfag8ZS2MDWMvrIqIP+jR9UrlHyAQdju5mX0uR0ri0sRtqDTdD0d
-	Tir++onkLRBk9Jd0WgwH2mWpHxsXm2n1jk/ukicezla1H1rMpPT3QT5FHFCKrIXe
-	REQbAaw1Crwpe0rlQrGngL1wfhf5K7TXD/zFAQXVcHiIjint0eZR5cCf/qEDFWkM
-	lZWCDDoRPOQJ6mdSGKI/ZIMh9PdArZeZmcCBDb0ecBms1qufA5gCnS4fAqGDZ6ne
-	cPZoXWWSdhB3Q4A68Frgia6uqrPohyc/TnRauHcHGeh7rr0k+9oMdzv2L5qEbU3G
-	f+OSoA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4u7bw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:26:57 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8747323272dso8645556d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:26:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760120817; x=1760725617;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wux/efAeHzCjaBAhhspzOVq9mish0P7Dal7te3lz2Gw=;
-        b=B63kTw4jJKzJIvCqaAfzOivv1ptD30mqgitrEG/y+orhCPNL39Qxs2Q1Z4G+0dPdAX
-         QcoVY7gSbTNYrNWI/rq9UlaB5LwVgSdN7mQov751Fhk/AB5F3VKDS+IdEk9dSWN+VSul
-         syABLUV2KfqaP8UsyR19M8ky5XWBcLltjfRyVd7A/yL+ofg9KOOb1kKj2wJbS7Tn0u1B
-         eam1y2ur1ntxghArhlpAoE28Wjh4dFot+ytQ5uVbrpm4rgYbLjL0J1/+0SDd898cug6H
-         iZBrAy7RYYF/noJ1MS8DmO21ArKdNNxSJ1/V5fHYjx56zIKaCr7hAsEqE3f/AOQ8UwaE
-         myeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWswD6B7j+zBWF9PicPZ1DOe7j5ESyV5v207bIhhDulFVBVidmWdVhqktGW7fp4jq2O377P28kft3gWpMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO3vX0UgG9nBb06/uVvXJhCySxFVoQ0JdNhBNyP9gIpBNbFZdT
-	4MB3nj7wQd+jYvCZ1dqB4CU5HSFvoZJDNeoyIrs+qhbsYdS6yH7tuK6mUA/4fro5BWW0L7ym4hV
-	YmTDc2i1ptcteBopJUKYVpk9AZP/lmt+jCDw1KaZDfxyyUH2seQOKMT9KH40KTktFO4w=
-X-Gm-Gg: ASbGnctUg9fsm1WNgOfIeOhmwwDDGCoaR9uSeNaVXI4yzWa3EHTYjfHaBbqrQM+POcK
-	4FDQrvpZj2TP7NNqWtawKLImlptQDblV7/94a1/14bvyIz+DWyMIXHpNUpkIMC74VqpQA7y0oV2
-	ud2xX5oAxpWDzbxz8JuD+Et3DuuincmHSoZTdJKSV5/J6qePssF+XK9Om0QIT9PzFY0tt7VIOI0
-	KTPgh52xkgzfnpDGprkzxHZ3xLIw5Tma6OLWAA+PCxHOrDshawdqwxlH98HMJbnckG9EKiE8SXQ
-	Xgodyy1AsYE9cKWGIkm88P5o1vCRLLA7BbcNhzOCsz25sj2goBwPCmVjUrcYAR+dIgurFcKSl+m
-	4KzAul4wj+a/HRKswnJPYsg==
-X-Received: by 2002:a05:6214:4102:b0:773:84c1:396 with SMTP id 6a1803df08f44-87b20ff9b56mr118583256d6.1.1760120816720;
-        Fri, 10 Oct 2025 11:26:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbv3DZ79BE34Kn/wUGZkuQspPjyI7j0FCaMJKAoltlhtem37CFBxGiGcrS2O8G/hsHNEwilQ==
-X-Received: by 2002:a05:6214:4102:b0:773:84c1:396 with SMTP id 6a1803df08f44-87b20ff9b56mr118582886d6.1.1760120816054;
-        Fri, 10 Oct 2025 11:26:56 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5235dccfsm2882274a12.9.2025.10.10.11.26.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 11:26:54 -0700 (PDT)
-Message-ID: <3e098e06-0ee6-477b-8a52-7370ed37b36e@oss.qualcomm.com>
-Date: Fri, 10 Oct 2025 20:26:51 +0200
+	s=arc-20240116; t=1760120855; c=relaxed/simple;
+	bh=eLy5f8BYq1FZ75LlTMzJvXsfCy88if544RCMW6Jg9FM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O7vgedinTj9JedMzX5H2MRnTmSNUQlKRnOGSvLa8fpC/g2OBjLfGVZfMQ54evZlzv1tNNRQyCFfN7T/TXE5TdNYG3FcZVHxUzkkmLIFoXHEGMQAXopk8J/deRPvY5gXWgycArGygRb/hNOQOvMC/LgIroDuN3kwbuo6ZaSiFgvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2jFgeA3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3E0C4CEF5;
+	Fri, 10 Oct 2025 18:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760120853;
+	bh=eLy5f8BYq1FZ75LlTMzJvXsfCy88if544RCMW6Jg9FM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Z2jFgeA3HOvCBv9HW0qSykSn5u+tXiXUOxQctdezWagjGCbHS5j+9vC8Cso8BGBAY
+	 i+A7R1yrViLxfBfYCyDRztU3Fw324cq94aBY3bI6lBuyDdSIw19Pz4IJn5js3SUlEx
+	 hztQJG2yEJIQIu1WqM+hcmoUvAfhYhrFoGtoc92HYsIO3UwIp+3JgQP4RO+Rpx9Vjp
+	 sp7J/c3v8hQsg5cYmUbq3dIGNEV1W/3INFAEL0VlOaKwDosNRLlPP04AB94mspPPAz
+	 vwnyMVV+p18peibko9X6g2ETn73yQvxpHKXQ9xj3x2FKgTlnFCaeRXDdSHTM7fQsZk
+	 yn1IyLL0lEQ1Q==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Fri, 10 Oct 2025 14:27:22 -0400
+Subject: [PATCH v5] sunrpc: allocate a separate bvec array for socket sends
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] drm/msm: Workaround IFPC counters bug
-To: Anna Maniscalco <anna.maniscalco2000@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251010-ifpc_counters_fix-v1-1-9187962b7d20@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251010-ifpc_counters_fix-v1-1-9187962b7d20@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Vrcuwu2n c=1 sm=1 tr=0 ts=68e94ff1 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=3vACEWP1_XwkJBBmlSAA:9
- a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: zvhexk7Uy56_HJDi_rlGPazc_vLJ4YDk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX/a4o/gPLtegk
- eFOHboYMfVM//X/VYJqZaKX6yvHLg2LSajwarNzIfakBH6O5pvZjWE6rjymvedpjJa0LoJMRHoC
- /xxdmUSVgj3k6CpMnXzMRS2Rc6XTfvvI1zvvB2VNMsH4etk+wzc7h8pt5l725ygdSxJrQ+nwVVj
- dtdZ/vHWifw64sE6cbJMaWrdAo6s0AqX0jfHnyqNXBEg+T2QjeX0AmNEUKHZfod59UcsoSd7qtU
- zoPQ/Dv8g02gUcaE5cnFaP+MOTnzIqecDfy+h5VDgxjW1pAcl0dWt/2MYMoqLSIcqFbKT6sSrC9
- FIRnMuOHk4UIGXIyjN6hF8vstRvHSv1yS2Zfo3d6VbUUyoIMf/lvaYpPlQA6wWbPGKOW/Ngp3GK
- qRDhcRyWYs7atXGf2goevTqBq24WLw==
-X-Proofpoint-ORIG-GUID: zvhexk7Uy56_HJDi_rlGPazc_vLJ4YDk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015 adultscore=0
- bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Message-Id: <20251010-rq_bvec-v5-1-44976250199d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAApQ6WgC/3XMQQ7CIBCF4asY1mKYQaB15T2MMQUGJZpWqSEa0
+ 7uLblrTuHyT+f4X6ylF6tlm8WKJcuxj15ahlgvmTk17JB592QwFKhCi4ul2sJkct1o3wYvgrbW
+ sfF8Thfj4lnb7sk+xv3fp+Q1n+FznjQxccBNQeoneKFLbM6WWLqsuHdknkvEPxAIrlE40lWrQu
+ BmUU1iPUBaoDFQgtbC1szO4nkAQI1xz4BqN0iaAoxp+4DAMbw0sK5BKAQAA
+X-Change-ID: 20251008-rq_bvec-b66afd0fdbbb
+To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ David Howells <dhowells@redhat.com>
+Cc: Brandon Adams <brandona@meta.com>, linux-nfs@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5335; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=eLy5f8BYq1FZ75LlTMzJvXsfCy88if544RCMW6Jg9FM=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo6VAPtUGvoIwWqqz/lc5Ho7U9WvDl3ATC9mU2v
+ a2ELpDKYGGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaOlQDwAKCRAADmhBGVaC
+ Ff4oD/0S5lUBbOdg04YMWA9mXPWwc1H071gKHk//J9K9bFDXtpPt6gaGqwyS4eCs6XoURn/VX5T
+ AntwsbiBmm5WFbstLEhvRiHVTaLQrhDQ0ojN4AlOjOj2OA/nft8ZFxBdSJJXKV14cI/w4IMuLTH
+ VQp4WnMpNVgb2nLpvTE8D1q2tlHghhj9xdcouhytxjkALj1uBvbiECnXbR6rBI81aS6SVUTaNZA
+ gRY6/uOMFb6brNKovczfOTlRUFGOPoX77J7QvIoZo9N6o/SWb0nInbPE4uyMCLUOKx4bBcpy4lw
+ fZTIym6TnDPVravIv1OIgLa7OBEjDBR0N36NiEKjBE+dT1LtV7cN2FMInU3olVkTzCDc523E9Z5
+ +7V9bWBwPAQez7kqDOreJVnZiota0Eyg56LxbJkJKI4ptsLy97fvpuQN+QhYJLOotzkBYLOnneR
+ Yg56qonIq7ffIxUXa8FxBbHCaWv8VsJgVGRYarqSklNUaLSd/g8qExL52Sh9M+ECglaJ2aw1URi
+ UJT3EmR7WsnooAjHKN8E9XCIjPeZrap+nYqUiehJtWT4CbJOke35bOlx0iavEas+PHq0Gcv+QrF
+ +AOI96dJO/bDOK7D23K3huuVnkFS3NqvsracLnfSvbyBR0znsCliRFDoRqPhOmsygx2c+32UOcq
+ G70fwp3kxPk9wyg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 10/10/25 7:49 PM, Anna Maniscalco wrote:
-> When keepalive vote is set to false IFPC will be re-enabled even if the
-> perfcounter oob vote is set.
-> 
-> Workaround this by not setting keepalive vote when sysprof is active.
-> 
-> ---
-> I have little confidence that this is the proper solution hence why
-> this is an RFC.
-> 
-> Hopefully something better can be found.
-> 
-> Signed-off-by: Anna Maniscalco <anna.maniscalco2000@gmail.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> index afc5f4aa3b17334027f3c20072cc3f059a9733b7..975b91e2c439f659b7f716cff87f73d389641d91 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> @@ -191,7 +191,8 @@ void a6xx_preempt_irq(struct msm_gpu *gpu)
->  
->  	set_preempt_state(a6xx_gpu, PREEMPT_NONE);
->  
-> -	a6xx_preempt_keepalive_vote(gpu, false);
-> +	if (refcount_read(&a6xx_gpu->base.base.sysprof_active) <= 0)
+svc_tcp_sendmsg() calls xdr_buf_to_bvec() with the second slot of
+rq_bvec as the start, but doesn't reduce the array length by one, which
+could lead to an array overrun. Also, rq_bvec is always rq_maxpages in
+length, which can be too short in some cases, since the TCP record
+marker consumes a slot.
 
-This returns an unsigned type, so you can just do:
+Fix both problems by adding a separate bvec array to the svc_sock that
+is specifically for sending. Allocate it when doing the first send on
+the socket, to avoid allocating the array for listener sockets.
 
-if (!refcount_read(..))
+For TCP, make this array one slot longer than rq_maxpages, to account
+for the record marker. For UDP only allocate as large an array as we
+need since frames are limited to 64k anyway.
 
-Konrad
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Minor update to the last patch to reduce the size of the array on UDP
+sockets since that transport doesn't need rq_maxpages.
+---
+Changes in v5:
+- reduce the size of sk_bvec on UDP sockets
+- Link to v4: https://lore.kernel.org/r/20251010-rq_bvec-v4-1-627567f1ce91@kernel.org
 
-> +		a6xx_preempt_keepalive_vote(gpu, false);
->  
->  	trace_msm_gpu_preemption_irq(a6xx_gpu->cur_ring->id);
->  
-> 
-> ---
-> base-commit: b5bad77e1e3c7249e4c0c88f98477e1ee7669b63
-> change-id: 20251010-ifpc_counters_fix-8bd4470e6351
-> 
-> Best regards,
+Changes in v4:
+- switch to allocating a separate bvec for sends in the svc_sock
+- Link to v3: https://lore.kernel.org/r/20251009-rq_bvec-v3-0-57181360b9cb@kernel.org
+
+Changes in v3:
+- Add rq_bvec_len field and use it in appropriate places
+- Link to v2: https://lore.kernel.org/r/20251008-rq_bvec-v2-0-823c0a85a27c@kernel.org
+
+Changes in v2:
+- Better changelog message for patch #2
+- Link to v1: https://lore.kernel.org/r/20251008-rq_bvec-v1-0-7f23d32d75e5@kernel.org
+---
+ include/linux/sunrpc/svcsock.h |  3 +++
+ net/sunrpc/svcsock.c           | 29 ++++++++++++++++++++++-------
+ 2 files changed, 25 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
+index 963bbe251e52109a902f6b9097b6e9c3c23b1fd8..a80a05aba75410b3c4cd7ba19181ead7d40e1fdf 100644
+--- a/include/linux/sunrpc/svcsock.h
++++ b/include/linux/sunrpc/svcsock.h
+@@ -26,6 +26,9 @@ struct svc_sock {
+ 	void			(*sk_odata)(struct sock *);
+ 	void			(*sk_owspace)(struct sock *);
+ 
++	/* For sends */
++	struct bio_vec		*sk_bvec;
++
+ 	/* private TCP part */
+ 	/* On-the-wire fragment header: */
+ 	__be32			sk_marker;
+diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+index 7b90abc5cf0ee1520796b2f38fcb977417009830..0ec1131ffade8d0c66099bfb1fb141b22c6e411b 100644
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -730,6 +730,13 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
+ 	unsigned int count;
+ 	int err;
+ 
++	count = DIV_ROUND_UP(RPC_MAX_REPHEADER_WITH_AUTH + RPCSVC_MAXPAYLOAD_UDP, PAGE_SIZE);
++	if (!svsk->sk_bvec) {
++		svsk->sk_bvec = kcalloc(count, sizeof(*svsk->sk_bvec), GFP_KERNEL);
++		if (!svsk->sk_bvec)
++			return -ENOMEM;
++	}
++
+ 	svc_udp_release_ctxt(xprt, rqstp->rq_xprt_ctxt);
+ 	rqstp->rq_xprt_ctxt = NULL;
+ 
+@@ -740,14 +747,14 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
+ 	if (svc_xprt_is_dead(xprt))
+ 		goto out_notconn;
+ 
+-	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
++	count = xdr_buf_to_bvec(svsk->sk_bvec, rqstp->rq_maxpages, xdr);
+ 
+-	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
++	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, svsk->sk_bvec,
+ 		      count, rqstp->rq_res.len);
+ 	err = sock_sendmsg(svsk->sk_sock, &msg);
+ 	if (err == -ECONNREFUSED) {
+ 		/* ICMP error on earlier request. */
+-		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
++		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, svsk->sk_bvec,
+ 			      count, rqstp->rq_res.len);
+ 		err = sock_sendmsg(svsk->sk_sock, &msg);
+ 	}
+@@ -1235,19 +1242,19 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
+ 	int ret;
+ 
+ 	/* The stream record marker is copied into a temporary page
+-	 * fragment buffer so that it can be included in rq_bvec.
++	 * fragment buffer so that it can be included in sk_bvec.
+ 	 */
+ 	buf = page_frag_alloc(&svsk->sk_frag_cache, sizeof(marker),
+ 			      GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 	memcpy(buf, &marker, sizeof(marker));
+-	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
++	bvec_set_virt(svsk->sk_bvec, buf, sizeof(marker));
+ 
+-	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
++	count = xdr_buf_to_bvec(svsk->sk_bvec + 1, rqstp->rq_maxpages,
+ 				&rqstp->rq_res);
+ 
+-	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
++	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, svsk->sk_bvec,
+ 		      1 + count, sizeof(marker) + rqstp->rq_res.len);
+ 	ret = sock_sendmsg(svsk->sk_sock, &msg);
+ 	page_frag_free(buf);
+@@ -1272,6 +1279,13 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
+ 					 (u32)xdr->len);
+ 	int sent;
+ 
++	if (!svsk->sk_bvec) {
++		/* +1 for TCP record marker */
++		svsk->sk_bvec = kcalloc(rqstp->rq_maxpages + 1, sizeof(*svsk->sk_bvec), GFP_KERNEL);
++		if (!svsk->sk_bvec)
++			return -ENOMEM;
++	}
++
+ 	svc_tcp_release_ctxt(xprt, rqstp->rq_xprt_ctxt);
+ 	rqstp->rq_xprt_ctxt = NULL;
+ 
+@@ -1636,5 +1650,6 @@ static void svc_sock_free(struct svc_xprt *xprt)
+ 		sock_release(sock);
+ 
+ 	page_frag_cache_drain(&svsk->sk_frag_cache);
++	kfree(svsk->sk_bvec);
+ 	kfree(svsk);
+ }
+
+---
+base-commit: 177818f176ef904fb18d237d1dbba00c2643aaf2
+change-id: 20251008-rq_bvec-b66afd0fdbbb
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
