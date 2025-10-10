@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-848243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42722BCCFFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:56:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD15BCD00E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50D334FC943
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:56:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C1D3BB0CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768F42F0685;
-	Fri, 10 Oct 2025 12:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C46261B76;
+	Fri, 10 Oct 2025 13:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ixmkdfes"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OQ1URU30"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A014414;
-	Fri, 10 Oct 2025 12:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C625353A7;
+	Fri, 10 Oct 2025 13:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101001; cv=none; b=U1M3p5cTx+Tsv/lbsO7D1oxlsBcNywrqUAqll2Dp8AUWozwjDeRjInd9TFcK4kNxbwvq4BV0Ovw2Xbqlmb6MKXG7a8PrU+geDYeSwWoEMA62S1LnETNT1rq0hNuMgVAQt2x9WqNCJctcKeaz1Y3MngrYh8YdfXHiKSq1osOJVXE=
+	t=1760101287; cv=none; b=T7h4YHgSANFs1e8/iylrPKusq7jSpagWfZ2/4FYJB5PZxv4RW1K/1CqYKcywp9sOypYhiY7qaAlvVtw7ijSyiTuk+H1D1SJCy4jl/q/GlV2OPx0oOQXr/bBeQ43UP/1xmfz/q9b55ZfAxGvuk2b1LwzaJiMLzpcH/tKqi3yO/GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101001; c=relaxed/simple;
-	bh=dD3igITv+JHDtXiWzqDlls1b5ftAr4cPy4acz3BAGhg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JNCUNLvUpBUFsMYmAXeqmsdQkElhvffBWANd5X2xs2pIeaKn/SWYOfUzoUI31KKx48NgoJnvdODpCNctC6318Kga2Iuo+jz1uBBSeV19mYXL+8/AbEoDIey9GnCap9nsWccC9BafMoTvLf94V6jyVGC4JHml3jNMowjVqaTJam4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ixmkdfes; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760100996; x=1760705796; i=markus.elfring@web.de;
-	bh=2SNKVWEp8lysblDMfyyWDhUGHiqupODtMa0SLSCv0C4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=IxmkdfesMykOibIC7wP1Qz2AqsM2uzwpKpTbML0feW0mPKFcAQkJG4UJCIPTE6pN
-	 GNyK3p6vm3gI1utC2DKq3rLmDIHPjZYb7O9FF2Y9OxgAeHf5lsm/GTmJh+BNxwhqK
-	 2XXEyT9qugnSLeYxDO08uh5GNF0L1DBDWH6GQewg16BqOepExdMkW6nkk2CkPgzA5
-	 M0mvA+iCL0Vx3OTGfcR3vBKjYN9P3E16Cz/GYGkkrszHA8GRB/oUtKzZTOMyXDgxb
-	 l1VGm3ZP9NxCMbdwEmqWKVlXcX4+TpdqGm4PoBL1uA5W+u5uvxX1+CSHnten75+Nf
-	 dI6Rzt+MlsCPNiLCBg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mcpqo-1uYgru0VfO-00aFLc; Fri, 10
- Oct 2025 14:56:36 +0200
-Message-ID: <10e2a3a5-e109-44b5-ba3c-3e8c40d76361@web.de>
-Date: Fri, 10 Oct 2025 14:56:34 +0200
+	s=arc-20240116; t=1760101287; c=relaxed/simple;
+	bh=DIMc28Re/uWBE9UbF6RYAhvk+QLad4Iqz9POVkoClQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CGbkNzglGMqlCY7FVx3cg+ROI62sA+1m1W1wCwhpnmU79xlXoW2hqVg0RSkvqvGK/9gMA/eODt2VllVrpIZPH2sfiWCkWPcPEBvrEMDv4F33v2AXm3gniZFBV0g1nSr3aydkTgF+IBfEFAf4KVQpiLBdAziZfVKHlCOu9ZY8U98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OQ1URU30; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59AD1BEa691602;
+	Fri, 10 Oct 2025 08:01:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760101271;
+	bh=7MQUoAZ0HNpxVkNgHkiEnbeP1gMkIhO6PW+nJAFGI+s=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=OQ1URU305fv0IYaMaltsYCQMCVZseaMBcDaOFSoyrV46sElRuw2cR4NCeOWNgpl8n
+	 36bWgpwu+6wrWakhMIknbmA0YWy5kivdPBKND75CarbAqaBgGLo2O8czB/YBOW3TIA
+	 9XoYt7G1hnyEsYzQabnIWNQZ/OoOIgTexcao6Xtc=
+Received: from DFLE215.ent.ti.com (dfle215.ent.ti.com [10.64.6.73])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59AD1BUl2210432
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 10 Oct 2025 08:01:11 -0500
+Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE215.ent.ti.com
+ (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 10 Oct
+ 2025 08:01:11 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 10 Oct 2025 08:01:11 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59AD1A9a1673948;
+	Fri, 10 Oct 2025 08:01:10 -0500
+Message-ID: <9c8d708f-bf20-4dda-abf8-7896c820c611@ti.com>
+Date: Fri, 10 Oct 2025 08:01:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,125 +64,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- Bharath SM <bharathsm@microsoft.com>,
- Boris Protopopov <bprotopopov@hotmail.com>,
- Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] smb: client: Omit one redundant variable assignment in
- cifs_xattr_set()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xgGFKwlC8fAbNPnPhe9WRoYMzFBnzrQvqKFb0p5yK7sXTOUiC/s
- 2XYyLbz3901nw+YfYGSTpJwWX2XlydLtKWPTFqnQH6S6ULL3uACcMCN/CQczU9QFc6DRr2U
- PXo1WeXM7vRWcGH2Ji5vV7hst5BVKwrEKYoMbUDRhEDK03BKiq2OrQUUU3ueCG8W/XFXmYG
- 4c7yOdm/LRFUS5yqD8AlA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eW8yYte7cDM=;aIZaFF5QXWh3GxyP8Yz03LbE/GA
- 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
- I1EcDd/1wX+ZrHebJgZrpi3U+s=
+Subject: Re: [PATCH 6/6] remoteproc: core: Consolidate bool flags into 1-bit
+ bitfields
+To: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251005-remoteproc-cleanup-v1-0-09a9fdea0063@nxp.com>
+ <20251005-remoteproc-cleanup-v1-6-09a9fdea0063@nxp.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20251005-remoteproc-cleanup-v1-6-09a9fdea0063@nxp.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 10 Oct 2025 14:48:13 +0200
+On 10/5/25 9:14 AM, Peng Fan wrote:
+> Per Documentation/process/coding-style.rst rule 17 regarding the use of
+> bool types:
+> If a structure has many true/false values, consider consolidating them into
+> a bitfield with 1-bit members, or using an appropriate fixed-width type
+> such as u8.
+> 
+> This commit replaces multiple bool members in struct rproc with 1-bit
+> bitfields and groups them together. This change reduces the overall size of
+> struct rproc from 0x4d8 to 0x4c8 on ARM64.
+> 
 
-The local variable =E2=80=9Crc=E2=80=9D is assigned a value in an if branc=
-h without
-using it before it is reassigned there.
-Thus delete this assignment statement.
+Most of the series looks good, but this patch I'm not a fan. This isn't
+a huge savings and bitfields come with many of their own challenges.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/smb/client/xattr.c | 1 -
- 1 file changed, 1 deletion(-)
+> No functional changes.
 
-diff --git a/fs/smb/client/xattr.c b/fs/smb/client/xattr.c
-index b88fa04f5792..029910d56c22 100644
-=2D-- a/fs/smb/client/xattr.c
-+++ b/fs/smb/client/xattr.c
-@@ -178,7 +178,6 @@ static int cifs_xattr_set(const struct xattr_handler *=
-handler,
- 			memcpy(pacl, value, size);
- 			if (pTcon->ses->server->ops->set_acl) {
- 				int aclflags =3D 0;
--				rc =3D 0;
-=20
- 				switch (handler->flags) {
- 				case XATTR_CIFS_NTSD_FULL:
-=2D-=20
-2.51.0
+If the structure's size changed then that is a functional change. There
+also is probably a performance change from extracting the value out of the
+bitfield, where before they might have each been an aligned width variable
+that could be tested in a single cycle.
+
+Andrew
+
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>   include/linux/remoteproc.h | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index b4795698d8c2a4e80ccafbe632436c4dfb636a1e..d8468a96edfbd82f4011881c10f59bf7c12e9c1a 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -528,21 +528,21 @@ enum rproc_features {
+>    * @index: index of this rproc device
+>    * @crash_handler: workqueue for handling a crash
+>    * @crash_cnt: crash counter
+> - * @recovery_disabled: flag that state if recovery was disabled
+>    * @max_notifyid: largest allocated notify id.
+>    * @table_ptr: pointer to the resource table in effect
+>    * @clean_table: copy of the resource table without modifications.  Used
+>    *		 when a remote processor is attached or detached from the core
+>    * @cached_table: copy of the resource table
+>    * @table_sz: size of @cached_table
+> - * @has_iommu: flag to indicate if remote processor is behind an MMU
+> - * @auto_boot: flag to indicate if remote processor should be auto-started
+> - * @sysfs_read_only: flag to make remoteproc sysfs files read only
+>    * @dump_segments: list of segments in the firmware
+>    * @nb_vdev: number of vdev currently handled by rproc
+>    * @elf_class: firmware ELF class
+>    * @elf_machine: firmware ELF machine
+>    * @cdev: character device of the rproc
+> + * @recovery_disabled: flag that state if recovery was disabled
+> + * @has_iommu: flag to indicate if remote processor is behind an MMU
+> + * @auto_boot: flag to indicate if remote processor should be auto-started
+> + * @sysfs_read_only: flag to make remoteproc sysfs files read only
+>    * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+>    * @features: indicate remoteproc features
+>    */
+> @@ -570,21 +570,21 @@ struct rproc {
+>   	int index;
+>   	struct work_struct crash_handler;
+>   	unsigned int crash_cnt;
+> -	bool recovery_disabled;
+>   	int max_notifyid;
+>   	struct resource_table *table_ptr;
+>   	struct resource_table *clean_table;
+>   	struct resource_table *cached_table;
+>   	size_t table_sz;
+> -	bool has_iommu;
+> -	bool auto_boot;
+> -	bool sysfs_read_only;
+>   	struct list_head dump_segments;
+>   	int nb_vdev;
+>   	u8 elf_class;
+>   	u16 elf_machine;
+>   	struct cdev cdev;
+> -	bool cdev_put_on_release;
+> +	bool recovery_disabled :1;
+> +	bool has_iommu :1;
+> +	bool auto_boot :1;
+> +	bool sysfs_read_only :1;
+> +	bool cdev_put_on_release :1;
+>   	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
+>   };
+>   
+> 
 
 
