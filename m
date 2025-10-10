@@ -1,565 +1,95 @@
-Return-Path: <linux-kernel+bounces-848841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBE9BCEAB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:05:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18A7BCEAC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96C924F47AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1D5189FF48
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3E626D4EB;
-	Fri, 10 Oct 2025 22:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F1826E6E6;
+	Fri, 10 Oct 2025 22:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O+9ilTYx"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VGYITCBY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88F926CE0C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EBA189BB0;
+	Fri, 10 Oct 2025 22:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760133941; cv=none; b=VuOpuV4tSQwpcg28LwuXI8Py4OvTT1TDm1Gm9n0y3i5lE+mz8qJlHQ28lzF8jwOMgsIxClCQ0aDBBNEO8RkAVjWTJfPZE8IxmhYGlVM9VR9eF14R+hbhhZQhKrfFq0V8fsyPMItE2cnXr0cXhYLPQzx/qzakWMt9uhnYuV6Nq10=
+	t=1760134125; cv=none; b=P6wsW1zEFsojZQJiNrMBNIZdyvsLnjMPTxd9HVl+XMiWMHprA2PklvNo0tozOOUqNzwNvF8NSouqZr/SFlpXbEvTszylcLfnEQp84mJ8ArSuK0+aiwXbP0Lck3H1ce/plkEynojtBcrT5D2wXbmjcaNHNPWPVyHEWH8oBJFY38U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760133941; c=relaxed/simple;
-	bh=TA43UXpcWuPU1IJdmkL/yMa05LOguj7JbaFH+3HKUZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H04AOnB8H3CFrnmadOJSEgohdhjrRcpBqKdMBNco9nFmhKYHwtMDi8IxXnGiWSICS4tHp6uDZFRkRdFUMNgjv3v8MRMGZTvk/4qp3kaGacu0+U8T8/9/kboeugC0S6hFfCoRohwAwK8F18E5gk/PnomH9UANJBRQGRiU1CuQoIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O+9ilTYx; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-42f8a966fe8so56545ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:05:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760133938; x=1760738738; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZmnSUvmSdY4ZiZ6tEp0Ci04V3l//Wrt4QcDb6RPwaK4=;
-        b=O+9ilTYxjs0RHrdnccGbOIwFEbZ1Uoom543cQHk0OeaAW2G0FdnEvJPNwsZsVW/KLT
-         +hakSvZACKyDn8b0lZLtPBd3irII7CONAGygdbAUZWUMVCU8mGZMVekAIt+Ei5zoFjUs
-         Uqu+jVJ24D6wuEfsdIBhB1mEtlFeIJcevwnoJN1a1F5xFLbr4Pq7Yj8i2NPpsxNW/ezV
-         zXoSEnlgnjy0pXGhAlMshw3+2e7L2Ul+pZRV8S2kWbd/3ocY9ZOOSSxwZz+Ae/nGXHHT
-         0E5gnxZeHRUA0FASgmho1zZkif8BCdvo0EaJMxzPF+l8h7cDIa00PoSlFqRFjieAZQ8Q
-         D0kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760133938; x=1760738738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZmnSUvmSdY4ZiZ6tEp0Ci04V3l//Wrt4QcDb6RPwaK4=;
-        b=wwm4t2Rgu4yvccsRoaVHvgbypTvw6fcR/qp838eS9VlN56ga3J5Y5h5DaNrNNhxGSx
-         LmrjXllrkt+uEOXfI2p/6ur4ZQgarT6rff0UT7LKdse7fs+yl5T2nwhUZaDVF8UMmIA5
-         ZEgR0VU5oKsDUNY9ARlkkxPW21Byjsc7S+gMNHM5dsKhYTXA6M4bPWa77DVYsWWZMlrG
-         yQkj6FQ4ak50ipIAvo7pD/eyByfMMbkEaxumnCTmRqvZOpZ5Ysh9rsTertP661brh8Yg
-         R/zJYPXB2xZ6pCfrKMim/ONU306yY6sZcW/lkCPLaUEPm/Qu0g4irer4wwT5S96NlpDn
-         kRng==
-X-Forwarded-Encrypted: i=1; AJvYcCXzgpLinCuiKMIde3Szihsq3glY8siAIFvGM1aTX+LYz+ZIZdZZYnGmtHnukLUGveX/+aitSdigZPI0o3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPN3xaIqzmDmN4z3xGqrI2/mPUU2sxpU07dCwNJp90BP2+hPCE
-	IuO49ih2VmhhUJr6jHmq4yaLVlTMlct2EMZSpE8V5rrcYc1i4RamBZVLIEp1tQSnKvo0n3XttT4
-	6B6ckafZNOKtGaSm3vCtMwv7EQLy97k5FpxYn0JEO
-X-Gm-Gg: ASbGncsZ9KLVUPdYV+a8eXqSxlmgruWUkti4z8Vj7dgdQcWVKM2MNxCGDxzjeaLk6cD
-	uXUrYWbAjFSk9SdRzhk6ERRBB1lgzmaEwNIweQJGTe26fUcbWLx7Q4sok2kBNm/06bTQOB5HA9o
-	Wi0xRAy4hbdDeWR0bq1MGG5AP+zwdKRM+XbtiQ2Dym7/zAEUWtP1tLOtta7hjvI4hXEXVJuj9Rg
-	ySIGfm8NwFRwjDWHTKRX8ngQMcJMxaRgzOktCXU+w==
-X-Google-Smtp-Source: AGHT+IHCgMkdadEhJ/jLB5zDZaBKV4+r/ra7hoXzHWxkTC/o79Mi8mibHtRi6YFL7dAUvHxtQsbnMdQktOK3DWxK4l0=
-X-Received: by 2002:a05:622a:215:b0:4b5:d6bb:f29b with SMTP id
- d75a77b69052e-4e6eab925c3mr22771281cf.8.1760133937208; Fri, 10 Oct 2025
- 15:05:37 -0700 (PDT)
+	s=arc-20240116; t=1760134125; c=relaxed/simple;
+	bh=V+KqT3fmN9PfM0xYoQfnTgfVMW7tzUUYviSX+SWUvaQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=COJ040s2yte5H31jGTdBOSO88i7FVVd+rtIiJUd5HxuXY3s6bJJD8X8TWA8AkOdeukSCrC0cGLuNIbW3s565qzSIRgeaRTP2pAC/5GornhAqyqyekrXUj8xM01NcXzdzmneufUcys//GeHfQKQHaZZo+hFig/5m5qJlYEOSyIwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VGYITCBY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C63C4CEF1;
+	Fri, 10 Oct 2025 22:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1760134125;
+	bh=V+KqT3fmN9PfM0xYoQfnTgfVMW7tzUUYviSX+SWUvaQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VGYITCBYPDQbn5ijuhutsAgIenUjKZrMdR40UGI5xCRvqTPRjqqEd3r8pYuhEqWsQ
+	 ysmK7Ba5RT4RQf8+ZSGx2j4E1tQL3MccKvKlEKmWoLlgz5dHShx53rFI1xsZ4knyBw
+	 BQIXxH3KhjjMr4B60kOclTEY+1Ot1539bJhImNSM=
+Date: Fri, 10 Oct 2025 15:08:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] additional non-MM updates for 6.18-rc1
+Message-Id: <20251010150844.1ac58a5f9b89aa1e7e260ace@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251010011951.2136980-8-surenb@google.com> <20251010211101.59275-1-sj@kernel.org>
-In-Reply-To: <20251010211101.59275-1-sj@kernel.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 10 Oct 2025 15:05:26 -0700
-X-Gm-Features: AS18NWApOnI13PqYYNoCkBzZIV6oPMv1-Ts98EufkX_D7igi4FK4fCru8Io3ADs
-Message-ID: <CAJuCfpG_aA7Fw+4=1Twh-EhQ1BshyH_aTj_99R400s2UY+yfTw@mail.gmail.com>
-Subject: Re: [PATCH 7/8] mm: introduce GCMA
-To: SeongJae Park <sj@kernel.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com, 
-	peterx@redhat.com, rppt@kernel.org, mhocko@suse.com, corbet@lwn.net, 
-	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	hch@infradead.org, jack@suse.cz, willy@infradead.org, 
-	m.szyprowski@samsung.com, robin.murphy@arm.com, hannes@cmpxchg.org, 
-	zhengqi.arch@bytedance.com, shakeel.butt@linux.dev, axelrasmussen@google.com, 
-	yuanchu@google.com, weixugc@google.com, minchan@kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	iommu@lists.linux.dev, Minchan Kim <minchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 10, 2025 at 2:11=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote=
-:
->
-> Hello Suren,
->
-> On Thu,  9 Oct 2025 18:19:50 -0700 Suren Baghdasaryan <surenb@google.com>=
- wrote:
->
-> > From: Minchan Kim <minchan@google.com>
-> >
-> > This patch introduces GCMA (Guaranteed Contiguous Memory Allocator)
-> > cleacache backend which reserves some amount of memory at the boot
-> > and then donates it to store clean file-backed pages in the cleancache.
-> > GCMA aims to guarantee contiguous memory allocation success as well as
-> > low and deterministic allocation latency.
-> >
-> > Notes:
-> > Originally, the idea was posted by SeongJae Park and Minchan Kim [1].
-> > Later Minchan reworked it to be used in Android as a reference for
-> > Android vendors to use [2].
-> >
-> > [1] https://lwn.net/Articles/619865/
-> > [2] https://android-review.googlesource.com/q/topic:%22gcma_6.12%22
-> >
-> > Signed-off-by: Minchan Kim <minchan@google.com>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  MAINTAINERS          |   2 +
-> >  include/linux/gcma.h |  36 +++++++
-> >  mm/Kconfig           |  15 +++
-> >  mm/Makefile          |   1 +
-> >  mm/gcma.c            | 231 +++++++++++++++++++++++++++++++++++++++++++
-> >  5 files changed, 285 insertions(+)
-> >  create mode 100644 include/linux/gcma.h
-> >  create mode 100644 mm/gcma.c
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 441e68c94177..95b5ad26ec11 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -16361,6 +16361,7 @@ F:    Documentation/admin-guide/mm/
-> >  F:   Documentation/mm/
-> >  F:   include/linux/cma.h
-> >  F:   include/linux/dmapool.h
-> > +F:   include/linux/gcma.h
-> >  F:   include/linux/ioremap.h
-> >  F:   include/linux/memory-tiers.h
-> >  F:   include/linux/page_idle.h
-> > @@ -16372,6 +16373,7 @@ F:    mm/dmapool.c
-> >  F:   mm/dmapool_test.c
-> >  F:   mm/early_ioremap.c
-> >  F:   mm/fadvise.c
-> > +F:   mm/gcma.c
-> >  F:   mm/ioremap.c
-> >  F:   mm/mapping_dirty_helpers.c
-> >  F:   mm/memory-tiers.c
-> > diff --git a/include/linux/gcma.h b/include/linux/gcma.h
-> > new file mode 100644
-> > index 000000000000..20b2c85de87b
-> > --- /dev/null
-> > +++ b/include/linux/gcma.h
-> > @@ -0,0 +1,36 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef __GCMA_H__
-> > +#define __GCMA_H__
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +#ifdef CONFIG_GCMA
-> > +
-> > +int gcma_register_area(const char *name,
-> > +                    unsigned long start_pfn, unsigned long count);
-> > +
-> > +/*
-> > + * NOTE: allocated pages are still marked reserved and when freeing th=
-em
-> > + * the caller should ensure they are isolated and not referenced by an=
-yone
-> > + * other than the caller.
-> > + */
-> > +int gcma_alloc_range(unsigned long start_pfn, unsigned long count, gfp=
-_t gfp);
-> > +int gcma_free_range(unsigned long start_pfn, unsigned long count);
-> > +
-> > +#else /* CONFIG_GCMA */
-> > +
-> > +static inline int gcma_register_area(const char *name,
-> > +                                  unsigned long start_pfn,
-> > +                                  unsigned long count)
-> > +             { return -EOPNOTSUPP; }
-> > +static inline int gcma_alloc_range(unsigned long start_pfn,
-> > +                                unsigned long count, gfp_t gfp)
-> > +             { return -EOPNOTSUPP; }
-> > +
-> > +static inline int gcma_free_range(unsigned long start_pfn,
-> > +                                unsigned long count)
-> > +             { return -EOPNOTSUPP; }
-> > +
-> > +#endif /* CONFIG_GCMA */
-> > +
-> > +#endif /* __GCMA_H__ */
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index 9f4da8a848f4..41ce5ef8db55 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -1013,6 +1013,21 @@ config CMA_AREAS
-> >
-> >         If unsure, leave the default value "8" in UMA and "20" in NUMA.
-> >
-> > +config GCMA
-> > +       bool "GCMA (Guaranteed Contiguous Memory Allocator)"
-> > +       depends on CLEANCACHE
-> > +     help
-> > +       This enables the Guaranteed Contiguous Memory Allocator to allo=
-w
-> > +       low latency guaranteed contiguous memory allocations. Memory
-> > +       reserved by GCMA is donated to cleancache to be used as pagecac=
-he
-> > +       extension. Once GCMA allocation is requested, necessary pages a=
-re
-> > +       taken back from the cleancache and used to satisfy the request.
-> > +       Cleancache guarantees low latency successful allocation as long
-> > +       as the total size of GCMA allocations does not exceed the size =
-of
-> > +       the memory donated to the cleancache.
-> > +
-> > +       If unsure, say "N".
-> > +
-> >  #
-> >  # Select this config option from the architecture Kconfig, if availabl=
-e, to set
-> >  # the max page order for physically contiguous allocations.
-> > diff --git a/mm/Makefile b/mm/Makefile
-> > index 845841a140e3..05aee66a8b07 100644
-> > --- a/mm/Makefile
-> > +++ b/mm/Makefile
-> > @@ -149,3 +149,4 @@ obj-$(CONFIG_TMPFS_QUOTA) +=3D shmem_quota.o
-> >  obj-$(CONFIG_PT_RECLAIM) +=3D pt_reclaim.o
-> >  obj-$(CONFIG_CLEANCACHE) +=3D cleancache.o
-> >  obj-$(CONFIG_CLEANCACHE_SYSFS)       +=3D cleancache_sysfs.o
-> > +obj-$(CONFIG_GCMA)   +=3D gcma.o
-> > diff --git a/mm/gcma.c b/mm/gcma.c
-> > new file mode 100644
-> > index 000000000000..3ee0e1340db3
-> > --- /dev/null
-> > +++ b/mm/gcma.c
-> > @@ -0,0 +1,231 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * GCMA (Guaranteed Contiguous Memory Allocator)
-> > + *
-> > + */
-> > +
-> > +#define pr_fmt(fmt) "gcma: " fmt
-> > +
-> > +#include <linux/cleancache.h>
-> > +#include <linux/gcma.h>
-> > +#include <linux/hashtable.h>
-> > +#include <linux/highmem.h>
-> > +#include <linux/idr.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/xarray.h>
-> > +#include "internal.h"
-> > +
-> > +#define MAX_GCMA_AREAS               64
-> > +#define GCMA_AREA_NAME_MAX_LEN       32
-> > +
-> > +struct gcma_area {
-> > +     int pool_id;
-> > +     unsigned long start_pfn;
-> > +     unsigned long end_pfn;
-> > +     char name[GCMA_AREA_NAME_MAX_LEN];
-> > +};
-> > +
-> > +static struct gcma_area areas[MAX_GCMA_AREAS];
-> > +static atomic_t nr_gcma_area =3D ATOMIC_INIT(0);
-> > +static DEFINE_SPINLOCK(gcma_area_lock);
-> > +
-> > +static int free_folio_range(struct gcma_area *area,
-> > +                          unsigned long start_pfn, unsigned long end_p=
-fn)
-> > +{
-> > +     unsigned long scanned =3D 0;
-> > +     struct folio *folio;
-> > +     unsigned long pfn;
-> > +
-> > +     for (pfn =3D start_pfn; pfn < end_pfn; pfn++) {
-> > +             int err;
-> > +
-> > +             if (!(++scanned % XA_CHECK_SCHED))
-> > +                     cond_resched();
-> > +
-> > +             folio =3D pfn_folio(pfn);
-> > +             err =3D cleancache_backend_put_folio(area->pool_id, folio=
-);
->
-> Why don't you use pfn_folio() directly, like alloc_folio_range() does?
 
-Yes, that would be better. Will change.
+Linus, please merge this small and final batch of non-MM changes for
+this merge cycle, thanks.
 
->
-> > +             if (WARN(err, "PFN %lu: folio is still in use\n", pfn))
-> > +                     return -EINVAL;
->
-> Why don't you return err, like alloc_folio_range() does?
 
-Ack. In my earlier version cleancache_backend_put_folio() was
-returning bool, so I had to convert it to int here. But now we can
-return err directly. Will change.
+The following changes since commit 7a405dbb0f036f8d1713ab9e7df0cd3137987b07:
 
->
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int alloc_folio_range(struct gcma_area *area,
-> > +                           unsigned long start_pfn, unsigned long end_=
-pfn,
-> > +                           gfp_t gfp)
-> > +{
-> > +     unsigned long scanned =3D 0;
-> > +     unsigned long pfn;
-> > +
-> > +     for (pfn =3D start_pfn; pfn < end_pfn; pfn++) {
-> > +             int err;
-> > +
-> > +             if (!(++scanned % XA_CHECK_SCHED))
-> > +                     cond_resched();
-> > +
-> > +             err =3D cleancache_backend_get_folio(area->pool_id, pfn_f=
-olio(pfn));
-> > +             if (err) {
-> > +                     free_folio_range(area, start_pfn, pfn);
-> > +                     return err;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static struct gcma_area *find_area(unsigned long start_pfn, unsigned l=
-ong end_pfn)
-> > +{
-> > +     int nr_area =3D atomic_read_acquire(&nr_gcma_area);
-> > +     int i;
-> > +
-> > +     for (i =3D 0; i < nr_area; i++) {
-> > +             struct gcma_area *area =3D &areas[i];
-> > +
-> > +             if (area->end_pfn <=3D start_pfn)
-> > +                     continue;
-> > +
-> > +             if (area->start_pfn > end_pfn)
-> > +                     continue;
-> > +
-> > +             /* The entire range should belong to a single area */
-> > +             if (start_pfn < area->start_pfn || end_pfn > area->end_pf=
-n)
-> > +                     break;
-> > +
-> > +             /* Found the area containing the entire range */
-> > +             return area;
-> > +     }
-> > +
-> > +     return NULL;
-> > +}
-> > +
-> > +int gcma_register_area(const char *name,
-> > +                    unsigned long start_pfn, unsigned long count)
-> > +{
-> > +     LIST_HEAD(folios);
-> > +     int i, pool_id;
-> > +     int nr_area;
-> > +     int ret =3D 0;
-> > +
-> > +     pool_id =3D cleancache_backend_register_pool(name);
-> > +     if (pool_id < 0)
-> > +             return pool_id;
-> > +
-> > +     for (i =3D 0; i < count; i++) {
-> > +             struct folio *folio;
-> > +
-> > +             folio =3D pfn_folio(start_pfn + i);
-> > +             folio_clear_reserved(folio);
-> > +             folio_set_count(folio, 0);
-> > +             list_add(&folio->lru, &folios);
-> > +     }
-> > +
-> > +     cleancache_backend_put_folios(pool_id, &folios);
-> > +
-> > +     spin_lock(&gcma_area_lock);
-> > +
-> > +     nr_area =3D atomic_read(&nr_gcma_area);
-> > +     if (nr_area < MAX_GCMA_AREAS) {
-> > +             struct gcma_area *area =3D &areas[nr_area];
-> > +
-> > +             area->pool_id =3D pool_id;
-> > +             area->start_pfn =3D start_pfn;
-> > +             area->end_pfn =3D start_pfn + count;
-> > +             strscpy(area->name, name);
-> > +             /* Ensure above stores complete before we increase the co=
-unt */
-> > +             atomic_set_release(&nr_gcma_area, nr_area + 1);
-> > +     } else {
-> > +             ret =3D -ENOMEM;
-> > +     }
-> > +
-> > +     spin_unlock(&gcma_area_lock);
-> > +
-> > +     return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(gcma_register_area);
-> > +
-> > +int gcma_alloc_range(unsigned long start_pfn, unsigned long count, gfp=
-_t gfp)
-> > +{
-> > +     unsigned long end_pfn =3D start_pfn + count;
-> > +     struct gcma_area *area;
-> > +     struct folio *folio;
-> > +     int err, order =3D 0;
-> > +
-> > +     gfp =3D current_gfp_context(gfp);
-> > +     if (gfp & __GFP_COMP) {
-> > +             if (!is_power_of_2(count))
-> > +                     return -EINVAL;
-> > +
-> > +             order =3D ilog2(count);
-> > +             if (order >=3D MAX_PAGE_ORDER)
-> > +                     return -EINVAL;
-> > +     }
-> > +
-> > +     area =3D find_area(start_pfn, end_pfn);
-> > +     if (!area)
-> > +             return -EINVAL;
-> > +
-> > +     err =3D alloc_folio_range(area, start_pfn, end_pfn, gfp);
-> > +     if (err)
-> > +             return err;
-> > +
-> > +     /*
-> > +      * GCMA returns pages with refcount 1 and expects them to have
-> > +      * the same refcount 1 when they are freed.
-> > +      */
-> > +     if (order) {
-> > +             folio =3D pfn_folio(start_pfn);
-> > +             set_page_count(&folio->page, 1);
-> > +             prep_compound_page(&folio->page, order);
-> > +     } else {
-> > +             for (unsigned long pfn =3D start_pfn; pfn < end_pfn; pfn+=
-+) {
-> > +                     folio =3D pfn_folio(pfn);
-> > +                     set_page_count(&folio->page, 1);
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(gcma_alloc_range);
->
-> I'm wondering if the rule of exporting symbols only for in-tree modules t=
-hat
-> use the symbols should be applied here or not, and why.
+  Merge tag 'mm-stable-2025-10-03-16-49' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2025-10-05 12:11:07 -0700)
 
-In Android we use gcma_alloc_range() in vendor-defined dmabuf-heap
-modules. That's why I need this API to be exported.
+are available in the Git repository at:
 
->
-> > +
-> > +int gcma_free_range(unsigned long start_pfn, unsigned long count)
-> > +{
-> > +     unsigned long end_pfn =3D start_pfn + count;
-> > +     struct gcma_area *area;
-> > +     struct folio *folio;
-> > +
-> > +     area =3D find_area(start_pfn, end_pfn);
-> > +     if (!area)
-> > +             return -EINVAL;
-> > +
-> > +     folio =3D pfn_folio(start_pfn);
-> > +     if (folio_test_large(folio)) {
-> > +             int expected =3D folio_nr_pages(folio);
->
-> folio_nr_pages() return 'unsigned long'.  Would it be better to match the=
- type?
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-nonmm-stable-2025-10-10-15-03
 
-Yes! Ack.
+for you to fetch changes up to 90eb9ae35727a662789c850efaf225ffe5511fae:
 
->
-> > +
-> > +             if (WARN(count !=3D expected, "PFN %lu: count %lu !=3D ex=
-pected %d\n",
-> > +                       start_pfn, count, expected))
-> > +                     return -EINVAL;
-> > +
-> > +             if (WARN(!folio_ref_dec_and_test(folio),
-> > +                      "PFN %lu: invalid folio refcount when freeing\n"=
-, start_pfn))
-> > +                     return -EINVAL;
-> > +
-> > +             free_pages_prepare(&folio->page, folio_order(folio));
-> > +     } else {
-> > +             for (unsigned long pfn =3D start_pfn; pfn < end_pfn; pfn+=
-+) {
-> > +                     folio =3D pfn_folio(pfn);
-> > +                     if (folio_nr_pages(folio) =3D=3D 1)
-> > +                             count--;
-> > +
-> > +                     if (WARN(!folio_ref_dec_and_test(folio),
-> > +                              "PFN %lu: invalid folio refcount when fr=
-eeing\n", pfn))
-> > +                             return -EINVAL;
->
-> Don't we need to increase the previously decreased folio refcounts?
+  lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt (2025-10-07 13:48:56 -0700)
 
-Yes, you are right. If any folio refcount is incorrect here (folio is
-still in use), we should restore the refcount for all folios that we
-have already processed. I think I'll also need to do 2 passes here:
-first drop and check the refcount on all folios, then call
-free_pages_prepare() if all folios are unused.
+----------------------------------------------------------------
+Just one series here - Mike Rappoport has taught KEXEC handover to
+preserve vmalloc allocations across handover.
 
-And also need to remove all these WARN()'s which I had for
-debugging... Will remove in the next version.
+----------------------------------------------------------------
+Mike Rapoport (Microsoft) (4):
+      kho: check if kho is finalized in __kho_preserve_order()
+      kho: replace kho_preserve_phys() with kho_preserve_pages()
+      kho: add support for preserving vmalloc allocations
+      lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt
 
->
-> > +
-> > +                     free_pages_prepare(&folio->page, 0);
-> > +             }
-> > +             WARN(count !=3D 0, "%lu pages are still in use!\n", count=
-);
->
-> Is WARN() but not returning error here ok?
+Umang Jain (1):
+      MAINTAINERS, .mailmap: update Umang's email address
 
-No. I'll rework this loop to perform 2 passes as I mentioned before
-and if the first pass detects any mistake, it will restore previous
-refcounts and return an error.
+ .mailmap                       |   1 +
+ MAINTAINERS                    |   2 +-
+ include/linux/kexec_handover.h |  33 +++-
+ kernel/kexec_handover.c        | 361 ++++++++++++++++++++++++++++++++++++-----
+ lib/test_kho.c                 |  41 +++--
+ mm/memblock.c                  |   4 +-
+ 6 files changed, 383 insertions(+), 59 deletions(-)
 
->
-> Also, why don't you warn earlier above if 'folio_nr_pages(folio) !=3D 1' =
-?
-
-I'll remove all these warnings and change the code to fail and restore
-folios if any folio in the range does not meet our expectations.
-
->
-> > +     }
-> > +
-> > +     return free_folio_range(area, start_pfn, end_pfn);
-> > +}
-> > +EXPORT_SYMBOL_GPL(gcma_free_range);
->
-> Like the gcma_alloc_range() case, I'm curious if this symbol exporting is
-> somewhat intended and the intention is explained.
-
-Same reasons. Vendor-provided dmabuf heap modules might use it.
-
-Thanks,
-Suren.
-
->
-> > --
-> > 2.51.0.740.g6adb054d12-goog
->
->
-> Thanks,
-> SJ
 
