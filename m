@@ -1,131 +1,157 @@
-Return-Path: <linux-kernel+bounces-848390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C88BCDA03
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:54:56 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6DABCDA09
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC22E1A6202E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:55:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B2368355EFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D1E2F7442;
-	Fri, 10 Oct 2025 14:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18742F7457;
+	Fri, 10 Oct 2025 14:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="i60S+LRN"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUhm7YSj"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0AA2F6569
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60B32F7456
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108091; cv=none; b=OfdnBrzM58xJAXMVLz0S5W/VCkphXzVKfYYu9e0wrM7jtr2QE6Sdi3MDjWA90QTjJLPg0PdSwlTDltauwe+UXvW3N5FyAytOKtrVxgq0cps4exb4Vcd4XvjtFIem6gL92R6B1JxROWj1mc9VMBtpal/IHnk+I9PcKY5xo022bVY=
+	t=1760108094; cv=none; b=PAxO+LKkl5VrZTTJ59jEKVfmgB6BhpS6CgCeCrDptSuG9NE7s4wB9PSZ7nP83glUP2/xpHMxnyBhkw9vNyrLNt9TrmUob4kWbyRTComY5tTrmQI118bR8c3z9ZAkUhrsp1GV5aWDqNV4uZpEjU8Llg4W9EudMGIMtaI4BeeX6KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108091; c=relaxed/simple;
-	bh=JYLGO+aunzqaQyg233Rpqn3/BKIT15UHFzo9wZBhkqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MFcPB5eLLBmRaD9Ez8zo2tA5zByFV1WtgjjQmg83vy6mB4hCoegV2gYtGAc5t93AFdCFe3E5K84JAVLeSgy1rYAgRfJ4jHVWM9xFgc8vsZybmuI/9Bq38/3IxSRe0zQpKJvfsyg4TmIky7KoXnwU3xdgiPG3CXAeDQnOs7t6RO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=i60S+LRN; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27d3540a43fso21457475ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:54:48 -0700 (PDT)
+	s=arc-20240116; t=1760108094; c=relaxed/simple;
+	bh=fSzNGvN8Odca+vaIJOa7B+9E5YxraxYKgj1v2RlgWfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VFXeiqsES6UBzF5SQ5N3y8ojR/k9ndvXGlHXltT2MWMoF0E+13ihDNCrwrO7tpuzhEpb0UDFFAm03eTApqM3usidNm1HknxnFaPHZubqhw18KvQuLD6mchODW8J/y+zmypnT80/lry74w4PZ8DCQF5XW2VKAcHP6nzGWy1q3WS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUhm7YSj; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e2e363118so18162195e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760108088; x=1760712888; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vbofJ5TYVrlVEz+XdSpL9ID+J57K1M46jTnGkwllw9Q=;
-        b=i60S+LRNyOfZ+5UyB7ryseoQPralCRNlYAOsYj95WJ+HoVTMeztSRdQ+u3wLpxZKI/
-         Q9lrPIbOVar3yFFJdhcaZeDw3Nw5MVSmisnL+dHGt0qAPNx83i47jHef+330pQaAlp9T
-         IvNYOoTzkX4ApN3uSSbo8PrHjncgr/Q7ekwrlc6B9EP+9sATkv2pcTWSjpP5PjDW7pmA
-         CLXAuNY36wV1jQEi37r0W2ifyVIWWQSzmUp8jepRyC0BFpohpi4Knbr5xhM4kA2QA2vt
-         FSYukuF9vZp5Ys2aHXCot/QC90JWODxuopAxMHTmizM2P/mTY1p0DoOu9si0iEcsPIvV
-         fOLQ==
+        d=gmail.com; s=20230601; t=1760108091; x=1760712891; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSzNGvN8Odca+vaIJOa7B+9E5YxraxYKgj1v2RlgWfo=;
+        b=OUhm7YSjRnlMapYtDiGwvdqa+WNOUbpPdozzNww6YjYukE2hTOk7nsY4JY6iXAXCW3
+         QvkEX/K1zB/0kW49rG0F/8Hg8G1BXBYFAc4Uzdka/DJdBYcVrth5M6vESg9Aupcb7vyK
+         12/+M0dfu1gduPz2eIgC3ehqJaI0ZitQj4EdpF70+x6E16vgU8c+V7Nmp3W6BFKE+X0U
+         ycj2dD2xBskU0K/CeLg7mttuakhvgP4DLe4SJllv2ejQaApdGB97Fea3d+IFuP8Ofj6s
+         htouc7Nrw2goegsaJJZV3fqkr68lXs3jEJfhITtP4C4x6CzCyKVMq5xOnIDRfuxqmRd+
+         u1kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108088; x=1760712888;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vbofJ5TYVrlVEz+XdSpL9ID+J57K1M46jTnGkwllw9Q=;
-        b=fKcFFzshNNfiuzTubWl3+I4OqmzUo81/BCLz0XBAr/+U9TxooOq2Q5k88Zh5onbY8Q
-         jRDxEJrKJBOCevg9HNFcU+rGfSHf8cFzAxcje3xgIgiE52CjnlMzTahTzbecB0EQiMTL
-         PuHMj4PeZQ/GM36VHOZIydVIfhgLEPvcaSBSiWu3aJwrwcFfAHCSAP0ENUXkaQWqlhSs
-         u519hpZLWxsYqskHLJ52DnLuwVCCTHXydGHmoTWtEzwIXDgxB/QgG1zx61znvHDZPeUF
-         w8JiDj7KUxz7ke6N+XXQpnSCHCkbZfL6B7ILQvznYedJS2hB/bP7QS9jBxFlNBfc4fpr
-         QQSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWig03pYNks3o4Mv0jRa1o3X5Rlp4e0nYenTDXd1qxmLMhfWlT7AvhHUJXGAieCwbg5mt4QSZTU/lSELvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7GiBaGsTGnuvpSifjhUp0vXzNx8lpuU/9NeYnJ58JZEPifqLT
-	AJWoQ2oW11YgbZuhJbZxyof8B4FBK4kRVRGtKEtpN+6wKn/Yh0XgNDIyk92j+rSF2r8=
-X-Gm-Gg: ASbGncvHK75dqPrfBdy4XA5YVRDzqAzDUIR9+/biVcMbZbUL+/oQCjB/0NyDyYifIqD
-	QsmPqIVi+u81f5eHUxFEk95//8rzfa7o0QbTfP3F82FGyNTL+DY/JZbEHSuoHS1+8C6lEPHv6j8
-	Eb01ILumKjoGUOIfJG4r7pNER6cZUzIG4QlJ20CPFnSfGPn1GYr4ECh2TyAyd1qT+9AYSw+1/6C
-	G+lD7e0O1SnIOBStNWg6IPpZM1SW0wyEAysH1pwYFKHuGS+GtmOE1rqR1Dw3QP67oXOtAPDwP9V
-	vf8zXHWGopzRIpbWkZnYJbm1LjJqOBPo8l5LZZt853GGrt0r5GYoRNwTBtv959PKWa1d9yuoFYJ
-	NELWJY3bAw9/2bK5VSKtfAa/W6k2IPearUn1hh5iJ/RRGUHwvJbvIT4RdwhrM
-X-Google-Smtp-Source: AGHT+IE2ykU3JRpPiQHMUmIjNKSKo2rlX9PQObXBs1FO64lFOyXHQeDzHA7ctCDQl2YOXgiwg7ruvg==
-X-Received: by 2002:a17:903:2292:b0:24c:bc02:788b with SMTP id d9443c01a7336-290272e3debmr174061055ad.44.1760108087677;
-        Fri, 10 Oct 2025 07:54:47 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29040e02648sm26130335ad.116.2025.10.10.07.54.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 07:54:47 -0700 (PDT)
-Message-ID: <cf4e88c6-0319-4084-8311-a7ca28a78c81@kernel.dk>
-Date: Fri, 10 Oct 2025 08:54:46 -0600
+        d=1e100.net; s=20230601; t=1760108091; x=1760712891;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fSzNGvN8Odca+vaIJOa7B+9E5YxraxYKgj1v2RlgWfo=;
+        b=NDNJAQdTB3VzhtPytqK2kyl2bXqSVdOa1dAU2B2IgkuPdtTnbXQdggJN5T/SQ5xeVN
+         qq0KFyiFLwctN3OMKP+2vbWLrfNptktKzYOljW4z5ZCHgE4+YqFBRPoP1fIQTEcvbP07
+         iqnF9DngpZvU4IM2RTIWXwqgQ0+K/icxD9Mg2Gcz0/AgPP4i+0oJqE/6ITFoXQ7Z0ga5
+         Ghd219A9sp6/oRWGv5Pfb0Z+0/3rM9nvB7RbczLxQr2rF6Kbmqy0IzvNF2uSRiJWDtYt
+         FHjINgicbmSFBf8fFtiRJbLE8FMamTHsuBAJpsR7fdFe/yVcOi+M5CRuzLlBnNTPCwQz
+         mFPg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2HFJ4frZdM2e0LUWhg5kD12ROpjA6HcRkJ5SKZEYHZ2dedxpBaSqOsfPBZ4S1vkw9aivUpZS66BO9N8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1hgiStNQT+p+xej883Izf7RIgdkJ+z+LBRUEpa/nNync1bvUZ
+	sIqtPkRUge9nBluy51IBS3Hxgq5Xub4HGmzHO1rW3aifkQtVXOcH8j+m
+X-Gm-Gg: ASbGncuC4bXAS2TDThgULVKKn9xBvbJX4J1W+AmUWfu4eDn1LZFyo5Ed82XFJwZjI0p
+	TVyWUk8/uWHiu07S/t/AkLDhXNV9AEQnqeFqg1Xczc/pqK045KhQ2xy8Uisfa1E3UBs2Nu8STBc
+	BvDvpZFYDL9n2xD9v3UevSbVd+s2oTlhEPAqKGFy6G1aN7tTgGWa6zgKCbECQLtNshv4OlizNg7
+	UVZzENg7ERvwgX7+4Kk4XrfI3z5fkkSX6qz/wfqlKD4uvIjSdJWnBPPPB71kCGwJoo7uWLzR+LX
+	HFuw6RHyETo4nhgjXcTzgWDRiJjEy/bPm6HD1PzyVhvYJ3g+t4ZkMGafkIoEZId0AjAsoOk8uOs
+	wzEDGEWo0ei1mX9P/Sdv/yj7yYJlLjVgwHCFh8RX6E0zeEmoO+STIMkMj2ZqBhfvt0Ir+fKJIDu
+	90vPUAQ+yATVLOIaXuuqGYkdWF+T88
+X-Google-Smtp-Source: AGHT+IEXkrDyUy97suKtDlq7eFA2ZJryfwfSk6MT1wtjJwB/9DlAxb8oq4wEf+SbzWkvD8LgIsrrzQ==
+X-Received: by 2002:a05:600c:3b0c:b0:46f:b42e:e391 with SMTP id 5b1f17b1804b1-46fb42ee4admr31215605e9.38.1760108090951;
+        Fri, 10 Oct 2025 07:54:50 -0700 (PDT)
+Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482b99fsm52826395e9.3.2025.10.10.07.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 07:54:49 -0700 (PDT)
+Date: Fri, 10 Oct 2025 16:54:48 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+Message-ID: <q2g5abyqniku2uxbjsndiwcidx5cqxbqaixcvdhkurupdnhu7q@pyhpxylwrtrs>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+ <86qzvcxi3j.wl-maz@kernel.org>
+ <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+ <86o6qgxayt.wl-maz@kernel.org>
+ <86ms60x7w7.wl-maz@kernel.org>
+ <us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+ <86bjmeyh5m.wl-maz@kernel.org>
+ <c7bb79c1-c760-4b44-97c3-86e1c34fff40@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: mainline boot fail nvme/block?
-To: Genes Lists <lists@sapience.com>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-References: <4b392af8847cc19720ffcd53865f60ab3edc56b3.camel@sapience.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <4b392af8847cc19720ffcd53865f60ab3edc56b3.camel@sapience.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lamoghzxow5fsofh"
+Content-Disposition: inline
+In-Reply-To: <c7bb79c1-c760-4b44-97c3-86e1c34fff40@nvidia.com>
 
-On 10/10/25 8:29 AM, Genes Lists wrote:
-> Mainline fails to boot - 6.17.1 works fine.
-> Same kernel on an older laptop without any nvme works just fine.
-> 
-> It seems to get stuck enumerating disks within the initramfs created by
-> dracut.
-> 
-> Subject to bisect verification, it may have started after commit
-> 
->   e1b1d03ceec343362524318c076b110066ffe305
-> 
->   Merge tag 'for-6.18/block-20250929' of 
->   git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux
-> 
-> Machine is dell xps 9320 laptop (firmware 2.23.0) with nvme
-> partitioned:
-> 
->     # lsblk -f
->     NAME        FSTYPE      FSVER LABEL FSAVAIL FSUSE% MOUNTPOINTS    
->     sr0
->     nvme0n1
->     ├─nvme0n1p1 vfat        FAT32 ESP   2.6G    12% /boot
->     ├─nvme0n1p2 ext4        1.0   root  77.7G    42% / 
->     └─nvme0n1p3 crypto_LUKS 2                          
->       └─home    btrfs             home  1.3T    26% /opt
->                                                     /home             
-> 
-> 
-> 
-> Will try do bisect over the weekend.
 
-That'd be great, because there's really not much to glean from this bug
-report.
+--lamoghzxow5fsofh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: IRQ thread timeouts and affinity
+MIME-Version: 1.0
 
--- 
-Jens Axboe
+On Fri, Oct 10, 2025 at 03:38:59PM +0100, Jon Hunter wrote:
+>=20
+> On 10/10/2025 15:18, Marc Zyngier wrote:
+>=20
+> ...
+>=20
+> > CPU hotplug is the main area of concern, and I'm pretty sure it breaks
+> > this distribution mechanism (or the other way around). Another thing
+> > is that if firmware isn't aware that 1:N interrupts can (or should)
+> > wake-up a CPU from sleep, bad things will happen. Given that nobody
+> > uses 1:N, you can bet that any bit of privileged SW (TF-A,
+> > hypervisors) is likely to be buggy (I've already spotted bugs in KVM
+> > around this).
+>=20
+> Thierry, do we ever hotplug CPUs on this device? If not, I am wondering if
+> something like this, for now, could only be enabled for devices that don't
+> hotplug CPUs. Maybe tied to the kernel config (ie. CONFIG_HOTPLUG_CPU)? J=
+ust
+> a thought ...
 
+I've only had limited exposure to this, so I don't know all of the use-
+cases. People can buy these devices and do anything they want with it,
+so I think we have to account for the general case.
+
+Thierry
+
+--lamoghzxow5fsofh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjpHjQACgkQ3SOs138+
+s6GxLBAAopBt0WNEut1yocnXx82oxmvWddArsqmrMJnBQ6mqe9JJGWc4O6e2pNR6
++732iu5IcFLfZFG4+XkkUD844lfy+hlvz60KQX+2/0jTZ76TS5S7bZAhD6Zu2lWp
+wBoZnJdoWG9nfElAiVcXC6P7HKlxt9zlYDqFfJSi2+PV6cGTNnTu+OtQCzsO05Z6
+ywktFlU5r2DFr8NWqaxcfPWOkvx2yAJhDAuJ2FbiSsmknSN/Ot4A3uw5jRMsWoZ9
+VuPjsJGVo0FQTJxFkMaP2Cm+vNSciLe0UM9Bfe5yxV6epJz+NjgLuRxCRL/6Tr9S
+SP5BUtsXwfHt1eIQjuiHD+q8rXOmrRZ7K+yQ58BicIATTTV6kQZkTFT2mWpp/5tN
+ksNlZ4ylBuKM5hks00q8TtoHeazb+QHuAoq9SMuGC59fsYOgn0V93TN17PSQY2rP
+tWuDZ9Ok+viij4T8PyNeAEZU4xK0Cff/maiIRtdtwtI//QLjl/gJN7Yw4JU4UuxB
+4/8UG0usLACCbHGyq15eNa31zvUUbxLcHpJXIoHTqYTRuzKeVZ/+aeO23YBUNogz
+SBwhWJijs3OpKnwsK31CfX+dHnJeI1RxvNpQXjpF2zDcHafaCdzrZAgpfOug6q5F
+gWX/MeIEbRhEPD5iojBNQYYmLj9ey4BwZG4GlVTlMhJC7VTNz7A=
+=EfpF
+-----END PGP SIGNATURE-----
+
+--lamoghzxow5fsofh--
 
