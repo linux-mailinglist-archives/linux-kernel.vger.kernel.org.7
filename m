@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-848436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0892FBCDC5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC54BCDC6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A10542F90
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E3E544227
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D798C2F90DC;
-	Fri, 10 Oct 2025 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419F72F9D82;
+	Fri, 10 Oct 2025 15:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRGmmmwy"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="NH4qBqrN"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4EC2F83DB
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBC92F9995;
+	Fri, 10 Oct 2025 15:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760109309; cv=none; b=NtFjrEz1G7c1RR0mnyQP1Us9Bq5i9Kf4r0Z7OsNNYilAVBackJ4Qfi2A2IlZXwewapT3sdP1vSPPyDaeFxCM5EWYkeJSLEnU67KR6etrBxRQMFaeY+7H+Yt2TPgb4mf6J+WpjVyqaeZRHCn6sq/wFq3aX8+DV1jtyafTaoFbNDs=
+	t=1760109310; cv=none; b=XsCqGOn7X+9MFlfcNikKucLP8Ji3hyQnMUvi8Ue83BTaHyBT+L22LM63xhJjgaeJROYvNQdQEVCplOZ3XBM+hSD1Najn53xL73dQVdixJDLPQjOVoIA+Vl5BOdLgIui/TDJHD7M1v/mstPdMdpPJOtjSC48GK92jB+N0Y0XPpMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760109309; c=relaxed/simple;
-	bh=rODvI7V59ljrj50mNeNRchQt/hB8lmPZOaakB/PpIO8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r35gqB2+jUNMyL+N8Hi2zzg2Kc0V61dsxpONg/WXoxUF8rux25AKFi0vdGSjpxqTpjW4ctFMnkgcgcjTNAsLaFRz3fEhoq/zJq/GReYy1Bb7wH/cNjJE9DZvXIkUGYeqVH6APanBVUSU+UypC37UJ7dMOZ/P926vjBe291Qdow0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRGmmmwy; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-782bfd0a977so1962285b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760109307; x=1760714107; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ku7ytx/v2Q4TA+VLykkrqqJQyrV884GCo3tZKDi5IH8=;
-        b=VRGmmmwyE1henoUTeLWhWGJG+3sbxhproDR2pWEzQN4DZcDlIcJQJmFw02oicoLFdu
-         wK2jBg2R2w8kFGzB2IzgZaErfyfoo9JBUFZPH5MM5RFR3S7jmlpcbZwmmsISNqhJmblt
-         JnnU+947yE+mhsDNnAkC+AkV9/gl2mOSiPis9h4gQBCOid185h82lnEKBA7xwngPhIC6
-         qmqK+c1UOcY4HiKr5LqvO72yZ4EE58pOPoscW7XDy4jGQwKkuZ9MGcZK47kacV6iw32q
-         JQzF9J2ksK7Gb4OFuWCH+AzP/xciY9aal6ojxZ/xLsJin58mEpAifJ5hSjbWpNX70C92
-         L7Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760109307; x=1760714107;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ku7ytx/v2Q4TA+VLykkrqqJQyrV884GCo3tZKDi5IH8=;
-        b=UImgWM+SmWPf8VQnXw1VbLHaD5XGEQ78jP7ArsEMcFXsS1x6N6LdOWSWkkJTGtMco/
-         rKv674RnKR7O+9sL8re3jqrCuoPm9lqXNn3GT9BJctUDXJeohK8P+XM5nRCg9js7QHNp
-         5QNW9GogT2jk7Q1RhQ332PFnzaBgeIUR86gnMZCyWkxOtyRScPk9is73we9NWVG1X/I1
-         V5QIOlOOdWKMOA+zABZrWkQgfnM3sdpKp3ODpDst4/GJDIvj2chd2ZhFIC7QQre4+55m
-         GHt61SbBTH82f4d0aHPh2wfHwCs9UEW4iacYCS5S/kFh0BZYPiCH8yhChIPygJSivXZr
-         xcSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSxtQI0KOleWUHlMg9AOzV1F6zB2YTqEW2RxmbCgjYuL8vr6JGXaJzFc7ghwnLllEUSmIhNRSuvvhgrK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3+FLD370NkPOpHQIfwz2KdBuO2702TPOLaRg9UT7Lmk0zMLVv
-	sRZnxlwe+uHw6OmUhAORFuNtW9pX435xCrdIzITCbrFywUX5x01ia7xH
-X-Gm-Gg: ASbGncvXgkESobUN9HlTv5uhiefl2mgEAFSwVJP2osrNOV40VYMd401uMD7rdL1rsjL
-	BcHjAnJz93pVymTZ44WFeXlJ5wS+njfd337J/Ls+MqvUcrlelwrM7kkbnOmknaMmLph8h8ZJdoB
-	+ADXOoiephUAMontZK1W1kuO5b9vIZEygE13FKij1b5Pzxu6yizEKqhTXmoUlGbx5dt9iyKbjH5
-	YTO/PmV1vcJL60aFb6pNt796Vqw+b21BCL5oGJsttQ4ytHrlkpVHasyLV1WsYgxoGmySucJzMKB
-	D6c4IkwnYQeA0Tb7eJgbnVq3Q0zcJGAsWGXyy9a1rGhtuCHNg8F+W0tEmTBrjJwEXjytROv0yoy
-	8TQ4olbS1MCVVQNehE2wWTHMxqK2oUje2VFGWj7JBzQeD5XSHHrzxnxrsHg32ty3lOklfUn1k30
-	Jq3Cxh2BD1ZWh0Azxl
-X-Google-Smtp-Source: AGHT+IF+CkE3KtT6ionDkSipExdfGDISvekrXKi2WT6S/RtLOjkVq23qdW0ISl/zTZg3zmduaAV6eQ==
-X-Received: by 2002:a05:6a00:2e92:b0:77f:1ef8:8acb with SMTP id d2e1a72fcca58-79385ed596bmr15180309b3a.13.1760109306603;
-        Fri, 10 Oct 2025 08:15:06 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e134fsm3270685b3a.58.2025.10.10.08.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 08:15:06 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: djakov@kernel.org
-Cc: quic_mdtipton@quicinc.com,
-	jserv@ccns.ncku.edu.tw,
-	marscheng@google.com,
-	wllee@google.com,
-	aarontian@google.com,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] interconnect: debugfs: Fix incorrect error handling for NULL path
-Date: Fri, 10 Oct 2025 23:14:47 +0800
-Message-Id: <20251010151447.2289779-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760109310; c=relaxed/simple;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P/wlfvfLkNTk2/tC18cU3ZDmOACmWQgzaI+qPBmPU9AyHvbFfzFS1LV24tpQeQFAjbNQOlZR1hnSfufccaxlK7giw1A1rJdnO4yCclsQFogJCsbskfsk0blycRkXHuCGFHs2cGYcOknaumt96YfBwmhrvLvNyhxPBUOU38uwVcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=NH4qBqrN; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1760109298; x=1760714098; i=rwarsow@gmx.de;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=NH4qBqrNfivTMyOZDKfLpvDwvxR1d/zh61pqMysH5mDcxevXOa7GsoKIM0o8T5J6
+	 pf9KlMWW3Jbghe1nTfGrMtGONt+jglNnsQxSpFhUlMHkyjj8ZMF8Nc9Sv1eWCo5El
+	 0WuFtkMSi/bOzRcyep3e8GevwWd00ZCocC955s6LmoXLvXximQC9q9kaZAbc/Hw99
+	 SvnkXOPyJWMXkufveb35grjUmMMJPuRRrZRMztztN9ddz90EBJzribyyEtgCiwYZy
+	 RMQxIN5E/W/FRHM65zZYwlVTQiLuJ7Slxp9QNAbhWmKr7ZN2sIckr6xi0BNYe1SSq
+	 NDclGH9aFYDEu45mAA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.32.48]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mj8qd-1udQO42qFp-00aydJ; Fri, 10
+ Oct 2025 17:14:57 +0200
+Message-ID: <31a32273-9d8c-40fa-9853-9436c2e1f077@gmx.de>
+Date: Fri, 10 Oct 2025 17:14:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 00/26] 6.17.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251010131331.204964167@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20251010131331.204964167@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:o00+2uT8W+MiKX7FrXifbtdLoO5KiBOeEyv5v+X5wM4WbBlQiQ0
+ 17MWEcNkqOWdmHXDd7zf1uPpUOtI2ptHVhkZBlVrXIzIVWa9Hq6jM0W9gy540GuOeCS0hxu
+ LibmNvEoRCse0aCLGlpX7R///czxInfwIKeARnNjbCjVY8x0k58CM1ebCWMutv+R12pZMyd
+ FbvqhFTQhpwlU4sZJNSrQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qDNdFgtyHPY=;aE5s2vcthEZvW+9mhHn0oKdMQwg
+ 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
+ EBgTizIQglDaah7snYtgKZw==
 
-The icc_commit_set() function, used by the debugfs interface, checks
-the validity of the global cur_path pointer using IS_ERR_OR_NULL().
-However, in the specific case where cur_path is NULL, while
-IS_ERR_OR_NULL(NULL) correctly evaluates to true, the subsequent call
-to PTR_ERR(NULL) returns 0.
+Hi
 
-This causes the function to return a success code (0) instead of an
-error, misleading the user into believing their bandwidth request was
-successfully committed when, in fact, no operation was performed.
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Fix this by adding an explicit check to return -EINVAL if cur_path is
-NULL. This prevents silent failures and ensures that an invalid
-operational sequence is immediately and clearly reported as an error.
+Thanks
 
-Fixes: 770c69f037c1 ("interconnect: Add debugfs test client")
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
- drivers/interconnect/debugfs-client.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/interconnect/debugfs-client.c b/drivers/interconnect/debugfs-client.c
-index bc3fd8a7b9eb..778deeb4a7e8 100644
---- a/drivers/interconnect/debugfs-client.c
-+++ b/drivers/interconnect/debugfs-client.c
-@@ -117,7 +117,12 @@ static int icc_commit_set(void *data, u64 val)
- 
- 	mutex_lock(&debugfs_lock);
- 
--	if (IS_ERR_OR_NULL(cur_path)) {
-+	if (!cur_path) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (IS_ERR(cur_path)) {
- 		ret = PTR_ERR(cur_path);
- 		goto out;
- 	}
--- 
-2.34.1
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
 
