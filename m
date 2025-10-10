@@ -1,517 +1,203 @@
-Return-Path: <linux-kernel+bounces-847979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D61BCC321
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CC3BCC330
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9ECD1A656A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A055C1A656F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD1226561D;
-	Fri, 10 Oct 2025 08:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8F2246793;
+	Fri, 10 Oct 2025 08:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EpAFugaH"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UT31UluM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B54A289E07
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392791BFE00;
+	Fri, 10 Oct 2025 08:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760085731; cv=none; b=fqy536TV74K+fZ41wO7EnJ9c096xltMK7pR0UTbSXVNeA5zVwIE2q6jKoz/ZuJN+olMls9pvw1S5wDp6nPVJK/t4aTZtziariMBcywZYrtKKbu9L5Vur/VpW5GTSe3IA1ru7eu9aXGuOA3GU3jjk2uqruN+nh3XCTVzi+RKu5jc=
+	t=1760085916; cv=none; b=k7xQP15Q92FC4dxhobvisFjzCJVj/rNsuyswTHL7UGikksdiIGPjbRB6p5HuPFVW03Dv8ridM3cHK8H6aDuCl5jm84pNNjqrKRPhXmOggb134MCggRaEsHFNamAvHFMaUre9ZUwh402gCpfr1Jzq3P8sIlwZ0a9A+DwVqVqf+eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760085731; c=relaxed/simple;
-	bh=rtdRGLejnTu67Rb9wmBHL0xESMEQ00Nn2zzDM0xi+V8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TWmxh45rXyUzws42Sx8JvQBhQbFHMhWe5YJ9jwgmNLGvQzBk0SBhBA6Rq/b213n0dSKeVSpGHufGzG1cYgvr6dg2RirKBEcM0PxkFYFADOCFnVYRJnVK4ysCDmGxTvg1PE0uJw6x9FaA0SZOSglghERB4UCbzMXJwoJXW10YfxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EpAFugaH; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B358F1A1288;
-	Fri, 10 Oct 2025 08:42:07 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8801A60667;
-	Fri, 10 Oct 2025 08:42:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D95B102F220A;
-	Fri, 10 Oct 2025 10:42:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760085726; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9kbiZUodR2cKxdISdXMzruPjD9ma3kA1eUcGB0z649o=;
-	b=EpAFugaH5sSynwFj633gVmsUg6geDhZMyxjw06XlaGQwZCwYtcbY9KnIGTy7NNRKQ+3sl0
-	zZ8WmA9ZSJXzKognROe4fqPUp9ONdo7iUndO47KohQQS6F8eJFExaTgsqHRahuZY2kpGCX
-	cIUeJzOxwLQCnukwZ+elR/fG21B4J3WTJTZ/9uxCI7ClX8nGit0bopNKbUVe9GoGeQC/Jn
-	4Nu/twcy43+bmLNj4WkradUg7PEBUGto2mEna4xck4LKOMFew7oVUU+8FMtzCYcInRZG3n
-	IxF0UU0Iqm/YF7EmIKHkGbWn04+9VgL5P9beEDLDREfM5u3fLuuYiKP24fKjIw==
-From: Richard Genoud <richard.genoud@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Wentao Liang <vulab@iscas.ac.cn>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH 15/15] mtd: rawnand: sunxi: Add support for H616 nand controller
-Date: Fri, 10 Oct 2025 10:40:42 +0200
-Message-ID: <20251010084042.341224-16-richard.genoud@bootlin.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251010084042.341224-1-richard.genoud@bootlin.com>
-References: <20251010084042.341224-1-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1760085916; c=relaxed/simple;
+	bh=0hkmzo9sEM+b8slOw7f3y38WOERUTTPFFZDlRrSW4l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHL0937TQ7Y81yyb45k6QoxWWwIS+bIG0cwkwTp92OwQuXSLfgBlW8EMN07QvRiJqms7CFZSwUzYRGSAGy4KCLsyvulwWGTw0FkK4qePcfA4I7DDYYjzmdhVwpcMb7d1rbw2UNeJfzdnrPDIgb+RnCr+fDYPr6/JmhnqQoG/6nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UT31UluM; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760085915; x=1791621915;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0hkmzo9sEM+b8slOw7f3y38WOERUTTPFFZDlRrSW4l0=;
+  b=UT31UluM8O82/xS0IekHi7sBPEmqvh6HRzy8qqpMfLRofF3xwshAGyNu
+   Ak4PC5h8UXLiE/YAJ4nIrOmAhfG0mMw9HCW+z1vy+e2amFy+MPxuizX1t
+   fX70OBm81JFtOvDalhCS3OBQwludigUzD9jSw0ypjctINvQbOp69vxGfG
+   dg0PZXxtEgIc8vVAlSJAp7gUSGytVkRw8620FVl9uoBYixymV/rULRNfE
+   BcPuO6TEr4qWbXWbNmApf0gbhJ50H6kqhVpYdKGhKyWqoPaPwaDvjD1Vs
+   8a95nrSfFOf8Sndv1rXSgQoa2eeMXFiuc5lgghih5k8GKpljhSvYw6xyL
+   Q==;
+X-CSE-ConnectionGUID: jz4G5vukQEaPRg/2iS+TiA==
+X-CSE-MsgGUID: 22XwNrpTRzyhqHfUkpOtLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62245334"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62245334"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 01:45:14 -0700
+X-CSE-ConnectionGUID: zT/Oa/p/ThS6t0xITBCewQ==
+X-CSE-MsgGUID: XTZn9jzPTyO0L3xrCuO3mQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="180034733"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 10 Oct 2025 01:45:11 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v78kO-0002Tv-1m;
+	Fri, 10 Oct 2025 08:45:08 +0000
+Date: Fri, 10 Oct 2025 16:44:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Andrew Davis <afd@ti.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 6/6] remoteproc: core: Consolidate bool flags into 1-bit
+ bitfields
+Message-ID: <202510101653.wulDfnoN-lkp@intel.com>
+References: <20251005-remoteproc-cleanup-v1-6-09a9fdea0063@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251005-remoteproc-cleanup-v1-6-09a9fdea0063@nxp.com>
 
-The H616 nand controller has the same base as A10/A23, with some
-differences:
-- mdma is based on chained buffers
-- its ECC supports up to 80bit per 1024bytes
-- some registers layouts are a bit different, mainly due do the stronger
-  ECC.
-- it uses USER_DATA_LEN registers along USER_DATA registers.
-- it needs a specific clock for ECC and MBUS.
+Hi Peng,
 
-This patch introduce the basic support, without DMA/MDMA.
+kernel test robot noticed the following build errors:
 
-Tested on Whatsminer H616 board (with and without scrambling, ECC)
+[auto build test ERROR on 3b9b1f8df454caa453c7fb07689064edb2eda90a]
 
-Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
----
- drivers/mtd/nand/raw/sunxi_nand.c | 182 ++++++++++++++++++++++++++++--
- 1 file changed, 174 insertions(+), 8 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/remoteproc-core-Drop-redundant-initialization-of-ret-in-rproc_shutdown/20251010-012012
+base:   3b9b1f8df454caa453c7fb07689064edb2eda90a
+patch link:    https://lore.kernel.org/r/20251005-remoteproc-cleanup-v1-6-09a9fdea0063%40nxp.com
+patch subject: [PATCH 6/6] remoteproc: core: Consolidate bool flags into 1-bit bitfields
+config: riscv-randconfig-002-20251010 (https://download.01.org/0day-ci/archive/20251010/202510101653.wulDfnoN-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510101653.wulDfnoN-lkp@intel.com/reproduce)
 
-diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
-index e81d74c6633a..1e1185f8d980 100644
---- a/drivers/mtd/nand/raw/sunxi_nand.c
-+++ b/drivers/mtd/nand/raw/sunxi_nand.c
-@@ -49,17 +49,40 @@
- #define NFC_REG_A23_IO_DATA	0x0300
- #define NFC_REG_ECC_CTL		0x0034
- #define NFC_REG_ECC_ST		0x0038
--#define NFC_REG_DEBUG		0x003C
-+#define NFC_REG_H6_PAT_FOUND	0x003C
- #define NFC_REG_A10_ECC_ERR_CNT	0x0040
-+#define NFC_REG_H6_ECC_ERR_CNT	0x0050
- #define NFC_REG_ECC_ERR_CNT(nfc, x)	((nfc->caps->reg_ecc_err_cnt + (x)) & ~0x3)
-+#define NFC_REG_H6_RDATA_CTL	0x0044
-+#define NFC_REG_H6_RDATA_0	0x0048
-+#define NFC_REG_H6_RDATA_1	0x004C
- #define NFC_REG_A10_USER_DATA	0x0050
-+#define NFC_REG_H6_USER_DATA	0x0080
- #define NFC_REG_USER_DATA(nfc, x)	(nfc->caps->reg_user_data + ((x) * 4))
-+#define NFC_REG_H6_USER_DATA_LEN 0x0070
-+/* A USER_DATA_LEN register can hold the length of 8 USER_DATA registers */
-+#define NFC_REG_USER_DATA_LEN_CAPACITY 8
-+#define NFC_REG_USER_DATA_LEN(nfc, step) \
-+	 (nfc->caps->reg_user_data_len + \
-+	 ((step) / NFC_REG_USER_DATA_LEN_CAPACITY) * 4)
- #define NFC_REG_SPARE_AREA(nfc) (nfc->caps->reg_spare_area)
- #define NFC_REG_A10_SPARE_AREA	0x00A0
- #define NFC_REG_PAT_ID(nfc) (nfc->caps->reg_pat_id)
- #define NFC_REG_A10_PAT_ID	0x00A4
- #define NFC_REG_MDMA_ADDR	0x00C0
- #define NFC_REG_MDMA_CNT	0x00C4
-+#define NFC_REG_H6_EFNAND_STATUS 0x0110
-+#define NFC_REG_H6_SPARE_AREA	0x0114
-+#define NFC_REG_H6_PAT_ID	0x0118
-+#define NFC_REG_H6_DDR2_SPEC_CTL 0x011C
-+#define NFC_REG_H6_NDMA_MODE_CTL 0x0120
-+#define NFC_REG_H6_MDMA_DLBA_REG 0x0200
-+#define NFC_REG_H6_MDMA_STA	0x0204
-+#define NFC_REG_H6_MDMA_INT_MAS	0x0208
-+#define NFC_REG_H6_MDMA_DESC_ADDR 0x020C
-+#define NFC_REG_H6_MDMA_BUF_ADDR 0x0210
-+#define NFC_REG_H6_MDMA_CNT	0x0214
-+
- #define NFC_RAM0_BASE		0x0400
- #define NFC_RAM1_BASE		0x0800
- 
-@@ -71,6 +94,7 @@
- #define NFC_BUS_WIDTH_16	(1 << 2)
- #define NFC_RB_SEL_MSK		BIT(3)
- #define NFC_RB_SEL(x)		((x) << 3)
-+/* CE_SEL BIT 27 is meant to be used for GPIO chipselect */
- #define NFC_CE_SEL_MSK		GENMASK(26, 24)
- #define NFC_CE_SEL(x)		((x) << 24)
- #define NFC_CE_CTL		BIT(6)
-@@ -89,6 +113,9 @@
- #define NFC_STA			BIT(4)
- #define NFC_NATCH_INT_FLAG	BIT(5)
- #define NFC_RB_STATE(x)		BIT(x + 8)
-+#define NFC_RB_STATE_MSK	GENMASK(11, 8)
-+#define NDFC_RDATA_STA_1	BIT(12)
-+#define NDFC_RDATA_STA_0	BIT(13)
- 
- /* define bit use in NFC_INT */
- #define NFC_B2R_INT_ENABLE	BIT(0)
-@@ -100,6 +127,7 @@
- 
- /* define bit use in NFC_TIMING_CTL */
- #define NFC_TIMING_CTL_EDO	BIT(8)
-+#define NFC_TIMING_CTL_E_EDO	BIT(9)
- 
- /* define NFC_TIMING_CFG register layout */
- #define NFC_TIMING_CFG(tWB, tADL, tWHR, tRHW, tCAD)		\
-@@ -107,9 +135,15 @@
- 	(((tWHR) & 0x3) << 4) | (((tRHW) & 0x3) << 6) |		\
- 	(((tCAD) & 0x7) << 8))
- 
-+#define NFC_TIMING_CFG2(tCDQSS, tSC, tCLHZ, tCSS, tWC)		\
-+	((((tCDQSS) & 0x1) << 11) | (((tSC) & 0x3) << 12) |	\
-+	 (((tCLHZ) & 0x3) << 14) | (((tCSS) & 0x3) << 16) |	\
-+	 (((tWC) & 0x3) << 18))
-+
- /* define bit use in NFC_CMD */
- #define NFC_CMD_LOW_BYTE_MSK	GENMASK(7, 0)
--#define NFC_CMD_HIGH_BYTE_MSK	GENMASK(15, 8)
-+#define NFC_CMD_HIGH_BYTE_MSK	GENMASK(15, 8)  // 15-10 reserved on H6
-+#define NFC_CMD_ADR_NUM_MSK	GENMASK(9, 8)
- #define NFC_CMD(x)		(x)
- #define NFC_ADR_NUM_MSK		GENMASK(18, 16)
- #define NFC_ADR_NUM(x)		(((x) - 1) << 16)
-@@ -122,6 +156,7 @@
- #define NFC_SEQ			BIT(25)
- #define NFC_DATA_SWAP_METHOD	BIT(26)
- #define NFC_ROW_AUTO_INC	BIT(27)
-+#define NFC_H6_SEND_RND_CMD2	BIT(27)
- #define NFC_SEND_CMD3		BIT(28)
- #define NFC_SEND_CMD4		BIT(29)
- #define NFC_CMD_TYPE_MSK	GENMASK(31, 30)
-@@ -133,6 +168,7 @@
- #define NFC_READ_CMD_MSK	GENMASK(7, 0)
- #define NFC_RND_READ_CMD0_MSK	GENMASK(15, 8)
- #define NFC_RND_READ_CMD1_MSK	GENMASK(23, 16)
-+#define NFC_RND_READ_CMD2_MSK	GENMASK(31, 24)
- 
- /* define bit use in NFC_WCMD_SET */
- #define NFC_PROGRAM_CMD_MSK	GENMASK(7, 0)
-@@ -150,6 +186,9 @@
- #define NFC_RANDOM_DIRECTION(nfc) (nfc->caps->random_dir_mask)
- #define NFC_ECC_MODE_MSK(nfc)	(nfc->caps->ecc_mode_mask)
- #define NFC_ECC_MODE(nfc, x)	field_prep(NFC_ECC_MODE_MSK(nfc), (x))
-+/* RANDOM_PAGE_SIZE: 0: ECC block size  1: page size */
-+#define NFC_A23_RANDOM_PAGE_SIZE	BIT(11)
-+#define NFC_H6_RANDOM_PAGE_SIZE	BIT(7)
- #define NFC_RANDOM_SEED_MSK	GENMASK(30, 16)
- #define NFC_RANDOM_SEED(x)	((x) << 16)
- 
-@@ -165,6 +204,9 @@
- 
- #define NFC_ECC_ERR_CNT(b, x)	(((x) >> (((b) % 4) * 8)) & 0xff)
- 
-+#define NFC_USER_DATA_LEN_MSK(step) \
-+	(0xf << (((step) % NFC_REG_USER_DATA_LEN_CAPACITY) * 4))
-+
- #define NFC_DEFAULT_TIMEOUT_MS	1000
- 
- #define NFC_MAX_CS		7
-@@ -224,9 +266,11 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
-  * @has_mdma:		Use mbus dma mode, otherwise general dma
-  *			through MBUS on A23/A33 needs extra configuration.
-  * @has_ecc_block_512:	If the ECC can handle 512B or only 1024B chuncks
-+ * @has_mbus_clk:	If the controller needs a mbus clock.
-  * @reg_io_data:	I/O data register
-  * @reg_ecc_err_cnt:	ECC error counter register
-  * @reg_user_data:	User data register
-+ * @reg_user_data_len:	User data length register
-  * @reg_spare_area:	Spare Area Register
-  * @reg_pat_id:		Pattern ID Register
-  * @reg_pat_found:	Data Pattern Status Register
-@@ -238,14 +282,23 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
-  * @dma_maxburst:	DMA maxburst
-  * @ecc_strengths:	Available ECC strengths array
-  * @nstrengths:		Size of @ecc_strengths
-+ * @max_ecc_steps:	Maximum supported steps for ECC, this is also the
-+ *			number of user data registers
-+ * @user_data_len_tab:  Table of lenghts supported by USER_DATA_LEN register
-+ *			The table index is the value to set in NFC_USER_DATA_LEN
-+ *			registers, and the corresponding value is the number of
-+ *			bytes to write
-+ * @nuser_data_tab:	Size of @user_data_len_tab
-  * @sram_size:		Size of the NAND controller SRAM
-  */
- struct sunxi_nfc_caps {
- 	bool has_mdma;
- 	bool has_ecc_block_512;
-+	bool has_mbus_clk;
- 	unsigned int reg_io_data;
- 	unsigned int reg_ecc_err_cnt;
- 	unsigned int reg_user_data;
-+	unsigned int reg_user_data_len;
- 	unsigned int reg_spare_area;
- 	unsigned int reg_pat_id;
- 	unsigned int reg_pat_found;
-@@ -257,6 +310,9 @@ struct sunxi_nfc_caps {
- 	unsigned int dma_maxburst;
- 	const u8 *ecc_strengths;
- 	unsigned int nstrengths;
-+	const u8 *user_data_len_tab;
-+	unsigned int nuser_data_tab;
-+	unsigned int max_ecc_steps;
- 	int sram_size;
- };
- 
-@@ -268,6 +324,7 @@ struct sunxi_nfc_caps {
-  * @regs: NAND controller registers
-  * @ahb_clk: NAND controller AHB clock
-  * @mod_clk: NAND controller mod clock
-+ * @ecc_clk: NAND controller ECC clock
-  * @reset: NAND controller reset line
-  * @assigned_cs: bitmask describing already assigned CS lines
-  * @clk_rate: NAND controller current clock rate
-@@ -282,7 +339,9 @@ struct sunxi_nfc {
- 	struct device *dev;
- 	void __iomem *regs;
- 	struct clk *ahb_clk;
-+	struct clk *mbus_clk;
- 	struct clk *mod_clk;
-+	struct clk *ecc_clk;
- 	struct reset_control *reset;
- 	unsigned long assigned_cs;
- 	unsigned long clk_rate;
-@@ -764,6 +823,53 @@ static void sunxi_nfc_hw_ecc_get_prot_oob_bytes(struct nand_chip *nand, u8 *oob,
- 		sunxi_nfc_randomize_bbm(nand, page, oob);
- }
- 
-+/*
-+ * On H6/H6 the user_data length has to be set in specific registers
-+ * before writing.
-+ */
-+static void sunxi_nfc_reset_user_data_len(struct sunxi_nfc *nfc)
-+{
-+	int loop_step = NFC_REG_USER_DATA_LEN_CAPACITY;
-+
-+	/* not all SoCs have this register */
-+	if (!nfc->caps->reg_user_data_len)
-+		return;
-+
-+	for (int i = 0; i < nfc->caps->max_ecc_steps; i += loop_step)
-+		writel(0, nfc->regs + NFC_REG_USER_DATA_LEN(nfc, i));
-+}
-+
-+static void sunxi_nfc_set_user_data_len(struct sunxi_nfc *nfc,
-+					int len, int step)
-+{
-+	bool found = false;
-+	u32 val;
-+	int i;
-+
-+	/* not all SoCs have this register */
-+	if (!nfc->caps->reg_user_data_len)
-+		return;
-+
-+	for (i = 0; i < nfc->caps->nuser_data_tab; i++) {
-+		if (len == nfc->caps->user_data_len_tab[i]) {
-+			found = true;
-+			break;
-+		}
-+	}
-+
-+	if (!found) {
-+		dev_warn(nfc->dev,
-+			 "Unsupported length for user data reg: %d\n", len);
-+		return;
-+	}
-+
-+	val = readl(nfc->regs + NFC_REG_USER_DATA_LEN(nfc, step));
-+
-+	val &= ~NFC_USER_DATA_LEN_MSK(step);
-+	val |= field_prep(NFC_USER_DATA_LEN_MSK(step), i);
-+	writel(val, nfc->regs + NFC_REG_USER_DATA_LEN(nfc, step));
-+}
-+
- static void sunxi_nfc_hw_ecc_set_prot_oob_bytes(struct nand_chip *nand,
- 						const u8 *oob, int step,
- 						bool bbm, int page)
-@@ -858,6 +964,8 @@ static int sunxi_nfc_hw_ecc_read_chunk(struct nand_chip *nand,
- 	if (ret)
- 		return ret;
- 
-+	sunxi_nfc_reset_user_data_len(nfc);
-+	sunxi_nfc_set_user_data_len(nfc, 4, 0);
- 	sunxi_nfc_randomizer_config(nand, page, false);
- 	sunxi_nfc_randomizer_enable(nand);
- 	writel(NFC_DATA_TRANS | NFC_DATA_SWAP_METHOD | NFC_ECC_OP,
-@@ -968,6 +1076,8 @@ static int sunxi_nfc_hw_ecc_read_chunks_dma(struct nand_chip *nand, uint8_t *buf
- 		return ret;
- 
- 	sunxi_nfc_hw_ecc_enable(nand);
-+	sunxi_nfc_reset_user_data_len(nfc);
-+	sunxi_nfc_set_user_data_len(nfc, 4, 0);
- 	sunxi_nfc_randomizer_config(nand, page, false);
- 	sunxi_nfc_randomizer_enable(nand);
- 
-@@ -1100,6 +1210,8 @@ static int sunxi_nfc_hw_ecc_write_chunk(struct nand_chip *nand,
- 
- 	sunxi_nfc_randomizer_config(nand, page, false);
- 	sunxi_nfc_randomizer_enable(nand);
-+	sunxi_nfc_reset_user_data_len(nfc);
-+	sunxi_nfc_set_user_data_len(nfc, 4, 0);
- 	sunxi_nfc_hw_ecc_set_prot_oob_bytes(nand, oob, 0, bbm, page);
- 
- 	writel(NFC_DATA_TRANS | NFC_DATA_SWAP_METHOD |
-@@ -1344,10 +1456,12 @@ static int sunxi_nfc_hw_ecc_write_page_dma(struct nand_chip *nand,
- 	if (ret)
- 		goto pio_fallback;
- 
-+	sunxi_nfc_reset_user_data_len(nfc);
- 	for (i = 0; i < ecc->steps; i++) {
- 		const u8 *oob = nand->oob_poi + (i * (ecc->bytes + 4));
- 
- 		sunxi_nfc_hw_ecc_set_prot_oob_bytes(nand, oob, i, !i, page);
-+		sunxi_nfc_set_user_data_len(nfc, 4, i);
- 	}
- 
- 	nand_prog_page_begin_op(nand, page, 0, NULL, 0);
-@@ -2148,18 +2262,36 @@ static int sunxi_nfc_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
- 
-+	nfc->caps = of_device_get_match_data(dev);
-+	if (!nfc->caps)
-+		return -EINVAL;
-+
- 	nfc->ahb_clk = devm_clk_get_enabled(dev, "ahb");
- 	if (IS_ERR(nfc->ahb_clk)) {
- 		dev_err(dev, "failed to retrieve ahb clk\n");
- 		return PTR_ERR(nfc->ahb_clk);
- 	}
- 
-+	if (nfc->caps->has_mbus_clk) {
-+		nfc->mbus_clk = devm_clk_get_enabled(dev, "mbus");
-+		if (IS_ERR(nfc->mbus_clk)) {
-+			dev_err(dev, "No mbus clock specified\n");
-+			return PTR_ERR(nfc->mbus_clk);
-+		}
-+	}
-+
- 	nfc->mod_clk = devm_clk_get_enabled(dev, "mod");
- 	if (IS_ERR(nfc->mod_clk)) {
- 		dev_err(dev, "failed to retrieve mod clk\n");
- 		return PTR_ERR(nfc->mod_clk);
- 	}
- 
-+	nfc->ecc_clk = devm_clk_get_optional_enabled(dev, "ecc");
-+	if (IS_ERR(nfc->ecc_clk)) {
-+		dev_err(dev, "failed to retrieve ecc clk\n");
-+		return PTR_ERR(nfc->ecc_clk);
-+	}
-+
- 	nfc->reset = devm_reset_control_get_optional_exclusive(dev, "ahb");
- 	if (IS_ERR(nfc->reset))
- 		return PTR_ERR(nfc->reset);
-@@ -2170,12 +2302,6 @@ static int sunxi_nfc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	nfc->caps = of_device_get_match_data(&pdev->dev);
--	if (!nfc->caps) {
--		ret = -EINVAL;
--		goto out_ahb_reset_reassert;
--	}
--
- 	ret = sunxi_nfc_rst(nfc);
- 	if (ret)
- 		goto out_ahb_reset_reassert;
-@@ -2226,8 +2352,17 @@ static const u8 sunxi_ecc_strengths_a10[] = {
- 	16, 24, 28, 32, 40, 48, 56, 60, 64
- };
- 
-+static const u8 sunxi_ecc_strengths_h6[] = {
-+	16, 24, 28, 32, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80
-+};
-+
-+static const u8 sunxi_user_data_len_h6[] = {
-+	0, 4, 8, 12, 16, 20, 24, 28, 32
-+};
-+
- static const struct sunxi_nfc_caps sunxi_nfc_a10_caps = {
- 	.has_ecc_block_512 = true,
-+	.has_mbus_clk = false,
- 	.reg_io_data = NFC_REG_A10_IO_DATA,
- 	.reg_ecc_err_cnt = NFC_REG_A10_ECC_ERR_CNT,
- 	.reg_user_data = NFC_REG_A10_USER_DATA,
-@@ -2242,11 +2377,13 @@ static const struct sunxi_nfc_caps sunxi_nfc_a10_caps = {
- 	.dma_maxburst = 4,
- 	.ecc_strengths = sunxi_ecc_strengths_a10,
- 	.nstrengths = ARRAY_SIZE(sunxi_ecc_strengths_a10),
-+	.max_ecc_steps = 16,
- 	.sram_size = 1024,
- };
- 
- static const struct sunxi_nfc_caps sunxi_nfc_a23_caps = {
- 	.has_mdma = true,
-+	.has_mbus_clk = false,
- 	.has_ecc_block_512 = true,
- 	.reg_io_data = NFC_REG_A23_IO_DATA,
- 	.reg_ecc_err_cnt = NFC_REG_A10_ECC_ERR_CNT,
-@@ -2262,9 +2399,34 @@ static const struct sunxi_nfc_caps sunxi_nfc_a23_caps = {
- 	.dma_maxburst = 8,
- 	.ecc_strengths = sunxi_ecc_strengths_a10,
- 	.nstrengths = ARRAY_SIZE(sunxi_ecc_strengths_a10),
-+	.max_ecc_steps = 16,
- 	.sram_size = 1024,
- };
- 
-+static const struct sunxi_nfc_caps sunxi_nfc_h616_caps = {
-+	.has_mdma = false, // H6 supports only chained descriptors
-+	.has_mbus_clk = true,
-+	.reg_io_data = NFC_REG_A23_IO_DATA,
-+	.reg_ecc_err_cnt = NFC_REG_H6_ECC_ERR_CNT,
-+	.reg_user_data = NFC_REG_H6_USER_DATA,
-+	.reg_user_data_len = NFC_REG_H6_USER_DATA_LEN,
-+	.reg_spare_area = NFC_REG_H6_SPARE_AREA,
-+	.reg_pat_id = NFC_REG_H6_PAT_ID,
-+	.reg_pat_found = NFC_REG_H6_PAT_FOUND,
-+	.random_en_mask = BIT(5),
-+	.random_dir_mask = BIT(6),
-+	.ecc_mode_mask = GENMASK(15, 8),
-+	.ecc_err_mask = GENMASK(31, 0),
-+	.pat_found_mask = GENMASK(31, 0),
-+	.dma_maxburst = 8,
-+	.ecc_strengths = sunxi_ecc_strengths_h6,
-+	.nstrengths = ARRAY_SIZE(sunxi_ecc_strengths_h6),
-+	.user_data_len_tab = sunxi_user_data_len_h6,
-+	.nuser_data_tab = ARRAY_SIZE(sunxi_user_data_len_h6),
-+	.max_ecc_steps = 32,
-+	.sram_size = 8192,
-+};
-+
- static const struct of_device_id sunxi_nfc_ids[] = {
- 	{
- 		.compatible = "allwinner,sun4i-a10-nand",
-@@ -2274,6 +2436,10 @@ static const struct of_device_id sunxi_nfc_ids[] = {
- 		.compatible = "allwinner,sun8i-a23-nand-controller",
- 		.data = &sunxi_nfc_a23_caps,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-h616-nand-controller",
-+		.data = &sunxi_nfc_h616_caps,
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sunxi_nfc_ids);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510101653.wulDfnoN-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_probe':
+>> drivers/remoteproc/stm32_rproc.c:860:42: error: cannot take address of bit-field 'auto_boot'
+     860 |  ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
+         |                                          ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
+   Depends on [n]: BINFMT_ELF [=n] && ELF_CORE [=y]
+   Selected by [y]:
+   - RISCV [=y]
+
+
+vim +/auto_boot +860 drivers/remoteproc/stm32_rproc.c
+
+376ffdc044568f Mathieu Poirier  2020-07-14  832  
+13140de09cc2dd Fabien Dessenne  2019-05-14  833  static int stm32_rproc_probe(struct platform_device *pdev)
+13140de09cc2dd Fabien Dessenne  2019-05-14  834  {
+13140de09cc2dd Fabien Dessenne  2019-05-14  835  	struct device *dev = &pdev->dev;
+13140de09cc2dd Fabien Dessenne  2019-05-14  836  	struct stm32_rproc *ddata;
+13140de09cc2dd Fabien Dessenne  2019-05-14  837  	struct device_node *np = dev->of_node;
+710028a2e4d76c Arnaud Pouliquen 2025-03-27  838  	const char *fw_name;
+13140de09cc2dd Fabien Dessenne  2019-05-14  839  	struct rproc *rproc;
+376ffdc044568f Mathieu Poirier  2020-07-14  840  	unsigned int state;
+13140de09cc2dd Fabien Dessenne  2019-05-14  841  	int ret;
+13140de09cc2dd Fabien Dessenne  2019-05-14  842  
+13140de09cc2dd Fabien Dessenne  2019-05-14  843  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+13140de09cc2dd Fabien Dessenne  2019-05-14  844  	if (ret)
+13140de09cc2dd Fabien Dessenne  2019-05-14  845  		return ret;
+13140de09cc2dd Fabien Dessenne  2019-05-14  846  
+710028a2e4d76c Arnaud Pouliquen 2025-03-27  847  	/* Look for an optional firmware name */
+710028a2e4d76c Arnaud Pouliquen 2025-03-27  848  	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+710028a2e4d76c Arnaud Pouliquen 2025-03-27  849  	if (ret < 0 && ret != -EINVAL)
+710028a2e4d76c Arnaud Pouliquen 2025-03-27  850  		return ret;
+710028a2e4d76c Arnaud Pouliquen 2025-03-27  851  
+710028a2e4d76c Arnaud Pouliquen 2025-03-27  852  	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, fw_name, sizeof(*ddata));
+13140de09cc2dd Fabien Dessenne  2019-05-14  853  	if (!rproc)
+13140de09cc2dd Fabien Dessenne  2019-05-14  854  		return -ENOMEM;
+13140de09cc2dd Fabien Dessenne  2019-05-14  855  
+8210fc873d2f1a Mathieu Poirier  2020-07-14  856  	ddata = rproc->priv;
+8210fc873d2f1a Mathieu Poirier  2020-07-14  857  
+3898fc99d19934 Clement Leger    2020-04-10  858  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+8210fc873d2f1a Mathieu Poirier  2020-07-14  859  
+8210fc873d2f1a Mathieu Poirier  2020-07-14 @860  	ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
+8210fc873d2f1a Mathieu Poirier  2020-07-14  861  	if (ret)
+8210fc873d2f1a Mathieu Poirier  2020-07-14  862  		goto free_rproc;
+8210fc873d2f1a Mathieu Poirier  2020-07-14  863  
+95e32f868aa67c Mathieu Poirier  2020-07-14  864  	ret = stm32_rproc_of_memory_translations(pdev, ddata);
+95e32f868aa67c Mathieu Poirier  2020-07-14  865  	if (ret)
+95e32f868aa67c Mathieu Poirier  2020-07-14  866  		goto free_rproc;
+95e32f868aa67c Mathieu Poirier  2020-07-14  867  
+376ffdc044568f Mathieu Poirier  2020-07-14  868  	ret = stm32_rproc_get_m4_status(ddata, &state);
+376ffdc044568f Mathieu Poirier  2020-07-14  869  	if (ret)
+376ffdc044568f Mathieu Poirier  2020-07-14  870  		goto free_rproc;
+376ffdc044568f Mathieu Poirier  2020-07-14  871  
+6e20a05104e55d Arnaud POULIQUEN 2021-03-12  872  	if (state == M4_STATE_CRUN)
+376ffdc044568f Mathieu Poirier  2020-07-14  873  		rproc->state = RPROC_DETACHED;
+376ffdc044568f Mathieu Poirier  2020-07-14  874  
+13140de09cc2dd Fabien Dessenne  2019-05-14  875  	rproc->has_iommu = false;
+714cf5e3846047 Arnaud Pouliquen 2019-10-25  876  	ddata->workqueue = create_workqueue(dev_name(dev));
+714cf5e3846047 Arnaud Pouliquen 2019-10-25  877  	if (!ddata->workqueue) {
+714cf5e3846047 Arnaud Pouliquen 2019-10-25  878  		dev_err(dev, "cannot create workqueue\n");
+714cf5e3846047 Arnaud Pouliquen 2019-10-25  879  		ret = -ENOMEM;
+dadbdb9c304c51 Mathieu Poirier  2020-07-14  880  		goto free_resources;
+714cf5e3846047 Arnaud Pouliquen 2019-10-25  881  	}
+13140de09cc2dd Fabien Dessenne  2019-05-14  882  
+13140de09cc2dd Fabien Dessenne  2019-05-14  883  	platform_set_drvdata(pdev, rproc);
+13140de09cc2dd Fabien Dessenne  2019-05-14  884  
+4a56e423e0e19b Fabien Dessenne  2019-11-15  885  	ret = stm32_rproc_request_mbox(rproc);
+4a56e423e0e19b Fabien Dessenne  2019-11-15  886  	if (ret)
+8210fc873d2f1a Mathieu Poirier  2020-07-14  887  		goto free_wkq;
+13140de09cc2dd Fabien Dessenne  2019-05-14  888  
+13140de09cc2dd Fabien Dessenne  2019-05-14  889  	ret = rproc_add(rproc);
+13140de09cc2dd Fabien Dessenne  2019-05-14  890  	if (ret)
+13140de09cc2dd Fabien Dessenne  2019-05-14  891  		goto free_mb;
+13140de09cc2dd Fabien Dessenne  2019-05-14  892  
+13140de09cc2dd Fabien Dessenne  2019-05-14  893  	return 0;
+13140de09cc2dd Fabien Dessenne  2019-05-14  894  
+13140de09cc2dd Fabien Dessenne  2019-05-14  895  free_mb:
+13140de09cc2dd Fabien Dessenne  2019-05-14  896  	stm32_rproc_free_mbox(rproc);
+714cf5e3846047 Arnaud Pouliquen 2019-10-25  897  free_wkq:
+714cf5e3846047 Arnaud Pouliquen 2019-10-25  898  	destroy_workqueue(ddata->workqueue);
+dadbdb9c304c51 Mathieu Poirier  2020-07-14  899  free_resources:
+dadbdb9c304c51 Mathieu Poirier  2020-07-14  900  	rproc_resource_cleanup(rproc);
+13140de09cc2dd Fabien Dessenne  2019-05-14  901  free_rproc:
+410119ee29b6c1 Fabien Dessenne  2019-08-26  902  	if (device_may_wakeup(dev)) {
+410119ee29b6c1 Fabien Dessenne  2019-08-26  903  		dev_pm_clear_wake_irq(dev);
+410119ee29b6c1 Fabien Dessenne  2019-08-26  904  		device_init_wakeup(dev, false);
+410119ee29b6c1 Fabien Dessenne  2019-08-26  905  	}
+13140de09cc2dd Fabien Dessenne  2019-05-14  906  	return ret;
+13140de09cc2dd Fabien Dessenne  2019-05-14  907  }
+13140de09cc2dd Fabien Dessenne  2019-05-14  908  
+
 -- 
-2.47.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
