@@ -1,152 +1,117 @@
-Return-Path: <linux-kernel+bounces-848731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C38BCE727
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:07:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67315BCE730
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE6314F1288
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7C03BA7E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA40302148;
-	Fri, 10 Oct 2025 20:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB5D302148;
+	Fri, 10 Oct 2025 20:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="l2raaEEq"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T5n+v+Jp"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D222F6171
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149D33019D7
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760126850; cv=none; b=nyCwgA3PZvmGHUqmE18HLes7xonrYOgj0bXa22Q/Je5Xrizb7RXuGM7Se5AVI4qrLJBcobY/uoEIOZ8YBh+2PCXKfmBQ0nD8wvYcV+CVDalpSfn1gK/j/FbItFstMgdoVkWdhxqDZJFJG6JU36AqYnhysKxU8Fo1hnO9rMSNrm4=
+	t=1760126968; cv=none; b=umh74TyOf6MVsW4djt4cZ9xE3PEBXAxL4mQrPA8JpoYEX7U0c5wSXLwGu7Cyiaf++/ydD+QZJSAgixCYQzUfVtEJQ0n07p7x7DoenPNX+VOnC5MlvOwJ0FP+9ym6rnr3LywOh5ECchEFFz11xzDFrWBx8oqqbT/JEtQj3uPY4ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760126850; c=relaxed/simple;
-	bh=yRUjUuUXNBLsIN1szrFomtxYw/WYo3wHfGbwO0TlmkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDh4P49Rrrzh8HmPevfJpsTI4o3GJqgdv2soAnGm1os43B779e0CbP37k3XY8hm4F9XIZtORZj2it8HRgippWs+vibvAEGzobeJq1O/7/eYung0uh+TkPseKQiL4fpWn0AIB3TTplx8MVgUk+wKqb6w7NKh6Er3GteJSn+ZubGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=l2raaEEq; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=sXtr63u17hNsb6FiIpfCvPf15KtfGYlPLgI+MFIT+c8=; b=l2raaEEqeEl6EphL
-	CkMZh3dEiisioiZXtVuUW37f/tunF6SwnBL4J6xQpZ14g7wvTbrN6Gjk9I++q3pvkjOxjRGy9DMK2
-	VRPQXPTSaYOD1jit2q4HS1XglRswcDTlgRV8yAYaXUVDEkBqKzHFszL/M5pQHu0v7EEziGvv6tt99
-	xAYCOWXyTSVEFISkQqIsH+KPA90V/DUmmKnngoo7ROBU44U7Izi1YvPVyQLcG3h1PjHlZyMtrzbyM
-	gWM4oxVh2hmfDeQ0Lcry6zBsZDgmlhXF9l6HgqAcuXjdz9d1drcEOjQVmdJioITjMV7EMIa+eaK9T
-	ahvBcYUv05wsgFguOQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1v7JOW-00FmK3-2H;
-	Fri, 10 Oct 2025 20:07:16 +0000
-Date: Fri, 10 Oct 2025 20:07:16 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Jeff Johnson <jjohnson@kernel.org>, wcn36xx@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wifi: wcn36xx: Remove unused
- wcn36xx_smd_update_scan_params
-Message-ID: <aOlndHPBg-SBZ-zU@gallifrey>
-References: <20250619010506.296494-1-linux@treblig.org>
- <CAFEp6-3U2rQEUtntb0cdJeykURocEZQdeVHXFbXXogZV=wxGWg@mail.gmail.com>
- <aOfT806hw7l2BeJu@gallifrey>
- <CAFEp6-3tq4FkiBLO20mk2HU1QkbyVMbyutu11v7b8PSyps2Qjw@mail.gmail.com>
- <83b4ff7d-2443-4ba9-8103-77c8dde518f2@oss.qualcomm.com>
- <aOhXV7IdoI0aBT1j@gallifrey>
- <CAFEp6-085_uTZtjpku5ffq9+81OpPcFBJb3jXzeWbzKmQwFy9Q@mail.gmail.com>
+	s=arc-20240116; t=1760126968; c=relaxed/simple;
+	bh=a0SX8kSR784b6penl5yfwzGgEtxTJ3kl50tCJ9L+ytw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lsHYc1FEuMC/8DqjR5F9kbrQnsBYELssQuTb6btLlBZDfw2VfW5dnk5hD/M6uq2IJHRGCQpfgE9SNXx6ldU11OYCSQkhMLb30oMoYbYwacspmvo2fMQmRoTO5YW58HqDuVCtZXOFzyFELvWi6TCW0UtCYJ+5PkUdUEQB9cbtljs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T5n+v+Jp; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-42f8d7f116eso9560615ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1760126966; x=1760731766; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=73mJei37SDLNEjyuCvIowUQets2tMYT4DQzAwbNhePI=;
+        b=T5n+v+Jp+qZgMzYubWXECWkEGY2kgzcaZRcfs9igBfebL44D82Z5Rf8GeodIzNZSLU
+         nz1a6zXbYWE1mLKjNhubqc/ngdzK+WxSFKyCb9GJ9JBPKtjl7TkjiZJ+yDXpGLUWxgBM
+         /ph5J1JQySF31p9NKEnWpDESgyRVwC+nD3S0M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760126966; x=1760731766;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=73mJei37SDLNEjyuCvIowUQets2tMYT4DQzAwbNhePI=;
+        b=csvJJ79568641otxiPF+AiqUi+sEP7gPKcVCIoJJLqal7yQ3KWjZjS5G+vXcQWNtx9
+         YwKyII8YLP1QSp/Jo1TcDUcT6KfbK1JrcdUyT36e8Y9mv0fswMPuJlR6AUEOSkU8Zoaa
+         pErhEopX3DWEB64gOs4R3REFgi+avEQ/PJATBJDedeKFC07gCTXbrHLuji96QO4OrygP
+         MDhSnU/qc4huaELKiHeQEgL54S98NoKjJxn/RFmJMS2+xd7mBFXaoQeiH/tKcJwYFFEe
+         3afU27hNgj99lPcimmgrr0LDJisHTFxubEgbxcoBCeeR6nS8mP8habjK20Gc0W+mrOaO
+         eXsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzkGTuQ9fYwCxFhJS4Tx6C6Vui5UVT7mk69lMZa9FRDk0yfXrLN41QWDTr4rQeDieskggvPA70dLRYiHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj8ouYVxSjXrfLkRAmWAO4ejVYqpEY7BWw1n6P6C1KApq0EU9l
+	vYcKN7tgwTt8lKigNIxArQ2hhu9qp3SoL7SqxIsXuBaLNswp539Hpnv1RxdWbq6dOYV2Qr6mJvd
+	4B0xz
+X-Gm-Gg: ASbGncuE5IXot8nA6uMJwL1ZIkL4aHHvkIgUMcz+FZuZ2+MPW4Cys4jhEpzqtb6qowm
+	mvPflMu/nDqAr8bOZXd05dVqMaO/TomeeHjtJ77CzaWrvPefFLCTYpaH3SWsHGuo+k7Z5Re9maY
+	1gGCy/X73Lr4tl2YDdfCoGMXdugHyDywjBp0Q6oxQeGigef8/V6/C9HseClYIzoGC/O1UaHJm3c
+	ozdW1C8d5G5Rdt1CQI8Nyzj4ucfkp6AjAEah6+PVP+ABdswa6JjqazpZSor58mxSN08uwZLLvz+
+	mhy7p5GNx5aEDl3nqiBCoRyS7yDIQiiOOf9VnykQtd1vnKHbeP59KVsTmRjGzK2prXDpNmw0vb2
+	BJSJN6/0rJ7SuqQzPmiiROci3p8r117rh14qby5f9S0hcBy8IVrkczg==
+X-Google-Smtp-Source: AGHT+IExfJ0SVNgKWSwK5nNYw70xExw5FwCwh1H8nQ16YOiFXCm7eW1/r+CH+IjqW338c6moXSgE4w==
+X-Received: by 2002:a05:6e02:318a:b0:42f:8ee7:6494 with SMTP id e9e14a558f8ab-42f8ee76610mr112903845ab.9.1760126965990;
+        Fri, 10 Oct 2025 13:09:25 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42fa5b44b58sm4846745ab.5.2025.10.10.13.09.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 13:09:25 -0700 (PDT)
+Message-ID: <a28d1c19-9d93-46eb-81ef-9fa4a39581bc@linuxfoundation.org>
+Date: Fri, 10 Oct 2025 14:09:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 18/30] selftests-dyndbg: add a dynamic_debug run_tests
+ target
+To: jim.cromie@gmail.com
+Cc: shuah@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251009175834.1024308-1-jim.cromie@gmail.com>
+ <20251009175834.1024308-19-jim.cromie@gmail.com>
+ <CAJfuBxw4G-6Ro06VkF_0K4hZ_=W1YqwJaN5=owvQiax1ShJwow@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CAJfuBxw4G-6Ro06VkF_0K4hZ_=W1YqwJaN5=owvQiax1ShJwow@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFEp6-085_uTZtjpku5ffq9+81OpPcFBJb3jXzeWbzKmQwFy9Q@mail.gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 20:06:50 up 166 days,  4:20,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
 
-* Loic Poulain (loic.poulain@oss.qualcomm.com) wrote:
-> Hi Dave,
+On 10/10/25 13:20, jim.cromie@gmail.com wrote:
+> cc'g Shua
 > 
-> On Fri, Oct 10, 2025 at 2:46 AM Dr. David Alan Gilbert
-> <linux@treblig.org> wrote:
-> >
-> > * Jeff Johnson (jeff.johnson@oss.qualcomm.com) wrote:
-> > > On 10/9/2025 3:15 PM, Loic Poulain wrote:
-> > > > Hi Jeff,
-> > > >
-> > > > On Thu, Oct 9, 2025 at 5:25 PM Dr. David Alan Gilbert <linux@treblig.org> wrote:
-> > > >>
-> > > >> * Loic Poulain (loic.poulain@oss.qualcomm.com) wrote:
-> > > >>> On Thu, Jun 19, 2025 at 3:05 AM <linux@treblig.org> wrote:
-> > > >>>>
-> > > >>>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > >>>>
-> > > >>>> wcn36xx_smd_update_scan_params() last use was removed in 2020 by
-> > > >>>> commit 5973a2947430 ("wcn36xx: Fix software-driven scan")
-> > > >>>>
-> > > >>>> Remove it.
-> > > >>>>
-> > > >>>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > >>>
-> > > >>> Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> > > >>
-> > > >> Hi Loic,
-> > > >>   Is this getting into a pull somewhere?
-> > > >
-> > > > Can it be picked for ath10-next?
-> > >
-> > > This was not on my radar since it wasn't sent to linux-wireless and hence
-> > > isn't tracked in patchwork. I just looked at it and it seems the following are
-> > > now also unused and could be removed:
-> > > struct wcn36xx_hal_update_scan_params_resp
-> > > struct wcn36xx_hal_update_scan_params_req_ex
-> >
-> > Oh, I'm happy to cook a v2 for that if Loic agrees they should go
-> > (I know some drivers like to keep struct definitions if they document the hardware)
+> On Thu, Oct 9, 2025 at 11:59 AM Jim Cromie <jim.cromie@gmail.com <mailto:jim.cromie@gmail.com>> wrote:
 > 
-> The software based scanning never worked very well, so I'm not even
-> sure the related structs are correct or complete, so it's ok to remove
-> in your v2.
-
-Sure.
-
-> > > Let me know if you want me to take this as-is or wait for a v2. If you send a
-> > > v2 please also include linux-wireless so that it is tracked by patchwork.
-> >
-> > Sure.
-> >
-> > Note that linux-wireless isn't included in get_maintainer output for this:
-> >
-> > $ scripts/get_maintainer.pl -f drivers/net/wireless/ath/wcn36xx/smd.c
-> > Loic Poulain <loic.poulain@oss.qualcomm.com> (maintainer:QUALCOMM WCN36XX WIRELESS DRIVER)
-> > wcn36xx@lists.infradead.org (open list:QUALCOMM WCN36XX WIRELESS DRIVER)
-> > linux-kernel@vger.kernel.org (open list)
-> > QUALCOMM WCN36XX WIRELESS DRIVER status: Supported
+>     Add a selftest script for dynamic-debug.  The config requires
+>     CONFIG_TEST_DYNAMIC_DEBUG=m and CONFIG_TEST_DYNAMIC_DEBUG_SUBMOD=m,
+>     which tacitly requires either CONFIG_DYNAMIC_DEBUG=y or
+>     CONFIG_DYNAMIC_DEBUG_CORE=y
 > 
-> Indeed, would you mind submitting a fix for the MAINTAINERS file?
-
-No problem.
-
-I'll cook a pair of patches.
-
-Dave
-
-> Regards,
-> Loic
+>     ATM this has just basic_tests(), which modify pr_debug() flags in the
+>     builtin params module.  This means they're available to manipulate and
+>     observe the effects in "cat control".
 > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+>     This is backported from another feature branch; the support-fns (thx
+>     Lukas) have unused features at the moment, they'll get used shortly.
+
+Please resend this patch - I don't have the patch in my inbox.
+
+thanks,
+-- Shuah
 
