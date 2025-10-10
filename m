@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-847634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B16BCB516
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:10:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ABCBCB51F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A5FCA351549
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:10:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BD3B4E6300
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA95213E89;
-	Fri, 10 Oct 2025 01:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820A521B9F1;
+	Fri, 10 Oct 2025 01:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LysD7Y/d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGsbsvB4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E269DDC5
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1D5DDC5;
+	Fri, 10 Oct 2025 01:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760058645; cv=none; b=MQ6rT+nN9Cxd+QocYEmwQCG3CsTlvIdYuTj9QFoVAmAgxvOPB5OD9YsL5c1+OPziKtkLEcWReDjLp6mrPf05VKckYDeP78j5N+R4BSsbI4kja8+nrPmsVEzFkhE+ebwr2GUEIsyZMUIwJNqern0nHb+tZ+pxJWtyy0ZA37IIwWQ=
+	t=1760058771; cv=none; b=JGc92AJnP8vSM94ixcJj9dBiD2D9PNC0qUJou5ouW6jN+dXD3lCqNbBR2CG8zeq310Cq/8nnPYTJa0xr7JBHtiPYe+f1+O1sHPWQ7nDQ1d93/ftfY2IVmwZceoMgq9ioV1qvnmTf7V0ToXgbBTVNnsMzXOtTKobPYs5nFV7N4IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760058645; c=relaxed/simple;
-	bh=5U6FCv7NgoRxqbeKp0lPvYqDabYpEssMfFjx3MwgN/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nehxy2I8bizYM3hegOBoqzAvgrLNjPRhkLx2TXSTNe7ERh4wKbVkWAeKGGIGScqolNzTrvS+gn2IjDx2OiqpK7Bwc5Y48pWoOBhkmfEzKJmRJPS4kQYIMVNhki5VDSVB1OjnyYfgxOXDAqfyrUiJ4rHdj4ZKYxK02IyLh1osIMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LysD7Y/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D254C4CEE7;
-	Fri, 10 Oct 2025 01:10:44 +0000 (UTC)
+	s=arc-20240116; t=1760058771; c=relaxed/simple;
+	bh=9RFb0ITLXdY5UcNja///NRHXOHieonf4kWFfDq+78Yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GzJHiIFgtYep7CBbU3Oz9gFOEBN4nsIoio9m5Inig2iv/4a3LXgdaYukI5KEMaxY88eC2G7iFsbksan5bomkRnZjEx5+NhbRHz+8U3O29OKxY5ycjXCS1GIadL7iruKpLsZHBhCW2QYb8Y3pTAvNPyuypOj9WHTLFhv5sgCP/BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGsbsvB4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76FE3C4CEE7;
+	Fri, 10 Oct 2025 01:12:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760058645;
-	bh=5U6FCv7NgoRxqbeKp0lPvYqDabYpEssMfFjx3MwgN/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LysD7Y/dHexnb+CYtqzBBX0jzAt+di2AvPgfcND/BCTZ5bWMKLDvXicZAd0DH42SA
-	 CGWEBIKDZGmvVx3ATSsozv4BespdpOJzhKna/iGoHGjvp35Bjtq6W+fKwhuD8RNNd8
-	 GG9aGnutYbSP5IkCQvmC+d/K1KnTsqxgHtkoqiQ4paSG6AvhbNdnzCLxkF0gsNyXw9
-	 CyCfBgE650HKZAxdVghKT46JM/ydgjpsVS83qUdv+wB8CuH40XzJAxnbHWlrVUAeEI
-	 ScTuDQcZC+Cn9Tl0LN93Tlr6jrxDRRWr2qhJm1xcsQ7vQH1EQIAHGO/hTR55MWBH8E
-	 Swrs0KlSEjikw==
-Date: Thu, 9 Oct 2025 18:10:42 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, "Kaplan, David" <David.Kaplan@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Klaus Kusche <klaus.kusche@computerix.info>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
-Message-ID: <xhxfkzrrn62xkd6moiapfueookui5f63x4lmzgkmnf3mbxilb5@kk4rylukegii>
-References: <20251003171936.155391-1-david.kaplan@amd.com>
- <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
- <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
- <20251007182257.ywrqrrhgrtrviila@desk>
- <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
- <20251007230821.5shpa3pusyzaohb2@desk>
- <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
- <20251009053336.ghcmhgsprtkgydas@desk>
+	s=k20201202; t=1760058771;
+	bh=9RFb0ITLXdY5UcNja///NRHXOHieonf4kWFfDq+78Yg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SGsbsvB44u8HFEhvE3uue6zJpFCve0eRmFwITbHhWfyXenj9OmrlVmjMuMPcjBp3O
+	 Jo5Pv9R+dJtVgzogHZrg/PcfSuQUNdjC//oYRBT/9YmyElhvC6hEoPits7KB4R4keT
+	 fAm0RlS0FNRYpeMsD63K+lt6vSgCUYt3VNb4S1hdVI8n78tDGSzovM2C3DZuLjpSDW
+	 xrwlSYYyRLQP/r46gYVJMMD/rZ+nGpRbypiJTD6IWZSUQOyJd2v7QTWBc8aRD8M7/B
+	 hdaHAZWuGkHpXz/YyAH0XQkoXVkpS/vXvi2B3dt9cFTNmGFNUWaMdTtbDMNtRLoLM8
+	 tOT36dIUNh7lw==
+Message-ID: <3118e300-f6de-42af-bd1b-ad13dc80537d@kernel.org>
+Date: Fri, 10 Oct 2025 03:12:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251009053336.ghcmhgsprtkgydas@desk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 1/2] dt-bindings: gpio: add gpio-split controller
+To: Jonas Jelonek <jelonek.jonas@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251009223501.570949-1-jelonek.jonas@gmail.com>
+ <20251009223501.570949-2-jelonek.jonas@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251009223501.570949-2-jelonek.jonas@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 08, 2025 at 10:33:36PM -0700, Pawan Gupta wrote:
-> On Tue, Oct 07, 2025 at 05:14:29PM -0700, Josh Poimboeuf wrote:
-> > On Tue, Oct 07, 2025 at 04:08:21PM -0700, Pawan Gupta wrote:
-> >   MITIGATION_RETPOLINE -> X86_UGLY_INDIRECT_THUNKS
-> >   MITIGATION_RETHUNK   -> X86_UGLY_RETURN_THUNKS
-> > 
-> >   etc...
-> > 
-> > Then one only needs to grep their .config file for UGLY to understand
-> > why their disassembly is so inscrutable ;-)
-> 
-> :-) Agree, this is ugly. One way to handle this could be two levels of
-> Kconfig options like below:
-> 
-> * CONFIG_MITIGATION_FOO			- Compiles out the mitigation
+On 10/10/2025 07:35, Jonas Jelonek wrote:
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-split.yaml b/Documentation/devicetree/bindings/gpio/gpio-split.yaml
+> new file mode 100644
+> index 000000000000..9a58c81da4fa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-split.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/gpio-split.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: GPIO split
+> +
+> +maintainers:
+> +  - Jonas Jelonek <jelonek.jonas@gmail.com>
+> +
+> +description:
+> +  A virtual GPIO controller to provide virtual GPIOs backed by a single real
+> +  GPIO and a multiplexer. This controller may be used in case a real GPIO is
+> +  connected to multiple inputs/outputs and controlled by a multiplexer, and
+> +  another subsystem/driver is not able to work with multiplexer subsystem.
 
-Maybe, though compiling out individual features would be complicated by
-the fact that we have dependencies between several of the mitigations,
-as evidenced by *_update_mitigation().
+Instead, please fix the subsystem driver?
 
->   * CONFIG_MITIGATION_FOO_DEFAULT	- Sets the bootup default
+I have also doubts we actually want it in DT, because we tie the
+limitation of Linux drivers to bindings.
 
-I'm wondering if we can just get rid of the compiled-in defaults.  Do
-people really need that anymore, now that we have the attack vector
-controls?  We could instead have
 
-  CONFIG_CPU_MITIGATIONS_OFF
-  CONFIG_CPU_MITIGATIONS_AUTO
-  CONFIG_CPU_MITIGATIONS_AUTO_NOSMT
-
-  CONFIG_CPU_MITIGATIONS_USER_USER
-  CONFIG_CPU_MITIGATIONS_USER_KERNEL
-  CONFIG_CPU_MITIGATIONS_GUEST_HOST
-  CONFIG_CPU_MITIGATIONS_GUEST_GUEST
-
-... which should cover the main cases.  And of course there's always
-CONFIG_CMDLINE for more customization.
-
->   select X86_UGLY_INDIRECT_THUNKS
-
-Unfortunately it's not always straightforward enough to say "mitigation
-FOO always needs X ugly feature".
-
-For example, newer CPUs mitigate Spectre v2 with enhanced IBRS, so they
-don't necessarily need all the retpoline and legacy IBRS stuff.  So
-CONFIG_MITIGATION_SPECTRE_V2 shouldn't enable those unconditionally.
-
-Instead, CONFIG_MITIGATION_SPECTRE_V2 could enable a submenu which then
-allows the user to enable retpoline, IBRS on entry, etc, with each
-having help text describing what generations of CPUs it would be the
-default for, to help guide the user to choose sane defaults depending on
-their CPU:
-
-  * CONFIG_MITIGATION_SPECTRE_V2
-    * CONFIG_MITIGATION_SPECTRE_V2_RETPOLINE
-      select CONFIG_BUILD_INDIRECT_THUNKS
-    * CONFIG_MITIGATION_SPECTRE_V2_IBRS
-      select CONFIG_BUILD_IBRS_ENTRY
-
--- 
-Josh
+Best regards,
+Krzysztof
 
