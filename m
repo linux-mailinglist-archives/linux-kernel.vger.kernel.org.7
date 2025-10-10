@@ -1,115 +1,270 @@
-Return-Path: <linux-kernel+bounces-847781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669AEBCBB1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:16:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98678BCBB2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95643189C085
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:17:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC6724EFC5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D5C2264BA;
-	Fri, 10 Oct 2025 05:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB791494CC;
+	Fri, 10 Oct 2025 05:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IHQhNdVB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MVxWw1k6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD791A58D;
-	Fri, 10 Oct 2025 05:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760073395; cv=none; b=GsCrTMfVBh/U4Ysn4ac0906UUCHT8K/MlIa2GOlCNfHdPk7VxqbnbOci5s5sOtLR+JroiMVXN1BFgpl3BzHxbECbBIcp6T04pS7aqApoBsi5hS31eKEfPoHZ/XxUOiDsgs25bRsH4bJg+p5iU743FG3TF5ewAJNWO06KVxS4NMI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760073395; c=relaxed/simple;
-	bh=tlGkaZi9TU7+xWd2v7EZav7T1tY41k41pnXLAy9TVXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u2paFGHksy8UL3/e8cD45ntW6RYg1L1cfMdyaZQuQR6cAk4Beqa4z8OG5FR2yqq8+3dCdvHX+hONH0RAd1m9f0tnKwFGwaCDknwPZE7hNIzT0oMzUsS1/nFoAvBc5A6QRq7ibFz4tYPeQ1X5FqiQKa8Khy5oebK327fYnJJnRpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IHQhNdVB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5C5C4CEF1;
-	Fri, 10 Oct 2025 05:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760073395;
-	bh=tlGkaZi9TU7+xWd2v7EZav7T1tY41k41pnXLAy9TVXo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IHQhNdVBuYnZBlnpaSY3B2/XLKzT06fK/4nCzYSB2vH0LmLKEK/l+ws8svdpRE1Wk
-	 TB979SGESje7/2CxTGDKWq991Kvk9qQBLZ2Jn1WFPPbL+sXCfzuxKa85ZD3nccqXEr
-	 6kIgI4swODdflhUp0ALHGZj9nhy1sPluFm0STuXlmEMyiGVYgRLyObzzrrnhO6oUEw
-	 vaDiepHQxUNHavzyJ9n3S3w7ZNssOeIlDGaPyW+yePXPsHlZXGK2Y0CfAwyzC8STby
-	 IqbFjbw29fUAAcA04wghJDPNwSYphjfg9umPawMgy14ZxReILo1MwQkAnuYf1UVYeT
-	 X/Nf66aW4H6dA==
-Message-ID: <57db4b09-b44c-4899-8229-e3e71cd70f14@kernel.org>
-Date: Fri, 10 Oct 2025 14:16:32 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB8F1A9F96;
+	Fri, 10 Oct 2025 05:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760073496; cv=fail; b=LTaKGazu+so0NIb/IzDclYcddtlaAZhI4nL8nK74lvqdB3Hao70ygVGVmKPqMRwZQK5YCZQ5WE/r3tXQN4uoUY4GYJv9Cq7zkZ/nsRzQQ0s8EgC6hNEtGjOaTh5zLlX54VeUfHocA5PGVSKROuudlkpyW9JIaMGOYZUCZ3Jzy3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760073496; c=relaxed/simple;
+	bh=E7j14qcwzWpTxL+k0qaacvD1pC0B2f50TVA8EF8+v48=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mKwezC/Tegx7zaT7s1TXv965ny9fLHjzvmmakwtVCIiXY687ArHPImRqG9sHsFNJR1G5JqLE9NgGuTCEyorUi/2RUjqoHV1Xz6D+j8bmVOJfa2jDJull35mznMVue2yJl8oEPGD8QoGyMCCvJvE1CX3rd8tzmswVD8/u7x5R5Hc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MVxWw1k6; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760073494; x=1791609494;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=E7j14qcwzWpTxL+k0qaacvD1pC0B2f50TVA8EF8+v48=;
+  b=MVxWw1k6KR2SZRkaALyuYjg0PhHD2g9BOGxxH6a8aWyzvIFrmQqjNPBO
+   pJwuz8hMBZC6QhSJESg2sYiM+0wMy/OOncpWm+7U282XFo1fPQ+JNLb3i
+   MxwqoK8UgOSmpOUkKMKeL1rqoWw7PtvL+//W93xI3k2LbBfGPIOf9M30F
+   rez+kkeUnCjKMObyRjnUZWTcQr3joL5LUa/qIObgvvBg0AItBIXLbCbgY
+   0WwPB8xCVihE4SHtTUJLXUcDcbE+GqaumCLIdZRNn3c3WeqSSazbluxV8
+   RSCXZHo73kwfmzaZNtx/nEyvKlzWQ0sSp2OBP2ZTiI4JHmTIr4gTcKR0t
+   g==;
+X-CSE-ConnectionGUID: iTCa5gY7R7a2BPOCwHc/RQ==
+X-CSE-MsgGUID: gCq2vZMcRN6iYQjFHpsH+A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="73634651"
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="73634651"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 22:18:13 -0700
+X-CSE-ConnectionGUID: RkdhuccrQnOQ//kCk3TvnQ==
+X-CSE-MsgGUID: eK1ID/E9Ro+K0tdNluxQKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="180479565"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 22:18:13 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 9 Oct 2025 22:18:12 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 9 Oct 2025 22:18:12 -0700
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.23) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 9 Oct 2025 22:18:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h5boiKLOgWHRYgc+lpxkhcyJDcDfDTVLxAhzmoX1scBYqu0YlekoJtzi/qqdTnpcgrs2evVwYuFY4wXE5D61geyata8r01EYGNAH12TZk59rM7OeQhNN5xSCMWQ5KnvENEnsWuK92ZXoVXqOiMN7qkQIKgdiz5Zukcm293soMwo4592MdOT3QCU6DA2n3+gtEKXUELuPWHsHfIcQBdVtWmmCDP0KYsBryEUatk3b68/DUnDinbZQ9YZG3u3vxuzkUd9GQ7/m1bsvLgYWtUNlor4Ir5uyv4RAai3A+jiVSFR8ccbKPQ0ye0XO2uU+b5YnkDyEXOBdG7sJmVvGQyXOgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aGlXz7D/WJKGc1zHLX27WxHmi9sV8NI+0SACgG+oyfU=;
+ b=hUq97LCTZpbqqjoHcfVPOrkOB6oc/LZDYN8Vxkp4HPk4vJLEgxC9lVrwKJekQRGFtH3oHn3QFYW6kJUzhki/lNUaDVZdWEZ6bUAzXK/kxwt+BRf8J523tR5TE+Z2a4VVacfs54+jjpnJgDqvOa9Mu+rGEA4Q7+m9kOYkUZZf0i8Bo8+I9lSlupdvmE72RofbfAOtFsCrm7O8zbUZQtHwwBEAkQZlFRUqpB/UolktI8fPfmHwnnXpHiv47jI/6yDN9xWSN2nXB+ZGsUW6ymEnc2s2we3hPmYMZfUbEm2hc08wLlRTbfbGNFmZveWSiUY+rS9NdphmLSDvCrL0EZrYdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by SA1PR11MB5827.namprd11.prod.outlook.com (2603:10b6:806:236::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Fri, 10 Oct
+ 2025 05:18:10 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.9203.007; Fri, 10 Oct 2025
+ 05:18:10 +0000
+Date: Fri, 10 Oct 2025 00:18:03 -0500
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+CC: <intel-xe@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, Icenowy Zheng <uwu@icenowy.me>, "Vivian
+ Wang" <wangruikang@iscas.ac.cn>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Simon Richter
+	<Simon.Richter@hogyros.de>, LKML <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drm/xe: Move rebar to be done earlier
+Message-ID: <epq2fe6hanziuyhvcihcrpgjgp24aik2wospyga2cjzbgsjk2h@7fr5zatwnbfg>
+References: <20250918-xe-pci-rebar-2-v1-0-6c094702a074@intel.com>
+ <20250918-xe-pci-rebar-2-v1-2-6c094702a074@intel.com>
+ <5osrqzgrh47n6rpjulvsixwbhbh5vwxrrn6p6hpodnwisjfung@lmivgjb66oed>
+ <dfdd45b2-5a8c-cfea-ecd3-495e947022d1@linux.intel.com>
+Content-Type: text/plain; charset="iso-8859-1"; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dfdd45b2-5a8c-cfea-ecd3-495e947022d1@linux.intel.com>
+X-ClientProxiedBy: SJ0PR05CA0161.namprd05.prod.outlook.com
+ (2603:10b6:a03:339::16) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] block/mq-deadline: adjust the timeout period of the
- per_prio->dispatch
-To: Bart Van Assche <bvanassche@acm.org>, chengkaitao <pilgrimtao@gmail.com>,
- axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chengkaitao <chengkaitao@kylinos.cn>
-References: <20251009155253.14611-1-pilgrimtao@gmail.com>
- <db87a85d-e433-4daf-97c7-d5156849db0f@acm.org>
- <bb362d12-b942-48f3-8414-e859cebb8862@kernel.org>
- <8406f13d-d8be-4957-b1ec-6996f19d32e9@acm.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <8406f13d-d8be-4957-b1ec-6996f19d32e9@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|SA1PR11MB5827:EE_
+X-MS-Office365-Filtering-Correlation-Id: d312291e-cf31-4c7f-8e18-08de07bc6759
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?Ra4EtJH0FLbMr5elhncWG2RuxUgvoHDG/RR7z1mLArhIdknqyTwNDkMIUt?=
+ =?iso-8859-1?Q?xWoOyL4IKf1Gn/Cp4zyVuyuuNe+KDDRdrPxD2rinvDGc8hH16CMOm8ZcTt?=
+ =?iso-8859-1?Q?WmLeF5ay2nYilzk9+SaJA/G1kerSJnGJN0idOiwMR13xIPeGksB8dbSkMt?=
+ =?iso-8859-1?Q?zXOIyUxZYdd5DJ3dlkMEfgkxglAG7ahcvZLj6o/sVEJwxI+F+rhSEyBlVS?=
+ =?iso-8859-1?Q?1mB2SYoh1ipzJyMBNDYYcXbe5aw8uDO0xw17kY2kSlX9Dh4GKebdNLIMCX?=
+ =?iso-8859-1?Q?TX+JQO00am2A2t3/UCRpA7ZPKnkmS2uHsuC5u9tontOiykn7vzhZq9xo16?=
+ =?iso-8859-1?Q?esZqtOx+VIZxmOM7oPBr7EqVivzWrv9Lgp38l8kBCGrkQ/mAwoAOA7NaUS?=
+ =?iso-8859-1?Q?Txip7Y7WHSrBoOBajxPNmAXAJbuSb5FVpMtBDOBZdX5e+gz31nqTy4rNpK?=
+ =?iso-8859-1?Q?EaM/SdQef+spRM58kK3jySPMnLQtGL+Afkcl+7tfwotW6ZEdq7KvEcrYFg?=
+ =?iso-8859-1?Q?gHjNd3RQDYABCUGJiQ7ABTBxiRWma86tqt6ruQoATudaStwpW65LiIxq58?=
+ =?iso-8859-1?Q?cRrvqcYrrcY+uZVL+Kb+B2EXr2+s3xMj8dmRfWHMDFzpy96+q9MUs3BMRv?=
+ =?iso-8859-1?Q?XNk+EN0hYV+pWs9vodq673LSGOhY4AelaJ8UfV+kUDAgLg0qzQOmaJv2/3?=
+ =?iso-8859-1?Q?NEYgnGJ7+0XLySVmBrosM4kQm4ReKYYsjD8wJI34i/ZjauCNBCmXVamz2C?=
+ =?iso-8859-1?Q?B0tHxb6FpYFCEvK3s75NnNN5cr+c1pA33EmFqxuVY69OamPk+XCRYYYWNK?=
+ =?iso-8859-1?Q?M+EgCa6HUnnUm+UQgkXNDyi/Lkv53FR4rz24NSVZUWm3m/6l444GlYQ+IQ?=
+ =?iso-8859-1?Q?fDg0vvIyXA3N/xEVzgkbP7rK+1V2hBWEr+sek6+2ae012QiKUggZJl73eY?=
+ =?iso-8859-1?Q?O1WsyM9BBM/6Tji3/yGbS+yb4XK1k2aa3IvNdr1Uc2EMBQaCM0B/+F76NY?=
+ =?iso-8859-1?Q?+IK8waDcfsXegk0jqfqLh+Ux92EtrHw150xpLqdFiFsMrjcg/jk1TdDZJY?=
+ =?iso-8859-1?Q?036Sx4zLvjmGG1clXDxiIndRx3b9wIhPG00CGcCr2Nqb443qALYc1WY++x?=
+ =?iso-8859-1?Q?zVJ5NEqofe3ZYuAbKpc3CVHjTzrHJn6ywlgo8wSgEZ/LNF6ZZTD1tIkwbk?=
+ =?iso-8859-1?Q?qH9ZqnNz1lia4AGCr7E9fI1LKuhhBzo3MTRi2LKbJ6iN0zsZ0DJUPk4ZYh?=
+ =?iso-8859-1?Q?nWxv3EE/MUJ7bzAbqOnTj+pKrjnpWaBmhtgHguPRIiGcqVrjTh4VFo2Ln+?=
+ =?iso-8859-1?Q?kxPxKTBgCTRfxeXLsQCXKZxqgA7l4kh9xY2y6xn1YoNWUJsXWqKrIACRuN?=
+ =?iso-8859-1?Q?qCtktRo5wfNFvHG1MqlJ46BaVWRpQNBsig4kKwDIMgVyKH/FTNctrfW0f/?=
+ =?iso-8859-1?Q?UzApQPKzFlN1y/4a+GDlHrd6Jzz1NjJXi9UEtPc2pADO60ohedfJCVHrOj?=
+ =?iso-8859-1?Q?nR8gUP1ac6nhZytTsnPBXG?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?g1n6JSnuCJJtRCfO10oTIEPyJMbfMglStxuwRUlIEuZ+dh1HUIE7ElR/SE?=
+ =?iso-8859-1?Q?/hCU7sHz0Z/y3jmIVOmNKGLSGtPLXe7jpXpqgHBAKgjEX7ddy04RgYUBcO?=
+ =?iso-8859-1?Q?CGdfootQ0cPtIkLuabFF/vqu26aCvKGPQV9ThSeHNPHoy0MQ4bjh31tLoY?=
+ =?iso-8859-1?Q?MZ8EcljzvCbPLX67ZzhC9B1MgM9SJAp71nA2xLTkKTK8kzNO6rdA2gzoqW?=
+ =?iso-8859-1?Q?4M9AT6UVlziFjV2Wr8fx93lPADGxIlQ7BKA3p/IsIdQDfBEANC7MxQF73j?=
+ =?iso-8859-1?Q?CHKlOmFlr6533VTUhVjWHTAh70o8pWiZJ9xrRcjHD5lNNRoejk82C53Al9?=
+ =?iso-8859-1?Q?LRU19SnEx59Mdqm9nRV/n4G/hsseC2dhZrireowmbuPpxGJikcrO66Nquz?=
+ =?iso-8859-1?Q?qhK2Rd536uBz/Wk2uuioOpOLi4xSF53+wYSDC1fk+Q6ZMbdRCAhjiRPkB8?=
+ =?iso-8859-1?Q?a1xeol8YqU60aMUZWYX91df7ZXgrzUqvus8UgDzPdyXxhY8c6jxArpmyZ1?=
+ =?iso-8859-1?Q?CYUlmoKXDEWMx6WCxiQ4ekKhfhEtdSCWs9zCRR4YGTUEs3b8bmGrOk+Bry?=
+ =?iso-8859-1?Q?QJqyrq/7TlGJp077md2+O2wV2SLvvAfKNdO2r4R4k7IJxwrGzunOm1Ru5F?=
+ =?iso-8859-1?Q?gC3F7U1yS9/1qUo/puiG+sA0imLJm3j0cw8pMdwXExD5mLlZJ2303roEym?=
+ =?iso-8859-1?Q?B6ebOKLElfHerUah7QUlqKovjvTIEBkuEuuwXmZs9J8+1GhNVxz8i9FSGR?=
+ =?iso-8859-1?Q?+I0QopLTX8d7fI/bIBDhxV+6TdQSqv+c6bOS6QQgLMhfAUrDgWwhKTLSjG?=
+ =?iso-8859-1?Q?FRDBMMgkWgTbZZ+wWUAoVUo2V29TIzdLyz2FbVpcgzSeKbKdaC7OWEdSX1?=
+ =?iso-8859-1?Q?X9cw6NIZZ5aIgqVwKwtf0CWvG+vyGGAV/+5SXQE9MsRgmRrjNZRwPR4gJx?=
+ =?iso-8859-1?Q?6hlDqG6Q+2HKYfbm+c4YlKdtIeV6qPezIRzqy6f3Gz4m83xbI1+a4GQIRe?=
+ =?iso-8859-1?Q?0TmhMJJQirSkc1JnYLoF1gp64kFDdekrFiinoQ9eb4CV94x9ktrxlXQQA3?=
+ =?iso-8859-1?Q?ofLsK0X1Sr5GTM+TJSrQHWbSLqIMsfgd2Ophas36iRu+3Bw9IiOgruf7Pu?=
+ =?iso-8859-1?Q?ScpUCOE494slVVMV5Z+X9/+9gxA5tRw3K6cQk2xKaRyPlZ4sLZp8UXzGcG?=
+ =?iso-8859-1?Q?zf3wGr1IYSaDsd3I1W/uI5tKx1MsNjD2BN8n53SdTGvNUK2kRHm6StlcvR?=
+ =?iso-8859-1?Q?QPU+7W3v9+69WLWMqtCTjH9udy5d4fVj663SNFwmFP7fMlrDoDAD1tLIYP?=
+ =?iso-8859-1?Q?7qU75AIEL0eerrvEci0uCfIiaCUvdDtRTx5+HyVURmbuE9kMEX/f5xsxQs?=
+ =?iso-8859-1?Q?11bx4kn1SIm5wd6U7pzRL6ohyywDKNxMW2KeQ84LXtO6fIyYnFTWCbC9vH?=
+ =?iso-8859-1?Q?CFOqSo8UlACJcNAmybC9JzIVaCXkgyAgCRJd6KiTOdL5iBYWjlKPB4brxV?=
+ =?iso-8859-1?Q?Zj9zQTJgzqT39/o4Q0RX392u+howK4nQM2v9Cw2dPGH2Sz2/3wS1eVz6b9?=
+ =?iso-8859-1?Q?wc4yo+VFmCDRWjHeE1O9foKr5Q63hq7BTN1VUp0Qdf4KFiSU/NYnIUZsaW?=
+ =?iso-8859-1?Q?XnTE5T3ivFiXRHPAjt99nIzANuWJVA/LEqYH9kWH4ZHZXiRGEFUeUT6g?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d312291e-cf31-4c7f-8e18-08de07bc6759
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 05:18:10.5950
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TkW+PNXHSrHVg4gPUZtAl9yuDJ8Chz9j/df9O8fvKFoD53sH9Zo0jh87mhQXA4W+zPrY5f0+6QHYAIcQhlmabThdjZpFfgy6rwqL5PvMFa4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5827
+X-OriginatorOrg: intel.com
 
-On 2025/10/10 8:40, Bart Van Assche wrote:
-> 
-> On 10/9/25 1:21 PM, Damien Le Moal wrote:
->> There is still something bothering me with this: the request is added to the
->> dispatch list, and *NOT* to the fifo/sort list. So this should be considered as
->> a scheduling decision in itself, and __dd_dispatch_request() reflects that as
->> the first thing it does is pick the requests that are in the dispatch list
->> already. However, __dd_dispatch_request() also has the check:
+On Mon, Sep 29, 2025 at 04:56:03PM +0300, Ilpo Järvinen wrote:
+>On Mon, 29 Sep 2025, Lucas De Marchi wrote:
+>
+>> Hi,
 >>
->> 		if (started_after(dd, rq, latest_start))
->>                          return NULL;
+>> On Thu, Sep 18, 2025 at 01:58:57PM -0700, Lucas De Marchi wrote:
+>> > There may be cases in which the BAR0 also needs to move to accommodate
+>> > the bigger BAR2. However if it's not released, the BAR2 resize fails.
+>> > During the vram probe it can't be released as it's already in use by
+>> > xe_mmio for early register access.
+>> >
+>> > Add a new function in xe_vram and let xe_pci call it directly before
+>> > even early device probe. This allows the BAR2 to resize in cases BAR0
+>> > also needs to move:
+>> >
+>> > 	[] xe 0000:03:00.0: vgaarb: deactivate vga console
+>> > 	[] xe 0000:03:00.0: [drm] Attempting to resize bar from 8192MiB ->
+>> > 16384MiB
+>> > 	[] xe 0000:03:00.0: BAR 0 [mem 0x83000000-0x83ffffff 64bit]: releasing
+>> > 	[] xe 0000:03:00.0: BAR 2 [mem 0x4000000000-0x41ffffffff 64bit pref]:
+>> > releasing
+>> > 	[] pcieport 0000:02:01.0: bridge window [mem 0x4000000000-0x41ffffffff
+>> > 64bit pref]: releasing
+>> > 	[] pcieport 0000:01:00.0: bridge window [mem 0x4000000000-0x41ffffffff
+>> > 64bit pref]: releasing
+>> > 	[] pcieport 0000:01:00.0: bridge window [mem 0x4000000000-0x43ffffffff
+>> > 64bit pref]: assigned
+>> > 	[] pcieport 0000:02:01.0: bridge window [mem 0x4000000000-0x43ffffffff
+>> > 64bit pref]: assigned
+>> > 	[] xe 0000:03:00.0: BAR 2 [mem 0x4000000000-0x43ffffffff 64bit pref]:
+>> > assigned
+>> > 	[] xe 0000:03:00.0: BAR 0 [mem 0x83000000-0x83ffffff 64bit]: assigned
+>> > 	[] pcieport 0000:00:01.0: PCI bridge to [bus 01-04]
+>> > 	[] pcieport 0000:00:01.0:   bridge window [mem 0x83000000-0x840fffff]
+>> > 	[] pcieport 0000:00:01.0:   bridge window [mem
+>> > 0x4000000000-0x44007fffff 64bit pref]
+>> > 	[] pcieport 0000:01:00.0: PCI bridge to [bus 02-04]
+>> > 	[] pcieport 0000:01:00.0:   bridge window [mem 0x83000000-0x840fffff]
+>> > 	[] pcieport 0000:01:00.0:   bridge window [mem
+>> > 0x4000000000-0x43ffffffff 64bit pref]
+>> > 	[] pcieport 0000:02:01.0: PCI bridge to [bus 03]
+>> > 	[] pcieport 0000:02:01.0:   bridge window [mem 0x83000000-0x83ffffff]
+>> > 	[] pcieport 0000:02:01.0:   bridge window [mem
+>> > 0x4000000000-0x43ffffffff 64bit pref]
+>> > 	[] xe 0000:03:00.0: [drm] BAR2 resized to 16384M
+>> > 	[] xe 0000:03:00.0: [drm:xe_pci_probe [xe]] BATTLEMAGE  e221:0000
+>> > dgfx:1 gfx:Xe2_HPG (20.02) ...
+>> >
+>> > As shown above, it happens even before we try to read any register for
+>> > platform identification.
+>> >
+>> > All the rebar logic is more pci-specific than xe-specific and can be
+>> > done very early in the probe sequence. In future it would be good to
+>> > move it out of xe_vram.c, but this refactor is left for later.
 >>
->> for requests that are already in the dispatch list. That is what does not make
->> sense to me. Why ? There is no comment describing this. And I do not understand
->> why we should bother with any time for requests that are in the dispatch list
->> already. These should be sent to the drive first, always.
->>
->> This patch seems to be fixing a problem that is introduced by the above check.
->> But why this check ? What am I missing here ?
-> 
-> Is my conclusion from the above correct that there is agreement that the 
-> I/O priority should be ignored for AT HEAD requests and that AT HEAD
-> requests should always be dispatched first? If so, how about merging the
-> three per I/O priority dispatch lists into a single dispatch list and
-> not to call started_after() at all for the dispatch list?
+>> Ilpo, can you take a look on this patch? It fixed the issue that I had
+>> with BMG. It needs the first patch for the full fix, but the fixes are
+>> more or less orthogonal.
+>
+>FWIW, it looks okay to me from PCI perspective,
+>
+>Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-More generally speaking, I think we really should have a single dispatch list:
-the scheduling policy (per prio with aging, and either lba or fifo ordered)
-decides on what request should be sent by adding them to the dispatch list. If
-we reschedule again requests that are in the dispatch list, we end up with a
-very complicated and hard to debug scheduling policy. Kaitao's patch is proof of
-that...
+I'm pushing this to drm-xe-next. The first one may go through pci or drm
+tree when it's reviewed.
 
-And for the at-head requests, it is indeed debatable what to do. We could be a
-little intelligent about them and do a sorted insert in the dispatch list based
-on the requests priorities so that we do not have priority inversions. But that
-feels like an optimization. I think that the most common case for at-head
-insertion is (rare) requeue, no ? Have not checked.
+Merged to drm-xe-next, thanks!
 
-So I feel like Kaitao's problem can be fixed exactly like you said: use a single
-dispatch queue and drop the started_after() check in __dd_dispatch_request() for
-the dispatch queue.
+[2/2] drm/xe: Move rebar to be done earlier
+       commit: 45e33f220fd625492c11e15733d8e9b4f9db82a4
 
--- 
-Damien Le Moal
-Western Digital Research
+thanks
+Lucas De Marchi
 
