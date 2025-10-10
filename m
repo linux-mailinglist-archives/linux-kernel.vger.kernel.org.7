@@ -1,153 +1,263 @@
-Return-Path: <linux-kernel+bounces-848622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F6BBCE30A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:08:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303B5BCE319
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1E3547529
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A8819A72BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6477C2F3C1E;
-	Fri, 10 Oct 2025 18:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvwRUBTZ"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111832FBDF8;
+	Fri, 10 Oct 2025 18:11:32 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3611A2545
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4B92459FD
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760119671; cv=none; b=SzS1/fb0G3kqLKdIYYGasZw0RU5en442bbYNiPru+P3Ej7+GN5VNxqB7j/Uqljjv5WA2Y/zEyi/uryIX9hoO5+DYo+Oifpry+xrYTo1B2GiyhV7rpVs5hhMSuPPTe7ZbTut0kRC1RRa5xSg4acd+jyTQYN4IEtHi6WdorZLxrak=
+	t=1760119891; cv=none; b=TvQQa6zKgkf99OJ3ujayyzzvDGk+GAPEyi3qfDuIZ0XIKIueCX4I2ks/noBkyY+B3djEfl0R3064glW1qYk4cu8Wtfr1RrqF/l0CSSuS47PB6NVRq5rMuAHsKTSyz1MWnCn/D8PjWaMifh5lGAcB4sP4m+7QoSpZ1OLGpEDX/XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760119671; c=relaxed/simple;
-	bh=wqfBWxmDIQi5vwtC1MbdIcpo0h3rSX9ClNyEAV6ccYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BLcBoqF3RfpLXI4PU4SMEEzU/t8fjVkpMrk+qPB7SImWx1SGGupG5A1DyBt0xT1mxbH/PV4q4N6P8YGL3Qb5Un8GLcl9xGDJ41QXtz0V0/nRWnjpZwTQ5qZ7lNNkCsZA6KviogkyuOdLXwFq+OCSLCdlFWG3QCuxXNs81/EFau4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BvwRUBTZ; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso4346111a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760119668; x=1760724468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BhxK1GJK5sA7N9K5yZGCGEkUd+inQEG5jk/d8suAk4A=;
-        b=BvwRUBTZeBMp0U9s0lg2I0D8mhcBltBNzBEe2M7TUtCqWM5FvKWN53YmKGt/EVPhPr
-         O6fQC96uJUGoJXtJkPCQHaCjdQfcLgF8r1sWE0rMAX0Pa/C5mCSad9zzkBZ6E6BDaVGt
-         VrJMjIqDCsVRdDDyJbRxb4oWFXYBI5bQ6BzVAwaw8A70/IcmAId57ga1Gs99S2SxnO3C
-         OJGBHJwkJSGMivpfJvkmCz+RGIV7Y841diSh1H9CZni7bQSN4itvsEZS7fOwhbEodMED
-         N7pw0F26I/WjMMRorH94yeD+/0GzhZULbKmf7eVdz2L3D00KAUZmLilVw8mAqqoh1i3D
-         Et6Q==
+	s=arc-20240116; t=1760119891; c=relaxed/simple;
+	bh=jroSb0GeuwaUWWYpr919dUviQieVv2crGZ0pB5X99iU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Qjb9sNaIzDAK5Hz0jwnDyFEHGS7fxa47pRO1y2btxSYFhUg8G7Ok3vYfiHR4LFRq+9tov0nIi1bAz+75hWSCWThgueR6VcYGMXMSujSrLyaTHFAlxXJO8uKwXLIW+aXnyRVcj5a7nauqb6pWeLQ7SH8caEAOtkx+1+wb7ZW3WvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-937ce715b90so992848339f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:11:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760119668; x=1760724468;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BhxK1GJK5sA7N9K5yZGCGEkUd+inQEG5jk/d8suAk4A=;
-        b=J4DDab+IF4bW9LGApiHq6nMAD8xygi8HmfI1rpukUCUBJE3KIIMk8eP5mMOSyGtK+y
-         fNdWTdOsTqt2/iOQUWb+5XZI67LV24I5iBqpzbep9G64LuqiX3hLTcW2dQfpZuh/LckQ
-         nj04I1QQcLfmPdNn5l3xUT9iGTSJwJfi87gVfJZ8HjTpAiB8hCwd3Yd9tFD8emNgYlcI
-         UkkZz4FJHJLIAdnRn+HJehVvFYlZvEh/qPXdckKVugoDiuMxZtw3L/Aj7BrqooSk5Rkz
-         ZsghtlTvEiiHbgWuPkMMsLkKv9VIBhcqQFSamvpBC+lVZqgFxpmxeWtXQsyk1DEbN4Gi
-         VXmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiIKfYyxBHnJC8F89xFhEXgFxtZLqiu4XwZhGoKS2wWiPR/bqF9xa5Gmif2THmQg9n2fUyXVpDJ6PvEJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxDIfoU/hvFUc4NCaLtX9mpLajya0Y+k5NH/qO3cx4+HoLx88o
-	Is1JWY/7De4S9Yk0i/bLuDSEDVMRncSvZcrcIaobrFTeB4D/Fdam013B9nN09A==
-X-Gm-Gg: ASbGncum6DKMp8bFkgSwE7A9Mo7ObJwH6Vp6b++OU6A5qet+4b4aH3lQyKsJSEuE95l
-	bUb71qGqvKB8fjD5XMDUM7UwSLCp4N4y9gOdIrqeS42pM4CtYNHRQxotXmI6s1m0EKULnpQsq8u
-	Co00KqROaW6FqMuIhSIddc5KZ59IIeb4TfQDjoUqYPpVsMUfqyUQgflBaf5Wr4hpqgslrrDCSfQ
-	iaXQAFNKlqacAaBrmq2PPfJwF5sX+snrlJkbXZudzIm3DnoF3DKRpULgF+ZCOalltyXoTbHDxTH
-	jZzYnI+9VuzCYEUAAxUB6b+voTo+ZUp+HOENkuPJCaZkB1GJ1qIStp0/aEPQr81hF5HzvHExIfD
-	tdCqCD8hT5F9Jc84NCuxq4aFhxP7s2A2PPayLyLbKAIPRPHkq9ZEBg0xqoWgFelqlle8MvxvStY
-	zMvxFDSRh/
-X-Google-Smtp-Source: AGHT+IFtha2OqKiOJaCe8DsE10T8YUc7pDffBcQTX15Aqoy/DyULhpRhI6gqFsXCRrzqzWJFg697+A==
-X-Received: by 2002:a05:6402:354e:b0:639:fb11:994f with SMTP id 4fb4d7f45d1cf-639fb119be2mr6397865a12.4.1760119668094;
-        Fri, 10 Oct 2025 11:07:48 -0700 (PDT)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63b7334cb4bsm87907a12.44.2025.10.10.11.07.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 11:07:47 -0700 (PDT)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 6.18-rc1
-Date: Fri, 10 Oct 2025 20:07:25 +0200
-Message-ID: <20251010180728.1007863-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1760119889; x=1760724689;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A4ZPfdM/tOvI57tbUB064ewdT3F0ExQQ9e7VQddRHIo=;
+        b=PZiBTmbOFYuP2jSGejF0Xnp2N8+eP053hDs9Yuj2fQKrUXF7qUTpv1PNh/oxH2uBYm
+         B2feTN8bTyQX0N6zxxwiGFuGsK+Eosm2UCzB9a0MCboM99qC6tobT7JCkBa2qS2+7Bmv
+         Rj9Hpw0NbKAB2jtmzt6Yg56gnX7b2a7xRIc4tJrB/YOpy3XNy8Sb21hTY7m4tMh5Gnvu
+         9Y18huVly5q61fyhlw+oovQwPhoTBmYzVXtxUGivZdmNTarxb2/GkEirwQUb+N7Qcwxc
+         zavJn4G9iiZSZp45VlW5mSEkctwimMlgcZyXtwW22OTGF/Z/PsMv9LcRoQsnGTvs6Fve
+         CHRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUT/T4pRPVk282P96JACTbnc5mXDsUp3hSwIr8XLMIUuzuZMD22dN8ss10WVGQgjw7u//R2N5E+DownCnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1Ve9t2sB3TChKV4K22CTWSGcbi/ceZyTktci2j6avSuenyDEE
+	34yOx9HM/JeO/yYd3lodWGkuNIezA8GxMVm41GvQvyCbw/ME7duZMAgKoM95an+54IX2W2kxY3z
+	w/d44t4jgOfdNNXFLnL9xon6mJcrFMRBTxRt5N27NuiZ0iY25A6RiGUSerTk=
+X-Google-Smtp-Source: AGHT+IEegEZG5KH1gQP89itIXU3fJWAIIJprLAOgbNp6UunfEp6ZOBfBJMZabT0qKdB5mLU3o+d1+/XWAcC8pexompf7EURWCIgT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3425:b0:8f6:8812:ef66 with SMTP id
+ ca18e2360f4ac-93bd1776ad9mr1743686739f.4.1760119888756; Fri, 10 Oct 2025
+ 11:11:28 -0700 (PDT)
+Date: Fri, 10 Oct 2025 11:11:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e94c50.a70a0220.b3ac9.0000.GAE@google.com>
+Subject: [syzbot] [bridge?] KASAN: slab-use-after-free Read in
+ br_switchdev_fdb_notify (2)
+From: syzbot <syzbot+8a7f78e2f99977bb8765@syzkaller.appspotmail.com>
+To: bridge@lists.linux.dev, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, idosch@nvidia.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	razor@blackwall.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Hello,
 
-The following changes since commit e5f0a698b34ed76002dc5cff3804a61c80233a7a:
+syzbot found the following issue on:
 
-  Linux 6.17 (2025-09-28 14:39:22 -0700)
+HEAD commit:    1b54b0756f05 net: doc: Fix typos in docs
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=15412304580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7a57b6f4ce559d7f
+dashboard link: https://syzkaller.appspot.com/bug?extid=8a7f78e2f99977bb8765
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-are available in the Git repository at:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.18-rc1
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/32476f0f6d41/disk-1b54b075.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f74e972d1c5e/vmlinux-1b54b075.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a3d8ae0b9753/bzImage-1b54b075.xz
 
-for you to fetch changes up to d74d6c0e98958aa0bdb6f0a93258a856bda58b97:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8a7f78e2f99977bb8765@syzkaller.appspotmail.com
 
-  ceph: add bug tracking system info to MAINTAINERS (2025-10-09 00:15:04 +0200)
+==================================================================
+BUG: KASAN: slab-use-after-free in br_switchdev_fdb_populate net/bridge/br_switchdev.c:141 [inline]
+BUG: KASAN: slab-use-after-free in br_switchdev_fdb_notify+0x30b/0x3e0 net/bridge/br_switchdev.c:165
+Read of size 8 at addr ffff8880558bd808 by task kworker/0:4/5896
 
-----------------------------------------------------------------
-Some messenger improvements from Eric and Max, a patch to address the
-issue (also affected userspace) of incorrect permissions being granted
-to users who have access to multiple different CephFS instances within
-the same cluster from Kotresh and a bunch of assorted CephFS fixes from
-Slava.
+CPU: 0 UID: 0 PID: 5896 Comm: kworker/0:4 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Workqueue: events_long br_fdb_cleanup
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ br_switchdev_fdb_populate net/bridge/br_switchdev.c:141 [inline]
+ br_switchdev_fdb_notify+0x30b/0x3e0 net/bridge/br_switchdev.c:165
+ fdb_notify+0x89/0x160 net/bridge/br_fdb.c:186
+ fdb_delete+0xec4/0x1160 net/bridge/br_fdb.c:324
+ br_fdb_cleanup+0x2aa/0x4d0 net/bridge/br_fdb.c:574
+ process_one_work kernel/workqueue.c:3263 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3346
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-----------------------------------------------------------------
-Eric Biggers (1):
-      libceph: Use HMAC-SHA256 library instead of crypto_shash
+Allocated by task 14184:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4376 [inline]
+ __kmalloc_node_noprof+0x276/0x4e0 mm/slub.c:4382
+ kmalloc_node_noprof include/linux/slab.h:932 [inline]
+ crypto_alloc_tfmmem crypto/api.c:514 [inline]
+ crypto_create_tfm_node+0x83/0x3f0 crypto/api.c:534
+ crypto_alloc_tfm_node+0x172/0x3f0 crypto/api.c:642
+ tls_set_sw_offload+0xa37/0x17d0 net/tls/tls_sw.c:2820
+ do_tls_setsockopt_conf net/tls/tls_main.c:698 [inline]
+ do_tls_setsockopt net/tls/tls_main.c:824 [inline]
+ tls_setsockopt+0xc40/0x1340 net/tls/tls_main.c:852
+ do_sock_setsockopt+0x17c/0x1b0 net/socket.c:2360
+ __sys_setsockopt net/socket.c:2385 [inline]
+ __do_sys_setsockopt net/socket.c:2391 [inline]
+ __se_sys_setsockopt net/socket.c:2388 [inline]
+ __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2388
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Kotresh HR (1):
-      ceph: fix multifs mds auth caps issue
+Freed by task 14179:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2422 [inline]
+ slab_free mm/slub.c:4695 [inline]
+ kfree+0x18e/0x440 mm/slub.c:4894
+ crypto_free_aead include/crypto/aead.h:196 [inline]
+ tls_sw_release_resources_tx+0x403/0x4f0 net/tls/tls_sw.c:2550
+ tls_sk_proto_cleanup net/tls/tls_main.c:352 [inline]
+ tls_sk_proto_close+0x24a/0x8c0 net/tls/tls_main.c:382
+ inet_release+0x144/0x190 net/ipv4/af_inet.c:437
+ __sock_release net/socket.c:662 [inline]
+ sock_close+0xc3/0x240 net/socket.c:1455
+ __fput+0x44c/0xa70 fs/file_table.c:468
+ task_work_run+0x1d1/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Max Kellermann (4):
-      ceph: make ceph_start_io_*() killable
-      libceph: make ceph_con_get_out_msg() return the message pointer
-      libceph: pass the message pointer instead of loading con->out_msg
-      libceph: add empty check to ceph_con_get_out_msg()
+The buggy address belongs to the object at ffff8880558bd800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 8 bytes inside of
+ freed 1024-byte region [ffff8880558bd800, ffff8880558bdc00)
 
-Viacheslav Dubeyko (9):
-      ceph: add checking of wait_for_completion_killable() return value
-      ceph: fix wrong sizeof argument issue in register_session()
-      ceph: fix overflowed constant issue in ceph_do_objects_copy()
-      ceph: fix potential race condition in ceph_ioctl_lazyio()
-      ceph: refactor wake_up_bit() pattern of calling
-      ceph: fix potential race condition on operations with CEPH_I_ODIRECT flag
-      ceph: fix potential NULL dereference issue in ceph_fill_trace()
-      ceph: cleanup in ceph_alloc_readdir_reply_buffer()
-      ceph: add bug tracking system info to MAINTAINERS
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880558bf800 pfn:0x558b8
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000240(workingset|head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000240 ffff88801a041dc0 ffffea000084cc10 ffffea00009f7c10
+raw: ffff8880558bf800 000000000010000f 00000000f5000000 0000000000000000
+head: 00fff00000000240 ffff88801a041dc0 ffffea000084cc10 ffffea00009f7c10
+head: ffff8880558bf800 000000000010000f 00000000f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001562e01 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5846, tgid 5846 (syz-executor), ts 78915902371, free_ts 23055932464
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2660
+ new_slab mm/slub.c:2714 [inline]
+ ___slab_alloc+0xbeb/0x1420 mm/slub.c:3901
+ __slab_alloc mm/slub.c:3992 [inline]
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ __do_kmalloc_node mm/slub.c:4375 [inline]
+ __kmalloc_noprof+0x305/0x4f0 mm/slub.c:4388
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ __alloc_workqueue+0x108/0x1b80 kernel/workqueue.c:5715
+ alloc_workqueue_noprof+0xd4/0x210 kernel/workqueue.c:5818
+ wg_newlink+0x246/0x640 drivers/net/wireguard/device.c:341
+ rtnl_newlink_create+0x30d/0xb00 net/core/rtnetlink.c:3833
+ __rtnl_newlink net/core/rtnetlink.c:3950 [inline]
+ rtnl_newlink+0x16e4/0x1c80 net/core/rtnetlink.c:4065
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6954
+ netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ __free_pages mm/page_alloc.c:5260 [inline]
+ free_contig_range+0x1bd/0x4a0 mm/page_alloc.c:7091
+ destroy_args+0x69/0x660 mm/debug_vm_pgtable.c:958
+ debug_vm_pgtable+0x39f/0x3b0 mm/debug_vm_pgtable.c:1345
+ do_one_initcall+0x233/0x820 init/main.c:1271
+ do_initcall_level+0x104/0x190 init/main.c:1333
+ do_initcalls+0x59/0xa0 init/main.c:1349
+ kernel_init_freeable+0x334/0x4b0 init/main.c:1581
+ kernel_init+0x1d/0x1d0 init/main.c:1471
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
 
- MAINTAINERS                    |   3 +
- fs/ceph/dir.c                  |   3 +-
- fs/ceph/file.c                 |  30 ++---
- fs/ceph/inode.c                |  11 ++
- fs/ceph/io.c                   | 100 ++++++++++++-----
- fs/ceph/io.h                   |   8 +-
- fs/ceph/ioctl.c                |  17 ++-
- fs/ceph/locks.c                |   5 +-
- fs/ceph/mds_client.c           |  22 +++-
- fs/ceph/mdsmap.c               |  14 ++-
- fs/ceph/super.c                |  14 ---
- fs/ceph/super.h                |  17 ++-
- include/linux/ceph/messenger.h |  10 +-
- net/ceph/Kconfig               |   3 +-
- net/ceph/messenger.c           |  12 +-
- net/ceph/messenger_v1.c        |  56 +++++-----
- net/ceph/messenger_v2.c        | 246 ++++++++++++++++++-----------------------
- 17 files changed, 323 insertions(+), 248 deletions(-)
+Memory state around the buggy address:
+ ffff8880558bd700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880558bd780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880558bd800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                      ^
+ ffff8880558bd880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880558bd900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
