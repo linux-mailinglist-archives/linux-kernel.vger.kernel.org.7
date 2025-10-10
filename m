@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-847926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7A7BCC10A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:05:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B32BCBF3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0C911A653C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:05:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EBC5B351966
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371CC286D69;
-	Fri, 10 Oct 2025 08:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0243275AF5;
+	Fri, 10 Oct 2025 07:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dFGi0pBN"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013005.outbound.protection.outlook.com [40.93.201.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E7GDJ8/W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7C72836B1;
-	Fri, 10 Oct 2025 08:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760083445; cv=fail; b=LQAL6f46fr1Wi4Aa4ahel2PGd979X54tGIVFlLQ/RxNS5tkNXne6JFzCcGUlV1zLgkD79hQlbz6QaOmod7qwK8flf6juW5+FgB0G5ubhoobHZwy43GKUsz88qsjUHz9yAHRKUiMYEetWVBhFy2znzExe+PJKvhfWXwptX4oZVCk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760083445; c=relaxed/simple;
-	bh=Q1IvtBInZcWICb+jmlGGEHaEPdjMGjCUM33ov4I2fL0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cdjdKqZSrjjzc8juXrV3ONl3H430c8focg2iQ3gg1HyQ9ZLAmfSNka7afSLwUXoUHudOvuybmtdIqTOT1hHkVgSiqT9+D5cTp0RbV4IF2g4Trk8HQK9rNkPxv1PG+UPoyblAEY/xjnzY1Xsee1G4EKOaRDybp6oUbNLJpANKaiQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dFGi0pBN; arc=fail smtp.client-ip=40.93.201.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jJJTQeo9a6/vRmCvrAE00B4PIGeUQ3h8pP4TD8bRW7wCX7sMq++lcEMT3KdKydwD0+4veP3X4xFOZKRuSv/83PteIex6zbngQOGypaYKDe257DbXd7tBEPP2iifz6QxaeVgejKn04D35cYWmwN4DlOXwMJzcdk2kwDAt1zIwHoRqXWtren34WC+mcIDzNS/nfnJD+J12jJACuMQVhtln6tPB90QCMWrptOh4UybNLcEv4xAFF+Cd5T7IqADBICmAcHnsqSNWgPuKYcERG1Cw+EhddeS3Uw2lJcshBz21mYn8+tsQVFGcU3z9MJqZXpMPzT8HpNRjMUW9kiEBsgag1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BLtMwY92dw1xgQ0tb41bxcj1i58Kz4RRWOTUn9i3N7Y=;
- b=Bh7ETbpuWGoK94UcgH1ERiot+PmzZq1Jhcje6+XFa3as/LXmAGOnLPCXS5aM3Z2w2V/w94w3J2v/FT95FRycnfgNA8rdds7Nc1ZJhoBz4mWT3K4CdxPyocsUv8U3bannDq2hFYJV8lQNrm/gMpfk6lvtEWDDqX7awoJAJX+uq+vBviOnXsuNPQYnourQDkuV/KtLJvqIbn90o6rsZWN/H4e1UCapl4uxWSI4tWD4Cew5WiaZgUjmQwPWEbDq3Gw67SjpsOvcPGQ/izW04kH/SaYTMpi1QkjsuTeEQ6pm95nHYdbyYyVEO1iRImH4rQE0CKrKexegj7JPq6yw0DoTBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BLtMwY92dw1xgQ0tb41bxcj1i58Kz4RRWOTUn9i3N7Y=;
- b=dFGi0pBNRi7mMwsPdKnf9F+nx4JfNR4+N4IkecVUNz0ulhlltgMYRFgAMxVgTRUbT+3wEhNqV31npqetJNqHAip2dtZeKrbHync+7o4WYAv1trQXeLY2hkutICVnKldOBgoxCoBFteD+EAWHUyP/WMoYF1/dkoYpioneM42xGAKfVDLE8O8gcmHjw+aeg1tAezeY3+4prr7QiqbUYAxOfcPQmePTpX4+6MpeRZS0qn2hU2O6C2vonQnU+fPVAFWs2wqr0uPHyUykn0NgXnlxkjo+PgpUC3D9RNcVEc8ZVLX+dqqkv54X9Wm61dX3s/eQx8axQb+3KWsh1sLu2nQbmA==
-Received: from SJ0PR03CA0105.namprd03.prod.outlook.com (2603:10b6:a03:333::20)
- by DS5PPFA3734E4BA.namprd12.prod.outlook.com (2603:10b6:f:fc00::65c) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Fri, 10 Oct
- 2025 08:03:57 +0000
-Received: from CO1PEPF000042A9.namprd03.prod.outlook.com
- (2603:10b6:a03:333:cafe::4e) by SJ0PR03CA0105.outlook.office365.com
- (2603:10b6:a03:333::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.10 via Frontend Transport; Fri,
- 10 Oct 2025 08:03:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000042A9.mail.protection.outlook.com (10.167.243.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Fri, 10 Oct 2025 08:03:57 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 10 Oct
- 2025 01:03:44 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 10 Oct
- 2025 01:03:44 -0700
-Received: from ipp2-2168.ipp2a1.colossus.nvidia.com (10.127.8.14) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Fri, 10 Oct 2025 01:03:43 -0700
-From: Zhi Wang <zhiw@nvidia.com>
-To: <rust-for-linux@vger.kernel.org>
-CC: <dakr@kernel.org>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
-	<ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
-	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
-	<a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<cjia@nvidia.com>, <smitra@nvidia.com>, <ankita@nvidia.com>,
-	<aniketa@nvidia.com>, <kwankhede@nvidia.com>, <targupta@nvidia.com>,
-	<zhiw@nvidia.com>, <zhiwang@kernel.org>
-Subject: [RFC 6/6] [!UPSTREAM] nova-core: test configuration routine.
-Date: Fri, 10 Oct 2025 08:03:30 +0000
-Message-ID: <20251010080330.183559-7-zhiw@nvidia.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251010080330.183559-1-zhiw@nvidia.com>
-References: <20251010080330.183559-1-zhiw@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B33218AAF;
+	Fri, 10 Oct 2025 07:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760081996; cv=none; b=DQuOEIBbXhp2etcZaSP8KQhozxNcqB8FxG54XNj5uBryZ8/vk9s0qaAMualm8lIZ7Aked8kHEr+C30aahaV7R7vGwaeEpbiutU32wN90sDnTIUxZiXyuxhjOjunEJUJ7SI101IbILndnTnBGF+4KaecDQiZTPDg4Q9MfALuOgrY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760081996; c=relaxed/simple;
+	bh=TAkre2RsHL2EDpN2llo+FtugM5LnLwO+oR1iRAFwHnM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dNsy+dpqTB8Fsnmf0FlJaM07/Y+fW3UKr/L/UKyroZcCKOUnj+SGDMMoVV2pc7+JmAiiUJPy1kGGLsk6cdoTlk1nL2bfNb9+YHZwx2shQCYAvlEbpi6XX6MTaWLGJmzyL1EMDMY6SBhnxCLUdsOECDokLGA+R538sqf9luN7+zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E7GDJ8/W; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760081994; x=1791617994;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TAkre2RsHL2EDpN2llo+FtugM5LnLwO+oR1iRAFwHnM=;
+  b=E7GDJ8/W/f51pK3wmAyQZ29MUpqEdbCoWFEtthGuMVTWNVLpghj01DWN
+   Z8Q3ZlRTHvnsou7YeQUIu+j/hCFO53e70R/+APomdpVibCr0E44RLKN4s
+   YrNG69mBA7KEbXhj2AnTAMMlkX/s3Yt+JFZUuGh9MtGNK1xf3gz8iYx7q
+   ymXUh5wR69qMWj4waRGQ2TjIa6JKnbIZV4ooJVXkz/TSNpvvK8+Ymsha1
+   N47/IsvAjyXsGvZcHrIWV0wkvjXY4xrZu9nd8JP/C8bT9m4SFZwgsHSOh
+   sL74frU+bcmj65B78Q1EXSV3hnGObMvD4upZXLUdnrmjWXcVOtEpPUBpi
+   g==;
+X-CSE-ConnectionGUID: nffznzpET1GwWxoDUG8/TQ==
+X-CSE-MsgGUID: tyEU8kSkRhq4eebV0rIhDw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79942273"
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="79942273"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:39:53 -0700
+X-CSE-ConnectionGUID: eBv6KxYATpCxGHZ9eq96LA==
+X-CSE-MsgGUID: GwWlZqxXScCa1g7sLUV6sA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="180502306"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by orviesa009.jf.intel.com with ESMTP; 10 Oct 2025 00:39:48 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	pan.deng@intel.com,
+	zhiguo.zhou@intel.com,
+	jiebin.sun@intel.com,
+	thomas.falcon@intel.com,
+	dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/3] perf tools c2c: Add annotation support to perf c2c report
+Date: Fri, 10 Oct 2025 16:33:11 +0800
+Message-ID: <20251010083313.1839179-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <aOTOEcNOiUiEJ9tz@google.com>
+References: <aOTOEcNOiUiEJ9tz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,79 +91,300 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042A9:EE_|DS5PPFA3734E4BA:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad0c8f16-1326-4388-0aec-08de07d3904e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Oqpt3Y4ynSQXhoaFli+42jDGZxVuBQWE4rzU/8XLdXriAEpFXeazhsjwPszT?=
- =?us-ascii?Q?BrIzv+zwnmcjzzM5AmjzX9a4JVoOeRxX27WPjOqGliPQCAx3pe7j1By+sjny?=
- =?us-ascii?Q?Cg+KVA4xA1LWCjRf/q3vdKjseakMH1B2WLfdSNf9xPzfIMvQmfzi2cFYectR?=
- =?us-ascii?Q?TmgShbefybXtrLKCR/VTtgVZXYveEoIbmV+n0dUM47YeNwcanANtEAJOMUWP?=
- =?us-ascii?Q?JHHACbVR2cm2XE/CSG188DtvUYy2kmVoKctJPmjTJFePgaSVZIBPo1J4VC0s?=
- =?us-ascii?Q?Q5dMQavRHDqBD5fxdzVnOsTaguuI635dLhrW189wUC8BOENUFAlSn1GZ0xcZ?=
- =?us-ascii?Q?iQcxh32S4v17/RVMmxVWmouS9yAZd1ohqYrQQbfpwyFlstOSlsd1Q+uxlU9j?=
- =?us-ascii?Q?3OmG+AiLC+fjc90DfSXGBxAR3s6bIAICs3hD/7/V8u58iECr68KATNPk66QV?=
- =?us-ascii?Q?x5NzMsyGiGTlDd0UEi7Hi7wpWJxZo8FE4ZPYa2lm0EfQ5eXhYISkIpK/ZUEG?=
- =?us-ascii?Q?VyOWKQC1cZfkmF0JngYXgJR2Ij1iDreKrerNUdiLj2oL1f6qMfD+0UPKMl9A?=
- =?us-ascii?Q?QcZ9xLBjBY37jg4KawzIF94H6d5c/uFSaVizBR7QIEWnWoSxBRK/WfVCGz2r?=
- =?us-ascii?Q?G2GT+7KU0lpdp7UMbnN+idAPZa4AptA/A5GKttOASLBJfSMiSichp2oEl18H?=
- =?us-ascii?Q?l90ZJtQ8jWfUWiFoIXcvSpDNJ7Dze0GT+mv4xciCEyBMpgOLkk6nXOQag5FZ?=
- =?us-ascii?Q?rkkUI2o8lOC8krdllMkZvdWLLANSI8wTk+fWGdRUtkD9Imr9EnaQH1x804zv?=
- =?us-ascii?Q?gt66wJMKZc+tCO1m4d/CzrQnVNwA+Y+jCX3ZgW08jejNYNeBhg8e1MNSWeIa?=
- =?us-ascii?Q?m5OSMCQf7Mb29557omz+GfMJC7gvfLK8PMBSJ/3gjKioFgIPDYaa9QpIMVyn?=
- =?us-ascii?Q?n/Xx6vXY8oGQZo6u950us+R8onEOKbq+mEtCE3tVtkQxl2/lhiTSIbwboEdV?=
- =?us-ascii?Q?dMIZ1N6RPxyiJo+EDrwNu4jvHfc1SNNYYDF7v01soL9v/HqXQE+TRxvaF7nA?=
- =?us-ascii?Q?fQT13gPsvmofi6Bj24GXfrwsI5sN4Y4aGCFC476O8qxSr92TcuMWNzKlogLi?=
- =?us-ascii?Q?8fzZwEWtGU4SG1mPYsw3LcZV+udn3dp+ATNRUzRiadIzE81zqhi44F7mHSI+?=
- =?us-ascii?Q?7kKgoqVta5sG/Dn4EcFPBSNMIDsPY7vLWf0W/lmZI61KVntp5EjqLhkd0cwo?=
- =?us-ascii?Q?oPK6VUog8x4Xrm4/Jk+tapitk4+Qc7KDJXwXQrCJvl0EA2Vl2cD6A3FQIWpr?=
- =?us-ascii?Q?efhwepsQHbqyC1czxw0oX7Y5u8STaKw17vak/T5d/kKLvRVl6FVXDOjLhT3r?=
- =?us-ascii?Q?CCxuXmiwf4XjcjUXiIhcTDj8BbX/BDWizCEgkZ0r/nzATrXLoR5eaEtPwHDW?=
- =?us-ascii?Q?1a8voMVVjAPGF+VByCKtlbDYYZ8q/zDae1WlFJnrgAzp9YjG2Q2xcfgX4kLz?=
- =?us-ascii?Q?LNVv3Y7T+Reh6qIGm5le8/knBUAevMql3CYkgl8ipP9BeRL5Psq6m2jq/NgL?=
- =?us-ascii?Q?0ZrLaGEFEgrxKSxkurM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 08:03:57.2653
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad0c8f16-1326-4388-0aec-08de07d3904e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042A9.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFA3734E4BA
 
-Signed-off-by: Zhi Wang <zhiw@nvidia.com>
+Perf c2c report currently specified the code address and source:line
+information in the cacheline browser, while it is lack of annotation
+support like perf report to directly show the disassembly code for
+the particular symbol shared that same cacheline. This patches add
+a key 'a' binding to the cacheline browser which reuse the annotation
+browser to show the disassembly view for easier analysis of cacheline
+contentions.
+
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
+Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
+Reviewed-by: Pan Deng <pan.deng@intel.com>
+Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
+Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
 ---
- drivers/gpu/nova-core/driver.rs | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/perf/Documentation/perf-c2c.txt |   7 ++
+ tools/perf/builtin-c2c.c              | 137 +++++++++++++++++++++++++-
+ 2 files changed, 139 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
-index 1380b47617f7..605d9146113c 100644
---- a/drivers/gpu/nova-core/driver.rs
-+++ b/drivers/gpu/nova-core/driver.rs
-@@ -44,6 +44,10 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-         let bar_clone = Arc::clone(&devres_bar);
-         let bar = bar_clone.access(pdev.as_ref())?;
+diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
+index f4af2dd6ab31..40b0f71a2c44 100644
+--- a/tools/perf/Documentation/perf-c2c.txt
++++ b/tools/perf/Documentation/perf-c2c.txt
+@@ -143,6 +143,13 @@ REPORT OPTIONS
+ 	feature, which causes cacheline sharing to behave like the cacheline
+ 	size is doubled.
  
-+        let config = pci::ConfigSpace::<{bindings::PCI_CFG_SPACE_EXP_SIZE as usize}>::new(pdev)?;
++-M::
++--disassembler-style=::
++	Set disassembler style for objdump.
 +
-+        dev_info!(pdev.as_ref(), "Nova Core GPU driver read pci {:x}.\n", config.read16(0));
++--objdump=<path>::
++        Path to objdump binary.
 +
-         let this = KBox::pin_init(
-             try_pin_init!(Self {
-                 gpu <- Gpu::new(pdev, devres_bar, bar),
+ C2C RECORD
+ ----------
+ The perf c2c record command setup options related to HITM cacheline analysis
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 9e9ff471ddd1..878913115b45 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -45,6 +45,8 @@
+ #include "pmus.h"
+ #include "string2.h"
+ #include "util/util.h"
++#include "util/symbol.h"
++#include "util/annotate.h"
+ 
+ struct c2c_hists {
+ 	struct hists		hists;
+@@ -62,6 +64,7 @@ struct compute_stats {
+ 
+ struct c2c_hist_entry {
+ 	struct c2c_hists	*hists;
++	struct evsel		*evsel;
+ 	struct c2c_stats	 stats;
+ 	unsigned long		*cpuset;
+ 	unsigned long		*nodeset;
+@@ -225,6 +228,12 @@ he__get_c2c_hists(struct hist_entry *he,
+ 	return hists;
+ }
+ 
++static void c2c_he__set_evsel(struct c2c_hist_entry *c2c_he,
++				struct evsel *evsel)
++{
++	c2c_he->evsel = evsel;
++}
++
+ static void c2c_he__set_cpu(struct c2c_hist_entry *c2c_he,
+ 			    struct perf_sample *sample)
+ {
+@@ -334,6 +343,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 	c2c_he__set_cpu(c2c_he, sample);
+ 	c2c_he__set_node(c2c_he, sample);
++	c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 	hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
+ 	ret = hist_entry__append_callchain(he, sample);
+@@ -371,6 +381,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 		c2c_he__set_cpu(c2c_he, sample);
+ 		c2c_he__set_node(c2c_he, sample);
++		c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 		hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
+ 		ret = hist_entry__append_callchain(he, sample);
+@@ -1997,6 +2008,9 @@ static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name, stru
+ 	if (dim == &dim_dso)
+ 		hpp_list->dso = 1;
+ 
++	if (dim == &dim_symbol || dim == &dim_iaddr)
++		hpp_list->sym = 1;
++
+ 	perf_hpp_list__register_sort_field(hpp_list, &c2c_fmt->fmt);
+ 	return 0;
+ }
+@@ -2549,7 +2563,56 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
+ 	print_pareto(out, perf_session__env(session));
+ }
+ 
++/*
++ * Return true if annotation is possible. When list is NULL,
++ * it means that we are called at the c2c_browser level,
++ * in that case we allow annotation to be initialized. When list
++ * is non-NULL, it means that we are called at the cacheline_browser
++ * level, in that case we allow annotation only if use_browser
++ * is set and symbol information is available.
++ */
++static bool perf_c2c__has_annotation(struct perf_hpp_list *list)
++{
++	if (use_browser != 1)
++		return false;
++	return !list || list->sym;
++}
++
+ #ifdef HAVE_SLANG_SUPPORT
++
++static int perf_c2c__toggle_annotation(struct hist_browser *browser)
++{
++	struct hist_entry *he = browser->he_selection;
++	struct symbol *sym = NULL;
++	struct annotated_source *src = NULL;
++	struct c2c_hist_entry *c2c_he = NULL;
++
++	if (!perf_c2c__has_annotation(he->hists->hpp_list)) {
++		ui_browser__help_window(&browser->b, "No annotation support");
++		return 0;
++	}
++
++	if (he == NULL) {
++		ui_browser__help_window(&browser->b, "No entry selected for annotation");
++		return 0;
++	}
++
++	sym = he->ms.sym;
++	if (sym == NULL) {
++		ui_browser__help_window(&browser->b, "Can not annotate, no symbol found");
++		return 0;
++	}
++
++	src = symbol__hists(sym, 0);
++	if (src == NULL) {
++		ui_browser__help_window(&browser->b, "Failed to initialize annotation source");
++		return 0;
++	}
++
++	c2c_he = container_of(he, struct c2c_hist_entry, he);
++	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL);
++}
++
+ static void c2c_browser__update_nr_entries(struct hist_browser *hb)
+ {
+ 	u64 nr_entries = 0;
+@@ -2617,6 +2680,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 	" ENTER         Toggle callchains (if present) \n"
+ 	" n             Toggle Node details info \n"
+ 	" s             Toggle full length of symbol and source line columns \n"
++	" a             Toggle annotation view \n"
+ 	" q             Return back to cacheline list \n";
+ 
+ 	if (!he)
+@@ -2651,6 +2715,9 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 			c2c.node_info = (c2c.node_info + 1) % 3;
+ 			setup_nodes_header();
+ 			break;
++		case 'a':
++			perf_c2c__toggle_annotation(browser);
++			break;
+ 		case 'q':
+ 			goto out;
+ 		case '?':
+@@ -3006,6 +3073,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *display = NULL;
+ 	const char *coalesce = NULL;
+ 	bool no_source = false;
++	const char *disassembler_style = NULL, *objdump_path = NULL;
+ 	const struct option options[] = {
+ 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
+ 		   "file", "vmlinux pathname"),
+@@ -3033,6 +3101,10 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
+ 		    "Enable LBR callgraph stitching approach"),
+ 	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
++	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
++		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
++	OPT_STRING(0, "objdump", &objdump_path, "path",
++		   "objdump binary to use for disassembly and annotations"),
+ 	OPT_PARENT(c2c_options),
+ 	OPT_END()
+ 	};
+@@ -3040,6 +3112,12 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *output_str, *sort_str = NULL;
+ 	struct perf_env *env;
+ 
++	annotation_options__init();
++
++	err = hists__init();
++	if (err < 0)
++		goto out;
++
+ 	argc = parse_options(argc, argv, options, report_c2c_usage,
+ 			     PARSE_OPT_STOP_AT_NON_OPTION);
+ 	if (argc)
+@@ -3052,6 +3130,27 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (c2c.stats_only)
+ 		c2c.use_stdio = true;
+ 
++	/**
++	 * Annotation related options disassembler_style, objdump_path are set
++	 * in the c2c_options, so we can use them here.
++	 */
++	if (disassembler_style) {
++		annotate_opts.disassembler_style = strdup(disassembler_style);
++		if (!annotate_opts.disassembler_style) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
++	if (objdump_path) {
++		annotate_opts.objdump_path = strdup(objdump_path);
++		if (!annotate_opts.objdump_path) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
++
+ 	err = symbol__validate_sym_arguments();
+ 	if (err)
+ 		goto out;
+@@ -3126,6 +3225,38 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (err)
+ 		goto out_mem2node;
+ 
++	if (c2c.use_stdio)
++		use_browser = 0;
++	else
++		use_browser = 1;
++
++	/*
++	 * Only in the TUI browser we are doing integrated annotation,
++	 * so don't allocate extra space that won't be used in the stdio
++	 * implementation.
++	 */
++	if (perf_c2c__has_annotation(NULL)) {
++		int ret = symbol__annotation_init();
++
++		if (ret < 0)
++			goto out_mem2node;
++		/*
++		 * For searching by name on the "Browse map details".
++		 * providing it only in verbose mode not to bloat too
++		 * much struct symbol.
++		 */
++		if (verbose > 0) {
++			/*
++			 * XXX: Need to provide a less kludgy way to ask for
++			 * more space per symbol, the u32 is for the index on
++			 * the ui browser.
++			 * See symbol__browser_index.
++			 */
++			symbol_conf.priv_size += sizeof(u32);
++		}
++		annotation_config__init();
++	}
++
+ 	if (symbol__init(env) < 0)
+ 		goto out_mem2node;
+ 
+@@ -3135,11 +3266,6 @@ static int perf_c2c__report(int argc, const char **argv)
+ 		goto out_mem2node;
+ 	}
+ 
+-	if (c2c.use_stdio)
+-		use_browser = 0;
+-	else
+-		use_browser = 1;
+-
+ 	setup_browser(false);
+ 
+ 	err = perf_session__process_events(session);
+@@ -3210,6 +3336,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ out_session:
+ 	perf_session__delete(session);
+ out:
++	annotation_options__exit();
+ 	return err;
+ }
+ 
 -- 
-2.47.3
+2.47.1
 
 
