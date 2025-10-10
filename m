@@ -1,182 +1,217 @@
-Return-Path: <linux-kernel+bounces-847821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47556BCBD00
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:48:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20916BCBE1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6D9424215
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:48:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7361734AF37
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A7D26CE37;
-	Fri, 10 Oct 2025 06:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pim+eoUL"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C421EE02F;
-	Fri, 10 Oct 2025 06:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4958E2727FC;
+	Fri, 10 Oct 2025 07:12:52 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD65A1991D2;
+	Fri, 10 Oct 2025 07:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760078919; cv=none; b=KX3DYIJjnQmmKMLjoYqeHbc3YkMXdO9fviC9SOjJb2ArCl4CQEGOzNv1OQUK4yoETDGRM3tlQpIaaW2IhkANK68/dTaoubvZ2OqnQEs/tGG3wNg1lbxMDTPgsBAueXXrQTSPRCa5pTNVK37OhdHkVZei7+zTPKPzGEOPNbqShsU=
+	t=1760080371; cv=none; b=O2EimdiJJ3AlV0mPaPjGTITXl/iY/3wJJuoETteBdsO7FBv0oKtkF9rN8uqb/JTdHlSIRjSoTKYQZujBk4NzP436BXjKohko4escgcxqoJM0nrLXY76fPKD3J4DwFa1iUN5YL5lbpEoLsRvWB0ObfyGMr4F/Ig9LNpw3bdmBapE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760078919; c=relaxed/simple;
-	bh=yGMJL4r/hPPWWsmbfgMDurf00zj1v+5RxJ6eKvcssl0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PpG6bUA1C+G3RdQnysJg8olbc0hD7B11JUXXPTkgk004M0Iy3RqOIh2Lj6RVtTyOqSeXuK3Yuz5sIMgQuVSzerVPymbHlm8zujHWG5DLzWwVDBEBB7ZTvtw3NdKE5BnIyr51UxXi8WD+NhnRBQ4dyr8PwaWs4kajsWmNYoDHbbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pim+eoUL; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760078897; x=1760683697; i=markus.elfring@web.de;
-	bh=vtlOIxV79j7jAKZ3KTd3T6J1uCqPjRG1lvZ9ZafTIXk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pim+eoUL/CiW4amHn/Cz+3q/tB3PbSBe57YYEArHrSBkn0dlGP05LwP+nbkPuKDp
-	 Ko/NX6sMAu+RSS0g6Wfne3/yU4Q3QhjPYjmF2qQGGmlKMNh5izeAyqzkyC7aKrR9o
-	 RUYCKMLMvosWx2WNuzcj+sMLG9cqHtADU3UcEB1O5JMtOh65yNwLEGxXuFwKWkVes
-	 oG/ekGd8iVG1yvXjJtQhUXkXZRXSdJ/K54s8kBlbf5ilEGCT7XMhGSuQGJk6OVGMX
-	 J/bVQVB13Lm7gH8ZhjNLtsU6XzLVf8uYUKqYOizuO7riqJZ1rTJJJeqb2akMYDmPm
-	 xhvRlHLNLvfQinehHg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MpTxo-1uSFJs3Y1E-00qE45; Fri, 10
- Oct 2025 08:48:16 +0200
-Message-ID: <ac955d29-54bf-4c02-8ff6-828331093b0e@web.de>
-Date: Fri, 10 Oct 2025 08:48:15 +0200
+	s=arc-20240116; t=1760080371; c=relaxed/simple;
+	bh=oHUPYoK0XprxGtek8pJ17S5bSCYNpVt98rv9tMQIWtQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jYkaLzSbKnp74GNReyCnQqKKYS1P+bCoWH+r/PCPIvWeJY2e5Jp8OwpmQxO4Z7Y/4qWp4yIQ/BrH62XAIb5MgzFyorRJDW1mkMZ+mMzQLRE1YBL91z3VU1gGYU29hT37Ogy5osNjZxmc+v5YMkel0gFZMLR4ZMezB0+VrmFyBrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.185])
+	by gateway (Coremail) with SMTP id _____8BxH9PtsehoEpUUAA--.44270S3;
+	Fri, 10 Oct 2025 15:12:45 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.185])
+	by front1 (Coremail) with SMTP id qMiowJBxjcHrsehojynYAA--.29868S2;
+	Fri, 10 Oct 2025 15:12:43 +0800 (CST)
+From: Song Gao <gaosong@loongson.cn>
+To: maobibo@loongson.cn,
+	chenhuacai@kernel.org
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	kernel@xen0n.name,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] LoongArch: KVM: Add AVEC support
+Date: Fri, 10 Oct 2025 14:48:58 +0800
+Message-Id: <20251010064858.2392927-1-gaosong@loongson.cn>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 1/3] smb: client: Return directly after a failed
- cifs_alloc_hash() in smb3_crypto_shash_allocate()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- Aurelien Aptel <aaptel@suse.com>, Bharath SM <bharathsm@microsoft.com>,
- Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
-Content-Language: en-GB, de-DE
-In-Reply-To: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Hly1mcRc7VJTGn5CNiKoyWkioXlwTa25P9lGt0G+DUE+EWP7+0O
- 9YQNAGq5BG2SUGIz4K+zY2vMlWb4+VG5pBPHNx+itma/RRVoNaatv+P/3KB9YY+9R7lb4Pd
- JzgJa/eitQ7rdO5/bqxIP1cyJmNX8QfmYo7hBSMgQUAcTTQPqpd3YSfcxcG6EVUkYGLxKE6
- BdnjngUPipCEZoVqvvxYg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ftcd9FwjS6g=;9pRRixGgXh995XLh649btcP4pUd
- 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
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxjcHrsehojynYAA--.29868S2
+X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 9 Oct 2025 18:44:53 +0200
+Add cpu_has_msgint() to check whether the host cpu supported avec,
+and restore/save CSR_MSGIS0-CSR_MSGIS3.
 
-Return directly after a call of the function =E2=80=9Ccifs_alloc_hash=E2=
-=80=9D failed
-at the beginning.
+Signed-off-by: Song Gao <gaosong@loongson.cn>
+---
+Based-on: https://patchew.org/linux/20250930093741.2734974-1-maobibo@loongson.cn/
+v2: fix build error.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/smb/client/smb2transport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/loongarch/include/asm/kvm_host.h |  4 ++++
+ arch/loongarch/include/asm/kvm_vcpu.h |  1 +
+ arch/loongarch/include/uapi/asm/kvm.h |  1 +
+ arch/loongarch/kvm/interrupt.c        |  3 +++
+ arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
+ arch/loongarch/kvm/vm.c               |  4 ++++
+ 6 files changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
-index bc0e92eb2b64..499b00c2a001 100644
-=2D-- a/fs/smb/client/smb2transport.c
-+++ b/fs/smb/client/smb2transport.c
-@@ -34,7 +34,7 @@ smb3_crypto_shash_allocate(struct TCP_Server_Info *serve=
-r)
-=20
- 	rc =3D cifs_alloc_hash("hmac(sha256)", &p->hmacsha256);
- 	if (rc)
--		goto err;
-+		return rc;
-=20
- 	rc =3D cifs_alloc_hash("cmac(aes)", &p->aes_cmac);
- 	if (rc)
-=2D-=20
-2.51.0
-
+diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+index 392480c9b958..446f1104d59d 100644
+--- a/arch/loongarch/include/asm/kvm_host.h
++++ b/arch/loongarch/include/asm/kvm_host.h
+@@ -285,6 +285,10 @@ static inline bool kvm_guest_has_lbt(struct kvm_vcpu_arch *arch)
+ 	return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | CPUCFG2_MIPSBT);
+ }
+ 
++static inline bool cpu_has_msgint(void)
++{
++	return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
++}
+ static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
+ {
+ 	return arch->cpucfg[6] & CPUCFG6_PMP;
+diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
+index f1efd7cfbc20..3784ab4ccdb5 100644
+--- a/arch/loongarch/include/asm/kvm_vcpu.h
++++ b/arch/loongarch/include/asm/kvm_vcpu.h
+@@ -15,6 +15,7 @@
+ #define CPU_PMU				(_ULCAST_(1) << 10)
+ #define CPU_TIMER			(_ULCAST_(1) << 11)
+ #define CPU_IPI				(_ULCAST_(1) << 12)
++#define CPU_AVEC                        (_ULCAST_(1) << 14)
+ 
+ /* Controlled by 0x52 guest exception VIP aligned to estat bit 5~12 */
+ #define CPU_IP0				(_ULCAST_(1))
+diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+index 57ba1a563bb1..de6c3f18e40a 100644
+--- a/arch/loongarch/include/uapi/asm/kvm.h
++++ b/arch/loongarch/include/uapi/asm/kvm.h
+@@ -104,6 +104,7 @@ struct kvm_fpu {
+ #define  KVM_LOONGARCH_VM_FEAT_PV_IPI		6
+ #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME	7
+ #define  KVM_LOONGARCH_VM_FEAT_PTW		8
++#define  KVM_LOONGARCH_VM_FEAT_MSGINT		9
+ 
+ /* Device Control API on vcpu fd */
+ #define KVM_LOONGARCH_VCPU_CPUCFG	0
+diff --git a/arch/loongarch/kvm/interrupt.c b/arch/loongarch/kvm/interrupt.c
+index 8462083f0301..adc278fb3cb9 100644
+--- a/arch/loongarch/kvm/interrupt.c
++++ b/arch/loongarch/kvm/interrupt.c
+@@ -21,6 +21,7 @@ static unsigned int priority_to_irq[EXCCODE_INT_NUM] = {
+ 	[INT_HWI5]	= CPU_IP5,
+ 	[INT_HWI6]	= CPU_IP6,
+ 	[INT_HWI7]	= CPU_IP7,
++	[INT_AVEC]	= CPU_AVEC,
+ };
+ 
+ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
+@@ -36,6 +37,7 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
+ 	case INT_IPI:
+ 	case INT_SWI0:
+ 	case INT_SWI1:
++	case INT_AVEC:
+ 		set_gcsr_estat(irq);
+ 		break;
+ 
+@@ -63,6 +65,7 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, unsigned int priority)
+ 	case INT_IPI:
+ 	case INT_SWI0:
+ 	case INT_SWI1:
++	case INT_AVEC:
+ 		clear_gcsr_estat(irq);
+ 		break;
+ 
+diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+index 30e3b089a596..226c735155be 100644
+--- a/arch/loongarch/kvm/vcpu.c
++++ b/arch/loongarch/kvm/vcpu.c
+@@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
+ 		*v = GENMASK(31, 0);
+ 		return 0;
+ 	case LOONGARCH_CPUCFG1:
+-		/* CPUCFG1_MSGINT is not supported by KVM */
+-		*v = GENMASK(25, 0);
++		*v = GENMASK(26, 0);
+ 		return 0;
+ 	case LOONGARCH_CPUCFG2:
+ 		/* CPUCFG2 features unconditionally supported by KVM */
+@@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
+ 		return -EINVAL;
+ 
+ 	switch (id) {
++	case LOONGARCH_CPUCFG1:
++		if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
++			return -EINVAL;
++		return 0;
+ 	case LOONGARCH_CPUCFG2:
+ 		if (!(val & CPUCFG2_LLFTP))
+ 			/* Guests must have a constant timer */
+@@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+ 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
+ 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
++	if (cpu_has_msgint()) {
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
++	}
+ 
+ 	/* Restore Root.GINTC from unused Guest.GINTC register */
+ 	write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
+@@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu *vcpu, int cpu)
+ 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
+ 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+ 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
++	if (cpu_has_msgint()) {
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
++	}
+ 
+ 	vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
+ 
+diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
+index d8c813e2d72e..438885b6f2b1 100644
+--- a/arch/loongarch/kvm/vm.c
++++ b/arch/loongarch/kvm/vm.c
+@@ -37,6 +37,9 @@ static void kvm_vm_init_features(struct kvm *kvm)
+ 		kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_PV_STEALTIME);
+ 	}
+ 
++	if (cpu_has_msgint())
++		kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_MSGINT);
++
+ 	val = read_csr_gcfg();
+ 	if (val & CSR_GCFG_GPMP)
+ 		kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_PMU);
+@@ -153,6 +156,7 @@ static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_attr *attr
+ 	case KVM_LOONGARCH_VM_FEAT_PMU:
+ 	case KVM_LOONGARCH_VM_FEAT_PV_IPI:
+ 	case KVM_LOONGARCH_VM_FEAT_PV_STEALTIME:
++        case KVM_LOONGARCH_VM_FEAT_MSGINT:
+ 		if (kvm_vm_support(&kvm->arch, attr->attr))
+ 			return 0;
+ 		return -ENXIO;
+-- 
+2.39.3
 
 
