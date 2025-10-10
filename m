@@ -1,179 +1,141 @@
-Return-Path: <linux-kernel+bounces-848527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62231BCDF74
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F5ABCDF88
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 100223565A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914A43BD2F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA962FBE0B;
-	Fri, 10 Oct 2025 16:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8ED259CA0;
+	Fri, 10 Oct 2025 16:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kwc9QkyR"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K9/UGIm5"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAB9266B52
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 16:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781742F7AB4
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 16:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760113940; cv=none; b=H2JztN5O6QIqqt0bS9hDc2wSZt8JajHEkvo9alxz9b7GIaEKLrTejLCSTweZ02lU4defl6GuHn6e+KBo6s2sdzBlHHXBVcvn4NZ1BTGZCuKgK6MMfYbJt8ywXyuBG5HjbSCdnp2jQ6641hj87t57tOEDv6qAingQo0BV2gONZkc=
+	t=1760114094; cv=none; b=aM8OiDT5Chobm17eK7B9H9rNSeu7GESwbqj0QRf9zy3QhH5/LtRPaw3C5K2vYjYjJgOgPIda12eeSoLzCudF7V/zQixspDV63AP8QPqyvzF7w3AMSxPz95DN2NX65neeuIrNzL0bJd9XOw29oZHhasSuNajet5UdbSOQzATlFMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760113940; c=relaxed/simple;
-	bh=5kwuV8eNnA83Ato1cZbhy9+x6tIprPRIWS08vVYojKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k8OgAi9bkxDeKoVmhITmZg45x40j8mUvUtt+FgmarKzWE/saB+jXNdc0YlrGY3J5laKy9eSgB/n6wCfY8JpxyMR6Nd5mSjO34Eluf21iOISjGHc/kbokflHEg/DEKlCGyB7fH+KdGxXpc5LGS/96suW5POLrGkH2UUvsMmo1WDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kwc9QkyR; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7187A4E40FCF;
-	Fri, 10 Oct 2025 16:32:10 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 374E160667;
-	Fri, 10 Oct 2025 16:32:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D7D3D102F21B3;
-	Fri, 10 Oct 2025 18:31:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760113929; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=pBVjYyQaOHn9Ik1fDoHu9eZ8SXCQAudCG8yjKEp/G2Y=;
-	b=kwc9QkyRkyaJaPEi2u4+QXJ4WKJT3ztIEJ6MP8BcqI8b5CXFsY+HtAwBDIHmzPV+GpR2cJ
-	dAPQNauShMHVcfjXIZS3a9NnEFcb/620JNuPeZBoH5hdhecEIfV6V/ylMQvfE1wgE2cmIZ
-	RIHM1/bu9PvBOqdAC25qyRcsUvLfI/7txZf60bODlcFg9vP1hb5/fxpLf0AaNozidbqQjV
-	VZrB/TYaXJf9+yWx7LPQKt5KWVMAeHrypCNVR+3IAgOLrbnPGBk7lxTrTyeI39r2GRKwO6
-	Mh6VuGUxVM/9SOrWPMzhiq9XvQXtFjif8OQjBmgexugctEgkkxAo0vP31HoHpA==
-Date: Fri, 10 Oct 2025 18:31:52 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: David Gibson <david@gibson.dropbear.id.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Ayush Singh
- <ayush@beagleboard.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring
- <robh@kernel.org>, Andrew Davis <afd@ti.com>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, devicetree@vger.kernel.org, Jason Kridner
- <jkridner@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, devicetree-compiler@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <20251010183152.1530f5ab@bootlin.com>
-In-Reply-To: <aOi8oLGYVckesJSb@zatzit>
-References: <20250918094409.0d5f92ec@bootlin.com>
-	<aMzhgDYOuG4qNcc0@zatzit>
-	<dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
-	<aNJVqSpdAJzGliNx@zatzit>
-	<20250923114849.2385736d@bootlin.com>
-	<CAMuHMdWmDwedyPnBERs-tSYEG15nMUuh9u1Q+W_FdquHpUC0-A@mail.gmail.com>
-	<aNNvaN4xJtKBFmWT@zatzit>
-	<cd9763b7-919a-4b44-a347-f1491d9584b9@beagleboard.org>
-	<aNtXnAeLj3xNwkyE@zatzit>
-	<CAMuHMdV+sUZpMtbCtWqJMiL_JC_nFEJcFDOoZJZPhhzhY8zQJQ@mail.gmail.com>
-	<aOi8oLGYVckesJSb@zatzit>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760114094; c=relaxed/simple;
+	bh=3O2slgopZs0r86JaYoeRil/K7lBwFmbcBIiyfk8jC8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f4FiDMHo5fR7PoAjHhh3VnNvqb7yPooBd+0gWZtsNed9XZVeP/ec53RewqysDapFTLI3TwHsVDjdlIFmj2R+Tm1KyH8clM7dZHsrWAZ+TCxqLOA9a+9L6IXuuC13spatdB0+enS1e7onCarjPCKaN9YlhBlPmEIFRy0AqiqVv0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K9/UGIm5; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7827025e548so922321a34.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:34:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760114091; x=1760718891; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YFQBxoNurmZy12ZR9zqI+fCdGcn7hfBSxuCEMNcYPPA=;
+        b=K9/UGIm5p6HiPGGO9yM4dqW0TI9c32Anr4phUlS86bYL/yFeSftbuyTkz/DDrMdUMw
+         R3NbuMX9ScU8iH7OhahUQKXyA5eCu5rR/qUfv12erBmEyZzZEY7EiogSkUB6iiYEOdfj
+         3vuh3Q4ykKUF4xRpBgJmRi4GFjWzLYn7/CGVbNis4PtcDYnC9el2KrRILIJ3q5qYUvZX
+         myEW/cgM6032wMBR6scUUSFbLzI0mlz7hdnDzvTHmytrOOpoGbMsDi6iF9ioU/R91xTN
+         D3fDdpndHyy+IRB06iQOp8327RH1JH61bs5FRgsTgYXNn4wCbJZ/UvHDXQIpwDy2S9ld
+         lSrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760114091; x=1760718891;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YFQBxoNurmZy12ZR9zqI+fCdGcn7hfBSxuCEMNcYPPA=;
+        b=uQJymceGIvEZhd8++foGPJ6RaAQIpLzsy4fM1gk4dLlvzNSAcwagyga4NWxKVIV+MT
+         WCZfOFzZGXKH1IS69okYhwqy9tyBbm5ROHCXkveJptlm1g8cO50JFxMzK3F5kWLZ8ZhB
+         h2NzrNG0FtJNji8yEmLVBu/AQf6ZhCoNUfrY8BhBpMegMqw7p/5RgCXKeFD0dcPCt7EI
+         7XykyjoFx3QHyyicKcAqMex6ViAVx5LkqMKtS8M0oVvPycw873JYtzG3P3sWj0MJf+Ft
+         ibczgHM1smpes7H9ZnNUxZCF/AwrnCX4CycUB9Rdw9FXtSkV5zcQCC37wAwNoGh9LJYS
+         oQgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkT4gZn6mMqZlrIL1K0UfbmAQmLaV1pAe1cdrlVZe1rm88jjj/gja8R+7oqJGK9nnVm7vwOlnHHub6Aps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNeoZT/aQLzsIleTErEoHtx/zCd1zRC9+qXtxyb0upTuUY0JKu
+	V6T01zWRmjrmhd/2zHYSJKTQuOC1YNkm8qkI8gxoMJAqmtepgbdt6ZOjzMCQYVHc8go=
+X-Gm-Gg: ASbGnctlEIO7Gv0qc6xZ0YbGn+m4M3ilR0yzxWKx7kHLp3NH/j4e8YkZ1XX6NR0I14/
+	gF93Blx6ja+cpSHgnYnpdyBrrwsIxZUEegqzg3oFbIBZS1DEC3rHMrMn37HnEkWdwd8mBzl/Zrf
+	IDe3GGbgXzIts0tZhuCnzeQwhaOB2ykRrvAL6aH/NQsWCPl/TMtc0qEmTvBAqgkx2dOxHqK+JBS
+	TviFc+i0SjUH/JKBX6sbP5pMQNdZy5O2RrircfKwY8XnFgue0bgV+gH2Jk+Hz+eGyjkWwAYoRPc
+	T0+HhLatGapLx7bBIBfMa+wkpXxDUJCsRGi5S8lPBR9CmTbxKe2dCMPNpBIzVNOyBI34vVPIy8B
+	HA+4PRChDS7EXPVOSMP3ClBW4IsULzt3AFKxT3P1V4WuxFlorHpdRpE5BM+zVaX9/GCetrbydJz
+	UC1uPTekQDhgp4o5hsKdFtL2UFdQ==
+X-Google-Smtp-Source: AGHT+IG9/7/OoQHlAG8tADy7YoqbVxyfvZROVmXiXdf1/YG7+lyaIrfsoJ0HIGLIpNwQAaE8j853Tw==
+X-Received: by 2002:a05:6830:61c7:b0:759:55bd:9597 with SMTP id 46e09a7af769-7c0df7ff940mr6338073a34.26.1760114091519;
+        Fri, 10 Oct 2025 09:34:51 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:6d3b:e3bd:4210:32e2? ([2600:8803:e7e4:500:6d3b:e3bd:4210:32e2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c0f915fd4esm968209a34.35.2025.10.10.09.34.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 09:34:51 -0700 (PDT)
+Message-ID: <3cb110ab-05e5-42c3-859d-34df721d98f2@baylibre.com>
+Date: Fri, 10 Oct 2025 11:34:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/8] pwm: Declare waveform stubs for when PWM is not
+ reachable
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, jic23@kernel.org,
+ michael.hennerich@analog.com, nuno.sa@analog.com, eblanc@baylibre.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ corbet@lwn.net, marcelo.schmitt1@gmail.com, kernel test robot <lkp@intel.com>
+References: <cover.1759929814.git.marcelo.schmitt@analog.com>
+ <129ff5c5b7f7be4f4f3f9cf8aa3e1957d713acb7.1759929814.git.marcelo.schmitt@analog.com>
+ <cuq6eh3vcrkgr7tj3xpo7ax4ruiy4ra6fjxgu45a3eqs2jbtah@ualgnhdwxnih>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <cuq6eh3vcrkgr7tj3xpo7ax4ruiy4ra6fjxgu45a3eqs2jbtah@ualgnhdwxnih>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 10 Oct 2025 18:58:24 +1100
-David Gibson <david@gibson.dropbear.id.au> wrote:
-
-> On Tue, Sep 30, 2025 at 09:52:44AM +0200, Geert Uytterhoeven wrote:
-> > Hi David,
-> > 
-> > On Tue, 30 Sept 2025 at 06:34, David Gibson <david@gibson.dropbear.id.au> wrote:  
-> > > On Wed, Sep 24, 2025 at 10:33:50PM +0530, Ayush Singh wrote:  
-> > > > On 9/24/25 09:41, David Gibson wrote:  
-> [snip]
-> > > > > > > > a) Addons can only add completely new nodes, never modify existing
-> > > > > > > >     ones.  This means that whatever addons are present at runtime,
-> > > > > > > >     every node has a single well defined owner (either base board or
-> > > > > > > >     addon).  
-> > > > > > > In this rule I suppose that "never modify existing ones" should be understood
-> > > > > > > as "never modify, add or remove properties in existing ones". Because, of course
-> > > > > > > adding a full node in a existing one is allowed (rule b).  
-> > > > > > What if the add-on board contains a provider for the base board.
-> > > > > > E.g. the connector has a clock input, fed by an optional clock generator
-> > > > > > on the add-on board.  Hooking that into the system requires modifying
-> > > > > > a clocks property in the base board, cfr. [1].
-> > > > > > Or is there some other solution?  
-> > > > > Hmm.  My first inclination would be that this case is not in scope for
-> > > > > the protocol we're trying to design now.  If the widget provides
-> > > > > things to the base board as well as the other way around, it's no
-> > > > > longer an "addon" for the purposes of this spec.
-> > > > >
-> > > > > But it's possible I've underestimated how common / useful such a case
-> > > > > is.
-> > > > >
-> > > > > Note that I'd expect the existing overlay mechanism to still be
-> > > > > around.  It may be ugly and not very well thought out, but its
-> > > > > drawbacks are much less severe if you're not dealing with hot unplug.  
-> > > >
-> > > > Well, while that was not an initial use-case in my mind, external clock
-> > > > inputs are a valid use-case when talking about connectors for board headers
-> > > > specifically (e.g. pocketbeagle connector).  
-> > >
-> > > I guess I'm not familiar enough with modern embedded hardware.  I'm
-> > > having a hard time wrapping my head around what's going on here.  If
-> > > the external clock input is optional (hence under a connector), how is
-> > > anything on the base board dependent on it?  If nothing on the base
-> > > board is dependent, why do we need to modify its properties to
-> > > represent it?
-> > >
-> > > Is this a design flaw in the clocks binding?  
-> > 
-> > In my example, the external clock input is indeed optional, and not
-> > used by the base board itself.  Still, it is a clock input to the SoC,
-> > and may be used as a reference clock when an add-on board is connected
-> > that needs to use the exact clock frequency of that reference clock.
-> > 
-> > https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/renesas/white-hawk-ard-audio-da7212.dtso
-> > AUDIO_CLKIN_V is the optional clock input to the SoC.
-> > GP1_25/SL_SW2_V/TPU is the reference clock (actually it is not
-> > generated on the add-on board, but by a PWM controller on the base
-> > board, but it could just be a crystal oscillator on the add-on board
-> > instead)
-> > 
-> > I hope this makes it clearer.  
+On 10/9/25 11:58 AM, Uwe Kleine-König wrote:
+> Hello,
 > 
-> I think so.
+> On Wed, Oct 08, 2025 at 10:49:44AM -0300, Marcelo Schmitt wrote:
+>> Previously, the PWM waveform consumer API would not be declared if
+>> CONFIG_PWM was not reachable. That caused kernel builds to fail if a
+>> consumer driver was enabled but PWM disabled. Add stubs for PWM waveform
+>> functions so client drivers that use, but don't depend on PWM, can build if
+>> PWM is disabled.
+>>
+>> Fixes: 6c5126c6406d ("pwm: Provide new consumer API functions for waveforms")
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202509272028.0zLNiR5w-lkp@intel.com/
+>> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+>> ---
+>> I've included this patch in this series because it should save us from being
+>> notified by 0-day about the build failure this patch fixes. From contributor's
+>> perspective, it's easier to have this patch together with the rest of ad4030
+>> series. Though, no objection if kernel maintainers decide to pick it [1] through
+>> the PWM tree.
+>>
+>> [1]: https://lore.kernel.org/linux-pwm/1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com/
 > 
-> IIUC, the problem is that while both the producer and the consumer of
-> the clock are addons, it's routed through the SoC, which is why it
-> requires some representation there.
+> TL;DR: nack
 > 
-> What seems like the logical approach to me is for the base board to
-> have essentially an unresolved pointer to the clock input.  I'm not
-> really sure how that could be sensibly encoded, though.
+> I replied to the original submission about why this patch is wrong. See
+> there for the details.
 > 
+> Best regards
+> Uwe
 
-I don't think that having unresolved symbols in the base DT is the right
-direction. This base DT is used and so all symbols have to be resolved.
-If any symbols are not resolved (either in addon DT or base DT), this DT
-should not be used. For the base DT, "not used" means no boot.
+If we want to avoid this patch, then it sounds like we should use:
 
-Do we really want to support DT used in runtime with some "invalid" parts ?
+#if IS_REACHABLE(CONFIG_PWM)
 
-IMHO, if the base DT need a resource wired at the connector and provided by
-the addon, the base DT need to reference the connector. From the base DT
-point of view, the consumed resource is the one provided at the connector.
+in the ADC driver around any PWM waveform code.
 
-if a clock is wired at the connector the connector can be seen as a clock
-controller. This clock controller should be a kind of "bridge" between the
-base DT clock consumer and the addon board provider and it should perform
-the link without having any unresolved symbols in the base DT side.
-
-Best regards,
-Hervé
 
