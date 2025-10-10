@@ -1,149 +1,129 @@
-Return-Path: <linux-kernel+bounces-848583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1AEBCE16E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:30:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC455BCE17A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68B514EE4C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:30:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6E62F3567D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06E322157F;
-	Fri, 10 Oct 2025 17:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B7621D599;
+	Fri, 10 Oct 2025 17:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iLdLx7Xf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L0ARrzIj"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20B7221FA4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2691FF7C8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760117412; cv=none; b=ls6hTsFO4LMO4AWNjPhNJoJBNTIk9YD7N3NQsYgu2vSDG6HrQaNaGwMbFfd7ix0lYzGUfDm3DZbsOmQ057//f7QeeS956McF5fu/rCgVKxNK2/9StWPUGlmOvivOv5/lXdvXVPB0EV8e8y3J+4WJNfvdsAWbdCaDdjrCd9duosY=
+	t=1760117437; cv=none; b=BHIUUxbpMkBbb2le84hNjJvgZokMxQb+82O+BIG8uGe5DdMQvWglxHRaRBvLne8PBU0+HqxK9VDEFXfFoQVypa6pSRJj4gLD5YTUS+PdhNhDAyyYIOBhFxWtM2p0/TEbXYeq2Ks7hN4830obC4zkmV1jyYwQ1NO51wYYgmvHP8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760117412; c=relaxed/simple;
-	bh=nWNPqczF/IxgC8AwsNffriAiexgBBMHO9WesC80uOcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mg6QBRD+0CiLVs+HCj3ycUFeMPbJB+IiBZaQ3+wqmferMd2HDe6p6Tab6/u1nJsjjwEAYRRmQUHom5YaNsveZ6HtbV3hDdEfHLzKyqzd6iIWqpscSVoYRQuq0cgxFQCzN5apuzEtx0Syl0T5spv0IHsDpKDFj4efJoBXzsDCKCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iLdLx7Xf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59AF1OSO018539
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:30:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ATXrLGPewk+USu4WH2tPmXTpI3iF7n/KZMdGkOVu4WY=; b=iLdLx7Xfko/0GgWa
-	hbPzFA1YEUyGGpWqBgTsZYy7efzDlklzJJDrDRQ3e5AI4TCr+7RK8nF3S/IC01wG
-	X+tvOzVklpiyOdaLJj1WRX6C2C+2RhOSWdZ2GU0i9I2aR4KhuJwLcD3/HGzPunLc
-	1qHNDnxOEuM+vgPZtHh+sj205MMZ65m0r5h0J1BCd61SaSk/0+5KNK8CLb+pbD8C
-	ttBfrI5LjG/tva5xb/94+AhEoeFAj+8lkemNN8S3eqtpvcaqVBWYN5in7kCsA8Hy
-	KpbWabNKwKJZtcvMOB+qpbBm3iRFyBEKZsj0gl+mnQHuKhC2X0UT91XTp7BD3+HT
-	Q6l+yQ==
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4m78ca-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:30:09 +0000 (GMT)
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-5d3fd09aa9eso424211137.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:30:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760117408; x=1760722208;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATXrLGPewk+USu4WH2tPmXTpI3iF7n/KZMdGkOVu4WY=;
-        b=rIBIfz0EktZ4f8mA+iGT8OFwD5jfmyjcSVfaISj2ya6NFIa35ztu3rztMM3ki5aLuP
-         WfjmPhxKlY/tGgfQmfUNbrea1zm+caC07is+eC3Sqq0+nMDvd0pOBmG/Y2uBUniMuRgH
-         55keANbYiLnX6ZYecnRz31F7xOJA01+wPC91DXjKIR3Gh7VpKPFQ3AQ7f/dSdr9PKyNG
-         QvZvBSXih8vnBTKuW6y19Rdqh2FV9OmzlALNpKPasSpEAK/2HkBFg9j5mZjzpnkyumED
-         z5zoo8UuAcP3p+UuJjxgzt10gBrZCwY2oE3MdFfBWzaOPKnwPndYDBcsKPW5hclvEw8J
-         CzKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2EuFpP6jmvEo/iKeSzJvOytDokMYIaY7qF51TxhZEnBvHfYzMH0CmcGS4beyuX7940FOwNKxe52QP0WA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWiZDL38xZdIurrA0hZPKTXUrosBDFencukIUL6AOvQxJ7bxtu
-	wvLbZiL1nYazuV0Bq6iUA4IDGEypl/r4fJ6RQvjkUCnfm3fceQswoiv9vbXf5WYM5pigoCE2SEG
-	b/kvwud+Pz65ebMIfjU50tXd3eey7UOASA7gffwbvqrKUmltMp6N8tQeCoXqQgzC/7rs=
-X-Gm-Gg: ASbGncvUd1rP1hvxA+Dt7aycrMhgcwUxiB7HsDB2xRTZJk0irBtnBliwhkRKs8bol9C
-	+scZGk+q9Mv/8+Z/MGFFWDgOMMtau2Tng8AP1MWvF5VkKGpFJ7OoTmF+65KRPPVzoS0qbaYOU01
-	5q1fLOPNzbVbKkTA/lgAQgO8H6ld/VV6TohRDrmdQQd/4RHkSsM3QzMtAS7ueVrWbIp/zjflCsc
-	Kc574hJV/TRR8zvFN51y0pzT7Tng0SWl+NItYauBG2elSZz8Q34MjPggR2gxYg5NcRNqaJJ/Iux
-	Rf9MTfUPsSsMQl2f/t6vc2geJVHusiYefev1EceeVwMNiqtO9/+wweqY+YcvPnBPascim/r9JaP
-	SHNuLsZ84Q9LcrjAEEV4pZQ==
-X-Received: by 2002:a05:6122:e0cf:b0:554:b341:2764 with SMTP id 71dfb90a1353d-554b890a550mr1451424e0c.0.1760117408358;
-        Fri, 10 Oct 2025 10:30:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHD0hhK6b4JamkLYHPshkWQ8JHKI3MVUIkzRHAZmhbAXRpyPdpO2PcbsweVGgxi06rXqhX5g==
-X-Received: by 2002:a05:6122:e0cf:b0:554:b341:2764 with SMTP id 71dfb90a1353d-554b890a550mr1451416e0c.0.1760117407888;
-        Fri, 10 Oct 2025 10:30:07 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c321341sm2786754a12.38.2025.10.10.10.30.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 10:30:06 -0700 (PDT)
-Message-ID: <eb15cf16-f51a-4eb9-992f-158e2510184e@oss.qualcomm.com>
-Date: Fri, 10 Oct 2025 19:30:04 +0200
+	s=arc-20240116; t=1760117437; c=relaxed/simple;
+	bh=YbZ/7JveVWcTwyM5r7IGGzLazstNbKsWuH0SvULtBH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=LjClnMXzovauup7jzgaJ8p1kWvfOrc3ovsQqvHC4KAEemw1O/N7/p2LmClOsgBuSy39unhsEo66PcPUoLb/NjQauT6CGZ6KnjYTHrOOpJWAzrHoQsyOMieNZfAMmZCzN3m6FHlhwXI27JFVqYa42P8bUY6iZAmrxyyoE032g8U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=L0ARrzIj; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251010173033euoutp01b9580b950788fe5988c91c359cf79e69~tMXrdp3YA2271622716euoutp01I
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:30:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251010173033euoutp01b9580b950788fe5988c91c359cf79e69~tMXrdp3YA2271622716euoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760117433;
+	bh=6tFHuuK0qC8nGlJ1SzSICW59vf38J6nYrrUDLyYcupI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=L0ARrzIjXHBE4Er9ryt1PGlnIkeAOwh0BJt9U6gLZbP9EvPP7cwEZWjBFkV6vTRLv
+	 4stQK97CmYsuWbsmiMz5/DxOgio8QBMT/eKjUKcZA+CLNDn0iQzY7pbeVoiHDmLFbF
+	 GIOziON2DJAOfM9BIdpPSyehOfUJlp40ZUzEIEBE=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251010173032eucas1p24ec518d7c35003805bc6e732c942843c~tMXrNS9uh1158011580eucas1p2o;
+	Fri, 10 Oct 2025 17:30:32 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251010173032eusmtip18cda9ca2b3f75cfb98c4be5c6f117eef~tMXq3VVVf2117121171eusmtip1d;
+	Fri, 10 Oct 2025 17:30:32 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy
+	<robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>, Andrew Morton
+	<akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH v2] dma-debug: don't report false positives with
+ DMA_BOUNCE_UNALIGNED_KMALLOC
+Date: Fri, 10 Oct 2025 19:30:09 +0200
+Message-Id: <20251010173009.3916215-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/msm: make sure last_fence is always updated
-To: Anna Maniscalco <anna.maniscalco2000@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Antonino Maniscalco <antomani103@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251010-close_fence_wait_fix-v2-1-adb332dbff65@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251010-close_fence_wait_fix-v2-1-adb332dbff65@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX4asWLwZrbsc4
- 20sUK2HsiA8j/jqGYVFxr9ZCTCAAlNjEk5jOCIoa61aO2W0oQd4CfNTNmppEqhWyTvWcYPCjCzP
- knhKWP8IFM6wSvbL3Rm/yAOY2Mx/a4NOUbVv0hk0L7qF+rM3vHJQztL1C0+aKEeT/GyrEY9Py/c
- AzOQeFUkJrq0ji8HgmlW/cQy4KUpbzBLzyGlRRx2QIminr6xkRGNrkwPZDZwsVUpTtB866C51Ze
- WtVUGu9V0uR192CARaepPjiF2fTE20FUthYGfwRaltpz1Tx0+Qe3/FsfKLB96n2M5os7E+jZgZ6
- AyLzmWkpLs4UYVbhKgC3b4JGUXWDRUEt+W387TTN7dTAfmVL8HTeqnw7BY5bhfo2n7jBjpJK7tb
- LONAgyCH+AYzOGU5kpahj8tlRQGncw==
-X-Authority-Analysis: v=2.4 cv=B6G0EetM c=1 sm=1 tr=0 ts=68e942a1 cx=c_pps
- a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=XV8jktkr_dr238JMAFQA:9
- a=QEXdDO2ut3YA:10 a=-aSRE8QhW-JAV6biHavz:22
-X-Proofpoint-GUID: eCespaQGcYAGAuYWf0925zNWdDkB3CW9
-X-Proofpoint-ORIG-GUID: eCespaQGcYAGAuYWf0925zNWdDkB3CW9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251010173032eucas1p24ec518d7c35003805bc6e732c942843c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251010173032eucas1p24ec518d7c35003805bc6e732c942843c
+X-EPHeader: CA
+X-CMS-RootMailID: 20251010173032eucas1p24ec518d7c35003805bc6e732c942843c
+References: <CGME20251010173032eucas1p24ec518d7c35003805bc6e732c942843c@eucas1p2.samsung.com>
 
-On 10/10/25 4:39 PM, Anna Maniscalco wrote:
-> Update last_fence in the vm-bind path instead of kernel managed path.
-> 
-> last_fence is used to wait for work to finish in vm_bind contexts but not
-> used for kernel managed contexts.
-> 
-> This fixes a bug where last_fence is not waited on context close leading
-> to faults as resources are freed while in use.
-> 
-> Fixes: 92395af63a99 ("drm/msm: Add VM_BIND submitqueue")
-> ---
-> Signed-off-by: Anna Maniscalco <anna.maniscalco2000@gmail.com>
+Commit 370645f41e6e ("dma-mapping: force bouncing if the kmalloc() size
+is not cache-line-aligned") introduced DMA_BOUNCE_UNALIGNED_KMALLOC
+feature and lets architecture specific code to configure kmalloc slabs
+with sizes smaller than the value of dma_get_cache_alignment().
 
-Your sign-off will be removed by git, as it appears below the '---' line
+When that feature is enabled, the physical address of some small
+kmalloc()-ed buffers might be not aligned to the CPU cachelines, thus not
+really suitable for typical DMA. To properly handle that case a SWIOTLB
+buffer bouncing is used, so no CPU cache corruption occurs. When that
+happens, there is no point reporting a false-positive DMA-API warning
+that the buffer is not properly aligned, as this is not a client driver
+fault.
 
-Konrad
+Fixes: 370645f41e6e ("dma-mapping: force bouncing if the kmalloc() size is not cache-line-aligned")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+---
+v2:
+- replaced is_swiotlb_allocated() with is_swiotlb_active(entry->dev) as
+  suggested by Catalin
+
+v1: https://lore.kernel.org/all/20251009141508.2342138-1-m.szyprowski@samsung.com/
+---
+ kernel/dma/debug.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index b82399437db0..7458382be840 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -23,6 +23,7 @@
+ #include <linux/ctype.h>
+ #include <linux/list.h>
+ #include <linux/slab.h>
++#include <linux/swiotlb.h>
+ #include <asm/sections.h>
+ #include "debug.h"
+ 
+@@ -594,7 +595,9 @@ static void add_dma_entry(struct dma_debug_entry *entry, unsigned long attrs)
+ 	if (rc == -ENOMEM) {
+ 		pr_err_once("cacheline tracking ENOMEM, dma-debug disabled\n");
+ 		global_disable = true;
+-	} else if (rc == -EEXIST && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)) {
++	} else if (rc == -EEXIST && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
++		   !(IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) &&
++		     is_swiotlb_active(entry->dev))) {
+ 		err_printk(entry->dev, entry,
+ 			"cacheline tracking EEXIST, overlapping mappings aren't supported\n");
+ 	}
+-- 
+2.34.1
+
 
