@@ -1,188 +1,239 @@
-Return-Path: <linux-kernel+bounces-847947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE29DBCC238
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:30:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0845BCC249
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 887B54F07A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:30:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33DB1A60382
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CFC25A655;
-	Fri, 10 Oct 2025 08:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s85p5hys"
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B349261B9D;
+	Fri, 10 Oct 2025 08:33:56 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04F734BA44
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845DC24DCEB
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760085051; cv=none; b=YTSFGBcyoMPO5EaaXWSrhjtKxHQWOtaMP1RmGyRIjcYw1P/Z3zrUaRPmg9ABYeRFHDrcTjiR2QR0x4B1UguZIR0JLOB+36Yp9yfF1HVSpxHfrVEgkLERHWV5BWlGIKxT8V1YKW6A4NXMkOiLdXrcUCChchPGagkX2LRpwoZfyTg=
+	t=1760085235; cv=none; b=KwUUHSXcJo91ERvB57KpFb0WNhH1+ztZ1EpJStiGmMkQy1YRhrDCddYWmItmIyFLcKibBfuJUGYRTH8zP0uhQGQjA0N7UMqxU77nyeq6SJ4PvP577r6i8QyoKhexbwRsQJ/QVvPp7fPBaEJdvXdbJlpJT/NkxdTTZ67ZLcQhftQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760085051; c=relaxed/simple;
-	bh=wctb4CCPOsVlg4MBcIeDFfStXaSUm2uLp61kJxrLTi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZXcxbOsMPgbhR7uRoLJzU1zDAj9z1j+s5fyi/Ypvt5iu/K8lBrgQMiUBdHyA5B5NUsGg9xEeaEAecjZRoDuYbYQjyJtrl55YH+j/hzVHUqHmawQH6WhjysBeTuQkCdBec65ByKv7TfTyrKpNa+9YSxINAmXB1euN8OONvF6tRXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s85p5hys; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6353ff1a78dso1748702d50.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760085048; x=1760689848; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M7/UvMP8pF2d0Di4W7qdfx/D73nsmwZpf5H8xyBvB+I=;
-        b=s85p5hys2GJk4R2j/PSaXILtwxCSyOg9r3/u8A6IxWeo9STlzUQ5D52W8RVN3MbLIv
-         lrUjsx30TPlYGhavLa53XBOOhVODHyb77OzdhjLfWqBTSoCTS9ZqFucHpiwrYr7hSin4
-         2aUf1CX1QRuDez1k1ic9ArED8oqmZhPgEqmhY2iwZe6Iws9IvCkF1SFYMQmC4JhXGQVC
-         fw0EWxXartvzR2LMkEllyw00cAKOVn27Im18yjXJH4Uaoa2CxskdOs4Jvpg5BWulmhcw
-         tkk1nqsJYO4V6bDvAkw4mT6QPLwA1/ssxvJTOeqtMNkfTtmCy9pg3BiLi4vyHR1VXC5e
-         HBow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760085048; x=1760689848;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M7/UvMP8pF2d0Di4W7qdfx/D73nsmwZpf5H8xyBvB+I=;
-        b=bl8f7t60o+w21hSdL9v26J+CDVOe+i51Pqkof9i3EYbbjSSykMvz3cEPjU/RNQBv8M
-         BnMnIlF3eq2l58jQLiQZtjfrivzZcsWCIDsz8D+8dVg5t81KPicF2dfTtCrBle67PJHW
-         rKdCBLeHpBeOpM/rpniFcLIoNwDYhwDa6MeS3yJPJv+StoaYzGNZTnSZHpZzp3zotzTD
-         2Hlj3Vfa7ujpurbiLJwZJmTDjYqP2u+zDDiLTmfX3/1uxh0R5qYeDwIhzSm+CtTfACnb
-         WPYiSRw28dEUS7ECSxA4+sw627WmyxJTx8TIAiNG64LVlDdQPvkWcZrVv1nartaRRUA2
-         3JUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFEi4nMZepQsXVJZVKRFZ7prawK1qsbtDqOj+9rUP+e0YxpH6cBkdlxSnOc/HYQQIZ3+82Ar8JXE2EQdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQyA0ep33DGWb05gyBxotVVOlRaAajUs9is/SWHlB1vM0tMHpN
-	VCxs1s1Xy53ouEHw1IDSYxU1QBbdo85CxzJ3JjN06uPVHzD4jR44AH1J31orvSgqfBIwqEIPR8Z
-	kzzrhGR2uhVqaKFiyAUJxP3Y072lXRKMhTOhIHN/KpA==
-X-Gm-Gg: ASbGncuvUyfVGqWwUZog3WG4CG/g2wLRFwY7ef60tj7XmdNy5M6KVxiOdRulUenok0H
-	LsfVOQ9DXeRBnNAlYprAEDkbOlaQ81D57r15FZ7tDamstASaKE0cLt+crVtL1TKcIcFipIaiE36
-	KgYcyQ/F4f4R6EIZ2lLlfJgt+nbBy58971lp0fhLI//XiKxOssZRdiFzqw4wUiPBPH1NI9C9tD7
-	9S9ajG8GCOy/dPVu8XeXtB4HETtL2PAO4TlhQ7MoQ==
-X-Google-Smtp-Source: AGHT+IELcVFwUCUEmhVUGDnSnGJlpWYHNQOXe5296t/FoFUefz+C1OeDjmmVZXYWz/J3fiD3QdzX5PFMMDEjuQIT79o=
-X-Received: by 2002:a05:690e:1a99:b0:63b:a4fa:202e with SMTP id
- 956f58d0204a3-63ccb8db942mr7870853d50.41.1760085047581; Fri, 10 Oct 2025
- 01:30:47 -0700 (PDT)
+	s=arc-20240116; t=1760085235; c=relaxed/simple;
+	bh=2I1HEzefLipY9ONBMa+V5AZRDh7NSM/PPmjwdO4MJVg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:References:To:Cc:
+	 In-Reply-To:Content-Type; b=BjM8AY2IkDrar2xDJ79lM1ygac7eJ9IoUNUck07zG9ayFu0AnPvpNADLhT3lNhopiL5BRQzKIOsRyvUdywX6fNEzF/Z0vS+mEaeh+vKKakH62d+qNKk6ksDIbtJn47RHypQk+vqG0BWHXdayMt//E/ukmsVG+qlSefgZ4Qmrzps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.pueschel@pengutronix.de>)
+	id 1v78Z3-0001WS-D9; Fri, 10 Oct 2025 10:33:25 +0200
+Message-ID: <a97780fa-5261-44ed-b54d-fd699d3cbb82@pengutronix.de>
+Date: Fri, 10 Oct 2025 10:33:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003150251.520624-1-ulf.hansson@linaro.org>
- <20251003150251.520624-3-ulf.hansson@linaro.org> <865xcsyqgs.wl-maz@kernel.org>
-In-Reply-To: <865xcsyqgs.wl-maz@kernel.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 10 Oct 2025 10:30:11 +0200
-X-Gm-Features: AS18NWBt9HOnP-sXI05iFB0KpurINCBSnZcmko0s_eAswoddpw0G_kSGehKntmY
-Message-ID: <CAPDyKFq4RgL0=hPhB0cwTQF-A+mXH8dxsZAYTB1CFuLxxxTujg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: smp: Implement cpus_has_pending_ipi()
-To: Marc Zyngier <maz@kernel.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Maulik Shah <quic_mkshah@quicinc.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?Q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
+Subject: Re: [PATCH 00/16] media: platform: rga: Add RGA3 support
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+ <3c62e3c837d534ef5bc21a95ec1dc408c38cb8a0.camel@ndufresne.ca>
+Content-Language: en-US
+To: Nicolas Dufresne <nicolas@ndufresne.ca>,
+ Jacob Chen <jacob-chen@iotwrt.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, kernel@pengutronix.de
+In-Reply-To: <3c62e3c837d534ef5bc21a95ec1dc408c38cb8a0.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.pueschel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, 6 Oct 2025 at 17:55, Marc Zyngier <maz@kernel.org> wrote:
+Hi Nicolas,
+
+On 10/7/25 8:06 PM, Nicolas Dufresne wrote:
+> Hi,
 >
-> On Fri, 03 Oct 2025 16:02:44 +0100,
-> Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > To add support for keeping track of whether there may be a pending IPI
-> > scheduled for a CPU or a group of CPUs, let's implement
-> > cpus_has_pending_ipi() for arm64.
-> >
-> > Note, the implementation is intentionally lightweight and doesn't use any
-> > additional lock. This is good enough for cpuidle based decisions.
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >  arch/arm64/kernel/smp.c | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >
-> > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> > index 68cea3a4a35c..dd1acfa91d44 100644
-> > --- a/arch/arm64/kernel/smp.c
-> > +++ b/arch/arm64/kernel/smp.c
-> > @@ -55,6 +55,8 @@
-> >
-> >  #include <trace/events/ipi.h>
-> >
-> > +static DEFINE_PER_CPU(bool, pending_ipi);
-> > +
-> >  /*
-> >   * as from 2.5, kernels no longer have an init_tasks structure
-> >   * so we need some other way of telling a new secondary core
-> > @@ -1012,6 +1014,8 @@ static void do_handle_IPI(int ipinr)
-> >
-> >       if ((unsigned)ipinr < NR_IPI)
-> >               trace_ipi_exit(ipi_types[ipinr]);
-> > +
-> > +     per_cpu(pending_ipi, cpu) = false;
-> >  }
-> >
-> >  static irqreturn_t ipi_handler(int irq, void *data)
-> > @@ -1024,10 +1028,26 @@ static irqreturn_t ipi_handler(int irq, void *data)
-> >
-> >  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
-> >  {
-> > +     unsigned int cpu;
-> > +
-> > +     for_each_cpu(cpu, target)
-> > +             per_cpu(pending_ipi, cpu) = true;
-> > +
+> Le mardi 07 octobre 2025 à 10:31 +0200, Sven Püschel a écrit :
+>> This series adds support for the Raster Graphic Acceleration 3 (RGA3)
+>> peripheral, which is included in the RK3588 SoC. Unlike the RGA2 it
+>> can use the existing rockchip-iommu-v2 driver to handle iommu mappings.
+>> Also the RK3588 contains two independent RGA3 cores.
+> Thanks for working on this.
 >
-> Why isn't all of this part of the core IRQ management? We already
-> track things like timers, I assume for similar reasons. If IPIs have
-> to be singled out, I'd rather this is done in common code, and not on
-> a per architecture basis.
+>> Only scaling and format conversions between common 8bit RGB/YUV formats
+>> are implemented. Also the color space conversion is fixed to BT601F.
+>> This already allows a practical usage of the RGA3.
+> This seems quite limiting, can we expect an update on this, can't be that hard
+> to fully implement.
 
-The idea was to start simple, avoid running code for architectures
-that don't seem to need it, by using this opt-in and lightweight
-approach.
+Sorry, but currently there is no need to have a fully featured 
+implementation from our side. As the datasheet mentions that the RGA3 
+should do 4 or 2 pixel/cycle depending on the operation
 
-I guess we could do this in generic IRQ code too. Perhaps making it
-conditional behind a Kconfig, if required.
+>> This was tested on a Radxa Rock 5T. With the increased clock speeds in
+>> the devicetree around 160 fps were measured when scaling and converting
+> This is quite vague, I've checked the patch and you didn't extend either there.
+> Is that an overclock or was it miss-configured ? Does RK implement a devfreq ?
+> Should that be moved with a voltage adjustement ? Is there any thermal nearby we
+> should monitor ?
 
->
-> >       trace_ipi_raise(target, ipi_types[ipinr]);
-> >       arm64_send_ipi(target, ipinr);
-> >  }
-> >
-> > +bool cpus_has_pending_ipi(const struct cpumask *mask)
-> > +{
-> > +     unsigned int cpu;
-> > +
-> > +     for_each_cpu(cpu, mask) {
-> > +             if (per_cpu(pending_ipi, cpu))
-> > +                     return true;
-> > +     }
-> > +     return false;
-> > +}
-> > +
->
-> The lack of memory barriers makes me wonder how reliable this is.
-> Maybe this is relying on the IPIs themselves acting as such, but
-> that's extremely racy no matter how you look at it.
+This is mainly the result of a very low performance in the initial 
+testing. We were quite disappointed looking at 30 fps output. The 
+datasheet mentions the core should do 2 or 4 pixel/cycle, so we looked 
+if the clock speed could be increased. The TRM Part1 mentions that the 
+RGA3 clock uses a default divider of 2, so I've tweaked the dtsi to 
+avoid the clock divider and run it on the fastest clock.
 
-It's deliberately lightweight. I am worried about introducing
-locking/barriers, as those could be costly and introduce latencies in
-these paths.
+But this tweaking only increased the frame rate to around 36fps. After 
+some brainstorming and testing we found the culprit being the 
+RGA3_WR_SW_OUTSTANDING_MAX value in the command. With this value maxed 
+out and without the clock tweaks I've got around 80fps. As the clock 
+increase resulted in the expected doubling of the fps and my few tests 
+worked, I've included it in the patch set.
 
-Still this is good enough to significantly improve cpuidle based
-decisions in this regard. Please have a look at the commit message of
-patch3.
+I haven't done any stress testing and don't mind to remove the clock 
+speed adjustments from the dtsi.
 
-That said, for sure I am open to suggestions on how to improve the
-"racyness", while still keeping it lightweight.
+>> from RGBA 480x360 to NV12 3840x2160. Without the clock speed scaling a
+>> default clock division factor of 2 is used and only around 80 fps are
+>> reached with one core. The v4l2-compliance tests only complain about
+>> the already failing colorspace propagation:
+> Did you do any more format testing to validation all supported combinations ?
+> This is a tool [0] you can use to test this using GStreamer and how to use it
+> [1].
 
-Kind regards
-Uffe
+Thanks for the link!
+
+I've did some simple format conversion tests with a static test pattern.
+
+The tests mainly converts any combination of RGB/YUV formats (hope I 
+didn't miss anything) to each other. Then I convert it back to rgba with 
+gstreamer and compare it's hash.
+
+For scaling I've just tested one upscale, downscale and scale to a non 
+aligned width/height.
+
+> [0]https://gitlab.collabora.com/mediatek/aiot/lava-test-definitions/-/tree/main/avvideocompare?ref_type=heads
+> [1]https://gitlab.collabora.com/mediatek/aiot/linux/-/blob/mediatek-next/.gitlab-ci.yml?ref_type=heads#L282
+>>    v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+>>    ...
+>>    		fail: v4l2-test-formats.cpp(923): fmt_cap.g_colorspace() !=
+>> col
+>>    	test VIDIOC_S_FMT: FAIL
+>>    ...
+>>    Total for rockchip-rga device /dev/video0: 47, Succeeded: 46, Failed: 1,
+>> Warnings: 0
+>>
+>>    v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+>>    ...
+>>    		fail: v4l2-test-formats.cpp(923): fmt_cap.g_colorspace() !=
+>> col
+>>    	test VIDIOC_S_FMT: FAIL
+>>    ...
+>>    Total for rockchip-rga device /dev/video1: 47, Succeeded: 46, Failed: 1,
+>> Warnings: 0
+>>
+>>    v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+>>    ...
+>>    		fail: v4l2-test-formats.cpp(923): fmt_cap.g_colorspace() !=
+>> col
+>>    	test VIDIOC_S_FMT: FAIL
+>>    ...
+>>    Total for rockchip-rga device /dev/video2: 47, Succeeded: 46, Failed: 1,
+>> Warnings: 0
+>>
+>> Each RGA core is a separate /dev/video device. To distinguish the RGA2
+>> core from the RGA3 cores the Card type is set accordingly. Combining all
+>> cores into a single device and scheduling tasks to the best core might
+>> be a future improvement, if it is desired by upstream to handle the
+>> scheduling and selection in kernel space.
+> It took me some time to understand why you spoke about multicore here. You
+> forgot to say here that you add RGA3 into RGA2 driver. Some information on why
+> you went that path instead of a separate driver.
+
+Mostly as I've started by using the rga driver as a basis and just 
+adjusted the command stream and register values to the RGA3. I was 
+unsure, if I should create a separate driver.
+As it didn't seem unfeasible to have the existing driver handle both 
+units, I've decided to add it to the existing driver to avoid code 
+duplication.
+
+But looking at your comments about the wrong announcement of e.g. color 
+space conversion, I now think that a new driver is probably better to 
+avoid adding too much of the differences to the struct.
+
+>  From high level view, I don't think its a good idea to multi-plex over
+> heterogeneous core. They may not even produce the exact same pixels for the same
+> operation. They also don't share the same MMU, and at first glance, the use of
+> rkiommu in RGA3 means it can no longer handle CPU cache (though I don't know if
+> this is implemented/supported in upstream RGA2 driver).
+
+Thanks for the insight. This gives me another reason to create a 
+separate driver. I'll probably also look into multiplexing the 2 RGA3 
+cores to only expose one RGA3 video device to userspace (the current 
+implementation exposes both cores individually to the userspace)
+
+Sincerely
+
+     Sven
+
+>> Patch 1-2 are general cleanups
+>> Patch 3-12 prepare the rga driver for the RGA3
+>> Patch 13 documments the RGA3 compatible value
+>> Patch 14 adds the RGA3 cores to the rk3588 dtsi
+>> Patch 15 increases the RGA3 core clock speeds
+>> Patch 16 adds RGA3 support to the rga driver
+>>
+>> Signed-off-by: Sven Püschel<s.pueschel@pengutronix.de>
+>> ---
+>> Sven Püschel (16):
+>>        media: rockchip: rga: use clk_bulk api
+>>        media: rockchip: rga: use stride for offset calculation
+>>        media: rockchip: rga: align stride to 16 bytes
+>>        media: rockchip: rga: move hw specific parts to a dedicated struct
+>>        media: rockchip: rga: use card type to specify rga type
+>>        media: rockchip: rga: change offset to dma_addresses
+>>        media: rockchip: rga: support external iommus
+>>        media: rockchip: rga: remove size from rga_frame
+>>        media: rockchip: rga: remove stride from rga_frame
+>>        media: rockchip: rga: move rga_fmt to rga-hw.h
+>>        media: rockchip: rga: add iommu restore function
+>>        media: rockchip: rga: handle error interrupt
+>>        media: dt-bindings: media: rockchip-rga: add rockchip,rk3588-rga3
+>>        arm64: dts: rockchip: add rga3 dt nodes
+>>        arm64: dts: rockchip: increase rga3 clock speed
+>>        media: rockchip: rga: add rga3 support
+>>
+>>   .../devicetree/bindings/media/rockchip-rga.yaml    |   1 +
+>>   arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      |  50 +++
+>>   drivers/media/platform/rockchip/rga/Makefile       |   2 +-
+>>   drivers/media/platform/rockchip/rga/rga-buf.c      |  78 ++--
+>>   drivers/media/platform/rockchip/rga/rga-hw.c       | 356 ++++++++++++---
+>>   drivers/media/platform/rockchip/rga/rga-hw.h       |  15 +-
+>>   drivers/media/platform/rockchip/rga/rga.c          | 404 ++++++-----------
+>>   drivers/media/platform/rockchip/rga/rga.h          |  74 ++--
+>>   drivers/media/platform/rockchip/rga/rga3-hw.c      | 490
+>> +++++++++++++++++++++
+>>   drivers/media/platform/rockchip/rga/rga3-hw.h      | 186 ++++++++
+>>   10 files changed, 1246 insertions(+), 410 deletions(-)
+>> ---
+>> base-commit: afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328
+>> change-id: 20251001-spu-rga3-8a00e018b120
+>>
+>> Best regards,
 
