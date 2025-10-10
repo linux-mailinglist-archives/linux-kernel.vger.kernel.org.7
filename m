@@ -1,47 +1,88 @@
-Return-Path: <linux-kernel+bounces-847704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6569CBCB751
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:49:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBFDBCB757
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB794036ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:49:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C60A4F0BEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FEE229B2A;
-	Fri, 10 Oct 2025 02:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2775619C542;
+	Fri, 10 Oct 2025 02:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DoE7yU7W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3W2G2ot"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B6314F9FB;
-	Fri, 10 Oct 2025 02:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7761A0B15
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760064533; cv=none; b=GF92hpt9Lv0zAYLgcvi/WR0swo2hn8FvIv+nFlLRPCdqDzjVMPbTPQqptVl+oNvE6lchhvpRAAph2L9iT19humuODXZ9oJICCOL5qS9Ys1g1FXSY3WVqNs5WJ0vF1T8ET9gNX4sdW5L/daZ64rpwJq8xSqmNyETGu4/a1wG/WRM=
+	t=1760064748; cv=none; b=d5SBKDsuBkKrLASxja5GQO5sRSP/tDMhj38mggQpRw03UbzJg5xtXHSAYE+sj0b3vBL+PNsoTwvrX85SUGW2g+RrAPPhbgI+ij4WjDtv6d0ATyUyRF4ik9bXAykFJ13JZysdMFgIHqBk8U/Ob5pKlD57WXeR9eXqk8Pyp8z8yL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760064533; c=relaxed/simple;
-	bh=dpHvJ3fXY5TGb269aSKXP1Sb8xv7H1F0krpu0an6SWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MOEPGVzgH//gVqDO+xB2uStHAU9efZRGKX8kJdzovwA+HSu303mSlL17BkjQklUbCEQRhICzj0VR8bASvxahit11ySvAJi+7ESyTEgeUBhzmvok5Khm+lRDbFPFzf52iFais4FYtGU69zcpG9HZ1DN5FMKEtmAV0R4NP365rIDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DoE7yU7W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B52BCC4CEE7;
-	Fri, 10 Oct 2025 02:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760064533;
-	bh=dpHvJ3fXY5TGb269aSKXP1Sb8xv7H1F0krpu0an6SWg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DoE7yU7WXBy06VP9Dofh+2qXhJ6nB0/LI0pvzA7fkWCHph4P+6b1nm8WKFCs6jduf
-	 3Swy2O5eBg1OX2d7jM2u8PlLUNx2+EUZOaHk9+dvrmyln8WHqd25Tk57Htu0ytOVnW
-	 /KLm9WAGiqEJCvw8VoYDCsk8f+zNwWvGI7CA/+VzHfpfcKN1PXlf8DM9TvLxV++QsE
-	 Hq3bJ6AGQIRFyeLqX4Qd812NF/VAKyfZmBPb/SlubG2q7aDW4n73OJ2MxaIKckHMgm
-	 2iwpX76GgVp68SbzxgqHClHXrDfbCXpkgtdZAD+oizuqU/sDv/E5Cebxf2/b40gTXS
-	 ZfDbTvu/ZrLnQ==
-Message-ID: <4f490516-20d8-485f-8e1a-a1fb8c23e526@kernel.org>
-Date: Fri, 10 Oct 2025 04:48:48 +0200
+	s=arc-20240116; t=1760064748; c=relaxed/simple;
+	bh=BtPGX0SCKTWOO/2pmFrKk9ubExIp15TCY8Ta2rehDnA=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HgpH69YueyuqoA8yuaDZHG8gNqxm+66B8mvQBhfn42LQ4ee6LosEdnUwpLVJBQfmeOsNJHSjP7/bRXxn1gp9NahfaNYxTUeLYDcoaYyvYF2f3jnNltagPDpQuCVmwnM31fSyq7hLJLu3L85lMBxuL4eXhDPnWqb4/AfAsvtqtQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3W2G2ot; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760064745;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p77JZb+Mdci5/KEMJK1kpt1QjxLJZnP83075vW8bdvw=;
+	b=h3W2G2otOek2e79fsAMahCn4y5ymGHc7LM0BK/DQXBwaUg3fFQo9WT0lAuIL9XQyXoPc8N
+	EDcJeSK4U/DnYaLvdNY4jdtmo4cKoQFgByYxxJKJtG1DCnDSk+R4fQ82SR0DeIhYFioBle
+	9PjSm2+4uVy/JGhfQPKcZ7oQneltX30=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-487-o31lBna-MnGLP0OSVA3xUA-1; Thu, 09 Oct 2025 22:52:24 -0400
+X-MC-Unique: o31lBna-MnGLP0OSVA3xUA-1
+X-Mimecast-MFC-AGG-ID: o31lBna-MnGLP0OSVA3xUA_1760064743
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-79e48b76f68so73323176d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 19:52:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760064743; x=1760669543;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p77JZb+Mdci5/KEMJK1kpt1QjxLJZnP83075vW8bdvw=;
+        b=D3VPFs7TowzvrPG9051l1/ORoaQrcs3u4x696Lv0rBrgsDrv/9QTp57iQQ7e2FCBnJ
+         ChL0gW4s+bzxMWknAyZyCbKbit9AAp6iquYPvNfDCKbHvrkn2+7nNYue51JFDcU2CHYu
+         fDsrtK8P90eQsn0bBV1DU2fSw+5rRfNAwUYwCF/fRJ87O36N13P/2u5u/e/BPkCAtST9
+         urPz/gT48pjVL/66K9vogUWER1SFcmZNfZIScLaeOLAv3KPhphuve8R94vf0SB4t2MO4
+         gFZzSCTQONkVdc8gJ8sIG6RhKHG2VGxxpvQpu9sC5b+4e6eUEDaD7c3hK8f7MielQx9c
+         RORw==
+X-Forwarded-Encrypted: i=1; AJvYcCUChavcSQAOyVkULVolHR2xH20+NmTQUQPE7ontcnA/t/pGwJPLvWecpWTdDznYDv/0Klu2m4R6UFQl7Go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywlCKKNwEbh1ybRlt9yuNwRGXeT2VUuNP2U4VVkoSNkVeGEyBd
+	92nmZuusq0CwBLCpG0Q5Q0dFeAWhspf+aRUCTH0xw3Al22K7FU+5ZQcm76xqwG6EnXr1zO0WPV4
+	DBONV8ISTHSQeJdoaNJ/nv8gzpQIPp7mAUvFkBDu+2h2qkuu6561L3negiuNk+uQkpQ==
+X-Gm-Gg: ASbGncvS9FW0pNlHJy+PPgEOsOD1hbAB/bPesVmBdNuSfJVG3HJZsrcUBUMurLrCrwZ
+	XtvWI7AWkIuBwPcsQDP76jB43oCRlGLG9x6Jt6REKECYp6JmPUtqb1SpblhV9s0JEktMY2ReF84
+	fRcha2z3i0ckDGP3QDkRGxA73QzE6UDHYRgE0Bh/UBZsHBqLEVWwEFHGWyBTreJyl+ncUfE33WB
+	/20Gsji4Z+5DCqXFRjysS3D9kigu7ToUgAwxSne21H1oiMQ/g3x2zNPuGn54ojQZw71JQVfea43
+	gtvtsctgx/UIWEAU/O9OT+otp9T/oPs94REXh0ivERPj+80A04wAEUFWmotZwg6IXKvrrueLCLn
+	Xk7xTcy1QIMY=
+X-Received: by 2002:ad4:594b:0:b0:873:f6bc:abb8 with SMTP id 6a1803df08f44-87b2101d5d4mr127529116d6.15.1760064743565;
+        Thu, 09 Oct 2025 19:52:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0lkCcjXQD1DjvauUfSkRJqcrLhOc8z33VBbhKdHXGR8krbUUptEp7lztjXHaRk4Wn9gpyaw==
+X-Received: by 2002:ad4:594b:0:b0:873:f6bc:abb8 with SMTP id 6a1803df08f44-87b2101d5d4mr127528846d6.15.1760064743131;
+        Thu, 09 Oct 2025 19:52:23 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87bc345da68sm7842246d6.13.2025.10.09.19.52.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 19:52:22 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <3c20a451-ebc6-4057-be77-2caaf6d2317c@redhat.com>
+Date: Thu, 9 Oct 2025 22:52:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,120 +90,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] memory: renesas-rpc-if: Add suspend/resume support
-To: Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- linux-renesas-soc@vger.kernel.org
-References: <20250923151437.287721-1-biju.das.jz@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] pci/aer_inject: switching inject_lock to
+ raw_spinlock_t
+To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org
+References: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250923151437.287721-1-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 23/09/2025 17:14, Biju wrote:
->  	if (rpc->info->type == XSPI_RZ_G3E) {
-> -		struct clk *spi_clk;
-> -
-> -		spi_clk = devm_clk_get_enabled(dev, "spix2");
-> -		if (IS_ERR(spi_clk))
-> -			return dev_err_probe(dev, PTR_ERR(spi_clk),
-> +		rpc->spix2_clk = devm_clk_get_enabled(dev, "spix2");
-> +		if (IS_ERR(rpc->spix2_clk))
-> +			return dev_err_probe(dev, PTR_ERR(rpc->spix2_clk),
->  					     "cannot get enabled spix2 clk\n");
->  
-> -		spi_clk = devm_clk_get_enabled(dev, "spi");
-> -		if (IS_ERR(spi_clk))
-> -			return dev_err_probe(dev, PTR_ERR(spi_clk),
-> +		rpc->spi_clk = devm_clk_get_enabled(dev, "spi");
-> +		if (IS_ERR(rpc->spi_clk))
-> +			return dev_err_probe(dev, PTR_ERR(rpc->spi_clk),
->  					     "cannot get enabled spi clk\n");
->  	}
->  
-> @@ -1063,6 +1063,44 @@ static void rpcif_remove(struct platform_device *pdev)
->  	platform_device_unregister(rpc->vdev);
->  }
->  
-> +static int rpcif_suspend(struct device *dev)
-> +{
-> +	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-> +
-> +	if (rpc->info->type == XSPI_RZ_G3E) {
+On 10/9/25 11:06 AM, Guangbo Cui wrote:
+> When injecting AER errors under PREEMPT_RT, the kernel may trigger a
+> lockdep warning about an invalid wait context:
+>
+> ```
+> [ 1850.950780] [ BUG: Invalid wait context ]
+> [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
+> [ 1850.951457] -----------------------------
+> [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
+> [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
+> [ 1850.952731] other info that might help us debug this:
+> [ 1850.952997] context-{5:5}
+> [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
+> [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
+> [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
+> [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
+> ```
+>
+> This happens because the AER injection path (`aer_inj_read_config()`)
+> is called in the context of the PCIe PME interrupt thread, which runs
+> through `irq_forced_thread_fn()` under PREEMPT_RT. In this context,
+> `pci_lock` (a raw_spinlock_t) is held with interrupts disabled
+> (`spin_lock_irqsave()`), and then `aer_inj_read_config()` tries to
+> acquire `inject_lock`, which is a `rt_spin_lock`. (Thanks Waiman Long)
+>
+> `rt_spin_lock` may sleep, so acquiring it while holding a raw spinlock
+> with IRQs disabled violates the lock ordering rules. This leads to
+> the “Invalid wait context” lockdep warning.
+>
+> In other words, the lock order looks like this:
+>
+> ```
+>    raw_spin_lock_irqsave(&pci_lock);
+>        ↓
+>    rt_spin_lock(&inject_lock);   <-- not allowed
+> ```
+>
+> To fix this, convert `inject_lock` from an `rt_spin_lock` to a
+> `raw_spinlock_t`, a raw spinlock is safe and consistent with the
+> surrounding locking scheme.
+>
+> This resolves the lockdep “Invalid wait context” warning observed when
+> injecting correctable AER errors through `/dev/aer_inject` on PREEMPT_RT.
+>
+> This was discovered while testing PCIe AER error injection on an arm64
+> QEMU virtual machine:
+>
+> ```
+>    qemu-system-aarch64 \
+>        -nographic \
+>        -machine virt,highmem=off,gic-version=3 \
+>        -cpu cortex-a72 \
+>        -kernel arch/arm64/boot/Image \
+>        -initrd initramfs.cpio.gz \
+>        -append "console=ttyAMA0 root=/dev/ram rdinit=/linuxrc earlyprintk nokaslr" \
+>        -m 2G \
+>        -smp 1 \
+>        -netdev user,id=net0,hostfwd=tcp::2223-:22 \
+>        -device virtio-net-pci,netdev=net0 \
+>        -device pcie-root-port,id=rp0,chassis=1,slot=0x0 \
+>        -device pci-testdev -s -S
+> ```
+>
+> Injecting a correctable PCIe error via /dev/aer_inject caused a BUG
+> report with "Invalid wait context" in the irq/PCIe thread.
+>
+> ```
+> ~ # export HEX="00020000000000000100000000000000000000000000000000000000"
+> ~ # echo -n "$HEX" | xxd -r -p | tee /dev/aer_inject >/dev/null
+> [ 1850.947170] pcieport 0000:00:02.0: aer_inject: Injecting errors 00000001/00000000 into device 0000:00:02.0
+> [ 1850.949951]
+> [ 1850.950479] =============================
+> [ 1850.950780] [ BUG: Invalid wait context ]
+> [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
+> [ 1850.951457] -----------------------------
+> [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
+> [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
+> [ 1850.952731] other info that might help us debug this:
+> [ 1850.952997] context-{5:5}
+> [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
+> [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
+> [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
+> [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
+> [ 1850.955932] stack backtrace:
+> [ 1850.956412] CPU: 0 UID: 0 PID: 56 Comm: irq/16-PCIe PME Not tainted 6.17.0-11316-g7a405dbb0f03-dirty #7 PREEMPT_{RT,(full)}
+> [ 1850.957039] Hardware name: linux,dummy-virt (DT)
+> [ 1850.957409] Call trace:
+> [ 1850.957727]  show_stack+0x18/0x24 (C)
+> [ 1850.958089]  dump_stack_lvl+0x40/0xbc
+> [ 1850.958339]  dump_stack+0x18/0x24
+> [ 1850.958586]  __lock_acquire+0xa84/0x3008
+> [ 1850.958907]  lock_acquire+0x128/0x2a8
+> [ 1850.959171]  rt_spin_lock+0x50/0x1b8
+> [ 1850.959476]  aer_inj_read_config+0x38/0x1dc
+> [ 1850.959821]  pci_bus_read_config_dword+0x80/0xd8
+> [ 1850.960079]  pcie_capability_read_dword+0xac/0xd8
+> [ 1850.960454]  pcie_pme_irq+0x44/0xc4
+> [ 1850.960728]  irq_forced_thread_fn+0x30/0x94
+> [ 1850.960984]  irq_thread+0x1ac/0x3a4
+> [ 1850.961308]  kthread+0x1b4/0x208
+> [ 1850.961557]  ret_from_fork+0x10/0x20
+> [ 1850.963088] pcieport 0000:00:02.0: AER: Correctable error message received from 0000:00:02.0
+> [ 1850.963330] pcieport 0000:00:02.0: PCIe Bus Error: severity=Correctable, type=Physical Layer, (Receiver ID)
+> [ 1850.963351] pcieport 0000:00:02.0:   device [1b36:000c] error status/mask=00000001/0000e000
+> [ 1850.963385] pcieport 0000:00:02.0:    [ 0] RxErr                  (First)
+> ```
+>
+> Signed-off-by: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+> ---
+> Changes in v2:
+> - Pulling kfree() out from the lock critical section. (Thanks Waiman Long)
+> - Link to v1: https://lore.kernel.org/linux-pci/20251007060218.57222-1-jckeep.cuiguangbo@gmail.com/
 
-clk are null in other case, so you can simplify it by dropping this if().
+As PCI error injection is mainly for debug/development, I think it is OK 
+to change inject_lock to a raw_spinlock. I think you should also mention 
+about moving kfree() out of the lock critical section in the commit log. 
+Or better yet, break it out as a separate patch. It is just a nit. So I 
+am fine with the current version too.
 
-> +		clk_disable_unprepare(rpc->spi_clk);
-> +		clk_disable_unprepare(rpc->spix2_clk);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int rpcif_resume(struct device *dev)
-> +{
-> +	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-> +
-> +	if (rpc->info->type == XSPI_RZ_G3E) {
+Now it is up to the PCI maintainer to decide if further change is needed.
 
+Acked-by: Waiman Long <longman@redhat.com>
 
-... which would save you one indentation here making it a bit more readable.
-
-> +		int ret;
-> +
-> +		ret = clk_prepare_enable(rpc->spix2_clk);
-> +		if (ret) {
-> +			dev_err(dev, "failed to enable spix2 clock: %pe\n",
-> +				ERR_PTR(ret));
-> +			return ret;
-
-
-Best regards,
-Krzysztof
 
