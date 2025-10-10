@@ -1,158 +1,161 @@
-Return-Path: <linux-kernel+bounces-848459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3B5BCDD1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE55BCDD43
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20346406880
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81A0C546158
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528422FB0B5;
-	Fri, 10 Oct 2025 15:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAjzMCP6"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE23B2FB0BC;
+	Fri, 10 Oct 2025 15:41:31 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71AC2FB091
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DB42FB098
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760110864; cv=none; b=k4YPe/jPqciU/+dyV7PPA+QadbGx/YmIsxR3YFBgUonu1xrkImUybFEozO/fFoWNySdlc5TodzIgCgW32l10d9gKsNzg+anqDq3FJQV7U5S2N7/jEfOf1bgv1o8tMVHcXggSXOLSx5y5xG/wYS0dYIxSpuuwM3E0aSkV8nBdGr8=
+	t=1760110891; cv=none; b=mxD2yx2bZkHRXwBpLlrl1Yy35DSmqwpmSyetXfAqGmPbp+I5qjfPLewDtOXKMyos9S43U0g7+DAbKDzBu9YLR/N4/vq3QX7yjvumZRcPO9wjEAHklnIqPVxlVDi4h7JU/0Dkiwe8AEHgViOD3yjCZ0CM4+kIM0YIUSY67shYivE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760110864; c=relaxed/simple;
-	bh=xOJuDOIlas451FiXAAHgBhsNRzt6HStLrb4Y3mKzjBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qBUfvyORGCNUpiqfOcCnjn3xaQgcZK6aTOLsrDNYbDwOwIsqCjtXLJ3rNqvx+RtYBzV0Q6JCbR08Uj7PaKTsbI+ca2eXfxXNDXiUMReW6v/WYI+iXuJJ8pjO0NzlLBoEF0c7tfeBtouCWp7xmoo/+RyD0JADso0QH0ptgdcKCOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAjzMCP6; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-636535e4b1aso4983505a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760110861; x=1760715661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pNrx81VuCOUnlOhs53ChqFbGZmsPkwHURyqTboyD4SA=;
-        b=HAjzMCP6WRFHv/sreS1KWvOy6uXorsCkmnygvRunN2bqmGbBktPhZ9U6HGiqyMP0cZ
-         vcYM6+1DmRsf5UmsVPkExeA4WxM6kbNyB2VNxeu4ENsh3hpq9Wt6RuMc1X8lZ7HSIaWs
-         EqIktZDYJcyX5J8DP6WL/i/WTfjV7NdvFv/trIlSgKJyMxW0Aisbc1WLCgoTmSmzq2tU
-         4rcf7rzcR3yi7nRiW4ojKWvGw1hg2qy38twmbdGmAAtI2oCDGcmLTkDX+d1WAmlwHDBy
-         KkHR6uV/go7sPmZTc+/dBMRFzIs+gbgdJBlT9wfbYDR3m+TfJFt+zxi0ii5lQeVsCD/E
-         0i0Q==
+	s=arc-20240116; t=1760110891; c=relaxed/simple;
+	bh=oXdJ9hxao0+88bJ3Q5bqzIcokKU8lyciNlAMcN/Ujkg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=c9HxIPjJKMgi9ha08YY0dvuusdvqmkvtMf5alHSjCrWcQLBeOqUDyfbBxdgwX645qChKYPM2QGz+qBx3XRO9ritBoyPYzqxCyRMZij/qMn9FkxImsoDJyQIKnzYmDfW9jppIe9uF+rPrfa/CMhKmP1Qk94g4UchVnTFF45by4LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42b2a51fad2so75208895ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:41:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760110861; x=1760715661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pNrx81VuCOUnlOhs53ChqFbGZmsPkwHURyqTboyD4SA=;
-        b=kzts3mySBK7ruv2lVJq8LMp14CgpwvjcaolHD+/gnezvRg044nHvhqBfJ8r5hCWXa5
-         7wiZy8JNMsJu6w1ecK3IU/+wz7iIU8jCz3kc+73JzOcxqJswgZDOSan+ef3yEBH/uIzO
-         07JKiagdcGg2W1jL0C85ddfQwGSrunNSKAxx1ZW5kN094v2ij52yJpXV03yD44wGsthL
-         ImAmP3CxcKAXnruSuRBE3iDmPra8lhybALqTB+4OLhMhAm9coP9vjFBEMlgYlKke4AZ8
-         EsL7jWJ28//2hEy5oD3pxkbPEl/kef8f+LUhC3lRgp9T1+SRBVfTwb9EQG7An0B4wbds
-         28NA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGIOjMIPI9LKlzTiKhfPM7BXZcQAC327r5s8dg26zV74pHs9bsZdTrrgTxDDpoNUps6NeL4fd3Ns9CZ64=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6y94SQUlghDGFb/7NLmbg3NaHpP2YXFqfSiBiBdQ4w6re7eBg
-	c4kztNbADzg1q43TiQvG7hFOhV6qaAnJ8PCNCEwdzTeYYGAnEqzky1no7eZ81+NLz/zHzja6siP
-	yfZ1H22UeKGJtRoiE3LJ1rPMd8RID96ldQyUz
-X-Gm-Gg: ASbGncuhptUE3RQFEXWhoPyn02QSoIbfcmOx2EvGnwCryAHsXpT52UbSTrsDs5+RJaz
-	wjM49hh1jJD8hZ0Oo4ueNs7cTyNKUBCFny2AA9yq/B4TL0jnkFf+hBjWrUIZfgqbjhEXwTVLVO/
-	B5z0EYjoQ4eCO9xTVlgXq0Y8203iwhnb0smBD4b3RfTeern2nYzr8ph1CSeRP7YziI/fuG1kgy/
-	JcMkdrPCarxKKUXHTUTK5wDQgIdshnRzSz6sURqtBkRvkCHmIT2plNF/+jkh1f8bCm+
-X-Google-Smtp-Source: AGHT+IFsVwlKz3dpQMSn0djeXDN0dipdKA/kgBAE2NxkawkzYdINOsshggkYLd2MlBJ2D7HcedRqmChtEct9QlvTNTA=
-X-Received: by 2002:a17:907:3e2a:b0:b2a:47c9:8ff5 with SMTP id
- a640c23a62f3a-b50bd050daemr1405146466b.10.1760110860769; Fri, 10 Oct 2025
- 08:41:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760110888; x=1760715688;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9t4YKrQ+i6zPnSqIk+4cnVQH6VUcMiv6uzmRTIEIoKI=;
+        b=rYhDbmyrg0ETuDhxdafBNxa9tVVqZUz1NVx9yWKWvnX6lKkNVAovxE94XSKizZPLxN
+         4I8VgzNKu3gZVCUPyxuwrnVYXLimobtDdW1xC2o4YbQtvFpUUDB9lLgdT0EGr+z9kbsA
+         BzOzTbccVrUkKdsCpIo6E+Paozuht4GJraGDFM50yxrFWHPteq0ARICbbOJXLgrrVf7V
+         4w/bOzyBST1lFuysyQyfUMFShWHigY2d2Q9I8qO/zS5Yk55nbjwoNffbhHmvkvATu76O
+         m2GrOnTnVPAB4D4yjLNzqzAB8n41oq0B1vnCuN7ebEIt+6Curs8om+LGitDErSFt350q
+         wb3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUxodQZX3kWr5tsM3XlKfVWaOdJN4JZaHAQhcb24+POoGIg9M6ZsLp73fn6dGr1mHDVKzVy/K4IFt7vhI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydUZ8cUtECnJQG6W+MvPDZ2EmE6W9OLVsRExOunLfJTQ6xkosz
+	MDYwdp2XO7j6fJyOjkyu7vQ8rU0diZoBMo24FZUkJuePsVO10RV0cBkw0MYrfNQii4igQXY//es
+	x/MlEo7nYriSZKnJuHpqil+TyJKnpkBuk6cS9ear977k9bXmcPmg9ejEsvFs=
+X-Google-Smtp-Source: AGHT+IEXeRrI+/fpBtKbI9Pf7crdMPmeGYhJHB7bmAj+WEO9WUvJdaR7A0Zl93pdG0LU5IE8GvkXLiCIYtgbmi5st4mnPcBuaQd7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009075929.1203950-1-mjguzik@gmail.com> <20251009075929.1203950-14-mjguzik@gmail.com>
- <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
-In-Reply-To: <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 10 Oct 2025 17:40:49 +0200
-X-Gm-Features: AS18NWBB3Bmc7XAi8sS7M18NKhoZbvSirs7my7gPJLr4eYk4Rf7Ljkokn3EGE5o
-Message-ID: <CAGudoHGckJHiWN9yCngP1JMGNa1PPNvnpSuriCxSM1mwWhpBUQ@mail.gmail.com>
-Subject: Re: [PATCH v7 13/14] xfs: use the new ->i_state accessors
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
+X-Received: by 2002:a05:6e02:1949:b0:42f:94f5:4684 with SMTP id
+ e9e14a558f8ab-42f94f54907mr64897265ab.5.1760110888125; Fri, 10 Oct 2025
+ 08:41:28 -0700 (PDT)
+Date: Fri, 10 Oct 2025 08:41:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e92928.050a0220.3897dc.0194.GAE@google.com>
+Subject: [syzbot] [bpf?] [net?] WARNING in sock_map_delete_elem (2)
+From: syzbot <syzbot+ad76dbe500667f3a4e17@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, jakub@cloudflare.com, john.fastabend@gmail.com, 
+	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	willemb@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 4:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 09-10-25 09:59:27, Mateusz Guzik wrote:
-> > Change generated with coccinelle and fixed up by hand as appropriate.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->
-> ...
->
-> > @@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
-> >        */
-> >       xfs_setup_iops(tmpfile);
-> >       xfs_finish_inode_setup(tmpfile);
-> > -     VFS_I(tmpfile)->i_state |=3D I_LINKABLE;
-> > +     inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
-> >
-> >       *wip =3D tmpfile;
-> >       return 0;
-> > @@ -2330,7 +2330,7 @@ xfs_rename(
-> >                * flag from the inode so it doesn't accidentally get mis=
-used in
-> >                * future.
-> >                */
-> > -             VFS_I(du_wip.ip)->i_state &=3D ~I_LINKABLE;
-> > +             inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
-> >       }
-> >
-> >  out_commit:
->
-> These two accesses look fishy (not your fault but when we are doing this
-> i_state exercise better make sure all the places are correct before
-> papering over bugs with _raw function variant). How come they cannot race
-> with other i_state modifications and thus corrupt i_state?
->
+Hello,
 
-I asked about this here:
-https://lore.kernel.org/linux-xfs/CAGudoHEi05JGkTQ9PbM20D98S9fv0hTqpWRd5fWj=
-EwkExSiVSw@mail.gmail.com/
+syzbot found the following issue on:
 
-> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > index caff0125faea..ad94fbf55014 100644
-> > --- a/fs/xfs/xfs_iops.c
-> > +++ b/fs/xfs/xfs_iops.c
-> > @@ -1420,7 +1420,7 @@ xfs_setup_inode(
-> >       bool                    is_meta =3D xfs_is_internal_inode(ip);
-> >
-> >       inode->i_ino =3D ip->i_ino;
-> > -     inode->i_state |=3D I_NEW;
-> > +     inode_state_set_raw(inode, I_NEW);
-> >
-> >       inode_sb_list_add(inode);
-> >       /* make the inode look hashed for the writeback code */
->
-> Frankly, the XFS i_state handling is kind of messy and I suspect we shoul=
-d
-> be getting i_state =3D=3D 0 here. But we need to confirm with XFS guys. I=
-'m
-> poking into this because this is actually the only case where we need
-> inode_state_set_raw() or inode_state_clear_raw() outside of core VFS and
-> I'd like to get rid of these functions because IMHO they are actively
-> dangerous to use.
->
+HEAD commit:    fd94619c4336 Merge tag 'zonefs-6.18-rc1' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ff8ee2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e2b03b8b7809165e
+dashboard link: https://syzkaller.appspot.com/bug?extid=ad76dbe500667f3a4e17
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-I'm going to address this in the other e-mail.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/201636e25a0b/disk-fd94619c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b63e3832240c/vmlinux-fd94619c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/11fc378734e8/bzImage-fd94619c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ad76dbe500667f3a4e17@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt))
+WARNING: CPU: 0 PID: 5969 at kernel/softirq.c:176 __local_bh_disable_ip+0x3d9/0x540 kernel/softirq.c:176
+Modules linked in:
+CPU: 0 UID: 0 PID: 5969 Comm: syz.1.2 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:__local_bh_disable_ip+0x3d9/0x540 kernel/softirq.c:176
+Code: 0f b6 04 28 84 c0 0f 85 56 01 00 00 83 3d 52 9b 32 0d 00 75 19 90 48 c7 c7 c0 b7 c9 8a 48 c7 c6 00 b8 c9 8a e8 f8 5f fe ff 90 <0f> 0b 90 90 90 e9 7b ff ff ff 90 0f 0b 90 e9 71 fe ff ff e8 cf 84
+RSP: 0018:ffffc900056bf940 EFLAGS: 00010246
+RAX: f63c8546519c3800 RBX: 1ffff92000ad7f30 RCX: 0000000000080000
+RDX: ffffc9000d891000 RSI: 00000000000093ed RDI: 00000000000093ee
+RBP: ffffc900056bfa48 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101710487b R12: ffff88803c911e00
+R13: dffffc0000000000 R14: ffff88803c91294c R15: 1ffff11007922529
+FS:  00007fe7c46d66c0(0000) GS:ffff888127020000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b30217ff8 CR3: 000000001dfd6000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ local_bh_disable include/linux/bottom_half.h:20 [inline]
+ spin_lock_bh include/linux/spinlock_rt.h:87 [inline]
+ __sock_map_delete net/core/sock_map.c:421 [inline]
+ sock_map_delete_elem+0xaf/0x170 net/core/sock_map.c:452
+ bpf_prog_e78d8a1634f5e22d+0x46/0x4e
+ bpf_dispatcher_nop_func include/linux/bpf.h:1350 [inline]
+ __bpf_prog_run include/linux/filter.h:721 [inline]
+ bpf_prog_run include/linux/filter.h:728 [inline]
+ bpf_prog_run_pin_on_cpu include/linux/filter.h:745 [inline]
+ bpf_flow_dissect+0x225/0x720 net/core/flow_dissector.c:1024
+ bpf_prog_test_run_flow_dissector+0x37c/0x5c0 net/bpf/test_run.c:1425
+ bpf_prog_test_run+0x2cd/0x340 kernel/bpf/syscall.c:4673
+ __sys_bpf+0x562/0x860 kernel/bpf/syscall.c:6152
+ __do_sys_bpf kernel/bpf/syscall.c:6244 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6242 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6242
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe7c646eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe7c46d6038 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fe7c66c5fa0 RCX: 00007fe7c646eec9
+RDX: 0000000000000050 RSI: 0000200000000000 RDI: 000000000000000a
+RBP: 00007fe7c64f1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fe7c66c6038 R14: 00007fe7c66c5fa0 R15: 00007ffd3a510c78
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
