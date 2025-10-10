@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-848886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E71BCEC20
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:36:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB21BCEC2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B8973B3C04
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694D93BB67C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9E827FB31;
-	Fri, 10 Oct 2025 23:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FF028153D;
+	Fri, 10 Oct 2025 23:36:55 +0000 (UTC)
 Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6195F26D4FB
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 23:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFEB27FB37
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 23:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760139397; cv=none; b=Zywga3l6Sc+pcC/RvVUVr5n2MXVP2WCtu5Wm/Of8cF2SvbQMWHl4YMKEihHYmUweqNnwpSxuj1PJPFYrFR3XLY29mzQpWGWhoEDhxOfp/ECsuvWZSCsHpPj9pjhwK/76Ih/7YWmDD0AGOqpcnoCkBDSqLYf9LXRj7Yyt1a0/5a4=
+	t=1760139415; cv=none; b=D/K9pDxW0HUtdkD9XJTCmkLKL08JyuMgM/2aNNfzHJ4Pm553D3TFPTw77yDqZe7LZ0Hj0jwI4BydbuDV+vBY+R/5Xmtx6rBvaqJZxppTTOzq34sh300B+9nM8AsEnrJHLLZiiK+GcZP8V38hyl8TCTcZV6KXtpfGiI2Lucbzl7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760139397; c=relaxed/simple;
-	bh=0OUg51FdlTMRQu8lk1RhOXlx6yb/G/EgjGO3ffnScbA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bYNbpKTUcFEZjENgiE34m+LU5QlsUbafqiwl4t0uzOkRd8gB4b+AP8NSiZC9vtX8pufbDLz2cVndmaNFJl9e+OKF5eImPrmwh3ZKEfyDOlOkGr9IRlYWVw3HfFo99aGCl6WWOcRc3qENynJ515kY9LehvAcDhFJ/5X6dnAqwjyw=
+	s=arc-20240116; t=1760139415; c=relaxed/simple;
+	bh=yn549GC5MTVOmDeuKYorX8vzwQVzn0ayeG7Hx9nghZg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iEFp5jr83cbEhvozc84GjqOdS0S66wPyMxG0u39K4bqxTrFNkVO+MqiKKb8+My/mpKK3G2Cc54zelq6IePZ09MaLtRhbNwpIhNC6vsdojKJMpE3r8Mmq0pcAJVJGGM7T9AUxMZvNoew1vJ114uur0xg4d0lXetmLNDQTkF8J8es=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from [127.0.0.2] (unknown [114.241.81.247])
-	by APP-05 (Coremail) with SMTP id zQCowADHaxVUmOloXC2IDQ--.41211S2;
+	by APP-05 (Coremail) with SMTP id zQCowADHaxVUmOloXC2IDQ--.41211S3;
 	Sat, 11 Oct 2025 07:35:48 +0800 (CST)
 From: Vivian Wang <wangruikang@iscas.ac.cn>
-Subject: [PATCH v3 0/5] riscv: Use __riscv_has_extension_{likely,unlikely}
-Date: Sat, 11 Oct 2025 07:35:42 +0800
-Message-Id: <20251011-riscv-altn-helper-wip-v3-0-d40ddaa1985a@iscas.ac.cn>
+Date: Sat, 11 Oct 2025 07:35:43 +0800
+Subject: [PATCH v3 1/5] riscv: pgtable: Use __riscv_has_extension_unlikely
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,12 +42,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAE6Y6WgC/4XOy07DMBAF0F+JvMaVH/KDrvgPxGI8HhNLbZLaw
- S2q8u+YdAMLxPKO5h7dO6tUMlV2HO6sUMs1z1MP+mlgOML0TjzHnpkSygivBC+5YuNwWic+0mm
- hwq954UJA0mCMQu1Y7y6FUr7t7uvbIxe6fHR+fRxZgEoc5/M5r8cBo4EuhJi80Dqi185bLU20O
- vmglQkxgEqRfVtjrutcPvfJTe7YP+ua5IKjRqssyuTIvvQ3qAfAA0672dRPR/7lqO48G28TOKG
- S87+dbdu+AA3BjXVQAQAA
-X-Change-ID: 20250820-riscv-altn-helper-wip-00af3a552c37
+Message-Id: <20251011-riscv-altn-helper-wip-v3-1-d40ddaa1985a@iscas.ac.cn>
+References: <20251011-riscv-altn-helper-wip-v3-0-d40ddaa1985a@iscas.ac.cn>
+In-Reply-To: <20251011-riscv-altn-helper-wip-v3-0-d40ddaa1985a@iscas.ac.cn>
 To: Paul Walmsley <paul.walmsley@sifive.com>, 
  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
  Alexandre Ghiti <alex@ghiti.fr>, Yury Norov <yury.norov@gmail.com>, 
@@ -58,77 +55,113 @@ Cc: Charlie Jenkins <charlie@rivosinc.com>,
  Vivian Wang <wangruikang@iscas.ac.cn>, Vivian Wang <uwu@dram.page>, 
  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-CM-TRANSID:zQCowADHaxVUmOloXC2IDQ--.41211S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw17Xr4UArW3tr1rXw1kZrb_yoW8trW3pF
-	43Cr9I9rn3G34Sqws3Ar129r40va1rWw1agrsIg348Z3y2yryxZrn0kw1ruryDtFZ7Zryj
-	kr13Gr17uF1UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-TRANSID:zQCowADHaxVUmOloXC2IDQ--.41211S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFWUKFW8uF4rXr1fJF45trb_yoW5Cw1Upr
+	Z3CasxWrWrCw1xurZ2yr4DCr45Z39ag3W3Kr1S93WrAr4akw42vrnxJ3Wayry8Ja97X348
+	KF4akr45W3W3Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
+	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84
+	ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
+	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
+	v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
+	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
+	IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
+	KfnxnUUI43ZEXa7VUjrHUDUUUUU==
 X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-There are about a dozen uses of asm goto in arch/riscv just to select
-between two code paths with the alternative mechanism. Convert them to
-the existing helpers __riscv_has_extension_{likely,unlikely}.
+Use __riscv_has_extension_unlikely() to check for RISCV_ISA_EXT_SVVPTC,
+replacing the use of asm goto with ALTERNATIVE.
 
-In each case, I have preserved the existing code's choice of asm goto
-pattern while picking between "likely" and "unlikely", namely:
+The "unlikely" variant is used to match the behavior of the original
+implementation using ALTERNATIVE("nop", "j %l[svvptc]", ...).
 
-  ALTERNATIVE("j %l[no]", "nop", ...)   -> "likely"
-  ALTERNATIVE("nop", "j %l[yes]", ...)  -> "unlikely"
-
-Since the helpers are just implementations of these patterns, the
-performance should be the same as before.
-
-These patches are also available at:
-
-https://github.com/dramforever/linux/tree/riscv/altn-helper/v2
-
+Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
 ---
-Changes in v3:
-- Rebased on riscv for-next
-  - Resolve conflict, use ALT_RISCV_PAUSE() in moved lines
-- Link to v2: https://lore.kernel.org/r/20250821-riscv-altn-helper-wip-v2-0-9586fa702f78@iscas.ac.cn
+ arch/riscv/include/asm/pgtable.h | 15 +++++++--------
+ arch/riscv/mm/pgtable.c          | 22 ++++++++++------------
+ 2 files changed, 17 insertions(+), 20 deletions(-)
 
-Changes in v2:
-- Cc'd authors who initially introduced the asm goto blocks
-- Use existing __riscv_has_extension_{likely,unlikely} instead
-- Remove bogus comment for Zbb being likely (checksum)
-- Restructured patch to minimize diff (bitops, hweight, cmpxchg)
-- Link to v1: https://lore.kernel.org/r/20250820-riscv-altn-helper-wip-v1-0-c3c626c1f7e6@iscas.ac.cn
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index 29e994a9afb67c638173d4a2475fdfbd91bee967..02f37322eb83a113b411e95e153fecc5c20319ad 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -496,8 +496,13 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+ 		struct vm_area_struct *vma, unsigned long address,
+ 		pte_t *ptep, unsigned int nr)
+ {
+-	asm goto(ALTERNATIVE("nop", "j %l[svvptc]", 0, RISCV_ISA_EXT_SVVPTC, 1)
+-		 : : : : svvptc);
++	/*
++	 * Svvptc guarantees that the new valid pte will be visible within
++	 * a bounded timeframe, so when the uarch does not cache invalid
++	 * entries, we don't have to do anything.
++	 */
++	if (__riscv_has_extension_unlikely(0, RISCV_ISA_EXT_SVVPTC))
++		return;
+ 
+ 	/*
+ 	 * The kernel assumes that TLBs don't cache invalid entries, but
+@@ -509,12 +514,6 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+ 	while (nr--)
+ 		local_flush_tlb_page(address + nr * PAGE_SIZE);
+ 
+-svvptc:;
+-	/*
+-	 * Svvptc guarantees that the new valid pte will be visible within
+-	 * a bounded timeframe, so when the uarch does not cache invalid
+-	 * entries, we don't have to do anything.
+-	 */
+ }
+ #define update_mmu_cache(vma, addr, ptep) \
+ 	update_mmu_cache_range(NULL, vma, addr, ptep, 1)
+diff --git a/arch/riscv/mm/pgtable.c b/arch/riscv/mm/pgtable.c
+index 8b6c0a112a8db4e91de54c3bd3bd527a605a6197..289ca6fa6b4de80d42287d28e266a0a8d3848cff 100644
+--- a/arch/riscv/mm/pgtable.c
++++ b/arch/riscv/mm/pgtable.c
+@@ -9,8 +9,16 @@ int ptep_set_access_flags(struct vm_area_struct *vma,
+ 			  unsigned long address, pte_t *ptep,
+ 			  pte_t entry, int dirty)
+ {
+-	asm goto(ALTERNATIVE("nop", "j %l[svvptc]", 0, RISCV_ISA_EXT_SVVPTC, 1)
+-		 : : : : svvptc);
++	if (__riscv_has_extension_unlikely(0, RISCV_ISA_EXT_SVVPTC)) {
++		if (!pte_same(ptep_get(ptep), entry)) {
++			__set_pte_at(vma->vm_mm, ptep, entry);
++			/* Here only not svadu is impacted */
++			flush_tlb_page(vma, address);
++			return true;
++		}
++
++		return false;
++	}
+ 
+ 	if (!pte_same(ptep_get(ptep), entry))
+ 		__set_pte_at(vma->vm_mm, ptep, entry);
+@@ -19,16 +27,6 @@ int ptep_set_access_flags(struct vm_area_struct *vma,
+ 	 * the case that the PTE changed and the spurious fault case.
+ 	 */
+ 	return true;
+-
+-svvptc:
+-	if (!pte_same(ptep_get(ptep), entry)) {
+-		__set_pte_at(vma->vm_mm, ptep, entry);
+-		/* Here only not svadu is impacted */
+-		flush_tlb_page(vma, address);
+-		return true;
+-	}
+-
+-	return false;
+ }
+ 
+ int ptep_test_and_clear_young(struct vm_area_struct *vma,
 
----
-Vivian Wang (5):
-      riscv: pgtable: Use __riscv_has_extension_unlikely
-      riscv: checksum: Use __riscv_has_extension_likely
-      riscv: hweight: Use __riscv_has_extension_likely
-      riscv: bitops: Use __riscv_has_extension_likely
-      riscv: cmpxchg: Use __riscv_has_extension_likely
-
- arch/riscv/include/asm/arch_hweight.h | 24 ++++++----------
- arch/riscv/include/asm/bitops.h       | 32 ++++++---------------
- arch/riscv/include/asm/checksum.h     | 13 +++------
- arch/riscv/include/asm/cmpxchg.h      | 12 +++-----
- arch/riscv/include/asm/pgtable.h      | 15 +++++-----
- arch/riscv/lib/csum.c                 | 53 ++++++++---------------------------
- arch/riscv/mm/pgtable.c               | 22 +++++++--------
- 7 files changed, 53 insertions(+), 118 deletions(-)
----
-base-commit: cd5a0afbdf8033dc83786315d63f8b325bdba2fd
-change-id: 20250820-riscv-altn-helper-wip-00af3a552c37
-
-Best regards,
 -- 
-Vivian "dramforever" Wang
+2.50.1
 
 
