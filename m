@@ -1,392 +1,337 @@
-Return-Path: <linux-kernel+bounces-848442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68454BCDC97
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58611BCDC9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38843AC76E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:20:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BE613B39A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C962F83DB;
-	Fri, 10 Oct 2025 15:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ADF2F8BFA;
+	Fri, 10 Oct 2025 15:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NEeXtDjV"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011047.outbound.protection.outlook.com [40.107.208.47])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GMxAzb2e"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011071.outbound.protection.outlook.com [40.107.208.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E67B2F999F;
-	Fri, 10 Oct 2025 15:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8CF26E16A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760109644; cv=fail; b=pSGYdwh02n56RS5TrCyhA4AhLzaH/8lnDknbuvY6EtP3u5ZeLKvmr/TSp3b80dTfzByvMa9e+4qjEKzjo3JTKYVFHSNv5MQurmB7mecipQV2ytVnk9UupOBAWgmA9urKKWxrxiwC55heLmZ1lY9mZnxpJwCamx2sjw6bvBCFUpQ=
+	t=1760109705; cv=fail; b=DHeyyBwfVbZlLYHrlJYQSy2MRKBeKFuJlTpI9zYYCpxoOSrDJ6S/lwpJll5U6rO5+z9JEJO7fUHgchsCwfbGVM2nDF3m6Pg6V31fF6OY50yN3+M2CfqzVfB9kcPnEEoQyHeVL/84J8bRpwshVwPRww/e7ZbuPokmLlvQTpt804g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760109644; c=relaxed/simple;
-	bh=mW8+e9k9I+ifDGa2bQ2nEMZrDe9C369vPqFatgACaVo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uSQfHa13TGQj5EVeAHJEfbF1Au+MI1BR+2Nn2j92OUu0tZEfzIhC2zXKmjBhYjl+r98et24H9/2heNa5PhNs+RrmQIWu4fhSqGYf0ZaAW1UUqdTcuzLFYvB6oiM4N/2ORcEsgioTD5OvwxdBxHmgbH2Xz4ReQQn7M9iPLJAHMi0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NEeXtDjV; arc=fail smtp.client-ip=40.107.208.47
+	s=arc-20240116; t=1760109705; c=relaxed/simple;
+	bh=zoX84xQlH0IFJwlvRuK72obk0hyCs3Xp3Hi5y8jO0nM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bNiw1TBQRYkVHEZlT8B3AK2j5bb2xgGInfZ7sE+nUcyC47rY4FFshpzNZTVHwA3qIQNUSX0thpVPNXxdo8EiRMjhjWCVBZvnQj1nxdowDxDczjxaX7+BF+QgiUUN319EZ0QUiAryeR3yqXEalL0k0NrlrFqWIRXVdcVzjorKYiI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GMxAzb2e; arc=fail smtp.client-ip=40.107.208.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d9wCIVj7uEB4WT8OG5N7ZJ94lWoAbg04qEZ+/XMhZse0RAnoD//uWwUw5X/ETgGsNxnXhhHSEnUzog6HG74zAULjgY0Z6uosb1JT5F66jL/4mDlp6ucoWtBeznqiZA/oRzjdpob31rZONrzBgAQrwMDrEX0vEZYBGUHCb8ebY13aR2ibX/BTtTJ/ShNMIlN9P73AgWGwKWZ4SwVasE3dwVgbI2AzcfLooQ8obSDHlOtpCbWijYC6r4lGc0Sf00gelgUqJsf3rdo7Df794D2z6NI9oub+x1/wFEpxoA7jw3LXeByvvRaq00ILvEBk0DTiTnuQ/LNGFD6v6gc/NPengQ==
+ b=JclX7SvnFhMK1UI8/MnGoCl0xzkmkDX3ThJhTH+eluX43/zHnYx86ebQ4AUNcNhBOoSwJr5MKTnALWVciAncAl03DFSu39BWfCSUqkd2smcEMnV4pzo0OiIH3QchxUquPxqCL9d+p3XzHryFaqe5vGzPoBKSngCOAF3eZgexBJpv+g662IOXG4vQt8rD2he6E3oWXhpfyknRloRoEauT5ECVjjLU/gMMDPB8qBbiBR3rvW6KlRN8GWjqIhqRqiY69ddwFfP69q5FxscJChZlE8pV+h3h7ypAZ9FH8sz/GheWWSWLmIivo4QOo5asUEs29LVTdn/lz+M5WfMJ1jHlUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R8Amco04sq+FJ3wpgWneGIykLDBgPATxS+tNaSBTXL8=;
- b=ZXIuDND4uUQ8WGCDbhainMrcJcXtBKqKQn1+BY53NlNNsqwoomfDjcmmaOXtWavzQEp431h+An3+AjfuGv9Ez0exUFNTvSH20ljzOuaatCaVV9Pbqd3T3qMSktrap+TZb9UhdzyBiqpG9H1xbFIP/IuVuAlnc67+EeIzWFgLvQ7QgAV5xh4wtqAkBmg+guzkAMjE7Gln2gt7WLPpeDu+4q6mzRsPCx2hCPDO7hWlPMGGA5S62jrEE2R/k02Srmg03H52NU6osP53APXT3sEZT2+Rwh/HfKD8n1pa03TW8S45U0ioqT6KUtpTAwCsFJ3NmFh1KBVeg5f5KkUXzBdSPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=YQl3bPZbAwkdYjKQRCUPCIXl4fn8COa/BRyYVijLDog=;
+ b=GsJpGVxgHTo0Zx+/IGBTCswO12GZ/8ISYjsjfEeRBB377IyJnO7W337aqx71lmzLaWvEMouSqT+iqecxVSF5Hm1FpsNSIgHb78mYGid5gzkzK79HTkNZ+uEERrmsRMCX7HrMuRPOihYYuwaa3n5mQobMXRMIrHSx9zS+5+J5N18zR39eef0bBG7kt0IoWxKpZUWqSbgtCOaf3Onic7IsNVpVujyJNOq/VaLsRfhttbddRgH6tvC4CKWFkvzjeDXw1Lo6kzFPnQFMrVqRe2oixpNeHOXZxVPN4WdoR14/jocFeMQaQ+5lQFjPeUpykHun9bDuvv1cELXSyJC5Q+BlOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R8Amco04sq+FJ3wpgWneGIykLDBgPATxS+tNaSBTXL8=;
- b=NEeXtDjV70W2cTjxtUFhq6FySYiDraEHv8T09qdX8pTKPq5JJloMdruy5i+Z3H65U8ojqCT1vju82d/1Dtvuyz8upmJkeuoKPp9p6Iuz30V/ZIp3pXu0Olldfz2/5bYp8yFMlCAJNrC/7yK1Zq5J+COpE1txqOtnQcxnbolBACT9jgZ4uon6Ws1Af6EdnfBGX9G7Kood6nr4qZHzl8laxXZm5eThTjet54n20Eg2RiZWCKsBq8G9D2SuU2F1R7SMyUGTSctp3ayVJDci+bfnYsLtzk3BFDe39RExf2i5W4sBwWOWv4pxs/IEKMZYu6J1ocyEEHI4CX0cmrFdlddSsA==
-Received: from BN1PR13CA0006.namprd13.prod.outlook.com (2603:10b6:408:e2::11)
- by PH7PR12MB9127.namprd12.prod.outlook.com (2603:10b6:510:2f6::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
- 2025 15:20:35 +0000
-Received: from BN3PEPF0000B06A.namprd21.prod.outlook.com
- (2603:10b6:408:e2:cafe::96) by BN1PR13CA0006.outlook.office365.com
- (2603:10b6:408:e2::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.6 via Frontend Transport; Fri,
- 10 Oct 2025 15:20:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B06A.mail.protection.outlook.com (10.167.243.69) with Microsoft
+ bh=YQl3bPZbAwkdYjKQRCUPCIXl4fn8COa/BRyYVijLDog=;
+ b=GMxAzb2etJYJRuEgJ0s1j5LeLv/Hy/0zW/vJthPHFZ7PS3doDK54FeKj1pYwNJ+WTxsBJC31sPckgIWqIs6NcRgSqZaIc2ba55gkkHd7bXzf6wxXXLXden6QybRW3WdQVNq1rYk+JAxppXxIEL9ZbM48tM/MIMz1J4WaXDahgSvAEnRFAuHts9u/QChYkyLcBB6eI8taSZcvJQpv/KwfxcnB35cLPQge7bOgxNmlX1mqkyvg3KsMweh60F8yiIQHKJiCgC4s3V7Uloj7WXb4vL/IDxUXPo1PCljno35vbdiLGENb0dJMyEofeA9QXOH91TTY221Ki8KbtO1u4x/lfQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DS2PR12MB9687.namprd12.prod.outlook.com (2603:10b6:8:27b::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.3 via Frontend Transport; Fri, 10 Oct 2025 15:20:35 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 10 Oct
- 2025 08:20:22 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 10 Oct
- 2025 08:20:21 -0700
-Received: from build-va-bionic-20241022.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Fri, 10 Oct 2025 08:20:18 -0700
-From: Vishwaroop A <va@nvidia.com>
-To: Mark Brown <broonie@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Sowjanya
- Komatineni" <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>,
-	<smangipudi@nvidia.com>, <kyarlagadda@nvidia.com>
-CC: Vishwaroop A <va@nvidia.com>, <linux-spi@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/2] spi: tegra210-quad: Check hardware status on timeout
-Date: Fri, 10 Oct 2025 15:20:01 +0000
-Message-ID: <20251010152001.2399799-3-va@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251010152001.2399799-1-va@nvidia.com>
-References: <20251010152001.2399799-1-va@nvidia.com>
+ 15.20.9203.10; Fri, 10 Oct 2025 15:21:40 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 15:21:40 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, baohua@kernel.org, baolin.wang@linux.alibaba.com,
+ dev.jain@arm.com, hughd@google.com, ioworker0@gmail.com,
+ kirill@shutemov.name, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ mpenttil@redhat.com, npache@redhat.com, ryan.roberts@arm.com,
+ richard.weiyang@gmail.com
+Subject: Re: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Date: Fri, 10 Oct 2025 11:21:37 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <3ABDAD81-A650-4C9A-BB4B-5515180F0743@nvidia.com>
+In-Reply-To: <20251008032657.72406-1-lance.yang@linux.dev>
+References: <20251008032657.72406-1-lance.yang@linux.dev>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MN2PR14CA0007.namprd14.prod.outlook.com
+ (2603:10b6:208:23e::12) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06A:EE_|PH7PR12MB9127:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63a12abe-17a5-4776-fd98-08de08108f85
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS2PR12MB9687:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04ae5557-7a12-4a60-8cd7-08de0810b5f8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ByZymhZuDYF4J0VreXiIZWsX57CnKKyIpaqk82kOvAnlOstHHgUI9OBuCGOv?=
- =?us-ascii?Q?GKAsdu1/TfTTkdX6hyKgEwCwXFXdh89duPbfRkzh/Vi5p0MfT1gNqT6KZvUn?=
- =?us-ascii?Q?/JpxmxAYuPg/o6Zac3bc37PqU54LjB2iNL/7bRqm8tt0WrFj+GA113Oi3RVo?=
- =?us-ascii?Q?6J4Pg96lWkkeJqy/OcZgfyPY/hIhwgmzCmOyPYN6Bq0SE/WzbhAOmQF2Du+C?=
- =?us-ascii?Q?4Y7jqgfBEpbNqq3lgppkl6GVhDN1gIiek9d8Bvmg/fOxXT1B4mHBNhS90pC/?=
- =?us-ascii?Q?umHAd8T7A7+1eCp0fh8aIWJVOgxUWZAyl+fn3OwqdXxICCXqXBLLWsGc5uFF?=
- =?us-ascii?Q?PWMBTN6LfKoHZvemyfEBRxO2gQaUXqDsHYiTu0DO8qqZ7IrGF1DZUgm7VQQR?=
- =?us-ascii?Q?/rNXOjUwY9KzzWTw71FKaPO9xg21HA2y+2eos8JPg8Vr+0tgtHPPJEEmyFxR?=
- =?us-ascii?Q?QouOrHxXng/Usqc1OYrp+2ccvsNVN3YKBKgebZfTzLFSYT3S9QNMFIOKTok7?=
- =?us-ascii?Q?mbF82Dhl3VziiQ6VYExurlDUN6retYJ+W5SbAMei/ljYI8ujy0CvPCBOL50k?=
- =?us-ascii?Q?EupBcVJcJvMaCEiyZw5A+tHbs7XNVuYvg8nw5JbXNnQ4HOG9pXCMJ3UV3PxW?=
- =?us-ascii?Q?sKbMLwCddshfN448r1shE9uF7OT9WNhCvOCpIFHnkrJAPwC99H4SoE9j7FI9?=
- =?us-ascii?Q?yNUWmj4h6qkySc2x+vJ98ndk0IalxfRB5e25pMkjkDcyURR0rtjjsh0iA5tm?=
- =?us-ascii?Q?ZypCmh3xBLzrJ3xujO0ZOdPQJxZFTivMesc2mgYNRHO6hvJMAO9bUuFhElYf?=
- =?us-ascii?Q?z4XPsyBaCVACpbl9ltBSm4ZJVL8ILxgyJxkHu3aMM/zU2ROF1WHSag83QWDn?=
- =?us-ascii?Q?w+Eq0Vr4NYv6Brr7B2dcQrQ6pSTPk1aZ+cr22oK5BQrSOmE1a9FTLRXPVSq8?=
- =?us-ascii?Q?Ln0/PTuChGJ/J5zr+pSGNRKmAlTYa1K52O1Q5fUXYsq91PyoS4452n6s7B/u?=
- =?us-ascii?Q?uobThYTAfxnmKVNH6zjy3NL26kWtIDZMpVyVgqEAPtPw10gJfJwQtWxMZq5j?=
- =?us-ascii?Q?zrK6P4vANI7kMRp32gHaWtmjkOcC06cdd29buAv92e+QdOFVvN5xIp6rJyVa?=
- =?us-ascii?Q?n/c9af4W10QCkW49/Ret5S9VhMt8p/gVVznGjwmQ+N3+F+zCHuTy1nYoUKcJ?=
- =?us-ascii?Q?LKdS1qwzWk08lmDo51ZVbPpxIxqi3QUkOpjMAd0xrbqM/7hsD5jcUMwNeHIM?=
- =?us-ascii?Q?3Jy73SQqXYdLeCeXTjGfymiRlYf26DrKJRCM80TGy6xJEGh1LufKbdhQWDCW?=
- =?us-ascii?Q?inUuN3KsoFIsMVaTkdnWhVJdEBVOlqac+KYPvoEcpLYZ/+j8nI56MM0t2uIQ?=
- =?us-ascii?Q?0zUSDHRfWx23usXTP5MKtHLRJbjy6b3fm0j6j2r3VkMRZSqLU3hj84lHrn6p?=
- =?us-ascii?Q?esfsg/Q74/ctlRVgg1CU45BugW34+BmK+nT72ZkJeOGMR/WOmqKJOGD181vD?=
- =?us-ascii?Q?hJ+/jzdMMiAnoAXEn7qEty7hMbKfKB86zSPdNe/x9BAvUUQu4yNE64BhYktU?=
- =?us-ascii?Q?7ylSASoPq/4T+DnQTVM=3D?=
+	=?us-ascii?Q?+Sz2fvXaqM29LBafUiOEG141Mxn4Rj8OgKYnq6CTCvlWTrbw3EVJMPqHr8hO?=
+ =?us-ascii?Q?jz0UjTM6S87tn9/SfpJDOPraIOpp4v5WM6t2KDpT1fxBtBeTXtSmFp3BDvV7?=
+ =?us-ascii?Q?EVddpeWOtt6+9W1VlP4pvBw3k22PSxKQtVoerwb7gISyjvjNq4JEF1reaRSY?=
+ =?us-ascii?Q?sE3f5eDZzerT89FINbKNkvKeT3Rdi7rQOVNL9VVMxLC6j2jRdY76WU/9YeRZ?=
+ =?us-ascii?Q?bXtUcnBaLmLEmfJCIETQxsNwfOCValUJ8UIjB7D77GGpRsAZtdXNac1PfgPr?=
+ =?us-ascii?Q?Rj15n/rXIvCmf6UNjbviO5z6KWoP7+mQ02FONxPUazetFvlKkzYAxT5Rv/R2?=
+ =?us-ascii?Q?0VzGeA3MrDsroFGTXwCFav/GpEaNYl9+v2laPY8yDC2C4CyjcPvSZDREIlxd?=
+ =?us-ascii?Q?/bWZ85P2l99B1eVk2unHATxweo3vYkENiK0nIhV7eu1mC0D0SSdGXIoUsCBa?=
+ =?us-ascii?Q?XJyA6tpiLPXfINYI+syxKoEwIEEaTO69sb4mpJgNKOpHfLbtIMIDrB2PDZBt?=
+ =?us-ascii?Q?Chen56nmZDYgZXCpYE1ST2Fdv3Vpz50h+EY4PEGckMiC18XldN7ZwXDKetgh?=
+ =?us-ascii?Q?IKWPk68KB7c02V2YndASIn2gf4yHdnAK6k2sDlVDweBlF1D1/2sHfDR/06yh?=
+ =?us-ascii?Q?FjKckVt6HGOR61zJDlP+SA02AjL0w7MOyVwMUrCJ5XyFiUUwZH3dcrRNVxr1?=
+ =?us-ascii?Q?mOhqOIeGgX7VpNp5YVUdDvr9SfpwkRTXU63P1ZDbcrz5vDnF3WJJsYIpEnuv?=
+ =?us-ascii?Q?Z/bdwBYXDcgFmYzA3Yi4g9BiSqCYO/8O3qMBkOpC6nszprajQ5i7cxSoXWa7?=
+ =?us-ascii?Q?11aPdL2+CmkulpoIxLOTS0DCo2qKBs5lneAvWC1TVzZkIfKTtNdKhnwSsh+w?=
+ =?us-ascii?Q?eO/QCzAEzr5D/agA9ya7hsw90F+H3UWCJK+S8KmUxPnEDdF9+ZrexmDhgoEu?=
+ =?us-ascii?Q?NrrCbBu8voIXjuYS1F/GHUrPlsvhl+y0+SbccVDT4U2FCeXbLGa3WwfYfdDj?=
+ =?us-ascii?Q?q0yWWNEEMTGn2MKlDqi4j8p8rL8LLYxTYWtLmvk61tYUyUKyAYev9dTBm9n/?=
+ =?us-ascii?Q?jIGISsrtO13iujMEOlNdKTTh/8pKp+x8WNL5XWgL7mbrOdUFdTkkotpKlDRB?=
+ =?us-ascii?Q?nvuu3CGzo6FE3o6qWwm0VD4FV0zqPcVbDnvruxJ9A3NlB8pZkRS4hk+aDKlt?=
+ =?us-ascii?Q?j0FcoFtTeKUh1i7+dANY4DIqQlTw5mt1I+FfIZV6iC0EzjHfh9FTY5YS0DMa?=
+ =?us-ascii?Q?Qz7SNiidzI05Cc4iJpCccqJ6Set6Etpp/PtSWJvUYW8dT58lGctdquYXo1pP?=
+ =?us-ascii?Q?bKkwsdXjUDRWPT3656Fr/WgrDVwdNIZFwjZ+LplZr2NwuOzCvDKgt7+QDc46?=
+ =?us-ascii?Q?HXMrQWTdIJXzi5xwnTblWqW1T9UkTlu/WP/ajnXMJ124NoYyMYzY2ARvA5bJ?=
+ =?us-ascii?Q?Zkse3q1KjaKxqsgEuE1q+3t9dQH5u+NNo9/9XzLb2RlPjLLkTL143A=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6FerM2nxvkoG7HS0getC2E31/kp5CckAHS7rS9AZj0RVNc2vLNhpH4PrkqrD?=
+ =?us-ascii?Q?twxs7bU1dTFvnGMKlAmVMKIH0Z4Dr6KxiXNBkTY5rK2yB4cybFlw6vXUk4xd?=
+ =?us-ascii?Q?I1gXUW+91QntV/VDtP0vTA1E0joxyLMNLqJibj5qr5EycWJSlr9vlwnExZY0?=
+ =?us-ascii?Q?uoW0TgjvNvNs1b51N2lP09d3M4v5d/QT/E2gJMHEWtHI1FDlqq1IdPAd/tLm?=
+ =?us-ascii?Q?lBR0neIT5Thfz+gkar27bf89SAqLXRXwE42awNrzrjHUkuD3LPhsxoC9s+Z6?=
+ =?us-ascii?Q?vtP0+/cp+Q945YLFdCildbQuBj3dmNOp4Ue6kTsHcoGf+gy0TKu8LBtm3B5e?=
+ =?us-ascii?Q?mffY/N0tLT6tSvvWf6sGTotGg9F2kREMJRHo5gfqjghRdsf2YT5gKAtQliZB?=
+ =?us-ascii?Q?ehO4V/+CROEtZ4Arvl0CDfAGZd2SWAEUihOcLs/6EAgc67hVf/dbhPho8lhE?=
+ =?us-ascii?Q?sMhGolSt4Mlb6KKNUMZvoB7943YhghAFRSvgbsHNOqsXi82HtyMf8cXJXGXB?=
+ =?us-ascii?Q?V1qazYMal5EKmy+FM4M+GE/jCNUSFtB2Zs/QLHb9+UB71rv2ITQZxliMd+KF?=
+ =?us-ascii?Q?gzIjPNZq9AHN1TV1usMSBaTvJHL0UPmqf4H5RVZyeC4fx7826NgoU0ba2nE0?=
+ =?us-ascii?Q?R7lcz0xe60Hegov25sLSqAgl+hq080Bx7c+XOuHwNx3d4TpWsy0SHlwfogCh?=
+ =?us-ascii?Q?SU8XkzubcSa0tX9Tti8tP561cL8kfq1u4/qMkQ8TlxzbodR9TKv9FWT4dAA7?=
+ =?us-ascii?Q?d7jKDQctoMsCcHxum7OicP+S5xY1gd+QD5Q22P1svno65Wu43pL3yXwqGgg9?=
+ =?us-ascii?Q?xrYPVl4s50J+qYsKNnVzoZ8595goAfJQS/PDphvPTp/nPA4egfcK3Av60CWb?=
+ =?us-ascii?Q?eORcxPQjQra6WAqLQYX66G/zWe9cQf2hwfjBikBi7JvN7ZueDsYJDbLk11Ao?=
+ =?us-ascii?Q?wXBp9JtKcAzyFQ0EdclEgHJY7tblQowOqpbl7zqF7xeQ51Av8OqlT3X46V7T?=
+ =?us-ascii?Q?iH/YTfDzON3NkzpJmsTXdVOLH1j8wVDzpV2EKAJXQaikRDVv+4O9O/ZdQPw6?=
+ =?us-ascii?Q?M+QdpUej+/LK/7OnymrY0ZLmqDVs2K7vo4fRwa/9uY8K/hxUCEdNDNBTOrhB?=
+ =?us-ascii?Q?8nnYJCgjw3fSX03MsncY/+euKhb7QA+P0rN3U5yGR1rQ9JE0Tesrqx0PUGSj?=
+ =?us-ascii?Q?Bgb5Lppt8XvQYw2gY6LvIPCBGpPtrNKjf7XTUYrZobzhmH9uJz/FxYk9mZd5?=
+ =?us-ascii?Q?nbsmVK3YK5jhuMLNctNB9dWjsR1ZrvG3MpNHgXTK/Mxb/w0b9fcbch/m6hBT?=
+ =?us-ascii?Q?2jOVIa2wOzJBuwfmzR0zCPJWSUKBU1JZ2UBGqGF0g/eCQg+ZqwNyuoCvCth4?=
+ =?us-ascii?Q?BkeLZgDyJ54YVB4XMgaRfbBR8+S2Vdt2VppsJ6IEGtwwMaA3K5+8yLrQPdxt?=
+ =?us-ascii?Q?qrfUxKalI3DdCGp2FMBEk4V40GLMSecgqcoJJyOF433l2QNFR00pAGIPF+cP?=
+ =?us-ascii?Q?I4T4OM5r1vaLp9rMNxyqAH5V1LlFSKXqBGFsf8l6mjzIiAG5XDLLjg3QYuYT?=
+ =?us-ascii?Q?MuIzqEpuHGk6gIWV7r4YgjkF0ZPp5ZMSNbIVvnT8?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 15:20:35.1620
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04ae5557-7a12-4a60-8cd7-08de0810b5f8
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 15:21:40.0376
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63a12abe-17a5-4776-fd98-08de08108f85
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B06A.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9127
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 08NDqRV+s3bxYhM+YWq2dcB2FELmwD4yy2ZFyk44Vkr2p57pk/3ef1qvtlj8ER4E
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9687
 
-Under high system load, QSPI interrupts can be delayed or blocked on the
-target CPU, causing wait_for_completion_timeout() to report failure even
-though the hardware successfully completed the transfer. This has been
-observed in production during error injection, RAS firmware activity, and
-CPU saturation scenarios.
+On 7 Oct 2025, at 23:26, Lance Yang wrote:
 
-When a timeout occurs, check the QSPI_RDY bit in QSPI_TRANS_STATUS to
-determine if the hardware actually completed the transfer. If so, manually
-invoke the completion handler to process the transfer successfully instead
-of failing it.
+> From: Lance Yang <lance.yang@linux.dev>
+>
+> Currently, special non-swap entries (like PTE markers) are not caught
+> early in hpage_collapse_scan_pmd(), leading to failures deep in the
+> swap-in logic.
+>
+> A function that is called __collapse_huge_page_swapin() and documented
+> to "Bring missing pages in from swap" will handle other types as well.
+>
+> As analyzed by David[1], we could have ended up with the following
+> entry types right before do_swap_page():
+>
+>   (1) Migration entries. We would have waited.
+>       -> Maybe worth it to wait, maybe not. We suspect we don't stumble=
 
-This distinguishes lost/delayed interrupts from real hardware timeouts,
-preventing unnecessary failures of transfers that completed successfully.
+>          into that frequently such that we don't care. We could always
+>          unlock this separately later.
+>
+>   (2) Device-exclusive entries. We would have converted to non-exclusiv=
+e.
+>       -> See make_device_exclusive(), we cannot tolerate PMD entries an=
+d
+>          have to split them through FOLL_SPLIT_PMD. As popped up during=
 
-Signed-off-by: Vishwaroop A <va@nvidia.com>
----
- drivers/spi/spi-tegra210-quad.c | 164 ++++++++++++++++++++++----------
- 1 file changed, 114 insertions(+), 50 deletions(-)
+>          a recent discussion, collapsing here is actually
+>          counter-productive, because the next conversion will PTE-map
+>          it again.
+>       -> Ok to not collapse.
+>
+>   (3) Device-private entries. We would have migrated to RAM.
+>       -> Device-private still does not support THPs, so collapsing righ=
+t
+>          now just means that the next device access would split the
+>          folio again.
+>       -> Ok to not collapse.
+>
+>   (4) HWPoison entries
+>       -> Cannot collapse
+>
+>   (5) Markers
+>       -> Cannot collapse
+>
+> First, this patch adds an early check for these non-swap entries. If
+> any one is found, the scan is aborted immediately with the
+> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+> work. While at it, convert pte_swp_uffd_wp_any() to pte_swp_uffd_wp()
+> since we are in the swap pte branch.
+>
+> Second, as Wei pointed out[3], we may have a chance to get a non-swap
+> entry, since we will drop and re-acquire the mmap lock before
+> __collapse_huge_page_swapin(). To handle this, we also add a
+> non_swap_entry() check there.
+>
+> Note that we can unlock later what we really need, and not account it
+> towards max_swap_ptes.
+>
+> [1] https://lore.kernel.org/linux-mm/09eaca7b-9988-41c7-8d6e-4802055b3f=
+1e@redhat.com
+> [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8=
+bd@lucifer.local
+> [3] https://lore.kernel.org/linux-mm/20251005010511.ysek2nqojebqngf3@ma=
+ster
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> Reviewed-by: Dev Jain <dev.jain@arm.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+> v2 -> v3:
+>  - Collect Acked-by from David - thanks!
+>  - Collect Reviewed-by from Wei and Dev - thanks!
+>  - Add a non_swap_entry() check in __collapse_huge_page_swapin() (per W=
+ei
+>    and David) - thanks!
+>  - Rework the changelog to incorporate David's detailed analysis of
+>    non-swap entry types - thanks!!!
+>  - https://lore.kernel.org/linux-mm/20251001032251.85888-1-lance.yang@l=
+inux.dev/
+>
+> v1 -> v2:
+>  - Skip all non-present entries except swap entries (per David) thanks!=
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index c2f880d08109..757e9fe23e0e 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -1019,17 +1019,22 @@ static void tegra_qspi_dump_regs(struct tegra_qspi *tqspi)
- 		tegra_qspi_readl(tqspi, QSPI_FIFO_STATUS));
- }
- 
--static void tegra_qspi_handle_error(struct tegra_qspi *tqspi)
-+static void tegra_qspi_reset(struct tegra_qspi *tqspi)
- {
--	dev_err(tqspi->dev, "error in transfer, fifo status 0x%08x\n", tqspi->status_reg);
--	tegra_qspi_dump_regs(tqspi);
--	tegra_qspi_flush_fifos(tqspi, true);
- 	if (device_reset(tqspi->dev) < 0) {
- 		dev_warn_once(tqspi->dev, "device reset failed\n");
- 		tegra_qspi_mask_clear_irq(tqspi);
- 	}
- }
- 
-+static void tegra_qspi_handle_error(struct tegra_qspi *tqspi)
-+{
-+	dev_err(tqspi->dev, "error in transfer, fifo status 0x%08x\n", tqspi->status_reg);
-+	tegra_qspi_dump_regs(tqspi);
-+	tegra_qspi_flush_fifos(tqspi, true);
-+	tegra_qspi_reset(tqspi);
-+}
-+
- static void tegra_qspi_transfer_end(struct spi_device *spi)
- {
- 	struct tegra_qspi *tqspi = spi_controller_get_devdata(spi->controller);
-@@ -1043,6 +1048,49 @@ static void tegra_qspi_transfer_end(struct spi_device *spi)
- 	tegra_qspi_writel(tqspi, tqspi->def_command1_reg, QSPI_COMMAND1);
- }
- 
-+static irqreturn_t handle_cpu_based_xfer(struct tegra_qspi *tqspi);
-+static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi);
-+
-+/**
-+ * tegra_qspi_handle_timeout - Handle transfer timeout with hardware check
-+ * @tqspi: QSPI controller instance
-+ *
-+ * When a timeout occurs but hardware has completed the transfer (interrupt
-+ * was lost or delayed), manually trigger transfer completion processing.
-+ * This avoids failing transfers that actually succeeded.
-+ *
-+ * Returns: 0 if transfer was completed, -ETIMEDOUT if real timeout
-+ */
-+static int tegra_qspi_handle_timeout(struct tegra_qspi *tqspi)
-+{
-+	irqreturn_t ret;
-+	u32 status;
-+
-+	/* Check if hardware actually completed the transfer */
-+	status = tegra_qspi_readl(tqspi, QSPI_TRANS_STATUS);
-+	if (!(status & QSPI_RDY))
-+		return -ETIMEDOUT;
-+
-+	/*
-+	 * Hardware completed but interrupt was lost/delayed. Manually
-+	 * process the completion by calling the appropriate handler.
-+	 */
-+	dev_warn_ratelimited(tqspi->dev,
-+			     "QSPI interrupt timeout, but transfer complete\n");
-+
-+	/* Clear the transfer status */
-+	status = tegra_qspi_readl(tqspi, QSPI_TRANS_STATUS);
-+	tegra_qspi_writel(tqspi, status, QSPI_TRANS_STATUS);
-+
-+	/* Manually trigger completion handler */
-+	if (!tqspi->is_curr_dma_xfer)
-+		ret = handle_cpu_based_xfer(tqspi);
-+	else
-+		ret = handle_dma_based_xfer(tqspi);
-+
-+	return (ret == IRQ_HANDLED) ? 0 : -EIO;
-+}
-+
- static u32 tegra_qspi_cmd_config(bool is_ddr, u8 bus_width, u8 len)
- {
- 	u32 cmd_config = 0;
-@@ -1074,6 +1122,30 @@ static u32 tegra_qspi_addr_config(bool is_ddr, u8 bus_width, u8 len)
- 	return addr_config;
- }
- 
-+static void tegra_qspi_dma_stop(struct tegra_qspi *tqspi)
-+{
-+	u32 value;
-+
-+	if ((tqspi->cur_direction & DATA_DIR_TX) && tqspi->tx_dma_chan)
-+		dmaengine_terminate_all(tqspi->tx_dma_chan);
-+
-+	if ((tqspi->cur_direction & DATA_DIR_RX) && tqspi->rx_dma_chan)
-+		dmaengine_terminate_all(tqspi->rx_dma_chan);
-+
-+	value = tegra_qspi_readl(tqspi, QSPI_DMA_CTL);
-+	value &= ~QSPI_DMA_EN;
-+	tegra_qspi_writel(tqspi, value, QSPI_DMA_CTL);
-+}
-+
-+static void tegra_qspi_pio_stop(struct tegra_qspi *tqspi)
-+{
-+	u32 value;
-+
-+	value = tegra_qspi_readl(tqspi, QSPI_COMMAND1);
-+	value &= ~QSPI_PIO;
-+	tegra_qspi_writel(tqspi, value, QSPI_COMMAND1);
-+}
-+
- static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
- 					struct spi_message *msg)
- {
-@@ -1081,7 +1153,7 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
- 	struct spi_transfer *xfer;
- 	struct spi_device *spi = msg->spi;
- 	u8 transfer_phase = 0;
--	u32 cmd1 = 0, dma_ctl = 0;
-+	u32 cmd1 = 0;
- 	int ret = 0;
- 	u32 address_value = 0;
- 	u32 cmd_config = 0, addr_config = 0;
-@@ -1148,43 +1220,28 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
- 					QSPI_DMA_TIMEOUT);
- 
- 			if (WARN_ON_ONCE(ret == 0)) {
--				dev_err_ratelimited(tqspi->dev,
--						    "QSPI Transfer failed with timeout\n");
--				if (tqspi->is_curr_dma_xfer) {
--					if ((tqspi->cur_direction & DATA_DIR_TX) &&
--					    tqspi->tx_dma_chan)
--						dmaengine_terminate_all(tqspi->tx_dma_chan);
--					if ((tqspi->cur_direction & DATA_DIR_RX) &&
--					    tqspi->rx_dma_chan)
--						dmaengine_terminate_all(tqspi->rx_dma_chan);
--				}
--
--				/* Abort transfer by resetting pio/dma bit */
--				if (!tqspi->is_curr_dma_xfer) {
--					cmd1 = tegra_qspi_readl
--							(tqspi,
--							 QSPI_COMMAND1);
--					cmd1 &= ~QSPI_PIO;
--					tegra_qspi_writel
--							(tqspi, cmd1,
--							 QSPI_COMMAND1);
--				} else {
--					dma_ctl = tegra_qspi_readl
--							(tqspi,
--							 QSPI_DMA_CTL);
--					dma_ctl &= ~QSPI_DMA_EN;
--					tegra_qspi_writel(tqspi, dma_ctl,
--							  QSPI_DMA_CTL);
-+				/*
-+				 * Check if hardware completed the transfer
-+				 * even though interrupt was lost or delayed.
-+				 * If so, process the completion and continue.
-+				 */
-+				ret = tegra_qspi_handle_timeout(tqspi);
-+				if (ret < 0) {
-+					/* Real timeout - clean up and fail */
-+					dev_err(tqspi->dev, "transfer timeout\n");
-+
-+					/* Abort transfer by resetting pio/dma bit */
-+					if (tqspi->is_curr_dma_xfer)
-+						tegra_qspi_dma_stop(tqspi);
-+					else
-+						tegra_qspi_pio_stop(tqspi);
-+
-+					/* Reset controller if timeout happens */
-+					tegra_qspi_reset(tqspi);
-+
-+					ret = -EIO;
-+					goto exit;
- 				}
--
--			/* Reset controller if timeout happens */
--			if (device_reset(tqspi->dev) < 0) {
--				dev_warn_once(tqspi->dev,
--					      "device reset failed\n");
--				tegra_qspi_mask_clear_irq(tqspi);
--			}
--			ret = -EIO;
--			goto exit;
- 			}
- 
- 			if (tqspi->tx_status ||  tqspi->rx_status) {
-@@ -1275,16 +1332,23 @@ static int tegra_qspi_non_combined_seq_xfer(struct tegra_qspi *tqspi,
- 		ret = wait_for_completion_timeout(&tqspi->xfer_completion,
- 						  QSPI_DMA_TIMEOUT);
- 		if (WARN_ON(ret == 0)) {
--			dev_err(tqspi->dev, "transfer timeout\n");
--			if (tqspi->is_curr_dma_xfer) {
--				if ((tqspi->cur_direction & DATA_DIR_TX) && tqspi->tx_dma_chan)
--					dmaengine_terminate_all(tqspi->tx_dma_chan);
--				if ((tqspi->cur_direction & DATA_DIR_RX) && tqspi->rx_dma_chan)
--					dmaengine_terminate_all(tqspi->rx_dma_chan);
-+			/*
-+			 * Check if hardware completed the transfer even though
-+			 * interrupt was lost or delayed. If so, process the
-+			 * completion and continue.
-+			 */
-+			ret = tegra_qspi_handle_timeout(tqspi);
-+			if (ret < 0) {
-+				/* Real timeout - clean up and fail */
-+				dev_err(tqspi->dev, "transfer timeout\n");
-+
-+				if (tqspi->is_curr_dma_xfer)
-+					tegra_qspi_dma_stop(tqspi);
-+
-+				tegra_qspi_handle_error(tqspi);
-+				ret = -EIO;
-+				goto complete_xfer;
- 			}
--			tegra_qspi_handle_error(tqspi);
--			ret = -EIO;
--			goto complete_xfer;
- 		}
- 
- 		if (tqspi->tx_status ||  tqspi->rx_status) {
--- 
-2.17.1
+>  - https://lore.kernel.org/linux-mm/20250924100207.28332-1-lance.yang@l=
+inux.dev/
+>
+>  mm/khugepaged.c | 37 +++++++++++++++++++++++--------------
+>  1 file changed, 23 insertions(+), 14 deletions(-)
+>
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index abe54f0043c7..bec3e268dc76 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1020,6 +1020,11 @@ static int __collapse_huge_page_swapin(struct mm=
+_struct *mm,
+>  		if (!is_swap_pte(vmf.orig_pte))
+>  			continue;
+>
+> +		if (non_swap_entry(pte_to_swp_entry(vmf.orig_pte))) {
+> +			result =3D SCAN_PTE_NON_PRESENT;
+> +			goto out;
+> +		}
+> +
+>  		vmf.pte =3D pte;
+>  		vmf.ptl =3D ptl;
+>  		ret =3D do_swap_page(&vmf);
+> @@ -1281,7 +1286,23 @@ static int hpage_collapse_scan_pmd(struct mm_str=
+uct *mm,
+>  	for (addr =3D start_addr, _pte =3D pte; _pte < pte + HPAGE_PMD_NR;
+>  	     _pte++, addr +=3D PAGE_SIZE) {
+>  		pte_t pteval =3D ptep_get(_pte);
+> -		if (is_swap_pte(pteval)) {
+> +		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+> +			++none_or_zero;
+> +			if (!userfaultfd_armed(vma) &&
+> +			    (!cc->is_khugepaged ||
+> +			     none_or_zero <=3D khugepaged_max_ptes_none)) {
+> +				continue;
+> +			} else {
+> +				result =3D SCAN_EXCEED_NONE_PTE;
+> +				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> +				goto out_unmap;
+> +			}
+> +		} else if (!pte_present(pteval)) {
+> +			if (non_swap_entry(pte_to_swp_entry(pteval))) {
+> +				result =3D SCAN_PTE_NON_PRESENT;
+> +				goto out_unmap;
+> +			}
+> +
+>  			++unmapped;
+>  			if (!cc->is_khugepaged ||
+>  			    unmapped <=3D khugepaged_max_ptes_swap) {
+> @@ -1290,7 +1311,7 @@ static int hpage_collapse_scan_pmd(struct mm_stru=
+ct *mm,
+>  				 * enabled swap entries.  Please see
+>  				 * comment below for pte_uffd_wp().
+>  				 */
+> -				if (pte_swp_uffd_wp_any(pteval)) {
+> +				if (pte_swp_uffd_wp(pteval)) {
 
+pte_swp_uffd_wp_any() returns true for both pte_swp_uffd_wp() and
+pte_marker_uffd_wp(). Why is it OK to just check pte_swp_uffd_wp() here?
+
+>  					result =3D SCAN_PTE_UFFD_WP;
+>  					goto out_unmap;
+>  				}
+> @@ -1301,18 +1322,6 @@ static int hpage_collapse_scan_pmd(struct mm_str=
+uct *mm,
+>  				goto out_unmap;
+>  			}
+>  		}
+> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+> -			++none_or_zero;
+> -			if (!userfaultfd_armed(vma) &&
+> -			    (!cc->is_khugepaged ||
+> -			     none_or_zero <=3D khugepaged_max_ptes_none)) {
+> -				continue;
+> -			} else {
+> -				result =3D SCAN_EXCEED_NONE_PTE;
+> -				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> -				goto out_unmap;
+> -			}
+> -		}
+>  		if (pte_uffd_wp(pteval)) {
+>  			/*
+>  			 * Don't collapse the page if any of the small
+> -- =
+
+> 2.49.0
+
+
+--
+Best Regards,
+Yan, Zi
 
