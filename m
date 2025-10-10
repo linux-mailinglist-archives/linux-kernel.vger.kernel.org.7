@@ -1,115 +1,211 @@
-Return-Path: <linux-kernel+bounces-847844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688FEBCBDFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:10:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499D5BCBE02
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3212E4E4F20
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE2519E5EF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A093E257431;
-	Fri, 10 Oct 2025 07:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434FA26F2AF;
+	Fri, 10 Oct 2025 07:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QApQzuwM"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j1JVPi6c";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ezsahyT0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j1JVPi6c";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ezsahyT0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9061624466D;
-	Fri, 10 Oct 2025 07:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F49246BD7
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760080238; cv=none; b=hBRbwgoE7HWZjHAnF3obRtbQixDMe00HOicJ9KvOgNdrf60F2DC2E//fP5wnPpcWB25vcHAViimqjbpb9broHDlGOACWLY43I53HfOdVPF8lkBu4jL+DSQ/b4fEMdDCXVjKsAv7RJZTiW7ATfOlfkjhf/XdtXdW3huzXruQPm+4=
+	t=1760080252; cv=none; b=MLR2PY7yuiyeNMfm3wNXfvXCH9OTmIhBfFyAtK9ETPlMbUH3QIxsjSenlCQ8drw943rs3EiEXus0ntCDj7n2fFMA88zkjFpb2K6so6UG+0dpKrW9dgQbUkKgPxpnFYu8DIMJcOskppiK74QubW44t1maTXefDDK2dAwBjQKh8Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760080238; c=relaxed/simple;
-	bh=zF+0z316RJQl9MIvnx3TLWdplqoKjE8A6iD22i2AB14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVGJ2yO/4TbQUmkrqA5/rCgM/0JrQdhNTK04iSJD7oqAiElSSmedMMKp4oHwRbWe93tECKQLkB2qgM17jMX8fFM86COPds85xdpneZhCN/QxYmHmCsCs0Bai/H8XFbgmajDfdqgNT2GonHpBV8dcoxynQ3CKDaKPC8FPFHvzGEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QApQzuwM; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=50y4dNqj3cTwICK+6pWktLMc2B7J6SPVStSqB8mkboA=; b=QApQzuwMjpDeLWln5BMhThjrrd
-	Seb/MnniOXasfRoosZ8SLuy/6gZ0KLOb0kozIwOLFoZ7VI9BH9OIj7Qf/yEWRAeRjmCMxTFzeTRmQ
-	HXAmk7Amb6EiklIJR/i5hbjTWnQXSO6wCoHmHPLISc13Zi6jnyJ2HuaUiGahTiyNvcpeNzQjBLHbN
-	0aZreBgS2ODsabnvENo6tJvXOdFmhy/iWbhhJPAX+ix32QkKgPeqTx/TunwL3O41pvy/z+M4h3Owm
-	cAsSSb+y3vosWs0lskrezIeKPRQDmTS+V3HDd5zc7RqJI7CN1twkP9DhzljIqrVWv71ocl0x+ijox
-	J7PM9ClA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v77Gq-00000006PCr-1KbF;
-	Fri, 10 Oct 2025 07:10:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8352A300325; Fri, 10 Oct 2025 09:10:32 +0200 (CEST)
-Date: Fri, 10 Oct 2025 09:10:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [tip:x86/core 1/1] vmlinux.o: warning: objtool:
- rcar_pcie_probe+0x13e: no-cfi indirect call!
-Message-ID: <20251010071032.GE4067720@noisy.programming.kicks-ass.net>
-References: <202510092124.O2IX0Jek-lkp@intel.com>
- <20251010032001.GA3741500@ax162>
+	s=arc-20240116; t=1760080252; c=relaxed/simple;
+	bh=Z4vUjXYBCIWhFZcLWPtw6BwvOL175Oy414ENP10QQCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJ6ofg8bWBPrMYmK3v1oEbTfb8+qRIpSZ5aEIL36/XYRJi5uC3cfhxnpR7J6GAMl+xLkGos6IXcteQ2xa1FxJ/V+We4oHQ8sJ46U2lhLdSgaUo1UAr+zbA1TNcugwGA93+5G3iGwgrM+Wia/czM/Ptf+/mQHQd95/Cm1UP1LdGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j1JVPi6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ezsahyT0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j1JVPi6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ezsahyT0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1D156223CF;
+	Fri, 10 Oct 2025 07:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760080249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=93jeYJ+ATJ5FvA+6WngIEwTUuSMPnvlLkuJb6VwS8cs=;
+	b=j1JVPi6cKZLXSHwutUuSfV8Fgy27X1a/780SzF25I6oeaZxYLDodIJNZYUc5dX8f6lT3lM
+	Nd2KqZycO0D+kTo339k7EDqxYCn1Hyqizc27o52khU2ohWZtPQ0uV5sBqf04NFNDfdGLHx
+	MwMzSUR1W7NJaFLpeHYcfNQZ/0u+PAU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760080249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=93jeYJ+ATJ5FvA+6WngIEwTUuSMPnvlLkuJb6VwS8cs=;
+	b=ezsahyT0dpXkX8vAxC71u0WjXl586e36+Ng0cyOszR3g1y0jcGVXBCnvYbnIfZ7wVh0QlM
+	8ONsgQQvKHaoZACw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760080249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=93jeYJ+ATJ5FvA+6WngIEwTUuSMPnvlLkuJb6VwS8cs=;
+	b=j1JVPi6cKZLXSHwutUuSfV8Fgy27X1a/780SzF25I6oeaZxYLDodIJNZYUc5dX8f6lT3lM
+	Nd2KqZycO0D+kTo339k7EDqxYCn1Hyqizc27o52khU2ohWZtPQ0uV5sBqf04NFNDfdGLHx
+	MwMzSUR1W7NJaFLpeHYcfNQZ/0u+PAU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760080249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=93jeYJ+ATJ5FvA+6WngIEwTUuSMPnvlLkuJb6VwS8cs=;
+	b=ezsahyT0dpXkX8vAxC71u0WjXl586e36+Ng0cyOszR3g1y0jcGVXBCnvYbnIfZ7wVh0QlM
+	8ONsgQQvKHaoZACw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E999413A40;
+	Fri, 10 Oct 2025 07:10:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id c4iON3ix6GhyawAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 10 Oct 2025 07:10:48 +0000
+Message-ID: <22de3e4b-bce4-43ec-8c62-55a7fbbf3baa@suse.de>
+Date: Fri, 10 Oct 2025 09:10:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010032001.GA3741500@ax162>
+User-Agent: Mozilla Thunderbird
+Subject: Re: PROBLEM: AST2500 BMC video output disabled by reboot (regression)
+To: Nick Bowler <nbowler@draconx.ca>
+Cc: Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, regressions@lists.linux.dev
+References: <wpwd7rit6t4mnu6kdqbtsnk5bhftgslio6e2jgkz6kgw6cuvvr@xbfswsczfqsi>
+ <CAD=FV=Xp7zOQ2iEVf896P074RW911F-e2Qa36deD0e8fWksFBA@mail.gmail.com>
+ <u7ek3ccya4c3c4rteliskjjfczpmrt4vmqo5c6kjdotxdgitn7@ko24dpb35pq4>
+ <ef6558a9-c44a-4c66-967c-187f260f73e1@suse.de>
+ <xeipdyk2i2lpkg4rrvz4cl2l3ch62sl4zoa73qvlms3ek3zkci@y7xqbgjulaet>
+ <cox6kpackepnunrlhpsssvgdmjd24477cc7mide52xptmmoxyr@ijjotb3xju3v>
+ <f1de37ae-2ae4-4513-98fd-18617016704a@suse.de>
+ <5949fd73-3ca4-4bd9-8092-2d9923dcbfd3@suse.de>
+ <qjyncqymjja57h2wxxv3ebuqpip5qu7yjalccons5xmtzfw5h5@m3u4rvbqzcxt>
+ <e0104f10-9230-41e5-acd1-4ca95c38220e@suse.de>
+ <hyyyuqsyf7c3ed2ku57fp4sjwkpcacygtrwnkgupn2xdq7ez4u@sg6xeg4shkdd>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <hyyyuqsyf7c3ed2ku57fp4sjwkpcacygtrwnkgupn2xdq7ez4u@sg6xeg4shkdd>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Thu, Oct 09, 2025 at 08:20:01PM -0700, Nathan Chancellor wrote:
-> Hi Peter,
-> 
-> On Thu, Oct 09, 2025 at 09:07:02PM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
-> > head:   6c6e6a5416471498d8aafc050110bec9467e4da7
-> > commit: 6c6e6a5416471498d8aafc050110bec9467e4da7 [1/1] Merge branch 'linus' into x86/core, to resolve conflicts
-> 
-> It appears that this got bisected to the merge because the configuration
-> has CONFIG_CFI=y, which needs the rename that is in Linus's tree. This
-> is reproducible with just commit 894af4a1cde6 ("objtool: Validate kCFI
-> calls") cherry-picked onto 6.17 and CONFIG_CFI_CLANG=y in the config
-> provided at the link below.
-> 
-> > config: x86_64-buildonly-randconfig-001-20251009 (https://download.01.org/0day-ci/archive/20251009/202510092124.O2IX0Jek-lkp@intel.com/config)
-> > compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251009/202510092124.O2IX0Jek-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202510092124.O2IX0Jek-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> > >> vmlinux.o: warning: objtool: rcar_pcie_probe+0x13e: no-cfi indirect call!
-> 
-> I do see an indirect call in rcar_pcie_probe() with ->host_init_fn() but
-> rcar_pcie_probe() is not __nocfi... +0x13e is 0x8d9d7e in this build.
-> 
->     8d9d6f: 31 c0                         xorl    %eax, %eax
->     8d9d71: 49 89 86 58 06 00 00          movq    %rax, 0x658(%r14)
->     8d9d78: 4c 89 ff                      movq    %r15, %rdi
->     8d9d7b: 45 31 db                      xorl    %r11d, %r11d
->     8d9d7e: 2e e8 00 00 00 00             callq   0x8d9d84 <rcar_pcie_probe+0x144>
->                   00000000008d9d80:  R_X86_64_PLT32       __x86_indirect_thunk_r11-0x4
-> 
-> Is this an issue with the objtool check or is clang not generating the
-> right code?
+Hi
 
-So going by the asm above, objtool is right, this is not a CFI adorned
-indirect call.
+Am 10.10.25 um 01:56 schrieb Nick Bowler:
+> Hello,
+>
+> On Tue, Oct 07, 2025 at 10:51:29AM +0200, Thomas Zimmermann wrote:
+>> Am 04.10.25 um 02:31 schrieb Nick Bowler:
+>>> But it introduces a new problem: the screen no longer turns back on if
+>>> I boot the patched kernel from the "display off" state.  The unpatched
+>>> 6.17 kernel would at least turn the display back on from this.
+>>> Furthermore, rebooting from this state keeps the display off.
+> [...]
+>> Thanks again for testing. Looks like your BMC is especially picky about
+>> these settings. :)
+>>
+>> Attached are two patches; each trying to eliminate one of the possible
+>> causes. Could you please test them individually and report the results?
+> 0001-ast-Use-VGACR17-sync-enable-and-VGACRB6-sync-off.patch
+>    ^ Everything appears to work fine with this patch applied on
+>      top of 6.17.
 
-Let me go build this thing.
+That's great news. I'll prepare the patch so that it can go into the 
+kernel. Thanks again for testing.
+
+Best regards
+Thomas
+
+>
+> 0001-ast-Use-VGACR17-sync-enable-and-VGASR01-screen-disab.patch
+>    ^ This one has the same problem as the last patch: the screen
+>      does not turn back on if it was previously off during bootup.
+>
+> Thanks,
+>    Nick
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
