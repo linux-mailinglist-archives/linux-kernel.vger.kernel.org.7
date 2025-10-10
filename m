@@ -1,267 +1,187 @@
-Return-Path: <linux-kernel+bounces-847823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F23BCBD15
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:51:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D6CBCBD21
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C3D19E52E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:52:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A2A54E464D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBA626FA56;
-	Fri, 10 Oct 2025 06:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D0270EA5;
+	Fri, 10 Oct 2025 06:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pgc0SajS"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oxlqWe9c"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BC222579E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796FD1E231E;
+	Fri, 10 Oct 2025 06:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760079099; cv=none; b=X4NGJq2iGBufLkkZO4GG7fvvbf37IhkQld3zMO2eri8u0qrlsjeLotvfiZFLu5QbOKH64dTD/0g74Ns8M8nBzF7jjibXgehoHVzC7WB7HOM25ujWTzAhQXvkKatwsGwVbAXqabvgrJ6+qIt2KPQP5oCB6d3VSEEmMDrfH+Bn2bI=
+	t=1760079111; cv=none; b=R8R2796ZcEYgmn1Lj7F8heZVFDGJojoqnZcb+JLtAQ9/GCcoc+gsW0+jEJ/akP8gvcwv2ImynWQxUyd87MQhvnmXp13iE2spBYe22Eo3/6lhG7AOcuAQIjSar/gOZJCnWhTzoG2vDKSBCZyTPvYcf2h2j9jIPgKRXvAXvy0mSfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760079099; c=relaxed/simple;
-	bh=JO89qedHC2MDzQioik5FsYyMVGDN4miABxDc+zrHX0Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1WQFwqcYj4YGZQ6t4se94IHsZR2rIxSn83oblEYh+0ILlECrcs8rCCPgtoiPRpr59pZ3XTQAU0JWHxF9zAS2+1106Lw5jlcKGKcm68BNlG+QQTQaoLuKCFJGFpufygqcxFzfYMIvx1ELtEIN9fqbtN2CW9EjBg2o1R7729MCZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pgc0SajS; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-9335a918867so166436939f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 23:51:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760079097; x=1760683897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yg0e0l77VG71toCseTjv4ZWJcNOrsHbf0eyR2Vr6uWs=;
-        b=Pgc0SajS1Ybg2z6ik8kF0tAmXPhN1FnxZFTw5bc7cZ+nbSFWR8yturj4Weeo9aRqLY
-         ihNdsPN+jdOzCD6QQKHC7tnvQXqPsjOEq4TGtB8zNZzuSlUtxO5cnqVfSTUJtL3v/zcD
-         J+VaWO+tyKzMZdSMasxcgIUaYPIWa6vI8ZUNMa76ZE1EDoL5RVlfdPfnn3T17DWjXm3Z
-         ks687f9vxNO0Td82+b+yOOGTGY50n1+9H/KQ8D6U75lRLN53DkCW2Cx3HMv3I+hbLu04
-         AiGbG16s8QPa5iZZqFbFriwOs0Pd9uKuu5dZLFZ9Od4wq0cg120qDo/eCehHZ1j3niln
-         4/Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760079097; x=1760683897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yg0e0l77VG71toCseTjv4ZWJcNOrsHbf0eyR2Vr6uWs=;
-        b=pyWQHxVotkSzWXXFTaupxiqSb+JNyIJahZKheQdTuQVlURspo2Xu2fq/pYdEpJGVBS
-         u1UbXIKzjJR0Ok6d7vqFJZPAEgmt9+fseehTG5G87GXlePrMGmt0abr5JPxUMZ8OZFgI
-         0IKY/seyzmYRWexDz7n3SORmcHwezvNn6/ov2tRk232fHOwkPOMywwBMjKQmNv0aW3ot
-         NHMTAAfUifTwevlXNx3JIUiLvLFPn4/Jjedyn+cE9tl/mWuuNT4FuYJ1OZ+/WBJeBtmt
-         apzVe8ru0nfl7biCqcWfkxF43Rigk8xGO5NxNhWM/PX1k6j+jqe1ikG4meN+gCyGPky0
-         jfsA==
-X-Forwarded-Encrypted: i=1; AJvYcCW82+/dUWXAcZ+2cGyx9ovL1fkEtDSw2vzoRIPOE9Zp49RKFnQuT04zRXOqVZ0S3DIwNSUEVkMGx/mYpOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOJq4tQ4+ws3MwNqAgZZORbtdiUcq1F9BBWURHNzCyVOIvO4uL
-	hLFZEGoF0qH+2akWQc/yCt+4qjMkrKcOPykDCb0z5Fct0m9dShvDS5+9SgZXynDQF7ZwrnXlpOt
-	c3xy5vollGRUgLH3LBDmRJeL69YKOL/k=
-X-Gm-Gg: ASbGncsI529t8ttflKS5103ZH3ngjHGD9f5HIxeHzngDtg9l4ZFBUdepeHDgu+SK8Z/
-	kj4PMeq3eJk/f6ppmgM5vVjdzVYzDHKmYMACBnAxzL20psE1fBvCr8o6QOPeNrLK8rH9e1UYKxT
-	V3Eg2qcnJxhnK4St/EYsI7XI6pO5UaARKvnfIdqkp+9W1rWNvNB1H2EXsHJQm/9S5QGqpOosNg+
-	NdXatTEZUT6tnaLawaexqT2aA==
-X-Google-Smtp-Source: AGHT+IEe8F2GZmi5p86X92Kgz6J3805Z1eNiHbQlhbqzs7s2OMXo54wa5LJlt3BYavvWRhltuJ3GA7pYmIhnRcbz9Fk=
-X-Received: by 2002:a05:6e02:471c:b0:42f:91aa:50df with SMTP id
- e9e14a558f8ab-42f91aa5224mr58051315ab.30.1760079096925; Thu, 09 Oct 2025
- 23:51:36 -0700 (PDT)
+	s=arc-20240116; t=1760079111; c=relaxed/simple;
+	bh=EKf4E4d9jYqC85kwDTeHkwcH5/FLvpvYghy4JiDj1tE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KjkZZKaMYCmNgeB9pKFRzbHgdu7PUIVLtJYc/Gfc8OCaE7/UMCX8gK9QplvztkWeTknXU+NKkfznrtjNHG6bPm2vDZoe7jk4izvzmPy+3ACgChdIthceMXcvVuPKeocVl6IWd5pJRmuklWuwS29z1WzLD7mlUJUUjruFklOuB00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oxlqWe9c; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760079099; x=1760683899; i=markus.elfring@web.de;
+	bh=YU+cG4oPGJIlYxkYFyaad4V9zA4pGvWCsGmGwS2HYPM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=oxlqWe9ca47hXbdioAT0cgqZnoXlUhLPQhLdISpRFQ3CbusGiN4cSvXVUKwIQ9lj
+	 PZsQvMvZBc0yHEUuMYO2DetjMFdsWhIOSY9VeLoPW2LHkVPbFUURvvCmmvsz/OHXy
+	 MPUzSvJB3PwgC9JYDhG7/WBv+m//7LzfyY6xS3mDuSNbb9uTWgOe7XRslKz19n1+S
+	 HfSvVYez4NcLMMKayZzieJPnQAuEOgjKOJ3iXgUUnZN7AGlsUKct9bv7BujBQgteX
+	 iiRAkLNrtsa63zKwBWwTHGGFnaOilY7A9i87xBV50Lv5DH6eUHQRtYsjfQGqACklS
+	 wnaDCGHHdl3tb+R+WQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSZI5-1ueoZm2FY1-00PwwR; Fri, 10
+ Oct 2025 08:51:39 +0200
+Message-ID: <8f7ac740-e6a8-4c37-a0aa-e0572c87fe9e@web.de>
+Date: Fri, 10 Oct 2025 08:51:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008165659.4141318-1-aleksander.lobakin@intel.com> <aOfGZvSxC8X2h8Zb@boxer>
-In-Reply-To: <aOfGZvSxC8X2h8Zb@boxer>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Fri, 10 Oct 2025 14:51:00 +0800
-X-Gm-Features: AS18NWDlKhy58lp8knSTyrYulXCXM8f_V3QUHqfkuv613BZKEyP79qxM1IO6OTw
-Message-ID: <CAL+tcoDJ3fCtgtrxwUnkgCPXkg9Zy6MKw-tNCuVEW2V1-yjvNw@mail.gmail.com>
-Subject: Re: [PATCH bpf] xsk: harden userspace-supplied &xdp_desc validation
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kees Cook <kees@kernel.org>, nxne.cnse.osdt.itp.upstreaming@intel.com, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 3/3] smb: client: Omit a variable initialisation in
+ smb311_crypto_shash_allocate()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Aurelien Aptel <aaptel@suse.com>, Bharath SM <bharathsm@microsoft.com>,
+ Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jTEjJW/ITWRakBkbMB60LMlkxhMS6X0TgKTeGGpPrgOIitDcDWy
+ PFScFI8YFp9Q/rKGWoG3pWGG7+vBSSYn849cujWwgCwckSZQhdmas3TcPeHvS+iUttK09CB
+ xxvPbavxxNEnVtyXabCwlqjwGd31KffIB9SOHhjoxtErv17RvLrEJPEb6BAxrrs/M8+HZy/
+ FUy4PpZpi9V84y8aMzycQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xmpO6l5Gxgw=;PxwRvO0Zg4Sy4ROTRMRJYJsMF5Q
+ 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
+ AK8lNrK25KVMc9v7I=
 
-On Thu, Oct 9, 2025 at 10:28=E2=80=AFPM Maciej Fijalkowski
-<maciej.fijalkowski@intel.com> wrote:
->
-> On Wed, Oct 08, 2025 at 06:56:59PM +0200, Alexander Lobakin wrote:
-> > Turned out certain clearly invalid values passed in &xdp_desc from
-> > userspace can pass xp_{,un}aligned_validate_desc() and then lead
-> > to UBs or just invalid frames to be queued for xmit.
-> >
-> > desc->len close to ``U32_MAX`` with a non-zero pool->tx_metadata_len
-> > can cause positive integer overflow and wraparound, the same way low
-> > enough desc->addr with a non-zero pool->tx_metadata_len can cause
-> > negative integer overflow. Both scenarios can then pass the
-> > validation successfully.
->
-> Hmm, when underflow happens the addr would be enormous, passing
-> existing validation would really be rare. However let us fix it while at
-> it.
->
-> > This doesn't happen with valid XSk applications, but can be used
-> > to perform attacks.
-> >
-> > Always promote desc->len to ``u64`` first to exclude positive
-> > overflows of it. Use explicit check_{add,sub}_overflow() when
-> > validating desc->addr (which is ``u64`` already).
-> >
-> > bloat-o-meter reports a little growth of the code size:
-> >
-> > add/remove: 0/0 grow/shrink: 2/1 up/down: 60/-16 (44)
-> > Function                                     old     new   delta
-> > xskq_cons_peek_desc                          299     330     +31
-> > xsk_tx_peek_release_desc_batch               973    1002     +29
-> > xsk_generic_xmit                            3148    3132     -16
-> >
-> > but hopefully this doesn't hurt the performance much.
->
-> Let us be fully transparent and link the previous discussion here?
->
-> I was commenting that breaking up single statement to multiple branches
-> might affect subtly performance as this code is executed per each
-> descriptor. Jason tested copy+aligned mode, let us see if zc+unaligned
-> mode is affected.
->
-> <rant>
-> I am also thinking about test side, but xsk tx metadata came with a
-> separate test (xdp_hw_metadata), which was rather about testing positive
-> cases. That is probably a separate discussion, but metadata negative
-> tests should appear somewhere, I suppose xskxceiver would be a good fit,
-> but then, should we merge the existing logic from xdp_hw_metadata?
-> </rant>
->
-> >
-> > Fixes: 341ac980eab9 ("xsk: Support tx_metadata_len")
-> > Cc: stable@vger.kernel.org # 6.8+
-> > Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> > ---
-> >  net/xdp/xsk_queue.h | 45 +++++++++++++++++++++++++++++++++++----------
-> >  1 file changed, 35 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
-> > index f16f390370dc..1eb8d9f8b104 100644
-> > --- a/net/xdp/xsk_queue.h
-> > +++ b/net/xdp/xsk_queue.h
-> > @@ -143,14 +143,24 @@ static inline bool xp_unused_options_set(u32 opti=
-ons)
-> >  static inline bool xp_aligned_validate_desc(struct xsk_buff_pool *pool=
-,
-> >                                           struct xdp_desc *desc)
-> >  {
-> > -     u64 addr =3D desc->addr - pool->tx_metadata_len;
-> > -     u64 len =3D desc->len + pool->tx_metadata_len;
-> > -     u64 offset =3D addr & (pool->chunk_size - 1);
-> > +     u64 len =3D desc->len;
-> > +     u64 addr, offset;
-> >
-> > -     if (!desc->len)
-> > +     if (!len)
->
-> This is yet another thing being fixed here as for non-zero tx_metadata_le=
-n
-> we were allowing 0 length descriptors... :< overall feels like we relied
-> too much on contract with userspace WRT descriptor layout.
->
-> If zc perf is fine, then:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Oct 2025 08:05:21 +0200
+Subject: [PATCH 3/3] smb: client: Omit a variable initialisation in smb311=
+_crypto_shash_allocate()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-Testing on IXGBE that can reach 10Gb/sec line rate, I didn't see any
-impact either. This time I used -u to cover the unaligned case.
+The local variable =E2=80=9Crc=E2=80=9D is immediately reassigned. Thus om=
+it the explicit
+initialisation at the beginning.
 
-What I did was just like below:
-# sysctl -w vm.nr_hugepages=3D1024
-# taskset -c 1 ./xdpsock -i eth1 -t -z -u -s 64
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/smb/client/smb2transport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Jason
+diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
+index b790f6b970a9..3f8b0509f8c8 100644
+=2D-- a/fs/smb/client/smb2transport.c
++++ b/fs/smb/client/smb2transport.c
+@@ -50,7 +50,7 @@ int
+ smb311_crypto_shash_allocate(struct TCP_Server_Info *server)
+ {
+ 	struct cifs_secmech *p =3D &server->secmech;
+-	int rc =3D 0;
++	int rc;
+=20
+ 	rc =3D cifs_alloc_hash("hmac(sha256)", &p->hmacsha256);
+ 	if (rc)
+=2D-=20
+2.51.0
 
-> Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
->
-> >               return false;
-> >
-> > -     if (offset + len > pool->chunk_size)
-> > +     /* Can overflow if desc->addr < pool->tx_metadata_len */
-> > +     if (check_sub_overflow(desc->addr, pool->tx_metadata_len, &addr))
-> > +             return false;
-> > +
-> > +     offset =3D addr & (pool->chunk_size - 1);
-> > +
-> > +     /*
-> > +      * Can't overflow: @offset is guaranteed to be < ``U32_MAX``
-> > +      * (pool->chunk_size is ``u32``), @len is guaranteed
-> > +      * to be <=3D ``U32_MAX``.
-> > +      */
-> > +     if (offset + len + pool->tx_metadata_len > pool->chunk_size)
-> >               return false;
-> >
-> >       if (addr >=3D pool->addrs_cnt)
-> > @@ -158,27 +168,42 @@ static inline bool xp_aligned_validate_desc(struc=
-t xsk_buff_pool *pool,
-> >
-> >       if (xp_unused_options_set(desc->options))
-> >               return false;
-> > +
-> >       return true;
-> >  }
-> >
-> >  static inline bool xp_unaligned_validate_desc(struct xsk_buff_pool *po=
-ol,
-> >                                             struct xdp_desc *desc)
-> >  {
-> > -     u64 addr =3D xp_unaligned_add_offset_to_addr(desc->addr) - pool->=
-tx_metadata_len;
-> > -     u64 len =3D desc->len + pool->tx_metadata_len;
-> > +     u64 len =3D desc->len;
-> > +     u64 addr, end;
-> >
-> > -     if (!desc->len)
-> > +     if (!len)
-> >               return false;
-> >
-> > +     /* Can't overflow: @len is guaranteed to be <=3D ``U32_MAX`` */
-> > +     len +=3D pool->tx_metadata_len;
-> >       if (len > pool->chunk_size)
-> >               return false;
-> >
-> > -     if (addr >=3D pool->addrs_cnt || addr + len > pool->addrs_cnt ||
-> > -         xp_desc_crosses_non_contig_pg(pool, addr, len))
-> > +     /* Can overflow if desc->addr is close to 0 */
-> > +     if (check_sub_overflow(xp_unaligned_add_offset_to_addr(desc->addr=
-),
-> > +                            pool->tx_metadata_len, &addr))
-> > +             return false;
-> > +
-> > +     if (addr >=3D pool->addrs_cnt)
-> > +             return false;
-> > +
-> > +     /* Can overflow if pool->addrs_cnt is high enough */
-> > +     if (check_add_overflow(addr, len, &end) || end > pool->addrs_cnt)
-> > +             return false;
-> > +
-> > +     if (xp_desc_crosses_non_contig_pg(pool, addr, len))
-> >               return false;
-> >
-> >       if (xp_unused_options_set(desc->options))
-> >               return false;
-> > +
-> >       return true;
-> >  }
-> >
-> > --
-> > 2.51.0
-> >
->
+
 
