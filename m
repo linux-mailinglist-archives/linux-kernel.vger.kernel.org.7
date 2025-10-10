@@ -1,424 +1,213 @@
-Return-Path: <linux-kernel+bounces-848282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE651BCD470
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:32:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BDABCD479
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B28F4FB567
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:32:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99D614FE668
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CC72F25F6;
-	Fri, 10 Oct 2025 13:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF982F3C2B;
+	Fri, 10 Oct 2025 13:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="GxVjLhZu"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iVXA9CDz"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013026.outbound.protection.outlook.com [40.107.162.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACE02EF667
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760103166; cv=none; b=BFqVFgqDSNd1ET4LhgbmIYrlEpyKqbLTN8QqYOYhvb5hRcGaZtq4lYCax4WOHmVomguYhUpr37ntKJ+RjCXQoY4UmbYYwR7KCnk979ACyAR5OJWS+RPhJ+CcE64LHXueq0bCS8M0y/pN77gnXMOId7l2LyBdfV72q5fXsDd2Lvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760103166; c=relaxed/simple;
-	bh=G4IhE9t2CQsfp9hFHLXb4P847fX5InBHZDM/5H1cc4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l6NFEX4mwVhna7JLc3orL6UX1YG0lKgxzfe9ERaqqtck3VOjiyyC6mGmvX0vx1iL6iqgslXvytQveupN4IS2NGs0A0sRHKdDvU07/m1BC7k+reWgL+NJGas0VicDixmS74arL2n1k/z2AU3gJ/d1brSphfGeyt5Q5Z6YWI1hJwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=GxVjLhZu; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B461D3F7D8
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1760103156;
-	bh=uImHt0aC/VLvi7JaQjnqrtzU3awc4toIj7D3nFGd2Hg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=GxVjLhZumKj6Cksnj+mLVaazU5bzOPc4PxBSDVdq1SDiFsCbsH5yUMlR92kyXvT5B
-	 XI92AMiNP4AJi2FH66K3iWC6xWgwZtWf5GmNRmoXiTAxxCr9W1KbrxUu4E1I6Stvux
-	 y1drKGfY9fgRb0LBqv0risLaV7oTE6MZxpzwsQM38mLAXTLZTGrYdgp+0ZMix1GN6e
-	 gIaIccBgqp5uq5HB2twVzPWm7c0f6yUu8HSjz6A5ixX8uPntwR+ElopKbVXy+Qz7Yw
-	 a6dC2vIhBmZftOpaqlAoEceL+7EA0x19PLTZtPvlgOuTZ/DtkEkOYnAeCowrjxHzCt
-	 hJcBItp4UIXRyd4WmPPdHxKnZnzFalYzaRXYBbHf90DCUsoeMtq6Df9oCdZ61Jjczr
-	 LjRMpaOmfKnCjH15dVjfgCOIudfgvKHvrvET62KWxNLLwzphhNIhJdqJ1oSQ3m+oQX
-	 k2ldL6elmJ0I9tTcPM2sCLp5n0bn+hX+FfuOcVlFqOHmn45skbzJNRPzS1NRMK40Os
-	 cQHI++BsJBiqGuMduHMPsX8/aCan+YcoLYJcmSGAmDTQwrUarXbNu5Y4ddqZ6fHYWP
-	 vUVNZi4L/mdpgxvJgIOR8QorF71XFa4AtsVlLEetg2RpD5tZ7gN0Bljq22NpYOGIfy
-	 H3l0nLGqxqWhqjU1l4i7saDE=
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e502a37cdso13504425e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:32:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760103156; x=1760707956;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uImHt0aC/VLvi7JaQjnqrtzU3awc4toIj7D3nFGd2Hg=;
-        b=n9u4JemGp/fUIB3ljyppMClWNM+OGcLJASodnXjBctqlhwMZGm4iDUlGaVLNCv/cX3
-         PBDQn0caM4W6cJ+PcmQeRUjdBeu6CD2nyd9dQo/Ac8pgsDE0FhTnXPH5ZPJw+M5hjhKa
-         Jdw+LXsEujY0a+Dn+XGf6YChgi27FTIV4p1w4lx/EQbHfCjq6vwi7Iwq9Nl4lpL0UjMb
-         aFQJwGNBzTHQDu+bE5Rfvy7siEGd9qacGxQG30tiVsI2GCEo6BWJDKpWcbu+xzWnY6d3
-         Ee9mqRqtts5LWfN5fhEwnfxx9ZE/Qv0t/njosH3smGIQ4X+YY5Y9/Wh/q+AsI2aa9koN
-         WUEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpXxpGrc0WksLU3vYdutfD5Tj2rM0Ftzg9BaSc6mO6z/4Q3zCwWbnZLQQYqBgHFEy2XEK36sd4nDzbb5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVSXD1+LQuR1ixlPN+Yt2VE0CgRs/lzucw4AqYdyWHYMPXvW11
-	YniziS3k+JxalmkJ5YpM95fNc70kuUFy45nh45YTgA8oB9/X/Z3c15sCAvW8aVy5AtIBH0FEyGa
-	LIk9o7xGmMEFY5Hfeg1i8iJBDDlV5Pfn46EKrn8DEXmGtCgNg7Dsr8Yg/PoUfjNAaw6Y05cGEcC
-	alOjcRYA==
-X-Gm-Gg: ASbGncs3rxUUh2FyZWti0JK1lLnftkEmTsJ1DGjHl0l29C2PSRPnJY3y/RIUavr5+E5
-	Ts9+YvMItETVB4g8MHYDotIA+TzPkw2prTC8320m+niDcnHTkqsVE+VIZhPUQWoYOhuvuiNLm7w
-	bFiuHd2oGc4oevj+0zH2n7h8aPIKvSB74L2Mxc9mzSK5S/jgJBgAEVDqpfm3xVgBqzWr18nsooY
-	P8hkfFow/D8QYMfDA54qLRZRjGgVZWDrz+dvXkP78804joLqtsoZQYj5y/xC9AuubXKOjaBmjmv
-	Jz8HQv4XlJzGJlAZV3hqhl4qQcjV698ZbROXIRgjyz6OvY+dN203iG0vLnvTRxHhtilmEz0gXmw
-	8XPnt1u69paBCCLH76VeiHXq5uhvt
-X-Received: by 2002:a05:600c:4fc9:b0:46e:652e:168f with SMTP id 5b1f17b1804b1-46fa9a8f0a6mr82265935e9.6.1760103156202;
-        Fri, 10 Oct 2025 06:32:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9wQ1lNN3oOf2OsrpZlPoadyIW4hYvLN1ru9asIjfY67wACdWaMe7gEerawui6Cg9+UuwM3g==
-X-Received: by 2002:a05:600c:4fc9:b0:46e:652e:168f with SMTP id 5b1f17b1804b1-46fa9a8f0a6mr82265635e9.6.1760103155651;
-        Fri, 10 Oct 2025 06:32:35 -0700 (PDT)
-Received: from [192.168.1.29] (lau06-h06-176-136-128-80.dsl.sta.abo.bbox.fr. [176.136.128.80])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426d0d9050bsm2674441f8f.13.2025.10.10.06.32.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 06:32:35 -0700 (PDT)
-Message-ID: <93e284fe-1627-4c16-b713-b2afefcf3bf4@canonical.com>
-Date: Fri, 10 Oct 2025 15:32:34 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715FD283145;
+	Fri, 10 Oct 2025 13:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760103168; cv=fail; b=sJVZLKGNWDMSModdCVeNCKSqamZ9vt3tP41wqoztd65EfH/KG0QcXRNCRe6iXMthdJ4j6rhoC7KhHYDfQb6Z02GQmi925hLG91oGqC2SC2SV6rmDo6P+Tcwl3I8dINraTnoVgY8IVyF6LISBAGMdme+ctAvtjRZkV2S1+Gk5CVY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760103168; c=relaxed/simple;
+	bh=x29kcSIYgL6XCze8ch/A3PmolzCrn+++RQRWmmrYJlg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iWHjsztXLd45bUFqVD6qUovlAsweW/uh5eMJSvmsrU8l2D5jO/XAK8Uyv31Bk+BQm5mm83f9RkhS+REmYGnlfXzOZyx9HOn2G/+77WIMgjf7b1QOC7i3rEnILcACogmZFye9t0STCmn4Nhb6LpNfVpZrsmQDlBBWUo1nteKPVh0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iVXA9CDz; arc=fail smtp.client-ip=40.107.162.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nMjbOoFN/24f6OlnZPJr0O1xtOOAocxAowjdGnkxv7eRUUPtSw1VqBsHTbQeFZ0HZCpUM/Gk2OPKXsSC3eutUHcKetanMQxuzFK8THy9Xr4Vp7WnDbpqp5+ODyqSeszzrc6Z/307HVpSIVArvYFI7aEG5TJWpvH/cqQhkTBE2MdMOZ2U77l/paPYUGSCIqg9JrDOtacBsRKkfLCnTGSx6djo0fTg/moKjQ9Qhj1jrqRsQsWPGmAwJ4OX99RVrx09GmHn4qGpLnY/o2DTjFecWCjawuVb3p5hXZqMLPmP2cQ5R2LJiM5P7Etypp4Ig24DBexFSNE3091EtS/B9/a71A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KgVsIDf8HkUOR0cU0uBBDorO8NOE1RPmu9AeklVF68s=;
+ b=sRPKjadnXpjezUSLZ5KvEmu6nyYGOtNr95q2Nt0PwAdoxRxbdwm3DQIWj+chRIvWygPa3c3U85pmevWbn3c0dOwGwjg2r7z4/HMlAgk1QJLscy/OObtcItmNulsvVEbUDxEzzS6YvGoFaLWmTWpGsh9qBCK1o03P8m5BG7KrpZi6dg5A/ed7oIp7Yz/4CY0/ZjWYQzsKWJ0csCxeoFRgBc4NY3070wMwwBy2wc3B1j531iKpsZIAKa0b5CgpYqkMMN7103JSJTOsL3UHHbF5Jjyf1Knb1X1UtIC3eOebZ5qrUesw01P6cgi5Eqr7RqJIXschKp5TiT0nRbV1hxBehQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KgVsIDf8HkUOR0cU0uBBDorO8NOE1RPmu9AeklVF68s=;
+ b=iVXA9CDzn+SNkR3D0mmyinITRysjuPbIPoq7XZE4nIVa9uw769MRLe38K4GnLVg2p7001TYoqU/S4Wh+7+HcG8foKO4f0TLTDX7oEUutdajfsrE4tGeBAjvwZ9CP0YedCyBIkmIa8+2eX5Q1p9sVa40L6DLgz/NH9F882hG6/L/FBrphz1QzbfJRI3DhMUcEQtjQ5yWIsrU4w+shsCI4e3pbDEGIFzWVyvQU7pXkHs9IwV1pQPoH9ibagY37iqXY6VoR9rMxlEH/fB5nNUdOdQA8Yt9VQvNVMiuBa0EGLHM5SiyR/kzIZiruOgyrK/bUwcjKHFy2Ue4Pdi5yaVYuAw==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by VI2PR04MB10690.eurprd04.prod.outlook.com (2603:10a6:800:279::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 13:32:42 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 13:32:42 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, Frank Li <frank.li@nxp.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net] net: enetc: correct the value of ENETC_RXB_TRUESIZE
+Thread-Topic: [PATCH net] net: enetc: correct the value of ENETC_RXB_TRUESIZE
+Thread-Index: AQHcOcsiKt52zsPKAk2fo+9Vq3ZFNLS7VS4AgAADikA=
+Date: Fri, 10 Oct 2025 13:32:41 +0000
+Message-ID:
+ <PAXPR04MB8510CCAFB1849BD712A320C488EFA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20251010092608.2520561-1-wei.fang@nxp.com>
+ <20251010124958.5fk33tb6o2m2qct7@skbuf>
+In-Reply-To: <20251010124958.5fk33tb6o2m2qct7@skbuf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|VI2PR04MB10690:EE_
+x-ms-office365-filtering-correlation-id: 2b7565b5-1c9e-411c-6481-08de08017d19
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|19092799006|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ElXQHeJOVXGaJEyaCUvgtitI3eTORdJlxu91mdtLL/Z47FBTVbsSvITFxHJt?=
+ =?us-ascii?Q?/jsRhZlwlPfNNkXiH6RHiziuv0cREEInjbKBejeFPyZVF4lp3QD6DIIjmykH?=
+ =?us-ascii?Q?ua/78MPaCD1nUuQ/11kRW2IFf4xiUBwWW8QhNoNEVNbA4mkCJu8cOsR+JfF1?=
+ =?us-ascii?Q?l+595FwF0mzWpcP+T+/zgUGJZDbF/ZWCLTuf4lqiEm2lkiFC5Q01dRsFc0vu?=
+ =?us-ascii?Q?csUTi+GqR5iDO0DD3WDyCtpfjnpyQmgnr622XKSfD1TNzdwyzQKLyanB3CJU?=
+ =?us-ascii?Q?Uc8W1WLK/OGI175AVbdA9pkJ0TLCgocFznnRH291Ygf658bpgIz1Ddk4gJTF?=
+ =?us-ascii?Q?nRkWwegpnB97Px5nR2DXXtqq9CU+9Oea3UobQkcgpwe3b2enXfO9NQ7ZUIhi?=
+ =?us-ascii?Q?WRHZqVFUyvRJ+3nVjD9Z0HfZiCommgSQABmF2uqPf2ef8IrbTnwuFjEAW/Lr?=
+ =?us-ascii?Q?VMhdSSVqgRCFXyem4g7cCWmskFHI8PuavLlVuwh41+fvEIYpi+CVCNRi67fc?=
+ =?us-ascii?Q?s6lYSwYTTtTm2TpszWnRtQaaJqlEna//vvnkcaqEQy0LMHR+kCKD/vwWxZuJ?=
+ =?us-ascii?Q?h2wY/ZfWMkx74pJehi/pp4IP/3hQYahfW6+QmR/mOWyXZSXgY0YD/qWyp/UF?=
+ =?us-ascii?Q?klIzjjmd49EPjFj3BHsQkeFgSExV/9xykmH8SunYSY3/hCiJpyHXWB3vL95b?=
+ =?us-ascii?Q?/Rt7PSzTqCNxXu5sF0QlFalv41i8tqhfAx7TW09QhH6B9BANswZrgsUzHnHz?=
+ =?us-ascii?Q?vdlfl0FEk73wpnUlw0cOVrGi9RhYe4Ay3kH28ja+lld0L1sAAlFV1N45A6w5?=
+ =?us-ascii?Q?Ut/xFaZM0ZNlCKLiv40yfajVbRnPPvXTpDiR0/yWJF4NM2PBDNiCmBKeOh+O?=
+ =?us-ascii?Q?wIea931QFy4NrNxI1M3AEwqvAlwvGxhAYiRRKgNkhQ/xKhn1aNjWcfnLVvoe?=
+ =?us-ascii?Q?aeSt6FioLCDYcXzVzO4HfVZTUJDiZpRKqO/UNh8Y4prbhfpBjrpi/8b4Rkgq?=
+ =?us-ascii?Q?oNCJSeiLTOZr2VjgiQpPdnujYolDemlfMd67v3lOkOXk1otsDOsTIzC1QD5W?=
+ =?us-ascii?Q?wUQRauTexMH81vJg8ydj+hBqvIf0qj0gv8sCRC3GPIT0m1FoCFHXq6/fbQcY?=
+ =?us-ascii?Q?w/JBlKev8/PS7XVp1eqBBhnPX6G0qc6+BS8G6kEthM8AUPJH2Y4tFX34I0lj?=
+ =?us-ascii?Q?tnLZk1I/DkYy03WgOyKDj7Z3hXBJOiIeFYZ7AnGtsfct4YCyuw+f8KD2j7n0?=
+ =?us-ascii?Q?MZnv8TEREhmlY+hD8sE+3NYCKozfnHas+4CY842YfCrzEP5ZrK/aXgZCnavQ?=
+ =?us-ascii?Q?NtFYyuUF5xuU/BnIBF1M5O777i/7K0MYPUeCRzs3fdKpccA4WvnUKl5kr6Lb?=
+ =?us-ascii?Q?FFLbU9RsxL/C3AP9hD3wg4/S6LQsSUAtiCtxY6PgFwfq2aB1ptGQgLxxdT0A?=
+ =?us-ascii?Q?8+vHkcgF5SdF6KRwAp5Xl6pBoDY5u5AvI3mlgKym6g6cNUnCjcnViRW/j6G7?=
+ =?us-ascii?Q?SKalLYHJoNIkzoXgY5ixwmMXm/YcWWcxJd/U?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(19092799006)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?CFPTxVBpOosRcle2qnqY9j9zuvujV7IegIX9IocxbR8r5DLiOATVSMT3chh6?=
+ =?us-ascii?Q?Rsytm2SmzgFr5Pi5Lkmws5ErEK5tl3jFVtn4tN4ZR5hZ5BEwXCmpQyKL6Iwm?=
+ =?us-ascii?Q?vB/Z9NLODyYUbwm5gp6ss95wvQ8HrcGCfBlEAsJ5cIL5CC53Ytd2gfZnm/QB?=
+ =?us-ascii?Q?F+wwBpZnbv/01iAM+VHzWkqyzL1qPJtplUcMKayGKh+uBzMwrbJ8C7dnUiY1?=
+ =?us-ascii?Q?BzHrVcKASTuf5zzX69VfV98zt0090NsFL/9cP3+e0eUfEJ9bkzutzGiJ9FWg?=
+ =?us-ascii?Q?5nbTMoA6kY/dudWLCxkEGZ9IkXTdXkuvO3xCWgIZPyCt3QzX8Wrcl/5OluBJ?=
+ =?us-ascii?Q?RdZl1ik66iFUV1IsRsZxieSU24H8kYGWRVsfEjjEAVG3RO4B1AQ1xiPXlIU+?=
+ =?us-ascii?Q?Rg9RJQRfHghsW7iGsSyONpmvKCZCn439aFJMy+llObgQkjhccRhMN2YAjqQ0?=
+ =?us-ascii?Q?pyckqOf6f+nMp1qQJeLobYy8E5jNge8o9mxjEz2+VwT7fpIJ5H0Ekxe6OHR+?=
+ =?us-ascii?Q?/WF3NLGJDPqr+1TDjIcxgm7YwLOHkccUJhpDL9AQK180fL2vYsQL23I+fZeC?=
+ =?us-ascii?Q?TBoci862Esq7RweM9HuE2w9NzYMkvfNFG++N+AHdGK0FDW5JfFfqIZVWEQ0n?=
+ =?us-ascii?Q?3Ejks+MeIY+yCxP/uFT+EDRHutgplKOH++3Cc/Uq451iQav6cZ/V38ot+Rei?=
+ =?us-ascii?Q?mfMtn/8/Q9fCvYaXiwjhKyzTPOEDzV/upYX55NElGlShKVgPAmoNg0mU/frO?=
+ =?us-ascii?Q?+lPKOURU8qbnzt9kVv2Q/yXj9y20v3SDd43UXtDIBCL9rifWi0hyg/z2ynFP?=
+ =?us-ascii?Q?I65LE3cffxWQIeJAWLCH0dindMhcw0A0W7L82pZk34V3UAFk2OyP284VdtFS?=
+ =?us-ascii?Q?oRmPBC9aShf5pLQ1AR/SfMMRsNoiGrelDviPV1l4DtLYnAKIzOrMLvWS02vV?=
+ =?us-ascii?Q?HAYu+FJVSyipW/iixFnq7BdfrkTlBfkGJhcviGDBDUD6/iWw1W6lq5ftMeg2?=
+ =?us-ascii?Q?ZUKpeq5FIhJX6OYEI8Ee3B87dKakQ5Ve6QLJwk0lUDRYJOo4Xe9LYv/YF5AJ?=
+ =?us-ascii?Q?KnWwldqLZch8K7GAqdt/wly2NYklWFWgrQToL8aUMKic+RLFGNFamAxwUCw9?=
+ =?us-ascii?Q?feMnBO7W9qEugQEZpCfK8aKsJ86fsH9FwJld4xZLcDNOm5dYM3u2C0/TFdti?=
+ =?us-ascii?Q?3tjlDmZuHpi45VmTYHBrnlSUn+Q/UCWixBhgLCPL50kQb4/qAlg+Ixessmbt?=
+ =?us-ascii?Q?AML7vAZxs6J72jdv62yt7jbwHQE47gSS/jxrKWmv7j3k3TKOoTKDKokBU4PI?=
+ =?us-ascii?Q?v7rdPHohIZrXJXcz6nV4Zh1rUp5kSfiYEbnnav6KeiGbzv2SNBtXPFnXIQEN?=
+ =?us-ascii?Q?XlZXym9XcKxOsWJPpK8kv6SCSQHM09O0mXkUnrj3UhuKs0mmqKB2gSVP8pzw?=
+ =?us-ascii?Q?qMJ54F1SBQTfzK5eBpi/inlEOHxN8hQ5TP1HShTjOSIrnlpPDqTrZXw/xrL4?=
+ =?us-ascii?Q?3yu5EPkmr/4H9tB72ltMaXtlCYmtOpmfxuLUmC0nJ8YWzRpeMPSgm+yyVH8w?=
+ =?us-ascii?Q?MBgfSeH7JTF7incfZDE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] lsm: introduce security_lsm_config_*_policy hooks
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, kees@kernel.org,
- stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
- takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, song@kernel.org,
- rdunlap@infradead.org, linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-kernel@vger.kernel.org
-References: <20250709080220.110947-1-maxime.belair@canonical.com>
- <20250709080220.110947-3-maxime.belair@canonical.com>
- <20250820.Ao3iquoshaiB@digikod.net>
-Content-Language: en-US
-From: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-Autocrypt: addr=maxime.belair@canonical.com; keydata=
- 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
- yriCIKEAbLqHTyj+RhbroZmv5q3X7iVq
-In-Reply-To: <20250820.Ao3iquoshaiB@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b7565b5-1c9e-411c-6481-08de08017d19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2025 13:32:41.9890
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3R8GWZjDIiTNpyLHY13w4XzSFX5/DD77E9wz+hpHBq1skf+mIAtaMVHyGtGl8zNo95L+UymCshPKps3AbwScgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10690
 
+> On Fri, Oct 10, 2025 at 05:26:08PM +0800, Wei Fang wrote:
+> > ENETC_RXB_TRUESIZE indicates the size of half a page, but the page
+> > size is adjustable, for ARM64 platform, the PAGE_SIZE can be 4K, 16K
+> > and 64K, so a fixed value '2048' is not correct when the PAGE_SIZE is 1=
+6K or
+> 64K.
+> >
+> > Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet
+> > drivers")
+> > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> > ---
+> >  drivers/net/ethernet/freescale/enetc/enetc.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h
+> > b/drivers/net/ethernet/freescale/enetc/enetc.h
+> > index 0ec010a7d640..f279fa597991 100644
+> > --- a/drivers/net/ethernet/freescale/enetc/enetc.h
+> > +++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+> > @@ -76,7 +76,7 @@ struct enetc_lso_t {
+> >  #define ENETC_LSO_MAX_DATA_LEN		SZ_256K
+> >
+> >  #define ENETC_RX_MAXFRM_SIZE	ENETC_MAC_MAXFRM_SIZE
+> > -#define ENETC_RXB_TRUESIZE	2048 /* PAGE_SIZE >> 1 */
+> > +#define ENETC_RXB_TRUESIZE	(PAGE_SIZE >> 1)
+> >  #define ENETC_RXB_PAD		NET_SKB_PAD /* add extra space if needed
+> */
+> >  #define ENETC_RXB_DMA_SIZE	\
+> >  	(SKB_WITH_OVERHEAD(ENETC_RXB_TRUESIZE) - ENETC_RXB_PAD)
+> > --
+> > 2.34.1
+> >
+>=20
+> Is this a problem that needs to be fixed on stable kernels? What
+> behaviour is observed by the end user?
 
+The issue should be invisible to users in most cases, but if users want
+to increase PAGE_SIZE to use one buffer to receive one packet, it will
+not work as expected. So, it is better to be fixed in stable kernels.
 
-On 8/20/25 16:21, Mickaël Salaün wrote:
-> On Wed, Jul 09, 2025 at 10:00:55AM +0200, Maxime Bélair wrote:
->> Define two new LSM hooks: security_lsm_config_self_policy and
->> security_lsm_config_system_policy and wire them into the corresponding
->> lsm_config_*_policy() syscalls so that LSMs can register a unified
->> interface for policy management. This initial, minimal implementation
->> only supports the LSM_POLICY_LOAD operation to limit changes.
->>
->> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
->> ---
->>  include/linux/lsm_hook_defs.h |  4 +++
->>  include/linux/security.h      | 20 ++++++++++++
->>  include/uapi/linux/lsm.h      |  8 +++++
->>  security/lsm_syscalls.c       | 17 ++++++++--
->>  security/security.c           | 60 +++++++++++++++++++++++++++++++++++
->>  5 files changed, 107 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->> index bf3bbac4e02a..fca490444643 100644
->> --- a/include/linux/lsm_hook_defs.h
->> +++ b/include/linux/lsm_hook_defs.h
->> @@ -464,3 +464,7 @@ LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
->>  LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
->>  LSM_HOOK(int, 0, bdev_setintegrity, struct block_device *bdev,
->>  	 enum lsm_integrity_type type, const void *value, size_t size)
->> +LSM_HOOK(int, -EINVAL, lsm_config_self_policy, u32 lsm_id, u32 op,
->> +	 void __user *buf, size_t size, u32 flags)
->> +LSM_HOOK(int, -EINVAL, lsm_config_system_policy, u32 lsm_id, u32 op,
->> +	 void __user *buf, size_t size, u32 flags)
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index cc9b54d95d22..54acaee4a994 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -581,6 +581,11 @@ void security_bdev_free(struct block_device *bdev);
->>  int security_bdev_setintegrity(struct block_device *bdev,
->>  			       enum lsm_integrity_type type, const void *value,
->>  			       size_t size);
->> +int security_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				    size_t size, u32 flags);
->> +int security_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				      size_t size, u32 flags);
->> +
->>  #else /* CONFIG_SECURITY */
->>  
->>  /**
->> @@ -1603,6 +1608,21 @@ static inline int security_bdev_setintegrity(struct block_device *bdev,
->>  	return 0;
->>  }
->>  
->> +static inline int security_lsm_config_self_policy(u32 lsm_id, u32 op,
->> +						  void __user *buf,
->> +						  size_t size, u32 flags)
->> +{
->> +
->> +	return -EOPNOTSUPP;
->> +}
->> +
->> +static inline int security_lsm_config_system_policy(u32 lsm_id, u32 op,
->> +						    void __user *buf,
->> +						    size_t size, u32 flags)
->> +{
->> +
->> +	return -EOPNOTSUPP;
->> +}
->>  #endif	/* CONFIG_SECURITY */
->>  
->>  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
->> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
->> index 938593dfd5da..2b9432a30cdc 100644
->> --- a/include/uapi/linux/lsm.h
->> +++ b/include/uapi/linux/lsm.h
->> @@ -90,4 +90,12 @@ struct lsm_ctx {
->>   */
->>  #define LSM_FLAG_SINGLE	0x0001
->>  
->> +/*
->> + * LSM_POLICY_XXX definitions identify the different operations
->> + * to configure LSM policies
->> + */
->> +
->> +#define LSM_POLICY_UNDEF	0
->> +#define LSM_POLICY_LOAD		100
-> 
-> Why the gap between 0 and 100?
-> 
->> +
->>  #endif /* _UAPI_LINUX_LSM_H */
->> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->> index a3cb6dab8102..dd016ba6976c 100644
->> --- a/security/lsm_syscalls.c
->> +++ b/security/lsm_syscalls.c
->> @@ -122,11 +122,24 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, u32 __user *, size,
->>  SYSCALL_DEFINE5(lsm_config_self_policy, u32, lsm_id, u32, op, void __user *,
->>  		buf, u32 __user *, size, u32, flags)
-> 
-> Given these are a multiplexor syscalls, I'm wondering if they should not
-> have common flags and LSM-specific flags.  Alternatively, the op
-> argument could also contains some optional flags.  In either case, the
-> documentation should guide LSM developers for flags that may be shared
-> amongst LSMs.
->
-> Examples of such flags could be to restrict the whole process instead of
-> the calling thread.
->
-
-Indeed, in v6 I used both common_flags and flags. For now I didn't
-support any of them to keep this patchset simple but we could discuss
-which flags we want to support. 
->>  {
->> -	return 0;
->> +	size_t usize;
->> +
->> +	if (get_user(usize, size))
-> 
-> Size should just be u32, not a pointer.
-
-Indeed
-
-> 
->> +		return -EFAULT;
->> +
->> +	return security_lsm_config_self_policy(lsm_id, op, buf, usize, flags);
->>  }
->>  
->>  SYSCALL_DEFINE5(lsm_config_system_policy, u32, lsm_id, u32, op, void __user *,
->>  		buf, u32 __user *, size, u32, flags)
->>  {
->> -	return 0;
->> +	size_t usize;
->> +
->> +	if (!capable(CAP_SYS_ADMIN))
->> +		return -EPERM;
-> 
-> I like this mandatory capability check for this specific syscall.  This
-> makes the semantic clearer.  However, to avoid the superpower of
-> CAP_SYS_ADMIN, I'm wondering how we could use the CAP_MAC_ADMIN instead.
-> This syscall could require CAP_MAC_ADMIN, and current LSMs (relying on a
-> filesystem interface for policy configuration) could also enforce
-> CAP_SYS_ADMIN for compatibility reasons.
-
-I agree and lsm_config_system_policy is now restricted to CAP_MAC_ADMIN
-in v6.
-
-> 
-> In fact, this "system" syscall could be a "namespace" syscall, which
-> would take a security/LSM namespace file descriptor as argument.  If the
-> namespace is not the initial namespace, any CAP_SYS_ADMIN implemented by
-> current LSMs could be avoided.  See
-> https://lore.kernel.org/r/CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com
-
-I would appreciate additional feedback on the best way to handle
-namespaces for this syscall.
-
-Possible approaches include:
- - Passing a value in buf (as I did patch v6 3/5 for AppArmor). This is
-   simple and let individual LSM handle namespaces as see fit. However,
-   it may slightly complicate the policy format.
- - Passing a file descriptor as a syscall argument. This offers a cleaner
-   interface but couples the pseudofs to this syscall, reducing some of
-   its advantages.
- - Providing no support for namespaces at this time.
-
-I tend to prefer the first approach here but I'm open to suggestions
-
-> 
->> +
->> +	if (get_user(usize, size))
-> 
-> ditto
-> 
->> +		return -EFAULT;
->> +
->> +	return security_lsm_config_system_policy(lsm_id, op, buf, usize, flags);
->>  }
->> diff --git a/security/security.c b/security/security.c
->> index fb57e8fddd91..166d7d9936d0 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -5883,6 +5883,66 @@ int security_bdev_setintegrity(struct block_device *bdev,
->>  }
->>  EXPORT_SYMBOL(security_bdev_setintegrity);
->>  
->> +/**
->> + * security_lsm_config_self_policy() - Configure caller's LSM policies
->> + * @lsm_id: id of the LSM to target
->> + * @op: Operation to perform (one of the LSM_POLICY_XXX values)
->> + * @buf: userspace pointer to policy data
->> + * @size: size of @buf
->> + * @flags: lsm policy configuration flags
->> + *
->> + * Configure the policies of a LSM for the current domain/user. This notably
->> + * allows to update them even when the lsmfs is unavailable or restricted.
->> + * Currently, only LSM_POLICY_LOAD is supported.
->> + *
->> + * Return: Returns 0 on success, error on failure.
->> + */
->> +int security_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				 size_t size, u32 flags)
->> +{
->> +	int rc = LSM_RET_DEFAULT(lsm_config_self_policy);
->> +	struct lsm_static_call *scall;
->> +
->> +	lsm_for_each_hook(scall, lsm_config_self_policy) {
->> +		if ((scall->hl->lsmid->id) == lsm_id) {
->> +			rc = scall->hl->hook.lsm_config_self_policy(lsm_id, op, buf, size, flags);
-> 
-> The lsm_id should not be passed to the hook.
-
-Indeed
-
-> 
-> The LSM syscall should manage the argument copy and buffer allocation
-> instead of duplicating this code in each LSM hook implementation (see
-> other LSM syscalls).
-
-I get your point but methods used internally by LSMs already handle the
-allocation themselves through a char __user * parameter.
- - smack: smk_write_rules_list
- - selinux: sel_write_load
- - apparmor: policy_update
-
-Hence, I think that it's actually better to let LSMs handle allocations
-
-> 
->> +			break;
->> +		}
->> +	}
->> +
->> +	return rc;
->> +}
->> +
->> +/**
->> + * security_lsm_config_system_policy() - Configure system LSM policies
->> + * @lsm_id: id of the lsm to target
->> + * @op: Operation to perform (one of the LSM_POLICY_XXX values)
->> + * @buf: userspace pointer to policy data
->> + * @size: size of @buf
->> + * @flags: lsm policy configuration flags
->> + *
->> + * Configure the policies of a LSM for the whole system. This notably allows
->> + * to update them even when the lsmfs is unavailable or restricted. Currently,
->> + * only LSM_POLICY_LOAD is supported.
->> + *
->> + * Return: Returns 0 on success, error on failure.
->> + */
->> +int security_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				   size_t size, u32 flags)
->> +{
->> +	int rc = LSM_RET_DEFAULT(lsm_config_system_policy);
->> +	struct lsm_static_call *scall;
->> +
->> +	lsm_for_each_hook(scall, lsm_config_system_policy) {
->> +		if ((scall->hl->lsmid->id) == lsm_id) {
->> +			rc = scall->hl->hook.lsm_config_system_policy(lsm_id, op, buf, size, flags);
-> 
-> ditto
-> 
->> +			break;
->> +		}
->> +	}
->> +
->> +	return rc;
->> +}
->> +
->>  #ifdef CONFIG_PERF_EVENTS
->>  /**
->>   * security_perf_event_open() - Check if a perf event open is allowed
->> -- 
->> 2.48.1
->>
->>
+From the perspective of driver implementation, a page is divided into
+two half pages for use, that is, one BD uses the first half, and another
+BD uses the second half. But when the PAGE_SIZE is 16K or 64K, both
+BDs use the first half. This is inconsistent with description in the releva=
+nt
+kernel doc and commit message.
 
 
