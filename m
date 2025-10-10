@@ -1,128 +1,332 @@
-Return-Path: <linux-kernel+bounces-848556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA19FBCE06D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:01:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1685BCE073
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 084B94EED5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0252188E3C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4749E1E1E16;
-	Fri, 10 Oct 2025 17:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056F01F75A6;
+	Fri, 10 Oct 2025 17:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IWC8PqnX"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mvxu5Bix"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9988313A86C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007D813A86C;
+	Fri, 10 Oct 2025 17:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760115660; cv=none; b=hAj54D2gq8k6utDkXoKLFIoS1IEYAPA4PoiqcDL/M9DCq7VLnZPQD4le4K8D2jtK9tu31T+Ud8491Cdg6ixyx09t32tJ2f2TAUu4PnSdUrR780KA58zdVpu1P1piVJ1R+NYNF+gB+auyVSYd7rJA2JfTMTWiOK+LecUA6vTQwxw=
+	t=1760115674; cv=none; b=GO+wgoHgFmtKdIlJA0urwqNBRuEOllVxG46isNyPwciVeDqq1PLbCyu/Ez84jnxZTc+lStG9AL2EjwD7VLLg4uW8UpENjB8C0eYlcnZ3nwgo7AqeEDRC4VoXuvDpEnDFJlTcbPjrYvfrePu1y3t9b5UOkihSmgIn1JINOc3DJ9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760115660; c=relaxed/simple;
-	bh=EYyHZi7lJwHBaK15OLYLE1MUoZnPM2C96io0qfOoKwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SsO5N5YA7n8Gpfj1/fiVHDXzFtwzvdH4YjYXJJG20gwTAH/MydDmx+D63YZvxbkLLREF3uWbZjsN46lnLsTfxkAENZm4c68BLu3WwMhnXookb570dABZ7+sfcmyBCgabnlzUcJlXyWlScjMmkLsxVaDxFsRaYl5ITgpMlPlf2gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IWC8PqnX; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-93ba2eb817aso219424639f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1760115657; x=1760720457; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TZn78b0wyDjiwHnWB67MhXOFvbYgRHJbgZQPwFHCBKo=;
-        b=IWC8PqnXSgCXickPzi2TGGW6/J/cp9w9QEv9EzPi/9BusL4AT1JY19iMkMg9rMPbr4
-         hvzThRzLBrOml5jN0PfbzTiFnIt6T0almHIHHBsVvZBDv3RKMB7DrqQEP/BcQUNzAIgi
-         xiOC2SU0SrXN7Zjj+p79uVPNA2lAck2kuRXns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760115657; x=1760720457;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZn78b0wyDjiwHnWB67MhXOFvbYgRHJbgZQPwFHCBKo=;
-        b=gwTspkTKGSmFftgR4l+H92K32wSMj1GIvBD3Z7znIQ/HhqqdKgS6ncsfmfSTGZtQjq
-         OGJuI4kDvdOVMGlpJkX1W6RgrCammqmUXfwOZFdSlWC7fNCMi2sckXg+kguj0+fNSy8D
-         QYHHcl8yjcC7bcqJhr1mCng0sqxLi0DyX/A0ZyWzUoeU8e5lLz9ZkVVDLBWrGtRWFwvI
-         V6s2xb/xOz7s3kfFdiPPSKgU9VqUEaazQVG+D38t7Hm9mdSkjAlDD9DeByRINQzetm8V
-         5j8dZclGeGDj2UhSASGP9riIsqDCNgY6quXtikpTFRqwWaHdHVXQ5kmZjQl23AlyFE3o
-         8f5Q==
-X-Gm-Message-State: AOJu0Yzq/XMufrDm/hK2yl109MGaTzfff0BXJfAin8X01yqRN22wMElK
-	EF/u6h7RCCP0j53VaUpiBgU2UvfE08xgPCksG0POqomWErNrEvb9+i0MkjUI9Eo28cM=
-X-Gm-Gg: ASbGncvJX0vbtv7xasdb+0wFt0tdVXDKppHBP9YgDucJFXicsnRck5W6O0jOi3/8uBd
-	SaLHL+JrsOBFQdBBzoLZZhMI4MgJOHRVi+VkSZEmq+4+ZKf3dMpYhD/U/SeL3VsDbxW9ZDLyT8t
-	xytCl6a9kZC09oxkn5Sm8cGNtVA0Zctpg9vUWOsjH8omAOYhTdx9yI/Veb6LksgHfJZAOSUIf2s
-	rl3vjxTr/NtKiuF+JNJUIImWOJH2mKfojXKV6kvYwZ0e5z7+ROfLrKl9XLwoyvTvRmYrmhw5iMJ
-	DS9texLTRW60442x23L0VhU4sKwNcci9ZFtTy+d/XzNvb6AG/fD1MJMcvSZ6Sd/+fpz9eLHtgc4
-	l1DbbZXo+ER5CeD/q9Cds0tc9WURAaIUJZH4EMWTYlNr/o4lq/Ic7uw==
-X-Google-Smtp-Source: AGHT+IHPmVcN5C+66P07fmSeMZl3tP1046j5NJ9TkQM499GvnLbyfyBXHwVz+boWgvfT6iEAzYzEcQ==
-X-Received: by 2002:a05:6602:1410:b0:884:1e28:904e with SMTP id ca18e2360f4ac-93bd19712b3mr1401822139f.12.1760115655891;
-        Fri, 10 Oct 2025 10:00:55 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f7200b0a4sm1016355173.38.2025.10.10.10.00.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 10:00:55 -0700 (PDT)
-Message-ID: <bd60a8e5-f4df-4743-8b56-3d6127906ff2@linuxfoundation.org>
-Date: Fri, 10 Oct 2025 11:00:53 -0600
+	s=arc-20240116; t=1760115674; c=relaxed/simple;
+	bh=p0iEOkvuuxMae+vrMRboSkPIcIQw3lKK5lp9vrvqJiI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=l+FjVFgj9YYr7ych1WzJEmnmLN/bcyLJ8gFkybPmMmezJI2zMPSjlOm+TvPRQpV4MjNxqFmnl2XKllgvQ5y/YXMDVL+PoQuPD8XG84KGNMuJF9D7QMggu6Bc9lHKcnucQgp5TZeiS2BZLRFUUZAhvCXO7OZHj4StcbI6BjW866s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mvxu5Bix; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760115672; x=1791651672;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=p0iEOkvuuxMae+vrMRboSkPIcIQw3lKK5lp9vrvqJiI=;
+  b=Mvxu5BixJ6W8tKaVIeBYOvo5C1oKHfrZ+HJF6Tx0E6QrOuMGMoQIEum9
+   kCh+4AZKoLF+r0kSEgFU/JUPO9IklCOdsKLGhr+kzAohIgr+NrWCSLq2Y
+   ufVPhYu8H724zVz1MHIg/TC3xzBA7XBIdkrvX5NorDTtluGomdyr5ToOj
+   Nk33DCSk87qZZ1x4w0hWjyBJ7CWRHCcvfmeMj/6HT1IbrKIYsadMGWTO+
+   AUQXm0Vh0z6PKkcCLFIow6KpzPrK9Nd6O2ypyxQirMK4gHHod4owA2SDn
+   ppYRYmKHIM6j2BeN+Mp+kAydzRGWQ3oxwN9a/77nfr+EuVilP+UNi2BnH
+   A==;
+X-CSE-ConnectionGUID: DO20Ft51SbCZbJwNDmx2GA==
+X-CSE-MsgGUID: nWp1taMXScmBa71z8+yKDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="62238489"
+X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
+   d="scan'208";a="62238489"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 10:01:11 -0700
+X-CSE-ConnectionGUID: kzVg1ydqTAyRkjoYYviO1A==
+X-CSE-MsgGUID: zSLTmc3bTgaXUdVKAIns5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
+   d="scan'208";a="185407866"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.127])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 10:01:08 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 10 Oct 2025 20:01:05 +0300 (EEST)
+To: Val Packett <val@packett.cool>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
+In-Reply-To: <2faffdc3-f956-4071-a6a4-de9b5889096d@packett.cool>
+Message-ID: <094618f2-947e-a66e-dc27-f4dedc8b5bb5@linux.intel.com>
+References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com> <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com> <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool> <f5eb0360-55bd-723c-eca2-b0f7d8971848@linux.intel.com> <cd8a1d3c-1386-476b-a93d-1259b81c04e9@packett.cool>
+ <8f9c9950-1612-6e2d-388a-ce69cf3aae1a@linux.intel.com> <2faffdc3-f956-4071-a6a4-de9b5889096d@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib: cpu_rmap.c Refactor allocation size calculation in
- kzalloc()
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
- akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250930092327.27848-1-mehdi.benhadjkhelifa@gmail.com>
- <10082c41-4302-4cb3-a2bf-788e59bad0c8@linuxfoundation.org>
- <84bf5902-b3e5-4d58-a2a7-f01e15cfe143@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <84bf5902-b3e5-4d58-a2a7-f01e15cfe143@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; BOUNDARY="8323328-1725611810-1760022322=:944"
+Content-ID: <81650c8e-e6e1-dd5d-7a5b-5a2fd38d371f@linux.intel.com>
 
-On 10/9/25 09:16, Mehdi Ben Hadj Khelifa wrote:
-> On 10/7/25 11:23 PM, Shuah Khan wrote:
-> 
->>
->> How did you find this problem and how did you test this change?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Bummer - you trimmed the code entirely from the thread. Next time
-leave it in for context for the discussion.
+--8323328-1725611810-1760022322=:944
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <f9b2e3ba-11bd-7cd1-c963-e3b06f21ddf1@linux.intel.com>
 
-> For the first part of your question,After simply referring to deprecated documentation[1] which states the following:
+On Thu, 9 Oct 2025, Val Packett wrote:
 
-Looks you forgot to add link to the deprecated documentation[1].
-It sounds like this is a potential problem without a reproducer.
-These types of problems made to a critical piece of code require
-substantial testing.
+> On 10/7/25 12:43 PM, Ilpo J=C3=A4rvinen wrote:
+>=20
+> > On Mon, 6 Oct 2025, Val Packett wrote:
+> > > [..]
+> > >=20
+> > > I think it's that early check in=C2=A0pci_read_bridge_bases=C2=A0that=
+ avoids the
+> > > setup
+> > > here:
+> > >=20
+> > >  =C2=A0 =C2=A0 if (pci_is_root_bus(child)) /* It's a host bus, nothin=
+g to read */
+> > >  =C2=A0 =C2=A0 =C2=A0 =C2=A0 return;
+> > If there's a PCI device as is the case in pci_read_bridge_windows()
+> > which inputs non-NULL pci_dev, the config space of that device can be r=
+ead
+> > normally (or should be readable normally, AFAIK). The case where bus->s=
+elf
+> > is NULL is different, we can't read from a non-existing PCI device, but
+> > it doesn't apply to pci_read_bridge_windows().
+> >=20
+> > I don't think reading the window is the real issue here but how the
+> > resource fitting algorithm corners itself by reserving space for bridge
+> > windows before it knows their sizes, so basically these lines from the
+> > earlier email:
+> >=20
+> > pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
+> > pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]:
+> > assigned
+> > pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
+> >=20
+> > ...which seem to occur before the child buses have been scanned so that
+> > space reserved is either hotplug reservation or due to "old_size" lower
+> > bounding. That non-prefetchable bridge window is too small to fit the
+> > child resources.
+> >=20
+> > Could you try passing pci=3Dhpmemsize=3D0M to kernel command line if th=
+at
+> > helps?
+> >=20
+> > The other case is the "old_size" in calculate_memsize() which too can
+> > cause the same effect preventing sizing bridge window truly to zero whe=
+n
+> > it's not needed (=3D=3D disable it =3D=3D not assign it at all at that =
+point).
+> > Forcing it to zero would perhaps be worth a test (or removing the max()
+> > related to old_size)
+> >=20
+> > I've no idea why the old_size should decide anything, I hate that black
+> > magic but I've just not dared to remove it (it's hard to know why some
+> > things were made in the past, there could have been some HW issue worke=
+d
+> > around by such odd feature but it's so old code that there isn't any re=
+al
+> > information about whys anymore to find).
+>
+> Well, you did dare to mess with resource assignment sequence, and it got =
+very
+> quickly and quietly merged into linux-next causing a big regression on
+> hardware that's not made by your company.. so maybe it's better not to to=
+uch
+> anything there at all (:
 
-> 'For other calculations, please compose the use of the size_mul(), size_add(), and size_sub() helpers'
-> Which is about dynamic calculations made inside of kzalloc() and kmalloc(). Specifically, the quoted part is talking about calculations which can't be simply divided into two parameters referring to the number of elements and size per element and in cases where we can't use struct_size() too.After that it was a matter of finding code where that could be the problem which is the case of the changed code.
-> 
-> For the second part, As per any patch,I make a copy of all dmesg warnings errors critical messages,then I compile install and boot the new kernel then check if there is any change or regression in dmesg.
+Even if you were very likely joking here, I'm still sorry for breaking it,=
+=20
+no matter which company's device.
 
-This is a basic boot test which isn't sufficient in this case.
+Perhaps I'll start Cc you in all upcoming resource changes as you seem to=
+=20
+be so willing to volunteer to review them. ;-D
 
-> For this particular change, since it doesn't have any selftests because it's in utility library which in my case cpu_rmap is used in the networking subsystem, I did some fault injection with a custom module to test if in case of overflow it fails safely reporting the issue in dmesg which is catched by the __alloc_frozen_pages_noprof() function in mm/page_alloc.c and also return a NULL for rmap instead of wrapping to a smaller size.
+> > pci=3Drealloc on command line might help too, but I'm not sure. There s=
+eems
+> > to be some extra space within the root bus resource so it might work.
+> >=20
+> > I'm not sure what call chain is causing the assignment of those 3 bridg=
+e
+> > windows. One easy way to find out where it comes from would be to put
+> > WARN_ON(res->start =3D=3D 0x7c400000); into pci_assign_resource() next =
+to the
+> > line which prints "...: assigned".
+>=20
+> OK, I've uploaded the full big chungus logs (all with the WARN_ON):
+>=20
+> https://owo.packett.cool/lin/pcifail.reverted.dmesg
+> https://owo.packett.cool/lin/pcifail.noarg.dmesg
+> https://owo.packett.cool/lin/pcifail.hpmeme.dmesg (hpmemsize didn't help)
+> https://owo.packett.cool/lin/pcifail.realloc.dmesg (realloc didn't help
+> either)
 
-Custom module testing doesn't test this change in a wider scope
-which is necessary when you are making changes such as these
-without a reproducer and a way to reproduce. How do you know
-this change doesn't introduce regressions?
+Thanks for the logs.
 
-thanks,
--- Shuah
+> So without your change, the assignment first comes from pci_rescan_bus =
+=E2=86=92
+> pci_assign_unassigned_bus_resources *via IRQ*, and then in the probe of t=
+he
+> wifi driver.
+
+There seem to be cases where pci_assign_unassigned_root_bus_resources()=20
+executes for bus 0000:04 before 0004:01:00.0 is scanned as it is only=20
+recorded later.
+
+Hmm, qcom_pcie_global_irq_thread() seems to indicate the real enumeration=
+=20
+can only occur after the link up event has arrived, and it starts another=
+=20
+scan from there.
+
+Perhaps this could be solved by inhibiting resource sizing and assignment=
+=20
+per host bridge until the bus could be enumerated for real. Otherwise the=
+=20
+resource assignment has no idea how the bridge windows should be sized=20
+which then can lead to this cornering itself if the initial assignment=20
+without knowledge of the necessary sizes.
+
+Could you please try if the patch below helps?
+
+
+--
+From: =3D?UTF-8?q?Ilpo=3D20J=3DC3=3DA4rvinen?=3D <ilpo.jarvinen@linux.intel=
+=2Ecom>
+Date: Fri, 10 Oct 2025 19:55:49 +0300
+Subject: [PATCH 1/1] PCI: Delay resource sizing until devices can be enumer=
+ated
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
+
+It seems pci-qcom cannot yet enumerate devices while scanning bus from
+pci_host_probe(). Instead, there is IRQ waiting for a link up event
+which starts the scan from qcom_pcie_global_irq_thread().
+
+pci_host_probe() also calls pci_assign_unassigned_root_bus_resources()
+which tries to size the bridge windows without any knowledge about the
+attached devices and assigns them. If the assigned window is too small
+to accomodate all the devices resource once they appear, the windows
+may have become so pinned in place that they cannot be successfully
+resized.
+
+It is not very useful to size bridge windows without the children.
+Thus, mark into the struct pci_host_bridge that delayed enumeration is
+performed. Inhibit resource assignment until the enumeration is known
+to be possible.
+
+FIXME: There could be other entrypoints to resource assignment code
+beyond those that include check for ->enumeration_pending but these
+were the ones seen in the logs.
+
+Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/controller/dwc/pcie-qcom.c |  3 +++
+ drivers/pci/setup-bus.c                | 10 ++++++++++
+ include/linux/pci.h                    |  1 +
+ 3 files changed, 14 insertions(+)
+
+diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controlle=
+r/dwc/pcie-qcom.c
+index 294babe1816e..33683d751de0 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -1644,6 +1644,7 @@ static irqreturn_t qcom_pcie_global_irq_thread(int ir=
+q, void *data)
+ =09=09msleep(PCIE_RESET_CONFIG_WAIT_MS);
+ =09=09dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
+ =09=09/* Rescan the bus to enumerate endpoint devices */
++=09=09pp->bridge->enumeration_pending =3D 0;
+ =09=09pci_lock_rescan_remove();
+ =09=09pci_rescan_bus(pp->bridge->bus);
+ =09=09pci_unlock_rescan_remove();
+@@ -1825,6 +1826,8 @@ static int qcom_pcie_probe(struct platform_device *pd=
+ev)
+ =09=09bridge->sysdata =3D cfg;
+ =09=09bridge->ops =3D (struct pci_ops *)&pci_qcom_ecam_ops.pci_ops;
+ =09=09bridge->msi_domain =3D true;
++=09=09// FIXME: Should this be specific to just some host bridges?
++=09=09bridge->enumeration_pending =3D 1;
+=20
+ =09=09ret =3D pci_host_probe(bridge);
+ =09=09if (ret)
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 7853ac6999e2..a54a4dda6b60 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -2266,6 +2266,7 @@ static void pci_prepare_next_assign_round(struct list=
+_head *fail_head,
+  */
+ void pci_assign_unassigned_root_bus_resources(struct pci_bus *bus)
+ {
++=09struct pci_host_bridge *host =3D pci_find_host_bridge(bus);
+ =09LIST_HEAD(realloc_head);
+ =09/* List of resources that want additional resources */
+ =09struct list_head *add_list =3D NULL;
+@@ -2275,6 +2276,10 @@ void pci_assign_unassigned_root_bus_resources(struct=
+ pci_bus *bus)
+ =09int pci_try_num =3D 1;
+ =09enum enable_type enable_local;
+=20
++=09/* Wait until enumeration to avoid pinning windows with wrong sizes. */
++=09if (host->enumeration_pending)
++=09=09return;
++
+ =09/* Don't realloc if asked to do so */
+ =09enable_local =3D pci_realloc_detect(bus, pci_realloc_enable);
+ =09if (pci_realloc_enabled(enable_local)) {
+@@ -2489,10 +2494,15 @@ int pci_reassign_bridge_resources(struct pci_dev *b=
+ridge, unsigned long type)
+=20
+ void pci_assign_unassigned_bus_resources(struct pci_bus *bus)
+ {
++=09struct pci_host_bridge *host =3D pci_find_host_bridge(bus);
+ =09struct pci_dev *dev;
+ =09/* List of resources that want additional resources */
+ =09LIST_HEAD(add_list);
+=20
++=09/* Wait until enumeration to avoid pinning windows with wrong sizes. */
++=09if (host->enumeration_pending)
++=09=09return;
++
+ =09down_read(&pci_bus_sem);
+ =09for_each_pci_bridge(dev, bus)
+ =09=09if (pci_has_subordinate(dev))
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 59876de13860..10fb5aaecd8e 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -619,6 +619,7 @@ struct pci_host_bridge {
+ =09unsigned int=09preserve_config:1;=09/* Preserve FW resource setup */
+ =09unsigned int=09size_windows:1;=09=09/* Enable root bus sizing */
+ =09unsigned int=09msi_domain:1;=09=09/* Bridge wants MSI domain */
++=09unsigned int=09enumeration_pending:1;=09/* Delayed enumeration */
+=20
+ =09/* Resource alignment requirements */
+ =09resource_size_t (*align_resource)(struct pci_dev *dev,
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+--=20
+2.39.5
+
+--8323328-1725611810-1760022322=:944--
 
