@@ -1,164 +1,179 @@
-Return-Path: <linux-kernel+bounces-847755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8AFBCB963
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:59:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4DBBCB96A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8211A63D32
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:59:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7E4C4E9D99
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC2A1D5170;
-	Fri, 10 Oct 2025 03:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86D71DFE26;
+	Fri, 10 Oct 2025 04:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b2gMUaDe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="l9lGzF70"
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A49E3FB31
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78930C2EA;
+	Fri, 10 Oct 2025 04:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760068750; cv=none; b=jQY9ehCJwD03hD+3lW7rt2qXHgzefrkvEbYNYnvDG24xbLqX5qiPa8BrW/wvO0zSGPLFo5/gjVLF52J/jzLazsLBncMDru8g2cBckp7ymixd0Phfzt81W4oTZcwSBpLXm1b5EdV7LiaZ5qnOyyrpud48A3/JtwZ0LPVKmlRTG9Q=
+	t=1760068809; cv=none; b=LVDCWlWLojpdE+bvy0QdDFX/cO9ko4IcQAx39wX5Ce/lBUmdzYF4DU7Kq4jtmSuByuvNrP/4ZaouhrzFpuIXLkWDX0+LFtLTg8W4oHe1ispFDi1xypzVMkh92NvIaRG+vuqwY/itNXzHzkeERmF5RCnYyj+lH5UWyWTeZnEttCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760068750; c=relaxed/simple;
-	bh=OOowEg/kEpwQ0lfAfbo1RCLo+763fhF3zIXfDo/uL2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UN+nwimwIK5ZuR3h8F5ZNDUmGsDGB/IfOhp3igu5S+0ypbKznUPgfeyFfqi9DbGRoSU+Ny3A3AFXzppQwnu1z3V29/lO6jBZ+THyG1X4Cmdjg/Ge9DLzT0lp16pbksLYzUPsE6yEABhtBunRYXjxZ0/gdWNKuEnXxJzexBXvpkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b2gMUaDe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760068746;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vTGZcY56/dokYZNCRBhJDePRYFdQBXGbtHcTvy8LlVQ=;
-	b=b2gMUaDeZF9TP2rDmWmdqVF4uGYjeD4kIUXI7SaW19yG5RjQTiZ9sN9bNB4pzxhc/U3CiG
-	tPFDWWrigg6ZjiLgzpPyxxmqQQpU4mT3ae5KKjWOp+GCk2QsFvbAnp+wRnHbgbwdQlq5SL
-	92Wi3cYZwpCZCp/leg0t/yE90Sp/d+w=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-378-FqYqQsGKNgiXUBlTIUQlug-1; Thu, 09 Oct 2025 23:59:05 -0400
-X-MC-Unique: FqYqQsGKNgiXUBlTIUQlug-1
-X-Mimecast-MFC-AGG-ID: FqYqQsGKNgiXUBlTIUQlug_1760068744
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b630753cc38so4352009a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 20:59:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760068744; x=1760673544;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vTGZcY56/dokYZNCRBhJDePRYFdQBXGbtHcTvy8LlVQ=;
-        b=Oun6bSEJxuHxEqFiceDCade06ZF1n8xXXcpANj6l7+lcwHXZKu3sAyXhvhdgGu/Bdq
-         EhOV21SThdnkOWgAyi5Be5IW5orpKeNCBSdnzOkTVx+PjFWh9hkkl5oCsu3AtCxnb0oJ
-         QQ9nwTHZi4198gnfANijnbk6HoFeb7g+wozdIrfDIGmNZ+DFxbAjR36RhlQSf44YZmN9
-         IQa2C9xQLCLJYfpm1bhGoqqcYuIxhd77Ej1diuhsyUTsgKaWycZuxDtkY8O9+IncgdRJ
-         dmhRwrPgRSvZAmBu2/Bw588aVi5/EIYXUxgiT4vfIFBnvPhUdK6uWR+QGmKNOZR9emnE
-         Rvkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlGfZA67eGmF9OEeCGIWJSEUah6x3tgMXHa4W+jJxNnrlQnNQX7gAjkXTVEtiv92h3WXDZS3jELCvJEhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFAplwk7pD2zZcerVJFiaEahENEXTSznp58lk+DsiqDNpCAe0N
-	a46YMnxhyLT6lxYkYl0hOxzZIn27mytcc+ms99FJ9tPvu99S8HvI8FxRTPtJkQdGevhsF7CHWY3
-	mD7kDMZNbzn+mtRpw5EsbESUlXXbEwO+i4ulMjBriqg9adhfkuu2IBSQNMJltqYq9sBqNrD8l12
-	meas9emgbVlk74Gtl6E6I1D1kAasz+kkHqsZEPEwDL
-X-Gm-Gg: ASbGncsPn4gr7yGZyxK+jOsTzxyUvYj6nVw7PhB2zAb0g5znu4jmRqWfF/0ui6G/lr8
-	9wgKLtCp5hscLKnPzOicr1ZklfDBzcGFvX/ds1qvqlGefPFPtbLNv2jcMJG4ayZWZGhW0OAFjnm
-	dG9fgJZKiHTFInHJ/0v+1riA==
-X-Received: by 2002:a17:90b:1e05:b0:32e:64ca:e84a with SMTP id 98e67ed59e1d1-33b51162572mr14729295a91.12.1760068743871;
-        Thu, 09 Oct 2025 20:59:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3LgHkeItfKnzksx2+VbTfs5eW8tDQx+zY+LgfqMUL2flkA6GpUP6M0cgBlsLMGMJv8UZaOLmaiFPSWsXCyYM=
-X-Received: by 2002:a17:90b:1e05:b0:32e:64ca:e84a with SMTP id
- 98e67ed59e1d1-33b51162572mr14729270a91.12.1760068743399; Thu, 09 Oct 2025
- 20:59:03 -0700 (PDT)
+	s=arc-20240116; t=1760068809; c=relaxed/simple;
+	bh=FEMzFMjlL0olVV+s4U5QQXQVBeOiTTXpdL+OsP2gbfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OfqdabvpW20Nd+X7KUJflzxbGKY+t1aD/X8Iwc/YUDTE2oX6+0ivRQ5ntRHt+bDebxPnh0aXd0SWuUvj49bRA2hLbuJMOMJ7a8tPyYB9siftsa3Y+gTxm6CMNplHaB0isUugsyJrXzASPjRIGbZi+byqijNlTqlYSQ5pqHDxQDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=l9lGzF70; arc=none smtp.client-ip=113.46.200.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=vXp9FK80IBNcMVhCOtsMWfNtGvpQvwTItDMeUKloxVA=;
+	b=l9lGzF70bPdjT0nV5RiTGSfa8jTXN4gvTl8kJcHJnZvZ1D4yh8qRTU2qP2yITch55LKQU+AKi
+	jIDXYtXSit6MOPt1HHgSH2Mm0HJ4zI6ctgMGGNr0lvVCLujslUlnm5EN4pxHJjQsbjPXJyKwen8
+	+il0WfnGnegPH1HI50rMITA=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cjY032lryznTWt;
+	Fri, 10 Oct 2025 11:59:15 +0800 (CST)
+Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B67D180042;
+	Fri, 10 Oct 2025 12:00:03 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 10 Oct 2025 12:00:02 +0800
+Message-ID: <46d6bf56-3e7a-92d9-218f-4135d8850be9@huawei.com>
+Date: Fri, 10 Oct 2025 11:59:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002103537.308717-1-eperezma@redhat.com> <20251002103537.308717-3-eperezma@redhat.com>
- <CACGkMEucnJMs0QcH4ggourizEGsvkzF-d_OYXy0XBeU_opdNAQ@mail.gmail.com>
-In-Reply-To: <CACGkMEucnJMs0QcH4ggourizEGsvkzF-d_OYXy0XBeU_opdNAQ@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 10 Oct 2025 11:58:52 +0800
-X-Gm-Features: AS18NWBtRCPzDFJG5Q7UQQXe3VTwnoyqKwTQOUsdAeF4GtUTRJFpiT8J0K9euhI
-Message-ID: <CACGkMEtG_zbbXPx8ZYfCm09GG4hRVeEQp6FBFzXZLP_-PrvCJw@mail.gmail.com>
-Subject: Re: [RFC 2/2] vduse: allow to specify device-specific features if
- it's multiclass
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: mst@redhat.com, Laurent Vivier <lvivier@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Dragos Tatulea DE <dtatulea@nvidia.com>, Cindy Lu <lulu@redhat.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	Jonah Palmer <jonah.palmer@oracle.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	virtualization@lists.linux.dev, 
-	=?UTF-8?Q?Be=C3=B1at_Gartzia_Arruabarrena?= <bgartzia@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 13/26] genirq: Factor-in percpu irqaction creation
+Content-Language: en-US
+To: Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-acpi@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob
+ Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James
+ Clark <james.clark@linaro.org>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>
+References: <20250922082833.2038905-1-maz@kernel.org>
+ <20250922082833.2038905-14-maz@kernel.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20250922082833.2038905-14-maz@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500011.china.huawei.com (7.185.36.131)
 
-On Fri, Oct 10, 2025 at 9:39=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Thu, Oct 2, 2025 at 6:36=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redha=
-t.com> wrote:
-> >
-> > Even if the device supports more than one class, there are ways to solv=
-e
-> > the ambiguity of which device are we creating.  In the VDUSE case it is
-> > the name, for example.
->
-> This may only work for VDUSE but not other parents.
->
-> >
-> > RFC: I fon't understand 100% the motivation of this limitation, as the
-> > backend should be the one filtering out the invalid features if any.
->
-> I think we can avoid these tricks. Currently, there's a one single
-> mgmt device, this seems to be in-convenient. Could we have a per
-> device mgmt device? For example, if user space creates vduse0, vdpa
-> mgmtdev show may see vduse0 so we won't have this issue.
 
-Or if we specify the class, there won't be ambiguity.
 
-Thanks
+On 2025/9/22 16:28, Marc Zyngier wrote:
+> Move the code creating a per-cpu irqaction into its own helper, so that
+> future changes to this code can be kept localised.
+> 
+> At the same time, fix the documentation which appears to say the wrong
+> thing when it comes to interrupts being automatically enabled
+> (percpu_devid interrupts never are).
+> 
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  kernel/irq/manage.c | 40 ++++++++++++++++++++++++----------------
+>  1 file changed, 24 insertions(+), 16 deletions(-)
+> 
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index c94837382037e..d9ddc30678b5d 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -2442,6 +2442,24 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
+>  	return retval;
+>  }
+>  
+> +static
+> +struct irqaction *create_percpu_irqaction(irq_handler_t handler, unsigned long flags,
+> +					  const char *devname, void __percpu *dev_id)
+> +{
+> +	struct irqaction *action;
+> +
+> +	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
+> +	if (!action)
+> +		return NULL;
+> +
+> +	action->handler = handler;
+> +	action->flags = flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
+> +	action->name = devname;
+> +	action->percpu_dev_id = dev_id;
+> +
+> +	return action;
+> +}
 
->
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> >  drivers/vdpa/vdpa.c | 9 ---------
-> >  1 file changed, 9 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> > index 34874beb0152..0fc32f3bd66f 100644
-> > --- a/drivers/vdpa/vdpa.c
-> > +++ b/drivers/vdpa/vdpa.c
-> > @@ -688,15 +688,6 @@ static int vdpa_nl_cmd_dev_add_set_doit(struct sk_=
-buff *skb, struct genl_info *i
-> >                 err =3D -EINVAL;
-> >                 goto err;
-> >         }
-> > -       if (!(config.mask & VDPA_DEV_NET_ATTRS_MASK) &&
-> > -           config.mask & BIT_ULL(VDPA_ATTR_DEV_FEATURES) &&
-> > -           classes & BIT_ULL(VIRTIO_ID_NET) && ncls > 1 &&
-> > -           config.device_features & VIRTIO_DEVICE_F_MASK) {
-> > -               NL_SET_ERR_MSG_MOD(info->extack,
-> > -                                  "Management device supports multi-cl=
-ass while device features specified are ambiguous");
-> > -               err =3D -EINVAL;
-> > -               goto err;
-> > -       }
-> >
-> >         err =3D mdev->ops->dev_add(mdev, name, &config);
-> >  err:
-> > --
-> > 2.51.0
-> >
->
-> Thanks
+This helper could be more universal by consider by distinguishing dev_id
+and percpu_dev_id， so we can use it in request_nmi() and
+request_threaded_irq() .
 
+> +
+>  /**
+>   * __request_percpu_irq - allocate a percpu interrupt line
+>   * @irq:	Interrupt line to allocate
+> @@ -2450,9 +2468,9 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
+>   * @devname:	An ascii name for the claiming device
+>   * @dev_id:	A percpu cookie passed back to the handler function
+>   *
+> - * This call allocates interrupt resources and enables the interrupt on the
+> - * local CPU. If the interrupt is supposed to be enabled on other CPUs, it
+> - * has to be done on each CPU using enable_percpu_irq().
+> + * This call allocates interrupt resources, but doesn't enable the interrupt
+> + * on any CPU, as all percpu-devid interrupts are flagged with IRQ_NOAUTOEN.
+> + * It has to be done on each CPU using enable_percpu_irq().
+>   *
+>   * @dev_id must be globally unique. It is a per-cpu variable, and
+>   * the handler gets called with the interrupted CPU's instance of
+> @@ -2477,15 +2495,10 @@ int __request_percpu_irq(unsigned int irq, irq_handler_t handler,
+>  	if (flags && flags != IRQF_TIMER)
+>  		return -EINVAL;
+>  
+> -	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
+> +	action = create_percpu_irqaction(handler, flags, devname, dev_id);
+>  	if (!action)
+>  		return -ENOMEM;
+>  
+> -	action->handler = handler;
+> -	action->flags = flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
+> -	action->name = devname;
+> -	action->percpu_dev_id = dev_id;
+> -
+>  	retval = irq_chip_pm_get(&desc->irq_data);
+>  	if (retval < 0) {
+>  		kfree(action);
+> @@ -2546,16 +2559,11 @@ int request_percpu_nmi(unsigned int irq, irq_handler_t handler,
+>  	if (irq_is_nmi(desc))
+>  		return -EINVAL;
+>  
+> -	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
+> +	action = create_percpu_irqaction(handler, IRQF_NO_THREAD | IRQF_NOBALANCING,
+> +					 name, dev_id);
+>  	if (!action)
+>  		return -ENOMEM;
+>  
+> -	action->handler = handler;
+> -	action->flags = IRQF_PERCPU | IRQF_NO_SUSPEND | IRQF_NO_THREAD
+> -		| IRQF_NOBALANCING;
+> -	action->name = name;
+> -	action->percpu_dev_id = dev_id;
+> -
+>  	retval = irq_chip_pm_get(&desc->irq_data);
+>  	if (retval < 0)
+>  		goto err_out;
 
