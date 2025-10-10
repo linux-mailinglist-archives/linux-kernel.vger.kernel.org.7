@@ -1,49 +1,58 @@
-Return-Path: <linux-kernel+bounces-847685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7183EBCB691
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:27:58 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84FCBCB697
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13983BFA3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:27:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4997434A1E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DE6242D86;
-	Fri, 10 Oct 2025 02:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF07239E63;
+	Fri, 10 Oct 2025 02:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzNjMqVo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzDYBwhK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7171923D7E8
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4005522F16E;
+	Fri, 10 Oct 2025 02:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760063253; cv=none; b=hbHHYp3Gfw7rWcpr2jIfcrrkO5Xqb/7YcetppYj/W9auWi7vgEF3EiMs63vzMLJwZuqqlMyneGPKB2zX870XY5C4TwkoYbCytnh8eMGSjpzMmiHyvBautwbGrmaM0bv4Mc3HZbWr5zLWQ7mdWoLrolHo7rO1ZV33EfSwR5VwETM=
+	t=1760063300; cv=none; b=X6sW2z6aepT0S9BimWWUfcaCzSB1ak5rWU/Ulf+SMl3dcrW4N7D5DDeqo5hQnMpF5zlJ+4ZT+jVWEmReDk5t6V/l/N79QVjk98SvsDdh0hUm/w/5kGP+8J3UK47epvnlix3pR6utm+NWfuB+pkQ9NKeqqeRNDxbKgVbxz9uda1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760063253; c=relaxed/simple;
-	bh=CAvsAwjaWn/h2QM1s6i1PciEcb48b9O0RDgV9x92drI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JsAyspHnsulqgOD6uPrp1OOUajxKNDOLwccb334pcWI/50rtc2KjQSVeEmXmNKZX9N4grIys/ll+pXQtmkOx2zAhGE1uTjpeMnl5dtGY4uSWO1qMXE4fnoj/IYiPbraf4j66me7tZaqc0+cq+qgIfCHOdRLtoWUUtg0vE6qDK6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzNjMqVo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9928C4CEE7;
-	Fri, 10 Oct 2025 02:27:32 +0000 (UTC)
+	s=arc-20240116; t=1760063300; c=relaxed/simple;
+	bh=PkHlXZp6ScUnG3D1az7EMmTZEmssxrzEjpBBdh1XINA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KfXlxMLl+4Wpx2YWna0HFK0Bid2rU0OqoH83VWBI6C9iyTyz0tvXhDBZh3pLNCZx0MbR+ZtY5vBYZlq4VFjZkMHVzTGHWvSUk2Fag5h4cPh4NhuyrP99M3ik5f/pRw61E9FZiCAjy9RYUY9h2kLiuL+/NQEtyOSXbHW3VqunLXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzDYBwhK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CB8C4CEE7;
+	Fri, 10 Oct 2025 02:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760063252;
-	bh=CAvsAwjaWn/h2QM1s6i1PciEcb48b9O0RDgV9x92drI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qzNjMqVoQ9XsQjbJt3m8Yj2kqXw7xRvVExRuwyxE1Plet9Zz3QsHIZEXQRJMJsLEU
-	 lpkV5/We1G/xDANaLw/UEe4ofEtLcNGxnRzDYaX1s68olfOxXDzWGJ18jzVNkPT/uU
-	 6TK8a+3iyofC7cc3RkVO7gtbe97wOilE0dRlGWT3//9X6R0sunE4iRCRX70tcfi2eQ
-	 8TbWYVyviI7EfWR8dGbS218JkYfK98sS1R3lUVKLP+JsTvg6vnsZeGTZmdiMzNhvFl
-	 noehEnnyhgciOmUZhYDrYofcOpT7mUkpVnbB7QB87a4Wj7BpqgjOxkYL/dPY8qAVE2
-	 itkAyxL9ysFbw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE5B3A55FB5;
-	Fri, 10 Oct 2025 02:27:21 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1760063300;
+	bh=PkHlXZp6ScUnG3D1az7EMmTZEmssxrzEjpBBdh1XINA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VzDYBwhKPHvvTQUKR+PRRDTEW8MvERkNZ4Mzhe39Q2AQhK8wfzXvW12ObtHSQSCZb
+	 yNp9lBMrAhiY0euE5tUT4u2fVgfHLCB8MuNVOL2Lchw/s4AtKtkCiaJuGWFTBK3Pq3
+	 O10J7twAr/PQcRX773OPSjX/VmqQpQoR3hosTTyownQhadDunp+YEQwiRi4wr7rJzq
+	 wZOif4my8TcqpH13skUzS3U6PQkipcluQVxWmmifyqvAK1m8/jppPHnWVbsdTXQRIH
+	 BJgTaOwp+muMjkxsJz5kO92Comxmdtz/UZL/gw6wjEDd0omuA1BfqBIikowenZchR6
+	 SVX7K+WqST8PA==
+From: Yu Kuai <yukuai@kernel.org>
+To: axboe@kernel.dk,
+	bvanassche@acm.org,
+	nilay@linux.ibm.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v3 0/7] blk-mq: introduce new queue attribute async_depth
+Date: Fri, 10 Oct 2025 10:28:02 +0800
+Message-ID: <20251010022812.2985286-1-yukuai@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,44 +60,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: acpi: chose to boot from acpi then disable FDT
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <176006324074.354358.17217967414602352060.git-patchwork-notify@kernel.org>
-Date: Fri, 10 Oct 2025 02:27:20 +0000
-References: <20250910112401.552987-1-rabenda.cn@gmail.com>
-In-Reply-To: <20250910112401.552987-1-rabenda.cn@gmail.com>
-To: Han Gao <rabenda.cn@gmail.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- akpm@linux-foundation.org, rppt@kernel.org, andybnac@gmail.com,
- guoweikang.kernel@gmail.com, visitorckw@gmail.com, bjorn@rivosinc.com,
- sycamoremoon376@gmail.com, usamaarif642@gmail.com, yongxuan.wang@sifive.com,
- linux-kernel@vger.kernel.org
 
-Hello:
+From: Yu Kuai <yukuai3@huawei.com>
 
-This patch was applied to riscv/linux.git (fixes)
-by Paul Walmsley <pjw@kernel.org>:
+Changes in v3:
+ - use guard()/scope_guard() in patch 3;
+ - add review tag other than patch 3;
+Changes in v2:
+ - keep limit_depth() method for kyber and mq-deadline in patch 3;
+ - add description about sysfs api change for kyber and mq-deadline;
+ - improve documentation in patch 7;
+ - add review tag for patch 1;
 
-On Wed, 10 Sep 2025 19:24:01 +0800 you wrote:
-> avoid errors caused by repeated driver initialization.
-> 
-> commit 3505f30fb6a9 ("ARM64 / ACPI: If we chose to boot from acpi then disable FDT")
-> 
-> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
-> ---
->  arch/riscv/kernel/setup.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+Background and motivation:
 
-Here is the summary with links:
-  - riscv: acpi: chose to boot from acpi then disable FDT
-    https://git.kernel.org/riscv/c/69a8b62a7aa1
+At first, we test a performance regression from 5.10 to 6.6 in
+downstream kernel(described in patch 5), the regression is related to
+async_depth in mq-dealine.
 
-You are awesome, thank you!
+While trying to fix this regression, Bart suggests add a new attribute
+to request_queue, and I think this is a good idea because all elevators
+have similar logical, however only mq-deadline allow user to configure
+async_depth.
+
+patch 1-3 add new queue attribute async_depth;
+patch 4 convert kyber to use request_queue->async_depth;
+patch 5 covnert mq-dedaline to use request_queue->async_depth, also the
+performance regression will be fixed;
+patch 6 convert bfq to use request_queue->async_depth;
+
+Yu Kuai (7):
+  block: convert nr_requests to unsigned int
+  blk-mq-sched: unify elevators checking for async requests
+  blk-mq: add a new queue sysfs attribute async_depth
+  kyber: covert to use request_queue->async_depth
+  mq-deadline: covert to use request_queue->async_depth
+  block, bfq: convert to use request_queue->async_depth
+  blk-mq: add documentation for new queue attribute async_dpeth
+
+ Documentation/ABI/stable/sysfs-block | 34 +++++++++++++++
+ block/bfq-iosched.c                  | 45 ++++++++-----------
+ block/blk-core.c                     |  1 +
+ block/blk-mq-sched.h                 |  5 +++
+ block/blk-mq.c                       | 64 +++++++++++++++++-----------
+ block/blk-sysfs.c                    | 42 ++++++++++++++++++
+ block/elevator.c                     |  1 +
+ block/kyber-iosched.c                | 33 +++-----------
+ block/mq-deadline.c                  | 39 +++--------------
+ include/linux/blkdev.h               |  3 +-
+ 10 files changed, 152 insertions(+), 115 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.51.0
 
 
