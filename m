@@ -1,128 +1,176 @@
-Return-Path: <linux-kernel+bounces-848125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BEFBCC966
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0284ABCC96C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400813C2E1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:44:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D2C3C4EAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44738283CB8;
-	Fri, 10 Oct 2025 10:44:00 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690E11B4F0A;
-	Fri, 10 Oct 2025 10:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917EA28506D;
+	Fri, 10 Oct 2025 10:44:16 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AD2285040
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760093039; cv=none; b=XH7koABUN/ELGbgKsVyQWY/xPPI36aVI+UN44m4OBupcBO+0920c3BlEDVz64LxJDYFvJ8wH5EA38wY7wDVtl9Fec6YvNoMepfqFeuKFgfWuCs7PI9rv0p7P9M0sZmp7l0c4c4weR3Taq7BdyaCXRN6MHNJhAlH0Y4wUwJBJIYs=
+	t=1760093056; cv=none; b=B75Npe2IjaUCjndQx1uyfqZ/rno3K9SE4zvrXLl+75j2gDyEq9Yfz3NOd9PLpWkpnJ7ZvIhRqX58UPmoAXUAxGPSgvHfIUxq4LCHPxqmyEoQmSHBl46WfevIHX0h4/TE2bUo+4PRnz5bZtYIk6nmRV1L2GqEmGx8AXYOpRxvcSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760093039; c=relaxed/simple;
-	bh=w0UyaiAGorJJnhWsrzaZobRZhjWgzEJUC6LvbliauOY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HQCZ/oWaPk5sPGFQrnwEenUM5zEgGqHL+v6SCZZc3EXNWs+g17NiVNDHmtMPC/RRC+XAw6fcAfFtnKC7L888mrG1U4h85nkNH2xyK27E98+xPjxh353WQaEkaL2cHiIXOE5k3sNWteUZv7hV6KxQ5Hdl7OxnLbE92Dfo/J//4Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: sUathrCVT9aW9ipNGqGSqw==
-X-CSE-MsgGUID: tQUFshdUQn68vzO/1OHzxA==
-X-IronPort-AV: E=Sophos;i="6.19,218,1754928000"; 
-   d="scan'208";a="129069490"
-From: =?gb2312?B?wqy5+rrq?= <luguohong@xiaomi.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jiri Kosina
-	<jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-CC: "kenalba@google.com" <kenalba@google.com>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, =?gb2312?B?wO7F9A==?= <lipeng43@xiaomi.com>,
-	=?gb2312?B?y87D3MPc?= <songmimi@xiaomi.com>, =?gb2312?B?wqy5+rrq?=
-	<luguohong@xiaomi.com>
-Subject: =?gb2312?B?tPC4tDogW0V4dGVybmFsIE1haWxdW1BBVENIXSBISUQ6IGhpZC1pbnB1dDog?=
- =?gb2312?Q?only_ignore_0_battery_events_for_digitizers?=
-Thread-Topic: [External Mail][PATCH] HID: hid-input: only ignore 0 battery
- events for digitizers
-Thread-Index: AQHcOazZHRANaD7djkOKShmNHYh1F7S7MO8b
-Date: Fri, 10 Oct 2025 10:43:55 +0000
-Message-ID: <6ec0ba2fd4ba42bf91fa8c5dbfb5e1c0@xiaomi.com>
-References: <of5qjeij72wduee3zyf26drfcwhpsl4sjs3v6tfjv3tgl3xsol@sss7zcyawwaz>
-In-Reply-To: <of5qjeij72wduee3zyf26drfcwhpsl4sjs3v6tfjv3tgl3xsol@sss7zcyawwaz>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1760093056; c=relaxed/simple;
+	bh=Xv8vfELqxCi0M3JUv12/9oo5sF3vO6GI19h00ESuh1U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jBQOUxDjTOuMW7tJs9AkPLMCe8ado8ANycsSqiBS9pBNbpDyTzZpYEZy9iMjOOeDb46SwI9GGNmb7di16Fq9pz360XUXS3B7oOR29n4ZwWDSEoSmv92SK+mzdHfD4AUtZ5gosoNv235NuMSfjzYlj8BUrzvk2/tJiJaH/hcHXRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb78ead12so324875466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:44:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760093052; x=1760697852;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4hjZQiho0iGA/YlIfjvASm46/AFyTuFHZ48K45pFHug=;
+        b=YT4Wta+BI3S/SVrrb4obcfIO/2bRsjdD3ALohq1wXPsqjHAvkH0zsytU9gMtIANyKQ
+         jYZmOyKxTwjmox7tVejjFMZ5OAWMXxS3JCTzHpc9RKeEaox1b5XWfKAmTTbkW9NkhcVD
+         w+5WkVqOBekA1ARUv6wPP4b1rH2LkmWVJA7HNFbux4QILimvfQK766ZDjEJoANDrNrta
+         BNcwSaHqM/NY1tnAADXWKV0jmeHb6nACboczoZfg9BtsoxktgZnRnQKmSEDqv9+3EKGS
+         GtE3NSmh39O3M4SEmhStomS4JA1nlLJRoAPmppuykahFh9xpSbr6j4ysfAU5jJchJlZ/
+         VlHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMxQckz6zTrpUEIElt3y8oM1grMWHT34dlMntOIKDw7YmG0e3oaLBotUFlVkJKlAjWsI83Pj8WrOSd5Q4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9PcJ27994bSsCzCCVXDpQfBu1HxQy3CN/IPnBaBs83cyQq+nT
+	CSjjs0UueYhXh3l9DV5TvW7zXZ9kTzzfE8ccXuaxVaN4CGVWbNsedU63tlJPSg==
+X-Gm-Gg: ASbGnctBCbbYRu42iPvyAaTGKPSGOIaKrjSOwrP10H/e5T/HB+RmyQFUFhMORhoII7n
+	eU7pQUvLufCql1uLqZLpuJueglg54V4h+lBSmr6V1CBlf7nNnsWLcyNciE6KghA0JeQA3d/OhIh
+	Ri/NQIlWmYJnKTaGjXGCLd1GdWlFRr/2BQWvdN3RnL9itwK/GamI5JGWcdrITqwa6AzFjyLHe+6
+	5UoJpSgKLAJKmEy6MQUNUg2RS5VV9bmY8+yZDoUDmY8i2FrgoS7xC/A3bztFrAOrs4FPj4FrGn8
+	BO9JN4VQ596YCTey2RSc5NYv0RDa4A8TcBfB5qE89QCyzqcxoDDxnFovWCA1xpuN4fA4JWjD+UF
+	roTurp30LbURgXClHv2vVBhCNEd/bt4wLuWuC
+X-Google-Smtp-Source: AGHT+IHEr3FgoOnkzJSJ3QXTjdVVTT0W9OMbIhq6GsugiZh5aafP9iMGPMQXEE4tmD+zXgXWqXCs1Q==
+X-Received: by 2002:a17:907:3f14:b0:b41:3c27:e3ca with SMTP id a640c23a62f3a-b50aa4909admr1122902966b.7.1760093051867;
+        Fri, 10 Oct 2025 03:44:11 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d9525bdesm201931466b.78.2025.10.10.03.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 03:44:11 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Fri, 10 Oct 2025 03:44:04 -0700
+Subject: [PATCH v3] efi/memattr: Convert efi_memattr_init() return type to
+ void
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251010-efi_fw_bug-v3-1-78259db0f39a@debian.org>
+X-B4-Tracking: v=1; b=H4sIAHTj6GgC/23MQQ6CMBBA0as0s6ZmpkK1rLyHMaSFKXQDptWqI
+ dzdwMKExO1P/pshcQycoBYzRM4hhWmEWhwLAe1gx55l6KAWoFBVSKgl+9D4V+OevVROKza2pLM
+ xUAi4R/bhvWHXWyFgCOkxxc9mZ1rrXyaTRIlkz+xKdJ7dpWMX7HiYYg+rk9XvJSTcvUqS1OSUo
+ apr+aR377IsXynJKK/hAAAA
+X-Change-ID: 20250106-efi_fw_bug-2b62e9a41899
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2436; i=leitao@debian.org;
+ h=from:subject:message-id; bh=Xv8vfELqxCi0M3JUv12/9oo5sF3vO6GI19h00ESuh1U=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo6ON6W6e3C/Qe3WoG1ip9wiq+lAK/++yi87Kr+
+ y9kz1yoRvaJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaOjjegAKCRA1o5Of/Hh3
+ bQtSEACdpPEJKfBod/cJDK5qm/LcmMRN9hfEyG2qJHSEvRQ/tsM2RGAdgf74izCo3sPyNcne3zK
+ IvzZ6GTwDOuQgHLKA5J9oQc8KBh+gSB3AVNP8mnNekhytbpzfEh62Yfx3gLBpDVUVGQz8WZyRg+
+ e9LY32dEjrY/AmoBd9LtgFz04IPwF2Kjs/FbPta1KrEEsRa4HmrXRTMaGQ8n1hlOTbd7FwA3VQf
+ p/ap0mpfWXvYKxwZVWnJsV2JdQDsnntebB/mHFuuDvU2jeC0ooG1YGlLgCwim+btY1k2L6nwYJj
+ qupDG15x+TbW+e42cnJtvewYpJp4WE6uKBuTn42aWfXlUVLCdFjQEGU4vjm8oVvX9/XcwysePfd
+ bWQl0L6guEhVaEq2WNu0++kfjw4v/krQj0RFrJ9ez2VMhMQLF8bzgqyP1vck/fk1GTJVXcSH7XI
+ 74E7r2Vqabp28EQEl4OkThZQuAjUcFqyhR4s2otISjIlcqrwD+hZitx9v0WMYISRsSCOY5nvJNA
+ ivSbRUe3xW3UHrW9u2U23lU21E9LFpkwDwgGbxnEwpYUVAZMvg67unYmcWjIYJ05Wloy0shtKcy
+ VrAV3TfUNMNqaXy7dtzBuur59i4tjszJ5NvC43Kn9JD1R4pHaVLNn2OG/HWKtKFTtMIWukGKgha
+ qspb2Hn1QkxEfBw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-VGhhbmtzLCBEbWl0cnkuDQoNCkhpIEppcmkgS29zaW5hLCBCZW5qYW1pbiBUaXNzb2lyZXMsIHBs
-ZWFzZSBsZXQgbWUga25vdyBvbmNlIHlvdSd2ZSBtZXJnZWQgdGhpcyBwYXRjaCBpbnRvIHRoZSBr
-ZXJuZWwuIFRoYW5rcyENCg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-Xw0Kt6K8/sjLOiBEbWl0cnkgVG9yb2tob3YgPGRtaXRyeS50b3Jva2hvdkBnbWFpbC5jb20+DQq3
-osvNyrG85DogMjAyNcTqMTDUwjEwyNUgMTQ6MTINCsrVvP7IyzogSmlyaSBLb3NpbmE7IEJlbmph
-bWluIFRpc3NvaXJlcw0Ks63LzTogwqy5+rrqOyBrZW5hbGJhQGdvb2dsZS5jb207IGxpbnV4LWlu
-cHV0QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0K1vfM4jog
-W0V4dGVybmFsIE1haWxdW1BBVENIXSBISUQ6IGhpZC1pbnB1dDogb25seSBpZ25vcmUgMCBiYXR0
-ZXJ5IGV2ZW50cyBmb3IgZGlnaXRpemVycw0KDQpbzeKyv9PKvP5dILTL08q8/sC01LTT2tChw9e5
-q8u+zeKyv6Osx+u998n3tKbA7aGjyPS21NPKvP6wssir0NS05tLJo6zH672r08q8/teqt6K4+G1p
-c2VjQHhpYW9taS5jb229+NDQt7TAoQ0KDQpDb21taXQgNTgxYzQ0ODQ3NjllICgiSElEOiBpbnB1
-dDogbWFwIGRpZ2l0aXplciBiYXR0ZXJ5IHVzYWdlIikgYWRkZWQNCmhhbmRsaW5nIG9mIGJhdHRl
-cnkgZXZlbnRzIGZvciBkaWdpdGl6ZXJzICh0eXBpY2FsbHkgZm9yIGJhdHRlcmllcw0KcHJlc2Vu
-dGVkIGluIHN0eWxpKS4gRGlnaXRpemVycyB0eXBpY2FsbHkgcmVwb3J0IGNvcnJlY3QgYmF0dGVy
-eSBsZXZlbHMNCm9ubHkgd2hlbiBzdHlsdXMgaXMgYWN0aXZlbHkgdG91Y2hpbmcgdGhlIHN1cmZh
-Y2UsIGFuZCBpbiBvdGhlciBjYXNlcw0KdGhleSBtYXkgcmVwb3J0IGJhdHRlcnkgbGV2ZWwgb2Yg
-MC4gVG8gYXZvaWQgY29uZnVzaW5nIGNvbnN1bWVycyBvZiB0aGUNCmJhdHRlcnkgaW5mb3JtYXRp
-b24gdGhlIGNvZGUgd2FzIGFkZGVkIHRvIGZpbGVyIG91dCByZXBvcnRzIHdpdGggMA0KYmF0dGVy
-eSBsZXZlbHMuDQoNCkhvd2V2ZXIgdGhlcmUgZXhpc3Qgb3RoZXIga2luZHMgb2YgZGV2aWNlcyB0
-aGF0IG1heSBsZWdpdGltYXRlbHkgcmVwb3J0DQowIGJhdHRlcnkgbGV2ZWxzLiBGaXggdGhpcyBi
-eSBmaWx0ZXJpbmcgb3V0IDAtbGV2ZWwgcmVwb3J0cyBvbmx5IGZvcg0KZGlnaXRpemVyIHVzYWdl
-cywgYW5kIGNvbnRpbnVlIHJlcG9ydGluZyB0aGVtIGZvciBvdGhlciBraW5kcyBvZiBkZXZpY2Vz
-DQooU21hcnQgQmF0dGVyaWVzLCBldGMpLg0KDQpSZXBvcnRlZC1ieTogwqy5+rrqIDxsdWd1b2hv
-bmdAeGlhb21pLmNvbT4NClRlc3RlZC1ieTogwqy5+rrqIDxsdWd1b2hvbmdAeGlhb21pLmNvbT4N
-CkZpeGVzOiA1ODFjNDQ4NDc2OWUgKCJISUQ6IGlucHV0OiBtYXAgZGlnaXRpemVyIGJhdHRlcnkg
-dXNhZ2UiKQ0KU2lnbmVkLW9mZi1ieTogRG1pdHJ5IFRvcm9raG92IDxkbWl0cnkudG9yb2tob3ZA
-Z21haWwuY29tPg0KLS0tDQogZHJpdmVycy9oaWQvaGlkLWlucHV0LmMgfCAxMCArKysrKysrLS0t
-DQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1pbnB1dC5jIGIvZHJpdmVycy9oaWQvaGlkLWlucHV0
-LmMNCmluZGV4IGZmMTc4NGI1YzJhNC4uYmEzZjY2NTVhZjllIDEwMDY0NA0KLS0tIGEvZHJpdmVy
-cy9oaWQvaGlkLWlucHV0LmMNCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1pbnB1dC5jDQpAQCAtNTk1
-LDE0ICs1OTUsMTggQEAgc3RhdGljIHZvaWQgaGlkaW5wdXRfY2xlYW51cF9iYXR0ZXJ5KHN0cnVj
-dCBoaWRfZGV2aWNlICpkZXYpDQogICAgICAgIGRldi0+YmF0dGVyeSA9IE5VTEw7DQogfQ0KDQot
-c3RhdGljIHZvaWQgaGlkaW5wdXRfdXBkYXRlX2JhdHRlcnkoc3RydWN0IGhpZF9kZXZpY2UgKmRl
-diwgaW50IHZhbHVlKQ0KK3N0YXRpYyB2b2lkIGhpZGlucHV0X3VwZGF0ZV9iYXR0ZXJ5KHN0cnVj
-dCBoaWRfZGV2aWNlICpkZXYsDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1
-bnNpZ25lZCBpbnQgdXNhZ2UsIGludCB2YWx1ZSkNCiB7DQogICAgICAgIGludCBjYXBhY2l0eTsN
-Cg0KICAgICAgICBpZiAoIWRldi0+YmF0dGVyeSkNCiAgICAgICAgICAgICAgICByZXR1cm47DQoN
-Ci0gICAgICAgaWYgKHZhbHVlID09IDAgfHwgdmFsdWUgPCBkZXYtPmJhdHRlcnlfbWluIHx8IHZh
-bHVlID4gZGV2LT5iYXR0ZXJ5X21heCkNCisgICAgICAgaWYgKCh1c2FnZSAmIEhJRF9VU0FHRV9Q
-QUdFKSA9PSBISURfVVBfRElHSVRJWkVSICYmIHZhbHVlID09IDApDQorICAgICAgICAgICAgICAg
-cmV0dXJuOw0KKw0KKyAgICAgICBpZiAodmFsdWUgPCBkZXYtPmJhdHRlcnlfbWluIHx8IHZhbHVl
-ID4gZGV2LT5iYXR0ZXJ5X21heCkNCiAgICAgICAgICAgICAgICByZXR1cm47DQoNCiAgICAgICAg
-Y2FwYWNpdHkgPSBoaWRpbnB1dF9zY2FsZV9iYXR0ZXJ5X2NhcGFjaXR5KGRldiwgdmFsdWUpOw0K
-QEAgLTE1MTgsNyArMTUyMiw3IEBAIHZvaWQgaGlkaW5wdXRfaGlkX2V2ZW50KHN0cnVjdCBoaWRf
-ZGV2aWNlICpoaWQsIHN0cnVjdCBoaWRfZmllbGQgKmZpZWxkLCBzdHJ1Y3QNCiAgICAgICAgICAg
-ICAgICBib29sIGhhbmRsZWQgPSBoaWRpbnB1dF9zZXRfYmF0dGVyeV9jaGFyZ2Vfc3RhdHVzKGhp
-ZCwgdXNhZ2UtPmhpZCwgdmFsdWUpOw0KDQogICAgICAgICAgICAgICAgaWYgKCFoYW5kbGVkKQ0K
-LSAgICAgICAgICAgICAgICAgICAgICAgaGlkaW5wdXRfdXBkYXRlX2JhdHRlcnkoaGlkLCB2YWx1
-ZSk7DQorICAgICAgICAgICAgICAgICAgICAgICBoaWRpbnB1dF91cGRhdGVfYmF0dGVyeShoaWQs
-IHVzYWdlLT5oaWQsIHZhbHVlKTsNCg0KICAgICAgICAgICAgICAgIHJldHVybjsNCiAgICAgICAg
-fQ0KLS0NCjIuNTEuMC43NDAuZzZhZGIwNTRkMTItZ29vZw0KDQoNCi0tDQpEbWl0cnkNCiMvKioq
-Kioqsb7Tyrz+vLDG5Li9vP66rNPQ0KHD17mry761xLGjw9zQxc+io6y99s/e09q3osvNuPjJz8Pm
-tdjWt9bQwdCz9rXEuPbIy7vyyLrX6aGjvfvWucjOus7G5Mv7yMvS1MjOus7Qzsq9yrnTw6OosPzA
-qLWrsrvP3tPayKuyv7vysr+31rXY0LnCtqGiuLTWxqGiu/LJoreio6mxvtPKvP7W0LXE0MXPoqGj
-yOe5+8T6tO3K1cHLsb7Tyrz+o6zH68T6waK8tLXnu7C78tPKvP7NqNaqt6K8/sjLsqLJvrP9sb7T
-yrz+o6EgVGhpcyBlLW1haWwgYW5kIGl0cyBhdHRhY2htZW50cyBjb250YWluIGNvbmZpZGVudGlh
-bCBpbmZvcm1hdGlvbiBmcm9tIFhJQU9NSSwgd2hpY2ggaXMgaW50ZW5kZWQgb25seSBmb3IgdGhl
-IHBlcnNvbiBvciBlbnRpdHkgd2hvc2UgYWRkcmVzcyBpcyBsaXN0ZWQgYWJvdmUuIEFueSB1c2Ug
-b2YgdGhlIGluZm9ybWF0aW9uIGNvbnRhaW5lZCBoZXJlaW4gaW4gYW55IHdheSAoaW5jbHVkaW5n
-LCBidXQgbm90IGxpbWl0ZWQgdG8sIHRvdGFsIG9yIHBhcnRpYWwgZGlzY2xvc3VyZSwgcmVwcm9k
-dWN0aW9uLCBvciBkaXNzZW1pbmF0aW9uKSBieSBwZXJzb25zIG90aGVyIHRoYW4gdGhlIGludGVu
-ZGVkIHJlY2lwaWVudChzKSBpcyBwcm9oaWJpdGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFp
-bCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGJ5IHBob25lIG9yIGVtYWlsIGlt
-bWVkaWF0ZWx5IGFuZCBkZWxldGUgaXQhKioqKioqLyMNCg==
+The efi_memattr_init() function's return values (0 and -ENOMEM) are never
+checked by callers. Convert the function to return void since the return
+status is unused.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+---
+Changes in v3:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v2: https://lore.kernel.org/r/20251010-efi_fw_bug-v2-1-61b2915dce76@debian.org
+
+Changes in v2:
+- drop the other patches from the previous patchset
+- Link to v1: https://lore.kernel.org/r/20250106-efi_fw_bug-v1-0-01a8eb40bfeb@debian.org
+---
+ drivers/firmware/efi/memattr.c | 7 +++----
+ include/linux/efi.h            | 2 +-
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/firmware/efi/memattr.c b/drivers/firmware/efi/memattr.c
+index c38b1a335590d..e727cc5909cb6 100644
+--- a/drivers/firmware/efi/memattr.c
++++ b/drivers/firmware/efi/memattr.c
+@@ -19,19 +19,19 @@ unsigned long __ro_after_init efi_mem_attr_table = EFI_INVALID_TABLE_ADDR;
+  * Reserve the memory associated with the Memory Attributes configuration
+  * table, if it exists.
+  */
+-int __init efi_memattr_init(void)
++void __init efi_memattr_init(void)
+ {
+ 	efi_memory_attributes_table_t *tbl;
+ 	unsigned long size;
+ 
+ 	if (efi_mem_attr_table == EFI_INVALID_TABLE_ADDR)
+-		return 0;
++		return;
+ 
+ 	tbl = early_memremap(efi_mem_attr_table, sizeof(*tbl));
+ 	if (!tbl) {
+ 		pr_err("Failed to map EFI Memory Attributes table @ 0x%lx\n",
+ 		       efi_mem_attr_table);
+-		return -ENOMEM;
++		return;
+ 	}
+ 
+ 	if (tbl->version > 2) {
+@@ -61,7 +61,6 @@ int __init efi_memattr_init(void)
+ 
+ unmap:
+ 	early_memunmap(tbl, sizeof(*tbl));
+-	return 0;
+ }
+ 
+ /*
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index a98cc39e7aaa8..0b9eb3d2ff977 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -772,7 +772,7 @@ extern unsigned long efi_mem_attr_table;
+  */
+ typedef int (*efi_memattr_perm_setter)(struct mm_struct *, efi_memory_desc_t *, bool);
+ 
+-extern int efi_memattr_init(void);
++extern void efi_memattr_init(void);
+ extern int efi_memattr_apply_permissions(struct mm_struct *mm,
+ 					 efi_memattr_perm_setter fn);
+ 
+
+---
+base-commit: 18a7e218cfcdca6666e1f7356533e4c988780b57
+change-id: 20250106-efi_fw_bug-2b62e9a41899
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
