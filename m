@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-848256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B3ABCD056
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:05:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBA7BCD05F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648CA3A6D3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:05:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33CB54FD452
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9902EFDBE;
-	Fri, 10 Oct 2025 13:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE182EFDB6;
+	Fri, 10 Oct 2025 13:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRCiNVm/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EFrq2wFR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0C91C5F27;
-	Fri, 10 Oct 2025 13:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E3E275845
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101531; cv=none; b=QteLo74i0pLD/VzFWRSGylKXknxdL9HD/SHZsSvUkXPpUcaxpqJHvlChQ1UUmCv6zVepRg/mJehHh4oDhmvCHSF+GhwOfKizyxQKwAQDFNJVYYd1GS3IoL+hdcITPzOQnObNVIV4I108UrvFM2xqLD4RHBce3N0SmWt1O3BWPDE=
+	t=1760101542; cv=none; b=Hu8eK8GB2aI1EoWndauBVZVbVzqXHI2qqqq59BYL3fReFMvQcHPI2wew46u/+KpgLl5RXvFdDIWbbJQFrzIu0154bdWGoMIDD265L4phUVp1tyd/H3JMG/OxMvd7TZsIbp6e/XFHclJmpcE7y/i+F+W8EYBshzFW4E4HAvZG6NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101531; c=relaxed/simple;
-	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
+	s=arc-20240116; t=1760101542; c=relaxed/simple;
+	bh=HGzsZi1vsvMyshyxacFILw/U09Wv8rG4wcljUa3zJLs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p5nZGE2lfCwds1eonaKarlPCy4a69SgTcKrv/7Uq5BUisQ5SrGIXqxB6/gh+07Qa4UHGstW/cxXTIOpEVYDi0X/hdtnpHHwrMz+w1fBlo7PTLObFrvtCGpPReVFXh79zxwzgRRde7s7F/WrJOl3hTaQmDqWRGikayDq/Jx6l5Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRCiNVm/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E597C4CEF1;
-	Fri, 10 Oct 2025 13:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760101530;
-	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fRCiNVm/3dF34ZzrUE+fvON/MgRL8ikYDRgTtPU9/UvueEfUu/zNhUZj35un78yc/
-	 F3og+IbYjn/0N2J/RQuvrTz85nnspTqKTzDoAcmY+pjHa61/1dGdL5IMheP+OO0YHx
-	 hvIl+2RS7kNnEY9Cv1rJ5/q7i97SsCaUvQROybd1pOc0+ImrZnVH1msl53wKXMNmnX
-	 JvjxQilFygro7QZcFTl9Ot+gsLtfQgLdISBfcTYTtru9F4We+yyoKQqfiCoDCvH6Th
-	 /k/L7Unq3lUY2YF6orKHwv9y9jkpbXrn8RLyT5GNIF8WglJ7AqRytp2w8IxMNWPF7n
-	 M4gDnXsmPHy8w==
-Message-ID: <d01ad1f7-dc46-4b9d-9823-9d69b1d2be54@kernel.org>
-Date: Fri, 10 Oct 2025 15:05:19 +0200
+	 In-Reply-To:Content-Type; b=UGiswNmeNoGQGyCphWRrCuN1+ZdZiKYQ79cF7/zyR3ZKPd+q6GlHTL98v2D4Jnms3qqFPRCmZnM9LjYYGk7R0p/gQoqVOzmMRjOZ+z7EV/jSHKz1CuRfjWP74tnkSoOmnUQI8TsVrobQkgNZf8GEeWpby5acqkhHXw126T5MWhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EFrq2wFR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760101539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2hGea7bmj/mcTVPTcwhsDoysIgtmUiEc0/u4e6XSjWY=;
+	b=EFrq2wFRZgmznqs+0f4SqmoxQuMsHq3fFE3dgM4iUEukOQrHuxHvm/Sbjq8D7l9JfZ1hOl
+	Lhnwt5vKBqLvohYi50NlLB2BluGYnPlW9EgAlfAQ/LSELSy69CH/W85IDMwAZ8LSF/1W4f
+	1ITUQh+hFkXQdVrH/anyUatG8uTE4+I=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-53-gGSXVztsM8uCDztJGFgKyw-1; Fri, 10 Oct 2025 09:05:38 -0400
+X-MC-Unique: gGSXVztsM8uCDztJGFgKyw-1
+X-Mimecast-MFC-AGG-ID: gGSXVztsM8uCDztJGFgKyw_1760101537
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b2f989de76eso375401666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:05:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760101537; x=1760706337;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2hGea7bmj/mcTVPTcwhsDoysIgtmUiEc0/u4e6XSjWY=;
+        b=hhWGljxR7w+aXAIkbcfO6aSNfoof1kfi1ZTkXgDoAFI35fyFaIDEJyJzfVqatk4Um6
+         GTitjvYpdybnW6FsrLEjTB/VM6M/YziyQ3Ht4PbS4CTVgmgvljSHFvn2K0bmg4d+HhZe
+         XQwrwd9YzHgmCiERCXOiVXcIb90WrIIV7fKw4F/Po1WZg4lqFH4gB+BDmRf1H4UOd9KE
+         cU+An6Zz5pMzd07Hd1mI+Me+jpMT1qXbdVs14kSlTurMz1rGs6jZDMMovCNfnaEqTgwO
+         Rvqv9AnPWsUcjF6CfVNWFVGG/oGWXeXoIzKHwOYGRHIb6e+5c7ummXKZXXWfcGObgBQJ
+         8FbQ==
+X-Gm-Message-State: AOJu0YxMSA4PRzvCCQwCb1dHCxpu8lz266LGu2OUjbdOpfrLfne+WM4c
+	Uyp7Z2Gb/Is8ez7GBS6EVC/54HnE1uhmhlXn2fvrpaA+mqCwCAPOC4BhjG159xOw9SxUdM0ZMww
+	GN7Hi7KGct6gdFFAppHlr0XNr961odsmBwQOlJX6zUGPa8l8G8DL5MmlvtzcYYCZjgxau93hS8Q
+	==
+X-Gm-Gg: ASbGncuZRS9zfudsAsLKJ4OZRxDSQmYbCkhHDfGEEEpZcUNKNbKohxZT1qtZqc3ffBW
+	qWjfmYpVNKIv1WB1gf7szGV9bb3qwztzb9JrHZH+5IpC2QcD6P7gT+kKLC9NI/MeIRfiB5C/P82
+	7FOo53znr77/2fVqCiXMB0rYLFzJgFCHkwRMgaBxgb67e/9jorzNy5kj+4IwlzJEJemRAww2jOR
+	51eS1WMeWhqiISYrG2SOQnTJnJ54LxlxIrD8hfooL3FdLYL6TF2JJ8SH0n5h2YqXT1pek2QmNN3
+	fWBwCea7kUOj/FxzOTAs3Fy8K58tV0dJA/c10EEgFKpX31aGcYRAi8y5nuWtEzsuqtFakydtS6c
+	yvAPx
+X-Received: by 2002:a17:907:26c5:b0:b50:9f92:fde0 with SMTP id a640c23a62f3a-b50bf7eb3c4mr1114054166b.29.1760101536611;
+        Fri, 10 Oct 2025 06:05:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJXCIqjoTCFwkJnbp63FjW7H91+lwbbxIWtE1s3Rk5OT6bmAOGxvAf+/ZtuBgUNz9xpBiMGA==
+X-Received: by 2002:a17:907:26c5:b0:b50:9f92:fde0 with SMTP id a640c23a62f3a-b50bf7eb3c4mr1114050866b.29.1760101536085;
+        Fri, 10 Oct 2025 06:05:36 -0700 (PDT)
+Received: from [192.168.0.7] (ltea-047-064-112-083.pools.arcor-ip.net. [47.64.112.83])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d900ccf1sm225383366b.63.2025.10.10.06.05.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 06:05:35 -0700 (PDT)
+Message-ID: <e00e64ad-f1ff-4469-8a20-9c44ebc2f32a@redhat.com>
+Date: Fri, 10 Oct 2025 15:05:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +89,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/7] clk: s2mps11: add the support for S2MPS16 PMIC
- clock
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 08/41] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ uapi headers
+To: Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>
+References: <20250314071013.1575167-1-thuth@redhat.com>
+ <20250314071013.1575167-9-thuth@redhat.com>
+ <20250314115554.GA8986@willie-the-truck>
+ <df30d093-c173-495a-8ed9-874857df7dee@app.fastmail.com>
+ <20250314134215.GA9171@willie-the-truck>
+From: Thomas Huth <thuth@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <20250314134215.GA9171@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 14/09/2025 14:42, Ivaylo Ivanov wrote:
-> Add the support for S2MPS16 PMIC clock, which is functionally the same
-> as the currently supported ones, with the exception of a different
-> register.
+On 14/03/2025 14.42, Will Deacon wrote:
+> On Fri, Mar 14, 2025 at 01:05:15PM +0100, Arnd Bergmann wrote:
+>> On Fri, Mar 14, 2025, at 12:55, Will Deacon wrote:
+>>> On Fri, Mar 14, 2025 at 08:09:39AM +0100, Thomas Huth wrote:
+>>>> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
+>>>> this is not really useful for uapi headers (unless the userspace
+>>>> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
+>>>> gets set automatically by the compiler when compiling assembly
+>>>> code.
+>>>>
+>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>> Cc: Will Deacon <will@kernel.org>
+>>>> Signed-off-by: Thomas Huth <thuth@redhat.com>
+>>>> ---
+>>>>   arch/arm64/include/uapi/asm/kvm.h        | 2 +-
+>>>>   arch/arm64/include/uapi/asm/ptrace.h     | 4 ++--
+>>>>   arch/arm64/include/uapi/asm/sigcontext.h | 4 ++--
+>>>>   3 files changed, 5 insertions(+), 5 deletions(-)
+>>>
+>>> Is there a risk of breaking userspace with this? I wonder if it would
+>>> be more conservative to do something like:
+>>>
+>>> #if !defined(__ASSEMBLY__) && !defined(__ASSEMBLER__)
+>>>
+>>> so that if somebody is doing '#define __ASSEMBLY__' then they get the
+>>> same behaviour as today.
+>>>
+>>> Or maybe we don't care?
+>>
+>> I think the main risk we would have is user applications relying
+>> on the __ASSEMBLER__ checks in new kernel headers and not defining
+>> __ASSEMBLY__. This would result in the application not building
+>> against old kernel headers that only check against __ASSEMBLY__.
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  drivers/clk/clk-s2mps11.c | 8 ++++++++
+> Hmm. I hadn't thought about the case of old headers :/
+> 
+> A quick Debian codesearch shows that glibc might #define __ASSEMBLY__
+> for some arch-specific headers:
+> 
+> https://codesearch.debian.net/search?q=%23define+__ASSEMBLY__&literal=1
+> 
+> which is what I was more worried about.
 
-This depends on mfd patch. Many maintainers would appreciate if you
-mention it also in the patch changelog (---), not only cover letter.
+  Hi!
 
+FWIW, the x86 patches have been merged since kernel v6.15, and as far as I 
+know, there haven't been any complaints about the change there yet. Thus I 
+assume the changes should be ok.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+So I rebased the arm64 patch now, too, and resend them separately as a v2:
 
-Best regards,
-Krzysztof
+  https://lore.kernel.org/lkml/20251010130116.828465-1-thuth@redhat.com/
+
+  Thomas
+
 
