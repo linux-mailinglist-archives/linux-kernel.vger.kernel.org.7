@@ -1,321 +1,155 @@
-Return-Path: <linux-kernel+bounces-848382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FB8BCD99A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:46:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68732BCD9C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAABA4FDB86
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:45:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BAE04E4154
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18142F6582;
-	Fri, 10 Oct 2025 14:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087052F6585;
+	Fri, 10 Oct 2025 14:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MasSTGUx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JPKVPQ46"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC2313BC0C;
-	Fri, 10 Oct 2025 14:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF1B2F6168;
+	Fri, 10 Oct 2025 14:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760107522; cv=none; b=cDuOmr8xp/dGnHmtr0zst+lk4n69OKBwHVGDO9W+9fvfJUwTMBA8SplB1kg2pbGu9KZ/Bcbd74hvoyybC4cttZFQM7JusxXgCWV5LolziDamq5xUhgM6PcFQZlkAwPOAi3h7r3fR/PEfU8uPAkZD5XeU2V9ZEQg8oG7RR5y/q6M=
+	t=1760107797; cv=none; b=BY4v5lDZ02Ybjh515NzCEXkdNd5ZfLRwGa0dV51QusWqR5PNuWOnoG8G8VDolsEtono7fDkjndhjpJX/wTx7/a0bHvTMx5cNnfNRVv3jnwFRYhArwy5zHMiy0QbFupPF5Njmk5mSgYshnp1KAcYnrUAfHFL0d7KLvE3YMRuWw7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760107522; c=relaxed/simple;
-	bh=9+oSY/IZtMS97w/FzZPMB/lEGaydDpXxMEPE+D8KrRA=;
+	s=arc-20240116; t=1760107797; c=relaxed/simple;
+	bh=x/nQh9NYCS7bzE7Ro77DDsqXiiN6FnnyCHeEtoXsDIQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iG3ljEzP0ZzI1VyyNXZxlFkcZyy5m248s9TaJoB73QAa0MWz3Oe86WVCfomD36egynH8TJK8As9ZZBHPQ3I4VryqtYg+WkXgxCvCtXjBTXQ3Ni4F0jPReYQJOeR4rwSaXiTuedrZ33iW2ZL+DQn4ZxHhG+SJHnvaihtMQWICU/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MasSTGUx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5A3C4CEF1;
-	Fri, 10 Oct 2025 14:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760107521;
-	bh=9+oSY/IZtMS97w/FzZPMB/lEGaydDpXxMEPE+D8KrRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MasSTGUxtdJ0kcf9pdDVZ1iYZ+kaTlR9cw4p4YYeuTi9Oeuadmj8g4UPjjFxrmQtK
-	 SKPfVf0lkBuTQDsNyj87s9EidgaRKqdVR8Q09GQWEAqMhvRtEkK4gkVVU0C0IhGgqW
-	 lBTY9xgHWg1kZFdOx0zeqNp9lYWfBN83x7tneTDBACZ/05+aakSlWqLKqUy7LiPnXq
-	 VDUvo3qGNObPubLd+37GUu8O1WYU1fNEgcLn69ny4t9A0uubroLl4BuJbvC70OYiqo
-	 4Hq0Ss+sXQtEJprY1YckkLeLlg9BvjcHxOYIVqjJJd6IQXvZMFryrtmIykMxMu7Yyj
-	 XDBSs+2wck6WA==
-Date: Fri, 10 Oct 2025 15:45:15 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [RFC PATCH 06/13] mfd: bd71828: Support ROHM BD72720
-Message-ID: <20251010144515.GI2988639@google.com>
-References: <cover.1759824376.git.mazziesaccount@gmail.com>
- <93142a80d90a0ac80b27090d0c83914675aad94d.1759824376.git.mazziesaccount@gmail.com>
- <20251009161847.GE2890766@google.com>
- <8ea507eb-f78c-4a16-882b-112e277fa1b6@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=thvgGpMjLBU2mipBuz9PZmqZc8gNLGapO4ieQ8eh7mrDNR0UP0ZY7S2AVINxaxM5zDZ/9Sl1u+42QkuM9DVn7cDUiyDijwf03W8ZCbMETw2qIB1WU+4M/Q8f/stqMKcLgouP0OnmuYEUXFJYSH8prSHAcxB4dnz3CjtoxBnhByE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JPKVPQ46; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760107795; x=1791643795;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=x/nQh9NYCS7bzE7Ro77DDsqXiiN6FnnyCHeEtoXsDIQ=;
+  b=JPKVPQ46RAxf7xEEzExmqPPEX3Is7JTG/XjQaShylStJkvNGbBP6XXKX
+   ACNtEwcZmRLLi169YzBQCtmLmWz2cFyBxdxQcsTWnzgTMjdNQxlXbk9W0
+   zgH+FSo+nFzAKKicIOO3JjNV+qllsx+GXhY9Ynq75l6nDJyloR2Seqh7X
+   ZMuPKTg70NEPZwBU+kdCRvwsHqmjPTMWW2UiJG+4y+2cLKlQSUbIfNDOk
+   Ew4q7djf+tXYOkQWfsorT06/EFoNfZ3zFeu1OhPqYGGxMkTUrvU+jmrp/
+   X/BVBPPelYP2XZGNSP3Wos0KwE+xNpLjK1VJR2dnokJ63i0L12syRDUTl
+   A==;
+X-CSE-ConnectionGUID: lzwbFXUmTt+X9pBpqhisQg==
+X-CSE-MsgGUID: nc7LRjxWQoak9Ot+wQjYiw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="65980807"
+X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
+   d="scan'208";a="65980807"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 07:49:54 -0700
+X-CSE-ConnectionGUID: vv13mbr8Tf+TpG9cjxF5hg==
+X-CSE-MsgGUID: Q+xU13TNQUe3N+FGTwfKow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
+   d="scan'208";a="181011172"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 10 Oct 2025 07:49:50 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7ERH-0002rv-2b;
+	Fri, 10 Oct 2025 14:49:47 +0000
+Date: Fri, 10 Oct 2025 22:49:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	linux-cxl@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	Robert Richter <rrichter@amd.com>,
+	Cheatham Benjamin <benjamin.cheatham@amd.com>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: Re: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes
+ on x86
+Message-ID: <202510102229.iFcGqbMH-lkp@intel.com>
+References: <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8ea507eb-f78c-4a16-882b-112e277fa1b6@gmail.com>
+In-Reply-To: <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
 
-On Fri, 10 Oct 2025, Matti Vaittinen wrote:
+Hi Fabio,
 
-> Hi deee Ho Lee,
-> 
-> And Thanks for the review!
-> 
-> On 09/10/2025 19:18, Lee Jones wrote:
-> > On Tue, 07 Oct 2025, Matti Vaittinen wrote:
-> > 
-> > > The ROHM BD72720 is a power management IC which continues the BD71828
-> > > family of PMICs. Similarly to the BD71815 and BD71828, the BD72720
-> > > integrates regulators, charger, RTC, clock gate and GPIOs.
-> > > 
-> > > The main difference to the earlier PMICs is that the BD72720 has two
-> > > different I2C slave addresses. In addition to the registers behind the
-> > > 'main I2C address', most of the charger (and to some extent LED) control
-> > > is done via registers behind a 'secondary I2C slave address', 0x4c.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > > 
-> > > ---
-> > > Note: This patch depends on the series: "power: supply: add charger for
-> > > BD71828" by Andreas:
-> > > https://lore.kernel.org/all/20250918-bd71828-charger-v5-0-851164839c28@kemnade.info/
-> > > 
-> > > There are some new variants being planned. Most notably, the BD73900
-> > > should be almost identical to the BD72720 - for everything else except
-> > > the charger block.
-> > > ---
-> 
-> // snip
-> 
-> > > +
-> > > +static struct regmap *bd72720_secondary_regmap;
-> > 
-> > Dynamically allocate this and add it to .platform_data once it's
-> > populated.
-> > 
-> 
-> This can be done but I suppose it's unnecessary churn. This driver does not
-> (at the moment) support more than one instance of the PMIC anyways. (The
-> button data is not alloacted).
-> 
-> This is not really a problem as typically there is only 1 of these PMICs to
-> be controlled.
+kernel test robot noticed the following build warnings:
 
-I'd take a few lines of extra code over a globally defined variable any
-day of the week.
+[auto build test WARNING on 46037455cbb748c5e85071c95f2244e81986eb58]
 
-> // snip
-> 
-> > > +/*
-> > > + * The BD72720 is an odd beast in that it contains two separate sets of
-> > > + * registers, both starting from address 0x0. The twist is that these "pages"
-> > > + * are behind different I2C slave addresses. Most of the registers are behind
-> > > + * a slave address 0x4b, which will be used as the "main" address for this
-> > > + * device.
-> > > + * Most of the charger related registers are located behind slave address 0x4c.
-> > > + * It is tempting to push the dealing with the charger registers and the extra
-> > > + * 0x4c device in power-supply driver - but perhaps it's better for the sake of
-> > > + * the cleaner re-use to deal with setting up all of the regmaps here.
-> > > + * Furthermore, the LED stuff may need access to both of these devices.
-> > > + */
-> > > +#define BD72720_SECONDARY_I2C_SLAVE 0x4c
-> > > +static const struct regmap_range bd72720_volatile_ranges_4b[] = {
-> > > +	{
-> > > +		/* RESETSRC1 and 2 are write '1' to clear */
-> > > +		.range_min = BD72720_REG_RESETSRC_1,
-> > > +		.range_max = BD72720_REG_RESETSRC_2,
-> > 
-> > regmap_reg_range()?
-> 
-> Ah, thanks. Out of the curiosity - do you know why this macro is written on
-> lowercase?
+url:    https://github.com/intel-lab-lkp/linux/commits/Fabio-M-De-Francesco/cxl-core-Change-match_-_by_range-signatures/20251010-111627
+base:   46037455cbb748c5e85071c95f2244e81986eb58
+patch link:    https://lore.kernel.org/r/20251006155836.791418-3-fabio.m.de.francesco%40linux.intel.com
+patch subject: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes on x86
+config: i386-randconfig-011-20251010 (https://download.01.org/0day-ci/archive/20251010/202510102229.iFcGqbMH-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510102229.iFcGqbMH-lkp@intel.com/reproduce)
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Mark Brown <broonie@linaro.org>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510102229.iFcGqbMH-lkp@intel.com/
 
-=:-)
+All warnings (new ones prefixed by >>):
 
-> // snip
-> > > +static int bd72720_set_type_config(unsigned int **buf, unsigned int type,
-> > > +				   const struct regmap_irq *irq_data,
-> > > +				   int idx, void *irq_drv_data)
-> > > +{
-> > > +	const struct regmap_irq_type *t = &irq_data->type;
-> > > +
-> > > +	/*
-> > > +	 * The regmap IRQ ecpects IRQ_TYPE_EDGE_BOTH to be written to register
-> > > +	 * as logical OR of the type_falling_val and type_rising_val. This is
-> > > +	 * not how the BD72720 implements this configuration, hence we need
-> > > +	 * to handle this specific case separately.
-> > > +	 */
-> > > +	if (type == IRQ_TYPE_EDGE_BOTH) {
-> > > +		buf[0][idx] &= ~t->type_reg_mask;
-> > > +		buf[0][idx] |= BD72720_GPIO_IRQ_TYPE_BOTH;
-> > > +
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	return regmap_irq_set_type_config_simple(buf, type, irq_data, idx,
-> > > +						 irq_drv_data);
-> > 
-> > Use 100-chars to avoid these pointless wraps please.
-> 
-> gnarl. I think we have discussed this before :)
-> I would love to keep the lines short - closer to 80 chars - because that way
-> I can fit 3 terminals on my screen. All the years spent staring at the
-> monitor are taking their toll, and my vision isn't as good as it used to be.
-> Frightening thing being that it seems I will only need to increase the font
-> in the future :/
-> 
-> Well, sure the lines can be split if you feel strongly about it - but I have
-> a real reason (other than the usual - "they have always been like that") to
-> try keep them short...
+>> drivers/cxl/core/platform_quirks.c:70:36: warning: result of comparison of constant 4294967296 with expression of type 'const resource_size_t' (aka 'const unsigned int') is always true [-Wtautological-constant-out-of-range-compare]
+      70 |             res->end < r->end && res->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
+         |                                  ~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
 
-Welcome to the year 2000 when 32" monitors are super affordable.
 
-> > > +}
-> > > +
-> > >   static const struct regmap_irq_chip bd71828_irq_chip = {
-> > >   	.name = "bd71828_irq",
-> > >   	.main_status = BD71828_REG_INT_MAIN,
-> > > @@ -465,6 +814,28 @@ static const struct regmap_irq_chip bd71815_irq_chip = {
-> > >   	.irq_reg_stride = 1,
-> > >   };
-> > > +static const unsigned int bd72720_irq_type_base = BD72720_REG_GPIO1_CTRL;
-> > 
-> > This makes it look like a global variable, which I am allergic to.
-> > 
-> > Perhaps make it clear that this is a single element static array instead.
-> 
-> Ok. Just a comment will do?
+vim +70 drivers/cxl/core/platform_quirks.c
 
-Nope. :)
-
-> > > +static const struct regmap_irq_chip bd72720_irq_chip = {
-> > > +	.name = "bd72720_irq",
-> > > +	.main_status = BD72720_REG_INT_LVL1_STAT,
-> > > +	.irqs = &bd72720_irqs[0],
-> > > +	.num_irqs = ARRAY_SIZE(bd72720_irqs),
-> > > +	.status_base = BD72720_REG_INT_PS1_STAT,
-> > > +	.unmask_base = BD72720_REG_INT_PS1_EN,
-> > > +	.config_base = &bd72720_irq_type_base,
-> > > +	.num_config_bases = 1,
-> > > +	.num_config_regs = 2,
-> > > +	.set_type_config = bd72720_set_type_config,
-> > > +	.ack_base = BD72720_REG_INT_PS1_STAT,
-> > > +	.init_ack_masked = true,
-> > > +	.num_regs = 12,
-> > > +	.num_main_regs = 1,
-> > > +	.sub_reg_offsets = &bd72720_sub_irq_offsets[0],
-> > > +	.num_main_status_bits = 8,
-> > > +	.irq_reg_stride = 1,
-> > > +};
-> > > +
-> > >   static int set_clk_mode(struct device *dev, struct regmap *regmap,
-> > >   			int clkmode_reg)
-> > >   {
-> > > @@ -511,6 +882,25 @@ static void bd71828_remove_poweroff(void *data)
-> > >   	pm_power_off = NULL;
-> > >   }
-> > > +static int bd72720_get_secondary_regmap(struct i2c_client *i2c,
-> > 
-> > Does this 'secondary' have a specific purpose or a better name?
-> 
-> I am not entirely sure. When I asked this from the designers they just told
-> me that they needed more than 255 registers so they added another slave
-> address... (I'm not sure what would have been wrong with using a page
-> register). So, I assume they just placed stuff that didn't fit in first 255
-> register there. But yeah, it looks like most of the registers there are
-> related to the charger. So, perhaps it isn't completely misleading to use
-> "charger regmap"? The data-sheet seems to be just using "Register map 1" and
-> "Register map 2" in the tables listing these registers. I kind of like using
-> something which maps easily to the data-sheet, but I really have no strong
-> opinion on this.
-> 
-> > > +					const struct mfd_cell *mfd, int cells)
-> > > +{
-> 
-> // snip
-> 
-> > > diff --git a/include/linux/mfd/rohm-bd72720.h b/include/linux/mfd/rohm-bd72720.h
-> > > new file mode 100644
-> > > index 000000000000..856a6962b1b2
-> > > --- /dev/null
-> > > +++ b/include/linux/mfd/rohm-bd72720.h
-> > > @@ -0,0 +1,632 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> > > +/*
-> > > + * Copyright 2024 ROHM Semiconductors.
-> > 
-> > Seems odd to introduce a new file with an old date.
-> 
-> I originally wrote this last year :) I can it update though. Thanks.
-> 
-> > 
-> > > + *
-> > > + * Author: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > + */
-> > > +
-> > > +#ifndef _MFD_BD72720_H
-> > > +#define _MFD_BD72720_H
-> > > +
-> > > +#include <linux/regmap.h>
-> > > +
-> > > +enum {
-> > > +	BD72720_BUCK1,
-> > > +	BD72720_BUCK2,
-> > > +	BD72720_BUCK3,
-> > > +	BD72720_BUCK4,
-> > > +	BD72720_BUCK5,
-> > > +	BD72720_BUCK6,
-> > > +	BD72720_BUCK7,
-> > > +	BD72720_BUCK8,
-> > > +	BD72720_BUCK9,
-> > > +	BD72720_BUCK10,
-> > > +	BD72720_BUCK11,
-> > > +	BD72720_LDO1,
-> > > +	BD72720_LDO2,
-> > > +	BD72720_LDO3,
-> > > +	BD72720_LDO4,
-> > > +	BD72720_LDO5,
-> > > +	BD72720_LDO6,
-> > > +	BD72720_LDO7,
-> > > +	BD72720_LDO8,
-> > > +	BD72720_LDO9,
-> > > +	BD72720_LDO10,
-> > > +	BD72720_LDO11,
-> > > +	BD72720_REGULATOR_AMOUNT,
-> > > +};
-> > > +
-> > > +/* BD72720 interrupts */
-> > > +#define BD72720_INT_LONGPUSH_MASK BIT(0)
-> > 
-> > Tab out the values please.
-> 
-> Ok, sure.
-> 
-> Ps.
-> I do really appreciate you going through RFCs :) Kudos!
-
-NP
+    50	
+    51	/**
+    52	 * platform_region_matches_cxld() - Platform quirk to match a CXL Region and a
+    53	 * Switch or Endpoint Decoder. It allows matching on platforms with LMH's.
+    54	 * @p: Region Params against which @cxled is matched.
+    55	 * @cxld: Switch or Endpoint Decoder to be tested for matching @p.
+    56	 *
+    57	 * Similar to platform_cxlrd_matches_cxled(), it matches regions and
+    58	 * decoders on platforms with LMH's.
+    59	 *
+    60	 * Return: true if a Decoder matches a Region, else false.
+    61	 */
+    62	bool platform_region_matches_cxld(const struct cxl_region_params *p,
+    63					  const struct cxl_decoder *cxld)
+    64	{
+    65		const struct range *r = &cxld->hpa_range;
+    66		const struct resource *res = p->res;
+    67		int align = cxld->interleave_ways * SZ_256M;
+    68	
+    69		if (res->start == LMH_CFMWS_RANGE_START && res->start == r->start &&
+  > 70		    res->end < r->end && res->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
+    71		    IS_ALIGNED(range_len(r), align))
+    72			return true;
+    73	
+    74		return false;
+    75	}
+    76	
 
 -- 
-Lee Jones [李琼斯]
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
