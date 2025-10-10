@@ -1,167 +1,139 @@
-Return-Path: <linux-kernel+bounces-848615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE42EBCE2CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:59:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5414DBCE2DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 730763B39CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0960D3B8527
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173F92C158E;
-	Fri, 10 Oct 2025 17:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029E33594A;
+	Fri, 10 Oct 2025 17:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ifLaA5dI"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxiYfyNc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11623594A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF07274FC1;
+	Fri, 10 Oct 2025 17:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760119173; cv=none; b=eRJOueKd1VNtAuzOViPhZ0D6l3L2xatzzsM9BbBeUAp8hhgksKaRh/AslIJrLLlgShcTAWcnizkU7q7nAMxNq0RnVsrRMe94RFU9TxW74YRU6+lWeVlkjUEowQTdNCsca2ir/Jjd124JF13ufkAceNsR1dofJcPavwzei2bN540=
+	t=1760119198; cv=none; b=bPmYeOtz1ONohrXM3be0H7dCqnUBRL8eh9c4KvWQ9OAsW343mGo0ysrzmsBuxqj+Cq79wDmjNwu23A+NYhKLzyl2+9hlllXV+i10q0j1/RwARfsLILWBhMfeU05FyIn3F2G+T5/SMTJGirLE38qH1REKy3SOkxZ1kU0Iaz0ioLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760119173; c=relaxed/simple;
-	bh=/O4J+xOHjAuEp3KBUHoVkp1FiMuNBMhKCunHsW3BgCY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CRHg/H0mgWm9r+bWdpcEVMLFS74KZy2o7Fg1E2PYWwT2LaV+8Miczt8NqLjI0Aq+MeGhzBs5ArE/Pf26Q2AffxEUX1X4XUreDdxOft60QtRAsaaQEUrwOfB/21IvNxkVck8HwcDqNjvOLnZuG/fouFqxPnBi2DdK4H+7QJwsA7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ifLaA5dI; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77b73bddbdcso3699075b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760119171; x=1760723971; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XsiTGDp45+d8REu3L6sx1lSo7GE9fyB7bHGlv479Ljo=;
-        b=ifLaA5dIVqwF/YlIRqVqqDZg3OJn9+9dls/Csj1K2MIkaQiLnN4+r4WAyEhkFC9Tua
-         sJ/XCkFik72ufEecrkIHy1vMyI5CS/H0+NgrIWYgWIxFkz8h4wAsHFJP6WQjhwl4jUmy
-         JVgPd5xeKVS4lQogaSEGtb4yJIc5LIFmtaOe3WSSbbtlCrB79FUqf08F+YXGbyosMIlU
-         eYrlm1RQsCa/wOoT8rOuvKAQXiVAtzjyJkOOkvRDs+dBB90Yc0rUVW3MYvyzK3zUPLmX
-         fnCWT0qhuF4jDqFKnt1nj6OwRaJciYS+TJM8HGQBHEe/wfprdXwrJmOMAGALdoabMLCT
-         sLtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760119171; x=1760723971;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XsiTGDp45+d8REu3L6sx1lSo7GE9fyB7bHGlv479Ljo=;
-        b=e1fWvQMbDmyU73++VRHYMQ8Od8ZJR23THmRgJIRQKbWjyS4HTvLpgldXBwFivbrBmv
-         A4zc/m6vfEiQa7P0x4Z9Tkzl4ti7bWH7oaoSLDClZOF1UnMnHTp1FRgL6CBm3zZJEXEE
-         rkMry7OPZZIkBrYwyzQN6Z0h5CHTAyDPaGeRwNNzPUDHeUBQzgnYpzUCuCbGq4mX14NV
-         SoAMXHlJOleFEK4fia75xPqp7HxG7gwxzgB4kiPTi098jHQe8G/aPFf2+DttfDl0gc7T
-         lkK1tlk2OrMJ9RIsRZbyPKgQKFyI6XKB3dGfTo8cz1RCPnGPcagaa3LddpW+P8QZZSI6
-         VhTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfI3F60kpkld3XryRkmgUPDx/HEldgFigkwvBC/HRimgEJmNBrJEmlecHNh/ju76xAft17Y7244L8Ut7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJl3cafWFso2YXIFmIS2pgvAO33c7hgTG+uivLeATUcg2wQ2tJ
-	O8fwgnhVm2njrCy2UxpJ33ydtURIb/3Tg7PS49O6svnR1mcIHh0F8tXCNg5U09Rm6LGLlqqNHpb
-	pgO6VoO2lTyKOLu/VtGZpKYvfmg==
-X-Google-Smtp-Source: AGHT+IFFulhZ6XtWtUEt5DU+FzApmeb72eQ72O6ZaO2RaynTOo8A78bn76Qqn2PHdxN8Dmi5RIdQ4MD/+FcahKppIg==
-X-Received: from pjca12.prod.google.com ([2002:a17:90b:5b8c:b0:32b:35fb:187f])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:6d93:b0:2ca:f345:5673 with SMTP id adf61e73a8af0-32da90145fdmr15350975637.27.1760119171293;
- Fri, 10 Oct 2025 10:59:31 -0700 (PDT)
-Date: Fri, 10 Oct 2025 10:59:29 -0700
-In-Reply-To: <20251007221420.344669-10-seanjc@google.com>
+	s=arc-20240116; t=1760119198; c=relaxed/simple;
+	bh=8ZOhmmUB47BnRVmcH9m8RmR0JD3HaFwGwUMxxXUZHg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dffYsOiOcGoaua8fMkT4cJqcoOAtCoe1nERteilRcGPsqQYEHcLUAnwy2hrTEXHGvPwDzrkI2TOuoMIzYX2S2IjjHY0zOR4yRWcUI5y6qIxXjC849EaDpP0n37u7DWKqy9HgKljUsktnOkHqJAxOE0QHARgjkNwMggc2nYqPpZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxiYfyNc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DCA6C4CEF1;
+	Fri, 10 Oct 2025 17:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760119197;
+	bh=8ZOhmmUB47BnRVmcH9m8RmR0JD3HaFwGwUMxxXUZHg8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nxiYfyNc9fO0TMEyIim7GKmK2/+Kaik9d56v7dKDdlRLyZ+sp24ytvC4pcodiwI0U
+	 amTpguZUYzPjj8eQkWyhwVKNMp9l7GyRNya4/yy7z7Qo6huqPrUWg0JvCDYp/4Cute
+	 +f4UJznliM5nXpJwNpzLW2l3NtQ95xBWBpAMV5uwFrC0WnywCsk/vmPuikS+zdraqy
+	 AOfQT9Hn0Hh83TOUM5BoQPqlmVAEU6GIVEWBe/NRH9OXxfflgHjd4GZs+euhl05fvO
+	 xPyBcm9D1dFJ0yq05WjFw2r1sclWKz82yDIXEIKa6w02e5n81SLDRKhNsEDjoJpAsj
+	 S1sHzwFtCzQOw==
+Message-ID: <3a73daeb-1353-463d-a1f1-22cdece1326b@kernel.org>
+Date: Fri, 10 Oct 2025 11:59:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-10-seanjc@google.com>
-Message-ID: <diqzy0pifxj2.fsf@google.com>
-Subject: Re: [PATCH v12 09/12] KVM: selftests: Use proper uAPI headers to pick
- up mempolicy.h definitions
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Shivank Garg <shivankg@amd.com>, 
-	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
+ pxamci_probe()
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Rakuram Eswaran <rakuram.e96@gmail.com>
+Cc: chenhuacai@kernel.org, dan.carpenter@linaro.org,
+ david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, lkp@intel.com,
+ skhan@linuxfoundation.org, ulf.hansson@linaro.org, zhoubinbin@loongson.cn
+References: <pe4sz3hamkxhahvwqzdq3p3q5u3yeqpdscl5rvvoo5gdfbbrl7@joiz2oj5y4so>
+ <20251009152744.9734-1-rakuram.e96@gmail.com>
+ <aliep4j5jmbdixu5cmqztoxwp3jv4r4hi63qpvhughepsepzb3@qh3mwgryf5ny>
+Content-Language: en-US
+From: Khalid Aziz <khalid@kernel.org>
+In-Reply-To: <aliep4j5jmbdixu5cmqztoxwp3jv4r4hi63qpvhughepsepzb3@qh3mwgryf5ny>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Sean Christopherson <seanjc@google.com> writes:
+On 10/10/25 3:59 AM, Uwe Kleine-König wrote:
+> Hello Rakuram,
+> 
+> On Thu, Oct 09, 2025 at 08:57:38PM +0530, Rakuram Eswaran wrote:
+>> Your suggestion makes perfect sense — since host is devm-managed,
+>> explicitly assigning its members to NULL has no effect.
+>> I’ll remove those two redundant lines in v2 as you suggested.
+>>
+>> I had one small clarification regarding the remaining host->dma_chan_tx = NULL;
+>> in the TX DMA error path. Since that branch uses goto out,
+>> the cleanup section below may call dma_release_channel() on both RX
+>> and TX pointers. Setting TX to NULL there seems like a defensive step
+>> to avoid accidentally passing an ERR_PTR() to dma_release_channel()
+>> — is that understanding correct?
+> 
+> Ah right, so either keep host->dma_chan_tx = NULL or improve the error
+> handling like:
+> 
+> diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
+> index 26d03352af63..e5068cc55fb2 100644
+> --- a/drivers/mmc/host/pxamci.c
+> +++ b/drivers/mmc/host/pxamci.c
+> @@ -715,7 +715,7 @@ static int pxamci_probe(struct platform_device *pdev)
+>   		dev_err(dev, "unable to request tx dma channel\n");
+>   		ret = PTR_ERR(host->dma_chan_tx);
+>   		host->dma_chan_tx = NULL;
+> -		goto out;
+> +		goto out_dma_tx;
+>   	}
+>   
+>   	if (host->pdata) {
+> @@ -765,10 +765,11 @@ static int pxamci_probe(struct platform_device *pdev)
+>   	return 0;
+>   
+>   out:
+> -	if (host->dma_chan_rx)
+> -		dma_release_channel(host->dma_chan_rx);
+>   	if (host->dma_chan_tx)
+>   		dma_release_channel(host->dma_chan_tx);
+> +out_dma_tx:
+> +	if (host->dma_chan_rx)
+> +		dma_release_channel(host->dma_chan_rx);
+>   	return ret;
+>   }
 
-> Include mempolicy.h in KVM's numaif.h to pick up the kernel-provided NUMA
-> definitions,
+I do not see the need for this code change. "if (host->dma_chan_tx)" 
+will skip "dma_release_channel(host->dma_chan_tx)" since dma_chan_tx is 
+already NULL. This code change does not add anything.
 
-mempolicy.h was actually already added in the patch before this, maybe
-rephrase as
+--
+Khalid
 
-Use included mempolicy.h's definitions
 
-> and drop selftests' definitions, which are _mostly_
-> equivalent.  The syscall numbers in particular are subtly x86_64-specific,
-> i.e. will cause problems if/when numaif.h is used outsize of x86.
->
-> Opportunistically clean up the file comment
+>   
+>> Also, I noticed that in the build configuration downloaded from the LKP report
+>> link (CONFIG_DMA_ENGINE isn’t defined), the kernel uses the stub inline
+>> version of dma_release_channel() from include/linux/dmaengine.h,
+>> which becomes a no-op.
+>>
+>>  From what I understand, when the DMA engine framework isn’t enabled,
+>> these APIs compile as no-ops through their inline stubs.
+>> Please correct me if I’m misunderstanding how this works.
+>>
+>> Please let me know if this reasoning aligns with what you had in mind.
+> 
+> Sounds right.
+> 
+> Best regards
+> Uwe
 
-This is true
-
-> and make the syscall wrappers
-> static inline so that including the header multiple times won't lead to
-> weirdness (currently numaif.h is included by exactly one header).
->
-
-The inlining part doesn't appear in this patch, I think it was already
-inlined right from the introduction in patch 6.
-
-> Fixes: 346b59f220a2 ("KVM: selftests: Add missing header file needed by xAPIC IPI tests")
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  tools/testing/selftests/kvm/include/numaif.h | 32 +-------------------
->  1 file changed, 1 insertion(+), 31 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/include/numaif.h b/tools/testing/selftests/kvm/include/numaif.h
-> index aaa4ac174890..1554003c40a1 100644
-> --- a/tools/testing/selftests/kvm/include/numaif.h
-> +++ b/tools/testing/selftests/kvm/include/numaif.h
-> @@ -1,14 +1,5 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
-> -/*
-> - * tools/testing/selftests/kvm/include/numaif.h
-> - *
-> - * Copyright (C) 2020, Google LLC.
-> - *
-> - * This work is licensed under the terms of the GNU GPL, version 2.
-> - *
-> - * Header file that provides access to NUMA API functions not explicitly
-> - * exported to user space.
-> - */
-> +/* Copyright (C) 2020, Google LLC. */
->  
->  #ifndef SELFTEST_KVM_NUMAIF_H
->  #define SELFTEST_KVM_NUMAIF_H
-> @@ -37,25 +28,4 @@ KVM_SYSCALL_DEFINE(mbind, 6, void *, addr, unsigned long, size, int, mode,
->  		   const unsigned long *, nodemask, unsigned long, maxnode,
->  		   unsigned int, flags);
->  
-> -/* Policies */
-> -#define MPOL_DEFAULT	 0
-> -#define MPOL_PREFERRED	 1
-> -#define MPOL_BIND	 2
-> -#define MPOL_INTERLEAVE	 3
-> -
-> -#define MPOL_MAX MPOL_INTERLEAVE
-> -
-> -/* Flags for get_mem_policy */
-> -#define MPOL_F_NODE	    (1<<0)  /* return next il node or node of address */
-> -				    /* Warning: MPOL_F_NODE is unsupported and
-> -				     * subject to change. Don't use.
-> -				     */
-> -#define MPOL_F_ADDR	    (1<<1)  /* look up vma using address */
-> -#define MPOL_F_MEMS_ALLOWED (1<<2)  /* query nodes allowed in cpuset */
-> -
-> -/* Flags for mbind */
-> -#define MPOL_MF_STRICT	     (1<<0) /* Verify existing pages in the mapping */
-> -#define MPOL_MF_MOVE	     (1<<1) /* Move pages owned by this process to conform to mapping */
-> -#define MPOL_MF_MOVE_ALL     (1<<2) /* Move every page to conform to mapping */
-> -
->  #endif /* SELFTEST_KVM_NUMAIF_H */
-> -- 
-> 2.51.0.710.ga91ca5db03-goog
 
