@@ -1,149 +1,278 @@
-Return-Path: <linux-kernel+bounces-848263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A52DBCD0C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:10:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A73BCD0C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F8E1A65A94
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:10:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25ED14FD7B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DABB2F0C63;
-	Fri, 10 Oct 2025 13:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23542F0C6B;
+	Fri, 10 Oct 2025 13:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Sw73Tyjl"
-Received: from fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.57.120.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="CfeBV7NQ"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6C11F1538
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.57.120.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEBA2F0C5B
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101809; cv=none; b=LfpToOocpQ6ZAWbNUOPKxw1PKzZ+UXksVa05sHAIjTGfFT6ERi4WeNK7m6jelbITGCmr7tCzCIoCzIKu/myFWo9Tc3zkzVe3a9oDBkiCUsRrQmQNRn8vjXicUFVxa2IW+tSEDShNNBlXOuZlOG2caZNrDUCTaYTudHCUEM5VhFM=
+	t=1760101821; cv=none; b=VbIQrA2oMBd37j8W8i1W8dykAzs++2KqTd99CY+Ax0VllGuzyOGiWVD95G3IfQ1EMOAxh6kRi+uw52O+1tOv8QJITM9knUf8om/JTEXGXNx459LGXJHJ8nLK3WhQqlEw8bNIohGTV0aspfplI7gk4Y7jpsm7vgJz4lmEo9ImpaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101809; c=relaxed/simple;
-	bh=LyTR9DtGywm23FUElXyBYi6OMxaV/1yL2eK31ENS4s0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o4hzKicFSdakJpXNu9Ey8YwEwbP8/Aad2XRZezvvVwbKXVTALVcN8YhlEcPqT1zw279t3ihomjV3UDFHaemIjKLduUF6JkUZpauIbcZl1ENZq/gvBzdyj2IikSr9FD88PbeOuXToXDHcJnnKb7obRaRdUITVBsW0bP8gfAB9kms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Sw73Tyjl; arc=none smtp.client-ip=52.57.120.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1760101821; c=relaxed/simple;
+	bh=4lJlcv8Gr+/KI2ALeNVhZviw1LbftEBNlP6ww8ci/QA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P2K4EhYGjjstYaFzVoEu8WNZp7+kGA+oWMK+G7uKDR0GINtQ3s4vnvMe3nrv18RTzaOdqr+xLxwYODCNEnRQziiLyE6dL+tOuC5b7z8GNRf3hZqQWt3jj6eXbTYLxmD3rHjKgwNBwvD7GkLiTpAn9Z0rPMtzK1naavs0NnzZWN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=CfeBV7NQ; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5d40e0106b6so1142322137.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1760101808; x=1791637808;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=QSXdhuJElvACKoDk9jjk+dDHt2vVcqmKZsYu2gcSkyY=;
-  b=Sw73Tyjl4sroglkUfsfya4M2nR2gYX7rnySIN9wz7qb0DNHQhRtaIDiL
-   qx/ruQR9sZwnW++WgNyiQEJRbUygyycTrqSJ9kQVI8yK1DYDHlbGTR0mf
-   koz3Q7HQjgxzn19mnx4FQg5lou6RJzvJn8W5f5UcQpWSVK34OhMqCL1RK
-   LghChD2yziICbnprHSfgsPegpY3H7H3RWYD2Esz6OAdA1qxVLbdVNTPRh
-   spUA3WclkHj55MPjP5tbtlA7ZKhR1yGVZaTlsaXWtcMV7vhLcT0W5yoje
-   VkY2Bqf8Tah2l+H29HTcztCOsJf/9zN4GTpBvNVtAwwTBurdCXUCTzXI/
-   Q==;
-X-CSE-ConnectionGUID: RmYK/vrnRmOMiAlUxTUluw==
-X-CSE-MsgGUID: /TWQkBlYQ1KHZqPjEdb4kw==
-X-IronPort-AV: E=Sophos;i="6.19,219,1754956800"; 
-   d="scan'208";a="3314556"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 13:09:52 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.226:4083]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.44.161:2525] with esmtp (Farcaster)
- id 3b800073-49ab-47e2-a2fb-f0357c5bdc55; Fri, 10 Oct 2025 13:09:52 +0000 (UTC)
-X-Farcaster-Flow-ID: 3b800073-49ab-47e2-a2fb-f0357c5bdc55
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 10 Oct 2025 13:09:50 +0000
-Received: from dev-dsk-abuehaze-1c-21d23c85.eu-west-1.amazon.com
- (10.13.244.41) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.2562.20; Fri, 10 Oct 2025 13:09:45 +0000
-From: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
-To: <clm@meta.com>
-CC: <bsegall@google.com>, <clm@fb.com>, <dietmar.eggemann@arm.com>,
-	<joseph.salisbury@oracle.com>, <juri.lelli@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <mgorman@suse.de>, <mingo@redhat.com>,
-	<peterz@infradead.org>, <rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
-	<vschneid@redhat.com>, <abuehaze@amazon.com>, <cpru@amazon.com>
-Subject: Re: [REGRESSION][v6.17-rc1]sched/fair: Bump sd->max_newidle_lb_cost when newidle balance fails
-Date: Fri, 10 Oct 2025 13:09:32 +0000
-Message-ID: <20251010130932.14768-1-abuehaze@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
-References: <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1760101818; x=1760706618; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1fLwwQtYS9/oCuPHk+DiJAuPGJNAUbU6jjwD4B7N0V0=;
+        b=CfeBV7NQ9JjVG3+TVEJ6PC9GqRzfZCJhpwK8Tt3LL8qEaoBO3pPNrOO78v2u3ofMQv
+         VFdbUGRpY1IPZo+fJevcJdszGB70vBFH+fqNhtsKTp7UbTMkA5YDEp09sPoYjKSqmgKB
+         XqxWGKqD6J2CwdYbyGzghe13nrdKmPq32BnR1QPUEa1BnUfr+66tTWN2WSpsPDwMsH2Q
+         wYBeKRN6jF6MIwSJXOnIkZ4Jv7OugDg7mdet76eUhnjzJ6hmdzzQrTR6i7YhFl8FgKQn
+         Gzjw90YvD0YyavfrRMHdj9B2bUAhVJN4FiUFli3pOIJKAMH4dlB0B3oui0LDVP6tt82t
+         izaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760101818; x=1760706618;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1fLwwQtYS9/oCuPHk+DiJAuPGJNAUbU6jjwD4B7N0V0=;
+        b=lKZyYPn6Zw3PTzRff/Ab1fSTWRuIjJuBnAHcdmGehko6jYtUXWPG4oM6Ildp5StNUT
+         ADxOplA28ZDmW6wcBavy9i6rtZf3Zh+T0li/1jwIPhNrNspahfstqbun+2n3CPS7FMnF
+         uWWVhNgxnY7r4ZcO7j4RpMuxz+OoCRO2fg6bQTxkv0ya3wiHHmxJfhFIlrlqYPp8mnAn
+         LrRnOd4NNWF2Z72P/NIQyD1zdIqWjfWTiUNuJF1tybs3RYs34wroi1f+UyoV7+9s63La
+         vgLHMZ4Sryc+BzVbRA7QWD82+anlcDI1GyxMPywAhJyaC3PwWccDLuHX6BKb29F8Hg6G
+         ITnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUfsQ5yTX+d+jTTN/bHxyGg/E5rPqirsFeXd8vhl5/D/8Jne2F1Bckw/rR5BY38rxZ8qCuqZm4wUps+pE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJmIp4dWS1NtV7pcA7E46De91quiAnwCaPyyAVjv8mjAjCSU15
+	H6CWcmsDSbBqolsoE5HaIGfPsiLcsVEZZJGdr7sBPFoJs4ZAHINDwTagApvvmMXTUiA=
+X-Gm-Gg: ASbGncuIXlVUNCYhya/fRjWkKSVK+Z3GJaXstw6AzlyAuQmY3io9POyLoIPwB/8BjBt
+	skC097thsmxmSVktr6SiFxZBufOS2ifdBxyUUm7+ki0vBtbhJdrBchf1x+ADgq8DXufcjMA9JE5
+	DPCNMW8F7/97CjYo4O+85uYcSD6tk9qzFKErJyDnqmB3LzmKN0Jlb/bgtiNWQMa1iK4MfRVCxC3
+	b1uMPV5/p7/gT90uDu3meuJvzUpxtO/QyET1bU73eGNfnBECINpw0vPeCcZz7JggFZZ2yoNYQYt
+	fyjSLA4Z35cB9jL6xXWhiUqOlyutdP+SRZ8FvNKnBnNAW7nPt62jeVdtGfYhJ4wF09IZFptx+x6
+	27wvj0542XXAr9dWbFrhpz+JtHneIG8oFX1MMbIwECGIYl2k=
+X-Google-Smtp-Source: AGHT+IFRUo0Z5NcP31jBqlbovhPstCVhPEpvKr9/mW5HAo/OoZxluHpqS1bKY5jZDCTa960/6sgFvQ==
+X-Received: by 2002:a05:6102:598b:b0:521:57e7:3b19 with SMTP id ada2fe7eead31-5d5e23ad946mr4722552137.25.1760101816309;
+        Fri, 10 Oct 2025 06:10:16 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:ebd3::c41? ([2606:6d00:17:ebd3::c41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-930bf6ce034sm704047241.7.2025.10.10.06.10.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 06:10:14 -0700 (PDT)
+Message-ID: <09dd8f5915da5a2e01bee3835e8de8e209cc4933.camel@ndufresne.ca>
+Subject: Re: [PATCH 11/16] media: rockchip: rga: add iommu restore function
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Sven =?ISO-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>, Jacob Chen
+	 <jacob-chen@iotwrt.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, kernel@pengutronix.de
+Date: Fri, 10 Oct 2025 09:10:13 -0400
+In-Reply-To: <bdebed9c-2980-4d5d-9eb3-1cb5e5e8e226@pengutronix.de>
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+	 <20251007-spu-rga3-v1-11-36ad85570402@pengutronix.de>
+	 <97879b9b078055fb130edfd126d253320ce616a1.camel@ndufresne.ca>
+	 <bdebed9c-2980-4d5d-9eb3-1cb5e5e8e226@pengutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-3xuLcpZRvhbRvRP2LvxW"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWB003.ant.amazon.com (10.13.139.135) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
->> Hi Chris,
->> 
->> During testing, we are seeing a ~6% performance regression with the 
->> upstream stable v6.12.43 kernel (And Oracle UEK 
->> 6.12.0-104.43.4.el9uek.x86_64 kernel) when running the Phoronix 
->> pts/apache benchmark with 100 concurrent requests [0].  The regression 
->> is seen with the following hardware:
->> 
->> PROCESSOR: Intel Xeon Platinum 8167M Core Count: 8 Thread Count: 16 
->> Extensions: SSE 4.2 + AVX512CD + AVX2 + AVX + RDRAND + FSGSBASE Cache 
->> Size: 16 MB Microcode: 0x1 Core Family: Cascade Lake
->> 
->> After performing a bisect, we found that the performance regression was 
->> introduced by the following commit:
->> 
->> Stable v6.12.43: fc4289233e4b ("sched/fair: Bump sd->max_newidle_lb_cost 
->> when newidle balance fails")
->> Mainline v6.17-rc1: 155213a2aed4 ("sched/fair: Bump 
->> sd->max_newidle_lb_cost when newidle balance fails")
->> 
->> Reverting this commit causes the performance regression to not exist.
->> 
->> I was hoping to get your feedback, since you are the patch author.  Do 
->> you think gathering any additional data will help diagnose this issue?
 
-> Hi everyone,
+--=-3xuLcpZRvhbRvRP2LvxW
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Peter, we've had a collection of regression reports based on this
-> change, so it sounds like we need to make it less aggressive, or maybe
-> we need to make the degrading of the cost number more aggressive?
+Le vendredi 10 octobre 2025 =C3=A0 10:45 +0200, Sven P=C3=BCschel a =C3=A9c=
+rit=C2=A0:
+>=20
+> On 10/7/25 20:30, Nicolas Dufresne wrote:
+> > Hi,
+> >=20
+> > Le mardi 07 octobre 2025 =C3=A0 10:32 +0200, Sven P=C3=BCschel a =C3=A9=
+crit=C2=A0:
+> > > Add an iommu restore function in preparation for the rga3 addition.
+> > > This is necessary for a soft reset, as the rga3 will also reset
+> > > it's iommu paging table to 0 and disable paging.
+> > >=20
+> > > The empty domain attach/detach to restore the iommu is copied
+> > > from the rkvdec driver.
+> > We did receive negative feedback after the fact on this one. We will li=
+kely
+> > upset further the iommu subsystem maintainers with that. Have you consi=
+dered
+> > adding a restore function in the rkiommu driver, similar to TI mmu and =
+Benjamin
+> > VSI MMU proposal ?
+> >=20
+> > I have no precise objection, I know it works, but adding a restore func=
+tion
+> > seems also pretty straight forward.
+>=20
+> I haven't considered adding an restore function. I've implemented this=
+=20
+> to handle potential command stream failures like scaling beyond the=20
+> supported 8x factor. I'll probably drop this for now to keep it simple=
+=20
+> and instead correctly announce the constraints to avoid creating invalid=
+=20
+> commands in the first place.
 
-> Joe (and everyone else who has hit this), can I talk you into trying the
-> drgn from
-> https://lore.kernel.org/lkml/2fbf24bc-e895-40de-9ff6-5c18b74b4300@meta.com/
+Ack, though keep a warning around and some comment about the behaviour. We =
+are
+human, and may leave some bugs behind, always nice then they are recoverabl=
+e.
+(though PM runtime cycle also would recover that one).
+>=20
+> > > Signed-off-by: Sven P=C3=BCschel <s.pueschel@pengutronix.de>
+> > > ---
+> > > =C2=A0=C2=A0drivers/media/platform/rockchip/rga/rga.c | 24 ++++++++++=
+++++++++++++++
+> > > =C2=A0=C2=A0drivers/media/platform/rockchip/rga/rga.h |=C2=A0 7 +++++=
+++
+> > > =C2=A0=C2=A02 files changed, 31 insertions(+)
+> > >=20
+> > > diff --git a/drivers/media/platform/rockchip/rga/rga.c
+> > > b/drivers/media/platform/rockchip/rga/rga.c
+> > > index
+> > > cd4da01645611e5fb51ed94e09b5f1463dad72c5..0a725841b0cfa41bbc5b861b8f5=
+ceac2452f
+> > > c2b5 100644
+> > > --- a/drivers/media/platform/rockchip/rga/rga.c
+> > > +++ b/drivers/media/platform/rockchip/rga/rga.c
+> > > @@ -9,6 +9,7 @@
+> > > =C2=A0=C2=A0#include <linux/delay.h>
+> > > =C2=A0=C2=A0#include <linux/fs.h>
+> > > =C2=A0=C2=A0#include <linux/interrupt.h>
+> > > +#include <linux/iommu.h>
+> > > =C2=A0=C2=A0#include <linux/module.h>
+> > > =C2=A0=C2=A0#include <linux/of.h>
+> > > =C2=A0=C2=A0#include <linux/pm_runtime.h>
+> > > @@ -560,6 +561,19 @@ static const struct video_device rga_videodev =
+=3D {
+> > > =C2=A0=C2=A0	.device_caps =3D V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_ST=
+REAMING,
+> > > =C2=A0=C2=A0};
+> > > =C2=A0=20
+> > > +void rga_iommu_restore(struct rockchip_rga *rga)
+> > > +{
+> > > +	if (rga->empty_domain) {
+> > > +		/*
+> > > +		 * To rewrite mapping into the attached IOMMU core, attach a
+> > > new empty domain that
+> > > +		 * will program an empty table, then detach it to restore the
+> > > default domain and
+> > > +		 * all cached mappings.
+> > > +		 */
+> > > +		iommu_attach_device(rga->empty_domain, rga->dev);
+> > > +		iommu_detach_device(rga->empty_domain, rga->dev);
+> > > +	}
+> > > +}
+> > > +
+> > > =C2=A0=C2=A0static int rga_parse_dt(struct rockchip_rga *rga)
+> > > =C2=A0=C2=A0{
+> > > =C2=A0=C2=A0	struct reset_control *core_rst, *axi_rst, *ahb_rst;
+> > > @@ -657,6 +671,13 @@ static int rga_probe(struct platform_device *pde=
+v)
+> > > =C2=A0=C2=A0		goto err_put_clk;
+> > > =C2=A0=C2=A0	}
+> > > =C2=A0=20
+> > > +	if (iommu_get_domain_for_dev(rga->dev)) {
+> > > +		rga->empty_domain =3D iommu_paging_domain_alloc(rga->dev);
+> > > +
+> > > +		if (!rga->empty_domain)
+> > Its an error pointer, see:
+> >=20
+> > https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/63=
+47dc7fb967521a77f9ff0774d25ef0cca4c6cd
+> >=20
+> > > +			dev_warn(rga->dev, "cannot alloc new empty
+> > > domain\n");
+> > > +	}
+> > > +
+> > > =C2=A0=C2=A0	ret =3D v4l2_device_register(&pdev->dev, &rga->v4l2_dev)=
+;
+> > > =C2=A0=C2=A0	if (ret)
+> > > =C2=A0=C2=A0		goto err_put_clk;
+> > > @@ -741,6 +762,9 @@ static void rga_remove(struct platform_device *pd=
+ev)
+> > > =C2=A0=C2=A0	v4l2_device_unregister(&rga->v4l2_dev);
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0	pm_runtime_disable(rga->dev);
+> > > +
+> > > +	if (rga->empty_domain)
+> > > +		iommu_domain_free(rga->empty_domain);
+> > > =C2=A0=C2=A0}
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0static int __maybe_unused rga_runtime_suspend(struct devi=
+ce *dev)
+> > > diff --git a/drivers/media/platform/rockchip/rga/rga.h
+> > > b/drivers/media/platform/rockchip/rga/rga.h
+> > > index
+> > > fc4805ba4e8ef7fb311f780a198ba6ba4d3aff17..e19c4c82aca5ae2056f52d52513=
+8093fbbb8
+> > > 1af8 100644
+> > > --- a/drivers/media/platform/rockchip/rga/rga.h
+> > > +++ b/drivers/media/platform/rockchip/rga/rga.h
+> > > @@ -75,6 +75,7 @@ struct rockchip_rga {
+> > > =C2=A0=C2=A0	void __iomem *regs;
+> > > =C2=A0=C2=A0	struct clk_bulk_data clks[3];
+> > > =C2=A0=C2=A0	struct rockchip_rga_version version;
+> > > +	struct iommu_domain *empty_domain;
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0	/* vfd lock */
+> > > =C2=A0=C2=A0	struct mutex mutex;
+> > > @@ -114,6 +115,12 @@ static inline struct rga_vb_buffer *vb_to_rga(st=
+ruct
+> > > vb2_v4l2_buffer *vb)
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0struct rga_frame *rga_get_frame(struct rga_ctx *ctx, enum=
+ v4l2_buf_type
+> > > type);
+> > > =C2=A0=20
+> > > +/*
+> > > + * This should be called in an interrupt handler to make sure no mem=
+ory
+> > > + * is mapped through the IOMMU while the empty domain is attached.
+> > > + */
+> > > +void rga_iommu_restore(struct rockchip_rga *rga);
+> > > +
+> > > =C2=A0=C2=A0/* RGA Buffers Manage */
+> > > =C2=A0=C2=A0extern const struct vb2_ops rga_qops;
+> > > =C2=A0=20
 
-> I'm curious if it degrades at all or just gets stuck up high.
+--=-3xuLcpZRvhbRvRP2LvxW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Hi All,
+-----BEGIN PGP SIGNATURE-----
 
-We are also seeing 20-30% performance regression on Database workloads
-specifically Cassandra & Mongodb across multiple hardware platforms. We
-have seen the regression on v6.1.149 & v6.12.43 and we were able to
-bisect the regression to 155213a2aed4 ("sched/fair: Bump 
-> sd->max_newidle_lb_cost when newidle balance fails"). 
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOkFtQAKCRDZQZRRKWBy
+9K7JAQDtH5ATpeywJXRiQ257tpfW7vvpZX9/3t7E0wbUA/MVsAD6A3FL1LcECnxq
+20Ch0znvV9//0YSBl4slG1UocjEBuQ4=
+=awm4
+-----END PGP SIGNATURE-----
 
-We were able to reproduce this regression on below AWS instance types:
-
-- c7a.4xlarge (16 4th generation AMD EPYC processors + 32 GiB RAM)
-- c7i.4xlarge (16 4th Generation Intel Xeon Scalable processors + 32GiB RAM)
-- c7g.4xlarge (16 AWS Arm based Graviton3 processors + 32 GiB RAM)
-- c8g.4xlarge (16 AWS Arm based Graviton4 processors + 32 GiB RAM)
-
-We will try drgn from
-https://lore.kernel.org/lkml/2fbf24bc-e895-40de-9ff6-5c18b74b4300@meta.com/
- and will let you know the results. Meanwhile and given the significant
-impact, Should we revert this commit on latest mainline & on impacted stable 
-branches to stop the bleeding until we have a permanent fix?
-
-Thank you.
-
-Hazem
+--=-3xuLcpZRvhbRvRP2LvxW--
 
