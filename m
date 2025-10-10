@@ -1,129 +1,174 @@
-Return-Path: <linux-kernel+bounces-847660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCAAABCB5E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0375ABCB5ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F4A1A61FF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E8D3C807A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D3C231A30;
-	Fri, 10 Oct 2025 01:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0D22222C0;
+	Fri, 10 Oct 2025 01:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rzasn+9e"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="d6W/loWQ"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1D6211499
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B3B2868B
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760060593; cv=none; b=r3qb1mQR01kjBRuLmSnomKhWUxpWWGCMH/0H3mvX+DdP19bYkoUsZzxinKq2MR3H72ymnXMeRc+90DXwcGicCf8DWxgL4y5wMBpBcnO+lobB9UZX0lXHPoqzxR2g2WOFElz3mHrsDW+zhCItpCzWyy88VFbAT7Ii3XlFFpwmBds=
+	t=1760060646; cv=none; b=jxqnjavzDoO4HJT+9CvLxT9OsLp0HF/GreraJOs9gZ3Qp2xBAGhzI+mCG6y+4kT0BQLnr0AFWTuwdis33rfI0LAr26hk7xseNGz9kD8MIh0dx9UAHE8uiS/N55nD1L56j0cOI97lKf3xWbi8ELRpl42yvZVUJZmCKPAQBCIRmBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760060593; c=relaxed/simple;
-	bh=NPtqkvv98yoDXNHLCe00Nr0xHDE7ZeJDXsad4q7/TKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lmZvf2TPOe/6jZXGXe1c96zeKRnabrBG5QrsL8mINKqT67jhM/NHSd507AsXBUy0sReCjwevecamXlv+O3HTJRNwGYN38cox5qNjiff7+zT7psXUNtCfbvdQw2aDrHYY0Cw5DmFu02r4eUATluXMoA/vMGPFG/OjzPTyP2Vzsko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rzasn+9e; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4dcc9cebfdfso81631cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 18:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760060591; x=1760665391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=96az3arQQNj4x6OI7kGaXy8qdPeeaXxUJmGrbGqdnv8=;
-        b=Rzasn+9eJppPsdUMJ3MSSJXH2S/OCfdfLO3/o7zwuilOebMaSu+By6jirbcfXXlwNA
-         q7iELuvNDD3adEbN6B4GdvOs8V4aak+EWesVu80vRrtejs3GxHTXC1GUbKweuga3nyYZ
-         RVWIJvAsYlsldEHXglb65xzD0J0+LGcCu5mVoqI7KYtImlKX5iw731TvVKTXUqbZuw10
-         4AjUatn75XlthFJni99tkiIL3NdGmgX2+WUUB0JNBUpCtJ5+ySw64rUsv/rxw9jTMXx2
-         z+3Otik7wjpNiTz1uz9WXf8J2LzQ9Clb6gfi65JPhbcGqbSL6AOABFVGSe9ylOgfwpf6
-         rwCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760060591; x=1760665391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=96az3arQQNj4x6OI7kGaXy8qdPeeaXxUJmGrbGqdnv8=;
-        b=iqJomq9CrKN+1MjHW1Yv6yYNbA0q6ipzD3J310aNfSsQAtEbrIaNlYyISPHFZL6YX3
-         DTiMpjrvla5I4MweQgwBehpxncwma3aYNWIpJionITT6jwJJCzTmfcapgx329SxSjF7J
-         fNiPmelxfa9rYgBfu5etAD2JE/irq9ZcQsW9hrZyMVrlWlNyINzVIeH6Skmcsz0UK+kd
-         u4ycsOGD9Y3kxv7dG728Rv8lv0CdOsUER1BsqB0swmry2gA6bfaQ90ie6K/JKrDW4rzh
-         57llGmYkjIJ4XgDgagNzRoqSfKQSSmMR5Q4L5EHRmsNigF3QpZ/gRlRvxLKchixHd4Hf
-         Hvrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwpk6NB668SyfDjLisvnlF3szr5qc5iJwSnQr7+c3dWVnuVQIaq3kMdSYnjmf0SuFoBzC14QTtrExHsek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+jWqqFLdMtb5PK0wVw+BOoN4qadw7j4ZXHQCMIc6VxaKE61rF
-	QoZ36bQFSiK7nQwkppQBH1BRNmPyDcvEgPFZ2fCy6FEAJGTz+xQPFP0BN1xdAv3H3TIvX6BgqQb
-	0XGY3HEz6WvRiavo3q9UXZsSQn8YFljiol2V7BOMV
-X-Gm-Gg: ASbGnctwnK8gvgtawbGqgiqnAPQ35r+G5CQAGeZ+HKNR+gm6eyp1d2F7CffWuCB1GoK
-	7RG6EuNkrtfTqUSAdYW96ZsjbewgSwg3EJsigLo9Z6KdI0XJAyvxmGoygeAb30hHV+OhMbk6RO+
-	UfwyHjLV377VKXZmMHDuBGBpf337MwiieLmGz0EN2uBvTfI35+qKGMAOO/RsX3fKX6nvtX0dveN
-	RToEgU1f7vSA4RithyjfquwWn5B57EYSxw9tE79Ty2g2IXnEmqZS0OSlP22BDqYN4voUV9ijV7h
-	g6E=
-X-Google-Smtp-Source: AGHT+IGu0DK2CtCxN7hIIonTOKdPg8kH2c5mClv9tYOC7wcuhU0agjHl/Z5qabjh4i0XRN459MUgMBBjudlklfZKzww=
-X-Received: by 2002:ac8:590c:0:b0:4b7:a72f:55d9 with SMTP id
- d75a77b69052e-4e6eac2a26bmr18693271cf.13.1760060590253; Thu, 09 Oct 2025
- 18:43:10 -0700 (PDT)
+	s=arc-20240116; t=1760060646; c=relaxed/simple;
+	bh=ygTWd416dsDBH0o8jzFdj75vHjks3ckW+8hA47V+rg0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=avGwCeHpoVfhTc0A/OCwiufvI7BJUpyoneDnpQFpbeg+sZlpwx3m/P7QWKmCtEZo+eKNK5/hC763j//D93/QgtGpL3HS6mIxMF95L0gTJqZ/6v+3oEQEpzFTdpTgNJbLVFKVLxYAhRETk1o7aC2NEI8iPBvTQ9svy9HJfd/tKas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=d6W/loWQ; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760060635; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=PQochvWsXGlGnlw3hP2OYE3dNubTNWRaSV2n1gL8K3M=;
+	b=d6W/loWQcCeJu33pTCmT6XR95ScNiNyYtn47O/zTnXBd7+pfs1E+lbOkowKNutgdDuRnfbTGLH+cv8R5fQJUhQ1FQRcPo1cSBLolGJD5i8kLOT3jpXwHg5+GGdh8tDHWikYtc1fpSdwQH24Ea/AH58fyQ32DVrfHa6MlkQdCZzk=
+Received: from L-G4162440-1116.localdomain(mailfrom:yadong.qi@linux.alibaba.com fp:SMTPD_---0WprD.43_1760060633 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 10 Oct 2025 09:43:54 +0800
+From: Yadong Qi <yadong.qi@linux.alibaba.com>
+To: akpm@linux-foundation.org,
+	urezki@gmail.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	ying.huang@linux.alibaba.com
+Cc: Yadong Qi <yadong.qi@linux.alibaba.com>
+Subject: [PATCH v4] mm: vmalloc: WARN_ON if mapping size is not PAGE_SIZE aligned
+Date: Fri, 10 Oct 2025 09:43:11 +0800
+Message-Id: <20251010014311.1689-1-yadong.qi@linux.alibaba.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010011951.2136980-1-surenb@google.com> <20251010011951.2136980-2-surenb@google.com>
- <20251009183145.3ed17cb0819f8b7e7fb4ec43@linux-foundation.org>
-In-Reply-To: <20251009183145.3ed17cb0819f8b7e7fb4ec43@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 9 Oct 2025 18:42:59 -0700
-X-Gm-Features: AS18NWC-Nnw6mbU0XDp5pk62GdBblSXl-3NkXh8X6HtK-SeNhS47_j3D0edxdNk
-Message-ID: <CAJuCfpEPOOFOtd-Vp4VtTJyqxP_5+7h7SaMT=6exY1YZOE9v5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/8] mm: implement cleancache
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, alexandru.elisei@arm.com, peterx@redhat.com, sj@kernel.org, 
-	rppt@kernel.org, mhocko@suse.com, corbet@lwn.net, axboe@kernel.dk, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, jack@suse.cz, 
-	willy@infradead.org, m.szyprowski@samsung.com, robin.murphy@arm.com, 
-	hannes@cmpxchg.org, zhengqi.arch@bytedance.com, shakeel.butt@linux.dev, 
-	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com, 
-	minchan@kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev, 
-	Minchan Kim <minchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 9, 2025 at 6:31=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
->
-> On Thu,  9 Oct 2025 18:19:44 -0700 Suren Baghdasaryan <surenb@google.com>=
- wrote:
->
-> > Subject: [PATCH 1/8] mm: implement cleancache
->
-> Well that's confusing.  We removed cleancache 3+ years ago in 0a4ee518185=
-e.
+In mm/vmalloc.c, the function vmap_pte_range() assumes that the
+mapping size is aligned to PAGE_SIZE. If this assumption is
+violated, the loop will become infinite because the termination
+condition (`addr != end`) will never be met. This can lead to
+overwriting other VA ranges and/or random pages physically follow
+the page table.
 
-Yes, this version is a complete rewrite. Previous version was a thin
-layer acting as a middleman and having hooks deep in the FS code. This
-version implements most of the cleancache page management inside
-cleancache itself and allows GCMA and future clients to be thin. It is
-also much less invasive, limiting its hooks mostly to the MM code.
-From the cover letter:
+It's the caller's responsibility to ensure that the mapping size
+is aligned to PAGE_SIZE. However, the memory corruption is hard
+to root cause. To identify the programming error in the caller
+easier, check whether the mapping size is PAGE_SIZE aligned with
+WARN_ON_ONCE().
 
-New implementation:
-1. Avoids intrusive hooks into filesystem code, limiting them to two
-hooks for filesystem mount/unmount events and a hook for bdev
-invalidation.
-2. Manages inode to folio association and handles pools of donated
-folios inside cleancache itself, freeing backends of this burden.
+Signed-off-by: Yadong Qi <yadong.qi@linux.alibaba.com>
+Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
+---
+v3 -> v4:
+  * replace WARN_ON with WARN_ON_ONCE
+v2 -> v3:
+  * change error code from ENOMEM to EINVAL
+  * modify callers of vmap_pte_range to handle return code
+v1 -> v2:
+  * Use WARN_ON instead of BUG_ON
+---
+ mm/vmalloc.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-The idea was presented at this year's LSF/MM and RFC was posted at
-https://lore.kernel.org/all/20250320173931.1583800-1-surenb@google.com/
-earlier this year.
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 5edd536ba9d2..c0213118a75e 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -100,6 +100,9 @@ static int vmap_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 	struct page *page;
+ 	unsigned long size = PAGE_SIZE;
+ 
++	if (WARN_ON_ONCE(!PAGE_ALIGNED(end - addr)))
++		return -EINVAL;
++
+ 	pfn = phys_addr >> PAGE_SHIFT;
+ 	pte = pte_alloc_kernel_track(pmd, addr, mask);
+ 	if (!pte)
+@@ -167,6 +170,7 @@ static int vmap_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
+ {
+ 	pmd_t *pmd;
+ 	unsigned long next;
++	int err;
+ 
+ 	pmd = pmd_alloc_track(&init_mm, pud, addr, mask);
+ 	if (!pmd)
+@@ -180,10 +184,11 @@ static int vmap_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
+ 			continue;
+ 		}
+ 
+-		if (vmap_pte_range(pmd, addr, next, phys_addr, prot, max_page_shift, mask))
+-			return -ENOMEM;
++		err = vmap_pte_range(pmd, addr, next, phys_addr, prot, max_page_shift, mask);
++		if (err)
++			break;
+ 	} while (pmd++, phys_addr += (next - addr), addr = next, addr != end);
+-	return 0;
++	return err;
+ }
+ 
+ static int vmap_try_huge_pud(pud_t *pud, unsigned long addr, unsigned long end,
+@@ -217,6 +222,7 @@ static int vmap_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
+ {
+ 	pud_t *pud;
+ 	unsigned long next;
++	int err;
+ 
+ 	pud = pud_alloc_track(&init_mm, p4d, addr, mask);
+ 	if (!pud)
+@@ -230,11 +236,11 @@ static int vmap_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
+ 			continue;
+ 		}
+ 
+-		if (vmap_pmd_range(pud, addr, next, phys_addr, prot,
+-					max_page_shift, mask))
+-			return -ENOMEM;
++		err = vmap_pmd_range(pud, addr, next, phys_addr, prot, max_page_shift, mask);
++		if (err)
++			break;
+ 	} while (pud++, phys_addr += (next - addr), addr = next, addr != end);
+-	return 0;
++	return err;
+ }
+ 
+ static int vmap_try_huge_p4d(p4d_t *p4d, unsigned long addr, unsigned long end,
+@@ -268,6 +274,7 @@ static int vmap_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
+ {
+ 	p4d_t *p4d;
+ 	unsigned long next;
++	int err;
+ 
+ 	p4d = p4d_alloc_track(&init_mm, pgd, addr, mask);
+ 	if (!p4d)
+@@ -281,11 +288,11 @@ static int vmap_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
+ 			continue;
+ 		}
+ 
+-		if (vmap_pud_range(p4d, addr, next, phys_addr, prot,
+-					max_page_shift, mask))
+-			return -ENOMEM;
++		err = vmap_pud_range(p4d, addr, next, phys_addr, prot, max_page_shift, mask);
++		if (err)
++			break;
+ 	} while (p4d++, phys_addr += (next - addr), addr = next, addr != end);
+-	return 0;
++	return err;
+ }
+ 
+ static int vmap_range_noflush(unsigned long addr, unsigned long end,
+-- 
+2.43.5
+
 
