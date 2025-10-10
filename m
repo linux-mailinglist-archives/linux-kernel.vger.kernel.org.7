@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-848635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663EABCE3BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F309BCE3CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91274013E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:26:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEEA83A5747
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6C82FD7C6;
-	Fri, 10 Oct 2025 18:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A27A2FE056;
+	Fri, 10 Oct 2025 18:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="erymPeW4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnddcaed"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB2D2FD1BB;
-	Fri, 10 Oct 2025 18:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929B6239E63;
+	Fri, 10 Oct 2025 18:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760120768; cv=none; b=rZfZpDSZKqTS0M4gZHfgA34b6Z4rqfv05lqTSWcJa7WFM9H4qPcwUc6i9HQf/D5lul+DmyDAate5uAl4wrWh+Mdq4dXtZJKUernbrOT/12ti0/K10uNkv7VRkqa4DUhvrdrJNIiryVTGtEaNXW+wWzCSlT6c5eaOWGnIVm0bmd4=
+	t=1760120774; cv=none; b=PoDY2MLYSlHhXLAFP0l8tyOl4b1F+UakcNVxSyCOajkIDyRjxGxLlQfUvHU/16IyprBdY2fEZ/ASBR+ns9SPWmC1O9qHlZdGhpHZ59OI1/msJ0lJNsBG6zHQXSNdqDWjsBQ6VOLOu7XP+QZALsDVE389DJ/+bdJC1RH7mciFRJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760120768; c=relaxed/simple;
-	bh=tGLvL5uxf5wlHTMze4sV3GkIVlu9BrEsghDf6r/BgOE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VtCnmzz1liYvLRs0ne9n0kCjvYiMWSOKQhKdFVj2rjk/IzZpYFalky+mWGjdM3Bm6L0Tg9OQA0pTPss1JgDJ+k0vgxNfV+8W6M4odKgV3JHIRFzOOiCFK4KiL5s9nDJiLkcOKXckzP7yqUNYUPRs+ALGLI+cR4rkqjJA7MLgJ3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=erymPeW4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE77DC113D0;
-	Fri, 10 Oct 2025 18:26:07 +0000 (UTC)
+	s=arc-20240116; t=1760120774; c=relaxed/simple;
+	bh=y6kUv3p09z4tnY6OYe2kejxG1n9JFKVSGTJOFpW3/4Q=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IUlo0PcX6Tw8XAuE37IvLhSDIYtkW+oJn/VsVUpRRRKAn8nfVsZ/KI7UdApeiombJSTlTtDCbgT2KAQyQCohn9dwPyFnrXb7FlXSykhYwTqmTAxH964DU5gh2psS7K5jXs8WXnSW8lmTmMOFS31JcjsLunHqZFMtfiHv4A+sjas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnddcaed; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BC6C19424;
+	Fri, 10 Oct 2025 18:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760120767;
-	bh=tGLvL5uxf5wlHTMze4sV3GkIVlu9BrEsghDf6r/BgOE=;
+	s=k20201202; t=1760120774;
+	bh=y6kUv3p09z4tnY6OYe2kejxG1n9JFKVSGTJOFpW3/4Q=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=erymPeW4B0exApYtqb4FYRGzmsZqZOSMIDnamKgzS1//8/vzI3rlg++DrbAnZlcHq
-	 017ID1UsLVAxG78gEUPoV5asRTmGj6D6DDkn7HMu3bputBBJRG61d9XuemY/nboI/S
-	 1o1p0UKQopbSZVkF19xwaw3BIDiIVuBjoVFh2z7HNrljoVHnrUTTw+7F0lrbjJ/F1P
-	 nwks+UZKYlZ2a8rRNqCYxccvPOy8ml7a0WdOFGeQzRXCZ4Hu1BDnKwoFb3VKByphKb
-	 dTpJiDiiWeNNM9z56mv+6fRlVLSiBg/AOIelMoZkJBSruPl4BSJnFRGWwDYCeRHCi0
-	 jcw+o2TZO8E9A==
+	b=pnddcaed0N1me+vFI0JixHliGKmAb33pYoK3RTSmYCjzaSAn+72BCSLe8A+ouv7gj
+	 kkITH2Fsap2djwNlxqToS/OkxlAC2b06bfVvVF08lRRI9AaOfs4/JGNidWIb7zYiTf
+	 ninJ4Ygx4yX7ri4881DBySAwLDEi+tCvNA0Glz2O/pcm5vmKKo5JlAEK3oG0jdYJjQ
+	 tQdDRkaKF1u4rJbBK50tjAFsbxDHMyo8a2AUY1m0mV5SfmK2KEo5EcHkwNfwtP1Paw
+	 uk3NdDkZAuMly3TIxlna51HorhYf2bI424Pg5MaxOOBZPg5ZCznCsfUGi2ZjjOI9o3
+	 MTlLAvqCSYv0A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7123F3809A00;
-	Fri, 10 Oct 2025 18:25:56 +0000 (UTC)
-Subject: Re: [GIT PULL] sound fixes for 6.18-rc1
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 714133809A00;
+	Fri, 10 Oct 2025 18:26:02 +0000 (UTC)
+Subject: Re: [PULL REQUEST] i2c-for-6.18-rc1-part2
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <87zf9yan50.wl-tiwai@suse.de>
-References: <87zf9yan50.wl-tiwai@suse.de>
-X-PR-Tracked-List-Id: <linux-sound.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87zf9yan50.wl-tiwai@suse.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.18-rc1
-X-PR-Tracked-Commit-Id: ca7a2317993efa26eb2100a1523548f1b3a07af0
+In-Reply-To: <aOjDQhhcanB_Vgbh@shikoro>
+References: <aOjDQhhcanB_Vgbh@shikoro>
+X-PR-Tracked-List-Id: <linux-i2c.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aOjDQhhcanB_Vgbh@shikoro>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.18-rc1-part2
+X-PR-Tracked-Commit-Id: eb4faf6343889fcd7edba3deeae49fc5a06531fd
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fdfa38e95e1229ec2fb2f18540987c97f861d470
-Message-Id: <176012075507.1074429.6833303949514440292.pr-tracker-bot@kernel.org>
-Date: Fri, 10 Oct 2025 18:25:55 +0000
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: aac31903329ba73ef24674df78252b6610cc9d60
+Message-Id: <176012076090.1074429.3492319535346079890.pr-tracker-bot@kernel.org>
+Date: Fri, 10 Oct 2025 18:26:00 +0000
+To: Wolfram Sang <wsa@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 10 Oct 2025 15:42:51 +0200:
+The pull request you sent on Fri, 10 Oct 2025 10:26:42 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.18-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.18-rc1-part2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fdfa38e95e1229ec2fb2f18540987c97f861d470
+https://git.kernel.org/torvalds/c/aac31903329ba73ef24674df78252b6610cc9d60
 
 Thank you!
 
