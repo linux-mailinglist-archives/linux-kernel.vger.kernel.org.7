@@ -1,120 +1,106 @@
-Return-Path: <linux-kernel+bounces-848171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF7BBCCCCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:46:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35604BCCCD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 908DB4E442A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:46:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A0C424793
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B658283C97;
-	Fri, 10 Oct 2025 11:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C93286435;
+	Fri, 10 Oct 2025 11:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M+7NVtlm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bradb5iq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F0A1E7C12;
-	Fri, 10 Oct 2025 11:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2257C1494CC;
+	Fri, 10 Oct 2025 11:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760096771; cv=none; b=NpTyPdCVFkQA/kcjJV7Xp8EcqGgqWV4dB5XQqR2hr8FdYsxrmkiNRo6Xb6/pbq4Y+/ruMHyYor7ER50wQx46MLD+ECUCO/YXrkO27Yfkdw35YPwuRLvGnTadllVrqXtaAP81fm+V46Yqhcu9vHFVjUcmeMXtRNAXlihwsOUzO1g=
+	t=1760096830; cv=none; b=nPg7nlAF532Z4EaF5J8Dny2F82L311N7RhFcsskLpU/ODDGoqIBFOJCYLIyG2mdtBsuVoIZaZjYMEbbUJ/dyGk4REaDnoJXXh4a15ELUELnsOatyjVTafavzlzaWCPp5rt9b81V8R/jKOilTthUbRSZ9SCzV+W2EdFNsrh9Rlxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760096771; c=relaxed/simple;
-	bh=VjRxcvWMrTGyGz85idIF5PiXEZxnTBbF4eiWaP7b8wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oqn3cp9GXJAyHpTFd7qNcn8FBwmXIVRNO6pKqXhJFiNBZjjF/iOlvCq4j/aJu2htXx8kSgnpKy2CbxUDTKYca6X6x34gJKFzrOqNJlrK5iqJanV6pY7JZ/zl2jkepVLyC+otdSq8h0oTUCegHr1jLfcIqEVq6EsUBKjnScEdYds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M+7NVtlm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE3DC4CEF8;
-	Fri, 10 Oct 2025 11:46:08 +0000 (UTC)
+	s=arc-20240116; t=1760096830; c=relaxed/simple;
+	bh=UPc3PX96ujolrFCKeAov5/QZ+6RJEXmIxdbgi70aPlc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PHaNrv/Br+NQiHau7AdZU2Kz0PU2sD+lkQzlLyLg1jrEWMlGRtt5EHxn/Yk5xyRUehCsU9hlBmRSvQY3ACMVPKbK2rFCTgFqANobJMhBWdEsysChmCFSsWvwfMIJ1W/cUal91qN6noEJpr8st80SWJ4Rw9x6YeRqeohpJ04Fg0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bradb5iq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB9BC4CEF1;
+	Fri, 10 Oct 2025 11:47:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760096771;
-	bh=VjRxcvWMrTGyGz85idIF5PiXEZxnTBbF4eiWaP7b8wc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M+7NVtlmySul0oHAyxjuJWWDer3RkdoMkGtEQoTnsSP09fys39swzVepuODsPzHt/
-	 IQn+WqBkqPJkTTTickC9FsLyM9ionInKUUxaOOs12s6Uf0IayEGoPzKU2YEpGy7GxU
-	 uL5P2q6o/61VyDwDFvPSVtgXLeF+ie7mP3Ps57DLmP197bxils85C0PGoEJSRfhnFl
-	 RKKvFq5oheFHgZxZToQIHSvDAM30hijZFCd0QgQ92KfRz7ru6Yh48nZjeRmTMj7fcd
-	 mpRMX0JCIs0/Ac+Iq0OkxnUlDu4o1udPiNJhm4ykRrLlagYbJqkl2B+2iwvW+JT/2O
-	 G4cYQHfJNkd4Q==
-Date: Fri, 10 Oct 2025 12:46:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jun Guo <Jun.Guo@cixtech.com>
-Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"michal.simek@amd.com" <michal.simek@amd.com>,
-	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Fugang Duan <fugang.duan@cixtech.com>,
-	Peter Chen <peter.chen@cixtech.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggMi8zXSBz?=
- =?utf-8?Q?pi=3A_spi-cadence?= =?utf-8?Q?=3A?= supports transmission with
- bits_per_word of 16 and 32
-Message-ID: <747574cf-3139-4e12-89b3-cbd396acd5a4@sirena.org.uk>
-References: <20250930075644.1665970-1-jun.guo@cixtech.com>
- <20250930075644.1665970-3-jun.guo@cixtech.com>
- <SI6PR06MB7104D8834A40A802CF6CB085FFEFA@SI6PR06MB7104.apcprd06.prod.outlook.com>
+	s=k20201202; t=1760096826;
+	bh=UPc3PX96ujolrFCKeAov5/QZ+6RJEXmIxdbgi70aPlc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Bradb5iqgfvTuj0qhTn70qVQBCSzaEM7aMRf/JdDcbE6u9pUyPhlVplCSPzCq4P80
+	 ba8EpEyZUIQxAntR97mNKBavq+feo39IrLilZZuayH5DPoeGXnyfmQe/B55e9gBT4J
+	 H4jyWVQszaglsLbPq9AUXZpybRTCVNC22nAOLuf/pvbkBr02qFyuQFq7u7fb+hjCRf
+	 lCmpANIPb98Jv3wI4zsd8Wj7klI8a90qNGs7oTSnOXEsMq3LWSpYyrOBnogMGLxFcn
+	 QcEyDT/G/9LHuld68XV6/qM3/YbseRcrWsN+yOT2Z5s6iQIBfAnsNKv1Fk5Y6nIDtj
+	 U6mi2QR9ZE7uA==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH 0/2] Fix to EOPNOTSUPP double conversion in ioctl_setflags()
+Date: Fri, 10 Oct 2025 13:47:00 +0200
+Message-ID: <20251010-frosch-erstklassig-b8ff59fe2c78@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
+References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lO07HjWtCSe5Llfz"
-Content-Disposition: inline
-In-Reply-To: <SI6PR06MB7104D8834A40A802CF6CB085FFEFA@SI6PR06MB7104.apcprd06.prod.outlook.com>
-X-Cookie: But it does move!
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1452; i=brauner@kernel.org; h=from:subject:message-id; bh=UPc3PX96ujolrFCKeAov5/QZ+6RJEXmIxdbgi70aPlc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS8+GRawjrf3yD3YtYuYYbKg7ZaE1gMf67ujOzel3mFZ cKlHfmfO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZi+pmRock1efYkhzx7qW1P Pm407inuq2zs25R7ZL7LdK7eif0VDgz/LOfU2t2KWLOcPVu1KflMlz7jAU3BfdfVk42rE7vaw6d yAQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Wed, 08 Oct 2025 14:44:16 +0200, Andrey Albershteyn wrote:
+> Revert original double conversion patch from ENOIOCTLCMD to EOPNOSUPP for
+> vfs_fileattr_get and vfs_fileattr_set. Instead, convert ENOIOCTLCMD only
+> where necessary.
+> 
+> To: linux-api@vger.kernel.org
+> To: linux-fsdevel@vger.kernel.org
+> To: linux-kernel@vger.kernel.org
+> To: linux-xfs@vger.kernel.org,
+> Cc: "Jan Kara" <jack@suse.cz>
+> Cc: "Jiri Slaby" <jirislaby@kernel.org>
+> Cc: "Christian Brauner" <brauner@kernel.org>
+> Cc: "Arnd Bergmann" <arnd@arndb.de>
+> 
+> [...]
 
---lO07HjWtCSe5Llfz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-On Fri, Oct 10, 2025 at 07:50:24AM +0000, Jun Guo wrote:
-> On 9/30/2025 3:56 PM, Jun Guo wrote:
-> > The Cadence IP supports configurable FIFO data widths of 16 bits or
-> > 32 bits during integration. The default FIFO data width is 8 bits.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
---lO07HjWtCSe5Llfz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjo8fwACgkQJNaLcl1U
-h9DyVwf/WCMG/NpBnT9MMwlm16K+zd2lPXv/ilYeqE7QaTU7WWngAYWiYFEoOdDZ
-cObq2XEyhZLmb+YN77c0ovhJyscBfdZVlspZMWAav6JEjc0h/7VqU/KQJzJTsy5U
-Aj4UxRx8wpiJWWwryPrs9BN3HkxObvWeShGEU0+YDSx+O/UXdT894AfXl9WTL2sS
-BfE57HUnGuf6tPrxcfcIc5UVTHm1BvejJhCzJGi7f//uOmGkUcenQH9yd2pl7gp0
-DSisTawh2QppOhrPFNidR+gL8FqULPybe01fGSqodm2gKV65eywghOrzUMtYeMro
-LtWr+sUCG4XghAmclVUDCNTozt7ZAw==
-=cXcT
------END PGP SIGNATURE-----
-
---lO07HjWtCSe5Llfz--
+[1/2] Revert "fs: make vfs_fileattr_[get|set] return -EOPNOTSUPP"
+      https://git.kernel.org/vfs/vfs/c/4dd5b5ac089b
+[2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr syscalls
+      https://git.kernel.org/vfs/vfs/c/d90ad28e8aa4
 
