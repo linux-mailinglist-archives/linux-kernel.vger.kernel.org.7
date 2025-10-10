@@ -1,154 +1,198 @@
-Return-Path: <linux-kernel+bounces-848081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C49BCC76E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:05:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AAFBCCB73
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC2EC4E7757
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:05:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 700A44ED563
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CF62EDD4F;
-	Fri, 10 Oct 2025 10:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71652EDD63;
+	Fri, 10 Oct 2025 11:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UVwQB8Jm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="DDW15/kp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B773226FA77
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2D224167A;
+	Fri, 10 Oct 2025 11:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760090711; cv=none; b=laG+5xL4a+BBR+LJs8mgGm2Q1Jnso9VO3SlnaAtVzYC09iq7JN/HSHogncH4Zt5qLdZZuf+VwNeH+qIF1xhgRKBtqUr/cSX0drKLwuOJhEvVt/GjqBg7mV3/YpLCf5rQJldIGRHgb5905BDPlZQeo3wvlQZoHaU5uL7jcjnVkvM=
+	t=1760094775; cv=none; b=mJbJxXfQkb1HrgQFUz9B+lPcyEZR2y/x4nQKzYT6WyOKqfDx/v0H6GELXLZwR0/C1Fqzcidstvz9lbFsFYgn2OG/FaJyqZLPkqJLeS+ReVKnUCeJeb3jSNO7zf8+puna1iaMBijBJirtPDssFc4oG/lTe05lYfuGKCSy8Oza1Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760090711; c=relaxed/simple;
-	bh=yxjUvtTYbJzNPd6jcvWn4XkfkMtZPuAQxmu/eENPV1k=;
+	s=arc-20240116; t=1760094775; c=relaxed/simple;
+	bh=PH6BK8k7jgJZM8Z1WEm9LWjUJiFZapASzntw1xVKL/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SG1TzqTe2/QBTaRikrMcyvzhjwQnmz6ZQ4r2pYW0N6dqbB9wuQg2eW8tDqodp49kopHbUl5VMWpgxx20Jy4pgKSULCwf99y0OeOoA+u8KiJMKWl8y1xrNAzKSlnF8mpnG6eybz+1qbD09DqtWZGg5IuQm63s6NG7VEXPuAXxaFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UVwQB8Jm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760090708;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1tnuXFIEOnkdTLEedmD2VLZtLJP/FDB86U+RErd2EzU=;
-	b=UVwQB8JmsifIDwDTwbpf/vN59yRqHQrCXnyMqTkNpkJew7aytDyk1KkKjqIwsUO/ZFmx43
-	MWYZdytSW/zzmcJutHoVfYbkJaz65a0ZaCYAJ58g/kKrcSfRr4LNq87ekUdQMu3tIWI1B0
-	Mo/pQUi6zODDB+suHnf4s80PDab+Q8g=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-83-zGwYuUYtPBeNmD2dhEEaoA-1; Fri, 10 Oct 2025 06:05:07 -0400
-X-MC-Unique: zGwYuUYtPBeNmD2dhEEaoA-1
-X-Mimecast-MFC-AGG-ID: zGwYuUYtPBeNmD2dhEEaoA_1760090706
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee1317b132so1115766f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:05:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760090706; x=1760695506;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1tnuXFIEOnkdTLEedmD2VLZtLJP/FDB86U+RErd2EzU=;
-        b=rDt61f2wJYV4FAWRAm1f2kMneUi1iIsP3OFzCkWXYxbPhzKrWPz1kq5i+tcmrPYnjd
-         LBfPNCWYxeUl2LKKIkV1x8V5VEG0e6EwR51/Q/i6CGcohDbT0aG47Vxj2vT0kfJ9gbPg
-         tylRTKL7Euq0SZaVCzkVs0uvsTBpZEN9p7fdIpswN33mMjLB94l+oLo5Tzgl6R9Ukyvs
-         eQ3epclDlyMBbS2juqbVqLMLErWg/8pwtoNiNXQmxfEOqDy5B589ejekQHBiDJNVaXQI
-         AQ5eutboCLW66R1KnKZrQAfsvYMHWkzbwRHS66DHOHFbCGNEgssUV+YgJawu1rvcnj6f
-         ZZaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSIeFHEI1YTc8NNJld3Iqllvxlv7nuRxWyj3fXdQnFZ4mOu3lSQICh7+Q7Betz2Tux0WIW5A9M5l/FTIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8msW5/DlMkC6lsSC1OM25f/bSdmJrLjQDs0DA69uwByhZG65l
-	qip1BZMzCrS0Lf0p/GhZ8pfScQYu1zSDrzW0acdGqcs5Fs597pNfaXd1HEb4x5m9y1C0YIN6j/T
-	HGuuI420tqnwOZlTAClV3xs+xi/xLeDq8V02a9e9KKahpzcwhhX0/3karPUrgj2hOMEw4DBur
-X-Gm-Gg: ASbGncsv5ySru/bkQfkXD8OYIj8e2JB0rQtoF2PQOZZxXB8Pk2vEC5PbEY3oGHpxRhO
-	xR1Nt+SqXEaE5rclkMQwOwMrvjmjp6rsa7m8hehXA+ZZWPdZM/If1zIHyVMaG81buWKh8d552cd
-	A7yJ5qwuYbf0uzXVggvZxLIXyxGJQT4YuV7BpCJPKVFUii2/k3fyHypNUjuYipMoBtJkRiqUKeL
-	kTwWeO+Pr5u5DaE6OtIPpOeD0esUpt5Xq9bauGQjTl558gvdUE6lC6OxNNI8Q01ypXx5fw1tP1m
-	8fzUMbm5CffY8mR+x06O1ZSqvjjLAO+H42h40j40oK6GIM7JW4bkG0M/mLTu
-X-Received: by 2002:a5d:5f82:0:b0:405:9e2a:8535 with SMTP id ffacd0b85a97d-4266e7c0240mr7991708f8f.27.1760090705840;
-        Fri, 10 Oct 2025 03:05:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3MG+EMhV6WcoQA4r+co7LNvaX9gw5/qrhvPUQ1CI9icTl+BzkJJl0HQutbbiXtsdES2s0pA==
-X-Received: by 2002:a5d:5f82:0:b0:405:9e2a:8535 with SMTP id ffacd0b85a97d-4266e7c0240mr7991667f8f.27.1760090705321;
-        Fri, 10 Oct 2025 03:05:05 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm3470012f8f.22.2025.10.10.03.05.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 03:05:04 -0700 (PDT)
-Date: Fri, 10 Oct 2025 12:05:04 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Jiri Slaby <jirislaby@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr
- syscalls
-Message-ID: <q6phvrrl2fumjwwd66d5glauch76uca4rr5pkvl2dwaxzx62bm@sjcixwa7r6r5>
-References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
- <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
- <20251009172041.GA6174@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4ryXSu8U6vJAGi9A/lm47JTZ0SqFLzdi4pwjeNd+I9/JAJWvut2jNATnmtd4RDDDCCkhaXGTzUeWAOAYxYbMeFJK3Qyf1ZKeYXJMK1MZNAsZ+O0thPt/ZE36IPN1WxghMyh6HCP0Hjcak2W+1AQKKULO8blDT9fRhTdhim/r8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=DDW15/kp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=gibson.dropbear.id.au; s=202510; t=1760094158;
+	bh=UJf6JA61Nmd5HVq98pguqChiugARbS4c9yK3aZVFduk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DDW15/kpFeSZdUSbplqhwDfROrMrCDlEYPmT24g7r+1QGgWpeQnefi0xE6jL6JDrK
+	 l5Kn8wthw8/XH52Bgkq5QratMpv/opY5233IudfgdhVzc5T8jP9XxU3SP3oqU7mEcE
+	 CYEk8HJ+xUYJC3N4FA9Z3gf/+P5SGY5TfGB17WRfgKN0HEet1pUQPutsc5UDBBIWWq
+	 mznGCvLIzq8RIkLesNFE5+1/vZSH/BUtrkRfpV6KuPHC2S5/2nuyyUUna4/h5Q52GT
+	 a5WfZUC4/m77A4arPqz7m/Z4XU5foltNqCVSwjwMIXM+fxt1pKmMaObKAfofsHgZl7
+	 NU+Z3BvFghp6w==
+Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
+	id 4cjkNZ0WNHz4wCl; Fri, 10 Oct 2025 22:02:38 +1100 (AEDT)
+Date: Fri, 10 Oct 2025 18:58:24 +1100
+From: David Gibson <david@gibson.dropbear.id.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ayush Singh <ayush@beagleboard.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Andrew Davis <afd@ti.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	devicetree@vger.kernel.org, Jason Kridner <jkridner@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <aOi8oLGYVckesJSb@zatzit>
+References: <20250918094409.0d5f92ec@bootlin.com>
+ <aMzhgDYOuG4qNcc0@zatzit>
+ <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
+ <aNJVqSpdAJzGliNx@zatzit>
+ <20250923114849.2385736d@bootlin.com>
+ <CAMuHMdWmDwedyPnBERs-tSYEG15nMUuh9u1Q+W_FdquHpUC0-A@mail.gmail.com>
+ <aNNvaN4xJtKBFmWT@zatzit>
+ <cd9763b7-919a-4b44-a347-f1491d9584b9@beagleboard.org>
+ <aNtXnAeLj3xNwkyE@zatzit>
+ <CAMuHMdV+sUZpMtbCtWqJMiL_JC_nFEJcFDOoZJZPhhzhY8zQJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Eq3oV7M9wkH493A0"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV+sUZpMtbCtWqJMiL_JC_nFEJcFDOoZJZPhhzhY8zQJQ@mail.gmail.com>
+
+
+--Eq3oV7M9wkH493A0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009172041.GA6174@frogsfrogsfrogs>
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-10-09 10:20:41, Darrick J. Wong wrote:
-> On Wed, Oct 08, 2025 at 02:44:18PM +0200, Andrey Albershteyn wrote:
-> > These syscalls call to vfs_fileattr_get/set functions which return
-> > ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
-> > inode. For syscalls EOPNOTSUPP would be more appropriate return error.
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > ---
-> >  fs/file_attr.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/fs/file_attr.c b/fs/file_attr.c
-> > index 460b2dd21a85..5e3e2aba97b5 100644
-> > --- a/fs/file_attr.c
-> > +++ b/fs/file_attr.c
-> > @@ -416,6 +416,8 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
-> >  	}
-> >  
-> >  	error = vfs_fileattr_get(filepath.dentry, &fa);
-> > +	if (error == -ENOIOCTLCMD)
-> 
-> Hrm.  Back in 6.17, XFS would return ENOTTY if you called ->fileattr_get
-> on a special file:
-> 
-> int
-> xfs_fileattr_get(
-> 	struct dentry		*dentry,
-> 	struct file_kattr	*fa)
-> {
-> 	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
-> 
-> 	if (d_is_special(dentry))
-> 		return -ENOTTY;
-> 	...
-> }
-> 
-> Given that there are other fileattr_[gs]et implementations out there
-> that might return ENOTTY (e.g. fuse servers and other externally
-> maintained filesystems), I think both syscall functions need to check
-> for that as well:
-> 
-> 	if (error == -ENOIOCTLCMD || error == -ENOTTY)
-> 		return -EOPNOTSUPP;
+On Tue, Sep 30, 2025 at 09:52:44AM +0200, Geert Uytterhoeven wrote:
+> Hi David,
+>=20
+> On Tue, 30 Sept 2025 at 06:34, David Gibson <david@gibson.dropbear.id.au>=
+ wrote:
+> > On Wed, Sep 24, 2025 at 10:33:50PM +0530, Ayush Singh wrote:
+> > > On 9/24/25 09:41, David Gibson wrote:
+[snip]
+> > > > > > > a) Addons can only add completely new nodes, never modify exi=
+sting
+> > > > > > >     ones.  This means that whatever addons are present at run=
+time,
+> > > > > > >     every node has a single well defined owner (either base b=
+oard or
+> > > > > > >     addon).
+> > > > > > In this rule I suppose that "never modify existing ones" should=
+ be understood
+> > > > > > as "never modify, add or remove properties in existing ones". B=
+ecause, of course
+> > > > > > adding a full node in a existing one is allowed (rule b).
+> > > > > What if the add-on board contains a provider for the base board.
+> > > > > E.g. the connector has a clock input, fed by an optional clock ge=
+nerator
+> > > > > on the add-on board.  Hooking that into the system requires modif=
+ying
+> > > > > a clocks property in the base board, cfr. [1].
+> > > > > Or is there some other solution?
+> > > > Hmm.  My first inclination would be that this case is not in scope =
+for
+> > > > the protocol we're trying to design now.  If the widget provides
+> > > > things to the base board as well as the other way around, it's no
+> > > > longer an "addon" for the purposes of this spec.
+> > > >
+> > > > But it's possible I've underestimated how common / useful such a ca=
+se
+> > > > is.
+> > > >
+> > > > Note that I'd expect the existing overlay mechanism to still be
+> > > > around.  It may be ugly and not very well thought out, but its
+> > > > drawbacks are much less severe if you're not dealing with hot unplu=
+g.
+> > >
+> > > Well, while that was not an initial use-case in my mind, external clo=
+ck
+> > > inputs are a valid use-case when talking about connectors for board h=
+eaders
+> > > specifically (e.g. pocketbeagle connector).
+> >
+> > I guess I'm not familiar enough with modern embedded hardware.  I'm
+> > having a hard time wrapping my head around what's going on here.  If
+> > the external clock input is optional (hence under a connector), how is
+> > anything on the base board dependent on it?  If nothing on the base
+> > board is dependent, why do we need to modify its properties to
+> > represent it?
+> >
+> > Is this a design flaw in the clocks binding?
+>=20
+> In my example, the external clock input is indeed optional, and not
+> used by the base board itself.  Still, it is a clock input to the SoC,
+> and may be used as a reference clock when an add-on board is connected
+> that needs to use the exact clock frequency of that reference clock.
+>=20
+> https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/renesas=
+/white-hawk-ard-audio-da7212.dtso
+> AUDIO_CLKIN_V is the optional clock input to the SoC.
+> GP1_25/SL_SW2_V/TPU is the reference clock (actually it is not
+> generated on the add-on board, but by a PWM controller on the base
+> board, but it could just be a crystal oscillator on the add-on board
+> instead)
+>=20
+> I hope this makes it clearer.
 
-Make sense (looks like ubifs, jfs and gfs2 also return ENOTTY for
-special files), I haven't found ENOTTY being used for anything else
-there
+I think so.
 
--- 
-- Andrey
+IIUC, the problem is that while both the producer and the consumer of
+the clock are addons, it's routed through the SoC, which is why it
+requires some representation there.
 
+What seems like the logical approach to me is for the base board to
+have essentially an unresolved pointer to the clock input.  I'm not
+really sure how that could be sensibly encoded, though.
+
+--=20
+David Gibson (he or they)	| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
+				| around.
+http://www.ozlabs.org/~dgibson
+
+--Eq3oV7M9wkH493A0
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmjovJQACgkQzQJF27ox
+2GfXJw//WY0vLNNk/QHOzkohUQBn+vW48SFGzl7BNkzhnMaDvUjwq6IlsiTZVwod
+iP0TXJk+J6FUJ/0Rlf+RSTIskkwNTanY+IMtH8tvxtmIS6xDveSNKTjCMRTBug1G
+MdsAeOXPC9brfo4DCufaZ3By7ntXVg3ifHWBAPW/yTxOedb0XOahWWRhdcI/bkJQ
+Sza34fbU0c2LN81o7b4ZpfZ+D/OiJ/TPkNhO7qsRKKU5YLwTtg+dPC1jMBsTg2+D
+IPGhKEYJkVBN97RXuzWWqudpDQW7zcG1RLpjaKiTWIHz8BEghyKpM26GMZ23OQJG
+PkHWwMkYghIJv2pUBZhQqNYoA5WBENBTRSmj+tC4/OSo7qe7qT7d4DO5DclqsbnE
+gmVStHGZgh5PIBDHH3HBQTXQJi8a77msGBbNauu4oHJR1FQeAvmOu7Yi4G9L0DyX
+0uc9s1bcnFU7bj7LDtvsaMhgVpnpfkyH2XQkpGWHDUeDukpFkKCZ2o3w5NCOX/7P
+3ZQLIIuOaPtROEGYszWRE8tGsSvTq1dBcth5dFaWoDsy2UPQb9TmCHiKQVleFNfY
+dh9sSzfOUSBTkXS0H5mgT/skMFZIcEJwBvCGOJ9mVsHI/ioTmoKNb2XrQNcPmz6/
+ECKs7K/WeGoXl1nU/hU43+rAoXILe0phCIunxRWoU3sxdgeTzBU=
+=OmPn
+-----END PGP SIGNATURE-----
+
+--Eq3oV7M9wkH493A0--
 
