@@ -1,129 +1,219 @@
-Return-Path: <linux-kernel+bounces-847624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076C5BCB4E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:51:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973CEBCB4E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC9B422DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:51:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB85189CEE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637F3214A8B;
-	Fri, 10 Oct 2025 00:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F6220FA81;
+	Fri, 10 Oct 2025 00:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2JktYbzm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fwpikYRL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933281A275;
-	Fri, 10 Oct 2025 00:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EDF1A275
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760057470; cv=none; b=Z/VNNpIlRKgpMXsb0Dk91G0100yA6PuCUuFqBCZV/1BenAtJna7lByg3ByYDc6xedaj5PwQ+bbFaBbZGFeBsHdfaer5mMX0HyMYvI7wDF9BeBRSeQ+26UoEDAACSzCGqjrxWDcQT+pwNa6hodoTSW5DvufmqKA7KUYQUUxskqAA=
+	t=1760057603; cv=none; b=sUY7+g/ykUdUIAkvVrN443Yt4wRGKen+LZ20CiQ1YWwfhYESYIsV+IMAoLHfNU4HbTwPSZ14riPahNc5xwVZSYFjZLcntipa0Qmuzs24mAOFr4asWl4U5Cq8HlLtNhaUKtYGeAeKP3aYNzM3WatiiqW2selbshDl/mbVV/n+ju4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760057470; c=relaxed/simple;
-	bh=A3UrofGwAstq0M2Uw/J4CU3Y1letTXoVhhSuZWoGGb8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VIcx6jeqEOLAHTEOLuGbUcIbZQKWBi0qImk8Cz26SsFPTkOVtVNWcdVmnH9ej7QUt7S41OAV6MVOMk9X9nF8f5v306gkAcVCiRpzvKXBt/5fxPHurLeRVkNSPAyxc7m/dc2OxNZTmNavXOmK0FnSFeg2afZASJDyEJ5DQFNGv9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2JktYbzm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24497C4CEE7;
-	Fri, 10 Oct 2025 00:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760057470;
-	bh=A3UrofGwAstq0M2Uw/J4CU3Y1letTXoVhhSuZWoGGb8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=2JktYbzmhzcnUjZxn4TJsLrCa4CdQmyNAz48GhTm60ifXFoRmbMF9Tc/M9RRLbvJV
-	 OTvz7R6JSbLUT9mEhQjhUsNNq5Xpz4vLivUTBLXDvZAdv81wS0YgNddSVET7bP2mj+
-	 E2cRLHzPEXFAzCsftZVpoY141RGvPOXXQkXJVlZA=
-Date: Thu, 9 Oct 2025 17:51:07 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jinchao Wang <wangjinchao600@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>, Alexander
- Potapenko <glider@google.com>, Randy Dunlap <rdunlap@infradead.org>, Marco
- Elver <elver@google.com>, Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
- Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, David Hildenbrand
- <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, Justin
- Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Sami Tolvanen <samitolvanen@google.com>, Miguel
- Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Rong Xu
- <xur@google.com>, Naveen N Rao <naveen@kernel.org>, David Kaplan
- <david.kaplan@amd.com>, Andrii Nakryiko <andrii@kernel.org>, Jinjie Ruan
- <ruanjinjie@huawei.com>, Nam Cao <namcao@linutronix.de>,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-mm@kvack.org, llvm@lists.linux.dev, Andrey Ryabinin
- <ryabinin.a.a@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
- Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
- kasan-dev@googlegroups.com, "David S. Miller" <davem@davemloft.net>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/23] mm/ksw: Introduce real-time KStackWatch
- debugging tool
-Message-Id: <20251009175107.ee07228e3253afca5b487316@linux-foundation.org>
-In-Reply-To: <20251009105650.168917-1-wangjinchao600@gmail.com>
-References: <20251009105650.168917-1-wangjinchao600@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760057603; c=relaxed/simple;
+	bh=Wga/aebCRWdiAWHpaU8AXh6U7vsHDFqO9Xvrom8jolo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OE6xeoJ1Q420L5VWNywxhj3WKldiZVbteXz1LTjmrdKY7LiyJWq7WJdETzt5SX63OX10ndDn/W42BUAhOyOCR3bon4iU7VrZ6cgKT8LlSFylJlPCf04Z3piBlXSljh+jFGBnG3ekTjdHVAbhzDjXuDjwdktbh//k2AGWGL8EgaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fwpikYRL; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760057601; x=1791593601;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Wga/aebCRWdiAWHpaU8AXh6U7vsHDFqO9Xvrom8jolo=;
+  b=fwpikYRLl7RCDwQCCPA95R5jpE068SUKCjLeJNv1yO7AuL//ZE2DWXfq
+   hDG7pxGsWKEnuLaf/s/lxFG71iwLY3Eywlw+Y0Xnu3DNmJuhbidSuCZaH
+   ABkPQvaHe2iSOnFRqwRdhQDn4ohP968/bdR0qDkZHe3OBIRbVMRgx+I/q
+   3f44a07Eg0Oke2b5MwLl1aUj9UD0zPA8jwkVPnSvFXGm3TycUlZwommS/
+   h0pQfoe9Kyli8Y+oH5SMx+hvOTu+I4Rn27Y0KdncOkc9SbDZK7qawD3th
+   +MiTf9GuikHKbOj+0utBeE2jpfn8yt4yfTBZFpu5+wVqv05RrFjJKvvMt
+   Q==;
+X-CSE-ConnectionGUID: 9WEBNKo0SByoXaYWzQVpeA==
+X-CSE-MsgGUID: x4/UNfcHShCsORacmuptcg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="64898218"
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="64898218"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 17:53:20 -0700
+X-CSE-ConnectionGUID: 4QLDYU65SZGnRrRsXlGYEw==
+X-CSE-MsgGUID: UDeu69kFRyqGchrUMdhs5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="211497284"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 09 Oct 2025 17:53:17 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v71Ni-0001h5-2H;
+	Fri, 10 Oct 2025 00:53:14 +0000
+Date: Fri, 10 Oct 2025 08:52:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: ssrane_b23@ee.vjti.ac.in, Mark Fasheh <mark@fasheh.com>
+Cc: oe-kbuild-all@lists.linux.dev, Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com,
+	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+Subject: Re: [PATCH] ocfs2: Fix use-after-free in ocfs2_dx_dir_lookup_rec
+Message-ID: <202510100838.uqgonWvJ-lkp@intel.com>
+References: <20251005151403.9012-1-ssranevjti@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251005151403.9012-1-ssranevjti@gmail.com>
 
-On Thu,  9 Oct 2025 18:55:36 +0800 Jinchao Wang <wangjinchao600@gmail.com> wrote:
+Hi,
 
-> This patch series introduces KStackWatch, a lightweight debugging tool to detect
-> kernel stack corruption in real time. It installs a hardware breakpoint
-> (watchpoint) at a function's specified offset using `kprobe.post_handler` and
-> removes it in `fprobe.exit_handler`. This covers the full execution window and
-> reports corruption immediately with time, location, and a call stack.
-> 
-> The motivation comes from scenarios where corruption occurs silently in one
-> function but manifests later in another, without a direct call trace linking
-> the two. Such bugs are often extremely hard to debug with existing tools.
-> These scenarios are demonstrated in test 3–5 (silent corruption test, patch 20).
-> 
-> ...
->
->  20 files changed, 1809 insertions(+), 62 deletions(-)
+kernel test robot noticed the following build warnings:
 
-It's obviously a substantial project.  We need to decide whether to add
-this to Linux.
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master v6.17 next-20251009]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-There are some really important [0/N] changelog details which I'm not
-immediately seeing:
+url:    https://github.com/intel-lab-lkp/linux/commits/ssrane_b23-ee-vjti-ac-in/ocfs2-Fix-use-after-free-in-ocfs2_dx_dir_lookup_rec/20251009-163456
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20251005151403.9012-1-ssranevjti%40gmail.com
+patch subject: [PATCH] ocfs2: Fix use-after-free in ocfs2_dx_dir_lookup_rec
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20251010/202510100838.uqgonWvJ-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510100838.uqgonWvJ-lkp@intel.com/reproduce)
 
-Am I correct in thinking that it's x86-only?  If so, what's involved in
-enabling other architectures?  Is there any such work in progress?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510100838.uqgonWvJ-lkp@intel.com/
 
-What motivated the work?  Was there some particular class of failures
-which you were persistently seeing and wished to fix more efficiently?
+All warnings (new ones prefixed by >>):
 
-Has this code (or something like it) been used in production systems? 
-If so, by whom and with what results?
+   In file included from fs/ocfs2/dir.c:45:
+   fs/ocfs2/dir.c: In function 'ocfs2_dx_dir_lookup_rec':
+>> fs/ocfs2/dir.c:821:35: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'long long unsigned int' [-Wformat=]
+     821 |                                   "Inode %lu has bad extent record (%u, %u, 0) in btree\n",
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     822 |                                   inode->i_ino,
+     823 |                                   eb_bh ? (unsigned long long)eb_bh->b_blocknr : 0);
+         |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                                                                                |
+         |                                                                                long long unsigned int
+   fs/ocfs2/super.h:18:48: note: in definition of macro 'ocfs2_error'
+      18 |         __ocfs2_error(sb, __PRETTY_FUNCTION__, fmt, ##__VA_ARGS__)
+         |                                                ^~~
+   fs/ocfs2/dir.c:821:70: note: format string is defined here
+     821 |                                   "Inode %lu has bad extent record (%u, %u, 0) in btree\n",
+         |                                                                     ~^
+         |                                                                      |
+         |                                                                      unsigned int
+         |                                                                     %llu
+>> fs/ocfs2/dir.c:821:35: warning: format '%u' expects a matching 'unsigned int' argument [-Wformat=]
+     821 |                                   "Inode %lu has bad extent record (%u, %u, 0) in btree\n",
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/ocfs2/super.h:18:48: note: in definition of macro 'ocfs2_error'
+      18 |         __ocfs2_error(sb, __PRETTY_FUNCTION__, fmt, ##__VA_ARGS__)
+         |                                                ^~~
+   fs/ocfs2/dir.c:821:74: note: format string is defined here
+     821 |                                   "Inode %lu has bad extent record (%u, %u, 0) in btree\n",
+         |                                                                         ~^
+         |                                                                          |
+         |                                                                          unsigned int
 
-Has it actually found some kernel bugs yet?  If so, details please.
 
-Can this be enabled on production systems?  If so, what is the
-measured runtime overhead?
+vim +821 fs/ocfs2/dir.c
+
+316f4b9f98a353a Mark Fasheh       2007-09-07  768  
+9b7895efac906d6 Mark Fasheh       2008-11-12  769  static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+9b7895efac906d6 Mark Fasheh       2008-11-12  770  				   struct ocfs2_extent_list *el,
+9b7895efac906d6 Mark Fasheh       2008-11-12  771  				   u32 major_hash,
+9b7895efac906d6 Mark Fasheh       2008-11-12  772  				   u32 *ret_cpos,
+9b7895efac906d6 Mark Fasheh       2008-11-12  773  				   u64 *ret_phys_blkno,
+9b7895efac906d6 Mark Fasheh       2008-11-12  774  				   unsigned int *ret_clen)
+23193e513d1cd69 Mark Fasheh       2007-09-12  775  {
+9b7895efac906d6 Mark Fasheh       2008-11-12  776  	int ret = 0, i, found;
+9b7895efac906d6 Mark Fasheh       2008-11-12  777  	struct buffer_head *eb_bh = NULL;
+9b7895efac906d6 Mark Fasheh       2008-11-12  778  	struct ocfs2_extent_block *eb;
+9b7895efac906d6 Mark Fasheh       2008-11-12  779  	struct ocfs2_extent_rec *rec = NULL;
+23193e513d1cd69 Mark Fasheh       2007-09-12  780  
+9b7895efac906d6 Mark Fasheh       2008-11-12  781  	if (el->l_tree_depth) {
+facdb77f54f09a3 Joel Becker       2009-02-12  782  		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+facdb77f54f09a3 Joel Becker       2009-02-12  783  				      &eb_bh);
+9b7895efac906d6 Mark Fasheh       2008-11-12  784  		if (ret) {
+9b7895efac906d6 Mark Fasheh       2008-11-12  785  			mlog_errno(ret);
+9b7895efac906d6 Mark Fasheh       2008-11-12  786  			goto out;
+9b7895efac906d6 Mark Fasheh       2008-11-12  787  		}
+23193e513d1cd69 Mark Fasheh       2007-09-12  788  
+9b7895efac906d6 Mark Fasheh       2008-11-12  789  		eb = (struct ocfs2_extent_block *) eb_bh->b_data;
+9b7895efac906d6 Mark Fasheh       2008-11-12  790  		el = &eb->h_list;
+4a12ca3a00a244e Mark Fasheh       2008-11-12  791  
+9b7895efac906d6 Mark Fasheh       2008-11-12  792  		if (el->l_tree_depth) {
+17a5b9ab32fe046 Goldwyn Rodrigues 2015-09-04  793  			ret = ocfs2_error(inode->i_sb,
+7ecef14ab1db961 Joe Perches       2015-09-04  794  					  "Inode %lu has non zero tree depth in btree tree block %llu\n",
+7ecef14ab1db961 Joe Perches       2015-09-04  795  					  inode->i_ino,
+9b7895efac906d6 Mark Fasheh       2008-11-12  796  					  (unsigned long long)eb_bh->b_blocknr);
+9b7895efac906d6 Mark Fasheh       2008-11-12  797  			goto out;
+9b7895efac906d6 Mark Fasheh       2008-11-12  798  		}
+23193e513d1cd69 Mark Fasheh       2007-09-12  799  	}
+23193e513d1cd69 Mark Fasheh       2007-09-12  800  
+44acc46d182ff36 Ivan Pravdin      2025-07-07  801  	if (le16_to_cpu(el->l_next_free_rec) == 0) {
+44acc46d182ff36 Ivan Pravdin      2025-07-07  802  		ret = ocfs2_error(inode->i_sb,
+44acc46d182ff36 Ivan Pravdin      2025-07-07  803  				  "Inode %lu has empty extent list at depth %u\n",
+44acc46d182ff36 Ivan Pravdin      2025-07-07  804  				  inode->i_ino,
+44acc46d182ff36 Ivan Pravdin      2025-07-07  805  				  le16_to_cpu(el->l_tree_depth));
+44acc46d182ff36 Ivan Pravdin      2025-07-07  806  		goto out;
+44acc46d182ff36 Ivan Pravdin      2025-07-07  807  	}
+44acc46d182ff36 Ivan Pravdin      2025-07-07  808  
+9b7895efac906d6 Mark Fasheh       2008-11-12  809  	found = 0;
+9b7895efac906d6 Mark Fasheh       2008-11-12  810  	for (i = le16_to_cpu(el->l_next_free_rec) - 1; i >= 0; i--) {
+9b7895efac906d6 Mark Fasheh       2008-11-12  811  		rec = &el->l_recs[i];
+9b7895efac906d6 Mark Fasheh       2008-11-12  812  
+9b7895efac906d6 Mark Fasheh       2008-11-12  813  		if (le32_to_cpu(rec->e_cpos) <= major_hash) {
+9b7895efac906d6 Mark Fasheh       2008-11-12  814  			found = 1;
+9b7895efac906d6 Mark Fasheh       2008-11-12  815  			break;
+9b7895efac906d6 Mark Fasheh       2008-11-12  816  		}
+9b7895efac906d6 Mark Fasheh       2008-11-12  817  	}
+9b7895efac906d6 Mark Fasheh       2008-11-12  818  
+9b7895efac906d6 Mark Fasheh       2008-11-12  819  	if (!found) {
+7ecef14ab1db961 Joe Perches       2015-09-04  820  		ret = ocfs2_error(inode->i_sb,
+7ecef14ab1db961 Joe Perches       2015-09-04 @821  				  "Inode %lu has bad extent record (%u, %u, 0) in btree\n",
+7ecef14ab1db961 Joe Perches       2015-09-04  822  				  inode->i_ino,
+82a88475c352f95 Shaurya Rane      2025-10-05  823  				  eb_bh ? (unsigned long long)eb_bh->b_blocknr : 0);
+9b7895efac906d6 Mark Fasheh       2008-11-12  824  		goto out;
+9b7895efac906d6 Mark Fasheh       2008-11-12  825  	}
+9b7895efac906d6 Mark Fasheh       2008-11-12  826  
+9b7895efac906d6 Mark Fasheh       2008-11-12  827  	if (ret_phys_blkno)
+9b7895efac906d6 Mark Fasheh       2008-11-12  828  		*ret_phys_blkno = le64_to_cpu(rec->e_blkno);
+9b7895efac906d6 Mark Fasheh       2008-11-12  829  	if (ret_cpos)
+9b7895efac906d6 Mark Fasheh       2008-11-12  830  		*ret_cpos = le32_to_cpu(rec->e_cpos);
+9b7895efac906d6 Mark Fasheh       2008-11-12  831  	if (ret_clen)
+9b7895efac906d6 Mark Fasheh       2008-11-12  832  		*ret_clen = le16_to_cpu(rec->e_leaf_clusters);
+9b7895efac906d6 Mark Fasheh       2008-11-12  833  
+9b7895efac906d6 Mark Fasheh       2008-11-12  834  out:
+9b7895efac906d6 Mark Fasheh       2008-11-12  835  	brelse(eb_bh);
+9b7895efac906d6 Mark Fasheh       2008-11-12  836  	return ret;
+9b7895efac906d6 Mark Fasheh       2008-11-12  837  }
+38760e243249f03 Mark Fasheh       2007-09-11  838  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
