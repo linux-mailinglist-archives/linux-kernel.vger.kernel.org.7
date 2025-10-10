@@ -1,439 +1,427 @@
-Return-Path: <linux-kernel+bounces-847806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFDFBCBC71
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:24:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55FE5BCBC7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32A019E4AC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAA43C09FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF2023C4F1;
-	Fri, 10 Oct 2025 06:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9A22459F3;
+	Fri, 10 Oct 2025 06:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c44opu8g"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVpvYMxg"
+Received: from mail-yx1-f65.google.com (mail-yx1-f65.google.com [74.125.224.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DDD22258C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D196227E83
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760077462; cv=none; b=igJQGXM4+Xe6VB8YxgGOMVe8hNCfrOBDNqNElcNZQJ+ZuYusy6cwTAPQcoMt6KaIoJ1R73RJMTMj3wEhjrwGGaS6RF6uhFRGdv0gGwjyvZ0a2Klsqzn0/95DdmfcQbO6Rr5UMDSNzxd+XrfD4MladH8yJLQ4sS8qP5MCFfT9z6c=
+	t=1760077539; cv=none; b=OErpqVmMdu8Aq5UgmlDs+pJ/7fcT5vv2s3U+J+YL4w9hBpSSFkgL5LDQJfYjFVqvQuRIEwRdwyuGrjB5UE0cO54XsTlrPGJaiI3LadFlExC7EjXawCLMCBwq7MYc7ZEYZEdSQB/xLoqCdMHhoMw7kuDJLoqZ/s9vAc0UKDZBYG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760077462; c=relaxed/simple;
-	bh=Nsss/Rw8F579NrBEQATuT21NAYC394pncld232qwJJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcGlZB/khC6jUu07KJ7FSYJDxhz/Vp3ij+GPmvYiZ1ceQz+dkFuS6SkjcGNc+N9UU8Et2V/acLS45dyOLyQM/bnLX2UnseL+SjumCE4Xa6JwHut66fkXLI73uuCeUoXk/dl6NyEeI7WzSzSrejal9aqiUXi1Xvfuf4JQ/xMRvXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c44opu8g; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6JKIb012988
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:24:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jFzSZYpvtUZFzWObwg4srbgH
-	vh7CbKtgqp7T+kySglU=; b=c44opu8gLuh+hlspnXwVpdOdOFO7c217bJb4/m8Y
-	yCZefLkzeBuU00RS49BJ8Q97PsAoxJfFbCyWlN49Vip/MK2DewDm8R86aptL3fsW
-	B9L4GuXwKi0USkcdYs4iK8XS0Z8dVQGWxRnd6ELyyASKBn9xnyvsbCorGtI1EtFb
-	v77sVGGS7BXVlEQp6jDaLr+B7K6neJTS+HK/YtavdJVAAeMtOQB0iVyDzbCwvmaG
-	TCb5E/Q0md7aWJ5nqahsT7McgwWHCxb2isOS7QJ9erw66T4TM8E6QphPYd+JTt1M
-	uCZDhwdJLjqENV6yEBY0Si+TXSYu8KCTs4dHWWcjGzvOGQ==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4knb3g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:24:19 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b650a3e0efcso3172475a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 23:24:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760077459; x=1760682259;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1760077539; c=relaxed/simple;
+	bh=S9pKXp1mceGitAT8F7nE1DIMm5o+Yfn5ytYnNhoHYYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bgh5igDdRDZTEAsvgmorbExMs1Tr89h4b6PL7Qcj/xYDN1+KUXGvHuYhDLjhmc5hsUFWzp2pc3bJupMbyp9F548FsCjxLLvaRaE9aZNXuf5u0ydJx1hEjONgyLMXSrGFRuz/rkGTugqfw0l/8zRyWXq3uCx7Gb3j4FeZAuLO6LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVpvYMxg; arc=none smtp.client-ip=74.125.224.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f65.google.com with SMTP id 956f58d0204a3-636d75f08a3so368938d50.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 23:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760077536; x=1760682336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jFzSZYpvtUZFzWObwg4srbgHvh7CbKtgqp7T+kySglU=;
-        b=EhH8OTBZMOsncXFnUmW49joEl4lo8FyusSDH6SI0l8eI8rawW2tu/7QwaGiR3eNtqS
-         u7T9jsHwfKhFLpM/uf2zQTpoN3mPVKQRmQEw5muU4+jzRewLRAVtkYwZTML6szbMPwf0
-         Fj0UuNtv8CffeKp71tkHTPhZKApMK4ZKPXKcAriPjGMXsmU5X+DWeNLTWqxqYprkLPDE
-         h+oonMxKAdlN+6/6y072J0w7Y9/gTylOOyosVNRRTSNZHI/tzdFWVn7Lr4fxj4wZKA4C
-         ADGXaqb1zoeroHmeocQODA31LMDYM99VDgslP2UjyiGS/Rgff10Srs6Ozp1l7G2Tt2UI
-         qsFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhfcKvf9BA9gBVH3Ixx3oxNIaK1VCo87vJX7XFag54KYKE51Ppgh1IX9aoy20TLfMOPkahbMhOpc7QmOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+dlIVmhf6svDO441QtEIunmH0XTPMoI8aCgGjkZc1HGVQEbT5
-	HA+SBFQjtPMRaKu44dcS9rwLgt0lKnNXSZmO7bITvx5CPpbO4pca8VCD5IEx/KJ8gmuV0JVBNsa
-	lfGHe8Ds5PawlvkQ0mzFu+D8uJKo9fySK2V1Cbr9ZFUFIHZz86VJQxiUTC7EFV7FQb08=
-X-Gm-Gg: ASbGnctbnjZWhfjLZaG1KpjUOX4c34Z9i9bGnzE+4e1/YnQqgt7Ylx/c4cqnfmGziw9
-	i/0Ymz4MmU1w+fLnjxwPCTw2T0wW/otctbC4jWtSMnZG/melN6v2O4Se01LqE7DvJFFxB8Oa12v
-	tFVeJd/vqc3ILxWJysXNs7dWU7XyYXibz3Hw9elysr+k2AfChFuKTXCm4oGaXO2wAkieeSFuqhD
-	Pwgc/jNUNAABL4nX0rdaUKvUZQyflUaRM/e642c338+Jn0AmlHH0kd37w4Y5y1tXktUkzE4kxal
-	z+3EGecwXWhkGaI6pLpIQcp5EmpQH3EU32VH3/eIgQXRZ2QWnse0wkVa24lCVt6vjjU=
-X-Received: by 2002:a17:903:1107:b0:275:f932:8636 with SMTP id d9443c01a7336-29027344a2amr140946675ad.38.1760077458494;
-        Thu, 09 Oct 2025 23:24:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG5PT5fnuqNMzfdt4BS8g9SFlz4v9jtivcu/HhHzChcBc8sRDmBlsDmCsUOGP8NXatH8NqZIw==
-X-Received: by 2002:a17:903:1107:b0:275:f932:8636 with SMTP id d9443c01a7336-29027344a2amr140946185ad.38.1760077457718;
-        Thu, 09 Oct 2025 23:24:17 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de56desm47435335ad.19.2025.10.09.23.24.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 23:24:16 -0700 (PDT)
-Date: Fri, 10 Oct 2025 11:54:10 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 05/12] remoteproc: pas: Replace metadata context with
- PAS context structure
-Message-ID: <20251010062410.h7smjmvpt5fbog3p@hu-mojha-hyd.qualcomm.com>
-References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
- <20251007-kvm_rprocv4_next-20251007-v4-5-de841623af3c@oss.qualcomm.com>
+        bh=/QfbWcG5kCfyEKR1UKuhCeI2DEJzoEgMMDIvKNtEeRM=;
+        b=eVpvYMxg6IY0vb0eA9W16KwJGb5BaXQci+qyD+SUgvVKRFh+Iyzar7qkHH5xcuLOa/
+         GrqQLOezSA1rSNoG7qcaw92kj+JGE4kkQ4C40H+jk95yEkHnB59HETZrFxf5nNJGXW0j
+         IaQ/qERmBfCpAdDX9Kt5mRVln9lUPFaPE8B3z0xO/fTqZioedllGU3ewaWwamB6nfxL+
+         TQk941Qf8N9RUKh1D582DMXJ/f5Y+qtFVh4TmYC3yps8c2kDpkN0bGyI7WE4/2bINhMd
+         MNmyt1h9FC8pjexL3YFy+0FPaeICrBvWmQba9+1MhNgNsb+/vMDV8wPMwNsEPXF0oySN
+         2cqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760077536; x=1760682336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/QfbWcG5kCfyEKR1UKuhCeI2DEJzoEgMMDIvKNtEeRM=;
+        b=a1qQk2WAOjZN90Cu0fqgHKiNkRyh09LGZj2x6WJnDljE0CBQw58VNpu/LuvdDRCnAC
+         H3+DSt2vNELr/5GdfBBFpHIiKKRuA2HgWjO7cfhHg2Vwi57ZcHSp10uq+D6701Dh4wpM
+         DUdefHF7UJzL3DkU6eZ7X4hT8R8gW0gu3te711ZtQgm/QROQ9G06Y86QFWzEPxFEmcdA
+         RzC/LbqEYZ9NpuPA3+uwnydVxZ0l/qPgch0gwXkQnq9EA7sc4qh07fO9o03Sy2aq51bO
+         Sg0ea7S340kosqPLcCRDQ5RcP01SApV5TflEzfMuKA3ec4YQWRgO34fCWxjNcUJx2ac7
+         GnHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXocBPySX7+BFnAA76l2kU34t7wfmQmSxUeWRcDAg8DgG4cxvgq73kEQxtH/e50psGHjroW8A+rBzFDkuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP1uRdtesQtjpUJg36bxaUoPCZJMIdHmmIL2V39ZQFm76Lx9Ik
+	aIzRk4f8R1amP6SVZL0Yu2slttCnFEdlsoydky+sL6JpvFjt5XZx6WXsW739C0Xp3CLEe4nw010
+	WmgcD88/XmCReMKsDY7vKSt1PuRks51Vmtmz2V9lASen3NFo=
+X-Gm-Gg: ASbGncvC/CUyT+FmBzRxVBF3+/2RtoczQwHZiTZwGI/bxQJosq/WuYDZZLBeD2NbXX4
+	QN5pg/jZltZaa1ZielScoOXepOFc278UaRj5rL3/e4XpFDg5qlV/PmRCiBIUswxF8Ibph0rQBi+
+	GakkctDHHgXDARso1/htYE3L9DHUtEvQpxy94hcSAWE8wl4/a5ZHsOAbHSUKHOdcScCh6/Zce6T
+	ggJhkaAiF8Sh3iBLQkwPxgs
+X-Google-Smtp-Source: AGHT+IE4GbEPO50CbgxPQAOSwezrDo7dIzpcSAQrlWm6QC827CxwK/94NY2Q1K02ANxH3vAAqI/PdQy15/ZmW11DAJo=
+X-Received: by 2002:a53:ec01:0:b0:636:1fd9:1c2 with SMTP id
+ 956f58d0204a3-63ccb8410e1mr4299532d50.3.1760077535974; Thu, 09 Oct 2025
+ 23:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-5-de841623af3c@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=dojWylg4 c=1 sm=1 tr=0 ts=68e8a693 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=hMk7HZvlmUkqmH-NLHIA:9
- a=CjuIK1q_8ugA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-GUID: 0RDee-RDSUaOONybVDF0ufi1QuDRs2rs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX7hu217lDSfu7
- gbz9BejOeTWAcOB2SDOIR/1AgNGu0IdOLNbpJIrE7dq1USOsf6j+D2OcQdBhc6Rhl6JqGkRW33L
- wTd+BaHNL/azOGhlDl/C7FsyL9TSIZ69oCsC7PKdEb7iQquubIt4T/Yfkrh8OyWMzrRpy1KtoIZ
- R09qcMNEPbDxk4Yp7XPspgfdJaGOltZVmyKR5DiW6TbaBW5Gr9h54DNve3iVu11geVRg3DkMst8
- 3s4dG9zgoyIUQr5KIgjoS72sAB/EAtmwzJkzvO7GI4YugD0KWtC6iu64fuZwjw4Fpalg0Gjs/Tz
- DymrgQl3PdDF8Xgt6+0xpL76IHVyorDRug1Y3ewvvyXQdpCB0aCi97BhwTlj4G50Z41upS74hsw
- uZwu9AeCLemZ0J6dgiLDtpSiCJrlCg==
-X-Proofpoint-ORIG-GUID: 0RDee-RDSUaOONybVDF0ufi1QuDRs2rs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com> <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+In-Reply-To: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+From: lu gu <giveme.gulu@gmail.com>
+Date: Fri, 10 Oct 2025 14:25:22 +0800
+X-Gm-Features: AS18NWBll---7cq99BfcA-9wIIccCh9eibmg4TJShI91BXN-i1ipDktLOHedHKI
+Message-ID: <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 10:18:50PM +0530, Mukesh Ojha wrote:
-> As a superset of the existing metadata context, the PAS context
-> structure enables both remoteproc and non-remoteproc subsystems to
-> better support scenarios where the SoC runs with or without the Gunyah
-> hypervisor. To reflect this, relevant SMC and metadata functions are
-> updated to incorporate PAS context awareness.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c       | 32 +++++++++--------
->  drivers/remoteproc/qcom_q6v5_pas.c     | 66 +++++++++++++++++++---------------
->  drivers/soc/qcom/mdt_loader.c          |  7 ++--
->  include/linux/firmware/qcom/qcom_scm.h |  4 +--
->  include/linux/soc/qcom/mdt_loader.h    |  5 ++-
->  5 files changed, 62 insertions(+), 52 deletions(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index b8ce4fc34dbe..7b4ff3cb26ed 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -621,7 +621,7 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_context_destroy);
->   *		and optional blob of data used for authenticating the metadata
->   *		and the rest of the firmware
->   * @size:	size of the metadata
-> - * @ctx:	optional metadata context
-> + * @ctx:	optional pas context
->   *
->   * Return: 0 on success.
->   *
-> @@ -630,8 +630,9 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_context_destroy);
->   * qcom_scm_pas_metadata_release() by the caller.
->   */
->  int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
-> -			    struct qcom_scm_pas_metadata *ctx)
-> +			    struct qcom_scm_pas_context *ctx)
->  {
-> +	struct qcom_scm_pas_metadata *mdt_ctx;
->  	dma_addr_t mdata_phys;
->  	void *mdata_buf;
->  	int ret;
-> @@ -682,10 +683,11 @@ int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
->  out:
->  	if (ret < 0 || !ctx) {
->  		dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
-> -	} else if (ctx) {
-> -		ctx->ptr = mdata_buf;
-> -		ctx->phys = mdata_phys;
-> -		ctx->size = size;
-> +	} else if (ctx && ctx->metadata) {
-> +		mdt_ctx = ctx->metadata;
-> +		mdt_ctx->ptr = mdata_buf;
-> +		mdt_ctx->phys = mdata_phys;
-> +		mdt_ctx->size = size;
->  	}
->  
->  	return ret ? : res.result[0];
-> @@ -694,18 +696,20 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_init_image);
->  
->  /**
->   * qcom_scm_pas_metadata_release() - release metadata context
-> - * @ctx:	metadata context
-> + * @ctx:	pas context
->   */
-> -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx)
-> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_context *ctx)
->  {
-> -	if (!ctx->ptr)
-> -		return;
-> +	struct qcom_scm_pas_metadata *mdt_ctx;
->  
-> -	dma_free_coherent(__scm->dev, ctx->size, ctx->ptr, ctx->phys);
-> +	mdt_ctx = ctx->metadata;
-> +	if (!mdt_ctx->ptr)
-> +		return;
->  
-> -	ctx->ptr = NULL;
-> -	ctx->phys = 0;
-> -	ctx->size = 0;
-> +	dma_free_coherent(__scm->dev, mdt_ctx->size, mdt_ctx->ptr, mdt_ctx->phys);
-> +	mdt_ctx->ptr = NULL;
-> +	mdt_ctx->phys = 0;
-> +	mdt_ctx->size = 0;
->  }
->  EXPORT_SYMBOL_GPL(qcom_scm_pas_metadata_release);
->  
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 158bcd6cc85c..46a23fdefd48 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -117,8 +117,8 @@ struct qcom_pas {
->  	struct qcom_rproc_ssr ssr_subdev;
->  	struct qcom_sysmon *sysmon;
->  
-> -	struct qcom_scm_pas_metadata pas_metadata;
-> -	struct qcom_scm_pas_metadata dtb_pas_metadata;
-> +	struct qcom_scm_pas_context *pas_ctx;
-> +	struct qcom_scm_pas_context *dtb_pas_ctx;
->  };
->  
->  static void qcom_pas_segment_dump(struct rproc *rproc,
-> @@ -211,9 +211,9 @@ static int qcom_pas_unprepare(struct rproc *rproc)
->  	 * auth_and_reset() was successful, but in other cases clean it up
->  	 * here.
->  	 */
-> -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
-> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
->  	if (pas->dtb_pas_id)
-> -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
->  
->  	return 0;
->  }
-> @@ -239,15 +239,8 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
->  			return ret;
->  		}
->  
-> -		ret = qcom_mdt_pas_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
-> -					pas->dtb_pas_id, pas->dtb_mem_phys,
-> -					&pas->dtb_pas_metadata);
-> -		if (ret)
-> -			goto release_dtb_firmware;
-> -
-> -		ret = qcom_mdt_load_no_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
-> -					    pas->dtb_mem_region, pas->dtb_mem_phys,
-> -					    pas->dtb_mem_size, &pas->dtb_mem_reloc);
-> +		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware, pas->dtb_firmware_name,
-> +					pas->dtb_mem_region, &pas->dtb_mem_reloc);
->  		if (ret)
->  			goto release_dtb_metadata;
->  	}
-> @@ -255,9 +248,7 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
->  	return 0;
->  
->  release_dtb_metadata:
-> -	qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> -
-> -release_dtb_firmware:
-> +	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
->  	release_firmware(pas->dtb_firmware);
->  
->  	return ret;
-> @@ -305,14 +296,8 @@ static int qcom_pas_start(struct rproc *rproc)
->  		}
->  	}
->  
-> -	ret = qcom_mdt_pas_init(pas->dev, pas->firmware, rproc->firmware, pas->pas_id,
-> -				pas->mem_phys, &pas->pas_metadata);
-> -	if (ret)
-> -		goto disable_px_supply;
-> -
-> -	ret = qcom_mdt_load_no_init(pas->dev, pas->firmware, rproc->firmware,
-> -				    pas->mem_region, pas->mem_phys, pas->mem_size,
-> -				    &pas->mem_reloc);
-> +	ret = qcom_mdt_pas_load(pas->pas_ctx, pas->firmware, rproc->firmware,
-> +				pas->mem_region, &pas->dtb_mem_reloc);
+[Resend, plain-text only: previous version was rejected due to HTML formatt=
+ing]
+Hi Joanne,
 
-s/&pas->dtb_mem_reloc/&pas->mem_reloc/
+Thank you again for the detailed explanation. I've been thinking
+carefully about your feedback and the deadlock issue related to
+holding the page lock.
+I now understand that keeping a low-level page lock while waiting for
+a userspace reply is dangerous and can easily lead to deadlocks with
+the memory manager. So my original patch was  not the right approach.
 
->  	if (ret)
->  		goto release_pas_metadata;
->  
-> @@ -332,9 +317,9 @@ static int qcom_pas_start(struct rproc *rproc)
->  		goto release_pas_metadata;
->  	}
->  
-> -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
-> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
->  	if (pas->dtb_pas_id)
-> -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
->  
->  	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
->  	pas->firmware = NULL;
-> @@ -342,9 +327,9 @@ static int qcom_pas_start(struct rproc *rproc)
->  	return 0;
->  
->  release_pas_metadata:
-> -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
-> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
->  	if (pas->dtb_pas_id)
-> -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
->  disable_px_supply:
->  	if (pas->px_supply)
->  		regulator_disable(pas->px_supply);
-> @@ -779,12 +764,33 @@ static int qcom_pas_probe(struct platform_device *pdev)
->  	}
->  
->  	qcom_add_ssr_subdev(rproc, &pas->ssr_subdev, desc->ssr_name);
-> +
-> +	pas->pas_ctx = qcom_scm_pas_context_init(pas->dev, pas->pas_id, pas->mem_phys,
-> +						 pas->mem_size);
-> +	if (IS_ERR(pas->pas_ctx)) {
-> +		ret = PTR_ERR(pas->pas_ctx);
-> +		goto remove_ssr_sysmon;
-> +	}
-> +
-> +	pas->dtb_pas_ctx = qcom_scm_pas_context_init(pas->dev, pas->dtb_pas_id,
-> +						     pas->dtb_mem_phys, pas->dtb_mem_size);
-> +	if (IS_ERR(pas->dtb_pas_ctx)) {
-> +		ret = PTR_ERR(pas->dtb_pas_ctx);
-> +		goto destroy_pas_ctx;
-> +	}
-> +
->  	ret = rproc_add(rproc);
->  	if (ret)
-> -		goto remove_ssr_sysmon;
-> +		goto destroy_dtb_pas_ctx;
->  
->  	return 0;
->  
-> +destroy_dtb_pas_ctx:
-> +	qcom_scm_pas_context_destroy(pas->dtb_pas_ctx);
-> +
-> +destroy_pas_ctx:
-> +	qcom_scm_pas_context_destroy(pas->pas_ctx);
-> +
->  remove_ssr_sysmon:
->  	qcom_remove_ssr_subdev(rproc, &pas->ssr_subdev);
->  	qcom_remove_sysmon_subdev(pas->sysmon);
-> @@ -807,6 +813,8 @@ static void qcom_pas_remove(struct platform_device *pdev)
->  {
->  	struct qcom_pas *pas = platform_get_drvdata(pdev);
->  
-> +	qcom_scm_pas_context_destroy(pas->dtb_pas_ctx);
-> +	qcom_scm_pas_context_destroy(pas->pas_ctx);
->  	rproc_del(pas->rproc);
->  
->  	qcom_q6v5_deinit(&pas->q6v5);
-> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-> index 31855836b251..105a44f42ba7 100644
-> --- a/drivers/soc/qcom/mdt_loader.c
-> +++ b/drivers/soc/qcom/mdt_loader.c
-> @@ -234,13 +234,13 @@ EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
->   * @fw_name:	name of the firmware, for construction of segment file names
->   * @pas_id:	PAS identifier
->   * @mem_phys:	physical address of allocated memory region
-> - * @ctx:	PAS metadata context, to be released by caller
-> + * @ctx:	PAS context, ctx->metadata to be released by caller
->   *
->   * Returns 0 on success, negative errno otherwise.
->   */
->  int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
->  		      const char *fw_name, int pas_id, phys_addr_t mem_phys,
-> -		      struct qcom_scm_pas_metadata *ctx)
-> +		      struct qcom_scm_pas_context *ctx)
->  {
->  	const struct elf32_phdr *phdrs;
->  	const struct elf32_phdr *phdr;
-> @@ -505,8 +505,7 @@ int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx, const struct firmware *f
->  {
->  	int ret;
->  
-> -	ret = qcom_mdt_pas_init(ctx->dev, fw, firmware, ctx->pas_id, ctx->mem_phys,
-> -				ctx->metadata);
-> +	ret = qcom_mdt_pas_init(ctx->dev, fw, firmware, ctx->pas_id, ctx->mem_phys, ctx);
->  	if (ret)
->  		return ret;
->  
-> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-> index e82fdc200df7..af6ab837ad5a 100644
-> --- a/include/linux/firmware/qcom/qcom_scm.h
-> +++ b/include/linux/firmware/qcom/qcom_scm.h
-> @@ -84,8 +84,8 @@ void *qcom_scm_pas_context_init(struct device *dev, u32 pas_id, phys_addr_t mem_
->  				size_t mem_size);
->  void qcom_scm_pas_context_destroy(struct qcom_scm_pas_context *ctx);
->  int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
-> -			    struct qcom_scm_pas_metadata *ctx);
-> -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
-> +			    struct qcom_scm_pas_context *ctx);
-> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_context *ctx);
->  int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
->  int qcom_scm_pas_auth_and_reset(u32 pas_id);
->  int qcom_scm_pas_shutdown(u32 pas_id);
-> diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-> index 2832e0717729..7d57746fbbfa 100644
-> --- a/include/linux/soc/qcom/mdt_loader.h
-> +++ b/include/linux/soc/qcom/mdt_loader.h
-> @@ -10,7 +10,6 @@
->  
->  struct device;
->  struct firmware;
-> -struct qcom_scm_pas_metadata;
->  struct qcom_scm_pas_context;
->  
->  #if IS_ENABLED(CONFIG_QCOM_MDT_LOADER)
-> @@ -18,7 +17,7 @@ struct qcom_scm_pas_context;
->  ssize_t qcom_mdt_get_size(const struct firmware *fw);
->  int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
->  		      const char *fw_name, int pas_id, phys_addr_t mem_phys,
-> -		      struct qcom_scm_pas_metadata *pas_metadata_ctx);
-> +		      struct qcom_scm_pas_context *pas_ctx);
->  int qcom_mdt_load(struct device *dev, const struct firmware *fw,
->  		  const char *fw_name, int pas_id, void *mem_region,
->  		  phys_addr_t mem_phys, size_t mem_size,
-> @@ -43,7 +42,7 @@ static inline ssize_t qcom_mdt_get_size(const struct firmware *fw)
->  
->  static inline int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
->  				    const char *fw_name, int pas_id, phys_addr_t mem_phys,
-> -				    struct qcom_scm_pas_metadata *pas_metadata_ctx)
-> +				    struct qcom_scm_pas_context *pas_ctx)
->  {
->  	return -ENODEV;
->  }
-> 
-> -- 
-> 2.50.1
-> 
+Your explanation really filled in the missing piece for me. Now, I
+understand the core problem sequence correctly:
 
--- 
--Mukesh Ojha
+    A concurrent read operation may trigger a GETATTR request when the
+attribute cache expires.
+    The result of this GETATTR can cause the kernel to invalidate the
+page cache for the inode.
+    As a result, the read operation ignores the (new) cached data and
+fetches data again from the backend.
+    The backend then returns stale data, which overwrites the updated
+page cache contents, leading to the data mismatch I observed.
+
+I=E2=80=99ve been thinking about how to implement proper synchronization
+without holding the page lock. Here=E2=80=99s an idea I=E2=80=99d like your=
+ thoughts
+on:
+
+    1. Keep the early unlock_page() in fuse_fill_write_pages().
+
+    2. In fuse_perform_write(), before sending the FUSE_WRITE request,
+we insert an entry representing the affected page/offset range into a
+new RB-tree on the fuse_inode. This structure, similar to how
+writeback is tracked (e.g., fuse_page_is_writeback), will be named
+sync_writes_in_flight.
+
+    3. In the read path (e.g., fuse_readpage()), before issuing a
+FUSE_READ, check this tree for any overlapping ranges.
+
+    4. If an overlap is found, the read operation waits on a wait
+queue associated with this synchronization structure.
+
+    5. When the FUSE_WRITE completes in fuse_perform_write(), remove
+the entry from the tree and wake up any waiting readers.
+
+This should serialize backend reads and writes for overlapping ranges
+while avoiding the deadlock risk, since the waiting happens at the
+FUSE layer rather than under a page lock.
+
+Does this approach sound reasonable to you? I=E2=80=99d really appreciate y=
+our
+feedback on whether this design makes sense, or if you see any
+potential pitfalls I=E2=80=99ve missed.
+
+Thanks,
+guangming.zhao
+
+On Fri, Oct 10, 2025 at 1:17=E2=80=AFPM lu gu <giveme.gulu@gmail.com> wrote=
+:
+>
+> Hi Joanne,
+>
+> Thank you again for the detailed explanation. I've been thinking carefull=
+y about your feedback and the deadlock issue related to holding the page lo=
+ck.
+> I now understand that keeping a low-level page lock while waiting for a u=
+serspace reply is dangerous and can easily lead to deadlocks with the memor=
+y manager. So my original patch was  not the right approach.
+>
+> Your explanation really filled in the missing piece for me. Now, I unders=
+tand the core problem sequence correctly:
+>
+>     A concurrent read operation may trigger a GETATTR request when the at=
+tribute cache expires.
+>     The result of this GETATTR can cause the kernel to invalidate the pag=
+e cache for the inode.
+>     As a result, the read operation ignores the (new) cached data and fet=
+ches data again from the backend.
+>     The backend then returns stale data, which overwrites the updated pag=
+e cache contents, leading to the data mismatch I observed.
+>
+> I=E2=80=99ve been thinking about how to implement proper synchronization =
+without holding the page lock. Here=E2=80=99s an idea I=E2=80=99d like your=
+ thoughts on:
+>
+>     1. Keep the early unlock_page() in fuse_fill_write_pages().
+>
+>     2. In fuse_perform_write(), before sending the FUSE_WRITE request, we=
+ insert an entry representing the affected page/offset range into a new RB-=
+tree on the fuse_inode. This structure, similar to how writeback is tracked=
+ (e.g., fuse_page_is_writeback), will be named sync_writes_in_flight.
+>
+>     3. In the read path (e.g., fuse_readpage()), before issuing a FUSE_RE=
+AD, check this tree for any overlapping ranges.
+>
+>     4. If an overlap is found, the read operation waits on a wait queue a=
+ssociated with this synchronization structure.
+>
+>     5. When the FUSE_WRITE completes in fuse_perform_write(), remove the =
+entry from the tree and wake up any waiting readers.
+>
+> This should serialize backend reads and writes for overlapping ranges whi=
+le avoiding the deadlock risk, since the waiting happens at the FUSE layer =
+rather than under a page lock.
+>
+> Does this approach sound reasonable to you? I=E2=80=99d really appreciate=
+ your feedback on whether this design makes sense, or if you see any potent=
+ial pitfalls I=E2=80=99ve missed.
+>
+> Thanks,
+> guangming.zhao
+>
+> On Fri, Oct 10, 2025 at 6:11=E2=80=AFAM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
+>>
+>> On Thu, Oct 9, 2025 at 4:09=E2=80=AFAM guangming.zhao <giveme.gulu@gmail=
+.com> wrote:
+>> >
+>>
+>> Hi Guangming,
+>>
+>> > The race occurs as follows:
+>> > 1. A write operation locks a page, fills it with new data, marks it
+>> >    Uptodate, and then immediately unlocks it within fuse_fill_write_pa=
+ges().
+>> > 2. This opens a window before the new data is sent to the userspace da=
+emon.
+>> > 3. A concurrent read operation for the same page may decide to re-vali=
+date
+>> >    its cache from the daemon. The fuse_wait_on_page_writeback()
+>> >    mechanism does not protect this synchronous writethrough path.
+>> > 4. The read request can be processed by the multi-threaded daemon *bef=
+ore*
+>> >    the write request, causing it to reply with stale data from its bac=
+kend.
+>> > 5. The read syscall returns this stale data to userspace, causing data
+>> >    verification to fail.
+>>
+>> I don't think the issue is that the read returns stale data (the
+>> client is responsible for synchronizing reads and writes, so if the
+>> read is issued before the write has completed then it should be fine
+>> that the read returned back stale data) but that the read will
+>> populate the page cache with stale data (overwriting the write data in
+>> the page cache), which makes later subsequent reads that are issued
+>> after the write has completed return back stale data.
+>>
+>> >
+>> > This can be reliably reproduced on a mainline kernel (e.g., 6.1.x)
+>> > using iogen and a standard multi-threaded libfuse passthrough filesyst=
+em.
+>> >
+>> > Steps to Reproduce:
+>> > 1. Mount a libfuse passthrough filesystem (must be multi-threaded):
+>> >    $ ./passthrough /path/to/mount_point
+>> >
+>> > 2. Run the iogen/doio test from LTP (Linux Test Project) with mixed
+>> >    read/write operations (example):
+>> >    $ /path/to/ltp/iogen -N iogen01 -i 120s -s read,write 500k:/path/to=
+/mount_point/file1 | \
+>> >      /path/to/ltp/doio -N iogen01 -a -v -n 2 -k
+>> >
+>> > 3. A data comparison error similar to the following will be reported:
+>> >    *** DATA COMPARISON ERROR ***
+>> >    check_file(/path/to/mount_point/file1, ...) failed
+>> >    expected bytes:  X:3091346:gm-arco:doio*X:3091346
+>> >    actual bytes:    91346:gm-arco:doio*C:3091346:gm-
+>> >
+>> > The fix is to delay unlocking the page until after the data has been
+>> > successfully sent to the daemon. This is achieved by moving the unlock
+>> > logic from fuse_fill_write_pages() to the completion path of
+>> > fuse_send_write_pages(), ensuring the page lock is held for the entire
+>> > critical section and serializing the operations correctly.
+>> >
+>> > [Note for maintainers]
+>> > This patch is created and tested against the 5.15 kernel. I have obser=
+ved
+>> > that recent kernels have migrated to using folios, and I am not confid=
+ent
+>> > in porting this fix to the new folio-based code myself.
+>> >
+>> > I am submitting this patch to clearly document the race condition and =
+a
+>> > proven fix on an older kernel, in the hope that a developer more
+>> > familiar with the folio conversion can adapt it for the mainline tree.
+>> >
+>> > Signed-off-by: guangming.zhao <giveme.gulu@gmail.com>
+>> > ---
+>> > [root@gm-arco example]# uname -a
+>> > Linux gm-arco 6.16.8-arch3-1 #1 SMP PREEMPT_DYNAMIC Mon, 22 Sep 2025 2=
+2:08:35 +0000 x86_64 GNU/Linux
+>> > [root@gm-arco example]# ./passthrough /tmp/test/
+>> > [root@gm-arco example]# mkdir /tmp/test/yy
+>> > [root@gm-arco example]# /home/gm/code/ltp/testcases/kernel/fs/doio/iog=
+en -N iogen01 -i 120s -s read,write 500b:/tmp/test/yy/kk1 1000b:/tmp/test/y=
+y/kk2 | /home/gm/code/ltp/testcases/kernel/fs/doio/doio -N iogen01 -a -v -n=
+ 2 -k
+>> >
+>> > iogen(iogen01) starting up with the following:
+>> >
+>> > Out-pipe:              stdout
+>> > Iterations:            120 seconds
+>> > Seed:                  3091343
+>> > Offset-Mode:           sequential
+>> > Overlap Flag:          off
+>> > Mintrans:              1           (1 blocks)
+>> > Maxtrans:              131072      (256 blocks)
+>> > O_RAW/O_SSD Multiple:  (Determined by device)
+>> > Syscalls:              read write
+>> > Aio completion types:  none
+>> > Flags:                 buffered sync
+>> >
+>> > Test Files:
+>> >
+>> > Path                                          Length    iou   raw iou =
+file
+>> >                                               (bytes) (bytes) (bytes) =
+type
+>> > ----------------------------------------------------------------------=
+-------
+>> > /tmp/test/yy/kk1                               256000       1     512 =
+regular
+>> > /tmp/test/yy/kk2                               512000       1     512 =
+regular
+>> >
+>> > doio(iogen01) (3091346) 17:43:50
+>> > ---------------------
+>> > *** DATA COMPARISON ERROR ***
+>> > check_file(/tmp/test/yy/kk2, 116844, 106653, X:3091346:gm-arco:doio*, =
+23, 0) failed
+>> >
+>> > Comparison fd is 3, with open flags 0
+>> > Corrupt regions follow - unprintable chars are represented as '.'
+>> > -----------------------------------------------------------------
+>> > corrupt bytes starting at file offset 116844
+>> >     1st 32 expected bytes:  X:3091346:gm-arco:doio*X:3091346
+>> >     1st 32 actual bytes:    91346:gm-arco:doio*C:3091346:gm-
+>> > Request number 13873
+>> > syscall:  write(4, 02540107176414100, 106653)
+>> >           fd 4 is file /tmp/test/yy/kk2 - open flags are 04010001
+>> >           write done at file offset 116844 - pattern is X:3091346:gm-a=
+rco:doio*
+>> >
+>> > doio(iogen01) (3091344) 17:43:50
+>> > ---------------------
+>> > (parent) pid 3091346 exited because of data compare errors
+>> >
+>> >  fs/fuse/file.c | 36 ++++++++++--------------------------
+>> >  1 file changed, 10 insertions(+), 26 deletions(-)
+>> >
+>> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> > index 5c5ed58d9..a832c3122 100644
+>> > --- a/fs/fuse/file.c
+>> > +++ b/fs/fuse/file.c
+>> > @@ -1098,7 +1098,6 @@ static ssize_t fuse_send_write_pages(struct fuse=
+_io_args *ia,
+>> >         struct fuse_file *ff =3D file->private_data;
+>> >         struct fuse_mount *fm =3D ff->fm;
+>> >         unsigned int offset, i;
+>> > -       bool short_write;
+>> >         int err;
+>> >
+>> >         for (i =3D 0; i < ap->num_pages; i++)
+>> > @@ -1113,26 +1112,21 @@ static ssize_t fuse_send_write_pages(struct fu=
+se_io_args *ia,
+>> >         if (!err && ia->write.out.size > count)
+>> >                 err =3D -EIO;
+>> >
+>> > -       short_write =3D ia->write.out.size < count;
+>> >         offset =3D ap->descs[0].offset;
+>> >         count =3D ia->write.out.size;
+>> >         for (i =3D 0; i < ap->num_pages; i++) {
+>> >                 struct page *page =3D ap->pages[i];
+>> >
+>> > -               if (err) {
+>> > -                       ClearPageUptodate(page);
+>> > -               } else {
+>> > -                       if (count >=3D PAGE_SIZE - offset)
+>> > -                               count -=3D PAGE_SIZE - offset;
+>> > -                       else {
+>> > -                               if (short_write)
+>> > -                                       ClearPageUptodate(page);
+>> > -                               count =3D 0;
+>> > -                       }
+>> > -                       offset =3D 0;
+>> > -               }
+>> > -               if (ia->write.page_locked && (i =3D=3D ap->num_pages -=
+ 1))
+>> > -                       unlock_page(page);
+>> > +        if (!err && !offset && count >=3D PAGE_SIZE)
+>> > +            SetPageUptodate(page);
+>> > +
+>> > +        if (count > PAGE_SIZE - offset)
+>> > +            count -=3D PAGE_SIZE - offset;
+>> > +        else
+>> > +            count =3D 0;
+>> > +        offset =3D 0;
+>> > +
+>> > +        unlock_page(page);
+>> >                 put_page(page);
+>> >         }
+>> >
+>> > @@ -1195,16 +1189,6 @@ static ssize_t fuse_fill_write_pages(struct fus=
+e_io_args *ia,
+>> >                 if (offset =3D=3D PAGE_SIZE)
+>> >                         offset =3D 0;
+>> >
+>> > -               /* If we copied full page, mark it uptodate */
+>> > -               if (tmp =3D=3D PAGE_SIZE)
+>> > -                       SetPageUptodate(page);
+>> > -
+>> > -               if (PageUptodate(page)) {
+>> > -                       unlock_page(page);
+>> > -               } else {
+>> > -                       ia->write.page_locked =3D true;
+>> > -                       break;
+>> > -               }
+>>
+>> I think this will run into the deadlock described here
+>> https://lore.kernel.org/linux-fsdevel/CAHk-=3Dwh9Eu-gNHzqgfvUAAiO=3DvJ+p=
+Wnzxkv+tX55xhGPFy+cOw@mail.gmail.com/,
+>> so I think we would need a different solution. Maybe one idea is doing
+>> something similar to what the fi->writectr bias does - that at least
+>> seems simpler to me than having to unlock all the pages in the array
+>> if we have to fault in the iov iter and then having to relock the
+>> pages while making sure everything is all consistent.
+>>
+>> Thanks,
+>> Joanne
+>>
+>> >                 if (!fc->big_writes)
+>> >                         break;
+>> >         } while (iov_iter_count(ii) && count < fc->max_write &&
+>> > --
+>> > 2.51.0
+>> >
+>> >
 
