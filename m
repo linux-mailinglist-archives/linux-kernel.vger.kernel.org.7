@@ -1,172 +1,148 @@
-Return-Path: <linux-kernel+bounces-848783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305D9BCE8F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806E5BCE8D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7AF19E1AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972FF54597F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2193A3043BF;
-	Fri, 10 Oct 2025 20:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACABC302775;
+	Fri, 10 Oct 2025 20:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="QQFrYdfr"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLlW/7jz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D2A303CAA;
-	Fri, 10 Oct 2025 20:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760129301; cv=pass; b=TD4c1Okg3GbMzllRnGzwyarewGO+DBFq82jy8+yqjuJi3rG5w2EExZy9vzvd5BxDwIBokUi7vq6ltkHT8jXbblUsid9uoftAS9POR/x2pbOBHH0BisyV5HJ0kMQqNBjQL6MObTI59ZDXze5BGfmlp2EoY9DqlL6XdnErita4l0c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760129301; c=relaxed/simple;
-	bh=DqdxqtZA+JTQXfSgoa0iFFT+t9Xu2GNK7V17jWtmqQQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JPq3bXmHihrGdTWoMBy51LVlP+fcXA/GkYSQrC20eb1nrrHlp+GD8cyrs0ksteFn2qfJQQUrIGuLSTb/tRZz7/CTXVgl3hTI8foqvLklntThogPuTGK75r5OgkhKaEx1nyhwFJDoUn/EXmC11MmjsvkC7eGCO9wiTwG9hcWfq5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=QQFrYdfr; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760129277; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FRB1JV3sOZSZ9JTFNpfXOd2Bv8HgJlwn+Mwuqs0hNoS0vUgHnNLQABUEEvKPwxcqs3HP2vmQ3oQMjStn/fgxJRPyISByAOhp0A9TUlyDa/TrDgVilXzXGq+intdCBoZ3w57VhUXsOh1XOFsBzEc53ExgQcY0v0xuAc+R2Mrpcz0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760129277; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=bZycTGcqflUTi8jckNmrkgc5LMZTQ/XWz04YrmhHY6Q=; 
-	b=lPEXIiqFJRpWR/7jKD5QtjKQUs4Ld6oAxVW7o3FszBl6VucePAMws4ilY0NR9aifc6ohf+PoaBfg3CzSMl/Qn9G+oTxjoRC6PfQOWb7K+1sipM2PS95sX/fZWFFhXfvdOblKxw4aTR8ly/xPgyY5/w3O6DXA4nBzQ7nvA2RTGEM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760129277;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=bZycTGcqflUTi8jckNmrkgc5LMZTQ/XWz04YrmhHY6Q=;
-	b=QQFrYdfrOeZ1cCsQWfyZDKWD1n7ctc7DQvvMPQyevQLJBwGe9xZFN4Vs+bXqE/5/
-	fZO2UAwhibKoElCFigRrflEaoUKfPSpInZ21hGxZah1FYWs9YS3c9HmqH7lYJ/ZczqU
-	lQt3qv7b6VjE6k/GklM2bYNOZ5AsuHzZp83XWW3A=
-Received: by mx.zohomail.com with SMTPS id 1760129275139615.3748636428318;
-	Fri, 10 Oct 2025 13:47:55 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Fri, 10 Oct 2025 22:47:13 +0200
-Subject: [PATCH v3 5/5] clk: mediatek: Add mfg_eb as parent to mt8196
- mfgpll clocks
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7C3279917
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760129274; cv=none; b=etg2JtsdNOBaxG2Lb82dDkBbKzZzUCvF37hMfzw4yg5YO2jgmTpVwUqtkvmcQh4H9SH9R8fxY4DDf2Z746HOlRyfeo1n6M3PdWjTROt9t2gM8JUhnSlQBXTkP/FcJGEBHpxBBJp//SVr0eQvOc8g+dKjxdn5UpwNVEe4Cu1C3LY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760129274; c=relaxed/simple;
+	bh=aZZwnBIcH9CMFofcrl8LA35WVTPs3TZCbJw87kdDbHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TaDtwhW1w6WTdCNMoDloorKReOBM9FMvPHR6sE7cSoRdrxIF3wSQ8p4AdlsfddczEVz0Ue3xknuSfGzDmelrl2LJsDViDbxLWjjPacS2OLNh1N4fS/PpK8KUAmMM8DZajac0Vvs86g0og7+AEKRL09zJg6t8oCT3xAdeZyy9n9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLlW/7jz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 848FEC4CEF1;
+	Fri, 10 Oct 2025 20:47:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760129273;
+	bh=aZZwnBIcH9CMFofcrl8LA35WVTPs3TZCbJw87kdDbHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QLlW/7jz3zpFgcfvLVgEA6YZ5x0I2gHBgNHYduhppe63+3fsnxYtM8vwztuN7HLtn
+	 LJK+b/ysqvd5MmaKiP6jjI+qeGG8iO04goreUlV+NML201bRBBz75tbl+wI/IBvbI9
+	 BD4Q4rJngGdQE3imJpvPk9xDj+wy+ZO+X5pVYp/S5Pp80BKdb7c5s7EE3dbYA9a2WZ
+	 ZKU+SHCItS58QCC+nw2BdRhSBgh634iCT9dD38GMdD6gMC+TEkaQfkOAEXUoCMWF37
+	 TEZLWOX9UuyafKkfLaxL3KhWyJ+c2sI6VJv86i288PUCQf8g11FbKsVrdR5LShTgD2
+	 q2lKMYZ7NekIw==
+Date: Fri, 10 Oct 2025 13:47:50 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Klaus Kusche <klaus.kusche@computerix.info>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
+Message-ID: <4bjplxwz3ixsrdh3tvaz4danwrku26fbt5mr6yqhmzv5i34v5r@kyggtyietezp>
+References: <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
+ <20251007182257.ywrqrrhgrtrviila@desk>
+ <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
+ <20251007230821.5shpa3pusyzaohb2@desk>
+ <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
+ <20251009053336.ghcmhgsprtkgydas@desk>
+ <xhxfkzrrn62xkd6moiapfueookui5f63x4lmzgkmnf3mbxilb5@kk4rylukegii>
+ <jlwwd3ohjr7a6lnd4ehu4lp7ys7tm7f6rlaxyc75725thvil4k@pf3bm243ncys>
+ <zrbzofjxeuioxhbruhaoacbyfbpclkbntiblg6jjirr4v2c2uu@aeyo5bdb44et>
+ <LV3PR12MB9265E186460C170527D1D6B594EFA@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-mtk-pll-rpm-v3-5-fb1bd15d734a@collabora.com>
-References: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
-In-Reply-To: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Yassine Oudjana <y.oudjana@protonmail.com>, 
- Laura Nao <laura.nao@collabora.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB9265E186460C170527D1D6B594EFA@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-All the MFGPLL require MFG_EB to be on for any operation on them, and
-they only tick when MFG_EB is on as well, therefore making this a
-parent-child relationship.
+On Fri, Oct 10, 2025 at 07:27:22PM +0000, Kaplan, David wrote:
+> > On Fri, Oct 10, 2025 at 11:47:25AM -0700, Pawan Gupta wrote:
+> > > > Instead, CONFIG_MITIGATION_SPECTRE_V2 could enable a submenu which
+> > then
+> > > > allows the user to enable retpoline, IBRS on entry, etc, with each
+> > > > having help text describing what generations of CPUs it would be the
+> > > > default for, to help guide the user to choose sane defaults depending on
+> > > > their CPU:
+> > > >
+> > > >   * CONFIG_MITIGATION_SPECTRE_V2
+> > > >     * CONFIG_MITIGATION_SPECTRE_V2_RETPOLINE
+> > > >       select CONFIG_BUILD_INDIRECT_THUNKS
+> > > >     * CONFIG_MITIGATION_SPECTRE_V2_IBRS
+> > > >       select CONFIG_BUILD_IBRS_ENTRY
+> > >
+> > > That would be good if a kernel is built for certain specific CPU(s). This
+> > > may not be ideal for distro kernels.
+> >
+> > Why not?  A distro can just enable everything:
+> >
+> >   CONFIG_MITIGATION_SPECTRE_V2=y
+> >   CONFIG_MITIGATION_SPECTRE_V2_RETPOLINE=y
+> >   CONFIG_MITIGATION_SPECTRE_V2_IBRS=y
+> >
+> > and then if/when some older HW ages out of being supported by the
+> > distro, they can start disabling things.
+> >
+> 
+> Is this really improving things?
+> 
+> There's already a lot of CONFIG options related to mitigations that
+> make testing a pain, and this seems to just make it worse by now
+> having even more options that may or may not make sense together.
+> 
+> I get the value in building a kernel with all mitigations disabled,
+> although frankly I think that only makes sense if it's substantially
+> better than just 'mitigations=off'.  But is the cost of only building
+> support for IBRS and not retpoline really buying much?
 
-This dependency wasn't clear during the initial upstreaming of these
-clock controllers, as it only made itself known when I could observe
-the effects of the clock by bringing up a different piece of hardware.
+I think this would add several improvements.
 
-Add a new PLL_PARENT_EN flag to mediatek's clk-pll.h, and check for it
-when initialising the pll to then translate it into the actual
-CLK_OPS_PARENT_ENABLE flag.
+It makes it clearer *why* retpolines are enabled: to mitigate Spectre v2
+for older hardware.  (Though, frustratingly, retpolines have made a
+comeback thanks to ITS.)
 
-Then add the mfg_eb parent to the mfgpll clocks, and set the new
-PLL_PARENT_EN flag.
+If I know I won't be running my kernel on old HW, this would make it
+easy to phase out old mitigations that are no longer needed, that
+otherwise uglify the code and might affect performance even when they're
+disabled at runtime.
 
-Fixes: 03dc02f8c7dc ("clk: mediatek: Add MT8196 mfg clock support")
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- drivers/clk/mediatek/clk-mt8196-mfg.c | 13 +++++++------
- drivers/clk/mediatek/clk-pll.c        |  3 +++
- drivers/clk/mediatek/clk-pll.h        |  1 +
- 3 files changed, 11 insertions(+), 6 deletions(-)
+That would be useful for me personally (I don't want that crap in my
+kernel if I don't need it), but also for distros which phase out support
+for older CPUs.
 
-diff --git a/drivers/clk/mediatek/clk-mt8196-mfg.c b/drivers/clk/mediatek/clk-mt8196-mfg.c
-index 8e09c0f7b7548f8e286671cea2dac64530b8ce47..a317183f1681bc6e8167c44b2bbe4a78566ba639 100644
---- a/drivers/clk/mediatek/clk-mt8196-mfg.c
-+++ b/drivers/clk/mediatek/clk-mt8196-mfg.c
-@@ -58,24 +58,25 @@
- 		.pcw_shift = _pcw_shift,			\
- 		.pcwbits = _pcwbits,				\
- 		.pcwibits = MT8196_INTEGER_BITS,		\
-+		.parent_name = "mfg_eb",			\
- 	}
- 
- static const struct mtk_pll_data mfg_ao_plls[] = {
--	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0, 0,
--	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
-+	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0,
-+	    PLL_PARENT_EN, BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
- 	    MFGPLL_CON1, 0, 22),
- };
- 
- static const struct mtk_pll_data mfgsc0_ao_plls[] = {
- 	PLL(CLK_MFGSC0_AO_MFGPLL_SC0, "mfgpll-sc0", MFGPLL_SC0_CON0,
--	    MFGPLL_SC0_CON0, 0, 0, 0, BIT(0), MFGPLL_SC0_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC0_CON1, 0, 22),
-+	    MFGPLL_SC0_CON0, 0, 0, PLL_PARENT_EN, BIT(0), MFGPLL_SC0_CON1, 24,
-+	    0, 0, 0, MFGPLL_SC0_CON1, 0, 22),
- };
- 
- static const struct mtk_pll_data mfgsc1_ao_plls[] = {
- 	PLL(CLK_MFGSC1_AO_MFGPLL_SC1, "mfgpll-sc1", MFGPLL_SC1_CON0,
--	    MFGPLL_SC1_CON0, 0, 0, 0, BIT(0), MFGPLL_SC1_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC1_CON1, 0, 22),
-+	    MFGPLL_SC1_CON0, 0, 0, PLL_PARENT_EN, BIT(0), MFGPLL_SC1_CON1, 24,
-+	    0, 0, 0, MFGPLL_SC1_CON1, 0, 22),
- };
- 
- static const struct of_device_id of_match_clk_mt8196_mfg[] = {
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index c4f9c06e5133dbc5902f261353c197fbde95e54d..0f3759fcd9d0228c23f4916d041d17b731a6c838 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -359,6 +359,9 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
- 
- 	init.name = data->name;
- 	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
-+	if (data->flags & PLL_PARENT_EN)
-+		init.flags |= CLK_OPS_PARENT_ENABLE;
-+
- 	init.ops = pll_ops;
- 	if (data->parent_name)
- 		init.parent_names = &data->parent_name;
-diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-index f6493699c4e367b45038ceede9565ae42a030b47..f49dc2732ffee50ebf023c01b513d74989a6ec7b 100644
---- a/drivers/clk/mediatek/clk-pll.h
-+++ b/drivers/clk/mediatek/clk-pll.h
-@@ -19,6 +19,7 @@ struct mtk_pll_div_table {
- 
- #define HAVE_RST_BAR	BIT(0)
- #define PLL_AO		BIT(1)
-+#define PLL_PARENT_EN	BIT(2)
- #define POSTDIV_MASK	GENMASK(2, 0)
- 
- struct mtk_pll_data {
+Yes, it does add some config options, but we can counterbalance that by
+removing all the ones which set the defaults, and instead only allow
+changing defaults at the granularity of attack vectors.
+
+And these MITIGATION config options wouldn't need to be referenced by
+actual code.  Their purpose would be to select
+CONFIG_BUILD_INDIRECT_THUNKS and friends, as needed, which are in a
+separate namespace (naming bikeshedding welcome).  So overall I think
+there would be a lot less confusion about the purpose of each config
+option.
+
+(Yes, CONFIG_MITIGATION_* could also be used to compile out individual
+mitigations, but I'm not quite convinced that would be worth all the
+ifdeffery)
+
+That's kind of a lot, I can work up some patches to clarify what it all
+would look like.
 
 -- 
-2.51.0
-
+Josh
 
