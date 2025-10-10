@@ -1,186 +1,262 @@
-Return-Path: <linux-kernel+bounces-848423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFD5BCDBEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4823BCDC34
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811444248FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:08:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05232545025
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95932F7ADE;
-	Fri, 10 Oct 2025 15:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E582F90D3;
+	Fri, 10 Oct 2025 15:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YvNqNllZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="stNCN4im"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656672F657E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCEF2F8BC4;
+	Fri, 10 Oct 2025 15:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108876; cv=none; b=CA+o8lzLyFplpfBF7yrCn8QXjbkGB0h5L6rFZ6BzVgxXJ74bRzGlZhpNTMc0jwBJXQocHxUuQy1uoz1Z/2JOkejZzfn3N5dk4vh1jF9s9VGana4OTAuHbIoHsLhGU75oTtqMCOgTT7BV5fUK93IByjOA/TbYmoDI7se8jy6d0bo=
+	t=1760109136; cv=none; b=pRDUPIudt/km68XbXCXxDUvZ7e71sWDBHy8R+9F9qh/c5m6A+a/WJYjuAiE/dV7e3AgdjvoclNpzPPDsEmpsXZzY90NEJ6udLMYlCkF6jhP/lf1zk+pL5YEkIE/dJCN+ykPdW0/Cob7HPJZPg2q0OGSa8Iuf5AfOKhk830CI4G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108876; c=relaxed/simple;
-	bh=gQrwr4gwxMvke4mFhglRe1Cg7eWP4zQ10dzsO7O6LTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RU0IIn0UnPgbPwXF/pfUGUq/n/1Kydgy7j2kdTEovdO8yqoLeJwWa2lAwLw7Kl2N5LhZemOr1tDPVHUTiVwdHr97Qd4eq/eY/Ro02Eq1UpHFMK6IG5CxDDFCx2tdm66Ngi84NjVzQhUR2XjG+P1feyroqPqlRLJ9Y/uFVnlUstA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YvNqNllZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760108873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LZmqunuZRQwJHo8CjkO0APHqvfQELPC5kOsrm4zYYHY=;
-	b=YvNqNllZIT8EnAcItKCWQ5SfdnyynJF9DcTg0N7bjs528I13rs7XAWEUvNj4KMLNJPODXg
-	y/J89RgxdOZ9lk9t1ji7jUBbdrFj2lfH4XGqHf41e6nvUT5cIzTEuvG4Cofh6T1xuLVVdk
-	qb4x//LL1VHGtC+yfOEz5w8kuIg6GzM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-Cgx54uA1OVqj-Su8aHRqzA-1; Fri, 10 Oct 2025 11:07:52 -0400
-X-MC-Unique: Cgx54uA1OVqj-Su8aHRqzA-1
-X-Mimecast-MFC-AGG-ID: Cgx54uA1OVqj-Su8aHRqzA_1760108871
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46b303f6c9cso17558005e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:07:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108870; x=1760713670;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LZmqunuZRQwJHo8CjkO0APHqvfQELPC5kOsrm4zYYHY=;
-        b=us+9Zp7MnQlc8sNYrue/VNXF1PvDjklVBqzneGXA78EAv9/ZbeBSDdPrwuKTeX+gJ4
-         cAvkjMUPGxI9OcHp4ilSY3G57r9HZqXf5b53yf1DbZVVB+2LN6x29Trgfo4G3C7I7rTc
-         mHeWUhFEOj8Up1r+MsfsLsvMFbpl/76h0b1xAwDgj9XkTnbM2fxQj+6TDaPdp+lFx4hs
-         HIkDyzui70qRQELdyFb3OceeJtRvMq7ptA8hyr9ILwFTg6qVSOal1JgInvQ9LrLZOusd
-         iQ31hS0+8uJlCswUTtkhdPmhV51KOXR4uGoqH5Lpa7z8/9zGJvMQOU1o99p3ey9i5Srj
-         b6rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkwSXG9CSrUKOoI1ndoW4GqqMrwvCqjSJDsBheshi7UfrGV9Y0DzZcSDBXDa2Ki9uWQJ3gM+hLwiNga7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl0VD+8APqMZ1ptF+eq9rcpSuwrmob4Wx2q8VuVG7QW6U5Y7Ot
-	gBF512GPI6CUTVxzhzE2aYAkO0OAburUP9JHv9IGLxDQ/Nwj8mTeMO00ZcoCov+S5LWdnld7gj0
-	SGol1OpxkDTWhaBjcvQ51sjSbviBLAUVIB/V+Exi21lHdQ0+KiRYTPhq/Kir41VK8aQ==
-X-Gm-Gg: ASbGncteIHxQEfxi54kfpmq+FxRkOWcBuQk59N1Ck1QeI/U9QiyMArJPsjE6veQxvmH
-	4fkA90W6kbaFYSQ243xSNfeds0/yGtYK3D5iXtuYjgZulSOrh4I7u1tU7GWMSvflE1BMUfegBdp
-	ZiA2Q8QzpZVLOtZ27TtjEF1EoS9ieIFFyRsZB62DNrx6yuY175yVvGxnQkppswWcyWQufv+Jt7U
-	KM4jj8aSW0usE/tmuHxNLBsg/fx1D8haHNqWFV5ZM/AECt3L8zP9SfRXX91s4zK2Heq0WX4lGmy
-	rDYm4KMRCO0Tl8RkE0LGfMXCvO3qpJ6byGyA7aqgS2bcVgEQ/F2eVNotpZ6h3xs5L2Z3V8zpNc0
-	NAao=
-X-Received: by 2002:a05:600c:4750:b0:45f:28d2:bd38 with SMTP id 5b1f17b1804b1-46fa9af3095mr88636125e9.18.1760108870683;
-        Fri, 10 Oct 2025 08:07:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH5JHSDo+98ZcIlXqkfGtP4ZZEWBP769aS/wsbUmwWkDRX+gxG1VW9W555xuFif1HCTIaL95g==
-X-Received: by 2002:a05:600c:4750:b0:45f:28d2:bd38 with SMTP id 5b1f17b1804b1-46fa9af3095mr88635835e9.18.1760108870194;
-        Fri, 10 Oct 2025 08:07:50 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489ad27sm51946505e9.15.2025.10.10.08.07.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 08:07:49 -0700 (PDT)
-Message-ID: <c8f74a07-9003-433a-9b1f-888df335e31b@redhat.com>
-Date: Fri, 10 Oct 2025 17:07:45 +0200
+	s=arc-20240116; t=1760109136; c=relaxed/simple;
+	bh=UWj2LSG9OR8fFHYaxWPSONArCEnqQWA+MByPC7l9Oec=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DBOxRhNTQydqE2BwGl+qCOYdbyRDb+8onuamhZA38sd74JsTzK6bwqh0uoEQvgMO9dPa/Imog+HTS1oosqS4fz/87mntVWzy6aF2Dk+oci0Xzycc8QThfJEJmSIBrJ69UAmElO0/0Imit6G5FeqeFTiSLiwIhnTnSM8jyuQFASA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=stNCN4im; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59AFBvvP341675;
+	Fri, 10 Oct 2025 10:11:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760109117;
+	bh=Z2J0NEK3lvDAZRDVx98UECEwl66Tg5VwoX+Yt/KcKk8=;
+	h=From:To:CC:Subject:Date;
+	b=stNCN4imhmJhMq+9+zy9hkX1j6/yWQFNLcWz1VTJE3SfTm519EJRsHcizhiTA1cxc
+	 U1w3DL4P/8oD6IA8AlmcrWVHObcW08ZYW4gSHbEOyJ6Vdpg3/hG9Ak9jyMNAnBJqVc
+	 BDNoKYlmE8KsEvH3p1yYsirorReYvFXpZ9RwJZrE=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59AFBvFj1136866
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 10 Oct 2025 10:11:57 -0500
+Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 10
+ Oct 2025 10:11:57 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
+ (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 10 Oct 2025 10:11:57 -0500
+Received: from a0507033-hp.dhcp.ti.com (a0507033-hp.dhcp.ti.com [172.24.231.225])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59AFBrGr2062686;
+	Fri, 10 Oct 2025 10:11:53 -0500
+From: Aksh Garg <a-garg7@ti.com>
+To: <netdev@vger.kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <edumazet@google.com>
+CC: <linux-kernel@vger.kernel.org>, <c-vankar@ti.com>, <s-vadapalli@ti.com>,
+        <danishanwar@ti.com>, Aksh Garg <a-garg7@ti.com>
+Subject: [PATCH net] net: ethernet: ti: am65-cpts: fix timestamp loss due to race conditions
+Date: Fri, 10 Oct 2025 20:38:21 +0530
+Message-ID: <20251010150821.838902-1-a-garg7@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 01/12] KVM: guest_memfd: Rename "struct kvm_gmem" to
- "struct gmem_file"
-To: "Garg, Shivank" <shivankg@amd.com>,
- Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Fuad Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>,
- Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
-References: <20251007221420.344669-1-seanjc@google.com>
- <20251007221420.344669-2-seanjc@google.com>
- <dd948073-0839-4f75-8cec-1f3041231ed7@amd.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <dd948073-0839-4f75-8cec-1f3041231ed7@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
->> -	struct file *gmem_file = READ_ONCE(slot->gmem.file);
->> -	struct kvm_gmem *gmem = file->private_data;
->> +	struct file *slot_file = READ_ONCE(slot->gmem.file);
->> +	struct gmem_file *f = file->private_data;
-> 			^^^
->>   	struct folio *folio;
->>   
->> -	if (file != gmem_file) {
->> -		WARN_ON_ONCE(gmem_file);
->> +	if (file != slot_file) {
->> +		WARN_ON_ONCE(slot_file);
->>   		return ERR_PTR(-EFAULT);
->>   	}
->>   
->> -	gmem = file->private_data;
->> -	if (xa_load(&gmem->bindings, index) != slot) {
->> -		WARN_ON_ONCE(xa_load(&gmem->bindings, index));
->> +	f = file->private_data;
-> 
-> This redundant initialization can be dropped.
-> 
-> I sent a cleanup patch including this change a few weeks ago:
-> 
-> https://lore.kernel.org/kvm/20250902080307.153171-2-shivankg@amd.com
+Resolve race conditions in timestamp events list handling between TX
+and RX paths causing missed timestamps.
 
-Yeah, Sean/Oaolo, can you take a look and pick that up as well?
+The current implementation uses a single events list for both TX and RX
+timestamps. The am65_cpts_find_ts() function acquires the lock,
+splices all events (TX as well as RX events) to a temporary list,
+and releases the lock. This function performs matching of timestamps
+for TX packets only. Before it acquires the lock again to put the
+non-TX events back to the main events list, a concurrent RX
+processing thread could acquire the lock, find an empty events list,
+and fail to attach timestamp to it, even though a relevant event exists
+in the spliced list which is yet to be restored to the main list.
 
+Fix this by splitting the events list to handle TX and RX timestamps
+independently.
+
+Fixes: c459f606f66df ("net: ethernet: ti: am65-cpts: Enable RX HW timestamp for PTP packets using CPTS FIFO")
+Signed-off-by: Aksh Garg <a-garg7@ti.com>
+---
+ drivers/net/ethernet/ti/am65-cpts.c | 57 +++++++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/am65-cpts.c b/drivers/net/ethernet/ti/am65-cpts.c
+index 59d6ab989c55..2e9719264ba5 100644
+--- a/drivers/net/ethernet/ti/am65-cpts.c
++++ b/drivers/net/ethernet/ti/am65-cpts.c
+@@ -163,7 +163,9 @@ struct am65_cpts {
+ 	struct device_node *clk_mux_np;
+ 	struct clk *refclk;
+ 	u32 refclk_freq;
+-	struct list_head events;
++	/* separate lists to handle TX and RX timestamp independently */
++	struct list_head events_tx;
++	struct list_head events_rx;
+ 	struct list_head pool;
+ 	struct am65_cpts_event pool_data[AM65_CPTS_MAX_EVENTS];
+ 	spinlock_t lock; /* protects events lists*/
+@@ -172,6 +174,7 @@ struct am65_cpts {
+ 	u32 ts_add_val;
+ 	int irq;
+ 	struct mutex ptp_clk_lock; /* PHC access sync */
++	struct mutex rx_ts_lock; /* serialize RX timestamp match */
+ 	u64 timestamp;
+ 	u32 genf_enable;
+ 	u32 hw_ts_enable;
+@@ -245,7 +248,16 @@ static int am65_cpts_cpts_purge_events(struct am65_cpts *cpts)
+ 	struct am65_cpts_event *event;
+ 	int removed = 0;
+ 
+-	list_for_each_safe(this, next, &cpts->events) {
++	list_for_each_safe(this, next, &cpts->events_tx) {
++		event = list_entry(this, struct am65_cpts_event, list);
++		if (time_after(jiffies, event->tmo)) {
++			list_del_init(&event->list);
++			list_add(&event->list, &cpts->pool);
++			++removed;
++		}
++	}
++
++	list_for_each_safe(this, next, &cpts->events_rx) {
+ 		event = list_entry(this, struct am65_cpts_event, list);
+ 		if (time_after(jiffies, event->tmo)) {
+ 			list_del_init(&event->list);
+@@ -306,11 +318,21 @@ static int __am65_cpts_fifo_read(struct am65_cpts *cpts)
+ 				cpts->timestamp);
+ 			break;
+ 		case AM65_CPTS_EV_RX:
++			event->tmo = jiffies +
++				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
++
++			list_move_tail(&event->list, &cpts->events_rx);
++
++			dev_dbg(cpts->dev,
++				"AM65_CPTS_EV_RX e1:%08x e2:%08x t:%lld\n",
++				event->event1, event->event2,
++				event->timestamp);
++			break;
+ 		case AM65_CPTS_EV_TX:
+ 			event->tmo = jiffies +
+ 				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
+ 
+-			list_move_tail(&event->list, &cpts->events);
++			list_move_tail(&event->list, &cpts->events_tx);
+ 
+ 			dev_dbg(cpts->dev,
+ 				"AM65_CPTS_EV_TX e1:%08x e2:%08x t:%lld\n",
+@@ -828,7 +850,7 @@ static bool am65_cpts_match_tx_ts(struct am65_cpts *cpts,
+ 	return found;
+ }
+ 
+-static void am65_cpts_find_ts(struct am65_cpts *cpts)
++static void am65_cpts_find_tx_ts(struct am65_cpts *cpts)
+ {
+ 	struct am65_cpts_event *event;
+ 	struct list_head *this, *next;
+@@ -837,7 +859,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
+ 	LIST_HEAD(events);
+ 
+ 	spin_lock_irqsave(&cpts->lock, flags);
+-	list_splice_init(&cpts->events, &events);
++	list_splice_init(&cpts->events_tx, &events);
+ 	spin_unlock_irqrestore(&cpts->lock, flags);
+ 
+ 	list_for_each_safe(this, next, &events) {
+@@ -850,7 +872,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
+ 	}
+ 
+ 	spin_lock_irqsave(&cpts->lock, flags);
+-	list_splice_tail(&events, &cpts->events);
++	list_splice_tail(&events, &cpts->events_tx);
+ 	list_splice_tail(&events_free, &cpts->pool);
+ 	spin_unlock_irqrestore(&cpts->lock, flags);
+ }
+@@ -861,7 +883,7 @@ static long am65_cpts_ts_work(struct ptp_clock_info *ptp)
+ 	unsigned long flags;
+ 	long delay = -1;
+ 
+-	am65_cpts_find_ts(cpts);
++	am65_cpts_find_tx_ts(cpts);
+ 
+ 	spin_lock_irqsave(&cpts->txq.lock, flags);
+ 	if (!skb_queue_empty(&cpts->txq))
+@@ -899,16 +921,21 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
+ {
+ 	struct list_head *this, *next;
+ 	struct am65_cpts_event *event;
++	LIST_HEAD(events_free);
+ 	unsigned long flags;
++	LIST_HEAD(events);
+ 	u32 mtype_seqid;
+ 	u64 ns = 0;
+ 
+ 	spin_lock_irqsave(&cpts->lock, flags);
+ 	__am65_cpts_fifo_read(cpts);
+-	list_for_each_safe(this, next, &cpts->events) {
++	list_splice_init(&cpts->events_rx, &events);
++	spin_unlock_irqrestore(&cpts->lock, flags);
++
++	list_for_each_safe(this, next, &events) {
+ 		event = list_entry(this, struct am65_cpts_event, list);
+ 		if (time_after(jiffies, event->tmo)) {
+-			list_move(&event->list, &cpts->pool);
++			list_move(&event->list, &events_free);
+ 			continue;
+ 		}
+ 
+@@ -919,10 +946,14 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
+ 
+ 		if (mtype_seqid == skb_mtype_seqid) {
+ 			ns = event->timestamp;
+-			list_move(&event->list, &cpts->pool);
++			list_move(&event->list, &events_free);
+ 			break;
+ 		}
+ 	}
++
++	spin_lock_irqsave(&cpts->lock, flags);
++	list_splice_tail(&events, &cpts->events_rx);
++	list_splice_tail(&events_free, &cpts->pool);
+ 	spin_unlock_irqrestore(&cpts->lock, flags);
+ 
+ 	return ns;
+@@ -948,7 +979,9 @@ void am65_cpts_rx_timestamp(struct am65_cpts *cpts, struct sk_buff *skb)
+ 
+ 	dev_dbg(cpts->dev, "%s mtype seqid %08x\n", __func__, skb_cb->skb_mtype_seqid);
+ 
++	mutex_lock(&cpts->rx_ts_lock);
+ 	ns = am65_cpts_find_rx_ts(cpts, skb_cb->skb_mtype_seqid);
++	mutex_unlock(&cpts->rx_ts_lock);
+ 	if (!ns)
+ 		return;
+ 
+@@ -1155,7 +1188,9 @@ struct am65_cpts *am65_cpts_create(struct device *dev, void __iomem *regs,
+ 		return ERR_PTR(ret);
+ 
+ 	mutex_init(&cpts->ptp_clk_lock);
+-	INIT_LIST_HEAD(&cpts->events);
++	mutex_init(&cpts->rx_ts_lock);
++	INIT_LIST_HEAD(&cpts->events_tx);
++	INIT_LIST_HEAD(&cpts->events_rx);
+ 	INIT_LIST_HEAD(&cpts->pool);
+ 	spin_lock_init(&cpts->lock);
+ 	skb_queue_head_init(&cpts->txq);
 -- 
-Cheers
-
-David / dhildenb
+2.34.1
 
 
