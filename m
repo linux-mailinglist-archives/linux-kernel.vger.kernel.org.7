@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-848124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336C8BCC95A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:42:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8BEFBCC966
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2151E4EC958
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400813C2E1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3596283144;
-	Fri, 10 Oct 2025 10:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Cslbs//z"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EBB1B4F0A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44738283CB8;
+	Fri, 10 Oct 2025 10:44:00 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690E11B4F0A;
+	Fri, 10 Oct 2025 10:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760092945; cv=none; b=Fen3qgbQubZ3WRanngqw8rJcO3aOHNHvH+I8JCaWP7LRH5oDMWurwyGkD+n2D4o8eqnEvPXFiYROMmQNQFsbrOL1G4kCg5rZpmHsLX1K0CPKoTz4Fmisf0GEsOK2wvu3p3fSnlDqTaQmir40V1+Nnax8tG7XIredgZUr/BoD8Vs=
+	t=1760093039; cv=none; b=XH7koABUN/ELGbgKsVyQWY/xPPI36aVI+UN44m4OBupcBO+0920c3BlEDVz64LxJDYFvJ8wH5EA38wY7wDVtl9Fec6YvNoMepfqFeuKFgfWuCs7PI9rv0p7P9M0sZmp7l0c4c4weR3Taq7BdyaCXRN6MHNJhAlH0Y4wUwJBJIYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760092945; c=relaxed/simple;
-	bh=lS0LeNdQo78bDhZSXrwZOByTYx9OfKfj+hv78w8WymA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nFNepqBrovii+/BcwkSxfjDMk/YlEGL7rEE1kRFc/u/M0MQwRsFmPyG89IXseN+3Gy5NL8NwT7hlcerSde+kGZA8lqF8rQJHhFtGTl9GbYHdIic351QmsB1kiZkaRMNdUYTczjsDYlAawSImH1vQMEoRDKNyTBgezS+muohkuX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Cslbs//z; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6eee7e44-cdf6-45c6-8114-b62c57a2a4e3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760092940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F/2MWyCrDxrhI4+1rtpNAxA+OW+hGmrTRFH+Isw9N58=;
-	b=Cslbs//z93t0gMKiCEWHXID71xt7lvfMI0M3fFC5xhYuiQsVeF3TJ0NUp9y/b43gWcDphY
-	MW0ggVSJrMRxCNTvfmHKPrhNOzBTr8zt4tqd/760Z3641Xyg60wpZgYKSC0hfaHYxISH7o
-	UPpkXfhV/UFG75lh0+GHaWreE282Xvk=
-Date: Fri, 10 Oct 2025 18:42:13 +0800
+	s=arc-20240116; t=1760093039; c=relaxed/simple;
+	bh=w0UyaiAGorJJnhWsrzaZobRZhjWgzEJUC6LvbliauOY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HQCZ/oWaPk5sPGFQrnwEenUM5zEgGqHL+v6SCZZc3EXNWs+g17NiVNDHmtMPC/RRC+XAw6fcAfFtnKC7L888mrG1U4h85nkNH2xyK27E98+xPjxh353WQaEkaL2cHiIXOE5k3sNWteUZv7hV6KxQ5Hdl7OxnLbE92Dfo/J//4Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: sUathrCVT9aW9ipNGqGSqw==
+X-CSE-MsgGUID: tQUFshdUQn68vzO/1OHzxA==
+X-IronPort-AV: E=Sophos;i="6.19,218,1754928000"; 
+   d="scan'208";a="129069490"
+From: =?gb2312?B?wqy5+rrq?= <luguohong@xiaomi.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jiri Kosina
+	<jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+CC: "kenalba@google.com" <kenalba@google.com>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, =?gb2312?B?wO7F9A==?= <lipeng43@xiaomi.com>,
+	=?gb2312?B?y87D3MPc?= <songmimi@xiaomi.com>, =?gb2312?B?wqy5+rrq?=
+	<luguohong@xiaomi.com>
+Subject: =?gb2312?B?tPC4tDogW0V4dGVybmFsIE1haWxdW1BBVENIXSBISUQ6IGhpZC1pbnB1dDog?=
+ =?gb2312?Q?only_ignore_0_battery_events_for_digitizers?=
+Thread-Topic: [External Mail][PATCH] HID: hid-input: only ignore 0 battery
+ events for digitizers
+Thread-Index: AQHcOazZHRANaD7djkOKShmNHYh1F7S7MO8b
+Date: Fri, 10 Oct 2025 10:43:55 +0000
+Message-ID: <6ec0ba2fd4ba42bf91fa8c5dbfb5e1c0@xiaomi.com>
+References: <of5qjeij72wduee3zyf26drfcwhpsl4sjs3v6tfjv3tgl3xsol@sss7zcyawwaz>
+In-Reply-To: <of5qjeij72wduee3zyf26drfcwhpsl4sjs3v6tfjv3tgl3xsol@sss7zcyawwaz>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new v3 3/3] mm/khugepaged: merge PTE scanning logic
- into a new helper
-Content-Language: en-US
-To: Dev Jain <dev.jain@arm.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- ioworker0@gmail.com, david@redhat.com, richard.weiyang@gmail.com,
- lorenzo.stoakes@oracle.com, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, linux-mm@kvack.org
-References: <20251008043748.45554-1-lance.yang@linux.dev>
- <20251008043748.45554-4-lance.yang@linux.dev>
- <ce95ab8a-70dc-4159-b38b-dd9f3ffc9aa1@arm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <ce95ab8a-70dc-4159-b38b-dd9f3ffc9aa1@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-
-
-On 2025/10/10 17:10, Dev Jain wrote:
-> 
-> On 08/10/25 10:07 am, Lance Yang wrote:
->>   	}
->>   }
->>   
->> +/*
->> + * thp_collapse_check_pte - Check if a PTE is suitable for THP collapse
->> + * @pte:           The PTE to check
->> + * @vma:           The VMA the PTE belongs to
->> + * @addr:          The virtual address corresponding to this PTE
->> + * @foliop:        On success, used to return a pointer to the folio
->> + *                 Must be non-NULL
->> + * @none_or_zero:  Counter for none/zero PTEs. Must be non-NULL
->> + * @unmapped:      Counter for swap PTEs. Can be NULL if not scanning swaps
->> + * @shared:        Counter for shared pages. Must be non-NULL
->> + * @scan_result:   Used to return the failure reason (SCAN_*) on a
->> + *                 PTE_CHECK_FAIL return. Must be non-NULL
->> + * @cc:            Collapse control settings
->> + *
->> + * Returns:
->> + *   PTE_CHECK_SUCCEED  - PTE is suitable, proceed with further checks
->> + *   PTE_CHECK_CONTINUE - Skip this PTE and continue scanning
->> + *   PTE_CHECK_FAIL     - Abort collapse scan
->> + */
->> +static inline int thp_collapse_check_pte(pte_t pte, struct vm_area_struct *vma,
->> +		unsigned long addr, struct folio **foliop, int *none_or_zero,
->> +		int *unmapped, int *shared, int *scan_result,
->> +		struct collapse_control *cc)
->> +{
->> +	struct folio *folio = NULL;
-> 
-> I think initialization is not needed here?Otherwise, LGTM. Reviewed-by: Dev Jain <dev.jain@arm.com>
-
-Yep. It's a minor thing, so I'll fold that in if a new version is 
-needed. Thanks!
+VGhhbmtzLCBEbWl0cnkuDQoNCkhpIEppcmkgS29zaW5hLCBCZW5qYW1pbiBUaXNzb2lyZXMsIHBs
+ZWFzZSBsZXQgbWUga25vdyBvbmNlIHlvdSd2ZSBtZXJnZWQgdGhpcyBwYXRjaCBpbnRvIHRoZSBr
+ZXJuZWwuIFRoYW5rcyENCg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Xw0Kt6K8/sjLOiBEbWl0cnkgVG9yb2tob3YgPGRtaXRyeS50b3Jva2hvdkBnbWFpbC5jb20+DQq3
+osvNyrG85DogMjAyNcTqMTDUwjEwyNUgMTQ6MTINCsrVvP7IyzogSmlyaSBLb3NpbmE7IEJlbmph
+bWluIFRpc3NvaXJlcw0Ks63LzTogwqy5+rrqOyBrZW5hbGJhQGdvb2dsZS5jb207IGxpbnV4LWlu
+cHV0QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0K1vfM4jog
+W0V4dGVybmFsIE1haWxdW1BBVENIXSBISUQ6IGhpZC1pbnB1dDogb25seSBpZ25vcmUgMCBiYXR0
+ZXJ5IGV2ZW50cyBmb3IgZGlnaXRpemVycw0KDQpbzeKyv9PKvP5dILTL08q8/sC01LTT2tChw9e5
+q8u+zeKyv6Osx+u998n3tKbA7aGjyPS21NPKvP6wssir0NS05tLJo6zH672r08q8/teqt6K4+G1p
+c2VjQHhpYW9taS5jb229+NDQt7TAoQ0KDQpDb21taXQgNTgxYzQ0ODQ3NjllICgiSElEOiBpbnB1
+dDogbWFwIGRpZ2l0aXplciBiYXR0ZXJ5IHVzYWdlIikgYWRkZWQNCmhhbmRsaW5nIG9mIGJhdHRl
+cnkgZXZlbnRzIGZvciBkaWdpdGl6ZXJzICh0eXBpY2FsbHkgZm9yIGJhdHRlcmllcw0KcHJlc2Vu
+dGVkIGluIHN0eWxpKS4gRGlnaXRpemVycyB0eXBpY2FsbHkgcmVwb3J0IGNvcnJlY3QgYmF0dGVy
+eSBsZXZlbHMNCm9ubHkgd2hlbiBzdHlsdXMgaXMgYWN0aXZlbHkgdG91Y2hpbmcgdGhlIHN1cmZh
+Y2UsIGFuZCBpbiBvdGhlciBjYXNlcw0KdGhleSBtYXkgcmVwb3J0IGJhdHRlcnkgbGV2ZWwgb2Yg
+MC4gVG8gYXZvaWQgY29uZnVzaW5nIGNvbnN1bWVycyBvZiB0aGUNCmJhdHRlcnkgaW5mb3JtYXRp
+b24gdGhlIGNvZGUgd2FzIGFkZGVkIHRvIGZpbGVyIG91dCByZXBvcnRzIHdpdGggMA0KYmF0dGVy
+eSBsZXZlbHMuDQoNCkhvd2V2ZXIgdGhlcmUgZXhpc3Qgb3RoZXIga2luZHMgb2YgZGV2aWNlcyB0
+aGF0IG1heSBsZWdpdGltYXRlbHkgcmVwb3J0DQowIGJhdHRlcnkgbGV2ZWxzLiBGaXggdGhpcyBi
+eSBmaWx0ZXJpbmcgb3V0IDAtbGV2ZWwgcmVwb3J0cyBvbmx5IGZvcg0KZGlnaXRpemVyIHVzYWdl
+cywgYW5kIGNvbnRpbnVlIHJlcG9ydGluZyB0aGVtIGZvciBvdGhlciBraW5kcyBvZiBkZXZpY2Vz
+DQooU21hcnQgQmF0dGVyaWVzLCBldGMpLg0KDQpSZXBvcnRlZC1ieTogwqy5+rrqIDxsdWd1b2hv
+bmdAeGlhb21pLmNvbT4NClRlc3RlZC1ieTogwqy5+rrqIDxsdWd1b2hvbmdAeGlhb21pLmNvbT4N
+CkZpeGVzOiA1ODFjNDQ4NDc2OWUgKCJISUQ6IGlucHV0OiBtYXAgZGlnaXRpemVyIGJhdHRlcnkg
+dXNhZ2UiKQ0KU2lnbmVkLW9mZi1ieTogRG1pdHJ5IFRvcm9raG92IDxkbWl0cnkudG9yb2tob3ZA
+Z21haWwuY29tPg0KLS0tDQogZHJpdmVycy9oaWQvaGlkLWlucHV0LmMgfCAxMCArKysrKysrLS0t
+DQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1pbnB1dC5jIGIvZHJpdmVycy9oaWQvaGlkLWlucHV0
+LmMNCmluZGV4IGZmMTc4NGI1YzJhNC4uYmEzZjY2NTVhZjllIDEwMDY0NA0KLS0tIGEvZHJpdmVy
+cy9oaWQvaGlkLWlucHV0LmMNCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1pbnB1dC5jDQpAQCAtNTk1
+LDE0ICs1OTUsMTggQEAgc3RhdGljIHZvaWQgaGlkaW5wdXRfY2xlYW51cF9iYXR0ZXJ5KHN0cnVj
+dCBoaWRfZGV2aWNlICpkZXYpDQogICAgICAgIGRldi0+YmF0dGVyeSA9IE5VTEw7DQogfQ0KDQot
+c3RhdGljIHZvaWQgaGlkaW5wdXRfdXBkYXRlX2JhdHRlcnkoc3RydWN0IGhpZF9kZXZpY2UgKmRl
+diwgaW50IHZhbHVlKQ0KK3N0YXRpYyB2b2lkIGhpZGlucHV0X3VwZGF0ZV9iYXR0ZXJ5KHN0cnVj
+dCBoaWRfZGV2aWNlICpkZXYsDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1
+bnNpZ25lZCBpbnQgdXNhZ2UsIGludCB2YWx1ZSkNCiB7DQogICAgICAgIGludCBjYXBhY2l0eTsN
+Cg0KICAgICAgICBpZiAoIWRldi0+YmF0dGVyeSkNCiAgICAgICAgICAgICAgICByZXR1cm47DQoN
+Ci0gICAgICAgaWYgKHZhbHVlID09IDAgfHwgdmFsdWUgPCBkZXYtPmJhdHRlcnlfbWluIHx8IHZh
+bHVlID4gZGV2LT5iYXR0ZXJ5X21heCkNCisgICAgICAgaWYgKCh1c2FnZSAmIEhJRF9VU0FHRV9Q
+QUdFKSA9PSBISURfVVBfRElHSVRJWkVSICYmIHZhbHVlID09IDApDQorICAgICAgICAgICAgICAg
+cmV0dXJuOw0KKw0KKyAgICAgICBpZiAodmFsdWUgPCBkZXYtPmJhdHRlcnlfbWluIHx8IHZhbHVl
+ID4gZGV2LT5iYXR0ZXJ5X21heCkNCiAgICAgICAgICAgICAgICByZXR1cm47DQoNCiAgICAgICAg
+Y2FwYWNpdHkgPSBoaWRpbnB1dF9zY2FsZV9iYXR0ZXJ5X2NhcGFjaXR5KGRldiwgdmFsdWUpOw0K
+QEAgLTE1MTgsNyArMTUyMiw3IEBAIHZvaWQgaGlkaW5wdXRfaGlkX2V2ZW50KHN0cnVjdCBoaWRf
+ZGV2aWNlICpoaWQsIHN0cnVjdCBoaWRfZmllbGQgKmZpZWxkLCBzdHJ1Y3QNCiAgICAgICAgICAg
+ICAgICBib29sIGhhbmRsZWQgPSBoaWRpbnB1dF9zZXRfYmF0dGVyeV9jaGFyZ2Vfc3RhdHVzKGhp
+ZCwgdXNhZ2UtPmhpZCwgdmFsdWUpOw0KDQogICAgICAgICAgICAgICAgaWYgKCFoYW5kbGVkKQ0K
+LSAgICAgICAgICAgICAgICAgICAgICAgaGlkaW5wdXRfdXBkYXRlX2JhdHRlcnkoaGlkLCB2YWx1
+ZSk7DQorICAgICAgICAgICAgICAgICAgICAgICBoaWRpbnB1dF91cGRhdGVfYmF0dGVyeShoaWQs
+IHVzYWdlLT5oaWQsIHZhbHVlKTsNCg0KICAgICAgICAgICAgICAgIHJldHVybjsNCiAgICAgICAg
+fQ0KLS0NCjIuNTEuMC43NDAuZzZhZGIwNTRkMTItZ29vZw0KDQoNCi0tDQpEbWl0cnkNCiMvKioq
+Kioqsb7Tyrz+vLDG5Li9vP66rNPQ0KHD17mry761xLGjw9zQxc+io6y99s/e09q3osvNuPjJz8Pm
+tdjWt9bQwdCz9rXEuPbIy7vyyLrX6aGjvfvWucjOus7G5Mv7yMvS1MjOus7Qzsq9yrnTw6OosPzA
+qLWrsrvP3tPayKuyv7vysr+31rXY0LnCtqGiuLTWxqGiu/LJoreio6mxvtPKvP7W0LXE0MXPoqGj
+yOe5+8T6tO3K1cHLsb7Tyrz+o6zH68T6waK8tLXnu7C78tPKvP7NqNaqt6K8/sjLsqLJvrP9sb7T
+yrz+o6EgVGhpcyBlLW1haWwgYW5kIGl0cyBhdHRhY2htZW50cyBjb250YWluIGNvbmZpZGVudGlh
+bCBpbmZvcm1hdGlvbiBmcm9tIFhJQU9NSSwgd2hpY2ggaXMgaW50ZW5kZWQgb25seSBmb3IgdGhl
+IHBlcnNvbiBvciBlbnRpdHkgd2hvc2UgYWRkcmVzcyBpcyBsaXN0ZWQgYWJvdmUuIEFueSB1c2Ug
+b2YgdGhlIGluZm9ybWF0aW9uIGNvbnRhaW5lZCBoZXJlaW4gaW4gYW55IHdheSAoaW5jbHVkaW5n
+LCBidXQgbm90IGxpbWl0ZWQgdG8sIHRvdGFsIG9yIHBhcnRpYWwgZGlzY2xvc3VyZSwgcmVwcm9k
+dWN0aW9uLCBvciBkaXNzZW1pbmF0aW9uKSBieSBwZXJzb25zIG90aGVyIHRoYW4gdGhlIGludGVu
+ZGVkIHJlY2lwaWVudChzKSBpcyBwcm9oaWJpdGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFp
+bCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGJ5IHBob25lIG9yIGVtYWlsIGlt
+bWVkaWF0ZWx5IGFuZCBkZWxldGUgaXQhKioqKioqLyMNCg==
 
