@@ -1,323 +1,149 @@
-Return-Path: <linux-kernel+bounces-848261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E5DBCD0B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:09:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A52DBCD0C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478C13AA996
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:09:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F8E1A65A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114D32F0C5B;
-	Fri, 10 Oct 2025 13:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DABB2F0C63;
+	Fri, 10 Oct 2025 13:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIbiIsdH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Sw73Tyjl"
+Received: from fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.57.120.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A86E28750B;
-	Fri, 10 Oct 2025 13:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6C11F1538
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.57.120.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101733; cv=none; b=XeTn7x8R+4t0IiX41Z5uLC825YB62l7kKEVrZFi9ysV3UlsR6LtjGCwrl3EYG9I1Rj4GncNMJOvx2ov+60vI2dxXhr4eSxy148m7tZijf8lC49JmqeY/S+HazTbI22mfBqxaiekR+9SNRGSDVHqhHNEj9Ukmjb0o5Zd0qo9qePQ=
+	t=1760101809; cv=none; b=LfpToOocpQ6ZAWbNUOPKxw1PKzZ+UXksVa05sHAIjTGfFT6ERi4WeNK7m6jelbITGCmr7tCzCIoCzIKu/myFWo9Tc3zkzVe3a9oDBkiCUsRrQmQNRn8vjXicUFVxa2IW+tSEDShNNBlXOuZlOG2caZNrDUCTaYTudHCUEM5VhFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101733; c=relaxed/simple;
-	bh=JR4Hk4k6IEBdj5ijdDCZpF2xNyBRaRCjepvB+KddypA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVGrDAEm6HwSKI629t8ogJ1NVQk9E9SibbZfGP4osn8qoGRGxwcJcft1sUE0XmALa+TAUs2i0sCl1WL/uFK+iii/3QC3Pn0jYFndZSHN46UCakEOFbQA5zmqPqqYQl3GYbL95Il0B+wfxrjA/PVdJ8Mvk/qoXuRw+4wHX2fEkIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIbiIsdH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8244C4CEF9;
-	Fri, 10 Oct 2025 13:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760101732;
-	bh=JR4Hk4k6IEBdj5ijdDCZpF2xNyBRaRCjepvB+KddypA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qIbiIsdHT05O167kEYpAx3aBLhmN2BkhLk6XqhSXuW/tyUO8B2bAyM94WKz55vhIN
-	 QROsXHXlP63C3lm0MVn/0NODpryXMeOKx+dfXljdvSAM0j5q/HrH59ZR/mfw4SghYV
-	 9eeNcC7iS/GUP3AuwhlaG+A9rjXPeTmz7xkcI9B9wf3N545kDwyBeXiDtOvkvoxXAg
-	 yg0VqAntGtZr6fpEF6Vv8fWjmBb/cQLgkoEAwxkIHP7Te2FCYMXaC+pq/YMuvoduWp
-	 g0PqOWXQMH/yosnRDmNv3ruDX+qDJgomh8WTSQ2FAKKjmi5nim0qcwXBR0zNAJjReI
-	 r7o9ZDdY6LiYg==
-Date: Fri, 10 Oct 2025 22:08:41 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Tianyou Li <tianyou.li@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>, wangyang.guo@intel.com,
-	pan.deng@intel.com, zhiguo.zhou@intel.com, jiebin.sun@intel.com,
-	thomas.falcon@intel.com, dapeng1.mi@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] perf tools c2c: Highlight the contention line in
- the annotate browser
-Message-ID: <aOkFWaFD42Jy7V0f@google.com>
-References: <aOTOEcNOiUiEJ9tz@google.com>
- <20251010083549.1839330-3-tianyou.li@intel.com>
+	s=arc-20240116; t=1760101809; c=relaxed/simple;
+	bh=LyTR9DtGywm23FUElXyBYi6OMxaV/1yL2eK31ENS4s0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o4hzKicFSdakJpXNu9Ey8YwEwbP8/Aad2XRZezvvVwbKXVTALVcN8YhlEcPqT1zw279t3ihomjV3UDFHaemIjKLduUF6JkUZpauIbcZl1ENZq/gvBzdyj2IikSr9FD88PbeOuXToXDHcJnnKb7obRaRdUITVBsW0bP8gfAB9kms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Sw73Tyjl; arc=none smtp.client-ip=52.57.120.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1760101808; x=1791637808;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QSXdhuJElvACKoDk9jjk+dDHt2vVcqmKZsYu2gcSkyY=;
+  b=Sw73Tyjl4sroglkUfsfya4M2nR2gYX7rnySIN9wz7qb0DNHQhRtaIDiL
+   qx/ruQR9sZwnW++WgNyiQEJRbUygyycTrqSJ9kQVI8yK1DYDHlbGTR0mf
+   koz3Q7HQjgxzn19mnx4FQg5lou6RJzvJn8W5f5UcQpWSVK34OhMqCL1RK
+   LghChD2yziICbnprHSfgsPegpY3H7H3RWYD2Esz6OAdA1qxVLbdVNTPRh
+   spUA3WclkHj55MPjP5tbtlA7ZKhR1yGVZaTlsaXWtcMV7vhLcT0W5yoje
+   VkY2Bqf8Tah2l+H29HTcztCOsJf/9zN4GTpBvNVtAwwTBurdCXUCTzXI/
+   Q==;
+X-CSE-ConnectionGUID: RmYK/vrnRmOMiAlUxTUluw==
+X-CSE-MsgGUID: /TWQkBlYQ1KHZqPjEdb4kw==
+X-IronPort-AV: E=Sophos;i="6.19,219,1754956800"; 
+   d="scan'208";a="3314556"
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 13:09:52 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.226:4083]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.44.161:2525] with esmtp (Farcaster)
+ id 3b800073-49ab-47e2-a2fb-f0357c5bdc55; Fri, 10 Oct 2025 13:09:52 +0000 (UTC)
+X-Farcaster-Flow-ID: 3b800073-49ab-47e2-a2fb-f0357c5bdc55
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Fri, 10 Oct 2025 13:09:50 +0000
+Received: from dev-dsk-abuehaze-1c-21d23c85.eu-west-1.amazon.com
+ (10.13.244.41) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.2562.20; Fri, 10 Oct 2025 13:09:45 +0000
+From: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>
+To: <clm@meta.com>
+CC: <bsegall@google.com>, <clm@fb.com>, <dietmar.eggemann@arm.com>,
+	<joseph.salisbury@oracle.com>, <juri.lelli@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <mgorman@suse.de>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
+	<vschneid@redhat.com>, <abuehaze@amazon.com>, <cpru@amazon.com>
+Subject: Re: [REGRESSION][v6.17-rc1]sched/fair: Bump sd->max_newidle_lb_cost when newidle balance fails
+Date: Fri, 10 Oct 2025 13:09:32 +0000
+Message-ID: <20251010130932.14768-1-abuehaze@amazon.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
+References: <28340138-a00e-47bc-a36f-270a01ac83b4@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251010083549.1839330-3-tianyou.li@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWB003.ant.amazon.com (10.13.139.135) To
+ EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
-Hello,
+>> Hi Chris,
+>> 
+>> During testing, we are seeing a ~6% performance regression with the 
+>> upstream stable v6.12.43 kernel (And Oracle UEK 
+>> 6.12.0-104.43.4.el9uek.x86_64 kernel) when running the Phoronix 
+>> pts/apache benchmark with 100 concurrent requests [0].  The regression 
+>> is seen with the following hardware:
+>> 
+>> PROCESSOR: Intel Xeon Platinum 8167M Core Count: 8 Thread Count: 16 
+>> Extensions: SSE 4.2 + AVX512CD + AVX2 + AVX + RDRAND + FSGSBASE Cache 
+>> Size: 16 MB Microcode: 0x1 Core Family: Cascade Lake
+>> 
+>> After performing a bisect, we found that the performance regression was 
+>> introduced by the following commit:
+>> 
+>> Stable v6.12.43: fc4289233e4b ("sched/fair: Bump sd->max_newidle_lb_cost 
+>> when newidle balance fails")
+>> Mainline v6.17-rc1: 155213a2aed4 ("sched/fair: Bump 
+>> sd->max_newidle_lb_cost when newidle balance fails")
+>> 
+>> Reverting this commit causes the performance regression to not exist.
+>> 
+>> I was hoping to get your feedback, since you are the patch author.  Do 
+>> you think gathering any additional data will help diagnose this issue?
 
-On Fri, Oct 10, 2025 at 04:35:49PM +0800, Tianyou Li wrote:
-> Add support to highlight the contention line in the annotate browser,
-> use 'TAB'/'UNTAB' to refocus to the contention line.
-> 
-> Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
-> Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
-> Reviewed-by: Pan Deng <pan.deng@intel.com>
-> Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
-> Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
-> Tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  tools/perf/builtin-annotate.c     |  2 +-
->  tools/perf/builtin-c2c.c          |  6 +++-
->  tools/perf/ui/browsers/annotate.c | 52 ++++++++++++++++++++++++++++---
->  tools/perf/ui/browsers/hists.c    |  2 +-
->  tools/perf/util/hist.h            |  6 ++--
->  5 files changed, 59 insertions(+), 9 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> index 646f43b0f7c4..d89796648bec 100644
-> --- a/tools/perf/builtin-annotate.c
-> +++ b/tools/perf/builtin-annotate.c
-> @@ -519,7 +519,7 @@ static void hists__find_annotations(struct hists *hists,
->  			/* skip missing symbols */
->  			nd = rb_next(nd);
->  		} else if (use_browser == 1) {
-> -			key = hist_entry__tui_annotate(he, evsel, NULL);
-> +			key = hist_entry__tui_annotate(he, evsel, NULL, NO_INITIAL_AL_ADDR);
+> Hi everyone,
 
-I think it's too long.  How about NO_ADDR or ZERO_ADDR?
+> Peter, we've had a collection of regression reports based on this
+> change, so it sounds like we need to make it less aggressive, or maybe
+> we need to make the degrading of the cost number more aggressive?
 
->  
->  			switch (key) {
->  			case -1:
-> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> index 878913115b45..7ee3c8a3f66c 100644
-> --- a/tools/perf/builtin-c2c.c
-> +++ b/tools/perf/builtin-c2c.c
-> @@ -2586,6 +2586,7 @@ static int perf_c2c__toggle_annotation(struct hist_browser *browser)
->  	struct symbol *sym = NULL;
->  	struct annotated_source *src = NULL;
->  	struct c2c_hist_entry *c2c_he = NULL;
-> +	u64 al_addr = NO_INITIAL_AL_ADDR;
->  
->  	if (!perf_c2c__has_annotation(he->hists->hpp_list)) {
->  		ui_browser__help_window(&browser->b, "No annotation support");
-> @@ -2609,8 +2610,11 @@ static int perf_c2c__toggle_annotation(struct hist_browser *browser)
->  		return 0;
->  	}
->  
-> +	if (he->mem_info)
-> +		al_addr = mem_info__iaddr(he->mem_info)->al_addr;
-> +
->  	c2c_he = container_of(he, struct c2c_hist_entry, he);
-> -	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL);
-> +	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL, al_addr);
+> Joe (and everyone else who has hit this), can I talk you into trying the
+> drgn from
+> https://lore.kernel.org/lkml/2fbf24bc-e895-40de-9ff6-5c18b74b4300@meta.com/
 
-I think it's better to add sample info to annotation like Ravi said.
-How about adding this? (not tested)
+> I'm curious if it degrades at all or just gets stuck up high.
 
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -336,6 +336,8 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
-        c2c_he__set_node(c2c_he, sample);
- 
-        hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
-+       if (perf_c2c__has_annotation(c2c_hists->hists.hpp_list))
-+               addr_map_symbol__inc_samples(mem_info__iaddr(mi), sample, evsel);
-        ret = hist_entry__append_callchain(he, sample);
- 
-        if (!ret) {
+Hi All,
 
+We are also seeing 20-30% performance regression on Database workloads
+specifically Cassandra & Mongodb across multiple hardware platforms. We
+have seen the regression on v6.1.149 & v6.12.43 and we were able to
+bisect the regression to 155213a2aed4 ("sched/fair: Bump 
+> sd->max_newidle_lb_cost when newidle balance fails"). 
 
->  }
->  
->  static void c2c_browser__update_nr_entries(struct hist_browser *hb)
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> index 32da310b3b62..1de9bb88c379 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -300,6 +300,13 @@ static void disasm_rb_tree__insert(struct annotate_browser *browser,
->  	rb_insert_color(&al->rb_node, root);
->  }
->  
-> +static void disasm_rb_tree__insert_if_empty(struct annotate_browser *browser,
-> +				struct annotation_line *al)
-> +{
-> +	if (rb_first(&browser->entries) == NULL)
-> +		disasm_rb_tree__insert(browser, al);
-> +}
-> +
->  static void annotate_browser__set_top(struct annotate_browser *browser,
->  				      struct annotation_line *pos, u32 idx)
->  {
-> @@ -396,6 +403,22 @@ static struct annotation_line *annotate_browser__find_new_asm_line(
->  	return NULL;
->  }
->  
-> +static struct annotation_line *annotate_browser__find_al_addr(struct annotate_browser *browser,
-> +						     u64 al_addr)
+We were able to reproduce this regression on below AWS instance types:
 
-We have annotated_source__get_line().
+- c7a.4xlarge (16 4th generation AMD EPYC processors + 32 GiB RAM)
+- c7i.4xlarge (16 4th Generation Intel Xeon Scalable processors + 32GiB RAM)
+- c7g.4xlarge (16 AWS Arm based Graviton3 processors + 32 GiB RAM)
+- c8g.4xlarge (16 AWS Arm based Graviton4 processors + 32 GiB RAM)
 
+We will try drgn from
+https://lore.kernel.org/lkml/2fbf24bc-e895-40de-9ff6-5c18b74b4300@meta.com/
+ and will let you know the results. Meanwhile and given the significant
+impact, Should we revert this commit on latest mainline & on impacted stable 
+branches to stop the bleeding until we have a permanent fix?
 
-> +{
-> +	struct symbol *sym = browser->he->ms.sym;
-> +	struct list_head *head = browser->b.entries;
-> +	struct annotation_line *al;
-> +
-> +	/* find an annotation line in the new list with the same al_addr */
-> +	list_for_each_entry(al, head, node) {
-> +		if (sym->start + al->offset == al_addr)
-> +			return al;
-> +	}
-> +	/* There are no asm lines */
-> +	return NULL;
-> +}
-> +
->  static struct annotation_line *annotate_browser__find_next_asm_line(
->  					struct annotate_browser *browser,
->  					struct annotation_line *al)
-> @@ -605,7 +628,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
->  	target_ms.map = ms->map;
->  	target_ms.sym = dl->ops.target.sym;
->  	annotation__unlock(notes);
-> -	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt);
-> +	__hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt, NO_INITIAL_AL_ADDR);
->  
->  	/*
->  	 * The annotate_browser above changed the title with the target function
-> @@ -897,6 +920,12 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  
->  	annotate_browser__calc_percent(browser, evsel);
->  
-> +	if (browser->curr_hot == NULL && browser->selection != NULL) {
-> +		disasm_rb_tree__insert_if_empty(browser, browser->selection);
-> +		browser->curr_hot = rb_first(&browser->entries);
-> +		browser->b.use_navkeypressed = false;
-> +	}
+Thank you.
 
-Then it can be like this.
-
-	if (browser->selection != NULL)
-		browser->curr_hot = &selection->rb_node;
-
-> +
->  	if (browser->curr_hot) {
->  		annotate_browser__set_rb_top(browser, browser->curr_hot);
->  		browser->b.navkeypressed = false;
-> @@ -1003,6 +1032,8 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  				nd = annotate_browser__rb_node_by_idx_asm(browser, idx_asm_nd);
->  				browser->curr_hot = annotate_browser__rb_node_by_idx_asm(browser,
->  							idx_asm_curr_hot);
-> +				disasm_rb_tree__insert_if_empty(browser,
-> +					rb_entry(nd, struct annotation_line, rb_node));
-
-I feel like it should call annotate_browser__calc_percent() after
-annotate_browser__toggle_source().  Then just updating curr_hot would
-work.
-
-Thanks,
-Namhyung
-
-
->  			}
->  			annotate__scnprintf_title(hists, title, sizeof(title));
->  			annotate_browser__show(browser, title, help);
-> @@ -1139,19 +1170,19 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  }
->  
->  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
-> -			     struct hist_browser_timer *hbt)
-> +			     struct hist_browser_timer *hbt, u64 al_addr)
->  {
->  	/* reset abort key so that it can get Ctrl-C as a key */
->  	SLang_reset_tty();
->  	SLang_init_tty(0, 0, 0);
->  	SLtty_set_suspend_state(true);
->  
-> -	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt);
-> +	return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt, al_addr);
->  }
->  
->  int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  			       struct evsel *evsel,
-> -			       struct hist_browser_timer *hbt)
-> +			       struct hist_browser_timer *hbt, u64 al_addr)
->  {
->  	struct symbol *sym = ms->sym;
->  	struct annotation *notes = symbol__annotation(sym);
-> @@ -1221,6 +1252,19 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  	if (annotate_opts.hide_src_code)
->  		ui_browser__init_asm_mode(&browser.b);
->  
-> +	/*
-> +	 * If al_addr is set, it means that there should be a line
-> +	 * intentionally selected, not based on the percentages
-> +	 * which caculated by the event sampling. In this case, we
-> +	 * convey this information into the browser selection, where
-> +	 * the selection in other cases should be empty.
-> +	 */
-> +	if (al_addr != NO_INITIAL_AL_ADDR) {
-> +		struct annotation_line *al = annotate_browser__find_al_addr(&browser, al_addr);
-> +
-> +		browser.selection = al;
-> +	}
-> +
->  	ret = annotate_browser__run(&browser, evsel, hbt);
->  
->  	debuginfo__delete(browser.dbg);
-> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-> index 487c0b08c003..c34ddc4ca13f 100644
-> --- a/tools/perf/ui/browsers/hists.c
-> +++ b/tools/perf/ui/browsers/hists.c
-> @@ -2485,7 +2485,7 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
->  		evsel = hists_to_evsel(browser->hists);
->  
->  	he = hist_browser__selected_entry(browser);
-> -	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt);
-> +	err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt, NO_INITIAL_AL_ADDR);
->  	/*
->  	 * offer option to annotate the other branch source or target
->  	 * (if they exists) when returning from annotate
-> diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-> index c64005278687..9542cf43bd2a 100644
-> --- a/tools/perf/util/hist.h
-> +++ b/tools/perf/util/hist.h
-> @@ -713,12 +713,14 @@ struct block_hist {
->  #include "../ui/keysyms.h"
->  void attr_to_script(char *buf, struct perf_event_attr *attr);
->  
-> +#define NO_INITIAL_AL_ADDR 0
-> +
->  int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  			       struct evsel *evsel,
-> -			       struct hist_browser_timer *hbt);
-> +			       struct hist_browser_timer *hbt, u64 al_addr);
->  
->  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
-> -			     struct hist_browser_timer *hbt);
-> +			     struct hist_browser_timer *hbt, u64 ad_addr);
->  
->  int evlist__tui_browse_hists(struct evlist *evlist, const char *help, struct hist_browser_timer *hbt,
->  			     float min_pcnt, struct perf_env *env, bool warn_lost_event);
-> -- 
-> 2.47.1
-> 
+Hazem
 
