@@ -1,121 +1,91 @@
-Return-Path: <linux-kernel+bounces-848384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CB4BCD9BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:49:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283D2BCD9D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DEAF189E187
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:50:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B397D4E47FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4122F0693;
-	Fri, 10 Oct 2025 14:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5992F658A;
+	Fri, 10 Oct 2025 14:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3OeukVv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b="K3NZHCCU"
+Received: from sender3-pp-o95.zoho.com (sender3-pp-o95.zoho.com [136.143.184.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB012F5A33;
-	Fri, 10 Oct 2025 14:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760107788; cv=none; b=e5Zoe2hbZYvfrIlSYhUk9hazywReqO+z41IQY5aHMxAQJrZD3jjZkDd0t1FeeqSxsJCYWVzNBRycgNHyqgYgP5Ms8uN+B02zQbe8u8A0BzbUHdW1oweEH7g5zSyE9hACyiwSVFN0CTGsmEpijDQ+skIXm3m4+zUzoIgKltatcWQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760107788; c=relaxed/simple;
-	bh=e1bcvsoWZNLQobGksLmW2VF9li2+bkiUFOuPrW1bo/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIDty3L0tTYAHrZFIPC5MvUZOG+X/nJxoaI+bPF//R5TjECYPRRuYZIRKRt3YOgor6+A9lnYvbkPhMb5jD9VFLPZIbsy4Ku0F81WX6DEojbw012T6VREg6aDxmvESIuk+PT0qZyFZXxX+Ta/RWmRd7ccn4KiqPx43/1Cj3eThSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3OeukVv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E813FC4CEF1;
-	Fri, 10 Oct 2025 14:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760107787;
-	bh=e1bcvsoWZNLQobGksLmW2VF9li2+bkiUFOuPrW1bo/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P3OeukVv9ab/fLuTN2A6/BfzhxyvshB8YrWwYXMmQ1a+gsss0ocL3K6P8Esrc+MyL
-	 Qj5NElOYaDmAsmKTViosjOL3HQuwPrQ/2alfbQFAil9TN6bUtLPrt8ZP5kL6nMyZoo
-	 jasuTYVwBzQ3RVFsZ/ew14wKEYf+k1OrIrR/ft02/wc8nEKSESMYbrQnGLTtexfBDL
-	 EOkPa2pVax0ggYySCJs842i2bbqj45olb4l66NHU8M0fT04Pl8VgVBZsCxN3+asGqK
-	 zFtnFm0772BDC8Ipb0U1FB1fsSxBqEnDXv3At2+0xT70bXIGZO0waheGaAsBB9SYUc
-	 zdGDS+U2BBFnQ==
-Date: Fri, 10 Oct 2025 15:49:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Thomas Wismer <thomas@wismer.xyz>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: pse-pd: ti,tps23881: Add TPS23881B
-Message-ID: <20251010-strudel-pagan-162308e183e2@spud>
-References: <20251004180351.118779-2-thomas@wismer.xyz>
- <20251004180351.118779-8-thomas@wismer.xyz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4612257AC2;
+	Fri, 10 Oct 2025 14:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760107961; cv=pass; b=L5UKqre+5Hb8bTwNGikvVdcPqA6CWgRIGfemSR+Y3T2yuIMK43+aWuoyqBWAWllm+APH9HewyvJK0fY6q8VXgy2Z7U0eFWVms3ugH69fTgmXjUhXNaXNopCsXuNG83xDLc4MgqIYmUBL6yhl948yQ2SZOxu8zs4voI3lgR3rhKw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760107961; c=relaxed/simple;
+	bh=OlZFCQlrsBiLFI9zG9MO2jJAXmW50RchoDXo7r1HAwE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DOiwSZ4dwf97irNZWnH/WTQ+YNDD2lzAYfDarf1aO1iI3MclMp7iPtJbd1vk3Dqt6Ma5o8l63bXmKQf+tgBYK3BnbSgex+Q6t6e+S6OutbO1VgmRc/I0I5RI8IEpU2dUGH/c2EYYPIbITUbB3VcX5PDN5h44Yla1bm/6D9C9pjc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b=K3NZHCCU; arc=pass smtp.client-ip=136.143.184.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760107952; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dqGPjNuo5ZZtIN9nOIILuOGnf49Xta8kZ2iizr85OQowudQ8aViC6RF1q358umTp4K3MgjSRRcLjnBfCUpysipTmAR2y65QHAs0YePLPz37q/r/6XFW+hXt3QTZYlCYcyD5DaV5ndrsQNUGbAbRm/IUNKJ6NbaZ2g2nk+5SGDo0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760107952; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+D/q0yqYEcI5+/j+FWZAKWs26Jry2gcs554MhCZfAKw=; 
+	b=C9Re35InSS+O836ZVVR7Hx480acOudJf8ZpcHEyWdpqrGwm4+DE2pazvY8NH9jWv4iamgFZ9NBFt+CVXk96Qr5Y9vrrN/d2CXedIzUc9NMDfHUO4BuEsH+faU4YRECNstAzyxNs3Jc0CCXHmtD4d4Wt44MMbr0CUOAdaGolN9Ck=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=newwheatzjz@zohomail.com;
+	dmarc=pass header.from=<newwheatzjz@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760107952;
+	s=zm2022; d=zohomail.com; i=newwheatzjz@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Feedback-ID:Message-Id:Reply-To;
+	bh=+D/q0yqYEcI5+/j+FWZAKWs26Jry2gcs554MhCZfAKw=;
+	b=K3NZHCCUvNNCOKzm9TRnqS2qae6bszrDO4ufXIJHpOjQJfVCB2/XhGuvXUMT1N2+
+	xrCvDuOXvbVyNIasBUlq1/BhUczOmVQDGFsdjYK9UzcGv8oI7tZHPMnHgFTilBeMbM6
+	iY+E8GoEvBg7T4yE8JiKLvTm0X1kRhTPgaDPKmnU=
+Received: by mx.zohomail.com with SMTPS id 17601079497071012.9082767786626;
+	Fri, 10 Oct 2025 07:52:29 -0700 (PDT)
+From: Jingzhou Zhu <newwheatzjz@zohomail.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v6 2/2] arm64: dts: qcom: Add support for Huawei MateBook E 2019
+Date: Fri, 10 Oct 2025 22:52:20 +0800
+Message-ID: <2386127.ElGaqSPkdT@debian-vmware>
+In-Reply-To: <c6880fe5-029a-4f8d-a08e-81a066a79450@oss.qualcomm.com>
+References:
+ <20251008130052.11427-1-newwheatzjz@zohomail.com>
+ <6199698.lOV4Wx5bFT@debian-vmware>
+ <c6880fe5-029a-4f8d-a08e-81a066a79450@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hhdFBT2hggI1LJAn"
-Content-Disposition: inline
-In-Reply-To: <20251004180351.118779-8-thomas@wismer.xyz>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Feedback-ID: rr0801122701d70a39a7fed5b45a08173e00004d767b6f4d7ed0933679a3a94a2cc61d65bb4359a1e4c4ba2a:zu080112277ad0ba977e7612494309121700005cfe3b6251fb207be6a0c3f9787550d5464a1de7785d3e642c:rf080112288d72baffb822b3774010c57a00001efc68c4cc5bc58bf37b51fce2a715f261396f6e59d14f75eb0c:ZohoMail
+X-ZohoMailClient: External
+
+On Thursday, 9 October 2025 21:58:29 CST, Konrad Dybcio wrote:
+> Please refrain from resending if it's just to apply tags, maintainer
+> tools do it for you
+> 
+> Konrad
+
+Understood. This is my first time to send patches, so I'm not very familiar
+with the tools. Should I wait for the maintainer to pick it up, or is there
+anything else I should do?
+
+Jingzhou Zhu
 
 
---hhdFBT2hggI1LJAn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Oct 04, 2025 at 08:03:53PM +0200, Thomas Wismer wrote:
-> From: Thomas Wismer <thomas.wismer@scs.ch>
->=20
-> Add the TPS23881B I2C power sourcing equipment controller to the list of
-> supported devices.
->=20
-> Signed-off-by: Thomas Wismer <thomas.wismer@scs.ch>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-> ---
->  Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yam=
-l b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-> index bb1ee3398655..0b3803f647b7 100644
-> --- a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-> +++ b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-> @@ -16,6 +16,7 @@ properties:
->    compatible:
->      enum:
->        - ti,tps23881
-> +      - ti,tps23881b
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.43.0
->=20
-
---hhdFBT2hggI1LJAn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOkdBgAKCRB4tDGHoIJi
-0tvoAP9asRWEu2vGy95zW9p7nwFO085CCdV5tmNlHYrbrQnycQD+PHtOm9g2iR4y
-1B1ZLGs/cyh4zZe0vZFTG5Ph8gGuRAo=
-=9FWq
------END PGP SIGNATURE-----
-
---hhdFBT2hggI1LJAn--
 
