@@ -1,202 +1,212 @@
-Return-Path: <linux-kernel+bounces-848301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4315BCD525
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:46:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DFCBCD53F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DDC421E56
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:46:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 353214F25FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7B92F3C13;
-	Fri, 10 Oct 2025 13:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043362F5339;
+	Fri, 10 Oct 2025 13:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nlVtMYQS"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qyjV93bF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FXIPxXvm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qyjV93bF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FXIPxXvm"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB20748F;
-	Fri, 10 Oct 2025 13:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CEE2EFDA6
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760104004; cv=none; b=Rvg0BH4gNrOfsA7GWrHYOYJQQtUzkX1Rta57ZEC9hYszb+G5juK8FNxlEz7uMVCyKCXxe0/2BvrdBqXqKJnv6xWLOUq6GOsn9vnsfUkTjE65u8JLk1+WiHXQsmq+ePsRQ33VC2r6y29/ToZu6naZ0sgGV2Hx2sUZ6ftPGEd+5iw=
+	t=1760104056; cv=none; b=XFSWwVawxW789fbypJIwtdp3z4bBrVhQY4q1FKM5DjfbaOXEx883atzsW/ooeIjAxybGGmDtK1cknPE7DCyTNPBjlZ64Yr++DctKXbwRsBBBu9SPoYgH/33ykX7AczdCu4SjKxPU3krzxuBqjaNXw79D4PW/sYc4gcdL6WgJ+78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760104004; c=relaxed/simple;
-	bh=j+7Q50v1WcbolonU2FwjWi93Z0/pQgPtjDDj72dphGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ajB1lrz0MrVdm/+j7llbNqAjLrsHtAEQnBrVZyln8fWhOLzb2vij0TjfQw8gsX7qxqEvUVh94f2IsWikSQRC3vMifirDNnDRMYwHM7xY3kdmX+Efm49Xc+jmzi0cQQguI3kcoLso/slBj1IiHb+7VOYe6IbpsD7fEwptd94f1h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nlVtMYQS; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760103999;
-	bh=j+7Q50v1WcbolonU2FwjWi93Z0/pQgPtjDDj72dphGs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nlVtMYQSaBTbBqEzskyVDW3uqVSg0BCrNtKS6VAG5QXDRwNiNzeITlsWwvFtu4i3P
-	 1WRK4yb5kYm82Yr9g+ZWRTiMYKA1C2CFvEQExtAob4eMz7/oxBRsVGvVig9gHxGKMv
-	 cJSGz3ReDwM9SWWa8y+iywpSRmJai4H3rrgzGKXFCus8YGZpxDf9uFdiL+/4cb5E5b
-	 6hIufXoENtW3maZaVUrwwSUfRJF5THUFM2+GEB48Z+bumAxZYvvx0LffQJ0FIApPkP
-	 eomBRxbnJvZwqdTuQ7/SGm8xuhJzx2yjDb9rj2VAeCU02C1h2PcEySLiBEYWVBK6uV
-	 OS+TrbwZCsFLg==
-Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1760104056; c=relaxed/simple;
+	bh=cL1HPOXOoRQqAW+trFcBYQam/s1EVUwH+wJ87rh29Ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExOHk/cIXruRhwDKI6p+OmR9PvjpCEyWXWSIv6p+kMGAVetEuYU4F9HY0Q0NKJCTef+l1WyAJ0L9QhGVBEaP59rE3vSkGvU0M4OWtdv2XA0kXZsy3bEVZLSAw+Oo++KjikADM5Ykoo5Mg9X3njFljfRoOp//8LJvlA8+kD0iRQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qyjV93bF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FXIPxXvm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qyjV93bF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FXIPxXvm; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C8D8017E01F5;
-	Fri, 10 Oct 2025 15:46:38 +0200 (CEST)
-Message-ID: <de1a1dce-f60e-48a1-9945-d2c91b328df5@collabora.com>
-Date: Fri, 10 Oct 2025 15:46:38 +0200
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B1CA421F2A;
+	Fri, 10 Oct 2025 13:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760104051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sufIZEkjBSCUUgqxs7dtAgeGm55696GDPH5Hgw3fgYQ=;
+	b=qyjV93bFgQlwTMgKr4frsx/E5m1C2OSypShgH0rutvL7HIHgQFW3OubC0Lzr+N7EbpVufZ
+	uf8qu3WuMkB7Iq1lcLfEV9dB6SkvrtXDtWA4aPum7pnPDOInwdUDqwGnbD4KnQgKZ7RpFQ
+	vZ1Nzn2NOCm/WzpQSvpKBw7eiik/cN4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760104051;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sufIZEkjBSCUUgqxs7dtAgeGm55696GDPH5Hgw3fgYQ=;
+	b=FXIPxXvmgwWYErOpREz6leTDKWtSeZ42OMsEq1KUQAir39bv0T10EQFd2QegDpW/3hFVUG
+	d0ctEbF/QuROzuBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qyjV93bF;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FXIPxXvm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760104051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sufIZEkjBSCUUgqxs7dtAgeGm55696GDPH5Hgw3fgYQ=;
+	b=qyjV93bFgQlwTMgKr4frsx/E5m1C2OSypShgH0rutvL7HIHgQFW3OubC0Lzr+N7EbpVufZ
+	uf8qu3WuMkB7Iq1lcLfEV9dB6SkvrtXDtWA4aPum7pnPDOInwdUDqwGnbD4KnQgKZ7RpFQ
+	vZ1Nzn2NOCm/WzpQSvpKBw7eiik/cN4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760104051;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sufIZEkjBSCUUgqxs7dtAgeGm55696GDPH5Hgw3fgYQ=;
+	b=FXIPxXvmgwWYErOpREz6leTDKWtSeZ42OMsEq1KUQAir39bv0T10EQFd2QegDpW/3hFVUG
+	d0ctEbF/QuROzuBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E9DE1375D;
+	Fri, 10 Oct 2025 13:47:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id K4nJInMO6WivbgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 13:47:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D5EADA0A58; Fri, 10 Oct 2025 15:47:30 +0200 (CEST)
+Date: Fri, 10 Oct 2025 15:47:30 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v7 01/14] fs: move wait_on_inode() from writeback.h to
+ fs.h
+Message-ID: <ftmhmoslzb6h3z2w4fuumvqcwmis5xeqep5nlgbhdklrcwzok4@re6ar7llo7ol>
+References: <20251009075929.1203950-1-mjguzik@gmail.com>
+ <20251009075929.1203950-2-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 00/17] media: rockchip: add a driver for the rockchip
- camera interface
-To: Bryan O'Donoghue <bod@kernel.org>,
- Mehdi Djait <mehdi.djait@linux.intel.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Markus Elfring <Markus.Elfring@web.de>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Collabora Kernel Team <kernel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Mehdi Djait <mehdi.djait@bootlin.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <HSTnNzc6MTLHGWih5qjlI2nvVECP8FVdcQVeBON4KlWYLtEaWIlNmEpKTU_vlqitbIIHMpabKnvnmpEQFqHYxQ==@protonmail.internalid>
- <20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com>
- <88b1dcda-be2d-4c57-b042-c1809ef1dc97@kernel.org>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <88b1dcda-be2d-4c57-b042-c1809ef1dc97@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009075929.1203950-2-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: B1CA421F2A
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-Hi Bryan,
-
-On 10/10/25 14:15, Bryan O'Donoghue wrote:
-> On 17/09/2025 16:38, Michael Riesch via B4 Relay wrote:
->> Habidere,
->>
->> This series introduces support for the Rockchip Camera Interface (CIF),
->> which is featured in many Rockchip SoCs in different variations.
->> For example, the PX30 Video Input Processor (VIP) is able to receive
->> video data via the Digital Video Port (DVP, a parallel data interface)
->> and transfer it into system memory using a double-buffering mechanism
->> called ping-pong mode.
->> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
->> DVP and a MIPI CSI-2 receiver that can receive video data independently
->> (both using the ping-pong scheme).
->> The different variants may have additional features, such as scaling
->> and/or cropping.
->> Finally, the RK3588 VICAP unit constitutes an essential piece of the
->> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
->> units, and a data path multiplexer (to scaler units, to ISP, ...).
->>
->> The v11 of the series adds a media controller centric V4L2 device driver
->> for the Rockchip CIF with
->>   - support for the PX30 VIP (not tested, though, due to the lack of HW)
->>   - support for the RK3568 VICAP, including
->>      - capturing frames from the DVP
->>      - capturing frames from the MIPI CSI-2 receiver
->>   - abstraction for the ping-pong scheme to allow for future extensions
->>   - abstraction for the INTERFACE and CROP parts to allow for future
->>     extensions
->>   - initial support for different virtual channels (not tested, though,
->>     due to the lack of HW)
->> and a V4L2 subdevice driver for the Rockchip MIPI CSI-2 Receiver.
->>
->> The driver can be readily extended to provide support for the RK3588
->> VICAP variant. In order to keep things simple, however, this extension
->> shall be submitted separately.
->>
->> Looking forward to your comments!
->>
->> To: Mehdi Djait<mehdi.djait@linux.intel.com>
->> To: Maxime Chevallier<maxime.chevallier@bootlin.com>
->> To: Théo Lebrun<theo.lebrun@bootlin.com>
->> To: Thomas Petazzoni<thomas.petazzoni@bootlin.com>
->> To: Gerald Loacker<gerald.loacker@wolfvision.net>
->> To: Bryan O'Donoghue<bryan.odonoghue@linaro.org>
->> To: Markus Elfring<Markus.Elfring@web.de>
->> To: Sakari Ailus<sakari.ailus@iki.fi>
->> To: Laurent Pinchart<laurent.pinchart@ideasonboard.com>
->> To: Mauro Carvalho Chehab<mchehab@kernel.org>
->> To: Rob Herring<robh+dt@kernel.org>
->> To: Krzysztof Kozlowski<krzk+dt@kernel.org>
->> To: Conor Dooley<conor+dt@kernel.org>
->> To: Heiko Stuebner<heiko@sntech.de>
->> To: Kever Yang<kever.yang@rock-chips.com>
->> To: Nicolas Dufresne<nicolas.dufresne@collabora.com>
->> To: Sebastian Reichel<sebastian.reichel@collabora.com>
->> To: Collabora Kernel Team<kernel@collabora.com>
->> To: Paul Kocialkowski<paulk@sys-base.io>
->> To: Alexander Shiyan<eagle.alexander923@gmail.com>
->> To: Val Packett<val@packett.cool>
->> To: Rob Herring<robh@kernel.org>
->> To: Philipp Zabel<p.zabel@pengutronix.de>
->> Cc:linux-media@vger.kernel.org
->> Cc:devicetree@vger.kernel.org
->> Cc:linux-kernel@vger.kernel.org
->> Cc:linux-arm-kernel@lists.infradead.org
->> Cc:linux-rockchip@lists.infradead.org
->> Signed-off-by: Michael Riesch<michael.riesch@wolfvision.net>
->> Signed-off-by: Michael Riesch<michael.riesch@collabora.com>
->>
->> Changes in v11:
->> - rkcif: split large driver patch (6/13 of v10) into smaller
->>    patches (6-11/17 of v11) (Bryan)
->> - rkcsi: replaced devm_reset_control_array_get_exclusive with
->>    devm_reset_control_get_exclusive (Philipp)
->> - Link to v10:https://lore.kernel.org/r/20240220-rk3568-vicap-
->> v10-0-62d8a7b209b4@collabora.com
+On Thu 09-10-25 09:59:15, Mateusz Guzik wrote:
+> The only consumer outside of fs/inode.c is gfs2 and it already includes
+> fs.h in the relevant file.
 > 
-> I believe it is the case and please feel free to correct me if I'm wrong
-> that you've dropped a long list of sob/co-develop-by, I think we
-> discussed that too, because of the level of change, it seems reasonable
-> too.
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-Correct. The tag list used to be quite complicated [0] due to the
-complicated history of this driver. Maxime worked on the driver up to
-v5, Mehdi up to v14, I added RK3568 support on top of Mehdi's v14 (with
-some valuable contributions from Gerald) and submitted that as v1. v2 of
-my work incorporated Mehdi's v14, and here we are, after several rounds
-of feedback, at soon-to-be v12 (or, in fact, v25).
+Fair. Feel free to add:
 
-> On question on that, are these people aware of the change and cc'd on
-> the list of recipients/contactable/agreeable to the change ?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-I announced this plan as a response to your comment to v10 [1] with
-Maxime, Mehdi and Gerald on Cc: and did not hear any objections.
+								Honza
 
-Hope that this is still OK for everybody!
-
-Best regards,
-Michael
-
-[0]
-https://lore.kernel.org/linux-media/20240220-rk3568-vicap-v10-6-62d8a7b209b4@collabora.com/
-[1]
-https://lore.kernel.org/linux-media/23ccc744-745d-4a31-a79c-2d64bf1ed43d@collabora.com/
-
+> ---
+>  include/linux/fs.h        | 10 ++++++++++
+>  include/linux/writeback.h | 11 -----------
+>  2 files changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ac62b9d10b00..b35014ba681b 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -949,6 +949,16 @@ static inline void inode_fake_hash(struct inode *inode)
+>  	hlist_add_fake(&inode->i_hash);
+>  }
+>  
+> +static inline void wait_on_inode(struct inode *inode)
+> +{
+> +	wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> +		       !(READ_ONCE(inode->i_state) & I_NEW));
+> +	/*
+> +	 * Pairs with routines clearing I_NEW.
+> +	 */
+> +	smp_rmb();
+> +}
+> +
+>  /*
+>   * inode->i_rwsem nesting subclasses for the lock validator:
+>   *
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index e1e1231a6830..06195c2a535b 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -189,17 +189,6 @@ void wakeup_flusher_threads_bdi(struct backing_dev_info *bdi,
+>  void inode_wait_for_writeback(struct inode *inode);
+>  void inode_io_list_del(struct inode *inode);
+>  
+> -/* writeback.h requires fs.h; it, too, is not included from here. */
+> -static inline void wait_on_inode(struct inode *inode)
+> -{
+> -	wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> -		       !(READ_ONCE(inode->i_state) & I_NEW));
+> -	/*
+> -	 * Pairs with routines clearing I_NEW.
+> -	 */
+> -	smp_rmb();
+> -}
+> -
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+>  
+>  #include <linux/cgroup.h>
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
