@@ -1,247 +1,230 @@
-Return-Path: <linux-kernel+bounces-848166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9066BBCCC97
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:36:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D951EBCCC9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749771A620C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:37:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD281A6240C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C9286D49;
-	Fri, 10 Oct 2025 11:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5C32857F6;
+	Fri, 10 Oct 2025 11:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="k/n3tobB"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010014.outbound.protection.outlook.com [52.101.229.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOFlzOEg"
+Received: from mail-lj1-f193.google.com (mail-lj1-f193.google.com [209.85.208.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9F24414;
-	Fri, 10 Oct 2025 11:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760096209; cv=fail; b=qokExJd7xIuMIbFyLBwQ46rJw7AK7DNKfkjHplp5QheE+2TqQVLGZVJZP2JangUcdWedFvEbQI9LgvgOwgwsJm9r9uTk+xcA6l2kKPrU0PEQfT1J/KRim9PTS/6xNdqEo3FlMwhY9en02CasVv7n2lmLhbU6hFMSg3JAdFH8BLI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760096209; c=relaxed/simple;
-	bh=bMd5mVq3iLn7fvCvUcyl6Oy8zu79tmCogyt3+467qkg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MMUEMJNQpwzNH81hhclrE2YukMGsJhWDKVMmIQTitjPHg556bVbmfj81IUZqMGz091sVIsgwn6gn62nWrup86lvUNZWjQ1pa3H24qPLs9cV4vDrZb/qQeomoFKj/lKMT0Fp9xwcJu45wVWiXPAuGYMx4Yw5kRWm61py0Ktqz6j4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=k/n3tobB; arc=fail smtp.client-ip=52.101.229.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YODuP/UhTCT4fp9VSWByYZSycTKZ0gUqJrCDV7d5a35ENAr+TsSZDO+DB7vuGtoBUQkxEYIUwoCqQqhS4OnQX0ptby+2cw7spKbJaxWPAQmiyYKh51NTVZWGMpZSQp8jQtZls/sMl2zmz6VUlsgpmJabnwEoE47dGttzpfATUQ1z8CPdZkrEoct7PGk/D1c5S1mZC2V6bcX1mXUJTgc8NYzSvDz3XQIob0R5DlZzXxb4qKMX1kC918GB3ExF5ZdTqRwSGoARyL14o2l9xhLh/qhXKbD1WXSe3Vtyp3E9PKbGYlhP0whNW+CcwxzbQe3WH2Rp1LclY6fp2XJOyovM/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bMd5mVq3iLn7fvCvUcyl6Oy8zu79tmCogyt3+467qkg=;
- b=fhzFS9l/BoFFReCzwf0waXnKwpRyyEXl3fhiafZ6KJ81jzRIRkzHTnSw90de+LIaXZOTj8diNj9TIy4pSJbxKRoWk/5ffVla/6nkirdSkoKpXgX1Ne0yA5ZAeTQENoF3VJHC7Quyn/537YvJQuA/EQIAmmcGHJiNhixVdXg7rfv7xH5Qjca0GV+v+zjeAycz4ecxgjimMgUv6oFRophXjHg649zvmfylCvznk+KuAQOWgmCI49ZaAZJHv1oeTzBBVFMUJOVoN76q5xJd0NHnufsSr8vKlFdb2KRpLCRRgbu+An1cM/5vagJFW7I5IyOY9AkZt+K4bU9s7sdRMVy5nA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bMd5mVq3iLn7fvCvUcyl6Oy8zu79tmCogyt3+467qkg=;
- b=k/n3tobBSNP2oU3QrkimcwurnTwGd1eXy19qAyvlot98QDE3TsNw//igwIsua9QfQtBHkZbbZ1L+G0Ql0rtWpt8hwoYtQOg1W48IYRU8GMOt9FmGm0PtMbzgsxIo4eKyZQOcR96f76p4IXyNCWhnPIJIIyyDTQfjy0rOKrDRK1M=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYYPR01MB15676.jpnprd01.prod.outlook.com (2603:1096:405:294::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.6; Fri, 10 Oct
- 2025 11:36:41 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.9228.005; Fri, 10 Oct 2025
- 11:36:41 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "lpieralisi@kernel.org"
-	<lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, magnus.damm
-	<magnus.damm@gmail.com>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, wsa+renesas
-	<wsa+renesas@sang-engineering.com>
-Subject: RE: [PATCH v5 3/6] arm64: dts: renesas: r9a08g045: Add PCIe node
-Thread-Topic: [PATCH v5 3/6] arm64: dts: renesas: r9a08g045: Add PCIe node
-Thread-Index: AQHcN4+Xl3bUT1Hya0C1BFZ2Fpr8n7S2sSOwgASOuYCAAAQDwA==
-Date: Fri, 10 Oct 2025 11:36:41 +0000
-Message-ID:
- <TY3PR01MB11346B3365740A98B6B52872D86EFA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20251007133657.390523-1-claudiu.beznea.uj@bp.renesas.com>
- <20251007133657.390523-4-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113461AF51BD346E1D96E43B486E0A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <7848e331-3d32-42ee-a05f-66ab40ef00be@tuxon.dev>
-In-Reply-To: <7848e331-3d32-42ee-a05f-66ab40ef00be@tuxon.dev>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB15676:EE_
-x-ms-office365-filtering-correlation-id: d7adb7f5-13b8-47a9-6d79-08de07f14855
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cWhKclUrbDNtRmNXcGpRQmUzS1VmSkQ5dFM1dXBaQ3NlSUM4NTVXRHpTZU5v?=
- =?utf-8?B?bDh3U2J2MGx1SmcrOUdlSG9zc1Rqb2doRjVIQ2d5USsvQVlOaUd0M25ueWt6?=
- =?utf-8?B?d093WWxGT00rUldBM2Z5OENqSVlpcDBHN2tqanlRYlAwVkdHUUlSKzkySkVy?=
- =?utf-8?B?U05aYU9POFRpbTI2ME5RQ29oUTVKVG1xajEzUVBJVlBTNG12ZnNqeEorMHRr?=
- =?utf-8?B?Q0tzaGFuZTNybzY0eDBvcHdlaFFmWUVZRGI4YlV6aDJJUXRuNmZoR0hic0c2?=
- =?utf-8?B?QXVpZUxjWnNoTElyU3FGaGhXTHNQSHNXVWpOUHdEZzQ2QWhLRWlNTDN0VFpa?=
- =?utf-8?B?R1g2cWpuV0toRkFMU3FJY002czZVVWwxSE96Z3NiS0tyNERMT3hNNDJzWEFJ?=
- =?utf-8?B?N0VBRXc1T2VxWE1YSTBwZzdaWnZaMjQwSjVpbXRreW9kb2xuSkZscWRSOEdr?=
- =?utf-8?B?dituZHVsUG14L010TnlwRENjWEp0VVI1ekxheWVWTUdmemU3YXUzOXhDWFMr?=
- =?utf-8?B?WXl4Q1MzdndXTHAzNWtRaGJjSjQwOTVlMVV6SnVkOWpsM1A1L0RZMUZWUjR1?=
- =?utf-8?B?ZlQ4d2s4NUZreTE5bWVvZkFnMzZIbjVLdm5ndVRPWUNGUEdUbG85aEhkVlRH?=
- =?utf-8?B?MzhkQUNYTTFWYTBaMVU5UGNsY0JRN0FXWEVtMEJkK25abFFGV0o0a0REQzU0?=
- =?utf-8?B?MC9YN2ovTU5ZUmJOWDB5NTdHSUI0YVdJK0tUODlMT04zQUgzcWVScXJ3Rkxn?=
- =?utf-8?B?d21EUUJJODVYc0hwNFQraHNPdHJUb1pLWDUzSkFBV1Q5dXF2aUUzRDcyWW9o?=
- =?utf-8?B?eUl0czlVYU9qSWgrK1l2bHQxUk9iczJsa1ljdUE1SUV1ZWVxZzRBZHJWbm5X?=
- =?utf-8?B?YUx1clhoaGxGZE9IQ2wwaWFuczFjMDV5dnVqaGxoWUw0clg1U1doVTJQODZw?=
- =?utf-8?B?aEVOTHNLeW1xOGFFbnNrRFg5RWNMUURJQ3o5YWIveUllcFJmaEV0VWJKeFJk?=
- =?utf-8?B?RkNrcFJaaFBLZU1xRmNvYXBtSXR4c1k5MnJZUFhweEhKVDdFTXNhQ3NhMHBO?=
- =?utf-8?B?aTdRNmtNVXUwOUZZZ3RQRkFnS2g0aFZQZExZZkJDcDE4TU9qKzdFQkp5Zlp5?=
- =?utf-8?B?L1JNdlhXUTJ0aG1CL2ZIc04vWGhnOXY1NWxHZ1FwUTRvVzkyaHRQTlg0b2p4?=
- =?utf-8?B?M3ZnVkpWN0I1SDgzWFNPUkdxRmNFK1BBVHZzU1R1U3laUmdIM1BsVExwOWZH?=
- =?utf-8?B?UWM5YS9MSDVyV3lkdUJETkVnbGVKU0VCcUJIVFZGU2dPS0NGSDl1NjRzUGxF?=
- =?utf-8?B?OHFzYjNqMEV1NU1UemJBQ05uNGVnbm1Uc29kbmpMaE1MM3lBdW1USjA5b2Rw?=
- =?utf-8?B?cTRkOW5kazZTc3VsSmpMcG9vZE1WQ0RWRnNRcDdZbDNRdm9tczdFRnlqQjlm?=
- =?utf-8?B?QU9tY3hUWlN5VDJyL0dSTHVwWDl1YWkvVU5tSVJWT3NFMjExTERoeFV4b3hJ?=
- =?utf-8?B?SEFhcWREQ0VvVFBQQzBJV3FER2h5bkJEQ2xZT01mQStRazl2T3Y2TGlITzZI?=
- =?utf-8?B?NUNPN3pVekl2azJBTmhUV2N4UVh5NDdOM0UxKzhyNFpSN0MwRHZiTXFUdTBH?=
- =?utf-8?B?dEhXT2hZa3BKaVBXbWora0paSGdodnFtYllCaXlZdVUzdVNSR2JXY0R0OW05?=
- =?utf-8?B?Q3NEamR3YVRpckFYaTkrdXRCTitvSUxUdDVVMTF6VG52STgyQis2emQzNC9w?=
- =?utf-8?B?OFMvSVRUbTh2WXVFVTdNQStWSjBMVG5UMUFkN2xFSmdmS2ZpZTZ3Q2wvaS85?=
- =?utf-8?B?d3QyaDhqVUgyN2N4SERHemNhOHZjekN3QWRZaEl2Qy9ETVRMNjBvOWRReGRl?=
- =?utf-8?B?NDRMcHVrYW14TWN2TlJEWDl0VHlUYy8veWhrOEJWY2FHNVJWRmVxVlAxcXMr?=
- =?utf-8?B?R05KUWd3UlZIeWVkSWMvUlE4VzdsbWxBQ1JaVnJ4bTBqYjJsNDl6WFJWdjkw?=
- =?utf-8?B?UDdHdWp3WEN3dTBTbW9GaEs2Ni83OHdmYnBoeFg5c3VsOE1jNGFHZVBHZEkz?=
- =?utf-8?B?RHhETjQwTWhTc2RnQW45cXkxQ3lVWkJwU3J2dz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UElSb005V045QjVNa1pwM0JaenNCdU5SWHppallOQjVwTHdGaU9UOUZiRTdv?=
- =?utf-8?B?c1pybnpsdGF0M0pZYVRIb3A5amsvNDlnTHljUWhERWdFQlA1SnlQT2tTWmdr?=
- =?utf-8?B?VUlGNS80cDNFTzVkM1RRczJNSVhnNVlmZ28zUkxaand2cjBRS0R4SitJZkFu?=
- =?utf-8?B?V09UM1VQczBBR1hlN0Uxb0o2R3dIQXM4QkR6cHhBODMxL2JIKzcwOUhiQzI0?=
- =?utf-8?B?MWc5MUpVZUlxTUUxaEZBU2tkaWFacTVRRi9sMzdJTmVnVlY5ZGlPc0E3ak0w?=
- =?utf-8?B?REdWYzM3QjdNT0p5aEFkR3lDY1ZlMWY3THl3MVJHV3pTN3UxYzZIbTlQanVD?=
- =?utf-8?B?bDUySVcvOXVxV2tIOVhsL0RrdmJjTVBjT2xERnpLUnk0YzlIMmpxZkR2UTEv?=
- =?utf-8?B?RVd4bzBySG90Sy8yV1F5d3J0ZGh0cHJKVXBYUFpoU1R0MmIzRDFXZnNJeGRr?=
- =?utf-8?B?aEFNYkp1eXpXU3BraWpKSm1HcjJ1aDFudi9zb1d3OHl4VU1jakdxVkNhT0pV?=
- =?utf-8?B?WS9tQ0dpdEUrclpzTGh1SkxJU1l2aXh1NXpiaXRBQ256aWozbE1td1N4dWRr?=
- =?utf-8?B?Z2pDdklLNy9tWU5PN2lnZUFKVm9LYVdMTFl0ck5pYlJUdndsamxlQVQzQzdZ?=
- =?utf-8?B?Y1RMUm1pMjFUVG40QmtDeHhUYTRoeEFCTW02Zy9SOVJkVk0xV3RoMXNYTmJO?=
- =?utf-8?B?ZnN5RTNqQTJGRTJLZGY5WXRMbHFJcjdmakt1U01YdWIzSHlneTE0dUdyb0s0?=
- =?utf-8?B?dThNTUxLbHJzY21nRGE2MDMxaHM4UWlIeE56VXdKaHk5ak54bVRWRG5velQv?=
- =?utf-8?B?bW1QK0ZzN1dtTEhiZnhCb1pleXhRQ1BaWE1HbVY1bTU5akRjZ2REeFUwSk5k?=
- =?utf-8?B?RXJoYnpSWkdqTTRiMVc1Vk1HalNaTTdqbWRSeFk2MTlKVTFsN2JGSFdFVlcy?=
- =?utf-8?B?MFMyakdidVJ6Q3BwUlh1Z3JXdFNDaTdmbEx3Q3lrOUw4bUdaR1VleVo2NVJ4?=
- =?utf-8?B?YWhBcTZFNzZQOGZ5N1doZE03VHVKZVJhTzVoMzJyRXhaaUkvUERpdHlxVDFs?=
- =?utf-8?B?YVFWWkp0Y0Z1ekEyVkR0a1Q1Uzl2RmszVHFRdi9SMUFnMERjMVl4bTBZVSs3?=
- =?utf-8?B?UXMxZS9PMDJtTHpPUjV3WUVtalRIazBuTUJHRlZVRjBsUWNoUmpMME5la0Vw?=
- =?utf-8?B?TGx0Wm5tcFUyS1hTYW0wcE85MkJnL1BRdnhHWUxnbzU4Tkw0R0hWZXZ0b0Js?=
- =?utf-8?B?WkdPeExzR1dSZ3VUR2J0NThoc05HbE92azd4aThNYUVYL1A4TWF1R2VWV1No?=
- =?utf-8?B?MTRxTS9DRzhMODdtNW5HOG9pVDQweUtDTndqYnM0TUEvMG9ZNjZjdGpRcGs5?=
- =?utf-8?B?dzhuemtFQVRabGcvT2xibEJqY2FaQjR0TnkzU1ZFZ1dQRk9qTTRkYWQrZTU5?=
- =?utf-8?B?S0s0MFZ6VDVqdHczTk92Z3liSVhsT3BQM2MwQlFRQ01Rd29BVHZNY2FiT29W?=
- =?utf-8?B?Z2Y1UFpYb0VmMDBrY05WUngwNHI1TERxc1l4eW5oKzVka2JhNWo0di9OZUJS?=
- =?utf-8?B?djJGaVg0MnhNV2g0aEVuMURmaEJCTWhCNzMrV2V3cFhqTEMvTjlUM1NVbkx3?=
- =?utf-8?B?VGFMRGJkeTAyeVVIdktZYlRIVWFwWC9CWk5sR1RqNlJMeUVoOFltMFdHclN6?=
- =?utf-8?B?MFpTb081UXZxNVRBWHo3dExlcjRYR2RoUUY5QUJPajhJclhpOUdPd3Z6SWg1?=
- =?utf-8?B?akZwRDBsa3RvRE81VmV1OGtkZmhidWhuQmJiSWVtUGd4MmdoTW5jcUF0K0dC?=
- =?utf-8?B?cHpKSWozMmJqL3ZjR0t4d0JDVzNvalNXMm0yZFpUMVB2Mno4RHRoUnM2MWpO?=
- =?utf-8?B?aVBNNTA5STVzaUphZkkvbDlaQXRseElLeTZvQXFMTC9wb002RyswaERSRldI?=
- =?utf-8?B?bG4zbFhTY3A2WUpoZVgzVVE3VmZjdWh1bEJkSTRzcmFaaEc4azVqT3lQc3o0?=
- =?utf-8?B?bjFWVkNSb3JxTXR3T280amtPVmZheForSDlIWVhEN3cyUGJ1SDdLSkNYWkdj?=
- =?utf-8?B?WHFnWmE0eklSUGV2WStzbUxmYmlnRngrYnpPMTkvU090TW5BcWg0UWZGWjho?=
- =?utf-8?Q?iw8b7DjLphbU4774cJEhN4Kle?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042701E7C12
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760096254; cv=none; b=hHugXnVCGGu284kYN8NascrixmepiYe3ms4zjnjIqcur8pkJHtDC3bYk9ouTicu9r1qsDCORf43M2knTvnf29LSjuevevUa9tRAbIKt6rEjp5jG2BnMZtHqmH2vvwVEbBg/K2Dxw+GPGTuc28ny0NVMlAQqAdyvRYF3KJbcGEfc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760096254; c=relaxed/simple;
+	bh=tu7CHFcv8NXWSg1jXKb9aylTFPPW+h9hgce2xBf6Y9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LjIZ8NO/SucgAD04AaR7aalFZhuqExOhV1CBjB2SJfU/rDbIIgb2JHcKiFNZ0OHX/lPmyHM+V+A+0vFLzjaOd7G4SQDqxmmUzzW1zbansI9K6fACjHZjSJAjP/Ueqhx1Np2CMvMJpQWPfc7eS38IMgw8eR85/BdwsLldC2Tl28Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOFlzOEg; arc=none smtp.client-ip=209.85.208.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f193.google.com with SMTP id 38308e7fff4ca-36a6a3974fdso20620421fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760096251; x=1760701051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/XA7NS0vsEk3cN/YAVwXXOlWiiJ4B+of+ksUnO/7Z0=;
+        b=IOFlzOEgDZUePc/JRbkmDAPwbZLzrcGUyz0Ng6NZWqbKJbkgAi69cCl23XOCUfNLC7
+         Z+BiH9e3kJOPXUx/OrVSZs51+r7rBddbfG98SIX+Dv5+JpO5Onc6e8Em+V44sYzhf7FV
+         e/Cbl5W2jcrmVaEtCr8yy4rnz3O5qvRiRxdAS9dHfOn0JLUfzy4z8+bTZVApGQ1CqyhL
+         AzrJiv/Lu7h7U8v4jOa/QKx4Zta7HnTWoqj2D3XUibSbS6/wRJhnRsuCcCflI988D8Vs
+         c5PxfNenqIzhZXG1Z1nSko1ZwmXXCoeFSD6Q2siEL3s/Sa/Ehf2aHqy9nVqfvCRyBb8e
+         vvyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760096251; x=1760701051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B/XA7NS0vsEk3cN/YAVwXXOlWiiJ4B+of+ksUnO/7Z0=;
+        b=nMXQ5BID9gMfsAm2nRo1NCRfwsKoTTo89u+iSyPUTju6ESVCtw3C80JzirHBmFDfhc
+         R6uBUVZcFArJtHMUv8FGMb0CHj8ijxlkT7YsK2Trd+y7F71N97GhrLf34oDyR8NBB+lH
+         2O5O9Q1A0zTiS6iHYbRMZXwwgsIVhGWerX2KjZ7doqdOOS1/u/QDQJbu/5T5Y++G5Wx8
+         Rc2HdIQ620k2akD28a8tWEnfVJ+dmG/S0YMYnEAExpwvw9GkN2y/xaubSlk1d4+3JiLe
+         vDbo0/nMglAWbxoC8dQE+njPfd0KqPp+MtAqnnyY563aZnlofTB6BLiP7Uz2HZWMeLqe
+         AU4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXq5HDoMhUG7wrkqYjGprAY41X7NwB1UG2SmhuwDzx5OEU2uWsCs54jBh8jOBAEqmtgzTTpjm/H/ZMSGAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6a/IvABkz7G/OkasK6v3PJ2rliPpNFcGvFRM8wvOgAyE8GsME
+	ui6aqC5g1b2jv9qrAggnx67P2++deRvrXM2z2/C6VmjazEFahdPo1AyxSOXajb0q4rc/vov+3Vk
+	amc5oQoog/wysMv0EREekAEE6HzU+qRs=
+X-Gm-Gg: ASbGncuDjxkyklWq4qTMIeA8DcZ3halmGyePoGwv4exw2OyvrnJ3LTK10h0KF26GNo1
+	90DkmBTIV4s0UYxW0bBO9HT1GxgYC8KCwwXpE5i4di7S+CbgOeAtunUzVPhISduxZCqyTOawbkd
+	vDpMwKFvsgfIjYjqTZAxkEB3o2a1cBwHAH6F7Ig8tfEkP9dRCl60BNZ7xpbSoiysysV304R3xbb
+	Iioi6SVPhCN5fzzgbKsE83IhyzdKPNcwvvbpQ==
+X-Google-Smtp-Source: AGHT+IHWoeDLCNVK8GZgZ3+ysWCGWbA3Vq7KFs0ot0ItXSxvUIF+xrvo0wUOe61rwPf1xrvjcr4elJgfRKWfCRpEwjY=
+X-Received: by 2002:a05:651c:1b96:b0:375:db6e:fac9 with SMTP id
+ 38308e7fff4ca-37609ee9960mr25670741fa.31.1760096250825; Fri, 10 Oct 2025
+ 04:37:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7adb7f5-13b8-47a9-6d79-08de07f14855
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2025 11:36:41.5121
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: njRt30JyZcwuQypPX6znNcAwoOPjIIZdX0npviK3TQwyG2xnNDfRVHqPVI/OLCUcDO8gjvfUzBi8FChCvWvP3G69xf0h4TfnRlKClQdoQT8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB15676
+References: <20250910084316.356169-1-hupu.gm@gmail.com> <1081f8ca-3c1b-46fe-a7d4-31303e5e2298@arm.com>
+In-Reply-To: <1081f8ca-3c1b-46fe-a7d4-31303e5e2298@arm.com>
+From: hupu <hupu.gm@gmail.com>
+Date: Fri, 10 Oct 2025 19:37:19 +0800
+X-Gm-Features: AS18NWDsaBQOalzBU5G47pMRnXvggtjx21-grwMceLfF7cYweXjgG0czRoJVADI
+Message-ID: <CADHxFxQTGRHuu82YK25UCcF2NCxyU_HrFik-jKY23eUMTfft7Q@mail.gmail.com>
+Subject: Re: [RESEND][RFC] sched: Introduce removed.load_sum for precise load propagation
+To: Pierre Gondois <pierre.gondois@arm.com>, vincent.guittot@linaro.org
+Cc: peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
+	rostedt@goodmis.org, dietmar.eggemann@arm.com, vschneid@redhat.com, 
+	bsegall@google.com, linux-kernel@vger.kernel.org, mgorman@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQ2xhdWRpdSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDbGF1
-ZGl1IEJlem5lYSA8Y2xhdWRpdS5iZXpuZWFAdHV4b24uZGV2Pg0KPiBTZW50OiAxMCBPY3RvYmVy
-IDIwMjUgMTI6MTgNCiw+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjUgMy82XSBhcm02NDogZHRzOiBy
-ZW5lc2FzOiByOWEwOGcwNDU6IEFkZCBQQ0llIG5vZGUNCj4gDQo+IEhpLCBCaWp1LA0KPiANCj4g
-T24gMTAvNy8yNSAxNjo0NCwgQmlqdSBEYXMgd3JvdGU6DQo+ID4gSGkgQ2xhdWRpdSwNCj4gPg0K
-PiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBDbGF1ZGl1IDxjbGF1
-ZGl1LmJlem5lYUB0dXhvbi5kZXY+DQo+ID4+IFNlbnQ6IDA3IE9jdG9iZXIgMjAyNSAxNDozNw0K
-PiA+PiBTdWJqZWN0OiBbUEFUQ0ggdjUgMy82XSBhcm02NDogZHRzOiByZW5lc2FzOiByOWEwOGcw
-NDU6IEFkZCBQQ0llIG5vZGUNCj4gPj4NCj4gPj4gRnJvbTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVk
-aXUuYmV6bmVhLnVqQGJwLnJlbmVzYXMuY29tPg0KPiA+Pg0KPiA+PiBUaGUgUlovRzNTIFNvQyBo
-YXMgYSB2YXJpYW50IChSOUEwOEcwNDVTMzMpIHdoaWNoIHN1cHBvcnRzIFBDSWUuIEFkZCB0aGUg
-UENJZSBub2RlLg0KPiA+Pg0KPiA+PiBUZXN0ZWQtYnk6IFdvbGZyYW0gU2FuZyA8d3NhK3JlbmVz
-YXNAc2FuZy1lbmdpbmVlcmluZy5jb20+DQo+ID4+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJo
-b2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBDbGF1
-ZGl1IEJlem5lYSA8Y2xhdWRpdS5iZXpuZWEudWpAYnAucmVuZXNhcy5jb20+DQo+ID4+IC0tLQ0K
-PiA+Pg0KPiA+PiBDaGFuZ2VzIGluIHY1Og0KPiA+PiAtIHVwZGF0ZWQgdGhlIGxhc3QgcGFydCBv
-ZiByYW5nZXMgYW5kIGRtYS1yYW5nZXMNCj4gPj4gLSBjb2xsZWN0ZWQgdGFncw0KPiA+Pg0KPiA+
-PiBDaGFuZ2VzIGluIHY0Og0KPiA+PiAtIG1vdmVkIHRoZSBub2RlIHRvIHI5YTA4ZzA0NS5kdHNp
-DQo+ID4+IC0gZHJvcHBlZCB0aGUgInMzMyIgZnJvbSB0aGUgY29tcGF0aWJsZSBzdHJpbmcNCj4g
-Pj4gLSBhZGRlZCBwb3J0IG5vZGUNCj4gPj4gLSByZS1vcmRlcmVkIHByb3BlcnRpZXMgdG8gaGF2
-ZSB0aGVtIGdyb3VwZWQgdG9nZXRoZXINCj4gPj4NCj4gPj4gQ2hhbmdlcyBpbiB2MzoNCj4gPj4g
-LSBjb2xsZWN0ZWQgdGFncw0KPiA+PiAtIGNoYW5nZWQgdGhlIHJhbmdlcyBmbGFncw0KPiA+Pg0K
-PiA+PiBDaGFuZ2VzIGluIHYyOg0KPiA+PiAtIHVwZGF0ZWQgdGhlIGRtYS1yYW5nZXMgdG8gcmVm
-bGVjdCB0aGUgU29DIGNhcGFiaWxpdHk7IGFkZGVkIGENCj4gPj4gICBjb21tZW50IGFib3V0IGl0
-Lg0KPiA+PiAtIHVwZGF0ZWQgY2xvY2stbmFtZXMsIGludGVycnVwdCBuYW1lcw0KPiA+PiAtIGRy
-b3BwZWQgbGVnYWN5LWludGVycnVwdC1jb250cm9sbGVyIG5vZGUNCj4gPj4gLSBhZGRlZCBpbnRl
-cnJ1cHQtY29udHJvbGxlciBwcm9wZXJ0eQ0KPiA+PiAtIG1vdmVkIHJlbmVzYXMsc3lzYyBhdCB0
-aGUgZW5kIG9mIHRoZSBub2RlIHRvIGNvbXBseSB3aXRoDQo+ID4+ICAgRFQgY29kaW5nIHN0eWxl
-DQo+ID4+DQo+ID4+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjlhMDhnMDQ1LmR0c2kg
-fCA2Ng0KPiA+PiArKysrKysrKysrKysrKysrKysrKysrDQo+ID4+ICAxIGZpbGUgY2hhbmdlZCwg
-NjYgaW5zZXJ0aW9ucygrKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290
-L2R0cy9yZW5lc2FzL3I5YTA4ZzA0NS5kdHNpDQo+ID4+IGIvYXJjaC9hcm02NC9ib290L2R0cy9y
-ZW5lc2FzL3I5YTA4ZzA0NS5kdHNpDQo+ID4+IGluZGV4IDE2ZTZhYzYxNDQxNy4uMDBiNDMzNzc4
-NzdlIDEwMDY0NA0KPiA+PiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjlhMDhn
-MDQ1LmR0c2kNCj4gPj4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9yZW5lc2FzL3I5YTA4ZzA0
-NS5kdHNpDQo+ID4+IEBAIC03MTcsNiArNzE3LDcyIEBAIGV0aDE6IGV0aGVybmV0QDExYzQwMDAw
-IHsNCj4gPj4gIAkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4+ICAJCX07DQo+ID4+DQo+ID4+
-ICsJCXBjaWU6IHBjaWVAMTFlNDAwMDAgew0KPiA+PiArCQkJY29tcGF0aWJsZSA9ICJyZW5lc2Fz
-LHI5YTA4ZzA0NS1wY2llIjsNCj4gPj4gKwkJCXJlZyA9IDwwIDB4MTFlNDAwMDAgMCAweDEwMDAw
-PjsNCj4gPj4gKwkJCXJhbmdlcyA9IDwweDAyMDAwMDAwIDAgMHgzMDAwMDAwMCAwIDB4MzAwMDAw
-MDAgMCAweDA4MDAwMDAwPjsNCj4gPj4gKwkJCS8qIE1hcCBhbGwgcG9zc2libGUgRFJBTSByYW5n
-ZXMgKDQgR0IpLiAqLw0KPiA+PiArCQkJZG1hLXJhbmdlcyA9IDwweDQyMDAwMDAwIDAgMHg0MDAw
-MDAwMCAwIDB4NDAwMDAwMDAgMSAweDAwMDAwMDAwPjsNCj4gPg0KPiA+IE9uIFJaL0czRSwgSFcg
-bWFudWFsIG1lbnRpb25zIFBDSWUgY2FuIGFjY2VzcyB1cCB0byBhIDM2LWJpdCBhZGRyZXNzIHNw
-YWNlIChhY2Nlc3MgdG8gRERSIGFuZA0KPiBQQ0lFMCkuDQo+ID4NCj4gPiBOb3Qgc3VyZSBhYm91
-dCBSWi9HM1M/DQo+IA0KPiBBcyBvZiBteSBrbm93bGVkZ2UvaW52ZXN0aWdhdGlvbiwgYWNjb3Jk
-aW5nIHRvIGNoYXB0ZXIgNS40LjIuMSAzNC1CaXQgQWRkcmVzcyBTcGFjZSBBY2Nlc3Mgb2YgSFcN
-Cj4gbWFudWFsLCByZXZpc2lvbiAxLjEwLCBvbiBSWi9HM1MgdGhlcmUgYXJlIHNvbWUgYnVzIG1h
-c3RlcnMgdGhhdCBjYW4gYWNjZXNzIHVwIHRvIDM0LWJpdCBhZGRyZXNzDQo+IHNwYWNlLCB0aGVz
-ZSBiZWluZyBTREhJL2VNTUMsIEdFdGhlcm5ldCwgVVNCMi4wLCBETUFDLiBUaGUgcmVzdCBjYW4g
-YWNjZXNzIHVwIHRvIDMyLWJpdCBhZGRyZXNzDQo+IHNwYWNlLg0KDQpPSywgVGhhbmtzIGZvciB0
-aGUgaW5mby4gDQoNCkkgYW0ganVzdCB3b25kZXJpbmcsIGxhdGVyIGhvdyB0byBoYW5kbGUgdGhl
-IENyb3NzLU92ZXIgNEcgbWVtb3J5IGluDQpkcml2ZXIgYXMgaGVyZSB3ZSBoYXZlIHNpemUgb2Yg
-MHgxXzAwMDBfMDAwMCBhbmQgc3RhcnQgYWRkcmVzcyBpcyAweDQwMDBfMDAwMCB3aGljaA0KY3Jv
-c3NlcyB0aGUgZmlyc3QgNEcgYm91bmRhcnkuIA0KDQpDaGVlcnMsDQpCaWp1DQo=
+Hi Pierre Gondois,
+Thank you very much for your reply, and I=E2=80=99m sorry for getting back =
+to
+you late as I was away on vacation recently.
+
+On Tue, Sep 30, 2025 at 3:46=E2=80=AFPM Pierre Gondois <pierre.gondois@arm.=
+com> wrote:
+>
+> Hello Hupu,
+>
+> On 9/10/25 10:43, hupu wrote:
+> > Currently, load_sum to be propagated is estimated from
+> > (removed_runnable * divider) >> SCHED_CAPACITY_SHIFT, which relies on
+> > runnable_avg as an approximation. This approach can introduce precision
+> > loss due to the shift operation, and the error may become more visible
+> > when small tasks frequently enter and leave the queue.
+> >
+> > This patch introduces removed.load_sum to directly accumulate
+> > se->avg.load_sum when tasks dequeue, and uses it during load
+> > propagation. By doing so:
+> >
+> >    a) Avoid relying on runnable_avg-based approximation and obtain
+> >       higher precision in load_sum propagation;
+> (runnable_sum =3D=3D load_sum) is not exactly accurate anymore since:
+> static inline long se_runnable(struct sched_entity *se)
+> {
+>      if (se->sched_delayed)
+>          return false;
+>
+>      return !!se->on_rq;
+> }
+>
+> So obtaining load_[sum|avg] from the runnable_avg signal seems compromise=
+d.
+>
+
+I agree with your point that when a task is in a delayed state
+(se->sched_delayed =3D 1), it still resides on the runqueue and
+continues to contribute to the load_sum, but no longer contributes to
+the runnable_sum.
+
+Moreover, based on the mathematical relationship, it is also evident
+that the two are not equal. As analyzed in my previous email, for a
+given se:
+
+    runnable_sum =3D decay(history) + contrib(running + runnable) * 1024
+    load_sum =3D decay(history) + contrib(running + runnable)
+
+Here, decay() represents the decayed contribution from history, and
+contrib() represents the new contribution from the running/runnable
+state. Due to the difference in these formulas, estimating load_avg
+from runnable_avg is inherently inaccurate.
+
+
+> It is possible to compute load_sum value without the runnable_signal, cf.
+> 40f5aa4c5eae ("sched/pelt: Fix attach_entity_load_avg() corner case")
+> https://lore.kernel.org/all/20220414090229.342-1-kuyo.chang@mediatek.com/=
+T/#u
+>
+> I.e.:
+> +       se->avg.load_sum =3D se->avg.load_avg * divider;
+> +       if (se_weight(se) < se->avg.load_sum)
+> +               se->avg.load_sum =3D div_u64(se->avg.load_sum, se_weight(=
+se));
+> +       else
+> +               se->avg.load_sum =3D 1;
+>
+> As a side note, as a counterpart of the above patch, the lower the nicene=
+ss,
+> the lower the weight (in sched_prio_to_weight[]) and the lower the task
+> load signal.
+> This means that the unweighted load_sum value looses granularity.
+> E.g.:
+> A task with weight=3D15 can have load_avg values in [0:15]. So all the va=
+lues
+> for load_sum in the range [X * (47742/15) : (X + 1) * (47742/15)]
+> are floored to load_avg=3DX, but load_sum is not reset when computing
+> load_avg.
+> attach_entity_load_avg() however resets load_sum to X * (47742/15).
+>
+
+From a mathematical perspective, deriving load_sum from load_avg is
+indeed feasible.
+
+However, as you pointed out, integer arithmetic may introduce
+significant quantization errors, particularly for tasks with low
+weights.
+
+For instance, if a task=E2=80=99s weight is 15 and its load_sum values are
+3183 and 6364 respectively, both would result in the same load_avg =3D 1
+under this method =E2=80=94 resulting in an error of 6364 - 3183 =3D 3181. =
+This
+error increases as the task=E2=80=99s weight decreases.
+
+Therefore, I believe that recomputing the propagated load_sum from
+load_avg within update_cfs_rq_load_avg() is not an ideal approach.
+Instead, my proposal is to record the load_sum of dequeued tasks
+directly in cfs_rq->removed, rather than inferring it indirectly from
+other signals such as runnable_sum or load_avg.
+
+> >    b) Eliminate precision loss from the shift operation, especially
+> >       with frequent short-lived tasks;
+>
+> It might also help aggregating multiple tasks. Right now, if 1.000 tasks
+> with load_sum=3D1 and load_avg=3D0 are removed, the rq's load signal will
+> not be impacted at all.
+>
+
+Exactly. As I mentioned in previous email, this is also one of the key
+motivations behind this PATCH.
+
+> On the other side, there might also be questions about the PELT windows
+> of all these tasks and the rq being aligned, cf.
+> https://lore.kernel.org/all/20170512171336.148578996@infradead.org/
+>
+
+To be honest, I=E2=80=99m not entirely sure I fully understand the potentia=
+l
+issue you are referring to here. I assume your concern is that the
+load_sum values stored in cfs_rq->removed may belong to a different
+PELT window than the current rq window during propagation.
+
+I understand the necessity of PELT window alignment.
+In attach_entity_load_avg(), when an se is enqueued into a cfs_rq, its
+PELT window is aligned with that of the cfs_rq, and its *_sum values
+are recalculated to keep both in sync.
+
+However, in this PATCH, the cfs_rq->removed mechanism only relates to
+the dequeue path =E2=80=94 it records the load_sum of a task when it leaves
+the runqueue, and later propagates it appropriately. Therefore, I
+don=E2=80=99t think window alignment needs to be considered at dequeue time
+(at least based on my current understanding), since this
+synchronization has already been handled during enqueue.
+
+That said, I may have missed some corner cases, so I=E2=80=99d really
+appreciate further discussion on this point.
+
+Thanks,
+hupu
 
