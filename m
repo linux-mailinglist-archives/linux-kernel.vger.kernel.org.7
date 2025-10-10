@@ -1,66 +1,108 @@
-Return-Path: <linux-kernel+bounces-848123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52771BCC951
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:40:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336C8BCC95A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED742355B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:40:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2151E4EC958
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C40283695;
-	Fri, 10 Oct 2025 10:40:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3596283144;
+	Fri, 10 Oct 2025 10:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Cslbs//z"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951851C5D44;
-	Fri, 10 Oct 2025 10:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EBB1B4F0A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760092842; cv=none; b=uDmHEkrRJFv90OhNMaz+g77+NNJzWZT2GynCqiuzn+tk1svkk3Ef3ikMXSNuAGACZF/TieYvcDlRsgvOUrHB/4vDCFBlf8/4+KYbCIWc2sDcDchNyezCqSEdpFEMLcStg/VZqujCRtK6EZB+p/qBj/G6RDJmrLr75dctPDdndSw=
+	t=1760092945; cv=none; b=Fen3qgbQubZ3WRanngqw8rJcO3aOHNHvH+I8JCaWP7LRH5oDMWurwyGkD+n2D4o8eqnEvPXFiYROMmQNQFsbrOL1G4kCg5rZpmHsLX1K0CPKoTz4Fmisf0GEsOK2wvu3p3fSnlDqTaQmir40V1+Nnax8tG7XIredgZUr/BoD8Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760092842; c=relaxed/simple;
-	bh=UEdMcPCwmc82o2IhHH4TEQF2CtYU6nBQMLFrtes5iFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rF+IohER1GRnXOM+prIn/YQCGZ0edJzAHDoaiKX8gcRtWvfp4mgfTLnth97Z+pfNJKVU08ZktBt0pUO7EWVbe94IDNNkWVKCAFlDYqmgoHp5Vy1J5bFfzqJRZHfpkcQCEg2guNtQt1vzZxYsg1rFmF7plUmQWp0du3+OLOKjtFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B23C4CEF1;
-	Fri, 10 Oct 2025 10:40:40 +0000 (UTC)
-Date: Fri, 10 Oct 2025 11:40:38 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] dma-debug: don't report false positives with
- DMA_BOUNCE_UNALIGNED_KMALLOC
-Message-ID: <aOjipm1vCJpgQQq1@arm.com>
-References: <CGME20251009141522eucas1p2c89eadd93fb571c557d3d70975d8ae4f@eucas1p2.samsung.com>
- <20251009141508.2342138-1-m.szyprowski@samsung.com>
+	s=arc-20240116; t=1760092945; c=relaxed/simple;
+	bh=lS0LeNdQo78bDhZSXrwZOByTYx9OfKfj+hv78w8WymA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nFNepqBrovii+/BcwkSxfjDMk/YlEGL7rEE1kRFc/u/M0MQwRsFmPyG89IXseN+3Gy5NL8NwT7hlcerSde+kGZA8lqF8rQJHhFtGTl9GbYHdIic351QmsB1kiZkaRMNdUYTczjsDYlAawSImH1vQMEoRDKNyTBgezS+muohkuX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Cslbs//z; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6eee7e44-cdf6-45c6-8114-b62c57a2a4e3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760092940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F/2MWyCrDxrhI4+1rtpNAxA+OW+hGmrTRFH+Isw9N58=;
+	b=Cslbs//z93t0gMKiCEWHXID71xt7lvfMI0M3fFC5xhYuiQsVeF3TJ0NUp9y/b43gWcDphY
+	MW0ggVSJrMRxCNTvfmHKPrhNOzBTr8zt4tqd/760Z3641Xyg60wpZgYKSC0hfaHYxISH7o
+	UPpkXfhV/UFG75lh0+GHaWreE282Xvk=
+Date: Fri, 10 Oct 2025 18:42:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009141508.2342138-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH mm-new v3 3/3] mm/khugepaged: merge PTE scanning logic
+ into a new helper
+Content-Language: en-US
+To: Dev Jain <dev.jain@arm.com>
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, david@redhat.com, richard.weiyang@gmail.com,
+ lorenzo.stoakes@oracle.com, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, linux-mm@kvack.org
+References: <20251008043748.45554-1-lance.yang@linux.dev>
+ <20251008043748.45554-4-lance.yang@linux.dev>
+ <ce95ab8a-70dc-4159-b38b-dd9f3ffc9aa1@arm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <ce95ab8a-70dc-4159-b38b-dd9f3ffc9aa1@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 09, 2025 at 04:15:08PM +0200, Marek Szyprowski wrote:
-> @@ -594,7 +595,9 @@ static void add_dma_entry(struct dma_debug_entry *entry, unsigned long attrs)
->  	if (rc == -ENOMEM) {
->  		pr_err_once("cacheline tracking ENOMEM, dma-debug disabled\n");
->  		global_disable = true;
-> -	} else if (rc == -EEXIST && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)) {
-> +	} else if (rc == -EEXIST && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
-> +		   !(IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) &&
-> +		     is_swiotlb_allocated())) {
 
-Maybe use is_swiotlb_active(entry->dev) instead for completeness. Either
-way:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+On 2025/10/10 17:10, Dev Jain wrote:
+> 
+> On 08/10/25 10:07 am, Lance Yang wrote:
+>>   	}
+>>   }
+>>   
+>> +/*
+>> + * thp_collapse_check_pte - Check if a PTE is suitable for THP collapse
+>> + * @pte:           The PTE to check
+>> + * @vma:           The VMA the PTE belongs to
+>> + * @addr:          The virtual address corresponding to this PTE
+>> + * @foliop:        On success, used to return a pointer to the folio
+>> + *                 Must be non-NULL
+>> + * @none_or_zero:  Counter for none/zero PTEs. Must be non-NULL
+>> + * @unmapped:      Counter for swap PTEs. Can be NULL if not scanning swaps
+>> + * @shared:        Counter for shared pages. Must be non-NULL
+>> + * @scan_result:   Used to return the failure reason (SCAN_*) on a
+>> + *                 PTE_CHECK_FAIL return. Must be non-NULL
+>> + * @cc:            Collapse control settings
+>> + *
+>> + * Returns:
+>> + *   PTE_CHECK_SUCCEED  - PTE is suitable, proceed with further checks
+>> + *   PTE_CHECK_CONTINUE - Skip this PTE and continue scanning
+>> + *   PTE_CHECK_FAIL     - Abort collapse scan
+>> + */
+>> +static inline int thp_collapse_check_pte(pte_t pte, struct vm_area_struct *vma,
+>> +		unsigned long addr, struct folio **foliop, int *none_or_zero,
+>> +		int *unmapped, int *shared, int *scan_result,
+>> +		struct collapse_control *cc)
+>> +{
+>> +	struct folio *folio = NULL;
+> 
+> I think initialization is not needed here?Otherwise, LGTM. Reviewed-by: Dev Jain <dev.jain@arm.com>
+
+Yep. It's a minor thing, so I'll fold that in if a new version is 
+needed. Thanks!
 
