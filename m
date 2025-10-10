@@ -1,340 +1,247 @@
-Return-Path: <linux-kernel+bounces-848445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AECBBCDCB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:27:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB8ABCDC82
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123C54066B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929611A6774D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426B82F90CE;
-	Fri, 10 Oct 2025 15:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CKq4s8t1"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013050.outbound.protection.outlook.com [40.107.201.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722A72F7AD4;
-	Fri, 10 Oct 2025 15:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760109798; cv=fail; b=BSAI2jSqszS3ckesGXiS0kPFTDUff8MFMkTstzM+ed4ZCS8aYtwMblX1Ou3LfqWUQ+hxaNU0LCe31XhY+Maj4jk+FBP6Cka/7MTzTjxq78oUU6XiKuw+8H4fz8ayP8BIQ8aYgCmj3BJ2QLN7rUTai7Op6Jd/5DypaB2NsqposS0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760109798; c=relaxed/simple;
-	bh=E2iDFspHBZ1qCMZ9QdBS5IucIOaCw1OXodPP3FradGs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rwf0oiExYDpal7w60w+M3fjV1q1WrzkCZuHYCZVE5ndTMdyt5mYFx1w6dWgYcQ2dAe8qfV6xITphJ4bSZhNUZSBbeK5lJy2Yj2fvWYYPfyz8wZGTYV+SIqsXCLOTmKIa4r2bgFFsJj2zI9vO7Fat0yr1dw7bBDXSQjkWpxN0FTM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CKq4s8t1; arc=fail smtp.client-ip=40.107.201.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NfeG9JPgVj1n5lDNtgx7vUhEniKiL716IhVD6hXXieV3wsScOomVltI/FlXI08Cz3Ji5u3AB/ouQnLDO9vZzvKUyhYg3Td+3NHUakqopm3yxoGlh08Pg6MJVRIrZmRno0mHbBTIYgoL6DOz2nWRKrWFbaGwX3RRGUxByX/su5GgWFIloPkJtOLdT9LjK16JTflycZpp/v2LE+cJ6lvhZCipptyBAmri9cDCy7FEcETOvOSsnwFTu0MdIyMJpVafkC6iUH5RQhOumZRvQQGQqmg1iXph9rQ8l64TLF0laA/oA290AOyxvp7WrNGSTIyJUmwfP1aGwT2EU4JtIx1CL5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GcGjRztxvIKm9/GYX8d68YJFJjYK787k/Z8eWT4g2SY=;
- b=yPJmSyQLzfkWmYKc1bTIDISxOs0dPBjZVD1M9e/r0vR3wEo+ijT/ZVRNKaKdZoZK0T+jm/3Oi1++CkvfQkW4XT046ghB/scBrr3E5Bd1TVGhiveLjpo851pL4WpT21y2+ESU0DcflSkowiX0irJz8IYFlCqAQc+Or0pOn23Bu9Y+Ali+rsicmxBCM9LBlrXHN8yekoa+83xK2TjbLhGVm5UjtPrWs+42eh0akdZaCOlMGROh2kT9Fhu38X6VillF6TACVL1I0QApWz6416/EXg7zjRepTa7OpMAHxMu4ITzpngC4cDwM+St4qEcEFe4VthC/R/DdCjLXkzIGr+Sipg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GcGjRztxvIKm9/GYX8d68YJFJjYK787k/Z8eWT4g2SY=;
- b=CKq4s8t1JqniLL0R1CgXYs1ogw5gt2GEe70GHfGiIZ3mfcf7y3+zGs7Slf6TzcL6Fw/A8lXh1fNKBNvecPDkak4l8z6FHrZVInb+ZR4MNeRhp+cemZzUk+ioGVTTp6t+MuvpUbbaoOm2Qrp7WZc+jeScjqEmRl0yGzqUtfnU2XuIdp1/ZPlO4zHkRnY4sOKJW3wbamow/fyg4a/zT43zNMhGB4tW05ja7wUc40aleva1TQ/aSoEk0Ug4VI802Yolz1QCv0XRKQRbSVSpb3InxDl/G2VGX7TFSnA7PxL4BGypM2RdRKlncTkVu+zJt3GO9AIexicsw4JLLj7Zm0N5ew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SJ5PPF665EE4E73.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::996) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Fri, 10 Oct
- 2025 15:23:04 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
- 15:23:04 +0000
-Message-ID: <b53e554c-252d-4b21-a337-578c97c80dde@nvidia.com>
-Date: Fri, 10 Oct 2025 11:23:02 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/3] rust: kernel: add bounded integer types
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Yury Norov <yury.norov@gmail.com>,
- Jesung Yang <y.j3ms.n@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- Nouveau <nouveau-bounces@lists.freedesktop.org>
-References: <20251009-bounded_ints-v2-2-ff3d7fee3ffd@nvidia.com>
- <20251009213353.GA2326866@joelbox2> <DDEIH181JDA9.2DG2C3DBOB2V@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <DDEIH181JDA9.2DG2C3DBOB2V@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN9PR03CA0651.namprd03.prod.outlook.com
- (2603:10b6:408:13b::26) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261272F8BFA;
+	Fri, 10 Oct 2025 15:23:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2085F2F618B
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760109791; cv=none; b=M6sRFsow8H1/Db0dAgD5h3iWaJ5lev8bZ1s3/IOJP1/HHb1BoouK9Ac7gl89ICbxYyktdI0uU1xc5ZDAvB3E7ENP1ofdrrPKlv9FdV7wQq1tAJY4+Qk2eClTwYQBohXlmErKrqTVuiXTGLoxcmbiCJ303KAPVvWtR4Ya9ph95pI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760109791; c=relaxed/simple;
+	bh=b6U6I+R3YkCWG8VlZzjudcPduzhx6TE6xWqusLNS/6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CQ8pMeZSefZoAWhQT+afzsIYmtu1BgVJiUFUHtEo/jPxayAiPzl1Jc3RWJy8PRAp7ZIYp+z4kZDU9dRZ32hwgzVPj3UxULlBcG6GfTxbKq1FFX/eJxxH1W3Tiz2n224Zb6qV7OuYLvnHkVxxglcu17P2VijbsxNShZfkL0PPwLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 743511063;
+	Fri, 10 Oct 2025 08:23:01 -0700 (PDT)
+Received: from [192.168.20.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DDFB3F66E;
+	Fri, 10 Oct 2025 08:23:09 -0700 (PDT)
+Message-ID: <281dcb37-9e50-42ed-918d-3a527e738e6e@arm.com>
+Date: Fri, 10 Oct 2025 10:23:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SJ5PPF665EE4E73:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28dc7fda-f016-4507-9d32-08de0810e876
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QWowNnhOMzV1TnhiQVN0ZkQxVDQySFNFMUd6SWdQMmovY05LbnoxL25VcWFx?=
- =?utf-8?B?cFJ4d1E3OXFGMkh3WGRMNkVBR2xEVmI2dlVLdW5KRUJtNGJGWUlXT3RuZEFC?=
- =?utf-8?B?NU4vTXVCb3lhVHFpWTJHa3dxeTNrdE1HS0lSMXJxT1c0YnJZd2Y0MVR6dTZF?=
- =?utf-8?B?c25QV05WMHNFZCtLV2VBeHQ1bmwzUTE1dDliU1prdXFZM0dTbUhVcGcva1Yv?=
- =?utf-8?B?c2xISzk5aDlPWUJGemZrVUF0Zkp6dE5Ob1dyK1BHVVY0eVZVVUNpQ3crQzdZ?=
- =?utf-8?B?WkdSeUZURzZOSkRJKy93YUNRWGVrYW1HNXhIazM3aHFCTDh5cG1VZ2s4a0NX?=
- =?utf-8?B?RXA1c1JwRzlCcitzdXVQL1h0czErWUtRN09ROGx4SEw5bSszdGVJbDRIa0tQ?=
- =?utf-8?B?bk4rMlpvei9DVzFlcDlLRzdBYjUyZU5KSzlNMUZMa1lSWTJzT1hiQzdRRC9R?=
- =?utf-8?B?MWo1eWRvdWZKQzBNZ0lqTDZ4QStoK1psbkZzd1h2a0ZHYkx2TlA2YUZ3Sncx?=
- =?utf-8?B?dlZrSFFnNmhhT3ZSTFprVDdleWlDU0RleWdDcCs0bFBmMWVMbFNMOVl6elZP?=
- =?utf-8?B?RVk5a0kxUUV4R04vVnRpY0t5c2dRS1hibU9SK3AvRGdJcWNuTWE0ZUJIUHAz?=
- =?utf-8?B?aG5BeFVUUC9TMmMvN1haREFFMnlvazlBRCszRUJkWVR3ZVJqNmFKWllSb2VI?=
- =?utf-8?B?ZjJGQWRJWmRiZzFhVnBIU1lwSXlyWFpIQ2FMUEdVVTFPTWdjSUJHMVZhSnlK?=
- =?utf-8?B?K0h2SVo3TGd5cTh0SU90MmVjbHF3WUp4SmI2c1JFUHcyWWhBSklhMXdOdmJa?=
- =?utf-8?B?Um9pL1dhRW9Sejd4U25rVWpaSGZpcXZaUit3ME9TRm9KcmlNZityZitTbmdh?=
- =?utf-8?B?eHo4eVdZY0JDRmszcDFFaGIzMitVS3RYZy83b1FVLzBSUk1kVTV5Q0hua0Mz?=
- =?utf-8?B?dHpXcnp1NlhLR0daNmZQNTJlanpjcEhhRWRkVG1LQy95ODdla2ttMWpiVWNB?=
- =?utf-8?B?SGN4ZnpLaTlHSngrKy9haDJXNGljMVF6aWNxYzh5NWVJeXNPUkVGWS9vU0dE?=
- =?utf-8?B?eFFvc0MvZm5uSUhwdFh3MFVhUGV0VEh4cjc4WmJka0M3alZTQXZLalU4VXBY?=
- =?utf-8?B?QjRDTjJkZ1lzNlQ0dUkrd1YvVXh1WEc0MVRmWEcydjBwT0hhZjFOZ0dkTTlI?=
- =?utf-8?B?dC9wTE1Vc2dVTEFCdURnWnljaHFrcUEzQjNBblNRZlJENzVrMTJuWmpmOGg1?=
- =?utf-8?B?TlQxVWh6TkJwR29LYmlyME9WdHZObWlQbnIrMVN3M1hYbTZ6R2Z6Q1FaWVY3?=
- =?utf-8?B?VzF6RzRtRFJKT3lTNXRIcmtZRE5HYmNtNTFPWXZkM3AxZ1BpTmJSUVBlanF1?=
- =?utf-8?B?UEpyUVBWdjg3L2dVOUJSUU5WTHFVUTFuZ0tOM3M4dmdWKzRadC9WZDV0azVD?=
- =?utf-8?B?REZqZXA5R0g1VFczRWdFUHFKbGxtNGhiSEtGV2tyNFpDTzJHN21Rb0twcGNv?=
- =?utf-8?B?R2NKQkZEVXdDT3BvZTdMZEhTNkZpNlVkOWtHWm84OWVxVS9rYytuSUZ4SVVL?=
- =?utf-8?B?VFdQeFdVR3g0Y2Z5SHZFUDBuNmN5TGRrYW9aRWdYbWVyeVF1NU0yS2d3NHFq?=
- =?utf-8?B?bWg3aEdDYmhrUkdRWTdad2lKeG54L2t3eVZhb0ZBUEtDM241aGJIcTN4OE0w?=
- =?utf-8?B?S1p5SHBlaXNuQVJ2ditjdkhlR29QWWkxTEQ0RXVWd3dPL2QyQXc1YmlkSk1t?=
- =?utf-8?B?cEgyQVRaZnNSMzNDN1hxMUV4bnVnV01iOW1wODRUb29zV2hBZ2J3L0puZjlr?=
- =?utf-8?B?b0prK0kzRDc1cmVqLzA4ODBNRGQzejZIa3pkbkQ5aUV1VUZBZmo5NHRUYWx3?=
- =?utf-8?B?anp1MzROSEJzVVFGbGR3dmt1Y3RKZlVDYzZmamRONW96djJScjVodFpBR0I4?=
- =?utf-8?B?d29WWjlOU3Vtak5DcTRxd3FYQkVzWGdTRU5FMDlCeDNhbDlBS25hYmF1N1dE?=
- =?utf-8?B?RmdZRWthcnF3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VHAzZ2gxcUQ0U0k2Z1d4Y3lxVGhDK0haN0dYL2dvZEZXcDFyZmEvWG12UjQv?=
- =?utf-8?B?djRDTUJuSzQyS1kxQmF0emlRZHlYWGlYYm9iVTcvV3JSNE9EM0k2WDVld3p6?=
- =?utf-8?B?VFBOZDFEblJJcVgyYTR3RTh4M2lXUFpPRThTTHRsYXA4aU9icC9xNGdnelVV?=
- =?utf-8?B?OUF4enE5RE5Gd1Y3VkpDL3RuUlpsTmo4aXNHSWJaeDRiTlRGVUkxdFNJSjJF?=
- =?utf-8?B?QWp0aERqQ083K21zWTBjKytPY3Rxd1FvYUh3Ykhwd0ZyN3k2cnprVWlnUFBN?=
- =?utf-8?B?MkVIc3hmR0ZnVkZ0eDBvSW8rTmtlS1F3ZldVWkZnUHUxWkdoMnVjRFdLTGRI?=
- =?utf-8?B?bEc4Wlp4bVlOL0N4bjMxcytybC9idFZQdC9kc0t6cy9pL3ZjMGZJb1Fxd1BG?=
- =?utf-8?B?cFBPbHZnb2V4N2YxTkpzR0U4cm8rNmNNNnpFWGFZSDR6eUJjcjNnSmV0N3RT?=
- =?utf-8?B?b0tRcGRhWGR0aWxrR1Q3V00zZkptYmFaUnBKVXFtTHJsTzdpVStjczRPenV1?=
- =?utf-8?B?WittY3dlc0pJZy9jeEowYlpZR3JlMmxKSWpRWUxrMGx4dkpMVFdlQlEvdDJ3?=
- =?utf-8?B?NHVNalBQOGVZZVhKVERxdm15dU5YTXMwR3QyWGd3QmxCYk83NHBMd1JBWXZn?=
- =?utf-8?B?QXJJZytNSUUwSTBQdmIwTVFTMGV1V3FMSXBLWTZGQ3dRUXFDMnU2TXRVb0pJ?=
- =?utf-8?B?Nm5QK1oxazdNMlphVTBIakJRYUxMaW5ndFdHTkdWWlBNdWRJc3Y3KzFRZU04?=
- =?utf-8?B?TDFHT0wwTHg0T3R1UDFuUXhWR2VydWZTS2VWZm5jQUwrTXpnM1JrRm82Q0Vw?=
- =?utf-8?B?Slp2MGZabHhBVDBOdisxaVhxMCtxN21Tb1RITjhVcVR5RGkwMWl3bUpkZkFi?=
- =?utf-8?B?dENVZVo2QW04UFJJam5Ja0JjNGJESnJ3NElMQ0pSa1dtOVhySkRxeTkyTkVx?=
- =?utf-8?B?TzkvUjZHOFpXbTNLVlB2eWQ1SGkvcVZvbktTNy9PZ2ZqRDJ2MW9odERZK3BI?=
- =?utf-8?B?cVZJK1dYYVFkZkM5SkZrYzBxQ28raklNQVByRHMvWTlzdVQzUjk4bCtQTis5?=
- =?utf-8?B?a0dTaERDMWkwd09tQWVPb1B4amNjUFZrTDBmVWhSVytPMkhsRVRJSWp5ck9M?=
- =?utf-8?B?UCtjMmtHK1RSLzdHUzBNZGZPV0o4dFlFSllWaXFFN0tCQWRDSU56djhQaTVE?=
- =?utf-8?B?NUl1NHhnekFwNDd0VXpYRjFLck4wUTY0Q3p1V0pzOEh3TnRDc0ZwMDlhU0di?=
- =?utf-8?B?c00rM1pvUEkySXNoTmdiUWdzcTRaQ2loSHA1VUc2bHFtVVZkK3V2d1lJNzY4?=
- =?utf-8?B?NURHN1JPV1hXajBTemlNVlZaaEhIcUc1Wk84emlySk00ZnBnaFVEV1Mya25W?=
- =?utf-8?B?bno5ZkV3VGFIZjdKalhTUVJ4S1ZObEhYZ3dYbVBiMHl2UjE1K0owbm8wNkFU?=
- =?utf-8?B?VkVGSmNKcVhOZldrK1NHNWdFN3pFNjF2eENPTVlTdDRTODRsWmROSFFCZVJ4?=
- =?utf-8?B?bU0rUDVOZnp1NDA4bjRJRHVFWjk1amJpYVR6TEVYbFNaVXJxWlQ2Q09WKzgr?=
- =?utf-8?B?akgrSUtSeDB2dEdtOXNSaUp5NWRBZDJCMU1jZnFtdlVNY1JDSmViRVBnRDNU?=
- =?utf-8?B?N1NZNjBkYW91cEJWWSt3aStzWG9nNHByVWFHQ1FkNTVHclpneWdHNEpFdEdP?=
- =?utf-8?B?VDYrZExFN0U2QzlMbjBuUGlocmJJV2tOOUZKbEZtalNrZXVrN2orbTNGWkZ5?=
- =?utf-8?B?cU4yaDRuS1B6UmJ5dHMvZDVlUmpFakFCNFpaekRVb25aTDMwbTBvUEhqZjF2?=
- =?utf-8?B?Yi94aFVWa3QrNkVVVm9URXdFVWtvK0FndjJ6TENtOWJ4cmZMN1lZMnZVZFdH?=
- =?utf-8?B?U3NUcndkWXJscm00NGx2cTFFM3FzcVNLUWV1OWNlVjBzWVVwZERzZi9QQlg4?=
- =?utf-8?B?U1NyMVJ5N1VDMVRHdmp1MStyN0JGSnFEUHB5Vld2enlzNVp1TnNzMEVyYlN6?=
- =?utf-8?B?SUxzQ0g4WEI1VUpxQzlhQmVZd0xkd0dVR1JFdExiR3pURG5abGhoZjM5NVFp?=
- =?utf-8?B?VDhudmViVEZjbzA2MXQzTWxkNDJqYUpWSlZiREVhdkZMU1AySDRqTW1lQUw3?=
- =?utf-8?Q?w/WTgmyVogeD6JbFm71GyFPPS?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28dc7fda-f016-4507-9d32-08de0810e876
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 15:23:04.7520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9QPdFNBdfeHed8sWS7F5JUpXv2/MmUJ7lNKSmhFAjwMdMUEWCJW4Pt4ZB1g9s/a2Hozr9KqR9nhNAmWl2Qr4cg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF665EE4E73
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coco: guest: arm64: Update ARM CCA guest driver
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+ linux-coco@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Steven Price <steven.price@arm.com>, Gavin Shan <gshan@redhat.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Sami Mujawar <sami.mujawar@arm.com>
+References: <20251008132758.784275-1-aneesh.kumar@kernel.org>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20251008132758.784275-1-aneesh.kumar@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 10/10/2025 4:49 AM, Alexandre Courbot wrote:
-> On Fri Oct 10, 2025 at 6:33 AM JST, Joel Fernandes wrote:
->> Hi Alex,
->>
->> Great effort, thanks. I replied with few comments below. Since the patch is
->> large, it would be great if could be possibly split. Maybe the From
->> primitives deserve a separate patch.
+On 10/8/25 8:27 AM, Aneesh Kumar K.V (Arm) wrote:
+> Make preparatory updates to the ARM CCA guest driver:
 > 
-> I'm all for smaller patches when it makes reviewing easier, but in this
-> case all it would achieve is making the second patch append code right
-> after the next. :) Is there a benefit in doing so?
-
-I think there is a benefit, because reviewers don't have to scroll through huge
-emails :). Plus separate commit messages would be added in too, to reason about
-new code. There's other possible logical splits too, was just giving example but
-I am Ok with it if you still want to keep it singular. :)
-
->>> +impl<const NUM_BITS: u32> Boundable<NUM_BITS> for u16 {
->>> +    const MASK: u16 = crate::bits::genmask_u16(0..=(NUM_BITS - 1));
->>> +}
->>> +
->>> +impl<const NUM_BITS: u32> Boundable<NUM_BITS> for u32 {
->>> +    const MASK: u32 = crate::bits::genmask_u32(0..=(NUM_BITS - 1));
->>> +}
->>> +
->>> +impl<const NUM_BITS: u32> Boundable<NUM_BITS> for u64 {
->>> +    const MASK: u64 = crate::bits::genmask_u64(0..=(NUM_BITS - 1));
->>> +}
->>> +
->>> +impl<T, const NUM_BITS: u32> BoundedInt<T, NUM_BITS>
->>> +where
->>> +    T: Boundable<NUM_BITS>,
->>> +{
->>> +    /// Checks that `value` is valid for this type at compile-time and build a new value.
->>> +    ///
->>> +    /// This relies on [`build_assert!`] to perform validation at compile-time. If `value` cannot
->>> +    /// be inferred to be in bounds at compile-time, use the fallible [`Self::try_new`] instead.
->>> +    ///
->>> +    /// When possible, use one of the `new_const` methods instead of this method as it statically
->>> +    /// validates `value` instead of relying on the compiler's optimizations.
->>
->> This sounds like, users might use the less-optimal API first with the same
->> build_assert issues we had with the IO accessors, since new() sounds very obvious.
->> How about the following naming?
->>
->> new::<VALUE>()        // Primary constructor for constants using const generics.
->> try_new(value)        // Keep as-is for fallible runtime
->> new_from_expr(value)  // For compile-time validated runtime values
->>
->> If new::<VALUE>() does not work for the user, the compiler will fail.
->>
->> Or, new_from_expr() could be from_value(), Ok with either naming or a better name.
+>   - Switch from using a platform device to a faux device (based on
+>     feedback in [1])
+>   - Rename the device from `arm-cca-dev` to `arm-rsi-dev`, so that the
+>     host driver can register an equivalent `arm-rmi-dev`
 > 
-> Agreed, the preferred method should appear first. IIRC Alice also made a
-> similar suggestion about v1 during the DRM sync, sorry for not picking
-> it up.
-
-Cool, sounds good.
-
-[..]>>> +    /// Returns the contained value as a primitive type.
->>> +    ///
->>> +    /// # Examples
->>> +    ///
->>> +    /// ```
->>> +    /// use kernel::num::BoundedInt;
->>> +    ///
->>> +    /// let v = BoundedInt::<u32, 4>::new_const::<7>();
->>> +    /// assert_eq!(v.get(), 7u32);
->>> +    /// ```
->>> +    pub fn get(self) -> T {
->>> +        if !T::is_in_bounds(self.0) {
->>> +            // SAFETY: Per the invariants, `self.0` cannot have bits set outside of `MASK`, so
->>> +            // this block will
->>> +            // never be reached.
->>> +            unsafe { core::hint::unreachable_unchecked() }
->>> +        }
->>
->> Does this if block help the compiler generate better code? I wonder if code
->> gen could be checked to confirm the rationale.
+> These changes are purely structural and introduce no new functionality.
+> Subsequent patches will extend this driver to add guest device
+> assignment support.
 > 
-> Benno suggested that it would on a different patch:
+> [1] https://lore.kernel.org/all/2025073035-bulginess-rematch-b92e@gregkh
 > 
-> https://lore.kernel.org/rust-for-linux/DBL1ZGZCSJF3.29HNS9BSN89C6@kernel.org/
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+> NOTE:
+> This patch is sent early outside the patchseries to avoid userspace from
+> depending on the presence of the newly introduced platform device.
+> The platform device was added in v6.14-rc1.
+
+
+At this point, changing the platform device name also breaks systemd's 
+confidential vm detection, because its using this device name as the 
+first step.
+
+
 > 
-> OTOH as shown in patch 3/3, this doesn't exempt us from handling
-> impossible values when using this in a match expression...
-
-Interesting, TIL.
-
->>> +        self.0
->>> +    }
->>> +
->>> +    /// Increase the number of bits usable for `self`.
->>> +    ///
->>> +    /// This operation cannot fail.
->>> +    ///
->>> +    /// # Examples
->>> +    ///
->>> +    /// ```
->>> +    /// use kernel::num::BoundedInt;
->>> +    ///
->>> +    /// let v = BoundedInt::<u32, 4>::new_const::<7>();
->>> +    /// let larger_v = v.enlarge::<12>();
->>> +    /// // The contained values are equal even though `larger_v` has a bigger capacity.
->>> +    /// assert_eq!(larger_v, v);
->>> +    /// ```
->>> +    pub const fn enlarge<const NEW_NUM_BITS: u32>(self) -> BoundedInt<T, NEW_NUM_BITS>
->>> +    where
->>> +        T: Boundable<NEW_NUM_BITS>,
->>> +        T: Copy,
->>
->> Boundable already implies copy so T: Copy is redundant.
+>   arch/arm64/include/asm/rsi.h                  |  2 +-
+>   arch/arm64/kernel/rsi.c                       | 15 -----
+>   drivers/virt/coco/arm-cca-guest/Makefile      |  3 +
+>   .../{arm-cca-guest.c => arm-cca.c}            | 65 +++++++++++--------
+>   4 files changed, 41 insertions(+), 44 deletions(-)
+>   rename drivers/virt/coco/arm-cca-guest/{arm-cca-guest.c => arm-cca.c} (85%)
 > 
-> Thanks. I need to do a thorough review of all the contraints as I've
-> changed them quite a bit as the implementation matured.
-
-Cool. :)
-
->> [...]
->>> +impl_const_new!(u8 u16 u32 u64);
->>> +
->>> +/// Declares a new `$trait` and implements it for all bounded types represented using `$num_bits`.
->>> +///
->>> +/// This is used to declare properties as traits that we can use for later implementations.
->>> +macro_rules! impl_size_rule {
->>> +    ($trait:ident, $($num_bits:literal)*) => {
->>> +        trait $trait {}
->>> +
->>> +        $(
->>> +        impl<T> $trait for BoundedInt<T, $num_bits> where T: Boundable<$num_bits> {}
->>> +        )*
->>> +    };
->>> +}
->>> +
->>> +// Bounds that are larger than a `u64`.
->>> +impl_size_rule!(LargerThanU64, 64);
->>> +
->>> +// Bounds that are larger than a `u32`.
->>> +impl_size_rule!(LargerThanU32,
->>> +    32 33 34 35 36 37 38 39
->>
->> If num_bits == 32 (number of bits), how could BoundedInt<T, 32> a
->> LargerThanU32? It should be AtleastU32 or something.
->>
->> Or the above list should start from 33. Only a >= 33-bit wide integer can be
->> LargerThanU32.
-> 
-> The name is a bit ambiguous indeed. An accurate one would be
-> `LargerOrEqualThanU32`, but `AtLeastU32` should also work.
-Sure, I prefer AtLeastU32 since it is shorter :)
-
-thanks,
-
- - Joel
-
+> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
+> index b42aeac05340..26ef6143562b 100644
+> --- a/arch/arm64/include/asm/rsi.h
+> +++ b/arch/arm64/include/asm/rsi.h
+> @@ -10,7 +10,7 @@
+>   #include <linux/jump_label.h>
+>   #include <asm/rsi_cmds.h>
+>   
+> -#define RSI_PDEV_NAME "arm-cca-dev"
+> +#define RSI_DEV_NAME "arm-rsi-dev"
+>   
+>   DECLARE_STATIC_KEY_FALSE(rsi_present);
+>   
+> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+> index ce4778141ec7..569ef08750e5 100644
+> --- a/arch/arm64/kernel/rsi.c
+> +++ b/arch/arm64/kernel/rsi.c
+> @@ -140,18 +140,3 @@ void __init arm64_rsi_init(void)
+>   
+>   	static_branch_enable(&rsi_present);
+>   }
+> -
+> -static struct platform_device rsi_dev = {
+> -	.name = RSI_PDEV_NAME,
+> -	.id = PLATFORM_DEVID_NONE
+> -};
+> -
+> -static int __init arm64_create_dummy_rsi_dev(void)
+> -{
+> -	if (is_realm_world() &&
+> -	    platform_device_register(&rsi_dev))
+> -		pr_err("failed to register rsi platform device\n");
+> -	return 0;
+> -}
+> -
+> -arch_initcall(arm64_create_dummy_rsi_dev)
+> diff --git a/drivers/virt/coco/arm-cca-guest/Makefile b/drivers/virt/coco/arm-cca-guest/Makefile
+> index 69eeba08e98a..609462ea9438 100644
+> --- a/drivers/virt/coco/arm-cca-guest/Makefile
+> +++ b/drivers/virt/coco/arm-cca-guest/Makefile
+> @@ -1,2 +1,5 @@
+>   # SPDX-License-Identifier: GPL-2.0-only
+> +#
+>   obj-$(CONFIG_ARM_CCA_GUEST) += arm-cca-guest.o
+> +
+> +arm-cca-guest-$(CONFIG_TSM) +=  arm-cca.o
+> diff --git a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c b/drivers/virt/coco/arm-cca-guest/arm-cca.c
+> similarity index 85%
+> rename from drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+> rename to drivers/virt/coco/arm-cca-guest/arm-cca.c
+> index 0c9ea24a200c..89d9e7f8eb5d 100644
+> --- a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+> +++ b/drivers/virt/coco/arm-cca-guest/arm-cca.c
+> @@ -1,8 +1,9 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+> - * Copyright (C) 2023 ARM Ltd.
+> + * Copyright (C) 2025 ARM Ltd.
+>    */
+>   
+> +#include <linux/device/faux.h>
+>   #include <linux/arm-smccc.h>
+>   #include <linux/cc_platform.h>
+>   #include <linux/kernel.h>
+> @@ -181,52 +182,60 @@ static int arm_cca_report_new(struct tsm_report *report, void *data)
+>   	return ret;
+>   }
+>   
+> -static const struct tsm_report_ops arm_cca_tsm_ops = {
+> +static const struct tsm_report_ops arm_cca_tsm_report_ops = {
+>   	.name = KBUILD_MODNAME,
+>   	.report_new = arm_cca_report_new,
+>   };
+>   
+> -/**
+> - * arm_cca_guest_init - Register with the Trusted Security Module (TSM)
+> - * interface.
+> - *
+> - * Return:
+> - * * %0        - Registered successfully with the TSM interface.
+> - * * %-ENODEV  - The execution context is not an Arm Realm.
+> - * * %-EBUSY   - Already registered.
+> - */
+> -static int __init arm_cca_guest_init(void)
+> +static void unregister_cca_tsm_report(void *data)
+> +{
+> +	tsm_report_unregister(&arm_cca_tsm_report_ops);
+> +}
+> +
+> +static int cca_tsm_probe(struct faux_device *fdev)
+>   {
+>   	int ret;
+>   
+>   	if (!is_realm_world())
+>   		return -ENODEV;
+>   
+> -	ret = tsm_report_register(&arm_cca_tsm_ops, NULL);
+> -	if (ret < 0)
+> +	ret = tsm_report_register(&arm_cca_tsm_report_ops, NULL);
+> +	if (ret < 0) {
+>   		pr_err("Error %d registering with TSM\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_add_action_or_reset(&fdev->dev, unregister_cca_tsm_report, NULL);
+> +	if (ret < 0) {
+> +		pr_err("Error %d registering devm action\n", ret);
+> +		unregister_cca_tsm_report(NULL);
+> +		return ret;
+> +	}
+>   
+>   	return ret;
+>   }
+> -module_init(arm_cca_guest_init);
+>   
+> -/**
+> - * arm_cca_guest_exit - unregister with the Trusted Security Module (TSM)
+> - * interface.
+> - */
+> -static void __exit arm_cca_guest_exit(void)
+> +static struct faux_device *cca_tsm;
+> +
+> +static const struct faux_device_ops cca_device_ops = {
+> +	.probe = cca_tsm_probe,
+> +};
+> +
+> +static int __init cca_tsm_init(void)
+>   {
+> -	tsm_report_unregister(&arm_cca_tsm_ops);
+> +	cca_tsm = faux_device_create(RSI_DEV_NAME, NULL, &cca_device_ops);
+> +	if (!cca_tsm)
+> +		return -ENOMEM;
+> +	return 0;
+>   }
+> -module_exit(arm_cca_guest_exit);
+> +module_init(cca_tsm_init);
+>   
+> -/* modalias, so userspace can autoload this module when RSI is available */
+> -static const struct platform_device_id arm_cca_match[] __maybe_unused = {
+> -	{ RSI_PDEV_NAME, 0},
+> -	{ }
+> -};
+> +static void __exit cca_tsm_exit(void)
+> +{
+> +	faux_device_destroy(cca_tsm);
+> +}
+> +module_exit(cca_tsm_exit);
+>   
+> -MODULE_DEVICE_TABLE(platform, arm_cca_match);
+>   MODULE_AUTHOR("Sami Mujawar <sami.mujawar@arm.com>");
+>   MODULE_DESCRIPTION("Arm CCA Guest TSM Driver");
+>   MODULE_LICENSE("GPL");
 
 
