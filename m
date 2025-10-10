@@ -1,47 +1,42 @@
-Return-Path: <linux-kernel+bounces-848266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D4DBCD0F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:12:31 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E019ABCD111
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D8983A60DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:12:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4B90734D26D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35392F1FFE;
-	Fri, 10 Oct 2025 13:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOahLxCd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60752EF651;
+	Fri, 10 Oct 2025 13:13:33 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2023053A7;
-	Fri, 10 Oct 2025 13:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFDC3594A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101945; cv=none; b=CcUe+O7r5KUaSYMj7I/4Nv9J7EXShZkgMhETATu6OaRnLylMf66Wra9aV2P1zMVbzTikewTD/T1V6gR5WrDu+cah2eZQaLOzjqzzrSfa8HQlco4cWYPV1oJQSaGfdY+cA5gq+FU+dq1FhOjTu8VrNam71M+BI4gx0F8h2yChiQU=
+	t=1760102013; cv=none; b=h5fIIDMBQP999rbltW0l6KJQtqcXJMJ/26M9CeRdZ3sZdk37HmcZcmNXkHnqcQW1f5vAh1bHTK3P1BuYMGhJGOydrA/aUTCf6VVhHtX8UISuexj9agfCX2dBIu7qu7D6Q/5i8tdpZuqkjNa3KJ6TieH4XyA0q+glPhBJhxuULrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101945; c=relaxed/simple;
-	bh=pruHw9/kUby5mwqKpt9tdx97guU3tM0R6qKJsdo0Y8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3FkOLLOD3fUjTRl2W0BYZZA1lMAWBDEu3xBruxyyhsbhMDokUiMauUxS2BZx5blWDL5F3K0h7waIhPBglLjcKaTiXcw9OtErfe8O1xjSBpYoCN2+jOAPSRovG9StzBd0uQSWOdAMp2sv0ZkpABSX/vXKYNcLMN3bjXMkcLM1NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOahLxCd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7071C4CEF8;
-	Fri, 10 Oct 2025 13:12:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760101944;
-	bh=pruHw9/kUby5mwqKpt9tdx97guU3tM0R6qKJsdo0Y8w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KOahLxCdmHOcxXpftHn+FT27Iz5bHFaVmf00/LRNoBhEzszgFuwmtpjEEKWhBsh0c
-	 rlKk8trl/mk2Pu6HRRB0EJmvW5TYanbhPS2r4l8KUjCVpVY3S5q5ICLu2oaTQAR+64
-	 TRfarE4myEdwRifRvZAS1rWloUcbWZKXUXNoZf5fsNJ44PRrDYgiiykuvr0tC9/f8M
-	 QVOgcisXb66ck8uZjo5BaflYrF/aLSwkSggbjzcgC1w0xdJoYlTwq4O2vHEnAyGgcx
-	 b7Mi+ZrNB+6LY6CexiWZUw4m4CcXYaOBI+esDBK0TqUyerWyGe4gD6ZDkGkk25KrHY
-	 enTzHEVWSFogw==
-Message-ID: <b3c40a8c-fe35-45a3-9702-2d9b1c555d4e@kernel.org>
-Date: Fri, 10 Oct 2025 15:12:15 +0200
+	s=arc-20240116; t=1760102013; c=relaxed/simple;
+	bh=2nEOD+5PfY8a3pV8dWjkubyvytfepFoxPqi7Eh8twUA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=V9+zGTqLgUNG24TGUP2d2yVwwCn03z0T8VBSBWpWjEtY7m8zDXzDghYmQGKf7Eo/byUz2xtpEXgGbqZAZQsp9fqjwb7FHL6YlxKlEJfa0suozXNdPj84B6rpc7NYJP2qXZ8SorgQKAHZ4R69ON5nmtRXsbVPjsE65opE5q6jMpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id AC6066028F35A;
+	Fri, 10 Oct 2025 15:12:50 +0200 (CEST)
+Message-ID: <e02b3b8b-78a3-41c7-864e-caba6f1a8c0b@molgen.mpg.de>
+Date: Fri, 10 Oct 2025 15:12:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +44,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/7] mfd: sec: add support for s2mps16 pmic
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914124227.2619925-5-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff: firmware
+ crashed!
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+ Jeff Johnson <jjohnson@kernel.org>
+Cc: ath10k@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+ jamie@stimulussoft.com
+References: <5aa2dae4-94ba-45cb-b138-bb40c89a85eb@molgen.mpg.de>
+ <486e9f27-3b03-4317-a1fc-1bd92235db1c@molgen.mpg.de>
+ <90a764d0-c230-43bb-b7e5-189544839f8d@quicinc.com>
+ <e2e58098-4589-4ae4-bc38-6b009823b071@molgen.mpg.de>
+ <82b9e966-5e12-4a13-98d4-0ffa88505f97@molgen.mpg.de>
+ <d8145c41-1e61-454f-a343-be0a7239e36e@molgen.mpg.de>
+ <8354f613-692e-4f6b-933c-3434a5ae90b2@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250914124227.2619925-5-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8354f613-692e-4f6b-933c-3434a5ae90b2@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 14/09/2025 14:42, Ivaylo Ivanov wrote:
->  enum s2mpu02_irq {
->  	S2MPU02_IRQ_PWRONF,
->  	S2MPU02_IRQ_PWRONR,
-> diff --git a/include/linux/mfd/samsung/s2mps16.h b/include/linux/mfd/samsung/s2mps16.h
-> new file mode 100644
-> index 000000000..d4394b054
-> --- /dev/null
-> +++ b/include/linux/mfd/samsung/s2mps16.h
-> @@ -0,0 +1,195 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
+Dear Baochen,
 
 
-Does the license 2.0+ (so 3.0 and so one) come from the downstream you
-copied it? Or from other upstream? If not, thus it is your invention,
-please keep only 2.0.
+Am 21.07.25 um 05:21 schrieb Baochen Qiang:
 
-Anyway:
+> On 7/20/2025 4:43 PM, Paul Menzel wrote:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Am 14.05.25 um 10:08 schrieb Paul Menzel:
 
-Best regards,
-Krzysztof
+[…]
+
+>>> Were you or the firmware team able to pinpoint the problem, and
+>>> come up with a fix? Is there any logging I can enable to help
+>>> with debugging?
+>> 
+>> It also happens with a Telekom Speedport Smart 3 (Arcadyan
+>> Corporation) router. The firmware crashed five more times since
+>> June. A reliable Wi-Fi connection would be really appreciated.
+>> Could you send me a debug firmware, so the firmware developers
+>> have it easier to fix it?
+> 
+> Paul, we are working on getting legal approval on collecting
+> necessary information, such as firmware dump etc, from community.
+> Once done we will share guides to collect them to debug further.
+
+I just wanted to know, if there was a conclusion yet.
+
+
+Kind regards,
+
+Paul
+
+
+PS: I set debug_mask to 0xffffffff a while back, and it logged so much, 
+that my old boot logs are gone from the systemd journal now. ;-)
+
+     echo 0xffffffff | sudo tee 
+/sys/module/ath10k_core/parameters/debug_mask
+
+Any hint on what to set, when the crashes happen?
 
