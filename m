@@ -1,73 +1,86 @@
-Return-Path: <linux-kernel+bounces-847797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACFEBCBBFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:58:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E09BCBC1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C676F4E9214
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:58:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFB314E2502
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290A322B8D0;
-	Fri, 10 Oct 2025 05:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F343223F26A;
+	Fri, 10 Oct 2025 06:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgylEpd2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMdf/wLq"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146A1635;
-	Fri, 10 Oct 2025 05:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EC81DF26E
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760075901; cv=none; b=hh7qGq8x93WKmER7COTW4+Ff6LjYsC2sfV1mu7T+FpT9G9TWEKAPwNHx6+ni0WPVcKIPYIAsNOH2lgOlu98ASD7jwjC12UExstRe7CQQDo5QCUl2iT+zVGwdyFcg+2dQ53KYlILUFRgPC70fdKQAXuzanl4fEmLBdHK14C/nP1I=
+	t=1760076744; cv=none; b=QxJRRD8e+Ldqe3UGOEL9ANcMlhI5WajNnuke1zadHIjp/qwNOBYxBrTSM4u8f3hMWoN8NjfEFiHw5F2F6u7K24RUHY5ZGkbR/i31QzRT4EUBoPVkk7e9M/JemiSgOgYkqrj0uYWg96ajA3gV8ZHo0d9lKtHbovKp9GvRdbAX02M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760075901; c=relaxed/simple;
-	bh=B5mzjs18/78/AD2RXdtHyRsQIVALLNfkycZggkol9qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BG9VsVttfsMOJtK10DE5N6/1O0xB8PoPwDHo/BZ+otOTheGhXWkDVYlYmnMLoU5h96cH05ZQyeDoRSiFl+YrasOKJPwKvy9OiF4guTsukpuuPrRgKjqzJjWrvGZuEwB6FPCRkVkD8cYHX98x3DwlrAjpRs3ZkN2bTPKMsyD1hGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgylEpd2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83535C4CEF1;
-	Fri, 10 Oct 2025 05:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760075900;
-	bh=B5mzjs18/78/AD2RXdtHyRsQIVALLNfkycZggkol9qc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QgylEpd2hrygc4PFI8BZoJyin+K0USvt05snBCqNgDEFpu6e6uGfj0abiblfUoNMO
-	 zeG8bPUZQ2tvZa/goZXkGJUl02H9ggTMc9aiRyrt73SNyP3LgDKdDrw+Xj/L7Stinc
-	 hEiLGRvruIeVzGgihSWKxuCW91g0WDdXAVFlxdzbyOMlALOf7De0NiCqg2fCeqfP5b
-	 VdKn90Zj3K/9Og2UP8hkGl2NBGkcOLeZq9KeIl3TNnkvPxhOBzZxwZrCm6P9N+i53G
-	 5dMaON3FsGQCx0lB+K3PeVN73YNAVVMH+xuV5vIqtxRmgQ5VVf+K1jiGSSBZXzpYNw
-	 Y1Sg59ngBO6IQ==
-Date: Fri, 10 Oct 2025 11:28:18 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
-	quic_hdev@quicinc.com, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	op-tee@lists.trustedfirmware.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [Linux-stm32] [PATCH v19 4/6] dt-bindings: remoteproc: Add
- compatibility for TEE support
-Message-ID: <aOigeqeHBDdU9191@sumit-X1>
-References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
- <20250625094028.758016-5-arnaud.pouliquen@foss.st.com>
- <aMkqifHSdlCs4VjA@sumit-X1>
- <62bdb238-7440-451b-84ef-79f846b10ba0@foss.st.com>
- <aMqIhFdIqp5auH22@sumit-X1>
- <8d385f2e-6470-4d66-be0b-a2a448a81fa4@foss.st.com>
- <aMz8XuHzIomNhmra@sumit-X1>
- <0e5a44df-f60a-4523-a791-6318b3c81425@foss.st.com>
- <f5b0e106-a731-461b-b401-1aa1f9892465@foss.st.com>
- <CANLsYkz58-TFhbPcsMMV27WBGphPc7UP5HfgMZZMrqxnqWqhNA@mail.gmail.com>
+	s=arc-20240116; t=1760076744; c=relaxed/simple;
+	bh=Ox5HfcBIa0Pd9ImGqX26Z7WFjqhZmoCpc19fwDDvGvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nZhafx1MmfLol2uoJOYKZTBc4EYYl2OfNnHOd2uXQUNP+E4PVRQelWFnotLzpSr4wI8fIcD9OTPAxzzSfJMLPoU63oQYXMztpSqyihDkE+sgwoO45ytOQWghuywmHQfH3AFGBw7cfcnEEy0mGJlhJm/yhj/1aWIEnn8c9BOkcjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMdf/wLq; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4fb8d3a2dbso1246543a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 23:12:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760076742; x=1760681542; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dAUs4mxyOS0iY2X7XLxfa0TcqLPgyAiOiZoIgTVsHYk=;
+        b=FMdf/wLqcLPS2zE04mMptPwnCx1xTmRUSart/DGd/954Md5mZDtGodYVq8lg7J09L4
+         FzpMBB5vBp9W7RGTkrKAsvSLD9tkZqDRjJGYj0DEC8GrKhjm7n282Gj09B94Y31UQJn9
+         EwoHDae/RaL5qpFi4ZxsZKQH+jU8ICt21GzwtNSp0L2Hx0dL1k6U4ZsasOYWDImhnAsJ
+         XnEPKIflxmgkR2VyCej1b3a8VdNAVIhuY9CWYj2Qtv325sQ9bMVr9p/jHBiLH8rEByDd
+         U4T0gn5CgxZd+PULdW5VM3e3hdd6B6qPF0QTlA5LOux5l3d1/MhbVXp0FfaYj+vwNreB
+         qf+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760076742; x=1760681542;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dAUs4mxyOS0iY2X7XLxfa0TcqLPgyAiOiZoIgTVsHYk=;
+        b=JTPDWZ2uLND2QBcWSNnWqtS40PE75dZRp3z4igjaPDt+XMCDPsZ+qPDDydMEPwvMIl
+         5ffcS3hhe3+PS1RrqNRHXZOpblkqWtNzq6ZgJ/cZUBTZ/W8kRcD7zVo0YUs8xMFn8uyf
+         hROzjzbpmS3RewOFZX7R4Sh+MZdaJ4kxAWBZnDBNEcwtbbkMyM4WFNfr9BM648kncTJF
+         dsw5ZUUzip9+5abrp58apxl5bob1wH9KZ6/vMBPiKs4/qSus5kETzdUpR0b0FCabbJpw
+         MK4nGBQJeJRT/rfBFvxtAg2VBPkSHfrcVy7dBZVZvpi94VzBC/DbNgCT+RTxNdRvs5JC
+         8AUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjAXmHh4FrgWQyZ6TgYJmT4xr6CJ9x44HqBt0DWjaIgHzrETm9/xCxYy1vXJ10q5o2V+ZtYw+0ale2L+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIyJ/KeuwJka9KyrYr6iH5zfa3/m6Dy2n8+us9N8yYEpOdRBqF
+	wfaH0Am0yvmdy9O0hLUO0ABE3Y5rjuWgD0CLAOyPChsN2rJD+Rx7i4oe9v7TEA==
+X-Gm-Gg: ASbGncteHuRQknXxjyCnI8H2XPvMnDCtaKb6RIdwUE8XanIRraNYiJt0hPj3alR4ufD
+	SYOFMrPCSPtTfSrCGNWKv+wO7XLMFSwd9EiWeFFsm+Ul0g0bNDGfQp5vwbd7wYwGaiZoob3g3dC
+	pPbXlEjcDYACc3dSrvik2Mqc+3I3pGI+bYHqVSIqkJIq8DNVWuQdA3zDeam6H3SMe0KCyPAStfL
+	4Visly0GdVwbQDe2gIiZKlG3oBSUYCvjo77KBZ5uq65miLTmM02Yp6LTwNtDReWsqJdikP8qsO4
+	HBtsIWMxqTtXBcGnqlundjAdnZiuQUlfaNxGNtlD0JNA3Ay0sbUuMEzV87xi1zKUz+bKn9wQ1g9
+	Ak3AUD0TCtre1jBNSWAahx8CGJlI1UiTzt98bEAaSrtTS8Py2FmPhUoyJ7aSxrFL6CnQTWSN/gh
+	UH0LlaKou6rowNWsM=
+X-Google-Smtp-Source: AGHT+IHibCd1Wm0g2BhXInFGKhNjAxMweDeOENyDko3pQXv/8IbBDLJrvtBuzPxZdKeg8K1kCgaeBQ==
+X-Received: by 2002:a17:903:17cf:b0:24c:b39f:baaa with SMTP id d9443c01a7336-290272e1fe5mr143061995ad.49.1760076742145;
+        Thu, 09 Oct 2025 23:12:22 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:c593:2dc:16de:acd1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f93b71sm46446495ad.114.2025.10.09.23.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 23:12:21 -0700 (PDT)
+Date: Thu, 9 Oct 2025 23:12:19 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>, kenalba@google.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: hid-input: only ignore 0 battery events for digitizers
+Message-ID: <of5qjeij72wduee3zyf26drfcwhpsl4sjs3v6tfjv3tgl3xsol@sss7zcyawwaz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,303 +90,66 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANLsYkz58-TFhbPcsMMV27WBGphPc7UP5HfgMZZMrqxnqWqhNA@mail.gmail.com>
 
-Hi Mathieu,
+Commit 581c4484769e ("HID: input: map digitizer battery usage") added
+handling of battery events for digitizers (typically for batteries
+presented in styli). Digitizers typically report correct battery levels
+only when stylus is actively touching the surface, and in other cases
+they may report battery level of 0. To avoid confusing consumers of the
+battery information the code was added to filer out reports with 0
+battery levels.
 
-On Wed, Oct 08, 2025 at 10:38:07AM -0600, Mathieu Poirier wrote:
-> On Tue, 7 Oct 2025 at 07:50, Arnaud POULIQUEN
-> <arnaud.pouliquen@foss.st.com> wrote:
-> >
-> > Hello Bjorn, Mathieu, Sumit,
-> >
-> > On 9/22/25 10:57, Arnaud POULIQUEN wrote:
-> > >
-> > >
-> > > On 9/19/25 08:46, Sumit Garg wrote:
-> > >> On Wed, Sep 17, 2025 at 03:47:40PM +0200, Arnaud POULIQUEN wrote:
-> > >>>
-> > >>> On 9/17/25 12:08, Sumit Garg wrote:
-> > >>>> On Tue, Sep 16, 2025 at 03:26:47PM +0200, Arnaud POULIQUEN wrote:
-> > >>>>> Hello Sumit,
-> > >>>>>
-> > >>>>> On 9/16/25 11:14, Sumit Garg wrote:
-> > >>>>>> Hi Arnaud,
-> > >>>>>>
-> > >>>>>> First of all apologies for such a late review comment as previously I
-> > >>>>>> wasn't CCed or involved in the review of this patch-set. In case
-> > >>>>>> any of
-> > >>>>>> my following comments have been discussed in the past then feel
-> > >>>>>> free to
-> > >>>>>> point me at relevant discussions.
-> > >>>>> No worries, there are too many versions of this series to follow
-> > >>>>> all the
-> > >>>>> past discussions. I sometimes have difficulty remembering all the
-> > >>>>> discussions myself :)
-> > >>>>>
-> > >>>>>> On Wed, Jun 25, 2025 at 11:40:26AM +0200, Arnaud Pouliquen wrote:
-> > >>>>>>> The "st,stm32mp1-m4-tee" compatible is utilized in a system
-> > >>>>>>> configuration
-> > >>>>>>> where the Cortex-M4 firmware is loaded by the Trusted Execution
-> > >>>>>>> Environment
-> > >>>>>>> (TEE).
-> > >>>>>> Having a DT based compatible for a TEE service to me just feels
-> > >>>>>> like it
-> > >>>>>> is redundant here. I can see you have also used a TEE bus based
-> > >>>>>> device
-> > >>>>>> too but that is not being properly used. I know subsystems like
-> > >>>>>> remoteproc, SCMI and others heavily rely on DT to hardcode
-> > >>>>>> properties of
-> > >>>>>> system firmware which are rather better to be discovered dynamically.
-> > >>>>>>
-> > >>>>>> So I have an open question for you and the remoteproc subsystem
-> > >>>>>> maintainers being:
-> > >>>>>>
-> > >>>>>> Is it feasible to rather leverage the benefits of a fully
-> > >>>>>> discoverable
-> > >>>>>> TEE bus rather than relying on platform bus/ DT to hardcode firmware
-> > >>>>>> properties?
-> > >>>>> The discoverable TEE bus does not works if the remoteproc is probed
-> > >>>>> before the OP-TEE bus, in such case  no possibility to know if the TEE
-> > >>>>> TA is not yet available or not available at all.
-> > >>>>> This point is mentioned in a comment in rproc_tee_register().
-> > >>> For the discussion, it’s probably better if I provide more details on
-> > >>> the
-> > >>> current OP-TEE implementation and the stm32mp processors.
-> > >>>
-> > >>> 1) STM32MP topology:
-> > >>>    - STM32MP1: only a Cortex-M4 remote processor
-> > >>>    -  STM32MP2x: a Cortex-M33 and a Cortex-M0 remote processors
-> > >>>    At this stage, only the STM32MP15 is upstreamed; the STM32MP25 is
-> > >>> waiting
-> > >>>    for this series to be merged.
-> > >>>
-> > >>> 2) OP-TEE architecture:
-> > >>> - A platform-agnostic Trusted Application (TA) handles the bus
-> > >>> service.[1]
-> > >>>    This TA supports managing multiple remote processors. It can be
-> > >>> embedded
-> > >>>    regardless of the number of remote processors managed in OP-TEE.
-> > >>>    The decision to embed this service is made at build time based on the
-> > >>>    presence of the remoteproc driver, so it is not device tree
-> > >>> dependent.
-> > >>>    - STM32MP15: TA activated only if the remoteproc OP-TEE driver is
-> > >>> probed
-> > >>>    - STM32MP2x: TA always activated as the OP-TEE remoteproc driver
-> > >>> is always
-> > >>> probed
-> > >>>
-> > >>> - A pseudo Trusted Application implements the platform porting[2],
-> > >>>    relying on registered remoteproc platform drivers.
-> > >>>
-> > >>> - Platform driver(s) manage the remote processors.[3][4]
-> > >>>    - If remoteproc is managed by OP-TEE: manages the remoteproc
-> > >>> lifecycle
-> > >>>    - If remoteproc is managed by Linux: provides access rights to
-> > >>> Linux to
-> > >>> manage
-> > >>>      the remoteproc
-> > >>>
-> > >>>    - STM32MP15: driver probed only if the remoteproc is managed in
-> > >>> OP-TEE
-> > >>>    - STM32MP2x: driver probed in both cases for the Cortex-M33
-> > >>>      For the STM32MP25, the TA is always present and queries the
-> > >>> driver to
-> > >>> check
-> > >>>      if it supports secure loading.
-> > >>>
-> > >>>
-> > >>> [1] https://elixir.bootlin.com/op-tee/4.7.0/source/ta/remoteproc
-> > >>> [2] https://elixir.bootlin.com/op-tee/4.7.0/source/core/pta/stm32mp/
-> > >>> remoteproc_pta.c
-> > >>> [3]https://elixir.bootlin.com/op-tee/4.7.0/source/core/drivers/
-> > >>> remoteproc/stm32_remoteproc.c
-> > >>> [4]https://github.com/STMicroelectronics/optee_os/blob/4.0.0-stm32mp/
-> > >>> core/drivers/remoteproc/stm32_remoteproc.c
-> > >> Thanks for the background here.
-> > >>
-> > >>>> The reason here is that you are mixing platform and TEE bus for
-> > >>>> remoteproc
-> > >>>> driver. For probe, you rely on platform bus and then try to migrate to
-> > >>>> TEE bus via rproc_tee_register() is the problem here. Instead you
-> > >>>> should
-> > >>>> rather probe remoteproc device on TEE bus from the beginning.
-> > >>> The approach is interesting, but how can we rely on Device Tree (DT) for
-> > >>> hardware configuration in this case?
-> > >>> At a minimum, I need to define memory regions and mailboxes.
-> > >> The hardware configuration in DT should be consumed by OP-TEE and the
-> > >> kernel probes remoteproc properties from OP-TEE since it's an OP-TEE
-> > >> mediated remoteproc service you are adding here.
-> > >>>  From my perspective, I would still need a driver probed by DT that
-> > >>> registers
-> > >>> a driver on the TEE bus. Therefore, I still need a mechanism to decide
-> > >>> whether the remote firmware is managed by the secure or non-secure
-> > >>> context.
-> > >> As I mentioned below, this should be achievable using the secure-status
-> > >> property without introducing the new compatible:
-> > >>
-> > >> Kernel managed remoteproc:
-> > >>     status = "okay"; secure-status = "disabled";     /* NS-only */
-> > >>
-> > >> OP-TEE managed remoteproc:
-> > >>     status = "disabled"; secure-status = "okay";     /* S-only */
-> > >>
-> > >>> Another issue would be to be able to share the remoteproc TEE service
-> > >>> between
-> > >>> several platform remoteproc drivers, in case of multi remote processor
-> > >>> support.
-> > >> Making the TEE based remoteproc service independent of DT will surely
-> > >> make it more scalable to other platforms too. Have a look at how OP-TEE
-> > >> based HWRNG service scales across platforms.
-> > >
-> > > Another important service is SCMI, which drivers use to manage clocks
-> > > and resets.
-> > > These clocks and resets are declared in the Device Tree (DT). It seems
-> > > to me that
-> > > in this case, we are closer to SCMI than to the RNG service.
-> > >
-> > > I propose we discuss this based on a concrete example with the STM32MP25.
-> > > Although not yet upstreamed, our plan is to manage signed firmware for the
-> > > Cortex-M33 and Cortex-M0.
-> > >
-> > > Please find below my view of the DT resources to address.
-> > >
-> > > STM32MP25  Cortex-M33 and Cortex-M0 nodes:
-> > >
-> > > m33_rproc {
-> > >    /* M33 watchdog interrupt */
-> > >    interrupt-parent = <&intc>;
-> > >    interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-> > >    /* power domain management */
-> > >    power-domains = <&cluster_pd>, <&ret_pd>;
-> > >    power-domain-names = "default", "sleep";
-> > >    /* RPMsg mailboxes + M33 graceful shutdown request */
-> > >    mboxes = <&ipcc1 0x0>, <&ipcc1 0x1>, <&ipcc1 2>;
-> > >    mbox-names = "vq0", "vq1", "shutdown";
-> > >    memory-region = <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>;
-> > >    status = "okay";
-> > > };
-> > >
-> > > m0_rproc {
-> > >    /* mailbox for graceful shutdown */
-> > >    mboxes = <&ipcc2 2>;
-> > >    mbox-names = "shutdown";
-> > >    /* M0 watchdog */
-> > >   interrupt-parent = <&intc>;
-> > >   interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> > >   /* M0 peripheral clocking (not accessible by the M0) */
-> > >   clocks = <&scmi_clk CK_SCMI_GPIOZ_AM>,
-> > >   <&scmi_clk CK_SCMI_GPIOZ>,
-> > >   <&scmi_clk CK_SCMI_IPCC2>,
-> > >   <&scmi_clk CK_SCMI_IPCC2_AM>,
-> > >   <&rcc CK_LPTIM3_AM>,
-> > >   <&rcc CK_LPUART1_AM>,
-> > >   <&rcc CK_CPU3_AM>,
-> > >   <&rcc CK_CPU3>,
-> > >   <&rcc CK_LPUART1_C3>,
-> > >   <&rcc CK_GPIOZ_C3>,
-> > >   <&rcc CK_LPTIM3_C3>,
-> > >   <&rcc CK_KER_LPUART1>,
-> > >   <&rcc CK_KER_LPTIM3>,
-> > >   <&scmi_clk CK_SCMI_GPIOZ>,
-> > >   <&scmi_clk CK_SCMI_IPCC2>;
-> > >   status = "okay";
-> > > };
-> > >
-> > > If we want to remove the DT, we need to consider:
-> > >
-> > > - Mechanism to differentiate Cortex-M33 and Cortex-M0:
-> > >    Similar to SCMI, the remoteproc OP-TEE service should support
-> > >   multiprocessor setups without instantiating multiple services.
-> > >
-> > > - Mailboxes:
-> > >
-> > >    A phandle is needed because the mailbox driver is managed by the
-> > >    Linux mailbox driver. STM32MP2 has two mailboxes.
-> > >    Moving towards your proposal would imply creating a mailbox service
-> > >    in TEE to manage non-secure mailboxes for non-secure IPC. This might
-> > >    not be efficient for inter-processor communication. Hardware-wise, it
-> > >    would require the IRQ to be handled by the secure context.
-> > >
-> > > - Memory regions:
-> > >   - Hardware limitation: OP-TEE is limited in the number of memory regions
-> > >     it can declare due to Firewall configuration. Moving IPC memory regions
-> > >     reaches this limit. Currently, OP-TEE defines a single region with
-> > > shareable
-> > >     access rights, which Linux splits into at least three memory regions
-> > > for RPMsg.
-> > >   - Memory mapping: Memory regions still need to be declared in Linux to
-> > > prevent
-> > >     Linux from using them.
-> > >   - Virtio/RPMsg: Memory region names are fixed (e.g., dev<X>vring<Y>),
-> > > so OP-TEE
-> > >    must declare memory regions in its DT according to Linux naming
-> > > conventions.
-> > >
-> > > - Clock and reset:
-> > >     Some clocks and resets are managed via SCMI, others are not. This
-> > > would require
-> > >    managing all clocks and resets through SCMI, with possible side
-> > > effect on the
-> > >    "unused" clock mechanism in Linux ( to be confirmed)
-> > >
-> > > - Power domain:
-> > >    Information is needed at the Linux level to determine the low power
-> > > mode.
-> > >
-> > > - Watchdog interrupt:
-> > >    Should be managed by OP-TEE, which requires the hardware to have an
-> > > associated
-> > >    secure IRQ.
-> > >
-> > > - Miscellaneous vendor DT properties:
-> > >     How to be sure that these can be addressed through TEE services?
-> > >
-> > > Regarding the existing DT needs, it seems to me that removing the DT
-> > > would require
-> > > moving all node resource management into TEE ( if really possible). This
-> > > would
-> > > increase TEE complexity and footprint, reduce system efficiency, and
-> > > make supporting
-> > > other platforms less scalable.
-> > >
-> > > That said, it probably also depends on the TEE implementation.
-> > > And  we should support both. This could be done by introducing a second
-> > > UUID.
-> > > but in this case should it be the same driver?
-> >
-> > I am unsure how to move forward here. It seems to me that addressing Sumit's
-> > request for a TEE without a device tree is not compatible with the current
-> > OP-TEE implementation, at least for the STM32MP platforms.
-> >
-> > Perhaps the simplest approach is to abandon the effort to make this generic
-> > and instead rename tee_remoteproc.c to stm32_tee_remoteproc.c, making it
-> > platform-dependent. Then, if another platform wants to reuse it with OP-TEE
-> > FFA or another TEE, the file can be renamed.
-> >
-> > Does this proposal would make sense to you?
-> 
-> I would certainly like to see a consensus, and more specifically, an
-> implementation that follows what other drivers that interact with the
-> secure world do.  I currently do not have a clear understanding of
-> what those other drivers do, and doing the research will take
-> bandwidth that I also currently do not have.
+However there exist other kinds of devices that may legitimately report
+0 battery levels. Fix this by filtering out 0-level reports only for
+digitizer usages, and continue reporting them for other kinds of devices
+(Smart Batteries, etc).
 
-The major problem I see with this patchset is the probing of remoteproc
-on platform bus and then try to move to a discoverable TEE bus. As I replied
-in the other thread, we should address the unavoidable DT dependency following
-what other discoverable buses like PCI etc. does.
+Reported-by: 卢国宏 <luguohong@xiaomi.com>
+Tested-by: 卢国宏 <luguohong@xiaomi.com>
+Fixes: 581c4484769e ("HID: input: map digitizer battery usage")
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/hid/hid-input.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
--Sumit
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index ff1784b5c2a4..ba3f6655af9e 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -595,14 +595,18 @@ static void hidinput_cleanup_battery(struct hid_device *dev)
+ 	dev->battery = NULL;
+ }
+ 
+-static void hidinput_update_battery(struct hid_device *dev, int value)
++static void hidinput_update_battery(struct hid_device *dev,
++				    unsigned int usage, int value)
+ {
+ 	int capacity;
+ 
+ 	if (!dev->battery)
+ 		return;
+ 
+-	if (value == 0 || value < dev->battery_min || value > dev->battery_max)
++	if ((usage & HID_USAGE_PAGE) == HID_UP_DIGITIZER && value == 0)
++		return;
++
++	if (value < dev->battery_min || value > dev->battery_max)
+ 		return;
+ 
+ 	capacity = hidinput_scale_battery_capacity(dev, value);
+@@ -1518,7 +1522,7 @@ void hidinput_hid_event(struct hid_device *hid, struct hid_field *field, struct
+ 		bool handled = hidinput_set_battery_charge_status(hid, usage->hid, value);
+ 
+ 		if (!handled)
+-			hidinput_update_battery(hid, value);
++			hidinput_update_battery(hid, usage->hid, value);
+ 
+ 		return;
+ 	}
+-- 
+2.51.0.740.g6adb054d12-goog
 
-> This situation is
-> expected to persist at least until December.
-> 
-> As such I see two avenues for this patchset:
-> (1) You seek to find a solution that is amenable to you, Sumit,
-> Abdellatif and Harshal (I had to add the latter two to this email
-> thread).
-> (2) You wait until December, and likely beyond, until I have time to
-> do the research needed to advise on the way forward.
-> 
+
+-- 
+Dmitry
 
