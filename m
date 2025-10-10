@@ -1,111 +1,193 @@
-Return-Path: <linux-kernel+bounces-847640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A886BBCB536
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:18:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E45D6BCB542
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 504C74ED402
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:18:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4FB34EC6FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD3220013A;
-	Fri, 10 Oct 2025 01:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B5434BA58;
+	Fri, 10 Oct 2025 01:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Im8wzDSk"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mfd/hyml"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2FF19E97B
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BB919E97B
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760059110; cv=none; b=Q96p2QEYUNeUplKie/xEhFXgctvXEvbnO6Mag2h4bHuiah1HbThdVFfTvcP+vl5BkvFgBECHNj3Dgj+FBep9agM4y1z9o3uyDFP/WzS5tuRUC8cnL2maChCGhj4JDIDc6WE7UPoKPPRexm3cjBOTcI9Sa17W6zwSZBscF+OEqdQ=
+	t=1760059198; cv=none; b=B92Z1oCl10nmUddH+YOkWfoQ7klAwW8+3oXbpB7kdgamlI1kTrHLgTotodZ8vZW9iUu8QyKRCqBT/b/tGC178spUeSVK0oR2iat01wyUZrJUpk1j9nwWAkH9s5RycqNM9qLuE9Rf16FkqcfFz6y3qMAoJoV4v0HPPeasKqos8h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760059110; c=relaxed/simple;
-	bh=dz7U3Xlz9VpD0eCDezRr9jzjFI/meWpiQJM8lO9zSvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUu0xYq2fY3LBIAz5f/UKckVPLIVg3+ec4SstKZq8OvdM0/FepGjpY+MqcZCe5vloiwq1ZRnLcYYmXbWYnfL2CNJJrywQLg1WvT4Ck7CBUkzggROnwM+zWDM4xhjAZO5LIrEMq8Ot0uFShB6G7kGu8hiC+Tu4MVe/hahGIE+d+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Im8wzDSk; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b40f11a1027so275265766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 18:18:28 -0700 (PDT)
+	s=arc-20240116; t=1760059198; c=relaxed/simple;
+	bh=uaTvHrHRLctEDmqgKU6Co6gfADnqxXrJ/YLmUpeeOrY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oN2hZt9/kaWqWirH34ULzIDB+quUqi+QOkg5QVNlbB8AmL9HsSbP389EfQiEx7wRAapRd5171qAcXgXUET2MGI5MPTxdbh06EXoqFyVETuXavRGXpXgosI5ZWRUkQNEQDW5vdY/2iGZfGRMBlCo3a3Q9izuARnLEJ0PKhus8P78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mfd/hyml; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ecab3865dso4658778a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 18:19:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760059107; x=1760663907; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HuuNyQUeQERuEHORqqgvkbAzAvdv3OChPVUcQyJiiVo=;
-        b=Im8wzDSkVa9TviVYdV4SIpDbXfOQQKmslaFxdU7KBD0Nn8nsfKela+0pC60mO1FtRr
-         xB3+fNFXTOACqk/MZesYqQWaIIJOa7vOd6gGPeWErwcICeJcJDT/jZ9Ho9vazZ0xN9im
-         V/cqcgtd3P7JDgDkwuLsJHu3UFAK8OXsVimvJlvIfkP2ZKzoz08CMGcpdis4Us/OEy6b
-         ZqFQjTeyF8BEsEuk79oUwpupFME2cCvI9rfpzXR9crNYhtU2s0vfK6W+tLIOivwE6dkm
-         6NiueKF1eSqJB0v/jmfolXL5pIyCXk1VoEViXPGdnYb5WDWvFh6ayJKQTElJ/foTp30F
-         fzlA==
+        d=google.com; s=20230601; t=1760059196; x=1760663996; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Umr72UDM+ef/eu/5GGg59+M3j2MSWUMKK6kjEtNqzt4=;
+        b=Mfd/hymlEn1QCs5BP6bx7Kp6cGxJm9jMAT13K+BusQRgl6R12p+te46wjuQ5f+tbdD
+         a3QVIXbAIjXDEJCzVgdut99Se5An64wmMBYIEeZ2ARMly2xH/V2xl+9IwDPTk0zc5j/C
+         1lkdwg6boq/B2oIuTNmQl/mchTV9tchS72oesmfIePZboNjc0aE/XtKX/tvtjxYWmz8S
+         VarjtKkaNF2x3RetsYD2UGHiRK2m3pAKbdonc30ZEUV8rmpAy+NzbsgEbvUTG3ibZJDj
+         x+DIzwNWGW+eel3Q2btWQyyxFw5NnoalaJ4HSL09CX2Ry/v7Aje3WqjYXKjbX1NscgQt
+         jkkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760059107; x=1760663907;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HuuNyQUeQERuEHORqqgvkbAzAvdv3OChPVUcQyJiiVo=;
-        b=bHcSijTpot3lrZpmkKGoCqKitSw7s4BiQkhI9XX8Y10gaYRz5ilsdTsnHzoKsAhRQJ
-         Y/awcviXm04j6nYdE83iMrCrY/IoNU9E303oALEjQDYTg57O6VuEsnDXqffuYk2shwmv
-         VA9ZNrGwA9P57iQKeCsVgbuKEQpXePObuMpZFwa7q58YYZjwiRfWmsznpmnjv2Z7Gu5g
-         3OkrNcdN0ZYrL/taiZbX5vgcFw2j2BRTV5bmJculIEfRBiF2LSYV/5djN3YkaHz2dw6v
-         fYfROA1H7rwtAnx+ejqFXEbFrp+ORF8BIuayS9YXw4ecIVPk8Snq7yg4+3jA8b7ZkJ2A
-         jB8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZhJB0jP6c6CqRYKX1y1zJX1tw3OiA0wsBiyA07+a8qrPdBDnfphf8ansOIxHVEf72r5FL17FfxUrKm9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLPxyf1PZ1H2j4i1zC4P52e4a84R+tipHc2XtLw2iGqrFTJw1a
-	Hwpj4vA8nAVkc/SfgECwh2zGAIA/n/4xPs8R3DiS/hzNIeBF8i+u/HpV
-X-Gm-Gg: ASbGnctCuGDNtD5lGCh/emUQ78sp++XF1wtRxebOKslOR+IpIwuR7NWBUs5p2nMmYZr
-	+GGY7lZHzNQtGTN2YzL6j1J87O1VqcmTM6XHmcrMaQ0XVSkLU6iNEUmLf2+aYvMQUqfJMlo2g5M
-	fKVx71Ej40GVsdI8ghPnMykoKHI8krh3pQY+G65HnOwl85QAZN+RkG6gYQaWDzCD8QqvbnwrJUg
-	websF+qGTRCYfNMp/PRJl3VWEqLELE3OrkE9OUTEJiZhbPF4MGImEGW4c+vQr3mQJKaKnGtqyWo
-	vNcOjl+6mwB81o3OLefPL6zTiZUAtXniBU9V5mbb3EqaiC+LBa4Nhb45o1BCYhvDl+49UHMeB0V
-	e7Pwtm0fnkQeBUzaOIGVwgybkV/3EfHdoAM+gSOKTQBe5yA==
-X-Google-Smtp-Source: AGHT+IHWcmsznp9PDr/fojGUBUEOr4Rw6hfIt6/AHC2pNuXs/i+8fxKhoUZc0yew5l7JtAhQWD9juw==
-X-Received: by 2002:a17:906:b118:b0:b54:981c:4072 with SMTP id a640c23a62f3a-b54981c4627mr476068166b.11.1760059107197;
-        Thu, 09 Oct 2025 18:18:27 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d971ec69sm97255066b.85.2025.10.09.18.18.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 Oct 2025 18:18:26 -0700 (PDT)
-Date: Fri, 10 Oct 2025 01:18:26 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Replace READ_ONCE() with standard page table
- accessors
-Message-ID: <20251010011826.4wv6sb4z3sedpabu@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251007063100.2396936-1-anshuman.khandual@arm.com>
+        d=1e100.net; s=20230601; t=1760059196; x=1760663996;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Umr72UDM+ef/eu/5GGg59+M3j2MSWUMKK6kjEtNqzt4=;
+        b=eOyJnkY1h22zH+c6Bjlp5ujuXN0jctfDeQiq3iLrbzVHmk1caawYxuaVLKdxvThAZY
+         083sCqko9ofGD6TkN+57NbUusrW1lEzuE2UjwUpH0ZLIPvve3y//Ft9RLLEHXUUKUoa1
+         qdWwr5ViMklZKHQ4DRTqvUaCCDGUG1AYIDN7s/FYNr/SiRGCSAfbxCGLmMzsDnDJsNeC
+         RPnJ4WMlBCMDFQqJQ+Jvx5P08EY3sKvcQUHcJ5cY2FQD25oNa/gTxc/kzXCvlAx0ep4c
+         jAELFNLN5iQ9ec/GB7Qb/cEWpiyJz79dEpaNLnM6w1lDXJMRtQya4eZFBLKYOqEoCKFd
+         fntA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgUxL8kqoY1ZjFxiSPWeix53pY2KbhgZFVCbByKx5P+EQEE6xEKA96WDQbAzG5Dg9OIq3o4Fa4CIjjA1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+CB95ZvLsSVeN3YGIcULPQKbNDmUpOB234+Q+Z/U2gJyV4YYF
+	/9vBui8BdwDl9WtNOgq/hCIHpNDJ+EEG+GiU3dt9uXmVoR1c604g2MpIQZ64vo1FVpO/gutBEvC
+	MNTXRtg==
+X-Google-Smtp-Source: AGHT+IE27KyVOHtRVs+A0lEatoDCera078aKUGcBNIuc3h+4WOD0YdO+2yFbdCIN2uDuSh9GKzfzUmBfEEw=
+X-Received: from plbml5.prod.google.com ([2002:a17:903:34c5:b0:28e:7f4e:dd17])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ec83:b0:267:d2f9:2327
+ with SMTP id d9443c01a7336-2902739b36dmr131881235ad.27.1760059195894; Thu, 09
+ Oct 2025 18:19:55 -0700 (PDT)
+Date: Thu,  9 Oct 2025 18:19:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007063100.2396936-1-anshuman.khandual@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
+Message-ID: <20251010011951.2136980-1-surenb@google.com>
+Subject: [PATCH 0/8] Guaranteed CMA
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, alexandru.elisei@arm.com, peterx@redhat.com, sj@kernel.org, 
+	rppt@kernel.org, mhocko@suse.com, corbet@lwn.net, axboe@kernel.dk, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, jack@suse.cz, 
+	willy@infradead.org, m.szyprowski@samsung.com, robin.murphy@arm.com, 
+	hannes@cmpxchg.org, zhengqi.arch@bytedance.com, shakeel.butt@linux.dev, 
+	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com, 
+	minchan@kernel.org, surenb@google.com, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 07, 2025 at 07:31:00AM +0100, Anshuman Khandual wrote:
->Replace all READ_ONCE() with a standard page table accessors i.e pxdp_get()
->that defaults into READ_ONCE() in cases where platform does not override.
->
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: David Hildenbrand <david@redhat.com>
->Cc: linux-mm@kvack.org
->Cc: linux-kernel@vger.kernel.org
->Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Guaranteed CMA (GCMA) is designed to improve utilization of reserved
+memory carveouts without compromising their advantages of:
+1. Guaranteed success of allocation (as long as total allocation size is
+below the size of the reservation.
+2. Low allocation latency.
+The idea is that carved out memory when not used for its primary purpose
+can be donated and used as an extension of the pagecache and any donated
+folio can be taken back at any moment with minimal latency and guaranteed
+success.
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+To achieve this, GCMA needs to use memory that is not addressable by the
+kernel (can't be pinned) and that contains content that can be discarded.
+To provide such memory we reintroduce cleancache idea [1] with two major
+changes. New implementation:
+1. Avoids intrusive hooks into filesystem code, limiting them to two hooks
+for filesystem mount/unmount events and a hook for bdev invalidation.
+2. Manages inode to folio association and handles pools of donated folios
+inside cleancache itself, freeing backends of this burden.
 
+Cleancache provides a simple interface to its backends which lets them
+donate folios to cleancache, take a folio back for own use and return the
+folio back to cleancache when not needed.
+
+With cleancache in place, GCMA becomes a thin layer linking CMA allocator
+to cleancache, which allows existing CMA API to be used for continuous
+memory allocations with additional guarantees listed above.
+The limitation of GCMA is that its donated memory can be used only to
+extend file-backed pagecache. Note that both CMA and GCMA can be used
+at the same time.
+
+Accounting for folios allocated from GCMA is implemented the same way as
+for CMA. The reasoning is that both CMA and GCMA use reserved memory for
+contiguous allocations with the only difference in how that memory gets
+donated while not in use. CMA donates its memory to the system for movable
+allocations with expectation that it will be returned when it is needed.
+GCMA donatest its memory to cleancache with the same expectation. Once CMA
+or GCMA use that memory for contiguous allocation, the difference between
+them disappears, therefore accounting at that point should not differ.
+
+The patchset borrows some ideas and code from previous implementations of
+the cleancache and GCMA [2] as well as Android's reference patchset [3]
+implemented by Minchan Kim and used by many Android vendors.
+
+[1] https://elixir.bootlin.com/linux/v5.16.20/source/Documentation/vm/cleancache.rst
+[2] https://lore.kernel.org/lkml/1424721263-25314-1-git-send-email-sj38.park@gmail.com/
+[3] https://android-review.googlesource.com/q/topic:%22gcma_6.12%22
+
+Patchset is based on mm-new.
+
+Minchan Kim (1):
+  mm: introduce GCMA
+
+Suren Baghdasaryan (7):
+  mm: implement cleancache
+  mm/cleancache: add cleancache LRU for folio aging
+  mm/cleancache: readahead support
+  mm/cleancache: add sysfs interface
+  mm/tests: add cleancache kunit test
+  add cleancache documentation
+  mm: integrate GCMA with CMA using dt-bindings
+
+ Documentation/mm/cleancache.rst |  112 +++
+ MAINTAINERS                     |   13 +
+ block/bdev.c                    |    6 +
+ fs/super.c                      |    3 +
+ include/linux/cleancache.h      |   84 +++
+ include/linux/cma.h             |   11 +-
+ include/linux/fs.h              |    6 +
+ include/linux/gcma.h            |   36 +
+ include/linux/pagemap.h         |    1 +
+ kernel/dma/contiguous.c         |   11 +-
+ mm/Kconfig                      |   40 ++
+ mm/Kconfig.debug                |   13 +
+ mm/Makefile                     |    4 +
+ mm/cleancache.c                 | 1144 +++++++++++++++++++++++++++++++
+ mm/cleancache_sysfs.c           |  209 ++++++
+ mm/cleancache_sysfs.h           |   58 ++
+ mm/cma.c                        |   37 +-
+ mm/cma.h                        |    1 +
+ mm/cma_sysfs.c                  |   10 +
+ mm/filemap.c                    |   26 +
+ mm/gcma.c                       |  231 +++++++
+ mm/readahead.c                  |   55 ++
+ mm/tests/Makefile               |    6 +
+ mm/tests/cleancache_kunit.c     |  425 ++++++++++++
+ mm/truncate.c                   |    4 +
+ mm/vmscan.c                     |    1 +
+ 26 files changed, 2534 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/mm/cleancache.rst
+ create mode 100644 include/linux/cleancache.h
+ create mode 100644 include/linux/gcma.h
+ create mode 100644 mm/cleancache.c
+ create mode 100644 mm/cleancache_sysfs.c
+ create mode 100644 mm/cleancache_sysfs.h
+ create mode 100644 mm/gcma.c
+ create mode 100644 mm/tests/Makefile
+ create mode 100644 mm/tests/cleancache_kunit.c
+
+
+base-commit: 70478cb9da6fc4e7b987219173ba1681d5f7dd3d
 -- 
-Wei Yang
-Help you, Help me
+2.51.0.740.g6adb054d12-goog
+
 
