@@ -1,126 +1,168 @@
-Return-Path: <linux-kernel+bounces-847693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F312BCB6BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:29:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD2DBCB6D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BC7519E7FB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:30:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82953A46AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95E526B759;
-	Fri, 10 Oct 2025 02:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bndp/sPY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8C268C42;
-	Fri, 10 Oct 2025 02:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C66F2517B9;
+	Fri, 10 Oct 2025 02:29:11 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A052924A047;
+	Fri, 10 Oct 2025 02:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760063322; cv=none; b=K0rvQchN8n9UDpP2da427Gg61aijrhzrQMKKNWO6A/NF0FzBopSjbVAe51z2tcVZ0KxrPFUWTnl2PsQmX+Tp4KJIiy48YjnYyYlGEIPZE1pAAxXbW0kNr1dt1umdQ0OFHGTl7PWBjLWDAhkcj+eAiqrf0bACoIsUgTqTc1JmDLc=
+	t=1760063350; cv=none; b=PjIFpXyokxXvf70/uMlVIYmLNioF409dH6h7V/jmUo4Mmz84BC8Rc8OVaChUgv2H1hmcZMamDu3r6DQsxOh0uK4epHgKK4vHAAZ1fw638NBWQhh1fEx/lkCXv5KxbRlkH7iTvq7rIheIda1xXuO5AAolE1wdckwpNDXdGhDo3e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760063322; c=relaxed/simple;
-	bh=FK9xKviTcI/C/LX0yN/JGLOVejrI+c9f1E6gl9PnytQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gtPum16gswonQPC3YSA3KWLoS4peJmd/EZZEJ5Tk0j64cvn+mQKTC01Sck4D3jLqJDVMEoyOlJzUQGSymYpTmxz32s1eQRYp8SarLpnsILKBUKwEkukiFyApQe4w3bWr0E7BAbUeBiRWBs3E1TJzmaGisLOV3z9BXRDkSWWzP2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bndp/sPY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED887C4CEF7;
-	Fri, 10 Oct 2025 02:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760063322;
-	bh=FK9xKviTcI/C/LX0yN/JGLOVejrI+c9f1E6gl9PnytQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bndp/sPYydcCNDbqrXtjVXk/W675XXogzGiv+wYQO7RUr4O7Qb323sK7694qpUdEB
-	 j5Wmyok32ASruvnzXq2Wju1+WutiK3Ql+cvY9VIgTVJ0fSOggPEiK2pOUL2LnZrGXP
-	 7MV0NvitQ8m8fJYIVrQHQCcSbwmVP5PJqlMGkaWVb0ptGQRoafeCgF7qyLELfyXdD9
-	 mGDKGey91KwMJTKM21onErVPUAVbS/Cke52c6KzTNY0IR6A74dHjFVE2Z6RxKzuR9R
-	 1EmjpsdWk6l62UzbYDrcD7uHVguKiwM9BwNkgf9sSoM3Kxohizt46BF2+kVK5eyAy1
-	 QeYbPuk8Cz35Q==
-From: Yu Kuai <yukuai@kernel.org>
-To: axboe@kernel.dk,
-	bvanassche@acm.org,
-	nilay@linux.ibm.com
-Cc: linux-block@vger.kernel.org,
+	s=arc-20240116; t=1760063350; c=relaxed/simple;
+	bh=bHwkYH/zaO4ohrvY74ltRru3hW8ph/UMjhR3E3/0RIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=koYVR+fL7eTx7Idp3wNj98fIvLYBSh65qBLdXrzpKSf+XnZkVL+Gp6dbB2mLMK9Z4esJQP/SCuVN9XEoOSBUj4JOguNR7VlxLDNqwQdAJjEOLX61P3hRmIqBvUrmeMQsnqRmFhFr6CqFFT0BkgUdt/Jp+HHokNtOm3CRuxkc9Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.57.136])
+	by gateway (Coremail) with SMTP id _____8BxG9Jtb+hoWIYUAA--.42626S3;
+	Fri, 10 Oct 2025 10:29:01 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.57.136])
+	by front1 (Coremail) with SMTP id qMiowJDxQ+Rfb+hoHsHXAA--.20307S2;
+	Fri, 10 Oct 2025 10:28:47 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	corbet@lwn.net,
+	alexs@kernel.org,
+	si.yanteng@linux.dev,
+	tglx@linutronix.de,
+	jiaxun.yang@flygoat.com,
+	peterz@infradead.org,
+	wangliupu@loongson.cn,
+	lvjianmin@loongson.cn,
+	maobibo@loongson.cn,
+	siyanteng@cqsoftware.com.cn,
+	gaosong@loongson.cn,
+	yangtiezhu@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v3 7/7] blk-mq: add documentation for new queue attribute async_dpeth
-Date: Fri, 10 Oct 2025 10:28:09 +0800
-Message-ID: <20251010022812.2985286-8-yukuai@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251010022812.2985286-1-yukuai@kernel.org>
-References: <20251010022812.2985286-1-yukuai@kernel.org>
+	Tianyang Zhang <zhangtianyang@loongson.cn>
+Subject: [PATCH v5 0/2]  Loongarch irq-redirect support
+Date: Fri, 10 Oct 2025 10:28:39 +0800
+Message-ID: <20251010022845.140234-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxQ+Rfb+hoHsHXAA--.20307S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxGF4UKr1DZry5Cr1UJF1rXwc_yoWrJr18pF
+	W7uasYyrs0kr4xCFn7Wa18uFy3GrykG3y2q3Wak347uwn8uryqqF10kF98ZFy8Gw4rK3WI
+	qr4Yq34DW3WDAagCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AK
+	xVWxJr0_GcWln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
+	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4YLvDUUUU
 
-From: Yu Kuai <yukuai3@huawei.com>
+This series of patches introduces support for interrupt-redirect
+controllers, and this hardware feature will be supported on 3C6000
+for the first time
 
-Explain the attribute and the default value in different case.
+change log:
+        v0->v1:
+        1.Rename the model names in the document.
+        2.Adjust the code format.
+        3.Remove architecture - specific prefixes.
+        4.Refactor the initialization logic, and IR driver no longer set 
+	  AVEC_ENABLE.
+        5.Enhance compatibility under certain configurations.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
----
- Documentation/ABI/stable/sysfs-block | 34 ++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+        v1->v2:
+        1.Fixed an erroneous enabling issue.
 
-diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-index 0ed10aeff86b..aa1e94169666 100644
---- a/Documentation/ABI/stable/sysfs-block
-+++ b/Documentation/ABI/stable/sysfs-block
-@@ -609,6 +609,40 @@ Description:
- 		enabled, and whether tags are shared.
- 
- 
-+What:		/sys/block/<disk>/queue/async_depth
-+Date:		August 2025
-+Contact:	linux-block@vger.kernel.org
-+Description:
-+		[RW] Controls how many asynchronous requests may be allocated in the
-+		block layer. The value is always capped at nr_requests.
-+
-+		When no elevator is active (none):
-+		- async_depth is always equal to nr_requests.
-+
-+		For bfq scheduler:
-+		- By default, async_depth is set to 75% of nr_requests.
-+		  Internal limits are then derived from this value:
-+		  * Sync writes: limited to async_depth (≈75% of nr_requests).
-+		  * Async I/O: limited to ~2/3 of async_depth (≈50% of nr_requests).
-+
-+		  If a bfq_queue is weight-raised:
-+		  * Sync writes: limited to ~1/2 of async_depth (≈37% of nr_requests).
-+		  * Async I/O: limited to ~1/4 of async_depth (≈18% of nr_requests).
-+
-+		- If the user writes a custom value to async_depth, BFQ will recompute
-+		  these limits proportionally based on the new value.
-+
-+		For Kyber:
-+		- By default async_depth is set to 75% of nr_requests.
-+		- If the user writes a custom value to async_depth, then it override the
-+		  default and directly control the limit for writes and async I/O.
-+
-+		For mq-deadline:
-+		- By default async_depth is set to nr_requests.
-+		- If the user writes a custom value to async_depth, then it override the
-+		  default and directly control the limit for writes and async I/O.
-+
-+
- What:		/sys/block/<disk>/queue/nr_zones
- Date:		November 2018
- Contact:	Damien Le Moal <damien.lemoal@wdc.com>
+        v2->v3
+        1.Replace smp_call with address mapping to access registers
+        2.Fix some code style issues
+
+        v3->v4
+        1.Provide reasonable comments on the modifications made to
+	  IRQ_SET_MASK_OK_DONE
+        2.Replace meaningless empty functions with parent_mask/unmask/ack
+        3.Added and indeed released resources
+        4.Added judgment for data structure initialization completion to 
+          avoid duplicate creation during cpuhotplug
+        5.Fixed the code style and some unnecessary troubles
+
+        v4->v5
+	1.when it is detected in avecintc_set_affinity that the current affinity
+	remains valid, the return value is modified to IRQ_SET_MASK_OK_DONE.
+	  After the introduction of redirect-domain, for each interrupt source, 
+	avecintc-domain only provides the CPU/interrupt vector, while redirect-domain 
+	provides other operations to synchronize interrupt affinity information 
+	among multiple cores. 	  The original intention is to notify the cascaded
+	redirect_set_affinity that multi-core synchronization is not required. 
+	  However, this introduces some compatibility issues, such as the new return
+	value causing msi_domain_set_affinity to no longer perform irq_chip_write_msi_msg.
+	  1) When redirect exist in the system, the msi msg_address and msg_data no 
+	longer changes after the allocation phase, so it does not actually require updating
+	the MSI message info.
+	  2) When only avecintc exists in the system, the irq_domain_activate_irq
+	interface will be responsible for the initial configuration of the MSI message,
+	which is unconditional. After that, if unnecessary, no modification to the MSI
+	message is alse correctly.
+
+	2.Restructured the macro definitions to make them appear more logical.
+
+	3.Adjusted the layout of members struct redirect_queue\struct redirect_table and 
+	struct redirect_item, making redirect_item the primary interface for accessing
+	other members.
+
+	4.The method of accessing registers has been standardized to MMIO.
+
+	5.Initialize variables at declaration whenever possible.
+
+	6.Replaced the the "struct page" in redirect_table and redirect_queue with "struct folio".
+
+	7.Adjusted the initialization process so that all irq_desc configurations are completed
+	during driver initialization, no longer relying on specific CPUs being online.
+
+	8.Refactored portions of the code to make them more concise and logical.
+
+Tianyang Zhang (2):
+  Docs/LoongArch: Add Advanced Extended-Redirect IRQ model description
+  irqchip/irq-loongarch-ir:Add Redirect irqchip support
+
+ .../arch/loongarch/irq-chip-model.rst         |  38 ++
+ .../zh_CN/arch/loongarch/irq-chip-model.rst   |  37 ++
+ arch/loongarch/include/asm/cpu-features.h     |   1 +
+ arch/loongarch/include/asm/cpu.h              |   2 +
+ arch/loongarch/include/asm/loongarch.h        |   6 +
+ arch/loongarch/kernel/cpu-probe.c             |   2 +
+ drivers/irqchip/Makefile                      |   2 +-
+ drivers/irqchip/irq-loongarch-avec.c          |  20 +-
+ drivers/irqchip/irq-loongarch-ir.c            | 527 ++++++++++++++++++
+ drivers/irqchip/irq-loongson.h                |  19 +
+ 10 files changed, 640 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/irqchip/irq-loongarch-ir.c
+
 -- 
-2.51.0
+2.41.0
 
 
