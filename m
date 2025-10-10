@@ -1,130 +1,172 @@
-Return-Path: <linux-kernel+bounces-847914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D376DBCC059
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:03:13 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B89BBCC04D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 890861A64AC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:03:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABAC0354543
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4F227602A;
-	Fri, 10 Oct 2025 08:03:05 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C892765C0;
+	Fri, 10 Oct 2025 08:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4Ce0Ihz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87A21FF7B3;
-	Fri, 10 Oct 2025 08:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569761FF7B3;
+	Fri, 10 Oct 2025 08:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760083385; cv=none; b=Njf0G2bqdARsVo1uTV1loyoVzVsz/T5dAznw/tKWBo8ITQXW/uk4dhQPGNVQqspOgsBqGCcJEjTXPW+3RAIVLCkDN2wqmj1MrwfojuHWigwaBeCOPNuHjxVD3d1o8dssar013A7viR6Og8SoaypB5u/UmK958D+6rYZcgydT314=
+	t=1760083340; cv=none; b=JtJlomCHM2jRbUW8VMO7850MjqYltjHaPfdn6X/FcANj+8EGqFs72mGQ7k/OUpEULQJiFMWPaMfDesNxj4ewufvRwC/fo6DrJn//5VUMxcePl6g6qokyN99IJviJV/IJjCUrFiQgC4QSFVI9nZmyqMiqdk1zgqnY7Tfi1YiOiyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760083385; c=relaxed/simple;
-	bh=yrH5cwTvmAFrqnJF1IG6QFpCBnGkg3t61LnX9CmgLiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HyTlaUas2b9TEVviWqL9YfCXqMQcR8+1cWQLtFCM9optzhq2e6g8fxHH7wXKRde7/vkUEfIGq5Ttut9ziNiuYeRs5KbKegDNPtEFFn2g1Vn/9oBunyLzK1BR1b5Sl3OolgCejq0bif6moGsFvOvkgmo5cb47frzq+evk2tZT+zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.212] (p5b13ae81.dip0.t-ipconnect.de [91.19.174.129])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id CA0806028F361;
-	Fri, 10 Oct 2025 10:02:07 +0200 (CEST)
-Message-ID: <b1fbadb2-235e-4b08-afba-e397c6d076df@molgen.mpg.de>
-Date: Fri, 10 Oct 2025 10:02:06 +0200
+	s=arc-20240116; t=1760083340; c=relaxed/simple;
+	bh=qITXVMxXmEHwXiNKpVxw+h1NSbH+gxKcGOO6VkAiZAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWEDlKKjnjjj8uBMwgn8GWOcS2Mp0fnXP/LVhqPYMXiDuqkOM0Vmga9vU3qDbxqMN2BBL553oJ2uW5dpQyuqk9jXnmZxTVLQKa3fRXg4kYp56XhThnfvzUYI5y0ysWIwg+svRi/cvoHXY6K8spaHPToFRcHHDvwrnu4b9FtiaKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4Ce0Ihz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E4AFC4CEF1;
+	Fri, 10 Oct 2025 08:02:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760083340;
+	bh=qITXVMxXmEHwXiNKpVxw+h1NSbH+gxKcGOO6VkAiZAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W4Ce0IhzxEtlBd34zRXczESlNsvIn/4sm7FxJjJXgOOvhPPqrNVWQIFZF3eooWXWy
+	 p5My/PZ8bo1uzbULgbP246bWosmlHa9YI2GZdEPO/7D2cgsa3zIQDkT7Y7Bfkpeu5I
+	 vNnjfgPh8rzguIwUhbue3nt81K30OAHoANq4cgYXxR1mHSHepEkloQ6K1AtNZqtiSe
+	 phow/E1jNkh0rEdAZKmuffo1+fFztn32VrSJaNAtAsg5PTgmq9RLb0YqVXdRnpe9cT
+	 IQD1aI9/9isEAxQPECazMxpHyv0N3e0yxei8fUm/CYt9LmP3+1Nx2v2svayptKBe3y
+	 l0xeJ4UOJUKOQ==
+Date: Fri, 10 Oct 2025 10:02:14 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nsc@kernel.org>, Charles Mirabile <cmirabil@redhat.com>,
+	da.gomez@samsung.com, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	masahiroy@kernel.org, mcgrof@kernel.org, petr.pavlu@suse.com,
+	samitolvanen@google.com, sfr@canb.auug.org.au
+Subject: Re: [PATCH v8 7/8] modpost: Create modalias for builtin modules
+Message-ID: <aOi9hqyvMg4bmXAw@example.org>
+References: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
+ <20251007011637.2512413-1-cmirabil@redhat.com>
+ <aOToOeNGiaFVM0Ds@example.org>
+ <aOgSaNejdcBWKXx8@levanger>
+ <20251010053736.GA447238@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] tpm: infineon: add bounds check in tpm_inf_recv
-To: Shahriyar Jalayeri <shahriyar@posteo.de>
-Cc: jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251010074956.6862-1-shahriyar@posteo.de>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251010074956.6862-1-shahriyar@posteo.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010053736.GA447238@ax162>
 
-Dear Shahriyar,
-
-
-Thank you for the improved version.
-
-Am 10.10.25 um 09:49 schrieb Shahriyar Jalayeri:
-> Add two buffer size validations to prevent buffer overflows in
-> tpm_inf_recv():
+On Thu, Oct 09, 2025 at 10:37:36PM -0700, Nathan Chancellor wrote:
+> On Thu, Oct 09, 2025 at 09:52:08PM +0200, Nicolas Schier wrote:
+> > On Tue, Oct 07, 2025 at 12:15:21PM +0200, Alexey Gladkov wrote:
+> > > Hm. Indeed. I haven't found a good solution yet, but you can use the
+> > > following patch to unlock compilation. It won't solve the problem, it will
+> > > only hide it.
+> > > 
+> > > --- a/scripts/Makefile.vmlinux
+> > > +++ b/scripts/Makefile.vmlinux
+> > > @@ -84,7 +84,7 @@ endif
+> > >  remove-section-y                                   := .modinfo
+> > >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> > > 
+> > > -remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> > > +remove-symbols := -w --strip-unneeded-symbol='__mod_device_table__*'
+> > > 
+> > >  # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
+> > >  # it is necessary to remove the PT_LOAD flag from the segment.
+> > > 
+> > 
+> > Is it problematic to hide that?  Otherwise we'd have to revert the
+> > patch, right?
 > 
-> 1. Validate that the provided buffer can hold at least the 4-byte header
->     before attempting to read it.
-> 2. Validate that the buffer is large enough to hold the data size reported
->     by the TPM before reading the payload.
-> 
-> Without these checks, a malicious or malfunctioning TPM could cause buffer
-> overflows by reporting data sizes larger than the provided buffer, leading
-> to memory corruption.
-> 
-> Fixes: ebb81fdb3dd0 ("[PATCH] tpm: Support for Infineon TPM")
-> Signed-off-by: Shahriyar Jalayeri <shahriyar@posteo.de>
-> ---
-> Changelog:
-> v5:
-> 	- replaced space indentation with tabs before the header comment
-> v4:
-> 	- removed the curly braces around one line statements
-> v3:
-> 	- removed dev_err() logs
-> 	- added missing "fixes" tag
-> 	- described header structure
-> 	- fixed commit message length
-> 	- removed use of local variable as constant
-> 	- fixed check to account for off-by-six bytes
-> v2:
-> 	- added complete changes in the commit message
-> 	- dev_err() logged expected sizes and stated operation is aborted
-> 
->   drivers/char/tpm/tpm_infineon.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-> index 7638b65b8..d76aae08b 100644
-> --- a/drivers/char/tpm/tpm_infineon.c
-> +++ b/drivers/char/tpm/tpm_infineon.c
-> @@ -250,6 +250,10 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
->   	number_of_wtx = 0;
->   
->   recv_begin:
-> +	/* expect at least 1-byte VL header, 1-byte ctrl-tag, 2-byte data size */
-> +	if (count < 4)
-> +		return -EIO;
-> +
->   	/* start receiving header */
->   	for (i = 0; i < 4; i++) {
->   		ret = wait(chip, STAT_RDA);
-> @@ -268,6 +272,9 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
->   		/* size of the data received */
->   		size = ((buf[2] << 8) | buf[3]);
->   
-> +		if (size + 6 > count)
-> +			return -EIO;
-> +
->   		for (i = 0; i < size; i++) {
->   			wait(chip, STAT_RDA);
->   			buf[i] = tpm_data_in(RDFIFO);
+> Yeah, I would much prefer to ending up with pointless
+> __mod_device_table__ symbols in the final binary than erroring out
+> during the build...
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+This is a very unpleasant problem, but it does not seem fatal. There will
+not be many such characters in the final vmlinux. In the configuration
+from the bug report, there are only:
+
+$ nm vmlinux.unstripped.riscv |grep -c __mod_device_table__
+17
+
+Of course, this does not mean that the problem does not need to be solved.
+
+> Does this happen with other architectures? I have
+> not seen any reports yet but I have not tested anything yet.
+
+LDFLAGS_vmlinux for riscv was taken from arm64. I suspect that there may
+be the same problem there. But I haven't checked yet whether the problem
+actually exists on arm64.
+
+> Why is RISC-V special here?
+
+This problem on riscv only occurs when CONFIG_RELOCATABLE=y is specified.
+Without this parameter, everything will compile as expected.
+ 
+> It seems like the relocation comes from the .LASANLOC4 symbol in
+> .data.rel.local?
+> 
+>   $ llvm-objdump -Dr drivers/irqchip/irq-riscv-aplic-main.o
+>   ...
+>   Disassembly of section .data.rel.local:
+>   ...
+>   0000000000000130 <.LASANLOC4>:
+>   ...
+>        1c0: 0000          unimp
+>           00000000000001c0:  R_RISCV_64   __mod_device_table__kmod_irq_riscv_aplic_main__acpi__aplic_acpi_match
+>   ...
+> 
+> I cannot find much information about this ASANLOC outside of its
+> location within the GCC sources, do we even need it? I don't see a way
+> to opt out of this section altogether or on a per-variable basis, I
+> wonder if there is some way to strip it out...
+
+The aplic_acpi_match structure is indeed used, but they are used
+themselves, not their alias, which is generated by the MODULE_DEVICE_TABLE
+macro.
+
+I also asked the guys from binutils for help:
+
+https://sourceware.org/pipermail/binutils/2025-October/144782.html
+
+> I plan to send the initial 6.18 Kbuild fixes pull request on Saturday.
+> If we cannot figure out a real solution before then, maybe we can just
+> switch to '--strip-unneeded-symbol' with a comment to upgrade that to
+> '--strip-symbol' when possible?
+
+Yes, that would be great.
 
 
-Kind regards,
 
-Paul
+Maybe I'm looking in the wrong direction, but still.
+
+On riscv:
+
+* with CONFIG_RELOCATABLE=y (where the error appears):
+
+vmlinux.unstripped: ELF 64-bit LSB shared object, UCB RISC-V, RVC, soft-float ABI, version 1 (SYSV), dynamically linked, not stripped
+
+* without CONFIG_RELOCATABLE:
+
+vmlinux.unstripped: ELF 64-bit LSB executable, UCB RISC-V, RVC, soft-float ABI, version 1 (SYSV), statically linked, not stripped
+
+On x64_64:
+
+* with and without CONFIG_RELOCATABLE=y:
+
+vmlinux.unstripped: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, not stripped
+
+-- 
+Rgrds, legion
+
 
