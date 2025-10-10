@@ -1,209 +1,134 @@
-Return-Path: <linux-kernel+bounces-848669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0C4BCE4E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:55:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8D7BCE4EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6981435663C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:55:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1BF44FA325
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F4E2FF156;
-	Fri, 10 Oct 2025 18:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC7720A5DD;
+	Fri, 10 Oct 2025 18:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GirWNMRb"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OKDoPdTN"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECC32C08B2;
-	Fri, 10 Oct 2025 18:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2388B30146F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760122520; cv=none; b=Y5AMTprWGi3I0e/2YIAS0kg+sSZyQJXH7n3do6knWSxO6GdXIJKls5RC9Zez1SJPo83q8anoe0g5h+RPtf7ym9dA8PgeTRi6LzItiGQRjsaCHL2rpRd/PEXjGQ+Pf+vARvrwpqIDDY/u+brmFWaOyrREQhmQU/4CyAY9UuF/WZU=
+	t=1760122530; cv=none; b=c/zr4D8HfALGA/CkBmm1HMW6sNNIfdjTfTuio4R8WyhY4JmRi2kaWKty+R/blXiuUPuR+ZM7B1JnBsUYplWn6wvep+RjnJ6ADPIi3tntpmEYoZLy5IC22ImvbE9O6zbxzDdqfxgLR+h+T6b84dm5mxGOaLJs0nzHWS1bDz+bL6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760122520; c=relaxed/simple;
-	bh=en9YFWnQpgZbRDUeAplwNqWZdpCubLq+g6tM2tWJ7PA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GWFbDH0M55da+Ov4dYDlHCgTDNGAY0hihCDjwlemGLX2fkQP+0yer6xs283NC+hJWyPA86i6r9gQlbTyixa3hXFOxaxzwwrnlYGkKPZnNbrXLfsN60CzF1u9iazHJJZlxXCcnzI0URu80d6+/dfZlwOdGx3BCJWq3KJ/cPJYwIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GirWNMRb; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=5jNCQYIvpduCc+VH5KL3Lm4MDphgs8rymPh/IGBtAvI=; b=GirWNMRbkJheAMGxdxBOFE/fDT
-	V0FAMb9JVnSPXwToKcKVXBqquf361jZaB46Q2dhmwIl9Qn+/jFW9xlvhwzR1gJFXY6Zw12ZN3PdJu
-	TIjXdr/q6Ws7axoVh14OQtasrZpiInwDAw8diKwzjlwLrHnMNt406gTeAIahsaJ2OKfA5jeEM7L3n
-	GmMt5WspbbTtLmUCg3poe+hZELf7Z6/fhTWymPqoET8vT3iDTdru7IaPV6uo0pvMPbaDo3OHsAgJ4
-	krNqYOwDzuLOO14otjJgxJExMzgyus4/bBpzLL+sYPgpUpT6mYwmsEKQwzmilZ2XF6B5uM6jg2PIU
-	psFP7BAw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v7IGm-00000009B8s-11Kg;
-	Fri, 10 Oct 2025 18:55:12 +0000
-Message-ID: <f2243a9b-e032-416b-aef8-958198ff3955@infradead.org>
-Date: Fri, 10 Oct 2025 11:55:11 -0700
+	s=arc-20240116; t=1760122530; c=relaxed/simple;
+	bh=npVbrD9jcPN3MO54+Q2/A4DReVoNnNeo91JkHkudlto=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Hge/zjemtL7W3aPJDm6JEjPl41MmeCXHbcuSpq7BtdkDMU9eG+CCS2kFxDeNrmMUUXQd1elvp8K2cB+tcWlAV0Yzs1ufUg6KmwlgeG3bGJaQkrsXOmu5R0uuqYsRbTZ+GrfILN74J3azzxu354lG/owCKWlLeZj35hG6LwAh7MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OKDoPdTN; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5f2c1a7e48so1606217a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760122528; x=1760727328; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DlaJ/6AvVXUkXGRj+5X+fFEMgNImOtajCd+PpnPQ/h8=;
+        b=OKDoPdTNBG70+u9wQrtEec9kevxOTxbTsd2yNTJfNp19hoZNmVi/RousvW5250ANgL
+         TK0Tv+D3h+CWG85nHYS+qUX5zb29+aNdYgit5gnWTZVDMxpo5aZfynVIm2sOhNi8/Rhg
+         nMyzL12smtwu21gL2nqPM7SbKuL3zcCBMlsOCA4Q/37VuhYA+/iidjRpEMFi/PY9s/Eh
+         B8Iq7brsdhNOVIBCHZB3+bPKXiqEmU1QowJM2aqmPzou38OYlTkXDgZ7347RVLbPIZf6
+         2MQhV5J4hpcyq3t9Ne9jJAEllCwHMOBwwu15lXYtRm8m0RxKd6x9QE/yBYCKFqc14uXT
+         4xoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760122528; x=1760727328;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DlaJ/6AvVXUkXGRj+5X+fFEMgNImOtajCd+PpnPQ/h8=;
+        b=ZEhxZtprKxHbSRnbnIvjNpB4+rr5DNwACFvdIse9+zPS0ZVMU5JmOIWMR+a7/hnkM6
+         hNRcaeINDw4wa0OwLU2lNAWTQ3+JRq4hftcBZIZ0Ph1w7WwXPnQy1kfyB+Amho8vk0sO
+         sKG43cXyv1thV+YC34QkYO6hvVprQW227+iTWl0+Qvjf05a9m/3dEoRxA7PZpks7nCEh
+         c2O2Ie6eUzPo+tRFTV7JHaPIkljkLA8HLl7h3miBroyyAl2WttdhcplAC9fBJtI8HO/j
+         xTpD7GeEbRdQaam64FXc/EQXuPAqgTW3R1ZmnzXtbsmbMrs1+cdmap8rzPtDREVW8F8D
+         v+TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYv0txi4ZzALp9PRStwOR1nt7/YprwfRDGUVCj75z8oXIjrLTQ78/JYS7F0KojOPGbbfGRdxSPiQ+o2Wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEqY0QjoUjTEel4FG9oinELLTh0Tkeo4ByIIbFhX6c4IOuzFsl
+	Ojtfg5fDid0qRnI2ZBgU8Yhk3ft10VnD/ZfbIpQhLHP049HIs9WRy3BJ
+X-Gm-Gg: ASbGncvwck5S+VRXsMRdF/n1L3JZ7irMjRPEJdZ3UC6bCg0bYFiaY23/j5WxXZFUQL/
+	ObeD6RDvkbTetdHIqmP+WSMNQH6Lp/3z7pZSmwVAuAMmMMlNUpBbwb1A1JlVE7tIKLZq9zkR3F3
+	QSguElblFDJ2ELHZzRHEja93UgGeeKAtOwepyKNNC3taRKA7uzM4LIDgLzNEHJqJA23KBO0+XTY
+	3DPcLeD/R5TWQWxYR4FUzcIKJ1EfKeHzs87fCN7OHblsUg4YZcYDvXjtDaODuz+QEi94LaJtztB
+	1y31AjXFbWw8t+P5fJuvGeLklUNhbwbFuM+C9BOCLRpuPeYrd0qVl5xqSA0yZAwnvR5H+3DZsJ1
+	Xz1fMapLstcmNTniHDszt2oTGYZu6bgNbhXe4FV50ktM3lsAuFV1w1+8nt2wciKJoQA==
+X-Google-Smtp-Source: AGHT+IHeWKPLJf1YnZgJ8mQxBiUkHyLKgv/P+D1FaJ/vyeBufx1XcfVPQPq0hF9mfyos8PqBo/MJBw==
+X-Received: by 2002:a17:903:1aa3:b0:269:9adf:839 with SMTP id d9443c01a7336-290272b3357mr162724315ad.19.1760122528050;
+        Fri, 10 Oct 2025 11:55:28 -0700 (PDT)
+Received: from ?IPv6:2a03:83e0:115c:1:ddee:16b9:c5d2:a3a9? ([2620:10d:c090:500::7:25f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034dea083sm64462435ad.24.2025.10.10.11.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 11:55:27 -0700 (PDT)
+Message-ID: <f9be7eda8fb72ad6a7a730023244409ee065ea60.camel@gmail.com>
+Subject: Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe
+ fault to BPF stderr
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Menglong Dong <menglong.dong@linux.dev>, Kumar Kartikeya Dwivedi	
+ <memxor@gmail.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Leon
+ Hwang <hffilwlqm@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Menglong Dong	
+ <menglong8.dong@gmail.com>, Alexei Starovoitov <ast@kernel.org>, bpf	
+ <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-trace-kernel	 <linux-trace-kernel@vger.kernel.org>,
+ jiang.biao@linux.dev
+Date: Fri, 10 Oct 2025 11:55:25 -0700
+In-Reply-To: <3349652.5fSG56mABF@7950hx>
+References: <20250927061210.194502-1-menglong.dong@linux.dev>
+	 <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
+	 <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
+	 <3349652.5fSG56mABF@7950hx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
-To: Thorsten Leemhuis <linux@leemhuis.info>,
- Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
- Sean O'Brien <seobrien@google.com>, Lucas GISSOT <lucas.gissot.pro@gmail.com>
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
- <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com>
- <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
- <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org>
- <1cd7fb11-0569-4032-905c-f887f3e0dd4c@leemhuis.info>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <1cd7fb11-0569-4032-905c-f887f3e0dd4c@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi,
+On Fri, 2025-10-10 at 20:05 +0800, Menglong Dong wrote:
 
-I think I found it... see below.
+[...]
 
+> save errno to r0(Eduard)
+> -----------------------------------
+> Save the errno to r0 in the exception handler of BPF_PROBE_MEM,
+> and read r0 with a __kfun in BPF program. (Not sure if I understand
+> it correctly).
+>=20
+> This sounds effective, but won't this break the usage of r0? I mean,
+> the r0 can be used by the BPF program somewhere.
 
-On 10/9/25 11:48 PM, Thorsten Leemhuis wrote:
-> [Top-Posting for easier consumption]
-> 
-> Mainly writing this mail to bring Lucas GISSOT in here, who reported the
-> same error yesterday here:
-> https://lore.kernel.org/all/aOgvA8Jiofcnk2xb@ARSENIURE.localdomain/
-> 
-> Lucas there suggested:
-> """but it seems to me that the #if IS_ENABLED(CONFIG_HID_HAPTIC) in
-> hid-haptic.h should be replaced by IS_BUILTIN(CONFIG_HID_HAPTIC) and
-> Kconfig updated."""
-> 
-> And Randy: Thx for the closer investigation! It explains some of the
-> "that feels odd, am I holding this wrong" feeling I had when reporting this.
-> 
-> Ciao, Thorsten
-> 
-> On 10/10/25 06:50, Randy Dunlap wrote:
->> On 10/9/25 7:43 AM, Thorsten Leemhuis wrote:
->>> On 8/19/25 01:08, Jonathan Denose wrote:
->>>> From: Angela Czubak <aczubak@google.com>
->>>>
->>>> Define a new structure that contains simple haptic device configuration
->>>> as well as current state.
->>>> Add functions that recognize auto trigger and manual trigger reports
->>>> as well as save their addresses.Hi,
->>>> Verify that the pressure unit is either grams or newtons.
->>>> Mark the input device as a haptic touchpad if the unit is correct and
->>>> the reports are found.
->>>>  [...]
->>>> +config HID_HAPTIC
->>>> +	tristate "Haptic touchpad support"
->>>> +	default n
->>>> +	help
->>>> +	Support for touchpads with force sensors and haptic actuators instead of a
->>>> +	traditional button.
->>>> +	Adds extra parsing and FF device for the hid multitouch driver.
->>>> +	It can be used for Elan 2703 haptic touchpad.
->>>> +
->>>> +	If unsure, say N.
->>>> +
->>>>  menu "Special HID drivers"
->>>
->>> I suspect this change is related to a build error I ran into today:
->>>
->>>   MODPOST Module.symvers
->>> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
->>> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
->>> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
->>> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
->>> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
->>> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
->>> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
->>> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
->>>
->>> The config where this occurred had this:
->>>
->>> CONFIG_HID=y
->>> CONFIG_HID_MULTITOUCH=m
->>> CONFIG_HID_HAPTIC=m
->>>
->>> Changing the latter to "CONFIG_HID_HAPTIC=y" fixed the problem for me.
->>
->> Sure, but that's just covering up the problem.
->>> First, I get this build error:
->>
->> ERROR: modpost: missing MODULE_LICENSE() in drivers/hid/hid-haptic.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-haptic.o
->>
+What I meant is that for cases when someone wants to check for memory
+access error, there is already bpf_probe_read_kernel(). It's return
+value in r0 and is defined for both success and failure cases.
 
-ISTM that tristate is incompatible with this newly added Makefile
-line:
+The problem with it, is that it has a function call overhead.
+But we can workaround that for 1,2,4,8 byte accesses, by replacing
+helper call by some `BPF_LDX | BPF_PROBE_MEM1 | <size>`,
+where BPF_PROBE_MEM1 is different from BPF_PROBE_MEM and tells
+jit that exception handler for this memory access needs to set
+r0 to -EFAULT if it is executed.
 
-+hid-$(CONFIG_HID_HAPTIC)       += hid-haptic.o
+The inconvenient part here is that one can't do chaining,
+like a->b->c, using bpf_probe_read_kernel().
+One needs to insert bpf_probe_read_kernel() call at each step of a
+chain, which is a bit of a pain.  Maybe it can be alleviated using
+some vararg macro.
 
-hid-* lists files that should be builtin, not loadable modules.
-These should all be hid-y.  AFAIK, hid-m is not useful.
-(A maintainer can correct me as needed.)
-
-So adding a MODULE_LICENSE() and MODULE_DESCRIPTION() to
-hid-haptic.c and changing drivers/hid/Makefile to use
-obj-$(CONFIG_HID_HAPTIC_	+= hid-haptic.o
-
-fixes the build errors for me.
-
-Angela, Jonathan D., is there any reason that
-hid-haptic needs to be builtin instead of a loadable
-module?  It's no problem for hid-multitouch.ko to call
-into hid-haptic.ko (both as loadable modules) as long as
-hid-haptic.ko is loaded first.
-
-Thanks.
-
-~Randy
----
----
- drivers/hid/hid-haptic.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- linux.orig/drivers/hid/hid-haptic.c
-+++ linux/drivers/hid/hid-haptic.c
-@@ -10,6 +10,9 @@
- 
- #include "hid-haptic.h"
- 
-+MODULE_DESCRIPTION("HID haptic touchpad support");
-+MODULE_LICENSE("GPL");
-+
- void hid_haptic_feature_mapping(struct hid_device *hdev,
- 				struct hid_haptic_device *haptic,
- 				struct hid_field *field, struct hid_usage *usage)
----
- drivers/hid/Makefile |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- linux.orig/drivers/hid/Makefile
-+++ linux/drivers/hid/Makefile
-@@ -4,7 +4,8 @@
- #
- hid-y			:= hid-core.o hid-input.o hid-quirks.o
- hid-$(CONFIG_DEBUG_FS)		+= hid-debug.o
--hid-$(CONFIG_HID_HAPTIC)	+= hid-haptic.o
-+
-+obj-$(CONFIG_HID_HAPTIC)	+= hid-haptic.o
- 
- obj-$(CONFIG_HID_BPF)		+= bpf/
- 
-
+[...]
 
