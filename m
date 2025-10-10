@@ -1,184 +1,342 @@
-Return-Path: <linux-kernel+bounces-847990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64591BCC38D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF5F3BCC3AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45C03A55E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227E03A83E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884B25EF90;
-	Fri, 10 Oct 2025 08:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732B6264614;
+	Fri, 10 Oct 2025 08:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="I65+FkmK"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q1MmrfX3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF691DE3B7
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16CB1B041A;
+	Fri, 10 Oct 2025 08:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760086331; cv=none; b=ANWW7s10EwaKtSnjyOuRDdzD7Unkra/lSISkYjQG9YdEafMJd05A82X11bZpWNSV59heZYHhARKgBTNVPtOqieelFeRsyuCPAzVNpZzCw6QHeiWI6lZoNAJocBiqUQUYKt+Q0LWycS4dJfp2HFAHFT6Svv7ZYCPU3eOustYuonw=
+	t=1760086451; cv=none; b=uOfLRNydN3dhYwY/OEx73YJe+/8MiAhzk106fvJ+BvVD2CtqYCaNHSDUlCzXEdVHOrNAtSpYJQqHfA+Sju2Q498aPINWzLBW13eqnQpAwwUPNgvOh7fhLi2a0zjc9p6y9F3mYSalWoC9nd10FYOzvySUsM8CGNatJDqc9nlrFic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760086331; c=relaxed/simple;
-	bh=DDx2jQ44UcYgADHR50SsvCLFlSwXmWfRDl8EjZfp3dA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P94XZ1jVyFRIL8dRpQ1wpGtqmuRPW+5CQ17XeNUQ8RJWEdWKILghFVZHzJRmx813lUXBjA5hWVs3YhckY+AN6djKn5w9C/MM3WCMJnKrAiftwGfG5GQPxQtfyWAFMv8aNsqjB/5YLMhAvoTF+qZvbPfdgLbCqX20NeZcrbXNYac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=I65+FkmK; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cjgTq279Mz9tyS;
-	Fri, 10 Oct 2025 10:51:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760086319; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DDx2jQ44UcYgADHR50SsvCLFlSwXmWfRDl8EjZfp3dA=;
-	b=I65+FkmKVoKEyK6Q/AoM4dmjeGLxzkiAzRQJi3NNHyTl2sTKOOSwHT2NWwYg0zNu5v0rC0
-	GPD/MnJf2JgivWN8jHtc/UNa5pGWsdTPjPJZvZ94YrMGap0OqNXINsG/YzWh9Z668x0apN
-	5kZ+AV/OenJoI6bJo5VPa8X/DC/VlxXlK+De9c0oyAmS1uZw9YCURV2r/rDuH/yuC6F2jx
-	Uk3Nkd2OJlJInAD8h8sgHmkN+sJWURU1w0dTV97JxNHvM4e2+rP54awWc1yUrVjGHrt176
-	TJx7qcnPUlswFlDQIMOR+GKzxVEy5vf5gidJc9jvF2pN7U46OVtzniCMcWu0RA==
-Message-ID: <f609ca476429b0737238cd9f6389e85472ac7529.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched: Mandate usage of drm_sched_job_cleanup()
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
- <phasta@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
-	 <ckoenig.leichtzumerken@gmail.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 10 Oct 2025 10:51:55 +0200
-In-Reply-To: <aNq9/6Ks2N3A1hDu@lstrano-desk.jf.intel.com>
-References: <20250926123630.200920-2-phasta@kernel.org>
-	 <aNq9/6Ks2N3A1hDu@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760086451; c=relaxed/simple;
+	bh=YhP+CtufTXhyPmgsnmJeK0jgn4wFSQk2YIPm7Udqhfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oYHqKA7kotkNH/YB+mOpNZezsngCHBeeVUihzNkAGofyph0hR4jhOtrK5XxM2CCse1VKCEHf+QheaencD8JH43MllLy9/B3pqmhB6uTYav5ja2nss9nZUIzOXr1aa2VHglP21zcQOzy1SGUGvt0E1spPvmPsscrGv6jaobAG6N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q1MmrfX3; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760086450; x=1791622450;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YhP+CtufTXhyPmgsnmJeK0jgn4wFSQk2YIPm7Udqhfk=;
+  b=Q1MmrfX3c8wtBzBdQrxrliP0Z5QC7DvKgp8OG6/vLnbjOqF6VL4g97RS
+   Vd2fyQUPx6/cY9CsgzolYNI4gPNhq5sxKDHiKZLPg+SKVX67oNnFdZXJ0
+   XXquv7IMf1dRjYBpc3RaOHov5qCCQivzrbvYVhMX0tHv1OdqEDuh6L5q8
+   PiOVsloBm/vMR6tTAXGMP5M7M7CDjbLiTRqMOd61t1w5I456ypda+Wgqb
+   7l6iZ7UQaeeB1C103mqZvRmetcKd5b/usziXbhqRi1uhzrm1ho9oOeJve
+   Q9gCc7bFeE9yIl9oaA/g2WbB7xDNQZSaw9rQr2TkOX+0baa6OSnDpS8ck
+   w==;
+X-CSE-ConnectionGUID: wOG9OJ6OQZ23EpXnGOQH0g==
+X-CSE-MsgGUID: NLvhXnYWRWC5TMhc7M+owQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="62187993"
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="62187993"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 01:54:09 -0700
+X-CSE-ConnectionGUID: eEzroqesQaeM4AMnGduqvw==
+X-CSE-MsgGUID: K+YBibDtTY6qefAcR8e9Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="180181641"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.245.124])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 01:54:04 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v16 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Fri, 10 Oct 2025 11:52:06 +0300
+Message-ID: <20251010085346.292287-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: cijir8hi1qag4711ie6wwtmkh7me6w3i
-X-MBO-RS-ID: 8cd8832534db39e8cba
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-09-29 at 10:12 -0700, Matthew Brost wrote:
-> On Fri, Sep 26, 2025 at 02:36:31PM +0200, Philipp Stanner wrote:
-> > drm_sched_job_cleanup()'s documentation so far uses relatively soft
-> > language, only "recommending" usage of the function. To avoid memory
-> > leaks and, potentiall, other bugs, however, the function has to be used=
-.
-> >=20
-> > Demand usage of the function explicitly.
-> >=20
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > ---
-> > =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 4 ++--
-> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/s=
-cheduler/sched_main.c
-> > index 46119aacb809..0a9df9e61963 100644
-> > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > @@ -1030,7 +1030,7 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
-> > =C2=A0 *
-> > =C2=A0 * Cleans up the resources allocated with drm_sched_job_init().
-> > =C2=A0 *
-> > - * Drivers should call this from their error unwind code if @job is ab=
-orted
-> > + * Drivers need to call this from their error unwind code if @job is a=
-borted
-> > =C2=A0 * before drm_sched_job_arm() is called.
-> > =C2=A0 *
-> > =C2=A0 * drm_sched_job_arm() is a point of no return since it initializ=
-es the fences
-> > @@ -1038,7 +1038,7 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
-> > =C2=A0 * submit it with drm_sched_entity_push_job() and cannot simply a=
-bort it by
-> > =C2=A0 * calling drm_sched_job_cleanup().
-> > =C2=A0 *
-> > - * This function should be called in the &drm_sched_backend_ops.free_j=
-ob callback.
-> > + * This function must be called in the &drm_sched_backend_ops.free_job=
- callback.
->=20
-> I believe both the existing documentation and the new version are
-> incorrect.
+Changes since v15:
 
-Feel free to submit a proposal.
+ - rebased on x86_tip master
+ - added tested-by tags
 
-What's important for this patch is: do you agree that cleanup_job()
-must be called in free_job()?
+Changes since v14 following reviews by Dave ad Kai:
 
->=20
-> Also, the free_job callback is probably misnamed. This ties into a
-> statement made during your XDC presentation today that confused me. The
-> DRM scheduler only holds a reference to the driver-allocated job from
-> the time run_job is called (i.e., once drm_sched_job_arm is invoked)
-> until the job=E2=80=99s fence signals. It does not own the responsibility=
- of
-> freeing the job =E2=80=94 the driver should manage the job=E2=80=99s refe=
-rence count and
-> free it as appropriate.
->=20
-> For most drivers, the only reference is the creation reference, which is
-> transferred to the DRM scheduler after drm_sched_job_arm and released in
-> free_job.
->=20
-> So, I think what really needs to be documented is this reference
-> counting transfer. drm_sched_job_cleanup is actually associated with
-> drm_sched_job_init =E2=80=94 meaning drm_sched_job_cleanup must be called=
- if
-> drm_sched_job_init was called. This is typically handled by the driver
-> through reference counting of the job.
->=20
-> Finally, I think free_job should probably be renamed to something like
-> sched_job_put to better reflect its purpose.
+ - added mutex to sgx_dec_usage_count()
+ - fixed a formatting issue pointed by Kai
+ - added review-by from Kai on patches 4-5
 
-That's maybe how free_job() was intended once, but it's not how it's
-implemented in some drivers currently. The implementation is fractured.
-Some drivers maybe have refcounted jobs, some others don't.
+Changes since v13 following reviews by Kai:
 
-That's exactly where our problems come from. free_job() and the
-scheduler de facto manage job lifetime.
+ - changed implementation of sgx_inc_usage_count() to 
+ only increment the sgx_usage_count at the end of
+ function and adjusted the counter check inside sgx_update_svn().
+ No functional changes here. 
+ - fixed two more formatting/comments issues pointed by Kai
 
-Moreover, I'm wondering what good it would even be to have everything
-refcounted and then have the scheduler tell the driver to drop its
-refcount.. that sounds fundamentally broken to me. It's not the purpose
-of refcounting.
-The idea is that everyone holds his reference until he doesn't need it
-anymore, and then drops it.
+Changes since v12 following reviews by Kai:
+
+ - added review-by from Kai on patches 1 & 3
+ - fixed sgx_inc_usage_count() to decrement the sgx_usage_count
+ in a rare case when sgx_update_svn() fails. The latter
+ is really an exceptional scenario (hw failure or
+ explicit attack/heavy load on RNG) and that's why the
+ fast path (increment by default) is left as it is. 
+
+Changes since v11 following reviews by Kai and Jarkko:
+
+ - added review-by from Jarkko on the whole series
+ - fixed all format and commit issues pointed out by Kai
+
+Changes since v10 following reviews by Dave:
+
+ - merge patch 1 and 2
+ - patch 1: clarify the comment about the function prototype
+ - patch 3: clarify the description of SGX_NO_UPDATE
+  error code, move the definition of EUPDATESVN enum leaf
+  to patch 4
+ - patch 4: clarify commit, adjust sgx_update_svn() function
+  according to feedback
+
+Changes since v9 following reviews by Kai:
+
+ - postpone the definition of sgx_inc_usage_count
+   until patch 6
+ - clarify the commit message in patch 6
+ - minor fixes
+
+Note: I didn't merge patch 1 and 2 since it goes against
+previous suggestion made by Jarkko.
+
+Changes since v8 following reviews by Dave and Jarkko:
+
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
+
+Changes since v7 following reviews by Dave:
+
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
+
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
+
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
+ 
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
+ 
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
 
 
-I think we should leave free_job() as is, agree that having it in the
-first place was a fundamental design mistake, and go on and do better
-with future job-managing infrastructure.
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
 
 
-P.
+Proposed solution
+-----------------
 
->=20
-> We can discuss this more in person on Wednesday at the workshop or grab
-> in the hallway.
->=20
-> Matt
->=20
-> > =C2=A0 */
-> > =C2=A0void drm_sched_job_cleanup(struct drm_sched_job *job)
-> > =C2=A0{
-> > --=20
-> > 2.49.0
-> >=20
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel 6.17.0_rc1 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly
+appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |   1 +
+ arch/x86/include/asm/sgx.h               |  37 +++++----
+ arch/x86/kernel/cpu/cpuid-deps.c         |   1 +
+ arch/x86/kernel/cpu/scattered.c          |   1 +
+ arch/x86/kernel/cpu/sgx/driver.c         |  19 ++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |   1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |   5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 101 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |   3 +
+ arch/x86/kernel/cpu/sgx/virt.c           |  20 ++++-
+ tools/arch/x86/include/asm/cpufeatures.h |   1 +
+ 11 files changed, 173 insertions(+), 17 deletions(-)
+
+-- 
+2.45.2
 
 
