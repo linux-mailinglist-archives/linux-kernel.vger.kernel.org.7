@@ -1,309 +1,221 @@
-Return-Path: <linux-kernel+bounces-848518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E39EBCDF2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:23:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510E7BCDF36
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A3219E030D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD3B919E04B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F742FC00C;
-	Fri, 10 Oct 2025 16:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B052FC00E;
+	Fri, 10 Oct 2025 16:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="PgOl4yQo"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HzGfc8Ib"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013062.outbound.protection.outlook.com [40.107.159.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2362F83A7;
-	Fri, 10 Oct 2025 16:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D9F2FBE08;
+	Fri, 10 Oct 2025 16:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760113374; cv=pass; b=BZ0BfbeZ85JJOUqre0C3J0//I/Lg1l6DdOLV+icHijEIdxnF5xO1NGP4g6sSOz2q+fVAbyKm2da/XxqkuJ/a60KfUR+HDHtyj4cEC5hTq26ht46GI81SrxUmxTD545aKUgHUswcwIks0Qa+rdqxyjuYGx9vz+nofSqoqnpnRr+I=
+	t=1760113436; cv=fail; b=mFpKLcjrz66MzLH9WAV3nHagN22uTIQEpMen3UPuZ/J1eMmnSb/dTUNxLnQZEMdHphJidZ1nK9eUy+QZUtIYfOST9SaIrySsA+C2oEr6yvBAbpCafSjhEdNXA2TGZfNL0VDuOed0QCUhe3Q8Exkx+4wVpH+oZekmQCOeNw7alIo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760113374; c=relaxed/simple;
-	bh=NJ79nuyZsplPwKJ7DXJvnAJD0tn3nUImoRljGVo1yHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1vELzAmQ7keAV6lur7lxA1v4J7CeKBOkTj+kunCBmhJ1wpRchCm6SFw/snMfK1RaFoxXJZbyYXMKf+d9GzXdIh3DnNqUBb6YN/07mhWElQN0xbkdXLfXkduJEkLLkvcIGpCaZGmgks/tkFALJFOx4Qu3btngnTvrn4z9oz1ks0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=PgOl4yQo; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760113354; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=L2yw+ibYTnKJXa3g7B+onBUwilhQuljfq1bnZwfWOW7fK9hRcZftW+ladaVAA2JkxEWKWsZhNAELA28tspW1/5B7oPQ0LJAZG9XO05NpgHH3JF7wTvpw5scAj7kTY7quFgwGNL5G34IgrtCqLCeFxL/wVAR+7i92BW4YqapeCbQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760113354; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=A4+ydwSIz5c9X24Guu+ZeVLgAXOBs3OahByrrq6IBzU=; 
-	b=lkahQ8LweiyY6JL6mYmorYB5j94IdkJ+bGNUIAFkrnZnh9hhZbKzNSxb8GJhkqVwz0UtCSN+r11yOuGmUsLEC7QeJqJVhL1Im/1luNLnVvDP9doiOalRYU6AAvjY+LBHhDKWIcOq2w4vBwbcdjNYQNHtKK9NV2VEpFIOgdDhx9U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
-	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760113354;
-	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=A4+ydwSIz5c9X24Guu+ZeVLgAXOBs3OahByrrq6IBzU=;
-	b=PgOl4yQob2nfK7Pi+Ui+jpHIiQeuttW3B49ah4tHMeXyVUqgx2BsGpVaSEsIV0kq
-	OrP2v5zdKASqNplrOpEo5SajiWOkfd/CwLkd7wvriQiOd/N3D5xGbBQJwIBijTypJUd
-	iYuGspKfn96BK16H38tZkiGgQ125eB+xX/kJ2TTQ=
-Received: by mx.zohomail.com with SMTPS id 1760113351437380.070465019327;
-	Fri, 10 Oct 2025 09:22:31 -0700 (PDT)
-Message-ID: <7c3e9c5a-2f1f-44e7-9c99-2f0a173bd8eb@collabora.com>
-Date: Fri, 10 Oct 2025 17:22:25 +0100
+	s=arc-20240116; t=1760113436; c=relaxed/simple;
+	bh=QpQ0snk79clkR8GxQmbmsbll3HjhkbuKFZxa0ZJd9zI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FVpGCxrwzCWQTwD3JHqIdz/+9XrALkYwPUyLgMkgS0//ODQTMiWN84jWWaca4IoJLasommVM01QPUQPD5v3Hj4nfmgjuw6B8aNOTqsUL0L1BhYxzJorF3bQHAvPIYQ7E8psSXYodsMfn0QBtOoXoqVwJ3Yk8A57YNKQIJ6cDeLw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HzGfc8Ib; arc=fail smtp.client-ip=40.107.159.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bHIrHZtf2jpGU2oVweSsWccwxbcPcUMkMnpIneTLP79QQVxnoEb1WIP5mpk6TkhuytaTQCA63rV/MeXIuI50oW4qGMCoAG4s1v90uNzQjccdR6A9Cgiz3TpRpQIh0rUwORFWGYFrpr2HBYvJYtiwZTx9Mb0Igkx3wPybbTT5BldC7R9P2qpFm9mn4Pqw7faI+29FYrx9oP0i6N1DgPgMLSgvsO1fSUpvF6dv/aP2swb+4dRGaL5o85CXpnazvHDVjS9IEVkx/VUIbNQFf1z1HVspDSDy/DUstCGXXawOEc9Mq6Qrg46gDuhFOoC5xmeRYPu3OOx3sfMR5Bc+kXKpXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nCfClxFd8Cgo9GcNn7ybbxI6l+p7vGD/DEDWpkn1nio=;
+ b=jqASEK7ibbKS6GHHyH45Dw/zKK+qBHMEo7cmVYoTfv3tmuBuyoqJ1YlbIWgSoAYz61Y3wISrBFVaQgnH28n2rGd58hGDd59wLAYDPx87q8pDasJ+McEOq8QeF+E0bSum+27uIOxfH0PihUPITaRrHRtjtcutjb//FsFtnPEzULph3132cDwZadj7AadH9O1S9COL/H8kDTNu893qRE20CUtzlFBf9TQoK/SQZ9fCu4u8Hmsg2HHLojA5DNMtw2UauNtv0NIqWWbPnX3KSjAtGE6rVqOxCvPT8LwpefglL/t1IgS2HXehVXwxsvkBHRJORe+4tzjh0CntdY3oe9imWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nCfClxFd8Cgo9GcNn7ybbxI6l+p7vGD/DEDWpkn1nio=;
+ b=HzGfc8IbqftS3zi5v6gIJlsAtApIcmXFDZthvW9eAqSj5qXLBuXuTyeB2+APW0A0elxQcNCTDBBu+HbknI3czlaqspPf/wFFawyNXMsTt8Q4YJpmld/h1ga0rXn7+oiq0P3Brfxr1u7gKJwgC0QcEzBRE9gSG7pMDnCeKy6u7Et5N5XwMOl7zRnfAomGQvykZelV+gLdg1U2TRdJ0jPCHtwoAcp8g5ywNtltRhmI7zuX58DIzG+Oc4wExD3JZ/nwld3gcJQHnGnQkY1ZkZvRohoQTgeASz8pByXlJCQCvLUKuMx74vJ5RjfCndZ0g+7TVzw2NyQlULNFFHTZY6T3xw==
+Received: from AM7PR04MB7142.eurprd04.prod.outlook.com (2603:10a6:20b:113::9)
+ by AM9PR04MB8414.eurprd04.prod.outlook.com (2603:10a6:20b:3ef::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 16:23:50 +0000
+Received: from AM7PR04MB7142.eurprd04.prod.outlook.com
+ ([fe80::6247:e209:1229:69af]) by AM7PR04MB7142.eurprd04.prod.outlook.com
+ ([fe80::6247:e209:1229:69af%6]) with mapi id 15.20.9182.017; Fri, 10 Oct 2025
+ 16:23:50 +0000
+From: Claudiu Manoil <claudiu.manoil@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>, Wei Fang <wei.fang@nxp.com>
+CC: Clark Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, Frank Li
+	<frank.li@nxp.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net] net: enetc: correct the value of ENETC_RXB_TRUESIZE
+Thread-Topic: [PATCH net] net: enetc: correct the value of ENETC_RXB_TRUESIZE
+Thread-Index: AQHcOcsjLfa+tXqAmEqFL+MdmHhkNLS7VNgAgAA7RCA=
+Date: Fri, 10 Oct 2025 16:23:50 +0000
+Message-ID:
+ <AM7PR04MB7142CA78A2EBA90FE16DF83B96EFA@AM7PR04MB7142.eurprd04.prod.outlook.com>
+References: <20251010092608.2520561-1-wei.fang@nxp.com>
+ <20251010124846.uzza7evcea3zs67a@skbuf>
+In-Reply-To: <20251010124846.uzza7evcea3zs67a@skbuf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM7PR04MB7142:EE_|AM9PR04MB8414:EE_
+x-ms-office365-filtering-correlation-id: 1a666cd4-bbf0-4b29-e75d-08de08196571
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7053199007|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?8hp97c9rT7UH7Gc+l0BsyL1+6pwKGCEkZ+lZ0uNDqsEoxNocQ2HwTbC+2OyN?=
+ =?us-ascii?Q?T8Hr6ivIqg4bUWRWhilK0waCbwsuF4XiCzRP55W+WjY+pKUP8FBPCjZbpBTP?=
+ =?us-ascii?Q?IBw/ls4Vhov5WQhC0yUisyCfLtUU30AHF1k6Mzyqt2soNaIZK/u/oUTRKJV1?=
+ =?us-ascii?Q?3VyoZx70xYNh+eZfKrkcBAFZ8AEyVBbhlNbr2SqnR2Mr/aK9fOiV52IcAx26?=
+ =?us-ascii?Q?fALeXfpzGDAIflwOsL+XHuXqrwbiTb3jTwq74cIc5fFYiRCKsymK6fpRXfuZ?=
+ =?us-ascii?Q?mAlSMKHN78etqnk20ZArLLoCJzhTXu/IIZ82Hn2PURSEHC7e3F75DrZ80Ua0?=
+ =?us-ascii?Q?KQUzf3NIvX9nNfo0PUfr01J8y6c+AS9pst8iIRLy1Jbgmjq9rdKXBo3DvKU6?=
+ =?us-ascii?Q?XgN1qwlTGrDHZ2LzUltJRBlxfGtlRj4Kt6Ti2qdt+BEYx4vhPvJ7JdaWW5TY?=
+ =?us-ascii?Q?04x1pVUXxAgF8E5zguFPBShwpx9uFWpYCvRGSESyHRQklQKZRfIc1hVmsbNS?=
+ =?us-ascii?Q?YVnPWMDsMSh37FpQP0e9OS6ylN/it02s9bonJL+uaM/23Ti30zOMz1o2q+h4?=
+ =?us-ascii?Q?4gsqAphYOtKW2iBB+jHIV3CDfwARtwbzaVIwA9oDwJCEMDR84P+a9I20OiGQ?=
+ =?us-ascii?Q?j1LlpVLzhudIhVbPxfI+8IrHeEmPEtGbXSEGyzihR/QwiZuK9ap8h2rzHH51?=
+ =?us-ascii?Q?Mkf8Gl3+RnxWJTYbKzkjDpRYJ3NIE1bP3mYFwS1NLuHLqqRqLqoTZTjTBqeR?=
+ =?us-ascii?Q?pocTKCjaV04lJSMBamsaMn+FL5faOSK2xPNFzL+dInfaNiYmMAToCVTLb/Oz?=
+ =?us-ascii?Q?AykhCAFt13bgTd2D26Mb6cnkKUZ6nCL939BE98DCFlGHLQpGgkqzggv96KZT?=
+ =?us-ascii?Q?DVwouthpTjcw2XUx6s5o+nDxEAvKO+J5rfveQYT1RFT0porWWzAcjTlVGIPq?=
+ =?us-ascii?Q?BEbHHjb6NpMeYosaIE356iCvFkihcCVNQJM3oUFvsZr5mQ9mq7yQi8oYH9Uy?=
+ =?us-ascii?Q?wlZL98Yf6Z2HEbMVEYYepu7hOrbgEzxxEov1MB8KIt+p81CdXh4XlVeBFene?=
+ =?us-ascii?Q?Kpi4XSUKCUQV1Lrpx4r6y6PrTJ2fEz622ZjBdV0+NLiu2Vc3yQHQ6bUogxnx?=
+ =?us-ascii?Q?j4lXqEvQko7Pmb7J+5oSVfP4MAv6VvAeCB3dYXzT7OilYdzcoNLjX+4+Sz4Z?=
+ =?us-ascii?Q?yRFFcOxdYF2YlbVPVrWV48Gmqd1fwbaxLnPFkLh8Og9gdpV4c9i4Wlw53bWR?=
+ =?us-ascii?Q?bidxOGNa+xk53mc6xibGBMTOSL8sgVXh3CIAEl8zEICrsJ7tSFd/pi74mgac?=
+ =?us-ascii?Q?mx2SHpjz4mflnjSivsTjtP8/sQgeIhHuoohqGLv2COE9seNPTT76u18IQGtu?=
+ =?us-ascii?Q?+IbfgH5JFUv+tncjpeuU8169mCq1T0sjng09M0UQgdslPae2+BIaVaVgjNBJ?=
+ =?us-ascii?Q?pFU0IA0D9GMV6uc/yVLnsIp+H7/GJZI/P/l+nQmcSdzONz6IYFWlsBS6Yo/w?=
+ =?us-ascii?Q?5peI/0vDsBuL5Kjtjy2yT8ZRwFaUa+NzhfIo?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7142.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7053199007)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?sklCw30xmhKPo/8V1UIJ/BVmyyKQyssZS1evGb5myIHd7HdmgyaOGjNeSN+Z?=
+ =?us-ascii?Q?BaoC9xQtza7mcoJOu7MdSYRPfKKu9AZeIlU6Ibw8q4qJhc6JTQnCCTb2Ht1t?=
+ =?us-ascii?Q?vfIOhAIp0OkOT2a8mBcrc+cI0THyeJE/5CGtsR0J1ySjVzFbb9XiY5uICm45?=
+ =?us-ascii?Q?UHemIRiUS4qBFDuRU3thIM9z2YM0J7FdGcOZwKaWjiXolmMOZ0W3h4qN3IA/?=
+ =?us-ascii?Q?+UVwuxDUmVzcgfB2ni53wKl3Lm507ZgHMbgS1Q9YLV3civ/rf9UCuXIvUfDH?=
+ =?us-ascii?Q?PGkVTStFWQI2n7Aitoegk8xtjhqO1XF2rJxSgj0qrLKwe7r1bNcoPMcLDSO/?=
+ =?us-ascii?Q?wgR54Bct0/jFhuLJdvITI+ieJCw3f7vlS34Zkw/nJduGkjC53poNP3tI77BL?=
+ =?us-ascii?Q?7HEl+2PAFvyLwRelSizY80SikIj2yJrZJjkU5clnOvVSct6lHqwiPsYFcikw?=
+ =?us-ascii?Q?RGXJKefarTpBzawig8xDf5BMC741vwqgqL8aSI5/JYgpwYgi8Hpcs4cYm6NS?=
+ =?us-ascii?Q?GtlhQy+SZmoo/ffebYcBv+a0mCbXLHKtHluXnhCnTiZUahhvp+V9MXQXXsS5?=
+ =?us-ascii?Q?UIRVF7AihPHUIeB1QtxiUk+ZUNXIerF+XM3mlHNlzWo6LQjRlo1dg7acF/AA?=
+ =?us-ascii?Q?nXwEeSJleCahR+IYGtrBSd8qQgJFuP7yXoCVKunFiy6sqFS7a0kjYAzZVi9P?=
+ =?us-ascii?Q?CXxDrTTMyPwDBBD5X8PDiECYxxim8wHaIC/gfL1F7GfmyqiYp+kA8WgwL23e?=
+ =?us-ascii?Q?e2dvt7+mIddUyFnyk5A4NQmz09ouJjwOztMmEUD2lnSA4qYeJDitgwUlrGla?=
+ =?us-ascii?Q?miZH3OH8McPnQM3YuNlCOCjz+xGH1RFnbElX1b0WrxLf1kXjabeQN/IQ7mPw?=
+ =?us-ascii?Q?kewuOtuvYv7x5k4/UVnzalMbLoITiDC2oc5KIO2a1gUR04GkxLmctu6CLuc+?=
+ =?us-ascii?Q?M7APkH48nIOtz4ns3rIXSxn1cp5LxaWQwNCsA1ch+unvDsNZKP+7uYrAp+dz?=
+ =?us-ascii?Q?Dkko05w+P7oQTpvVS9DlVZmZJsOG3k4EwkAxjZM4pixvYRkaUJAcWkTz49Lo?=
+ =?us-ascii?Q?pMlRyS/3c/Qv61EdO1s8hkATq1zkIYNvWFgvqbLEV9p2symyIkY7p7XyPNir?=
+ =?us-ascii?Q?izDw+62neLQikozCBL49ymlzGP3+cE9kCjDufEobP7OIaUFwiC/qz77axse6?=
+ =?us-ascii?Q?MU8oPayfFl/O82TX+VRS29H4YIjILfd/I4SwqpIjmfoH+BVw4oG5/p/vqjBw?=
+ =?us-ascii?Q?tSb0e6m+wRdiIugDalY+of6Uj8fxB+m9y45wCvjZlyZ/lP/O2HXI5ecFMt4/?=
+ =?us-ascii?Q?db5UJYS/QuZVXtcFhKVzoyW9Riy8rwNuMONXvvTsd67ifu6Tj9hs0gFwkHIT?=
+ =?us-ascii?Q?Q9Jif63knjSsFabouZw8BZtsbd3kj4g5zUWJYdwilzkYWmn+H+9DezBAcizo?=
+ =?us-ascii?Q?b5OuhIYg6Egic8Qx13hJot49nD6IRvsWqU1UkSsVAkhjKJtBY4TvYCDnRRqj?=
+ =?us-ascii?Q?mfoiNyVF0nZsqra3WG16QQkCvZOShawGDsO2RNCe5jJKR4LatEtbGvn2rwzP?=
+ =?us-ascii?Q?tyavmRK/xfmJLJuSkkv4U/Jc3enMoQEegTQMKjVe?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/22] wifi: nxpwifi: create nxpwifi to support iw61x
-To: Jeff Chen <jeff.chen_1@nxp.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- briannorris@chromium.org, johannes@sipsolutions.net, francesco@dolcini.it,
- tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de, brian.hsu@nxp.com
-References: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
- <164050d7-e0db-4a67-bf47-6d88e80d78ab@collabora.com>
- <aOfcb3bwacg8RidH@nxpwireless-Inspiron-14-Plus-7440>
-Content-Language: en-US
-From: Martyn Welch <martyn.welch@collabora.com>
-In-Reply-To: <aOfcb3bwacg8RidH@nxpwireless-Inspiron-14-Plus-7440>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7142.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a666cd4-bbf0-4b29-e75d-08de08196571
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2025 16:23:50.1854
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: C6A6QnYNNWZx0JjDA+qrO7GzJD7BJ0faiMqlPCHj3xVMcY87ZNZVhBOxqqFw0xQwpoOj1DRDTJAmW8bNNQ57Qw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8414
 
 
 
-On 09/10/2025 17:01, Jeff Chen wrote:
-> On Tue, Oct 07, 2025 at 05:49:59 PM +0100, Martyn Welch wrote:
->> This seems to be working well for me, at least for Wifi. I'd like to get
->> Bluetooth up as well. The bluetooth driver (btnxpuart) doesn't seem happy
->> loading the bluetooh firmware:
->>
->> [   35.930755] Bluetooth: hci0: Request Firmware: nxp/uartspi_n61x_v1.bin.se
->> [   37.953107] Bluetooth: hci0: FW Download Complete: 396444 bytes
->> [   37.953167] Bluetooth: hci0: Frame reassembly failed (-84)
->> [   39.277635] Bluetooth: hci0: Frame reassembly failed (-84)
->> [   39.292011] Bluetooth: hci0: Frame reassembly failed (-84)
->> [   39.310094] Bluetooth: hci0: Frame reassembly failed (-84)
->> [   39.330273] Bluetooth: hci0: Frame reassembly failed (-84)
->> [   39.351381] Bluetooth: hci0: Frame reassembly failed (-84)
->> [   39.373112] Bluetooth: hci0: Frame reassembly failed (-84)
->> [   41.353087] Bluetooth: hci0: Opcode 0x1002 failed: -110
->> [   41.358411] Bluetooth: hci0: command 0x1002 tx timeout
->>
->> I think the "combo" firmware needs to be loaded by the WiFi driver right? I
->> assume this isn't supported yet?
->>
->> Martyn
->>
-> Hi Martyn,
-> 
-> Thanks for testing the nxpwifi driver. On our side, we haven’t seen issues
-> with Bluetooth on the NXP i.MX93 EVK platform, regardless of whether the nxpwifi
-> driver loads the Wi-Fi-only firmware or the combo firmware.
-> 
->  From your logs, it looks like you're loading the Wi-Fi-only firmware
-> (nxp/uartspi_n61x_v1.bin.se). If it were the combo firmware, the btnxpuart
-> driver would skip loading the BT firmware entirely, since it would already
-> be downloaded by the Wi-Fi driver.
-> 
+> -----Original Message-----
+> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Sent: Friday, October 10, 2025 3:49 PM
+> To: Wei Fang <wei.fang@nxp.com>; Claudiu Manoil
+> <claudiu.manoil@nxp.com>
+> Cc: Clark Wang <xiaoning.wang@nxp.com>; andrew+netdev@lunn.ch;
+> davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> pabeni@redhat.com; Frank Li <frank.li@nxp.com>; imx@lists.linux.dev;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH net] net: enetc: correct the value of ENETC_RXB_TRUES=
+IZE
+>=20
+> On Fri, Oct 10, 2025 at 05:26:08PM +0800, Wei Fang wrote:
+> > ENETC_RXB_TRUESIZE indicates the size of half a page, but the page
+> > size is adjustable, for ARM64 platform, the PAGE_SIZE can be 4K, 16K
+> > and 64K, so a fixed value '2048' is not correct when the PAGE_SIZE is 1=
+6K or
+> 64K.
+> >
+> > Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet
+> > drivers")
+> > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> > ---
+> >  drivers/net/ethernet/freescale/enetc/enetc.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h
+> > b/drivers/net/ethernet/freescale/enetc/enetc.h
+> > index 0ec010a7d640..f279fa597991 100644
+> > --- a/drivers/net/ethernet/freescale/enetc/enetc.h
+> > +++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+> > @@ -76,7 +76,7 @@ struct enetc_lso_t {
+> >  #define ENETC_LSO_MAX_DATA_LEN		SZ_256K
+> >
+> >  #define ENETC_RX_MAXFRM_SIZE	ENETC_MAC_MAXFRM_SIZE
+> > -#define ENETC_RXB_TRUESIZE	2048 /* PAGE_SIZE >> 1 */
+> > +#define ENETC_RXB_TRUESIZE	(PAGE_SIZE >> 1)
+> >  #define ENETC_RXB_PAD		NET_SKB_PAD /* add extra space if
+> needed */
+> >  #define ENETC_RXB_DMA_SIZE	\
+> >  	(SKB_WITH_OVERHEAD(ENETC_RXB_TRUESIZE) - ENETC_RXB_PAD)
+> > --
+> > 2.34.1
+> >
+>=20
+> I wonder why 2048 was preferred, even though PAGE_SIZE >> 1 was in a
+> comment.
+> Claudiu, do you remember?
 
-Yes, I'm currently using the wifi only firmware. If I'm not mistaken, 
-that's the only firmware that the NXPWifi driver will currently use. It 
-appears that it should be able to load `firmware_sdiouart`, but that 
-doesn't appear to be set anywhere and thus it's not considered. I tried 
-to rename the combo firmware to have the name used for the wifi only 
-firmware, but that was failing for me (more about that in a moment).
+Initial driver implementation for enetcv1 was bound to 4k pages, I need to =
+recheck why and get back to you.
 
-> To help us reproduce and investigate further, could you please share:
-> - Your test platform (SoC, board, etc.)
-
-Custom board based on Renesas RZ-G2L, using Ezurio Sona NX611 M.2 1216 
-module.
-
-Kernel is 6.17 with an added custom DT, a few patches for other hardware 
-and the NXPWifi patch series.
-
-Both btnxpuart and nxpwifi are built as modules.
-
-The firmware itself is what Ezurio provide in their Yocto layer:
-
-$ md5sum *
-6a9307d27c3bdb3bde800265056ab217  sd_w61x_v1.bin.se
-8a28ec7f1b77dbde0ac7568d0426c669  sduart_nw61x_v1.bin.se
-d38935f03dbe6da7a9ac3daf58e640bf  uartspi_n61x_v1.bin.se
-
-
-Looking a bit deeper, if I try and load the combined firmware, the 
-bluetooth modules attempts to load before the WiFi driver has had a 
-chance to complete loading the firmware which is resulting in the 
-firmware failing.
-
-If I blacklist the btnxpuart module (and rename the combo firmware),
-it loads:
-
-[   45.781023] nxpwifi_sdio mmc1:0001:1: info: FW download over, size 
-944916 bytes
-[   45.884760] nxpwifi_sdio mmc1:0001:1: WLAN FW is active
-[   45.913045] nxpwifi_sdio mmc1:0001:1: VDLL image: len=109800
-[   45.913209] nxpwifi_sdio mmc1:0001:1: Firmware api version 15.1
-[   46.023576] nxpwifi_sdio mmc1:0001:1: info: NXPWIFI VERSION: nxpwifi 
-1.12 (18.99.3.p15.0)
-[   46.023610] nxpwifi_sdio mmc1:0001:1: driver_version = nxpwifi 1.12 
-(18.99.3.p15.0)
-
-
-If I then try to manually load the bluetooth module I get a failure:
-
-[  104.627753] Bluetooth: Core ver 2.22
-[  104.628041] NET: Registered PF_BLUETOOTH protocol family
-[  104.628053] Bluetooth: HCI device and connection manager initialized
-[  104.632606] Bluetooth: HCI socket layer initialized
-[  104.632646] Bluetooth: L2CAP socket layer initialized
-[  104.632704] Bluetooth: SCO socket layer initialized
-[  104.651019] btnxpuart serial0-0: supply vcc not found, using dummy 
-regulator
-[  105.245804] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-[  105.245841] Bluetooth: BNEP filters: protocol multicast
-[  105.245866] Bluetooth: BNEP socket layer initialized
-[  105.672560] Bluetooth: hci0: FW already running.
-[  105.775233] Bluetooth: hci0: Frame reassembly failed (-84)
-[  105.781369] Bluetooth: hci0: Frame reassembly failed (-84)
-[  105.787899] Bluetooth: hci0: Frame reassembly failed (-84)
-[  105.794313] Bluetooth: hci0: Frame reassembly failed (-84)
-[  105.800861] Bluetooth: hci0: Frame reassembly failed (-84)
-[  105.806457] Bluetooth: hci0: Frame reassembly failed (-84)
-[  105.811925] ------------[ cut here ]------------
-[  105.811929] Unbalanced enable for IRQ 38
-[  105.811953] WARNING: CPU: 0 PID: 40 at kernel/irq/manage.c:753 
-__enable_irq+0x54/0x90
-[  105.811979] Modules linked in: bnep btnxpuart bluetooth ecdh_generic 
-ecc snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nxpwifi_sdio 
-nxpwifi joydev cfg80211 aes_ce_blk aes_ce_cipher polyval_ce ghash_ce 
-snd_soc_tlv320aic3x_i2c snd_soc_simple_card snd_soc_rz_ssi 
-snd_soc_tlv320aic3x snd_soc_simple_card_utils snd_soc_bt_sco gf128mul 
-snd_soc_core snd_compress snd_pcm_dmaengine rzg2l_cru snd_pcm goodix_ts 
-v4l2_fwnode v4l2_async rzg2l_thermal snd_timer optee snd ffa_core tee 
-leds_gpio soundcore cpufreq_dt rfkill qrtr evdev ip6t_REJECT 
-nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp xt_conntrack 
-nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables x_tables 
-efi_pstore configfs nfnetlink autofs4 ext4 crc16 mbcache jbd2 cls_cgroup 
-rzg2l_du_drm drm_display_helper panel_simple cec rc_core panfrost 
-gpu_sched micrel vsp1 phy_package drm_client_lib ravb drm_shmem_helper 
-rzg2l_mipi_dsi drm_dma_helper mdio_bitbang videobuf2_vmalloc 
-drm_kms_helper of_mdio videobuf2_dma_contig videobuf2_memops fixed_phy 
-videobuf2_v4l2
-[  105.812215]  fwnode_mdio drm videodev libphy 
-renesas_sdhi_internal_dmac renesas_sdhi_core reset_rzg2l_usbphy_ctrl 
-mdio_bus rzg2l_wdt videobuf2_common tmio_mmc_core mc rcar_fcp i2c_riic 
-pwm_rz_mtu3 fixed gpio_keys_polled pwm_bl
-[  105.812270] CPU: 0 UID: 0 PID: 40 Comm: kworker/u4:2 Not tainted 
-6.17.0+ #10 VOLUNTARY
-[  105.812281] Hardware name: Custom Board (DT)
-[  105.812288] Workqueue: events_unbound flush_to_ldisc
-[  105.812305] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS 
-BTYPE=--)
-[  105.812313] pc : __enable_irq+0x54/0x90
-[  105.812321] lr : __enable_irq+0x54/0x90
-[  105.812329] sp : ffff800080003db0
-[  105.812332] x29: ffff800080003db0 x28: ffff00007fbcf140 x27: 
-ffff00000ae212c0
-[  105.812343] x26: ffff00007fbcf140 x25: ffff00007fbcf140 x24: 
-0000000000000006
-[  105.812352] x23: 00000000000000c0 x22: 0000000000000000 x21: 
-00000000000000c0
-[  105.812362] x20: 0000000000000026 x19: ffff000010ed3200 x18: 
-00000000ffffffff
-[  105.812371] x17: ffff7ffffe0a5000 x16: ffff800080000000 x15: 
-ffff800081fefa4c
-[  105.812380] x14: 0000000000000000 x13: 3833205152492072 x12: 
-ffff800081c84a90
-[  105.812390] x11: ffff800081c2cae8 x10: ffff800081c84ae8 x9 : 
-ffff800080170a2c
-[  105.812399] x8 : 0000000000000001 x7 : 0000000000017fe8 x6 : 
-c0000000ffffefff
-[  105.812408] x5 : ffff00007fbcb508 x4 : 0000000000000000 x3 : 
-ffff7ffffe0a5000
-[  105.812418] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 
-ffff00000ae212c0
-[  105.812428] Call trace:
-[  105.812433]  __enable_irq+0x54/0x90 (P)
-[  105.812444]  enable_irq+0x74/0xe8
-[  105.812453]  sci_dma_rx_reenable_irq+0x70/0xe0
-[  105.812465]  sci_dma_rx_timer_fn+0x234/0x3b0
-[  105.812474]  __hrtimer_run_queues+0x130/0x2e0
-[  105.812487]  hrtimer_interrupt+0x10c/0x2e0
-[  105.812498]  arch_timer_handler_virt+0x34/0x60
-[  105.812514]  handle_percpu_devid_irq+0x88/0x1b0
-[  105.812525]  handle_irq_desc+0x3c/0x68
-[  105.812534]  generic_handle_domain_irq+0x24/0x40
-[  105.812542]  gic_handle_irq+0x54/0x140
-[  105.812551]  call_on_irq_stack+0x30/0x48
-[  105.812560]  do_interrupt_handler+0x88/0xa0
-[  105.812569]  el1_interrupt+0x34/0x58
-[  105.812583]  el1h_64_irq_handler+0x18/0x28
-[  105.812590]  el1h_64_irq+0x6c/0x70
-[  105.812598]  console_flush_all+0x2dc/0x3b8 (P)
-[  105.812611]  console_unlock+0x8c/0x160
-[  105.812621]  vprintk_emit+0x304/0x388
-[  105.812631]  vprintk_default+0x40/0x58
-[  105.812641]  vprintk+0x30/0x48
-[  105.812651]  _printk+0x68/0xa0
-[  105.812660]  bt_err+0x6c/0x9a8 [bluetooth]
-[  105.812881]  btnxpuart_receive_buf+0x170/0x318 [btnxpuart]
-[  105.812901]  ttyport_receive_buf+0x6c/0xe0
-[  105.812916]  flush_to_ldisc+0xbc/0x1b0
-[  105.812927]  process_one_work+0x178/0x3c8
-[  105.812941]  worker_thread+0x208/0x400
-[  105.812951]  kthread+0x120/0x220
-[  105.812961]  ret_from_fork+0x10/0x20
-[  105.812972] ---[ end trace 0000000000000000 ]---
-[  105.815082] Bluetooth: hci0: Frame reassembly failed (-84)
-[  107.816594] Bluetooth: hci0: Opcode 0x1002 failed: -110
-
-
-
-> - Your test steps
-
-At the moment, booting and checking to see if the hardware has probed.
-If it has, ensure I can connect to my wifi network and ensure that I can 
-pass a little bit of traffic.
-
-> - The exact firmware version you're using
-
-As above.
-
-> Also, have you tried running Bluetooth in a BT-only scenario (without loading
-> the Wi-Fi driver)? Does that work correctly?
-> 
-
-I hadn't. Just gave that a go and I seem to be getting the same failure 
-(though :
-
-$ sudo dmesg | grep hci0
-[   40.859055] Bluetooth: hci0: ChipID: 7601, Version: 0
-[   40.889487] Bluetooth: hci0: Request Firmware: nxp/uartspi_n61x_v1.bin.se
-[   42.850682] Bluetooth: hci0: FW Download Complete: 396444 bytes
-[   42.850736] Bluetooth: hci0: Frame reassembly failed (-84)
-[   44.222243] Bluetooth: hci0: Frame reassembly failed (-84)
-[   44.230226] Bluetooth: hci0: Frame reassembly failed (-84)
-[   44.237480] Bluetooth: hci0: Frame reassembly failed (-84)
-[   44.247567] Bluetooth: hci0: Frame reassembly failed (-84)
-[   44.254188] Bluetooth: hci0: Frame reassembly failed (-84)
-[   44.263459] Bluetooth: hci0: Frame reassembly failed (-84)
-[   44.269814] Bluetooth: hci0: Frame reassembly failed (-84)
-[   46.280494] Bluetooth: hci0: Opcode 0x1002 failed: -110
-[   46.285835] Bluetooth: hci0: command 0x1002 tx timeout
-
-
-Are there any BT patches that I'm missing?
-
-Martyn
-
-> Thanks,
-> Jeff
-
+Regards,
+Claudiu
 
