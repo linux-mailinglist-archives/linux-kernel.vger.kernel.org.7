@@ -1,118 +1,82 @@
-Return-Path: <linux-kernel+bounces-848352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB79BCD829
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:25:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D670BCD820
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7355A4FE8E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 960BE1893FBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B362F2617;
-	Fri, 10 Oct 2025 14:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1752F549F;
+	Fri, 10 Oct 2025 14:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bzKXwADA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pxduouzo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/2bOU4q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDF317597;
-	Fri, 10 Oct 2025 14:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C2A2673B0;
+	Fri, 10 Oct 2025 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760106227; cv=none; b=fdZY1KcmRRsu+wClCrDoKe+uuGuCMUCqrJP+vf4LQJO8V9NwdCAISaHtFVSTkWcr4VBbOHn+fJaJSGZKtd8HDbSoOfjimcYDWfdnyn2E88lEhLze381+BDrqxXdu+hNWmDNt0eNLUbRWKBnFxHJ6LjH+eY9P8vo5pXJY8XCeq5s=
+	t=1760106247; cv=none; b=cXB/hoVY2+kRPWBiAXp3Y+cE+UwpWxvmKqSplhJNwC+pnIP5kCyPZTK9hl3myLQXiepFELMYHuSbOypRETZ+HpfpzLP1E4ah8hjJZQy3DgmZlKR8jTG/UklaArPYdUQs9ekHDB0g+c6RrirfweD3FmrRTEkCPx2iAAY475wa3po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760106227; c=relaxed/simple;
-	bh=vC/N7IozNJkARanX5/Ha8AZGYMhKJmuSp0KN3cJmk9A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nS6M2xnrWVxWWTibdhmOucqd+Pe4uZA6QKUtmveXaXD9sRbGgx3cFjG2B9x5i+0UKBXTkS2bOIajl++/cJxNVw1lzas6MQBitNpQ9Z3o2T3vij8SseQn6ODrtgCr+3APpx1N7KLJWXxsUhRWkHi2gDuED4e6cbm1YE8S52/HV60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bzKXwADA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pxduouzo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760106223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VOutbgETX+ROuc8lXZhUEXkf+F2qnmvgorpg8EXYRRk=;
-	b=bzKXwADA2IX/HfUYgOVYJVMYa5gyD+CVsBgJsmhN60xyVfPxN0ccpVbKn+4hNZA8f7GrB8
-	OFtP883iNNQ4oa7jbeAn8Q+r6roqoVEQ4DummwsLkzpEVSEQgvwx4pPz1KNHMFAGN0bI4i
-	Xv4D8ktk7jFQ5bL+ja18XhBIFQmUVKewydHfRtCaZEUtp4Z2JJaht7jLrG5I9Olcem7Azf
-	s8kBhDbGQijDYIs1zg6KvexiUrsViOrLOQmr6XjWnZdaDxCYXcCVs7zL2tKJLJ6iQf08UW
-	1c8R0E3bX8ay8OpD3XndLG9gAMEcbjmclL3+a/7vz/6BqMwM/itvRoS/3YtwbQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760106223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VOutbgETX+ROuc8lXZhUEXkf+F2qnmvgorpg8EXYRRk=;
-	b=PxduouzorCoRjzUmQE3nqwB8g7AJrHUOnJRvUGn6EgW1ACPHIsiKdwkaEeZFuE/Jc30X+e
-	OwfZgEaLx7mVUcBQ==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
- Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
- Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v2 14/20] rv: Add sample hybrid monitors stall
-In-Reply-To: <20250919140954.104920-15-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
- <20250919140954.104920-15-gmonaco@redhat.com>
-Date: Fri, 10 Oct 2025 16:23:42 +0200
-Message-ID: <87frbqygwh.fsf@yellow.woof>
+	s=arc-20240116; t=1760106247; c=relaxed/simple;
+	bh=g/CCLFYJth2UWZIRrD9Q/CZFla4xPgWxZ+t6woi5ZUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGQ7LqgdWErb41HS8+FCZOsr0o33b3OrsPoiwcYXmb6E8rH8ID2VUAy6RQ86R0B7SpIv9jg0qC1USn2Z/WAjJV8raPsntuWKbsCFYclyJJkUxePsNRM/AhxuxY1NIrZT30NWpDXbizRfS6WvRrUk5qa0Yj8w7zflCg8F4NhpkrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/2bOU4q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2F5C4CEF8;
+	Fri, 10 Oct 2025 14:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760106246;
+	bh=g/CCLFYJth2UWZIRrD9Q/CZFla4xPgWxZ+t6woi5ZUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b/2bOU4qvv1Y1gvxd3uTWsxHGG33oTre9jFhgeoxJHjbyXyZAiS8W37Ctp154law9
+	 54a9B5TRQTsaKdqbxbcaZbhc71O2kbXk+qxLJznBInC0xTCSFNq8IZekTVfmvB+Zpr
+	 XufCbxrS0vI3UJGh6EJsuFsjZYufbIHU/CSQWU2O8xmb1Cc5pe0LNJDWrSukj3Syxc
+	 zs25Nn94Qrl4JxxfRaPIfa3v9ezQPVb3NVzzq55gVQPHk+j8JIO4CK5g5JMdIT3/FR
+	 tUeiA09ul6mTekNTbpDA0MiABz4wluy9gIQLe7NtT8aEhwlVuP4gvG/s9iCBdOynec
+	 c1LKn/XYNcT3g==
+Date: Fri, 10 Oct 2025 09:24:04 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, quic_nguyenb@quicinc.com,
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
+	linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
+	devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+	quic_sayalil@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, quic_rampraka@quicinc.com,
+	Ulf Hansson <ulf.hansson@linaro.org>, quic_pragalla@quicinc.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V1 1/3] dt-bindings: mmc: sdhci-msm: Add sm8750 compatible
+Message-ID: <176010624404.239496.14425678947212580288.robh@kernel.org>
+References: <20251007054445.4096630-1-sarthak.garg@oss.qualcomm.com>
+ <20251007054445.4096630-2-sarthak.garg@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007054445.4096630-2-sarthak.garg@oss.qualcomm.com>
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
-> +- Name: stall - wakeup in preemptive
-                   ^^^^^^^^^^^^^^^^^^^^
-                   copy-paste mistake?
 
-> +- Type: per-task hybrid automaton
-> +- Author: Gabriele Monaco <gmonaco@redhat.com>
-> +
-> +Description
-> +-----------
-> +
-> +The stalled task (stall) monitor is a sample per-task timed monitor that checks
-> +if tasks are scheduled within a defined threshold after they are ready::
-> +
-> +                        |
-> +                        |
-> +                        v
-> +                      #==================================#
-> +                      H             dequeued             H <+
-> +                      #==================================#  |
-> +                        |                                   |
-> +                        | sched_wakeup;reset(clk)           |
-> +                        v                                   |
-> +                      +----------------------------------+  |
-> +                      |             enqueued             |  |
-> +                      |     clk < threshold_jiffies      |  | sched_switch_wait
-> +                      +----------------------------------+  |
-> +                        |                                   |
-> +                        | sched_switch_in                   |
-> +    sched_switch_in     v                                   |
-> +    sched_wakeup      +----------------------------------+  |
-> +  +------------------ |                                  |  |
-> +  |                   |             running              |  |
-> +  +-----------------> |                                  | -+
-> +                      +----------------------------------+
+On Tue, 07 Oct 2025 11:14:43 +0530, Sarthak Garg wrote:
+> Document the compatible string for the SDHCI controller on the
+> sm8750 platform.
+> 
+> Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-I think this monitor does not detect if a task get preempted, but then
-never get scheduled again?
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-This sample monitor does not have to cover everything obviously, but I'm
-curious if I understand it correct.
-
-Nam
 
