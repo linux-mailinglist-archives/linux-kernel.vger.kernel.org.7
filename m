@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-848807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DAEBCE9C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 370EBBCE9D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C44894F5306
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:23:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E82FB4F386D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E156730217A;
-	Fri, 10 Oct 2025 21:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BEF302CA3;
+	Fri, 10 Oct 2025 21:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KVIxqDZG"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hA2jaENo"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB28F237A4F;
-	Fri, 10 Oct 2025 21:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C606944F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760131405; cv=none; b=f1LrI9C4oZ2XmkKenA1PtCqZsDQI+budOaqd7/OFQM7DFCVZIg5Z8ESepg06v341Vr1QX+AVCjoaEKf57hfrZEI0s4srtGj7/0s/FGOMehQ4nnhhfP0YKp3IUCIR07+aIAWE3Sw6SWRIUTpSL2JHNbCgU46C8yBmZuCpzCNbVzE=
+	t=1760131842; cv=none; b=iuNJ21sAgR5q4A7gX+ldnnaZvTrVahYSZaGXD7H3uF01aj998PUh8LAvRdfaBGL6pep0jNfVN8pwgdP5DbuF+4jf09qDNEV/DCf3wBptyRyKdFNprBO2TZms87f6I38buNlEZPcIjbofUUOJlVemzPHZovpXTI+eGK631Gb1QiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760131405; c=relaxed/simple;
-	bh=Nkr3uJp5OqnDjljCPLtTh4RSl6GNhT46w1+67dI/zNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6q7GRB/D5dSL85n/iIR+9l53wKIyNHoz0EOZQ7vafwy5g8u1yS1Oyw+j5CyZxTa+zQe+4pVzCGIRiS7NWD7EZkdo+MH5pTPa2HNXiz7LNdUa6LohG1GpxHpEh9fTVvaYlRXbmfXLRrL3R2AXA4SiyovoPRMsX+/6UZeFwXQdqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KVIxqDZG; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 39E2040E016D;
-	Fri, 10 Oct 2025 21:23:12 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id I8IXORZg4TQ6; Fri, 10 Oct 2025 21:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1760131387; bh=qySDLascQ+yEC/QoOhS2+2VgA0BDmGIVzu4wiCJpGlc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KVIxqDZGlLlU7IW1hC0/qbB10VYeoGJ6k9FwRMRCBHgy32I2rVKesuC3q3VlysSG8
-	 d6v9vEyxBl7QwhFNe/VkdZC4dtZSYffraJi9Dk69dVw5arCFpWHLDCGsMcp4nN2DMG
-	 2AHkfg+X7uMe2vXJ+Mnj/YKcX8CgjuetqZ9v7qcqWJJF/UurWt4JF8/Qo/OuuDLbh2
-	 jK+dSL0DCicwiJiQ8/n8Ss7rUgLzUo0pUFq6/sg/zl9m7qJaYq71bKHkN8xgLymylQ
-	 NV8rWwmRCWmcbHiNwCWV4iypocXzhztDCaX4rzzc5cVAd2lNAc8/1Q6SwBqhD4NZT9
-	 wDeHtoW+IFmDS7ZGRj5PEmAyNNdS5fdptvfkwHhXtljs4xnrEkq/8MeoeztSsDTi2b
-	 RCRt6gG8HzcxHA1825eJtXUMuKU7UkaO6OOQp7yHwB0QhsXwUcXIIuua0Qv4Y304Pt
-	 bcJQ/4HC5t409TPu1Xuy4oET+UzfTecWK6JABXiCAJe3uRBMeVGLDUIQdvNlYQy6wY
-	 frcXYJ9suYF+/C7YgJRbNn/u3bTvT12+kktaYPElvg30bD0lIcP2ObGE7eEuU2Iom2
-	 fVHgnSXsUK20YxCbrRiLblvYQ662rTXOyQP/i5Zc8zM7yFlW0Kd5sT8FIm8vuWOvet
-	 JeHDo9M3HdDGo5FQlg//LbTY=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 7F39240E015F;
-	Fri, 10 Oct 2025 21:23:01 +0000 (UTC)
-Date: Fri, 10 Oct 2025 23:22:51 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>, x86@kernel.org
-Subject: Re: [tip: x86/cleanups] crypto: X86 - Remove CONFIG_AS_VAES
-Message-ID: <20251010212251.GAaOl5K1M2UOdqNzYP@fat_crate.local>
-References: <20250819085855.333380-2-ubizjak@gmail.com>
- <175577973263.1420.12918884895191770948.tip-bot2@tip-bot2>
- <20251010202122.GA2922@quark>
+	s=arc-20240116; t=1760131842; c=relaxed/simple;
+	bh=8/p7tRrQjkWsIDoGrp+Q/dZhfHbhdeZtiwno3OQBCi8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ahrkzm1GefktkK3l+0d8l6gVF7kn3Ci3zjvmKPyo9MvSN4i0+4mNoZHmD47Wq+QYMU/UzOfYLN2n9MvoxUVde7iyjbfVK4B7ohvFV68OWJ9DfXVvBG76Z3vKQxsUD0o1pW3IlsmOKYS/rjo/GLf3ZcIDFRRrhNZtCR/xw/Pk3Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hA2jaENo; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339d5dbf58aso12084358a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760131840; x=1760736640; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGidvreBdRrQ9/e+QABa4XqhsTH5hvZRquUKr+ibx5g=;
+        b=hA2jaENokK0aNDL9+jMmbO7XlkY2L6ddh18eK7j6YlyMnaclZ+iAhuXqOmFzKfpcfO
+         4otQ3Y4KhhzOejtqIgf26687JrPLoBjJWuraP/1eacEYYTek9bjC9Ww4f2F0G4V3ZgYN
+         ejpW0DH5yOty0M29VhSxSIx61mH4Jvty56g4HfAPz8RiqYPRR8egB9AHWr59r5GLlOc0
+         qWmYCNM/iJ34OEbqakv437BBHFPUIS/cGtY2c0CHPhupZi4pswVTvzIxZFHQr/GY/mP4
+         LkpZP4iBnC+1DjlMItKPcsuoogU+mHwCEGiIzBLxwqVtJY/G3NdlbCrjxH7wSSEOllPG
+         zTfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760131840; x=1760736640;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGidvreBdRrQ9/e+QABa4XqhsTH5hvZRquUKr+ibx5g=;
+        b=SVJOgIM+kjxhnmo+AJ1eU5veSBgcb1p5KvPyDgD8phbUdKWO17UCdVvcE2nXqGK6IK
+         tjHvV/kH+uDPxzwy4M+K511Foj/IMeYY83lUwDvPzmlSFw6Xyhx+U7XPQI/8G2QkPv/h
+         A5kXmJe7pvcJp4LI8Gd0T1/ksTtrCIs22dN9nU20tdWHjLVa59jy2fs5ha1didduS+vM
+         kPfZYO5tgKzM4Zvt57IthrCeBPPL7S1MffxdcyOufoobsz5VrJjrOVxYDtqGDP9pp5y+
+         3waZxyEUhBezmnSVchjjcwK1vgfs920ZcVwfdVlrhSGsnyF2iWcQKu4+czBquBPcAEzP
+         iJ3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXGGDrcGmtaEHzZgDOici++lwjGcsAg5er/58dSZjZwpZCJZSP0bg/vwQ0/5ok2BKOaWq9QBv9pLKgDlDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZd8oXscpJCzDUxAzzf/zBaZqky3RfaNeIwx/LUnxh8Z5z1wcr
+	7x7vruK6cOyfBuf7bs/Idl7/bxbfg6r8DNzu6IskM/wdvcki4wAuCQsy8SUCXD8sD1+HXlfdkgb
+	5jcy78w==
+X-Google-Smtp-Source: AGHT+IEcoM39c7Mj6p6VihhWMNZc1Lv9bgkpm92KunbjLNVZrSA/4FpGt5gG4aPbYdD2+ok2Z9TplqyvzX0=
+X-Received: from pjso12.prod.google.com ([2002:a17:90a:c08c:b0:327:dc48:1406])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1e05:b0:32e:64ca:e84a
+ with SMTP id 98e67ed59e1d1-33b51162572mr20174140a91.12.1760131840262; Fri, 10
+ Oct 2025 14:30:40 -0700 (PDT)
+Date: Fri, 10 Oct 2025 14:30:32 -0700
+In-Reply-To: <20251010005239.146953-1-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251010202122.GA2922@quark>
+Mime-Version: 1.0
+References: <20251010005239.146953-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
+Message-ID: <176013142377.973380.7356596643115609309.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: x86/pmu: Fix the warning in perf_get_x86_pmu_capability()
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
+	Zide Chen <zide.chen@intel.com>, Das Sandipan <Sandipan.Das@amd.com>, 
+	Shukla Manali <Manali.Shukla@amd.com>, Dapeng Mi <dapeng1.mi@intel.com>, 
+	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Oct 10, 2025 at 01:21:22PM -0700, Eric Biggers wrote:
-> On Thu, Aug 21, 2025 at 12:35:31PM -0000, tip-bot2 for Uros Bizjak wrote:
-> > The following commit has been merged into the x86/cleanups branch of tip:
-> > 
-> > Commit-ID:     4593311290006793a38a9cbd91d4a65b63cd7b76
-> > Gitweb:        https://git.kernel.org/tip/4593311290006793a38a9cbd91d4a65b63cd7b76
-> > Author:        Uros Bizjak <ubizjak@gmail.com>
-> > AuthorDate:    Tue, 19 Aug 2025 10:57:50 +02:00
-> > Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-> > CommitterDate: Thu, 21 Aug 2025 12:23:28 +02:00
-> > 
-> > crypto: X86 - Remove CONFIG_AS_VAES
-> 
-> Hi!  Just wanted to confirm that this is going to make it into an x86
-> pull request for 6.18?
+On Fri, 10 Oct 2025 08:52:39 +0800, Dapeng Mi wrote:
+> When load KVM module in Intel hybrid platforms, the warning below is
+> observed.
+>
+> [...]
 
-Bah, looks like one of us went on vacation after sending a bunch of pull
-requests expecting the others to send that one. Oh well, it hasn't happened.
+Applied to kvm-x86 fixes, with a different shortlog and changelog.  I wanted to
+call out that the fix is for hybrid CPUs, and that snapshotting PMU capabilities
+for non-hybrid CPUs even if enable_pmu=false is intentional.
 
-Thanks for letting me know, I'll send them tomorrow.
+Thanks much!
 
--- 
-Regards/Gruss,
-    Boris.
+[1/1] KVM: x86/pmu: Don't try to get perf capabilities for hybrid CPUs
+      https://github.com/kvm-x86/linux/commit/034417c1439a
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--
+https://github.com/kvm-x86/linux/tree/next
 
