@@ -1,210 +1,237 @@
-Return-Path: <linux-kernel+bounces-848229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD75BCCF63
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02B5BCCF75
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF6E424E20
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:46:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09DB1A668B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0118B2EFD90;
-	Fri, 10 Oct 2025 12:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3BF2F068C;
+	Fri, 10 Oct 2025 12:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="jTH7dhnN"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HXI+aK+J"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656CA35949
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621542EE274
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760100394; cv=none; b=sLV5Mdryl7OYBNvT1SNq9BMdtHunpdi/S7n5PVBWGNVlNugbo9AuwXO81i11iLGyBSynV+QDfd3qNgVCoopKJ1xSwNTIS3aRyjOSd1T4i54Cd8zGSQocJHmYRu5+twqpSO5jBcRNDXK21XhTfOJ+s2dju2nEKKOa/fKrekRoELo=
+	t=1760100406; cv=none; b=QSEg+eF+m7aFra2fW6ka6VHD+dUe71XsYVW36LG7daEq8/089Aq6yoLGSYbo49FZQxk+oQauIuVSJH/G4/o2zZ06CUONGhjEF1e4XNNQwP+FA8m97gK76W71UATONtynT9B0rE1hk2CWb95Jlp2PI1fTLkKqbJ23DjIaFaDvtI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760100394; c=relaxed/simple;
-	bh=cYonixcZbuyHF6K3JhPk4silzO2xyU5l/z1VPiL1Kzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ozE6Tp6FLt7VQD6UbaFwvFF6G+k206s2Vh1BTa//7RLQmDr6pYSFQZAPo5IvZC6TtaMnASgwVT9RlKHPVyc4/ijyd9prMA4xXahvc1tjgrRsSOQTMDguMg8w3ePtcU6faNgsYhdnrJt5SAvc1z8aoUYJZ892YNctFNN0n7mZYFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=jTH7dhnN; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4dfbab4fb0dso25944451cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:46:32 -0700 (PDT)
+	s=arc-20240116; t=1760100406; c=relaxed/simple;
+	bh=sMfv3TLRGxjMXD6OCX5QEzplP012kwoWjahSV/92jHU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bmEJwQ9lPpfE3QicG+YUlAvz22mqVsMdaUQ1RoFOHy3bnMbsUDj3/tF7JjtUKHnM7cdZWIC6PmFQB2p+Posfl9voeEWPTNqmvnnhXsqx/zqpH0TGKtGyAKAyoxu6ozFMZmY7B0QDgBWg9p4feMpGJ10Bh3/ynumPu5xf4NVo+FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HXI+aK+J; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e384dfde0so19311115e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1760100391; x=1760705191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kSdoiDX5nR8jqPMFduOgTUs/SIBXnAYTIt/wPSACCBU=;
-        b=jTH7dhnNtPW/Dz0k7tMfL16rG8lybdtk62ELH4BBaXh9m5eE/ERIfPM7/p+IugdCWY
-         rA0MtwUPMV48cVy0gDL4KN2pG2sQj6w8FZzRh/vV7NkZ512u4gFFtIokgSxLyuTov7zI
-         wQD9ogDOWugnEvKIt446I8UTl0kqTfPNRB5PsGcDVlS+Huwapns5zNoJrR2YovzvekF7
-         J+TAwkfuHUq/MzTefzfCe1QC5pCxSA9lMKd9eEBSu1jrs/cdCWohdf986VX/glDgdbx6
-         msfGlp0roNHt1ys117bS1eyR8VI1apFnyddTwtIV7q2yfSFzG7J/MBRfZM5nWUsBb43e
-         eu7A==
+        d=linaro.org; s=google; t=1760100403; x=1760705203; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejjXNuvOY4qHqOLsDaR4tDbzd5dU03zyuYMmAd/GyvQ=;
+        b=HXI+aK+Jv3p3p86fEtvXmcmBkbaW89HOgGOPZDvVE3mepCSeqSSCpwWlM2oFJKtN8/
+         eYUhxN9LtkCLkhbUOZRacAX33QG38ZXXhiIjc3pkjpGds2DH/JwEifXU21VJqra2HlV3
+         I0uqVGhF/GvCBFrlBjErsIgBQhRlD9LdZBxtQY2MWM+cGgqh3A/jYAl7qFYdVKR0hx2/
+         clYs0i4TQmQJ5SWNjGbLmcd6t+CUSZ0z6yhop3+8gzrc8NEyUeYJXqUBo6XJB2VMsQfJ
+         kG9EfttK6nnQ5vvYxi9i7ohVdRZWx+XsvXLeXQ63GxVQpWZBiCrOgkAubDrB90YyHX5+
+         wowA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760100391; x=1760705191;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kSdoiDX5nR8jqPMFduOgTUs/SIBXnAYTIt/wPSACCBU=;
-        b=ayVxXNWTGc98v6wwOAhx7dJcRo4kNlYNuyjD5CLztQOg+ogtPqhh0Otv9mYa1XuVdD
-         jSNZ+CscO/m0zo/2n5SRaSRJMyc6nv7SZtESkJ4XGYWBRafy7q3EKoy2SM4wDjgmJxpM
-         SOkxrQbZfTLBv2ROahtXsaLg/xBJII5auzLuc5ZZnx2+5ym9fp0euYy8wro26vrQqsmt
-         6sC7bj3KF1558Lrd4Gmeufv2m8I/1iJFAuJ12xlH3dfTXJV3QHftEcS+8/hWJVt1w+4s
-         plcwOEulJGYbkeUme/LvGUvuyC7fPLEZJo1vNa/oTHBu2bt6jC3D0MN7zgW8dZtMUG8g
-         Fj8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVlBD8WT5KtnKHwgBL/HNY4YqNXs0JTzDtRfQT2Zy+/kCliEbVt7F8c92MVYQTeC+f5gaLqrdh87jYM75I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn4VDM/JE4Tjk2KaQJYkHiRebtdwVRjV4krJWKuVIm2P9t1y3n
-	VIVEM4RwIMR6L02HHeo7fQS9QrDlWzQYM/6jKHoabw+GEOJtMgAevzD+JD7oXkbcCgpKxM1AxmU
-	L7riSJYgvl1eqP0eeMTF1+veQnQPN0zOqFR6DrpCKKA==
-X-Gm-Gg: ASbGncvt0auFV6/R7q+D5tdINdLV2XALQjygyUhUBSk5Oviv3YzOkmP0g5roeh9jJ2m
-	gMC5h3j3T6aufwkKG7D+cLbFMtUH4QracArtuPUN4ghO64VPjkFnoh4ojy5Srro/MSHRrCdZKc1
-	UJfRbe/MR1gup6iolBAb/ueeRChosIU0Xbw26K8NURL2VRYB0LiZ355M/RyJJamy39qqwuEe8uX
-	gr35/XPJfqLexhZFDdmCp1tr27R2zENpQ==
-X-Google-Smtp-Source: AGHT+IF3WkXquYSs0aZNr+CjES7Xeg58N6tZ4SYA03I6oeZM5oBf1kS+Z/F3o89F5+eVQe4l/6epRXKKJ0esSY22H0k=
-X-Received: by 2002:ac8:444a:0:b0:4e6:eb6c:fdd4 with SMTP id
- d75a77b69052e-4e6eb6d00c8mr119176221cf.52.1760100390967; Fri, 10 Oct 2025
- 05:46:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760100403; x=1760705203;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ejjXNuvOY4qHqOLsDaR4tDbzd5dU03zyuYMmAd/GyvQ=;
+        b=SQ/pJrDqnL+MBCeEnw6AI4iIu+bvvNTo5M6G9VpKg2meDtmaqFkX3HXJfW9ug8u256
+         FtrDP58pX1LBDpqNmCGYbBafk1RMLrtyCYWRR12G5JD/jKGSgOq6gqPENfp4bZs8Uqvp
+         TN1rah15AIdH4uoVfKHQooRzcRNL118WxPuxuU60Aqoc3LhSSTT8pMJQc56aCcSPzgxt
+         mnhoX2r0UBqIM8B6AIjDCnpmox31OMu+mgYxMszR1SpJpkri+wle4aOLVILA1ySYPQTZ
+         tYi18p+zvSJ0j2dKAXRvqmxBL6pNb00dmsUPkmSkUsI4Na22QMUu9T8L1DDwOa8W3tB3
+         8ISQ==
+X-Gm-Message-State: AOJu0YwBmQK346jpkZZ30EG2AAjdjlRty1qbZN+kFKIZ3UJG1td2CwU+
+	ZecML27m+6/E+yZY0tLJfkUhtkHLDykoCk5WZwvmILjmj64CYZ4IRsHsMo9kTEjY/lY=
+X-Gm-Gg: ASbGncvASh7SmXcHhl5cLAnaBKr2lOajNFIKQhv1FN4kq62Q+GKSkJXqbhbeaD9lB6o
+	2Q4xzHf5XWBPJeqqvW3nxVHKI/cN24NEmlp0XOGMZoq3BX2rK0/kU11HJhhCqxzizP9pgoj3ZA4
+	OK0NGoo4Seh31VYIiBRJTwVcQHN1xifXWqGHjpRkA2epMslRoCUHkgqZQXx28Wv1hg17a2Mpd/k
+	MCZC0ilpZVXZiMq9FJWBVIfSyeozde+SmZSsIuvYWbrpzmpJtHoDfltBvoBPeLiucZyx15f1XFt
+	OLrP9z3Jnvab4OMzcCAjl4+5ZKhPx6gPrkEsEJDt2ehSKFjdduYNej4aqoAxfJkCPdB8bpv7Grx
+	r70/CdB7OZcMaK9YONkPhdhi0L7SKE0n/WOaVGI9Cty9C8o6iMHGuj9A0p6rp/GKWnWvYIrnqrg
+	QJjfk+kUQ6NwiSUlOHu5eVfw==
+X-Google-Smtp-Source: AGHT+IFFVh+qVBdW5ElAZZfgvNHjG6SIuxAjy6I3c4ghlrs6mBTWOZSzV+ytuvT6FMhPPEuwTiq4Gg==
+X-Received: by 2002:a05:600c:529a:b0:46e:3802:741a with SMTP id 5b1f17b1804b1-46fa9af2d67mr72482845e9.22.1760100402653;
+        Fri, 10 Oct 2025 05:46:42 -0700 (PDT)
+Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484d056sm46376895e9.9.2025.10.10.05.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 05:46:42 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v6 0/6] exynos-acpm: add DVFS protocol and clock driver
+Date: Fri, 10 Oct 2025 12:46:30 +0000
+Message-Id: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com> <mafs0ms5zn0nm.fsf@kernel.org>
-In-Reply-To: <mafs0ms5zn0nm.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 10 Oct 2025 08:45:52 -0400
-X-Gm-Features: AS18NWD1lDKPEljKLMW4w1nOwJRnWgZiJv6poOU8kRsyRJy9732wSgdXfAOypQY
-Message-ID: <CA+CK2bAKdu4-bZQgopNguE_gVtfZ-mpCo+0zOk-9wu8LW8QQwg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACYA6WgC/23OTW7DIBAF4KtErEs1DMOPs+o9qi6AIQlqake4s
+ lpFvntxNqVyxeqh+d7MXcy5ljyL4+Eual7KXKaxBft0EOkSxnOWhVsWCGjAq0GGdPuQ6fou0TM
+ G5zNocKKN32o+la9H1etby5cyf071+9G8qO33n5JFSZA2Rh4cObJOvVzLGOr0PNWz2FoW7CS6T
+ mKTnE3yNtIQLe2k/pUD6E7qbafJiQnZ++R2knrpO0mb1FobSO3F/bWmk0idNE1SSkGdAjMA/5H
+ ruv4AKonej4kBAAA=
+X-Change-ID: 20250819-acpm-clk-28d2a78e0307
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760100401; l=5658;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=sMfv3TLRGxjMXD6OCX5QEzplP012kwoWjahSV/92jHU=;
+ b=qIvKlqHpyoQD8t1YCdVatudYDt0vnXZPCCRI4cw/L2+rdVui9oFehURMKYsHJVJPt5tlczkC2
+ KHJTUWeUpK9Buu5wQYFtHWLo7PaaM8LqdI/vZ4VIJzJ0VlwmbxSur5d
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On Thu, Oct 9, 2025 at 6:58=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org>=
- wrote:
->
-> On Tue, Oct 07 2025, Pasha Tatashin wrote:
->
-> > On Sun, Sep 28, 2025 at 9:03=E2=80=AFPM Pasha Tatashin
-> > <pasha.tatashin@soleen.com> wrote:
-> >>
-> [...]
-> > 4. New File-Lifecycle-Bound Global State
-> > ----------------------------------------
-> > A new mechanism for managing global state was proposed, designed to be
-> > tied to the lifecycle of the preserved files themselves. This would
-> > allow a file owner (e.g., the IOMMU subsystem) to save and retrieve
-> > global state that is only relevant when one or more of its FDs are
-> > being managed by LUO.
->
-> Is this going to replace LUO subsystems? If yes, then why? The global
-> state will likely need to have its own lifecycle just like the FDs, and
-> subsystems are a simple and clean abstraction to control that. I get the
-> idea of only "activating" a subsystem when one or more of its FDs are
-> participating in LUO, but we can do that while keeping subsystems
-> around.
->
-> >
-> > The key characteristics of this new mechanism are:
-> > The global state is optionally created on the first preserve() call
-> > for a given file handler.
-> > The state can be updated on subsequent preserve() calls.
-> > The state is destroyed when the last corresponding file is unpreserved
-> > or finished.
-> > The data can be accessed during boot.
-> >
-> > I am thinking of an API like this.
-> >
-> > 1. Add three more callbacks to liveupdate_file_ops:
-> > /*
-> >  * Optional. Called by LUO during first get global state call.
-> >  * The handler should allocate/KHO preserve its global state object and=
- return a
-> >  * pointer to it via 'obj'. It must also provide a u64 handle (e.g., a =
-physical
-> >  * address of preserved memory) via 'data_handle' that LUO will save.
-> >  * Return: 0 on success.
-> >  */
-> > int (*global_state_create)(struct liveupdate_file_handler *h,
-> >                            void **obj, u64 *data_handle);
-> >
-> > /*
-> >  * Optional. Called by LUO in the new kernel
-> >  * before the first access to the global state. The handler receives
-> >  * the preserved u64 data_handle and should use it to reconstruct its
-> >  * global state object, returning a pointer to it via 'obj'.
-> >  * Return: 0 on success.
-> >  */
-> > int (*global_state_restore)(struct liveupdate_file_handler *h,
-> >                             u64 data_handle, void **obj);
-> >
-> > /*
-> >  * Optional. Called by LUO after the last
-> >  * file for this handler is unpreserved or finished. The handler
-> >  * must free its global state object and any associated resources.
-> >  */
-> > void (*global_state_destroy)(struct liveupdate_file_handler *h, void *o=
-bj);
-> >
-> > The get/put global state data:
-> >
-> > /* Get and lock the data with file_handler scoped lock */
-> > int liveupdate_fh_global_state_get(struct liveupdate_file_handler *h,
-> >                                    void **obj);
-> >
-> > /* Unlock the data */
-> > void liveupdate_fh_global_state_put(struct liveupdate_file_handler *h);
->
-> IMHO this looks clunky and overcomplicated. Each LUO FD type knows what
-> its subsystem is. It should talk to it directly. I don't get why we are
-> adding this intermediate step.
->
-> Here is how I imagine the proposed API would compare against subsystems
-> with hugetlb as an example (hugetlb support is still WIP, so I'm still
-> not clear on specifics, but this is how I imagine it will work):
->
-> - Hugetlb subsystem needs to track its huge page pools and which pages
->   are allocated and free. This is its global state. The pools get
->   reconstructed after kexec. Post-kexec, the free pages are ready for
->   allocation from other "regular" files and the pages used in LUO files
->   are reserved.
+Dependencies description:
+All patches should go through the Samsung SoC tree.
+The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
+If the clock subsystem needs to merge the new clock driver, it will
+need an immutable tag with the 2 patches.
 
-Thinking more about this, HugeTLB is different from iommufd/iommu-core
-vfiofd/pci because it supports many types of FDs, such as memfd and
-guest_memfd (1G support is coming soon!). Also, since not all memfds
-or guest_memfd instances require HugeTLB, binding their lifecycles to
-HugeTLB doesn't make sense here. I agree that a subsystem is more
-appropriate for this use case.
+The following DT patches depend on the bindings from #1:
+https://lore.kernel.org/linux-samsung-soc/20250924-acpm-dvfs-dt-v4-0-3106d49e03f5@linaro.org/
 
-Pasha
+The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+are variable and index based. These clocks don't provide an entire range
+of values between the limits but only discrete points within the range.
+The firmware also manages the voltage scaling appropriately with the
+clock scaling. Make the ACPM node a clock provider.
+
+Add support for the ACPM DVFS protocol. It translates clock frequency
+requests to messages that can be interpreted by the ACPM firmware.
+Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
+
+Thanks,
+ta
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Changes in v6:
+- acpm-clk: s/b0/bo, (big ocean)
+- acpm-dvfs: drop dbg_val arg from get_rate(). It's unused upstream and
+  we'll probably choose to introduce a dedicated debug API if needed.
+- MAINTAINERS: add ACPM clock bindings and driver (new patch)
+- Link to v5: https://lore.kernel.org/r/20250924-acpm-clk-v5-0-4cca1fadd00d@linaro.org
+
+Changes in v5:
+- acpm-clk: address Stephen's comments:
+  - drop of.h unused include, add devres/devres.h and container_of.h
+    to avoid implicit includes.
+  - r/acpm_clk_ops_init/acpm_clk_register.
+  - remove period from error messages, drop comma after sentinel in
+    platform_device_id.
+- collect Peter's R-b and T-b tags.
+- Link to v4: https://lore.kernel.org/r/20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org
+
+Changes in v4:
+- clk-acpm:
+  - remove GS101_ACPM_CLK_ID type handling. Dead code, it should be
+    introduced with next devices.
+  - remove runtime check on clock IDs. Instead add a comment about the
+    assumptions the code is making: the clock IDs start from zero, are
+    sequential and do not have gaps. Slight changes based on this
+    assumption: s/hws[id]/hws[i], remove the inclusion of
+    dt-bindings/clock/google,gs101-acpm.h and the use of the clock IDs.
+    The clocks are defined solely by name in the driver.
+- move firmware patches close to each other, in between the bindings and
+  the clock driver
+- update the description of dependencies in the cover letter.
+- Link to v3: https://lore.kernel.org/r/20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org
+
+Changes in v3:
+- dt-bindings:
+  - move clock bindings to a new bindings header
+  - update commit's subject, s/add #clock-cells/add ACPM clocks.
+    It also suggests that the bindings are added.
+  - prepend "GS101_" on clocks binding name. The bindings name are the
+    same for GS201 and the acpm-clk driver will likely include both.
+  - collect Rob's R-b
+- clk-acpm:
+  - move clock definitions here instead of keeping them into the
+    ACPM protocol driver
+  - use platform_driver.id_table to differentiate device type
+  - fix Kconfig dependency, || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+  - update commit subject, s/dev/pdev
+- exynos-acpm:
+  - move clock definitions to clk-acpm
+  - use devm-action to unregister clk-acpm platform device
+- Link to v2: https://lore.kernel.org/r/20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org
+
+Changes in v2:
+- dt-bindings: clocks are not longer a child of ACPM protocol. Instead
+  make Alive Clock and Power Manager (ACPM) node a clock provider.
+  Update commit message.
+- firmware: exynos-acpm: register by hand the ACPM clocks dev (new
+  patch)
+- firmware: exynos-acpm: use defines intead of enum
+- acpm-clk:
+  - switch to determine_rate
+  - drop __init, __refdata, __initconst, this is a module, we need those
+    methods and data, after boot as well.
+  - fix the assumption that the clocks are defined by ID in ascending order.
+    There's still an assumption that the clk_id < nr_clks, but this is
+    now covered by a sanity check in the clock driver.
+- arm64: defconfig: enable Exynos ACPM clocks (add patch together with
+  this patch set) 
+- Link to v1: https://lore.kernel.org/r/20250819-acpm-clk-v1-0-6bbd97474671@linaro.org
+
+---
+Tudor Ambarus (6):
+      dt-bindings: firmware: google,gs101-acpm-ipc: add ACPM clocks
+      firmware: exynos-acpm: add DVFS protocol
+      firmware: exynos-acpm: register ACPM clocks pdev
+      clk: samsung: add Exynos ACPM clock driver
+      arm64: defconfig: enable Exynos ACPM clocks
+      MAINTAINERS: add ACPM clock bindings and driver
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  11 ++
+ MAINTAINERS                                        |   3 +-
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/samsung/Kconfig                        |  10 ++
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-acpm.c                     | 185 +++++++++++++++++++++
+ drivers/firmware/samsung/Makefile                  |   4 +-
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  80 +++++++++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        |  21 +++
+ drivers/firmware/samsung/exynos-acpm.c             |  26 +++
+ include/dt-bindings/clock/google,gs101-acpm.h      |  26 +++
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  10 ++
+ 12 files changed, 376 insertions(+), 2 deletions(-)
+---
+base-commit: 5472d60c129f75282d94ae5ad072ee6dfb7c7246
+change-id: 20250819-acpm-clk-28d2a78e0307
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
+
 
