@@ -1,262 +1,208 @@
-Return-Path: <linux-kernel+bounces-848532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D4ABCDFC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:51:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37ABBCDFC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 463904EE8BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B615479C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3EA2FBE16;
-	Fri, 10 Oct 2025 16:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D8F2FBDF4;
+	Fri, 10 Oct 2025 16:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="lH4AC0Vg"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UdliAmTy"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010004.outbound.protection.outlook.com [52.101.193.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453BA49620
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 16:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760115092; cv=none; b=Omwtm5qDnBepPcdgfXSizDy3MtYzGr9WcqfWINIXrhHBnfch9yL+NntFgP79OMDWCY38HKnx/dv4JPVpzOrXZAxM6gcJaBhruWjXSnVziu9cMASQzJm4sC5upSbrWJpx6IPoU3zMCVPj/uknF06hVJ9A4hODhp79umkqZmssfr8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760115092; c=relaxed/simple;
-	bh=NWxAP+OAiNf2NIMWmMefGk2A6rvq71H95dLg9mlcrJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g1vGv9VQ2RwSQ9DzrcV+PgaJvaSLbYMmk/2+21OoM0p5pyXUTfpv3eKshQpABQu2PpyzC5LX0ZQec7YTgf9tPaTI9OxC5hYF5mwvACeoxTKPVLDJvK0NHHRCiXp9cEp/cHzr0ziMc07Cl7QwsOEegP8wtqPCZRdFXznvXWUcbN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=lH4AC0Vg; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-91fbba9a8f5so207139239f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1760115089; x=1760719889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oEIgQBXV9GwQ/0dS70LI3mvqTg3PMZTKu+jR89lRS3I=;
-        b=lH4AC0VgNpK31e85SnhMNfHL1noDiTopxSH0KV9qwkvKc3Kim8TgYr0Jy2RL97CSfd
-         WMnne/yFfT7mhR112REc6MyQN0y7f+gB9q8x6KvSK+kV63LD5+8eMmIPUgZaI1AM2xsR
-         3HX4wF+4JJrEn455BcevKKz//VAjVP9T0A71dx4moq6DHPCMZ8eL633VCMlHfi7atwBK
-         /BSnhb0Bi7YD9g0OXrAolfZq6N1h1Otlj2RXy9hhov5EEtekhTPZHf12CQZGky3yfAtJ
-         wLlfb+M3TViT7bOh7VR4Njg4UKgueQ12taJbR67xiICQbfr83pAksh7n12AN4J3Zf5UI
-         +Lrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760115089; x=1760719889;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oEIgQBXV9GwQ/0dS70LI3mvqTg3PMZTKu+jR89lRS3I=;
-        b=d6y2eokLFtDSv7Lxemp1vWVMI/Dbo9A4FTOZDucyd9rpkXovt9vukHnTCSQ7GGHQ+x
-         WkpPR6LQjUrGhjEBNec9MRzoFSywK5tumPMdI3TRTZxlk5xYOOAGq1SlGTKpxywAJ8/a
-         TKsIbls8AzcHx8Bvzla+1uijT9U0A/ZUANUFQ3At12VS1/MqJ2j5EiIpZ77bc/CDWXys
-         EgK8o14l9CAsOeySME1HEybyvzhebF5/YcFNVh8amc6m30X3vwmS7TCE3bA2nzjXYLOX
-         qGt3WVgH9um64ScXUsv7v9edk+hvAcknto7Xko+0EOmrLTqxrghaS89Fp1dRSllohvI9
-         hYDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6M6sOqfQOEuLr8lbwp3uXMC8/2ncT6jyDiXkffHD3I8lBgQFfzNh+SZqqodFFqvd/uOl92f52IvkvgkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWVDtmUlIacaRVA5pDzEm2L6XpGmVTlnQ6u3zRQwXMlxdex9IZ
-	to4s5HwzRJsLS44Ys6WcjHnEOMOHFHccC4grqem3tzlQXQMQ1k+jVKHy2nXW2rdQuyI=
-X-Gm-Gg: ASbGncu0HehUjRMxcATt71XNUGBzqiGI7veWgF1FBK5EvkOj66T1CurdO2o8SZHknE4
-	/0x5BiE1ohvw+8bsCrqNsIRA6AKIkGj/pZHtIaHC7Pps+r3tURJ/8lwg/EMuEXz2qFe/fsFwaZF
-	cOTL7wOAqbvN23EeTZTBvjgZHSYRZdJKTenbNm8j3dgElfM4ojEo/lN3GWb7RESc3HJL7jDEesB
-	V+sV4BZtPlMpeMvgxA4AK9g9bSf2EgmjtAJTaJt1IhX+WGjYlEIKNU3llmKnNX9UUkellyhvoJt
-	xlQBKSKEKr71JKTRmHhEmDEcJb1WUySer3U4XWsCa2FMZ8U6SIpuspSxxXblf0sWTUaGRJPCVpD
-	tzkT1IsnAevQIJERL0CQKWvoTyUA7C0ZaUTcfhDRy9w==
-X-Google-Smtp-Source: AGHT+IE3jpt/o7GLJZwpn6pE5MwHXBbBbWmYCLc2vN2apcU0MOIuhKG3h3YETs47jD8aWS8NvxasSQ==
-X-Received: by 2002:a05:6602:6013:b0:8ef:d0e4:43d8 with SMTP id ca18e2360f4ac-93bd186600dmr1560312839f.3.1760115089131;
-        Fri, 10 Oct 2025 09:51:29 -0700 (PDT)
-Received: from [100.64.0.1] ([170.85.6.207])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e25a95cbbsm111538339f.22.2025.10.10.09.51.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 09:51:28 -0700 (PDT)
-Message-ID: <53f717fb-b79e-49e0-9c1d-cf626b9a99b0@sifive.com>
-Date: Fri, 10 Oct 2025 11:51:27 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBC249620
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 16:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760115141; cv=fail; b=a0PmWCu/aiLfUMX7NNEK/1E6Qu79HEx6xsy9ThZiEn6id0/IXOXMWScy4ZClojyeBEOSM0pvZCZEEaLf1pk9upae8msnqn/dwJnTQbu+wpUmhw5GtIiDSDHv3EqjiWxdthRpCS7DTJwd1CM+4rOY6AUkGNWA1QV1TuHW3cfJTRw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760115141; c=relaxed/simple;
+	bh=YI/ft9EDTdlSTbQUqYUsYMFIA62YoQKxbYSZKKgSxj0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VzHQbErBqIuQ8R6t/rZo1daoAS6eBpd1/3GajPw2eFi6AbDmZ50qVZlozdoSPako/V6pvHgJ3aLst3PvBMlcBY9fIR2YWmMWGDrnJOst4diPzThBgUn+4pOIeMwKlCoPjbjOEOyUhH43PqoItwqZHxG1ZA0KwY5fRLUBaPHfzOQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UdliAmTy; arc=fail smtp.client-ip=52.101.193.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ilrd54lA0rApYN9f2JFawWJKLYYC/U26BbgbMnLm56301mYe/LxRjH/fcXOFXCEM7nFYcE1SnypVIktclUN6tPR9PxeDYWhbhc5mZ+KJUw1sVXvCFLvU6nFdhDpzSZ+LWhMiMSEQHIwYyxPqdADV0hRCqTwuDfwH6iio93GYI4GDuZb5BqnzY5RB8J4KzWZNJjMQnSkzp6hVs00hGIfdMFskppG8rNor1X1TdsJsTbFSp9O45Vz7ic5QeDar4Wt2b9DYiEEiw/Gs75fo9+8TqJmEEeBZ0uo0RVtcDsrw9c1S8JsueRCsr0Ks8xxA7MREgXFOUmcRXMlnUapQD1AOHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gMrnPz1Br0RY7FCDtIoFnrwHf1Jym5iq44VTDEoK5Co=;
+ b=dn7DciBCpsbZCxMM+OcMlMU1XIL1MPM/tg4FRi3z3ro7c6F5kbeNUhFVi0dfPC5zCJQk4grG1ka9Ghs0VWG7tFRSW5vqjUaVHCyBpl8yUhiJtVs6VOGXvbNJJbnMjVqKlgw1G54EZCnQAkkRSlxd6qmV4SogsWWNCSWOqEijb5TrIYmEOBA+Tez7SHQWu8WDhmFK2Rt4ndUk+RaNVJS9lsFqwtj5ZU/ROnc0aQctdvaBvh4gY2poOElye3ymyEYnwZpkRxiEEaTIqp5aGv65p2Dgu+aLBi9pQhUaV2mFyaLZuvTMleXFjaC+5qmhsaHmKdbw+bMxJvp/71+OPzbALQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gMrnPz1Br0RY7FCDtIoFnrwHf1Jym5iq44VTDEoK5Co=;
+ b=UdliAmTynkuUZBd9Bq1z+cvyJMhYG7DE3JyNkkL+yi823XhoVnLDgCU6K1qkwOU+YXUl7kqbaFqQmN27TZeAAsXSgxoCgTvh2E9f5NamqGEz607n2C3L3f8U+/Th1WUEqhPm9xvMkgXxvoj/dus/tXhNwMHd/4eTM3uESa8cBoA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc) by DM4PR12MB6134.namprd12.prod.outlook.com
+ (2603:10b6:8:ad::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 16:52:16 +0000
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::8d61:56ca:a8ea:b2eb]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::8d61:56ca:a8ea:b2eb%8]) with mapi id 15.20.9115.018; Fri, 10 Oct 2025
+ 16:52:16 +0000
+Message-ID: <b9a0ac5d-6ccc-45b1-afbf-bdba24aaf501@amd.com>
+Date: Fri, 10 Oct 2025 11:52:12 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] x86/resctrl: Fix miscount of bandwidth event when
+ reactivating previously Unavailable RMID
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, tony.luck@intel.com, Dave.Martin@arm.com,
+ james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+ peternewman@google.com, eranian@google.com, gautham.shenoy@amd.com
+References: <8eace6e47bb7e124ffb6c10150d1b7d38c2f5494.1760034251.git.babu.moger@amd.com>
+ <3c428de8-f8a6-47a1-a5ca-768d1906ed24@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <3c428de8-f8a6-47a1-a5ca-768d1906ed24@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7P220CA0016.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:806:123::21) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/18] riscv: dts: starfive: jh7100: Use physical
- memory ranges for DMA
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
- linux-riscv@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Conor Dooley <conor@kernel.org>,
- Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>,
- Andrew Morton <akpm@linux-foundation.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20251009015839.3460231-1-samuel.holland@sifive.com>
- <20251009015839.3460231-18-samuel.holland@sifive.com>
- <CAJM55Z_C_ce6wwCpNyGeozxBKW1krSrdzApvGumLn_p7K0hhYw@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <CAJM55Z_C_ce6wwCpNyGeozxBKW1krSrdzApvGumLn_p7K0hhYw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|DM4PR12MB6134:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54ddd507-3f3b-45d2-505f-08de081d5e0f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bDgycHRFSkVzY0N4NWUvOW02ZDR2SkpZWmxNQ3BvT0QwY0xOVHZKMEpXOXA4?=
+ =?utf-8?B?MUlHTXppeVBPR01tdXdvc2l0anplcUlEai9acDhjMEJCdndMUHFNLzNBNnM1?=
+ =?utf-8?B?dFk5Ulp3Q25sZ0JIeG5PSjVTamlzWU5VUjJuRzhUMjNXbGpxdlIwRURWckIw?=
+ =?utf-8?B?cjdiTmxicnJQM0V3TXZTeUZTaDdFcTdnQ0svSEZBSUxuUHd2Tjhuc1g1VFlB?=
+ =?utf-8?B?T2JiTXRuS1IxTURuNFVaWWJFdnBJWk1ZZGQ1emlVMmhpbkpIM2E5bE1nTms0?=
+ =?utf-8?B?T0pET1gzb05BNk5GREFIbW13WDNVa3h6ZUNYcGs3ZTdHN2tETTZ1dnloWFFN?=
+ =?utf-8?B?V3RTVTVmeS9Zck53b0lWdEF0WHhGeFR4cVlNcENVVDJvb1NwOU5nWWQrVGNx?=
+ =?utf-8?B?V1V1Y3c5WG0yN1hSdU1RbVV2am1XcTRaM3VHU0ZhOVdreDc0aEY2SDNuZ3pp?=
+ =?utf-8?B?NVVCU2JjdUtZL3VLcG9kRDRtSjlCVXhpc1dWY2w3Tkt1YVIvTlkvaG5SdTBa?=
+ =?utf-8?B?Q2xpVWFiRjMyK2YyM0FPeHRobmdsWnBWc3VqQi91LzNqZ00vNlVlODN0a1Zl?=
+ =?utf-8?B?K05sRDdVOEFFUFN5a3ZvYWM0K3UrRUlma1lVckpkd3hyZ0tvZXpMTUhCKzA3?=
+ =?utf-8?B?ZlVoMjQwQ1FzdkFBdm52V2hNWVQrdjh5ZEZFcUk3UVR5bW05VmRVWTJFZ0E4?=
+ =?utf-8?B?cTU3RzB3cXl4blNVcDRmZERRUHJYRmpLVlcxWFJoWlp6Lzc3WnRTQktIemxj?=
+ =?utf-8?B?TGVPdDVPY1lFYkM0eG9tekRjcC9GYklQTDBrQk8vV2o2RDRYOXhLSURBWFB6?=
+ =?utf-8?B?eFJkalZWcDlEL1V0azIwc2h4THI3WUpndmdUVlZJQUlqUzZwbkNHQ3I3K2d6?=
+ =?utf-8?B?WlYwdmxZRHVteUNaVWZkVjFwZWdrTVJ0a3dKclZDTTNRQUR4bFhMRlVkS09W?=
+ =?utf-8?B?L1NRMXNOUUpScE5RakZ4akt0ODcrSS9pYzc2Vml6allEUEtXV0JzQmQ1aVJj?=
+ =?utf-8?B?RnFoejBNVkFiVDEvdHZSMXUwZmZJbGFyc3BsQ2gxMWJRbFBBTkNZYWxDcDNT?=
+ =?utf-8?B?OTh0d3ZpcDl1WnhFT3ZUdVlzcnFpWFY4SDkyN0VKVFErRjJNK1Rvd0cyVVZo?=
+ =?utf-8?B?S2hvcklCMUJZckpQaGRQbS9MbnFpUjRhNXNuYXdEQVZMVzhxWHltaG5IUU8x?=
+ =?utf-8?B?VFc2a1R3MTk2N2xHSHlaY0VaME1naVAyaHFSNDE2ZnlVZ2Z0dmRuU0o5bG1W?=
+ =?utf-8?B?ZURiNzN0OVA5Njd3T0dVaDFBYXVneE5lN215SVZ4NkxQWVRld1FWMFNwN243?=
+ =?utf-8?B?SlpsWU9sbGlNZ0swUEZLWjZvVUdxdktlREFUWG5WdE9uam5Ba2J4YUt1OXVj?=
+ =?utf-8?B?OXc3WHhOemtzK2JpU21ZVmZ3RnVwRGd3ZGw3MlZxVHhySXNIQ0U0eXFDVzc3?=
+ =?utf-8?B?c1VucUpDN0pUT0pBQ2VzY1VibVNjNzR0cW1UM3YxQ2Qrc3FZN2V1a2J6RmdW?=
+ =?utf-8?B?K1QzVXJ0aDQycWx6YzNpcjFNdXhXOGF2TDVuZGs0emljU09raFN6ZVZ2NS9n?=
+ =?utf-8?B?OFVzOHplanYyNytBTTFKbG9qdHNHb2RyVHdXQnZrOTUwdEloZmc4TzJteXh0?=
+ =?utf-8?B?Q2xiRnBDS0t1NUFITzFkcHVqUllQNWRlSVFGRTQ3VklnVS9LVGR2clkyZFI1?=
+ =?utf-8?B?d2hzYmdZcEdVTTNLTkhjSG9zWGFPQ2tCSFJjN1B2aUJiUmkxd01OcGo2akto?=
+ =?utf-8?B?eVhGbUZrMWhYYXVaalczWmsrRlRmL2VjQ1h1LzBEVkZQRldrWnU5SFQ1T1Ru?=
+ =?utf-8?B?cDFrWWtMeE0xWjByd01xTXF2STErcUJ0Z0syS0lrei94M3RMdnk1a2lCOXUy?=
+ =?utf-8?B?YTFOQ2xGU3lvMy9kdHQ0MDRLNzlKdGI3WXJwOHRWdGV2cmRyRFhqNUxKMldB?=
+ =?utf-8?Q?/QnpYu2maGHFY388dDywIIMkD1qSruuB?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TWorQ25STzNMbDJ1bUEwbFJwS0xNT01WQXlpN1pCRktCd3hoT05NVjEzWi9N?=
+ =?utf-8?B?aEVuMW54ZS9IeWQ4T1RwaDErUTNaYklqZEZwTC83TXNIc3JzZ2NnNU5XSnVZ?=
+ =?utf-8?B?MjFwSnZqSE5vM3BaR2UwUEhCam5UZVkzMVpvTWQxemRwWnJQZ1c3aDFQc2Rh?=
+ =?utf-8?B?b1NBMG9NeUxlQWU3dnFxbm5OcGM1cEtNdjFOR3ViMyt5TDJncHFtdmh2Q1NZ?=
+ =?utf-8?B?elJ5Y05vOThmMllaOUFtTmdJOThHU1htbU9JelVOb3ZmR1pQcG1wMldXcnAy?=
+ =?utf-8?B?SjNxMk9vWjNxMEwvcVU0dFVWUm5qMXE3Y040eEdZaXphdGRGN3VtZ1pxbXpK?=
+ =?utf-8?B?bHFhbWxLTkFqTlBtOWQwTlF2eU01YUVUNXAwcGxPcHRISTJJaVlQdTNCclVa?=
+ =?utf-8?B?SUlJU1FPY2ZXWTZtc3Q2R2VyVDdVeG8zTGJiYzdRMzl5d0lkN2sreHBBQ0hr?=
+ =?utf-8?B?d21JaGsxMldJWldNT1l3YlY3R2g4aGttYk9CMmcyQXlVOG9VYVpkSFgyRmp0?=
+ =?utf-8?B?YmxvQ0V2RmZ0enRBY0ZJa3lCVkZJY0FZOFJxNlB6N0ZwOElzb3ZKNEJmTVVJ?=
+ =?utf-8?B?NVpPYURtbTFoT2dzOXlFaC8rbEVDV1F0d25sRFkrM3RBOWN3WGIvUFJXNTZS?=
+ =?utf-8?B?UVd4aGdjaFNOWFR3ck1HaDFjaVU3NUozVnB1ZnhGNFNJR1Q3V0ZiVTlhM09a?=
+ =?utf-8?B?VEpNMm9pZVZaWWdPRTdCNkJnNlVTNngza1AxeHBzSjUzUk9hRDVWWTN6cWQr?=
+ =?utf-8?B?ejUxMlNQdy92cmsxck9MUEZZYklFUmxNM3huRjIzMnptKzZlM2g0UWhLSGJ3?=
+ =?utf-8?B?WmtDSERRVTZpYXRmdlpMbWlIb3dHd3UyeDBlSzlQVEhmRytzb0NrUmlRZlE2?=
+ =?utf-8?B?SExDRFJhSFVPYVcvRmV2SXp1dkpXNW12Sno4ZTlNUWx0QlF0SEFIQ0Z5TGZq?=
+ =?utf-8?B?V2RXMCtodTgyeFhhYkFDV0JYM0lUeno1M3YwZXpGS043ZnRteEo4emFwS1F1?=
+ =?utf-8?B?UlVxWEFwRjVLVnY4cU9LanBYdzYzMUhVWWlnbG5UTm94MlhGSFd4Y2JqbHhF?=
+ =?utf-8?B?WnJtdjNTdDBlakVKaHVxQjRzK28wOEtxWm90Zm55ZU5vdlllUjhYZFh6cEhm?=
+ =?utf-8?B?NU9FSDlKZGpnTnZXdmFwenhxbTdhQUFRa2REMmQzYmlmS0ZteVpCSjA5RkFG?=
+ =?utf-8?B?ZmpiQzFlekNJdUM2b1N3d2oyRE9aRzNIRU9JdTdtQ2pxWW1WRFNtUEY4RlMv?=
+ =?utf-8?B?ZHo2dzhqUHIvNlZPUnhrR1RWUzgxMWorSTZTS3NnK0JlMCsrQ1JBK3JlSStn?=
+ =?utf-8?B?YUJ3dk9pLzJ4NENFSmk5cE9MM2VpMVVUZlpxVHZyK1lTZHcrZDd6ZnM4RU5l?=
+ =?utf-8?B?STduMDlDNndUT1BQa1BhUUhJSzFpM3J2ZGliWlpVZWwyUmoxc0FIL2NCQjF6?=
+ =?utf-8?B?YXZGSDVpV3h5WkVnYlVKaXNQdDZaN0F0S2dqenBSNDNERGRkUUNFTWxSbHg4?=
+ =?utf-8?B?My9XNnNuSDBub3ZzbTdQR1pzdi9GS0hXSyt2NVlITWNZeWlac0Vkdkt5cXdI?=
+ =?utf-8?B?d0RnRzRrZ2pXZFRNOXhBSVRZTW0vR3hGR09MWE81QTRXNWJLU0w2NHU5dGQw?=
+ =?utf-8?B?bTAra2xlUi9yZ05TU3g0N29TSTg3WGtGWk9Gc1U0T1lPTUFFcmtjNTFvL3g1?=
+ =?utf-8?B?VTFwWXRnVHdVUVY1WEluWkZRZktNRHNMN1gzZ1lramJGQ3cvY0xuY3QwUUdy?=
+ =?utf-8?B?azJwRlhEdGIyYnFBTVhHRjJsSmE4K204d2hkdDV3UXRxYUtkaDMzZzFzUG56?=
+ =?utf-8?B?blM0cnRQS2FLamVLUVFHeWhpZmVzVXlOK1o5VXpibWcrYWlNeVZaT09iV3Bs?=
+ =?utf-8?B?ZkN0QU1UWGlRWE9JRG1MRXQ0MERHT0hvdzdZajJJdFJ1ZTU3K2NxT2d0TG5J?=
+ =?utf-8?B?V1A1YVVWcXRrdG03bGtOb1lVTVVJQkJHRTV2aVJ6bVpZMTh6eXFrYzFzdFpW?=
+ =?utf-8?B?UGMxbFJHT0U2YVlTMVhLM1hyR0R5TXlGUHJyYnFHcTc0eFROOFFYUlpZTmEy?=
+ =?utf-8?B?andVN0theXBBKzR4N25BSzFjSGdzaWMwWktkSzJlNGd3UjdyV0lGcWwwOXJl?=
+ =?utf-8?Q?oGHEnOxl39hgDv2muzgV2OGTo?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54ddd507-3f3b-45d2-505f-08de081d5e0f
+X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 16:52:16.0872
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s/Q7dWIt+2h3+gfEKhJTfLKk07e+7YtPRR7AurggeaoJoPN2TG1LQqH1di7mwLlJ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6134
 
-Hi Emil,
+Hi Reinette,
 
-On 2025-10-10 9:19 AM, Emil Renner Berthing wrote:
-> Samuel Holland wrote:
->> JH7100 provides a physical memory region which is a noncached alias of
->> normal cacheable DRAM. Now that Linux can apply PMAs by selecting
->> between aliases of a physical memory region, any page of DRAM can be
->> marked as noncached for use with DMA, and the preallocated DMA pool is
->> no longer needed. This allows portable kernels to boot on JH7100 boards.
->>
->> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->> ---
->>
->> Changes in v2:
->>  - Move the JH7100 DT changes from jh7100-common.dtsi to jh7100.dtsi
->>  - Keep RISCV_DMA_NONCOHERENT and RISCV_NONSTANDARD_CACHE_OPS selected
->>
->>  arch/riscv/Kconfig.errata                     | 19 ---------------
->>  arch/riscv/Kconfig.socs                       |  2 ++
->>  .../boot/dts/starfive/jh7100-common.dtsi      | 24 -------------------
->>  arch/riscv/boot/dts/starfive/jh7100.dtsi      |  4 ++++
->>  4 files changed, 6 insertions(+), 43 deletions(-)
->>
->> diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
->> index e318119d570de..62700631a5c5d 100644
->> --- a/arch/riscv/Kconfig.errata
->> +++ b/arch/riscv/Kconfig.errata
->> @@ -53,25 +53,6 @@ config ERRATA_SIFIVE_CIP_1200
->>
->>  	  If you don't know what to do here, say "Y".
->>
->> -config ERRATA_STARFIVE_JH7100
->> -	bool "StarFive JH7100 support"
->> -	depends on ARCH_STARFIVE
->> -	depends on !DMA_DIRECT_REMAP
->> -	depends on NONPORTABLE
->> -	select DMA_GLOBAL_POOL
->> -	select RISCV_DMA_NONCOHERENT
->> -	select RISCV_NONSTANDARD_CACHE_OPS
->> -	select SIFIVE_CCACHE
->> -	default n
->> -	help
->> -	  The StarFive JH7100 was a test chip for the JH7110 and has
->> -	  caches that are non-coherent with respect to peripheral DMAs.
->> -	  It was designed before the Zicbom extension so needs non-standard
->> -	  cache operations through the SiFive cache controller.
->> -
->> -	  Say "Y" if you want to support the BeagleV Starlight and/or
->> -	  StarFive VisionFive V1 boards.
->> -
->>  config ERRATA_THEAD
->>  	bool "T-HEAD errata"
->>  	depends on RISCV_ALTERNATIVE
->> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
->> index 848e7149e4435..a8950206fb750 100644
->> --- a/arch/riscv/Kconfig.socs
->> +++ b/arch/riscv/Kconfig.socs
->> @@ -50,6 +50,8 @@ config SOC_STARFIVE
->>  	bool "StarFive SoCs"
->>  	select PINCTRL
->>  	select RESET_CONTROLLER
->> +	select RISCV_DMA_NONCOHERENT
->> +	select RISCV_NONSTANDARD_CACHE_OPS
+On 10/9/2025 11:19 PM, Reinette Chatre wrote:
+> Hi Babu,
 > 
-> Hi Samuel,
+> On 10/9/25 11:29 AM, Babu Moger wrote:
+>> Users can create as many monitoring groups as the number of RMIDs supported
+>> by the hardware. However, on AMD systems, only a limited number of RMIDs
+>> are guaranteed to be actively tracked by the hardware. RMIDs that exceed
+>> this limit are placed in an "Unavailable" state. When a bandwidth counter
+>> is read for such an RMID, the hardware sets MSR_IA32_QM_CTR.Unavailable
+>> (bit 62). When such an RMID starts being tracked again the hardware counter
+>> is reset to zero. MSR_IA32_QM_CTR.Unavailable remains set on first read
+>> after tracking re-starts and is clear on all subsequent reads as long as
+>> the RMID is tracked.
+>>
+>> resctrl miscounts the bandwidth events after an RMID transitions from the
+>> "Unavailable" state back to being tracked. This happens because when the
+>> hardware starts counting again after resetting the counter to zero, resctrl
+>> in turn compares the new count against the counter value stored from the
+>> previous time the RMID was tracked. This results in resctrl computing an
+>> event value that is either undercounting (when new counter is more than
+>> stored counter)	or a mistaken overflow (when new counter is less than
 > 
-> Thanks for working on this! I think you also need to select DMA_DIRECT_REMAP
-> here, otherwise devices complain that they can't allocate coherent memory at
-> all.
-
-It looks like the logic for selecting DMA_DIRECT_REMAP is all messed up.
-Currently it's selected by RISCV_ISA_ZICBOM and ERRATA_THEAD_CMO, but really it
-has nothing to do with CMOs and everything to do with being able to allocate and
-map coherent pages. So it should be selected by the three PBMT options instead.
-I'll fix this in v3. I didn't notice because I always had RISCV_ISA_ZICBOM enabled.
-
-> But even with that added it still doesn't work for me with 6.17 on the JH7100,
-> the sdcard isn't initialized properly, and I haven't figured out why yet. I
-> seem to remember your previous version did work though.
+> Since there is going to be a respin ... there is a stray tab above.
 > 
-> Plain 6.17:          https://esmil.dk/pma/upstream.txt
-> 6.17 + this series:  https://esmil.dk/pma/test.txt
-> 
-> The kernel config I'm using is available here:
-> https://esmil.dk/pma/config.txt
 
-There's a bug in this DT patch (see below). If that still doesn't work, please
-ping me and I can help debug. I will also have access to a JH7100 board within
-the next few days, so I will be able to test this SoC locally before sending v3.
+Yes. Thanks
+-Babu
 
-Thanks,
-Samuel
-
->>  	select ARM_AMBA
->>  	help
->>  	  This enables support for StarFive SoC platform hardware.
->> diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
->> index ae1a6aeb0aeaa..47d0cf55bfc02 100644
->> --- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
->> +++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
->> @@ -42,30 +42,6 @@ led-ack {
->>  		};
->>  	};
->>
->> -	reserved-memory {
->> -		#address-cells = <2>;
->> -		#size-cells = <2>;
->> -		ranges;
->> -
->> -		dma-reserved@fa000000 {
->> -			reg = <0x0 0xfa000000 0x0 0x1000000>;
->> -			no-map;
->> -		};
->> -
->> -		linux,dma@107a000000 {
->> -			compatible = "shared-dma-pool";
->> -			reg = <0x10 0x7a000000 0x0 0x1000000>;
->> -			no-map;
->> -			linux,dma-default;
->> -		};
->> -	};
->> -
->> -	soc {
->> -		dma-ranges = <0x00 0x80000000 0x00 0x80000000 0x00 0x7a000000>,
->> -			     <0x00 0xfa000000 0x10 0x7a000000 0x00 0x01000000>,
->> -			     <0x00 0xfb000000 0x00 0xfb000000 0x07 0x85000000>;
->> -	};
->> -
->>  	wifi_pwrseq: wifi-pwrseq {
->>  		compatible = "mmc-pwrseq-simple";
->>  		reset-gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
->> diff --git a/arch/riscv/boot/dts/starfive/jh7100.dtsi b/arch/riscv/boot/dts/starfive/jh7100.dtsi
->> index 7de0732b8eabe..34ff65d65ac7e 100644
->> --- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
->> +++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
->> @@ -7,11 +7,15 @@
->>  /dts-v1/;
->>  #include <dt-bindings/clock/starfive-jh7100.h>
->>  #include <dt-bindings/reset/starfive-jh7100.h>
->> +#include <dt-bindings/riscv/physical-memory.h>
->>
->>  / {
->>  	compatible = "starfive,jh7100";
->>  	#address-cells = <2>;
->>  	#size-cells = <2>;
->> +	riscv,physical-memory-regions =
->> +		<0x00 0x80000000 0x08 0x00000000 (PMA_RWXA | PMA_NONCOHERENT_MEMORY) 0x0>,
->> +		<0x10 0x00000000 0x08 0x00000000 (PMA_RWX | PMA_NONCACHEABLE_MEMORY | PMR_ALIAS(1)) 0x0>;
-
-This should be PMR_ALIAS(0), because I removed the special entry from the
-beginning of this list.
-
->>
->>  	cpus: cpus {
->>  		#address-cells = <1>;
->> --
->> 2.47.2
->>
 
 
