@@ -1,230 +1,248 @@
-Return-Path: <linux-kernel+bounces-848643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B57CBCE3DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:29:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 661E8BCE3DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C4319E0662
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBCBC19A7D36
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B4C2FF65B;
-	Fri, 10 Oct 2025 18:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2752FD1D7;
+	Fri, 10 Oct 2025 18:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2jFgeA3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UK3qpMe0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="94IGIneb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UK3qpMe0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="94IGIneb"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E6D2FFDC0;
-	Fri, 10 Oct 2025 18:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975322FE591
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760120855; cv=none; b=QsTTmC4kSpCYyNejb0sE5WATtvWD/7URMC6ji1BaGv3bU3Mi5z1INTcrH02z3oL1uUkws9ul5HSIUPJtyB4curK7rObTeiUPgx0P6eXIax8zV1r1/B3q7vxMGWKphfeqTUZOCSHp9O/FWkEZDL4fiCkbHcsbYkE4c6859421DRo=
+	t=1760120893; cv=none; b=j0+czgpptftguapxOsLd6lqsnnMRfKBulWVuJ1fgw64SYC0FBB+wbWtIXm/Up1hsN2vhFkK7Lc7MODvaG9XVmP40WNcj0SuSPSk/2hTxJtzgoSCznXYNZGLN9/TWyozJqvPTrPC4FARhpBIGbnf8owZM8MtO3SVBNFncEGYC9ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760120855; c=relaxed/simple;
-	bh=eLy5f8BYq1FZ75LlTMzJvXsfCy88if544RCMW6Jg9FM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O7vgedinTj9JedMzX5H2MRnTmSNUQlKRnOGSvLa8fpC/g2OBjLfGVZfMQ54evZlzv1tNNRQyCFfN7T/TXE5TdNYG3FcZVHxUzkkmLIFoXHEGMQAXopk8J/deRPvY5gXWgycArGygRb/hNOQOvMC/LgIroDuN3kwbuo6ZaSiFgvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2jFgeA3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3E0C4CEF5;
-	Fri, 10 Oct 2025 18:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760120853;
-	bh=eLy5f8BYq1FZ75LlTMzJvXsfCy88if544RCMW6Jg9FM=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Z2jFgeA3HOvCBv9HW0qSykSn5u+tXiXUOxQctdezWagjGCbHS5j+9vC8Cso8BGBAY
-	 i+A7R1yrViLxfBfYCyDRztU3Fw324cq94aBY3bI6lBuyDdSIw19Pz4IJn5js3SUlEx
-	 hztQJG2yEJIQIu1WqM+hcmoUvAfhYhrFoGtoc92HYsIO3UwIp+3JgQP4RO+Rpx9Vjp
-	 sp7J/c3v8hQsg5cYmUbq3dIGNEV1W/3INFAEL0VlOaKwDosNRLlPP04AB94mspPPAz
-	 vwnyMVV+p18peibko9X6g2ETn73yQvxpHKXQ9xj3x2FKgTlnFCaeRXDdSHTM7fQsZk
-	 yn1IyLL0lEQ1Q==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 10 Oct 2025 14:27:22 -0400
-Subject: [PATCH v5] sunrpc: allocate a separate bvec array for socket sends
+	s=arc-20240116; t=1760120893; c=relaxed/simple;
+	bh=JfJNniXdOCvJRlHf+hVhrPhEahD7TGAZFhtG7dtNJz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LIVMQCq2l1gSJHL+I+U6PQBbyALp8T+PQDd+FLT9xQ6vy9XPyHvupto8O8US+xLHO0M6KDDhKHK/vfznc448uA6SGW8PdYiwX5E7dXmnM5eb/yZhX5WXmdpD//MDXvu4lFSE/puy9hkqlk3VCWKKlRzNP368fw5YeIkoBfJC9SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UK3qpMe0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=94IGIneb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UK3qpMe0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=94IGIneb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0BA5A2119C;
+	Fri, 10 Oct 2025 18:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760120851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
+	b=UK3qpMe0aAexXWOcL/OYi8peoGsO/EdJSRuU7LpZLz5xI24FVra98yOQoSbRSN/WWfuJiX
+	UbItqwHPf+eVDygJ8MHDwDep2tbVuoZt7lNnQJ/zP6ifLZlbSKyEn85kcnHLjsRL2mNN/1
+	+54ViubzkDXyQk/JjHitiW8SKHWm65g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760120851;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
+	b=94IGInebxch6UTzrFp69mub6FlTByZkla5PR6MoFFM4VCrzPQV1Jz3Gv85bbz4r2c4JqyC
+	I/z7d10X+JofVpCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760120851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
+	b=UK3qpMe0aAexXWOcL/OYi8peoGsO/EdJSRuU7LpZLz5xI24FVra98yOQoSbRSN/WWfuJiX
+	UbItqwHPf+eVDygJ8MHDwDep2tbVuoZt7lNnQJ/zP6ifLZlbSKyEn85kcnHLjsRL2mNN/1
+	+54ViubzkDXyQk/JjHitiW8SKHWm65g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760120851;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
+	b=94IGInebxch6UTzrFp69mub6FlTByZkla5PR6MoFFM4VCrzPQV1Jz3Gv85bbz4r2c4JqyC
+	I/z7d10X+JofVpCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F07BE1375D;
+	Fri, 10 Oct 2025 18:27:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CLxeOhJQ6Wj5dAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 10 Oct 2025 18:27:30 +0000
+Message-ID: <e4f2a3e3-649a-423b-9696-6406ef56340f@suse.cz>
+Date: Fri, 10 Oct 2025 20:27:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Boot fails with 59faa4da7cd4 and 3accabda4da1
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Phil Auld <pauld@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>
+References: <20251010151116.GA436967@pauld.westford.csb>
+ <CAHk-=wg1xK+Br=FJ5QipVhzCvq7uQVPt5Prze6HDhQQ=QD_BcQ@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAHk-=wg1xK+Br=FJ5QipVhzCvq7uQVPt5Prze6HDhQQ=QD_BcQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-rq_bvec-v5-1-44976250199d@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAApQ6WgC/3XMQQ7CIBCF4asY1mKYQaB15T2MMQUGJZpWqSEa0
- 7uLblrTuHyT+f4X6ylF6tlm8WKJcuxj15ahlgvmTk17JB592QwFKhCi4ul2sJkct1o3wYvgrbW
- sfF8Thfj4lnb7sk+xv3fp+Q1n+FznjQxccBNQeoneKFLbM6WWLqsuHdknkvEPxAIrlE40lWrQu
- BmUU1iPUBaoDFQgtbC1szO4nkAQI1xz4BqN0iaAoxp+4DAMbw0sK5BKAQAA
-X-Change-ID: 20251008-rq_bvec-b66afd0fdbbb
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- David Howells <dhowells@redhat.com>
-Cc: Brandon Adams <brandona@meta.com>, linux-nfs@vger.kernel.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5335; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=eLy5f8BYq1FZ75LlTMzJvXsfCy88if544RCMW6Jg9FM=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo6VAPtUGvoIwWqqz/lc5Ho7U9WvDl3ATC9mU2v
- a2ELpDKYGGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaOlQDwAKCRAADmhBGVaC
- Ff4oD/0S5lUBbOdg04YMWA9mXPWwc1H071gKHk//J9K9bFDXtpPt6gaGqwyS4eCs6XoURn/VX5T
- AntwsbiBmm5WFbstLEhvRiHVTaLQrhDQ0ojN4AlOjOj2OA/nft8ZFxBdSJJXKV14cI/w4IMuLTH
- VQp4WnMpNVgb2nLpvTE8D1q2tlHghhj9xdcouhytxjkALj1uBvbiECnXbR6rBI81aS6SVUTaNZA
- gRY6/uOMFb6brNKovczfOTlRUFGOPoX77J7QvIoZo9N6o/SWb0nInbPE4uyMCLUOKx4bBcpy4lw
- fZTIym6TnDPVravIv1OIgLa7OBEjDBR0N36NiEKjBE+dT1LtV7cN2FMInU3olVkTzCDc523E9Z5
- +7V9bWBwPAQez7kqDOreJVnZiota0Eyg56LxbJkJKI4ptsLy97fvpuQN+QhYJLOotzkBYLOnneR
- Yg56qonIq7ffIxUXa8FxBbHCaWv8VsJgVGRYarqSklNUaLSd/g8qExL52Sh9M+ECglaJ2aw1URi
- UJT3EmR7WsnooAjHKN8E9XCIjPeZrap+nYqUiehJtWT4CbJOke35bOlx0iavEas+PHq0Gcv+QrF
- +AOI96dJO/bDOK7D23K3huuVnkFS3NqvsracLnfSvbyBR0znsCliRFDoRqPhOmsygx2c+32UOcq
- G70fwp3kxPk9wyg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	URIBL_BLOCKED(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-svc_tcp_sendmsg() calls xdr_buf_to_bvec() with the second slot of
-rq_bvec as the start, but doesn't reduce the array length by one, which
-could lead to an array overrun. Also, rq_bvec is always rq_maxpages in
-length, which can be too short in some cases, since the TCP record
-marker consumes a slot.
+On 10/10/25 20:19, Linus Torvalds wrote:
+> On Fri, 10 Oct 2025 at 08:11, Phil Auld <pauld@redhat.com> wrote:
+>>
+>> After several days of failed boots I've gotten it down to these two
+>> commits.
+>>
+>> 59faa4da7cd4 maple_tree: use percpu sheaves for maple_node_cache
+>> 3accabda4da1 mm, vma: use percpu sheaves for vm_area_struct cache
+>>
+>> The first is such an early failure it's silent. With just 3acca I
+>> get :
+>>
+>> [    9.341152] BUG: kernel NULL pointer dereference, address: 0000000000000040
+>> [    9.348115] #PF: supervisor read access in kernel mode
+>> [    9.353264] #PF: error_code(0x0000) - not-present page
+>> [    9.358413] PGD 0 P4D 0
+>> [    9.360959] Oops: Oops: 0000 [#1] SMP NOPTI
+>> [    9.365154] CPU: 21 UID: 0 PID: 818 Comm: kworker/u398:0 Not tainted 6.17.0-rc3.slab+ #5 PREEMPT(voluntary)
+>> [    9.374982] Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.26.0 07/30/2025
+>> [    9.382641] RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
+>> [    9.388048] Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
+> 
+> That decodes to
+> 
+>    0:           mov    0x10(%rsi),%rax
+>    4:           mov    0x8(%rsi),%rsi
+>    8:           test   %rax,%rax
+>    b:           je     0x18
+>    d:           mov    0x18(%rax),%ecx
+>   10:           test   %ecx,%ecx
+>   12:           jne    0xfd
+>   18:           movslq %gs:0x250eee4(%rip),%rax
+>   20:           mov    0xe0(%r14,%rax,8),%rax
+>   28:*          mov    0x40(%rax),%r13          <-- trapping instruction
+>   2c:           mov    %r13,%rdi
+>   2f:           call   0xffffffffffff81e4
+>   34:           mov    %rax,%rbp
+>   37:           test   %rax,%rax
+>   3a:           je     0x59
+> 
+> which is the code around that barn_replace_empty_sheaf() call.
+> 
+> In particular, the trapping instruction is from get_barn(), it's the "->barn" in
+> 
+>         return get_node(s, numa_mem_id())->barn;
+> 
+> so it looks like 'get_node()' is returning NULL here:
+> 
+>         return s->node[node];
+> 
+> That 0x250eee4(%rip) is from "get_node()" becoming
+> 
+>   18:           movslq  %gs:numa_node(%rip), %rax  # node
+>   20:           mov    0xe0(%r14,%rax,8),%rax # ->node[node]
+> 
+> instruction, and then that ->barn dereference is the trapping
+> instruction that tries to read node->barn:
+> 
+>   28:*          mov    0x40(%rax),%r13   # node->barn
+> 
+> but I did *not* look into why s->node[node] would be NULL.
+> 
+> Over to you Vlastimil,
 
-Fix both problems by adding a separate bvec array to the svc_sock that
-is specifically for sending. Allocate it when doing the first send on
-the socket, to avoid allocating the array for listener sockets.
+Thanks, yeah will look ASAP. I suspect the "nodes with zero memory" is
+something that might not be handled well in general on x86. I know powerpc
+used to do these kind of setups first and they have some special handling,
+so numa_mem_id() would give you the closest node with memory in there and I
+suspect it's not happening here. CPU 21 is node 6 so it's one of those
+without memory. I'll see if I can simulate this with QEMU and what's the
+most sensible fix
 
-For TCP, make this array one slot longer than rq_maxpages, to account
-for the record marker. For UDP only allocate as large an array as we
-need since frames are limited to 64k anyway.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-Minor update to the last patch to reduce the size of the array on UDP
-sockets since that transport doesn't need rq_maxpages.
----
-Changes in v5:
-- reduce the size of sk_bvec on UDP sockets
-- Link to v4: https://lore.kernel.org/r/20251010-rq_bvec-v4-1-627567f1ce91@kernel.org
-
-Changes in v4:
-- switch to allocating a separate bvec for sends in the svc_sock
-- Link to v3: https://lore.kernel.org/r/20251009-rq_bvec-v3-0-57181360b9cb@kernel.org
-
-Changes in v3:
-- Add rq_bvec_len field and use it in appropriate places
-- Link to v2: https://lore.kernel.org/r/20251008-rq_bvec-v2-0-823c0a85a27c@kernel.org
-
-Changes in v2:
-- Better changelog message for patch #2
-- Link to v1: https://lore.kernel.org/r/20251008-rq_bvec-v1-0-7f23d32d75e5@kernel.org
----
- include/linux/sunrpc/svcsock.h |  3 +++
- net/sunrpc/svcsock.c           | 29 ++++++++++++++++++++++-------
- 2 files changed, 25 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
-index 963bbe251e52109a902f6b9097b6e9c3c23b1fd8..a80a05aba75410b3c4cd7ba19181ead7d40e1fdf 100644
---- a/include/linux/sunrpc/svcsock.h
-+++ b/include/linux/sunrpc/svcsock.h
-@@ -26,6 +26,9 @@ struct svc_sock {
- 	void			(*sk_odata)(struct sock *);
- 	void			(*sk_owspace)(struct sock *);
- 
-+	/* For sends */
-+	struct bio_vec		*sk_bvec;
-+
- 	/* private TCP part */
- 	/* On-the-wire fragment header: */
- 	__be32			sk_marker;
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 7b90abc5cf0ee1520796b2f38fcb977417009830..0ec1131ffade8d0c66099bfb1fb141b22c6e411b 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -730,6 +730,13 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
- 	unsigned int count;
- 	int err;
- 
-+	count = DIV_ROUND_UP(RPC_MAX_REPHEADER_WITH_AUTH + RPCSVC_MAXPAYLOAD_UDP, PAGE_SIZE);
-+	if (!svsk->sk_bvec) {
-+		svsk->sk_bvec = kcalloc(count, sizeof(*svsk->sk_bvec), GFP_KERNEL);
-+		if (!svsk->sk_bvec)
-+			return -ENOMEM;
-+	}
-+
- 	svc_udp_release_ctxt(xprt, rqstp->rq_xprt_ctxt);
- 	rqstp->rq_xprt_ctxt = NULL;
- 
-@@ -740,14 +747,14 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
- 	if (svc_xprt_is_dead(xprt))
- 		goto out_notconn;
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-+	count = xdr_buf_to_bvec(svsk->sk_bvec, rqstp->rq_maxpages, xdr);
- 
--	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
-+	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, svsk->sk_bvec,
- 		      count, rqstp->rq_res.len);
- 	err = sock_sendmsg(svsk->sk_sock, &msg);
- 	if (err == -ECONNREFUSED) {
- 		/* ICMP error on earlier request. */
--		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
-+		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, svsk->sk_bvec,
- 			      count, rqstp->rq_res.len);
- 		err = sock_sendmsg(svsk->sk_sock, &msg);
- 	}
-@@ -1235,19 +1242,19 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
- 	int ret;
- 
- 	/* The stream record marker is copied into a temporary page
--	 * fragment buffer so that it can be included in rq_bvec.
-+	 * fragment buffer so that it can be included in sk_bvec.
- 	 */
- 	buf = page_frag_alloc(&svsk->sk_frag_cache, sizeof(marker),
- 			      GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
- 	memcpy(buf, &marker, sizeof(marker));
--	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
-+	bvec_set_virt(svsk->sk_bvec, buf, sizeof(marker));
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
-+	count = xdr_buf_to_bvec(svsk->sk_bvec + 1, rqstp->rq_maxpages,
- 				&rqstp->rq_res);
- 
--	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
-+	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, svsk->sk_bvec,
- 		      1 + count, sizeof(marker) + rqstp->rq_res.len);
- 	ret = sock_sendmsg(svsk->sk_sock, &msg);
- 	page_frag_free(buf);
-@@ -1272,6 +1279,13 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
- 					 (u32)xdr->len);
- 	int sent;
- 
-+	if (!svsk->sk_bvec) {
-+		/* +1 for TCP record marker */
-+		svsk->sk_bvec = kcalloc(rqstp->rq_maxpages + 1, sizeof(*svsk->sk_bvec), GFP_KERNEL);
-+		if (!svsk->sk_bvec)
-+			return -ENOMEM;
-+	}
-+
- 	svc_tcp_release_ctxt(xprt, rqstp->rq_xprt_ctxt);
- 	rqstp->rq_xprt_ctxt = NULL;
- 
-@@ -1636,5 +1650,6 @@ static void svc_sock_free(struct svc_xprt *xprt)
- 		sock_release(sock);
- 
- 	page_frag_cache_drain(&svsk->sk_frag_cache);
-+	kfree(svsk->sk_bvec);
- 	kfree(svsk);
- }
-
----
-base-commit: 177818f176ef904fb18d237d1dbba00c2643aaf2
-change-id: 20251008-rq_bvec-b66afd0fdbbb
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+>             Linus
 
 
