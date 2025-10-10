@@ -1,237 +1,137 @@
-Return-Path: <linux-kernel+bounces-847747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29CCBCB909
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 631D3BCB90C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B392219E74D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C8C19E76B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878612749D2;
-	Fri, 10 Oct 2025 03:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0046B26E17A;
+	Fri, 10 Oct 2025 03:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N91YdqeG"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Q9xnfrVr"
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F9E2737F9
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0107426B74D;
+	Fri, 10 Oct 2025 03:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760067544; cv=none; b=HNVL83errpvSWlElcYiWl4gXqWnsQkIyyqMayxNh0FOulsKFd6RorWXOY9zXcpfERYRIkDXNfwbyuNkWbTKUL0N/zuuKFgqXXpTt/EHZ/cOa0Fea9ZznhlRdlV/rJ8j662SZ6lhLCI/PXf8ZPmIXCgqeRCdfi4wjZql2JLJJWeQ=
+	t=1760067577; cv=none; b=AXjCkw+XQPpqO4d9Ezc3V7KhC5HeadW7CdQ53SnMTyVNyeVaChGrQ6kIHkBa3p2zJy3A8plqNCBbEgocA+4Vn3f1TEIWC6IabdqdBnT91x4shwqqBvBzbtXjRzsLFJR7Gw4KyXfwPj14fHsNtPri8L9YRDfIZVUqJt7xfTSXlaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760067544; c=relaxed/simple;
-	bh=KXynVc/l4z0I/0afxLQ1qgxkhnxUen6TcUANd7bwj6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TzXCvSUNt2EYUf73412riUl6AsWkA/FW0g0S2jkZXXyjELdMePlsPUT1qHbGvx5lv0pDBn04Jgd8n7t0jHI2z83TKD4M9+jFkiIy83El+2WAvm6PcRzTwlMPXshSr58vYuo55xxMxYUPaKYEk6fXCCkpIOD5XzaYEkYX3CZTdEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N91YdqeG; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-77f605f22easo1495009b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 20:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760067542; x=1760672342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aBZqKJ/asg/RWAeGZDfmIrxp30oaYR/dgJdIlWzmC0w=;
-        b=N91YdqeGK7Nj2b2+WeiVh5z+Vi8lO4a+1AQxa2tWA0FXf9BMTdaTzpWDd0pAQEGTeR
-         xb5r32XgsneiG3uZ8/DnC3ULjYAw2uwrgtviHWPWvHGGCQ3ATrranhLBaOnS3is4t9Uy
-         41KlBVDbAKrFpyETmVKPM1QJ2WuK0zxSv72PsJZDTZNF6WrtZHYtSqWkVnTqa42uSHwW
-         f+ohqj04AYtSMCeLFfd+kJk3x2xrD6bbc/FbOHpH0iFSN7SlW8wiZfWfC4FKugyBBIyr
-         XG6oYccxEZzFtkZMTxfiewpUFB0I+YmyOPqo3go43/Ui+cAxjcwTQk9GpBmW/ZRlg/af
-         RiaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760067542; x=1760672342;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aBZqKJ/asg/RWAeGZDfmIrxp30oaYR/dgJdIlWzmC0w=;
-        b=NnCGRgawWJgUmFzezURSM/pZRE5y+Qjw3o/Kfxpdj3peT/JVK7jkFdj4bFbuBDpaZW
-         EG9gewvMbCgCsgELIjHltt2RcLrhVw0UU+5XdmApAwMPBmj28Tc96eyAOpavHDrQ7fEh
-         mLIuOXWB03uGi3qKuQiVmErKtZnLSJr3ZO/j3AjUToSx9hGlul6OzTcDGfooOP+2FPS8
-         m2lkfxcXGKaXJioNhA912hGQn1kbdQCtpxHqjvjYi051aZ9lYMXp60wMMGEme4TMpd5K
-         Qu/E+P//Ls1gTaNOTH6rJHYojuMeS24bUzIbv9VFOO5yW2+CdAxjeysKmyUc4Z4T3gbj
-         hg3w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3qAn2qmJLjysk5NMA96XZuv7SoMxfdixPFO/IspcmFBWS1U4IQ7tm2mOAyH2InH0UaWF0qvMWTVXQXug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhNTlgK8EgVWvAxO8EonogYg0AkE0kXXv9WUGDIB2Wq2iAPpjb
-	IFpM2eCYbINZyUE6r/Tt1EMA8vySKRzxSMy/tF9BjCKZOTK7JfW7giuA
-X-Gm-Gg: ASbGncscZ7cusv6Ck5xt9vmrtoFdqNrUycFkDtLl7ajEOJN/vdnvewL33qJJ+wl8Ddd
-	Y0BTV1Xr/XyoxOJ2qyNVuFh4XdZDRtAN005Fp6JioT+6DadG3ReBdh0CU7WxUfm6t6DKEQwxjjH
-	Oh+/jCOk5WncW58OAdEDmXB2K5hM0yK86FecbvW5m0TwleroahwrJcDeXGXsGbXF93XjDAJefG1
-	b8p78xE/2fzbfFj+C9OTYj+FLV8Z7Z6h2pokT6H/EOl36FjUFS7Lmiah3jqC35kD5D5QVpUfvyu
-	1kXSwpJwdh1k8CrMaD18KRA9P2akpHMdH0QGsRfxM8EEzGzHUstVJ54LkIrmZ4kvhGu2ZoTnYhm
-	JtqYHnR4MJNfACw5yt/L/kLTtXrnOXZCzf9ykzQ==
-X-Google-Smtp-Source: AGHT+IG1pii1a/6UxHO3ZsdaqVmhRYM3KeTUX2lb00NzJ4iCKSEU4O/XYpU3GYBm0sSAc3AywoQaSQ==
-X-Received: by 2002:a05:6a20:938e:b0:309:99e3:c6f5 with SMTP id adf61e73a8af0-32da83e68a9mr14172182637.48.1760067542542;
-        Thu, 09 Oct 2025 20:39:02 -0700 (PDT)
-Received: from 7940hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d993853sm1260148b3a.74.2025.10.09.20.38.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 20:39:02 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: mhiramat@kernel.org
-Cc: rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiang.biao@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH v2 2/2] lib/test_fprobe: add testcase for mixed fprobe
-Date: Fri, 10 Oct 2025 11:38:47 +0800
-Message-ID: <20251010033847.31008-3-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251010033847.31008-1-dongml2@chinatelecom.cn>
-References: <20251010033847.31008-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1760067577; c=relaxed/simple;
+	bh=HAHSKsweYgDeZ9whWne147CCDcr2rKaRTzz/0XzYW2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sGJSlK6VIncZeTBOqA8yG1gfcFijRoFmqJHIjCjITak31bsi3O/0g2BxmvOWyFWB0rcnKlwQRmFdNBoXEme1UmVfH5UgwwlvgjGDpNbn9qV8qF6tc+Hd+NYZYVa/9kBeuAb32A0G5H8FfBngyHh7ng14dDejwsAqc35WInCFBpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Q9xnfrVr; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from canpmsgout09.his.huawei.com (unknown [172.19.92.135])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cjXRn1SDpzTh8t;
+	Fri, 10 Oct 2025 11:34:45 +0800 (CST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=QfS5ejxh5GqFmut0s+Xz893zHL/kygYE/3kNRX/2D8k=;
+	b=Q9xnfrVr0DDuqZ7xoRBKLV+QSlEIy6Nh2e4fWpJLD0pwKnpLggkoKJi0uye7ZYQchgd7BL34x
+	9T+Yx+mitq31Nstri3bUTHQfe0NYyf3E4Pzmqy2yZYsJJ1UznXAriHKkpfdvKKW1KtC/O1PpcYx
+	WWLHZF/+GWkmNwovjYo0/s8=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4cjXXh24Zhz1cyVx;
+	Fri, 10 Oct 2025 11:39:00 +0800 (CST)
+Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 578531401F3;
+	Fri, 10 Oct 2025 11:39:17 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 10 Oct 2025 11:39:16 +0800
+Message-ID: <4491c8b6-adab-1e86-19cc-777a8a9c8858@huawei.com>
+Date: Fri, 10 Oct 2025 11:39:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 08/26] perf: arm_pmu: Convert to new IRQ affinity
+ retrieval API
+Content-Language: en-US
+To: Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-acpi@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob
+ Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James
+ Clark <james.clark@linaro.org>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>
+References: <20250922082833.2038905-1-maz@kernel.org>
+ <20250922082833.2038905-9-maz@kernel.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20250922082833.2038905-9-maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500011.china.huawei.com (7.185.36.131)
 
-Add the testcase for the fprobe, which will hook the same target with two
-fprobe: entry, entry+exit. And the two fprobes will be registered with
-different order.
 
-fgraph and ftrace are both used for the fprobe, and this testcase is for
-the mixed situation.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- lib/tests/test_fprobe.c | 99 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 98 insertions(+), 1 deletion(-)
+On 2025/9/22 16:28, Marc Zyngier wrote:
+> Now that the relevant interrupt controllers are equipped with
+> a callback returning the affinity of per-CPU interrupts, switch
+> the OF side of the ARM PMU driver over to this new method.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/perf/arm_pmu_platform.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_pmu_platform.c b/drivers/perf/arm_pmu_platform.c
+> index 118170a5cedef..9c0494d8a867a 100644
+> --- a/drivers/perf/arm_pmu_platform.c
+> +++ b/drivers/perf/arm_pmu_platform.c
+> @@ -42,14 +42,13 @@ static int probe_current_pmu(struct arm_pmu *pmu,
+>  	return ret;
+>  }
+>  
+> -static int pmu_parse_percpu_irq(struct arm_pmu *pmu, int irq)
+> +static int pmu_parse_percpu_irq(struct arm_pmu *pmu, int irq,
+> +				const struct cpumask *affinity)
+>  {
+> -	int cpu, ret;
+>  	struct pmu_hw_events __percpu *hw_events = pmu->hw_events;
+> +	int cpu;
+>  
+> -	ret = irq_get_percpu_devid_partition(irq, &pmu->supported_cpus);
+> -	if (ret)
+> -		return ret;
+> +	cpumask_copy(&pmu->supported_cpus, affinity);
+>  
+>  	for_each_cpu(cpu, &pmu->supported_cpus)
+>  		per_cpu(hw_events->irq, cpu) = irq;
+> @@ -115,9 +114,12 @@ static int pmu_parse_irqs(struct arm_pmu *pmu)
+>  	}
+>  
+>  	if (num_irqs == 1) {
+> -		int irq = platform_get_irq(pdev, 0);
+> +		const struct cpumask *affinity;
+> +		int irq;
+> +
+> +		irq = platform_get_irq_affinity(pdev, 0, &affinity);
+>  		if ((irq > 0) && irq_is_percpu_devid(irq))
+> -			return pmu_parse_percpu_irq(pmu, irq);
+> +			return pmu_parse_percpu_irq(pmu, irq, affinity);
+>  	}
+>  
 
-diff --git a/lib/tests/test_fprobe.c b/lib/tests/test_fprobe.c
-index cf92111b5c79..108c7aa33cb4 100644
---- a/lib/tests/test_fprobe.c
-+++ b/lib/tests/test_fprobe.c
-@@ -12,7 +12,8 @@
- 
- static struct kunit *current_test;
- 
--static u32 rand1, entry_val, exit_val;
-+static u32 rand1, entry_only_val, entry_val, exit_val;
-+static u32 entry_only_count, entry_count, exit_count;
- 
- /* Use indirect calls to avoid inlining the target functions */
- static u32 (*target)(u32 value);
-@@ -190,6 +191,101 @@ static void test_fprobe_skip(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, 0, unregister_fprobe(&fp));
- }
- 
-+/* Handler for fprobe entry only case */
-+static notrace int entry_only_handler(struct fprobe *fp, unsigned long ip,
-+				      unsigned long ret_ip,
-+				      struct ftrace_regs *fregs, void *data)
-+{
-+	KUNIT_EXPECT_FALSE(current_test, preemptible());
-+	KUNIT_EXPECT_EQ(current_test, ip, target_ip);
-+
-+	entry_only_count++;
-+	entry_only_val = (rand1 / div_factor);
-+
-+	return 0;
-+}
-+
-+static notrace int fprobe_entry_multi_handler(struct fprobe *fp, unsigned long ip,
-+					      unsigned long ret_ip,
-+					      struct ftrace_regs *fregs,
-+					      void *data)
-+{
-+	KUNIT_EXPECT_FALSE(current_test, preemptible());
-+	KUNIT_EXPECT_EQ(current_test, ip, target_ip);
-+
-+	entry_count++;
-+	entry_val = (rand1 / div_factor);
-+
-+	return 0;
-+}
-+
-+static notrace void fprobe_exit_multi_handler(struct fprobe *fp, unsigned long ip,
-+					      unsigned long ret_ip,
-+					      struct ftrace_regs *fregs,
-+					      void *data)
-+{
-+	unsigned long ret = ftrace_regs_get_return_value(fregs);
-+
-+	KUNIT_EXPECT_FALSE(current_test, preemptible());
-+	KUNIT_EXPECT_EQ(current_test, ip, target_ip);
-+	KUNIT_EXPECT_EQ(current_test, ret, (rand1 / div_factor));
-+
-+	exit_count++;
-+	exit_val = ret;
-+}
-+
-+static void check_fprobe_multi(struct kunit *test)
-+{
-+	entry_only_count = entry_count = exit_count = 0;
-+	entry_only_val = entry_val = exit_val = 0;
-+
-+	target(rand1);
-+
-+	/* Verify all handlers were called */
-+	KUNIT_EXPECT_EQ(test, 1, entry_only_count);
-+	KUNIT_EXPECT_EQ(test, 1, entry_count);
-+	KUNIT_EXPECT_EQ(test, 1, exit_count);
-+
-+	/* Verify values are correct */
-+	KUNIT_EXPECT_EQ(test, (rand1 / div_factor), entry_only_val);
-+	KUNIT_EXPECT_EQ(test, (rand1 / div_factor), entry_val);
-+	KUNIT_EXPECT_EQ(test, (rand1 / div_factor), exit_val);
-+}
-+
-+/* Test multiple fprobes hooking the same target function */
-+static void test_fprobe_multi(struct kunit *test)
-+{
-+	struct fprobe fp1 = {
-+		.entry_handler = fprobe_entry_multi_handler,
-+		.exit_handler = fprobe_exit_multi_handler,
-+	};
-+	struct fprobe fp2 = {
-+		.entry_handler = entry_only_handler,
-+	};
-+
-+	current_test = test;
-+
-+	/* Test Case 1: Register in order 1 -> 2 */
-+	KUNIT_EXPECT_EQ(test, 0, register_fprobe(&fp1, "fprobe_selftest_target", NULL));
-+	KUNIT_EXPECT_EQ(test, 0, register_fprobe(&fp2, "fprobe_selftest_target", NULL));
-+
-+	check_fprobe_multi(test);
-+
-+	/* Unregister all */
-+	KUNIT_EXPECT_EQ(test, 0, unregister_fprobe(&fp1));
-+	KUNIT_EXPECT_EQ(test, 0, unregister_fprobe(&fp2));
-+
-+	/* Test Case 2: Register in order 2 -> 1 */
-+	KUNIT_EXPECT_EQ(test, 0, register_fprobe(&fp2, "fprobe_selftest_target", NULL));
-+	KUNIT_EXPECT_EQ(test, 0, register_fprobe(&fp1, "fprobe_selftest_target", NULL));
-+
-+	check_fprobe_multi(test);
-+
-+	/* Unregister all */
-+	KUNIT_EXPECT_EQ(test, 0, unregister_fprobe(&fp1));
-+	KUNIT_EXPECT_EQ(test, 0, unregister_fprobe(&fp2));
-+}
-+
- static unsigned long get_ftrace_location(void *func)
- {
- 	unsigned long size, addr = (unsigned long)func;
-@@ -217,6 +313,7 @@ static struct kunit_case fprobe_testcases[] = {
- 	KUNIT_CASE(test_fprobe_syms),
- 	KUNIT_CASE(test_fprobe_data),
- 	KUNIT_CASE(test_fprobe_skip),
-+	KUNIT_CASE(test_fprobe_multi),
- 	{}
- };
- 
--- 
-2.51.0
+Reviewed-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
+>  	if (nr_cpu_ids != 1 && !pmu_has_irq_affinity(dev->of_node))
 
