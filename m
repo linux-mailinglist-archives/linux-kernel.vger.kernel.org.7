@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-848573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E37BCE112
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:17:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885E0BCE11A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0411885797
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:18:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FD134E30C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45F4217F55;
-	Fri, 10 Oct 2025 17:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0FD21D3DF;
+	Fri, 10 Oct 2025 17:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="F/IYXQ0w"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/lfwDDP"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EAD1FF5F9
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CC11DF751
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760116663; cv=none; b=kbw1HffkF7C7JTWjvQsd95CuHGsZNTl+RU6bCes6BkxBY4zizjTxXokHNhJ8oFfIM+lIidMrp8DPpvyHzFo83B5ZMB6zkjMJrkFb1TSv0jCGvCToSVdG9inaUTa9AVk6Y8DrSqoDeycDO1d5zJnTGrbY/1iCtDNl4y1BIDwcLE4=
+	t=1760116698; cv=none; b=cm3e1DO0xFNk/qNEsDjypZ7sxXQdO7tVw3Ns+7/3BOiOV44PvHZcuOFjvt+osh3DWkN+tNDUrM00uf6vZJEZXN21xCnPl0gstlu+fqSsFApva/YtBj0xWOnJ85RJc+rvKdQJNMmGMcHNmbmXYGNbWAXQraEx7uY6T8XDvW8GbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760116663; c=relaxed/simple;
-	bh=I1Jv1K8pMlHzgbwxs+yw/rgUKNnWjuy0CuTLkQH3qMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T+Yo1cGbsviF6fE9TTl1AZN9oRkQi+M0/GzQrx1IFYkUoi7Kclo8Z7OJ/h48skCz8nOjP/f7yIS3PFbE4EfBu39zTtRsIfiM4VkgNmCyU769qD042Wjh3duXyw8e1NKpf3VjLPKc1U6VpEesAPlNSzpfDCRw4MEeZ+d0oOJCON4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=F/IYXQ0w; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-42d857dcf92so8987225ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:17:41 -0700 (PDT)
+	s=arc-20240116; t=1760116698; c=relaxed/simple;
+	bh=Z8Bgg8Yh3z/S2AKEWMy72snzKqxcwIZAWYiJw1H/xlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ka0gyTOE7v7/8B1AwWaLGRm4IT2q5ca1Cb2Y/JYYTy+l51NpogsRIV5OI6b0IRmg29zwog1uP2IccQGTBaIHZ08gevHubsjtJ06BBhMAhLt0Diev/pPAS1Y10hvUzunPpVnKpEFyIpheU9tGfQtmZ563cWW6sVlW8MAg70/yeaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/lfwDDP; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so1635298a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1760116661; x=1760721461; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6G/IEc8eQi80LISFTxnAaN67mBaGX3+NUViuwGCrxp8=;
-        b=F/IYXQ0wDEkphwVhN9FpeTOmpHkHAESbjdpgzqq7rh4b3JpQy2QqHM99R2dW2rNFsB
-         87SY4fOH3evNwOIoscuM2k9FvVNmCe+PKvqMwBoGnto+e03+sznD1QZcKnipoxWoEFN5
-         WdCT8np3E3KyOCu1G89JwdGNMN9bieuJTrKPWG6UPTxH3mZO1rPFGDh9j99b7qUoJ+4T
-         A4wWRc3SMi3HBt8SF7Env1DzhMxKNk1i39ZmMNHnA+/HFqgXotygCgv0vCNugICgwwvp
-         S9EMp29ZrTfgp32Sq0okO56AyDJzpy2rMPCGT+dIR8r7Z1wV0eukAxVYZ4dnt5Bv6DKy
-         2utA==
+        d=gmail.com; s=20230601; t=1760116696; x=1760721496; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4BfVsigI/RIm7lCLr6Chg7lwMcGQgn9TsXQSX3+pXnM=;
+        b=G/lfwDDPTIJm8F10JlGVZ42+ooBOZZXzLjuA2ttCnThVp9CKtnJUF4Gl8qy1BD1itS
+         UIFvhdkeIHPS5A0RAB+QETV0YKlOorO4mbCKjLIeDpugPXH2XBCig4gq1xeqne8iIhuJ
+         1Lpv2vkFO9YUMRITCuTAn3qaznCTNI9o8dmEzcVJIp/XjRBBaVl+txBIDZ8/yDqCwQhU
+         H1W7EuIU/3rFbEwvMnRps35TyFxgP6gQaEPsl0dgQmBbZT4upspBgwIR6JvsOUxK/LjT
+         T8V7UIl/eiVmrfW1yyZrsqI+Wf22UtaskmcWiemq2Ud9jPFFDoORu+yfzTpHn5BfWbY1
+         TnpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760116661; x=1760721461;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6G/IEc8eQi80LISFTxnAaN67mBaGX3+NUViuwGCrxp8=;
-        b=t/RWcY4V0raTteqc9TioAfbFpRxbw3+Z4GtUV2KBRn/4W1Xpr/Nwh3WvN4g5ZHhQRg
-         TvrUC07OPmrh5naWh+p/z7sGtuSg1kyJanWLOmNB4GHB7kJzZkQBYYItOA0IiO2rpQA/
-         BnBxWubzXPE8Q9bF25pwqU2qN5TEQ2cmehgTQpLscuu4I3vBRYiQbHFxoCLLUyOwPHuY
-         RBZbgh86ARMFfQuZWmiNKuL61lLM3FoGu7kk87fnnaYkJXXWCFOK/2wzPkUfOnY/xE+Y
-         p8o6KaS3UUNqLYoMRGIhxn8wF3iH3DlmornbTEGzDm7eLJ/UwFNEhQEORr7D8KDrZJ10
-         Lqzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwsajFZ2TU8L+i1JbHjbUb/usoyowpBpf09mEJiYrj10gEOAIG83Pl0wtRbXUvJkXGGqGxZKqMT2s74Yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkKQF0FSy9XoDodEfPxTri6Z+rLFUoKLfHfocNofZv+mCPUIVZ
-	k08SykpFO5DbXq/uLHI+L/Sj7QIVOWGCc71XZIeJ06Oq46GmYTl4xzdwhJdqsvTIGW8=
-X-Gm-Gg: ASbGnctf3sMZAikwGrByI3/J7kqPfpYY8YNGEoSRZPqjlN5JlyIw4RRaYqgkXalt6KW
-	+/Ox0meXSU67so2ai6lZcLnqOovj77juqX3G1UoCw7DKK8s78SRv/F6xwLco5MRHJrPI9Ar8Qkg
-	cJbiUuNRK+lZlrTAB90kPQEybIzmOhSI8G5AvYVPxTq15dhB9TeXaBX6d3WtRY/17GGOqTTvU45
-	thKODooR19jAly4n/QaUzl73VVi0YZrFLAn6YDRs1RwpaqL1U1e978FdXg0XtygqjZsQKGF6Op2
-	lwlxgdtqK1oMgQap3gNlrrzTPg/b+nLHvYuYWSS4t4OqKLRHTTik+u1AcLce3KEjSlolckvT5IU
-	/oweLehE8VRyHJpQaBH+BNIX33SrZA8ztvn5irzb2IOOf73thXiKsDbjn7A==
-X-Google-Smtp-Source: AGHT+IFf3Dfk1VAV0Y7S/J8epFVv9DK6aEZ68GWSHSQhqH0ufWaX/0UhdYSoDg68NQQ/vOlVIsMBKA==
-X-Received: by 2002:a05:6e02:1a8f:b0:427:b642:235 with SMTP id e9e14a558f8ab-42f87374f3bmr135463955ab.10.1760116660354;
-        Fri, 10 Oct 2025 10:17:40 -0700 (PDT)
-Received: from [100.64.0.1] ([170.85.6.207])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f902962fbsm23231445ab.18.2025.10.10.10.17.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 10:17:39 -0700 (PDT)
-Message-ID: <126d2381-c913-4815-bd9f-b6e9fe3cf5d8@sifive.com>
-Date: Fri, 10 Oct 2025 12:17:38 -0500
+        d=1e100.net; s=20230601; t=1760116696; x=1760721496;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4BfVsigI/RIm7lCLr6Chg7lwMcGQgn9TsXQSX3+pXnM=;
+        b=VyWhX+Wag+GRiWIHZ0xA+hJ+cOC2b7hMVoOSOvEDg8M/BLVavjuKeX8+32T+uzMRve
+         50TymzboddRKtQYmLy/C6aFNVjXJj1LkllbwRY5EKTXBxxxOLyEhrHlYCmfJcy1rVrCb
+         VVZFy7sBNeQr4mmqLYMO85VWHlA2ojAi+xKNmXdqHfexroD4S1v1Wyv+exjgWV318BM/
+         yYJKCn3g4wXlJ+EGagE5vbMpF2cJ2lKsvV2fuzRManPy7z87NQgv4wJN4mkq6OhKl8Q4
+         pXOSGy9xSMdE21WNFkfMOGAaOEdYx7SubWJoDCHg14VLj7bFHOiC3dtnoTlcbvMclwi0
+         ckzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVahm2Esb1FMd2EzjNCvy4O8We/q4WA2HQk13YgPJmNyez58/gMGKbHLbKSO3XxvtGfJH6bRRfp8Pwt33c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9/oCIwo5iyf8ssCeSbQW0NLTFyabaOTklnsgpzXydMr7o5seJ
+	vCuZZf9k7XIjVvUDvJNRgNOVrVaHWaUFDPYLywxhMfqLUwwVXL2IGUj0b4wONTc9n+8L/qpYWav
+	QFOoCDLmfjSIrEjpSkFRdV9VuMPAiPu8=
+X-Gm-Gg: ASbGnctvBHjwCojd8EOOYjyU34IL0C4rZa9j5RfOFUyQcE7sNb+gR2m7qNHWLp2b5YM
+	8hnvwnswdlH2yQcgcySwMVS9YOj0KT0lJRmSDK6UHRbrJkIH5enLQ2IKYY96ZEdy2Ddg5XUnk6u
+	Ug1Qy5ItrqKiMdwpgKDekpq+o2mqt/Gu3s8Em18/2wZLKAH/v8rzW+DPoP1v6HRezx5Pvy3VegR
+	G7AdQmVd+ruDiiQwagC9a/f/1YyUEAPkgy/Lg==
+X-Google-Smtp-Source: AGHT+IH1giPZcnOv6CGAjB6Rl2QcFEzz3CPtE14GWTh10ezJZ6kvXIL6/4N3fdyqX9JAPTZlX1XtlfpaKep3fWug9Ws=
+X-Received: by 2002:a17:90b:1fc4:b0:32b:d8a9:8725 with SMTP id
+ 98e67ed59e1d1-339edadd5b9mr23216650a91.18.1760116696201; Fri, 10 Oct 2025
+ 10:18:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/18] riscv: Memory type control for platforms with
- physical memory aliases
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Conor Dooley <conor@kernel.org>, Alexandre Ghiti <alex@ghiti.fr>,
- Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- David Hildenbrand <david@redhat.com>
-References: <20251009015839.3460231-1-samuel.holland@sifive.com>
- <20251009181559.7bfa3dce6cb7265822b2d5c5@linux-foundation.org>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <20251009181559.7bfa3dce6cb7265822b2d5c5@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com> <20251010071555.u4ubYPid@linutronix.de>
+In-Reply-To: <20251010071555.u4ubYPid@linutronix.de>
+From: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+Date: Sat, 11 Oct 2025 01:18:05 +0800
+X-Gm-Features: AS18NWB9IwjfwJLLXvf_C7PSNG6WlpQ2fa-Gc_uHnrsGBHqIZb9E1EFejDVQ0N0
+Message-ID: <CAH6oFv+SUo7B6nPPw=OgQ1AhqVfQYC1HvX=kjcHJX8W13kTwZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pci/aer_inject: switching inject_lock to raw_spinlock_t
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-10-09 8:15 PM, Andrew Morton wrote:
-> On Wed,  8 Oct 2025 18:57:36 -0700 Samuel Holland <samuel.holland@sifive.com> wrote:
-> 
->> On some RISC-V platforms, including StarFive JH7100 and ESWIN EIC7700,
->> DRAM is mapped to multiple physical address ranges, with each alias
->> having a different set of statically-determined Physical Memory
->> Attributes (PMAs), such as cacheability. Software can alter the PMAs for
->> a page by selecting a PFN from the corresponding physical address range.
->> On these platforms, this is the only way to allocate noncached memory
->> for use with noncoherent DMA.
-> 
-> Well that's weird.
-> 
->> --- a/mm/ptdump.c
->> +++ b/mm/ptdump.c
->> @@ -31,7 +31,7 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
->>  			    unsigned long next, struct mm_walk *walk)
->>  {
->>  	struct ptdump_state *st = walk->private;
->> -	pgd_t val = READ_ONCE(*pgd);
->> +	pgd_t val = pgdp_get(pgd);
->>  
->>  #if CONFIG_PGTABLE_LEVELS > 4 && \
->>  		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
-> 
-> OK, but how are we to maintain this?  Will someone be running
-> grep/coccinelle/whatever on each kernel release?
-> 
-> Please give some thought to finding a way to break the build if someone
-> uses a plain dereference or a READ_ONCE().  Or add a checkpatch rule. 
-> Or something.  Let's not rely upon the whole world knowing about this.
+On Fri, Oct 10, 2025 at 09:15:55AM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-10-09 15:06:50 [+0000], Guangbo Cui wrote:
+> > index 91acc7b17f68..6dd231d9fccd 100644
+> > --- a/drivers/pci/pcie/aer_inject.c
+> > +++ b/drivers/pci/pcie/aer_inject.c
+> > @@ -523,8 +523,8 @@ static int __init aer_inject_init(void)
+> >  static void __exit aer_inject_exit(void)
+> >  {
+> >     struct aer_error *err, *err_next;
+> > -   unsigned long flags;
+> >     struct pci_bus_ops *bus_ops;
+> > +   LIST_HEAD(einjected_to_free);
+> >
+> >     misc_deregister(&aer_inject_device);
+> >
+> > @@ -533,12 +533,14 @@ static void __exit aer_inject_exit(void)
+> >             kfree(bus_ops);
+> >     }
+> >
+> > -   spin_lock_irqsave(&inject_lock, flags);
+> > -   list_for_each_entry_safe(err, err_next, &einjected, list) {
+> > +   scoped_guard(raw_spinlock_irqsave, &inject_lock) {
+> > +           list_splice_init(&einjected, &einjected_to_free);
+> > +   }
+>
+> I would either convert _all_ instance of the lock usage to guard
+> notation or none. But not one.
 
-My initial plan was to add a script to scripts/coccinelle so `make coccicheck`
-would catch any new instances. This would require some way to avoid false
-positives in the few places where these pointers are safe to dereference (like
-the ptentp and pmdvalp mentioned in commit message), such as a separate typedef
-or a naming convention.
 
-I had also explored using sparse to annotate pte_t and friends as noderef. This
-would require changes to the sparse tool to allow noderef to work with a
-non-pointer type (and get inherited by any pointers to that type), or else each
-pointer parameter/variable would need to be annotated in the source code
-(equivalent to __user). Neither seems ideal.
+> Also I wouldn't split everything to another list just to free it later.
+> I would argue here that locking in aer_inject_exit() locking is not
+> required because the misc device is removed (no one can keep it open as
+> it would not allow module removal) and so this is the only possible
+> user.
+> Therefore you can iterate over the list and free items lock less.
+> This reasoning of this change needs to be part of your commit
+> description. Also _why_ this becomes a problem. You do not mention this
+> change at all.
 
-I hadn't considered a checkpatch rule. That's probably the most straightforward
-solution, to warn on any instances of "\*(vmf(\.|->))?(pte|p[mu4g]d)p?", along
-with a coccinelle script that could be run occasionally.
+Hi, Sebastian
 
-Regards,
-Samuel
+Yeah, you're right. Once misc_deregister is called, no new user can add
+err injection, and aer_inj_pci_ops was deleted by pci_bus_ops_pop below.
+All places that access einjected have already been released, so freeing
+einjected can be done without locking.
 
+I will drop the lock in aer_inject_exit, and update commit msg.
+
+Best regards,
+Guangbo
 
