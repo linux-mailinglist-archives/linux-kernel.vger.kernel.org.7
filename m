@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-848351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 847BDBCD826
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB79BCD829
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5EA44FE403
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:22:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7355A4FE8E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A33D2F3600;
-	Fri, 10 Oct 2025 14:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B362F2617;
+	Fri, 10 Oct 2025 14:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0pDKvYp"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bzKXwADA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pxduouzo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FABE17597
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDF317597;
+	Fri, 10 Oct 2025 14:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760106154; cv=none; b=EZId0ZwFiBsPfGwP/3N13voHdveHXwPfybhafrU+xYXchqrdQ1mL7+BGdUSraze1W74g4M30RQ7kLiPJ0YD7hjDwZS20A9LtAKg9n6oloA1QJeKt+9itHWix4c7ra7UmkX2ZvuOeks5eh81uryubgNho9BvPryi8BfdxrVqpI3c=
+	t=1760106227; cv=none; b=fdZY1KcmRRsu+wClCrDoKe+uuGuCMUCqrJP+vf4LQJO8V9NwdCAISaHtFVSTkWcr4VBbOHn+fJaJSGZKtd8HDbSoOfjimcYDWfdnyn2E88lEhLze381+BDrqxXdu+hNWmDNt0eNLUbRWKBnFxHJ6LjH+eY9P8vo5pXJY8XCeq5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760106154; c=relaxed/simple;
-	bh=7dndPtRevbITE9ffdTBKfJlBf/TdoDeFhl4O+Fj03Os=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiY4zVTnD43Vh9LnOY62jL3/SlqC1uxICX4lv7OG2INd+so4l6MV7EnTGOp8etjkoy4MK/8hZnpou4E7I5jQQV4f1O9oQcM0lrz+fkq1oe1k2ucZJVPO9ag+V2M0Hf7C/+Fi5UEjTD2MQ6Gv9gRYtlw7ZuQYWA/F8FfTGUJgEwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0pDKvYp; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-781997d195aso1546276b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:22:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760106152; x=1760710952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9CuwuYd6rsM2ZdZipwD4GPWKHOfizRXrtv5NCir+9FI=;
-        b=i0pDKvYprOqKTUOvlTb0+Kwemaf4fSwtBs0seoQFE0Utg5Sr+RMW8UILA/0c3A98ji
-         9RNY51cIh+lXObvmkLfZC+62DbEOQudHH3I3jzbC8KlAK3cRYauXcUQJwUz/UY+HLSGG
-         cfjAWYUZ/ptTnnqO1stxYZq/fQzxSncXvVJkPS+WgeWpkeTFif7vkbrzjBYNnps3/x/Y
-         zahLYrbRNKe4zU6dUP9d1IfRGImscJ6QkWvi6zdUjKBZp2ftW3uZjkyjSObad42b8syh
-         JF8Av+bJcGJqs8/9LZQbbGeAgI6kdKS2WKtk3WY62/MqRJ1Tow3yv/MLHFGmD5SAEYeC
-         BI3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760106152; x=1760710952;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9CuwuYd6rsM2ZdZipwD4GPWKHOfizRXrtv5NCir+9FI=;
-        b=P21EV4jueCks5j2ntCp60VI+OWThLFbL82auxVGqehZeyN7ojvGIUFDjMgbPW+Bf4N
-         F4b0BsAlOnji6ryRLHZOvtP9lmhAxlg/R135EkuSD5YhBGzHWXv9MH51WzG7Et8zxtQH
-         fxEKERFxmMrMmLwOAKS5K/lU7orQZ1YQCHKqhjTAkRwKQznWt5VyGnKW517WqMU72qKk
-         EtpOoO/3yN7NnTV+QnVmvrBnji56W09xtgtjI3hd3MK6OvhpMNCFyGmpWKKeCHLrbsk6
-         d53j1vzEqlpk3N/Q7JLpy6A3sz7CtJe/6i0bAQWpsrkZiMkdu2XY7DCVBDVHcq0ivhOw
-         pJ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVVDWgFvr1gBiwaoV5Dm7/uMnb55vviuaQXJtmXTXGRrBjwaWGaPoCjKUXdGgcl+qldgvgRzmxqtpmp70Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP8qfFMqiEYICeWX+nTJk/BY4wN9f71X1ZnLr0HcW5jrjzjQ8J
-	DHyutqnShgrd9f8a9rvl8X1xrsBZnt83r3N9ASt7tgZl97zuEsi5gUNY
-X-Gm-Gg: ASbGncs8t/2Odjh+TcxwvYRiLCaB3ZlVIJRWJunfvse4pjnInB6ElWO/szJQviJ0/1G
-	9pUHL+9hu+wgLyzMqV+gj7RuyHSiHY6gBSFyZp/0ySzpLAve6dDprwhbGEPniayVfzuQgfUZfBY
-	0ZcLl+fKoidA9z06HmpuEN9QOszwYnIIXpJaH+bidS5/EZIfW7oWpJOUBrIl3wcXu9iQ0NY89gO
-	ENZobguyOm7YWBNY8GntAbxZ2eWmzHd9caZOhS6/JxXOQ5udrqJia3lhdtzBdEmmqB0JdcPlFfs
-	EaOFwLm2DgsXzhudIiguA1N3Fvi+FJ4tQ6tu1ESeb4lyqpoIolo8NWmKMIPf1KNtuoFyWqAJgkW
-	SLOsh0z+J/1eqQtvV/d4FDFSmddFfl95S0C31Rtuad1E9q5LFxavpmnp9FZ3NLXi4d+7GBaygY4
-	E=
-X-Google-Smtp-Source: AGHT+IH1+iBy8nFHwk58M7adbDk6CNfAFBIzVimB+kebnYyWU9N7MoWT9usmV/V05WE/d2nIHvMYkQ==
-X-Received: by 2002:a17:903:4b50:b0:246:a543:199 with SMTP id d9443c01a7336-2902741e471mr151973715ad.54.1760106152226;
-        Fri, 10 Oct 2025 07:22:32 -0700 (PDT)
-Received: from [172.20.10.4] ([117.20.154.54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f8f9bbsm58596885ad.121.2025.10.10.07.22.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 07:22:31 -0700 (PDT)
-Message-ID: <5c68715e-d851-44cc-ba14-0886e515ef45@gmail.com>
-Date: Fri, 10 Oct 2025 22:22:18 +0800
+	s=arc-20240116; t=1760106227; c=relaxed/simple;
+	bh=vC/N7IozNJkARanX5/Ha8AZGYMhKJmuSp0KN3cJmk9A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nS6M2xnrWVxWWTibdhmOucqd+Pe4uZA6QKUtmveXaXD9sRbGgx3cFjG2B9x5i+0UKBXTkS2bOIajl++/cJxNVw1lzas6MQBitNpQ9Z3o2T3vij8SseQn6ODrtgCr+3APpx1N7KLJWXxsUhRWkHi2gDuED4e6cbm1YE8S52/HV60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bzKXwADA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pxduouzo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760106223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VOutbgETX+ROuc8lXZhUEXkf+F2qnmvgorpg8EXYRRk=;
+	b=bzKXwADA2IX/HfUYgOVYJVMYa5gyD+CVsBgJsmhN60xyVfPxN0ccpVbKn+4hNZA8f7GrB8
+	OFtP883iNNQ4oa7jbeAn8Q+r6roqoVEQ4DummwsLkzpEVSEQgvwx4pPz1KNHMFAGN0bI4i
+	Xv4D8ktk7jFQ5bL+ja18XhBIFQmUVKewydHfRtCaZEUtp4Z2JJaht7jLrG5I9Olcem7Azf
+	s8kBhDbGQijDYIs1zg6KvexiUrsViOrLOQmr6XjWnZdaDxCYXcCVs7zL2tKJLJ6iQf08UW
+	1c8R0E3bX8ay8OpD3XndLG9gAMEcbjmclL3+a/7vz/6BqMwM/itvRoS/3YtwbQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760106223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VOutbgETX+ROuc8lXZhUEXkf+F2qnmvgorpg8EXYRRk=;
+	b=PxduouzorCoRjzUmQE3nqwB8g7AJrHUOnJRvUGn6EgW1ACPHIsiKdwkaEeZFuE/Jc30X+e
+	OwfZgEaLx7mVUcBQ==
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
+ Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
+ Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v2 14/20] rv: Add sample hybrid monitors stall
+In-Reply-To: <20250919140954.104920-15-gmonaco@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+ <20250919140954.104920-15-gmonaco@redhat.com>
+Date: Fri, 10 Oct 2025 16:23:42 +0200
+Message-ID: <87frbqygwh.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault
- to BPF stderr
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>,
- Menglong Dong <menglong.dong@linux.dev>,
- Menglong Dong <menglong8.dong@gmail.com>, Alexei Starovoitov
- <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
-References: <20250927061210.194502-1-menglong.dong@linux.dev>
- <20250927061210.194502-2-menglong.dong@linux.dev>
- <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
- <3571660.QJadu78ljV@7950hx> <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
- <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
- <405caf71-315d-46a4-af35-c1fd53470b91@gmail.com>
- <CAADnVQK8Rw19Z6ib0CfK0cMHUsYBuhEv8_464knZ4qFZ6Gfv2g@mail.gmail.com>
-Content-Language: en-US
-From: Leon Hwang <hffilwlqm@gmail.com>
-In-Reply-To: <CAADnVQK8Rw19Z6ib0CfK0cMHUsYBuhEv8_464knZ4qFZ6Gfv2g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> +- Name: stall - wakeup in preemptive
+                   ^^^^^^^^^^^^^^^^^^^^
+                   copy-paste mistake?
 
+> +- Type: per-task hybrid automaton
+> +- Author: Gabriele Monaco <gmonaco@redhat.com>
+> +
+> +Description
+> +-----------
+> +
+> +The stalled task (stall) monitor is a sample per-task timed monitor that checks
+> +if tasks are scheduled within a defined threshold after they are ready::
+> +
+> +                        |
+> +                        |
+> +                        v
+> +                      #==================================#
+> +                      H             dequeued             H <+
+> +                      #==================================#  |
+> +                        |                                   |
+> +                        | sched_wakeup;reset(clk)           |
+> +                        v                                   |
+> +                      +----------------------------------+  |
+> +                      |             enqueued             |  |
+> +                      |     clk < threshold_jiffies      |  | sched_switch_wait
+> +                      +----------------------------------+  |
+> +                        |                                   |
+> +                        | sched_switch_in                   |
+> +    sched_switch_in     v                                   |
+> +    sched_wakeup      +----------------------------------+  |
+> +  +------------------ |                                  |  |
+> +  |                   |             running              |  |
+> +  +-----------------> |                                  | -+
+> +                      +----------------------------------+
 
-On 2025/10/9 22:45, Alexei Starovoitov wrote:
-> On Thu, Oct 9, 2025 at 7:15 AM Leon Hwang <hffilwlqm@gmail.com> wrote:
->>
->>
->> The verifier can rewrite 'bpf_reg_aux()' into the following instructions:
->>
->> dst_reg = BPF_REG_AUX;
->> BPF_REG_AUX = 0; /* clear BPF_REG_AUX */
->>
->> As for the architecture-specific implementation, BPF_REG_AUX can be
->> mapped to an appropriate register per arch — for example, r11 on x86_64.
-> 
-> it's taken. There are no free registers.
+I think this monitor does not detect if a task get preempted, but then
+never get scheduled again?
 
-Understood.
+This sample monitor does not have to cover everything obviously, but I'm
+curious if I understand it correct.
 
-It would certainly be beneficial if there were available registers on
-x86_64, as that would enable certain optimizations and improvements.
-
-In a similar direction, I have been exploring the idea of introducing a
-dedicated BPF_REG_TAIL_CALL register to unify the handling of
-tail_call_cnt in the verifier. This could help standardize the logic
-across architectures, particularly for those that already employ a
-dedicated register for tail calls, and allow JIT backends to simplify
-their tail call implementations accordingly.
-
-Thanks,
-Leon
-
+Nam
 
