@@ -1,103 +1,82 @@
-Return-Path: <linux-kernel+bounces-848341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657BFBCD79E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:19:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3927CBCD786
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A60484FF443
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:17:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CDB83355BFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358232F5A3C;
-	Fri, 10 Oct 2025 14:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BBE2F6588;
+	Fri, 10 Oct 2025 14:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RqUreT6b";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w8vcmEYd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RqUreT6b";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w8vcmEYd"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KLRMleA5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5E92F90D3
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129792F656E
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760105760; cv=none; b=tGcJxYAWIsXAe3WZbJ8kskv5b2Tr3Xdxmuakk/O9kRWyrS6MSIMAkhW9WEop/pa2ElhcMJG1LaGyUL/1PeyqQrDMxY1aahx9KQPWNdvJ04MKUkBmkU71iyFtj1I4t9+iKKeNWu3NK1ziC8isevJgqU5vzqWmIE78h4PJ2tu0LWc=
+	t=1760105813; cv=none; b=P/szvUPfqjl9LQ5tLjnbuXZ+jNjJivOcjwiXmVsHXm5SOw9290x3/bV2Sfx5bYtpZ/GZsiiBrC3MgX/Z+n33J5Szr+We2jB29aAk5dFTkCe25PGxSpn2lDGre8v3CqMozZ0Zmj6Ea9zGCN08RbW4m+CO4PPp1bzilcZnylKlytI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760105760; c=relaxed/simple;
-	bh=uw2Ra7SKIQ6DzFatNSHGgYtbKJe9M4DAUUqzwwLdiQQ=;
+	s=arc-20240116; t=1760105813; c=relaxed/simple;
+	bh=80h6mrAaud97uc9EduYzED8S14ed6d870EpHss4JGBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWbb7S6RYjdIG9b8Cc0LJYltqTpaRjukd2W4DJMzcW+uuoVKx0O5n0JzTV67wYzu11HDAMZcqPzwxCPMlhu8TQXL+3M0+F3fUeCpgFRKdWyXwFKkk3M+lw0wiFEIv1lX0aozxTma4nZxK53A1TJ8TR23XzlV2xrP+AyQ5geS8H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RqUreT6b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w8vcmEYd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RqUreT6b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w8vcmEYd; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C06F1F397;
-	Fri, 10 Oct 2025 14:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760105756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0qW8WvGK9GRf1olcZDAqZ9ZDNuJrDZDc0ZIlfNsJTgk=;
-	b=RqUreT6bIseP0WLbFfj3R2g/9X9tH6F7qsUqWMuqt+cYdnGjwN1fiUZYjdibkpBnDsAkAW
-	vP6IWZUIq4UHeO5IaO7ipdXgwzD3FG4ChQD6SlDHUjvmpGZzxKYbC+7IAalO6UtF8m47RK
-	roo+nvunP7M1m5TBM4Gq5Onk66zaFFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760105756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0qW8WvGK9GRf1olcZDAqZ9ZDNuJrDZDc0ZIlfNsJTgk=;
-	b=w8vcmEYd/3HGBg1uKBqGH2stOvZsUv8ZN88xjNO9qoueNVdbQFGExRWYqiJZkOP5AvsytH
-	wRRVIKxlAwkPf/BQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RqUreT6b;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w8vcmEYd
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760105756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0qW8WvGK9GRf1olcZDAqZ9ZDNuJrDZDc0ZIlfNsJTgk=;
-	b=RqUreT6bIseP0WLbFfj3R2g/9X9tH6F7qsUqWMuqt+cYdnGjwN1fiUZYjdibkpBnDsAkAW
-	vP6IWZUIq4UHeO5IaO7ipdXgwzD3FG4ChQD6SlDHUjvmpGZzxKYbC+7IAalO6UtF8m47RK
-	roo+nvunP7M1m5TBM4Gq5Onk66zaFFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760105756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0qW8WvGK9GRf1olcZDAqZ9ZDNuJrDZDc0ZIlfNsJTgk=;
-	b=w8vcmEYd/3HGBg1uKBqGH2stOvZsUv8ZN88xjNO9qoueNVdbQFGExRWYqiJZkOP5AvsytH
-	wRRVIKxlAwkPf/BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 50B3B1375D;
-	Fri, 10 Oct 2025 14:15:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SLSyExwV6WjhCwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:15:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 903F5A0A58; Fri, 10 Oct 2025 16:15:55 +0200 (CEST)
-Date: Fri, 10 Oct 2025 16:15:55 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v7 08/14] smb: use the new ->i_state accessors
-Message-ID: <axpsruczzp2xvpckjduswimqzdkfci3hioegogzrz7xqk4oxj2@itxjjeqwkbzx>
-References: <20251009075929.1203950-1-mjguzik@gmail.com>
- <20251009075929.1203950-9-mjguzik@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6+FOKL6vgyVY8yQvYOERenFljLsN/s3wDYmXmZxNrh7/kxA//kueI73GV+6GYgu3XnK197qE7+RWc1oQl8CTIBojt5jARmK28ELV+Y6owbmBfcbFnBbnO1mynQkpjgxag7aoybftJtGwASaXoBK/y47pfbm3V2/8u+Cd5Lix6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KLRMleA5; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760105811; x=1791641811;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=80h6mrAaud97uc9EduYzED8S14ed6d870EpHss4JGBc=;
+  b=KLRMleA5JUxaUPQ58Mqo5+JbDtZI9q9OoiMfzWhaJNCJ2XaBJSiiYEOS
+   UL8WvAQIZ0fmXPVaNsyrsWp+KSyMInv6SM6BqZQ4VlqOIowNHyLb4Xb4G
+   tETkBYVGP6mSOgFt53yplGPLOfrL3ksyzYkiVoGNB0u+cshUBDD5IqZdH
+   1pygJp2QvQuqa5sZNh2ntSQHTCWJvoCbZh98wZAqb2R+f4vNNfmJN44zV
+   0AiDM+WoAVCe1s+u+XP2Zzr8oQdHHuS9eNsgvyZl6wnm0cSOfLbuQY8ja
+   KT5tFq283cJ11RSu6k9msePiIpV2CmO7JKzB/BSFctyi19+cD7QiCA+21
+   g==;
+X-CSE-ConnectionGUID: kCaOFwWVQHCruup70T0aJw==
+X-CSE-MsgGUID: KurIKBROS4ivYAvTdcK3cg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="72582399"
+X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
+   d="scan'208";a="72582399"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 07:16:51 -0700
+X-CSE-ConnectionGUID: 8LBWA8r0S8KeaHF8A8VjEQ==
+X-CSE-MsgGUID: BIOHHL5DRvuQZ8fJ2wR0Yw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
+   d="scan'208";a="186122752"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 10 Oct 2025 07:16:46 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7DvJ-0002qV-0H;
+	Fri, 10 Oct 2025 14:16:45 +0000
+Date: Fri, 10 Oct 2025 22:16:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	linux-coco@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Steven Price <steven.price@arm.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Sami Mujawar <sami.mujawar@arm.com>,
+	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Subject: Re: [PATCH] coco: guest: arm64: Update ARM CCA guest driver
+Message-ID: <202510102121.hLzgHTck-lkp@intel.com>
+References: <20251008132758.784275-1-aneesh.kumar@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,158 +85,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009075929.1203950-9-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: 6C06F1F397
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <20251008132758.784275-1-aneesh.kumar@kernel.org>
 
-On Thu 09-10-25 09:59:22, Mateusz Guzik wrote:
-> Change generated with coccinelle and fixed up by hand as appropriate.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Hi Aneesh,
 
-Looks good. Feel free to add:
+kernel test robot noticed the following build errors:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+[auto build test ERROR on arm64/for-next/core]
+[also build test ERROR on arm/for-next arm/fixes kvmarm/next soc/for-next linus/master v6.17 next-20251009]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-								Honza
+url:    https://github.com/intel-lab-lkp/linux/commits/Aneesh-Kumar-K-V-Arm/coco-guest-arm64-Update-ARM-CCA-guest-driver/20251009-203207
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+patch link:    https://lore.kernel.org/r/20251008132758.784275-1-aneesh.kumar%40kernel.org
+patch subject: [PATCH] coco: guest: arm64: Update ARM CCA guest driver
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20251010/202510102121.hLzgHTck-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510102121.hLzgHTck-lkp@intel.com/reproduce)
 
-> ---
-> 
-> cheat sheet:
-> 
-> If ->i_lock is held, then:
-> 
-> state = inode->i_state          => state = inode_state_read(inode)
-> inode->i_state |= (I_A | I_B)   => inode_state_set(inode, I_A | I_B)
-> inode->i_state &= ~(I_A | I_B)  => inode_state_clear(inode, I_A | I_B)
-> inode->i_state = I_A | I_B      => inode_state_assign(inode, I_A | I_B)
-> 
-> If ->i_lock is not held or only held conditionally:
-> 
-> state = inode->i_state          => state = inode_state_read_once(inode)
-> inode->i_state |= (I_A | I_B)   => inode_state_set_raw(inode, I_A | I_B)
-> inode->i_state &= ~(I_A | I_B)  => inode_state_clear_raw(inode, I_A | I_B)
-> inode->i_state = I_A | I_B      => inode_state_assign_raw(inode, I_A | I_B)
-> 
->  fs/smb/client/cifsfs.c |  2 +-
->  fs/smb/client/inode.c  | 14 +++++++-------
->  2 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index 1775c2b7528f..103289451bd7 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -484,7 +484,7 @@ cifs_evict_inode(struct inode *inode)
->  {
->  	netfs_wait_for_outstanding_io(inode);
->  	truncate_inode_pages_final(&inode->i_data);
-> -	if (inode->i_state & I_PINNING_NETFS_WB)
-> +	if (inode_state_read_once(inode) & I_PINNING_NETFS_WB)
->  		cifs_fscache_unuse_inode_cookie(inode, true);
->  	cifs_fscache_release_inode_cookie(inode);
->  	clear_inode(inode);
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index 8bb544be401e..32d9054a77fc 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -101,7 +101,7 @@ cifs_revalidate_cache(struct inode *inode, struct cifs_fattr *fattr)
->  	cifs_dbg(FYI, "%s: revalidating inode %llu\n",
->  		 __func__, cifs_i->uniqueid);
->  
-> -	if (inode->i_state & I_NEW) {
-> +	if (inode_state_read_once(inode) & I_NEW) {
->  		cifs_dbg(FYI, "%s: inode %llu is new\n",
->  			 __func__, cifs_i->uniqueid);
->  		return;
-> @@ -146,7 +146,7 @@ cifs_nlink_fattr_to_inode(struct inode *inode, struct cifs_fattr *fattr)
->  	 */
->  	if (fattr->cf_flags & CIFS_FATTR_UNKNOWN_NLINK) {
->  		/* only provide fake values on a new inode */
-> -		if (inode->i_state & I_NEW) {
-> +		if (inode_state_read_once(inode) & I_NEW) {
->  			if (fattr->cf_cifsattrs & ATTR_DIRECTORY)
->  				set_nlink(inode, 2);
->  			else
-> @@ -167,12 +167,12 @@ cifs_fattr_to_inode(struct inode *inode, struct cifs_fattr *fattr,
->  	struct cifsInodeInfo *cifs_i = CIFS_I(inode);
->  	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
->  
-> -	if (!(inode->i_state & I_NEW) &&
-> +	if (!(inode_state_read_once(inode) & I_NEW) &&
->  	    unlikely(inode_wrong_type(inode, fattr->cf_mode))) {
->  		CIFS_I(inode)->time = 0; /* force reval */
->  		return -ESTALE;
->  	}
-> -	if (inode->i_state & I_NEW)
-> +	if (inode_state_read_once(inode) & I_NEW)
->  		CIFS_I(inode)->netfs.zero_point = fattr->cf_eof;
->  
->  	cifs_revalidate_cache(inode, fattr);
-> @@ -194,7 +194,7 @@ cifs_fattr_to_inode(struct inode *inode, struct cifs_fattr *fattr,
->  	inode->i_gid = fattr->cf_gid;
->  
->  	/* if dynperm is set, don't clobber existing mode */
-> -	if (inode->i_state & I_NEW ||
-> +	if (inode_state_read(inode) & I_NEW ||
->  	    !(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_DYNPERM))
->  		inode->i_mode = fattr->cf_mode;
->  
-> @@ -236,7 +236,7 @@ cifs_fattr_to_inode(struct inode *inode, struct cifs_fattr *fattr,
->  
->  	if (fattr->cf_flags & CIFS_FATTR_JUNCTION)
->  		inode->i_flags |= S_AUTOMOUNT;
-> -	if (inode->i_state & I_NEW) {
-> +	if (inode_state_read_once(inode) & I_NEW) {
->  		cifs_set_netfs_context(inode);
->  		cifs_set_ops(inode);
->  	}
-> @@ -1638,7 +1638,7 @@ cifs_iget(struct super_block *sb, struct cifs_fattr *fattr)
->  		cifs_fattr_to_inode(inode, fattr, false);
->  		if (sb->s_flags & SB_NOATIME)
->  			inode->i_flags |= S_NOATIME | S_NOCMTIME;
-> -		if (inode->i_state & I_NEW) {
-> +		if (inode_state_read_once(inode) & I_NEW) {
->  			inode->i_ino = hash;
->  			cifs_fscache_get_inode_cookie(inode);
->  			unlock_new_inode(inode);
-> -- 
-> 2.34.1
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510102121.hLzgHTck-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: cannot open drivers/virt/coco/arm-cca-guest/: Is a directory
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
