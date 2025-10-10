@@ -1,120 +1,143 @@
-Return-Path: <linux-kernel+bounces-848146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8673ABCCAD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:02:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5596BBCCAD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93507407C65
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7DF1883D90
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CA32E9754;
-	Fri, 10 Oct 2025 11:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661F52BE7D6;
+	Fri, 10 Oct 2025 11:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tOrdDBBN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IYm9b8C+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="V26/ZUEJ"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD603286400;
-	Fri, 10 Oct 2025 11:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C15B271A9A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760094135; cv=none; b=cnYanpAqACRhT/kmPxhuJqK1eGTR2Fvyyug2NvVKXEr6W3vfOPyGZ/5l8MRI/9yccmi/rDN9aDdcNb+vIrYd27m+wrT7WKxOa88lckOiR9cGiAyUi2ZR/EJYDQ8zP4grZVGUtihjki+g/hFFhd7/E0SAIsqHE4+6DcrAraJwWbg=
+	t=1760094198; cv=none; b=SP/+4zW4GaDi6/Rllfkrf+pZVQUC7x9eMn2f6OqEhXsWtkq/zC4Yv+MA+3aTTvTlsHfRnfDDYWj5zl9lAHwx0YylqGjnQea8Wr6iPA01MwlutDXiqNwPIATX7PeFCVhQZeUjYMvt/ss/SZQrNeKPC+xsday2ECWaYL8g8MCvVDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760094135; c=relaxed/simple;
-	bh=nWv5X8S/qaxTGFYmD5w0ZTLO5xlpB9Ti5yrab9M93WE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0b0BJvdPpklCt9Ap4Zrz9+/hrhLm7jmSDSEiv+ffqlLRZtLmthWcuBGRzf8i6jAQHR3MhV1nrU/BqwDKFyGD1VrjYzuwq6vL/laxNjyBE7Xu4Wbwt82VTSvOkIENOAbD1G6eTxti2zfiFC1Sk30WLA6IVgM7pRlvA9wJlZabBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tOrdDBBN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IYm9b8C+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 10 Oct 2025 13:02:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760094130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nhA87/u2mAPHsYuJYI+0fGHiSpP15kQi52IOFFmfKQE=;
-	b=tOrdDBBNvCKlUjErfcG3nKZa2KG/m0iZROp3DlCYuofno+TyvrWCWMhcNVzvW85skVDL3y
-	MJPk9h7/GVLsgJ7YHebMvhfX7p0FWrF8QHJKYnT785GkdEOQA/HmPTt9MgMMCOwVMryLgj
-	D8JGNjGMoOBh+lf0UnMSc6tevd+64fqQnP0o7fHG/ODe0z3e8FPZjk2VrgT9J7+jI76TxE
-	FHfATUFGbscm+NRglhGB9iDJoE08n31llCNvg46MfFR/7ucEdALESGs0iA84gTEL2MxlG9
-	/8TShf6CZH6eUDTzPHbx7r1utP+tnSqz28DJiJXWKfnhW5YhGvaqADNoEG/v6Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760094130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nhA87/u2mAPHsYuJYI+0fGHiSpP15kQi52IOFFmfKQE=;
-	b=IYm9b8C+jkV+BU3F9UoGH9EeJOPu9RjUQuREwSRqPaSMITLfNps9qyda4LBhRpPYpjddMi
-	0mX8T7/pOjWFhKDQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] rv: Add signal reactor
-Message-ID: <20251010125823-9bcb33be-96b9-4753-8ae0-11576f0e8d40@linutronix.de>
-References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
- <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
- <20250922162900.eNwI7CS0@linutronix.de>
- <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
- <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
- <87ikgxqrna.fsf@yellow.woof>
- <3c55441187b869b5bb07b74ef88c10bfd51f9fb1.camel@redhat.com>
- <20251006115555-9822f5f1-fc9d-4d6a-9735-274b242e0eba@linutronix.de>
- <2536a7777eb54ede40a335fa4204e87301b13040.camel@redhat.com>
+	s=arc-20240116; t=1760094198; c=relaxed/simple;
+	bh=RiCXugU0GUcVOYPMU8exLUXnla8jMSBor0KZb3ZOzMg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=R64aBnFlrHk9yiJ8ouCUupoT5dEqxHYVdDe1A+v/GdONStR1dh1f9X3+fn8H0LNV5EOoRLU5yHmeKkGch5ESt10czb0Au5dN3Xa9cHQ1bFvGfqx1tnVjzguStgw9onXuiKxoiGhrkPyQ8fD4F1cp91myuIQQmkhxYbw8Iy75hj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=V26/ZUEJ; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1760094191; bh=Va2a4D98hjnu9LEgc09fJiZkCEmkyPryN1JxjQF74wc=;
+	h=From:To:Cc:Subject:Date;
+	b=V26/ZUEJ4fEPsdafF5UJ/T4qIqdJusiNFW0QrZ/GZBgCCy3SbPlpAIummWJP6KSpH
+	 VfrW3UbdML3Z/OSSf9IlDIR8X3VwO/OQ5A+PnBuPs+Cg73sQ38vPHcOg3/KYJKfym5
+	 8U1DdmUGcA1deUPA3IDuNMZmzwfyI4cAb2Xb4Z6k=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id C9238DF; Fri, 10 Oct 2025 19:03:09 +0800
+X-QQ-mid: xmsmtpt1760094189th75kxfie
+Message-ID: <tencent_001410A13E4527AF944A2844EC4F54EC2E07@qq.com>
+X-QQ-XMAILINFO: NGZp1yYNf7Y+f2RC3BlwYiizd3prbv3hYezNwInt+laiQwFkK5HXIhSEisvqjc
+	 O5UX/TsKVHDGxK8QJ5/2eNg8WWt2ZbP8GKTX1SmhnAO+SoePYqc5j3PrCLN7rrfvvD4fMGriWazF
+	 Z97zBRuqcQ1xkKUWC1h7oNAPEx7ZAMPac7UrG3UkhTYPWpW6EBLeBxdZQfUcI3mO3/KMDV9wtRtM
+	 Ih50G0DR0WUggFygIiswb7gDbvgTREsPNGw2/7wPoMeNm9EEWc7k5yu2mzu7oYlzaEGPvjVYL+93
+	 aSPIIyh46YVkngiKw0R8Xvl+H3oQ47KzS2zBi+Nsi5sEISt760YfRWuSf+EKpYRblIOpVDhnlfZB
+	 0OTkEca41NXOk4qaLmR+3bIs6HnTaKcRDLXtvlEjdnApqGAUNe9BONoTCsck4M3qF8vvWhcsfDhb
+	 okvTwmp+Oj/B2kns2UhpPScMxIVgpWqqYO9otzeSQGRF5gP+w6wqN0bcZ15nUptubKGpGvYjSPtk
+	 C4SEUYWIW83i4jmKW+REPzwVNuLizOSc0IpzDiiG9XjCjkjCHFhLLNkPtH6tAHc+TdvRCpPhgBHs
+	 vlj41Yn1x+ETbzsaHfJCP386d0Ja/KqUr1NISzkfC/nrvBSWho3URHe5UTBn9Fwd7nqP7FN5q6Uc
+	 6COXDBfBzQmYBcuoTdv64nv1it2EAQ82JNBEC7ITE/ziuh2pHQWvUwCeP0oR1706puEbccuiNGPt
+	 Pj1yDtc50DG0GU9a8SrONYZ1YACBWiIbId9H16rjRqKAVCAS3kAuz8ktyDTmIoJPASrpAZ6MGDAy
+	 zvq9JCGDZ+JAyfToZ2luGSL2HXWKnu69qjg5W/BEVDqZGfEtTLI4B/MWGT3dVOhWBsE8BMoAPdM4
+	 SrSY2DX3avIpde27emxwXm47mdH6Fnc9aNWSuXuKOeW7lJVWdBQUm6HMPk+VZGjnLnQpLc1dnIu9
+	 uvkrkJbZkVXvpyARHZ8C+N5B8apom4r84T4waZaGw=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: 2564278112@qq.com
+To: alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Wang Jiang <jiangwang@kylinos.cn>
+Subject: [PATCH] drm/radeon: Solve the problem of the audio options not disappearing promptly after unplugging the HDMI audio.
+Date: Fri, 10 Oct 2025 19:03:07 +0800
+X-OQ-MSGID: <20251010110307.226431-1-2564278112@qq.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2536a7777eb54ede40a335fa4204e87301b13040.camel@redhat.com>
 
-On Mon, Oct 06, 2025 at 05:19:24PM +0200, Gabriele Monaco wrote:
-> On Mon, 2025-10-06 at 12:10 +0200, Thomas Weiﬂschuh wrote:
+From: Wang Jiang <jiangwang@kylinos.cn>
 
-(...)
+The audio detection process in the Radeon driver is as follows:
+radeon_dvi_detect/radeon_dp_detect -> radeon_audio_detect -> radeon_audio_enable -> radeon_audio_component_notify -> radeon_audio_component_get_eld
+When HDMI is unplugged, radeon_dvi_detect is triggered.
+At this point, radeon_audio_detect is triggered before radeon_dvi_detect has finished (which also means the new state of the connector has not been reported).
+In this scenario, radeon_audio_detect can detect that the connector is disconnected (because the parameter is passed down),
+ but it is very likely that the audio callback function radeon_audio_component_get_eld cannot detect the disconnection of the connector.
+As a result, when the audio component (radeon_audio_component_get_eld) performs detection, the connector's state is not shown as disconnected,
+and connector->eld is not zero, causing the audio component to think the audio driver is still working.
+I have added a new member (enable_mask) to the audio structure to record the audio enable status.
+Only when radeon_audio_component_get_eld detects that enable_mask is not zero will it continue to work.
 
-> > > For instance, what's the exact use case of the signal reactor? Isn't it
-> > > simpler
-> > > to do everything in BPF? Is the signal needed at all or something else (e.g.
-> > > perf) would do the job?
-> > 
-> > The signal reactor is convenient to write automated tests. It can be used to
-> > validate the monitors by triggering known-bad systemcalls from a test
-> > executable and expect it to be killed with the reactor signal, see below for
-> > an example.
-> > On the other hand it can be used to validate that the kernel itself does not
-> > regress with respect to RV-validated properties. For example the test program
-> > can enable the rtapp monitor and run an example RT application using all kinds
-> > of known-good IPC mechanisms without it being killed.
-> > 
-> 
-> Yeah, what I meant is: having a signal isn't your goal. Easily understand if
-> there was a reaction is.
-> You could even restructure your test using tracepoints without any signal.
+Signed-off-by: Wang Jiang <jiangwang@kylinos.cn>
+---
+ drivers/gpu/drm/radeon/radeon.h       | 1 +
+ drivers/gpu/drm/radeon/radeon_audio.c | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-Agreed.
+diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/radeon.h
+index 63c47585afbc..2d0a411e3ed6 100644
+--- a/drivers/gpu/drm/radeon/radeon.h
++++ b/drivers/gpu/drm/radeon/radeon.h
+@@ -1745,6 +1745,7 @@ struct r600_audio_pin {
+ 	u32			offset;
+ 	bool			connected;
+ 	u32			id;
++	u8			enable_mask;
+ };
+ 
+ struct r600_audio {
+diff --git a/drivers/gpu/drm/radeon/radeon_audio.c b/drivers/gpu/drm/radeon/radeon_audio.c
+index 8d64ba18572e..a0717895cc8a 100644
+--- a/drivers/gpu/drm/radeon/radeon_audio.c
++++ b/drivers/gpu/drm/radeon/radeon_audio.c
+@@ -212,6 +212,7 @@ static void radeon_audio_enable(struct radeon_device *rdev,
+ 	if (rdev->audio.funcs->enable)
+ 		rdev->audio.funcs->enable(rdev, pin, enable_mask);
+ 
++	rdev->audio.pin[pin->id].enable_mask = enable_mask;
+ 	radeon_audio_component_notify(rdev, pin->id);
+ }
+ 
+@@ -274,6 +275,7 @@ int radeon_audio_init(struct radeon_device *rdev)
+ 		rdev->audio.pin[i].connected = false;
+ 		rdev->audio.pin[i].offset = pin_offsets[i];
+ 		rdev->audio.pin[i].id = i;
++		rdev->audio.pin[i].enable_mask = 0;
+ 	}
+ 
+ 	radeon_audio_interface_init(rdev);
+@@ -760,6 +762,9 @@ static int radeon_audio_component_get_eld(struct device *kdev, int port,
+ 	if (!rdev->audio.enabled || !rdev->mode_info.mode_config_initialized)
+ 		return 0;
+ 
++	if (rdev->audio.pin[port].enable_mask == 0)
++		return 0;
++
+ 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+ 		const struct drm_connector_helper_funcs *connector_funcs =
+ 				connector->helper_private;
+-- 
+2.25.1
 
-> So if I get it correctly, you are both "voting" for removing reactors in favour
-> of tracepoint-only error reporting.
-> Am I getting this right?
-
-No, it is a suggestion for a cleanup/optimization where reactors are not
-directly called from the monitors but instead from a tracepoint which is
-triggered from the monitors. It would decouple the monitor and reactor
-subsystems.
-
-
-Thomas
 
