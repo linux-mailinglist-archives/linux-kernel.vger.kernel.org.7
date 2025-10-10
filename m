@@ -1,235 +1,188 @@
-Return-Path: <linux-kernel+bounces-848239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4C2BCCFDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:49:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4F8BCCFE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1431C4F179A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A1F3426E6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27B12EFD9F;
-	Fri, 10 Oct 2025 12:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772B32F25F3;
+	Fri, 10 Oct 2025 12:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cw+mD3lQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X7LVzkzU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cw+mD3lQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X7LVzkzU"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="behOat92"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011062.outbound.protection.outlook.com [52.101.70.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C97B2EE617
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760100531; cv=none; b=t8WcwmXevxiL/8fOao6CrDwhcDd5An6MvQfd4nsHy1w4vO5uOk7JyLW5yYkW3GIl57re1tfw+Z+f1NePc/8UlJdzauR48cG6dqEFwF5H0VORmYZlSq3Y7Balvc5Hi2blNKV5byAwz5YWLDw2JklH18pa5F8KOvbpSwF5XfbaUT8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760100531; c=relaxed/simple;
-	bh=N1+yDWTcvP8w1JxXGMNph1gBa9q47mbzc2toHVbSUI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=csde7QqFjtmIRvhxcif73zEaepIooAb1DwByiNwAhO4SkBYYLPjWKG6QJlKymOqnp72gCHuLsHyFqw9nDZtsvUj9yGfYzreeO10r+Sc2tEalfoavCYx0+Hjn6MN7amuq7PcnLKOLg+OHbWUHb8IjBokg7FqIPjK0ymzwKwNoecA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cw+mD3lQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X7LVzkzU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cw+mD3lQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X7LVzkzU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5C14C21286;
-	Fri, 10 Oct 2025 12:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760100526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2DWhJpAvXNt4nGU+zHS2kg0wKNnrOVaGhcDqNB9SnGw=;
-	b=Cw+mD3lQSfjtcU67FOtqzm5CefE22ZmxqJmO4CNuHknEKRL9PVnsL2xXPHc8z6CDU/imkF
-	St1Dzjoxn+nh+nHIbVoWbeTCxVNszJI5Sm6px/YOffWq6gvBgH3YYbMFgk1sxukB8uBkqU
-	rw/8DQwIs482W5EBay7Wd5oGn3Q/OWM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760100526;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2DWhJpAvXNt4nGU+zHS2kg0wKNnrOVaGhcDqNB9SnGw=;
-	b=X7LVzkzUlRR5FaQmTI+inzg/5S0RNFQviraVnjRA/Vb436LZfNyajmiwNEofTAeeK4OxII
-	zLpVFDD9RgjpRGCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760100526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2DWhJpAvXNt4nGU+zHS2kg0wKNnrOVaGhcDqNB9SnGw=;
-	b=Cw+mD3lQSfjtcU67FOtqzm5CefE22ZmxqJmO4CNuHknEKRL9PVnsL2xXPHc8z6CDU/imkF
-	St1Dzjoxn+nh+nHIbVoWbeTCxVNszJI5Sm6px/YOffWq6gvBgH3YYbMFgk1sxukB8uBkqU
-	rw/8DQwIs482W5EBay7Wd5oGn3Q/OWM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760100526;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2DWhJpAvXNt4nGU+zHS2kg0wKNnrOVaGhcDqNB9SnGw=;
-	b=X7LVzkzUlRR5FaQmTI+inzg/5S0RNFQviraVnjRA/Vb436LZfNyajmiwNEofTAeeK4OxII
-	zLpVFDD9RgjpRGCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 428AE13A40;
-	Fri, 10 Oct 2025 12:48:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XkbGD64A6WgeNwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 10 Oct 2025 12:48:46 +0000
-Message-ID: <63bbcf0d-5a02-4eba-8fc1-680eeb4e09cb@suse.cz>
-Date: Fri, 10 Oct 2025 14:48:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3F22EF652;
+	Fri, 10 Oct 2025 12:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760100535; cv=fail; b=PXjjcPBjCik/IDYJDqdt+wwR/zwS+BTeOdjtlWeIScPUD+sIo+3v7ssq+zE31nZxMqEn2gxuv/bKyki6Xfc6GKDsu7fQBT/u6RJVOHdYe29H4EN2J9ttdpk59dsyde8xy11D4DxrnEiH+aptoDY4wgfl2GF1QWf7og/u0yFNJh8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760100535; c=relaxed/simple;
+	bh=Z5jJEF4NyIsXC8cKBK1m/nJ4RM/6Yf09W5MsgTd2kLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LJUtK7CKXhb/OCw9fhTgomoH2pa8kDLMadzMi+dwdW7cnlcOF7EkXGy24lycUxLBTrfHF4zJyvMOscMybGWila8aYAP6mllgikHq8runtfce39/vSCVr9kpkbvN01s8ghvEjtK9mdJVlJ0WbxYGdtUO15q891wbCrNqkf87p3e4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=behOat92; arc=fail smtp.client-ip=52.101.70.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gwMaIFx4XJpteLfliClRxUdloXFpRL8NvZYSmzQgtgdIf6Ip/x8SnI/Z12ewqNYewWKFXdfXNHiUpjlSluLvBC4Mfcuv7om+vmU6GAvalQIUmlDo2Yo9Kbiap5Xwe44WXi6wZrO7WEJXxIBpy2m7ecI+Yy5X7KM8S6+bWsh9HEQ25bGm/ZrJAH2WHDfLqy2DvU4eAV9zqVAjFYXigDSOZaNI1WoTh0bKab9R+SgAPf9amW1LCQCCpBccv19ZrQB8nD5xCtrYFJpa4WpGupxBUQ3vp2Kez4Y96K0cYjB3OZug1FnAIiacP42U/FJCXqJE5DEmIQxnM1Ogqu2hgpgYbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7f4BEGZW0+5/RYt4U5KEFf0UIwJgSCIV9EUt5H3Tom0=;
+ b=TvYEKWrjMr0nPVXSDwMGkSs/s7LbDxPyT8SRCP23bEVVhW2TmAs8qT+JnOIqSmXRI2AdHxv/8Va/upUN8FL8cFq2BIvh989S81fNiT52VHJIBSdlYUfw90S6SZcFZxZEMQ6tt1mlCXHfl299TAPwfIYzkSwBwRvYaeFNJ6UZcPgarHJsCFjsM8L6CNsNbKctNyDnv7JniMk+pA8LYVzqCLpJ5/5hAvPw9m2rzUiA1Im2K+FBzxyRpvqIi9nqBe0b8TbNbsJ8vafaACg8SYIJC3Rqffw4lzJD5rDPSQe3HJ0RING/jVX4FbrYC8x1jClTEtoZNPlCAOt77y5Z93hR9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7f4BEGZW0+5/RYt4U5KEFf0UIwJgSCIV9EUt5H3Tom0=;
+ b=behOat92ZZTaGyo8Chl1tfzPvrUVjqkVVJvLZ13fhSrBtu4ZTnJQ2FgLw+C9be6A41SuWHGpVCdOOKxGqpOmHGwkkJ12iBh6gNwVpnQ/E+nN/d9VcHfpErWmcXVLR3F7YMSc0RwwGHWdzIHq/gNXvESk/z1v+ZAWduL86Q2uR3UdSNFgUCyXmrYepnW3RV6dzMIhHKUFPWzTueYiwYhWenUhV3l2reVrzbkrXOZrcOMY7P9vIOSYiVFfugyEZHOPBS5QInU+IQLHIsca37e0fYdyPXyIKKH+fGaCuCkLGsvawoD7f4VPH8+MRnEL6DDJdezxZ4LUj9MIVV3HLnXQcA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PA2PR04MB10132.eurprd04.prod.outlook.com (2603:10a6:102:407::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 12:48:49 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::b067:7ceb:e3d7:6f93]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::b067:7ceb:e3d7:6f93%5]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 12:48:49 +0000
+Date: Fri, 10 Oct 2025 15:48:46 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>, claudiu.manoil@nxp.com
+Cc: xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	Frank.Li@nxp.com, imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: enetc: correct the value of ENETC_RXB_TRUESIZE
+Message-ID: <20251010124846.uzza7evcea3zs67a@skbuf>
+References: <20251010092608.2520561-1-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010092608.2520561-1-wei.fang@nxp.com>
+X-ClientProxiedBy: BE1P281CA0064.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:26::12) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] mm/page_alloc: Batch page freeing in
- decay_pcp_high
-Content-Language: en-US
-To: Joshua Hahn <joshua.hahnjy@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Chris Mason <clm@fb.com>, Kiryl Shutsemau <kirill@shutemov.name>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
- Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel-team@meta.com
-References: <20251002204636.4016712-1-joshua.hahnjy@gmail.com>
- <20251002204636.4016712-3-joshua.hahnjy@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251002204636.4016712-3-joshua.hahnjy@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA2PR04MB10132:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21f0d591-1f95-4444-6999-08de07fb5bf8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|19092799006|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9hLaI+seJzXokIj1deNwMiufL3zEX3RRk92CZCQGVIvwb+9Vhat6JjBzpX1O?=
+ =?us-ascii?Q?WI7UAdaRwksLOHc9HOZtFVrYcAKVc9k2Ul4va94bPE8c890auOs08261t2Z5?=
+ =?us-ascii?Q?dznVL33Enbo5/E139AUqt0gCmhDfM0r9R+vTWdo/k/8LVGOn58TXGnca3v8W?=
+ =?us-ascii?Q?h867CIb3uPcPY152p3o0elWUx0xtWpccmZezCXkgo0Sj+OycDxkNPPI4ej5f?=
+ =?us-ascii?Q?ntEosRcrjALtrjlXNVKdaWZPKklyZUGufh4889VKwmppFCvsy6nHc+iwby3p?=
+ =?us-ascii?Q?Jbt6/bx/QfOrpZNC0OWoSqI8pc9EHzUSaipGSsVXnqKYkIjorySUM+LbemsG?=
+ =?us-ascii?Q?ITysZ+iciqJZsRuwodv2Eb+jvpVvXT6tgcSt9MTZlQFqF++vZFYmz0+4e2oC?=
+ =?us-ascii?Q?jfjtfQzQtUBDGqW24ddpFmXrP2RMD76I+0HGYd6YOvwwXtZHcd+DsAmScA1E?=
+ =?us-ascii?Q?VfjSzbHOT+D/UFvTk3Ub261Ie8tzEzfRL2amH3p8I6HkpJlOeUKl4u8aDRWz?=
+ =?us-ascii?Q?J3kZxpCkU+AOwMmpWNJAPGlVtHvjBHZONa30KDWLRi3fz6YIyj3gXPQyro9c?=
+ =?us-ascii?Q?guWrzxFmRITUAME3XMHCR7XduIyKZWp8xjq1sO/GRxHimGSGUwz5w/LMGax3?=
+ =?us-ascii?Q?NIBvQ4XMjZYvxMXhHiE1r1l7+R09CC/3jkKZ8gm6P9mRGXH6jVURBU/xbGsM?=
+ =?us-ascii?Q?gLRNRPrBQjOFmHzgJPrunrPNSyd8mypXUxv1/tYKh3oJ4kyAmr5sJX1+jVS5?=
+ =?us-ascii?Q?WWzWoYQMDdeo8XNBIMzf529DEU2JHnuKV9fkDK+dEl5dhzLeWxGlJTzwx51q?=
+ =?us-ascii?Q?dNOS9hUNgelX1DLXtjTHgN9+ZR62ldcqxUaVp4HCPHo5OYsi61ZcapKRWecM?=
+ =?us-ascii?Q?/l7rAPtguuEsiaVvIDx5jCE9mJmuugFndSRvRf/Rbb0uWgbMoBJRbUI9uZGL?=
+ =?us-ascii?Q?k2pbUFRiIIJNpSFrnKahB95EPmAFoWF43h+7gdSnfPAnGfFm+cgHYdA+mCTt?=
+ =?us-ascii?Q?8x8paJWa/DGUi0ElMHS7ZGGb8zsgpyRuC+5As+GJmSP0yQXt/vB5IEwnQ4Ns?=
+ =?us-ascii?Q?od8ERM4Ni5AhdHK46y8ypWaRbIzYefr4Cx3YvpKwhZjaVCMOTy/mH8Kq21uJ?=
+ =?us-ascii?Q?kKswNOdHpX+bdLXeH9qkBcHGgDwMSeXMI0Afu31jcxsMhVmt2U9Oz6rXPecf?=
+ =?us-ascii?Q?09RRTJI2P31OxYBWi5LlCi6lC+lgxu+a7JKEmCNxcK459ItuLRq/aPtVJksC?=
+ =?us-ascii?Q?HuF62My5WUkT6cUrm9Awvny2puHtVZdM/fe3NGjk1dyQMhEC3f97su/sg1Yq?=
+ =?us-ascii?Q?1t7578TSVlkNtH0pDFo96VLh63xU19WKkUd7ITomoHvduGNnpW/MjlNgS6Pn?=
+ =?us-ascii?Q?ukl3JN5Wdwa3ff06f8RHp0w2ARs6kSoGTezzXou0h9fNySCP7PMPFJOQyvZ5?=
+ =?us-ascii?Q?G8Iv4ZkxrvmEKbWJXDB6w9wBkgsNuYlu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(19092799006)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xLUBhpWsfjXyxUDz+/hJorYHtaeTCu8BtYVMxMhIPg1SBLQ0Z5WENJVZ620V?=
+ =?us-ascii?Q?XVJ1lBCxmlTlTpJIkn2/zM0eAtOQbrqLgQnJBOgCQCXJCShRTssoOWAT5fu4?=
+ =?us-ascii?Q?kifQ994XhPlCUKeGDG10oiB0ike2KREL2cbnbQWrabCwVdDFTgyLj5XsZOQr?=
+ =?us-ascii?Q?iTRSmPlwaUDF/1TYeGPMoMSVmGUjfI+5rcOkt9ajg61xM4goHxk0guFnPmTO?=
+ =?us-ascii?Q?MPTxtX+L6qpeYf8FvEdbxpgf6ANmypHfDHXZHn1Yfu7d8Rj08iPCE44JWdgD?=
+ =?us-ascii?Q?O4b4njzQPpZUsUpmSaereGk2i42asAd94zSZxvMRJFRZSKs5sxItd2KQ1FwX?=
+ =?us-ascii?Q?eXDu6t8sIvGB+O3odjiySTc4JMwZ/Dwdp7/aj8PhPX2Qf8rZFzM8I3iUPHp8?=
+ =?us-ascii?Q?8xyD/oe9KneZeadp+XB682/8sHllX2zW0oZqcNru+7Sljuxd5VaMZ4JnPgOV?=
+ =?us-ascii?Q?CV2feYyy6k+EssSNCUqWE4opo/ST502JhGePVKR+AVKbCuO1X90RALoN5ykr?=
+ =?us-ascii?Q?8PG1uXKwS7j0ZOd76K8EqdC6ahY+W56IWQRErlbEQ68HZaqij9x3DqAyHivc?=
+ =?us-ascii?Q?5faiBe5o8sB4jsQJIjzyUoXvrH7R+Y0iAW7uKMKhUX5N0qosbiT3PrCd3soH?=
+ =?us-ascii?Q?+Iqr+C0t9uQfze7vbTtQaNPiIQEfrYKsSeJYUWNvKtV5XGmXAGAgBDQ2s0eh?=
+ =?us-ascii?Q?4U2MXogkc1mH81es04WzSp1cAcs0s27VnmvwxHpk2Ai8YPk36+DQsamHgkcM?=
+ =?us-ascii?Q?POJJgWwglMKtHgN3L8nD2oZwKKMHv5PuHDFO2VMm4doFhKh1WcrDJjSo76Bj?=
+ =?us-ascii?Q?6TsqNbefTOnG1oiz4kJgEybWOJ5bDVM3mVqytP94ENrWRgQeh43Vtl5V5z2x?=
+ =?us-ascii?Q?lSblOkMYq8lfDABrXfFJ6GR1OXHUQPh++YPOLVOq0PmKuDllY3Jwwn9pP6XG?=
+ =?us-ascii?Q?Ewtb+U7/JM+oxAGqAr2HMfticZv//SaazNEuhhgYhMczSHdPI+VMf+7+litw?=
+ =?us-ascii?Q?75I7eziqEtfJqGDJlErsxJHDPcA/rIkj9px9G5qhQQgVEO2b65auSwaBGHpO?=
+ =?us-ascii?Q?a3RgibeHBHtJuhmx5EWovQVbZ+ZjCj+RFCN9EPga1+88kaEA7QAJ2D4udBzc?=
+ =?us-ascii?Q?wfhQvPpiRZgmrqW9WaY8xYjfPpsKAdhrepFLlAx5n6IBFQRFBVblKOXaZzxG?=
+ =?us-ascii?Q?l4S1NpylI3YAJ39H3Mg507+D8J1GhzpiSU96b+eTKVdGu9dMvpcQOgYLR+AF?=
+ =?us-ascii?Q?QZuPrmXiwLIySFbKyMIsTuFTZFl5xrxt9R0KG2IzeM/P+00frNuoYa1AsNkL?=
+ =?us-ascii?Q?IFFVhgYCUDNG2ficjdKpP8LsebFbxGbZhDy11wYBqKV/KVq3fGcNplgZaQb7?=
+ =?us-ascii?Q?dKcaYzEWdYk0ZIpnqM9BPI8bJ7TOKnxpZM9GjVXx2x0T2LuDO/hmIpjNzEIM?=
+ =?us-ascii?Q?nwNSZVoJlNz4TTXopv7jSTEyztNj8xDIFlOGdgAKMj+s+dD9Hy/Xzb28F/p5?=
+ =?us-ascii?Q?tjwog1rkoFjPCc3Ivi35vkmGTxZUUFC2jrGzFMOSnH3Dix7GgHNQ1Wy8x+eU?=
+ =?us-ascii?Q?zUsTNW7Y9k1xwW+rzQxKrIGl6hbCvqIDu8AKeAc5pu7YXh0lTWiNWun4qjA3?=
+ =?us-ascii?Q?tRhlr9ISftXp9eUMCktV5haOR+H4JgAwls8bd2KoC+nn+Y5EJx2JZ/x1kD5L?=
+ =?us-ascii?Q?GiF50w=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21f0d591-1f95-4444-6999-08de07fb5bf8
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 12:48:49.6644
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K1T14kCYn4V4tmU40kWtNZkyGBZqHb3kxzIv2J4xEPBGNKYuFpAaTYaPgiq7FSy8cdMIXLDIRGBGB3tQOFQU6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10132
 
-On 10/2/25 22:46, Joshua Hahn wrote:
-> It is possible for pcp->count - pcp->high to exceed pcp->batch by a lot.
-> When this happens, we should perform batching to ensure that
-> free_pcppages_bulk isn't called with too many pages to free at once and
-> starve out other threads that need the pcp lock.
-
-... or the zone lock.
-
-> Since we are still only freeing the difference between the initial
-> pcp->count and pcp->high values, there should be no change to how many
-> pages are freed.
+On Fri, Oct 10, 2025 at 05:26:08PM +0800, Wei Fang wrote:
+> ENETC_RXB_TRUESIZE indicates the size of half a page, but the page size
+> is adjustable, for ARM64 platform, the PAGE_SIZE can be 4K, 16K and 64K,
+> so a fixed value '2048' is not correct when the PAGE_SIZE is 16K or 64K.
 > 
-> Suggested-by: Chris Mason <clm@fb.com>
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Co-developed-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
+> Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet drivers")
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
->  mm/page_alloc.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+>  drivers/net/ethernet/freescale/enetc/enetc.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index b9fc357d2d48..f525f197c5fd 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2559,7 +2559,7 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
->   */
->  bool decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp)
->  {
-> -	int high_min, to_drain, batch;
-> +	int high_min, to_drain, to_drain_batched, batch;
->  	bool todo = false;
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
+> index 0ec010a7d640..f279fa597991 100644
+> --- a/drivers/net/ethernet/freescale/enetc/enetc.h
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+> @@ -76,7 +76,7 @@ struct enetc_lso_t {
+>  #define ENETC_LSO_MAX_DATA_LEN		SZ_256K
 >  
->  	high_min = READ_ONCE(pcp->high_min);
-> @@ -2577,11 +2577,14 @@ bool decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp)
->  	}
->  
->  	to_drain = pcp->count - pcp->high;
-> -	if (to_drain > 0) {
-> +	while (to_drain > 0) {
-> +		to_drain_batched = min(to_drain, batch);
->  		spin_lock(&pcp->lock);
-> -		free_pcppages_bulk(zone, to_drain, pcp, 0);
-> +		free_pcppages_bulk(zone, to_drain_batched, pcp, 0);
->  		spin_unlock(&pcp->lock);
->  		todo = true;
-> +
-> +		to_drain -= to_drain_batched;
->  	}
->  
->  	return todo;
+>  #define ENETC_RX_MAXFRM_SIZE	ENETC_MAC_MAXFRM_SIZE
+> -#define ENETC_RXB_TRUESIZE	2048 /* PAGE_SIZE >> 1 */
+> +#define ENETC_RXB_TRUESIZE	(PAGE_SIZE >> 1)
+>  #define ENETC_RXB_PAD		NET_SKB_PAD /* add extra space if needed */
+>  #define ENETC_RXB_DMA_SIZE	\
+>  	(SKB_WITH_OVERHEAD(ENETC_RXB_TRUESIZE) - ENETC_RXB_PAD)
+> -- 
+> 2.34.1
+>
 
+I wonder why 2048 was preferred, even though PAGE_SIZE >> 1 was in a comment.
+Claudiu, do you remember?
 
