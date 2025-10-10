@@ -1,199 +1,285 @@
-Return-Path: <linux-kernel+bounces-847850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAE3BCBE2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:13:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90774BCBE38
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EBC3B7F8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:13:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53F104E164A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B7524466D;
-	Fri, 10 Oct 2025 07:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6EB242D7C;
+	Fri, 10 Oct 2025 07:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SABTPONg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zJKpNwev";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DRYvxN0h"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBAB257431
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92BA15E90;
+	Fri, 10 Oct 2025 07:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760080411; cv=none; b=T91Zg06Zr8TIffLvvFih+kRJxon23hWYz7lR/IjL1aePAGkqiIWAnmWnm8DoqctFwvtMYtu64OD/rFIwMN3gjxDCBf/Xwy0gJnYTPlCptaG51vub+ePrWsUzTIJ2qLIPKN97GdlNjIdlqIF2s0JB+MxLmlNRsCy54t8yY8vS8Io=
+	t=1760080560; cv=none; b=TpGUk1aIqLu9P+XsBOmWoWy9L5EyHrsZoe8AvsTq+grMAzRnMnlYM8ENTd7ISaH0q9/nTdyzvv5y3+Ds3qa/o/gc+0y7JHq8WItXUWceLb2SCKAZdD6ZBXifpLt/BHi1/wB7FngfbilA4BINUcGO5xKlDA2xE6t/liM6QqSay0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760080411; c=relaxed/simple;
-	bh=ts9kOQV52xX2ipkuJDjIaYy4QbG40eTx4UG+9BV7Wxc=;
+	s=arc-20240116; t=1760080560; c=relaxed/simple;
+	bh=dRoOPR29iySi0tptZHIOHY6lhyS+1YJkli0s3czvg+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCRAeUxrtHqk0b3uAIVDFG0DncyuL59ACIAWITkoHUaTfDUhtfbTP8iPuObo/JPWfi+qIl+0aCZUGLycUm6q/hXh3etsjXNMA87iWJ/ZUVPy/ze4bNZXK/uRB99mgrq9ASy+yCh3vgG1hGXeF8zZfSbhuHbE7s7XT/rG8KTAXLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SABTPONg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6Wx2I032492
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:13:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KR/Ios316oNkK2GJ5MYH0w1E
-	L7QWbrsGiZOp+JqAuJE=; b=SABTPONg6XJeCij2J5BfYfXwx+rYlvoIyOjXwfay
-	h2M6Y5GAmx8to10ygS2uH9EzQhp2qsbWU3wf2EF9++qhsNaAEc7hLto+3FgQPEti
-	v3IyZK4QKThOmgKLq0zDuf42DO4xBKc5Tr4BVbuMBcNyaKFdzP6eSegBxspSnJYW
-	s+hhBHWb43B6O4Krdf8XaLuwywdkMr6yGwAR7Odn9OKyUbER10lycwq8aORZetV7
-	YyibFS+AubM9r/EqqymE8UNtxrqU1VrqzCmMnLT/WHxs3/valwN0BaiGW/x2/zLQ
-	P6l4jDoZSW+uLZmJVM8DG2cMxyC84JFZMwzEvEH1k7zt3Q==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4kwfer-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:13:28 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-27eca7298d9so81833565ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:13:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760080408; x=1760685208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KR/Ios316oNkK2GJ5MYH0w1EL7QWbrsGiZOp+JqAuJE=;
-        b=mXY+ZD+Iq3lddGNcqMQLYGdaBWaE+TaQdFgIjqIUKBVypalOtnAcPyU2VxD417JQOF
-         KZc4p3LzGeSQ6Rs9LF3jDK7dERkcAf3POZ+0mWMxPyXHV6JKvJmSRCp/y1SSTXfxTr9S
-         5iuqFPXtjPTKoGivqGk7ca91BeGPcdhQaoaRDzCGN2wzQqXcURBZ9SCV7mrG5U2WiTSn
-         0tSzc+QC74YhnwXvvTZiPUgPrTfFzCAUWjbLS9ofaXtj02YmNcV1CcOMpQluRzCd8owc
-         64BcK1FpvYSaDsXnzC2ozP90K9a/YQp6KV18/3HO+jiw/rgj17a4vj4o5ZEN7ezdIFDn
-         d5pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi0cQbukYY4c/nxRIT9cPRHOgJK3DsVPgxWbiAUYg0r4xQn/XUgN8YAWXUw2f1121F2hRnBvhEUOG0ckE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmDRpjJRCAJH3ADY4Ndc406ORy/dq5IU6vXwVh+IN30Qgq8wEt
-	T/BLsoWHaHu1zy+AcqU05+pDaqDciuKRASGl5S1S5GFNMSjZrj/T7IPgZiP1RnMuGlJDdBTR8Gk
-	iEABKxJz0G9+80uTwvKleIFGwdANLctjuXD7jTTicDuhm2LS95Gbg4fOTPMFC3rvSeuZZh7uRAR
-	qxaw==
-X-Gm-Gg: ASbGncsSOu/cAytfkbebqllTuX4F0MaMmROtTbDLyaVpRnyn4HKI33WzwTS+VgjboyY
-	G8tFfsDlSqyvkSm0gmW5UpxNtzr1bU0vfp4a2gcuW4gwSlHsJkFX7y3uuk9DU7VCNByuwot7nB/
-	i0RDUVg+8iY13GMM9jdRA0dzdmD7ODc/SoCV7g4oYeZIQXxYSyFypiT+lojFMAueWQ82TSjvB7J
-	9C8eniupcEbYOtVK8XjvbM7r1IY6B45cR45yaFKss0cpYLbmPPrkR/u876goFgeP080baTcbke6
-	VZeySittfMx7mhwrosab5sCAdDw2XDBiVU4wKUYPw4ajJnd/2GBZeJROGV1qWCTL16chvFtZ0Fr
-	HOT1cDD8uHNI=
-X-Received: by 2002:a17:902:e94e:b0:26f:7db2:3e1e with SMTP id d9443c01a7336-290273ffbe6mr131256125ad.47.1760080407483;
-        Fri, 10 Oct 2025 00:13:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZomklByII8D+XieFuJ2V77oyKee3Dzlu5Ztu8yLBuVQK2BdzUtqGP5w8pf/EdEOpW5U1eww==
-X-Received: by 2002:a17:902:e94e:b0:26f:7db2:3e1e with SMTP id d9443c01a7336-290273ffbe6mr131255795ad.47.1760080407019;
-        Fri, 10 Oct 2025 00:13:27 -0700 (PDT)
-Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e45568sm48077925ad.55.2025.10.10.00.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 00:13:26 -0700 (PDT)
-Date: Fri, 10 Oct 2025 00:13:24 -0700
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 20/24] arm64: dts: qcom: glymur-crd: Add power supply and
- sideband signal for pcie5
-Message-ID: <aOiyFI0gBDh8YwLL@hu-qianyu-lv.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-20-24b601bbecc0@oss.qualcomm.com>
- <qudnwwle62rekkuaeriqhvkvk5xukl4fmkhkzjse5zud37vlxl@gek6nmscgvgs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M7Huy5YOnJ3W2V2n+XxRt6rouDrUSyxhXdXaEaNIy2tzbyErgNwQM+rszft3h7RC/HK4L2r4kTVGvS25/d0T750nJ1M5mZW4RPr+mkXrFs+f0qQPNynt4tqL9Jgz2n1t+/lz8Z3+v7cI40CiVVFrELOT0KvaG0inh4ZUE5WmCeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zJKpNwev; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DRYvxN0h; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 10 Oct 2025 09:15:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760080557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Rp/JfHMIffiimy4DDTGv8kJRHufu9eKtuWQ4rilImI=;
+	b=zJKpNwev0yHJ34PKGzAOecp+Mu9MRZY8nhVl7+uc/mkG4AG5paz9fU31g/FI9cjCjD9wJk
+	IWDPuSv0+7s2oQfS5CsgP4ce62O7AzL2uPr9mtWCAaM2WdNJeT70pbqDH+dtOKHsxnIi8g
+	OvvsdXVhlMKluAQ9NraDjypJfDo/gVN/SrE83THY8HMDvjac5c7SkgpuobVW+cIrgDcLZ7
+	zQ3EX/pQw9WkHMzGsjuYNJHLyJQBlTN1r5ovA6NMFnseS7SbU0y8Qtzkc5Du2xxBxLE0pq
+	k7UNrBX8RMUpSOVUQJaQ60hJCBagwv6yOH6HHuDxmyeWknaJte5/ItouVS4hXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760080557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Rp/JfHMIffiimy4DDTGv8kJRHufu9eKtuWQ4rilImI=;
+	b=DRYvxN0hkH+E9O3t7Xn7E/Kj+AoAN/uYU3ry8ffIZNJHJYAgmGfbwTrCoCMnPMlAIEMmw/
+	uheeLPCqC1RDLWDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+Cc: Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] pci/aer_inject: switching inject_lock to
+ raw_spinlock_t
+Message-ID: <20251010071555.u4ubYPid@linutronix.de>
+References: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <qudnwwle62rekkuaeriqhvkvk5xukl4fmkhkzjse5zud37vlxl@gek6nmscgvgs>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfXxkABml+8iJGr
- QA+t6drF4tVtbaBVEx2aBbrW/xP3sEKeixBmwVJTjVTJgUFn1okLSV2Xfj4RWcfhuexFEDuzXGx
- 3W3bGVFSgxRSi9st/FMLSPIw8dA9WdFJndd0h4Vjr3QgcX1s5+vC1Aic9fhml0gRF+bf/xL1LFG
- VCKu24ayVq2cwnWd3J5HgMbWJ2GflVA2gwrC6js7rmzCBOBbk6Ro5YU9BtxTJnZrk5u7pD4iOO1
- 1tAmpSJgA5M5b2sPsV0eGnQuku267JcqBvz3lsAM5f/y+xwSeBIKwNDhfF53PAoQCQ/mdwiAvx8
- ZfZrKyLVkmwWNE0bAkxzzUZa4mtWFG//sip3rlHK/WEaEXo3XJ57Hs+A2jJ1b2/dXkdBYV9FERf
- be27/zFx8faIQmo4qd3e3snuIkBKng==
-X-Authority-Analysis: v=2.4 cv=CbcFJbrl c=1 sm=1 tr=0 ts=68e8b218 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=CFs5gaHkoshYMbNuCBMA:9
- a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: QDvjAl7bTWnGpDMsAt-S6nkt3VSCmkpB
-X-Proofpoint-ORIG-GUID: QDvjAl7bTWnGpDMsAt-S6nkt3VSCmkpB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com>
 
-On Thu, Oct 09, 2025 at 12:53:24PM +0300, Abel Vesa wrote:
-> On 25-09-25 12:02:28, Pankaj Patil wrote:
-> > From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> > 
-> > Add perst, wake and clkreq sideband signals and required regulators in
-> > PCIe5 controller and PHY device tree node.
-> > 
-> > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> > Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/glymur-crd.dts | 68 +++++++++++++++++++++++++++++++++
-> >  1 file changed, 68 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> > index 3f94bdf8b3ccfdff182005d67b8b3f84f956a430..03aacdb1dd7e2354fe31e63183519e53fa022829 100644
-> > --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> > +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> > @@ -107,6 +107,20 @@ port@1 {
-> >  			};
-> >  		};
-> >  	};
-> > +
-> > +	vreg_nvme: regulator-nvme {
-> > +		compatible = "regulator-fixed";
-> > +
-> > +		regulator-name = "VREG_NVME_3P3";
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +
-> > +		gpio = <&pmh0101_gpios 14 GPIO_ACTIVE_HIGH>;
-> > +		enable-active-high;
-> > +
-> > +		pinctrl-0 = <&nvme_reg_en>;
-> > +		pinctrl-names = "default";
-> > +	};
-> >  };
-> >  
-> >  &tlmm {
-> 
-> so tlmm already exists in here, but ...
-> 
-> > @@ -461,3 +475,57 @@ vreg_l4h_e0_1p2: ldo4 {
-> >  &pmk8850_rtc {
-> >  	no-alarm;
-> >  };
-> > +
-> > +&pmh0101_gpios {
-> > +	nvme_reg_en: nvme-reg-en-state {
-> > +		pins = "gpio14";
-> > +		function = "normal";
-> > +		bias-disable;
-> > +	};
-> > +};
-> > +
-> > +&tlmm {
-> 
-> you add it here again.
+On 2025-10-09 15:06:50 [+0000], Guangbo Cui wrote:
+> When injecting AER errors under PREEMPT_RT, the kernel may trigger a
+> lockdep warning about an invalid wait context:
+>=20
+> ```
+> [ 1850.950780] [ BUG: Invalid wait context ]
+> [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
+> [ 1850.951457] -----------------------------
+> [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
+> [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_re=
+ad_config+0x38/0x1dc
+> [ 1850.952731] other info that might help us debug this:
+> [ 1850.952997] context-{5:5}
+> [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
+> [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_=
+bh_disable_ip+0x30/0x268
+> [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu=
+_lock_acquire+0x4/0x48
+> [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_=
+pme_irq+0x34/0xc4
+> [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu=
+_lock_acquire+0x4/0x48
+> [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_=
+read_config_dword+0x5c/0xd8
+> ```
+>=20
+> This happens because the AER injection path (`aer_inj_read_config()`)
+> is called in the context of the PCIe PME interrupt thread, which runs
+> through `irq_forced_thread_fn()` under PREEMPT_RT. In this context,
+> `pci_lock` (a raw_spinlock_t) is held with interrupts disabled
+> (`spin_lock_irqsave()`), and then `aer_inj_read_config()` tries to
+> acquire `inject_lock`, which is a `rt_spin_lock`. (Thanks Waiman Long)
 
-Will move this part to above tlmm node.
+This is way more verbose than it has to be. The key point here is that
+it is a "sleeping while atomic" condition because, as you correctly
+identified, a raw_spinlock_t is held while a sleeping lock und
+PREEMPT_RT is accessed. No need to paste halve of lockdep's output.
 
-- Qiang Yu
-> 
-> > +	pcie5_default: pcie5-default-state {
-> > +		clkreq-n-pins {
-> > +			pins = "gpio153";
-> > +			function = "pcie5_clk_req_n";
-> > +			drive-strength = <2>;
-> > +			bias-pull-up;
-> > +		};
-> > +
+> `rt_spin_lock` may sleep, so acquiring it while holding a raw spinlock
+> with IRQs disabled violates the lock ordering rules. This leads to
+> the =E2=80=9CInvalid wait context=E2=80=9D lockdep warning.
+>=20
+> In other words, the lock order looks like this:
+>=20
+> ```
+>   raw_spin_lock_irqsave(&pci_lock);
+>       =E2=86=93
+>   rt_spin_lock(&inject_lock);   <-- not allowed
+> ```
+
+=2E..
+
+> To fix this, convert `inject_lock` from an `rt_spin_lock` to a
+> `raw_spinlock_t`, a raw spinlock is safe and consistent with the
+> surrounding locking scheme.
+
+Switching the lock type is a possible solution. It must not become the
+default solution if things like this happen. In this case it is okay as
+lock usage is limited and the only source of "unbound latencies" is the
+list it protects. This is of no concern as you explained it should not
+contain thousands of items _and_ it is used only for debugging and
+development.
+
+> This resolves the lockdep =E2=80=9CInvalid wait context=E2=80=9D warning =
+observed when
+> injecting correctable AER errors through `/dev/aer_inject` on PREEMPT_RT.
+>=20
+> This was discovered while testing PCIe AER error injection on an arm64
+> QEMU virtual machine:
+>=20
+> ```
+>   qemu-system-aarch64 \
+>       -nographic \
+>       -machine virt,highmem=3Doff,gic-version=3D3 \
+>       -cpu cortex-a72 \
+>       -kernel arch/arm64/boot/Image \
+>       -initrd initramfs.cpio.gz \
+>       -append "console=3DttyAMA0 root=3D/dev/ram rdinit=3D/linuxrc earlyp=
+rintk nokaslr" \
+>       -m 2G \
+>       -smp 1 \
+>       -netdev user,id=3Dnet0,hostfwd=3Dtcp::2223-:22 \
+>       -device virtio-net-pci,netdev=3Dnet0 \
+>       -device pcie-root-port,id=3Drp0,chassis=3D1,slot=3D0x0 \
+>       -device pci-testdev -s -S
+> ```
+>=20
+> Injecting a correctable PCIe error via /dev/aer_inject caused a BUG
+> report with "Invalid wait context" in the irq/PCIe thread.
+>=20
+> ```
+> ~ # export HEX=3D"0002000000000000010000000000000000000000000000000000000=
+0"
+> ~ # echo -n "$HEX" | xxd -r -p | tee /dev/aer_inject >/dev/null
+> [ 1850.947170] pcieport 0000:00:02.0: aer_inject: Injecting errors 000000=
+01/00000000 into device 0000:00:02.0
+> [ 1850.949951]
+> [ 1850.950479] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [ 1850.950780] [ BUG: Invalid wait context ]
+> [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
+> [ 1850.951457] -----------------------------
+> [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
+> [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_re=
+ad_config+0x38/0x1dc
+> [ 1850.952731] other info that might help us debug this:
+> [ 1850.952997] context-{5:5}
+> [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
+> [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_=
+bh_disable_ip+0x30/0x268
+> [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu=
+_lock_acquire+0x4/0x48
+> [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_=
+pme_irq+0x34/0xc4
+> [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu=
+_lock_acquire+0x4/0x48
+> [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_=
+read_config_dword+0x5c/0xd8
+> [ 1850.955932] stack backtrace:
+> [ 1850.956412] CPU: 0 UID: 0 PID: 56 Comm: irq/16-PCIe PME Not tainted 6.=
+17.0-11316-g7a405dbb0f03-dirty #7 PREEMPT_{RT,(full)}
+> [ 1850.957039] Hardware name: linux,dummy-virt (DT)
+> [ 1850.957409] Call trace:
+> [ 1850.957727]  show_stack+0x18/0x24 (C)
+> [ 1850.958089]  dump_stack_lvl+0x40/0xbc
+> [ 1850.958339]  dump_stack+0x18/0x24
+> [ 1850.958586]  __lock_acquire+0xa84/0x3008
+> [ 1850.958907]  lock_acquire+0x128/0x2a8
+> [ 1850.959171]  rt_spin_lock+0x50/0x1b8
+> [ 1850.959476]  aer_inj_read_config+0x38/0x1dc
+> [ 1850.959821]  pci_bus_read_config_dword+0x80/0xd8
+> [ 1850.960079]  pcie_capability_read_dword+0xac/0xd8
+> [ 1850.960454]  pcie_pme_irq+0x44/0xc4
+> [ 1850.960728]  irq_forced_thread_fn+0x30/0x94
+> [ 1850.960984]  irq_thread+0x1ac/0x3a4
+> [ 1850.961308]  kthread+0x1b4/0x208
+> [ 1850.961557]  ret_from_fork+0x10/0x20
+> [ 1850.963088] pcieport 0000:00:02.0: AER: Correctable error message rece=
+ived from 0000:00:02.0
+> [ 1850.963330] pcieport 0000:00:02.0: PCIe Bus Error: severity=3DCorrecta=
+ble, type=3DPhysical Layer, (Receiver ID)
+> [ 1850.963351] pcieport 0000:00:02.0:   device [1b36:000c] error status/m=
+ask=3D00000001/0000e000
+> [ 1850.963385] pcieport 0000:00:02.0:    [ 0] RxErr                  (Fir=
+st)
+> ```
+
+This is a lot. And I don't think this belongs here. The part how to use
+aer_inject should be described somewhere in Documentation/ as _this_ is
+not unique to your usage but a general problem of the driver.
+The commit message should describe the problem you are facing and your
+solution to it. Please take a look at
+	https://docs.kernel.org/process/submitting-patches.html#describe-your-chan=
+ges
+
+> Signed-off-by: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+> ---
+> index 91acc7b17f68..6dd231d9fccd 100644
+> --- a/drivers/pci/pcie/aer_inject.c
+> +++ b/drivers/pci/pcie/aer_inject.c
+> @@ -523,8 +523,8 @@ static int __init aer_inject_init(void)
+>  static void __exit aer_inject_exit(void)
+>  {
+>  	struct aer_error *err, *err_next;
+> -	unsigned long flags;
+>  	struct pci_bus_ops *bus_ops;
+> +	LIST_HEAD(einjected_to_free);
+> =20
+>  	misc_deregister(&aer_inject_device);
+> =20
+> @@ -533,12 +533,14 @@ static void __exit aer_inject_exit(void)
+>  		kfree(bus_ops);
+>  	}
+> =20
+> -	spin_lock_irqsave(&inject_lock, flags);
+> -	list_for_each_entry_safe(err, err_next, &einjected, list) {
+> +	scoped_guard(raw_spinlock_irqsave, &inject_lock) {
+> +		list_splice_init(&einjected, &einjected_to_free);
+> +	}
+
+I would either convert _all_ instance of the lock usage to guard
+notation or none. But not one.
+Also I wouldn't split everything to another list just to free it later.
+I would argue here that locking in aer_inject_exit() locking is not
+required because the misc device is removed (no one can keep it open as
+it would not allow module removal) and so this is the only possible
+user.
+Therefore you can iterate over the list and free items lock less.
+This reasoning of this change needs to be part of your commit
+description. Also _why_ this becomes a problem. You do not mention this
+change at all.
+
+> +	list_for_each_entry_safe(err, err_next, &einjected_to_free, list) {
+>  		list_del(&err->list);
+>  		kfree(err);
+>  	}
+> -	spin_unlock_irqrestore(&inject_lock, flags);
+>  }
+> =20
+>  module_init(aer_inject_init);
+
+Sebastian
 
