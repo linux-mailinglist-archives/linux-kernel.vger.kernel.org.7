@@ -1,165 +1,116 @@
-Return-Path: <linux-kernel+bounces-847682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F0ABCB688
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4640BCB68B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0A33BB700
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4DC3BBCD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDA922F16E;
-	Fri, 10 Oct 2025 02:26:17 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DD419E967;
-	Fri, 10 Oct 2025 02:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB25239E61;
+	Fri, 10 Oct 2025 02:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNX0xmHv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAD022F16E;
+	Fri, 10 Oct 2025 02:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760063176; cv=none; b=ewHxm7jOHzYeW5ZLJayi8pHMTGj/7ieLoYtPUxgcog7mhhLxULRr3xEahtefsoXBz1BIh5JZZgH/73WDQ0X9ZvckciyxIOZV9tp7nKyxvGbXN/RGwAhf6myrF/j2IouAwWOmYoTE1PU38QeQUeEzLtL1poZaRgU6zitGyPZK+xE=
+	t=1760063250; cv=none; b=h7cCT7j8A7EVm1YFTakNwAl4qs1Eisv7OWkQakKigXO/RiwA/pLOPIiR9jT9KHMo6JmbCMaK0Mb/08Vcn4E5qoAvXR1FHDy4yVzsrlItFHU4mDVa9Sf9pXySWtxEDhBt0wEM7pQ22d5xVozDCQyW2jsMmMzmjrN1ONrWYaLOBQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760063176; c=relaxed/simple;
-	bh=8llGNS3vHz0wb6LvUfFxLumVm8IEXug/GgX2N/OVHvE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=C6kXx9b5jD7AUa1gyQ0Dm9Xf4O5zCJp4ZxbUT4Uj22l6XjXmmA3SWL2W7RF745665rl0OW9Wy94IjNr+oJSVcAcxXy5g5i2Ppe6taryyft94cxoWez2mw0xypP8SU/G6y8Y9Y4iS6o0X5tsYafFenIfKD5tbMzZp9NVZ7HPcIqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: B5zu5/GQQVuUkjlG5tsLAg==
-X-CSE-MsgGUID: F08nOeRNSuS62V1Mnk+dgg==
-X-IronPort-AV: E=Sophos;i="6.19,217,1754928000"; 
-   d="scan'208";a="129007296"
-From: =?gb2312?B?wqy5+rrq?= <luguohong@xiaomi.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC: =?gb2312?B?Sm9zqKYgRXhwqK5zaXRv?= <jose.exposito89@gmail.com>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jikos@kernel.org" <jikos@kernel.org>, "bentiss@kernel.org"
-	<bentiss@kernel.org>, =?gb2312?B?wO7F9A==?= <lipeng43@xiaomi.com>,
-	=?gb2312?B?RmVpMSBKaWFuZyC9r7fJ?= <jiangfei1@xiaomi.com>,
-	=?gb2312?B?y87D3MPc?= <songmimi@xiaomi.com>, =?gb2312?B?wqy5+rrq?=
-	<luguohong@xiaomi.com>
-Subject: =?gb2312?B?tPC4tDogtPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFRoZSB6ZXJvIHBvd2Vy?=
- =?gb2312?B?IGxldmVsIG9mIHRoZSBISUQgZGV2aWNlIGluIGtlcm5lbCA2LjEyIGlzIG5v?=
- =?gb2312?Q?t_reported_from_the_kernel_to_the_upper_layer.?=
-Thread-Topic: =?gb2312?B?tPC4tDogW0V4dGVybmFsIE1haWxdUmU6IFRoZSB6ZXJvIHBvd2VyIGxldmVs?=
- =?gb2312?B?IG9mIHRoZSBISUQgZGV2aWNlIGluIGtlcm5lbCA2LjEyIGlzIG5vdCByZXBv?=
- =?gb2312?Q?rted_from_the_kernel_to_the_upper_layer.?=
-Thread-Index: AQHcJwWA1Pv1UPoVhEyxSk6qnb4viLSZrf4AgABrXICABNg0/oAD42UAgAKWVzmABLnD5IAQpqUE
-Date: Fri, 10 Oct 2025 02:25:55 +0000
-Message-ID: <80a4f9e6416944d3919c63a392325d3b@xiaomi.com>
-References: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
- <aM0XBudxlXuzALbg@fedora>
- <px5t2iedrrqhcrpdvmu5pznp53d3e5jp55dm72phlsti2rmt4j@rj2pajkavuir>
- <91e0d952fd774e769e2d24ce2165df18@xiaomi.com>,<vkm32giijggtzv7hudsvqg34utpqvw4nnccfi7d4txj5tlzstp@4bu2ox2lmtm5>,<aada0917f31641c19ba7c48e3c6d3c53@xiaomi.com>,<39809571f1b7439abd754279fac7e702@xiaomi.com>
-In-Reply-To: <39809571f1b7439abd754279fac7e702@xiaomi.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1760063250; c=relaxed/simple;
+	bh=ac4VtTda8SJRSe7ya6qERv9chI6J5rNgon5I14QHQy0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Pv9QroEVjAtZ5ql6w5+LRTxyNN3VT4kKQZV3/U//4OH04RwH4ZDo/B7ONYyEzzBykzSODaHdkc91MKJytiHwFmeLZoaeFoz+MBmAKCa+dUkyAXCnyPP1NYf53GM6HynqAWhmX6giWamb3Yo8ucAU3PT7Ma16veGFeLH46YtlBCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNX0xmHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CF31C4CEE7;
+	Fri, 10 Oct 2025 02:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760063250;
+	bh=ac4VtTda8SJRSe7ya6qERv9chI6J5rNgon5I14QHQy0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WNX0xmHvBiFXxv4mqNdaXwfKcAosh5PPPpszwfbWljExYKQ7ylm65jrdqKFPAfARV
+	 WM9X/9nWqGrxDcDCPKBpkE3xWWjPAezq18hjJOOKfimQ8ePlsdOO/FKTz6Ye9EaiLn
+	 uw+mnHVAnUogKtYbbi/WGlWSKdLR/MQD7JN/rzXsccDpd0w3U3gqwKLRvHr9+9Tv9j
+	 rOJ6wTM6G9FYWM0+ZYTA8O7xWieWYWSr694a9UYw9MQ2Cj9qPUw9K544EZkaKfD8tW
+	 RG3PiLSsUteZ/HPfrn0wkKake8vRSb6bMLAbdIfY9IH4923Lc2riE3YTEBUoNXNe3V
+	 i/hRDi5gBaU9w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E633A55FB5;
+	Fri, 10 Oct 2025 02:27:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 0/9] perf build: Support building with Clang
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <176006323800.354358.6110592426551858799.git-patchwork-notify@kernel.org>
+Date: Fri, 10 Oct 2025 02:27:18 +0000
+References: <20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com>
+In-Reply-To: <20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com>
+To: Leo Yan <leo.yan@arm.com>
+Cc: linux-riscv@lists.infradead.org, acme@kernel.org, namhyung@kernel.org,
+ jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+ nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com,
+ justinstitt@google.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, james.clark@linaro.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ llvm@lists.linux.dev
 
-SGkgRG1pdHJ5LA0KUGxlYXNlIGxldCB1cyBrbm93IHdoZXRoZXIgeW91IHBsYW4gdG8gbWVyZ2Ug
-dGhpcyBzb2x1dGlvbiBpbnRvIHRoZSBrZXJuZWwgb3Igbm90ISBUaGFua3MhDQpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQq3orz+yMs6IMKsufq66g0Kt6LLzcqxvOQ6
-IDIwMjXE6jnUwjI5yNUgMjA6MTA6NDINCsrVvP7IyzogRG1pdHJ5IFRvcm9raG92DQqzrcvNOiBK
-b3OopiBFeHCornNpdG87IGxpbnV4LWlucHV0QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZzsgamlrb3NAa2VybmVsLm9yZzsgYmVudGlzc0BrZXJuZWwub3JnOyDA
-7sX0OyBGZWkxIEppYW5nIL2vt8k7IMvOw9zD3Dsgwqy5+rrqDQrW98ziOiC08Li0OiC08Li0OiBb
-RXh0ZXJuYWwgTWFpbF1SZTogVGhlIHplcm8gcG93ZXIgbGV2ZWwgb2YgdGhlIEhJRCBkZXZpY2Ug
-aW4ga2VybmVsIDYuMTIgaXMgbm90IHJlcG9ydGVkIGZyb20gdGhlIGtlcm5lbCB0byB0aGUgdXBw
-ZXIgbGF5ZXIuDQoNCkhpIERtaXRyeSwNCkFueSB1cGRhdGVzIG9uIG1lcmdpbmcgeW91ciBjb2Rl
-IGZvciByZXBvcnRpbmcgYSB6ZXJvIGJhdHRlcnkgbGV2ZWwgaW4gSElEIGRldmljZXM/IEkgbG9v
-ayBmb3J3YXJkIHRvIGhlYXJpbmcgZnJvbSB5b3UuDQpUaGFuayB5b3UhDQpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fDQq3orz+yMs6IMKsufq66g0Kt6LLzcqxvOQ6IDIw
-MjXE6jnUwjI2yNUgMjA6MDMNCsrVvP7IyzogRG1pdHJ5IFRvcm9raG92DQqzrcvNOiBKb3OopiBF
-eHCornNpdG87IGxpbnV4LWlucHV0QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
-a2VybmVsLm9yZzsgamlrb3NAa2VybmVsLm9yZzsgYmVudGlzc0BrZXJuZWwub3JnOyDA7sX0OyBG
-ZWkxIEppYW5nIL2vt8k7IMvOw9zD3Dsgwqy5+rrqDQrW98ziOiC08Li0OiC08Li0OiBbRXh0ZXJu
-YWwgTWFpbF1SZTogVGhlIHplcm8gcG93ZXIgbGV2ZWwgb2YgdGhlIEhJRCBkZXZpY2UgaW4ga2Vy
-bmVsIDYuMTIgaXMgbm90IHJlcG9ydGVkIGZyb20gdGhlIGtlcm5lbCB0byB0aGUgdXBwZXIgbGF5
-ZXIuDQoNCkhpIERtaXRyeSwNCkFmdGVyIHRlc3RpbmcsIHdlIGZvdW5kIHRoYXQgeW91ciBwcm9w
-b3NlZCBtZXRob2QgY2FuIHNvbHZlIG91ciBwcm9ibGVtLiBQbGVhc2UgaGVscCBtZXJnZSB0aGlz
-IG1ldGhvZCBpbnRvIHRoZSBMaW51eCBrZXJuZWwgYXMgc29vbiBhcyBwb3NzaWJsZSEgUGxlYXNl
-IHJlbWVtYmVyIHRvIHNlbmQgdXMgdGhlIHJlbGV2YW50IGluZm9ybWF0aW9uIG9mIHRoZSBtZXJn
-ZWQgZ2l0IHNvIHRoYXQgd2UgY2FuIGNvbnRhY3QgR29vZ2xlIGFuZCBtZXJnZSB0aGVpciBBbmRy
-b2lkIEdLSSBhcyB3ZWxsLiBPdXIgcHJvamVjdCBpcyBsb29raW5nIGZvcndhcmQgdG8gdXNpbmcg
-dGhpcyBmZWF0dXJlLiBUaGFuayB5b3UgdmVyeSBtdWNoIQ0KDQpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fDQq3orz+yMs6IERtaXRyeSBUb3Jva2hvdiA8ZG1pdHJ5LnRv
-cm9raG92QGdtYWlsLmNvbT4NCreiy83KsbzkOiAyMDI1xOo51MIyNcjVIDEyOjI2DQrK1bz+yMs6
-IMKsufq66g0Ks63LzTogSm9zqKYgRXhwqK5zaXRvOyBsaW51eC1pbnB1dEB2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGppa29zQGtlcm5lbC5vcmc7IGJlbnRp
-c3NAa2VybmVsLm9yZzsgwO7F9DsgRmVpMSBKaWFuZyC9r7fJOyDLzsPcw9wNCtb3zOI6IFJlOiC0
-8Li0OiBbRXh0ZXJuYWwgTWFpbF1SZTogVGhlIHplcm8gcG93ZXIgbGV2ZWwgb2YgdGhlIEhJRCBk
-ZXZpY2UgaW4ga2VybmVsIDYuMTIgaXMgbm90IHJlcG9ydGVkIGZyb20gdGhlIGtlcm5lbCB0byB0
-aGUgdXBwZXIgbGF5ZXIuDQoNClvN4rK/08q8/l0gtMvTyrz+wLTUtNPa0KHD17mry77N4rK/o6zH
-6733yfe0psDtoaPI9LbU08q8/rCyyKvQ1LTm0smjrMfrvavTyrz+16q3orj4bWlzZWNAeGlhb21p
-LmNvbb340NC3tMChDQoNCk9uIE1vbiwgU2VwIDIyLCAyMDI1IGF0IDA5OjI5OjIwQU0gKzAwMDAs
-IMKsufq66iB3cm90ZToNCj4NCj4gV2hhdCBraW5kIG9mIGFjdGlvbiBhcmUgd2UgdGFsa2luZyBh
-Ym91dD8gU2VjdGlvbiAzMSBvZiB0aGUgSElEDQo+IHNwZWNpZmljYXRpb24gZGVmaW5lcyBldmVu
-dHMgZm9yICJTbWFydCBCYXR0ZXJ5IiAoIlRvIGNvbXBseSB3aXRoIHRoZQ0KPiBTbWFydCBCYXR0
-ZXJ5IFNwZWNpZmljYXRpb24sIHRoZSBCYXR0ZXJ5IFN5c3RlbSBtdXN0IHN1cHBvcnQgdGhlDQo+
-IGZ1bmN0aW9ucyBkZWZpbmVkIGluIHRoZSBCYXR0ZXJ5IGFuZCBDaGFyZ2VyIHVzYWdlIHRhYmxl
-cy4gRm9yIGRldGFpbHMsDQo+IHNlZSBTZWN0aW9uIDQuMiwgobBCYXR0ZXJ5IFN5c3RlbSBQYWdl
-ICh4ODUpLqGxKSBhbmQgaXMgdHlwaWNhbGx5IHVzZWQgZm9yDQo+ICJiYXR0ZXJ5IHBhY2sgZm9y
-IGNlbGx1bGFyIHBob25lcyAocHJpbmNpcGFsIHNvdXJjZSksIHRoZSBiYXR0ZXJ5DQo+IHBhY2so
-cykgZm9yIG5vdGVib29rIGNvbXB1dGVycyAoYXV4aWxpYXJ5IHNvdXJjZSksIGFuZCB0aGUgc2Vh
-bGVkDQo+IGJhdHRlcmllcyBpbiB1bmludGVycnVwdGlibGUgcG93ZXIgc3VwcGxpZXMgKGF1eGls
-aWFyeSBzb3VyY2UpLiINCj4NCj4gSXMgeW91ciB1c2UgY2FzZSBtYWluIGJhdHRlcnkgb3IgYmF0
-dGVyeSBpbiBhIHN0eWx1cyBvciBzb21lIG90aGVyDQo+IHBlcmlwaGVyYWw/DQo+DQo+DQo+IC0t
-LT4+Pg0KPiBXaGF0IHdlIGFyZSBkaXNjdXNzaW5nIGlzIHRoZSBjb2RlIGltcGxlbWVudGF0aW9u
-IG9mIFNlY3Rpb24gMzEgb2YgdGhlDQo+IEhJRCBwcm90b2NvbDogMzEgQmF0dGVyeSBTeXN0ZW0g
-UGFnZSAoMHg4NSkuIE91ciBzY2VuYXJpbyBpczogYW4NCj4gQW5kcm9pZCBwaG9uZSBpcyBjb25u
-ZWN0ZWQgdG8gYSBoYW5kbGUgdmlhIFVTQi4gVGhlIGhhbmRsZSBpcyBhIEhJRA0KPiBkZXZpY2Ug
-d2l0aCBhIGJhdHRlcnkuIFRoZSBwb3dlciBvZiB0aGUgYmF0dGVyeSBpbiB0aGUgaGFuZGxlIGlz
-IHNlbnQNCj4gdG8gdGhlIGJvdHRvbSBsYXllciAoa2VybmVsKSBvZiB0aGUgcGhvbmUgdmlhIFVT
-Qi4gVGhlIGJvdHRvbSBsYXllciBvZg0KPiB0aGUgcGhvbmUgdGhlbiByZXBvcnRzIHRoaXMgcG93
-ZXIgdG8gdGhlIHVwcGVyIGxheWVyIG9mIEFuZHJvaWQNCj4gdGhyb3VnaCB0aGUgSElEIGRyaXZl
-ci4NCg0KSSBzZWUuIEkgZ3Vlc3Mgd2UgY2FuIHRyeSBvbmx5IGZpbHRlcmluZyBvdXQgMCByZXBv
-cnRzIGZvciB0aGUNCmRpZ2l0aXplcnMsIGxlYXZpbmcgb3RoZXIgZGV2aWNlcyB3aXRoIGJhdHRl
-cmllcyBhbG9uZS4gU29tZXRoaW5nIGxpa2UNCnRoaXM6DQoNCg0KZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvaGlkL2hpZC1pbnB1dC5jIGIvZHJpdmVycy9oaWQvaGlkLWlucHV0LmMNCmluZGV4IGZmMTc4
-NGI1YzJhNC4uYmEzZjY2NTVhZjllIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9oaWQvaGlkLWlucHV0
-LmMNCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1pbnB1dC5jDQpAQCAtNTk1LDE0ICs1OTUsMTggQEAg
-c3RhdGljIHZvaWQgaGlkaW5wdXRfY2xlYW51cF9iYXR0ZXJ5KHN0cnVjdCBoaWRfZGV2aWNlICpk
-ZXYpDQogICAgICAgIGRldi0+YmF0dGVyeSA9IE5VTEw7DQogfQ0KDQotc3RhdGljIHZvaWQgaGlk
-aW5wdXRfdXBkYXRlX2JhdHRlcnkoc3RydWN0IGhpZF9kZXZpY2UgKmRldiwgaW50IHZhbHVlKQ0K
-K3N0YXRpYyB2b2lkIGhpZGlucHV0X3VwZGF0ZV9iYXR0ZXJ5KHN0cnVjdCBoaWRfZGV2aWNlICpk
-ZXYsDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgdXNh
-Z2UsIGludCB2YWx1ZSkNCiB7DQogICAgICAgIGludCBjYXBhY2l0eTsNCg0KICAgICAgICBpZiAo
-IWRldi0+YmF0dGVyeSkNCiAgICAgICAgICAgICAgICByZXR1cm47DQoNCi0gICAgICAgaWYgKHZh
-bHVlID09IDAgfHwgdmFsdWUgPCBkZXYtPmJhdHRlcnlfbWluIHx8IHZhbHVlID4gZGV2LT5iYXR0
-ZXJ5X21heCkNCisgICAgICAgaWYgKCh1c2FnZSAmIEhJRF9VU0FHRV9QQUdFKSA9PSBISURfVVBf
-RElHSVRJWkVSICYmIHZhbHVlID09IDApDQorICAgICAgICAgICAgICAgcmV0dXJuOw0KKw0KKyAg
-ICAgICBpZiAodmFsdWUgPCBkZXYtPmJhdHRlcnlfbWluIHx8IHZhbHVlID4gZGV2LT5iYXR0ZXJ5
-X21heCkNCiAgICAgICAgICAgICAgICByZXR1cm47DQoNCiAgICAgICAgY2FwYWNpdHkgPSBoaWRp
-bnB1dF9zY2FsZV9iYXR0ZXJ5X2NhcGFjaXR5KGRldiwgdmFsdWUpOw0KQEAgLTE1MTgsNyArMTUy
-Miw3IEBAIHZvaWQgaGlkaW5wdXRfaGlkX2V2ZW50KHN0cnVjdCBoaWRfZGV2aWNlICpoaWQsIHN0
-cnVjdCBoaWRfZmllbGQgKmZpZWxkLCBzdHJ1Y3QNCiAgICAgICAgICAgICAgICBib29sIGhhbmRs
-ZWQgPSBoaWRpbnB1dF9zZXRfYmF0dGVyeV9jaGFyZ2Vfc3RhdHVzKGhpZCwgdXNhZ2UtPmhpZCwg
-dmFsdWUpOw0KDQogICAgICAgICAgICAgICAgaWYgKCFoYW5kbGVkKQ0KLSAgICAgICAgICAgICAg
-ICAgICAgICAgaGlkaW5wdXRfdXBkYXRlX2JhdHRlcnkoaGlkLCB2YWx1ZSk7DQorICAgICAgICAg
-ICAgICAgICAgICAgICBoaWRpbnB1dF91cGRhdGVfYmF0dGVyeShoaWQsIHVzYWdlLT5oaWQsIHZh
-bHVlKTsNCg0KICAgICAgICAgICAgICAgIHJldHVybjsNCiAgICAgICAgfQ0KDQoNClRoYW5rcy4N
-Cg0KLS0NCkRtaXRyeQ0KIy8qKioqKiqxvtPKvP68sMbkuL28/rqs09DQocPXuavLvrXEsaPD3NDF
-z6KjrL32z97T2reiy824+MnPw+a12Na31tDB0LP2tcS49sjLu/LIutfpoaO9+9a5yM66zsbky/vI
-y9LUyM66ztDOyr3KudPDo6iw/MCotauyu8/e09rIq7K/u/Kyv7fWtdjQucK2oaK4tNbGoaK78smi
-t6KjqbG+08q8/tbQtcTQxc+ioaPI57n7xPq07crVwcuxvtPKvP6jrMfrxPrBory0tee7sLvy08q8
-/s2o1qq3orz+yMuyosm+s/2xvtPKvP6joSBUaGlzIGUtbWFpbCBhbmQgaXRzIGF0dGFjaG1lbnRz
-IGNvbnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGZyb20gWElBT01JLCB3aGljaCBpcyBp
-bnRlbmRlZCBvbmx5IGZvciB0aGUgcGVyc29uIG9yIGVudGl0eSB3aG9zZSBhZGRyZXNzIGlzIGxp
-c3RlZCBhYm92ZS4gQW55IHVzZSBvZiB0aGUgaW5mb3JtYXRpb24gY29udGFpbmVkIGhlcmVpbiBp
-biBhbnkgd2F5IChpbmNsdWRpbmcsIGJ1dCBub3QgbGltaXRlZCB0bywgdG90YWwgb3IgcGFydGlh
-bCBkaXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIG9yIGRpc3NlbWluYXRpb24pIGJ5IHBlcnNvbnMg
-b3RoZXIgdGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpIGlzIHByb2hpYml0ZWQuIElmIHlv
-dSByZWNlaXZlIHRoaXMgZS1tYWlsIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIg
-YnkgcGhvbmUgb3IgZW1haWwgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSBpdCEqKioqKiovIw0K
+Hello:
+
+This series was applied to riscv/linux.git (fixes)
+by Arnaldo Carvalho de Melo <acme@redhat.com>:
+
+On Mon, 06 Oct 2025 17:21:22 +0100 you wrote:
+> This series adds support for building perf with Clang, following the
+> discussion in [1]. Because the Android NDK uses Clang by default,
+> enabling Clang builds naturally covers Android as well.
+> 
+> The series is organized as follows:
+> 
+>   - Patches 1~2: Fix two bugs found with Clang.
+>   - Patches 3~7: Correct CROSS_ARCH, Disable thread safety analysis for
+>                  perl header, and dismiss Clang build warnings.
+>   - Patches 8~9: Enable Clang in the Makefile and update the
+>                  documentation.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v3,1/9] tools build: Align warning options with perf
+    https://git.kernel.org/riscv/c/53d067feb8c4
+  - [v3,2/9] perf python: split Clang options when invoking Popen
+    https://git.kernel.org/riscv/c/c6a43bc3e8f6
+  - [v3,3/9] perf build: Correct CROSS_ARCH for clang
+    https://git.kernel.org/riscv/c/ed33e5e43c1e
+  - [v3,4/9] perf build: Disable thread safety analysis for perl header
+    https://git.kernel.org/riscv/c/e7e86d7697c6
+  - [v3,5/9] perf test coresight: Dismiss clang warning for memcpy thread
+    https://git.kernel.org/riscv/c/50b7e7082a3d
+  - [v3,6/9] perf test coresight: Dismiss clang warning for thread loop
+    https://git.kernel.org/riscv/c/244a1ac76a67
+  - [v3,7/9] perf test coresight: Dismiss clang warning for unroll loop thread
+    https://git.kernel.org/riscv/c/9ec46fc93803
+  - [v3,8/9] perf build: Support build with clang
+    https://git.kernel.org/riscv/c/4772e66cb45e
+  - [v3,9/9] perf docs: Document building with Clang
+    https://git.kernel.org/riscv/c/0a75ba3e842c
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
