@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel+bounces-847843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18711BCBDF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:10:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688FEBCBDFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8B0420894
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:10:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3212E4E4F20
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF128271A6D;
-	Fri, 10 Oct 2025 07:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A093E257431;
+	Fri, 10 Oct 2025 07:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KsS/Fw5y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QApQzuwM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DB9635;
-	Fri, 10 Oct 2025 07:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9061624466D;
+	Fri, 10 Oct 2025 07:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760080212; cv=none; b=aV9OXAkZKLgShE9T1chc6xm/UBgqX5TspNB92rRzw4TvL8KnkgBhWsN0unXKI0nOY6mIhxsD/nbqHSljvLl1YyN/QkKMD7K4lfXTyc4Ya2M0yNfx942dWsXX5mmfC2mtUJxaJPymysrX3t3smnHCWciKAMgBrwpnOpgUnUwFvJY=
+	t=1760080238; cv=none; b=hBRbwgoE7HWZjHAnF3obRtbQixDMe00HOicJ9KvOgNdrf60F2DC2E//fP5wnPpcWB25vcHAViimqjbpb9broHDlGOACWLY43I53HfOdVPF8lkBu4jL+DSQ/b4fEMdDCXVjKsAv7RJZTiW7ATfOlfkjhf/XdtXdW3huzXruQPm+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760080212; c=relaxed/simple;
-	bh=mFIn2mObs5dKqhQdsiISRpULCebc5OTRrwRrnVShcDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D+htmomVawABnmVJVgE3pEGDwQoEMrNjNJAC0iTS75RyWxkIrVvif8Lm1TOuQgqa8tlyRHRO+o3Eu8u2CjT/PHzf80ScJNP68TGSaEqu6fxS4Z1z/CfVYlQCzRUqhIKrlBz5Ig7sR2RXjEI6TWfweLwezjz+KDhNW4Mk5SaHmVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KsS/Fw5y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F17FC4CEF1;
-	Fri, 10 Oct 2025 07:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760080210;
-	bh=mFIn2mObs5dKqhQdsiISRpULCebc5OTRrwRrnVShcDk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KsS/Fw5ye6Ox65qBuy/P6/foDTiAIKzEiu6zJeYo0FQ7M88DUFy9q6rjovsk4vsCA
-	 7yJhql4MoBmS5qVaZVj5PBdZ2mOi9RgeQ6AAl8T0PXj3XrM0orYCw9PU3OLaRuGuKe
-	 khYzYf9hMW16IikqH+mDUsyeqL47odxBGsh9vvMiJi999lkW706pZcHNhXuuCiopHy
-	 oK71lZ5aiMWuIKz3U7D/UIWXVhlMmHFplvbMyqlIBABccj0lCRFQtxNVD3DW4oicWt
-	 JnpNilQjLyJXsazpF9RG/WSnVwkedGPpvFrjv3zPhNEs+gwzwQXNFyxhgZlalnSC/h
-	 xhrcGKdtEEyVg==
-Date: Fri, 10 Oct 2025 08:10:00 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Hans Verkuil
- <hverkuil+cisco@kernel.org>, Malcolm Priestley <tvboxspy@gmail.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, Hans
- Verkuil <hverkuil@kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@pengutronix.de>, Rusty Russell <rusty@rustcorp.com.au>,
- Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>, Sami
- Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] media: dvb-usb-v2: lmedm04: Fix firmware macro
- definitions
-Message-ID: <20251010081000.1104c7b1@sal.lan>
-In-Reply-To: <20251010030610.3032147-1-kees@kernel.org>
-References: <20251010030348.it.784-kees@kernel.org>
-	<20251010030610.3032147-1-kees@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760080238; c=relaxed/simple;
+	bh=zF+0z316RJQl9MIvnx3TLWdplqoKjE8A6iD22i2AB14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UVGJ2yO/4TbQUmkrqA5/rCgM/0JrQdhNTK04iSJD7oqAiElSSmedMMKp4oHwRbWe93tECKQLkB2qgM17jMX8fFM86COPds85xdpneZhCN/QxYmHmCsCs0Bai/H8XFbgmajDfdqgNT2GonHpBV8dcoxynQ3CKDaKPC8FPFHvzGEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QApQzuwM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=50y4dNqj3cTwICK+6pWktLMc2B7J6SPVStSqB8mkboA=; b=QApQzuwMjpDeLWln5BMhThjrrd
+	Seb/MnniOXasfRoosZ8SLuy/6gZ0KLOb0kozIwOLFoZ7VI9BH9OIj7Qf/yEWRAeRjmCMxTFzeTRmQ
+	HXAmk7Amb6EiklIJR/i5hbjTWnQXSO6wCoHmHPLISc13Zi6jnyJ2HuaUiGahTiyNvcpeNzQjBLHbN
+	0aZreBgS2ODsabnvENo6tJvXOdFmhy/iWbhhJPAX+ix32QkKgPeqTx/TunwL3O41pvy/z+M4h3Owm
+	cAsSSb+y3vosWs0lskrezIeKPRQDmTS+V3HDd5zc7RqJI7CN1twkP9DhzljIqrVWv71ocl0x+ijox
+	J7PM9ClA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v77Gq-00000006PCr-1KbF;
+	Fri, 10 Oct 2025 07:10:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8352A300325; Fri, 10 Oct 2025 09:10:32 +0200 (CEST)
+Date: Fri, 10 Oct 2025 09:10:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [tip:x86/core 1/1] vmlinux.o: warning: objtool:
+ rcar_pcie_probe+0x13e: no-cfi indirect call!
+Message-ID: <20251010071032.GE4067720@noisy.programming.kicks-ass.net>
+References: <202510092124.O2IX0Jek-lkp@intel.com>
+ <20251010032001.GA3741500@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010032001.GA3741500@ax162>
 
-Em Thu,  9 Oct 2025 20:06:07 -0700
-Kees Cook <kees@kernel.org> escreveu:
+On Thu, Oct 09, 2025 at 08:20:01PM -0700, Nathan Chancellor wrote:
+> Hi Peter,
+> 
+> On Thu, Oct 09, 2025 at 09:07:02PM +0800, kernel test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
+> > head:   6c6e6a5416471498d8aafc050110bec9467e4da7
+> > commit: 6c6e6a5416471498d8aafc050110bec9467e4da7 [1/1] Merge branch 'linus' into x86/core, to resolve conflicts
+> 
+> It appears that this got bisected to the merge because the configuration
+> has CONFIG_CFI=y, which needs the rename that is in Linus's tree. This
+> is reproducible with just commit 894af4a1cde6 ("objtool: Validate kCFI
+> calls") cherry-picked onto 6.17 and CONFIG_CFI_CLANG=y in the config
+> provided at the link below.
+> 
+> > config: x86_64-buildonly-randconfig-001-20251009 (https://download.01.org/0day-ci/archive/20251009/202510092124.O2IX0Jek-lkp@intel.com/config)
+> > compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251009/202510092124.O2IX0Jek-lkp@intel.com/reproduce)
+> > 
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202510092124.O2IX0Jek-lkp@intel.com/
+> > 
+> > All warnings (new ones prefixed by >>):
+> > 
+> > >> vmlinux.o: warning: objtool: rcar_pcie_probe+0x13e: no-cfi indirect call!
+> 
+> I do see an indirect call in rcar_pcie_probe() with ->host_init_fn() but
+> rcar_pcie_probe() is not __nocfi... +0x13e is 0x8d9d7e in this build.
+> 
+>     8d9d6f: 31 c0                         xorl    %eax, %eax
+>     8d9d71: 49 89 86 58 06 00 00          movq    %rax, 0x658(%r14)
+>     8d9d78: 4c 89 ff                      movq    %r15, %rdi
+>     8d9d7b: 45 31 db                      xorl    %r11d, %r11d
+>     8d9d7e: 2e e8 00 00 00 00             callq   0x8d9d84 <rcar_pcie_probe+0x144>
+>                   00000000008d9d80:  R_X86_64_PLT32       __x86_indirect_thunk_r11-0x4
+> 
+> Is this an issue with the objtool check or is clang not generating the
+> right code?
 
-> The firmware filename macros incorrectly included semicolons in their
-> string literal definitions. Right now, this wasn't causing any real
-> problem, but coming changes to the MODULE_INFO() macro make this more
-> sensitive. Specifically, when used with MODULE_FIRMWARE(), this
-> created syntax errors during macro expansion:
-> 
->     MODULE_FIRMWARE(LME2510_C_S7395);
-> 
-> expands to:
-> 
->     MODULE_INFO(firmware, "dvb-usb-lme2510c-s7395.fw";)
->                                                      ^
->                                           syntax error
-> 
-> Remove the trailing semicolons from all six firmware filename macro
-> definitions. Semicolons should only appear at the point of use, not in
-> the macro definition.
-> 
-> Reviewed-by: Hans Verkuil <hverkuil+cisco@kernel.org>
-> Signed-off-by: Kees Cook <kees@kernel.org>
+So going by the asm above, objtool is right, this is not a CFI adorned
+indirect call.
 
-LGTM.
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-
-> ---
-> Cc: Malcolm Priestley <tvboxspy@gmail.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: <linux-media@vger.kernel.org>
-> ---
->  drivers/media/usb/dvb-usb-v2/lmedm04.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-> index 0c510035805b..05c18b6de5c6 100644
-> --- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
-> +++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-> @@ -70,12 +70,12 @@
->  #include "ts2020.h"
->  
->  
-> -#define LME2510_C_S7395	"dvb-usb-lme2510c-s7395.fw";
-> -#define LME2510_C_LG	"dvb-usb-lme2510c-lg.fw";
-> -#define LME2510_C_S0194	"dvb-usb-lme2510c-s0194.fw";
-> -#define LME2510_C_RS2000 "dvb-usb-lme2510c-rs2000.fw";
-> -#define LME2510_LG	"dvb-usb-lme2510-lg.fw";
-> -#define LME2510_S0194	"dvb-usb-lme2510-s0194.fw";
-> +#define LME2510_C_S7395	"dvb-usb-lme2510c-s7395.fw"
-> +#define LME2510_C_LG	"dvb-usb-lme2510c-lg.fw"
-> +#define LME2510_C_S0194	"dvb-usb-lme2510c-s0194.fw"
-> +#define LME2510_C_RS2000 "dvb-usb-lme2510c-rs2000.fw"
-> +#define LME2510_LG	"dvb-usb-lme2510-lg.fw"
-> +#define LME2510_S0194	"dvb-usb-lme2510-s0194.fw"
->  
->  /* debug */
->  static int dvb_usb_lme2510_debug;
+Let me go build this thing.
 
