@@ -1,241 +1,152 @@
-Return-Path: <linux-kernel+bounces-848504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C054BCDE5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:55:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E99BCDE97
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7139C19A1588
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AB33B07B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF19C2F3633;
-	Fri, 10 Oct 2025 15:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A914127877F;
+	Fri, 10 Oct 2025 15:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q+NAGFBW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OUZh9YSE"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602D6262FE7;
-	Fri, 10 Oct 2025 15:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E19E271470
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760111583; cv=none; b=fhOyQMo23IWNM5njXLyqks4NNy86IgZVxcRqpaUBIqtFelb3EN7+9O7xp1kwnYF+Nudct8Z+eVYIYL/ymxAfNgUXolwBhVTqHIpSejixgBT9rugxhdy66VBfZ6anjkLWmoE+MlNq3loiF9HdE1eZ7WyR7lOWgHZxkm7Mt1F7YSM=
+	t=1760111792; cv=none; b=DuQNOecgoFzodMm+broP7HbU2e2pOIJ+MXmPpXH5ywIbkI3JjR4AVgQvQ19STFuAIO2+XFWe31cJMc3AdNTCZAGCty7s5AUEgcMHpnCmQs0F8/D1dvl7kOVmWRaTAwA2f5T/40lFdnfB5v4i/gKPs25Qd7x+5dchJ3L5Ln9OACE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760111583; c=relaxed/simple;
-	bh=DD/abvJw2ItDqp3cRU9yINzo4b8UTYCdngAKkF58aDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WsHZceHo2fNTeRsa5Mr8jlwLoag6WcU7+HhWzXycht8qziKYJ1u9oE1XvnAkYvk0mI9WBDYZ4FbBWoR3d220QTpWUHBxAiKfmBJ7/UsN89of6CTXFeCYfNTbtdkj0zOKS/MFV9UxhwgPcMsAd+I9aQYyA0xWvhEJMvjSFOWn89g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q+NAGFBW; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760111581; x=1791647581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DD/abvJw2ItDqp3cRU9yINzo4b8UTYCdngAKkF58aDY=;
-  b=Q+NAGFBWwIV25qPsKPhjDSvhA/npadGEAwd9Mz10asWcLZ4+Rftqn3DW
-   mUpbwMH8QCb96+R3nb2cK224azR8PI2ywQRqiBeaDXJg6ePe81ylPpD+w
-   UWc+epVtd03t7vZHayDk+mpw82cXUf0Eg/sIcPqEmV2p6Axuyvn2Wv/D3
-   wfm6Ik8Xw0aRaI13kZLuTbyuRkbbviv6rQqwTvOdgkPXcz6OtCYJFsh/i
-   YIMYKbPOZ9DSRC70PT7LlTpr4qxG84jLbwXve66I5jIJPHvAcz3VugicM
-   8MbCX0dHUIFrGJzqRlaohvpG6EFPJs3r8BcyjlY76mmgnOdK6TZ1TLPM0
-   A==;
-X-CSE-ConnectionGUID: QlQpxAwtSYOCUYRvMDHOPQ==
-X-CSE-MsgGUID: x9AF91tQS7SDZY5aaf2C1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="65986451"
-X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
-   d="scan'208";a="65986451"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 08:52:58 -0700
-X-CSE-ConnectionGUID: Z82LRwkHS2OR8R6OHAvESA==
-X-CSE-MsgGUID: ezsRcgzBQwOn6ubOlZuqPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
-   d="scan'208";a="186143528"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 10 Oct 2025 08:52:55 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7FQL-0002vZ-1Y;
-	Fri, 10 Oct 2025 15:52:53 +0000
-Date: Fri, 10 Oct 2025 23:52:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Chung <seokwoo.chung130@gmail.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mathieu.desnoyers@efficios.com,
-	shuah@kernel.org, hca@linux.ibm.com, corbet@lwn.net,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
-	seokwoo.chung130@gmail.com
-Subject: Re: [PATCH v3 3/5] tracing: fprobe: support comma-separated symbols
- and :entry/:exit
-Message-ID: <202510102331.y36ENO9m-lkp@intel.com>
-References: <20251004235001.133111-4-seokwoo.chung130@gmail.com>
+	s=arc-20240116; t=1760111792; c=relaxed/simple;
+	bh=qy58+hYfxQW2mQ5sz6S6JQNjtjzjW3pl/fdczNT6W+c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NFN8WlQ9pgcF+jHSG3oTqMWSaoQCz+/rTspn3YSAo5StUyNqWDFYckfQ/flK/iq97JvB020EF6FpJHjROCtL5L3+IA8GnY+zCyRgVRUG+siZoVS1H0iIV10us6Yr4flHQVg2N+BDDVED+YZ1Snba/TGfmiRHukjyWNnKiorND5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OUZh9YSE; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e44f22f15so323739266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760111789; x=1760716589; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ZoRFa4EgNbo9YHpT/rgkVAy6RF2nhrPvBGmNOSTvII=;
+        b=OUZh9YSEqwPb6zNfLojcw+4urecEii+dnSI4Hm1nUOo2OU/9VY3GUy2hEDase9DnoJ
+         ryGFcI4Yom2LUHLmcEQGhNPyh/GU7tOkJ47UT5VM6AkY6fLNwJYwtDoRtk5urFVsBM7B
+         41fdr0+xYkp+AqWU4RDR3MZGDAxjyv7JVbGBZiamhNWZl59fgprXnuo2aEYe3Nlok7SR
+         LVYBcoUuZ+Pat/boIaedK+tfDRkkMOa6CMI95BFZJeEvJlGUnY2cxnb0LSr5U229Yaqt
+         yTGTRoAFRxMF7gLSY3w+qvNI3rJf0DKWHoOhvOkA2ndLNNuOke9qs/aYRNibuHACp4Lo
+         zJaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760111789; x=1760716589;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ZoRFa4EgNbo9YHpT/rgkVAy6RF2nhrPvBGmNOSTvII=;
+        b=dxKDBkJPg+diZ354Gvshqhu9Er+2BYiGUbmR/WP2wL+gTYI1lZpTg0gVxb+BZ74xPs
+         ceEJInFGMkRyXgd1qxDuxsT6G2wK79qfKFAy+CZ2u+9XySfozhHvIwACA372pj0SGcQC
+         r6ZQISmcjW02uqDllogAKu3SRe42dh0B90cGpFqdyLFtYz1puY4u6I7DQXjkd8QlzhW5
+         OsYb/B+omVy2TTe8hlDrmiLKkTuj5K7kD6PXc6bX4+gyR0IBP6kwOk9Y0UgXtohRB8+v
+         QgwnpXtllc7UrlqO+lE5m45M0419GJEBZpUrKKEAfQkP27k7Avb+P/o4HsuFSv4/SjmI
+         MX6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Ki3Lolv5Qj1vF/KiUpkvUgNOYxdgyP0i045rPaWqAOLvPMEmvgcMgewOL9yZ8kC04Wwk+PU3iAyFOcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEz16OdIcl44wa4BAszlqAP66RLHRxi7XsTUyR8D4n3HO569fI
+	KGARauyhrM3YxE1eSTSiZGT+dT0WP/CRZTQu3m5n2zRUEP5wl3pHqoXnEJx36unbmLo=
+X-Gm-Gg: ASbGncsBCS4d6UuiHStkhMeHyYTXbczKXnmA8Zg4C5wxyxXR822L0NE68dwdPpW3aEB
+	r5D36sQ7UNvJ3UmP0n2imI0wA8Gn/xOv4DJVlT0jzPomTVFxFBKWNiZXNp6ibVtu9Hezg3whStd
+	LJGyw7QPFpLsEeBMkFhnitiy/tao0qN6ruTAo0ZErZ+T9W9/gE1jddMDdS/EUjwzB/tpIlbUwW2
+	gsCyHoqDHQwTnGc8XycjN487pgsCEak/1bBniSGokCZIIZRJlLkegGFM6v7HheRkGG2wVE5fY9p
+	RreyzYdBFjOKRr/LrgvxeKwO1oxTgomk8BQFSBTeKl5SSCogazkU293zXcUJXvV7SEssHGhJiXl
+	vecXmK1lABD6624LoRJAZyeJB0SZNuwfFtAN+ICGovrMumrDNa3SIifqPEQBW1ZsrV1mTdNgCA2
+	WrnJY3I1/t5DTKwFRAW7KlwxR+vWNK/Ej9c5A=
+X-Google-Smtp-Source: AGHT+IFPrLD0cpURVx9vlEq9MIRSEh4Uvrp2QcOigo0VAcKE9vYjUK34xwAVj5/gi01gKaUb5M2abg==
+X-Received: by 2002:a17:906:4789:b0:b41:c892:2c67 with SMTP id a640c23a62f3a-b50abfc861amr1291709266b.45.1760111788585;
+        Fri, 10 Oct 2025 08:56:28 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cacba7sm261285866b.5.2025.10.10.08.56.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 08:56:28 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Fri, 10 Oct 2025 16:56:26 +0100
+Subject: [PATCH] arm64: dts: exynos: gs101-pixel-common: add node for
+ s2mpg10 / clock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251004235001.133111-4-seokwoo.chung130@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251010-s2mpg10-clk-v1-1-dafb5d179395@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKks6WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0MD3WKj3IJ0IJ2ck62bnJRkkZxkYGaQbGimBNRRUJSallkBNi06trY
+ WAJcH5UZdAAAA
+X-Change-ID: 20251010-s2mpg10-clk-cbb8cb060c16
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-Hi Ryan,
+On Pixel 6 (and Pro), a Samsung S2MPG10 is used as main PMIC, which
+contains the following functional blocks:
+    * common / speedy interface
+    * regulators
+    * 3 clock outputs
+    * RTC
+    * power meters
 
-kernel test robot noticed the following build errors:
+This change adds a node for the clock outputs which are used as inputs
+as follows:
+* RTC clock for AP
+* GNSS receiver, WLAN, Bluetooth
+* vibrator, modem
 
-[auto build test ERROR on v6.17]
-[also build test ERROR on linus/master next-20251010]
-[cannot apply to trace/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The names have been chosen to match the schematic.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chung/docs-tracing-fprobe-document-list-filters-and-entry-exit/20251010-111713
-base:   v6.17
-patch link:    https://lore.kernel.org/r/20251004235001.133111-4-seokwoo.chung130%40gmail.com
-patch subject: [PATCH v3 3/5] tracing: fprobe: support comma-separated symbols and :entry/:exit
-config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20251010/202510102331.y36ENO9m-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510102331.y36ENO9m-lkp@intel.com/reproduce)
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Note: This depends on the samsung,s2mpg10-clk binding which was
+only recently merged into Linus' tree via the clock tree.
+---
+ arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510102331.y36ENO9m-lkp@intel.com/
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+index 84ff3e047d3b31b5f96d4d6c78ec933bb05f3e6b..93892adaa679439bd87b0630cf9416b05c9d4536 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+@@ -109,6 +109,13 @@ pmic {
+ 		system-power-controller;
+ 		wakeup-source;
+ 
++		clocks {
++			compatible = "samsung,s2mpg10-clk";
++			#clock-cells = <1>;
++			clock-output-names = "rtc32k_ap", "peri32k1",
++					     "peri32k2";
++		};
++
+ 		regulators {
+ 		};
+ 	};
 
-All error/warnings (new ones prefixed by >>):
+---
+base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
+change-id: 20251010-s2mpg10-clk-cbb8cb060c16
 
-   kernel/trace/trace_fprobe.c: In function 'parse_fprobe_spec':
->> kernel/trace/trace_fprobe.c:274:28: error: assignment of read-only location '*p'
-     274 |                         *p = '\0';
-         |                            ^
-   kernel/trace/trace_fprobe.c:276:28: error: assignment of read-only location '*p'
-     276 |                         *p = '\0';
-         |                            ^
-   kernel/trace/trace_fprobe.c: In function 'parse_symbol_and_return':
->> kernel/trace/trace_fprobe.c:1281:31: error: 'nofilter' undeclared (first use in this function); did you mean 'filter'?
-    1281 |         char *filter = NULL; *nofilter = NULL;
-         |                               ^~~~~~~~
-         |                               filter
-   kernel/trace/trace_fprobe.c:1281:31: note: each undeclared identifier is reported only once for each function it appears in
-   kernel/trace/trace_fprobe.c: In function 'trace_fprobe_create_internal':
-   kernel/trace/trace_fprobe.c:1355:14: warning: unused variable 'has_wild' [-Wunused-variable]
-    1355 |         bool has_wild = false;
-         |              ^~~~~~~~
-   kernel/trace/trace_fprobe.c: At top level:
->> kernel/trace/trace_fprobe.c:1275:12: warning: 'parse_symbol_and_return' defined but not used [-Wunused-function]
-    1275 | static int parse_symbol_and_return(int argc, const char *argv[],
-         |            ^~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +274 kernel/trace/trace_fprobe.c
-
-   233	
-   234	static int parse_fprobe_spec(const char *in, bool is_tracepoint,
-   235			char **base, bool *is_return, bool *list_mode,
-   236			char **filter, char **nofilter)
-   237	{
-   238		const char *p;
-   239		char *work = NULL;
-   240		char *b = NULL, *f = NULL, *nf = NULL;
-   241		bool legacy_ret = false;
-   242		bool list = false;
-   243		int ret = 0;
-   244	
-   245		if (!in || !base || !is_return || !list_mode || !filter || !nofilter)
-   246			return -EINVAL;
-   247	
-   248		*base = NULL; *filter = NULL; *nofilter = NULL;
-   249		*is_return = false; *list_mode = false;
-   250	
-   251		if (is_tracepoint) {
-   252			if (strchr(in, ',') || strchr(in, ':'))
-   253				return -EINVAL;
-   254			if (strstr(in, "%return"))
-   255				return -EINVAL;
-   256			for (p = in; *p; p++)
-   257				if (!isalnum(*p) && *p != '_')
-   258					return -EINVAL;
-   259			b = kstrdup(in, GFP_KERNEL);
-   260			if (!b)
-   261				return -ENOMEM;
-   262			*base = b;
-   263			return 0;
-   264		}
-   265	
-   266		work = kstrdup(in, GFP_KERNEL);
-   267		if (!work)
-   268			return -ENOMEM;
-   269	
-   270		p = strstr(work, "%return");
-   271		if (p) {
-   272			if (!strcmp(p, ":exit")) {
-   273				*is_return = true;
- > 274				*p = '\0';
-   275			} else if (!strcmp(p, ":entry")) {
-   276				*p = '\0';
-   277			} else {
-   278				ret = -EINVAL;
-   279				goto out;
-   280			}
-   281		}
-   282	
-   283		list = !!strchr(work, ',') || has_wildcard(work);
-   284		if (legacy_ret)
-   285			*is_return = true;
-   286	
-   287		b = kstrdup(work, GFP_KERNEL);
-   288		if (!b) {
-   289			ret = -ENOMEM;
-   290			goto out;
-   291		}
-   292	
-   293		if (list) {
-   294			char *tmp = b, *tok;
-   295			size_t fsz = strlen(b) + 1, nfsz = strlen(b) + 1;
-   296	
-   297			f = kzalloc(fsz, GFP_KERNEL);
-   298			nf = kzalloc(nfsz, GFP_KERNEL);
-   299			if (!f || !nf) {
-   300				ret = -ENOMEM;
-   301				goto out;
-   302			}
-   303	
-   304			while ((tok = strsep(&tmp, ",")) != NULL) {
-   305				char *dst;
-   306				bool neg = (*tok == '!');
-   307	
-   308				if (*tok == '\0')
-   309					continue;
-   310				if (neg)
-   311					tok++;
-   312				dst = neg ? nf : f;
-   313				if (dst[0] != '\0')
-   314					strcat(dst, ",");
-   315				strcat(dst, tok);
-   316			}
-   317			*list_mode = true;
-   318		}
-   319	
-   320		*base = b; b = NULL;
-   321		*filter = f; f = NULL;
-   322		*nofilter = nf; nf = NULL;
-   323	
-   324	out:
-   325		kfree(work);
-   326		kfree(b);
-   327		kfree(f);
-   328		kfree(nf);
-   329		return ret;
-   330	}
-   331	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+André Draszik <andre.draszik@linaro.org>
+
 
