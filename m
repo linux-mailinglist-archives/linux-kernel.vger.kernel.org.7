@@ -1,234 +1,230 @@
-Return-Path: <linux-kernel+bounces-848197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3524DBCCDDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C888FBCCDEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B0031A626EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7261A618CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4935A28BABA;
-	Fri, 10 Oct 2025 12:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B6A28BABA;
+	Fri, 10 Oct 2025 12:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="avTqcA/A"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="l5DVNHDH"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010068.outbound.protection.outlook.com [52.101.84.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85616215077
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760099045; cv=none; b=KcLGaFiGWWQMvCrNrUTu982oERqnzwRMTdk3Ha/rO3kC4rA/Eg8lp+rSzELxw+39+AFkcRzOE3uECxtnXzjvMXEccxEUepIPwKhzvoK+7CYXRrD3BIfExILmjpja3fPz+9qhUdd6Qi4wc+gMpWu1pv7fPTOJdHF9fY/si4Mfb70=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760099045; c=relaxed/simple;
-	bh=VikWKkG6XHYuWwJ0LqHNlM5SlI2m77fONIHGfB8p2Oc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tYktFCb33uI6q+2TN8erUjTWW8utB1S1PGoy5Sd5kuVEARMmuP6AM2C1zuvb/sbDh8JHLXSmvzgaMSx0+jqN31IbT6FCtWtF2G8Kobmyfsl8/RVL5V0WdbLpW4Lyfi5Qtek+C88ekYO+uzWqk11V/rw2Ls3j9rR+IGBaMEg+JQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=avTqcA/A; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-3ac1ad95537so1244695fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760099042; x=1760703842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ro3+kAua24TbasdwiZJ06Dvn43ZJ82YF71cQ3Adsr5c=;
-        b=avTqcA/AGhLSEJAM8YTPgQhjh9A2LsH1eUfofQit4z68EM1lCqbdmxwCcoGnpdLsx6
-         Z0V3pS8cjCKUSdFFgBs3niZtyC9DX0eH5EGXpsK46goZNvTFDnE8eRMAB3aLSyUqzMPb
-         dT0M6aVPbz4VZ9+1bjX7OLlP0sOodACS0C5XyQpt5hyUgg/p6nd+y0vXGZe18GapMLCq
-         fLhByM5Zgmjw8EWJ5A4mhr4ocGdPV5oBV6veXOYu3O0mYEKciFTEO4cUvaHPDZi3tGmC
-         N5CZrbhyPtOpPl8gZ2EZphOcmy3EgK14pZiPPhtXWLTbV3t2XMl12Kv0mJF3tsOVCe1S
-         cw2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760099043; x=1760703843;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ro3+kAua24TbasdwiZJ06Dvn43ZJ82YF71cQ3Adsr5c=;
-        b=cg88lim8gY/w137ZsiKbZzxzMkD81H94AYb+8c0H2llNbyz9zdkdRrgZH4DoDLsGEL
-         4sH3CTnKEw92OuN7YW/2qfEFlbx+LSCGKsUD5y4ZlBsiOgi2iccnUgsHeCGvUunEbjy4
-         JeO6oX1SATXtvuk0s0EGakuD5ep0b86/OQJD9HK4p1VekIM44u7gZhIYjdrRLXC6XAng
-         lorD7mL2DShR/a6v7pJBYBpDkoAPJDxHnqcBmkrGwjo3bh87s57RaEs0/FS34kcfVFMx
-         fWrglaGEOZnLBZQDjpiG64VPwRMclPJFsjbmhUeJJWZ/BcN12Y5EZ/v8llwIVHYxmeo4
-         5FSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSWiFj/CYk+ZQe8oFj1kOc5FUJbF2WzH4/kxQ55Zm0/IbwbKqBhQe2gA7G5wdU01l4QFJgbSkYFd9IKg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhj0jIcE9PKggm49YBLFlCqYI/Sas/vHFZczVJZo6qM4VU5dEm
-	oR2gm1IuF3wGUzbrgoaGohyw/IgoiPRixWsk+1NOyFM3KqHyaoDChECATkSBS3bBx4Nh68713Tx
-	HS1b8pWax25Jg2OMvo2J2L1LlFBAXvQYwcolAol4t6A==
-X-Gm-Gg: ASbGncvvQaP0kBEY251UI3hc+vCxugl6YOnv35aJCP4bdYWSMBvN7Fx58AyJ6/Z8y4c
-	FIdSZBwk2fJJvBxCCBkpfFiYCuZS4BKbs1H0F5NCC5ZnA8EA7R1w2USnGRGt82o4lvbUTibCFWR
-	KqlgmTCOkcqQ2oB2YUe+mUfn/qdl4XLyMCuo1XIf/xsLDy3viA84fq/VZR06usk83nOw7vBwJ8l
-	3YQs573BdJSWn+JgC/UPaaq2BJ6tkgX/CTmYRs=
-X-Google-Smtp-Source: AGHT+IFwxCA7x9/0sbYa1+iquw2dNW2ztO7RgA5N9vNqLZKjJ8WptOtg61iPfZU7eyB/c+01KuJjQS2dtnsOgkC9/no=
-X-Received: by 2002:a05:6870:d372:b0:3a5:81b0:8339 with SMTP id
- 586e51a60fabf-3c0f91a8ef0mr5229274fac.31.1760099042537; Fri, 10 Oct 2025
- 05:24:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2815215077;
+	Fri, 10 Oct 2025 12:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760099080; cv=fail; b=YBB/sT1S9f7qH7wN/AjoUa8rxOGWsbLNoPfqomq1vn9rFSKGD25Wz/Mwh11JYw8ns2EzGAhRLXlr2arT/PFr4O3FcpIJUOADtH+RJpt9UvpMHAxmSJKJRnsv45AIcjUTRfeKAvRmL4N1h6acXjryjiBLkYBwSd2scPWXnCs3/sc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760099080; c=relaxed/simple;
+	bh=sb0d7iCIRjM4okMrJmOfw9vFf2eyfAXWCqvgxPLlEGc=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=PJj80gpOJ5BixN+8LndQCyIsQtP85Drblv+ob3XbwQXpZuBjHl0K8Sr5t1rqZyf709Gw48yDzslzyYD+/4zp63tVl35NVHDht9J8pNaI0aR/5r9BuDR/uaZLliZu9UioSxEoiTrV3wUpKaGVkKRITd5wSFE0sP97wDdoTV/p0vQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=l5DVNHDH; arc=fail smtp.client-ip=52.101.84.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PTHyVquCbi6JMqu+hU+OtBloN2tmiNarLx+qNhnqlxVZe4X/ki4jna2Vg66JZ+gNfjbV3zzEJWpqFL60MRIIktAXLrwBpmunktlEq/bCMQrLCjJXfTBq8O6gB6eYqer/qvYRwzb8+dat5modugmgZgg9TBFA0atZ1r173IPMLnYmY/vi7XmYk1Qpbz3Oo4C4VMVnuHPPLxMGdBM1rJvZFdB0PluwyPcY8F5ykGdgtkOUr6LTxzKUiwasB7H474GHJdhAwmbqFJsIl/8g7608UDgyp3t4eSE4akYU4K+gy5xortb6GRNs8NeK+GfP5CvoeT14qSNHngJTz/WXxjwLcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k2AJDRj1pfnh4AuS/woJM0MlIThvNwU/7B3FdJYnlzk=;
+ b=qWvRQ0jPpVQ6FDhV3OqOtBimHG7OiRM/bS1DhZQhCxn4BDHIPF0DwnHeWbOU5XCwE+GyZslWttPAjblbbVlNR8HkDxRKGGMcW/E7Z9JTr3D6ERNDyyavoRvvVnP46F0BvDeT5gIMCEXbeC/4Httb4EsB7JWsMXgRpERs2t6gHv90GLAUL8nZzGOhfKq/rWhRiMqqyXbICF+elcHj8xd+zRljrfDJkfH3jxWo26k5XbFXYY4SiV3UFbi/4I9tHkWTSsxlESWc+Fd+3NMJB3Yxq8FbkWFz1xRjh46l4EMkgXIoNoExJvR4UpAONG+bwtE15f5ld8TXKW5mkfJ8UBBGRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k2AJDRj1pfnh4AuS/woJM0MlIThvNwU/7B3FdJYnlzk=;
+ b=l5DVNHDH1OuFTPsefclZrwUNBip/7qHQMTbHGa/lwyKMZmpMrdsmjYXqDD17zEFbNmWSPiAaiQMgee6yaJMvAjI8w/uTIOSs0FyIcb5zSdYGi3BXB5x2YnLnLh4/5B2epZV03DdouEdOIdQ9aBq9lTQgF3QvObwnW74HOSK3JpB5L7BaluL89D1l2ty/xPcDwHVTySpmoqNh3wdokcrngP8416L7VBslrAcFMGnVtZly7/xwh82yNRUFFHwoCtBE2kopkUSpPV2DOlUxvuQ+yr7uJ++31CuuCd4mWWkvC0lVIPI3qF7NQlCq3icdI9RH9Gu98nyIftVnhuDGQSoiSw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS8PR04MB8449.eurprd04.prod.outlook.com (2603:10a6:20b:407::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 12:24:35 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9203.007; Fri, 10 Oct 2025
+ 12:24:35 +0000
+From: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v2 0/7] remoteproc: core: misc update
+Date: Fri, 10 Oct 2025 20:24:11 +0800
+Message-Id: <20251010-remoteproc-cleanup-v2-0-7cecf1bfd81c@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOv66GgC/22NwQ7CIBAFf6XZs5gFxFhP/ofpgcDWklggUElNw
+ 7+LTbx5nEnevA0yJUcZrt0GiYrLLvgG4tCBmbR/EHO2MQgUiiNKlmgOC8UUDDNP0v4VmTwpYxW
+ OxOUF2jAmGt26R+9D48nlJaT3/lH41/5y6l+ucIYMe92PljTiWd78Go8mzDDUWj+xKTfSsgAAA
+ A==
+X-Change-ID: 20251003-remoteproc-cleanup-345cd50fe138
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Andrew Davis <afd@ti.com>, 
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760099067; l=1646;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=sb0d7iCIRjM4okMrJmOfw9vFf2eyfAXWCqvgxPLlEGc=;
+ b=tXf1bFkcIlhyKFTdiWdBKWqvHCNVAwX5HxoM9BLZwuDFMLOrhFEC1f7APgKuoTN4oYLFvugpn
+ ZNZ6cgI8RfhCzhwPO2DjM01dAlwsvSmc9aPKXyRIVRE56Z4av/YDZ1w
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SG2PR01CA0134.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::14) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007-ssqosid-v4-0-e8b57e59d812@kernel.org>
-In-Reply-To: <20251007-ssqosid-v4-0-e8b57e59d812@kernel.org>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Fri, 10 Oct 2025 20:23:50 +0800
-X-Gm-Features: AS18NWBjm-gW9xf5A556itmFvcxR3HUB5zONSZ2JAVqk6TC55UaCFUsRW7mLiVI
-Message-ID: <CAEEQ3w=3pte5=CR9-R3rmCGFZ9ErJ9YcWS9i=JwPUb1Ty3ipwQ@mail.gmail.com>
-Subject: Re: [External] [PATCH v4 0/3] RISC-V: Detect Ssqosid extension and
- handle srmcfg CSR
-To: Drew Fustini <fustini@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?Q?Kornel_Dul=C4=99ba?= <mindal@semihalf.com>, 
-	Adrien Ricciardi <aricciardi@baylibre.com>, James Morse <james.morse@arm.com>, 
-	Atish Kumar Patra <atishp@rivosinc.com>, Atish Patra <atish.patra@linux.dev>, 
-	Vasudevan Srinivasan <vasu@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>, guo.wenjia23@zte.com.cn, 
-	liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS8PR04MB8449:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17460af3-bb12-4bbb-1652-08de07f7f921
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|7416014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UDg0TElreUZKUFdRVGduUjNIb05MNkdmcnJ6cU1oWmgxdGVPWDZ6K0F1Sm1J?=
+ =?utf-8?B?MGRoUXJJQm15a2JQelVzVVdEc3JicmpXdnkxSCtxdGdQVENOckVaZE13bkh4?=
+ =?utf-8?B?UVpVYTJrMjdjWlpqbXAxKzFqS3RzdkVxM2FEME9QdTAwc3FybmtCUlhKK2hF?=
+ =?utf-8?B?OWh6OFc0YWVIVHNwL1VBWmgzYTZHYkYzckxyMFc1enV0VE1UTXNlRm9heHVu?=
+ =?utf-8?B?UkVSUnRZM1A0TGhUYWpYaWhMMDEwMGFYd1lyQUsvWGFmeUlMTkhpRVdHZkQ4?=
+ =?utf-8?B?eTRBSVJINkdFR1BkK1J1S20rZFFvdmQ4V1ZPMWhrZFkycGV1TTg5Q0FsV1Zz?=
+ =?utf-8?B?dkkvcmpQTk5iU0lJU3hQUGZXU1JHMmQ4WUgzeEFacGQyQlMza3JYbFcyMTNm?=
+ =?utf-8?B?cC82NDMwQ3RadkIzdEZlS200a1pnUTF0T2JPNkMwbG5uZENNQkl3ektVdjlr?=
+ =?utf-8?B?eEFkbTFiWFV5TVRBOUo1MHI1Vk9PR0lkc1J4V3FNUS9HQzJCTUZUL2VSQmJP?=
+ =?utf-8?B?LzlkdGNucjdUcHFYUXB3UzFUYlJrSWRYNFg1Z3RIMUE3bjhGS2g0QUV3c3ZX?=
+ =?utf-8?B?dWEzZzFNVEtvRXBVbUt4VHNxRFY4WHJKYzl5ampvMFhGNEQ3WnF3ZXJCRHFn?=
+ =?utf-8?B?RDAwMjNXZTZFeTJzUkhrcE4vOE5MWE5VUzdPZFFXTjdlOWEydmFkc1pSbHVO?=
+ =?utf-8?B?VGhCTDExdVlQYmpZYWRVek44UmRnNi9hL2hROXRPUU84dnQzRWRFOThGMllh?=
+ =?utf-8?B?QnJ6WmtINHozTmRRMFhTUk9nVXBNVlo3ZVp4cVlMS2ZENGllZ0lBUmhJQWJn?=
+ =?utf-8?B?NDBVZExjUUEzeDg1NENGMkgxd3JlUlR4VkswaUFpcE9xWThxU3VkcHJJTCt2?=
+ =?utf-8?B?RjJ6ZHNaNUNQREJpcG9aSno0cm1jTUloOXVYNVJReU5yUVN5LzZiM0hETzhv?=
+ =?utf-8?B?TUF2TWRkR0ZML0kxZ2dZU3ZoU1B1aXdGbG94R29iZWxNbVc0VkZJbm80UWNj?=
+ =?utf-8?B?ZUwzbURvbm5DZkNpL2RhTzMrby90SmNRYVZBR1ZsY0l1bUxDZFhxbVc3TU9Z?=
+ =?utf-8?B?RHdZeHFjbzJwcFVVK0FKMGdxTlpjRzA1ZUV3N2syZGRBM2FNQkVYWndVaWZU?=
+ =?utf-8?B?d2hFR0xRTHc4d2t2VHJlMzlLcGRPRWMrNjAyK20vUElhaThGL1YxMGxKZGpn?=
+ =?utf-8?B?bnVDdy82ZVRvYmFDVlVqYTBlckx1eTJFRXJMY2N2NmpOZUV5YWlCSGJaY2Z4?=
+ =?utf-8?B?TjZNcWgxeGZwTGZ1Vld0dWkzU0xuRDZNRkczNXY5aVYzMXpidFVhMllVRjc4?=
+ =?utf-8?B?M1NrZFJlWHBSUE5qamY5VFBZNUNJMmRzYVBlZGx4MzBLMlVzUjVtQUh5Zy9R?=
+ =?utf-8?B?anlhVzE2ZXJ1QkczNU0zS05TZ3VpbTY5bGh3SWtRQlZFdWhDcFNKTG9Mcnl0?=
+ =?utf-8?B?bzhjZGFGdWJ4UUQzbjlNaXJUbXRYeThKbzVQRmwrMUkzOEZnVWNCL0RyR1Zn?=
+ =?utf-8?B?QjRkOEVFRFFYaE9lR2ZGNzB1bEVYekI1SCtGbW1JN2JxMkxtajBoTkV4ZHFR?=
+ =?utf-8?B?eGVSSWtJNzB1VkgyYldZTlJ2N2tEL2hTQVJIVGlPNGR6MVBXU1dDQXlOTEE2?=
+ =?utf-8?B?Vms1dGxEWVozcTRpaWdrQjRYSUZqZEFXNzB2KzJPd3BaRm9TS1FtdnRTTUNn?=
+ =?utf-8?B?U2ZoZVhyNlVldHdQNWl6WnBPVDAzKzloekQwWEQvcFlDV1YyWDhKV3FhMm1k?=
+ =?utf-8?B?L1FZUk1nY2UyODRKWXkzNU1rblB5UWtTS2pTTlJLZGZBc1R3ZVhRZ2JETVpP?=
+ =?utf-8?B?ZGU4REVyRUs5Ri9zUnRKN2ptT1UvOHEwdDRCUXhEQTYyYllESXBTRXE3eUVs?=
+ =?utf-8?B?STVndVBCS08wRW9uZksweUJBeUY1a25pTTdIRFdYOGVjRTRZS1RqUnlMcmJU?=
+ =?utf-8?B?cVc0YUlHaGlaQ0dhNFpBOW5yMENPYjVmd2xua2MrdU9ZcGJyTXFmc2NYTERp?=
+ =?utf-8?B?Qld2TFl0VGVMQTBrNFNSL213NUdza3N2N0pNN2NIUUJkN3VtVDgxeEtacmI1?=
+ =?utf-8?Q?+eUBPy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cElhKzI5RW9LQi9ud29PSWx5RVdRUy83dFhEU1IweldBbVEzeGwrNk1UdHhN?=
+ =?utf-8?B?Ym5CZTRZL1RMWGxiVjIzSXoxTS9HZDJUZ0dJNVFPRDJYb3BCVVJwMStsVHVN?=
+ =?utf-8?B?Y1g1OXVrM2RaRysrNkx1NVNMbEkxUzBsZklNNFc1bUhqQXNQc1BBdXY4TjhS?=
+ =?utf-8?B?TVQrR2M2ejlxR09PL1NFV2l1K2Z2MjdBOVd6V2NqY256c0EzZUp3UU1TOU9U?=
+ =?utf-8?B?MURrVHg2S0FOSDZ5Wkt6c3dsZ1N6eFdIdTlPOGVCanYrVkt4cmlkc2o0b3hU?=
+ =?utf-8?B?TEVwenlkM1Z1WU51MlY2RjF2N2tBb0d4Y0s5WDVzamt6WnBNZWo5Qm1VMWJ0?=
+ =?utf-8?B?M1lkNzVKeFk2SGVyN0wvS2ZyV3dnQmxVTExaRllvQStvT21VdWpoZU1ZU205?=
+ =?utf-8?B?UzJLQlI0dkRKVStzTUxyK3hPZ2YvRDdaMEFWck1DODliS1ZvKzNUWkxrQTFQ?=
+ =?utf-8?B?MCtLN2NEVVZuR1o3bXdhSzVFRlV6bTc5WlMrNXB1bFNPSTUwK3luNUtlenJs?=
+ =?utf-8?B?RmptMGZCUjMxL3NyQVVydFk2ZkRNWnRYZnJKQWdJNGZ3SGdZbzZ3UkhLL0k5?=
+ =?utf-8?B?NTFBbFJ5clBWdmpSQ1ArbUNMTDRNNUdCbFBhWkw2R01YZGRUZGwvR25KZXpY?=
+ =?utf-8?B?eEF1OWp3ZW9VMStKNnhPUjNYRGEzRzFMZW5vYXREcENIOVpyczNORHBocitv?=
+ =?utf-8?B?SXRNQzFOWmFoQnd1bHJlVjhIaEcxUkpZZnRuUUpTZHZWN0xvYUhjemRVSFo3?=
+ =?utf-8?B?UTBkWmg3dW1kbWRpY3I2Z3ZMVlBQamppZ1B6bmRuaEk4eWdibnpOV2djVU9o?=
+ =?utf-8?B?WDJHclNaOXJHWkI0ZnBNOHZoUGJSbkVuNGpESmd5dC83UkdIWVYzSVAxQ01C?=
+ =?utf-8?B?TFloak1oVitxNDFTOW4wZldBenE1TWFIbnRJOUJPemJFenBwNFg5dlBIQ3lq?=
+ =?utf-8?B?SXRPRUZjZmVMdzEvRjRMc3EyNktpTWFieExFOUtJRHYwMnN6MndSeCsvMnVi?=
+ =?utf-8?B?VlVvdmY2L2xUb3RzMUdDVlU2VVJVQXFsYThpaXM5cC9zSmlpeExrUzlzdVRa?=
+ =?utf-8?B?c0dzTFU1MGdIdDBiVW5Pc0prdTdtdTBKcVl6QkJFMnlROGRHc1h4WWpxdXY3?=
+ =?utf-8?B?UjY2ekxqcUNnUXBSWW4wVWZzQWYvUlRpME0rZjhLWWhNWHBPaUdoNTk5Z1lZ?=
+ =?utf-8?B?bnFaVTFKSjNLM3Q1SG1qNWt2ZU5ZclluOVQ0MWRNMWd3TFlWb04wOGIvczFB?=
+ =?utf-8?B?aWl3OE1yOXdvaVY3Rm5FVU5jbXQ2ZjYxSVRNTFJLTlJiYzgyeS9SWW50NHk4?=
+ =?utf-8?B?cnZrUE13ekFta0NHYkI1RVN5YTZ3MXI4Qmw3c05TVTJiZklHSlh0cmRGKzAy?=
+ =?utf-8?B?Q3MwQkFhSzhUdlZwR0d5bXZGZXZacHlkV2JGakVKYUphM3VBb3VTdDkva0Qr?=
+ =?utf-8?B?VFBSOTBybXRWdHlZWFY4dW5Gd2syRUNxOURudHhSLzVtQ3ZLWTdvR3FrRWR2?=
+ =?utf-8?B?Q3RjMUhrV1hIcGdoWVpXbnhRRUgrQ29RYk44VGxyNFZiT2Z3dWh0eWlrcStC?=
+ =?utf-8?B?SmY0SzR1VWpYV2RjbWU5bVZlcHhNSWdlVjlhTFY2ZkJrWExodVlxQUdpdUtI?=
+ =?utf-8?B?TEVTRTMva0ZrMXFFMDFuMm9sM3pnSXZyeXlMakovdFlGVStQNDhjMEZCcEx2?=
+ =?utf-8?B?aCt5azAyelFFazNtWk1MajlLZTdNejFES3l6endJS2dndFZKcW1ybC9vWDlO?=
+ =?utf-8?B?YkZGRjMxRDE2SDZQNlVHckl2SEdGZlNPOWtNVlJRaHVQWm16RVhCZkFxYlNE?=
+ =?utf-8?B?VHBxaVVPMitsQlU2U05tS0RGbDRsZGduQy9yWFZiSDVHNG9vczdRbmZFYjRE?=
+ =?utf-8?B?ajVwOHhjZHQ3Q1VpSVIzQm81aWpJZHdwSDBnMG93UlFqbGRxUGlvbzlTdzZB?=
+ =?utf-8?B?WG5wQWl3UlUzUXh4RzBBdUJLZ0V4VElKaDVxN1FNZFRheVBlenJVdStScmJG?=
+ =?utf-8?B?eXlNQnNFQTN5Y0FSbU83czg0dXBOVTVudkIxU2JaRWdWWXFpdEU0MTJPMlVY?=
+ =?utf-8?B?a1BMYTc4cU1hNDdEWUdXM09CSHFBR0pCdk5GMFVkSWd0ZGswRk0xaUJ2RU4v?=
+ =?utf-8?Q?3So5wo4/0bJOHYKvODuiwsnAY?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17460af3-bb12-4bbb-1652-08de07f7f921
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 12:24:35.2712
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ajTTs18tv/ZjCR4T8fd/YshYLVV1pZnswKnDJtyM2pzeEwJNwqNnzKdso3CeBr+N5caRsf+OmKF+Tp4q/399Xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8449
 
-Hi Drew,
+This patchset is a misc update of remoteproc_core.c.
+Patch 1: Drop a pointless initialization to variable ret
+Patch 2-3: Cleanup the included headers
+Patch 4: Use cleanup.h to simplify code
+Patch 5: Remove export of rproc_va_to_pa
+Patch 6: Update stm32_rproc auto_boot assignment.
+Patch 7: Use 1-bit bitfields for bool
 
-On Wed, Oct 8, 2025 at 2:22=E2=80=AFPM Drew Fustini <fustini@kernel.org> wr=
-ote:
->
-> This series adds support for the RISC-V Quality-of-Service Identifiers
-> (Ssqosid) extension [1] which adds the srmcfg register. This CSR
-> configures a hart with two identifiers: a Resource Control ID (RCID)
-> and a Monitoring Counter ID (MCID). These identifiers accompany each
-> request issued by the hart to shared resource controllers.
->
-> Background on RISC-V QoS:
->
-> The Ssqosid extension is used by the RISC-V Capacity and Bandwidth
-> Controller QoS Register Interface (CBQRI) specification [2]. QoS in
-> this context is concerned with shared resources on an SoC such as cache
-> capacity and memory bandwidth. Intel and AMD already have QoS features
-> on x86 and ARM has MPAM. There is an existing user interface in Linux:
-> the resctrl virtual filesystem [3].
->
-> The srmcfg CSR provides a mechanism by which a software workload (e.g.
-> a process or a set of processes) can be associated with an RCID and an
-> MCID. CBQRI defines operations to configure resource usage limits, in
-> the form of capacity or bandwidth. CBQRI also defines operations to
-> configure counters to track the resource utilization.
->
-> Goal for this series:
->
-> These patches are taken from the implementation of resctrl support for
-> RISC-V CBQRI. Please refer to the proof-of-concept RFC [4] for details
-> on the resctrl implementation. More recently, I have rebased the CBQRI
-> support on mainline [5]. Big thanks to James Morse for the tireless
-> work to extract resctrl from arch/x86 and make it available to all
-> architectures.
->
-> I think it makes sense to first focus on the detection of Ssqosid and
-> handling of srmcfg when switching tasks. It has been tested against a
-> QEMU branch that implements Ssqosid and CBQRI [6]. A test driver [7]
-> was used to set srmcfg for the current process. This allows switch_to
-> to be tested without resctrl.
+I am also reviewing the rproc->lock usage and thinking whether we
+need to add a lockdep_assert_held for some functions that should have
+lock held. But not sure.
 
-Could we consider submitting the entire QoS functionality as a single
-integrated patchset (indicating the upstream branch that the patchset
-is based on)? This should include the content from
-https://lore.kernel.org/linux-riscv/20230419111111.477118-1-dfustini@baylib=
-re.com/
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v2:
+- Add patch 6 "remoteproc: stm32: Avoid directly taking address of auto_boot"
+  to address stm32_rproc.c build issue
+- Link to v1: https://lore.kernel.org/r/20251005-remoteproc-cleanup-v1-0-09a9fdea0063@nxp.com
 
+---
+Peng Fan (7):
+      remoteproc: core: Drop redundant initialization of 'ret' in rproc_shutdown()
+      remoteproc: core: Sort header includes
+      remoteproc: core: Removed unused headers
+      remoteproc: core: Use cleanup.h macros to simplify lock handling
+      remoteproc: core: Remove unused export of rproc_va_to_pa
+      remoteproc: stm32: Avoid directly taking address of auto_boot
+      remoteproc: core: Consolidate bool flags into 1-bit bitfields
 
->
-> [1] https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
-> [2] https://github.com/riscv-non-isa/riscv-cbqri/releases/tag/v1.0
-> [3] https://docs.kernel.org/filesystems/resctrl.html
-> [4] https://lore.kernel.org/linux-riscv/20230419111111.477118-1-dfustini@=
-baylibre.com/
-> [5] https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git/log=
-/?h=3Db4/cbqri
-> [6] https://github.com/tt-fustini/qemu/tree/riscv-cbqri-rqsc-pptt
-> [7] https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git/log=
-/?h=3Db4/ssqosid-debug
->
-> Changes in v4:
->  - Rebase on riscv/for-next as of riscv-for-linus-6.18-mw2
->  - Add Conor's Acked-by to the yaml patch
->  - Link to v3: https://lore.kernel.org/all/20250920-ssqosid-v6-17-rc5-v3-=
-0-5093162922d8@kernel.org/
->
-> Changes in v3:
->  - Fix parameter in __switch_to_srmcfg() when CONFIG_RISCV_ISA_SSQOSID
->    is not set to avoid error in clang. This does trigger checkpatch
->    warning about "Argument '__next' is not used in function-like macro"
->    but it seems that '__switch_to_srmcfg(__next)' is needed to avoid
->    the error that LKP reported. '__switch_to_srmcfg()' will trigger a
->    build error in clang.
->    https://lore.kernel.org/oe-kbuild-all/202509162355.wByessnb-lkp@intel.=
-com/
->  - Improve description of ssqosid in extensions.xml
->  - Link to v2: https://lore.kernel.org/linux-riscv/20250915-ssqosid-v6-17=
--rc5-v2-0-2d4b0254dfd6@kernel.org/
->
-> Changes in v2:
->  - Restore the per-cpu fix from RFC v2 that was missed in v1:
->    change DEFINE_PER_CPU to DECLARE_PER_CPU in qos.h and move
->    DEFINE_PER_CPU to qos.c
->  - Introduce a patch that adds Ssqosid to riscv/extensions.yaml
->  - Link to v1: https://lore.kernel.org/r/20250910-ssqosid-v6-17-rc5-v1-0-=
-72cb8f144615@kernel.org
->
-> Changes in v1:
->  - Rename all instances of the sqoscfg CSR to srmcfg to match the
->    ratified Ssqosid spec
->  - Link RFC v2: https://lore.kernel.org/linux-riscv/20230430-riscv-cbqri-=
-rfc-v2-v2-0-8e3725c4a473@baylibre.com/
->
-> Changes in RFC v2:
->  - change DEFINE_PER_CPU to DECLARE_PER_CPU for cpu_sqoscfg in qos.h to
->    prevent linking error about multiple definition. Move DEFINE_PER_CPU
->    for cpu_sqoscfg into qos.c
->  - renamed qos prefix in function names to sqoscfg to be less generic
->  - handle sqoscfg the same way has_vector and has_fpu are handled in the
->    vector patch series
->  - Link to RFC v1: https://lore.kernel.org/linux-riscv/20230410043646.313=
-8446-1-dfustini@baylibre.com/
->
-> Signed-off-by: Drew Fustini <fustini@kernel.org>
-> ---
-> Drew Fustini (3):
->       dt-bindings: riscv: Add Ssqosid extension description
->       RISC-V: Detect the Ssqosid extension
->       RISC-V: Add support for srmcfg CSR from Ssqosid ext
->
->  .../devicetree/bindings/riscv/extensions.yaml      |  6 ++++
->  MAINTAINERS                                        |  7 ++++
->  arch/riscv/Kconfig                                 | 17 +++++++++
->  arch/riscv/include/asm/csr.h                       |  8 +++++
->  arch/riscv/include/asm/hwcap.h                     |  1 +
->  arch/riscv/include/asm/processor.h                 |  3 ++
->  arch/riscv/include/asm/qos.h                       | 41 ++++++++++++++++=
-++++++
->  arch/riscv/include/asm/switch_to.h                 |  3 ++
->  arch/riscv/kernel/Makefile                         |  2 ++
->  arch/riscv/kernel/cpufeature.c                     |  1 +
->  arch/riscv/kernel/qos/Makefile                     |  2 ++
->  arch/riscv/kernel/qos/qos.c                        |  5 +++
->  12 files changed, 96 insertions(+)
-> ---
-> base-commit: 68247d45c045bb7dda923cf2c8d0937ce0e16394
-> change-id: 20251007-ssqosid-ddc87968b2d9
->
-> Best regards,
-> --
-> Drew Fustini <fustini@kernel.org>
->
->
+ drivers/remoteproc/remoteproc_core.c | 144 ++++++++++++++---------------------
+ drivers/remoteproc/stm32_rproc.c     |   5 +-
+ include/linux/remoteproc.h           |  18 ++---
+ 3 files changed, 71 insertions(+), 96 deletions(-)
+---
+base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
+change-id: 20251003-remoteproc-cleanup-345cd50fe138
 
-Thanks,
-Yunhui
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
+
 
