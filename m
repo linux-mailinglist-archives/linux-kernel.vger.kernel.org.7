@@ -1,352 +1,294 @@
-Return-Path: <linux-kernel+bounces-847605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB11BCB435
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49A9BCB438
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CA524E75DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585241892550
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1ED748F;
-	Fri, 10 Oct 2025 00:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B070318C031;
+	Fri, 10 Oct 2025 00:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="FBfD7cRI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wcw6eCbq"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+SpWn/f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47641BC2A;
-	Fri, 10 Oct 2025 00:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760055031; cv=none; b=G1K3J4+K0/v4tDXGBVkCl1lHt2jKwb9mHhOgG39ycLDweZCeMVplce+W+Vv7TE+vqTpyTz9htK3oVJJGF5sCrbz5rivEM0f16uJscKFQewy55X/4kbxAFjxYXO7hh9HRYddRY4s7Cij2/ex16RxGSns1jdAYEAsQ2S1GS+DqS1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760055031; c=relaxed/simple;
-	bh=ILO6mk9xMKJYjMG/ztxFdn243CQQZsFxR9A7pMa3iwc=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=FAxzi2gcIhu1HryTL4WSzXnSEV8L/gBKNOPAAH9Lze1kLjPI60PG5GZjcZdIz1Lqic+40MABR5q0o5Wq0HiSb96SqomtafPIeVP+7Tuo5r1VwXv4d7LZ7hkzstWb2TJD7oCBaQH2hZOnmnB8j0upXXeqjSBCZLT+EQ/31FonuGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=FBfD7cRI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wcw6eCbq; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 64E167A00CB;
-	Thu,  9 Oct 2025 20:10:27 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Thu, 09 Oct 2025 20:10:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1760055027; x=1760141427; bh=/rIslGpp5X3plNPgeuvixOqik8qIg2/1lu+
-	r9KnPNNk=; b=FBfD7cRIM1eMUe95Z5kDH9R0/Ygf1UlqsF0h6/84z0tPPGGk2Aq
-	hj1rjguWebbFmGSY7Nxs0JIyZK0JVcdX7YMcgdFzOv+zlLvlfa51T7+qVzhVdyrG
-	bKzbhNBUKG0QoEBe24MeEl+B4oxlBBHwJqPx/fjSEI74J5B/IByq+xW0VZ7vHY+E
-	P3Nb9nVkGeHcOsC4MRBNkRU7PhSErEHiRsWe9QNKL83PJ65/iDfDwkVfjO/6dy2t
-	IwDjETer/xEoaNBHXDUv3qFqCkB673Ux2kREhciFy5KUOGyut2OdyGiWyNHnmHBO
-	473P2aHpjqNB8EnwgXcuedd2/yJasc30nDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760055027; x=
-	1760141427; bh=/rIslGpp5X3plNPgeuvixOqik8qIg2/1lu+r9KnPNNk=; b=w
-	cw6eCbqJYh9MCL0OqaikZgHysUoJyOpQXzqZu5yLENOElTnfPJxc/AfdjjMWxK3b
-	xJVWP0XW91r2lywXYLDY1j+tyxSKCqO3wKSr1+/yjCXZ4MNJNnrPkjAJWbsFwiCc
-	ropRJtG8QpvUlUO3I2XA8xyMWh+KE4uom1b6AbmlJt+gTJgZP+MgrjhgMa1Qo8OQ
-	Xw13KxqRmJcfv/+nUhxbhSKYDZ7NhqtDsb17YKvcHitSX7v2dk7QAe6VJGYBC6qG
-	jL6AJeQRJC+XcGv7Yv+ytA3bLpsVEo1wOR8u6gmr6GDJJn/XB9y8HRsv1wv/h4TR
-	RXS7cQU/l8eUge8KjBtDg==
-X-ME-Sender: <xms:8k7oaMjUbHWpGYmiTIY1-IcFIdhHwSeAitTti-zrSf4WQijstmeoFA>
-    <xme:8k7oaF_HGpvL7bMvFw_hwEZ0-mmlwh63uO-rJYrtuzv94EkHZAHfzw1C7Lwkd5TmN
-    K_IQwvslmSX9uFc-pdJKnzwq5Ep-37PNvMnIcPRBRjTV4sG7Q>
-X-ME-Received: <xmr:8k7oaEZDxyXL3wK54UvjqlORWCl7rEfbgvb5ACqqc-Op66NRWs5w_gbOB8HfdKyfm-gzYnCGQEkVNefvsk1eM8FNhUt074lBviWs3HVMH9TP>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdejheekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehr
-    vgguhhgrthdrtghomhdprhgtphhtthhopehokhhorhhnihgvvhesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgtphhtthho
-    pegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegurghird
-    hnghhosehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:8k7oaLtSUoL55rnpdiH74yDJBxZYQlaar0S3RkP-0-UnYbJO1bCogA>
-    <xmx:8k7oaAneupu_bVCTfnygf1qNWM5Xik-g1gMEBlkqhI1EwL8LASOebw>
-    <xmx:8k7oaLxenfkQjnj-FdY43vvZzdSAMVOKd6fpRCNnRlaYv3H0nyMlYA>
-    <xmx:8k7oaEzaT8uGbhdLbpaUmNlgvlPwfwq0QQsxTfOIyQXbHQgfHU6EBw>
-    <xmx:807oaG1VOBx_ZBpLtGc-EbOP6FmkkvNEhMQTeGkfmfvJKe8EreNNNdy8>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 9 Oct 2025 20:10:22 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E60135950
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760055367; cv=fail; b=GYfNicvwlvA8OayEDfaZ6JNfQGJ7cw/JGqz/dFlZWiOU655Ye5A9Wv05u91mxRwzBPoDy11CtJsEr9hoYmYy4fxLCBT4rnhX46gr3o7KjIqRIxkgV9xdhhzMhoHRhf7Gc1fPluKQbL2z4VaK6zsHfmTY9up4cOhLEHxB1IWELdc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760055367; c=relaxed/simple;
+	bh=qDGFvKO2RthWluR0grYo8iMhYLjW60JeZExWlHoWGMw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RHRddNTy8BcjAOt03ai/pFg8/xR09j6JcPzP83eNZ8g0mRtcNcjW2+hWqOCu0NSoMXH51yfHCaWjHYSFSZmTI63fTDoPHLqhShWmW+Exh7900/h833N9RQxDzr0OEBNViYC4iuiGeVdzV3eHVtgXhKnrCMLbbKv9UYNmHJXYin4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+SpWn/f; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760055366; x=1791591366;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=qDGFvKO2RthWluR0grYo8iMhYLjW60JeZExWlHoWGMw=;
+  b=Y+SpWn/fP7RCW/kGRgnn7U5g5kaXubqJ2gGKau0Fc+NAaeHTiBa2dHIi
+   A0+r2fJQ5B1KW597R+BJeHoG8sFyLGk4YM/qdyzoBsnQdVo8YOFoWD+uj
+   ioKAXNpEbV75URTrYUIQvI9JZjlU4h8Vosfe3cEdvIHjLYSjlEwvb1izH
+   daVxQk6vYx55EjukSiYNCyJywY8XIRVTWTH8u5pF8RHXzkXee7DKF52cj
+   /7S/pNXrLzYfXA72zvnOlG2F6mWprU/oWW94qEQk/VzBl6HEkeVcqWJhO
+   fIKoA4c7/meQLAvQdW5H27h6OtIHSikh/nsECi0+qkvSGJyZKGqn9YVkA
+   w==;
+X-CSE-ConnectionGUID: 2iy/u7qSTemVud6oWxOtqw==
+X-CSE-MsgGUID: dQ31X1aUQ8i5PeNDW00lAg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="66131202"
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="66131202"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 17:16:06 -0700
+X-CSE-ConnectionGUID: 8heth+i9SwCcM073g//F7w==
+X-CSE-MsgGUID: w1qCeBXlRQGF0wzGiJzvVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="186108889"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 17:16:05 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 9 Oct 2025 17:16:05 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 9 Oct 2025 17:16:05 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.17) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 9 Oct 2025 17:16:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vVTwWSXJ3YplkcmqyAdMoISHp/iTDzOwH0/+0flg6bHO4X6juEdvWmnJX51+cwHhPvTmu3AbREJYc7CUBu5qEeZRcJWjtZBNFQsUQ47KXHPt4J3om+utS8wM9r7mBHls/MNtZ+WaM9nCtizF0o4iJ3AcKmzKq6e3/0YEUz/A78QkZaDbH1tlWUbGvQSFdT8tgoCsJB6NIaKc70Hz/idz2agIDxNZiEcKw0L2x4z++wSaRhn51wq3NNMXDM2gQXbFx3oDEfq9C8VNoYHa/0HtRhCcs3Iwnzbdk3FBa9RNRzPpZ44j0vz/W7rzzPvt3455CNyaT0/7xs/R1u+svOJ4mQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HerPKCCWjYkyCp3Z6crAEYcrrMM159OuqDQIC/qL0Wg=;
+ b=FxXnYhsXwB7q/4zaBpIU1kNo5eXkm5WWj94jj8y/aHaxb3shml9MCe4iaTdabC0sfhV9JolOOpRxYH4+zQqH+y15zA/Ja7zSkEoVaPCwuIMZw4152HEJzSLsTtbRyx/KxhO0bHL5qBU79gaQs2z4bcsRUYR35LRXE7D876k3jRtz/sjh2TAXqaCkC0BHKGOW5Loc38qtmHelRuXcyy6H7bH1+4RuQDI494THZV8SFMbJ6gvo8KaqQqZiPyolb/kuyF92t7v10HFgAkNLYBxraAACZeR7PPwv59bwR54Bw6DAo8DGkql9Up04R36P9WusN5g671vl7bk19t6DElzCxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by PH3PPF496D5EAB2.namprd11.prod.outlook.com (2603:10b6:518:1::d1c) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Fri, 10 Oct
+ 2025 00:16:02 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 00:16:02 +0000
+Message-ID: <21cd6535-a51c-4a8a-9e82-328b03a8fc40@intel.com>
+Date: Thu, 9 Oct 2025 17:16:00 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 20/31] fs/resctrl: Refactor Sub-NUMA Cluster (SNC) in
+ mkdir/rmdir code flow
+To: "Luck, Tony" <tony.luck@intel.com>
+CC: Fenghua Yu <fenghuay@nvidia.com>, "Wieczor-Retman, Maciej"
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, "Chen,
+ Yu C" <yu.c.chen@intel.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+References: <20250925200328.64155-1-tony.luck@intel.com>
+ <20250925200328.64155-21-tony.luck@intel.com>
+ <fbd49f1a-ddb2-45e2-b943-df43d2173503@intel.com>
+ <aORMZ6NUXMpECHU6@agluck-desk3>
+ <ed1a10d2-2f13-43aa-93f8-7dfe8864cf47@intel.com>
+ <aObUZU8rnWIDR_tH@agluck-desk3>
+ <860ded3d-2003-4d72-9013-a5fe97657934@intel.com>
+ <DS7PR11MB6077A0323678A68DF5878C0CFCE1A@DS7PR11MB6077.namprd11.prod.outlook.com>
+ <e536ea0b-c466-4381-b92b-993be92fe65e@intel.com>
+ <aOf0yA1AWlzJLf8H@agluck-desk3>
+ <6778a8af-5312-419e-a064-bcb6a495a207@intel.com>
+ <SJ1PR11MB608328747C28F736C6DD5FCFFCEEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <1ea9cff4-e93d-4be8-bbe2-308fc05eb3d1@intel.com>
+ <SJ1PR11MB608302F7FFA34D93EBD77640FCEEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <SJ1PR11MB608302F7FFA34D93EBD77640FCEEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0316.namprd04.prod.outlook.com
+ (2603:10b6:303:82::21) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- "David Howells" <dhowells@redhat.com>, "Brandon Adams" <brandona@meta.com>,
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
-In-reply-to: <74e20200de3d113c0bced1380c0ce99a569c2892.camel@kernel.org>
-References: <>, <74e20200de3d113c0bced1380c0ce99a569c2892.camel@kernel.org>
-Date: Fri, 10 Oct 2025 11:10:20 +1100
-Message-id: <176005502018.1793333.5043420085151021396@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH3PPF496D5EAB2:EE_
+X-MS-Office365-Filtering-Correlation-Id: b37d4b84-362f-4a17-9561-08de07923207
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RmpqaFNNck1IQ2xmaDZNWlEvVWk0TFhUZWVLQlhEMDhXbHdwcWJZbTFwMjUw?=
+ =?utf-8?B?UCtaWWh3VWpXdmhPaEwwUXQxZWtha0ZPMHBwcU5zZ29CcFNEeUNzS1JIc3Fo?=
+ =?utf-8?B?cDVtTktja1pnb0FCQnV4QmpEa1l5YUs2UEJ5ajNjYUhkckYvSXQyYThhak9Y?=
+ =?utf-8?B?c1ZHMXBZV1pOb3dmYjdGcmU1NXE2UmJjL09GcXl4YnFuWWljVVdOOGpUWVky?=
+ =?utf-8?B?Y21rWGRRdGo4MW5GZXlSb2pIK1JqUTgyL2k1YWJQWUVtc292L1FYVjl2ZlB0?=
+ =?utf-8?B?R0h1Q0FWQlppRm9kU1h1cU5JS0tjb1lIZ3J4TlFmYmZBRC9OZUgxYkViYkNx?=
+ =?utf-8?B?Z1owNS9nL0xhNHpJZWpJTkFIMm1vaVZ6TlhqN2dLNEhMTUxuN0x0V29mc0h5?=
+ =?utf-8?B?L1JDSWY2ZzZFTlRYR3pIZUM1cU5lWGFCWGpqbmRwcmZxRmg1YmcrY2s0akhO?=
+ =?utf-8?B?eEE5RjY3VGI2S215UkhYT2lObkFiWGVrbEd2SjlDTnA1NTIwOERyV0hqOU1E?=
+ =?utf-8?B?SkkxbTBxWU9odmVZZERUL1NnRHdFTGszalBWRUM3M1hNbndqbUVRR2pJT0c0?=
+ =?utf-8?B?RkFKUHFFS2t2TDEyelBzenFCU2djZ1BNemdMY0JLVDlmWWVjTkpIN2ZWWEhu?=
+ =?utf-8?B?TEtnU1MvVzNJNmlla2tRYUY4bnBIYk9hakRQU3JJKzBmTG9EQXhFWkQ3T01C?=
+ =?utf-8?B?TU1YZmpHQU81a1F0a1BIemRIQ1dtTWN6N2xKcTVlWm41azhRYW5tcXIrNllW?=
+ =?utf-8?B?VEdYLzF3NmhJVmw5MGRhdWw1dlFoR29OTWY5UUZkMmpJYzRKeUlBQnZiWlFz?=
+ =?utf-8?B?aFZ3ZE5UMEp6UHBZcFgyRFlIcFVGLzhQV05FZnVTWW1FR3ROa0NkTjNrbFNN?=
+ =?utf-8?B?OXRzM2xXYUc5VU5MZ1VNSEU4ak5iV0RZajBQT0F1STYvdlZici83ZzU0a3Fj?=
+ =?utf-8?B?eU81Zi84dlo0a3AzUURGOVBidmwwejQ5S0xZYkY1NnRzbmdwc0dJQWJaMXFh?=
+ =?utf-8?B?ZnhuUTVOMDRQQWNjNlk2TjZpOHdEL2syN3I0b3BKVWY5d0kwbmVDYlp1b0ZU?=
+ =?utf-8?B?S2FETTU5bW9yOE4vRzNEQk83TmtqdW1rdHd3MjladTNURUxZL2Z2enhLLzB6?=
+ =?utf-8?B?dWxvYTRKMHFlQnI2ZXVGdmdFVVlDRzdLUkE3ejYrVTkrNXBxN1V0QngyMXRk?=
+ =?utf-8?B?OGxHMURDK0IrNGlQNjVGd0oxandIMlIralhhbnpBOTk1cS9IRUxWekwyRkFv?=
+ =?utf-8?B?WUZkUkVXTGF0bDk2d3U3TzllMlp5Y1hZaGNLUTlzS3pxc3JIRGJFaC94YUU4?=
+ =?utf-8?B?TlFOcjJUZzJybVJLVG5ZUExGRXhwVXNCZkdrNHkvWVRCOXhnZ285SUtnazM1?=
+ =?utf-8?B?em1PbzA5QVNsYWpTZlhCcjlNdFFWV1JRN1VvRkxkdWpZWUYwZHd6V2k3dUdx?=
+ =?utf-8?B?aTRpZUxpcnBWQlZvdmpuS01vYmpNQkllT3g2T3FTc0szUUJoS3krR09BdVZW?=
+ =?utf-8?B?Y2E1WVJvRmd1d0MzbDRxQ0JHV3gwalFmcHFIczZqc3d5cE5iQ3QrNEsvQkpU?=
+ =?utf-8?B?d0xkSjJXMW9LNkxFaGRwS29wZVFLUGgzbGIzT1UxcDF0VWZOY0I1Q2xJdU95?=
+ =?utf-8?B?TS9jU3JBcU0wdDZkZlEyaGFPbE5KbGMzUlVHL2doZWZIRm1LUHlQRjl1MG4x?=
+ =?utf-8?B?SWhuUkw1MHhZemQ5RUFaSXJ4N3JsZzZ3akgvaHd5aFV2aVNCVFdjQWlCNjZ5?=
+ =?utf-8?B?QklGK0hjNUo0RG9VUW1YOUIvNXNGQjFteEtON0ltM3NZV2JIVFBVSE5DdXFs?=
+ =?utf-8?B?UWg5R0FpNjEyUFZ4TmI5T3N6YVlyWnFxcVZzdVVMcjFvRDVOOVJaVjR0VmlL?=
+ =?utf-8?B?VkFhNjlWSGZTL3RwVEFhMG1kdnhUTUFZdVYweHJjTTNiNUllcWJqeVlvYWtl?=
+ =?utf-8?Q?BGvWKxSJCyc/1RMhwAYTbEhDF4Mk64eU?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T2d2cXZxbXlBS2lNa0R3RFhXYzF2UnlscXdXYk5EdC9UUThwUldOOXBPVnU1?=
+ =?utf-8?B?UFdHdDFMSXNjL3FPc1NLMDFaTjd4dGRHT3BnZjAvT1dYY2RYTFMyTkJhdHZm?=
+ =?utf-8?B?ZUVINkdEMEpyMmhudGM4WTNTZE9UWit0eGZIMGhpUUhhK0RUU1VESjFpQnUr?=
+ =?utf-8?B?U0RjR2N5bWtpdHkrMjlJNDBFNm5yZHVNUWVKQzdncFlZNVRQM1l4MGNkT2V6?=
+ =?utf-8?B?UXRnWkxxcDlnVVk5THBTTUgwOGk2QmM5UVRzWFJXcGpmTHk2dHNTRmsyN0gy?=
+ =?utf-8?B?Zk5JM3BTdWpyVi9YSXFwM29Xc3U2SzMzZHEvU1htS085UzdZWWRLTHJqWFJZ?=
+ =?utf-8?B?NFFWbzd2LytZSExiRlNEMDZUL3hONGd1OWN3V3hsa243cE5MaU13UzFFYkww?=
+ =?utf-8?B?VXdhUkhlNWZvbXZDZjRjV1ZqL1Y2aVE3WXpZUVkrWjlMbWQ5OEJyNDRhSFRZ?=
+ =?utf-8?B?Z3RUcVVKWXM5ZWU2QUhockNTOVNzTEp0bERPa3k0TTkyV3VWZ3RLOWRjQmEv?=
+ =?utf-8?B?K3o3TzhsbzJwSE1LRWtFdXdqTDErTDMwSUlPWTQrK0thakxqNUptdEZSOHM0?=
+ =?utf-8?B?elJHeDJqK3VpL3lRSUU3ZjdrUzJVLzE4WHZIZnJTR29pNnJpQjU5T1VZOVZN?=
+ =?utf-8?B?RnZaRWdjZE0reEI3bjhCOTc5TDlDYjh1eW5DOTVTcXVuZ2htRXRMOWdyVjM3?=
+ =?utf-8?B?djZBQ3ZYSXlwNTFtWWQ3NFBNdjhwMFlhWGI2QUtyTlFxdHNjRjh3citvMmIr?=
+ =?utf-8?B?SjJoTUFCNEZSZ2IyeWlWNjZjd0J4L1hKbnlQT21wTzRvSU1rVWpQeDg0d3p6?=
+ =?utf-8?B?ekJMMUdGVjZlMHRBVUZWWkdTQUQ5eWdpTnRUdklGbzNjeXVpMzFoUS9XOVk4?=
+ =?utf-8?B?N2liRmc5d0JTcFN5WU5UbXVIRzYvTkpaNSs0cnRJRTVGREoydHFQZFJyYnJF?=
+ =?utf-8?B?YlFvNms4NG1IRHErdWV2K1JtT1plY3ozRk1sOTRPUzYxYm91YTA1Szd6WkZP?=
+ =?utf-8?B?MGpCWUVSRUxIUDVyM281SkN6Nk5NMTQ3TG54NzFrZ0J1ZVlWQWxndS9MTkdL?=
+ =?utf-8?B?MEozSUF1ckVMeStTUm5HL2dmZHhOS3Nqcll6bDNnYWZubm9oTXJVUC9INTZF?=
+ =?utf-8?B?NVdDWWRHV1RWRGUyKzNTWDdBVjJkTDR3ellNN0dreXVReTBSeVdhM2RHMnZq?=
+ =?utf-8?B?bzZva1VGb2svUG5OR2FGdWxyeFhySnYzRTFhRSsrdEYyOTd4MmdJcE5XOHFq?=
+ =?utf-8?B?aTR3RWRzcThNV0doT2s1SVVwNThKMG9WSWlFd094UC90TXhtdDd3a0NMS05s?=
+ =?utf-8?B?bUhYRXo4ZWhISDhUbHI0bjBqRmp3eWF5MUV0clVnelFRbmNMMG9wRUZWWTlh?=
+ =?utf-8?B?RVpMNzNYZHZpRTVEMVFVMGlmaE9MNzd6ckJxc28wUXp1NHhHcjVGYUFZOUo5?=
+ =?utf-8?B?Nm5oNENJeUVJd2dqcFBvMjRwTHA5ZFdvSE82UjB2S3FYaVNxYUtvVnJua3dN?=
+ =?utf-8?B?SDlCbUhLNW56U1RtT1Ftbk1zN2NxVFBSMVBVNWsxNnJWTVVPWlIvWG5EbGFT?=
+ =?utf-8?B?Nm5kdUVxOWJLSm1XelBqT2RKZjdqRmFQYUFVWitDSUgzbVFKMnB5czdKQ3kv?=
+ =?utf-8?B?RlNjUUV1ZGttSDhvTys4TnZiNTE4MjE5VGtHSTlTclU1VmZ0VDkzdHNocUpQ?=
+ =?utf-8?B?dkVRanlVSmVDUVFscS9MRXAxWmRSa0dLQ0U1SXRlOHdiQThTdmZ0bGJlV3hr?=
+ =?utf-8?B?NGJjL0tvY28zSkRlYlhNK2toeGZPbnJMZzJlaVNFVUVoN3AxZ09GZFgrNU00?=
+ =?utf-8?B?Y3dNdTRLaW1mdVcrRXVUai9QUU83d05TY0RPaWU5VjFLMGJGS0tRT1lDTFVH?=
+ =?utf-8?B?bTZYd2tCK3ZHRGkyNEJ1dk11NXE3aWlzY0oxL1FrTTdEWWVFTGoxdTkyYTJv?=
+ =?utf-8?B?WTFqWXRXcENmcDF3SUZsRXloVloyVk4wZ2IzUHhIMlFRSDY2MFVzaFFwUnRY?=
+ =?utf-8?B?WGJHZGE5Q3hEd0Y2VUVVTXh4L1hmN1NuRUh4dDl0R0ZoMi9KTCtqRUlmenVj?=
+ =?utf-8?B?MHMzclVTbG5KTjZXU1MvdGE5YlBYWXdzc3k2QUlGZkkxbWM5OXJKeDBpQTcv?=
+ =?utf-8?B?Q1F1WGJ2NU5jWGVZeVI2bjQ5QmgrUXZnTEpQanB3T2xxNWlZYzZMenVETXhN?=
+ =?utf-8?B?ZkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b37d4b84-362f-4a17-9561-08de07923207
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 00:16:02.1451
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3mXx6jdKaBT1AgHlCv4wKaUJjQwl7p+MvgEbiYCPQGCZHLHto/bN4NuNYT6skEH4qsL4Hmn3210Hwd9YFLnLYnE1H/XYub7la1Lln7RfZvs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF496D5EAB2
+X-OriginatorOrg: intel.com
 
-On Thu, 09 Oct 2025, Jeff Layton wrote:
-> On Thu, 2025-10-09 at 08:51 +1100, NeilBrown wrote:
-> > On Thu, 09 Oct 2025, Jeff Layton wrote:
-> > > We've seen some occurrences of messages like this in dmesg on some knfsd
-> > > servers:
-> > >=20
-> > >     xdr_buf_to_bvec: bio_vec array overflow
-> > >=20
-> > > Usually followed by messages like this that indicate a short send (note
-> > > that this message is from an older kernel and the amount that it reports
-> > > attempting to send is short by 4 bytes):
-> > >=20
-> > >     rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - shutti=
-ng down socket
-> > >=20
-> > > svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP record
-> > > marker. If the send is an unaligned READ call though, then there may not
-> > > be enough slots in the rq_bvec array in some cases.
-> > >=20
-> > > Add a slot to the rq_bvec array, and fix up the array lengths in the
-> > > callers that care.
-> > >=20
-> > > Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single soc=
-k_sendmsg() call")
-> > > Tested-by: Brandon Adams <brandona@meta.com>
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/nfsd/vfs.c        | 6 +++---
-> > >  net/sunrpc/svc.c     | 3 ++-
-> > >  net/sunrpc/svcsock.c | 4 ++--
-> > >  3 files changed, 7 insertions(+), 6 deletions(-)
-> >=20
-> > I can't say that I'm liking this patch.
-> >=20
-> > There are 11 place where (in nfsd-testing recently) where
-> > rq_maxpages is used (as opposed to declared or assigned).
-> >=20
-> > 3 in nfsd/vfs.c
-> > 4 in sunrpc/svc.c
-> > 1 in sunrpc/svc_xprt.c
-> > 2 in sunrpc/svcsock.c
-> > 1 in xprtrdma/svc_rdma_rc.c
-> >=20
-> > Your patch changes six of those to add 1.  I guess the others aren't
-> > "callers that care".  It would help to have it clearly stated why, or
-> > why not, a caller might care.
-> >=20
-> > But also, what does "rq_maxpages" even mean now?
-> > The comment in svc.h still says "num of entries in rq_pages"
-> > which is certainly no longer the case.
-> > But if it was the case, we should have called it "rq_numpages"
-> > or similar.
-> > But maybe it wasn't meant to be the number of pages in the array,
-> > maybe it was meant to be the maximum number of pages is a request
-> > or a reply.....
-> > No - that is sv_max_mesg, to which we add 2 and 1.
-> > So I could ask "why not just add another 1 in svc_serv_maxpages()?"
-> > Would the callers that might not care be harmed if rq_maxpages were
-> > one larger than it is?
-> >=20
-> > It seems to me that rq_maxpages is rather confused and the bug you have
-> > found which requires this patch is some evidence to that confusion.  We
-> > should fix the confusion, not just the bug.
-> >=20
-> > So simple question to cut through my waffle:
-> > Would this:
-> > -	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1;
-> > +	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1 + 1;
-> >=20
-> > fix the problem.  If not, why not?  If so, can we just do this?
-> > then look at renaming rq_maxpages to rq_numpages and audit all the uses
-> > (and maybe you have already audited...).
-> >=20
->=20
-> I get the objection. I'm not crazy about all of the adjustments either.
->=20
-> rq_maxpages is used to size two fields in the rqstp: rq_pages and
-> rq_bvec. It turns out that they both want rq_maxpages + 1 slots. The
-> rq_pages array needs the extra slot for a NULL terminator, and rq_bvec
-> needs it for the TCP record marker.
+Hi Tony,
 
-Somehow the above para helped a lot for me to understand what the issue
-is here - thanks.
+On 10/9/25 3:08 PM, Luck, Tony wrote:
+>> I did not mean to imply that this can be supported without refactoring. It does
+>> seem as though you agree that mon_data::sum may be used for something
+>> other than SNC and thus that using mon_data::sum as a check for SNC is not ideal.
+> 
+> Reinette,
+> 
+> Yes, we are in agreement about non-SNC future usage.
+> 
+> Is it sufficient that I plant some WARN_ON_ONCE() in places where the
+> code assumes that mon_data::sum is only used by RDT_RESOURCE_L3
+> or for SNC?
 
-rq_bvec is used for two quite separate purposes.
+From what I understand this series does this already? I think this only applies to
+rdtgroup_mondata_show() that does below ("L3 specific" comments added by me just for this example)
+in this series:
 
-nfsd/vfs.c uses it to assemble read/write requests to send to the
-filesystem.
-sunrpc/svcsock.c uses to assemble send/recv requests to send to the
-network.
+	rdtgroup_mondata_show() 
+	{
+		...
+		if (md->sum) {
+			struct rdt_l3_mon_domain *d;
 
-It might help me if this were documented clearly in svc.h as I seem to
-have had to discover several times now :-(
+			if (WARN_ON_ONCE(resid != RDT_RESOURCE_L3)) {
+				...
+			}
 
-Should these even use the same rq_bvec?  I guess it makes sense to share
-but we should be cautious about letting the needs of one side infect the
-code of the other side.
+			list_for_each_entry(d, &r->mon_domains, hdr.list) {
+				if (d->ci_id == domid) { /* L3 specific field */
+					...
+					/* L3 specific */
+					ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
+				}
+			}
+		...
+	}
 
-So if we increase the size of rq_bvec to meet the needs of svcsock.c, do
-we need to make *any* code changes to vfs.c?  I doubt it.
+This seems reasonable since the flow is different from the typical "check resource"
+followed by a domain_header_is_valid() that a refactor to support another resource
+would probably do as you state below.
 
-It bothers me a little bit that svc_tcp_sendmsg() needs to allocate a
-frag.  But given that it does, could it also allocate a larger bvec if
-rq_bvec isn't big enough?
+> 
+> Such code can be fixed by future patches that want to use mon_data::sum
+> for other things.
 
-Or should svc_tcp_recvfrom() allocate the frag and make sure the bvec is
-big enough ......
-Or svc_alloc_arg() could check with each active transport for any
-preallocation requirements...
-Or svc_create_socket() could update some "bvec_size" field in svc_serv
-which svc_alloc_arg() could check an possibly realloc rq_bvec.
+This discussion digressed a bit. The discussion started with a request to add a check
+for the L3 resource before calling rmdir_mondata_subdir_allrdtgrp_snc(). 
+I see this as something like:
+	if (r->rid == RDT_RESOURCE_L3 && r->mon_scope == RESCTRL_L3_NODE) {
+		rmdir_mondata_subdir_allrdtgrp_snc(r, hdr);
+		...
+	}
 
-I'm rambling a bit here.  I agree with Chuck (and you) that it would be
-nice if this need for a larger bvec were kept local to svcsock code if
-possible.
+I understand that rmdir_mondata_subdir_allrdtgrp_snc() may look something like below
+but I still find the flow easier to follow if a resource check is done before calling
+rmdir_mondata_subdir_allrdtgrp_snc().
 
-But I'm fairly confident that the current problem doesn't justify any
-changes to vfs.c.  svc.c probably needs to somehow be involved in
-rq_bvec being bigger and svcsock.c certainly needs to be able to make
-use of the extra space, but that seems to be all that is required.
+	rmdir_mondata_subdir_allrdtgrp_snc(r, hdr)
+	{
+		if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+                return -EINVAL;
 
-Thanks,
-NeilBrown
+	        d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+		...
 
+	}
 
->=20
-> The RPC code mostly ignores the last slot in rq_pages array after it's
-> allocated, but we need rq_bvec to treat it like any other slot, hence
-> the adjustment here.
->=20
-> I looked at just doing what you suggest first. It would fix it, but at
-> the expense of keeping an extra page per nfsd thread. We could couple
-> your suggested fix with just not allocating that last rq_pages slot,
-> but we end up having to adjust more places than this change does. Also,
-> at that point, rq_maxpages is not _really_ the max number of pages.
->=20
-> Maybe what we need to do is move to a separate length field for
-> rq_bvec? We have some existing holes in svc_rqst that could hold one
-> and that would make the code more clear. I'll respin this and see how
-> that looks.
->=20
-> Thanks for the review!
->=20
-> >=20
-> >=20
-> > >=20
-> > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> > > index 77f6879c2e063fa79865100bbc2d1e64eb332f42..c4e9300d657cf7fdba23f2f=
-4e4bdaad9cd99d1a3 100644
-> > > --- a/fs/nfsd/vfs.c
-> > > +++ b/fs/nfsd/vfs.c
-> > > @@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct s=
-vc_fh *fhp,
-> > > =20
-> > >  	v =3D 0;
-> > >  	total =3D dio_end - dio_start;
-> > > -	while (total && v < rqstp->rq_maxpages &&
-> > > +	while (total && v < rqstp->rq_maxpages + 1 &&
-> > >  	       rqstp->rq_next_page < rqstp->rq_page_end) {
-> > >  		len =3D min_t(size_t, total, PAGE_SIZE);
-> > >  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> > > @@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, str=
-uct svc_fh *fhp,
-> > > =20
-> > >  	v =3D 0;
-> > >  	total =3D *count;
-> > > -	while (total && v < rqstp->rq_maxpages &&
-> > > +	while (total && v < rqstp->rq_maxpages + 1 &&
-> > >  	       rqstp->rq_next_page < rqstp->rq_page_end) {
-> > >  		len =3D min_t(size_t, total, PAGE_SIZE - base);
-> > >  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> > > @@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc=
-_fh *fhp,
-> > >  	if (stable && !fhp->fh_use_wgather)
-> > >  		kiocb.ki_flags |=3D IOCB_DSYNC;
-> > > =20
-> > > -	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload=
-);
-> > > +	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, pay=
-load);
-> > >  	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
-> > >  	since =3D READ_ONCE(file->f_wb_err);
-> > >  	if (verf)
-> > > diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-> > > index 4704dce7284eccc9e2bc64cf22947666facfa86a..919263a0c04e3f1afa60741=
-4bc1893ba02206e38 100644
-> > > --- a/net/sunrpc/svc.c
-> > > +++ b/net/sunrpc/svc.c
-> > > @@ -706,7 +706,8 @@ svc_prepare_thread(struct svc_serv *serv, struct sv=
-c_pool *pool, int node)
-> > >  	if (!svc_init_buffer(rqstp, serv, node))
-> > >  		goto out_enomem;
-> > > =20
-> > > -	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages,
-> > > +	/* +1 for the TCP record marker */
-> > > +	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages + 1,
-> > >  				      sizeof(struct bio_vec),
-> > >  				      GFP_KERNEL, node);
-> > >  	if (!rqstp->rq_bvec)
-> > > diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-> > > index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..5f8bb11b686bcd7302b9447=
-6490ba9b1b9ddc06a 100644
-> > > --- a/net/sunrpc/svcsock.c
-> > > +++ b/net/sunrpc/svcsock.c
-> > > @@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
-> > >  	if (svc_xprt_is_dead(xprt))
-> > >  		goto out_notconn;
-> > > =20
-> > > -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-> > > +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, xdr=
-);
-> > > =20
-> > >  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
-> > >  		      count, rqstp->rq_res.len);
-> > > @@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk,=
- struct svc_rqst *rqstp,
-> > >  	memcpy(buf, &marker, sizeof(marker));
-> > >  	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
-> > > =20
-> > > -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
-> > > +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
-> > >  				&rqstp->rq_res);
-> > > =20
-> > >  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
-> > >=20
-> > > --=20
-> > > 2.51.0
-> > >=20
-> > >=20
->=20
-> --=20
-> Jeff Layton <jlayton@kernel.org>
->=20
-
+Reinette
 
