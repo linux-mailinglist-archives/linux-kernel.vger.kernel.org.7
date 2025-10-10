@@ -1,113 +1,142 @@
-Return-Path: <linux-kernel+bounces-848222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C65BCCF19
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:37:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F79BCCF24
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E9A64FB133
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6281A6630B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5A82EDD40;
-	Fri, 10 Oct 2025 12:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A672EE274;
+	Fri, 10 Oct 2025 12:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsM9POjv"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gCxelIpC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6771E2EDD45
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6432D0629;
+	Fri, 10 Oct 2025 12:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760099863; cv=none; b=VxLm6KT5JRCFD1c4w6u12fDmyuOmjZCOWaX9Apnnaj4SX0oDl7ADaaYoA+No6aCfJPPK3pkQgQX35W9CfRlKSprkk7HLL0n0VZh1jswjXGpx9pIfze5HcK8cE57Qcmp3cWkbg7brJxXOkl8Uu9aXCCx4a7Su/fJxsHUo8bs1xKU=
+	t=1760099933; cv=none; b=LwqSOnXCJf6gRmXbheyndDKaShbZBwcAZpjydESEPlEGqWpW+D26zVnHpX5nPJ3GFfOZYRaTErRvKDOTIafFJUgB3bfXYUVwvfX4Shvq+IoJpZyebEd2/ojGgkJTCr7rRb0mukwnz2zsxSehCXT70de0I7tx1ENiBbHffXSC16w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760099863; c=relaxed/simple;
-	bh=FzClrbjrEqRv/xjQzJWT38TrRTYaKK7xz/qIodXf1jc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tQ37Dalcx7jk+2i5m8YHnt97k95402CyX77X3BKACwe4SJHN2kZ1bADU5Omftf1dTbE0J7j8aL8xlyJd9JNuqfQfvStJaig3/mqyUJixu99oD/V/czbvXLnT4La2FGz2/Y/xgMEUCggKsvEuT2WAhgeEAF+4WWfwEkYK6ntxwCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsM9POjv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DD2C4CEF8
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760099863;
-	bh=FzClrbjrEqRv/xjQzJWT38TrRTYaKK7xz/qIodXf1jc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IsM9POjvwyCr1PbRX12nI+ZuNpRx8dxTXWVwRSzo8H092LcaJTXQuaj3Q4Xck8kNw
-	 VzV6fLAL4L9sfCe7tTOClKZx2f1f+QVpSNRMJFIC+zAKAKhaqwdCK452EiiwBpqWjf
-	 264J6TuMEK0EaD9/fsnN0OuNFRGQ25+GxjkySZ0IJCuXS7HeIk4/DqlHhijEZ5sNwC
-	 2KMHz4qHU3ovsPr+KztruhGcE23KAxmtjmMCPRVy4W60Hr3C+YN/+3vPmlkau1i+O3
-	 1hiO7a+pP0N2sYaORgQOriiAxLFSFLfXj3kXZ9qQh5hgG3bRFeOIpdjLWRXNLOZtTI
-	 1GoeF3ET1mXGQ==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso330053366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:37:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkHkSmXiKJXNueByeGNci6as4fGcveT4Tx+OitmkkDBmOhwZHMm+EVt7OaxWGpz3v+9JrVefmOFSG7k74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0tDUE/VfsC2B/tqBdpQdJ8+NI/Pgkdb2nkID9tQke9AZxZvgD
-	5hXZ+aCWhlZJ4B1RxrjIiF+hgOEivqBB1SqFBL4x1njPvCzfXEUnrsllGmcrCiGXOMvbrjznq4Y
-	W4GRoEKpwD14l7g/rs8yvKyffnkLAmA==
-X-Google-Smtp-Source: AGHT+IGBfdId2xOqPFSyPpgfeIJHQuLK4TGjxZ5FnQdownP+UCJpNZuLxcTbgHzTsZqQYW4/D3kSN7NUXXPIuhIYdnE=
-X-Received: by 2002:a17:907:961b:b0:b0e:d477:4972 with SMTP id
- a640c23a62f3a-b50aa7a086amr1275250466b.25.1760099861528; Fri, 10 Oct 2025
- 05:37:41 -0700 (PDT)
+	s=arc-20240116; t=1760099933; c=relaxed/simple;
+	bh=p2dq1+BYCl83wtRQDI4S8QRU072WIE+qdJpzYKgqGwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5TOJ/IekRUMTqfFwNJl4edVWp0LCd/8xdN7QzpDDOFZo+sgAg3KrHYWfQPcfFQE67JGeYTBkSkgcJSf03RZzxA8g53LloLmGh6s2UHqlZMhBYqpjgKTnxnBCqrmZwhc+MPnAeLZged0gT7EHGshTTEwI3o9W/2yTVAgcee19XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gCxelIpC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87526C4CEF1;
+	Fri, 10 Oct 2025 12:38:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760099933;
+	bh=p2dq1+BYCl83wtRQDI4S8QRU072WIE+qdJpzYKgqGwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gCxelIpCywnl2nZ+0zzEYviCt/IR7PSgK9ywEfdoWQn+oAPWP7F11LRUhgwqcpVge
+	 VRUUfQbpTeDkgpT6ATNWtNlJNzpyVp3Ok6k/i3dDGVy/2vxfxa+aX2gebckUC0W++P
+	 daAx7QgJQ2VIKINmVs97v+NZSTJ9hvGWv5Wb1mjk=
+Date: Fri, 10 Oct 2025 14:38:50 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
+	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
+ device
+Message-ID: <2025101020-tiara-procreate-e56f@gregkh>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-12-aneesh.kumar@kernel.org>
+ <20250729181045.0000100b@huawei.com>
+ <20250729231948.GJ26511@ziepe.ca>
+ <yq5aqzxy9ij1.fsf@kernel.org>
+ <20250730113827.000032b8@huawei.com>
+ <20250730132333.00006fbf@huawei.com>
+ <2025073035-bulginess-rematch-b92e@gregkh>
+ <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001150003.417472-1-srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20251001150003.417472-1-srinivas.kandagatla@oss.qualcomm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 10 Oct 2025 07:37:30 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKCG-zY7f-gX6jwXXbE_uha-z1seqx2Dj+rS685DuzNMQ@mail.gmail.com>
-X-Gm-Features: AS18NWBbuq0Y4UeZ9RroCyCV34TGF9G0nqMZ2dAG4m1y1D0Ujlkw-gQqUKpyAtw
-Message-ID: <CAL_JsqKCG-zY7f-gX6jwXXbE_uha-z1seqx2Dj+rS685DuzNMQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: slimbus: fix warning from example
-To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: srini@kernel.org, krzk+dt@kernel.org, gregkh@linuxfoundation.org, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
 
-On Wed, Oct 1, 2025 at 10:00=E2=80=AFAM Srinivas Kandagatla
-<srinivas.kandagatla@oss.qualcomm.com> wrote:
->
-> Fix below warnings generated dt_bindings_check for examples in the
-> bindings.
->
-> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> slim@28080000 (qcom,slim-ngd-v1.5.0): 'audio-codec@1,0' does not match
-> any of the regexes: '^pinctrl-[0-9]+$', '^slim@[0-9a-f]+$'
->         from schema $id:
-> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected
->         from schema $id:
-> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property
->         from schema $id:
-> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required
-> property
->         from schema $id:
-> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
->
->
-> Fixes: 7cbba32a2d62 ("slimbus: qcom: remove unused qcom controller driver=
-")
-> Reported-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/slimbus/slimbus.yaml     | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
+On Fri, Oct 10, 2025 at 07:10:58AM -0500, Jeremy Linton wrote:
+> Hi,
+> 
+> 
+> On 7/30/25 8:07 AM, Greg KH wrote:
+> > On Wed, Jul 30, 2025 at 01:23:33PM +0100, Jonathan Cameron wrote:
+> > > On Wed, 30 Jul 2025 11:38:27 +0100
+> > > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+> > > 
+> > > > On Wed, 30 Jul 2025 14:12:26 +0530
+> > > > "Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
+> > > > 
+> > > > > Jason Gunthorpe <jgg@ziepe.ca> writes:
+> > > > > > On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
+> > > > > > > > +static struct platform_device cca_host_dev = {
+> > > > > > > Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
+> > > > > > > platform devices being registered with no underlying resources etc as glue
+> > > > > > > layers.  Maybe some of that will come later.
+> > > > > > 
+> > > > > > Is faux_device a better choice? I admit to not knowing entirely what
+> > > > > > it is for..
+> > > > 
+> > > > I'll go with a cautious yes to faux_device. This case of a glue device
+> > > > with no resources and no reason to be on a particular bus was definitely
+> > > > the intent but I'm not 100% sure without trying it that we don't run
+> > > > into any problems.
+> > > > 
+> > > > Not that many examples yet, but cpuidle-psci.c looks like a vaguely similar
+> > > > case to this one.
+> > > > 
+> > > > All it really does is move the location of the device and
+> > > > smash together the device registration with probe/remove.
+> > > > That means the device disappears if probe() fails, which is cleaner
+> > > > in many ways than leaving a pointless stub behind.
+> > > > 
+> > > > Maybe it isn't appropriate it if is actually useful to rmmod/modprobe the
+> > > > driver.
+> > > > 
+> > > > +CC Greg on basis I may have wrong end of the stick ;)
+> > > This time with at least one less typo in Greg's email address.
+> > 
+> > Yes, use faux_device if you need/want a struct device to represent
+> > something in the tree and it does NOT have any real platform resources
+> > behind it.  That's explicitly what it was designed for.
+> 
+> Right, but this code is intended to trigger the kmod/userspace module
+> loader.
 
-You missed the DT list and Conor...
+Why?
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> AFAIK, the faux device is currently missing a faux_device_id in
+> mod_devicetable, alias matching logic in file2alias, and probably a few
+> other things which keeps it from performing this function.
 
-I would have picked this up to get it into -rc1, but I don't have the
-dependent patches.
+How would a faux device ever expect to get auto-loaded?  That's not what
+is supposed to be happening here at all.
+
+If you have real hardware backing something, then use the real driver
+type.  that is NOT a faux driver, which is, as the name says, for "fake"
+devices that you wish to add to the device/driver tree.
+
+thanks,
+
+greg k-h
 
