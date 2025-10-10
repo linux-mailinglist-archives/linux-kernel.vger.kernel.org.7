@@ -1,67 +1,58 @@
-Return-Path: <linux-kernel+bounces-847750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C99BCB91E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D70D1BCB91B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2F1E4F4512
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:40:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A556B4F20D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7231A26B74D;
-	Fri, 10 Oct 2025 03:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B767026F280;
+	Fri, 10 Oct 2025 03:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="l/cCHbzC";
-	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="y3zuROBF"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mn5OGqv1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9D826CE37
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057D93D76;
+	Fri, 10 Oct 2025 03:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760067636; cv=none; b=H3qVMwGPzgLDRzwUXW22YwmBrBE8C6LcHbgvo+uk71tPlObSbGlqA+YbpMHkYbH/9WwBQj8lZHio0e5OirOs5vE4oBTCIdjjCzw7pOp9aFsQLQmrN5wKWlkX9w2I7n2ik0CBK9HRoWF4Mvc/EkfTMTIwI2eI1M/MCQxRX7RZq8A=
+	t=1760067631; cv=none; b=pwphrA1Alq+QBTdb/HlYXznZarMvN45CaeC1eIUlwx6UUPLnPyGBJWbvsWdpWfaeMdb4rHffBYKYedK4Fy+ORxwpNyI4+PoCMbegOUM30o/Y/Ojjfer7U8fYmcho26lY2YeCijLuxVCXuqQSFS8EjyP8ZZIRiTh7hCJdIfH5cz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760067636; c=relaxed/simple;
-	bh=EAEy9jXZzMRV5ceE185as2de8jTa17gujyqxp8vu9pk=;
+	s=arc-20240116; t=1760067631; c=relaxed/simple;
+	bh=DGLG8ilbr8Yy86vDLTSHOB1NuH2rRWTQ/kLDD7HnNDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hNCxUNfejMNRhfYydsaN4rfgK42OZwptpNHLNhIi77NzUqs8IxocDPIvIB7uReBgZNT//3GtVWa42I3hSKqIAmQqfDB8sIHOgDrVOCYXpRCD3Pu1GekMLu2Zs3lC5071ySV6vNr7lj0PHFx3sufV2c0TyNLrlotwsIHYNcZQYuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi; spf=pass smtp.mailfrom=hacktheplanet.fi; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=l/cCHbzC; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=y3zuROBF; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hacktheplanet.fi
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=gibson; bh=EAEy9jXZzMRV5
-	ceE185as2de8jTa17gujyqxp8vu9pk=; h=in-reply-to:references:subject:cc:
-	to:from:date; d=hacktheplanet.fi; b=l/cCHbzCSuPCrspwIiOZMiXJfkmya+mQV+
-	9Zbxg9t8ZsnqJ+vwIu43GlPZez45/FWY0nES8E3TDOsItJ7mtm8QwVTqDr1ink9stRhsCu
-	KGXSX1ckUJQOeuyRFjgxQBzkVC+ebJhcjpPF0fameOK57fgvN1RPITLWz96zWIOdTC+ksE
-	cGBHsHSCUdtuqxztJ7MnDjBBSnivmI7gIraBp239aCd/jbwEjDlSK1bY3uESVQqbeQAWfs
-	HUHDQ75pHvjH4Za1Yg0DlS+Pm6nkuj4kiDxCZoF+OlckVhYCTPJkMBJMLJtf2Ipsa4bcck
-	obZHMYZpu6hjPJVfdx53Do5IZOkw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hacktheplanet.fi;
-	s=key1; t=1760067629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqTikEuoSgkx6Sgcx3a1z9CiqBLgFrqNn1OJpzaSp8w=;
-	b=y3zuROBF4bd4UwMpOYSUOjcOqFloh/mw31x34qCWp0SIzdVYbN3K/ZVPSaY4iD5SHotpbp
-	yB1CecTisDTbJsEbGd6s5X5NZ8cUC/KEsw1f2Di9OzoIkAUWHW5RTcVRD67QufPyLDc4+y
-	YVyuAVFuLHTDhOASSqDD4mnGELC+S55rYqZ6/PC7cgQngMTRv7HcX8d0BikDQcPnrWMHR9
-	o4sl+G1nhWVaQIC+Z2w/8ZfpsYlRSi7E/JbB9V9Y/9TSzLoeKxOUbFAFf7NrSUlsH68t+v
-	jCECVN7OtgwQf4/VgJPaofH+alZANirroq/XRaUomAjzrG5TCIulW2oSxcmoHw==
-Date: Fri, 10 Oct 2025 12:40:17 +0900
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lauri Tirkkonen <lauri@hacktheplanet.fi>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXxO/P/AKmFxzQ04p+M4TiRd2Dr+IHca2xsKccxObwK49Gk3ZLTw1I6TjkfmRXPq0VeGaeeMdGqVWGoQUuBb4aCaHg27edp/a3VKvz4kQ05IyZww4YR5VqUqJKPZAH2nL7n9dDQPJu/zX/aFXWQxCUUaWl5OREG4zIue0VQngbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mn5OGqv1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74BDBC4CEF1;
+	Fri, 10 Oct 2025 03:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760067630;
+	bh=DGLG8ilbr8Yy86vDLTSHOB1NuH2rRWTQ/kLDD7HnNDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mn5OGqv1oclS2jPcCTRtHn90eB57biWAwc4PVlfHgjmcr8DsYELczx/8QBTLIxKCq
+	 UXIGEErGpn30GGHOFfJ5N8eipHgNeoejih3rpsXSt6MiE1XaXzCKscarvyuI1ujm/M
+	 jzRVJ46ZSiMILCl00YSELHsXbDvLDx4o7fE9jUcXCyzFKwnp25szNiQzyXqCZplvwq
+	 jW+j4ITdPHzyA47WC34b16PdiaAnFcz+v0sPVtnYrM7AwXBtcQ63vKw18V2L8laXVT
+	 zyi+uBCpgijDOAbXwTZbcnVj37CgYQ/SRagVBj2ElNaruoBzrPsel8ntExgNvr3O7V
+	 dpPkOin9DN9ew==
+Date: Fri, 10 Oct 2025 06:40:26 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-hardening@vger.kernel.org, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: i2c-hid: patch Lenovo Yoga Slim 7x Keyboard rdesc
-Message-ID: <aOiAIeVUVQxNrg28@mail.hacktheplanet.fi>
-References: <aOdLxAEYQpV2zp77@mail.hacktheplanet.fi>
- <lxtbtu5frygbw7qzfaelc63vgientm7d6oo7dt6jeassl3ttbh@f22h223wehbm>
- <aOdsqHznz1SJdadC@mail.hacktheplanet.fi>
- <56l5tnplzap4mcqcridsavbtvbevhqd235m4m3h4ititj3j5p2@z6oy6wimoodv>
+Subject: Re: [PATCH] keys: Replace deprecated strncpy in
+ ecryptfs_fill_auth_tok
+Message-ID: <aOiAKoMiGG4LdoC2@kernel.org>
+References: <20251009180316.394708-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,40 +61,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <56l5tnplzap4mcqcridsavbtvbevhqd235m4m3h4ititj3j5p2@z6oy6wimoodv>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20251009180316.394708-3-thorsten.blum@linux.dev>
 
-On Thu, Oct 09 2025 10:29:19 +0200, Benjamin Tissoires wrote:
-> On Oct 09 2025, Lauri Tirkkonen wrote:
-> > This device uses hid-over-i2c, not hid-lenovo; I've got
-> > CONFIG_HID_LENOVO=m but the module is not even loaded. I don't see how
-> > putting the fixup in a module that does not attach to the device could
-> > work. So where should it go?
+On Thu, Oct 09, 2025 at 08:03:17PM +0200, Thorsten Blum wrote:
+> strncpy() is deprecated for NUL-terminated destination buffers; use
+> strscpy_pad() instead.
 > 
-> Well, the transport layer is i2c-hid, but the logical implementation is
-> in hid-generic which leverages the hid core default implementation.
+> Link: https://github.com/KSPP/linux/issues/90
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+
+Deprecated or not but commit message still should have a better
+explanation :-) Sure there's also the link too that explains it 
+all but still one should get the gist without cross-referencing
+into it.
+
+It's a permanent amortized cost as everytime when revisiting this
+commit (e.g. over the course of bisecting or whatever), you need
+a web browser in order to make anything out of the message.
+
+> ---
+>  security/keys/encrypted-keys/ecryptfs_format.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> In your case, you need to tell hid-lenovo to handle the device so we
-> stick to nice and tidy approach with each HID driver handling it's own
-> business.
+> diff --git a/security/keys/encrypted-keys/ecryptfs_format.c b/security/keys/encrypted-keys/ecryptfs_format.c
+> index 8fdd76105ce3..2fc6f3a66135 100644
+> --- a/security/keys/encrypted-keys/ecryptfs_format.c
+> +++ b/security/keys/encrypted-keys/ecryptfs_format.c
+> @@ -54,8 +54,7 @@ int ecryptfs_fill_auth_tok(struct ecryptfs_auth_tok *auth_tok,
+>  	auth_tok->version = (((uint16_t)(major << 8) & 0xFF00)
+>  			     | ((uint16_t)minor & 0x00FF));
+>  	auth_tok->token_type = ECRYPTFS_PASSWORD;
+> -	strncpy((char *)auth_tok->token.password.signature, key_desc,
+> -		ECRYPTFS_PASSWORD_SIG_SIZE);
+> +	strscpy_pad(auth_tok->token.password.signature, key_desc);
+>  	auth_tok->token.password.session_key_encryption_key_bytes =
+>  		ECRYPTFS_MAX_KEY_BYTES;
+>  	/*
+> -- 
+> 2.51.0
 > 
-> Adding a line like the following will bind the keyboard part of the
-> device to hid-lenovo in lenovo_devices[]:
-> 	{ HID_DEVICE(BUS_I2C, HID_GROUP_GENERIC,
-> 		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_YOGA_SLIM_7X) },
 
-> If you don't use hid-multitouch on the same device you need a
-> HID_I2C_DEVICE() macro instead.
-
-Thank you for the explanation; that makes sense.
-
-This machine does have multitouch, but it's in a different product id.
-
-However, it did not work: apparently hid-lenovo can't be loaded on this
-machine because it depends on platform_profile, which returns
--EOPNOTSUPP at initialization. This is an arm64 machine with
-acpi_disabled. Not sure what to do about that.
-
--- 
-Lauri Tirkkonen | lotheac @ IRCnet
+BR, Jarkko
 
