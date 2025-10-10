@@ -1,265 +1,240 @@
-Return-Path: <linux-kernel+bounces-847898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B15BCBF8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:49:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F5BBCBF92
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30C91A63813
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:49:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57AE44EDA04
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304F25A350;
-	Fri, 10 Oct 2025 07:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A2A27057D;
+	Fri, 10 Oct 2025 07:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VTpLJMRl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LgPvXBny"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0961531C1
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760082554; cv=none; b=PlzRVEijfnUQ6QpUj7UrM7xnTfSCudx2Y+zBuQbJaU6rP89ig1wc+J1iuOCruk/dXrKJuQ8T78gRBVoTEVXseefybjBhZJJoijZ0FThxXSGYjLsr1zrlhoBj9/1QvnWaWN5mRpK520rDsmt4diznmBsCyLI3N73LqAfTuJnPW2o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760082554; c=relaxed/simple;
-	bh=WITPA9UX0mo7jnNcZhH/peun2UL7jtO3QDe+jYYMhxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7UR5Bnmqump8ctmPVyAHycJQhO6IucR+J3BPeJs1adHtghdyCCfA4yVYS/Fne4P4hK62juXiqCTbuCqN2k5hEBKneYI80hDRGYyPDFqaOGLghqvR45m2ROwUJXvB75uiUT8zLfTM9HTtCyMqCi5kD0500IsHfH2GT/gJIrKZhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VTpLJMRl; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D324E1531C1;
+	Fri, 10 Oct 2025 07:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760082599; cv=fail; b=A/j55CUNiqFy0tBkB+ZIQczol5DwEYZ//C9BH98xlBL1MxezKowppXmbKxQbHOAqyauXFq5D5gSkj3a12WdfBN0nHhBAdRqwuN8Rz+oAYAgrDVG5lM/I6KXivLgRKcuvfTuWqtfpwqFG0NOZK6p8MTRwtiRf6jam79X2I7YsDvc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760082599; c=relaxed/simple;
+	bh=v7oq4Rt3lwOz7Tc643Q7eCI2UbEx6eQM2t3OnmMaAbM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZE0pHe41rfSjvNgPKkisWDjtakTwvKK/hzlhBcOgc/i7Xxuo16DijydFPCC5goyY6G9rAbmMXkDO+0Uo9b57LsAxZD3UJSz3dDwR6gec2NsolnmKuNb9PAGm06cM7lO/FTzzVgLEYNsOnpGN2hbx7r2/cw+9wX2tiiOZYPW46DQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LgPvXBny; arc=fail smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760082552; x=1791618552;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=WITPA9UX0mo7jnNcZhH/peun2UL7jtO3QDe+jYYMhxE=;
-  b=VTpLJMRlpF4a+Mgo057Kf0YeQocPbKz5l+cg+gUBRj50xFmXrom1UfC1
-   BFwV9dWkRrz8cWtYfGQar+pmBS05Fn4sXc+2cmzDMuLa63xg7aa99Zjhg
-   Vkn3qQPivmEPSe9GFCcESlQYdGr1q70ELuMQLLNYz+EfmXQuFEnBQBcL/
-   Yw5QnzuYEPFG0Cs+/L63hKDB4Z/E9JleS1oFmR7PmzC6yH1TTD7SgjJSf
-   1zSJ1wiZT3Rxi1k0F2ENNc/cjIk7TY4CtfqWdtPnJzSdU31vnTvpCQ2it
-   47L1bBht03A1BAlsBIjGWozYYM/J97Q62A1PF9HsIya9mS/UDUMRH5D8/
+  t=1760082598; x=1791618598;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=v7oq4Rt3lwOz7Tc643Q7eCI2UbEx6eQM2t3OnmMaAbM=;
+  b=LgPvXBnyibXUnlDOchCps+GJZBWlGvKyLBnzTNFiFlZoPiu+SdlS/zLG
+   yfxFTMwWG3AxjnwPMOmbI0vH7PJ3UWju6/+DL/Hryzmvo+A2OjbMESuhG
+   3fKjE14DqZltv2eUoI2WBiI0O51jZo6lJXuOfGgR1GUQnhN7VvBr/EB46
+   hGmfz2xPHfbsDVKSPix9oVW5PwjuMqM9Vt94HndmcsNZ29XUrJ2F8S7gl
+   Qs9G92SCVNAEegAeKDBCTcAIxMG9baooIX3qgD11+YVfUIqernDS0NRLR
+   sXsvS9oLdWyGBwdkXpZlitQTtE5byEuDkgSfq1bX1lic31nwanup0UmIj
    g==;
-X-CSE-ConnectionGUID: 7rL6NVyLTdianwblfcQ+UQ==
-X-CSE-MsgGUID: IhO5CwIuTjCQDOJB1NF9Ew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="64921805"
+X-CSE-ConnectionGUID: +p6wUPcyT9+weZJqbPUj4w==
+X-CSE-MsgGUID: HO81juuZSdiQgB5lHfmlKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="73644919"
 X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
-   d="scan'208";a="64921805"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:49:12 -0700
-X-CSE-ConnectionGUID: mXA4EAEiTXqigEW2vYLEcw==
-X-CSE-MsgGUID: PgyogO0/TP2+AFnJYA+RAg==
+   d="scan'208";a="73644919"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:49:57 -0700
+X-CSE-ConnectionGUID: jngC/b3NQviNXsdpDxca6A==
+X-CSE-MsgGUID: ZsWSL30qSHqZxhsebELqBg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
-   d="scan'208";a="185304299"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 10 Oct 2025 00:49:05 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v77s6-0002Ql-34;
-	Fri, 10 Oct 2025 07:49:02 +0000
-Date: Fri, 10 Oct 2025 15:48:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Lo=EFc?= Molinari <loic.molinari@collabora.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Christopher Healy <healych@amazon.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, kernel@collabora.com
-Subject: Re: [PATCH v3 02/10] drm/gem: Introduce drm_gem_get_unmapped_area()
- fop
-Message-ID: <202510101507.UiRzhiAP-lkp@intel.com>
-References: <20251004093054.21388-3-loic.molinari@collabora.com>
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:49:57 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 10 Oct 2025 00:49:56 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 10 Oct 2025 00:49:56 -0700
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.31) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 10 Oct 2025 00:49:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rJ6PeuUw29sBhp7XHPeo59ewJ8CJ7MzGKlPdJgNlfFKF5v02fBUKdsFUtiZZJ+++g1I+2duORlPgq+mEQDSpRXk3upj0y6Y8G9IPXPqxD9KL5TUssX3EJsz1t6Ogv6m9lg1LnFp+hAnp/94IAlrjzdmyeFVjR/9fG/dKtWaG5SR1LqEBOxA1YjSnA6oleFS5sFg96zFeS74zshwfHDPzve1GwNGAhFqdQXtQKdtowkGqqxAqr7ik/GGYDMeK4C2vDsuuaZczkl576GMYC0TN90JWovUWP8YpUjRJC8yIQiRueMHGqNg/b9PUz4sUW3oSNzMvVv5A9zrR4A+XHCqwyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=luVTT98XC9LJ87stflpZXGI6MUgaHK6jjewlMeuk6C0=;
+ b=lsXuQYXyBwKxy/L0eRopzIJK2v2IIbcddm+ujIMpUmQuMahSf9fE957KGmDKBV1fTReImKd0Iu91CG4WkKXqfkwe4XrKmW5oLlRgl7P6TMPmW4kF7Rey2nV9O60Xf4QBcioFROZ81444wZqWZzseoMyvvIz6OpljUlzgOe7S/5med5ufzW+9VHW+JbkqlM+JCOXFEoXfMwr/+1bdbny0y63/Hq/lxyrZl8LspYBwf1p3hxqk14U7zJyhlAlq79U1H/XAJyewoK7De5vVefwe2CstMu/mmVylTOTWcXY4TYYK0Hf0jNeTa3NEl6aqbxgEFhC13Z95P1XlG3VBrEOXNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MW4PR11MB8289.namprd11.prod.outlook.com (2603:10b6:303:1e8::9)
+ by PH3PPF681F257FD.namprd11.prod.outlook.com (2603:10b6:518:1::d29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Fri, 10 Oct
+ 2025 07:49:53 +0000
+Received: from MW4PR11MB8289.namprd11.prod.outlook.com
+ ([fe80::d626:a4f8:c029:5022]) by MW4PR11MB8289.namprd11.prod.outlook.com
+ ([fe80::d626:a4f8:c029:5022%6]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 07:49:53 +0000
+Message-ID: <9a533ced-293d-4d18-aa8f-e6aafc429e2a@intel.com>
+Date: Fri, 10 Oct 2025 15:49:45 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] perf tools c2c: Add annotation support to perf c2c
+ report
+To: Ravi Bangoria <ravi.bangoria@amd.com>, Arnaldo Carvalho de Melo
+	<acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
+ Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Kan
+ Liang" <kan.liang@linux.intel.com>, <wangyang.guo@intel.com>,
+	<pan.deng@intel.com>, <zhiguo.zhou@intel.com>, <jiebin.sun@intel.com>,
+	<thomas.falcon@intel.com>, <dapeng1.mi@intel.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <aOTOEcNOiUiEJ9tz@google.com>
+ <20251009042839.1643396-1-tianyou.li@intel.com>
+ <43ac631c-3404-4e15-a02e-d1976ead4956@amd.com>
+Content-Language: en-US
+From: "Li, Tianyou" <tianyou.li@intel.com>
+In-Reply-To: <43ac631c-3404-4e15-a02e-d1976ead4956@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PSBPR02CA0018.apcprd02.prod.outlook.com (2603:1096:301::28)
+ To MW4PR11MB8289.namprd11.prod.outlook.com (2603:10b6:303:1e8::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251004093054.21388-3-loic.molinari@collabora.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR11MB8289:EE_|PH3PPF681F257FD:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86911c42-5dcc-4d86-aef9-08de07d198f6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?L1J0b0MvMGtMbDEzKzRvUGxnWGp3Tk12NnFxU2pXd3ozN3hTNVZRQ0c0aGp2?=
+ =?utf-8?B?ZjEyQlozSFBuUGRwdDZKV0JaTHlvOHpwbGpRZHhhS0hURzBCZy8zTnNmOVYw?=
+ =?utf-8?B?NmlibmFvT3lrUndJVmNlN29vNHYrTnV3Qmxmblo4L0hJMzZOWXhPTmhMVWZJ?=
+ =?utf-8?B?QklpY3VEbVJpd2ZmNVE4NFJUYnc1R2RESFRVSmJvMnNVdzdYWjl0MTdDQmJu?=
+ =?utf-8?B?TXB3OHBkOTNkTnNJY0NFY1phVCt6L1RYalRNWTQ1ZUI1RmtacHlyb1VudGF4?=
+ =?utf-8?B?SkxVZDllYzYzSFNWZ2VSR1l3eXRDNlE0V09NYjZFQjJLdGJBQmxRYmlzVUU0?=
+ =?utf-8?B?NEIrY3d5THRscXQxcVBVSkpYZnZzeWRORHR4VWRFSWRHdFJxYjM2UWViSmN2?=
+ =?utf-8?B?bEpaU1hsRmtNRVNEbHl3SDFQZ1czWGZHM3V1K055bTNQdVMxV24vdmFIYmxy?=
+ =?utf-8?B?WC9VZEtYSVVWMytia0laN1lzVGhhWWZWSi9iUzlnUStybXhMdlQwNXZTOVB5?=
+ =?utf-8?B?clRWSnB2NWg0YWFMKzl2aGxRNU9EZFpIRVVyME9nNjBhT0ZQUkJoU3h5cmo3?=
+ =?utf-8?B?NTc5SUF5ekJqN0czbm9PUC9CYzFZMmorZkdwdTFDdHM0RDl6dU9lV1REODhX?=
+ =?utf-8?B?dExnbTVLd3dUeW9iUG1uNllJYTZEN3YwZTNFaVF4WHhtVDBqeGZqUWZzd2hU?=
+ =?utf-8?B?MlQ4cHRncytCMDJMbWgxcHpheDRhVDY0Z2xDSkVKazdrMnYxeEQ4RGpZa1dQ?=
+ =?utf-8?B?M2RMU0dhS3JlQUNMUUdPamwxeDg1STdZazhleDI1UTEvSlVKSmp0QnNrZVdQ?=
+ =?utf-8?B?cUoxbW1VYXBwK1VEdEpvL2Q0b1Q3SFJSWlJjWHpQeUFIQzhtOVl1NTVCME5u?=
+ =?utf-8?B?UG41bWRXWGNGVFpIR3cxVTNnQ2c1eTNwdi9LNGRndkdXd2ZQSXN3dGdNLy9E?=
+ =?utf-8?B?Zk45WEhUV2kwOEhvc0xxclhWeERDejdVSWEydm5LbVJLY2xSemJ3Y3NUV29t?=
+ =?utf-8?B?cjlDRkZKWCtFOW5oZW92N0dVcVYrd0w4cXhaNTlLay9iTGhIS2VIUURnQWE0?=
+ =?utf-8?B?QWttSGw3MkY1UmRjc1VWenk2QzlmSVlWbkErL2pVMnE4TG1zNSsyNENpamtp?=
+ =?utf-8?B?c3ZpaWhvNjY5YlMvUDIrQnRwTHNsa0EyMEFKa00zRmQvSFhXNTdneUhBQVlo?=
+ =?utf-8?B?TE9NbG1YRTdETlJtOWFtMHlLZFhuOGtYYmJNbkN6MjNzUFVuVVppOTRlMm9y?=
+ =?utf-8?B?enpnaE9TYXFIY1F0V3c2a3FxQXB6cDdmVDQ3NmcxTmdYTWVzV3Y4R0FqbWUx?=
+ =?utf-8?B?RTYzVm5sWFU1bEdKUHBCQXJuZmQ5NXJkQ1ZhTlNrang1eG1EWG1aV3V6ZjRB?=
+ =?utf-8?B?K3Y3Tk9QY1ZSYUIvZ2hDcXlBVFpEbnA2YTdSekVmN0FnYkUzR2VnKzFJSDdn?=
+ =?utf-8?B?enlETldxaUJMVEx6RkR2cHdaTXlBbEFQaFdEb2FZeVNpUjBldHlZbTV6Ly9B?=
+ =?utf-8?B?ZjVwbHNJVktzcTRueGRPRFcrVU9DK1dab056VFkrUy9QWi9lQURHcXZGaUg5?=
+ =?utf-8?B?dSt0SEtoR2JSRkRXNzk5Tis2cjJUL1djTUJSMS9FL3ppSnA5ck8wYWlxa295?=
+ =?utf-8?B?cjFHOCtITzgwem8wVVVZWkdkUkJFUkdpWi9yU2YzdGR2cnRSOEoySlRHN3Ri?=
+ =?utf-8?B?RFg5bkxmTWVoRkVTT0ZUb3lqRzF6bUFCTHlxdkZOOFJ2U21iVVYyM2FQM2pP?=
+ =?utf-8?B?ZGxoNk1raVVMaUxlcy9oZFJuMld6S3U4N0NHNElyYXRzTzVYU3liamtVYTNJ?=
+ =?utf-8?B?RDZ5N3M3WERFelMwTnJkc3RieHlRSUhqL0drZWR5eGhsYVBiemVyblNrU25k?=
+ =?utf-8?B?Um4yaUdyQWtvTzlBVWtBLzBDZUREOWpUZllUWEI0K1kwa2dMZDVOTmVaTDNY?=
+ =?utf-8?Q?s6GYbZPPnEKX0Jg/4byr05x2E0gCYfQ3?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB8289.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NmtGUTh1dlF5YlpiN3dLSHUyS0NOaC9yd1BLakxKQUFIczJkMDJvNmNDWVdL?=
+ =?utf-8?B?d21GMXQ5K2R4NytkYlRGaXdwdXV1bUJFa3FiQWsvVDU1M1VWUzJQTDl5ajVo?=
+ =?utf-8?B?VFhucUo3c0liWDJQa2hmSUlCQ1Ewa25QOFpYb0U0c0lYREY1NW1ZditUSUww?=
+ =?utf-8?B?Z1lEV2pOQndvSURyYSs0TDJHWEpaV0ZNRVliaDNqVXlUZzNMOVkxSXJnZFFN?=
+ =?utf-8?B?RjNNaFR4SkFPaGl3S0ZzalhYRmQ0a1lRYVozSGI2U3ZHSDV3Y3daaU5LV0py?=
+ =?utf-8?B?dE9YUmdUdndlV01oLzRNaytrRk96ODRPVll6cG1WY2I5bzJTVldpWVJDQS9y?=
+ =?utf-8?B?amxtbERCVHFzemFaZmtmUVpJYkVSaFVYOWxEeHpKd2FsL0tkK1VwWFlxZWRY?=
+ =?utf-8?B?SnJPM0h3M0VicDIySTJ5N3VKa3pWaFYzek16T25vZ2tFZTNCOUxkL01ROHZr?=
+ =?utf-8?B?eFBPMW9HVVBIL2VJRTdSTy9ITFcwbElCYWRPWnhFRHhXMjhrR2lRa1FIYUxZ?=
+ =?utf-8?B?ak15dmw3cHdNUGdwRXAwN2crYW5Dc2xpbE51THJNNWhrajBzYjNtVjhXMFdr?=
+ =?utf-8?B?S2Y5OWJGN0NIaTJqbmRJRmxObFRVM0hibTVwOTFIbndzMGIwbXppdy9IM0NT?=
+ =?utf-8?B?VnNhZ2k1cENxRm91cXBWZi9xTS9UblA1dXZRdXhWRXJsNmJzYi9VcjBPZ2Jv?=
+ =?utf-8?B?VnVxb1M2bHpvaFh4MzVFYitJMDladXFjbk9GRGwwbWJYNmoxK3pTR2hZMXlP?=
+ =?utf-8?B?WXpYb0p4dWxlOFBDZVhwK2ZtWk5pN0k1TjU1Tk5RdUIxTm9CMjJKWndUN084?=
+ =?utf-8?B?NjFBYndGZ09RVFNVL1hTODVjbWNLbmhkeHAxQXNLdUZmVTJ3TDhmd1JzNjhw?=
+ =?utf-8?B?TU9WbFMyMlZLczVNc0haR21OQTJOUS9xOXZGN0JuLzluZVc3bUNKUlZWUkFx?=
+ =?utf-8?B?VXk4ZnR4bDNDdlYzcmlVN0ZIRXd2Q00wYW8zNnprZWgveHlvbVd4bmJ2OEIr?=
+ =?utf-8?B?aDV2MTJpZ3VLRUJQaG9KRU5wRitGZVRxM1ppSnowc2hxUUdnbWZxVjlXcFM5?=
+ =?utf-8?B?N2MxUkhpN094Zk5sT2IzZ2t5a1laSWVhRTdZcjZNM05KdklWdDlNT2dwSHVD?=
+ =?utf-8?B?dVdYdVMreC9zTHdwMmNJdU5CekFQZzFGeDM4YjB6TjkyZ0hmNTNITmVtS3Jv?=
+ =?utf-8?B?Q1dDRlh1MUVtMXo0TUV3bUhJUGczSlYxdVRRTVZZMlpxQXpPVmRucmtuY2FW?=
+ =?utf-8?B?bEhGU0ZEczJWVHU1RHpPWGE2b3duZjk2QnhOT2wvWHFaMHd3M2x0Z3c5L2d3?=
+ =?utf-8?B?UVBQVkFWVWdaWUVvWThmTkFtMmYxUGg3Q1VBYjRKSUsxcFkzd3RwNFJGamVN?=
+ =?utf-8?B?SEdWZUZyaElZVWZMNENlQ3dlN3loL2FiNkRYZCtLaDNCcm5IdW9OM2lTWFlr?=
+ =?utf-8?B?QWZKdnNaWmZLOUtQMkNCdnlGaXcyN0FpbFl3QVVGNSt5dERudjJnMkJxNmlO?=
+ =?utf-8?B?T2RSUW9CTVZuR0ZmU2xMYm9YVEpLdnVSenBaTXY5U2pzcGZyYmorMm9CUWt0?=
+ =?utf-8?B?c2Z5bHR4ZDZqbis0Mk9ZT2k4SW9mT0tKRERMQm8zSUw1WTNUb0loUmtKUEx6?=
+ =?utf-8?B?NU4wVmxBblRJT3ZQL0FseDhUOFFYNWcrMXUvUnRtZDNmT3RsemxRTHJKblgw?=
+ =?utf-8?B?NUNDY3RiV1B6VE5YT3VjbHQyYi9BUkFvamRHREdPZHdVVWZpdC9BdEUyd3ZN?=
+ =?utf-8?B?dFZaZmlLSXhSVW1XdjlnQjBEdWwwcTdUUVBJaEhMV2JTeGRTRDkvSC84WVM4?=
+ =?utf-8?B?ZGdFbVRGd1dwajAvZ1pKY1JkZ2ZZSjVpUFQwQ1Jpa2JxVnB2OFFMVk8yRXhp?=
+ =?utf-8?B?cmdmNWZLb2tneVowbC9TTDhJU1d0dXpiNFpONk90Ny9CS2JraFRDN2JTaXd1?=
+ =?utf-8?B?am1VRm9CTzVYWGtoLzhJeENrSTUxZ2FZK0p0WFZTd2tVVkJGTElQRUVoQlVB?=
+ =?utf-8?B?YlJTWWR1N3crRnU1ZWJ5SVQzZHVjVmJhaS9DMUpjeW02YWw3V3M0a25lZXF0?=
+ =?utf-8?B?cGxZTnpjUTA2eVRiMHdMS3ZVR3Z3Q3pqYnpRemVFZjNlRTF2aFIzbjY3clRZ?=
+ =?utf-8?Q?GUH6j+ML3+xRUUoKLx8LXsKlJ?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86911c42-5dcc-4d86-aef9-08de07d198f6
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB8289.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 07:49:53.7058
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GHntSozj0E95jvG10rjDIcuhcqC/C9L6U9g/ZKwbdLH9W1+fCkdYtY9asbQ38dKeumUDA3ChWBAsVQXHH21Hrg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF681F257FD
+X-OriginatorOrg: intel.com
 
-Hi Loïc,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on linus/master v6.17 next-20251009]
-[cannot apply to akpm-mm/mm-everything]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Lo-c-Molinari/drm-shmem-helper-Add-huge-page-fault-handler/20251004-173347
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20251004093054.21388-3-loic.molinari%40collabora.com
-patch subject: [PATCH v3 02/10] drm/gem: Introduce drm_gem_get_unmapped_area() fop
-config: riscv-randconfig-001-20251010 (https://download.01.org/0day-ci/archive/20251010/202510101507.UiRzhiAP-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510101507.UiRzhiAP-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510101507.UiRzhiAP-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/drm_gem.c:28:
-   In file included from include/linux/dma-buf.h:16:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:804:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     804 |         insb(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:104:53: note: expanded from macro 'insb'
-     104 | #define insb(addr, buffer, count) __insb(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/drm_gem.c:28:
-   In file included from include/linux/dma-buf.h:16:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:812:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     812 |         insw(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:105:53: note: expanded from macro 'insw'
-     105 | #define insw(addr, buffer, count) __insw(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/drm_gem.c:28:
-   In file included from include/linux/dma-buf.h:16:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:820:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     820 |         insl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
-     106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
-         |                                          ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/drm_gem.c:28:
-   In file included from include/linux/dma-buf.h:16:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:829:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     829 |         outsb(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
-     118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/drm_gem.c:28:
-   In file included from include/linux/dma-buf.h:16:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:838:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     838 |         outsw(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
-     119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/drm_gem.c:28:
-   In file included from include/linux/dma-buf.h:16:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:847:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     847 |         outsl(addr, buffer, count);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
-     120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
-         |                                            ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/drm_gem.c:28:
-   In file included from include/linux/dma-buf.h:16:
-   In file included from include/linux/iosys-map.h:10:
-   In file included from include/linux/io.h:12:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
->> drivers/gpu/drm/drm_gem.c:1271:10: error: call to undeclared function 'mm_get_unmapped_area'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1271 |                 return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
-         |                        ^
-   drivers/gpu/drm/drm_gem.c:1271:10: note: did you mean '__get_unmapped_area'?
-   include/linux/mm.h:3337:1: note: '__get_unmapped_area' declared here
-    3337 | __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
-         | ^
-   7 warnings and 1 error generated.
+Thanks Ravi. I resent the patches and updated the 'Tested-by' tag. Very 
+appreciated.
 
 
-vim +/mm_get_unmapped_area +1271 drivers/gpu/drm/drm_gem.c
+Regards,
 
-  1239	
-  1240	/**
-  1241	 * drm_gem_get_unmapped_area - get memory mapping region routine for GEM objects
-  1242	 * @filp: DRM file pointer
-  1243	 * @uaddr: User address hint
-  1244	 * @len: Mapping length
-  1245	 * @pgoff: Offset (in pages)
-  1246	 * @flags: Mapping flags
-  1247	 *
-  1248	 * If a driver supports GEM object mapping, before ending up in drm_gem_mmap(),
-  1249	 * mmap calls on the DRM file descriptor will first try to find a free linear
-  1250	 * address space large enough for a mapping. Since GEM objects are backed by
-  1251	 * shmem buffers, this should preferably be handled by the shmem virtual memory
-  1252	 * filesystem which can appropriately align addresses to huge page sizes when
-  1253	 * needed.
-  1254	 *
-  1255	 * Look up the GEM object based on the offset passed in (vma->vm_pgoff will
-  1256	 * contain the fake offset we created) and call shmem_get_unmapped_area() with
-  1257	 * the right file pointer.
-  1258	 *
-  1259	 * If a GEM object is not available at the given offset or if the caller is not
-  1260	 * granted access to it, fall back to mm_get_unmapped_area().
-  1261	 */
-  1262	unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long uaddr,
-  1263						unsigned long len, unsigned long pgoff,
-  1264						unsigned long flags)
-  1265	{
-  1266		struct drm_gem_object *obj;
-  1267		unsigned long ret;
-  1268	
-  1269		obj = drm_gem_object_lookup_from_offset(filp, pgoff, len >> PAGE_SHIFT);
-  1270		if (IS_ERR(obj))
-> 1271			return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
-  1272						    flags);
-  1273	
-  1274		ret = shmem_get_unmapped_area(obj->filp, uaddr, len, 0, flags);
-  1275	
-  1276		drm_gem_object_put(obj);
-  1277	
-  1278		return ret;
-  1279	}
-  1280	EXPORT_SYMBOL(drm_gem_get_unmapped_area);
-  1281	
+Tianyou
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 10/10/2025 1:56 PM, Ravi Bangoria wrote:
+> On 09-Oct-25 9:58 AM, Tianyou Li wrote:
+>> Perf c2c report currently specified the code address and source:line
+>> information in the cacheline browser, while it is lack of annotation
+>> support like perf report to directly show the disassembly code for
+>> the particular symbol shared that same cacheline. This patches add
+>> a key 'a' binding to the cacheline browser which reuse the annotation
+>> browser to show the disassembly view for easier analysis of cacheline
+>> contentions.
+>>
+>> Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+>> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
+>> Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
+>> Reviewed-by: Pan Deng <pan.deng@intel.com>
+>> Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
+>> Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
+> Works fine on AMD.
+>
+> Tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
+>
 
