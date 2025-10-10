@@ -1,363 +1,265 @@
-Return-Path: <linux-kernel+bounces-847897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788C2BCBF80
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:47:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B15BCBF8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA973B0EA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30C91A63813
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463F323ED5B;
-	Fri, 10 Oct 2025 07:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304F25A350;
+	Fri, 10 Oct 2025 07:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bDK2y65Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VTpLJMRl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451B91531C1
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0961531C1
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760082430; cv=none; b=bf8yGdEEPXGJ49mHUa8GCUhJ20nzviVySDsMCpjTZggh2UBdr8nF2lFfySNwHyhgExq4yju5rCUW4HgIov6c90E3Qa8T31gJF1OZMN6aRaPueAYUail0xHmM2aTkksJBngOkb6/QVSV0OJ2lIoirDAsbiKWuTsu0txvsUbbeVog=
+	t=1760082554; cv=none; b=PlzRVEijfnUQ6QpUj7UrM7xnTfSCudx2Y+zBuQbJaU6rP89ig1wc+J1iuOCruk/dXrKJuQ8T78gRBVoTEVXseefybjBhZJJoijZ0FThxXSGYjLsr1zrlhoBj9/1QvnWaWN5mRpK520rDsmt4diznmBsCyLI3N73LqAfTuJnPW2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760082430; c=relaxed/simple;
-	bh=W3dOsgbtTI4mJEylSFndcpS+ycygr2/i8AMpxGspctE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=L1/zFd9VfFFzzNxVFtHlwe3FM8ypPqqQLWgoBWd5fd4Tpwh20P+aIKRVbTfvUssAx4KAAX2NOx3rdCeENqHlcKICP1LP21O6Tnws5ktSBS7pB7XdQnwUHqJaWgX33Jd+MdYEg7LNfjuN3e/fGHCFeGnG1j5g1cxhhRgQ6tRILHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bDK2y65Y; arc=none smtp.client-ip=192.198.163.8
+	s=arc-20240116; t=1760082554; c=relaxed/simple;
+	bh=WITPA9UX0mo7jnNcZhH/peun2UL7jtO3QDe+jYYMhxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7UR5Bnmqump8ctmPVyAHycJQhO6IucR+J3BPeJs1adHtghdyCCfA4yVYS/Fne4P4hK62juXiqCTbuCqN2k5hEBKneYI80hDRGYyPDFqaOGLghqvR45m2ROwUJXvB75uiUT8zLfTM9HTtCyMqCi5kD0500IsHfH2GT/gJIrKZhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VTpLJMRl; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760082428; x=1791618428;
-  h=date:from:to:cc:subject:message-id;
-  bh=W3dOsgbtTI4mJEylSFndcpS+ycygr2/i8AMpxGspctE=;
-  b=bDK2y65YRKL9Lk1umdGc1MnbThrKC0WDlvoSwUp+XaqG+A2Tu+zZBEFs
-   UHp8cr6lnoHViT3pxumZ9cWBV3Ue2xSfPM+ptlB5N7RM2TGBw3WXu7aV0
-   3SP6dMoXYY7GZOmWIHKmqrxShOVudHqVm5QKpIJEUs8Y1Ej8ZGCwe2ToO
-   pSSHUG/hFmSst6Zncdh0TOJKDGhI6XzEK2HX8YlDCFlI7UWIoTE2pMDWR
-   +LeRedUkWFEpaCIZTh02hAV8RWGrlhEtmoplz+rtnUo3NJwhfVe3zhvlf
-   3TlsqLAP/voeKPZKu6TelTWCeAtdDWKR/1GHELxRB52vDbA47UEEcn5Sd
+  t=1760082552; x=1791618552;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=WITPA9UX0mo7jnNcZhH/peun2UL7jtO3QDe+jYYMhxE=;
+  b=VTpLJMRlpF4a+Mgo057Kf0YeQocPbKz5l+cg+gUBRj50xFmXrom1UfC1
+   BFwV9dWkRrz8cWtYfGQar+pmBS05Fn4sXc+2cmzDMuLa63xg7aa99Zjhg
+   Vkn3qQPivmEPSe9GFCcESlQYdGr1q70ELuMQLLNYz+EfmXQuFEnBQBcL/
+   Yw5QnzuYEPFG0Cs+/L63hKDB4Z/E9JleS1oFmR7PmzC6yH1TTD7SgjJSf
+   1zSJ1wiZT3Rxi1k0F2ENNc/cjIk7TY4CtfqWdtPnJzSdU31vnTvpCQ2it
+   47L1bBht03A1BAlsBIjGWozYYM/J97Q62A1PF9HsIya9mS/UDUMRH5D8/
    g==;
-X-CSE-ConnectionGUID: Fgkqt8OfTh6YhkVQ1DuexA==
-X-CSE-MsgGUID: NijNQQgQRsiEaAEreMB1Xw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79942751"
+X-CSE-ConnectionGUID: 7rL6NVyLTdianwblfcQ+UQ==
+X-CSE-MsgGUID: IhO5CwIuTjCQDOJB1NF9Ew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="64921805"
 X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
-   d="scan'208";a="79942751"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:47:07 -0700
-X-CSE-ConnectionGUID: V0AvF/ERTGGRjy7whdDr3A==
-X-CSE-MsgGUID: u96JIBz0RfWYWYqr0ML4Fw==
+   d="scan'208";a="64921805"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:49:12 -0700
+X-CSE-ConnectionGUID: mXA4EAEiTXqigEW2vYLEcw==
+X-CSE-MsgGUID: PgyogO0/TP2+AFnJYA+RAg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
-   d="scan'208";a="180503918"
+   d="scan'208";a="185304299"
 Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 10 Oct 2025 00:47:05 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 10 Oct 2025 00:49:05 -0700
 Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1v77qA-0002QZ-2X;
-	Fri, 10 Oct 2025 07:47:02 +0000
-Date: Fri, 10 Oct 2025 15:46:28 +0800
+	id 1v77s6-0002Ql-34;
+	Fri, 10 Oct 2025 07:49:02 +0000
+Date: Fri, 10 Oct 2025 15:48:34 +0800
 From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20251009] BUILD REGRESSION
- 0a843be7c99be610223cafd649d9ab645ce4cd89
-Message-ID: <202510101517.PeMduGni-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+To: =?iso-8859-1?Q?Lo=EFc?= Molinari <loic.molinari@collabora.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>, Melissa Wen <mwen@igalia.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Nitin Gote <nitin.r.gote@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Christopher Healy <healych@amazon.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, kernel@collabora.com
+Subject: Re: [PATCH v3 02/10] drm/gem: Introduce drm_gem_get_unmapped_area()
+ fop
+Message-ID: <202510101507.UiRzhiAP-lkp@intel.com>
+References: <20251004093054.21388-3-loic.molinari@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251004093054.21388-3-loic.molinari@collabora.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20251009
-branch HEAD: 0a843be7c99be610223cafd649d9ab645ce4cd89  scsi: libsas/aci94xx: Avoid multiple -Wflex-array-member-not-at-end warnings
+Hi Loïc,
 
-Error/Warning (recently discovered and may have been fixed):
+kernel test robot noticed the following build errors:
 
-    include/linux/stddef.h:16:33: error: expected declaration specifiers or '...' before '__builtin_offsetof'
-    include/scsi/sas.h:365:14: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
-    include/scsi/sas.h:365:15: error: expected ')'
-    include/scsi/sas.h:365:15: error: expected parameter declarator
-    include/scsi/sas.h:365:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-    include/scsi/sas.h:366:15: error: expected declaration specifiers or '...' before string constant
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on linus/master v6.17 next-20251009]
+[cannot apply to akpm-mm/mm-everything]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Error/Warning ids grouped by kconfigs:
+url:    https://github.com/intel-lab-lkp/linux/commits/Lo-c-Molinari/drm-shmem-helper-Add-huge-page-fault-handler/20251004-173347
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20251004093054.21388-3-loic.molinari%40collabora.com
+patch subject: [PATCH v3 02/10] drm/gem: Introduce drm_gem_get_unmapped_area() fop
+config: riscv-randconfig-001-20251010 (https://download.01.org/0day-ci/archive/20251010/202510101507.UiRzhiAP-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510101507.UiRzhiAP-lkp@intel.com/reproduce)
 
-recent_errors
-|-- i386-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- i386-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- x86_64-allyesconfig
-|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-scsi-sas.h:error:expected-)
-|   |-- include-scsi-sas.h:error:expected-parameter-declarator
-|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-buildonly-randconfig-004-20251010
-|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-scsi-sas.h:error:expected-)
-|   |-- include-scsi-sas.h:error:expected-parameter-declarator
-|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-kexec
-|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-scsi-sas.h:error:expected-)
-|   |-- include-scsi-sas.h:error:expected-parameter-declarator
-|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-randconfig-001-20251010
-|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-scsi-sas.h:error:expected-)
-|   |-- include-scsi-sas.h:error:expected-parameter-declarator
-|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-randconfig-005-20251010
-|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-scsi-sas.h:error:expected-)
-|   |-- include-scsi-sas.h:error:expected-parameter-declarator
-|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-randconfig-071-20251010
-|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-scsi-sas.h:error:expected-)
-|   |-- include-scsi-sas.h:error:expected-parameter-declarator
-|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-randconfig-075-20251010
-|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-scsi-sas.h:error:expected-)
-|   |-- include-scsi-sas.h:error:expected-parameter-declarator
-|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-rhel-9.4
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- x86_64-rhel-9.4-bpf
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- x86_64-rhel-9.4-func
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- x86_64-rhel-9.4-kselftests
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- x86_64-rhel-9.4-kunit
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
-`-- x86_64-rhel-9.4-ltp
-    |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-    `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510101507.UiRzhiAP-lkp@intel.com/
 
-elapsed time: 1115m
+All errors (new ones prefixed by >>):
 
-configs tested: 202
-configs skipped: 3
+   In file included from drivers/gpu/drm/drm_gem.c:28:
+   In file included from include/linux/dma-buf.h:16:
+   In file included from include/linux/iosys-map.h:10:
+   In file included from include/linux/io.h:12:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:804:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     804 |         insb(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:104:53: note: expanded from macro 'insb'
+     104 | #define insb(addr, buffer, count) __insb(PCI_IOBASE + (addr), buffer, count)
+         |                                          ~~~~~~~~~~ ^
+   In file included from drivers/gpu/drm/drm_gem.c:28:
+   In file included from include/linux/dma-buf.h:16:
+   In file included from include/linux/iosys-map.h:10:
+   In file included from include/linux/io.h:12:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:812:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     812 |         insw(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:105:53: note: expanded from macro 'insw'
+     105 | #define insw(addr, buffer, count) __insw(PCI_IOBASE + (addr), buffer, count)
+         |                                          ~~~~~~~~~~ ^
+   In file included from drivers/gpu/drm/drm_gem.c:28:
+   In file included from include/linux/dma-buf.h:16:
+   In file included from include/linux/iosys-map.h:10:
+   In file included from include/linux/io.h:12:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:820:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     820 |         insl(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
+     106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
+         |                                          ~~~~~~~~~~ ^
+   In file included from drivers/gpu/drm/drm_gem.c:28:
+   In file included from include/linux/dma-buf.h:16:
+   In file included from include/linux/iosys-map.h:10:
+   In file included from include/linux/io.h:12:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:829:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     829 |         outsb(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
+     118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
+         |                                            ~~~~~~~~~~ ^
+   In file included from drivers/gpu/drm/drm_gem.c:28:
+   In file included from include/linux/dma-buf.h:16:
+   In file included from include/linux/iosys-map.h:10:
+   In file included from include/linux/io.h:12:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:838:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     838 |         outsw(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
+     119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
+         |                                            ~~~~~~~~~~ ^
+   In file included from drivers/gpu/drm/drm_gem.c:28:
+   In file included from include/linux/dma-buf.h:16:
+   In file included from include/linux/iosys-map.h:10:
+   In file included from include/linux/io.h:12:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:847:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     847 |         outsl(addr, buffer, count);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
+     120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
+         |                                            ~~~~~~~~~~ ^
+   In file included from drivers/gpu/drm/drm_gem.c:28:
+   In file included from include/linux/dma-buf.h:16:
+   In file included from include/linux/iosys-map.h:10:
+   In file included from include/linux/io.h:12:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+    1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+         |                                                   ~~~~~~~~~~ ^
+>> drivers/gpu/drm/drm_gem.c:1271:10: error: call to undeclared function 'mm_get_unmapped_area'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1271 |                 return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
+         |                        ^
+   drivers/gpu/drm/drm_gem.c:1271:10: note: did you mean '__get_unmapped_area'?
+   include/linux/mm.h:3337:1: note: '__get_unmapped_area' declared here
+    3337 | __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+         | ^
+   7 warnings and 1 error generated.
 
-tested configs:
-alpha                             allnoconfig    clang-22
-alpha                            allyesconfig    clang-19
-alpha                               defconfig    clang-19
-arc                              allmodconfig    clang-19
-arc                               allnoconfig    clang-22
-arc                              allyesconfig    clang-19
-arc                                 defconfig    clang-19
-arc                   randconfig-001-20251010    gcc-12.5.0
-arc                   randconfig-001-20251010    gcc-8.5.0
-arc                   randconfig-002-20251010    gcc-8.5.0
-arm                              allmodconfig    clang-19
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    clang-19
-arm                         bcm2835_defconfig    gcc-15.1.0
-arm                                 defconfig    clang-19
-arm                      integrator_defconfig    gcc-15.1.0
-arm                   randconfig-001-20251010    gcc-8.5.0
-arm                   randconfig-002-20251010    gcc-13.4.0
-arm                   randconfig-002-20251010    gcc-8.5.0
-arm                   randconfig-003-20251010    gcc-8.5.0
-arm                   randconfig-004-20251010    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    clang-22
-arm64                               defconfig    clang-19
-arm64                 randconfig-001-20251010    gcc-14.3.0
-arm64                 randconfig-001-20251010    gcc-8.5.0
-arm64                 randconfig-002-20251010    clang-19
-arm64                 randconfig-002-20251010    gcc-8.5.0
-arm64                 randconfig-003-20251010    clang-17
-arm64                 randconfig-003-20251010    gcc-8.5.0
-arm64                 randconfig-004-20251010    gcc-15.1.0
-arm64                 randconfig-004-20251010    gcc-8.5.0
-csky                              allnoconfig    clang-22
-csky                                defconfig    clang-19
-csky                  randconfig-001-20251010    gcc-14.3.0
-csky                  randconfig-002-20251010    gcc-14.3.0
-hexagon                          alldefconfig    clang-22
-hexagon                          allmodconfig    clang-19
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-19
-hexagon                             defconfig    clang-19
-hexagon               randconfig-001-20251010    gcc-14.3.0
-hexagon               randconfig-002-20251010    gcc-14.3.0
-i386                             allmodconfig    clang-20
-i386                              allnoconfig    clang-20
-i386                             allyesconfig    clang-20
-i386        buildonly-randconfig-001-20251010    gcc-14
-i386        buildonly-randconfig-002-20251010    gcc-14
-i386        buildonly-randconfig-003-20251010    gcc-14
-i386        buildonly-randconfig-004-20251010    gcc-14
-i386        buildonly-randconfig-005-20251010    gcc-14
-i386        buildonly-randconfig-006-20251010    gcc-14
-i386                                defconfig    clang-20
-i386                  randconfig-001-20251010    clang-20
-i386                  randconfig-002-20251010    clang-20
-i386                  randconfig-003-20251010    clang-20
-i386                  randconfig-004-20251010    clang-20
-i386                  randconfig-005-20251010    clang-20
-i386                  randconfig-006-20251010    clang-20
-i386                  randconfig-007-20251010    clang-20
-i386                  randconfig-011-20251010    gcc-14
-i386                  randconfig-012-20251010    gcc-14
-i386                  randconfig-013-20251010    gcc-14
-i386                  randconfig-014-20251010    gcc-14
-i386                  randconfig-015-20251010    gcc-14
-i386                  randconfig-016-20251010    gcc-14
-i386                  randconfig-017-20251010    gcc-14
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251010    gcc-14.3.0
-loongarch             randconfig-002-20251010    gcc-14.3.0
-m68k                             allmodconfig    clang-19
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    clang-19
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    clang-19
-m68k                          sun3x_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    clang-19
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    clang-19
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                          eyeq5_defconfig    clang-22
-mips                           gcw0_defconfig    gcc-15.1.0
-mips                           ip22_defconfig    clang-22
-nios2                             allnoconfig    gcc-15.1.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20251010    gcc-14.3.0
-nios2                 randconfig-002-20251010    gcc-14.3.0
-openrisc                          allnoconfig    clang-22
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-14
-openrisc                  or1klitex_defconfig    clang-22
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    clang-22
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251010    gcc-14.3.0
-parisc                randconfig-002-20251010    gcc-14.3.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    clang-22
-powerpc                          allyesconfig    gcc-15.1.0
-powerpc                      mgcoge_defconfig    clang-22
-powerpc                      pasemi_defconfig    clang-22
-powerpc               randconfig-001-20251010    gcc-14.3.0
-powerpc               randconfig-002-20251010    gcc-14.3.0
-powerpc               randconfig-003-20251010    gcc-14.3.0
-powerpc64             randconfig-001-20251010    gcc-14.3.0
-powerpc64             randconfig-002-20251010    gcc-14.3.0
-powerpc64             randconfig-003-20251010    gcc-14.3.0
-riscv                            allmodconfig    gcc-15.1.0
-riscv                             allnoconfig    clang-22
-riscv                            allyesconfig    gcc-15.1.0
-riscv                               defconfig    gcc-14
-riscv                    nommu_k210_defconfig    gcc-15.1.0
-riscv                 randconfig-001-20251010    clang-22
-riscv                 randconfig-001-20251010    gcc-9.5.0
-riscv                 randconfig-002-20251010    gcc-9.5.0
-s390                             allmodconfig    gcc-15.1.0
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    gcc-14
-s390                  randconfig-001-20251010    gcc-14.3.0
-s390                  randconfig-001-20251010    gcc-9.5.0
-s390                  randconfig-002-20251010    clang-22
-s390                  randconfig-002-20251010    gcc-9.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-14
-sh                    randconfig-001-20251010    gcc-15.1.0
-sh                    randconfig-001-20251010    gcc-9.5.0
-sh                    randconfig-002-20251010    gcc-15.1.0
-sh                    randconfig-002-20251010    gcc-9.5.0
-sh                           se7721_defconfig    clang-22
-sh                            shmin_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251010    gcc-11.5.0
-sparc                 randconfig-001-20251010    gcc-9.5.0
-sparc                 randconfig-002-20251010    gcc-8.5.0
-sparc                 randconfig-002-20251010    gcc-9.5.0
-sparc64                             defconfig    gcc-14
-sparc64               randconfig-001-20251010    clang-20
-sparc64               randconfig-001-20251010    gcc-9.5.0
-sparc64               randconfig-002-20251010    gcc-10.5.0
-sparc64               randconfig-002-20251010    gcc-9.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    clang-19
-um                                  defconfig    gcc-14
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251010    gcc-14
-um                    randconfig-001-20251010    gcc-9.5.0
-um                    randconfig-002-20251010    gcc-14
-um                    randconfig-002-20251010    gcc-9.5.0
-um                           x86_64_defconfig    gcc-14
-um                           x86_64_defconfig    gcc-15.1.0
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251010    gcc-14
-x86_64      buildonly-randconfig-002-20251010    gcc-14
-x86_64      buildonly-randconfig-003-20251010    gcc-14
-x86_64      buildonly-randconfig-004-20251010    gcc-14
-x86_64      buildonly-randconfig-005-20251010    gcc-14
-x86_64      buildonly-randconfig-006-20251010    gcc-14
-x86_64                              defconfig    clang-20
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20251010    clang-20
-x86_64                randconfig-002-20251010    clang-20
-x86_64                randconfig-003-20251010    clang-20
-x86_64                randconfig-004-20251010    clang-20
-x86_64                randconfig-005-20251010    clang-20
-x86_64                randconfig-006-20251010    clang-20
-x86_64                randconfig-007-20251010    clang-20
-x86_64                randconfig-008-20251010    clang-20
-x86_64                randconfig-071-20251010    clang-20
-x86_64                randconfig-072-20251010    clang-20
-x86_64                randconfig-073-20251010    clang-20
-x86_64                randconfig-074-20251010    clang-20
-x86_64                randconfig-075-20251010    clang-20
-x86_64                randconfig-076-20251010    clang-20
-x86_64                randconfig-077-20251010    clang-20
-x86_64                randconfig-078-20251010    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-14
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-kunit    gcc-14
-x86_64                           rhel-9.4-ltp    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                generic_kc705_defconfig    gcc-15.1.0
-xtensa                randconfig-001-20251010    gcc-8.5.0
-xtensa                randconfig-001-20251010    gcc-9.5.0
-xtensa                randconfig-002-20251010    gcc-9.5.0
 
---
+vim +/mm_get_unmapped_area +1271 drivers/gpu/drm/drm_gem.c
+
+  1239	
+  1240	/**
+  1241	 * drm_gem_get_unmapped_area - get memory mapping region routine for GEM objects
+  1242	 * @filp: DRM file pointer
+  1243	 * @uaddr: User address hint
+  1244	 * @len: Mapping length
+  1245	 * @pgoff: Offset (in pages)
+  1246	 * @flags: Mapping flags
+  1247	 *
+  1248	 * If a driver supports GEM object mapping, before ending up in drm_gem_mmap(),
+  1249	 * mmap calls on the DRM file descriptor will first try to find a free linear
+  1250	 * address space large enough for a mapping. Since GEM objects are backed by
+  1251	 * shmem buffers, this should preferably be handled by the shmem virtual memory
+  1252	 * filesystem which can appropriately align addresses to huge page sizes when
+  1253	 * needed.
+  1254	 *
+  1255	 * Look up the GEM object based on the offset passed in (vma->vm_pgoff will
+  1256	 * contain the fake offset we created) and call shmem_get_unmapped_area() with
+  1257	 * the right file pointer.
+  1258	 *
+  1259	 * If a GEM object is not available at the given offset or if the caller is not
+  1260	 * granted access to it, fall back to mm_get_unmapped_area().
+  1261	 */
+  1262	unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long uaddr,
+  1263						unsigned long len, unsigned long pgoff,
+  1264						unsigned long flags)
+  1265	{
+  1266		struct drm_gem_object *obj;
+  1267		unsigned long ret;
+  1268	
+  1269		obj = drm_gem_object_lookup_from_offset(filp, pgoff, len >> PAGE_SHIFT);
+  1270		if (IS_ERR(obj))
+> 1271			return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
+  1272						    flags);
+  1273	
+  1274		ret = shmem_get_unmapped_area(obj->filp, uaddr, len, 0, flags);
+  1275	
+  1276		drm_gem_object_put(obj);
+  1277	
+  1278		return ret;
+  1279	}
+  1280	EXPORT_SYMBOL(drm_gem_get_unmapped_area);
+  1281	
+
+-- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
