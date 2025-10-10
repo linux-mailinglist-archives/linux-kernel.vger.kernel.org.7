@@ -1,87 +1,55 @@
-Return-Path: <linux-kernel+bounces-848182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26387BCCD4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:08:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50261BCCD5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B861A6352F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:09:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12853B6141
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE88D28935C;
-	Fri, 10 Oct 2025 12:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D42A28A1CC;
+	Fri, 10 Oct 2025 12:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VX5s010i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="uEr8DHEq"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD1D288CA3
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A66288CA3;
+	Fri, 10 Oct 2025 12:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760098109; cv=none; b=Jz44djFeggsRxGBoU97rAVA0KO4apVMulbFuUhXAUqGeJcZx4BDB+EqlaAz1vIXPwqO4se3Gbiq2LDQ+2heiJKrnsSjDD53oATBYNyUbWjceujhVSFC40580Jx09AWBw4lnTQtS8QoKvEoGKToVIQPJvkMEr2pNE7WuPSX6FuyM=
+	t=1760098117; cv=none; b=PaiFtwOmyRaXm7BtDUEud8JOqLfhdb88FNTiDppq/RFZPCYpcfUL4gM4yc7SiXwT6vBL+E8fcGDZwc4BrDqigL9hL6N0qncxgAFIMzy3xjaXs42c06H84cUKf8NEX22fmx9Bf7RqmxMoV/ymvTE69bvpcInOcj00GLZ9QYZOVeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760098109; c=relaxed/simple;
-	bh=iKJ2fLr2YhVltnzFlk7Qs4rtHNtLbaKkQJ4xtFpKE7E=;
+	s=arc-20240116; t=1760098117; c=relaxed/simple;
+	bh=Zh6BhKnMA79MWyab0CAzmMs8HsF0Oe7PImX9VjoEZRk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PiuXEkDA/h0I6yQJP80bSeRkrqVpewpuvqzx3nE/0dsmzBrkuPZgEJSzq9r3J6uXyOy1d1g7DFt0fGrzGbuXfk7SCEwe4VtFt7LrB6jQfHex5OQR7uhJtURKL4ZvAp2HVz9SqPwBo8hn8gLIWsfvgTLGuniFLqUvy5xpEPVvnEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VX5s010i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6WlZF006222
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:08:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UHuTCSWufHEK1MDgZ7mZP8+Xj4HqPk/PfO4Tympx3Jg=; b=VX5s010iKdvXCZui
-	XVSfN9OAtcSdAIJGH1on+BWZi6E7iD3iWhEBFyIOuLzTk7aRO0OL9akbtqgAIQSS
-	dFj+TGpzU4jLL4Tu2+1t2E25aJThlFJEyMVvANkliBG+Zqr4QbagnQhqYbRf5oR9
-	kElYb8MDK3oGSA/YVQ17cn7v0FTeJJ9+vSFf9Jt1da/Kd+7fKk2qEwmfXnQJJ9+r
-	Iqr0+V2K7P52MmjccTBKQqGwYO/ZZkarweyz0oW8/Eo6zUSaoyGb3BwEFNLircAq
-	5GbR/wzy5wCS/stJLs8/UuvpDuu4Vs9CiGtdyYcbysBfHtCGTfER7YG3SjZU6sMu
-	VJ+QYQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4sp97q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:08:26 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32eb3736080so820273a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:08:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760098105; x=1760702905;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHuTCSWufHEK1MDgZ7mZP8+Xj4HqPk/PfO4Tympx3Jg=;
-        b=W1LeGiS5Gy2bC9bdEM4dUdAM7s86LRUrex8eKfXYAu8NkHMjs5C0O20Sq8MuUB5oCX
-         W2DH4wTw+6nFUoStDe7pHFi591gOhFWJ/4OTtSmyDA1TiCYZq10ZH3Xs5Uts4TWt16wa
-         g5/WM8OAJCKmfiD9FTLhTh/Q7avBXTdXjNK2MLyS2jG+amnJqidbU9uEl0MP8dfaBSIL
-         xHXPceSv7UkLFOAZI/7bC8p/C3pebeelOVVGHf6vs7oIgRqocu7U2GE+HkMow0nGI19R
-         re40iOVf5wUl+4jIpT6Suu6xdrRTjk/4MXGpewQ2yNTq673NZlfh3eWlrqwxC8dG8cgz
-         ExMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW1MiSsN3FPkxO7jqpCgFPfCyr6J/PzIzg1pxR72d0i8s7WcI9OoFCpR1x2tbQm1r+aho2AxzdJ6HeiuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzngKyOk9V/ycoiZ2F0zVOoSBs33MXdZmubXw4DkF5UrLobYDdj
-	RrOXvF0S3GPtgd8aPVoQtKGFukTGzq89BWzhV3EmDYbnhezApOTYXgWicKqmb4nSe8R1Pq7198S
-	CR3M5myBWoCVgLvn6FuRUSFUciXSGQBEbT2dr4sKmnfnwYzVi8JJMxr94a29gfoNGWBU=
-X-Gm-Gg: ASbGnctUYc2pPLiXG7GxI5i21QOOGCVcr9D7Z/RvkmZgeTz90XgaFWRt7LfP692iH3c
-	8hwTeIcjtMTx9Z/u8rIPaBPRaula7e8GCvGAG8F/k3/acv6P5nz4DAX9/xE2XKQ/+xfmNZ/xsyR
-	3P5kSQEiwtAIEynzhoRyuorboFAhSreMgx2TD9LKxY6t1BkyvKPqGKxSOxrndPoNgXsj4BFbjX5
-	Io3FJFIiw6yjYXg5AlX6ylw6Zb9vJOYqxDUV9UuXhtLtGr6Y73Z2DMVvXykATOqVqgAoqxPTFBI
-	LhA15kGNiX2JleCBJThRGcWjSVt8DZoExlQ5z+c3OUd05HWJDnn24N0tfT3mg5yx0lDsQ0oidQL
-	eFwfzhTWH8WnZUmHOVo6lBtIY99M9QQ==
-X-Received: by 2002:a17:90b:1c0d:b0:330:7a07:edb5 with SMTP id 98e67ed59e1d1-33b511172b2mr7589507a91.2.1760098104914;
-        Fri, 10 Oct 2025 05:08:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSIwcQ7HEPUZ4YLrwYlWbMFtOKin3a2w2qnn0ShovV6i4HKbxcbOCq6y8QmB3MxfGJbOFMEQ==
-X-Received: by 2002:a17:90b:1c0d:b0:330:7a07:edb5 with SMTP id 98e67ed59e1d1-33b511172b2mr7589455a91.2.1760098104120;
-        Fri, 10 Oct 2025 05:08:24 -0700 (PDT)
-Received: from [10.133.33.85] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2ab3sm2772219b3a.64.2025.10.10.05.08.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 05:08:23 -0700 (PDT)
-Message-ID: <81ac4acb-3e0a-4e4c-a5b9-bcc5a949b8c9@oss.qualcomm.com>
-Date: Fri, 10 Oct 2025 20:08:18 +0800
+	 In-Reply-To:Content-Type; b=bJtq0xTrZlWz5ANse4HjmSJCFO7KYS/ax2KCjGrFnDb+KbaM63K1q2AYwLTXH0bddD0oCPYE9hNYLyddDb9NJuDPHEVzLqc0WRKq5z5idVf/4HHJNyDqBH20mdT3KFGLWaTsZ2OQpwaJi+dgo1pegTGN+ocfVOTneJCSF2yDtxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=uEr8DHEq; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1760098104; x=1760702904; i=deller@gmx.de;
+	bh=Zh6BhKnMA79MWyab0CAzmMs8HsF0Oe7PImX9VjoEZRk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=uEr8DHEqzEp5AsiARDrUfkeBbKxGSB2AS3l2wwkgRPC5jjy/CPfVVV69Jvb37cRf
+	 lCMaD61UkH7O8fh7IoQfboM8OCfFRhJ7nlSvkSGfTNKMK0kanmTaL1Ee8jB0mEZhA
+	 7du/I1QrIyY+WSTcwyGqF0dvxm3qHGh1aySo3eIA65OffKaakre4wiI3DxeesbsZ2
+	 PAQh3WvbZcmEocf5NwyvF/o3VE1CabQeZSZC0rwCFVsFPRRbvaXDUJk1wxE/BFmFI
+	 0Q60Er5ZM4gQxQ2VamFMv19ulWk7rHa+QhsHaH6OP/FKEdENAr50FcUGyH1CLRRLg
+	 9lDX83tNUgD8AJWyiQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.51.136]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mlw7f-1uPqPb0xNb-00gwy2; Fri, 10
+ Oct 2025 14:08:24 +0200
+Message-ID: <f532c6d3-b6e1-4fc4-9627-1e84f4ba6df8@gmx.de>
+Date: Fri, 10 Oct 2025 14:08:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,192 +57,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/24] arm64: dts: qcom: Update the pmh0110.dtsi for
- Glymur
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-14-24b601bbecc0@oss.qualcomm.com>
- <CAJKOXPdQH2jXcEY6ZpkmixvUt26SqdzYgDAiJ3RHMG7xkPyi_A@mail.gmail.com>
- <lcbcjpoazpwbltedkiqlw4l3aomwvi3qsfwvmwghb6uf5wvnme@kh7qdpunfuwr>
- <CAJKOXPcyhDdFW_u4YQLiHYj8gM7wYB-LOmB_PJs+5OOgn8WZFw@mail.gmail.com>
- <mzoctelzfp6h2ezzkc3j7gnghsaf67flxqlvfhtlpdfxtddsvi@zqihmnygvdjk>
- <20251008073123.GA20592@hu-kamalw-hyd.qualcomm.com>
- <6bf19804-7ce2-4cb6-bdbd-dc12c18330df@oss.qualcomm.com>
-From: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Subject: Re: [PATCH v3] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Javier Garcia <rampxxxx@gmail.com>
+Cc: tzimmermann@suse.de, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org
+References: <20251006164143.1187434-1-rampxxxx@gmail.com>
+ <20251008183627.1279115-1-rampxxxx@gmail.com>
+ <dis2jb72ejrbmv26jdj3rwawrdmhmde5fahrkdn6y3elsgg4p7@wsjopejnmz5f>
 Content-Language: en-US
-In-Reply-To: <6bf19804-7ce2-4cb6-bdbd-dc12c18330df@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: RKOsCChH2w2YZoFXAm3aj21ilJqdugyi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX8szSiq5nQT3L
- ja1+lOAH85zXH0SlpGPvCM06E9eqfrlMYHQLDK3rhwEukxJ8eUkkjkl1f9+wpSbt5KeL4bO8gpk
- 3B6FV9rLJGHlxIDu6LGoUP6sp0TV4wS2vSLtkxG4FmftYxFgL8sEC8ePfutKoJhP6t64T30lQKV
- L3Bfnxdou5ql+iCK/Za9QR9/OC9MUfDZrDU/aawHuP7aWnzqP44+V1/fx8jQYUHb/CwDBBoqfvu
- XunShvN3IoinUFkKctOcJHfMayjtE6ff2T60l7m4bFQxzyTm1x2yeptqBF6j2rGBfKClvxxFrfU
- SLT7z7TfMQzMXIR/QqAsStM4qrd0uapzWbR9PbjdLnza2KnfEzh1w89x0KGjL41xAbg7ZTq8pA1
- PtdFxwxwIudhoZqV6v8y6ph/uQOhJg==
-X-Authority-Analysis: v=2.4 cv=SfL6t/Ru c=1 sm=1 tr=0 ts=68e8f73a cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=fbgB7Lw66JwkRMScquwA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-ORIG-GUID: RKOsCChH2w2YZoFXAm3aj21ilJqdugyi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 malwarescore=0 bulkscore=0 priorityscore=1501
- suspectscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <dis2jb72ejrbmv26jdj3rwawrdmhmde5fahrkdn6y3elsgg4p7@wsjopejnmz5f>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zsjiOZTGZ1wj/tdP4v0oUQPCeHEqqinC1gG4XVGXpm3XwHES9Np
+ 0AddWeg+R0jT/eu08T3TUnXreY05bg/Qqv8E9xunRs0tjdRzJBDnyzdMPHk0aVRIQU7YJKg
+ y+CdmUh67IZ1CoKSVRfKLWGcMpIeGUy5n4D8ZMXwHciHVxmomiMIhs+AGHHYH1Zr7hBtoYl
+ 7XW6CwXMKsTCogV6bn6WQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:B+G/qZvIa98=;CmxxUvj9S2yxX0w7Og885ssBKVp
+ cFnhUkwrZWy/KN7J+9pcCUKdBdkHQr5IZDheZeycQ7WO6V1aXhdO9V/Oy9RvsTEfgtH85uzec
+ 9k7D6rVdlsZfDhH4WR2PW0YuwQHQv6FOP0WeOQ1tekELmU+o5xAPYMInYR51nph/R/+nL5wbM
+ LV4xOKKJpIxieg8cHYC0Nj8p+xKnLFnf31PkHCxGqA3CX15xBzXWFMfZdZbT4qlnmogAIqnzC
+ f+7yFr2IEikFx2AUrUlkXsDiTFJFuChQvCGnbb8i/3fZwTA1Nwzeb7/aCC2/sQI+d5x87q3A8
+ /+OJwVkiVCvcOi0PhGw8Ow1R2Ia3GBTMg0DpycDiYPZ2r/UPR+t1FvYQ2YpTK/D1OZHmy1lFe
+ /2LSa8grmC2qPK0Jx3zGlbY8b0ezPVD9C0hn4r4GQKKhGTGI4Rq3g/7CoyLkGNhEMc4SWyoWo
+ la+w9BKkdt23XNma+4PQmhGtngg05J6lO1LjjwSOvvjASz6BYifJgC4SKNKfBy2KeGyKogjtF
+ LwBkYDdAjLIhcvOgdj3De8Is23Mp0PcaAtSpT1exH+CsqTQwrnul3bdkJmwbltZ3hGnCelpXd
+ 1G5YBsHM3QGerSX2PgVEyGWZEyP8SM3tptpGNMLD6zbsIHsIpi26qhpJIZIdiW0pl8myi+e5N
+ DCzfuXKPCTXlGJhFhVqNp1DzEdKY+D+JfgI1qQCnuevaBi722CXRS5JN9rDiHtMofcDcIJKj7
+ S5lnW2aPNDI+yI7w1vFUC8ENtv3nknuR/aSjMvAQzhAdI4KBhaPX6fNWJE+gSUn0NDoSpgD5q
+ VEXf6WnpCjR9b7VsyxxKwxLvpwgnFEmkfmauHjBcr2ZtlYPYjly/XB7uENAKYFJqztWmfHd7q
+ yPDkC6bYJtYMDi9x+5P6MTym6QPEMfSf+tnDdT2MrEjHiRiso9OyIeAek6ncX3cRtfSn2/5Og
+ 2XptoP3MVekcy7eSa7nS0UQipo57IGS0bNdSsunYRMIoyESrq2IDuXbPOIM8k3ETXDZzMScVb
+ iYKBv1MlPEtNvRonHCXhXrDHnjlNJ7UpfC0l00JymivDP76D4cjVQgLOSlOFKwrlkbPDtXGmy
+ XXqwNU42x+i9+RsliSUwwp+BK0PUOGzLeqbtRMGCEtb9BGKE8XpWKJbI3kVHP6ENeSjx3fWcK
+ mObXJ2lGzB2aPG0c583HoEDrGS3iEUKn9IlHZnfq8ye0Lq46eP/H1szfM/AQt0Kv717VX1AH7
+ IiQLOOQl79qcRqikmcuaTKytEG3z9muQUX7AvvgwMvuzX4+RCjfhDL9/Nm6yhsZ0wvn9jvPs+
+ W66Z9ArNlj31shkXUinG/2w/Mkos86X2QocaTEUQ4CBHEeyqL+817achWEj164s9ECEQOVDOC
+ r9fWbcKOLV72mpM8dNxW+m8u2OQVQE0G9sqqYHb5HCD3bw00IouTDhKoY5tBfjy4iRADBTR3R
+ tuAL4TtM5tRdaT0xR1buqGKIRfauMlumE0maRxJXxDWLo3Cp7W/ZgdQw/tAU6qoZzGI0cWFIc
+ fnt0MWEFottSZMXxQ3hOz8I3Wj8/N0TPQ0MB8KKnN95fdDiAabCvGPg8OdZtqsnuPCyoTi3Nx
+ rYDzWXvuZdiORBg8O2IezgIkHssA8WfmOIqMQ2bwsNUVeD4YhxhL5uTU6wl8WULzFh4dQEI9b
+ sOamfA7RiTC2gjyVsR4sncSPsi0kyFHfiFNN4p7IZaZm5r0kReyrmN5CrJW9apXoPRVN2Imtw
+ 74BlCk5TIJvx/5RVP4UTVwlMOq1njfwYuVZSPLu4AJagKFEmY2M72Nqg/bGN63HeQbMi+K2ax
+ aelGms5USznn09i5WwM8dP7c19tv1u18yDJt19R1GwqGGGcHSCI261o9cR39QRaUUZQxHY8r5
+ uevM315/wBEc04tbm5I8wa9g3w4mBo64+fkvtfkM5Lys8lOtfFYWVStKsEfjy53ZcZjDRfuKW
+ TwIOi0eDfbA/BEX/KWY4XoueqpX0kCI6EzMvrXucyqc0b6qJbphbADJA5c3hNOLSREiclGJEo
+ s5HLrHyUiL5IMthfhqeeRzp5gSkJP4Al3XOkL3ggn83VaK7EnlBbKChktZPBlRNgyFYHyEcMt
+ hc7bF/v8CVhqIhMEX2pV3fr8J9gKviozTFRsDsnhToweDHHGAqhkCQE422m49IEdTOcdCv61O
+ 01p0Y/92vVHaH3f2+CgbazmTvCy1fBtcS31BejNjTeGqMT87J/pG+vK/jner1FB+UOOo9aLxB
+ 9fsZaz6Ss3aZGgAMng2KuMKkmx2cdy6Kp/azwCpVeqzwuq7KB7VU+1BxDeQlrEiplEvbw6urr
+ 7MSugRdP3oSgp/LERHOfNp16RfzpluyGMHNe1Ua6ePx6id+lc1ied4I8oxthwD1MwIEDxGKGp
+ 2sMRtkz03dSawCDzDcClxiKfBBE/MTl9xhlCVnBm+X/KuknsYKcTuugMiunpQ8otbT/cYn0UC
+ fViq0i6uAxpxm7g5KEbH/z6xq0riWNBSRXqMAJGs6sm8yieMYv1h5UhdB3eS8NeqUAZB3hbsm
+ wSvnvE2WOXRqGohpRkKvce/6hX17qU7x+cektzaG0RHMI32pYVpQXe981LyGhEZaM4n/bignF
+ b+UrYhct2J2nYOBJF+Mcqnfi1I4cIqDBrATlkA6vJq/6tM/MQO6lkWu/14zJnk90WRr3FNA2i
+ qcAJy05K/kFyxslhEs0L3u5zaUp4OGdLewjRPkneioifoAKiAYqZFtR0MUHJ4nPsIiiXrS1o/
+ dGZZAtEnrzuTklKle7l9nvR5I23Q8kxNZXhqNsjzeHFTqRc5Xxo1RzN3mnTU4/0V0qB9XdXkU
+ 61/kSH/Bz1vyPm5VNT4MHFhAF2g/1iCDnMyniC28cc1nYpqtfYA3dPas3EErcLchyG4CRXrMV
+ 08maIVUaQvrc6ked2q8ar3LbBOWw3eZgInxJlPzU3TEnwRJORApXyWd+vt3Ybi9MDCJTCZSwF
+ sW8Uq1hbmifv8XUucri67hNYwgNAIo+6vYQUYfJMeRW5Y1MlWTw3qE4HcshFd2qtHTYFjB22M
+ /9P41ml+qKuQmHQFtNNYj4fpCaxOdtYNq8tVl7DHJrE2ejNHs7wQ9neiMqq3ySXeM8Ka9T/Hs
+ Gp8SPjywAkDUPXnAVWD4xHlAKGNxjkeIBB9gobVoaaYiJxEFaEKQnud/NZV7H3l9nQJHh+2p3
+ 5JD7EF7NnCS94k/c+YR84T22v8Y5qZCQ3/AI5h0WJHEPCW98XnWNw1l1l0RKskgDJ0d6ASGev
+ IVDTD+V+XV5jXrJSeKS6ZSbhHSnfNG7602wietGjGPkyQE2xwX5Hov84pFZyuj2lZOj7OYPO4
+ zHYKBx+6mXnvhBEUsKezNJxnLrUUmQwZU6BdkzxKhj4SIuj1xXehPjDzh489quFlzk/voMAwJ
+ 1WpF4i5eAsaTtkBcVBenl7OA4Gy/4NTdah8tlhBoi2nrJWACnm7KfE693g5iaaauPHwCOTWee
+ SOvLVK/NWXZ7Gteb6dyJnraLMGH+uyXLlfiTQ93enDkEMFKsilKL4YHVMzBCLdvp0PrvcD7Nf
+ sjDPMUqDlKw0NkPbV3hBYwxgWFGeQQuP0HdDVLXNI93HEMrvZDoH3Ig3J5tZrZWUx1DyXiQVX
+ Buha30j9rC17fCm+U9aGDYseKKjS8PLfSiQDpY2hTibJZWa3HjYs/teOHhCd6yO3USLtC+Z87
+ f4LemGQxGILQpy5ga3HwLBPYmK0DkJa348no+2tGNGjwzKmq8gpo82/8OB81UDF01hMgeJ/qT
+ qiTxhuOHoVSyMOfHdXmYqg+tuIs/nrZ0zHO4dcB0wqq4sFVcqpsEZFNzpihbCUW2iLch12h0M
+ Hvv9+RX0D8BRqwl2JDTc3YE5oTm0qGmdQTK7VZyyKUc2ARUbLe5fUj1lJveUYX5gFhd3SWKwp
+ 1eO32j9aQh0YFOULwW9uDHDWz+4/DObHKGLK94/4oqd36gugycrMz1dRCBH9dCjdnLk1wWJr0
+ wNt0rPUn3fufC0H0YrSOabKEbS3OG33CZTGTo2y4yP24WbhXxFK/FWjze/ncL+AsrugawHt89
+ wFgzq7JaVKgtCxVSu03BUVD6/tQ9fDxkgA5KTgTbQWDpELlChxap0+h7UjeTX/VZy9nIi3GBl
+ rBbzR/HYCZk01LAulVZa/IouChxQ/WLm/bKvB1e0X2O0hopm0/i61H2eSy8aso7L2aCqOrNEL
+ 8yl9nftWeiTx/fPIz2KZpVyYmKypQ3FHqkSauIrgrgVXMfpKI2rSYZTAyyD8pUi/zXnCvJ2VU
+ KPxPf29vU80EFzFXFIa3AeaXzkS4owc7HN4sTuax3M2ZL+QTqgPTVTkFXVv3HRFUuPBXqXKJD
+ bKWFLqgdTXl1sFP0qsALGJAthX2AZMvPCYJhihRZnwc7NWbscOj/q/teCKmHXD3QJ4qO27+jp
+ +ELSyxErTD2EitY5lUTvQBZ8jhBZvPkyUZ4BsvhxjkGfEchHuUXyir358FfiYJYOdiO9EGwRG
+ dmLJzkMaREZACUyNIbiwS3osd9SvzrzCSzKC8a1sEKZZ4vk/sv5cJZLBjFa9eXjlDK2h1BqYe
+ QtLdb0/FHHkQR5mcqrAkz2aVZ1+BDUm9kIKxIH3O1WG4DpaFY+PkpQ72yqYvaLkOmxrlzS52w
+ Z+w/lCHfzSeKHotg1+XZ72Zcwi+dqEiQlBjkdphLS/O46F8SsQldm21RpYQ4ozGWIpWFt8xwY
+ JAjV2OcxWiWCnN304Sh58ZhXiqvir8QsgEhdT3Q840J+sljQpk7X8Bw2LsnhZ2t8qcLF5CV2Q
+ 9URmPF4BJ/eEQs32Ko3Bmn4RbWlwa6O6HPEeNj2s6s5goD6ZrTYemdFkBsdVqK45mAHX21rw4
+ wgoWHNJPJoYMvhCmamk/hWmW1bfG0NBm64ToweB0EmeS02yKSh//k5WTftCq7b7RrBSmaXRQi
+ 0ogZwD8wi5gWra10DKY9R1/4nEkWPGTmN7nE4rS8RVEZ2ztyklE9VvxZv2OJmmRho/RxpWYm5
+ A7Uq1/558SOh7w==
 
-On 10/8/2025 5:15 PM, Konrad Dybcio wrote:
-> On 10/8/25 9:31 AM, Kamal Wadhwa wrote:
->> Hi Krzysztof, Dmitry, Konrad,
+On 10/9/25 10:50, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Javier,
+>=20
+> On Wed, Oct 08, 2025 at 08:36:27PM +0200, Javier Garcia wrote:
+>> This patch wraps the relevant code blocks with `IS_ENABLED(CONFIG_FB_DE=
+VICE)`.
 >>
->> On Thu, Sep 25, 2025 at 09:57:02PM +0300, Dmitry Baryshkov wrote:
->>> On Thu, Sep 25, 2025 at 10:34:52PM +0900, Krzysztof Kozlowski wrote:
->>>> On Thu, 25 Sept 2025 at 22:14, Dmitry Baryshkov
->>>> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>>>>
->>>>> On Thu, Sep 25, 2025 at 05:08:54PM +0900, Krzysztof Kozlowski wrote:
->>>>>> On Thu, 25 Sept 2025 at 15:34, Pankaj Patil
->>>>>> <pankaj.patil@oss.qualcomm.com> wrote:
->>>>>>>
->>>>>>> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->>>>>>>
->>>>>>> Add multiple instance of PMH0110 DT node, one for each assigned
->>>>>>> SID for this PMIC on the spmi_bus0 and spmi_bus1 on the Glymur
->>>>>>> CRD.
->>>>>>>
->>>>>>> Take care to avoid compilation issue with the existing nodes by
->>>>>>> gaurding each PMH0110 nodes with `#ifdef` for its corresponding
->>>>>>> SID macro. So that only the nodes which have the their SID macro
->>>>>>> defined are the only ones picked for compilation.
->>>>>>>
->>>>>>> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->>>>>>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->>>>>>> ---
->>>>>>>  arch/arm64/boot/dts/qcom/pmh0110.dtsi | 66 ++++++++++++++++++++++++++++++++++-
->>>>>>>  1 file changed, 65 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/arch/arm64/boot/dts/qcom/pmh0110.dtsi b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
->>>>>>> index b99c33cba8860f1852231db33a127646c08c1e23..4a5c66e5c9fbc35cedb67601f4568844dc41fbea 100644
->>>>>>> --- a/arch/arm64/boot/dts/qcom/pmh0110.dtsi
->>>>>>> +++ b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
->>>>>>> @@ -7,6 +7,8 @@
->>>>>>>  #include <dt-bindings/spmi/spmi.h>
->>>>>>>
->>>>>>>  &spmi_bus0 {
->>>>>>> +
->>>>>>> +#ifdef PMH0110_D_E0_SID
->>>>>>
->>>>>> NAK
->>>>>>
->>>>>> I already explained on IRC in great details why.
->>>>>
->>>>> A short summary or a link to a channel / date would be nice in order to
->>>>> include other people into the discussion.
->>>>>
->>>>
->>>> Of course but:
->>>> 1. You were there so maybe you remember the arguments, and:
->>>> 2. I'm offline, using phone, not having laptop, replying during my
->>>> personal time off just before merge window so any emergency time
->>>> should be spent on important matters instead these two huge patch
->>>> bombs adding such usage I already said: NO, don't do this.
->>>
->>>
->>> Well, If I'm asking, it means I don't rememebr the discussion. And I
->>> defeinitely didn't know that you are spending your personal vacation
->>> time in ML. And if the discussion was with some other people, then
->>> somebody else can drop the response to the question.
+>> Allows the driver to be used for framebuffer text console, even if
+>> support for the /dev/fb device isn't compiled-in (CONFIG_FB_DEVICE=3Dn)=
+.
 >>
->> Just wanted to give some background on this patch.
->> Even though PMH0104 and PMH0110 are common (b/w Kaanapali and Glymur),
->> they don't share the SIDs. So we tried to use status="disabled" to handle
->> this but we observed that because of the node name being common in the
->> two included files, it ends up overwriting the previous node with the
->> same name.
->>
->> eg-
->> #include "pmh0104.dtsi"  // assume contains pmic@4 { ...};
->> #include "pmh0110.dtsi"  // assume contains pmic@4 { status=disabled;};
->>
->> Here intention was to use the pmh0104 on sid-4, but it gets overwritten
->> with the pmh0110 on sid-4 ( with status disabled). This is why we ended
->> up using the `#ifdef`, ensuring that we can control the exact pmic that
->> gets picked by using the PMXXX_SID macro.
->>
->> side note, i did `grep` in the `/arch/arm64/boot/dts/` and i see a lot
->> of instances of `#if...` present in that.  Assuming the concern here is
->> about the use of `#ifdef`.
->>
->> Can you suggest some alternative approach?
->> or comment on below approaches:-
->>
->> 1. Can I use `pmic@pm0104_d_e0` ?
->> This may work but looks like a departure from the current format
->> i.e `pmic@<sid>` used in the arch/arm64/boot/dts/qcom.
->>
->> 2. Create PMIC-ID based pmic dts? `pmh0104_d_e0.dtsi` and likewise add all
->> pmics? But this could mean creating too many pmic files and end up
->> bloating the dts/qcom/ directory.
->>
->> 3. Add the nodes directly inside glymur-pmics.dtsi ( not using #include)?
-> 
-> This is what we did for x1e after similar conundrums
-> 
-> It adds up to the maintenance cost in theory, but the alternative was worse
+>> This align with Documentation/drm/todo.rst
 
-It seems a common scenario for different targets!
+This seems to be Documentation/gpu/todo.rst now...
 
-Considering that a PMIC chip can be reused across different targets—and
-even within a single platform multiple instances of the same PMIC may
-exist—it might be beneficial to define separate common DTSI files for
-each allocated SID."
+>> "Remove driver dependencies on FB_DEVICE">>> I've not the card so I was=
+ not able to test it.
+>=20
+> I still don't understand why the creation of the dispregs sysfs file
+> should be conditional on FB_DEVICE.=20
 
-When the device tree is another language to interpret the hardware,
-shall we change the sentence more easily structured?
+I think this is because people simply believe it, as it's documented like =
+this
+in the todo file. I think this is wrong.
 
-For example, kaanapali actually have 4*PMH0110 mounted with SPMI0, and
-each PMH0110 have different SID(3, 5, 6, 8) allocated like(pseudocode,
-not tested, just for better understanding the ideas):
-#define PMH0110_D_E0_SID 3
-#include "pmh0110_spmi0".dtsi
-#define PMH0110_F_E0_SID 5
-#include "pmh0110_spmi0".dtsi
-#define PMH0110_G_E0_SID 6
-#include "pmh0110_spmi0".dtsi
-#define PMH0110_I_E0_SID 8
-#include "pmh0110_spmi0".dtsi
+I think the problem was, that device_create_file() has a "struct device *"
+pointer as first parameter. Some device drivers probably referenced
+the "struct device" pointer of the "/dev/fb" device, which does not exist
+when FB_DEVICE isn't enabled. As such, the device_create_file() would fail
+during initialization (since the devide ptr is NULL) of the driver and
+prevent the driver from working.
+That's not the case for this driver here, and probably not for the other
+remaining drivers.
 
-Glymur actually have 3*PMH0110 mounted 2 with SPMI0,, and the other one
-with SPMI1,  and each PMH0110 have different SID allocated(pseudocode,
-not tested, just for better understanding the ideas):
-#define PMH0110_SPMI0	0x1
-#include "pmh0110_spmi0".dtsi
-#define PMH0110_SPMI0	0x7
-#include "pmh0110_spmi0".dtsi
+> Either they have nothing to do with each other, or I'm missing
+> something.=20
 
-#define PMH0110_SPMI1	0x5
-#define "pmh0110_spmi1".dtsi
+Right now you are right... it has nothing to do with each other.
 
-Request a brainstorming here. Welcome the ideas!
+> The former makes this patch wrong, the latter would be an
+> indication that the commit log is still non-optimal.
+Either way, I've dropped the patch from the git repo for now.
+I don't think the patch is wrong, but it's not deemed necessary either.
+If someone has that device I'd happy to apply it after some feedback.
 
-> 
-> Konrad
+In addition, maybe the section from the todo file should be dropped?
 
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
+Helge
 
