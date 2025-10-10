@@ -1,268 +1,158 @@
-Return-Path: <linux-kernel+bounces-848128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6BABCC984
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D433BCC993
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C943E4F992A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:48:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 805074E63D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6784828642D;
-	Fri, 10 Oct 2025 10:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD36285CA8;
+	Fri, 10 Oct 2025 10:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="xszJsjbv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B3fGNoVJ"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eR8PEdRC"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E33BA3F;
-	Fri, 10 Oct 2025 10:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745BC283140
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760093280; cv=none; b=lbnpjyznpT78G5IrHt4Oskqdr83c8vYR0pQXPOQQPt11HacICqZyWJo95Oq7hoMxmaiIaCWa/h9H8uI1aAH77dLV8tKwITaT294c8Wq3wbRiGFe07rBHjlDxrEuzpTqcjGvRt229HzGNF+3bYG1XmpJpbX+Ibpn+enem+x1AsMQ=
+	t=1760093336; cv=none; b=ur/VpQLrdfZt6LVslbfosoUdGioP0BHkCRxLWT1irt7ieXxkKS9/TdfvqF1gjGKh6ImsBOI4u16QrLn3wisUNiWOd+vpzpdYc7PXjCll+B2jDCdTzvMJOh/e6iQSWxV9iB8REfTqfu/BfQKmMhNMoeR7B6CSMZ+IKNONlxO7Keg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760093280; c=relaxed/simple;
-	bh=phKAygcCHq5E5DNocoYzByqQdzOTV1jDLrVnQWjgKFc=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=rsPGpPYwYCHgn5as1/bU1+idagW1tV/AVGBYYMySodBT2/FJHHAdSeD5sE9L3UqvUyZwSqzw6CWa+l2MiodzOQxMHi615UwOb7pz2TWV7iocF6nTAIglNc3HeNy8OzBb/LaJ6DQ6rZUfVF3sfagv98op5ytbpKQ+8OTHBO2SQHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=xszJsjbv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B3fGNoVJ; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A43E2140002F;
-	Fri, 10 Oct 2025 06:47:56 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Fri, 10 Oct 2025 06:47:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1760093276; x=1760179676; bh=LExDmiF7iRBPhdv/4uvxxSe04Ic7f+Yd8wI
-	CU190Iac=; b=xszJsjbvdIirmw0tyngHbK53+w9lsE+9jnUSSz1KcaZvmdHWKyk
-	oWZAXI9fcj99QBqW3zREItFucaG88UKZ35GU6+srBww+Vnt9Vvw6TUvHnSEIVBeX
-	2cCY6eWBq+/qJoDkaWq3Z8tVA28rWKNBSXhOAm4YFOIXJSypvLaqZb4RDc1u8ezm
-	kfO1y2J4mbExW2QBeJqwwY/x2UucxLxbqXz7JLB0nHE413bQxyL8wCd5J1O+gI9h
-	GZhv2kV2przHerhD4ukIoxwajKRNynlxkz+N/+J5z0dbdTTBkZT149ZyKCOwxK2C
-	xlR+m4wQ5KtUvGxV9riK+vI3N6LdF1e+4iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760093276; x=
-	1760179676; bh=LExDmiF7iRBPhdv/4uvxxSe04Ic7f+Yd8wICU190Iac=; b=B
-	3fGNoVJsJARCfYuhSaSJ5jofIBOJTWoiBzXzL4EG4xBbx6VG7pFz9Z7eJ5LmnucZ
-	t4xb2cbynY9cfLcp/qgGm17Q5Bf8F0+Q2pneimISMaw7s9txBIp4dw9PoEr0k2pe
-	Qbl9yLS9bjN/u487X1nmVaZnzE3QRhRYfIVAafU8MOLPOEaFS0yQWio4eL58Xxxs
-	zc9FLoPfpyigSIrB72JUrZNnQ/ABA6UzzIFWdbVT/51WXXjMQzHUrKcOTnFUpO/c
-	VWJr6YpEUN7IH3O2e7mHJ+OtA/cNod9u6Cy6PR4l8NoxGTP6grkNkZ8P3Ug+3xNQ
-	X0e4AKtBHT/UMzsKjsyzw==
-X-ME-Sender: <xms:XOToaNa1xZ5bIlRtFvOwsZoPFOy1c7xeskrpVLFC2LuxQZ4AQ8Npow>
-    <xme:XOToaPG1gU9T2Vou-q2FFnWIuaL8ZwBHCjh01v1jnss5Gke-Eb1zRh3Nc4z2inchl
-    -XlXiiRl_1KANvoyUVDRtIp9a92s1B-DMTgLBWgPkpJLF2TcQ>
-X-ME-Received: <xmr:XOToaIrHXslwBpeOjG5Zmgf6ziWgNFnGAk4sqZ5KxsuBqgqunfuIpGlzTzlFr5W4dZ7SDHXb6Lk72afxNgwP6ZOtwTxfYIE7GS3mHV8ixQq4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdekkeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehr
-    vgguhhgrthdrtghomhdprhgtphhtthhopehokhhorhhnihgvvhesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgtphhtthho
-    pegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegurghird
-    hnghhosehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:XOToaCyUzj3OGBkGL7qzV8womnybPiS9oQsXmQx2g-G5ozrfLsy1yA>
-    <xmx:XOToaKNd6fMeXBAGBHlGGI0333Qg0xZRjN17bjlViU2VkZAPqkN4Ig>
-    <xmx:XOToaKfsovNA4hFNLDWP1MeV1hjko-LC-75iJGusO-wIPTcuMgwLcA>
-    <xmx:XOToaO6lljvBLiP95pHOZQPVqN9kjU6DSYwT9b8dlV0-BMCubM-mKg>
-    <xmx:XOToaLwAv_xHOB9NHNnwEe8PVIaE78JER5r_tTOmaZ-gKPyOjeRj19YX>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Oct 2025 06:47:50 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760093336; c=relaxed/simple;
+	bh=lYpzXUJGIPqLiDVqIx8/ZgeeX6xADxsThjAvI10s8A0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WJSN+awKFCNfZ4xNE7hpfG1dv5oS0xrBcovcufq9VJS0LPY7SFlPHpNOCDqwNPtM7IGLAEezO0ijySYBE3L/Yub0Kcfbdp/YhT7OX6D/ANQj3stE4qQFDXFgzPkMzeE9idTleyICJMYG4HXui177lTk9e4ZcjmhJx5gqo+m7alU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eR8PEdRC; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-28a5b8b12a1so18351645ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760093334; x=1760698134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=x2LiN8aGSeEz5/QEAPT2ZIDR5uamXQ8YXQ1ZPBqL/90=;
+        b=eR8PEdRCTiTUJTQOAwDkw0uOiOqkF7kh3iqswnjFr5hictujyuKXtNPRp4qd+kP3oI
+         8ICjWlFXxY2YIqbHwodbYhnFoAlGQMVisCefWVMk7/PK2C7EialoJ+W8FpJiJTBcViyS
+         XqdmuIggo5vadlquvcEa3hd2RlmUm/DYmYhAqrT4wRfb3I79OmSwxsdjFknh0diO05RG
+         lGkisKaSc2hNleIhor1WGl+sfAEZ/wxOBEI76JmdSVuze+augrjYBbUNV5wnzaJVoNIn
+         FLXJPqZmb4mkSQReAD13lRCZi5CIAWDnm4r0tYPF1uCerzx99a2QaVcRqiPmtPEZfFJm
+         nEGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760093334; x=1760698134;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x2LiN8aGSeEz5/QEAPT2ZIDR5uamXQ8YXQ1ZPBqL/90=;
+        b=hQXsTKNxqCUyGmDs+ADCo9OA36+NLeNvNNu4nQ4JrCPZ8Xhjwrs61ocBwbfHDpxdnS
+         atuz95vNNAj+WaIem4lgKMcgqKuwafVpCQgFbo0PQZi8CcAj2LU8wCAksuuUJRCyS5fK
+         mCdMU1PKmKy7yUtl7RxekC3jU9VEsQF3/GeieByiiJ6JPgPdjGrl9uSkfwapMGuFw2f0
+         VQ/5jkPDz8vh23r7tMkvxa4bUqycu2J45I3aYsEC+GILpjVdCDi6KDyCxmqmOA/uoexk
+         aX3J04dSD+diqrNJkeF+XMduglChHgeps+gf0b5YfvsC7ib7b6roMGLb/c3fzz6VIiV1
+         cZ6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd9Zfeff1lTW3RAO4o10Ans3hA+sRI/muf5ISK5JWZLc4RVShjNeVSyVpKdUU4r2HG2uOl4wpqNm1VzvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOotzm9ZvkLVEBRRRXFeBRV0hJLCRvn8nszxgFlfK+g/yfg4Rc
+	lfm2iieIyEGpbRKktR/5QeQwh+OCqymTJTqaviOfh/q/ekuow2AiamNy
+X-Gm-Gg: ASbGncvS9VUO3rdDfLaqU0VmL/szSBbfhxR+grIC+NQEVIcntxufA85JD9kzrM7inQy
+	IkMZSOO4rhynfwcuGSoPRURPmV4/Wl+Nvg+Y63ykRZVi5cmNB2jbckiueEWoAAYXqAnz77Fj8k0
+	VKVIxWZkknP5Bw3UAAa/MldJd+vTZhpgJ0cYaMrjti/0SeZVN4zKki2PmqleutQMUfjEnJmTG6y
+	n1wEInhdBsdhwa5q8gIBGo909qo2uurri5OnUkk9L0HmH2Sifyzr5cJzYbHOhIKk2k9lSkk9+Q9
+	UKJO0tFAMSsoNWdAQ7KSQFzlXmudgiKfELGzY4T7Um8EIxLWKvaR/BHpfrRk83tzv2fWk/Dd4/J
+	p9wYlPtHhUZsj+bYfEhEzJA7FLmDj/sO7agg4h0G7CLjx594wxQYW1SlA89jO0cRw//CfmqrZkR
+	oIb+nNsEk7KVd6tw==
+X-Google-Smtp-Source: AGHT+IEwedOJdX2C4dcT7YtHIB9g10cEcA1KXeKDB3iN+o2qBogEjJkFDAFvSZ4Lz3eibMEDLOuYqg==
+X-Received: by 2002:a17:902:ccc8:b0:28d:18d3:46ce with SMTP id d9443c01a7336-290273ed885mr134399495ad.31.1760093333627;
+        Fri, 10 Oct 2025 03:48:53 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f070basm53936325ad.77.2025.10.10.03.48.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 03:48:53 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <9e179850-56ff-48bf-8cea-ab5895b6f935@roeck-us.net>
+Date: Fri, 10 Oct 2025 03:48:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- "David Howells" <dhowells@redhat.com>, "Brandon Adams" <brandona@meta.com>,
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
-In-reply-to: <8cbef9511c8b70dfcf7cdaa9a620f931ab170faa.camel@kernel.org>
-References: <>, <>,
- <74e20200de3d113c0bced1380c0ce99a569c2892.camel@kernel.org>,
- <176005502018.1793333.5043420085151021396@noble.neil.brown.name>,
- <8cbef9511c8b70dfcf7cdaa9a620f931ab170faa.camel@kernel.org>
-Date: Fri, 10 Oct 2025 21:47:42 +1100
-Message-id: <176009326228.1793333.8127990928981202919@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] watchdog: aspeed: Support variable number of reset
+ mask registers
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, wim@linux-watchdog.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ BMC-SW@aspeedtech.com
+References: <20251010080315.816628-1-chin-ting_kuo@aspeedtech.com>
+ <20251010080315.816628-3-chin-ting_kuo@aspeedtech.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20251010080315.816628-3-chin-ting_kuo@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 10 Oct 2025, Jeff Layton wrote:
-> On Fri, 2025-10-10 at 11:10 +1100, NeilBrown wrote:
-> > On Thu, 09 Oct 2025, Jeff Layton wrote:
-> > > On Thu, 2025-10-09 at 08:51 +1100, NeilBrown wrote:
-> > > > On Thu, 09 Oct 2025, Jeff Layton wrote:
-> > > > > We've seen some occurrences of messages like this in dmesg on some =
-knfsd
-> > > > > servers:
-> > > > >=20
-> > > > >     xdr_buf_to_bvec: bio_vec array overflow
-> > > > >=20
-> > > > > Usually followed by messages like this that indicate a short send (=
-note
-> > > > > that this message is from an older kernel and the amount that it re=
-ports
-> > > > > attempting to send is short by 4 bytes):
-> > > > >=20
-> > > > >     rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - sh=
-utting down socket
-> > > > >=20
-> > > > > svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP re=
-cord
-> > > > > marker. If the send is an unaligned READ call though, then there ma=
-y not
-> > > > > be enough slots in the rq_bvec array in some cases.
-> > > > >=20
-> > > > > Add a slot to the rq_bvec array, and fix up the array lengths in the
-> > > > > callers that care.
-> > > > >=20
-> > > > > Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single=
- sock_sendmsg() call")
-> > > > > Tested-by: Brandon Adams <brandona@meta.com>
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > ---
-> > > > >  fs/nfsd/vfs.c        | 6 +++---
-> > > > >  net/sunrpc/svc.c     | 3 ++-
-> > > > >  net/sunrpc/svcsock.c | 4 ++--
-> > > > >  3 files changed, 7 insertions(+), 6 deletions(-)
-> > > >=20
-> > > > I can't say that I'm liking this patch.
-> > > >=20
-> > > > There are 11 place where (in nfsd-testing recently) where
-> > > > rq_maxpages is used (as opposed to declared or assigned).
-> > > >=20
-> > > > 3 in nfsd/vfs.c
-> > > > 4 in sunrpc/svc.c
-> > > > 1 in sunrpc/svc_xprt.c
-> > > > 2 in sunrpc/svcsock.c
-> > > > 1 in xprtrdma/svc_rdma_rc.c
-> > > >=20
-> > > > Your patch changes six of those to add 1.  I guess the others aren't
-> > > > "callers that care".  It would help to have it clearly stated why, or
-> > > > why not, a caller might care.
-> > > >=20
-> > > > But also, what does "rq_maxpages" even mean now?
-> > > > The comment in svc.h still says "num of entries in rq_pages"
-> > > > which is certainly no longer the case.
-> > > > But if it was the case, we should have called it "rq_numpages"
-> > > > or similar.
-> > > > But maybe it wasn't meant to be the number of pages in the array,
-> > > > maybe it was meant to be the maximum number of pages is a request
-> > > > or a reply.....
-> > > > No - that is sv_max_mesg, to which we add 2 and 1.
-> > > > So I could ask "why not just add another 1 in svc_serv_maxpages()?"
-> > > > Would the callers that might not care be harmed if rq_maxpages were
-> > > > one larger than it is?
-> > > >=20
-> > > > It seems to me that rq_maxpages is rather confused and the bug you ha=
-ve
-> > > > found which requires this patch is some evidence to that confusion.  =
-We
-> > > > should fix the confusion, not just the bug.
-> > > >=20
-> > > > So simple question to cut through my waffle:
-> > > > Would this:
-> > > > -	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1;
-> > > > +	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1 + 1;
-> > > >=20
-> > > > fix the problem.  If not, why not?  If so, can we just do this?
-> > > > then look at renaming rq_maxpages to rq_numpages and audit all the us=
-es
-> > > > (and maybe you have already audited...).
-> > > >=20
-> > >=20
-> > > I get the objection. I'm not crazy about all of the adjustments either.
-> > >=20
-> > > rq_maxpages is used to size two fields in the rqstp: rq_pages and
-> > > rq_bvec. It turns out that they both want rq_maxpages + 1 slots. The
-> > > rq_pages array needs the extra slot for a NULL terminator, and rq_bvec
-> > > needs it for the TCP record marker.
-> >=20
-> > Somehow the above para helped a lot for me to understand what the issue
-> > is here - thanks.
-> >=20
-> > rq_bvec is used for two quite separate purposes.
-> >=20
-> > nfsd/vfs.c uses it to assemble read/write requests to send to the
-> > filesystem.
-> > sunrpc/svcsock.c uses to assemble send/recv requests to send to the
-> > network.
-> >=20
-> > It might help me if this were documented clearly in svc.h as I seem to
-> > have had to discover several times now :-(
-> >=20
-> > Should these even use the same rq_bvec?  I guess it makes sense to share
-> > but we should be cautious about letting the needs of one side infect the
-> > code of the other side.
-> >=20
-> > So if we increase the size of rq_bvec to meet the needs of svcsock.c, do
-> > we need to make *any* code changes to vfs.c?  I doubt it.
-> >=20
-> > It bothers me a little bit that svc_tcp_sendmsg() needs to allocate a
-> > frag.  But given that it does, could it also allocate a larger bvec if
-> > rq_bvec isn't big enough?
-> >=20
-> > Or should svc_tcp_recvfrom() allocate the frag and make sure the bvec is
-> > big enough ......
-> > Or svc_alloc_arg() could check with each active transport for any
-> > preallocation requirements...
-> > Or svc_create_socket() could update some "bvec_size" field in svc_serv
-> > which svc_alloc_arg() could check an possibly realloc rq_bvec.
-> >=20
-> > I'm rambling a bit here.  I agree with Chuck (and you) that it would be
-> > nice if this need for a larger bvec were kept local to svcsock code if
-> > possible.
-> >=20
-> > But I'm fairly confident that the current problem doesn't justify any
-> > changes to vfs.c.  svc.c probably needs to somehow be involved in
-> > rq_bvec being bigger and svcsock.c certainly needs to be able to make
-> > use of the extra space, but that seems to be all that is required.
-> >=20
->=20
-> I sent a v3 patch which adds a separate rq_bvec_len field and uses that
-> in the places where the code is iterating over the rq_bvec. That does
-> change places in vfs.c, but I think it makes the code clearer. Are you
-> OK with that version?
+On 10/10/25 01:03, Chin-Ting Kuo wrote:
+> Starting from the AST2600 platform, the SoC design has become more
+> complex, with an increased number of reset mask registers.
+> To support this, introduce a new field 'num_reset_masks' in the
+> 'aspeed_wdt_config' structure to specify the number of reset mask
+> registers per platform. This change removes the need for hardcoded
+> platform-specific logic and improves scalability for future SoCs.
+> 
+> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
 
-Hmmm....  yes, I think so.  The bug itself doesn't really need vfs.c to
-be changed.  But the deeper bug is that rq_maxpages is being overloaded
-to mean multiple things and you are separating rq_bvec_len out from that
-meaning, and consistent using rq_bvec_len whenever the length of the
-rq_bvec is needed.  So in that sense vfs.c does need changed.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-The commit comment could be improved though.  I'll reply separately.
-
-Thanks,
-NeilBrown
 
