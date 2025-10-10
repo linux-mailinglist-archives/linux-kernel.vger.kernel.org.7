@@ -1,55 +1,76 @@
-Return-Path: <linux-kernel+bounces-848437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC54BCDC6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41283BCDC79
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E3E544227
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F64E3A4C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419F72F9D82;
-	Fri, 10 Oct 2025 15:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6762F90D4;
+	Fri, 10 Oct 2025 15:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="NH4qBqrN"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dpPycjBc"
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBC92F9995;
-	Fri, 10 Oct 2025 15:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23BA2F83BB
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760109310; cv=none; b=XsCqGOn7X+9MFlfcNikKucLP8Ji3hyQnMUvi8Ue83BTaHyBT+L22LM63xhJjgaeJROYvNQdQEVCplOZ3XBM+hSD1Najn53xL73dQVdixJDLPQjOVoIA+Vl5BOdLgIui/TDJHD7M1v/mstPdMdpPJOtjSC48GK92jB+N0Y0XPpMs=
+	t=1760109344; cv=none; b=A4yXwSXCSmfMfpd0Gyco5KltrJbw7iXnexQqlha6iVOqMjvT7xUVutqSaS+bYHzeUWpc9cbtLPlr2BqrqgozAeh9m/2ziR/rvJPTeHBOwqRx3MD5PScszeiF8Eq3Z1Dz87XT0XzG29iozrWjQhcMu6LgreMqqh4Z3wNdHCJ6V7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760109310; c=relaxed/simple;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	s=arc-20240116; t=1760109344; c=relaxed/simple;
+	bh=O7vJu4u6ys9inKro9P2h9NErr4/dr5wJFRq/c2zu5yk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/wlfvfLkNTk2/tC18cU3ZDmOACmWQgzaI+qPBmPU9AyHvbFfzFS1LV24tpQeQFAjbNQOlZR1hnSfufccaxlK7giw1A1rJdnO4yCclsQFogJCsbskfsk0blycRkXHuCGFHs2cGYcOknaumt96YfBwmhrvLvNyhxPBUOU38uwVcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=NH4qBqrN; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1760109298; x=1760714098; i=rwarsow@gmx.de;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=NH4qBqrNfivTMyOZDKfLpvDwvxR1d/zh61pqMysH5mDcxevXOa7GsoKIM0o8T5J6
-	 pf9KlMWW3Jbghe1nTfGrMtGONt+jglNnsQxSpFhUlMHkyjj8ZMF8Nc9Sv1eWCo5El
-	 0WuFtkMSi/bOzRcyep3e8GevwWd00ZCocC955s6LmoXLvXximQC9q9kaZAbc/Hw99
-	 SvnkXOPyJWMXkufveb35grjUmMMJPuRRrZRMztztN9ddz90EBJzribyyEtgCiwYZy
-	 RMQxIN5E/W/FRHM65zZYwlVTQiLuJ7Slxp9QNAbhWmKr7ZN2sIckr6xi0BNYe1SSq
-	 NDclGH9aFYDEu45mAA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.32.48]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mj8qd-1udQO42qFp-00aydJ; Fri, 10
- Oct 2025 17:14:57 +0200
-Message-ID: <31a32273-9d8c-40fa-9853-9436c2e1f077@gmx.de>
-Date: Fri, 10 Oct 2025 17:14:55 +0200
+	 In-Reply-To:Content-Type; b=EjkKKxpT3vZPqZnyyYyohk4H+cSaOnQKPpm9shwMX9u6EnttQqmh1sRcidiqDIqA+Gj3varGFkf8NkB0jJMprrO+E/meW80QHW6NImln1tI2ea21ZPZytE5tQ3MW2vMNKJgS30dTrKNTPddGJdJv9skOldGA7d6wMWHH6LO4RdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=dpPycjBc; arc=none smtp.client-ip=66.163.186.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760109342; bh=dRYAjFrXP3E1+9sZiWcQjvbUIK8Bm2BRi67VqMWynBE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=dpPycjBcgmQTx7hQAb3doSpGyMh0Y8Wx4MkTMOrwosZJjIXFmygZ8F7qWQ83vppRXBCFlsJXv0QfafFlNJlsx+LduGJZNUnkO8FEOrBpP4YN+I4PBR8Yi/naINcS9x11F/dMsCN4nuAt2vHS9uonmHQb8GVEMxlyOCC0WiCrBd0YPD1NbCN/vdGMjpT4s3uOgvBcUcOA+xiEurFtv+b3DyDpVbzVfCE7BHG9zGOCugJnQckZzhsZddyfKDPcTqtQAXKb7zvi1O1+r6MFHf5jU7gwPTeYb+xdNAdKNtnSNsd5n+qFzKRwqiHUGv96ETUia+QOn6yGDMPNhkaSemr9HA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760109342; bh=CMy7zU0hFZfi05XDI6EQ393Ll9F5DT12CZN1Tud9JHD=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WmkzJdJUHRI/VOO2I0wZkZEnVLq3cwspKBPTiHllP45uijPBuYUVLGRALViNSzz/ZxKrq0gp24kbWbhApbfBVTNiEuGblRJ+9kYC8Y2yOOtYwZIkGdHGsI6edROtyLiXp700c39rRlhX84u73ekJzElRfWqCB8pF1MZmNRN7bqvdtXK2n/fb3rizR2ByTzvC/YGrmMDJHMXrl0fSXW/ILmCc2hsLBRyXHRUoevw1hSOsy3Ra2lYeQHXOt+iFwBa1k3zUHUXTPt7Qgo/itsQ72F1ecTnQepH31WS9SdyMbkAg8W0e+Ag4hNetYFVZ7CU0lZoqMMDgB8Ya4ZSx6fLNbg==
+X-YMail-OSG: HIc.fSkVM1k66w0Jv5kJJgbNBlZA48teX84CM_p9L_c3PGS6DkD.hQflVZ2kUWg
+ 7kjNRT.fE_xmBAj5iRHJ.omX0_UCLX_ZnxSHGNWpnrZ4OHZriy9g_BlzQcCqZtjJHlfBrvsN8x2F
+ eJOb3FZxqAji7FS4Q1a89kAkPpR16zNHiKugdnezMzOcKGotZdeyh_vocRM8CTTyFMWH6HPKHkav
+ eN3_izwKAU3ZHS.kEv6nDdl57QNDaUsUSHtOjR8HS3zcvq3tENDBSszS_Fd66r6WDn9OrIK7Z4Em
+ PZfSRXxNNgV7Bx27J62SVg7CUvJCPcV0XvgtIAMbbZpUf1DaDwwz.iQMKoQ6ou4Rusq9Pq_lhIlA
+ hhgglocvH9jG2ZV_bVaeS39CdHOwOIrdAW.Pf37X.tlxcEJH1Vu4vgKPpaTQp78ksiID8d54sCCg
+ I6V2Qb28qmQ5q5cict5mvGv5Cq0AjiTs8Si.Us6ry5UrPsr3tVVupLdtPuUtrnOTQh1QbevQ8Rj_
+ piHCzZqibT8klGBLRxFSd3xbkRzHpZEF1BNgnG08xRZuQ6Mwc67LmHqxNOQZ3wqaSKHFF9ZseSyc
+ QBu9DmKEKsgAGDmxWfk0dOeVITJVfRmcu_n168UB5EC3.lrPj_H9aD16RjIpJhd6nf4afF8X5zl4
+ 8hd__CnAdOe2vfkMPflGFTyOfSUtg9g.DINohiLOQeywBgIdlyiQi_hYqE5NdFFQLgOaqSE3Wkjl
+ TovBDrHR.kCJ99sAEcp.zeKKbUlB0GzmZTMwBHwmPGBln0cHhzT328zLV017yy7a8v2U86Omha2T
+ SCpQRoEI0kqDHJIS0J2B1CQgx_nLgF4sXTzB9t2LSTcLWq4NZIcprtmEMtHQlgjB4kRIhSXtI1Yv
+ Jp09bl.V7Y.u8R_ZxOuXrFU1OfFC8iXJeYcGwKeDksAgniM0O__U.SH8rTVVCVCHxhuD.YbPglMC
+ qF.8fZcZrSPrPirGqeakp4WNeCfM8Bod1.vDGmFoD161rk4yldp78_xuzrCxtBHOCQTtNdxyDvFt
+ BX8bmT87wiILbjhYf4OE9mhzC66MTgHnSbTIaGMO_WngnSW_V_gn0flR2PAlWOkY4_vSD.EJTGo4
+ JCeOuq_LzV6n51R1qTOodvwEYnOnSg3mlQxZuJ5rXdv36syo3UzxAkCbDSpGFcjpzM1_pClLyqhI
+ kZ4YWx6xQR66jmIIzOUrUOCVdeY9kk9KabPuxvfyAzqqFcN0AIAPoQEt5mgPqeI_1lg9_aUypNM5
+ BFhTve6RBIAYb.odWj7xbKfcLvMikvGS57VeD1mE5GEEqIO8fQKLI3cpeHJTX2zdpXhCq3kTNvVD
+ HgBZHKCsn1V2aqTkUzI3CWAIDE506uYfyXPVBPZDQ74q5yWbthC232eJLeDVJfMgU1wm_36_z.HO
+ oiYjlKeGpgDcXli5Se6r4H3CcttSvze9sBZFU4Isu7.8hKg.lQsYzPLX4k0wFM2eMT_XuEjDI8_Z
+ hGtOPQ9sHwLhEzrZsBT1Ij5_.FBWU1SxxeQV4CFNbJKc5wx369BvIeQhVRt1w4I3ZRgJ8dk9odge
+ jBziedl3y5KRmOhF1FII7sF6mxUgdV5_1SyybzE59cCxNVRKM1rPdo3qu0Py35lDbe.0pjSPkuqP
+ InklYXd93XTgtbPeESK08hGk9HJ1jSCp8O3fz467mCyEphPRkNfzw09B58lS8OQ6OksPQsoTggE9
+ Qe0LsbXfr.fjBlZITf_51LmT3obUXHels.jp9ygWU9_BrTRrkyq0Ujp4oEtvrQQIIweJQCoJxNHc
+ .RX8bwiF.vuv7o99btnxIbpIE3sL3BAy8O1OE6fcKPMuZurkKMBTSvWawl3IGdieTawf6Jf.iHBD
+ dAwhb81e8sKjXSVGHODpca.uocTgwi3L_stOtZ5xXctdBCACRNh28jt4yRwQ5LqweSy4IeY1eZwu
+ rphXJm3itU9BZIUkvPH1Ryk4WvDbR9QQfAks.8FNcVWSGfKRr9mhJJ26NZTMBf9F6GX5LClCc9Wg
+ Qrf6F_gzUXpBg4LFusT189jR23rMh4DptWnB.CzyTyvjEEgJttvz4YlmhNbLTdbmt.C.KSFg8.6k
+ bzdirp1oHo.3DZtygoH8Fh5qc1wuqzF2iSZoDprqKkJ4.c_ZOTjkhepvLpybSDerV4adTCXFRZP4
+ MZi.893ef6N8FhiQ5_s8HSW2I5FOaxzZzokNe9G4wgBeboOBk4ETnAiH.WdIS5XUU11OqS9P_gYS
+ OtkKC7sczAL8VitAIVRcJCSvYpVePXUbE_Rgb5M9tvP1TsYM.zILyCKbR6untwY5JxhSWAHsqNBc
+ sN.cWSYo_3vaV1Dihzi51Wu9V
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 397e9ee9-8051-4bd7-a384-f966a5b3db07
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 15:15:42 +0000
+Received: by hermes--production-gq1-66b66ffd5-4kj8j (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5a3bbbe036446cce417e04accb83fa7c;
+          Fri, 10 Oct 2025 15:15:39 +0000 (UTC)
+Message-ID: <dcde4774-3852-455a-87be-6c9c0b7198e2@schaufler-ca.com>
+Date: Fri, 10 Oct 2025 08:15:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,102 +78,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.17 00/26] 6.17.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251010131331.204964167@linuxfoundation.org>
-From: Ronald Warsow <rwarsow@gmx.de>
-Content-Language: de-DE, en-US
-In-Reply-To: <20251010131331.204964167@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:o00+2uT8W+MiKX7FrXifbtdLoO5KiBOeEyv5v+X5wM4WbBlQiQ0
- 17MWEcNkqOWdmHXDd7zf1uPpUOtI2ptHVhkZBlVrXIzIVWa9Hq6jM0W9gy540GuOeCS0hxu
- LibmNvEoRCse0aCLGlpX7R///czxInfwIKeARnNjbCjVY8x0k58CM1ebCWMutv+R12pZMyd
- FbvqhFTQhpwlU4sZJNSrQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qDNdFgtyHPY=;aE5s2vcthEZvW+9mhHn0oKdMQwg
- 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
- EBgTizIQglDaah7snYtgKZw==
+Subject: Re: [PATCH v6 5/5] Smack: add support for lsm_config_self_policy and
+ lsm_config_system_policy
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+ linux-security-module@vger.kernel.org
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, mic@digikod.net, kees@kernel.org,
+ stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
+ penguin-kernel@I-love.SAKURA.ne.jp, song@kernel.org, rdunlap@infradead.org,
+ linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20251010132610.12001-1-maxime.belair@canonical.com>
+ <20251010132610.12001-6-maxime.belair@canonical.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20251010132610.12001-6-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi
+On 10/10/2025 6:25 AM, Maxime Bélair wrote:
+> Enable users to manage Smack policies through the new hooks
+> lsm_config_self_policy and lsm_config_system_policy.
+>
+> lsm_config_self_policy allows adding Smack policies for the current cred.
+> For now it remains restricted to CAP_MAC_ADMIN.
+>
+> lsm_config_system_policy allows adding globabl Smack policies. This is
+> restricted to CAP_MAC_ADMIN.
+>
+> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+I will be reviewing these patches, but will not be able to do so
+until early November. I know how frustrating review delays can be,
+but it really can't be helped this time around. Thank you for your
+patience.
 
-Thanks
-
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
-
+> ---
+>  security/smack/smack.h     |  8 +++++
+>  security/smack/smack_lsm.c | 73 ++++++++++++++++++++++++++++++++++++++
+>  security/smack/smackfs.c   |  2 +-
+>  3 files changed, 82 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index bf6a6ed3946c..3e3d30dfdcf7 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -275,6 +275,14 @@ struct smk_audit_info {
+>  #endif
+>  };
+>  
+> +/*
+> + * This function is in smackfs.c
+> + */
+> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+> +			     size_t count, loff_t *ppos,
+> +			     struct list_head *rule_list,
+> +			     struct mutex *rule_lock, int format);
+> +
+>  /*
+>   * These functions are in smack_access.c
+>   */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 99833168604e..bf4bb2242768 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -5027,6 +5027,76 @@ static int smack_uring_cmd(struct io_uring_cmd *ioucmd)
+>  
+>  #endif /* CONFIG_IO_URING */
+>  
+> +/**
+> + * smack_lsm_config_system_policy - Configure a system smack policy
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: User-supplied buffer in the form "<fmt><policy>"
+> + *        <fmt> is the 1-byte format of <policy>
+> + *        <policy> is the policy to load
+> + * @size: size of @buf
+> + * @flags: reserved for future use; must be zero
+> + *
+> + * Returns: number of written rules on success, negative value on error
+> + */
+> +static int smack_lsm_config_system_policy(u32 op, void __user *buf, size_t size,
+> +					  u32 flags)
+> +{
+> +	loff_t pos = 0;
+> +	u8 fmt;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (size < 2)
+> +		return -EINVAL;
+> +
+> +	if (get_user(fmt, (uint8_t *)buf))
+> +		return -EFAULT;
+> +
+> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, NULL, NULL, fmt);
+> +}
+> +
+> +/**
+> + * smack_lsm_config_self_policy - Configure a smack policy for the current cred
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: User-supplied buffer in the form "<fmt><policy>"
+> + *        <fmt> is the 1-byte format of <policy>
+> + *        <policy> is the policy to load
+> + * @size: size of @buf
+> + * @flags: reserved for future use; must be zero
+> + *
+> + * Returns: number of written rules on success, negative value on error
+> + */
+> +static int smack_lsm_config_self_policy(u32 op, void __user *buf, size_t size,
+> +					u32 flags)
+> +{
+> +	loff_t pos = 0;
+> +	u8 fmt;
+> +	struct task_smack *tsp;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (size < 2)
+> +		return -EINVAL;
+> +
+> +	if (get_user(fmt, (uint8_t *)buf))
+> +		return -EFAULT;
+> +	/**
+> +	 * smk_write_rules_list could be used to gain privileges.
+> +	 * This function is thus restricted to CAP_MAC_ADMIN.
+> +	 * TODO: Ensure that the new rule does not give extra privileges
+> +	 * before dropping this CAP_MAC_ADMIN check.
+> +	 */
+> +	if (!capable(CAP_MAC_ADMIN))
+> +		return -EPERM;
+> +
+> +
+> +	tsp = smack_cred(current_cred());
+> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, &tsp->smk_rules,
+> +				    &tsp->smk_rules_lock, fmt);
+> +}
+> +
+>  struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
+>  	.lbs_cred = sizeof(struct task_smack),
+>  	.lbs_file = sizeof(struct smack_known *),
+> @@ -5203,6 +5273,9 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
+>  	LSM_HOOK_INIT(uring_cmd, smack_uring_cmd),
+>  #endif
+> +	LSM_HOOK_INIT(lsm_config_self_policy, smack_lsm_config_self_policy),
+> +	LSM_HOOK_INIT(lsm_config_system_policy, smack_lsm_config_system_policy),
+> +
+>  };
+>  
+>  
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 90a67e410808..ed1814588d56 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -441,7 +441,7 @@ static ssize_t smk_parse_long_rule(char *data, struct smack_parsed_rule *rule,
+>   *	"subject<whitespace>object<whitespace>
+>   *	 acc_enable<whitespace>acc_disable[<whitespace>...]"
+>   */
+> -static ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+>  					size_t count, loff_t *ppos,
+>  					struct list_head *rule_list,
+>  					struct mutex *rule_lock, int format)
 
