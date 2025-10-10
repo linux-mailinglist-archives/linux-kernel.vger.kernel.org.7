@@ -1,81 +1,245 @@
-Return-Path: <linux-kernel+bounces-848872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B3EBCEBB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F76BCEBB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E25619A32E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E312419A32E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C2827B345;
-	Fri, 10 Oct 2025 22:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74725279DAE;
+	Fri, 10 Oct 2025 22:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Qn/mYYpt"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BA927A10D;
-	Fri, 10 Oct 2025 22:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760136843; cv=none; b=aoZcmlj1hB7J45s1E4/juwQ0WB3j+ZrseX5Lp4l7piIpCjXRO5sqQD0bH28bMWHorvux9zwOg565LjUZ3QhRlNyLisKZ0nVF6lUOcCK2nyTz+8gTY5heWtdunrwD9ad4TVtyCxXxTt/bqN7A0Yp0toEV/ZBC0nqICMJEuCiy84Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760136843; c=relaxed/simple;
-	bh=dC5O/oAKoeWMJKmrtBTHsUupdBG570w4tC1m/z3q1ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pZ8/VFx6zZ+XhM1BkvLK7UKH2886NIac0KXL3He1q/ys7ggCwztx+4FQxcV3eWNrUYij5YzvxzksweF/9Dnkzv2Wf46LzYDFhCwR6AYgTdApoiJ2TocVjtNTRwI/vEDniXjayW5eQgrKydivT6BNGIbzOcfpfbbrpU8J4Z93Ve4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Qn/mYYpt; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.97.55] (unknown [20.236.11.185])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3F5982016012;
-	Fri, 10 Oct 2025 15:54:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3F5982016012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1760136841;
-	bh=DIt1F6mJQXMR+k/QGp+q+hT6aqDU/x9G2ahh2m5zay4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qn/mYYptZX895is+0GgCZE15F08EFz9Iz0e7EFq9+DCNnRb14UHKAP1WwDSUCa0yx
-	 QXiGkh3pn0HDRR3leGgUFU5XUu/pQX8uuCQTkmSIjDIeBIrfey7JiTqWtYY5roN4Y3
-	 Ge3sBzVAjcy54pyrgj/XdlZBhtAZbLL2duSEkkbk=
-Message-ID: <2ad6b120-bbe5-4d81-84b3-66b892bd0abd@linux.microsoft.com>
-Date: Fri, 10 Oct 2025 15:54:00 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="krJF0sZB"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012065.outbound.protection.outlook.com [40.107.209.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB171278771
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760136877; cv=fail; b=Ss1yEKWQUkIUTRMmmnGd92UmF0t17F8IF1bG2Lp9S0P+jU/lUpzDL5pzbBWaAMVtUmPFFEKKp4ngZ9DeKrFcM3VLbtVG95ALgqtjg/iUGsw2+Lz8ONE3Fm6iRCH/A24Qj4CtzBk35xrsZGt3nmsMPacOz+noCYH3rD1BsPVQ7Mw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760136877; c=relaxed/simple;
+	bh=CuKEJ14Odv+4gbIofg5VkILCkrOdrptmgwtvLUfMoGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kSQmN2u//QcQmNWBlS2KxkL5bgXnzwhVGB7EhUyGaLxjFR2AEOewvZ44M3upp41m3tHk4LtJFEoHAGxQn4fJHSIgk020zuWufyHLbiTQ4+vbOupshnsUaP/nudALbPusjxwIAXjgYa4bt/y2UpWP23aT9E0TkRJd8RZDEEZdYaw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=krJF0sZB; arc=fail smtp.client-ip=40.107.209.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wDvH7I4tSnZbHfD2yW78G6m5jNm4hsEbh85ZZ62vajTnAf0KCSFrk+p/TxO0E2GparqNVut6GVpck49HgT1e6ZA9G1tFsZF77ReeKBqg3QM1dkJCgPOre07QeZdRrXdeGAK5gHxaSwAlg3HpfLokvRcwXEIYX8A/GmYGDKBhBqjq1mjwXSnTdcemzHhF8QR0R2sZKTXNZk9DxN/jJ63CRtPHltS5e8WIHWUKNWM7nS8Xy7EhLLXqLoDEQ8+l1nZ7bvsvMPaN2Muf/iW1TBpWGpQCaXlnKbvKo6SEMRVfNmcqOooO2KfTO9Bq7Js3EGab9KfBg/o5Rob0pk5i5d0R2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b9RYAyeQksevSFPLbyxiIIQtLaWUb4Jqls8xHCK6JCM=;
+ b=Rq47FkHUkSyhK88dWUpUxx3uMyuIr9KPOt5akfOAMnhiECViUmvaQQyQhtpCGdQkv1UfCRqmzvMY5ZwvwaYsKMmAhmkjrdZigKPpIlZRGdV5WeYMyIulh93nLcm6/bWpnIUcB9EP9tmSUJ1DHr98olykebBQKK72LKwb0MEQhLrQakx/UcPAu4O7tcFVCk7/2iyR7axumZZkyg0paDAIys7k8t6KDCiwoUm7kmJOvFYy4LKPayKBcI6tHFBSndHDg/L5MsI1MovfbwCX7hgQ1q3aBsEMMCXPYqEN4VuaX1JCsdoSKw0uf8c/eMYcHjFGEtq3lFBiZA1iZ4k0piF3Eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b9RYAyeQksevSFPLbyxiIIQtLaWUb4Jqls8xHCK6JCM=;
+ b=krJF0sZBf0f2NhyisXO3NNbGfevD4rSlfPcLpe/mPAp2wP5b5KgraqeKRXJ+ZW7wauC51jiBsKL1f10YTKu6PaUFBkHuG7pU4KkEYdINH5XMmKSJuBjiG2TjzMuemVMSAqzKChSx5WRJsHrHlmZjc+lUJOemA6qVxT3bm49HzRi7UsWIdmwBSdsqo7aYJD4pDkwXUH8Oyk48VcpHSLWiVQ1mRMSsB1qehB8NvXyRzzoOcXfDWAht3Y5Xr1hXTqE36OqVHryuCGfWuJn1Wu1F5O/3alYxu6EdLCIlFfJWkMWG8mdv/K8hBtcgam/NhEOL1VDq8MRMVvO/Yjm4kwmO8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by BL1PR12MB5972.namprd12.prod.outlook.com (2603:10b6:208:39b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 22:54:33 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 22:54:32 +0000
+Date: Fri, 10 Oct 2025 19:54:31 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	will@kernel.org, joro@8bytes.org, kevin.tian@intel.com,
+	jsnitsel@redhat.com, vasant.hegde@amd.com, iommu@lists.linux.dev,
+	santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+	jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+	wnliu@google.com, gptran@google.com, kpsingh@google.com,
+	joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+Subject: Re: [PATCH v3 11/15] iommu/amd: Add support for nested domain
+ allocation
+Message-ID: <20251010225431.GL3901471@nvidia.com>
+References: <20251009235755.4497-1-suravee.suthikulpanit@amd.com>
+ <20251009235755.4497-12-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009235755.4497-12-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: BN9PR03CA0629.namprd03.prod.outlook.com
+ (2603:10b6:408:106::34) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] Drivers: hv: Centralize guest memory region
- destruction
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <175976284493.16834.4572937416426518745.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <175976318116.16834.6830692842208026430.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <175976318116.16834.6830692842208026430.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|BL1PR12MB5972:EE_
+X-MS-Office365-Filtering-Correlation-Id: 619ef864-056c-4b0c-e34e-08de084ffa44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uZogMfN8ELZyufrS1a7vDW2nZLyL2N2IKiAyp3zZzxUV+ffWou91I8wBXHuO?=
+ =?us-ascii?Q?fnauRkcFqh/U5uFOQe2dWqBpqG8sClNyPJlC5Y21RAo7LGQ0AVLsDBuMv/Hl?=
+ =?us-ascii?Q?zbTarwltN9jhsYvxOXljhIQjyib2PcKfUGScpLvlvbomHRXyHFZTkpY909rb?=
+ =?us-ascii?Q?/rlEIOKzq11eyOkB+ev5DDWI9ukkCA63HNUkYD8A2El8PKzfU9wiKjzI7Kxm?=
+ =?us-ascii?Q?JI/CU+eG3+23LwaLagnODlu6VcKzXzXZGZLz5Q8jroLmHensJRkn8X4Qbet7?=
+ =?us-ascii?Q?VDllI3KWPJM6YlBriYpaE2aaukjfh2qWQI2lGELOQGTnl9mVEvcR5UWChqhS?=
+ =?us-ascii?Q?se5Z9bPxp7X/n5m0vOJkEC2bU45tBNAL/eXEjm6SAhpnGX93FxeEvFGX84Ee?=
+ =?us-ascii?Q?AOKUu/iEKGR6IEYMZOfjCznC4rDCdLMlGCFnSmL4VcqBJJGHrVl78GJQ5dyQ?=
+ =?us-ascii?Q?7LYvy5zKeGeIMjkTZckla2De6pWASQ771qvTg5B85P5hhL02nYZDdp1FaYOg?=
+ =?us-ascii?Q?pZZVVj5ZDk2JoxbvxUKwKbyHocHqNT1jsio0V5W4EVGlYleG5XM29miZxcTg?=
+ =?us-ascii?Q?hmQphHbWz4NjaiS8NRdzLusq1N/jI9m2i6jK+Wch0JdQkdzTrsQAcUwD8aLg?=
+ =?us-ascii?Q?hQvN305KxjsHzl0UL+gHn09ELYhjxfSefLQlDwpUHKaZgUDXMcorJ2IrQPvk?=
+ =?us-ascii?Q?fGPbPV9V099ivcIHAbB0ARf8ugWGu2uN0cW5/s5bjHSkjqwDtZPkbULVioh/?=
+ =?us-ascii?Q?j19f+lQz+6OboWHxokkcoYzT2QtKJgBxZ+CaBoMsZiJ0+FtHHnUaiS4bxqEy?=
+ =?us-ascii?Q?Rsqo+7dHHSvfQDHv41bYL3iJcAUq0hFVCMqOYubozxucX5NrTo3xT0qO0wI6?=
+ =?us-ascii?Q?4U/6PgHVFmYbEJzo+fg8rIqqQeZQzHbAh0TfJRPpCzv92VrlbzALWF5B/BKh?=
+ =?us-ascii?Q?9X6Us6mRmXzNBV5/NYhWpiCOYQp5HDB1RwU1Yh/KfRCSDAbTopRjbxo8wwb1?=
+ =?us-ascii?Q?aqa5n/iJCpO+GtIGOEWsqpZyuw89rH7/Nih6Rg58sb1117APojDIBFh7Qt96?=
+ =?us-ascii?Q?MZJX5WXIG1mMPK4ZM7WQiyjqr7EpgR9l+qCOEdWLAjnzGsscQt33vMUEdYw/?=
+ =?us-ascii?Q?Ph8qdsN65JIyMBrxblBkA/ZO2IbZv3jxdgkiVG8ZV82LxZx26vR7vvexpacM?=
+ =?us-ascii?Q?fxVSbXne5UBQB6H0BAAdj3QEGdLzE1opFVtbcR2ZTclBE35MpLNkqjPaZDGm?=
+ =?us-ascii?Q?mikaDkGsZsZi8iYWY7xo8iIGJ1B3pC2JykxVMZ77AtMCfgJCciYDHcXe0YI4?=
+ =?us-ascii?Q?uoUNGoGWjEG5rKrkkpeVnpFkNYMvEt5yU7NFXFu/LtGUep3R74u8ybinifsM?=
+ =?us-ascii?Q?jvxCbRx71UClvZ4ONEbk8WeE1mfZPTI2QSyh4AnTndVUZLUcN9dHrD0SZiCu?=
+ =?us-ascii?Q?JTHoAhm+f/ZpRf0vpZCqi79RcX7lT4iH?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XLyb7HtB9CR2w4+4aZbghiMgDHh5sVXq+jQefg/5Dtv1VtZaFdgPi5o0c/ru?=
+ =?us-ascii?Q?oqzM0z0Pn0fBeRlU8whHSCrAvs9CCx1395q9DY3cSAto8vfnaOJO3ByAGJhP?=
+ =?us-ascii?Q?WQ5uM7a9T0NPW4Yc8LwRILVEUb6xQkuSqsWYNQWMpx0rckC8hr5JfZqVDca/?=
+ =?us-ascii?Q?z8mE3YpQeBHYdHgGFYAw8+5tzJpMRPC64B/A/ookMuJoxXcMh1oA1P0E7oJr?=
+ =?us-ascii?Q?wKsrLQnYNntBet5yIod3aMr718In9SkH3jTMO6cJfBQEpBy7fuoFyo1PXLMr?=
+ =?us-ascii?Q?mo2LTVkFOUyPdqLcM1PO5vt6nSB1Pw5cIbEbX30KBd9yRK7fqb3k+dYIBIlu?=
+ =?us-ascii?Q?2qnyxRyth7r3iYiOnz4I8YGZEPZN7or8zc7wYd/2eqGBcRM51FbnHXH4z/wS?=
+ =?us-ascii?Q?oX358GVFtNRX4QoVYZ+oymqHG8bFatyj6HjOcdM9fs+Mt6/Uv+zOGdNCKXmB?=
+ =?us-ascii?Q?DnGnSML49+YtdQnswwcGTdTtqIvOPxfdq+dRVOnaFC0mi5CEVU3Y0mxpfSvJ?=
+ =?us-ascii?Q?EI4BVl+OkpAjHVY1t12W3QK/S9OtlFTHpP7rIjKYVT0ZQoEkdbc/2GZ34Wys?=
+ =?us-ascii?Q?Sp/B6Kubl/dX2bfNV43vHuYGJcnaP69h1E9M7xCFfxQMkweBUzq0978Dl+R5?=
+ =?us-ascii?Q?9ahGhYTYVldER5Xku2cscSowYA8FoGnYVTdD85VOma5CDXGYtdlzSlfrXjlv?=
+ =?us-ascii?Q?Z1wq8FkyPt4h5R8FcPi8YgRe0JD5sX3/4WTvv1A3XRsG2wHc2LvAfNn6okwp?=
+ =?us-ascii?Q?xRWkgbOxmaWXfXDBkqrFaVl+FvsTJq4V2Bjj3sH/btz7Gn02aFxkbbg4jYDI?=
+ =?us-ascii?Q?BOlo5NmAE1xGJ/00p5zCMz/vnfaETaq6kvVSUf/OtJhD8DBe6bEvv7fyHkkJ?=
+ =?us-ascii?Q?sfixqFRIEtxN1TNTf0L45XQ76PBdEAf6SFHrwWffqDffHXSpE4kON9yn8HHa?=
+ =?us-ascii?Q?zEPFRhIQtLCAfjDYcmiRPE881oE1y9Zq3QO4rsqB5m2NFradad3vzdY00STq?=
+ =?us-ascii?Q?fiSudbeJpQ99h4d4WUqbiGk6ZEngvYHZKkv5OJg2AtRwB506PqsQYnaL9AzL?=
+ =?us-ascii?Q?Wq2gD5AGQM5eO2lKFjYpuanHghc98v+UESL/aSEKqeYV0SXvICjy2ts0kB8h?=
+ =?us-ascii?Q?a0HcAVH7pRSHHR6djbHmjZpnNaYfEtiqdvpCBDvIWK/UAETPitazJlnYFnMZ?=
+ =?us-ascii?Q?OxqCSmHB5MnFe1NXzQUAT2aoh6aHoEm7jGNy7pFYtSUnPQlylHmuyFc8WdEx?=
+ =?us-ascii?Q?InEs0aVNagCcyaK2i702pnIDYRG5x0DecQf3EPy5HbaFYQYi1dP3PaAudA3i?=
+ =?us-ascii?Q?lL9QyBvERJzfM+XoofLVo5wccyY4Nvq/gOc8AuWsvENuT2PhhGd6MnX5rhqx?=
+ =?us-ascii?Q?igWDZFV0RbrYaMbSNiufmPywozFNe/ZmCz7dgz8bGHWDepyy77+cJI0HJ9Bv?=
+ =?us-ascii?Q?52tc081/0mmmg4fmN5bGXcFV1QniOnVDpMZ/4XAhwQw5RBimswcyzfW/Sddo?=
+ =?us-ascii?Q?YvHwhDOU4SVin/7vqMx2HhdJtGDd0eQXXJl5QJvjn07F4FaC0k1l0gQB+EUH?=
+ =?us-ascii?Q?eoazGsE50EqQnSa7uGo=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 619ef864-056c-4b0c-e34e-08de084ffa44
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 22:54:32.9380
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hpa7GAex8Niu089mi+xyISGZK0aJWD+j+MDoR/7bQ4c16Ev7ZHbNROSLiWW9uI6U
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5972
 
-On 10/6/2025 8:06 AM, Stanislav Kinsburskii wrote:
-> Centralize guest memory region destruction to prevent resource leaks and
-> inconsistent cleanup across unmap and partition destruction paths.
-> 
-> Unify region removal, encrypted partition access recovery, and region
-> invalidation to improve maintainability and reliability. Reduce code
-> duplication and make future updates less error-prone by encapsulating
-> cleanup logic in a single helper.
-> 
-> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-> ---
->  drivers/hv/mshv_root_main.c |   65 ++++++++++++++++++++++---------------------
->  1 file changed, 34 insertions(+), 31 deletions(-)
-> 
+On Thu, Oct 09, 2025 at 11:57:51PM +0000, Suravee Suthikulpanit wrote:
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> +/*
+> + * Structure defining one entry in the device table
+> + */
+> +struct dev_table_entry {
+> +	union {
+
+There is no longer a reason to move this, so these hunks can be dropped?
+
+> +/*
+> + * This function is assigned to struct iommufd_viommu_ops.alloc_domain_nested()
+> + * during the call to struct iommu_ops.viommu_init().
+> + */
+> +struct iommu_domain *
+> +amd_iommu_alloc_domain_nested(struct iommufd_viommu *viommu, u32 flags,
+> +			      const struct iommu_user_data *user_data)
+> +{
+> +	int ret;
+> +	struct iommu_hwpt_amd_guest gdte;
+> +	struct nested_domain *ndom;
+> +
+> +	if (user_data->type != IOMMU_HWPT_DATA_AMD_GUEST)
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+> +	ret = iommu_copy_struct_from_user(&gdte, user_data,
+> +					  IOMMU_HWPT_DATA_AMD_GUEST,
+> +					  dte);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	ndom = kzalloc(sizeof(*ndom), GFP_KERNEL);
+> +	if (!ndom)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ndom->domain.ops = &nested_domain_ops;
+> +	ndom->domain.type = IOMMU_DOMAIN_NESTED;
+> +	memcpy(&ndom->gdte, &gdte, sizeof(gdte));
+
+You can move the iommu_copy_struct_from_user() to here and avoid this
+memcpy and stack allocation.
+
+> +	/*
+> +	 * Normally, when a guest has multiple pass-through devices,
+> +	 * the IOMMU driver setup DTEs with the same stage-2 table and
+> +	 * use the same host domain ID (hDomId). In case of nested translation,
+> +	 * if the guest setup different stage-1 tables with same PASID,
+> +	 * IOMMU would use the same TLB tag. This will results in TLB
+> +	 * aliasing issue.
+
+Yes, but if the guest does this then the guest is required to use
+different gDomID's.
+
+> +	 *
+> +	 * Workaround the issue by allocating per-device hDomID for nested
+> +	 * domain (i.e. ndom->id). This require per-device IOMMU TLB invalidation
+> +	 * with corresponded hDomId on the host side when updating stage-2 table.
+> +	 */
+
+This is still missing the point - we cannot work around this with
+unique hDomID's because when you implement invalidation there is only
+one input gDomID and you need to map it to exactly one hDomID to push
+the PASID invalidation.
+
+The only reason it is barely acceptable now is because there is no
+invalidation support!
+
+The comment should be:
+
+ The guest is assigning gDomIDs based on its own algorithm for managing
+ cache tags of (DomID, PASID). Within a single viommu the S2 is used
+ by all DTEs but we need to consistently map the gDomID to a single hDomID.
+ This should be done by using an xarray in the viommu to keep track of
+ the gDomID mapping. Since there is no invalidation support and no
+ viommu yet just always use a unique hDomId for now.
+
+ When the S2 is changed all the hDomIDs in the xarray need to have
+ invalidations pushed.
+
+Other than that it looks OK
+
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
