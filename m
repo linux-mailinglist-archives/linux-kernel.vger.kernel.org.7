@@ -1,66 +1,67 @@
-Return-Path: <linux-kernel+bounces-848180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003BABCCD2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:03:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EF3BCCD34
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50CC24ED264
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A36A3B1681
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86F2288C25;
-	Fri, 10 Oct 2025 12:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DA9288C27;
+	Fri, 10 Oct 2025 12:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FoDPBAnp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oNIdUWY2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OxBDD2Lh"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1D0220698
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C80287512
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760097797; cv=none; b=iz7XKS/MB/SsvNGFf6sb5Bf674oMVNaTP8scYvBnFaNrzBvTNJ58Jv6TCk7kvW96sJYnS5sZNPcrZAMV2jlMxkSkWbcE5h019o3QHhq8nQ9spzozjEJyoraeBB354goOWm2+zV45eUUtsnWNhnYMY/YG/A3MOawHwetXRRS5+Mg=
+	t=1760097931; cv=none; b=kTb/iwdmjdQYdG6mycgYG5ynozzRrBFHEC1PZdnOEOU1JotXg/XdcWyaAtFBogIM+n+xHueGbPA7PTpUBRSp9QFBgIFqm4sGaWymTBXwt4TohLdOD/FqU9zPKEGwSSjEcaamX99ZcpFM4XZFKIqczv2muHmBlCp81FZa04QUllo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760097797; c=relaxed/simple;
-	bh=OeLAYRoODw1GEaOFT/AQr2n8zpeVCbvh6hul0MaeIuI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dHSkOhFebzB63ADaizQ2g/2rnImd38N2+ztludkLG0oRzZxpcIDBmmhn1BaNlUcy2G1ojvkXFhfXuMLYii2VFfztzUBTP6XqyhS2VwlrWDrrzkhkMzyLiuSRtFt/b7+6M0jl9JFgAYKLrLsdURbFKZ6YS1uPH6ZXA9/BxDJZRio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FoDPBAnp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oNIdUWY2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760097793;
+	s=arc-20240116; t=1760097931; c=relaxed/simple;
+	bh=c6FZUJ87VJV2SHBTZSiSrj04fSF+beoy53iVYqVx7Kw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ENxjKSmGndCZ13wBtuQtDAs7iJWBo7bRTWdlXM0lpiXcefWgzzQskTlKP8BuS77bWC0HWanlsDQXB7r8yBzNcbtMZYpEbZ+x8vwY3xqwIMIl4oXXus87jNhJYMEoIOfxgKN3rb0cGMAyNuw3+rJt+r9GrC2uYv5KNtXaUoUc2EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OxBDD2Lh; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760097925;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1WQ4/s0vJPykpnnYd7mdV+rKmdacgri2InTmJfigiAI=;
-	b=FoDPBAnp+dQMTD4mcmpKFr4YwyeaJlOmD6ryPOjT5zu/nZtjOEA9iicgSemlVrbU2bsD7p
-	2mWYm/84lLykVQCKHq4++S8uhykCfnpNzb7Owwwxu8X/le7Wk+HhKx6raMC2QqkQAP+U7X
-	Q+5R3q/H42ncxgUD3J5NjRFvdoATd6yt9YjFzx8gZfgN6b88aA0sEtrpKW+MKajzemMurq
-	iHD3v2vZyibnP0Q8xShkkj45keGAILnKy1Fh5XCVAqf4pETVDf7nAXSAnxZ8VQXlgy1S3p
-	WC6SzEU4oSdc/e1KehZl6gF6+X2IZqTnInwZ4uAuRVepjbYb2/gKqDmihTHy0A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760097793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1WQ4/s0vJPykpnnYd7mdV+rKmdacgri2InTmJfigiAI=;
-	b=oNIdUWY2nXLLoRleentRIre5rOxeakSX2Rb//70QW0sJKIGAhz+anLVF7pSlBVsfYGQWzC
-	j8CE2tzYaUFAgzDg==
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: [PATCH] powerpc/pseries/msi: Fix NULL pointer dereference at irq domain teardown
-Date: Fri, 10 Oct 2025 12:03:07 +0000
-Message-ID: <20251010120307.3281720-1-namcao@linutronix.de>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c6FZUJ87VJV2SHBTZSiSrj04fSF+beoy53iVYqVx7Kw=;
+	b=OxBDD2LhJsyZXu9L/ho5qTLiT68ifM8pf3HU68POPo3jwWfqIWz06A05E/9S04tx1i/yOW
+	NMoQuwa61y7+K1uzP6lXulfDO2XOXX5Vn4PtOD+qX9ZP1Yb6Ntqbdtevu/0KBH7Idr+r/u
+	oy6WGNjQMEcEc9TFA2yEdEA63OH1s3Y=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Eduard Zingerman <eddyz87@gmail.com>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Leon Hwang <hffilwlqm@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+ Menglong Dong <menglong8.dong@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
+Subject:
+ Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault to BPF
+ stderr
+Date: Fri, 10 Oct 2025 20:05:10 +0800
+Message-ID: <3349652.5fSG56mABF@7950hx>
+In-Reply-To:
+ <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
+References:
+ <20250927061210.194502-1-menglong.dong@linux.dev>
+ <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
+ <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,41 +69,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-pseries_msi_ops_teardown() reads pci_dev* from msi_alloc_info_t. However,
-pseries_msi_ops_prepare() does not populate this structure, thus it is all
-zeros. Consequently, pseries_msi_ops_teardown() triggers a NULL pointer
-dereference crash.
+On 2025/10/9 04:08, Kumar Kartikeya Dwivedi wrote:
+> On Wed, 8 Oct 2025 at 21:34, Eduard Zingerman <eddyz87@gmail.com> wrote:
+> >
+> > On Wed, 2025-10-08 at 19:08 +0200, Kumar Kartikeya Dwivedi wrote:
+> > > On Wed, 8 Oct 2025 at 18:27, Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
+> > > >
+> > > > On Wed, Oct 8, 2025 at 7:41=E2=80=AFAM Leon Hwang <hffilwlqm@gmail.=
+com> wrote:
+> > > > >
+> > > > >
+> > > > >
+> > > > > On 2025/10/7 14:14, Menglong Dong wrote:
+> > > > > > On 2025/10/2 10:03, Alexei Starovoitov wrote:
+> > > > > > > On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <mengl=
+ong8.dong@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > Introduce the function bpf_prog_report_probe_violation(), w=
+hich is used
+> > > > > > > > to report the memory probe fault to the user by the BPF std=
+err.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
+> > > > >
+> > > > > [...]
+> > > > >
+[......]
+> > >
+> > > Yeah, agreed that this would be useful, particularly in this case. I'm
+> > > wondering how we'll end up implementing this.
+> > > Sounds like it needs to be tied to the program's invocation, so it
+> > > cannot be per-cpu per-program, since they nest. Most likely should be
+> > > backed by run_ctx, but that is unavailable in all program types. Next
+> > > best thing that comes to mind is reserving some space in the stack
+> > > frame at a known offset in each subprog that invokes this helper, and
+> > > use that to signal (by finding the program's bp and writing to the
+> > > stack), the downside being it likely becomes yet-another arch-specific
+> > > thing. Any other better ideas?
+> >
+> > Another option is to lower probe_read to a BPF_PROBE_MEM instruction
+> > and generate a special kind of exception handler, that would set r0 to
+> > -EFAULT. (We don't do this already, right? Don't see anything like that
+> > in verifier.c or x86/../bpf_jit_comp.c).
+> >
+> > This would avoid any user-visible changes and address performance
+> > concern. Not so convenient for a chain of dereferences a->b->c->d,
+> > though.
+>=20
+> Since we're piling on ideas, one of the other things that I think
+> could be useful in general (and maybe should be done orthogonally to
+> bpf_errno)
+> is making some empty nop function and making it not traceable reliably
+> across arches and invoke it in the bpf exception handler.
+> Then if we expose prog_stream_dump_stack() as a kfunc (should be
+> trivial), the user can write anything to stderr that is relevant to
+> get more information on the fault.
 
-struct pci_dev is available in struct irq_domain. Read it there instead.
+Thanks for all the ideas! So we have following approaches
+on this problem:
 
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Closes: https://lore.kernel.org/linuxppc-dev/878d7651-433a-46fe-a28b-1b7e89=
-3fcbe0@linux.ibm.com/
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- arch/powerpc/platforms/pseries/msi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+may_goto(Kumar)
+=2D-------------------------
+Hmm......I haven't figure how this work on this problem yet.
 
-diff --git a/arch/powerpc/platforms/pseries/msi.c b/arch/powerpc/platforms/=
-pseries/msi.c
-index 825f9432e03d..a82aaa786e9e 100644
---- a/arch/powerpc/platforms/pseries/msi.c
-+++ b/arch/powerpc/platforms/pseries/msi.c
-@@ -443,8 +443,7 @@ static int pseries_msi_ops_prepare(struct irq_domain *d=
-omain, struct device *dev
-  */
- static void pseries_msi_ops_teardown(struct irq_domain *domain, msi_alloc_=
-info_t *arg)
- {
--	struct msi_desc *desc =3D arg->desc;
--	struct pci_dev *pdev =3D msi_desc_to_pci_dev(desc);
-+	struct pci_dev *pdev =3D to_pci_dev(domain->dev);
-=20
- 	rtas_disable_msi(pdev);
- }
---=20
-2.51.0
+"may_goto" is a condition break, does it mean that we introduce
+a "condition_fault"? Will it need the supporting of the compiler?
+
+I'm not sure if this is the right understanding: save the fault
+type(PROBE_FAULT, AREA_READ_FAULT, AREA_WRITE_FAULT) to
+the stack or the run_ctx, and the "if (condition_fault)" will be
+replace with "if (__stack or run_ctx)".
+
+save errno to r0(Eduard)
+=2D----------------------------------
+Save the errno to r0 in the exception handler of BPF_PROBE_MEM,
+and read r0 with a __kfun in BPF program. (Not sure if I understand
+it correctly).
+
+This sounds effective, but won't this break the usage of r0? I mean,
+the r0 can be used by the BPF program somewhere.
+
+trace error event(Kumar)
+=2D-----------------------------------
+Call a empty and traceable function in the exception handler.
+
+This maybe the simplest way, and I think the only shortcoming
+is that there may be some noise, as the the BPF program can
+receive the fault event from other BPF users.
+
+And maybe it's better to pass the bpf prog to the arguments of
+the empty function, therefore users can do some filter. Or, we
+can introduce a tracepoint for this propose.
+
+And I think this is the similar way that Leon suggested later.
+
+bpf errno(Leon)
+=2D---------------------
+introduce a percpu variable, save the -EFAULT to it in the
+exception handler. Introduce the __kfunc to read, set and
+clear the errno.
+
+output the error information directly to STDERR(Menglong)
+=2D------------------------------------------------------------------------=
+=2D------------
+As it described.
+
+Ah......it seems we have many approaches here, and most
+of them work. Do we have any ideas on these ideas?
+
+Thanks!
+Menglong Dong
+
+>=20
+> It is then up to the user to decide the rate of messages for such
+> faults etc. and get more information if needed.
+>=20
+
+
+
 
 
