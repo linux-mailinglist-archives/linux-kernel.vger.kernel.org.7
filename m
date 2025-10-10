@@ -1,270 +1,282 @@
-Return-Path: <linux-kernel+bounces-848137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F76ABCC9E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00149BCC9EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24DE13C7E0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:55:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F365F19E5DB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150782C326D;
-	Fri, 10 Oct 2025 10:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231372ED15A;
+	Fri, 10 Oct 2025 10:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="H+LZkkCr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GfssZ31I"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TIChXsOt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A30225A5B;
-	Fri, 10 Oct 2025 10:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9342853EF
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760093691; cv=none; b=gKTnXCRh2vcG0ujDJKEcXoAKfCn7PFMqrJ1MB+EALzzxYEw7DGzJbL5BTfDfvq+TJiXBjMpfhIjaxwTVXayS7q8RrD8hAG05EXkbgEzOLdftxrtYXTVbM2qjGuXfiC/SY+WSAw9/Br7aBAgJKfIrsgjbdm0TxYmStSmBOT+GXHk=
+	t=1760093706; cv=none; b=O2jRso4XKMxLVpsaRIr3CCkuasVQ4eK1jJJj0+Maxjqqtrt8y4pBEDmYGPgxjf2TY2dbZNomVW5XRaSNLKE41510pIbNgQ0+jV28S3GwJRy74cjoH228f7YsEygMmtz/dNMxbtKpTscNFQW9SCpWTjplzj6y/zb6QMg3N3xUcMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760093691; c=relaxed/simple;
-	bh=PznYaXdLlhqjNPQ/D33Qb4oof/R/K3lCXgiB3PyJwiY=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=PT8drelZdHoyThOzSy45O/5XcTMhh+almFOotlYmeS+E/Wx2If2lGpe2P5jTWONE6jNmN0VDSB+TRn1exi8AMiRzrJ/VudpljUQT2tYzMZzEwA2gVDf6Q6QpAsfxKMWcEC8lkO1j5qU2wB4pxtuL04yVY2SgEC5Ty/q4Ghi3f3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=H+LZkkCr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GfssZ31I; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4A8AE140012E;
-	Fri, 10 Oct 2025 06:54:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Fri, 10 Oct 2025 06:54:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1760093686; x=1760180086; bh=ZaF0nEr18+OpoiLR6XW1SusBgEo8i+hrGKM
-	y+cl1dPY=; b=H+LZkkCrlDaVg2L8UveFChGJkXImdVEQpJlH6GzKgVFQhnBFI1E
-	B5kMCBLiG2WzNUdaRGax4LYVuESIe3d+fzpQInK1KDRAnHMAo18E9CBiYUGpL2JX
-	kT1Z2PoTQdXk9TVRlJEoWqS6gw2Y8vp3Ax5VdSRnE6XVGdQO/NgBjqhuujeLdaC/
-	S2ckCTgiiiQ7Yx3lWHocJugzVGqOBDWr05lBbm2GGSigJ8AWyHQ+HGOKiNOUkY+j
-	HpyHcbtKBO25IZM6h2dL3eRSy5ZFZEgCHUhzSKL2pMZEz6SRAGidK27B/IiUi9g2
-	tiN+qcvNLaGZ38rmmizefu/xwUuztfD7hnw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760093686; x=
-	1760180086; bh=ZaF0nEr18+OpoiLR6XW1SusBgEo8i+hrGKMy+cl1dPY=; b=G
-	fssZ31Id1+bRz9NEPZQiZuKbl/bXEeH1uPtuNx2GaH0IjxdRvDEIrIgOK4SWMH7a
-	Cj0QJjJXM9rZ5wVa/R0v/5Oqi7POnoLfRjYHC8nwWcmj9EYOn4WwxGBQeCkbJxyi
-	fROj7TQ0XQLRNrX8cDIezb8/1sRYtbZ9d/ko/lLZXLhvbk++gAKGxnPxTFnpDvBo
-	tyQkj3y+A0Y5ah+J/iOKvr7SkOGIGCLKK6q9VnxLLajpf8OJkchnTG3BwvbAKgj7
-	CplfBQ2UozB9Kqb8gCY5GbCxDNrUblCDhjWSZWPQrB1A+flSOmIcLuDU46DyLQzz
-	tKkq5cMwdzjKRunVJo/eQ==
-X-ME-Sender: <xms:9eXoaENAQOMC-q6vv2qr_apZZ2zcRiwX3RSHPBdQG3IGqE_jS2Hshg>
-    <xme:9eXoaL4MFBCHsNlzn_gz7TjetuSk24roMbgXBKdbwPdbDQLSSWskSDgVUMyt81Cf9
-    u006k51JaC18IMufYba1c3BRFG0EjWPtmhBeVy8tFzPxkGrUwU>
-X-ME-Received: <xmr:9eXoaLkm0T30MiQKUVlYQE-RGONhh4oUgUUZfE60s5J4-T45p2fRg_EXmy_E0vdQRAiCwXoFzXuF0dq0PKrlos9kun82TdlbbsPp4uXpuxrF>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdekkeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehr
-    vgguhhgrthdrtghomhdprhgtphhtthhopehokhhorhhnihgvvhesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgtphhtthho
-    pegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegurghird
-    hnghhosehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:9eXoaLJ85QhCh_kNuFUZMHSzQg1Nq-X5L-6BewdltiiudQiRmO7w8Q>
-    <xmx:9eXoaDSmywGEWVmG8EIM4GwY0nNU6FFCfbdje5nZ_SMazjTCPxyCIw>
-    <xmx:9eXoaAs7PVQVWRPjfBQoJe145CxLAcPtphU4HXL9KXq_imZcLFmbYw>
-    <xmx:9eXoaO-hI5x1tihU9RUWN1BlwcRYtBTQtd2vYFdgglN3AvZidpcwrw>
-    <xmx:9uXoaNygBZYqyhwqGu9Sa4mxzovp6semU5zccB6wHMObBTPIyzXtBfW7>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Oct 2025 06:54:41 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760093706; c=relaxed/simple;
+	bh=ijK5qG6cvhdXxF9G5TzG2LmSGh+cAfxXsFKKRQN6fpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DQIOlYDg04lRrk6cU+I9VzhYs8V5OrSm70OYFGlMIY39aV31DgEvte01FEeMZOcQkHUVKxgM/a69kb7mrCo2foe4UXdnShsLy8fk9GB0cC0D6EM1JhKsivjFwbf38PSUFbSA4vr2k+PkqVNgPMc/aRQkkvCI1ExyKngKY8lq52M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TIChXsOt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6WgAY002274
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:55:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Vwy3pwTMiTvFORyUGui267pugrOCUt49BYQxcWSdE2M=; b=TIChXsOt3LWh5IFn
+	16G/KK/tvxPSpHI9kZxXKjQag9AuMt99elTlhgTT8DebHdq8u8Kyk4S2HSOX4hEE
+	UFg5vmry2W/QTAw0xl/RnYv54jE88JD/DAOBgi/VsRxMma2MhO1SqixJTmUxg/VN
+	JJEQas+OVTUnBcnPhQYFc1hnSm31+BVMlfUhB4J4bPmo+GGqDf54bOv7BN1SM9qY
+	GvMzDJnHgAZ7FGsomC5Ct5CCPOp+kV9Hf7wU6kTwf4D3jCpMF2Nvmmoj9OIEuFVQ
+	0jeWhAIn6jdQWZjFiQmSaj1XcT6KLKXmZdEcVkDyaCGXH2sVdmek1GNwkAnUj6Kp
+	ey+hwA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49pgdsthpm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:55:03 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b62da7602a0so3404752a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:55:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760093702; x=1760698502;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vwy3pwTMiTvFORyUGui267pugrOCUt49BYQxcWSdE2M=;
+        b=dIl0GD3FxTddKaEE7hvGT1E3+yyPNYn2O51WfQLuCPe1LmaVZXIhksgOH99QIN++YK
+         wIqxPC+z7/QVB2iMez6+xvfl1+DHQYm2zHZquOUqJuoe7hLNQs7jHRTjR+ISqDLRtnp4
+         BUoVuslMdDpwPMhPcAFSGSAFwTsHGY/PomRTj1IIlu4vF08yIl3omMs2866cQIaal2be
+         6s+/0TYP4TVODNuRWaNUxHz0e+Oi/uTi8QLzT23XaoZwC70HvzUlznBQgN4Lip1BkXgp
+         /XiSkwEF25uED4jb6GV7XeBX6T1GDs0inMsZg7rATpJ256qakUw+ocqldoFTiL+E235x
+         VeFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8CSvEkEgWJeLqK+8ScKSf5chpqvsMORRTZZ0AbljIXihN/Bdec52aNImsc+7/8DemLLdcnYPEVXvnnaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3iH6I8eq4KDBHz15tWCJVUcKo0oXrmOC72Tc4XAmqODdm7B4X
+	2wpL2+K0rKhY4vWBqsWNbXAYUmZXDW5Vkc9yeSv+zDMr2FNEu0gf7wuWUTma68cxvPEtUQAFvq0
+	runTYWfpru3QNwjRKnCbBBV20H3FjvIG2pU4bm3UQCUVQI1EL6+qj3yiXxFa8aT9pjmE=
+X-Gm-Gg: ASbGnct4el9AcpGddJGu7MAxCrPM26xgo/mLCjR6EO8fGZoIfnYod3+lVrS2VP1LmAg
+	ZNw2dt+mf89cozMe/T6PrR3CHfr0/HNJyLaPi/nGJjb2YX1Yg/szKfOtjyDMCPKqnDWXazAZDy+
+	670AV4cuxCOSXnRR11j/sYfsA0UJ6CDdA/SZRlK5mT1PrzD1PKVe317EgreP7wnASMZ4COzlr5D
+	vePiK6U65LSe13py29i0DSLD364hAz/pYy0fslQv3BpjspgbdLFHo98ZByJY6vOYt0jtLpT436a
+	E36egpd1yTmIy5ncrrO19kwVN9O+nOA+2TNXhzH/Dc3ofnGSQDXKFK5bR+hNaLNcWMmRmJVs
+X-Received: by 2002:a05:6a20:3956:b0:303:8207:eb56 with SMTP id adf61e73a8af0-32da8190b86mr15071679637.5.1760093701977;
+        Fri, 10 Oct 2025 03:55:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOrHyLiE5Vt9JDYoYk4bw+AVJvks5v/hLpiw0jFgJz4TA9XD0cfQ6Lmwqkvx1bZPMxALt9Og==
+X-Received: by 2002:a05:6a20:3956:b0:303:8207:eb56 with SMTP id adf61e73a8af0-32da8190b86mr15071633637.5.1760093701429;
+        Fri, 10 Oct 2025 03:55:01 -0700 (PDT)
+Received: from [10.217.217.28] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b529956e3sm3740156a91.5.2025.10.10.03.54.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 03:55:01 -0700 (PDT)
+Message-ID: <dd4d4fa3-abd4-476f-a37e-c44cb6c83fb0@oss.qualcomm.com>
+Date: Fri, 10 Oct 2025 16:24:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- "David Howells" <dhowells@redhat.com>, "Brandon Adams" <brandona@meta.com>,
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
-Subject:
- Re: [PATCH v3 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
-In-reply-to: <20251009-rq_bvec-v3-2-57181360b9cb@kernel.org>
-References: <20251009-rq_bvec-v3-0-57181360b9cb@kernel.org>,
- <20251009-rq_bvec-v3-2-57181360b9cb@kernel.org>
-Date: Fri, 10 Oct 2025 21:54:39 +1100
-Message-id: <176009367950.1793333.10338134521377665575@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/20] arm64: dts: qcom: kaanapali-mtp: Enable more
+ features
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Eugen Hristev <eugen.hristev@linaro.org>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-14-3fdbc4b9e1b1@oss.qualcomm.com>
+ <588a7b68-2e2e-4e65-9249-fe8b18b67927@linaro.org>
+ <831f6fd7-b81f-4d6f-b9bd-5a8fe514befb@oss.qualcomm.com>
+ <0c9ca026-9986-4347-a86d-8bf65e2d12e6@linaro.org>
+ <kocj7sf6jgj4uynvlxvbsojc4bykyj2ipb4ex56fagjqoxwcie@2trytltkhd4a>
+Content-Language: en-US
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <kocj7sf6jgj4uynvlxvbsojc4bykyj2ipb4ex56fagjqoxwcie@2trytltkhd4a>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 5Y5NuYI-zdvbZhl7Gawab-_oQ5hqHeF9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA5MDA5OCBTYWx0ZWRfX6EQtGpIeQGh1
+ I7Wzuult+YnjyC/6fkEWj0+1IB3E403ETRy2DIVcHW7bLAkFOoPlRtjRhWI4pkUftnyrjyKtwE2
+ ls2xdu0cs9Q5zR9+gHYzGoF31VTwtKndnbuahcfy5C6TCN3hSrJD2OTuOZaDLapFGGJgF5JJR8o
+ HFNg+Sp/xbrwE8ijV8iLrX8tn382qHXUJCM0KBc9Z1iVd5r/Ed46iQ4CfXZUxybBVnDiyGoZUG+
+ LGTeJa/CVRpCeeT0qf02TFlDDQyTsxtOBkBeFy8n/bUYswGC0snVGjuQYWrWhhTHW/YSjKAjcy5
+ p9bcyXlcV2G/pOjI0nWKK76L9JkGS6gc0LpfF6pxG38m5CV+/NNmf2/iYoQPRfBZfgJJFYCOgB7
+ xZRE97scP5fr8Zfp7J2tMh7BKOOtzw==
+X-Authority-Analysis: v=2.4 cv=DISCIiNb c=1 sm=1 tr=0 ts=68e8e607 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=DphT3ukwsKVHlzpFmrcA:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+ a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-GUID: 5Y5NuYI-zdvbZhl7Gawab-_oQ5hqHeF9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-10_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510090098
 
-On Fri, 10 Oct 2025, Jeff Layton wrote:
-> We've seen some occurrences of messages like this in dmesg on some knfsd
-> servers:
->=20
->     xdr_buf_to_bvec: bio_vec array overflow
->=20
-> Usually followed by messages like this that indicate a short send (note
-> that this message is from an older kernel and the amount that it reports
-> attempting to send is short by 4 bytes):
->=20
->     rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - shutting d=
-own socket
->=20
-> svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP record
-> marker. If the send is an unaligned READ call though, then there may not
-> be enough slots in the rq_bvec array in some cases.
->=20
-> Add a rqstp->rq_bvec_len field and use that to keep track of the length
-> of rq_bvec. Use that in place of rq_maxpages where it's iterating over
-> the bvec.
+Hi Dmitry and Eugen,
 
-The above never says that the patch increases the size of rq_bvec, which
-is important for actually fixing the bug.
+On 10/9/2025 9:58 PM, Dmitry Baryshkov wrote:
+> On Thu, Oct 09, 2025 at 05:58:03PM +0300, Eugen Hristev wrote:
+>>
+>>
+>> On 10/9/25 16:54, Jishnu Prakash wrote:
+>>> Hi Eugen,
+>>>
+>>> On 9/25/2025 1:33 PM, Eugen Hristev wrote:
+>>>>
+>>>>
+>>>> On 9/25/25 03:17, Jingyi Wang wrote:
+>>>>> Enable more features on Kaanapali MTP boards including PMIC peripherals,
+>>>>> bus, SDHCI, remoteprocs, USB, PCIE, WLAN and Bluetooth.
+>>>>>
+>>>>> Written with help from Jyothi Kumar Seerapu(added bus), Ronak Raheja
+>>>>> (added USB), Manish Pandey(added SDHCI), Jishnu Prakash(added PMIC),
+>>>>> Qiang Yu(added PCIE), Yijie Yang(Added WLAN) and Zijun Hu(Added Bluetooth).
+>>>>>
+>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>>>> ---
+>>>>>  arch/arm64/boot/dts/qcom/kaanapali-mtp.dts | 663 +++++++++++++++++++++++++++++
+>>>>>  1 file changed, 663 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts b/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
+>>>>> index 9cf3158e2712..2949579481a9 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
+>>>>> +++ b/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
+>>>>> @@ -5,9 +5,23 @@
+>>>>>  
+>>>
+>>> ...
+>>>
+>>>>> +
+>>>>> +&spmi_bus1 {
+>>>>> +	pmd8028: pmic@4 {
+>>>>> +		compatible = "qcom,pmd8028", "qcom,spmi-pmic";
+>>>>> +		reg = <0x4 SPMI_USID>;
+>>>>> +		#address-cells = <1>;
+>>>>> +		#size-cells = <0>;
+>>>>> +
+>>>>> +		pmd8028_temp_alarm: temp-alarm@a00 {
+>>>>> +			compatible = "qcom,spmi-temp-alarm";
+>>>>> +			reg = <0xa00>;
+>>>>> +			interrupts = <0x4 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
+>>>>> +			#thermal-sensor-cells = <0>;
+>>>>> +		};
+>>>>> +
+>>>>> +		pmd8028_gpios: gpio@8800 {
+>>>>> +			compatible = "qcom,pmd8028-gpio", "qcom,spmi-gpio";
+>>>>> +			reg = <0x8800>;
+>>>>> +			gpio-controller;
+>>>>> +			gpio-ranges = <&pmd8028_gpios 0 0 4>;
+>>>>> +			#gpio-cells = <2>;
+>>>>> +			interrupt-controller;
+>>>>> +			#interrupt-cells = <2>;
+>>>>> +		};
+>>>>> +	};
+>>>>> +
+>>>>> +	pmih0108: pmic@7 {
+>>>>> +		compatible = "qcom,pmih0108", "qcom,spmi-pmic";
+>>>>> +		reg = <0x7 SPMI_USID>;
+>>>>> +		#address-cells = <1>;
+>>>>> +		#size-cells = <0>;
+>>>>> +
+>>>>> +		pmih0108_temp_alarm: temp-alarm@a00 {
+>>>>> +			compatible = "qcom,spmi-temp-alarm";
+>>>>> +			reg = <0xa00>;
+>>>>> +			interrupts = <0x7 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
+>>>>> +			#thermal-sensor-cells = <0>;
+>>>>> +		};
+>>>>> +
+>>>>> +		pmih0108_gpios: gpio@8800 {
+>>>>> +			compatible = "qcom,pmih0108-gpio", "qcom,spmi-gpio";
+>>>>> +			reg = <0x8800>;
+>>>>> +			gpio-controller;
+>>>>> +			gpio-ranges = <&pmih0108_gpios 0 0 18>;
+>>>>> +			#gpio-cells = <2>;
+>>>>> +			interrupt-controller;
+>>>>> +			#interrupt-cells = <2>;
+>>>>> +		};
+>>>>> +
+>>>>> +		pmih0108_eusb2_repeater: phy@fd00 {
+>>>>> +			compatible = "qcom,pm8550b-eusb2-repeater";
+>>>>> +			reg = <0xfd00>;
+>>>>> +			#phy-cells = <0>;
+>>>>> +			vdd18-supply = <&vreg_l15b_1p8>;
+>>>>> +			vdd3-supply = <&vreg_l5b_3p1>;
+>>>>> +		};
+>>>>> +	};
+>>>>> +
+>>>>> +	pmr735d: pmic@a {
+>>>>
+>>>> Hi,
+>>>>
+>>>> The PMR735D is available in pmr735d_a.dtsi
+>>>>
+>>>> Can we find a way to reuse that include file instead of duplicating it
+>>>> here ?
+>>>
+>>> In pmr735d_a.dtsi, the peripherals are added under the parent phandle
+>>> "spmi_bus", which was commonly used in older SoCs having only a single
+>>> bus under the PMIC arbiter, but in Kaanapali, there are two buses
+>>> present under the PMIC arbiter, with phandles "spmi_bus0" and "spmi_bus1",
+>>> so we cannot include the file as it is.
+>>>
+>>
+>> I know the problem. I disagree with using include files in one case, and
+>> having the PMIC in the dts in the other case.
+>>
+>> So there has to be a unified way to handle this in all cases.
+> 
+> Rework SPMI PMICs to follow the approach started by Johan for PM8008. I
+> think this is the way to go.
+> 
 
-This patch does two things:
+We got a recommendation from Krzysztof recently here for Glymur: 
+https://lore.kernel.org/all/b784387b-5744-422e-92f5-3d575a24d01c@kernel.org/
 
- 1/ introduce ->rq_bvec_len which records the length of rq_bvec, and use
-    it where ever that length is needed, rather than assuming it is
-    rq_maxpages.
- 2/ increase ->rq_bvec_len by 1 as svc_tcp_sendmsg needs an extra slot
-    to send the record header.
+For PMH0110, he suggested we could keep different DTSI files per SoC,
+like pmh0110-kaanapali.dtsi and pmh0110-glymur.dtsi.
 
-You could conceivably make it two patches, but I don't think that is
-necessary.  It *is* necessary to make it clear that these two distinct
-though related changes are happening.
+We could follow a similar approach on Kaanapali, to 
+#include the following files in the .dts file:
 
-With something like that added to the commit message:
+pmk8850.dtsi
+pmh0101.dtsi
+pmh0110-kaanapali.dtsi
+pmh0104-kaanapali.dtsi
+pmd8028-kaanapali.dtsi
+pmih0108-kaanapali.dtsi
+pmr735d-kaanapali.dtsi
+pm8010-kaanapali.dtsi
 
-  Reviewed-by: NeilBrown <neil@brown.name>
+The first two files are new and common with Glymur,so they
+do not have the SoC name suffix.
+
+Hope this is fine, please let us know if you see any issue.
 
 Thanks,
-NeilBrown
-
-
->=20
-> Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_se=
-ndmsg() call")
-> Tested-by: Brandon Adams <brandona@meta.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/nfsd/vfs.c              | 6 +++---
->  include/linux/sunrpc/svc.h | 1 +
->  net/sunrpc/svc.c           | 4 +++-
->  net/sunrpc/svcsock.c       | 4 ++--
->  4 files changed, 9 insertions(+), 6 deletions(-)
->=20
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index 77f6879c2e063fa79865100bbc2d1e64eb332f42..6c7224570d2dadae21876e0069e=
-0b2e0551af0fa 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc_f=
-h *fhp,
-> =20
->  	v =3D 0;
->  	total =3D dio_end - dio_start;
-> -	while (total && v < rqstp->rq_maxpages &&
-> +	while (total && v < rqstp->rq_bvec_len &&
->  	       rqstp->rq_next_page < rqstp->rq_page_end) {
->  		len =3D min_t(size_t, total, PAGE_SIZE);
->  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> @@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struct =
-svc_fh *fhp,
-> =20
->  	v =3D 0;
->  	total =3D *count;
-> -	while (total && v < rqstp->rq_maxpages &&
-> +	while (total && v < rqstp->rq_bvec_len &&
->  	       rqstp->rq_next_page < rqstp->rq_page_end) {
->  		len =3D min_t(size_t, total, PAGE_SIZE - base);
->  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> @@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh =
-*fhp,
->  	if (stable && !fhp->fh_use_wgather)
->  		kiocb.ki_flags |=3D IOCB_DSYNC;
-> =20
-> -	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
-> +	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_bvec_len, payload);
->  	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
->  	since =3D READ_ONCE(file->f_wb_err);
->  	if (verf)
-> diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
-> index 5506d20857c318774cd223272d4b0022cc19ffb8..0ee1f411860e55d5e0131c29766=
-540f673193d5f 100644
-> --- a/include/linux/sunrpc/svc.h
-> +++ b/include/linux/sunrpc/svc.h
-> @@ -206,6 +206,7 @@ struct svc_rqst {
-> =20
->  	struct folio_batch	rq_fbatch;
->  	struct bio_vec		*rq_bvec;
-> +	u32			rq_bvec_len;
-> =20
->  	__be32			rq_xid;		/* transmission id */
->  	u32			rq_prog;	/* program number */
-> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-> index 4704dce7284eccc9e2bc64cf22947666facfa86a..a6bdd83fba77b13f973da66a1ba=
-c00050ae922fe 100644
-> --- a/net/sunrpc/svc.c
-> +++ b/net/sunrpc/svc.c
-> @@ -706,7 +706,9 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_po=
-ol *pool, int node)
->  	if (!svc_init_buffer(rqstp, serv, node))
->  		goto out_enomem;
-> =20
-> -	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages,
-> +	/* +1 for the TCP record marker */
-> +	rqstp->rq_bvec_len =3D rqstp->rq_maxpages + 1;
-> +	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_bvec_len,
->  				      sizeof(struct bio_vec),
->  				      GFP_KERNEL, node);
->  	if (!rqstp->rq_bvec)
-> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-> index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..2075ddec250b3fdb36becca4a53=
-f1c0536f8634a 100644
-> --- a/net/sunrpc/svcsock.c
-> +++ b/net/sunrpc/svcsock.c
-> @@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
->  	if (svc_xprt_is_dead(xprt))
->  		goto out_notconn;
-> =20
-> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_bvec_len, xdr);
-> =20
->  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
->  		      count, rqstp->rq_res.len);
-> @@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, str=
-uct svc_rqst *rqstp,
->  	memcpy(buf, &marker, sizeof(marker));
->  	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
-> =20
-> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
-> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_bvec_len - 1,
->  				&rqstp->rq_res);
-> =20
->  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
->=20
-> --=20
-> 2.51.0
->=20
->=20
+Jishnu
 
 
