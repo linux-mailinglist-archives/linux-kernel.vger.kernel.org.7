@@ -1,199 +1,272 @@
-Return-Path: <linux-kernel+bounces-848374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D840CBCD925
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:41:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FA8BCD93D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 894F419E1835
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D37B540574
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E97257821;
-	Fri, 10 Oct 2025 14:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5032F60DB;
+	Fri, 10 Oct 2025 14:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zIq9ifNG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sKTHNjzP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oHV0vwpv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jZPzR8qo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lo8ohFfD"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0B82F3C0C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6133D6F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760107293; cv=none; b=VylkxZMttIFxqj0h5OF9GC0U5vvfYhEijJfnSX6Bfuh+V9HCnmtFOCyxxo0wFJTK9Dxdj12jn4QyIumCqLLiOsbF76rkn1c7lx6PSzObK2TTWJfZOApfE5HEQZ/Be7V3gYaFm2+RKeL4b1iE/PvH1faNbAqvGgwPRBvY3gfc6Mg=
+	t=1760107346; cv=none; b=PFPz3YFq+DaVsFhHEyuAQGl4XPQB0Pr1iEXjm3V/vCCYh0ONqlz2r49TXHavrR/BE20sez17bmw3tYhM2PMOQTnvClNeIWr8Zbb0IAUJ+xs92V/JODzYvERwndXP5b1aUsNlcSlpWeA7vIrKgAG16HHgu8QkHC3MRii5TpszGis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760107293; c=relaxed/simple;
-	bh=sCIUZWQCl8s5LiKfHt4OAO05fKvlszY++fniEl/8m9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QzzQH2ZAPq4EU+NEHC4442q/CPKIVyZ7ucZpKx9jk/5r7hJb7L0XX3YRqqG1vfOCHq9ZSu+z6QjzFWkH9ManUY+J6Cafkgsa+OTQbdf3s147NlTjM02nkVZu2XpNzZJkaHKkMzXyVJt2Mm2TgIDkF1NreD9lAy28dPltLXENwQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zIq9ifNG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sKTHNjzP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oHV0vwpv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jZPzR8qo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D3B351F397;
-	Fri, 10 Oct 2025 14:41:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760107290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
-	b=zIq9ifNGGnSWNKuEtdZXODrupBHw7SKGLyE/9DF6feYWqVPLOVdH58Q6IQG54QvcuGrnGh
-	moY3UMIa2GbCVoZPnxl1JkDPeVP0ZSXqwZkQCMU9mzszNaHbQEygxiPllL9VI8lTaniJ+g
-	IcMN4k+3x37mu4F1aKPlefwFXhqrYHs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760107290;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
-	b=sKTHNjzPZXtVptWOJw6/vYrdx/KMU2R1ZrqGLnP6Y/7qcKQCDlNHQFlqCv7VZ4kWt2ywEF
-	FR7vbxbYOanw7MAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oHV0vwpv;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jZPzR8qo
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760107289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
-	b=oHV0vwpvPaRjDEAthTPKSTOZ8X/AyboQFA/ngZJ3ce4cJ5MNzKnP+rxSRRMgg1y0vYvguY
-	FYRwnpb9hpQUwi9wTOdzCVQnwO+N2+cQFj8Qee6Is+2zexmC4dNHoPr/5SJju7nW9p34Zp
-	vj/fjL3eGv4/NU6gAe+OTx4QtOYZFuA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760107289;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
-	b=jZPzR8qopWB56r0Wf3Kh5BcEG8zxi1YJMX+rscsbH1HrC/KhrfQd8GxGYktmQLmNrIRtC3
-	WsBPlzZVG+5CGCCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B171613A40;
-	Fri, 10 Oct 2025 14:41:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8jZQKxkb6WgqIwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:41:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 181C9A0A58; Fri, 10 Oct 2025 16:41:28 +0200 (CEST)
-Date: Fri, 10 Oct 2025 16:41:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v7 13/14] xfs: use the new ->i_state accessors
-Message-ID: <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
-References: <20251009075929.1203950-1-mjguzik@gmail.com>
- <20251009075929.1203950-14-mjguzik@gmail.com>
+	s=arc-20240116; t=1760107346; c=relaxed/simple;
+	bh=0s4IbHxpsZYsEeLq2mqAk8GBRa1ktEVkQshD92Q/jiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FrmCfa4RWZjKrbTcyCYJnxeRsKqTHn5MDeTjW+Yn62NueFBE/C+CV8yBjSVJB3AdR0lo8okJfR9bl6d9kZXBcx0PCrbQNIR5QMUUI/wRj9/p5AQWyoHwNiTive8IXBDrQBxyS14etdAHKj1VMqZXa5v1e/8eJsatswjI8eqDJV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lo8ohFfD; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33255011eafso2339833a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760107344; x=1760712144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/1lnHPEdEWZo+CQq4FmAQbXLK0sMDF/The3o/4XWkFk=;
+        b=lo8ohFfD575FURv7M+Vn0+AkhXFf5gxUF9KxmmnwiYPkzfU77uVZ2OU/CK6vsst2FM
+         ozhz4qhuJDx65oa/8tfRwLW+mGQPiGziz5ar9A0fOmCTnrMF7TpstG+YntglQ3aFbRyY
+         bjkGK1Rrz6KALC0HPJ4E3TUwtVDkzci0Dzu9kDYguMCZnTGPWLvDVSmoyc5nTfmZPV1j
+         XGVGnLbq1+x5xmunvaTeVxNABiooZ+O+MSjN2SycOeOwJ9BDbPjxblGobU3lnwCwY6+8
+         nLQrQVaUM5FRj5rKRsWbWhGlB7Hi0pcyagccoNQsP1EcPhz2PVUtgeeuUIWimkyhUzan
+         yegQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760107344; x=1760712144;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/1lnHPEdEWZo+CQq4FmAQbXLK0sMDF/The3o/4XWkFk=;
+        b=rBmGPZ/bK/eROeWMIoqpJLR5koGCzmJmPTMQnjizeV6zaHdR7pM2E849EGYNKvRFyj
+         q16wnkJjn3iUBBch1ZWp2dMtWrPNR21/oH+krEoBzD5kgv5V9ILjez1sWBSQAtwWqFyX
+         dMSK60PP4Kq4WcSdGVp9kIukMEiwHX5B4nVJ5EhJ7lXYfUcA2xY1kQwSEQQCkBhypf06
+         Auej3I4u09ot702Dt4pqxw49qwh9o0EjdL75mebQ9yhLZ2eMIl7swwOSHbwfK0Xpvero
+         tNS8aNDq2Y6NRAP1yzhewqy26+1mqDj5Lb/qqeiHVTggb7mmcIyhxnQHR11csk58O4vO
+         fDQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPfBSV+dJXIBdXjdtbIbq6pexPq3RL41+Z/vLyponbgWae8lB/fzGBtiyGH7uHG1cFPXdx3f2ga3IK7qM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7KLxticZs7HhLU2EsZXJrbyRtuJQcg2Q1RqTkfPdnYybyA4xs
+	0WAe6jw6UmAy5VMSwCDw8ot0fcII0EdAbH6ZXB0uoxD7EwAsbnbIjTSMFR7qflt+Ga/v8TlfEcR
+	KPSJ9BJ66fyy/jQTJZZibCrTUtwh3IhA=
+X-Gm-Gg: ASbGncvMGuROSZ36wkdD7b35Wr+fYZzVEh8ZF6Yo5fwxaHBwGgrUx7NI4FvE/jAoXAm
+	jxBrs+IJKxrONoU23pkQosKGRq2iuklX01M5kdokIEhrGSlkW7Z4pwAcxRmH8hmSZgaqt8SVjVy
+	zdYRVg8v3PSsJc7BC/169bFbmVjhfSrkmT5SsFCS1FiZEhF9DEtMqrLNLUQJHAfFMwGhqIpwXMD
+	zSY4j4LxmAfmfCO6r93NSDp8jNH7N5km0I2
+X-Google-Smtp-Source: AGHT+IFsXItlp5QPUTqsr8CSOUNYNVTKUJnhco/kz6hzhqLLhxhwLkRrKj2BGYxqo3gsOdsVV3rvBkk7udICunbK7f8=
+X-Received: by 2002:a17:90b:1641:b0:330:4a1d:223c with SMTP id
+ 98e67ed59e1d1-33b5116a6a6mr16709971a91.15.1760107343707; Fri, 10 Oct 2025
+ 07:42:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009075929.1203950-14-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: D3B351F397
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+References: <20251010132610.12001-1-maxime.belair@canonical.com>
+ <20251010132610.12001-5-maxime.belair@canonical.com> <CAEjxPJ6Xcwsic_zyLTPdHHaY9r7-ZTySzyELQ76aVZCFbh8FMQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6Xcwsic_zyLTPdHHaY9r7-ZTySzyELQ76aVZCFbh8FMQ@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 10 Oct 2025 10:42:12 -0400
+X-Gm-Features: AS18NWDccWyH7c6wXJg45erB-Ave82Isew0ZMf5dyNnwkmOaYknftSjGFvm9TU4
+Message-ID: <CAEjxPJ5hbGrDPv3bRb1hhBw3+w=wOR3vxW5n9FnNLL8Uv-f0YQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] SELinux: add support for lsm_config_system_policy
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
+Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net, 
+	kees@kernel.org, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
+	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org, rdunlap@infradead.org, 
+	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-kernel@vger.kernel.org, SElinux list <selinux@vger.kernel.org>, 
+	Ondrej Mosnacek <omosnace@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 09-10-25 09:59:27, Mateusz Guzik wrote:
-> Change generated with coccinelle and fixed up by hand as appropriate.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On Fri, Oct 10, 2025 at 9:58=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Fri, Oct 10, 2025 at 9:27=E2=80=AFAM Maxime B=C3=A9lair
+> <maxime.belair@canonical.com> wrote:
+> >
+> > Enable users to manage SELinux policies through the new hook
+> > lsm_config_system_policy. This feature is restricted to CAP_MAC_ADMIN.
+>
+> (added selinux mailing list and Fedora/Red Hat SELinux kernel maintainer =
+to cc)
+>
+> A couple of observations:
+> 1. We do not currently require CAP_MAC_ADMIN for loading SELinux
+> policy, since it was only added later for Smack and SELinux implements
+> its own permission checks. When loading policy via selinuxfs, one
+> requires uid-0 or CAP_DAC_OVERRIDE to write to /sys/fs/selinux/load
+> plus the corresponding SELinux permissions, but this is just an
+> artifact of the filesystem-based interface. I'm not opposed to using
+> CAP_MAC_ADMIN for loading policy via the new system call but wanted to
+> note it as a difference.
+>
+> 2. The SELinux namespaces support [1], [2] is based on instantiating a
+> separate selinuxfs instance for each namespace; you load a policy for
+> a namespace by mounting a new selinuxfs instance after unsharing your
+> SELinux namespace and then write to its /sys/fs/selinux/load
+> interface, only affecting policy for the new namespace. Your interface
+> doesn't appear to support such an approach and IIUC will currently
+> always load the init SELinux namespace's policy rather than the
+> current process' SELinux namespace.
 
-...
-
-> @@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
->  	 */
->  	xfs_setup_iops(tmpfile);
->  	xfs_finish_inode_setup(tmpfile);
-> -	VFS_I(tmpfile)->i_state |= I_LINKABLE;
-> +	inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
->  
->  	*wip = tmpfile;
->  	return 0;
-> @@ -2330,7 +2330,7 @@ xfs_rename(
->  		 * flag from the inode so it doesn't accidentally get misused in
->  		 * future.
->  		 */
-> -		VFS_I(du_wip.ip)->i_state &= ~I_LINKABLE;
-> +		inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
->  	}
->  
->  out_commit:
-
-These two accesses look fishy (not your fault but when we are doing this
-i_state exercise better make sure all the places are correct before
-papering over bugs with _raw function variant). How come they cannot race
-with other i_state modifications and thus corrupt i_state?
-
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index caff0125faea..ad94fbf55014 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1420,7 +1420,7 @@ xfs_setup_inode(
->  	bool			is_meta = xfs_is_internal_inode(ip);
->  
->  	inode->i_ino = ip->i_ino;
-> -	inode->i_state |= I_NEW;
-> +	inode_state_set_raw(inode, I_NEW);
->  
->  	inode_sb_list_add(inode);
->  	/* make the inode look hashed for the writeback code */
-
-Frankly, the XFS i_state handling is kind of messy and I suspect we should
-be getting i_state == 0 here. But we need to confirm with XFS guys. I'm
-poking into this because this is actually the only case where we need
-inode_state_set_raw() or inode_state_clear_raw() outside of core VFS and
-I'd like to get rid of these functions because IMHO they are actively
-dangerous to use.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Actually, on second thought, checking CAP_MAC_ADMIN via capable() will
+require the process to have that capability in the global/init
+namespace, which IIUC would prevent systemd running in a non-init user
+namespace from loading the SELinux policy at all. That's problematic
+for a different reason since it would prevent us from using this
+interface for loading the namespace policy using this system call.
+>
+> [1] https://github.com/stephensmalley/selinuxns
+> [2] https://lore.kernel.org/selinux/20250814132637.1659-1-stephen.smalley=
+.work@gmail.com/
+>
+> >
+> > Signed-off-by: Maxime B=C3=A9lair <maxime.belair@canonical.com>
+> > ---
+> >  security/selinux/hooks.c            | 27 +++++++++++++++++++++++++++
+> >  security/selinux/include/security.h |  7 +++++++
+> >  security/selinux/selinuxfs.c        | 16 ++++++++++++----
+> >  3 files changed, 46 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index e7a7dcab81db..3d14d4e47937 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -7196,6 +7196,31 @@ static int selinux_uring_allowed(void)
+> >  }
+> >  #endif /* CONFIG_IO_URING */
+> >
+> > +/**
+> > + * selinux_lsm_config_system_policy - Manage a LSM policy
+> > + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is suppo=
+rted
+> > + * @buf: User-supplied buffer
+> > + * @size: size of @buf
+> > + * @flags: reserved for future use; must be zero
+> > + *
+> > + * Returns: number of written rules on success, negative value on erro=
+r
+> > + */
+> > +static int selinux_lsm_config_system_policy(u32 op, void __user *buf,
+> > +                                           size_t size, u32 flags)
+> > +{
+> > +       loff_t pos =3D 0;
+> > +
+> > +       if (op !=3D LSM_POLICY_LOAD || flags)
+> > +               return -EOPNOTSUPP;
+> > +
+> > +       if (!selinux_null.dentry || !selinux_null.dentry->d_sb ||
+> > +           !selinux_null.dentry->d_sb->s_fs_info)
+> > +               return -ENODEV;
+> > +
+> > +       return __sel_write_load(selinux_null.dentry->d_sb->s_fs_info, b=
+uf, size,
+> > +                               &pos);
+> > +}
+> > +
+> >  static const struct lsm_id selinux_lsmid =3D {
+> >         .name =3D "selinux",
+> >         .id =3D LSM_ID_SELINUX,
+> > @@ -7499,6 +7524,8 @@ static struct security_hook_list selinux_hooks[] =
+__ro_after_init =3D {
+> >  #ifdef CONFIG_PERF_EVENTS
+> >         LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
+> >  #endif
+> > +       LSM_HOOK_INIT(lsm_config_system_policy, selinux_lsm_config_syst=
+em_policy),
+> > +
+> >  };
+> >
+> >  static __init int selinux_init(void)
+> > diff --git a/security/selinux/include/security.h b/security/selinux/inc=
+lude/security.h
+> > index e7827ed7be5f..7b779ea43cc3 100644
+> > --- a/security/selinux/include/security.h
+> > +++ b/security/selinux/include/security.h
+> > @@ -389,7 +389,14 @@ struct selinux_kernel_status {
+> >  extern void selinux_status_update_setenforce(bool enforcing);
+> >  extern void selinux_status_update_policyload(u32 seqno);
+> >  extern void selinux_complete_init(void);
+> > +
+> > +struct selinux_fs_info;
+> > +
+> >  extern struct path selinux_null;
+> > +extern ssize_t __sel_write_load(struct selinux_fs_info *fsi,
+> > +                               const char __user *buf, size_t count,
+> > +                               loff_t *ppos);
+> > +
+> >  extern void selnl_notify_setenforce(int val);
+> >  extern void selnl_notify_policyload(u32 seqno);
+> >  extern int selinux_nlmsg_lookup(u16 sclass, u16 nlmsg_type, u32 *perm)=
+;
+> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.=
+c
+> > index 47480eb2189b..1f7e611d8300 100644
+> > --- a/security/selinux/selinuxfs.c
+> > +++ b/security/selinux/selinuxfs.c
+> > @@ -567,11 +567,11 @@ static int sel_make_policy_nodes(struct selinux_f=
+s_info *fsi,
+> >         return ret;
+> >  }
+> >
+> > -static ssize_t sel_write_load(struct file *file, const char __user *bu=
+f,
+> > -                             size_t count, loff_t *ppos)
+> > +ssize_t __sel_write_load(struct selinux_fs_info *fsi,
+> > +                        const char __user *buf, size_t count,
+> > +                        loff_t *ppos)
+> >
+> >  {
+> > -       struct selinux_fs_info *fsi;
+> >         struct selinux_load_state load_state;
+> >         ssize_t length;
+> >         void *data =3D NULL;
+> > @@ -605,7 +605,6 @@ static ssize_t sel_write_load(struct file *file, co=
+nst char __user *buf,
+> >                 pr_warn_ratelimited("SELinux: failed to load policy\n")=
+;
+> >                 goto out;
+> >         }
+> > -       fsi =3D file_inode(file)->i_sb->s_fs_info;
+> >         length =3D sel_make_policy_nodes(fsi, load_state.policy);
+> >         if (length) {
+> >                 pr_warn_ratelimited("SELinux: failed to initialize seli=
+nuxfs\n");
+> > @@ -626,6 +625,15 @@ static ssize_t sel_write_load(struct file *file, c=
+onst char __user *buf,
+> >         return length;
+> >  }
+> >
+> > +static ssize_t sel_write_load(struct file *file, const char __user *bu=
+f,
+> > +                             size_t count, loff_t *ppos)
+> > +{
+> > +       struct selinux_fs_info *fsi =3D file_inode(file)->i_sb->s_fs_in=
+fo;
+> > +
+> > +       return __sel_write_load(fsi, buf, count, ppos);
+> > +}
+> > +
+> > +
+> >  static const struct file_operations sel_load_ops =3D {
+> >         .write          =3D sel_write_load,
+> >         .llseek         =3D generic_file_llseek,
+> > --
+> > 2.48.1
+> >
 
