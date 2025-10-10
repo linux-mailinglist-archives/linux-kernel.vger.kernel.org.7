@@ -1,176 +1,235 @@
-Return-Path: <linux-kernel+bounces-848332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04ACDBCD713
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644F1BCD71C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8B5C4FE84D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:14:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EC83A788F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576492F3C3B;
-	Fri, 10 Oct 2025 14:14:35 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3942F49EC;
+	Fri, 10 Oct 2025 14:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Y4+nwXNd";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="w2f+zorX"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2032436124
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760105674; cv=none; b=ga6X38bKezQ0yo4Lq3LFFlXZ7bIvlaf379AMMNgEIfREi1rgVbY9yprG3Y26ruaypd3RaUiUz0J/WZcXXxrB9gWpXoKkG7L6bZpcOUATiLAeqMwaSaRaQYxL/10NLvg8JJ/b9B1LYELj0ACIcsEH+Y7hwVD7l1Autsx2R0JaYsg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760105674; c=relaxed/simple;
-	bh=3CBUjkHoKcDc4eae55hRVsYNApO8T+juvhSKWISdee4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hicE5Esgu7NNbosPbtdeMGItkZ0SNfTWHQJZN4cO+uwmAhKAX8y/s+0E5DytPaBctoOst+r1WGB1FAxUw5qI4kJrKFAuWDYZo/dE1IYWZoxp26pePPwa2GXISmIwoNxZR8dF1s5WDKVDwGzqCzHiueWvGTwvShTCOjtYeW6dZbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-927f4207211so675467339f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:14:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760105672; x=1760710472;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HKGXAfrOMFC7mG6muRH4oijoMxv8/UaK6fNUmCFKTss=;
-        b=CjblkQHvg3lQ/dpSm3ynUz0HICv/O+NS0oay7mY1kVhI4rEJcJUHu6InwjZArVNx0k
-         O53GMATLu+Vrdr28oYZzi3vHHCuNlAyC26E0Cwb+CIgdszM/bdgUjJ0pxbb3mg6QW8dJ
-         BP6bfoM5MKp/bwk/eMDG6Bjv6ILnxKePqbQwe3GmdJmWz1dckWnKqZhahbqiWMuTJG40
-         VzgIqSWu8XZDyyvBsf7K/GbxxLigwUYy8hmMLuGq42tX8aylK9iGdiUwT6gwSKpn4QuJ
-         xHCdU+XVkC7VRQOcF2JeoiNzCVsiX5OXHTaZSCfVL+Wb3SmixKffCoJgk6Qq09mcAcaa
-         fVAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrHaWjg1cj980uup3NeDqipHN5b5DMD6fd18SiLXL93A+XK+Ed0Cg2hvtZyKTJl5PIBopfR73CJNVzXhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS2WkiJdb1bDhGYHupRVpsruydqr8xKEpqAs7sN6EVaPhVuzr+
-	hr8oZF1XpYrmWEbIWO9B7Ku96oVkDl2LTUk5k8rZYQ95056nB2Hn2ROhrowI7+b3zXJmYjSxjI4
-	V+ln20br85z04SyZGPlyS9UUQN9eblV0C78VZrh+tuOkkMr32CWMpg6j3VNQ=
-X-Google-Smtp-Source: AGHT+IFBolmOV5XO5EECQRO9AtwRA+bEfr0qnIjPY8MikU+Yo9KfP2cwapuBWug4BqaaorD1vZE9KCezqDgxlZdn1OAI2yXRGzne
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921238528E;
+	Fri, 10 Oct 2025 14:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760105727; cv=fail; b=LQY0hLSniQtroM+L/8D5BtvYqKltPnCz/1hbJnz/6JKBwWo4AA14zSG5keTPxHeErp0VGVjTOx6kHhK9CT9hR+5O8WOfgqjndEESiBSABz65/+66VSLUt+5UKIhLR94MFcgu5alD4nTsTAfLuAr5m6CWEYviFeROjlQMyv9mB8w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760105727; c=relaxed/simple;
+	bh=O4M67R3Wp0nWo0XWfKV9BHU77M58ibMWDt+VDha8rYw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=F6tZCIjIebkdAAhilfXY9l22HhnMbAhuldefVnp6JbMLW6n6bEB40eJ0CrJxu9TxygkZ5mE+yxKc2bbxQehBH+1rG0hN97efL3ZbkxSz1wnn2KLxMLSPkVHTCPAvz5cg49YrAbfpUf2NtOFOq3ay6FqX4MM9SF8Qpr+PrN/BT/M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Y4+nwXNd; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=w2f+zorX; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A8tMVf032425;
+	Fri, 10 Oct 2025 14:15:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=TeX+VgeXJOBgR65w
+	AOdRxSBPUPk/Jia470O51AHYoUs=; b=Y4+nwXNdcGjDDCSo2WN47NsON4CHuIiE
+	SXSWWDgUWmeO1M655RVjyebOJ9x5zRw/MgjjXCwWlQpG/JSXpV31jA3xFpRk86Rf
+	gFM1AqwQINxKM2B08mbhNhDd9Tg1s53nTFz6j9Ggs79ZO45YVa8B4sueAIUX6yEI
+	OkrhRETkKqGRl8ziWR/ltHGYHMDNRlCtEm5QC+oP6B+TdlFfhXWskj54ucsfqGmG
+	n4uY74uNsS20tbCnG/xWmdw1jvfYbh7RfyO58V4gsOhirJdLoyxY8/XOC6ZxbQtK
+	z1oZeSXU/CPSij/mLbWvLJXM/nvx40y1X0tA21/8ZRdyr/125XRk/Q==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49nv6d3t7r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 Oct 2025 14:15:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59ACk13Q029101;
+	Fri, 10 Oct 2025 14:15:23 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012008.outbound.protection.outlook.com [52.101.53.8])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49nv699pnw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 Oct 2025 14:15:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=am02BLWFL6eXykCjzq1Q4gY2o8joD9F/Qqwh0QJ5fSL27ANzz61HXFZiB/iWuMe/7N7SdUe53NTNlnFv3Nolp80n+1xpw8W1/WBuCEOkfg40ENR+81rhPykZjPsX8v1dPDbYf2WYxuizHXtX0E5nqS+2MQwyoqG7t42h7jR5TLl/6GvGyrfxgEHJ6aPwahlSbpIztzzWT+GanOflwhAAGq/CEL7lIZDLJLoGxNPFOj7+ZMOSlUngU5fzPobsepTMtFtelGsL+jUtP1NZtFf35FGEO34EVtl3SOvwi3/NWCWkEsmb+X1qqytOzb4wwtUkT5KdzccKkiQ8otMahtcI9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TeX+VgeXJOBgR65wAOdRxSBPUPk/Jia470O51AHYoUs=;
+ b=j68AGFyHAWAqz9pqtrS8koEk8uJkXpWKLrxCwjWgPODV+BYGVSyF8x4DSziiPtjyfhYXzTVXJItLjKhbqB8OCV47B/mFHB4kNPYxfp3N2VhtEWyga9+wtYGboylAwsYCGh1sd4AIFP/FSNtZQ6gA0RkIp2Z6U4+BkM+vs9pRdJcbgGGNh7SnejxIqG3o+AHXXylKH5QeP6LUdhDSZ4rTJ4xUyRx854qsWhrnWaug9h55RAjopCT5OTcDCYvIQ+7PpoXxyolgygp4VManbU/PLksYPNhXXgGL9iGZByQUgloubieooB2WpXDSoHXSXV685bLw85z7eSPnygjAzP/QfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TeX+VgeXJOBgR65wAOdRxSBPUPk/Jia470O51AHYoUs=;
+ b=w2f+zorXrzk81T//vZc8oEcrlUVBxkWLY2nGYUB9sXxsC9GI/oAWiZSYn2vkKDoZgD0tVYG1Z9SNbWq66qomwarTva7fc/VGporekCu7qY8HVp3qeSabbnXPaTi3atbw9+tY0pVybanM9iKObrCNzpL2lbEu81YiNIA7jyaUuzA=
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com (2603:10b6:208:1d5::16)
+ by CO1PR10MB4723.namprd10.prod.outlook.com (2603:10b6:303:9c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 14:15:20 +0000
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c]) by MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c%5]) with mapi id 15.20.9203.007; Fri, 10 Oct 2025
+ 14:15:19 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: martin.petersen@oracle.com
+Cc: target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, michael.christie@oracle.com,
+        John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v2 0/7] scsi: target: Add WRITE_ATOMIC_16 support
+Date: Fri, 10 Oct 2025 14:15:01 +0000
+Message-ID: <20251010141508.3695908-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.43.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH7P220CA0023.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:326::10) To MN2PR10MB4320.namprd10.prod.outlook.com
+ (2603:10b6:208:1d5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2b0e:b0:912:5455:f0b0 with SMTP id
- ca18e2360f4ac-93bd188eab3mr1442867339f.9.1760105672224; Fri, 10 Oct 2025
- 07:14:32 -0700 (PDT)
-Date: Fri, 10 Oct 2025 07:14:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e914c8.050a0220.1186a4.000a.GAE@google.com>
-Subject: [syzbot] [kernel?] KMSAN: uninit-value in psi_task_change
-From: syzbot <syzbot+6a41c3d25697203c245a@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4320:EE_|CO1PR10MB4723:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55adce44-63cc-413a-17f4-08de080770f6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Pjr6B3whfbhhFohk+5TfBjIDLgnfZnQH1dRKmdKd4/v9zT9GhHk4NlFkg7Fa?=
+ =?us-ascii?Q?DamJhGsXIowJWxrCOSZfLNr/osf5PKqTBeNtQk+ujiw0R+Cu2buqDMsnxQA4?=
+ =?us-ascii?Q?yzJMnW4x8rTuNvAREbO+NlWWEMXWhEBJN/SCO/I5ev+dIf/Hb4TlztBRJE8X?=
+ =?us-ascii?Q?9jDXYwFTaMuRAoEG9xg+7joy+aE+eJd6WaQWXWovQ7OR9/X0W9On2A28lrFO?=
+ =?us-ascii?Q?kJ9S51JBqyuLQ9Vm3DyfaBZqqH+NsOgrf9uxGzFR6xv1d2cEJfPiq4XKzbtG?=
+ =?us-ascii?Q?8hLbNkJiS9NhGqTmc8o3832DFeXgFJ/u91AsAzQA7RhIygqUS9fAj0OjYqe4?=
+ =?us-ascii?Q?6Zq9zmYmDfI/sgmed3KSXozCzIQTFOz0AZRSYIB+8Vu1NsDoM7+qrzT99/gu?=
+ =?us-ascii?Q?ocM7mMLVwb28iC/tzrkBC3tpYnqqKttAkruBx2qL8jcYOOLc+hjExUolAdVf?=
+ =?us-ascii?Q?3YbhXcjVuXgoMmHQ9tM0oVBGGgFEaMa/fjb4buN/4aVh7SCM18CBxq+s56fr?=
+ =?us-ascii?Q?nOcQ/ARtkUZ1C0ZSLUDp2ZLVjIA5FSWmp0XlTAyfytrgY3+dcSpYozz/5NGv?=
+ =?us-ascii?Q?lcds9jaXJPQsZ185u6nQjHLlvyIDfD/mRFTugGXiBUj3J9reeCGweDs9xGvx?=
+ =?us-ascii?Q?EpdIocwQvpzYGf+fAYoa/aQqbmmrY/5/jZC1hl4FHUpGFx5M8GtSKsZs88+/?=
+ =?us-ascii?Q?xr34qOBIpCArYm+xegz5qFfOnCpGD/9GHwx78KuGhLLZGpE0dFvYkwWije0v?=
+ =?us-ascii?Q?q3AIj3kEtzXvVozbzfM4fgzl8tb8PuHVFweFjnn8KJwtq5uSShE4MoUXCjbV?=
+ =?us-ascii?Q?nWMlxO9hoj9MncHZ2HMomzYl4aAaTydbywn8w/+B6iQATpNEJv9x1bf8ze0Q?=
+ =?us-ascii?Q?+8s4E5spTaEhNzI+9bWrj5gUDpznq5+rSxAX/F3G6uV0cyzkFDcTxZ1d1PdA?=
+ =?us-ascii?Q?Gv5AL+9HFddmRcFtNmQaW0tKbia2mlEdSozeeeK+z7ys6XO5ZhhCzayzbBZm?=
+ =?us-ascii?Q?NB1OBzZ9qs9IWXOzZVIqShTQxmaqwsCkjG87c6YaHF4k6dbgAbq6RmzsMd66?=
+ =?us-ascii?Q?VY1F+4JXVFcHc51uXyRJOgu4SJzXUFNTkAe4N6709Gs8HKdhf5A8/iJfeQ7c?=
+ =?us-ascii?Q?f1lzRF6QVU6BEbGulXENVbIVs5BnuvHhGhu5JPyRr9WKBWJCZXZ+e6Z3gaXn?=
+ =?us-ascii?Q?Xw8G+aP+qQQ0sEZWNPINa1Az9uDXHRwl1E8ky9pCcQrnfvTh+7Sz43RhJ2Ph?=
+ =?us-ascii?Q?g2U3MhXg+tDE6e+EG8BbnAmrZnwqPEzXe48C+4uoGYfPlYt+aMbV/es9kT6V?=
+ =?us-ascii?Q?FvMsPsrqKQCBEgUAla0uzNCHcOnyGkcm/922MW0cJ2fWZ7FqY+5vDAiFtXjy?=
+ =?us-ascii?Q?zg5DHUJ28LfNAwmqJb0Z1X1SFMGd8fvMnDQ10xy5gzGa5DdeczB+XJSc4w59?=
+ =?us-ascii?Q?Z8bfdDnMN8WvfMRH2xn7iwROR1/dfaYT?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4320.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gq0Vleb08aKwUexP4kg9Sx3vj+omifP0cVa5G6/ba7aKz8u8gxjEDp2RGgaG?=
+ =?us-ascii?Q?kGJSP9yAZNo1jQrnwq2Jqmr76tUuyfr7ITsuWpblgvF8/4OqcDeJvgdlYAyg?=
+ =?us-ascii?Q?rJvv3YNALoV6cXIFcLLpbE9325EUD/Q9LPCjOtYFlolsR2SZQJe5H6WB/Fgc?=
+ =?us-ascii?Q?ctkKHWDGFD5XDdGp3XRoteNvEfHJzDyLCzART11uWvltsQ46kj1Kml34wLwG?=
+ =?us-ascii?Q?jJ0lOHo1YmAx4gK+h15mum69jdrOtO/dJKUra3uSwugKh7Km2uar1A5Nb5HH?=
+ =?us-ascii?Q?QbI29KObKYuBTCZHUD2LbMhqR+Xyp6E+2K+re5t9KG9b+m9aUW3kp7yCw8Ak?=
+ =?us-ascii?Q?mJvsR/ywr0NoY0fLRggHX1ASHIiUe0DaNCVqLGCxKEODbu1+5K1LFlfwadjq?=
+ =?us-ascii?Q?IqH8e1xf1SMMaUWglFInrU+eZjFMJuEM4yaTAheQPZZ1MOYLBSoHnIbbGtY4?=
+ =?us-ascii?Q?0G4h9v65wZ7hO3IaKT1+vFJLoOZzb/5G2m6lLU31u5lPtujcALMaofvdPaSH?=
+ =?us-ascii?Q?ua3WhSYwuCA2pU4v0/oLKNoc3uS9ihPl+Jw2cVM2e6u3FP9ttR0OzVcEaHv0?=
+ =?us-ascii?Q?IBBc/gVyMWYYJSEaCX9osKambOKIelDAq6S4KNDEf+5y3jeYt7+s3YeDIU8d?=
+ =?us-ascii?Q?zzc/yYNEqwEpHAEU66PiwJML/vGhnNIriUxX153tHinmd6tCjT10dXxLZcIl?=
+ =?us-ascii?Q?lg5J++ZTJMWda5RNdhnMwWSBm6r7sX5WTsvvZbY/vy48xUJoqkVz7Jmxis3F?=
+ =?us-ascii?Q?ijwesgu2IJfZ6JzT4RV+T2fQ9C44A5g+GdPh1HYTrIHJJCVZqIRBVaj3F8Kg?=
+ =?us-ascii?Q?aHSApMm+8rMGw0brf1huNqRRc60laHu4MNMs3lMWCLIfcp9cbRHz+REK0+R9?=
+ =?us-ascii?Q?Y3YRylPI7aBuYPL1PpaU5O5kpY4V2DE55gkhzmrY63yqdJs6C+zGRtNVc5Qe?=
+ =?us-ascii?Q?KSUWmT/YYjVYrqBkq7Enit4h+IslGXvNmtODIocx6V+l4GQAt3nF0LXhKV6H?=
+ =?us-ascii?Q?e3XSA91QCypNdfwHMtZ3b2net8UIa7LNsy2Njv5xIipDI24/KIm2Ih8pzp0q?=
+ =?us-ascii?Q?ptUKcw7mqgvjXZNKsErDGaJJlKD8U/36ot1QxWJ/0N3vFsWeVZ8uGCBxb4md?=
+ =?us-ascii?Q?Yo2hjQU8ySSlrAVBAOxdFvDPAi0Fw1EdtwlqJtcz3XeZrfZL5+V2cwXlbgUE?=
+ =?us-ascii?Q?ydebGxXm/baW4Z/y1YUttxNUgFyroFqQ3iRc9X1MnTPPEDmjkG+gl0jxM/oW?=
+ =?us-ascii?Q?aaAK2axnRS/OyilSbtgEvgBRkKejIK9wNsYgOfX+WnU6Eo23bzy38vslG62G?=
+ =?us-ascii?Q?dcGsWNJw5FYTnQjYCKiVZ6u7pXGdL+tJ/qkXhgrG1Y+bePYT2GOZZ0DOJA8/?=
+ =?us-ascii?Q?pUDO879d/ukPBgMicdfeqLX4RG7wB7AfEpkj+I4VyUJU1t1I/SGhP9wKH0/i?=
+ =?us-ascii?Q?tv2b4gtTapYe53Nl6wUXLYsHdQcMWTQgI05HBQqAYLXo0HrswFm1IhNhnwfr?=
+ =?us-ascii?Q?Qr6tGuF8fVG/WQtmiya7+HHMWYAY9HbPapy32q3CgyYG5g5SijYj9m+Ru7Iy?=
+ =?us-ascii?Q?4nvunChizrs23yp9xBKXOAlM/XeniapRkmKz9UAOEMhYzRt9hP4uUvuA4dGO?=
+ =?us-ascii?Q?yg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	bhK+65ThfH5Vqnim8LWAtyQPewaxpgTGjttiVgd6bQd85ArMxAvn0iyI4n7mHOnMrtGnu7QoDUd3KXY7eB1kImeWX4Ie6yhVmqo23fumikmEvCYp5vfhdvKUHEyhTX2JOUONDPuSXD1QUklnMdXOPHWuD13Rscvyp5sZFyEXldWkAMSpJKXvYnjkavEjhSYmXpJ2c7H7UMLIpM/C62Q6lAj0kYFJDEIYokj56WBSCCZpQe16Qj8795KrA/wjV4AYtiLjeiJPOGR2T9tbjcOTP6LgJGQbknjNxUb5WVCSUbetr74Um3xZ6uHWCY/FLTAedRYWz/6hHjZBvFkCPXo8eRVr2OupSXpnTSvatucuK31kj5s3UGZfJUyndN8Fa0aBD7YnR4yIt1tUwhccHfhN4ddciL55+JHCNi8ytCG6wELmwvbGEbScRmAef7nOSfYgdBb75i+G3c6u+9Hm0cGloIApcZooHPqntQngTesKgfTdI2Lbf6I1X/VIEugzKlwZ4UwvdHYQDhbeH0bbMew1Wfd2brYqkrrenb4XexfWHmyLAQ5t+OEaP/WHjMgiDk97ttxeT4Kv9Ns6lICS8nPO3lgi/hT+TsVss3ur09un+ME=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55adce44-63cc-413a-17f4-08de080770f6
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4320.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 14:15:19.8913
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3EOfEPhkUugvsj3ihRogpdVlN63ooyQPt71w2HLZePhYjrB3T4njg9NFHAHAPagGGSOEaI998qFebvoEgWU1lw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4723
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-10_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 adultscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510100082
+X-Proofpoint-ORIG-GUID: ZF7BqzQmySXnMj_anspN5Cax-nuji742
+X-Authority-Analysis: v=2.4 cv=bK4b4f+Z c=1 sm=1 tr=0 ts=68e914fc b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=Qo1nWHBUvXFxagpMxwIA:9 cc=ntf awl=host:12092
+X-Proofpoint-GUID: ZF7BqzQmySXnMj_anspN5Cax-nuji742
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfXxymir26skrRS
+ uOeN0fQXXiGdGFZrO8AVaYmYSyk7FwBm+QrR+o4hEawmPF76Vi0s8YaoQ0dlVGaFSfZ5fHDZ0YQ
+ 2e2WEHMB/zC3TYZMf+d0Kuv+ruR55FFAGyOpq23Qzk0hVdEB0ltSYfYh8/kHkJEDbjS6a1LHhCF
+ fATKdv92bltJT/TsnbTZrh/KYwTuO99IK7qSE0dJbH0cDGI+vrfeMyfEE267La1M/s2NfWCpfTh
+ 6gPa/B0lf/a7yWVcwifDkbuDkfqJY2n8zMyUCobj+5wa2N5rmFXf8MfPGGXo0LoQ40Eb3QWxatL
+ eeegNe4RcgyHk6Cp9ckDG5oEUZw5g/Jxyt1cQq/SlHEdshViFZinLQmp2d67F9+bDqEgX8mNxd2
+ pNB/RGzgo9oWQ0yPKW12Qvubblq7QjAz+uJBwK24NeSjHr/Wadg=
 
-Hello,
+This is a reposting of Mike's atomic writes support for the SCSI target.
 
-syzbot found the following issue on:
+Again, we are now only supporting target_core_iblock. It's implemented
+similar to UNMAP where we do not do any emulation and instead pass the
+operation to the block layer.
 
-HEAD commit:    9b0d551bcc05 Merge tag 'pull-misc' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1539392f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=50fb29d81ff5a3df
-dashboard link: https://syzkaller.appspot.com/bug?extid=6a41c3d25697203c245a
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Changes since v1:
+- Don't make atomic alignment configurable
+- Drop atomic_supported configfs entry
+- reformatting
+- fix lba size in sbc_check_atomic()
+- fix return code from sbc_check_atomic()
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Mike Christie (7):
+  scsi: target: Rename target_configure_unmap_from_queue
+  scsi: target: Add atomic se_device fields
+  scsi: target: Add helper to setup atomic values from block_device
+  scsi: target: Add WRITE_ATOMIC_16 handler
+  scsi: target: Report atomic values in INQUIRY
+  scsi: target: Add WRITE_ATOMIC_16 support to RSOC
+  scsi: target: Add atomic support to target_core_iblock
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/90b0fb888152/disk-9b0d551b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1120c646f284/vmlinux-9b0d551b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/df9bbfa8cbe6/bzImage-9b0d551b.xz
+ drivers/target/target_core_configfs.c | 15 ++++++++
+ drivers/target/target_core_device.c   | 23 +++++++++++--
+ drivers/target/target_core_file.c     |  4 +--
+ drivers/target/target_core_iblock.c   |  9 +++--
+ drivers/target/target_core_sbc.c      | 49 +++++++++++++++++++++++++++
+ drivers/target/target_core_spc.c      | 49 +++++++++++++++++++++++----
+ include/target/target_core_backend.h  |  6 ++--
+ include/target/target_core_base.h     |  6 ++++
+ 8 files changed, 146 insertions(+), 15 deletions(-)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6a41c3d25697203c245a@syzkaller.appspotmail.com
+-- 
+2.43.5
 
-=====================================================
-BUG: KMSAN: uninit-value in kernfs_ino include/linux/kernfs.h:368 [inline]
-BUG: KMSAN: uninit-value in cgroup_ino include/linux/cgroup.h:590 [inline]
-BUG: KMSAN: uninit-value in cgroup_psi include/linux/psi.h:37 [inline]
-BUG: KMSAN: uninit-value in task_psi_group kernel/sched/psi.c:889 [inline]
-BUG: KMSAN: uninit-value in psi_task_change+0x4ba/0x710 kernel/sched/psi.c:921
- kernfs_ino include/linux/kernfs.h:368 [inline]
- cgroup_ino include/linux/cgroup.h:590 [inline]
- cgroup_psi include/linux/psi.h:37 [inline]
- task_psi_group kernel/sched/psi.c:889 [inline]
- psi_task_change+0x4ba/0x710 kernel/sched/psi.c:921
- psi_enqueue kernel/sched/stats.h:166 [inline]
- enqueue_task+0x32d/0x390 kernel/sched/core.c:2094
- activate_task kernel/sched/core.c:2134 [inline]
- ttwu_do_activate+0x1dd/0x9d0 kernel/sched/core.c:3706
- ttwu_queue kernel/sched/core.c:3969 [inline]
- try_to_wake_up+0xf83/0x1f50 kernel/sched/core.c:4293
- wake_up_process+0x2a/0x40 kernel/sched/core.c:4424
- hrtimer_wakeup+0x85/0xd0 kernel/time/hrtimer.c:2013
- __run_hrtimer kernel/time/hrtimer.c:1777 [inline]
- __hrtimer_run_queues+0x559/0xd80 kernel/time/hrtimer.c:1841
- hrtimer_interrupt+0x456/0xb80 kernel/time/hrtimer.c:1903
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
- __sysvec_apic_timer_interrupt+0xa7/0x420 arch/x86/kernel/apic/apic.c:1058
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
- sysvec_apic_timer_interrupt+0x7f/0x90 arch/x86/kernel/apic/apic.c:1052
- asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
- finish_task_switch+0x184/0x920 kernel/sched/core.c:5193
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x2331/0x7790 kernel/sched/core.c:6929
- __schedule_loop kernel/sched/core.c:7011 [inline]
- schedule+0x17d/0x3c0 kernel/sched/core.c:7026
- exit_to_user_mode_loop+0x6c/0x370 kernel/entry/common.c:31
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x1e3/0x210 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __netns_tracker_alloc include/net/net_namespace.h:362 [inline]
- sk_alloc+0x5de/0x8a0 net/core/sock.c:2311
- __netlink_create net/netlink/af_netlink.c:628 [inline]
- __netlink_kernel_create+0x19b/0xcc0 net/netlink/af_netlink.c:2020
- netlink_kernel_create include/linux/netlink.h:62 [inline]
- rtnetlink_net_init+0x6b/0x110 net/core/rtnetlink.c:7038
- ops_init+0x2b3/0x9f0 net/core/net_namespace.c:137
- __register_pernet_operations net/core/net_namespace.c:1314 [inline]
- register_pernet_operations+0x649/0xfa0 net/core/net_namespace.c:1391
- register_pernet_subsys+0x5b/0xa0 net/core/net_namespace.c:1432
- rtnetlink_init+0x29/0xa0 net/core/rtnetlink.c:7093
- netlink_proto_init+0x1f8/0x280 net/netlink/af_netlink.c:2948
- do_one_initcall+0x237/0xb60 init/main.c:1283
- do_initcall_level+0x157/0x2e0 init/main.c:1345
- do_initcalls+0x176/0x310 init/main.c:1361
- do_basic_setup+0x1d/0x30 init/main.c:1380
- kernel_init_freeable+0x275/0x4a0 init/main.c:1593
- kernel_init+0x2f/0x5e0 init/main.c:1483
- ret_from_fork+0x233/0x380 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-CPU: 0 UID: 0 PID: 31572 Comm: syz.3.9106 Tainted: G        W           syzkaller #0 PREEMPT(none) 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
