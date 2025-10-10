@@ -1,154 +1,647 @@
-Return-Path: <linux-kernel+bounces-848296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC16BCD4E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:39:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E81BCD4F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92113189E2A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:40:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BDE18355A97
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B82F3633;
-	Fri, 10 Oct 2025 13:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855A02F39B3;
+	Fri, 10 Oct 2025 13:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="SepOnIEe"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013054.outbound.protection.outlook.com [40.107.159.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W1HwnyDt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/NEAfJdT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W1HwnyDt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/NEAfJdT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680B8264F96;
-	Fri, 10 Oct 2025 13:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760103569; cv=fail; b=kPvtKfLM1cQEpip8ySubWJ5TeqkKlTFQtCDQljvWi2X/kXZ+DDBjICRbXFtAV8ZpnRbaq1oTsN1Lt7wNBsPOdkmdRKDwngeyxxOwCkn7Eh/QUPv5AEnzAWluityw7yldtuAEkjh37stlw+qS5csG+KprllCZ6dyT9QiXaghOpYU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760103569; c=relaxed/simple;
-	bh=OM/Z/Db4w2vZA4wn/pSiwNdowgqblpIpBYy9aTQN5jU=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s3uHhxv0vBGOsgLFfPwmfQLcHCRGx6TVCZ/mjKtBgVhbAotvfD5vu5nURjplrCmAopLAhVbCk5VLNhhG1qW7xnwZYjMZ264VPafd6M8mBUWd7yQKAni5EUAXHKqzqbtr057YV037QKCpUJcgs0DAu/vbMSwKq7xMPXbsbr0ZPHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=SepOnIEe; arc=fail smtp.client-ip=40.107.159.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MopOl4Zm5EAmSH2Y95YlF13RjLFncPFtRj380UBUPIBqeCBL0PPV168Sakciy4JZzL4emONOoyC6aStUgvTL5I5SzimxpRvuhG1ABt50ZXeDaR8l25sD2VwJPDVhhPOoLUyUrjVDeJ4N9rsKc1pLkm1pOD0pAHjRzyP229y3yk/1LgUgC4mxOSibpES/E4DwKSny5zBJlIiooCfVaSWvM6zPWtqb0Mhko2BcJUzgYefMTpu+vvHCuK71zC5DjATftdJ2R5Dfo4AKsZIiXHW63u2C6O5G3AX5krUIF2PMETuO94IowyCiS01cp7vEt61Y3raPvSLoivCHISXoBj2SFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OM/Z/Db4w2vZA4wn/pSiwNdowgqblpIpBYy9aTQN5jU=;
- b=A85AUyo3B1faar7EFBTpjZ9fzO7acXEqVggSNfJm/GX9DgXX15Ac9qDIU700u2tbjMXBiQcUV6D9aC2HLXfW4b7oANQMdcbu6mRfsMnhjJbPDgN2czvUMPJ/65oZJAH/pnEjt+mjaWXe+Y5EoK9lA9guKXJqPR3Da2EevQJKl7AvvJLppNILaRF9b9oH3fPFPTnSR5WLj2ZDGE5rpSc4QcZRe759dekhofk5Bsc31wnz+u9jt+ISwMmASEcz9maH2OWe06AokxE1upbFINyHyQm6tgS6mw6TAK0ityJrRtr9Mkumts4CPuJ84Z8iIzPxyATDHNO8bsbw1r5Qobbx/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OM/Z/Db4w2vZA4wn/pSiwNdowgqblpIpBYy9aTQN5jU=;
- b=SepOnIEeM+0M1HH6p3v6xyrDN60mEnyGtLOXfjSwsQV99/sES/M1G7xlMiYLeZ3gXreavAkPzeb4Pr2QRNZvv6AI+r47sxwzopsnQ4y+ByqrCSi0OZo4ToI1DKANk3Z7IBG2jmyMrhzocfQs26rpPMesx/hSxMN8ebIluv8U0z0=
-Received: from DB7PR05CA0023.eurprd05.prod.outlook.com (2603:10a6:10:36::36)
- by GVXPR02MB11133.eurprd02.prod.outlook.com (2603:10a6:150:1f7::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
- 2025 13:39:22 +0000
-Received: from DU6PEPF0000B61C.eurprd02.prod.outlook.com
- (2603:10a6:10:36:cafe::c9) by DB7PR05CA0023.outlook.office365.com
- (2603:10a6:10:36::36) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.10 via Frontend Transport; Fri,
- 10 Oct 2025 13:39:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- DU6PEPF0000B61C.mail.protection.outlook.com (10.167.8.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9203.9 via Frontend Transport; Fri, 10 Oct 2025 13:39:22 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58; Fri, 10 Oct
- 2025 15:39:21 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-CC: <kernel@axis.com>, <linux-phy@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] phy: exynos5-usbdrd: Remove error print for
- devm_add_action_or_reset()
-In-Reply-To: <pnd34a6m7tc.a.out@axis.com> (Waqar Hameed's message of "Tue, 5
-	Aug 2025 11:33:35 +0200")
-References: <pnd34a6m7tc.a.out@axis.com>
-User-Agent: a.out
-Date: Fri, 10 Oct 2025 15:39:21 +0200
-Message-ID: <pnd7bx2j2pi.a.out@axis.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135052F0C63
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760103685; cv=none; b=rIBorp3HpTqMUrnHmyuZN3gfQz7aQbS3Ac4+Nt4DiHtmfZ87sVUj2A5WGpS5x9uq60+1tVDykfxmxUNbJu9rX/IPuBoTf/X7P14BWowJ2ItWun7B/d73O7VlcGdwHWEjGefaNDDzuSvsuWRECS4lSe8ZEMnI6lI78nCTyCIPfdE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760103685; c=relaxed/simple;
+	bh=An1oHMgrkJs38BVTD+HoLE2SPDnwgZ3L+6I3yXO0PCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=arG/ixVQWJIUwmImc99y4YfY/8uw/KXj6bWKTiGQ46WvlqO3hJHhGjADDFQ2J3MR8fZ7e5aYC82PZAnEsITSbJsKHuUd2o5wfMvv3g+9rj4lejZ0Pj0epEzLoHx4pnLEMkQJ0MED1vBtlUUVenJ/F14yQA+JOcLOchc380Pcttw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W1HwnyDt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/NEAfJdT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W1HwnyDt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/NEAfJdT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 369CB21CFF;
+	Fri, 10 Oct 2025 13:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760103681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B6QY0pRXyeAhuWwZPoWn0eD56DMZpR9a5PP5EI+dP7Q=;
+	b=W1HwnyDt6z9cLtD9xdm2pa3xbc1aI2GQaKNpzbKJp1+L7GgSmV9yVXJc+tjrcKpuZ+NaKY
+	6miifK5GM9dtFleWIAxbktlXL0fL1cGFeAJXcuAgWHXl/u1KVowr3KEjRkOzcMFHhHmo3m
+	2LIpO9i4Bx6jvjL6ucIoqPFCTpj2z+M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760103681;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B6QY0pRXyeAhuWwZPoWn0eD56DMZpR9a5PP5EI+dP7Q=;
+	b=/NEAfJdT/wy1FmDyOx71KoxdqReq5m59SFTwIYEHNUty+fBC/faolk497ZZHcl+7P9dr15
+	XBFhNeXJy4PnevCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=W1HwnyDt;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/NEAfJdT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760103681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B6QY0pRXyeAhuWwZPoWn0eD56DMZpR9a5PP5EI+dP7Q=;
+	b=W1HwnyDt6z9cLtD9xdm2pa3xbc1aI2GQaKNpzbKJp1+L7GgSmV9yVXJc+tjrcKpuZ+NaKY
+	6miifK5GM9dtFleWIAxbktlXL0fL1cGFeAJXcuAgWHXl/u1KVowr3KEjRkOzcMFHhHmo3m
+	2LIpO9i4Bx6jvjL6ucIoqPFCTpj2z+M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760103681;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B6QY0pRXyeAhuWwZPoWn0eD56DMZpR9a5PP5EI+dP7Q=;
+	b=/NEAfJdT/wy1FmDyOx71KoxdqReq5m59SFTwIYEHNUty+fBC/faolk497ZZHcl+7P9dr15
+	XBFhNeXJy4PnevCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0ED9F1375D;
+	Fri, 10 Oct 2025 13:41:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4nmdAwEN6WjlaAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 13:41:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 32A9AA0A58; Fri, 10 Oct 2025 15:41:20 +0200 (CEST)
+Date: Fri, 10 Oct 2025 15:41:20 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v3 10/12] ext4: switch to using the new extent movement
+ method
+Message-ID: <aebi7rs34c2gcsgenuond2v7ebbkw737ypugxbrmozd6aaiik5@w4pa3v6fprlu>
+References: <20251010103326.3353700-1-yi.zhang@huaweicloud.com>
+ <20251010103326.3353700-11-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61C:EE_|GVXPR02MB11133:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a48c1fa-e92d-42fb-ad9a-08de08026bee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5g/58upOCZQxAZSgXlg4IcdSa3eTbnjf8fgeUgLBKOy1KT5qfL/uVYa8Ab7d?=
- =?us-ascii?Q?J9fAq/7QphZC/SKToJxkeIFG90LR2x4BaxyH1CxCDzJKtlMAmiVmgS15+Vat?=
- =?us-ascii?Q?s6c93uSesDngDYfdr5wIR/PY2Ji3V3cRZMu8eEK5c0WLBa/ma4sWaiftLAa7?=
- =?us-ascii?Q?7JvMZavkpddq5H5M5KxNBt86Lbw6eoffTRWoYT05Gho4PtZBJN7zBEJbJ3R3?=
- =?us-ascii?Q?VvK2Zuc/ideVdQTkf+5SrlM+SEabbc8lE5iRzBX4I0wRxLm+/SnKAj1jD9Mc?=
- =?us-ascii?Q?+L0meOZq+jKAe5cIkvm1z2ryPMWYcldDQM8VID5F+Kr3HVuaUez9Rzgiqpjc?=
- =?us-ascii?Q?uFqnCLxsEDDZ9ZTONUiu1Sct25oNZvWQCLsMhAnraYQRDDgGrDlulpZT0y9O?=
- =?us-ascii?Q?GqV25DGa9zozLjRmvyDvnOHSY1bTHcsrGHpP7UTpH0BSiJNPy1/UJD2ZW0Pa?=
- =?us-ascii?Q?gBrsuuConI2Li6BOtdE35iQPVhjqnRk6AEy82ncvG4YWnfryb7XtIiIezEmn?=
- =?us-ascii?Q?BGNrBnoZJY9ndqMgJs0JshGsjJpg2rExetshR5OA2pNHvT19RH0vZM7Rd1ys?=
- =?us-ascii?Q?9i6OcCDDw0M9mbbx8/UW8GSfTNC19JSAkAn4OLpzxOV5tD47lFWFZ2cGkf3f?=
- =?us-ascii?Q?+a6AqDpxteW0QkRqpNZWzz0tCkrhXRx44bwazawoq+5mDTICtCv1TvAXrQ2I?=
- =?us-ascii?Q?n3eZvU+Q2OlK3uk5eiKmf3YInkYQrUe4970veX/PvtgXoMY0Yg+HRyTfDtNM?=
- =?us-ascii?Q?EYoe32JhDc4Y26mmwfF5cGsRJjVgOcCHxcIQf9cSFaW12W6sAgMZQWmbxSZF?=
- =?us-ascii?Q?IaDaUxybLqsq84196aK32I3hdnIeMlugEJLE+Elo/CKrdxNX/0rWnmBj5hum?=
- =?us-ascii?Q?3/2kSrIR/xknWZQsX7gOvkQoYQUYR+TMkpL+ZLgIYa9+IxCBAtYfqKYkZTCl?=
- =?us-ascii?Q?fau3z0X3LzUWQx6ngQgiNqhQVXnm3M92bvYQnRdrHIY/gR4TMfZIBFddoleZ?=
- =?us-ascii?Q?py0MkVbHAM4nNVndbB/+snfZI3uXeLeK5dexiRA7BGaB9XUCnVJMlUT4q0NS?=
- =?us-ascii?Q?5Ev92sOghmYTx/8CAN0BFVlGtvwi9f6nExiTH+VvonE+HMctvBJpQAwItmuX?=
- =?us-ascii?Q?pLU5rMaVA6hVjefaSXhp3rek8lXs11xPX7Q9H7xMWlwesYnqRGvBou7I9PzA?=
- =?us-ascii?Q?2JHpmlo4NqB0WUi/tQeNCNnhRV2upQPZZ1/F9dhPWZzpgIvfrzABv2ZeT8TX?=
- =?us-ascii?Q?VtRdznXcRUcIrTnjL6AeW5v9Z31Dgeaw367OVbSn+hlZK3YEYuc2c6roqdNi?=
- =?us-ascii?Q?XeBr8u2t9qH/sIdc8q3yqwoXN9U62nJmnaxNwGDF72/ZNNtyi5C8QCZ8OB4o?=
- =?us-ascii?Q?2rYsdQLnM9Yb2ROwGrbtar8wWqjBgXZHb5sMQkhfLL5fV+0ZD5tDBx2yjhlZ?=
- =?us-ascii?Q?gN89ABq0PVfJEBUUKQo2+bL+3htDC/Jjo3uizp0HAzDhDBjeCDXGfxnV+tRW?=
- =?us-ascii?Q?01gr1VZ/IDKqgyU6cvqYinSNw6zC+DdZV6QKdnb6nHlEmoL1TV6WslO/TV3c?=
- =?us-ascii?Q?KzyLR6ZSDur4r/tVTIs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 13:39:22.6440
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a48c1fa-e92d-42fb-ad9a-08de08026bee
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000B61C.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR02MB11133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010103326.3353700-11-yi.zhang@huaweicloud.com>
+X-Rspamd-Queue-Id: 369CB21CFF
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On Tue, Aug 05, 2025 at 11:33 +0200 Waqar Hameed <waqar.hameed@axis.com> wrote:
+On Fri 10-10-25 18:33:24, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Now that we have mext_move_extent(), we can switch to this new interface
+> and deprecate move_extent_per_page(). First, after acquiring the
+> i_rwsem, we can directly use ext4_map_blocks() to obtain a contiguous
+> extent from the original inode as the extent to be moved. It can and
+> it's safe to get mapping information from the extent status tree without
+> needing to access the ondisk extent tree, because ext4_move_extent()
+> will check the sequence cookie under the folio lock. Then, after
+> populating the mext_data structure, we call ext4_move_extent() to move
+> the extent. Finally, the length of the extent will be adjusted in
+> mext.orig_map.m_len and the actual length moved is returned through
+> m_len.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
+Looks good. Feel free to add:
 
-Friendly ping incoming!
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/move_extent.c | 395 ++++++------------------------------------
+>  1 file changed, 51 insertions(+), 344 deletions(-)
+> 
+> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+> index aa243be36200..85f5ae53a2d6 100644
+> --- a/fs/ext4/move_extent.c
+> +++ b/fs/ext4/move_extent.c
+> @@ -20,29 +20,6 @@ struct mext_data {
+>  	ext4_lblk_t donor_lblk;		/* Start block of the donor file */
+>  };
+>  
+> -/**
+> - * get_ext_path() - Find an extent path for designated logical block number.
+> - * @inode:	inode to be searched
+> - * @lblock:	logical block number to find an extent path
+> - * @path:	pointer to an extent path
+> - *
+> - * ext4_find_extent wrapper. Return an extent path pointer on success,
+> - * or an error pointer on failure.
+> - */
+> -static inline struct ext4_ext_path *
+> -get_ext_path(struct inode *inode, ext4_lblk_t lblock,
+> -	     struct ext4_ext_path *path)
+> -{
+> -	path = ext4_find_extent(inode, lblock, path, EXT4_EX_NOCACHE);
+> -	if (IS_ERR(path))
+> -		return path;
+> -	if (path[ext_depth(inode)].p_ext == NULL) {
+> -		ext4_free_ext_path(path);
+> -		return ERR_PTR(-ENODATA);
+> -	}
+> -	return path;
+> -}
+> -
+>  /**
+>   * ext4_double_down_write_data_sem() - write lock two inodes's i_data_sem
+>   * @first: inode to be locked
+> @@ -59,7 +36,6 @@ ext4_double_down_write_data_sem(struct inode *first, struct inode *second)
+>  	} else {
+>  		down_write(&EXT4_I(second)->i_data_sem);
+>  		down_write_nested(&EXT4_I(first)->i_data_sem, I_DATA_SEM_OTHER);
+> -
+>  	}
+>  }
+>  
+> @@ -78,42 +54,6 @@ ext4_double_up_write_data_sem(struct inode *orig_inode,
+>  	up_write(&EXT4_I(donor_inode)->i_data_sem);
+>  }
+>  
+> -/**
+> - * mext_check_coverage - Check that all extents in range has the same type
+> - *
+> - * @inode:		inode in question
+> - * @from:		block offset of inode
+> - * @count:		block count to be checked
+> - * @unwritten:		extents expected to be unwritten
+> - * @err:		pointer to save error value
+> - *
+> - * Return 1 if all extents in range has expected type, and zero otherwise.
+> - */
+> -static int
+> -mext_check_coverage(struct inode *inode, ext4_lblk_t from, ext4_lblk_t count,
+> -		    int unwritten, int *err)
+> -{
+> -	struct ext4_ext_path *path = NULL;
+> -	struct ext4_extent *ext;
+> -	int ret = 0;
+> -	ext4_lblk_t last = from + count;
+> -	while (from < last) {
+> -		path = get_ext_path(inode, from, path);
+> -		if (IS_ERR(path)) {
+> -			*err = PTR_ERR(path);
+> -			return ret;
+> -		}
+> -		ext = path[ext_depth(inode)].p_ext;
+> -		if (unwritten != ext4_ext_is_unwritten(ext))
+> -			goto out;
+> -		from += ext4_ext_get_actual_len(ext);
+> -	}
+> -	ret = 1;
+> -out:
+> -	ext4_free_ext_path(path);
+> -	return ret;
+> -}
+> -
+>  /**
+>   * mext_folio_double_lock - Grab and lock folio on both @inode1 and @inode2
+>   *
+> @@ -363,7 +303,7 @@ static int mext_folio_mkwrite(struct inode *inode, struct folio *folio,
+>   * the replaced block count through m_len. Return 0 on success, and an error
+>   * code otherwise.
+>   */
+> -static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
+> +static int mext_move_extent(struct mext_data *mext, u64 *m_len)
+>  {
+>  	struct inode *orig_inode = mext->orig_inode;
+>  	struct inode *donor_inode = mext->donor_inode;
+> @@ -456,210 +396,6 @@ static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
+>  	goto unlock;
+>  }
+>  
+> -/**
+> - * move_extent_per_page - Move extent data per page
+> - *
+> - * @o_filp:			file structure of original file
+> - * @donor_inode:		donor inode
+> - * @orig_page_offset:		page index on original file
+> - * @donor_page_offset:		page index on donor file
+> - * @data_offset_in_page:	block index where data swapping starts
+> - * @block_len_in_page:		the number of blocks to be swapped
+> - * @unwritten:			orig extent is unwritten or not
+> - * @err:			pointer to save return value
+> - *
+> - * Save the data in original inode blocks and replace original inode extents
+> - * with donor inode extents by calling ext4_swap_extents().
+> - * Finally, write out the saved data in new original inode blocks. Return
+> - * replaced block count.
+> - */
+> -static int
+> -move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+> -		     pgoff_t orig_page_offset, pgoff_t donor_page_offset,
+> -		     int data_offset_in_page,
+> -		     int block_len_in_page, int unwritten, int *err)
+> -{
+> -	struct inode *orig_inode = file_inode(o_filp);
+> -	struct folio *folio[2] = {NULL, NULL};
+> -	handle_t *handle;
+> -	ext4_lblk_t orig_blk_offset, donor_blk_offset;
+> -	unsigned long blocksize = orig_inode->i_sb->s_blocksize;
+> -	unsigned int tmp_data_size, data_size, replaced_size;
+> -	int i, err2, jblocks, retries = 0;
+> -	int replaced_count = 0;
+> -	int from;
+> -	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
+> -	struct super_block *sb = orig_inode->i_sb;
+> -	struct buffer_head *bh = NULL;
+> -
+> -	/*
+> -	 * It needs twice the amount of ordinary journal buffers because
+> -	 * inode and donor_inode may change each different metadata blocks.
+> -	 */
+> -again:
+> -	*err = 0;
+> -	jblocks = ext4_meta_trans_blocks(orig_inode, block_len_in_page,
+> -					 block_len_in_page) * 2;
+> -	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, jblocks);
+> -	if (IS_ERR(handle)) {
+> -		*err = PTR_ERR(handle);
+> -		return 0;
+> -	}
+> -
+> -	orig_blk_offset = orig_page_offset * blocks_per_page +
+> -		data_offset_in_page;
+> -
+> -	donor_blk_offset = donor_page_offset * blocks_per_page +
+> -		data_offset_in_page;
+> -
+> -	/* Calculate data_size */
+> -	if ((orig_blk_offset + block_len_in_page - 1) ==
+> -	    ((orig_inode->i_size - 1) >> orig_inode->i_blkbits)) {
+> -		/* Replace the last block */
+> -		tmp_data_size = orig_inode->i_size & (blocksize - 1);
+> -		/*
+> -		 * If data_size equal zero, it shows data_size is multiples of
+> -		 * blocksize. So we set appropriate value.
+> -		 */
+> -		if (tmp_data_size == 0)
+> -			tmp_data_size = blocksize;
+> -
+> -		data_size = tmp_data_size +
+> -			((block_len_in_page - 1) << orig_inode->i_blkbits);
+> -	} else
+> -		data_size = block_len_in_page << orig_inode->i_blkbits;
+> -
+> -	replaced_size = data_size;
+> -
+> -	*err = mext_folio_double_lock(orig_inode, donor_inode, orig_page_offset,
+> -				     donor_page_offset, folio);
+> -	if (unlikely(*err < 0))
+> -		goto stop_journal;
+> -	/*
+> -	 * If orig extent was unwritten it can become initialized
+> -	 * at any time after i_data_sem was dropped, in order to
+> -	 * serialize with delalloc we have recheck extent while we
+> -	 * hold page's lock, if it is still the case data copy is not
+> -	 * necessary, just swap data blocks between orig and donor.
+> -	 */
+> -	if (unwritten) {
+> -		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+> -		/* If any of extents in range became initialized we have to
+> -		 * fallback to data copying */
+> -		unwritten = mext_check_coverage(orig_inode, orig_blk_offset,
+> -						block_len_in_page, 1, err);
+> -		if (*err)
+> -			goto drop_data_sem;
+> -
+> -		unwritten &= mext_check_coverage(donor_inode, donor_blk_offset,
+> -						 block_len_in_page, 1, err);
+> -		if (*err)
+> -			goto drop_data_sem;
+> -
+> -		if (!unwritten) {
+> -			ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -			goto data_copy;
+> -		}
+> -		if (!filemap_release_folio(folio[0], 0) ||
+> -		    !filemap_release_folio(folio[1], 0)) {
+> -			*err = -EBUSY;
+> -			goto drop_data_sem;
+> -		}
+> -		replaced_count = ext4_swap_extents(handle, orig_inode,
+> -						   donor_inode, orig_blk_offset,
+> -						   donor_blk_offset,
+> -						   block_len_in_page, 1, err);
+> -	drop_data_sem:
+> -		ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -		goto unlock_folios;
+> -	}
+> -data_copy:
+> -	from = offset_in_folio(folio[0],
+> -			       orig_blk_offset << orig_inode->i_blkbits);
+> -	*err = mext_folio_mkuptodate(folio[0], from, from + replaced_size);
+> -	if (*err)
+> -		goto unlock_folios;
+> -
+> -	/* At this point all buffers in range are uptodate, old mapping layout
+> -	 * is no longer required, try to drop it now. */
+> -	if (!filemap_release_folio(folio[0], 0) ||
+> -	    !filemap_release_folio(folio[1], 0)) {
+> -		*err = -EBUSY;
+> -		goto unlock_folios;
+> -	}
+> -	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+> -	replaced_count = ext4_swap_extents(handle, orig_inode, donor_inode,
+> -					       orig_blk_offset, donor_blk_offset,
+> -					   block_len_in_page, 1, err);
+> -	ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -	if (*err) {
+> -		if (replaced_count) {
+> -			block_len_in_page = replaced_count;
+> -			replaced_size =
+> -				block_len_in_page << orig_inode->i_blkbits;
+> -		} else
+> -			goto unlock_folios;
+> -	}
+> -	/* Perform all necessary steps similar write_begin()/write_end()
+> -	 * but keeping in mind that i_size will not change */
+> -	bh = folio_buffers(folio[0]);
+> -	if (!bh)
+> -		bh = create_empty_buffers(folio[0],
+> -				1 << orig_inode->i_blkbits, 0);
+> -	for (i = 0; i < from >> orig_inode->i_blkbits; i++)
+> -		bh = bh->b_this_page;
+> -	for (i = 0; i < block_len_in_page; i++) {
+> -		*err = ext4_get_block(orig_inode, orig_blk_offset + i, bh, 0);
+> -		if (*err < 0)
+> -			goto repair_branches;
+> -		bh = bh->b_this_page;
+> -	}
+> -
+> -	block_commit_write(folio[0], from, from + replaced_size);
+> -
+> -	/* Even in case of data=writeback it is reasonable to pin
+> -	 * inode to transaction, to prevent unexpected data loss */
+> -	*err = ext4_jbd2_inode_add_write(handle, orig_inode,
+> -			(loff_t)orig_page_offset << PAGE_SHIFT, replaced_size);
+> -
+> -unlock_folios:
+> -	folio_unlock(folio[0]);
+> -	folio_put(folio[0]);
+> -	folio_unlock(folio[1]);
+> -	folio_put(folio[1]);
+> -stop_journal:
+> -	ext4_journal_stop(handle);
+> -	if (*err == -ENOSPC &&
+> -	    ext4_should_retry_alloc(sb, &retries))
+> -		goto again;
+> -	/* Buffer was busy because probably is pinned to journal transaction,
+> -	 * force transaction commit may help to free it. */
+> -	if (*err == -EBUSY && retries++ < 4 && EXT4_SB(sb)->s_journal &&
+> -	    jbd2_journal_force_commit_nested(EXT4_SB(sb)->s_journal))
+> -		goto again;
+> -	return replaced_count;
+> -
+> -repair_branches:
+> -	/*
+> -	 * This should never ever happen!
+> -	 * Extents are swapped already, but we are not able to copy data.
+> -	 * Try to swap extents to it's original places
+> -	 */
+> -	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+> -	replaced_count = ext4_swap_extents(handle, donor_inode, orig_inode,
+> -					       orig_blk_offset, donor_blk_offset,
+> -					   block_len_in_page, 0, &err2);
+> -	ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -	if (replaced_count != block_len_in_page) {
+> -		ext4_error_inode_block(orig_inode, (sector_t)(orig_blk_offset),
+> -				       EIO, "Unable to copy data block,"
+> -				       " data will be lost.");
+> -		*err = -EIO;
+> -	}
+> -	replaced_count = 0;
+> -	goto unlock_folios;
+> -}
+> -
+>  /*
+>   * Check the validity of the basic filesystem environment and the
+>   * inodes' support status.
+> @@ -821,106 +557,81 @@ static int mext_check_adjust_range(struct inode *orig_inode,
+>   *
+>   * This function returns 0 and moved block length is set in moved_len
+>   * if succeed, otherwise returns error value.
+> - *
+>   */
+> -int
+> -ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+> -		  __u64 donor_blk, __u64 len, __u64 *moved_len)
+> +int ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+> +		      __u64 donor_blk, __u64 len, __u64 *moved_len)
+>  {
+>  	struct inode *orig_inode = file_inode(o_filp);
+>  	struct inode *donor_inode = file_inode(d_filp);
+> -	struct ext4_ext_path *path = NULL;
+> -	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
+> -	ext4_lblk_t o_end, o_start = orig_blk;
+> -	ext4_lblk_t d_start = donor_blk;
+> +	struct mext_data mext;
+> +	struct super_block *sb = orig_inode->i_sb;
+> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> +	int retries = 0;
+> +	u64 m_len;
+>  	int ret;
+>  
+> +	*moved_len = 0;
+> +
+>  	/* Protect orig and donor inodes against a truncate */
+>  	lock_two_nondirectories(orig_inode, donor_inode);
+>  
+>  	ret = mext_check_validity(orig_inode, donor_inode);
+>  	if (ret)
+> -		goto unlock;
+> +		goto out;
+>  
+>  	/* Wait for all existing dio workers */
+>  	inode_dio_wait(orig_inode);
+>  	inode_dio_wait(donor_inode);
+>  
+> -	/* Protect extent tree against block allocations via delalloc */
+> -	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+>  	/* Check and adjust the specified move_extent range. */
+>  	ret = mext_check_adjust_range(orig_inode, donor_inode, orig_blk,
+>  				      donor_blk, &len);
+>  	if (ret)
+>  		goto out;
+> -	o_end = o_start + len;
+>  
+> -	*moved_len = 0;
+> -	while (o_start < o_end) {
+> -		struct ext4_extent *ex;
+> -		ext4_lblk_t cur_blk, next_blk;
+> -		pgoff_t orig_page_index, donor_page_index;
+> -		int offset_in_page;
+> -		int unwritten, cur_len;
+> -
+> -		path = get_ext_path(orig_inode, o_start, path);
+> -		if (IS_ERR(path)) {
+> -			ret = PTR_ERR(path);
+> +	mext.orig_inode = orig_inode;
+> +	mext.donor_inode = donor_inode;
+> +	while (len) {
+> +		mext.orig_map.m_lblk = orig_blk;
+> +		mext.orig_map.m_len = len;
+> +		mext.orig_map.m_flags = 0;
+> +		mext.donor_lblk = donor_blk;
+> +
+> +		ret = ext4_map_blocks(NULL, orig_inode, &mext.orig_map, 0);
+> +		if (ret < 0)
+>  			goto out;
+> -		}
+> -		ex = path[path->p_depth].p_ext;
+> -		cur_blk = le32_to_cpu(ex->ee_block);
+> -		cur_len = ext4_ext_get_actual_len(ex);
+> -		/* Check hole before the start pos */
+> -		if (cur_blk + cur_len - 1 < o_start) {
+> -			next_blk = ext4_ext_next_allocated_block(path);
+> -			if (next_blk == EXT_MAX_BLOCKS) {
+> -				ret = -ENODATA;
+> -				goto out;
+> +
+> +		/* Skip moving if it is a hole or a delalloc extent. */
+> +		if (mext.orig_map.m_flags &
+> +		    (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
+> +			ret = mext_move_extent(&mext, &m_len);
+> +			*moved_len += m_len;
+> +			if (!ret)
+> +				goto next;
+> +
+> +			/* Move failed or partially failed. */
+> +			if (m_len) {
+> +				orig_blk += m_len;
+> +				donor_blk += m_len;
+> +				len -= m_len;
+>  			}
+> -			d_start += next_blk - o_start;
+> -			o_start = next_blk;
+> -			continue;
+> -		/* Check hole after the start pos */
+> -		} else if (cur_blk > o_start) {
+> -			/* Skip hole */
+> -			d_start += cur_blk - o_start;
+> -			o_start = cur_blk;
+> -			/* Extent inside requested range ?*/
+> -			if (cur_blk >= o_end)
+> -				goto out;
+> -		} else { /* in_range(o_start, o_blk, o_len) */
+> -			cur_len += cur_blk - o_start;
+> +			if (ret == -ESTALE)
+> +				continue;
+> +			if (ret == -ENOSPC &&
+> +			    ext4_should_retry_alloc(sb, &retries))
+> +				continue;
+> +			if (ret == -EBUSY &&
+> +			    sbi->s_journal && retries++ < 4 &&
+> +			    jbd2_journal_force_commit_nested(sbi->s_journal))
+> +				continue;
+> +
+> +			goto out;
+>  		}
+> -		unwritten = ext4_ext_is_unwritten(ex);
+> -		if (o_end - o_start < cur_len)
+> -			cur_len = o_end - o_start;
+> -
+> -		orig_page_index = o_start >> (PAGE_SHIFT -
+> -					       orig_inode->i_blkbits);
+> -		donor_page_index = d_start >> (PAGE_SHIFT -
+> -					       donor_inode->i_blkbits);
+> -		offset_in_page = o_start % blocks_per_page;
+> -		if (cur_len > blocks_per_page - offset_in_page)
+> -			cur_len = blocks_per_page - offset_in_page;
+> -		/*
+> -		 * Up semaphore to avoid following problems:
+> -		 * a. transaction deadlock among ext4_journal_start,
+> -		 *    ->write_begin via pagefault, and jbd2_journal_commit
+> -		 * b. racing with ->read_folio, ->write_begin, and
+> -		 *    ext4_get_block in move_extent_per_page
+> -		 */
+> -		ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -		/* Swap original branches with new branches */
+> -		*moved_len += move_extent_per_page(o_filp, donor_inode,
+> -				     orig_page_index, donor_page_index,
+> -				     offset_in_page, cur_len,
+> -				     unwritten, &ret);
+> -		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+> -		if (ret < 0)
+> -			break;
+> -		o_start += cur_len;
+> -		d_start += cur_len;
+> +next:
+> +		orig_blk += mext.orig_map.m_len;
+> +		donor_blk += mext.orig_map.m_len;
+> +		len -= mext.orig_map.m_len;
+> +		retries = 0;
+>  	}
+>  
+>  out:
+> @@ -929,10 +640,6 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+>  		ext4_discard_preallocations(donor_inode);
+>  	}
+>  
+> -	ext4_free_ext_path(path);
+> -	ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -unlock:
+>  	unlock_two_nondirectories(orig_inode, donor_inode);
+> -
+>  	return ret;
+>  }
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
