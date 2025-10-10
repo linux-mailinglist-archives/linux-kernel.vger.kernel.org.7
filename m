@@ -1,124 +1,268 @@
-Return-Path: <linux-kernel+bounces-848127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA1CBCC96F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:46:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6BABCC984
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A215188D218
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:46:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C943E4F992A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7595E283140;
-	Fri, 10 Oct 2025 10:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6784828642D;
+	Fri, 10 Oct 2025 10:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1dbetcx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="xszJsjbv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B3fGNoVJ"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32541684A4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E33BA3F;
+	Fri, 10 Oct 2025 10:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760093174; cv=none; b=DZfVJ2/Wwlg2z3OhVgcb3gTr4Lb+uK7lNL+95zJsHxOXa4lB7jTDz6OBl0843t0NYbmHGbS+B5Scj9M0/C40E5GP7MKfxGXiiRb00V8BVlcj6fpPYjfhBK18vU+q03BXulvzqhssdKOFJcyWI3rSxB51y152GzZKX9Z4JY+/Wt4=
+	t=1760093280; cv=none; b=lbnpjyznpT78G5IrHt4Oskqdr83c8vYR0pQXPOQQPt11HacICqZyWJo95Oq7hoMxmaiIaCWa/h9H8uI1aAH77dLV8tKwITaT294c8Wq3wbRiGFe07rBHjlDxrEuzpTqcjGvRt229HzGNF+3bYG1XmpJpbX+Ibpn+enem+x1AsMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760093174; c=relaxed/simple;
-	bh=tu/3YXWndspnmW1FhqUQCHSgsgn+D8yeWmdhNr94be0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eGeSuSYsVxEsLfZRJwftQieXStx52EiLY574t4NwayVfNHHUlrSa9H7JTggLu75XslLoR2CMFNeRj4ziErjbvHtehxO8NacfldHkEAlVP69fMse0jEHrT4JMrB6DwT0bfey2Z5tGsfhXfuodnEHgP6fWa9/8JCGNkDlWpHAzF1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1dbetcx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3420CC4CEF1;
-	Fri, 10 Oct 2025 10:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760093172;
-	bh=tu/3YXWndspnmW1FhqUQCHSgsgn+D8yeWmdhNr94be0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=P1dbetcxC7JH6TiV0CYv7t7Hz7X+nYXsccRgu4vFt0+W3c/SYSaXQkSRBOOMiejgZ
-	 Qyl11SDtdEptqVsbFRxej1C2gAfgZKQ4mMw5MTpo6P21gFZd0N49xveVnRWfq1q7m6
-	 TndqzwPj137LadyPNN/cgLE3IChtjPaSEDZjPKrGF+On426L4Q3R4OuHa0l9cEL4E6
-	 vR/XrDF6ipbsH289YVitAlzsuJ6V9hq/VVeA2pLHW2PWEQMVhdqqEv6KGeZdiYVv2C
-	 B620MtLb5szFkSvbwvCMiqP+m8kLUhnlXbYvSa9D2QpIeKIB2JQsbeVdfkXvFbIehs
-	 3s3gDfVv/AYag==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212B3CCD185;
-	Fri, 10 Oct 2025 10:46:12 +0000 (UTC)
-From: Jiucheng Xu via B4 Relay <devnull+jiucheng.xu.amlogic.com@kernel.org>
-Date: Fri, 10 Oct 2025 10:45:50 +0000
-Subject: [PATCH v2] f2fs: Use mapping->gfp_mask to get file cache for
- writing
+	s=arc-20240116; t=1760093280; c=relaxed/simple;
+	bh=phKAygcCHq5E5DNocoYzByqQdzOTV1jDLrVnQWjgKFc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=rsPGpPYwYCHgn5as1/bU1+idagW1tV/AVGBYYMySodBT2/FJHHAdSeD5sE9L3UqvUyZwSqzw6CWa+l2MiodzOQxMHi615UwOb7pz2TWV7iocF6nTAIglNc3HeNy8OzBb/LaJ6DQ6rZUfVF3sfagv98op5ytbpKQ+8OTHBO2SQHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=xszJsjbv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B3fGNoVJ; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A43E2140002F;
+	Fri, 10 Oct 2025 06:47:56 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Fri, 10 Oct 2025 06:47:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1760093276; x=1760179676; bh=LExDmiF7iRBPhdv/4uvxxSe04Ic7f+Yd8wI
+	CU190Iac=; b=xszJsjbvdIirmw0tyngHbK53+w9lsE+9jnUSSz1KcaZvmdHWKyk
+	oWZAXI9fcj99QBqW3zREItFucaG88UKZ35GU6+srBww+Vnt9Vvw6TUvHnSEIVBeX
+	2cCY6eWBq+/qJoDkaWq3Z8tVA28rWKNBSXhOAm4YFOIXJSypvLaqZb4RDc1u8ezm
+	kfO1y2J4mbExW2QBeJqwwY/x2UucxLxbqXz7JLB0nHE413bQxyL8wCd5J1O+gI9h
+	GZhv2kV2przHerhD4ukIoxwajKRNynlxkz+N/+J5z0dbdTTBkZT149ZyKCOwxK2C
+	xlR+m4wQ5KtUvGxV9riK+vI3N6LdF1e+4iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760093276; x=
+	1760179676; bh=LExDmiF7iRBPhdv/4uvxxSe04Ic7f+Yd8wICU190Iac=; b=B
+	3fGNoVJsJARCfYuhSaSJ5jofIBOJTWoiBzXzL4EG4xBbx6VG7pFz9Z7eJ5LmnucZ
+	t4xb2cbynY9cfLcp/qgGm17Q5Bf8F0+Q2pneimISMaw7s9txBIp4dw9PoEr0k2pe
+	Qbl9yLS9bjN/u487X1nmVaZnzE3QRhRYfIVAafU8MOLPOEaFS0yQWio4eL58Xxxs
+	zc9FLoPfpyigSIrB72JUrZNnQ/ABA6UzzIFWdbVT/51WXXjMQzHUrKcOTnFUpO/c
+	VWJr6YpEUN7IH3O2e7mHJ+OtA/cNod9u6Cy6PR4l8NoxGTP6grkNkZ8P3Ug+3xNQ
+	X0e4AKtBHT/UMzsKjsyzw==
+X-ME-Sender: <xms:XOToaNa1xZ5bIlRtFvOwsZoPFOy1c7xeskrpVLFC2LuxQZ4AQ8Npow>
+    <xme:XOToaPG1gU9T2Vou-q2FFnWIuaL8ZwBHCjh01v1jnss5Gke-Eb1zRh3Nc4z2inchl
+    -XlXiiRl_1KANvoyUVDRtIp9a92s1B-DMTgLBWgPkpJLF2TcQ>
+X-ME-Received: <xmr:XOToaIrHXslwBpeOjG5Zmgf6ziWgNFnGAk4sqZ5KxsuBqgqunfuIpGlzTzlFr5W4dZ7SDHXb6Lk72afxNgwP6ZOtwTxfYIE7GS3mHV8ixQq4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdekkeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehr
+    vgguhhgrthdrtghomhdprhgtphhtthhopehokhhorhhnihgvvhesrhgvughhrghtrdgtoh
+    hmpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgtphhtthho
+    pegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegurghird
+    hnghhosehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:XOToaCyUzj3OGBkGL7qzV8womnybPiS9oQsXmQx2g-G5ozrfLsy1yA>
+    <xmx:XOToaKNd6fMeXBAGBHlGGI0333Qg0xZRjN17bjlViU2VkZAPqkN4Ig>
+    <xmx:XOToaKfsovNA4hFNLDWP1MeV1hjko-LC-75iJGusO-wIPTcuMgwLcA>
+    <xmx:XOToaO6lljvBLiP95pHOZQPVqN9kjU6DSYwT9b8dlV0-BMCubM-mKg>
+    <xmx:XOToaLwAv_xHOB9NHNnwEe8PVIaE78JER5r_tTOmaZ-gKPyOjeRj19YX>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 10 Oct 2025 06:47:50 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-origin-dev-v2-1-952a3c98cd9c@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAN3j6GgC/03MwQoCIRSF4VcZ7jpDhUlt1XvELEyvzoVmDA0pB
- t89Gwha/gfOt0HBTFjgPGyQsVKhtPaQhwHcbNeIjHxvkFyO3AjOUqZIK/NYmbZjCKcboggS+uG
- RMdBrx65T75nKM+X3blfxXX+M/meqYIJpb7RSPhhU6mKXe4rkji4tMLXWPrgQj7OmAAAA
-X-Change-ID: 20250910-origin-dev-8a5ff6bee1f2
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- tuan.zhang@amlogic.com, jianxin.pan@amlogic.com, 
- Jiucheng Xu <jiucheng.xu@amlogic.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760093171; l=1482;
- i=jiucheng.xu@amlogic.com; s=20250821; h=from:subject:message-id;
- bh=ys2NNWUvMRWSNrqqE75d/Agpj0X5GunxR0O5cIjS0+s=;
- b=zBpqK6IpjtdrVtovPKjZFXMscyFRS/aovVGopagjDr07kHZ2g+Rn8Bz2l8yn850QC/rwg1Z2W
- 5EdQvlweuoxAm5ybl4mHETIzsjc2dHIS0i4oIw3YzP9HmnTx/8heVz7
-X-Developer-Key: i=jiucheng.xu@amlogic.com; a=ed25519;
- pk=Q18IjkdWCCuncSplyu+dYqIrm+n42glvoLFJTQqpb2o=
-X-Endpoint-Received: by B4 Relay for jiucheng.xu@amlogic.com/20250821 with
- auth_id=498
-X-Original-From: Jiucheng Xu <jiucheng.xu@amlogic.com>
-Reply-To: jiucheng.xu@amlogic.com
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
+ "David Howells" <dhowells@redhat.com>, "Brandon Adams" <brandona@meta.com>,
+ linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
+In-reply-to: <8cbef9511c8b70dfcf7cdaa9a620f931ab170faa.camel@kernel.org>
+References: <>, <>,
+ <74e20200de3d113c0bced1380c0ce99a569c2892.camel@kernel.org>,
+ <176005502018.1793333.5043420085151021396@noble.neil.brown.name>,
+ <8cbef9511c8b70dfcf7cdaa9a620f931ab170faa.camel@kernel.org>
+Date: Fri, 10 Oct 2025 21:47:42 +1100
+Message-id: <176009326228.1793333.8127990928981202919@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-From: Jiucheng Xu <jiucheng.xu@amlogic.com>
+On Fri, 10 Oct 2025, Jeff Layton wrote:
+> On Fri, 2025-10-10 at 11:10 +1100, NeilBrown wrote:
+> > On Thu, 09 Oct 2025, Jeff Layton wrote:
+> > > On Thu, 2025-10-09 at 08:51 +1100, NeilBrown wrote:
+> > > > On Thu, 09 Oct 2025, Jeff Layton wrote:
+> > > > > We've seen some occurrences of messages like this in dmesg on some =
+knfsd
+> > > > > servers:
+> > > > >=20
+> > > > >     xdr_buf_to_bvec: bio_vec array overflow
+> > > > >=20
+> > > > > Usually followed by messages like this that indicate a short send (=
+note
+> > > > > that this message is from an older kernel and the amount that it re=
+ports
+> > > > > attempting to send is short by 4 bytes):
+> > > > >=20
+> > > > >     rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - sh=
+utting down socket
+> > > > >=20
+> > > > > svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP re=
+cord
+> > > > > marker. If the send is an unaligned READ call though, then there ma=
+y not
+> > > > > be enough slots in the rq_bvec array in some cases.
+> > > > >=20
+> > > > > Add a slot to the rq_bvec array, and fix up the array lengths in the
+> > > > > callers that care.
+> > > > >=20
+> > > > > Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single=
+ sock_sendmsg() call")
+> > > > > Tested-by: Brandon Adams <brandona@meta.com>
+> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > ---
+> > > > >  fs/nfsd/vfs.c        | 6 +++---
+> > > > >  net/sunrpc/svc.c     | 3 ++-
+> > > > >  net/sunrpc/svcsock.c | 4 ++--
+> > > > >  3 files changed, 7 insertions(+), 6 deletions(-)
+> > > >=20
+> > > > I can't say that I'm liking this patch.
+> > > >=20
+> > > > There are 11 place where (in nfsd-testing recently) where
+> > > > rq_maxpages is used (as opposed to declared or assigned).
+> > > >=20
+> > > > 3 in nfsd/vfs.c
+> > > > 4 in sunrpc/svc.c
+> > > > 1 in sunrpc/svc_xprt.c
+> > > > 2 in sunrpc/svcsock.c
+> > > > 1 in xprtrdma/svc_rdma_rc.c
+> > > >=20
+> > > > Your patch changes six of those to add 1.  I guess the others aren't
+> > > > "callers that care".  It would help to have it clearly stated why, or
+> > > > why not, a caller might care.
+> > > >=20
+> > > > But also, what does "rq_maxpages" even mean now?
+> > > > The comment in svc.h still says "num of entries in rq_pages"
+> > > > which is certainly no longer the case.
+> > > > But if it was the case, we should have called it "rq_numpages"
+> > > > or similar.
+> > > > But maybe it wasn't meant to be the number of pages in the array,
+> > > > maybe it was meant to be the maximum number of pages is a request
+> > > > or a reply.....
+> > > > No - that is sv_max_mesg, to which we add 2 and 1.
+> > > > So I could ask "why not just add another 1 in svc_serv_maxpages()?"
+> > > > Would the callers that might not care be harmed if rq_maxpages were
+> > > > one larger than it is?
+> > > >=20
+> > > > It seems to me that rq_maxpages is rather confused and the bug you ha=
+ve
+> > > > found which requires this patch is some evidence to that confusion.  =
+We
+> > > > should fix the confusion, not just the bug.
+> > > >=20
+> > > > So simple question to cut through my waffle:
+> > > > Would this:
+> > > > -	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1;
+> > > > +	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1 + 1;
+> > > >=20
+> > > > fix the problem.  If not, why not?  If so, can we just do this?
+> > > > then look at renaming rq_maxpages to rq_numpages and audit all the us=
+es
+> > > > (and maybe you have already audited...).
+> > > >=20
+> > >=20
+> > > I get the objection. I'm not crazy about all of the adjustments either.
+> > >=20
+> > > rq_maxpages is used to size two fields in the rqstp: rq_pages and
+> > > rq_bvec. It turns out that they both want rq_maxpages + 1 slots. The
+> > > rq_pages array needs the extra slot for a NULL terminator, and rq_bvec
+> > > needs it for the TCP record marker.
+> >=20
+> > Somehow the above para helped a lot for me to understand what the issue
+> > is here - thanks.
+> >=20
+> > rq_bvec is used for two quite separate purposes.
+> >=20
+> > nfsd/vfs.c uses it to assemble read/write requests to send to the
+> > filesystem.
+> > sunrpc/svcsock.c uses to assemble send/recv requests to send to the
+> > network.
+> >=20
+> > It might help me if this were documented clearly in svc.h as I seem to
+> > have had to discover several times now :-(
+> >=20
+> > Should these even use the same rq_bvec?  I guess it makes sense to share
+> > but we should be cautious about letting the needs of one side infect the
+> > code of the other side.
+> >=20
+> > So if we increase the size of rq_bvec to meet the needs of svcsock.c, do
+> > we need to make *any* code changes to vfs.c?  I doubt it.
+> >=20
+> > It bothers me a little bit that svc_tcp_sendmsg() needs to allocate a
+> > frag.  But given that it does, could it also allocate a larger bvec if
+> > rq_bvec isn't big enough?
+> >=20
+> > Or should svc_tcp_recvfrom() allocate the frag and make sure the bvec is
+> > big enough ......
+> > Or svc_alloc_arg() could check with each active transport for any
+> > preallocation requirements...
+> > Or svc_create_socket() could update some "bvec_size" field in svc_serv
+> > which svc_alloc_arg() could check an possibly realloc rq_bvec.
+> >=20
+> > I'm rambling a bit here.  I agree with Chuck (and you) that it would be
+> > nice if this need for a larger bvec were kept local to svcsock code if
+> > possible.
+> >=20
+> > But I'm fairly confident that the current problem doesn't justify any
+> > changes to vfs.c.  svc.c probably needs to somehow be involved in
+> > rq_bvec being bigger and svcsock.c certainly needs to be able to make
+> > use of the extra space, but that seems to be all that is required.
+> >=20
+>=20
+> I sent a v3 patch which adds a separate rq_bvec_len field and uses that
+> in the places where the code is iterating over the rq_bvec. That does
+> change places in vfs.c, but I think it makes the code clearer. Are you
+> OK with that version?
 
-On 32-bit architectures, when GFP_NOFS is used, the file cache for write
-operations cannot be allocated from the highmem and CMA.
+Hmmm....  yes, I think so.  The bug itself doesn't really need vfs.c to
+be changed.  But the deeper bug is that rq_maxpages is being overloaded
+to mean multiple things and you are separating rq_bvec_len out from that
+meaning, and consistent using rq_bvec_len whenever the length of the
+rq_bvec is needed.  So in that sense vfs.c does need changed.
 
-Since mapping->gfp_mask is set to GFP_HIGHUSER_MOVABLE during inode
-allocation, using mapping_gfp_mask(mapping) as the GFP flag of getting file
-cache for writing is more efficient for 32-bit architectures.
+The commit comment could be improved though.  I'll reply separately.
 
-Additionally, use FGP_NOFS to avoid potential deadlock issues caused by
-GFP_FS in GFP_HIGHUSER_MOVABLE
-
-Signed-off-by: Jiucheng Xu <jiucheng.xu@amlogic.com>
----
-Changes in v2:
-- Add FGP_NOFS to keep original GFP_NOFS flag.
-- Link to v1: https://lore.kernel.org/r/20250918-origin-dev-v1-1-8d9877df9e77@amlogic.com
----
- fs/f2fs/data.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7961e0ddfca3aaa332b7dbd4985ae7766551834f..b449edb519d9069f58572685d607a2502e4c9473 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3587,7 +3587,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
- 	 * Will wait that below with our IO control.
- 	 */
- 	folio = __filemap_get_folio(mapping, index,
--				FGP_LOCK | FGP_WRITE | FGP_CREAT, GFP_NOFS);
-+				FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_NOFS,
-+				mapping_gfp_mask(mapping));
- 	if (IS_ERR(folio)) {
- 		err = PTR_ERR(folio);
- 		goto fail;
-
----
-base-commit: c872b6279cd26762339ff02513e2a3f16149a6f1
-change-id: 20250910-origin-dev-8a5ff6bee1f2
-
-Best regards,
--- 
-Jiucheng Xu <jiucheng.xu@amlogic.com>
-
-
+Thanks,
+NeilBrown
 
