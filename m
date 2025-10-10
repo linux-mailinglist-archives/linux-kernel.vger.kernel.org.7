@@ -1,268 +1,158 @@
-Return-Path: <linux-kernel+bounces-848796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC6BBCE959
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:10:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE071BCE9B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B8624F37D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BEC189B708
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2408930170B;
-	Fri, 10 Oct 2025 21:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB8826056C;
+	Fri, 10 Oct 2025 21:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxdqAXmt"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KDaNUPsA"
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AACF29CB48
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353BB25A2C9
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760130587; cv=none; b=O5cT+EBKzL0wkELr5Oc5IxHVkBd5qTb7mOKtbz7Erc85Qo0BGpHFIDIAZBOXz1/cD6nciXIb5hd87/y825Ki/SHBjlVJB0I6Uo9i33c/zSCUkeSFdrEpkT2KwRW7BuC95Govx1Y+hNDYQF0baoX/ivB9seQcrCXrzTTNBLonLSA=
+	t=1760131274; cv=none; b=MklXzOmwn7FfyADAzYd1VR4sKK76R2iepN4y1c/U0OuE6Ah5fvVgoQ5Y6+2DPkaOox0euDtH4AxDktUKUT3q4l1kne6ibZZ0e8W3x6Li20gYqizCERcHBltyQfs6MRGJ9iQ8238KTiuN8QoQtcX2+nBZH23vpUuArEZ8vEdryyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760130587; c=relaxed/simple;
-	bh=hgyCFWAvyhgvatIU/K0unb+MfKo3mrh42mP8FTzGTPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5NvaT5FpA1QJa5qTLDjfneqG2JZlBBkPOROkK4UJey5wiPcgkm1kCpcQ+ixuFH2/t7WmRg0nVxaZgJ/4+rmkZZBv2Go7CzN6X7C7zf1zBKwFC2vx19xwhQteAmrwR1m65duh9eLrfafXhXNcAto1A5+cd1mUZVPxOEjnjFWGd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxdqAXmt; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e37d6c21eso14432745e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760130583; x=1760735383; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YL9Lfr4K4sqYkwAFmLjCmYw/FX8K54aol5jtmBg3r+U=;
-        b=DxdqAXmtcHNMWwewyW+k1taGaAShtO0P2C+yfsjFOkZTZtpDtzkzZ5l3iGi/5DvowN
-         0wvOQJnPkuUJbc6dw5huK87ykQlpIld3BkWelKRpOC9b2Gb2SV9faHety9OCu9CKHXNL
-         bnHsbbpWFCh5UAXfL1YgutpOhbZEIE0okVWwlzzlCw0UPTiPlfBR8monmq7gbtf9+f+U
-         lnc3g7Lm0qPbKULzR8GKxj8ABqMo3b0xjUlXRJRHdZMvI6rgsX5ycFBqIFJvJi07tOvv
-         aTG9qc4FHKAMg5pI/l5OgjaMLFH0KJTagMtE+EN2oe3SZ8f83KO9ushWvmeNjrGVTM88
-         /ABw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760130583; x=1760735383;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YL9Lfr4K4sqYkwAFmLjCmYw/FX8K54aol5jtmBg3r+U=;
-        b=P/QAd4ZHSKA5r1J3Ge6AUXbyszwNeZKKTg0XkrXp9Dsk0QCg8khVAWvKoUBqrsYbt0
-         2YDM4JxR05xzMftgE+IhLPy7kJFfFM2fwBSazCglDRxQXx/e4Eiy5vaUI5VUlHj2Rm79
-         UyjuvGRQqWktkyvOJS8oYReuc5fOEov5VU0ggvkV5WKWdrjnjEFCNa1jUZMfONTSiiv8
-         whaR0H5/ir+HwBxmYylT+CwkLsKgkaCSZdFWk3clRZs7gtHczK97jkBRVIzxxBnVROxQ
-         O04RP8ChU/8TnGa02Qm6dgWuuecksoCCPwNsjI+aVe/JLPYgotVMROTBOAxYr8Bsi3C6
-         Vs0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWoOCZLn4n1J5HrzqkFHVOUzaJFDSlxECs3uGdWI6a6KvW6XW8DL4U2BebA63xpcBWuyLtRj5DCKxSSLMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznEdXyPIEIf/6JPEB9s7w4jbGgQFKoRu4J18LoEy9aRP31e6TQ
-	bIWhe56E0vFyprGi6exqizKTvHQEbV0zDb+CSvyr/AnTvA10AI7ul0qC
-X-Gm-Gg: ASbGncsUv2nZNOyVfxLJNK1L4JIhtHO6NvEFydBFrh7QCDIfIT7cu+x1y4nrSFZZ4Yk
-	T17U2E51nyLzUcLqjTJWb4fmqf87txYdeE7FKfjeSCqoyYQ149VxOrE0yatplyKIQYuddVs8Aya
-	WS416zyOLSRPtTnGJaEf9N55SCLxCOrbp7kv5hJYCvQpU8c0QOtL5Di0frgvZG8BXlBz7ZbwzrB
-	SgxjHH71+iOApw3pJi8fRJvG6hQF3kMY7M3xvzLrEBrJzjdEV/a15eq1utLzvuEQ6gTCEHlOdjc
-	6GTTCE0r+DoP8po+QAm+gG+Wugc1QAnHJINN2p1o8yTgBcBibHlh7nGePKN9+TabLgfJt7+ZBHx
-	BVSUj44ZwLN2NuKPRo+7WVNpmQVylEc4pao/L7rCnKh3sPeaCUugBfLgif8N0dQvCHCJg5/koTZ
-	GqG8ooyISM4voZ5zwSSQ2kfz/VOgOgDUtEuckIpk8T6e51qQKlrADeNQ==
-X-Google-Smtp-Source: AGHT+IGO8jgeWqNOOxRgUfgzCS0O4EYngbpmbTcHl8ghsaUEWelooW8Epj+R+0pCYLOszI7amA9a+w==
-X-Received: by 2002:a05:6000:2509:b0:3ee:147a:9df with SMTP id ffacd0b85a97d-4266e7df9d1mr8719807f8f.39.1760130583273;
-        Fri, 10 Oct 2025 14:09:43 -0700 (PDT)
-Received: from ARSENIURE.localdomain (lfbn-tou-1-1184-225.w90-76.abo.wanadoo.fr. [90.76.241.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e13b6sm5870804f8f.44.2025.10.10.14.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 14:09:42 -0700 (PDT)
-Date: Fri, 10 Oct 2025 23:09:39 +0200
-From: Lucas GISSOT <lucas.gissot.pro@gmail.com>
-To: Jonathan Denose <jdenose@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Angela Czubak <aczubak@google.com>,
-	Sean O'Brien <seobrien@google.com>
-Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
-Message-ID: <aOl2E75q9L1rCyzd@ARSENIURE.localdomain>
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
- <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com>
- <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
- <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org>
- <1cd7fb11-0569-4032-905c-f887f3e0dd4c@leemhuis.info>
- <f2243a9b-e032-416b-aef8-958198ff3955@infradead.org>
- <CAMCVhVOm5xzN6pkX5cKMSHrMqvdCD_14+XuunAuJLENgLO1NqA@mail.gmail.com>
+	s=arc-20240116; t=1760131274; c=relaxed/simple;
+	bh=jm07cNqujmJsz6ETfN/ZaqZkj9ZOG1ZyWaAGnftTQOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M99TyHktW4ofDkAjrIJ2/1ykJjp6cyNT/m83pmo7RUY1tWgN0K34smOFagjF00CLc3Hn2ooFMQHhzeDZFC4fW2/08y6pVhvMRjC0FmtfNyIjlzMT2dIIkQL3KboT7FeZ7QzxOoQmCr5GAtfpXEtRVmrHHf4+CtDvyrDCsK6MgZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=KDaNUPsA; arc=none smtp.client-ip=66.163.187.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131271; bh=DLpuuXFqNbqtDCgdc3OpUNFxQzGQ43wi3kmUOA0+q64=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KDaNUPsAIePiDjxg6FdLTVUGIgOgqKqk5IHsBTpz8PWiGdUy+gCRwV+0w7Z19F2x1X4AQVC2XsPiclDMmN3/0pBphT+anwTlr9uedYKy99LINtwyDNfMf2ahZ1e+x1qJLMX9lu3r/3o7Wfr/Pw9MI4RbfkYdF6sCN39QevD30TdfcGAyzIWZQsTvXKOguIzqg/4rgm7UOfLT1ZLInhg7GJ6I0C2J3sKpmfM4/SHCZEHFER/T3X6p6CNObJU5xxDCAo1yAUmin4yN0VBkeLLYHFLRSKkPFs3KFLzLkkPvSQHTB78mMobBkJb4torTJAvzi+LlvvT89t0rA4y5H2ockQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131271; bh=xyE/YIYkpNZzkLwIMYboev9z4AuOCPjy6hfaDKZ1oKi=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jhCQCD76sJXcfLM0ArTvQ944iD2+Oej7r610w5EkrfZgebQrurM9gD3xdMH0NmuBBrngwrhVRcqB/J4w6D3jdZhOUwhcdS1bdHXcafjrfIS21pR5XN9PF2Xpk0nD2+cukEoJ1dN/zTQrVyuPJ5WNiZpz9P4g8uJXyksW7/wfr7+ORotT5pbKVQXm8pmBIRlNWTwn8mrZ3gODMqZJcQX63YQmEe9n0VJEAInMnnznn0caU7u5Bws/EPzhG86L3J6JvjgUrEMjkhwhLVJXknd3vy2LXjMPs1W3APeNO29Za/GiCI/WgwxGiCTqTtNGDPECn+Hlfxc9OUaDo2MdI8+5Yg==
+X-YMail-OSG: 4R.Id2cVM1lqqIxGsyOt7xiKCrc0.kZ.A5NMx1geX4kIovaTZzef9vXcAdUn0Lz
+ 4V.VJYH0W7IGwB85ebK5rNYnDxc4RKut4Ry6He2C54MUFnHRUxf0gcp6t1waOpUOcUsn.CsjFohb
+ HQnJXbpKrisaRT78sJgIC0aW9ss6ybQVolU0J5.MU0.3T7L7gjrjDt0HSI3nSPTNSuUdeDj.1ksh
+ HADxfWEUIy3iKJyG_rfs9a3Wh4uTCU6NDxIMRZPwR4yQr2lNqQRp.WLMkijWwDsGASQY.4cFOlBM
+ EfJfWE6ArkmiykiOGX8lqfVagVWSWgV_1hCq3sD0MOP5fmSDmXtTUQcAStNaBuDpwrPYMVApylaM
+ G0LvYVjp9jDcLewWGA0xQZGuLHFCW5uu9.m_IxJdPYgsR3rtjXLC3ImQEBtpJHRpabQ2IBYrdjS1
+ fOSOVbNHDBLzpdk.tHZG.pausk1v6_aMp2v2k4JVmC38M_mnl3LaVglIGQXEXjhW2BQYUmDZj17u
+ oCF3DYxDh.uguB2xwjG0PXQpzryJ1mN1dxaZitu1q89_vz0G1SmnMd0.TxfKlDOJNTBspwvZ7mUb
+ RqwuJznRwZLCb5mHF4_dFntgWfyAtzbr5VGrNOzod7zDsX7GUAOPksSxFe8kZmnrZQAvj.DQkDLg
+ x9UjCc0ZIaVO9y1mwcM28czLmB96UOZjhOsLuKiQRRfjFESREJps2CXBLYT9cn3zo7OHOjTNap98
+ un0vPk1HGF9RJkkQAQ86Cv5UKY7DAlplyiFWsuIak6KGxe1S0MapesiwBo3q3jQOJsDZrKs9KRqa
+ JUaDqHyvt_jkg5xg4z550cfEbMlh5Njkl6UiTxg8NmUXm3XaBlJoJULLdueAo2KavGWCtfE4VaEU
+ PfoidspaBMdWIAemm7Ynqm_sbAVOCrg9hKbaXgsDwvqIonFCwXYZEuONVmxzXRH4jGZQMIAkNXmx
+ zZ851v5gqnHDwPXqZ4B83_1acK4DJpVHGcpc9BVOwBGJfOn.4ategsoyyIwHmW9gpdh8cxkG7grS
+ 4p7Y_LrEh.3F2.Sf5PZtWyl2vMCVS.WO.Y_YyFNWpJfrWUs30md9M12wQjui_IzI760azrYTozi9
+ Kx6xBNM6aVADvgmwRCMj6U1UEV9snuvk0sLU11Q4cQPz4aPY_DwTRW4TAefH6OGYsDK9VCzHJkIG
+ 5vE7zFynCwV0d3rPirjvg6EkMQBmZQwh211ejJSo4pVVoL06V9dtwuZF_sozF.R6wXHABszApiDT
+ KyKoO4UP.tRQgLvRQRmIVUcV9L5OKeVo9EoAWqRpxstc61j0yCN1ss_tbJcyQTgXFv_o7lX1FF.A
+ CnVdF98TOB_zDU3VM0Np67kJxnGyMJXJXuqE1ZKMtGGOubqafDZXazGSBzL_7_16Fy0o1zGxrQuI
+ dgsyof7NJPcvt.xZFgYlrgkqtY.mG6okpY_7DKGVm.mAmaXK3ivJsqLJPewA6UMTMXk0IZWvdI2g
+ Vw5HITDrE9RizL_85qKe4eHeCTeUNHKA2nNIAad1maeXR9kwKS_AOU7VuSE4rUx8G4GrebKXUshD
+ 6swJWI6lgHMY8kCFzkMh.7I0TKAFuUzaCJTcIZzhHJgZjCLP5u0glwe9S6sIWx2ux6Uih8x_zSSz
+ WsrBlOO6CPUZXHtjMltTsoU6_Q7yBQkkLSFQdPn629ryCd1uy1_Nv.31r5GxCheIdjoEiod8dMRU
+ FtAQGfX3jYYjFNMTTn5Ph1gjj7jnW1coiqAvgGyOABL8v1pR98KsqsPUodbnsQ45AV8C1NcyNBcY
+ XVF5.F4GabUWZRUGGKH_5ZDgsFrmg62c8YEpeom47dKORkDXKSYhszyaEWMncsWfo2McptTDpRtl
+ KAvxF.g1mtBvlq02k_g49GhyL4aNvlScrwN3GrYgHxBYycxlKDRckWBWVpmmpVPId6QyIYSlXFhk
+ MLOkbWtscO5PEzppF4.JAyK6z9HGiO85zN1NcbgaDkd9xnCvsgkYss9mddLjn27HwGorM7WFP2gd
+ x7Rdr.by92xppzFRVur2jgcTkWJLJuC15QtYKotg6DJ3m_KgkOBa.7smlCDZR1XiNW1kdHUoom76
+ aZkBS5xbFMcOiIfdtMXC4t7hbJ2rx4PRRbH_MYrULaDH3LxZquIxS3b_0qExz_gJ0L309S67rWzU
+ kcqGRxj_h63dfhonCMN2Gg48mrH5gUioen35IX81Ev_175BZhTsI0U3Guc2sBmaGAhZ9XlZkaE4l
+ piz8Klhp1vCSf9zEaOVC7EkXl9_VIQX23cY.OaGesJL.xoBulR5DLVGTf2urB8gvqCm1_AczRkqA
+ K5iXqHLOONv2eAZ0_3Q--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: aae4a878-c368-4734-8f1c-3e5ebf10e800
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 21:21:11 +0000
+Received: by hermes--production-gq1-66b66ffd5-8qsph (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5ca4e18b572c15992d67a822f1821bda;
+          Fri, 10 Oct 2025 21:11:00 +0000 (UTC)
+Message-ID: <01879779-d529-40f2-8693-257cc598dcd7@schaufler-ca.com>
+Date: Fri, 10 Oct 2025 14:10:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
+ jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20251001215643.31465-1-casey@schaufler-ca.com>
+ <20251001215643.31465-3-casey@schaufler-ca.com>
+ <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
+ <ec89959d-c3a0-403d-bfb0-7405639eb0cf@schaufler-ca.com>
+ <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMCVhVOm5xzN6pkX5cKMSHrMqvdCD_14+XuunAuJLENgLO1NqA@mail.gmail.com>
+X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi,
-I applied Randy's patch and built with CONFIG_HID_MULTITOUCH=m and
-CONFIG_HID_HAPTIC=m, it builts; but there is an ld error on hid_haptic_*
-functions as soon as CONFIG_HID_MULTITOUCH is changed to yes.
+On 10/10/2025 12:53 PM, Stephen Smalley wrote:
+> On Fri, Oct 10, 2025 at 11:09 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 10/9/2025 11:53 AM, Stephen Smalley wrote:
+>>> On Wed, Oct 1, 2025 at 5:56 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Allow LSMs to request exclusive access to the netlabel facility.
+>>>> Provide mechanism for LSMs to determine if they have access to
+>>>> netlabel. Update the current users of netlabel, SELinux and Smack,
+>>>> to use and respect the exclusive use of netlabel.
+>>>>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> ---
+>>>> diff --git a/security/security.c b/security/security.c
+>>>> index e59e3d403de6..9eca10844b56 100644
+>>>> --- a/security/security.c
+>>>> +++ b/security/security.c
+>>>> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+>>>>                 else
+>>>>                         blob_sizes.lbs_secmark = true;
+>>>>         }
+>>>> +       if (needed->lbs_netlabel) {
+>>>> +               if (blob_sizes.lbs_netlabel)
+>>>> +                       needed->lbs_netlabel = false;
+>>>> +               else
+>>>> +                       blob_sizes.lbs_netlabel = true;
+>>>> +
+>>> Same principle here - if a LSM wants to use netlabel, it may want to
+>>> guarantee that it truly has exclusive access to it no matter what the
+>>> LSM order is.
+>> And if SELinux and Smack both shout "I gotta have it!" who wins?
+>> Does the system fail to boot? Do you assign it to the first requestor,
+>> as this patch does explicitly?
+>>
+>> If LSMs can't be equal in the eyes of the infrastructure, If one (e.g. SELinux)
+>> always gets its way regardless of the end user intent, I have a problem with
+>> the whole thing.
+> End user intent is unlikely to be expressed as a silent side effect of
+> LSM order.
 
-Is this .config not something desired, and then HID_HAPTIC should not be
-a tristate (if I understood correctly), or is there another problem?
+But that's what we have now with the "first exclusive LSM" rule.
+And the patch doesn't have a "silent" side effect. An LSM is informed
+at initialization whether it can use secmarks. An LSM could even
+decide to use secmarks if it has been told not to. That would be wrong,
+and probably not upstream acceptable, but in security the wild and wacky
+happens all too often.
 
-Thanks,
+> If a security module supports its use without the use of secmark
+> and/or netlabel and the end user wants to assign one or both to
+> another security module, that's fine.
 
-Lucas
+That is what this patch implements.
 
-On Fri, Oct 10, 2025 at 03:30:05PM -0500, Jonathan Denose wrote:
-> Hi all,
-> 
-> Thanks for looking into this.
-> 
-> On Fri, Oct 10, 2025 at 1:55 PM Randy Dunlap <rdunlap@infradead.org> wrote:
-> >
-> > Hi,
-> >
-> > I think I found it... see below.
-> >
-> >
-> > On 10/9/25 11:48 PM, Thorsten Leemhuis wrote:
-> > > [Top-Posting for easier consumption]
-> > >
-> > > Mainly writing this mail to bring Lucas GISSOT in here, who reported the
-> > > same error yesterday here:
-> > > https://lore.kernel.org/all/aOgvA8Jiofcnk2xb@ARSENIURE.localdomain/
-> > >
-> > > Lucas there suggested:
-> > > """but it seems to me that the #if IS_ENABLED(CONFIG_HID_HAPTIC) in
-> > > hid-haptic.h should be replaced by IS_BUILTIN(CONFIG_HID_HAPTIC) and
-> > > Kconfig updated."""
-> > >
-> > > And Randy: Thx for the closer investigation! It explains some of the
-> > > "that feels odd, am I holding this wrong" feeling I had when reporting this.
-> > >
-> > > Ciao, Thorsten
-> > >
-> > > On 10/10/25 06:50, Randy Dunlap wrote:
-> > >> On 10/9/25 7:43 AM, Thorsten Leemhuis wrote:
-> > >>> On 8/19/25 01:08, Jonathan Denose wrote:
-> > >>>> From: Angela Czubak <aczubak@google.com>
-> > >>>>
-> > >>>> Define a new structure that contains simple haptic device configuration
-> > >>>> as well as current state.
-> > >>>> Add functions that recognize auto trigger and manual trigger reports
-> > >>>> as well as save their addresses.Hi,
-> > >>>> Verify that the pressure unit is either grams or newtons.
-> > >>>> Mark the input device as a haptic touchpad if the unit is correct and
-> > >>>> the reports are found.
-> > >>>>  [...]
-> > >>>> +config HID_HAPTIC
-> > >>>> +  tristate "Haptic touchpad support"
-> > >>>> +  default n
-> > >>>> +  help
-> > >>>> +  Support for touchpads with force sensors and haptic actuators instead of a
-> > >>>> +  traditional button.
-> > >>>> +  Adds extra parsing and FF device for the hid multitouch driver.
-> > >>>> +  It can be used for Elan 2703 haptic touchpad.
-> > >>>> +
-> > >>>> +  If unsure, say N.
-> > >>>> +
-> > >>>>  menu "Special HID drivers"
-> > >>>
-> > >>> I suspect this change is related to a build error I ran into today:
-> > >>>
-> > >>>   MODPOST Module.symvers
-> > >>> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
-> > >>> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
-> > >>> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
-> > >>> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
-> > >>> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-> > >>> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-> > >>> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
-> > >>> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
-> > >>>
-> > >>> The config where this occurred had this:
-> > >>>
-> > >>> CONFIG_HID=y
-> > >>> CONFIG_HID_MULTITOUCH=m
-> > >>> CONFIG_HID_HAPTIC=m
-> > >>>
-> > >>> Changing the latter to "CONFIG_HID_HAPTIC=y" fixed the problem for me.
-> > >>
-> > >> Sure, but that's just covering up the problem.
-> > >>> First, I get this build error:
-> > >>
-> > >> ERROR: modpost: missing MODULE_LICENSE() in drivers/hid/hid-haptic.o
-> > >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-haptic.o
-> > >>
-> >
-> > ISTM that tristate is incompatible with this newly added Makefile
-> > line:
-> >
-> > +hid-$(CONFIG_HID_HAPTIC)       += hid-haptic.o
-> >
-> > hid-* lists files that should be builtin, not loadable modules.
-> > These should all be hid-y.  AFAIK, hid-m is not useful.
-> > (A maintainer can correct me as needed.)
-> >
-> > So adding a MODULE_LICENSE() and MODULE_DESCRIPTION() to
-> > hid-haptic.c and changing drivers/hid/Makefile to use
-> > obj-$(CONFIG_HID_HAPTIC_        += hid-haptic.o
-> >
-> > fixes the build errors for me.
-> >
-> > Angela, Jonathan D., is there any reason that
-> > hid-haptic needs to be builtin instead of a loadable
-> > module?  It's no problem for hid-multitouch.ko to call
-> > into hid-haptic.ko (both as loadable modules) as long as
-> > hid-haptic.ko is loaded first.
-> >
-> As long as hid-multitouch.ko is able to call into hid-haptic.ko I
-> don't see any issues, but is there a way to enforce that when
-> CONFIG_HID_HAPTIC is enabled, hid-haptic.ko will be loaded before
-> hid-multitouch.ko?
-> >
-> > Thanks.
-> >
-> > ~Randy
-> > ---
-> > ---
-> >  drivers/hid/hid-haptic.c |    3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > --- linux.orig/drivers/hid/hid-haptic.c
-> > +++ linux/drivers/hid/hid-haptic.c
-> > @@ -10,6 +10,9 @@
-> >
-> >  #include "hid-haptic.h"
-> >
-> > +MODULE_DESCRIPTION("HID haptic touchpad support");
-> > +MODULE_LICENSE("GPL");
-> > +
-> >  void hid_haptic_feature_mapping(struct hid_device *hdev,
-> >                                 struct hid_haptic_device *haptic,
-> >                                 struct hid_field *field, struct hid_usage *usage)
-> > ---
-> >  drivers/hid/Makefile |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > --- linux.orig/drivers/hid/Makefile
-> > +++ linux/drivers/hid/Makefile
-> > @@ -4,7 +4,8 @@
-> >  #
-> >  hid-y                  := hid-core.o hid-input.o hid-quirks.o
-> >  hid-$(CONFIG_DEBUG_FS)         += hid-debug.o
-> > -hid-$(CONFIG_HID_HAPTIC)       += hid-haptic.o
-> > +
-> > +obj-$(CONFIG_HID_HAPTIC)       += hid-haptic.o
-> >
-> >  obj-$(CONFIG_HID_BPF)          += bpf/
-> >
-> >
-> --
-> Jonathan
+> But some security modules may not function correctly (or at all) if
+> secmark and/or netlabel are silently disabled on them, and the end
+> user needs a better way to express intent.
+
+I'm open to suggestions. Would boot options lsm.secmark and lsm.netlabel
+be sufficient to address your concern?
+
 
