@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-848832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86293BCEA80
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:03:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49476BCEA89
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4381F19E7D3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:03:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75AC24E48E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02DF26CE0C;
-	Fri, 10 Oct 2025 22:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VbcUIB/A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156FB26D4C3;
+	Fri, 10 Oct 2025 22:03:57 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5AF264614;
-	Fri, 10 Oct 2025 22:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F40B264614;
+	Fri, 10 Oct 2025 22:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760133806; cv=none; b=SH7iHFS2dvXFNbWI83x/yaGUEMp263T8LBwIsChUWdmJdItUDx9zHRCyfFT6REbxWBl1VCMrG3pid0DAXInVPQzFvU/QJanNU2Kbu7kzQdTm39H3YDNGNBWvbaWl0/SsjRX+l8oVhq5ogpWxIO1Q8lSdmCoDLkKldr82z6f9pS8=
+	t=1760133836; cv=none; b=PgcRW/16Vs31Bgh8flFu+F7+e1Aruwv3jqhQDOXnm0qmidCOBias8WvwlBa0S7h51MLua3CGI95SaG9Lnkh7z1Gdz5HoRiL0bMDyx3AXfsTPUdTvbInT27CPAvE3Es5qiIkyE+MBbFIGXM4+uv+SIkZNYVO2rSg2ub1JvWSaWlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760133806; c=relaxed/simple;
-	bh=evq7KJC3SkQwvHwE0wNIuv0UzWRVw71S/m1wT8vCslA=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=mthRXztvzZMu/SiMhr4iT/TQIaqoT8+4UgdJuGwpMpenPnvqn7T//Jo6WO+mvmoNvQeqsavehH1FnusBVzZL/9hN506mmp3CtxpsEZeeWA8PPcf3tdX0SIAoN8yXMx4tEEq2KOsoB84KeW7GvNNAtYTW8hKEBCD1gApCoTdjOGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VbcUIB/A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA65C4CEF1;
-	Fri, 10 Oct 2025 22:03:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760133805;
-	bh=evq7KJC3SkQwvHwE0wNIuv0UzWRVw71S/m1wT8vCslA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VbcUIB/Ac0WEQXNEFE8FPrdF0VjzbYDFX6speK0X2FO8k/4gyPhFiqr0Fgi8k66c8
-	 ACmLYVaPonWC3CFNTM+UR6eaYEW64seNRay9ue65Nnt7ewLqTTseBgQwiX+dZ07Wnw
-	 Z7tC9JREF/mpeeuuGqfid8UrGt5X3ixovjk1vzkA=
-Date: Fri, 10 Oct 2025 15:03:23 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.18-rc1
-Message-Id: <20251010150323.2d73ad0f6fa1c49fbb7d9870@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760133836; c=relaxed/simple;
+	bh=WAQH2h36TSL7hjHlp7jybFBleTDmQfIXfTTqppPG6/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p4zbfHIZ3ioEVNXE22AzR9RgxRnqB6Ie/2MSx7rw7kZH67jqSs8lOXzBRmIo95/nLLmFeylTXsoBQ5s3Tl0AU2K+bbjaAgJOodKUkWiXuR7pgwZsoPrwaFh/tfFLRgtPvRW3Bz2/tXgU2kgMPl4FBDk7y36fRdQpcsTCj4AfAmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.106] (unknown [114.241.81.247])
+	by APP-05 (Coremail) with SMTP id zQCowAAXfRa2gulo4BSFDQ--.31232S2;
+	Sat, 11 Oct 2025 06:03:35 +0800 (CST)
+Message-ID: <0d50502a-0709-49ea-b412-927c17f15b60@iscas.ac.cn>
+Date: Sat, 11 Oct 2025 06:03:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: interrupt-controller: add UltraRISC
+ DP1000 PLIC
+To: Lucas Zampieri <lzampier@redhat.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Charles Mirabile <cmirabil@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Krzysztof Kozlowski <krzk@kernel.org>
+References: <20251009082013.1331361-1-lzampier@redhat.com>
+ <20251009082013.1331361-3-lzampier@redhat.com>
+ <9ae53c6d-613b-4a25-b672-88ffabfef4fa@kernel.org>
+ <CAOOg__BTJw53uTK4h_o4GK6x2D0XutTSQMpb-BDXh22Ac0-q-A@mail.gmail.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <CAOOg__BTJw53uTK4h_o4GK6x2D0XutTSQMpb-BDXh22Ac0-q-A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAXfRa2gulo4BSFDQ--.31232S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr4UAF43WFyxCrW8Jr4rGrg_yoW8ur4UpF
+	ZruFyqyF4vvF13u3yIqa10kayI9FsxJF9rKrs0qw45CF1qgr1rXFW2ga15CFn2vrs2qrWj
+	yF4I934fJa42vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvGb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+	C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjxU2wIDUUUUU
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
 
-Linus, please merge this batch of hotfixes, thanks.
+On 10/10/25 21:57, Lucas Zampieri wrote:
+> On Thu, Oct 9, 2025 at 9:39 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 09/10/2025 17:20, Lucas Zampieri wrote:
+>>> From: Charles Mirabile <cmirabil@redhat.com>
+>>>
+>>> Add a new compatible string for UltraRISC DP1000 PLIC.
+>>>
+>>> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+>>> ---
+>>>  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml        | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+>>> index 5b827bc24301..a419de50f5a8 100644
+>>> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+>>> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+>>> @@ -74,6 +74,8 @@ properties:
+>>>                - sophgo,sg2044-plic
+>>>                - thead,th1520-plic
+>>>            - const: thead,c900-plic
+>>> +      - items:
+>>
+>> Missing SoC specific front compatible, me thinks.
+> Right, if I'm understanding this correctly, I would need to add the
+> sifive,plic-1.0.0 fallback compatible to indicate register layout
+> compatibility. However, the DP1000 PLIC has a claim register hardware
+> bug that breaks interrupt handling without the driver quirk. Should we
+> still include the fallback even though the generic driver doesn't
+> work?
 
+See what the thead,c900-plic thing is doing. The PLIC compatible should
+be SoC-associated model, and then CPU-core-associated model.
 
+(I guess *theoretically* the PLIC could be external to the CPU but it
+doesn't really make sense to design a core this way.)
 
-The following changes since commit 7a405dbb0f036f8d1713ab9e7df0cd3137987b07:
+Supposedly [1] the cores are called UR-CP100, so it should be
 
-  Merge tag 'mm-stable-2025-10-03-16-49' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2025-10-05 12:11:07 -0700)
+    compatible = "ultrarisc,dp1000-plic", "ultrarisc,cp100-plic";
 
-are available in the Git repository at:
+And the driver should match on ultrarisc,cp100-plic instead.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-10-10-15-00
+Vivian "dramforever" Wang
 
-for you to fetch changes up to f52ce0ea90c83a28904c7cc203a70e6434adfecb:
-
-  mm: hugetlb: avoid soft lockup when mprotect to large memory area (2025-10-07 14:01:12 -0700)
-
-----------------------------------------------------------------
-7 hotfixes.  All 7 are cc:stable and all 7 are for MM.
-
-All singletons, please see the changelogs for details.
-
-----------------------------------------------------------------
-Jakub Acs (1):
-      mm/ksm: fix flag-dropping behavior in ksm_madvise
-
-Lance Yang (2):
-      mm/thp: fix MTE tag mismatch when replacing zero-filled subpages
-      mm/rmap: fix soft-dirty and uffd-wp bit loss when remapping zero-filled mTHP subpage to shared zeropage
-
-Ryan Roberts (1):
-      fsnotify: pass correct offset to fsnotify_mmap_perm()
-
-SeongJae Park (1):
-      mm/damon/vaddr: do not repeat pte_offset_map_lock() until success
-
-Shakeel Butt (1):
-      memcg: skip cgroup_file_notify if spinning is not allowed
-
-Yang Shi (1):
-      mm: hugetlb: avoid soft lockup when mprotect to large memory area
-
- include/linux/memcontrol.h      | 26 +++++++++++++++++++-------
- include/linux/mm.h              |  2 +-
- mm/damon/vaddr.c                |  8 ++------
- mm/huge_memory.c                | 15 +++------------
- mm/hugetlb.c                    |  2 ++
- mm/memcontrol.c                 |  7 ++++---
- mm/migrate.c                    | 23 +++++++++++------------
- mm/util.c                       |  3 ++-
- rust/bindings/bindings_helper.h |  1 +
- 9 files changed, 45 insertions(+), 42 deletions(-)
+[1]: https://ultrarisc.github.io/ultrarisc-devblog/2025/06/18/dp1000-spec/
 
 
