@@ -1,148 +1,148 @@
-Return-Path: <linux-kernel+bounces-848709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B38FBCE647
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D877BCE65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC7B19A800B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DAA19A7C3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D2F273800;
-	Fri, 10 Oct 2025 19:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304B2301030;
+	Fri, 10 Oct 2025 19:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkNCtU8Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4DtP1zW4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2BD23A9AC
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 19:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD531D6193;
+	Fri, 10 Oct 2025 19:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760124638; cv=none; b=agR0xdxzWVDXOfzPC+oI+evqhl6PCxhIN0orGF3HPy+v2Ozf13wuJewoWjq6lcuGSOONJBuAXbbW0yDVLaAASB6MsbNdmgIqM+FIScRGwI7xAKloRTz8zLnUlJxK00yHEAV/0pLDdHPJNdJaGcPRngiBLSQ6fj6qObpuwb5VQGc=
+	t=1760124691; cv=none; b=aTihdudJj5RkQ/gqgcsYHVtjYRy46OpxX4AqrvCaknqL4ofOphpuhuZOMMbXxu5izlWGMMU7Cl3EBAPshxJht+yXurkWJq9IqFFRk3IF9MA5Zoig1/+hoc+hEKma6Oz3QWFfACI+231uCoY8BoFeYw9yrEh6lCQAMUTpFh1mcrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760124638; c=relaxed/simple;
-	bh=UO7tWaC1D06ILgslhIE6Vp+GGNOSccu5h6NsvDEB6bI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sXLxM6PEwee44JPOmPjv2bGknBxL4J2OVbdFL1GOGnRT94+Hp1sdqT+t4rUVfEBSMBPn1H0w9jU52gxQYJw90TZCOZTeUBLvvn39YTl0R01mh1OZVtz/U/IdcKDe7rOoeXSOMQ1GgUqmna0Bc094uM5MW7VyPRK6TTkPjln99k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkNCtU8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76778C113D0
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 19:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760124637;
-	bh=UO7tWaC1D06ILgslhIE6Vp+GGNOSccu5h6NsvDEB6bI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RkNCtU8QTeCBdWpLHhNr8JvrU3SuLc+1RKV/B5DWkkchSXpVbewLPEGu9PteSIC59
-	 3QdUV0p1QZHp+XhVjKliK0wvXSdB1RU5a+CyZxjimdAkkEp5C2xHmsIcspGs72E0Lk
-	 cyObdDJQL2lwFThzP/75aTtYq1Rg+WwTXzxuf5I/WZflCtsZ6JwrjI1V1vO6mFvs05
-	 WXMcevad9JypeFhT7/uwXWjFcL+u+BZQ80FRHRXSyCarsMyxQ97kXJWkBlv02hVeDW
-	 nUw04T6EMyGqqoQYGxSvUHP+TG9k6oSLAKGh4+rIvWYp5GUXc/FJOhGX6qNXxLvulc
-	 NRaGMKALZ1/8g==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso4465795a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:30:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVGqijJvtTcKpaTcFk+AzwPx/HATh4K/6rSzLf1+iwmo1qjbKFiIn5ul1V4qMo9rTe1FA77C6PEUD3QkBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI0bYyODQ0W5Y4Bbi9OgCFxqJXuRiMxQwocq6yV3YY4drTq7Uf
-	UOohqm+PF8EDBVFjQsLoZGwGZxUwC4bix+4HbEFmIcLfIAGW+ja3+4l5odQ/RNNplWJwZeZx2U8
-	FQxqAnuocWJmwPt696VVuyLtQzOa0FA==
-X-Google-Smtp-Source: AGHT+IFrGZS8VdfbsjL7y3HXA+QaopPkTmxI0XGy8rPLFJbEh/CBDAxBRtvMMLAceU+RXRafaXg83rsGiK6CrH/c2zI=
-X-Received: by 2002:a17:907:3e8c:b0:b48:4966:91a5 with SMTP id
- a640c23a62f3a-b50aba9e585mr1400916466b.30.1760124635939; Fri, 10 Oct 2025
- 12:30:35 -0700 (PDT)
+	s=arc-20240116; t=1760124691; c=relaxed/simple;
+	bh=AiHgADCO575LW3Jd7nNp0VaAAqwI7NoyKpnJZKEjRNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O1nlNCr8ge9BgMV1re6mdCNuEKmFczV6jlELXEbEzksmrFykCR/+KQWcWxH1FEofGG9rfdzyM4nvg4nYVP0am7wSsS7Ko8ZlwUVnUpyPqnBc8XGVLYu6txNNwlgjYo2AaEcvVpGCR0IIxDQf2gBagtxZrJMIYTdyoTTHya0WxRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4DtP1zW4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=PCNi5/OuVnRwhbzGyuTsh6ukiwTm+O6EJKLlJ1B2gEw=; b=4DtP1zW44Vb6QBKbJyt2gzFny1
+	yvoH5OtVcCy5Ms02majpKQ1uofu1fe3sIP/2IwWe1pCnQE1bX/8S8BSzkwIvvlSHeCqkZdgpfQzr9
+	l1DJFzOWWnoL1D328ZjMcbAmNQAJvPWCjCuiLz0JQmgF36GPQmgapZSILT2ZZnvEKTjGFe4YT7Bnw
+	ooE7Hco/w4VVet2bxVfVNpG2TcG1kU6a8lC9wtEY55wtgG6NGbFAcZ99cGEbz9k7PPnniY3FpdeAu
+	ZxsMIKZ7IfV2CP/X40W2eXqppC5Ws+ANhxeYX9gxltQ7OeitlW10UYQMb6/T8ERzySBkf2wXv9sGm
+	b7s1whdw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v7Ipn-00000009FkH-15gP;
+	Fri, 10 Oct 2025 19:31:23 +0000
+Message-ID: <07ae142e-4266-44a3-9aa1-4b2acbd72c1b@infradead.org>
+Date: Fri, 10 Oct 2025 12:31:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926-ethos-v3-0-6bd24373e4f5@kernel.org> <20250926-ethos-v3-1-6bd24373e4f5@kernel.org>
- <aNrVwn1ibQmB/rKJ@lizhi-Precision-Tower-5810>
-In-Reply-To: <aNrVwn1ibQmB/rKJ@lizhi-Precision-Tower-5810>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 10 Oct 2025 14:30:24 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJkOVOVNvnePGE5G0HmbxxXPK1a=1qjOEk-G4ZZ3wf6Ew@mail.gmail.com>
-X-Gm-Features: AS18NWBBQSTOplEO26OgX73Pts2y8G-I5Seb0FzonJgu4d7oZEgcPiz1tLe4anM
-Message-ID: <CAL_JsqJkOVOVNvnePGE5G0HmbxxXPK1a=1qjOEk-G4ZZ3wf6Ew@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: npu: Add Arm Ethos-U65/U85
-To: Frank Li <Frank.li@nxp.com>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
-	Daniel Stone <daniel@fooishbar.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] initrd: remove deprecated code path (linuxrc)
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Alexander Graf <graf@amazon.com>,
+ Rob Landley <rob@landley.net>, Lennart Poettering <mzxreary@0pointer.de>,
+ linux-arch@vger.kernel.org, linux-block@vger.kernel.org,
+ initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+ Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>,
+ Arnd Bergmann <arnd@arndb.de>, Dave Young <dyoung@redhat.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Borislav Petkov <bp@alien8.de>,
+ Jessica Clarke <jrtc27@jrtc27.com>, Nicolas Schichan <nschichan@freebox.fr>,
+ David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
+References: <20251010094047.3111495-1-safinaskar@gmail.com>
+ <20251010094047.3111495-3-safinaskar@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251010094047.3111495-3-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 29, 2025 at 1:54=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Fri, Sep 26, 2025 at 03:00:48PM -0500, Rob Herring (Arm) wrote:
-> > Add a binding schema for Arm Ethos-U65/U85 NPU. The Arm Ethos-U NPUs ar=
-e
-> > designed for edge AI inference applications.
-> >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> >  .../devicetree/bindings/npu/arm,ethos.yaml         | 79 ++++++++++++++=
-++++++++
-> >  1 file changed, 79 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/npu/arm,ethos.yaml b/Doc=
-umentation/devicetree/bindings/npu/arm,ethos.yaml
-> > new file mode 100644
-> > index 000000000000..716c4997f976
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/npu/arm,ethos.yaml
-> > @@ -0,0 +1,79 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/npu/arm,ethos.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Arm Ethos U65/U85
-> > +
-> > +maintainers:
-> > +  - Rob Herring <robh@kernel.org>
-> > +
-> > +description: >
-> > +  The Arm Ethos-U NPUs are designed for IoT inference applications. Th=
-e NPUs
-> > +  can accelerate 8-bit and 16-bit integer quantized networks:
-> > +
-> > +    Transformer networks (U85 only)
-> > +    Convolutional Neural Networks (CNN)
-> > +    Recurrent Neural Networks (RNN)
-> > +
-> > +  Further documentation is available here:
-> > +
-> > +    U65 TRM: https://developer.arm.com/documentation/102023/
-> > +    U85 TRM: https://developer.arm.com/documentation/102685/
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - fsl,imx93-npu
-> > +          - const: arm,ethos-u65
-> > +      - items:
-> > +          - {}
->
-> what's means {} here ?, just not allow arm,ethos-u85 alone?
+Hi,
 
-Yes, u85 support is currently on a FVP model. The naming for it isn't
-really clear yet nor is it clear if it ever will be. So really just a
-placeholder until there is a chip using it. It keeps folks from using
-just the fallback.
+On 10/10/25 2:40 AM, Askar Safin wrote:
+> Remove linuxrc initrd code path, which was deprecated in 2020.
+> 
+> Initramfs and (non-initial) RAM disks (i. e. brd) still work.
+> 
+> Both built-in and bootloader-supplied initramfs still work.
+> 
+> Non-linuxrc initrd code path (i. e. using /dev/ram as final root
+> filesystem) still works, but I put deprecation message into it
+> 
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  4 +-
+>  fs/init.c                                     | 14 ---
+>  include/linux/init_syscalls.h                 |  1 -
+>  include/linux/initrd.h                        |  2 -
+>  init/do_mounts.c                              |  4 +-
+>  init/do_mounts.h                              | 18 +---
+>  init/do_mounts_initrd.c                       | 85 ++-----------------
+>  init/do_mounts_rd.c                           | 17 +---
+>  8 files changed, 17 insertions(+), 128 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 521ab3425504..24d8899d8a39 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4285,7 +4285,7 @@
+>  			Note that this argument takes precedence over
+>  			the CONFIG_RCU_NOCB_CPU_DEFAULT_ALL option.
+>  
+> -	noinitrd	[RAM] Tells the kernel not to load any configured
+> +	noinitrd	[Deprecated,RAM] Tells the kernel not to load any configured
+>  			initial RAM disk.
+>  
+>  	nointremap	[X86-64,Intel-IOMMU,EARLY] Do not enable interrupt
+> @@ -5299,7 +5299,7 @@
+>  	ramdisk_size=	[RAM] Sizes of RAM disks in kilobytes
+>  			See Documentation/admin-guide/blockdev/ramdisk.rst.
+>  
+> -	ramdisk_start=	[RAM] RAM disk image start address
+> +	ramdisk_start=	[Deprecated,RAM] RAM disk image start address
+>  
+>  	random.trust_cpu=off
+>  			[KNL,EARLY] Disable trusting the use of the CPU's
 
->
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+There are more places in Documentation/ that refer to "linuxrc".
+Should those also be removed or fixed?
 
-Thanks,
-Rob
+accounting/delay-accounting.rst
+admin-guide/initrd.rst
+driver-api/early-userspace/early_userspace_support.rst
+power/swsusp-dmcrypt.rst
+translations/zh_CN/accounting/delay-accounting.rst
+
+
+Thanks.
+
+
 
