@@ -1,155 +1,129 @@
-Return-Path: <linux-kernel+bounces-847774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E86BCBA8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:51:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3562BCBA9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACC91880233
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:51:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 29F8A35065F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4689823D7D1;
-	Fri, 10 Oct 2025 04:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDA1247284;
+	Fri, 10 Oct 2025 04:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hVGgvavC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jJlEjJTp"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38427154BE2;
-	Fri, 10 Oct 2025 04:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA481238175
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760071857; cv=none; b=RxH91qASKCZIuk+NO3lZOQpoP97cKiLRJTEmiVnt1D/Kpdg/TmI5zbYq59qNzV+JRgbu0vac/DCz25x5JRDEDf2PKSpna+pk5lIM50gATlzv8XRRry7VwS61HBGsKxUQIrOLVxfr7+bRmtmql9oLUqp7aSaqlJZVNAqpuAmpewI=
+	t=1760072174; cv=none; b=B+fWLaNv94vBQ2DVye2ctJpinTRLd0D2YqfFJ3hq1ZTlpe4FCrnCSTeXOHUI+b+dL8Tw5fhOSooNAJNz1/pFnzCL1Sk2tx2q9h9O28W27JIaqhrPHiSpv+CXzOfsnHnwtWcIii0oAastNdx1xUD3G6wYLCfFUQVVMFo3W5QwqgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760071857; c=relaxed/simple;
-	bh=0kWQqlge3ibfIqKIb57H5DjAi9xf8KkSBmcp8QEH+sQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k9Ujv38NjfU8BDhCrKbFFm1Vs0cUrVxNo0B+/Euthd2rrfm25Oqh397G4eqId1HYPfY5T6Hy45Fc+PdEtDPpjNwib1kW3DBhktdS9hK0VhmqJJ/Rtjj4/7COtw13Acn3T/OlZVLdS8yZgDK/GUFYtU6BOM5w2v2IYOKqA5cOvrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hVGgvavC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=bw05gP/ShEPDLsMfaMo0V/ALc/pLmaUkqTajQJOIQFs=; b=hVGgvavCheCaOVYbPfkzU83MpO
-	SZ4fWzf9xft5XP/lNwWcRqRGxzOCB3cWnUFo3jnQ4gmCJURfLhoGiZEHzNGuxcq6jYmrGL1h1HNKf
-	LjEtsiVZycD4vK6FEZvZjVfu73ZlBLPgWCQZEJwuIPPEnjpLO+45lz0q+Rj9LhqhTcZmnQ5tJfWqf
-	DZe+IM8ptph9S8EQWGYPeqFBpZTqZQKwZRoLxd7v4Df5gQCyllnvuqOTKLpkk1TAm1S8qvj6DoO80
-	B8XGA+8ahwUwkfslP70jZYc3bB8jrg0kUh/FW2/2RxEGZnyrIAJADSSjwVxEz8wr8VTPg+lMG4Sqb
-	K4f3mfaQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v755f-00000007fy5-013p;
-	Fri, 10 Oct 2025 04:50:51 +0000
-Message-ID: <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org>
-Date: Thu, 9 Oct 2025 21:50:50 -0700
+	s=arc-20240116; t=1760072174; c=relaxed/simple;
+	bh=BXQBEg49WGrsvFjprcDLou8kFWrRywhvTMF300kqw/0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=GoqYssNNmpe3woSNqe1Vbv4AF5m8YlQAJxNozKU1Z1+Fv+tk0KN38wYJR+gu1Wb5QMvaA6DReT/3wS68QwFkYHLGyvW186qK/JiqJsEcbNyJBrhlhmerjZnQVE1KbPHn84x5ZhutJxKNdPwM0NYGI7XUtTYQg10f/lJpsKp4q7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jJlEjJTp; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251010045604epoutp020567543aa9ffdc5d5de7c3e0efdb6a4d~tCE7XqJS72066720667epoutp02V
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:56:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251010045604epoutp020567543aa9ffdc5d5de7c3e0efdb6a4d~tCE7XqJS72066720667epoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760072164;
+	bh=b96lHOK7OOj9AgDqZ6liSCCMlFccuKNhL36Drok74AE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=jJlEjJTp5sq57ROgGm3SWlApL12iSHqaj1ZbI6qq+WRcptfj+qZv/BkrqBRfmdWoj
+	 WvTgmBaoyC+oOpFea+UpqRBUZ5dFLq/IIGN60LO9y/EgOfWwCdPm8xvpkbMXL622eu
+	 CbOb58rmLk7VrljvIGzseAayWQYJ5d1NehI8HocM=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251010045603epcas5p100e8b22da565c8ddedc855e3eee2a63d~tCE639vYj2303523035epcas5p1O;
+	Fri, 10 Oct 2025 04:56:03 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cjZFZ2QhXz3hhTD; Fri, 10 Oct
+	2025 04:56:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251010045601epcas5p29c5dc8d86df33b732d285b1ab7821bfd~tCE5MyevZ0899008990epcas5p2H;
+	Fri, 10 Oct 2025 04:56:01 +0000 (GMT)
+Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251010045559epsmtip1ef22b9497c9caa63d35fb46e3b9ed6e6~tCE3gwKOS3107331073epsmtip1L;
+	Fri, 10 Oct 2025 04:55:59 +0000 (GMT)
+From: "Faraz Ata" <faraz.ata@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <andi.shyti@kernel.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>
+Cc: <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>
+In-Reply-To: <4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
+Subject: RE: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
+ exynosautov920-hsi2c compatible
+Date: Fri, 10 Oct 2025 10:25:50 +0530
+Message-ID: <000001dc39a2$2cf5e570$86e1b050$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
-To: Thorsten Leemhuis <linux@leemhuis.info>,
- Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
- Sean O'Brien <seobrien@google.com>
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
- <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com>
- <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHZnjCsweC3oVP5Ejv6M2pHGPEXvgKyFlopAbdTD1i0nLvhcA==
+Content-Language: en-us
+X-CMS-MailID: 20251010045601epcas5p29c5dc8d86df33b732d285b1ab7821bfd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336
+References: <CGME20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336@epcas5p2.samsung.com>
+	<20251009101911.2802433-1-faraz.ata@samsung.com>
+	<4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
 
-Hi,
+HI Krzysztof
 
-On 10/9/25 7:43 AM, Thorsten Leemhuis wrote:
-> On 8/19/25 01:08, Jonathan Denose wrote:
->> From: Angela Czubak <aczubak@google.com>
->>
->> Define a new structure that contains simple haptic device configuration
->> as well as current state.
->> Add functions that recognize auto trigger and manual trigger reports
->> as well as save their addresses.Hi,
->> Verify that the pressure unit is either grams or newtons.
->> Mark the input device as a haptic touchpad if the unit is correct and
->> the reports are found.
->>  [...]
->> +config HID_HAPTIC
->> +	tristate "Haptic touchpad support"
->> +	default n
->> +	help
->> +	Support for touchpads with force sensors and haptic actuators instead of a
->> +	traditional button.
->> +	Adds extra parsing and FF device for the hid multitouch driver.
->> +	It can be used for Elan 2703 haptic touchpad.
->> +
->> +	If unsure, say N.
->> +
->>  menu "Special HID drivers"
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Thursday, October 9, 2025 3:43 PM
+> To: Faraz Ata <faraz.ata@samsung.com>; andi.shyti@kernel.org;
+> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> alim.akhtar@samsung.com
+> Cc: linux-i2c@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com
+> Subject: Re: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
+> exynosautov920-hsi2c compatible
 > 
-> I suspect this change is related to a build error I ran into today:
+> On 09/10/2025 19:19, Faraz Ata wrote:
+> > Add "samsung,exynosautov920-hsi2c" dedicated compatible for HSI2C
+> > found in ExynosAutov920 SoC.
+> >
+> > Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+> > ---
+> > Note: This patch was previously sent separately. Resending now as part
+> > of a two-patch series to avoid dt-binding check error. No functional
+> > changes from the earlier submission[1]
 > 
->   MODPOST Module.symvers
-> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
-> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
+> It's not necessary. You only need to provide lore link to bindings in patch
+> changelog. Read carefully report you received.
 > 
-> The config where this occurred had this:
+> Also, do not resend non-fix patches during merge window. It's just noise.
+
+Thanks for your comment
+I will send v2 of dt patch with lore link to binding 
 > 
-> CONFIG_HID=y
-> CONFIG_HID_MULTITOUCH=m
-> CONFIG_HID_HAPTIC=m
 > 
-> Changing the latter to "CONFIG_HID_HAPTIC=y" fixed the problem for me.
-
-Sure, but that's just covering up the problem.
-
-First, I get this build error:
-
-ERROR: modpost: missing MODULE_LICENSE() in drivers/hid/hid-haptic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-haptic.o
-
-so I added those to hid-haptic.c.... and I still get that same build error.
-
-So I looked at the hid-haptic.o file, in the .modinfo section,
-and saw this:
-
-Disassembly of section .modinfo:
-
-0000000000000000 <__UNIQUE_ID_modinfo569>:
-   0:	68 69 64 2e 6c       	push   $0x6c2e6469
-   5:	69 63 65 6e 73 65 3d 	imul   $0x3d65736e,0x65(%rbx),%esp
-   c:	47 50                	rex.RXB push %r8
-   e:	4c 00            	rex.WR add %r13b,0x69(%rax)
-
-which is ASCII " h  i  d  .  l  i  c  e  n  s  e  =  G  P  L".
-
-so the license string is there.
-
-Maybe something is modpost is having a problem.
-Unless someone who has modified modpost recently has any ideas,
-this needs a git bisect, I expect.
-
----
-~Randy
-
-
-
+> Best regards,
+> Krzysztof
 
 
