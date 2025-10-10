@@ -1,304 +1,232 @@
-Return-Path: <linux-kernel+bounces-847808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE64BCBC7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B284BCBC8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C513BD9C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:27:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CB8403408
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239D72376FD;
-	Fri, 10 Oct 2025 06:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB6E24466D;
+	Fri, 10 Oct 2025 06:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="oJYXMx0Q"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013047.outbound.protection.outlook.com [40.107.201.47])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZS/Du9ps"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D684A06
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760077640; cv=fail; b=u6+tV/AQ+hIXeofSj/ktpG/vYB9zkxxX/Li3ZF4zNYubnp6PfBE8k4DYOZiZSGPx7qj+od6qiy9P/jdCheEw8E0vo9yJtrzcjSytRoFEuVzHthD4zamT7hSc4zp3mETS+zhq3jNVIxa91vrDmJhgNtEv7ijm1FEDuabE0yaFVHw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760077640; c=relaxed/simple;
-	bh=a83p9dET9/VwfpCMh+pWs/MThOOYCA7jIsGFsfjTBnw=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mVv7rf7+DVzCAKwVhgc/Jy/8KZTFJwrhtU7i1RtIZHQgEZVjBiIwa+0R2iHR3M6P3tHF5qxkm07GMi3+LaTzCnxO/Tom44F4UfgJjg6OrPafXoEZk8HFSG1u3tjbqJvz00jeGudqS+DES4iUe2VihIqt4mPXFqeH349o8Q3VF3c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=oJYXMx0Q; arc=fail smtp.client-ip=40.107.201.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TMcCiO/JqInyIJLB8DXpZW9f9frWc9U2FUlFJ0Dpt7FM6Zr3T7Rw4KC8QiDp4lvD50Kzn7t5xqQXFavZrxFXR8ECNXhKaFQhWafYjXcREzF7I+9EKrRLnsVW2Ok4bDVFiO/Hz0UUskfSPayn6lvvL+eaj6HPCtiEp/dJD9CP3HVcSW7ykka2kI0K8V0JVYhU0azGhBfTBF8C87agnOLk/MxCrUF7ehcTOC7x8wGqOOkAgsubzmvHes/sPwmMzKm/0S7jv2ZilqYEiEY5gfdAOvd/ymj1bRsohnxjyeQmJfSNALC/2aoEmyAbh9sHFRMlWP9Qjxl6OOtOi+0dEEWMBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=osVjU6/3HvPxoKbGOzab4V9/CWq3EJ0SikkkdAGPHyo=;
- b=gyL18qykD1YITy8q+/VTuCGpvtIhAJRtBpbPGEuC4AGonpFs9NirDImeAMuD4+NUGc3Yfwgz2PZlx3Lx0oGLEhuewQmeH19YN89aPbhCOtzn/ZYgQq4ULwJTyVGSSbgAfYmI6U+zbq1RNnXKYoVrmWZQEHCdkvbMfZgRolEAFmqPqw6EAGIeWh7yRZjBYzicjKAFzgMI3l8CTEmI5PjyAA0yKQ39gaGAfGNwVrD13CUlH4Xi68mTCZA3hqaBmF9FT/lsCcUfMmBF1a3OXRHmYVvLL2cU7Sw060hEkBbIFVlQpXVQ21omvggaENJ3AnIOL8U7pdwMfghXAbTylN19jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=osVjU6/3HvPxoKbGOzab4V9/CWq3EJ0SikkkdAGPHyo=;
- b=oJYXMx0Q/OaQ/vjSLrApgucyBlRh7Zlqo9uf3KjU4xLOgIp05YZ+Ql2i9V85TqyPYrH3K2eLzXhlzVqpHhaHfWQhVw8igFONrHSSz5BZowj9ZZ9oo3GEFcMMXPXytAxamUNPFyCf8n4vUwnJarFK5r47EM8iYJ9TRe6yZ9RtFZnV6ZnePmb5+qSyP+PvwVWI1bNJ6b+WuCnaRWntGoe+nKPXNkoCp38veWBgT/TfOuSNUkXRec9xxqOG20aozpH1xpJGYKCKs5Unz3lHTeYMb90CpwzWTFy/A1fWgpuk+sWnIBmTcy7LSyQfXfG4d+tLxpYNbzLjGgzlrQG3wVX90g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by PH0PR03MB6656.namprd03.prod.outlook.com (2603:10b6:510:b6::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
- 2025 06:27:15 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
- 06:27:13 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	linux-kernel@vger.kernel.org (open list:INTEL STRATIX10 FIRMWARE DRIVERS),
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Subject: [PATCH v4 1/1] firmware: stratix10-svc: Add definition for voltage and temperature sensor
-Date: Fri, 10 Oct 2025 14:27:09 +0800
-Message-Id: <5797fa3875f39c30ab5c942310abc913344335a6.1759914326.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1759914326.git.khairul.anuar.romli@altera.com>
-References: <cover.1759914326.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0067.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::12) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACCA247284
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760077646; cv=none; b=eLnZ+BeBjv5xNhw7XYVtBIyhvLsqfJxeCRGLTuSAyIi5HnpYeC6Kszs/63/YjIUzblcvge3p+2YyPLeCeAhHPfmkq//BusCqUiFyXi6BxTGvCfIXDBSEg4wnUtFUu8yrfkGPKqNr+Q4O6yWI3f3xjVmHJOAFaF4fRHGeSkeR0g0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760077646; c=relaxed/simple;
+	bh=pnGq//BMmE5bY73Ar2fzVMMFUkllb6bB1zHYfLKr9oI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ss/mHedwGSJnD2AEypHRNJYQclp9N/UO0KS3hK1vdaRkx+rFoTh5M+JdaZ13UbthLdQx+2U9k7jSxhwmpd1J/KOVS+lJEpmBeMYloFWIQKxElXCEYSidtKreobk3ZnD/6v75SCdBLbuoPsnP34V/s5RGU72T5OBach7OlkJRpOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZS/Du9ps; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6J1SO007029
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:27:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=8KOlJ1KeODNmXdXyLJpBfhqY
+	iV7WSitTJL7ZDmq9RSY=; b=ZS/Du9psdphoUphP4v5iSES+PKhNKQ+r2OENk8JG
+	9Tlubmfx4AzXz0g2xsn4SQCq2mBJySL1YqJakn4eeIBjEJS/gzgD6Ys7GhCJ95ca
+	PzzMHvw1pHub3PQqO7hm/v6X1R1MbyXtozpe49V/35ykvDP+2FZKz3fbiiWt0viO
+	wgi+8XiphatwvH5b0YgfCb+T1tBAiRDefzM2MPY2oA5mVYk0r6iV7QY7R4g1D/5H
+	r+wmeiAgxf1q/vESbVCJC2onK/PfcT2ZL70rYQpreJJeEmIzLk4zR8ypo1Vn2Rg0
+	0mWMG3GGRDTSyMLDtIxjCiXhO1VQwPur/JUlGLW3T6Z26g==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49pgdsst8a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:27:22 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-28e8112143fso42275095ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 23:27:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760077641; x=1760682441;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8KOlJ1KeODNmXdXyLJpBfhqYiV7WSitTJL7ZDmq9RSY=;
+        b=qVye3xh+QRjpy1rQS3HHkhvL/0EbdqsS6NbSCsd9TIUZ90omTxqK8BcNCxLKhEJlwr
+         k9ekjNox0g2txX288CGfD4IxeEQzr3p/FTgA1hQalYBXdvuxmLzhWSid/kbfn8djqXlG
+         zXP/kyxe3cMCmChmPvGJYU3RpdyvWNYzx9CZ3d+SREgWXCU1OcSeezhB7EER8Wb/nvg0
+         b34zv891YkSXW1rC2E5sk6ln2SC3EPZxJN3F0H33kq7CuubXWXPRaBPhzHyBCjgTaPQ2
+         i28YkeSWdoHhuGepdWALTZlzpM/zwb2gmjpyVZmzd20eMkylUfPVLq6wuutODUKsGyjF
+         xeAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAV9YwShhJByVoZIXDVmg6NketgJyHDthEiynrRNV9wg2PS0wSl2qQU8wsOd15cU/nL9eb003WKNZNe0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRWZ14jQ9lCS00pEr1/D/nH86x6xNQFrpe7O9uylNiHg5PT57o
+	fzRgC5lZz9LUEE6UBY9x4/qEAzNtfJzowMVID15tQT9eHOzqj2GgmTv+VBtjdR73Cc9GSSFQEVV
+	B6ML26+In+BKKTVu4IWFK700QFyPMAyM1T60eADtQNRn9LFRd72rMhYiA9hSX/IllwD8=
+X-Gm-Gg: ASbGnct65kc6Z9+q4cVG9Fx1RYeQfAwAFqoU9pjJ8d4LXfdGXsJJCkAMHkv36fG+tGN
+	J1Df/6c5dmsOCm5v++156mnAAvkjkXBK/kZRl1hj2DhSv3o6s55D2rb9twxmI+bl0vbypFuSQu0
+	MAHhFtrGCO2tLyW3c6bSbGijQfiwYW16iiAW6a2pznvcXhf764OAUsJCZuazx1omWsZJaRKEVHx
+	5dG6YdnHdXKDoC+G4eHjQx9IjNt/ijw4SluBwiam/cUZJ7HQ902uvWY7j3IndX78pd+BjXFckMb
+	0zGncuMAx3Ut/BhvhzcSfeGmqOIWgG1FbRmvRQEIebvdegZ48iQOUGc70QP5JVu5uAQ=
+X-Received: by 2002:a17:903:94f:b0:27e:c27f:b834 with SMTP id d9443c01a7336-290272f7e6fmr145372065ad.56.1760077640820;
+        Thu, 09 Oct 2025 23:27:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfC4Z+Rtwh20NJKoWgbMQbKmnRvWnaw1tbJid4gWcGtL7HdfPaybNBG6CJfaeKuWX+dFJFFg==
+X-Received: by 2002:a17:903:94f:b0:27e:c27f:b834 with SMTP id d9443c01a7336-290272f7e6fmr145371765ad.56.1760077640123;
+        Thu, 09 Oct 2025 23:27:20 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de7871sm47073245ad.16.2025.10.09.23.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 23:27:19 -0700 (PDT)
+Date: Fri, 10 Oct 2025 11:57:13 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 12/12] arm64: dts: qcom: Add EL2 overlay for Lemans
+Message-ID: <20251010062713.jff37ulgskv5xllf@hu-mojha-hyd.qualcomm.com>
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <20251007-kvm_rprocv4_next-20251007-v4-12-de841623af3c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH0PR03MB6656:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f8a978f-43cf-4550-916b-08de07c60cf4
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?W5h24PeYU8TY59F0WE4LP2l4j1Si/uvBPGmv3+WS72Gc8Cj4InIIWqsN1AOc?=
- =?us-ascii?Q?gdkrpY0cPQUUjNtTv3UKrn2kKcM7zQHHWWEnsub60jXeoDjMmaEjQhCMlssv?=
- =?us-ascii?Q?acjmf0J4KPzbbpc+URgcDFJSNjwhdES7I8R3TVULDqA67zSzx6j3QUaPiLUp?=
- =?us-ascii?Q?ky/55uyYABZc+oiw3QfT45o7tPGIuFoxcWSWizEZ6CeXp4ab+THWxT4REPlr?=
- =?us-ascii?Q?HOtzruOOtGmuNXD1Y6DPl+wCTju2h7W9ajDxhLu+NQWP+ie4ywKf5On+aF2E?=
- =?us-ascii?Q?vGMB7R7m28Uv6o3xLQ1VM1iUr3uF7yP28+q2losHNkQBTYUkDUMI/YQ10it8?=
- =?us-ascii?Q?oycpZ3+WzsSYgmP7oJsNBw1cU2RJ/IIrlCgGHRd+5dhqXWXuEfWDPEMwxwYm?=
- =?us-ascii?Q?1VPTv6ROc8D0+LIhYrcz9HxvBumMSE1C9J6QfPyW1kmyGN48flUepRkWJjAE?=
- =?us-ascii?Q?sL4VsX9Trr5wTjVYKziBjzklHbp1aydoUXVfPicUD3s2Wbnrps2hhCd/GI3B?=
- =?us-ascii?Q?f388idowU9xqKZAUpiaTmjIWD99ghoOAMo9sp7UN0Xf5/RafyqpPvg08OJwh?=
- =?us-ascii?Q?oA6cxS/OZ2+4ajc0Lt7bjQJV0dJ1i9wYS0w8kXoXqwHSlW2HfDyE+Nd1p7Dd?=
- =?us-ascii?Q?iwJCMejNlXj/m2c9lPAr8oKTZWqF63pF19xovZ+n4u2hfp0MQIAG+YjjD5zk?=
- =?us-ascii?Q?cMruMrlARDctoMAIO+i4CC3iknTqrRTPewThacs4GqbuzvZq44rrfaSvDlpT?=
- =?us-ascii?Q?2oCUc/nukOuZdQcHWGOf4xOFI3OkhTOg/c1pg/hXKylGm3GKJljQhmJ7ywYq?=
- =?us-ascii?Q?PAf4ouLrNFT6ma+Xg9LotTp4Hpbc4X9XfGBWAMbOuQX/RnFWpMLdbLnzoFdQ?=
- =?us-ascii?Q?1LHuqR8o5ue7mv3A/RbYZXKFidWuL993ADkcdNyxREY7ZxbtrsRon5yCTquH?=
- =?us-ascii?Q?H81+i7XWOW3cagVWwZU+UNZtncmeJMoEePe+9hMbiWr7afU+rGjoKRDVHOvP?=
- =?us-ascii?Q?ytyYypVpT7Xg2QJ40//gLSRjNbUAK1pcT/8dPep+NpZ8MzabvMvAjGrmv934?=
- =?us-ascii?Q?RTkNPFAtQAazrvz2zpBEgM4fcafW6SRIcdqa7q7+ZdX97alLtog07oDckUcR?=
- =?us-ascii?Q?6Ckscxl/eSB1tUhfAsvGQz4Y5Jc7TqjKGDWsHN1SWNn5LDv6dyHBjbTw3Bbr?=
- =?us-ascii?Q?XNgVMrZXqAQ5Tg/4xmHTY+zRCMEGya/WrCXxFmoBFIPsKBf2gnmiMFzdBb6P?=
- =?us-ascii?Q?RuqgORpkQ7cRdQc+5VEHAStV8xbsxxbTjLVyAcMJwtOE1C+qjSa1u2s6zpW7?=
- =?us-ascii?Q?pkRxvRW5UA1YXV2OUoxTBT0zavsGUsDeWvfTD+bzV9CYZf5k4IXlf+hxrKlv?=
- =?us-ascii?Q?c+AzstYPHo7uXJB+FvmwzUSlgtxzM9c3UuIsJZBJrqsTuCYsEWNK47ZJne60?=
- =?us-ascii?Q?C1z44ZKU+/ohASTzrP412EK4DR0LNwQ/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sY7Q8SM+fxPX3pFqhUI9MtR/U969Emct3RH7Cv2hN25dL2Ly+9JZeFcWWIVk?=
- =?us-ascii?Q?pWcaDjzHI6HKJl49fIDGbLj655xpBteOICchgq/Qn2U+BQXiJdYeH0XJEY4R?=
- =?us-ascii?Q?cv1B/Xx49PeWS5gXCCThXObVK2X80D7nXIskpZ0DOSRxUsCmSysWXFlO+gSC?=
- =?us-ascii?Q?2tMBUSh70cQfOtzRnFc5arVH/XkVRI5OMnJrhr5JVE15Io+JoiYfhpN0eCg6?=
- =?us-ascii?Q?O+SqZw4sOR7GYl0Zc3sYP9Vrdo+QJXOiV28aNvGJyBuK2etjsyqeufDZ2j4e?=
- =?us-ascii?Q?w4LjBw97xBfMnnpN2PH64+npyNs34CIk9TbLIIlgSJq3jhQiIkX+1kXh2cVU?=
- =?us-ascii?Q?AyPRAfiXUHzeptS+9G/Rq0s55H4Uw+ZOPHe1tZfExe9FAjmfYdcqSk8RUSuU?=
- =?us-ascii?Q?P9b5DQdpI1VyvRsOyDpiIWBX4/Ro3rt40Nfsw5cWbH2Pjx+nzppl4CLE967G?=
- =?us-ascii?Q?pjbN09LW12gCoFgWg6ZqkZPYW+H5Z9lBgc3e5r1YLiINOF4ylx5Sgr58qU30?=
- =?us-ascii?Q?fSzsPC3dyXQ8JjYWYpyT/aAyyYe2Dav7+be3uLOI3IvCy496cieQrYkXh7ZV?=
- =?us-ascii?Q?jrfjAiVrCn4owY3V9oqCuOmf3bQldinGWCfewptbx5pkpu3xLJJLPzoJwLKX?=
- =?us-ascii?Q?HyZPyHwONSFs18o7rfVqyK87DFnTB2kjYgG2M1J1+f3ZEK6Y1W4fA3VjBP0F?=
- =?us-ascii?Q?OQGVXWnKUY5r5TraHY3yXAUeASW+MvZiBFl4kv9aRlaOHKP3yPi6XtOoJT7u?=
- =?us-ascii?Q?otNslTrJQhWyPrc0i+QMkW5IctX3zTNOrcevo+/a0AvS8NjoKsLyiN/nxCeQ?=
- =?us-ascii?Q?SPMH+7aSbBnczqo3VmwFK3hqYZIamoUQ9fiG0GdDRFrgbfRkZUWT07xN97M3?=
- =?us-ascii?Q?UaUwyloHJZzmwwCub+CSlE2Jywl0sfWDG4XWQeKyop791kyIqXtsTchr7Ez5?=
- =?us-ascii?Q?EJgXH1H77+5YPzfeZ22A6xppAmEQcz+F6kJBG3jgkv0ijON9d4wxmZHUccfV?=
- =?us-ascii?Q?0hVpqTAHf6fP2/M9/K5bd5e7ukF+ly6bcYf6sRen9IQHpOxD4szj/BxYOn0R?=
- =?us-ascii?Q?qZIuJW1dJ+7yLmfnA2bNyBiMQgvp5FC6+l0pe5yizBJGmEoKgMYHvh2fLL93?=
- =?us-ascii?Q?s48EYPS9Fu5Nahfje1ffcJHAwrj3HLKHM78V5RPAVHWSv6mKUow2QHNCL8H2?=
- =?us-ascii?Q?CByXRipO4oMIbBkic12eXQshCzrsXY2uAoRmkOjkioGAzKqEXtAB7nkNoIb5?=
- =?us-ascii?Q?d6EjQMSDzsl9dOLyf0IHMBxX1jtc0z53zJW94f1ZAdTAWY4NglAznwYqtFIa?=
- =?us-ascii?Q?svCHlm6Xs/f88mr3yKd6Yz669zO4xeubPl/izsFlaE+Z2wejUglKVjrTLqTs?=
- =?us-ascii?Q?d5ywxKSmTPOmXinGIh4mt/ykZgJ2XqYgLFU65fDmZpO9xM5nPwTnwogNXrx6?=
- =?us-ascii?Q?T+v7nzjZ7GCpN/Qul6HCVzoKkIzVwHrtjKR1gaFc1BLcspHicvBkDTi0Riz6?=
- =?us-ascii?Q?DlbwUtubunlZkeBhp8m6m/BCRnroCTzy879hp7Mxxts9cdx2dub+bYL2wKu9?=
- =?us-ascii?Q?fSoh/kzTsUEo+sDJRwyXzLS0InBrQQ8KmaWcXe6GaG/wLZJYehH1Njc1FdXD?=
- =?us-ascii?Q?Rw=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f8a978f-43cf-4550-916b-08de07c60cf4
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 06:27:13.9060
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GSkBwAqKkZk6zTSfeH+wEP41eTAfEi0SfTsuuB25TQ/Z4c/+2kxXJoJvsxKI/QQ2XajNdy46upIc3qZyU77r4F6dzxA96odLf9eXG/r+c/k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB6656
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-12-de841623af3c@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: t1L0KMjIzgM8CGNLu4CkBfmKclJ607iK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA5MDA5OCBTYWx0ZWRfX2m4eDHADLneR
+ 4SScQ4UyUimHo/xKmQm36BBDHMbg/Q/Ndyglkf+rityJctsbINahoxTxCaAgaR4NVLVZUJQUL9T
+ jG+zKGK9y+j65otQEdDNcBGMryKdlyMb26ov0VVz+benFwQolNUVEdlhOzeOwetE4JUeZ0vNb71
+ l8GHLLFg0aWom6Oioid7QWHanFLTZhbGejwnO8IFSkh9byGFhbiV0kYBr82EcK/eV9c2ZvT06H6
+ UGywL5g2x5OZ67bwr2ny5o3WnbjlrhlP8HmRodFYF4Sh9zciopfom36/PquceuBnsQp7j2Jji0G
+ wfr1VvShGUJ9+UC+4YtRjDV71STNBxjTq5zi+6Tjg35/JV5ndBiKYJdOPcEirh9/192o71b37/h
+ U75K7KR194EJSLW7AnWOwyr5WLCHdQ==
+X-Authority-Analysis: v=2.4 cv=DISCIiNb c=1 sm=1 tr=0 ts=68e8a74a cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=oFCgBSb2_MPOKaEsi3wA:9
+ a=CjuIK1q_8ugA:10 a=eSe6kog-UzkA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: t1L0KMjIzgM8CGNLu4CkBfmKclJ607iK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510090098
 
-Add entry in Stratix 10 Service Layer to support temperature and voltage
-sensor.
+On Tue, Oct 07, 2025 at 10:18:57PM +0530, Mukesh Ojha wrote:
+> All the Lemans IOT variants boards are using Gunyah hypervisor which
+> means that, so far, Linux-based OS could only boot in EL1 on those
+> devices.  However, it is possible for us to boot Linux at EL2 on these
+> devices [1].
+> 
+> When running under Gunyah, remote processor firmware IOMMU streams is
+> controlled by the Gunyah however when Linux take ownership of it in EL2,
+> It need to configure it properly to use remote processor.
+> 
+> Add a EL2-specific DT overlay and apply it to Lemans IOT variant
+> devices to create -el2.dtb for each of them alongside "normal" dtb.
+> 
+> [1]
+> https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-4/boot-developer-touchpoints.html#uefi
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile        |  7 +++++-
+>  arch/arm64/boot/dts/qcom/lemans-el2.dtso | 41 ++++++++++++++++++++++++++++++++
+>  2 files changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 296688f7cb26..e2eb6c4f8e25 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -35,6 +35,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk.dtb
+>  lemans-evk-camera-csi1-imx577-dtbs	:= lemans-evk.dtb lemans-evk-camera-csi1-imx577.dtbo
+>  
+>  dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk-camera-csi1-imx577.dtb
+> +lemans-evk-el2-dtbs := lemans-evk.dtb lemans-el2.dtbo
+> +dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk-el2.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
+> @@ -136,7 +138,10 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-vision-mezzanine.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
 
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
----
- drivers/firmware/stratix10-svc.c              | 21 ++++++++++--
- include/linux/firmware/intel/stratix10-smc.h  | 34 +++++++++++++++++++
- .../firmware/intel/stratix10-svc-client.h     |  8 ++++-
- 3 files changed, 60 insertions(+), 3 deletions(-)
+Either this can be removed., or removed from below line.
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index e3f990d888d7..5a32c1054bee 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -34,7 +34,7 @@
-  * timeout is set to 30 seconds (30 * 1000) at Intel Stratix10 SoC.
-  */
- #define SVC_NUM_DATA_IN_FIFO			32
--#define SVC_NUM_CHANNEL				3
-+#define SVC_NUM_CHANNEL				4
- #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
- #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
- #define BYTE_TO_WORD_SIZE              4
-@@ -341,6 +341,8 @@ static void svc_thread_recv_status_ok(struct stratix10_svc_data *p_data,
- 	case COMMAND_RSU_MAX_RETRY:
- 	case COMMAND_RSU_DCMF_STATUS:
- 	case COMMAND_FIRMWARE_VERSION:
-+	case COMMAND_HWMON_READTEMP:
-+	case COMMAND_HWMON_READVOLT:
- 		cb_data->status = BIT(SVC_STATUS_OK);
- 		cb_data->kaddr1 = &res.a1;
- 		break;
-@@ -525,7 +527,17 @@ static int svc_normal_to_secure_thread(void *data)
- 			a1 = (unsigned long)pdata->paddr;
- 			a2 = 0;
- 			break;
--
-+		/* for HWMON */
-+		case COMMAND_HWMON_READTEMP:
-+			a0 = INTEL_SIP_SMC_HWMON_READTEMP;
-+			a1 = pdata->arg[0];
-+			a2 = 0;
-+			break;
-+		case COMMAND_HWMON_READVOLT:
-+			a0 = INTEL_SIP_SMC_HWMON_READVOLT;
-+			a1 = pdata->arg[0];
-+			a2 = 0;
-+			break;
- 		/* for polling */
- 		case COMMAND_POLL_SERVICE_STATUS:
- 			a0 = INTEL_SIP_SMC_SERVICE_COMPLETED;
-@@ -1197,6 +1209,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	chans[2].name = SVC_CLIENT_FCS;
- 	spin_lock_init(&chans[2].lock);
- 
-+	chans[3].scl = NULL;
-+	chans[3].ctrl = controller;
-+	chans[3].name = SVC_CLIENT_HWMON;
-+	spin_lock_init(&chans[3].lock);
-+
- 	list_add_tail(&controller->node, &svc_ctrl);
- 	platform_set_drvdata(pdev, controller);
- 
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index ee80ca4bb0d0..7306dd243b2a 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -620,4 +620,38 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_FCS_GET_PROVISION_DATA \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FCS_GET_PROVISION_DATA)
- 
-+/**
-+ * Request INTEL_SIP_SMC_HWMON_READTEMP
-+ * Sync call to request temperature
-+ *
-+ * Call register usage:
-+ * a0 Temperature Channel
-+ * a1-a7 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ * a1 Temperature Value
-+ * a2-a3 not used
-+ */
-+#define INTEL_SIP_SMC_FUNCID_HWMON_READTEMP 32
-+#define INTEL_SIP_SMC_HWMON_READTEMP \
-+	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_HWMON_READTEMP)
-+
-+/**
-+ * Request INTEL_SIP_SMC_HWMON_READVOLT
-+ * Sync call to request voltage
-+ *
-+ * Call register usage:
-+ * a0 Voltage Channel
-+ * a1-a7 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ * a1 Voltage Value
-+ * a2-a3 not used
-+ */
-+#define INTEL_SIP_SMC_FUNCID_HWMON_READVOLT 33
-+#define INTEL_SIP_SMC_HWMON_READVOLT \
-+	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_HWMON_READVOLT)
-+
- #endif
-diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
-index 60ed82112680..520004a5f15d 100644
---- a/include/linux/firmware/intel/stratix10-svc-client.h
-+++ b/include/linux/firmware/intel/stratix10-svc-client.h
-@@ -11,12 +11,14 @@
-  *
-  * fpga: for FPGA configuration
-  * rsu: for remote status update
-+ * hwmon: for hardware monitoring (voltage and temperature)
-  */
- #define SVC_CLIENT_FPGA			"fpga"
- #define SVC_CLIENT_RSU			"rsu"
- #define SVC_CLIENT_FCS			"fcs"
-+#define SVC_CLIENT_HWMON		"hwmon"
- 
--/*
-+/**
-  * Status of the sent command, in bit number
-  *
-  * SVC_STATUS_OK:
-@@ -70,6 +72,7 @@
- #define SVC_RSU_REQUEST_TIMEOUT_MS              300
- #define SVC_FCS_REQUEST_TIMEOUT_MS		2000
- #define SVC_COMPLETED_TIMEOUT_MS		30000
-+#define SVC_HWMON_REQUEST_TIMEOUT_MS		300
- 
- struct stratix10_svc_chan;
- 
-@@ -171,6 +174,9 @@ enum stratix10_svc_command_code {
- 	COMMAND_MBOX_SEND_CMD = 100,
- 	/* Non-mailbox SMC Call */
- 	COMMAND_SMC_SVC_VERSION = 200,
-+	/* for HWMON */
-+	COMMAND_HWMON_READTEMP,
-+	COMMAND_HWMON_READVOLT
- };
- 
- /**
+> -dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
+> +qcs9100-ride-el2-dtbs := qcs9100-ride.dtb lemans-el2.dtbo
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb qcs9100-ride-el2.dtb
+> +qcs9100-ride-r3-el2-dtbs := qcs9100-ride-r3.dtb lemans-el2.dtbo
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb qcs9100-ride-r3-el2.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/lemans-el2.dtso b/arch/arm64/boot/dts/qcom/lemans-el2.dtso
+> new file mode 100644
+> index 000000000000..582b0a3a291a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/lemans-el2.dtso
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +/*
+> + * Lemans specific modifications required to boot in EL2.
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&iris {
+> +	/* TODO: Add video-firmware iommus to start IRIS from EL2 */
+> +	status = "disabled";
+> +};
+> +
+> +/*
+> + * When running under Gunyah, remote processor firmware IOMMU streams is
+> + * controlled by the Gunyah however when we take ownership of it in EL2,
+> + * we need to configure it properly to use remote processor.
+> + */
+> +&remoteproc_adsp {
+> +	iommus = <&apps_smmu 0x3000 0x0>;
+> +};
+> +
+> +&remoteproc_cdsp0 {
+> +	iommus = <&apps_smmu 0x21c0 0x0400>;
+> +};
+> +
+> +&remoteproc_cdsp1 {
+> +	iommus = <&apps_smmu 0x29c0 0x0400>;
+> +};
+> +
+> +&remoteproc_gpdsp0 {
+> +       iommus = <&apps_smmu 0x38a0 0x0>;
+> +};
+> +
+> +&remoteproc_gpdsp1 {
+> +       iommus = <&apps_smmu 0x38c0 0x0>;
+> +};
+> 
+> -- 
+> 2.50.1
+> 
+
 -- 
-2.35.3
-
+-Mukesh Ojha
 
