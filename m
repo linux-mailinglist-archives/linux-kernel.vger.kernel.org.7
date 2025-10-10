@@ -1,112 +1,91 @@
-Return-Path: <linux-kernel+bounces-847825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE70BCBD2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8923BCBD4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AA1E4E96CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:53:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EF974ED051
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF8D26CE2B;
-	Fri, 10 Oct 2025 06:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D5826F2AF;
+	Fri, 10 Oct 2025 06:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="k0icUu82"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8U/Q+Vi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2842AD16
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1458D14286;
+	Fri, 10 Oct 2025 06:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760079178; cv=none; b=hghgzc2yIOjEmzpAKf8vacjfKPNedHAMp77uZgqdeM1HpUZsXh2WKnsX3cmmrr6yjucjcuE2A3UdQbTqCOot5bxv/VvW6JPGVvayLXOW9+0smN/vCia/zt9AfkQpa4ndTe7vUOHv2CB6mUvslwFspVkyHhBdu0i4JBxGiw85jhg=
+	t=1760079320; cv=none; b=GihsF/k+UrigB59Pa814Xv+boX0LJ03gRBDrL8EP2CEO7do+Pa0ZSfM+m7T8QPswLazHpXDUmpZspvnA4eA/qi9sy+woCzqxlaBn3cZT6j0UXOLRFHRNr1bSeW9Seq+cLHauW0shGJ0k7ILRH3phW9jo+Hp49FnB2/XQZhY97lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760079178; c=relaxed/simple;
-	bh=KX7lzwpNEotn/b3rUi+RyFrZRcNxyheFetbZlNRP9Yk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=upRUZcQJoC5prEElvFJ166plz3wxd81DarckPwYSIS1neSk3rUW9tUQnrIugcuzXPmDRLmhhs6hGb0m2LA1WVJL0l+6Houd1lQgxQZLtpoVsBtu7/CkW+2bgBhzDIMGDoLP5ugwUIcrSwMgvsLtgNYhKGm7Uk+lC2ILKNJZAcSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=k0icUu82; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 62403240101
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:52:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760079175; bh=4KtbrKcuo2oXPvw5UPLDbrYNrbLO1DC0VXXnWtEBq0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:From;
-	b=k0icUu82oj94f3xDEctZ8BFI0zN9i1518i4kI17HIHhLoXv40nnzWGHhgMUykv9MR
-	 nGr5f7leOqanPPL0C3JXHR+5BgU8pB0PHmctcBqgdz/t3VILWMEOKwI7Rdugw+mLb9
-	 dr7ZM/E5kxPuSEB1z9Tgj3FEYxHvChEPdfL7FVpkj29Np94OKcoQjswlhJix9g4QJC
-	 sRf+vvKEE7QKVdk2qGW9/TY/xNE2nu9g1Tqqzxku28mCE/QRP2Rg6zDgs53ii7Smyd
-	 +1BJnALptySWSE/VEa7u1dTIdB5RFIc6YlFcogj7qf4/sCSF8dnrQnQJzDsLOq18wh
-	 SHw9PkSUpl1iA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cjcrQ40Vcz6tw8;
-	Fri, 10 Oct 2025 08:52:54 +0200 (CEST)
-From: Shahriyar Jalayeri <shahriyar@posteo.de>
-To: jarkko@kernel.org
-Cc: shahriyar@posteo.de,
-	peterhuewe@gmx.de,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm: infineon: add bounds check in tpm_inf_recv
-Date: Fri, 10 Oct 2025 06:52:55 +0000
-Message-ID: <20251010065252.4377-1-shahriyar@posteo.de>
+	s=arc-20240116; t=1760079320; c=relaxed/simple;
+	bh=hZyYjmCjGC/aWO0FIJleRNuNf7fd08tfn9vyJ/aJV0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1hIVPIaxAYXhtQOXeP30FfEKjcnmCF1lW/LKb0RUj5U/ka++XDa5LjmIuau/tAwjh6zkF4W9YH3qjPx4hcqIrCz/RdLMRjXHzWRoVtYJXWipP/c/CrwVmbqWUJ6+E6eyoIHrJ4f+QfZgMowwSYvdArmYKwd7oY1fOJwFeiC53Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8U/Q+Vi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14BBC4CEF1;
+	Fri, 10 Oct 2025 06:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760079319;
+	bh=hZyYjmCjGC/aWO0FIJleRNuNf7fd08tfn9vyJ/aJV0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P8U/Q+ViHaprrZOwJSTlQZc0FfO664M9Zn0UnDLSBiMDG9bkl5WGE+ZGtQR0Ict4U
+	 gWk72Ta9nDdnh1JcyekT+OJgQMvnpcgpFB8vKNCvJDp/GCnO5aSD+TR3G26zvxnppV
+	 t4qNbWc9NpxNnojSQJMRdsyxJEQnQRqliSUbG6xoPGYD3b2jVJWfazD+OGuBzIo4gL
+	 Hf8QvZM2lhkO9y+qi1epNGQw5cXiLF8s57wNyfSQtK7kvuzx5nebJwlZlDes4suEku
+	 pWE8+exurqVoJ/PHu87J7LrRCbuk3EEEJ12g8vYk2dPnZYhf8KhFHXDGe6AsgamWpJ
+	 u6XvXpV0wwgmg==
+Date: Fri, 10 Oct 2025 07:55:15 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yeounsu Moon <yyyynoom@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] net: dlink: handle dma_map_single() failure
+ properly
+Message-ID: <20251010065515.GA3115768@horms.kernel.org>
+References: <20251009155715.1576-2-yyyynoom@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009155715.1576-2-yyyynoom@gmail.com>
 
-Add two buffer size validations to prevent buffer overflows in
-tpm_inf_recv():
+On Fri, Oct 10, 2025 at 12:57:16AM +0900, Yeounsu Moon wrote:
+> There is no error handling for `dma_map_single()` failures.
+> 
+> Add error handling by checking `dma_mapping_error()` and freeing
+> the `skb` using `dev_kfree_skb()` (process context) when it fails.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
+> Tested-on: D-Link DGE-550T Rev-A3
+> Suggested-by: Simon Horman <horms@kernel.org>
 
-1. Validate that the provided buffer can hold at least the 4-byte header
-   before attempting to read it.
-2. Validate that the buffer is large enough to hold the data size reported
-   by the TPM before reading the payload.
+FWIIW, I don't think my Suggested-by tag is strictly necessary here. I did
+suggest an implementation approach. And I'm very happy that you took my
+idea on board. But I'd view as more of a tweak in this case. Because the
+overall meaning of the patch remains the same as your original version.
 
-Without these checks, a malicious or malfunctioning TPM could cause buffer
-overflows by reporting data sizes larger than the provided buffer, leading
-to memory corruption.
+> ---
+> Changelog:
+> v2:
+> - fix one thing properly
+> - use goto statement, per Simon's suggestion
+> v1: https://lore.kernel.org/netdev/20251002152638.1165-1-yyyynoom@gmail.com/
 
-Fixes: ebb81fdb3dd0 ("[PATCH] tpm: Support for Infineon TPM")
-Signed-off-by: Shahriyar Jalayeri <shahriyar@posteo.de>
----
- drivers/char/tpm/tpm_infineon.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thanks for the update, this version looks good to me.
 
-diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-index 7638b65b8..0fe4193a3 100644
---- a/drivers/char/tpm/tpm_infineon.c
-+++ b/drivers/char/tpm/tpm_infineon.c
-@@ -250,6 +250,10 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
- 	number_of_wtx = 0;
- 
- recv_begin:
-+    /* expect at least 1-byte VL header, 1-byte ctrl-tag, 2-byte data size */
-+	if (count < 4)
-+		return -EIO;
-+
- 	/* start receiving header */
- 	for (i = 0; i < 4; i++) {
- 		ret = wait(chip, STAT_RDA);
-@@ -268,6 +272,9 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
- 		/* size of the data received */
- 		size = ((buf[2] << 8) | buf[3]);
- 
-+		if (size + 6 > count)
-+			return -EIO;
-+
- 		for (i = 0; i < size; i++) {
- 			wait(chip, STAT_RDA);
- 			buf[i] = tpm_data_in(RDFIFO);
--- 
-2.43.0
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
