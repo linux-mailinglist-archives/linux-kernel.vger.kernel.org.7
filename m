@@ -1,113 +1,217 @@
-Return-Path: <linux-kernel+bounces-848388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E7CBCD9F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A99BCD97C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 160404E747C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:54:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2136B1A626A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8AC2F7442;
-	Fri, 10 Oct 2025 14:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB4E2F6599;
+	Fri, 10 Oct 2025 14:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="U43nJxiY"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rEOGc2QG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k8Bd1OmN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rEOGc2QG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k8Bd1OmN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507C92F6195;
-	Fri, 10 Oct 2025 14:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65B22F5A33
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108038; cv=none; b=kBIFBiNqE0YnHj3yL586KFPN9ruoC+TjTzDwlNYwefjWP3Zhwt56FUy/KT0daSYyFDiMFBjeKYSSwDbxdxNAkTknYY70T84j3dgySVVzvrfmDWgJP+ib10TnyXJrZ4v/qC2CedO9b5Znc5jJ0KhUAKAYxCsnHbnwGvQggVE5r8A=
+	t=1760107465; cv=none; b=eLyzxUfqjwgLJwhXJOXUJMX6EDr8U9w5nMIwgAFaN9X1151FiizdbEIVNU6ZNEW7fNuHpNE+ow9vFeDZ5MFfl1WzpBfnPPI2/OEZgkYulEDnIxf2ApniAi71w3tKsQqF9ug0LvlCQ/e7SkNO5YYzduqH2n97VNE+r1AE9ZZ6Oos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108038; c=relaxed/simple;
-	bh=+FYk2Aiw0NILrjGxho9f8f5Z/1azgXY7bYe01i9lapM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fqHDQAPVqmBxkcEWxVtkRwH1d/GInYD88ReIGw3ao5aIE41lerfQjhocXsNZUI708RCDLgU40cMXh+FquTWS/+nb+NpkmUlngpVv4U2+bxynAnqaN/ujvmBfFSVFH3uZim8bRPVwOh+TyqLrfQZ406jJP9M9xdf86B7fSAV9xsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=U43nJxiY; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0D
-	+8AaCyd4XMgbrnCJCI0RxpX33lz6o2ehjmms18h4M=; b=U43nJxiYt9nMDNq9WZ
-	Aycac17TCAO4kHYaK5MvubjrCJ7z37J/VJXmsA52YJ1ic7lu4ozxLVyM/ovmex+L
-	8ggTgJPchgXJ6lK6Qz9h31bKfZcjC91By3DO+0w8mWFXXeI4WYCo3tIib3OLTvqA
-	rgmH4aomu30wxHROnez1dW3mQ=
-Received: from zhb.. (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgD3XvSCG+lo5o4zBw--.11679S2;
-	Fri, 10 Oct 2025 22:43:15 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	helgaas@kernel.org,
-	mani@kernel.org
-Cc: robh@kernel.org,
-	sashal@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2] pci: cadence-ep: Fix incorrect MSI capability ID
-Date: Fri, 10 Oct 2025 22:43:07 +0800
-Message-Id: <20251010144307.12979-1-18255117159@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760107465; c=relaxed/simple;
+	bh=otewvy1SKQKUiBbtFLMLxCv1J0smN2v/CXcupri8NvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMlJA7d1a0cqfRgu2ZVtnTEwaUH6tPcHwE9szk8fTkO7Q+5SzKoym7kkKHM9F5vlWnrYUpKKob6xgwM+7xR8G9HVc40/a+fDezWCzauq8Zz1mqKpWcOhS47zinaywgYIKAFVSSGZt+OfQKKVDHRS7BsiFzQURus55tkludKR8qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rEOGc2QG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k8Bd1OmN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rEOGc2QG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k8Bd1OmN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E81071F393;
+	Fri, 10 Oct 2025 14:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760107462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iAAwqaAerezpxf2CYgSSWjLVyuTqzxcgxlzpFnSX2vA=;
+	b=rEOGc2QGAu8Cnqx+FyIAN0gYX3YCn0MNtWLodXfkX3kCH3qcnvTAHgDNDv1qBtc9OpJ0WB
+	zb2JAO2kLcGb7oaTYpSkXmWFMBVVqm8MVPSQmY1Ea5m+D0Sw/wZawDsz4XpRKq24Ud6t2J
+	lAwwtKPM33aTYAH9YXYs5ToIe8agogY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760107462;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iAAwqaAerezpxf2CYgSSWjLVyuTqzxcgxlzpFnSX2vA=;
+	b=k8Bd1OmNTb4kY+4JisnsrWtZOGzKYbMNyNv5rnmMAsSliimeSASBiRr8vPAorbNOwBnvDr
+	SxecT5fpZYMaoyAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rEOGc2QG;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=k8Bd1OmN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760107462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iAAwqaAerezpxf2CYgSSWjLVyuTqzxcgxlzpFnSX2vA=;
+	b=rEOGc2QGAu8Cnqx+FyIAN0gYX3YCn0MNtWLodXfkX3kCH3qcnvTAHgDNDv1qBtc9OpJ0WB
+	zb2JAO2kLcGb7oaTYpSkXmWFMBVVqm8MVPSQmY1Ea5m+D0Sw/wZawDsz4XpRKq24Ud6t2J
+	lAwwtKPM33aTYAH9YXYs5ToIe8agogY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760107462;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iAAwqaAerezpxf2CYgSSWjLVyuTqzxcgxlzpFnSX2vA=;
+	b=k8Bd1OmNTb4kY+4JisnsrWtZOGzKYbMNyNv5rnmMAsSliimeSASBiRr8vPAorbNOwBnvDr
+	SxecT5fpZYMaoyAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5FC813A40;
+	Fri, 10 Oct 2025 14:44:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Yq5qLMUb6WjvJQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:44:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 02876A0A58; Fri, 10 Oct 2025 16:44:19 +0200 (CEST)
+Date: Fri, 10 Oct 2025 16:44:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v7 03/14] fs: provide accessors for ->i_state
+Message-ID: <h2etb4acmmlmcvvfyh2zbwgy7bd4xeuqqyciqjw6k5zd3thmzq@vwhxpsoauli7>
+References: <20251009075929.1203950-1-mjguzik@gmail.com>
+ <20251009075929.1203950-4-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgD3XvSCG+lo5o4zBw--.11679S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw1DAw4fWFy7ur4Dur1kuFg_yoW8Ary5pF
-	W8GF1IkF18JFWa93Wq9a17ZF13tas5A347Wa92kw15ZF17CFyUGFn2gF45KFsxGrs7ZF13
-	ZrWDtryvkFsrArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRR6wJUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiDwzio2jpExLohgAAss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009075929.1203950-4-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: E81071F393
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-In a previous change, the MSIX capability ID (PCI_CAP_ID_MSIX)
-was mistakenly used when trying to locate the MSI capability in
-cdns_pcie_ep_get_msi(). This is incorrect as the function handles
-MSI functionality, not MSIX.
+On Thu 09-10-25 09:59:17, Mateusz Guzik wrote:
+> +static inline void inode_state_set_raw(struct inode *inode,
+> +				       enum inode_state_flags_enum flags)
+> +{
+> +	WRITE_ONCE(inode->i_state, inode->i_state | flags);
+> +}
 
-Fix this by replacing PCI_CAP_ID_MSIX with the correct MSI capability
-ID(PCI_CAP_ID_MSI) when calling cdns_pcie_find_capability(). This
-ensures the MSI capability is properly located, allowing MSI functionality
-to work asintended.
+I think this shouldn't really exist as it is dangerous to use and if we
+deal with XFS, nobody will actually need this function.
 
-Fixes: 907912c1daa7 ("PCI: cadence: Use cdns_pcie_find_*capability() to avoid hardcoding offsets")
-Reported-by: Sasha Levin <sashal@kernel.org>
-Closes: https://lore.kernel.org/r/aOfMk9BW8BH2P30V@laps/
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
-Dear Maintainer,
+> +static inline void inode_state_set(struct inode *inode,
+> +				   enum inode_state_flags_enum flags)
+> +{
+> +	lockdep_assert_held(&inode->i_lock);
+> +	inode_state_set_raw(inode, flags);
+> +}
+> +
+> +static inline void inode_state_clear_raw(struct inode *inode,
+> +					 enum inode_state_flags_enum flags)
+> +{
+> +	WRITE_ONCE(inode->i_state, inode->i_state & ~flags);
+> +}
 
-Since the previous patch mistakenly changed the MSI ID to MSIX ID,
-a patch is submitted here to fix it. Thank you very much, Sasha, for
-pointing it out.
+Ditto here.
 
-Best regards,
-Hans
----
- drivers/pci/controller/cadence/pcie-cadence-ep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +static inline void inode_state_clear(struct inode *inode,
+> +				     enum inode_state_flags_enum flags)
+> +{
+> +	lockdep_assert_held(&inode->i_lock);
+> +	inode_state_clear_raw(inode, flags);
+> +}
+> +
+> +static inline void inode_state_assign_raw(struct inode *inode,
+> +					  enum inode_state_flags_enum flags)
+> +{
+> +	WRITE_ONCE(inode->i_state, flags);
+> +}
+> +
+> +static inline void inode_state_assign(struct inode *inode,
+> +				      enum inode_state_flags_enum flags)
+> +{
+> +	lockdep_assert_held(&inode->i_lock);
+> +	inode_state_assign_raw(inode, flags);
+> +}
+> +
+> +static inline void inode_state_replace_raw(struct inode *inode,
+> +					   enum inode_state_flags_enum clearflags,
+> +					   enum inode_state_flags_enum setflags)
+> +{
+> +	enum inode_state_flags_enum flags;
+> +	flags = inode->i_state;
+> +	flags &= ~clearflags;
+> +	flags |= setflags;
+> +	inode_state_assign_raw(inode, flags);
+> +}
 
-diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-index 1eac012a8226..c0e1194a936b 100644
---- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
-+++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-@@ -255,7 +255,7 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn, u8 vfn)
- 	u16 flags, mme;
- 	u8 cap;
- 
--	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
- 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
- 
- 	/* Validate that the MSI feature is actually enabled. */
+Nobody needs this so I'd just provide inode_state_replace().
+
+> +static inline void inode_state_replace(struct inode *inode,
+> +				       enum inode_state_flags_enum clearflags,
+> +				       enum inode_state_flags_enum setflags)
+> +{
+> +	lockdep_assert_held(&inode->i_lock);
+> +	inode_state_replace_raw(inode, clearflags, setflags);
+> +}
+> +
+>  static inline void inode_set_cached_link(struct inode *inode, char *link, int linklen)
+>  {
+>  	VFS_WARN_ON_INODE(strlen(link) != linklen, inode);
+
+								Honza
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
