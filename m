@@ -1,185 +1,131 @@
-Return-Path: <linux-kernel+bounces-848389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD78BCD9F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:54:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C88BCDA03
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5AA3E4E62AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC22E1A6202E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990642F7463;
-	Fri, 10 Oct 2025 14:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D1E2F7442;
+	Fri, 10 Oct 2025 14:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VTnmIb1T"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="i60S+LRN"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD502F6573
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0AA2F6569
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108050; cv=none; b=G1IjDBQ/Dxhx3V7SDR87k3lsGP9ntiEPErUw0sEeh0tJEhJgAhDRuDpTW/zKeZL+89Im0Xin6/gmO2jBhXF6rIi7qU4CY5nG/bhs/mvTUBqWBm6CVwR4Zf/fWknsDxuv2nSNaLutSO8t01lb+qnMSfq3ntEh5cX0JxakvRDuKvw=
+	t=1760108091; cv=none; b=OfdnBrzM58xJAXMVLz0S5W/VCkphXzVKfYYu9e0wrM7jtr2QE6Sdi3MDjWA90QTjJLPg0PdSwlTDltauwe+UXvW3N5FyAytOKtrVxgq0cps4exb4Vcd4XvjtFIem6gL92R6B1JxROWj1mc9VMBtpal/IHnk+I9PcKY5xo022bVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108050; c=relaxed/simple;
-	bh=DC7x9YWROCenDmlSc1FcZsUca68HCfG/mUx/W7rmzrA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YJzneht6QmM64NyUyiaqrnrD7rvp7HLZ/xlaTbx2+MxGzfjPK7aFxRdrY568F4kWfhoMlyTdI8JAA1IvfOTHtEcA7pdH6hIWv7orRcnseYg2xNRcQfYICi8blnBIoJRtcaKIHGAobqeTsR+YsTuBFsjIC424L4sLxnHUaO8tAcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VTnmIb1T; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4e6ec0d1683so314461cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:54:08 -0700 (PDT)
+	s=arc-20240116; t=1760108091; c=relaxed/simple;
+	bh=JYLGO+aunzqaQyg233Rpqn3/BKIT15UHFzo9wZBhkqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MFcPB5eLLBmRaD9Ez8zo2tA5zByFV1WtgjjQmg83vy6mB4hCoegV2gYtGAc5t93AFdCFe3E5K84JAVLeSgy1rYAgRfJ4jHVWM9xFgc8vsZybmuI/9Bq38/3IxSRe0zQpKJvfsyg4TmIky7KoXnwU3xdgiPG3CXAeDQnOs7t6RO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=i60S+LRN; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27d3540a43fso21457475ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760108048; x=1760712848; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0DpdiimUJLGEL9YZv8OhwGPgsBnQcaD8Xj4apakBfn0=;
-        b=VTnmIb1TlHElKTohVvdtRHx7HEmeqrB8hSvmF22DJB+mQqqZZk+wvsDuz4uln9V7FU
-         dpsQgLT/r6jgDPFmApUUPclup6rNvOlQo0ZBmnDUNevAy0Zisy9ZysmhlASpSd4Rc+w1
-         UlL5OoGSVmhMYUtrcg8PpuJ5/J5BCFolzz31lFG/HMjjS7/pk80KXDRttm9jhNG34XxI
-         y42d9fImcgtux4nhQ7EP8Q2jXzWGqDHaxpe/P/Sck42KrtcdBO5PGk1kL/VeEL5tIWyF
-         /sauTiZHoQFdaXa8Z681DWvHC8T3LFGFuTu+3Zdya2+6jVwPi1yIjMqIFriwTRqAu6Ku
-         DWSw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760108088; x=1760712888; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vbofJ5TYVrlVEz+XdSpL9ID+J57K1M46jTnGkwllw9Q=;
+        b=i60S+LRNyOfZ+5UyB7ryseoQPralCRNlYAOsYj95WJ+HoVTMeztSRdQ+u3wLpxZKI/
+         Q9lrPIbOVar3yFFJdhcaZeDw3Nw5MVSmisnL+dHGt0qAPNx83i47jHef+330pQaAlp9T
+         IvNYOoTzkX4ApN3uSSbo8PrHjncgr/Q7ekwrlc6B9EP+9sATkv2pcTWSjpP5PjDW7pmA
+         CLXAuNY36wV1jQEi37r0W2ifyVIWWQSzmUp8jepRyC0BFpohpi4Knbr5xhM4kA2QA2vt
+         FSYukuF9vZp5Ys2aHXCot/QC90JWODxuopAxMHTmizM2P/mTY1p0DoOu9si0iEcsPIvV
+         fOLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108048; x=1760712848;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0DpdiimUJLGEL9YZv8OhwGPgsBnQcaD8Xj4apakBfn0=;
-        b=g1ARVWCT32dNldcyyKUQaaUgVrEohFsI9n6XCM7L7XxaOQ6cMGlLsThvsIIHXyuqkP
-         XOLK+UWAD2fEd01Q9NuTKaNrq6p55gAAwrSRC83ssbbsjWuLRU3PwWLGDInqJuEGW/uv
-         gjcW64k1HPkPwbMtukGeGuiEFqFOmnyh1uXIHADdzvW/Rz5f+EfMFG1zE+9EzPRGb+xN
-         2mk1zkNx3v5RX6++t52iHYXTS/FYskZqzze5bUL53vWm9NKK7UZfTsv8XBCMNJZNZCAB
-         ZU6MCZfJ8URt/o90qyn9pvMYNB9pX+Ddk+xNd6t0q/vMXhr+jaV+R8y3BdqEDWP31rvS
-         5SQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUs+50sHLRbl9m4fsdAH51o//sQRlciB7F9HNqxnWLpomv+yP2J0eEfwUv5EZfPf1CTIU+xsZEMMcwmiz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvVA8L/r6+n7ZgIHVWzrqp31X/XJ83JtpDxbqHxcqvSgRFE28P
-	mBvjY5qpU0AHTBTio8La6ysWNfOcqTCFpVYTvk+QPYYm2gombAU49oXvjiBQYw4agFPMr5UMHPC
-	oR1ANnCy8WWjoJeAtPk7bCBJKcupMAC39ua8CbY0U
-X-Gm-Gg: ASbGncvLj6Xnf4aEY+uZTLF3dwNjQLLguewj0q5tqTVPtuxyYQbOkJgS2m/WyaHheqG
-	PiHzCkl/dntuk5axOiizCiqeErbyKW3tTFq8zIHDr7awMgv56ViiI8wNzX9obLs6SbDoj44jVVu
-	5EgwaYqksk+tb6Cv4r/dGDOwgV3v71KH3MYQVzafI845ZYbepUAs8TqdUDBwxFabqolOs3qe2Ov
-	jHiCIhRmu7jOYqbunPg2b3gZYjwGedrlNyt1vYR37PEPuHX9OeI
-X-Google-Smtp-Source: AGHT+IELG1HO5re9l71qV16AXiLCV5TxV3n/x4fv7b1UlE7oKp+shLXPJ4Ui15bl56g81Rjif4tTmM3A2oXDy0V1pv8=
-X-Received: by 2002:a05:622a:50:b0:4d0:dff9:9518 with SMTP id
- d75a77b69052e-4e6eabcf616mr24839371cf.12.1760108047605; Fri, 10 Oct 2025
- 07:54:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760108088; x=1760712888;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vbofJ5TYVrlVEz+XdSpL9ID+J57K1M46jTnGkwllw9Q=;
+        b=fKcFFzshNNfiuzTubWl3+I4OqmzUo81/BCLz0XBAr/+U9TxooOq2Q5k88Zh5onbY8Q
+         jRDxEJrKJBOCevg9HNFcU+rGfSHf8cFzAxcje3xgIgiE52CjnlMzTahTzbecB0EQiMTL
+         PuHMj4PeZQ/GM36VHOZIydVIfhgLEPvcaSBSiWu3aJwrwcFfAHCSAP0ENUXkaQWqlhSs
+         u519hpZLWxsYqskHLJ52DnLuwVCCTHXydGHmoTWtEzwIXDgxB/QgG1zx61znvHDZPeUF
+         w8JiDj7KUxz7ke6N+XXQpnSCHCkbZfL6B7ILQvznYedJS2hB/bP7QS9jBxFlNBfc4fpr
+         QQSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWig03pYNks3o4Mv0jRa1o3X5Rlp4e0nYenTDXd1qxmLMhfWlT7AvhHUJXGAieCwbg5mt4QSZTU/lSELvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7GiBaGsTGnuvpSifjhUp0vXzNx8lpuU/9NeYnJ58JZEPifqLT
+	AJWoQ2oW11YgbZuhJbZxyof8B4FBK4kRVRGtKEtpN+6wKn/Yh0XgNDIyk92j+rSF2r8=
+X-Gm-Gg: ASbGncvHK75dqPrfBdy4XA5YVRDzqAzDUIR9+/biVcMbZbUL+/oQCjB/0NyDyYifIqD
+	QsmPqIVi+u81f5eHUxFEk95//8rzfa7o0QbTfP3F82FGyNTL+DY/JZbEHSuoHS1+8C6lEPHv6j8
+	Eb01ILumKjoGUOIfJG4r7pNER6cZUzIG4QlJ20CPFnSfGPn1GYr4ECh2TyAyd1qT+9AYSw+1/6C
+	G+lD7e0O1SnIOBStNWg6IPpZM1SW0wyEAysH1pwYFKHuGS+GtmOE1rqR1Dw3QP67oXOtAPDwP9V
+	vf8zXHWGopzRIpbWkZnYJbm1LjJqOBPo8l5LZZt853GGrt0r5GYoRNwTBtv959PKWa1d9yuoFYJ
+	NELWJY3bAw9/2bK5VSKtfAa/W6k2IPearUn1hh5iJ/RRGUHwvJbvIT4RdwhrM
+X-Google-Smtp-Source: AGHT+IE2ykU3JRpPiQHMUmIjNKSKo2rlX9PQObXBs1FO64lFOyXHQeDzHA7ctCDQl2YOXgiwg7ruvg==
+X-Received: by 2002:a17:903:2292:b0:24c:bc02:788b with SMTP id d9443c01a7336-290272e3debmr174061055ad.44.1760108087677;
+        Fri, 10 Oct 2025 07:54:47 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29040e02648sm26130335ad.116.2025.10.10.07.54.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 07:54:47 -0700 (PDT)
+Message-ID: <cf4e88c6-0319-4084-8311-a7ca28a78c81@kernel.dk>
+Date: Fri, 10 Oct 2025 08:54:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010011951.2136980-1-surenb@google.com> <20251010011951.2136980-2-surenb@google.com>
- <aOhx9Zj1a6feN8wC@casper.infradead.org>
-In-Reply-To: <aOhx9Zj1a6feN8wC@casper.infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 10 Oct 2025 07:53:56 -0700
-X-Gm-Features: AS18NWBSQfAZ95bfn8zHE7YuLwgx02HxJfLsEBTBLUde_yaDHMul1ATmajxkrCY
-Message-ID: <CAJuCfpH85Ns8_+JNG4HS6TnFMUN0si+mcLXxUxedhQh1c0CSEw@mail.gmail.com>
-Subject: Re: [PATCH 1/8] mm: implement cleancache
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com, 
-	peterx@redhat.com, sj@kernel.org, rppt@kernel.org, mhocko@suse.com, 
-	corbet@lwn.net, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	hch@infradead.org, jack@suse.cz, m.szyprowski@samsung.com, 
-	robin.murphy@arm.com, hannes@cmpxchg.org, zhengqi.arch@bytedance.com, 
-	shakeel.butt@linux.dev, axelrasmussen@google.com, yuanchu@google.com, 
-	weixugc@google.com, minchan@kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	iommu@lists.linux.dev, Minchan Kim <minchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: mainline boot fail nvme/block?
+To: Genes Lists <lists@sapience.com>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <4b392af8847cc19720ffcd53865f60ab3edc56b3.camel@sapience.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <4b392af8847cc19720ffcd53865f60ab3edc56b3.camel@sapience.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 9, 2025 at 7:39=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
- wrote:
->
-> On Thu, Oct 09, 2025 at 06:19:44PM -0700, Suren Baghdasaryan wrote:
-> > +     /*
-> > +      * 99% of the time, we don't need to flush the cleancache on the =
-bdev.
-> > +      * But, for the strange corners, lets be cautious
-> > +      */
-> > +     cleancache_invalidate_inode(mapping, mapping->host);
->
-> Why do we need to pass in both address_space and inode?
+On 10/10/25 8:29 AM, Genes Lists wrote:
+> Mainline fails to boot - 6.17.1 works fine.
+> Same kernel on an older laptop without any nvme works just fine.
+> 
+> It seems to get stuck enumerating disks within the initramfs created by
+> dracut.
+> 
+> Subject to bisect verification, it may have started after commit
+> 
+>   e1b1d03ceec343362524318c076b110066ffe305
+> 
+>   Merge tag 'for-6.18/block-20250929' of 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux
+> 
+> Machine is dell xps 9320 laptop (firmware 2.23.0) with nvme
+> partitioned:
+> 
+>     # lsblk -f
+>     NAME        FSTYPE      FSVER LABEL FSAVAIL FSUSE% MOUNTPOINTS    
+>     sr0
+>     nvme0n1
+>     ├─nvme0n1p1 vfat        FAT32 ESP   2.6G    12% /boot
+>     ├─nvme0n1p2 ext4        1.0   root  77.7G    42% / 
+>     └─nvme0n1p3 crypto_LUKS 2                          
+>       └─home    btrfs             home  1.3T    26% /opt
+>                                                     /home             
+> 
+> 
+> 
+> Will try do bisect over the weekend.
 
-Ah, you mean why I don't use inode->i_mapping to get to its address
-space? I think I can. I'll try, and unless something blows up, I'll
-apply the change in the next version.
+That'd be great, because there's really not much to glean from this bug
+report.
 
->
-> > +/*
-> > + * Backend API
-> > + *
-> > + * Cleancache does not touch page reference. Page refcount should be 1=
- when
-> > + * page is placed or returned into cleancache and pages obtained from
-> > + * cleancache will also have their refcount at 1.
->
-> I don't like these references to page refcount.  Surely you mean folio
-> refcount?
+-- 
+Jens Axboe
 
-Yes, mea culpa :) Will fix.
-
->
-> > +     help
-> > +       Cleancache can be thought of as a page-granularity victim cache
-> > +       for clean pages that the kernel's pageframe replacement algorit=
-hm
-> > +       (PFRA) would like to keep around, but can't since there isn't e=
-nough
->
-> PFRA seems to be an acronym you've just made up.  Why?
-
-Inherited from the original cleancache documentation. Will remove.
-
->
-> > +struct cleancache_inode {
-> > +     struct inode *inode;
-> > +     struct hlist_node hash;
-> > +     refcount_t ref_count;
-> > +     struct xarray folios; /* protected by folios.xa_lock */
->
-> This is a pointless comment.  All xarrays are protected by their own
-> xa_lock.
-
-Ack.
-
->
-> > +static DEFINE_IDR(fs_idr);
->
-> No.  The IDR is deprecated.  Use an allocating XArray.
-
-Ah, good to know. I'll change to xarray.
-
->
-> > +/*
-> > + * Folio attributes:
-> > + *   folio->_mapcount - pool_id
-> > + *   folio->mapping - ccinode reference or NULL if folio is unused
-> > + *   folio->index - file offset
->
-> No.  Don't reuse fields for something entirely different.  Put a
-> properly named field in the union.
-
-Ack.
-
->
-> > +static void folio_attachment(struct folio *folio, struct cleancache_in=
-ode **ccinode,
->
-> Unnecessarily long line
-
-Ack.
-
-Thanks for the feedback, Matthew!
-
->
 
