@@ -1,46 +1,51 @@
-Return-Path: <linux-kernel+bounces-848866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BF3BCEB8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:49:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D4BBCEB99
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56AB19A22C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A886D5427A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D222773EC;
-	Fri, 10 Oct 2025 22:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D662773ED;
+	Fri, 10 Oct 2025 22:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N80/HoPk"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223781F4C8E;
-	Fri, 10 Oct 2025 22:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hVE4sueK"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D031A9FAE;
+	Fri, 10 Oct 2025 22:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760136578; cv=none; b=fnjR2MDbdmJqVe/hevovi2VbkorZ+DCPJP2cghGlt0iHfvHmrE9PqaXcYFVMfl/uQ88FBKHoO8u4Jxbjitah41iqha2gj68IL728ZJLtMrtLpyP1gsVZDrE2d73s/oaJKUVQUwdClrFTtTxjpykURhwI2TE+p1Q4zhXeEs3FYf8=
+	t=1760136725; cv=none; b=HiPB0utxAVl3BkXAgjRpNxtqA/MZuhTSB6BHFPC578q+3V1KHwmsQLtlBDIamaeSloKVAABt/YWl+W93ohvGXSKlXUmKWOotwqDfS70JC4RuvFBucwXjG1ba8Xaw/I1SoVHnquONqIaXLji0LBewd+MPdDmy3ZkSkteXfS+375o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760136578; c=relaxed/simple;
-	bh=utW0Ey8ri/x00Pxu2qEp6HZVbsMvKfPEAWCDeIITY84=;
+	s=arc-20240116; t=1760136725; c=relaxed/simple;
+	bh=k6YhC9NBpNnOSVVMeiqTQaknXO9wXXNTs18UctEB2JM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LKHUDgDUGsHZbJ18z0laobQEipVIDWXD1yH566tN7jxivJiZK5LENgtjEyHtVhBi075ySO+Dw+oFg2VH0cViZTod8lNJGLna6jBx+CUZo1bg3VfqF4J+t5WX4f9tcGS3WfzPRA4JOeC+MXbBAnabYH6BSbrEqKgH3DGWU3BDjM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N80/HoPk; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.97.55] (unknown [20.236.10.163])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 70AD2201601B;
-	Fri, 10 Oct 2025 15:49:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 70AD2201601B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1760136576;
-	bh=hWcYr0BL80j1/GbQO+qD+sJ/rTwwhTaXjPpTotUU+FM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N80/HoPkGqSf8ltsZ3heGflwl5ZmvpDg2yH5g3zRVmU752Y5vTJrQWz8n9+N3zelo
-	 gf8AQyh/Id5h2/wokEwIvmkYjT6K2LC0stirGquLI4w+0/sOWkPlAEcjqUHMrVd7tG
-	 QbdjFiF0PnYa5MMWBiHZZslat0ml08tYyHXOrmAY=
-Message-ID: <bbc67703-ffed-4ed0-aede-4e569236454c@linux.microsoft.com>
-Date: Fri, 10 Oct 2025 15:49:35 -0700
+	 In-Reply-To:Content-Type; b=I2amHxJjDEmpXyZMLrTBncYgd2fr7ix02l90IQKQVbBNoH3+iYFB+ssQLnueRXiY6KW65kMZm9DaMYDFeqN/BCoLqP+oG++xtzetuEoOPoWfiZG17gF63az9vmLKyFUxJ35elehxtSmBqXF5zXDB1mvZlrVAEW02kn7wDayBae0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hVE4sueK; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=pvO3W/Lz36UxaHl800907mVxlEm6TgC58ZA7A3ouD+k=; b=hVE4sueKJ5q5AVHQLTz9xm4JlI
+	J+7ggztN8pDhc9jGxLFxibA7JKzpFLw4Q4Hp1ECQD6S5rd+C3OWZvzHeVGsZ8fE0H0OKBAR6SMVN4
+	3nwjD/DAG4KJc6RYCG5wlqRu7ehFUQU83FFsBsYQDQbtWkNLAnhbbRgnQTmB5wVwuGqPMVSC/T3nL
+	pSzCf0EutL2NpU1Ljrm4wommXcJrmFk4AnUKBPrYARJXM1LeLpR6c6+TVCzdHOUgIHjwNiEQIh62j
+	tQ7YZI2nGW3TARwSt+KKkbH+eSjqc6iuwVIW4rOWxgtV9vP2SV7364FrvUkU8tiO4SSRlnIN6iFyw
+	mo8JTpAg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v7Lxu-00000009V7f-2NCK;
+	Fri, 10 Oct 2025 22:51:58 +0000
+Message-ID: <04df1bb8-8409-4ece-a21c-4c71592eb852@infradead.org>
+Date: Fri, 10 Oct 2025 15:51:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,32 +53,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] Drivers: hv: Refactor and rename memory region
- handling functions
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <175976284493.16834.4572937416426518745.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <175976317202.16834.13905194415092065784.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
+To: Jonathan Denose <jdenose@google.com>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
+ Sean O'Brien <seobrien@google.com>, Lucas GISSOT <lucas.gissot.pro@gmail.com>
+References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+ <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com>
+ <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
+ <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org>
+ <1cd7fb11-0569-4032-905c-f887f3e0dd4c@leemhuis.info>
+ <f2243a9b-e032-416b-aef8-958198ff3955@infradead.org>
+ <CAMCVhVOm5xzN6pkX5cKMSHrMqvdCD_14+XuunAuJLENgLO1NqA@mail.gmail.com>
 Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <175976317202.16834.13905194415092065784.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAMCVhVOm5xzN6pkX5cKMSHrMqvdCD_14+XuunAuJLENgLO1NqA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/6/2025 8:06 AM, Stanislav Kinsburskii wrote:
-> Simplify and unify memory region management to improve code clarity and
-> reliability. Consolidate pinning and invalidation logic, adopt consistent
-> naming, and remove redundant checks to reduce complexity.
-> 
-> Enhance documentation and update call sites for maintainability.
-> 
-> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-> ---
->  drivers/hv/mshv_root_main.c |   80 +++++++++++++++++++------------------------
->  1 file changed, 36 insertions(+), 44 deletions(-)
-> 
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+
+On 10/10/25 1:30 PM, Jonathan Denose wrote:
+> Hi all,
+> 
+> Thanks for looking into this.
+> 
+> On Fri, Oct 10, 2025 at 1:55 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> Hi,
+>>
+>> I think I found it... see below.
+>>
+>>
+>> On 10/9/25 11:48 PM, Thorsten Leemhuis wrote:
+>>> [Top-Posting for easier consumption]
+>>>
+>>> Mainly writing this mail to bring Lucas GISSOT in here, who reported the
+>>> same error yesterday here:
+>>> https://lore.kernel.org/all/aOgvA8Jiofcnk2xb@ARSENIURE.localdomain/
+>>>
+>>> Lucas there suggested:
+>>> """but it seems to me that the #if IS_ENABLED(CONFIG_HID_HAPTIC) in
+>>> hid-haptic.h should be replaced by IS_BUILTIN(CONFIG_HID_HAPTIC) and
+>>> Kconfig updated."""
+>>>
+>>> And Randy: Thx for the closer investigation! It explains some of the
+>>> "that feels odd, am I holding this wrong" feeling I had when reporting this.
+>>>
+>>> Ciao, Thorsten
+>>>
+>>> On 10/10/25 06:50, Randy Dunlap wrote:
+>>>> On 10/9/25 7:43 AM, Thorsten Leemhuis wrote:
+>>>>> On 8/19/25 01:08, Jonathan Denose wrote:
+>>>>>> From: Angela Czubak <aczubak@google.com>
+>>>>>>
+>>>>>> Define a new structure that contains simple haptic device configuration
+>>>>>> as well as current state.
+>>>>>> Add functions that recognize auto trigger and manual trigger reports
+>>>>>> as well as save their addresses.Hi,
+>>>>>> Verify that the pressure unit is either grams or newtons.
+>>>>>> Mark the input device as a haptic touchpad if the unit is correct and
+>>>>>> the reports are found.
+>>>>>>  [...]
+>>>>>> +config HID_HAPTIC
+>>>>>> +  tristate "Haptic touchpad support"
+>>>>>> +  default n
+>>>>>> +  help
+>>>>>> +  Support for touchpads with force sensors and haptic actuators instead of a
+>>>>>> +  traditional button.
+>>>>>> +  Adds extra parsing and FF device for the hid multitouch driver.
+>>>>>> +  It can be used for Elan 2703 haptic touchpad.
+>>>>>> +
+>>>>>> +  If unsure, say N.
+>>>>>> +
+>>>>>>  menu "Special HID drivers"
+>>>>>
+>>>>> I suspect this change is related to a build error I ran into today:
+>>>>>
+>>>>>   MODPOST Module.symvers
+>>>>> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
+>>>>> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
+>>>>> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
+>>>>> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
+>>>>> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
+>>>>> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
+>>>>> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
+>>>>> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
+>>>>>
+>>>>> The config where this occurred had this:
+>>>>>
+>>>>> CONFIG_HID=y
+>>>>> CONFIG_HID_MULTITOUCH=m
+>>>>> CONFIG_HID_HAPTIC=m
+>>>>>
+>>>>> Changing the latter to "CONFIG_HID_HAPTIC=y" fixed the problem for me.
+>>>>
+>>>> Sure, but that's just covering up the problem.
+>>>>> First, I get this build error:
+>>>>
+>>>> ERROR: modpost: missing MODULE_LICENSE() in drivers/hid/hid-haptic.o
+>>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-haptic.o
+>>>>
+>>
+>> ISTM that tristate is incompatible with this newly added Makefile
+>> line:
+>>
+>> +hid-$(CONFIG_HID_HAPTIC)       += hid-haptic.o
+>>
+>> hid-* lists files that should be builtin, not loadable modules.
+>> These should all be hid-y.  AFAIK, hid-m is not useful.
+>> (A maintainer can correct me as needed.)
+
+More correctly, any .o that is listed as being built as part of
+hid.o should is going to be controlled by CONFIG_HID and should
+not its own have a Kconfig symbol at all.
+
+E.g. here:
+ hid-y                  := hid-core.o hid-input.o hid-quirks.o
+hid-core, hid-input, and hid-quirks don't have their own
+Kconfig symbols.
+
+
+
+>> So adding a MODULE_LICENSE() and MODULE_DESCRIPTION() to
+>> hid-haptic.c and changing drivers/hid/Makefile to use
+>> obj-$(CONFIG_HID_HAPTIC_        += hid-haptic.o
+>>
+>> fixes the build errors for me.
+>>
+>> Angela, Jonathan D., is there any reason that
+>> hid-haptic needs to be builtin instead of a loadable
+>> module?  It's no problem for hid-multitouch.ko to call
+>> into hid-haptic.ko (both as loadable modules) as long as
+>> hid-haptic.ko is loaded first.
+>>
+> As long as hid-multitouch.ko is able to call into hid-haptic.ko I
+> don't see any issues, but is there a way to enforce that when
+> CONFIG_HID_HAPTIC is enabled, hid-haptic.ko will be loaded before
+> hid-multitouch.ko?
+
+I only know of two possibilities though there may be more.
+
+a. use request_module(true, "hid-haptic");
+
+This would probably be used in the hid core somewhere, afterthe device matching is done.
+
+b. use udev. When a device that needs hid-multitouch is
+discovered, have udev load both hid-haptic and hid-multitouch.
+
+
+I see that hid-haptic.h is written so that it has stubs for
+when CONFIG_HID_HAPTIC is not enabled. Can hid-multitouch
+operate (in a reduced capacity) when HID_HAPTIC is not enabled?
+So that they are separate modules and hid-multitouch is not
+dependent on hid-haptic?
+
+There is probably a use case for hid-multitouch without having
+hid-haptic loaded since hid-multitouch existed without having
+hid-haptic around at all.
+
+It seems that you want both of them loaded. And then Lucas
+has reported a build error when HID_HAPTIC=m and
+HID_MULTITOUCH=y, so either (like Lucas said) HID_HAPTIC
+should be bool, not tristate; or in Kconfig,
+HID_MULTITOUCH should depend on HID_HAPTIC, which would not
+allow the problem config that Lucas reported.
+But that forces devices that want HID_MULTITOUCH to also
+have HID_HAPTIC loaded, even though they may not need it.
+
+
+-- 
+~Randy
+
 
