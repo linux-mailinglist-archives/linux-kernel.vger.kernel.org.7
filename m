@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-847855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDEDBCBE4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:18:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F146BCBE57
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84D7188F67E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:19:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 126D04EFE61
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136FF263C8C;
-	Fri, 10 Oct 2025 07:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC9D263C8C;
+	Fri, 10 Oct 2025 07:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upx2IcbI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FK2FjZwU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A09D1A267;
-	Fri, 10 Oct 2025 07:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FE81D6193;
+	Fri, 10 Oct 2025 07:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760080719; cv=none; b=GwcF/1jWl0AFeWxvjUfeWFHrTe3xCiKAHdk/yU45jteZ4i1gSumErrg2QmU4cbqJ3mZ4YTZy0YGLkDtg1zdCXuwtSsNdleajmZ2Pw8+sKbTvjxvVHIiryrETBehuwtcwcD6MZSAvCuzb9paiSQIekdvACrQaYglz8twGoQl1DwI=
+	t=1760080751; cv=none; b=KP9TdzGtJNcZlyeDqVl9rdHYlPYju2MvTg9AUAZ2xCZZm2x7Am3PCW2VZpFJOqcbvfb+LbTJEuAc4GB1TyHxuGZ4I0WD+vNRi+Xp2GnJv2NRK+QgcaI+LSKpUH2Fkj1XeYvf1dm0ZeBicLsWmZ99mQcbgqH83uOuUM8h1Xgp4NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760080719; c=relaxed/simple;
-	bh=0L2Qi+NGJJTq2+7NzVpgzCxVh7Djj6DY8ORJwVShcws=;
+	s=arc-20240116; t=1760080751; c=relaxed/simple;
+	bh=w3vHy6Avbo99VMJhAgCj54/k6LJnsXN5d71As9vJDDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1OzKqGtUXonD7lOlwPt11yc/2bVLFMcdASW0x7ult4o0s7eVXfpd09OUVx0BSf07qhM2B1+9ZzE3pPzjVJJYAKFnm2zCJMiAmFszZh4rCeLnKEmj4Llf6ddgsi6m8dzhNbvOONHLfOPm/6eiM6bHwcNeJPbOqL5aTyTbTBjZTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upx2IcbI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EDBCC4CEF1;
-	Fri, 10 Oct 2025 07:18:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1AXDPJOSRX2iQIVdLlOtXR+Rz1xZm4fxbvvYn9mWjTVFAAnqPSBocPN36nVz3e69FRCiusGUm9qFWw/WKY+tSbQdfSfPRzbyASCeGbxEUr7ZuIqTZM+DCGa23hXoFOX//htTmpe+XpHXVGjqrWSEdf8ofcCG4e+5Sy7F7P3F0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FK2FjZwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206F9C4CEF1;
+	Fri, 10 Oct 2025 07:19:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760080718;
-	bh=0L2Qi+NGJJTq2+7NzVpgzCxVh7Djj6DY8ORJwVShcws=;
+	s=k20201202; t=1760080748;
+	bh=w3vHy6Avbo99VMJhAgCj54/k6LJnsXN5d71As9vJDDU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=upx2IcbILcqGDdpncJur8gjpsPOgzpjJ4fMR8DxXT+i9zNAqr7bgS9TOmdulEvS5D
-	 743devjPJB4TEDFIzcuB1F8uCwyuG3XK0bhgEBkL1FrXzdxI+dpmsNcqrfiRrOxT9i
-	 ukRgLMgbCUYlnfBN+Ht8CJHfmcSgA5DMJa4ZGpabPAx6fpQqx2L9d2MDLgYf67a3WO
-	 t8Le/xz8UVCVINAa9m+SK1igdzCl89/fpix3RHuOU16njswwEy5LuVh/54eOm1xgoo
-	 r12T6MULrRNF0Qvuxhm12M3b1B23oYNmLrd9+mEbXuDwQ4tzFLBSfQMMvukzBjFJtL
-	 2gC2GQzHqmjWQ==
-Date: Fri, 10 Oct 2025 08:18:35 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yeounsu Moon <yyyynoom@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: dlink: fix null dereference in receive_packet()
-Message-ID: <20251010071835.GB3115768@horms.kernel.org>
-References: <20251009190222.4777-1-yyyynoom@gmail.com>
+	b=FK2FjZwUUOiHzXe5q/OBThaV+TpuMZkhaigQwQXhV0xUJGaUKWLeybTOZStC5r3Fq
+	 yI0iLW+nM1ExkqeA8RYnlRiUU7s2Y01TXFGqMFMqZdtWb04PADnXcTgOju2yVkszfk
+	 kH1iJY5d5eCKXwNeLCR3rp/7lp7mfe03GQBnHc6zXh9JTzhHiAFG/MiOLxaEleTwgM
+	 Ao/AYezyDNfrUVVSqiBptnJ2hMzZsZbb123eTiO7q32f+7NoO0/wo3kFHI23w7qhVq
+	 Qk0xDWV5St0s4ioje9eZuDxGC8cohyu3tT1avXhqJOwVbNARYNgbDOFdJlQjaKXs9l
+	 UhsaTTFMhhsVw==
+Date: Fri, 10 Oct 2025 09:19:01 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nsc@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 0/3] kbuild: Fixes for fallout from recent
+ modules.builtin.modinfo series
+Message-ID: <aOizZcGLEH9edZQ0@example.org>
+References: <20251008-kbuild-fix-modinfo-regressions-v1-0-9fc776c5887c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,34 +65,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009190222.4777-1-yyyynoom@gmail.com>
+In-Reply-To: <20251008-kbuild-fix-modinfo-regressions-v1-0-9fc776c5887c@kernel.org>
 
-On Fri, Oct 10, 2025 at 04:02:22AM +0900, Yeounsu Moon wrote:
-> If `np->rx_skbuff[entry]` was not allocated before
-> reuse, `receive_packet()` will cause null dereference.
+On Wed, Oct 08, 2025 at 03:46:43PM -0700, Nathan Chancellor wrote:
+> Hi all,
 > 
-> This patch fixes the issue by breaking out of the loop when
-> `np->rx_skbuff[entry]` is `NULL`.
-
-I see that if np->rx_skbuff[entry] there will be a dereference.
-But I'm less clear on how this situation can occur.
-So I think it would be worth adding some explanation of that
-to the commit message.
-
-Also, I do see that break will result in np->rx_skbuff[entry],
-and other empty entries in that array, being refilled.
-This is due to the refill loop that towards the end of receive_packet().
-But perhaps it is worth mentioning that in the commit message too?
-
+> This is a series to address some problems that were exposed by the
+> recent modules.builtin.modinfo series that landed in commit c7d3dd9163e6
+> ("Merge patch series "Add generated modalias to
+> modules.builtin.modinfo"").
 > 
-> Found by inspection.
-
-Thanks, that is clear.
-
+> The third patch is not directly related to the aforementioned series, as
+> the warning it fixes happens prior to the series but commit 8d18ef04f940
+> ("s390: vmlinux.lds.S: Reorder sections") from the series creates
+> conflicts in this area, so I included it here.
 > 
-> Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Tested-on: D-Link DGE-550T Rev-A3
+> I plan to send at least the first two patches to Linus by Saturday for
+> -rc1 but I will take the third with an Ack.
+> 
+> ---
+> Nathan Chancellor (3):
+>       kbuild: Restore pattern to avoid stripping .rela.dyn from vmlinux
+>       kbuild: Add '.rel.*' strip pattern for vmlinux
+>       s390/vmlinux.lds.S: Move .vmlinux.info to end of allocatable sections
+> 
+>  arch/s390/kernel/vmlinux.lds.S | 44 +++++++++++++++++++++---------------------
+>  scripts/Makefile.vmlinux       |  5 ++++-
+>  2 files changed, 26 insertions(+), 23 deletions(-)
+> ---
+> base-commit: 38492c5743f8b7213ca86f0cd72ea625af35d5ef
+> change-id: 20251008-kbuild-fix-modinfo-regressions-95e3fd151dec
+> 
+> Best regards,
+> --  
+> Nathan Chancellor <nathan@kernel.org>
+> 
 
-...
+Acked-by: Alexey Gladkov <legion@kernel.org>
+
+-- 
+Rgrds, legion
+
 
