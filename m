@@ -1,124 +1,191 @@
-Return-Path: <linux-kernel+bounces-847751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C9ABCB927
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:41:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9651BCB93C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A0324F63E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B271A636EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D81526CE2B;
-	Fri, 10 Oct 2025 03:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BC226CE37;
+	Fri, 10 Oct 2025 03:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="dUfzL1br"
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="PUNz2wP8"
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9064B3D76;
-	Fri, 10 Oct 2025 03:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C943D76;
+	Fri, 10 Oct 2025 03:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760067688; cv=none; b=UOfMzPUXNK4TW66WZBuB4+5pucnU9zt4GUk+UAajGE5Zq03Ue4ucCuGUsOWsPoX6zeqmbj+6ycQW6m5Pxwzt8bewlCMIzjELoXA6DVH6S5jx+0R3DKWn9Jjf51bvoNySINkW3Zkrw7bzYIim3IpRWIGiKcAvfGDgzT5k6mgwI7A=
+	t=1760067878; cv=none; b=tzb801JfE//swyAUhmWBRi2dsoOoCoKX3wB6B7/1ekyY9OvPp4ENuUvUmDWyJA3hvmSoBwjAQp3bnpE/98fEXHyyD0AnsWF0ztAxi3+2nrqKzHoA+BWT4r/wawndpXUacrM2GwnVt9pLPP8RM9fGfgSZr78JhQ81MQTkQ26xUSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760067688; c=relaxed/simple;
-	bh=Z9CW37xU5+4MOU34pEGDAWryAljY9qOsHKNFc7fKDZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OmNnFPGG7xkin7LEG2mDi1o5rj0HI0RhXVf9tOHwqrhy7FuZK9idVzykvptwGqB/Zb8Bcm4GyfNuKoBhAfH6s3/dRW6Vt/3EeqWZ3cvPgr8kPtfaBwe/Jk2h/FIdWdx3Ig/Q9d6HHADcd1Ni9kaIh6jAKHtoP76gvFSmPTyj7SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=dUfzL1br; arc=none smtp.client-ip=113.46.200.218
+	s=arc-20240116; t=1760067878; c=relaxed/simple;
+	bh=KXVk+qxTTK5dmUBUc1AAzLAw8BFrjpHoLyZVhe0cHQo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PkACRbYscgUIDlx4ENIm0tDXeW844GnLd3+4XJK2jeUlyN83zpa68t5Dxgm2MBqi7bUk24o1HIT+8o97NXypul54oLGvOBxwxoZnfm0ddlqoHNL4KmchDUe06j+I4oyPBmsjeqlgRxn2gZ2knAtc53PSNp0TCKnuR/mJf6U7PoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=PUNz2wP8; arc=none smtp.client-ip=113.46.200.226
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=6ib9FPglNu41CzWqVMwNxnGJL+FukWXzH1VDfijrkoY=;
-	b=dUfzL1brp36gtrQslDAIiDiRXLr5YllztSUN9fxkQsmF3d3cb8W9f/FaTOlXw/qNZxOUE3dGx
-	stzw4ksTgDb2c2LIbIki/+MsSdrX9XP553OU2mvHEKmQh1wU+TDnSOvBCO8jOvs0EquzrVQUTlf
-	74kKI5T5PGkQgsTGqR3nYtc=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cjXZY6dqYzpTKC;
-	Fri, 10 Oct 2025 11:40:37 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 86CFB140279;
-	Fri, 10 Oct 2025 11:41:23 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 10 Oct 2025 11:41:22 +0800
-Message-ID: <fa16cacc-07a8-ae85-a391-1736765f1cad@huawei.com>
-Date: Fri, 10 Oct 2025 11:41:19 +0800
+	bh=UO2i6K049bN9LynJuKtSWLZ6WnrlQgkXQr1f5NmB5MM=;
+	b=PUNz2wP88wk2a4WneMNmtP1V5FAGCflUTa66xZ7KEPgiRamxKbkIRqLmo0Wg20+33pO0FlCnt
+	qdlYSXRfyIE0/hLF478av45hSSP4+l2nu0Lx+4y1txpByYnYulQXeAazkUsGT+WQauXKRIdhoNO
+	W/z53RveWuzGNqSp1+kWhNE=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cjXff3D7KzKm6c;
+	Fri, 10 Oct 2025 11:44:10 +0800 (CST)
+Received: from kwepemj200013.china.huawei.com (unknown [7.202.194.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6A5A01A016C;
+	Fri, 10 Oct 2025 11:44:27 +0800 (CST)
+Received: from huawei.com (10.50.85.155) by kwepemj200013.china.huawei.com
+ (7.202.194.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 10 Oct
+ 2025 11:44:26 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neil@brown.name>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>, <zhangjian496@huawei.com>, <bcodding@redhat.com>
+Subject: [PATCH v4] nfsd: remove long-standing revoked delegations by force
+Date: Fri, 10 Oct 2025 11:43:33 +0800
+Message-ID: <20251010034333.670068-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 09/26] perf: arm_spe_pmu: Convert to new IRQ affinity
- retrieval API
-Content-Language: en-US
-To: Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-acpi@vger.kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob
- Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James
- Clark <james.clark@linaro.org>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>
-References: <20250922082833.2038905-1-maz@kernel.org>
- <20250922082833.2038905-10-maz@kernel.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20250922082833.2038905-10-maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500011.china.huawei.com (7.185.36.131)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemj200013.china.huawei.com (7.202.194.25)
 
+When file access conflicts occur between clients, the server recalls
+delegations. If the client holding delegation fails to return it after
+a recall, nfs4_laundromat adds the delegation to cl_revoked list.
+This causes subsequent SEQUENCE operations to set the
+SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
+validate all delegations and return the revoked one.
 
+However, if the client fails to return the delegation like this:
+nfs4_laundromat                       nfsd4_delegreturn
+ unhash_delegation_locked
+ list_add // add dp to reaplist
+          // by dl_recall_lru
+ list_del_init // delete dp from
+               // reaplist
+                                       destroy_delegation
+                                        unhash_delegation_locked
+                                         // do nothing but return false
+ revoke_delegation
+ list_add // add dp to cl_revoked
+          // by dl_recall_lru
 
-On 2025/9/22 16:28, Marc Zyngier wrote:
-> Now that the relevant interrupt controllers are equipped with
-> a callback returning the affinity of per-CPU interrupts, switch
-> the ARM SPE driver over to this new method.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/perf/arm_spe_pmu.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-> index 369e77ad5f13f..a1c86a1f21427 100644
-> --- a/drivers/perf/arm_spe_pmu.c
-> +++ b/drivers/perf/arm_spe_pmu.c
-> @@ -1211,8 +1211,10 @@ static void arm_spe_pmu_dev_teardown(struct arm_spe_pmu *spe_pmu)
->  static int arm_spe_pmu_irq_probe(struct arm_spe_pmu *spe_pmu)
->  {
->  	struct platform_device *pdev = spe_pmu->pdev;
-> -	int irq = platform_get_irq(pdev, 0);
-> +	const struct cpumask *affinity;
-> +	int irq;
->  
-> +	irq = platform_get_irq_affinity(pdev, 0, &affinity);
->  	if (irq < 0)
->  		return -ENXIO;
->  
-> @@ -1221,10 +1223,7 @@ static int arm_spe_pmu_irq_probe(struct arm_spe_pmu *spe_pmu)
->  		return -EINVAL;
->  	}
->  
-> -	if (irq_get_percpu_devid_partition(irq, &spe_pmu->supported_cpus)) {
-> -		dev_err(&pdev->dev, "failed to get PPI partition (%d)\n", irq);
-> -		return -EINVAL;
-> -	}
-> +	cpumask_copy(&spe_pmu->supported_cpus, affinity);
+The delegation will remain in the server's cl_revoked list while the
+client marks it revoked and won't find it upon detecting
+SEQ4_STATUS_RECALLABLE_STATE_REVOKED.
+This leads to a loop:
+the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and the
+client repeatedly tests all delegations, severely impacting performance
+when numerous delegations exist.
 
-Reviewed-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Since abnormal delegations are removed from flc_lease via nfs4_laundromat
+--> revoke_delegation --> destroy_unhashed_deleg -->
+nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
+requests indefinitely, retaining such a delegation on the server is
+unnecessary.
 
->  
->  	spe_pmu->irq = irq;
->  	return 0;
+Reported-by: Zhang Jian <zhangjian496@huawei.com>
+Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOKED")
+Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com/
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+  Changes in v2:
+  1) Set SC_STATUS_CLOSED unconditionally in destroy_delegation();
+  2) Determine whether to remove the delegation based on SC_STATUS_CLOSED,
+     rather than by timeout;
+  3) Modify the commit message.
+
+  Changes in v3:
+  1) Move variables used for traversal inside the if statement;
+  2) Add a comment to explain why we have to do this;
+  3) Move the second check of cl_revoked inside the if statement of
+     the first check.
+
+  Changes in v4:
+  Stuff dp onto a local list under the protect of cl_lock and put all
+  the items later.
+ fs/nfsd/nfs4state.c | 41 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 39 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 81fa7cc6c77b..30fed3845fa1 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -1373,6 +1373,11 @@ static void destroy_delegation(struct nfs4_delegation *dp)
+ 
+ 	spin_lock(&state_lock);
+ 	unhashed = unhash_delegation_locked(dp, SC_STATUS_CLOSED);
++	/*
++	 * Unconditionally set SC_STATUS_CLOSED, regardless of whether the
++	 * delegation is hashed, to mark the current delegation as invalid.
++	 */
++	dp->dl_stid.sc_status |= SC_STATUS_CLOSED;
+ 	spin_unlock(&state_lock);
+ 	if (unhashed)
+ 		destroy_unhashed_deleg(dp);
+@@ -4507,8 +4512,40 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	default:
+ 		seq->status_flags = 0;
+ 	}
+-	if (!list_empty(&clp->cl_revoked))
+-		seq->status_flags |= SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
++	if (!list_empty(&clp->cl_revoked)) {
++		struct list_head *pos, *next, reaplist;
++		struct nfs4_delegation *dp;
++
++		/*
++		 * Concurrent nfs4_laundromat() and nfsd4_delegreturn()
++		 * may add a delegation to cl_revoked even after the
++		 * client has returned it, causing persistent
++		 * SEQ4_STATUS_RECALLABLE_STATE_REVOKED, disrupting normal
++		 * operations.
++		 * Remove delegations with SC_STATUS_CLOSED from cl_revoked
++		 * to resolve.
++		 */
++		INIT_LIST_HEAD(&reaplist);
++		spin_lock(&clp->cl_lock);
++		list_for_each_safe(pos, next, &clp->cl_revoked) {
++			dp = list_entry(pos, struct nfs4_delegation, dl_recall_lru);
++			if (dp->dl_stid.sc_status & SC_STATUS_CLOSED) {
++				list_del_init(&dp->dl_recall_lru);
++				list_add(&dp->dl_recall_lru, &reaplist);
++			}
++		}
++		spin_unlock(&clp->cl_lock);
++
++		while (!list_empty(&reaplist)) {
++			dp = list_first_entry(&reaplist, struct nfs4_delegation,
++						dl_recall_lru);
++			list_del_init(&dp->dl_recall_lru);
++			nfs4_put_stid(&dp->dl_stid);
++		}
++
++		if (!list_empty(&clp->cl_revoked))
++			seq->status_flags |= SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
++	}
+ 	if (atomic_read(&clp->cl_admin_revoked))
+ 		seq->status_flags |= SEQ4_STATUS_ADMIN_STATE_REVOKED;
+ 	trace_nfsd_seq4_status(rqstp, seq);
+-- 
+2.46.1
+
 
