@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-848234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD86BCCF9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:47:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04BDBCCFB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44B7422693
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AE88424F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0489F2F3C04;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E543E2F49E0;
 	Fri, 10 Oct 2025 12:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wH5cq9Qr"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XyX41Wqy"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADBE2EFDAD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA662F1FEA
 	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760100411; cv=none; b=JpruYuA6mWYXwwP+MMJjGw22JlBVHO5gDb3yhdlkKnK7dTfAG1+Y1pFAKMiUNsGd509nTlcUhCURZOAH2ATHe21hiQ1tdpB2RIljOxPfSMTeNdl+6H7tZV/qVfB78H36/dBEqCCsRLehcNJexyWP8gzocR1VjwaV22iSf4qo10o=
+	t=1760100413; cv=none; b=X9hDKuQFlZ6gbjoeoOjzBDig92SkuRFpMMCOpeDFEWYYnCnyc0qY2j8ROSctJ+3BZFJvI2DRxjgNYG/Ie8dSDBSNUvTdPYTZ1Zc1zsqGqBqh1eBK3hUiY9DGMXhOqWorsorffoU9RG4OJXFofktY94B0F31eDJbZE/EEoPXG7go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760100411; c=relaxed/simple;
-	bh=WUOPaewEXUxz1AoJ6NXGQ9zCjuaJhlXKujpMsFiB5fI=;
+	s=arc-20240116; t=1760100413; c=relaxed/simple;
+	bh=g3mKjgBA5eOmM+lFx4cmUAPX+2oV/GnRecyAQho2Lnc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ePDDKU20InyugOAG5lxp5QEMIpZ8rMKqb5jOJWOXtUoE7Ivl1dmAbw4ayHAaNQY7AvxQmjg8qGYOcLW0MblU+xiixlPi2Bv8L0+lzm0DCABSyDiHuzBgJPT8EyjGqn0TenGvf4b0vEeIzCGuRwBD8IYH9xWwQ1IAd8Z01WhDuoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wH5cq9Qr; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:To:Cc; b=UPfpbN7BNna6FXIjLKx+qq3imu6XHyx/53n5pnWGsuy/3D/2X5GBy0bWSVmI4liSfEzylHjpa1rXmDsF0Ye3ZKyM3El2hYNy42g/NzWSOwBv/U430ywycykBNk/WLJGVzboYvIoAHgJ5VZZMN+ddzP89lDfJYHuS8PsvtNoqunU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XyX41Wqy; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e37d10f3eso15147095e9.0
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e48d6b95fso18887965e9.3
         for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760100407; x=1760705207; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760100408; x=1760705208; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LAlEGGoIwwLS+tNt2iilinfrs+DKRYT+/rT/ksD4Tt4=;
-        b=wH5cq9QrWs7r15VOlSbLBFIfdqVquh6HoI+h9nrerjGQClHwKTiCcVKIlu533yx6kD
-         Do4SZYxLNlptSKn7ZQ7Ih0ECAZsFI7/ny25Hql5nhQtfOGqYGmEAvMJ7L007LplgqxW2
-         4qyEvizTDufqK7DNUpQUe3Y8t/fqnBRZuLolnJEueIiuluaTKFep3imrw0+1Ys9sI+qG
-         hHAsIY6XI+xz6gyHeOglnCIYLouYCUV36EBvKym3GEk6YJqUF70dZKcTrwpfmzprY+oK
-         2evqiIy0VdffXUi//h8YifCVAawu9b/J6mDOmAu5yf6RXeTWADVlYyuhvSIM0YxQ8v9o
-         6hxg==
+        bh=pI91YBUn0ODEJ37uAPOBfrBDVY8tx0luGRG7kO6Mtbk=;
+        b=XyX41WqyW6BugaY898VZBmSIZQl4cJakg7dvkTLYDBdufG9ltARL6bwvI4VkI3VwAP
+         IAJK+8olzsfwJF61pLKJ88kL/mLFzsjxWxSSWvaYMCr/5qEZ/fqvuO7wzqnh+8SUc1q0
+         vDKDbbL5ZeswYGt856bA6J66S/Qu5qEJnhbixUHvjnUXmE7gf/7j/muj5BI4qdE/F67Y
+         8iXS5hH7/H2tcDya966bbQ230ilJmqq9+uoLJ7ydVhIC5SqStNJi5iboEkwlcGWQBUjB
+         th18Qpm+Q4qKg/SLS26KSeM2fGGCoET0zlwS8SE2z6oQh48kkdun9UGzGDNr3mxbTqmw
+         j/eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760100407; x=1760705207;
+        d=1e100.net; s=20230601; t=1760100408; x=1760705208;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LAlEGGoIwwLS+tNt2iilinfrs+DKRYT+/rT/ksD4Tt4=;
-        b=aO1xrj9ZxYeAOuNLtB7iKY8RQrIL/A3FiddqdNRYSL1XsExF+WcoRxkJTYzj96bA7b
-         dz2amnam7cBqEAsan5fwJs/aTUtyVR04QybKtg1N6ZkYD9jq4CBgrnQg02/gp7vRezRP
-         Q1HBSpdwrXidFYVRVYHQY5N/DUrozL2fI5vkLAQIbWwcwG/CjfY52gk/DcT2eNb6PEnW
-         xqmg0e/RH6ltZAcYJqcMtW7p/dAuUw3YJ27nVjpVbI0VL6N8YHv4vEgQ8J8G7wx/prUU
-         iaNsMJ8vvo7ggkwRI/4oje5MElKSpMrRvf+L8SCHd+nay5TJ43AF4diiN+mJRPgrBrtq
-         Tqow==
-X-Gm-Message-State: AOJu0YxLyqTmVTN6jWI61c6Tz27DO+kceMmHzAvjeNKp1gSlL2IGh/2y
-	hgIp1b1tKhKuH1p3FLxBJRTdL4+VPyyylgW1Kwy9uVguGm8RokkiVp+AK7/myPQrsQc=
-X-Gm-Gg: ASbGncu5ZtqpQ496WQGsQ4iFQGME4dgcKjN6dorycBhjgLhATV7rVnqnRjQMYOeeosM
-	COPdyXcjfp6N+Ft6gMXlx40qg61N1go3/Kj2Um4eckJsx3otrKN6dqqMPgxUIHoiBSIYPBEF6gm
-	EyqjDjIserSm4KkaO2geHI62VbOUXKHCZlWKHU0wrojpbCzehFM8NBq1fjp492IonUaSxoMkwSx
-	oCCY7Wa6OHWPZLj6iLiP4RVoyjtdIqFJb5AHfMIAU/90vGJDVUvUsFMmN5LkR7GFjnKlQ9/r2kN
-	AiEgYZ3sUcd8u1JwxKdzSF7g/K0FZXYcmGbfi9MIufeB0z3+9eiISpwF0UNYSSiINLh7sl5sbln
-	CrMdpFcipIfrvJdCDS4LsdbCMxJDNNyUmEfTEH22b0X40LED6sM5mJgomU0qtM2dZVO2808NQh2
-	+4+rd+Ppq+KSsdYwwytXETGg==
-X-Google-Smtp-Source: AGHT+IGuI2G+Ae3XpP1MAn3JfPl3PWFrf8R525ep2U5Hm4R+0mx8g5Lnp7ZF1uVZR6Qd868Jax78JA==
-X-Received: by 2002:a05:600c:8505:b0:46e:67c8:729f with SMTP id 5b1f17b1804b1-46fa9a9447cmr76851325e9.7.1760100407426;
-        Fri, 10 Oct 2025 05:46:47 -0700 (PDT)
+        bh=pI91YBUn0ODEJ37uAPOBfrBDVY8tx0luGRG7kO6Mtbk=;
+        b=B8wZxV7Pd6KOV+Wet85HfNzCrANE0XILKJwKQogVL3XucZ/x4QfSX+U3KZB7frTDlR
+         9FLexlwFh5cwcZ64N81T4Z9wszw+2R2EUOgH+OF+w1MCBItn8J17cM/+RsHjRjiv75wk
+         RlH1davqFL/RhWkpR/0yckpzk5Nn7nxJYhadnZZpDYIpupQ+uKFgzl+R8TYYNtkj7hS5
+         +3QYUz63wIo7ZBJnDy8MEyL/aU8YlXOBqs+kxzbFZyYuuuP/1Am5bM6UCCc1uDGkZRgb
+         efuE8joII7M2rT9nDK5iQopT91aVn5q4/t+JYkNQr+p5KOMsUzeJ9v4AIiTJnhIPEb7/
+         nbXg==
+X-Gm-Message-State: AOJu0Yzi2EbYWi6dVUlkxj0bDtORi9NpbvScKD6pB90btgC0eENmVED+
+	qECqAs7+QFSQ0lme/5SUGQsTWjKM3r7Ve5n8GVbMS4CPgCjZscgzw74+hggelr0fT+8=
+X-Gm-Gg: ASbGnculMnoVhT3t/NWz1l1509rkrzeTAB6BUHfTZeFoD/+udGT2Y3xxd6nsBFg/H2T
+	0mUBkG/MBWbX1YfNLkjAVDGsbY67K8sI2xncpEnEpIis2OClBImsd+RQRKKLDhDN/v3d0wwTBaI
+	Em4IcAbkVXJJQy9Wx20ZPfNwueKioHeG8iUtOLYGGx79J8hIEz9iECrUrA2kjEVvZBFkfj5cpFy
+	PNFCrQrEQPtxRdtG/Ogu0lqvqs4HVGZP8rIVoGx760/o9/DEUfTDGczdbKt02nmwBL5qNY1tLui
+	dkmLHH7Y1jsRvQzVvZuojQjk7X+b2tYIy/q4h3EI2mYBlsfRFb1CO1mPufBXIIC1uc08/v5mZpf
+	bsg1Iy2fDXPXSISilp+g6lXCMAzD1Olfelh4ATEfkJ1ZnQ9qxlsQPo/FYPHfhI8p9cCCdRUJtS6
+	ag7sTpMpcQfS7YtftAxjoGeg==
+X-Google-Smtp-Source: AGHT+IF4DKpiRzWSCX0rNDuTrRqKdF56LpWr4xVHOhNz6eYaEJ8Bb9XyBCJmGVJ2NHkQ9GmAaWccdA==
+X-Received: by 2002:a05:600c:548d:b0:46e:49fd:5e30 with SMTP id 5b1f17b1804b1-46fa9a8f4e3mr83469915e9.6.1760100408062;
+        Fri, 10 Oct 2025 05:46:48 -0700 (PDT)
 Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484d056sm46376895e9.9.2025.10.10.05.46.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484d056sm46376895e9.9.2025.10.10.05.46.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 05:46:46 -0700 (PDT)
+        Fri, 10 Oct 2025 05:46:47 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 10 Oct 2025 12:46:34 +0000
-Subject: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+Date: Fri, 10 Oct 2025 12:46:35 +0000
+Subject: [PATCH v6 5/6] arm64: defconfig: enable Exynos ACPM clocks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+Message-Id: <20251010-acpm-clk-v6-5-321ee8826fd4@linaro.org>
 References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
 In-Reply-To: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -101,250 +101,37 @@ Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760100401; l=7194;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760100402; l=946;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=WUOPaewEXUxz1AoJ6NXGQ9zCjuaJhlXKujpMsFiB5fI=;
- b=BanjhtC7fgNjpy0sgYOx2hwH230uKAsCpatoQx+xvu1n80CRbIq0YU4T5O6Mx0kMVbVRBX0ub
- M8hXBqCff5zB8P8HnSUfWxh3XsBlLFCNADZbVT8yMkXZR+KKkPOOCRs
+ bh=g3mKjgBA5eOmM+lFx4cmUAPX+2oV/GnRecyAQho2Lnc=;
+ b=NTVzlJxWw7xyeoGeBBqzM/8gvY/1az1ZXvATM9Z29dX7t5LcuktT1BATpk+ooyP6VGq7mm4+T
+ lssKF7XBzBZC5cew2mcDdiAvlteaBf9sTDx/nJY7jNJXG2Iu7gwaeJ9
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Add the Exynos ACPM clock driver. It provides support for clocks that
-are controlled by firmware that implements the ACPM interface.
+Enable the Exynos ACPM clocks driver. Samsung Exynos platforms
+implement ACPM to provide support for clock configuration, PMIC
+and temperature sensors.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 Tested-by: Peter Griffin <peter.griffin@linaro.org> # on gs101-oriole
 ---
- drivers/clk/samsung/Kconfig    |  10 +++
- drivers/clk/samsung/Makefile   |   1 +
- drivers/clk/samsung/clk-acpm.c | 185 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 196 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
- 	  status of the certains clocks from SoC, but it could also be tied to
- 	  other devices as an input clock.
- 
-+config EXYNOS_ACPM_CLK
-+	tristate "Clock driver controlled via ACPM interface"
-+	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
-+	help
-+	  This driver provides support for clocks that are controlled by
-+	  firmware that implements the ACPM interface.
-+
-+	  This driver uses the ACPM interface to interact with the firmware
-+	  providing all the clock controlls.
-+
- config TESLA_FSD_COMMON_CLK
- 	bool "Tesla FSD clock controller support" if COMPILE_TEST
- 	depends on COMMON_CLK_SAMSUNG
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index ef464f434740f96623f9df62f94e2903e14e2226..f3657f2e1b98c6f431ab1f04c2d2a44fe317261b 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos990.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov9.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov920.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-gs101.o
-+obj-$(CONFIG_EXYNOS_ACPM_CLK)		+= clk-acpm.o
- obj-$(CONFIG_S3C64XX_COMMON_CLK)	+= clk-s3c64xx.o
- obj-$(CONFIG_S5PV210_COMMON_CLK)	+= clk-s5pv210.o clk-s5pv210-audss.o
- obj-$(CONFIG_TESLA_FSD_COMMON_CLK)	+= clk-fsd.o
-diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..b90809ce3f882c489114c9d7299417d7fe373749
---- /dev/null
-+++ b/drivers/clk/samsung/clk-acpm.c
-@@ -0,0 +1,185 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Samsung Exynos ACPM protocol based clock driver.
-+ *
-+ * Copyright 2025 Linaro Ltd.
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/clk-provider.h>
-+#include <linux/container_of.h>
-+#include <linux/device/devres.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/firmware/samsung/exynos-acpm-protocol.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+
-+struct acpm_clk {
-+	u32 id;
-+	struct clk_hw hw;
-+	unsigned int mbox_chan_id;
-+	const struct acpm_handle *handle;
-+};
-+
-+struct acpm_clk_variant {
-+	const char *name;
-+};
-+
-+struct acpm_clk_driver_data {
-+	const struct acpm_clk_variant *clks;
-+	unsigned int nr_clks;
-+	unsigned int mbox_chan_id;
-+};
-+
-+#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
-+
-+#define ACPM_CLK(cname)					\
-+	{						\
-+		.name		= cname,		\
-+	}
-+
-+static const struct acpm_clk_variant gs101_acpm_clks[] = {
-+	ACPM_CLK("mif"),
-+	ACPM_CLK("int"),
-+	ACPM_CLK("cpucl0"),
-+	ACPM_CLK("cpucl1"),
-+	ACPM_CLK("cpucl2"),
-+	ACPM_CLK("g3d"),
-+	ACPM_CLK("g3dl2"),
-+	ACPM_CLK("tpu"),
-+	ACPM_CLK("intcam"),
-+	ACPM_CLK("tnr"),
-+	ACPM_CLK("cam"),
-+	ACPM_CLK("mfc"),
-+	ACPM_CLK("disp"),
-+	ACPM_CLK("bo"),
-+};
-+
-+static const struct acpm_clk_driver_data acpm_clk_gs101 = {
-+	.clks = gs101_acpm_clks,
-+	.nr_clks = ARRAY_SIZE(gs101_acpm_clks),
-+	.mbox_chan_id = 0,
-+};
-+
-+static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct acpm_clk *clk = to_acpm_clk(hw);
-+
-+	return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
-+					clk->mbox_chan_id, clk->id);
-+}
-+
-+static int acpm_clk_determine_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *req)
-+{
-+	/*
-+	 * We can't figure out what rate it will be, so just return the
-+	 * rate back to the caller. acpm_clk_recalc_rate() will be called
-+	 * after the rate is set and we'll know what rate the clock is
-+	 * running at then.
-+	 */
-+	return 0;
-+}
-+
-+static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct acpm_clk *clk = to_acpm_clk(hw);
-+
-+	return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
-+					clk->mbox_chan_id, clk->id, rate);
-+}
-+
-+static const struct clk_ops acpm_clk_ops = {
-+	.recalc_rate = acpm_clk_recalc_rate,
-+	.determine_rate = acpm_clk_determine_rate,
-+	.set_rate = acpm_clk_set_rate,
-+};
-+
-+static int acpm_clk_register(struct device *dev, struct acpm_clk *aclk,
-+			     const char *name)
-+{
-+	struct clk_init_data init = {};
-+
-+	init.name = name;
-+	init.ops = &acpm_clk_ops;
-+	aclk->hw.init = &init;
-+
-+	return devm_clk_hw_register(dev, &aclk->hw);
-+}
-+
-+static int acpm_clk_probe(struct platform_device *pdev)
-+{
-+	const struct acpm_handle *acpm_handle;
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_hw **hws;
-+	struct device *dev = &pdev->dev;
-+	struct acpm_clk *aclks;
-+	unsigned int mbox_chan_id;
-+	int i, err, count;
-+
-+	acpm_handle = devm_acpm_get_by_node(dev, dev->parent->of_node);
-+	if (IS_ERR(acpm_handle))
-+		return dev_err_probe(dev, PTR_ERR(acpm_handle),
-+				     "Failed to get acpm handle\n");
-+
-+	count = acpm_clk_gs101.nr_clks;
-+	mbox_chan_id = acpm_clk_gs101.mbox_chan_id;
-+
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = count;
-+	hws = clk_data->hws;
-+
-+	aclks = devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
-+	if (!aclks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < count; i++) {
-+		struct acpm_clk *aclk = &aclks[i];
-+
-+		/*
-+		 * The code assumes the clock IDs start from zero,
-+		 * are sequential and do not have gaps.
-+		 */
-+		aclk->id = i;
-+		aclk->handle = acpm_handle;
-+		aclk->mbox_chan_id = mbox_chan_id;
-+
-+		hws[i] = &aclk->hw;
-+
-+		err = acpm_clk_register(dev, aclk,
-+					acpm_clk_gs101.clks[i].name);
-+		if (err)
-+			return dev_err_probe(dev, err,
-+					     "Failed to register clock\n");
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clk_data);
-+}
-+
-+static const struct platform_device_id acpm_clk_id[] = {
-+	{ "gs101-acpm-clk" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(platform, acpm_clk_id);
-+
-+static struct platform_driver acpm_clk_driver = {
-+	.driver	= {
-+		.name = "acpm-clocks",
-+	},
-+	.probe = acpm_clk_probe,
-+	.id_table = acpm_clk_id,
-+};
-+module_platform_driver(acpm_clk_driver);
-+
-+MODULE_AUTHOR("Tudor Ambarus <tudor.ambarus@linaro.org>");
-+MODULE_DESCRIPTION("Samsung Exynos ACPM clock driver");
-+MODULE_LICENSE("GPL");
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e3a2d37bd10423b028f59dc40d6e8ee1c610d6b8..646097e94efe7f1a18fb59d5b6dfc6268be91383 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1458,6 +1458,7 @@ CONFIG_CLK_GFM_LPASS_SM8250=m
+ CONFIG_SM_VIDEOCC_8450=m
+ CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
+ CONFIG_CLK_RENESAS_VBATTB=m
++CONFIG_EXYNOS_ACPM_CLK=m
+ CONFIG_CLK_SOPHGO_CV1800=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_OMAP=m
 
 -- 
 2.51.0.740.g6adb054d12-goog
