@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-848494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9E4BCDDE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:51:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDD1BCDDFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DBCA50021F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:48:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A10CC4FF167
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BCF2FB991;
-	Fri, 10 Oct 2025 15:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bibn0VuR"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF7D2FB98B
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9655526A091;
+	Fri, 10 Oct 2025 15:50:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12D625DAF0;
+	Fri, 10 Oct 2025 15:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760111282; cv=none; b=L3hKzJHllW7M/ib7VIuUSpUEsDCK/q93hNWlJnaMG2mKOuhrBjEEITcKOc9qHs2kpFuuQdSZKTnEAXitXf8AGIjUVK2IlRP1O3MItT1X+WY6xKLKOAoC6SNB6QCl1OXv3ktPONS6aS/ql1UPW189zUSU6I4+/MXYDjoZQkVDcqQ=
+	t=1760111408; cv=none; b=fr/kBxkP2MQtnXFabxxTfHpi7ycOYYQIrcFRW946LaUAf7msdfsnHXBZZHpUdPh/bl86aiZhOhpYUAhQGsTgY4VydnVNn+EGIMQ11t02zJZsuPvzJFsWs+TXXza8Vkw8ZL1So4c7HGqgaNMdVSj86j7czMUNUi2ljCmBuXHpRkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760111282; c=relaxed/simple;
-	bh=NdsUvpJDpi+f0utptiH48+P8qxTjCKD1BXdBqHb5OLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NrA2IZHg6GKu2aAAALtiX1aS7ydu2XnqlDl8Wz147yP17xXSBCPWB6B4jeDmA+uGcPtcQ0baq+xRSDraymLeO7X33dhPJ0eWndK5sABfEKJ0gwt7O3ZxeahaEKmGIzMvbEVkI5hrlQPG8Wn+GjxPK9l5BjP550VskqNqRftwrOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bibn0VuR; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b593def09e3so1506736a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760111280; x=1760716080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IVrsyEiFlMWkB/upPN4SEiDIc8/lApQ9S0UUM9Wa5uQ=;
-        b=Bibn0VuRo1gZ1Ith6+kwbMQxRF6QJO82MZ61cWDTgQ0zR5kc82761192OgOYQVDdf5
-         FSjvU8NTpGPcguygjMc8zxB32iZFmGePFDCc6rfhTuQ2nkDI/0ehO+M9GalPGJZB/nde
-         zauySeYNGccs8gPBMzVnvYXdfuN2+98Aqx2sT7LXKfD7ZPQfqzmlwfBYeWLFnBUgFm8p
-         29VRElBHTnqn8xnsuYJPi6A8xnIup6C/2pF0NImKCx2TFlGdsAYrwUKEHCZ9RRhk546U
-         Q+5G1e9A4WCIewy5KW04z2U4+/QdHYlDtH3+uT1rsdu0sAyVxe4rIfnnql+NNPKaOLLj
-         fHVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760111280; x=1760716080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IVrsyEiFlMWkB/upPN4SEiDIc8/lApQ9S0UUM9Wa5uQ=;
-        b=drtXUTx3n8a/ycVSsqBrlXAaMJybxxNDPUEXFSCWyvrKagr9WccYAeeCIiZdK6L8PR
-         2jByip8NPR5jQs8/8YnkDjpqASQ4FFoH0AXyOldOSY1Rhizyi8HHqjQEdyiJ3JNgwc7C
-         VjptTmTFw09DRrvjZIpgX1jYP+kvxPuxFralrZjzWufOOndBCyOtau2G0Nuc8r/Rkdyg
-         dewjZNyunAptF5KUazgP25KkQQ+yRiedUARDLU/ElCgq2dEchqE0HPk2PV6KYbPA8Tv7
-         ksu43DoNCj/1wEDE+mcX5jnCAAN05S2ic5qbFTTaw0Oym1Bgce9rWvsyVrmjhBH5Fgd2
-         9lug==
-X-Forwarded-Encrypted: i=1; AJvYcCUJfGSgT1t57wjOvaU2cpj11OdWidbAqu3ecX4gqlhJng/kQORYw1PRHapz+OqW45A1Mkvs5JO4x5Dx+w4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrHfFhBq/eEqLStlevkInZ2mt6DeQYxtmdbsRM8zsF63qQM00o
-	n6/c+hTmVW7uBwS/yM1rmBO+oaBl8njhLroRq30V0yQXs5DZTOgFXDr0Tg1QP9mFfMA=
-X-Gm-Gg: ASbGncsNt9ao69X2nrnuxZqEnUqky2YmXAgIk6yyeEoCjRIa4y2NmqMqSuNvCnmjudN
-	aY9RzBihiKTsGTMbq44cgjojZAoptJqYjfJgSi8Q4KuBFBvYU6GZjvAAMY9OnUVh9+3wfO3+ecb
-	WbT8W132myXz6PkDwO6s/JG/nArJpS91IHg781G7r/rfjw0hu5rzsIE4i90lOvJxmziXdqFYE6M
-	tD+zdSOKquG9nGYrceHGBVZ8AlcLKZjU4CRcv5tqkLGm+KbNnpFggQitdReNbJ/mVBH/TMI+Zi1
-	Z09HlgkfA3u3htQ/hBey3K1hgCjhD2G4U8zFryFvgcYuq9q9UPWP8nCbPuQzlLQShhjJrqoFf6p
-	hZxRinlZfMbefNRzyBpPkJbl4+qwyZKdoHSWn
-X-Google-Smtp-Source: AGHT+IECq+NaLToeqvLCJlAHobRhWtoU2tfGHlHLrRwiIikFaVG8MgZK2PzLWaGJXCNyUhyUAiHnRg==
-X-Received: by 2002:a17:902:f608:b0:278:9051:8ea5 with SMTP id d9443c01a7336-290272b340fmr165277955ad.21.1760111280220;
-        Fri, 10 Oct 2025 08:48:00 -0700 (PDT)
-Received: from localhost ([122.171.19.27])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f06c82sm60691875ad.81.2025.10.10.08.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 08:47:59 -0700 (PDT)
-From: Divya Bharathi <divya27392@gmail.com>
-To: linux-fscrypt@vger.kernel.org
-Cc: ebiggers@kernel.org,
-	tytso@mit.edu,
-	aegeuk@kernel.org,
-	orbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Divya Bharathi <divya27392@gmail.com>
-Subject: [PATCH] docs: fscrypt: document EFAULT return for FS_IOC_SET_ENCRYPTION_POLICY
-Date: Fri, 10 Oct 2025 21:17:53 +0530
-Message-ID: <20251010154753.19216-1-divya27392@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760111408; c=relaxed/simple;
+	bh=Zfnj6x7VmAlOK54hg3XHiIHlBbeE4/euzteOAJlxeDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mOAXB1h8yNUqnzDRyvRBKfrsOqeTzQMaHL3X2QysXXPYQNB/xQ9O25Z1GIYWmnoQpgJgr7qJU6CjRuaJzatPf943y+gM+sz3NGU7vfn8NHM0u7475T+wnl4Dhrbt7z9rk0tBA+sULuiyucQvJ3tEDS8k7IylT5aPKLsQwMt4UjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AA931595;
+	Fri, 10 Oct 2025 08:49:58 -0700 (PDT)
+Received: from [192.168.20.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3BF63F66E;
+	Fri, 10 Oct 2025 08:50:04 -0700 (PDT)
+Message-ID: <f6cf20f6-0f19-4814-b917-4f92dad39648@arm.com>
+Date: Fri, 10 Oct 2025 10:50:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
+ device
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
+ kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+ Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>,
+ Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+ Steven Price <steven.price@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+References: <20250728135216.48084-12-aneesh.kumar@kernel.org>
+ <20250729181045.0000100b@huawei.com> <20250729231948.GJ26511@ziepe.ca>
+ <yq5aqzxy9ij1.fsf@kernel.org> <20250730113827.000032b8@huawei.com>
+ <20250730132333.00006fbf@huawei.com>
+ <2025073035-bulginess-rematch-b92e@gregkh>
+ <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
+ <20251010135922.GC3833649@ziepe.ca>
+ <4a7d84b2-2ec4-4773-a2d5-7b63d5c683cf@arm.com>
+ <20251010153046.GF3833649@ziepe.ca>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20251010153046.GF3833649@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Divya Bharathi <divya27392@gmail.com>
----
- Documentation/filesystems/fscrypt.rst | 2 ++
- 1 file changed, 2 insertions(+)
+On 10/10/25 10:30 AM, Jason Gunthorpe wrote:
+> On Fri, Oct 10, 2025 at 10:28:36AM -0500, Jeremy Linton wrote:
+> 
+>>> So you could use auxiliary_device, you'd consider SMC itself to be the
+>>> shared HW block and all the auxiliary drivers are per-subsystem
+>>> aspects of that shared SMC interface. It is not a terrible fit for
+>>> what it was intended for at least.
+>>
+>> Turns out that changing any of this, will at the moment break systemd's
+>> confidential vm detection, because they wanted the earliest indicator the
+>> guest was capable and that turned out to be this platform device.
+> 
+> Having systemd detect a software created platform device sounds
+> compltely crazy, don't do that. Make a proper sysfs uapi for such a
+> general idea please.
 
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index 4a3e844b7..26cb409e3 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -729,6 +729,8 @@ FS_IOC_SET_ENCRYPTION_POLICY can fail with the following errors:
-   version, mode(s), or flags; or reserved bits were set); or a v1
-   encryption policy was specified but the directory has the casefold
-   flag enabled (casefolding is incompatible with v1 policies).
-+- ``EFAULT``: an invalid pointer was passed for the encryption policy
-+  structure
- - ``ENOKEY``: a v2 encryption policy was specified, but the key with
-   the specified ``master_key_identifier`` has not been added, nor does
-   the process have the CAP_FOWNER capability in the initial user
--- 
-2.51.0
+Yes, I agree, its just at the time the statment was around what is the 
+most reliable early indicator, and since there isn't a hwcap or anything 
+that ended up being the choice, as disgusting as it is.
+
+Presumably once all this works out the sysfs/api surface will be more 
+'defined'
+
+
+> 
+> Jason
 
 
