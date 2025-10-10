@@ -1,100 +1,82 @@
-Return-Path: <linux-kernel+bounces-848193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8354EBCCDB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:21:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FCCBCCDD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A02B4E0374
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:21:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BE421A621F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09660286D66;
-	Fri, 10 Oct 2025 12:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="KZNRGRGf"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C55F28CF6B;
+	Fri, 10 Oct 2025 12:23:55 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D3423D7FC;
-	Fri, 10 Oct 2025 12:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA63215077;
+	Fri, 10 Oct 2025 12:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760098882; cv=none; b=mhXvlo38va1rCL1GK3+XfQD7OY389LkwujqU8kKIFIIyejIPHWtMgm5KSKy4oXpAYP4HKumdu6kJcLe46QlJqYoTo6Hne0DrYu/8r+8+hWjRNPx2rZqCQwlmawjoj6Qot9q5L56evSAgMzeaKkUODIWiriLysuEUoIP0+XgzelE=
+	t=1760099035; cv=none; b=EHNNnjBVa6ayjQF44CqILmx7A0iVGcAhyGMYEkmhqThd5K2MJaUuoPW+Lqk9JEP3yeEh++S2QMjL5kjqad47k9eDA6TnPFpmtztktT9rOhBRh1RaJqWwTjzqDMRQbNaNcj644Wxp9fGukwyGuEQEIePQ7iaCBbKXCubx+x/v0ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760098882; c=relaxed/simple;
-	bh=f9L7zhzAnXXfnNNyUZTA1kqF7B9ZiXQDJUpg7Yma138=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fd/EXa58h7flGC3uMFDBFIEyU0i9S/GKwmvnMuLzLte+FzMspQ4XW6RnRxkaZm46rC0msFD80boJPY2u3SRmzP4gnpFmckpBp2GgAZl7VzLHI6NUIzcqgmT3Cr3W67kz5AXjQv5r9GJAEWCxIEA0N+alskx6irmPOLF+ro+V9Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=KZNRGRGf; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:cc:to:subject:message-id:date:from:content-type:in-reply-to:
-	references:reply-to; bh=UHAG8oD6VlfPwpNIB//e81NoaomE3IWVH+FR9PROA5g=; b=KZNRG
-	RGfLb8oFJwAi8J1YdDf6Bg6C+pNxLSjdvbB8YT9Y1X9Dd4k+o2/BXcvUYpPGdSM4Je3zxWTOSvhqq
-	0PgjR/nYnZV8gTrytFkHawlihPmNaB2jWuVE+qyaDkS+Cr5LVBslarv/hXQkV8bDC+Bfcdu3sGdlp
-	dRxg/9dy64vuLlW5lE0ils1xG/AjoPYtTRxXysfHj8h+63Qs+kTVKMdyPweiqws+2KC44vYkX66Rq
-	9M2XFPBkVkakRMqLB1ZJECGm2+uL/k1UgxaLlkj3W06HP+NiHlxi5kcE2W2OGUENosig8u7wHfXG3
-	rbQ1ufWOeptxAl4FYzYjAWNyWe22g==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1v7BSe-00Bisf-0k;
-	Fri, 10 Oct 2025 19:39:01 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Oct 2025 19:39:00 +0800
-Date: Fri, 10 Oct 2025 19:39:00 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: [GIT PULL] Crypto Fixes for 6.18
-Message-ID: <aOjwVEx6xDDRKiAx@gondor.apana.org.au>
+	s=arc-20240116; t=1760099035; c=relaxed/simple;
+	bh=OWWKf/RfcqcJXFkAF6wIhsxL2svDUszCwwbQkpiQ2Wo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oJ5cj6Q09h7+KmSUoEWzZDPRpdZq7v4Jbl7azevoZ44ALaWpE1kako8i9BybtHDvySi2O9gMjY+Tjs/lVS7/4uSRIP18pE0UbxODb4XDgZA2wwi9UZ1m5Wkxl7ulP4POPYgEUjRqvQ9SUfEgL001006hKDY7GxkPEOkapJAV2y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <jpoimboe@kernel.org>, <jikos@kernel.org>, <mbenes@suse.cz>,
+	<pmladek@suse.com>, <joe.lawrence@redhat.com>, <shuah@kernel.org>
+CC: <live-patching@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH] selftests: livepatch: use canonical ftrace path
+Date: Fri, 10 Oct 2025 20:07:27 +0800
+Message-ID: <20251010120727.20631-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc8.internal.baidu.com (172.31.50.52) To
+ bjkjy-exc17.internal.baidu.com (172.31.50.13)
+X-FEAS-Client-IP: 172.31.50.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Hi Linus:
+Since v4.1 kernel, a new interface for ftrace called "tracefs" was
+introduced, which is usually mounted in /sys/kernel/tracing. Therefore,
+tracing files can now be accessed via either the legacy path
+/sys/kernel/debug/tracing or the newer path /sys/kernel/tracing.
 
-The following changes since commit c0d36727bf39bb16ef0a67ed608e279535ebf0da:
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ tools/testing/selftests/livepatch/functions.sh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-  crypto: rng - Ensure set_ent is always present (2025-10-06 10:17:07 +0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.18-p3
-
-for you to fetch changes up to 6bb73db6948c2de23e407fe1b7ef94bf02b7529f:
-
-  crypto: essiv - Check ssize for decryption and in-place encryption (2025-10-09 15:02:35 +0800)
-
-----------------------------------------------------------------
-This push contains the following changes:
-
-- Fix bug in crypto_skcipher that breaks the new ti driver.
-- Check for invalid assoclen in essiv.
-----------------------------------------------------------------
-
-Herbert Xu (1):
-      crypto: essiv - Check ssize for decryption and in-place encryption
-
-T Pratham (1):
-      crypto: skcipher - Fix reqsize handling
-
- crypto/essiv.c    | 14 ++++++--------
- crypto/skcipher.c |  2 ++
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-Thanks,
+diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
+index 46991a029f7c..8ec0cb64ad94 100644
+--- a/tools/testing/selftests/livepatch/functions.sh
++++ b/tools/testing/selftests/livepatch/functions.sh
+@@ -10,7 +10,11 @@ SYSFS_KERNEL_DIR="/sys/kernel"
+ SYSFS_KLP_DIR="$SYSFS_KERNEL_DIR/livepatch"
+ SYSFS_DEBUG_DIR="$SYSFS_KERNEL_DIR/debug"
+ SYSFS_KPROBES_DIR="$SYSFS_DEBUG_DIR/kprobes"
+-SYSFS_TRACING_DIR="$SYSFS_DEBUG_DIR/tracing"
++if [[ -e /sys/kernel/tracing/trace ]]; then
++	SYSFS_TRACING_DIR="$SYSFS_KERNEL_DIR/tracing"
++else
++	SYSFS_TRACING_DIR="$SYSFS_DEBUG_DIR/tracing"
++fi
+ 
+ # Kselftest framework requirement - SKIP code is 4
+ ksft_skip=4
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.36.1
+
 
