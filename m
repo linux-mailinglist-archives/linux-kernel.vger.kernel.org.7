@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-848896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E8DABCEC50
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:41:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C20BCEC62
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F6019A6492
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:41:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB63C4F8F6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AE52D0C7D;
-	Fri, 10 Oct 2025 23:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DCE2D1F7E;
+	Fri, 10 Oct 2025 23:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAzrW+m6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="08jTALD2"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B842C2376;
-	Fri, 10 Oct 2025 23:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D422D1931
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 23:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760139679; cv=none; b=jH7JPxueZHHJpFPnCXysBX4H6WqRk6ebqAl3FbI9IfcHaeC9xWZfltX4iqkChjNzYrWvmWDlAX29+0ixEOyHfVoj8SgnSj5sV25kSMZbV7JENJgbfvHBmRpqbErNh1fC4ZJGLuHdfVqVuwsG3WjOU+z8t6aGSL29RzrARCLjXHs=
+	t=1760139774; cv=none; b=YpRSkWTu1JFKF1Hg2un0kF9sxjbzejIvdF6ObjY+AVvHuj4Y42Kbbta98jO/adU1IgYMOqFmq7Wpe7RLZfvo14CBeY2HHbRa8w0TNGV90cDGaeo1XTXNhlCONpdxZk1OGlTgBru53JCTSfPjegGHp25+VxoxZ2Wp8mrGnplXoo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760139679; c=relaxed/simple;
-	bh=Z1SFGMYBG5iiGF5wh3L1mIVKHEfIhBlqbCwyIysAJfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ydzc4KvAhenSQYi78qeUF7cv2F0AqOv+5V7r5BdcvYYgM+w7y9eoT6DS3Szah36nkffaeJXv5cH77vMG2PisWLhEK4/HvsW+PqHmczNawVT8tuCsmjuKNPyzg5UrmUyNO38ldLYnRS4A347BFkx59PyAsZNC+ynXtVYism85VUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAzrW+m6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 253DEC4CEF1;
-	Fri, 10 Oct 2025 23:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760139678;
-	bh=Z1SFGMYBG5iiGF5wh3L1mIVKHEfIhBlqbCwyIysAJfM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CAzrW+m6eLFBsOK2H+yPbQkBCFjjACBJ7MUTF0WKBYuaL4rH3COjAH9qiq07JXI9N
-	 tNEahb3niNxwFeeiECmfvyPGkqiqBCnpabqBHQyKU2X2pqP7Jhuli54kbtX8rv+hCM
-	 LCN5uUGi5/lBSaYc6Tkzb79gDzJjwa0xtP+Wxk0J0NSB5vC0nS9Xs8v6Fre5h5wA+Z
-	 xGtpeqaP9ZhZdFrVJGDij+DpQt6pTNnf+H7GXK/M8w9cm/tfLkkYNreR0skA7S55K8
-	 xRixwcxRQB4d4Pk/iQDMH16BbEeTDGuYSNAhOCSFDxpV6n7LZciNwFbcVOQZeFfysR
-	 BqHW7/tfQUafQ==
-Message-ID: <25ebd850-ca13-4274-af6d-fc68ba089935@kernel.org>
-Date: Sat, 11 Oct 2025 01:41:10 +0200
+	s=arc-20240116; t=1760139774; c=relaxed/simple;
+	bh=1DHRMQqIywXJrr6QTGXP6duk0tt6J5QON/Qjub4crf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m+qVqG8fSCn1/SXi69P139dcEMERj55TSGdt0P2Qwx+My0wpxx3mY/zG6UAeJqL/n9OvwZN/d0r9dVIU5i8XiPhBuwObY7/Xn9VTvkP8B0AD4GWIG303LjIxq+SUvJBTFa0W0oGUFjQ3gJD53xi5920Nb6sZ9Zi+PoWG4cctfCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=08jTALD2; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so1556525f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 16:42:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760139771; x=1760744571; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qjgmlS/nwdme/rqi8+Zl0mMzFEWA0WaAZGElUraE+oY=;
+        b=08jTALD27JrtJOANd7g3q0Q/bboL+rjTie/jvR4byY1apN6kr269mfn7dKjWFOCn/P
+         OFvzak+pK90w1hRRSo2T0TFyYFgHz1wWTSNylclVcKy5vRpE9UdLBQp4CyXoPwmvex+5
+         eVHc6s4yfSxm57vIo45H5iuo8IJCsTciHNZTeAPXxzds4Pi7PWpGnub2QhyUOiQ/qBTx
+         dj5zNskkkPXvzoNvjWUX4wjMrtYxjX8hBecNAlkykyTjTUjEyCWsXEo/mVU5j+rfa0iQ
+         7wpMZP/jYDVvWJpDifp7yyN8pXOiAtNTy9ntK3rv1WL/30dMuUA7Mh6qghgJSVV+L9Z1
+         eY0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760139771; x=1760744571;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qjgmlS/nwdme/rqi8+Zl0mMzFEWA0WaAZGElUraE+oY=;
+        b=AXrbszRRruQxlZpATO/Y3qH7XybbbNGr7JjdoIFlPxAQU3x9X2XdCq5YidwZcW8QXl
+         wqdtncovC4Ip8zy9fJUtBl6T0UXtIOnIbXOKuJ6aK+uVCaMajcg/Ebc/qW6VHsG4Nvom
+         dVR3BAigJCUrHFA7i02OCAwUm0f3jP5dsGCchUsex1AoJ9a4J9lekEdjCLTeqSGpt1o+
+         0W+oemlsoaJX/J6jh8qb+wAZk/k2dsck9jPu/d+hvBMn4Tzl4uRqE3q/l9bz8bNziXGk
+         /USBMMC2n304C7VjW+NYDO1+WTkyYPLfB7IosL5OUK8oZfDN2+xkkculk1l6fhFFoWky
+         AXKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYItAXwXhpHfJ1ir9X9AKQeLlBD4U4Oej18082VcJHeVVMWJI/WCR0tn6h+4xUmPfTx5mHmE533Iy7cJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7VaXrQg8jcIO7kkLkN5gFmpTvOQgdf6nsus3bv0vyvTCYvh3Z
+	J+fwP1DSCh1F1QhuYuyTUnVtVnuWpZ1eUJY/fo9ZdtvgvRxrE+L6qnDyUx+26/wMRHHB9wAIhsG
+	qKiPlnPwQeoqMLQzcCQAqmbUIS03BoB7iWh2bwAhY
+X-Gm-Gg: ASbGnctAC5s5RZhuKd9MzFdRY0i40/6Du2jnbi29dp2Wwu7nt7eB2gPSS7s8NjBCuMA
+	60NRpIpIZYw0Ok+5hlSMcVrBREzstmP0boXwP2oBEW8vZcN5wJs8FEtTBdNNBzgrW7Q9gY2Ij3z
+	UOXmmtEtqQBby/KYQNRZlMM8bC182Xbr+RyBdhD/9gaxsWtfHtMrN2PzWeoU0A7pc7AfqqfJbt/
+	R9b0BpoEsYkJFEiUZrg1ZVEkRklMjsH2QgVLgcA8/CsACpr9WPZDUqunN5xZXBJF9hvD9mtjw==
+X-Google-Smtp-Source: AGHT+IHwk0C8u8+BGJMJhnPgtDgiHfihQd43A30Zms6p211AfNBUz2Fb03qCPj3iq3U+g5DYO0xAbnnUFf3zJMfbsts=
+X-Received: by 2002:a05:6000:1a8f:b0:3fb:aca3:d5d9 with SMTP id
+ ffacd0b85a97d-42666ac39c0mr7811026f8f.1.1760139771103; Fri, 10 Oct 2025
+ 16:42:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 15/15] arm: dts: airoha: en7523: add SNAND node
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
-References: <20251010185940.GA715991-robh@kernel.org>
- <20251010192038.1592889-1-mikhail.kshevetskiy@iopsys.eu>
- <20251010192038.1592889-16-mikhail.kshevetskiy@iopsys.eu>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251010192038.1592889-16-mikhail.kshevetskiy@iopsys.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251009010312.2203812-1-jthies@google.com> <20251009010312.2203812-4-jthies@google.com>
+ <zcs3utvlaac336ezw2y7mzbbjsqocbls3e4nx5sc4tufiig475@cekebowcrpmz>
+In-Reply-To: <zcs3utvlaac336ezw2y7mzbbjsqocbls3e4nx5sc4tufiig475@cekebowcrpmz>
+From: Jameson Thies <jthies@google.com>
+Date: Fri, 10 Oct 2025 16:42:38 -0700
+X-Gm-Features: AS18NWAbdJz1C0NgiYf1yQNoHH17CeGVC6GnFq4ht1hoOI5sdcoyeMHRLCTzf2I
+Message-ID: <CAMFSAReOGgXAKsTPiGi55t2Xt=FsKu9FAznmYzDU=i71N-GTyA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] mfd: cros_ec: Don't add cros_ec_ucsi if it is
+ defined in OF or ACPI
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
+	robh@kernel.org, bleung@chromium.org, heikki.krogerus@linux.intel.com, 
+	ukaszb@chromium.org, tzungbi@kernel.org, devicetree@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/10/2025 21:20, Mikhail Kshevetskiy wrote:
-> Add SNAND node to enable support of attached SPI-NAND on the EN7523 SoC.
-> 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> ---
->  arch/arm/boot/dts/airoha/en7523.dtsi | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/airoha/en7523.dtsi b/arch/arm/boot/dts/airoha/en7523.dtsi
-> index b523a868c4ad..a13dc6e77d08 100644
-> --- a/arch/arm/boot/dts/airoha/en7523.dtsi
-> +++ b/arch/arm/boot/dts/airoha/en7523.dtsi
-> @@ -203,4 +203,25 @@ pcie_intc1: interrupt-controller {
->  			#interrupt-cells = <1>;
->  		};
->  	};
-> +
-> +	spi_ctrl: spi_controller@1fa10000 {
+> It still can be a subdevice of the EC, if it has a correct DT node.
 
-You got warning here. Allow people to actually test your code before
-posting next version. Especially such large posting SHOULD NOT happen
-during merge window, immediately the same day!
-
-Best regards,
-Krzysztof
+That's correct. What I meant to say in the commit message is that it
+does not need to be added as  a subdevice of the cros_ec_dev mfd. I'll
+clarify the commit message in the v4 series.
 
