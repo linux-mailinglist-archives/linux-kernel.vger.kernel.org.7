@@ -1,100 +1,163 @@
-Return-Path: <linux-kernel+bounces-847764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268D2BCBA22
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:20:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE897BCBA19
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C84ED35428B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:20:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D25740523F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591A71E5B70;
-	Fri, 10 Oct 2025 04:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQTDoKiq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20A920C038;
+	Fri, 10 Oct 2025 04:19:29 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BA61FE44A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD2A1E5B70
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760069978; cv=none; b=niA81w0oHJMOhJmCmmZ9p2CsCV7AcfIcziMUR3o1HKCwwTUi0EnpSy137NoyTeRDEZVGW5/PcB9tqrmJam9pb1he3Ju2Vm3+9vaM3A3mT9//+qjaobIqKC0HueRDI9SKNITkRVBWO/cw6Uy89+ALzlsuBYwUzwHF2qG7PlNDMuI=
+	t=1760069969; cv=none; b=Pkji9Fe7EZ5g+BusROy68kf9dZ9woXwXHB9KeDNATMVRTOiW3Uz1r7pPSQ+g4ziL4tmR9w9KRTquP8djfkTxscz7W4oNfy5cu5Yaj9jeBLLb0P3o7HZ2a5bszMsMp6NEvvM8EvwxvUGOF4dzJyYXFcqr/5aLDmjxVhd3nTjXYlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760069978; c=relaxed/simple;
-	bh=bJV3A2ztZGaLQ6mgfvyHfdT7NOP/K+k71R0Kusejlnc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gazv0W2Nh1iliM1GFk3O//aoaLOl/1iMGghXdKxz75g4sRQWitpO37RdfJ7n74SYaCelm8zxufzUETFJGulRIlYnWMvP9k1EpKc8f02I/Lkz/zh+zJIzgy7jZVvQwHFnA4+kwIwQBVuWKR+yNO/OJUFVaAG0MA5cmW6A+x+vK0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQTDoKiq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB1CC116B1
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760069978;
-	bh=bJV3A2ztZGaLQ6mgfvyHfdT7NOP/K+k71R0Kusejlnc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BQTDoKiqaGFunGsyhh1cbd7kdKT7FDFjTs7auCjOhXVFIujP32wm8NR5H1D0qoO9X
-	 560grcEWL+xo7zPe9VtRzFChsZVCoL1+awasIcTBhFIA1XVXT9RWP8+V8UsT3xPYy3
-	 elf9PI+UPsydclMFBaaOjqgKdMDumtaiG70vJFxJNSTChwgdrzYQbd63b+EAkXU0vd
-	 zugWmoSv7FfkAaPwlDrNWONUSEKezzTneq1TLFPdiVhj/CzytW0xUF4m3/caiaoLo3
-	 rhszQMNCBU/Rsh5xshKWDmEcURG90gtzXSRdaxVLPDYt01bKwl41KEWCabfYYj+79M
-	 gzAcR8tsVnEKg==
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-749399349ddso20168417b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 21:19:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXrPQTjyhlGxNDuXdnSpt1ELk975T166uX8rjA4h7ilQZWrfY/2iTS+bJwgnHKloRATbMl35ijS67x/iz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy40F/8JTRrbENChtT0UFw6s6ECQrz98tAnzCqbUK9+5MK0EMB+
-	8hNUlgQsSyqSPJ12eQtAPb+er9Qfl9Vdy0k3fWssvi/5MM+Qt/Fn8XV5Qtz/SVOBfQ8vq3MKuZt
-	UdDn3tLANhJBB9BagayMQBE7j5SpbBmSGK7jdr+ro0g==
-X-Google-Smtp-Source: AGHT+IHLY3NQ877f+Hb/NGw3OlMwCbxviANquhSk208SkinMsbXRBhob17ACKUqhB6hbnqihTyuVE3CPYH0yMCZrPxs=
-X-Received: by 2002:a53:ea91:0:b0:636:fd5:ed02 with SMTP id
- 956f58d0204a3-63ccb8ee9f6mr8057747d50.45.1760069977672; Thu, 09 Oct 2025
- 21:19:37 -0700 (PDT)
+	s=arc-20240116; t=1760069969; c=relaxed/simple;
+	bh=X4vWqucx5Kcwu2eSTvHDuRtPw9jJFsHk8sz1Or4c9i0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=psPwfG4hgNvwZ+xndR7mX0MtUSj5Ldb8NZfQbtiaFewMBpuSwWmh40Uar5B/0WJqWSXoeQ0ndOJix2/3uKWsq9c7Glcgfmw1IlMyJEPEkMH0aeDD3HGwQGqwdGp1GiiUtETr1v+lszV5JdYcnqR03ofbcCfjpZ+r245YRt6EJIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-90e469a7f6bso483329339f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 21:19:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760069966; x=1760674766;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yGQltiHAB8hMnc/QahGJ3qmDYxqfKV7yfoDqevYiDBM=;
+        b=Jwzv4bkMDp37brVMg/ov1NQ/Nvo3j2e8jaMmP0sGrC7OjfJLJ215icf183NUZ1/xrP
+         DpaykaOOT5OFKiGLuE1iXx1QYOC88PY675P05wHTiGLa2zcZaWEk2YNK7O7xJ4/jmGi6
+         Ri4blpoFB5ryMcLqhx7aGyDwDKLVpGYQ0EwI7ofpcV/DsQ3L80H47esaR6V8gBwhhB4Q
+         K06EZUS8V67HvCskJQ4MLB1xorP+tHErj51AAjM2Lc2OmeheuwdwImx6FfgjHWlHzLlT
+         JzdhjB69l4WHpmCSCcNL/MYhYBxqVbGWvWlqfPovSw23Ow1PBBrG8Ft9gUv+wD6+H7QT
+         ovpA==
+X-Gm-Message-State: AOJu0YxD7HIEYArPM8FMdgRuWE/hV4+LuxMEwOGZWJ9Kvc0fOc1FUC8W
+	U89tQWUVBBNXWs7hwoK9z1WsvvDUEXZ9hFyezRLcZ4TxJY6rlvxcgeb73zChbsEf9HbQcLXNabt
+	4RaX/mYtlR1Q6FIv4PZ2CfPHbhjBYktS0AW1cy5+gyoC/baGVL4SuRf9TxNwFPQ==
+X-Google-Smtp-Source: AGHT+IFLyIC7w3GTy4an7qyQzYnUGImlJBgOEQ8FhxciyBeNEOe81IUTgHvK8Pz1FRTccr2G1exi3zkIw8VJtsKx18HvUGdIpyJW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+CK2bAbB8YsheCwLi0ztY5LLWMyQ6He3sbYru697Ogq5+hR+Q@mail.gmail.com>
- <20250929150425.GA111624@bhelgaas> <CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
- <CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com> <mafs0a51zmzjp.fsf@kernel.org>
-In-Reply-To: <mafs0a51zmzjp.fsf@kernel.org>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 9 Oct 2025 21:19:25 -0700
-X-Gmail-Original-Message-ID: <CACePvbW9eSBY7qRz4o6Wqh0Ji0qECrFP+RDxa+nn4aHRTt1zkQ@mail.gmail.com>
-X-Gm-Features: AS18NWCu3_vyHjoCV8Rj_bpQLVkf37Xx7I24e2eNWuCPz2Dl_PLLF000jx8A6IY
-Message-ID: <CACePvbW9eSBY7qRz4o6Wqh0Ji0qECrFP+RDxa+nn4aHRTt1zkQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] LUO: PCI subsystem (phase I)
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>, 
-	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
-	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, skhawaja@google.com
+X-Received: by 2002:a05:6602:134a:b0:91e:c3a4:537c with SMTP id
+ ca18e2360f4ac-93bd19a54edmr1211148939f.14.1760069966635; Thu, 09 Oct 2025
+ 21:19:26 -0700 (PDT)
+Date: Thu, 09 Oct 2025 21:19:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e8894e.050a0220.91a22.0056.GAE@google.com>
+Subject: [syzbot] [media?] KMSAN: uninit-value in pctv452e_i2c_msg
+From: syzbot <syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2025 at 4:21=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org>=
- wrote:
->
-> On Tue, Oct 07 2025, Chris Li wrote:
->
-> [...]
-> > That will keep me busy for a while waiting for the VFIO series.
->
-> I recall we talked in one of the biweekly meetings about some sanity
-> checking of folios right before reboot (make sure they are right order,
-> etc.) under a KEXEC_HANDOVER_DEBUG option. If you have some spare time
-> on your hands, would be cool to see some patches for that as well :-)
+Hello,
 
-Sure, I will add that to my "nice to have" list. No promised I got
-time to get to it with the PCI. It belong to the KHO series not PCI
-though.
+syzbot found the following issue on:
 
-Chris
+HEAD commit:    9b0d551bcc05 Merge tag 'pull-misc' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e89a7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50fb29d81ff5a3df
+dashboard link: https://syzkaller.appspot.com/bug?extid=480edd2cadb85ddb4bbe
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/90b0fb888152/disk-9b0d551b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1120c646f284/vmlinux-9b0d551b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/df9bbfa8cbe6/bzImage-9b0d551b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in hex_string+0x681/0x740 lib/vsprintf.c:1220
+ hex_string+0x681/0x740 lib/vsprintf.c:1220
+ pointer+0x2c7/0x1bd0 lib/vsprintf.c:2520
+ vsnprintf+0xf8a/0x1bd0 lib/vsprintf.c:2930
+ vscnprintf+0x6d/0x120 lib/vsprintf.c:2991
+ printk_sprint+0x53/0x5c0 kernel/printk/printk.c:2189
+ vprintk_store+0xbb9/0x1530 kernel/printk/printk.c:2309
+ vprintk_emit+0x21a/0xb60 kernel/printk/printk.c:2399
+ vprintk_default+0x3f/0x50 kernel/printk/printk.c:2438
+ vprintk+0x36/0x50 kernel/printk/printk_safe.c:82
+ _printk+0x17e/0x1b0 kernel/printk/printk.c:2448
+ pctv452e_i2c_msg+0x82a/0x8f0 drivers/media/usb/dvb-usb/pctv452e.c:467
+ pctv452e_i2c_xfer+0x2e6/0x4c0 drivers/media/usb/dvb-usb/pctv452e.c:502
+ __i2c_transfer+0xecd/0x3110 drivers/i2c/i2c-core-base.c:-1
+ i2c_transfer+0x300/0x4b0 drivers/i2c/i2c-core-base.c:2317
+ i2c_transfer_buffer_flags+0x138/0x200 drivers/i2c/i2c-core-base.c:2345
+ i2c_master_recv include/linux/i2c.h:79 [inline]
+ i2cdev_read+0x1b2/0x3c0 drivers/i2c/i2c-dev.c:155
+ vfs_read+0x27c/0xf90 fs/read_write.c:570
+ ksys_pread64 fs/read_write.c:763 [inline]
+ __do_sys_pread64 fs/read_write.c:771 [inline]
+ __se_sys_pread64 fs/read_write.c:768 [inline]
+ __x64_sys_pread64+0x2ab/0x3b0 fs/read_write.c:768
+ x64_sys_call+0x3370/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:18
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4953 [inline]
+ slab_alloc_node mm/slub.c:5245 [inline]
+ __kmalloc_cache_noprof+0x8f5/0x16b0 mm/slub.c:5719
+ kmalloc_noprof include/linux/slab.h:957 [inline]
+ pctv452e_i2c_msg+0x98/0x8f0 drivers/media/usb/dvb-usb/pctv452e.c:425
+ pctv452e_i2c_xfer+0x2e6/0x4c0 drivers/media/usb/dvb-usb/pctv452e.c:502
+ __i2c_transfer+0xecd/0x3110 drivers/i2c/i2c-core-base.c:-1
+ i2c_transfer+0x300/0x4b0 drivers/i2c/i2c-core-base.c:2317
+ i2c_transfer_buffer_flags+0x138/0x200 drivers/i2c/i2c-core-base.c:2345
+ i2c_master_recv include/linux/i2c.h:79 [inline]
+ i2cdev_read+0x1b2/0x3c0 drivers/i2c/i2c-dev.c:155
+ vfs_read+0x27c/0xf90 fs/read_write.c:570
+ ksys_pread64 fs/read_write.c:763 [inline]
+ __do_sys_pread64 fs/read_write.c:771 [inline]
+ __se_sys_pread64 fs/read_write.c:768 [inline]
+ __x64_sys_pread64+0x2ab/0x3b0 fs/read_write.c:768
+ x64_sys_call+0x3370/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:18
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 10013 Comm: syz.1.697 Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
