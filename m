@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-847799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431B2BCBC24
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:14:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A540CBCBC2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E71A4E234B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:14:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8FB03C536A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062B923F439;
-	Fri, 10 Oct 2025 06:13:55 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4673423F439;
+	Fri, 10 Oct 2025 06:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHYKV4do"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430801DF26E;
-	Fri, 10 Oct 2025 06:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55050227E83
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760076834; cv=none; b=dEjLXIZ675hY8KYSqzm+rqji9thE7wud/bUgNEI2gF3KZMihwfEQtyyL04Qx1Ro9/sVZhwXBFLtBolBkr0BYTEJBO/Tv5qmcnngtbBhLcqbDnMpJBwRPMebJzF36/vVFHJudcx3dESGviYPJnq9pDolFmnU3URYADAEexzjZ5iU=
+	t=1760076843; cv=none; b=kqFBC5wqitC4wZqBEvURuKzoemgnZVDz5qY2lUkhLM8qxLrc1f70IONiwBpDc3gFrS04mrh6XrSMWPk7TcnS9zJ41X2dlDtf3B9QVzE/HywPyfYyS1CYXwGAEwNlOmpEGPIShTWQVQQCTh0zKP9l1ZASq4Qe1vpB59WKjR3zKEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760076834; c=relaxed/simple;
-	bh=8lRFCfq0asVD86BsvSVEeZIEvT5MHwfBVWvl4XWy4Ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ohtmWDiF/dNk/N8DdQHqcATVD7y0AaDJrm4ZAdDBJRWAI41zA+SJwP2cA712cCHMMTRFuv8II70rA+TnJT8OaA5jPetDCZ2XgVa56DfApfb1IHTmlqhlchH9r3T06JWA64GRB5eug8JbO5IMMXCL+B0m1numgHx3UYqCCQiah9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.104] (unknown [114.241.81.247])
-	by APP-05 (Coremail) with SMTP id zQCowACnRhALpOho_rxjDQ--.13259S2;
-	Fri, 10 Oct 2025 14:13:31 +0800 (CST)
-Message-ID: <a02aec9a-976a-4b63-86cb-126b8ae71185@iscas.ac.cn>
-Date: Fri, 10 Oct 2025 14:13:31 +0800
+	s=arc-20240116; t=1760076843; c=relaxed/simple;
+	bh=1v5NcS0vxoaVrNiPNGl8QcRfrGJ70C36+++6hlNjRMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gt3D3O9DIznNl8eeNxL9vF1MfH7uvYXHxmmPo5yqUTLQdd4oinxWEiYlC0GfUBYyxbf0Qt1nkjPtQcdX0fiy5wZwxLiaSQK0MWbnrLvVIo1/fUu40I7fz6NVmkeeclrU8tulnREp+ARfq+aGUS8MThbWDXagaM6/zFt24iB4LNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHYKV4do; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-267f0fe72a1so12313815ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 23:14:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760076840; x=1760681640; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZeZgHpNxoLpmShnYhfUU1prae6Lh9wrT/tWekhyimpo=;
+        b=kHYKV4doabezjMieFY34F/w5R6MkrINaeIl35ZggTwRSU+mdNicvMd289A2GWv5wrd
+         XkCrJ5HXu0dSopMjMEg87lX7TPcdLvt6gXHsLfoIehQINZs9H0IGVbvpDa6wzFWZ8Xv2
+         LTfDi2dO2KROjucUN98okwsItFkxqCnVwQQi9i3MiDhWLsrP3kaEPTA2PbOVlI5bMhlL
+         wNedJxESfrWrG/+bd0p22F9YZ4dmC4u/+2UuLqU9f5fFSGJvo+mnzz0/7VL7LgBUDQVQ
+         GSsi8hx6LLdb1WZDJ59mpNwuUMWPXHwa8YsYqvr1Qgk81Zxce8+FKZFjqGY9yBRQsZa0
+         851A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760076840; x=1760681640;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZeZgHpNxoLpmShnYhfUU1prae6Lh9wrT/tWekhyimpo=;
+        b=Aw2UuaSw+ywU+G/qnW+f+kOQ+YaQ4lLKXIOLQwuJMGFCACRHT1cT7/CkbsGozod27C
+         8vvFjZ90GNBwNBA84UsZANTNL16soM2xuWxqaNQIWygXAvxgJkP2jeOLbuD4mGKBbQh6
+         CewWosoG/3jeVsLmDjLZjRZUhGzg3Cl1vsoQ5BaHTLr3UNDy7VeM/cqVS51oWKBtwRr/
+         VwrH0TR/+dR8HXnCXorOM5J5SmD6HzCkA+iqPNDypuHduD7T3oQYlpYNCQaXjXExAU1I
+         /HktMvZeEZmgBP9kL3ow5R4eqN+llmokXqpqXVyTZy7XyJK7yYqq8uzCAHW5PKXFzKji
+         6dQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEOk/p9+Wm1XlaMKnW9ZP1ntFKfNlROGZhlOsiOMN4SEtukE1g+PAu983E/DWFIR8MmPH8Ew7nkBw08f8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw370l8bshJzh0B8YK3OqyzzmRa1i1uuMs/jRnA3bd97HtCzqvG
+	qmf8lXdrOK1Z3XEEKPz5BVB0rZM69hLaMKtKHDtHVtKtGU+Nfp85Mbr1
+X-Gm-Gg: ASbGncv2XMNtVA8Opc32Qm7Tm88KKEXre+wGo1+Lgrk89KbJW0qdwJATE7LaLqvRHjj
+	B8Ye2TxVKvunytCi/0w6+oDjWpF7eQDtVyIOgW8cBC31/ZOeyENptFwPPnoAJvR/gADyQ1gzUH6
+	nJfSz4X8QQMURY/QoBA2l1f62VWBnimE9I3GUkn7UdjFOxhaP3D/6Jtw4N/XzSG9838QrjsJZ/4
+	Q6J9WBlSfW6ofvEwhu4Rj6z6CLLdFbvcQrOqag3lCvdRjF0lVeDa/zZVytxR+RcrXbWG4+p6Dfv
+	KPeiBzzpv/00ccQh1nKBXeOnvIGtdKicRkv/AV2tozgAbey5GD/JTDyRjKrS4Y7p+jZDS/UL/4t
+	YZSVDUV/1CxhgVOvxhZQa+Y3WYv/G5qmuTARAndvuwhrTuodNrJRA3NHDWPYPoN695gEpENUrcV
+	ZBcW98
+X-Google-Smtp-Source: AGHT+IGhZo9EHJGeyJ7Hv8uoiFml8F5FMqKr/vrLQTWePNVXfivw4o/tTOUhOD4QMWgfGle0YhWxww==
+X-Received: by 2002:a17:902:f785:b0:27d:69cc:9a6 with SMTP id d9443c01a7336-290273959b8mr122074805ad.53.1760076840512;
+        Thu, 09 Oct 2025 23:14:00 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:c593:2dc:16de:acd1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f070ecsm46772125ad.60.2025.10.09.23.13.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 23:13:59 -0700 (PDT)
+Date: Thu, 9 Oct 2025 23:13:57 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>
+Cc: =?utf-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"jikos@kernel.org" <jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>, 
+	=?utf-8?B?5p2O6bmP?= <lipeng43@xiaomi.com>, Fei1 Jiang =?utf-8?B?6JKL6aOe?= <jiangfei1@xiaomi.com>, 
+	=?utf-8?B?5a6L5a+G5a+G?= <songmimi@xiaomi.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtFeHRlcm5hbCBNYWlsXVJlOiBU?=
+ =?utf-8?Q?he_zero_power_level_of_the_HID_device_in_kerne?= =?utf-8?Q?l?=
+ 6.12 is not reported from the kernel to the upper layer.
+Message-ID: <lel67fl7rgv7j6eyaf2xbblcwijuuqqoqs77ahbfmdu7ra5bei@zjvzeuyckjlb>
+References: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
+ <aM0XBudxlXuzALbg@fedora>
+ <px5t2iedrrqhcrpdvmu5pznp53d3e5jp55dm72phlsti2rmt4j@rj2pajkavuir>
+ <91e0d952fd774e769e2d24ce2165df18@xiaomi.com>
+ <vkm32giijggtzv7hudsvqg34utpqvw4nnccfi7d4txj5tlzstp@4bu2ox2lmtm5>
+ <aada0917f31641c19ba7c48e3c6d3c53@xiaomi.com>
+ <39809571f1b7439abd754279fac7e702@xiaomi.com>
+ <80a4f9e6416944d3919c63a392325d3b@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] riscv: dts: spacemit: add Ethernet support for
- MusePi Pro
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Yangyu Chen <cyy@cyyself.name>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251010-k1-musepi-pro-dts-v2-0-6e1b491f6f3e@linux.spacemit.com>
- <20251010-k1-musepi-pro-dts-v2-5-6e1b491f6f3e@linux.spacemit.com>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20251010-k1-musepi-pro-dts-v2-5-6e1b491f6f3e@linux.spacemit.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:zQCowACnRhALpOho_rxjDQ--.13259S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFy7Wr1rtw13JFy7uw43GFg_yoW8WFy5pF
-	Z7urs3GwnrKr4fKr1ava17u3WfJaykXa1YgasFkr1DJrsxXry5C3s5t3WakF1UZFyrG340
-	vr18Wa1xur4qqr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUqiFxDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <80a4f9e6416944d3919c63a392325d3b@xiaomi.com>
 
+Hi,
 
-On 10/10/25 09:56, Troy Mitchell wrote:
-> MusePi Pro features a single RGMII Ethernet port with
-> PHY reset controlled by GPIO.
->
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-> index 89a35914710bfd15c6ad27cd8d0de7ccf62e2309..e9a53dc7a417117c82f3e467677290bdaeffc845 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-> +++ b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
-> @@ -47,6 +47,29 @@ &pdma {
->  	status = "okay";
->  };
->  
-> +&eth0 {
+On Fri, Oct 10, 2025 at 02:25:55AM +0000, 卢国宏 wrote:
+> Hi Dmitry,
+> Please let us know whether you plan to merge this solution into the kernel or not! Thanks!
 
-For node orders in board DTS for SpacemiT devices, usually we follow
-node name order because there's no unit address to go off of here, so
-for what we have here it should be emmc, eth0, pdma, uart.
+I just sent the patch to HID maintainers. You were CCed on it.
 
-See e.g. arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts and previous
-discussion [1].
+Thanks.
 
-Also, personally I think it would be fine to just add the whole
-k1-musepi-pro.dts in the same patch instead of splitting it up like
-this. I feel it would be easier to manage this way. For previous devices
-these nodes have been added piecemeal mostly because the drivers were
-being developed in parallel, but if you're going to base this on
-v6.18-rc1 there shouldn't be dependency problems.
-
-Maybe Yixun can chime in about this as well.
-
-Thanks,
-Vivian "dramforever" Wang
-
-[1]: https://lore.kernel.org/linux-riscv/CAH1PCMa35n4dnJ94-EHGrJyU3kztQYO8_v2CkD=rid466zv3+A@mail.gmail.com
-
+-- 
+Dmitry
 
