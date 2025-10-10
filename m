@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-847775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3562BCBA9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54753BCBAD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 29F8A35065F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:56:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6EBF7353A2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDA1247284;
-	Fri, 10 Oct 2025 04:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBB026F2B2;
+	Fri, 10 Oct 2025 04:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jJlEjJTp"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrdiTzbT"
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA481238175
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186FF269CE5
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760072174; cv=none; b=B+fWLaNv94vBQ2DVye2ctJpinTRLd0D2YqfFJ3hq1ZTlpe4FCrnCSTeXOHUI+b+dL8Tw5fhOSooNAJNz1/pFnzCL1Sk2tx2q9h9O28W27JIaqhrPHiSpv+CXzOfsnHnwtWcIii0oAastNdx1xUD3G6wYLCfFUQVVMFo3W5QwqgU=
+	t=1760072282; cv=none; b=dfT7Mr04iJr/7fmkrV0ppODvnP6MlYQrdGBC9PACnlrd6T4s1HXY34i4i+Wi92EoUToDHCYV5uIUxWDB2AER20KmeeUe8mXQ04hmcfQc/569LPYnRHenTsm2OAwcuvf4yOfnPB5UWgyzmkGaZbQbH88wjaTIH3Y/MILOWyVHP5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760072174; c=relaxed/simple;
-	bh=BXQBEg49WGrsvFjprcDLou8kFWrRywhvTMF300kqw/0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=GoqYssNNmpe3woSNqe1Vbv4AF5m8YlQAJxNozKU1Z1+Fv+tk0KN38wYJR+gu1Wb5QMvaA6DReT/3wS68QwFkYHLGyvW186qK/JiqJsEcbNyJBrhlhmerjZnQVE1KbPHn84x5ZhutJxKNdPwM0NYGI7XUtTYQg10f/lJpsKp4q7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jJlEjJTp; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251010045604epoutp020567543aa9ffdc5d5de7c3e0efdb6a4d~tCE7XqJS72066720667epoutp02V
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:56:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251010045604epoutp020567543aa9ffdc5d5de7c3e0efdb6a4d~tCE7XqJS72066720667epoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760072164;
-	bh=b96lHOK7OOj9AgDqZ6liSCCMlFccuKNhL36Drok74AE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=jJlEjJTp5sq57ROgGm3SWlApL12iSHqaj1ZbI6qq+WRcptfj+qZv/BkrqBRfmdWoj
-	 WvTgmBaoyC+oOpFea+UpqRBUZ5dFLq/IIGN60LO9y/EgOfWwCdPm8xvpkbMXL622eu
-	 CbOb58rmLk7VrljvIGzseAayWQYJ5d1NehI8HocM=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251010045603epcas5p100e8b22da565c8ddedc855e3eee2a63d~tCE639vYj2303523035epcas5p1O;
-	Fri, 10 Oct 2025 04:56:03 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cjZFZ2QhXz3hhTD; Fri, 10 Oct
-	2025 04:56:02 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251010045601epcas5p29c5dc8d86df33b732d285b1ab7821bfd~tCE5MyevZ0899008990epcas5p2H;
-	Fri, 10 Oct 2025 04:56:01 +0000 (GMT)
-Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251010045559epsmtip1ef22b9497c9caa63d35fb46e3b9ed6e6~tCE3gwKOS3107331073epsmtip1L;
-	Fri, 10 Oct 2025 04:55:59 +0000 (GMT)
-From: "Faraz Ata" <faraz.ata@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <andi.shyti@kernel.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>
-Cc: <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>
-In-Reply-To: <4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
-Subject: RE: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
- exynosautov920-hsi2c compatible
-Date: Fri, 10 Oct 2025 10:25:50 +0530
-Message-ID: <000001dc39a2$2cf5e570$86e1b050$@samsung.com>
+	s=arc-20240116; t=1760072282; c=relaxed/simple;
+	bh=20zVq/I1A85ImSdUuzZ7bh9Qs7dqD4eEIEsQzzw5Ci4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hqX4TBrHJxPLRLmQaGHu29WCXsOVJppzidDal/wGIUAs9f+tr5LBK7Bgx3hemMVzNYRvsTyyA8T+fPrgGUhQVcqDP/WJGrJCNs1v15XEPvWVmiYU8kAiulSy9Mh/ivpEV7ErlbHJOfp4FGB7Rpban8OnJ5TXMWSjHtc8SP0KCKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GrdiTzbT; arc=none smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-63b960a0a2bso2025002d50.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 21:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760072278; x=1760677078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j7qS0AM3lX7OGhXSFEYS6mkC3EKNzPxshbg7hLZcah0=;
+        b=GrdiTzbTpmXrgj0/PjkohCZ6LgFNbxV45gb5L/ZVbzaWKAHJgA12/mfFqFdtOpY72m
+         bZZCyt4k8jRvQo4unsWw4ZeaFcU/eOYR2U/wcLgsvZR/RYdUoV9fmyuViF8Of5PYj/l4
+         634Gm0JHXypxB9ycdlhLckuOP80mjqw4wIO9HLiTQ6purdE8gu3SXgXaNMsYndjRbf75
+         1dPvVv1bpLUsn7UsoLTsiGPIZ2KQmnwtMFB4nrm8RHlzLeSFwrO7OIHtu7G4t0f6Q3Az
+         maevl8wn3jZRwLsUqzTevJOM0Q45hnxhlAkendZd7mXKlZsyaRmG6ugJRYjmZ1sxfyiy
+         qCrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760072278; x=1760677078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j7qS0AM3lX7OGhXSFEYS6mkC3EKNzPxshbg7hLZcah0=;
+        b=km5T2HXdOgnN9wo5A1zZAmjG+48lzL8woSWkxrRw4VE6MgYpowiccCyXnRlY+/fbX1
+         NVZwXcQXN9LfhY8FPWOZRouP42HZ+t5KHmnxJUcX12BuAKhGe2jXazy9LJQ7MVOdeTTW
+         hwFS74QCNbQXBmd0hwCJeCVA4jAe4ctlGGLjCJSVGC/kJQCOq62Xuy2ruIlhGFvTEOn3
+         u/0NUABESvlNcDHGTdYBYrhC7F5yMtv4N4nPB+YD/7eH8Hkvh2D9kzrN4MEhJbi6GeCn
+         HVT7aJNY+6saubRgyD/y038ko5Le/AhgCK1dRg4vQ5fFikT4KQdFfbd1FDJpR+2X2LNl
+         KhBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCmoE2mTbxerSq89az15arGw5ce3oKxsCJEvq783I8JfJmMqR+PnwSbt1WJHSyCqdZfRdQul+kzQrvO04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlfV4YJkQvXhXPojqeN6P5OdDsOh0hppdkONhHVYrT1zv9aJP7
+	PvK9iNGPdglZmuBIVtV1/57veqEVGF5S4dlTLp+FnHBiLBb2epGHYplMgtY+tF7OY0uJNERcDmS
+	CYYLsnwH1ENnPGNRfeLKb8xpqoY8GJt8=
+X-Gm-Gg: ASbGncsxRS2qT+Oc2aPXoXFd6XPq4z3hXbWSUfYBfiqIYlBP7DAd42L0w3MrmxpfhZ9
+	/uD1mBIHe2Thd1n/E0CU7bD/YADjFvraSu8mOhofjyWBaPCDZXOMhYycqq7NRWiWS5Q2WVHRkDU
+	xibSexlfBi/Dz2G8F2GjefpqR9H32+MDaWRdhFdi+6muYt6L5xp2DMJ3+syHhxDylb/fE3PVmfS
+	jIFEs77rHPUw25APVFHT479YQ==
+X-Google-Smtp-Source: AGHT+IHqDciv7GAPYfMGdKr9Fwuo5GT168N8GcrpsJ5KozP5HqYqg/LDALxuogvzJXgNCm6zrA+DoCqu7lr8uhQrVc0=
+X-Received: by 2002:a53:5009:0:b0:636:2420:d3ce with SMTP id
+ 956f58d0204a3-63ccb93456dmr7466309d50.51.1760072277565; Thu, 09 Oct 2025
+ 21:57:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHZnjCsweC3oVP5Ejv6M2pHGPEXvgKyFlopAbdTD1i0nLvhcA==
-Content-Language: en-us
-X-CMS-MailID: 20251010045601epcas5p29c5dc8d86df33b732d285b1ab7821bfd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336
-References: <CGME20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336@epcas5p2.samsung.com>
-	<20251009101911.2802433-1-faraz.ata@samsung.com>
-	<4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
+References: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
+ <20250925131055.3933381-1-nschichan@freebox.fr>
+In-Reply-To: <20250925131055.3933381-1-nschichan@freebox.fr>
+From: Askar Safin <safinaskar@gmail.com>
+Date: Fri, 10 Oct 2025 07:57:21 +0300
+X-Gm-Features: AS18NWAQwCKadWHXCZjVUBNaD3TaKIilJiJAQzSbvGFaYuFuE8UDpW1_H3riB-k
+Message-ID: <CAPnZJGBPyONjJoM6cskxysDnN4pxWuWJCK5A6TgikR2xHsrN5Q@mail.gmail.com>
+Subject: Re: [PATCH-RFC] init: simplify initrd code (was Re: [PATCH RESEND
+ 00/62] initrd: remove classic initrd support).
+To: nschichan@freebox.fr
+Cc: akpm@linux-foundation.org, andy.shevchenko@gmail.com, axboe@kernel.dk, 
+	brauner@kernel.org, cyphar@cyphar.com, devicetree@vger.kernel.org, 
+	ecurtin@redhat.com, email2tema@gmail.com, graf@amazon.com, 
+	gregkh@linuxfoundation.org, hca@linux.ibm.com, hch@lst.de, 
+	hsiangkao@linux.alibaba.com, initramfs@vger.kernel.org, jack@suse.cz, 
+	julian.stecklina@cyberus-technology.de, kees@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
+	linux-csky@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-hexagon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, mcgrof@kernel.org, 
+	mingo@redhat.com, monstr@monstr.eu, mzxreary@0pointer.de, 
+	patches@lists.linux.dev, rob@landley.net, sparclinux@vger.kernel.org, 
+	thomas.weissschuh@linutronix.de, thorsten.blum@linux.dev, 
+	torvalds@linux-foundation.org, tytso@mit.edu, viro@zeniv.linux.org.uk, 
+	x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-HI Krzysztof
+On Thu, Sep 25, 2025 at 4:12=E2=80=AFPM <nschichan@freebox.fr> wrote:
+> - drop prompt_ramdisk and ramdisk_start kernel parameters
+> - drop compression support
+> - drop image autodetection, the whole /initrd.image content is now
+>   copied into /dev/ram0
+> - remove rd_load_disk() which doesn't seem to be used anywhere.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Thursday, October 9, 2025 3:43 PM
-> To: Faraz Ata <faraz.ata@samsung.com>; andi.shyti@kernel.org;
-> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> alim.akhtar@samsung.com
-> Cc: linux-i2c@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com
-> Subject: Re: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
-> exynosautov920-hsi2c compatible
-> 
-> On 09/10/2025 19:19, Faraz Ata wrote:
-> > Add "samsung,exynosautov920-hsi2c" dedicated compatible for HSI2C
-> > found in ExynosAutov920 SoC.
-> >
-> > Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
-> > ---
-> > Note: This patch was previously sent separately. Resending now as part
-> > of a two-patch series to avoid dt-binding check error. No functional
-> > changes from the earlier submission[1]
-> 
-> It's not necessary. You only need to provide lore link to bindings in patch
-> changelog. Read carefully report you received.
-> 
-> Also, do not resend non-fix patches during merge window. It's just noise.
+I welcome any initrd simplification!
 
-Thanks for your comment
-I will send v2 of dt patch with lore link to binding 
-> 
-> 
-> Best regards,
-> Krzysztof
+> Hopefully my email config is now better and reaches gmail users
+> correctly.
 
+Yes, I got this email.
+
+--
+Askar Safin
 
