@@ -1,182 +1,164 @@
-Return-Path: <linux-kernel+bounces-848752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1623BCE7F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:37:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440A6BCE802
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59581542C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B792A543A45
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ADA259CB9;
-	Fri, 10 Oct 2025 20:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2522765C0;
+	Fri, 10 Oct 2025 20:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rm8s3l5Y"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNtWikKX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F711DDC33
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE2E1DDC33
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760128615; cv=none; b=qYCjDioWgiouvPgN9z3+tBfZxDkM4trlNom3woFL9bMRfzY5Gf8uyTOK4XvpBa51do4zq0pptbnD4ubd9JHWdyL5sTZYhuQw6EJs4+RQJ2q7wp8Ntw84SMT774qeFRUv1XsWV687+o74RE4C17sbtB2fmGYz7G1Vba7z8KwZcaA=
+	t=1760128714; cv=none; b=HZ6IRyAJwzmCtkyqQwS4MCfcTkroFV1razOOoAAnRRkxo5F0a2VvGVMDeYalXSwf/vRpzrw9RrRcgILhuPI2MvGu0agZT4strErXmMmH/orafnF4ButMO+JctSnvPewINYBlE99D75065jlNIJXp62a4BvuKveHnDLEHTmo1+vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760128615; c=relaxed/simple;
-	bh=Emo7hhyobRfducLrcbdgGE5EzoH+3R3fQ3ddbvBlCu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6yw/P8vwQaZhhiJaoAtuQK0HGgDXZzj9zcWYRpV38pEjBIE4MZ5kcOxY4+FhkaajOmmkEJ7/+84K0kdDSDVeQyV01ydSFy9F2HRhXso2flbVZ+XakAV8iyawio9MBY+2rLYtg0+SKmPwufswpMH0paHB1mrV13IS9H9LUBU0cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rm8s3l5Y; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b67684e2904so1186380a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760128613; x=1760733413; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=z342sgXhiD/O8A715zP2egB65IpjdIWZS6PWIEJhgKI=;
-        b=Rm8s3l5Y9ymJS5f9tPpiIQZB0fH47+5z/y/3qFVEU2HwpqmuiN5+JWVBGER64fol/k
-         UQu5gTrmnIDOGQH8qL9Y+AYym6bkIepg2XiADGeHjEvUO4qdOxrB256Bhvty6HP7XqSL
-         PdFN+Np6FbHnOIaAJa7pYb/9ouErxom+1yKRmoA0bjpQicC7l6t71j+sSeD36NW14d8L
-         vHWO0Y6tZb+mVZzSt+4UD05EaROcaMXKdKXPw2jGAn5Rl8OvcJ+xbkUC9RwXZOdfUAeH
-         BT3LFyYADKwGLw46TpCRK/w+ABf3v5C5cGTcrcLvcLAGUwx5zRD7ZbpSaQP/q/a1GeUg
-         R8UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760128613; x=1760733413;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z342sgXhiD/O8A715zP2egB65IpjdIWZS6PWIEJhgKI=;
-        b=U9R0JNC8ppd17uDvnzI0GxCP6RtoXLOLI9ZWakbhkBcjin5p4kVFcHZXssBsdUm6GT
-         nBTOjKm/6dOgvQ89Rc0sjYKMJdjGi5pxGJEIsnCEpwrIne5aCZuqxTIj2f7yGsijg36A
-         MyoWthTp4U0y40d1ZFEkDZzH146qyhuiJNA6MzSXJXYzoDzZRMU8eD8/OXB/7yNYN+16
-         FkSF0mYr6Vxf7QQpGdzVTmVT+fpCyLRPWqmBwhZmnEh4izAjwMuVfYU5kvuR6/39dA+G
-         ZxHVlx0bZSLqyOxdR84tg/IphH43a95u77A6u8hk+nVC7nqG0l2Y5a1etLSyDvXmUMTa
-         QwFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHsMAHDkrqekavr5d9nNXe1SotdCbAjFAkHm+upn5CzCD9y2gB89RzJDIIyy4vjJ8gp6D6/24EdwTby9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcI4xcNZpwvWKVY8aPtpvcGZykf3CUPJjW5dWXktNH/gMt3JJF
-	hAd7hVtEqvOPM+b0tW037cRDc7/4IpIoJmR5TY4uPOxk9/+hi3rlluAt
-X-Gm-Gg: ASbGncv6aZvYGJ80ahw03Sk6RBFEaUGsOjMp80nqv7ak4r9w7ujEwD9tjtdv+6tguOv
-	M0/R9QlhOgUyZJ+6F2uGTixNloTajlG0qJi8Z40zvK4dFfLY1IVdLxzctVJ9rcTs2ZHF10l2/8P
-	p366E5JMe1PMaot+ObrcZXX7KjSIvnqPJRW2pHgPV9KgeKQA3rq3/8QwT996WHZYlV9Jh42hTNu
-	gwr08yT6Wj2J/up1Up/Qp4uQZYbzB91kBTUr6jMBV27//+Q1JuGrLIOQNLJO+MYTNYE4I8bfBFF
-	41BxcQoFx8RCdbYO2ezqVI8zvpqir5ECfqUcVIY3GNacbk7rMvaxLRrtRvf6Rc4PQNJPsWefuJ9
-	3yXA4xcM8jBVMdhgD4iOoXFFEhY45swTKZkZ+bNGAiJjrMyCtFA==
-X-Google-Smtp-Source: AGHT+IH9jJP+gVV3DYzKpzglB7kWoF3neWRRoVNVj3O59IVhAsyeWrtkFm3S3KlF9BP78LUiXGfghg==
-X-Received: by 2002:a17:902:e952:b0:262:4878:9dff with SMTP id d9443c01a7336-290273567a8mr166430805ad.12.1760128613169;
-        Fri, 10 Oct 2025 13:36:53 -0700 (PDT)
-Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-29034f99fbfsm65398065ad.128.2025.10.10.13.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 13:36:52 -0700 (PDT)
-Date: Fri, 10 Oct 2025 17:37:52 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, kernel test robot <lkp@intel.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Axel Haslam <ahaslam@baylibre.com>, dlechner@baylibre.com
-Subject: Re: [PATCH] pwm: Declare waveform stubs for when PWM is not reachable
-Message-ID: <aOluoP01oaDzaseV@debian-BULLSEYE-live-builder-AMD64>
-References: <1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com>
- <6v4hny7hxjsdf6zvinhpagtbhluxbd6psq7wpx5ls6zdbnjtym@lnygnkav4ewk>
- <2e82eaf275b5c8df768c8b842167c3562991e50c.camel@gmail.com>
- <aOlYDyLzVGbCh5mE@debian-BULLSEYE-live-builder-AMD64>
- <04eb5b1ccc0268ff7e9b88835203771886c5ee25.camel@gmail.com>
+	s=arc-20240116; t=1760128714; c=relaxed/simple;
+	bh=IE1QwwL8bkDBUE2YAsOh0uVIdpMvU24OHPmkXbY5os8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d5zboHfneLsIxMB906L6npqgr2trR9lvMx3DSZYGlV2M67AKFFhCk7XCzMP2LHq5R3AwrNnB6ahLD7YSv0K/dyTalom6RRnrh93zMU2H/QWLX0BcAo5GdnEg6LVIqdDVZiUDKEPNiusVBSdV+5bseheJi/3CJ6nzrz2JCjZsRTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNtWikKX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B992BC4CEF1;
+	Fri, 10 Oct 2025 20:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760128713;
+	bh=IE1QwwL8bkDBUE2YAsOh0uVIdpMvU24OHPmkXbY5os8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=kNtWikKXPiUKdSii0L+me6qHdv77JRB2d9s4KsUnmFVDZ8O6wFpKvBfSJZo4ypge6
+	 ZqfP5QtHVpmYjJIaymAKrjmUaKQ7F5uGCEg8FQDfQ8GpooUCu83IA7QSVzOqspgMTp
+	 7evl8xQeulhVnD+fOlPjGSBD3YBvFep5aO5hAu1RlbWA/TmLa527i5SMwrjcRSOjt0
+	 PZ25jbPOF1okr0gSOGbYFokeC3LD8nQlt5hbykHAvz9E8nrR8I2vviR2phfl2iC9vz
+	 /qGpXy28VsnDYS3EVcByYFgaMolPS6MVPn5K/1p63ddy0NEzfakUdABpLCwfpc/Jfj
+	 O6ZrW7Ja2A0og==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6016CCD187;
+	Fri, 10 Oct 2025 20:38:33 +0000 (UTC)
+From: Shubhang Kaushik via B4 Relay <devnull+shubhang.os.amperecomputing.com@kernel.org>
+Date: Fri, 10 Oct 2025 13:38:17 -0700
+Subject: [PATCH] sched/fair: Add helper to handle leaf cfs_rq addition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <04eb5b1ccc0268ff7e9b88835203771886c5ee25.camel@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251010-sched-cfs-refactor-propagate-v1-1-b5928aa36771@os.amperecomputing.com>
+X-B4-Tracking: v=1; b=H4sIALhu6WgC/x3MQQqEMAxA0atI1gbaOg7MXGVwEWKq2diSiAji3
+ S2zfPD5F7iYisO3u8DkUNeyNcS+A15pWwR1boYU0hhDDOi8yoycHU0y8V4Mq5VKC+2C8h5eI6V
+ PzANDW9TW6Pnf/6b7fgBmh82IbgAAAA==
+X-Change-ID: 20251010-sched-cfs-refactor-propagate-e6345a291f3c
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+Cc: Shubhang Kaushik <sh@gentwo.org>, Christopher Lameter <cl@gentwo.org>, 
+ linux-kernel@vger.kernel.org, 
+ Shubhang Kaushik <shubhang@os.amperecomputing.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760128713; l=2865;
+ i=shubhang@os.amperecomputing.com; s=20251010; h=from:subject:message-id;
+ bh=PoMBnuR5rndeOerIM079JrSnbV5lxjXSoJlYvGNDmFk=;
+ b=Pnfun07Y50EISghGQEvlrJChPVOFGksQ6XRZQu0/jfMWv6keif6pHq7dPcfC3QL1n8Bk2BVGB
+ kX5ls7ykMs9CF9yDaTgjGVZ7ETv2Nl0RHZLSZC1aNgRC8aZDFV7Frkq
+X-Developer-Key: i=shubhang@os.amperecomputing.com; a=ed25519;
+ pk=jc8YIRvxPSyJaBRe5y+a4N0RXKBUEcAh8+OFhlROXPY=
+X-Endpoint-Received: by B4 Relay for
+ shubhang@os.amperecomputing.com/20251010 with auth_id=539
+X-Original-From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+Reply-To: shubhang@os.amperecomputing.com
 
-...
-> > > 
-> > > I did not tested but I also wonder if 'imply SPI_OFFLOAD_TRIGGER_PWM' is not
-> > > similar to the above.
-> > 
-> > It works, and I'll update the IIO patch to have
-> > 	select SPI_OFFLOAD
-> > 	imply PWM
-> > 	imply SPI_OFFLOAD_TRIGGER_PWM
-> > in Kconfig. The PWM imply is because I think SPI offload support meets the 
-> > "highly desirable feature" criterion mentioned by kbuild doc [1].
-> 
-> With imply we then need to take care either using stubs (which seems not to be an
-> option) or with preprocessor conditions in your driver. As discussed in the other
-> thread I would just select SPI_OFFLOAD. Basically I would:
-> 
-> 	select SPI_OFFLOAD
-> 	select SPI_OFFLOAD_TRIGGER_PWM
-> 	depends on PWM
+From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
 
-Yeah, depending on PWM is what I was trying to avoid because the ADC can be used
-without PWM. Doing the above is the easiest solution - depend on everything,
-select everything. Though, I guess I'm technically not keeping backwards
-compatibility if I add a new dependency to the driver.
+Refactor the logic for adding a cfs_rq to the leaf list into a helper
+function.
 
-IIO_BUFFER_DMA and IIO_BUFFER_DMAENGINE are part of IIO subsystem so okay to
-select them? Otherwise, yeah, they should be optional too (would either imply
-them or select if SPI_OFFLOAD).
+The existing code repeated the logic to check if the cfs_rq was
+throttled and added it to the leaf list. This change extracts that
+logic into the static inline helper `__cfs_rq_maybe_add_leaf()`, which
+is a more robust naming convention for an internal helper.
 
-I'm currently leaning towards
- 	imply PWM
- 	imply SPI_OFFLOAD_TRIGGER_PWM //(SPI_OFFLOAD_TRIGGER_PWM depends on SPI_OFFLOAD)
-but not really sure.
+This refactoring removes code duplication and makes the parent function,
+`propagate_entity_cfs_rq()`, cleaner and easier to read.
 
-It's sort of a feature bundle we want to enable to provide SPI offloading.
+Signed-off-by: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+---
+Refactor repeated cfs_rq leaf logic in `propagate_entity_cfs_rq()`
+into a new helper function, `__cfs_rq_maybe_add_leaf()`, to
+remove code duplication and improve readability.
+---
+ kernel/sched/fair.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-if SPI_OFFLOAD && PWM
-	select SPI_OFFLOAD_TRIGGER_PWM
-	select IIO_BUFFER_DMA
-	select IIO_BUFFER_DMAENGINE
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index bc0b7ce8a65d6bbe616953f530f7a02bb619537c..fe714c68f0ef52c08c552ce93741f29df95d7d1c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -13159,6 +13159,18 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
+ }
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
++/*
++ * If a task gets attached to this cfs_rq and, before being queued,
++ * it gets migrated to another CPU (e.g., due to reasons like affinity change),
++ * this cfs_rq must remain on leaf cfs_rq list. This allows the
++ * removed load to decay properly; otherwise, it can cause a fairness problem.
++ */
++static inline void __cfs_rq_maybe_add_leaf(struct cfs_rq *cfs_rq)
++{
++	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
++		list_add_leaf_cfs_rq(cfs_rq);
++}
++
+ /*
+  * Propagate the changes of the sched_entity across the tg tree to make it
+  * visible to the root
+@@ -13167,14 +13179,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ {
+ 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 
+-	/*
+-	 * If a task gets attached to this cfs_rq and before being queued,
+-	 * it gets migrated to another CPU due to reasons like affinity
+-	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
+-	 * that removed load decayed or it can cause faireness problem.
+-	 */
+-	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
+-		list_add_leaf_cfs_rq(cfs_rq);
++	__cfs_rq_maybe_add_leaf(cfs_rq);
+ 
+ 	/* Start to propagate at parent */
+ 	se = se->parent;
+@@ -13184,8 +13189,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 
+ 		update_load_avg(cfs_rq, se, UPDATE_TG);
+ 
+-		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
+-			list_add_leaf_cfs_rq(cfs_rq);
++		__cfs_rq_maybe_add_leaf(cfs_rq);
+ 	}
+ }
+ #else /* !CONFIG_FAIR_GROUP_SCHED: */
 
-we can have
-	imply IIO_BUFFER_DMA
-	imply IIO_BUFFER_DMAENGINE
- 	imply PWM
- 	imply SPI_OFFLOAD_TRIGGER_PWM
+---
+base-commit: 0d97f2067c166eb495771fede9f7b73999c67f66
+change-id: 20251010-sched-cfs-refactor-propagate-e6345a291f3c
 
-but we could then have IIO_BUFFER_DMA=y and PWM=n and still be unable to SPI offload?
+Best regards,
+-- 
+Shubhang Kaushik <shubhang@os.amperecomputing.com>
 
-Maybe
-	imply IIO_BUFFER_DMA if (SPI_OFFLOAD && PWM)
-	imply IIO_BUFFER_DMAENGINE if (SPI_OFFLOAD && PWM)
- 	imply PWM
- 	imply SPI_OFFLOAD_TRIGGER_PWM if (SPI_OFFLOAD && PWM)
-?
 
-Forgot to add David to CC list on previous reply so doing it now.
-
-> 
-> - Nuno Sá
-> 	
-> > 
-> > [1]:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/kbuild/kconfig-language.rst?h=v6.17#n197
-> > 
-> > One alternative to this patch is to have `#if IS_REACHABLE(CONFIG_PWM)` in the
-> > ADC driver as David suggested in the other thread. I'll probably do that and
-> > drop the changes to PWM.
-> > 
-> > I first thought of using `#ifdef CONFIG_PWM`, but couldn't convince myself about
-> > that from the relatively small number of ifdef use-cases in IIO.
-> > 
-> > Thanks,
-> > Marcelo
-> > 
-> > > 
-> > > - Nuno Sá
-> > > 
-> > > > Best regards
-> > > > Uwe
 
