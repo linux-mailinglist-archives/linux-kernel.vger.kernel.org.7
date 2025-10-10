@@ -1,109 +1,196 @@
-Return-Path: <linux-kernel+bounces-848071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F9DBCC6B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:45:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52D5BCC6EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 91D6F3551B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:45:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9210A4E94BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D6B2D12E2;
-	Fri, 10 Oct 2025 09:45:38 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B062ED164;
+	Fri, 10 Oct 2025 09:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvslxa6y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABE9281529
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDD62ECE9A;
+	Fri, 10 Oct 2025 09:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760089538; cv=none; b=JQZlLL/qNkPP80Ogn8xgISKq8IZoKtSqqF8IrPH6G/d6CAuKGqIHQHxvoV9Pk8pDNES8QDNxGjqRRBx6lpK9XN+ZWOhpKkeu2G/iUdrM1szO1gWVSAQeep9OKJx3vApkWmR6corBHqcdsEUyjnV/jkfTRDF5yd+TVfKaXPmEacE=
+	t=1760089698; cv=none; b=EfQY4FTaNJRatIgyVk6VvtGt7vdmk6Jxjhc9gyvVPhRptuvaCHOLBVl3MuGAr1x78vv45N3iJ/FjYxqpYKO/YXOb243/OHgsvNQYXxNPiSbic185XARxWwyZIUdOe8j9t4IyFV8J2chly8nf2dZfoX1DZctJhyiFs9NcCdqaS6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760089538; c=relaxed/simple;
-	bh=RMXAJnAkU205MbP6vX2oZI4xHvNmkJEViuibbSmCIyk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N15szj6gAl6RgcnXIs0qivS6MSdFcJW5mBo/ndGSQfSOUY1FlHWYqutDlsbsonDbjNAJJhqle6S36T/BmTfawV+QSU+oHLADsAImL8ptZwVcDWb/NhUvmO+lWNq1mMLRXHbh1OMKWrslKZ/vfdSRzINH9goltiLdiE+cad0OE6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cjhcZ5Rp5z6L56H;
-	Fri, 10 Oct 2025 17:42:54 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id D50E71401F4;
-	Fri, 10 Oct 2025 17:45:32 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 10 Oct
- 2025 10:45:32 +0100
-Date: Fri, 10 Oct 2025 10:45:30 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Yicong Yang <yangyicong@huawei.com>
-CC: Yang Shen <shenyang39@huawei.com>, <yangyicong@hisilicon.com>,
-	<linux-kernel@vger.kernel.org>, <fanghao11@huawei.com>, "Zengtao (B)"
-	<prime.zeng@hisilicon.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>
-Subject: Re: [PATCH] MAINTAINERS: Update HiSilicon PTT driver maintainer
-Message-ID: <20251010104530.00000186@huawei.com>
-In-Reply-To: <81d63996-41e3-029a-7de4-cb78c9bbfb26@huawei.com>
-References: <20251010014847.2747140-1-shenyang39@huawei.com>
-	<81d63996-41e3-029a-7de4-cb78c9bbfb26@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1760089698; c=relaxed/simple;
+	bh=JrWrN+FQZRgzUNzMiSaZNnbC3MC4bk658YLS+9m48g8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gPZ461WvRMjuIjK3Hh54CwyJfRqzfHGIrFDOKPHTzHB0F38sLKEOY1l/eK0gB9zUXN5X53PWF/ol8ipHabBzfFtsouqbGUKHu+to48L8+AlYNkfQiardmj3Lhf1MER+EBZQbou7/drOvd5ICUABVTKdX7PtKGPzIZhLbaTn6iLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvslxa6y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDA5C4CEF1;
+	Fri, 10 Oct 2025 09:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760089697;
+	bh=JrWrN+FQZRgzUNzMiSaZNnbC3MC4bk658YLS+9m48g8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dvslxa6yxvt2X8m9j5W8vxa0CEpmn58MZW4GD8Bm90QDt4Li+sTdT51zb8UE0qeLb
+	 azDAoKjznhK8NsVXZ0yiVFtmkDfO4v3OP0darB8cUgpIS4xYA7XGtz9twXoN2m/2Iv
+	 Zgla+K3E0rJ87QbBw4pf2zqk4qvl+l8MiFs2THHroDkH9Duy8Rpn560n26a4X/x8mc
+	 y1cAca8VS22y3cTaYlvNauRTOqGmc6n5JZY5PyxnsPIL5DzzvT7zot84hDCxmeS4b2
+	 Qz7IcfT+5G/3MKmXcCqcN4AOS7vciwONESBmCNrU278J4u6ZJDH3uR36EV0+E9bpF5
+	 sYKnC7q9v6t1w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v79jT-0000000CsJY-3fzQ;
+	Fri, 10 Oct 2025 09:48:16 +0000
+Date: Fri, 10 Oct 2025 10:48:15 +0100
+Message-ID: <86h5w7xf34.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maulik Shah <quic_mkshah@quicinc.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: smp: Implement cpus_has_pending_ipi()
+In-Reply-To: <CAPDyKFq4RgL0=hPhB0cwTQF-A+mXH8dxsZAYTB1CFuLxxxTujg@mail.gmail.com>
+References: <20251003150251.520624-1-ulf.hansson@linaro.org>
+	<20251003150251.520624-3-ulf.hansson@linaro.org>
+	<865xcsyqgs.wl-maz@kernel.org>
+	<CAPDyKFq4RgL0=hPhB0cwTQF-A+mXH8dxsZAYTB1CFuLxxxTujg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ulf.hansson@linaro.org, rafael@kernel.org, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, tglx@linutronix.de, quic_mkshah@quicinc.com, sudeep.holla@arm.com, daniel.lezcano@linaro.org, vincent.guittot@linaro.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 10 Oct 2025 11:23:43 +0800
-Yicong Yang <yangyicong@huawei.com> wrote:
+On Fri, 10 Oct 2025 09:30:11 +0100,
+Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> 
+> On Mon, 6 Oct 2025 at 17:55, Marc Zyngier <maz@kernel.org> wrote:
+> >
+> > On Fri, 03 Oct 2025 16:02:44 +0100,
+> > Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
+> > > To add support for keeping track of whether there may be a pending IPI
+> > > scheduled for a CPU or a group of CPUs, let's implement
+> > > cpus_has_pending_ipi() for arm64.
+> > >
+> > > Note, the implementation is intentionally lightweight and doesn't use any
+> > > additional lock. This is good enough for cpuidle based decisions.
+> > >
+> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > ---
+> > >  arch/arm64/kernel/smp.c | 20 ++++++++++++++++++++
+> > >  1 file changed, 20 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> > > index 68cea3a4a35c..dd1acfa91d44 100644
+> > > --- a/arch/arm64/kernel/smp.c
+> > > +++ b/arch/arm64/kernel/smp.c
+> > > @@ -55,6 +55,8 @@
+> > >
+> > >  #include <trace/events/ipi.h>
+> > >
+> > > +static DEFINE_PER_CPU(bool, pending_ipi);
+> > > +
+> > >  /*
+> > >   * as from 2.5, kernels no longer have an init_tasks structure
+> > >   * so we need some other way of telling a new secondary core
+> > > @@ -1012,6 +1014,8 @@ static void do_handle_IPI(int ipinr)
+> > >
+> > >       if ((unsigned)ipinr < NR_IPI)
+> > >               trace_ipi_exit(ipi_types[ipinr]);
+> > > +
+> > > +     per_cpu(pending_ipi, cpu) = false;
+> > >  }
+> > >
+> > >  static irqreturn_t ipi_handler(int irq, void *data)
+> > > @@ -1024,10 +1028,26 @@ static irqreturn_t ipi_handler(int irq, void *data)
+> > >
+> > >  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
+> > >  {
+> > > +     unsigned int cpu;
+> > > +
+> > > +     for_each_cpu(cpu, target)
+> > > +             per_cpu(pending_ipi, cpu) = true;
+> > > +
+> >
+> > Why isn't all of this part of the core IRQ management? We already
+> > track things like timers, I assume for similar reasons. If IPIs have
+> > to be singled out, I'd rather this is done in common code, and not on
+> > a per architecture basis.
+> 
+> The idea was to start simple, avoid running code for architectures
+> that don't seem to need it, by using this opt-in and lightweight
+> approach.
 
-> +cc Suzuki.
-> 
-> as ptt patches are usually kindly processed through coresight tree, many appreciations.
-> 
-> On 2025/10/10 9:48, Yang Shen wrote:
-> > Add Yang Shen as the maintainer of the HiSilicon PTT driver,
-> > replacing Yicong Yang.
-> > 
-> > Signed-off-by: Yang Shen <shenyang39@huawei.com>  
-> 
-> good luck :)
-> 
-> Acked-by: Yicong Yang <yangyicong@hisilicon.com>
-
-Sorry to see you go Yicong but I'm happy to have shenyang on
-board.
-
-Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+If this stuff is remotely useful, then it is useful to everyone, and I
+don't see the point in littering the arch code with it. We have plenty
+of buy-in features that can be selected by an architecture and ignored
+by others if they see fit.
 
 > 
-> thanks.
+> I guess we could do this in generic IRQ code too. Perhaps making it
+> conditional behind a Kconfig, if required.
 > 
-> > ---
-> >  MAINTAINERS | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 9a6f4ef1cca3..e9a40db0f368 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -11278,8 +11278,8 @@ F:	drivers/perf/hisilicon
-> >  F:	tools/perf/pmu-events/arch/arm64/hisilicon/
-> >  
-> >  HISILICON PTT DRIVER
-> > -M:	Yicong Yang <yangyicong@hisilicon.com>
-> >  M:	Jonathan Cameron <jonathan.cameron@huawei.com>
-> > +M:	Yang Shen <shenyang39@huawei.com>
-> >  L:	linux-kernel@vger.kernel.org
-> >  S:	Maintained
-> >  F:	Documentation/ABI/testing/sysfs-bus-event_source-devices-hisi_ptt
-> >   
+> >
+> > >       trace_ipi_raise(target, ipi_types[ipinr]);
+> > >       arm64_send_ipi(target, ipinr);
+> > >  }
+> > >
+> > > +bool cpus_has_pending_ipi(const struct cpumask *mask)
+> > > +{
+> > > +     unsigned int cpu;
+> > > +
+> > > +     for_each_cpu(cpu, mask) {
+> > > +             if (per_cpu(pending_ipi, cpu))
+> > > +                     return true;
+> > > +     }
+> > > +     return false;
+> > > +}
+> > > +
+> >
+> > The lack of memory barriers makes me wonder how reliable this is.
+> > Maybe this is relying on the IPIs themselves acting as such, but
+> > that's extremely racy no matter how you look at it.
+> 
+> It's deliberately lightweight. I am worried about introducing
+> locking/barriers, as those could be costly and introduce latencies in
+> these paths.
 
+"I've made this car 10% faster by removing the brakes. It's great! Try
+it!"
+
+> Still this is good enough to significantly improve cpuidle based
+> decisions in this regard. Please have a look at the commit message of
+> patch3.
+
+If I can't see how this thing is *correct*, I really don't care how
+fast it is. You might as well remove most locks and barriers from the
+kernel -- it will be even faster!
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
