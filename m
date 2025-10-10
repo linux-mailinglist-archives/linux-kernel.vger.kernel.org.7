@@ -1,124 +1,152 @@
-Return-Path: <linux-kernel+bounces-848730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF03DBCE721
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:07:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C38BCE727
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899E419A29B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:07:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE6314F1288
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBE030171B;
-	Fri, 10 Oct 2025 20:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA40302148;
+	Fri, 10 Oct 2025 20:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DGqpZBGG"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="l2raaEEq"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E8C2EFD90
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D222F6171
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760126832; cv=none; b=pJIJXMJTo/wkjM0oEtWPGOx4d06ZmpZqM3SbX1oEKU7lvDFX74aG6NivLwvSkV2EjJUljlBbdsyCDm998tgX8QppIv+QmqR34MA1SARjoIuo/70ELDqVvHoPwLY5Tp+FZ+p1e7HhufA+SWsg3f+6Y8UINS+SN28v3uixICGivx4=
+	t=1760126850; cv=none; b=nyCwgA3PZvmGHUqmE18HLes7xonrYOgj0bXa22Q/Je5Xrizb7RXuGM7Se5AVI4qrLJBcobY/uoEIOZ8YBh+2PCXKfmBQ0nD8wvYcV+CVDalpSfn1gK/j/FbItFstMgdoVkWdhxqDZJFJG6JU36AqYnhysKxU8Fo1hnO9rMSNrm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760126832; c=relaxed/simple;
-	bh=qJNQginXw33OCL6otz/mio9dtPI95vuO0c28D6VMtAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T5tIyrX/MHbSJQHMUg8DgRupWEs7Eckzj5aSpFqwwUc6ohY/oHXesQ448SK50PXo3XS5eoQZX4mwPi2K3UkxZU18DDqu24XtvKGV+U74ZcWcig3UhDtMP02M9ivwbmIij5iDYlFGMGpd6hyO1/IUxI7IT96WN+VBtg8FgLoUX3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DGqpZBGG; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-93607aec358so46992139f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1760126830; x=1760731630; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1C9TGYFUXxVemAwR89Ulh9sGzSp7qA+8XlrADAfHgVc=;
-        b=DGqpZBGGjcYvuhn3d1qtBAPuwV6HidoG/f9LxCAAAM2hziVAae/CJyC0oigmkXLzvv
-         Ga93rLuSxyVYcz+j0LAzOKF7KT8i792q8WG9oCm5pY5IIhe0RU9bzaDIWhdtWGQyABwn
-         RA3hdEC1ygms6StQIxlZy+OsIfJnfgZPhRi+4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760126830; x=1760731630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1C9TGYFUXxVemAwR89Ulh9sGzSp7qA+8XlrADAfHgVc=;
-        b=LdcZ0/WnfZGcMHyH8gVhUiYVf5gRMX1O325LkuEvaELBs2HlGjLDUhAyX31QPPzq48
-         GuFK3Mk8JITzQQwdY0Op500QUwCj0CMKkdkM9mX6o9h8XT8AS2Ys2a3b9VRaBVnNFHux
-         ViUJcMaRX3QO1tL9C/eVDvIU7q/zeaLbQTPXyxlhvQpg9f9y52Z+NOgdT1AldHQcCzyy
-         ZHw1facDA2hqLlD7UQemJF1bUKpFJzEd8VnPoJihP1fKTTPva6cuGJPSb6yUdyniULg9
-         bBww8jWmaHGFWTnv2jiR6vWxiffFmia3eyJ1yLuQPiA83X9A+eCHYI1gLBPPzmFzHx7t
-         G8Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVD9Jg+3/u4q8eUh+UZut9jbzFencs9UOwKeNEHii8N4fc1WONmD+tuqjKjawAAkbfu7+yPcEjPS1mbK8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9eRW8i6Ns415lFnFO8WFkJV/tKq+kdIBdhWmu1e+gKfR2TTfn
-	Bb94EMmKHIF9rT5xIOrL4uI7ymm+YZDoYcVa7Sp1pniQRuytXG8JOt2xD1+gkhR1vGk=
-X-Gm-Gg: ASbGncu2Hp+xOzLQFwlWQDXrMGQW3TPo64DrLEDTq/EfO4tVM31qyW5BVxb0rQjYMAP
-	5The2qXxO4sRLYQS+3GqEnmt6E2NUtO+OFRVVeDZT8spIxxU8+OpX3Qik94C5IQDqCaNOKllkr0
-	3Vh9X/W2ciPdCF3h7FrAYQ905dSTM/2+FUnEPidDLVSxqgG9x1yT1D9DO7AOz1x+QTXZTEyZayD
-	aSEMPXDWvuEz3CORddLKgvsBqBXrhAzpE0gMitT5Dqm83OyYErIxf44+DEmMpqxcaOOihAUasuE
-	I4X3h6dMNHv3oJjqXxcQbRXOcXHfA2ubXFu/foUihFgHFL27koV7wiOJf/bV2DhXhK3Cr6uTpWn
-	t/nZ9ZSDQXrD4fb+PU7s5cJUpJNb2m+QQ1Qop7fcuHcCwZ5eiRgxT1A==
-X-Google-Smtp-Source: AGHT+IF47OBorJnDZLxogs92bg9DbP41Re55bcWPxH2LtcWYwZh2W54OFZb8SOadJVjAyPp0dDz4Zg==
-X-Received: by 2002:a05:6e02:2186:b0:42e:6e45:e0a3 with SMTP id e9e14a558f8ab-42f873544bfmr138691105ab.2.1760126829993;
-        Fri, 10 Oct 2025 13:07:09 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f9036cee5sm23494755ab.32.2025.10.10.13.07.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 13:07:09 -0700 (PDT)
-Message-ID: <75584276-6d30-4e35-9e59-e084c60d1c5f@linuxfoundation.org>
-Date: Fri, 10 Oct 2025 14:07:08 -0600
+	s=arc-20240116; t=1760126850; c=relaxed/simple;
+	bh=yRUjUuUXNBLsIN1szrFomtxYw/WYo3wHfGbwO0TlmkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uDh4P49Rrrzh8HmPevfJpsTI4o3GJqgdv2soAnGm1os43B779e0CbP37k3XY8hm4F9XIZtORZj2it8HRgippWs+vibvAEGzobeJq1O/7/eYung0uh+TkPseKQiL4fpWn0AIB3TTplx8MVgUk+wKqb6w7NKh6Er3GteJSn+ZubGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=l2raaEEq; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=sXtr63u17hNsb6FiIpfCvPf15KtfGYlPLgI+MFIT+c8=; b=l2raaEEqeEl6EphL
+	CkMZh3dEiisioiZXtVuUW37f/tunF6SwnBL4J6xQpZ14g7wvTbrN6Gjk9I++q3pvkjOxjRGy9DMK2
+	VRPQXPTSaYOD1jit2q4HS1XglRswcDTlgRV8yAYaXUVDEkBqKzHFszL/M5pQHu0v7EEziGvv6tt99
+	xAYCOWXyTSVEFISkQqIsH+KPA90V/DUmmKnngoo7ROBU44U7Izi1YvPVyQLcG3h1PjHlZyMtrzbyM
+	gWM4oxVh2hmfDeQ0Lcry6zBsZDgmlhXF9l6HgqAcuXjdz9d1drcEOjQVmdJioITjMV7EMIa+eaK9T
+	ahvBcYUv05wsgFguOQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1v7JOW-00FmK3-2H;
+	Fri, 10 Oct 2025 20:07:16 +0000
+Date: Fri, 10 Oct 2025 20:07:16 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Jeff Johnson <jjohnson@kernel.org>, wcn36xx@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wifi: wcn36xx: Remove unused
+ wcn36xx_smd_update_scan_params
+Message-ID: <aOlndHPBg-SBZ-zU@gallifrey>
+References: <20250619010506.296494-1-linux@treblig.org>
+ <CAFEp6-3U2rQEUtntb0cdJeykURocEZQdeVHXFbXXogZV=wxGWg@mail.gmail.com>
+ <aOfT806hw7l2BeJu@gallifrey>
+ <CAFEp6-3tq4FkiBLO20mk2HU1QkbyVMbyutu11v7b8PSyps2Qjw@mail.gmail.com>
+ <83b4ff7d-2443-4ba9-8103-77c8dde518f2@oss.qualcomm.com>
+ <aOhXV7IdoI0aBT1j@gallifrey>
+ <CAFEp6-085_uTZtjpku5ffq9+81OpPcFBJb3jXzeWbzKmQwFy9Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] selftests: cachestat: Fix warning on declaration under
- label
-To: hannes@cmpxchg.org, nphamcs@gmail.com
-Cc: nathan@kernel.org, shuah@kernel.org, morbo@google.com,
- justinstitt@google.com, nick.desaulniers+lkml@gmail.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, david.hunter.linux@gmail.com,
- Shuah Khan <skhan@linuxfoundation.org>,
- Sidharth Seela <sidharthseela@gmail.com>, SeongJae Park <sj@kernel.org>
-References: <20250929172724.75108-1-sj@kernel.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250929172724.75108-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFEp6-085_uTZtjpku5ffq9+81OpPcFBJb3jXzeWbzKmQwFy9Q@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 20:06:50 up 166 days,  4:20,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 9/29/25 11:27, SeongJae Park wrote:
-> On Mon, 29 Sep 2025 17:24:06 +0530 Sidharth Seela <sidharthseela@gmail.com> wrote:
+* Loic Poulain (loic.poulain@oss.qualcomm.com) wrote:
+> Hi Dave,
 > 
->> Fix warning caused from declaration under a case label. The proper way
->> is to declare variable at the beginning of the function. The warning
->> came from running clang using LLVM=1; and is as follows:
->> --
->> -test_cachestat.c:260:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
->>    260 |                 char *map = mmap(NULL, filesize, PROT_READ | PROT_WRITE,
->>        |
->>
->> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> On Fri, Oct 10, 2025 at 2:46 AM Dr. David Alan Gilbert
+> <linux@treblig.org> wrote:
+> >
+> > * Jeff Johnson (jeff.johnson@oss.qualcomm.com) wrote:
+> > > On 10/9/2025 3:15 PM, Loic Poulain wrote:
+> > > > Hi Jeff,
+> > > >
+> > > > On Thu, Oct 9, 2025 at 5:25 PM Dr. David Alan Gilbert <linux@treblig.org> wrote:
+> > > >>
+> > > >> * Loic Poulain (loic.poulain@oss.qualcomm.com) wrote:
+> > > >>> On Thu, Jun 19, 2025 at 3:05 AM <linux@treblig.org> wrote:
+> > > >>>>
+> > > >>>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > >>>>
+> > > >>>> wcn36xx_smd_update_scan_params() last use was removed in 2020 by
+> > > >>>> commit 5973a2947430 ("wcn36xx: Fix software-driven scan")
+> > > >>>>
+> > > >>>> Remove it.
+> > > >>>>
+> > > >>>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > >>>
+> > > >>> Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> > > >>
+> > > >> Hi Loic,
+> > > >>   Is this getting into a pull somewhere?
+> > > >
+> > > > Can it be picked for ath10-next?
+> > >
+> > > This was not on my radar since it wasn't sent to linux-wireless and hence
+> > > isn't tracked in patchwork. I just looked at it and it seems the following are
+> > > now also unused and could be removed:
+> > > struct wcn36xx_hal_update_scan_params_resp
+> > > struct wcn36xx_hal_update_scan_params_req_ex
+> >
+> > Oh, I'm happy to cook a v2 for that if Loic agrees they should go
+> > (I know some drivers like to keep struct definitions if they document the hardware)
 > 
-> Reviewed-by: SeongJae Park <sj@kernel.org>
+> The software based scanning never worked very well, so I'm not even
+> sure the related structs are correct or complete, so it's ok to remove
+> in your v2.
+
+Sure.
+
+> > > Let me know if you want me to take this as-is or wait for a v2. If you send a
+> > > v2 please also include linux-wireless so that it is tracked by patchwork.
+> >
+> > Sure.
+> >
+> > Note that linux-wireless isn't included in get_maintainer output for this:
+> >
+> > $ scripts/get_maintainer.pl -f drivers/net/wireless/ath/wcn36xx/smd.c
+> > Loic Poulain <loic.poulain@oss.qualcomm.com> (maintainer:QUALCOMM WCN36XX WIRELESS DRIVER)
+> > wcn36xx@lists.infradead.org (open list:QUALCOMM WCN36XX WIRELESS DRIVER)
+> > linux-kernel@vger.kernel.org (open list)
+> > QUALCOMM WCN36XX WIRELESS DRIVER status: Supported
 > 
+> Indeed, would you mind submitting a fix for the MAINTAINERS file?
+
+No problem.
+
+I'll cook a pair of patches.
+
+Dave
+
+> Regards,
+> Loic
 > 
-
-Johannes and Nhat,
-
-Assuming this will go through cachestat tree
-
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-
-Let me know if you would like me to take this through my tree.
-
-thanks,
--- Shuah
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
