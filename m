@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-848170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB62BCCCBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:45:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF7BBCCCCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB19919E5FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:45:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 908DB4E442A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB103287275;
-	Fri, 10 Oct 2025 11:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B658283C97;
+	Fri, 10 Oct 2025 11:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gikhRvMl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M+7NVtlm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7CB1494CC;
-	Fri, 10 Oct 2025 11:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F0A1E7C12;
+	Fri, 10 Oct 2025 11:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760096720; cv=none; b=OnyYcdfyskMmNpfALVCURKlqTLNfcd2YpTpmPuClidgcyUn0CmT6GqxjLYfItUEimsI65oqJTiLYgWRuBa372UkPtN0UY8ImHTefcboaapJyt1cDCV471FJr0yjxivdwU2yzIEogJXu2ke9zyhMr36qXAvjGHWHuqEU2cYO1Yfs=
+	t=1760096771; cv=none; b=NpTyPdCVFkQA/kcjJV7Xp8EcqGgqWV4dB5XQqR2hr8FdYsxrmkiNRo6Xb6/pbq4Y+/ruMHyYor7ER50wQx46MLD+ECUCO/YXrkO27Yfkdw35YPwuRLvGnTadllVrqXtaAP81fm+V46Yqhcu9vHFVjUcmeMXtRNAXlihwsOUzO1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760096720; c=relaxed/simple;
-	bh=ziouyjwySw3UWuW8tL6Q6l7Pc4+Kgy16ZCEvsUCbGbM=;
+	s=arc-20240116; t=1760096771; c=relaxed/simple;
+	bh=VjRxcvWMrTGyGz85idIF5PiXEZxnTBbF4eiWaP7b8wc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=af4dyyr2340V9eaUx5MO3D3xPTZLDgRDCSV+RsDMJuGjQIUufHH1wJecHmJ+wW5zDH7J2HGh2E8Q/myejMmHNfSx1XhIcnAkXbaq5Gw3FbdZWCVBfaeNm31Jqnf8Y0+SOYi9q4WPcw3OUzyGW1Wd0v+pRLy/u1j69TNygdsYFCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gikhRvMl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C38C4CEF1;
-	Fri, 10 Oct 2025 11:45:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oqn3cp9GXJAyHpTFd7qNcn8FBwmXIVRNO6pKqXhJFiNBZjjF/iOlvCq4j/aJu2htXx8kSgnpKy2CbxUDTKYca6X6x34gJKFzrOqNJlrK5iqJanV6pY7JZ/zl2jkepVLyC+otdSq8h0oTUCegHr1jLfcIqEVq6EsUBKjnScEdYds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M+7NVtlm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE3DC4CEF8;
+	Fri, 10 Oct 2025 11:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760096719;
-	bh=ziouyjwySw3UWuW8tL6Q6l7Pc4+Kgy16ZCEvsUCbGbM=;
+	s=k20201202; t=1760096771;
+	bh=VjRxcvWMrTGyGz85idIF5PiXEZxnTBbF4eiWaP7b8wc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gikhRvMlwqEPykhS9jg3m/YakpwPEgbjbuQnlVW5St6YgVs/a78tSLo36C54z+YDc
-	 TmSZE4vCfvYHq5tmQcNjHMt99Q0ym81gtY/MV0S8i60V8Qh/oA0FYmYlT9VMEd32FV
-	 p6tjOX8tPn+01Qh9Zjw2lW+R5+VO/HxCc3oCIFxabB4O8lsGAzC9o4zvP2YT9SzlxY
-	 FPzgHpERkWSyLdMY/AsZNd27o59eJ0UsmKFHskJz9kiy9569QA4mpNhvS/2FkMUjeV
-	 8WdGegJDyk+zmFkuFzxfyUp9FBoCjTuskW+UkOjaccXj7wG2KiLbhbJIxJG0y6V2yR
-	 5iNrrjzBy84bQ==
-Date: Fri, 10 Oct 2025 13:45:13 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr
- syscalls
-Message-ID: <20251010-schachfiguren-blutkonserven-9707ac22a0e2@brauner>
-References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
- <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
- <20251009172041.GA6174@frogsfrogsfrogs>
- <q6phvrrl2fumjwwd66d5glauch76uca4rr5pkvl2dwaxzx62bm@sjcixwa7r6r5>
+	b=M+7NVtlmySul0oHAyxjuJWWDer3RkdoMkGtEQoTnsSP09fys39swzVepuODsPzHt/
+	 IQn+WqBkqPJkTTTickC9FsLyM9ionInKUUxaOOs12s6Uf0IayEGoPzKU2YEpGy7GxU
+	 uL5P2q6o/61VyDwDFvPSVtgXLeF+ie7mP3Ps57DLmP197bxils85C0PGoEJSRfhnFl
+	 RKKvFq5oheFHgZxZToQIHSvDAM30hijZFCd0QgQ92KfRz7ru6Yh48nZjeRmTMj7fcd
+	 mpRMX0JCIs0/Ac+Iq0OkxnUlDu4o1udPiNJhm4ykRrLlagYbJqkl2B+2iwvW+JT/2O
+	 G4cYQHfJNkd4Q==
+Date: Fri, 10 Oct 2025 12:46:04 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jun Guo <Jun.Guo@cixtech.com>
+Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Fugang Duan <fugang.duan@cixtech.com>,
+	Peter Chen <peter.chen@cixtech.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggMi8zXSBz?=
+ =?utf-8?Q?pi=3A_spi-cadence?= =?utf-8?Q?=3A?= supports transmission with
+ bits_per_word of 16 and 32
+Message-ID: <747574cf-3139-4e12-89b3-cbd396acd5a4@sirena.org.uk>
+References: <20250930075644.1665970-1-jun.guo@cixtech.com>
+ <20250930075644.1665970-3-jun.guo@cixtech.com>
+ <SI6PR06MB7104D8834A40A802CF6CB085FFEFA@SI6PR06MB7104.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lO07HjWtCSe5Llfz"
 Content-Disposition: inline
-In-Reply-To: <q6phvrrl2fumjwwd66d5glauch76uca4rr5pkvl2dwaxzx62bm@sjcixwa7r6r5>
+In-Reply-To: <SI6PR06MB7104D8834A40A802CF6CB085FFEFA@SI6PR06MB7104.apcprd06.prod.outlook.com>
+X-Cookie: But it does move!
 
-On Fri, Oct 10, 2025 at 12:05:04PM +0200, Andrey Albershteyn wrote:
-> On 2025-10-09 10:20:41, Darrick J. Wong wrote:
-> > On Wed, Oct 08, 2025 at 02:44:18PM +0200, Andrey Albershteyn wrote:
-> > > These syscalls call to vfs_fileattr_get/set functions which return
-> > > ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
-> > > inode. For syscalls EOPNOTSUPP would be more appropriate return error.
-> > > 
-> > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > > ---
-> > >  fs/file_attr.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/fs/file_attr.c b/fs/file_attr.c
-> > > index 460b2dd21a85..5e3e2aba97b5 100644
-> > > --- a/fs/file_attr.c
-> > > +++ b/fs/file_attr.c
-> > > @@ -416,6 +416,8 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
-> > >  	}
-> > >  
-> > >  	error = vfs_fileattr_get(filepath.dentry, &fa);
-> > > +	if (error == -ENOIOCTLCMD)
-> > 
-> > Hrm.  Back in 6.17, XFS would return ENOTTY if you called ->fileattr_get
-> > on a special file:
-> > 
-> > int
-> > xfs_fileattr_get(
-> > 	struct dentry		*dentry,
-> > 	struct file_kattr	*fa)
-> > {
-> > 	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
-> > 
-> > 	if (d_is_special(dentry))
-> > 		return -ENOTTY;
-> > 	...
-> > }
-> > 
-> > Given that there are other fileattr_[gs]et implementations out there
-> > that might return ENOTTY (e.g. fuse servers and other externally
-> > maintained filesystems), I think both syscall functions need to check
-> > for that as well:
-> > 
-> > 	if (error == -ENOIOCTLCMD || error == -ENOTTY)
-> > 		return -EOPNOTSUPP;
-> 
-> Make sense (looks like ubifs, jfs and gfs2 also return ENOTTY for
-> special files), I haven't found ENOTTY being used for anything else
-> there
 
-I'm folding this in.
+--lO07HjWtCSe5Llfz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Oct 10, 2025 at 07:50:24AM +0000, Jun Guo wrote:
+> On 9/30/2025 3:56 PM, Jun Guo wrote:
+> > The Cadence IP supports configurable FIFO data widths of 16 bits or
+> > 32 bits during integration. The default FIFO data width is 8 bits.
+
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
+
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
+
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, so sending again is generally a better approach though there are
+some other maintainers who like them - if in doubt look at how patches
+for the subsystem are normally handled.
+
+--lO07HjWtCSe5Llfz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjo8fwACgkQJNaLcl1U
+h9DyVwf/WCMG/NpBnT9MMwlm16K+zd2lPXv/ilYeqE7QaTU7WWngAYWiYFEoOdDZ
+cObq2XEyhZLmb+YN77c0ovhJyscBfdZVlspZMWAav6JEjc0h/7VqU/KQJzJTsy5U
+Aj4UxRx8wpiJWWwryPrs9BN3HkxObvWeShGEU0+YDSx+O/UXdT894AfXl9WTL2sS
+BfE57HUnGuf6tPrxcfcIc5UVTHm1BvejJhCzJGi7f//uOmGkUcenQH9yd2pl7gp0
+DSisTawh2QppOhrPFNidR+gL8FqULPybe01fGSqodm2gKV65eywghOrzUMtYeMro
+LtWr+sUCG4XghAmclVUDCNTozt7ZAw==
+=cXcT
+-----END PGP SIGNATURE-----
+
+--lO07HjWtCSe5Llfz--
 
