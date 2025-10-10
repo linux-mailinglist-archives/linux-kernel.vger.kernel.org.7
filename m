@@ -1,242 +1,169 @@
-Return-Path: <linux-kernel+bounces-848183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50261BCCD5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52785BCCD6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12853B6141
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:08:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C7A3B372B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D42A28A1CC;
-	Fri, 10 Oct 2025 12:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B678228BAAC;
+	Fri, 10 Oct 2025 12:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="uEr8DHEq"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="e++32knt"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A66288CA3;
-	Fri, 10 Oct 2025 12:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760098117; cv=none; b=PaiFtwOmyRaXm7BtDUEud8JOqLfhdb88FNTiDppq/RFZPCYpcfUL4gM4yc7SiXwT6vBL+E8fcGDZwc4BrDqigL9hL6N0qncxgAFIMzy3xjaXs42c06H84cUKf8NEX22fmx9Bf7RqmxMoV/ymvTE69bvpcInOcj00GLZ9QYZOVeQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760098117; c=relaxed/simple;
-	bh=Zh6BhKnMA79MWyab0CAzmMs8HsF0Oe7PImX9VjoEZRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bJtq0xTrZlWz5ANse4HjmSJCFO7KYS/ax2KCjGrFnDb+KbaM63K1q2AYwLTXH0bddD0oCPYE9hNYLyddDb9NJuDPHEVzLqc0WRKq5z5idVf/4HHJNyDqBH20mdT3KFGLWaTsZ2OQpwaJi+dgo1pegTGN+ocfVOTneJCSF2yDtxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=uEr8DHEq; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1760098104; x=1760702904; i=deller@gmx.de;
-	bh=Zh6BhKnMA79MWyab0CAzmMs8HsF0Oe7PImX9VjoEZRk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=uEr8DHEqzEp5AsiARDrUfkeBbKxGSB2AS3l2wwkgRPC5jjy/CPfVVV69Jvb37cRf
-	 lCMaD61UkH7O8fh7IoQfboM8OCfFRhJ7nlSvkSGfTNKMK0kanmTaL1Ee8jB0mEZhA
-	 7du/I1QrIyY+WSTcwyGqF0dvxm3qHGh1aySo3eIA65OffKaakre4wiI3DxeesbsZ2
-	 PAQh3WvbZcmEocf5NwyvF/o3VE1CabQeZSZC0rwCFVsFPRRbvaXDUJk1wxE/BFmFI
-	 0Q60Er5ZM4gQxQ2VamFMv19ulWk7rHa+QhsHaH6OP/FKEdENAr50FcUGyH1CLRRLg
-	 9lDX83tNUgD8AJWyiQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.51.136]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mlw7f-1uPqPb0xNb-00gwy2; Fri, 10
- Oct 2025 14:08:24 +0200
-Message-ID: <f532c6d3-b6e1-4fc4-9627-1e84f4ba6df8@gmx.de>
-Date: Fri, 10 Oct 2025 14:08:23 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DDB28935C;
+	Fri, 10 Oct 2025 12:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760098170; cv=pass; b=V4tyzUnViXDG3qezY/RCyMj/5ZHfCh5KB2gFa/g+VUwE3khAUUI/V1kJ4XmIxbLw45G4zzwwYVFFBDjivRDKWw4YSEX/tSCdofzzCFsjHa6RonP6gVFbxzWuj7G48/xfSJsMG4uJixreuLcaJOTNcuiJ2hhK9WkhSJr+g/KZ8z4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760098170; c=relaxed/simple;
+	bh=4w3kqGVJTLViAam56F8blcy40H7IF16KUIpTWyq6UcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MyPmSzdc1Xq4FFIq2XQAERS/BBpb0qzmKxCVC2gEYc/MF+zBmvJH8ocr0uHA0iNL9OwlaQ4x5rjMdTTpgHqV0DxQ2vJCEY2BCiJw/4qC/St6xBhIwnxBiu6Ug7GauAGIis4kVgoe/9xfPwjXAZQUgbMWBSH/s3lDd8xICo81DtA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=e++32knt; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760098144; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dA7yAX/vP+3sun5ZXeCK2uinkx7VxnyIrLK/qFVhnYkyIFMtM7d0mDDrS+TVtokDdKLyrYnAAwSizRXhvpbRLgf2TDGGByKbFmsqPa6nviQqfy4lrZk6kcd0Ae7HWo39fKmeIXVQXcXiYB37IGKBh2MKy+Z7YhgN03NwLj9wa0Q=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760098144; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5TVVAycESmEEhj5tXHazMG2YgT7j35yrk8K3ETkT928=; 
+	b=LrRKByWE0juU2zdLzyEYdDD1mp9eVTrWVGP1NeYLCrsE0o38GKgbGP08xo0GlCT8Cc1Cofa+1c2eId5d3DQtwywqTNOjUuWeTQx4F7dsZJ62uZjwLStFKhuEdDXO2nVowLYnkS5SGG9WHyYd5Szo6DqN3gpyDQhcAanBlNNLICg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760098144;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=5TVVAycESmEEhj5tXHazMG2YgT7j35yrk8K3ETkT928=;
+	b=e++32knteoigBVHQgzqdtxzmswEgQW44+hGhNEU0OeQ+GmGQTqbxF29o9ndVlZw3
+	q+VPMupP2hE/k9JBfai0xY/xICZijegXN+IN+7AcgZrFIMxvzzRnoLEmnPD5oHubILE
+	q0ozm8UE6yix73c5DQeKYJY4j46i0QaDOJzImgw0=
+Received: by mx.zohomail.com with SMTPS id 1760098141718220.0272880217807;
+	Fri, 10 Oct 2025 05:09:01 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 8F261181905; Fri, 10 Oct 2025 14:08:53 +0200 (CEST)
+Date: Fri, 10 Oct 2025 14:08:53 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Saravana Kannan <saravanak@google.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-pm@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Sebin Francis <sebin.francis@ti.com>, Diederik de Haas <didi.debian@cknow.org>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Jon Hunter <jonathanh@nvidia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] driver core: fw_devlink: Don't warn about
+ sync_state() pending
+Message-ID: <f7zspguplzerupaorr4ex4xnpeyrcdcid473u3tx3ekbvcj233@wgle5id5z5on>
+References: <20251007094312.590819-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] fbdev: mb862xxfbdrv: Make CONFIG_FB_DEVICE optional
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Javier Garcia <rampxxxx@gmail.com>
-Cc: tzimmermann@suse.de, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org
-References: <20251006164143.1187434-1-rampxxxx@gmail.com>
- <20251008183627.1279115-1-rampxxxx@gmail.com>
- <dis2jb72ejrbmv26jdj3rwawrdmhmde5fahrkdn6y3elsgg4p7@wsjopejnmz5f>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <dis2jb72ejrbmv26jdj3rwawrdmhmde5fahrkdn6y3elsgg4p7@wsjopejnmz5f>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o7l652o277il7yvz"
+Content-Disposition: inline
+In-Reply-To: <20251007094312.590819-1-ulf.hansson@linaro.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/260.58.11
+X-ZohoMailClient: External
+
+
+--o7l652o277il7yvz
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zsjiOZTGZ1wj/tdP4v0oUQPCeHEqqinC1gG4XVGXpm3XwHES9Np
- 0AddWeg+R0jT/eu08T3TUnXreY05bg/Qqv8E9xunRs0tjdRzJBDnyzdMPHk0aVRIQU7YJKg
- y+CdmUh67IZ1CoKSVRfKLWGcMpIeGUy5n4D8ZMXwHciHVxmomiMIhs+AGHHYH1Zr7hBtoYl
- 7XW6CwXMKsTCogV6bn6WQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:B+G/qZvIa98=;CmxxUvj9S2yxX0w7Og885ssBKVp
- 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
- A7Uq1/558SOh7w==
+Subject: Re: [PATCH v2] driver core: fw_devlink: Don't warn about
+ sync_state() pending
+MIME-Version: 1.0
 
-On 10/9/25 10:50, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Javier,
+Hi,
+
+On Tue, Oct 07, 2025 at 11:43:12AM +0200, Ulf Hansson wrote:
+> Due to the wider deployment of the ->sync_state() support, for PM domains
+> for example, we are receiving reports about the sync_state() pending
+> message that is being logged in fw_devlink_dev_sync_state(). In particular
+> as it's printed at the warning level, which is questionable.
 >=20
-> On Wed, Oct 08, 2025 at 08:36:27PM +0200, Javier Garcia wrote:
->> This patch wraps the relevant code blocks with `IS_ENABLED(CONFIG_FB_DE=
-VICE)`.
->>
->> Allows the driver to be used for framebuffer text console, even if
->> support for the /dev/fb device isn't compiled-in (CONFIG_FB_DEVICE=3Dn)=
-.
->>
->> This align with Documentation/drm/todo.rst
-
-This seems to be Documentation/gpu/todo.rst now...
-
->> "Remove driver dependencies on FB_DEVICE">>> I've not the card so I was=
- not able to test it.
+> Even if it certainly is useful to know that the ->sync_state() condition
+> could not be met, there may be nothing wrong with it. For example, a driv=
+er
+> may be built as module and are still waiting to be initialized/probed. For
+> this reason let's move to the info level for now.
 >=20
-> I still don't understand why the creation of the dispregs sysfs file
-> should be conditional on FB_DEVICE.=20
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reported-by: Sebin Francis <sebin.francis@ti.com>
+> Reported-by: Diederik de Haas <didi.debian@cknow.org>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-I think this is because people simply believe it, as it's documented like =
-this
-in the todo file. I think this is wrong.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-I think the problem was, that device_create_file() has a "struct device *"
-pointer as first parameter. Some device drivers probably referenced
-the "struct device" pointer of the "/dev/fb" device, which does not exist
-when FB_DEVICE isn't enabled. As such, the device_create_file() would fail
-during initialization (since the devide ptr is NULL) of the driver and
-prevent the driver from working.
-That's not the case for this driver here, and probably not for the other
-remaining drivers.
+-- Sebastian
 
-> Either they have nothing to do with each other, or I'm missing
-> something.=20
+> ---
+>=20
+> Changes in v2:
+> 	- Due to discussions on v1 and because the default Kconfig is to use the
+> 	FW_DEVLINK_SYNC_STATE_STRICT, I suggest that for now it may be best to
+> 	keep the warning level for the "Timed out.." print and only change the
+> 	"sync_state pending..." message.
+>=20
+> ---
+>  drivers/base/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index d22d6b23e758..c62e428b95b0 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1784,7 +1784,7 @@ static int fw_devlink_dev_sync_state(struct device =
+*dev, void *data)
+>  		return 0;
+> =20
+>  	if (fw_devlink_sync_state =3D=3D FW_DEVLINK_SYNC_STATE_STRICT) {
+> -		dev_warn(sup, "sync_state() pending due to %s\n",
+> +		dev_info(sup, "sync_state() pending due to %s\n",
+>  			 dev_name(link->consumer));
+>  		return 0;
+>  	}
+> --=20
+> 2.43.0
+>=20
 
-Right now you are right... it has nothing to do with each other.
+--o7l652o277il7yvz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> The former makes this patch wrong, the latter would be an
-> indication that the commit log is still non-optimal.
-Either way, I've dropped the patch from the git repo for now.
-I don't think the patch is wrong, but it's not deemed necessary either.
-If someone has that device I'd happy to apply it after some feedback.
+-----BEGIN PGP SIGNATURE-----
 
-In addition, maybe the section from the todo file should be dropped?
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjo91EACgkQ2O7X88g7
++pomMhAAgIOiXn/XY2FB+L5+3ENCR0BvsBVlK+rVbqoS/fUE/D7K/rUt4yv/2O+p
+bt9dweSC0hd9Z0Zb11SMW9Txh1ChIxByF0g+OuoqvG2BtoQhdNVqkhATO9hDT6yX
+P7h0znsMPWh3BqxBn7r/kEyTY2fnUb8GPAD0LUx4ueKZtDBXBrGX/5P9idorPLkY
+lclBxSg6VAFOIgcFW8SEAMn1ZCvCF+5stTLuR7Mou68+M2Qfd61t+Yj0drYzCgAG
+joUXON246lHT8zLcSTKpkNro6KTMlL8SHtM5SPdJDnO7pS9dNI+B3MqD7TK9link
+s5j7Xyr8crIcpb9+iqcnIRcWe3h6VxJVNTf3TkPFz2svNmjrLOzH2Wdpy2V9zeGz
+rTI7ZuG74S/OiDI6TpVu7Hk+VKDfevhos/vyV1IgXU9LdCUHDisytirZc0j3t0tE
+DYdQQpCA83ZIFz6imfBJaTg+stf9FAwcFKpzpPe7w1w0RxXqt+3Sut8kUb3lLo3l
+H2F/q6mFL7Cemwo90QXtrDK6PKLa/WVS3IQB0/pyWqEHMGnsvXqT7lXwzRhiCc7L
+4kToIWU3haS2yG8vB+of3kOl6hPYhUJSMBy6Q/49qKn8ktDriMDC5+HeOUrPL7kl
+5He8aqTNVKGgRSzNLF0oVO9FyyKCQPcQCUKOcunDvPXD4f6y9Rw=
+=iRpS
+-----END PGP SIGNATURE-----
 
-Helge
+--o7l652o277il7yvz--
 
