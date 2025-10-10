@@ -1,86 +1,161 @@
-Return-Path: <linux-kernel+bounces-848876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0284BCEBC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:57:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D943BCEBD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2945A19A33FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:58:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92D624E6E61
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1B279DCA;
-	Fri, 10 Oct 2025 22:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF6927BF6C;
+	Fri, 10 Oct 2025 23:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owy6loEA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B44B278771;
-	Fri, 10 Oct 2025 22:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TS8lkZH6"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0AE27B4E4;
+	Fri, 10 Oct 2025 23:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760137047; cv=none; b=gF34+TJLhoGGX/KaqeCQKXHZj0RuQstvK8hrhCuWrsfmlQwXVYctCIW2bcYDZn9+kXI+fOwwrcVypUBeTA7d8f/cCZE60N8Yn9pRi7te4bGBfducqe/hIownyASatj4JRav24s57EhMw+2xknSxAG2ronTBICJyZzI7/NOcqdFQ=
+	t=1760137610; cv=none; b=DLSOQpJLaxEezMPjJCOflmd8IXkbsDxjHoVcQT9rJgJhpwhBNHp+qEUMdPuqEyQQRN+r/ibT+B46xftclnN1KIiFd7xebijXLXoorcyXHGp+p5A3+LFWMRduYxPzIiIkzLUxWPo4/mFriYA9k3jYLP10WT4KF29XZoxmtD8goTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760137047; c=relaxed/simple;
-	bh=NPCnJm+glac6qNv/XVTi3HpMJ283abXEd2rPLQG0eqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rTtSVU6nYZ8/Hd0tLRoTkn99zfRylXiHipMBgncu7mMyFOGdvF72RuHgE8JT1GwYhhO1F7lxaFFuRDiprNMIa9H+YaQ20rp4caH1+p9kKQDpmRRb189tmeYLf0RSr2kP4gbsXxRge9iEg4bUa+izWadcpueqGSd68/6eeuD/Gc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owy6loEA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CEB0C4CEF1;
-	Fri, 10 Oct 2025 22:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760137046;
-	bh=NPCnJm+glac6qNv/XVTi3HpMJ283abXEd2rPLQG0eqQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=owy6loEAjrNGDq93yL+08XL4RfvnUQNFlJqCljte3VLEzpuDUJFJc8tzQgMHnKfvk
-	 8ZXazvKs4NabIA5ZZTF+5MI0aDcE79iPOhEeRkwMt/G237jj7OHI/3IqsB1rp6WlnP
-	 jBr5sqWuKBw4cIxfAN6Qz4rN4BCRAU+KR50VYi4nn7p++SuZqStPI8YWeeu4Xlw2Ui
-	 pgTH4vhAlDlu1sws4muw36iMJbmjSVFv4TR72LrM96bvMFinHlf65hC8VLm/7x41AP
-	 bwKFmm59akzs5PrGkcd3ooo5uFOxSTo1oLreU0SvYWFYyRNvxvTzQ7cepdgUMKcmf9
-	 9MB+vx6CvrNAA==
-Date: Fri, 10 Oct 2025 15:57:26 -0700
-From: Kees Cook <kees@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] dma-buf: use SB_I_NOEXEC and SB_I_NODEV
-Message-ID: <202510101556.5C71F86@keescook>
-References: <20251008061027.work.515-kees@kernel.org>
- <aOYBpY7jPx622xcz@infradead.org>
+	s=arc-20240116; t=1760137610; c=relaxed/simple;
+	bh=vP5QNSY1W31DnU2sT3J2iOCPuLZnuDapSlYjRFxK/n4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Otknbs9r/9tkPkvpAiUJTj6w72AZIK8zAqhxGI8Ix9TGUTMSApXmfPkfzdk6mY7fQhPiWavhYOzeN/f2SLaBqD7ieBK43FypZhRrVHMK0M3Yd4COKCvFztpHBYgaVCBxnVKkNc8PBLAkrniRUop34qzVO7ta0MkwiXITiGrb+pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TS8lkZH6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.97.55] (unknown [20.236.11.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B0DC4201601D;
+	Fri, 10 Oct 2025 16:06:44 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B0DC4201601D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760137605;
+	bh=mwIFeJ1KKd5Sc2uIhclnh5A/XfzapTJ/Acz9suBhQ20=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TS8lkZH6I5W3fD+l1DI5DtiA8OibFFmYmowc7nJnvK0wZm4h0JjBXxEmaMVAkfPTM
+	 cE0QFG0LV1ZKkfyBbiKCq0FeNNFei8iPvTQoHwv1+ViLxgm9/jqKrlqf8mjENGFO8J
+	 FJfTIgsZ9rCtoAr/0OCsepPWE00AxRrHhxPk3p84=
+Message-ID: <5be44d00-2a34-49cf-828f-105c2e07874b@linux.microsoft.com>
+Date: Fri, 10 Oct 2025 16:06:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOYBpY7jPx622xcz@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] Drivers: hv: Batch GPA unmap operations to improve
+ large region performance
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <175976284493.16834.4572937416426518745.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <175976318688.16834.16198650808431263017.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <175976318688.16834.16198650808431263017.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 07, 2025 at 11:16:05PM -0700, Christoph Hellwig wrote:
-> On Tue, Oct 07, 2025 at 11:10:32PM -0700, Kees Cook wrote:
-> > The dma-buf pseudo-filesystem should never have executable mappings nor
-> > device nodes. Set SB_I_NOEXEC and SB_I_NODEV on the superblock to enforce
-> > this at the filesystem level, similar to secretmem, commit 98f99394a104
-> > ("secretmem: use SB_I_NOEXEC").
-> > 
-> > Fix the syzbot-reported warning from the exec code to enforce this
-> > requirement:
+On 10/6/2025 8:06 AM, Stanislav Kinsburskii wrote:
+> Reduce overhead when unmapping large memory regions by batching GPA unmap
+> operations in 2MB-aligned chunks.
 > 
-> Can you please just enforce this in init_pseudo?  If a file system
-> really wants to support devices or executable it can clear them,
-> but a quick grep suggests that none of them should.
+> Use a dedicated constant for batch size to improve code clarity and
+> maintainability.
+> 
+> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> ---
+>  drivers/hv/mshv_root.h         |    2 ++
+>  drivers/hv/mshv_root_hv_call.c |    2 +-
+>  drivers/hv/mshv_root_main.c    |   28 +++++++++++++++++++++++++---
+>  3 files changed, 28 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> index e3931b0f12693..97e64d5341b6e 100644
+> --- a/drivers/hv/mshv_root.h
+> +++ b/drivers/hv/mshv_root.h
+> @@ -32,6 +32,8 @@ static_assert(HV_HYP_PAGE_SIZE == MSHV_HV_PAGE_SIZE);
+>  
+>  #define MSHV_PIN_PAGES_BATCH_SIZE	(0x10000000ULL / HV_HYP_PAGE_SIZE)
+>  
+> +#define MSHV_MAX_UNMAP_GPA_PAGES	512
+> +
+>  struct mshv_vp {
+>  	u32 vp_index;
+>  	struct mshv_partition *vp_partition;
+> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+> index c9c274f29c3c6..0696024ccfe31 100644
+> --- a/drivers/hv/mshv_root_hv_call.c
+> +++ b/drivers/hv/mshv_root_hv_call.c
+> @@ -17,7 +17,7 @@
+>  /* Determined empirically */
+>  #define HV_INIT_PARTITION_DEPOSIT_PAGES 208
+>  #define HV_MAP_GPA_DEPOSIT_PAGES	256
+> -#define HV_UMAP_GPA_PAGES		512
+> +#define HV_UMAP_GPA_PAGES		MSHV_MAX_UNMAP_GPA_PAGES
+>  
+>  #define HV_PAGE_COUNT_2M_ALIGNED(pg_count) (!((pg_count) & (0x200 - 1)))
+>  
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index 97e322f3c6b5e..b61bef6b9c132 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -1378,6 +1378,7 @@ mshv_map_user_memory(struct mshv_partition *partition,
+>  static void mshv_partition_destroy_region(struct mshv_mem_region *region)
+>  {
+>  	struct mshv_partition *partition = region->partition;
+> +	u64 gfn, gfn_count, start_gfn, end_gfn;
+>  	u32 unmap_flags = 0;
+>  	int ret;
+>  
+> @@ -1396,9 +1397,30 @@ static void mshv_partition_destroy_region(struct mshv_mem_region *region)
+>  	if (region->flags.large_pages)
+>  		unmap_flags |= HV_UNMAP_GPA_LARGE_PAGE;
+>  
+> -	/* ignore unmap failures and continue as process may be exiting */
+> -	hv_call_unmap_gpa_pages(partition->pt_id, region->start_gfn,
+> -				region->nr_pages, unmap_flags);
+> +	start_gfn = region->start_gfn;
+> +	end_gfn = region->start_gfn + region->nr_pages;
+> +
+> +	for (gfn = start_gfn; gfn < end_gfn; gfn += gfn_count) {
+> +		if (gfn % MSHV_MAX_UNMAP_GPA_PAGES)
+> +			gfn_count = ALIGN(gfn, MSHV_MAX_UNMAP_GPA_PAGES) - gfn;
+> +		else
+> +			gfn_count = MSHV_MAX_UNMAP_GPA_PAGES;
+> +
+> +		if (gfn + gfn_count > end_gfn)
+> +			gfn_count = end_gfn - gfn;
+> +
+> +		/* Skip if all pages in this range if none is mapped */
 
-I that that's a fine idea, but I defer to Christian -- I think the WARN
-was put in place to avoid doing that...
+nit: comment grammar. Suggest "Skip all pages in this range if none are mapped"
 
--- 
-Kees Cook
+Looks good otherwise.
+
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+
+> +		if (!memchr_inv(region->pages + (gfn - start_gfn), 0,
+> +				gfn_count * sizeof(struct page *)))
+> +			continue;
+> +
+> +		ret = hv_call_unmap_gpa_pages(partition->pt_id, gfn,
+> +					      gfn_count, unmap_flags);
+> +		if (ret)
+> +			pt_err(partition,
+> +			       "Failed to unmap GPA pages %#llx-%#llx: %d\n",
+> +			       gfn, gfn + gfn_count - 1, ret);
+> +	}
+>  
+>  	mshv_region_invalidate(region);
+>  
+> 
+> 
+
 
