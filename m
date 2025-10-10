@@ -1,211 +1,156 @@
-Return-Path: <linux-kernel+bounces-848164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01923BCCC80
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA4FBCCC86
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069F619E2547
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B75919E4E49
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1734A285C9F;
-	Fri, 10 Oct 2025 11:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8995D286883;
+	Fri, 10 Oct 2025 11:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VSq3om9A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OJ6N+oDz"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBD34414;
-	Fri, 10 Oct 2025 11:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2F727781D
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760095892; cv=none; b=jSBnEG8N18FNZXH0+yQpG3XclmNbLgYmb72/fZj+AuhRURxt3CLmY6T+TvGeOoq7nU2uQoafcuott0HFFSGaWjdbimb4Vkq+YwxmF+cTtLcDUGoIo6Mj3o45kaZfBdiVPEoFJ7Ti/CMmCe5w3bAeMbysH/rZKqNo8OLskXv61eM=
+	t=1760096006; cv=none; b=uO56+4x/H7cmuJjiPEZ58fAKgnqs8oZ6INRK7WzmLUXrpxxrDMYSgBO+1Q9hA/Q1mY49teQOeWwysv1STvOU4uEvYu3cYFkDpwxNKqYiU7A742xg/skebYiwW5EcWYDjYyId2VxXKYjHhUgUAP9mo/sMIRXPNWRGx+Q+bnvrmKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760095892; c=relaxed/simple;
-	bh=cJo0B2S+cA8lzwnu2M2IUcY4hw9CqzMyqc2bKFP90jA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDjvohx+wc1ntBO1r0F/vIv37fV+Wugg6JW/l0FpdWwL4zmL8gWl/9RLbokO0NPt7iB3rpG66pbBjoALJVvUqjlEqO/LJYO1Bex8WgIG9bu8WV+LS6m9vAiNOUw4NgE6ve3lUkKymPjy59WlGFwCQmZpXzQ8nhLkS5crU3dB5tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VSq3om9A; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760095891; x=1791631891;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cJo0B2S+cA8lzwnu2M2IUcY4hw9CqzMyqc2bKFP90jA=;
-  b=VSq3om9AEjZKikTXK6CDbaWTdPhMmLVkEPXKYyYdRKUAQdpMq5DFhvb3
-   lsD0SInHvFMf6Z6QymH3K9KW3cIMDidx1Q2rQv+QnxmOpFhT+XrUL8RVw
-   j8IyZPr2A9OaGUDMtv9+d0zkfXTHDQsCHZTcmrSbrByymwSEug46AJ7zt
-   KhTneYw6zfAcfJ9hSxPCuHIB+NsgVApVfBla2F01sLGApKnQrAuGpodP3
-   nTL34bASm6FKkeSVNYCCOiKCs+REaHoEHWMqXuVdKl2YWTTSRgVKEm8+c
-   xYmUExkvoBN6kAM4EqgvJnVLjtPoC+CDuohx/rpWa6mNP52E3qaW0g7Fb
-   Q==;
-X-CSE-ConnectionGUID: qPTX7foORha98mXAicpw3g==
-X-CSE-MsgGUID: iPAK4Ar4RbCV4GuL6msAOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="49875867"
-X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
-   d="scan'208";a="49875867"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 04:31:30 -0700
-X-CSE-ConnectionGUID: bE1E7ZDISlehYaCKgbxf1A==
-X-CSE-MsgGUID: /aU+BrapQBiGTeh1j+wz9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
-   d="scan'208";a="180644249"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 10 Oct 2025 04:31:27 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7BLJ-0002b1-1D;
-	Fri, 10 Oct 2025 11:31:25 +0000
-Date: Fri, 10 Oct 2025 19:31:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ahmet Eray Karadag <eraykrdg1@gmail.com>, tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: oe-kbuild-all@lists.linux.dev, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org, Ahmet Eray Karadag <eraykrdg1@gmail.com>,
-	syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: Re: [PATCH] Fix: ext4: add sanity check for inode inline write range
-Message-ID: <202510101841.kobch6UW-lkp@intel.com>
-References: <20251007234221.28643-2-eraykrdg1@gmail.com>
+	s=arc-20240116; t=1760096006; c=relaxed/simple;
+	bh=r3zKZRotjPWQlgOeKsaLGYW9tbVEWlL8OkX4yQy1Ci0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rDBbF0XUFZA9oUJLiTNz/lzlY7cbSz/Xcs+AYUfTZEuNGE87Ueqf0zSKFrbADNED2kFqUpS8a9tzEAV8HaCRQeozKI1gspQ7klCXNB1Yxfd59X+CQvQRFLiM/PW6Fl02wM4inXvuAno1t7dSGrW9qEZr8eCw4gsF2I6SoGfpYdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OJ6N+oDz; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-63049fca047so2470197a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760096004; x=1760700804; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IH1YDvYsxX3hjWroQNK0cNnu+sMWw/N2vm++yhHs9VI=;
+        b=OJ6N+oDz7xYwWz7sl3zhKIPAxZ0OsVSVWmwMPiQoi3yeb11mUi5sOHmzRCLMIUG/s2
+         X8ODB6HL7coo7ZQBu5yziWRKmwg+2W2BExSdtywn4wbpPBfaG4kxKPyp64OX5aHdWSUT
+         edJ3bQ8QBdS5TqiW5yAsk8StZqTM0GXOloths6BPBEzGrkjNwLpC3fY+J09yEFotYbRz
+         6z9dwwVCdQepVHKmlexWXOnjwl345Kw4mrZjPtBg4b7k/3DenufI+iT4V1bu/G0TEeBq
+         czlIL+nptFvt38jqzgnnCDLgoYKDs0pGgdhPFnDpSG1akQO1CM/yWwpMGdvgmWuQ5U9c
+         epKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760096004; x=1760700804;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IH1YDvYsxX3hjWroQNK0cNnu+sMWw/N2vm++yhHs9VI=;
+        b=Q46qYxvXupfS+oHP2gzr1DRUNh5YQib9MChuMlgE3A9syHgnjFMqXA/3CQFPwRAdvi
+         iL8sKnXcxSCXEyTg8kDKabMfdBgjLYilQvlpR4cR9yqnTVUNyK+OfWu3M3YF3vwappfx
+         n5vocKskWk5ghFpHBRaTDlnqkQE5w4//8Jc4qjm4X/Z4xQ/iigsOeadEO/ZB0Y4TzGir
+         RkzJiwKaSSmi+g6n0iyz8NrkZL22pwOOonRrDOe/zN8A+Fr5OclR2DrkmCtIorzlWNuy
+         WIrSXD9q5mtUXxOu9oBqlJc7Z0On/mmbfidAC8XhvTCWyM2g9o+do9G3AJje1lJsg+TE
+         2gsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXaYXeuE/7lNNS2KvnYnO6fpMyetGTWgGSs/zo4X1HNh4JYJM8/4Qb666wfV32g2bPwPn9On/dXqzi7P3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfWk37zTkyKNNXz9CDKC9fv0n7QqQIk9bKDcA6MTmo8jaWaWR+
+	ZicedVnBsrIgpE46p2sSorEEf+gaZRN9o9RIGJeQHqlhNh8WWIo9R5pKvu8MkHW4lSATtPDfzru
+	NWmU8Dy0mZfbqCm9CiA==
+X-Google-Smtp-Source: AGHT+IFV6v++ooPwo8zgY/r4GJHECl9wGwude+Hat/aZ5a07QvQNNKNLo0YbYD1Zbr62UXM08XqQmvhtFgNoZlY=
+X-Received: from edbio4-n1.prod.google.com ([2002:a05:6402:2184:10b0:62d:a09d:445f])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:3483:b0:63a:50e:e828 with SMTP id 4fb4d7f45d1cf-63a050eee43mr4613252a12.35.1760096003647;
+ Fri, 10 Oct 2025 04:33:23 -0700 (PDT)
+Date: Fri, 10 Oct 2025 11:33:22 +0000
+In-Reply-To: <20251009181203.248471-2-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007234221.28643-2-eraykrdg1@gmail.com>
+Mime-Version: 1.0
+References: <20251009181203.248471-1-markus.probst@posteo.de> <20251009181203.248471-2-markus.probst@posteo.de>
+Message-ID: <aOjvAozHB8T2PZbm@google.com>
+Subject: Re: [PATCH v2 1/2] rust: add basic Pin<Vec<T, A>> abstractions
+From: Alice Ryhl <aliceryhl@google.com>
+To: Markus Probst <markus.probst@posteo.de>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi Ahmet,
+On Thu, Oct 09, 2025 at 06:12:33PM +0000, Markus Probst wrote:
+> Implement core Pin<Vec<T, A>> abstractions, including
+>  * `Vec::pin` and `Vec::into_pin` for constructing a `Pin<Vec<T, A>>`.
+>    If T does not implement `Unpin`, its values will never be moved.
+>  * an extension for `Pin<Vec<T, A>>` allowing PinInit to be initialied on a
+>    Pin<Vec>, as well as truncating and popping values from the Vec
+> 
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> ---
+>  rust/kernel/alloc.rs      |  1 +
+>  rust/kernel/alloc/kvec.rs | 86 +++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/prelude.rs    |  2 +-
+>  3 files changed, 88 insertions(+), 1 deletion(-)
+> 
+> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> index a2c49e5494d3..9c129eaf0625 100644
+> --- a/rust/kernel/alloc.rs
+> +++ b/rust/kernel/alloc.rs
+> @@ -24,6 +24,7 @@
+>  pub use self::kvec::KVec;
+>  pub use self::kvec::VVec;
+>  pub use self::kvec::Vec;
+> +pub use self::kvec::PinnedVecExt;
+>  
+>  /// Indicates an allocation error.
+>  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index 3c72e0bdddb8..d5582a7f17e9 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -16,11 +16,13 @@
+>      ops::DerefMut,
+>      ops::Index,
+>      ops::IndexMut,
+> +    pin::Pin,
+>      ptr,
+>      ptr::NonNull,
+>      slice,
+>      slice::SliceIndex,
+>  };
+> +use pin_init::PinInit;
+>  
+>  mod errors;
+>  pub use self::errors::{InsertError, PushError, RemoveError};
+> @@ -109,6 +111,21 @@ pub struct Vec<T, A: Allocator> {
+>      _p: PhantomData<A>,
+>  }
+>  
+> +/// Extension for Pin<Vec<T, A>>
+> +pub trait PinnedVecExt<T> {
+> +    /// Pin-initializes P and appends it to the back of the [`Vec`] instance without reallocating.
+> +    fn push_pin_init<E: From<PushError<P>>, P: PinInit<T, E>>(&mut self, init: P) -> Result<(), E>;
+> +
+> +    /// Shortens the vector, setting the length to `len` and drops the removed values.
+> +    /// If `len` is greater than or equal to the current length, this does nothing.
+> +    ///
+> +    /// This has no effect on the capacity and will not allocate.
+> +    fn truncate(&mut self, len: usize);
+> +
+> +    /// Removes the last element from a vector and drops it returning true, or false if it is empty.
+> +    fn pop(&mut self) -> bool;
+> +}
 
-kernel test robot noticed the following build warnings:
+Please no extension traits just for this. Just provide `self: Pin<&mut Self>`
+methods on Vec.
 
-[auto build test WARNING on tytso-ext4/dev]
-[also build test WARNING on linus/master v6.17 next-20251009]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ahmet-Eray-Karadag/Fix-ext4-add-sanity-check-for-inode-inline-write-range/20251010-013008
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/20251007234221.28643-2-eraykrdg1%40gmail.com
-patch subject: [PATCH] Fix: ext4: add sanity check for inode inline write range
-config: powerpc-randconfig-r073-20251010 (https://download.01.org/0day-ci/archive/20251010/202510101841.kobch6UW-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.3.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510101841.kobch6UW-lkp@intel.com/
-
-smatch warnings:
-fs/ext4/inline.c:789 ext4_write_inline_data_end() warn: inconsistent indenting
-fs/ext4/inline.c:854 ext4_write_inline_data_end() error: uninitialized symbol 'ret2'.
-
-vim +789 fs/ext4/inline.c
-
-   775	
-   776	int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
-   777				       unsigned copied, struct folio *folio)
-   778	{
-   779		handle_t *handle = ext4_journal_current_handle();
-   780		int no_expand;
-   781		void *kaddr;
-   782		struct ext4_iloc iloc;
-   783		int ret = 0, ret2;
-   784	
-   785		if ((pos + len) > EXT4_I(inode)->i_inline_size) {
-   786				ext4_warning_inode(inode,
-   787					"inline write beyond capacity (pos=%lld, len=%u, inline_size=%d)",
-   788					pos, len, EXT4_I(inode)->i_inline_size);
- > 789			folio_unlock(folio);
-   790			folio_put(folio);
-   791			ret = -EINVAL;
-   792			goto out;
-   793		}
-   794	
-   795		if (unlikely(copied < len) && !folio_test_uptodate(folio))
-   796			copied = 0;
-   797	
-   798		if (likely(copied)) {
-   799			ret = ext4_get_inode_loc(inode, &iloc);
-   800			if (ret) {
-   801				folio_unlock(folio);
-   802				folio_put(folio);
-   803				ext4_std_error(inode->i_sb, ret);
-   804				goto out;
-   805			}
-   806			ext4_write_lock_xattr(inode, &no_expand);
-   807			BUG_ON(!ext4_has_inline_data(inode));
-   808	
-   809			/*
-   810			 * ei->i_inline_off may have changed since
-   811			 * ext4_write_begin() called
-   812			 * ext4_try_to_write_inline_data()
-   813			 */
-   814			(void) ext4_find_inline_data_nolock(inode);
-   815	
-   816			kaddr = kmap_local_folio(folio, 0);
-   817			ext4_write_inline_data(inode, &iloc, kaddr, pos, copied);
-   818			kunmap_local(kaddr);
-   819			folio_mark_uptodate(folio);
-   820			/* clear dirty flag so that writepages wouldn't work for us. */
-   821			folio_clear_dirty(folio);
-   822	
-   823			ext4_write_unlock_xattr(inode, &no_expand);
-   824			brelse(iloc.bh);
-   825	
-   826			/*
-   827			 * It's important to update i_size while still holding folio
-   828			 * lock: page writeout could otherwise come in and zero
-   829			 * beyond i_size.
-   830			 */
-   831			ext4_update_inode_size(inode, pos + copied);
-   832		}
-   833		folio_unlock(folio);
-   834		folio_put(folio);
-   835	
-   836		/*
-   837		 * Don't mark the inode dirty under folio lock. First, it unnecessarily
-   838		 * makes the holding time of folio lock longer. Second, it forces lock
-   839		 * ordering of folio lock and transaction start for journaling
-   840		 * filesystems.
-   841		 */
-   842		if (likely(copied))
-   843			mark_inode_dirty(inode);
-   844	out:
-   845		/*
-   846		 * If we didn't copy as much data as expected, we need to trim back
-   847		 * size of xattr containing inline data.
-   848		 */
-   849		if (pos + len > inode->i_size && ext4_can_truncate(inode))
-   850			ext4_orphan_add(handle, inode);
-   851		if (handle)
-   852			ret2 = ext4_journal_stop(handle);
-   853		if (!ret)
- > 854			ret = ret2;
-   855		if (pos + len > inode->i_size) {
-   856			ext4_truncate_failed_write(inode);
-   857			/*
-   858			 * If truncate failed early the inode might still be
-   859			 * on the orphan list; we need to make sure the inode
-   860			 * is removed from the orphan list in that case.
-   861			 */
-   862			if (inode->i_nlink)
-   863				ext4_orphan_del(NULL, inode);
-   864		}
-   865		return ret ? ret : copied;
-   866	}
-   867	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Alice
 
