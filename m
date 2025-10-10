@@ -1,262 +1,133 @@
-Return-Path: <linux-kernel+bounces-848431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4823BCDC34
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8799BBCDBEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05232545025
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CD8342895A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E582F90D3;
-	Fri, 10 Oct 2025 15:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25362F83A5;
+	Fri, 10 Oct 2025 15:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="stNCN4im"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NjDrQ4Oq"
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCEF2F8BC4;
-	Fri, 10 Oct 2025 15:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE512F7AD2
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760109136; cv=none; b=pRDUPIudt/km68XbXCXxDUvZ7e71sWDBHy8R+9F9qh/c5m6A+a/WJYjuAiE/dV7e3AgdjvoclNpzPPDsEmpsXZzY90NEJ6udLMYlCkF6jhP/lf1zk+pL5YEkIE/dJCN+ykPdW0/Cob7HPJZPg2q0OGSa8Iuf5AfOKhk830CI4G0=
+	t=1760108945; cv=none; b=Su7kWsZgg7CH9ZUIaZkkHIF4FdfEJOgCFqRCPnB97SO9MpDT6ous0kFvgp5OsdfgeUlq/KukfnRxikpd+8beRUdanB6Qey637luTUJehP00xKH2BIdBvgUKkDQDHOlvGMuX9gAikWmdw88kEXpSxmpzBkHBQ4CInztY3K7vRfms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760109136; c=relaxed/simple;
-	bh=UWj2LSG9OR8fFHYaxWPSONArCEnqQWA+MByPC7l9Oec=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DBOxRhNTQydqE2BwGl+qCOYdbyRDb+8onuamhZA38sd74JsTzK6bwqh0uoEQvgMO9dPa/Imog+HTS1oosqS4fz/87mntVWzy6aF2Dk+oci0Xzycc8QThfJEJmSIBrJ69UAmElO0/0Imit6G5FeqeFTiSLiwIhnTnSM8jyuQFASA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=stNCN4im; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59AFBvvP341675;
-	Fri, 10 Oct 2025 10:11:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760109117;
-	bh=Z2J0NEK3lvDAZRDVx98UECEwl66Tg5VwoX+Yt/KcKk8=;
-	h=From:To:CC:Subject:Date;
-	b=stNCN4imhmJhMq+9+zy9hkX1j6/yWQFNLcWz1VTJE3SfTm519EJRsHcizhiTA1cxc
-	 U1w3DL4P/8oD6IA8AlmcrWVHObcW08ZYW4gSHbEOyJ6Vdpg3/hG9Ak9jyMNAnBJqVc
-	 BDNoKYlmE8KsEvH3p1yYsirorReYvFXpZ9RwJZrE=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59AFBvFj1136866
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 10 Oct 2025 10:11:57 -0500
-Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 10
- Oct 2025 10:11:57 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
- (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 10 Oct 2025 10:11:57 -0500
-Received: from a0507033-hp.dhcp.ti.com (a0507033-hp.dhcp.ti.com [172.24.231.225])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59AFBrGr2062686;
-	Fri, 10 Oct 2025 10:11:53 -0500
-From: Aksh Garg <a-garg7@ti.com>
-To: <netdev@vger.kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <edumazet@google.com>
-CC: <linux-kernel@vger.kernel.org>, <c-vankar@ti.com>, <s-vadapalli@ti.com>,
-        <danishanwar@ti.com>, Aksh Garg <a-garg7@ti.com>
-Subject: [PATCH net] net: ethernet: ti: am65-cpts: fix timestamp loss due to race conditions
-Date: Fri, 10 Oct 2025 20:38:21 +0530
-Message-ID: <20251010150821.838902-1-a-garg7@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760108945; c=relaxed/simple;
+	bh=HGsjbE6k1Cg7BWKlETqXdaWfp1ExPcd17cLqxSAQBWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H6G0r9qxyc7ygboPTg1hX8l96t4Ot/h4CzwdXoIBtyqFwS5GWQ55K/1axIVSH5oQcQWczWTEcrKLtmccsPTJZmhMt4kYEBjYQq4XsWf+RNK1l/oALeHPBJ773xByvuj77NvEFG3T70ZUIehp8WdjafCvfsQgwt/jRYTJ4ibJGqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=NjDrQ4Oq; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760108941; bh=s5sHM8FWOIxntJ1+B14ZnieG9KTdiXXbLg0dtX9zCwg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=NjDrQ4Oq67a7AMu/BGuI6WCi7mMFwgXhbbI1BGjYaNA7DEeebXULtQxxmQ4+7S2/wo0I6xXNsz9THdGEny/Fl2Cu4TxSA5Tjrvd54BNLutP7LdH+fcmzlXynpGAHCksHg7U/ip5rwxt7plV4CCv1ftuPBEUQOt6P6M547Sdu134MOmo5vYaddvkpOiMdTRolo9vOxeYQCLGQOnUM5dlzySHoin9bcyO6YODsqsOoTv4jzy3AVaVihGn6xQ2dIrg9tsfL6lvNT64KwlkAlNURfaceIlORDeDBLfGFluFy56BbUpYOiB5bwskeslkh8Yr0Rxq2En3/NQhI2PQVZ31ayw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760108941; bh=USJTwe/uw7H6hWaOg/k7AgrN3VrUJGb1DO/eXMDzcoQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=TjFjHGqOqu05f4pCz4WorNCoLUj5Rjv97dHdeQgC8LA/bY+vK3hR1o0h40qx/4GGI/qT5IXSzfXrXJJ9bcJA5iG6i5d8sTXzLTCHxa/UcO774vvXUZXrsx6FFFEwgvKLK3TuBcB0gmgpMKhS0ud2Hl15EgDgblLHXXO4iCioS8qSt0DoVRV4PAhwmND3HaqbKoRZ2Nlme+FlHT/IyHxdst8UJHKGvBSqfGW67EfhBvbtBsYM52BU/IIwL37vPKyQO2Zh2I1p/K3U8AUi/SU/X7k1Fxx1s0V45/QQCqiyG355ajPD0EZ/4tyxX9CvskEv2mLWIgW1qHg2CayB8e+ENQ==
+X-YMail-OSG: 3ziaTvAVM1mpfcaMokhq84FKVpBZUg8u9NEtemdnSBGzpYFiOd.tjtG0.hg.U6w
+ eNPgLN2q0eHNqwFImdk7pEq7HZVi4FeJ4splyxi03MrjMX9JTjVCIeHaLmpbaFRSvvEXoQxAyIZ_
+ 6X0BIq1CySHP1SJhdm6cst5332TkNg7YVvOHk5ewAnF4tuvt.JKZUjJQfPj32az1FC2vVONJlRse
+ 94KSqmog_256XcPEQT7i8TmGuCp2qrxgCfq3xxvfpwFEfWykKdRSQ5UyxuomT_rUYTweY.2Iqc9Q
+ YR4HYBFVQXNOoCaoSSztrzUjZk5ad4ckMeGdP2hoiT_wtPHnumCRnOVT1rRdsokew3Rjk3hYlcm2
+ vuosDBJ0Xxc2wOLlu_mKIFsxgfQZRgxxNxv9QUQvUp_9z3BGunbKZAQlF11S5wh9ii2_gesZUnAL
+ IqV_fsQ0FpKNsRArv9Et7vE2k_wTY4cPYZZAUUomdbiuZjk2A_W0u3uceg.o0Qenru9eobNjhk3B
+ 7gWX6HIXnHItG3_XJG3cB578iHhV26jr07tZXQgaFBTMDE13YDHPJ8.1tAdr2zMRJKLFDy0FNUFv
+ JsItEYzAoSxTGslR6xSTvgCK_q1mwF_CIoR3XT44pEJG1VQNvYb.sdTnOSH7ciiZx1.4tHrgqMQc
+ bWPPTfHssAULCdTY9laLDU8yVVfYiQN9W17Wd65ixo.adpCSIVupWyeLdx9m0j.AEkH4H8ATCAD_
+ SPAx3mP6ZHPfbJga8Xz0i_WYl7m5xr6Tn6L0vlXLe4pCPKCckvHf_raWCEvdQSKlbuOEk3Q63.3s
+ S5eQQZBnVgtAFTrNjdW.Szu0W.jMK0WdnDC886b8Fbj1OGW48o6k5YZMZzF3TY.rXMd.tuzz2bGv
+ 0dmly.UnBnKYrqaQMdm9KTziDFR6SkJWp5EujSWVhANUokLWBJDJzTh5S7wY4nwR_mSZbYv_n48C
+ jxgGFwC5i.vgUMBLwBpUHJtoQP.2B9T5NL7vpDpyTT37Qvk66HK3EFO5UhDgsCWUbD0VtYC46QZb
+ SZfQNSVCCLYPAX2ZMq9ME43mvz3Q.ohaaFVM_Idw_Mut4owyF15Xf.45w7rk9WUiU54U3cib59lN
+ It72KpfpfhaD_JmOPXBVQqSfp1dNFwbprheWFPDR3ryaf22wSIs7KPz4fS3rHw_yO1tdMRr01DSY
+ sXBY736HEF7impyDRmbi4QgJEQ2XyyBfw6JOlLBdbJJlAYkm4QYzZROoSn2hyzamuF5yDxEX8iBs
+ 2t2NXIl5UIHwQFhig_P0SuAmpJZ9yroHhYPMSD8eIwfdd9CxMsdAWvDIlV8CSbGFR.hkRPyQuaT0
+ M1ok0vwWV3hFIyRkKd10.sZrybZ3sTh8KXJgpXuA5aMJ4azDrjxYAEEcgjzSVlb4FTwVngO87OQQ
+ LjMZIZxRdar4SLG2pinyB1Oc5Hofq.a29zHg0A5KC3lQtRqor6kcLVPXTwaynMBFM2BawZCpuiVG
+ 9KE1WEc2KLjaKcVw4EgxvQSALfslDStbvEWn_ODjw.nOnJeaOq2QOWqzGYJpYhYfsPHcvOebi7As
+ N4drSq0RuicmeN4j7Wm9qqIL8PwVuvkBwoR7ZOWhzlcHEFlvMW77BH64HG22Z7ePYVm.Y_8pTzZG
+ kTp5ae.QvLM8zue3qB0kHfORqwgSjh6Y_RroPWzWKPEYbXBNRHJBAwj3_qwYvShuEZmH1W3BHC3e
+ o7ku3mMpr526UqtFZrCagmTUSCqrZ5coUgEFeBJwKpvD1r_2XA_sPInvslD2.AxddiZ5fnl95RXa
+ 6zVqaEoMUEYfuiOrzNwIr.IZta_zSpRdjFYmFP9mMszcJa4PRXkL3IwQIJ2kEjQNiVc2eqeSn9Hm
+ zofsWHr1t0zlqUieoxrK1OBBqf.LWmrDes2nAQHTHqC0.LYcMSGyI7dK3R2gQ7ASpyK7C_Qk11Xo
+ mcY5QSa0YIt7PFZet1dYddFZW_dm732.J1hhMvX7E4ZT1eqgpysBWwEMa69xKHG_gz0z2NLz4zO8
+ LTxdvl4qBKM4X5qhgygjJROYKs2SC4jQLMEyhBLrXNsSUckqdJS_Dr45hVaaQa.8ODciUjRbOvwj
+ C9eo3Y3TALiiRlKBRNckRYt7tO55M0aF.wRPPMhek__VmoQMUr2N5smQfxhJZHNGrnDUAMk4U4W2
+ RbtcnJBGP4i_E7Aah7DdYAks0jlBH._b0zxdO.d3Yv.Qb7Z9TiqmMeyN16tlj1yQT.Q_GPqEp_iP
+ 3IGBeuQzHi4V6Q9B9jvpB2WPJkpwMZ2ec5LQ990kv.psKlnB4BlfB.SaE5rYbzblnbHanGIBcyxu
+ w2y_JnXGf4SNCzSFF
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 468ca47d-6dfd-4e15-b4d1-43d336e800bd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 15:09:01 +0000
+Received: by hermes--production-gq1-66b66ffd5-cl26f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8888783bd8bb8c322748e1ff4bf26922;
+          Fri, 10 Oct 2025 15:08:56 +0000 (UTC)
+Message-ID: <ec89959d-c3a0-403d-bfb0-7405639eb0cf@schaufler-ca.com>
+Date: Fri, 10 Oct 2025 08:08:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
+ jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20251001215643.31465-1-casey@schaufler-ca.com>
+ <20251001215643.31465-3-casey@schaufler-ca.com>
+ <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Resolve race conditions in timestamp events list handling between TX
-and RX paths causing missed timestamps.
+On 10/9/2025 11:53 AM, Stephen Smalley wrote:
+> On Wed, Oct 1, 2025 at 5:56 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Allow LSMs to request exclusive access to the netlabel facility.
+>> Provide mechanism for LSMs to determine if they have access to
+>> netlabel. Update the current users of netlabel, SELinux and Smack,
+>> to use and respect the exclusive use of netlabel.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>> diff --git a/security/security.c b/security/security.c
+>> index e59e3d403de6..9eca10844b56 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+>>                 else
+>>                         blob_sizes.lbs_secmark = true;
+>>         }
+>> +       if (needed->lbs_netlabel) {
+>> +               if (blob_sizes.lbs_netlabel)
+>> +                       needed->lbs_netlabel = false;
+>> +               else
+>> +                       blob_sizes.lbs_netlabel = true;
+>> +
+> Same principle here - if a LSM wants to use netlabel, it may want to
+> guarantee that it truly has exclusive access to it no matter what the
+> LSM order is.
 
-The current implementation uses a single events list for both TX and RX
-timestamps. The am65_cpts_find_ts() function acquires the lock,
-splices all events (TX as well as RX events) to a temporary list,
-and releases the lock. This function performs matching of timestamps
-for TX packets only. Before it acquires the lock again to put the
-non-TX events back to the main events list, a concurrent RX
-processing thread could acquire the lock, find an empty events list,
-and fail to attach timestamp to it, even though a relevant event exists
-in the spliced list which is yet to be restored to the main list.
+And if SELinux and Smack both shout "I gotta have it!" who wins?
+Does the system fail to boot? Do you assign it to the first requestor,
+as this patch does explicitly?
 
-Fix this by splitting the events list to handle TX and RX timestamps
-independently.
-
-Fixes: c459f606f66df ("net: ethernet: ti: am65-cpts: Enable RX HW timestamp for PTP packets using CPTS FIFO")
-Signed-off-by: Aksh Garg <a-garg7@ti.com>
----
- drivers/net/ethernet/ti/am65-cpts.c | 57 +++++++++++++++++++++++------
- 1 file changed, 46 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/am65-cpts.c b/drivers/net/ethernet/ti/am65-cpts.c
-index 59d6ab989c55..2e9719264ba5 100644
---- a/drivers/net/ethernet/ti/am65-cpts.c
-+++ b/drivers/net/ethernet/ti/am65-cpts.c
-@@ -163,7 +163,9 @@ struct am65_cpts {
- 	struct device_node *clk_mux_np;
- 	struct clk *refclk;
- 	u32 refclk_freq;
--	struct list_head events;
-+	/* separate lists to handle TX and RX timestamp independently */
-+	struct list_head events_tx;
-+	struct list_head events_rx;
- 	struct list_head pool;
- 	struct am65_cpts_event pool_data[AM65_CPTS_MAX_EVENTS];
- 	spinlock_t lock; /* protects events lists*/
-@@ -172,6 +174,7 @@ struct am65_cpts {
- 	u32 ts_add_val;
- 	int irq;
- 	struct mutex ptp_clk_lock; /* PHC access sync */
-+	struct mutex rx_ts_lock; /* serialize RX timestamp match */
- 	u64 timestamp;
- 	u32 genf_enable;
- 	u32 hw_ts_enable;
-@@ -245,7 +248,16 @@ static int am65_cpts_cpts_purge_events(struct am65_cpts *cpts)
- 	struct am65_cpts_event *event;
- 	int removed = 0;
- 
--	list_for_each_safe(this, next, &cpts->events) {
-+	list_for_each_safe(this, next, &cpts->events_tx) {
-+		event = list_entry(this, struct am65_cpts_event, list);
-+		if (time_after(jiffies, event->tmo)) {
-+			list_del_init(&event->list);
-+			list_add(&event->list, &cpts->pool);
-+			++removed;
-+		}
-+	}
-+
-+	list_for_each_safe(this, next, &cpts->events_rx) {
- 		event = list_entry(this, struct am65_cpts_event, list);
- 		if (time_after(jiffies, event->tmo)) {
- 			list_del_init(&event->list);
-@@ -306,11 +318,21 @@ static int __am65_cpts_fifo_read(struct am65_cpts *cpts)
- 				cpts->timestamp);
- 			break;
- 		case AM65_CPTS_EV_RX:
-+			event->tmo = jiffies +
-+				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
-+
-+			list_move_tail(&event->list, &cpts->events_rx);
-+
-+			dev_dbg(cpts->dev,
-+				"AM65_CPTS_EV_RX e1:%08x e2:%08x t:%lld\n",
-+				event->event1, event->event2,
-+				event->timestamp);
-+			break;
- 		case AM65_CPTS_EV_TX:
- 			event->tmo = jiffies +
- 				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
- 
--			list_move_tail(&event->list, &cpts->events);
-+			list_move_tail(&event->list, &cpts->events_tx);
- 
- 			dev_dbg(cpts->dev,
- 				"AM65_CPTS_EV_TX e1:%08x e2:%08x t:%lld\n",
-@@ -828,7 +850,7 @@ static bool am65_cpts_match_tx_ts(struct am65_cpts *cpts,
- 	return found;
- }
- 
--static void am65_cpts_find_ts(struct am65_cpts *cpts)
-+static void am65_cpts_find_tx_ts(struct am65_cpts *cpts)
- {
- 	struct am65_cpts_event *event;
- 	struct list_head *this, *next;
-@@ -837,7 +859,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
- 	LIST_HEAD(events);
- 
- 	spin_lock_irqsave(&cpts->lock, flags);
--	list_splice_init(&cpts->events, &events);
-+	list_splice_init(&cpts->events_tx, &events);
- 	spin_unlock_irqrestore(&cpts->lock, flags);
- 
- 	list_for_each_safe(this, next, &events) {
-@@ -850,7 +872,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
- 	}
- 
- 	spin_lock_irqsave(&cpts->lock, flags);
--	list_splice_tail(&events, &cpts->events);
-+	list_splice_tail(&events, &cpts->events_tx);
- 	list_splice_tail(&events_free, &cpts->pool);
- 	spin_unlock_irqrestore(&cpts->lock, flags);
- }
-@@ -861,7 +883,7 @@ static long am65_cpts_ts_work(struct ptp_clock_info *ptp)
- 	unsigned long flags;
- 	long delay = -1;
- 
--	am65_cpts_find_ts(cpts);
-+	am65_cpts_find_tx_ts(cpts);
- 
- 	spin_lock_irqsave(&cpts->txq.lock, flags);
- 	if (!skb_queue_empty(&cpts->txq))
-@@ -899,16 +921,21 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
- {
- 	struct list_head *this, *next;
- 	struct am65_cpts_event *event;
-+	LIST_HEAD(events_free);
- 	unsigned long flags;
-+	LIST_HEAD(events);
- 	u32 mtype_seqid;
- 	u64 ns = 0;
- 
- 	spin_lock_irqsave(&cpts->lock, flags);
- 	__am65_cpts_fifo_read(cpts);
--	list_for_each_safe(this, next, &cpts->events) {
-+	list_splice_init(&cpts->events_rx, &events);
-+	spin_unlock_irqrestore(&cpts->lock, flags);
-+
-+	list_for_each_safe(this, next, &events) {
- 		event = list_entry(this, struct am65_cpts_event, list);
- 		if (time_after(jiffies, event->tmo)) {
--			list_move(&event->list, &cpts->pool);
-+			list_move(&event->list, &events_free);
- 			continue;
- 		}
- 
-@@ -919,10 +946,14 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
- 
- 		if (mtype_seqid == skb_mtype_seqid) {
- 			ns = event->timestamp;
--			list_move(&event->list, &cpts->pool);
-+			list_move(&event->list, &events_free);
- 			break;
- 		}
- 	}
-+
-+	spin_lock_irqsave(&cpts->lock, flags);
-+	list_splice_tail(&events, &cpts->events_rx);
-+	list_splice_tail(&events_free, &cpts->pool);
- 	spin_unlock_irqrestore(&cpts->lock, flags);
- 
- 	return ns;
-@@ -948,7 +979,9 @@ void am65_cpts_rx_timestamp(struct am65_cpts *cpts, struct sk_buff *skb)
- 
- 	dev_dbg(cpts->dev, "%s mtype seqid %08x\n", __func__, skb_cb->skb_mtype_seqid);
- 
-+	mutex_lock(&cpts->rx_ts_lock);
- 	ns = am65_cpts_find_rx_ts(cpts, skb_cb->skb_mtype_seqid);
-+	mutex_unlock(&cpts->rx_ts_lock);
- 	if (!ns)
- 		return;
- 
-@@ -1155,7 +1188,9 @@ struct am65_cpts *am65_cpts_create(struct device *dev, void __iomem *regs,
- 		return ERR_PTR(ret);
- 
- 	mutex_init(&cpts->ptp_clk_lock);
--	INIT_LIST_HEAD(&cpts->events);
-+	mutex_init(&cpts->rx_ts_lock);
-+	INIT_LIST_HEAD(&cpts->events_tx);
-+	INIT_LIST_HEAD(&cpts->events_rx);
- 	INIT_LIST_HEAD(&cpts->pool);
- 	spin_lock_init(&cpts->lock);
- 	skb_queue_head_init(&cpts->txq);
--- 
-2.34.1
+If LSMs can't be equal in the eyes of the infrastructure, If one (e.g. SELinux)
+always gets its way regardless of the end user intent, I have a problem with
+the whole thing.
 
 
