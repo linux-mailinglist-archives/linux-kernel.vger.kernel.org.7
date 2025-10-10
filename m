@@ -1,358 +1,233 @@
-Return-Path: <linux-kernel+bounces-848329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D94EBCD6EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BB1BCD70A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9420A4FECB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:13:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 252C54FE605
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5952F5A0F;
-	Fri, 10 Oct 2025 14:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4233F2F5473;
+	Fri, 10 Oct 2025 14:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lFdaMee7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y/6Vks8a";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lFdaMee7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y/6Vks8a"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KYVEq21D"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010052.outbound.protection.outlook.com [52.101.84.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2AF1A4F3C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760105564; cv=none; b=kAHMjsjxkTYLRMmYS1+ObdupGwUTNZJbz+fZBlgHQROs59X4MKZWIkLJ5ia047fts/ZfCOOgoUViaIaZ05ZV4YtnpvePzSMvIQa2jTTmWA5EGi6vGQ/WGdzHgkvGvL4LJ4tDrDCRzmXtqIAO+OY2U28nldq5Ma+HlXBN/hwIgx8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760105564; c=relaxed/simple;
-	bh=f4z8bdtTHOsQ14NaVpmPyM3d7w3XBSahKI4xwW0lmeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZwnuwHBmm6SoVN+cken0uJ/FobBf0nx7mDlHiJ9tAfL44aWoU/wDXmhGDIcpTiin0VGLEU9Cwh3cpoc65Le6gdAUaejlTmARt6hNPiE99qHjTDhoeu3z4+bpmiNaem/8uknW1Fo0dsuc0RjRDghGZ81DynZSmtuss5cokBKy+q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lFdaMee7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y/6Vks8a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lFdaMee7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y/6Vks8a; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 70FB91F397;
-	Fri, 10 Oct 2025 14:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760105561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
-	b=lFdaMee78BtkQmpioPL7r4Oi2oK87Y2/h3KLh90mONS/2uZY40R0kekgsw2VTe0pXj9wDo
-	0utJhVzFZuG9sWkmnyMrAOD5oD29rhP9DBvmiZ8eylWD0N8j7QoLp8ROqFNK/Fk4cgQ+JW
-	xQ239QBVCElMtrnMEMmutISBWubpK/E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760105561;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
-	b=Y/6Vks8aCTBvOaogOBWzgEt3mL7roBAanFxsT7WRrjL95OZfWEJzJCuQR4OFf/QbdfyVHl
-	kBgwIAhWEBx7niAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760105561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
-	b=lFdaMee78BtkQmpioPL7r4Oi2oK87Y2/h3KLh90mONS/2uZY40R0kekgsw2VTe0pXj9wDo
-	0utJhVzFZuG9sWkmnyMrAOD5oD29rhP9DBvmiZ8eylWD0N8j7QoLp8ROqFNK/Fk4cgQ+JW
-	xQ239QBVCElMtrnMEMmutISBWubpK/E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760105561;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
-	b=Y/6Vks8aCTBvOaogOBWzgEt3mL7roBAanFxsT7WRrjL95OZfWEJzJCuQR4OFf/QbdfyVHl
-	kBgwIAhWEBx7niAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 529E11375D;
-	Fri, 10 Oct 2025 14:12:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 94goFFkU6WhgCAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:12:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3B197A0A58; Fri, 10 Oct 2025 16:12:40 +0200 (CEST)
-Date: Fri, 10 Oct 2025 16:12:40 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v7 07/14] ceph: use the new ->i_state accessors
-Message-ID: <pgntaqxmxnoe2zujqmwswz5tfgob7p24it4ckhxlshy4v6d6ir@jabz5zepbz2x>
-References: <20251009075929.1203950-1-mjguzik@gmail.com>
- <20251009075929.1203950-8-mjguzik@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B7A2F3600;
+	Fri, 10 Oct 2025 14:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760105593; cv=fail; b=dQydNC181PjgfFl5AqsyKpkhsQUR32mfLaJOhv8oWLaFT6QDY/l5EqxpFCBDtEyInR+uSTQSsJrCYr5o0zuAWmW2lA6QHvFYgEuZoxcjPJ6fofw7l6i+KdwTMylsUiKZp7lGpkoTZwd6zvvEoMoQsFKAjn3vDqD795wyOik20dE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760105593; c=relaxed/simple;
+	bh=oc/vBWzCvHiUDuqwCkNhSTTz1284DF+a/v4/uYIAA4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=m+LUITUDfk3lm21Ft4bjjKqayL3owu76WpxbOmsIpULzkIuA44WqInD/KelZVwZlxytjuoRigP+zL87FBn+U1uqQCkk40JTa/BdRTKuBPYedOLbcX1ZoCXjyK/Z1m8A5IkG2eRLukbmHYK0ABkbZLD2B45zQ6NtOkCLxzITHV8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KYVEq21D; arc=fail smtp.client-ip=52.101.84.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z47klZkkKdeIKmFNbUpKxlclABCpNP3ddQ/Zt8ts5DHSNhTDP658k+t8R94wmdch7DYyDXTm8zrbQWCtyPndNEHXc6DciuqnJoqTc+e1cM/m6Qww4GWbPHiQq/wNl6W31rMjlwRNb587/L1O6IvlTPq1Zv741f5xgiVyq66ppBFZhJZVkh6yjSaCxRQXhpHjzu7tOMucHHhm+PterRb+gOt/SbQeaOHqObvfYtZQz8hSK5TojiYDJmcWt9GKowTFDYjUd0bdA4Y/mx0WrPQVnIY56mMnbt1ujNPVUmomGbqvgYZP1HiipmZboi5Px5Ck+cpsHTB+LCRBGqLRS2gSXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q2Rv4iQy6E4dQna8+F/dEN397pB00qS/MxhzilLpz88=;
+ b=fhlMhyhwjc8SWvrMRD1FDBUtnRZvablMYRXQrhxuuQSVX30XUTtwcekZo8Gpm2ygEtZjU270Ef99duyjx74eRs2yhxSoLrWLEuJXvB8MTU55A4AA/YWJ7XGNMuD3GsFIy+pSDL/17L8lKhhRhmChsqy2vkiMRM/TXpWuvH2FrowKIAvhijtbvG5WD4zEisJv1smijclUnX5XRE+7Rsert2A9GNttGfQMNZF99UlejAQv3cydu7bLmbxoPz62dTCORxdN1gdJyriD6+bV+5LF5HuZLk6ZJNxqPVPdh4J7cJ4XMR9/PX9QNYTit7vPOUytPvraAMMCeUEOc6ASGUw8Fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q2Rv4iQy6E4dQna8+F/dEN397pB00qS/MxhzilLpz88=;
+ b=KYVEq21DGQTt/b0qET+GuhfQodp3KVaDMWLgtJw7e+adAUPdEvHKipfNdfE6HWd/7xOCVfoiSkBZHaQwvfZbTjjECWllv06gitP24DePXXMbLvj1veUCAqNDI4aOOm7481D44WvbNvifJ0DkRXuQkWWWygghKete7pvzC2gL0zA4svgFwhOIz1QduS+dUrdA42pP7F6ruIyqotwYbej1e4bLabtyiuyW6r7Ae3iQpuTDV8D+lIDEMbUxwd7diQ00vGeIoIodIVuMw5i8NmFhGlozM7GtvsY+Mp05PAGRIvh+squjDhPKm2WInjSZE04a0MGDR9M3U6bo/3pHduygnA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AS8PR04MB7671.eurprd04.prod.outlook.com (2603:10a6:20b:299::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 14:13:08 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9203.007; Fri, 10 Oct 2025
+ 14:13:08 +0000
+Date: Fri, 10 Oct 2025 10:12:59 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] clk: imx95-blk-ctl: Add one clock mux for HSIO
+ block
+Message-ID: <aOkUa2WcTkp89Jx9@lizhi-Precision-Tower-5810>
+References: <20251010-usb-phy-alt-clk-support-v2-0-af4b78bb4ae8@nxp.com>
+ <20251010-usb-phy-alt-clk-support-v2-4-af4b78bb4ae8@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010-usb-phy-alt-clk-support-v2-4-af4b78bb4ae8@nxp.com>
+X-ClientProxiedBy: PH8PR05CA0010.namprd05.prod.outlook.com
+ (2603:10b6:510:2cc::15) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009075929.1203950-8-mjguzik@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB7671:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b02a241-af97-42e5-bebe-08de0807234a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|376014|7416014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?k4flzeP06NA2VJ8va1ZpxmpN74JRAL8ESl8pzLuzuycrgU2VwEfBtm0zHOw9?=
+ =?us-ascii?Q?eAYdMGuDy8yBw8y/Lnz2j2EXHM/AXnG6/VW57omwNJrqZtec/dloAcuDQfuy?=
+ =?us-ascii?Q?Aslp+e+MV9A2Qy/jHEFI2ubSFDZ7TUmn6LNGeuP0uSooJ4Sotg63S/P1Vmsh?=
+ =?us-ascii?Q?DWs6eMpgNYvbCYxaZUwPAe9CMztP7Em3t7pviSMRuVa/8/32o6SliWw76wrQ?=
+ =?us-ascii?Q?Ijv8XYVI2zXk7dqlEo+2t7C3BsXPsSxyjiTbM5QXVbr6uxt7gcTPT4PBCmpX?=
+ =?us-ascii?Q?WnPeBrpamsgR34FogsMZ1/EQd/Ym7k3n45JZOLs+3dktoO4+LwMWSWln/Onx?=
+ =?us-ascii?Q?AqRu4tvAPYl9GRrefQBJ4Ya/XoA3SnQCdTofnshayvGOhKu0UZibu47FdjRP?=
+ =?us-ascii?Q?1gYluBQRYRAO9b0S8hbilww5GSd/ihTy0bAGUjaY2Bw46HxFG5jaVRuBzVrS?=
+ =?us-ascii?Q?7iTn0K58hPIXvQ08Af2TLX8hxx2BTcKguuqziWO7NLY8SfBVxULgaH3fB/qa?=
+ =?us-ascii?Q?kMsFQwXFkk9cp1XM3qAReFlmONwPPZKiAEp+CfNcnZ9Rnv1YlyJxVvCT+/JQ?=
+ =?us-ascii?Q?MBXxAFV1H2A3S4K49zdc8dUlfmEMMDSt2JrFPDGsmQP+krmzcMz1vhrznXjV?=
+ =?us-ascii?Q?pKHyxcbPyb/OMWkMTKKtoI7O5zmZkDE6c4ER7JOoN8gG++ccP898nQvAYEvm?=
+ =?us-ascii?Q?Yfyi3mEuEPvE9iYn88JYsm6+Tw0bG6pWBawsE+k9JsxjL5rIQhmwsIpUI/0/?=
+ =?us-ascii?Q?Y0vtPa8U2oxU4fe3BXzLPYp1TGWM4V+qkLrSDSbcTIrLVH3SgSDhfcwJ3G2x?=
+ =?us-ascii?Q?SmwjDZKe7x0IRBrao2E0vSONuGhmJ/nitz5Z5szwSP+ICyzvFy651CCdF4Rg?=
+ =?us-ascii?Q?9vXWZoQ8f3FOfcGjRxUfQCb9okoHYFYAVcnGght4UdQYLu4SA5L+KGfRIrUS?=
+ =?us-ascii?Q?TYbkvchb0RGtQTJcz7DQPJi1iFsJTcPlUUJVkXGYTjTHueRMftePdeEV4Jhu?=
+ =?us-ascii?Q?Ia5bFehKo68kg5pTu0i7NOzFXPmn77OvbZ6FGdj2BOi6WlLHeP4bR9KsXFyE?=
+ =?us-ascii?Q?M0uZ4hLaJbSN2FsYpKpZ26XtHBKewrTatZVy5Rq2dMLPGf2OJjZP0H1qQJh1?=
+ =?us-ascii?Q?QBb6YKkZNnIF+v5u1qXhfoA4UAT5jw5WSZ3ZVhInZSf1srsWAOzAKTpEonRC?=
+ =?us-ascii?Q?IRsb8cO0OeeO3jJ+ONXeoje1QA2QHsY7/FwsoHQ5ZHXfhE1/9fiUG34TocBW?=
+ =?us-ascii?Q?488N9nF2znuuFT9/LVD97zQFJX8OKI3r2GpW7RudTr8LMNUKxu1dovo/xzsW?=
+ =?us-ascii?Q?IRQmgZJDDsbYzQWdslVFksHfgA87qVVQmFAXniet5nKtaf4HjdkCFfaAr4KU?=
+ =?us-ascii?Q?TWu3psaq6sslUfkjIWDeippid9W0C0gC1NZsf5InAmELK8mOitAZJEyHhc+6?=
+ =?us-ascii?Q?sA0fRnm2ZlARdbxFD5equ6Z44MIN6AZQEcQljRZ0gxBmLWg5Gp0k8rRvVGVp?=
+ =?us-ascii?Q?EysMxyBb9sTaUJdpg4vcG3/Lspm8rXfx/2XZ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?71UiRtF9CdaSE/EvZifN6gVp562F+yoGBTHAYnpb1Pa0lfejza3Rbwwu0RIm?=
+ =?us-ascii?Q?clo3afOv33wqNCotQfnWy6JbUrTNuAOvIO24a+7aPW54E/0W9KE1dGRjcQ4v?=
+ =?us-ascii?Q?Yqa0tzJArJeL71G0ysFgsRWBlj/wbB1wO3nARRVmo0ovimsA3Wy44q+rGHAc?=
+ =?us-ascii?Q?WmjJq8pEpfGHPm+p8VCvtN6D1TG8nP4EWCMIxs5OSTYCm5QKfwqU0pFjlXGQ?=
+ =?us-ascii?Q?Zn8kzT57cHQtwjkuxQtjHlN/qmYrvKjv/Yz96D4fLlA9Gmin6Drxx4muWDbk?=
+ =?us-ascii?Q?DTrPnT6Vgt/i+Aube9hYLp/OFt6quiY3Thni1lXj74VQYH9SxVsjS54PH4uy?=
+ =?us-ascii?Q?WjSPPPZe48nvhSiWetdFKtNXYkkGeG3Tini9EO1FK1wMjjC3ulLambSid/qF?=
+ =?us-ascii?Q?Wg4SIsaawrFD9kxceI4+kNGDuq9TUwXg2frgDTcDma6DzgDXEP0/pf7WaQD1?=
+ =?us-ascii?Q?aF8fLculG7vRrvnNI0fjiZs+VAcbc3O974iS/WU2On9km0zaetko9pwmHx1n?=
+ =?us-ascii?Q?K8VCGxPTvIwh4vRmOFpu8l9yHnlJ+3CRSdLz3448ajo38pLcYDgiM/F8HAVo?=
+ =?us-ascii?Q?ZOS8dPcJO7aIS4kjfm9SYFQYWihX/EZCK5RZD+IeBPl8qgM0cjcGMGHb4Phw?=
+ =?us-ascii?Q?gkT2n4YD/Q2vrsKpg5yc+2DvntpD6sEkYRZkD2QOgkRmSlckcBvE6BI9IVdz?=
+ =?us-ascii?Q?mMgPlGzRyaBETgE65acERm4zN+5Mnpg2pzK/NAZ6WmE3TNRUWQb/noF3Upbc?=
+ =?us-ascii?Q?AFhuT0V7ughTZ8TK92xTy64V9/yu8b4aLbM9hLixK/oQK78M/vUlUml728Tx?=
+ =?us-ascii?Q?uStfWkRbZF3vlUw12TdUa5piEa7IoHnM2KQUmhaN68g3w7yj5xBakLaHe+9o?=
+ =?us-ascii?Q?9vDXTSadHgVPWtOc1x1H0jM7nC7WzPCmI0ykbwYQri/wI6OGDH38VbQRpIf+?=
+ =?us-ascii?Q?4zGuAXZlr+/4p3YYQCbfBYQu2Dd3zoEI1uUVs3yFSffXjY+EfhRsRd8l1WBb?=
+ =?us-ascii?Q?2dILV7EsYMkIhgxpfZiTM8hF9comjsUQ87BHbUp6meNMPKEwrrSzaZKWdqR2?=
+ =?us-ascii?Q?CpZySL23iuVzb6TGCn+s10yAy7AMyODdgoUq2PcQ+XVHarZabanm+VjC1On+?=
+ =?us-ascii?Q?y5fCQcuaCVATE67BDzPRQbWzKfu4YLd+AoPqq020skhrJzOp7qOQeDl0wCcf?=
+ =?us-ascii?Q?A7SXUP3B++tK2nwhDEgcBOAuiBsJJl2Jsjas0O9smtQdy9PStrKZQFevz3mk?=
+ =?us-ascii?Q?oYzKED+bjUtMktLDI9/nBVGLoWOaM6KnPQ/EhoDsekOL3i86X7id6iceDVz1?=
+ =?us-ascii?Q?6MHGWuhhMESZHFzPBXnb6OXXJW6dhans9TcIe7gIj412v6wr/MFwrhWMCtRV?=
+ =?us-ascii?Q?K/wvicgXwIk29nXmJXYV2+8CWTo392N4JAqcV6iLs6kAEsVtmCnJM484wCGM?=
+ =?us-ascii?Q?uSZOsdUMbLEsOG8DH6r5f5Xh67qcL7BHArFHnyWlDz+2DutYo38GFn77tske?=
+ =?us-ascii?Q?OC7rCT8XHT1eY8efDIp0/3j2hiIEuClgzbSJpElREWdaHnEkNfsbw8smWrIf?=
+ =?us-ascii?Q?Ei+R0sBNw1gLNhSfX+mQlnILHwtcGVdB9mxU5e5R?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b02a241-af97-42e5-bebe-08de0807234a
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 14:13:08.6567
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2J1gbga99EGS8D9tsE+9n3b/JnX76JbEYE4GSTabVmes/8tITT3cMNP4p4YoVOofT0Hf9a2VLhdDIeWQvgZs8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7671
 
-On Thu 09-10-25 09:59:21, Mateusz Guzik wrote:
-> Change generated with coccinelle and fixed up by hand as appropriate.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On Fri, Oct 10, 2025 at 07:01:13PM +0800, Xu Yang wrote:
+> The GPR_REG0 register has an USB_PHY_REF_CLK_SEL (bit 6) to select USB 3.0
+> PHY reference clock.
+>
+> USB_PHY_REF_CLK_SEL:
+> bit[6]   - 0b 24 MHz external oscillator
+>          - 1b 100 MHz high performance PLL
+>
+> Add a clock multiplexer to support USB3.0 PHY clock selection.
+>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
 
-Looks good. Feel free to add:
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+>
 > ---
-> 
-> cheat sheet:
-> 
-> If ->i_lock is held, then:
-> 
-> state = inode->i_state          => state = inode_state_read(inode)
-> inode->i_state |= (I_A | I_B)   => inode_state_set(inode, I_A | I_B)
-> inode->i_state &= ~(I_A | I_B)  => inode_state_clear(inode, I_A | I_B)
-> inode->i_state = I_A | I_B      => inode_state_assign(inode, I_A | I_B)
-> 
-> If ->i_lock is not held or only held conditionally:
-> 
-> state = inode->i_state          => state = inode_state_read_once(inode)
-> inode->i_state |= (I_A | I_B)   => inode_state_set_raw(inode, I_A | I_B)
-> inode->i_state &= ~(I_A | I_B)  => inode_state_clear_raw(inode, I_A | I_B)
-> inode->i_state = I_A | I_B      => inode_state_assign_raw(inode, I_A | I_B)
-> 
->  fs/ceph/cache.c  |  2 +-
->  fs/ceph/crypto.c |  4 ++--
->  fs/ceph/file.c   |  4 ++--
->  fs/ceph/inode.c  | 28 ++++++++++++++--------------
->  4 files changed, 19 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
-> index 930fbd54d2c8..f678bab189d8 100644
-> --- a/fs/ceph/cache.c
-> +++ b/fs/ceph/cache.c
-> @@ -26,7 +26,7 @@ void ceph_fscache_register_inode_cookie(struct inode *inode)
->  		return;
->  
->  	/* Only new inodes! */
-> -	if (!(inode->i_state & I_NEW))
-> +	if (!(inode_state_read_once(inode) & I_NEW))
->  		return;
->  
->  	WARN_ON_ONCE(ci->netfs.cache);
-> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> index 7026e794813c..928746b92512 100644
-> --- a/fs/ceph/crypto.c
-> +++ b/fs/ceph/crypto.c
-> @@ -329,7 +329,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
->  out:
->  	kfree(cryptbuf);
->  	if (dir != parent) {
-> -		if ((dir->i_state & I_NEW))
-> +		if ((inode_state_read_once(dir) & I_NEW))
->  			discard_new_inode(dir);
->  		else
->  			iput(dir);
-> @@ -438,7 +438,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
->  	fscrypt_fname_free_buffer(&_tname);
->  out_inode:
->  	if (dir != fname->dir) {
-> -		if ((dir->i_state & I_NEW))
-> +		if ((inode_state_read_once(dir) & I_NEW))
->  			discard_new_inode(dir);
->  		else
->  			iput(dir);
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 978acd3d4b32..1c9d73523b88 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -741,7 +741,7 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
->  		      vino.ino, ceph_ino(dir), dentry->d_name.name);
->  		ceph_dir_clear_ordered(dir);
->  		ceph_init_inode_acls(inode, as_ctx);
-> -		if (inode->i_state & I_NEW) {
-> +		if (inode_state_read_once(inode) & I_NEW) {
->  			/*
->  			 * If it's not I_NEW, then someone created this before
->  			 * we got here. Assume the server is aware of it at
-> @@ -903,7 +903,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->  				new_inode = NULL;
->  				goto out_req;
->  			}
-> -			WARN_ON_ONCE(!(new_inode->i_state & I_NEW));
-> +			WARN_ON_ONCE(!(inode_state_read_once(new_inode) & I_NEW));
->  
->  			spin_lock(&dentry->d_lock);
->  			di->flags |= CEPH_DENTRY_ASYNC_CREATE;
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 949f0badc944..4044a13969ad 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -132,7 +132,7 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
->  			goto out_err;
->  	}
->  
-> -	inode->i_state = 0;
-> +	inode_state_assign_raw(inode, 0);
->  	inode->i_mode = *mode;
->  
->  	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
-> @@ -201,7 +201,7 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino,
->  
->  	doutc(cl, "on %llx=%llx.%llx got %p new %d\n",
->  	      ceph_present_inode(inode), ceph_vinop(inode), inode,
-> -	      !!(inode->i_state & I_NEW));
-> +	      !!(inode_state_read_once(inode) & I_NEW));
->  	return inode;
->  }
->  
-> @@ -228,7 +228,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
->  		goto err;
->  	}
->  
-> -	if (!(inode->i_state & I_NEW) && !S_ISDIR(inode->i_mode)) {
-> +	if (!(inode_state_read_once(inode) & I_NEW) && !S_ISDIR(inode->i_mode)) {
->  		pr_warn_once_client(cl, "bad snapdir inode type (mode=0%o)\n",
->  				    inode->i_mode);
->  		goto err;
-> @@ -261,7 +261,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
->  		}
->  	}
->  #endif
-> -	if (inode->i_state & I_NEW) {
-> +	if (inode_state_read_once(inode) & I_NEW) {
->  		inode->i_op = &ceph_snapdir_iops;
->  		inode->i_fop = &ceph_snapdir_fops;
->  		ci->i_snap_caps = CEPH_CAP_PIN; /* so we can open */
-> @@ -270,7 +270,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
->  
->  	return inode;
->  err:
-> -	if ((inode->i_state & I_NEW))
-> +	if ((inode_state_read_once(inode) & I_NEW))
->  		discard_new_inode(inode);
->  	else
->  		iput(inode);
-> @@ -744,7 +744,7 @@ void ceph_evict_inode(struct inode *inode)
->  
->  	netfs_wait_for_outstanding_io(inode);
->  	truncate_inode_pages_final(&inode->i_data);
-> -	if (inode->i_state & I_PINNING_NETFS_WB)
-> +	if (inode_state_read_once(inode) & I_PINNING_NETFS_WB)
->  		ceph_fscache_unuse_cookie(inode, true);
->  	clear_inode(inode);
->  
-> @@ -1013,7 +1013,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->  	      le64_to_cpu(info->version), ci->i_version);
->  
->  	/* Once I_NEW is cleared, we can't change type or dev numbers */
-> -	if (inode->i_state & I_NEW) {
-> +	if (inode_state_read_once(inode) & I_NEW) {
->  		inode->i_mode = mode;
->  	} else {
->  		if (inode_wrong_type(inode, mode)) {
-> @@ -1090,7 +1090,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->  
->  #ifdef CONFIG_FS_ENCRYPTION
->  	if (iinfo->fscrypt_auth_len &&
-> -	    ((inode->i_state & I_NEW) || (ci->fscrypt_auth_len == 0))) {
-> +	    ((inode_state_read_once(inode) & I_NEW) || (ci->fscrypt_auth_len == 0))) {
->  		kfree(ci->fscrypt_auth);
->  		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
->  		ci->fscrypt_auth = iinfo->fscrypt_auth;
-> @@ -1692,13 +1692,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
->  			pr_err_client(cl, "badness %p %llx.%llx\n", in,
->  				      ceph_vinop(in));
->  			req->r_target_inode = NULL;
-> -			if (in->i_state & I_NEW)
-> +			if (inode_state_read_once(in) & I_NEW)
->  				discard_new_inode(in);
->  			else
->  				iput(in);
->  			goto done;
->  		}
-> -		if (in->i_state & I_NEW)
-> +		if (inode_state_read_once(in) & I_NEW)
->  			unlock_new_inode(in);
->  	}
->  
-> @@ -1887,11 +1887,11 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
->  			pr_err_client(cl, "inode badness on %p got %d\n", in,
->  				      rc);
->  			err = rc;
-> -			if (in->i_state & I_NEW) {
-> +			if (inode_state_read_once(in) & I_NEW) {
->  				ihold(in);
->  				discard_new_inode(in);
->  			}
-> -		} else if (in->i_state & I_NEW) {
-> +		} else if (inode_state_read_once(in) & I_NEW) {
->  			unlock_new_inode(in);
->  		}
->  
-> @@ -2103,7 +2103,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
->  			pr_err_client(cl, "badness on %p %llx.%llx\n", in,
->  				      ceph_vinop(in));
->  			if (d_really_is_negative(dn)) {
-> -				if (in->i_state & I_NEW) {
-> +				if (inode_state_read_once(in) & I_NEW) {
->  					ihold(in);
->  					discard_new_inode(in);
->  				}
-> @@ -2113,7 +2113,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
->  			err = ret;
->  			goto next_item;
->  		}
-> -		if (in->i_state & I_NEW)
-> +		if (inode_state_read_once(in) & I_NEW)
->  			unlock_new_inode(in);
->  
->  		if (d_really_is_negative(dn)) {
-> -- 
+> Changes in v2:
+>  - add Rb tag
+> ---
+>  drivers/clk/imx/clk-imx95-blk-ctl.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> index 56bed44719954d6a644606914b61dad672cd82cf..c078b2ee28e81155ca3a93d26c2e757c8ddc91be 100644
+> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
+> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> @@ -302,6 +302,24 @@ static const struct imx95_blk_ctl_dev_data hsio_blk_ctl_dev_data = {
+>  	.clk_reg_offset = 0,
+>  };
+>
+> +static const struct imx95_blk_ctl_clk_dev_data hsio_usb_blk_ctl_clk_dev_data[] = {
+> +	[0] = {
+> +		.name = "usb_phy_ref_clk_sel",
+> +		.parent_names = (const char *[]){"osc24m", "hsiopll"},
+> +		.num_parents = 2,
+> +		.reg = 0,
+> +		.bit_idx = 6,
+> +		.bit_width = 1,
+> +		.type = CLK_MUX,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
+> +	}
+> +};
+> +
+> +static const struct imx95_blk_ctl_dev_data hsio_usb_blk_ctl_dev_data = {
+> +	.num_clks = 1,
+> +	.clk_dev_data = hsio_usb_blk_ctl_clk_dev_data,
+> +};
+> +
+>  static const struct imx95_blk_ctl_clk_dev_data imx94_lvds_clk_dev_data[] = {
+>  	[IMX94_CLK_DISPMIX_LVDS_CLK_GATE] = {
+>  		.name = "lvds_clk_gate",
+> @@ -519,6 +537,7 @@ static const struct of_device_id imx95_bc_of_match[] = {
+>  	{ .compatible = "nxp,imx95-display-csr", .data = &imx95_dispmix_csr_dev_data },
+>  	{ .compatible = "nxp,imx95-lvds-csr", .data = &imx95_lvds_csr_dev_data },
+>  	{ .compatible = "nxp,imx95-hsio-blk-ctl", .data = &hsio_blk_ctl_dev_data },
+> +	{ .compatible = "nxp,imx95-hsio-usb-blk-ctl", .data = &hsio_usb_blk_ctl_dev_data },
+>  	{ .compatible = "nxp,imx95-vpu-csr", .data = &vpublk_dev_data },
+>  	{ .compatible = "nxp,imx95-netcmix-blk-ctrl", .data = &netcmix_dev_data},
+>  	{ /* Sentinel */ },
+>
+> --
 > 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
 
