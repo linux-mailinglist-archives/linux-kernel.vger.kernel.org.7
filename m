@@ -1,152 +1,140 @@
-Return-Path: <linux-kernel+bounces-847766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22E1BCBA34
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:23:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77429BCBA44
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6573D406C0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A26F4070F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852471F4C96;
-	Fri, 10 Oct 2025 04:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0586D1F4C96;
+	Fri, 10 Oct 2025 04:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kq7XAPTx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iv7Ch4WR"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6141136B
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60A336B
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760070219; cv=none; b=AkKkMI8AIqPBWJcT9+XNe5pZWZ37VkNN1MwKEf4C4FkneADc85ph6R7uoV5gXzoVwjveuKB0uwFcgjRTWuI49q21Y/xMb3VtQpHtur/j1Ee+9z2089Ulm2+zAbsOADwc5BGvFsQLasSkvpd3k73WoNHEw9zXTJpO+tYFfAq+ksQ=
+	t=1760070365; cv=none; b=YR2h9KAgTPZmkisQPBwaJfMkGzdVzie0mdrfGZtAjiPWFem4+KNvd/S8SPttKQOS4yjasakcT0MSWA9OeDKe8n23z0SvjorPXpe///vJ7mkECMqUUnRh+u8VJiqTo9V6hn34Or6WLGX7paeVClkpy3SkQOlJAFXgBcXfKAlsnG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760070219; c=relaxed/simple;
-	bh=n6RsdAyftAlN87tnAMgw//jh+cc1BMgT0p7KlyZ57QA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bFPHawTw3/T/HOODsdxhEVTb+XLLFpvadxP+ZyPd285KvPmUjl7fWY2Po7UxaA+ZByYFgHAAqYPWt6B+sUjuBItd2OZqZr+nxDuo+2mEEy2IwyUDeAxl9P6oEpsM25xhAq5dc3QdiId3zrkrsHZqeBBFcbnb0sjzTWPLEj41LoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kq7XAPTx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599IHucF002809;
-	Fri, 10 Oct 2025 04:23:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=8mBBfh
-	OUT8M6yrO90Duy0AJBqEiKRHoVuX608C0++mI=; b=kq7XAPTxSbppsUv27Pe7cd
-	UtpRys4EbdvN7Dg5lb5D0O+D7dvJSWVxgUMsf3cYe31K1fqi7g2Rrmqkog5ocfOG
-	qTFy4QjOeyBY7xQcbuTQvs8NgIJfWxpT8qg3ZfS0/HsoFmKoaSIY/GLJGvVE5UQR
-	NSjbVKIE0YGm/bZrSWOkDVkOmG02LXdBZYF1tOM13EjBeO9P4OYbepjEybw5fZ0j
-	V44qdjiQZH3YNfvhQdKsEc5veg0KVLFTw1FOIX+qmerSMb3hnGT4An3hpratIo5Z
-	UAieZITgaJop+cYw+W4LDRxB6O55itdGtCSBhIkYpWDMp3i8NnqjIRqLkTSAZDzg
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv870fs9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 04:23:18 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59A31Kns026015;
-	Fri, 10 Oct 2025 04:23:17 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49nvamr31r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 04:23:17 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59A4NG1I27919090
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Oct 2025 04:23:16 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E49F58065;
-	Fri, 10 Oct 2025 04:23:16 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0CD6958052;
-	Fri, 10 Oct 2025 04:23:15 +0000 (GMT)
-Received: from [9.61.240.51] (unknown [9.61.240.51])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 10 Oct 2025 04:23:14 +0000 (GMT)
-Message-ID: <72694ae5-f3ef-4da5-a5ac-b18236d9583c@linux.ibm.com>
-Date: Fri, 10 Oct 2025 09:53:13 +0530
+	s=arc-20240116; t=1760070365; c=relaxed/simple;
+	bh=sR+Idaz06ecGflkm+Rs+OmZAkLeUwM3jY5FgynIXcrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S5zHtb5GNApjtRIwRCNvHwwsBO16lG4gNvn9uvaNNta9aXnfMOVv7BX6Sc3gyxXRPzXSL0ykgqGRxH3QoKVQQ/unwHRxSsqu4SdbdxkZnPzpP8DO4rG6l9I2qNyGgRFg6CNCjs5JWrJ2hbR6P/MB1ptnlbkwpmVMiDMj7ZiMSGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iv7Ch4WR; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-782023ca359so1687747b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 21:26:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760070362; x=1760675162; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jch11Bu3wI9Xf6VNMlwdSI3EJI5QLIUQJkMhWN2GBUE=;
+        b=Iv7Ch4WRvDEZTCk7YY9kC/GTGfLgqKannKLsLgL5+Ydf9noLcXP7jxludWobpej+D9
+         8XWR+sTXY6avhx15rffYrzFb+EyrafXTrlnc0h8sBgbWVi0pRePEJIIHZYlxaYmF/CFC
+         c8ccvZtfZ1dXPhF+CroN1/co2M7i9aJzv6fGBLEy8mRl/A3x1XlTfzG8wHeaBBNXoSvl
+         nHSFNP9a5ehzlfSJ+A9TgsvW9Ar9xvuVrU6MeLi5To1WtH0x+7I0kfm7CFi0NyReQif8
+         CR3e0/Rh4hWTc2ZJAn43teGqVL5XCJNKW8LY/PLoCRZWn9VO27quW3gHczjV6Zwide9T
+         qmMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760070362; x=1760675162;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jch11Bu3wI9Xf6VNMlwdSI3EJI5QLIUQJkMhWN2GBUE=;
+        b=oU349t7bUP+LgGCJYJj3wBuwWeWBmoqHzWouHZbPkzdhAjYR02j6Y4krkNPbY7rY4z
+         gqT2iCDK1ftZNtEoE8CQR7wCD2QC9EjFPxaOefPnbpt00gPTHqD+b8UOqKChmnc0sr+M
+         3EDv/1lkSQ3eIKnh/gyPXRTkBP0UABQhntJxkAM5+iZRzBBgGrPRkyVZfvG4wpcF+4WI
+         v5isBJLsoX5bvmCNti/s+bllhAebYcHqOd21p5OuldUBqEIhlPRT1uV3B5ndnIGdxKPB
+         QnaGGKFDFJ5JDq0ctUkK5ba656pmSOLfkn7/bfLHs/WsavF8co8IXy9Mp8xoRbBN92y+
+         JO7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9yUvCMES97gVn8RpIukgJaJVCfJSsR+2KkVpLF2PBYgk2cmhm0PVt9ZXxw+DE8OcqugsVTUhHSMcM5q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2KlnJf8banCaQLKctVCwflNddi4wfLh4xwtlnDu1IUnyOKMal
+	X1cPDc/XOn/gqvYqukNmF14IodX9sM5A7iddq/wjeqiQ7vuA8aEwOWyT
+X-Gm-Gg: ASbGncv525ymbS8SREF222uAgUot9a11fk1k8HE/TsP4pHEzzPMr2C6K21pIhXU6fz3
+	16k7JIZPpRIiLjQnAwN4kKiwp2IRdrwkzme9p44M73cFZgCNj2q5TO9VKpUdKPAsAfg30WqjCtj
+	huIRH/OieUdE70cKR6TDFs1f/ieojyjtAtCg0RwXBS9+5sOqjaakwXT+gMg7OhNY859dmqYwYgP
+	JYo1F66jyuBgjvadREpJtTUjQFUze8qHzAhaD3pNOjTyNd9Z8+1iv1BM6inlyTSaTqFl08Yq/oJ
+	bfnvB9pZOf3u9WuuGHMnQsUZoJtHzV7rgujJ32eATonwLRhasMx52PCwwyneJneGdqAKt8nOMpM
+	SARSaCGctRaPiTrspBeyshvhg7hrfVxq85eL/XDS3QynDMU6+8mH+eFVM6GzlLQmi8ts=
+X-Google-Smtp-Source: AGHT+IGEkqIzhQuL3f5LTjx03nPrTKH8siuoV4YI/aI1YU/01DZQX0TA2yC06xsJawbIkzuIWPaPQg==
+X-Received: by 2002:a05:6a20:9389:b0:251:9f29:4553 with SMTP id adf61e73a8af0-32da80db3a8mr12916317637.10.1760070361997;
+        Thu, 09 Oct 2025 21:26:01 -0700 (PDT)
+Received: from fedora ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b8285ddsm1414005b3a.23.2025.10.09.21.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 21:26:01 -0700 (PDT)
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Hannes Reinecke <hare@suse.de>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: [PATCH v2] nvme/tcp: handle tls partially sent records in write_space()
+Date: Fri, 10 Oct 2025 14:25:15 +1000
+Message-ID: <20251010042514.704249-2-wilfred.opensource@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bisected][mainline]Kernel OOPs at msi_desc_to_pci_dev
-To: Nam Cao <namcao@linutronix.de>, Madhavan Srinivasan
- <maddy@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Gautam Menghani <gautam@linux.ibm.com>
-References: <878d7651-433a-46fe-a28b-1b7e893fcbe0@linux.ibm.com>
- <87wm55h8ep.fsf@yellow.woof>
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <87wm55h8ep.fsf@yellow.woof>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: CVYy3NYgwX7N4bgbJ4yKHTBIwFj0eEe-
-X-Proofpoint-ORIG-GUID: CVYy3NYgwX7N4bgbJ4yKHTBIwFj0eEe-
-X-Authority-Analysis: v=2.4 cv=MKNtWcZl c=1 sm=1 tr=0 ts=68e88a36 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=ZJ7TM_y2-Z2NVvSBRrsA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX3kfu4vM4FKS3
- inIkwG2cH33mSGhKqpLj5fcAGnZH3L1eBCIRS+tvIUDLM1/dIUWn+Jr3QjfgLlkCW2I3Bv+Lu3L
- couripZXvEeieh4q0IMfONrH6viy4wb0dB6c7pH2GaIKCiFMNACNCKo+ELlHsAY+76TmRwSIBnb
- dTFmWGofqa5L6CUXDVkAWDmA5cLyQuU8xoYrdKaFW+6qhChKftDE0/aPJRVKRukh1Ec06YTYpxe
- 6pxcPaZcQ7YObarxpXD0eY3CsqDgRInLTd7zPHnXJplMsvds5cq7rjsiEkFpkbOtoItneTPrOIP
- mkd7aBySEcKF/p6CFoK3UyrH3MHkmMKznrcf8pTqViSRTm5DiRx2QjQSNul6FteJqwgcXCaYTrb
- LBaQZZVnMVVMJv9ZxxeD1U7iwN10vw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510080121
+Content-Transfer-Encoding: 8bit
 
+From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
-On 08/10/25 6:12 pm, Nam Cao wrote:
-> Venkat Rao Bagalkote <venkat88@linux.ibm.com> writes:
->> IBM CI has reported a kernel crash while running module load and unload
->> testing on lpfc driver.
-> Thanks for the report.
->
-> I trust the below patch should fix the issue?
->
-> diff --git a/arch/powerpc/platforms/pseries/msi.c b/arch/powerpc/platforms/pseries/msi.c
-> index 825f9432e03d..a82aaa786e9e 100644
-> --- a/arch/powerpc/platforms/pseries/msi.c
-> +++ b/arch/powerpc/platforms/pseries/msi.c
-> @@ -443,8 +443,7 @@ static int pseries_msi_ops_prepare(struct irq_domain *domain, struct device *dev
->    */
->   static void pseries_msi_ops_teardown(struct irq_domain *domain, msi_alloc_info_t *arg)
->   {
-> -	struct msi_desc *desc = arg->desc;
-> -	struct pci_dev *pdev = msi_desc_to_pci_dev(desc);
-> +	struct pci_dev *pdev = to_pci_dev(domain->dev);
->   
->   	rtas_disable_msi(pdev);
->   }
->
-Thanks for the fix. This change fixes the reported issue. Please add 
-below tag also, while sending out the patch.
+With TLS enabled, records that are encrypted and appended to TLS TX
+list can fail to see a retry if the underlying TCP socket is busy, for
+example, hitting an EAGAIN from tcp_sendmsg_locked(). This is not known
+to the NVMe TCP driver, as the TLS layer successfully generated a record.
 
+Typically, the TLS write_space() callback would ensure such records are
+retried, but in the NVMe TCP Host driver, write_space() invokes
+nvme_tcp_write_space(). This causes a partially sent record in the TLS TX
+list to timeout after not being retried.
 
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+This patch fixes the above by calling queue->write_space(), which calls
+into the TLS layer to retry any pending records.
 
+Fixes: be8e82caa685 ("nvme-tcp: enable TLS handshake upcall")
+Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+---
+V2:
+    - Unconditionally invoke TLS write_space(). This means we don't need
+      to export tls_is_partially_sent_record()
+---
+drivers/nvme/host/tcp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Regards,
-
-Venkat.
-
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 1413788ca7d5..6016510577bd 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -1079,8 +1079,13 @@ static void nvme_tcp_write_space(struct sock *sk)
+ 
+ 	read_lock_bh(&sk->sk_callback_lock);
+ 	queue = sk->sk_user_data;
++
+ 	if (likely(queue && sk_stream_is_writeable(sk))) {
+ 		clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
++		/* Ensure pending TLS partial records are retried */
++		if (nvme_tcp_queue_tls(queue))
++			queue->write_space(sk);
++
+ 		queue_work_on(queue->io_cpu, nvme_tcp_wq, &queue->io_work);
+ 	}
+ 	read_unlock_bh(&sk->sk_callback_lock);
+-- 
+2.51.0
 
 
