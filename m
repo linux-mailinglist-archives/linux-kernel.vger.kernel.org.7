@@ -1,129 +1,170 @@
-Return-Path: <linux-kernel+bounces-848868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905BBBCEB9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E802DBCEBA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AACE544FEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 954AC5460B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E682797BD;
-	Fri, 10 Oct 2025 22:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1DC27A11E;
+	Fri, 10 Oct 2025 22:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiEOcNsE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="cCAVKtFk"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC878277CB6;
-	Fri, 10 Oct 2025 22:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09404279782
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760136798; cv=none; b=rNRIyDcvuze0bcfmrB7iNJlcfYcat1xgzrh67l5Cv4dIGabgcqHxHFIJSeYNPraLVKOIcPWKSEAo23hsEl2IPQL1xnx5VYhnXd8jjmlTF2VnTplvCAsaZiunLBEVxs2BjKzhJ8ZNszzWLyM+5c1jJhN6a7c4M2SwO43/Yz7jkz0=
+	t=1760136840; cv=none; b=X91FcBrmpwcoKsdR4nklONYaZM4IDi6Nn3YhNF53OniKzS0DfBMGz29lRUpJ5I7WW96U5wA/nV5zUMo2zIcBdsnGDP0pnInJzHSqRkFHwvXJz1fmwr8BEEzW0A9lK7qEm7r+xbKriB9IIzuMX/N3v+wd0XsN34lupJM5iFSZ+UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760136798; c=relaxed/simple;
-	bh=gpOkKkEsmX1Wjj/6cRNkLNpSD17dKGgauuMWdtr5Gzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZhxPL+UEAerLNu5AuBqfKlXMqtq79MAuUzGFzMnV0zyhRqHFwpiZNWEHBoUG16WiKaRURvS1cf6ADydvKp0YaYShUG58l0+Jl3I8fM/hik9v0rQ8c5Pq34sEgo13FmduIp55D+gTLE7uspa4XY5zU9bbro55b9cV1cEVKvDnxOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SiEOcNsE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32301C4CEF1;
-	Fri, 10 Oct 2025 22:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760136798;
-	bh=gpOkKkEsmX1Wjj/6cRNkLNpSD17dKGgauuMWdtr5Gzw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SiEOcNsEFFGgzzSrfbeSU/mjbQi8S0Dv3uo1oxtTJIq8c4qxdvUzkwxLego0PacwF
-	 Wk8dNxP9mkmYVlypEraJFk5CiEgCTbEYqmih0u9NGwNgMjAZd+yAmui1MZYX7oCDGn
-	 fptnk64LbLgkiaaAJG4wsDd9hnt5+6U+TOMb92qFAclpK0qPxZzptjGhDGFL9qILYx
-	 uqxGuTYKaUoarZt8ARIWP812wHOMPt6rledRAMU9PjdiRLHma4Y8xvzLBTF1w/WHQn
-	 xNw1CqabRmOGWPl36l36RGsqvuwWA3w7TWRHWZOeB4aapsd2UrTMxA2D8Yhjf3Yfm5
-	 UPSqzKTM0GQbQ==
-Date: Fri, 10 Oct 2025 15:53:17 -0700
-From: Kees Cook <kees@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [tip:x86/core 1/1] vmlinux.o: warning: objtool:
- rcar_pcie_probe+0x13e: no-cfi indirect call!
-Message-ID: <202510101552.2B06CB4CBB@keescook>
-References: <202510092124.O2IX0Jek-lkp@intel.com>
- <20251010032001.GA3741500@ax162>
- <20251010071032.GE4067720@noisy.programming.kicks-ass.net>
- <20251010074446.GE4068168@noisy.programming.kicks-ass.net>
- <20251010223012.GA3597090@ax162>
+	s=arc-20240116; t=1760136840; c=relaxed/simple;
+	bh=dO6uZ/xxizWg6j1ldogwy9rgx1M5pRghMVXo1v3Mc4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DlhEn7tlj9C4SunnUVS0N5kFSs/Ay2GSxhxplaCfJBH5wxjoRYvZD0NKTQrKTlmmdyLor+fvEoisPjMtzR2EJJcKl1jr+Q0/2OIvlM+FrhFpi8rgy5zfnZT2J456Sn1VY+MKNbVgeQ8SwznUpSDcNAvU8hxJkpUNjQ2x1H/buFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=cCAVKtFk; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 6748B24002D
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:53:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760136835; bh=3XmCiT9NsaZuID2sgjvpRYr9wi80Bo3bIXyzVHk62WM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
+	b=cCAVKtFkCsvY26Hh6y1uQxs+gFPaz3ZqwoBWH07yVmAaMr4XCo4xm0Oa36uGI+Ggc
+	 LSWJvhXjgzOMk1FcLbNFyfiIqEvqkSfkN9dIPIVOxdKbi0J2Gmg0ActTqJrYD3zxFN
+	 Zu4ABjViVUR2GXOo+Ju5zOAPobyuzbZIVXfrm72DVLL2dv8vSv/7GXSTMC+p5pjoys
+	 WuI9BNqZv4WLtYbAzXZyoNlgjJgSP0C0LP0YFMP57DGchHFZcxDdiejPRSztmuowPC
+	 9KHXxctCIMOKJ46KeN+TE7983l4YfbeLum7YUL6ggCqDuW2gOfXUzSsGk5BOvC49yE
+	 6RxUtBTMfwxwQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4ck29F3GCnz6v21;
+	Sat, 11 Oct 2025 00:53:53 +0200 (CEST)
+From: Markus Probst <markus.probst@posteo.de>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Markus Probst <markus.probst@posteo.de>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v3 0/2] rust: leds: add led classdev abstractions
+Date: Fri, 10 Oct 2025 22:53:54 +0000
+Message-ID: <20251010225349.734350-1-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010223012.GA3597090@ax162>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Fri, Oct 10, 2025 at 03:30:12PM -0700, Nathan Chancellor wrote:
-> On Fri, Oct 10, 2025 at 09:44:46AM +0200, Peter Zijlstra wrote:
-> > That's here... and that is indeed broken. Also note how it zeros r11
-> > right before calling it.
-> > 
-> > AFAICT this is:
-> > 
-> >         host->phy_init_fn = of_device_get_match_data(dev);
-> >         err = host->phy_init_fn(host);
-> > 
-> > Where it has decided that of_device_get_match_data() *will* return NULL
-> > and then helpfully emits (*NULL)(); or something like that. And then
-> 
-> Oh duh because it will :)
-> 
->   $ rg '^(# )?CONFIG_OF' .config
->   1528:# CONFIG_OF is not set
-> 
-> which means that of_device_get_match_data() is always NULL:
-> 
->   static inline const void *of_device_get_match_data(const struct device *dev)
->   {
->       return NULL;
->   }
-> 
-> > forgets to add CFI bits on for extra fun and games.
-> 
-> which means this is another instance of what Sami mentioned happening on
-> another report of a similar issue
-> 
->   https://lore.kernel.org/CABCJKue1wCB6jBLYUc-fAEzpyQWHXwbk8R5GBaZCkCao0EQZPA@mail.gmail.com/
-> 
-> which does somewhat make sense because what's the point of setting up
-> the CFI call if you know nothing can actually make use of it since we
-> will crash when trying to indirectly call a NULL pointer?
-> 
-> Something like this would avoid this issue then.
-> 
-> Cheers,
-> Nathan
-> 
-> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-> index 213028052aa5..15514c9c1927 100644
-> --- a/drivers/pci/controller/pcie-rcar-host.c
-> +++ b/drivers/pci/controller/pcie-rcar-host.c
-> @@ -981,7 +981,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  		goto err_clk_disable;
->  
->  	host->phy_init_fn = of_device_get_match_data(dev);
-> -	err = host->phy_init_fn(host);
-> +	err = host->phy_init_fn ? host->phy_init_fn(host) : -ENODEV;
->  	if (err) {
->  		dev_err(dev, "failed to init PCIe PHY\n");
->  		goto err_clk_disable;
+This patch series has previously been contained in
+https://lore.kernel.org/rust-for-linux/20251008181027.662616-1-markus.probst@posteo.de/T/#t
+which added a rust written led driver for a microcontroller via i2c.
 
-Much preferred over "always crash" ;) Nice digging!
+As the reading and writing to the i2c client via the register!
+macro has not been implemented yet [1], the patch series will only
+contain the additional abstractions required.
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+[1] https://lore.kernel.org/rust-for-linux/DDDS2V0V2NVJ.16ZKXCKUA1HUV@kernel.org/
+
+The following changes were made:
+* add basic Pin<Vec<T, A>> abstractions, that allow to initialize PinInit items with
+  the guarantee that these will never be moved.
+
+* add basic led classdev abstractions to register and unregister leds
+
+Changes since v2:
+* return `Devres` on `led::Device` creation
+* replace KBox<T> with T in struct definition
+* increment and decrement reference-count of fwnode
+* make a device parent mandatory for led classdev creation
+* rename `led::Handler` to `led::LedOps`
+* add optional `brightness_get` function to `led::LedOps`
+* use `#[vtable]` instead of `const BLINK: bool`
+* use `Opaque::cast_from` instead of casting a pointer
+* improve documentation
+* improve support for older rust versions
+* use `&Device<Bound>` for parent
+
+Changes since v1:
+* fixed typos noticed by Onur Özkan
+
+Markus Probst (2):
+  rust: add basic Pin<Vec<T, A>> abstractions
+  rust: leds: add basic led classdev abstractions
+
+ rust/kernel/alloc.rs      |   1 +
+ rust/kernel/alloc/kvec.rs |  86 ++++++++++
+ rust/kernel/led.rs        | 332 ++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs        |   1 +
+ rust/kernel/prelude.rs    |   2 +-
+ 5 files changed, 421 insertions(+), 1 deletion(-)
+ create mode 100644 rust/kernel/led.rs
 
 -- 
-Kees Cook
+2.49.1
+
 
