@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-848255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750E7BCD041
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B3ABCD056
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9ABE3BC53E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648CA3A6D3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63822EF677;
-	Fri, 10 Oct 2025 13:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9902EFDBE;
+	Fri, 10 Oct 2025 13:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfTL8JbQ"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRCiNVm/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF251C5F27
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0C91C5F27;
+	Fri, 10 Oct 2025 13:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101491; cv=none; b=mlnGciBXirzLj62BPpgHgIcuOV0JZhqJk4aHKSZ++q9gtRcAiB91vhahMA2kw0FyRlRrcAchGmxQZN93epmuOlR7LR7LbBMYtgqU1nwZGhseAvAC1LnJEKpLtR3gQyUwWoFdTiaCqlBEL6ZyiXM4j9auMq4xjgA5i5YUDn0rIjQ=
+	t=1760101531; cv=none; b=QteLo74i0pLD/VzFWRSGylKXknxdL9HD/SHZsSvUkXPpUcaxpqJHvlChQ1UUmCv6zVepRg/mJehHh4oDhmvCHSF+GhwOfKizyxQKwAQDFNJVYYd1GS3IoL+hdcITPzOQnObNVIV4I108UrvFM2xqLD4RHBce3N0SmWt1O3BWPDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101491; c=relaxed/simple;
-	bh=fZsy0sd/tS20msY1KlPWxCXhCRLHUme+WfSUdIbiGeU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qRn2GdKvBSyh1hgzDyiwgP54UYFrVNo+nS1PtEwPyxyQeGxRevRjNOCZIwG83GrbCIhup8A2zzwnTZIdWwHix8Gcio8MuFjxnitih5RTjGspBuZTY/p/bIwRioIcLl7eQm/DDyaUK9ZbPm41Qfg3WXudmBqeQ97SojB6Q2J9J44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfTL8JbQ; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-26816246a0aso3275435ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760101489; x=1760706289; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fZsy0sd/tS20msY1KlPWxCXhCRLHUme+WfSUdIbiGeU=;
-        b=jfTL8JbQ2TnrNYmvD2h5m/OLa3Yhitw3/jc0ubut2bOkUm4NZ5+uu9fpgvQl6AHncb
-         AeHaGlNZk4A2mkOSH0tTlZV00+CfdVnltmJadXHv0FmTkXoq2Cje/sbrzFfzqTCTTnpN
-         w0g5BZZBTd9b69/a5qlVTes3XWWmHeVq+j+dw5wtN0sylxUo46PiSFxWfPLBkKlzFF02
-         NwD249OcaQopVPMi7wILBcojsFSFcKg6L6E0fxBx4S3lulvg/aPYstrC7ZcKOVRNyKB1
-         0QRrbJjIamlz7pDVWvEKmSqebmGi7skpR2Nfua0ivlkjB1yLgqMSKMU3Zx010igUSHCW
-         uYyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760101489; x=1760706289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fZsy0sd/tS20msY1KlPWxCXhCRLHUme+WfSUdIbiGeU=;
-        b=rBg6cyIhgkiqH8YjQ1bzu2sXTaT4WGLqmXy19YDACi8MJ5nKO/Kt6eAAz8/jvvm35S
-         XtrfL/01H7RWsWvM6lmXhQFlFK60W/Da/FkqGKh/WjCHIrcLYlxD8ruVC+FBaLTdxdRt
-         NtTkNRIyOeEDl1saACjAWyP4jgsJVPti3SmD0HpEKBkodiKSc3ygoBrHJ9aRzb2IvZC7
-         XYGvTnaYOsaD31Z9JYd8TM3L6OtIpl2QxX3IoguBNPmWXzRCOCeALwK3k5HmiUdScbCI
-         qc4QfuQJGC+BTIxbqUIErn/0NTz8P6X7bgHnwN3S1+iNhSeD4hFXkVqyxdJDn/V/IYDk
-         NUew==
-X-Forwarded-Encrypted: i=1; AJvYcCVW8cFwkhR37lglY/vxa7smxSs8058jQuGbBC7AIP/8/0CssAY00dyS3kV4qoNKPSD6Y2SXY7KQOi32hpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww9+4mJUdwTBZn6krwpg7rE+Z8/S+yiagXN2hxl/HN33R4JjsF
-	EX/zSyAwAbvNo9mlXLCJYOnHZSngHSzUik+TsjxHALbkihGN5r9I9dQXXLW/K/hT+XqgMIn/PEw
-	0/Cd4KB8Dfu0HDZbkJNn1mLQjN+fZqJM=
-X-Gm-Gg: ASbGncuhFJkzaJ2KdSTtNzXWOJ4miWX2sAzAabs7apOLps+bQUF25kgfBq0N21psoLp
-	qNRL5BfkAIEqPf6+s2GgE3sE/yqyeQK5U6GLZNI8eVOy2fhcPwNPUNfsLGOfywcEcEKXt65zECS
-	3LdzCXqIEK6RX4DrcL5lSaRUySUF2MM+WnYH5wUcrbGLUBCCA62kHjKxXd1SyOyjdhnJ1R9zsPy
-	hvzbJVxoK9JhfxzJT7S0mpTWGCVPQ2zN0KDi9d1WQSG20MsMR6sZ4E349Wo7CDJGCZ/sECQx2hE
-	8oTzrs6+Q29Hs5+n8Wrsd7/JPHO+7Cdlt/mwYciZx+4y
-X-Google-Smtp-Source: AGHT+IHctbYyDSdEesc3Os/a9pgB+AQdDwE+Ntk73IR/L6Vt/U6ucoy8bCnQDqUIyz26++WUnRY9zE90ykw9QTMNvXM=
-X-Received: by 2002:a17:903:2342:b0:275:c066:33dd with SMTP id
- d9443c01a7336-2902745bef8mr75368735ad.10.1760101489019; Fri, 10 Oct 2025
- 06:04:49 -0700 (PDT)
+	s=arc-20240116; t=1760101531; c=relaxed/simple;
+	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p5nZGE2lfCwds1eonaKarlPCy4a69SgTcKrv/7Uq5BUisQ5SrGIXqxB6/gh+07Qa4UHGstW/cxXTIOpEVYDi0X/hdtnpHHwrMz+w1fBlo7PTLObFrvtCGpPReVFXh79zxwzgRRde7s7F/WrJOl3hTaQmDqWRGikayDq/Jx6l5Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRCiNVm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E597C4CEF1;
+	Fri, 10 Oct 2025 13:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760101530;
+	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fRCiNVm/3dF34ZzrUE+fvON/MgRL8ikYDRgTtPU9/UvueEfUu/zNhUZj35un78yc/
+	 F3og+IbYjn/0N2J/RQuvrTz85nnspTqKTzDoAcmY+pjHa61/1dGdL5IMheP+OO0YHx
+	 hvIl+2RS7kNnEY9Cv1rJ5/q7i97SsCaUvQROybd1pOc0+ImrZnVH1msl53wKXMNmnX
+	 JvjxQilFygro7QZcFTl9Ot+gsLtfQgLdISBfcTYTtru9F4We+yyoKQqfiCoDCvH6Th
+	 /k/L7Unq3lUY2YF6orKHwv9y9jkpbXrn8RLyT5GNIF8WglJ7AqRytp2w8IxMNWPF7n
+	 M4gDnXsmPHy8w==
+Message-ID: <d01ad1f7-dc46-4b9d-9823-9d69b1d2be54@kernel.org>
+Date: Fri, 10 Oct 2025 15:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755235180.git.y.j3ms.n@gmail.com> <CANiq72nbERSOWKRUTJ96YYKCDeAoHLBuiVP+XkDUKg7JYkoyiA@mail.gmail.com>
- <CA+tqQ4KG98XcWh3rkAxEOiACSUtPf7KM0Wqh9Af=POgVDHJzzw@mail.gmail.com>
-In-Reply-To: <CA+tqQ4KG98XcWh3rkAxEOiACSUtPf7KM0Wqh9Af=POgVDHJzzw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 10 Oct 2025 15:04:35 +0200
-X-Gm-Features: AS18NWACc6jJI62ULqH_q_jHKtWGfejkpxt52RfXiBIGzY9GSvEv_f9PahKrFhg
-Message-ID: <CANiq72kE89ukxpf3L0_jFOdv51TDtjjj3r=1mjJzdGWJwmAbaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] rust: add `TryFrom` and `Into` derive macros
-To: Jesung Yang <y.j3ms.n@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/7] clk: s2mps11: add the support for S2MPS16 PMIC
+ clock
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 10, 2025 at 12:08=E2=80=AFPM Jesung Yang <y.j3ms.n@gmail.com> w=
-rote:
->
-> That said, it becomes a bit trickier when dealing with conversions
-> between signed and unsigned types, particularly when `u128` and `i128`
-> are involved. For example:
+On 14/09/2025 14:42, Ivaylo Ivanov wrote:
+> Add the support for S2MPS16 PMIC clock, which is functionally the same
+> as the currently supported ones, with the exception of a different
+> register.
+> 
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  drivers/clk/clk-s2mps11.c | 8 ++++++++
 
-Yeah, it is why I said it was a dummy unsigned case -- I didn't mean
-that single comparison would work for all cases.
+This depends on mfd patch. Many maintainers would appreciate if you
+mention it also in the patch changelog (---), not only cover letter.
 
-But what case do you think we cannot assert? We can always take the
-discriminant and reject whatever inputs (e.g. ranges) we decide, no?
-And we know what type we are going into, so we can always decide what
-the values to check will be, i.e. we could in principle even support
-infallible conversions of the discriminant to other types like, say,
-the bounded integers or powers of two.
 
-Maybe the issue is in what you say at "the discriminant value
-interpreted as the target type" -- I am not sure what you mean by
-"interpreted", i.e. I would think of this as accepting only some bit
-patterns, i.e. working with in the discriminant space, not the target
-type one.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I may be missing something, but in any case, at the end of the day,
-within a proc macro "everything" should be possible one way or another
--- even if we had to inspect manually the literals :) And it seems
-worth to remove the pitfall.
-
-If really needed, we can always drop support for certain combinations.
-We already do, in the sense that we don't cover every single other
-type out there, like the ones I mention above, e.g. `Alignment`. But,
-just in case, I assume with that approach you mean skipping some
-combinations early (the ones that cannot be checked) and then still
-asserting the discriminants, right? Otherwise the caveat is still
-there.
-
-Thanks!
-
-Cheers,
-Miguel
+Best regards,
+Krzysztof
 
