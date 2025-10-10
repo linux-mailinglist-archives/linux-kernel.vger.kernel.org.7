@@ -1,130 +1,128 @@
-Return-Path: <linux-kernel+bounces-848608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5BEBCE291
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:51:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855B5BCE2A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5F819A3833
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:51:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 758934F4924
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67791234984;
-	Fri, 10 Oct 2025 17:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAC5223702;
+	Fri, 10 Oct 2025 17:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bb46iiyl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PSfuofaR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9056222580
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BCA222580
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760118624; cv=none; b=rVBXEI9OcLoFN2gh91Yjg/sGWA4RiTTnpiXIH046m0E4dIu3j1EQk+QtUvT939g3xliENH02dFE6FHaxOiZdY0oIlkUY6wwilo9XSECeXEOqHT0V2PrlAyqiBvYXM/Ii2gcwVlwgOAoUxISrC1UTdW1K2nKUrALp5Xj0bXPGQA4=
+	t=1760118748; cv=none; b=Ob0evdCqt7BYeA4x42JvfS0UuhDB+RXDAWIlqUJyAJqEDHrRExj95BVzNfNf7KI4RI71Z4JkbGOmegOR4/+y6BAsagICUpyJlerPY/AEdVpGq+aQLC/NcqYIALuiH6gc7zQyiMiveNFcNjXvTL0HTzoLSsbltjGniDy3hEJIr3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760118624; c=relaxed/simple;
-	bh=rLfW2f2M9XNswFGXljZ3Iduk5Ck52EhLpoddlrpwCU4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZrTGunReSaJeQoOp6hKLUIuaMRO4D7GGZjkAJKiylv1156RpVcuh/jSk7cva2LqX5AtR7PBaS3zSYi1ZYRpB6VuCKch/+copJbbS4VtkQK/uHwvLksPEHO024yUgC/4qayXM6haXhQByryjNBXHbQNkU7L4uc17Tr3PT904EnX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bb46iiyl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760118621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rLfW2f2M9XNswFGXljZ3Iduk5Ck52EhLpoddlrpwCU4=;
-	b=Bb46iiylpWfiOwHOgiOfJjPsGz4s8QGQfWB50x6on3MtegpYJaYKpNWEqTLCpXmC9yinWy
-	WdXzvaYOyr0/N7uU+RjyOERlvJ8QTsaDdDTSw0te3h7i9TLVCLaBtAZo8x+VDys8vW5dOi
-	/sx6YN0e9C5Mk39Bx01D6bJk7ALwPxc=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-263-DzMKAKcHNJe2OTma72_7DA-1; Fri, 10 Oct 2025 13:50:20 -0400
-X-MC-Unique: DzMKAKcHNJe2OTma72_7DA-1
-X-Mimecast-MFC-AGG-ID: DzMKAKcHNJe2OTma72_7DA_1760118620
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42f67904af6so153255365ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:50:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760118620; x=1760723420;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rLfW2f2M9XNswFGXljZ3Iduk5Ck52EhLpoddlrpwCU4=;
-        b=NX1zTVvZkEurdpzKLSAupQVk+ecBCWs9Wk7fCX9P9u/GdHOizzK32NUMUiASxS5qqv
-         tD24qmi/lSIJgtBqtA4YtUaBxL5r5MmzNAwjxX1r4jA/yR8msEAXHXgdfaVthdCamWnh
-         1lG6S4lLAtGfEPD/1a992rf0ci1PNuz0mb9XNYPdPr6An5I6Oh0OoFRhB6mJyKx9AQML
-         jtyLwGY4VmLvV4mRLmU2QNVV5EKTaBe2WvD91gAUSu1xA7q4TysAbc04J7rRpcqwDSnL
-         bLVuy3Y9zXBnX/xIYF3avKGiEbsaY7e8mKowjRrWa3NVODKkQMv1dWcFo23Q/Y3oACvk
-         cmfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuSomiNln0OIQZyixj+FDnqeOE4CBfo+7W8MkiOoGUjjdhKiuJYwxrQPqWpiUbLoDd4dTjV8ExsGO+ZbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKOWn8NG6EElKgwb/yGph/W1NwfTOd2KLsbGygh3XAVA81+bk/
-	N2Ej1YKFA43F6aQxJIVPnYU9SXADdU3Wn8H45euPZEiBdp/P1MsO8lW+F2SRfV4ltcIOBRAG6zY
-	P9tJx6WHQbGnanLEU/g+z+l41T/3mN6n7shwzzXQqLeB2XHBJDejJZa+5xu/iN2PTEQ==
-X-Gm-Gg: ASbGncuEg3D6blw2r82hijx406OC+NS8t1F7dHGtMR3hI2FYZDvCndit1fDmWCKebas
-	9x/jL5peBuolNvWeDylpRmN58apu2a2XHh/CRxDxVkCePcNN/tPLF1ic5JNPR+gutGeBibWOVJA
-	WYMmwqz2QCD3OJ6pqgUqaxfCnULu00iufsgs+cQ5ZEI31Pb9mkTIBsNj6yDgrI5HFPyFatpokuf
-	AfcjMqFxHcGnZWdsIvlN3c7S35zKOvDmlUlNuBDAmYzTp5gPwmOf7rjyK4NSdpamUQO8Dky4Izy
-	+/ApGqrsgCv4QMjdVmTWEQ9dPT+yoCs+1tw2VqEjak+H880EUZmDEqP0UF6LMWARQJP4b2wE
-X-Received: by 2002:a05:6e02:214a:b0:418:3b13:d810 with SMTP id e9e14a558f8ab-42f87369997mr124814755ab.9.1760118619732;
-        Fri, 10 Oct 2025 10:50:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuEr1LbEgCdvx7M0g4qU2T30kNZutU1XAtlJUA2qld1e1AJmZAVgTNchwHGkxRss8qWACILA==
-X-Received: by 2002:a05:6e02:214a:b0:418:3b13:d810 with SMTP id e9e14a558f8ab-42f87369997mr124814435ab.9.1760118619250;
-        Fri, 10 Oct 2025 10:50:19 -0700 (PDT)
-Received: from crwood-thinkpadp16vgen1.minnmso.csb ([2601:447:c680:2b50:ee6f:85c2:7e3e:ee98])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e2594a558sm117662939f.7.2025.10.10.10.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 10:50:18 -0700 (PDT)
-Message-ID: <c60f6d32159d02df6c2c98477d22705539909245.camel@redhat.com>
-Subject: Re: [PATCH v1 1/5] tools/rtla: Add fatal() and replace error
- handling pattern
-From: Crystal Wood <crwood@redhat.com>
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>,
-  John Kacur <jkacur@redhat.com>, Jan Stancek <jstancek@redhat.com>, Tiezhu
- Yang <yangtiezhu@loongson.cn>, 	linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 10 Oct 2025 12:50:17 -0500
-In-Reply-To: <CADDUTFwFerzjRTPp1F+Rw+_U2DoomAxyDonXudCwh9gyXSn=nw@mail.gmail.com>
-References: <20251008195905.333514-1-costa.shul@redhat.com>
-	 <20251008195905.333514-2-costa.shul@redhat.com>
-	 <34afd8ffbb1c889e91fa536cf60369a697d86575.camel@redhat.com>
-	 <CADDUTFwFerzjRTPp1F+Rw+_U2DoomAxyDonXudCwh9gyXSn=nw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760118748; c=relaxed/simple;
+	bh=26wS2UwwrJX369/cOLS63wjrCQ8Ov4xWQodKO7NyVSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cSi0tdrokR5RtSIUTpO3aBCsU3MJyX+RGMRB1/yjFyy/l5oA0xGPw2oPYJdK+5IR6gInKup+yxdg+j/A/3ZmjSn2o3Altvq/grm74w4JbwFvk9P79xDQxkGqjzikliQ5xeKnXrB6zibPTI2ymsyN8bFyemIGF9fjVSYH3O5l+mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PSfuofaR; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760118747; x=1791654747;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=26wS2UwwrJX369/cOLS63wjrCQ8Ov4xWQodKO7NyVSs=;
+  b=PSfuofaRyx8SRx7XkGvKpfSvZWloT8ARPYBS9GZm5JwVB0R5hFiW0acu
+   wYVFCF/pLwB4My6M7S+03zr27FNryvg3rXESOrZjt4lrbfwLsJUWuLDHD
+   S6onO9GoX9cGHKv2W1tMJZsXpo9EdtDmoT+ic1CBeUFXLew+CrX5ZfrGR
+   YWY6782FxbC4OkewS9UdgNQ5rVEiP1kYNrHa7qALJRj01CIET0eROxm9e
+   6m4DAe++ai1b5WKWuQs4kBdDpW14yNTr2z7lsc4706hKMsfD+1LoDvdUW
+   L9JmgPxyP1i9a30D8oXbMI7vYVypSv+XSk3CbI0korMKGZ31BAHNYMtU3
+   g==;
+X-CSE-ConnectionGUID: 5a9LmbsyRNCtfAXVNxhfxw==
+X-CSE-MsgGUID: CzX6XPt8Rfa4xVU2Jtdvfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62261798"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62261798"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 10:52:26 -0700
+X-CSE-ConnectionGUID: 8ow4oYWAQ2i26YbBisFeXg==
+X-CSE-MsgGUID: PNtez41uQyWskJw4E4xRmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
+   d="scan'208";a="181453935"
+Received: from guptapa-dev.ostc.intel.com (HELO desk) ([10.54.69.136])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 10:52:25 -0700
+Date: Fri, 10 Oct 2025 10:52:19 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Petr Tesarik <ptesarik@suse.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, 
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] x86/tsx: Get the tsx= command line parameter with
+ early_param()
+Message-ID: <ghbb5hxgodvkuupqcdqlt5t2cum5tidoqgimtkixfqg7ymsxxy@gubq5y6eflqd>
+References: <cover.1758906115.git.ptesarik@suse.com>
+ <63118e583443490a285fd194baeae874d65eff87.1758906115.git.ptesarik@suse.com>
+ <20251009185134.fb4evjrk76rwxv37@desk>
+ <20251010003345.dc6ybdhwoslyse5m@desk>
+ <20251010094519.3d845993@mordecai.tesarici.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010094519.3d845993@mordecai.tesarici.cz>
 
-On Fri, 2025-10-10 at 10:20 +0300, Costa Shulyupin wrote:
-> On Thu, 9 Oct 2025 at 00:55, Crystal Wood <crwood@redhat.com> wrote:
-> > Looks like there was existing inconsistency with newlines... maybe have
-> > fatal() include the newline automatically to simplify callers slightly?
-> > We're not going to print a continuation if we're exiting.
-> >=20
-> > Otherwise, for the whole series:
-> > Reviewed-by: Crystal Wood <crwood@redhat.com>
->=20
-> fatal() belongs to the same family as debug_msg() and err_msg().
-> Historically, the prototype and usage of these functions is identical
-> to printf().
-> printk() was identical as well, but now it adds a missing end-of-line
-> automatically.
-> fatal(), along with debug_msg() and err_msg(),
-> can be upgraded too, but they should be updated together for consistency.
+On Fri, Oct 10, 2025 at 09:45:19AM +0200, Petr Tesarik wrote:
+> On Thu, 9 Oct 2025 17:33:45 -0700
+> Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
+> 
+> > On Thu, Oct 09, 2025 at 11:51:40AM -0700, Pawan Gupta wrote:
+> > > On Fri, Sep 26, 2025 at 08:01:02PM +0200, Petr Tesarik wrote:  
+> > > > Use early_param() to get the value of the tsx= command line parameter.
+> > > > Although cmdline_find_option() works fine, the option is later reported
+> > > > as unknown and passed to user space. The latter is not a real issue, but
+> > > > the former is confusing and makes people wonder if the tsx= parameter had
+> > > > any effect and double-check for typos unnecessarily.  
+> > 
+> > If this is too much of an annoyance, I would suggest to move
+> > x86_get_tsx_auto_mode() from tsx_parse_cmdline() to tsx_init().
+> > 
+> > ---
+> > diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
+> > index 167dfd38b87a..805be8beb37a 100644
+> > --- a/arch/x86/kernel/cpu/tsx.c
+> > +++ b/arch/x86/kernel/cpu/tsx.c
+> > @@ -20,6 +20,7 @@
+> >  #define pr_fmt(fmt) "tsx: " fmt
+> >  
+> >  enum tsx_ctrl_states {
+> > +	TSX_CTRL_AUTO,
+> >  	TSX_CTRL_ENABLE,
+> >  	TSX_CTRL_DISABLE,
+> >  	TSX_CTRL_RTM_ALWAYS_ABORT,
+> > @@ -27,7 +28,8 @@ enum tsx_ctrl_states {
+> >  };
+> >  
+> >  static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init =
+> > -	TSX_CTRL_NOT_SUPPORTED;
+> > +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO :
+> > +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF)  ? TSX_CTRL_DISABLE : TSX_CTRL_ENABLE;
+> 
+> I like this approach, because it converts runtime initialization code
+> to a build-time initializer, based on build-time config options.
+> 
+> Can I add your Signed-off-by: for a v3?
 
-Only fatal() has the "you're never going to get a chance to print a
-continuation line so why would you ever not want a newline?" aspect.
-
-And this would be consistent with panic() on the kernel side.
-
--Crystal
-
+You may keep the authorship and add my Suggested-by:
 
