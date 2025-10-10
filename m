@@ -1,360 +1,248 @@
-Return-Path: <linux-kernel+bounces-848293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094C1BCD4CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:37:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9EEBCD4D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13E8F189E2B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:37:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB73A4E5DD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C402EE268;
-	Fri, 10 Oct 2025 13:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D8C2F2601;
+	Fri, 10 Oct 2025 13:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gb6Yyrha";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OkzzenWj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gb6Yyrha";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OkzzenWj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QLPDb7Ws"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C26134BA2D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E97D264F96;
+	Fri, 10 Oct 2025 13:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760103447; cv=none; b=jUt8AwDM5qtK5gOH1G/bIiKpdoLL6XK/52vXfnbOt6yTsmx4hyh7PoAhkkeCjGuKOfY/I17T7P4QdgtyVuG4xuwEsiHIL6JF60lZXj2k6eCzI3iXLgfXUo0EgOW01OuiC0Mm3lNcRpGJyZ8wR08VcsZGWR82Lz1kuXTZORBtQiQ=
+	t=1760103525; cv=none; b=luNGd9QrBuI7zbskzdo6hOMw/lfYvYrgI1YDImcU0FIALATViElyhGgl7ig4Ya5O9BxT0nrhS9/9bG6p7eKhMFlFMPHKKJOF3xRA6+3zazFIb6Gj6CjW9+BgS9cap4ARw1BeaAd3lSzu9FnI+wnlHJFRTztVHcjN20zmaHjTqCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760103447; c=relaxed/simple;
-	bh=SXlnoObrG1tZyv0Kt4drICvDD5naquKlX5xBWbR+Xb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nCdkM/LoI/rf/5isgaAMn8dVUCHDrxGdMwtijwlymrhzy/B8o/wDtrTILAl2WUSoqfNrSo+rMg1y6DxpP+Y4p0PgnG1MMGiCs9Ms3RTxnyhLDJirohJmKnwDiN+TVec1XYzho2vIXlg5xX/KRZoPBzywNGl6pRV8QxE4ak6ToTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gb6Yyrha; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OkzzenWj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gb6Yyrha; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OkzzenWj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 684C31F747;
-	Fri, 10 Oct 2025 13:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760103443; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YvcYTxYRDtgRrenJeRWs489UP+bUBsVp/05Xpv/hSxM=;
-	b=Gb6YyrhaohqP66OvvfGt1yEKij0xSk+DcWu84T7+sqGkZa5xWwW1w0HBMBC+5dATwQXr8U
-	jk/QMcGTnjvgvd2lcXbU7VtbAXM/ogeIgEAJ4fKRaMBJrwFBMFoDwHl/jVerwkqOEtYlxH
-	CRljpAPJKJCrzhhFMXkY5VUz1jEUpK0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760103443;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YvcYTxYRDtgRrenJeRWs489UP+bUBsVp/05Xpv/hSxM=;
-	b=OkzzenWjC34QhDfzXyVu+SPSXG5rzheK4hmOWk45UZo4fxEYjIOB7xrgrY1xPPyk71U8UB
-	xMnsSBTqz1bx8TCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Gb6Yyrha;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OkzzenWj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760103443; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YvcYTxYRDtgRrenJeRWs489UP+bUBsVp/05Xpv/hSxM=;
-	b=Gb6YyrhaohqP66OvvfGt1yEKij0xSk+DcWu84T7+sqGkZa5xWwW1w0HBMBC+5dATwQXr8U
-	jk/QMcGTnjvgvd2lcXbU7VtbAXM/ogeIgEAJ4fKRaMBJrwFBMFoDwHl/jVerwkqOEtYlxH
-	CRljpAPJKJCrzhhFMXkY5VUz1jEUpK0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760103443;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YvcYTxYRDtgRrenJeRWs489UP+bUBsVp/05Xpv/hSxM=;
-	b=OkzzenWjC34QhDfzXyVu+SPSXG5rzheK4hmOWk45UZo4fxEYjIOB7xrgrY1xPPyk71U8UB
-	xMnsSBTqz1bx8TCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5000E1375D;
-	Fri, 10 Oct 2025 13:37:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rH4yExMM6WgZZQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 10 Oct 2025 13:37:23 +0000
-Message-ID: <c48ae6d5-3a04-4c32-8084-33d2e10d8d2e@suse.cz>
-Date: Fri, 10 Oct 2025 15:37:23 +0200
+	s=arc-20240116; t=1760103525; c=relaxed/simple;
+	bh=83UN0hzd8CiJbDXtGHGwxtEe48e/VlqBef7rMl8gp/A=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=c9SIuDV5/VqZ5fZbHB03evdNFMXed3b6SeHHfFuSDxzrF9yIW0icGS0NmHuXOsZGhTBLUV4NVlOid9NYV2IKFFjNIBnGV3oaRrLJLOFpTE4y3qoXm9n16rEGAsTqB4NlQN3zQ5hNo2g7q0f+GXoRbpNT58vtEBFRTUpn0TAVAdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QLPDb7Ws; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1760103508; bh=uFQel1X7R06BLhx08hUll4E03N2/pdCw/fPAx+ksags=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=QLPDb7Wsc3hbrKFVi5KdNEsMU+WANVi4yg62CL3pas38ZWSmxa0b7S5do5iURnNP8
+	 zVNGBoZODrQeZqTr0lMvnvqbn/LqcItNONC11DbSfi4wk9ywP5D6q51I20TEu+ndaW
+	 TFnfEwm559yR6Nm+RAN8Wp6JN1ZYpe3PvCkiaPz8=
+Received: from smtpclient.apple ([2001:268:9a74:5c3a:98e2:c178:7cc:f5cf])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 9992841E; Fri, 10 Oct 2025 21:38:25 +0800
+X-QQ-mid: xmsmtpt1760103505t02uujl1q
+Message-ID: <tencent_1FBE7C358261DAD78EEEB81A315F21C88D08@qq.com>
+X-QQ-XMAILINFO: NGX5+lQVxpC+wEkmodSHDmoT+eLh33LMVdkm5q4XAvIihe/Qg5UGHqvDOcCqXo
+	 GL2Eqc3msa1kfH6suF2JxGdowqP5ZME3Xz0DjoUg6I3SeRuHzwIWMJWEe/uZ1D4MzRnPKfUi+qX8
+	 B/6gm+Ham0K4/krPagYyC31LUVLqgIGadP1aVeM2O9Xgl/GAusDKhFsCmm+0hhvffIEZq9AeAXeq
+	 XbptFR2hLTJUw6m9wEB2YZ4m0AhgfEOGmCkuV5gRYvy8/eGLhB1zWGJQMqKvLKv2p6BNSvrTnPkC
+	 DAAkfZ62KzS9/tbOAzCWrIMHKM1AJZnjH49Me0vUcG0kNp0nEZZF+2kaZjYw9BuoMU69p75IyqOn
+	 hdxucaFs6PoBr3s/nmjHEPLJA2OOLnntqpXeiC/1dJ3Gn24JChOLQsPPifHgwcpalRpy5KbQDEdL
+	 0wXBGz0W5g2iV0LJfptOyOkX9QJgcBU+RaZIDUSE1996lz9uGSJCWr2uyEacqxDjsLnCHf0/MUao
+	 Tf9QocRLbZ1p0pUlDBwFWslQkVzD2G9TlGLDSPXUIzT2eNwACvsiDATQK1Yey8fSertythFm+v5J
+	 SQmGJF+q+ukZifkYPIslqlrJOomrvexIV1STKIbnUy+eRB0bb8UG9JeQOpU18tZk3pr7JuiqFukj
+	 +04KGnE1steHfzZ65uMPK/AIPMb7lg3NNR4UHoxErL9z6CO5G6ztA2Qt3zuSfrBIAESIiTE6G+F9
+	 hU/kZSY4DdabqiqkhxdVbLhr/kwCooYyOSSrOs5AN6Hp3yXWM6a/p8tIJ/GDOho10keabyxUyNDX
+	 898oocTMFinDeGvZDViVjtr20oekZtdsx5eIO6uW8li3cZCNNxvzb+8Z2l6hgzfBBtlUvmFWsFkH
+	 OYYTTTR8tjcqp+VX2HBjYnUNHmeHjwnkbiXHIDtgSZx0a6c2sCo4mLS2f2WYza2TUCOANIdLODMC
+	 qcfV1dAhY1dvomMm4Rl91YJ2JWGCFOP8mlZwFafa8VxT/EsVj3Unkqld5MJqIOfM9moHQ599oNpi
+	 abxdf/OXJgPgT80CrgFEvt0WERldo=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] mm/page_alloc: Batch page freeing in
- free_frozen_page_commit
-Content-Language: en-US
-To: Joshua Hahn <joshua.hahnjy@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Chris Mason <clm@fb.com>, Kiryl Shutsemau <kirill@shutemov.name>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
- Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel-team@meta.com
-References: <20251002204636.4016712-1-joshua.hahnjy@gmail.com>
- <20251002204636.4016712-4-joshua.hahnjy@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
-In-Reply-To: <20251002204636.4016712-4-joshua.hahnjy@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 684C31F747
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH -fixes] PCI: Fix regression in
+ pci_bus_distribute_available_resources
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <56429ac6-8188-ce6c-eec1-0de7f93e912c@linux.intel.com>
+Date: Fri, 10 Oct 2025 22:38:15 +0900
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+ linux-pci@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <FC3D98BB-8D67-48DA-B1C8-F65479F9A442@cyyself.name>
+References: <20251008200930.GA638461@bhelgaas>
+ <56429ac6-8188-ce6c-eec1-0de7f93e912c@linux.intel.com>
+To: =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
 
-On 10/2/25 22:46, Joshua Hahn wrote:
-> Before returning, free_frozen_page_commit calls free_pcppages_bulk using
-> nr_pcp_free to determine how many pages can appropritately be freed,
-> based on the tunable parameters stored in pcp. While this number is an
-> accurate representation of how many pages should be freed in total, it
-> is not an appropriate number of pages to free at once using
-> free_pcppages_bulk, since we have seen the value consistently go above
-> 2000 in the Meta fleet on larger machines.
-> 
-> As such, perform batched page freeing in free_pcppages_bulk by using
-> pcp->batch member. In order to ensure that other processes are not
-> starved of the zone lock, free both the zone lock and pcp lock to yield to
-> other threads.
-> 
-> Note that because free_frozen_page_commit now performs a spinlock inside the
-> function (and can fail), the function may now return with a freed pcp.
-> To handle this, return true if the pcp is locked on exit and false otherwise.
-> 
-> In addition, since free_frozen_page_commit must now be aware of what UP
-> flags were stored at the time of the spin lock, and because we must be
-> able to report new UP flags to the callers, add a new unsigned long*
-> parameter UP_flags to keep track of this.
-> 
-> Suggested-by: Chris Mason <clm@fb.com>
-> Co-developed-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> ---
->  mm/page_alloc.c | 66 ++++++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 57 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index f525f197c5fd..9b9f5a44496c 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2818,12 +2818,21 @@ static int nr_pcp_high(struct per_cpu_pages *pcp, struct zone *zone,
->  	return high;
->  }
->  
-> -static void free_frozen_page_commit(struct zone *zone,
-> +/*
-> + * Tune pcp alloc factor and adjust count & free_count. Free pages to bring the
-> + * pcp's watermarks below high.
-> + *
-> + * May return a freed pcp, if during page freeing the pcp spinlock cannot be
-> + * reacquired. Return true if pcp is locked, false otherwise.
-> + */
-> +static bool free_frozen_page_commit(struct zone *zone,
->  		struct per_cpu_pages *pcp, struct page *page, int migratetype,
-> -		unsigned int order, fpi_t fpi_flags)
-> +		unsigned int order, fpi_t fpi_flags, unsigned long *UP_flags)
->  {
->  	int high, batch;
-> +	int to_free, to_free_batched;
->  	int pindex;
-> +	int cpu = smp_processor_id();
->  	bool free_high = false;
->  
->  	/*
-> @@ -2861,15 +2870,20 @@ static void free_frozen_page_commit(struct zone *zone,
->  		 * Do not attempt to take a zone lock. Let pcp->count get
->  		 * over high mark temporarily.
->  		 */
-> -		return;
-> +		return true;
->  	}
->  
->  	high = nr_pcp_high(pcp, zone, batch, free_high);
->  	if (pcp->count < high)
-> -		return;
-> +		return true;
-> +
-> +	to_free = nr_pcp_free(pcp, batch, high, free_high);
-> +	if (to_free == 0)
-> +		return true;
->  
-> -	free_pcppages_bulk(zone, nr_pcp_free(pcp, batch, high, free_high),
-> -			   pcp, pindex);
-> +free_batch:
-> +	to_free_batched = min(to_free, batch);
-> +	free_pcppages_bulk(zone, to_free_batched, pcp, pindex);
->  	if (test_bit(ZONE_BELOW_HIGH, &zone->flags) &&
 
-We could do this handling once after all batches. But maybe it's better to
-act as soon as it becomes true, and checking once ber batch isn't measurably
-slower, dunno.
 
->  	    zone_watermark_ok(zone, 0, high_wmark_pages(zone),
->  			      ZONE_MOVABLE, 0)) {
-> @@ -2887,6 +2901,35 @@ static void free_frozen_page_commit(struct zone *zone,
->  		    next_memory_node(pgdat->node_id) < MAX_NUMNODES)
->  			atomic_set(&pgdat->kswapd_failures, 0);
->  	}
-> +	high = nr_pcp_high(pcp, zone, batch, free_high);
+> On 9 Oct 2025, at 20:02, Ilpo J=C3=A4rvinen =
+<ilpo.jarvinen@linux.intel.com> wrote:
+>=20
+> On Wed, 8 Oct 2025, Bjorn Helgaas wrote:
+>> On Wed, Oct 08, 2025 at 10:36:52PM +0800, Yangyu Chen wrote:
+>>> The refactoring in upstream commit 4292a1e45fd4 ("PCI: Refactor
+>>> distributing available memory to use loops") switched
+>>> pci_bus_distribute_available_resources to operate on an array of =
+bridge
+>>> windows. That rewrite accidentally looked up bus resources via
+>>> pci_bus_resource_n and then passed those pointers to helper routines
+>>> that expect the resource to belong to the device. As soon as we
+>>> execute that code, pci_resource_num warned because the resource
+>>> wasn't in the bridge's resource array.
+>>>=20
+>>> This happens on my AMD Strix Halo machine with Thunderbolt device, =
+the
+>>> error message is shown below:
+>>>=20
+>>> [    4.212389] ------------[ cut here ]------------
+>>> [    4.212391] WARNING: CPU: 6 PID: 272 at drivers/pci/pci.h:471 =
+pci_bus_distribute_available_resources+0x6ad/0x6d0
+>>> [    4.212400] Modules linked in: raid6_pq(+) hid_generic uas =
+usb_storage scsi_mod usbhid hid scsi_common amdgpu amdxcp =
+drm_panel_backlight_quirks gpu_sched drm_buddy drm_ttm_helper ttm =
+drm_exec i2c_algo_bit drm_suballoc_helper drm_display_helper cec rc_core =
+drm_client_lib drm_kms_helper sdhci_pci sdhci_uhs2 xhci_pci sp5100_tco =
+xhci_hcd r8169 drm nvme sdhci watchdog realtek usbcore thunderbolt cqhci =
+atlantic nvme_core mdio_devres psmouse libphy mmc_core nvme_keyring =
+video i2c_piix4 macsec nvme_auth serio_raw mdio_bus i2c_smbus usb_common =
+crc16 hkdf wmi
+>>> [    4.212443] CPU: 6 UID: 0 PID: 272 Comm: irq/33-pciehp Not =
+tainted 6.17.0+ #1 PREEMPT(voluntary)
+>>> [    4.212447] Hardware name: PELADN YO Series/YO1, BIOS 1.04 =
+05/15/2025
+>>> [    4.212449] RIP: =
+0010:pci_bus_distribute_available_resources+0x6ad/0x6d0
+>>> [    4.212453] Code: ff e9 a2 48 c7 c7 b8 b7 83 a3 4c 89 4c 24 18 e8 =
+a9 2a fb ff 4c 8b 4c 24 18 e9 ca fd ff ff 48 8b 05 60 53 47 01 e9 94 fe =
+ff ff <0f> 0b e9 5d fe ff ff 48 8b 05 55 53 47 01 e9 81 fe ff ff e8 4b =
+87
+>>> [    4.212455] RSP: 0018:ffffaffcc0d4f9a8 EFLAGS: 00010206
+>>> [    4.212458] RAX: 00000000000000cd RBX: ffff9721a687f800 RCX: =
+ffff9721a687c828
+>>> [    4.212459] RDX: 0000000000000000 RSI: 00000000000000cd RDI: =
+ffff97218bc8a3c0
+>>> [    4.212461] RBP: ffff9721a687c828 R08: ffffaffcc0d4f9f8 R09: =
+0000000000000001
+>>> [    4.212462] R10: ffff97218bc8d700 R11: 0000000000000000 R12: =
+ffffaffcc0d4f9f8
+>>> [    4.212462] R13: ffffaffcc0d4f9f8 R14: 0000000000000000 R15: =
+ffff97218bc8a000
+>>> [    4.212464] FS:  0000000000000000(0000) GS:ffff973ee1ad9000(0000) =
+knlGS:0000000000000000
+>>> [    4.212465] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [    4.212467] CR2: 00005640b0f29360 CR3: 0000000ccb224000 CR4: =
+0000000000f50ef0
+>>> [    4.212469] PKRU: 55555554
+>>> [    4.212470] Call Trace:
+>>> [    4.212473]  <TASK>
+>>> [    4.212478]  pci_bus_distribute_available_resources+0x590/0x6d0
+>>> [    4.212483]  pci_bridge_distribute_available_resources+0x62/0xb0
+>>> [    4.212487]  pci_assign_unassigned_bridge_resources+0x65/0x1b0
+>>> [    4.212490]  pciehp_configure_device+0x92/0x160
+>>> [    4.212495]  pciehp_handle_presence_or_link_change+0x1b5/0x350
+>>> [    4.212498]  pciehp_ist+0x147/0x1c0
+>>> [    4.212502]  irq_thread_fn+0x20/0x60
+>>> [    4.212508]  irq_thread+0x1cc/0x360
+>>> [    4.212511]  ? __pfx_irq_thread_fn+0x10/0x10
+>>> [    4.212515]  ? __pfx_irq_thread_dtor+0x10/0x10
+>>> [    4.212518]  ? __pfx_irq_thread+0x10/0x10
+>>> [    4.212521]  kthread+0xf9/0x240
+>>> [    4.212525]  ? __pfx_kthread+0x10/0x10
+>>> [    4.212528]  ret_from_fork+0x195/0x1d0
+>>> [    4.212533]  ? __pfx_kthread+0x10/0x10
+>>> [    4.212536]  ret_from_fork_asm+0x1a/0x30
+>>> [    4.212540]  </TASK>
+>>> [    4.212541] ---[ end trace 0000000000000000 ]---
+>>>=20
+>>> Fix the regression by always fetching the resource directly from the
+>>> bridge: use pci_resource_n(bridge, PCI_BRIDGE_RESOURCES + i). This
+>>> restores the original behaviour while keeping the refactored =
+structure.
+>>> And then we can successfully assign resources to the Thunderbolt =
+device.
+>>>=20
+>>> Fixes: 4292a1e45fd4 ("PCI: Refactor distributing available memory to =
+use loops")
+>>>=20
+>>> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+>>=20
+>> Tentatively applied to pci/for-linus for v6.18, pending Ilpo's =
+review.
+>=20
+> Thanks to Yangyu for the patch.=20
+>=20
+> I see it already was pulled by Linus. No big objection to this as it=20=
 
-It's not clear why we recalculate this. Ah I see, the calculation involves a
-ZONE_BELOW_HIGH check which we might have changed above. So as a result ths
-patch isn't a straightforward "we free the same amount of pages but in
-smaller batches" but something different (and I'm not immediately sure what
-exactly).
+> clearly seems to help and should cause no issue to move back to use=20
+> pci_resource_n().
+>=20
+> However, that change to pci_bus_resource_n() was very much done=20
+> intentionally as those two calls should have been equivalent. =
+Initially
+> I was perplexed how this change can fix anything but it seem one of my=20=
 
-I think it's an argument for doing the ZONE_BELOW_HIGH test above just once
-in the end, and not recalculating "high" here. I'd just stick to the
-"to_free" calculated uprofront and decreasing it by "to_free_batched" each
-round.
-We should maybe also check that pcp->count went to 0 and bail out so we
-don't make useless iterations in rare cases when someone else drains the pcp
-between our batches (free_pcppages_bulk() protects itself from passing too
-high "count" so it would be just some wasted cpu otherwise, not a disaster).
+> pci_bus_resource_n() conversions was wrong...
+>=20
+>> Thank you very much for debugging and providing a patch!
+>>=20
+>>> ---
+>>> drivers/pci/setup-bus.c | 5 +++--
+>>> 1 file changed, 3 insertions(+), 2 deletions(-)
+>>>=20
+>>> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+>>> index 362ad108794d..4a8735b275e4 100644
+>>> --- a/drivers/pci/setup-bus.c
+>>> +++ b/drivers/pci/setup-bus.c
+>>> @@ -2085,7 +2085,8 @@ static void =
+pci_bus_distribute_available_resources(struct pci_bus *bus,
+>>> int i;
+>>>=20
+>>> for (i =3D 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+>>> - struct resource *res =3D pci_bus_resource_n(bus, i);
+>>> + struct resource *res =3D
+>>> + pci_resource_n(bridge, PCI_BRIDGE_RESOURCES + i);
+>=20
+> Was this change actually necessary to fix anything or was it changed =
+just=20
+> due to noticing the other case?
 
-> +	to_free -= to_free_batched;
-> +	if (pcp->count >= high) {
-> +		pcp_spin_unlock(pcp);
-> +		pcp_trylock_finish(*UP_flags);
-> +
-> +		pcp_trylock_prepare(*UP_flags);
-> +		pcp = pcp_spin_trylock(zone->per_cpu_pageset);
-> +		if (!pcp) {
-> +			pcp_trylock_finish(*UP_flags);
-> +			return false;
-> +		}
-> +
-> +		/*
-> +		 * Check if this thread has been migrated to a different
-> +		 * CPU. If that is the case, give up and indicate that
-> +		 * the pcp is returned in an unlocked state.
-> +		 */
-> +		if (smp_processor_id() != cpu) {
+It was changed just to align with the following code.
 
-We could have remembered the old pcp pointer and compare that instead of
-doing smp_processor_id(), although that should also work.
+>=20
+>>>=20
+>>> available[i] =3D available_in[i];
+>>>=20
+>>> @@ -2158,7 +2159,7 @@ static void =
+pci_bus_distribute_available_resources(struct pci_bus *bus,
+>>> continue;
+>>>=20
+>>> for (i =3D 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+>>> - res =3D pci_bus_resource_n(bus, i);
+>>> + res =3D pci_resource_n(dev, PCI_BRIDGE_RESOURCES + i);
+>=20
+> This was misconverted by me, as dev is not same as bridge here, so it=20=
 
-> +			pcp_spin_unlock(pcp);
-> +			pcp_trylock_finish(*UP_flags);
-> +			return false;
-> +		}
-> +	}
-> +
-> +	if (to_free > 0 && pcp->count >= high)
-> +		goto free_batch;
-> +
-> +	return true;
->  }
->  
->  /*
-> @@ -2934,7 +2977,9 @@ static void __free_frozen_pages(struct page *page, unsigned int order,
->  	pcp_trylock_prepare(UP_flags);
->  	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
->  	if (pcp) {
-> -		free_frozen_page_commit(zone, pcp, page, migratetype, order, fpi_flags);
-> +		if (!free_frozen_page_commit(zone, pcp, page, migratetype,
-> +						order, fpi_flags, &UP_flags))
-> +			return;
->  		pcp_spin_unlock(pcp);
->  	} else {
->  		free_one_page(zone, page, pfn, order, fpi_flags);
-> @@ -3034,8 +3079,11 @@ void free_unref_folios(struct folio_batch *folios)
->  			migratetype = MIGRATE_MOVABLE;
->  
->  		trace_mm_page_free_batched(&folio->page);
-> -		free_frozen_page_commit(zone, pcp, &folio->page, migratetype,
-> -					order, FPI_NONE);
-> +		if (!free_frozen_page_commit(zone, pcp, &folio->page,
-> +				migratetype, order, FPI_NONE, &UP_flags)) {
-> +			pcp = NULL;
-> +			locked_zone = NULL;
-> +		}
->  	}
->  
->  	if (pcp) {
+> should have been pci_bus_resource_n(b, i); (b is dev->subordinate).
+
+Indeed.
+
+I didn't figure out why pci_bus_resource_n fails at the time to
+submit the patch. But I just chose the most confident way to fix
+that since it breaks mainline.
+
+Thanks,
+Yangyu Chen
+
+>=20
+> --=20
+> i.
 
 
