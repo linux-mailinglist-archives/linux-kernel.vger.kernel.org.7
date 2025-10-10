@@ -1,111 +1,59 @@
-Return-Path: <linux-kernel+bounces-848854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C04ABCEB35
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:34:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E970BCEB3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3329D3ACD4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:34:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38DF74F672C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8EF2773EC;
-	Fri, 10 Oct 2025 22:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F42277CBD;
+	Fri, 10 Oct 2025 22:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="X6I7iV5R"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShFlpnwa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDB527465C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B112C277C88;
+	Fri, 10 Oct 2025 22:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760135689; cv=none; b=ZuKtMucsgj2BOck8isTEIo7VLjn4v1dEBp56WJKkI6G8huOn3xf35XLfzfLo9EvaqfsQOxl+1QohItUgi6U5waOvOeYhLyF9yxF+mn9cR3/f2MJ35E6btQelbN092NfoW5YJPvieNCHypy7DFOPTvP6HAsfwTmuA+K+hVangHdY=
+	t=1760135692; cv=none; b=d0y2yUeD6YCHGK726WRBp0issy7y9u0DAnPjkII7qbFP+KGQuPKOtEld2sOAGHFRjkC/6fIuKpxmyIIZZhWXxVrw+SwnBrd0HWX7N73eXAybpd3RmKh60WK1nS8j+VCzp5js5WigMe4FihMvJoOb3NHvetfCfci3xsZ9blm11YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760135689; c=relaxed/simple;
-	bh=Pk2+8/IwqNSzhAu614JVEvZm09rKZH8rHw8rZM0DYaY=;
+	s=arc-20240116; t=1760135692; c=relaxed/simple;
+	bh=WROgCmZgtstKv4eITK/u78V+uzOkFLK31P8ASk/uNc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WjOftzh+khNWco6rczfSamxCsxeSkmhbee9jy2iGAvVv0AoiivwamdawXkmU6MNXCAhKuv+HrM+WdrrfiKccxsYZpBT43JGMbiGmO0RPYtAkKacIoRKE4Vhor7UaaY6/u1d1eBhTuVGqjGCuxbVZ1oJIxFC1n5S5+EZcNqJu/CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=X6I7iV5R; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-7960d69f14bso16315726d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1760135685; x=1760740485; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e2mC6oaVhDB8uY07Xh45M+WrV8K3BihoQCe6CsvnzAk=;
-        b=X6I7iV5RLmLJK4Gr/0GbKkwcqvGxq+FE8LFK/yFzebLarnssRBwHyEg6URBs7RnOV0
-         Y2SieomcM6hbAKaYnyo8j1R90PlXlq9Jglm9m6gU02a33xXkqPAJerD5AOTYOXPv1QFW
-         z+2JlMopkvMRN8qaZOW9lAibr33gHQuAo0jw4fXUD2iyjDhXPKKHEE1Mv6oGjBCg9QN0
-         dKNtocEO3GErE7L/QZev1G7TSZFdzGMHoBvBLSWsIMtQ8ezvmsF65+0jTjKZpE21vENY
-         iS6dxfAjhUME+ps5ynYWBdBthzDdlowDXMP0EsdLTGrby25k4EWzJt2SlXXEQOXe9DaE
-         i86A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760135685; x=1760740485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e2mC6oaVhDB8uY07Xh45M+WrV8K3BihoQCe6CsvnzAk=;
-        b=R9zDwIPp2o+1DvNIulz/C8/+BHO7+lacFkv0uUkMWX3n3Sv3AlTQuXXHP/aAMnjUUh
-         2WwNF9krzBg+ENjCSWFwtx20h80rSIXDJtW7UMe/ABQhTLuRqxyPwGYaXQyFh7tW4Cgq
-         cjhQ4WCR10Yke1hjLrPTBK1sIQJHruJcvelcOLIU/fX6SvNtXp3OEbMTfMxeCouYtW3n
-         ZRkMCxGwWyUiKfcnRTxy6O7s5XqmZeAt4MuliyYe/r+GXzz9eGwZFr13XoYqjcljLzfJ
-         MC0Ogw9cCCA6zTF9Y+tEClQhOu+4zv2G79YH2/YcAW4QjOzZfyBfWS9PpRktu3AxRwHl
-         XjtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzq+Kv8qcasCvl5PHnrvdIEa1v2cTBKwiAaeogERwlD1nPbh6JPB5VbJLRj4Bx3NNzBWvzMwAJF+YKUKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxODC3VWB3KxAVQEyubPTO+pOce9L2EvjfuOORaOsq39paKAGyW
-	KOC0QXdWpPoftXnH0Uc3A2h/lHPTpFfpK0b8b+zguv2qlzZJ7aBBcRGrzzL73+KrbD2LwSr0N5w
-	1Ijykpak=
-X-Gm-Gg: ASbGncvBOQ9dXyroq7RkTT9dhT0IcuVJuelGq5sI5F7xTCPTm2jmZSK1P6xFDG4X6uG
-	AdraBcLZx73WuXLL37EvCJcUm8tRRicp/Wrm3zuV1i0yUCBSHwav7CL2U8oIWfyUH5C5fUiz/Ww
-	y2cU3w3awlTMhgXGB79YvGfzkDWo//kTMnX+jHHyQVku1mxjBA4LR++Y/nQCZtgzppFdIiu8W2A
-	d/+uEwUxxenQrcg1R2mYkcwnVYYyjro36MkHLpxu01hwk9wnyGitQcvBOCGFV4w+DY5NHoG/NuL
-	7LSYf4moRjCYWrdHfDSe+bPY4/32Fz08+HjkUEPpEpPuz/6mmxJtpHAAOYzLxGKoBtUt1iMqK+g
-	tR2BFepzYEoi3bHVTlWB77Yq7hbYzC6NUwh5aQawvm7eaAYAVu39IK0EjkfKa2XfpkM0Csyubap
-	muKpaNMLt9MK8=
-X-Google-Smtp-Source: AGHT+IECAcR/KGy/e7wbySPEFRjHLCdMYKTul/IVB6jvzNGBmryovZWE46iccPi7Pk1ulqBzRKwDww==
-X-Received: by 2002:a05:622a:5984:b0:4cb:57b4:4d6c with SMTP id d75a77b69052e-4e6eaccc73cmr181726641cf.12.1760135685384;
-        Fri, 10 Oct 2025 15:34:45 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e706de73ccsm26004611cf.45.2025.10.10.15.34.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 15:34:44 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v7LhE-0000000Ghev-0UWp;
-	Fri, 10 Oct 2025 19:34:44 -0300
-Date: Fri, 10 Oct 2025 19:34:44 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: dan.j.williams@intel.com
-Cc: Jeremy Linton <jeremy.linton@arm.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
- device
-Message-ID: <20251010223444.GA3938986@ziepe.ca>
-References: <yq5aqzxy9ij1.fsf@kernel.org>
- <20250730113827.000032b8@huawei.com>
- <20250730132333.00006fbf@huawei.com>
- <2025073035-bulginess-rematch-b92e@gregkh>
- <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
- <20251010135922.GC3833649@ziepe.ca>
- <4a7d84b2-2ec4-4773-a2d5-7b63d5c683cf@arm.com>
- <20251010153046.GF3833649@ziepe.ca>
- <f6cf20f6-0f19-4814-b917-4f92dad39648@arm.com>
- <68e953f484464_1992810065@dwillia2-mobl4.notmuch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckuqOpzMwbE3ldskyQBmDl3o7H3MdJMtL5N0pSeJ3rgDaKZukDuuL6RmGUbbFinEV7RnuAu7crCmxWyJ1W+Qoxiy2LrmfI2zrFqAE+Zqd8LNWIK47+vrGMarw2my4MH7xhQ5LmEsErC/zbwC9nVt4v2ZEU5dyShokGByFjR/Rbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShFlpnwa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F40C4CEF9;
+	Fri, 10 Oct 2025 22:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760135692;
+	bh=WROgCmZgtstKv4eITK/u78V+uzOkFLK31P8ASk/uNc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ShFlpnwa+lPDPbhRLPLBmb6E8nJ/rJpw2X16SDp1057TrTCeFUjHMz8bhh/mPQk+A
+	 RYdRu9li6jR2Im4gjJPrAAQR1dzy/xw61LhSwa4M7AUg+kqRENa2y9sTCZ8cECKxoK
+	 8DIuUbKEYrh/p5qgFYe8H/OSv2tjmnOtAbF+CYXWWeJZb90cNWyeZFNNBLsk9o+NlB
+	 LYD58f89xei9DFIHvVIArLppncAfZ1lfODqbnZMp6hKZ4prFkiuURpN9AqW/CYZ2Ox
+	 +JDSLF7BWY9GUdsApmWRVZuvoC/GSo07c5bdLanU6hWl/cm06LhAt+J49lopjka6At
+	 sICLBvRaaXIcQ==
+Date: Fri, 10 Oct 2025 17:34:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tim Harvey <tharvey@gateworks.com>,
+	"open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" <linux-media@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: media: convert nxp,tda1997x.txt to yaml
+ format
+Message-ID: <20251010223450.GA1293636-robh@kernel.org>
+References: <20251010151637.2061727-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,57 +62,197 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68e953f484464_1992810065@dwillia2-mobl4.notmuch>
+In-Reply-To: <20251010151637.2061727-1-Frank.Li@nxp.com>
 
-On Fri, Oct 10, 2025 at 11:44:04AM -0700, dan.j.williams@intel.com wrote:
-> Jeremy Linton wrote:
-> > On 10/10/25 10:30 AM, Jason Gunthorpe wrote:
-> > > On Fri, Oct 10, 2025 at 10:28:36AM -0500, Jeremy Linton wrote:
-> > > 
-> > >>> So you could use auxiliary_device, you'd consider SMC itself to be the
-> > >>> shared HW block and all the auxiliary drivers are per-subsystem
-> > >>> aspects of that shared SMC interface. It is not a terrible fit for
-> > >>> what it was intended for at least.
-> > >>
-> > >> Turns out that changing any of this, will at the moment break systemd's
-> > >> confidential vm detection, because they wanted the earliest indicator the
-> > >> guest was capable and that turned out to be this platform device.
-> > > 
-> > > Having systemd detect a software created platform device sounds
-> > > compltely crazy, don't do that. Make a proper sysfs uapi for such a
-> > > general idea please.
-> > 
-> > Yes, I agree, its just at the time the statment was around what is the 
-> > most reliable early indicator, and since there isn't a hwcap or anything 
-> > that ended up being the choice, as disgusting as it is.
-> > 
-> > Presumably once all this works out the sysfs/api surface will be more 
-> > 'defined'
+On Fri, Oct 10, 2025 at 11:16:23AM -0400, Frank Li wrote:
+> Convert nxp,tda1997x.txt to yaml format
 > 
-> It has definition today.
+> Additional changes:
+> - update audio width to 8, 16, 24, 32.
+> - keep one example only.
 > 
-> All guest-side TSM drivers currently call tsm_report_register(), that
-> establishes /sys/kernel/config/tsm/report which is the common cross-arch
-> transport for retrieving CVM launch attestation reports.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/media/i2c/nxp,tda19971.yaml      | 158 ++++++++++++++++
+>  .../bindings/media/i2c/nxp,tda1997x.txt       | 178 ------------------
+>  2 files changed, 158 insertions(+), 178 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml b/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
+> new file mode 100644
+> index 0000000000000..7624391e1c1e8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
+> @@ -0,0 +1,158 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/nxp,tda19971.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP TDA1997x HDMI receiver
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +description: |
+> +  The TDA19971/73 are HDMI video receivers.
+> +
+> +  The TDA19971 Video port output pins can be used as follows:
+> +   - RGB 8bit per color (24 bits total): R[11:4] B[11:4] G[11:4]
+> +   - YUV444 8bit per color (24 bits total): Y[11:4] Cr[11:4] Cb[11:4]
+> +   - YUV422 semi-planar 8bit per component (16 bits total): Y[11:4] CbCr[11:4]
+> +   - YUV422 semi-planar 10bit per component (20 bits total): Y[11:2] CbCr[11:2]
+> +   - YUV422 semi-planar 12bit per component (24 bits total): - Y[11:0] CbCr[11:0]
+> +   - YUV422 BT656 8bit per component (8 bits total): YCbCr[11:4] (2-cycles)
+> +   - YUV422 BT656 10bit per component (10 bits total): YCbCr[11:2] (2-cycles)
+> +   - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
+> +
+> +  The TDA19973 Video port output pins can be used as follows:
+> +   - RGB 12bit per color (36 bits total): R[11:0] B[11:0] G[11:0]
+> +   - YUV444 12bit per color (36 bits total): Y[11:0] Cb[11:0] Cr[11:0]
+> +   - YUV422 semi-planar 12bit per component (24 bits total): Y[11:0] CbCr[11:0]
+> +   - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
+> +
+> +  The Video port output pins are mapped via 4-bit 'pin groups' allowing
+> +  for a variety of connection possibilities including swapping pin order within
+> +  pin groups. The video_portcfg device-tree property consists of register mapping
+> +  pairs which map a chip-specific VP output register to a 4-bit pin group. If
+> +  the pin group needs to be bit-swapped you can use the *_S pin-group defines.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,tda19971
+> +      - nxp,tda19973
 
-I suspect this ins't a TSM question but an existing question if any of
-the underlying CC frameworks are enabled. 
+blank line
 
-It is this stuff:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  DOVDD-supply: true
+> +
+> +  DVDD-supply: true
+> +
+> +  AVDD-supply: true
+> +
+> +  '#sound-dai-cells':
+> +    const: 0
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +  nxp,vidout-portcfg:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +    minItems: 1
+> +    maxItems: 4
+> +    items:
+> +      items:
+> +        maxItems: 2
 
-https://github.com/systemd/systemd/blob/main/src/basic/confidential-virt.c
-https://github.com/systemd/systemd/commit/2572bf6a39b6c548acef07fd25f461c5a88560af
+1 too many levels...
 
-  Like the s390 detection logic, the sysfs path being checked is not labeled
-  as ABI, and may change in the future. It was chosen because its
-  directly tied to the kernel's detection of the realm service interface
-  rather to the Trusted Security Module (TSM) which is what is being
-  triggered by the device entry.
+items:
+  maxItems: 2
 
-Maybe a /sys/firmware/smc/rsi file might be appropriate?
+But really you need to describe what each of the 2 items are. And are 
+there some constraints? I'd assume pins here is something like pin 1-N?
 
-Given how small a deployed fooprint ARM CCA has right now (ie none) it
-would be good to fix this ASAP so it doesn't become entrenched.
-
-Jason
+> +
+> +    description:
+> +      array of pairs mapping VP output pins to pin groups.
+> +
+> +  nxp,audout-format:
+> +    enum:
+> +      - i2s
+> +      - spdif
+> +
+> +  nxp,audout-width:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [8, 16, 24, 32]
+> +    description:
+> +      width of audio output data bus.
+> +
+> +  nxp,audout-layout:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +    description:
+> +      data layout (0=AP0 used, 1=AP0/AP1/AP2/AP3 used).
+> +
+> +  nxp,audout-mclk-fs:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Multiplication factor between stream rate and codec mclk.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - DOVDD-supply
+> +  - AVDD-supply
+> +  - DVDD-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/media/tda1997x.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        hdmi-receiver@48 {
+> +            compatible = "nxp,tda19971";
+> +            reg = <0x48>;
+> +            pinctrl-names = "default";
+> +            pinctrl-0 = <&pinctrl_tda1997x>;
+> +            interrupt-parent = <&gpio1>;
+> +            interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+> +            DOVDD-supply = <&reg_3p3v>;
+> +            AVDD-supply = <&reg_1p8v>;
+> +            DVDD-supply = <&reg_1p8v>;
+> +            /* audio */
+> +            #sound-dai-cells = <0>;
+> +            nxp,audout-format = "i2s";
+> +            nxp,audout-layout = <0>;
+> +            nxp,audout-width = <16>;
+> +            nxp,audout-mclk-fs = <128>;
+> +            /*
+> +             * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
+> +             * and Y[11:4] across 16bits in the same pixclk cycle.
+> +             */
+> +            nxp,vidout-portcfg =
+> +                /* Y[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
+> +                < TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
+> +                /* Y[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
+> +                < TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
+> +                /* CbCc[11:8]<->VP[07:04]<->CSI_DATA[11:8] */
+> +                < TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
+> +                /* CbCr[7:4]<->VP[03:00]<->CSI_DATA[7:4] */
+> +                < TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
+> +
+> +            port {
+> +                endpoint {
+> +                    remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
+> +                    bus-width = <16>;
+> +                    hsync-active = <1>;
+> +                    vsync-active = <1>;
+> +                    data-active = <1>;
+> +                };
+> +            };
+> +        };
+> +    };
 
