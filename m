@@ -1,427 +1,304 @@
-Return-Path: <linux-kernel+bounces-847807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FE5BCBC7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:25:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE64BCBC7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAA43C09FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C513BD9C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9A22459F3;
-	Fri, 10 Oct 2025 06:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239D72376FD;
+	Fri, 10 Oct 2025 06:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVpvYMxg"
-Received: from mail-yx1-f65.google.com (mail-yx1-f65.google.com [74.125.224.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="oJYXMx0Q"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013047.outbound.protection.outlook.com [40.107.201.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D196227E83
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.65
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760077539; cv=none; b=OErpqVmMdu8Aq5UgmlDs+pJ/7fcT5vv2s3U+J+YL4w9hBpSSFkgL5LDQJfYjFVqvQuRIEwRdwyuGrjB5UE0cO54XsTlrPGJaiI3LadFlExC7EjXawCLMCBwq7MYc7ZEYZEdSQB/xLoqCdMHhoMw7kuDJLoqZ/s9vAc0UKDZBYG8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760077539; c=relaxed/simple;
-	bh=S9pKXp1mceGitAT8F7nE1DIMm5o+Yfn5ytYnNhoHYYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bgh5igDdRDZTEAsvgmorbExMs1Tr89h4b6PL7Qcj/xYDN1+KUXGvHuYhDLjhmc5hsUFWzp2pc3bJupMbyp9F548FsCjxLLvaRaE9aZNXuf5u0ydJx1hEjONgyLMXSrGFRuz/rkGTugqfw0l/8zRyWXq3uCx7Gb3j4FeZAuLO6LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVpvYMxg; arc=none smtp.client-ip=74.125.224.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f65.google.com with SMTP id 956f58d0204a3-636d75f08a3so368938d50.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 23:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760077536; x=1760682336; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/QfbWcG5kCfyEKR1UKuhCeI2DEJzoEgMMDIvKNtEeRM=;
-        b=eVpvYMxg6IY0vb0eA9W16KwJGb5BaXQci+qyD+SUgvVKRFh+Iyzar7qkHH5xcuLOa/
-         GrqQLOezSA1rSNoG7qcaw92kj+JGE4kkQ4C40H+jk95yEkHnB59HETZrFxf5nNJGXW0j
-         IaQ/qERmBfCpAdDX9Kt5mRVln9lUPFaPE8B3z0xO/fTqZioedllGU3ewaWwamB6nfxL+
-         TQk941Qf8N9RUKh1D582DMXJ/f5Y+qtFVh4TmYC3yps8c2kDpkN0bGyI7WE4/2bINhMd
-         MNmyt1h9FC8pjexL3YFy+0FPaeICrBvWmQba9+1MhNgNsb+/vMDV8wPMwNsEPXF0oySN
-         2cqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760077536; x=1760682336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/QfbWcG5kCfyEKR1UKuhCeI2DEJzoEgMMDIvKNtEeRM=;
-        b=a1qQk2WAOjZN90Cu0fqgHKiNkRyh09LGZj2x6WJnDljE0CBQw58VNpu/LuvdDRCnAC
-         H3+DSt2vNELr/5GdfBBFpHIiKKRuA2HgWjO7cfhHg2Vwi57ZcHSp10uq+D6701Dh4wpM
-         DUdefHF7UJzL3DkU6eZ7X4hT8R8gW0gu3te711ZtQgm/QROQ9G06Y86QFWzEPxFEmcdA
-         RzC/LbqEYZ9NpuPA3+uwnydVxZ0l/qPgch0gwXkQnq9EA7sc4qh07fO9o03Sy2aq51bO
-         Sg0ea7S340kosqPLcCRDQ5RcP01SApV5TflEzfMuKA3ec4YQWRgO34fCWxjNcUJx2ac7
-         GnHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXocBPySX7+BFnAA76l2kU34t7wfmQmSxUeWRcDAg8DgG4cxvgq73kEQxtH/e50psGHjroW8A+rBzFDkuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP1uRdtesQtjpUJg36bxaUoPCZJMIdHmmIL2V39ZQFm76Lx9Ik
-	aIzRk4f8R1amP6SVZL0Yu2slttCnFEdlsoydky+sL6JpvFjt5XZx6WXsW739C0Xp3CLEe4nw010
-	WmgcD88/XmCReMKsDY7vKSt1PuRks51Vmtmz2V9lASen3NFo=
-X-Gm-Gg: ASbGncvC/CUyT+FmBzRxVBF3+/2RtoczQwHZiTZwGI/bxQJosq/WuYDZZLBeD2NbXX4
-	QN5pg/jZltZaa1ZielScoOXepOFc278UaRj5rL3/e4XpFDg5qlV/PmRCiBIUswxF8Ibph0rQBi+
-	GakkctDHHgXDARso1/htYE3L9DHUtEvQpxy94hcSAWE8wl4/a5ZHsOAbHSUKHOdcScCh6/Zce6T
-	ggJhkaAiF8Sh3iBLQkwPxgs
-X-Google-Smtp-Source: AGHT+IE4GbEPO50CbgxPQAOSwezrDo7dIzpcSAQrlWm6QC827CxwK/94NY2Q1K02ANxH3vAAqI/PdQy15/ZmW11DAJo=
-X-Received: by 2002:a53:ec01:0:b0:636:1fd9:1c2 with SMTP id
- 956f58d0204a3-63ccb8410e1mr4299532d50.3.1760077535974; Thu, 09 Oct 2025
- 23:25:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D684A06
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760077640; cv=fail; b=u6+tV/AQ+hIXeofSj/ktpG/vYB9zkxxX/Li3ZF4zNYubnp6PfBE8k4DYOZiZSGPx7qj+od6qiy9P/jdCheEw8E0vo9yJtrzcjSytRoFEuVzHthD4zamT7hSc4zp3mETS+zhq3jNVIxa91vrDmJhgNtEv7ijm1FEDuabE0yaFVHw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760077640; c=relaxed/simple;
+	bh=a83p9dET9/VwfpCMh+pWs/MThOOYCA7jIsGFsfjTBnw=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mVv7rf7+DVzCAKwVhgc/Jy/8KZTFJwrhtU7i1RtIZHQgEZVjBiIwa+0R2iHR3M6P3tHF5qxkm07GMi3+LaTzCnxO/Tom44F4UfgJjg6OrPafXoEZk8HFSG1u3tjbqJvz00jeGudqS+DES4iUe2VihIqt4mPXFqeH349o8Q3VF3c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=oJYXMx0Q; arc=fail smtp.client-ip=40.107.201.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TMcCiO/JqInyIJLB8DXpZW9f9frWc9U2FUlFJ0Dpt7FM6Zr3T7Rw4KC8QiDp4lvD50Kzn7t5xqQXFavZrxFXR8ECNXhKaFQhWafYjXcREzF7I+9EKrRLnsVW2Ok4bDVFiO/Hz0UUskfSPayn6lvvL+eaj6HPCtiEp/dJD9CP3HVcSW7ykka2kI0K8V0JVYhU0azGhBfTBF8C87agnOLk/MxCrUF7ehcTOC7x8wGqOOkAgsubzmvHes/sPwmMzKm/0S7jv2ZilqYEiEY5gfdAOvd/ymj1bRsohnxjyeQmJfSNALC/2aoEmyAbh9sHFRMlWP9Qjxl6OOtOi+0dEEWMBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=osVjU6/3HvPxoKbGOzab4V9/CWq3EJ0SikkkdAGPHyo=;
+ b=gyL18qykD1YITy8q+/VTuCGpvtIhAJRtBpbPGEuC4AGonpFs9NirDImeAMuD4+NUGc3Yfwgz2PZlx3Lx0oGLEhuewQmeH19YN89aPbhCOtzn/ZYgQq4ULwJTyVGSSbgAfYmI6U+zbq1RNnXKYoVrmWZQEHCdkvbMfZgRolEAFmqPqw6EAGIeWh7yRZjBYzicjKAFzgMI3l8CTEmI5PjyAA0yKQ39gaGAfGNwVrD13CUlH4Xi68mTCZA3hqaBmF9FT/lsCcUfMmBF1a3OXRHmYVvLL2cU7Sw060hEkBbIFVlQpXVQ21omvggaENJ3AnIOL8U7pdwMfghXAbTylN19jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=osVjU6/3HvPxoKbGOzab4V9/CWq3EJ0SikkkdAGPHyo=;
+ b=oJYXMx0Q/OaQ/vjSLrApgucyBlRh7Zlqo9uf3KjU4xLOgIp05YZ+Ql2i9V85TqyPYrH3K2eLzXhlzVqpHhaHfWQhVw8igFONrHSSz5BZowj9ZZ9oo3GEFcMMXPXytAxamUNPFyCf8n4vUwnJarFK5r47EM8iYJ9TRe6yZ9RtFZnV6ZnePmb5+qSyP+PvwVWI1bNJ6b+WuCnaRWntGoe+nKPXNkoCp38veWBgT/TfOuSNUkXRec9xxqOG20aozpH1xpJGYKCKs5Unz3lHTeYMb90CpwzWTFy/A1fWgpuk+sWnIBmTcy7LSyQfXfG4d+tLxpYNbzLjGgzlrQG3wVX90g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
+ by PH0PR03MB6656.namprd03.prod.outlook.com (2603:10b6:510:b6::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 06:27:15 +0000
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 06:27:13 +0000
+From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+To: Dinh Nguyen <dinguyen@kernel.org>,
+	linux-kernel@vger.kernel.org (open list:INTEL STRATIX10 FIRMWARE DRIVERS),
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+Subject: [PATCH v4 1/1] firmware: stratix10-svc: Add definition for voltage and temperature sensor
+Date: Fri, 10 Oct 2025 14:27:09 +0800
+Message-Id: <5797fa3875f39c30ab5c942310abc913344335a6.1759914326.git.khairul.anuar.romli@altera.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <cover.1759914326.git.khairul.anuar.romli@altera.com>
+References: <cover.1759914326.git.khairul.anuar.romli@altera.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0067.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::12) To MN2PR03MB4927.namprd03.prod.outlook.com
+ (2603:10b6:208:1a8::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com> <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
-In-Reply-To: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
-From: lu gu <giveme.gulu@gmail.com>
-Date: Fri, 10 Oct 2025 14:25:22 +0800
-X-Gm-Features: AS18NWBll---7cq99BfcA-9wIIccCh9eibmg4TJShI91BXN-i1ipDktLOHedHKI
-Message-ID: <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH0PR03MB6656:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f8a978f-43cf-4550-916b-08de07c60cf4
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?W5h24PeYU8TY59F0WE4LP2l4j1Si/uvBPGmv3+WS72Gc8Cj4InIIWqsN1AOc?=
+ =?us-ascii?Q?gdkrpY0cPQUUjNtTv3UKrn2kKcM7zQHHWWEnsub60jXeoDjMmaEjQhCMlssv?=
+ =?us-ascii?Q?acjmf0J4KPzbbpc+URgcDFJSNjwhdES7I8R3TVULDqA67zSzx6j3QUaPiLUp?=
+ =?us-ascii?Q?ky/55uyYABZc+oiw3QfT45o7tPGIuFoxcWSWizEZ6CeXp4ab+THWxT4REPlr?=
+ =?us-ascii?Q?HOtzruOOtGmuNXD1Y6DPl+wCTju2h7W9ajDxhLu+NQWP+ie4ywKf5On+aF2E?=
+ =?us-ascii?Q?vGMB7R7m28Uv6o3xLQ1VM1iUr3uF7yP28+q2losHNkQBTYUkDUMI/YQ10it8?=
+ =?us-ascii?Q?oycpZ3+WzsSYgmP7oJsNBw1cU2RJ/IIrlCgGHRd+5dhqXWXuEfWDPEMwxwYm?=
+ =?us-ascii?Q?1VPTv6ROc8D0+LIhYrcz9HxvBumMSE1C9J6QfPyW1kmyGN48flUepRkWJjAE?=
+ =?us-ascii?Q?sL4VsX9Trr5wTjVYKziBjzklHbp1aydoUXVfPicUD3s2Wbnrps2hhCd/GI3B?=
+ =?us-ascii?Q?f388idowU9xqKZAUpiaTmjIWD99ghoOAMo9sp7UN0Xf5/RafyqpPvg08OJwh?=
+ =?us-ascii?Q?oA6cxS/OZ2+4ajc0Lt7bjQJV0dJ1i9wYS0w8kXoXqwHSlW2HfDyE+Nd1p7Dd?=
+ =?us-ascii?Q?iwJCMejNlXj/m2c9lPAr8oKTZWqF63pF19xovZ+n4u2hfp0MQIAG+YjjD5zk?=
+ =?us-ascii?Q?cMruMrlARDctoMAIO+i4CC3iknTqrRTPewThacs4GqbuzvZq44rrfaSvDlpT?=
+ =?us-ascii?Q?2oCUc/nukOuZdQcHWGOf4xOFI3OkhTOg/c1pg/hXKylGm3GKJljQhmJ7ywYq?=
+ =?us-ascii?Q?PAf4ouLrNFT6ma+Xg9LotTp4Hpbc4X9XfGBWAMbOuQX/RnFWpMLdbLnzoFdQ?=
+ =?us-ascii?Q?1LHuqR8o5ue7mv3A/RbYZXKFidWuL993ADkcdNyxREY7ZxbtrsRon5yCTquH?=
+ =?us-ascii?Q?H81+i7XWOW3cagVWwZU+UNZtncmeJMoEePe+9hMbiWr7afU+rGjoKRDVHOvP?=
+ =?us-ascii?Q?ytyYypVpT7Xg2QJ40//gLSRjNbUAK1pcT/8dPep+NpZ8MzabvMvAjGrmv934?=
+ =?us-ascii?Q?RTkNPFAtQAazrvz2zpBEgM4fcafW6SRIcdqa7q7+ZdX97alLtog07oDckUcR?=
+ =?us-ascii?Q?6Ckscxl/eSB1tUhfAsvGQz4Y5Jc7TqjKGDWsHN1SWNn5LDv6dyHBjbTw3Bbr?=
+ =?us-ascii?Q?XNgVMrZXqAQ5Tg/4xmHTY+zRCMEGya/WrCXxFmoBFIPsKBf2gnmiMFzdBb6P?=
+ =?us-ascii?Q?RuqgORpkQ7cRdQc+5VEHAStV8xbsxxbTjLVyAcMJwtOE1C+qjSa1u2s6zpW7?=
+ =?us-ascii?Q?pkRxvRW5UA1YXV2OUoxTBT0zavsGUsDeWvfTD+bzV9CYZf5k4IXlf+hxrKlv?=
+ =?us-ascii?Q?c+AzstYPHo7uXJB+FvmwzUSlgtxzM9c3UuIsJZBJrqsTuCYsEWNK47ZJne60?=
+ =?us-ascii?Q?C1z44ZKU+/ohASTzrP412EK4DR0LNwQ/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sY7Q8SM+fxPX3pFqhUI9MtR/U969Emct3RH7Cv2hN25dL2Ly+9JZeFcWWIVk?=
+ =?us-ascii?Q?pWcaDjzHI6HKJl49fIDGbLj655xpBteOICchgq/Qn2U+BQXiJdYeH0XJEY4R?=
+ =?us-ascii?Q?cv1B/Xx49PeWS5gXCCThXObVK2X80D7nXIskpZ0DOSRxUsCmSysWXFlO+gSC?=
+ =?us-ascii?Q?2tMBUSh70cQfOtzRnFc5arVH/XkVRI5OMnJrhr5JVE15Io+JoiYfhpN0eCg6?=
+ =?us-ascii?Q?O+SqZw4sOR7GYl0Zc3sYP9Vrdo+QJXOiV28aNvGJyBuK2etjsyqeufDZ2j4e?=
+ =?us-ascii?Q?w4LjBw97xBfMnnpN2PH64+npyNs34CIk9TbLIIlgSJq3jhQiIkX+1kXh2cVU?=
+ =?us-ascii?Q?AyPRAfiXUHzeptS+9G/Rq0s55H4Uw+ZOPHe1tZfExe9FAjmfYdcqSk8RUSuU?=
+ =?us-ascii?Q?P9b5DQdpI1VyvRsOyDpiIWBX4/Ro3rt40Nfsw5cWbH2Pjx+nzppl4CLE967G?=
+ =?us-ascii?Q?pjbN09LW12gCoFgWg6ZqkZPYW+H5Z9lBgc3e5r1YLiINOF4ylx5Sgr58qU30?=
+ =?us-ascii?Q?fSzsPC3dyXQ8JjYWYpyT/aAyyYe2Dav7+be3uLOI3IvCy496cieQrYkXh7ZV?=
+ =?us-ascii?Q?jrfjAiVrCn4owY3V9oqCuOmf3bQldinGWCfewptbx5pkpu3xLJJLPzoJwLKX?=
+ =?us-ascii?Q?HyZPyHwONSFs18o7rfVqyK87DFnTB2kjYgG2M1J1+f3ZEK6Y1W4fA3VjBP0F?=
+ =?us-ascii?Q?OQGVXWnKUY5r5TraHY3yXAUeASW+MvZiBFl4kv9aRlaOHKP3yPi6XtOoJT7u?=
+ =?us-ascii?Q?otNslTrJQhWyPrc0i+QMkW5IctX3zTNOrcevo+/a0AvS8NjoKsLyiN/nxCeQ?=
+ =?us-ascii?Q?SPMH+7aSbBnczqo3VmwFK3hqYZIamoUQ9fiG0GdDRFrgbfRkZUWT07xN97M3?=
+ =?us-ascii?Q?UaUwyloHJZzmwwCub+CSlE2Jywl0sfWDG4XWQeKyop791kyIqXtsTchr7Ez5?=
+ =?us-ascii?Q?EJgXH1H77+5YPzfeZ22A6xppAmEQcz+F6kJBG3jgkv0ijON9d4wxmZHUccfV?=
+ =?us-ascii?Q?0hVpqTAHf6fP2/M9/K5bd5e7ukF+ly6bcYf6sRen9IQHpOxD4szj/BxYOn0R?=
+ =?us-ascii?Q?qZIuJW1dJ+7yLmfnA2bNyBiMQgvp5FC6+l0pe5yizBJGmEoKgMYHvh2fLL93?=
+ =?us-ascii?Q?s48EYPS9Fu5Nahfje1ffcJHAwrj3HLKHM78V5RPAVHWSv6mKUow2QHNCL8H2?=
+ =?us-ascii?Q?CByXRipO4oMIbBkic12eXQshCzrsXY2uAoRmkOjkioGAzKqEXtAB7nkNoIb5?=
+ =?us-ascii?Q?d6EjQMSDzsl9dOLyf0IHMBxX1jtc0z53zJW94f1ZAdTAWY4NglAznwYqtFIa?=
+ =?us-ascii?Q?svCHlm6Xs/f88mr3yKd6Yz669zO4xeubPl/izsFlaE+Z2wejUglKVjrTLqTs?=
+ =?us-ascii?Q?d5ywxKSmTPOmXinGIh4mt/ykZgJ2XqYgLFU65fDmZpO9xM5nPwTnwogNXrx6?=
+ =?us-ascii?Q?T+v7nzjZ7GCpN/Qul6HCVzoKkIzVwHrtjKR1gaFc1BLcspHicvBkDTi0Riz6?=
+ =?us-ascii?Q?DlbwUtubunlZkeBhp8m6m/BCRnroCTzy879hp7Mxxts9cdx2dub+bYL2wKu9?=
+ =?us-ascii?Q?fSoh/kzTsUEo+sDJRwyXzLS0InBrQQ8KmaWcXe6GaG/wLZJYehH1Njc1FdXD?=
+ =?us-ascii?Q?Rw=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f8a978f-43cf-4550-916b-08de07c60cf4
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 06:27:13.9060
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GSkBwAqKkZk6zTSfeH+wEP41eTAfEi0SfTsuuB25TQ/Z4c/+2kxXJoJvsxKI/QQ2XajNdy46upIc3qZyU77r4F6dzxA96odLf9eXG/r+c/k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB6656
 
-[Resend, plain-text only: previous version was rejected due to HTML formatt=
-ing]
-Hi Joanne,
+Add entry in Stratix 10 Service Layer to support temperature and voltage
+sensor.
 
-Thank you again for the detailed explanation. I've been thinking
-carefully about your feedback and the deadlock issue related to
-holding the page lock.
-I now understand that keeping a low-level page lock while waiting for
-a userspace reply is dangerous and can easily lead to deadlocks with
-the memory manager. So my original patch was  not the right approach.
+Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+---
+ drivers/firmware/stratix10-svc.c              | 21 ++++++++++--
+ include/linux/firmware/intel/stratix10-smc.h  | 34 +++++++++++++++++++
+ .../firmware/intel/stratix10-svc-client.h     |  8 ++++-
+ 3 files changed, 60 insertions(+), 3 deletions(-)
 
-Your explanation really filled in the missing piece for me. Now, I
-understand the core problem sequence correctly:
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index e3f990d888d7..5a32c1054bee 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -34,7 +34,7 @@
+  * timeout is set to 30 seconds (30 * 1000) at Intel Stratix10 SoC.
+  */
+ #define SVC_NUM_DATA_IN_FIFO			32
+-#define SVC_NUM_CHANNEL				3
++#define SVC_NUM_CHANNEL				4
+ #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
+ #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
+ #define BYTE_TO_WORD_SIZE              4
+@@ -341,6 +341,8 @@ static void svc_thread_recv_status_ok(struct stratix10_svc_data *p_data,
+ 	case COMMAND_RSU_MAX_RETRY:
+ 	case COMMAND_RSU_DCMF_STATUS:
+ 	case COMMAND_FIRMWARE_VERSION:
++	case COMMAND_HWMON_READTEMP:
++	case COMMAND_HWMON_READVOLT:
+ 		cb_data->status = BIT(SVC_STATUS_OK);
+ 		cb_data->kaddr1 = &res.a1;
+ 		break;
+@@ -525,7 +527,17 @@ static int svc_normal_to_secure_thread(void *data)
+ 			a1 = (unsigned long)pdata->paddr;
+ 			a2 = 0;
+ 			break;
+-
++		/* for HWMON */
++		case COMMAND_HWMON_READTEMP:
++			a0 = INTEL_SIP_SMC_HWMON_READTEMP;
++			a1 = pdata->arg[0];
++			a2 = 0;
++			break;
++		case COMMAND_HWMON_READVOLT:
++			a0 = INTEL_SIP_SMC_HWMON_READVOLT;
++			a1 = pdata->arg[0];
++			a2 = 0;
++			break;
+ 		/* for polling */
+ 		case COMMAND_POLL_SERVICE_STATUS:
+ 			a0 = INTEL_SIP_SMC_SERVICE_COMPLETED;
+@@ -1197,6 +1209,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+ 	chans[2].name = SVC_CLIENT_FCS;
+ 	spin_lock_init(&chans[2].lock);
+ 
++	chans[3].scl = NULL;
++	chans[3].ctrl = controller;
++	chans[3].name = SVC_CLIENT_HWMON;
++	spin_lock_init(&chans[3].lock);
++
+ 	list_add_tail(&controller->node, &svc_ctrl);
+ 	platform_set_drvdata(pdev, controller);
+ 
+diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
+index ee80ca4bb0d0..7306dd243b2a 100644
+--- a/include/linux/firmware/intel/stratix10-smc.h
++++ b/include/linux/firmware/intel/stratix10-smc.h
+@@ -620,4 +620,38 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
+ #define INTEL_SIP_SMC_FCS_GET_PROVISION_DATA \
+ 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FCS_GET_PROVISION_DATA)
+ 
++/**
++ * Request INTEL_SIP_SMC_HWMON_READTEMP
++ * Sync call to request temperature
++ *
++ * Call register usage:
++ * a0 Temperature Channel
++ * a1-a7 not used
++ *
++ * Return status
++ * a0 INTEL_SIP_SMC_STATUS_OK
++ * a1 Temperature Value
++ * a2-a3 not used
++ */
++#define INTEL_SIP_SMC_FUNCID_HWMON_READTEMP 32
++#define INTEL_SIP_SMC_HWMON_READTEMP \
++	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_HWMON_READTEMP)
++
++/**
++ * Request INTEL_SIP_SMC_HWMON_READVOLT
++ * Sync call to request voltage
++ *
++ * Call register usage:
++ * a0 Voltage Channel
++ * a1-a7 not used
++ *
++ * Return status
++ * a0 INTEL_SIP_SMC_STATUS_OK
++ * a1 Voltage Value
++ * a2-a3 not used
++ */
++#define INTEL_SIP_SMC_FUNCID_HWMON_READVOLT 33
++#define INTEL_SIP_SMC_HWMON_READVOLT \
++	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_HWMON_READVOLT)
++
+ #endif
+diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
+index 60ed82112680..520004a5f15d 100644
+--- a/include/linux/firmware/intel/stratix10-svc-client.h
++++ b/include/linux/firmware/intel/stratix10-svc-client.h
+@@ -11,12 +11,14 @@
+  *
+  * fpga: for FPGA configuration
+  * rsu: for remote status update
++ * hwmon: for hardware monitoring (voltage and temperature)
+  */
+ #define SVC_CLIENT_FPGA			"fpga"
+ #define SVC_CLIENT_RSU			"rsu"
+ #define SVC_CLIENT_FCS			"fcs"
++#define SVC_CLIENT_HWMON		"hwmon"
+ 
+-/*
++/**
+  * Status of the sent command, in bit number
+  *
+  * SVC_STATUS_OK:
+@@ -70,6 +72,7 @@
+ #define SVC_RSU_REQUEST_TIMEOUT_MS              300
+ #define SVC_FCS_REQUEST_TIMEOUT_MS		2000
+ #define SVC_COMPLETED_TIMEOUT_MS		30000
++#define SVC_HWMON_REQUEST_TIMEOUT_MS		300
+ 
+ struct stratix10_svc_chan;
+ 
+@@ -171,6 +174,9 @@ enum stratix10_svc_command_code {
+ 	COMMAND_MBOX_SEND_CMD = 100,
+ 	/* Non-mailbox SMC Call */
+ 	COMMAND_SMC_SVC_VERSION = 200,
++	/* for HWMON */
++	COMMAND_HWMON_READTEMP,
++	COMMAND_HWMON_READVOLT
+ };
+ 
+ /**
+-- 
+2.35.3
 
-    A concurrent read operation may trigger a GETATTR request when the
-attribute cache expires.
-    The result of this GETATTR can cause the kernel to invalidate the
-page cache for the inode.
-    As a result, the read operation ignores the (new) cached data and
-fetches data again from the backend.
-    The backend then returns stale data, which overwrites the updated
-page cache contents, leading to the data mismatch I observed.
-
-I=E2=80=99ve been thinking about how to implement proper synchronization
-without holding the page lock. Here=E2=80=99s an idea I=E2=80=99d like your=
- thoughts
-on:
-
-    1. Keep the early unlock_page() in fuse_fill_write_pages().
-
-    2. In fuse_perform_write(), before sending the FUSE_WRITE request,
-we insert an entry representing the affected page/offset range into a
-new RB-tree on the fuse_inode. This structure, similar to how
-writeback is tracked (e.g., fuse_page_is_writeback), will be named
-sync_writes_in_flight.
-
-    3. In the read path (e.g., fuse_readpage()), before issuing a
-FUSE_READ, check this tree for any overlapping ranges.
-
-    4. If an overlap is found, the read operation waits on a wait
-queue associated with this synchronization structure.
-
-    5. When the FUSE_WRITE completes in fuse_perform_write(), remove
-the entry from the tree and wake up any waiting readers.
-
-This should serialize backend reads and writes for overlapping ranges
-while avoiding the deadlock risk, since the waiting happens at the
-FUSE layer rather than under a page lock.
-
-Does this approach sound reasonable to you? I=E2=80=99d really appreciate y=
-our
-feedback on whether this design makes sense, or if you see any
-potential pitfalls I=E2=80=99ve missed.
-
-Thanks,
-guangming.zhao
-
-On Fri, Oct 10, 2025 at 1:17=E2=80=AFPM lu gu <giveme.gulu@gmail.com> wrote=
-:
->
-> Hi Joanne,
->
-> Thank you again for the detailed explanation. I've been thinking carefull=
-y about your feedback and the deadlock issue related to holding the page lo=
-ck.
-> I now understand that keeping a low-level page lock while waiting for a u=
-serspace reply is dangerous and can easily lead to deadlocks with the memor=
-y manager. So my original patch was  not the right approach.
->
-> Your explanation really filled in the missing piece for me. Now, I unders=
-tand the core problem sequence correctly:
->
->     A concurrent read operation may trigger a GETATTR request when the at=
-tribute cache expires.
->     The result of this GETATTR can cause the kernel to invalidate the pag=
-e cache for the inode.
->     As a result, the read operation ignores the (new) cached data and fet=
-ches data again from the backend.
->     The backend then returns stale data, which overwrites the updated pag=
-e cache contents, leading to the data mismatch I observed.
->
-> I=E2=80=99ve been thinking about how to implement proper synchronization =
-without holding the page lock. Here=E2=80=99s an idea I=E2=80=99d like your=
- thoughts on:
->
->     1. Keep the early unlock_page() in fuse_fill_write_pages().
->
->     2. In fuse_perform_write(), before sending the FUSE_WRITE request, we=
- insert an entry representing the affected page/offset range into a new RB-=
-tree on the fuse_inode. This structure, similar to how writeback is tracked=
- (e.g., fuse_page_is_writeback), will be named sync_writes_in_flight.
->
->     3. In the read path (e.g., fuse_readpage()), before issuing a FUSE_RE=
-AD, check this tree for any overlapping ranges.
->
->     4. If an overlap is found, the read operation waits on a wait queue a=
-ssociated with this synchronization structure.
->
->     5. When the FUSE_WRITE completes in fuse_perform_write(), remove the =
-entry from the tree and wake up any waiting readers.
->
-> This should serialize backend reads and writes for overlapping ranges whi=
-le avoiding the deadlock risk, since the waiting happens at the FUSE layer =
-rather than under a page lock.
->
-> Does this approach sound reasonable to you? I=E2=80=99d really appreciate=
- your feedback on whether this design makes sense, or if you see any potent=
-ial pitfalls I=E2=80=99ve missed.
->
-> Thanks,
-> guangming.zhao
->
-> On Fri, Oct 10, 2025 at 6:11=E2=80=AFAM Joanne Koong <joannelkoong@gmail.=
-com> wrote:
->>
->> On Thu, Oct 9, 2025 at 4:09=E2=80=AFAM guangming.zhao <giveme.gulu@gmail=
-.com> wrote:
->> >
->>
->> Hi Guangming,
->>
->> > The race occurs as follows:
->> > 1. A write operation locks a page, fills it with new data, marks it
->> >    Uptodate, and then immediately unlocks it within fuse_fill_write_pa=
-ges().
->> > 2. This opens a window before the new data is sent to the userspace da=
-emon.
->> > 3. A concurrent read operation for the same page may decide to re-vali=
-date
->> >    its cache from the daemon. The fuse_wait_on_page_writeback()
->> >    mechanism does not protect this synchronous writethrough path.
->> > 4. The read request can be processed by the multi-threaded daemon *bef=
-ore*
->> >    the write request, causing it to reply with stale data from its bac=
-kend.
->> > 5. The read syscall returns this stale data to userspace, causing data
->> >    verification to fail.
->>
->> I don't think the issue is that the read returns stale data (the
->> client is responsible for synchronizing reads and writes, so if the
->> read is issued before the write has completed then it should be fine
->> that the read returned back stale data) but that the read will
->> populate the page cache with stale data (overwriting the write data in
->> the page cache), which makes later subsequent reads that are issued
->> after the write has completed return back stale data.
->>
->> >
->> > This can be reliably reproduced on a mainline kernel (e.g., 6.1.x)
->> > using iogen and a standard multi-threaded libfuse passthrough filesyst=
-em.
->> >
->> > Steps to Reproduce:
->> > 1. Mount a libfuse passthrough filesystem (must be multi-threaded):
->> >    $ ./passthrough /path/to/mount_point
->> >
->> > 2. Run the iogen/doio test from LTP (Linux Test Project) with mixed
->> >    read/write operations (example):
->> >    $ /path/to/ltp/iogen -N iogen01 -i 120s -s read,write 500k:/path/to=
-/mount_point/file1 | \
->> >      /path/to/ltp/doio -N iogen01 -a -v -n 2 -k
->> >
->> > 3. A data comparison error similar to the following will be reported:
->> >    *** DATA COMPARISON ERROR ***
->> >    check_file(/path/to/mount_point/file1, ...) failed
->> >    expected bytes:  X:3091346:gm-arco:doio*X:3091346
->> >    actual bytes:    91346:gm-arco:doio*C:3091346:gm-
->> >
->> > The fix is to delay unlocking the page until after the data has been
->> > successfully sent to the daemon. This is achieved by moving the unlock
->> > logic from fuse_fill_write_pages() to the completion path of
->> > fuse_send_write_pages(), ensuring the page lock is held for the entire
->> > critical section and serializing the operations correctly.
->> >
->> > [Note for maintainers]
->> > This patch is created and tested against the 5.15 kernel. I have obser=
-ved
->> > that recent kernels have migrated to using folios, and I am not confid=
-ent
->> > in porting this fix to the new folio-based code myself.
->> >
->> > I am submitting this patch to clearly document the race condition and =
-a
->> > proven fix on an older kernel, in the hope that a developer more
->> > familiar with the folio conversion can adapt it for the mainline tree.
->> >
->> > Signed-off-by: guangming.zhao <giveme.gulu@gmail.com>
->> > ---
->> > [root@gm-arco example]# uname -a
->> > Linux gm-arco 6.16.8-arch3-1 #1 SMP PREEMPT_DYNAMIC Mon, 22 Sep 2025 2=
-2:08:35 +0000 x86_64 GNU/Linux
->> > [root@gm-arco example]# ./passthrough /tmp/test/
->> > [root@gm-arco example]# mkdir /tmp/test/yy
->> > [root@gm-arco example]# /home/gm/code/ltp/testcases/kernel/fs/doio/iog=
-en -N iogen01 -i 120s -s read,write 500b:/tmp/test/yy/kk1 1000b:/tmp/test/y=
-y/kk2 | /home/gm/code/ltp/testcases/kernel/fs/doio/doio -N iogen01 -a -v -n=
- 2 -k
->> >
->> > iogen(iogen01) starting up with the following:
->> >
->> > Out-pipe:              stdout
->> > Iterations:            120 seconds
->> > Seed:                  3091343
->> > Offset-Mode:           sequential
->> > Overlap Flag:          off
->> > Mintrans:              1           (1 blocks)
->> > Maxtrans:              131072      (256 blocks)
->> > O_RAW/O_SSD Multiple:  (Determined by device)
->> > Syscalls:              read write
->> > Aio completion types:  none
->> > Flags:                 buffered sync
->> >
->> > Test Files:
->> >
->> > Path                                          Length    iou   raw iou =
-file
->> >                                               (bytes) (bytes) (bytes) =
-type
->> > ----------------------------------------------------------------------=
--------
->> > /tmp/test/yy/kk1                               256000       1     512 =
-regular
->> > /tmp/test/yy/kk2                               512000       1     512 =
-regular
->> >
->> > doio(iogen01) (3091346) 17:43:50
->> > ---------------------
->> > *** DATA COMPARISON ERROR ***
->> > check_file(/tmp/test/yy/kk2, 116844, 106653, X:3091346:gm-arco:doio*, =
-23, 0) failed
->> >
->> > Comparison fd is 3, with open flags 0
->> > Corrupt regions follow - unprintable chars are represented as '.'
->> > -----------------------------------------------------------------
->> > corrupt bytes starting at file offset 116844
->> >     1st 32 expected bytes:  X:3091346:gm-arco:doio*X:3091346
->> >     1st 32 actual bytes:    91346:gm-arco:doio*C:3091346:gm-
->> > Request number 13873
->> > syscall:  write(4, 02540107176414100, 106653)
->> >           fd 4 is file /tmp/test/yy/kk2 - open flags are 04010001
->> >           write done at file offset 116844 - pattern is X:3091346:gm-a=
-rco:doio*
->> >
->> > doio(iogen01) (3091344) 17:43:50
->> > ---------------------
->> > (parent) pid 3091346 exited because of data compare errors
->> >
->> >  fs/fuse/file.c | 36 ++++++++++--------------------------
->> >  1 file changed, 10 insertions(+), 26 deletions(-)
->> >
->> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->> > index 5c5ed58d9..a832c3122 100644
->> > --- a/fs/fuse/file.c
->> > +++ b/fs/fuse/file.c
->> > @@ -1098,7 +1098,6 @@ static ssize_t fuse_send_write_pages(struct fuse=
-_io_args *ia,
->> >         struct fuse_file *ff =3D file->private_data;
->> >         struct fuse_mount *fm =3D ff->fm;
->> >         unsigned int offset, i;
->> > -       bool short_write;
->> >         int err;
->> >
->> >         for (i =3D 0; i < ap->num_pages; i++)
->> > @@ -1113,26 +1112,21 @@ static ssize_t fuse_send_write_pages(struct fu=
-se_io_args *ia,
->> >         if (!err && ia->write.out.size > count)
->> >                 err =3D -EIO;
->> >
->> > -       short_write =3D ia->write.out.size < count;
->> >         offset =3D ap->descs[0].offset;
->> >         count =3D ia->write.out.size;
->> >         for (i =3D 0; i < ap->num_pages; i++) {
->> >                 struct page *page =3D ap->pages[i];
->> >
->> > -               if (err) {
->> > -                       ClearPageUptodate(page);
->> > -               } else {
->> > -                       if (count >=3D PAGE_SIZE - offset)
->> > -                               count -=3D PAGE_SIZE - offset;
->> > -                       else {
->> > -                               if (short_write)
->> > -                                       ClearPageUptodate(page);
->> > -                               count =3D 0;
->> > -                       }
->> > -                       offset =3D 0;
->> > -               }
->> > -               if (ia->write.page_locked && (i =3D=3D ap->num_pages -=
- 1))
->> > -                       unlock_page(page);
->> > +        if (!err && !offset && count >=3D PAGE_SIZE)
->> > +            SetPageUptodate(page);
->> > +
->> > +        if (count > PAGE_SIZE - offset)
->> > +            count -=3D PAGE_SIZE - offset;
->> > +        else
->> > +            count =3D 0;
->> > +        offset =3D 0;
->> > +
->> > +        unlock_page(page);
->> >                 put_page(page);
->> >         }
->> >
->> > @@ -1195,16 +1189,6 @@ static ssize_t fuse_fill_write_pages(struct fus=
-e_io_args *ia,
->> >                 if (offset =3D=3D PAGE_SIZE)
->> >                         offset =3D 0;
->> >
->> > -               /* If we copied full page, mark it uptodate */
->> > -               if (tmp =3D=3D PAGE_SIZE)
->> > -                       SetPageUptodate(page);
->> > -
->> > -               if (PageUptodate(page)) {
->> > -                       unlock_page(page);
->> > -               } else {
->> > -                       ia->write.page_locked =3D true;
->> > -                       break;
->> > -               }
->>
->> I think this will run into the deadlock described here
->> https://lore.kernel.org/linux-fsdevel/CAHk-=3Dwh9Eu-gNHzqgfvUAAiO=3DvJ+p=
-Wnzxkv+tX55xhGPFy+cOw@mail.gmail.com/,
->> so I think we would need a different solution. Maybe one idea is doing
->> something similar to what the fi->writectr bias does - that at least
->> seems simpler to me than having to unlock all the pages in the array
->> if we have to fault in the iov iter and then having to relock the
->> pages while making sure everything is all consistent.
->>
->> Thanks,
->> Joanne
->>
->> >                 if (!fc->big_writes)
->> >                         break;
->> >         } while (iov_iter_count(ii) && count < fc->max_write &&
->> > --
->> > 2.51.0
->> >
->> >
 
