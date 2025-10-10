@@ -1,211 +1,363 @@
-Return-Path: <linux-kernel+bounces-847896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A273BCBF7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788C2BCBF80
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C50A1A63AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:45:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA973B0EA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D45C246796;
-	Fri, 10 Oct 2025 07:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463F323ED5B;
+	Fri, 10 Oct 2025 07:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AwDD6hrl"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bDK2y65Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF141EDA02
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451B91531C1
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760082327; cv=none; b=hbKwmNFW17YN7lYArHsNP4U2bOjxlrEjohxDfQcOIi9CUSZJBDYUgCyUmDIe+Z3v1OzClI8wXTRyCLHo0/YpDdXrGnpRkpcAU+9aJ+69RGnPenouySs9cPKg0lSQt8gvMDuPVjk3j4hMB4V5MjeAfAFmIJo3tD4LA9Zaika5Zzo=
+	t=1760082430; cv=none; b=bf8yGdEEPXGJ49mHUa8GCUhJ20nzviVySDsMCpjTZggh2UBdr8nF2lFfySNwHyhgExq4yju5rCUW4HgIov6c90E3Qa8T31gJF1OZMN6aRaPueAYUail0xHmM2aTkksJBngOkb6/QVSV0OJ2lIoirDAsbiKWuTsu0txvsUbbeVog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760082327; c=relaxed/simple;
-	bh=hBEF0FWAokM9P0rqGsUh11kjOyb0zIwpQozrxsQMsAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g9GI9vZ31CSQAOR6LycI9gkLY/wJzAXeMfi8Ye4FevlqmYtf5CLLneFHCey7qym+/65x6Rzst0jB0XgYcBJpwMHz0KZnRjXmNL8ObSkqJ/H9sgCxEjjV0UPkiVH1jYS20ZkfYhKTUpFQKTMiQSI8KxkfSNHZCOK6t5z+niHYg1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AwDD6hrl; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46f9d1b186dso1741315e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760082323; x=1760687123; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wLjqJv+QyyPTLNsZ8zbHcbBclNkfPTr01qnu368qCwE=;
-        b=AwDD6hrlbyU3vFxg91S+cpO8lrTlI2V0lVojJi9atJYLbZ5BmqkDCUUPzxDy3og0Ki
-         Nhy6WvMqSWB+Q1huFGZmMkHK8DHc0PfnzLsqndPXp74QWps9JGB6YfryYEEyOkvcIamD
-         rZac0CPLnUnEvEBCdb6xG0KfKhy361meEZBaloKmVMkfhlgNO2v79e1RQ36vdAHD9TIk
-         bUgZbPBSdhTvKu9jRLDnROWG/+sdY7J707uz9bP5Lvmd8NyKf6BofRgGAfm75cvJfusQ
-         l/euJpVeF+W+zpz8wdtX+7GjK5rjlY8TinnRY+FLPOTjLL5mQg87v5+/0aGR514rvZ3h
-         SQlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760082323; x=1760687123;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wLjqJv+QyyPTLNsZ8zbHcbBclNkfPTr01qnu368qCwE=;
-        b=QiVF21LCSRfHqZsW4tPu98IPdLnv7Xv4rqG9aErmO880ovrUbx+FJGqZZBtwUIP9YW
-         uugUDMqmqQzVTZkAsFYmjlf2gT7AgKLWj2Vmc6dVrdUrS3bmMfqyE5v9bam22h6hGFzX
-         2g5CUQrviBVAzhMVM8O1FLGMtvvIAYVbL1NNhS92p1RHPQGmnfXQN004bXuPICRByvU6
-         w4YZJ5xd3N7sRcmyEaPsRANpW3Y6GAD9uCqugMuiwrt6yZP7Ea6deXXlv2YPY71gYMTt
-         3j0++fHRkiWUGVhKVyd3NUuAvaC8Vh+Kr4sLSfoYN918Dl0FiNyy7t1gJUwsfnsa5ZXb
-         IYdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQzKgtdIHe9CDOHEGyXzP3kL0cZy+fIX3LNNmFFrWaoMaI3FqoHSTL+rUdKc5X37hULU/llKpLmiwgLPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD2/WdwLtGx0vS9m7wYcfoGlZCmoQnKCKou+tiJhEhi0HdIYZ5
-	TO77s5V1onVprK8ID8PjuGrQBH2ZAopHdJM1HJ8pRzx3ikgB+8LRVdpOBVDXkuEyrSE=
-X-Gm-Gg: ASbGnctx0k+o4oFYIA+j9AC3DerXcouEKQ+PJZd3acOcGBAnjiFMdGiFhDSjo8L8yer
-	3gG5lbIxyBCU0LMicTEcNdwLyRuAAxGNCdW3maGLrETuF6ECsstn5rKL5FrQ3x1L7ZCPj4dXBWS
-	In5XLYMp2zgK2o0hDmHdXSINdS5oKRPeock9q5njkftFcu7WoPzr+Fj+eP6T7oqj1E1y3xmpK9J
-	PblD42/dVE0ceDVaJE4Pa9TVOZg+JM9mBKSRe4z8ibrBjmMTd/XrWLNpAN3E0re9fs0ezTudRwN
-	SLVHnD1/AkSZ+FiabUtJlFYRvx5ZeGLT5tRg9nnFZ/r3YyJdRj9gqBrVZRh7Iw3IdzYdYqENu/l
-	9HEwCE/swPz0net+e3sVAP0i9fKizO89/yB6n+aE16iHmL2n8wtvBgihdyY0J5ZW7ELx2lBuJfq
-	mwAXY9kpqfmZHLnAyF2Ev1a4c9m5P/xznBR3TS1mYk8SLG/0jrp67Mz0nF/A==
-X-Google-Smtp-Source: AGHT+IFMVCmi3Q47jOI3pU6H/HdR1VM1sN75fjQ8Cr4d6PGLmkE2TxUhWmcNN+FrONdh6OiSevcSUA==
-X-Received: by 2002:a05:600c:3b11:b0:46e:6042:4671 with SMTP id 5b1f17b1804b1-46fa9b19fcamr36344475e9.8.1760082322863;
-        Fri, 10 Oct 2025 00:45:22 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce589a21sm2911255f8f.23.2025.10.10.00.45.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 00:45:22 -0700 (PDT)
-Date: Fri, 10 Oct 2025 09:45:19 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND
- 64-BIT)" <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] x86/tsx: Get the tsx= command line parameter
- with early_param()
-Message-ID: <20251010094519.3d845993@mordecai.tesarici.cz>
-In-Reply-To: <20251010003345.dc6ybdhwoslyse5m@desk>
-References: <cover.1758906115.git.ptesarik@suse.com>
-	<63118e583443490a285fd194baeae874d65eff87.1758906115.git.ptesarik@suse.com>
-	<20251009185134.fb4evjrk76rwxv37@desk>
-	<20251010003345.dc6ybdhwoslyse5m@desk>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1760082430; c=relaxed/simple;
+	bh=W3dOsgbtTI4mJEylSFndcpS+ycygr2/i8AMpxGspctE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=L1/zFd9VfFFzzNxVFtHlwe3FM8ypPqqQLWgoBWd5fd4Tpwh20P+aIKRVbTfvUssAx4KAAX2NOx3rdCeENqHlcKICP1LP21O6Tnws5ktSBS7pB7XdQnwUHqJaWgX33Jd+MdYEg7LNfjuN3e/fGHCFeGnG1j5g1cxhhRgQ6tRILHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bDK2y65Y; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760082428; x=1791618428;
+  h=date:from:to:cc:subject:message-id;
+  bh=W3dOsgbtTI4mJEylSFndcpS+ycygr2/i8AMpxGspctE=;
+  b=bDK2y65YRKL9Lk1umdGc1MnbThrKC0WDlvoSwUp+XaqG+A2Tu+zZBEFs
+   UHp8cr6lnoHViT3pxumZ9cWBV3Ue2xSfPM+ptlB5N7RM2TGBw3WXu7aV0
+   3SP6dMoXYY7GZOmWIHKmqrxShOVudHqVm5QKpIJEUs8Y1Ej8ZGCwe2ToO
+   pSSHUG/hFmSst6Zncdh0TOJKDGhI6XzEK2HX8YlDCFlI7UWIoTE2pMDWR
+   +LeRedUkWFEpaCIZTh02hAV8RWGrlhEtmoplz+rtnUo3NJwhfVe3zhvlf
+   3TlsqLAP/voeKPZKu6TelTWCeAtdDWKR/1GHELxRB52vDbA47UEEcn5Sd
+   g==;
+X-CSE-ConnectionGUID: Fgkqt8OfTh6YhkVQ1DuexA==
+X-CSE-MsgGUID: NijNQQgQRsiEaAEreMB1Xw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79942751"
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="79942751"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:47:07 -0700
+X-CSE-ConnectionGUID: V0AvF/ERTGGRjy7whdDr3A==
+X-CSE-MsgGUID: u96JIBz0RfWYWYqr0ML4Fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="180503918"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 10 Oct 2025 00:47:05 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v77qA-0002QZ-2X;
+	Fri, 10 Oct 2025 07:47:02 +0000
+Date: Fri, 10 Oct 2025 15:46:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20251009] BUILD REGRESSION
+ 0a843be7c99be610223cafd649d9ab645ce4cd89
+Message-ID: <202510101517.PeMduGni-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 9 Oct 2025 17:33:45 -0700
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20251009
+branch HEAD: 0a843be7c99be610223cafd649d9ab645ce4cd89  scsi: libsas/aci94xx: Avoid multiple -Wflex-array-member-not-at-end warnings
 
-> On Thu, Oct 09, 2025 at 11:51:40AM -0700, Pawan Gupta wrote:
-> > On Fri, Sep 26, 2025 at 08:01:02PM +0200, Petr Tesarik wrote:  
-> > > Use early_param() to get the value of the tsx= command line parameter.
-> > > Although cmdline_find_option() works fine, the option is later reported
-> > > as unknown and passed to user space. The latter is not a real issue, but
-> > > the former is confusing and makes people wonder if the tsx= parameter had
-> > > any effect and double-check for typos unnecessarily.  
-> 
-> If this is too much of an annoyance, I would suggest to move
-> x86_get_tsx_auto_mode() from tsx_parse_cmdline() to tsx_init().
-> 
-> ---
-> diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
-> index 167dfd38b87a..805be8beb37a 100644
-> --- a/arch/x86/kernel/cpu/tsx.c
-> +++ b/arch/x86/kernel/cpu/tsx.c
-> @@ -20,6 +20,7 @@
->  #define pr_fmt(fmt) "tsx: " fmt
->  
->  enum tsx_ctrl_states {
-> +	TSX_CTRL_AUTO,
->  	TSX_CTRL_ENABLE,
->  	TSX_CTRL_DISABLE,
->  	TSX_CTRL_RTM_ALWAYS_ABORT,
-> @@ -27,7 +28,8 @@ enum tsx_ctrl_states {
->  };
->  
->  static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init =
-> -	TSX_CTRL_NOT_SUPPORTED;
-> +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO :
-> +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF)  ? TSX_CTRL_DISABLE : TSX_CTRL_ENABLE;
+Error/Warning (recently discovered and may have been fixed):
 
-I like this approach, because it converts runtime initialization code
-to a build-time initializer, based on build-time config options.
+    include/linux/stddef.h:16:33: error: expected declaration specifiers or '...' before '__builtin_offsetof'
+    include/scsi/sas.h:365:14: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
+    include/scsi/sas.h:365:15: error: expected ')'
+    include/scsi/sas.h:365:15: error: expected parameter declarator
+    include/scsi/sas.h:365:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+    include/scsi/sas.h:366:15: error: expected declaration specifiers or '...' before string constant
 
-Can I add your Signed-off-by: for a v3?
+Error/Warning ids grouped by kconfigs:
 
-Petr T
+recent_errors
+|-- i386-allmodconfig
+|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|-- i386-allyesconfig
+|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|-- x86_64-allyesconfig
+|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
+|   |-- include-scsi-sas.h:error:expected-)
+|   |-- include-scsi-sas.h:error:expected-parameter-declarator
+|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
+|-- x86_64-buildonly-randconfig-004-20251010
+|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
+|   |-- include-scsi-sas.h:error:expected-)
+|   |-- include-scsi-sas.h:error:expected-parameter-declarator
+|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
+|-- x86_64-kexec
+|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
+|   |-- include-scsi-sas.h:error:expected-)
+|   |-- include-scsi-sas.h:error:expected-parameter-declarator
+|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
+|-- x86_64-randconfig-001-20251010
+|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
+|   |-- include-scsi-sas.h:error:expected-)
+|   |-- include-scsi-sas.h:error:expected-parameter-declarator
+|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
+|-- x86_64-randconfig-005-20251010
+|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
+|   |-- include-scsi-sas.h:error:expected-)
+|   |-- include-scsi-sas.h:error:expected-parameter-declarator
+|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
+|-- x86_64-randconfig-071-20251010
+|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
+|   |-- include-scsi-sas.h:error:expected-)
+|   |-- include-scsi-sas.h:error:expected-parameter-declarator
+|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
+|-- x86_64-randconfig-075-20251010
+|   |-- include-scsi-sas.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
+|   |-- include-scsi-sas.h:error:expected-)
+|   |-- include-scsi-sas.h:error:expected-parameter-declarator
+|   `-- include-scsi-sas.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
+|-- x86_64-rhel-9.4
+|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|-- x86_64-rhel-9.4-bpf
+|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|-- x86_64-rhel-9.4-func
+|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|-- x86_64-rhel-9.4-kselftests
+|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|-- x86_64-rhel-9.4-kunit
+|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+|   `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
+`-- x86_64-rhel-9.4-ltp
+    |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
+    `-- include-scsi-sas.h:error:expected-declaration-specifiers-or-...-before-string-constant
 
+elapsed time: 1115m
 
+configs tested: 202
+configs skipped: 3
 
->  static void tsx_disable(void)
->  {
-> @@ -164,11 +166,28 @@ static void tsx_dev_mode_disable(void)
->  	}
->  }
->  
-> -void __init tsx_init(void)
-> +static int __init tsx_parse_cmdline(char *str)
->  {
-> -	char arg[5] = {};
-> -	int ret;
-> +	if (!str)
-> +		return -EINVAL;
-> +
-> +	if (!strcmp(str, "on")) {
-> +		tsx_ctrl_state = TSX_CTRL_ENABLE;
-> +	} else if (!strcmp(str, "off")) {
-> +		tsx_ctrl_state = TSX_CTRL_DISABLE;
-> +	} else if (!strcmp(str, "auto")) {
-> +		tsx_ctrl_state = TSX_CTRL_AUTO;
-> +	} else {
-> +		tsx_ctrl_state = TSX_CTRL_DISABLE;
-> +		pr_err("invalid option, defaulting to off\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +early_param("tsx", tsx_parse_cmdline);
->  
-> +void __init tsx_init(void)
-> +{
->  	tsx_dev_mode_disable();
->  
->  	/*
-> @@ -202,27 +221,8 @@ void __init tsx_init(void)
->  		return;
->  	}
->  
-> -	ret = cmdline_find_option(boot_command_line, "tsx", arg, sizeof(arg));
-> -	if (ret >= 0) {
-> -		if (!strcmp(arg, "on")) {
-> -			tsx_ctrl_state = TSX_CTRL_ENABLE;
-> -		} else if (!strcmp(arg, "off")) {
-> -			tsx_ctrl_state = TSX_CTRL_DISABLE;
-> -		} else if (!strcmp(arg, "auto")) {
-> -			tsx_ctrl_state = x86_get_tsx_auto_mode();
-> -		} else {
-> -			tsx_ctrl_state = TSX_CTRL_DISABLE;
-> -			pr_err("invalid option, defaulting to off\n");
-> -		}
-> -	} else {
-> -		/* tsx= not provided */
-> -		if (IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO))
-> -			tsx_ctrl_state = x86_get_tsx_auto_mode();
-> -		else if (IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF))
-> -			tsx_ctrl_state = TSX_CTRL_DISABLE;
-> -		else
-> -			tsx_ctrl_state = TSX_CTRL_ENABLE;
-> -	}
-> +	if (tsx_ctrl_state == TSX_CTRL_AUTO)
-> +		tsx_ctrl_state = x86_get_tsx_auto_mode();
->  
->  	if (tsx_ctrl_state == TSX_CTRL_DISABLE) {
->  		tsx_disable();
+tested configs:
+alpha                             allnoconfig    clang-22
+alpha                            allyesconfig    clang-19
+alpha                               defconfig    clang-19
+arc                              allmodconfig    clang-19
+arc                               allnoconfig    clang-22
+arc                              allyesconfig    clang-19
+arc                                 defconfig    clang-19
+arc                   randconfig-001-20251010    gcc-12.5.0
+arc                   randconfig-001-20251010    gcc-8.5.0
+arc                   randconfig-002-20251010    gcc-8.5.0
+arm                              allmodconfig    clang-19
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    clang-19
+arm                         bcm2835_defconfig    gcc-15.1.0
+arm                                 defconfig    clang-19
+arm                      integrator_defconfig    gcc-15.1.0
+arm                   randconfig-001-20251010    gcc-8.5.0
+arm                   randconfig-002-20251010    gcc-13.4.0
+arm                   randconfig-002-20251010    gcc-8.5.0
+arm                   randconfig-003-20251010    gcc-8.5.0
+arm                   randconfig-004-20251010    gcc-8.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    clang-22
+arm64                               defconfig    clang-19
+arm64                 randconfig-001-20251010    gcc-14.3.0
+arm64                 randconfig-001-20251010    gcc-8.5.0
+arm64                 randconfig-002-20251010    clang-19
+arm64                 randconfig-002-20251010    gcc-8.5.0
+arm64                 randconfig-003-20251010    clang-17
+arm64                 randconfig-003-20251010    gcc-8.5.0
+arm64                 randconfig-004-20251010    gcc-15.1.0
+arm64                 randconfig-004-20251010    gcc-8.5.0
+csky                              allnoconfig    clang-22
+csky                                defconfig    clang-19
+csky                  randconfig-001-20251010    gcc-14.3.0
+csky                  randconfig-002-20251010    gcc-14.3.0
+hexagon                          alldefconfig    clang-22
+hexagon                          allmodconfig    clang-19
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-19
+hexagon                             defconfig    clang-19
+hexagon               randconfig-001-20251010    gcc-14.3.0
+hexagon               randconfig-002-20251010    gcc-14.3.0
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    clang-20
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20251010    gcc-14
+i386        buildonly-randconfig-002-20251010    gcc-14
+i386        buildonly-randconfig-003-20251010    gcc-14
+i386        buildonly-randconfig-004-20251010    gcc-14
+i386        buildonly-randconfig-005-20251010    gcc-14
+i386        buildonly-randconfig-006-20251010    gcc-14
+i386                                defconfig    clang-20
+i386                  randconfig-001-20251010    clang-20
+i386                  randconfig-002-20251010    clang-20
+i386                  randconfig-003-20251010    clang-20
+i386                  randconfig-004-20251010    clang-20
+i386                  randconfig-005-20251010    clang-20
+i386                  randconfig-006-20251010    clang-20
+i386                  randconfig-007-20251010    clang-20
+i386                  randconfig-011-20251010    gcc-14
+i386                  randconfig-012-20251010    gcc-14
+i386                  randconfig-013-20251010    gcc-14
+i386                  randconfig-014-20251010    gcc-14
+i386                  randconfig-015-20251010    gcc-14
+i386                  randconfig-016-20251010    gcc-14
+i386                  randconfig-017-20251010    gcc-14
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20251010    gcc-14.3.0
+loongarch             randconfig-002-20251010    gcc-14.3.0
+m68k                             allmodconfig    clang-19
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    clang-19
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    clang-19
+m68k                          sun3x_defconfig    gcc-15.1.0
+microblaze                       allmodconfig    clang-19
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    clang-19
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                          eyeq5_defconfig    clang-22
+mips                           gcw0_defconfig    gcc-15.1.0
+mips                           ip22_defconfig    clang-22
+nios2                             allnoconfig    gcc-15.1.0
+nios2                               defconfig    gcc-15.1.0
+nios2                 randconfig-001-20251010    gcc-14.3.0
+nios2                 randconfig-002-20251010    gcc-14.3.0
+openrisc                          allnoconfig    clang-22
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-14
+openrisc                  or1klitex_defconfig    clang-22
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    clang-22
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20251010    gcc-14.3.0
+parisc                randconfig-002-20251010    gcc-14.3.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-22
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc                      mgcoge_defconfig    clang-22
+powerpc                      pasemi_defconfig    clang-22
+powerpc               randconfig-001-20251010    gcc-14.3.0
+powerpc               randconfig-002-20251010    gcc-14.3.0
+powerpc               randconfig-003-20251010    gcc-14.3.0
+powerpc64             randconfig-001-20251010    gcc-14.3.0
+powerpc64             randconfig-002-20251010    gcc-14.3.0
+powerpc64             randconfig-003-20251010    gcc-14.3.0
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-22
+riscv                            allyesconfig    gcc-15.1.0
+riscv                               defconfig    gcc-14
+riscv                    nommu_k210_defconfig    gcc-15.1.0
+riscv                 randconfig-001-20251010    clang-22
+riscv                 randconfig-001-20251010    gcc-9.5.0
+riscv                 randconfig-002-20251010    gcc-9.5.0
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    gcc-14
+s390                  randconfig-001-20251010    gcc-14.3.0
+s390                  randconfig-001-20251010    gcc-9.5.0
+s390                  randconfig-002-20251010    clang-22
+s390                  randconfig-002-20251010    gcc-9.5.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-14
+sh                    randconfig-001-20251010    gcc-15.1.0
+sh                    randconfig-001-20251010    gcc-9.5.0
+sh                    randconfig-002-20251010    gcc-15.1.0
+sh                    randconfig-002-20251010    gcc-9.5.0
+sh                           se7721_defconfig    clang-22
+sh                            shmin_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20251010    gcc-11.5.0
+sparc                 randconfig-001-20251010    gcc-9.5.0
+sparc                 randconfig-002-20251010    gcc-8.5.0
+sparc                 randconfig-002-20251010    gcc-9.5.0
+sparc64                             defconfig    gcc-14
+sparc64               randconfig-001-20251010    clang-20
+sparc64               randconfig-001-20251010    gcc-9.5.0
+sparc64               randconfig-002-20251010    gcc-10.5.0
+sparc64               randconfig-002-20251010    gcc-9.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    clang-19
+um                                  defconfig    gcc-14
+um                             i386_defconfig    gcc-14
+um                    randconfig-001-20251010    gcc-14
+um                    randconfig-001-20251010    gcc-9.5.0
+um                    randconfig-002-20251010    gcc-14
+um                    randconfig-002-20251010    gcc-9.5.0
+um                           x86_64_defconfig    gcc-14
+um                           x86_64_defconfig    gcc-15.1.0
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20251010    gcc-14
+x86_64      buildonly-randconfig-002-20251010    gcc-14
+x86_64      buildonly-randconfig-003-20251010    gcc-14
+x86_64      buildonly-randconfig-004-20251010    gcc-14
+x86_64      buildonly-randconfig-005-20251010    gcc-14
+x86_64      buildonly-randconfig-006-20251010    gcc-14
+x86_64                              defconfig    clang-20
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20251010    clang-20
+x86_64                randconfig-002-20251010    clang-20
+x86_64                randconfig-003-20251010    clang-20
+x86_64                randconfig-004-20251010    clang-20
+x86_64                randconfig-005-20251010    clang-20
+x86_64                randconfig-006-20251010    clang-20
+x86_64                randconfig-007-20251010    clang-20
+x86_64                randconfig-008-20251010    clang-20
+x86_64                randconfig-071-20251010    clang-20
+x86_64                randconfig-072-20251010    clang-20
+x86_64                randconfig-073-20251010    clang-20
+x86_64                randconfig-074-20251010    clang-20
+x86_64                randconfig-075-20251010    clang-20
+x86_64                randconfig-076-20251010    clang-20
+x86_64                randconfig-077-20251010    clang-20
+x86_64                randconfig-078-20251010    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-14
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-14
+x86_64                           rhel-9.4-ltp    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                generic_kc705_defconfig    gcc-15.1.0
+xtensa                randconfig-001-20251010    gcc-8.5.0
+xtensa                randconfig-001-20251010    gcc-9.5.0
+xtensa                randconfig-002-20251010    gcc-9.5.0
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
