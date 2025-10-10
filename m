@@ -1,98 +1,99 @@
-Return-Path: <linux-kernel+bounces-848545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5805BCE025
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:56:31 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C79BCE00A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2BF1548FF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:55:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 32262354A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F5F2FBE12;
-	Fri, 10 Oct 2025 16:54:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9225B2FC88C;
-	Fri, 10 Oct 2025 16:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B302FC87A;
+	Fri, 10 Oct 2025 16:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BmJ6TLz+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978092FC876;
+	Fri, 10 Oct 2025 16:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760115297; cv=none; b=Hcvhpto33IyG8YfIItjg5pw2/fdPiWr1TTAi7JHrSBHXsKYy/49iMjYiO+zUE+srfI9zdkqDPxFQ0V75e5AYetcW+wzuOCeFr0HKkOdpPSwZQjUqELMnOeK4/UxAhZ028Bi7YCAvi3a10aZyWgB0ZnX+tZnAI75ZMk40FU40aE8=
+	t=1760115309; cv=none; b=a0Eyq7QNRnlA2/G04uhf1e3Rc6ycje/GXUaLYPMYkDA3cv3vy0St4J3iPYSXGKOAkkcQUlhXD40PCMrMkAok8z7uBAMj3SwrcWaFAQCh0c21ytJZ5GXNZvji0LJZcpPRWJeY5gP0THDHg1ywsy8jHsnp7+0F5tKyylKictTv714=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760115297; c=relaxed/simple;
-	bh=rzgS5U3wOAz6i7tHimCpHOWZle7PLS21PkU3v7tYq7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dy525qFmWZE7WnaU5MAiTZ3EHasT+doEbChPY1S+k12dSoNywc27U+6no6wEY5eTrRpDSFG/NUJ1fU17qpGwJ1Hw9mApHT8mEvSOu15V5Ve8VA4SRNfISG/VH1zqtFfw8Jeo5p9huo7MT+norB9szP10jLfvZ/UW51zNBFUyvNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2DCE1713;
-	Fri, 10 Oct 2025 09:54:45 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 912D03F66E;
-	Fri, 10 Oct 2025 09:54:48 -0700 (PDT)
-Message-ID: <c6a34438-ab7e-4bdc-9494-d3ac2574213a@arm.com>
-Date: Fri, 10 Oct 2025 17:54:25 +0100
+	s=arc-20240116; t=1760115309; c=relaxed/simple;
+	bh=suRumcgYqoCReE8eyejZ0DNC/ShHcuzZ9zg6cgvFHCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YjaWV+S50zk2riFKqaI7zPK14D3yL+cAPN3dEbxOf1LinDmIONht2+JMEgweio/v+6zuXAn8s3akHwpJ9gV+u3dC8X8BRK2pBUGmn3NN3iGEj+0JtJquirqg0UVYB2xhuBNrF6RTNOrKtMClhzDxF0T5zWyzzjfQySvV8wzGzjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BmJ6TLz+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vscTT9HApN3I/7J7o6eTXeB4kqT2Uq/JxUsNpPc9x4c=; b=BmJ6TLz+3ImZgyegUyiBhBdxD6
+	6t7z+p3q0qqdz29e9/eJ53uRu+bGZ1JD+F4O8+/JkzDTC0o1kuaU72MG9wZAY+OV7uRg1f7MlAwY1
+	fxV7oYk88oPiZ73BA+Net4WlYvnjkrZ7uTsUByCBLA/Kegb9P0cyY4nR6GrNremzyFGY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v7GOE-00AcUe-SN; Fri, 10 Oct 2025 18:54:46 +0200
+Date: Fri, 10 Oct 2025 18:54:46 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Conor Dooley <conor@kernel.org>
+Cc: Thomas Wismer <thomas@wismer.xyz>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: pse-pd: ti,tps23881: Add TPS23881B
+Message-ID: <d93573b4-6faa-4af5-80ae-32d68092ff30@lunn.ch>
+References: <20251004180351.118779-2-thomas@wismer.xyz>
+ <20251004180351.118779-8-thomas@wismer.xyz>
+ <20251007-stipulate-replace-1be954b0e7d2@spud>
+ <20251008135243.22a908ec@pavilion>
+ <e14c6932-efc9-4bf2-a07b-6bbb56d7ffbd@lunn.ch>
+ <20251009223302.306e036a@pavilion>
+ <8395a77f-b3ae-4328-9acb-58c6ac00bf9e@lunn.ch>
+ <20251010-gigahertz-parakeet-4e8b62ffa9fd@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask from
- a processor container
-To: Fenghua Yu <fenghuay@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-2-james.morse@arm.com>
- <89d5a73c-2a48-4aec-9249-07c71ca214ec@nvidia.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <89d5a73c-2a48-4aec-9249-07c71ca214ec@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010-gigahertz-parakeet-4e8b62ffa9fd@spud>
 
-Hi Fenghua,
-
-On 02/10/2025 04:35, Fenghua Yu wrote:
-> On 9/10/25 13:42, James Morse wrote:
->> The ACPI MPAM table uses the UID of a processor container specified in
->> the PPTT to indicate the subset of CPUs and cache topology that can
->> access each MPAM System Component (MSC).
->>
->> This information is not directly useful to the kernel. The equivalent
->> cpumask is needed instead.
->>
->> Add a helper to find the processor container by its id, then walk
->> the possible CPUs to fill a cpumask with the CPUs that have this
->> processor container as a parent.
->>
->> CC: Dave Martin <dave.martin@arm.com>
->> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
+> > So if the silicon and the DT disagree, you get -ENODEV or similar?
+> > That is what i would recommend, so that broken DT blobs get found by
+> > the developer.
 > 
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> I'm personally not a big fan of this kind of thing, as it prevents using
+> fallbacks for new devices when done strictly. I only really like it
+> being done this way if the driver does not produce errors for unknown
+> part numbers, only if (using this case as an example) a b device is
+> labeled as a non-b, or vice-versa. IOW, if the driver doesn't recognise
+> the ID, believe what's in DT.
 
+The issue we have seen in the past when not strictly checking the
+compatible against the hardware, is that a number of DT blob ship with
+the wrong compatible. Then sometime later you find you need to key
+some feature off the compatible, but you cannot without breaking all
+those devices which have the wrong compatible.
 
-Thanks!
+In order to be able to use the compatible, it has to be correct.
 
-James
+   Andrew
 
