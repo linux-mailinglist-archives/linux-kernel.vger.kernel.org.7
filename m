@@ -1,60 +1,54 @@
-Return-Path: <linux-kernel+bounces-847788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5DCBCBBAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:37:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397DEBCBBB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95B9D19E3F72
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DE2019E4168
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB170220698;
-	Fri, 10 Oct 2025 05:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23BD220698;
+	Fri, 10 Oct 2025 05:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE/NCL8B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7Tb5QJs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A0C1E5B88;
-	Fri, 10 Oct 2025 05:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3872AE70;
+	Fri, 10 Oct 2025 05:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760074662; cv=none; b=Jgy5EAaR4WwAx0CmPgC/BhgsMelcFCAeWmSAqLKRVEgeQ3WogtQZwf0KeyWbP3PZfaecYskQY9i3hM8/RW05Q38TPTY66eNZGjXJSQ3/aaj5mrAayYlEIaM023WfB7ZZtp2oumHx56y3aPf4Je4HNoZN22XM5PA1QN+FYEqx1yk=
+	t=1760074731; cv=none; b=X+rJ9wKMopUxQx+o48YzurEcoZcyHtfRaH5UkcFRSs2Zu8H/TGzvndOJW6raSv/6XWwsBPRq4anelV6ih7dShWn4UEiuxi3n1YR/AJD7W4UZDcatcuURcS9WZb3/Q6S8gbP7HMf48hARFaoBm4nfiAUM22Tl1B5h0Op9leMO1Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760074662; c=relaxed/simple;
-	bh=eSG/Q37AL9myTBhDnUGwpJwl96ThmygUixnMjqfFA7w=;
+	s=arc-20240116; t=1760074731; c=relaxed/simple;
+	bh=F7O07B2LlSVeGYLipoh5LnBlEanKkhrcvSpVxLznUi0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CaS2zUxDtZJUHHUgdgHDwxGuO/VVh/Hdugj/r85xfDoYL9HS+U+TfOm7kBl9/8LdpwwfICtW6ViZXnBMX1rdGsADhRmljMpP6XBlopn9LB11mKHJiXOxsygc7HrVFIVYPUkU7pXaExXBkhePP0LyowAzp8WSnmNLZZF54/IDyrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE/NCL8B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37497C4CEF1;
-	Fri, 10 Oct 2025 05:37:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LzfOgK+2vWDcF4kS63Fod64JMlwy4aIHV+whFe6hHK4Y/Ffz1FAX/D1MzOjkxFQ+cRTrA9y6EwnN32Nl/MAxp8bMN0M7ZLJbut1lIhFKO6DVfD+zWIJZLw4mfLflSnH+7Txxx1PrtT/RFcrYa4CqSg80XrKVLcMMccEiaLqEgf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7Tb5QJs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FC54C4CEF1;
+	Fri, 10 Oct 2025 05:38:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760074661;
-	bh=eSG/Q37AL9myTBhDnUGwpJwl96ThmygUixnMjqfFA7w=;
+	s=k20201202; t=1760074730;
+	bh=F7O07B2LlSVeGYLipoh5LnBlEanKkhrcvSpVxLznUi0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mE/NCL8BB4pxQmbWQWld9vmyEKkzDTVph4kFYLT8D6CxOIunbO3lsKyifa7pUV+7l
-	 C1OyCfMr1shXqOSaGvN1HIE3Xa+WQluhv3hWTL0BDu7MRrKoFRjvfxMP/evN1bKDm9
-	 L5OsI03zPx3hHjXSCGDG2cTPG3JO/uUPO6ED5dXjkRvbG3gdpwWu6g7M5CaHHyS9Ck
-	 qWTLqHRg97t1kBkuRYTwUEft6UBGWSHf5DEQpPmHO8Twr4HuYo/jJSFnGh5fEzSwsi
-	 RfTCFRXZhINgXySpPI1hlTOp49aHh1zHl6B0X7dSvvVMAXhxzPJbMNw5EN719EvWhn
-	 1QFsHhGMJ3Syw==
-Date: Thu, 9 Oct 2025 22:37:36 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nicolas Schier <nsc@kernel.org>
-Cc: Alexey Gladkov <legion@kernel.org>,
-	Charles Mirabile <cmirabil@redhat.com>, da.gomez@samsung.com,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, masahiroy@kernel.org,
-	mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com,
-	sfr@canb.auug.org.au
-Subject: Re: [PATCH v8 7/8] modpost: Create modalias for builtin modules
-Message-ID: <20251010053736.GA447238@ax162>
-References: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
- <20251007011637.2512413-1-cmirabil@redhat.com>
- <aOToOeNGiaFVM0Ds@example.org>
- <aOgSaNejdcBWKXx8@levanger>
+	b=k7Tb5QJsKj9BY9Hmmuu/c0VOajg2Qj7o0FDzvbBRRGnzW6Q3BD/D8C2acY3j2vsYJ
+	 v4RvcQ7vp1oxIxEhtKlmw2taE4xZbqFAsbdfXfM61xxfgyTkkBc58LpDvJBAu1pptj
+	 UavfvZZ9yNkDaxNvulWvTn55RVUGCo9Idqmsow+LO9kDfGBYvCIEjHweXNu52xiOUH
+	 EDWh/U5N7182eDb6R/H0va5pjUYOLc3PqNpFwc2FvdUqQvp3Yk9XJalrGgik9RxvCh
+	 xDrmQfICRQSI7kdK2/Z0QIZUcGLWj9Jx8VKDLcM0bLMdMRTlLtTQZi4xZVmatZupR/
+	 atYUvZESwW9XA==
+Date: Fri, 10 Oct 2025 08:38:46 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18-2
+Message-ID: <aOib5vbM4qDZr7sL@kernel.org>
+References: <aOibAOKu_lEsSlC8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,59 +57,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOgSaNejdcBWKXx8@levanger>
+In-Reply-To: <aOibAOKu_lEsSlC8@kernel.org>
 
-On Thu, Oct 09, 2025 at 09:52:08PM +0200, Nicolas Schier wrote:
-> On Tue, Oct 07, 2025 at 12:15:21PM +0200, Alexey Gladkov wrote:
-> > Hm. Indeed. I haven't found a good solution yet, but you can use the
-> > following patch to unlock compilation. It won't solve the problem, it will
-> > only hide it.
-> > 
-> > --- a/scripts/Makefile.vmlinux
-> > +++ b/scripts/Makefile.vmlinux
-> > @@ -84,7 +84,7 @@ endif
-> >  remove-section-y                                   := .modinfo
-> >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> > 
-> > -remove-symbols := -w --strip-symbol='__mod_device_table__*'
-> > +remove-symbols := -w --strip-unneeded-symbol='__mod_device_table__*'
-> > 
-> >  # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
-> >  # it is necessary to remove the PT_LOAD flag from the segment.
-> > 
-> 
-> Is it problematic to hide that?  Otherwise we'd have to revert the
-> patch, right?
+On Fri, Oct 10, 2025 at 08:35:00AM +0300, Jarkko Sakkinen wrote:
+> As per Chris' feedback, commands fail because it is based on Google's a
+> non-standard proprietary TPM alike implementation. And the issue is not
+> PC Client Profile specific. "typical profiles" are fine when they become
+                              "atypical profiles"
 
-Yeah, I would much prefer to ending up with pointless
-__mod_device_table__ symbols in the final binary than erroring out
-during the build... Does this happen with other architectures? I have
-not seen any reports yet but I have not tested anything yet. Why is
-RISC-V special here?
+> "typical profiles".
+ 
 
-It seems like the relocation comes from the .LASANLOC4 symbol in
-.data.rel.local?
-
-  $ llvm-objdump -Dr drivers/irqchip/irq-riscv-aplic-main.o
-  ...
-  Disassembly of section .data.rel.local:
-  ...
-  0000000000000130 <.LASANLOC4>:
-  ...
-       1c0: 0000          unimp
-          00000000000001c0:  R_RISCV_64   __mod_device_table__kmod_irq_riscv_aplic_main__acpi__aplic_acpi_match
-  ...
-
-I cannot find much information about this ASANLOC outside of its
-location within the GCC sources, do we even need it? I don't see a way
-to opt out of this section altogether or on a per-variable basis, I
-wonder if there is some way to strip it out...
-
-I plan to send the initial 6.18 Kbuild fixes pull request on Saturday.
-If we cannot figure out a real solution before then, maybe we can just
-switch to '--strip-unneeded-symbol' with a comment to upgrade that to
-'--strip-symbol' when possible?
-
-Cheers,
-Nathan
+BR, Jarkko
 
