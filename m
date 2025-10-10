@@ -1,138 +1,166 @@
-Return-Path: <linux-kernel+bounces-848249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823B2BCD01D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:03:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0FCBCD026
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92103189334E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:03:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2F204FD814
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCFB288527;
-	Fri, 10 Oct 2025 13:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A921D2F0C5B;
+	Fri, 10 Oct 2025 13:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DDluU58A"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0XR8HZR"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509F31C5F27
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A444275845
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101377; cv=none; b=FiMrm9B9X/JthbMySxe2H+5BWTS3wB0dRDheFAtOpvH6Vwunnjw90c6+zCOnW+HLm5kdg5XjRM3jdyml291azY7WUro0Gf+xEqf0YzRZ+n43ViJjmXvTbQLLIh0vZQTG/9Rn2QGWhlHarYAfj+Y2c8VpYLh5Ne5QDUDKn0Rm2DA=
+	t=1760101379; cv=none; b=XPgGvvXB3oNVjtq1A+wn7lcc3g1Ok0KpBTTyZkiJBlXGT9AXNpQ4jEziov5+4k52YfCfA/tM27M+6N/IC3J7bwD1jgTsVIGrty2OlygDOd90jYFX0l6xvHZrXFgeaHGC24fsA01z5lGadIGm368JL0KiW0SDZc6RGeqD+IFhJVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101377; c=relaxed/simple;
-	bh=FnimfbU2FanRO/TFNV/nIlg6CaWFEdZfo2qAFRmfFTw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZMJzYZGiyP8JqzBT0qEKF1f2gaW81ViBQHBTm7/NWv3DvGfPhog1EHTb31pXMDHL3nyFYvrXnrfFuzs5HyAI79j3+nccGTb8LaBT/FhnYuzDb6wvmz7mvKiv+x6i/Y8V/NFbHkBVEmE0YTSHhqzV4+SGlBjtgDHzXdUJ+axI4OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DDluU58A; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760101375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FnimfbU2FanRO/TFNV/nIlg6CaWFEdZfo2qAFRmfFTw=;
-	b=DDluU58AyztwY/tjcYgKVN84m6CqVmRnDKLV2jMjiIjKVkMGX9uz0Si9cs7bXjO0l0NecJ
-	7qLWe+i4yDO5De8uZ3UPk+G+t+BIkU2eF1FS/ObIRisu/shLjRdq4w3pF2Q16Q3qlOUT+t
-	TcXPpDcSHGJSh+/msCSF6uGC9MIOMks=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-96-XgNtLAIkNbqhGBmjyXQhNw-1; Fri, 10 Oct 2025 09:02:54 -0400
-X-MC-Unique: XgNtLAIkNbqhGBmjyXQhNw-1
-X-Mimecast-MFC-AGG-ID: XgNtLAIkNbqhGBmjyXQhNw_1760101373
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8645d397860so958480685a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:02:54 -0700 (PDT)
+	s=arc-20240116; t=1760101379; c=relaxed/simple;
+	bh=UMmh0ixuXJTt0s2TKUlOVuK1lCZfhBnZUVnUdxDuRZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UsksNr+94Dmhz+DN0yVcSM/PfIhCYe2jQUBw4foYGmjj3d0ZheDrhwk4Kb1gzAtILnDbeKO0sTwgL88IkR3aRk9VExNfTGUMPmgkBCKVxHUC2hykOXNxEZr7cvj/ANVbfVIejse4+JA+MoOWjZf+uMBCaUnLijUGpUU7Tpn3qTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G0XR8HZR; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so1266496f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:02:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760101376; x=1760706176; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4fPogEhzUXrTdhTTuabqrK7QngG4oNt13cZY7dhIIwI=;
+        b=G0XR8HZRXOBg7yP0zO+62uxho3M2w+/LSTVeITXv0HnxTLMxnbXVb423KnQA7FYMG+
+         s3ObLpOi3KfIY8rzSX3Y2dFWKtYc0/7cmaDdqK3H89IGnVW7SHXArDMEs79zmLuQAYHM
+         /iCnr66/X6251l5jfTTtocV2qJZrGnmBVXl8qWu/fD739nxXluGjoi82EB8XMC2E4BXh
+         syaP/2xs9rsJOncMRyybZ3pIG7Vlk1pLz/PEYgTfKKDAlcnuGq3IdVGA/ardDLYI+Dd9
+         5CVCxSeqC3y4VAJWsAAL5//g6NHXV19F2/xqUKqUJWIVBwBZxAZz0UpxqEPdyJmEqjgz
+         jWkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760101373; x=1760706173;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FnimfbU2FanRO/TFNV/nIlg6CaWFEdZfo2qAFRmfFTw=;
-        b=ZIDJvqXwRRHuJ36IrAnpIjlteJRmrQLeaGIwe/jrEBgkI7/I5cGBUFRshA73Am13PT
-         /weO6svIm1+G0xCx2cyGto5zQe5K5UHezbiiUWjre9CLarJ67i2UNFAZpae2D4wYz1/s
-         S179Xh2fIk4RrrkHvQyPDauplSy3a5HvBNr6njhcavjg9XcmT6AlqNGofSEWalXaxh9y
-         96iFqKa3owAejUeElK1WJf1gjamxXdQ6oUMhzl6Y6NO2vjcVQ9yybaAr1qojobrTaXKL
-         hOLjwSl58Jlj4uq/07Mwi9qXjHEJ5JBcEROci1qouRVZXNGqsDC5US7cUheimTU3Xh3C
-         mycw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4+tjYIO6Lqo9PvUO6pEBoNA9XXASWDQVi3E/j+3YbFSRlEwg690GGa2LqPQuW9oY2mMKYYVOBdIszTgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+yCM1pXkWcdIMog3ZJq3Du3sdr8B7I/oF2I27kDI7o+ASW6O/
-	+mSS0V5iFnlpN2grePF/K7by+YPKEPZvV66jdwOm6ghbQVAYIYeDTS1msDT/ZbtA0R9TpXmiJjR
-	UPTrwiAIyQOT3FskOWB9PnpujVSQ3keXa/EZFi2VqxgVorHpcG9wz89VtjlecAsFwUg==
-X-Gm-Gg: ASbGncu38+GDQkaIOjmDNjtH0npT4H7XMmAOwSQgCqDv6io6smJaY1MGQf0egwZ6I2X
-	9lwne6C/o3uYjGgHCccOl9BAGFTPIKInQBZr0M6z0b0B5e6MrtgVgy+0X20HOExDbr1dL3JckIX
-	YzVrm1extPpq+k2QfSBgFfiftfZpznuRxYdEol0CMmk2fohdNh4f+U90BDlsmIOmYQI3mYDXW2t
-	IkbhJRTYf+PXKzRX1vWUcynNk+2CU0JmHlVisUw//OhDVPG67oULQNvIjA5dZoqIIutFRm59gxz
-	IrEToXylyNq1wNzwmLtfNMHvQPmySAxoLmbsxX6kHTY3y7666ZRbAS4fjwwE9BRogvmr
-X-Received: by 2002:a05:620a:3955:b0:800:367d:b9cf with SMTP id af79cd13be357-88352ab0a0amr1681030285a.38.1760101373405;
-        Fri, 10 Oct 2025 06:02:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGnBnL7bmfY10viDPL7rL1Bs4KKFHHbDdLEX0MPg+8h0pURGT9gfkD0AmyKBdVqjSuBGaneJA==
-X-Received: by 2002:a05:620a:3955:b0:800:367d:b9cf with SMTP id af79cd13be357-88352ab0a0amr1681019385a.38.1760101372490;
-        Fri, 10 Oct 2025 06:02:52 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.168.96.228])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8849f9ac935sm402758185a.15.2025.10.10.06.02.50
+        d=1e100.net; s=20230601; t=1760101376; x=1760706176;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4fPogEhzUXrTdhTTuabqrK7QngG4oNt13cZY7dhIIwI=;
+        b=KEBC5M6DnYjydmQIg/ImhmwAtCkUBi32vQXMQyv1Xxmfu+M0Mwgvj3wbapnNpT0SLK
+         ocA+F5MxD63psWxDGtrv/szpp3rgjwDn4EAsBjrsrBdKFIG97vFEVLUKF2K0m/wB2OJ9
+         1XjbU9rbjhDncZmQDEBfWfq4PwjrLuEKFMc1WDQCuXDbLzuR5u0GaA9ssR2Uv1OVs+EQ
+         iVEiDcqFJEiU7BfV2C4ylKWnQx07mQSaCW/b9yZ8Z8RyILC8HQEYeFvWvou4HpWy8ZSI
+         ueh3QmtFte/pNCh9eBhEgilIc3JMK98cT6jr8kE8QXZbEKtADA87YfEFwQy8K+7fiZJ8
+         kRnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXre6J9WdU2SCTZL/AyRIwKPTTjCyLuhefh9K89vmTvGm91z1nMld+eDOvhBYoaWsckn6RlzFB8QEepows=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ6Eeq4cNTPXfNoQtdqyDrnZVAGxnLZbN6OC/OXK5NIFo/EsLz
+	RF8Odn67odkmS243XPiKJ7fqQR3evWDu++oIBS5PnnC1sB8N7TFz1gUn
+X-Gm-Gg: ASbGnctApydTLvCf5cL7YdqDRG1tMAG3uetPX5XroAxGJbTJpq5xRnDGADUJx1mlfkW
+	n+IhAyIFdp6wXiZQ/byRwB9j4u12yKV26K5urswfl2rJy2+xjqVuVFg7qlMnZBtm+miMWN2pBS2
+	3BPdtEjgo6YR1MywSzjvYGk9566YNlGLxD0UgCzIQ0cL0AxSnPhOKEfI4uvK0ltv91Z8UgKmkIp
+	F3lti7E3zGvep00tdAucOF4mMiIJrufm5loTmDNJF+7faWAV1LhVH7m3K/hQ5dQyPl+LDdZPDdp
+	E6OT7nb7XalpdHyikBkfH7ZalCSQsm4hUnsGNgkqum5eQ0nE/C0cHnoSSXEZrK/kLBo2oFRvSyZ
+	FauuoANFe/zBwSE1wHI0xFqht6J8wwDE4TuaM6uibJQCbNryBwSTfDivGgi7N3uZGpfKoZNaHJl
+	swoj+ytvQvWxfxg3clhaOu5nS1weknabsA4Q6qCec=
+X-Google-Smtp-Source: AGHT+IEMjxLTrJZ/o60+I/Q5hZnJdR8vNmdbTfqELxLC3RPvRkjHax7jfQ7GpFbXCyBlMYsPRvJkVg==
+X-Received: by 2002:a05:6000:4006:b0:3cc:8d94:1108 with SMTP id ffacd0b85a97d-4266726c45amr7913933f8f.22.1760101375405;
+        Fri, 10 Oct 2025 06:02:55 -0700 (PDT)
+Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce589b3dsm4284391f8f.24.2025.10.10.06.02.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 06:02:51 -0700 (PDT)
-Message-ID: <0f438533d0a0189efb4649dfac3190196330868e.camel@redhat.com>
-Subject: Re: [PATCH] rv: Add signal reactor
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Date: Fri, 10 Oct 2025 15:02:42 +0200
-In-Reply-To: <20251010125823-9bcb33be-96b9-4753-8ae0-11576f0e8d40@linutronix.de>
-References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
-	 <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
-	 <20250922162900.eNwI7CS0@linutronix.de>
-	 <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
-	 <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
-	 <87ikgxqrna.fsf@yellow.woof>
-	 <3c55441187b869b5bb07b74ef88c10bfd51f9fb1.camel@redhat.com>
-	 <20251006115555-9822f5f1-fc9d-4d6a-9735-274b242e0eba@linutronix.de>
-	 <2536a7777eb54ede40a335fa4204e87301b13040.camel@redhat.com>
-	 <20251010125823-9bcb33be-96b9-4753-8ae0-11576f0e8d40@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
- cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
- T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
- eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
- 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        Fri, 10 Oct 2025 06:02:53 -0700 (PDT)
+Date: Fri, 10 Oct 2025 15:02:51 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, jonathanh@nvidia.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] gpio: tegra186: Use generic macro for port
+ definitions
+Message-ID: <owzpsj5mhp6hq2cnujjd4il7pvbxjh2umy3vaoxa6yy5rwohdv@75xoicdb7psj>
+References: <20251010101331.712553-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pcqfgr3y5jk7i3mb"
+Content-Disposition: inline
+In-Reply-To: <20251010101331.712553-1-kkartik@nvidia.com>
 
-On Fri, 2025-10-10 at 13:02 +0200, Thomas Wei=C3=9Fschuh wrote:
-> > So if I get it correctly, you are both "voting" for removing reactors i=
-n
-> > favour
-> > of tracepoint-only error reporting.
-> > Am I getting this right?
+
+--pcqfgr3y5jk7i3mb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 1/2] gpio: tegra186: Use generic macro for port
+ definitions
+MIME-Version: 1.0
+
+On Fri, Oct 10, 2025 at 03:43:30PM +0530, Kartik Rajput wrote:
+> Introduce a generic macro TEGRA_GPIO_PORT to define SoC specific
+> ports macros. This simplifies the code and avoids unnecessary
+> duplication.
 >=20
-> No, it is a suggestion for a cleanup/optimization where reactors are not
-> directly called from the monitors but instead from a tracepoint which is
-> triggered from the monitors. It would decouple the monitor and reactor
-> subsystems.
+> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 87 +++++++++++-------------------------
+>  1 file changed, 25 insertions(+), 62 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index 4d3db6e06eeb..7ea541d6d537 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -1002,14 +1002,17 @@ static int tegra186_gpio_probe(struct platform_de=
+vice *pdev)
+>  	return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio);
+>  }
+> =20
+> -#define TEGRA186_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+> -	[TEGRA186_MAIN_GPIO_PORT_##_name] =3D {			\
+> -		.name =3D #_name,					\
+> -		.bank =3D _bank,					\
+> -		.port =3D _port,					\
+> -		.pins =3D _pins,					\
+> +#define TEGRA_GPIO_PORT(_prefix, _name, _bank, _port, _pins) \
+> +	[_prefix##_GPIO_PORT_##_name] =3D { \
+> +		.name =3D #_name, \
+> +		.bank =3D _bank, \
+> +		.port =3D _port, \
+> +		.pins =3D _pins, \
 
-Right, now I understand this better. Interesting idea, we can give it a tho=
-ught.
+If you keep the whitespace you can save another 8 lines of diff since
+these last four lines are exactly the same.
 
-Thanks,
-Gabriele
+Not a big deal, so either way:
 
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--pcqfgr3y5jk7i3mb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjpA/sACgkQ3SOs138+
+s6HdNhAAj3QcePPVQz0R9gcJDzaBbrFuORBYpeu5GIBz9LHCWWUtQ5bbXhLhFR1b
+frR83G/XWtu944mOBfTVlGSkTyEEmBHtiJdqATfDh5NOZMBSicdNGQI6+OrtCjvs
+8c6kqRz1rTnID5r7LqYHjw23+Rz7cjuKL7mAF8w3bQpbuNtbwoUY5rH58LUHRVRZ
+QVhIwM7+KrA/jTspDqN/V6Z0LT3XiYlmmhSanxHrl7EcgbKQHgzJhPWiQ/eBnk++
+st8fcLE7u6pz0/5zP5B2zJt70whesgyrgJxe1Fv5jAY2APhqAaCIzpWKtuR80P70
+lHStqpQIpbHCeYbFoVloaQgp7Xbln2VlP0hhSDna6hjDo4HhWnClkC2peKP1SDzB
+6ulyDz5mKP4AmLJVePsV9r+42sZMe0zaDqIjOgKi7EZo2IY4INuSLRmbX0dYPVON
+h4VKGQYmWx3evNiVCpL9QssbTjGdgxPpIeuAilaFa1wJo9aQw/WmxqH/bRNAx9S1
+XqXAfd07JjMwwQLrMvlM/nvOUbI3N6F0lNrCUshVQ4k6XhUTbeoFTTsjt6KyK4VB
+D733rdDy8PmOnuqELa5za00OYaCzXWsB1cn1cjIhdsYNoTH9KQYsPCATImSbAchU
+8vB3rNxM6/YC6xgYdtnAf5eHufE/Dukg+W0f6YM5J96d3Xmuowg=
+=nwfK
+-----END PGP SIGNATURE-----
+
+--pcqfgr3y5jk7i3mb--
 
