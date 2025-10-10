@@ -1,134 +1,116 @@
-Return-Path: <linux-kernel+bounces-847857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7DDBCBE60
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3782BCBE66
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 766804F0026
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:21:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A43F84F0493
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8339726FDAC;
-	Fri, 10 Oct 2025 07:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C29271464;
+	Fri, 10 Oct 2025 07:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9sHQKav"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HiMhiydg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C0F1D6193
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F6C271448
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760080874; cv=none; b=jUnHh0w8+AanjZe74fIctKQg6WCcdiRjmdHO5B6zfCFiZEARzfH07KoJsXDyR+5NqgkQq/BqHvQ7LaRK2GS5yz3hWhK8/Gp/42jBiDygvmw4psBJEcjGEmZ5wjzueZcU0TnJlNLKYJFWHvSmUgfUHHQTQRz9OZrSiwIMXkeaFoU=
+	t=1760080895; cv=none; b=M3oumzXeRC68QEOF1sddFla75obz4IlZOE/poCx36yc3S24ZwSyN+LkHiwBvXrxbCcazyltJiwoSLgF6L7OnIQub0GGIc2C2aDRczfWG/B66s6K1Xoqy58T1AUD9Z8pb0feFvA5EHcuvUz42l0aajucBHPKDZWcjdQjT4jvL3ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760080874; c=relaxed/simple;
-	bh=+DNwI8xaGLTmIzy1asfGEcemAncg+VAiG1XyG9gcAnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=roJGVtUhDcYpxbQpSBOATtd4ZpI68TWf4xh5uC2VIjQ6karo6srh4i0mbax3X/Mm2M8xemU9jDWS8nn/DIHzXz/zQjLh3olCTH3x1oJJ9dAb44JwGTLSNbfX58NSczjyHLQeitJ/rGU8hbEZon0ObNdpbeVt3zQsvHVwZd8xDVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9sHQKav; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-781251eec51so1526582b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:21:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760080872; x=1760685672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mxptVhruQAiRPEx46nNiwkKEt3IcgJzyOLn78aoPtes=;
-        b=j9sHQKavNiXnA9lwMjlGqGSEzZB9Gbmrba61ME3JT+683ANrf5xXUNS/Pq4FG+4pH3
-         Qz7AYitnE+aI0ts0hJO0mAR50UUXZLeRZcaTIZQxRnLwtrTxeGD9XjZaj/UP4u31N8mm
-         ObdqNDHsZMGUQjbkNd44DLJHIB94ng4rpUtVIV2HVtwAlN1ZpZiARi2tEXdPGPVuEh4X
-         ccsh4DbSnXrjCB2VOd6KB05FIV+CO64udh/Ylp3da0rX+Xw7IoZZcSrOlqSMXz68Bdo9
-         1qu0NjKlsWX4FSFOx+Rl2T75OOB2OghugSxwe8vCUzKD/C54hModX+DLnyMhpvBvGup/
-         86Lg==
+	s=arc-20240116; t=1760080895; c=relaxed/simple;
+	bh=WoN0dpJjGxiZ0wQf4DNv5iwB6nIANTg2G+mNbipfa0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0ZGrhWOryDMKbwvXDlwoD4n/j8XPBpQFxFqNPOG+wnKzMMyCtEnjUhG04WrotCVF5eVjxYaw8AJ2SDIIuj8CZlYgizBEmQMuxBu9mHCy+iWAUY1JQBO3LmC0WaZKRh5NK3hVOC9sYC/0FRUlumJXtxIeJDhJoAb7j4wN2tnnvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HiMhiydg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760080892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WoN0dpJjGxiZ0wQf4DNv5iwB6nIANTg2G+mNbipfa0o=;
+	b=HiMhiydgfwF8QBmM1UFbqY5uVFwzUjNy3rWg4zmywMdaxlnMUu0Ck3dhINSaPKq2fNO+H/
+	u8T7FPiehmi4tDzZ8oF/HZ5ZPCbAk8GZdRG6PtIdnCMIlNvUTXOLzuUfDtMj6ZI3SViL73
+	2bHJqbptRcGgGaAs7cTKmQxuvbZAWdU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-bKtLugnVPeaO0BPGnEQIFw-1; Fri, 10 Oct 2025 03:21:31 -0400
+X-MC-Unique: bKtLugnVPeaO0BPGnEQIFw-1
+X-Mimecast-MFC-AGG-ID: bKtLugnVPeaO0BPGnEQIFw_1760080890
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b4c2f26ab55so172697166b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:21:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760080872; x=1760685672;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1760080890; x=1760685690;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mxptVhruQAiRPEx46nNiwkKEt3IcgJzyOLn78aoPtes=;
-        b=NqJJxI406diFBmAaXoHGVkZgo03tDMqib9OrvcGipYvVd/UxRtECh9aIrQ5MWVgmsM
-         aF7Pxms3XodWIVlE0HnY54qV3Lh5qZb9NZCI0+GxJidzQiE/99GsLpI4isrQ3U8BlQ9k
-         nOWGA39c7lEt2vXj52aQhaXMcRh9CKCWvlArqfWPjLuccKETqv2Jjf6vp7KwHzAWh6Ip
-         XfrEs86pNixm8rcRcTIwuWmDoH7jRfVqr4iF9dz+4KutY8rYeDmcZJJsrWzSaEiCv3LL
-         vlr10H4cSSOY9b5GuZ3xDFzedpkduJtAmcCGaCL4y/qT2YWRdj+CbHeVfd4ybjtR58U2
-         PIYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWy+1cNwvLgHT3NO2BWCmTx7brOqb8+HK6QC4o0bM3WvQ73QRa79HL9BAVKkCxVHSTvkxq2xJTnkb/5f7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD9FEUh7XHoEorNJFSUPs/l1UDNKlZGdNt6XbVxtfv8AK7sLcT
-	+yyXM0+QoPTOsHq4GxmeTexvT65PNMf4UDRh4ANkrpdYB5CPBG/VX60j
-X-Gm-Gg: ASbGnctUTu64Tw8MQIOqtLnIVAnmErSNiyg1tibDZPO+yrmkwVDIxOiwBbb/QWHOKm8
-	IlFR7hZtCijOz4jMyxv9HdKS7nenqunked1D61gYXcYLgAKYyyNBPpL5GKrWM3eraHSSWkQyxL/
-	H+xZYOXdqG3L/GDa27qJ8s1Ymg9rflmZvMDSqjiR9MRK3kOscvNoVPqHciOnHQPc5/J7wPuZrKT
-	q7CWCkzi/glnfulmlk9b1n3f01dgT5Snkrr+BCuu1QNmRxmVy1uZp3i5bhVYYZcQYq2gcEPKuJZ
-	GcVmh7pDPSwdFITkm8+YmhN20UGSzhIHHB41NAMQzW7xJdByHFXRSYRrShYinewfkj3OkZRVQ7C
-	Kwm9qTL4MP4X97OGQeStWYqmWVIIXE18J91xVZ8fj/QqJMg==
-X-Google-Smtp-Source: AGHT+IFAWLmtWVM5EBGnGCaXD98Ys2mJ6n7A9+96/hj6XjqpG7KFLZEg2LWeP/xd2x4o7fwM7CawYw==
-X-Received: by 2002:a05:6a20:918e:b0:2e5:655c:7f86 with SMTP id adf61e73a8af0-32da839f1b2mr14664880637.39.1760080871668;
-        Fri, 10 Oct 2025 00:21:11 -0700 (PDT)
-Received: from fedora ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0965c3sm1926468b3a.52.2025.10.10.00.21.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 00:21:11 -0700 (PDT)
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Hannes Reinecke <hare@suse.de>,
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>
-Subject: [PATCH v3] nvme/tcp: handle tls partially sent records in write_space()
-Date: Fri, 10 Oct 2025 17:19:42 +1000
-Message-ID: <20251010071939.709063-4-wilfred.opensource@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        bh=WoN0dpJjGxiZ0wQf4DNv5iwB6nIANTg2G+mNbipfa0o=;
+        b=IV2/b/rHrogwMVp/ps8nDGfC5lhdJ1IOvw+4j6Ev2WDoKRfeVc7MY1hOB3nkNG+tuA
+         fq62Oubb6+1c58kbeycvzpA0WlsrBsezh5Ikg6GwEwqlBwHgLKgAiABht0aizq2frWFI
+         nSag7EVtytbv244IZw8m5NfqjoCCzqgAc4x1Az4c5XYcqCnwZc26MYhdbyIsV3Ebd5Zc
+         pnNRc42gwk9PUQMWLcqRHMCpuoPbQEDgJu6akQW70VcAlyZ1buZVV5czxzHs+5cFtHBx
+         v9uDkRfciwQ6YpZ/NJ4RaN1WmcZjKCc+uyCeJOk3FPlWgB4FzOep1hm+k0pc5yLnd1bP
+         7Uaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmU2Q4AUvM/mywhpju8zstmXpGhlgrY07GpxiuNng3JlkvSVi6UJ2MROAoU8VsBrUjPXpBei9b6hS2SzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr6jfIZjqOu3iDxrd/k3zBQwuRdB+Sxy5IMJk2bcHxSN/lhENi
+	lQnQHcvZYwcIJ07lTWVSxrzuVaQlM2GfPNHZ49xt7NJF8u1fZHgr48QWXXPEuRwit+eNclfN00F
+	EHgkIhiH3zsedumfX75wsSIXLrqEM5u6qgzQYdqcBaDPz1rPQbzPRYDYsRKcW72Lig1AL4w5vd8
+	KR0PoxUezVR3XfTUPjHg+2ziZQJrCOd7ekCMWpdz0s
+X-Gm-Gg: ASbGncujjtI9yNIGDLb+7B8v9WuDjPtBhEp3HGusGtxnrNjsIBJbmxgFT9TbpZIlpzt
+	N/I3wEGFlOIuSMy7VL0ISQ+JmnMXn2jCP6+znsOZ12xmKEFvg58KI3NrR1ThVOoO0ZRA46JULyc
+	Tyo3fcRncUDHvgcHLt8MWBuUz0jzM9BJQZIQqby4SROIQf2iIJm7d0Brg=
+X-Received: by 2002:a17:907:d0d:b0:b46:6718:3f29 with SMTP id a640c23a62f3a-b50a9d6facemr1103279866b.3.1760080889814;
+        Fri, 10 Oct 2025 00:21:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHtxGrbv0D1tCUVxtHfdMD5J4fwcx28uznIcAJssW+Z5+SL/t71bkFpdvjGgLGlUSDvq+NWmofNFYne2QiySXY=
+X-Received: by 2002:a17:907:d0d:b0:b46:6718:3f29 with SMTP id
+ a640c23a62f3a-b50a9d6facemr1103277466b.3.1760080889404; Fri, 10 Oct 2025
+ 00:21:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251008195905.333514-1-costa.shul@redhat.com>
+ <20251008195905.333514-2-costa.shul@redhat.com> <34afd8ffbb1c889e91fa536cf60369a697d86575.camel@redhat.com>
+In-Reply-To: <34afd8ffbb1c889e91fa536cf60369a697d86575.camel@redhat.com>
+From: Costa Shulyupin <costa.shul@redhat.com>
+Date: Fri, 10 Oct 2025 10:20:53 +0300
+X-Gm-Features: AS18NWDd9gdjeL-7ac1kmmdkaQjxIh8CkWqVuO7GoExI0sLzGguXDNu6X50mDgE
+Message-ID: <CADDUTFwFerzjRTPp1F+Rw+_U2DoomAxyDonXudCwh9gyXSn=nw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] tools/rtla: Add fatal() and replace error handling pattern
+To: Crystal Wood <crwood@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, 
+	John Kacur <jkacur@redhat.com>, Jan Stancek <jstancek@redhat.com>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+On Thu, 9 Oct 2025 at 00:55, Crystal Wood <crwood@redhat.com> wrote:
+> Looks like there was existing inconsistency with newlines... maybe have
+> fatal() include the newline automatically to simplify callers slightly?
+> We're not going to print a continuation if we're exiting.
+>
+> Otherwise, for the whole series:
+> Reviewed-by: Crystal Wood <crwood@redhat.com>
 
-With TLS enabled, records that are encrypted and appended to TLS TX
-list can fail to see a retry if the underlying TCP socket is busy, for
-example, hitting an EAGAIN from tcp_sendmsg_locked(). This is not known
-to the NVMe TCP driver, as the TLS layer successfully generated a record.
+fatal() belongs to the same family as debug_msg() and err_msg().
+Historically, the prototype and usage of these functions is identical
+to printf().
+printk() was identical as well, but now it adds a missing end-of-line
+automatically.
+fatal(), along with debug_msg() and err_msg(),
+can be upgraded too, but they should be updated together for consistency.
 
-Typically, the TLS write_space() callback would ensure such records are
-retried, but in the NVMe TCP Host driver, write_space() invokes
-nvme_tcp_write_space(). This causes a partially sent record in the TLS TX
-list to timeout after not being retried.
-
-This patch fixes the above by calling queue->write_space(), which calls
-into the TLS layer to retry any pending records.
-
-Fixes: be8e82caa685 ("nvme-tcp: enable TLS handshake upcall")
-Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
----
-V2->V3: Minor Style Changes
----
-drivers/nvme/host/tcp.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 1413788ca7d5..9a96df1a511c 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -1081,6 +1081,9 @@ static void nvme_tcp_write_space(struct sock *sk)
- 	queue = sk->sk_user_data;
- 	if (likely(queue && sk_stream_is_writeable(sk))) {
- 		clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
-+		/* Ensure pending TLS partial records are retried */
-+		if (nvme_tcp_queue_tls(queue))
-+			queue->write_space(sk);
- 		queue_work_on(queue->io_cpu, nvme_tcp_wq, &queue->io_work);
- 	}
- 	read_unlock_bh(&sk->sk_callback_lock);
--- 
-2.51.0
+Thanks
+Costa
 
 
