@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-848386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882A6BCD9CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:50:43 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C90BCD87D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 824673AE63D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:50:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7050C355BDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8812F6196;
-	Fri, 10 Oct 2025 14:50:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614D82F549C
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2738D23C4EA;
+	Fri, 10 Oct 2025 14:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXpCUjjH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763082836F;
+	Fri, 10 Oct 2025 14:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760107837; cv=none; b=Kpj5xnVMMi4tJlED/yzbfOcnez/qZmJnktAnvB5iUhkZACGK0UspxATtr4cHGR6lYDG9S/g6SI9Ub0HMNzv5Yn3LkATtLpdsERjcdxX7WN9W3ak6x2KqNbe4Symlh+vxLWxayljCNHhi978nt9fiADkrVVOH9e6OHLnCRTEfpus=
+	t=1760106720; cv=none; b=FqrtE9EOul1z6YH+QYPtUCVdQ/95j5m9AG3mhzDrV58SR8ZhxfUyvHQ4SBJHic2n2Wejv5DEU93I4ziumIfftW+EpKKWTTyAch4cBmNc/cGNsvbVzH21hk2h77vnHB+IIRGcrziJ5tFQQvJ/4vveqOp7xnwelsJ6hkWdt+d3gl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760107837; c=relaxed/simple;
-	bh=AgO5pJut8aaSpnOm0/973gm5/iIRjZby2wuHJQT1TqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eTZMXIsV4WMev8X+vZFrK8JcEs2KwJ5vLDBpJ47wNDAQgYVcbXsqnUGIy2gl6xhJJ+0+Y4qR9QV5sFn8csD0+rcd4Nq7mqLZiuS+eRFbpPPffryXQTJ2AtLZ8JPwTfO1y1eqUMHVEHb1dhiwBCK+9Sw7gVL8k0TefLjLdQWWbTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cjpzk4Kbmz9sS8;
-	Fri, 10 Oct 2025 16:29:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id kVVLb1asJWS3; Fri, 10 Oct 2025 16:29:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cjpzk3d5Tz9sRy;
-	Fri, 10 Oct 2025 16:29:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6BC278B774;
-	Fri, 10 Oct 2025 16:29:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id dGGoIumUbtKf; Fri, 10 Oct 2025 16:29:54 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1E9038B763;
-	Fri, 10 Oct 2025 16:29:54 +0200 (CEST)
-Message-ID: <fd1fbd79-734c-47c7-b229-a985e9761da3@csgroup.eu>
-Date: Fri, 10 Oct 2025 16:29:53 +0200
+	s=arc-20240116; t=1760106720; c=relaxed/simple;
+	bh=wEhFTZooq1SoHLK/XSZtmAYLO1RTIgJF4XL0BWpSf6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCYmb8yhvaECAA+YMPwHBmD9LRjwUlKl1er48XMT+eTNcjZ0nevIMzGVy01wcNKOWsC31V8R0akvqy+TNkeCmpLIMGkTXf+HGNwPaw/lqJnlTi4tNK7u5mtvAGrXbuzzh4EcMhtHr7Qzag5vz2tVn9ilOHbUDXVeOprWzjTnLIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXpCUjjH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1A4C4CEF1;
+	Fri, 10 Oct 2025 14:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760106719;
+	bh=wEhFTZooq1SoHLK/XSZtmAYLO1RTIgJF4XL0BWpSf6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FXpCUjjH9b/60w57JjvE1ZeBOKiZcpafsYdqPVv+0bN4+mCBf8fyZNgsOzG1MSJoT
+	 P81HDDez/i6P/08T6m9e2/P5JQH3TEcTmzHeq5WLMQZj+o6mQhjpEt2rz3wzyj8X3Y
+	 aIR5xPdCs3Zs//fY3zOCHI5xdoI2W7PBp99rvspB1EA9oWBODKnvMveUlLGnkZ+7EZ
+	 iY1Ztt4jHYz/yxJ+Zh/7antlDGDH7v7sm8xIWGkwaB8l4NdZfiZ3qr4SmKa22Yjt1c
+	 mYGuEwetaX1bykkHnzvHQ8/CdGZxgHtqL7kyyDGJWsMRTs2zbz0z7NhQDkAXdiwHTF
+	 2+l8nLEhYJcvg==
+Date: Fri, 10 Oct 2025 15:31:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: phy: imx8mq-usb: add alternate
+ reference clock
+Message-ID: <20251010-eldest-padded-98f9852a1248@spud>
+References: <20251010-usb-phy-alt-clk-support-v2-0-af4b78bb4ae8@nxp.com>
+ <20251010-usb-phy-alt-clk-support-v2-1-af4b78bb4ae8@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] 85xx: Add several root nodes to probe
-To: linuxppc-dev@lists.ozlabs.org, Scott Wood <oss@buserror.net>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org
-References: <2025042122-shiny-vicugna-28507c@boujee-and-buff>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <2025042122-shiny-vicugna-28507c@boujee-and-buff>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ReRyNSNdhTFV+Mx9"
+Content-Disposition: inline
+In-Reply-To: <20251010-usb-phy-alt-clk-support-v2-1-af4b78bb4ae8@nxp.com>
 
 
+--ReRyNSNdhTFV+Mx9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Le 22/04/2025 à 04:40, Ben Collins a écrit :
-> T4240 fails to hafve ifc, rapidio, and localbus probed.
-> 
-> This matches other QorIQ platforms and ensures devices under these nodes
-> get added as platform devices.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+--
+pw-bot: not-applicable
 
-What do you mean by "this matches other platforms" ? I can't grep any 
-other platform file with "fsl,ifc" or "rapidio"
+--ReRyNSNdhTFV+Mx9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Christophe
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> Signed-off-by: Ben Collins <bcollins@kernel.org>
-> Cc: Scott Wood <oss@buserror.net>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->   arch/powerpc/platforms/85xx/corenet_generic.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/powerpc/platforms/85xx/corenet_generic.c b/arch/powerpc/platforms/85xx/corenet_generic.c
-> index c44400e95f551..c81b8a47f3b0f 100644
-> --- a/arch/powerpc/platforms/85xx/corenet_generic.c
-> +++ b/arch/powerpc/platforms/85xx/corenet_generic.c
-> @@ -61,6 +61,9 @@ static const struct of_device_id of_device_ids[] = {
->   	{
->   		.compatible	= "simple-bus"
->   	},
-> +	{
-> +		.compatible	= "fsl,ifc"
-> +	},
->   	{
->   		.compatible	= "mdio-mux-gpio"
->   	},
-> @@ -91,6 +94,12 @@ static const struct of_device_id of_device_ids[] = {
->   	{
->   		.compatible	= "fsl,qe",
->   	},
-> +	{
-> +		.name           = "localbus",
-> +	},
-> +	{
-> +		.name		= "rapidio",
-> +	},
->   	/* The following two are for the Freescale hypervisor */
->   	{
->   		.name		= "hypervisor",
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOkY2QAKCRB4tDGHoIJi
+0q3mAP9j5GE2F7HQWGUYyOU9k9MhsEyyX3rvlNH5Tnd6R2lBIAD+LQIwhk0KoqWh
+PzUa4lYpWpc9tc/dr16rfSTrs9YE8wk=
+=mQj2
+-----END PGP SIGNATURE-----
 
+--ReRyNSNdhTFV+Mx9--
 
