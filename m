@@ -1,104 +1,138 @@
-Return-Path: <linux-kernel+bounces-848577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD478BCE12C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5C1BCE13B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2580189D243
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5BD189EC8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D9F21D590;
-	Fri, 10 Oct 2025 17:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5865D21D590;
+	Fri, 10 Oct 2025 17:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cG7VsJL1"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sq3SIhWP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A6821A436
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AD018EAB;
+	Fri, 10 Oct 2025 17:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760117076; cv=none; b=f5WXZmWUVxFAp5hZ0L0BoD+sDj8josAQFOQVe+4WBN4EOLaNWovo27TSnUAwUa4P0JV+P2Gb7ptL82stTJXGFdogdN+ZVtDFxIc0y7a+uVHjymv15+DNoA+cmzNCg/CImGZeVOSFk6beVLS6Yf12k0j/HqDpeoOZPhTKv70E2aU=
+	t=1760117202; cv=none; b=kikyAaTM+pyg8b5snnLRrclCbosLfw6CorcMk/eXrhV30hA39MVzUxXgHQH6OuL7PJb+N381UOkbnd9/cFddKLh2uOrETAxlngS5PNkQJls8eYVueqgcmjG05aAfhTQayRRwK837ASVL5dF2gpsgmuhAiGikl3FhQE3ndgGU1XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760117076; c=relaxed/simple;
-	bh=5hiZIrWLL0dsWutE1BeXFfmcVtDxybMWLs8vsm2o+dY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Db+u+WKGimLE64iaXWuLP5Nv6BhZYnAgJ1vECHk3g/64RmwdI0cSFBgslxEF0AOrh3MbIUroPpINpBPn6cbRVd3NqKZVUnidS5qA1a06uiS6qi5UCu1A7qg+m7K/Hu07Om1R1ptoyW/3SH3Y/dXEPeceYt+OJkhWWsaRd6GL/i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cG7VsJL1; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251010172425euoutp02c118378d154ad8c0ec25e6dbfc178e4a~tMSUw4u2x2384423844euoutp02h
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:24:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251010172425euoutp02c118378d154ad8c0ec25e6dbfc178e4a~tMSUw4u2x2384423844euoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760117065;
-	bh=QXEP0g6tg/h/jFfO58lrELlWh5ONcV16srL2AqNzFmo=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=cG7VsJL1TTN1MfZNT63iuc2hb5bfDdiKemrWb4DlT84pcSlXQZlUKf/cINGHNxGHo
-	 VXAC0g0Hl/z86ubAgX+8JsS68WaYE2BM3b+WX/AGQcxzf9d6IDrIqcxXmdjnpmQqwZ
-	 Qm8kaBSMcAdPvlcNLvu5VfepiZ5iRhzuhi7loAr0=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251010172424eucas1p1aa27ffbc4632902061b09b167d064da3~tMSTrLJrO0295602956eucas1p1y;
-	Fri, 10 Oct 2025 17:24:24 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251010172423eusmtip2790c7cef85f1b547b63fa7e804dcb4bf~tMSTTWH241080710807eusmtip2I;
-	Fri, 10 Oct 2025 17:24:23 +0000 (GMT)
-Message-ID: <78ad60af-aa9e-4909-95fb-d4441fd944b4@samsung.com>
-Date: Fri, 10 Oct 2025 19:24:23 +0200
+	s=arc-20240116; t=1760117202; c=relaxed/simple;
+	bh=yfT6N5HMuFsulEv0jGG9X/xOELVYT6TNPjuWTZgZtEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QBLtbIyOr1PTB8g1tALLNdXoS9RfIIx1GCkg2njC/QlmrGZKJQwOJapnqN5tJkeQrPs9rTCAMEB5aBWCem8hI9EEONwiEM4vasgr+M9b9H4USiApHSRZe/tri14yvD70GTEET/vWDq5kyDW1XwmEd0J7yzqF2Leh7VXA0JrJFTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sq3SIhWP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD345C4CEF1;
+	Fri, 10 Oct 2025 17:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760117202;
+	bh=yfT6N5HMuFsulEv0jGG9X/xOELVYT6TNPjuWTZgZtEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sq3SIhWPFFFawAC65sWBDnx3tGFLkK00472iXjCe81Br9kVaLuo1nbrVbD3zeDhbT
+	 NlNvHs+1Bbjns3sbWM58EvEilWCrCpZbbAdOuviig/HJek4RqhABaXpVRTIiU3M5ta
+	 1taWXP+m+56FuxBFrewFx0g4yUjC8GTAjRUXmQVrtdij0DXJ+yw+dDhBRD2FRiJWZ7
+	 Oz8s1XYRV6PFYZ0N8vtJd63NKk/fZi0GrrQY2ttMrcRyU7pYfALGWbQPyihas11xOI
+	 nqgIDkXfeo1x3ac0TGPqL/R+2XkOXcDfkgn1iyE7pzBk+Jcso5dUwmFsc8KihEd400
+	 9U5vYDJLg+h1A==
+Date: Fri, 10 Oct 2025 20:26:38 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18-2
+Message-ID: <aOlBzobMDAQ39WgU@kernel.org>
+References: <aOibAOKu_lEsSlC8@kernel.org>
+ <CAHk-=whUUZpENHKMrrVQwqfBgP9Lm=SxW+a3WmoxZR3JObdrUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] dma-debug: don't report false positives with
- DMA_BOUNCE_UNALIGNED_KMALLOC
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Robin Murphy
-	<robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>, Andrew Morton
-	<akpm@linux-foundation.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <aOjipm1vCJpgQQq1@arm.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251010172424eucas1p1aa27ffbc4632902061b09b167d064da3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251009141522eucas1p2c89eadd93fb571c557d3d70975d8ae4f
-X-EPHeader: CA
-X-CMS-RootMailID: 20251009141522eucas1p2c89eadd93fb571c557d3d70975d8ae4f
-References: <CGME20251009141522eucas1p2c89eadd93fb571c557d3d70975d8ae4f@eucas1p2.samsung.com>
-	<20251009141508.2342138-1-m.szyprowski@samsung.com>
-	<aOjipm1vCJpgQQq1@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whUUZpENHKMrrVQwqfBgP9Lm=SxW+a3WmoxZR3JObdrUA@mail.gmail.com>
 
-On 10.10.2025 12:40, Catalin Marinas wrote:
-> On Thu, Oct 09, 2025 at 04:15:08PM +0200, Marek Szyprowski wrote:
->> @@ -594,7 +595,9 @@ static void add_dma_entry(struct dma_debug_entry *entry, unsigned long attrs)
->>   	if (rc == -ENOMEM) {
->>   		pr_err_once("cacheline tracking ENOMEM, dma-debug disabled\n");
->>   		global_disable = true;
->> -	} else if (rc == -EEXIST && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)) {
->> +	} else if (rc == -EEXIST && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
->> +		   !(IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) &&
->> +		     is_swiotlb_allocated())) {
-> Maybe use is_swiotlb_active(entry->dev) instead for completeness. Either
-> way:
->
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+On Fri, Oct 10, 2025 at 08:51:09AM -0700, Linus Torvalds wrote:
+> On Thu, 9 Oct 2025 at 22:35, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v6.18-2
+> 
+> So I've pulled this, but I'm still unhappy about the explanation.
+> 
+> You tried to explain a one-line single-character change in that pull
+> request, and even in that explanation you spent most effort on
+> dismissing other peoples concerns.
 
-Thanks for suggestion. is_swiotlb_active() looks a bit more appropriate 
-in this context.
+For what it is, most of it comes from:
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1. "tpm: use a map for tpm2_calc_ordinal_duration()"
+    Flattened out timeout calculations to a table and increase timeout
+    for TPM2_SelfTest, which addresses longer timeout on Raspeberry Pi.
+2. "tpm: Prevent local DOS via tpm/tpm0/ppi/*operations"
+   Caches TPM physical presence interface ACPI functions on first run
+   instead of requesting for every read.
 
+Also:
+
+1. I went through Chris' email because you asked to refer to it.
+2. I also spent time re-testing O_EXCL change throughly once more. From
+   my subjective perspective I was exactly trying to address other people's
+   concerns.
+
+That said, I fell off the track and yeah not well delivered agreed.
+ 
+> That one-liner would have been - and is - sufficiently explained by
+> "it performs badly and breaks some configurations". There's absolutely
+> no reason to then go on to describe how *you* don't care about those
+> configurations.
+
+Maybe I had a bad choice of words but there's no configuration that
+breaks with anything sold as discrete TPM chips, embedded SoC, fTPM's
+or anything really. I got the impression of a bug in the wild, other
+than the perf regression.
+
+> 
+> But lookie here:
+> 
+>  8 files changed, 137 insertions(+), 199 deletions(-)
+> 
+> that's the actual meat of the pull request, and it gets not a peep of
+> commentary.
+> 
+> I'd also like to point out that Microsoft spent *years* trying to do
+> the "we require certain typical TPM setups", and people complained
+> about their idiocy.
+> 
+> For all I know, they still push that crap.
+> 
+> I would certainly are *NOT* that stupid, and we are not going down that path.
+> 
+> So when it comes to TPM, the rule is not "typical cases work".
+> 
+> The rule is "if it causes problems, we acknowledge them and we avoid them".
+
+I deeply care anything that can be bought with money or even anything
+that drifts away from a spec manageable amount.
+
+
+ 
+> Thus the whole "disable TCG_TPM2_HMAC" really doesn't merit this kind
+> of long explanation.
+> 
+> In contrast, the *other* changes are probably much more interesting than that.
+
+Very true :-)
+
+ 
+>              Linus
+
+BR, Jarkko
 
