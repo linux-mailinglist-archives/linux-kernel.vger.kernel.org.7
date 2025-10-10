@@ -1,172 +1,125 @@
-Return-Path: <linux-kernel+bounces-848600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD50BCE234
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F10BCE246
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9091D4F2C46
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E4A3ADB00
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8257226165;
-	Fri, 10 Oct 2025 17:44:45 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B76F20DD72;
+	Fri, 10 Oct 2025 17:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcun/mwR"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E87A22157F;
-	Fri, 10 Oct 2025 17:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6670A86331
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760118285; cv=none; b=NC0L3LmR0s6X04oR3pnFZO3IgczuEN7zU9qYV/T+izRKtpqnChfUy9LDGLvKpUq24Gzb5TmQuv0v27he9IXSOrSe08Aa3yRRGVYlgpERsIJi8dYOT4sS/fUwYNNqNfnwLjTvN91spdHyipEDWjjfAPX0HTb9qNTa+Jgn4lHDlBc=
+	t=1760118390; cv=none; b=dtebkth4HYVh5y8Wp8S56IEETPCMxxQfdLu5dix4IirsLMAJpfp913ZgKi9whHPGb8/3nj8uh6I2Hv3IfVndfD1B94t1nkM8XuQehF5iklE3MKHvORY5ck0SJye4C62w2ElKGdpB4PIyXxp3q7Br7PqRR6LjltKBB2WJBHndvHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760118285; c=relaxed/simple;
-	bh=xa/LDCE1IR+Wes0Wpil4GLi0GhmjvATifvtOD9qRiuM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WeOHSzW5FsiIZ29pqKVme/gRQ90+RPZ4bBxRB+dxWTFtWrs2YbatgJNDLWfr+mIJsmZvfV3zxMc6UBqCmEdqnwodYczyrg2Zo3/Xk6zLEzE5y1kcRK7ZHq7foI2rQAieQjDRkK4nRjujz3p3U87+Uk8oLpZsHRL26Zkt0ff9Zto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cjvDZ0qVdz6M4PW;
-	Sat, 11 Oct 2025 01:41:18 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1424A1402F0;
-	Sat, 11 Oct 2025 01:44:40 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 10 Oct
- 2025 18:44:39 +0100
-Date: Fri, 10 Oct 2025 18:44:37 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Francesco Lavra <flavra@baylibre.com>
-CC: Lorenzo Bianconi <lorenzo@kernel.org>, Jonathan Cameron
-	<jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
-	<andy@kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] iio: imu: st_lsm6dsx: Decouple sensor ODR from FIFO
- batch data rate
-Message-ID: <20251010184437.00004428@huawei.com>
-In-Reply-To: <20251009173609.992452-3-flavra@baylibre.com>
-References: <20251009173609.992452-1-flavra@baylibre.com>
-	<20251009173609.992452-3-flavra@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1760118390; c=relaxed/simple;
+	bh=eeBH9js9yZifP+83s8d7mMmQ9oxVME4Da/JyScf/Ub0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TtBTUEphMTqa5NEvFrSV0hbd0Qg++Sv2TCsDYY97nT0DnkzkF+YeCBxTq/ti2HnKhkerhkTzffeGUl4LLLvMPbA0X/nTrdm7m2PSWrnBy8QJbn4y7rF98E5XxhSbV0PPYdbY7JiIFaYCCA7eyIwXrpCMq2p98ONJBHSFHR+iVeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcun/mwR; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so3055016a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:46:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760118389; x=1760723189; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T+v2LXmYVIoRn/hgAmq+CTJPSpbC6ESSwB+GSt5X9Sg=;
+        b=Gcun/mwRHjoJ5EH1RbjapGUMxJ3SQhyc5ggX0G5inALA1BZmKS3mASwA1z04ygI9Aj
+         rNVV7QAoEKJLrELxcf9FrLX+7c07c6TL3pjjLF+xYQODnLnOt+AgaoHwL7okVO6bmOW5
+         o1pq0aXqGMdSwB9B2AMa8vuQjXJvpvF2U2QgOZNMaZGmhLK6H8lJ+uJvzKFU4HPuQ08j
+         ErArnOWY944k75+DKshU5S7m4zykUOTaVG4MPbPGo144bjEupIhpyZIuAqKVJwmDX5ix
+         6dKlBDipQtPG2DxGqEaeFYpAUhu2C6eJbc+4S9+TpQuZ0cwbLvq19VNSUCg8bbfSSnuH
+         d/Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760118389; x=1760723189;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T+v2LXmYVIoRn/hgAmq+CTJPSpbC6ESSwB+GSt5X9Sg=;
+        b=Ne5XMeMDL8QXMANgagWZWunQGJ0wZqhBMZfF7EUZZ7MSluy+UEasPCUpbSRrAyvsNI
+         9JMdg5cqXVz8GyELUy/irvN+fL7Emt3rjRQOFUf5ap/u8OVwOT91OurbKaV4frCkSGcu
+         Nzn5vWrs3BSv0+37FG4XK2gnIJLqjfG/d/U+MW99AvWa2IOUUJqztA6Q2PrdhtvIYHxA
+         5SiPuE0ZTXD99HwzojSHfEpj8wCTDioZBndbvVWLCq8z3j+xC5iGeokdqHBUafDj5XVQ
+         /vmbSl5NQuqxJZ9j5q1dnmbeG3WoJhcZDMTDKjnbG45HD4k/xlOo1hZX+BXfi7TVcR+C
+         f0JQ==
+X-Gm-Message-State: AOJu0YzO3cTb43/B8HNn//qFb5kRVm27vc3uoml8zBapp9dj7jnT3M0t
+	bNJTF4oKUeQVU/Wa2HvW6+sne2ej4gzK+6EqvTwFT511kAJieL1WGu6G
+X-Gm-Gg: ASbGncvykSHlMMpaAmnqSRyPz4OhqMMToWE075oOh3GPp7NJJiT/+1DHfMG4NGyGlax
+	h5sTvVqdUrmGydd1MGSSCutEamDL65zxXQItH4BWuxWcRCe4P0mcWIFbBBhDv1IxebpiijG5Gnb
+	2ZcTKoKXpnHdedpKEMpuLfp/meTGxmAwwFGXxdy+cgRitGn7MVVdit6hrtaUNqBut+kkIOf9dB2
+	u6KQjteOSVkN4beJ9rCtmfl6ozIp1rpsxgOGDVh7wgx4hzdik4usxImu2VnYo/t69e93dXmlDAO
+	8/0gbL2g1iF9ctPqGzjve8uKnYultFD4itI18a6d/yYV1wTmvGHjUZvyGCtkb7JcNm+lL5mrf8g
+	8FLksNESXZueB0vHA/vBlG9HuHNYLb3UOERHFela4mPB0AOKd5zxy+mVs7vYQO8y4qqRQ/Ytjk8
+	NamULs6LVb1A==
+X-Google-Smtp-Source: AGHT+IFZ5hRHhPP/Eg0/Jq2+4DYR1nB6XEhpkuQdZ0UoNcUtw/UYGqw8Q7rVxqdQ+Tsl+/QeKS1Nvg==
+X-Received: by 2002:a17:90b:3890:b0:338:3156:fc44 with SMTP id 98e67ed59e1d1-33b513758bbmr18612054a91.18.1760118388317;
+        Fri, 10 Oct 2025 10:46:28 -0700 (PDT)
+Received: from octofox.hsd1.ca.comcast.net ([2601:646:a200:bbd0:4f7d:10ff:4cc5:8c1d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b5295ab65sm5909867a91.1.2025.10.10.10.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 10:46:27 -0700 (PDT)
+From: Max Filippov <jcmvbkbc@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PULL 0/2] xtensa updates for v6.18
+Date: Fri, 10 Oct 2025 10:46:14 -0700
+Message-Id: <20251010174614.3953574-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Transfer-Encoding: 8bit
 
-On Thu,  9 Oct 2025 19:36:09 +0200
-Francesco Lavra <flavra@baylibre.com> wrote:
+Hi Linus,
 
-> The rate at which accelerometer or gyroscope sensor samples are fed
-> to the hardware FIFO (batch data rate, or BDR) does not have to
-> coincide with the sensor sampling frequency (output data rate, or
-> ODR); the only requirement is for the BDR to not be greater than
-> the ODR. Having a BDR lower than the ODR is useful in cases where
-> an application requires a high sampling rate for accurate detection
-> of motion events (e.g. wakeup events), but wants to read sensor
-> sample values from the device buffer at a lower data rate.
-> To support the above use case, add a sampling_frequency sysfs
-> attribute to the buffer directory of st_lsm6dsx IIO devices, which
-> controls the BDR for a given sensor independently from the "main"
-> sampling_frequency attribute (which controls the ODR); introduce a
-> new `bdr` field in struct st_lsm6dsx_sensor to keep track of the
-> current BDR value, and use this field instead of the `odr` field in
-> the code that deals with the FIFO data rate. In the sensor hub
-> driver, make the bdr value always mirror the odr value, since there
-> is no separate configuration setting to control the BDR for data
-> produced by the sensor hub functionality.
-> 
-> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+please pull the following updates for the Xtensa architecture.
 
-A few additional trivial things from me.  In general this looks fine.
-Whilst that buffer/sampling_frequency isn't common it's been part
-of the ABI for a while for this sort of thing.
+The following changes since commit 038d61fd642278bab63ee8ef722c50d10ab01e8f:
 
-My only slight concern is backwards compatibility. 
-Perhaps you can add something on what happens if main sampling_frequency
-is modified by a user who doesn't know anything about buffer/sampling_frequency?
+  Linux 6.16 (2025-07-27 14:26:38 -0700)
 
-Given that's a new interface and the ABI always allows a write to one
-value to change any other maybe we have to say the main sampling frequency
-write updates the buffer one and a write to the buffer one after that is needed
-to set it to a different value?
+are available in the Git repository at:
 
-That is a bit ugly but it is backwards compatible I think.
+  https://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20251010
 
+for you to fetch changes up to 4c8bad3ed035ab85ad9b0d247154be43a53ef84d:
 
+  xtensa: use HZ_PER_MHZ in platform_calibrate_ccount (2025-09-15 08:37:28 -0700)
 
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> index 8a9d2593576a..5912ea76d493 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> @@ -56,6 +56,7 @@
->  #include <linux/iio/kfifo_buf.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/buffer.h>
-> +#include <linux/iio/sysfs.h>
->  #include <linux/regmap.h>
->  #include <linux/bitfield.h>
->  
-> @@ -105,7 +106,7 @@ static int
->  st_lsm6dsx_get_decimator_val(struct st_lsm6dsx_sensor *sensor, u32 max_odr)
->  {
->  	const int max_size = ARRAY_SIZE(st_lsm6dsx_decimator_table);
-> -	u32 decimator =  max_odr / sensor->odr;
-> +	u32 decimator =  max_odr / sensor->bdr;
+----------------------------------------------------------------
+Xtensa updates for v6.18
 
-No idea why there is a bonus space after = but good to cleanup whilst you are
-here.
+- minor cleanups
 
->  	int i;
+----------------------------------------------------------------
+Miaoqian Lin (1):
+      xtensa: simdisk: add input size check in proc_write_simdisk
 
-> +static ssize_t st_lsm6dsx_bdr_store(struct device *dev,
-> +				    struct device_attribute *attr,
-> +				    const char *buf, size_t len)
-> +{
-> +	struct iio_dev *iio_dev = dev_to_iio_dev(dev);
-> +	struct st_lsm6dsx_sensor *sensor = iio_priv(iio_dev);
-> +	int integer, fract;
-> +	int ret;
-> +	u32 bdr;
-> +	u8 data;
-> +
-> +	ret = iio_str_to_fixpoint(buf, 100, &integer, &fract);
-> +	if (ret)
-> +		return ret;
+Thorsten Blum (1):
+      xtensa: use HZ_PER_MHZ in platform_calibrate_ccount
 
-Add blank line after this sort of error handling return.  Slightly helps
-with readability.
+ arch/xtensa/kernel/platform.c       | 5 +++--
+ arch/xtensa/platforms/iss/simdisk.c | 6 +++++-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-> +	bdr = integer * 1000 + fract;
-> +	ret = st_lsm6dsx_check_odr(sensor, bdr, &data);
-> +	if (ret < 0)
-> +		return ret;
-Here as well.
-> +	bdr = ret;
-
-Probably here as well.
-
-> +	if (!iio_device_claim_direct(iio_dev))
-> +		return -EBUSY;
-> +	/* the batch data rate must not exceed the sensor output data rate */
-> +	if (bdr <= sensor->odr)
-> +		sensor->bdr = bdr;
-> +	else
-> +		ret = -EINVAL;
-> +	iio_device_release_direct(iio_dev);
-Add one before the final return.
-> +	return (ret < 0) ? ret : len;
-> +}
-
-
+-- 
+Thanks.
+-- Max
 
