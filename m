@@ -1,199 +1,203 @@
-Return-Path: <linux-kernel+bounces-847837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB7FBCBD99
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:02:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEC3BCBDAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 62138352031
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:02:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F1994EC371
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C2D25A642;
-	Fri, 10 Oct 2025 07:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90E423E35B;
+	Fri, 10 Oct 2025 07:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bPrEUSRg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ouuEGk3R";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bdqcFU5J";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ouuEGk3R";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bdqcFU5J"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA9E22CBC0
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C639AC2E0
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760079731; cv=none; b=aMrb8xAol92BH4Yww9678JpClZSDfzDX0prnzG32fJvlVfmSgCO1/M0n7EV8WFOwx1DQqvNS58HQwItRF8Lk+MsiEUi6G/yF/6MFMkYBIuT3b77l1wTP3JVmPgLOw2+IfxHGbkhaEMEiw2Pm6PK6urphkHwLvWvutjVvc4SI030=
+	t=1760079843; cv=none; b=rUIa9Qx08l1b9pA+KPEd4p/zTl//LsSh9I9VKnF0+fWKFgpbvhcOQH2ydkMeXivw8/KxeGJdPCb8CP8ehB46snjjVUE8hR6MeGbqyOA4NmZe0J4JN9zC+liKLbVTxZRtzNzQMcwNMLRC7u76cxYpmt6kfD4Z85dmHPMimKOpvPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760079731; c=relaxed/simple;
-	bh=4vvvEMb2vuNn8UVT9VIvvwNLOeHP8FoAvPrXeBK9elU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3mUNmquRt5KDUwjbByD+LkRekJTJxQHXLaU1vEEQ58aFWlWnc1n1x/LIo+v5KQzKzpTITh8xgalR2t1/epA/66kyADaLV6bwagU4b/IKSle3yEMxx7uc/DJSdVqJ38SyWSTaT+7B7kQrB7ckHIetrol+Eg3qtWCluBzo4fgY7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bPrEUSRg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6WnDt032427
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:02:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=dQwvd11Ba4OZZPtdkUFVNZBI
-	SyWrAhGDJUfi6nuz7rM=; b=bPrEUSRgzrYc+3qyDhpzEtMX0lGgR34YK/st6XmK
-	/hXfeFDPAEpLbIz7Oj6mffsVD4tTsH4UDMQ68xFLSY6V9DGtH+G7BJzCoLaA9Zo+
-	bdG8gSiA2AfcdnWS6NCURwD1cJXt2wJuLyHpV3Duui5ZQMDKXtSS4lKgXxHEZ22O
-	XdvKxE29Kg1b8zUzYvj4v60/CtcAvXG1iNtiFLCrlMckt93lfNBKsgXS+MKGb6Ky
-	vgg5X2EaFZx2eAFj2kAN4dze2eXDXXt2oKi2ODZCORdlC9ZgONUGjuq33eDniGde
-	WNHiSjlAQDoqxjDVq8PmD8wHQ6CKX1K0RiOxHvdpoAzPGA==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4kwehv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:02:09 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-28e538b5f23so35819125ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:02:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760079728; x=1760684528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dQwvd11Ba4OZZPtdkUFVNZBISyWrAhGDJUfi6nuz7rM=;
-        b=v8MRBeE7YWypJRUe8c8hs30knC9m8j3HV7zZUxim7smB1KZXn2fGPGZQ1+tZSHfmFi
-         1+h2HuAL+dK2D75EIJyJNOEoz1dIc+NqoNiilWTFKUgCYp3ExtllhfYpErVKWrwrcqrq
-         xtnvfKpEOoGz5t4AvkXAtBn4b8s+QQPX3aD4iMlTHpJ/uNoO4MffVMBIjVftCGULUHkn
-         Nk0/9dZpGLsmB9SEOQ2vSI3W67z3xv7N7zhomosXiaau61QdaZdiLPqA12P5sNzP2858
-         ehSf34h/GQida1GwoAJJbi5Qc+5YcypaAmJKCkW180/MqxMcPQ0qojudE2Y6TS3Xskz8
-         OLPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWZhn+DFA3Z+8OY0cHxdL7IocVGUK9gFZKs/VOBtEWD/sw3AH3iHdqSRFbaAF/ivIZohGdChdWgBuzRUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxskLqfrkkiD9CPGfKCxboqftaBPr/SFM7ULDRtbhpiY7hiI6WD
-	1ufxg1N+KF9gxT++VMe3eIY3EiWZuS4Jd/EYGIlKgFIXKJrlv4d99PDjbsTH7wNgyWKLP2iN45h
-	YPG4SUUCpIQXrkq42FGfpWNmE/vGrPoY77KI9Lnoku0a/jXrfhX0F5ikHcz8YdtTRvd4=
-X-Gm-Gg: ASbGncu4u61ROZxoXzdJX6fXTeBnaD1lNXlM4a1G1Dwm/NTBjl/qgyLjfud+Msuc2LF
-	5/bG7CEQKEQdRcpnikpquF0Hbup7zOOnZthuczAZprgX1lnDR4nOciV1Te2Z0DgzLC1siUA4r8n
-	hbtXV1lPTL7U4KiwquPIc4GL0TNaQqWBG6KNuzIqDy2dqrBC4J7001/XcyCD+NwZFXutIRH9OEq
-	/N+bFBsTIdL4xqt4xxLj1vPcYBL+kwTBlJ2Hsi4DsGGJiyU1LGYJ7MPUpBA/8N3z59rro6adIj8
-	s7wocPp70OXYSrPvqzUXuReR7B2EEqowD9WCDngd9/A3CW/EmBokfWYFZHInM6ribmCS4WLwhe/
-	s1HumOim5ygA=
-X-Received: by 2002:a17:903:1b4b:b0:26d:353c:75cd with SMTP id d9443c01a7336-290272409c7mr142515045ad.21.1760079728475;
-        Fri, 10 Oct 2025 00:02:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHXYefKjkw/AY2CktNp8R5G+EiBMLqaA04w5BsZCP6mW9dFQLgjjEQp8WdnscP3rBXH2Ry6Aw==
-X-Received: by 2002:a17:903:1b4b:b0:26d:353c:75cd with SMTP id d9443c01a7336-290272409c7mr142514515ad.21.1760079727974;
-        Fri, 10 Oct 2025 00:02:07 -0700 (PDT)
-Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f070ecsm48098155ad.60.2025.10.10.00.02.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 00:02:07 -0700 (PDT)
-Date: Fri, 10 Oct 2025 00:02:05 -0700
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-Subject: Re: [PATCH 19/24] arm64: dts: qcom: glymur: Add support for PCIe5
-Message-ID: <aOivbf/U0FluPsZj@hu-qianyu-lv.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-19-24b601bbecc0@oss.qualcomm.com>
- <75d8cdc7-60c1-44a8-bf6c-0fb1ef38dd70@oss.qualcomm.com>
+	s=arc-20240116; t=1760079843; c=relaxed/simple;
+	bh=ECli3oNhCUbzdZpOIMg/kskkNHG0fp6jZc7+Jv9X9Rw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KT9kkk4wn7uMDZAorxD78akuqiNoyzmyYwdocG1F2D822t6yK9Qy0S90iYZhsRdnAGd+lmTrMc8JdmaGdPJmPlLex980qbi1lC/AosWpNIwdwAM99v6FlAFh+PmgaGt3Js6iHMCvUYZT397QDqzpcGffiW4/yDkdioN3eQ6cSJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ouuEGk3R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bdqcFU5J; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ouuEGk3R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bdqcFU5J; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 86842222AA;
+	Fri, 10 Oct 2025 07:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760079837; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mJHAX+igMXV+KAJJKez9mmyUS7tV115m9DcTyfDrR1k=;
+	b=ouuEGk3R66RmyRRE1i+oPZPGcLUrP8Q5TrgQxZOdl9qyDlqiCCS8a2j56DkGy6zR7ArPKs
+	JceYQrFoeDmpz/NTZAT7/BCm6iKbkJ+ztnoJ8iKDo1/90eXS7OVbINvPBahOxg1x3wL+Za
+	zqDF/bKTcPP1ENJmnVdDhb8RV1bKNjU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760079837;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mJHAX+igMXV+KAJJKez9mmyUS7tV115m9DcTyfDrR1k=;
+	b=bdqcFU5JQBdwoR4fzpC+Q+OPDgkN6FUZj6H5Jm+0xBJDKftcANQY+r2HD89i8qMl7Wqy51
+	595X6q0jnwuIBtAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ouuEGk3R;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=bdqcFU5J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760079837; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mJHAX+igMXV+KAJJKez9mmyUS7tV115m9DcTyfDrR1k=;
+	b=ouuEGk3R66RmyRRE1i+oPZPGcLUrP8Q5TrgQxZOdl9qyDlqiCCS8a2j56DkGy6zR7ArPKs
+	JceYQrFoeDmpz/NTZAT7/BCm6iKbkJ+ztnoJ8iKDo1/90eXS7OVbINvPBahOxg1x3wL+Za
+	zqDF/bKTcPP1ENJmnVdDhb8RV1bKNjU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760079837;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mJHAX+igMXV+KAJJKez9mmyUS7tV115m9DcTyfDrR1k=;
+	b=bdqcFU5JQBdwoR4fzpC+Q+OPDgkN6FUZj6H5Jm+0xBJDKftcANQY+r2HD89i8qMl7Wqy51
+	595X6q0jnwuIBtAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 546D413A40;
+	Fri, 10 Oct 2025 07:03:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rkZ2E92v6GhCZAAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 10 Oct 2025 07:03:57 +0000
+Message-ID: <33dd4088-2a48-4dbd-a374-e2204aff3941@suse.de>
+Date: Fri, 10 Oct 2025 09:03:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <75d8cdc7-60c1-44a8-bf6c-0fb1ef38dd70@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX5X3Zi80DLGaB
- Sj+AZfT1AVwU7/x3EIgX+KmJuNwwgNpOUeuCPSzGHDVKIGMmMKa1oPyldOUSRAXNBdkmoCWMl9p
- M7I9p29nGnS5AgSzCo29JoCdvm2W3IKVtXR7UuNjmoWOXwrAdU8GCCNmDBcAkyIDsKZVh4ZFIi7
- oMy9XMVrHT1Xq/FIvEwDzCbcTdB2OKRZHszsX4EG9Zq8+hqSs8U7NI1Fnkr5pEFbWqcgzOO25h2
- wtCzwtNyrncsJC6lyw4Z2SbYCWpyuzKAld5iknH+tEkbNIDCe12aAgFMipIaQ6lCLXwP5jAJjXW
- eL10jg19YAttsTWjGYvzrAlYlW2NHroci2J9jBFqW5dt6nvZv9cBc/SvXm0SaKoqtlkOIil3iaO
- 61IuswUsJG/FmOs6jcQ7c/QUOvLLwg==
-X-Authority-Analysis: v=2.4 cv=CbcFJbrl c=1 sm=1 tr=0 ts=68e8af71 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=z4uItHPOzOwcMgdkeGIA:9 a=CjuIK1q_8ugA:10 a=1OuFwYUASf3TG4hYMiVC:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: -9nq3IZVxjqOdiL0rMappiJBZmPYToLM
-X-Proofpoint-ORIG-GUID: -9nq3IZVxjqOdiL0rMappiJBZmPYToLM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] nvme/tcp: handle tls partially sent records in
+ write_space()
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Wilfred Mallawa <wilfred.mallawa@wdc.com>
+References: <20251010042514.704249-2-wilfred.opensource@gmail.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20251010042514.704249-2-wilfred.opensource@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 86842222AA
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,lists.infradead.org,vger.kernel.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-On Thu, Sep 25, 2025 at 01:32:04PM +0200, Konrad Dybcio wrote:
-> On 9/25/25 8:32 AM, Pankaj Patil wrote:
-> > From: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> > 
-> > Describe PCIe5 controller and PHY. Also add required system resources like
-> > regulators, clocks, interrupts and registers configuration for PCIe5.
-> > 
-> > Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> > Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> > ---
+On 10/10/25 06:25, Wilfred Mallawa wrote:
+> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 > 
-> [...]
+> With TLS enabled, records that are encrypted and appended to TLS TX
+> list can fail to see a retry if the underlying TCP socket is busy, for
+> example, hitting an EAGAIN from tcp_sendmsg_locked(). This is not known
+> to the NVMe TCP driver, as the TLS layer successfully generated a record.
 > 
-> > +		pcie5: pci@1b40000 {
-> > +			device_type = "pci";
-> > +			compatible = "qcom,glymur-pcie", "qcom,pcie-x1e80100";
-> > +			reg = <0x0 0x01b40000 0x0 0x3000>,
-> > +			      <0x7 0xa0000000 0x0 0xf20>,
-> > +			      <0x7 0xa0000f40 0x0 0xa8>,
-> > +			      <0x7 0xb0000000 0x0 0x4000>,
-> > +			      <0x7 0xa0100000 0x0 0x100000>,
-> > +			      <0x0 0x01b43000 0x0 0x1000>;
-> > +			reg-names = "parf",
-> > +				    "dbi",
-> > +				    "elbi",
-> > +				    "atu",
-> > +				    "config",
-> > +				    "mhi";
-> > +			#address-cells = <3>;
-> > +			#size-cells = <2>;
-> > +			ranges = <0x02000000 0 0x7a000000 0 0x7a000000 0 0x4000000>;
+> Typically, the TLS write_space() callback would ensure such records are
+> retried, but in the NVMe TCP Host driver, write_space() invokes
+> nvme_tcp_write_space(). This causes a partially sent record in the TLS TX
+> list to timeout after not being retried.
 > 
-> No I/O space? We can also add the (presumably prefetchable) 64-bit range 
+> This patch fixes the above by calling queue->write_space(), which calls
+> into the TLS layer to retry any pending records.
+> 
+> Fixes: be8e82caa685 ("nvme-tcp: enable TLS handshake upcall")
+> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> ---
+> V2:
+>      - Unconditionally invoke TLS write_space(). This means we don't need
+>        to export tls_is_partially_sent_record()
+> ---
+> drivers/nvme/host/tcp.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+> index 1413788ca7d5..6016510577bd 100644
+> --- a/drivers/nvme/host/tcp.c
+> +++ b/drivers/nvme/host/tcp.c
+> @@ -1079,8 +1079,13 @@ static void nvme_tcp_write_space(struct sock *sk)
+>   
+>   	read_lock_bh(&sk->sk_callback_lock);
+>   	queue = sk->sk_user_data;
+> +
+>   	if (likely(queue && sk_stream_is_writeable(sk))) {
+>   		clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
+> +		/* Ensure pending TLS partial records are retried */
+> +		if (nvme_tcp_queue_tls(queue))
+> +			queue->write_space(sk);
+> +
+>   		queue_work_on(queue->io_cpu, nvme_tcp_wq, &queue->io_work);
+>   	}
+>   	read_unlock_bh(&sk->sk_callback_lock);
 
-Will add I/O space and prefetchable mem space since we don't know which
-device user may insert.
+Minus the whitespace change:
 
-> 
-> 
-> > +			pcie5port0: pcie@0 {
-> 
-> pcie5_port0:
-> 
-> > +				device_type = "pci";
-> > +				reg = <0x0 0x0 0x0 0x0 0x0>;
-> > +				bus-range = <0x01 0xff>;
-> > +
-> > +				#address-cells = <3>;
-> > +				#size-cells = <2>;
-> > +				ranges;
-> > +				phys = <&pcie5_phy>;
-> 
-> same comment as on the other patch
->
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Will change the order as you commented for kaanapali patch.
+Cheers,
 
-device_type = "pci";
-reg = <0x0 0x0 0x0 0x0 0x0>;
-bus-range = <0x01 0xff>;
-
-phys = <&pcie0_phy>;
-
-#address-cells = <3>;
-#size-cells = <2>;
-ranges;
-
-- Qiang Yu
-> Konrad
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
