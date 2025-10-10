@@ -1,224 +1,266 @@
-Return-Path: <linux-kernel+bounces-848083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFDBBCC780
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:08:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2CDBCC789
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892DD1A65799
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:08:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 232874F08D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6922ED870;
-	Fri, 10 Oct 2025 10:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADE02ED87F;
+	Fri, 10 Oct 2025 10:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gv+2ROuZ"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kGZCA6nr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF6B277037
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FB92D027F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760090893; cv=none; b=FuuITksiyfkfDMTURNgCtBHg7VOfhdG+TbIUCq27570IxRa06R2xxAmNDpuCBd8RzhC1/b5borVVJrTLu++EmkzsfDIAqKL9yO+sGI6+UY7kDqfa4ef0OB7BTGjuc8PgItfsEdywpD++8iRX9Owe0Bluf5+I/dQmHDQAjofNkNM=
+	t=1760090921; cv=none; b=uaQQATn+xj7R5345xV6DP8zJGQ7bXBpqoJM0YwcsjGkVecVTbQZySSkY9DrVvoIeXBW6uo6jti/tWeYksrX5EAclPziJU/3hEcSRSmLnypCZBeH8hSfouHip3jy0X2hylfhSsw6aQI+2djqd4rL+sTp+rNGMyyErIIZ/bU5xfBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760090893; c=relaxed/simple;
-	bh=757Rw+peN+Z+BJ0/8voAoRMaixAMA8al/pwz/vHpLTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cpBBZjKhXOQ4CUCAYQYqXN93zY2KGnULsG80of+TDC44sGD6H5NMXoc52L4YMZKR8s9rn3SilaPlFI5G3mt4Ya+4UD64TK8jVxyU7dCwaoMvy6oez/Hh/lTalf8/RM5TYODj4H7AIYsFh4Roz50nZwcNrguuVDpBO+/VDkD0nvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gv+2ROuZ; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-425911e5661so7250875ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760090891; x=1760695691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9JuJuRZhLwsG+1iMul2+WUv/TYmYlRZZULI5AyK9zhk=;
-        b=gv+2ROuZoZuZIfM+32jfHanl8Umoxdr8Z4l10AxpS6wpSMdSlQvpoa6KNvOaoh/LYh
-         NLAGd8YVtr29csVKesy5gAjCixVkL7Th8LfhqES27iPdu5cmadLqLPYNbpLd4oXmS/vt
-         3CaULv6/DMh4m31eDsXW9jSm6MFBc8RKMOySPPcC5O69GrqC7LYcFQXqMVn74QMZK0hV
-         qe3eHEf/3oxFe1cYtkL+aJ983kQ7dsWDrO7XEtfVOt/diK2b6eiJO85SreSmOzDSgeHd
-         ub1fblu6wOrcrloGo4rVwkynCSvq7P74pnsaZoLun+1s3V4PQHqvfMQJwcgM2OfSgiXQ
-         CM7Q==
+	s=arc-20240116; t=1760090921; c=relaxed/simple;
+	bh=YOnQtEu7JFWMhUYj3xy66VgJf7TBh9ulmd+/dQCONcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IM/eT/Z5JV6S+IJ3TYVkHRL5QA7BfXK83zznP+nkg7+TOeA2utQw27d0eeoKh3ZZmqdw9TJBPPbjC+Y+NYXuTMM90s10G5Qb0fKWCVK0jz7AnCIZBIqdz5nC3rtysTcwI1HRhZJIHvAnOYQBpTny3GK9IKll/zsJWKWvbk6R9ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kGZCA6nr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A6WuDC002164
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:08:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FPvDh1+4NyZCubXd1ngtnPbpp/8IVN3Nsyy2TEjNtns=; b=kGZCA6nrmJWuTDoy
+	NUrRwFyWeoJ2caE0NBseoAF2mTnWDaXEDhgHLpEukSRYuLCiYlsf9bQl+YSHJO0Q
+	ckUDAywT980Hk6mAiNoh12HuSzTV+5dioGf4A9v3YWXtlWzHddWOQPiR+NYKE5Ja
+	6ziNzZb6zmPwB3LkSO7dY6O2aENUVDNL0xe5DpzVJYgtmDH6VB/SXjj0DVuEjDE2
+	U1J/7GZ7y0ryU5HkmSi1Cih4HaRvRk/yfKDH3U9XAXGce115EaW4DgwJ6xfW5B5f
+	V4r6ZaiGDrdQbPk1zWn9Ropj4CdWci4gx5S77Oe35CSQ1KueNOwgtJO5YsKEPP0i
+	rwNK/g==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4u5yfq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:08:32 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-336b646768eso5103983a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:08:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760090891; x=1760695691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9JuJuRZhLwsG+1iMul2+WUv/TYmYlRZZULI5AyK9zhk=;
-        b=xNWznpNwTk/+hQ5jZBHpKH+qSvPLmgvzh8IZDdri6aHkn69RDa/sn+AN2vQprLCjkI
-         Wd9Q2FqzRmC2hoiu1+u2XgaChWpT7e+y2iBjkEug+ERDWFU8VDFPvr9olZR3okMWOtdt
-         Ca+EvwLa4tPn+pSaq15YbXlrMWqjalaSPNenCZTMnNhVfKUwLtbjOiLbz2JzpfZNHMqf
-         X+fsLSgxVIPHHr510y/CyrloU5WQHezUTyYbq9nBHZkHKbz3bgS4bupm3/9d7ClGmyix
-         +Zl+G61ktGBjQIbGemXJ6jPU1w5dUpT7VUfTptxAwoWrZ6znLtIDLVogOUgbPMtgoX7i
-         /hGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDcU/GxHilJgwAXMNWy28QELOuP0F7L80iD/QYALaFLmlCviR+tbgnoCM/MABCJUUVYe1wfm9GXXjVtrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvjDv2KSUqMV5RjTUaq39ytVLbre03w7LJusgcPJt6a/L8yb2X
-	Ima7MgLUenImPO21WhZ+bR8DWq0uKxE6P7Y5S47Yo3MnPb8oGZOSJuDKs+xJt5GnyAYPq4fY/Hv
-	StaczASy/92C5PGghMbZd89h/vQFzZeM=
-X-Gm-Gg: ASbGnctnxahYpe2hSzPbJP/p25EXFAU+7Yc98MsR2A53z3lLplrV6NTAg/YSrfYyjwM
-	OG2jSlCJ1qlv+ChuWedIgKXs8EgYgV6h+l/tRiInZUSGHNHXV3/xnSpX/ThwcxX2JGyFMfDDj0O
-	jyI5uDyNTNyJbPSV+bXyXHWuB7j2c7ggksGM2UyPRM2L81rRarGa/hJa2fRKAiEswq65D1FVBha
-	ncbhpG3F2xzTqrVi977O0a86eOGHuTjH6hyrSo1uw==
-X-Google-Smtp-Source: AGHT+IGuRdBMYAkwKzsAFlzdYolufmnZhc4gT3Qkanm3b+H0ZT0F+1Fkx1oHfqeGTKvMgS5xq+3CPhlmxRxpaK9+R9M=
-X-Received: by 2002:a05:6e02:18c5:b0:3f2:a771:9fb3 with SMTP id
- e9e14a558f8ab-42f873f432amr105318985ab.27.1760090890836; Fri, 10 Oct 2025
- 03:08:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760090911; x=1760695711;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPvDh1+4NyZCubXd1ngtnPbpp/8IVN3Nsyy2TEjNtns=;
+        b=JJ5GtcN2286h5k0PJuiTa2HXe1MMUjTqlezPbSmXkudxA9sZS7iCzYI9F6sHXyZoBn
+         OOOLLj1JLVZzRRk/BKIb0Vbnirp3MrD6EaLIo3IpXWcet9j4O9jtTHPuxKeHeU02TK4Y
+         iRjp0YL7hARfFHsxrX3n6hGyrvtW5M9JCXwPd92sbABqc/qOH5Tzko+GnXIYxV7tI9iZ
+         0H5sOB0Dk2VVdbIHX22MhjfU4eutlITIiv/3eKT75IHaxffdgDKsAAEu0IIqE3qGKs9Z
+         L9vwHyln0WHm7gVSJglmgRvij2PKFoNRf9hVUwA0e6drrWTdRYDE/J/PgaH/9YsKw+dl
+         0D+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUhJG+42rQqPNWQEA9+Rs0aCQcqw+SkdnSsdimc18rcTdkwGB3VlDOITAAVWTgzoEzbrqf8WiH5p2aHzkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzii0Sn0JyjT9JLvKf9CM5N1UNe9ORr+mRvNCc3+FqzUZihEYhS
+	LWdQ2aC1wCtBTfgvN2lovFaYVE3XMOnePvdWX8aqNxktdu0x1qPrxgbmmgPwRKKxiFRpfZ1VEfJ
+	gInMaPT+9LajNX/C+iprxTGaDn7+C+8G4rX4ViPGQ/ukStWWGldRu2PhX20n6voKp7FY=
+X-Gm-Gg: ASbGncttn2/DB0zClerg/fa/y37CPCuJOy0Zod+9TAjfGWbHbe/DDsY+ur+yFAyUaXA
+	gtGbRkMr8EwoIn6X7j0W32MU4cwErYITIexQeRtvoY34+T3LbmSFe4dPhQgFb/H9kQWDaiymbl2
+	59R0bYHgL3v3qGIsqLJTUj5v+SeGMq+cFf8UA80J/SmVDT0k5z65NyfZtlUTPVEXEkIWgRNBKu6
+	uLZgODxjEhbeedM6tkq3fSTAYBhDEGBLuR03GMgG4u+G5CP3B2giDxgM5doYOq2P+8t+pT9hqge
+	BWrTQMQtejF2Hg1Ub5AlImPRCeHbDOSWaiKts19j11cUcXnhGXA4gdAqsKEPAm/+M1A=
+X-Received: by 2002:a17:90b:4c07:b0:32e:a60d:93e2 with SMTP id 98e67ed59e1d1-33b51114ec4mr17421351a91.11.1760090911003;
+        Fri, 10 Oct 2025 03:08:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6t323CK1XKUt3kCAeKmlXD3F1oo4fJpF0gTwFVa06YC+kIJzq3zfGNifAphNavHFinjSPDg==
+X-Received: by 2002:a17:90b:4c07:b0:32e:a60d:93e2 with SMTP id 98e67ed59e1d1-33b51114ec4mr17421300a91.11.1760090910355;
+        Fri, 10 Oct 2025 03:08:30 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626d284bsm2362830a91.18.2025.10.10.03.08.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 03:08:29 -0700 (PDT)
+Date: Fri, 10 Oct 2025 15:38:23 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v4 00/12] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+Message-ID: <20251010100823.wc72fle2psf6r4wi@hu-mojha-hyd.qualcomm.com>
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <b6akgk6nymtaxqak2procz4gkq6hrj2ao2yaw3axo6yjn7ekuk@g66xx5vd3fcp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755235180.git.y.j3ms.n@gmail.com> <CANiq72nbERSOWKRUTJ96YYKCDeAoHLBuiVP+XkDUKg7JYkoyiA@mail.gmail.com>
-In-Reply-To: <CANiq72nbERSOWKRUTJ96YYKCDeAoHLBuiVP+XkDUKg7JYkoyiA@mail.gmail.com>
-From: Jesung Yang <y.j3ms.n@gmail.com>
-Date: Fri, 10 Oct 2025 19:07:58 +0900
-X-Gm-Features: AS18NWBVMcBD24mf1KqbL440nVAyfGu-ZCbyG3tLNt_guISUTjnPv0xN-eS_TOI
-Message-ID: <CA+tqQ4KG98XcWh3rkAxEOiACSUtPf7KM0Wqh9Af=POgVDHJzzw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] rust: add `TryFrom` and `Into` derive macros
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b6akgk6nymtaxqak2procz4gkq6hrj2ao2yaw3axo6yjn7ekuk@g66xx5vd3fcp>
+X-Authority-Analysis: v=2.4 cv=Vrcuwu2n c=1 sm=1 tr=0 ts=68e8db20 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=4W5d78O8fA4mGIgYuL8A:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22 a=cvBusfyB2V15izCimMoJ:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: gtegN6G4nIIiFPIrdKXaX7iev6MYFWoj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX3AyKENfyA9FZ
+ rf+ul7VHudJ3Gt1aqPy8Z0cYPBgxoVPd57Wh/GXHgT6gv85rc9Wkt7WgMuAuGhEJBA8gzFOXKwB
+ wF6Lh/d5K9ngv4ycrFeXxX0fDKVwQZXPr4r0s1z1XNHiGoP/lZZC9L4ATgfyZsTgjkT0xa6FV6U
+ vnO/DxcapEaPlLaYvujGacEVx2/x1KDHoJgaaNIQ0LrgtNkv7iMQLQ553wFHvvgpDfqrKTMgUX9
+ v2GD9syBbYGQLO6xzIBtZBmjk+H105trMXFKeyTqTK/5F6PrMj5JtbN6D8nGnAFfg7Y1uTivo2f
+ sH2bmq8Zge+1n9IuujeizRItcfU8fytUxz4Gn058EUmov9DN/apcv5V0qk2bKX0ZSDomnEsv8Sb
+ /pYzeWP/Mue8V/PcPrkKDBEDjsF1Wg==
+X-Proofpoint-ORIG-GUID: gtegN6G4nIIiFPIrdKXaX7iev6MYFWoj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-10_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-Hi,
+On Tue, Oct 07, 2025 at 02:56:13PM -0700, Manivannan Sadhasivam wrote:
+> On Tue, Oct 07, 2025 at 10:18:45PM +0530, Mukesh Ojha wrote:
+> > A few months ago, we discussed the challenges at Linaro Connect 2025 [1] 
+> > related to Secure PAS remoteproc enablement when Linux is running at EL2.
+> > 
+> > [1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
+> > 
+> > Below, is the summary of the discussion.
+> > 
+> > Qualcomm is working to enable remote processors on the SA8775p SoC with
+> > a Linux host running at EL2. In doing so, it has encountered several
+> > challenges related to how the remoteproc framework is handled when Linux
+> > runs at EL1.
+> > 
+> > One of the main challenges arises from differences in how IOMMU
+> > translation is currently managed on SoCs running the Qualcomm EL2
+> > hypervisor (QHEE), where IOMMU translation for any device is entirely
+> > owned by the hypervisor. Additionally, the firmware for remote
+> > processors does not contain a resource table, which would typically
+> > include the necessary IOMMU configuration settings.
+> > 
+> > Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
+> > Authentication Service (PAS) from TrustZone (TZ) firmware to securely
+> > authenticate and reset remote processors via a single SMC call,
+> > _auth_and_reset_. This call is first trapped by QHEE, which then invokes
+> > TZ for authentication. Once authentication is complete, the call returns
+> > to QHEE, which sets up the IOMMU translation scheme for the remote
+> > processors and subsequently brings them out of reset. The design of the
+> > Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+> > is not permitted to configure IOMMU translation for remote processors,
+> > and only a single-stage translation is configured.
+> > 
+> > To make the remote processor bring-up (PAS) sequence
+> > hypervisor-independent, the auth_and_reset SMC call is now handled
+> > entirely by TZ. However, the issue of IOMMU configuration remains
+> > unresolved, for example a scenario, when KVM host at EL2 has no
+> > knowledge of the remote processors’ IOMMU settings.  This is being
+> > addressed by overlaying the IOMMU properties when the SoC runs a Linux
+> > host at EL2. SMC call is being provided from the TrustZone firmware to
+> > retrieve the resource table for a given subsystem.
+> > 
+> > There are also remote processors such as those for video, camera, and
+> > graphics that do not use the remoteproc framework to manage their
+> > lifecycle. Instead, they rely on the Qualcomm PAS service to
+> > authenticate their firmware. These processors also need to be brought
+> > out of reset when Linux is running at EL2. The client drivers for these
+> > processors use the MDT loader function to load and authenticate
+> > firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
+> > to retrieve the resource table, create a shared memory bridge
+> > (shmbridge), and map the resources before bringing the processors out of
+> > reset.
+> > 
+> > It is based on next-20251007 and tested on SA8775p which is now called
+> >  Lemans IOT platform and does not addresses DMA problem discussed at
+> > [1] which is future scope of the series.
+> > 
+> 
+> Could you please add a link to the modified TZ firmware for Lemans, required to
+> make use this patchset?
 
-On Wed, Oct 1, 2025 at 5:13=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-[...]
->   - My biggest concern is the overflow caveat, which is a fairly big
-> one if one, especially if one is dealing with runtime values.
->
->     Can we do better? Accessing the discriminant via `as` is available
-> in const context, and you already have every variant easily available,
-> so can we check that every variant fits in the relevant target types?
->
->     For instance, by creating some item-level const blocks
-> (`static_assert!`s) -- dummy example for an unsigned-to-unsigned case:
->
->         const _: () =3D { assert! (E::A as u128 <=3D u8::MAX as u128); };
->         const _: () =3D { assert! (E::B as u128 <=3D u8::MAX as u128); };
->         ...
->
->     and so on. There may be better ways to do it -- I just quickly
-> brute forced it that unsigned case with what you already had for
-> handling variants:
->
->         variants.iter().map(|variant| {
->             quote! {
->                 const _: () =3D { assert!(#enum_ident::#variant as u128
-> <=3D #ty::MAX as u128); };
->             }
->         });
->
->     Maybe this was already discussed elsewhere and there is a reason
-> not to do something like this, but it seems to me that we should try
-> to avoid that risk.
+It is not yet available in public, but I could share you internally.
 
-Thanks, I see your point, and I agree that compile-time checking for
-potential overflows is a better and safer approach.
+> 
+> - Mani
+> 
+> > Changes in v4: https://lore.kernel.org/lkml/20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com/
+> >  - Fixed kernel robot warning/errors.
+> >  - Reworded some of the commit log, code comment as per suggestion from Bryan.
+> >  - Added support of gpdsp0 and gpdsp1 and disabled iris node.
+> >  - Add R-b tag to some of the reviewed patches.
+> >  - Rename struct qcom_scm_pas_cxt to qcom_scm_pas_context.
+> > 
+> > Changes in v3: https://lore.kernel.org/lkml/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/
+> >  - Dropped video subsystem enablement for now, could add it in future
+> >    or on a separate series.
+> >  - Addressed most of the suggestion from Stephen and Bryan like some
+> >    remoteproc code checking resource table presence or right error
+> >    code propagation above the layer.
+> >  - Added leman-el2 overlay file.
+> >  - Added missed iommus binding which was missed last series.
+> >  - Separated qcom_mdt_pas_load() patch and its usage.
+> >  - Patch numbering got changed compared to last version
+> > 
+> > Changes in v2: https://lore.kernel.org/lkml/20241004212359.2263502-1-quic_mojha@quicinc.com/
+> >  - A lot has changed from the V1 and a fresh look would be preferred.
+> >  - Removed approach where device tree contain devmem resources in
+> >    remoteproc node.
+> >  - SHMbridge need to created for both carveout and metadata memory
+> >    shared to TZ in a new way.
+> >  - Now, resource table would be given by SMC call which need to mapped
+> >    along with carveout before triggering _auth_and_reset_.
+> >  - IOMMU properties need to be added to firmware devices tree node when Linux
+> >    control IOMMU.
+> > 
+> > ---
+> > Mukesh Ojha (12):
+> >       dt-bindings: remoteproc: qcom,pas: Add iommus property
+> >       firmware: qcom_scm: Rename peripheral as pas_id
+> >       firmware: qcom_scm: Introduce PAS context initialization and destroy helper
+> >       soc: qcom: mdtloader: Add PAS context aware qcom_mdt_pas_load() function
+> >       remoteproc: pas: Replace metadata context with PAS context structure
+> >       firmware: qcom_scm: Add a prep version of auth_and_reset function
+> >       firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
+> >       firmware: qcom_scm: Add SHM bridge handling for PAS when running without QHEE
+> >       firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get resource table
+> >       remoteproc: pas: Extend parse_fw callback to fetch resources via SMC call
+> >       remoteproc: qcom: pas: Enable Secure PAS support with IOMMU managed by Linux
+> >       arm64: dts: qcom: Add EL2 overlay for Lemans
+> > 
+> >  .../bindings/remoteproc/qcom,pas-common.yaml       |   3 +
+> >  arch/arm64/boot/dts/qcom/Makefile                  |   7 +-
+> >  arch/arm64/boot/dts/qcom/lemans-el2.dtso           |  41 ++
+> >  drivers/firmware/qcom/qcom_scm.c                   | 415 ++++++++++++++++++---
+> >  drivers/firmware/qcom/qcom_scm.h                   |   1 +
+> >  drivers/remoteproc/qcom_q6v5_pas.c                 | 187 ++++++++--
+> >  drivers/soc/qcom/mdt_loader.c                      |  32 +-
+> >  include/linux/firmware/qcom/qcom_scm.h             |  36 +-
+> >  include/linux/soc/qcom/mdt_loader.h                |  16 +-
+> >  9 files changed, 635 insertions(+), 103 deletions(-)
+> > ---
+> > base-commit: 68842969e138d9ad3e3aa2bbd65d514df1581b5c
+> > change-id: 20251007-kvm_rprocv4_next-20251007-5e4ea5a978da
+> > 
+> > Best regards,
+> > -- 
+> > -Mukesh Ojha
+> > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
-That said, it becomes a bit trickier when dealing with conversions
-between signed and unsigned types, particularly when `u128` and `i128`
-are involved. For example:
-
-    #[derive(TryFrom, Into)]
-    #[try_from(u128)]
-    #[into(u128)]
-    #[repr(i128)]
-    enum MyEnum {
-        A =3D 0xffffffffffffffff0, // larger than u64::MAX
-        B =3D -1
-    }
-
-In this case, since there's no numeric type that can encompass both
-`u128` and `i128`, I don't think we can express a compile-time
-assertion like the one you suggested. While such edge cases involving
-128-bit numeric types are unlikely in practice, the broader challenge
-is that, in signed-to-unsigned conversions, I think it's difficult to
-detect overflows using only the `repr` type, the target type, and the
-discriminant value interpreted as the target type (please correct me if
-I've misunderstood something here).
-
-I'm considering an alternative approach: performing these checks while
-parsing the macro inputs, to handle all combinations of `repr` and
-target types (such as `u128` in the above example) in a unified way. I
-believe this makes the behavior easier to reason about and better
-covers edge cases like conversions between `i128` and `u128`. For
-example:
-
-    const U128_ALLOWED: [&str; 9] =3D
-        ["u8", "i8", "u16", "i16", "i32", "u32", "u64", "i64", "u128"];
-    const I128_ALLOWED: [&str; 9] =3D
-        ["u8", "i8", "u16", "i16", "i32", "u32", "u64", "i64", "i128"];
-    ...
-
-    // Use this function after parsing `#[repr(...)]`, `#[into(u128)]`
-    // and `#[try_from(...)]`.
-    fn check_overflow(
-        discriminant_repr: &str,
-        helper_inputs: Vec<&str>
-    ) -> Vec<&str> {
-        let mut violations =3D Vec::new();
-        if discriminant_repr =3D=3D "u128" {
-            for ty in helper_inputs.iter() {
-                if !U128_ALLOWED.contains(&ty) {
-                    violations.push(ty);
-                }
-            }
-        } else if discriminant_repr =3D=3D "i128" {
-            for ty in helper_inputs.iter() {
-                if !I128_ALLOWED.contains(&ty) {
-                    violations.push(ty);
-                }
-            }
-        }
-        ...
-        violations
-    }
-
-This is a rough sketch, but it gives a consistent way to reject
-obviously invalid combinations early during parsing. I'd appreciate
-your thoughts -- does this approach seem reasonable to you as well?
-
->   - On other news, I will post in the coming days the `syn` patches,
-> and my plan is to merge them for next cycle, so when those are out,
-> Benno thought you could give them a go (we can still merge this with
-> your current approach and then convert, but still, more `syn` users
-> and converting the existing macros would be nice :).
->
->     (By the way, the linked patches about converting the existing
-> macros to `syn` are an RFC in the sense that they cannot be applied,
-> but having `syn` itself is something we already agreed on a long time
-> ago.)
-
-Sounds good -- I'd be happy to give `syn` a try. It should simplify
-the parsing logic quite a bit, and I believe it'll also make things
-easier for reviewers.
-
->   - Couple nits: typo arise -> arises, and I would do `repr-rust`
-> instead of `repr-rs` since that is the anchor in the reference that
-> you are linking.
-
-Thanks, I'll fix them in v3.
-
-Best Regards,
-Jesung
-
->
-> Thanks a lot!
->
-> Cheers,
-> Miguel
+-- 
+-Mukesh Ojha
 
