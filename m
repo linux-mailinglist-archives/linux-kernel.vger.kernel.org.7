@@ -1,99 +1,99 @@
-Return-Path: <linux-kernel+bounces-848546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C79BCE00A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:55:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BEDBCE03A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 32262354A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:55:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A88464FF443
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B302FC87A;
-	Fri, 10 Oct 2025 16:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BmJ6TLz+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978092FC876;
-	Fri, 10 Oct 2025 16:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AF92FCBE1;
+	Fri, 10 Oct 2025 16:55:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0FC2FC866;
+	Fri, 10 Oct 2025 16:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760115309; cv=none; b=a0Eyq7QNRnlA2/G04uhf1e3Rc6ycje/GXUaLYPMYkDA3cv3vy0St4J3iPYSXGKOAkkcQUlhXD40PCMrMkAok8z7uBAMj3SwrcWaFAQCh0c21ytJZ5GXNZvji0LJZcpPRWJeY5gP0THDHg1ywsy8jHsnp7+0F5tKyylKictTv714=
+	t=1760115331; cv=none; b=Ukg5z5bYExX5wjT8n80meyRhoOzJPY9TUpphgr0Oz0fnWH8jZZUzemH3uewcajeuu1955HBeD40NwJ6fCQWGSXw5hr1Wmdzmr6KJyYQzrJIAa4AqMmRy5e3XbKT6TjBz3DAhjD38zQuRMECWdZLMlyUT1qxbsU1uoXpZjQUthIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760115309; c=relaxed/simple;
-	bh=suRumcgYqoCReE8eyejZ0DNC/ShHcuzZ9zg6cgvFHCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YjaWV+S50zk2riFKqaI7zPK14D3yL+cAPN3dEbxOf1LinDmIONht2+JMEgweio/v+6zuXAn8s3akHwpJ9gV+u3dC8X8BRK2pBUGmn3NN3iGEj+0JtJquirqg0UVYB2xhuBNrF6RTNOrKtMClhzDxF0T5zWyzzjfQySvV8wzGzjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BmJ6TLz+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=vscTT9HApN3I/7J7o6eTXeB4kqT2Uq/JxUsNpPc9x4c=; b=BmJ6TLz+3ImZgyegUyiBhBdxD6
-	6t7z+p3q0qqdz29e9/eJ53uRu+bGZ1JD+F4O8+/JkzDTC0o1kuaU72MG9wZAY+OV7uRg1f7MlAwY1
-	fxV7oYk88oPiZ73BA+Net4WlYvnjkrZ7uTsUByCBLA/Kegb9P0cyY4nR6GrNremzyFGY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v7GOE-00AcUe-SN; Fri, 10 Oct 2025 18:54:46 +0200
-Date: Fri, 10 Oct 2025 18:54:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Conor Dooley <conor@kernel.org>
-Cc: Thomas Wismer <thomas@wismer.xyz>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: pse-pd: ti,tps23881: Add TPS23881B
-Message-ID: <d93573b4-6faa-4af5-80ae-32d68092ff30@lunn.ch>
-References: <20251004180351.118779-2-thomas@wismer.xyz>
- <20251004180351.118779-8-thomas@wismer.xyz>
- <20251007-stipulate-replace-1be954b0e7d2@spud>
- <20251008135243.22a908ec@pavilion>
- <e14c6932-efc9-4bf2-a07b-6bbb56d7ffbd@lunn.ch>
- <20251009223302.306e036a@pavilion>
- <8395a77f-b3ae-4328-9acb-58c6ac00bf9e@lunn.ch>
- <20251010-gigahertz-parakeet-4e8b62ffa9fd@spud>
+	s=arc-20240116; t=1760115331; c=relaxed/simple;
+	bh=Sz8RabVnrjFNVx868GiQTmH/sjg8X8gn79S1Yrj3Svo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jX9MsDcJXsoz3+peGyFVJzYGe86O/x2M6h1pVbyHVAmZbBPjwuFwHnqK4VV+ty9gBW7z/Po3GY23LvsP9tJDMo5p01Rn7ZNj6KmanK194dBh2I0SmyQVTB/mKSrRC1ZmzD29cRJsNnLAJ7rn4oGzScWuQGFZNUXnvRopWULRzLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A279153B;
+	Fri, 10 Oct 2025 09:55:21 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A66AB3F66E;
+	Fri, 10 Oct 2025 09:55:23 -0700 (PDT)
+Message-ID: <6cdb1661-67c5-445e-bfe0-b4a8f3493676@arm.com>
+Date: Fri, 10 Oct 2025 17:55:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010-gigahertz-parakeet-4e8b62ffa9fd@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask from
+ a processor container
+To: Gavin Shan <gshan@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-2-james.morse@arm.com>
+ <3a2f6807-9a49-4976-a4d7-7577756c3c26@redhat.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <3a2f6807-9a49-4976-a4d7-7577756c3c26@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > So if the silicon and the DT disagree, you get -ENODEV or similar?
-> > That is what i would recommend, so that broken DT blobs get found by
-> > the developer.
+Hi Gavin,
+
+On 03/10/2025 01:15, Gavin Shan wrote:
+> On 9/11/25 6:42 AM, James Morse wrote:
+>> The ACPI MPAM table uses the UID of a processor container specified in
+>> the PPTT to indicate the subset of CPUs and cache topology that can
+>> access each MPAM System Component (MSC).
+>>
+>> This information is not directly useful to the kernel. The equivalent
+>> cpumask is needed instead.
+>>
+>> Add a helper to find the processor container by its id, then walk
+>> the possible CPUs to fill a cpumask with the CPUs that have this
+>> processor container as a parent.
+
+> With the description for the return value of acpi_pptt_get_cpus_from_container()
+> is dropped since that function doesn't have a return value, as mentioned by
+> Stanimir Varbanov.
 > 
-> I'm personally not a big fan of this kind of thing, as it prevents using
-> fallbacks for new devices when done strictly. I only really like it
-> being done this way if the driver does not produce errors for unknown
-> part numbers, only if (using this case as an example) a b device is
-> labeled as a non-b, or vice-versa. IOW, if the driver doesn't recognise
-> the ID, believe what's in DT.
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-The issue we have seen in the past when not strictly checking the
-compatible against the hardware, is that a number of DT blob ship with
-the wrong compatible. Then sometime later you find you need to key
-some feature off the compatible, but you cannot without breaking all
-those devices which have the wrong compatible.
 
-In order to be able to use the compatible, it has to be correct.
+Thanks!
 
-   Andrew
+James
 
