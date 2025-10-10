@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-847787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE2ABCBBA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5DCBCBBAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B21519E2E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95B9D19E3F72
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4F621FF21;
-	Fri, 10 Oct 2025 05:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB170220698;
+	Fri, 10 Oct 2025 05:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9nEE65B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE/NCL8B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B701547F2;
-	Fri, 10 Oct 2025 05:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A0C1E5B88;
+	Fri, 10 Oct 2025 05:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760074500; cv=none; b=kkrR0xRKv3G7HVqTRPUWObBCUEFA+U53lBbPsBWKQvKG12ULkt9iWLxpfBl0u3o9YexRiWJQUF3ntnH47nMzvRSeIt2Hf8xCapeyL14dUGqHEXtPBZprYhFmixaevFE6+XZ9pJ06XGutVmXqMI42PuSYAovOqY6+NGzgsJNSip8=
+	t=1760074662; cv=none; b=Jgy5EAaR4WwAx0CmPgC/BhgsMelcFCAeWmSAqLKRVEgeQ3WogtQZwf0KeyWbP3PZfaecYskQY9i3hM8/RW05Q38TPTY66eNZGjXJSQ3/aaj5mrAayYlEIaM023WfB7ZZtp2oumHx56y3aPf4Je4HNoZN22XM5PA1QN+FYEqx1yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760074500; c=relaxed/simple;
-	bh=lM58MpWdmSETT+79z7f98iKjDJs4/2IzUXemQDA/MaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YgZ8Q+VIfQeJABCJcNSeOB7kmdVE8o6J0SLPdoVtHsA0vshIcFUa1Wa/cvj9SoikFBZRedi6jexefT48c7WRRlEVs8BlgGPf0R1foCqNl/yIP6uXLOpbvQ6YSgPcP651yC+PP8nMNqJmbBIbeCxG8mjwDqJzc3ltT1hzO1HA8TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9nEE65B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B58C4CEF1;
-	Fri, 10 Oct 2025 05:34:59 +0000 (UTC)
+	s=arc-20240116; t=1760074662; c=relaxed/simple;
+	bh=eSG/Q37AL9myTBhDnUGwpJwl96ThmygUixnMjqfFA7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaS2zUxDtZJUHHUgdgHDwxGuO/VVh/Hdugj/r85xfDoYL9HS+U+TfOm7kBl9/8LdpwwfICtW6ViZXnBMX1rdGsADhRmljMpP6XBlopn9LB11mKHJiXOxsygc7HrVFIVYPUkU7pXaExXBkhePP0LyowAzp8WSnmNLZZF54/IDyrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE/NCL8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37497C4CEF1;
+	Fri, 10 Oct 2025 05:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760074499;
-	bh=lM58MpWdmSETT+79z7f98iKjDJs4/2IzUXemQDA/MaM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=A9nEE65BBvsF7XgPgUXbgliTaphESNamBxLLgc1G9FQtAhYsqKtZhZsZSnZYoWNp5
-	 zgKzkyxYIwi/v9dzfNpfoidlyMEXXCLzU7m6qLdmWPSjjcGL6npgcpVuy07T3cbYfB
-	 UGOHKJRYvq2uNXHr7j3N1ctyWws3EYXyQfwsq0MLN7gF1VfxMimfD3B4t3PFNDpAM8
-	 wKygFL2NYTXSkgPYGJk8CridfJ6JJiIqbwgL2paPBLl+iBYqb9AK5mFp7SJjMKzuB7
-	 MCRhLxY/brQ2yPqAyDvHp1lUl1xQ+cJlfmYh0efRYnQ9t+nRthZab+XeA7H6qTs+01
-	 M0nkGlIC5GokA==
-Date: Fri, 10 Oct 2025 08:34:56 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18-2
-Message-ID: <aOibAOKu_lEsSlC8@kernel.org>
+	s=k20201202; t=1760074661;
+	bh=eSG/Q37AL9myTBhDnUGwpJwl96ThmygUixnMjqfFA7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mE/NCL8BB4pxQmbWQWld9vmyEKkzDTVph4kFYLT8D6CxOIunbO3lsKyifa7pUV+7l
+	 C1OyCfMr1shXqOSaGvN1HIE3Xa+WQluhv3hWTL0BDu7MRrKoFRjvfxMP/evN1bKDm9
+	 L5OsI03zPx3hHjXSCGDG2cTPG3JO/uUPO6ED5dXjkRvbG3gdpwWu6g7M5CaHHyS9Ck
+	 qWTLqHRg97t1kBkuRYTwUEft6UBGWSHf5DEQpPmHO8Twr4HuYo/jJSFnGh5fEzSwsi
+	 RfTCFRXZhINgXySpPI1hlTOp49aHh1zHl6B0X7dSvvVMAXhxzPJbMNw5EN719EvWhn
+	 1QFsHhGMJ3Syw==
+Date: Thu, 9 Oct 2025 22:37:36 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Alexey Gladkov <legion@kernel.org>,
+	Charles Mirabile <cmirabil@redhat.com>, da.gomez@samsung.com,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, masahiroy@kernel.org,
+	mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com,
+	sfr@canb.auug.org.au
+Subject: Re: [PATCH v8 7/8] modpost: Create modalias for builtin modules
+Message-ID: <20251010053736.GA447238@ax162>
+References: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
+ <20251007011637.2512413-1-cmirabil@redhat.com>
+ <aOToOeNGiaFVM0Ds@example.org>
+ <aOgSaNejdcBWKXx8@levanger>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,69 +63,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aOgSaNejdcBWKXx8@levanger>
 
-The following changes since commit 5472d60c129f75282d94ae5ad072ee6dfb7c7246:
+On Thu, Oct 09, 2025 at 09:52:08PM +0200, Nicolas Schier wrote:
+> On Tue, Oct 07, 2025 at 12:15:21PM +0200, Alexey Gladkov wrote:
+> > Hm. Indeed. I haven't found a good solution yet, but you can use the
+> > following patch to unlock compilation. It won't solve the problem, it will
+> > only hide it.
+> > 
+> > --- a/scripts/Makefile.vmlinux
+> > +++ b/scripts/Makefile.vmlinux
+> > @@ -84,7 +84,7 @@ endif
+> >  remove-section-y                                   := .modinfo
+> >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> > 
+> > -remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> > +remove-symbols := -w --strip-unneeded-symbol='__mod_device_table__*'
+> > 
+> >  # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
+> >  # it is necessary to remove the PT_LOAD flag from the segment.
+> > 
+> 
+> Is it problematic to hide that?  Otherwise we'd have to revert the
+> patch, right?
 
-  Merge tag 'trace-v6.18-2' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace (2025-10-09 12:18:22 -0700)
+Yeah, I would much prefer to ending up with pointless
+__mod_device_table__ symbols in the final binary than erroring out
+during the build... Does this happen with other architectures? I have
+not seen any reports yet but I have not tested anything yet. Why is
+RISC-V special here?
 
-are available in the Git repository at:
+It seems like the relocation comes from the .LASANLOC4 symbol in
+.data.rel.local?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v6.18-2
+  $ llvm-objdump -Dr drivers/irqchip/irq-riscv-aplic-main.o
+  ...
+  Disassembly of section .data.rel.local:
+  ...
+  0000000000000130 <.LASANLOC4>:
+  ...
+       1c0: 0000          unimp
+          00000000000001c0:  R_RISCV_64   __mod_device_table__kmod_irq_riscv_aplic_main__acpi__aplic_acpi_match
+  ...
 
-for you to fetch changes up to a29ad21b988652dc60aa99c6d3b1e3d52dc69c30:
+I cannot find much information about this ASANLOC outside of its
+location within the GCC sources, do we even need it? I don't see a way
+to opt out of this section altogether or on a per-variable basis, I
+wonder if there is some way to strip it out...
 
-  tpm: Prevent local DOS via tpm/tpm0/ppi/*operations (2025-10-10 08:21:45 +0300)
+I plan to send the initial 6.18 Kbuild fixes pull request on Saturday.
+If we cannot figure out a real solution before then, maybe we can just
+switch to '--strip-unneeded-symbol' with a comment to upgrade that to
+'--strip-symbol' when possible?
 
-----------------------------------------------------------------
-Hi,
-
-Round #2.
-
-O_EXCL patches will be postponed to 6.19 as they need some restructuring.
-E.g., there's in-between series regression breaking the user space as lack
-of O_EXCL flag handling causes obviously unconditional O_EXCL.
-
-As per Chris' feedback, commands fail because it is based on Google's a
-non-standard proprietary TPM alike implementation. And the issue is not
-PC Client Profile specific. "typical profiles" are fine when they become
-"typical profiles".
-
-The null key can be verified with vendor certificate tied keys, and there's
-challenge-response process using them for certifying any other key by a
-remote party.
-
-Performance hit on generation aside, if really starting to cut hairs null
-keys are the most secure option, and it's a non-debatable fact: they have
-shortest expiration times as seed changes per power cycle.
-
-Based on this TCG_TPM2_HMAC is disabled from defconfig exactly for the sake
-of the performance issues.
-
-BR, Jarkko
-
-----------------------------------------------------------------
-Denis Aleksandrov (1):
-      tpm: Prevent local DOS via tpm/tpm0/ppi/*operations
-
-Eric Biggers (2):
-      tpm: Compare HMAC values in constant time
-      tpm: Use HMAC-SHA256 library instead of open-coded HMAC
-
-Gunnar Kudrjavets (1):
-      tpm_tis: Fix incorrect arguments in tpm_tis_probe_irq_single
-
-Jarkko Sakkinen (2):
-      tpm: Disable TPM2_TCG_HMAC by default
-      tpm: use a map for tpm2_calc_ordinal_duration()
-
- drivers/char/tpm/Kconfig         |   3 +-
- drivers/char/tpm/tpm-interface.c |   2 +-
- drivers/char/tpm/tpm.h           |   2 +-
- drivers/char/tpm/tpm2-cmd.c      | 127 ++++++++++-----------------------------
- drivers/char/tpm/tpm2-sessions.c | 104 +++++++++-----------------------
- drivers/char/tpm/tpm_ppi.c       |  89 ++++++++++++++++++++-------
- drivers/char/tpm/tpm_tis_core.c  |   4 +-
- include/linux/tpm.h              |   5 +-
- 8 files changed, 137 insertions(+), 199 deletions(-)
-
+Cheers,
+Nathan
 
