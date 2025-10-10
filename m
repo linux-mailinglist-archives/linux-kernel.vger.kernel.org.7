@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-848172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35604BCCCD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:47:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A31BBCCCDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A0C424793
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:47:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 494404E559A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C93286435;
-	Fri, 10 Oct 2025 11:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FEF285C9A;
+	Fri, 10 Oct 2025 11:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bradb5iq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlxP2ush"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2257C1494CC;
-	Fri, 10 Oct 2025 11:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B210E26158C
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760096830; cv=none; b=nPg7nlAF532Z4EaF5J8Dny2F82L311N7RhFcsskLpU/ODDGoqIBFOJCYLIyG2mdtBsuVoIZaZjYMEbbUJ/dyGk4REaDnoJXXh4a15ELUELnsOatyjVTafavzlzaWCPp5rt9b81V8R/jKOilTthUbRSZ9SCzV+W2EdFNsrh9Rlxw=
+	t=1760096875; cv=none; b=E1oKlx/eeQNK2zVST1yHtifqiTe679AM0G4s8Nkyfc0GhNtUxHTLnmuW/Ntx1OJK7Iok1D8yRmgPW4wU2puJiatyVK+WBR0bAUu+oXH51NTmDPiVHwDEdNtePaDR5toEqF7UjXf3/fnw7ZMbjpST8omjsp1i9ZP6I5gf2KY7tNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760096830; c=relaxed/simple;
-	bh=UPc3PX96ujolrFCKeAov5/QZ+6RJEXmIxdbgi70aPlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PHaNrv/Br+NQiHau7AdZU2Kz0PU2sD+lkQzlLyLg1jrEWMlGRtt5EHxn/Yk5xyRUehCsU9hlBmRSvQY3ACMVPKbK2rFCTgFqANobJMhBWdEsysChmCFSsWvwfMIJ1W/cUal91qN6noEJpr8st80SWJ4Rw9x6YeRqeohpJ04Fg0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bradb5iq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB9BC4CEF1;
-	Fri, 10 Oct 2025 11:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760096826;
-	bh=UPc3PX96ujolrFCKeAov5/QZ+6RJEXmIxdbgi70aPlc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bradb5iqgfvTuj0qhTn70qVQBCSzaEM7aMRf/JdDcbE6u9pUyPhlVplCSPzCq4P80
-	 ba8EpEyZUIQxAntR97mNKBavq+feo39IrLilZZuayH5DPoeGXnyfmQe/B55e9gBT4J
-	 H4jyWVQszaglsLbPq9AUXZpybRTCVNC22nAOLuf/pvbkBr02qFyuQFq7u7fb+hjCRf
-	 lCmpANIPb98Jv3wI4zsd8Wj7klI8a90qNGs7oTSnOXEsMq3LWSpYyrOBnogMGLxFcn
-	 QcEyDT/G/9LHuld68XV6/qM3/YbseRcrWsN+yOT2Z5s6iQIBfAnsNKv1Fk5Y6nIDtj
-	 U6mi2QR9ZE7uA==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1760096875; c=relaxed/simple;
+	bh=j8Hd4Iay6zYNggN2mZzljQRaAldF0uuSlvshS+04klw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=V7PI1y6TYuk+BxRDRjCWKfY9XrKGkmEx/m+belRQTEH8Iu/X0lNZMnamrAY5rT8Qy9Ay12KxtWxiNVY+Mguct2pj6qXQ8T8BrHzJdMKMK1vXHIKMwt/5TxOmARL84yCZ3dzxKskhSsMQPBS5WfTQuycIWYVXF1sIyrcmJ6ld/iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlxP2ush; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-28e8c5d64d8so18785085ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:47:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760096873; x=1760701673; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K6G7I4yZCC3xCLDmgNXcqXWYF504/swrtgR3bZf+tR8=;
+        b=VlxP2ushFPA/dhlY6hp1IuLoaC+4Ave2aVoW4rvssr3XZoS8/XqiNYadxWKo6KdywX
+         O85lvh33daoO7gFlCTXPTchUYZ7SCnYox+bpmXpXZgaPE92IwehLJ7cWOwmupouToONw
+         icPV20PQvwaW78IqPfas/rgxAwiBcwcHN9Hrk4TwaV2ZkhlfSTjZwOUx7rVE0Dl0jw9Q
+         g1J7ZuSUWFL+1GoPTwa1lOO0I7/RIMXaml5e5MxOLT6DeM0upR3FGoQpd/9O3V89d/rI
+         rQbZW117IjRQxlD933uHM+DlRoR8QgmwJRx1syger0cFcIksy4YcmHnZazR42sjlDkP0
+         HQ3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760096873; x=1760701673;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K6G7I4yZCC3xCLDmgNXcqXWYF504/swrtgR3bZf+tR8=;
+        b=TI4TBB7ijIj5DRRd3Y0vYxIsvu2sy5xDmZSYLVJCHw4s6wS4OOyHAkFbbAT43jTdHI
+         tmucEp1vlJxSWFTY9ljGrZIPVj22Mxo38mDuQxhdrOoUrcxGCF1CZ6Oo6/FiUSpKf93M
+         LsJAx5q1JWwmL1oTG54Hmnr6oRmy7zOTGZiXLCJMF4EUCXvKnwGWJlMeLTGWdprFFLBI
+         2Yp5Uf+36HNQTGaMzIPa1jqQcvAF6TZJDIS/PNrJxNkfNqNngRDZYMh/MfLv2Vocm4W8
+         brf1Bow/WE/8hGC8pk1GIGewNEKnL4l+4Wql9xwH5NpHJ7X/fdLY0eQdv4B1sLbHrThq
+         qVQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXa948UGsUzampVHudURh9HpINC4pHHe2bSGGkgwEOHzh7eo91/RAF4W3mcVmkS5W2Gt2epOfqHNcx3xI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye+con6PPHX8qZ1JOad1ROHgIB4qrh5Re2I2LEL4XZuweJSAED
+	17tJKTDpSfWW/JsqYBchHmqK0s10Mf2by2hbyXjcbT6H52KLsY8AnVck
+X-Gm-Gg: ASbGncuQSBRjmGz1fuqHiNq6B/XSjLmigfeFSu1mut2F30LPc3D74G0os0LfeWfg3Uh
+	17VQAn8oxcNTI/9LursKqBXzSORDeLOTmDEZ1IG9wy/G1NUUswzZidaIpNzQbsOyhMhR/N5kIt5
+	PZglkPGYTJikPGHem1JUDnODsdUcXgl/B4qnbqOO7lppUdDSfLfbGKIVxuPzjMQrEWhxLVNf+u6
+	EsfowPK9ujHS2Gc1E/Evn/q94K3Jz4+CIQ1CyCfpSE5Wp00NQgjBTSCHOKzU/c98eR/Zt1b4uKb
+	ZrnF+ZTqICU3tnNs2Z4nssasdp6XfoVFOTTV4iNxFh1Xk2Kri3KDQsh6mEQR41jYIIjElqavO/u
+	eGO00o6eXScjN+X67Wo1VmfGiSumSKzB46otLTS4Ad3tDIUIxILxtOIXL/FysK8L7JoA=
+X-Google-Smtp-Source: AGHT+IG0cfNJnLLfwDicVViuXeEoizTyF3mRCh0vPGnpWvLjbE/ACva2N0i9tIjdj0MQ2LPSn8nOeg==
+X-Received: by 2002:a17:903:b4e:b0:28e:acf2:a782 with SMTP id d9443c01a7336-290273edf3amr116504145ad.37.1760096872925;
+        Fri, 10 Oct 2025 04:47:52 -0700 (PDT)
+Received: from test-HP-Desktop-Pro-G3.. ([103.218.174.23])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f0726asm54956535ad.72.2025.10.10.04.47.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 04:47:52 -0700 (PDT)
+From: Sudarshan Shetty <tessolveupstream@gmail.com>
+To: andersson@kernel.org
+Cc: konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH 0/2] Fix to EOPNOTSUPP double conversion in ioctl_setflags()
-Date: Fri, 10 Oct 2025 13:47:00 +0200
-Message-ID: <20251010-frosch-erstklassig-b8ff59fe2c78@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
-References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
+	tessolveupstream@gmail.com
+Subject: [PATCH v2 1/2] dt-bindings: arm: qcom: Add QCS615 Talos EVK SMARC platform
+Date: Fri, 10 Oct 2025 17:17:44 +0530
+Message-Id: <20251010114745.1897293-1-tessolveupstream@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <qq4aak33bn3mqxd2edu6zgkkshby63mmitg7zqkly2rj4c2lh7@4s7sndb7e2jr>
+References: <qq4aak33bn3mqxd2edu6zgkkshby63mmitg7zqkly2rj4c2lh7@4s7sndb7e2jr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1452; i=brauner@kernel.org; h=from:subject:message-id; bh=UPc3PX96ujolrFCKeAov5/QZ+6RJEXmIxdbgi70aPlc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS8+GRawjrf3yD3YtYuYYbKg7ZaE1gMf67ujOzel3mFZ cKlHfmfO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZi+pmRock1efYkhzx7qW1P Pm407inuq2zs25R7ZL7LdK7eif0VDgz/LOfU2t2KWLOcPVu1KflMlz7jAU3BfdfVk42rE7vaw6d yAQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Wed, 08 Oct 2025 14:44:16 +0200, Andrey Albershteyn wrote:
-> Revert original double conversion patch from ENOIOCTLCMD to EOPNOSUPP for
-> vfs_fileattr_get and vfs_fileattr_set. Instead, convert ENOIOCTLCMD only
-> where necessary.
-> 
-> To: linux-api@vger.kernel.org
-> To: linux-fsdevel@vger.kernel.org
-> To: linux-kernel@vger.kernel.org
-> To: linux-xfs@vger.kernel.org,
-> Cc: "Jan Kara" <jack@suse.cz>
-> Cc: "Jiri Slaby" <jirislaby@kernel.org>
-> Cc: "Christian Brauner" <brauner@kernel.org>
-> Cc: "Arnd Bergmann" <arnd@arndb.de>
-> 
-> [...]
+Add binding support for the QCS615-based Talos EVK SMARC platform.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 0a3222d6f368..a323be3d2ba2 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -862,6 +862,7 @@ properties:
+       - items:
+           - enum:
+               - qcom,qcs615-ride
++              - qcom,talos-evk
+           - const: qcom,qcs615
+           - const: qcom,sm6150
+ 
+-- 
+2.34.1
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/2] Revert "fs: make vfs_fileattr_[get|set] return -EOPNOTSUPP"
-      https://git.kernel.org/vfs/vfs/c/4dd5b5ac089b
-[2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr syscalls
-      https://git.kernel.org/vfs/vfs/c/d90ad28e8aa4
 
