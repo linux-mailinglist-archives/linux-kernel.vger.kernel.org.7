@@ -1,196 +1,349 @@
-Return-Path: <linux-kernel+bounces-848072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A52D5BCC6EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:48:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B0EBCC707
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9210A4E94BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:48:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153E93BB9C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B062ED164;
-	Fri, 10 Oct 2025 09:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3102E2ED17C;
+	Fri, 10 Oct 2025 09:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvslxa6y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YU0Ny0HD"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDD62ECE9A;
-	Fri, 10 Oct 2025 09:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858B92C159D
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760089698; cv=none; b=EfQY4FTaNJRatIgyVk6VvtGt7vdmk6Jxjhc9gyvVPhRptuvaCHOLBVl3MuGAr1x78vv45N3iJ/FjYxqpYKO/YXOb243/OHgsvNQYXxNPiSbic185XARxWwyZIUdOe8j9t4IyFV8J2chly8nf2dZfoX1DZctJhyiFs9NcCdqaS6k=
+	t=1760089909; cv=none; b=GcYCPi5PWfQzFxBl1R5Dxajk4Bo1Fji+i5rq5dB/d86bYscyb7CSpt+OyS0H+s4YoYGxUoJWc6NUw3Z5nBrKGWTvUweOXKwTS28jgGzIcckoA+yuzDJd0mYcVdIg0bKEOrzs/DWhyFkDZ80OvJh+KLX+0wX8S8DN2N0mCu/QUFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760089698; c=relaxed/simple;
-	bh=JrWrN+FQZRgzUNzMiSaZNnbC3MC4bk658YLS+9m48g8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gPZ461WvRMjuIjK3Hh54CwyJfRqzfHGIrFDOKPHTzHB0F38sLKEOY1l/eK0gB9zUXN5X53PWF/ol8ipHabBzfFtsouqbGUKHu+to48L8+AlYNkfQiardmj3Lhf1MER+EBZQbou7/drOvd5ICUABVTKdX7PtKGPzIZhLbaTn6iLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvslxa6y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDA5C4CEF1;
-	Fri, 10 Oct 2025 09:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760089697;
-	bh=JrWrN+FQZRgzUNzMiSaZNnbC3MC4bk658YLS+9m48g8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dvslxa6yxvt2X8m9j5W8vxa0CEpmn58MZW4GD8Bm90QDt4Li+sTdT51zb8UE0qeLb
-	 azDAoKjznhK8NsVXZ0yiVFtmkDfO4v3OP0darB8cUgpIS4xYA7XGtz9twXoN2m/2Iv
-	 Zgla+K3E0rJ87QbBw4pf2zqk4qvl+l8MiFs2THHroDkH9Duy8Rpn560n26a4X/x8mc
-	 y1cAca8VS22y3cTaYlvNauRTOqGmc6n5JZY5PyxnsPIL5DzzvT7zot84hDCxmeS4b2
-	 Qz7IcfT+5G/3MKmXcCqcN4AOS7vciwONESBmCNrU278J4u6ZJDH3uR36EV0+E9bpF5
-	 sYKnC7q9v6t1w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v79jT-0000000CsJY-3fzQ;
-	Fri, 10 Oct 2025 09:48:16 +0000
-Date: Fri, 10 Oct 2025 10:48:15 +0100
-Message-ID: <86h5w7xf34.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: smp: Implement cpus_has_pending_ipi()
-In-Reply-To: <CAPDyKFq4RgL0=hPhB0cwTQF-A+mXH8dxsZAYTB1CFuLxxxTujg@mail.gmail.com>
-References: <20251003150251.520624-1-ulf.hansson@linaro.org>
-	<20251003150251.520624-3-ulf.hansson@linaro.org>
-	<865xcsyqgs.wl-maz@kernel.org>
-	<CAPDyKFq4RgL0=hPhB0cwTQF-A+mXH8dxsZAYTB1CFuLxxxTujg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1760089909; c=relaxed/simple;
+	bh=0gpFLDbwtlyVkGYGGMoUWd2mlJVVmwWM/n+HgLvMV+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IDv+Yt+BCMBRSJWMsX+dvZptQS1e3pSoCONZ13PGO5vf53/qfizH8AXnGSszc2Hp0jhyrQ5ew6gIyROPvxO7PNT2NCKyr1hFpRKugDzGvlKv2LfMOCAmU8xNoBr0fBwQwfteoTXCmhwkZ4p5awLI3UgQ+4c5p75bMEdRatNKWDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YU0Ny0HD; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so10908115e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760089904; x=1760694704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eV0VkyvZwjNec7z9vbdRZ7vdRavcOqLYA4ozWnex1xw=;
+        b=YU0Ny0HDH31cOZUgDkKteUlHTCWyIiusJtOAfkapl1o2AwMGd1reGGslLpSjwVa3Zh
+         j4JZggt41K3ZroaZ4+zdSaKgRlRGqQnE6gXFsiqlhHj208ffPHToYRUlBaOiOHkizkfT
+         T2HJTTdrn3LQvCPXk1A26MlM5L/SPjNrA6ivBzI0YwfFUEyQuHpb9s8KDUV8NBfOOZIc
+         ZjUKpKra7YNc5TFmhwmtDHJsUiMBp9rYviraibsv1fjdMW29cDqavKIdbBwQzI+RKEPe
+         Y/udO4bQCK4mTj23ZrGO9lix2gHkr6sEr4sNKW73j/+l8IW+C/Tc8TGvJzI+7EA7r2Ez
+         8GWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760089904; x=1760694704;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eV0VkyvZwjNec7z9vbdRZ7vdRavcOqLYA4ozWnex1xw=;
+        b=geKB1M4NDtin8Zw3cC+JljdJ8oqxGy0PkLwxwzs7BGAmEP9VPrayXVLY3S7lhlWEeG
+         1lwnc05tJY8A5Gwg/8OHy/0UYGwVlo5DkANEt59H3so4yw5JxuTSSnikHUNH+toKNpbp
+         95j1usZDxfHz77edVP0H+hnl+0GYzT5aAcJegJ1D+IArm/q3fr7nlnecRZh4NMfQ7ar+
+         Tm8Pp1ks+pbSfzBkh9iZGqIHCpI2goZ19yg0oh/av2cn9LPOE+7pFel3fMIUTZbHORyf
+         NlrijXiqhaMXuISvyTfrF3brp6Yk4wei3/Q0nRWyaV+4UTFwF4YZMWODn5JLrtx10NSg
+         2+Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQWvrMGZ0R3W01bAvV8xxspslrgQnUTr8rTAk2QdtUIdlPzv+lEYx3XcPkOQIzcwwKVx8ik7/PiQdjB5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHio8+2LXHyeH6AwXgXXP2WYxdQZJit9QPzhoCg0F3GYrsQ6bu
+	eEBehkDXv3Vl10B4oJ5bbKnV6jO2p5PpMiPINgtTLnYFR5kZcL3M1htovL1yyA==
+X-Gm-Gg: ASbGnctbwpkRf1iUyi57vJuDqIyKtH/s4hOhsrJi0eZww+8usTTkedpiA90anEdsrDj
+	YTllXFQ4j7tCo5+2Tuey7buxc8qJ2f05JfSrU4T173mxCJmY+WtGHy6WfDmbOb0uHgpWVue7gQ8
+	98ejGoatoS/1HODNUiQIeikyfytQJzEfdGRiYI8TYZaq7AVUhRqUtT6fzFYn0D3/KrTB+pCXt5C
+	d+Kiy16/A+NW59y1XaQCslA889n9mclSn2K8y8/kHdPdjLiPlzYunZN6AxIIpIpwMP29V3LmDgi
+	nIj9qK9LXPeV7RfxjoJVeLrVoicVzXy/vYed2Z/8xqs9qpL42QvvyAQXBU0y0GzeNNw58Iu4yxc
+	8KDFvYDQoCS4cJi4SF/3cn+tvd7qopw7fvbI+NZ1BpbvhgJCx3zJrJoIKEKoYMGV1ZmyuLvQNQO
+	GG0GejuC0=
+X-Google-Smtp-Source: AGHT+IEA2a9V9moY9Q0X8l4fa8n2FoyS2Xm8feyo+zRRNYARtth7YTtorp1JP7E6mAtA18UXC+S7bw==
+X-Received: by 2002:a05:6000:603:b0:401:41a9:524f with SMTP id ffacd0b85a97d-4266e7d452bmr7539955f8f.29.1760089903522;
+        Fri, 10 Oct 2025 02:51:43 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e83e1sm3392578f8f.51.2025.10.10.02.51.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 02:51:43 -0700 (PDT)
+Date: Fri, 10 Oct 2025 10:51:38 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+ akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
+ ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
+ jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with
+ reverse lookup tables
+Message-ID: <20251010105138.0356ad75@pumpkin>
+In-Reply-To: <aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+	<20250926065556.14250-1-409411716@gms.tku.edu.tw>
+	<CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
+	<aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
+	<CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+	<20251005181803.0ba6aee4@pumpkin>
+	<aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
+	<CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
+	<20251007192327.57f00588@pumpkin>
+	<aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ulf.hansson@linaro.org, rafael@kernel.org, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, tglx@linutronix.de, quic_mkshah@quicinc.com, sudeep.holla@arm.com, daniel.lezcano@linaro.org, vincent.guittot@linaro.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 10 Oct 2025 09:30:11 +0100,
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> 
-> On Mon, 6 Oct 2025 at 17:55, Marc Zyngier <maz@kernel.org> wrote:
-> >
-> > On Fri, 03 Oct 2025 16:02:44 +0100,
-> > Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > >
-> > > To add support for keeping track of whether there may be a pending IPI
-> > > scheduled for a CPU or a group of CPUs, let's implement
-> > > cpus_has_pending_ipi() for arm64.
-> > >
-> > > Note, the implementation is intentionally lightweight and doesn't use any
-> > > additional lock. This is good enough for cpuidle based decisions.
-> > >
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > ---
-> > >  arch/arm64/kernel/smp.c | 20 ++++++++++++++++++++
-> > >  1 file changed, 20 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> > > index 68cea3a4a35c..dd1acfa91d44 100644
-> > > --- a/arch/arm64/kernel/smp.c
-> > > +++ b/arch/arm64/kernel/smp.c
-> > > @@ -55,6 +55,8 @@
-> > >
-> > >  #include <trace/events/ipi.h>
-> > >
-> > > +static DEFINE_PER_CPU(bool, pending_ipi);
-> > > +
-> > >  /*
-> > >   * as from 2.5, kernels no longer have an init_tasks structure
-> > >   * so we need some other way of telling a new secondary core
-> > > @@ -1012,6 +1014,8 @@ static void do_handle_IPI(int ipinr)
-> > >
-> > >       if ((unsigned)ipinr < NR_IPI)
-> > >               trace_ipi_exit(ipi_types[ipinr]);
-> > > +
-> > > +     per_cpu(pending_ipi, cpu) = false;
-> > >  }
-> > >
-> > >  static irqreturn_t ipi_handler(int irq, void *data)
-> > > @@ -1024,10 +1028,26 @@ static irqreturn_t ipi_handler(int irq, void *data)
-> > >
-> > >  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
-> > >  {
-> > > +     unsigned int cpu;
-> > > +
-> > > +     for_each_cpu(cpu, target)
-> > > +             per_cpu(pending_ipi, cpu) = true;
-> > > +
-> >
-> > Why isn't all of this part of the core IRQ management? We already
-> > track things like timers, I assume for similar reasons. If IPIs have
-> > to be singled out, I'd rather this is done in common code, and not on
-> > a per architecture basis.
-> 
-> The idea was to start simple, avoid running code for architectures
-> that don't seem to need it, by using this opt-in and lightweight
-> approach.
+On Thu, 9 Oct 2025 20:25:17 +0800
+Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
 
-If this stuff is remotely useful, then it is useful to everyone, and I
-don't see the point in littering the arch code with it. We have plenty
-of buy-in features that can be selected by an architecture and ignored
-by others if they see fit.
+...
+> As Eric mentioned, the decoder in fs/crypto/ needs to reject invalid inpu=
+t.
 
-> 
-> I guess we could do this in generic IRQ code too. Perhaps making it
-> conditional behind a Kconfig, if required.
-> 
-> >
-> > >       trace_ipi_raise(target, ipi_types[ipinr]);
-> > >       arm64_send_ipi(target, ipinr);
-> > >  }
-> > >
-> > > +bool cpus_has_pending_ipi(const struct cpumask *mask)
-> > > +{
-> > > +     unsigned int cpu;
-> > > +
-> > > +     for_each_cpu(cpu, mask) {
-> > > +             if (per_cpu(pending_ipi, cpu))
-> > > +                     return true;
-> > > +     }
-> > > +     return false;
-> > > +}
-> > > +
-> >
-> > The lack of memory barriers makes me wonder how reliable this is.
-> > Maybe this is relying on the IPIs themselves acting as such, but
-> > that's extremely racy no matter how you look at it.
-> 
-> It's deliberately lightweight. I am worried about introducing
-> locking/barriers, as those could be costly and introduce latencies in
-> these paths.
+(to avoid two different input buffers giving the same output)
 
-"I've made this car 10% faster by removing the brakes. It's great! Try
-it!"
+Which is annoyingly reasonable.
 
-> Still this is good enough to significantly improve cpuidle based
-> decisions in this regard. Please have a look at the commit message of
-> patch3.
+> One possible solution I came up with is to first create a shared
+> base64_rev_common lookup table as the base for all Base64 variants.
+> Then, depending on the variant (e.g., BASE64_STD, BASE64_URLSAFE, etc.), =
+we
+> can dynamically adjust the character mappings for position 62 and positio=
+n 63
+> at runtime, based on the variant.
+>=20
+> Here are the changes to the code:
+>=20
+> static const s8 base64_rev_common[256] =3D {
+> 	[0 ... 255] =3D -1,
+> 	['A'] =3D  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+> 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+> 	['a'] =3D 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+> 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+> 	['0'] =3D 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
+> };
+>=20
+> static const struct {
+> 	char char62, char63;
+> } base64_symbols[] =3D {
+> 	[BASE64_STD] =3D { '+', '/' },
+> 	[BASE64_URLSAFE] =3D { '-', '_' },
+> 	[BASE64_IMAP] =3D { '+', ',' },
+> };
+>=20
+> int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enu=
+m base64_variant variant)
+> {
+> 	u8 *bp =3D dst;
+> 	u8 pad_cnt =3D 0;
+> 	s8 input1, input2, input3, input4;
+> 	u32 val;
+> 	s8 base64_rev_tables[256];
+>=20
+> 	/* Validate the input length for padding */
+> 	if (unlikely(padding && (srclen & 0x03) !=3D 0))
+> 		return -1;
 
-If I can't see how this thing is *correct*, I really don't care how
-fast it is. You might as well remove most locks and barriers from the
-kernel -- it will be even faster!
+There is no need for an early check.
+Pick it up after the loop when 'srclen !=3D 0'.
 
-	M.
+>=20
+> 	memcpy(base64_rev_tables, base64_rev_common, sizeof(base64_rev_common));
 
--- 
-Without deviation from the norm, progress is not possible.
+Ugg - having a memcpy() here is not a good idea.
+It really is better to have 3 arrays, but use a 'mostly common' initialiser.
+Perhaps:
+#define BASE64_REV_INIT(ch_62, ch_63) =3D { \
+	[0 ... 255] =3D -1, \
+	['A'] =3D  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
+		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, \
+	['a'] =3D 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, \
+		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, \
+	['0'] =3D 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
+	[ch_62] =3D 62, [ch_63] =3D 63, \
+}
+
+static const s8 base64_rev_maps[][256] =3D {
+	[BASE64_STD] =3D BASE64_REV_INIT('+', '/'),
+	[BASE64_URLSAFE] =3D BASE64_REV_INIT('-', '_'),
+	[BASE64_IMAP] =3D BASE64_REV_INIT('+', ',')
+};
+
+Then (after validating variant):
+	const s8 *map =3D base64_rev_maps[variant];
+
+>=20
+> 	if (variant < BASE64_STD || variant > BASE64_IMAP)
+> 		return -1;
+>=20
+> 	base64_rev_tables[base64_symbols[variant].char62] =3D 62;
+> 	base64_rev_tables[base64_symbols[variant].char63] =3D 63;
+>=20
+> 	while (padding && srclen > 0 && src[srclen - 1] =3D=3D '=3D') {
+> 		pad_cnt++;
+> 		srclen--;
+> 		if (pad_cnt > 2)
+> 			return -1;
+> 	}
+
+I'm not sure I'd to that there.
+You are (in some sense) optimising for padding.
+=46rom what I remember, "abcd" gives 24 bits, "abc=3D" 16 and "ab=3D=3D" 8.
+
+>=20
+> 	while (srclen >=3D 4) {
+> 		/* Decode the next 4 characters */
+> 		input1 =3D base64_rev_tables[(u8)src[0]];
+> 		input2 =3D base64_rev_tables[(u8)src[1]];
+> 		input3 =3D base64_rev_tables[(u8)src[2]];
+> 		input4 =3D base64_rev_tables[(u8)src[3]];
+
+I'd be tempted to make src[] unsigned - probably be assigning the parameter
+to a local at the top of the function.
+
+Also you have input3 =3D ... src[2]...
+Perhaps they should be input[0..3] instead.
+
+>=20
+> 		val =3D (input1 << 18) |
+> 		      (input2 << 12) |
+> 		      (input3 << 6) |
+> 		      input4;
+
+Four lines is excessive, C doesn't require the () and I'm not sure the
+compilers complain about << and |.
+
+>=20
+> 		if (unlikely((s32)val < 0))
+> 			return -1;
+
+Make 'val' signed - then you don't need the cast.
+You can pick up the padding check here, something like:
+			val =3D input1 << 18 | input2 << 12;
+			if (!padding || val < 0 || src[3] !=3D '=3D')
+				return -1;
+			*bp++ =3D val >> 16;
+			if (src[2] =3D=3D '=3D')
+				return bp - dst;
+			if (input3 < 0)
+				return -1;
+			val |=3D input3 << 6;
+			*bp++ =3D val >> 8;
+			return bp - dst;
+
+Or, if you really want to use the code below the loop:
+			if (!padding || src[3] !=3D '=3D')
+				return -1;
+			padding =3D 0;
+			srclen -=3D 1 + (src[2] =3D=3D '=3D');
+			break;
+
+
+>=20
+> 		*bp++ =3D (u8)(val >> 16);
+> 		*bp++ =3D (u8)(val >> 8);
+> 		*bp++ =3D (u8)val;
+
+You don't need those casts.
+
+>=20
+> 		src +=3D 4;
+> 		srclen -=3D 4;
+> 	}
+>=20
+> 	/* Handle leftover characters when padding is not used */
+
+You are coming here with padding.
+I'm not sure what should happen without padding.
+For a multi-line file decode I suspect the characters need adding to
+the start of the next line (ie lines aren't required to contain
+multiples of 4 characters - even though they almost always will).
+
+> 	if (srclen > 0) {
+> 		switch (srclen) {
+
+You don't need an 'if' and a 'switch'.
+srclen is likely to be zero, but perhaps write as:
+	if (likely(!srclen))
+		return bp - dst;
+	if (padding || srclen =3D=3D 1)
+		return -1;
+
+	val =3D base64_rev_tables[(u8)src[0]] << 12 | base64_rev_tables[(u8)src[1]=
+] << 6;
+	*bp++ =3D val >> 10;
+	if (srclen =3D=3D 1) {
+		if (val & 0x800003ff)
+			return -1;
+	} else {
+		val |=3D base64_rev_tables[(u8)src[2]];
+		if (val & 0x80000003)
+			return -1;
+		*bp++ =3D val >> 2;
+	}
+	return bp - dst;
+}
+
+	David
+
+> 		case 2:
+> 			input1 =3D base64_rev_tables[(u8)src[0]];
+> 			input2 =3D base64_rev_tables[(u8)src[1]];
+> 			val =3D (input1 << 6) | input2; /* 12 bits */
+> 			if (unlikely((s32)val < 0 || val & 0x0F))
+> 				return -1;
+>=20
+> 			*bp++ =3D (u8)(val >> 4);
+> 			break;
+> 		case 3:
+> 			input1 =3D base64_rev_tables[(u8)src[0]];
+> 			input2 =3D base64_rev_tables[(u8)src[1]];
+> 			input3 =3D base64_rev_tables[(u8)src[2]];
+>=20
+> 			val =3D (input1 << 12) |
+> 			      (input2 << 6) |
+> 			      input3; /* 18 bits */
+> 			if (unlikely((s32)val < 0 || val & 0x03))
+> 				return -1;
+>=20
+> 			*bp++ =3D (u8)(val >> 10);
+> 			*bp++ =3D (u8)(val >> 2);
+> 			break;
+> 		default:
+> 			return -1;
+> 		}
+> 	}
+>=20
+> 	return bp - dst;
+> }
+> Based on KUnit testing, the performance results are as follows:
+> 	base64_performance_tests: [64B] decode run : 40ns
+> 	base64_performance_tests: [1KB] decode run : 463ns
+>=20
+> However, this approach introduces an issue. It uses 256 bytes of memory
+> on the stack for base64_rev_tables, which might not be ideal. Does anyone
+> have any thoughts or alternative suggestions to solve this issue, or is it
+> not really a concern?
+>=20
+> Best regards,
+> Guan-Chun
+>=20
+> > >=20
+> > > Best,
+> > > Caleb =20
+> >  =20
+
 
