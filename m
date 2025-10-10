@@ -1,191 +1,723 @@
-Return-Path: <linux-kernel+bounces-848066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481ABBCC65C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:42:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D02BCC659
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5EB3B4FD218
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:42:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 548584FC1E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1C62D0C7D;
-	Fri, 10 Oct 2025 09:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H8b8ePCk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD2927B34A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C542C326B;
+	Fri, 10 Oct 2025 09:41:48 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FE92D0627;
+	Fri, 10 Oct 2025 09:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760089314; cv=none; b=IEEwySXV1TMIPXevX4uBFYYAV1HC1BM3oP7ou5oefa9KnxSfeYsrNTeBFrdyCKoKJT+CvGI4AAN4GNwMAYCh9Ast2DV8AhlQxoacwLLwEglCmOegOLxr7W2CPLWERqc28/tKTfdNuy4b+0G8jpNSVkwcGbevPvnWBTooJEaA8DA=
+	t=1760089298; cv=none; b=j+tFQyZPlZ+Za49JCyowGfm2dH++ouGeLMNP/uJpo/gMTqvNmJvD91fnxhy2gxatoYGMdO+YS7HpsoHAgwG4J2VGoD5B7HM8jcKiG6f37y8Gm7FbfoRh7vqOOH7cvcVWurFooVHgKGNkDlx8Z+8ZpvfVk+TiplfH3vmPiqRhHec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760089314; c=relaxed/simple;
-	bh=TCxe8AKQudXrjI6Ezcpx/IM4UKhmFZ9JhyxcqMdvoqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uzZcazXuBxElrAJ1T4huApqYEmoK/X3qQOWd/SqeW88Fxfc2cZ1hrCpvcnZZeaG7CbWqgZIswe6GWWDLK9LvfGFzCFM8XR/61lnOV/D7ZsfuQGRopXOk6oqo+R4LsKa5LLxB1HqtZ/hszLOLzApnyff1XxQmaaw/731xUvrmudo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H8b8ePCk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760089304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QRU9De0ZG84MmWJ0E/AfuolzoTzmUWqKv+6ReOBq7PQ=;
-	b=H8b8ePCkmRn3O59KXWpVmnNXrya1pscFG0bFMutIKIlcA+WO8rPCXLWnGMSOXBuQG9ch85
-	VqhETGOTpR73jFw+xL90y5ogcPigzUIA48ZLAhC8G2cAqAnPWCTIhwgMoEvgLlsNfIeUjJ
-	8DEeiBLAOFDp+Q+oT5wDKtaGxie6eu4=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-237-zwDpzHXdPQiuuUW-ZLhPjA-1; Fri, 10 Oct 2025 05:41:42 -0400
-X-MC-Unique: zwDpzHXdPQiuuUW-ZLhPjA-1
-X-Mimecast-MFC-AGG-ID: zwDpzHXdPQiuuUW-ZLhPjA_1760089302
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-780d2956a2fso43450777b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:41:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760089302; x=1760694102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QRU9De0ZG84MmWJ0E/AfuolzoTzmUWqKv+6ReOBq7PQ=;
-        b=u/gKD+M+0wWxZqVPbR3ciO33rA14QehWpgwbk9nlWrze9od6yG9vlKjeRWAqELGITA
-         GwrNR2rlolTf7/REsOm4zMctvjNmenHle7Wxxe9byyy6zBZfvfAiZeo6oFecVkHU4ZXm
-         AQ7XyD4D+49k7MFfiB/kQHKrxSHNDLutHpPQ0eEgsteJou6/wfgALkGP5or2vKhjpDf6
-         e0Qtumt7Opc3IsRAj1eeCvktW9Za4sAcSnvqkleoprK3HAqmC0yvtYKwfWRnLxwBN2L1
-         Q25tpe1l4qTbPSZ0nrqC+yGPkti64+rNBelYURW4vDll76MHaNq38n/e6q56xHwe4I5g
-         m2uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUYLR3b+274CTWEgpAo82QEXsFxMh/UL8DVaq+/W89CFr7WB7/1Og2UYMD8wHbqnYix+nDBWZibc5HkoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZAAcDgqxJIDj8S8va+qv0x6fzxyl+GzWA1mVyRdrc3vJ6WWxv
-	vOmLXJxOAKqL8GJ3Wv9Ss74NTtma90lflnXVd1eI55o3W+IHXr/s95im3UbyCfW/JIcf5ydAuIM
-	I7nfrSL8fpEawbmdwwYA/OlTug9EgW0MWEhZN7clvZcSlFdmeYZkhvkjEfRPUFq9wHgHpwP1vhW
-	aiNEAvNE53u0aMMHGEU0aCulzQtQav6HwVmiH0qtLi
-X-Gm-Gg: ASbGncvbm0dQ9PvVqR8hCr2g5/hAP2MXM53sTV3fwfY++sALRoKnYoohNQgYSgleKxk
-	xzA5x9AYPV1ZE/6UyEOJw2zetQxq3eDi3glMsUcatWQ6DqABRWguaPruZi7U511BmJB4qM5+jFW
-	7oWLU5xSHbAlwbgNiRy7FDVCXc07DfHT4FLh9+PyruUv86Ud3GjUpVFIyOzm7fKLJ563iybglmY
-	8RMigaa
-X-Received: by 2002:a53:e02a:0:b0:63b:6340:8e64 with SMTP id 956f58d0204a3-63ccb9030ccmr7879076d50.39.1760089301983;
-        Fri, 10 Oct 2025 02:41:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlUiPsiwWpvI3oTDKYUNUVRFCMnRJmvebTbfIc4uDv865d8wTOTnPHEKhrULJ+5FLnqrcuR9Jto3LombTI4u4=
-X-Received: by 2002:a53:e02a:0:b0:63b:6340:8e64 with SMTP id
- 956f58d0204a3-63ccb9030ccmr7879067d50.39.1760089301559; Fri, 10 Oct 2025
- 02:41:41 -0700 (PDT)
+	s=arc-20240116; t=1760089298; c=relaxed/simple;
+	bh=jRebk4897YCwN2eMEJbbx6yXcj0knn5uRX0dU2fRT9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xl6R64P4gTQz5RSHWXGNPdQC2lGar53S1+e/isgg55kWICqKdzkzMnkhe8/hW+U1v3cQNbvHHq62TbuvIHD8VWJSPoNsbfGVYPUlAyGs3sUR4C6V9MnU87lbeEV0Ike87F09uT/7ps3mfbuC81wWciLc1PvKlhz3cF0+/z+4srU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005154LT.eswin.cn (unknown [10.12.96.103])
+	by app2 (Coremail) with SMTP id TQJkCgAXqZK31OhoEzUDAQ--.40848S2;
+	Fri, 10 Oct 2025 17:41:13 +0800 (CST)
+From: hehuan1@eswincomputing.com
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jszhang@kernel.org,
+	adrian.hunter@intel.com,
+	p.zabel@pengutronix.de,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	xuxiang@eswincomputing.com,
+	luyulin@eswincomputing.com,
+	dongxuyang@eswincomputing.com,
+	zhangsenchuan@eswincomputing.com,
+	weishangjuan@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	caohang@eswincomputing.com,
+	hehuan1@eswincomputing.com
+Subject: [PATCH v3 2/2] mmc: sdhci-of-dwcmshc: Add support for Eswin EIC7700
+Date: Fri, 10 Oct 2025 17:41:09 +0800
+Message-ID: <20251010094109.1613-1-hehuan1@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+In-Reply-To: <20251010093807.1579-1-hehuan1@eswincomputing.com>
+References: <20251010093807.1579-1-hehuan1@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002103537.308717-1-eperezma@redhat.com> <20251002103537.308717-2-eperezma@redhat.com>
- <59eb64f1-7019-450d-96bb-a9398d2af602@oracle.com>
-In-Reply-To: <59eb64f1-7019-450d-96bb-a9398d2af602@oracle.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Fri, 10 Oct 2025 11:41:05 +0200
-X-Gm-Features: AS18NWCjM5wvi9XlNJHpYwkkr8FMsHSPm7e0O_6hZ2XlqsH_hMhNdnOb8X4OZb4
-Message-ID: <CAJaqyWcxooE69w+P-M24FTkKi37WGthrhhdJ0BC+GBQV0xxngg@mail.gmail.com>
-Subject: Re: [RFC 1/2] vduse: support feature provisioning
-To: Si-Wei Liu <si-wei.liu@oracle.com>
-Cc: mst@redhat.com, Laurent Vivier <lvivier@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Dragos Tatulea DE <dtatulea@nvidia.com>, Cindy Lu <lulu@redhat.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, jasowang@redhat.com, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	Jonah Palmer <jonah.palmer@oracle.com>, virtualization@lists.linux.dev, 
-	=?UTF-8?Q?Be=C3=B1at_Gartzia_Arruabarrena?= <bgartzia@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAXqZK31OhoEzUDAQ--.40848S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfCFykZr4Uuw4DCryUAry5Arb_yoW8Zw18Zo
+	WfWF13Jw4fJw4xWFWjkFn7tF1UurZ7C3ySkw4a9w4ku3Wku3WUJrWSkF43J34SqryFyr1k
+	Jrs7Jry3XrWfAF1kn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYN7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42
+	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
+	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4U
+	JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcV
+	C2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRihF4tUUUUU==
+X-CM-SenderInfo: 5khk3tzqr6v25zlqu0xpsx3x1qjou0bp/
 
-On Fri, Oct 10, 2025 at 6:40=E2=80=AFAM Si-Wei Liu <si-wei.liu@oracle.com> =
-wrote:
->
->
->
-> On 10/2/2025 3:35 AM, Eugenio P=C3=A9rez wrote:
-> > This patch implements features provisioning for vduse devices.  This
-> > allows the device provisioner to clear the features exposed by the
-> > userland device, so the driver never see them.  The intended use case i=
-s
-> > to provision more than one different device with the same feature set,
-> > allowing live migration between them.
-> >
-> > The device addition validates the provisioned features to be a subset o=
-f
-> > the parent features, as the rest of the backends.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> >   drivers/vdpa/vdpa_user/vduse_dev.c | 17 ++++++++++++++---
-> >   1 file changed, 14 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index 6c74282d5721..ef8fc795cfeb 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -121,6 +121,7 @@ struct vduse_dev {
-> >       bool connected;
-> >       u64 api_version;
-> >       u64 device_features;
-> > +     u64 supported_features;
-> >       u64 driver_features;
-> >       u32 device_id;
-> >       u32 vendor_id;
-> > @@ -698,7 +699,7 @@ static u64 vduse_vdpa_get_device_features(struct vd=
-pa_device *vdpa)
-> >   {
-> >       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> >
-> > -     return dev->device_features;
-> > +     return dev->supported_features;
-> >   }
-> >
-> >   static int vduse_vdpa_set_driver_features(struct vdpa_device *vdpa, u=
-64 features)
-> > @@ -2256,13 +2257,22 @@ struct vduse_mgmt_dev {
-> >
-> >   static struct vduse_mgmt_dev *vduse_mgmt;
-> >
-> > -static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name=
-)
-> > +static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name=
-,
-> > +                            const struct vdpa_dev_set_config *config)
-> >   {
-> >       struct vduse_vdpa *vdev;
-> >
-> >       if (dev->vdev)
-> >               return -EEXIST;
-> >
-> > +     if (config->mask & BIT_ULL(VDPA_ATTR_DEV_FEATURES)) {
-> > +             if (config->device_features & ~dev->device_features)
-> > +                     return -EINVAL;
-> > +             dev->supported_features =3D config->device_features;
-> > +     } else {
-> > +             dev->supported_features =3D dev->device_features;
-> > +     }
-> > +
-> Why this feature filter can't be done in the client (library) of vduse
-> itself, similar to other device specific features of the existing vduse
-> client? I thought those vduse clients are never managed by vdpa tool,
-> while the device class can't be bound until client had registered with
-> vduse. What is the point to define the feature bit in one place, but the
-> value of the feature (for e.g. mac, mtu) is still or has to be provided
-> by the client itself? Is it the right behavior to filter features in a
-> separate layer rather than contain all relevant feature bits and
-> attributes in one central location?
->
+From: Huan He <hehuan1@eswincomputing.com>
 
-Maxime can expand on this, but the user of the vdpa command should not
-need to know if the backend device is VDUSE, HW, or other device: It
-should just call the vdpa command the same way, and expect the same
-results.
+Add support for the mmc controller in the Eswin EIC7700 with the new
+compatible "eswin,eic7700-dwcmshc". Implement custom sdhci_ops for
+set_clock, reset, set_uhs_signaling, platform_execute_tuning.
 
-That also implies that it should handle the same way if a HW device
-has its own MAC address and then you set a different one with the vdpa
-command, but device_featues just came first in the pending list :).
+Signed-off-by: Huan He <hehuan1@eswincomputing.com>
+---
+ drivers/mmc/host/sdhci-of-dwcmshc.c | 526 ++++++++++++++++++++++++++--
+ 1 file changed, 504 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+index eebd45389956..023f0d7c9819 100644
+--- a/drivers/mmc/host/sdhci-of-dwcmshc.c
++++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+@@ -11,6 +11,7 @@
+ #include <linux/arm-smccc.h>
+ #include <linux/bitfield.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+@@ -19,8 +20,11 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
++#include <linux/regmap.h>
+ #include <linux/reset.h>
+ #include <linux/sizes.h>
++#include <linux/mfd/syscon.h>
++#include <linux/units.h>
+ 
+ #include "sdhci-pltfm.h"
+ #include "cqhci.h"
+@@ -39,6 +43,7 @@
+ #define DWCMSHC_CARD_IS_EMMC		BIT(0)
+ #define DWCMSHC_ENHANCED_STROBE		BIT(8)
+ #define DWCMSHC_EMMC_ATCTRL		0x40
++#define DWCMSHC_AT_STAT			0x44
+ /* Tuning and auto-tuning fields in AT_CTRL_R control register */
+ #define AT_CTRL_AT_EN			BIT(0) /* autotuning is enabled */
+ #define AT_CTRL_CI_SEL			BIT(1) /* interval to drive center phase select */
+@@ -194,6 +199,19 @@
+ #define PHY_DLLDL_CNFG_SLV_INPSEL_MASK	GENMASK(6, 5) /* bits [6:5] */
+ #define PHY_DLLDL_CNFG_SLV_INPSEL	0x3 /* clock source select for slave DL */
+ 
++/* PHY DLL offset setting register */
++#define PHY_DLL_OFFST_R			(DWC_MSHC_PTR_PHY_R + 0x29)
++/* DLL LBT setting register */
++#define PHY_DLLBT_CNFG_R		(DWC_MSHC_PTR_PHY_R + 0x2c)
++/* DLL Status register */
++#define PHY_DLL_STATUS_R		(DWC_MSHC_PTR_PHY_R + 0x2e)
++#define DLL_LOCK_STS			BIT(0)/* DLL is locked and ready */
++/*
++ * Captures the value of DLL's lock error status information. Value is valid
++ * only when LOCK_STS is set.
++ */
++#define DLL_ERROR_STS			BIT(1)
++
+ #define FLAG_IO_FIXED_1V8	BIT(0)
+ 
+ #define BOUNDARY_OK(addr, len) \
+@@ -206,6 +224,31 @@
+ /* SMC call for BlueField-3 eMMC RST_N */
+ #define BLUEFIELD_SMC_SET_EMMC_RST_N	0x82000007
+ 
++/* Eswin specific Registers */
++#define EIC7700_CARD_CLK_STABLE		BIT(28)
++#define EIC7700_INT_BCLK_STABLE		BIT(16)
++#define EIC7700_INT_ACLK_STABLE		BIT(8)
++#define EIC7700_INT_TMCLK_STABLE	BIT(0)
++#define EIC7700_INT_CLK_STABLE		(EIC7700_CARD_CLK_STABLE | \
++					 EIC7700_INT_ACLK_STABLE | \
++					 EIC7700_INT_BCLK_STABLE | \
++					 EIC7700_INT_TMCLK_STABLE)
++#define EIC7700_HOST_VAL_STABLE		BIT(0)
++
++/* strength definition */
++#define PHYCTRL_DR_33OHM		0xee
++#define PHYCTRL_DR_40OHM		0xcc
++#define PHYCTRL_DR_50OHM		0x88
++#define PHYCTRL_DR_66OHM		0x44
++#define PHYCTRL_DR_100OHM		0x00
++
++#define MAX_PHASE_CODE			0xff
++#define TUNING_RANGE_THRESHOLD		40
++#define PHY_CLK_MAX_DELAY_MASK		0x7f
++#define PHY_DELAY_CODE_MAX		0x7f
++#define PHY_DELAY_CODE_EMMC		0x17
++#define PHY_DELAY_CODE_SD		0x55
++
+ enum dwcmshc_rk_type {
+ 	DWCMSHC_RK3568,
+ 	DWCMSHC_RK3588,
+@@ -217,6 +260,11 @@ struct rk35xx_priv {
+ 	u8 txclk_tapnum;
+ };
+ 
++struct eic7700_priv {
++	struct reset_control *reset;
++	unsigned int drive_impedance;
++};
++
+ #define DWCMSHC_MAX_OTHER_CLKS 3
+ 
+ struct dwcmshc_priv {
+@@ -238,6 +286,28 @@ struct dwcmshc_pltfm_data {
+ 	void (*postinit)(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv);
+ };
+ 
++static void dwcmshc_enable_card_clk(struct sdhci_host *host)
++{
++	u16 ctrl;
++
++	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++	if ((ctrl & SDHCI_CLOCK_INT_EN) && !(ctrl & SDHCI_CLOCK_CARD_EN)) {
++		ctrl |= SDHCI_CLOCK_CARD_EN;
++		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
++	}
++}
++
++static void dwcmshc_enable_card_clk(struct sdhci_host *host)
++{
++	u16 ctrl;
++
++	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++	if ((ctrl & SDHCI_CLOCK_INT_EN) && !(ctrl & SDHCI_CLOCK_CARD_EN)) {
++		ctrl |= SDHCI_CLOCK_CARD_EN;
++		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
++	}
++}
++
+ static int dwcmshc_get_enable_other_clks(struct device *dev,
+ 					 struct dwcmshc_priv *priv,
+ 					 int num_clks,
+@@ -1095,6 +1165,413 @@ static int sg2042_init(struct device *dev, struct sdhci_host *host,
+ 					     ARRAY_SIZE(clk_ids), clk_ids);
+ }
+ 
++static void sdhci_eic7700_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	u16 clk;
++
++	host->mmc->actual_clock = clock;
++
++	if (clock == 0) {
++		sdhci_set_clock(host, clock);
++		return;
++	}
++	dwcmshc_disable_card_clk(host);
++
++	clk_disable_unprepare(pltfm_host->clk);
++	clk_set_rate(pltfm_host->clk, clock);
++	clk_prepare_enable(pltfm_host->clk);
++
++	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++	clk |= SDHCI_CLOCK_INT_EN;
++	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++
++	dwcmshc_enable_card_clk(host);
++}
++
++static void sdhci_eic7700_config_phy_delay(struct sdhci_host *host, int delay)
++{
++	delay &= PHY_CLK_MAX_DELAY_MASK;
++
++	/* phy clk delay line config */
++	sdhci_writeb(host, PHY_SDCLKDL_CNFG_UPDATE, PHY_SDCLKDL_CNFG_R);
++	sdhci_writeb(host, delay, PHY_SDCLKDL_DC_R);
++	sdhci_writeb(host, 0x0, PHY_SDCLKDL_CNFG_R);
++}
++
++static void sdhci_eic7700_config_phy(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
++	u32 emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
++	struct eic7700_priv *priv = dwc_priv->priv;
++	unsigned int val, drv;
++
++	drv = FIELD_PREP(PHY_CNFG_PAD_SP_MASK, priv->drive_impedance & 0xF);
++	drv |= FIELD_PREP(PHY_CNFG_PAD_SN_MASK, (priv->drive_impedance >> 4) & 0xF);
++
++	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
++		val = sdhci_readw(host, dwc_priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
++		val |= DWCMSHC_CARD_IS_EMMC;
++		sdhci_writew(host, val, dwc_priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
++	}
++
++	/* reset phy, config phy's pad */
++	sdhci_writel(host, drv | (~PHY_CNFG_RSTN_DEASSERT), PHY_CNFG_R);
++
++	/* configure phy pads */
++	val = FIELD_PREP(PHY_PAD_TXSLEW_CTRL_P_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
++	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_N_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
++	val |= FIELD_PREP(PHY_PAD_WEAKPULL_MASK, PHY_PAD_WEAKPULL_PULLUP);
++	val |= PHY_PAD_RXSEL_1V8;
++	sdhci_writew(host, val, PHY_CMDPAD_CNFG_R);
++	sdhci_writew(host, val, PHY_DATAPAD_CNFG_R);
++	sdhci_writew(host, val, PHY_RSTNPAD_CNFG_R);
++
++	/* Clock PAD Setting */
++	val = FIELD_PREP(PHY_PAD_TXSLEW_CTRL_P_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
++	val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_N_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
++	sdhci_writew(host, val, PHY_CLKPAD_CNFG_R);
++
++	/* PHY strobe PAD setting (EMMC only) */
++	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
++		val = FIELD_PREP(PHY_PAD_TXSLEW_CTRL_P_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
++		val |= FIELD_PREP(PHY_PAD_TXSLEW_CTRL_N_MASK, PHY_PAD_TXSLEW_CTRL_N_SG2042);
++		val |= PHY_PAD_RXSEL_1V8;
++		sdhci_writew(host, val, PHY_STBPAD_CNFG_R);
++	}
++	usleep_range(2000, 3000);
++	sdhci_writel(host, drv | PHY_CNFG_RSTN_DEASSERT, PHY_CNFG_R);
++	sdhci_eic7700_config_phy_delay(host, dwc_priv->delay_line);
++}
++
++static void sdhci_eic7700_reset(struct sdhci_host *host, u8 mask)
++{
++	sdhci_reset(host, mask);
++
++	/* after reset all, the phy's config will be clear */
++	if (mask == SDHCI_RESET_ALL)
++		sdhci_eic7700_config_phy(host);
++}
++
++static int sdhci_eic7700_reset_init(struct device *dev, struct eic7700_priv *priv)
++{
++	int ret;
++
++	priv->reset = devm_reset_control_array_get_optional_exclusive(dev);
++	if (IS_ERR(priv->reset)) {
++		ret = PTR_ERR(priv->reset);
++		dev_err(dev, "failed to get reset control %d\n", ret);
++		return ret;
++	}
++
++	ret = reset_control_assert(priv->reset);
++	if (ret) {
++		dev_err(dev, "Failed to assert reset signals: %d\n", ret);
++		return ret;
++	}
++	usleep_range(2000, 2100);
++	ret = reset_control_deassert(priv->reset);
++	if (ret) {
++		dev_err(dev, "Failed to deassert reset signals: %d\n", ret);
++		return ret;
++	}
++
++	return ret;
++}
++
++static unsigned int eic7700_convert_drive_impedance_ohm(struct device *dev, unsigned int dr_ohm)
++{
++	switch (dr_ohm) {
++	case 100:
++		return PHYCTRL_DR_100OHM;
++	case 66:
++		return PHYCTRL_DR_66OHM;
++	case 50:
++		return PHYCTRL_DR_50OHM;
++	case 40:
++		return PHYCTRL_DR_40OHM;
++	case 33:
++		return PHYCTRL_DR_33OHM;
++	}
++
++	dev_warn(dev, "Invalid value %u for drive-impedance-ohms.\n", dr_ohm);
++	return PHYCTRL_DR_50OHM;
++}
++
++static int sdhci_eic7700_delay_tuning(struct sdhci_host *host, u32 opcode)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
++	int delay_min = -1;
++	int delay_max = -1;
++	int cmd_error = 0;
++	int delay = 0;
++	int i = 0;
++	int ret;
++
++	for (i = 0; i <= PHY_DELAY_CODE_MAX; i++) {
++		sdhci_eic7700_config_phy_delay(host, i);
++		ret = mmc_send_tuning(host->mmc, opcode, &cmd_error);
++		if (ret) {
++			host->ops->reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
++			usleep_range(200, 210);
++			if (delay_min != -1 && delay_max != -1)
++				break;
++		} else {
++			if (delay_min == -1) {
++				delay_min = i;
++				continue;
++			} else {
++				delay_max = i;
++				continue;
++			}
++		}
++	}
++	if (delay_min == -1 && delay_max == -1) {
++		pr_err("%s: delay code tuning failed!\n", mmc_hostname(host->mmc));
++		sdhci_eic7700_config_phy_delay(host, dwc_priv->delay_line);
++		return ret;
++	}
++
++	delay = (delay_min + delay_max) / 2;
++	sdhci_eic7700_config_phy_delay(host, delay);
++
++	return 0;
++}
++
++static int sdhci_eic7700_phase_code_tuning(struct sdhci_host *host, u32 opcode)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u32 sd_caps = MMC_CAP2_NO_MMC | MMC_CAP2_NO_SDIO;
++	int phase_code = -1;
++	int code_range = -1;
++	bool is_sd = false;
++	int code_min = -1;
++	int code_max = -1;
++	int cmd_error = 0;
++	int ret = 0;
++	int i = 0;
++
++	if ((host->mmc->caps2 & sd_caps) == sd_caps)
++		is_sd = true;
++
++	for (i = 0; i <= MAX_PHASE_CODE; i++) {
++		/* Centered Phase code */
++		sdhci_writew(host, i, priv->vendor_specific_area1 + DWCMSHC_AT_STAT);
++		ret = mmc_send_tuning(host->mmc, opcode, &cmd_error);
++		host->ops->reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
++
++		if (ret) {
++			/* SDIO specific range tracking */
++			if (is_sd && code_min != -1 && code_max != -1) {
++				if (code_max - code_min > code_range) {
++					code_range = code_max - code_min;
++					phase_code = (code_min + code_max) / 2;
++					if (code_range > TUNING_RANGE_THRESHOLD)
++						break;
++				}
++				code_min = -1;
++				code_max = -1;
++			}
++			/* EMMC breaks after first valid range */
++			if (!is_sd && code_min != -1 && code_max != -1)
++				break;
++		} else {
++			/* Track valid phase code range */
++			if (code_min == -1) {
++				code_min = i;
++				if (!is_sd)
++					continue;
++			}
++			code_max = i;
++			if (is_sd && i == MAX_PHASE_CODE) {
++				if (code_max - code_min > code_range) {
++					code_range = code_max - code_min;
++					phase_code = (code_min + code_max) / 2;
++				}
++			}
++		}
++	}
++
++	/* Handle tuning failure case */
++	if ((is_sd && phase_code == -1) ||
++	    (!is_sd && code_min == -1 && code_max == -1)) {
++		pr_err("%s: phase code tuning failed!\n", mmc_hostname(host->mmc));
++		sdhci_writew(host, 0, priv->vendor_specific_area1 + DWCMSHC_AT_STAT);
++		return -EIO;
++	}
++	if (!is_sd)
++		phase_code = (code_min + code_max) / 2;
++
++	sdhci_writew(host, phase_code, priv->vendor_specific_area1 + DWCMSHC_AT_STAT);
++
++	/* SDIO specific final verification */
++	if (is_sd) {
++		ret = mmc_send_tuning(host->mmc, opcode, &cmd_error);
++		host->ops->reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
++		if (ret) {
++			pr_err("%s: Final phase code 0x%x verification failed!\n",
++			       mmc_hostname(host->mmc), phase_code);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static int sdhci_eic7700_executing_tuning(struct sdhci_host *host, u32 opcode)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u32 emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
++	int ret = 0;
++	u16 ctrl;
++	u32 val;
++
++	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++	ctrl &= ~SDHCI_CTRL_TUNED_CLK;
++	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
++
++	val = sdhci_readl(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_ATCTRL);
++	val |= AT_CTRL_SW_TUNE_EN;
++	sdhci_writew(host, val, priv->vendor_specific_area1 + DWCMSHC_EMMC_ATCTRL);
++
++	sdhci_writew(host, 0, priv->vendor_specific_area1 + DWCMSHC_AT_STAT);
++	sdhci_writew(host, 0x0, SDHCI_CMD_DATA);
++
++	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
++		ret = sdhci_eic7700_delay_tuning(host, opcode);
++		if (ret)
++			return ret;
++	}
++
++	ret = sdhci_eic7700_phase_code_tuning(host, opcode);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void sdhci_eic7700_set_uhs_signaling(struct sdhci_host *host, unsigned int timing)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u8 status;
++	u32 val;
++	int ret;
++
++	dwcmshc_set_uhs_signaling(host, timing);
++
++	/* here need make dll locked when in hs400 at 200MHz */
++	if (timing == MMC_TIMING_MMC_HS400 && host->clock == 200000000) {
++		val = sdhci_readl(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_ATCTRL);
++		val &= ~(FIELD_PREP(AT_CTRL_POST_CHANGE_DLY_MASK, AT_CTRL_POST_CHANGE_DLY));
++		/* 2-cycle latency */
++		val |= FIELD_PREP(AT_CTRL_POST_CHANGE_DLY_MASK, 0x2);
++		sdhci_writew(host, val, priv->vendor_specific_area1 + DWCMSHC_EMMC_ATCTRL);
++
++		sdhci_writeb(host, FIELD_PREP(PHY_DLL_CNFG1_SLVDLY_MASK, PHY_DLL_CNFG1_SLVDLY) |
++			     0x3, PHY_DLL_CNFG1_R);/* DLL wait cycle input */
++		/* DLL jump step input */
++		sdhci_writeb(host, 0x02, PHY_DLL_CNFG2_R);
++		sdhci_writeb(host, FIELD_PREP(PHY_DLLDL_CNFG_SLV_INPSEL_MASK,
++					      PHY_DLLDL_CNFG_SLV_INPSEL), PHY_DLLDL_CNFG_R);
++		/* Sets the value of DLL's offset input */
++		sdhci_writeb(host, 0x00, PHY_DLL_OFFST_R);
++		/* Sets the value of DLL's olbt loadval input. Controls the Ibt
++		 * timer's timeout value at which DLL runs a revalidation cycle.
++		 */
++		sdhci_writew(host, 0xffff, PHY_DLLBT_CNFG_R);
++		sdhci_writeb(host, PHY_DLL_CTRL_ENABLE, PHY_DLL_CTRL_R);
++		usleep_range(100, 110);
++
++		ret = read_poll_timeout(sdhci_readb, status, status & DLL_LOCK_STS, 100, 1000000,
++					false, host, PHY_DLL_STATUS_R);
++		if (ret) {
++			pr_err("%s: DLL lock timeout! status: 0x%x\n",
++			       mmc_hostname(host->mmc), status);
++			return;
++		}
++
++		status = sdhci_readb(host, PHY_DLL_STATUS_R);
++		if (status & DLL_ERROR_STS) {
++			pr_err("%s: DLL lock failed!err_status:0x%x\n",
++			       mmc_hostname(host->mmc), status);
++		}
++	}
++}
++
++static void sdhci_eic7700_set_uhs_wrapper(struct sdhci_host *host, unsigned int timing)
++{
++	u32 sd_caps = MMC_CAP2_NO_MMC | MMC_CAP2_NO_SDIO;
++
++	if ((host->mmc->caps2 & sd_caps) == sd_caps)
++		sdhci_set_uhs_signaling(host, timing);
++	else
++		sdhci_eic7700_set_uhs_signaling(host, timing);
++}
++
++static int eic7700_init(struct device *dev, struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
++{
++	u32 emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
++	unsigned int val, hsp_int_status, hsp_pwr_ctrl;
++	struct of_phandle_args args;
++	struct eic7700_priv *priv;
++	struct regmap *hsp_regmap;
++	int ret;
++
++	priv = devm_kzalloc(dev, sizeof(struct eic7700_priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	dwc_priv->priv = priv;
++
++	ret = sdhci_eic7700_reset_init(dev, dwc_priv->priv);
++	if (ret) {
++		dev_err(dev, "failed to reset\n");
++		return ret;
++	}
++
++	ret = of_parse_phandle_with_fixed_args(dev->of_node, "eswin,hsp-sp-csr", 2, 0, &args);
++	if (ret) {
++		dev_err(dev, "Fail to parse 'eswin,hsp-sp-csr' phandle (%d)\n", ret);
++		return ret;
++	}
++
++	hsp_regmap = syscon_node_to_regmap(args.np);
++	if (IS_ERR(hsp_regmap)) {
++		dev_err(dev, "Failed to get regmap for 'eswin,hsp-sp-csr'\n");
++		of_node_put(args.np);
++		return ret;
++	}
++	hsp_int_status = args.args[0];
++	hsp_pwr_ctrl = args.args[1];
++	of_node_put(args.np);
++	/*
++	 * Assert clock stability: write EIC7700_INT_CLK_STABLE to hsp_int_status.
++	 * This signals to the eMMC controller that platform clocks (card, ACLK,
++	 * BCLK, TMCLK) are enabled and stable.
++	 */
++	regmap_write(hsp_regmap, hsp_int_status, EIC7700_INT_CLK_STABLE);
++	/*
++	 * Assert voltage stability: write EIC7700_HOST_VAL_STABLE to hsp_pwr_ctrl.
++	 * This signals that VDD is stable and permits transition to high-speed
++	 * modes (e.g., UHS-I).
++	 */
++	regmap_write(hsp_regmap, hsp_pwr_ctrl, EIC7700_HOST_VAL_STABLE);
++
++	if ((host->mmc->caps2 & emmc_caps) == emmc_caps)
++		dwc_priv->delay_line = PHY_DELAY_CODE_EMMC;
++	else
++		dwc_priv->delay_line = PHY_DELAY_CODE_SD;
++
++	if (!of_property_read_u32(dev->of_node, "eswin,drive-impedance-ohms", &val))
++		priv->drive_impedance = eic7700_convert_drive_impedance_ohm(dev, val);
++	return 0;
++}
++
+ static const struct sdhci_ops sdhci_dwcmshc_ops = {
+ 	.set_clock		= sdhci_set_clock,
+ 	.set_bus_width		= sdhci_set_bus_width,
+@@ -1169,6 +1646,18 @@ static const struct sdhci_ops sdhci_dwcmshc_sg2042_ops = {
+ 	.platform_execute_tuning = th1520_execute_tuning,
+ };
+ 
++static const struct sdhci_ops sdhci_dwcmshc_eic7700_ops = {
++	.set_clock = sdhci_eic7700_set_clock,
++	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
++	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
++	.set_bus_width = sdhci_set_bus_width,
++	.reset = sdhci_eic7700_reset,
++	.set_uhs_signaling = sdhci_eic7700_set_uhs_wrapper,
++	.set_power = sdhci_set_power_and_bus_voltage,
++	.irq = dwcmshc_cqe_irq_handler,
++	.platform_execute_tuning = sdhci_eic7700_executing_tuning,
++};
++
+ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_pdata = {
+ 	.pdata = {
+ 		.ops = &sdhci_dwcmshc_ops,
+@@ -1238,6 +1727,17 @@ static const struct dwcmshc_pltfm_data sdhci_dwcmshc_sg2042_pdata = {
+ 	.init = sg2042_init,
+ };
+ 
++static const struct dwcmshc_pltfm_data sdhci_dwcmshc_eic7700_pdata = {
++	.pdata = {
++		.ops = &sdhci_dwcmshc_eic7700_ops,
++		.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
++			  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL,
++		.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
++			   SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
++	},
++	.init = eic7700_init,
++};
++
+ static const struct cqhci_host_ops dwcmshc_cqhci_ops = {
+ 	.enable		= dwcmshc_sdhci_cqe_enable,
+ 	.disable	= sdhci_cqe_disable,
+@@ -1338,6 +1838,10 @@ static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
+ 		.compatible = "sophgo,sg2042-dwcmshc",
+ 		.data = &sdhci_dwcmshc_sg2042_pdata,
+ 	},
++	{
++		.compatible = "eswin,eic7700-dwcmshc",
++		.data = &sdhci_dwcmshc_eic7700_pdata,
++	},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, sdhci_dwcmshc_dt_ids);
+@@ -1469,17 +1973,6 @@ static int dwcmshc_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static void dwcmshc_disable_card_clk(struct sdhci_host *host)
+-{
+-	u16 ctrl;
+-
+-	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+-	if (ctrl & SDHCI_CLOCK_CARD_EN) {
+-		ctrl &= ~SDHCI_CLOCK_CARD_EN;
+-		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+-	}
+-}
+-
+ static void dwcmshc_remove(struct platform_device *pdev)
+ {
+ 	struct sdhci_host *host = platform_get_drvdata(pdev);
+@@ -1570,17 +2063,6 @@ static int dwcmshc_resume(struct device *dev)
+ 	return ret;
+ }
+ 
+-static void dwcmshc_enable_card_clk(struct sdhci_host *host)
+-{
+-	u16 ctrl;
+-
+-	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+-	if ((ctrl & SDHCI_CLOCK_INT_EN) && !(ctrl & SDHCI_CLOCK_CARD_EN)) {
+-		ctrl |= SDHCI_CLOCK_CARD_EN;
+-		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+-	}
+-}
+-
+ static int dwcmshc_runtime_suspend(struct device *dev)
+ {
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+-- 
+2.25.1
 
 
