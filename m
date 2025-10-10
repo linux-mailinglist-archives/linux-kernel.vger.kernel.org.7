@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-848788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFB1BCE91F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:56:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BEFBCE928
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748B71898EDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9AD83AE838
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEC72594BE;
-	Fri, 10 Oct 2025 20:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iFLkQlRf"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC9325A350;
+	Fri, 10 Oct 2025 21:00:40 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B6E25784B
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29DBC2EA
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760129796; cv=none; b=c0cNuIJfd10Vz/xw0Xlg6fPk94ss5z/4xd8zn5NbKeZKI4cyh9eUnB227VY8Z8oxEyLn7ScRACDSmE3bIU8lNhCbhmTpkWbD9TXc96fmJgijiOF52OmyRynp9JfdsgkHkrm/81Jn/KvR1Jf/WOmNHEnT4SP3T5kT4zf3LKKzB4g=
+	t=1760130040; cv=none; b=lyiKbpkDGZXZ7zEWjAJEgh8Z1DQDrZvoIFZgJkeTtBhL1g6UNR0OJdqLyIL0YYfg751858vz+YPafLxRBN3r7wiTjzx96rD3eDRsVlhd3oDMF5aIVaPl639IyzUOXhpG3eZm0h6RbwxiMI3WHa8jiI1Kx2hQPKcqPPJmn+7FzV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760129796; c=relaxed/simple;
-	bh=CCuYNuIIVsY7FaNQiEz2s+18rwWUhIG0BCeJOEXr7Zc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qM8jbcwHHfOmVn0AqD/nc0/mjnT6J07mNl/MTd0dKJZdZcRHYiNrPIQhZsdo+CdmWAsiUiJz8Zu7lxgJZpGAotUwNAPxAXadzC8gebf7aaZ9S9mx9IPQ3JDM0aKuXs93e60MO9hZ3Qiv/kawds/9z3b8TYVGtLAyd4SehouyD4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iFLkQlRf; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-43f8116a163so1162093b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:56:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760129794; x=1760734594; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EpaXFAs8jrvhj5Iwajcw+7el/YiNtrh4pH3E6yC24YI=;
-        b=iFLkQlRfKAxRQ6MLGsgDryfgmis9DO4UmlLwTj6IOitWDT2N6udOwDK2I/b8wr4h3z
-         6NCYAIBWqfrZL3cFwJRP+F0xb6t0r/HpWQcAvdhMaOK6jo+1+NvLyLkqN3iSv/WjATSl
-         qPX3xdlR1sT23/gRer7D0dis1yu1iw02luV8hQSgmAs6N9SmykQpZLEv4PPuXoj3sb8m
-         NZ+8x1dvsyafeR0GyvVLlB5AjsQhwfPP21eRS5CZLVywWn3PmNxq2WG4wxaIu+sJdoph
-         y/FV8l9+RSWWLv3/rmRArBgB2LBfvhCh2vwTr1YuPPlynT0oVzaE4k/TmVCNMpUMOf2Y
-         3lfg==
+	s=arc-20240116; t=1760130040; c=relaxed/simple;
+	bh=LpUxzYVvhwsUykyCtYa0fzL9/cPgaQThwTleBr327cM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lxq5PyjnkKsMD/0LFHcwn180P3bBYjIXQbcbfqNiK+u5/o1K+CDKOsbBzC4yoq9aQI147lO88WV2YCpb/5jyPjliOl7ImHs8e3VVctT64EOZ8kVxhBJcC+oKJ8Bxi6TPpjxzTTf3aE1qijHo86N+rFxpPCM0O9BKtQZ41Ts62B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-91b3cc5aa6aso1334790639f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:00:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760129794; x=1760734594;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EpaXFAs8jrvhj5Iwajcw+7el/YiNtrh4pH3E6yC24YI=;
-        b=dWmUmnj7DSHdrYesl4QBO4gBAEpchDKtU8s6vp46WMj+eLIFMJapGYr3kdhzFkRuGD
-         n2nNPLoR7vKCV2zIhYnXOfvRJox8jYWzdHaCESEU3rFIukQ6kn5axya+EFmtTexmtpEx
-         ow8CqEX85qW26KbbU3m7PE9iEnpunlpfzSJTOi2rxEwHFGf8vGVJ36PE0sH536pbMvIA
-         Jt5S5kzTPAYlY6f6/YoDqF4LtyV67OQh1L2Zv/bopI/Cj9NCBD7hrx6RfCJz3DWsaqyn
-         xHT7gLPdQ32TcfGK0llJgLI1l27Ci56JkbCxbkkH4iVfp+vDnNHmOB/VNL9XoX4H0IcH
-         R72A==
-X-Forwarded-Encrypted: i=1; AJvYcCXtTqjGt1eqnhpCBdi0OQZFlulBh+XL4p8YouKk93mx1ooPkCtrUI7Y7PCgveFb6eeZakuPpa+CdFLKL8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPMOolNa0FN3+kM79AclMAfSr7mJJU2doqacW/fThAmM+9NdqW
-	Gy6pC6OyweDFTF4HjfIeZa80Z7oF0bbVx/Fse2gD8xBcB1dVfzZR9LLzexqMAuGktZE=
-X-Gm-Gg: ASbGncuIHt9aNDnR7+JiXcyl7593Uo8gkoXnY+J5HjWz+JhPaKC5guCZmK7oLR5Rgqv
-	f55SnbELfOQ01k39DMd/w4WxFsioSzmoUmnK/oa29wRt8rCOveVSr2ToHI708cmwaP86epWytMg
-	Dp0RFtmiljy8FTWffmaLmT8HShRVryGAKS8lqiWH72947GDZEwed8sQw/DRgcJTqe45Zl5vvFOM
-	CEPYDf1eBMF4LXPiXz8tscE5jqNMli/ULA6cOUm3AHV3ZgTWFQeRVXRQBcKNS2xTsg75GcrIHUe
-	NaZpx93oy/jzAH9iSpGtsBcYySSTeA9tP6WkMQuq1vCexX5dm4MpRdkylX5luXEt3yJKIuzjVBQ
-	Z3zDaLEtftTg7BvsTrks0i+yhzJTeuZI0IahPur8Hj73BOWiOiPgK5yAn63Zs3Opi6+NK21y83E
-	pg859CNh8NkGLaPDbjUSbuXspsOA==
-X-Google-Smtp-Source: AGHT+IFDRZYD0tvp0ZMbppnD3D1rHut3LIprbR5X32btFAwVwdld60PTV7/IdSY1ynz2HldpOFeF3Q==
-X-Received: by 2002:a05:6808:4f4f:b0:43f:7940:69bf with SMTP id 5614622812f47-4417b3acf95mr6013690b6e.26.1760129793687;
-        Fri, 10 Oct 2025 13:56:33 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:8a0c:c02d:81d3:2e7f? ([2600:8803:e7e4:500:8a0c:c02d:81d3:2e7f])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65018200761sm952285eaf.19.2025.10.10.13.56.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 13:56:33 -0700 (PDT)
-Message-ID: <c770c799-4318-4c40-bd62-3cefbbbef731@baylibre.com>
-Date: Fri, 10 Oct 2025 15:56:32 -0500
+        d=1e100.net; s=20230601; t=1760130038; x=1760734838;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Tb7JA8nQSppmswvWj5Za4jrsCoMl2uCHIZrjUPUW+9Y=;
+        b=vgakVMJpzIyVr0hBX55CcnqEVzBL4LfnG+0V8+GxCNfKUHtUd1GBY0Mwjlf/JfmSqA
+         k8azkVj94uJ/cChgeadFVMnsjxo/S851xi4eVvNKFXmpuZL8/QxYOB/bTLrJEYDDdFhS
+         3WZoSp7XCdcA62wmfri1Abrsdnp6HDQ2zwvXehZbEhWhhSe+WdFfMYpaH5UqH0RhPOwA
+         aOQrTroqd8Nf1kKi4adsXZBeZxyz1GaJLFaN2bLjYPPHX9DLhXUAHazF1YLQaXj5CM1X
+         X9RQxgVceHgn2BUxCO5n21WCiAH6EkSd9tcsJGnlVUoaMJ7/rhO9DvjoZiFXkGekANI0
+         vCfQ==
+X-Gm-Message-State: AOJu0YzO8lf1o4WysY52jSMlAOO/7Mogm8nl9Kl2AJRdFrit1pmtv5un
+	QVDt2oouqu3yPnxq2X1HTDz7Bixl0XFKTJpztvjz5dEzfizQmvfAokvAXkQdx9d2BY/u1CfNm/N
+	z3w2NO1zFPBL+RLGfcQCrGUnUtsoRcoHlQS1NGlNTup0XQoPL6UgCjeUOwvc=
+X-Google-Smtp-Source: AGHT+IHEJ/tuUBE/OzYTs/Fcvbt0h2ZHQmXuI2aMLHR2U95LqmebklBZw80TVLMLVw1RShenlNRkcMWbmicUqqaeV75RuqeS2hw5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/6] Battery temperature ADC plumbing on Qualcomm
- platforms
-To: Luca Weiss <luca.weiss@fairphone.com>, Jonathan Cameron
- <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Jens Reidel <adrian@mainlining.org>,
- Casey Connolly <casey.connolly@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:2d81:b0:8e3:2d3d:9a7d with SMTP id
+ ca18e2360f4ac-93bd19a9a40mr1759767739f.18.1760130037498; Fri, 10 Oct 2025
+ 14:00:37 -0700 (PDT)
+Date: Fri, 10 Oct 2025 14:00:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e973f5.050a0220.1186a4.0010.GAE@google.com>
+Subject: [syzbot] [trace?] WARNING in write_raw_marker_to_buffer
+From: syzbot <syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/10/25 6:21 AM, Luca Weiss wrote:
-> This is an RFC which implements a potential solution to get battery
-> temperature readings working on for example smartphones with Qualcomm
-> SoCs.
-> 
+Hello,
 
-...
+syzbot found the following issue on:
 
-> 3. Add temperature-lookup-table as property to simple-battery
-> 
-> Since the NTC is a part of the battery pack, adding a
-> temperature-lookup-table property to simple-battery would make sense
-> instead of having this lookup table be standalone in the
-> generic-adc-thermal node. However being able to re-use the existing code
-> in generic-adc-thermal lead me to the current proposal.
-> 
-Did you consider creating a specific compatible string for the battery pack?
-Then the battery node could have the io-channels property for the ADC
-connected to the temperature sensor. Then a specific battery driver could
-handle the conversion as needed rather than filling the devicetree with
-conversion tables.
+HEAD commit:    5472d60c129f Merge tag 'trace-v6.18-2' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1239b458580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e7dba95d4cdd903c
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a2ede1643175f350105
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eec52f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122e9892580000
 
-The simple-battery bindings are already far from simple! So I would not
-be inclined to add more to it.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fbf444614257/disk-5472d60c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f129612e3b8b/vmlinux-5472d60c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8095ae997ffa/bzImage-5472d60c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+memcpy: detected field-spanning write (size 2655) of single field "&entry->id" at kernel/trace/trace.c:7458 (size 4)
+WARNING: CPU: 0 PID: 6004 at kernel/trace/trace.c:7458 write_raw_marker_to_buffer.isra.0+0x2d4/0x330 kernel/trace/trace.c:7458
+Modules linked in:
+CPU: 0 UID: 0 PID: 6004 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:write_raw_marker_to_buffer.isra.0+0x2d4/0x330 kernel/trace/trace.c:7458
+Code: ff e8 30 74 fa ff c6 05 b4 7e aa 0e 01 90 b9 04 00 00 00 48 c7 c2 e0 1e 93 8b 4c 89 e6 48 c7 c7 40 1f 93 8b e8 6d fc b8 ff 90 <0f> 0b 90 90 e9 d7 fe ff ff e8 6e 04 62 00 e9 da fd ff ff e8 64 04
+RSP: 0018:ffffc90003837c40 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff88813ff34018 RCX: ffffffff817a5e58
+RDX: ffff888031d73c80 RSI: ffffffff817a5e65 RDI: 0000000000000001
+RBP: ffff88813ff34010 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000a5f
+R13: ffff88813ff18c00 R14: 0000000000000000 R15: 0000200000000040
+FS:  000055558e5ff500(0000) GS:ffff8881249e6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b30263fff CR3: 0000000034638000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ tracing_mark_raw_write+0x2da/0x4a0 kernel/trace/trace.c:7500
+ vfs_write+0x2a0/0x11d0 fs/read_write.c:684
+ ksys_write+0x1f8/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f18a0b8eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff2b2d2c28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f18a0de5fa0 RCX: 00007f18a0b8eec9
+RDX: 0000000000000a5f RSI: 0000200000000040 RDI: 0000000000000003
+RBP: 00007f18a0c11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f18a0de5fa0 R14: 00007f18a0de5fa0 R15: 0000000000000003
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
