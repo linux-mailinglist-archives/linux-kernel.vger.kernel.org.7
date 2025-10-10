@@ -1,179 +1,121 @@
-Return-Path: <linux-kernel+bounces-847756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4DBBCB96A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:00:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33396BCB970
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7E4C4E9D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:00:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB7CC403E00
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86D71DFE26;
-	Fri, 10 Oct 2025 04:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14EE1B4F0A;
+	Fri, 10 Oct 2025 04:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="l9lGzF70"
-Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWnL9W5v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78930C2EA;
-	Fri, 10 Oct 2025 04:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3494414;
+	Fri, 10 Oct 2025 04:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760068809; cv=none; b=LVDCWlWLojpdE+bvy0QdDFX/cO9ko4IcQAx39wX5Ce/lBUmdzYF4DU7Kq4jtmSuByuvNrP/4ZaouhrzFpuIXLkWDX0+LFtLTg8W4oHe1ispFDi1xypzVMkh92NvIaRG+vuqwY/itNXzHzkeERmF5RCnYyj+lH5UWyWTeZnEttCg=
+	t=1760068914; cv=none; b=TrUsFCGDkGQON0vYjt724XCVvzpKLaOGsZy4ll+n3HiwEqj63A0A0CsUcfQ1OOBl5S0aqqXzqANCHM19514nJXtV6JqP0Wxl9QCwBsIVqzDvRC1Ru5KmGpewo5QMuP+D+cCr7usj1eS2979PeetOHOYVot7WnYp7Iy9xerGXHQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760068809; c=relaxed/simple;
-	bh=FEMzFMjlL0olVV+s4U5QQXQVBeOiTTXpdL+OsP2gbfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OfqdabvpW20Nd+X7KUJflzxbGKY+t1aD/X8Iwc/YUDTE2oX6+0ivRQ5ntRHt+bDebxPnh0aXd0SWuUvj49bRA2hLbuJMOMJ7a8tPyYB9siftsa3Y+gTxm6CMNplHaB0isUugsyJrXzASPjRIGbZi+byqijNlTqlYSQ5pqHDxQDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=l9lGzF70; arc=none smtp.client-ip=113.46.200.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=vXp9FK80IBNcMVhCOtsMWfNtGvpQvwTItDMeUKloxVA=;
-	b=l9lGzF70bPdjT0nV5RiTGSfa8jTXN4gvTl8kJcHJnZvZ1D4yh8qRTU2qP2yITch55LKQU+AKi
-	jIDXYtXSit6MOPt1HHgSH2Mm0HJ4zI6ctgMGGNr0lvVCLujslUlnm5EN4pxHJjQsbjPXJyKwen8
-	+il0WfnGnegPH1HI50rMITA=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cjY032lryznTWt;
-	Fri, 10 Oct 2025 11:59:15 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6B67D180042;
-	Fri, 10 Oct 2025 12:00:03 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 10 Oct 2025 12:00:02 +0800
-Message-ID: <46d6bf56-3e7a-92d9-218f-4135d8850be9@huawei.com>
-Date: Fri, 10 Oct 2025 11:59:59 +0800
+	s=arc-20240116; t=1760068914; c=relaxed/simple;
+	bh=ib5Tf65cpQlayck4K7tgp8Or1k3DMe8jI4294TCf+lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dKfPmqUyPCsd9NmhbQHHJJ4Egcgz14ZCmIT+KN/PBKQjWlRKPfYBUqXD6O2tXA+T2PWXVmfFy2iwm01San1hdoErbXHj/ymYil3aYM7LBWjCsny6p9EWBI5HDZB3JNhENRF8aYxsv/+NyZy0+2KjVAlOn59mkfQKhfItobTKiEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWnL9W5v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C4BC4CEF1;
+	Fri, 10 Oct 2025 04:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760068913;
+	bh=ib5Tf65cpQlayck4K7tgp8Or1k3DMe8jI4294TCf+lk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oWnL9W5vGzXbDLuylqiULwSwob3LvjKENf9T6IoEveeZmQzCT3FliMHAaMpSrsQ+h
+	 CrwWMsvftpyz2VcREwRxWa9GFrXUEDFo5n1V0U/EaQx9Mevtkmv76VTVQeZes1qcTK
+	 HyyE9DC7RfxYO0gNv58bSUHnFVJcg8QK5bF9TYNytRi/f91f0zVvBJs3WFDp9QIqi6
+	 LWJABgQ5Kq4GZPJ8iLc2PZIvl3zKumPg7GouQ48wOShiMWpbLYm4LEwIbVBAW5YAKH
+	 m0mgUhwPQFSEWRHB40K9eE4cHdgEvDIL0vwIDLSgmrLDpS+lwiw13vLaj7E+w7aVwu
+	 TcF04YMC+d4kA==
+Date: Fri, 10 Oct 2025 07:01:50 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: encrypted: Use designated initializers for
+ match_table_t structs
+Message-ID: <aOiFLjI9iqtEPDdk@kernel.org>
+References: <20251009115817.368170-2-thorsten.blum@linux.dev>
+ <aOiDqjEyowUkegbd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 13/26] genirq: Factor-in percpu irqaction creation
-Content-Language: en-US
-To: Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-acpi@vger.kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob
- Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James
- Clark <james.clark@linaro.org>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>
-References: <20250922082833.2038905-1-maz@kernel.org>
- <20250922082833.2038905-14-maz@kernel.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20250922082833.2038905-14-maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500011.china.huawei.com (7.185.36.131)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOiDqjEyowUkegbd@kernel.org>
 
-
-
-On 2025/9/22 16:28, Marc Zyngier wrote:
-> Move the code creating a per-cpu irqaction into its own helper, so that
-> future changes to this code can be kept localised.
+On Fri, Oct 10, 2025 at 06:55:26AM +0300, Jarkko Sakkinen wrote:
+> On Thu, Oct 09, 2025 at 01:58:17PM +0200, Thorsten Blum wrote:
+> > Use designated initializers for 'key_format_tokens' and 'key_tokens' to
+> > allow struct fields to be reordered more easily and to improve
+> > readability.
+> > 
+> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> > ---
+> >  security/keys/encrypted-keys/encrypted.c | 16 ++++++++--------
+> >  1 file changed, 8 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+> > index aef438d18da8..76a6dab2f4d2 100644
+> > --- a/security/keys/encrypted-keys/encrypted.c
+> > +++ b/security/keys/encrypted-keys/encrypted.c
+> > @@ -62,17 +62,17 @@ enum {
+> >  };
+> >  
+> >  static const match_table_t key_format_tokens = {
+> > -	{Opt_default, "default"},
+> > -	{Opt_ecryptfs, "ecryptfs"},
+> > -	{Opt_enc32, "enc32"},
+> > -	{Opt_error, NULL}
+> > +	{ .token = Opt_default, .pattern = "default"},
+> > +	{ .token = Opt_ecryptfs, .pattern = "ecryptfs"},
+> > +	{ .token = Opt_enc32, .pattern = "enc32"},
+> > +	{ .token = Opt_error, .pattern = NULL}
+> >  };
+> >  
+> >  static const match_table_t key_tokens = {
+> > -	{Opt_new, "new"},
+> > -	{Opt_load, "load"},
+> > -	{Opt_update, "update"},
+> > -	{Opt_err, NULL}
+> > +	{ .token = Opt_new, .pattern = "new"},
+> > +	{ .token = Opt_load, .pattern = "load"},
+> > +	{ .token = Opt_update, .pattern = "update"},
+> > +	{ .token = Opt_err, .pattern = NULL}
+> >  };
+> >  
+> >  static bool user_decrypted_data = IS_ENABLED(CONFIG_USER_DECRYPTED_DATA);
+> > -- 
+> > 2.51.0
+> > 
 > 
-> At the same time, fix the documentation which appears to say the wrong
-> thing when it comes to interrupts being automatically enabled
-> (percpu_devid interrupts never are).
+> For me this look like a "convert tuple alike initializations into struct
+> alike initializations" type of change :-)
 > 
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  kernel/irq/manage.c | 40 ++++++++++++++++++++++++----------------
->  1 file changed, 24 insertions(+), 16 deletions(-)
-> 
-> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-> index c94837382037e..d9ddc30678b5d 100644
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -2442,6 +2442,24 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
->  	return retval;
->  }
->  
-> +static
-> +struct irqaction *create_percpu_irqaction(irq_handler_t handler, unsigned long flags,
-> +					  const char *devname, void __percpu *dev_id)
-> +{
-> +	struct irqaction *action;
-> +
-> +	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
-> +	if (!action)
-> +		return NULL;
-> +
-> +	action->handler = handler;
-> +	action->flags = flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
-> +	action->name = devname;
-> +	action->percpu_dev_id = dev_id;
-> +
-> +	return action;
-> +}
+> In a context the change would make sense. E.g., if an optional field was
+> required.
 
-This helper could be more universal by consider by distinguishing dev_id
-and percpu_dev_id， so we can use it in request_nmi() and
-request_threaded_irq() .
+If we had struct initializers I would equally nak "convert struct
+initializers to tuple initializers" type of change.
 
-> +
->  /**
->   * __request_percpu_irq - allocate a percpu interrupt line
->   * @irq:	Interrupt line to allocate
-> @@ -2450,9 +2468,9 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
->   * @devname:	An ascii name for the claiming device
->   * @dev_id:	A percpu cookie passed back to the handler function
->   *
-> - * This call allocates interrupt resources and enables the interrupt on the
-> - * local CPU. If the interrupt is supposed to be enabled on other CPUs, it
-> - * has to be done on each CPU using enable_percpu_irq().
-> + * This call allocates interrupt resources, but doesn't enable the interrupt
-> + * on any CPU, as all percpu-devid interrupts are flagged with IRQ_NOAUTOEN.
-> + * It has to be done on each CPU using enable_percpu_irq().
->   *
->   * @dev_id must be globally unique. It is a per-cpu variable, and
->   * the handler gets called with the interrupted CPU's instance of
-> @@ -2477,15 +2495,10 @@ int __request_percpu_irq(unsigned int irq, irq_handler_t handler,
->  	if (flags && flags != IRQF_TIMER)
->  		return -EINVAL;
->  
-> -	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
-> +	action = create_percpu_irqaction(handler, flags, devname, dev_id);
->  	if (!action)
->  		return -ENOMEM;
->  
-> -	action->handler = handler;
-> -	action->flags = flags | IRQF_PERCPU | IRQF_NO_SUSPEND;
-> -	action->name = devname;
-> -	action->percpu_dev_id = dev_id;
-> -
->  	retval = irq_chip_pm_get(&desc->irq_data);
->  	if (retval < 0) {
->  		kfree(action);
-> @@ -2546,16 +2559,11 @@ int request_percpu_nmi(unsigned int irq, irq_handler_t handler,
->  	if (irq_is_nmi(desc))
->  		return -EINVAL;
->  
-> -	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
-> +	action = create_percpu_irqaction(handler, IRQF_NO_THREAD | IRQF_NOBALANCING,
-> +					 name, dev_id);
->  	if (!action)
->  		return -ENOMEM;
->  
-> -	action->handler = handler;
-> -	action->flags = IRQF_PERCPU | IRQF_NO_SUSPEND | IRQF_NO_THREAD
-> -		| IRQF_NOBALANCING;
-> -	action->name = name;
-> -	action->percpu_dev_id = dev_id;
-> -
->  	retval = irq_chip_pm_get(&desc->irq_data);
->  	if (retval < 0)
->  		goto err_out;
+BR, Jarkko
 
