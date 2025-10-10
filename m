@@ -1,136 +1,195 @@
-Return-Path: <linux-kernel+bounces-847610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20532BCB460
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:24:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B623BCB50E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66E7C404EDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC653AC973
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBE51DE8AD;
-	Fri, 10 Oct 2025 00:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A815214A6A;
+	Fri, 10 Oct 2025 01:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nE8sH/4l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pPKUTpvl"
+Received: from sonic316-55.consmr.mail.gq1.yahoo.com (sonic316-55.consmr.mail.gq1.yahoo.com [98.137.69.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4174414;
-	Fri, 10 Oct 2025 00:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDF41F4281
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760055888; cv=none; b=bsLpo9u+RiiBsxQnIT2c6YA0T/11TrYWPCS6lhU+7KeYCjvfR4+xr+UeU3Zo+CaSjIgjgWs+1JmIuNEqYgJSNmnflAoNJGZgiWl8P9LUyPv29JwwJh+DhSp6CtbI14Nw4mX20r+WW0FzEMHNEREvMQRSm5gfesvdENk//CMA4Q8=
+	t=1760058362; cv=none; b=hs3scqyPt0oQkKrQIr4wJo3SBbUhfcx9K7l5/CTslM6QQqXk8PfF5iBooN+lW7XzD3maZzdKvD9YWL6/KXMSxNN63dJI+NX6sE0Y38gDzcAkeL9yasiOjFyNH4KVLUIT9T/meYftRtyjR+2TCdtLQik62MojsJ56checsVCtUtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760055888; c=relaxed/simple;
-	bh=5q7Yu7NgjctPfodWiVDtkAPJc1cExxHii4l+YRrQ7RU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pB9v8xHwfb5+aJ89hjtzzEsjA30ttUYNuPOTsLuvKi0BEQBrAVY2x2MNcuSBRTZPBOxxQpnfcoQeU/AeubdmEeOilLD5eOqbv9fj5ol+rfHCi4a4ko203B8oA/Ln4DJ6T7L1TKCmj4xkz5HjhV/0lADjosCwPlqiUPxHaxCNub4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nE8sH/4l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80460C4CEE7;
-	Fri, 10 Oct 2025 00:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760055887;
-	bh=5q7Yu7NgjctPfodWiVDtkAPJc1cExxHii4l+YRrQ7RU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nE8sH/4lIf7FRnGFFjuPTpSobeQ2SmcpwLFf52h5EOVrUisOiRoFyNAkjFZXIEWf1
-	 C0sjQvykMxadHpoVmXa4aiWbY2kH2Q4aFBJtlYvO6EHH3iT8XOyCx4K54fs75JanEQ
-	 WWMGQEqy4r9GiKjyJLUcZUoYDEfDNmVsDIMGNGf+5ZX+k9lNfEagQKVebGihWLX4OS
-	 25mXK2sKxAMpPoME4Oqba5vHGKKIVzIGw/K5PI4UvHohHapVZMxjQ+fLqrD/K2iT/q
-	 ciss5gNvb/EI0YZLTlcbdOFo9v9UgZJSP8GLvKREyke2CRW/04VcLNr3iyOrSUa78V
-	 QUs4ITLwIsZOA==
-Message-ID: <28de0f76-24eb-4033-a1fb-20415cfb8d82@kernel.org>
-Date: Fri, 10 Oct 2025 02:24:37 +0200
+	s=arc-20240116; t=1760058362; c=relaxed/simple;
+	bh=/hMfUOIeK9GD9x4vXhTNoREyWRIX0X+0EK95NCRkb4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=g4qeZjypFoh6DBEOq+Kn9CcFdxz7ny6qc87+q5HckZZ04+qJUjMMLLJyDmQF+Hwg+YFyJphDR1Ga8SCCSTZwabOO8FehoYOZi3D5NKQiUqW1nK2x9eGb22MbB1MMGUraSE7Q3nDAbSIGytpfGHAS5E2CUMQr2t4CjRQ8VjW39ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=pPKUTpvl; arc=none smtp.client-ip=98.137.69.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760058359; bh=0VTdNEpFRWjnOOzcXbrlmV0h1KaJ09ZXiLQBWRMC6P4=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=pPKUTpvlaVOak4PQxpWttdJACYmcJYtphGGe50SycBhGtKElkxFff7YykzeoZXnyYhH1JLVJnkimY2OjNJxm+u/2Nz9Men2MsHcRwY+k0zhb0eMfeP+UTscicVHkXaAjGGCa1WE+NFebXyyMUURADykeYvuZ23+C7qXrPegvtsR/wlkY5OyP6ajwNfA/uD61xHSxH18rI/hg4G+aKDdpE7Pg0cwAHuCXJxrWp4Ny+J3G6e9yQHQyFnRoACCgzuFXC+L5s2o5v8eoVAoAj8wy/rsRbYzqD6NwEEMVZk3L/KBpVYykhzYX2n9+9lRCYIOERK8orzrppG8ROlYo7VbzXA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760058359; bh=f9onEI4lcpxFlgSZrxrP8CGHqi9leEybBHPuUY6vkbc=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=aO3C9QPYoaLeKuvtwDK8qXXirTvy9f349MVW+QtaR0c24hRauXgwtZpexo8liTt/LI8Cajj0gWuU4dD/MmLaQxLx7gwIK7ey/U2PKdOsnBZetdGF+/AOX36N96bbrsAbwdya168Rv4/lzGdeqW0O7G9/tMx3cHSNBhlxwHAOKmySnShfWMNJdN/GHAisocsFjhxQAmAMETJcbNxUhSKOpuxrqhuJ9RVscpR/ZnO9TTuk5gr7PE+6WLpTm/c+sbDUiZkUj23yhdlaRsxndp17eBm1kImocjMkku+cTKH4A3AFCJCnzh3rzjxU+zu5u/3q7yXQWivRb8sqtRWkwqsr6g==
+X-YMail-OSG: VbSpB3AVM1kFrdWXjzDYStmyabFzfBauQUcwFj47wWqxZxJitX1xO3ebNu4krFG
+ RYQR8ULwOVgn.h1u8WtC7pNSFezlkCIP5ViSBedj010XjuCG41T6P7hnXSOyPvRuOyvo086giPHs
+ QIds0t..w4ib.odZn2LDZjDhIHWe2fnN5rvSeXreWlwLP1dvLDMR5DGd.K3IM.9it2p7NkAu2Ppl
+ FXVgrWOIpSZHW8KNUgnRmlqRbSLqjaFONg3F7CxdWpkgsItxyb4b3D9SLH5j9..RHFb.VfK1L.nT
+ McWUQ9L_l8qxMmjrEl9nMD8FGp9m8WtLasAfs46DXOz8Dkxvv0iw94AEH6h2hIvnZgBj8IAP5K3D
+ hxkPLHwnEJGiUHqbD5KVyuzYDSgwQsv1xTvfrV5k6KwN6oSiRNyT6Qt8by3ppQ0LqIri.kw4qJdR
+ aFYkgmrkK_5xykJLnE2yikjGijnS0jsvgwNc42Ocn.Fd_EtgV2u9LJV18nxPhQYyF6.mtJ7h1Z7I
+ 4Qy1xfTpJQPzzDcVLiIPvlIi_rQbMMIfqO_ODX0dnCrMA8f0XBjzrEuSoRWsUkvT5Q8el4pyU.Sx
+ jqsniHM1cJwIMMZG1BePtJTJVGeJ9vayJbK1AxPUOFvAxKyQ5AZtNuFC08Ns26RnGEHjtJshZiq8
+ SOy6wM4j12ukM53E6vd_458XVaijSMPgMRIYUGr0d9.r6kqJr9xQl8qAxAcEJs2VHmVofMM1hl0o
+ iCdb5TyRTUWXds_TQLL9cDTOJxIAHGyzUcbA8kKhROV400Ilt00SkvQjhBPwVts2BDqzhAua108k
+ 7zWYQ5QBBIEfpP16AdOOoaaRvAcNkpr1grweqrPYfKS0YIpH6rzb.Rfva_FS7WovrEI4yy38Gi.I
+ 8sy.MJ_aY1B0wph0Lwrk3wOeob2C7gKtPCIGqS5ccagJ7qk2fcB3r5.AfD68qxpdTVEaLUZaG_Nv
+ qmWBYb3koT3A93Wzs4sgGmDf55hgOdMvEjcNLH5SGnY0W1FJqibmzN.XciwD0wnsF1zeQS6433Bf
+ t7FMM72C1msUZ.2UiChbJusz9Ir73UuR9R6PViDQjlQ1IXhUdSMeMo241w6EMCPauzohk9qvXqnK
+ hWHzA5pMm0ommaeD7kUHiI5UFkw3TADMdYBcW9RnJjmSeUGTxGqxLuT_IdtZ_rpeXdBMyXWybUHM
+ GEyjdHkagMqG0VuoWeyl.ijKZzp728eCkgeBZA31VUICKt_DUc4TEKOLtwHDLwSENS2MIKfiohp.
+ Wa.Xht25RzdeqCsaB6Y9XtzqCFu559E7PXWSE4rUDrQ2onEMXdZdJhJXNU213eieycpnZCHJXjPK
+ bPJENJYq5dootkYjBkVftgyqgRrSk6W5Ovm7RwAmaJ5Qi.PF2nxheNbxLZZVMj9iOS6Juj98I7LA
+ 9Eexvnv_7XDhaorhNZgtiVa_oq2jwQdBE_Zqq9aKQj.GSJ0tRIjryZ.gfSPZH78xaSkD..bhrEXn
+ OxuW81QoKcQJBL6LJSX6.08HG.X_DoraZZPhKHDtEJIfJEwODyca4iTdNiCbQHFRA4cI.yaYCUYN
+ TaahGVo0qXY0UDgjd1uHCWBzxg6OdvWJnigmwu2q2nvHYJ1pT95pVs6JZDI98g2jkxkrIBVU9qOb
+ Gc0v.rXdykiDft6kCBlc3HKS..Me0IInEiS.87.D_lsENtG3Fz5hsFZWoin_CXpiVO2w7lbGpqUt
+ MQ5Mb1KTVoOoL7OcQcMWq2GheLtdDQs62HC4_nhqFqcFo4Yb9DMoKkY.qfa4wGWKNzjEVWf2EiBW
+ kUVoSDKb0BT1sWoCbRyhw4tTn2azcLSZcHIyYk1nnMhqk5Ve3GsX1x02S3CFMdTgYn90GgSyP00A
+ 1xpgx.dO7jed9GA4eek4.APdgY32wVuhHu.ke__oEw97r6CNfV39VyJ8lIy4j.dL9MW6f7bBhq1H
+ u7jscG9HxuOLJPMf92gTSBtYx84rFnspRcbCnbKhiLaeckhJWAic1UgHjCXPgXZKCoy0KGXmlIdu
+ wuhFYaflNX1_W7qqs17TFf_SvbVSoMxCJqjxmmH1r.daaMTd3ksAAnMl3Wf7dTWLDs8oVtkegx.9
+ azASxo8rzljyv4.6aXBVhtWPlwHha5OOcAvuCPoVk08_rj3cJFyUGoYZeWv.IoRRsYoCEJ2EKE3I
+ QDw11LOeY_DY86jqNA6VqCLXdJXGKTQGQpEYmuWtmlPj0JF1e.cHZ.6u_bNLh_PEYjPrGvRbvK78
+ QxCWJxQDoHB2yQeUOXI8nMu7_HUBRO0qHWmXArYrrRFOU1QogfnpbPH.qgfZ7zsTUqZBV_DGIafK
+ pcnLWWaeMuHvODd4-
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: 6cc0e7b1-f593-4cd8-9102-8f489ef4c6b3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 10 Oct 2025 01:05:59 +0000
+Received: by hermes--production-bf1-798569fcb9-27qrh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3c7b071a36dce4930d289eabdfc11d66;
+          Fri, 10 Oct 2025 00:25:31 +0000 (UTC)
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	zack.rusin@broadcom.com
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Subject: [PATCH] drm: rename drm_ioctl_flags() to drm_ioctl_get_flags() to fix kernel-doc name conflict
+Date: Fri, 10 Oct 2025 01:25:20 +0100
+Message-ID: <20251010002520.359824-1-adelodunolaoluwa@yahoo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro
- codecs
-To: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rao Mandadapu <quic_srivasam@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, jingyi.wang@oss.qualcomm.com,
- konrad.dybcio@oss.qualcomm.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20251009143644.3296208-1-prasad.kumpatla@oss.qualcomm.com>
- <20251009143644.3296208-6-prasad.kumpatla@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251009143644.3296208-6-prasad.kumpatla@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+References: <20251010002520.359824-1-adelodunolaoluwa.ref@yahoo.com>
 
-On 09/10/2025 23:36, Prasad Kumpatla wrote:
-> Add bindings for Qualcomm Kaanapali (LPASS) RX, TX, VA and WSA
-> macro codecs, which is likely compatible with earlier SM8550.
-> 
-> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+The function `drm_ioctl_flags()` defined in `drm_ioctl.c` shares the same
+identifier name as the `enum drm_ioctl_flags` defined in
+`drm_ioctl.h`. Although this naming overlap is perfectly valid in C —
+since functions and enumerations exist in separate namespaces and do
+not affect compilation or linkage — it causes a symbol collision in the
+kernel-doc build system.
 
+During `make htmldocs`, Sphinx reports the following warning:
+  ./Documentation/gpu/drm-uapi:574: ./drivers/gpu/drm/drm_ioctl.c:915:
+  WARNING: Duplicate C declaration, also defined at gpu/drm-uapi:69.
+  Declaration is '.. c:function::
+  bool drm_ioctl_flags (unsigned int nr, unsigned int *flags)'.
 
-Now it is incorrect SoB chain.
+This happens because kernel-doc processes both identifiers (the enum and
+the function) under the same name, leading to a duplicate symbol entry
+in the generated documentation index. The build system therefore treats
+them as conflicting declarations, even though they represent different
+entities in code.
 
-Please start using b4 - v1 was sent with b4, so I do not understand why
-now changing this.
+To resolve this, the function has been renamed to
+`drm_ioctl_get_flags()`, which both removes the naming collision and
+better describes the function’s purpose—retrieving ioctl permission
+flags associated with a given command number.
 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+All affected references have been updated accordingly in:
+  - `drivers/gpu/drm/drm_ioctl.c`
+  - `drivers/gpu/drm/vmwgfx/vmwgfx_drv.c`
+  - `include/drm/drm_ioctl.h`
 
+No other symbols or behavior are modified.
 
-Best regards,
-Krzysztof
+Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+---
+ drivers/gpu/drm/drm_ioctl.c         | 6 +++---
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 2 +-
+ include/drm/drm_ioctl.h             | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+index f593dc569d31..313e8bb7986a 100644
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -912,7 +912,7 @@ long drm_ioctl(struct file *filp,
+ EXPORT_SYMBOL(drm_ioctl);
+ 
+ /**
+- * drm_ioctl_flags - Check for core ioctl and return ioctl permission flags
++ * drm_ioctl_get_flags - Check for core ioctl and return ioctl permission flags
+  * @nr: ioctl number
+  * @flags: where to return the ioctl permission flags
+  *
+@@ -923,7 +923,7 @@ EXPORT_SYMBOL(drm_ioctl);
+  * Returns:
+  * True if the @nr corresponds to a DRM core ioctl number, false otherwise.
+  */
+-bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
++bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags)
+ {
+ 	if (nr >= DRM_COMMAND_BASE && nr < DRM_COMMAND_END)
+ 		return false;
+@@ -935,4 +935,4 @@ bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
+ 	*flags = drm_ioctls[nr].flags;
+ 	return true;
+ }
+-EXPORT_SYMBOL(drm_ioctl_flags);
++EXPORT_SYMBOL(drm_ioctl_get_flags);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index 8ff958d119be..fa4644067d46 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -1257,7 +1257,7 @@ static long vmw_generic_ioctl(struct file *filp, unsigned int cmd,
+ 			goto out_io_encoding;
+ 
+ 		flags = ioctl->flags;
+-	} else if (!drm_ioctl_flags(nr, &flags))
++	} else if (!drm_ioctl_get_flags(nr, &flags))
+ 		return -EINVAL;
+ 
+ 	return ioctl_func(filp, cmd, arg);
+diff --git a/include/drm/drm_ioctl.h b/include/drm/drm_ioctl.h
+index 171760b6c4a1..585dda7550b0 100644
+--- a/include/drm/drm_ioctl.h
++++ b/include/drm/drm_ioctl.h
+@@ -164,7 +164,7 @@ long drm_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+ /* Let drm_compat_ioctl be assigned to .compat_ioctl unconditionally */
+ #define drm_compat_ioctl NULL
+ #endif
+-bool drm_ioctl_flags(unsigned int nr, unsigned int *flags);
++bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags);
+ 
+ int drm_noop(struct drm_device *dev, void *data,
+ 	     struct drm_file *file_priv);
+-- 
+2.43.0
+
 
