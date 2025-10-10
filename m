@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-848057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2B0BCC5F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:35:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF1CBCC601
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E083B0996
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:35:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0421B4F8583
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A565266560;
-	Fri, 10 Oct 2025 09:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EAF23BD1D;
+	Fri, 10 Oct 2025 09:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="G4mf+qgG"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="NJkbJarl"
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A0A23AB9F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7AD244675
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760088952; cv=none; b=Vk88BtqPu8hLxC1E1pQWO0CZtJ+n0P8MU3R1AK0Z+4epd29mMQ44thHdGsWgCuJ6uPfbVpJS8AG5oZBZsNillBctp6gHgiYhO4zF9bYNmU+ZgIo+ia1InkwZ5zz8QOlWXJ+aoRp+4SWx6xA6YkYm2S1chHjLWtQrG2qB8h1xeIE=
+	t=1760089086; cv=none; b=XCiP0BkLd+lyZr/HKMRdR6S10J+1xl9/oWmlzoBYLjxoUemsylpaHIKYzO/jMr1EWJSRJ0Y0Gyxy+swuLSP5//kvukSz6hQT2bqSkQ69MiSm7hB3ofzP2S1IEt0MOVcVR2gBL2HqhseWnmG6pBFMnZ+iHJlGEIAW5IDbzWcSv6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760088952; c=relaxed/simple;
-	bh=zny5wSoIzJoSyo8CorlviCTUvLFpKork/5EFauexRBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tP3tkqxcBLEHvg0TPSJfJbakQraF7xPedaRIn9KPb2TIhuXUQUifTk1t3hNGAWGZKoQmXOGisWq2MiOBwWyFeLQj3ARK1QOZgH59jgXJZY9sEZTZmR/vuSaWa5K7Og0fGGNo8fcfb2pvub0xr2rVANRsOG1gNkB1FbEVj+eA3jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=G4mf+qgG; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-421b93ee372so983394f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:35:49 -0700 (PDT)
+	s=arc-20240116; t=1760089086; c=relaxed/simple;
+	bh=BQ1oHHYvuMaZbPRajQUMjDgfN19wIVCgnf/g9F2n4Oo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=D+6404gfQOw8qwp0CszEcAhhUfRbIlCnTyfwvn7OAzy4B6agJVLoACkFJ61Cn1mZLo30EY7uY6EuJxw8to5e5k3YoXmbCk8vmqmdVJx/CGbby7i5NCKr83GhzAUJE2Tz/izgbPQBWqBscQO9W5766FOi5vl7p+5YJIf4B/iDo0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=NJkbJarl; arc=none smtp.client-ip=209.85.216.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso2082843a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760088948; x=1760693748; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0Z7oPxo3msRFw6jTL6tKQQ4wRSt857hLXrO6qMVjK9U=;
-        b=G4mf+qgG9JzyBaPPswQwFheyW+46aaTy9Xtm+mb3sGxfq/Q4274e9LBDeOWJ4MAQlS
-         vCAM1QJEP2T4nTKUhJfgvndzF4nhtWGb1OtD35bD2rGU6yJAMJLG65AtmEM4WgwoNR9a
-         3eStVBVfOnzpkj/54fMWspoaGN4ykxnK9BJcudZJrhfbnOm48sl1TrTk5CfjmiD31qnr
-         VZVcwwpJ19RwTGpfT2WHdoDxHoGDOk2cQVkiN1UrkwtiIt/fI+HI7HlMJ6STRwiwk7Kx
-         Zixc56kkn5eitR4IkLx7xTZwWWWAVounMLdKa9n7DLrFKOEuvAUnjuacmGs4FHYSMiJ0
-         X3UA==
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1760089084; x=1760693884; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DIh2qwkMoeCHH2ZTOMpMki7Y9wRE+NbEr8T8mhJQZZg=;
+        b=NJkbJarlKX49KQx1Jq0TTBCVkvJnpQVCEhNzzz6/CiKnXQO4M9vYbXqgg/6vKp0ywq
+         AH/4AyQr3Sa0Yh40LA+foseShKZoVk8O4GcjCX9g6yAgckGLDnxVWmKJgdZiXj0SbHfy
+         uroKuSnDHneT0zVfwHNCPP6NL02PcHrkUC5vn56wulZLwFpTJTggqDmfBe4LI7YQEthe
+         raWZbgEGXIgWPrR6YXmpUNDq8INGmRaLR+X1UDUu9w+ngZX+D7JFrI0Ocd5F9teOBn5t
+         oXVuiiWAF49MfbPU5plvc0Nr2KbwAe8Lu2v28dfKFd2qE/XPbhY+FGa8pPiCz0XlA3dS
+         DStg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760088948; x=1760693748;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Z7oPxo3msRFw6jTL6tKQQ4wRSt857hLXrO6qMVjK9U=;
-        b=bPzKTheRaYf6alMgEYiyLf08ZeGFP6gzASkNIDdLteozhlkPyr8mDsbfxAXDnuQ8YL
-         rCPYRYqds/dCmrZsPmGtNPLBPHOLZqiyh2pvk6pdPlDPOrS41soNEhaLd8foGzuvx9Zo
-         5xbnhG+7rSspLausbG3a8wTZte8nq9OsYYXEmueoq8YCZVjRYEESAkUoRPJSFNJVYd+q
-         E60XtO7QAngaboQq7vJny3VCnqkpe2laqLlEkp8Dn5Y1uKQ1+S3ahsMu9RR3QK3VMsHU
-         l/td8glxcXRDprThAtS0pxuWWr69HFMPhqjfuQrDh7Ytn58eRVv9NAHn2ly7f/dF6Ty/
-         DNkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwVkFYnb8FZCQSaPdMaW4sMIdk7KX8KUMIC1RM1y7CTBV8MrpiZRropw+nCrdwPMhlQYYOgzrYzxOQW/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRZtAgq+9YLs1Pvh6xZpa6CW1LXHOWK3ap1ypKn6BOkRxx9zTI
-	3j7pBKRKayRvwzyXwYDrnEnWvPTSOBqlqKUHQ+6TN2oFv/qnMclUpVTx56H+pKQ6Pec=
-X-Gm-Gg: ASbGncsauJISPg+E4dYmUnPoqlSuA2BYTf2wph96vKQBy/bCpHVb57NUO6/6uxo+74m
-	+uaPqhLIL46N61mJ/CiZzvwbuLa70ZEjHPPp4/HUXZ0/FrddPPC336B6F9FRoCCvvQPl7ZQ1dYq
-	3Qtey8aTHya5H0CR3YDEgyIzWCsubjk8EJo4WM8vg+JwljCBPZbdaYjMRLAfs5dY5wsLc0V8NsT
-	nt4ZT7oth4IlQHpbXvDATTTEM1e4hYKyTb8EeeB1hOjAGiqji41xWIF7SFxE4dvcrb8jgyg/Ky7
-	l0EZKOME4rKtrefsTkRqhf2Bpmiv6yoUqZEz3Tg5O5m+d5x3mdYkCBnWUOK/6/G8d3+/0DnAY06
-	FwW7WRT/0lozAYPY23TYQJXA94sDz7UGa/EgfbtpacfZAAxXRxRu0zU+nlh8=
-X-Google-Smtp-Source: AGHT+IHyAlOBieFD9hoZkkNP1XYcHS2L4Rw4LJHk3fKdvO9j6FchF9sThZ4fj1/AGeC/KM4a0dhxkw==
-X-Received: by 2002:a05:6000:2584:b0:3ec:c50c:7164 with SMTP id ffacd0b85a97d-4266726c309mr7801633f8f.15.1760088947436;
-        Fri, 10 Oct 2025 02:35:47 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab36a773sm58415965e9.0.2025.10.10.02.35.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 02:35:47 -0700 (PDT)
-Message-ID: <4cd8b624-3830-4989-b287-01e689cdb3df@tuxon.dev>
-Date: Fri, 10 Oct 2025 12:35:45 +0300
+        d=1e100.net; s=20230601; t=1760089084; x=1760693884;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DIh2qwkMoeCHH2ZTOMpMki7Y9wRE+NbEr8T8mhJQZZg=;
+        b=d2brolOI8T5wdqprNpJYmYhpwJ3O9MPI7z5oqLLWLMeMpbwoBYm2Vus2xOgHG4PNUx
+         2+ns/g4NtvVHaQMPrSN7QNh/i6XiPu7qoPJJQD4QGdLw0LTgENhV4kXhBbTbI2WVrQ6N
+         SGXtFqTBeLdj6Tj+O36KA/771nPuXgxIIyY0eSeN+Rr0ERadchQ2PYddNZ+PdgFjM5ya
+         qof7q57u1HOmbBQ/93Wy4/1O410LG9Kdt7sH7u429Q4FPIC+pp8Q72CLOzY4P8Y6eNuZ
+         6LpmByNaY9RuEVBj8SfeYWTy/m6VMBgPgi72ze0oxfo0ooTlkJIGKdaH2uU2GPkhJY7u
+         e06g==
+X-Forwarded-Encrypted: i=1; AJvYcCVR87MESvHGla3OoN1Ut9ZOgjoWWRSdTP94fZJkOy3QYFjDCmLGvw3/RDRZd8FUSKafiE91YPkeq60lRQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0FsiD9oJqHVtYNWTtDD2cwsiNrC4a00SjdsnlX7+20vRPudMV
+	lgOTabqQKk2bH00R4CFThZzQ18DhPnlJ9908TXGNtrNKAEKdQmDum93NK86wRdO6mVg=
+X-Gm-Gg: ASbGncvAb757+f2MRpdtmppzrHOhw3O14zRW84ethnX6XaKa2qCNVdKTg/HGL0puZ0Q
+	3zvNiCzwI32mt7XZnaxqp+E5sOjBXX7aATh/Q/cIAo/RTPIygY4FFj8i6mhai7xj6btbhvTYa4N
+	6tPiBWHt5mRBRpp0gGhRXrjRrfbHjE5gkGly+t1krHCa9Yk3iyMQqAPWg9/9Jtob3Zti0sSSml7
+	+/H+KiMSk4KMWkjMXxA8y5QOU9MKurDs1VhKJR37KqeDzMfLb+1wcjonCPo7RAbHZE4LAKLOMbE
+	/x5lx9GxUQvsfVu4L7JqzinwGawcygSKbDaEDiIkK2qBW6e/WghbtfunJY8n4Dyn/Zcek/RIDCK
+	WEJj/wmipc1HZKVSiusEazJmFgQqkR9xaule4dvW/arg+jmaw4KSwV84pc4Gk2Hc8fjvRh7Z7Zx
+	QY/9IaZgPhw2xxIJj3eCC4+90=
+X-Google-Smtp-Source: AGHT+IE2wj+eZssA6TSzpJaJjIg40oge1dIPe73EIfDWpkmFrmkYu8Y+3/4LATAVo6bm8P7VtzzjWw==
+X-Received: by 2002:a17:90b:3ec4:b0:32e:51dd:46dd with SMTP id 98e67ed59e1d1-33b5116b782mr15637151a91.16.1760089083929;
+        Fri, 10 Oct 2025 02:38:03 -0700 (PDT)
+Received: from dgp100339560-01.huaqin.com ([103.117.77.121])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61a392cdsm2668196a91.7.2025.10.10.02.38.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 02:38:03 -0700 (PDT)
+From: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+To: neil.armstrong@linaro.org,
+	jessica.zhang@oss.qualcomm.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dianders@chromium.org
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Subject: [PATCH v2 0/2] drm/panel: Add Ilitek IL79900A controller and bindings
+Date: Fri, 10 Oct 2025 17:37:49 +0800
+Message-Id: <20251010093751.2793492-1-yelangyan@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mmc: renesas_sdhi: Deassert the reset signal on probe
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org,
- p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20251008042526.3312597-1-claudiu.beznea.uj@bp.renesas.com>
- <20251008042526.3312597-2-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdW__Nw=oViQSPUb6zKbwRjXC7+6kUevHi1GzTTxrHxKkg@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdW__Nw=oViQSPUb6zKbwRjXC7+6kUevHi1GzTTxrHxKkg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
+This series adds device tree bindings and a DRM panel driver for
+the Ilitek IL79900A MIPI-DSI LCD controller, which is used in the
+Tianma TL121BVMS07-00 12.1-inch panel.
 
-On 10/10/25 10:51, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, 10 Oct 2025 at 07:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Deassert the reset signal of the SDHI controller during probe to avoid
->> relying on the previous bootloaders. Without deasserting the reset signal,
->> the SDHI controller will not function.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/mmc/host/renesas_sdhi_core.c
->> +++ b/drivers/mmc/host/renesas_sdhi_core.c
->> @@ -1103,7 +1103,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->>         if (IS_ERR(priv->clk_cd))
->>                 return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk_cd), "cannot get cd clock");
->>
->> -       priv->rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
->> +       priv->rstc = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev, NULL);
-> 
-> Note that this has the side effect of asserting reset again on probe
-> failure or unbind.
+Changes in v2:
+- PATCH 1/2: Address Rob Herring’s review comments and align with panel-common.yaml conventions.
+- PATCH 2/2: Rename driver to panel-ilitek-il79900a and align naming and structure with existing Ilitek panel drivers.
+- Link to v1: https://lore.kernel.org/all/20250930075044.1368134-1-yelangyan@huaqin.corp-partner.google.com/
 
-I agree. I've tested unbind/bind on RZ/G3S and I saw no issue.
+Langyan Ye (2):
+  dt-bindings: display: panel: Add Tianma TL121BVMS07-00 panel
+  drm/panel: Add driver for Ilitek IL79900A-based panels
 
->  Also on SoCs that boot with reset already deasserted
-> (e.g. R-Car).  I don't know if that would be a problem.
+ .../display/panel/ilitek,il79900a.yaml        |  64 +++
+ drivers/gpu/drm/panel/panel-ilitek-il79900a.c | 394 ++++++++++++++++++
+ 2 files changed, 458 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,il79900a.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-ilitek-il79900a.c
 
-I think all SoCs boot with resets de-asserted as the driver does register
-configuration before calling reset_control_reset() in renesas_sdhi_reset(),
-e.g:
-- one register configuration is just above reset_control_reset()
-- one register configuration, through sd_ctrl_write32_as_16_and_16(), in
-  renesas_sdhi_probe()
-- register writes in tmio_mmc_reset() before host->reset() call
-
-I did bonnie++ tests after boot on RZ/G2{H, M, N, L, UL}, RZ/V2L and saw no
-issue.
-
-Thank you for your review,
-Claudiu
-
-> 
->>         if (IS_ERR(priv->rstc))
->>                 return PTR_ERR(priv->rstc);
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+-- 
+2.34.1
 
 
