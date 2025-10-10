@@ -1,203 +1,194 @@
-Return-Path: <linux-kernel+bounces-847980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CC3BCC330
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:45:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FEABCC339
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A055C1A656F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:45:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4481C1A65691
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8F2246793;
-	Fri, 10 Oct 2025 08:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UT31UluM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A2C248880;
+	Fri, 10 Oct 2025 08:45:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392791BFE00;
-	Fri, 10 Oct 2025 08:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7779625C70C
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760085916; cv=none; b=k7xQP15Q92FC4dxhobvisFjzCJVj/rNsuyswTHL7UGikksdiIGPjbRB6p5HuPFVW03Dv8ridM3cHK8H6aDuCl5jm84pNNjqrKRPhXmOggb134MCggRaEsHFNamAvHFMaUre9ZUwh402gCpfr1Jzq3P8sIlwZ0a9A+DwVqVqf+eY=
+	t=1760085922; cv=none; b=CZUAEuqyGRk7KX7DReBG0HpSEnYa6kZ9S5de68UgNdR7gri9A0BlollfNpwLbX8kenQPbuxUQzIKBW8fLfOSH9VNSpq/wmERR9s8aM3Rdxh5IYiPjWHjpKW3d2Or6wdq81Sznk4Nn38POudrnTZqdESHa7Mr42hvQoIS0xLICM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760085916; c=relaxed/simple;
-	bh=0hkmzo9sEM+b8slOw7f3y38WOERUTTPFFZDlRrSW4l0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nHL0937TQ7Y81yyb45k6QoxWWwIS+bIG0cwkwTp92OwQuXSLfgBlW8EMN07QvRiJqms7CFZSwUzYRGSAGy4KCLsyvulwWGTw0FkK4qePcfA4I7DDYYjzmdhVwpcMb7d1rbw2UNeJfzdnrPDIgb+RnCr+fDYPr6/JmhnqQoG/6nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UT31UluM; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760085915; x=1791621915;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0hkmzo9sEM+b8slOw7f3y38WOERUTTPFFZDlRrSW4l0=;
-  b=UT31UluM8O82/xS0IekHi7sBPEmqvh6HRzy8qqpMfLRofF3xwshAGyNu
-   Ak4PC5h8UXLiE/YAJ4nIrOmAhfG0mMw9HCW+z1vy+e2amFy+MPxuizX1t
-   fX70OBm81JFtOvDalhCS3OBQwludigUzD9jSw0ypjctINvQbOp69vxGfG
-   dg0PZXxtEgIc8vVAlSJAp7gUSGytVkRw8620FVl9uoBYixymV/rULRNfE
-   BcPuO6TEr4qWbXWbNmApf0gbhJ50H6kqhVpYdKGhKyWqoPaPwaDvjD1Vs
-   8a95nrSfFOf8Sndv1rXSgQoa2eeMXFiuc5lgghih5k8GKpljhSvYw6xyL
-   Q==;
-X-CSE-ConnectionGUID: jz4G5vukQEaPRg/2iS+TiA==
-X-CSE-MsgGUID: 22XwNrpTRzyhqHfUkpOtLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62245334"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62245334"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 01:45:14 -0700
-X-CSE-ConnectionGUID: zT/Oa/p/ThS6t0xITBCewQ==
-X-CSE-MsgGUID: XTZn9jzPTyO0L3xrCuO3mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
-   d="scan'208";a="180034733"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 10 Oct 2025 01:45:11 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v78kO-0002Tv-1m;
-	Fri, 10 Oct 2025 08:45:08 +0000
-Date: Fri, 10 Oct 2025 16:44:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Andrew Davis <afd@ti.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 6/6] remoteproc: core: Consolidate bool flags into 1-bit
- bitfields
-Message-ID: <202510101653.wulDfnoN-lkp@intel.com>
-References: <20251005-remoteproc-cleanup-v1-6-09a9fdea0063@nxp.com>
+	s=arc-20240116; t=1760085922; c=relaxed/simple;
+	bh=J7C8gisNVHFUUCpyirZyFtk7rUnMc8ldzuxGXyDR1+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ulbidl0OLdoYpiRDrjFr7907XZoUegWgNZ5NlhhMAZflbf2Pn458XUDK0WsoCLvkwOTNTQ3Xe00t1Z4lvcaNnJJthyQFPHHfjabGeFvowV35WuiKhIahNNKPbu3UNGpd3rRu/NZtV1WVbBGghEUlsjae+e29/ZqWy9jH0qSC/bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.pueschel@pengutronix.de>)
+	id 1v78kK-0003BM-Eg; Fri, 10 Oct 2025 10:45:04 +0200
+Message-ID: <bdebed9c-2980-4d5d-9eb3-1cb5e5e8e226@pengutronix.de>
+Date: Fri, 10 Oct 2025 10:45:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005-remoteproc-cleanup-v1-6-09a9fdea0063@nxp.com>
-
-Hi Peng,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 3b9b1f8df454caa453c7fb07689064edb2eda90a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/remoteproc-core-Drop-redundant-initialization-of-ret-in-rproc_shutdown/20251010-012012
-base:   3b9b1f8df454caa453c7fb07689064edb2eda90a
-patch link:    https://lore.kernel.org/r/20251005-remoteproc-cleanup-v1-6-09a9fdea0063%40nxp.com
-patch subject: [PATCH 6/6] remoteproc: core: Consolidate bool flags into 1-bit bitfields
-config: riscv-randconfig-002-20251010 (https://download.01.org/0day-ci/archive/20251010/202510101653.wulDfnoN-lkp@intel.com/config)
-compiler: riscv32-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510101653.wulDfnoN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510101653.wulDfnoN-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_probe':
->> drivers/remoteproc/stm32_rproc.c:860:42: error: cannot take address of bit-field 'auto_boot'
-     860 |  ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
-         |                                          ^
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
-   Depends on [n]: BINFMT_ELF [=n] && ELF_CORE [=y]
-   Selected by [y]:
-   - RISCV [=y]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/16] media: rockchip: rga: add iommu restore function
+To: Nicolas Dufresne <nicolas@ndufresne.ca>,
+ Jacob Chen <jacob-chen@iotwrt.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, kernel@pengutronix.de
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+ <20251007-spu-rga3-v1-11-36ad85570402@pengutronix.de>
+ <97879b9b078055fb130edfd126d253320ce616a1.camel@ndufresne.ca>
+Content-Language: en-US
+From: =?UTF-8?Q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
+In-Reply-To: <97879b9b078055fb130edfd126d253320ce616a1.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.pueschel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-vim +/auto_boot +860 drivers/remoteproc/stm32_rproc.c
+On 10/7/25 20:30, Nicolas Dufresne wrote:
+> Hi,
+>
+> Le mardi 07 octobre 2025 à 10:32 +0200, Sven Püschel a écrit :
+>> Add an iommu restore function in preparation for the rga3 addition.
+>> This is necessary for a soft reset, as the rga3 will also reset
+>> it's iommu paging table to 0 and disable paging.
+>>
+>> The empty domain attach/detach to restore the iommu is copied
+>> from the rkvdec driver.
+> We did receive negative feedback after the fact on this one. We will likely
+> upset further the iommu subsystem maintainers with that. Have you considered
+> adding a restore function in the rkiommu driver, similar to TI mmu and Benjamin
+> VSI MMU proposal ?
+>
+> I have no precise objection, I know it works, but adding a restore function
+> seems also pretty straight forward.
 
-376ffdc044568f Mathieu Poirier  2020-07-14  832  
-13140de09cc2dd Fabien Dessenne  2019-05-14  833  static int stm32_rproc_probe(struct platform_device *pdev)
-13140de09cc2dd Fabien Dessenne  2019-05-14  834  {
-13140de09cc2dd Fabien Dessenne  2019-05-14  835  	struct device *dev = &pdev->dev;
-13140de09cc2dd Fabien Dessenne  2019-05-14  836  	struct stm32_rproc *ddata;
-13140de09cc2dd Fabien Dessenne  2019-05-14  837  	struct device_node *np = dev->of_node;
-710028a2e4d76c Arnaud Pouliquen 2025-03-27  838  	const char *fw_name;
-13140de09cc2dd Fabien Dessenne  2019-05-14  839  	struct rproc *rproc;
-376ffdc044568f Mathieu Poirier  2020-07-14  840  	unsigned int state;
-13140de09cc2dd Fabien Dessenne  2019-05-14  841  	int ret;
-13140de09cc2dd Fabien Dessenne  2019-05-14  842  
-13140de09cc2dd Fabien Dessenne  2019-05-14  843  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-13140de09cc2dd Fabien Dessenne  2019-05-14  844  	if (ret)
-13140de09cc2dd Fabien Dessenne  2019-05-14  845  		return ret;
-13140de09cc2dd Fabien Dessenne  2019-05-14  846  
-710028a2e4d76c Arnaud Pouliquen 2025-03-27  847  	/* Look for an optional firmware name */
-710028a2e4d76c Arnaud Pouliquen 2025-03-27  848  	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
-710028a2e4d76c Arnaud Pouliquen 2025-03-27  849  	if (ret < 0 && ret != -EINVAL)
-710028a2e4d76c Arnaud Pouliquen 2025-03-27  850  		return ret;
-710028a2e4d76c Arnaud Pouliquen 2025-03-27  851  
-710028a2e4d76c Arnaud Pouliquen 2025-03-27  852  	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, fw_name, sizeof(*ddata));
-13140de09cc2dd Fabien Dessenne  2019-05-14  853  	if (!rproc)
-13140de09cc2dd Fabien Dessenne  2019-05-14  854  		return -ENOMEM;
-13140de09cc2dd Fabien Dessenne  2019-05-14  855  
-8210fc873d2f1a Mathieu Poirier  2020-07-14  856  	ddata = rproc->priv;
-8210fc873d2f1a Mathieu Poirier  2020-07-14  857  
-3898fc99d19934 Clement Leger    2020-04-10  858  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
-8210fc873d2f1a Mathieu Poirier  2020-07-14  859  
-8210fc873d2f1a Mathieu Poirier  2020-07-14 @860  	ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
-8210fc873d2f1a Mathieu Poirier  2020-07-14  861  	if (ret)
-8210fc873d2f1a Mathieu Poirier  2020-07-14  862  		goto free_rproc;
-8210fc873d2f1a Mathieu Poirier  2020-07-14  863  
-95e32f868aa67c Mathieu Poirier  2020-07-14  864  	ret = stm32_rproc_of_memory_translations(pdev, ddata);
-95e32f868aa67c Mathieu Poirier  2020-07-14  865  	if (ret)
-95e32f868aa67c Mathieu Poirier  2020-07-14  866  		goto free_rproc;
-95e32f868aa67c Mathieu Poirier  2020-07-14  867  
-376ffdc044568f Mathieu Poirier  2020-07-14  868  	ret = stm32_rproc_get_m4_status(ddata, &state);
-376ffdc044568f Mathieu Poirier  2020-07-14  869  	if (ret)
-376ffdc044568f Mathieu Poirier  2020-07-14  870  		goto free_rproc;
-376ffdc044568f Mathieu Poirier  2020-07-14  871  
-6e20a05104e55d Arnaud POULIQUEN 2021-03-12  872  	if (state == M4_STATE_CRUN)
-376ffdc044568f Mathieu Poirier  2020-07-14  873  		rproc->state = RPROC_DETACHED;
-376ffdc044568f Mathieu Poirier  2020-07-14  874  
-13140de09cc2dd Fabien Dessenne  2019-05-14  875  	rproc->has_iommu = false;
-714cf5e3846047 Arnaud Pouliquen 2019-10-25  876  	ddata->workqueue = create_workqueue(dev_name(dev));
-714cf5e3846047 Arnaud Pouliquen 2019-10-25  877  	if (!ddata->workqueue) {
-714cf5e3846047 Arnaud Pouliquen 2019-10-25  878  		dev_err(dev, "cannot create workqueue\n");
-714cf5e3846047 Arnaud Pouliquen 2019-10-25  879  		ret = -ENOMEM;
-dadbdb9c304c51 Mathieu Poirier  2020-07-14  880  		goto free_resources;
-714cf5e3846047 Arnaud Pouliquen 2019-10-25  881  	}
-13140de09cc2dd Fabien Dessenne  2019-05-14  882  
-13140de09cc2dd Fabien Dessenne  2019-05-14  883  	platform_set_drvdata(pdev, rproc);
-13140de09cc2dd Fabien Dessenne  2019-05-14  884  
-4a56e423e0e19b Fabien Dessenne  2019-11-15  885  	ret = stm32_rproc_request_mbox(rproc);
-4a56e423e0e19b Fabien Dessenne  2019-11-15  886  	if (ret)
-8210fc873d2f1a Mathieu Poirier  2020-07-14  887  		goto free_wkq;
-13140de09cc2dd Fabien Dessenne  2019-05-14  888  
-13140de09cc2dd Fabien Dessenne  2019-05-14  889  	ret = rproc_add(rproc);
-13140de09cc2dd Fabien Dessenne  2019-05-14  890  	if (ret)
-13140de09cc2dd Fabien Dessenne  2019-05-14  891  		goto free_mb;
-13140de09cc2dd Fabien Dessenne  2019-05-14  892  
-13140de09cc2dd Fabien Dessenne  2019-05-14  893  	return 0;
-13140de09cc2dd Fabien Dessenne  2019-05-14  894  
-13140de09cc2dd Fabien Dessenne  2019-05-14  895  free_mb:
-13140de09cc2dd Fabien Dessenne  2019-05-14  896  	stm32_rproc_free_mbox(rproc);
-714cf5e3846047 Arnaud Pouliquen 2019-10-25  897  free_wkq:
-714cf5e3846047 Arnaud Pouliquen 2019-10-25  898  	destroy_workqueue(ddata->workqueue);
-dadbdb9c304c51 Mathieu Poirier  2020-07-14  899  free_resources:
-dadbdb9c304c51 Mathieu Poirier  2020-07-14  900  	rproc_resource_cleanup(rproc);
-13140de09cc2dd Fabien Dessenne  2019-05-14  901  free_rproc:
-410119ee29b6c1 Fabien Dessenne  2019-08-26  902  	if (device_may_wakeup(dev)) {
-410119ee29b6c1 Fabien Dessenne  2019-08-26  903  		dev_pm_clear_wake_irq(dev);
-410119ee29b6c1 Fabien Dessenne  2019-08-26  904  		device_init_wakeup(dev, false);
-410119ee29b6c1 Fabien Dessenne  2019-08-26  905  	}
-13140de09cc2dd Fabien Dessenne  2019-05-14  906  	return ret;
-13140de09cc2dd Fabien Dessenne  2019-05-14  907  }
-13140de09cc2dd Fabien Dessenne  2019-05-14  908  
+I haven't considered adding an restore function. I've implemented this 
+to handle potential command stream failures like scaling beyond the 
+supported 8x factor. I'll probably drop this for now to keep it simple 
+and instead correctly announce the constraints to avoid creating invalid 
+commands in the first place.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>> Signed-off-by: Sven Püschel <s.pueschel@pengutronix.de>
+>> ---
+>>   drivers/media/platform/rockchip/rga/rga.c | 24 ++++++++++++++++++++++++
+>>   drivers/media/platform/rockchip/rga/rga.h |  7 +++++++
+>>   2 files changed, 31 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/rockchip/rga/rga.c
+>> b/drivers/media/platform/rockchip/rga/rga.c
+>> index
+>> cd4da01645611e5fb51ed94e09b5f1463dad72c5..0a725841b0cfa41bbc5b861b8f5ceac2452f
+>> c2b5 100644
+>> --- a/drivers/media/platform/rockchip/rga/rga.c
+>> +++ b/drivers/media/platform/rockchip/rga/rga.c
+>> @@ -9,6 +9,7 @@
+>>   #include <linux/delay.h>
+>>   #include <linux/fs.h>
+>>   #include <linux/interrupt.h>
+>> +#include <linux/iommu.h>
+>>   #include <linux/module.h>
+>>   #include <linux/of.h>
+>>   #include <linux/pm_runtime.h>
+>> @@ -560,6 +561,19 @@ static const struct video_device rga_videodev = {
+>>   	.device_caps = V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_STREAMING,
+>>   };
+>>   
+>> +void rga_iommu_restore(struct rockchip_rga *rga)
+>> +{
+>> +	if (rga->empty_domain) {
+>> +		/*
+>> +		 * To rewrite mapping into the attached IOMMU core, attach a
+>> new empty domain that
+>> +		 * will program an empty table, then detach it to restore the
+>> default domain and
+>> +		 * all cached mappings.
+>> +		 */
+>> +		iommu_attach_device(rga->empty_domain, rga->dev);
+>> +		iommu_detach_device(rga->empty_domain, rga->dev);
+>> +	}
+>> +}
+>> +
+>>   static int rga_parse_dt(struct rockchip_rga *rga)
+>>   {
+>>   	struct reset_control *core_rst, *axi_rst, *ahb_rst;
+>> @@ -657,6 +671,13 @@ static int rga_probe(struct platform_device *pdev)
+>>   		goto err_put_clk;
+>>   	}
+>>   
+>> +	if (iommu_get_domain_for_dev(rga->dev)) {
+>> +		rga->empty_domain = iommu_paging_domain_alloc(rga->dev);
+>> +
+>> +		if (!rga->empty_domain)
+> Its an error pointer, see:
+>
+> https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/6347dc7fb967521a77f9ff0774d25ef0cca4c6cd
+>
+>> +			dev_warn(rga->dev, "cannot alloc new empty
+>> domain\n");
+>> +	}
+>> +
+>>   	ret = v4l2_device_register(&pdev->dev, &rga->v4l2_dev);
+>>   	if (ret)
+>>   		goto err_put_clk;
+>> @@ -741,6 +762,9 @@ static void rga_remove(struct platform_device *pdev)
+>>   	v4l2_device_unregister(&rga->v4l2_dev);
+>>   
+>>   	pm_runtime_disable(rga->dev);
+>> +
+>> +	if (rga->empty_domain)
+>> +		iommu_domain_free(rga->empty_domain);
+>>   }
+>>   
+>>   static int __maybe_unused rga_runtime_suspend(struct device *dev)
+>> diff --git a/drivers/media/platform/rockchip/rga/rga.h
+>> b/drivers/media/platform/rockchip/rga/rga.h
+>> index
+>> fc4805ba4e8ef7fb311f780a198ba6ba4d3aff17..e19c4c82aca5ae2056f52d525138093fbbb8
+>> 1af8 100644
+>> --- a/drivers/media/platform/rockchip/rga/rga.h
+>> +++ b/drivers/media/platform/rockchip/rga/rga.h
+>> @@ -75,6 +75,7 @@ struct rockchip_rga {
+>>   	void __iomem *regs;
+>>   	struct clk_bulk_data clks[3];
+>>   	struct rockchip_rga_version version;
+>> +	struct iommu_domain *empty_domain;
+>>   
+>>   	/* vfd lock */
+>>   	struct mutex mutex;
+>> @@ -114,6 +115,12 @@ static inline struct rga_vb_buffer *vb_to_rga(struct
+>> vb2_v4l2_buffer *vb)
+>>   
+>>   struct rga_frame *rga_get_frame(struct rga_ctx *ctx, enum v4l2_buf_type
+>> type);
+>>   
+>> +/*
+>> + * This should be called in an interrupt handler to make sure no memory
+>> + * is mapped through the IOMMU while the empty domain is attached.
+>> + */
+>> +void rga_iommu_restore(struct rockchip_rga *rga);
+>> +
+>>   /* RGA Buffers Manage */
+>>   extern const struct vb2_ops rga_qops;
+>>   
 
