@@ -1,239 +1,127 @@
-Return-Path: <linux-kernel+bounces-847949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0845BCC249
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FE3BCC252
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33DB1A60382
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:34:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7201A62710
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B349261B9D;
-	Fri, 10 Oct 2025 08:33:56 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D061026159E;
+	Fri, 10 Oct 2025 08:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hDhWykYG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845DC24DCEB
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A026C25A655
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760085235; cv=none; b=KwUUHSXcJo91ERvB57KpFb0WNhH1+ztZ1EpJStiGmMkQy1YRhrDCddYWmItmIyFLcKibBfuJUGYRTH8zP0uhQGQjA0N7UMqxU77nyeq6SJ4PvP577r6i8QyoKhexbwRsQJ/QVvPp7fPBaEJdvXdbJlpJT/NkxdTTZ67ZLcQhftQ=
+	t=1760085258; cv=none; b=R35Vtf1OefzT16mRJVVhy1UgE5gyxR3new7cP1nzaUWIb47xZTqMY6jd/IrzCeeQUd8v4R7ZzgSR+QG1AUjiSZhSNq/rf4usrgZGLEXiuL5RiYdlv2MaL2mGI3RwmVr0NrdUq1wKfmvv0SE94y09xNPEUcv7VZuNBi6/EFzXjCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760085235; c=relaxed/simple;
-	bh=2I1HEzefLipY9ONBMa+V5AZRDh7NSM/PPmjwdO4MJVg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:References:To:Cc:
-	 In-Reply-To:Content-Type; b=BjM8AY2IkDrar2xDJ79lM1ygac7eJ9IoUNUck07zG9ayFu0AnPvpNADLhT3lNhopiL5BRQzKIOsRyvUdywX6fNEzF/Z0vS+mEaeh+vKKakH62d+qNKk6ksDIbtJn47RHypQk+vqG0BWHXdayMt//E/ukmsVG+qlSefgZ4Qmrzps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.pueschel@pengutronix.de>)
-	id 1v78Z3-0001WS-D9; Fri, 10 Oct 2025 10:33:25 +0200
-Message-ID: <a97780fa-5261-44ed-b54d-fd699d3cbb82@pengutronix.de>
-Date: Fri, 10 Oct 2025 10:33:21 +0200
+	s=arc-20240116; t=1760085258; c=relaxed/simple;
+	bh=0nVHt1G+Jqp+oKetIsOYgW2nvWNPm+MyfNq6WGmqwlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GkOEvuNRmvE7RIJq2a3vmlxwgr9tcSYNDSlwTADMJaS65sruc468PSrcsG2Obrq7QeAa6J44XSokidJRGx6UYE/ns36LLrEI6Vl+urorqPi67xKEzMrA8bfmIpZHu5yG22VYclVbW9hQKrDTCTXRIk1gs1WfL4fLtO6i9/euEMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hDhWykYG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760085255;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XEPIUQZfoE+JbLbZCi1s6/pbCySyRkdPveDvN9XnJDU=;
+	b=hDhWykYG+IiRL9tSUjGkgIGy1xSvLB0yuOuEWafsAHrW36spUJyCTWN70U9v72gvhMARg/
+	kmOmwADJ9t9LfFQtSrMu7KzIiaG4XQoS9WT8/YbG6KA+12EKj5rsoy6Vsn35qLqgL1XqL6
+	lv7tTso9BIepM1x3jG5IkyJxkeG7bDs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-kjVYaasiM0yHr0H3tFuLMQ-1; Fri,
+ 10 Oct 2025 04:34:12 -0400
+X-MC-Unique: kjVYaasiM0yHr0H3tFuLMQ-1
+X-Mimecast-MFC-AGG-ID: kjVYaasiM0yHr0H3tFuLMQ_1760085251
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC37A180057A;
+	Fri, 10 Oct 2025 08:34:10 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.197])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D847519560BB;
+	Fri, 10 Oct 2025 08:34:05 +0000 (UTC)
+From: Tomas Glozar <tglozar@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	John Kacur <jkacur@redhat.com>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Crystal Wood <crwood@redhat.com>,
+	Attila Fazekas <afazekas@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH 0/9] Documentation/rtla: Cover default options
+Date: Fri, 10 Oct 2025 10:33:29 +0200
+Message-ID: <20251010083338.478961-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?Q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>
-Subject: Re: [PATCH 00/16] media: platform: rga: Add RGA3 support
-References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
- <3c62e3c837d534ef5bc21a95ec1dc408c38cb8a0.camel@ndufresne.ca>
-Content-Language: en-US
-To: Nicolas Dufresne <nicolas@ndufresne.ca>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kernel@pengutronix.de
-In-Reply-To: <3c62e3c837d534ef5bc21a95ec1dc408c38cb8a0.camel@ndufresne.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.pueschel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Nicolas,
+RTLA has many options that have a default value that is used when
+the option is not set associated with them. Those are not covered in
+the documentation for the options, which creates confusion among users.
 
-On 10/7/25 8:06 PM, Nicolas Dufresne wrote:
-> Hi,
->
-> Le mardi 07 octobre 2025 à 10:31 +0200, Sven Püschel a écrit :
->> This series adds support for the Raster Graphic Acceleration 3 (RGA3)
->> peripheral, which is included in the RK3588 SoC. Unlike the RGA2 it
->> can use the existing rockchip-iommu-v2 driver to handle iommu mappings.
->> Also the RK3588 contains two independent RGA3 cores.
-> Thanks for working on this.
->
->> Only scaling and format conversions between common 8bit RGB/YUV formats
->> are implemented. Also the color space conversion is fixed to BT601F.
->> This already allows a practical usage of the RGA3.
-> This seems quite limiting, can we expect an update on this, can't be that hard
-> to fully implement.
+Document the default behavior for all relevant options: -H, -P, -C,
+--trace-buffer-size. Some of these are covered in general
+descriptions, only missing from the option documentation.
 
-Sorry, but currently there is no need to have a fully featured 
-implementation from our side. As the datasheet mentions that the RGA3 
-should do 4 or 2 pixel/cycle depending on the operation
+Also, fix a few typos and incorrect naming of tracers.
 
->> This was tested on a Radxa Rock 5T. With the increased clock speeds in
->> the devicetree around 160 fps were measured when scaling and converting
-> This is quite vague, I've checked the patch and you didn't extend either there.
-> Is that an overclock or was it miss-configured ? Does RK implement a devfreq ?
-> Should that be moved with a voltage adjustement ? Is there any thermal nearby we
-> should monitor ?
+-----------------------
 
-This is mainly the result of a very low performance in the initial 
-testing. We were quite disappointed looking at 30 fps output. The 
-datasheet mentions the core should do 2 or 4 pixel/cycle, so we looked 
-if the clock speed could be increased. The TRM Part1 mentions that the 
-RGA3 clock uses a default divider of 2, so I've tweaked the dtsi to 
-avoid the clock divider and run it on the fastest clock.
+The patchset contains two parts: fixes (first five commits), and new
+additions for default options, which were previously undocumented or
+poorly documented (the rest).
 
-But this tweaking only increased the frame rate to around 36fps. After 
-some brainstorming and testing we found the culprit being the 
-RGA3_WR_SW_OUTSTANDING_MAX value in the command. With this value maxed 
-out and without the clock tweaks I've got around 80fps. As the clock 
-increase resulted in the expected doubling of the fps and my few tests 
-worked, I've included it in the patch set.
+The patchset assumes [1] is applied, renaming included files to *.txt
+from *.rst, to prevent build error on "make htmldocs".
 
-I haven't done any stress testing and don't mind to remove the clock 
-speed adjustments from the dtsi.
+Note: I am aware that there are more issues with the documentation, just
+not everything can (and should) be fixed in one patchset.
 
->> from RGBA 480x360 to NV12 3840x2160. Without the clock speed scaling a
->> default clock division factor of 2 is used and only around 80 fps are
->> reached with one core. The v4l2-compliance tests only complain about
->> the already failing colorspace propagation:
-> Did you do any more format testing to validation all supported combinations ?
-> This is a tool [0] you can use to test this using GStreamer and how to use it
-> [1].
+[1] https://lore.kernel.org/linux-trace-kernel/20251008184522.13201-1-krishnagopi487@gmail.com/
 
-Thanks for the link!
+Tomas Glozar (9):
+  Documentation/rtla: Fix typo in common_options.txt
+  Documentation/rtla: Fix typo in common_timerlat_options.txt
+  Documentation/rtla: Fix typo in rtla-timerlat-top.rst
+  Documentation/rtla: Fix typo in common_timerlat_options.txt
+  Documentation/rtla: Correct tracer name for common options
+  Documentation/rtla: Mention default priority
+  Documentation/rtla: Mention default cgroup state
+  Documentation/trace: Specify exact priority for timerlat
+  Documentation/rtla: Include defaults for tracer options
 
-I've did some simple format conversion tests with a static test pattern.
+ Documentation/tools/rtla/common_options.txt      | 16 +++++++++++++---
+ .../tools/rtla/common_timerlat_options.txt       |  4 ++--
+ Documentation/tools/rtla/rtla-timerlat-top.rst   |  2 +-
+ Documentation/trace/timerlat-tracer.rst          | 12 ++++++------
+ 4 files changed, 22 insertions(+), 12 deletions(-)
 
-The tests mainly converts any combination of RGB/YUV formats (hope I 
-didn't miss anything) to each other. Then I convert it back to rgba with 
-gstreamer and compare it's hash.
+-- 
+2.51.0
 
-For scaling I've just tested one upscale, downscale and scale to a non 
-aligned width/height.
-
-> [0]https://gitlab.collabora.com/mediatek/aiot/lava-test-definitions/-/tree/main/avvideocompare?ref_type=heads
-> [1]https://gitlab.collabora.com/mediatek/aiot/linux/-/blob/mediatek-next/.gitlab-ci.yml?ref_type=heads#L282
->>    v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
->>    ...
->>    		fail: v4l2-test-formats.cpp(923): fmt_cap.g_colorspace() !=
->> col
->>    	test VIDIOC_S_FMT: FAIL
->>    ...
->>    Total for rockchip-rga device /dev/video0: 47, Succeeded: 46, Failed: 1,
->> Warnings: 0
->>
->>    v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
->>    ...
->>    		fail: v4l2-test-formats.cpp(923): fmt_cap.g_colorspace() !=
->> col
->>    	test VIDIOC_S_FMT: FAIL
->>    ...
->>    Total for rockchip-rga device /dev/video1: 47, Succeeded: 46, Failed: 1,
->> Warnings: 0
->>
->>    v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
->>    ...
->>    		fail: v4l2-test-formats.cpp(923): fmt_cap.g_colorspace() !=
->> col
->>    	test VIDIOC_S_FMT: FAIL
->>    ...
->>    Total for rockchip-rga device /dev/video2: 47, Succeeded: 46, Failed: 1,
->> Warnings: 0
->>
->> Each RGA core is a separate /dev/video device. To distinguish the RGA2
->> core from the RGA3 cores the Card type is set accordingly. Combining all
->> cores into a single device and scheduling tasks to the best core might
->> be a future improvement, if it is desired by upstream to handle the
->> scheduling and selection in kernel space.
-> It took me some time to understand why you spoke about multicore here. You
-> forgot to say here that you add RGA3 into RGA2 driver. Some information on why
-> you went that path instead of a separate driver.
-
-Mostly as I've started by using the rga driver as a basis and just 
-adjusted the command stream and register values to the RGA3. I was 
-unsure, if I should create a separate driver.
-As it didn't seem unfeasible to have the existing driver handle both 
-units, I've decided to add it to the existing driver to avoid code 
-duplication.
-
-But looking at your comments about the wrong announcement of e.g. color 
-space conversion, I now think that a new driver is probably better to 
-avoid adding too much of the differences to the struct.
-
->  From high level view, I don't think its a good idea to multi-plex over
-> heterogeneous core. They may not even produce the exact same pixels for the same
-> operation. They also don't share the same MMU, and at first glance, the use of
-> rkiommu in RGA3 means it can no longer handle CPU cache (though I don't know if
-> this is implemented/supported in upstream RGA2 driver).
-
-Thanks for the insight. This gives me another reason to create a 
-separate driver. I'll probably also look into multiplexing the 2 RGA3 
-cores to only expose one RGA3 video device to userspace (the current 
-implementation exposes both cores individually to the userspace)
-
-Sincerely
-
-     Sven
-
->> Patch 1-2 are general cleanups
->> Patch 3-12 prepare the rga driver for the RGA3
->> Patch 13 documments the RGA3 compatible value
->> Patch 14 adds the RGA3 cores to the rk3588 dtsi
->> Patch 15 increases the RGA3 core clock speeds
->> Patch 16 adds RGA3 support to the rga driver
->>
->> Signed-off-by: Sven Püschel<s.pueschel@pengutronix.de>
->> ---
->> Sven Püschel (16):
->>        media: rockchip: rga: use clk_bulk api
->>        media: rockchip: rga: use stride for offset calculation
->>        media: rockchip: rga: align stride to 16 bytes
->>        media: rockchip: rga: move hw specific parts to a dedicated struct
->>        media: rockchip: rga: use card type to specify rga type
->>        media: rockchip: rga: change offset to dma_addresses
->>        media: rockchip: rga: support external iommus
->>        media: rockchip: rga: remove size from rga_frame
->>        media: rockchip: rga: remove stride from rga_frame
->>        media: rockchip: rga: move rga_fmt to rga-hw.h
->>        media: rockchip: rga: add iommu restore function
->>        media: rockchip: rga: handle error interrupt
->>        media: dt-bindings: media: rockchip-rga: add rockchip,rk3588-rga3
->>        arm64: dts: rockchip: add rga3 dt nodes
->>        arm64: dts: rockchip: increase rga3 clock speed
->>        media: rockchip: rga: add rga3 support
->>
->>   .../devicetree/bindings/media/rockchip-rga.yaml    |   1 +
->>   arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      |  50 +++
->>   drivers/media/platform/rockchip/rga/Makefile       |   2 +-
->>   drivers/media/platform/rockchip/rga/rga-buf.c      |  78 ++--
->>   drivers/media/platform/rockchip/rga/rga-hw.c       | 356 ++++++++++++---
->>   drivers/media/platform/rockchip/rga/rga-hw.h       |  15 +-
->>   drivers/media/platform/rockchip/rga/rga.c          | 404 ++++++-----------
->>   drivers/media/platform/rockchip/rga/rga.h          |  74 ++--
->>   drivers/media/platform/rockchip/rga/rga3-hw.c      | 490
->> +++++++++++++++++++++
->>   drivers/media/platform/rockchip/rga/rga3-hw.h      | 186 ++++++++
->>   10 files changed, 1246 insertions(+), 410 deletions(-)
->> ---
->> base-commit: afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328
->> change-id: 20251001-spu-rga3-8a00e018b120
->>
->> Best regards,
 
