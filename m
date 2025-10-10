@@ -1,232 +1,199 @@
-Return-Path: <linux-kernel+bounces-848373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9509BCD916
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:40:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D840CBCD925
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C770C1A61FE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:40:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 894F419E1835
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3DC257821;
-	Fri, 10 Oct 2025 14:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E97257821;
+	Fri, 10 Oct 2025 14:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eml6+LRK"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zIq9ifNG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sKTHNjzP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oHV0vwpv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jZPzR8qo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99C42F3C20
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0B82F3C0C
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760107210; cv=none; b=fWnbWLfxLykUMD+yHE3NOxeILG9J5cI03xOS5n8a38yk2ZwVx10A8fr7T9P90q8RKiAKetwknVR+di5qt0DtFXdW1Jm7uHwvyNWSjyMvTOeEkpUbOM+YHqbOQJ5DobF5TIq2NeOtMvBjaFmOqvqI25m0EH9AnNNIuE06H/9+uYw=
+	t=1760107293; cv=none; b=VylkxZMttIFxqj0h5OF9GC0U5vvfYhEijJfnSX6Bfuh+V9HCnmtFOCyxxo0wFJTK9Dxdj12jn4QyIumCqLLiOsbF76rkn1c7lx6PSzObK2TTWJfZOApfE5HEQZ/Be7V3gYaFm2+RKeL4b1iE/PvH1faNbAqvGgwPRBvY3gfc6Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760107210; c=relaxed/simple;
-	bh=WbeLzUgEV22dDeik0xafOaSUdi9R9dEvpfqnpGFwEAw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BuQ7+R+2VeYXNSPXcMKhP/5yT26c1BEdsC1IeY8OIBjm+h5+1TT1bdy4E3lO8xu4Eqmuyh2xkzmgq33z4QxqHJmgKvuWSzTLdqBZkz2DcOOvXmNEiGRXjwp42XpEh09c0C1kX1ierdE+IB1/kpOs5JDP5dHDgrU6SBrOZt40/TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eml6+LRK; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso14275675e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760107207; x=1760712007; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WbeLzUgEV22dDeik0xafOaSUdi9R9dEvpfqnpGFwEAw=;
-        b=Eml6+LRK6dXTs8wDanPMG4/UBwafDNcsex+TU4XIv8H+YPlSSbdpmI6aQRtt9FS3MO
-         XXiYJgUJDhugYOwVhPzBTa+Aj45j1dc0dtJhbRZGn9zcD3Wt7fjUsl9dkBVwihjUgMRH
-         yXE9oxfYIlEu+13IwkAPfCIvtMRGCTsD1UHAgPB6eAeymExTGiViv2mER4eLHzO1oUnG
-         roBlOJAHl9ZD/unr8xJ/5O2Z3aXbb+sysPP3ilMQDWsJTevMfEEpV1ZYnoWPKybXJ+RG
-         Z32bDHCnjZrEw2xVdpt8/REaov7l7TSi2zD7od+92UAr04ChvEpep5yO79DrvOVb26aI
-         fs0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760107207; x=1760712007;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WbeLzUgEV22dDeik0xafOaSUdi9R9dEvpfqnpGFwEAw=;
-        b=Bt92HquANLUNLR4OFabp27lyjyRRO8qZt4fjPz1yIoE2Oa+kcD5uoe5yhuoc5uflV8
-         HssPebqre1e0DubQaeBdnurIJKInjE3y3EI+x+IaytGc7MLWL1prI6I67PNgtDpNnK6E
-         kXF52+vDtxaCPLJH28ZVrXT4uDbqp6++g9o/fd/d7EcnaMJNmPxtCgiVuP1N5JZZAVqC
-         Ldy2WXVbM3DwNL1Ect20Vsw/+bOhR1YK2aZdPlB7ASlKoQ/Ei+kN+B9DMscW3G3vjWSf
-         sPSGHrShsisrjTKiUkHNeum9tbk6YB8d0mDnnbkKZeDAaaS5KO0/l7+tdFLw48TsZBYk
-         rzug==
-X-Forwarded-Encrypted: i=1; AJvYcCW99EWMaLBo6yViGekIZTBNoNmB+w5pvxL1FCu9NJy6YcvGoJEVjiJW5oXIGD3i1Ka+7kb7+fJrwqnKDtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpbaz9ClqIreCU6+f4CONaCK448wSLuwQytw2S/fW3tnYkACX5
-	lAIHPBXXtWigfPbm7lMI5pDcoVp0PxVRM9Hn424B1Ooqqb2YNJmLOQR3
-X-Gm-Gg: ASbGnctLzsbRh9r7rqS1rl76YEZfZcVswzzwcA5ZMuQbF4bPaoAiFps94tqZloQhwOF
-	sgXRX8/6em7/L0jlqCjIMabXseJe/TKD/z6LuSgYE6hdd9mVwlAI5CEZzXC8AXwjjh2nUrij4sE
-	e+F72Hk/As5zaCu2XqVtrj/vgy+yPETzrfHneagNny+Vy6kCo8B7hpip+BvYqeOY+qZm0VgReXo
-	5K3qdbc/mOGvK4AufmWFKNu85/NGIMlfGfDOsWXpQmW1ReMxK6HP6p+gRqrzohcRyN8NRpoGP9M
-	mz7U4SyePiGqocnYudqNkRBfa+L8mnQzblURj744qoTR7llIA3/toUr41eXgeANkjoL8ZcEfb6v
-	K4PZgKBiLN6r5qso+uFKtTMYEONetKDiCb3MbGjtsS+zYUP+poVnH8sRPO2FG
-X-Google-Smtp-Source: AGHT+IFnMF+6qNtBAMw+CyoQv3jiuQo/QSyCG7rCO6D+8KNfzJwrWSPS9T8beikQzgBhf5GvDE9Ang==
-X-Received: by 2002:a05:6000:1867:b0:3eb:b80c:cea0 with SMTP id ffacd0b85a97d-42666abbbabmr6495344f8f.4.1760107206730;
-        Fri, 10 Oct 2025 07:40:06 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5833dcsm4580320f8f.19.2025.10.10.07.40.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 07:40:06 -0700 (PDT)
-Message-ID: <61b5a5f43d97f700ec7fc52110a1784ef699eeaa.camel@gmail.com>
-Subject: Re: [PATCH RFC 0/6] Battery temperature ADC plumbing on Qualcomm
- platforms
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Luca Weiss <luca.weiss@fairphone.com>, Jonathan Cameron
- <jic23@kernel.org>,  David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko	
- <andy@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano	
- <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba	
- <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Laxman Dewangan	
- <ldewangan@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, Konrad
- Dybcio	 <konradybcio@kernel.org>, Hans de Goede <hansg@kernel.org>, Jens
- Reidel	 <adrian@mainlining.org>, Casey Connolly <casey.connolly@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Date: Fri, 10 Oct 2025 15:40:36 +0100
-In-Reply-To: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
-References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1760107293; c=relaxed/simple;
+	bh=sCIUZWQCl8s5LiKfHt4OAO05fKvlszY++fniEl/8m9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QzzQH2ZAPq4EU+NEHC4442q/CPKIVyZ7ucZpKx9jk/5r7hJb7L0XX3YRqqG1vfOCHq9ZSu+z6QjzFWkH9ManUY+J6Cafkgsa+OTQbdf3s147NlTjM02nkVZu2XpNzZJkaHKkMzXyVJt2Mm2TgIDkF1NreD9lAy28dPltLXENwQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zIq9ifNG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sKTHNjzP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oHV0vwpv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jZPzR8qo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D3B351F397;
+	Fri, 10 Oct 2025 14:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760107290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
+	b=zIq9ifNGGnSWNKuEtdZXODrupBHw7SKGLyE/9DF6feYWqVPLOVdH58Q6IQG54QvcuGrnGh
+	moY3UMIa2GbCVoZPnxl1JkDPeVP0ZSXqwZkQCMU9mzszNaHbQEygxiPllL9VI8lTaniJ+g
+	IcMN4k+3x37mu4F1aKPlefwFXhqrYHs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760107290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
+	b=sKTHNjzPZXtVptWOJw6/vYrdx/KMU2R1ZrqGLnP6Y/7qcKQCDlNHQFlqCv7VZ4kWt2ywEF
+	FR7vbxbYOanw7MAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oHV0vwpv;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jZPzR8qo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760107289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
+	b=oHV0vwpvPaRjDEAthTPKSTOZ8X/AyboQFA/ngZJ3ce4cJ5MNzKnP+rxSRRMgg1y0vYvguY
+	FYRwnpb9hpQUwi9wTOdzCVQnwO+N2+cQFj8Qee6Is+2zexmC4dNHoPr/5SJju7nW9p34Zp
+	vj/fjL3eGv4/NU6gAe+OTx4QtOYZFuA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760107289;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh8afuSklgP8R6OwH+PVFLZnr35LOcviwXSRFVPl2go=;
+	b=jZPzR8qopWB56r0Wf3Kh5BcEG8zxi1YJMX+rscsbH1HrC/KhrfQd8GxGYktmQLmNrIRtC3
+	WsBPlzZVG+5CGCCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B171613A40;
+	Fri, 10 Oct 2025 14:41:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8jZQKxkb6WgqIwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:41:29 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 181C9A0A58; Fri, 10 Oct 2025 16:41:28 +0200 (CEST)
+Date: Fri, 10 Oct 2025 16:41:28 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v7 13/14] xfs: use the new ->i_state accessors
+Message-ID: <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
+References: <20251009075929.1203950-1-mjguzik@gmail.com>
+ <20251009075929.1203950-14-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009075929.1203950-14-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: D3B351F397
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On Fri, 2025-10-10 at 13:21 +0200, Luca Weiss wrote:
-> This is an RFC which implements a potential solution to get battery
-> temperature readings working on for example smartphones with Qualcomm
-> SoCs.
->=20
-> The solution chosen in downstream Qualcomm kernels is exposing
-> ADC_BAT_THERM_PU* in the ADC driver as temperature channels with the
-> lookup table ("struct vadc_map_pt") for the specific NTC found in a
-> device's battery patched to adjust the lookup table.
->=20
-> The high level solution proposed here:
-> * ADC driver provides temperature channel in (milli)volt as IIO channel
-> * generic-adc-thermal driver converts voltage to temperature based on
-> =C2=A0 provided lookup table from DT (driver has one IIO channel input, o=
-ne
-> =C2=A0 IIO channel output)
-> * The fuel gauge driver can use that temperature IIO channel to expose
-> =C2=A0 battery temperature via the power supply device
->=20
-> Variants/alternatives considered:
->=20
-> 1. Do not implement IIO device in generic-adc-thermal
->=20
-> Without an IIO channel and using thermal zone directly it becomes more
-> difficult. You cannot get thermal zone by reference (e.g.
-> thermal-sensors =3D <&foo>;). The function thermal_zone_get_zone_by_name(=
-)
-> exists but lookup by name is kinda clunky. Adding by-phandle support
-> might be possible but is lots of work. It also doesn't really look like
-> thermal-sensor is really meant to be used by other drivers. E.g.
-> there's also no "thermal-sensor-names" property to designate passing
-> multiple thermal sensors. So I believe IIO is a better fitting API for
-> this.
+On Thu 09-10-25 09:59:27, Mateusz Guzik wrote:
+> Change generated with coccinelle and fixed up by hand as appropriate.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-The only thing that I dislike is that using IIO just feels like hacking aro=
-und
-the lack of an inkernel interface (as you pointed out and which IIO provide=
-s)
-for thermal devices. My main question is, what makes this device an IIO dev=
-ice
-despite the fact that we (you) want to use the IIO inkernel API (IIUC)? AFA=
-IU,
-the sensor is already being implemented as the ADC driver and this is just
-convenience.
+...
 
-Anyways, that said, there's precedent (at least in 2 places) about register=
-ing
-IIO devices outside of the subsystem.
+> @@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
+>  	 */
+>  	xfs_setup_iops(tmpfile);
+>  	xfs_finish_inode_setup(tmpfile);
+> -	VFS_I(tmpfile)->i_state |= I_LINKABLE;
+> +	inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
+>  
+>  	*wip = tmpfile;
+>  	return 0;
+> @@ -2330,7 +2330,7 @@ xfs_rename(
+>  		 * flag from the inode so it doesn't accidentally get misused in
+>  		 * future.
+>  		 */
+> -		VFS_I(du_wip.ip)->i_state &= ~I_LINKABLE;
+> +		inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
+>  	}
+>  
+>  out_commit:
 
-Maybe we need the concept of an IIO proxy for the IIO inkernel interface. L=
-ike
-consumers of IIO devices that can use some the measurements (channels), do
-something with them and then be IIO providers. I guess I'm already rambling=
- :)
-=20
->=20
-> 2. Expose IIO channel as temperature in ADC driver
->=20
-> This would require passing in the temperature lookup table somehow to
-> the ADC driver via DT. I think this passes too many details about the
-> hardware that's connected into the ADC driver. While possible, at least
-> for Qcom ADC there's no precedent yet.
+These two accesses look fishy (not your fault but when we are doing this
+i_state exercise better make sure all the places are correct before
+papering over bugs with _raw function variant). How come they cannot race
+with other i_state modifications and thus corrupt i_state?
 
-Not really familiar with the HW setup but (just for my understanding) why i=
-t
-would not make sense to pass that info to the IIO driver? I guess that tabl=
-e is
-just not part of the ADC?
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index caff0125faea..ad94fbf55014 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1420,7 +1420,7 @@ xfs_setup_inode(
+>  	bool			is_meta = xfs_is_internal_inode(ip);
+>  
+>  	inode->i_ino = ip->i_ino;
+> -	inode->i_state |= I_NEW;
+> +	inode_state_set_raw(inode, I_NEW);
+>  
+>  	inode_sb_list_add(inode);
+>  	/* make the inode look hashed for the writeback code */
 
->=20
-> 3. Add temperature-lookup-table as property to simple-battery
->=20
-> Since the NTC is a part of the battery pack, adding a
-> temperature-lookup-table property to simple-battery would make sense
-> instead of having this lookup table be standalone in the
-> generic-adc-thermal node. However being able to re-use the existing code
-> in generic-adc-thermal lead me to the current proposal.
+Frankly, the XFS i_state handling is kind of messy and I suspect we should
+be getting i_state == 0 here. But we need to confirm with XFS guys. I'm
+poking into this because this is actually the only case where we need
+inode_state_set_raw() or inode_state_clear_raw() outside of core VFS and
+I'd like to get rid of these functions because IMHO they are actively
+dangerous to use.
 
-What about turning it into a small lib module? No idea where to put it thou=
-gh.
-But while I was thinking about this, your option 3 looks the one that makes=
- more
-sense to me.
-
-My 2 cents!
-- Nuno S=C3=A1
-
-
->=20
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
-> Luca Weiss (6):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: qcom-spmi-adc5: Add battery ther=
-mal channels
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: thermal: generic-adc: Documen=
-t #io-channel-cells
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 thermal/drivers/generic-adc: Register as I=
-IO device
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 thermal/drivers/generic-adc: Allow probe w=
-ithout TZ registration
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 arm64: dts: qcom: pm7250b: Define battery =
-temperature ADC channels
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 arm64: dts: qcom: sm7225-fairphone-fp4: Ad=
-d battery temperature node
->=20
-> =C2=A0.../bindings/thermal/generic-adc-thermal.yaml=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 4 ++
-> =C2=A0arch/arm64/boot/dts/qcom/pm7250b.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 24 +++++++
-> =C2=A0arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts=C2=A0 | 83
-> ++++++++++++++++++++++
-> =C2=A0drivers/iio/adc/qcom-spmi-adc5.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- |=C2=A0 6 ++
-> =C2=A0drivers/iio/adc/qcom-vadc-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 16 +++++
-> =C2=A0drivers/thermal/thermal-generic-adc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 68 ++++++++++++++++--
-> =C2=A0include/linux/iio/adc/qcom-vadc-common.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +
-> =C2=A07 files changed, 198 insertions(+), 6 deletions(-)
-> ---
-> base-commit: 6063257da111c7639d020c5f15bfb37fb839d8b6
-> change-id: 20251010-bat-temp-adc-8539bf0b85bc
->=20
-> Best regards,
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
