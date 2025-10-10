@@ -1,153 +1,145 @@
-Return-Path: <linux-kernel+bounces-847878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42385BCBF17
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:38:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493B5BCBF3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D1C14F69E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2434087C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE91274FF5;
-	Fri, 10 Oct 2025 07:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58938275B1A;
+	Fri, 10 Oct 2025 07:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlQKXsjF"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cp8Atrw/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2CE273805
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52B9274FF9;
+	Fri, 10 Oct 2025 07:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760081904; cv=none; b=t5Z6yZNB9kjPtmCYrpt9aFuzGSBSVsunMXooauUe5N/tR2eqft5nN8s4KEV+qBKhgIEL67PHHj5HQOEP9AouqXApHe+2h+8a4oRtBkd0fJjqjBFyfcwd2hpRY0RjKTKNsaFQlOcQ7PjAls0dXYfuxQaCh6mOgrDPsxr/fhioWDI=
+	t=1760081950; cv=none; b=g6iwt7LiL9bclb9LKcxMGBI0MXsJZzXP9bHLcXY4AxQlIVbwiiZDLEpT4/zlWtpojon4L1U+BqkNWoCAX0ens0/kRIJ54P6Mv2i5Auk8C8Ot1sKOSmBC6XPVIQKCWaNOXejxlgph+pX+UsmO4fkA3Bl4l83Y92tUicInXfd9Mhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760081904; c=relaxed/simple;
-	bh=MpA9Ba727PWpTiit6pJN7JEb+SmHnIAuxsvN32bkDoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Itb9Hu1GPdHDduzEINWuZLW8JE6TvpmlF3PLrQC4OrIgfXo3+HIatICqMFLysTYh5yjpK8a8YT/pL//1wVbCTyL86qkuhRdDfQ26TILSVyxd94US8e/YrLA5ssh6E/uBRBeGDJKR2NWCFA437n8V44Mga2jec+wXPwb3HgVm3I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlQKXsjF; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-91f6ccdbfc8so88616939f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:38:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760081902; x=1760686702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSkReOZjk0xY+q439G4iJeisRcTeHWRCE0gBX7ZntOQ=;
-        b=OlQKXsjFjHi+uua3vAYIsFM4C0P/AWC1a+GxcMObjD8uYQv1S3UVCBnDCNB5V2MHCO
-         Z9S7MLir+R1JYhc5OB3ivY2tJobBujxb2UdInT7hoEKczCKHQyCdCQ+5O1wiV0nui5Ew
-         jKwJQFpAEbcox5j64w2aLWlrAYCQNPHpDe95B2dn4f9oi40BSxF4QygDrgdKFjxsw7yr
-         uUMigUo3V1dYT7lxj7MXOnerTRXfdZdM6hO4iRphfRvDS9lRWk1oGoUV4LFuQa0Je4e/
-         Se5yr9eeNlvQ0RcyvTiITO9hR4UzgB2trANVefdi7Fo6RcwIZUuvKc5S/x25W6xJyzXL
-         ZEqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760081902; x=1760686702;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OSkReOZjk0xY+q439G4iJeisRcTeHWRCE0gBX7ZntOQ=;
-        b=nchssEP77NfXDlZkvgfYxvFo0EUVxrtQgIOoky1qcBeE+bDiDPe4zcI0U3JGghnHhb
-         jr7Urx2swrMpl3BGk8YxUPJIOnloH8yKn5F7Wfp2w6dwobYbpIxxP98EDKnnpyo6d6uZ
-         QySts5eW068HBJOgDeu4BFBSLC61ILKjWR+8xnGe/E4jkf4l/HYCYixM1I6GqqssjvQz
-         yWv+moV6YJ+8Dbjoc2TuW/FrqgspSSeOIfmljDe64/m3o/C0+77cG7wDgn1+SY8BqNeB
-         4UREh4rs7tTxg/kc1QoF8IKZfO7HgIGkP3fbcjgWnqQnDPG9EH+nbQbIlvg8Q8ltMP52
-         z39g==
-X-Forwarded-Encrypted: i=1; AJvYcCVerQPfFtU8vdkeyZHSZ33iz5hR2g+c/PQ7fVFAY6LuB4qIBSFZiR+LUeWFKM17FwXwiZw6ntpuXhQg8nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/6xUaWVrkTh0yecKpl0Jj5+hPLuGpfCBlPbdYRj4+VOUccjUy
-	xPzguivk3sZ0siaodMpwbgTJSoejvNmKce+x9jnbALJQkIBjRyuHsNtK
-X-Gm-Gg: ASbGncskXlnMuL7SV96N1YIKWaT21JibrUsAX+Dr2yz0iGFBmL1KXljilKYtpPDwQxC
-	byGKD1SUoLQLtwksgBnejmTt0zo/sWoQkzKDymE7yWmjaiYvUyz0dL/Gr7jelrh0H3reZcoW3Ff
-	DH+BXAGBa1qqaq1yRSNfn4ZyJ8v5fjbsooEhc7gkqVJcdNDRN19amd9jdmxMR8IYtfsQLk5FNj2
-	6YKyGWSbBiKy+rkp1pS2YPupV3EfrmMgRkVwuw5LiA2/ivZLLBuhdmM9H/tNDsIKjeCsUARxBTR
-	yEXfkegWLTnUcmomf3AVYfCfOT0255cZrKd3fMsx/uuVdcmf0nOPNtG+1mfil6Vehqqb1jfxn59
-	Z+cOaIUpS9jhDtg1JT+kwIl7F7bPVQWynkUZz
-X-Google-Smtp-Source: AGHT+IFLDnuMzjpQsHE8maLNss22i9SbCwyHbHSlyPt/YAet7vC4ZYbeftfnNxrJt0Ye/5hqinibpw==
-X-Received: by 2002:a05:6602:6b89:b0:90a:ce21:ae1e with SMTP id ca18e2360f4ac-93bd18f2a3bmr1228708539f.5.1760081901767;
-        Fri, 10 Oct 2025 00:38:21 -0700 (PDT)
-Received: from arch-box ([2607:fea8:54de:2200::3171])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f71e21a4asm632732173.47.2025.10.10.00.38.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 00:38:21 -0700 (PDT)
-From: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: Albin Babu Varghese <albinbabuvarghese20@gmail.com>,
-	syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com,
-	Ahmet Eray Karadag <eraykrdg1@gmail.com>,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ext4: synchronize free block counter when detecting corruption
-Date: Fri, 10 Oct 2025 03:38:00 -0400
-Message-ID: <20251010073801.5921-1-albinbabuvarghese20@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760081950; c=relaxed/simple;
+	bh=t5IJJx4kPbbwg7ljX2+w4hVtPwBcGYi2Buk9ChSRlgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZVP5kX/CLgFAEEcx3b2R6LWEDhjxjXAmyG5C+7uPbLCAi5yC7eGmnBKzRBPdvBDDcjnQBWPd2rEg+B9/5Lemhtft3qc1s5t6PcNLlN2+DnafyF91L/uzB2UVaGthWxW4dvW5daBM//DQgcnRwdgv6XktKF9lx670qMtRi4f9Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cp8Atrw/; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760081949; x=1791617949;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t5IJJx4kPbbwg7ljX2+w4hVtPwBcGYi2Buk9ChSRlgw=;
+  b=Cp8Atrw/RHIRUNq3r83MhZH2agOxw+T4B8UF+eLDYJMFPI3scqHeyuK8
+   kwrXBLivhWT+myhRGhDu86Xd0ZRvcHx24mEZnFp0JmXZdC/S35/uyta+e
+   BYC//amO2enuDcpC6+vPByCBZEe44YpBWZh7SoYrZbkVmiipXQnHCSJG3
+   sV9wB8SgtEUCTkoYu5lE0QYkGDvrK0I5SjdR40Mbz6xFmoiHneBatMtCf
+   oucdT07SX/RKfbc/R9zheA4gLrDhHqZofD5z/8pA+oi1Jd2EjgP4p2Pbg
+   FJ2ZrYJvef24Omfbeol0x0qTzyYGUfxPParBUWVZ5NZuxkxO1imXBpdPQ
+   Q==;
+X-CSE-ConnectionGUID: F16H7FLjSyeFnL1STn8how==
+X-CSE-MsgGUID: YIHPHj9ARPWu4fAlyWel6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="61330667"
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="61330667"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 00:39:08 -0700
+X-CSE-ConnectionGUID: Rqx7rlU1ShC+slAvdV4afg==
+X-CSE-MsgGUID: 4EPbltHWSIaL7RyweUdzsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,218,1754982000"; 
+   d="scan'208";a="184951573"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 10 Oct 2025 00:39:05 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v77iQ-0002Q7-0S;
+	Fri, 10 Oct 2025 07:39:02 +0000
+Date: Fri, 10 Oct 2025 15:38:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	linux-cxl@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	Robert Richter <rrichter@amd.com>,
+	Cheatham Benjamin <benjamin.cheatham@amd.com>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: Re: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes
+ on x86
+Message-ID: <202510101555.zofjGvZF-lkp@intel.com>
+References: <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
 
-When ext4_mb_generate_buddy() detects block group descriptor
-corruption (free block count mismatch between descriptor and
-bitmap), it corrects the in-memory group descriptor (grp->bb_free)
-but does not synchronize the percpu free clusters counter.
+Hi Fabio,
 
-This causes delayed allocation to read stale counter values when
-checking for available space. The allocator believes space is
-available based on the stale counter, makes reservation promises,
-but later fails during writeback when trying to allocate actual
-blocks from the bitmap. This results in "Delayed block allocation
-failed" errors and potential system crashes.
+kernel test robot noticed the following build errors:
 
-Fix by updating the percpu counter with the correction delta when
-corruption is detected:
+[auto build test ERROR on 46037455cbb748c5e85071c95f2244e81986eb58]
 
-  s64 correction = (s64)free - (s64)grp->bb_free;
-  grp->bb_free = free;
-  percpu_counter_add(&sbi->s_freeclusters_counter, correction);
+url:    https://github.com/intel-lab-lkp/linux/commits/Fabio-M-De-Francesco/cxl-core-Change-match_-_by_range-signatures/20251010-111627
+base:   46037455cbb748c5e85071c95f2244e81986eb58
+patch link:    https://lore.kernel.org/r/20251006155836.791418-3-fabio.m.de.francesco%40linux.intel.com
+patch subject: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes on x86
+config: i386-buildonly-randconfig-005-20251010 (https://download.01.org/0day-ci/archive/20251010/202510101555.zofjGvZF-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510101555.zofjGvZF-lkp@intel.com/reproduce)
 
-This ensures the global counter stays synchronized with the
-corrected group descriptor, preventing false promises and crashes.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510101555.zofjGvZF-lkp@intel.com/
 
-Reported-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
-Tested-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
-Co-developed-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
----
-Changes in v2:
-  - v1 added bounds checking in ext4_write_inline_data_end() to reject
-    writes beyond inline capacity
-  - v2 fixes the root cause by synchronizing the percpu free clusters
-    counter when corruption is detected in ext4_mb_generate_buddy()
-  - Addresses review feedback from Ted Ts'o and Darrick Wong
-Link to v1:
-https://lore.kernel.org/all/20251007234221.28643-2-eraykrdg1@gmail.com/T/
----
- fs/ext4/mballoc.c | 3 +++
- 1 file changed, 3 insertions(+)
+All errors (new ones prefixed by >>):
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 9087183602e4..956e5fa307ca 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -1290,8 +1290,11 @@ void ext4_mb_generate_buddy(struct super_block *sb,
- 		/*
- 		 * If we intend to continue, we consider group descriptor
- 		 * corrupt and update bb_free using bitmap value
-+		 * Also update the global free clusters counter to stay in sync.
- 		 */
-+		s64 correction = (s64)free - (s64)grp->bb_free;
- 		grp->bb_free = free;
-+		percpu_counter_add(&sbi->s_freeclusters_counter, correction);
- 		ext4_mark_group_bitmap_corrupted(sb, group,
- 					EXT4_GROUP_INFO_BBITMAP_CORRUPT);
- 	}
+   ld: drivers/cxl/core/platform_quirks.o: in function `platform_res_adjust':
+>> drivers/cxl/core/platform_quirks.c:95:(.text+0x1f1): undefined reference to `__udivdi3'
+
+
+vim +95 drivers/cxl/core/platform_quirks.c
+
+    76	
+    77	void platform_res_adjust(struct resource *res,
+    78				 struct cxl_endpoint_decoder *cxled,
+    79				 const struct cxl_root_decoder *cxlrd)
+    80	{
+    81		if (!platform_cxlrd_matches_cxled(cxlrd, cxled))
+    82			return;
+    83	
+    84		guard(rwsem_write)(&cxl_rwsem.dpa);
+    85		dev_dbg(cxled_to_memdev(cxled)->dev.parent,
+    86			"Low Memory Hole detected. Resources were (%s: %pr, %pr)\n",
+    87			dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
+    88		if (res) {
+    89			/* Trim region resource overlap with LMH */
+    90			res->end = cxlrd->res->end;
+    91		}
+    92		/* Match endpoint decoder's DPA resource to root decoder's */
+    93		cxled->dpa_res->end =
+    94			cxled->dpa_res->start +
+  > 95			resource_size(cxlrd->res) / cxled->cxld.interleave_ways - 1;
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
