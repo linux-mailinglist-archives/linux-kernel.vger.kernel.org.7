@@ -1,90 +1,124 @@
-Return-Path: <linux-kernel+bounces-847723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587ECBCB838
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:30:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07EB6BCB79D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 05:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 510FF4EAC75
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:30:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 809E24E5BEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A5134BA39;
-	Fri, 10 Oct 2025 03:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CA0247284;
+	Fri, 10 Oct 2025 03:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1DA0GK1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="o/TK5PsD"
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB56268690
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B0113C3CD;
+	Fri, 10 Oct 2025 03:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760067011; cv=none; b=mjbTRw32qLCZHuh4XaIsFx4d00q1c2ng3/3+eClpMgTK8rmWqt779WUK8nwz68jtvMxN0ALopyQWjyydZtHPNJMPptdlGVtjrGj4tTkDyGj7FDI2uuwgn+oq6hMJddEeK4L5fs27Np01lH37HzurkD/YkVpzLmv1tng/PzkowG0=
+	t=1760065644; cv=none; b=S7l7BHnmz6CMYlAg2e3/hm8axe7QpoESihoMjoFgb98mbMas/+DbR9/167kprD/cDu0C0OK1lb1xXyH+BNnmFj+OgXmNEBnrGtmVIjdcNir9KJenc48jxnXTam2Ms76oqTZ8csFvtxNQ83mhCWyF6dP3ApKLwhDxgJiicsmQyyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760067011; c=relaxed/simple;
-	bh=UwYI1Y9zzpkLWZonQKLPHrolSHjRGw+LY5fd58IPCws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j2QSsZ8H04XKkKt/fIKQZerUUlQnTD5Jr6I7xdY4znFpGXlCwDOgARPNmW29Gr6EkfyrgBAf1zP7X+dTTDgSHhAf8F3vKmcGfEcqCDeIJ9jDexsETNXn8gMer0uVf/ovK47/uTCpi3aeEHecUcyKc2/yB5WEnbrUgKywUGdZD50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1DA0GK1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F32C4CEE7
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760067010;
-	bh=UwYI1Y9zzpkLWZonQKLPHrolSHjRGw+LY5fd58IPCws=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=s1DA0GK1N26hb8WWnmFel9nQ94mCRxpbVVZwaFKl5XjMUFFzByJ9g3Zo4JCqloZEW
-	 nCA4RH+l5DfKPp4JIen49URYgB5IfMNC9l/TPyyE2Fblbe9Ajq1eT6GcW76aHmG54O
-	 baNhvQmTwMu4kxAXBm42ITWUEQHPHJ26aZvnDd62Yh7y8gkLZ2JE8b3Ofm0J9qa7mx
-	 Sgpw9n74QFA3bp6SXmFdiaIZux3gtMtAcqEkMPUX9kKf4+ZNBujXffq6w5S8TS2Ixx
-	 TmOPPO1varkTxBTEoq09b44izWYST7a8kB/IUfkmxz2rCCZ8H944W/BkNirMj/DSZV
-	 FYH1bLm+YRzKg==
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4fb8d3a2dbso1188312a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 20:30:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWXtBCsKmrhW4p48HaFO625grgT7LLsh2Rjb2hOk/WlwhtmZM1bFyZhgc503rGa9nWnT7LjgvR/C4s+GL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygN+qVxzP6KOV93vEtEYLqNmie6UnaVqrW7/hKU0Nrf2xgaVik
-	biVc+ErZHPqPW9KALK7orNPaNoxQdXsow0a9ZjEAwjaD+hePNw4Nkaj7/RGKvZ79CcAHYisSKws
-	UxJGRZovs0kCVLZLCvKHQY/GDKvpWLJI=
-X-Google-Smtp-Source: AGHT+IFC8y1COauSn562LCbBBd6ugpsfjo0VIlf7hz5sw+24Aezq7s8KdouhQV3Zdib7V9MkZYqnVr9+gUZV0IfsSLY=
-X-Received: by 2002:a17:902:ef07:b0:288:5d07:8a8f with SMTP id
- d9443c01a7336-2902724dc52mr130716075ad.24.1760067010423; Thu, 09 Oct 2025
- 20:30:10 -0700 (PDT)
+	s=arc-20240116; t=1760065644; c=relaxed/simple;
+	bh=E+PedWIYDXGpsw54lL5cH1Zzlx9PmLHNpe4sM40g0WA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CA8OClBfl9+CbgW7rnzIytzn3x7gc20T1ESJ2kVByGKHBkxes9k7sLW+0fqAdrhvDRIE07xEIDHcL2Gw3gCwwdlRKSXYyRG7Sny4mNJUhsh/pilJHfYDSWU6Y6AkScK3u3kAmRIa4VopxpEDq949ZeFHDxqbO2CuUG0JBPa6RAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=o/TK5PsD; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=obnXO4y70/lmfDM42dcgMfBq8dtpoCphEXp8xd3mUMI=;
+	b=o/TK5PsDM+FVyVpmgeBh1TYKBpOn2O2gkfuCMPKQrVRfWzfJAnZLCoangZXzu5KUaOwNFwnpO
+	mpsDI1Bh6MSg/eMAkYc00eiCEpucxISqMQd/tBsN0BMBwQyHJHXWfVcftjwlpQ0gZbxsr4Igy3v
+	JsioA7MS9RqYsvNVxShN/xs=
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4cjWq909YYzcb0Q;
+	Fri, 10 Oct 2025 11:06:29 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id C04A81402E9;
+	Fri, 10 Oct 2025 11:07:17 +0800 (CST)
+Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 10 Oct
+ 2025 11:07:16 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <shuah@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>,
+	<zhangchangzhong@huawei.com>, <wangliang74@huawei.com>
+Subject: [PATCH net-next] selftests: net: check jq command is supported
+Date: Fri, 10 Oct 2025 11:30:43 +0800
+Message-ID: <20251010033043.140501-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009154525.31932-1-bp@kernel.org>
-In-Reply-To: <20251009154525.31932-1-bp@kernel.org>
-From: Fan Wu <wufan@kernel.org>
-Date: Thu, 9 Oct 2025 20:29:58 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGhdPgtXeCYpxO8p7YjQ8a7CUygUn63P-Aj71zsfP50wQ@mail.gmail.com>
-X-Gm-Features: AS18NWAKOC3o3IQbceKdyO39h8_ejvzlFqnWt_-WVj5xoNLtcyI_W2RGz9u1SM8
-Message-ID: <CAKtyLkGhdPgtXeCYpxO8p7YjQ8a7CUygUn63P-Aj71zsfP50wQ@mail.gmail.com>
-Subject: Re: [PATCH] ipe: Drop a duplicated CONFIG_ prefix in the ifdeffery
-To: Borislav Petkov <bp@kernel.org>
-Cc: Fan Wu <wufan@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Thu, Oct 9, 2025 at 8:45=E2=80=AFAM Borislav Petkov <bp@kernel.org> wrot=
-e:
->
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
->
-> Looks like it got added by mistake, perhaps editor auto-completion
-> artifact. Drop it.
->
-> No functional changes.
->
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+The jq command is used in vlan_bridge_binding.sh, if it is not supported,
+the test will spam the following log.
 
-Thanks, applied to ipe-next.
+  # ./vlan_bridge_binding.sh: line 51: jq: command not found
+  # ./vlan_bridge_binding.sh: line 51: jq: command not found
+  # ./vlan_bridge_binding.sh: line 51: jq: command not found
+  # ./vlan_bridge_binding.sh: line 51: jq: command not found
+  # ./vlan_bridge_binding.sh: line 51: jq: command not found
+  # TEST: Test bridge_binding on->off when lower down                   [FAIL]
+  #       Got operstate of , expected 0
 
--Fan
+The rtnetlink.sh has the same problem. It makes sense to check if jq is
+installed before running these tests. After this patch, the
+vlan_bridge_binding.sh skipped if jq is not supported:
+
+  # timeout set to 3600
+  # selftests: net: vlan_bridge_binding.sh
+  # TEST: jq not installed                                              [SKIP]
+
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ tools/testing/selftests/net/rtnetlink.sh           | 2 ++
+ tools/testing/selftests/net/vlan_bridge_binding.sh | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/selftests/net/rtnetlink.sh
+index dbf77513f617..163a084d525d 100755
+--- a/tools/testing/selftests/net/rtnetlink.sh
++++ b/tools/testing/selftests/net/rtnetlink.sh
+@@ -1466,6 +1466,8 @@ usage: ${0##*/} OPTS
+ EOF
+ }
+ 
++require_command jq
++
+ #check for needed privileges
+ if [ "$(id -u)" -ne 0 ];then
+ 	end_test "SKIP: Need root privileges"
+diff --git a/tools/testing/selftests/net/vlan_bridge_binding.sh b/tools/testing/selftests/net/vlan_bridge_binding.sh
+index db481af9b6b3..e8c02c64e03a 100755
+--- a/tools/testing/selftests/net/vlan_bridge_binding.sh
++++ b/tools/testing/selftests/net/vlan_bridge_binding.sh
+@@ -249,6 +249,8 @@ test_binding_toggle_off_when_upper_down()
+ 	do_test_binding_off : "on->off when upper down"
+ }
+ 
++require_command jq
++
+ trap defer_scopes_cleanup EXIT
+ setup_prepare
+ tests_run
+-- 
+2.34.1
+
 
