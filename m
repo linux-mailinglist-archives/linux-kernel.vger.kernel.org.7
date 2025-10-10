@@ -1,128 +1,272 @@
-Return-Path: <linux-kernel+bounces-848729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A838DBCE71E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDB8BCE717
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C696B19A78A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FDB406CE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C434302162;
-	Fri, 10 Oct 2025 20:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25503019B2;
+	Fri, 10 Oct 2025 20:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Avo+7IaE"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A70/x2nD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1013019DE;
-	Fri, 10 Oct 2025 20:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF14C1D86D6;
+	Fri, 10 Oct 2025 20:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760126547; cv=none; b=PllwvtcNv3FVm0O/4XyNlu+ofVE3Ze/LQRMRtKnk/NO+Kd7QGCwzSDW0moEEy/hn+OC2dwIcpHD0YtaBrQiEcVtSaYgm9U42MaFRf3myKvodBPaHA+Muv0Nj3u5E76f2lrobhC8QeDEYgNZXLkU1ZtnwrwdCNDosfAn5cRtua2Q=
+	t=1760126545; cv=none; b=DAIUmvOvNtFclFbeARLdqQpq25lQUO32OFoZw1L/K18HbR6wT1ms8ZVKKuQDpumx0VMDAEP8q08DTZqTJ0qxisqGgR13DrNy/knp5AJciBN/WSve08W/lMqlvK0BPApzN0XnOk0f5wCCx5E/CYic3AVhc1o+J6+vs8YTg9uFcq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760126547; c=relaxed/simple;
-	bh=Gq8iru9xAslZ95vTaUJQXj6P7gEo738ViH0eAmET2Mc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EOoMcc7uTZTIHQWFcR3D9mx5m/RmaLGNMB3C5VdaHmUhSmnkznsnSYwGFGwEf/BBDMRiPUBxtlYa72RRFpDH4Sbn8a90FDkTuN0Ihvl9VQNC8jaFJQqHLD8APPBGoD45FbCWMr+H6r5LMipFjdiUoYdd6EzyXe2LgTW3MCL2te8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Avo+7IaE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=1uOItTL0KBTFqu9SxT/ohOMw6976arZ30lgBj7Y1/To=; b=Avo+7IaE91NLFjM4HOJOUnOGLL
-	579y9RDwAw7L205S678TugPGGJueV/XNuSmkwxei4bF6/2W5x2VWUnbbqFLsBbXbeTAzX9Oa1uZld
-	YjIbaZKfyuJOSs6+hja6mjaZfDPm2qk03Q/mtIgTM5vmnNklwo2byLo4ZYWpP4RF/H3JN7TSM/ka6
-	2/InTtiMWRIs2bw+SE9iTahmLMs0c3T5iEQBBcJb9OjV5XJ4kyNWfuOf5SvoqqoBlyD4unvQNTRFh
-	JFzLZKTphPb+Fw+WCUpW9lU986SZmFhw0U+sXf8mBU7+ecoo6KsCLQLI679yMaPn254rqJRJz6AZc
-	y7T7E4/A==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v7JJb-00000009HMt-11L2;
-	Fri, 10 Oct 2025 20:02:11 +0000
-Message-ID: <c1b2ec8c-0c09-4356-819c-7d2ee28b47f2@infradead.org>
-Date: Fri, 10 Oct 2025 13:02:09 -0700
+	s=arc-20240116; t=1760126545; c=relaxed/simple;
+	bh=mQ/9VMvF6zOXhiLTogPFW/flktBJ9draVEmT3yKQ3OE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fGyU5snbi3q5+U9++4Y60R2C9O+9+9MBD//6kTPucjC5fPPgKV+hQy3yszWnDNt2Ha6Ik1x1SvknX+KrzJoduMigIqJiGTyfBfEXwux6d6zL2+OyCeIyWGmnn865p8+xkyaPRzc/fFfxN8trhIVWRto1Ulwe2abiUDjlca9LH54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A70/x2nD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB61CC4CEF1;
+	Fri, 10 Oct 2025 20:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760126544;
+	bh=mQ/9VMvF6zOXhiLTogPFW/flktBJ9draVEmT3yKQ3OE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=A70/x2nD9FIL4094FrnWYnJUqX4bW4ppf6Zzwna7iZVvmgRFWPw+zjdbu0RMsjt4Y
+	 ymuWrcsTZ5A9AGFuv84vOO0LBuHqSo5Nn9fFe4RNVs+hJ4wUf7/daeDD8mEacSoNxZ
+	 oIY+YfPu6zlgtGvZUbCrtEL4NcFs12C4kLERduEfJJF7PW3y0bBFmFxKUgONVf661N
+	 iwNY8WNlXVQ9YCqYBMhEEtZ8v8SVg3OHoDL1cl2xgJJ3iB1JEl1bkGq2yDps+9pkpE
+	 wgOBtGM1lBwqk3I7F2K3aUAWnZy8hjbVX1moPoarS7xjiuOPpJ5HKsrws7BB1P+55y
+	 QD1D/55jGUx2Q==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Fri, 10 Oct 2025 22:02:18 +0200
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Move CPU idle states to their
+ respective PSCI PDs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 22/23] docs: add KStackWatch document
-To: Jinchao Wang <wangjinchao600@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Kees Cook <kees@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Sami Tolvanen <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Rong Xu <xur@google.com>,
- Naveen N Rao <naveen@kernel.org>, David Kaplan <david.kaplan@amd.com>,
- Andrii Nakryiko <andrii@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
- Nam Cao <namcao@linutronix.de>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com,
- "David S. Miller" <davem@davemloft.net>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org
-References: <20251009105650.168917-1-wangjinchao600@gmail.com>
- <20251009105650.168917-23-wangjinchao600@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251009105650.168917-23-wangjinchao600@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251010-topic-x1e_dt_idle-v1-1-b1c8d558e635@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAElm6WgC/x3MQQqAIBBA0avErBNGS6iuEiGlYw1EhUYE4t2Tl
+ m/xf4JIgSnCUCUI9HDk8yiQdQV2m4+VBLtiUKi0RIniPi+24pVk3G3Y7SSwwd632uml6aB0VyD
+ P7/8cp5w/T3Lk8mMAAAA=
+X-Change-ID: 20251010-topic-x1e_dt_idle-0309f45d5b38
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760126541; l=5642;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=gGRDdmGRbPX60+lPVi1iCvjlDiMusDV4h8zXv075Au4=;
+ b=3Eurktm8tc+mnx0XiBo335JzkDla0kd9AgRnbef8bQDAOx1Ftb6ADY2Ctp0HY56/Ssp4GBYDB
+ lfxn8Wff8IsC0T07VBEGIdnetQI+lSBBYd8HkR6589xN7QQMz+skmk+
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
+To make things uniform with other Qualcomm platforms, move the CPU idle
+states under their PSCI power domains. No functional change.
 
-On 10/9/25 3:55 AM, Jinchao Wang wrote:
-> Add documentation for KStackWatch under Documentation/.
-> 
-> It provides an overview, main features, usage details, configuration
-> parameters, and example scenarios with test cases. The document also
-> explains how to locate function offsets and interpret logs.
-> 
-> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> ---
->  Documentation/dev-tools/index.rst       |   1 +
->  Documentation/dev-tools/kstackwatch.rst | 314 ++++++++++++++++++++++++
->  2 files changed, 315 insertions(+)
->  create mode 100644 Documentation/dev-tools/kstackwatch.rst
-> 
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Sorry if you received this twice, I pressed enter too fast before
+fixing the subject and cancelled it at some point in the send-email
+flow
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 51576d9c935d..6c50edcb3414 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -75,7 +75,6 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&l2_0>;
+ 			power-domains = <&cpu_pd0>, <&scmi_dvfs 0>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 
+ 			l2_0: l2-cache {
+ 				compatible = "cache";
+@@ -92,7 +91,6 @@ cpu1: cpu@100 {
+ 			next-level-cache = <&l2_0>;
+ 			power-domains = <&cpu_pd1>, <&scmi_dvfs 0>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu2: cpu@200 {
+@@ -103,7 +101,6 @@ cpu2: cpu@200 {
+ 			next-level-cache = <&l2_0>;
+ 			power-domains = <&cpu_pd2>, <&scmi_dvfs 0>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu3: cpu@300 {
+@@ -114,7 +111,6 @@ cpu3: cpu@300 {
+ 			next-level-cache = <&l2_0>;
+ 			power-domains = <&cpu_pd3>, <&scmi_dvfs 0>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu4: cpu@10000 {
+@@ -125,7 +121,6 @@ cpu4: cpu@10000 {
+ 			next-level-cache = <&l2_1>;
+ 			power-domains = <&cpu_pd4>, <&scmi_dvfs 1>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 
+ 			l2_1: l2-cache {
+ 				compatible = "cache";
+@@ -142,7 +137,6 @@ cpu5: cpu@10100 {
+ 			next-level-cache = <&l2_1>;
+ 			power-domains = <&cpu_pd5>, <&scmi_dvfs 1>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu6: cpu@10200 {
+@@ -153,7 +147,6 @@ cpu6: cpu@10200 {
+ 			next-level-cache = <&l2_1>;
+ 			power-domains = <&cpu_pd6>, <&scmi_dvfs 1>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu7: cpu@10300 {
+@@ -164,7 +157,6 @@ cpu7: cpu@10300 {
+ 			next-level-cache = <&l2_1>;
+ 			power-domains = <&cpu_pd7>, <&scmi_dvfs 1>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu8: cpu@20000 {
+@@ -175,7 +167,6 @@ cpu8: cpu@20000 {
+ 			next-level-cache = <&l2_2>;
+ 			power-domains = <&cpu_pd8>, <&scmi_dvfs 2>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 
+ 			l2_2: l2-cache {
+ 				compatible = "cache";
+@@ -192,7 +183,6 @@ cpu9: cpu@20100 {
+ 			next-level-cache = <&l2_2>;
+ 			power-domains = <&cpu_pd9>, <&scmi_dvfs 2>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu10: cpu@20200 {
+@@ -203,7 +193,6 @@ cpu10: cpu@20200 {
+ 			next-level-cache = <&l2_2>;
+ 			power-domains = <&cpu_pd10>, <&scmi_dvfs 2>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu11: cpu@20300 {
+@@ -214,7 +203,6 @@ cpu11: cpu@20300 {
+ 			next-level-cache = <&l2_2>;
+ 			power-domains = <&cpu_pd11>, <&scmi_dvfs 2>;
+ 			power-domain-names = "psci", "perf";
+-			cpu-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu-map {
+@@ -371,61 +359,73 @@ psci {
+ 		cpu_pd0: power-domain-cpu0 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd0>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd1: power-domain-cpu1 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd0>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd2: power-domain-cpu2 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd0>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd3: power-domain-cpu3 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd0>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd4: power-domain-cpu4 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd1>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd5: power-domain-cpu5 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd1>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd6: power-domain-cpu6 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd1>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd7: power-domain-cpu7 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd1>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd8: power-domain-cpu8 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd2>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd9: power-domain-cpu9 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd2>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd10: power-domain-cpu10 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd2>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cpu_pd11: power-domain-cpu11 {
+ 			#power-domain-cells = <0>;
+ 			power-domains = <&cluster_pd2>;
++			domain-idle-states = <&cluster_c4>;
+ 		};
+ 
+ 		cluster_pd0: power-domain-cpu-cluster0 {
 
-Thanks.
+---
+base-commit: 0b2f041c47acb45db82b4e847af6e17eb66cd32d
+change-id: 20251010-topic-x1e_dt_idle-0309f45d5b38
 
+Best regards,
 -- 
-~Randy
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
