@@ -1,52 +1,54 @@
-Return-Path: <linux-kernel+bounces-847820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02F8BCBCF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:48:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47556BCBD00
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E2EF4EF250
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6D9424215
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E41626B2CE;
-	Fri, 10 Oct 2025 06:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A7D26CE37;
+	Fri, 10 Oct 2025 06:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="V0US8huO"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pim+eoUL"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5670C14286;
-	Fri, 10 Oct 2025 06:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C421EE02F;
+	Fri, 10 Oct 2025 06:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760078906; cv=none; b=GL4FoycC3IKhrN7OHbHi9o5lVlyw8IiVk7vHwqNwzSI5jCG+ZFGv3LZI0lxVhdFW0f4/ZWZzwedVMF4I3ov+icQCIpuTzdxOtxdAa0/Lcdxorz9qQ8ScocqNgc4d1nM6yV50aa4lMpcHeLsC/Ogj9334ooQHvFcCuaoqOxgsTFg=
+	t=1760078919; cv=none; b=KX3DYIJjnQmmKMLjoYqeHbc3YkMXdO9fviC9SOjJb2ArCl4CQEGOzNv1OQUK4yoETDGRM3tlQpIaaW2IhkANK68/dTaoubvZ2OqnQEs/tGG3wNg1lbxMDTPgsBAueXXrQTSPRCa5pTNVK37OhdHkVZei7+zTPKPzGEOPNbqShsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760078906; c=relaxed/simple;
-	bh=ld9KHF8hp5h2wDwV7ZSXjTTQYoQED6UBU5bjhe+/WH4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OYjKs70rfWaMPh+ofT0BJHoRatlObbg7gpWrEBzrJrxz0KAIC1WrCzsCUXiaxjgTl8n1h4miXaKgRnrAXQSzEyl4hOAgPpA2s3stMzFrki7q1b9D48+nVcfh2wkY4lKAwzo5lizf96ZJQ6Jp1bp0RuzdUhmQyrIb3QErMHkh2R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=V0US8huO; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=PEXFZhEo4Y2ButrlZIrBpEPRoqX0qYk7QFEJhw4k2RY=; t=1760078904;
-	x=1760510904; b=V0US8huOADa0OQQG5yw37jO8LLmXRIN7Ez8F+cAQhI6bnb4DhxV4hokoTj7Gc
-	0BYgnI2rMUtNwu4WsnJfoE9/Z1UAsmYBMgbqklm07PBRzFNUvcOw1X4PKB2e7tVOQC2feN5SBwrL0
-	1tW76nc+NUa8pqflkCGr3j7UMmorsgADMpBXHkC0p+s8an9I0JwZPVRDEUB0KgOYq9oraEI2+ykTO
-	dk1iV7Imdss3YIeypIEI6ywsmAiApGoMh3mNYvOrGYFNUl9m2+tshkZy/mZ04xOxDCI39XURKlQPv
-	XWUur2eHTTQn0iwpd46tskyqec5sxOOZF3+I+291Kyh1n21zGA==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1v76vG-006iXc-1P;
-	Fri, 10 Oct 2025 08:48:14 +0200
-Message-ID: <1cd7fb11-0569-4032-905c-f887f3e0dd4c@leemhuis.info>
-Date: Fri, 10 Oct 2025 08:48:11 +0200
+	s=arc-20240116; t=1760078919; c=relaxed/simple;
+	bh=yGMJL4r/hPPWWsmbfgMDurf00zj1v+5RxJ6eKvcssl0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PpG6bUA1C+G3RdQnysJg8olbc0hD7B11JUXXPTkgk004M0Iy3RqOIh2Lj6RVtTyOqSeXuK3Yuz5sIMgQuVSzerVPymbHlm8zujHWG5DLzWwVDBEBB7ZTvtw3NdKE5BnIyr51UxXi8WD+NhnRBQ4dyr8PwaWs4kajsWmNYoDHbbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pim+eoUL; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760078897; x=1760683697; i=markus.elfring@web.de;
+	bh=vtlOIxV79j7jAKZ3KTd3T6J1uCqPjRG1lvZ9ZafTIXk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pim+eoUL/CiW4amHn/Cz+3q/tB3PbSBe57YYEArHrSBkn0dlGP05LwP+nbkPuKDp
+	 Ko/NX6sMAu+RSS0g6Wfne3/yU4Q3QhjPYjmF2qQGGmlKMNh5izeAyqzkyC7aKrR9o
+	 RUYCKMLMvosWx2WNuzcj+sMLG9cqHtADU3UcEB1O5JMtOh65yNwLEGxXuFwKWkVes
+	 oG/ekGd8iVG1yvXjJtQhUXkXZRXSdJ/K54s8kBlbf5ilEGCT7XMhGSuQGJk6OVGMX
+	 J/bVQVB13Lm7gH8ZhjNLtsU6XzLVf8uYUKqYOizuO7riqJZ1rTJJJeqb2akMYDmPm
+	 xhvRlHLNLvfQinehHg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MpTxo-1uSFJs3Y1E-00qE45; Fri, 10
+ Oct 2025 08:48:16 +0200
+Message-ID: <ac955d29-54bf-4c02-8ff6-828331093b0e@web.de>
+Date: Fri, 10 Oct 2025 08:48:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,156 +56,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
-To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Denose
- <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
- Sean O'Brien <seobrien@google.com>, Lucas GISSOT <lucas.gissot.pro@gmail.com>
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
- <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com>
- <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
- <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 MEK4
-In-Reply-To: <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org>
+Subject: [PATCH 1/3] smb: client: Return directly after a failed
+ cifs_alloc_hash() in smb3_crypto_shash_allocate()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Aurelien Aptel <aaptel@suse.com>, Bharath SM <bharathsm@microsoft.com>,
+ Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <e8a44f5e-0f29-40ab-a6a3-74802cd970aa@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1760078904;3fe0ece1;
-X-HE-SMSGID: 1v76vG-006iXc-1P
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Hly1mcRc7VJTGn5CNiKoyWkioXlwTa25P9lGt0G+DUE+EWP7+0O
+ 9YQNAGq5BG2SUGIz4K+zY2vMlWb4+VG5pBPHNx+itma/RRVoNaatv+P/3KB9YY+9R7lb4Pd
+ JzgJa/eitQ7rdO5/bqxIP1cyJmNX8QfmYo7hBSMgQUAcTTQPqpd3YSfcxcG6EVUkYGLxKE6
+ BdnjngUPipCEZoVqvvxYg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ftcd9FwjS6g=;9pRRixGgXh995XLh649btcP4pUd
+ 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
 
-[Top-Posting for easier consumption]
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 9 Oct 2025 18:44:53 +0200
 
-Mainly writing this mail to bring Lucas GISSOT in here, who reported the
-same error yesterday here:
-https://lore.kernel.org/all/aOgvA8Jiofcnk2xb@ARSENIURE.localdomain/
+Return directly after a call of the function =E2=80=9Ccifs_alloc_hash=E2=
+=80=9D failed
+at the beginning.
 
-Lucas there suggested:
-"""but it seems to me that the #if IS_ENABLED(CONFIG_HID_HAPTIC) in
-hid-haptic.h should be replaced by IS_BUILTIN(CONFIG_HID_HAPTIC) and
-Kconfig updated."""
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/smb/client/smb2transport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And Randy: Thx for the closer investigation! It explains some of the
-"that feels odd, am I holding this wrong" feeling I had when reporting this.
+diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
+index bc0e92eb2b64..499b00c2a001 100644
+=2D-- a/fs/smb/client/smb2transport.c
++++ b/fs/smb/client/smb2transport.c
+@@ -34,7 +34,7 @@ smb3_crypto_shash_allocate(struct TCP_Server_Info *serve=
+r)
+=20
+ 	rc =3D cifs_alloc_hash("hmac(sha256)", &p->hmacsha256);
+ 	if (rc)
+-		goto err;
++		return rc;
+=20
+ 	rc =3D cifs_alloc_hash("cmac(aes)", &p->aes_cmac);
+ 	if (rc)
+=2D-=20
+2.51.0
 
-Ciao, Thorsten
 
-On 10/10/25 06:50, Randy Dunlap wrote:
-> On 10/9/25 7:43 AM, Thorsten Leemhuis wrote:
->> On 8/19/25 01:08, Jonathan Denose wrote:
->>> From: Angela Czubak <aczubak@google.com>
->>>
->>> Define a new structure that contains simple haptic device configuration
->>> as well as current state.
->>> Add functions that recognize auto trigger and manual trigger reports
->>> as well as save their addresses.Hi,
->>> Verify that the pressure unit is either grams or newtons.
->>> Mark the input device as a haptic touchpad if the unit is correct and
->>> the reports are found.
->>>  [...]
->>> +config HID_HAPTIC
->>> +	tristate "Haptic touchpad support"
->>> +	default n
->>> +	help
->>> +	Support for touchpads with force sensors and haptic actuators instead of a
->>> +	traditional button.
->>> +	Adds extra parsing and FF device for the hid multitouch driver.
->>> +	It can be used for Elan 2703 haptic touchpad.
->>> +
->>> +	If unsure, say N.
->>> +
->>>  menu "Special HID drivers"
->>
->> I suspect this change is related to a build error I ran into today:
->>
->>   MODPOST Module.symvers
->> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
->> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
->> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
->> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
->> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
->> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
->> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
->> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
->>
->> The config where this occurred had this:
->>
->> CONFIG_HID=y
->> CONFIG_HID_MULTITOUCH=m
->> CONFIG_HID_HAPTIC=m
->>
->> Changing the latter to "CONFIG_HID_HAPTIC=y" fixed the problem for me.
-> 
-> Sure, but that's just covering up the problem.
->> First, I get this build error:
-> 
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/hid/hid-haptic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-haptic.o
-> 
-> so I added those to hid-haptic.c.... and I still get that same build error.
-> 
-> So I looked at the hid-haptic.o file, in the .modinfo section,
-> and saw this:
-> 
-> Disassembly of section .modinfo:
-> 
-> 0000000000000000 <__UNIQUE_ID_modinfo569>:
->    0:	68 69 64 2e 6c       	push   $0x6c2e6469
->    5:	69 63 65 6e 73 65 3d 	imul   $0x3d65736e,0x65(%rbx),%esp
->    c:	47 50                	rex.RXB push %r8
->    e:	4c 00            	rex.WR add %r13b,0x69(%rax)
-> 
-> which is ASCII " h  i  d  .  l  i  c  e  n  s  e  =  G  P  L".
-> 
-> so the license string is there.
-> 
-> Maybe something is modpost is having a problem.
-> Unless someone who has modified modpost recently has any ideas,
-> this needs a git bisect, I expect.
 
