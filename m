@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-848362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570ADBCD892
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:32:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB5EBCD8A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C2C1A617F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46B3427EF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59173258EDF;
-	Fri, 10 Oct 2025 14:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA922F3C13;
+	Fri, 10 Oct 2025 14:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0DM+ICi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rudQa4Cw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EAD1DE8A4;
-	Fri, 10 Oct 2025 14:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0422367B0;
+	Fri, 10 Oct 2025 14:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760106741; cv=none; b=HQE1BrxukQFcKu1m/5QpxtqEwW+mnTTEtv4mnlCNRG9+AYais6F81gOH6P1XroI1GnuNGtueZD+wal/DPU7iA7whR4aTtuGSpOoGeZ5Dg9e7uuaznw/5gLfjuoqivojoKibumZm8qG1Jp4H38cmm0kjba54KxY4pqY7TwmlxvAc=
+	t=1760106797; cv=none; b=i+0QaUTgB917asxhHFpiWWuHxUqWRzCuMPz7YYSVzortl2xUfbwoJLS7v8KmzsxZNjL9wBeXoZutrsOBdaknZYXb/umRHoJ5Iv2058GCKeNzItx+FQsE8BI4/KeD93+tMFR2vak7Mbf7uoNZNkTnMGNsNy+pjNG5ofcGBW3wo3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760106741; c=relaxed/simple;
-	bh=Y13MZLSFH0Wu9ldSZ+acLNvddtlrHdyWJ1rhQK7RQ6c=;
+	s=arc-20240116; t=1760106797; c=relaxed/simple;
+	bh=m2PXNXrLebhFa6++1XBL2y98d/eheP7r5cvfGNR8yVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gM/JMnRAWIlAuUrUUJCAYCJKe2rYgfVJwuQQ4OeawvYrv5m2XsYAFaT9PuNwCSVaqnktRFBInWZi8WMRX0IqFWeDx7b2LgX7vpDF5EdBLBHdzU8NQ6Et1/SFMik2CLncRD4t8xuSEZafwhcEEZYxCbxNaV120luE/eNsYRY+zDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0DM+ICi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52057C4CEF1;
-	Fri, 10 Oct 2025 14:32:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxdUVMHBb5Ixq/KXoh5jHs4cojRIfMlT0MF4/HE94/XCgS5Abe8WFsi7VCDxZwqUUT6O2Tb7lxCGYf8CsVo8/Ip+Aaf19vPlHrlfb8HuExQT7ukAaKZbmEu1Uin1gG/DuUAyixJwg25AGfU0MozQL8kLgIvM6/93IW3ersSK+ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rudQa4Cw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E5AC4CEF1;
+	Fri, 10 Oct 2025 14:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760106741;
-	bh=Y13MZLSFH0Wu9ldSZ+acLNvddtlrHdyWJ1rhQK7RQ6c=;
+	s=k20201202; t=1760106796;
+	bh=m2PXNXrLebhFa6++1XBL2y98d/eheP7r5cvfGNR8yVA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K0DM+ICir0i7Q2RAddxiar9C1/wPPoy+vlk/h9Y4rlov2EXexkpvpkfdWzZkbsl0H
-	 SYclKJTzLys6HmkeArSuiRrYlL/3AxDha0Epirp2i9kof7u57OttYN14foOe+xb3p8
-	 0q8ibH95OrzKRRX+ffcSIeZB0yMrYyj3wOJEb1BELpU4N87plVZIOz1aspcv7bLdPX
-	 7ZjugNKFVTC8MjrjDzZM16hBiH3KEGQ7lgQhXnbqxGe2+lxFZEZvi4GtHMli2sLIM5
-	 f44y/xXonYOLkNN8RuARkh2DyeI4BoaS0+Oa95dcp8eg/fGkaXYRL0Gpu5bEq7MQQP
-	 Qui8oxOOOCjmA==
-Date: Fri, 10 Oct 2025 09:32:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v5 1/6] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
- documentation for the PCIe IP on Renesas RZ/G3S
-Message-ID: <20251010143219.GB242024-robh@kernel.org>
-References: <20251007133657.390523-1-claudiu.beznea.uj@bp.renesas.com>
- <20251007133657.390523-2-claudiu.beznea.uj@bp.renesas.com>
+	b=rudQa4CwjZPlcEyIjZSD/meAC8K/kcQSLFWXk+zb4u95bUz0GkUzdYbVvZxn0i3bP
+	 JsHQPldNp8xjCqCXHwe4gn+Yig8oSdETZUtZjXjnS1BykzpxNxjZdrPiI7pbSxeJdD
+	 b9kUcTCTcofCNkeoNMS+rFsRqfP83/CvcX+IIbqqFjk6awPJ2d8u0Y8OaqlG/BVfFx
+	 wy8TTmZsckSy+RkniV4NZzLz8MP+vXJL5tX5a/u2dihQaIT5VBCMyBlw5h4UgA3Esh
+	 wdnWpHqe7EMBbdR9kfTWOE+5HrAB/JjxULpRjeyjwks44VNfm1Hv+MarEzwhPx7NN2
+	 exDyON92tAnCw==
+Date: Fri, 10 Oct 2025 09:33:14 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, kernel-team@android.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Will McVicker <willmcvicker@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: google,gs101-clock: add power-domains
+Message-ID: <176010679359.249518.14445454979945020127.robh@kernel.org>
+References: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251007133657.390523-2-claudiu.beznea.uj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
 
-On Tue, Oct 07, 2025 at 04:36:52PM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+On Tue, 07 Oct 2025 17:03:10 +0100, André Draszik wrote:
+> The CMU can be part of a power domain, so we need to allow the relevant
+> property 'power-domains'.
 > 
-> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
-> Base Specification 4.0. It is designed for root complex applications and
-> features a single-lane (x1) implementation. Add documentation for it.
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Also, for the subject, "Add Renesas RZ/G3S" is sufficient. We already 
-know it is for PCI and is documentation.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Rob
 
