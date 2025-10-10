@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-847846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380DABCBE0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:11:17 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798C6BCBE14
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7B2B19E6AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:11:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DB8BD353381
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 07:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C25027281C;
-	Fri, 10 Oct 2025 07:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQhguH/w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3081F26F2AF;
+	Fri, 10 Oct 2025 07:11:56 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B74324466D;
-	Fri, 10 Oct 2025 07:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E5B1991D2;
+	Fri, 10 Oct 2025 07:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760080267; cv=none; b=S8C/yULO8Yr5WHSTPsxxwnKdsK8tuDoQpGeF2wr12FtA9Daxvu22B2TmokWIXwA22sN5jX2A6bDgaaUlflUTAt2zchs1okBgbaY8xIjPOhpeWmHci84ygSR5zQu0XnVxB1kx7ixM0pCVLY8V3KRsBeAOloBjFIVsGWNwtcEVTLc=
+	t=1760080315; cv=none; b=WbOqSyGwShGxl9sbzqNAoPBsZ7TOVVlIGFlEiUc8q1l+E8PIcKnFn6mlRvf9CdvI5hMfuAYI5anC1vcVzOX6RJk99JKTysCh5gJ6Zics8CJPG9BWxt/iqiYQGnYKtuKdZPGCVKjFzrKZC0UC6Cyllx2Uisk9BgNApUwJ6izN+lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760080267; c=relaxed/simple;
-	bh=WnOn2RWfJZ+5mfrH3gFi/22D2gFBJVtPFdAeLDWJtpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDV+7to7V/e7nd3Di/n0GCXcsREZpie1kt6wRDWDuthJJn8WK+eTmdLvuZBHD6idACnRf0l6Pvgxlt9G7XCKu15/97oduM4CEJoWZ3KKUSk/IOkRJHoXS907wUqhRJ1+YhvF0w1i0zeyKI3wOP6dwvmwUxLnWEM5ljQ9NGa7reo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQhguH/w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D25E8C4CEF1;
-	Fri, 10 Oct 2025 07:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760080266;
-	bh=WnOn2RWfJZ+5mfrH3gFi/22D2gFBJVtPFdAeLDWJtpI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tQhguH/wuDdCKXd7Tt8gZQY96Xzw1IoCX83ATx74aOZdjBcxe0+HS6wzI4t1YxWWQ
-	 +ot1SQtQKU2N4XPXMfNAQMv5YKGq6fkYImAOGZR+kCHtvAUbvO8jyslZu7Wsz0hBN+
-	 2K41pGWSWMly+xb1pz+4nbxy3hK9XImf4TWb5QyWpXbVgQM8srF3bLFfDspYOqrJBI
-	 xdPSyl0KxYUh0o85ROWAwnd/Si6MKzY4PdN2SGzQWWJDdFV8l6fbynrFI9r2N3a+7a
-	 8B/m3m1WDf5lLcq79a6Y/Tfc9jDqRKIpHNJ2MhYOofzzrV6/5cvjN2wYpSoyL3hYHh
-	 ZHsENQ8xead0Q==
-Date: Fri, 10 Oct 2025 08:10:56 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Hans Verkuil
- <hverkuil+cisco@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@pengutronix.de>, linux-media@vger.kernel.org, Malcolm
- Priestley <tvboxspy@gmail.com>, Rusty Russell <rusty@rustcorp.com.au>, Petr
- Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>, Sami
- Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] media: radio: si470x: Fix DRIVER_AUTHOR macro
- definition
-Message-ID: <20251010081046.07c37df2@sal.lan>
-In-Reply-To: <20251010030610.3032147-2-kees@kernel.org>
-References: <20251010030348.it.784-kees@kernel.org>
-	<20251010030610.3032147-2-kees@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760080315; c=relaxed/simple;
+	bh=ItylXDBQlpp1zycVEsPz4/9Q9VmKWLt1RercsQM9iGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wa+bAxzoM/Mupk5RVG+yDFQwuF9hOeQIM9Mp5Z8UGqu5fkxHFV46DTydjMwdB/WS+4DZOej7kdcPZir8m3QEIds9g06PgB+Me+Z+0jzZ0fJECAVDLe+T8ivdyoalqYUnbqecEsahYAbIWf3eRTdeko202E2+acGWJCF4GqkVtbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.212] (p5b13ae81.dip0.t-ipconnect.de [91.19.174.129])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2EE9C6028F360;
+	Fri, 10 Oct 2025 09:11:28 +0200 (CEST)
+Message-ID: <3cc8d276-f092-47eb-86d5-fd882692bccf@molgen.mpg.de>
+Date: Fri, 10 Oct 2025 09:11:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] tpm: infineon: add bounds check in tpm_inf_recv
+To: Shahriyar Jalayeri <shahriyar@posteo.de>
+Cc: jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251010065252.4377-1-shahriyar@posteo.de>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251010065252.4377-1-shahriyar@posteo.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Em Thu,  9 Oct 2025 20:06:08 -0700
-Kees Cook <kees@kernel.org> escreveu:
+Dear Shahriyar,
 
-> The DRIVER_AUTHOR macro incorrectly included a semicolon in its
-> string literal definition. Right now, this wasn't causing any real
-> problem, but coming changes to the MODULE_INFO() macro make this more
-> sensitive. Specifically, when used with MODULE_AUTHOR(), this created
-> syntax errors during macro expansion:
->=20
->     MODULE_AUTHOR(DRIVER_AUTHOR);
->=20
-> expands to:
->=20
->     MODULE_INFO(author, "Joonyoung Shim <jy0922.shim@samsung.com>";)
->                                                                   ^
->                                                        syntax error
->=20
-> Remove the trailing semicolon from the DRIVER_AUTHOR definition.
-> Semicolons should only appear at the point of use, not in the macro
-> definition.
->=20
-> Reviewed-by: Hans Verkuil <hverkuil+cisco@kernel.org>
-> Signed-off-by: Kees Cook <kees@kernel.org>
 
-LGTM.
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Thank you for the improved version.
 
+Am 10.10.25 um 08:52 schrieb Shahriyar Jalayeri:
+> Add two buffer size validations to prevent buffer overflows in
+> tpm_inf_recv():
+> 
+> 1. Validate that the provided buffer can hold at least the 4-byte header
+>     before attempting to read it.
+> 2. Validate that the buffer is large enough to hold the data size reported
+>     by the TPM before reading the payload.
+> 
+> Without these checks, a malicious or malfunctioning TPM could cause buffer
+> overflows by reporting data sizes larger than the provided buffer, leading
+> to memory corruption.
+> 
+> Fixes: ebb81fdb3dd0 ("[PATCH] tpm: Support for Infineon TPM")
+> Signed-off-by: Shahriyar Jalayeri <shahriyar@posteo.de>
 > ---
-> Cc: Hans Verkuil <hverkuil@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> Cc: <linux-media@vger.kernel.org>
-> ---
->  drivers/media/radio/si470x/radio-si470x-i2c.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/radio/si470x/radio-si470x-i2c.c b/drivers/medi=
-a/radio/si470x/radio-si470x-i2c.c
-> index cdd2ac198f2c..3932a449a1b1 100644
-> --- a/drivers/media/radio/si470x/radio-si470x-i2c.c
-> +++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
-> @@ -10,7 +10,7 @@
-> =20
-> =20
->  /* driver definitions */
-> -#define DRIVER_AUTHOR "Joonyoung Shim <jy0922.shim@samsung.com>";
-> +#define DRIVER_AUTHOR "Joonyoung Shim <jy0922.shim@samsung.com>"
->  #define DRIVER_CARD "Silicon Labs Si470x FM Radio"
->  #define DRIVER_DESC "I2C radio driver for Si470x FM Radio Receivers"
->  #define DRIVER_VERSION "1.0.2"
+
+A changelog would be nice to have here.
+
+>   drivers/char/tpm/tpm_infineon.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
+> index 7638b65b8..0fe4193a3 100644
+> --- a/drivers/char/tpm/tpm_infineon.c
+> +++ b/drivers/char/tpm/tpm_infineon.c
+> @@ -250,6 +250,10 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
+>   	number_of_wtx = 0;
+>   
+>   recv_begin:
+> +    /* expect at least 1-byte VL header, 1-byte ctrl-tag, 2-byte data size */
+
+`scripts/checkpatch.pl` should have complained about using spaces 
+instead of tabs for indentation.
+
+> +	if (count < 4)
+> +		return -EIO;
+> +
+>   	/* start receiving header */
+>   	for (i = 0; i < 4; i++) {
+>   		ret = wait(chip, STAT_RDA);
+> @@ -268,6 +272,9 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
+>   		/* size of the data received */
+>   		size = ((buf[2] << 8) | buf[3]);
+>   
+> +		if (size + 6 > count)
+> +			return -EIO;
+> +
+>   		for (i = 0; i < size; i++) {
+>   			wait(chip, STAT_RDA);
+>   			buf[i] = tpm_data_in(RDFIFO);
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
