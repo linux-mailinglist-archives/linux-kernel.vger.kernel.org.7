@@ -1,93 +1,139 @@
-Return-Path: <linux-kernel+bounces-848265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC9BBCD0D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D4DBCD0F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142FB3B8EF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D8983A60DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7179204C36;
-	Fri, 10 Oct 2025 13:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35392F1FFE;
+	Fri, 10 Oct 2025 13:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBbCyWyI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOahLxCd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3A82F0692;
-	Fri, 10 Oct 2025 13:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2023053A7;
+	Fri, 10 Oct 2025 13:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760101874; cv=none; b=eh3UlWEXVthpF8zv/PbEHb6u5aMQ5J/O1t1LZO/LHB1xsuNh1x8g2KZDS6B8mwPDGEex4enB97mlKb/iGrgCFEeI08qd/Eyeopap31hBx/ijacA2lug5jrwMxo08Szt9qEzah5ZjIPKWRGwqW+Z07ywRMjALSt5hIr4oBAoG7gg=
+	t=1760101945; cv=none; b=CcUe+O7r5KUaSYMj7I/4Nv9J7EXShZkgMhETATu6OaRnLylMf66Wra9aV2P1zMVbzTikewTD/T1V6gR5WrDu+cah2eZQaLOzjqzzrSfa8HQlco4cWYPV1oJQSaGfdY+cA5gq+FU+dq1FhOjTu8VrNam71M+BI4gx0F8h2yChiQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760101874; c=relaxed/simple;
-	bh=YRfRCQf6n4cPuhCA6MRI2nvKmWxnUc5yTbXXP4MKi2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hjaNlkpztG60gs4IPYia9njhazVaqKUbg6jVHbTUheiqRRsAdcEdPq9G3/fzK4piHGWe9TFGPQ/4hzUcOXhDdjQEYvtaYVS9NqnoCsNuwKqHDUBTzhDzsdnyra9ymRWGrjY0bpiA1U1ZgYIY8d1wyiDNrYOXDZz7K4rQTMY7/Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBbCyWyI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCC3C4CEF1;
-	Fri, 10 Oct 2025 13:11:13 +0000 (UTC)
+	s=arc-20240116; t=1760101945; c=relaxed/simple;
+	bh=pruHw9/kUby5mwqKpt9tdx97guU3tM0R6qKJsdo0Y8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P3FkOLLOD3fUjTRl2W0BYZZA1lMAWBDEu3xBruxyyhsbhMDokUiMauUxS2BZx5blWDL5F3K0h7waIhPBglLjcKaTiXcw9OtErfe8O1xjSBpYoCN2+jOAPSRovG9StzBd0uQSWOdAMp2sv0ZkpABSX/vXKYNcLMN3bjXMkcLM1NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOahLxCd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7071C4CEF8;
+	Fri, 10 Oct 2025 13:12:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760101874;
-	bh=YRfRCQf6n4cPuhCA6MRI2nvKmWxnUc5yTbXXP4MKi2o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IBbCyWyIsZkNBuBJNxV7dYZpy8m+sw4mGZZ0mWmDPsjJswFaC+Q8cQsMUty/ksKAd
-	 XHqJKuNrsFKH1uoVpQyMF3wTgGqcQvG6dascT8dLUDskwU3wexbcRZhY0+JtjYG+26
-	 7oYHaPdC3z4Z6hssUy9tr4UBBWW3CHgakbrdqaA3gDRggSWWUbMxInOQ6tIyJ8j2Ol
-	 22rIBOZHHifk6elftPinxZs7zKYHxLP94eG+WXm4asgawhJm9eeGxVLWuKDtLlF2Qh
-	 I5QXDpjmQHlsBKlrSu8vTDd3Ns0slcbgV8uURewxeg3J4g7vlLVTDmQeT9/CynPt6x
-	 3syrOadEAl/SA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Move DT patchwork to kernel.org
-Date: Fri, 10 Oct 2025 08:10:58 -0500
-Message-ID: <20251010131058.69778-1-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=k20201202; t=1760101944;
+	bh=pruHw9/kUby5mwqKpt9tdx97guU3tM0R6qKJsdo0Y8w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KOahLxCdmHOcxXpftHn+FT27Iz5bHFaVmf00/LRNoBhEzszgFuwmtpjEEKWhBsh0c
+	 rlKk8trl/mk2Pu6HRRB0EJmvW5TYanbhPS2r4l8KUjCVpVY3S5q5ICLu2oaTQAR+64
+	 TRfarE4myEdwRifRvZAS1rWloUcbWZKXUXNoZf5fsNJ44PRrDYgiiykuvr0tC9/f8M
+	 QVOgcisXb66ck8uZjo5BaflYrF/aLSwkSggbjzcgC1w0xdJoYlTwq4O2vHEnAyGgcx
+	 b7Mi+ZrNB+6LY6CexiWZUw4m4CcXYaOBI+esDBK0TqUyerWyGe4gD6ZDkGkk25KrHY
+	 enTzHEVWSFogw==
+Message-ID: <b3c40a8c-fe35-45a3-9702-2d9b1c555d4e@kernel.org>
+Date: Fri, 10 Oct 2025 15:12:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/7] mfd: sec: add support for s2mps16 pmic
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-5-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250914124227.2619925-5-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The ozlabs.org PW instance is slow due to being geographically far away
-from any of the maintainers and seems to have gotten slower as of late
-(AI scrapers perhaps). The kernel.org PW also has some additional
-features (i.e. pwbot) we want to use.
+On 14/09/2025 14:42, Ivaylo Ivanov wrote:
+>  enum s2mpu02_irq {
+>  	S2MPU02_IRQ_PWRONF,
+>  	S2MPU02_IRQ_PWRONR,
+> diff --git a/include/linux/mfd/samsung/s2mps16.h b/include/linux/mfd/samsung/s2mps16.h
+> new file mode 100644
+> index 000000000..d4394b054
+> --- /dev/null
+> +++ b/include/linux/mfd/samsung/s2mps16.h
+> @@ -0,0 +1,195 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
 
-DT core patches also go into PW, so add the PW link for it.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Does the license 2.0+ (so 3.0 and so one) come from the downstream you
+copied it? Or from other upstream? If not, thus it is your invention,
+please keep only 2.0.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3c1970f96d99..9ffa6408fa97 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18882,6 +18882,7 @@ M:	Rob Herring <robh@kernel.org>
- M:	Saravana Kannan <saravanak@google.com>
- L:	devicetree@vger.kernel.org
- S:	Maintained
-+Q:	http://patchwork.kernel.org/project/devicetree/list/
- W:	http://www.devicetree.org/
- C:	irc://irc.libera.chat/devicetree
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-@@ -18902,7 +18903,7 @@ M:	Krzysztof Kozlowski <krzk+dt@kernel.org>
- M:	Conor Dooley <conor+dt@kernel.org>
- L:	devicetree@vger.kernel.org
- S:	Maintained
--Q:	http://patchwork.ozlabs.org/project/devicetree-bindings/list/
-+Q:	http://patchwork.kernel.org/project/devicetree/list/
- C:	irc://irc.libera.chat/devicetree
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
- F:	Documentation/devicetree/
--- 
-2.51.0
+Anyway:
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
