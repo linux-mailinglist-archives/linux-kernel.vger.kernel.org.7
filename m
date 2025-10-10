@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-848644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661E8BCE3DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 478FEBCE3E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBCBC19A7D36
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CDA1892BAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2752FD1D7;
-	Fri, 10 Oct 2025 18:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7B52FF64F;
+	Fri, 10 Oct 2025 18:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UK3qpMe0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="94IGIneb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UK3qpMe0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="94IGIneb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WRLRSjuw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975322FE591
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F144299A94
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760120893; cv=none; b=j0+czgpptftguapxOsLd6lqsnnMRfKBulWVuJ1fgw64SYC0FBB+wbWtIXm/Up1hsN2vhFkK7Lc7MODvaG9XVmP40WNcj0SuSPSk/2hTxJtzgoSCznXYNZGLN9/TWyozJqvPTrPC4FARhpBIGbnf8owZM8MtO3SVBNFncEGYC9ck=
+	t=1760120945; cv=none; b=JiCNA3I8e1xv9VXbRdiCAytndGJnD6VWlNcxuz+Fnr+TbJ3emKO1NKSyPnRl0teNn2ofPIv7Ber47LbxLQVKIQvD07Iv4P1jpqhP9em3to7Td2eALtA6vi+OOBegzRoEX5nJkOKIR7nQjKGajocqtYuAFU8LpiBKHYt4Tohwgf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760120893; c=relaxed/simple;
-	bh=JfJNniXdOCvJRlHf+hVhrPhEahD7TGAZFhtG7dtNJz8=;
+	s=arc-20240116; t=1760120945; c=relaxed/simple;
+	bh=DDGFgNcpRXXs5drDknCOk7ZT+jZa1tJMMOq5dszvroo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LIVMQCq2l1gSJHL+I+U6PQBbyALp8T+PQDd+FLT9xQ6vy9XPyHvupto8O8US+xLHO0M6KDDhKHK/vfznc448uA6SGW8PdYiwX5E7dXmnM5eb/yZhX5WXmdpD//MDXvu4lFSE/puy9hkqlk3VCWKKlRzNP368fw5YeIkoBfJC9SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UK3qpMe0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=94IGIneb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UK3qpMe0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=94IGIneb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0BA5A2119C;
-	Fri, 10 Oct 2025 18:27:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760120851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
-	b=UK3qpMe0aAexXWOcL/OYi8peoGsO/EdJSRuU7LpZLz5xI24FVra98yOQoSbRSN/WWfuJiX
-	UbItqwHPf+eVDygJ8MHDwDep2tbVuoZt7lNnQJ/zP6ifLZlbSKyEn85kcnHLjsRL2mNN/1
-	+54ViubzkDXyQk/JjHitiW8SKHWm65g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760120851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
-	b=94IGInebxch6UTzrFp69mub6FlTByZkla5PR6MoFFM4VCrzPQV1Jz3Gv85bbz4r2c4JqyC
-	I/z7d10X+JofVpCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760120851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
-	b=UK3qpMe0aAexXWOcL/OYi8peoGsO/EdJSRuU7LpZLz5xI24FVra98yOQoSbRSN/WWfuJiX
-	UbItqwHPf+eVDygJ8MHDwDep2tbVuoZt7lNnQJ/zP6ifLZlbSKyEn85kcnHLjsRL2mNN/1
-	+54ViubzkDXyQk/JjHitiW8SKHWm65g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760120851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CueUJ6XmXbiW/zHe2/YUqtwlamQZpKhUrxeZQ2bug14=;
-	b=94IGInebxch6UTzrFp69mub6FlTByZkla5PR6MoFFM4VCrzPQV1Jz3Gv85bbz4r2c4JqyC
-	I/z7d10X+JofVpCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F07BE1375D;
-	Fri, 10 Oct 2025 18:27:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CLxeOhJQ6Wj5dAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 10 Oct 2025 18:27:30 +0000
-Message-ID: <e4f2a3e3-649a-423b-9696-6406ef56340f@suse.cz>
-Date: Fri, 10 Oct 2025 20:27:30 +0200
+	 In-Reply-To:Content-Type; b=MjyGAeGcnyo1N+ztpFP3ObY9ti0b9k/wLhnfHz1hP/oZ2tCQ79BPZHO4QsHGt1Ough7AC0QAyBVrNBWgNoRo4ehwnvzbOHeOEBKlnYFe4/+jTTzsUr7sDX7QdmSBWDpPiLmEb1lNfyY2vrW+rhJCtI0Ry7K+4j78UjU6tI3zfAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WRLRSjuw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59AExixx009932
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:28:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dMas5ueTnfbR6ogwJDvGtBET5Zhd3Y1zcYOGGYAo7eA=; b=WRLRSjuwy/30kckx
+	lUlmPjjISE+Oc+T53aXKK8yjijNhLGKAdhrajBwPqIcZrrPhzM7aMXm5F4p6DdDc
+	UDl29/ajikFx0MESr89fC1/HeWYCv6fi7RSKTI1kUuag4TVql0CwY7D3X3dPjuP4
+	WYAYUitFYyFVHg3Ru4uEiSwlDHYXogiyyohbO/eQdJYWFaueDnAkF2NiRpcV0QZf
+	qke9TQsrjZOm9dguouFN5ZE63ATbNl+HH0yYBepSwzKuES+rDWsucSlVUEp6xsoz
+	/x6VJeRizTjasHjaOK7fHHF/G1j9xbCC+IKAW7LqT6qPrFsS8dWYUSyLzEg0Ixwu
+	lVv9yg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4nydfe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:28:58 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8572f379832so89305085a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:28:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760120937; x=1760725737;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dMas5ueTnfbR6ogwJDvGtBET5Zhd3Y1zcYOGGYAo7eA=;
+        b=eYRlkL/5CXQ8FDudxASPVNDtfovxCbYAIs2FuoqGCwkINpFvPjqjlDJkBd7P9OPJkm
+         IEa7RkE0dsXfsj5nPJlp6aX9O0W32NLqKBEVOeESokkkzPgBKYoa/4IubN2R7XECbLvY
+         8RCAPse7+ZdCyqrc+GT2Iu5nDYbUOZNFQOAL2lkPNGBknTzTcP29BpR9lmf/wzL1fl6G
+         z2tlU91/h55zOQJYpYQVALBljhL23l2uTbTpdipaPYJBYRKoAnk01xxYvuoGN1Bj0/hq
+         Nama6Z3XvSKbgADn5OkjQfc04QxRaG8VhDAajv0c+7TzM6AcG9dDFIVIUzHthElT86Mc
+         MtiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxMiJlqWcXs2tdHBJI3DQK/XocFYy0U7Sipp58f8XtqxjwOP9mDt/fgBYwGlYAQlWF0fXbyN1BZb2kGYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIUJSsMEOg2di5u69UaUZoP28/i1+EmLBR18ntmgYVs1AHL8zE
+	Gc6bA8Az4XQT5tnIwajPmRzPvlRy8VNvYQo+PzbFNZoomOLyJa/9v/RK1I2G3gajjniPrhRcJyn
+	FTbNR2iDRTSq7gcJNucogn7jLU+8UNz8cD0Q3HHt6JmjyCQSIxu1rj/GLAD3pY5uTUNc=
+X-Gm-Gg: ASbGncvn+054gNt/BrvUohmJ3q6qzkLik00GX7h3H5RBUOBDWKVVOFXo8cWNBETGYS5
+	rKAbkpAP5NUyhIMfujPpaft1cU/5sEyNPqBnXmz5j1MEaKtUP3euLOU/kftRX9YB3UXYGpZHBXo
+	D8cLWpz4XL7f7FGGRrwQW7yfYuRQ+Jvh9i+EGbKJ0nUtetikiVHjjFMb/WXITsFqPdY+4GhjoRk
+	JJ8Opifoxf7q84X+Q/Zb1xV/zBOB37STiEQGJdcNsc4EEdkQ74iVXTdsdZsyWOjqrUVo0KjzlZs
+	/BOri3D+qy/CBATDDU/Mgvd3VajZ6obVZK1Wb0oZF+UDAzWzwDVe4j22a+QZ2fTv1XmEIsd2iLw
+	7lbHLdUUZS9AmDeAHt5Ceww==
+X-Received: by 2002:a05:620a:4609:b0:86a:3188:bb40 with SMTP id af79cd13be357-88353e1de97mr1201123785a.8.1760120937388;
+        Fri, 10 Oct 2025 11:28:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHH4ijfK86so2oQgbaGVcntvQ4Ssr8eaS2Emg+YzBaOfN0x1ZloTX9mbEdoCPNs8davYPPQ1A==
+X-Received: by 2002:a05:620a:4609:b0:86a:3188:bb40 with SMTP id af79cd13be357-88353e1de97mr1201119785a.8.1760120936880;
+        Fri, 10 Oct 2025 11:28:56 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c133f58sm2911251a12.30.2025.10.10.11.28.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 11:28:56 -0700 (PDT)
+Message-ID: <896b58cd-9a13-4b7e-bf62-e062728d3e53@oss.qualcomm.com>
+Date: Fri, 10 Oct 2025 20:28:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,153 +89,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Boot fails with 59faa4da7cd4 and 3accabda4da1
+Subject: Re: [PATCH 2/3] dt-bindings: PCI: qcom: Enforce check for PHY, PERST#
+ and WAKE# properties
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
+ <20251010-pci-binding-v1-2-947c004b5699@oss.qualcomm.com>
 Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Phil Auld <pauld@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>
-References: <20251010151116.GA436967@pauld.westford.csb>
- <CAHk-=wg1xK+Br=FJ5QipVhzCvq7uQVPt5Prze6HDhQQ=QD_BcQ@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAHk-=wg1xK+Br=FJ5QipVhzCvq7uQVPt5Prze6HDhQQ=QD_BcQ@mail.gmail.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251010-pci-binding-v1-2-947c004b5699@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	URIBL_BLOCKED(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+X-Proofpoint-ORIG-GUID: 74SS8OIzqw71FuaMJoq3ISLNY9bm2o8w
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX2ozBra1EpVi8
+ 6AB/NHzh3RGbphFYWj70aL6CmqaJM1Y55hXwYKzXHIj6usYRHMUMDIde0ZANqwxTw27I4c06/Yp
+ uJzoY9GNYghk6taPdpUCnoIuaUvbh4k6LGRJcNqZ0nmyAGFIBG2WLLmcem0+bwtorqes5j0Fkn2
+ EaXJVJP0R1SUO9eWdw9IZyPiBIY5T1x2RIMqCqGgViSz0uWL7RCRbCov4l2WafFg6d8tJc2vC59
+ /7YUu/VY2W6Xe/P1O8eMQZjcgdyx8lhGnXiNEi69E0KDjyB14FM3bHxb704W6pW16NH1t8aMtTT
+ Naz9CIpfRPY6dl9RZlQfTQvZSJC2NWiPbASc8OWNnOB1cJbL0iazj2CVPzU8x51ABr8xnwJLdQD
+ wUnxhsDzRA9nc77uqnLGjFd4vw+tEA==
+X-Proofpoint-GUID: 74SS8OIzqw71FuaMJoq3ISLNY9bm2o8w
+X-Authority-Analysis: v=2.4 cv=b6a/I9Gx c=1 sm=1 tr=0 ts=68e9506a cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=pqiSj10MyONZ7g7U9k0A:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-10_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
+ clxscore=1015 spamscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-On 10/10/25 20:19, Linus Torvalds wrote:
-> On Fri, 10 Oct 2025 at 08:11, Phil Auld <pauld@redhat.com> wrote:
->>
->> After several days of failed boots I've gotten it down to these two
->> commits.
->>
->> 59faa4da7cd4 maple_tree: use percpu sheaves for maple_node_cache
->> 3accabda4da1 mm, vma: use percpu sheaves for vm_area_struct cache
->>
->> The first is such an early failure it's silent. With just 3acca I
->> get :
->>
->> [    9.341152] BUG: kernel NULL pointer dereference, address: 0000000000000040
->> [    9.348115] #PF: supervisor read access in kernel mode
->> [    9.353264] #PF: error_code(0x0000) - not-present page
->> [    9.358413] PGD 0 P4D 0
->> [    9.360959] Oops: Oops: 0000 [#1] SMP NOPTI
->> [    9.365154] CPU: 21 UID: 0 PID: 818 Comm: kworker/u398:0 Not tainted 6.17.0-rc3.slab+ #5 PREEMPT(voluntary)
->> [    9.374982] Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.26.0 07/30/2025
->> [    9.382641] RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
->> [    9.388048] Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
+On 10/10/25 8:25 PM, Manivannan Sadhasivam wrote:
+> Currently, the binding supports specifying the PHY, PERST#, WAKE#
+> properties in two ways:
 > 
-> That decodes to
+> 1. Controller node (deprecated)
+> 	- phys
+> 	- perst-gpios
+> 	- wake-gpios
 > 
->    0:           mov    0x10(%rsi),%rax
->    4:           mov    0x8(%rsi),%rsi
->    8:           test   %rax,%rax
->    b:           je     0x18
->    d:           mov    0x18(%rax),%ecx
->   10:           test   %ecx,%ecx
->   12:           jne    0xfd
->   18:           movslq %gs:0x250eee4(%rip),%rax
->   20:           mov    0xe0(%r14,%rax,8),%rax
->   28:*          mov    0x40(%rax),%r13          <-- trapping instruction
->   2c:           mov    %r13,%rdi
->   2f:           call   0xffffffffffff81e4
->   34:           mov    %rax,%rbp
->   37:           test   %rax,%rax
->   3a:           je     0x59
+> 2. Root Port node
+> 	- phys
+> 	- reset-gpios
+> 	- wake-gpios
 > 
-> which is the code around that barn_replace_empty_sheaf() call.
+> But there is no check to make sure that the both variants are not mixed.
+> For instance, if the Controller node specifies 'phys', 'reset-gpios',
+> 'wake-gpios' or if the Root Port node specifies 'phys', 'perst-gpios',
+> 'wake-gpios', then the driver will fail as reported. Hence, enforce the
+> check in the binding to catch these issues.
 > 
-> In particular, the trapping instruction is from get_barn(), it's the "->barn" in
+> It is also possible that DTs could have 'phys' property in Controller node
+> and 'reset-gpios/wake-gpios' properties in the Root Port node. It will also
+> be a problem, but it is not possible to catch these cross-node issues in
+> the binding.
 > 
->         return get_node(s, numa_mem_id())->barn;
-> 
-> so it looks like 'get_node()' is returning NULL here:
-> 
->         return s->node[node];
-> 
-> That 0x250eee4(%rip) is from "get_node()" becoming
-> 
->   18:           movslq  %gs:numa_node(%rip), %rax  # node
->   20:           mov    0xe0(%r14,%rax,8),%rax # ->node[node]
-> 
-> instruction, and then that ->barn dereference is the trapping
-> instruction that tries to read node->barn:
-> 
->   28:*          mov    0x40(%rax),%r13   # node->barn
-> 
-> but I did *not* look into why s->node[node] would be NULL.
-> 
-> Over to you Vlastimil,
+> Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Closes: https://lore.kernel.org/linux-pci/8f2e0631-6c59-4298-b36e-060708970ced@oss.qualcomm.com
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
 
-Thanks, yeah will look ASAP. I suspect the "nodes with zero memory" is
-something that might not be handled well in general on x86. I know powerpc
-used to do these kind of setups first and they have some special handling,
-so numa_mem_id() would give you the closest node with memory in there and I
-suspect it's not happening here. CPU 21 is node 6 so it's one of those
-without memory. I'll see if I can simulate this with QEMU and what's the
-most sensible fix
+I would also like to add
 
->             Linus
+Reported-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 
+Since he originally made me aware of this issue
+
+Konrad
 
