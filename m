@@ -1,164 +1,85 @@
-Return-Path: <linux-kernel+bounces-847816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56DCBCBCBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED312BCBCD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A78794E061B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:39:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756243A584C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515C7262FF3;
-	Fri, 10 Oct 2025 06:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E/E4XC0O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E32262FF3;
+	Fri, 10 Oct 2025 06:43:27 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DE53F9D2;
-	Fri, 10 Oct 2025 06:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642E723E320;
+	Fri, 10 Oct 2025 06:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760078384; cv=none; b=fv6Jnl+0kaWscsArrCKGVbAWCLUo4WpjQpvS42/tsj4iKjQ5Jeqv6bCbG0fjGhfv5FKQxKaF2RB9AsVRAW5lncbiy60wGRUQTmecNuDVweQRkch3HVUruj/z0HPtASeausbybMRmXAk2p7CToUPxbro/uyERZdbMo5rasNgE538=
+	t=1760078606; cv=none; b=H4n08nEQ4j1+aViv8MCkKtzM40FmLhSZcxmgZEpEckZzrbAI1r1XWYwBtI4PjFBL25roX5QbGpVT9894/TNGkgJykqYTjOilNReOSGC6BQrwSfXPd+zAorsKI3nfykk65UCE5qOYDFjROzpdAgZZjz2Z3velISoSXayxQ9Z9LLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760078384; c=relaxed/simple;
-	bh=f275Z6QBP1oJ7FjNXnqjQQ3arZ+vlTTlgIAxDsW1u1A=;
+	s=arc-20240116; t=1760078606; c=relaxed/simple;
+	bh=vdhUDgaQh+xEYdkKNbOXJPeU6RVE4xKptUp/KdiymTE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaWM611kfuOMYM1UfwSj4gHXqRD50WAioEOnItgWpqqfX8MAXIIrazsJomMqGhzTjq64iT1rI4Qv9Qj7LzaeOZ2XDXrUCW84pbRaV+z4DDpXftO3E2UyleIK6Gl+2h/TxfRKcnrVSmyseqpKINfy8BaQa1c+HXA/rf4fvu5KAqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E/E4XC0O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC42C4CEF1;
-	Fri, 10 Oct 2025 06:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760078383;
-	bh=f275Z6QBP1oJ7FjNXnqjQQ3arZ+vlTTlgIAxDsW1u1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/E4XC0OPvNpqewhJaQ4nGbxL62esjMmVSltK67IIVcxdGmwf16INSfid2uo26dGR
-	 963ucB1qo46+2lEPEd8aGn9IMZVMQdo+3Nh0mpr8weqS34CQPv1YYWugKh2Yv1Gp4g
-	 sL2c6uu2EtJaHZ8tcsdSndMcHFBEBMyTE7XCuZh8=
-Date: Fri, 10 Oct 2025 08:39:40 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: "Yanjun.Zhu" <yanjun.zhu@linux.dev>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com
-Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state
- monitoring
-Message-ID: <2025101001-sandpit-setup-7424@gregkh>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-20-pasha.tatashin@soleen.com>
- <a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
- <mafs0qzvcmje2.fsf@kernel.org>
- <CA+CK2bCx=kTVORq9dRE2h3Z4QQ-ggxanY2tDPRy13_ARhc+TqA@mail.gmail.com>
- <dc71808c-c6a4-434a-aee9-b97601814c92@linux.dev>
- <CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
- <d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev>
- <mafs0ecrbmzzh.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtsUVk+wc4kfG8VytKyp5r465qJicn46/KIuWH3NKbicC2b1v+e4C0k+/nS9hYBDzuuz8lNenYycAqs9Xf4Qyqy7/gM+V6eJmtl3HvwaMU2X4+G0tNMBYMomOnU3tPATYBQgtiIOQ8eVB/nvgDqnaHCt0KVSbyAbWoOQrDTsKCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.147.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 5C40C340D31;
+	Fri, 10 Oct 2025 06:43:24 +0000 (UTC)
+Date: Fri, 10 Oct 2025 14:43:10 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Vivian Wang <wangruikang@iscas.ac.cn>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] riscv: dts: spacemit: add Ethernet support for
+ MusePi Pro
+Message-ID: <20251010064310-GYA1439398@gentoo.org>
+References: <20251010-k1-musepi-pro-dts-v2-0-6e1b491f6f3e@linux.spacemit.com>
+ <20251010-k1-musepi-pro-dts-v2-5-6e1b491f6f3e@linux.spacemit.com>
+ <a02aec9a-976a-4b63-86cb-126b8ae71185@iscas.ac.cn>
+ <59657BBB86F7B678+aOilnA5Z-QL7xF9O@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <mafs0ecrbmzzh.fsf@kernel.org>
+In-Reply-To: <59657BBB86F7B678+aOilnA5Z-QL7xF9O@kernel.org>
 
-On Fri, Oct 10, 2025 at 01:12:18AM +0200, Pratyush Yadav wrote:
-> On Thu, Oct 09 2025, Yanjun.Zhu wrote:
-> 
-> > On 10/9/25 10:04 AM, Pasha Tatashin wrote:
-> >> On Thu, Oct 9, 2025 at 11:35 AM Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
-> >>>
-> >>> 在 2025/10/9 5:01, Pasha Tatashin 写道:
-> >>>>>> Because the window of kernel live update is short, it is difficult to statistics
-> >>>>>> how many times the kernel is live updated.
-> >>>>>>
-> >>>>>> Is it possible to add a variable to statistics the times that the kernel is live
-> >>>>>> updated?
-> >>>>> The kernel doesn't do the live update on its own. The process is driven
-> >>>>> and sequenced by userspace. So if you want to keep statistics, you
-> >>>>> should do it from your userspace (luod maybe?). I don't see any need for
-> >>>>> this in the kernel.
-> >>>>>
-> >>>> One use case I can think of is including information in kdump or the
-> >>>> backtrace warning/panic messages about how many times this machine has
-> >>>> been live-updated. In the past, I've seen bugs (related to memory
-> >>>> corruption) that occurred only after several kexecs, not on the first
-> >>>> one. With live updates, especially while the code is being stabilized,
-> >>>> I imagine we might have a similar situation. For that reason, it could
-> >>>> be useful to have a count in the dmesg logs showing how many times
-> >>>> this machine has been live-updated. While this information is also
-> >>>> available in userspace, it would be simpler for kernel developers
-> >>>> triaging these issues if everything were in one place.
-> 
-> Hmm, good point.
-> 
-> >>> I’m considering this issue from a system security perspective. After the
-> >>> kernel is automatically updated, user-space applications are usually
-> >>> unaware of the change. In one possible scenario, an attacker could
-> >>> replace the kernel with a compromised version, while user-space
-> >>> applications remain unaware of it — which poses a potential security risk.
-> 
-> Wouldn't signing be the way to avoid that? Because if the kernel is
-> compromised then it can very well fake the reboot count as well.
-> 
-> >>>
-> >>> To mitigate this, it would be useful to expose the number of kernel
-> >>> updates through a sysfs interface, so that we can detect whether the
-> >>> kernel has been updated and then collect information about the new
-> >>> kernel to check for possible security issues.
-> >>>
-> >>> Of course, there are other ways to detect kernel updates — for example,
-> >>> by using ftrace to monitor functions involved in live kernel updates —
-> >>> but such approaches tend to have a higher performance overhead. In
-> >>> contrast, adding a simple update counter to track live kernel updates
-> >>> would provide similar monitoring capability with minimal overhead.
-> >> Would a print during boot, i.e. when we print that this kernel is live
-> >> updating, we could include the number, work for you? Otherwise, we
-> >> could export this number in a debugfs.
-> > Since I received a notification that my previous message was not sent
-> > successfully, I am resending it.
-> >
-> > IMO, it would be better to export this number via debugfs. This approach reduces
-> > the overhead involved in detecting a kernel live update.
-> > If the number is printed in logs instead, the overhead would be higher compared
-> > to using debugfs.
-> 
-> Yeah, debugfs sounds fine. No ABI at least.
+Hi Troy, Vivian:
 
-Do not provide any functionality in debugfs that userspace relies on at
-all, as odds are, it will not be able to be accessed by most/all of
-userspace on many systems.  It is for debugging only.
+On 14:20 Fri 10 Oct     , Troy Mitchell wrote:
+> On Fri, Oct 10, 2025 at 02:13:31PM +0800, Vivian Wang wrote:
+> > 
+[snip]..
+> > 
+> > Maybe Yixun can chime in about this as well.
+> We have talked here [1]
+> 
+> Personally, I think splitting them makes the commit history clearer.
+> I'm happy to merge them if others also think it's more appropriate.
+> 
+I do not have strong preference, either way is fine for me
+If you plan to split the DT into fine patches, then go ahead
 
-thanks,
-
-greg k-h
+-- 
+Yixun Lan (dlan)
 
