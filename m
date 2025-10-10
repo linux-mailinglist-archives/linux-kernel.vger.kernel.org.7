@@ -1,134 +1,244 @@
-Return-Path: <linux-kernel+bounces-848452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50A8BCDCE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E6BBCDCFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31064249FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A92D440804D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944EC2F9C38;
-	Fri, 10 Oct 2025 15:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620772FABFA;
+	Fri, 10 Oct 2025 15:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DXAUFiAa"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NTnmzvmL"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C3F237A4F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAAC2FA0DF
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760110255; cv=none; b=VTP/FqwgBpfD3neFeOchjhEyFv9lSx3ze8u/MzQmL4ZJWXIiNyqNDhOjCC9Q1nCHNrMCpZc8qANtA81mDMVqI9+q5QSGXIDtCbV5nmUm6AVZ8QP0Ch4ACgb6G8o+2f1zFVOQdSLIiG1oi0hsRa9tfuCMFRrD7LZRZt6nSHvA3gc=
+	t=1760110475; cv=none; b=nLIc7Cc7IcV4f24AeQsk8txyh8gZaw+Q6DxKpHdpv0EyNb00DJzQt9/YKoIPGgFTdmDtLD9EDrbm1dSyK4jKSG/3UdhaQt0AGM8rFNIYfOP8bmaHoSWnySRyQnZhT00oLGt8wRETJyhNdC/ukJ4pnB7EnJuQSBQfS1Z6L+0yXqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760110255; c=relaxed/simple;
-	bh=YweDjybfnRXAUjAFM2cXyTvz7RwWQP0buSdnlIEIdyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kb8MeS9gpFSLczs/g9NnIsZnrNbsO4nyWv6HyBhhnaD9yNHRkwlehIQ+gg82vJibtAJuGauG1rMLS01e/gz/HraFmyNI33K/TKn8stgS3TFKWx2iLyQAatAzjb/LiHnxWVFZ7O43l1bgHVUqIMgBLb5oTI+RixGn4+HnDX4FeXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=DXAUFiAa; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-78f75b0a058so22019356d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:30:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1760110253; x=1760715053; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e6cOfIK7qdN8qKLRMhM71lR4Nf+xbZ2+eVm4l2+34ic=;
-        b=DXAUFiAaDqqCC3+EGPzuTEpjDPpj8TDL6f7/wTX64ElUquDD3fp/hbRxJWl8zAES+j
-         +dnCNkHQplC9wAAKmgxpSmQbvK1W3l0d6pcCSq++3xLlrDG3xBD0z+MBSs7B+lPfBr2e
-         l1b26laUQRZIYyja9N804pvrD3shemyxPsUCsgTZ6G32QXpa0OSVge6fW51lGfultT96
-         IrSsZkYxbnA14n6CqWaAaRM6YSev8Doda2pH6/bEjAM/CKYqaRvpd0Omt9vmbYOd+IjR
-         4oE077WohG5cUdFp9gg+ElT6orI4tDRIR5hbzTcsty2mXYEkqL4+4CE5NdzzT1IdtUeW
-         KmxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760110253; x=1760715053;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e6cOfIK7qdN8qKLRMhM71lR4Nf+xbZ2+eVm4l2+34ic=;
-        b=pt5Pv/LNGG2vz3k41elox11vloKmVVHsUygkm4c+haOUSv7wO2YVFfhkP3cFyOm7f5
-         IKrNXa2OzZBP4s2tiCUjmKcz5JJGuDQ/UQv/aoBEm/O7EuHgyIe//CoNV9B9tIqHmCNz
-         vCyHzuhIttr+mxF3s3OaqHdqBuGYTz0xrEDvIGPl27YGBb7GRhz2KYrlaD1kIMnrAt+n
-         Fcn1OLVmgEE/3oLfM7IO/0ojCcU+zfL6k9QpG3q4D0Du0ocSFXJJ2R2W4gTSfKd/dkem
-         g+lSlWv9a5idtuTRW3SIyhDnCakZLz8mKkbzEV2py4dIF8A1RPNkMZ/0Mv+UjuQXqLsv
-         zLkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuEDMbGO1jD9FrPY74PlBa4198e/BAFEn/inik0BxWY8ddAS/ff01To05/yR8bh4kgRMXbebOy9qEX9/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydFISYmwOR/nlijNIOk1Y/OGxyPaGhmHbIKcv+oXMENJ6uF0Vn
-	v3UMcmwQsvh5GxCuKIw/KDb/H8zem/QYJFN/qHPFgqiWN93fbMg18gF4HTx2RAX6O8A=
-X-Gm-Gg: ASbGncsyWDvHGRFW2cqEA6YAvMK/GPyp3w5wwmhZOyKlnk+glghn0nxvGTzK66GEr+R
-	GKNwvqxk6EOkHBYpIG0wOVQjxhYWmEBaQVHO4DRGOzxYv4StOB8x7VA56oQm1sU/jC+sWVnnH60
-	29y6K67PEtiY4f//uSWWZskbArLW3GskgfGF4uQO8Bt5LE6lIhmaQ3Azi+LwU04HKq15RNi6kBL
-	9AgLLQ8onniLyzZyxdPdqWygSMWdzMbrkdTcTMFgz26RK3bB+gaBU2COlMz5qlmAjUpjaGurDOE
-	ZL3DLNUPskrP56k8w3Us16Vu5gUidpTrLDym8d+nk4YmLs04FnrFykwk8J9lpTcJrp6GweDCZZi
-	LD/BNAMEUwjuKGLhHeahyRWQ0PCWjCoHrOct5cRNZpY/haEC3YAeY1PwOgtjnhYn+foH7GA2hfI
-	5veGWMrk9SzUc=
-X-Google-Smtp-Source: AGHT+IGgKhRm3oNF4ALMXNjdHTaNK2zfI9rzl46bTecy6J4CNJ6lSFvDvqcPlarS77J3/CcjSy9rWQ==
-X-Received: by 2002:a05:6214:c64:b0:830:5c6d:419 with SMTP id 6a1803df08f44-87b210728c4mr182061246d6.4.1760110247638;
-        Fri, 10 Oct 2025 08:30:47 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87bc3570c1esm18187826d6.40.2025.10.10.08.30.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 08:30:47 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v7F4w-0000000GWAu-2XWh;
-	Fri, 10 Oct 2025 12:30:46 -0300
-Date: Fri, 10 Oct 2025 12:30:46 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
- device
-Message-ID: <20251010153046.GF3833649@ziepe.ca>
-References: <20250728135216.48084-12-aneesh.kumar@kernel.org>
- <20250729181045.0000100b@huawei.com>
- <20250729231948.GJ26511@ziepe.ca>
- <yq5aqzxy9ij1.fsf@kernel.org>
- <20250730113827.000032b8@huawei.com>
- <20250730132333.00006fbf@huawei.com>
- <2025073035-bulginess-rematch-b92e@gregkh>
- <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
- <20251010135922.GC3833649@ziepe.ca>
- <4a7d84b2-2ec4-4773-a2d5-7b63d5c683cf@arm.com>
+	s=arc-20240116; t=1760110475; c=relaxed/simple;
+	bh=L4IvhMroY4iYBrC3di0nY8VoKX2tEH0eXJKF2I6BZT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGoB9C1fgculpUlFbZV5i6Jsr43pUnofJ4OFyrqhESQZZGEBvo35ZPE08Xm+eM1jEx4aQxF6exY6udp7WJBoVYznjJH6DzHdHqvW1bS2XiG2Bh46arGSouSu6ctYHtBiZX/pHQ2RyrX2A0Z1FZxB7RdaOiAYVZkjhO3J3LZujB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NTnmzvmL; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <73bbc22f-2739-4f0e-b8d7-b8e344a3fead@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760110471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m4qsKbpNSIpA/NVXxQj6liAluALHkPVnznxBwYjjPvc=;
+	b=NTnmzvmLuwBW42Vk6+G3ozKCQJmkscoHymC893MAgN1qpa4PviLFOlDB1uQxBSZgx+l+XC
+	i5mjGyk+JMIUsIJmmI0jtEJF0NJrj7lm1+32dA/+0+UkSEhUm3zNpnBN4nx76fkZ2f6EGY
+	edCr0qTAYdQRDkYmxDewwapgxliu5O0=
+Date: Fri, 10 Oct 2025 23:34:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a7d84b2-2ec4-4773-a2d5-7b63d5c683cf@arm.com>
+Subject: Re: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Content-Language: en-US
+To: Zi Yan <ziy@nvidia.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, baohua@kernel.org, baolin.wang@linux.alibaba.com,
+ dev.jain@arm.com, hughd@google.com, ioworker0@gmail.com,
+ kirill@shutemov.name, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ mpenttil@redhat.com, npache@redhat.com, ryan.roberts@arm.com,
+ richard.weiyang@gmail.com
+References: <20251008032657.72406-1-lance.yang@linux.dev>
+ <3ABDAD81-A650-4C9A-BB4B-5515180F0743@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <3ABDAD81-A650-4C9A-BB4B-5515180F0743@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 10, 2025 at 10:28:36AM -0500, Jeremy Linton wrote:
 
-> > So you could use auxiliary_device, you'd consider SMC itself to be the
-> > shared HW block and all the auxiliary drivers are per-subsystem
-> > aspects of that shared SMC interface. It is not a terrible fit for
-> > what it was intended for at least.
+
+On 2025/10/10 23:21, Zi Yan wrote:
+> On 7 Oct 2025, at 23:26, Lance Yang wrote:
 > 
-> Turns out that changing any of this, will at the moment break systemd's
-> confidential vm detection, because they wanted the earliest indicator the
-> guest was capable and that turned out to be this platform device.
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> Currently, special non-swap entries (like PTE markers) are not caught
+>> early in hpage_collapse_scan_pmd(), leading to failures deep in the
+>> swap-in logic.
+>>
+>> A function that is called __collapse_huge_page_swapin() and documented
+>> to "Bring missing pages in from swap" will handle other types as well.
+>>
+>> As analyzed by David[1], we could have ended up with the following
+>> entry types right before do_swap_page():
+>>
+>>    (1) Migration entries. We would have waited.
+>>        -> Maybe worth it to wait, maybe not. We suspect we don't stumble
+>>           into that frequently such that we don't care. We could always
+>>           unlock this separately later.
+>>
+>>    (2) Device-exclusive entries. We would have converted to non-exclusive.
+>>        -> See make_device_exclusive(), we cannot tolerate PMD entries and
+>>           have to split them through FOLL_SPLIT_PMD. As popped up during
+>>           a recent discussion, collapsing here is actually
+>>           counter-productive, because the next conversion will PTE-map
+>>           it again.
+>>        -> Ok to not collapse.
+>>
+>>    (3) Device-private entries. We would have migrated to RAM.
+>>        -> Device-private still does not support THPs, so collapsing right
+>>           now just means that the next device access would split the
+>>           folio again.
+>>        -> Ok to not collapse.
+>>
+>>    (4) HWPoison entries
+>>        -> Cannot collapse
+>>
+>>    (5) Markers
+>>        -> Cannot collapse
+>>
+>> First, this patch adds an early check for these non-swap entries. If
+>> any one is found, the scan is aborted immediately with the
+>> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+>> work. While at it, convert pte_swp_uffd_wp_any() to pte_swp_uffd_wp()
+>> since we are in the swap pte branch.
+>>
+>> Second, as Wei pointed out[3], we may have a chance to get a non-swap
+>> entry, since we will drop and re-acquire the mmap lock before
+>> __collapse_huge_page_swapin(). To handle this, we also add a
+>> non_swap_entry() check there.
+>>
+>> Note that we can unlock later what we really need, and not account it
+>> towards max_swap_ptes.
+>>
+>> [1] https://lore.kernel.org/linux-mm/09eaca7b-9988-41c7-8d6e-4802055b3f1e@redhat.com
+>> [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
+>> [3] https://lore.kernel.org/linux-mm/20251005010511.ysek2nqojebqngf3@master
+>>
+>> Acked-by: David Hildenbrand <david@redhat.com>
+>> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+>> Reviewed-by: Dev Jain <dev.jain@arm.com>
+>> Suggested-by: David Hildenbrand <david@redhat.com>
+>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> ---
+>> v2 -> v3:
+>>   - Collect Acked-by from David - thanks!
+>>   - Collect Reviewed-by from Wei and Dev - thanks!
+>>   - Add a non_swap_entry() check in __collapse_huge_page_swapin() (per Wei
+>>     and David) - thanks!
+>>   - Rework the changelog to incorporate David's detailed analysis of
+>>     non-swap entry types - thanks!!!
+>>   - https://lore.kernel.org/linux-mm/20251001032251.85888-1-lance.yang@linux.dev/
+>>
+>> v1 -> v2:
+>>   - Skip all non-present entries except swap entries (per David) thanks!
+>>   - https://lore.kernel.org/linux-mm/20250924100207.28332-1-lance.yang@linux.dev/
+>>
+>>   mm/khugepaged.c | 37 +++++++++++++++++++++++--------------
+>>   1 file changed, 23 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index abe54f0043c7..bec3e268dc76 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -1020,6 +1020,11 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
+>>   		if (!is_swap_pte(vmf.orig_pte))
+>>   			continue;
+>>
+>> +		if (non_swap_entry(pte_to_swp_entry(vmf.orig_pte))) {
+>> +			result = SCAN_PTE_NON_PRESENT;
+>> +			goto out;
+>> +		}
+>> +
+>>   		vmf.pte = pte;
+>>   		vmf.ptl = ptl;
+>>   		ret = do_swap_page(&vmf);
+>> @@ -1281,7 +1286,23 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>>   	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+>>   	     _pte++, addr += PAGE_SIZE) {
+>>   		pte_t pteval = ptep_get(_pte);
+>> -		if (is_swap_pte(pteval)) {
+>> +		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>> +			++none_or_zero;
+>> +			if (!userfaultfd_armed(vma) &&
+>> +			    (!cc->is_khugepaged ||
+>> +			     none_or_zero <= khugepaged_max_ptes_none)) {
+>> +				continue;
+>> +			} else {
+>> +				result = SCAN_EXCEED_NONE_PTE;
+>> +				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>> +				goto out_unmap;
+>> +			}
+>> +		} else if (!pte_present(pteval)) {
+>> +			if (non_swap_entry(pte_to_swp_entry(pteval))) { 
+>> +				result = SCAN_PTE_NON_PRESENT;
+>> +				goto out_unmap;
+>> +			}
+>> +
+>>   			++unmapped;
+>>   			if (!cc->is_khugepaged ||
+>>   			    unmapped <= khugepaged_max_ptes_swap) {
+>> @@ -1290,7 +1311,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>>   				 * enabled swap entries.  Please see
+>>   				 * comment below for pte_uffd_wp().
+>>   				 */
+>> -				if (pte_swp_uffd_wp_any(pteval)) {
+>> +				if (pte_swp_uffd_wp(pteval)) {
+> 
+> pte_swp_uffd_wp_any() returns true for both pte_swp_uffd_wp() and
+> pte_marker_uffd_wp(). Why is it OK to just check pte_swp_uffd_wp() here?
 
-Having systemd detect a software created platform device sounds
-compltely crazy, don't do that. Make a proper sysfs uapi for such a
-general idea please.
++		} else if (!pte_present(pteval)) {
++			if (non_swap_entry(pte_to_swp_entry(pteval))) { <--
++				result = SCAN_PTE_NON_PRESENT;
++				goto out_unmap;
++			}
 
-Jason
+IIUC, we have just handled all non-swap entries above (which would
+include pte_marker_uffd_wp()), right?
+
+> 
+>>   					result = SCAN_PTE_UFFD_WP;
+>>   					goto out_unmap;
+>>   				}
+>> @@ -1301,18 +1322,6 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>>   				goto out_unmap;
+>>   			}
+>>   		}
+>> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>> -			++none_or_zero;
+>> -			if (!userfaultfd_armed(vma) &&
+>> -			    (!cc->is_khugepaged ||
+>> -			     none_or_zero <= khugepaged_max_ptes_none)) {
+>> -				continue;
+>> -			} else {
+>> -				result = SCAN_EXCEED_NONE_PTE;
+>> -				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>> -				goto out_unmap;
+>> -			}
+>> -		}
+>>   		if (pte_uffd_wp(pteval)) {
+>>   			/*
+>>   			 * Don't collapse the page if any of the small
+>> -- 
+>> 2.49.0
+> 
+> 
+> --
+> Best Regards,
+> Yan, Zi
+
 
