@@ -1,180 +1,217 @@
-Return-Path: <linux-kernel+bounces-848105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5164BCC880
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:26:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E555BCC903
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5E004FD6F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10C293B2824
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DEC283FC3;
-	Fri, 10 Oct 2025 10:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDsHwdR5"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF362F5A01;
+	Fri, 10 Oct 2025 10:34:45 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589EB28506D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C92F2F0C63;
+	Fri, 10 Oct 2025 10:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760091982; cv=none; b=jHo8ihVCu3tiCFbS+LxvLLPu3pwCyZZm+0Bju1iHhV4QCW37DSJUPYUBUVr0KrERUMPICy/RJ2ZQPYWFNUcd5YdsEwUCEEHY7VB4EymeBdOzwpOhE/w73eE7IH/WsNh6qZLBetLKjnh7Hp7f4sJVqvcVaiLGcnD1HNGvUb8AFqo=
+	t=1760092484; cv=none; b=r0ixp3/NwL3XULfn3qdXlRc/F7BxvTWUst8TQLYxbkjqXaj7l6Io31FsP11v4pfMM3U1TBnQ/xYTALA2AJrPYCVJGSCmO/s5KikcKuZqBsdtMiEYJ2BbQryXdD8bUpx10fSWa8Tt9Ub5N9KEi9ttzJYIxkix534qorPcCiVVhuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760091982; c=relaxed/simple;
-	bh=UZmabyKdE5tjxeLurwM+WNImkK1c7Yg2W5nT2vOQv1Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iARaNftpeELK3gwTZuPtrbFXUedLiRjb6z5IMnSr2qz8gfRaqlZ+XkfoKVrzsfBx8NGwDpa0ZG4iB0W5pTzEcW9t1VZCnr8A9bq51Q0jV+t7KJFEfFY/FjbrP/DjLAvNMkxge1WJUbP7XBPBT+phv9z5RwhVtMR8phxMUwS5sno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDsHwdR5; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e37d10f3eso13970525e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 03:26:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760091978; x=1760696778; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=f/wisNhEkDXpBQcqt8JCgArlMwsFd4AUx+Hr46blXNQ=;
-        b=PDsHwdR54OO9tlib42tw3IE8/UvRcqbubU3CPBKs0Yhce+tQQhWHejZx+UuoHdSJvv
-         J/a431/rSq0dpGPHuoyWYNatWzdZhuM6FGw8xAu3m5ML75eVU7N3Siw9i1N6ubKmLdF4
-         CUAheqS2osgslkmmX06v2pbykLEY32hCuHa14+2IOPv7VZs63CQQHAIYj1+U/7lNgWGD
-         IzCaF+yjkA4iqAAxVpygdHGvrsEpDUt7AfKS0J667A6tv4dNzXYYwqljzxK9+1eCDwIE
-         eJRqfW+SpJYa/LQngCLAXxGF8B+rTwKE2zBze3OZ8R5/ztOo49g9MG4IO0ndLWb6W8Ao
-         QdwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760091978; x=1760696778;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f/wisNhEkDXpBQcqt8JCgArlMwsFd4AUx+Hr46blXNQ=;
-        b=X3DdFQuPbwhgX8zRs7FV4aSFgB9I2ahQVcYxBdBSloTEfrrCYw2q/TSZJGAhyg205M
-         EuV0OwXshwKk/BC8kg2KAVgzD+ypzXvCEG3nv00XurxCNnP8qvW/21bxntIhgu6xRAQG
-         qeWDWCBFUOnVXfUjck/B0MeEz91ar8s5wl7iXlH6ioUsgv+mPDsx7e1p5AcKAQ7SuNIp
-         lIoTTYbS0FkL+teEuIr+tr9LUHyeWBmUZWCBzp4T5ui2KAGQmaW9CJ48q2HyNcRyqR7O
-         iC1nCJdGMdfZyzXAeB1Wy9pGGg8J6ry7XZl5P9YrM6x+/jkCoSJbX7/e7jzNZyr/EN4J
-         Ghzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNxG4fygR8RGnp39KOuxHEGczXxJESCNcS8UToV+J7sHPkXbpjLAVOhzuwXvy6uQ+LE+2AKCp/xIbXZ9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVRd5Ti9iJOZwX3RrMCYtdvvbzWdkJbAxXq/6A5UVy5KYOCOkz
-	U/5NlvQWZFMK6BUls9JEk3SaXDT8BmPjxs6wP6UjZLozdLOgCA39n1Ab
-X-Gm-Gg: ASbGncsYUkWaCLKHHMo4N5cEUA8dWP9SM+hUrBm+TZAXjuPpEkng4GkwXZmJJHJbMa4
-	g1Je9bd5+Idxan9rM7f69lLp+lief8iKCiTDOtKQUt6YJktXR8mRaA/bEdQRm8sDH1KydY1lBtG
-	42eUw5JksFrD2c7kbvNJnMIYc+RYeWgNzzVgMAsiGN28N8ArQPm329wLf8MHnWfaof+M4VD3gNO
-	JYN6x3ulmg7OHCPxZNIJ+5FPS04r5WzYVKhW2GN+9AGE01CBJ8zG5rAOGDbeYbe0k3dyDeMztIb
-	bxsFm0ZKinhlKKqQGhzXuuH/K0qnGpWTfyeP0p032VnKoOct7SzASIXVduMFDbm+q9KBzM9ihRX
-	BwnypbM6XDRsRCdlkp014FMrOxCBlBnXWL5tCNytkvGiQQYAvtF06f0tTZOa9
-X-Google-Smtp-Source: AGHT+IFHf6TeR/NVDH3cfePc+5+edkwy9xfRhJNNTE6F7bdfomvn1olhA2eAJQ6y5FxO9DrlPYYWXg==
-X-Received: by 2002:a05:600c:6287:b0:46f:b42e:e365 with SMTP id 5b1f17b1804b1-46fb42ee3f5mr22514855e9.39.1760091978348;
-        Fri, 10 Oct 2025 03:26:18 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57cce5sm3633649f8f.1.2025.10.10.03.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 03:26:18 -0700 (PDT)
-Message-ID: <2e82eaf275b5c8df768c8b842167c3562991e50c.camel@gmail.com>
-Subject: Re: [PATCH] pwm: Declare waveform stubs for when PWM is not
- reachable
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- jic23@kernel.org, 	marcelo.schmitt1@gmail.com, kernel test robot
- <lkp@intel.com>, Trevor Gamblin	 <tgamblin@baylibre.com>, Axel Haslam
- <ahaslam@baylibre.com>
-Date: Fri, 10 Oct 2025 11:26:49 +0100
-In-Reply-To: <6v4hny7hxjsdf6zvinhpagtbhluxbd6psq7wpx5ls6zdbnjtym@lnygnkav4ewk>
-References: 
-	<1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com>
-	 <6v4hny7hxjsdf6zvinhpagtbhluxbd6psq7wpx5ls6zdbnjtym@lnygnkav4ewk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1760092484; c=relaxed/simple;
+	bh=GoOB+ZZKWQc/jzWg0Zyt7t6XIDgoA7zWTdLvBDqr01A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hUoAQkTZrjCjAztD0RLvRzY7UdLmlxsHl8Apj/6uvJpIppdG9ByWW+fDEDmIqE0v1fOObagtCPBaibPwLRuzT3t7q1BYzm7OGdIbeUMOH1QuOzTa/Wvgg8btBsdsFMA+mUewd53cOmQtT7eLec7nrRBbThImJY5cGEdQ4OBAUKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cjjlW68qSzYQvL2;
+	Fri, 10 Oct 2025 18:33:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 113C51A1439;
+	Fri, 10 Oct 2025 18:34:34 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgCHS2Ms4ehoxOK5CQ--.63632S4;
+	Fri, 10 Oct 2025 18:34:31 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v3 00/12] ext4: optimize online defragment
+Date: Fri, 10 Oct 2025 18:33:14 +0800
+Message-ID: <20251010103326.3353700-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHS2Ms4ehoxOK5CQ--.63632S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3Gw1kAr4ktFyDXryrWr4rKrg_yoW7AFykpa
+	yakw48trykJw1kG3yxAFs2qryYkw4rGr47CF1UGr15CF45XFy8WFWrKa98ZFy8ArW8Z34Y
+	va1Iyr1Uu3WUAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, 2025-10-09 at 18:53 +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Marcelo,
->=20
-> On Tue, Oct 07, 2025 at 07:19:38PM -0300, Marcelo Schmitt wrote:
-> > Previously, the PWM waveform consumer API would not be declared if
-> > CONFIG_PWM was not reachable. That caused kernel builds to fail if a
-> > consumer driver was enabled but PWM disabled. Add stubs for PWM wavefor=
-m
-> > functions so client drivers that use, but don't depend on PWM, can buil=
-d if
-> > PWM is disabled.
-> >=20
-> > Fixes: 6c5126c6406d ("pwm: Provide new consumer API functions for
-> > waveforms")
->=20
-> At the time 6c5126c6406d was applied, there was no user of the API that
-> doesn't depend on CONFIG_PWM, so I object adding this Fixes line.
->=20
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes:
-> > https://lore.kernel.org/oe-kbuild-all/202509272028.0zLNiR5w-lkp@intel.c=
-om/
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> > Cc: Jonathan Cameron <jic23@kernel.org>
-> > Hi Uwe,
-> >=20
-> > This is a fix based on a report from 0-day bot [1].
-> > We need this for a sophisticated IIO device that makes direct use of a =
-PWM
-> > waveform (in addition to indirect use of PWM through
-> > SPI_OFFLOAD_TRIGGER_PWM).=20
->=20
-> Does the driver work in some configuration with the pwm stubs? If not,
-> the right thing to do is to let it depend on PWM. (Note the inverse
-> isn't necessarily a good idea.)
->=20
-> And I wonder how you could even compile your driver without PWM support
-> given that it selects SPI_OFFLOAD_TRIGGER_PWM which depends on PWM.
->=20
-> ... some time later ...
->=20
-> OK, I tried to reproduce the problem that the kernel build bot run into.
-> There is a warning:
->=20
-> 	WARNING: unmet direct dependencies detected for
-> SPI_OFFLOAD_TRIGGER_PWM
-> 	=C2=A0 Depends on [n]: SPI [=3Dy] && SPI_OFFLOAD [=3Dy] && PWM [=3Dn]
-> 	=C2=A0 Selected by [y]:
-> 	=C2=A0 - AD4030 [=3Dy] && IIO [=3Dy] && SPI [=3Dy] && GPIOLIB [=3Dy]
->=20
-> This is the thing that needs fixing, i.e. don't select a symbol with
-> dependencies that the selecting symbol doesn't assert to be fulfilled.
->=20
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Agreed. Seems to be one of those cases where we select a symbol that depend=
-s on
-something.
+Changes since v2:
+ - Rebase patches to the 6.18-5472d60c129f.
+ - Patch 02, add a TODO comment, we should optimize the increasement of
+   the extents sequence counter ext4_es_insert_extent() in the future as
+   Jan suggested.
+ - Patch 09, add a WARN_ON_ONCE if ext4_swap_extents() return
+   successfully but the swapped length is shorter than required. Also,
+   copy data if some extents have been swapped to prevent data loss.
+   Finally, fix the comment as Jan suggested.
+ - Patch 10, fix the increasement of moved_len in ext4_move_extents()
+   as Jan pointed out.
+ - Patch 11, fix potential overflow issues on the left shift as Jan
+   pointed out.
+ - Add review tag in patch 01-08,11-12 from Jan.
+Changes since v1:
+ - Fix the syzbot issues reported in v1 by adjusting the order of
+   parameter checks in mext_check_validity() in patches 07 and 08.
 
-However, this driver can indeed work without spi offload and hence PWM and
-SPI_OFFLOAD (AFAIR) are optional so I wonder what's the right approach. Loo=
-king
-at the new series I already see:
+v2: https://lore.kernel.org/linux-ext4/20250925092610.1936929-1-yi.zhang@huaweicloud.com/
+v1: https://lore.kernel.org/linux-ext4/20250923012724.2378858-1-yi.zhang@huaweicloud.com/
 
-select SPI_OFFLOAD_TRIGGER_PWM if (SPI_OFFLOAD && PWM)
 
-Which makes more sense but I guess we still need the stubs with the above. =
-But=20
-I would also expect stubs to be needed for spi/offload/consumer.h. Maybe I'=
-m
-missing something though...
+Original Description:
 
-I did not tested but I also wonder if 'imply SPI_OFFLOAD_TRIGGER_PWM' is no=
-t
-similar to the above.
+Currently, the online defragmentation of the ext4 is primarily
+implemented through the move extent operation in the kernel. This
+extent-moving operates at the granularity of PAGE_SIZE, iteratively
+performing extent swapping and data movement operations, which is quite
+inefficient. Especially since ext4 now supports large folios, iterations
+at the PAGE_SIZE granularity are no longer practical and fail to
+leverage the advantages of large folios. Additionally, the current
+implementation is tightly coupled with buffer_head, making it unable to
+support after the conversion of buffered I/O processes to the iomap
+infrastructure.
 
-- Nuno S=C3=A1
+This patch set (based on 6.17-rc7) optimizes the extent-moving process,
+deprecates the old move_extent_per_page() interface, and introduces a
+new mext_move_extent() interface. The new interface iterates over and
+copies data based on the extents of the original file instead of the
+PAGE_SIZE, and supporting large folios. The data processing logic in the
+iteration remains largely consistent with previous versions, with no
+additional optimizations or changes made. 
 
-> Best regards
-> Uwe
+Additionally, the primary objective of this set of patches is to prepare
+for converting the buffered I/O process for regular files to the iomap
+infrastructure. These patches decouple the buffer_head from the main
+extent-moving process, restricting its use to only the helpers
+mext_folio_mkwrite() and mext_folio_mkuptodate(), which handle updating
+and marking pages in the swapped page cache as dirty. The overall coding
+style of the extent-moving process aligns with the iomap infrastructure,
+laying the foundation for supporting online defragmentation once the
+iomap infrastructure is adopted.
+
+Patch overview:
+
+Patch 1:    Fix a minor issue related to validity checking.
+Patch 2-4:  Introduce a sequence counter for the mapping extent status
+            tree, this also prepares for the iomap infrastructure.
+Patch 5-7:  Refactor the mext_check_arguments() helper function and the
+            validity checking to improve code readability.
+Patch 8-12: Drop move_extent_per_page() and switch to using the new
+            mext_move_extent(). Additionally, add support for large
+            folios.
+
+With this patch set, the efficiency of online defragmentation for the
+ext4 file system can also be improved under general circumstances. Below
+is a set of typical test obtained using the fio e4defrag ioengine on the
+environment with Intel Xeon Gold 6240 CPU, 400G memory and a NVMe SSD
+device.
+
+  [defrag]
+  directory=/mnt
+  filesize=400G
+  buffered=1
+  fadvise_hint=0
+  ioengine=e4defrag
+  bs=4k         # 4k,32k,128k
+  donorname=test.def
+  filename=test
+  inplace=0
+  rw=write
+  overwrite=0   # 0 for unwritten extent and 1 for written extent
+  numjobs=1
+  iodepth=1
+  runtime=30s
+
+  [w/o]
+   U 4k:    IOPS=225k,  BW=877MiB/s      # U: unwritten extent-moving
+   U 32k:   IOPS=33.2k, BW=1037MiB/s
+   U 128k:  IOPS=8510,  BW=1064MiB/s
+   M 4k:    IOPS=19.8k, BW=77.2MiB/s     # M: written extent-moving
+   M 32k:   IOPS=2502,  BW=78.2MiB/s
+   M 128k:  IOPS=635,   BW=79.5MiB/s
+
+  [w]
+   U 4k:    IOPS=246k,  BW=963MiB/s
+   U 32k:   IOPS=209k,  BW=6529MiB/s
+   U 128k:  IOPS=146k,  BW=17.8GiB/s
+   M 4k:    IOPS=19.5k, BW=76.2MiB/s
+   M 32k:   IOPS=4091,  BW=128MiB/s
+   M 128k:  IOPS=2814,  BW=352MiB/s 
+
+Best Regards,
+Yi.
+
+
+Zhang Yi (12):
+  ext4: correct the checking of quota files before moving extents
+  ext4: introduce seq counter for the extent status entry
+  ext4: make ext4_es_lookup_extent() pass out the extent seq counter
+  ext4: pass out extent seq counter when mapping blocks
+  ext4: use EXT4_B_TO_LBLK() in mext_check_arguments()
+  ext4: add mext_check_validity() to do basic check
+  ext4: refactor mext_check_arguments()
+  ext4: rename mext_page_mkuptodate() to mext_folio_mkuptodate()
+  ext4: introduce mext_move_extent()
+  ext4: switch to using the new extent movement method
+  ext4: add large folios support for moving extents
+  ext4: add two trace points for moving extents
+
+ fs/ext4/ext4.h              |   3 +
+ fs/ext4/extents.c           |   2 +-
+ fs/ext4/extents_status.c    |  31 +-
+ fs/ext4/extents_status.h    |   2 +-
+ fs/ext4/inode.c             |  28 +-
+ fs/ext4/ioctl.c             |  10 -
+ fs/ext4/move_extent.c       | 780 +++++++++++++++++-------------------
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |  97 ++++-
+ 9 files changed, 499 insertions(+), 455 deletions(-)
+
+-- 
+2.46.1
+
 
