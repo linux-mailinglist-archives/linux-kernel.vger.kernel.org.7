@@ -1,195 +1,285 @@
-Return-Path: <linux-kernel+bounces-847930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49827BCC146
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D66FBCC14C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D153A595C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:09:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374621881B56
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE17B279DAD;
-	Fri, 10 Oct 2025 08:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6462279DC3;
+	Fri, 10 Oct 2025 08:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MHp7l3M4"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6V+p8MWS"
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9372749ED;
-	Fri, 10 Oct 2025 08:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31EA1F7569;
+	Fri, 10 Oct 2025 08:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760083786; cv=none; b=IJLg4qZr305UIzL2f3H/yEYQJyT4UN5xfbKv4Qmd8MQeUI7bWIGCqJc/9JOEaNj1Lx0ly1qersJIIrJ5rmymmbo6J4i6kznHCHFVEg6hxosfBVo5XXV+XbpqhyhveAsb3mz6O0O0g3lGy1XH3sNRQxrjN4gAm3K0nEmYRQ5gzLA=
+	t=1760083860; cv=none; b=csyi30yypGxSdw37QxJ3QKoEM4wtIdylQZgT7/VOfXcrvQPFWXHe895rnKUfRe03bXPzsOSuCvDt3ILLv4uCblAfNZgLDeSosIdnFSGWexyCbQEHbEWSv3WZo5CWCAnBGt57PT1jRtLsPFSQ/Ngg4NrlGEtyCu3lHi0h0TJR8Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760083786; c=relaxed/simple;
-	bh=ykShCOPmAhqg69uP7U0GZy54nhN8YLicots+KryMWEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qFNF9kL55vX4S+pjjxyyZkd6WH1ycBBOAyZeBap2uOVT99i7g3L3WOXlbzbZUwajD8vs+uQsRK3ZQELC+hgfbp7HXtOLCPeGtt0DbWggqxtVnmVXcqy81iAzw/H0OJo0MpWVDGarBF5EncL37DcFelo4HpVHDhHUKYIqTBpFSR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MHp7l3M4; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A7QtOa031098;
-	Fri, 10 Oct 2025 08:09:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=Gzdv8UWdEnCN56xKeWjK1CJF5EdNSu
-	3Q50DKVSJHF8M=; b=MHp7l3M4ztwAPc0fyybEazxaTSzDl6k40j9mZAP1C/tJ7U
-	kbUp5DQOuIUQaxmLdGMjXvHerAo2ErrM29R6Ik/+YSmJ+YMChSrEVPbaIDIqlq8y
-	OSekPQHyHiTzxEoSQ7MkkPayXXkvEb0Fq8ivunbIBLGkwmlIQO581cbcJ+9UKPW6
-	VgJPqFFpabjODT6p2qZt889z/Rt1W8EqV/V4VaXhbnKIvDwe0gPVTCmziqy9UPvf
-	U/DUeF6YbxaACXToUWMuQjApqkzAJZm7464jFNigAO8WUkwYNHPXUjTJmr6mM/eP
-	BP7ljBDvLNk8MNO3reP5Rp0Axk1Lti5ciTjIN+TA==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv81sa32-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 08:09:39 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59A812mC012997;
-	Fri, 10 Oct 2025 08:09:38 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49nvan0uqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 08:09:38 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59A89YVN38338946
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Oct 2025 08:09:34 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A0B320183;
-	Fri, 10 Oct 2025 08:09:34 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1BC6320181;
-	Fri, 10 Oct 2025 08:09:34 +0000 (GMT)
-Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.54.55])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 10 Oct 2025 08:09:34 +0000 (GMT)
-Date: Fri, 10 Oct 2025 10:09:32 +0200
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [PATCH v2 2/4] s390/sclp: Add support for dynamic
- (de)configuration of memory
-Message-ID: <aOi_PL68QaY2YIAg@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-References: <20251009131839.3739108-1-sumanthk@linux.ibm.com>
- <20251009131839.3739108-3-sumanthk@linux.ibm.com>
- <ed7db8b9-e828-420d-a8b2-3e1b8aa8c95c@redhat.com>
+	s=arc-20240116; t=1760083860; c=relaxed/simple;
+	bh=XWpwa4b51wkuGxde4RWMSBsT+RNvsUrYw6yVRq8IcSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=De26ma+1rU80wzeB64mq2Afrcdx6PT6ZzfNiABwqvy12MedcAYtzNEj4PYiY6XpOUAcPu8hOgk3OzO//KQXcd2XKB7flNxVee9u9KnmHTEHlg5n6ExvcwE92ZtUho1yoqQjz0npb5q+7QzdQ1tgGp6j//AvNqm80Q1v5mW/6mQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6V+p8MWS; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=MYXlAWEvSyN7eZhivp5e3os3yNQ8UaiQtka1Xgi30qU=;
+	b=6V+p8MWS6G41pqdbKpjJ8z91bFa2d0+266K9faWvViycKBGR3p6qo40F1TiA9vI0RS0UX+nSX
+	VGD00p4ZPb+lhAmybM1UNm9rotvBjMdtW2VqHtWmb2QPrxxzgKsWA2H1XNkNyCKKJNc67TpCPZL
+	Pdj84E7a3ib3k3TlfFdG2E4=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4cjfZ500w5zmV6g;
+	Fri, 10 Oct 2025 16:10:36 +0800 (CST)
+Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2D4531800CE;
+	Fri, 10 Oct 2025 16:10:54 +0800 (CST)
+Received: from [10.174.177.149] (10.174.177.149) by
+ dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 10 Oct 2025 16:10:53 +0800
+Message-ID: <089646c2-0f11-4ad9-833b-c540383bec02@huawei.com>
+Date: Fri, 10 Oct 2025 16:10:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed7db8b9-e828-420d-a8b2-3e1b8aa8c95c@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: IudfyhWzW7_jQh-hdHIgBVZ2osLZPOxi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfXyOplaghO3qUJ
- L75RtbN4mdBJFl14fqQH9v9Drb1zLgcbQrLPimgMiwkCY960GAY6pmTWsEv/n/mo04QazaooSg3
- 3yFExSyAe5HMF8elHfGe+Croi+Ksdez4HldSerO0JrFdjnTDLkBMahK1Mp/MDNcWN/Gkxlk+LBV
- Z4hUYneSqMJrxExsO8wvAe8ajYAaXpQ3E32y0SNoSyInb/OzxT63lKTMloTXFs8xzeEjNHn7Mx8
- jsfjg6zk08whGJWpPUjv/25mVgXNGLg8HKoXXGOdN1zyhwKjipq4Y1+YgtcSPHYJtWhb2T1hVV8
- xJCxTveeuy+a3gB0+aA/3b7Hh6Q92RdtjC0OMgTwWNhI8gA24i1M4kuDXceuxARfzgispzC8qUm
- crltVkOGrjwd8N43EDcH6jn/rs/07A==
-X-Authority-Analysis: v=2.4 cv=cKntc1eN c=1 sm=1 tr=0 ts=68e8bf43 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=Fw4thcao37LPlByLA-sA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: IudfyhWzW7_jQh-hdHIgBVZ2osLZPOxi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 bulkscore=0 phishscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbcon: Set fb_display[i]->mode to NULL when the mode is
+ released
+To: Thomas Zimmermann <tzimmermann@suse.de>, <simona@ffwll.ch>
+CC: <deller@gmx.de>, <linux-kernel@vger.kernel.org>,
+	<linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>, <sunnanyong@huawei.com>
+References: <20250923110608.3385083-1-yanquanmin1@huawei.com>
+ <234d94ac-3984-4ff9-9743-9178f68370de@suse.de>
+From: Quanmin Yan <yanquanmin1@huawei.com>
+In-Reply-To: <234d94ac-3984-4ff9-9743-9178f68370de@suse.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf200018.china.huawei.com (7.185.36.31)
 
-> > +struct sclp_mem {
-> > +	struct kobject kobj;
-> > +	unsigned int id;
-> > +	unsigned int memmap_on_memory;
-> > +	unsigned int config;
-> > +};
-> > +
-> > +struct sclp_mem_arg {
-> > +	struct sclp_mem *sclp_mems;
-> > +	struct kset *kset;
-> > +};
-> 
-> Just one thought: if you keep either as global variable you wouldn't need
-> this. (I would just keep both as globals, but whatever you prefer)
-> 
-> Whatever you prefer.
+Hi Thomas,
 
-Hi David,
+在 2025/9/24 17:17, Thomas Zimmermann 写道:
+> Hi,
+>
+> thanks for the report.
+>
+> Am 23.09.25 um 13:06 schrieb Quanmin Yan:
+>> Recently, we discovered the following issue through syzkaller:
+>>
+>> BUG: KASAN: slab-use-after-free in fb_mode_is_equal+0x285/0x2f0
+>> Read of size 4 at addr ff11000001b3c69c by task syz.xxx
+>> ...
+>> Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0xab/0xe0
+>>   print_address_description.constprop.0+0x2c/0x390
+>>   print_report+0xb9/0x280
+>>   kasan_report+0xb8/0xf0
+>>   fb_mode_is_equal+0x285/0x2f0
+>>   fbcon_mode_deleted+0x129/0x180
+>>   fb_set_var+0xe7f/0x11d0
+>>   do_fb_ioctl+0x6a0/0x750
+>>   fb_ioctl+0xe0/0x140
+>>   __x64_sys_ioctl+0x193/0x210
+>>   do_syscall_64+0x5f/0x9c0
+>>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>
+>> The issue occurs in the function fb_mode_is_equal(p->mode, mode), I also
+>> noticed that when freeing the memory related to fb_info->modelist, 
+>> there's
+>> no attempt to set the corresponding fb_display[i]->mode to NULL after
+>> freeing. Based on analysis, the root cause of this bug appears to be 
+>> that
+>> a certain p->mode has become a wild pointer.
+>>
+>> I've identified two code paths for freeing modelist->mode:
+>> 1. fb_delete_videomode - removes videomode entry from modelist.
+>> 2. fb_destroy_modelist - destroys the entire modelist.
+>
+> What about fb_new_modelist()? [1] It's called from store_modes() and 
+> the whole logic in the caller seems fragile to me. This could leave 
+> p->mode set when it should be cleared; and vice versa.
+>
+> [1] 
+> https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbmem.c#L712
+> [2] 
+> https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbsysfs.c#L113 
+>
+>
+After testing, this path does not exhibit the issue because in 
+fbcon_new_modelist [1], the
+modes in fb_display[] get refreshed and won't leave wild pointers. Even 
+if fb_new_modelist()
+fails, the original modelist will be restored [2].
 
-I prefer to preserve the ones we have.
+[1] 
+https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbmem.c#L736
+[2] 
+https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbsysfs.c#L115 
 
-> > -static void __init sclp_add_standby_memory(void)
-> > +static int __init create_standby_sclp_mems(struct sclp_mem *sclp_mems, struct kset *kset)
-> >   {
-> >   	struct memory_increment *incr;
-> > +	int rc = 0;
-> >   	list_for_each_entry(incr, &sclp_mem_list, list) {
-> >   		if (incr->standby)
-> > -			add_memory_merged(incr->rn);
-> > +			rc = create_standby_sclp_mems_merged(sclp_mems, kset, incr->rn);
-> > +		if (rc)
-> > +			goto out;
-> 
-> Why not "return rc;" to avoid the goto label?
+>>
+>> Analysis shows that fb_delete_videomode path should have been fixed in
+>> a previous patch[1]. Therefore, the current bug is likely triggered
+>> through the fb_destroy_modelist path. I've found a reproducible test 
+>> case:
+>> 1. With /dev/fb0 already registered in the system, load a kernel module
+>>     to register a new device /dev/fb1;
+>> 2. Set fb1's mode to the global fb_display[] array (via 
+>> FBIOPUT_CON2FBMAP);
+>> 3. Switch console from fb to VGA (to allow normal rmmod of the ko);
+>> 4. Unload the kernel module - at this point fb1's modelist is freed, 
+>> leaving
+>>     a wild pointer in fb_display[];
+>> 5. Trigger the bug via system calls through fb0 attempting to delete 
+>> a mode
+>>     from fb0.
+>>
+>> To prevent similar issues from recurring, consider traversing 
+>> fb_display[]
+>> whenever releasing a mode from fb_info. If the corresponding mode exists
+>> in fb_display[], set its pointer to NULL.
+>>
+>> [1] 
+>> https://lore.kernel.org/all/20210712085544.2828-1-thunder.leizhen@huawei.com/
+>>
+>> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+>> ---
+>> This is my first time working on fb issues. If there are any 
+>> misunderstandings
+>> in my analysis, I would appreciate corrections from the community.
+>>
+>>   drivers/video/fbdev/core/fbcon.c  | 11 +++++++++++
+>>   drivers/video/fbdev/core/modedb.c |  7 +++++++
+>>   include/linux/fbcon.h             |  2 ++
+>>   3 files changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/video/fbdev/core/fbcon.c 
+>> b/drivers/video/fbdev/core/fbcon.c
+>> index b062b05f4128..bfbf79d6cd05 100644
+>> --- a/drivers/video/fbdev/core/fbcon.c
+>> +++ b/drivers/video/fbdev/core/fbcon.c
+>> @@ -2803,6 +2803,17 @@ int fbcon_mode_deleted(struct fb_info *info,
+>>       return found;
+>>   }
+>>   +void fb_display_clean_videomode(struct fb_videomode *m)
+>
+> Rather fbcon_delete_mode
+>
+>> +{
+>> +    struct fbcon_display *p;
+>> +
+>> +    for (int i = first_fb_vc; i <= last_fb_vc; i++) {
+>
+> I think this code also needs to test the fb_info, or it might clear 
+> another display's mode. See [3] for an example
+>
+> [3] 
+> https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbcon.c#L2786
+>
+>> +        p = &fb_display[i];
+>> +        if (p->mode == m)
+>> +            p->mode = NULL;
+>> +    }
+>> +}
+>> +
+>>   #ifdef CONFIG_VT_HW_CONSOLE_BINDING
+>>   static void fbcon_unbind(void)
+>>   {
+>> diff --git a/drivers/video/fbdev/core/modedb.c 
+>> b/drivers/video/fbdev/core/modedb.c
+>> index 53a610948c4a..5a0ee96ebefa 100644
+>> --- a/drivers/video/fbdev/core/modedb.c
+>> +++ b/drivers/video/fbdev/core/modedb.c
+>> @@ -16,6 +16,7 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/fb.h>
+>>   #include <linux/kernel.h>
+>> +#include <linux/fbcon.h>
+>>     #undef DEBUG
+>>   @@ -1100,6 +1101,7 @@ void fb_delete_videomode(const struct 
+>> fb_videomode *mode,
+>>           modelist = list_entry(pos, struct fb_modelist, list);
+>>           m = &modelist->mode;
+>>           if (fb_mode_is_equal(m, mode)) {
+>> +            fb_display_clean_videomode(m);
+>
+> There's only one caller of fb_delete_videomode(). I think this call 
+> should be right before fb_delete_videomode().
+This path has already been fixed [3], so this modification is no longer 
+necessary and will be
+removed in the next version of the patch.
 
-Sure. Will add it.
+[3] 
+https://lore.kernel.org/all/20210712085544.2828-1-thunder.leizhen@huawei.com/
 
-> >   	}
-> > -	add_memory_merged(0);
-> > +	rc = create_standby_sclp_mems_merged(sclp_mems, kset, 0);
-> > +out:
-> > +	return rc;
-> > +}
-> > +
-> > +static int __init init_sclp_mem(void)
-> > +{
-> > +	const u64 block_size = memory_block_size_bytes();
-> 
-> Instead of "u64" maybe "unsigned long" like memory_block_size_bytes()
-> returns?
+Additionally, in the next version of the patch, I have incorporated your 
+other suggestions
+and made corresponding adjustments. I will send the updated patch set 
+shortly.
 
-Noted.
-
-> > +	const u64 max_sclp_mems = roundup(sclp.rnmax * sclp.rzm, block_size) / block_size;
-> 
-> Instead of u64 maybe "unsigned int" like the ids you store per sclp_mem?
-
-Sure.
-
-> > +	struct sclp_mem *sclp_mems;
-> > +	struct sclp_mem_arg arg;
-> > +	struct kset *kset;
-> > +	int rc;
-> > +
-> > +	/* Allocate memory for all blocks ahead of time. */
-> > +	sclp_mems = kcalloc(max_sclp_mems, sizeof(struct sclp_mem), GFP_KERNEL);
-> > +	if (!sclp_mems)
-> > +		return -ENOMEM;
-> > +
-> > +	kset = kset_create_and_add("memory", NULL, firmware_kobj);
-> > +	if (!kset)
-> > +		return -ENOMEM;
-> 
-> I guess we don't care about freeing sclp_mems in that case? Likely it should
-> never ever happen either way.
-
-Right. We dont care about freeing sclp_mems here.
-
-Thank you.
+Best regards,
+Quanmin Yan
+>
+>>               list_del(pos);
+>>               kfree(pos);
+>>           }
+>> @@ -1113,8 +1115,13 @@ void fb_delete_videomode(const struct 
+>> fb_videomode *mode,
+>>   void fb_destroy_modelist(struct list_head *head)
+>>   {
+>>       struct list_head *pos, *n;
+>> +    struct fb_modelist *modelist;
+>> +    struct fb_videomode *m;
+>>         list_for_each_safe(pos, n, head) {
+>> +        modelist = list_entry(pos, struct fb_modelist, list);
+>> +        m = &modelist->mode;
+>> +        fb_display_clean_videomode(m);
+>
+> Same here: I think fb_destroy_modelist() should only release the mode. 
+> Clearing the fbcon mode should be done by the caller.
+>
+> Best regards
+> Thomas
+>
+>>           list_del(pos);
+>>           kfree(pos);
+>>       }
+>> diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
+>> index 81f0e698acbf..2b5e93aeaaff 100644
+>> --- a/include/linux/fbcon.h
+>> +++ b/include/linux/fbcon.h
+>> @@ -18,6 +18,7 @@ void fbcon_suspended(struct fb_info *info);
+>>   void fbcon_resumed(struct fb_info *info);
+>>   int fbcon_mode_deleted(struct fb_info *info,
+>>                  struct fb_videomode *mode);
+>> +void fb_display_clean_videomode(struct fb_videomode *m);
+>>   void fbcon_new_modelist(struct fb_info *info);
+>>   void fbcon_get_requirement(struct fb_info *info,
+>>                  struct fb_blit_caps *caps);
+>> @@ -38,6 +39,7 @@ static inline void fbcon_suspended(struct fb_info 
+>> *info) {}
+>>   static inline void fbcon_resumed(struct fb_info *info) {}
+>>   static inline int fbcon_mode_deleted(struct fb_info *info,
+>>                        struct fb_videomode *mode) { return 0; }
+>> +static inline void fb_display_clean_videomode(struct fb_videomode 
+>> *m) {}
+>>   static inline void fbcon_new_modelist(struct fb_info *info) {}
+>>   static inline void fbcon_get_requirement(struct fb_info *info,
+>>                        struct fb_blit_caps *caps) {}
+>
 
