@@ -1,264 +1,247 @@
-Return-Path: <linux-kernel+bounces-847919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D96BCC0FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:04:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF14BCC107
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0272424CE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:03:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B9864F5039
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2AD277032;
-	Fri, 10 Oct 2025 08:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5299C284688;
+	Fri, 10 Oct 2025 08:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ora1BG2W"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FGm8wC2+"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012021.outbound.protection.outlook.com [40.107.209.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D282750E1
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760083419; cv=none; b=j0WIauGZo7p29+iyzI+fj8KqQ3buU2KP4AvtKg9+i6BPzas0G4SbsTZ7sxG2V9GKO3h+mJy3OPdS8wj8GR2HYym1+SfvfoTv3Hdmd5OJihstb/vL65ONBqOiRgym1vBGZg5972LxDqw7aRg5wUSum3MV0bTwD4TvWuc8y8MXmZ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760083419; c=relaxed/simple;
-	bh=Hr2HfUFu8PpxmQsxceE1JzN1nqvM5MKIHV4MaA5UBVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZXzn3vIUH/dh2W2OEsatLb/a0j8ESiUP0NyT3I2DgEcoe4Lai2BFi0Nac375qQfi82ajP/Ap75N6WA8t8g99439kogl/h+9FRp79FozA9u99RIdDND5U6yEQt/YLxi3SBi7n13Yq+/JcxFl8mXu+oLTTzsvRQl8v8XXSf36ZaFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ora1BG2W; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3sqi2g0Xg79fjy1lU/loVbkeZWtx4zm34wmi9o+3jck=; b=ora1BG2WxcE2bSYgK1Y5n6QY/D
-	/LN/5DSzBUk3a1CUWTbjP3AKsmroNArBwBA7dIKM5O8509q9a50o3iEjpP3k7nFWvinr+t/aN6dSv
-	BAgtYShTL85yiGvmRB90VADJq4e+OJM81ZhoWzcXoTHlYFdENcgIxwNbNYHjoZwUfr6q4kFOZA870
-	+yJgPaEmhChhH9sVZVcTRvf8iKV/vMTDjvhJWsqgG1lrp6fJaTL72NSZLh05tTjSxWR6XJYPMOB9W
-	P6Xzcjy6XJdOGkh9pPj8Jbv7h2+pjk89SoqTkwqBiNEolm6AZOju8ZDjy5VBgHtes+5TvTPjPkA94
-	hPkcSH+A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v7863-000000077rD-03kV;
-	Fri, 10 Oct 2025 08:03:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3186530023C; Fri, 10 Oct 2025 10:03:27 +0200 (CEST)
-Date: Fri, 10 Oct 2025 10:03:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
- scoped_seqlock_read_irqsave()
-Message-ID: <20251010080327.GF4067720@noisy.programming.kicks-ass.net>
-References: <20251008123045.GA20440@redhat.com>
- <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
- <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
- <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
- <20251009143748.GA2704@redhat.com>
- <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
- <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
- <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
- <20251009221242.GX3419281@noisy.programming.kicks-ass.net>
- <CAHk-=whmjm0BbirO8HhT_TZQ2JJMs_FpTcT9SXXaA3NifW2a4w@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F87F28135D;
+	Fri, 10 Oct 2025 08:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760083443; cv=fail; b=SszGrqNZCew8kikqTunoNrJbcVicMVscxZN+9JHLJNe+n2EK6HGu0kaxvi164eLjiNRoQd9T+eJpkQnSYRzMi0xt/ehCJY4U27IrRh3yb2h+XsLsxEavWdyCU2SGnHq75h8yEi344oi2rhRC0r6vtkI6+H33Y9HWTQ4gZqX3Mmc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760083443; c=relaxed/simple;
+	bh=GarHk45DPv6WH/xGBwkvr+BWhgezJ1ggcGny+pvMwik=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ls8bJiu3SbfdIq5Z/2wEzh6Tee+2cdF9IYfS5/7gPcUr+OYzYLoM1HB18o43ZWwcF5QR/nd8tqgjdj+FGVpcqbep+6z0/Chvdx034PQddo9+RhQndrklI0Nhkr35RPnp6wyQlRApWsW8rwp8XSyISGddKDgz8PXlQyV326Uj/OA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FGm8wC2+; arc=fail smtp.client-ip=40.107.209.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yK5Qw8Snjhnonh5fyH5hmNNbDR26sWutYidohzYin7mCb4LNK770XOdRBkuUX70DZl84LF2+U5AsKI10B3N5LbaGgfYm7+5vzjlSmUzIfDU9HTZoKYZmUmQtgdfeP4YYAZVwTR/DXqxOoZUXhEzSiWm2AxduXgEq6mNJByerhp6H87giex3HNEh3Sv4RkCb/SPtpYChqED3OTk5yzcc71ioUsd0DSlM1XeZQD7jtuyBQEbo16X8emZ5UZHf3szbpBt80de/TGV41URuT+mW26Gx7rdlqyEndC0Sneo3llsiA4XPY+2X5Th45Xbw7Dn9GVmBEK2kxMriQUueDd9I1ZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BPQGulD05p4i0YiGtOLX0WteKpyWM2Apik3jxnkF9kQ=;
+ b=LZwjPVJi4JbuDtXV3FK5nCYVMAp1YYhhzaO62i2HuCOLAH/gvtHF8E27EupSOlZ4kaGvkZNbEiN4PF/HMk+8XGFcp4gpugsQ/HUCwG1KKE42GDwsiN+BFyEL+SV8nW/EWAgI0tIJQXNTAeQEmozaFtshCWwYOUDj3xIlENtV01xe54l27fjPUSvfMYJlLSoG0/yLuJh6/qMCSZDXw77wUuGc3978KU7bMf/UV5U0zBFxXt66AyqRdoj5YV4ihv4BXRUQbPT8SGSKkA1ZCGfWC3umMMo9naInStTyiADSUHMc1JAzIrMWm/XAqC9lSnbP52SXcG/ULRyzrFKkw/28wQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BPQGulD05p4i0YiGtOLX0WteKpyWM2Apik3jxnkF9kQ=;
+ b=FGm8wC2+djw7EHACr+BilFRoqcDaKENvTHYik799D+h5FVRJVgFJr7qvqMUTTcCdTbTJftbbd6E/k1VV5WgLUNWfxgV6x6bXa6zjhXg3C3Q2VCyiy7IX/jhyE9YXoegd4vOoBL1LIeJsi16N4EEtdDKuoZykeLoKf8ewtHKeL5OPt2ZEr8DqKPKib1egS4tTWGSU9IYgYkuFb6ps9kmOZl/nMJ6Zr2zpIkbvNIISDWRSdpHcTOeB0fgyL69JDWi4GVYKg6UIc2F5ScmKpOCXGOCWm/TczdRKhKRJiIbsBj45GP0tH9N4G7+/DO82QStey9N5YWQ0vmKOHen+lLlmZw==
+Received: from SJ0PR03CA0117.namprd03.prod.outlook.com (2603:10b6:a03:333::32)
+ by IA1PR12MB6652.namprd12.prod.outlook.com (2603:10b6:208:38a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 08:03:53 +0000
+Received: from CO1PEPF000042A9.namprd03.prod.outlook.com
+ (2603:10b6:a03:333:cafe::70) by SJ0PR03CA0117.outlook.office365.com
+ (2603:10b6:a03:333::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Fri,
+ 10 Oct 2025 08:03:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000042A9.mail.protection.outlook.com (10.167.243.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Fri, 10 Oct 2025 08:03:53 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 10 Oct
+ 2025 01:03:42 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 10 Oct
+ 2025 01:03:42 -0700
+Received: from ipp2-2168.ipp2a1.colossus.nvidia.com (10.127.8.14) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Fri, 10 Oct 2025 01:03:41 -0700
+From: Zhi Wang <zhiw@nvidia.com>
+To: <rust-for-linux@vger.kernel.org>
+CC: <dakr@kernel.org>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
+	<ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
+	<a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<cjia@nvidia.com>, <smitra@nvidia.com>, <ankita@nvidia.com>,
+	<aniketa@nvidia.com>, <kwankhede@nvidia.com>, <targupta@nvidia.com>,
+	<zhiw@nvidia.com>, <zhiwang@kernel.org>
+Subject: [RFC 4/6] rust: pci: add config space read/write support
+Date: Fri, 10 Oct 2025 08:03:28 +0000
+Message-ID: <20251010080330.183559-5-zhiw@nvidia.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251010080330.183559-1-zhiw@nvidia.com>
+References: <20251010080330.183559-1-zhiw@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whmjm0BbirO8HhT_TZQ2JJMs_FpTcT9SXXaA3NifW2a4w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042A9:EE_|IA1PR12MB6652:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97349583-a175-44dc-2a91-08de07d38e10
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+4FcGkjNouv8amBWG2+nB8aeTZ7CC1TKjDDuIjL5+vYvp39ObYaaGbkVCj8E?=
+ =?us-ascii?Q?K4ZjYLHvzasRLD+81cZsl+2byaYUG4ERvfLeEg3bT+W6wwoSZSENH85j/pbx?=
+ =?us-ascii?Q?VrjzcNpc/rjyeLEUXMgNtiZW+CHsp7ju1PHGgpL/Qt9z93+vFATKB7VDg2Oi?=
+ =?us-ascii?Q?IvreWzzSvuqzJ81zx2CwgvfF8d7aNF4cgqhezz4v89ZuhNlziaGWu3m42I44?=
+ =?us-ascii?Q?GJnNXW/YWRaKJVL6VFggSK8dq233hVv/cvvn5pDTVemqTjpCiSc6JLqToR6G?=
+ =?us-ascii?Q?21FOB0iKpxxYe3odo4KSHleiK5KfcIyrsgQT2E2gnElY4AJOXf1rNyDI2bbA?=
+ =?us-ascii?Q?ub5asDpCIqhpQu4SvuIZG7u13QEVDrUfDTc3MUL9y2HQ7Fh+kvpvMFDCrJ4l?=
+ =?us-ascii?Q?yHMj3j5+VyVXe48hIT3J1AxiEI55pf2z0N7dyIng8sk5LnzTgCkSmfrbiU5Z?=
+ =?us-ascii?Q?bkumiX/BHWumIGw+z1tkSlU4waOKelpQSWc71S/0fLKXZzQ5gthwYZteEhzS?=
+ =?us-ascii?Q?o4OMv3nZwfR4tBYmgRWEflT74MIMNvmxQLaUW3BELlJX52ufwDIK21Fy8K1J?=
+ =?us-ascii?Q?hM6V4KrhEZVWTAxTDZQ5KJmttMTWQRzXAjP9gZhlmhcnFg4Qvad3AzbNBb8p?=
+ =?us-ascii?Q?3UrWN3/io+HUL/n18C0Znwf3wQBN7GJFWZ5PlBbm4N8TSsIqW1dWroyutSg0?=
+ =?us-ascii?Q?WKvqMEo1vIdULyRFGE/f3A/x9wtV/jHGxr75Bm7TdeddYu6g5KF29BVSicYU?=
+ =?us-ascii?Q?Ii8AjkIup32wFVwjp9k7IZR/lXw6EpdOUmO4dNYKj+q8KgcI04dHD4QCj+BV?=
+ =?us-ascii?Q?/czp1tjtlzNQJQJHX19fBfyZ3ttB8EsqKs2wVONC94ULQxcRo4hkBjkgQUSw?=
+ =?us-ascii?Q?DVM0yCm+9FLiQfWv8g1J3xH/d72ew6/14fY3zvo4f2RbjltqOM6ELPVSFgjM?=
+ =?us-ascii?Q?EjbWLu6P1giJWKHW9+P33i1I9dX9fA/Nk+fyuDWks9zTMK9WnyHqR98SHsfH?=
+ =?us-ascii?Q?cU5iSQPZ81zR60iaR6vadcPDhh2QysFR3dCfxs/9R81KKJHyIBwhvSapY9ZJ?=
+ =?us-ascii?Q?uBXii57RkRpdXwcZxjkPnmgBCK9NhgBLDnxvoa4l/ZQ+3/58mn1VhqHWdJ0y?=
+ =?us-ascii?Q?8vs8h1/7u/cmIx2I0HNqRm0aQ/H5qFr53ILhugZ+5ymCXbK/VBXUXP1jtfSz?=
+ =?us-ascii?Q?FSaCnOM5GfwTtmBod0zPvkjpjxxbX1WFQqy2uqcXr6t7nwc7mvs6JnkFykpd?=
+ =?us-ascii?Q?kQqX+IJeQxHax/DSlTHYm1qqLjN3NP4FhhKNVWBI468ZChgbOBMgdipBQEDe?=
+ =?us-ascii?Q?MgeCv1/jogEOTVp2zGVPWV2TSPV8H9HRo0/8JTSeyDspuNDbFMpVceiFisA4?=
+ =?us-ascii?Q?9jOUCFmMhmlg7x3OldkAm1dqbje2nZmgc6HCztMaaROhOA2ECij8oa40gjFQ?=
+ =?us-ascii?Q?RRLSxisTF/sZiHGfbfs5mdn+UEqN1Ls1NG3/RfPHnkLdqILdVJaJOntLYLSz?=
+ =?us-ascii?Q?ZOncmjH3SSQ8bSV1VJhfL0F/gs/eQRgS8gxQhoPzC+PFwlKH7HskyYqAYBS5?=
+ =?us-ascii?Q?s3SXkXfl80Xjms6xdNI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 08:03:53.4996
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97349583-a175-44dc-2a91-08de07d38e10
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042A9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6652
 
-On Thu, Oct 09, 2025 at 03:55:15PM -0700, Linus Torvalds wrote:
-> On Thu, 9 Oct 2025 at 15:12, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Sure; otoh compiler should be able to tell the same using liveness
-> > analysis I suppose, but perhaps they're not *that* clever.
-> 
-> They are that clever, but only if they end up unrolling the loop
-> statically. If the loop remains a loop, the two variables end up live
-> in the same code.
-> 
-> And while a compiler _could_ in theory still see that they aren't
-> actually live in the same _iteration_, I don't think any compiler
-> actually ends up being that clever in practice.
-> 
-> So making it a union then hopefully gets the compiler to basically use
-> that explicit information.
+Introduce a `ConfigSpace` wrapper in Rust PCI abstraction to provide safe
+accessors for PCI configuration space. The new type implements the
+`IoRegion` trait to share offset validation and bound-checking logic with
+MMIO regions.
 
-Right, so I had to use -Os to not make it unroll the thing, but then
-indeed, sharing the variable helps it.
-
-> > So I thought they were fine; we handle all the enum cases with 'return'
-> > so its impossible to not exit the switch() but the silly compiler was
-> > complaining about possible fall-through, so clearly it was getting
-> > confused.
-> 
-> Yeah, I found the same thing with the 0/1/2 approach - the compiler
-> wouldn't realize that the range was limited until I added a very
-> explicit limit check that "shouldn't matter", but did.
-> 
-> This might obviously end up depending on compiler version and other
-> random things, but in general the whole value range analysis tends to
-> be a pretty fragile thing.
-> 
-> In practice, compilers tend to be good at doing value range analysis
-> if they see particular patterns (like initializing it to some value,
-> always incrementing it by one, and comparing against another value).
-> 
-> But when it's written more like a state machine like this, it's
-> clearly very hit and miss.
-
-I reordered the code, it is happier now.
-
-Anyway, the below seems to generate decent code for
-{-O2,-Os}x{gcc-14,clang-22}. Yay for optimizing compilers I suppose :-)
-
+Signed-off-by: Zhi Wang <zhiw@nvidia.com>
 ---
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index 5ce48eab7a2a..45fab026f7d6 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -1209,4 +1209,83 @@ done_seqretry_irqrestore(seqlock_t *lock, int seq, unsigned long flags)
- 	if (seq & 1)
- 		read_sequnlock_excl_irqrestore(lock, flags);
- }
-+
-+enum ss_state {
-+	ss_done = 0,
-+	ss_lock,
-+	ss_lock_irqsave,
-+	ss_lockless,
-+};
-+
-+struct ss_tmp {
-+	enum ss_state	state;
-+	unsigned long	data;
-+	spinlock_t	*lock;
-+	spinlock_t	*lock_irqsave;
-+};
-+
-+static inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
-+{
-+	if (sst->lock)
-+		spin_unlock(sst->lock);
-+	if (sst->lock_irqsave)
-+		spin_unlock_irqrestore(sst->lock, sst->data);
+ rust/kernel/pci.rs | 61 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+
+diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+index 7a107015e7d2..2f94b370fc99 100644
+--- a/rust/kernel/pci.rs
++++ b/rust/kernel/pci.rs
+@@ -12,6 +12,8 @@
+     error::{from_result, to_result, Result},
+     io::Io,
+     io::IoRaw,
++    io::IoRegion,
++    io::{define_read, define_write},
+     str::CStr,
+     types::{ARef, Opaque},
+     ThisModule,
+@@ -275,6 +277,65 @@ pub struct Device<Ctx: device::DeviceContext = device::Normal>(
+     PhantomData<Ctx>,
+ );
+ 
++/// Represents the PCI configuration space of a device.
++///
++/// Provides typed read and write accessors for configuration registers
++/// using the standard `pci_read_config_*` and `pci_write_config_*` helpers.
++///
++/// The generic const parameter `SIZE` can be used to indicate the
++/// maximum size of the configuration space (e.g. 256 bytes for legacy,
++/// 4096 bytes for extended config space). The actual size is obtained
++/// from the underlying `struct pci_dev` via [`Device::cfg_size`].
++pub struct ConfigSpace<const SIZE: usize = 0> {
++    pdev: ARef<Device>,
 +}
 +
-+extern void __scoped_seqlock_invalid_target(void);
-+extern void __scoped_seqlock_bug(void);
++impl<const SIZE: usize> IoRegion<SIZE> for ConfigSpace<SIZE> {
++    /// Returns the base address of this mapping.
++    #[inline]
++    fn addr(&self) -> usize {
++        0
++    }
 +
-+static inline void
-+__scoped_seqlock_next(struct ss_tmp *sst, seqlock_t *lock, enum ss_state target)
-+{
-+	switch (sst->state) {
-+	case ss_done:
-+		__scoped_seqlock_bug();
-+		return;
-+
-+	case ss_lock:
-+	case ss_lock_irqsave:
-+		sst->state = ss_done;
-+		return;
-+
-+	case ss_lockless:
-+		if (!read_seqretry(lock, sst->data)) {
-+			sst->state = ss_done;
-+			return;
-+		}
-+		break;
-+	}
-+
-+	switch (target) {
-+	case ss_done:
-+		__scoped_seqlock_invalid_target();
-+		return;
-+
-+	case ss_lock:
-+		sst->lock = &lock->lock;
-+		spin_lock(sst->lock);
-+		sst->state = ss_lock;
-+		return;
-+
-+	case ss_lock_irqsave:
-+		sst->lock_irqsave = &lock->lock;
-+		spin_lock_irqsave(sst->lock, sst->data);
-+		sst->state = ss_lock_irqsave;
-+		return;
-+
-+	case ss_lockless:
-+		sst->data = read_seqbegin(lock);
-+		return;
-+	}
++    /// Returns the maximum size of this mapping.
++    #[inline]
++    fn maxsize(&self) -> usize {
++        self.pdev.cfg_size() as usize
++    }
 +}
 +
-+#define __scoped_seqlock_read(_seqlock, _target, _s)			\
-+	for (struct ss_tmp _s __cleanup(__scoped_seqlock_cleanup) =	\
-+	     { .state = ss_lockless, .data = read_seqbegin(_seqlock) };	\
-+	     _s.state != ss_done;					\
-+	     __scoped_seqlock_next(&_s, _seqlock, _target))
++macro_rules! call_config_read {
++    ($c_fn:ident, $self:ident, $offset:expr, $ty:ty, $_addr:expr) => {{
++        let mut val: $ty = 0;
++        let _ret = unsafe { bindings::$c_fn($self.pdev.as_raw(), $offset as i32, &mut val) };
++        val
++    }};
++}
 +
-+#define scoped_seqlock_read(_seqlock, _target)				\
-+	__scoped_seqlock_read(_seqlock, _target, __UNIQUE_ID(seqlock))
++macro_rules! call_config_write {
++    ($c_fn:ident, $self:ident, $offset:expr, $ty:ty, $_addr:expr, $value:expr) => {{
++        let _ret = unsafe { bindings::$c_fn($self.pdev.as_raw(), $offset as i32, $value) };
++    }};
++}
 +
- #endif /* __LINUX_SEQLOCK_H */
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 7097de2c8cda..d2b3f987c888 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -313,10 +313,8 @@ static u64 read_sum_exec_runtime(struct task_struct *t)
- void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
- {
- 	struct signal_struct *sig = tsk->signal;
--	u64 utime, stime;
- 	struct task_struct *t;
--	unsigned int seq, nextseq;
--	unsigned long flags;
-+	u64 utime, stime;
- 
- 	/*
- 	 * Update current task runtime to account pending time since last
-@@ -329,27 +327,19 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
- 	if (same_thread_group(current, tsk))
- 		(void) task_sched_runtime(current);
- 
--	rcu_read_lock();
--	/* Attempt a lockless read on the first round. */
--	nextseq = 0;
--	do {
--		seq = nextseq;
--		flags = read_seqbegin_or_lock_irqsave(&sig->stats_lock, &seq);
-+	guard(rcu)();
-+	scoped_seqlock_read(&sig->stats_lock, ss_lock_irqsave) {
- 		times->utime = sig->utime;
- 		times->stime = sig->stime;
- 		times->sum_exec_runtime = sig->sum_sched_runtime;
- 
--		for_each_thread(tsk, t) {
-+		__for_each_thread(sig, t) {
- 			task_cputime(t, &utime, &stime);
- 			times->utime += utime;
- 			times->stime += stime;
- 			times->sum_exec_runtime += read_sum_exec_runtime(t);
- 		}
--		/* If lockless access failed, take the lock. */
--		nextseq = 1;
--	} while (need_seqretry(&sig->stats_lock, seq));
--	done_seqretry_irqrestore(&sig->stats_lock, seq, flags);
--	rcu_read_unlock();
-+	}
- }
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
++#[allow(dead_code)]
++impl<const SIZE: usize> ConfigSpace<SIZE> {
++    /// Return an initialized object.
++    pub fn new(pdev: &Device) -> Result<Self> {
++        Ok(ConfigSpace {
++            pdev: pdev.into(),
++        })
++    }
++
++    define_read!(read8, try_read8, call_config_read, pci_read_config_byte -> u8);
++    define_read!(read16, try_read16, call_config_read, pci_read_config_word -> u16);
++    define_read!(read32, try_read32, call_config_read, pci_read_config_dword -> u32);
++
++    define_write!(write8, try_write8, call_config_write, pci_write_config_byte <- u8);
++    define_write!(write16, try_write16, call_config_write, pci_write_config_word <- u16);
++    define_write!(write32, try_write32, call_config_write, pci_write_config_dword <- u32);
++}
++
+ /// A PCI BAR to perform I/O-Operations on.
+ ///
+ /// # Invariants
+-- 
+2.47.3
+
 
