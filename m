@@ -1,194 +1,140 @@
-Return-Path: <linux-kernel+bounces-848269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6CCBCD138
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE243BCD12C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 15:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102293C70EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:16:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674713B4CBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD00285CB6;
-	Fri, 10 Oct 2025 13:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0A7289376;
+	Fri, 10 Oct 2025 13:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ekz3Ue5J"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjDcJxSR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FB11F63FF
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D2934BA46;
+	Fri, 10 Oct 2025 13:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760102179; cv=none; b=TkfFZEt9PD8GIbjJUri0Fd0iM1zIBDHXrKiM1ihlGUQ6iEpXIVCwPTulqJuOM8GjZDiclfPv/PVF2iiiOomSmzrXM00yQ9oEeL7Tj2S7SgmZmAisMD7QgS5iJi1r2fhJNMAz4kpcE1CN/JzkWe+qGpZp5iKiqihq7+JBZJ4d9uc=
+	t=1760102141; cv=none; b=ISXWWWZNghdwkwMYlL96LMzrhxCMUvc5c0goOA0LM/8RQaczzq9BXr37ao5e2Yl7hbLy+HFWLla0lwxB0q98dW4msAsNkHtMS2v3TN/6r6VGs3O1FijTkHhxYzjho9s0c/hXYRBJSpgO5gKh2y5IWo85SzjLuCUh3y0arcJOF8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760102179; c=relaxed/simple;
-	bh=N2KbvdFGyoYES8nigVZMAyfBjCSoYaOhcXXRE2LcdCo=;
+	s=arc-20240116; t=1760102141; c=relaxed/simple;
+	bh=O8r1zDNV/ies1XRo8c9X1EYti/ggkfRs1ACGmDvFl38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tjG8PiSvT1cjscWuyR3ZkGSJy+MUn05eqgAKv2/bC3MSMKS2qw6RYVESh6U2KRwe2vu9hmJi16crweo42Fy0QpkeOHlmkHI6leHNYh2Ahvg9DBWOlwk+JhbHHrzUSs5QhBMqhrioT5tPEeyOwZjIBX4LzTDQf8/UUKr9wbu9iSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ekz3Ue5J; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760102176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxer9+u7BblvH5ZI0UIQCwT2/E+R71RYa38L9H5HCIc=;
-	b=ekz3Ue5JXoIeNICJvb0ZLK9kaXa2uecfKgrWchExiQ6CmPQ+nCvzERuDaN0bstFlALFXYw
-	dzi5c45CkEVIynRPpz0R2auFE0nfswPvT9qbDRiwDuDmOQDRq+1QRLo6Y8mT6cjrbUDlnh
-	9KunekekTvFOI78+pSznI8EyZ1F+XDs=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-190-DgycrCXoNA2_lBZHLFNYwA-1; Fri,
- 10 Oct 2025 09:16:07 -0400
-X-MC-Unique: DgycrCXoNA2_lBZHLFNYwA-1
-X-Mimecast-MFC-AGG-ID: DgycrCXoNA2_lBZHLFNYwA_1760102166
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 94E57180057E;
-	Fri, 10 Oct 2025 13:16:05 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.21])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6C5E41800446;
-	Fri, 10 Oct 2025 13:16:00 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 10 Oct 2025 15:14:45 +0200 (CEST)
-Date: Fri, 10 Oct 2025 15:14:39 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPdyrtSbeHIDoAItsXhmwCXKnSoN98RWor1YceFwbq83VzEMrimBl9isVrZVEU37uUm+LGeiRwQXEnaN2dO06xVb7f0ZtqN1XmX6l2BB2h3lBWDpJQpnAyBmORYFc9gSPxWclzPbWzP16DJemKsnGrtPJgDOkY2Hmk25uRwLLhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjDcJxSR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6BB8C4CEF1;
+	Fri, 10 Oct 2025 13:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760102141;
+	bh=O8r1zDNV/ies1XRo8c9X1EYti/ggkfRs1ACGmDvFl38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HjDcJxSR0hQ09NB7ldl0ncgXbArBd7W3/aipJ7JWIBd0IVJZFQUxq91KNtX588cP5
+	 tUqU9nFMF/hTOKIBDIFlrEbrMCYcio/+/LdjJvxJWqh3hqNuo8nyFTrU8fw/grlr1F
+	 51/MxZVpQER9pjo+mzUfTbnVBMv4Oobfirt55L7OTi2YeyAMPS1TD/eVJu044PFz8S
+	 wMFseFHULY58amwtA1wtRKVzbMRqL52BpWwnfw1V8IDXMpKIINudKi3MB84QJTEAD+
+	 1R9I4fq3tU1a4crLuMERSdGYBCGsyljURp3FMxZW73+yzlQbcTGzq26QPMTPm9SscT
+	 fNR0cB7xZ2yag==
+Date: Fri, 10 Oct 2025 15:15:38 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Francesco Lavra <flavra@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
- scoped_seqlock_read_irqsave()
-Message-ID: <20251010131439.GB8798@redhat.com>
-References: <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
- <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
- <20251009143748.GA2704@redhat.com>
- <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
- <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
- <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
- <20251009221242.GX3419281@noisy.programming.kicks-ass.net>
- <CAHk-=whmjm0BbirO8HhT_TZQ2JJMs_FpTcT9SXXaA3NifW2a4w@mail.gmail.com>
- <20251010080327.GF4067720@noisy.programming.kicks-ass.net>
- <20251010122347.GA8798@redhat.com>
+Subject: Re: [PATCH 2/2] iio: imu: st_lsm6dsx: Decouple sensor ODR from FIFO
+ batch data rate
+Message-ID: <aOkG-jBOYXxWy1z3@lore-desk>
+References: <20251009173609.992452-1-flavra@baylibre.com>
+ <20251009173609.992452-3-flavra@baylibre.com>
+ <aOg3dg21aWNTF47x@lore-desk>
+ <160b32c14df3daa06304fef430534561cabcfaea.camel@baylibre.com>
+ <aOjAK9LRMCcBspkb@lore-desk>
+ <9dbd2ae7883ec8dba65706603a29f3144076840e.camel@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q9L2gUSXS00tM16I"
+Content-Disposition: inline
+In-Reply-To: <9dbd2ae7883ec8dba65706603a29f3144076840e.camel@baylibre.com>
+
+
+--Q9L2gUSXS00tM16I
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251010122347.GA8798@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: quoted-printable
 
-On 10/10, Oleg Nesterov wrote:
->
-> On 10/10, Peter Zijlstra wrote:
-> >
-> > I reordered the code, it is happier now.
-> >
-> > Anyway, the below seems to generate decent code for
-> > {-O2,-Os}x{gcc-14,clang-22}. Yay for optimizing compilers I suppose :-)
->
-> Another approach which looks better than mine ;)
->
-> Linus's version is simpler, but yours can handle break/return and
-> the "only lockless" case, good.
->
-> I leave this patch to you and Linus, he seems to like your code too.
->
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
->
->
-> But... perhaps we should not "export" the _target names and instead
-> add the additional defines, something like
->
-> 	scoped_seqlock_read()
-> 	scoped_seqlock_read_or_lock()
-> 	scoped_seqlock_read_or_lock_irqsave()
->
-> ?
+On Oct 10, Francesco Lavra wrote:
+> On Fri, 2025-10-10 at 10:13 +0200, Lorenzo Bianconi wrote:
+> > > On Fri, 2025-10-10 at 00:30 +0200, Lorenzo Bianconi wrote:
+> > > > > The rate at which accelerometer or gyroscope sensor samples are f=
+ed
+> > > > > to the hardware FIFO (batch data rate, or BDR) does not have to
+> > > > > coincide with the sensor sampling frequency (output data rate, or
+> > > > > ODR); the only requirement is for the BDR to not be greater than
+> > > > > the ODR. Having a BDR lower than the ODR is useful in cases where
+> > > > > an application requires a high sampling rate for accurate detecti=
+on
+> > > > > of motion events (e.g. wakeup events), but wants to read sensor
+> > > > > sample values from the device buffer at a lower data rate.
+> > > >=20
+> > > > can you please provide more details here? Are you using the hw fifo
+> > > > to
+> > > > read
+> > > > data? If we configure the hw fifo according to the BDR (even assumi=
+ng
+> > > > the
+> > > > watermark is set 1) the hw will generate interrupts according to the
+> > > > BDR
+> > > > (bdr < odr).
+> > >=20
+> > > Yes, I'm using the hw fifo to read data. The use case is to enable
+> > > event
+> > > detection (which works best at high sampling rates) and sensor data
+> > > streaming at the same time, without requiring the data stream to be at
+> > > the
+> > > same rate as the sensor sampling rate. So the amount of I2C (or SPI)
+> > > traffic (as well as the rate of periodic interrupts) required by the
+> > > data
+> > > stream is kept to a minimum without sacrificing the accuracy of event
+> > > detection.
+> >=20
+> > I guess you can get the same result (reduce sensor data interrupt rate
+> > keeping high odr value) configuring the hw fifo watermark.
+> > Does it work for you?
+>=20
+> Setting the hw fifo watermark to a high value reduces the rate of
+> interrupts, but doesn't do much to reduce the amount of I2C traffic, so t=
+he
+> issue would still be there.
 
-And... perhaps we can simplify this code a little bit? I mean
+ack, now I got the goal of the series. I think the series is mostly fine.
+I guess hwfifo_odr instead of bdr is more meaningful, what do you think?
+Naming is always hard.
 
-	enum ss_state {
-		ss_lockless	= 0,
-		ss_lock		= 1,
-		ss_lock_irqsave	= 2,
-		ss_done		= 4,
-	};
+Regards,
+Lorenzo
 
-	struct ss_tmp {
-		enum ss_state	state;
-		unsigned long	data;
-		seqlock_t	*lock;
-	};
+--Q9L2gUSXS00tM16I
+Content-Type: application/pgp-signature; name=signature.asc
 
-	static inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
-	{
-		if (sst->state & ss_lock)
-			spin_unlock(&sst->lock.lock);
-		if (sst->state & ss_lock_irqsave)
-			spin_unlock_irqrestore(&sst->lock.lock, sst->data);
-	}
+-----BEGIN PGP SIGNATURE-----
 
-	static inline void
-	__scoped_seqlock_next(struct ss_tmp *sst, enum ss_state target)
-	{
-		switch (sst->state) {
-		case ss_lock:
-		case ss_lock_irqsave:
-			sst->state |= ss_done;
-			return;
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaOkG+gAKCRA6cBh0uS2t
+rHLRAQCQLWQ0sOMo9fZdnLqw2UQ/r+BFlsyeejmJSC6ZZltjCQEAmQBL+WP6q8p0
+gJfXdcR2Y602paeKhLq8US/aby3zLwc=
+=yC/a
+-----END PGP SIGNATURE-----
 
-		case ss_lockless:
-			if (!read_seqretry(sst->lock, sst->data)) {
-				sst->state = ss_done;
-				return;
-			}
-			break;
-		}
-
-		switch (target) {
-		case ss_lock:
-			spin_lock(&sst->lock.lock);
-			sst->state = ss_lock;
-			return;
-
-		case ss_lock_irqsave:
-			spin_lock_irqsave(&sst->lock.lock, sst->data);
-			sst->state = ss_lock_irqsave;
-			return;
-
-		case ss_lockless:
-			sst->data = read_seqbegin(sst->lock);
-			return;
-		}
-	}
-
-	#define __scoped_seqlock_read(_seqlock, _target, _s)			\
-		for (struct ss_tmp _s __cleanup(__scoped_seqlock_cleanup) =				\
-		     { .state = ss_lockless, .data = read_seqbegin(_seqlock), .lock = __seqlock };	\
-		     !(_s.state & ss_done);								\
-		     __scoped_seqlock_next(&_s, _target))
-
-
-(I removed __scoped_seqlock_invalid_target/__scoped_seqlock_bug to lessen the code).
-
-Not sure this makes sense. Plus I didn't even try to compile this code and I have
-no idea how this change can affect the code generation. But let me ask anyway...
-
-Oleg.
-
+--Q9L2gUSXS00tM16I--
 
