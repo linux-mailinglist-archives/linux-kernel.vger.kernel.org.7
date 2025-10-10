@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-848356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644AEBCD82C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3451EBCD835
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 52CB3355DE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:25:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEE183512CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1415F2F5487;
-	Fri, 10 Oct 2025 14:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D702A2F5485;
+	Fri, 10 Oct 2025 14:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSVFSg2v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpzpcZ/d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625EF2F3C32;
-	Fri, 10 Oct 2025 14:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F9F287268;
+	Fri, 10 Oct 2025 14:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760106300; cv=none; b=RIWIhB+vTN3hTxmFEdYDCoFgeQ+OHOx4DQJnxnkViFOqjGN66vqxF8frSQ2r93Nn6mlBC0R1VPCoK7QPtUw3O87MfsZgR7N6FB8rXJxuthR8ABUZqco6rBq/s22KYuwLLzJBMhCbyM1K/bBI9awF87tuqKnShxjEywDVH0+E8Jw=
+	t=1760106329; cv=none; b=JlyFYN80TJWLnrYFMU+YdgmOLBSgRlWgK78I7uPl+6o/0YndB7bYjf9xy5mBq8bzhnlwgd/qp06nVtF/rx0v+wiGqyJ1AxSw5pa79VH6cbwfb6kLJFFOGmi2Yj7JmCFJHTj5cQoSy7wk0yxBRSeUaJF97LOIplScLfXwerXaGjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760106300; c=relaxed/simple;
-	bh=J8sWNiOYxowlMW18nKVK3dVuYCRC461LwDkFzez3QWE=;
+	s=arc-20240116; t=1760106329; c=relaxed/simple;
+	bh=2cqoklTmnWcMBIxfli3d/ARO/y0tQWg6ESZXPMf9q0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XsTaOzOAhB3nwFDsgaMJN7dHvhQsTzT3O1NN9JMXp7if9i6urshk5oUDqgrjA0eGjbxKTCxBDPECJMDGgdaNiZxn2wDc9GZiLUIZ5IrTcNnEzmv4GtT+zcTdAQruuHmMCMEfyyeTvH0jm6Zi61YbmQ+7WDqWgYpiTqlIrNTzq/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSVFSg2v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B95C4CEF1;
-	Fri, 10 Oct 2025 14:24:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZBN3ekLVMFLUylxOkqbyLCMD5V90mkkmBFce4TO2lKNJUTE0JIkRSMJPhQl9FzzV7ij0fu5n14wRLjceEE1BXR7sowRIkLlrjY2SoARdsHkhUMKHDiqkRynqRc6TMRtKD9hN75u+E4h0j4vKZ99LK3vvkAQCsXrjiE84Ao8P+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpzpcZ/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 727E1C4CEF1;
+	Fri, 10 Oct 2025 14:25:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760106299;
-	bh=J8sWNiOYxowlMW18nKVK3dVuYCRC461LwDkFzez3QWE=;
+	s=k20201202; t=1760106328;
+	bh=2cqoklTmnWcMBIxfli3d/ARO/y0tQWg6ESZXPMf9q0I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MSVFSg2vVo6Qro2rAkelTcna3fSOk/InqEC682lBjaO6aUxpCzYZZ1GTMHsKmvPrt
-	 Gxu0ZeJRfQ8KLnq6ESiLJ3SlKg0b2WASUYp61rSAdcvnJhFqHYuemfCY1gb68l0AK0
-	 i7g5ImLxeGk7dHBJSikwNtgcif6LaIKdFNtBzW/TCtUv378L5CNDX3e7k4d0GdU9Yh
-	 Lvh+9k9UVdOjfZ12gqGNDpAy2rx53lH0HKV3h6EBIzHpAKldoXMOZGHrbyK9vDjFOY
-	 BQ4AwZxZBGkD5Kczt5wuQ4EutZ6+ogs5NjPFnMkl0vV2xpC6MgfbC7WvDh6cTumw8r
-	 5yRKtyaI22KbQ==
-Date: Fri, 10 Oct 2025 15:24:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	b=lpzpcZ/dKsdtgEk2sydCmYgvR99u1H5iNfrZ6WIpCTfgdKaLAtChsAxBatdre8cI6
+	 mpqUg3lak6r+Pb1sJ1/kWOKdj75Vz6tsnHq1KQ9FfQTAJH1v0sLcqaPwXfeN7z//GV
+	 Z+K8aiV1pKme6p7fSxbEAy/lwmQJFJdjOffDf5ThZ6ISFlJ2apU2Sp3BhyeV3Fujuo
+	 tSX2icvdUoZ2pz7Efhc8TA7bpOYqvuEffH+yf2W411C7fW3KFTaycjCzzN7IzkXXk9
+	 IxXn7gPwybpY/E8CL9ry/3lwDr9gun4ZrVUQ8jsh3v4zTNC4y8JVXqbJuo2SJ7tdfi
+	 YO4UPHzhl451w==
+Date: Fri, 10 Oct 2025 09:25:26 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Sven Eckelmann (Plasma Cloud)" <se@simonwunderlich.de>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-arm-kernel@lists.infradead.org,
 	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sean Wang <sean.wang@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-mediatek@lists.infradead.org,
-	Andreas Gnau <andreas.gnau@iopsys.eu>
-Subject: Re: [PATCH v7 16/17] dt-bindings: spi: airoha: add compatible for
- EN7523
-Message-ID: <20251010-landscape-cavity-88a963e45a6b@spud>
-References: <20251010033136.1475673-1-mikhail.kshevetskiy@iopsys.eu>
- <20251010033136.1475673-17-mikhail.kshevetskiy@iopsys.eu>
+	Conor Dooley <conor+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Ryder Lee <ryder.lee@mediatek.com>, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH mt76 v3 1/3] dt-bindings: net: wireless: mt76: Document
+ power-limits country property
+Message-ID: <176010632601.241034.1894010503665386462.robh@kernel.org>
+References: <20251007-backoff-table-support-v3-0-fd6e2684988f@simonwunderlich.de>
+ <20251007-backoff-table-support-v3-1-fd6e2684988f@simonwunderlich.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rOjyNSm5a3C66cVt"
-Content-Disposition: inline
-In-Reply-To: <20251010033136.1475673-17-mikhail.kshevetskiy@iopsys.eu>
-
-
---rOjyNSm5a3C66cVt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251007-backoff-table-support-v3-1-fd6e2684988f@simonwunderlich.de>
 
-On Fri, Oct 10, 2025 at 06:31:35AM +0300, Mikhail Kshevetskiy wrote:
-> Add dt-bindings documentation of SPI NAND controller
-> for Airoha EN7523 SoC platform.
->=20
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 
-Please explain in the commit message why these two devices are not
-compatible.
-
+On Tue, 07 Oct 2025 10:11:14 +0200, Sven Eckelmann (Plasma Cloud) wrote:
+> The commit 22b980badc0f ("mt76: add functions for parsing rate power limits
+> from DT") added filtering of the power limits based on two properties:
+> 
+> * regdomain
+> * country
+> 
+> If either the country or the regdomain matches, the power limits are
+> applied and the search is aborted. If none of the two is defined for the
+> power limit, it is a global (or "fallback") power limit. The last
+> "fallback" power limit in the list will be returned when not matching
+> regdomain or country was found.
+> 
+> The idea is here to allow to specify "overwriting" country limits in front
+> of the list - just in case a regdomain is shared but a country has
+> additional limitations.
+> 
+> But this property was forgotten to be defined in commit 2de6ccebe0e7
+> ("dt-bindings:net:wireless:mediatek,mt76: introduce power-limits node").
+> 
+> Signed-off-by: Sven Eckelmann (Plasma Cloud) <se@simonwunderlich.de>
 > ---
->  .../devicetree/bindings/spi/airoha,en7581-snand.yaml         | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/airoha,en7581-snand.ya=
-ml b/Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
-> index b820c5613dcc..fdc5b0f920cc 100644
-> --- a/Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
-> +++ b/Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
-> @@ -14,7 +14,10 @@ allOf:
-> =20
->  properties:
->    compatible:
-> -    const: airoha,en7581-snand
-> +    enum:
-> +      - airoha,en7523-snand
-> +      - airoha,en7581-snand
-> +
-> =20
->    reg:
->      items:
-> --=20
-> 2.51.0
->=20
+>  Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
---rOjyNSm5a3C66cVt
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOkXNgAKCRB4tDGHoIJi
-0ty4AP9HhsDk0a5+c83mF5LeHVZq0iCJQOUqAv/6o87d7uhvoAD/acsmShTBVTC4
-ViX0nbl+U2XzHK+Yzxtl3YDx7XD8Owo=
-=kctn
------END PGP SIGNATURE-----
-
---rOjyNSm5a3C66cVt--
 
