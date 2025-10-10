@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-847672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04083BCB636
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:58:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4187ABCB646
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA413405E3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B621D405F61
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCC12367B0;
-	Fri, 10 Oct 2025 01:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68CD21B9E2;
+	Fri, 10 Oct 2025 02:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNMa1U7C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZ5uhXEo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E9922172E;
-	Fri, 10 Oct 2025 01:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C758528E;
+	Fri, 10 Oct 2025 02:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760061467; cv=none; b=QtnhcEhEDrGLsN7y4M8MBR2TocS4Cjy162JRK9+yq6FvrlU2klZPkGfFBMSTfSFJ1OnWgy6Xw4P2YMfVWhLGj+d6loFLc5/VbDD08YmF9Xxe9q6hsZ/YPmzcgiUy9oJfkVI8dRAh8JS+HlheCwpDhmzvqaFcTcknKWBj2bogJSw=
+	t=1760061618; cv=none; b=LSTDy6fet6piFOeUYy7EVHot5Ua+c+0zSfaW1uP0xDOM17d40d3ShA8MWt9L5VKqOf251KVc4dL0vYH6Lbxhxk6gsW53Y5zIjf6qvsY/hnYHvObOQKWGGw7cnYdCDutbEOL2Nar9imOU8fKPpq8uVjuUumBaRkkZ6xpeXDsrQUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760061467; c=relaxed/simple;
-	bh=o3CI4EuJTyFUFn/y3ml0QJAyD26AqnEUu/PbF21PZx4=;
+	s=arc-20240116; t=1760061618; c=relaxed/simple;
+	bh=bKb2+LWn+9bFo0JvyMz+IuBawvd4IewFiapgoPwhJDY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WnfnaIal3JO8El2vWDZr+2jHAj5Rh8YKh1H34S7QHmLcr1i9sj1kfLrExGvIJ9ePLHbZ+2ecY/oPX3SBmMqRgYXaPt8n+Oeo4Yaq5+WAkbgbbnDDqzZvLsk88UHXapBrVPd1jC0nhsGHx+3TP92r1jt2Sjt8vxOHYk3driwvjww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNMa1U7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95787C4CEE7;
-	Fri, 10 Oct 2025 01:57:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bRTAI2uSE+V6aQGeizoVT+57KXsxZIWxr7UuR/LFQ+7VQSeqmA5lWM903YuQFTwd0G9ahtQM5PeJPnSR0SL5WELDgzLyEPgcsvYjonq1a/9ncLjsMZmP6HAOEs+ahNmrSs1ONN9ak0T3He+1T+97htWNHtxYLQ/LInJskRMtPvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZ5uhXEo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8B2C4CEE7;
+	Fri, 10 Oct 2025 02:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760061467;
-	bh=o3CI4EuJTyFUFn/y3ml0QJAyD26AqnEUu/PbF21PZx4=;
+	s=k20201202; t=1760061617;
+	bh=bKb2+LWn+9bFo0JvyMz+IuBawvd4IewFiapgoPwhJDY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SNMa1U7CniPTaDmB56QR0lqtO3NRRXxg/NBade5ntUHbt5pSkb7l/ITWp3IRqpNer
-	 KiLe/HkC36lZpQRriWT9/nZcnMINetMxcN6FgpYvHFIvh6pH25lbtztH3UoTwdVgyv
-	 csb8ucA1mCyjFzKawUB8tPwkW1SNoLEQeaJey04D9xXrYwEFD7zOyWOq3P6kvFmqHA
-	 6wvlFNGsIdBBSkixxTatBB9fE6PMaKdR7FRSOlgOEMmX1QtOEpeF4xXcgPFe/m1yQ3
-	 BZGhsDrLAiG6qqG7mfhByIEhOhAnMWwa9yqV5ft44IABuADz/JW+5kxNI779p0KdNH
-	 Zbwdd1GS4yf0w==
-Message-ID: <b4436b4f-a54b-4294-8dd9-7a4b95711dc4@kernel.org>
-Date: Fri, 10 Oct 2025 03:57:33 +0200
+	b=EZ5uhXEoFwIigR89ZDxpuiMJjV9tImylj7s191qm0WMCHwWJEDHZhfwPLEnCSN3QH
+	 FZ0SJJAnIg+OWIdX/eILZaJoD7pLii01fGS49y6IFAwmkjeYjfINwMQVc602rdpWuc
+	 iHVzGw0Yn/yidtKyTbS60g10UkVGEuB4JcGMEzXsN9DdqtrHHljHHetaKWH/6+Y2nq
+	 r7lk1HZoX3yr+9v7/OLDJBG+KRLb0Dru5HkuZiRFYALrjGkPUhNWQx9ONI5G08aVCo
+	 VVbxE02hyMT1h708EIfzLjzHEBXuT38aGZ7Ujk4hjRGj/Xdz2ElziLwTUHHWHNhV6U
+	 CdDWfA6WYsTgg==
+Message-ID: <3791aa93-c1c0-4fc9-9706-91f3f62743a3@kernel.org>
+Date: Fri, 10 Oct 2025 04:00:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: iio: imu: smi330: Add binding
-To: Conor Dooley <conor@kernel.org>, Jianping.Shen@de.bosch.com
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
- Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
-References: <20251009153149.5162-1-Jianping.Shen@de.bosch.com>
- <20251009153149.5162-2-Jianping.Shen@de.bosch.com>
- <20251009-squishy-poem-ddb0fdd9583d@spud>
+Subject: Re: [PATCH v3 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock
+ support
+To: Kamal Dasu <kamal.dasu@broadcom.com>, peng.fan@oss.nxp.com,
+ andersson@kernel.org, baolin.wang@linux.alibaba.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, florian.fainelli@broadcom.com
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251009212003.2714447-1-kamal.dasu@broadcom.com>
+ <20251009212003.2714447-2-kamal.dasu@broadcom.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,41 +104,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251009-squishy-poem-ddb0fdd9583d@spud>
+In-Reply-To: <20251009212003.2714447-2-kamal.dasu@broadcom.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/10/2025 18:48, Conor Dooley wrote:
-> On Thu, Oct 09, 2025 at 05:31:48PM +0200, Jianping.Shen@de.bosch.com wrote:
->> From: Jianping Shen <Jianping.Shen@de.bosch.com>
->>
->> Add devicetree binding for Bosch imu smi330.
->> The smi330 is a combined three axis angular rate and
->> three axis acceleration sensor module.
->>
->> Signed-off-by: Jianping Shen <Jianping.Shen@de.bosch.com>
-> 
-> https://lore.kernel.org/all/20250916-henna-rinsing-32a18a4d30b9@spud/
-> 
-> Why did you ignore my ack?
-> Didn't Jonathan already apply v4 of this two weeks ago, why is there
-> even a v5 to begin with?
+On 09/10/2025 23:20, Kamal Dasu wrote:
+> The broadcom settop SoCs have hardware semaphores as part of "sundry"
+> IP block which has other controls that do not belong anywhere else.
+> e.g. pin/mux controls, SoC identification, drive strength, reset controls,
+> and other misc bits are part of this block.
 
-Not only v4, but also v2 and reminder in v3:
-
-https://lore.kernel.org/all/20250514-deserve-marina-224bef5b2db3@spud/
-
-
-and here I exactly reminded what has to be done:
-https://lore.kernel.org/all/1196da81-ecd7-487c-8afc-e0d3660fa158@kernel.org/
-
-which was completely ignored.
-
-So I can write detailed instructions and Jianping will just ignore it,
-because who am I to say anything?
-
-I will ignore future contributions from Jianping in such case. It is
-waste of our time.
+This does not explain why this has to be a separate block. Rob comment
+stays valid - this belongs to parent node.
 
 Best regards,
 Krzysztof
