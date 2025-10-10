@@ -1,249 +1,164 @@
-Return-Path: <linux-kernel+bounces-847817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F52BCBCC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:40:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56DCBCBCBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EBB3A491A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:40:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A78794E061B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70374242D83;
-	Fri, 10 Oct 2025 06:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515C7262FF3;
+	Fri, 10 Oct 2025 06:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="awgrrz4E"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E/E4XC0O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7462E22F77E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DE53F9D2;
+	Fri, 10 Oct 2025 06:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760078421; cv=none; b=B7+DlVf11tCqq2dGh9rQ5JAaGPC8VVa/Hc8pWFKKC23Ae3pCawQiZGPdat5B4AIonxN5RSOPAexzEM07/mNOMgo4ejZg2UDIcnba7hPM53dDhsHgDf3OsiGNyiwJ3xgtK5/Wtuxjsf8RpfZmCMvhDRHbCXPMxccDMKtvhV2KlM4=
+	t=1760078384; cv=none; b=fv6Jnl+0kaWscsArrCKGVbAWCLUo4WpjQpvS42/tsj4iKjQ5Jeqv6bCbG0fjGhfv5FKQxKaF2RB9AsVRAW5lncbiy60wGRUQTmecNuDVweQRkch3HVUruj/z0HPtASeausbybMRmXAk2p7CToUPxbro/uyERZdbMo5rasNgE538=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760078421; c=relaxed/simple;
-	bh=bMrgqdBozNK6AeYWBzFMz+gUaAR2YNtQY7Glg4y8Gfo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=ZPOEAth7ckdG8v5vNkuazV/c9plxzrVzJAUmmEzvz4k6WUtAfXVl/nj1JdMM1qWve764rUxDmadoWheLxt0rPzzyR8C3gCtWZKJkXwKA8B53udERaB3JoeBa8lnHcmkkCYbXvTkdAY9SXzefH3V0Lj8xuWRcLyHAPxGvCwjS4FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=awgrrz4E; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251010064016epoutp04c769996b542fa728b9c465658dc8148f~tDf6Duw-T1256712567epoutp04d
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:40:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251010064016epoutp04c769996b542fa728b9c465658dc8148f~tDf6Duw-T1256712567epoutp04d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760078416;
-	bh=UGIEXiitJAYS1R0cE+vMBuyTKPBtweIwoCV3iM46DOs=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=awgrrz4EnUaeCZwRVx0JMX+ml06jdB+tti+z4lnHbjdwNyJClOhXcX68R+CPhQrN7
-	 S/UHQt1P8QoL+gprxxOtAZjfsEbmOP3thY7A061BvXF6i+XQIFJ6+Cyp0lKw8OSJ/I
-	 W1d8kAixr9xWnFOIlD01nzdtaQZnUkDc6MLf24+o=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251010064014epcas5p113955a4ba67dc4227fd3fb8704522c6a~tDf47nEzh0666806668epcas5p1j;
-	Fri, 10 Oct 2025 06:40:14 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cjcYp02zKz2SSKj; Fri, 10 Oct
-	2025 06:40:14 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251010064008epcas5p3c507d64678fadfb71574050b01357341~tDfzMqHrq0587705877epcas5p3o;
-	Fri, 10 Oct 2025 06:40:08 +0000 (GMT)
-Received: from node122.. (unknown [109.105.118.122]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251010064007epsmtip2edf5675729b3f781186020c0c6469edf~tDfyV5xGU2716227162epsmtip2_;
-	Fri, 10 Oct 2025 06:40:07 +0000 (GMT)
-From: Xue He <xue01.he@samsung.com>
-To: axboe@kernel.dk, akpm@linux-foundation.org, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com, hexue <xue01.he@samsung.com>
-Subject: [PATCH v4] block: plug attempts to batch allocate tags multiple
- times
-Date: Fri, 10 Oct 2025 06:35:38 +0000
-Message-Id: <20251010063538.3597-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760078384; c=relaxed/simple;
+	bh=f275Z6QBP1oJ7FjNXnqjQQ3arZ+vlTTlgIAxDsW1u1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GaWM611kfuOMYM1UfwSj4gHXqRD50WAioEOnItgWpqqfX8MAXIIrazsJomMqGhzTjq64iT1rI4Qv9Qj7LzaeOZ2XDXrUCW84pbRaV+z4DDpXftO3E2UyleIK6Gl+2h/TxfRKcnrVSmyseqpKINfy8BaQa1c+HXA/rf4fvu5KAqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E/E4XC0O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC42C4CEF1;
+	Fri, 10 Oct 2025 06:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760078383;
+	bh=f275Z6QBP1oJ7FjNXnqjQQ3arZ+vlTTlgIAxDsW1u1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E/E4XC0OPvNpqewhJaQ4nGbxL62esjMmVSltK67IIVcxdGmwf16INSfid2uo26dGR
+	 963ucB1qo46+2lEPEd8aGn9IMZVMQdo+3Nh0mpr8weqS34CQPv1YYWugKh2Yv1Gp4g
+	 sL2c6uu2EtJaHZ8tcsdSndMcHFBEBMyTE7XCuZh8=
+Date: Fri, 10 Oct 2025 08:39:40 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: "Yanjun.Zhu" <yanjun.zhu@linux.dev>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
+	graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state
+ monitoring
+Message-ID: <2025101001-sandpit-setup-7424@gregkh>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-20-pasha.tatashin@soleen.com>
+ <a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
+ <mafs0qzvcmje2.fsf@kernel.org>
+ <CA+CK2bCx=kTVORq9dRE2h3Z4QQ-ggxanY2tDPRy13_ARhc+TqA@mail.gmail.com>
+ <dc71808c-c6a4-434a-aee9-b97601814c92@linux.dev>
+ <CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
+ <d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev>
+ <mafs0ecrbmzzh.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251010064008epcas5p3c507d64678fadfb71574050b01357341
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251010064008epcas5p3c507d64678fadfb71574050b01357341
-References: <CGME20251010064008epcas5p3c507d64678fadfb71574050b01357341@epcas5p3.samsung.com>
+In-Reply-To: <mafs0ecrbmzzh.fsf@kernel.org>
 
-This patch aims to enable batch allocation of sufficient tags after
-batch IO submission with plug mechanism, thereby avoiding the need for
-frequent individual requests when the initial allocation is
-insufficient.
+On Fri, Oct 10, 2025 at 01:12:18AM +0200, Pratyush Yadav wrote:
+> On Thu, Oct 09 2025, Yanjun.Zhu wrote:
+> 
+> > On 10/9/25 10:04 AM, Pasha Tatashin wrote:
+> >> On Thu, Oct 9, 2025 at 11:35 AM Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
+> >>>
+> >>> 在 2025/10/9 5:01, Pasha Tatashin 写道:
+> >>>>>> Because the window of kernel live update is short, it is difficult to statistics
+> >>>>>> how many times the kernel is live updated.
+> >>>>>>
+> >>>>>> Is it possible to add a variable to statistics the times that the kernel is live
+> >>>>>> updated?
+> >>>>> The kernel doesn't do the live update on its own. The process is driven
+> >>>>> and sequenced by userspace. So if you want to keep statistics, you
+> >>>>> should do it from your userspace (luod maybe?). I don't see any need for
+> >>>>> this in the kernel.
+> >>>>>
+> >>>> One use case I can think of is including information in kdump or the
+> >>>> backtrace warning/panic messages about how many times this machine has
+> >>>> been live-updated. In the past, I've seen bugs (related to memory
+> >>>> corruption) that occurred only after several kexecs, not on the first
+> >>>> one. With live updates, especially while the code is being stabilized,
+> >>>> I imagine we might have a similar situation. For that reason, it could
+> >>>> be useful to have a count in the dmesg logs showing how many times
+> >>>> this machine has been live-updated. While this information is also
+> >>>> available in userspace, it would be simpler for kernel developers
+> >>>> triaging these issues if everything were in one place.
+> 
+> Hmm, good point.
+> 
+> >>> I’m considering this issue from a system security perspective. After the
+> >>> kernel is automatically updated, user-space applications are usually
+> >>> unaware of the change. In one possible scenario, an attacker could
+> >>> replace the kernel with a compromised version, while user-space
+> >>> applications remain unaware of it — which poses a potential security risk.
+> 
+> Wouldn't signing be the way to avoid that? Because if the kernel is
+> compromised then it can very well fake the reboot count as well.
+> 
+> >>>
+> >>> To mitigate this, it would be useful to expose the number of kernel
+> >>> updates through a sysfs interface, so that we can detect whether the
+> >>> kernel has been updated and then collect information about the new
+> >>> kernel to check for possible security issues.
+> >>>
+> >>> Of course, there are other ways to detect kernel updates — for example,
+> >>> by using ftrace to monitor functions involved in live kernel updates —
+> >>> but such approaches tend to have a higher performance overhead. In
+> >>> contrast, adding a simple update counter to track live kernel updates
+> >>> would provide similar monitoring capability with minimal overhead.
+> >> Would a print during boot, i.e. when we print that this kernel is live
+> >> updating, we could include the number, work for you? Otherwise, we
+> >> could export this number in a debugfs.
+> > Since I received a notification that my previous message was not sent
+> > successfully, I am resending it.
+> >
+> > IMO, it would be better to export this number via debugfs. This approach reduces
+> > the overhead involved in detecting a kernel live update.
+> > If the number is printed in logs instead, the overhead would be higher compared
+> > to using debugfs.
+> 
+> Yeah, debugfs sounds fine. No ABI at least.
 
-------------------------------------------------------------
-Perf:
-base code: __blk_mq_alloc_requests() 1.31%
-patch: __blk_mq_alloc_requests() 0.71%
-------------------------------------------------------------
+Do not provide any functionality in debugfs that userspace relies on at
+all, as odds are, it will not be able to be accessed by most/all of
+userspace on many systems.  It is for debugging only.
 
----
-changes since v1:
-- Modify multiple batch registrations into a single loop to achieve
-  the batch quantity
+thanks,
 
-changes since v2:
-- Modify the call location of remainder handling
-- Refactoring sbitmap cleanup time
-
-changes since v3:
-- Add handle operation in loop
-- Add helper sbitmap_find_bits_in_word
-
-Signed-off-by: hexue <xue01.he@samsung.com>
----
- block/blk-mq.c | 39 ++++++++++++++++++---------------
- lib/sbitmap.c  | 58 ++++++++++++++++++++++++++++++++++----------------
- 2 files changed, 62 insertions(+), 35 deletions(-)
-
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ba3a4b77f578..695ccc72e69f 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -458,26 +458,31 @@ __blk_mq_alloc_requests_batch(struct blk_mq_alloc_data *data)
- 	unsigned long tag_mask;
- 	int i, nr = 0;
- 
--	tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
--	if (unlikely(!tag_mask))
--		return NULL;
-+	do {
-+		tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
-+		if (unlikely(!tag_mask)) {
-+			if (nr == 0)
-+				return NULL;
-+			break;
-+		}
-+		tags = blk_mq_tags_from_data(data);
-+		for (i = 0; tag_mask; i++) {
-+			if (!(tag_mask & (1UL << i)))
-+				continue;
-+			tag = tag_offset + i;
-+			prefetch(tags->static_rqs[tag]);
-+			tag_mask &= ~(1UL << i);
-+			rq = blk_mq_rq_ctx_init(data, tags, tag);
-+			rq_list_add_head(data->cached_rqs, rq);
-+			data->nr_tags--;
-+			nr++;
-+		}
-+		if (!(data->rq_flags & RQF_SCHED_TAGS))
-+			blk_mq_add_active_requests(data->hctx, nr);
-+	} while (data->nr_tags);
- 
--	tags = blk_mq_tags_from_data(data);
--	for (i = 0; tag_mask; i++) {
--		if (!(tag_mask & (1UL << i)))
--			continue;
--		tag = tag_offset + i;
--		prefetch(tags->static_rqs[tag]);
--		tag_mask &= ~(1UL << i);
--		rq = blk_mq_rq_ctx_init(data, tags, tag);
--		rq_list_add_head(data->cached_rqs, rq);
--		nr++;
--	}
--	if (!(data->rq_flags & RQF_SCHED_TAGS))
--		blk_mq_add_active_requests(data->hctx, nr);
- 	/* caller already holds a reference, add for remainder */
- 	percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
--	data->nr_tags -= nr;
- 
- 	return rq_list_pop(data->cached_rqs);
- }
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index 4d188d05db15..c0a8da1beec9 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -208,6 +208,32 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
- 	return nr;
- }
- 
-+static unsigned long sbitmap_find_bits_in_word(struct sbitmap_word *map,
-+				    unsigned int depth, unsigned int alloc_hint, bool wrap,
-+				    unsigned long *val, int nr_tags, unsigned int map_depth)
-+{
-+	unsigned long local_val, nr;
-+
-+	while (1) {
-+		local_val = READ_ONCE(map->word);
-+		if (local_val == (1UL << (map_depth - 1)) - 1) {
-+			if (!sbitmap_deferred_clear(map, depth, alloc_hint, wrap))
-+				return -1UL;
-+			continue;
-+		}
-+
-+		nr = find_first_zero_bit(&local_val, map_depth);
-+		if (nr + nr_tags <= map_depth)
-+			break;
-+
-+		if (!sbitmap_deferred_clear(map, depth, alloc_hint, wrap))
-+			return -1UL;
-+	};
-+
-+	*val = local_val;
-+	return nr;
-+}
-+
- static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
- 					     int index,
- 					     unsigned int shallow_depth)
-@@ -534,26 +560,22 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
- 		unsigned int map_depth = __map_depth(sb, index);
- 		unsigned long val;
- 
--		sbitmap_deferred_clear(map, 0, 0, 0);
--		val = READ_ONCE(map->word);
--		if (val == (1UL << (map_depth - 1)) - 1)
-+		nr = sbitmap_find_bits_in_word(map, 0, 0, 0, &val, nr_tags, map_depth);
-+		if (nr == -1UL)
- 			goto next;
- 
--		nr = find_first_zero_bit(&val, map_depth);
--		if (nr + nr_tags <= map_depth) {
--			atomic_long_t *ptr = (atomic_long_t *) &map->word;
--
--			get_mask = ((1UL << nr_tags) - 1) << nr;
--			while (!atomic_long_try_cmpxchg(ptr, &val,
--							  get_mask | val))
--				;
--			get_mask = (get_mask & ~val) >> nr;
--			if (get_mask) {
--				*offset = nr + (index << sb->shift);
--				update_alloc_hint_after_get(sb, depth, hint,
--							*offset + nr_tags - 1);
--				return get_mask;
--			}
-+		atomic_long_t *ptr = (atomic_long_t *) &map->word;
-+
-+		get_mask = ((1UL << nr_tags) - 1) << nr;
-+		while (!atomic_long_try_cmpxchg(ptr, &val,
-+						  get_mask | val))
-+			;
-+		get_mask = (get_mask & ~val) >> nr;
-+		if (get_mask) {
-+			*offset = nr + (index << sb->shift);
-+			update_alloc_hint_after_get(sb, depth, hint,
-+						*offset + nr_tags - 1);
-+			return get_mask;
- 		}
- next:
- 		/* Jump to next index. */
--- 
-2.34.1
-
+greg k-h
 
