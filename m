@@ -1,172 +1,79 @@
-Return-Path: <linux-kernel+bounces-847913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B89BBCC04D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:02:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1D7BCC0C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABAC0354543
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EAAF42394E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C892765C0;
-	Fri, 10 Oct 2025 08:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4Ce0Ihz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDE62773D3;
+	Fri, 10 Oct 2025 08:03:20 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569761FF7B3;
-	Fri, 10 Oct 2025 08:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E720326E6F8;
+	Fri, 10 Oct 2025 08:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760083340; cv=none; b=JtJlomCHM2jRbUW8VMO7850MjqYltjHaPfdn6X/FcANj+8EGqFs72mGQ7k/OUpEULQJiFMWPaMfDesNxj4ewufvRwC/fo6DrJn//5VUMxcePl6g6qokyN99IJviJV/IJjCUrFiQgC4QSFVI9nZmyqMiqdk1zgqnY7Tfi1YiOiyU=
+	t=1760083400; cv=none; b=Tu3tVa71i7DFEKB09ULOLrezUCJg5BoiqWCPx9Fk0Ft9RNLVsFCvUSkz1bmgT+g0RtVHNK9NwJrSCfgoXzYMpB/PPh+Berta9F+HFFZOWmI9YJbzaGQRbIzrL8bo/9WGNTFNKD7eb576YymqtD7pbJ6HDaJiUcqDB3ZARAoIllU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760083340; c=relaxed/simple;
-	bh=qITXVMxXmEHwXiNKpVxw+h1NSbH+gxKcGOO6VkAiZAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWEDlKKjnjjj8uBMwgn8GWOcS2Mp0fnXP/LVhqPYMXiDuqkOM0Vmga9vU3qDbxqMN2BBL553oJ2uW5dpQyuqk9jXnmZxTVLQKa3fRXg4kYp56XhThnfvzUYI5y0ysWIwg+svRi/cvoHXY6K8spaHPToFRcHHDvwrnu4b9FtiaKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4Ce0Ihz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E4AFC4CEF1;
-	Fri, 10 Oct 2025 08:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760083340;
-	bh=qITXVMxXmEHwXiNKpVxw+h1NSbH+gxKcGOO6VkAiZAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W4Ce0IhzxEtlBd34zRXczESlNsvIn/4sm7FxJjJXgOOvhPPqrNVWQIFZF3eooWXWy
-	 p5My/PZ8bo1uzbULgbP246bWosmlHa9YI2GZdEPO/7D2cgsa3zIQDkT7Y7Bfkpeu5I
-	 vNnjfgPh8rzguIwUhbue3nt81K30OAHoANq4cgYXxR1mHSHepEkloQ6K1AtNZqtiSe
-	 phow/E1jNkh0rEdAZKmuffo1+fFztn32VrSJaNAtAsg5PTgmq9RLb0YqVXdRnpe9cT
-	 IQD1aI9/9isEAxQPECazMxpHyv0N3e0yxei8fUm/CYt9LmP3+1Nx2v2svayptKBe3y
-	 l0xeJ4UOJUKOQ==
-Date: Fri, 10 Oct 2025 10:02:14 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nsc@kernel.org>, Charles Mirabile <cmirabil@redhat.com>,
-	da.gomez@samsung.com, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	masahiroy@kernel.org, mcgrof@kernel.org, petr.pavlu@suse.com,
-	samitolvanen@google.com, sfr@canb.auug.org.au
-Subject: Re: [PATCH v8 7/8] modpost: Create modalias for builtin modules
-Message-ID: <aOi9hqyvMg4bmXAw@example.org>
-References: <28d4da3b0e3fc8474142746bcf469e03752c3208.1758182101.git.legion@kernel.org>
- <20251007011637.2512413-1-cmirabil@redhat.com>
- <aOToOeNGiaFVM0Ds@example.org>
- <aOgSaNejdcBWKXx8@levanger>
- <20251010053736.GA447238@ax162>
+	s=arc-20240116; t=1760083400; c=relaxed/simple;
+	bh=e/EXtZWCi3iK9z1nOSESHp1p8RxHwCt8mI82MrXSiuY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Il0+KNPFyGiQjV8x1uDJwlw+rx//5fnqKqj+R+dIDAu3ezaFxUpuJaC/7pSZr3st33ALXR21V9sPH8OO+fbSMZOS7FgRbDYMj+2NRlwOJ+do4PZqidk3SiIUwu0DRoqNeossr+AdMLLRawrg2rHMcvcHcZIG9sE+Ix9utOGXezs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 10 Oct
+ 2025 16:03:15 +0800
+Received: from aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 10 Oct 2025 16:03:15 +0800
+From: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <linux-watchdog@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<BMC-SW@aspeedtech.com>
+Subject: [PATCH v2 0/3] watchdog: aspeed: Add AST2700 support
+Date: Fri, 10 Oct 2025 16:03:12 +0800
+Message-ID: <20251010080315.816628-1-chin-ting_kuo@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010053736.GA447238@ax162>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Oct 09, 2025 at 10:37:36PM -0700, Nathan Chancellor wrote:
-> On Thu, Oct 09, 2025 at 09:52:08PM +0200, Nicolas Schier wrote:
-> > On Tue, Oct 07, 2025 at 12:15:21PM +0200, Alexey Gladkov wrote:
-> > > Hm. Indeed. I haven't found a good solution yet, but you can use the
-> > > following patch to unlock compilation. It won't solve the problem, it will
-> > > only hide it.
-> > > 
-> > > --- a/scripts/Makefile.vmlinux
-> > > +++ b/scripts/Makefile.vmlinux
-> > > @@ -84,7 +84,7 @@ endif
-> > >  remove-section-y                                   := .modinfo
-> > >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> > > 
-> > > -remove-symbols := -w --strip-symbol='__mod_device_table__*'
-> > > +remove-symbols := -w --strip-unneeded-symbol='__mod_device_table__*'
-> > > 
-> > >  # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
-> > >  # it is necessary to remove the PT_LOAD flag from the segment.
-> > > 
-> > 
-> > Is it problematic to hide that?  Otherwise we'd have to revert the
-> > patch, right?
-> 
-> Yeah, I would much prefer to ending up with pointless
-> __mod_device_table__ symbols in the final binary than erroring out
-> during the build...
+This patch series improves the ASPEED watchdog driver to support newer
+AST2700 SoC. It enhances reset mask handling to accommodate platforms
+with multiple registers, adds AST2700-specific configuration, and
+updates the device tree bindings accordingly.
 
-This is a very unpleasant problem, but it does not seem fatal. There will
-not be many such characters in the final vmlinux. In the configuration
-from the bug report, there are only:
+Changes in v2:
+  - Removed 'num_reset_masks' field from AST2400 platform configuration.
+  - Simplify 'if' contional statement for platforms after AST2400.
 
-$ nm vmlinux.unstripped.riscv |grep -c __mod_device_table__
-17
+Chin-Ting Kuo (3):
+  dt-bindings: watchdog: aspeed,ast2400-wdt: Add support for AST2700
+  watchdog: aspeed: Support variable number of reset mask registers
+  watchdog: aspeed: Add support for AST2700 platform
 
-Of course, this does not mean that the problem does not need to be solved.
-
-> Does this happen with other architectures? I have
-> not seen any reports yet but I have not tested anything yet.
-
-LDFLAGS_vmlinux for riscv was taken from arm64. I suspect that there may
-be the same problem there. But I haven't checked yet whether the problem
-actually exists on arm64.
-
-> Why is RISC-V special here?
-
-This problem on riscv only occurs when CONFIG_RELOCATABLE=y is specified.
-Without this parameter, everything will compile as expected.
- 
-> It seems like the relocation comes from the .LASANLOC4 symbol in
-> .data.rel.local?
-> 
->   $ llvm-objdump -Dr drivers/irqchip/irq-riscv-aplic-main.o
->   ...
->   Disassembly of section .data.rel.local:
->   ...
->   0000000000000130 <.LASANLOC4>:
->   ...
->        1c0: 0000          unimp
->           00000000000001c0:  R_RISCV_64   __mod_device_table__kmod_irq_riscv_aplic_main__acpi__aplic_acpi_match
->   ...
-> 
-> I cannot find much information about this ASANLOC outside of its
-> location within the GCC sources, do we even need it? I don't see a way
-> to opt out of this section altogether or on a per-variable basis, I
-> wonder if there is some way to strip it out...
-
-The aplic_acpi_match structure is indeed used, but they are used
-themselves, not their alias, which is generated by the MODULE_DEVICE_TABLE
-macro.
-
-I also asked the guys from binutils for help:
-
-https://sourceware.org/pipermail/binutils/2025-October/144782.html
-
-> I plan to send the initial 6.18 Kbuild fixes pull request on Saturday.
-> If we cannot figure out a real solution before then, maybe we can just
-> switch to '--strip-unneeded-symbol' with a comment to upgrade that to
-> '--strip-symbol' when possible?
-
-Yes, that would be great.
-
-
-
-Maybe I'm looking in the wrong direction, but still.
-
-On riscv:
-
-* with CONFIG_RELOCATABLE=y (where the error appears):
-
-vmlinux.unstripped: ELF 64-bit LSB shared object, UCB RISC-V, RVC, soft-float ABI, version 1 (SYSV), dynamically linked, not stripped
-
-* without CONFIG_RELOCATABLE:
-
-vmlinux.unstripped: ELF 64-bit LSB executable, UCB RISC-V, RVC, soft-float ABI, version 1 (SYSV), statically linked, not stripped
-
-On x64_64:
-
-* with and without CONFIG_RELOCATABLE=y:
-
-vmlinux.unstripped: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, not stripped
+ .../bindings/watchdog/aspeed,ast2400-wdt.yaml |   8 +-
+ drivers/watchdog/aspeed_wdt.c                 |  30 +++-
+ include/dt-bindings/watchdog/aspeed-wdt.h     | 138 ++++++++++++++++++
+ 3 files changed, 167 insertions(+), 9 deletions(-)
 
 -- 
-Rgrds, legion
+2.34.1
 
 
