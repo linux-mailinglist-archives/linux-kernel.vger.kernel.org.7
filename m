@@ -1,121 +1,235 @@
-Return-Path: <linux-kernel+bounces-847757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33396BCB970
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:02:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CD4BCB9BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB7CC403E00
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:01:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 552E84FA65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14EE1B4F0A;
-	Fri, 10 Oct 2025 04:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09072AD31;
+	Fri, 10 Oct 2025 04:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWnL9W5v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VCOjjjWI"
+Received: from mail-m49231.qiye.163.com (mail-m49231.qiye.163.com [45.254.49.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3494414;
-	Fri, 10 Oct 2025 04:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F79182D0;
+	Fri, 10 Oct 2025 04:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760068914; cv=none; b=TrUsFCGDkGQON0vYjt724XCVvzpKLaOGsZy4ll+n3HiwEqj63A0A0CsUcfQ1OOBl5S0aqqXzqANCHM19514nJXtV6JqP0Wxl9QCwBsIVqzDvRC1Ru5KmGpewo5QMuP+D+cCr7usj1eS2979PeetOHOYVot7WnYp7Iy9xerGXHQo=
+	t=1760069286; cv=none; b=NR+uTAryqKQL+Kmds2HYAKleGK2tcX/62HuJ18Bmp2AVJ7d1iJWoMrbfiMNHvb8Ns3Sp0sxVU6es5Dz5Ejze8DQJmryRV9lf9W2NmcXQclWB7aIlywC0b+7lHBbvXy1rpiWAHn3yL1AlpM56pMr3eRwBeH+ggW2H9+1RFoVkdoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760068914; c=relaxed/simple;
-	bh=ib5Tf65cpQlayck4K7tgp8Or1k3DMe8jI4294TCf+lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dKfPmqUyPCsd9NmhbQHHJJ4Egcgz14ZCmIT+KN/PBKQjWlRKPfYBUqXD6O2tXA+T2PWXVmfFy2iwm01San1hdoErbXHj/ymYil3aYM7LBWjCsny6p9EWBI5HDZB3JNhENRF8aYxsv/+NyZy0+2KjVAlOn59mkfQKhfItobTKiEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWnL9W5v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C4BC4CEF1;
-	Fri, 10 Oct 2025 04:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760068913;
-	bh=ib5Tf65cpQlayck4K7tgp8Or1k3DMe8jI4294TCf+lk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oWnL9W5vGzXbDLuylqiULwSwob3LvjKENf9T6IoEveeZmQzCT3FliMHAaMpSrsQ+h
-	 CrwWMsvftpyz2VcREwRxWa9GFrXUEDFo5n1V0U/EaQx9Mevtkmv76VTVQeZes1qcTK
-	 HyyE9DC7RfxYO0gNv58bSUHnFVJcg8QK5bF9TYNytRi/f91f0zVvBJs3WFDp9QIqi6
-	 LWJABgQ5Kq4GZPJ8iLc2PZIvl3zKumPg7GouQ48wOShiMWpbLYm4LEwIbVBAW5YAKH
-	 m0mgUhwPQFSEWRHB40K9eE4cHdgEvDIL0vwIDLSgmrLDpS+lwiw13vLaj7E+w7aVwu
-	 TcF04YMC+d4kA==
-Date: Fri, 10 Oct 2025 07:01:50 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: encrypted: Use designated initializers for
- match_table_t structs
-Message-ID: <aOiFLjI9iqtEPDdk@kernel.org>
-References: <20251009115817.368170-2-thorsten.blum@linux.dev>
- <aOiDqjEyowUkegbd@kernel.org>
+	s=arc-20240116; t=1760069286; c=relaxed/simple;
+	bh=X63iAn+aQH9VSzWIOvI40cDDjWVc1dw6bbn/t20RtYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UB4HO2yk1kTPDtT3BlhpZVpa20pDRCIwGI5EDMQYhQ4kkiX5TlfJZDIoiFXh7og/dOOxIkwSjD+Uhkx2jv0qDlQV6kmu2SgkUoJcfE0XZN1kt8+4yoUaOqZISpcyvIGST/BA7BAEmGx3WUaaoRVJhVUzS5cLOowH5zLsP8/0nFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VCOjjjWI; arc=none smtp.client-ip=45.254.49.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 256613dc5;
+	Fri, 10 Oct 2025 12:02:44 +0800 (GMT+08:00)
+Message-ID: <b47c5579-511e-4831-b86e-48ad4cefaa6c@rock-chips.com>
+Date: Fri, 10 Oct 2025 12:02:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOiDqjEyowUkegbd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix connector status detection
+ for bridges
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20251009193028.4952-1-heiko@sntech.de>
+ <v6aqic6kffc3x42dkb4bika5tvoqdpmmloroqio2656g74pkws@7fe3bsfzbasn>
+ <3572997.QJadu78ljV@diego>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <3572997.QJadu78ljV@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99cc49106703a3kunm83717e1fa8459
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGklOSlZPGUgZTkNMGh1DHU1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=VCOjjjWIpm8zpF9NqD0SP/ze5+hbIMIcSXoNvqOQfkmwmjkR5AcJwvXZDcLpheH0NZr8ZoT5Dlq8tfuxsW5qN4Y9ZRDF7m5Z1/TSpFCfjLJeqrJjzs7+YC0W2vMw+JhU2Ij7RyJydf4czuEd03Tx/NsyfP+Kir+EymCgdAoNXqk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=GjdmS7xtW1HFPjDkBq2hnFUV3l8gzHZMY6mZgqnMerE=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, Oct 10, 2025 at 06:55:26AM +0300, Jarkko Sakkinen wrote:
-> On Thu, Oct 09, 2025 at 01:58:17PM +0200, Thorsten Blum wrote:
-> > Use designated initializers for 'key_format_tokens' and 'key_tokens' to
-> > allow struct fields to be reordered more easily and to improve
-> > readability.
-> > 
-> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> > ---
-> >  security/keys/encrypted-keys/encrypted.c | 16 ++++++++--------
-> >  1 file changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-> > index aef438d18da8..76a6dab2f4d2 100644
-> > --- a/security/keys/encrypted-keys/encrypted.c
-> > +++ b/security/keys/encrypted-keys/encrypted.c
-> > @@ -62,17 +62,17 @@ enum {
-> >  };
-> >  
-> >  static const match_table_t key_format_tokens = {
-> > -	{Opt_default, "default"},
-> > -	{Opt_ecryptfs, "ecryptfs"},
-> > -	{Opt_enc32, "enc32"},
-> > -	{Opt_error, NULL}
-> > +	{ .token = Opt_default, .pattern = "default"},
-> > +	{ .token = Opt_ecryptfs, .pattern = "ecryptfs"},
-> > +	{ .token = Opt_enc32, .pattern = "enc32"},
-> > +	{ .token = Opt_error, .pattern = NULL}
-> >  };
-> >  
-> >  static const match_table_t key_tokens = {
-> > -	{Opt_new, "new"},
-> > -	{Opt_load, "load"},
-> > -	{Opt_update, "update"},
-> > -	{Opt_err, NULL}
-> > +	{ .token = Opt_new, .pattern = "new"},
-> > +	{ .token = Opt_load, .pattern = "load"},
-> > +	{ .token = Opt_update, .pattern = "update"},
-> > +	{ .token = Opt_err, .pattern = NULL}
-> >  };
-> >  
-> >  static bool user_decrypted_data = IS_ENABLED(CONFIG_USER_DECRYPTED_DATA);
-> > -- 
-> > 2.51.0
-> > 
+Hi,
+
+On 10/10/2025 7:42 AM, Heiko Stübner wrote:
+> Hi Dmitry,
 > 
-> For me this look like a "convert tuple alike initializations into struct
-> alike initializations" type of change :-)
+> Am Freitag, 10. Oktober 2025, 00:30:11 Mitteleuropäische Sommerzeit schrieb Dmitry Baryshkov:
+>> On Thu, Oct 09, 2025 at 09:30:28PM +0200, Heiko Stuebner wrote:
+>>> Right now if there is a next bridge attached to the analogix-dp controller
+>>> the driver always assumes this bridge is connected to something, but this
+>>> is of course not always true, as that bridge could also be a hotpluggable
+>>> dp port for example.
+>>>
+>>> On the other hand, as stated in commit cb640b2ca546 ("drm/bridge: display-
+>>> connector: don't set OP_DETECT for DisplayPorts"), "Detecting the monitor
+>>> for DisplayPort targets is more complicated than just reading the HPD pin
+>>> level" and we should be "letting the actual DP driver perform detection."
+>>>
+>>> So use drm_bridge_detect() to detect the next bridge's state but ignore
+>>> that bridge if the analogix-dp is handling the hpd-gpio.
+>>>
+>>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>>> ---
+>>> As this patch stands, it would go on top of v6 of Damon's bridge-connector
+>>> work, but could very well be also integrated into one of the changes there.
+>>>
+>>> I don't know yet if my ordering and/or reasoning is the correct one or if
+>>> a better handling could be done, but with that change I do get a nice
+>>> hotplug behaviour on my rk3588-tiger-dp-carrier board, where the
+>>> Analogix-DP ends in a full size DP port.
+>>>
+>>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++++++--
+>>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> index c04b5829712b..cdc56e83b576 100644
+>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>> @@ -983,8 +983,12 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
+>>>   	struct analogix_dp_device *dp = to_dp(bridge);
+>>>   	enum drm_connector_status status = connector_status_disconnected;
+>>>   
+>>> -	if (dp->plat_data->next_bridge)
+>>> -		return connector_status_connected;
+>>> +	/*
+>>> +	 * An optional next bridge should be in charge of detection the
+>>> +	 * connection status, except if we manage a actual hpd gpio.
+>>> +	 */
+>>> +	if (dp->plat_data->next_bridge && !dp->hpd_gpiod)
+>>> +		return drm_bridge_detect(dp->plat_data->next_bridge, connector);
+
+I have tried to use the drm_bridge_detect() API to do this as 
+simple-bridge driver, but it does not work well for bridges that do not 
+declare OP_DETECT.
+
+Take nxp-ptn3460 as an example, the connected status will be treated as 
+connector_status_unknown via the following call stack:
+
+drm_helper_probe_single_connector_modes()
+   -> drm_helper_probe_detect()
+      -> drm_bridge_connector_detect()
+         -> analogix_dp_bridge_detect()
+            -> drm_bridge_detect()
+               -> return connector_status_unknown due to !OP_DETECT
+
+However, the connected status will be connector_status_connected as 
+expected if Analogix DP does not declare OP_DETECT[0]:
+
+drm_helper_probe_single_connector_modes()
+   -> drm_helper_probe_detect()
+      -> drm_bridge_connector_detect()
+         -> return connector_status_connected due to CONNECTOR_LVDS
+
+Base on Andy's commit 5d156a9c3d5e ("drm/bridge: Pass down connector to 
+drm bridge detect hook"), the drm_connector becomes available in 
+drm_bridge_detect().
+
+It may be better to unify the logic of drm_bridge_detect() and 
+drm_bridge_connector_detect(), which sets the connected status according 
+to the connector_type. Then the codes will be more reasonable and become 
+similar to the simple-bridge demo via 
+'drm_bridge_detect(dp->plat_data->next_bridge, connector)'.
+
+But we still need a specific check for DP-connector to resolve this 
+issue. The '!dp->hpd_gpiod' may not be well-considered. Perhaps we could 
+introduce a new API, similar to drm_bridge_is_panel(), called 
+drm_bridge_is_display_connector()?
+
+>>
+>> And it's also not correct because the next bridge might be a retimer
+>> with the bridge next to it being a one with the actual detection
+>> capabilities. drm_bridge_connector solves that in a much better way. See
+>> the series at [1]
+>>
+>> [1] https://lore.kernel.org/dri-devel/41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com/
 > 
-> In a context the change would make sense. E.g., if an optional field was
-> required.
+> Hence my comment above about that possibly not being the right variant.
+> Sort of asking for direction :-) .
+> 
+> I am working on top of Damon's drm-bridge-connector series as noted above,
+> but it looks like the detect function still is called at does then stuff.
+> 
+> My board is the rk3588-tiger-displayport-carrier [0], with a dp-connector
+> which is the next bridge, so _without_ any changes, the analogix-dp
+> always assumes "something" is connected and I end up with
+> 
+> [    9.869198] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
+> [    9.980422] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
+> [   10.091522] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
+> [   10.202419] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
+> [   10.313651] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
+> 
+> when no display is connected.
+> 
+> With this change I do get the expected hotplug behaviour, so something is
+> missing still even with the bridge-connector series.
+> 
+> 
+> Heiko
+> 
+> 
+> [0] v3: https://lore.kernel.org/r/20250812083217.1064185-3-heiko@sntech.de
+>      v4: https://lore.kernel.org/r/20251009225050.88192-3-heiko@sntech.de
+>      (moved hpd-gpios from dp-connector back to analogix-dp per dp-connector
+>      being not able to detect dp-monitors)
+>>
+>>>   
+>>>   	if (!analogix_dp_detect_hpd(dp))
+>>>   		status = connector_status_connected;
+>>
+>>
+> 
+> 
 
-If we had struct initializers I would equally nak "convert struct
-initializers to tuple initializers" type of change.
+I see... There is also a way to leave the connected status check in 
+Analogix DP bridge:
 
-BR, Jarkko
+1.If the later bridge does not support HPD function, the 'force-hpd' 
+property must be set under the DP DT node. The DT modifications may be
+large by this way.
+2.If the later bridge do support HPD function like the DP-connector, the
+connected status detection method is GPIO HPD or functional pin HPD.
+
+With the DT modifications for above 1, the analogix_dp_bridge_detect() 
+can be simplified to:
+
+static enum drm_connector_status
+analogix_dp_bridge_detect(struct drm_bridge *bridge, struct 
+drm_connector *connector)
+{
+	struct analogix_dp_device *dp = to_dp(bridge);
+	enum drm_connector_status status = connector_status_disconnected;
+
+	if (!analogix_dp_detect_hpd(dp))
+		status = connector_status_connected;
+
+	return status;
+}
+
+Best regards,
+Damon
+
+[0]https://lore.kernel.org/all/22a5119c-01da-4a7a-bafb-f657b1552a56@rock-chips.com/
+
 
