@@ -1,103 +1,290 @@
-Return-Path: <linux-kernel+bounces-848811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13F3BCE9E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:31:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4381BCE9F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD0C426C6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:31:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D6814F7FB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5BE302CAE;
-	Fri, 10 Oct 2025 21:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2C9302CAC;
+	Fri, 10 Oct 2025 21:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oYbVRhIn"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+k1bZ0n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1749303A0E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3A9944F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760131851; cv=none; b=MVl72XCQXw3pE/Jj5gXyDOxSQ1LtWFj15z5sC4foJr9AqLLia7r0TM491Atsa+jHdSZA19A0eFyRdgoV34WbMzwUs53uPWwzy1O2AEaxg+9RbCgdpDexAHWB8ccck4q+z7l4HFPRb2BAgpJLyazWP8tWrwKW4s0SREpI8YmlYuY=
+	t=1760131957; cv=none; b=T4ttXDK4gma17TrI0e9ZBR7wsxmW1mJm6Rd+QV3iHELU8/ayrJYF9m7QTwUpihCd41TAjXSPnC420BSnBGhZV5eRHU2k7nfC5xw5KdjEZ8PV10dZvChp30NtkLcbsRkE1mf3K9FmC+eYMABA9wi2CUXTYs63+k0SkAweKrMh/Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760131851; c=relaxed/simple;
-	bh=x8ZdD9t8xaKyanN3XNVD+r2/6u9tMr0Y+7qjId0Z1kc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DByhSamef4DDCwx//Ful3IFv0+maFmGgRbVztx7cvzxUECcEDTiTwbTJA4qfr0iqOyi4r6aJ7ZGJ9n1bOP3BSIz981VTMYDS3ACOtNHhHh7sLCtg7UXRVK9aHHWXKfKRWiZknotMulUqesN8BD7dzz1kZpWvP+huFh2upfiPqqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oYbVRhIn; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-268149e1c28so73082245ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760131849; x=1760736649; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7EL7WGjbXjGss0nIK+61duSt+Dw39EYfognGEJJFlik=;
-        b=oYbVRhInqgq18OMJSlpNIK6xXgyZU5lspp0gO3E9ECvlppFs3s6M127qJHEk8DoMXe
-         uaSVFLA6FKtGd1tiZefyhclq6HOp0Bvxa2xMt1aIb2Hk8I9lSOzinOhTnP1WyiMfU86k
-         sM4u2CBKs7cpIlRkNOnyirtewa8fAMtTfnnk9hTWcoyrKfl7/XmohJq/avbKsdZFFsyI
-         DKwCQqlFHioY7/7NsMCFtzZYrWzt406sUFVfWGqCsxYrXrOcCdeZV49QuXFnwZAlqrdK
-         ogi83FdD+9AWTRCKTPNWMSbIvQkWjisHLYj5WaBnoZbLudOiNTkdGzpIj8dHKtCvqTbD
-         YlAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760131849; x=1760736649;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7EL7WGjbXjGss0nIK+61duSt+Dw39EYfognGEJJFlik=;
-        b=d1/jcSY0RzpVtVDFTAgIXjifbfM3LLTL+MloNS4zeulwU6ST26APiTaSQpKg+CWRjQ
-         nVIqKLaii1pUOX/OwH7MFJLS/jqtiH6ddgzr+AgP+xpVu467FcV3pQYnEVDQujU8XxlR
-         gHbsiZe5xt3UTe07Qd+Ra/falMImeB/hhd4Rt1llq6LTLMRzb3hON5sBX8bXYbetW3f6
-         WYchVxBB20Ij1qQfnqWOw6EIQGElFYNcw16NSkpqgQRtth9AqUGDWvrGFoPW52NpNVMw
-         b+tCMV5R+CwW5VqegkPfKcXxxkokR1pRMHIMYZ3QgmcS46IaV80M1OC/1CWi+nvmoT2a
-         AwKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSPJGVCHB6lGVWs2hGkIKAKb/mmluq9oUka52d8VL1kggccxlcSFQG2H4etMaScuot7I+Y8UOqIISf17c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA/aXAEq2hqxX0aCmAHW7nTYc46Zf+X9Jp5MNJ/SLA1KoAOdUR
-	zQVY9KQ7v4XpxYBXaqc13Mqs/F+zmRW8rcf6QXTXatHYH67JYaVT5NyL+TIwxcaEjpKfEwf57Hb
-	UnvWgqA==
-X-Google-Smtp-Source: AGHT+IHhbLvCYGsBh6ODhMnEDvAuta6cPkH1KNgVvHSQ9KHYqVszyeRaOArV3kO5lGiA3vXVq/dSXjWdUKY=
-X-Received: from pjbga18.prod.google.com ([2002:a17:90b:392:b0:32e:c813:df48])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b0d:b0:32d:d5f1:fe7f
- with SMTP id 98e67ed59e1d1-33b51118e6amr20842431a91.15.1760131849296; Fri, 10
- Oct 2025 14:30:49 -0700 (PDT)
-Date: Fri, 10 Oct 2025 14:30:36 -0700
-In-Reply-To: <20250924174255.2141847-1-seanjc@google.com>
+	s=arc-20240116; t=1760131957; c=relaxed/simple;
+	bh=ArWUSUq8CsQ/P/wD4tX39L5zyuywg/oQR6eI4rbEtmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c8IiTo7E5M2chMJSoM65TsIjxN8FdXGQKBlRXdsIYEmjxd6+OMcxcrNZMW1PyZdHU4RzFKck3QgCS8VsDFFwNibhk+65rlaIx2OlnG96Nsazct7qYFFQWDYKd3U23s2+WnEeOsIXuskcd6LbeoL0THI5PmXTgEtQQ2KW6CtPtsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+k1bZ0n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E86C19423
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760131956;
+	bh=ArWUSUq8CsQ/P/wD4tX39L5zyuywg/oQR6eI4rbEtmI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=D+k1bZ0nFqoniRZZ+cDYGVVwQJSSy2z/JrK/z6/A7hVSAsrXW0duSCsltU23Yg2ox
+	 6SkyJy/SU+k7H2VzNq0CmoJFIeLMTxcl0hD7nMoGrQkLRgIr7aPD5FGq16/o6Ht+2M
+	 7hZ5lwpJ9Bmpz4vgpnSPsEU8o0t8Wc79RUkdxL0nKj4DBi+vMe+g+nIcPBXzdc9J7k
+	 ciL7Y41kYOXqgP3o+Y6+zBvNaiS1cEMOBicz65koAf9KRrp/97Ey9HxQVzeZrCn8B1
+	 A2rmouo8i/q/7zPaIanIE6cSFiB5w48QCU00UKIU01kJ6xxZwdHd24ICxT6bFcgKss
+	 dLm0CZ51xQbqQ==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b00a9989633so404983066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:32:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWIZSOWr09MpiVHHblqk3jqEMKzUBMPuXW1pWyPCZNKbJ3dlrfqVTEuaLqdEQOmK4giyo0F25Y6aqdjF9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtI8BhM/S/8FNmETZNpMRNQI+XHpXnsyL0N2JNRp3/IoVkq7A8
+	9gnEoKkjALXppfhnXTIDRGjn17IXgwzmbpciYXeuKMHapg+3n4hec2iUBW12oyasmnZvpQNA7f1
+	Kila0DyHu6mEp9a7j+clpcSR93W0aeQ==
+X-Google-Smtp-Source: AGHT+IFexy1+T7e90A8g4k3s8jVRhUi34qlbue4tmM9kxCqG5lFhj6gYrjvGeC3ntN1XjkQ1Jf8fwLukEaWkt/6kFwE=
+X-Received: by 2002:a17:906:6a16:b0:b23:20e7:b480 with SMTP id
+ a640c23a62f3a-b50bedbf4f1mr1683334766b.18.1760131955101; Fri, 10 Oct 2025
+ 14:32:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924174255.2141847-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
-Message-ID: <176013138845.972857.17974431872471984207.b4-ty@google.com>
-Subject: Re: [PATCH v3] KVM: selftests: Test prefault memory during concurrent
- memslot removal
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250926-ethos-v3-0-6bd24373e4f5@kernel.org> <20250926-ethos-v3-2-6bd24373e4f5@kernel.org>
+ <aNrce2up6ZxzMJpo@lizhi-Precision-Tower-5810>
+In-Reply-To: <aNrce2up6ZxzMJpo@lizhi-Precision-Tower-5810>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 10 Oct 2025 16:32:23 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLbBKyWsMgq0-rooQd5LvxMjPkNtcYvff2fDoCoDxDoOA@mail.gmail.com>
+X-Gm-Features: AS18NWB70VVslCF2YO6NXRIQZkN1Oi2H4qa3p8YK7r-F05r60yMYia5RgwxjdvU
+Message-ID: <CAL_JsqLbBKyWsMgq0-rooQd5LvxMjPkNtcYvff2fDoCoDxDoOA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] accel: Add Arm Ethos-U NPU driver
+To: Frank Li <Frank.li@nxp.com>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
+	Daniel Stone <daniel@fooishbar.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 24 Sep 2025 10:42:55 -0700, Sean Christopherson wrote:
-> Expand the prefault memory selftest to add a regression test for a KVM bug
-> where TDX's retry logic (to avoid tripping the zero-step mitigation) would
-> result in deadlock due to the memslot deletion waiting on prefaulting to
-> release SRCU, and prefaulting waiting on the memslot to fully disappear
-> (KVM uses a two-step process to delete memslots, and KVM x86 retries page
-> faults if a to-be-deleted, a.k.a. INVALID, memslot is encountered).
-> 
-> [...]
+On Mon, Sep 29, 2025 at 2:22=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Fri, Sep 26, 2025 at 03:00:49PM -0500, Rob Herring (Arm) wrote:
+> > Add a driver for Arm Ethos-U65/U85 NPUs. The Ethos-U NPU has a
+> > relatively simple interface with single command stream to describe
+> > buffers, operation settings, and network operations. It supports up to =
+8
+> > memory regions (though no h/w bounds on a region). The Ethos NPUs
+> > are designed to use an SRAM for scratch memory. Region 2 is reserved
+> > for SRAM (like the downstream driver stack and compiler). Userspace
+> > doesn't need access to the SRAM.
+> >
 
-Applied to kvm-x86 fixes, with a massaged changelog to call out that it's
-KVM's retry logic, not the TDX-specific zero-step logic that is being tested.
+> ...
+> > +
+> > +static int ethosu_init(struct ethosu_device *ethosudev)
+> > +{
+> > +     int ret;
+> > +     u32 id, config;
+> > +
+> > +     ret =3D devm_pm_runtime_enable(ethosudev->base.dev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D pm_runtime_resume_and_get(ethosudev->base.dev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     pm_runtime_set_autosuspend_delay(ethosudev->base.dev, 50);
+> > +     pm_runtime_use_autosuspend(ethosudev->base.dev);
+>
+> pm_runtime_use_autosuspend() should be after last register read
+> readl_relaxed(ethosudev->regs + NPU_REG_CONFIG);
+>
+> incase schedule happen between pm_runtime_use_autosuspend(ethosudev->base=
+.dev);
+> and readl().
 
-[1/1] KVM: selftests: Test prefault memory during concurrent memslot removal
-      https://github.com/kvm-x86/linux/commit/1bcc3f879127
+All the call does is enable autosuspend. I don't think it matters
+exactly when we enable it. We already did a get preventing autosuspend
+until we do a put.
 
---
-https://github.com/kvm-x86/linux/tree/next
+> > +     /* If PM is disabled, we need to call ethosu_device_resume() manu=
+ally. */
+> > +     if (!IS_ENABLED(CONFIG_PM)) {
+> > +             ret =3D ethosu_device_resume(ethosudev->base.dev);
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+> > +
+> > +     ethosudev->npu_info.id =3D id =3D readl_relaxed(ethosudev->regs +=
+ NPU_REG_ID);
+> > +     ethosudev->npu_info.config =3D config =3D readl_relaxed(ethosudev=
+->regs + NPU_REG_CONFIG);
+
+
+> ...
+> > +
+> > +/**
+> > + * ethosu_gem_create_with_handle() - Create a GEM object and attach it=
+ to a handle.
+> > + * @file: DRM file.
+> > + * @ddev: DRM device.
+> > + * @size: Size of the GEM object to allocate.
+> > + * @flags: Combination of drm_ethosu_bo_flags flags.
+> > + * @handle: Pointer holding the handle pointing to the new GEM object.
+> > + *
+> > + * Return: Zero on success
+> > + */
+> > +int ethosu_gem_create_with_handle(struct drm_file *file,
+> > +                              struct drm_device *ddev,
+> > +                              u64 *size, u32 flags, u32 *handle)
+> > +{
+> > +     int ret;
+> > +     struct drm_gem_dma_object *mem;
+> > +     struct ethosu_gem_object *bo;
+>
+> move 'ret' here to keep reverise christmas tree order.
+
+Is that the order DRM likes? It's got to be the dumbest coding standard we =
+have.
+
+> > +
+> > +     mem =3D drm_gem_dma_create(ddev, *size);
+> > +     if (IS_ERR(mem))
+> > +             return PTR_ERR(mem);
+> > +
+> > +     bo =3D to_ethosu_bo(&mem->base);
+> > +     bo->flags =3D flags;
+> > +
+> > +     /*
+> > +      * Allocate an id of idr table where the obj is registered
+> > +      * and handle has the id what user can see.
+> > +      */
+> > +     ret =3D drm_gem_handle_create(file, &mem->base, handle);
+> > +     if (!ret)
+> > +             *size =3D bo->base.base.size;
+> > +
+> > +     /* drop reference from allocate - handle holds it now. */
+> > +     drm_gem_object_put(&mem->base);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> ...
+> > +
+> > +static void cmd_state_init(struct cmd_state *st)
+> > +{
+> > +     /* Initialize to all 1s to detect missing setup */
+> > +     memset(st, 0xff, sizeof(*st));
+> > +}
+> > +
+> > +static u64 cmd_to_addr(u32 *cmd)
+> > +{
+> > +     return ((u64)((cmd[0] & 0xff0000) << 16)) | cmd[1];
+>
+> will FIELD_PREP helpful?
+
+Like this?:
+
+return ((u64)FIELD_PREP(GENMASK(23, 16), cmd[0]) << 32) | cmd[1];
+
+Questionable to me if that's better...
+
+>
+> > +}
+> > +
+> > +static u64 dma_length(struct ethosu_validated_cmdstream_info *info,
+> > +                   struct dma_state *dma_st, struct dma *dma)
+> > +{
+> > +     s8 mode =3D dma_st->mode;
+> > +     u64 len =3D dma->len;
+> > +
+> > +     if (mode >=3D 1) {
+> > +             len +=3D dma->stride[0];
+> > +             len *=3D dma_st->size0;
+> > +     }
+> > +     if (mode =3D=3D 2) {
+> > +             len +=3D dma->stride[1];
+> > +             len *=3D dma_st->size1;
+> > +     }
+> > +     if (dma->region >=3D 0)
+> > +             info->region_size[dma->region] =3D max(info->region_size[=
+dma->region],
+> > +                                                  len + dma->offset);
+> > +
+> > +     return len;
+> > +}
+> > +
+> ...
+>
+> > +
+> > +static void ethosu_job_handle_irq(struct ethosu_device *dev)
+> > +{
+> > +     u32 status;
+> > +
+> > +     pm_runtime_mark_last_busy(dev->base.dev);
+>
+> I think don't need pm_runtime_mark_last_busy() here because
+> pm_runtime_put_autosuspend() already call pm_runtime_mark_last_busy().
+>
+> only mark last busy without pm_runtime_put() can't affect run time pm
+> state, still in active state.
+
+Yes, agreed. Copied from rocket, so Tomeu, you may want to look at that.
+
+>
+> > +
+> > +     status =3D readl_relaxed(dev->regs + NPU_REG_STATUS);
+> > +
+> > +     if (status & (STATUS_BUS_STATUS | STATUS_CMD_PARSE_ERR)) {
+> > +             dev_err(dev->base.dev, "Error IRQ - %x\n", status);
+> > +             drm_sched_fault(&dev->sched);
+> > +             return;
+> > +     }
+> > +
+> > +     scoped_guard(mutex, &dev->job_lock) {
+> > +             if (dev->in_flight_job) {
+> > +                     dma_fence_signal(dev->in_flight_job->done_fence);
+> > +                     pm_runtime_put_autosuspend(dev->base.dev);
+> > +                     dev->in_flight_job =3D NULL;
+> > +             }
+> > +     }
+> > +}
+> > +
+> ...
+> > +
+> > +int ethosu_job_init(struct ethosu_device *dev)
+> > +{
+> > +     struct drm_sched_init_args args =3D {
+> > +             .ops =3D &ethosu_sched_ops,
+> > +             .num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> > +             .credit_limit =3D 1,
+> > +             .timeout =3D msecs_to_jiffies(JOB_TIMEOUT_MS),
+> > +             .name =3D dev_name(dev->base.dev),
+> > +             .dev =3D dev->base.dev,
+> > +     };
+> > +     int ret;
+> > +
+> > +     spin_lock_init(&dev->fence_lock);
+> > +     mutex_init(&dev->job_lock);
+> > +     mutex_init(&dev->sched_lock);
+>
+> now perfer use dev_mutex_init().
+
+$ git grep dev_mutex_init
+(END)
+
+Huh??
 
