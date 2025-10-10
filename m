@@ -1,96 +1,137 @@
-Return-Path: <linux-kernel+bounces-847662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFFBBCB5F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3E4BCB5FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A673C818B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C4C405714
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D643E1514E4;
-	Fri, 10 Oct 2025 01:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63311DFE09;
+	Fri, 10 Oct 2025 01:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Pp7KMqCy"
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnDV+2hH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7860DDC5
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF0CDDC5;
+	Fri, 10 Oct 2025 01:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760060958; cv=none; b=mt5W9zH5zbsH6NQBkADvCMFd02uvBL+ozE37kRvMMt+PZc1UVEsNNI67if1u9C/Z4usrBxhdUR1p6BmGxe/iSrzLUpxM5T0HfFDAhJhNoOkfcoWEM2SNdaAzYHomn2rpsu2NmYJEDXsjTlbBrXox3ARt1cGZs5HXGTq1px6QR3Y=
+	t=1760061112; cv=none; b=JNc32DqAJBqeR74K8C6d8YI3M5VSqZ0OIdX5xaHEzurRzd7pmQA3nARYz94U4fQVRPOrrfA5mIo0U7Xk3sLxQ1cIonyAWALkmHlBIfLpjHxXxsuhXFB2KEyCz4fvw/H/XbD0XqKBxpwPFVSvcjkdud6b+bv34qOhfIVd6QzNTqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760060958; c=relaxed/simple;
-	bh=34b1++mXtY0zR4TfJY1CiEAcda+FlEyiO4n61Y51gxE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mKnGVq+9JU1+wybvS6Tbyu6uFLqdPGZO0U4oFK5VB55oFkcwXWSOFtf5LU6rddtFby0C3dsa+wQir9rApLPkZNge5fpWrq4gCupkDNyc8R+XBrUYu+b1jYl7Wv1e5Kv25Yl4QPpkQ/fOrs4q9x7nei+3tRr6ArUtbiCaGjTCeBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Pp7KMqCy; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from canpmsgout01.his.huawei.com (unknown [172.19.92.178])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cjV5M0HpRzvX8m
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:48:39 +0800 (CST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=NN7TKZpuTKou0cZq/X6oLAacTZkxb+JVQ09be3EeP1Y=;
-	b=Pp7KMqCy5krUbStfoY2D5FQulDV63BZ8Kz/On8RQhlfFTbDGZBC4HRcY9Cg/FgW/D18pLD3JC
-	+zuhrqtG4TKEvaHbsxTX3iq4KZOSkFy8ZvAiaNZgUhYYjfeXBzsSmzPYNQs9SySloyyeZcoibVr
-	uBrVNdIHZFt7B+lvCAUXd/M=
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cjV505TVDz1T4FX
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:48:20 +0800 (CST)
-Received: from dggpemf500006.china.huawei.com (unknown [7.185.36.235])
-	by mail.maildlp.com (Postfix) with ESMTPS id E89F21402C8
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:48:57 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- dggpemf500006.china.huawei.com (7.185.36.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 10 Oct 2025 09:48:57 +0800
-From: Yang Shen <shenyang39@huawei.com>
-To: <yangyicong@huawei.com>, <jonathan.cameron@huawei.com>,
-	<fanghao11@huawei.com>, <shenyang39@huawei.com>
-CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH] MAINTAINERS: Update HiSilicon PTT driver maintainer
-Date: Fri, 10 Oct 2025 09:48:47 +0800
-Message-ID: <20251010014847.2747140-1-shenyang39@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1760061112; c=relaxed/simple;
+	bh=dkB6fdpTFBXzre8Ol8wQB91/KFyloPbHgVKGDiUe7z0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XSBVse5Rhi7dCXPeAsMxiCbLXZWdW8oRElAu5ruVx2DWf/kKjDAhGLl0Ctib4Mnob/8/KWibUBDXrnV7suJJQIdhARJF3ygUFiDcYp1KRolF+U//n6RPl3JfpV2Mqvh9/adaeviOuc9vMMj4Qr5ApIapIRMw4eqReOMdbHLcfjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnDV+2hH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF028C4CEE7;
+	Fri, 10 Oct 2025 01:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760061111;
+	bh=dkB6fdpTFBXzre8Ol8wQB91/KFyloPbHgVKGDiUe7z0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CnDV+2hHyceKibppma+7u3LrE9ZbYtlsG80QNSrC+OjDpdM78j/s9VxTdL/X9hKxd
+	 g7DkRZUBa9PpgCFF4uN5LXzbGeRjZdOulA48njYTde51znjlIwcOe+p6kUzYjTbMHa
+	 WPg3vfTsrjjSH0IS5oQGdwZijqOp7RhStDczUjMA+YXE2rV8Tbj5k6+IEBm3dZHKy9
+	 BDay/a4TKa1qxE71J/IESbEYB498E4JU/JX2LvgDxOHjzTv3HHjax0NYPVeJLyhj+5
+	 HnO5X4AZCYH+/EwC3JYQbJSn4tSO8aVQxnD/SBENJADTjOUAaAcWcDB0MNkzmY8C4k
+	 mwesfnm7mCPcQ==
+Message-ID: <030bf0c8-c710-4b4e-a1fe-9754eaa0d335@kernel.org>
+Date: Fri, 10 Oct 2025 03:51:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500006.china.huawei.com (7.185.36.235)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm: rockchip: add RK3588 DP carrier
+ from Theobroma Systems
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quentin.schulz@cherry.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, damon.ding@rock-chips.com,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20251009225050.88192-1-heiko@sntech.de>
+ <20251009225050.88192-2-heiko@sntech.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251009225050.88192-2-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add Yang Shen as the maintainer of the HiSilicon PTT driver,
-replacing Yicong Yang.
+On 10/10/2025 00:50, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> 
+> The DisplayPort carrier is a very simple baseboard only providing serial,
+> ethernet and a displayport output.
+> 
+> But its main functionality is that it routes the Analogix eDP controller
+> to this DisplayPort output, which allows to test that controller simply
+> by hooking it up to a suitable monitor.
+> 
+> Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+> Acked-by: "Rob Herring (Arm)" <robh@kernel.org>
 
-Signed-off-by: Yang Shen <shenyang39@huawei.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please update your b4. Quotes are not needed. Weird that you had to add
+them somehow, because they were not in previous version.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9a6f4ef1cca3..e9a40db0f368 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11278,8 +11278,8 @@ F:	drivers/perf/hisilicon
- F:	tools/perf/pmu-events/arch/arm64/hisilicon/
- 
- HISILICON PTT DRIVER
--M:	Yicong Yang <yangyicong@hisilicon.com>
- M:	Jonathan Cameron <jonathan.cameron@huawei.com>
-+M:	Yang Shen <shenyang39@huawei.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	Documentation/ABI/testing/sysfs-bus-event_source-devices-hisi_ptt
--- 
-2.33.0
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> Link: https://lore.kernel.org/r/20250723190904.37792-2-heiko@sntech.de
 
+That is not really useful Link. Points to the same patch.
+
+> ---
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+Best regards,
+Krzysztof
 
