@@ -1,195 +1,180 @@
-Return-Path: <linux-kernel+bounces-847633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B623BCB50E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 03:06:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 408C0BCB469
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC653AC973
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:06:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12B844EC5A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A815214A6A;
-	Fri, 10 Oct 2025 01:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702C71EB9F2;
+	Fri, 10 Oct 2025 00:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pPKUTpvl"
-Received: from sonic316-55.consmr.mail.gq1.yahoo.com (sonic316-55.consmr.mail.gq1.yahoo.com [98.137.69.31])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6ATgbT1"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDF41F4281
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1B918A6CF
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 00:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760058362; cv=none; b=hs3scqyPt0oQkKrQIr4wJo3SBbUhfcx9K7l5/CTslM6QQqXk8PfF5iBooN+lW7XzD3maZzdKvD9YWL6/KXMSxNN63dJI+NX6sE0Y38gDzcAkeL9yasiOjFyNH4KVLUIT9T/meYftRtyjR+2TCdtLQik62MojsJ56checsVCtUtc=
+	t=1760055999; cv=none; b=XF4WtuI2QVlKf6CaSRAEqHGhxKNFEJE1d/1dEstOVkX459uC14/oqhDiAAzjwGsVZOI/KZvJ8sPHHJLXnQHCxXYl1Ecp88yfuKGrdqM0LNpVfNlPrv8uvbrr7zoKck4QYPBCwOvoalWwZIn7FBTTKX+gRXRY3Jf3c2KE+RqdiCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760058362; c=relaxed/simple;
-	bh=/hMfUOIeK9GD9x4vXhTNoREyWRIX0X+0EK95NCRkb4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=g4qeZjypFoh6DBEOq+Kn9CcFdxz7ny6qc87+q5HckZZ04+qJUjMMLLJyDmQF+Hwg+YFyJphDR1Ga8SCCSTZwabOO8FehoYOZi3D5NKQiUqW1nK2x9eGb22MbB1MMGUraSE7Q3nDAbSIGytpfGHAS5E2CUMQr2t4CjRQ8VjW39ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=pPKUTpvl; arc=none smtp.client-ip=98.137.69.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760058359; bh=0VTdNEpFRWjnOOzcXbrlmV0h1KaJ09ZXiLQBWRMC6P4=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=pPKUTpvlaVOak4PQxpWttdJACYmcJYtphGGe50SycBhGtKElkxFff7YykzeoZXnyYhH1JLVJnkimY2OjNJxm+u/2Nz9Men2MsHcRwY+k0zhb0eMfeP+UTscicVHkXaAjGGCa1WE+NFebXyyMUURADykeYvuZ23+C7qXrPegvtsR/wlkY5OyP6ajwNfA/uD61xHSxH18rI/hg4G+aKDdpE7Pg0cwAHuCXJxrWp4Ny+J3G6e9yQHQyFnRoACCgzuFXC+L5s2o5v8eoVAoAj8wy/rsRbYzqD6NwEEMVZk3L/KBpVYykhzYX2n9+9lRCYIOERK8orzrppG8ROlYo7VbzXA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760058359; bh=f9onEI4lcpxFlgSZrxrP8CGHqi9leEybBHPuUY6vkbc=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=aO3C9QPYoaLeKuvtwDK8qXXirTvy9f349MVW+QtaR0c24hRauXgwtZpexo8liTt/LI8Cajj0gWuU4dD/MmLaQxLx7gwIK7ey/U2PKdOsnBZetdGF+/AOX36N96bbrsAbwdya168Rv4/lzGdeqW0O7G9/tMx3cHSNBhlxwHAOKmySnShfWMNJdN/GHAisocsFjhxQAmAMETJcbNxUhSKOpuxrqhuJ9RVscpR/ZnO9TTuk5gr7PE+6WLpTm/c+sbDUiZkUj23yhdlaRsxndp17eBm1kImocjMkku+cTKH4A3AFCJCnzh3rzjxU+zu5u/3q7yXQWivRb8sqtRWkwqsr6g==
-X-YMail-OSG: VbSpB3AVM1kFrdWXjzDYStmyabFzfBauQUcwFj47wWqxZxJitX1xO3ebNu4krFG
- RYQR8ULwOVgn.h1u8WtC7pNSFezlkCIP5ViSBedj010XjuCG41T6P7hnXSOyPvRuOyvo086giPHs
- QIds0t..w4ib.odZn2LDZjDhIHWe2fnN5rvSeXreWlwLP1dvLDMR5DGd.K3IM.9it2p7NkAu2Ppl
- FXVgrWOIpSZHW8KNUgnRmlqRbSLqjaFONg3F7CxdWpkgsItxyb4b3D9SLH5j9..RHFb.VfK1L.nT
- McWUQ9L_l8qxMmjrEl9nMD8FGp9m8WtLasAfs46DXOz8Dkxvv0iw94AEH6h2hIvnZgBj8IAP5K3D
- hxkPLHwnEJGiUHqbD5KVyuzYDSgwQsv1xTvfrV5k6KwN6oSiRNyT6Qt8by3ppQ0LqIri.kw4qJdR
- aFYkgmrkK_5xykJLnE2yikjGijnS0jsvgwNc42Ocn.Fd_EtgV2u9LJV18nxPhQYyF6.mtJ7h1Z7I
- 4Qy1xfTpJQPzzDcVLiIPvlIi_rQbMMIfqO_ODX0dnCrMA8f0XBjzrEuSoRWsUkvT5Q8el4pyU.Sx
- jqsniHM1cJwIMMZG1BePtJTJVGeJ9vayJbK1AxPUOFvAxKyQ5AZtNuFC08Ns26RnGEHjtJshZiq8
- SOy6wM4j12ukM53E6vd_458XVaijSMPgMRIYUGr0d9.r6kqJr9xQl8qAxAcEJs2VHmVofMM1hl0o
- iCdb5TyRTUWXds_TQLL9cDTOJxIAHGyzUcbA8kKhROV400Ilt00SkvQjhBPwVts2BDqzhAua108k
- 7zWYQ5QBBIEfpP16AdOOoaaRvAcNkpr1grweqrPYfKS0YIpH6rzb.Rfva_FS7WovrEI4yy38Gi.I
- 8sy.MJ_aY1B0wph0Lwrk3wOeob2C7gKtPCIGqS5ccagJ7qk2fcB3r5.AfD68qxpdTVEaLUZaG_Nv
- qmWBYb3koT3A93Wzs4sgGmDf55hgOdMvEjcNLH5SGnY0W1FJqibmzN.XciwD0wnsF1zeQS6433Bf
- t7FMM72C1msUZ.2UiChbJusz9Ir73UuR9R6PViDQjlQ1IXhUdSMeMo241w6EMCPauzohk9qvXqnK
- hWHzA5pMm0ommaeD7kUHiI5UFkw3TADMdYBcW9RnJjmSeUGTxGqxLuT_IdtZ_rpeXdBMyXWybUHM
- GEyjdHkagMqG0VuoWeyl.ijKZzp728eCkgeBZA31VUICKt_DUc4TEKOLtwHDLwSENS2MIKfiohp.
- Wa.Xht25RzdeqCsaB6Y9XtzqCFu559E7PXWSE4rUDrQ2onEMXdZdJhJXNU213eieycpnZCHJXjPK
- bPJENJYq5dootkYjBkVftgyqgRrSk6W5Ovm7RwAmaJ5Qi.PF2nxheNbxLZZVMj9iOS6Juj98I7LA
- 9Eexvnv_7XDhaorhNZgtiVa_oq2jwQdBE_Zqq9aKQj.GSJ0tRIjryZ.gfSPZH78xaSkD..bhrEXn
- OxuW81QoKcQJBL6LJSX6.08HG.X_DoraZZPhKHDtEJIfJEwODyca4iTdNiCbQHFRA4cI.yaYCUYN
- TaahGVo0qXY0UDgjd1uHCWBzxg6OdvWJnigmwu2q2nvHYJ1pT95pVs6JZDI98g2jkxkrIBVU9qOb
- Gc0v.rXdykiDft6kCBlc3HKS..Me0IInEiS.87.D_lsENtG3Fz5hsFZWoin_CXpiVO2w7lbGpqUt
- MQ5Mb1KTVoOoL7OcQcMWq2GheLtdDQs62HC4_nhqFqcFo4Yb9DMoKkY.qfa4wGWKNzjEVWf2EiBW
- kUVoSDKb0BT1sWoCbRyhw4tTn2azcLSZcHIyYk1nnMhqk5Ve3GsX1x02S3CFMdTgYn90GgSyP00A
- 1xpgx.dO7jed9GA4eek4.APdgY32wVuhHu.ke__oEw97r6CNfV39VyJ8lIy4j.dL9MW6f7bBhq1H
- u7jscG9HxuOLJPMf92gTSBtYx84rFnspRcbCnbKhiLaeckhJWAic1UgHjCXPgXZKCoy0KGXmlIdu
- wuhFYaflNX1_W7qqs17TFf_SvbVSoMxCJqjxmmH1r.daaMTd3ksAAnMl3Wf7dTWLDs8oVtkegx.9
- azASxo8rzljyv4.6aXBVhtWPlwHha5OOcAvuCPoVk08_rj3cJFyUGoYZeWv.IoRRsYoCEJ2EKE3I
- QDw11LOeY_DY86jqNA6VqCLXdJXGKTQGQpEYmuWtmlPj0JF1e.cHZ.6u_bNLh_PEYjPrGvRbvK78
- QxCWJxQDoHB2yQeUOXI8nMu7_HUBRO0qHWmXArYrrRFOU1QogfnpbPH.qgfZ7zsTUqZBV_DGIafK
- pcnLWWaeMuHvODd4-
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 6cc0e7b1-f593-4cd8-9102-8f489ef4c6b3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 10 Oct 2025 01:05:59 +0000
-Received: by hermes--production-bf1-798569fcb9-27qrh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3c7b071a36dce4930d289eabdfc11d66;
-          Fri, 10 Oct 2025 00:25:31 +0000 (UTC)
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	zack.rusin@broadcom.com
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Subject: [PATCH] drm: rename drm_ioctl_flags() to drm_ioctl_get_flags() to fix kernel-doc name conflict
-Date: Fri, 10 Oct 2025 01:25:20 +0100
-Message-ID: <20251010002520.359824-1-adelodunolaoluwa@yahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760055999; c=relaxed/simple;
+	bh=JVQGXEnKlYV2bfnTgHup24mHvFAa+322b8XCRQx448g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sIqtY7VgTVTS6+KQc21RfFX13+Q8TryIiS8QxIli6GEMyXVRSzhjc9ubnEoTH4Ejrhl81+Z0HOrqySIADvViGwyBkwIguMqcSr4Hr08DPlapcgLyy4PNkTBF40ajhCqOYCAGOYa/Caq2GCXtAK7ouXfOfd1KGeTNRGsYRoHhmjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6ATgbT1; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e2e363118so12587425e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 17:26:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760055993; x=1760660793; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zUW4z5PB2uYt+UHHfwXSoWrNlo9PxYnuvCzympehrHU=;
+        b=B6ATgbT1ukD0lFOwuh5p+sifo49XW21YM9nUDCIhQ/9gqYi1rQ88PlVe3WHjl7bZX6
+         ugpGD+MGVbQw7tE+ZAOzqZCyFex6wRp8GfHDNAfD8FPyekJM5YKjh1KCEkfQChlXyTuv
+         7AhyDVLK61+ZT1Qtsf47kNOtpeR9pOugjUUra/YTRg69dUGOCCRBgezILfW7rejpVwGb
+         KemawWyzPk203OTs0ib78Ukk8LPUD3FYE/An7wlMY0SSmcYXygvyO/SgcFOp4E+idVmC
+         VL3Zt/frFjNv/aBGs+aK8WM0EB9PNSBKGD52/qOP0jigKyUpOb3L4d1T5xdnI75Zr7wS
+         lOwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760055993; x=1760660793;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zUW4z5PB2uYt+UHHfwXSoWrNlo9PxYnuvCzympehrHU=;
+        b=SKPxrTD0R1sjkMYaooSm0fwGTAWGO48M6faDxguuwrDQ9rZrCWy9+oROnShTpvNO1X
+         6FcT1tX1w2Q1BqDCuz3Tqm4GDML4TsGALGFeIRj0dj/SMIf2bHaVNOIQ8wowI8Z+Trf0
+         GlWH9o+mwS6Ry2XJk9ApUdezLjpcwBft0UBPWd7YJSz8VXH48ZChkyJTMFStcAkga0PX
+         Fji3RPjy7nlIPAOXWRjNKL7GOb6unPetSRT9kiSkE+7qhYo20/6QHXr6ECYukeerWNbm
+         AF5GaiDYP09Cx35TmPo0EXC05bP1IwxNq3nKBc8g0ZKhHRmVHT6vmnKf3BJK/PN52tk3
+         n+Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCU40fU7PJPY6CgNp+4VqTA1I1Hv2Vk7OogTDKR5BqD6SiepQ8xuBwAYrkIhRr8hD9FpIY9nBWh+gKfzGhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR4kTtUkpZnTD79aaRYttB0xWcr3Re5U6+g4Q9BUsmit9g+UiQ
+	Pl+BjBBXrkd4A1adRmP2ul7hX5+orMhdF1I12XbV7Fdz9PziQ/wF+CFNrDtbODvrT/wZn0vZl62
+	OSWerNdL3BsRqvpncK9INl/CJ17Pt2+s=
+X-Gm-Gg: ASbGncuBjxfjAWJUt09rqHoAIcf8iiNY4B2hLCO04IbAB2bmQJ4LYnpX0HkZKfOty5v
+	tIdrc/DoJlFWEN1bszS0CJkC6FgrPc/g6oJtrTwXDS+acArI1bONa16zLv4gpY33fApSpojlS2q
+	xB+eJl8OOAxk0b6VtXkVt0/w1c3PD7iSipv/NtE+g/rfrygdSK1SMXh23iVcWD/gsojMkKessmu
+	sy0Fzb3h3kvv3Z66jUwZdctDfDqseZASmkacaiZWBMCKAQk9EFXI/tu7lkQT8s3
+X-Google-Smtp-Source: AGHT+IEKhtlRs7io6HG8uJV/pO+2akEGSzzZFCHHiFDcUno2eR4NPpeVNsPtm6HRWIbw/xBK09T31f2XH3b4EnhpJ1g=
+X-Received: by 2002:a05:600c:4506:b0:45b:8a0e:cda9 with SMTP id
+ 5b1f17b1804b1-46fa9a8638dmr69082915e9.2.1760055993199; Thu, 09 Oct 2025
+ 17:26:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-References: <20251010002520.359824-1-adelodunolaoluwa.ref@yahoo.com>
+References: <68e7e6ad.a70a0220.126b66.0043.GAE@google.com> <20251009165241.4d78dc5d9fa5525d988806b5@linux-foundation.org>
+In-Reply-To: <20251009165241.4d78dc5d9fa5525d988806b5@linux-foundation.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 9 Oct 2025 17:26:21 -0700
+X-Gm-Features: AS18NWBxXjf9R6H60KDIOONvstVA7iwAST5osQQuEMTaL13eeM1e3CKmUs6Ja48
+Message-ID: <CAADnVQK_8bNYEA7TJYgwTYR57=TTFagsvRxp62pFzS_z129eTg@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING: locking bug in __set_page_owner (2)
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: syzbot <syzbot+8259e1d0e3ae8ed0c490@syzkaller.appspotmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Brendan Jackman <jackmanb@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	Michal Hocko <mhocko@suse.com>, Network Development <netdev@vger.kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, syzkaller-bugs <syzkaller-bugs@googlegroups.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, ziy@nvidia.com, bpf <bpf@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000428a840640c2f8e6"
 
-The function `drm_ioctl_flags()` defined in `drm_ioctl.c` shares the same
-identifier name as the `enum drm_ioctl_flags` defined in
-`drm_ioctl.h`. Although this naming overlap is perfectly valid in C —
-since functions and enumerations exist in separate namespaces and do
-not affect compilation or linkage — it causes a symbol collision in the
-kernel-doc build system.
+--000000000000428a840640c2f8e6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-During `make htmldocs`, Sphinx reports the following warning:
-  ./Documentation/gpu/drm-uapi:574: ./drivers/gpu/drm/drm_ioctl.c:915:
-  WARNING: Duplicate C declaration, also defined at gpu/drm-uapi:69.
-  Declaration is '.. c:function::
-  bool drm_ioctl_flags (unsigned int nr, unsigned int *flags)'.
+On Thu, Oct 9, 2025 at 4:52=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+>
+> On Thu, 09 Oct 2025 09:45:33 -0700 syzbot <syzbot+8259e1d0e3ae8ed0c490@sy=
+zkaller.appspotmail.com> wrote:
+>
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    2c95a756e0cf net: pse-pd: tps23881: Fix current measure=
+men..
+> > git tree:       net
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D16e1852f980=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D5bcbbf19237=
+350b5
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D8259e1d0e3ae8=
+ed0c490
+> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7=
+976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/8272657e4298/d=
+isk-2c95a756.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/4e53ba690f28/vmli=
+nux-2c95a756.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/6112d620d6fc=
+/bzImage-2c95a756.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+8259e1d0e3ae8ed0c490@syzkaller.appspotmail.com
+>
+> At 2c95a756e0cf, page_owner.c hasn't been modified in a couple of years.
+>
+> How can add_stack_record_to_list()'s spin_lock_irqsave() be "invalid
+> wait context"?  In NMI, yes, but the trace doesn't indicate that we're
+> in an NMI.
+>
+> Confused.  I'm suspecting BPF involvement.  Cc'ed for help, please.
 
-This happens because kernel-doc processes both identifiers (the enum and
-the function) under the same name, leading to a duplicate symbol entry
-in the generated documentation index. The build system therefore treats
-them as conflicting declarations, even though they represent different
-entities in code.
+The attached patch should fix it.
+There are different options, but this one is the simplest.
 
-To resolve this, the function has been renamed to
-`drm_ioctl_get_flags()`, which both removes the naming collision and
-better describes the function’s purpose—retrieving ioctl permission
-flags associated with a given command number.
+--000000000000428a840640c2f8e6
+Content-Type: application/octet-stream; 
+	name="0001-mm-Don-t-spin-in-add_stack_record-when-gfp-flags-don.patch"
+Content-Disposition: attachment; 
+	filename="0001-mm-Don-t-spin-in-add_stack_record-when-gfp-flags-don.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mgk3vgkn0>
+X-Attachment-Id: f_mgk3vgkn0
 
-All affected references have been updated accordingly in:
-  - `drivers/gpu/drm/drm_ioctl.c`
-  - `drivers/gpu/drm/vmwgfx/vmwgfx_drv.c`
-  - `include/drm/drm_ioctl.h`
-
-No other symbols or behavior are modified.
-
-Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
----
- drivers/gpu/drm/drm_ioctl.c         | 6 +++---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 2 +-
- include/drm/drm_ioctl.h             | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index f593dc569d31..313e8bb7986a 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -912,7 +912,7 @@ long drm_ioctl(struct file *filp,
- EXPORT_SYMBOL(drm_ioctl);
- 
- /**
-- * drm_ioctl_flags - Check for core ioctl and return ioctl permission flags
-+ * drm_ioctl_get_flags - Check for core ioctl and return ioctl permission flags
-  * @nr: ioctl number
-  * @flags: where to return the ioctl permission flags
-  *
-@@ -923,7 +923,7 @@ EXPORT_SYMBOL(drm_ioctl);
-  * Returns:
-  * True if the @nr corresponds to a DRM core ioctl number, false otherwise.
-  */
--bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
-+bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags)
- {
- 	if (nr >= DRM_COMMAND_BASE && nr < DRM_COMMAND_END)
- 		return false;
-@@ -935,4 +935,4 @@ bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
- 	*flags = drm_ioctls[nr].flags;
- 	return true;
- }
--EXPORT_SYMBOL(drm_ioctl_flags);
-+EXPORT_SYMBOL(drm_ioctl_get_flags);
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 8ff958d119be..fa4644067d46 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -1257,7 +1257,7 @@ static long vmw_generic_ioctl(struct file *filp, unsigned int cmd,
- 			goto out_io_encoding;
- 
- 		flags = ioctl->flags;
--	} else if (!drm_ioctl_flags(nr, &flags))
-+	} else if (!drm_ioctl_get_flags(nr, &flags))
- 		return -EINVAL;
- 
- 	return ioctl_func(filp, cmd, arg);
-diff --git a/include/drm/drm_ioctl.h b/include/drm/drm_ioctl.h
-index 171760b6c4a1..585dda7550b0 100644
---- a/include/drm/drm_ioctl.h
-+++ b/include/drm/drm_ioctl.h
-@@ -164,7 +164,7 @@ long drm_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- /* Let drm_compat_ioctl be assigned to .compat_ioctl unconditionally */
- #define drm_compat_ioctl NULL
- #endif
--bool drm_ioctl_flags(unsigned int nr, unsigned int *flags);
-+bool drm_ioctl_get_flags(unsigned int nr, unsigned int *flags);
- 
- int drm_noop(struct drm_device *dev, void *data,
- 	     struct drm_file *file_priv);
--- 
-2.43.0
-
+RnJvbSAzODNhOTllYTlhMjM4MWQ4Y2VlMzk3Y2RjM2M4YTA5NmE5ZTVkN2NkIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbGV4ZWkgU3Rhcm92b2l0b3YgPGFzdEBrZXJuZWwub3JnPgpE
+YXRlOiBUaHUsIDkgT2N0IDIwMjUgMTc6MTU6MTMgLTA3MDAKU3ViamVjdDogW1BBVENIIG1tXSBt
+bTogRG9uJ3Qgc3BpbiBpbiBhZGRfc3RhY2tfcmVjb3JkIHdoZW4gZ2ZwIGZsYWdzIGRvbid0CiBh
+bGxvdwoKc3l6Ym90IHdhcyBhYmxlIHRvIGZpbmQgdGhlIGZvbGxvd2luZyBwYXRoOgogIGFkZF9z
+dGFja19yZWNvcmRfdG9fbGlzdCBtbS9wYWdlX293bmVyLmM6MTgyIFtpbmxpbmVdCiAgaW5jX3N0
+YWNrX3JlY29yZF9jb3VudCBtbS9wYWdlX293bmVyLmM6MjE0IFtpbmxpbmVdCiAgX19zZXRfcGFn
+ZV9vd25lcisweDJjMy8weDRhMCBtbS9wYWdlX293bmVyLmM6MzMzCiAgc2V0X3BhZ2Vfb3duZXIg
+aW5jbHVkZS9saW51eC9wYWdlX293bmVyLmg6MzIgW2lubGluZV0KICBwb3N0X2FsbG9jX2hvb2sr
+MHgyNDAvMHgyYTAgbW0vcGFnZV9hbGxvYy5jOjE4NTEKICBwcmVwX25ld19wYWdlIG1tL3BhZ2Vf
+YWxsb2MuYzoxODU5IFtpbmxpbmVdCiAgZ2V0X3BhZ2VfZnJvbV9mcmVlbGlzdCsweDIxZTQvMHgy
+MmMwIG1tL3BhZ2VfYWxsb2MuYzozODU4CiAgYWxsb2NfcGFnZXNfbm9sb2NrX25vcHJvZisweDk0
+LzB4MTIwIG1tL3BhZ2VfYWxsb2MuYzo3NTU0CgpEb24ndCBzcGluIGluIGFkZF9zdGFja19yZWNv
+cmRfdG9fbGlzdCgpIHdoZW4gaXQgaXMgY2FsbGVkCmZyb20gKl9ub2xvY2soKSBjb250ZXh0LgoK
+UmVwb3J0ZWQtYnk6IHN5emJvdCs4MjU5ZTFkMGUzYWU4ZWQwYzQ5MEBzeXprYWxsZXIuYXBwc3Bv
+dG1haWwuY29tClJlcG9ydGVkLWJ5OiBzeXpib3QrNjY1NzM5ZjQ1NmIyOGYzMmIyM2RAc3l6a2Fs
+bGVyLmFwcHNwb3RtYWlsLmNvbQpTaWduZWQtb2ZmLWJ5OiBBbGV4ZWkgU3Rhcm92b2l0b3YgPGFz
+dEBrZXJuZWwub3JnPgotLS0KIG1tL3BhZ2Vfb3duZXIuYyB8IDMgKysrCiAxIGZpbGUgY2hhbmdl
+ZCwgMyBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvbW0vcGFnZV9vd25lci5jIGIvbW0vcGFn
+ZV9vd25lci5jCmluZGV4IGMzY2EyMTEzMmMyYy4uNTg5ZWMzN2M5NGFhIDEwMDY0NAotLS0gYS9t
+bS9wYWdlX293bmVyLmMKKysrIGIvbW0vcGFnZV9vd25lci5jCkBAIC0xNjgsNiArMTY4LDkgQEAg
+c3RhdGljIHZvaWQgYWRkX3N0YWNrX3JlY29yZF90b19saXN0KHN0cnVjdCBzdGFja19yZWNvcmQg
+KnN0YWNrX3JlY29yZCwKIAl1bnNpZ25lZCBsb25nIGZsYWdzOwogCXN0cnVjdCBzdGFjayAqc3Rh
+Y2s7CiAKKwlpZiAoIWdmcGZsYWdzX2FsbG93X3NwaW5uaW5nKGdmcF9tYXNrKSkKKwkJcmV0dXJu
+OworCiAJc2V0X2N1cnJlbnRfaW5fcGFnZV9vd25lcigpOwogCXN0YWNrID0ga21hbGxvYyhzaXpl
+b2YoKnN0YWNrKSwgZ2ZwX25lc3RlZF9tYXNrKGdmcF9tYXNrKSk7CiAJaWYgKCFzdGFjaykgewot
+LSAKMi40Ny4zCgo=
+--000000000000428a840640c2f8e6--
 
