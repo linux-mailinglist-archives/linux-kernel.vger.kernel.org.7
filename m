@@ -1,124 +1,188 @@
-Return-Path: <linux-kernel+bounces-847945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03D7BCC207
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:27:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE29DBCC238
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B852401C1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:27:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 887B54F07A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3269725FA0E;
-	Fri, 10 Oct 2025 08:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CFC25A655;
+	Fri, 10 Oct 2025 08:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSADIlDJ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s85p5hys"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD94D25B30E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04F734BA44
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760084856; cv=none; b=PepGRBFpLgXlgsZx8PevlTI6o4ctUAk9H0UDdyin/ASciDeaWkis75q3yfm58f70A/xlSvU4eNAqZ3zKGaebnKa7FfYIwQbwoCchGVQ8B4bdEL7XW1hxBQBDuWSdWtrcKKjpIsqX74TaLh7Ui5e/9bH8HuzDSKFmlba1mMFl5OM=
+	t=1760085051; cv=none; b=YTSFGBcyoMPO5EaaXWSrhjtKxHQWOtaMP1RmGyRIjcYw1P/Z3zrUaRPmg9ABYeRFHDrcTjiR2QR0x4B1UguZIR0JLOB+36Yp9yfF1HVSpxHfrVEgkLERHWV5BWlGIKxT8V1YKW6A4NXMkOiLdXrcUCChchPGagkX2LRpwoZfyTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760084856; c=relaxed/simple;
-	bh=Bc+OPdWbJK0owUba+Khr9n3WegKFbUlo55fcd6DlxyQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SjDLfuja5gF8EpYTpQi7n6m8pER4Ej4mlV/ldKPKuLFv3YxYxOuPoz5Y04H/glmbnNjzwqjR8uLW5vzvpHiDCZRseXZZf/Km3vQ2c8loaNv4GXXa99ePfW/n4t681Dnqxqaj6JOCQsZWDCYeK5XqaZEb0sPUkJycGSYx4DTSj9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSADIlDJ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3fa528f127fso1304887f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:27:34 -0700 (PDT)
+	s=arc-20240116; t=1760085051; c=relaxed/simple;
+	bh=wctb4CCPOsVlg4MBcIeDFfStXaSUm2uLp61kJxrLTi8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZXcxbOsMPgbhR7uRoLJzU1zDAj9z1j+s5fyi/Ypvt5iu/K8lBrgQMiUBdHyA5B5NUsGg9xEeaEAecjZRoDuYbYQjyJtrl55YH+j/hzVHUqHmawQH6WhjysBeTuQkCdBec65ByKv7TfTyrKpNa+9YSxINAmXB1euN8OONvF6tRXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s85p5hys; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6353ff1a78dso1748702d50.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 01:30:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760084853; x=1760689653; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bc+OPdWbJK0owUba+Khr9n3WegKFbUlo55fcd6DlxyQ=;
-        b=NSADIlDJ6dmizJ9cbFhLCbdteg7iCM7g7AW3zA387b3Jz1RDs2kHbMvkxBqJdYlToA
-         o8YqlMU8p86Ol3Y1/8mAQA4wFiSkfMtF5REaoVTmnYXhrWtwCrVFnLeh4yC9Rpa/RT/j
-         PJbtECmpXqATNwRWzeigFUA9WLXibLu+wn+z9PWMPV6XhMIihAUwibep+ys9mfUCMmny
-         xeJnjLlSsGpOeT8sN5n4JiBPC59X02I8YjTngPTY6Lb+tQgxvlo+jkR8GXrIY6L0s1iY
-         Ot5Ry/fmSrLLy+iqRvdKfxEsGJzeQ8XiHMLjq9xsNzqpcOA4SbbJr/ngDmu1pw+hbQwv
-         4Kjg==
+        d=linaro.org; s=google; t=1760085048; x=1760689848; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7/UvMP8pF2d0Di4W7qdfx/D73nsmwZpf5H8xyBvB+I=;
+        b=s85p5hys2GJk4R2j/PSaXILtwxCSyOg9r3/u8A6IxWeo9STlzUQ5D52W8RVN3MbLIv
+         lrUjsx30TPlYGhavLa53XBOOhVODHyb77OzdhjLfWqBTSoCTS9ZqFucHpiwrYr7hSin4
+         2aUf1CX1QRuDez1k1ic9ArED8oqmZhPgEqmhY2iwZe6Iws9IvCkF1SFYMQmC4JhXGQVC
+         fw0EWxXartvzR2LMkEllyw00cAKOVn27Im18yjXJH4Uaoa2CxskdOs4Jvpg5BWulmhcw
+         tkk1nqsJYO4V6bDvAkw4mT6QPLwA1/ssxvJTOeqtMNkfTtmCy9pg3BiLi4vyHR1VXC5e
+         HBow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760084853; x=1760689653;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bc+OPdWbJK0owUba+Khr9n3WegKFbUlo55fcd6DlxyQ=;
-        b=fCm8sVWwGtR0R4R58sdihQ09psUJTYzNgMNwiYrwWmAeBV+qdtHeWEhFE8TRUqSBMC
-         LCOcT/mIOy8LeofUAjnoDhy+kETZQpUfdUY4WJs6dA9nNdtOZwnDqeR/GI4ITfAdUZEx
-         dDJyA7UMXjhaPcFKsOoEXawvlg2Y//qlVOCMeMpYzle5yDH1uLhvc57ltXce26pLWH5e
-         xD7+AYn/wuqaTS6n7MNiCsGzZz48m3vtyX35utajfgG0tq4tQZbERXV7V4wv7Gd9cntR
-         A5wTdZd2bxJqoaboDbRwaBYt57ZKsseu6rG9wKL4RLd1Lu7UoebR6T9r2oDFA/xd1+Do
-         d4mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUxfBqMG4X5aySUA7IMHldtqRn/824x0cXQATN8O3Qj9AiLuhAAQo8yD/9+vabQgZSPobrpaAueCaCZqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw+9MKUafrQPwQ8hrplD+jyjvxA1MMlaGaWXvEMvT1/OSUlbFG
-	0TFqaXVWwhf5Ei9e295NkJD35W0AeWIlPPL3PrHMKKuoRhgs7ymeFZgZ
-X-Gm-Gg: ASbGncuEbn4Ba6oK7uDJuptfYxb/Ofzghd5ycgyaPSw9n8yRUYWQzm/UxXVrup6WIdb
-	PraYvwy6IDzkbjUmVPbR1FQQz9mgOCN8djdtQuAq3ytED2SOq0srSf8xSr2E+Qq4lzelxRgPynX
-	T/5UYsBUG+kJ9pupGMN5G3vor3OTNdHbbE9w7oXuO4M/bX6y4U+xAjy70bxPqGz15QjM8EvpQal
-	irDBnh14tI6qun6jIFKGeFRA98KtW/JWFr4IOUbn/Nv4CnP5pAl/JX6+FqkXwxck+6NaVBT4Nbs
-	RIEuZ0qvSg91ztp1zl3JtYu5O7/iq6I9eq+T82gMh+2phScASWXNDxDPkCFjIfO6Eek1q8JGtoC
-	n0KUbuJie5Yk6dTjAjnRGZZVbwtgO4JmhpeuxET5RX3n/PyWMIrbwIgmbpGwVs3fg1VzI1R/v2O
-	e0xIz1x3xoJ3O4rq/+ixnWpF0GjDAswtd//Z6HsQ==
-X-Google-Smtp-Source: AGHT+IE4OYFOeFOUeL/SJc4KgTN0TBbVFULDSfyHbqmID+CsCye2eOCE6l5tIJdbjksWUl22gALd9g==
-X-Received: by 2002:a05:6000:4027:b0:401:2cbf:ccad with SMTP id ffacd0b85a97d-425829e78e9mr10382089f8f.17.1760084852939;
-        Fri, 10 Oct 2025 01:27:32 -0700 (PDT)
-Received: from ?IPV6:2001:9e8:f127:a901:35ca:1de4:aff:7ab6? ([2001:9e8:f127:a901:35ca:1de4:aff:7ab6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49d159csm33647325e9.20.2025.10.10.01.27.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 01:27:32 -0700 (PDT)
-Message-ID: <22a99be5-b0ea-4f8c-8a2c-5024507a7e32@gmail.com>
-Date: Fri, 10 Oct 2025 10:27:31 +0200
+        d=1e100.net; s=20230601; t=1760085048; x=1760689848;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M7/UvMP8pF2d0Di4W7qdfx/D73nsmwZpf5H8xyBvB+I=;
+        b=bl8f7t60o+w21hSdL9v26J+CDVOe+i51Pqkof9i3EYbbjSSykMvz3cEPjU/RNQBv8M
+         BnMnIlF3eq2l58jQLiQZtjfrivzZcsWCIDsz8D+8dVg5t81KPicF2dfTtCrBle67PJHW
+         rKdCBLeHpBeOpM/rpniFcLIoNwDYhwDa6MeS3yJPJv+StoaYzGNZTnSZHpZzp3zotzTD
+         2Hlj3Vfa7ujpurbiLJwZJmTDjYqP2u+zDDiLTmfX3/1uxh0R5qYeDwIhzSm+CtTfACnb
+         WPYiSRw28dEUS7ECSxA4+sw627WmyxJTx8TIAiNG64LVlDdQPvkWcZrVv1nartaRRUA2
+         3JUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFEi4nMZepQsXVJZVKRFZ7prawK1qsbtDqOj+9rUP+e0YxpH6cBkdlxSnOc/HYQQIZ3+82Ar8JXE2EQdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQyA0ep33DGWb05gyBxotVVOlRaAajUs9is/SWHlB1vM0tMHpN
+	VCxs1s1Xy53ouEHw1IDSYxU1QBbdo85CxzJ3JjN06uPVHzD4jR44AH1J31orvSgqfBIwqEIPR8Z
+	kzzrhGR2uhVqaKFiyAUJxP3Y072lXRKMhTOhIHN/KpA==
+X-Gm-Gg: ASbGncuvUyfVGqWwUZog3WG4CG/g2wLRFwY7ef60tj7XmdNy5M6KVxiOdRulUenok0H
+	LsfVOQ9DXeRBnNAlYprAEDkbOlaQ81D57r15FZ7tDamstASaKE0cLt+crVtL1TKcIcFipIaiE36
+	KgYcyQ/F4f4R6EIZ2lLlfJgt+nbBy58971lp0fhLI//XiKxOssZRdiFzqw4wUiPBPH1NI9C9tD7
+	9S9ajG8GCOy/dPVu8XeXtB4HETtL2PAO4TlhQ7MoQ==
+X-Google-Smtp-Source: AGHT+IELcVFwUCUEmhVUGDnSnGJlpWYHNQOXe5296t/FoFUefz+C1OeDjmmVZXYWz/J3fiD3QdzX5PFMMDEjuQIT79o=
+X-Received: by 2002:a05:690e:1a99:b0:63b:a4fa:202e with SMTP id
+ 956f58d0204a3-63ccb8db942mr7870853d50.41.1760085047581; Fri, 10 Oct 2025
+ 01:30:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/2] dt-bindings: gpio: add gpio-split controller
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251009223501.570949-1-jelonek.jonas@gmail.com>
- <20251009223501.570949-2-jelonek.jonas@gmail.com>
- <3118e300-f6de-42af-bd1b-ad13dc80537d@kernel.org>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <3118e300-f6de-42af-bd1b-ad13dc80537d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251003150251.520624-1-ulf.hansson@linaro.org>
+ <20251003150251.520624-3-ulf.hansson@linaro.org> <865xcsyqgs.wl-maz@kernel.org>
+In-Reply-To: <865xcsyqgs.wl-maz@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 10 Oct 2025 10:30:11 +0200
+X-Gm-Features: AS18NWBt9HOnP-sXI05iFB0KpurINCBSnZcmko0s_eAswoddpw0G_kSGehKntmY
+Message-ID: <CAPDyKFq4RgL0=hPhB0cwTQF-A+mXH8dxsZAYTB1CFuLxxxTujg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: smp: Implement cpus_has_pending_ipi()
+To: Marc Zyngier <maz@kernel.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Maulik Shah <quic_mkshah@quicinc.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
-
-On 10.10.25 03:12, Krzysztof Kozlowski wrote:
-> Instead, please fix the subsystem driver?
-
-That's why I sent this as an RFC. I thought about this too but have no good
-idea how to represent this in DT while keeping the existing bindings. 
-
-So I just thought this small driver would be the easier way, possibly being
-useful for other potential usecases.
-
-But sure, if this is the only way to go I'll have to RFC this at the SFP
-driver side asking for any ideas how this could be achieved.
-
-> I have also doubts we actually want it in DT, because we tie the
-> limitation of Linux drivers to bindings.
+On Mon, 6 Oct 2025 at 17:55, Marc Zyngier <maz@kernel.org> wrote:
 >
+> On Fri, 03 Oct 2025 16:02:44 +0100,
+> Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > To add support for keeping track of whether there may be a pending IPI
+> > scheduled for a CPU or a group of CPUs, let's implement
+> > cpus_has_pending_ipi() for arm64.
+> >
+> > Note, the implementation is intentionally lightweight and doesn't use any
+> > additional lock. This is good enough for cpuidle based decisions.
+> >
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >  arch/arm64/kernel/smp.c | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> >
+> > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> > index 68cea3a4a35c..dd1acfa91d44 100644
+> > --- a/arch/arm64/kernel/smp.c
+> > +++ b/arch/arm64/kernel/smp.c
+> > @@ -55,6 +55,8 @@
+> >
+> >  #include <trace/events/ipi.h>
+> >
+> > +static DEFINE_PER_CPU(bool, pending_ipi);
+> > +
+> >  /*
+> >   * as from 2.5, kernels no longer have an init_tasks structure
+> >   * so we need some other way of telling a new secondary core
+> > @@ -1012,6 +1014,8 @@ static void do_handle_IPI(int ipinr)
+> >
+> >       if ((unsigned)ipinr < NR_IPI)
+> >               trace_ipi_exit(ipi_types[ipinr]);
+> > +
+> > +     per_cpu(pending_ipi, cpu) = false;
+> >  }
+> >
+> >  static irqreturn_t ipi_handler(int irq, void *data)
+> > @@ -1024,10 +1028,26 @@ static irqreturn_t ipi_handler(int irq, void *data)
+> >
+> >  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
+> >  {
+> > +     unsigned int cpu;
+> > +
+> > +     for_each_cpu(cpu, target)
+> > +             per_cpu(pending_ipi, cpu) = true;
+> > +
 >
-> Best regards,
-> Krzysztof
+> Why isn't all of this part of the core IRQ management? We already
+> track things like timers, I assume for similar reasons. If IPIs have
+> to be singled out, I'd rather this is done in common code, and not on
+> a per architecture basis.
 
-Best regards,
-Jonas
+The idea was to start simple, avoid running code for architectures
+that don't seem to need it, by using this opt-in and lightweight
+approach.
+
+I guess we could do this in generic IRQ code too. Perhaps making it
+conditional behind a Kconfig, if required.
+
+>
+> >       trace_ipi_raise(target, ipi_types[ipinr]);
+> >       arm64_send_ipi(target, ipinr);
+> >  }
+> >
+> > +bool cpus_has_pending_ipi(const struct cpumask *mask)
+> > +{
+> > +     unsigned int cpu;
+> > +
+> > +     for_each_cpu(cpu, mask) {
+> > +             if (per_cpu(pending_ipi, cpu))
+> > +                     return true;
+> > +     }
+> > +     return false;
+> > +}
+> > +
+>
+> The lack of memory barriers makes me wonder how reliable this is.
+> Maybe this is relying on the IPIs themselves acting as such, but
+> that's extremely racy no matter how you look at it.
+
+It's deliberately lightweight. I am worried about introducing
+locking/barriers, as those could be costly and introduce latencies in
+these paths.
+
+Still this is good enough to significantly improve cpuidle based
+decisions in this regard. Please have a look at the commit message of
+patch3.
+
+That said, for sure I am open to suggestions on how to improve the
+"racyness", while still keeping it lightweight.
+
+Kind regards
+Uffe
 
