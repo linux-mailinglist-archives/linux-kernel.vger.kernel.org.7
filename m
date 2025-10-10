@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-847814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341F0BCBCB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:35:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44965BCBCAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56CC0189FC28
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:35:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C1DE4E1BB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF7B239E61;
-	Fri, 10 Oct 2025 06:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5611A239E61;
+	Fri, 10 Oct 2025 06:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="tCruLc/4"
-Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R1AhY70n";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bA55roXF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8968F22579E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 06:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760078107; cv=pass; b=T5jXukpehBxf8tG33iL8ei5KlMoyAVeb9nCJphuOE6fY7d8qaG6sROOY1nUF8JUUb3+DvSF95iCLVsGv5Vel6qha6rAAiY/yQVTEGRUXsI2sVzKcOTqh1Zl1lPnHBPq3BND3orcFVVX3IFkheeFoc+fP/JSip/hMaivdnGvw49o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760078107; c=relaxed/simple;
-	bh=TfXKfGLIgdyqoC0vLmTK/YGBXyzqSeERAXzUxlk71To=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A6B3F9D2;
+	Fri, 10 Oct 2025 06:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760078084; cv=none; b=P0PVNYMUfjwPE6dgeES8/Sic/L1rUciOEj2IA+jWRhlnyCkJTjI/ksFPxCXE1sdff7GdjRpKQm00WROsulDSg8P77RHk/fj5t4JV17P0AWr17hFJro96BSdJU0NPWVJ0z/Q69+AomDZbQl4dGFPAhC7n9mNgey3WD5Gub4dcCq4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760078084; c=relaxed/simple;
+	bh=/mRuhHRC392X5pmkdrDLMtdkkjcqyAuBiMgYYggFlTE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CO5/474GoOcdZJcdK97dtt0X+Ddeg1rLQIVQ2gvr432KGvZIN2AufBCOvWh2l8/WARKEICA/tVWqmjSNhNUwiOZ4N/DCvkVvdohUDRWl6H0gf1aJsS/6AtRuW41TjBzadRvgJdEf1udtooim2xqXQi5+AG7HYY6dUk3u/2k7Gco=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=tCruLc/4; arc=pass smtp.client-ip=143.89.41.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
-Received: from osx.local (ecs-119-8-240-33.compute.hwclouds-dns.com [119.8.240.33] (may be forged))
-	(authenticated bits=0)
-	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59A6YDcH2442651
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 14:34:19 +0800
-ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1760078061; cv=none;
-	b=iyh4uTH33qzmNtoDxOsdakGME2842mUtVmLWN51a/yKyinCxDIxVJmEYQYyEvSGUfOpn4XMNrZqWl6GIEYq4scd9w1p12keduyncuGV3aFV9GKEt3SdbRELp8apI7y+Re53ObPm6xwXldEMQcHmohYLtAQtDqILChXNjP4Mt9JE=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
-	t=1760078061; c=relaxed/relaxed;
-	bh=mlixuZgziH+wjVJSfwbssxjlyT8K5O91PRYV9CIA+nk=;
-	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=w7ZddfkYI4L+Q2EOFZPOE1oRWTDGc8ECcVRnBW7X9/NS/p/rbaTS3++y+x/A0F6Yiw8m0vp/Ce30znLiocO52lMmm4ieL56OSjzHBLQBTFgY6ATAAvJ7kvKPE8/xrcBiKzTjL6hWwUTptGk7GnyGibF+A/ZyqFzi3128WdHyvY8=
-ARC-Authentication-Results: i=1; cse.ust.hk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
-	s=cseusthk; t=1760078061;
-	bh=mlixuZgziH+wjVJSfwbssxjlyT8K5O91PRYV9CIA+nk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tCruLc/4VmyGm6a9MIIxurcOVxwTx/Iel0VnEiWBcsHRHBLAazx26FnqJo9z+w1xl
-	 5qvgVTWRNwFrdeAjjjFL2vNQzoj2ci1LvpaxZ/3SWZ8vJHpUR58JpBYz6YCGFs1nWP
-	 N8tTDQoClniJcd9twSb2tTt7cKNbKmV8UO23vjoM=
-Date: Fri, 10 Oct 2025 14:34:08 +0800
-From: Shuhao Fu <sfual@cse.ust.hk>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: fix refcount inconsistency in i3c_master_register
-Message-ID: <aOio4HtjjfXclSW1@osx.local>
-References: <aOYSTX5EA_nRoIY_@osx.local>
- <aOfgB6UpBha+pvqa@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HAv0vtkPT5QuJtqKGWLm2vUR8WcqSp3vDbcj9G4R8qh0nk09jvgpAMVXs513Vbn2vhvNY4bFUVBlT/5Iu1Ek7j73xFa4Cnx/YwNlFNIfCcfiMH5O4KnG8ECbHmNzJpol3nu4BQm1DCmpSS7/QG3+WwLpk0cJe2FIUblzkWceSw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R1AhY70n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bA55roXF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 10 Oct 2025 08:34:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760078074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iyHaf+gpqdV0paie6RQCx/SzHlqjG0cpyjEGnlnxH3g=;
+	b=R1AhY70noMw1rq5tVIxcwaKnSBzuMYiRyC3t5+A+M8DhOS3KPLigGXd9yEwW64CvZggc/t
+	RSlzf/adWKNmwgE3gCjgTpcAcBl6zoxKdT23tJUbECXol3fws1O1fjrvDgnl3YUoo5U+Vv
+	4mX+ffPhdA2FX86fLV0qO8Uorg+clwAXYsbek0oTbb89medIExYRaDjRdghIeh9B4HWbuQ
+	/zl2fttQuvTA5wmd1MiMbSLc28XmGWMzqNeEklEb8VEhEJLFEto9r/q10TzNVZja9l76e6
+	SkLss1/7Tz6Ts0p47Hi6B0wfR3fMetAf2Nuz20HsUXH7ll3XOTzt+BU67/Hu9g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760078074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iyHaf+gpqdV0paie6RQCx/SzHlqjG0cpyjEGnlnxH3g=;
+	b=bA55roXF3H9aQTdJPa8VB1TN3l3w7swi8vZHx6aQCMkon2MmhDcnH+KHEfEghSjmgJi+8p
+	4uKR5qF7yivf9LDw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/run_kselftest.sh: Add --error-on-fail flag
+Message-ID: <20251010082310-b25e69f3-4568-4886-a0c9-3bd611bce073@linutronix.de>
+References: <20251007-b4-ksft-error-on-fail-v1-1-71bf058f5662@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,69 +66,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOfgB6UpBha+pvqa@lizhi-Precision-Tower-5810>
-X-Env-From: sfual
+In-Reply-To: <20251007-b4-ksft-error-on-fail-v1-1-71bf058f5662@google.com>
 
-On Thu, Oct 09, 2025 at 12:17:11PM -0400, Frank Li wrote:
-> On Wed, Oct 08, 2025 at 03:27:09PM +0800, Shuhao Fu wrote:
-> > In `i3c_master_register`, a possible refcount inconsistency has been
-> > identified, causing possible resource leak.
-> >
-> > Function `of_node_get` increases the refcount of `parent->of_node`. If
-> > function `i3c_bus_init` fails, the function returns immediately without
-> > a corresponding decrease, resulting in an inconsistent refcounter.
-> >
-> > In this patch, an extra goto label is added to ensure the balance of
-> > refcount when `i3c_bus_init` fails.
-> >
-> > Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
-> > Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
-> > ---
-> >  drivers/i3c/master.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> > index d946db75d..9f4fe98d2 100644
-> > --- a/drivers/i3c/master.c
-> > +++ b/drivers/i3c/master.c
-> > @@ -2885,7 +2885,7 @@ int i3c_master_register(struct i3c_master_controller *master,
-> >
-> >  	ret = i3c_bus_init(i3cbus, master->dev.of_node);
-> >  	if (ret)
-> > -		return ret;
-> > +		goto err_put_of_node;
+On Tue, Oct 07, 2025 at 11:06:46AM +0000, Brendan Jackman wrote:
+> Parsing KTAP is quite an inconvenience, but most of the time the thing
+> you really want to know is "did anything fail"?
 > 
-> I think it'd better to set release function for master dev to release
-> of_node because of_node_put() also missed at i3c_master_unregister()
+> Let's give the user the ability to get this information without needing
+> to parse anything.
 > 
-> you can refer drivers/base/platform.c
+> Because of the use of subshells and namespaces, this needs to be
+> communicated via a file. Just write arbitrary data into the file and
+> treat non-emppty content as a signal that something failed.
 > 
-> Frank
+> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+> ---
+>  tools/testing/selftests/kselftest/runner.sh | 14 ++++++++++----
+>  tools/testing/selftests/run_kselftest.sh    | 14 ++++++++++++++
+>  2 files changed, 24 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
+> index 2c3c58e65a419f5ee8d7dc51a37671237a07fa0b..fd1e0f9b1cef48c5df1afaaedc0c97bee1c12dc5 100644
+> --- a/tools/testing/selftests/kselftest/runner.sh
+> +++ b/tools/testing/selftests/kselftest/runner.sh
+> @@ -44,6 +44,12 @@ tap_timeout()
+>  	fi
+>  }
+>  
+> +report_failure()
+> +{
+> +	echo "not ok $*" >> "$kselftest_failures_file"
+> +	echo "$*" >> "$kselftest_failures_file"
 
-Do you mean that we should do `of_node_release` in
-`platform_device_release`, instead of respecting the refcounting via
-`of_node_put`? 
+Both of these go into the failures file. The first should go to stdout, no?
 
+> +}
+> +
+>  run_one()
+>  {
+>  	DIR="$1"
+> @@ -105,7 +111,7 @@ run_one()
+>  	echo "# $TEST_HDR_MSG"
+>  	if [ ! -e "$TEST" ]; then
+>  		echo "# Warning: file $TEST is missing!"
+> -		echo "not ok $test_num $TEST_HDR_MSG"
+> +		report_failure "$test_num $TEST_HDR_MSG"
+>  	else
+>  		if [ -x /usr/bin/stdbuf ]; then
+>  			stdbuf="/usr/bin/stdbuf --output=L "
+> @@ -123,7 +129,7 @@ run_one()
+>  				interpreter=$(head -n 1 "$TEST" | cut -c 3-)
+>  				cmd="$stdbuf $interpreter ./$BASENAME_TEST"
+>  			else
+> -				echo "not ok $test_num $TEST_HDR_MSG"
+> +				report_failure "$test_num $TEST_HDR_MSG"
+>  				return
+>  			fi
+>  		fi
+> @@ -137,9 +143,9 @@ run_one()
+>  			echo "ok $test_num $TEST_HDR_MSG # SKIP"
+>  		elif [ $rc -eq $timeout_rc ]; then \
+>  			echo "#"
+> -			echo "not ok $test_num $TEST_HDR_MSG # TIMEOUT $kselftest_timeout seconds"
+> +			report_failure "$test_num $TEST_HDR_MSG # TIMEOUT $kselftest_timeout seconds"
+>  		else
+> -			echo "not ok $test_num $TEST_HDR_MSG # exit=$rc"
+> +			report_failure "$test_num $TEST_HDR_MSG # exit=$rc"
+>  		fi)
+>  		cd - >/dev/null
+>  	fi
+> diff --git a/tools/testing/selftests/run_kselftest.sh b/tools/testing/selftests/run_kselftest.sh
+> index 0443beacf3621ae36cb12ffd57f696ddef3526b5..c345f38ad424029bfe50d19b26bdd1d4bda29316 100755
+> --- a/tools/testing/selftests/run_kselftest.sh
+> +++ b/tools/testing/selftests/run_kselftest.sh
+> @@ -36,6 +36,7 @@ Usage: $0 [OPTIONS]
+>    -n | --netns			Run each test in namespace
+>    -h | --help			Show this usage info
+>    -o | --override-timeout	Number of seconds after which we timeout
+> +  -e | --error-on-fail	After finishing all tests, exit with code 1 if any failed.
+
+To me it looks like the new behavior could be the default,
+removing the need for an additional option.
+
+>  EOF
+>  	exit $1
+>  }
+> @@ -44,6 +45,7 @@ COLLECTIONS=""
+>  TESTS=""
+>  dryrun=""
+>  kselftest_override_timeout=""
+> +ERROR_ON_FAIL=false
+>  while true; do
+>  	case "$1" in
+>  		-s | --summary)
+> @@ -71,6 +73,9 @@ while true; do
+>  		-o | --override-timeout)
+>  			kselftest_override_timeout="$2"
+>  			shift 2 ;;
+> +		-e | --error-on-fail)
+> +			ERROR_ON_FAIL="true"
+> +			shift ;;
+>  		-h | --help)
+>  			usage 0 ;;
+>  		"")
+> @@ -105,9 +110,18 @@ if [ -n "$TESTS" ]; then
+>  	available="$(echo "$valid" | sed -e 's/ /\n/g')"
+>  fi
+>  
+> +kselftest_failures_file=$(mktemp --tmpdir kselftest-failures-XXXXXX)
+
+Quoting?
+
+I'm not a fan of the implementation details, but also can't come up with
+something better.
+
+> +export kselftest_failures_file
+> +
+>  collections=$(echo "$available" | cut -d: -f1 | sort | uniq)
+>  for collection in $collections ; do
+>  	[ -w /dev/kmsg ] && echo "kselftest: Running tests in $collection" >> /dev/kmsg
+>  	tests=$(echo "$available" | grep "^$collection:" | cut -d: -f2)
+>  	($dryrun cd "$collection" && $dryrun run_many $tests)
+>  done
+> +
+> +failures="$(cat "$kselftest_failures_file")"
+> +rm "$kselftest_failures_file"
+> +if "$ERROR_ON_FAIL" && [ "$failures" ]; then
+> +	exit 1
+> +fi
 > 
-> >
-> >  	device_initialize(&master->dev);
-> >  	dev_set_name(&master->dev, "i3c-%d", i3cbus->id);
-> > @@ -2973,6 +2973,9 @@ int i3c_master_register(struct i3c_master_controller *master,
-> >  err_put_dev:
-> >  	put_device(&master->dev);
-> >
-> > +err_put_of_node:
-> > +	of_node_put(master->dev.of_node);
-> > +
-> >  	return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(i3c_master_register);
-> > --
-> > 2.39.5 (Apple Git-154)
-> >
-> >
-> > --
-> > linux-i3c mailing list
-> > linux-i3c@lists.infradead.org
-> > https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-i3c&data=05%7C02%7Csfual%40connect.ust.hk%7Cbfee3f910b654276330508de074f5750%7C6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638956234525799989%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aTeKcQJDC2Av%2FQ1MjtDuoOYrWJ6ZwhbjQbHs%2Fci90jw%3D&reserved=0
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20251007-b4-ksft-error-on-fail-0c2cb3246041
+> 
+> Best regards,
+> -- 
+> Brendan Jackman <jackmanb@google.com>
+> 
 
