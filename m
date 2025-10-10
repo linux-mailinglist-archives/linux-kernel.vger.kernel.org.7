@@ -1,206 +1,193 @@
-Return-Path: <linux-kernel+bounces-848049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5ABBCC5A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:31:52 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDB3BCC5AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CF423550E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:31:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8A38835512F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC5826A1B5;
-	Fri, 10 Oct 2025 09:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DC3271A7B;
+	Fri, 10 Oct 2025 09:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aFlo9lDT"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012023.outbound.protection.outlook.com [52.101.66.23])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Bk6+g3YK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A263C231A55;
-	Fri, 10 Oct 2025 09:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760088702; cv=fail; b=JZJtBkMTNaLVvVGlEll/EBMO3u5Q8msyFooEuGcpCHXUNss3FGHoeRDzZZktcDCAb08v77BaypqSCoiXKv8xk7/AaejxGGQhMyKQuVWhtb/CBN6KN0vhZy97nXEH3kFOawZulCuQCRzqWbtVJvmT3y6OjrPIOSjiPJx6nxCNFjI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760088702; c=relaxed/simple;
-	bh=x3jIrsJR2QTy9lamiLskF7cyXY72Zuqwo69W76fLMg0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oFa7TWFpS1CqCLexxXgzsm9Myx0aRWN9KEXHnY6rn+espi6pKdgGAV5JluqbezpGbuJQawRpMiVwqQNprBfHEKWHbSUMIVPWViRnq4kUtgtw6pMivhAWuDLaQWGJ0MpwrpzAQUi+OZa8TS7o77P2JPdwBKgN8WxTt1hy1wNgTFs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aFlo9lDT; arc=fail smtp.client-ip=52.101.66.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fF/IvQIbb6dYgVdp46/mljeheUpuz7qxZt3E/87gNPh1ofmlf4Evi9VieIQzgtPj3Tp0WyhAXFPriPRCphJ6TKjoBRl3K9h2hndcVbpBsBW/bEnnDPIRPVScD1utf/E2ERNq8LHfAcVtELxv5D4nsEd0Jynxacl0/Kc1oCZ9XFNETayz0dM/Lecmv8CujDQhoic4N8eAzlCBlPLZwiDQ3PZNcOYA2ZDCYBRu1GWlhn66URu8aP17hSfchGZNE4sIAvclbR799NtxCroD+RiyPLqVgvpOEY2tiVsc7w48hUxt0eyxGJkanz1z4llfvrrHKcYNkS0xWjpSmnYMt8QDUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pkV2UObwL4ElrZvvpKDsLNxfT/P6dKNtvCqV6cYWBmU=;
- b=Zs0N22W9wwxYZyQHwhx96TWOsK5z+iEKUkIzL0zEA9JPpJmTnckHZsWFXfCIdQCPA58ah9TLsdePjFiXMZFFHAgsmg5a8X8FKEnILrHdh0dQfhLFCyQKDVGdNj+Y5/zbr02f/dCjaY/Eg+NKP0nHNkXTGkV9aUx8Iawl1Tgk113hwkBK3e8pNupufETvv6tIR/ZRWAVb4tGtt0oP0f0LCj+INowdrUdDswljbzjshA3Dp3NfEnc0Tr4zDM0fHUWddrjNzbktsePcXjaRjR56PQG/Yfs4EcQpX7CMI8CfNkCHVN5kH33sK/0H4ZqjmW3ji4GHHyALe1du4SE/8EiMow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pkV2UObwL4ElrZvvpKDsLNxfT/P6dKNtvCqV6cYWBmU=;
- b=aFlo9lDTi6EqUkTYoV78RJqe+NztC5i50EHOMntFvyTHWItzV9jXFLLk1xgppYHSifCDIZSwA6vijAKU2bDCGXxjpAxZyHIr6NqA2knBJKkcGFpOZkq9ortxGzzDoe6dkuZ8LVEbq3Rid/tJA3MtIR+R7kfvmSHtG5I3Notqpf82BhUnzPfvZnM6CoLdAuxo0aVgLNhysdm2OgHV1DIP2PWm5V22Jvf51HeCZNwWblo2OgnsoTXCN7/CiT2q+EXbQiu0izTqRvEsYJYRbFLuePz9OXpj6uN0usw7lfC8BgyOBx/663zrrP5R0/mdYNhaAwdNa906OxT/xh0ZInaiWg==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by AS8PR04MB8899.eurprd04.prod.outlook.com (2603:10a6:20b:42e::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Fri, 10 Oct
- 2025 09:31:37 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
- 09:31:37 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Jianpeng Chang <jianpeng.chang.cn@windriver.com>, Vladimir Oltean
-	<vladimir.oltean@nxp.com>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, Alexandru
- Marginean <alexandru.marginean@nxp.com>
-Subject: RE: [v3 PATCH net] net: enetc: fix the deadlock of enetc_mdio_lock
-Thread-Topic: [v3 PATCH net] net: enetc: fix the deadlock of enetc_mdio_lock
-Thread-Index: AQHcOLyl4vHcP8LukUGQcvWe857yFbS7GIsQ
-Date: Fri, 10 Oct 2025 09:31:37 +0000
-Message-ID:
- <PAXPR04MB85109BDA9DCBE103B0EE1F8F88EFA@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20251009013215.3137916-1-jianpeng.chang.cn@windriver.com>
-In-Reply-To: <20251009013215.3137916-1-jianpeng.chang.cn@windriver.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS8PR04MB8899:EE_
-x-ms-office365-filtering-correlation-id: 3277cedc-c671-48c5-b016-08de07dfcf95
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|19092799006|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?PF1tyy9TTArgRtQkOrba2dsHgqSbhwJjxPEtykh6uneCXMcAY8oAlrbm/spM?=
- =?us-ascii?Q?rmbXRjFdbN6q0LxGTBdTocrNN7X+kEojl+czY9wJoMuBmDt8jn4yIaBkwNHO?=
- =?us-ascii?Q?/IYNjodUi0YEKPOYqrcnl2ugUdVALy0HgMhfbwNhM+l4bofHkvHkXQIXtJxs?=
- =?us-ascii?Q?G6cVwZTQwX/lUX6g/d8l6HaAtjGbuDj8FZ6xMDiE0ccuwmUQlYoZDBKO9GX+?=
- =?us-ascii?Q?WkEvW+2LcYoGt7HgKq7FuFhZiHpPWkskT276xsVVMbYP/DMzplX4T2JjnTx2?=
- =?us-ascii?Q?Gpv2tJnufCSIwMeVWiL8983RwW9nqmT3twBEq98hyO2q3hnm/ZLCU+TcJmWF?=
- =?us-ascii?Q?Iz8YMKWY1uP+jhQtlJV+0xF8p5dy4DCZhm4mhqzFkiZ3SKx1axlwe/TShJN4?=
- =?us-ascii?Q?wdrPXJsnQhAuYhOaLqufgm+xAu1jDWBJSOOlVwKXVPxdGkQSsURZWl0CkAdq?=
- =?us-ascii?Q?BiWvR51KZ08etdG0/opF+n8iE4P1J1cpbxiV0KdHATIktAB+ju3ToVi5C0EL?=
- =?us-ascii?Q?P7wbqptVrZy+MYVr0O/ykg7fok8vhIaTqjSAg0Zw9n8DtsBPI26sroVVnTRd?=
- =?us-ascii?Q?mCIK7/v5rW6flMi862okSVtUwpjIJ+2NCpkmK/DitZuu5tDBJ86f6tJN1LYl?=
- =?us-ascii?Q?wBezMfGH10EWtUrC/iYPfatQOrvlwQJXVHHIhVelNuC74zCi+qMTTeTe22mN?=
- =?us-ascii?Q?omDFWiBe6u1Dcdp2J6liSk40beQ4YL3bGD8TQVpwCZnbDf9UVTwDQbjQVL7E?=
- =?us-ascii?Q?QH7wcFDR4QOKNSX5hoYl4oBYCgwqPx6WP8CiNe5NfuFfaJYsFF6Vx43DEdai?=
- =?us-ascii?Q?1MJMutgHbScV1sc3w4VTbXv/goRkn6ti2oO0tSSP7uKvFQ/WM0I6eUl4J3Ma?=
- =?us-ascii?Q?U0POYloW9dpnxIuG43uUnn3GmTMeXSl9czVWHSYxG/EatkOmCcAnQDb8NqHj?=
- =?us-ascii?Q?kZjUKwWcTbXI8apPERxRX2k+8y7/Ds9h/yOewTbWSRfaAWJiXRT0qB1j8OZQ?=
- =?us-ascii?Q?dM5cWNbwbvcAFvCEDroC+amZzwEaCjI4mSqoUSvVWw0RuPuEzT+0BlFHTULa?=
- =?us-ascii?Q?5+1p53ZFJF7/Drwojz/5YohhU/iRBNX+yJlHlWW6DgzRIJRx7k7jmw9/m0VL?=
- =?us-ascii?Q?HWHNUpyed58cex04ZBSrxJYq8tADfT7qoD/ZY1HI7hmY5bGYFkC5DblCyiBi?=
- =?us-ascii?Q?DAEX/PNLmzpXkyh/aGedFDB6G7WkooqVhn5YyLjlVjNJyqprIpiuNkofpLWo?=
- =?us-ascii?Q?oLMmgSEivZNSnEuZ9U09XJ+KWkOLMdQuWH89iNFCCEIF/ol5mfl9m70WX9ra?=
- =?us-ascii?Q?zAYYh8D46c8yrYE0Hob6enivOvu2kthpA4CRx6EF1EZ6o8J33zfzB3j+Z8ge?=
- =?us-ascii?Q?mgbM2ebWPtwLXwZ2ZHNhDOOLmnsbYeEqxRjRQuyT3eKgL9PlryhHP270zh8o?=
- =?us-ascii?Q?5Elfj1Myu0aPGqHaEU/4O4RKd5uiwBafMXLOfOxhdwPVw4c6jSmXUdzhHhpo?=
- =?us-ascii?Q?JHMKa2tEoIBhe8jYpjaWPWSEgt0/VqRil8r1?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(19092799006)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?z3kaUzTIwz92NLiquNMPdEmjzp+JrEwUj2HJGLDjSwSL6x19oIp+oaJEUTKm?=
- =?us-ascii?Q?+GGPM5T7Y3hrDZjrv2XidEC3P/Whaf60+sdq6GGrCT8qlZetljeE7crDxbsa?=
- =?us-ascii?Q?Dl7qviQ0iIxLC52BdKW1/aKiu5W116EZD0fpepAKBrMaGeeuwxMF4GGUHrN6?=
- =?us-ascii?Q?h0zGIAUQ5ZP1O3Iw+XyTIyTaDXSHL8L34zcZDL7SK9hNJm6PtpSsOrF049zp?=
- =?us-ascii?Q?O/d9AU+HCejxEdyvZopeP9ShwSgvat7eRAPeR7jDagXoHT/O+Jobz7Yb31v3?=
- =?us-ascii?Q?Fqom8O8x+xsirIZXRJcm52148xynS67u23TJRqZSJi4Wx3wo5yss8NdRthg8?=
- =?us-ascii?Q?JLo5rtVgS0diVsgqvWAhs0mlR6jy8JgSCNbd/exOcPxQXq8GyQrN9yQc7TWh?=
- =?us-ascii?Q?K3ftQ8hkuXD9Uhw/sJIZk6MARW/nGqFiCTfdMLC3uLPlEkmNfynMbSJlVGJG?=
- =?us-ascii?Q?PXoPvinP813Jl77dnx5vH/IRmWlQR1DlWL7O8tU7JP7tDnETj3cp6ZrXghxB?=
- =?us-ascii?Q?BObdAg/KKzXVSFAJbGSizbUonPteEKq8mlCg8rvrIkEETNUxr+62yGEUbVRk?=
- =?us-ascii?Q?/LiUl086u8zG5vBsjIM2gcwx0JdL1sSLmK4vD6hdKc/dB8ABOEluVU0tk5KO?=
- =?us-ascii?Q?s/fZlEQZoIOloX/yvWHEeyQcMn3Ri6sfGbr8bhflsJutu4Ei7fUEixqnzT8F?=
- =?us-ascii?Q?XK6NY/khgge4mgetJxxPnsnamjXvlRdZwb9c+GMFFrYkZn3s4Dn44O5CIYBq?=
- =?us-ascii?Q?u+bJiVk3gGFIo2JiO9Ayk97bwwDkpksLIxyYeX7oY5bnybGpalTcZb20u8oU?=
- =?us-ascii?Q?X3/mFF8aLpsY2Z3YHkvWAOt64feHU9yG17YmhYgQyUOmNVa7OT59XHk6zL3m?=
- =?us-ascii?Q?p0TDs0C+Y+AETHq9H9h8/mE59nztXBGFZ6+mc2vwFHovbE1DFC+AaoJxw3nF?=
- =?us-ascii?Q?W0ibF5TU5Opskt7vzg0v50tV1zSAsrVK+QiHdLmjbcQr8407bXwCLWeQnYlq?=
- =?us-ascii?Q?VKNC3A9vlYzqMtPrJ8xfmTTQKf6A/Q+Sm+5snWCvrDvMVkChqwbVJzMA/d1A?=
- =?us-ascii?Q?gXcVsnKddoG7JHXxo1GOr78kIr3yPaM3LBep0uhqRsAQL530AxIG3M04P2G4?=
- =?us-ascii?Q?+eoyibV6tYxvB7ON5vT/XDd6Pn74mZyk8NUBDzbNeQoj2tXf0rWQSgVIdmay?=
- =?us-ascii?Q?BH/Or5YZEX+Yc54A2uOqukJIbb5mxyueK/yiJH/SisM8TJCZhX9tHuYw3SvR?=
- =?us-ascii?Q?DOEQRneZvYjIqwZY5NPsUOVJ9Rojjs3OazoNOO3dO5mI2cNNTzNoQIfubFkD?=
- =?us-ascii?Q?vw/dAaKU4oqz4+zHyV+qrP1wldBF/pzpwe4ThWB3F/8EkkBHDw5h2KNx5Ph/?=
- =?us-ascii?Q?cc6WcOKAjjD7Y3vMmKkh3attQOjg4jNmCf6eP0Af6q/a5mtZDU4ct3e+jmgt?=
- =?us-ascii?Q?1YzZRjYUHzIpM6V3vDznuxiD+9PH9L49Q+dKIKa4b2kgwM71fMVY4f4TE0cQ?=
- =?us-ascii?Q?Pta/0Wy8OHmme9cuur1i7mxxdVjhQDUMkz8ECnznvTY6rgHujv/MUaFRh2QJ?=
- =?us-ascii?Q?ZLGzTz/kq8qWa/Kuroo=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9265526E6F8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760088707; cv=none; b=pqchx6Lv7T8ewQshCsOchdLbjh7Qj9cyHXXgocvlr1b1XwUbRFGAGDdj88uf3GcctyhbcCy9d2wwrKAECTv3yzfpohaJudEXJh49IJbHawEBhKxduix7intFv08JOCkkL2lu/ophHCpcLwacXIEpu/ANGzrk6Msr5hJKQ9OuUbA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760088707; c=relaxed/simple;
+	bh=9SG9MfMh9cU3sLQ9N+U2VcoFk/gaHuh7G5vb2XTyEsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NcsTrysxxILo3QOypf69xcd9yG6pe9x22+ogYm/y6nBU87uQjx9SlrSoVSLYM5lUAmjfAqcXNdP/flCqHU/v/yMCSXZ7sirqsIR+8I07yf8crAVElgfsEg52PBLxX4BUkQwaBetPU/+yOrg1ctew/XM7jeZuu8mxdh+BfVQ8Yog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Bk6+g3YK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760088703;
+	bh=9SG9MfMh9cU3sLQ9N+U2VcoFk/gaHuh7G5vb2XTyEsU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bk6+g3YKfbe0t+0IWYGKF7sMSEPeW2pRNi6aNJh5j8QHcsixq/vpVM3b4XSYCNnr5
+	 Q+iKwa477RT7u3XN5ErSzt2Zm+7knrLtxjv75CRW303r6sQh6pNmofkVMwbdOzFe+j
+	 mY5u9axHe5C9k54pZJnJD6UXLRk608gyyFic4/yKl5DzzWzli8vJFd2rRy4pe4OZ5X
+	 eWZKutGmGce3vZBkXmct1BZU78OYa7LywO1EBAJ/haGERXIsN3TKCh5KmO4A4uLma3
+	 CkR+SouiJQEP+Km5NrbcNSiircUSzGm+iIUtDJ4G8YovaMpRuZSjRZ2ZWLgF9ABwb3
+	 yrrRvJH+vKqdQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5F6DC17E013C;
+	Fri, 10 Oct 2025 11:31:43 +0200 (CEST)
+Date: Fri, 10 Oct 2025 11:31:38 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Rain Yang <jiyu.yang@oss.nxp.com>
+Cc: airlied@gmail.com, dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, liviu.dudau@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ prabhu.sundararaj@nxp.com, simona@ffwll.ch, steven.price@arm.com,
+ tzimmermann@suse.de, xianzhong.li@nxp.com
+Subject: Re: [PATCH] drm/panthor: attach the driver's multiple power domains
+Message-ID: <20251010113138.719d431f@fedora>
+In-Reply-To: <aOjOjFVGb8MLjvYI@oss.nxp.com>
+References: <20251009140039.101189-1-jiyu.yang@oss.nxp.com>
+	<20251009160820.74f04ead@fedora>
+	<20251009160929.1b36b9ea@fedora>
+	<aOfPaQWIVzMaWlSl@oss.nxp.com>
+	<20251009172320.6a2cbf55@fedora>
+	<aOjOjFVGb8MLjvYI@oss.nxp.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3277cedc-c671-48c5-b016-08de07dfcf95
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2025 09:31:37.4603
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j/gH6v/4llLujiiyadOdT3zdkuhgJbEcih1O8+kA+1mW9GtXr+oOWIYiiuv1ugl2y0A1voLI6H+Gl9CnI57mYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8899
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> After applying the workaround for err050089, the LS1028A platform
-> experiences RCU stalls on RT kernel. This issue is caused by the
-> recursive acquisition of the read lock enetc_mdio_lock. Here list some
-> of the call stacks identified under the enetc_poll path that may lead to
-> a deadlock:
->=20
-> enetc_poll
->   -> enetc_lock_mdio
->   -> enetc_clean_rx_ring OR napi_complete_done
->      -> napi_gro_receive
->         -> enetc_start_xmit
->            -> enetc_lock_mdio
->            -> enetc_map_tx_buffs
->            -> enetc_unlock_mdio
->   -> enetc_unlock_mdio
->=20
-> After enetc_poll acquires the read lock, a higher-priority writer attempt=
-s
-> to acquire the lock, causing preemption. The writer detects that a
-> read lock is already held and is scheduled out. However, readers under
-> enetc_poll cannot acquire the read lock again because a writer is already
-> waiting, leading to a thread hang.
->=20
-> Currently, the deadlock is avoided by adjusting enetc_lock_mdio to preven=
-t
-> recursive lock acquisition.
->=20
-> Fixes: 6d36ecdbc441 ("net: enetc: take the MDIO lock only once per NAPI p=
-oll
-> cycle")
-> Signed-off-by: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
+Hello Rain,
 
-Acked-by: Wei Fang <wei.fang@nxp.com>
+On Fri, 10 Oct 2025 17:14:52 +0800
+Rain Yang <jiyu.yang@oss.nxp.com> wrote:
 
-Hi Vladimir,
+> On Thu, Oct 09, 2025 at 05:23:20PM +0200, Boris Brezillon wrote:
+> >On Thu, 9 Oct 2025 23:06:17 +0800
+> >Rain Yang <jiyu.yang@oss.nxp.com> wrote:
+> >  
+> >> On Thu, Oct 09, 2025 at 04:09:29PM +0200, Boris Brezillon wrote:  
+> >> >On Thu, 9 Oct 2025 16:08:20 +0200
+> >> >Boris Brezillon <boris.brezillon@collabora.com> wrote:
+> >> >    
+> >> >> On Thu,  9 Oct 2025 22:00:39 +0800
+> >> >> Rain Yang <jiyu.yang@oss.nxp.com> wrote:
+> >> >>     
+> >> >> > From: Rain Yang <jiyu.yang@nxp.com>
+> >> >> > 
+> >> >> > Some platforms, such as i.MX95, utilize multiple power domains that need
+> >> >> > to be attached explicitly. This patch ensures that the driver properly
+> >> >> > attaches all available power domains using devm_pm_domain_attach_list().
+> >> >> > 
+> >> >> > Signed-off-by: Prabhu Sundararaj <prabhu.sundararaj@nxp.com>
+> >> >> > Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
+> >> >> > ---
+> >> >> >  drivers/gpu/drm/panthor/panthor_device.c | 6 ++++++
+> >> >> >  drivers/gpu/drm/panthor/panthor_device.h | 2 ++
+> >> >> >  2 files changed, 8 insertions(+)
+> >> >> > 
+> >> >> > diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> >> >> > index f0b2da5b2b96..6f40d053b16c 100644
+> >> >> > --- a/drivers/gpu/drm/panthor/panthor_device.c
+> >> >> > +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> >> >> > @@ -218,6 +218,12 @@ int panthor_device_init(struct panthor_device *ptdev)
+> >> >> >  	if (ret)
+> >> >> >  		return ret;
+> >> >> >  
+> >> >> > +	ret = devm_pm_domain_attach_list(ptdev->base.dev, NULL, &ptdev->pd_list);
+> >> >> > +	if (ret < 0) {
+> >> >> > +		drm_err(&ptdev->base, "attach power domains failed, ret=%d", ret);
+> >> >> > +		return ret;
+> >> >> > +	}
+> >> >> > +
+> >> >> >  	ret = panthor_devfreq_init(ptdev);
+> >> >> >  	if (ret)
+> >> >> >  		return ret;
+> >> >> > diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> >> >> > index 4fc7cf2aeed5..5ecb541ec67b 100644
+> >> >> > --- a/drivers/gpu/drm/panthor/panthor_device.h
+> >> >> > +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> >> >> > @@ -196,6 +196,8 @@ struct panthor_device {
+> >> >> >  		/** @recovery_needed: True when a resume attempt failed. */
+> >> >> >  		atomic_t recovery_needed;
+> >> >> >  	} pm;      
+> >> >> 
+> >> >> Add a blank line here.
+> >> >>     
+> >> >> > +	/** @pm: Power management related data. */    
+> >> >
+> >> >Also, the comment is wrong, and it would probably make sense to move
+> >> >that to the pm sub-struct since this is PM related.    
+> >> thanks, will fix it next version.  
+> >> >    
+> >> >> > +	struct dev_pm_domain_list  *pd_list;
+> >> >> >        
+> >> >> 
+> >> >> Do we even need to keep the pd_list in panthor_device if we don't do
+> >> >> anything with it?    
+> >> The second power domain is typically used for frequency scaling. The driver
+> >> works fine when there's only one single power domain. That said, I will update
+> >> the implementation to attach multiple power domains only when the domain count
+> >> is greater than one.  
+> >
+> >That's not what I meant. What I mean is that the
+> >panthor_device::pd_list is never used, because the extra power domains
+> >get attached to the struct device directly, and the PM core
+> >automatically enables all PDs on resume and disable them on suspend.
+> >Because it's a devm_ function, you don't need it to detach the pd_list
+> >at ::remove() time either. TLDR; that means you can pass
+> >devm_pm_domain_attach_list() a local pd_list instead of ptdev->pd_list
+> >and you can thus drop panthor_device::pd_list altogether, I think.
+> >
+> >If you intend to use the pd_list for manual PD control in panthor in a
+> >follow-up patchset, this should be mentioned in the commit message.  
+> thanks for your suggestion, pd_list will be allocated by devm_kmalloc.
 
-Do you have any comments? This patch will cause the regression of performan=
-ce
-degradation, but the RCU stalls are more severe.
+There's no extra allocation needed. Just do:
 
+	struct dev_pm_domain_list  *pd_list;
+
+	...
+	
+	ret = devm_pm_domain_attach_list(ptdev->base.dev, NULL, &pd_list);
+	if (ret < 0) {
+		drm_err(&ptdev->base, "attach power domains failed, ret=%d", ret);
+		return ret;
+	}
+
+and that's it.
+
+> 
+> I have not found a general solution to modify the frequency via SCMI perf
+> and OPP framework except the manual PD control, I'd appreciate it if
+> there is any idea.
+
+What's the manual PD control you're talking about? I don't see
+anything using the pd_list in this patch. Is there another patchset
+on top of this one that you haven't posted yet? Dunno if that's of
+any help, but this patchset [1] might give you some ideas.
+
+Regards,
+
+Boris
+
+[1]https://lwn.net/Articles/1040831
 
