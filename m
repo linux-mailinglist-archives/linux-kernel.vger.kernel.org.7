@@ -1,137 +1,179 @@
-Return-Path: <linux-kernel+bounces-848051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93458BCC5AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:32:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF888BCC5B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C799407678
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:32:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FEC44FA1FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D298124466C;
-	Fri, 10 Oct 2025 09:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bt82sF3+"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A742367D7
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76076271A94;
+	Fri, 10 Oct 2025 09:32:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C42926B75B;
+	Fri, 10 Oct 2025 09:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760088736; cv=none; b=RFjqiGCBA5MFHw8K8OT2CUaeJNlkrV8avW8lv6Oyl7taj17VVMdUmQIPj5HAp0kHZpNdULVQwOhb/WagEYQrMXKiT3ZYZX1E/XFnwu7i4GueHYZD2d6KflmRhYdJB+NMUy6sD/GUbIVoB835pROReP3tECxmjmkIkHy/CnlOn08=
+	t=1760088740; cv=none; b=ILUf8mUqJyJhb4W/owVhOmSXaZThYKrEleatZJixT1br7kw37aKvhuLxnokMe+EpyqSPY+n5Wh5GZ7zFCAVfjaP0NUhxhZzrxib9umyzAwDSIFlCnOQb5dnY1CKDgGDq2cieLGt5mgaRtx/cZELvxrRB6txVpgg+OpV22r3Gh4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760088736; c=relaxed/simple;
-	bh=3n+/PuX4xKfzOn3Pk3YuBv65d8E2XKe0ZY0j62zMu5Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NKb+nttwfrIwL90McpPZkQeh0PzMXo7Nlvdh2sWFKsl3dEh9IhFNpizWJfc4X2x2fIPcABxYPV+ww0x6v0izcjWnGAkQp92jsNelQXhQ/cSbB9cIzut6OlUB6AUyf1NbSzfrkB02lG+UdaNa6jFJDwX9KO4fCRfhjWMOsk3b1zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bt82sF3+; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e31191379so13237315e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:32:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760088733; x=1760693533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TEpMCsNexUqXFV3HphEqSGQQa1/8ZtyBl4COb7naegU=;
-        b=bt82sF3+lV1DTMfLEJPwDiLzazza2AdpkByuMXMmc8kiJ7EZicJs+7QHXsSvz+SpQ8
-         LnjrLv+xzAKU7GnycbxAsb6wT8p9+8pKaBBNlWMsuDkDa3oxeF7h/GE0LoWjuUNV4Kkv
-         Jshg0mT6c1Y/K9EZuy+BLOlOVYe0H1Ne78vTFUv6tg64/aY+QhJEpW7LtTtL1lyDBPUK
-         pxmPxFMSU6XgmD3L9MH81PE7+WD1gvG1wIJaECjIY6KCiWR1Br6QVXPEAVw+b48iLtJ9
-         pF0sCVuoRD2g3qkL8xIPbor9AZOFEjIi6ZZqaqBlJjocB/222vtVzm6MnE6qu00Vpihy
-         wWeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760088733; x=1760693533;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TEpMCsNexUqXFV3HphEqSGQQa1/8ZtyBl4COb7naegU=;
-        b=T8ZIeUSjWxYuojy41S8FTRVZwwmnEYhyJH15oFoe6Q502KdXYA04e/Xcm9qBcZf2a7
-         lotdGb5EE1l71CJmpQEzxsTeXCsRfIHx+A0axKdmagcosv5Rw8FKSysLRZhJvr4lg/us
-         F8wv//X2yZ6k/t1XMe21LavSBu0nX2i7MemTI23qFiX25s9iKMY9T3yE1iTWHQBF2g9r
-         mXCAvGMMw5F0Ih5yFiLBxSnNOojOg7ZrSUrLVUp/t7eJlradek6HZxYnS5v4nVcmBCYS
-         6CkWJvXh3Qc9an1M22/amOwJJNR5mn+VzKdQQBKtuMPMdN8YlYviEGNJt8tfWZcfLVWq
-         7a4g==
-X-Forwarded-Encrypted: i=1; AJvYcCX6kdc/tiz4o8rC3r3YBuKwStcPBWtylMjiPqwCbmRG/CfPZDolT3gyXsDIuVMs6nUDkbnGvI79l+e4eVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb+MfLyXazJVqajTx8LiXaeCPQOJUikAYF/MyKugznzsZ30B1Z
-	1tkJbE5TFFb4PKCXfOddiqDcXKSPdOmqddhjDZGZ6YxVCqTPC0Yjmqre+COgpNivoRiSzNfxf7N
-	2QdOQnmLA2XHEMg==
-X-Google-Smtp-Source: AGHT+IGMIeEfpOAUAWc049vIU3CiOvZxV3DyvsEN7g3HfwV+UjKQInLrwgOHvMdE62gWE3zcOIw/MK4QdR5oDA==
-X-Received: from wrqw17.prod.google.com ([2002:a05:6000:18d1:b0:425:f04a:4d7d])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2283:b0:3ff:17ac:a34b with SMTP id ffacd0b85a97d-4266e8db451mr6680816f8f.42.1760088732819;
- Fri, 10 Oct 2025 02:32:12 -0700 (PDT)
-Date: Fri, 10 Oct 2025 09:32:11 +0000
-In-Reply-To: <20251010082310-b25e69f3-4568-4886-a0c9-3bd611bce073@linutronix.de>
+	s=arc-20240116; t=1760088740; c=relaxed/simple;
+	bh=zvXQ3aAsM/PqS0XEz0tavtBpshfkfSFCqC31NPz018E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qNVglNHq1m9kWKu+gaTiaDUFGBFPPbd6SFQdqQoEgwM/+mHO4sIfOY1GpevJcN6RD4bejW3tZv4rmZWVq6qLOqNK9En5LtvHpkncKWxx6+25Jw/iLdGDfQc9KDTwI1ESpde+mi2nYXcSnLRmWJAauP2Gt20Ryi8xMg3tGAnRZLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC0261595;
+	Fri, 10 Oct 2025 02:32:02 -0700 (PDT)
+Received: from [10.57.84.93] (unknown [10.57.84.93])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A78D73F738;
+	Fri, 10 Oct 2025 02:32:08 -0700 (PDT)
+Message-ID: <716995b1-2d70-4053-a929-2f94e696a025@arm.com>
+Date: Fri, 10 Oct 2025 10:32:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251007-b4-ksft-error-on-fail-v1-1-71bf058f5662@google.com> <20251010082310-b25e69f3-4568-4886-a0c9-3bd611bce073@linutronix.de>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDEJDSXMTE64.2LRRDLAWFPA0T@google.com>
-Subject: Re: [PATCH] selftests/run_kselftest.sh: Add --error-on-fail flag
-From: Brendan Jackman <jackmanb@google.com>
-To: "=?utf-8?q?Thomas_Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>, 
-	Brendan Jackman <jackmanb@google.com>
-Cc: Shuah Khan <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>, 
-	<linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v4 06/10] PM: EM: Implement em_nl_get_pds_doit()
+To: Changwoo Min <changwoo@igalia.com>
+Cc: christian.loehle@arm.com, tj@kernel.org, pavel@kernel.org,
+ len.brown@intel.com, rafael@kernel.org, kernel-dev@igalia.com,
+ linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250921031928.205869-1-changwoo@igalia.com>
+ <20250921031928.205869-7-changwoo@igalia.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20250921031928.205869-7-changwoo@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri Oct 10, 2025 at 6:34 AM UTC, Thomas Wei=C3=9Fschuh wrote:
-> On Tue, Oct 07, 2025 at 11:06:46AM +0000, Brendan Jackman wrote:
->> +report_failure()
->> +{
->> +	echo "not ok $*" >> "$kselftest_failures_file"
->> +	echo "$*" >> "$kselftest_failures_file"
->
-> Both of these go into the failures file. The first should go to stdout, n=
-o?
 
-Oops, thanks.
 
->> --- a/tools/testing/selftests/run_kselftest.sh
->> +++ b/tools/testing/selftests/run_kselftest.sh
->> @@ -36,6 +36,7 @@ Usage: $0 [OPTIONS]
->>    -n | --netns			Run each test in namespace
->>    -h | --help			Show this usage info
->>    -o | --override-timeout	Number of seconds after which we timeout
->> +  -e | --error-on-fail	After finishing all tests, exit with code 1 if a=
-ny failed.
->
-> To me it looks like the new behavior could be the default,
-> removing the need for an additional option.
+On 9/21/25 04:19, Changwoo Min wrote:
+> When a userspace requests EM_CMD_GET_PDS, the kernel responds with
+> information on all performance domains. The message format of the
+> response is as follows:
+> 
+> EM_A_PDS_PD (NLA_NESTED)*
+>      EM_A_PD_PD_ID (NLA_U32)
+>      EM_A_PD_FLAGS (NLA_U64)
+>      EM_A_PD_CPUS (NLA_STRING)
+> 
+> where EM_A_PDS_PD can be repeated as many times as there are performance
+> domains, and EM_A_PD_CPUS is a hexadecimal string representing a CPU
+> bitmask.
+> 
+> Signed-off-by: Changwoo Min <changwoo@igalia.com>
+> ---
+>   kernel/power/em_netlink.c | 82 ++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 81 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/power/em_netlink.c b/kernel/power/em_netlink.c
+> index f3fbfeff29a4..31b27c6fe3c9 100644
+> --- a/kernel/power/em_netlink.c
+> +++ b/kernel/power/em_netlink.c
+> @@ -17,9 +17,89 @@
+>   #include "em_netlink.h"
+>   #include "em_netlink_autogen.h"
+>   
+> +#define EM_A_PD_CPUS_LEN		256
+> +
+> +/*************************** Command encoding ********************************/
+> +static int __em_nl_get_pd_size(struct em_perf_domain *pd, void *data)
+> +{
+> +	char cpus_buf[EM_A_PD_CPUS_LEN];
+> +	int *tot_msg_sz = data;
+> +	int msg_sz, cpus_sz;
+> +
+> +	cpus_sz = snprintf(cpus_buf, sizeof(cpus_buf), "%*pb",
+> +			   cpumask_pr_args(to_cpumask(pd->cpus)));
+> +
+> +	msg_sz = nla_total_size(0) +			/* EM_A_PDS_PD */
+> +		 nla_total_size(sizeof(u32)) +		/* EM_A_PD_PD_ID */
+> +		 nla_total_size_64bit(sizeof(u64)) +	/* EM_A_PD_FLAGS */
+> +		 nla_total_size(cpus_sz);		/* EM_A_PD_CPUS */
+> +
+> +	*tot_msg_sz += nlmsg_total_size(genlmsg_msg_size(msg_sz));
+> +	return 0;
+> +}
+> +
+> +static int __em_nl_get_pd(struct em_perf_domain *pd, void *data)
+> +{
+> +	char cpus_buf[EM_A_PD_CPUS_LEN];
+> +	struct sk_buff *msg = data;
+> +	struct nlattr *entry;
+> +
+> +	entry = nla_nest_start(msg, EM_A_PDS_PD);
+> +	if (!entry)
+> +		goto out_cancel_nest;
+> +
+> +	if (nla_put_u32(msg, EM_A_PD_PD_ID, pd->id))
+> +		goto out_cancel_nest;
+> +
+> +	if (nla_put_u64_64bit(msg, EM_A_PD_FLAGS, pd->flags, EM_A_PD_PAD))
+> +		goto out_cancel_nest;
+> +
+> +	snprintf(cpus_buf, sizeof(cpus_buf), "%*pb",
+> +		 cpumask_pr_args(to_cpumask(pd->cpus)));
+> +	if (nla_put_string(msg, EM_A_PD_CPUS, cpus_buf))
+> +		goto out_cancel_nest;
+> +
+> +	nla_nest_end(msg, entry);
+> +
+> +	return 0;
+> +
+> +out_cancel_nest:
+> +	nla_nest_cancel(msg, entry);
+> +
+> +	return -EMSGSIZE;
+> +}
+> +
+>   int em_nl_get_pds_doit(struct sk_buff *skb, struct genl_info *info)
+>   {
+> -	return -EOPNOTSUPP;
+> +	struct sk_buff *msg;
+> +	void *hdr;
+> +	int cmd = info->genlhdr->cmd;
+> +	int ret = -EMSGSIZE, msg_sz = 0;
+> +
+> +	for_each_em_perf_domain(__em_nl_get_pd_size, &msg_sz);
+> +
+> +	msg = genlmsg_new(msg_sz, GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	hdr = genlmsg_put_reply(msg, info, &em_nl_family, 0, cmd);
+> +	if (!hdr)
+> +		goto out_free_msg;
+> +
+> +	ret = for_each_em_perf_domain(__em_nl_get_pd, msg);
+> +	if (ret)
+> +		goto out_cancel_msg;
+> +
+> +	genlmsg_end(msg, hdr);
+> +
+> +	return genlmsg_reply(msg, info);
+> +
+> +out_cancel_msg:
+> +	genlmsg_cancel(msg, hdr);
+> +out_free_msg:
+> +	nlmsg_free(msg);
+> +
+> +	return ret;
+>   }
+>   
+>   int em_nl_get_pd_table_doit(struct sk_buff *skb, struct genl_info *info)
 
-That sounds good to me, I will wait a day or two to see if anyone
-objects to this before I send v2.
+LGTM,
 
-IMO it's important that your testing systems can tell you the difference
-between "tests failed, your code is broken" and "I fell over, the
-infrastructure is broken". My thinking was that if anyone's using this
-in a proper CI loop, they won't actually want --error-on-fail because
-then they sort of lose this distinction (nonzero exit code means "I fell
-over" while "your tests failed" is communicated through KTAP). But, now
-I think about it, this script is running on the kernel under test so
-it's not capable of making this distinction anyway. So default SGTM.
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
->> +kselftest_failures_file=3D$(mktemp --tmpdir kselftest-failures-XXXXXX)
->
-> Quoting?
-
-Oh yep, thanks again.
-
-> I'm not a fan of the implementation details, but also can't come up with
-> something better.
-
-Yeah, I feel the same. I think the next best thing is to rewrite this
-whole thing in a proper programming language though.=20
-
-Thanks for taking a look :)
 
