@@ -1,350 +1,184 @@
-Return-Path: <linux-kernel+bounces-847993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4A0BCC39F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:52:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64591BCC38D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD241A65949
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:52:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45C03A55E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED3B26B97E;
-	Fri, 10 Oct 2025 08:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884B25EF90;
+	Fri, 10 Oct 2025 08:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UI0q4ces"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="I65+FkmK"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3580425F96B;
-	Fri, 10 Oct 2025 08:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF691DE3B7
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 08:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760086334; cv=none; b=bg2gu5NYisRbbzIermL1Znm/JaIZ17ZS/dCWLLlRckxmN3nLPI8ECzRo03jX5MFrb1/cUxkgStKMBGdE10MmKWoJo8qvwY1XRr1tB/LuCND8431A3fZqM5xrJlq1nIQgHxHkIV1mcLobcAa3W2bwtpGnZIj5T1WMBxAclBNXyCo=
+	t=1760086331; cv=none; b=ANWW7s10EwaKtSnjyOuRDdzD7Unkra/lSISkYjQG9YdEafMJd05A82X11bZpWNSV59heZYHhARKgBTNVPtOqieelFeRsyuCPAzVNpZzCw6QHeiWI6lZoNAJocBiqUQUYKt+Q0LWycS4dJfp2HFAHFT6Svv7ZYCPU3eOustYuonw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760086334; c=relaxed/simple;
-	bh=mYOiOTMrqUu6itztQQgYeopmr/ZphGWC2fdQY4fCjrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BmqhpdEFR4QwuZJe8adkyLsgFsCN7N5OcknFhgyn2Ox08Zh/+FgmR8yF/wPKshtB7SA4FIpVe0KY/Moaw4+ZHczhctm+HM1dQmgVYdetELIh5ILbQprVxpDF7MgNj3QcGIMIpulzQ9w/QbDUZ/Clwm0EWRqyOJfX09OW602liyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UI0q4ces; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599Ksa5R031169;
-	Fri, 10 Oct 2025 08:52:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=KQ/aGM9rH94UftiKI
-	ale0JIwz3RTAt1rdgKxSr6lQpQ=; b=UI0q4cesThQ2CNy40uv/IG7muqFRSOxJ0
-	ib4m3/7/pIDWBf6vU4Sgt3KZGQMi1YPGGPc+j5QMIO+5pX6IcqKfi8UKKa6y6hfc
-	Qn0TFwH7uCVRQxevaMLfq+Ap8uQzn++VCRUjF2vai3Y19QOueKAGxFPhuFtypqjm
-	mP8Th08nEQutshbKV/a64pZAyl3VlcmM16NSZhtSwJoRqlAhcPzPXpkNjtTBaHtM
-	dJL0NxExnBzKURxuAwDyd72doGI/CAfrGluOUqDh3T3B2sd+4OrXVtPT/w55So1+
-	uED4M2ElaS/6GqI+kxkNtaqQ4MbGS0E50/qZJwMJ5tlwOlxTrfQug==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv81sfxr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 08:52:06 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59A80RPO020979;
-	Fri, 10 Oct 2025 08:52:06 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49nv9n109m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 08:52:06 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59A8q2uT29557378
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Oct 2025 08:52:02 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0C9182008C;
-	Fri, 10 Oct 2025 08:52:02 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CA8D620091;
-	Fri, 10 Oct 2025 08:52:01 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 10 Oct 2025 08:52:01 +0000 (GMT)
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, linux-mm <linux-mm@kvack.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sumanth Korikkar <sumanthk@linux.ibm.com>
-Subject: [PATCH v3 4/4] mm/memory_hotplug: Remove MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers
-Date: Fri, 10 Oct 2025 10:51:47 +0200
-Message-ID: <20251010085147.2175918-5-sumanthk@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
-References: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
+	s=arc-20240116; t=1760086331; c=relaxed/simple;
+	bh=DDx2jQ44UcYgADHR50SsvCLFlSwXmWfRDl8EjZfp3dA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P94XZ1jVyFRIL8dRpQ1wpGtqmuRPW+5CQ17XeNUQ8RJWEdWKILghFVZHzJRmx813lUXBjA5hWVs3YhckY+AN6djKn5w9C/MM3WCMJnKrAiftwGfG5GQPxQtfyWAFMv8aNsqjB/5YLMhAvoTF+qZvbPfdgLbCqX20NeZcrbXNYac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=I65+FkmK; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cjgTq279Mz9tyS;
+	Fri, 10 Oct 2025 10:51:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760086319; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DDx2jQ44UcYgADHR50SsvCLFlSwXmWfRDl8EjZfp3dA=;
+	b=I65+FkmKVoKEyK6Q/AoM4dmjeGLxzkiAzRQJi3NNHyTl2sTKOOSwHT2NWwYg0zNu5v0rC0
+	GPD/MnJf2JgivWN8jHtc/UNa5pGWsdTPjPJZvZ94YrMGap0OqNXINsG/YzWh9Z668x0apN
+	5kZ+AV/OenJoI6bJo5VPa8X/DC/VlxXlK+De9c0oyAmS1uZw9YCURV2r/rDuH/yuC6F2jx
+	Uk3Nkd2OJlJInAD8h8sgHmkN+sJWURU1w0dTV97JxNHvM4e2+rP54awWc1yUrVjGHrt176
+	TJx7qcnPUlswFlDQIMOR+GKzxVEy5vf5gidJc9jvF2pN7U46OVtzniCMcWu0RA==
+Message-ID: <f609ca476429b0737238cd9f6389e85472ac7529.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: Mandate usage of drm_sched_job_cleanup()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
+ <phasta@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+	 <ckoenig.leichtzumerken@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 10 Oct 2025 10:51:55 +0200
+In-Reply-To: <aNq9/6Ks2N3A1hDu@lstrano-desk.jf.intel.com>
+References: <20250926123630.200920-2-phasta@kernel.org>
+	 <aNq9/6Ks2N3A1hDu@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: NQZ6OBCpbR_KwvA3CBqGLHLSeBLUL9uv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX9sQhrIFWT5ji
- Q/nDGehyq9f4Qgq2fZFe4OIFBLijyz9538qI+jWDYxxQUZaXurBDhNvjdEn+G3NnOVBvgsnKSuD
- zVZvW9d+KvqsWrlZ83yXnWASD45FlnFjwX6pC6y8E1mYzeuEIcR+AXpEzuM6Q86YuE5JTmZu5TB
- ZZPqzVJGNcbSFFrJtN0wRSuQB2Z2f6aq7xx1hvDp0ks4A6efIsIS5LLGZhvVX0iQE4YryhVqNuD
- pG3UWxnpdSLxeK921W3RhGlaBgUrxR1csVgluMOUpzXNFRpHtpZ2iKorkx4Y92QbDFUsOuEDbui
- CWDe7YXMPEqji+DMe3BH3bU4rHGwXccrzdmmeyrjdPZhfQ1/gyvg0F1zzlWMezfyARW7CJyhSg5
- sKlMN6DgdTjAF0f7QSBzuc2H7apZCg==
-X-Authority-Analysis: v=2.4 cv=cKntc1eN c=1 sm=1 tr=0 ts=68e8c936 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=x6icFKpwvdMA:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=rQaNfnSK3a-WYbhgV1gA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: NQZ6OBCpbR_KwvA3CBqGLHLSeBLUL9uv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 bulkscore=0 phishscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+X-MBO-RS-META: cijir8hi1qag4711ie6wwtmkh7me6w3i
+X-MBO-RS-ID: 8cd8832534db39e8cba
 
-MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE memory notifiers were introduced
-to prepare the transition of memory to and from a physically accessible
-state. This enhancement was crucial for implementing the "memmap on memory"
-feature for s390.
+On Mon, 2025-09-29 at 10:12 -0700, Matthew Brost wrote:
+> On Fri, Sep 26, 2025 at 02:36:31PM +0200, Philipp Stanner wrote:
+> > drm_sched_job_cleanup()'s documentation so far uses relatively soft
+> > language, only "recommending" usage of the function. To avoid memory
+> > leaks and, potentiall, other bugs, however, the function has to be used=
+.
+> >=20
+> > Demand usage of the function explicitly.
+> >=20
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > ---
+> > =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 4 ++--
+> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/s=
+cheduler/sched_main.c
+> > index 46119aacb809..0a9df9e61963 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > @@ -1030,7 +1030,7 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+> > =C2=A0 *
+> > =C2=A0 * Cleans up the resources allocated with drm_sched_job_init().
+> > =C2=A0 *
+> > - * Drivers should call this from their error unwind code if @job is ab=
+orted
+> > + * Drivers need to call this from their error unwind code if @job is a=
+borted
+> > =C2=A0 * before drm_sched_job_arm() is called.
+> > =C2=A0 *
+> > =C2=A0 * drm_sched_job_arm() is a point of no return since it initializ=
+es the fences
+> > @@ -1038,7 +1038,7 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+> > =C2=A0 * submit it with drm_sched_entity_push_job() and cannot simply a=
+bort it by
+> > =C2=A0 * calling drm_sched_job_cleanup().
+> > =C2=A0 *
+> > - * This function should be called in the &drm_sched_backend_ops.free_j=
+ob callback.
+> > + * This function must be called in the &drm_sched_backend_ops.free_job=
+ callback.
+>=20
+> I believe both the existing documentation and the new version are
+> incorrect.
 
-With introduction of dynamic (de)configuration of hotpluggable memory,
-memory can be brought to accessible state before add_memory(). Memory
-can be brought to inaccessible state before remove_memory(). Hence,
-there is no need of MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE memory
-notifiers anymore.
+Feel free to submit a proposal.
 
-This basically reverts commit
-c5f1e2d18909 ("mm/memory_hotplug: introduce MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers")
-Additionally, apply minor adjustments to the function parameters of
-move_pfn_range_to_zone() and mhp_supports_memmap_on_memory() to ensure
-compatibility with the latest branch.
+What's important for this patch is: do you agree that cleanup_job()
+must be called in free_job()?
 
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
----
- drivers/base/memory.c          | 23 +----------------------
- include/linux/memory.h         |  9 ---------
- include/linux/memory_hotplug.h | 18 +-----------------
- include/linux/memremap.h       |  1 -
- mm/memory_hotplug.c            | 17 +++--------------
- mm/sparse.c                    |  3 +--
- 6 files changed, 6 insertions(+), 65 deletions(-)
+>=20
+> Also, the free_job callback is probably misnamed. This ties into a
+> statement made during your XDC presentation today that confused me. The
+> DRM scheduler only holds a reference to the driver-allocated job from
+> the time run_job is called (i.e., once drm_sched_job_arm is invoked)
+> until the job=E2=80=99s fence signals. It does not own the responsibility=
+ of
+> freeing the job =E2=80=94 the driver should manage the job=E2=80=99s refe=
+rence count and
+> free it as appropriate.
+>=20
+> For most drivers, the only reference is the creation reference, which is
+> transferred to the DRM scheduler after drm_sched_job_arm and released in
+> free_job.
+>=20
+> So, I think what really needs to be documented is this reference
+> counting transfer. drm_sched_job_cleanup is actually associated with
+> drm_sched_job_init =E2=80=94 meaning drm_sched_job_cleanup must be called=
+ if
+> drm_sched_job_init was called. This is typically handled by the driver
+> through reference counting of the job.
+>=20
+> Finally, I think free_job should probably be renamed to something like
+> sched_job_put to better reflect its purpose.
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 6d84a02cfa5d..fc43f2703ae0 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -226,7 +226,6 @@ static int memory_block_online(struct memory_block *mem)
- 	unsigned long start_pfn = section_nr_to_pfn(mem->start_section_nr);
- 	unsigned long nr_pages = PAGES_PER_SECTION * sections_per_block;
- 	unsigned long nr_vmemmap_pages = 0;
--	struct memory_notify arg;
- 	struct zone *zone;
- 	int ret;
- 
-@@ -246,19 +245,9 @@ static int memory_block_online(struct memory_block *mem)
- 	if (mem->altmap)
- 		nr_vmemmap_pages = mem->altmap->free;
- 
--	arg.altmap_start_pfn = start_pfn;
--	arg.altmap_nr_pages = nr_vmemmap_pages;
--	arg.start_pfn = start_pfn + nr_vmemmap_pages;
--	arg.nr_pages = nr_pages - nr_vmemmap_pages;
- 	mem_hotplug_begin();
--	ret = memory_notify(MEM_PREPARE_ONLINE, &arg);
--	ret = notifier_to_errno(ret);
--	if (ret)
--		goto out_notifier;
--
- 	if (nr_vmemmap_pages) {
--		ret = mhp_init_memmap_on_memory(start_pfn, nr_vmemmap_pages,
--						zone, mem->altmap->inaccessible);
-+		ret = mhp_init_memmap_on_memory(start_pfn, nr_vmemmap_pages, zone);
- 		if (ret)
- 			goto out;
- 	}
-@@ -280,11 +269,7 @@ static int memory_block_online(struct memory_block *mem)
- 					  nr_vmemmap_pages);
- 
- 	mem->zone = zone;
--	mem_hotplug_done();
--	return ret;
- out:
--	memory_notify(MEM_FINISH_OFFLINE, &arg);
--out_notifier:
- 	mem_hotplug_done();
- 	return ret;
- }
-@@ -297,7 +282,6 @@ static int memory_block_offline(struct memory_block *mem)
- 	unsigned long start_pfn = section_nr_to_pfn(mem->start_section_nr);
- 	unsigned long nr_pages = PAGES_PER_SECTION * sections_per_block;
- 	unsigned long nr_vmemmap_pages = 0;
--	struct memory_notify arg;
- 	int ret;
- 
- 	if (!mem->zone)
-@@ -329,11 +313,6 @@ static int memory_block_offline(struct memory_block *mem)
- 		mhp_deinit_memmap_on_memory(start_pfn, nr_vmemmap_pages);
- 
- 	mem->zone = NULL;
--	arg.altmap_start_pfn = start_pfn;
--	arg.altmap_nr_pages = nr_vmemmap_pages;
--	arg.start_pfn = start_pfn + nr_vmemmap_pages;
--	arg.nr_pages = nr_pages - nr_vmemmap_pages;
--	memory_notify(MEM_FINISH_OFFLINE, &arg);
- out:
- 	mem_hotplug_done();
- 	return ret;
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index 0c214256216f..ba1515160894 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -96,17 +96,8 @@ int set_memory_block_size_order(unsigned int order);
- #define	MEM_GOING_ONLINE	(1<<3)
- #define	MEM_CANCEL_ONLINE	(1<<4)
- #define	MEM_CANCEL_OFFLINE	(1<<5)
--#define	MEM_PREPARE_ONLINE	(1<<6)
--#define	MEM_FINISH_OFFLINE	(1<<7)
- 
- struct memory_notify {
--	/*
--	 * The altmap_start_pfn and altmap_nr_pages fields are designated for
--	 * specifying the altmap range and are exclusively intended for use in
--	 * MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers.
--	 */
--	unsigned long altmap_start_pfn;
--	unsigned long altmap_nr_pages;
- 	unsigned long start_pfn;
- 	unsigned long nr_pages;
- };
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 23f038a16231..f2f16cdd73ee 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -58,22 +58,6 @@ typedef int __bitwise mhp_t;
-  * implies the node id (nid).
-  */
- #define MHP_NID_IS_MGID		((__force mhp_t)BIT(2))
--/*
-- * The hotplugged memory is completely inaccessible while the memory is
-- * offline. The memory provider will handle MEM_PREPARE_ONLINE /
-- * MEM_FINISH_OFFLINE notifications and make the memory accessible.
-- *
-- * This flag is only relevant when used along with MHP_MEMMAP_ON_MEMORY,
-- * because the altmap cannot be written (e.g., poisoned) when adding
-- * memory -- before it is set online.
-- *
-- * This allows for adding memory with an altmap that is not currently
-- * made available by a hypervisor. When onlining that memory, the
-- * hypervisor can be instructed to make that memory available, and
-- * the onlining phase will not require any memory allocations, which is
-- * helpful in low-memory situations.
-- */
--#define MHP_OFFLINE_INACCESSIBLE	((__force mhp_t)BIT(3))
- 
- /*
-  * Extended parameters for memory hotplug:
-@@ -123,7 +107,7 @@ extern void adjust_present_page_count(struct page *page,
- 				      long nr_pages);
- /* VM interface that may be used by firmware interface */
- extern int mhp_init_memmap_on_memory(unsigned long pfn, unsigned long nr_pages,
--				     struct zone *zone, bool mhp_off_inaccessible);
-+				     struct zone *zone);
- extern void mhp_deinit_memmap_on_memory(unsigned long pfn, unsigned long nr_pages);
- extern int online_pages(unsigned long pfn, unsigned long nr_pages,
- 			struct zone *zone, struct memory_group *group);
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index e5951ba12a28..30c7aecbd245 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -25,7 +25,6 @@ struct vmem_altmap {
- 	unsigned long free;
- 	unsigned long align;
- 	unsigned long alloc;
--	bool inaccessible;
- };
- 
- /*
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 0be83039c3b5..238a6712738e 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1088,7 +1088,7 @@ void adjust_present_page_count(struct page *page, struct memory_group *group,
- }
- 
- int mhp_init_memmap_on_memory(unsigned long pfn, unsigned long nr_pages,
--			      struct zone *zone, bool mhp_off_inaccessible)
-+			      struct zone *zone)
- {
- 	unsigned long end_pfn = pfn + nr_pages;
- 	int ret, i;
-@@ -1097,15 +1097,6 @@ int mhp_init_memmap_on_memory(unsigned long pfn, unsigned long nr_pages,
- 	if (ret)
- 		return ret;
- 
--	/*
--	 * Memory block is accessible at this stage and hence poison the struct
--	 * pages now.  If the memory block is accessible during memory hotplug
--	 * addition phase, then page poisining is already performed in
--	 * sparse_add_section().
--	 */
--	if (mhp_off_inaccessible)
--		page_init_poison(pfn_to_page(pfn), sizeof(struct page) * nr_pages);
--
- 	move_pfn_range_to_zone(zone, pfn, nr_pages, NULL, MIGRATE_UNMOVABLE,
- 			       false);
- 
-@@ -1444,7 +1435,7 @@ static void remove_memory_blocks_and_altmaps(u64 start, u64 size)
- }
- 
- static int create_altmaps_and_memory_blocks(int nid, struct memory_group *group,
--					    u64 start, u64 size, mhp_t mhp_flags)
-+					    u64 start, u64 size)
- {
- 	unsigned long memblock_size = memory_block_size_bytes();
- 	u64 cur_start;
-@@ -1460,8 +1451,6 @@ static int create_altmaps_and_memory_blocks(int nid, struct memory_group *group,
- 		};
- 
- 		mhp_altmap.free = memory_block_memmap_on_memory_pages();
--		if (mhp_flags & MHP_OFFLINE_INACCESSIBLE)
--			mhp_altmap.inaccessible = true;
- 		params.altmap = kmemdup(&mhp_altmap, sizeof(struct vmem_altmap),
- 					GFP_KERNEL);
- 		if (!params.altmap) {
-@@ -1555,7 +1544,7 @@ int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
- 	 */
- 	if ((mhp_flags & MHP_MEMMAP_ON_MEMORY) &&
- 	    mhp_supports_memmap_on_memory()) {
--		ret = create_altmaps_and_memory_blocks(nid, group, start, size, mhp_flags);
-+		ret = create_altmaps_and_memory_blocks(nid, group, start, size);
- 		if (ret)
- 			goto error;
- 	} else {
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 17c50a6415c2..b5b2b6f7041b 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -951,8 +951,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
- 	 * Poison uninitialized struct pages in order to catch invalid flags
- 	 * combinations.
- 	 */
--	if (!altmap || !altmap->inaccessible)
--		page_init_poison(memmap, sizeof(struct page) * nr_pages);
-+	page_init_poison(memmap, sizeof(struct page) * nr_pages);
- 
- 	ms = __nr_to_section(section_nr);
- 	set_section_nid(section_nr, nid);
--- 
-2.48.1
+That's maybe how free_job() was intended once, but it's not how it's
+implemented in some drivers currently. The implementation is fractured.
+Some drivers maybe have refcounted jobs, some others don't.
+
+That's exactly where our problems come from. free_job() and the
+scheduler de facto manage job lifetime.
+
+Moreover, I'm wondering what good it would even be to have everything
+refcounted and then have the scheduler tell the driver to drop its
+refcount.. that sounds fundamentally broken to me. It's not the purpose
+of refcounting.
+The idea is that everyone holds his reference until he doesn't need it
+anymore, and then drops it.
+
+
+I think we should leave free_job() as is, agree that having it in the
+first place was a fundamental design mistake, and go on and do better
+with future job-managing infrastructure.
+
+
+P.
+
+>=20
+> We can discuss this more in person on Wednesday at the workshop or grab
+> in the hallway.
+>=20
+> Matt
+>=20
+> > =C2=A0 */
+> > =C2=A0void drm_sched_job_cleanup(struct drm_sched_job *job)
+> > =C2=A0{
+> > --=20
+> > 2.49.0
+> >=20
 
 
