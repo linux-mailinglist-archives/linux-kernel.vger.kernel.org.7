@@ -1,84 +1,101 @@
-Return-Path: <linux-kernel+bounces-848363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB5EBCD8A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:33:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 760D7BCD8AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46B3427EF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:33:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B5A24E3B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA922F3C13;
-	Fri, 10 Oct 2025 14:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7040A2F5468;
+	Fri, 10 Oct 2025 14:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rudQa4Cw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrX3xQa2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0422367B0;
-	Fri, 10 Oct 2025 14:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8204257821;
+	Fri, 10 Oct 2025 14:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760106797; cv=none; b=i+0QaUTgB917asxhHFpiWWuHxUqWRzCuMPz7YYSVzortl2xUfbwoJLS7v8KmzsxZNjL9wBeXoZutrsOBdaknZYXb/umRHoJ5Iv2058GCKeNzItx+FQsE8BI4/KeD93+tMFR2vak7Mbf7uoNZNkTnMGNsNy+pjNG5ofcGBW3wo3M=
+	t=1760106843; cv=none; b=bgif8FL/X9SsGiDjgHXi8F+GTQCOHKEm28SGqr5g8uerfgR0A9ygbPuU6FLlAjS9fFD/9AEmLBTrI6KwbMfXReANJHdph4E5Ok2iUKdiSgRtUpi/jmX7/J4bfxh2pw2gcPJqq4Rg6zFdi2e9K81UazxRM8mrtZ/B5ucjQmMvH4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760106797; c=relaxed/simple;
-	bh=m2PXNXrLebhFa6++1XBL2y98d/eheP7r5cvfGNR8yVA=;
+	s=arc-20240116; t=1760106843; c=relaxed/simple;
+	bh=FnS23TIvZXoikLOJ5/OdqMUZUwa1vW83VBZi/rmZ3C8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KxdUVMHBb5Ixq/KXoh5jHs4cojRIfMlT0MF4/HE94/XCgS5Abe8WFsi7VCDxZwqUUT6O2Tb7lxCGYf8CsVo8/Ip+Aaf19vPlHrlfb8HuExQT7ukAaKZbmEu1Uin1gG/DuUAyixJwg25AGfU0MozQL8kLgIvM6/93IW3ersSK+ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rudQa4Cw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E5AC4CEF1;
-	Fri, 10 Oct 2025 14:33:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=skMfdVtIDEELOMITSTrBrIw5xx6bVd8FimajeB2hAFzNLg+Wpsx7btvOkUnV63C6QmYtLM1zoBBsTk3tN5YtbR3YKA4UDImPfPS17TbWgNHmoncbCP9w9uXewXfZDmDFDUuHPDpCOL0LlehP1slT5YCUixlTDOtRqbiPeeJ8Ibc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrX3xQa2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6633DC4CEF1;
+	Fri, 10 Oct 2025 14:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760106796;
-	bh=m2PXNXrLebhFa6++1XBL2y98d/eheP7r5cvfGNR8yVA=;
+	s=k20201202; t=1760106843;
+	bh=FnS23TIvZXoikLOJ5/OdqMUZUwa1vW83VBZi/rmZ3C8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rudQa4CwjZPlcEyIjZSD/meAC8K/kcQSLFWXk+zb4u95bUz0GkUzdYbVvZxn0i3bP
-	 JsHQPldNp8xjCqCXHwe4gn+Yig8oSdETZUtZjXjnS1BykzpxNxjZdrPiI7pbSxeJdD
-	 b9kUcTCTcofCNkeoNMS+rFsRqfP83/CvcX+IIbqqFjk6awPJ2d8u0Y8OaqlG/BVfFx
-	 wy8TTmZsckSy+RkniV4NZzLz8MP+vXJL5tX5a/u2dihQaIT5VBCMyBlw5h4UgA3Esh
-	 wdnWpHqe7EMBbdR9kfTWOE+5HrAB/JjxULpRjeyjwks44VNfm1Hv+MarEzwhPx7NN2
-	 exDyON92tAnCw==
-Date: Fri, 10 Oct 2025 09:33:14 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, kernel-team@android.com,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Will McVicker <willmcvicker@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: google,gs101-clock: add power-domains
-Message-ID: <176010679359.249518.14445454979945020127.robh@kernel.org>
-References: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
+	b=jrX3xQa2NuoaG6xeHmtdqRs9XZKPVFADW2WTdIcOzp8KsraJoRODhRslJhblHfIto
+	 TkUHY0IW9eA2wnw+QDkUa+tv//ri8lgEXrvMjdGqlJUODt3RYuFievjERcvcj12I92
+	 cUctd0I4EsfnXXrvg6Y+wN5g9AjNgWk+8Ecyb/EOEsI5F2KRzNNo4Q6pKtKc5IR5uY
+	 Gb/l16K9c8wwpaqE72OzrTFPJZl5aT2Zyqtr5/ywNOeXh7T3SAYv33ry18vCZsRv8f
+	 dujpy9TKuNzFvJ5hhfVYW9u5qkuWsNp/Rk4/4GgKqEHM5hWyCW7BjCMA6I8tVSrD0Y
+	 Dc/zzjV20s0mg==
+Date: Fri, 10 Oct 2025 15:33:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: hehuan1@eswincomputing.com
+Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jszhang@kernel.org, adrian.hunter@intel.com,
+	p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com, xuxiang@eswincomputing.com,
+	luyulin@eswincomputing.com, dongxuyang@eswincomputing.com,
+	zhangsenchuan@eswincomputing.com, weishangjuan@eswincomputing.com,
+	lizhi2@eswincomputing.com, caohang@eswincomputing.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin
+ EIC7700
+Message-ID: <20251010-evergreen-scalded-058caa421214@spud>
+References: <20251010093807.1579-1-hehuan1@eswincomputing.com>
+ <20251010094014.1596-1-hehuan1@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9apZ3jHtDJ4+bC2k"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
+In-Reply-To: <20251010094014.1596-1-hehuan1@eswincomputing.com>
 
 
-On Tue, 07 Oct 2025 17:03:10 +0100, André Draszik wrote:
-> The CMU can be part of a power domain, so we need to allow the relevant
-> property 'power-domains'.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+--9apZ3jHtDJ4+bC2k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+On Fri, Oct 10, 2025 at 05:40:13PM +0800, hehuan1@eswincomputing.com wrote:
+> From: Huan He <hehuan1@eswincomputing.com>
+>=20
+> EIC7700 use Synopsys dwcmshc IP for SD/eMMC controllers.
+> Add Eswin EIC7700 support in sdhci-of-dwcmshc.yaml.
+>=20
+> Signed-off-by: Huan He <hehuan1@eswincomputing.com>
 
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+--
+pw-bot: not-applicable
+
+--9apZ3jHtDJ4+bC2k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOkZVQAKCRB4tDGHoIJi
+0pugAQDBGEAe3AMxCAoCb7W+/GzL8Bia0+s16TRJiVIfUkkH+QEA3ukBv+q8j6lI
+zh1bHI+D2r1dMl3ye+ZzoVBSoDYu2wM=
+=Qh/h
+-----END PGP SIGNATURE-----
+
+--9apZ3jHtDJ4+bC2k--
 
