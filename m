@@ -1,147 +1,165 @@
-Return-Path: <linux-kernel+bounces-848822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8FFBCEA48
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:49:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95012BCEA4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 134BF4E1FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39797544135
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAC7303A3C;
-	Fri, 10 Oct 2025 21:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D342303C8D;
+	Fri, 10 Oct 2025 21:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvBAVpKx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="VEm1OyRV"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2FA263F5F;
-	Fri, 10 Oct 2025 21:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364FC263F5F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 21:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760132981; cv=none; b=ftIyBYgARlbLGFRsxosEAtprvKZM7zeVmSETHMfXThQim8Ug2rbHuhWAHb3XpEqbSuPtDdcbZZsAhE2lc/+86mfon3JPjLCZ/qQbWjQwiJg0cdOPSJ61w8Cv4yXU7cHoEdLxkww54OJOSiLZ9SIWqpcZSiqF1TW2rke70HkpzRU=
+	t=1760133283; cv=none; b=W5m/U4BnPaOhoZoHq7+5aG7W+WtorOGF99L6RP+H3OyVFxyPloHAUi2sslRgE8BtqWgqlBDsBm6Ido4Fe7zA4sYlWhGP4wmJ8EAWtKfB8w3IertiUCxld6+dJxSEuyppwxLVsh4AfSbnsZcFHKSolhiX4UE4E85rknq46wXuW9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760132981; c=relaxed/simple;
-	bh=WhUTgOUQwZz/mKwCSbgdhMyMfQoSYK7seDZUD2CkcCU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QCYqV8sSYbaZZ3w/tw3jgurOW7rzkz1MQ4MlOuHCYwwlhZVe1LEmSWtJ4m8OiW0xFvnsgTpbM8mscFyjOZxsDLNxrl6KrqC5jJWORGz42FVf/aPUD6fa2yV3KwSYo45Vr3ovWyP/UiOCGh+2ZFQ4dt0RXAKkdW3Ga47u7mwswdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvBAVpKx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2153C4CEF1;
-	Fri, 10 Oct 2025 21:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760132981;
-	bh=WhUTgOUQwZz/mKwCSbgdhMyMfQoSYK7seDZUD2CkcCU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=hvBAVpKxg+Ah/i30F3SfptTMIKf+JfKWqHASH38i0lZSXkWwtfh7AN5nqsu7WHP/G
-	 e8iIF5jyqMrhW3CN8b9RhcoYCG86lU1lfHh2ZTL0RxuRkFsWJ40DnC+IS4/KHWvOpJ
-	 GHtVL4bcFITAXHhof363ON4Csu10gcVJxKG5hSvtzc6iyGfYSP/zkhkSr3UBL93HcL
-	 aHPxZYNA+DwSKiNkKcumk8qiydxL3A3A8rKmAre0srInul7kf/Rt6xNwNBHi0AcTda
-	 2yFIE4bISo6lwnK8gwzQ5mOPV6fjNy0kk/so+yE1nI/4+mKw8wWUVAx76GoZk8U1+f
-	 Cl8Chp/ltIAIw==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Fri, 10 Oct 2025 14:49:27 -0700
-Subject: [PATCH] kbuild: Use '--strip-unneeded-symbol' for removing module
- device table symbols
+	s=arc-20240116; t=1760133283; c=relaxed/simple;
+	bh=TQhN5+VBAldqzha0yZZbUznpZu+Wfy02Ms1cw1wu/14=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=anjY9RkXeC4zR54JNs1HA5ixvRUJBbGa3fuav+XVKS59JwdNAdqce0f+lxQRmUrr5GxIQpRp5ZCriLUB0+BWhGixkq5G9NHCD1wVRlrxEpDHwUmYYa0E9cYFYLeztu6iize1svCCrPYrdtZ6ciI535YKGIerK4SKD7In0ecICyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=VEm1OyRV; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C2A8540B1C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1760133273; bh=hRrb34XD5dxoecrJ/PIbMxd3WSJmNZn5QPlxXsYVJTA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VEm1OyRVV7NdRb3aQq7uF0+uN0LSSPBPbH2YTtZVLVxiNSDybB0Zb22Ecx0z09djk
+	 8TDZ2stdHBtpYxSGDuZ3vFMVu3ZqFOc6Kmuo7qfF/fX//lIWmI3DsGB9dCNylr5Jd3
+	 dhJQcpM8kSK08YmJVAVBG61lhe/nwhyHyHFw/G5rCWJpJbVwgrpn3TC2N6Xa1qc06k
+	 aUW0CM0nDdO5oCVEUGqr4f9bqrCNzI2j9LGuzu87GKNk+zqy+DgZ46q1GYFEQtN6K4
+	 iiPTXte8tnTXXGOOXQoQvK6XaNJxRg6wcOxE7Ep2RwloXcvYqjvEMrgceaUscPZSQC
+	 vKzOSNURVWKMg==
+Received: from lwn.net (c-76-118-42-142.hsd1.nh.comcast.net [76.118.42.142])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id C2A8540B1C;
+	Fri, 10 Oct 2025 21:54:32 +0000 (UTC)
+From: Daroc Alden <daroc@lwn.net>
+To: corbet@lwn.net,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>,
+	linux-kernel@vger.kernel.org (open list:LOCKING PRIMITIVES)
+Cc: Daroc Alden <daroc@lwn.net>
+Subject: [PATCH] lock: Add doc comments for spin_lock_irq()
+Date: Fri, 10 Oct 2025 17:53:58 -0400
+Message-ID: <20251010215403.743811-1-daroc@lwn.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-kbuild-fix-mod-device-syms-reloc-err-v1-1-6dc88143af25@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGZ/6WgC/x2NywrCQAwAf6XkbGC3Ggr+iniwm2hDHysJLUrpv
- xs8zmFmdnAxFYdrs4PJpq51CcinBsrwWF6CysHQppZyygnHftWJ8akfnCsjh1ME/Ts7mky1oJg
- hnamjTvhSmCBSb5MQ/pvb/Th+W0+vD3YAAAA=
-X-Change-ID: 20251010-kbuild-fix-mod-device-syms-reloc-err-535757ed4cd5
-To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, 
- Alexey Gladkov <legion@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
- Alexander Potapenko <glider@google.com>, 
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
- kasan-dev@googlegroups.com, Charles Mirabile <cmirabil@redhat.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3205; i=nathan@kernel.org;
- h=from:subject:message-id; bh=WhUTgOUQwZz/mKwCSbgdhMyMfQoSYK7seDZUD2CkcCU=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBkv64vuftv+/x4bb8O50Pxtn7ZMb9qS+un6CuUbNyWeb
- BPTUHM71FHKwiDGxSArpshS/Vj1uKHhnLOMN05NgpnDygQyhIGLUwAmUjWVkWHNk3fzFJ+tye3+
- X2qU5a1y1Xth79mzTTY3xGYw1Z/4VO/B8D+XI+Sn2Isr5zme2tsuYpv9oqumYdLtY2mNoaU9V51
- 2hTMBAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-After commit 5ab23c7923a1 ("modpost: Create modalias for builtin
-modules"), relocatable RISC-V kernels with CONFIG_KASAN=y start failing
-when attempting to strip the module device table symbols:
+The commonly used spin_lock_irq(), spin_lock_irqsave(),
+spin_unlock_irq(), and spin_unlock_irqrestore() functions do not
+currently have any documentation; this commit adds kerneldoc comments
+to these four functions describing when their behavior and when they are
+appropriate to use.
 
-  riscv64-linux-objcopy: not stripping symbol `__mod_device_table__kmod_irq_starfive_jh8100_intc__of__starfive_intc_irqchip_match_table' because it is named in a relocation
-  make[4]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error 1
-
-The relocation appears to come from .LASANLOC5 in .data.rel.local:
-
-  $ llvm-objdump --disassemble-symbols=.LASANLOC5 --disassemble-all -r drivers/irqchip/irq-starfive-jh8100-intc.o
-
-  drivers/irqchip/irq-starfive-jh8100-intc.o:   file format elf64-littleriscv
-
-  Disassembly of section .data.rel.local:
-
-  0000000000000180 <.LASANLOC5>:
-  ...
-       1d0: 0000          unimp
-                  00000000000001d0:  R_RISCV_64   __mod_device_table__kmod_irq_starfive_jh8100_intc__of__starfive_intc_irqchip_match_table
-  ...
-
-This section appears to come from GCC for including additional
-information about global variables that may be protected by KASAN.
-
-There appears to be no way to opt out of the generation of these symbols
-through either a flag or attribute. Attempting to remove '.LASANLOC*'
-with '--strip-symbol' results in the same error as above because these
-symbols may refer to (thus have relocation between) each other.
-
-Avoid this build breakage by switching to '--strip-unneeded-symbol' for
-removing __mod_device_table__ symbols, as it will only remove the symbol
-when there is no relocation pointing to it. While this may result in a
-little more bloat in the symbol table in certain configurations, it is
-not as bad as outright build failures.
-
-Fixes: 5ab23c7923a1 ("modpost: Create modalias for builtin modules")
-Reported-by: Charles Mirabile <cmirabil@redhat.com>
-Closes: https://lore.kernel.org/20251007011637.2512413-1-cmirabil@redhat.com/
-Suggested-by: Alexey Gladkov <legion@kernel.org>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Daroc Alden <daroc@lwn.net>
 ---
-I am Cc'ing KASAN folks in case they have any additional knowledge
-around .LASANLOC symbols or how to remove/avoid them.
+ include/linux/spinlock.h | 53 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-I plan to send this to Linus tomorrow.
----
- scripts/Makefile.vmlinux | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-index c02f85c2e241..ced4379550d7 100644
---- a/scripts/Makefile.vmlinux
-+++ b/scripts/Makefile.vmlinux
-@@ -87,7 +87,7 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*' '!.rel*.dyn'
- # https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=c12d9fa2afe7abcbe407a00e15719e1a1350c2a7
- remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel.*'
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index d3561c4a080e..35bd55605319 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -371,11 +371,47 @@ do {									\
+ 	raw_spin_lock_nest_lock(spinlock_check(lock), nest_lock);	\
+ } while (0)
  
--remove-symbols := -w --strip-symbol='__mod_device_table__*'
-+remove-symbols := -w --strip-unneeded-symbol='__mod_device_table__*'
++/**
++ * spin_lock_irq() - Lock a spinlock while disabling interrupts.
++ * @lock: The spinlock that will be locked.
++ *
++ * When a spinlock is shared by code running in interrupt context and process
++ * context, it is important to ensure that interrupts are disabled while the
++ * lock is held. Otherwise, an interrupt handler might attempt to take the lock
++ * while it is already held, leading to a deadlock.
++ *
++ * This function unconditionally disables interrupts on the local CPU, and then
++ * locks the provided spinlock. It is suitable for use in contexts where
++ * interrupts are known to be enabled — because the corresponding unlock
++ * function, spin_unlock_irq(), unconditionally enables interrupts.
++ *
++ * When code can be called with interrupts either enabled or disabled, prefer
++ * spin_lock_irqsave(), which preserves the current state so that it can be
++ * restored when the spinlock is released.
++ */
+ static __always_inline void spin_lock_irq(spinlock_t *lock)
+ {
+ 	raw_spin_lock_irq(&lock->rlock);
+ }
  
- # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
- # it is necessary to remove the PT_LOAD flag from the segment.
-
----
-base-commit: cfc584537150484874e10ec4e59ad2ecbae46bfe
-change-id: 20251010-kbuild-fix-mod-device-syms-reloc-err-535757ed4cd5
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
++/**
++ * spin_lock_irqsave() - Lock a lock, disable interrupts, and save current state.
++ * @lock: The spinlock that will be locked.
++ * @flags: An unsigned long to store the current interrupt state.
++ *
++ * When a spinlock is shared by code running in interrupt context and process
++ * context, it is important to ensure that interrupts are disabled while the
++ * lock is held. Otherwise, an interrupt handler might attempt to take the lock
++ * while it is already held, leading to a deadlock.
++ *
++ * This function disables interrupts on the local CPU if they are enabled, and
++ * then locks the provided spinlock. The previous state of interrupts (enabled
++ * or disabled) is saved in the @flags argument so that it can be restored by
++ * the corresponding call to spin_unlock_irqrestore().
++ *
++ * When code will only be run with interrupts enabled, using spin_lock_irq() can
++ * avoid the need to create a local variable to save the state.
++ */
+ #define spin_lock_irqsave(lock, flags)				\
+ do {								\
+ 	raw_spin_lock_irqsave(spinlock_check(lock), flags);	\
+@@ -396,11 +432,28 @@ static __always_inline void spin_unlock_bh(spinlock_t *lock)
+ 	raw_spin_unlock_bh(&lock->rlock);
+ }
+ 
++/**
++ * spin_unlock_irq() - Unlock a spinlock and enable interrupts.
++ * @lock: The spinlock that will be unlocked.
++ *
++ * This function unlocks the provided lock, and then unconditionally enables
++ * interrupts on the current CPU. It should typically correspond to a previous
++ * call to spin_lock_irq().
++ */
+ static __always_inline void spin_unlock_irq(spinlock_t *lock)
+ {
+ 	raw_spin_unlock_irq(&lock->rlock);
+ }
+ 
++/**
++ * spin_unlock_irqrestore() - Unlock a spinlock and restore interrupt state.
++ * @lock: The spinlock that will be unlocked.
++ * @flags: The previously saved interrupt state to restore.
++ *
++ * This function unlocks the provided lock, and then restores interrupts to
++ * whichever state (enabled or disabled) is indicated by @flags. @flags should
++ * come from a previous call to spin_lock_irqsave().
++ */
+ static __always_inline void spin_unlock_irqrestore(spinlock_t *lock, unsigned long flags)
+ {
+ 	raw_spin_unlock_irqrestore(&lock->rlock, flags);
+-- 
+2.51.0
 
 
