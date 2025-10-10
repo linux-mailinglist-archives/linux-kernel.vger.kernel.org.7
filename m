@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-848393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3BCBCDA24
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:56:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCBBEBCDA2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 16:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FA03B5438
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:55:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE8BC4EFCFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0492F7457;
-	Fri, 10 Oct 2025 14:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AE92F7459;
+	Fri, 10 Oct 2025 14:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuzBevIT"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VnHU/lEU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2E32F619B
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3B5257848
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 14:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108149; cv=none; b=OJ+wbv0VABa+QGPNIvzDuVSyqQ3QSLZ9p02fvOVAnwNeCGAzw1Tf9yjcj3tKwRFLBT5ntVsKTaWO77B+01hixzTqY7wfU9PWL/55jWj4VutW6DgcwZTmSj00waAnyqfA1P14lMex4JTmNf4tvdXUcrCaddsYxqxx4cpA26dtQ88=
+	t=1760108196; cv=none; b=qLh88heDpMgJc/BpX5RJSUvowqlMFil7GgWhXsh8uQ8ynW6RbNF640Hfbh/qvui/whfVRi3Sq16F5MFLdsTexOdRQj7cDiDvwWsiekPsI0NGT+7wW19JPeuxyD/7eg77fYs/hvc7YDmjuZTkHKrSuWBNofszC62nZ1HjL1zu8bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108149; c=relaxed/simple;
-	bh=6+gv/w4gUrEGa/XwIA7UjRaNyK0xz55jWAx88AKH4d8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvikiZtvBEL33pWmwiOC42ceoYTSmvrmiFeDNn/BS07v7vFqcUwe7dtnZykLjuDRex/TJVp+8r1ALFcH1r8t9HvU0BGWPGYzgcySUuI0Chg24aksDBZqyMnUWy9ABvehlEruMv+svnuA0t9X3fhX/ItMC4i6a9KE4DfG3P5w9sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuzBevIT; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3b27b50090so404219366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760108146; x=1760712946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HPLbWNPxZc2wfvIlljRognyXQF9RLtB9DEHDg3spNS4=;
-        b=QuzBevITHS31OVdN2VllQcYiL+rnhdB5KzRrFg3yC+uA2UeFtuUOwrdCyGSYtG5CwA
-         WizpIrEYxHrW7EhUX7woeBmITUJhxv0qGcO82sB7ngvPPujgGm5w47KMDVe73x9HSSrk
-         MCrD5G6L2L0bWMIYn9aMF6beAPhqgXGliE+y8xhEJWzrvNs1nkxQP6SLG6IpkofL1d09
-         ZyO1oa9BnVgqEyYbUX2MDo6mt2MPMSIDSXlGwjrCNwyRP73wjBuI3ciokQ+zjwt1hmmp
-         +pVvoYXo8xG8NPZ7To9kDrWjNogGs6Cks6QrakW250lG2HaHxQLG5N4+NH8ueqH7Fr1U
-         IWnA==
+	s=arc-20240116; t=1760108196; c=relaxed/simple;
+	bh=1Jhcg0xv8VWaEgihjzPeUziID4oG3ExKtqP9zC0KWCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yb8wyFpcOZHTokuaX+FpeAg5dO0Fi/p9E9n6OadoKVt+8hR0yRAAiaDGGr6xtE9TFBtUVmyDVOkzrVfDinClWqmjmI7sDWUdy2ev8Ojy20DiLOvrjEuGYtDBp7oMlYDjQQTdSNW2yS4VzIZ0efAB5Ps3KvaQZZjVXWt/Mgu2SDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VnHU/lEU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760108194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1P5X+NGWefQQJqZl15++e1LnM8GbiR8ChaM6QOBRs6E=;
+	b=VnHU/lEUMarqMKZGXISFJSNs2O9utbb6/GGG4sc5Ki79q0NxyDtacUfTW1bcGJLZxAZ8Md
+	efwJ4EjDVs66JreqLFc1uggKTJBDiWB9CfO/uKJbRopTZZyIQKRpIaIH/LCCK3ClHiie1s
+	u9zbFUbl7fPGd6qfgQQJwosp3h37rTo=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-141-_BSOYXyANJGsBpFm2g3y_A-1; Fri, 10 Oct 2025 10:56:33 -0400
+X-MC-Unique: _BSOYXyANJGsBpFm2g3y_A-1
+X-Mimecast-MFC-AGG-ID: _BSOYXyANJGsBpFm2g3y_A_1760108192
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b2f9dc3264bso531363866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 07:56:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108146; x=1760712946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HPLbWNPxZc2wfvIlljRognyXQF9RLtB9DEHDg3spNS4=;
-        b=KeWMxf0sqFWVOqPQ32/Zny0ADVH264GRdyRnwg8vJka/0IDzgCdFFRlOIqGVehNvMj
-         mJ760z0OOXnRPsoNCo/Ct/7GgytTNiSdUmfie/pXZxfhAWBYu6AEW7F26GBctLq2nPWV
-         MM+N2cZX4ZTrQnWmumfEgJMB08ho+1WPXK+Xnr0tjY19XWGBgousoe7jEOwZXbcKaPvA
-         UqGuH8rFF/F/g5y6EDpgvoMJAzqu+ovf+MPcqEPiSSobZZ0Z0viayKaIc50bfW31ehcO
-         Z1PX0mfsD67ECwl6jbUnf1gR45m7J8iPlxSoo0hXNqHT2aDo7Za2NTbLLo5J+8NnJzU/
-         D/mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTX1bZbp6E7HcwWKF/VNrZHU9tVgHsJFG/eycEHM4vOy8GAEXx357gckX7s2X8IbzlAlUctgllc+uqIVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQpMya3K9aC9+MzPd/5fKzAQ9cLGxmkxRp9jW+dwpgmx4vR7+T
-	+6yhpTt/UbSD8XZ3bgMHyRFJ/PhjBRb+r3ZC91T7SJ3UhjSEKKaHu0SAmgvw9nGtn/9Hr1qUvDL
-	oIAp605IZkYVENio5loo6cge+xPy6HFM=
-X-Gm-Gg: ASbGncuyLtDaVF0CAUBcspI29vyf8h8pY88rjdqmGFVl81F/hbktaUjgCg4vFexnXVX
-	E3qUPktH9auZIE3h6yVz9vBb306iHIlJWOtsIz83bWPfcnFXAwNCkbjxFEV6h7hRJ9J89xDP4ww
-	BCx0QNWUj8B8rST8DcVbeP4CzHioWAQ3MWoswA5xjJ3iS+HTG9k3+fuVjGg2AgAO8T4spb0XPoR
-	4udgAhB/8AxCl5GCvqe+QeH+yIdxqUyhO9Z
-X-Google-Smtp-Source: AGHT+IGkvwFBFghkv/zq53Sv+Yq1LeqEQPVseBK8uEWfs8vTYsR13eTVsDsXGa4XRQtqexUM4bBgzRzSTpZwrJqX1DU=
-X-Received: by 2002:a17:907:e8f:b0:b34:985c:a503 with SMTP id
- a640c23a62f3a-b50ac1c34c9mr1122595266b.35.1760108145750; Fri, 10 Oct 2025
- 07:55:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760108192; x=1760712992;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1P5X+NGWefQQJqZl15++e1LnM8GbiR8ChaM6QOBRs6E=;
+        b=XOI5dVSrgnrIMtAlZ9TcQQmz77v7xCjzrcQIafVhYCdi6W04PX4EVwJuE5yzwHomWo
+         4064HzZvN1+JxYeTOT0qIH2q+zf+SjO1fqekUaWBfbhU6UKaOzWlgmNZVnzuuFIZLQCK
+         /7/L3T2TBPhM9B2Je8Y6ikqVuSxHDGMppCtQ6HcdOUJYZ6Gnlh3m5L5BVwPzQoKfq7un
+         xsipvT56HpvVBTvB9Wr92LUD3bmCygko3nJSjK0zLqEOCNvahy3pt4F+Lv76V7DJjm/+
+         LVRgXqNdJumKGdoqQUTNhfnpvuDDfPJ6S8iO5lg+vsjxCr5srwx45pYTuCNYVpmCdXgu
+         N9bA==
+X-Forwarded-Encrypted: i=1; AJvYcCWX+j5kXKHJmGVcBi1mjI7NAA9PXj5DMJY++6r+OlE4vouPw2snMF1OpP1CcwDFWeHZZRQ4Bqnjmnw0iHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb+vTUawkKpeWApBxOWL6wPTlD/uB8Ea0uSeVEBjTkY3b41h30
+	GIjoRo9eAcJ2ciTBljerVBtLvs1EZzidfKmmNflWDqVUv+I2k7QF3pBO/QfMkO5WFrFascSNh//
+	5jhmz/vFqFjJZ+S/OJX2Ae1X3E3H6fAy0dKVtZjSYXiOegPN4kHgeRILi2O2L6rRyRA==
+X-Gm-Gg: ASbGnctQw2ccMiM9NA+FPt1naQBZkfGpU/DhLRy94Ld0gX8So7zb3BRmfPT4v88e56d
+	xThhiqOAKNkeWOMuaNn5ayb8x/Xx5aYnijE1hWvkHHWhJjIlrXrPbUdcALDWTOw0Vredf5ndXTV
+	oXYBjHyk+fNfVJnClOpCw4Bt88QzTCbJfxw6vYMbwcP3KexIm9snZyTNtvvpJ9XFpg0WqdVgnsy
+	/WGt6JkefkJifxj5SV8KDw2N3DwnrWVqQXMihyE4RCiqS0JHxvbpAG3VJm3OUJvgtmk9iHNl/KE
+	7ovMl3WmgoV0EcbkuR6sW6XIhv+pPEFmkR7O2e9PPpP2Kxh4Q+EdF3lh/pDNILPpPwr4SdAtw0Q
+	iiGar2LayeHVV
+X-Received: by 2002:a17:907:ea5:b0:b3f:f822:2db2 with SMTP id a640c23a62f3a-b50a9c5b35emr1276356866b.11.1760108191606;
+        Fri, 10 Oct 2025 07:56:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9U3OHPHv03/njQrGc9l3W5M5GCK0ZytbxV4E62A/ghGcguoBHcO5uBfWotYvFJEwS98Ry+Q==
+X-Received: by 2002:a17:907:ea5:b0:b3f:f822:2db2 with SMTP id a640c23a62f3a-b50a9c5b35emr1276355066b.11.1760108191199;
+        Fri, 10 Oct 2025 07:56:31 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cacbeesm240224566b.15.2025.10.10.07.56.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 07:56:30 -0700 (PDT)
+Message-ID: <bd3149e8-e213-48b0-8f8a-0888d1837b84@redhat.com>
+Date: Fri, 10 Oct 2025 16:56:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009173609.992452-1-flavra@baylibre.com> <20251009173609.992452-3-flavra@baylibre.com>
-In-Reply-To: <20251009173609.992452-3-flavra@baylibre.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 10 Oct 2025 17:55:10 +0300
-X-Gm-Features: AS18NWCWhWCW7KSsOItV_xEhoRQPB-J80xRVLRJuJLRllK75wOUDTJXaeqkV6Ug
-Message-ID: <CAHp75VfOfeS21=5SK6Qa9Fc-WQdjDkz1ecoTFrk=hT1NGGt0TA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] iio: imu: st_lsm6dsx: Decouple sensor ODR from FIFO
- batch data rate
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] selftests: net: check jq command is supported
+To: Wang Liang <wangliang74@huawei.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, horms@kernel.org, shuah@kernel.org
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yuehaibing@huawei.com,
+ zhangchangzhong@huawei.com
+References: <20251010033043.140501-1-wangliang74@huawei.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251010033043.140501-1-wangliang74@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 9, 2025 at 8:36=E2=80=AFPM Francesco Lavra <flavra@baylibre.com=
-> wrote:
->
-> The rate at which accelerometer or gyroscope sensor samples are fed
-> to the hardware FIFO (batch data rate, or BDR) does not have to
-> coincide with the sensor sampling frequency (output data rate, or
-> ODR); the only requirement is for the BDR to not be greater than
-> the ODR. Having a BDR lower than the ODR is useful in cases where
-> an application requires a high sampling rate for accurate detection
-> of motion events (e.g. wakeup events), but wants to read sensor
-> sample values from the device buffer at a lower data rate.
-> To support the above use case, add a sampling_frequency sysfs
-> attribute to the buffer directory of st_lsm6dsx IIO devices, which
-> controls the BDR for a given sensor independently from the "main"
-> sampling_frequency attribute (which controls the ODR); introduce a
-> new `bdr` field in struct st_lsm6dsx_sensor to keep track of the
-> current BDR value, and use this field instead of the `odr` field in
-> the code that deals with the FIFO data rate. In the sensor hub
-> driver, make the bdr value always mirror the odr value, since there
-> is no separate configuration setting to control the BDR for data
-> produced by the sensor hub functionality.
+On 10/10/25 5:30 AM, Wang Liang wrote:
+> The jq command is used in vlan_bridge_binding.sh, if it is not supported,
+> the test will spam the following log.
+> 
+>   # ./vlan_bridge_binding.sh: line 51: jq: command not found
+>   # ./vlan_bridge_binding.sh: line 51: jq: command not found
+>   # ./vlan_bridge_binding.sh: line 51: jq: command not found
+>   # ./vlan_bridge_binding.sh: line 51: jq: command not found
+>   # ./vlan_bridge_binding.sh: line 51: jq: command not found
+>   # TEST: Test bridge_binding on->off when lower down                   [FAIL]
+>   #       Got operstate of , expected 0
+> 
+> The rtnetlink.sh has the same problem. It makes sense to check if jq is
+> installed before running these tests. After this patch, the
+> vlan_bridge_binding.sh skipped if jq is not supported:
+> 
+>   # timeout set to 3600
+>   # selftests: net: vlan_bridge_binding.sh
+>   # TEST: jq not installed                                              [SKIP]
+> 
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
 
-...
+This looks more a fix than net-next material (and net-next is currently
+closed for the merge window).
 
-> -               *max_odr =3D max_t(u32, *max_odr, sensor->odr);
-> -               *min_odr =3D min_t(u32, *min_odr, sensor->odr);
-> +               *max_odr =3D max_t(u32, *max_odr, sensor->bdr);
-> +               *min_odr =3D min_t(u32, *min_odr, sensor->bdr);
+Please re-post for net including suitable fixes tag(s). You can retain
+Hangbin's ack.
 
-Can we get rid of '_t' parts at some point? Or IOW what is the good
-justification for typed macros here?
+Thanks,
 
-...
+Paolo
 
-> +       ret =3D iio_str_to_fixpoint(buf, 100, &integer, &fract);
-> +       if (ret)
-> +               return ret;
-> +       bdr =3D integer * 1000 + fract;
-
-MILLI?
-
---=20
-With Best Regards,
-Andy Shevchenko
 
