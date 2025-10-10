@@ -1,79 +1,53 @@
-Return-Path: <linux-kernel+bounces-848242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F4DBCCFF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:54:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42722BCCFFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 14:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 404CC4F59E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:54:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50D334FC943
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 12:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785162EFDA1;
-	Fri, 10 Oct 2025 12:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768F42F0685;
+	Fri, 10 Oct 2025 12:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRRGuWLc"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ixmkdfes"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373D04414
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A014414;
+	Fri, 10 Oct 2025 12:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760100885; cv=none; b=emHQTFY0M0PBXHk3qZjubToiUN9ABsrCN9ayUB/G1UHXfl72u7XGvsyr580lMTXTxKVZeZo3x52uNlqkIXO/CoyUe4QjLoA4C32WUg2FAox90UvzT2X3ppyvFki+o+yT9K75H11UDLqXoB5KKulxclTVzHGKBfZUrZTMhjwlR4E=
+	t=1760101001; cv=none; b=U1M3p5cTx+Tsv/lbsO7D1oxlsBcNywrqUAqll2Dp8AUWozwjDeRjInd9TFcK4kNxbwvq4BV0Ovw2Xbqlmb6MKXG7a8PrU+geDYeSwWoEMA62S1LnETNT1rq0hNuMgVAQt2x9WqNCJctcKeaz1Y3MngrYh8YdfXHiKSq1osOJVXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760100885; c=relaxed/simple;
-	bh=cNunwt1gn2omp+C+FbkZBROAPqfXLTbgv7DeZ7+Yzg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rXhKAfymWS9qKHdtZYf9dpe/aT2KT57O8iAh2YUYKv2lRMfHK1u4hGL8apLoMScWQxLkb5op+1EcBo4yfsWOqXgXwGkqIOSNsvqlpfcrBnGq4yWNlYjjDOTOi4NK7ln4ntsHtQmAvWdslETGJdm6P3QBsRi+IBLvxSqX60JUO/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRRGuWLc; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-339d7c4039aso1993539a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 05:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760100883; x=1760705683; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kldC2zud6k9mqSCmtlg6o1ObXhcirCSqMnvOGGq4r3s=;
-        b=hRRGuWLclPizUTGmiQYQQ8F25Pon1yV1xSxq71EZKOwbTbn4tpYLOY//cWdeJHlJxp
-         vpGpODYSp88/TIRUznY1bKp27GySo5lQWcl6vumM0mB0ChTl1bdhUcX6rJ7mb3iVu1z1
-         VTrgsthUI/HxQCN+n2XZNt9pkr96FyDED8NeLpwwXMjkI6YoCkjeLZsrBDaFoEu16Vct
-         ZCo5Vj7Qe+duSki4CzZuPRlKnSIJbLYfkxmCwQ8dSM9WtzxfFLA4g+6MTNcLJ58nJnmz
-         7ra8v/C/+An/1HFjyptB/g/TePW/3UyzOSJb7S6k3D1ln5BZyEx6JDdWa3v7NyQVkXvs
-         fdzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760100883; x=1760705683;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kldC2zud6k9mqSCmtlg6o1ObXhcirCSqMnvOGGq4r3s=;
-        b=RCSsUr2UrY2umETn1mjfpUE4Zj1L2r98ZgHU3OUI11n6BKRbkuVmopEpwt2UknDX/D
-         ztDQHyMXU7WRCMG8xmzJYyjpHlDtdoTnJnzdNGvLZWCQA+TMDr0Tr8CY3Xjm5pZ8ZhIQ
-         VlyhXb77UyPwEuvf6o3UmEY77PGf1DFVy0TvkPKi8tfr0TnqoLXtaHynSid2V3yDYCft
-         IskS/QHfH5iO3rGrdwPYoftBnoHOWlZgGVddliRTxY64z3ScFvhDB1uwrxPxIKW7xA4c
-         2BIEerKsD+aspouwTasM/ja4nbDVmmuxA/pxAP5l8e79R5taYqolJiOVdhzYBU8tbA9I
-         Guxw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7zo/ZzQxiRSI+vwGd24vtHzaQLv47vqC+u2E1aFTzQZoxr82Dgc+NDhUlZsb4IVohWoCkhMT7CpckcMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9gCVzlloME0MX/a5B0gRaaTBHBO30x+bylVSZngNeUQDzREbG
-	jWy7oUYXv3mi/DtHYzDJxpGo4QyBgVrNDKuJ6A77nRepO0MHFVUA/iR3
-X-Gm-Gg: ASbGnctfRDeqpEO3yFQfJezSymYOyzEFIGvYxbAREfZtywoX9NyqjRTI8kl982P2YRU
-	iyFktWVZcfhFeJyC0SA/G3v/a9UFaWf6cCU6gD9FnE5wVILRb26g1aIDK1m3hTfCYaP/8RJ8ock
-	XOGwoX8KmX59e0Kh2YN9Ex+BBY/DCO8FICoMLel85hkbzby00FICMvTMSRkuWytuPpEIMGkNLWJ
-	LyioodNflaXIcHfHncclkbfUOegqFwnq2o+r33eNRJVrjo4dYwc4FHtWx8PjMMuAvwspVRvjnXP
-	TCYszl+eC7aNIdwiMovY2LbYHhMJQ2iHJviRTN7U2KKjGXbFAIxPXgiA0aEVbl7GlJEkcfIyp0R
-	B4ucOEQmPdih38fcxuz5hYJ3xMzOEJKGzeFAGihFbLAJJfm1y
-X-Google-Smtp-Source: AGHT+IEIxCl6Q477ztznNVKd7XMjfZA1OsWCmkCbiDx+RmUOwYB7lB3n8z2Z0BX7PWzMCBFIeSxkEA==
-X-Received: by 2002:a17:90b:4d8b:b0:329:e703:d00b with SMTP id 98e67ed59e1d1-33b51386449mr15424797a91.19.1760100883216;
-        Fri, 10 Oct 2025 05:54:43 -0700 (PDT)
-Received: from [127.0.0.1] ([2a12:a301:1000::20f3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b62631266sm2912083a91.3.2025.10.10.05.54.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 05:54:42 -0700 (PDT)
-Message-ID: <a4c80b15-fed0-4ba5-acc1-240ceb7278e4@gmail.com>
-Date: Fri, 10 Oct 2025 20:54:18 +0800
+	s=arc-20240116; t=1760101001; c=relaxed/simple;
+	bh=dD3igITv+JHDtXiWzqDlls1b5ftAr4cPy4acz3BAGhg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JNCUNLvUpBUFsMYmAXeqmsdQkElhvffBWANd5X2xs2pIeaKn/SWYOfUzoUI31KKx48NgoJnvdODpCNctC6318Kga2Iuo+jz1uBBSeV19mYXL+8/AbEoDIey9GnCap9nsWccC9BafMoTvLf94V6jyVGC4JHml3jNMowjVqaTJam4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ixmkdfes; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760100996; x=1760705796; i=markus.elfring@web.de;
+	bh=2SNKVWEp8lysblDMfyyWDhUGHiqupODtMa0SLSCv0C4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IxmkdfesMykOibIC7wP1Qz2AqsM2uzwpKpTbML0feW0mPKFcAQkJG4UJCIPTE6pN
+	 GNyK3p6vm3gI1utC2DKq3rLmDIHPjZYb7O9FF2Y9OxgAeHf5lsm/GTmJh+BNxwhqK
+	 2XXEyT9qugnSLeYxDO08uh5GNF0L1DBDWH6GQewg16BqOepExdMkW6nkk2CkPgzA5
+	 M0mvA+iCL0Vx3OTGfcR3vBKjYN9P3E16Cz/GYGkkrszHA8GRB/oUtKzZTOMyXDgxb
+	 l1VGm3ZP9NxCMbdwEmqWKVlXcX4+TpdqGm4PoBL1uA5W+u5uvxX1+CSHnten75+Nf
+	 dI6Rzt+MlsCPNiLCBg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mcpqo-1uYgru0VfO-00aFLc; Fri, 10
+ Oct 2025 14:56:36 +0200
+Message-ID: <10e2a3a5-e109-44b5-ba3c-3e8c40d76361@web.de>
+Date: Fri, 10 Oct 2025 14:56:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,155 +55,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup
- detector
-To: Ian Rogers <irogers@google.com>
-Cc: Doug Anderson <dianders@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>,
- akpm@linux-foundation.org, catalin.marinas@arm.com, maddy@linux.ibm.com,
- mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, acme@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, kees@kernel.org,
- masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org,
- thomas.weissschuh@linutronix.de, xur@google.com, ruanjinjie@huawei.com,
- gshan@redhat.com, maz@kernel.org, suzuki.poulose@arm.com,
- zhanjie9@hisilicon.com, yangyicong@hisilicon.com, gautam@linux.ibm.com,
- arnd@arndb.de, zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com,
- coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com,
- luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org,
- yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
-References: <aMpRqlDXXOR5qYFd@mdev>
- <CAP-5=fV05++2Qvcxs=+tqhTdpGK8L9e5HzVu=y+xHxy9AqLMmg@mail.gmail.com>
- <CAD=FV=VNmjTVxcxgTQqjE7CTkK2NVGbRxFJSwv=yOHU8gj-urQ@mail.gmail.com>
- <CAP-5=fW64xHEW+4dKU_voNv7E67nUOFm27FFBuhtFii52NiQUQ@mail.gmail.com>
- <CAD=FV=U3ic707dLuUc+NfxtWF6-ZyRdE0OY2VA6TgvgWKCHUzg@mail.gmail.com>
- <CAP-5=fVkw6TLjVuR3UCNs+X1cwVmYk7UFABio4oDOwfshqoP_g@mail.gmail.com>
- <CAD=FV=UWkZx8xQD=jBkOO6h2f5tw_KCoqhHciw5hkEOYU=GM8A@mail.gmail.com>
- <CAP-5=fXTFHcCE8pf5qgEf1AVODs2+r+_nDUOiWgdQeEgUBHzfA@mail.gmail.com>
- <CAD=FV=VuDYiu5nL5ZeZcY2b+YXOzZtSu2E4qBBHz9fWTW8gPhg@mail.gmail.com>
- <CAP-5=fX4=fV70N3GCdXgV6o-YoJynnSppxJp0MwdRrtsyDrs0w@mail.gmail.com>
- <aOdbRI3BaMCbyvtv@mdev>
- <CAP-5=fUAato=+jyNNESCX3SjWMEEJQ697VvWiBFCi5wKs_JQCA@mail.gmail.com>
-Content-Language: en-CA
-From: Jinchao Wang <wangjinchao600@gmail.com>
-In-Reply-To: <CAP-5=fUAato=+jyNNESCX3SjWMEEJQ697VvWiBFCi5wKs_JQCA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB, de-DE
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Bharath SM <bharathsm@microsoft.com>,
+ Boris Protopopov <bprotopopov@hotmail.com>,
+ Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] smb: client: Omit one redundant variable assignment in
+ cifs_xattr_set()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xgGFKwlC8fAbNPnPhe9WRoYMzFBnzrQvqKFb0p5yK7sXTOUiC/s
+ 2XYyLbz3901nw+YfYGSTpJwWX2XlydLtKWPTFqnQH6S6ULL3uACcMCN/CQczU9QFc6DRr2U
+ PXo1WeXM7vRWcGH2Ji5vV7hst5BVKwrEKYoMbUDRhEDK03BKiq2OrQUUU3ueCG8W/XFXmYG
+ 4c7yOdm/LRFUS5yqD8AlA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:eW8yYte7cDM=;aIZaFF5QXWh3GxyP8Yz03LbE/GA
+ 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
+ I1EcDd/1wX+ZrHebJgZrpi3U+s=
 
-On 10/9/25 21:22, Ian Rogers wrote:
-> On Wed, Oct 8, 2025 at 11:50 PM Jinchao Wang <wangjinchao600@gmail.com> wrote:
->>
->> On Tue, Oct 07, 2025 at 05:11:52PM -0700, Ian Rogers wrote:
->>> On Tue, Oct 7, 2025 at 3:58 PM Doug Anderson <dianders@chromium.org> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On Tue, Oct 7, 2025 at 3:45 PM Ian Rogers <irogers@google.com> wrote:
->>>>>
->>>>> On Tue, Oct 7, 2025 at 2:43 PM Doug Anderson <dianders@chromium.org> wrote:
->>>>> ...
->>>>>> The buddy watchdog was pretty much following the conventions that were
->>>>>> already in the code: that the hardlockup detector (whether backed by
->>>>>> perf or not) was essentially called the "nmi watchdog". There were a
->>>>>> number of people that were involved in reviews and I don't believe
->>>>>> suggesting creating a whole different mechanism for enabling /
->>>>>> disabling the buddy watchdog was never suggested.
->>>>>
->>>>> I suspect they lacked the context that 1 in the nmi_watchdog is taken
->>>>> to mean there's a perf event in use by the kernel with implications on
->>>>> how group events behave. This behavior has been user
->>>>> visible/advertised for 9 years. I don't doubt that there were good
->>>>> intentions by PowerPC's watchdog and in the buddy watchdog patches in
->>>>> using the file, that use will lead to spurious warnings and behaviors
->>>>> by perf.
->>>>>
->>>>> My points remain:
->>>>> 1) using multiple files regresses perf's performance;
->>>>> 2) the file name by its meaning is wrong;
->>>>> 3) old perf tools on new kernels won't behave as expected wrt warnings
->>>>> and metrics because the meaning of the file has changed.
->>>>> Using a separate file for each watchdog resolves this. It seems that
->>>>> there wasn't enough critical mass for getting this right to have
->>>>> mattered before, but that doesn't mean we shouldn't get it right now.
->>>>
->>>> Presumably your next steps then are to find someone to submit a patch
->>>> and try to convince others on the list that this is a good idea. The
->>>> issue with perf has been known for a while now and I haven't seen any
->>>> patches. As I've said, I won't stand in the way if everyone else
->>>> agrees, but given that I'm still not convinced I'm not going to author
->>>> any patches for this myself.
->>>
->>> Writing >1 of:
->>> ```
->>> static struct ctl_table watchdog_hardlockup_sysctl[] = {
->>> {
->>> .procname       = "nmi_watchdog",
->>> .data = &watchdog_hardlockup_user_enabled,
->>> .maxlen = sizeof(int),
->>> .mode = 0444,
->>> .proc_handler   = proc_nmi_watchdog,
->>> .extra1 = SYSCTL_ZERO,
->>> .extra2 = SYSCTL_ONE,
->>> },
->>> };
->>> ```
->>> is an exercise of copy-and-paste, if you need me to do the copy and
->>> pasting then it is okay.
->> Can we get whether a perf event is already in use directly from the
->> perf subsystem? There may be (or will be) other kernel users of
->> perf_event besides the NMI watchdog. Exposing that state from the perf
->> side would avoid coupling unrelated users through nmi_watchdog and
->> similar features.
-> 
-> For regular processes there is this unmerged proposal:
-> https://lore.kernel.org/lkml/20250603181634.1362626-1-ctshao@google.com/
-> it doesn't say whether the counter is pinned - the NMI watchdog's
-> counter is pinned to be a higher priority that flexible regular
-> counters that may be multiplexed. I don't believe there is anything to
-> say whether the kernel has taken a performance counter. In general
-> something else taking a performance counter is okay as  the kernel
-> will multiplex the counter or groups of counters.
-> 
-> The particular issue for the NMI watchdog counter is that groups of
-> events are tested to see if they fit on a PMU, the perf event open
-> will fail when a group isn't possible and then the events will be
-> reprogrammed by the perf tool without a group. When the group is
-> tested the PMU has always assumed that all counters are available,
-> which of course with the NMI watchdog they are not. This results with
-> the NMI watchdog causing a group of events to be created that can
-> never be scheduled.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 10 Oct 2025 14:48:13 +0200
 
-Addressing the PMU assumption that all counters are available would
-resolve the issue. If perf managed reserved or pinned counters
-internally, other users would not need to be aware of that detail.
+The local variable =E2=80=9Crc=E2=80=9D is assigned a value in an if branc=
+h without
+using it before it is reassigned there.
+Thus delete this assignment statement.
 
-Alternatively, perf could provide an interface to query whether a
-counter is pinned. Having the NMI watchdog supply that information
-creates coupling between otherwise independent subsystems.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/smb/client/xattr.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> 
-> Thanks,
-> Ian
-> 
->>>
->>> Thanks,
->>> Ian
->>>
->>>
->>>> -Doug
->>>>
->>
->> --
->> Jinchao
+diff --git a/fs/smb/client/xattr.c b/fs/smb/client/xattr.c
+index b88fa04f5792..029910d56c22 100644
+=2D-- a/fs/smb/client/xattr.c
++++ b/fs/smb/client/xattr.c
+@@ -178,7 +178,6 @@ static int cifs_xattr_set(const struct xattr_handler *=
+handler,
+ 			memcpy(pacl, value, size);
+ 			if (pTcon->ses->server->ops->set_acl) {
+ 				int aclflags =3D 0;
+-				rc =3D 0;
+=20
+ 				switch (handler->flags) {
+ 				case XATTR_CIFS_NTSD_FULL:
+=2D-=20
+2.51.0
 
-
-
--- 
-Jinchao
 
