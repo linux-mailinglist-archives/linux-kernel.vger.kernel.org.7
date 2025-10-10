@@ -1,164 +1,186 @@
-Return-Path: <linux-kernel+bounces-848754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440A6BCE802
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33E7BCE7FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B792A543A45
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D3F543454
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2522765C0;
-	Fri, 10 Oct 2025 20:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNtWikKX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3682765C1;
+	Fri, 10 Oct 2025 20:38:27 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE2E1DDC33
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65CA23D7C4
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760128714; cv=none; b=HZ6IRyAJwzmCtkyqQwS4MCfcTkroFV1razOOoAAnRRkxo5F0a2VvGVMDeYalXSwf/vRpzrw9RrRcgILhuPI2MvGu0agZT4strErXmMmH/orafnF4ButMO+JctSnvPewINYBlE99D75065jlNIJXp62a4BvuKveHnDLEHTmo1+vg=
+	t=1760128706; cv=none; b=s9ZtT+tHXjJzWzXMHb3JRpEeKjOd/s7yg175hLuQHuUUmlSRhIOIlZu9oR1HkjHdMlr6NfzjpLvf6dvjEhwkZHo1NH72lv57i0GxaNTmR2dmxCx7+FuhJmbTpSFkL2mcDQ4NFGliJ97XlHQrU0lJHu3F4DGsuE2icoLZDhyL54I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760128714; c=relaxed/simple;
-	bh=IE1QwwL8bkDBUE2YAsOh0uVIdpMvU24OHPmkXbY5os8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d5zboHfneLsIxMB906L6npqgr2trR9lvMx3DSZYGlV2M67AKFFhCk7XCzMP2LHq5R3AwrNnB6ahLD7YSv0K/dyTalom6RRnrh93zMU2H/QWLX0BcAo5GdnEg6LVIqdDVZiUDKEPNiusVBSdV+5bseheJi/3CJ6nzrz2JCjZsRTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNtWikKX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B992BC4CEF1;
-	Fri, 10 Oct 2025 20:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760128713;
-	bh=IE1QwwL8bkDBUE2YAsOh0uVIdpMvU24OHPmkXbY5os8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=kNtWikKXPiUKdSii0L+me6qHdv77JRB2d9s4KsUnmFVDZ8O6wFpKvBfSJZo4ypge6
-	 ZqfP5QtHVpmYjJIaymAKrjmUaKQ7F5uGCEg8FQDfQ8GpooUCu83IA7QSVzOqspgMTp
-	 7evl8xQeulhVnD+fOlPjGSBD3YBvFep5aO5hAu1RlbWA/TmLa527i5SMwrjcRSOjt0
-	 PZ25jbPOF1okr0gSOGbYFokeC3LD8nQlt5hbykHAvz9E8nrR8I2vviR2phfl2iC9vz
-	 /qGpXy28VsnDYS3EVcByYFgaMolPS6MVPn5K/1p63ddy0NEzfakUdABpLCwfpc/Jfj
-	 O6ZrW7Ja2A0og==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6016CCD187;
-	Fri, 10 Oct 2025 20:38:33 +0000 (UTC)
-From: Shubhang Kaushik via B4 Relay <devnull+shubhang.os.amperecomputing.com@kernel.org>
-Date: Fri, 10 Oct 2025 13:38:17 -0700
-Subject: [PATCH] sched/fair: Add helper to handle leaf cfs_rq addition
+	s=arc-20240116; t=1760128706; c=relaxed/simple;
+	bh=yLew8Rl01k3KaW6flGFWAhuUGx9UAQv84e7MoJrKvkc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EOZmHsBVTbhYVp8vArA33heMTOWmAsfL9gGaR4boNWJsYvBH4Dx5/LuIPng0WkKFAN0n0OS3ur1OA3q5yrNSqtIcfOt+0b8qK9+h6BvJ40467FfU3KskzXGSpnFzhv0FFy/LN2n98sZJ1mKw/1XgWBVHN8gf7OvuPJUV6teedjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42486f6da6fso90345315ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:38:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760128704; x=1760733504;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ui6K6YF+spReZ25GO2naUTGC6+wguMdNBIkM6SNvYNg=;
+        b=q/fEvFMFTjNRD7TR/W80cp6ymcvmnB0l1FMRZliSbKLLtCJNAnlcTMIcUnjL6S5Y9O
+         wUQwbQZ7FAAdT+VlF6nFm9nLxESeVp/b9rx5B3OWf9c2nJ/NifL4uEVPCM8VQMRBQbZm
+         kB7gpXWjM9KW2VJmmmI3P+Xj0u4eQ3NSLow7rpPoxCjyEAXkIMVq+8kOJ8ii69MsHEZ9
+         v3SmQaOPDad8yDK9zQ8e6zsyi0qrWX2G6RSkOhiD1aGSAuc0OJRCGEsE5tOaJAjMFn0Z
+         GfaNwUOxAFNYfYQ+cWa2Wt+GCB5a2YrUcfxAwcy8HjIw5AGyIOM0oebMFEphxm0KSE+W
+         +Q+w==
+X-Forwarded-Encrypted: i=1; AJvYcCX07cfDWHo9MpfEKLOMPILudE6STlowAmXdWb/i5pOuBQ4Cg1GCWeJvE18s5B5lCiTdFrMifUxErRJU18U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2PgQXiTgu+/Pjk9LFvT9iu5sFE3x0iu7+73iAX8samBHxEydD
+	ejSGECrq1KxvCr6djBg0ti0zriWH6CatB7BZ2m9P01/BbqYK4oGtc/lMcYZ0+WrZ2+A/yXM0jvu
+	ViWmESkrU54qjEIp6LxUSLe/Gse7pcRTjk0au7Iusz5RPvnUJdDdZWwqtR/E=
+X-Google-Smtp-Source: AGHT+IFKU/qp78m9hPZWGHOoYx9KU8423H9AQ6Dc2vVvGyhXIIH4zeHoBYjozxRonn+wsYf586Uut8Jo6UgY64keydg4uoJLIHel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-sched-cfs-refactor-propagate-v1-1-b5928aa36771@os.amperecomputing.com>
-X-B4-Tracking: v=1; b=H4sIALhu6WgC/x3MQQqEMAxA0atI1gbaOg7MXGVwEWKq2diSiAji3
- S2zfPD5F7iYisO3u8DkUNeyNcS+A15pWwR1boYU0hhDDOi8yoycHU0y8V4Mq5VKC+2C8h5eI6V
- PzANDW9TW6Pnf/6b7fgBmh82IbgAAAA==
-X-Change-ID: 20251010-sched-cfs-refactor-propagate-e6345a291f3c
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-Cc: Shubhang Kaushik <sh@gentwo.org>, Christopher Lameter <cl@gentwo.org>, 
- linux-kernel@vger.kernel.org, 
- Shubhang Kaushik <shubhang@os.amperecomputing.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760128713; l=2865;
- i=shubhang@os.amperecomputing.com; s=20251010; h=from:subject:message-id;
- bh=PoMBnuR5rndeOerIM079JrSnbV5lxjXSoJlYvGNDmFk=;
- b=Pnfun07Y50EISghGQEvlrJChPVOFGksQ6XRZQu0/jfMWv6keif6pHq7dPcfC3QL1n8Bk2BVGB
- kX5ls7ykMs9CF9yDaTgjGVZ7ETv2Nl0RHZLSZC1aNgRC8aZDFV7Frkq
-X-Developer-Key: i=shubhang@os.amperecomputing.com; a=ed25519;
- pk=jc8YIRvxPSyJaBRe5y+a4N0RXKBUEcAh8+OFhlROXPY=
-X-Endpoint-Received: by B4 Relay for
- shubhang@os.amperecomputing.com/20251010 with auth_id=539
-X-Original-From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
-Reply-To: shubhang@os.amperecomputing.com
+X-Received: by 2002:a05:6e02:18c7:b0:42d:8a3f:ec8b with SMTP id
+ e9e14a558f8ab-42f87362229mr135800235ab.3.1760128703882; Fri, 10 Oct 2025
+ 13:38:23 -0700 (PDT)
+Date: Fri, 10 Oct 2025 13:38:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e96ebf.050a0220.91a22.0177.GAE@google.com>
+Subject: [syzbot] [virt?] upstream test error: KMSAN: use-after-free in vring_map_one_sg
+From: syzbot <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com>
+To: eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
+	mst@redhat.com, syzkaller-bugs@googlegroups.com, 
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+Hello,
 
-Refactor the logic for adding a cfs_rq to the leaf list into a helper
-function.
+syzbot found the following issue on:
 
-The existing code repeated the logic to check if the cfs_rq was
-throttled and added it to the leaf list. This change extracts that
-logic into the static inline helper `__cfs_rq_maybe_add_leaf()`, which
-is a more robust naming convention for an internal helper.
+HEAD commit:    ba9dac987319 Merge tag 'libnvdimm-for-6.18' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=138581e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ad506767107aacda
+dashboard link: https://syzkaller.appspot.com/bug?extid=ac856b8b866cca41352c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-This refactoring removes code duplication and makes the parent function,
-`propagate_entity_cfs_rq()`, cleaner and easier to read.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ce6a737acd38/disk-ba9dac98.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d7053b626642/vmlinux-ba9dac98.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/13f2d7e62179/bzImage-ba9dac98.xz
 
-Signed-off-by: Shubhang Kaushik <shubhang@os.amperecomputing.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com
+
+8021q: adding VLAN 0 to HW filter on device bond0
+eql: remember to turn off Van-Jacobson compression on your slave devices
+=====================================================
+BUG: KMSAN: use-after-free in vring_map_one_sg+0x290/0x7b0 drivers/virtio/virtio_ring.c:401
+ vring_map_one_sg+0x290/0x7b0 drivers/virtio/virtio_ring.c:401
+ virtqueue_add_split drivers/virtio/virtio_ring.c:608 [inline]
+ virtqueue_add+0x32aa/0x6320 drivers/virtio/virtio_ring.c:2281
+ virtqueue_add_outbuf+0x89/0xa0 drivers/virtio/virtio_ring.c:2342
+ virtnet_add_outbuf drivers/net/virtio_net.c:574 [inline]
+ xmit_skb drivers/net/virtio_net.c:3343 [inline]
+ start_xmit+0x274d/0x4860 drivers/net/virtio_net.c:3367
+ __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5257 [inline]
+ xmit_one net/core/dev.c:3845 [inline]
+ dev_hard_start_xmit+0x22c/0xa30 net/core/dev.c:3861
+ sch_direct_xmit+0x3b2/0xcf0 net/sched/sch_generic.c:344
+ __dev_xmit_skb net/core/dev.c:4152 [inline]
+ __dev_queue_xmit+0x3588/0x5e60 net/core/dev.c:4729
+ dev_queue_xmit include/linux/netdevice.h:3365 [inline]
+ lapbeth_data_transmit+0x352/0x480 drivers/net/wan/lapbether.c:260
+ lapb_data_transmit+0x90/0xf0 net/lapb/lapb_iface.c:447
+ lapb_transmit_buffer+0x260/0x330 net/lapb/lapb_out.c:149
+ lapb_send_control+0x458/0x5b0 net/lapb/lapb_subr.c:251
+ lapb_establish_data_link+0xa6/0xd0 net/lapb/lapb_out.c:-1
+ lapb_device_event+0xb2a/0xbc0 net/lapb/lapb_iface.c:-1
+ notifier_call_chain kernel/notifier.c:85 [inline]
+ raw_notifier_call_chain+0xe0/0x410 kernel/notifier.c:453
+ call_netdevice_notifiers_info+0x1ac/0x2b0 net/core/dev.c:2229
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ __dev_notify_flags+0x20d/0x3c0 net/core/dev.c:-1
+ netif_change_flags+0x162/0x1e0 net/core/dev.c:9705
+ dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
+ devinet_ioctl+0x1186/0x2500 net/ipv4/devinet.c:1199
+ inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1003
+ sock_do_ioctl+0x9c/0x480 net/socket.c:1254
+ sock_ioctl+0x70b/0xd60 net/socket.c:1375
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0x239/0x400 fs/ioctl.c:583
+ __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:583
+ x64_sys_call+0x1cbc/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_free_hook mm/slub.c:2440 [inline]
+ slab_free mm/slub.c:6566 [inline]
+ kmem_cache_free+0x2b0/0x1490 mm/slub.c:6676
+ skb_kfree_head net/core/skbuff.c:1046 [inline]
+ skb_free_head+0x13c/0x3a0 net/core/skbuff.c:1060
+ skb_release_data+0x9f7/0xac0 net/core/skbuff.c:1087
+ skb_release_all net/core/skbuff.c:1152 [inline]
+ __kfree_skb+0x6b/0x260 net/core/skbuff.c:1166
+ consume_skb+0x83/0x230 net/core/skbuff.c:1398
+ skb_free_datagram+0x1e/0x30 net/core/datagram.c:324
+ netlink_recvmsg+0xad1/0xfe0 net/netlink/af_netlink.c:1974
+ sock_recvmsg_nosec net/socket.c:1078 [inline]
+ sock_recvmsg+0x2dc/0x390 net/socket.c:1100
+ ____sys_recvmsg+0x193/0x610 net/socket.c:2850
+ ___sys_recvmsg+0x20b/0x850 net/socket.c:2892
+ __sys_recvmsg net/socket.c:2925 [inline]
+ __do_sys_recvmsg net/socket.c:2931 [inline]
+ __se_sys_recvmsg net/socket.c:2928 [inline]
+ __x64_sys_recvmsg+0x20e/0x3d0 net/socket.c:2928
+ x64_sys_call+0x35f0/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:48
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Bytes 0-17 of 18 are uninitialized
+Memory access of size 18 starts at ffff88811a0f1000
+
+CPU: 1 UID: 0 PID: 5441 Comm: dhcpcd Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+=====================================================
+
+
 ---
-Refactor repeated cfs_rq leaf logic in `propagate_entity_cfs_rq()`
-into a new helper function, `__cfs_rq_maybe_add_leaf()`, to
-remove code duplication and improve readability.
----
- kernel/sched/fair.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index bc0b7ce8a65d6bbe616953f530f7a02bb619537c..fe714c68f0ef52c08c552ce93741f29df95d7d1c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -13159,6 +13159,18 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
- }
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
-+/*
-+ * If a task gets attached to this cfs_rq and, before being queued,
-+ * it gets migrated to another CPU (e.g., due to reasons like affinity change),
-+ * this cfs_rq must remain on leaf cfs_rq list. This allows the
-+ * removed load to decay properly; otherwise, it can cause a fairness problem.
-+ */
-+static inline void __cfs_rq_maybe_add_leaf(struct cfs_rq *cfs_rq)
-+{
-+	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
-+		list_add_leaf_cfs_rq(cfs_rq);
-+}
-+
- /*
-  * Propagate the changes of the sched_entity across the tg tree to make it
-  * visible to the root
-@@ -13167,14 +13179,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- {
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
- 
--	/*
--	 * If a task gets attached to this cfs_rq and before being queued,
--	 * it gets migrated to another CPU due to reasons like affinity
--	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
--	 * that removed load decayed or it can cause faireness problem.
--	 */
--	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
--		list_add_leaf_cfs_rq(cfs_rq);
-+	__cfs_rq_maybe_add_leaf(cfs_rq);
- 
- 	/* Start to propagate at parent */
- 	se = se->parent;
-@@ -13184,8 +13189,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- 
- 		update_load_avg(cfs_rq, se, UPDATE_TG);
- 
--		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
--			list_add_leaf_cfs_rq(cfs_rq);
-+		__cfs_rq_maybe_add_leaf(cfs_rq);
- 	}
- }
- #else /* !CONFIG_FAIR_GROUP_SCHED: */
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
-base-commit: 0d97f2067c166eb495771fede9f7b73999c67f66
-change-id: 20251010-sched-cfs-refactor-propagate-e6345a291f3c
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-Shubhang Kaushik <shubhang@os.amperecomputing.com>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
