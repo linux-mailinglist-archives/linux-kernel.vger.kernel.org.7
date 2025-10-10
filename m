@@ -1,353 +1,214 @@
-Return-Path: <linux-kernel+bounces-848055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D70BCC5DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D56BEBCC5E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDA124F9497
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:33:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C07724E5872
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2941A23AB9F;
-	Fri, 10 Oct 2025 09:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KPb8gl6H"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012006.outbound.protection.outlook.com [52.101.48.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE9D266560;
+	Fri, 10 Oct 2025 09:34:07 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F9E224AEB;
-	Fri, 10 Oct 2025 09:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760088810; cv=fail; b=dumVVicvhlJIkdN/apRdzoNCO/K01Mncv9EU06zPYMRv+r7423wo5hUbMBed0/1xEgFu2pF3GFU1jYN563U3/55dgFMd12GoUaSO3q6vBdMBPSX7SCKbEd/U5NZcbLIKo+8RU2kaEjNat6jVT8U6zSI54yF4HJ2GBaJ64Sf0Qkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760088810; c=relaxed/simple;
-	bh=k0B9t81EFbI+92V2FnIZ6qMLxrMB3glFEHI3seSi1pM=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EL8GKF3PyVxnJR94qqqylhiUJxqEY49DKBuBPlEHKjahZoWrph7C4AvEt/JGiZsRF9+v5/Hp77cGqzvINsL++M/IJRiMvUcG+pgc58+L9Iwjmo8a7+eWF672sF6hkRtY7vxeknZHIrsZhy4MMZZkdsmjAJN0opoNEK+pRFfHsGA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KPb8gl6H; arc=fail smtp.client-ip=52.101.48.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H+SB53wCQxZyXjTX1LG4R3IK+RCipPKPUvXvoHl98RjBNdqX9HQIYJsvf2INl2M/Xgnv+jEZV9X37NlPfn5/HegDHZ8uffvV1M9ejniJem4Rpz6OgiD/YBHkqdEWvKALFtCckyCKHIzMORXi4qhh/4Sxsk+BD4eX1XGnJHwdrqmgPmOWKFMsvF58YJNvGGSUa3f/ILUGaDs5ud5XPTf/VSTtr0tOnrfvo0iRL/l6PZIvEVwAZAm16IwrffOwUr9ZBS5BvQgCSYlJdSBmbTJjLyX6CuRfJqI3OUefTaGetX/tIXjVjNR2MB/QwQ1nKCXuCB5Q5ivsC+eOuKJnR3wLrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pW4gYb84fHeZcFmdSssBbZbkQPHqDPXWXkTtZpif4AM=;
- b=h277l68U5fq21Y6JdB82WysZFaQ9g+gsnv22ZYzU+L+QSIOx6qDGmortSMigdtXYojNJ/c7ONf5XtvUJFWaVGkkgKq64QX42sYC6XuMtz8Cf7NSKBkQNIqTXen8RZdwJv2pwXbYVRPSD5MHOKuywEolbjAdt4nwb6si+TlgqnpmOkb28Y9HfZSZeFgI31HtFx2MFp8WkZ3+k62Mqi/ffuMIoWxW+u9fV63pPK6clgK1E115/1hrcNsVhbMQToJeWRoRZOazCq6rNC0ulwke7z6bFEPCDweCiFh9WTfJX9usNiEkSajtN8pG0V/f0FaQJrH4wYBh1zJ+cN4J0XKYX7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pW4gYb84fHeZcFmdSssBbZbkQPHqDPXWXkTtZpif4AM=;
- b=KPb8gl6H3ZDrIE243+YBfgVnf+Gx4MwrdWY2wblxBWmSUIQ8VXL6ElGHBmHaBd5mw5w1pjKKuoQiRB/FgjtrSqe1yS6hQAdMGmRvLNFncpG/PC2fjM9ib02PVA+zFutbndWgyubQUl+IcTIoEx2ZiEaBj1eDqprQ3ON+6ePGe0CAOiyDPowRTEiRLVyrmbkgLiCExM73opD10dXa3X2ecqYmztUyaWODOKCVlpB1jTE/TTMyZq04aWeilsHDPMltpgee5cBMUaVBdqvsNNYB7hw0xDD5VBnNZmwf91WH6eD4YxXuNq7AFs/JsBZYCyVJ0ASrqgmwlkCdmsOhryENdg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH7PR12MB5686.namprd12.prod.outlook.com (2603:10b6:510:13d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
- 2025 09:33:25 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9182.017; Fri, 10 Oct 2025
- 09:33:25 +0000
-Message-ID: <b6355a70-07a2-49ae-8715-ddc052515f6b@nvidia.com>
-Date: Fri, 10 Oct 2025 10:33:20 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] gpio: tegra186: Use generic macro for port
- definitions
-To: Kartik Rajput <kkartik@nvidia.com>, linus.walleij@linaro.org,
- brgl@bgdev.pl, thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20251010092913.711906-1-kkartik@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20251010092913.711906-1-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0327.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:390::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECED23AB9F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760088847; cv=none; b=U4SHYmFmbR43dV9TQyOu7RKYMotDW9pAoTJvtxEVfGZ4j+44QWjn86kugdXJKYdeF29COklDM47h659nX7I0JrbLYhPGY5RhWBkr8S4p7szFhESIcdev4py2hT1mk0pmSRl/MOe3TBRWiAj5T7kne9LsK6pFpx8za/PqjOj61Zo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760088847; c=relaxed/simple;
+	bh=gItYuHssEZDt9pZzGcg2JKELHJmDuqOp+ZhZVjke2Ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mJ4TqHyqpbKSWiOhLpHMlj+YT7LgJmFPG605CGruFfzFeUhkFgBiF1SyfhcBCNP+VC36Cq5ah9sJrcQ0vKspVOjV+Fdr5mGj8KyZSiSCukUJIFBoWEEkRKOAugMQpPtmxv7RqS96Z8peVaSFC3UzTmsNllS9bi+a5Us97B4ssho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b50645ecfbbso384165866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:34:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760088843; x=1760693643;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cv4nEj7UBTV72f1gU8wuBa1ut3a9qHUaWAVjisQOCJo=;
+        b=Qr7NcPF4N1PLDH3zfHs8vTFYuBEmL6a1dDduBeavUix+ck8O1UYLAvy3JjeNOhsIBS
+         iClFYZDMi9NKNVBZQJ0L68Yz/2zE/S7N354G15ioKDsmBrig6GQr6uGoeJR3GMNIAJWq
+         eIrfZkdIya9UMzT0tAhdNYh8pNR6+FnSJ74qXNffviaHjJj41lneRug+Zurdxq+VhaTt
+         oJOE//qyxQP8eZpJ+9RF6uA9FFC/VhOxNWtMXIHwYXyNMDvx4nl3N20ZjGZMnfecrIh/
+         IJt2PJHqh1i1SFRZdQAMmDThgudKdrjzEadOIJLN2k9i/O8xSR0P3hZLdRXv7Xj/a7eQ
+         29qA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0QgwNM5aQKKFXFEINPYbWMnmcB9hF8NeP2AWsNmTqG+E+TwjPVjFhG2ZlZmR4n9lNmEZ3ZgUyQ3fC2jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkeh6JrVX7n/rRUok2K3T7jwLKfns69S0H6meMkyxzljmhnKIm
+	32bQPIFtXjqPFv0sQbBt0ePBX1sI4XyDa2RgQyFcT2hNaHrVedvRH0Fc
+X-Gm-Gg: ASbGncvf8bPO6mH+RddQzshWqgEMEG6yP5yw7axroDySEDXQW+9bJA+Zj7b95TDKUEv
+	E/COVBJgNsetDiuPTbt0kpXvW5A4L/oIY2eWoNOUV0Bjh3SoEcBK0cTYasd2PPTf7JAeLhg8jNq
+	KzbPYR3irIiWuR99YJeQXv/YkHjZbLRG58s3KO27c+HlLeW7Zjhs5+TMM5yP39JJPI6Mx7via/R
+	yZ8h3jIIAVU7plWUMt6/pMX6/6cnNZvcOpB4GGRlFkaCZMIn8uiPLDvLO/4TfW13s8gScGd/0dt
+	PlDAZegPwPeRFPfCnyxDScVOnh9+ytzVNFonfiWdQDfgpLt0aKSfEehHcB0nEXLsLSt37QPv/ZI
+	jkPsaKN8Llqwr5hYEdPTHyVTxM/8X3VTioIC9
+X-Google-Smtp-Source: AGHT+IHJJZYzLmff6dVgniqDgTA9wuOtJBZMe0+HaoaCcR6f3ALYVARpNqjkBuP0lUSeRtOHCgzETA==
+X-Received: by 2002:a17:906:6b9a:b0:b45:1063:fb65 with SMTP id a640c23a62f3a-b50abaafd40mr960927966b.39.1760088843318;
+        Fri, 10 Oct 2025 02:34:03 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:70::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d9a3fc41sm190057566b.87.2025.10.10.02.34.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 02:34:02 -0700 (PDT)
+Date: Fri, 10 Oct 2025 02:33:59 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Changyuan Lyu <changyuanl@google.com>, rppt@kernel.org
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org, 
+	bp@alien8.de, catalin.marinas@arm.com, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, devicetree@vger.kernel.org, dwmw2@infradead.org, 
+	ebiederm@xmission.com, graf@amazon.com, hpa@zytor.com, jgowans@amazon.com, 
+	kexec@lists.infradead.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, mark.rutland@arm.com, 
+	mingo@redhat.com, pasha.tatashin@soleen.com, pbonzini@redhat.com, 
+	peterz@infradead.org, ptyadav@amazon.de, robh@kernel.org, rostedt@goodmis.org, 
+	rppt@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
+Subject: Re: [PATCH v8 01/17] memblock: add MEMBLOCK_RSRV_KERN flag
+Message-ID: <ef6wfr72set5wa5el3wbbu4yd5tnc4p2rhtjpb5kpmncv3xs5d@i3c5v3ciioi3>
+References: <20250509074635.3187114-1-changyuanl@google.com>
+ <20250509074635.3187114-2-changyuanl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB5686:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47ce2576-a132-450c-14ee-08de07e00f9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eS84Z3hiSmJjT3ExcXVNa09nSGlsQ21DZTk3ZS9MUXI2dzBDS1hOUURDemo0?=
- =?utf-8?B?Z2FLSm5hVGt3UUo2WnVhZjFwOWZ3OU1JVFRqeWluenZ6dldTcU1lK1ZjaEM2?=
- =?utf-8?B?NU5xd1NaWktkMjhFYXhialFwdVZQS1ZJbko4eG5BK2RXNnlGK3dYN2JJaWxi?=
- =?utf-8?B?U01MdC8wT3MrZlBCZXlWM2xCYmtLU29SUUExZXJzSTBPdU9LZXpWR0RDUjdm?=
- =?utf-8?B?d1RWVzM5M3ZiZXhwTktCN2RhSTFzMUdRYnVNZ1FkZzYvcFFxRlNSVkMyMFpm?=
- =?utf-8?B?WjZVK1VkTWFQUm9KZjlYVjRTOWx4aHVkd2RFUm8rU0s0REM4dFN6K1UybGZF?=
- =?utf-8?B?b3QwOHFUTktYZUJVN0htOGtqN2lsWmVhaXpQczM1cms5TkVHaTd5OWV4S25M?=
- =?utf-8?B?Y1gyUFE0akI2bnlmdHNHeWkwaWZlVC9tQVNpblAvaWlTQ1R6TkNQeGpOM3dT?=
- =?utf-8?B?VS8wN043bm5JV2VqalpnNFZBVHBYRXR3TThGSWZSZ0hmbS9sVEhwMVEzaFlN?=
- =?utf-8?B?ZDhjWGcvajFhQWhOb0UwbG9sUHpKOEkzSmQyVmtZSXA2VWdkck8zSk9mL2NG?=
- =?utf-8?B?aWk3VFJhS0pTdEFUZG10bmxLVUJBWUx2aU5JaWN2ZlQ2Zmk0cEZ2TXhDTE9W?=
- =?utf-8?B?TE1SbjdYNk9VMzJNTG1PK1NSNTNvelNMY1dxZkVYY0lsMjRTbVlJQVlsbGxV?=
- =?utf-8?B?K0ZwSmhjQThUYSt3bHlOSmhrQ3hXT01WSWdpaDFsU2JKMDNhck5sbGtzaEor?=
- =?utf-8?B?UlQxSjJ0UlR3eDQzQkFucUw2TjhPa3ZmcnFkMVBDSElraDFwVWNyNXpXbnNy?=
- =?utf-8?B?WCt0Y0NGd3JyNHg2UlgrcVZXYzcvcXB5RjdaTFIwRGRybTV0V2tmci9RMitS?=
- =?utf-8?B?cXhpVWdCRGE1SEhjRXYxNUwvNEpwZi91UDN6bit6ekFMcVJQSnREMzhpRXNR?=
- =?utf-8?B?ZFlWekIwczdhc3FyWFN0THlOVTJpblR3bFFYY0JaS0lmR1RKbE9SNWsyTXZm?=
- =?utf-8?B?Mmg3VkYyTW9EcnE4UnNrTks5T1V5SHRpOXF5V2dSUjA1c0UwbmtzMlNzc09a?=
- =?utf-8?B?MHdFWU03c0MvTzFXUlEyTGJwbDFwbU15VXFQK3RwYXk3OERiYVFPY0h0TTNn?=
- =?utf-8?B?dnduYWJrU05GbFNuL2ZSa25hU29MWVpTTVE0eCtISWRkc2NocUtBWS9RaktB?=
- =?utf-8?B?cWZwNEFOcVBodTZIaUVWRldtN3JYVC8yRjU3ZkhuNGh3VkNRclg4RkVNMEI3?=
- =?utf-8?B?VHRhOVlMOFk0Y1R6dXBUZ1p5NWpDNmxmZURYa3pTRVhpN09BZVU0UjdSY3ZR?=
- =?utf-8?B?MW1kbXdmNGt3SEhDdkFLZUIyWmxOVzRSdW9MTms2OGkxcmh3RFFONkRYSlBo?=
- =?utf-8?B?RlZkeSszWXFiOVVtbWFpL1FuZ0JPdXNiT1dpWmZ0UHk2RjNKSWwwaDYxRWs3?=
- =?utf-8?B?Y0pSa0o1dVZWY2NFMEhXK0V2eDlJOVdBaU4yRzlIY2lPNUdnZXZSRmJpdHRX?=
- =?utf-8?B?ZFhHMkVLazM5aG94b3o3M2Rsck95eVhhTlY5ZnRFTmh4ejFTL0ttMDJaazFJ?=
- =?utf-8?B?TXJxVjhQcmY3SXRCOTd4WGs5Q0tjNGpWK3Y0RXRGdjFTd2wrLzJ1SmxhZjFK?=
- =?utf-8?B?VldXYUUyVUZrY2hUSStlMWNQOFZCOWxHQzcrem5lQkRhOEpMYkoxdVF4U0Uw?=
- =?utf-8?B?Vlk3ZkZXQ1NVMmdoRlF5TXNBVE9zVFZ2bDVjTXRla002RUJWVU1tcUY4eEcv?=
- =?utf-8?B?NUNiWnJaeTVXRzRDNk1kN1U4dC9nODNDSkxVZnNERVBhajVtc0FNb0FYL0w5?=
- =?utf-8?B?b3g4TkkyaFpzZ1pUWUdabVJJcUgyY3NhV24zdEo2cmU3eWltZzJMaFZDc1Yw?=
- =?utf-8?B?Q2g0V2lrcEhpNEFDOHpNK2tLODRaTUdDTHRwM3pUSTFFTmlKY3BiSmNtdjI5?=
- =?utf-8?Q?TufRQbNiHsGnMpI8BwUMyx6Yr6rOFgN9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ajZJSDJuUGZXUnMvZDVXSFhSNk8zSWRpYTllSk9oTVJvZmlmc1d5eGFUdmZP?=
- =?utf-8?B?R0dtNHRhTVRwNmk4RVQ5UHlVRC9LeEJrZFl0bGpSRWUrTmUvTXFlemVBN1Qz?=
- =?utf-8?B?M2ZLMnZTQkFmbUhLc1dGbWkrMjV5ZXFXazZOK0liNHF1bElCeDhUSW9jcldz?=
- =?utf-8?B?eFdBU245NUpiRDlrNjhZZ1FwN2JrTkJQRmY2N1dBLzAxRGE0Nm1FVHBmOEhl?=
- =?utf-8?B?VTd0TGtsc09xVHZjWnBZRDhWSVk2OWdTOTQrRUNUVVlrdm4wY3JNTkMzTzFG?=
- =?utf-8?B?RU0rUk5wbWRDU2tKM1dCYWtKKytVVWQ1MStWS1JIZzduVXJOZGltakxXUGMz?=
- =?utf-8?B?bXFTSHMyVCs5emxJcUVKdG5rN0RqYkRSTmJZR0dNbzRiUk55TGF0b1pWdGZI?=
- =?utf-8?B?TmxRb1Z1NUJsU01icERwUjhENU02eG14WlRqQVhIKytYaGxaeXRpbVF0Y1E4?=
- =?utf-8?B?YnVkc0lMTEsybk5wSzdEODg2bU9sVXNXcGhxM1NvNUw1a2drMU8xdzhkSWlm?=
- =?utf-8?B?Yy9lWWVrN05vUVBOR1VNVXZQVkNpMjUyeXl2cE1jQTBaU0pEb3pCUzRkZWwv?=
- =?utf-8?B?TllOQllvZWZabDhXSElKaU5FQVhHMjIwNEMxOXByTzhGejgzNmdueXB5NTBh?=
- =?utf-8?B?NFlDbUFKaVc3eFdBVm5RUXlHa0VVcFJaVkYxS2lCdHRLWWZ3ZE1ZRDRWT2pK?=
- =?utf-8?B?YzVCcmRQaUdsOHhQZjdTYlhPcmJzd3hPbUNqOC9MZTNPSkdJLzNBUFZZSGhO?=
- =?utf-8?B?UlRWWkFhbytNYXQvU0pZZEpraUdzYU1jRUUyR010M2JFc1huS0VjMmoxMGV1?=
- =?utf-8?B?QVp6NmdxNzJJSlBVNjFiRzBjd1REL2FiMTZyK29xQnJuWGg4WHFhTHUwWjBo?=
- =?utf-8?B?T2Iwd1RGYTBOWU8yYlVvT2NnbGlxL1BYYXNZbGdKRXc0VlI2WXJ2THBRdU0y?=
- =?utf-8?B?MkVDRXY2elFldmV0TUhTbjQ3Y3NNUlhWcUMzVjhIQTQ4dWlXc0ppdDZOcHk3?=
- =?utf-8?B?VDcvN0tOMHhVRWwyQmh0MDQ3czhqVGVtRjliTUx6UkRrTVJncy9xcmRodXBo?=
- =?utf-8?B?TXd2QVkvRGNWL2ltTEhoaXVCZVhsRC93YmFTYVpQbS9UTGZDbTcrcHJPcytM?=
- =?utf-8?B?aFVNOGI0Q1A3aytScHRhZTlwUmoyV2hzQmZqd2VDa0x1VVZlSTQvSjI2Z2R2?=
- =?utf-8?B?aGZjVkJRQkYyN3IvSkE3YWhpNzY0eHk0aHQzWlNaSlJsZWpSUW13OVdyNUd2?=
- =?utf-8?B?UEl6cVJYcjk0U3RVKzFUcG5XMDk5bklnNmNjeUovb2t4ckNhWGVVc05ma2Zj?=
- =?utf-8?B?YVVnd0VIcWtydy9YalRjOU16UGkzMURuemk3SjdKUVlNeVpqSGpIZWZZNTlN?=
- =?utf-8?B?ZDAvbGZ5NlFNc0lOb0xKUmY2UWllcEVCK3BtNVgxdFEwQ3N3WmxvNUltUzBS?=
- =?utf-8?B?T3FBNHNzVytKcFRYV0lvL2JURlVLK2MyWmtBTUFkOUlPV0tld3dScXloVjM4?=
- =?utf-8?B?dXl6VFdIZDVXQnhleVVoUlIyT1dsQ3lWMkVRaEdFWDA3THRRTjkyT3dIdlNZ?=
- =?utf-8?B?QTRpR1BSUlY4dXVxQTFMOS9YWXZBcG81VUFzUjRjdHcxQnk3L2lkdElodXRa?=
- =?utf-8?B?cTN3QWN3eWdhSjNsQVlFdkpRaERSbEpuc2NwQ2N2aElZM2p1endPNVMwWThU?=
- =?utf-8?B?Z3pIVTlBaElaeWYvaFRBekd3dWsyeUNKYUhHNitPNUkyTkNRSjZya2szd3lt?=
- =?utf-8?B?R2FUejhFRDRVN005Z2VXZiswWlU0a0tvK2w4UnhEQmxXZFJWeVYvS3E3bEpl?=
- =?utf-8?B?MytxdWNhYXhYSnNBb29pc1J2MWFoVEUxS2FLdER0UWhoYkhVTXlFOGU1REdh?=
- =?utf-8?B?Q0t0aTVWc0pQbnhZMkdwbWZKclRKdWlnbmVMUUVobGdBeVpHRk9tSXRtMkRh?=
- =?utf-8?B?MVBTNkY3Y0Z4NFBhMDJlbEFjOXh2bWppa1gwVm0xc2lSS0szeHA4eWxzMzNv?=
- =?utf-8?B?ejR4TFlva3BjeXhBajNuQ3dVQ1F3RllURzY0WWR4ZHlFNVlvWmYzUmlQU2Vi?=
- =?utf-8?B?M0R5RmFxdm1hMmR4d1RTbFZrYlBaT2k4UVRGQTNEbG04WURUeDNYMmNLMVZT?=
- =?utf-8?Q?QyhiCIDY7P3bGtyKFOvxrBbgd?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47ce2576-a132-450c-14ee-08de07e00f9f
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 09:33:25.1752
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 56dQ3YI27mBd7nJxNVxTrv8IEcKurgz+BAj6j6MiL8KY+TgwnL3jRs0XDjFzJ9BCGxc/S3Whjwn89caFBmir9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5686
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509074635.3187114-2-changyuanl@google.com>
 
+Hello Chanyuan, Mike,
 
-On 10/10/2025 10:29, Kartik Rajput wrote:
-> Introduce a generic macro TEGRA_GPIO_PORT to define SoC specific
-> ports macros. This simplifies the code and avoids unnecessary
-> duplication.
-> 
-> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
->   drivers/gpio/gpio-tegra186.c | 87 +++++++++++-------------------------
->   1 file changed, 25 insertions(+), 62 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> index 4d3db6e06eeb..7ea541d6d537 100644
-> --- a/drivers/gpio/gpio-tegra186.c
-> +++ b/drivers/gpio/gpio-tegra186.c
-> @@ -1002,14 +1002,17 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
->   	return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio);
->   }
->   
-> -#define TEGRA186_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA186_MAIN_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> +#define TEGRA_GPIO_PORT(_prefix, _name, _bank, _port, _pins) \
-> +	[_prefix##_GPIO_PORT_##_name] = { \
-> +		.name = #_name, \
-> +		.bank = _bank, \
-> +		.port = _port, \
-> +		.pins = _pins, \
->   	}
->   
-> +#define TEGRA186_MAIN_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA186_MAIN, _name, _bank, _port, _pins)
-> +
->   static const struct tegra_gpio_port tegra186_main_ports[] = {
->   	TEGRA186_MAIN_GPIO_PORT( A, 2, 0, 7),
->   	TEGRA186_MAIN_GPIO_PORT( B, 3, 0, 7),
-> @@ -1045,13 +1048,8 @@ static const struct tegra_gpio_soc tegra186_main_soc = {
->   	.has_vm_support = false,
->   };
->   
-> -#define TEGRA186_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA186_AON_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA186_AON_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA186_AON, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra186_aon_ports[] = {
->   	TEGRA186_AON_GPIO_PORT( S, 0, 1, 5),
-> @@ -1073,13 +1071,8 @@ static const struct tegra_gpio_soc tegra186_aon_soc = {
->   	.has_vm_support = false,
->   };
->   
-> -#define TEGRA194_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA194_MAIN_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA194_MAIN_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA194_MAIN, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra194_main_ports[] = {
->   	TEGRA194_MAIN_GPIO_PORT( A, 1, 2, 8),
-> @@ -1129,13 +1122,8 @@ static const struct tegra_gpio_soc tegra194_main_soc = {
->   	.has_vm_support = true,
->   };
->   
-> -#define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA194_AON_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA194_AON, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra194_aon_ports[] = {
->   	TEGRA194_AON_GPIO_PORT(AA, 0, 3, 8),
-> @@ -1155,13 +1143,8 @@ static const struct tegra_gpio_soc tegra194_aon_soc = {
->   	.has_vm_support = false,
->   };
->   
-> -#define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA234_MAIN_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA234_MAIN, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra234_main_ports[] = {
->   	TEGRA234_MAIN_GPIO_PORT( A, 0, 0, 8),
-> @@ -1200,13 +1183,8 @@ static const struct tegra_gpio_soc tegra234_main_soc = {
->   	.has_vm_support = true,
->   };
->   
-> -#define TEGRA234_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA234_AON_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA234_AON_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA234_AON, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra234_aon_ports[] = {
->   	TEGRA234_AON_GPIO_PORT(AA, 0, 4, 8),
-> @@ -1227,13 +1205,8 @@ static const struct tegra_gpio_soc tegra234_aon_soc = {
->   	.has_vm_support = false,
->   };
->   
-> -#define TEGRA241_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA241_MAIN_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA241_MAIN_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA241_MAIN, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra241_main_ports[] = {
->   	TEGRA241_MAIN_GPIO_PORT(A, 0, 0, 8),
-> @@ -1258,13 +1231,8 @@ static const struct tegra_gpio_soc tegra241_main_soc = {
->   	.has_vm_support = false,
->   };
->   
-> -#define TEGRA241_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA241_AON_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA241_AON_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA241_AON, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra241_aon_ports[] = {
->   	TEGRA241_AON_GPIO_PORT(AA, 0, 0, 8),
-> @@ -1280,13 +1248,8 @@ static const struct tegra_gpio_soc tegra241_aon_soc = {
->   	.has_vm_support = false,
->   };
->   
-> -#define TEGRA256_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-> -	[TEGRA256_MAIN_GPIO_PORT_##_name] = {			\
-> -		.name = #_name,					\
-> -		.bank = _bank,					\
-> -		.port = _port,					\
-> -		.pins = _pins,					\
-> -	}
-> +#define TEGRA256_MAIN_GPIO_PORT(_name, _bank, _port, _pins) \
-> +	TEGRA_GPIO_PORT(TEGRA256_MAIN, _name, _bank, _port, _pins)
->   
->   static const struct tegra_gpio_port tegra256_main_ports[] = {
->   	TEGRA256_MAIN_GPIO_PORT(A, 0, 0, 8),
+On Fri, May 09, 2025 at 12:46:19AM -0700, Changyuan Lyu wrote:
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -492,7 +492,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+>  	 * needn't do it
+>  	 */
+>  	if (!use_slab)
+> -		BUG_ON(memblock_reserve(addr, new_alloc_size));
+> +		BUG_ON(memblock_reserve_kern(addr, new_alloc_size));
+>  
+>  	/* Update slab flag */
+>  	*in_slab = use_slab;
+> @@ -642,7 +642,7 @@ static int __init_memblock memblock_add_range(struct memblock_type *type,
+>  #ifdef CONFIG_NUMA
+>  			WARN_ON(nid != memblock_get_region_node(rgn));
+>  #endif
+> -			WARN_ON(flags != rgn->flags);
+> +			WARN_ON(flags != MEMBLOCK_NONE && flags != rgn->flags);
 
-Thanks! Looks good to me ...
+I am hitting some sporadic warnings at early boot on a production kernel
+(6.16). Unfortunately this issue is not easily reproduce for me to test on
+upstream.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+	09:14:44  BIOS-provided physical RAM map:
+	09:14:44  BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usable
+	09:14:44  BIOS-e820: [mem 0x00000000000a0000-0x00000000000fffff] reserved
+	09:14:44  BIOS-e820: [mem 0x0000000000100000-0x0000000064cb7fff] usable
+	09:14:44  BIOS-e820: [mem 0x0000000064cb8000-0x0000000064dc3fff] reserved
+	09:14:44  BIOS-e820: [mem 0x0000000064dc4000-0x0000000065b13fff] usable
+	09:14:44  BIOS-e820: [mem 0x0000000065b14000-0x0000000065b61fff] reserved
+	09:14:44  BIOS-e820: [mem 0x0000000065b62000-0x0000000065ed0fff] usable
+	09:14:44  BIOS-e820: [mem 0x0000000065ed1000-0x0000000065f2bfff] reserved
+	09:14:44  BIOS-e820: [mem 0x0000000065f2c000-0x0000000066621fff] usable
+	09:14:44  BIOS-e820: [mem 0x0000000066622000-0x0000000066630fff] reserved
+	09:14:44  BIOS-e820: [mem 0x0000000066631000-0x0000000068107fff] usable
+	09:14:44  BIOS-e820: [mem 0x0000000068108000-0x000000006819dfff] ACPI data
+	09:14:44  BIOS-e820: [mem 0x000000006819e000-0x000000006a48cfff] usable
+	09:14:44  BIOS-e820: [mem 0x000000006a48d000-0x000000006c58cfff] reserved
+	09:14:44  BIOS-e820: [mem 0x000000006c58d000-0x000000006c5dcfff] ACPI data
+	09:14:44  BIOS-e820: [mem 0x000000006c5dd000-0x000000006cfdcfff] ACPI NVS
+	09:14:44  BIOS-e820: [mem 0x000000006cfdd000-0x000000006e9fcfff] reserved
+	09:14:44  BIOS-e820: [mem 0x000000006e9fd000-0x000000006fffffff] usable
+	09:14:44  BIOS-e820: [mem 0x0000000070000000-0x000000008fffffff] reserved
+	09:14:44  BIOS-e820: [mem 0x00000000fd000000-0x00000000fe7fffff] reserved
+	09:14:44  BIOS-e820: [mem 0x00000000fed20000-0x00000000fed44fff] reserved
+	09:14:44  BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
+	09:14:44  BIOS-e820: [mem 0x0000000100000000-0x000000107fff655f] usable
+	09:14:44  BIOS-e820: [mem 0x000000107fff6560-0x000000107fff656f] type 128
+	09:14:44  BIOS-e820: [mem 0x000000107fff6570-0x000000107fffffff] usable
+	09:14:44  random: crng init done
+	09:14:44  ------------[ cut here ]------------
+	09:14:44 WARNING: CPU: 0 PID: 0 at mm/memblock.c:668 memblock_add_range (mm/memblock.c:668)
+	09:14:44  Modules linked in:
+	09:14:44  Tainted: [S]=CPU_OUT_OF_SPEC
+	09:14:44 RIP: 0010:memblock_add_range (mm/memblock.c:668)
+	09:14:44 Code: 28 80 3c 01 00 0f 84 04 fd ff ff 4c 89 ef e8 6c 77 09 00 e9 f7 fc ff ff 0f 0b 83 7c 24 1c 00 0f 85 9c fd ff ff e9 c5 fd ff ff <0f> 0b e9 be fd ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 6b fd
+	All code
+	========
+	0:    28 80 3c 01 00 0f        sub    %al,0xf00013c(%rax)
+	6:    84 04 fd ff ff 4c 89     test   %al,-0x76b30001(,%rdi,8)
+	d:    ef                       out    %eax,(%dx)
+	e:    e8 6c 77 09 00           call   0x9777f
+	13:    e9 f7 fc ff ff           jmp    0xfffffffffffffd0f
+	18:    0f 0b                    ud2
+	1a:    83 7c 24 1c 00           cmpl   $0x0,0x1c(%rsp)
+	1f:    0f 85 9c fd ff ff        jne    0xfffffffffffffdc1
+	25:    e9 c5 fd ff ff           jmp    0xfffffffffffffdef
+	2a:*    0f 0b                    ud2            <-- trapping instruction
+	2c:    e9 be fd ff ff           jmp    0xfffffffffffffdef
+	31:    44 89 f1                 mov    %r14d,%ecx
+	34:    80 e1 07                 and    $0x7,%cl
+	37:    80 c1 03                 add    $0x3,%cl
+	3a:    38 c1                    cmp    %al,%cl
+	3c:    0f                       .byte 0xf
+	3d:    8c 6b fd                 mov    %gs,-0x3(%rbx)
 
-Jon
+	Code starting with the faulting instruction
+	===========================================
+	0:    0f 0b                    ud2
+	2:    e9 be fd ff ff           jmp    0xfffffffffffffdc5
+	7:    44 89 f1                 mov    %r14d,%ecx
+	a:    80 e1 07                 and    $0x7,%cl
+	d:    80 c1 03                 add    $0x3,%cl
+	10:    38 c1                    cmp    %al,%cl
+	12:    0f                       .byte 0xf
+	13:    8c 6b fd                 mov    %gs,-0x3(%rbx)
+	09:14:44  RSP: 0000:ffffffff85e07d48 EFLAGS: 00010083 ORIG_RAX: 0000000000000000
+	09:14:44  RAX: 0000000000000020 RBX: 0000000000001c00 RCX: dffffc0000000000
+	09:14:44  RDX: 000000000009f000 RSI: 000000000009d000 RDI: ffffffff8685ebf8
+	09:14:44  RBP: 0000000000000002 R08: 0000000000000020 R09: 0000000000000000
+	09:14:44  R10: ffffffffff200570 R11: fffffbffffe400b2 R12: 000000000009d000
+	09:14:44  R13: 0000000000100000 R14: ffffffff8edf5ce4 R15: ffffffff8edf5ce0
+	09:14:44  FS:  0000000000000000(0000) GS:0000000000000000(0000) knlGS:0000000000000000
+	09:14:44  CR2: ffff888059e2dff8 CR3: 000000005bc1d000 CR4: 00000000000000b0
+	09:14:44  Call Trace:
+	09:14:44   <TASK>
+	09:14:44 ? __memblock_reserve (mm/memblock.c:936)
+	09:14:44 ? add_early_ima_buffer (arch/x86/kernel/setup.c:413)
+	09:14:44 ? parse_setup_data (arch/x86/kernel/setup.c:500)
+	09:14:44 ? setup_arch (arch/x86/kernel/setup.c:245 arch/x86/kernel/setup.c:958)
+	09:14:44 ? start_kernel (init/main.c:922)
+	09:14:44 ? x86_64_start_reservations (arch/x86/kernel/ebda.c:57)
+	09:14:44 ? x86_64_start_kernel (arch/x86/kernel/head64.c:231)
+	09:14:44 ? common_startup_64 (arch/x86/kernel/head_64.S:419)
+	09:14:44   </TASK>
+	....
+	Memory: 49640988K/66772816K available (54946K kernel code, 19058K rwdata, 22636K rodata, 2940K init, 120968K bss, 10650188K reserved, 6291456K cma-reserved)
 
--- 
-nvpublic
+So, there is a memory override, and I am curious about it. Do you think it
+would be useful to expand this warning to dump more information about the
+issue? (only compiled tested)
 
+	if (flags != MEMBLOCK_NONE && flags != rgn->flags) {
+		pr_warn("memblock: Flag mismatch at region [%pa-%pa]\n",
+			&rgn->base, &rend);
+		pr_warn("  Existing region flags: %#x\n", rgn->flags);
+		pr_warn("  New range flags: %#x\n", flags);
+		pr_warn("  New range: [%pa-%pa]\n", &base, &end);
+		WARN_ON_ONCE(1);
+	}
+
+Thanks
+--breno
 
