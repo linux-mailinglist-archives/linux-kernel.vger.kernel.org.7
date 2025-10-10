@@ -1,313 +1,148 @@
-Return-Path: <linux-kernel+bounces-848708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84894BCE638
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:30:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B38FBCE647
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D71544A65
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC7B19A800B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C73271A71;
-	Fri, 10 Oct 2025 19:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D2F273800;
+	Fri, 10 Oct 2025 19:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbCmtgLB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkNCtU8Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A5C272813;
-	Fri, 10 Oct 2025 19:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2BD23A9AC
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 19:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760124608; cv=none; b=kfPAAyTd0pICsA2kil1lzDTFKPsO3E0Aw3pDWyeKuIEbNjlIoHst6WO/FOu3n96hT3AFw/ttIEBwGYfnzk1+eRCylp9osy+XXD6UUrVnZ76Dql1jjz+qHJtc1Zr3qk//8a589olZrxWQa5oMt5C2jI1Cnah96i7ojuMo0nHdEo8=
+	t=1760124638; cv=none; b=agR0xdxzWVDXOfzPC+oI+evqhl6PCxhIN0orGF3HPy+v2Ozf13wuJewoWjq6lcuGSOONJBuAXbbW0yDVLaAASB6MsbNdmgIqM+FIScRGwI7xAKloRTz8zLnUlJxK00yHEAV/0pLDdHPJNdJaGcPRngiBLSQ6fj6qObpuwb5VQGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760124608; c=relaxed/simple;
-	bh=X6PD5rPNl+xPi+aiCBZrdWb4RCY92xvaYy4Yis8E/As=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KHXEUJg0CfuW815OMzNVgMVRxy3WzA0TGEEBk1eLBE/Uoj15G5hcQqICGZV+UXh3LYFzUzz32irVNnsOoUTKh/M9Ini1KIYf6r+gTYBpWraXMBQxU+ZNKN8A6P8M00RXTbQUg2t5RX2CzNmZeunX65Xg0TOeWfJD78EqkWfpfCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbCmtgLB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5919FC113D0;
-	Fri, 10 Oct 2025 19:30:06 +0000 (UTC)
+	s=arc-20240116; t=1760124638; c=relaxed/simple;
+	bh=UO7tWaC1D06ILgslhIE6Vp+GGNOSccu5h6NsvDEB6bI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sXLxM6PEwee44JPOmPjv2bGknBxL4J2OVbdFL1GOGnRT94+Hp1sdqT+t4rUVfEBSMBPn1H0w9jU52gxQYJw90TZCOZTeUBLvvn39YTl0R01mh1OZVtz/U/IdcKDe7rOoeXSOMQ1GgUqmna0Bc094uM5MW7VyPRK6TTkPjln99k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkNCtU8Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76778C113D0
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 19:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760124607;
-	bh=X6PD5rPNl+xPi+aiCBZrdWb4RCY92xvaYy4Yis8E/As=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=RbCmtgLBsW47obn4b0rZOnryO2it+q3cmspc1QLf6+VJjwZ4hMvP7pQpwMWgXGnnA
-	 3o0PRElIGIyClX2335uaCo/f837V1iI+QHzcvwD8vinUCtM7j/aujJVS9P6Lavp7E/
-	 +JerQ8P1bsWbR/zES8G/KTYjLs14wsGFXQbL37CfhT4V3y/0sQgj9WdKqEah0CN3+Z
-	 V55WKNk/Q3QLOmJi01633FrQEKOnivxOQSxubQN/PEzmG2LrQoR6Qtm8iFtKDTwkLS
-	 hLO4M7InGOdjzdEYQS7eoeqGNLUpKHYdy2San/C4odXzRqFmSaaLWu46RrYJoivPCB
-	 7GlQJJNGe35Bg==
-Message-ID: <0c8c170f9b6b49b6a7aad0a0a53457d52987fa22.camel@kernel.org>
-Subject: Re: [PATCH v4] nfsd: remove long-standing revoked delegations by
- force
-From: Jeff Layton <jlayton@kernel.org>
-To: Li Lingfeng <lilingfeng3@huawei.com>, chuck.lever@oracle.com, 
-	neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, lilingfeng@huaweicloud.com, zhangjian496@huawei.com, 
-	bcodding@redhat.com
-Date: Fri, 10 Oct 2025 15:30:05 -0400
-In-Reply-To: <20251010034333.670068-1-lilingfeng3@huawei.com>
-References: <20251010034333.670068-1-lilingfeng3@huawei.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=k20201202; t=1760124637;
+	bh=UO7tWaC1D06ILgslhIE6Vp+GGNOSccu5h6NsvDEB6bI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RkNCtU8QTeCBdWpLHhNr8JvrU3SuLc+1RKV/B5DWkkchSXpVbewLPEGu9PteSIC59
+	 3QdUV0p1QZHp+XhVjKliK0wvXSdB1RU5a+CyZxjimdAkkEp5C2xHmsIcspGs72E0Lk
+	 cyObdDJQL2lwFThzP/75aTtYq1Rg+WwTXzxuf5I/WZflCtsZ6JwrjI1V1vO6mFvs05
+	 WXMcevad9JypeFhT7/uwXWjFcL+u+BZQ80FRHRXSyCarsMyxQ97kXJWkBlv02hVeDW
+	 nUw04T6EMyGqqoQYGxSvUHP+TG9k6oSLAKGh4+rIvWYp5GUXc/FJOhGX6qNXxLvulc
+	 NRaGMKALZ1/8g==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso4465795a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 12:30:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGqijJvtTcKpaTcFk+AzwPx/HATh4K/6rSzLf1+iwmo1qjbKFiIn5ul1V4qMo9rTe1FA77C6PEUD3QkBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI0bYyODQ0W5Y4Bbi9OgCFxqJXuRiMxQwocq6yV3YY4drTq7Uf
+	UOohqm+PF8EDBVFjQsLoZGwGZxUwC4bix+4HbEFmIcLfIAGW+ja3+4l5odQ/RNNplWJwZeZx2U8
+	FQxqAnuocWJmwPt696VVuyLtQzOa0FA==
+X-Google-Smtp-Source: AGHT+IFrGZS8VdfbsjL7y3HXA+QaopPkTmxI0XGy8rPLFJbEh/CBDAxBRtvMMLAceU+RXRafaXg83rsGiK6CrH/c2zI=
+X-Received: by 2002:a17:907:3e8c:b0:b48:4966:91a5 with SMTP id
+ a640c23a62f3a-b50aba9e585mr1400916466b.30.1760124635939; Fri, 10 Oct 2025
+ 12:30:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250926-ethos-v3-0-6bd24373e4f5@kernel.org> <20250926-ethos-v3-1-6bd24373e4f5@kernel.org>
+ <aNrVwn1ibQmB/rKJ@lizhi-Precision-Tower-5810>
+In-Reply-To: <aNrVwn1ibQmB/rKJ@lizhi-Precision-Tower-5810>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 10 Oct 2025 14:30:24 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJkOVOVNvnePGE5G0HmbxxXPK1a=1qjOEk-G4ZZ3wf6Ew@mail.gmail.com>
+X-Gm-Features: AS18NWBBQSTOplEO26OgX73Pts2y8G-I5Seb0FzonJgu4d7oZEgcPiz1tLe4anM
+Message-ID: <CAL_JsqJkOVOVNvnePGE5G0HmbxxXPK1a=1qjOEk-G4ZZ3wf6Ew@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: npu: Add Arm Ethos-U65/U85
+To: Frank Li <Frank.li@nxp.com>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
+	Daniel Stone <daniel@fooishbar.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-10-10 at 11:43 +0800, Li Lingfeng wrote:
-> When file access conflicts occur between clients, the server recalls
-> delegations. If the client holding delegation fails to return it after
-> a recall, nfs4_laundromat adds the delegation to cl_revoked list.
-> This causes subsequent SEQUENCE operations to set the
-> SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
-> validate all delegations and return the revoked one.
->=20
-> However, if the client fails to return the delegation like this:
-> nfs4_laundromat                       nfsd4_delegreturn
->  unhash_delegation_locked
->  list_add // add dp to reaplist
->           // by dl_recall_lru
->  list_del_init // delete dp from
->                // reaplist
->                                        destroy_delegation
->                                         unhash_delegation_locked
->                                          // do nothing but return false
->  revoke_delegation
->  list_add // add dp to cl_revoked
->           // by dl_recall_lru
->=20
-> The delegation will remain in the server's cl_revoked list while the
-> client marks it revoked and won't find it upon detecting
-> SEQ4_STATUS_RECALLABLE_STATE_REVOKED.
-> This leads to a loop:
-> the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and th=
+On Mon, Sep 29, 2025 at 1:54=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Fri, Sep 26, 2025 at 03:00:48PM -0500, Rob Herring (Arm) wrote:
+> > Add a binding schema for Arm Ethos-U65/U85 NPU. The Arm Ethos-U NPUs ar=
 e
-> client repeatedly tests all delegations, severely impacting performance
-> when numerous delegations exist.
->=20
-> Since abnormal delegations are removed from flc_lease via nfs4_laundromat
-> --> revoke_delegation --> destroy_unhashed_deleg -->
-> nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
-> requests indefinitely, retaining such a delegation on the server is
-> unnecessary.
->=20
-> Reported-by: Zhang Jian <zhangjian496@huawei.com>
-> Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOK=
-ED")
-> Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@=
-huawei.com/
-> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> ---
->   Changes in v2:
->   1) Set SC_STATUS_CLOSED unconditionally in destroy_delegation();
->   2) Determine whether to remove the delegation based on SC_STATUS_CLOSED=
-,
->      rather than by timeout;
->   3) Modify the commit message.
->=20
->   Changes in v3:
->   1) Move variables used for traversal inside the if statement;
->   2) Add a comment to explain why we have to do this;
->   3) Move the second check of cl_revoked inside the if statement of
->      the first check.
->=20
->   Changes in v4:
->   Stuff dp onto a local list under the protect of cl_lock and put all
->   the items later.
->  fs/nfsd/nfs4state.c | 41 +++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 39 insertions(+), 2 deletions(-)
->=20
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 81fa7cc6c77b..30fed3845fa1 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -1373,6 +1373,11 @@ static void destroy_delegation(struct nfs4_delegat=
-ion *dp)
-> =20
->  	spin_lock(&state_lock);
->  	unhashed =3D unhash_delegation_locked(dp, SC_STATUS_CLOSED);
-> +	/*
-> +	 * Unconditionally set SC_STATUS_CLOSED, regardless of whether the
-> +	 * delegation is hashed, to mark the current delegation as invalid.
-> +	 */
-> +	dp->dl_stid.sc_status |=3D SC_STATUS_CLOSED;
+> > designed for edge AI inference applications.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >  .../devicetree/bindings/npu/arm,ethos.yaml         | 79 ++++++++++++++=
+++++++++
+> >  1 file changed, 79 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/npu/arm,ethos.yaml b/Doc=
+umentation/devicetree/bindings/npu/arm,ethos.yaml
+> > new file mode 100644
+> > index 000000000000..716c4997f976
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/npu/arm,ethos.yaml
+> > @@ -0,0 +1,79 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/npu/arm,ethos.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Arm Ethos U65/U85
+> > +
+> > +maintainers:
+> > +  - Rob Herring <robh@kernel.org>
+> > +
+> > +description: >
+> > +  The Arm Ethos-U NPUs are designed for IoT inference applications. Th=
+e NPUs
+> > +  can accelerate 8-bit and 16-bit integer quantized networks:
+> > +
+> > +    Transformer networks (U85 only)
+> > +    Convolutional Neural Networks (CNN)
+> > +    Recurrent Neural Networks (RNN)
+> > +
+> > +  Further documentation is available here:
+> > +
+> > +    U65 TRM: https://developer.arm.com/documentation/102023/
+> > +    U85 TRM: https://developer.arm.com/documentation/102685/
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - fsl,imx93-npu
+> > +          - const: arm,ethos-u65
+> > +      - items:
+> > +          - {}
+>
+> what's means {} here ?, just not allow arm,ethos-u85 alone?
 
-I think we should just unconditionally apply status flags on every call
-to unhash_delegation_locked() instead of special-casing it here.
+Yes, u85 support is currently on a FVP model. The naming for it isn't
+really clear yet nor is it clear if it ever will be. So really just a
+placeholder until there is a chip using it. It keeps folks from using
+just the fallback.
 
->  	spin_unlock(&state_lock);
->  	if (unhashed)
->  		destroy_unhashed_deleg(dp);
-> @@ -4507,8 +4512,40 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd=
-4_compound_state *cstate,
->  	default:
->  		seq->status_flags =3D 0;
->  	}
-> -	if (!list_empty(&clp->cl_revoked))
-> -		seq->status_flags |=3D SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
-> +	if (!list_empty(&clp->cl_revoked)) {
-> +		struct list_head *pos, *next, reaplist;
-> +		struct nfs4_delegation *dp;
-> +
-> +		/*
-> +		 * Concurrent nfs4_laundromat() and nfsd4_delegreturn()
-> +		 * may add a delegation to cl_revoked even after the
-> +		 * client has returned it, causing persistent
-> +		 * SEQ4_STATUS_RECALLABLE_STATE_REVOKED, disrupting normal
-> +		 * operations.
-> +		 * Remove delegations with SC_STATUS_CLOSED from cl_revoked
-> +		 * to resolve.
-> +		 */
-> +		INIT_LIST_HEAD(&reaplist);
-> +		spin_lock(&clp->cl_lock);
-> +		list_for_each_safe(pos, next, &clp->cl_revoked) {
-> +			dp =3D list_entry(pos, struct nfs4_delegation, dl_recall_lru);
-> +			if (dp->dl_stid.sc_status & SC_STATUS_CLOSED) {
-> +				list_del_init(&dp->dl_recall_lru);
-> +				list_add(&dp->dl_recall_lru, &reaplist);
-> +			}
-> +		}
-> +		spin_unlock(&clp->cl_lock);
-> +
-> +		while (!list_empty(&reaplist)) {
-> +			dp =3D list_first_entry(&reaplist, struct nfs4_delegation,
-> +						dl_recall_lru);
-> +			list_del_init(&dp->dl_recall_lru);
-> +			nfs4_put_stid(&dp->dl_stid);
-> +		}
-> +
-> +		if (!list_empty(&clp->cl_revoked))
-> +			seq->status_flags |=3D SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
-> +	}
->  	if (atomic_read(&clp->cl_admin_revoked))
->  		seq->status_flags |=3D SEQ4_STATUS_ADMIN_STATE_REVOKED;
->  	trace_nfsd_seq4_status(rqstp, seq);
+>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-I'm not thrilled with this fix. It seems heavyweight, and it's also
-less than ideal to not just release the delegation in the laundromat
-when this happens. Given the race you described in the changelog, would
-something like this fix the problem too?
-
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index c9053ef4d79f..7977f94fdc1d 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -1347,13 +1347,14 @@ unhash_delegation_locked(struct nfs4_delegation *dp=
-, unsigned short statusmask)
-=20
-        lockdep_assert_held(&state_lock);
-=20
--       if (!delegation_hashed(dp))
--               return false;
--
-        if (statusmask =3D=3D SC_STATUS_REVOKED &&
-            dp->dl_stid.sc_client->cl_minorversion =3D=3D 0)
-                statusmask =3D SC_STATUS_CLOSED;
-        dp->dl_stid.sc_status |=3D statusmask;
-+
-+       if (!delegation_hashed(dp))
-+               return false;
-+
-        if (statusmask & SC_STATUS_ADMIN_REVOKED)
-                atomic_inc(&dp->dl_stid.sc_client->cl_admin_revoked);
-=20
-@@ -6899,7 +6900,13 @@ nfs4_laundromat(struct nfsd_net *nn)
-                dp =3D list_first_entry(&reaplist, struct nfs4_delegation,
-                                        dl_recall_lru);
-                list_del_init(&dp->dl_recall_lru);
--               revoke_delegation(dp);
-+               if (dp->dl_stid.sc_status & SC_STATUS_REVOKED)
-+                       revoke_delegation(dp);
-+               else if (dp->dl_stid.sc_status & SC_STATUS_CLOSED)
-+                       destroy_unhashed_deleg(dp);
-+               else
-+                       pr_warn_once("nfsd: unexpected status when revoking=
- deleg: 0x%hx\n",
-+                                    dp->dl_stid.sc_status);
-        }
-=20
-        spin_lock(&nn->client_lock);
+Thanks,
+Rob
 
