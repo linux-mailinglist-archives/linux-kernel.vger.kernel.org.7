@@ -1,132 +1,206 @@
-Return-Path: <linux-kernel+bounces-848054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBA9BCC5C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:33:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5ABBCC5A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 347304FB2C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:33:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CF423550E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 09:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD5826A0DB;
-	Fri, 10 Oct 2025 09:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC5826A1B5;
+	Fri, 10 Oct 2025 09:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hwj+0uhn"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aFlo9lDT"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012023.outbound.protection.outlook.com [52.101.66.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79028258CFA
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 09:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760088778; cv=none; b=C4vauC0UEKoeJHXQf+kk4HlO6r/p0x5zUp6OInBHR/0N3JY9vlIVn8a/zlEUNlSPz0MA/mjO15zeX+Kt2GhaxS16rERJFwKait8LdNKsrY0G++xoy+AHW7dK+6bR4WeULKhuoey2HlWgIuWNUU1H1OF63wyQXNsWPEYMp+MRLOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760088778; c=relaxed/simple;
-	bh=6mprBf9rHm8t7EC0WKhRFNgUz+XHrcRxygL5v/apfQY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=GZOM/m59Bp0qdcFByP/RfH8YVspD2e4mwdc6xH4Bo6zNYArOuOA1UzYuMymB2RFyyFzmfCGmoSQUFiDrcKwQMSqqo8vp5qD7nh+KGGGjSNdelGGEaHki/j8Bou7pbzVUoHCFdDN/67VTJGc1bJskWvBSi4ALh8lty+4404LjhNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hwj+0uhn; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-78f3bfe3f69so1788263b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:32:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760088776; x=1760693576; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OhN24A5UCW1ooWw6ilGbTrMsyp8dpaTZlf+HDDnFDSk=;
-        b=hwj+0uhnqFZen5RcA6FAvmGrtlpUZN53g3sD6rDpLuEt79/zQvLqZF8dscFxzSx42H
-         Iq/IJ/wr6YuhlAXUAIE2ozl1a2ycoULBpGbxMnOmAJnw0Ye1cTiqq9Q2SgkTMkBCUf7x
-         0Da7XhiTe8SrP8+4v0lNfei3wN8lolP+t5/13YuVsJGMw4B9K/OQPKElnKjB8zdgpzsU
-         aoBYRyfGFXt4j7cQnMVphINOtEZtkfIjbb5KY8AqYoPdNRRnlyD1h8ldeVzvWNiHpRrA
-         lBDQfRGQuCQEPBUvxGtiEdLPSTMbTRbyryZ7C+GY81PfF/GBsgOv8HxhapcF7nrDrhRP
-         H9FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760088776; x=1760693576;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OhN24A5UCW1ooWw6ilGbTrMsyp8dpaTZlf+HDDnFDSk=;
-        b=VqK3tW2bCTigBbAgAdZ6HkAhhSTv+zAu5kwzj7HW1YDNBJORvboGyY2TYJE8GXlj2J
-         VGCgrpy6kVNiC6yTVKPu+ChYVyrLRocqP2ghEVn03VQJCmO2HpCb3VbSXL/lQ6cohjK1
-         F11Cu456azJ4xg0X7usA1r7X2J9gOg46+iYaBhTq6aKpUsoWrCfy5CwsgKl6L3xcIUic
-         fw0ypYQ4n5i01y1KYnDaFRgMUA9fXzta1u5RA1hAUYPB1+DfqExhSKxnM1aGzv0DoZg5
-         mFyGll/Qa5juLWOvkVbbYAkLdSGHydJ9/CecuygfGAyE/Oz2qRfy0MUtqvHYqA6VyTaS
-         CRSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFu2Fe9ci77dfV0iaNCCpEduot3ZsAbtDbBuutS5Q9TL1LZN+7dpjqZtGz2jsQ+Nj3X9vyJ5K4DG6f+AY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDO+34fwGapSknIzHaM032+sSmLDYdDaCxHinGmtT+5ndI99Cx
-	NCGphXiSbpIMjoJIhJ5lppUGOXcAEAZYmvFhw5/FHAwzx8PCUB77IovxACC0Q4DZH3c=
-X-Gm-Gg: ASbGncsEyKXYM9k5FZtZ2EVIkY1oLYfTutx3sdg0u+EZuJ/Aix8QwNsgxY3sEoFi8sg
-	0yZWvybx/hUDk3Ni99QH29eImWaqf9I64amIubxquwd7mySmdiXUUzPkKIP8nIx1nLgoUxulit1
-	wUVcIuME6IfKgznvZaH/FS/L2O4j62RG0XUQrwXlIHHM/S91v0gQxJUJqzz8rDn4mhs4a04KwDM
-	fALLDb8/b9nNi3V0fGqo71Nkp+SUnjp4AM5D3rkzeEkjR0eNRZzZL+e5kegxd5AJwfTbrt9qAsQ
-	aYmE5+ofQHSpGHAoqT6KutcM+G94EATajM0FMfk810NLxBV8+Z21NequyNbVOlZzlyQzYC0X2vb
-	aCle6HV2TCpZ8Dej+IpBqDLo1UAZLb5hGR6oGCpePQ6yFL2QQI+5iAI1S5kKZgrv8iIv+7bAPne
-	lXGqx7GjnwqtJIZ3yB54XuIufJSFlC
-X-Google-Smtp-Source: AGHT+IGToyfnFp6Nx9gf8NmRJnd4O/Y3pam9cbiDX+UZWPa17SsaNbTO7MXGaHWms2MZ1He/ASjT8A==
-X-Received: by 2002:a05:6a20:3d8c:b0:2b4:41d9:b068 with SMTP id adf61e73a8af0-32da8462f7emr12905134637.37.1760088775650;
-        Fri, 10 Oct 2025 02:32:55 -0700 (PDT)
-Received: from 5CG3510V44-KVS.bytedance.net ([139.177.225.247])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2d51sm2308775b3a.65.2025.10.10.02.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 02:32:55 -0700 (PDT)
-From: Jinhui Guo <guojinhui.liam@bytedance.com>
-To: bhelgaas@google.com
-Cc: guojinhui.liam@bytedance.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] PCI: Print the error code when PCI sysfs or procfs creation fails
-Date: Fri, 10 Oct 2025 17:30:23 +0800
-Message-Id: <20251010093023.2569-3-guojinhui.liam@bytedance.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251010093023.2569-1-guojinhui.liam@bytedance.com>
-References: <20251010093023.2569-1-guojinhui.liam@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A263C231A55;
+	Fri, 10 Oct 2025 09:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760088702; cv=fail; b=JZJtBkMTNaLVvVGlEll/EBMO3u5Q8msyFooEuGcpCHXUNss3FGHoeRDzZZktcDCAb08v77BaypqSCoiXKv8xk7/AaejxGGQhMyKQuVWhtb/CBN6KN0vhZy97nXEH3kFOawZulCuQCRzqWbtVJvmT3y6OjrPIOSjiPJx6nxCNFjI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760088702; c=relaxed/simple;
+	bh=x3jIrsJR2QTy9lamiLskF7cyXY72Zuqwo69W76fLMg0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oFa7TWFpS1CqCLexxXgzsm9Myx0aRWN9KEXHnY6rn+espi6pKdgGAV5JluqbezpGbuJQawRpMiVwqQNprBfHEKWHbSUMIVPWViRnq4kUtgtw6pMivhAWuDLaQWGJ0MpwrpzAQUi+OZa8TS7o77P2JPdwBKgN8WxTt1hy1wNgTFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aFlo9lDT; arc=fail smtp.client-ip=52.101.66.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fF/IvQIbb6dYgVdp46/mljeheUpuz7qxZt3E/87gNPh1ofmlf4Evi9VieIQzgtPj3Tp0WyhAXFPriPRCphJ6TKjoBRl3K9h2hndcVbpBsBW/bEnnDPIRPVScD1utf/E2ERNq8LHfAcVtELxv5D4nsEd0Jynxacl0/Kc1oCZ9XFNETayz0dM/Lecmv8CujDQhoic4N8eAzlCBlPLZwiDQ3PZNcOYA2ZDCYBRu1GWlhn66URu8aP17hSfchGZNE4sIAvclbR799NtxCroD+RiyPLqVgvpOEY2tiVsc7w48hUxt0eyxGJkanz1z4llfvrrHKcYNkS0xWjpSmnYMt8QDUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pkV2UObwL4ElrZvvpKDsLNxfT/P6dKNtvCqV6cYWBmU=;
+ b=Zs0N22W9wwxYZyQHwhx96TWOsK5z+iEKUkIzL0zEA9JPpJmTnckHZsWFXfCIdQCPA58ah9TLsdePjFiXMZFFHAgsmg5a8X8FKEnILrHdh0dQfhLFCyQKDVGdNj+Y5/zbr02f/dCjaY/Eg+NKP0nHNkXTGkV9aUx8Iawl1Tgk113hwkBK3e8pNupufETvv6tIR/ZRWAVb4tGtt0oP0f0LCj+INowdrUdDswljbzjshA3Dp3NfEnc0Tr4zDM0fHUWddrjNzbktsePcXjaRjR56PQG/Yfs4EcQpX7CMI8CfNkCHVN5kH33sK/0H4ZqjmW3ji4GHHyALe1du4SE/8EiMow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pkV2UObwL4ElrZvvpKDsLNxfT/P6dKNtvCqV6cYWBmU=;
+ b=aFlo9lDTi6EqUkTYoV78RJqe+NztC5i50EHOMntFvyTHWItzV9jXFLLk1xgppYHSifCDIZSwA6vijAKU2bDCGXxjpAxZyHIr6NqA2knBJKkcGFpOZkq9ortxGzzDoe6dkuZ8LVEbq3Rid/tJA3MtIR+R7kfvmSHtG5I3Notqpf82BhUnzPfvZnM6CoLdAuxo0aVgLNhysdm2OgHV1DIP2PWm5V22Jvf51HeCZNwWblo2OgnsoTXCN7/CiT2q+EXbQiu0izTqRvEsYJYRbFLuePz9OXpj6uN0usw7lfC8BgyOBx/663zrrP5R0/mdYNhaAwdNa906OxT/xh0ZInaiWg==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AS8PR04MB8899.eurprd04.prod.outlook.com (2603:10a6:20b:42e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Fri, 10 Oct
+ 2025 09:31:37 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 09:31:37 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Jianpeng Chang <jianpeng.chang.cn@windriver.com>, Vladimir Oltean
+	<vladimir.oltean@nxp.com>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, Alexandru
+ Marginean <alexandru.marginean@nxp.com>
+Subject: RE: [v3 PATCH net] net: enetc: fix the deadlock of enetc_mdio_lock
+Thread-Topic: [v3 PATCH net] net: enetc: fix the deadlock of enetc_mdio_lock
+Thread-Index: AQHcOLyl4vHcP8LukUGQcvWe857yFbS7GIsQ
+Date: Fri, 10 Oct 2025 09:31:37 +0000
+Message-ID:
+ <PAXPR04MB85109BDA9DCBE103B0EE1F8F88EFA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20251009013215.3137916-1-jianpeng.chang.cn@windriver.com>
+In-Reply-To: <20251009013215.3137916-1-jianpeng.chang.cn@windriver.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS8PR04MB8899:EE_
+x-ms-office365-filtering-correlation-id: 3277cedc-c671-48c5-b016-08de07dfcf95
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|19092799006|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?PF1tyy9TTArgRtQkOrba2dsHgqSbhwJjxPEtykh6uneCXMcAY8oAlrbm/spM?=
+ =?us-ascii?Q?rmbXRjFdbN6q0LxGTBdTocrNN7X+kEojl+czY9wJoMuBmDt8jn4yIaBkwNHO?=
+ =?us-ascii?Q?/IYNjodUi0YEKPOYqrcnl2ugUdVALy0HgMhfbwNhM+l4bofHkvHkXQIXtJxs?=
+ =?us-ascii?Q?G6cVwZTQwX/lUX6g/d8l6HaAtjGbuDj8FZ6xMDiE0ccuwmUQlYoZDBKO9GX+?=
+ =?us-ascii?Q?WkEvW+2LcYoGt7HgKq7FuFhZiHpPWkskT276xsVVMbYP/DMzplX4T2JjnTx2?=
+ =?us-ascii?Q?Gpv2tJnufCSIwMeVWiL8983RwW9nqmT3twBEq98hyO2q3hnm/ZLCU+TcJmWF?=
+ =?us-ascii?Q?Iz8YMKWY1uP+jhQtlJV+0xF8p5dy4DCZhm4mhqzFkiZ3SKx1axlwe/TShJN4?=
+ =?us-ascii?Q?wdrPXJsnQhAuYhOaLqufgm+xAu1jDWBJSOOlVwKXVPxdGkQSsURZWl0CkAdq?=
+ =?us-ascii?Q?BiWvR51KZ08etdG0/opF+n8iE4P1J1cpbxiV0KdHATIktAB+ju3ToVi5C0EL?=
+ =?us-ascii?Q?P7wbqptVrZy+MYVr0O/ykg7fok8vhIaTqjSAg0Zw9n8DtsBPI26sroVVnTRd?=
+ =?us-ascii?Q?mCIK7/v5rW6flMi862okSVtUwpjIJ+2NCpkmK/DitZuu5tDBJ86f6tJN1LYl?=
+ =?us-ascii?Q?wBezMfGH10EWtUrC/iYPfatQOrvlwQJXVHHIhVelNuC74zCi+qMTTeTe22mN?=
+ =?us-ascii?Q?omDFWiBe6u1Dcdp2J6liSk40beQ4YL3bGD8TQVpwCZnbDf9UVTwDQbjQVL7E?=
+ =?us-ascii?Q?QH7wcFDR4QOKNSX5hoYl4oBYCgwqPx6WP8CiNe5NfuFfaJYsFF6Vx43DEdai?=
+ =?us-ascii?Q?1MJMutgHbScV1sc3w4VTbXv/goRkn6ti2oO0tSSP7uKvFQ/WM0I6eUl4J3Ma?=
+ =?us-ascii?Q?U0POYloW9dpnxIuG43uUnn3GmTMeXSl9czVWHSYxG/EatkOmCcAnQDb8NqHj?=
+ =?us-ascii?Q?kZjUKwWcTbXI8apPERxRX2k+8y7/Ds9h/yOewTbWSRfaAWJiXRT0qB1j8OZQ?=
+ =?us-ascii?Q?dM5cWNbwbvcAFvCEDroC+amZzwEaCjI4mSqoUSvVWw0RuPuEzT+0BlFHTULa?=
+ =?us-ascii?Q?5+1p53ZFJF7/Drwojz/5YohhU/iRBNX+yJlHlWW6DgzRIJRx7k7jmw9/m0VL?=
+ =?us-ascii?Q?HWHNUpyed58cex04ZBSrxJYq8tADfT7qoD/ZY1HI7hmY5bGYFkC5DblCyiBi?=
+ =?us-ascii?Q?DAEX/PNLmzpXkyh/aGedFDB6G7WkooqVhn5YyLjlVjNJyqprIpiuNkofpLWo?=
+ =?us-ascii?Q?oLMmgSEivZNSnEuZ9U09XJ+KWkOLMdQuWH89iNFCCEIF/ol5mfl9m70WX9ra?=
+ =?us-ascii?Q?zAYYh8D46c8yrYE0Hob6enivOvu2kthpA4CRx6EF1EZ6o8J33zfzB3j+Z8ge?=
+ =?us-ascii?Q?mgbM2ebWPtwLXwZ2ZHNhDOOLmnsbYeEqxRjRQuyT3eKgL9PlryhHP270zh8o?=
+ =?us-ascii?Q?5Elfj1Myu0aPGqHaEU/4O4RKd5uiwBafMXLOfOxhdwPVw4c6jSmXUdzhHhpo?=
+ =?us-ascii?Q?JHMKa2tEoIBhe8jYpjaWPWSEgt0/VqRil8r1?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(19092799006)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?z3kaUzTIwz92NLiquNMPdEmjzp+JrEwUj2HJGLDjSwSL6x19oIp+oaJEUTKm?=
+ =?us-ascii?Q?+GGPM5T7Y3hrDZjrv2XidEC3P/Whaf60+sdq6GGrCT8qlZetljeE7crDxbsa?=
+ =?us-ascii?Q?Dl7qviQ0iIxLC52BdKW1/aKiu5W116EZD0fpepAKBrMaGeeuwxMF4GGUHrN6?=
+ =?us-ascii?Q?h0zGIAUQ5ZP1O3Iw+XyTIyTaDXSHL8L34zcZDL7SK9hNJm6PtpSsOrF049zp?=
+ =?us-ascii?Q?O/d9AU+HCejxEdyvZopeP9ShwSgvat7eRAPeR7jDagXoHT/O+Jobz7Yb31v3?=
+ =?us-ascii?Q?Fqom8O8x+xsirIZXRJcm52148xynS67u23TJRqZSJi4Wx3wo5yss8NdRthg8?=
+ =?us-ascii?Q?JLo5rtVgS0diVsgqvWAhs0mlR6jy8JgSCNbd/exOcPxQXq8GyQrN9yQc7TWh?=
+ =?us-ascii?Q?K3ftQ8hkuXD9Uhw/sJIZk6MARW/nGqFiCTfdMLC3uLPlEkmNfynMbSJlVGJG?=
+ =?us-ascii?Q?PXoPvinP813Jl77dnx5vH/IRmWlQR1DlWL7O8tU7JP7tDnETj3cp6ZrXghxB?=
+ =?us-ascii?Q?BObdAg/KKzXVSFAJbGSizbUonPteEKq8mlCg8rvrIkEETNUxr+62yGEUbVRk?=
+ =?us-ascii?Q?/LiUl086u8zG5vBsjIM2gcwx0JdL1sSLmK4vD6hdKc/dB8ABOEluVU0tk5KO?=
+ =?us-ascii?Q?s/fZlEQZoIOloX/yvWHEeyQcMn3Ri6sfGbr8bhflsJutu4Ei7fUEixqnzT8F?=
+ =?us-ascii?Q?XK6NY/khgge4mgetJxxPnsnamjXvlRdZwb9c+GMFFrYkZn3s4Dn44O5CIYBq?=
+ =?us-ascii?Q?u+bJiVk3gGFIo2JiO9Ayk97bwwDkpksLIxyYeX7oY5bnybGpalTcZb20u8oU?=
+ =?us-ascii?Q?X3/mFF8aLpsY2Z3YHkvWAOt64feHU9yG17YmhYgQyUOmNVa7OT59XHk6zL3m?=
+ =?us-ascii?Q?p0TDs0C+Y+AETHq9H9h8/mE59nztXBGFZ6+mc2vwFHovbE1DFC+AaoJxw3nF?=
+ =?us-ascii?Q?W0ibF5TU5Opskt7vzg0v50tV1zSAsrVK+QiHdLmjbcQr8407bXwCLWeQnYlq?=
+ =?us-ascii?Q?VKNC3A9vlYzqMtPrJ8xfmTTQKf6A/Q+Sm+5snWCvrDvMVkChqwbVJzMA/d1A?=
+ =?us-ascii?Q?gXcVsnKddoG7JHXxo1GOr78kIr3yPaM3LBep0uhqRsAQL530AxIG3M04P2G4?=
+ =?us-ascii?Q?+eoyibV6tYxvB7ON5vT/XDd6Pn74mZyk8NUBDzbNeQoj2tXf0rWQSgVIdmay?=
+ =?us-ascii?Q?BH/Or5YZEX+Yc54A2uOqukJIbb5mxyueK/yiJH/SisM8TJCZhX9tHuYw3SvR?=
+ =?us-ascii?Q?DOEQRneZvYjIqwZY5NPsUOVJ9Rojjs3OazoNOO3dO5mI2cNNTzNoQIfubFkD?=
+ =?us-ascii?Q?vw/dAaKU4oqz4+zHyV+qrP1wldBF/pzpwe4ThWB3F/8EkkBHDw5h2KNx5Ph/?=
+ =?us-ascii?Q?cc6WcOKAjjD7Y3vMmKkh3attQOjg4jNmCf6eP0Af6q/a5mtZDU4ct3e+jmgt?=
+ =?us-ascii?Q?1YzZRjYUHzIpM6V3vDznuxiD+9PH9L49Q+dKIKa4b2kgwM71fMVY4f4TE0cQ?=
+ =?us-ascii?Q?Pta/0Wy8OHmme9cuur1i7mxxdVjhQDUMkz8ECnznvTY6rgHujv/MUaFRh2QJ?=
+ =?us-ascii?Q?ZLGzTz/kq8qWa/Kuroo=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3277cedc-c671-48c5-b016-08de07dfcf95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2025 09:31:37.4603
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: j/gH6v/4llLujiiyadOdT3zdkuhgJbEcih1O8+kA+1mW9GtXr+oOWIYiiuv1ugl2y0A1voLI6H+Gl9CnI57mYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8899
 
-pci_bus_add_device() ignores the return values of
-pci_create_sysfs_dev_files() and pci_proc_attach_device(), so any
-sysfs/procfs creation errors are silently lost. To make PCI
-bring-up failures easier to diagnose, log the errno returned by
-pci_create_sysfs_dev_files() and pci_proc_attach_device() in
-pci_bus_add_device().
+> After applying the workaround for err050089, the LS1028A platform
+> experiences RCU stalls on RT kernel. This issue is caused by the
+> recursive acquisition of the read lock enetc_mdio_lock. Here list some
+> of the call stacks identified under the enetc_poll path that may lead to
+> a deadlock:
+>=20
+> enetc_poll
+>   -> enetc_lock_mdio
+>   -> enetc_clean_rx_ring OR napi_complete_done
+>      -> napi_gro_receive
+>         -> enetc_start_xmit
+>            -> enetc_lock_mdio
+>            -> enetc_map_tx_buffs
+>            -> enetc_unlock_mdio
+>   -> enetc_unlock_mdio
+>=20
+> After enetc_poll acquires the read lock, a higher-priority writer attempt=
+s
+> to acquire the lock, causing preemption. The writer detects that a
+> read lock is already held and is scheduled out. However, readers under
+> enetc_poll cannot acquire the read lock again because a writer is already
+> waiting, leading to a thread hang.
+>=20
+> Currently, the deadlock is avoided by adjusting enetc_lock_mdio to preven=
+t
+> recursive lock acquisition.
+>=20
+> Fixes: 6d36ecdbc441 ("net: enetc: take the MDIO lock only once per NAPI p=
+oll
+> cycle")
+> Signed-off-by: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
 
-Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
----
- drivers/pci/bus.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Acked-by: Wei Fang <wei.fang@nxp.com>
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index f26aec6ff588..395a1c7bb4c7 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -344,6 +344,7 @@ void pci_bus_add_device(struct pci_dev *dev)
- {
- 	struct device_node *dn = dev->dev.of_node;
- 	struct platform_device *pdev;
-+	int ret;
- 
- 	/*
- 	 * Can not put in pci_device_add yet because resources
-@@ -353,8 +354,12 @@ void pci_bus_add_device(struct pci_dev *dev)
- 	pci_fixup_device(pci_fixup_final, dev);
- 	if (pci_is_bridge(dev))
- 		of_pci_make_dev_node(dev);
--	pci_create_sysfs_dev_files(dev);
--	pci_proc_attach_device(dev);
-+	ret = pci_create_sysfs_dev_files(dev);
-+	if (ret)
-+		pci_err(dev, "created sysfs files error %d\n", ret);
-+	ret = pci_proc_attach_device(dev);
-+	if (ret)
-+		pci_err(dev, "created procfs files error %d\n", ret);
- 	pci_bridge_d3_update(dev);
- 
- 	/*
--- 
-2.20.1
+Hi Vladimir,
+
+Do you have any comments? This patch will cause the regression of performan=
+ce
+degradation, but the RCU stalls are more severe.
 
 
