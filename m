@@ -1,107 +1,95 @@
-Return-Path: <linux-kernel+bounces-848677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9758ABCE521
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:59:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877E5BCE52D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 914324FAA4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:59:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 34D36356B95
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 18:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBBB301461;
-	Fri, 10 Oct 2025 18:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCF4301483;
+	Fri, 10 Oct 2025 18:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FiZAYKdK"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAbBoqOL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF151DFD8F;
-	Fri, 10 Oct 2025 18:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C442EFD91;
+	Fri, 10 Oct 2025 18:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760122737; cv=none; b=nUPBGgwtziGZ0LSUqWq5BJTLh1x0amJlcWbztfjE8JauOe2l6bpfezCUqa28skKIMeQdvnqa+GOZgquzaGmw7Wht8R8rRhs/6nr8IBnnfrbl7C/u++DvedaRO4Ru8WWNSkzVEHibzM4tEpDh+hxPIxreENLQIC1h+Xw5lFQpPQw=
+	t=1760122782; cv=none; b=rlkYO2bvG7WeYaIqKQ6tOouONoJ+SG71hEzKMvcawFrGheDzVHe7sK/Dc3QWOGwE3J1sdWCraWDpjXzAjtgbLgj96yIUdDRuj97KcBGJgU7XLPV5pd/UDWnKGipoCRliOa9Svt3yynF1eU6qtFzo6H7rcbnFj1xCX0oVp6xDGl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760122737; c=relaxed/simple;
-	bh=Q/9X8eDjLNsGnCFUP0D1zZBftDpTDm4iPEUON+dm/yk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NtCuRLM/k5rmCHF3xfWMA7SeCdatRwPkB2H63b9PKWuLwVwR7KZydj5eF0t7iy3SL0DxFe1rHiLWXuWUDAMu7F0rr2gpRn6tD5l9HG1nyVU3IOZy2kjkUSWkI8jxaKIIs8TtX+kGYTFJ9xiHYnmjBRi/2bdROfEb/+jE/m2y5Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FiZAYKdK; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id 7IKJvBbLKn3LW7IKJvlKz9; Fri, 10 Oct 2025 20:58:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1760122733;
-	bh=NAjcAUUGbCXwbNJ/vJc6N1P0xBbcp7/30iqfViOPjj0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FiZAYKdKCbSCjlulrQedrfPPd/caNT13ihSSJ7oWNiY3nCBauRbDpIDElP+fndOgq
-	 L5hM+HN4phtas3A4pyBxFwDnlQEo6umpvRdMF7ND7EypLYwFGZnXcAOykmBwhG26Wc
-	 ZgxJYXXuaqNHFB1rOh50Qkw4TohaAm5/HnLjItq5Z7ovi0ax3Vj453DcadxRTKSi2M
-	 NyYOu/94FVdjEYUCFvQUkWhWdGh6n+WZjDsvM60niy0koS69SDThCfIatPmlUWeiSZ
-	 6i/vLEBuIVMqHIhRUf+XzqDye8IoPJ9Vt2hYB/f7E+umG7eLRIhIUWcQ1IRTPr9/b2
-	 V7v3enLO+HWHg==
-X-ME-Helo: fedora
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 10 Oct 2025 20:58:53 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	s=arc-20240116; t=1760122782; c=relaxed/simple;
+	bh=sYk5aMSZbgzMbwPbuCiskyPX36SDyxnlnzL93Z3Hx8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsqoKzVYBxdXj88+4VypqvyfutTFUuVEc4VEMF9pqDdqPsfxFMsnnFrluF1O15ARyWniRUJdCvbspkVu2c7yDYvnoNpaWlNA79FuRRvfW8AutPZYU4/WZPsCfCrzLspqVOC5DrZheNC/OHiy7/0MI/5UjJ7MJXFIqJp4oGhf/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAbBoqOL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4770C4CEF1;
+	Fri, 10 Oct 2025 18:59:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760122782;
+	bh=sYk5aMSZbgzMbwPbuCiskyPX36SDyxnlnzL93Z3Hx8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aAbBoqOLzWF5nIYGCF3jaULfN5Z8H0pbTLCv/IjTM6Gd299B8zQJpW7CXm5El1rXj
+	 iuJfOS+1Cg6jIH6iHKnZmTeCbs2GSzx2yCtpp0gdXr6j1HMku/mDAarkQWmDow2Hsh
+	 VKVV/HgenrEHtChtQrtuaTsSl7d5HJhCKWS2b8ptAdBFrf7mkgLeRvuPfEg5gpQ5EZ
+	 8HkBjSHV16j42dmgpdXvLgKVi/5O71eSJApuuY3jbzm00UhyFEuX7lWTZILJYm0aTV
+	 /nddl0q8EVqvLysUt0crqykn5+yg9kykhhYYhhL54kE3rwJa15drT+Fqk12R1rWV7J
+	 tmfbN4l/HCLaw==
+Date: Fri, 10 Oct 2025 13:59:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Conor Dooley <conor@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Andy Shevchenko <andy@kernel.org>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Karol Wrona <k.wrona@samsung.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH] iio:common:ssp_sensors: Fix an error handling path ssp_probe()
-Date: Fri, 10 Oct 2025 20:58:48 +0200
-Message-ID: <6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.51.0
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Andreas Gnau <andreas.gnau@iopsys.eu>
+Subject: Re: [PATCH v7 16/17] dt-bindings: spi: airoha: add compatible for
+ EN7523
+Message-ID: <20251010185940.GA715991-robh@kernel.org>
+References: <20251010033136.1475673-1-mikhail.kshevetskiy@iopsys.eu>
+ <20251010033136.1475673-17-mikhail.kshevetskiy@iopsys.eu>
+ <20251010-landscape-cavity-88a963e45a6b@spud>
+ <f709fe24-ca89-498a-a06d-677b703aecba@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f709fe24-ca89-498a-a06d-677b703aecba@iopsys.eu>
 
-If an error occurs after a successful mfd_add_devices() call, it should be
-undone by a corresponding mfd_remove_devices() call, as already done in the
-remove function.
+On Fri, Oct 10, 2025 at 05:57:35PM +0300, Mikhail Kshevetskiy wrote:
+> On 10.10.2025 17:24, Conor Dooley wrote:
+> > On Fri, Oct 10, 2025 at 06:31:35AM +0300, Mikhail Kshevetskiy wrote:
+> >> Add dt-bindings documentation of SPI NAND controller
+> >> for Airoha EN7523 SoC platform.
+> >>
+> >> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> > Please explain in the commit message why these two devices are not
+> > compatible.
+> 
+> 
+> They are compatible (at least from the point of this driver), but
+>  * en7523 is an old chip destined for 32-bit OS (ARCH=arm)
+>  * en7581 is a much newer chip destined for 64-bit OS (ARCH=arm64)
+> so using of 'en7581-snand' may leads to peoples confusion.
 
-Fixes: 50dd64d57eee ("iio: common: ssp_sensors: Add sensorhub driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iio/common/ssp_sensors/ssp_dev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+If they are confused, then that is their problem. That is how compatible 
+works.
 
-diff --git a/drivers/iio/common/ssp_sensors/ssp_dev.c b/drivers/iio/common/ssp_sensors/ssp_dev.c
-index 1e167dc673ca..da09c9f3ceb6 100644
---- a/drivers/iio/common/ssp_sensors/ssp_dev.c
-+++ b/drivers/iio/common/ssp_sensors/ssp_dev.c
-@@ -503,7 +503,7 @@ static int ssp_probe(struct spi_device *spi)
- 	ret = spi_setup(spi);
- 	if (ret < 0) {
- 		dev_err(&spi->dev, "Failed to setup spi\n");
--		return ret;
-+		goto err_setup_spi;
- 	}
- 
- 	data->fw_dl_state = SSP_FW_DL_STATE_NONE;
-@@ -568,6 +568,8 @@ static int ssp_probe(struct spi_device *spi)
- err_setup_irq:
- 	mutex_destroy(&data->pending_lock);
- 	mutex_destroy(&data->comm_lock);
-+err_setup_spi:
-+	mfd_remove_devices(&spi->dev);
- 
- 	dev_err(&spi->dev, "Probe failed!\n");
- 
--- 
-2.51.0
-
+Rob
 
