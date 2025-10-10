@@ -1,258 +1,178 @@
-Return-Path: <linux-kernel+bounces-848855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E970BCEB3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:35:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6A7BCEB42
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38DF74F672C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:35:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A7524ECBA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F42277CBD;
-	Fri, 10 Oct 2025 22:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0BC2765ED;
+	Fri, 10 Oct 2025 22:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShFlpnwa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Shg9IsQC"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011054.outbound.protection.outlook.com [40.107.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B112C277C88;
-	Fri, 10 Oct 2025 22:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760135692; cv=none; b=d0y2yUeD6YCHGK726WRBp0issy7y9u0DAnPjkII7qbFP+KGQuPKOtEld2sOAGHFRjkC/6fIuKpxmyIIZZhWXxVrw+SwnBrd0HWX7N73eXAybpd3RmKh60WK1nS8j+VCzp5js5WigMe4FihMvJoOb3NHvetfCfci3xsZ9blm11YI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760135692; c=relaxed/simple;
-	bh=WROgCmZgtstKv4eITK/u78V+uzOkFLK31P8ASk/uNc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckuqOpzMwbE3ldskyQBmDl3o7H3MdJMtL5N0pSeJ3rgDaKZukDuuL6RmGUbbFinEV7RnuAu7crCmxWyJ1W+Qoxiy2LrmfI2zrFqAE+Zqd8LNWIK47+vrGMarw2my4MH7xhQ5LmEsErC/zbwC9nVt4v2ZEU5dyShokGByFjR/Rbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShFlpnwa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F40C4CEF9;
-	Fri, 10 Oct 2025 22:34:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760135692;
-	bh=WROgCmZgtstKv4eITK/u78V+uzOkFLK31P8ASk/uNc8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ShFlpnwa+lPDPbhRLPLBmb6E8nJ/rJpw2X16SDp1057TrTCeFUjHMz8bhh/mPQk+A
-	 RYdRu9li6jR2Im4gjJPrAAQR1dzy/xw61LhSwa4M7AUg+kqRENa2y9sTCZ8cECKxoK
-	 8DIuUbKEYrh/p5qgFYe8H/OSv2tjmnOtAbF+CYXWWeJZb90cNWyeZFNNBLsk9o+NlB
-	 LYD58f89xei9DFIHvVIArLppncAfZ1lfODqbnZMp6hKZ4prFkiuURpN9AqW/CYZ2Ox
-	 +JDSLF7BWY9GUdsApmWRVZuvoC/GSo07c5bdLanU6hWl/cm06LhAt+J49lopjka6At
-	 sICLBvRaaXIcQ==
-Date: Fri, 10 Oct 2025 17:34:50 -0500
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Tim Harvey <tharvey@gateworks.com>,
-	"open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" <linux-media@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: media: convert nxp,tda1997x.txt to yaml
- format
-Message-ID: <20251010223450.GA1293636-robh@kernel.org>
-References: <20251010151637.2061727-1-Frank.Li@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF702586E8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760135876; cv=fail; b=o0DiK+aSLZj7kpqPmOwEQmH+lazrIdEoPAe+KFoWeTGW3JzklLvYPJYvyxV/YGTzhUkKvZGPz9wHkl0BmhQ08YkT6nBBpATsPb6hp13gsSzeMgOMVDoDv29rqKRUG7bVdsoc9fxLY0GccUryx2ewUo7sYT0yH8E+wUpwJ1HtKXc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760135876; c=relaxed/simple;
+	bh=+ogHahvGGmMUi5eixgmmPcbXsGdzWc4fIEyo1bx4Umg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RXLvApg36Ju6Sq3/M2o8FFZvPwvc7cg780vXE6AqeyD+dy8R6R2/X1HVNrUYVWjreqo/jWURBQqsejxEIomhzhDD3dcY4zZAvXl7rVppbynsKsk53pSNGYJ889cp/Nwzbx34GRPQREbu6UYeZPYfhwkOsVN7BfB+YuhJVn2EIvc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Shg9IsQC; arc=fail smtp.client-ip=40.107.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SMDOMLd3vYkqf3vj7djR5H6hCnonNPT1AWZoWmotAPeMk8wb9oDo4gTCFFQJIoKLc3PHlwd7U3yK1QwWGHPyPOKVO+tfTWignLXdbcXHs4w2cg8yIxqugD1FkakMbYGxX87CE0ymew1DHW2RuQEs6Zn5QQL/O/Mj4PoCU4tzB3s5nFIUEIuL7+sKf7jCp7bUCBoMw8ghMWyylZUVmbMUhEqkH+6Omo9fDKOtQEpGPCUtu+c38QkqOPc2gVLX+CJTtMAWN84NgPX7k1SRtS1RoiEsMMydWhzpZzPPYZBGY9RtEasa3bvg2mUYsasyuPGj8vioR3B6DdRtLSO9x8GEzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Zwi55iR0I5Y/pR3yGFJDZc0HXcvDrwE7H/HcWUYgYZk=;
+ b=t23PrFSEF1MJKyOy+U3nDeqC/MjMIcq8L4mP/XBwezo/LR2xb8BRui8Xi5CfoAIKs43IFKvTQRADTWMS3duTK0Q53MFMP9mj3jQHh1zKcw89e7BlXnETBfKQUrNlx+bSxxvSeaL3G85YW9ttNuKytRB5A9R+S0aD4LNtqyVkydq6rRDOS6WbSFl0QYtI+V9wbXkGQBS4KkBlbPPhHVsolx9isRkVMN33wAbIn+wEAsK6X9fFXzKrKIt7QeXfHIBTF2EZNONaiGs19Zxb3lZBSYCmnhfxy7lFSGR+hOYIGfS/kh8dsMufpdkLMRX6jnFjmmw5EPnFpA3N5XuEiyJLPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zwi55iR0I5Y/pR3yGFJDZc0HXcvDrwE7H/HcWUYgYZk=;
+ b=Shg9IsQC4KtFs+JdnBvZlYIb6iA8jOjolRn5gY+ZILpKsSmXMCb9NnU9W2rPJrtNGHd9WgpnkgIjOZxj2MLQeeaI2XWbs80qXE4zYRPouQ79EfTvvQpJFiLKIIwb+Z5wNienMSHP7AQWehPb8KtN4AgmnJ2B9hDfc37Qfa0UtPj3hQ8B5WAhlp8DFYh71jH0r7IFipSaJN1USQ4+pzNqcffTC/hot9DgTgSTmkUZtPAhdi13AxZSfl20xJM0yrNdJDqa8XQ5s4MyzHy/ur9LGIoKtfHXbL+LM2sk7qPhpWsxV9SylOq6nR6KxyfrQHRQLeM8ovw8/kJDMJvocQkoXQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by PH0PR12MB7887.namprd12.prod.outlook.com (2603:10b6:510:26d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Fri, 10 Oct
+ 2025 22:37:51 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9203.009; Fri, 10 Oct 2025
+ 22:37:50 +0000
+Date: Fri, 10 Oct 2025 19:37:49 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	will@kernel.org, joro@8bytes.org, kevin.tian@intel.com,
+	jsnitsel@redhat.com, vasant.hegde@amd.com, iommu@lists.linux.dev,
+	santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+	jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+	wnliu@google.com, gptran@google.com, kpsingh@google.com,
+	joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+Subject: Re: [PATCH v3 09/15] iommu/amd: Always enable GCR3TRPMode when
+ supported.
+Message-ID: <20251010223749.GJ3901471@nvidia.com>
+References: <20251009235755.4497-1-suravee.suthikulpanit@amd.com>
+ <20251009235755.4497-10-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009235755.4497-10-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: IA4P220CA0002.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:558::13) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010151637.2061727-1-Frank.Li@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH0PR12MB7887:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4354aaef-07de-4eea-a83d-08de084da4da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bUtQz0XZkSXdjCI2GYWPMpxwCYswqQjuThQyyxIzRjZ5A2LWE/iOTq6QHO4U?=
+ =?us-ascii?Q?RPNvXReUbjnkjgckFIGtliMchaoIR9qk705Usu42VRwyD804XMUbXZILDxB1?=
+ =?us-ascii?Q?om4dNVj41w26xdB2dkRFLv9wC92bDdpKu5mV/PMc0bE0UkUUCZ2kUj0VmXZm?=
+ =?us-ascii?Q?61wISICpyUJ76wVOs8y+LN+Ihsw+QK0ycsroXZDuA8x2jzaOdjO/Co16bPXr?=
+ =?us-ascii?Q?OWZQY8HRgR/eCfWpmfaJ3ix3PwoKce/bbTBqyv4kold48zC4zOdopxJ0VkRY?=
+ =?us-ascii?Q?H1cFoKJtdoE+0fDdVKSok9T8hHuq1wbx+/5ZMLRIEjFfNNbYjA8DBXMQ/OkM?=
+ =?us-ascii?Q?x2Lj//jly+dS04ZAkDCzYlrYID/H0Ce54aNSz2mR5j3Zv5GfZ+g4xQt8ogSx?=
+ =?us-ascii?Q?2xhBfOzru7WWaQyx8M1AfxLg9HMORNhEbxPv66Kl8ASX6KhOTkEd3hpBTkRx?=
+ =?us-ascii?Q?Cy8kfVODn8VFyD1DOE7rTuDGa47j+cXzAMKy7AXHPoq8HDJYapfac4lffCMN?=
+ =?us-ascii?Q?F5yV/QpBWddSoZ6e6PH29SmAySfUHH686nmb76MVdTEO6S3CZiG0oBKwpDU4?=
+ =?us-ascii?Q?Lz3D3RZ8Y/DLQG1Rc96FlwgKdH2M6SSkLiDCFjBrBLteBPE45MfUYcfjcTBV?=
+ =?us-ascii?Q?kKfDBm2B3MZkte5ohLbRXtlzBFowy+lmt2muQrKieZfZuLcuciJ6KyPGNepp?=
+ =?us-ascii?Q?ykUJC5ctFG7OQs935UT75gC5Zf0hdNhlQw0pEfqjozqjeEcY6rxoqXPAQEkz?=
+ =?us-ascii?Q?j77qUr8GSYv7Ic1tc/b0BTo9k2ITKN52Y+VxEECeu/mtCP8FWvs8ndURdm7O?=
+ =?us-ascii?Q?x3FjPhqHkBu047+8218MmSEVrQwEhPrVyarpc0gLGzjdAZr8TM4KpSkn7Urv?=
+ =?us-ascii?Q?9w5c5lPZqeLVMBIfapDpzGIJFtRN4v4p0uUPaYdENIfti3tQghHfSJzoY++z?=
+ =?us-ascii?Q?Klnc/rRQ0cZtw9t4VuGW6wOgj3n/9rcnPEVjhZQVFlSkvts6/xz4XQa4zjUR?=
+ =?us-ascii?Q?49LXI3iNidBg6WTMHCWpf3fb/PnAltfk7og5tsmqNlORa30yPE1BWz7Pqgjs?=
+ =?us-ascii?Q?BAfopfk5FIt7lYHO0VT3pjSSQPCpzMTq6BUw8e11vzi24cmz7kBOPe1EMbJJ?=
+ =?us-ascii?Q?ht695pPXVX52JYwayV/B3hh1ukl0paiMmHiRYnFZcYbdAa+jXYBrsRcLYTjy?=
+ =?us-ascii?Q?JJ3kVe6dasrc816lrfqGGQMrMCjupXXq/ObHHjiTDO0NMzOCrMmlvHi/cqWG?=
+ =?us-ascii?Q?LuHX9ovOhNPhsCNQ4NMjJyxB5s22KJOthwG9Dfe6fMxl5EkxRQT3//MeHyL2?=
+ =?us-ascii?Q?6T1+RDJGuhga6x89E8V9EQwjabRoLvaJ2JvsPGw2UYZF1IPDEJDTa69jLOYX?=
+ =?us-ascii?Q?FpiQjLltBY7nanbUCUTThfLCYlb6s+KIjrscLyMbzsWeOH5B5l86mq1LprCv?=
+ =?us-ascii?Q?ZpHx59PT5PAnD0AxNB9+ZchTKfaX6vEK?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?99JrmOtg1IFHijksBnvpGhQ2GbmpxccHrWu+S1GRUEhhpqM9Ts1iJyjr9jdi?=
+ =?us-ascii?Q?e2+Q2Zly5T9tDXt+ubC1w4AyDmOUe6ZKic64wnAqs+AhhcUiaCCfdVgWb9dK?=
+ =?us-ascii?Q?MYVVS/QD0JJ3KhZcy82H872e7IEsUCPf36nyMTw8fOaFOJyNuwPISYJ74wUA?=
+ =?us-ascii?Q?vPENco8kLZSChZizgPDcdGcJGI6wm7OU96bCfolzFtj+Bcm0iBcT5FH2UWWF?=
+ =?us-ascii?Q?HL8f1A1gD+NcI9jHBeGqik+7nKZU7aCjPlEoxg9ZKbJ27HkN2ehJ1Zv9UqvV?=
+ =?us-ascii?Q?P47yMiTbmcmDm7evrtJnmR/st20UR8I3nbovc7ZN64fF6jqVhK8nlPJLb5ip?=
+ =?us-ascii?Q?Y7SbQtq2MdTsJu/e0K0/nUg3CPpRIIGt31naStcnre2qYvMym3/oaTIZpxzn?=
+ =?us-ascii?Q?6fNi/FnvWLeeQX/rk3qkNkkcpG29OvQPLyYkDDWwu9Ud4oZVcMy4bxvWb8Pt?=
+ =?us-ascii?Q?L3H24gJ/PvBfOVa4rcL1eg13E1a4Fuu63uI0aLTy9n4JRtKY8TOu7Omv6WJj?=
+ =?us-ascii?Q?XqiB7n9h2tfsCA5BYcS/4RTvVfp1u+lhafJhhQaqQAblPmpFAGpVMXYmyc75?=
+ =?us-ascii?Q?bzYiBh60QgK5PJXkNJOa+RY1bA1ZoNWVmmb/9Xf7oB8/T3rpoetYaS2NwGvR?=
+ =?us-ascii?Q?wR6BPTopbJPyOrUHuDkCj9Fdidscx1jpQwT6iOYXGKz9NLxqS6yMLjXawSRr?=
+ =?us-ascii?Q?P7iyKwpjaCpqblquim3w+HIOOZGWsTt5sxTaDrbDshNgI+n1tAaA90+UZgf9?=
+ =?us-ascii?Q?9fAcC3IrFeB6PMj6tl22Oi42L1lRBoUjBJdSpSAWYMhNR7n1w6x8pzbQGzgb?=
+ =?us-ascii?Q?FDsh6fnpN4xBcgefTSLTO+plVc5UvCLVCVRvolBFx0mw+mTPmagL9mN6gfXj?=
+ =?us-ascii?Q?SlVEKSoqhhWLYSu4IvTrios6ms6NXUslBdWDtE97HNpXMI9F7lHHFgHAPDmw?=
+ =?us-ascii?Q?ASIrzQbwfNNLa90vMRuXY9JM30hJBn2cVNjGFvIuPxdJ59gifXHVmHAdVE65?=
+ =?us-ascii?Q?7IFFa85hOoJDE+LDsW9cm/GC13noDqF5ZJ9KjxYNhoUwYv9W2SEI5W4SucBX?=
+ =?us-ascii?Q?8Wbd95RAk4Ty0H3tEcoralxP84uoNcfQn11n6kE1MpgC3yz2b1xmG/7hfm8h?=
+ =?us-ascii?Q?bCquXZKcFl+6+2PJPY1BhMka/3o9EeUcdkxSplKbQtova2phWgDpVWO3oApf?=
+ =?us-ascii?Q?XeG8i0HfZRD43KAazkqIsbc3K71DOMtJB7XxoSAf8CdSJWgByt7qxiyV6wNq?=
+ =?us-ascii?Q?z9Ms0NlE/CFfrDNeqef4BbC+0TN8zGv2ZHwMqhthlb1Gy+w0vJD6pXp4QR2/?=
+ =?us-ascii?Q?G9s7NFdvD7VFXAyXgRYbC9WXeEbjPakf8h6Ptk7cQ5vRoaIe1S4vTFCGY4wi?=
+ =?us-ascii?Q?mbqdpncXuvzS3UKfAxST2O6Js2UFz9vMdQCMB9R6ZO6AQSC93A6YvzjDqCRn?=
+ =?us-ascii?Q?wMRnHzfB85CWhHOByA/msH6NLxBV4tJ6p0Ctrwx5g6nTwFeT03EbSu0LP/0G?=
+ =?us-ascii?Q?Om41wQr7YH6IC1H2hh2lkNiXo07PvbB1pnCHaOudEaghDxx7XdEw345dUei3?=
+ =?us-ascii?Q?iUVEEKKd/2nR4bjD4SQ=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4354aaef-07de-4eea-a83d-08de084da4da
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 22:37:50.6721
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JxjbZzq+DR9q1wWv4szmlokyLwWnRix0rDmBGStu1A7QsI6mwTB3su7ok9xiK8hs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7887
 
-On Fri, Oct 10, 2025 at 11:16:23AM -0400, Frank Li wrote:
-> Convert nxp,tda1997x.txt to yaml format
+On Thu, Oct 09, 2025 at 11:57:49PM +0000, Suravee Suthikulpanit wrote:
+> The GCR3TRPMode feature allows the DTE[GCR3TRP] field to be configured
+> with GPA (instead of SPA). This simplifies the implementation, and is
+> a pre-requisite for nested translation support.
 > 
-> Additional changes:
-> - update audio width to 8, 16, 24, 32.
-> - keep one example only.
+> Therefore, always enable this feature if available.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 > ---
->  .../bindings/media/i2c/nxp,tda19971.yaml      | 158 ++++++++++++++++
->  .../bindings/media/i2c/nxp,tda1997x.txt       | 178 ------------------
->  2 files changed, 158 insertions(+), 178 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
->  delete mode 100644 Documentation/devicetree/bindings/media/i2c/nxp,tda1997x.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml b/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
-> new file mode 100644
-> index 0000000000000..7624391e1c1e8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/nxp,tda19971.yaml
-> @@ -0,0 +1,158 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/nxp,tda19971.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP TDA1997x HDMI receiver
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +description: |
-> +  The TDA19971/73 are HDMI video receivers.
-> +
-> +  The TDA19971 Video port output pins can be used as follows:
-> +   - RGB 8bit per color (24 bits total): R[11:4] B[11:4] G[11:4]
-> +   - YUV444 8bit per color (24 bits total): Y[11:4] Cr[11:4] Cb[11:4]
-> +   - YUV422 semi-planar 8bit per component (16 bits total): Y[11:4] CbCr[11:4]
-> +   - YUV422 semi-planar 10bit per component (20 bits total): Y[11:2] CbCr[11:2]
-> +   - YUV422 semi-planar 12bit per component (24 bits total): - Y[11:0] CbCr[11:0]
-> +   - YUV422 BT656 8bit per component (8 bits total): YCbCr[11:4] (2-cycles)
-> +   - YUV422 BT656 10bit per component (10 bits total): YCbCr[11:2] (2-cycles)
-> +   - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
-> +
-> +  The TDA19973 Video port output pins can be used as follows:
-> +   - RGB 12bit per color (36 bits total): R[11:0] B[11:0] G[11:0]
-> +   - YUV444 12bit per color (36 bits total): Y[11:0] Cb[11:0] Cr[11:0]
-> +   - YUV422 semi-planar 12bit per component (24 bits total): Y[11:0] CbCr[11:0]
-> +   - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
-> +
-> +  The Video port output pins are mapped via 4-bit 'pin groups' allowing
-> +  for a variety of connection possibilities including swapping pin order within
-> +  pin groups. The video_portcfg device-tree property consists of register mapping
-> +  pairs which map a chip-specific VP output register to a 4-bit pin group. If
-> +  the pin group needs to be bit-swapped you can use the *_S pin-group defines.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,tda19971
-> +      - nxp,tda19973
+>  drivers/iommu/amd/amd_iommu_types.h | 1 +
+>  drivers/iommu/amd/init.c            | 3 +++
+>  2 files changed, 4 insertions(+)
 
-blank line
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  DOVDD-supply: true
-> +
-> +  DVDD-supply: true
-> +
-> +  AVDD-supply: true
-> +
-> +  '#sound-dai-cells':
-> +    const: 0
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/$defs/port-base
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      endpoint:
-> +        $ref: /schemas/media/video-interfaces.yaml#
-> +        unevaluatedProperties: false
-> +
-> +  nxp,vidout-portcfg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +    minItems: 1
-> +    maxItems: 4
-> +    items:
-> +      items:
-> +        maxItems: 2
-
-1 too many levels...
-
-items:
-  maxItems: 2
-
-But really you need to describe what each of the 2 items are. And are 
-there some constraints? I'd assume pins here is something like pin 1-N?
-
-> +
-> +    description:
-> +      array of pairs mapping VP output pins to pin groups.
-> +
-> +  nxp,audout-format:
-> +    enum:
-> +      - i2s
-> +      - spdif
-> +
-> +  nxp,audout-width:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [8, 16, 24, 32]
-> +    description:
-> +      width of audio output data bus.
-> +
-> +  nxp,audout-layout:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1]
-> +    description:
-> +      data layout (0=AP0 used, 1=AP0/AP1/AP2/AP3 used).
-> +
-> +  nxp,audout-mclk-fs:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Multiplication factor between stream rate and codec mclk.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - DOVDD-supply
-> +  - AVDD-supply
-> +  - DVDD-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/media/tda1997x.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        hdmi-receiver@48 {
-> +            compatible = "nxp,tda19971";
-> +            reg = <0x48>;
-> +            pinctrl-names = "default";
-> +            pinctrl-0 = <&pinctrl_tda1997x>;
-> +            interrupt-parent = <&gpio1>;
-> +            interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
-> +            DOVDD-supply = <&reg_3p3v>;
-> +            AVDD-supply = <&reg_1p8v>;
-> +            DVDD-supply = <&reg_1p8v>;
-> +            /* audio */
-> +            #sound-dai-cells = <0>;
-> +            nxp,audout-format = "i2s";
-> +            nxp,audout-layout = <0>;
-> +            nxp,audout-width = <16>;
-> +            nxp,audout-mclk-fs = <128>;
-> +            /*
-> +             * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
-> +             * and Y[11:4] across 16bits in the same pixclk cycle.
-> +             */
-> +            nxp,vidout-portcfg =
-> +                /* Y[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
-> +                < TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
-> +                /* Y[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
-> +                < TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
-> +                /* CbCc[11:8]<->VP[07:04]<->CSI_DATA[11:8] */
-> +                < TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
-> +                /* CbCr[7:4]<->VP[03:00]<->CSI_DATA[7:4] */
-> +                < TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
-> +
-> +            port {
-> +                endpoint {
-> +                    remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
-> +                    bus-width = <16>;
-> +                    hsync-active = <1>;
-> +                    vsync-active = <1>;
-> +                    data-active = <1>;
-> +                };
-> +            };
-> +        };
-> +    };
+Jason
 
