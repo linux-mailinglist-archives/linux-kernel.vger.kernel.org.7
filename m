@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-847991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAACEBCC399
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:52:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E26BCC3AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626563AD259
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:52:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B9F9425B2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0865D267B90;
-	Fri, 10 Oct 2025 08:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A2825DAFF;
+	Fri, 10 Oct 2025 08:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="drNtNgtR"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ATZ5ufaA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EB9258CFA;
-	Fri, 10 Oct 2025 08:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874D626056A;
+	Fri, 10 Oct 2025 08:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760086333; cv=none; b=K4vUcf7uteL0moiFjCWA+fhbUTt0/G/M5bmvFxdIesij9Oyg2WyA7cF1PCLY0/u0nk6QgJqHQ3qYfq5L4bQ/pX4ThvsSsylP90ZLPXCrsKWsb/PkyO2bZVDE6stGFpSd4zKgM462TikmtcIV/qW/4LpxvOczrIQrRuEdu4Iv58g=
+	t=1760086334; cv=none; b=VXC2iiJwISDaSJFdOUs7+aQVwwmMO+UB5/e/a1uMQVDYgUsv2r0WZ19kUKrM2EnKBOxa6xiJiUQhShSEc7PQo2tf7qlSYF5u6FbC0cGFwD/aXK0V8Pad0siqwks+6zON2aa72wR/ZlGsleaLCSsCHAPCxMMqVIEEAKbvFVOkF+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760086333; c=relaxed/simple;
-	bh=yolDaoqwvvZ2SZlVZTDUsOOCJ3rncpBjNhuLVfaY1xU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XTRaqc4gWdaDtCC4SHcahqam2FU9/WsYL9Bmtcmgvhs+c0HxttkuL/uVYOyNbw8DLFMwyHOe6ItO1zOwKUjNFXxCiA+nPO4TC6RMWM6dinj0hXl5SEzdGpN3rB/5SAKVlWpwfikQ7Le2ZiiEPbrJecmW93HWNEIHCsRC+MH5kgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=drNtNgtR; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1760086334; c=relaxed/simple;
+	bh=WOaaAHuh4Fa2o9iVX+RO3xM+kBJpXm76xWCANu9mB7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NlqAhLr4Ra+y2ny0yEAfMrXid0KcHZoTnyBC+rGS5+2RiH5VVCr26yK2RZecJhFvgrEz7pqhsJkkNLPKLEaCXbiWzvyLsNx3v+2ze957DYUJnZxWGpgQOD0yo3wzBezOyAy4qM16S361iZ0UoBRpIGqfOX4GjdpjEHUMa3aJ4IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ATZ5ufaA; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59A8GRd5014547;
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599KftOb006921;
 	Fri, 10 Oct 2025 08:52:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=QRsNL82ZLwEb6IY0lunB/CAS5uyvEyO5V5O5FXn1E
-	uM=; b=drNtNgtR0n0enbZ3EYIt9vyDiirGa6mdaolTKZRFsju7K5Lmbno9cDrZL
-	JRHZAo7O86YVHWX0U88X/rPDjEUEkDMmDYJCdl6h2mQTwovtbpPkdX/RaQ2ZUo/M
-	UHkfoRPi3NTpJ6sIKhraRpJMrTShTYC9MSVrMiI5HEqaCtjFfVf94O+Ivg+FTpNR
-	cNzf6AgUptIaX2L0Gxwa8oYIRIwSyV+LfTmP5x9t+7IeyNw4LkByfHig7dAK41J9
-	+OUCM9ORyNmeaOyRKdWP6YhrMnpyLfWNnTCbxhO/DYT/5hLiGElFf/kfmpOrZfv6
-	DL/3+45+iV/ibbdaBzXXHMP4OnIiw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv84shmq-1
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=IRCYsVBNlKYerMoXi
+	WnkluUK6QHgLsXvSZKnJ1VkvWg=; b=ATZ5ufaAu8mKjFARwnv7Pf33KT0QIznGp
+	KM9HAa2dvGwI6INiZlCSqQ/nJSfm1Z5Tvp3v1bBbsYthcLoVtuteSqOehFMTrbYN
+	nwUhX6coKuZzpWVafchQPIip8QNL0KAbqtbv6ALuccwZ6cKybMShdV0soi9X8VSo
+	i3VAfboHKr9eFYHiwP21KKdyvCnbkry0qJQYNTYXATLOakcnoG1U+ffV39craSLQ
+	TU6PNINtxh+F3o+HuZxh3KpIpc9g2uExnOZz+lZzTmpB69uhrivH4+64e2QCcBfL
+	0KGkR5QuEaU8EnKuE8mjRAZyuPre04haAnQYsFCAHHM3GO+az924A==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv809qxn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 10 Oct 2025 08:52:05 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59A7wfom020946;
-	Fri, 10 Oct 2025 08:52:05 GMT
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59A7qS5B021019;
+	Fri, 10 Oct 2025 08:52:04 GMT
 Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49nv9n109h-1
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49nv8ss0f5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Oct 2025 08:52:05 +0000
+	Fri, 10 Oct 2025 08:52:04 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59A8q13M53412224
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59A8q1xs53412226
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 10 Oct 2025 08:52:01 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 156642008C;
+	by IMSVA (Postfix) with ESMTP id 4B18E2008C;
 	Fri, 10 Oct 2025 08:52:01 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CE8F42008F;
-	Fri, 10 Oct 2025 08:52:00 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 1BF932008D;
+	Fri, 10 Oct 2025 08:52:01 +0000 (GMT)
 Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 10 Oct 2025 08:52:00 +0000 (GMT)
+	Fri, 10 Oct 2025 08:52:01 +0000 (GMT)
 From: Sumanth Korikkar <sumanthk@linux.ibm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
         David Hildenbrand <david@redhat.com>, linux-mm <linux-mm@kvack.org>
@@ -74,10 +75,12 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
         Alexander Gordeev <agordeev@linux.ibm.com>,
         Sumanth Korikkar <sumanthk@linux.ibm.com>
-Subject: [PATCH v3 0/4] Support dynamic (de)configuration of memory
-Date: Fri, 10 Oct 2025 10:51:43 +0200
-Message-ID: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
+Subject: [PATCH v3 1/4] s390/mm: Support removal of boot-allocated virtual memory map
+Date: Fri, 10 Oct 2025 10:51:44 +0200
+Message-ID: <20251010085147.2175918-2-sumanthk@linux.ibm.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
+References: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,194 +89,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=HKPO14tv c=1 sm=1 tr=0 ts=68e8c935 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
- a=NBdnYRyKUmeqgR0V3jUA:9 a=HhbK4dLum7pmb74im6QT:22 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
-X-Proofpoint-GUID: IggDq2wNjKyEyC6EEBTpFy57fP0Xn7q7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX0pKeSPlMyxM1
- 6kUvIo0m5+W3MqSpxn45bNB3MBD+0tp2+HCS2geMF29OTAGVSoGf9XyulXU5/260G3vwAx0Acuk
- sQVbSRdc+73KPapmVsSAl3tcGEyghNB3UbTHSRRmer94YTsjxwooR6bufuTBjyB1Wa+838Ex8Tk
- sEweAlSt2swHw7+WXi5E28EHRO2PP9vE6/0s+iOvG1kbsjHmbDF+3melptOjYtaW+IfS9K6o1JE
- A3oQM+hkNcYslYdgAQVM/I9SzJdNdNP3cpo/1mJj/fHCgGKqOTTx8OXspFV5JGbHBP0YABFxWV2
- z+wzQQvwXx7HBL6TA+GxZj5hLTUk8bYBJdux+91cEXlznXe92l92ikhucfchC1F5i05IT3k28/R
- ARLLB5Vu9k47+3OLpgqcvHsQ7M7Zjg==
-X-Proofpoint-ORIG-GUID: IggDq2wNjKyEyC6EEBTpFy57fP0Xn7q7
+X-Authority-Analysis: v=2.4 cv=NsDcssdJ c=1 sm=1 tr=0 ts=68e8c935 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=To8m7Vbe2ZeGRMaUrlAA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: EvjJTogrhKAy-wVTO6WVAj-KcpNlugsU
+X-Proofpoint-ORIG-GUID: EvjJTogrhKAy-wVTO6WVAj-KcpNlugsU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX05UL7PserKIv
+ pJeWMXvdUCvc0MaYwKJhyMFcbRAtu/xqlucvY/WxUONjJ0LYrc34AczDVL1YmFl7nEt7LAxeiIk
+ IpLW6h4ATqF+NiTTxuFFIg+ivWRp6iVUzzHcHWNVErF+fcak6SGIkareC2O0+hKRbxMvETUERuK
+ bE7f3AmrdG9/sIlhfdDY/IyJxQw8aBhQ/CUOmazh6KJYAVmgjqFLYhO5PRIzhorD+5QD8B2VuFk
+ QpNk6gWuk5ZT9T/xoZKpEYWbTOKi8+6IIibvICPYxVfb1CfZs/4cXLopAMgkU1uCFMSj3aHHowh
+ rW4t3aAgZYzWSWdh9kSMegWTMdnrWaJADYz50TjioHudoAY97EDfE6o+Jm9J/XsZHZlV5WfIsgW
+ sTWpr5z6YKz72Br5GWNLFCpL3heUlA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-10_01,2025-10-06_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
- adultscore=0 clxscore=1015 phishscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+ suspectscore=0 spamscore=0 impostorscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510080121
 
-Hi,
+On s390, memory blocks are not currently removed via
+arch_remove_memory(). With upcoming dynamic memory (de)configuration
+support, runtime removal of memory blocks is possible. This internally
+involves tearing down identity mapping, virtual memory mappings and
+freeing the physical memory backing the struct pages metadata.
 
-Patchset provides a new interface for dynamic configuration and
-deconfiguration of hotplug memory on s390, allowing with/without
-memmap_on_memory support. It is a follow up on the discussion with David
-when introducing memmap_on_memory support for s390 and support dynamic
-(de)configuration of memory:
-https://lore.kernel.org/all/ee492da8-74b4-4a97-8b24-73e07257f01d@redhat.com/
-https://lore.kernel.org/all/20241202082732.3959803-1-sumanthk@linux.ibm.com/
+During early boot, physical memory used to back the struct pages
+metadata in vmemmap is allocated through:
 
-The original motivation for introducing memmap_on_memory on s390 was to
-avoid using online memory to store struct pages metadata, particularly
-for standby memory blocks. This became critical in cases where there was
-an imbalance between standby and online memory, potentially leading to
-boot failures due to insufficient memory for metadata allocation.
+setup_arch()
+  -> sparse_init()
+    -> sparse_init_nid()
+      -> __populate_section_memmap()
+        -> vmemmap_alloc_block_buf()
+          -> sparse_buffer_alloc()
+            -> memblock_alloc()
 
-To address this, memmap_on_memory was utilized on s390. However, in its
-current form, it adds struct pages metadata at the start of each memory
-block at the time of addition (only standby memory), and this
-configuration is static. It cannot be changed at runtime  (When the user
-needs continuous physical memory).
+Here, sparse_init_nid() sets up virtual-to-physical mapping for struct
+pages backed by memblock_alloc(). This differs from runtime addition of
+hotplug memory which uses the buddy allocator later.
 
-Inorder to provide more flexibility to the user and overcome the above
-limitation, add an option to dynamically configure and deconfigure
-hotpluggable memory block with/without memmap_on_memory.
+To correctly free identity mappings, vmemmap mappings during hot-remove,
+boot-time and runtime allocations must be distinguished using the
+PageReserved bit:
 
-With the new interface, s390 will not add all possible hotplug memory in
-advance, like before, to make it visible in sysfs for online/offline
-actions. Instead, before memory block can be set online, it has to be
-configured via a new interface in /sys/firmware/memory/memoryX/config,
-which makes s390 similar to others.  i.e. Adding of hotpluggable memory is
-controlled by the user instead of adding it at boottime.
+* Boot-time memory, such as identity-mapped page tables allocated via
+  boot_crst_alloc() and reserved via reserve_pgtables() is marked
+  PageReserved in memmap_init_reserved_pages().
 
-s390 kernel sysfs interface to configure/deconfigure memory with
-memmap_on_memory (with upcoming lsmem changes):
+* Physical memory backing vmemmap (struct pages from memblock_alloc())
+  is also marked PageReserved similarly.
 
-* Initial memory layout:
-lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
-RANGE                 SIZE   STATE BLOCK CONFIGURED MEMMAP_ON_MEMORY
-0x00000000-0x7fffffff   2G  online 0-15  yes        no
-0x80000000-0xffffffff   2G offline 16-31 no         yes
+During teardown, PageReserved bit is checked to distinguish between
+boot-time allocation or buddy allocation.
 
-* Configure memory
-echo 1 > /sys/firmware/memory/memory16/config
-lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
-RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
-0x00000000-0x7fffffff    2G  online  0-15  yes        no
-0x80000000-0x87ffffff  128M offline    16  yes        yes
-0x88000000-0xffffffff  1.9G offline 17-31  no         yes
+This is similar to commit 645d5ce2f7d6 ("powerpc/mm/radix: Fix PTE/PMD
+fragment count for early page table mappings")
 
-* Deconfigure memory
-echo 0 > /sys/firmware/memory/memory16/config
-lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
-RANGE                 SIZE   STATE BLOCK CONFIGURED MEMMAP_ON_MEMORY
-0x00000000-0x7fffffff   2G  online 0-15  yes        no
-0x80000000-0xffffffff   2G offline 16-31 no         yes
+Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
+Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+---
+ arch/s390/mm/pgalloc.c |  2 ++
+ arch/s390/mm/vmem.c    | 21 ++++++++++++---------
+ 2 files changed, 14 insertions(+), 9 deletions(-)
 
-* Enable memmap_on_memory and online it.
-(Deconfigure first)
-echo 0 > /sys/devices/system/memory/memory5/online
-echo 0 > /sys/firmware/memory/memory5/config
-
-lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
-RANGE                  SIZE  STATE  BLOCK CONFIGURED MEMMAP_ON_MEMORY
-0x00000000-0x27ffffff  640M  online 0-4   yes        no
-0x28000000-0x2fffffff  128M offline 5     no         no
-0x30000000-0x7fffffff  1.3G  online 6-15  yes        no
-0x80000000-0xffffffff    2G offline 16-31 no         yes
-
-(Enable memmap_on_memory and online it)
-echo 1 > /sys/firmware/memory/memory5/memmap_on_memory
-echo 1 > /sys/firmware/memory/memory5/config
-echo 1 > /sys/devices/system/memory/memory5/online
-
-lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
-RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
-0x00000000-0x27ffffff  640M  online  0-4   yes        no
-0x28000000-0x2fffffff  128M  online  5     yes        yes
-0x30000000-0x7fffffff  1.3G  online  6-15  yes        no
-0x80000000-0xffffffff    2G  offline 16-31 no         yes
-
-* Disable memmap_on_memory and online it.
-(Deconfigure first)
-echo 0 > /sys/devices/system/memory/memory5/online
-echo 0 > /sys/firmware/memory/memory5/config
-
-lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
-RANGE                  SIZE  STATE  BLOCK CONFIGURED MEMMAP_ON_MEMORY
-0x00000000-0x27ffffff  640M  online 0-4   yes        no
-0x28000000-0x2fffffff  128M offline 5     no         yes
-0x30000000-0x7fffffff  1.3G  online 6-15  yes        no
-0x80000000-0xffffffff    2G offline 16-31 no         yes
-
-(Disable memmap_on_memory and online it)
-echo 0 > /sys/firmware/memory/memory5/memmap_on_memory
-echo 1 > /sys/firmware/memory/memory5/config
-echo 1 > /sys/devices/system/memory/memory5/online
-
-lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
-RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
-0x00000000-0x7fffffff  2G    online  0-15  yes        no
-0x80000000-0xffffffff  2G    offline 16-31 no         yes
-
-* Userspace changes:
-lsmem/chmem tool is also changed to use the new interface. I will send
-it to util-linux soon.
-
-Patch 1 adds support for removal of boot-allocated memory blocks.
-
-Patch 2 provides option to dynamically configure and deconfigure memory
-with/without memmap_on_memory.
-
-Patch 3 removes MHP_OFFLINE_INACCESSIBLE from s390. The mhp flag was
-used to mark memory as not accessible until memory hotplug online phase
-begins.  However, with patch 2, it is no longer essential. Memory can be
-brought to accessible state before adding memory, as the memory is added
-during runttime now instead of boottime.
-
-Patch 4 removes the MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers. It
-is no longer needed.  Memory can be brought to accessible state before
-adding memory now, with runtime (de)configuration of memory.
-
-Note: The patches apply to the linux-next branch.
-
-v3:
-Thanks David
-* Avoid goto label in create_standby_sclp_mems().
-* Use unsigned long instead of u64.
-* Add Acked-by.
-
-v2:
-Thanks David
-* Rename struct mblock/mblock_arg with struct sclp_mem/sclp_mem_arg.
-* Rename all mblocks/mblock references with sclp_mems/sclp_mem -
-  structures, functions.
-* Rename create_online_mblock() with create_configured_sclp_mem().
-* Rename config_mblock_show()/config_mblock_store() with
-  config_sclp_mem_show()/config_sclp_mem_store().
-* Remove contains_standby_increment() and
-  sclp_mem_notifier. sclp mem state change is performed when
-  adding/removing memory. sclp memory notifier - no longer needed with
-  this patchset.
-* Recover sclp mem state when add_memory() fails.
-* Refactor and add function init_sclp_mem().
-* Use unsigned long instead of unsigned long long.
-* Simplify and correct kobj handling. Thanks Heiko.
-
-Sumanth Korikkar (4):
-  s390/mm: Support removal of boot-allocated virtual memory map
-  s390/sclp: Add support for dynamic (de)configuration of memory
-  s390/sclp: Remove MHP_OFFLINE_INACCESSIBLE
-  mm/memory_hotplug: Remove MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE
-    notifiers
-
- arch/s390/mm/pgalloc.c         |   2 +
- arch/s390/mm/vmem.c            |  21 +--
- drivers/base/memory.c          |  23 +--
- drivers/s390/char/sclp_mem.c   | 288 +++++++++++++++++++++++----------
- include/linux/memory.h         |   9 --
- include/linux/memory_hotplug.h |  18 +--
- include/linux/memremap.h       |   1 -
- mm/memory_hotplug.c            |  17 +-
- mm/sparse.c                    |   3 +-
- 9 files changed, 225 insertions(+), 157 deletions(-)
-
+diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+index 626fca116cd7..7df23528c01b 100644
+--- a/arch/s390/mm/pgalloc.c
++++ b/arch/s390/mm/pgalloc.c
+@@ -164,6 +164,8 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
+ {
+ 	struct ptdesc *ptdesc = virt_to_ptdesc(table);
+ 
++	if (pagetable_is_reserved(ptdesc))
++		return free_reserved_ptdesc(ptdesc);
+ 	pagetable_dtor_free(ptdesc);
+ }
+ 
+diff --git a/arch/s390/mm/vmem.c b/arch/s390/mm/vmem.c
+index f48ef361bc83..d96587b84e81 100644
+--- a/arch/s390/mm/vmem.c
++++ b/arch/s390/mm/vmem.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/memory_hotplug.h>
++#include <linux/bootmem_info.h>
+ #include <linux/cpufeature.h>
+ #include <linux/memblock.h>
+ #include <linux/pfn.h>
+@@ -39,15 +40,21 @@ static void __ref *vmem_alloc_pages(unsigned int order)
+ 
+ static void vmem_free_pages(unsigned long addr, int order, struct vmem_altmap *altmap)
+ {
++	unsigned int nr_pages = 1 << order;
++	struct page *page;
++
+ 	if (altmap) {
+ 		vmem_altmap_free(altmap, 1 << order);
+ 		return;
+ 	}
+-	/* We don't expect boot memory to be removed ever. */
+-	if (!slab_is_available() ||
+-	    WARN_ON_ONCE(PageReserved(virt_to_page((void *)addr))))
+-		return;
+-	free_pages(addr, order);
++	page = virt_to_page((void *)addr);
++	if (PageReserved(page)) {
++		/* allocated from memblock */
++		while (nr_pages--)
++			free_bootmem_page(page++);
++	} else {
++		free_pages(addr, order);
++	}
+ }
+ 
+ void *vmem_crst_alloc(unsigned long val)
+@@ -79,10 +86,6 @@ pte_t __ref *vmem_pte_alloc(void)
+ 
+ static void vmem_pte_free(unsigned long *table)
+ {
+-	/* We don't expect boot memory to be removed ever. */
+-	if (!slab_is_available() ||
+-	    WARN_ON_ONCE(PageReserved(virt_to_page(table))))
+-		return;
+ 	page_table_free(&init_mm, table);
+ }
+ 
 -- 
 2.48.1
 
