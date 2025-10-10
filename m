@@ -1,171 +1,111 @@
-Return-Path: <linux-kernel+bounces-847679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFA4BCB673
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:05:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2ED9BCB677
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9340F4F51A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C2C33C80A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 02:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B609239099;
-	Fri, 10 Oct 2025 02:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbnS7UDX"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CF11EF0B0;
+	Fri, 10 Oct 2025 02:19:55 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C58C2356A4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 02:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B253F9FB;
+	Fri, 10 Oct 2025 02:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760061909; cv=none; b=a4xuvYl+g++SkUile4FLCTUh0b4dy46ZKqCWp1nn0LUbdyuqG9xqWLRDyE6NqIQrN6hdy8TCZFmt6swd3n91rTT9Pyz7kn3VPi+wrvIQArXWj0HrWN1AsZvmkgymnDz5JwL1IThIQH2npIDwE9YiwrjeWvW2NTbGIHl+Fi0HsyI=
+	t=1760062794; cv=none; b=Oh3C1AnQz5YIfiRXFFDOn/n8Hf3/QCVDTQfbRb/PNsgu2gzZxKi0+Sh392sx1raZEaUBtw3xkZ6GoxQ+Ukfwnio5JM1TcHKdiXs81gIqCitcAKR9m/pLWOoDfvl1rRB/+kQOwSjXmNyRLeEjpD9EoWc5G3W5bDqW8kzpYTrX8CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760061909; c=relaxed/simple;
-	bh=4TBHId0bMm9CdTNvUN5XuLKY3sjRAw7vbQwPUrCIGvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ruU5j8IAr3FZe4PqShonQlHQ5JvDHrFc7jgv91lldj3SR8n/mio9jSH3IEsEAAFXlDsh8mP3UHx5r4A+LgAWdCarCM6fplnkn5P76kqslB9KuEWgzdEZ8idOnTc3ZK7smh7+qpOc21swCOfmS0+vw0m0O2fxo65bNuk5oHOfxpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbnS7UDX; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27edcbbe7bfso20872025ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 19:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760061907; x=1760666707; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h1rKJVS+vc6Xu/tqhvpZMEVhOAA3UUcIm1XqkGlHfjk=;
-        b=JbnS7UDXsIYTTo2e2s7gJVPY/kak4SQig1MyyhIdw90c5SAA+PmWnxuo+Ai5opKtUm
-         CKkW5stFwP8ln5958nyZy18yvzNgad3cOcsfzVOMH0kc51K7kUS2s39KHDYwmqZh2c1w
-         iIomCa1pa6PtG/qVlvXIrxqex9/0Fqxjr/rp5Ie88v+ruC+EAJdEbcDcfeXtwFmrNkil
-         8NUqVpj5mlBuDTzzY54cG2cIhIfPyHzfO+4rU+CsrhSNieJyUdZpPNYU2uUmrHXfyB/8
-         sZOIJD8qCrjIGVvpH2d9fCiuWlxzBKifG2E8gXB80/uDTuj7//9qXseOGb17k2KlyIAb
-         yfiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760061907; x=1760666707;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h1rKJVS+vc6Xu/tqhvpZMEVhOAA3UUcIm1XqkGlHfjk=;
-        b=mL2NtAsqYeCVx+XQsCubr6d+6Fw9ByCxxJUtd/GKJziyT4r01Wj0onAuwImRHOkmlP
-         XgcnFBKLKdd1DXKuNHa35zANQCyC8AbS9f0FgMSlcHrHJP8/uG/DpF86oKmoN0bcdB85
-         MhudDLY79OVHq8CnZH6Dz/oJrN+xcWn8YXfgDw+wJBQm7x6N1QFUNbhaxq7MBSq67GET
-         IUvW6QRsMKUv5aLIghYHFIiWtnaJ1J8iPXH0DH0/N0f90+4vuR7zqOyyMleufI4wDvIU
-         RSKmqRT2JPcco9NvWxPnPaMeJwzbijyz6pNfq4Xjv5GjDmhAVDPM3JSRMI4BYnvdyAxB
-         5gXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY0tX6LtUPs0MH4jsWhXE0273PuOqU+gPv9peplBOTawjq6/O+DzOKm2q8mO2eSl36fcgA2VYhFIJfv4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp2aGv4Jh/4N0LESKzwLq3r21m0zdxmXO2pG/1dSdG2o5Y7+Vm
-	RVZ1ikbQOPwQMKXIWhz9uV5dv5MQRvJ2b6LYLYIYQzuqxKCtDXGH+0Gy4TtzfhXO
-X-Gm-Gg: ASbGnctsXymCo1KRLjQ5QA0BSPuyNYC0yZoJlApo+0PlvxsT0gf7+2lq3Qufb0OkP09
-	lkg+KjxTekNvnGM0pPqesKlEREkshdY8MYVeuv+J6xnY+6p6KFx8/xZh3PIVoyrIAWLhmUGzWgq
-	ezk4tWj7rc0PvfopTOdjxqubxht7Y8N1KzaZV9jqrjohCpB9eteXE4zYN2gt5YKDAAAIlnX+6gp
-	JURQgsmKH8SkE328i7xEcLGMYE8jOJt1Ox/EOcVa6+oH9mjQ5s6SSm6+avorwXvCIFSo981H+O9
-	uZhZ3KU4iWdhaaIuyIHzGSYS2KjUB21wCUjS0P4glzwgiHkBCpbB5kCOjWnHp81b//lay69BMxw
-	93bT4hn7a50eAVRDSClFZhIr2EKoYJG6e2W5RlLJ3vbBqJKgulUECaMxLu9KlCkk=
-X-Google-Smtp-Source: AGHT+IFUKd5++PDzS5abSESfTQMJE2QGfoxe3f5Mp2ZuxGS2YUSKKiYyTeMogVzSyN+wUnOPRXUvpg==
-X-Received: by 2002:a17:903:1aef:b0:250:1c22:e7b with SMTP id d9443c01a7336-290272e3a78mr128609435ad.43.1760061907263;
-        Thu, 09 Oct 2025 19:05:07 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e179cesm41443735ad.34.2025.10.09.19.05.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 19:05:06 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: dave.hansen@intel.com
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	dave.hansen@linux.intel.com,
-	djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] iomap: move prefaulting out of hot write path
-Date: Fri, 10 Oct 2025 10:04:58 +0800
-Message-ID: <20251010020505.3230463-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <486185f6-7da7-4fdc-9206-8f1eebd341cf@intel.com>
-References: <486185f6-7da7-4fdc-9206-8f1eebd341cf@intel.com>
+	s=arc-20240116; t=1760062794; c=relaxed/simple;
+	bh=H4rwtwxheMrKspUo4FRhc7L8mv59sXRKgQUg7DBSzXk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U2TeOl2YD5Vm/2zqL8LNGPwU+A1AfDtTdCugAUXiPy5Mo44DrFJz599kHE/IeYSnxiAqUTi9kzc7zLV8EtMdjwq85+zXXW7r4umgILxbii+w+J0QSwRTV7pjA7KgGLSuf1eDTJKkWPvnKMxROh8dU2XiM/ZmHhJVNnOyOVFIaHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cjVmd6tYCzKHMQX;
+	Fri, 10 Oct 2025 10:19:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9E1561A0EF8;
+	Fri, 10 Oct 2025 10:19:43 +0800 (CST)
+Received: from [10.174.176.236] (unknown [10.174.176.236])
+	by APP4 (Coremail) with SMTP id gCh0CgA3+mE8behoAzCTCQ--.54861S3;
+	Fri, 10 Oct 2025 10:19:41 +0800 (CST)
+Message-ID: <54b0b560-493b-4f08-859c-8c1c41cf4c27@huaweicloud.com>
+Date: Fri, 10 Oct 2025 10:19:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2022-50455: nfs: fix possible null-ptr-deref when parsing
+ param
+To: cve@kernel.org, linux-kernel@vger.kernel.org,
+ linux-cve-announce@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@kernel.org>
+References: <2025100118-CVE-2022-50455-24fb@gregkh>
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+In-Reply-To: <2025100118-CVE-2022-50455-24fb@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgA3+mE8behoAzCTCQ--.54861S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFWDWF1xuFW7Xw4UKw17KFg_yoW3Zrb_u3
+	4vgFWUKw13Xr4Iga18KrZ5Zry2qry3XrykAr42qFy0kr9xurs8AFZ3GFZay3Z3Krn2krs5
+	JFn5Zw4kKr1IgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbOxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVj
+	vjDU0xZFpf9x07UE-erUUUUU=
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-> On 11/9/25 08:01, Darrick J. Wong wrote:
-> > On Thu, Oct 09, 2025 at 05:08:51PM +0800, alexjlzheng@gmail.com wrote:
-> >> From: Jinliang Zheng <alexjlzheng@tencent.com>
-> >>
-> >> Prefaulting the write source buffer incurs an extra userspace access
-> >> in the common fast path. Make iomap_write_iter() consistent with
-> >> generic_perform_write(): only touch userspace an extra time when
-> >> copy_folio_from_iter_atomic() has failed to make progress.
-> >>
-> >> This patch is inspired by commit 665575cff098 ("filemap: move
-> >> prefaulting out of hot write path").
-> > Seems fine to me, but I wonder if dhansen has any thoughts about this
-> > patch ... which exactly mirrors one he sent eight months ago?
+
+
+
+
+> From: Greg Kroah-Hartman <gregkh@kernel.org>
 > 
-> I don't _really_ care all that much. But, yeah, I would have expected
-> a little shout-out or something when someone copies the changelog and
-> code verbatim from another patch:
+> Description
+> ===========
 > 
-> 	https://lore.kernel.org/lkml/20250129181753.3927F212@davehans-spike.ostc.intel.com/
+> In the Linux kernel, the following vulnerability has been resolved:
 > 
-> and then copies a comment from a second patch I did.
-
-Sorry for forgetting to CC you in my previous email.
-
-When I sent V1[1], I hadn't come across this email (which was an oversight on my part):
-- https://lore.kernel.org/lkml/20250129181753.3927F212@davehans-spike.ostc.intel.com/
-
-At that time, I was quite puzzled about why generic_perform_write() had moved prefaulting
-out of the hot write path, while iomap_write_iter() had not done the same.
-
-It wasn't until I was preparing V2[2] that I found the email above. However, the code around
-had already undergone some changes by then, so I rebased the code in this email onto the
-upstream version. My apologies for forgetting to CC you earlier.
-
-[1] https://lore.kernel.org/linux-xfs/20250726090955.647131-2-alexjlzheng@tencent.com/
-[2] https://lore.kernel.org/linux-xfs/20250730164408.4187624-2-alexjlzheng@tencent.com/
-
-Hope you know I didn't mean any offense. Sorry about that.
-
+> nfs: fix possible null-ptr-deref when parsing param
 > 
-> But I guess I was cc'd at least. Also, if my name isn't on this one,
-> then I don't have to fix any of the bugs it causes. Right? ;)
+> According to commit "vfs: parse: deal with zero length string value",
+> kernel will set the param->string to null pointer in vfs_parse_fs_string()
+> if fs string has zero length.
 > 
-> Just one warning: be on the lookout for bugs in the area. The
-> prefaulting definitely does a good job of hiding bugs in other bits
-> of the code. The generic_perform_write() gunk seems to have uncovered
-> a bug or two.
 
-Indeed, the reason I sent this patch was precisely because I was unsure why the change
-for iomap_write_iter() hadn't been merged like the one for generic_perform_write() — I
-wondered if there might be some underlying issue. I hoped to seek everyone's thoughts
-through this patch. :)
+Hi Greg,
 
-> 
-> Also, didn't Christoph ask you to make the comments wider the last
-> time Alex posted this? I don't think that got changed.
-> 
-> 	https://lore.kernel.org/lkml/aIt8BYa6Ti6SRh8C@infradead.org/
-> 
-> Overall, the change still seems as valid to me as it did when I wrote the
-> patch in the first place. Although it feels funny to ack my own
-> patch.
+The patch "vfs: parse: deal with zero length string value", which introduced
+this issue, was never merged into mainline.
 
-If moving prefaulting out of the hot write path in iomap_write_iter() is indeed
-acceptable, would you mind taking the time to rebase the code from your patch onto
-the latest upstream version and submit a new patch? After all, you are the
-original author of the change. :)
+It only exists in the mailing list:
+https://lists.openwall.net/linux-kernel/2022/06/28/18
 
-Thank you very much,
-Jinliang. :)
+Since the problematic behavior never existed in any released kernel,
+CVE-2022-50455 cannot be valid.
+
+Please consider rejecting this CVE.
+
+Best regards,
+Wang Zhaolong
+
 
