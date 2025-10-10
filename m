@@ -1,95 +1,339 @@
-Return-Path: <linux-kernel+bounces-848842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18A7BCEAC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:08:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F80FBCEAD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1D5189FF48
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245C23BE120
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F1826E6E6;
-	Fri, 10 Oct 2025 22:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C08271A94;
+	Fri, 10 Oct 2025 22:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VGYITCBY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="usR0BRci"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EBA189BB0;
-	Fri, 10 Oct 2025 22:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D6D189BB0
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760134125; cv=none; b=P6wsW1zEFsojZQJiNrMBNIZdyvsLnjMPTxd9HVl+XMiWMHprA2PklvNo0tozOOUqNzwNvF8NSouqZr/SFlpXbEvTszylcLfnEQp84mJ8ArSuK0+aiwXbP0Lck3H1ce/plkEynojtBcrT5D2wXbmjcaNHNPWPVyHEWH8oBJFY38U=
+	t=1760134174; cv=none; b=d1qmdubmKjPsOxvKFOOL+D5jg3uBmpD5BC/blQ9mMlsJwUPVv3kfyLdNdBCZdz6sjzhQZNWb2WI83LkjkAwn0COG0LHvi6o4HHnniULz/Y9vlof5tMIxftU+VtK3PasOHkkkEvk06e2qYrfhBL0e7zkuOdBkYkud+mtBZZRLkHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760134125; c=relaxed/simple;
-	bh=V+KqT3fmN9PfM0xYoQfnTgfVMW7tzUUYviSX+SWUvaQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=COJ040s2yte5H31jGTdBOSO88i7FVVd+rtIiJUd5HxuXY3s6bJJD8X8TWA8AkOdeukSCrC0cGLuNIbW3s565qzSIRgeaRTP2pAC/5GornhAqyqyekrXUj8xM01NcXzdzmneufUcys//GeHfQKQHaZZo+hFig/5m5qJlYEOSyIwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VGYITCBY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C63C4CEF1;
-	Fri, 10 Oct 2025 22:08:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760134125;
-	bh=V+KqT3fmN9PfM0xYoQfnTgfVMW7tzUUYviSX+SWUvaQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VGYITCBYPDQbn5ijuhutsAgIenUjKZrMdR40UGI5xCRvqTPRjqqEd3r8pYuhEqWsQ
-	 ysmK7Ba5RT4RQf8+ZSGx2j4E1tQL3MccKvKlEKmWoLlgz5dHShx53rFI1xsZ4knyBw
-	 BQIXxH3KhjjMr4B60kOclTEY+1Ot1539bJhImNSM=
-Date: Fri, 10 Oct 2025 15:08:44 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] additional non-MM updates for 6.18-rc1
-Message-Id: <20251010150844.1ac58a5f9b89aa1e7e260ace@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760134174; c=relaxed/simple;
+	bh=whVp2qZBbeukaKmVgYtaHYfETEJJ1mPdQ4+rkrdkiFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PMTD7o+XAjYPYU7vmJGp3CX1JU7a7KX9DCotlX6fTFdiIi6EpH0ahdwFaRt892Tn2QhmSMLN/J0QrX0C99aC65yF0WwHh9aR2bsL3H1gM7PBidxpQWQCvj4tNalgn1FhJ1Hg0k+bL520qL8Gqonrqtw7DY7Hfdu8IV4bEKwfzfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=usR0BRci; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-42f6af58c39so239735ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 15:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760134170; x=1760738970; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LWDl81NsDb6bdxq6lZZ3Oo5fI0gR9e+s7CI7q6rmrnY=;
+        b=usR0BRci7nddDMA6iJ6L1009QdlirFVjhD2WLO3S3NXVc28MeMK73hVJeq0tZSiCBU
+         tQprU2DzAxS9jED2GLlXgmaYqJQRpblsRniyTGCNwiCHGFWJYSnSdty/+zuU2WRpbuz8
+         7M3ELRMyLHaEf7Nh5HLdDm9UbowO4EMU22MWnMYBXlNxgKvi8updyIfh9M+gSgFu7wkl
+         eFdczo+DzoUdH77wE+2J7m1nNvePRbvBvYL+SUQSR7NqwYPzGpf9Qa/NVgKe3UqIPd7+
+         il2UM5/moAJp337sA/44HcuPRBx+dmlD9J5Dd7B4OQWoK31KU5qrC/LLcPLTyY0j5QVn
+         rsDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760134170; x=1760738970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LWDl81NsDb6bdxq6lZZ3Oo5fI0gR9e+s7CI7q6rmrnY=;
+        b=OIBxinkxt4To0+oGtQ/ElHxb5BD4q5Sef8Fytjgp5mbQaC6sbgZ5bnCbavZaX2eOCf
+         +Dk6noTS+9/grcLovDhL5uEGRbhcWHiLYA2t7doid5P9TYLhabPp7kmExdvxXUdqm+FQ
+         Q0fO5lRAdZ3mKn5m90Qf3su+2PAuWa3ibrXwvHzlhQW04EWvcvTxvbrXQVOyK6yw7at4
+         YsxbOiLgeye9gQzJEpzsdxx1MJc+cXmLEImj4WnbA4A7BzNt/geB1OejjZT23J5ncr/u
+         oHHmR/ejQW3bKQBTEgi0mRLpqQoYoe8H92fOmQaLooitXFoYIVSMyx2w+vgZOFlk05a9
+         qBFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwdwrBin0xmD1X+mpLasAKmqPghTG2G/mpikerdOxKW1TzWC3oFsnurKi/R0fEVBdBhLaIcwTk0Atr6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxChOVw3ppRxFBdv/pXTWMPNzvc16AKsoz3MmIPf2iTynBAfAO4
+	fa8GS+HailObyYs6mVlasBjLFKi0lV4BYyP96yXaLEeA7+MN45HvY2V19Ce9lStT1SybrOnHNT1
+	2mkhdOvoXLgz7da9EUC3bgkikJah2Pr3ClPBf5mi5
+X-Gm-Gg: ASbGncvXMjJcs5Vl5DW7itIcWrVkmFlcMgj8pg9SapgiqvASM5xr6PXLm1qQL2P/TsM
+	9l8ANK0wNYhFBh/fbiHqYypf1DLkHsJLD0kKr4MPKPwpfaon4udmfx4szgfMI/LByWHubradllq
+	Lfdl/IFvdk13OjWvn2DXreFZS5taJfHjbb3FmwIQBqwxnmFFBEd22nQlRVqveaUn+8DAzKoNalz
+	myjUKdWqZXjhVzINtwZrsdYNxGwwGg=
+X-Google-Smtp-Source: AGHT+IEheEysfffoa2UToJd25UhCG01OYZFDrESO0ecdrZ/jfSjqLqSlKoaOdjO8BC9OyiGuvNfvS8dJfmUrxJvS6qg=
+X-Received: by 2002:a05:622a:1111:b0:4b3:1617:e617 with SMTP id
+ d75a77b69052e-4e6eabcef17mr26585351cf.11.1760134169530; Fri, 10 Oct 2025
+ 15:09:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20251010011951.2136980-7-surenb@google.com> <20251010202034.58002-1-sj@kernel.org>
+In-Reply-To: <20251010202034.58002-1-sj@kernel.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 10 Oct 2025 15:09:18 -0700
+X-Gm-Features: AS18NWAqrvtXxssXuPoUdtLG3YkWXccAtAeaTjudhXcSXDHpPbRX_NTpHoxKXI4
+Message-ID: <CAJuCfpHmLpE-7U2_efn9XqK=3SM+zRw-jUkDgJRBW=2tWZTepg@mail.gmail.com>
+Subject: Re: [PATCH 6/8] add cleancache documentation
+To: SeongJae Park <sj@kernel.org>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com, 
+	peterx@redhat.com, rppt@kernel.org, mhocko@suse.com, corbet@lwn.net, 
+	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	hch@infradead.org, jack@suse.cz, willy@infradead.org, 
+	m.szyprowski@samsung.com, robin.murphy@arm.com, hannes@cmpxchg.org, 
+	zhengqi.arch@bytedance.com, shakeel.butt@linux.dev, axelrasmussen@google.com, 
+	yuanchu@google.com, weixugc@google.com, minchan@kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 10, 2025 at 1:20=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote=
+:
+>
+> Hello Suren,
 
-Linus, please merge this small and final batch of non-MM changes for
-this merge cycle, thanks.
+Hi SJ!
 
+>
+> On Thu,  9 Oct 2025 18:19:49 -0700 Suren Baghdasaryan <surenb@google.com>=
+ wrote:
+>
+> > Document cleancache, it's APIs and sysfs interface.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  Documentation/mm/cleancache.rst | 112 ++++++++++++++++++++++++++++++++
+> >  MAINTAINERS                     |   1 +
+>
+> I think this great document is better to be linked on mm/index.rst.
 
-The following changes since commit 7a405dbb0f036f8d1713ab9e7df0cd3137987b07:
+Ack.
 
-  Merge tag 'mm-stable-2025-10-03-16-49' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2025-10-05 12:11:07 -0700)
+>
+> Also, would it make sense to split the sysfs interface part and put under
+> Documentation/admin-guide/mm/ ?
 
-are available in the Git repository at:
+Hmm. I guess that makes sense.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-nonmm-stable-2025-10-10-15-03
+>
+> >  2 files changed, 113 insertions(+)
+> >  create mode 100644 Documentation/mm/cleancache.rst
+> >
+> > diff --git a/Documentation/mm/cleancache.rst b/Documentation/mm/cleanca=
+che.rst
+> > new file mode 100644
+> > index 000000000000..deaf7de51829
+> > --- /dev/null
+> > +++ b/Documentation/mm/cleancache.rst
+> > @@ -0,0 +1,112 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +Cleancache
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Motivation
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Cleancache is a feature to utilize unused reserved memory for extendin=
+g
+> > +page cache.
+> > +
+> > +Cleancache can be thought of as a folio-granularity victim cache for c=
+lean
+> > +file-backed pages that the kernel's pageframe replacement algorithm (P=
+FRA)
+> > +would like to keep around, but can't since there isn't enough memory. =
+So
+> > +when the PFRA "evicts" a folio, it stores the data contained in the fo=
+lio
+> > +into cleancache memory which is not directly accessible or addressable=
+ by
+> > +the kernel (transcendent memory) and is of unknown and possibly
+> > +time-varying size.
+>
+> IMHO, "(transcendent memory)" better to be dropped, as it has removed by =
+commit
+> 814bbf49dcd0 ("xen: remove tmem driver").
 
-for you to fetch changes up to 90eb9ae35727a662789c850efaf225ffe5511fae:
+Ah, good point. Will remove.
 
-  lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt (2025-10-07 13:48:56 -0700)
+>
+> > +
+> > +Later, when a filesystem wishes to access a folio in a file on disk, i=
+t
+> > +first checks cleancache to see if it already contains required data; i=
+f it
+> > +does, the folio data is copied into the kernel and a disk access is
+> > +avoided.
+> > +
+> > +The memory cleancache uses is donated by other system components, whic=
+h
+> > +reserve memory not directly addressable by the kernel. By donating thi=
+s
+> > +memory to cleancache, the memory owner enables its utilization while i=
+t
+> > +is not used. Memory donation is done using cleancache backend API and =
+any
+> > +donated memory can be taken back at any time by its donor without no d=
+elay
+>
+> "without delay" or "with no delay" ?
 
-----------------------------------------------------------------
-Just one series here - Mike Rappoport has taught KEXEC handover to
-preserve vmalloc allocations across handover.
+Ack. Will change to "without delay"
 
-----------------------------------------------------------------
-Mike Rapoport (Microsoft) (4):
-      kho: check if kho is finalized in __kho_preserve_order()
-      kho: replace kho_preserve_phys() with kho_preserve_pages()
-      kho: add support for preserving vmalloc allocations
-      lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt
+>
+> > +and with guarantees success. Since cleancache uses this memory only to
+> > +store clean file-backed data, it can be dropped at any time and theref=
+ore
+> > +the donor's request to take back the memory can be always satisfied.
+> > +
+> > +Implementation Overview
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Cleancache "backend" (donor that provides transcendent memory), regist=
+ers
+>
+> Again, "transcendent memory" part seems better to be dropped.
 
-Umang Jain (1):
-      MAINTAINERS, .mailmap: update Umang's email address
+Ack.
 
- .mailmap                       |   1 +
- MAINTAINERS                    |   2 +-
- include/linux/kexec_handover.h |  33 +++-
- kernel/kexec_handover.c        | 361 ++++++++++++++++++++++++++++++++++++-----
- lib/test_kho.c                 |  41 +++--
- mm/memblock.c                  |   4 +-
- 6 files changed, 383 insertions(+), 59 deletions(-)
+>
+> > +itself with cleancache "frontend" and received a unique pool_id which =
+it
+> > +can use in all later API calls to identify the pool of folios it donat=
+es.
+> > +Once registered, backend can call cleancache_backend_put_folio() or
+> > +cleancache_backend_put_folios() to donate memory to cleancache. Note t=
+hat
+> > +cleancache currently supports only 0-order folios and will not accept
+> > +larger-order ones. Once the backend needs that memory back, it can get=
+ it
+> > +by calling cleancache_backend_get_folio(). Only the original backend c=
+an
+> > +take the folio it donated from the cleancache.
+> > +
+> > +Kernel uses cleancache by first calling cleancache_add_fs() to registe=
+r
+> > +each file system and then using a combination of cleancache_store_foli=
+o(),
+> > +cleancache_restore_folio(), cleancache_invalidate_{folio|inode} to sto=
+re,
+> > +restore and invalidate folio content.
+> > +cleancache_{start|end}_inode_walk() are used to walk over folios insid=
+e
+> > +an inode and cleancache_restore_from_inode() is used to restore folios
+> > +during such walks.
+> > +
+> > +From kernel's point of view folios which are copied into cleancache ha=
+ve
+> > +an indefinite lifetime which is completely unknowable by the kernel an=
+d so
+> > +may or may not still be in cleancache at any later time. Thus, as its =
+name
+> > +implies, cleancache is not suitable for dirty folios. Cleancache has
+> > +complete discretion over what folios to preserve and what folios to di=
+scard
+> > +and when.
+> > +
+> > +Cleancache Performance Metrics
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +If CONFIG_CLEANCACHE_SYSFS is enabled, monitoring of cleancache perfor=
+mance
+> > +can be done via sysfs in the `/sys/kernel/mm/cleancache` directory.
+> > +The effectiveness of cleancache can be measured (across all filesystem=
+s)
+> > +with provided stats.
+> > +Global stats are published directly under `/sys/kernel/mm/cleancache` =
+and
+> > +include:
+>
+> ``/sys/kernel/mm/cleancache`` ?
 
+Ack.
+
+>
+> > +
+> > +``stored``
+> > +     number of successful cleancache folio stores.
+> > +
+> > +``skipped``
+> > +     number of folios skipped during cleancache store operation.
+> > +
+> > +``restored``
+> > +     number of successful cleancache folio restore operations.
+> > +
+> > +``missed``
+> > +     number of failed cleancache folio restore operations.
+> > +
+> > +``reclaimed``
+> > +     number of folios reclaimed from the cleancache due to insufficien=
+t
+> > +     memory.
+> > +
+> > +``recalled``
+> > +     number of times cleancache folio content was discarded as a resul=
+t
+> > +     of the cleancache backend taking the folio back.
+> > +
+> > +``invalidated``
+> > +     number of times cleancache folio content was discarded as a resul=
+t
+> > +     of invalidation.
+> > +
+> > +``cached``
+> > +     number of folios currently cached in the cleancache.
+> > +
+> > +Per-pool stats are published under `/sys/kernel/mm/cleancache/<pool na=
+me>`
+>
+> ``/sys/kernel/mm/cleancache/<pool name>`` ?
+
+Ack.
+
+>
+> > +where "pool name" is the name pool was registered under. These stats
+> > +include:
+> > +
+> > +``size``
+> > +     number of folios donated to this pool.
+> > +
+> > +``cached``
+> > +     number of folios currently cached in the pool.
+> > +
+> > +``recalled``
+> > +     number of times cleancache folio content was discarded as a resul=
+t
+> > +     of the cleancache backend taking the folio back from the pool.
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 1c97227e7ffa..441e68c94177 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -6053,6 +6053,7 @@ CLEANCACHE
+> >  M:   Suren Baghdasaryan <surenb@google.com>
+> >  L:   linux-mm@kvack.org
+> >  S:   Maintained
+> > +F:   Documentation/mm/cleancache.rst
+> >  F:   include/linux/cleancache.h
+> >  F:   mm/cleancache.c
+> >  F:   mm/cleancache_sysfs.c
+> > --
+> > 2.51.0.740.g6adb054d12-goog
+>
+>
+> Thanks,
+> SJ
+
+Thanks for the review!
 
