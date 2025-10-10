@@ -1,186 +1,99 @@
-Return-Path: <linux-kernel+bounces-848753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33E7BCE7FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BF9BCE80B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 22:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D3F543454
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CA0D19A71C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 20:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3682765C1;
-	Fri, 10 Oct 2025 20:38:27 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AFB2765C1;
+	Fri, 10 Oct 2025 20:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grMAhxX1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65CA23D7C4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ADC1DDC33;
+	Fri, 10 Oct 2025 20:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760128706; cv=none; b=s9ZtT+tHXjJzWzXMHb3JRpEeKjOd/s7yg175hLuQHuUUmlSRhIOIlZu9oR1HkjHdMlr6NfzjpLvf6dvjEhwkZHo1NH72lv57i0GxaNTmR2dmxCx7+FuhJmbTpSFkL2mcDQ4NFGliJ97XlHQrU0lJHu3F4DGsuE2icoLZDhyL54I=
+	t=1760128779; cv=none; b=V+0cPbTMN9zDLzM/BhnDlmeCE1h/QyWRzWYKe1RwJwE+1G3ZqZAkZgBjgA3zRTIps/asqMMFwTNt5xKc1wZVfo86n6lV6ayCVqzGk9mklqkrcqPE6rav82RlHzQZN1AKx/um2TP6yTvvDOVPwyiOkvTt0JPv1+nVK6WIok0S1Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760128706; c=relaxed/simple;
-	bh=yLew8Rl01k3KaW6flGFWAhuUGx9UAQv84e7MoJrKvkc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EOZmHsBVTbhYVp8vArA33heMTOWmAsfL9gGaR4boNWJsYvBH4Dx5/LuIPng0WkKFAN0n0OS3ur1OA3q5yrNSqtIcfOt+0b8qK9+h6BvJ40467FfU3KskzXGSpnFzhv0FFy/LN2n98sZJ1mKw/1XgWBVHN8gf7OvuPJUV6teedjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42486f6da6fso90345315ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 13:38:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760128704; x=1760733504;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ui6K6YF+spReZ25GO2naUTGC6+wguMdNBIkM6SNvYNg=;
-        b=q/fEvFMFTjNRD7TR/W80cp6ymcvmnB0l1FMRZliSbKLLtCJNAnlcTMIcUnjL6S5Y9O
-         wUQwbQZ7FAAdT+VlF6nFm9nLxESeVp/b9rx5B3OWf9c2nJ/NifL4uEVPCM8VQMRBQbZm
-         kB7gpXWjM9KW2VJmmmI3P+Xj0u4eQ3NSLow7rpPoxCjyEAXkIMVq+8kOJ8ii69MsHEZ9
-         v3SmQaOPDad8yDK9zQ8e6zsyi0qrWX2G6RSkOhiD1aGSAuc0OJRCGEsE5tOaJAjMFn0Z
-         GfaNwUOxAFNYfYQ+cWa2Wt+GCB5a2YrUcfxAwcy8HjIw5AGyIOM0oebMFEphxm0KSE+W
-         +Q+w==
-X-Forwarded-Encrypted: i=1; AJvYcCX07cfDWHo9MpfEKLOMPILudE6STlowAmXdWb/i5pOuBQ4Cg1GCWeJvE18s5B5lCiTdFrMifUxErRJU18U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2PgQXiTgu+/Pjk9LFvT9iu5sFE3x0iu7+73iAX8samBHxEydD
-	ejSGECrq1KxvCr6djBg0ti0zriWH6CatB7BZ2m9P01/BbqYK4oGtc/lMcYZ0+WrZ2+A/yXM0jvu
-	ViWmESkrU54qjEIp6LxUSLe/Gse7pcRTjk0au7Iusz5RPvnUJdDdZWwqtR/E=
-X-Google-Smtp-Source: AGHT+IFKU/qp78m9hPZWGHOoYx9KU8423H9AQ6Dc2vVvGyhXIIH4zeHoBYjozxRonn+wsYf586Uut8Jo6UgY64keydg4uoJLIHel
+	s=arc-20240116; t=1760128779; c=relaxed/simple;
+	bh=23QQchZn74OhbikjpJXXcj/0fhyi1s4y231R27LUpzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFtP2nrFsY4YLiqAxyPIAOPfnHi3NyTkVR8H+TTQG2QtBrLdBqf5+AIiu0+aRi6Dze6afHPyHhv5j3NnKcShr0CcGhRuxal/acSsxmQVR2Oe+IsSFKgfMZiD7wyr1bsKS9QY91020wmIJDVh+7+nqTEWfNnTPazL/jnD9u0qhMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grMAhxX1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6495C4CEF1;
+	Fri, 10 Oct 2025 20:39:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760128779;
+	bh=23QQchZn74OhbikjpJXXcj/0fhyi1s4y231R27LUpzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=grMAhxX1/IMkXmvN/KTFayDf9a5qX4x+eOd6D13ZFiyX7LpV41whughu8vkEflqUc
+	 NSQc+tzXKv3dIzQuOxiu660Paich0bb16Y9Lw46DxIXxVRL0z+WN/PbJOmEYr4zLmo
+	 zHk1nzmRdjX6xwhp3PLx2yiUInoA8Uda94XFTfkeD+vVKUc347LgzmKF6HY09vBph5
+	 Z3p+wv9XBhnR3Cmmp2AKAvc2lAQyRq9tAzhB4Zaf0sk6wrw98m79VtycxYOs4lLh1L
+	 jeOMyxdR6DjBxPUalaVWN3ZO3MK/KJfadSPlP5rfmOgds0NinmqjJkdWE9yR89L+JO
+	 f4vyA2SR4nwLQ==
+Date: Fri, 10 Oct 2025 13:39:37 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Divya Bharathi <divya27392@gmail.com>
+Cc: linux-fscrypt@vger.kernel.org, tytso@mit.edu, jaegeuk@kernel.org,
+	corbet@lwn.net, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: fscrypt: document EFAULT return for
+ FS_IOC_SET_ENCRYPTION_POLICY
+Message-ID: <20251010203937.GC2922@quark>
+References: <20251010154753.19216-1-divya27392@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c7:b0:42d:8a3f:ec8b with SMTP id
- e9e14a558f8ab-42f87362229mr135800235ab.3.1760128703882; Fri, 10 Oct 2025
- 13:38:23 -0700 (PDT)
-Date: Fri, 10 Oct 2025 13:38:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e96ebf.050a0220.91a22.0177.GAE@google.com>
-Subject: [syzbot] [virt?] upstream test error: KMSAN: use-after-free in vring_map_one_sg
-From: syzbot <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com>
-To: eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
-	mst@redhat.com, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010154753.19216-1-divya27392@gmail.com>
 
-Hello,
+On Fri, Oct 10, 2025 at 09:17:53PM +0530, Divya Bharathi wrote:
+> Signed-off-by: Divya Bharathi <divya27392@gmail.com>
+> ---
+>  Documentation/filesystems/fscrypt.rst | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+> index 4a3e844b7..26cb409e3 100644
+> --- a/Documentation/filesystems/fscrypt.rst
+> +++ b/Documentation/filesystems/fscrypt.rst
+> @@ -729,6 +729,8 @@ FS_IOC_SET_ENCRYPTION_POLICY can fail with the following errors:
+>    version, mode(s), or flags; or reserved bits were set); or a v1
+>    encryption policy was specified but the directory has the casefold
+>    flag enabled (casefolding is incompatible with v1 policies).
+> +- ``EFAULT``: an invalid pointer was passed for the encryption policy
+> +  structure
+>  - ``ENOKEY``: a v2 encryption policy was specified, but the key with
+>    the specified ``master_key_identifier`` has not been added, nor does
+>    the process have the CAP_FOWNER capability in the initial user
+> -- 
+> 2.51.0
+> 
 
-syzbot found the following issue on:
+Thanks for the patch!
 
-HEAD commit:    ba9dac987319 Merge tag 'libnvdimm-for-6.18' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=138581e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ad506767107aacda
-dashboard link: https://syzkaller.appspot.com/bug?extid=ac856b8b866cca41352c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+I think I omitted EFAULT intentionally, since it's always a possibility
+for almost any ioctl or syscall that takes a pointer parameter.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ce6a737acd38/disk-ba9dac98.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d7053b626642/vmlinux-ba9dac98.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/13f2d7e62179/bzImage-ba9dac98.xz
+If we'd like to explicitly document it, it probably should be documented
+for all the ioctls in fscrypt.rst, rather than just
+FS_IOC_SET_ENCRYPTION_POLICY.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com
+Also, the list of error codes is alphabetized.  EFAULT should go into
+the correct position in the list.
 
-8021q: adding VLAN 0 to HW filter on device bond0
-eql: remember to turn off Van-Jacobson compression on your slave devices
-=====================================================
-BUG: KMSAN: use-after-free in vring_map_one_sg+0x290/0x7b0 drivers/virtio/virtio_ring.c:401
- vring_map_one_sg+0x290/0x7b0 drivers/virtio/virtio_ring.c:401
- virtqueue_add_split drivers/virtio/virtio_ring.c:608 [inline]
- virtqueue_add+0x32aa/0x6320 drivers/virtio/virtio_ring.c:2281
- virtqueue_add_outbuf+0x89/0xa0 drivers/virtio/virtio_ring.c:2342
- virtnet_add_outbuf drivers/net/virtio_net.c:574 [inline]
- xmit_skb drivers/net/virtio_net.c:3343 [inline]
- start_xmit+0x274d/0x4860 drivers/net/virtio_net.c:3367
- __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
- netdev_start_xmit include/linux/netdevice.h:5257 [inline]
- xmit_one net/core/dev.c:3845 [inline]
- dev_hard_start_xmit+0x22c/0xa30 net/core/dev.c:3861
- sch_direct_xmit+0x3b2/0xcf0 net/sched/sch_generic.c:344
- __dev_xmit_skb net/core/dev.c:4152 [inline]
- __dev_queue_xmit+0x3588/0x5e60 net/core/dev.c:4729
- dev_queue_xmit include/linux/netdevice.h:3365 [inline]
- lapbeth_data_transmit+0x352/0x480 drivers/net/wan/lapbether.c:260
- lapb_data_transmit+0x90/0xf0 net/lapb/lapb_iface.c:447
- lapb_transmit_buffer+0x260/0x330 net/lapb/lapb_out.c:149
- lapb_send_control+0x458/0x5b0 net/lapb/lapb_subr.c:251
- lapb_establish_data_link+0xa6/0xd0 net/lapb/lapb_out.c:-1
- lapb_device_event+0xb2a/0xbc0 net/lapb/lapb_iface.c:-1
- notifier_call_chain kernel/notifier.c:85 [inline]
- raw_notifier_call_chain+0xe0/0x410 kernel/notifier.c:453
- call_netdevice_notifiers_info+0x1ac/0x2b0 net/core/dev.c:2229
- call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
- call_netdevice_notifiers net/core/dev.c:2281 [inline]
- __dev_notify_flags+0x20d/0x3c0 net/core/dev.c:-1
- netif_change_flags+0x162/0x1e0 net/core/dev.c:9705
- dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
- devinet_ioctl+0x1186/0x2500 net/ipv4/devinet.c:1199
- inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1003
- sock_do_ioctl+0x9c/0x480 net/socket.c:1254
- sock_ioctl+0x70b/0xd60 net/socket.c:1375
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0x239/0x400 fs/ioctl.c:583
- __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:583
- x64_sys_call+0x1cbc/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_free_hook mm/slub.c:2440 [inline]
- slab_free mm/slub.c:6566 [inline]
- kmem_cache_free+0x2b0/0x1490 mm/slub.c:6676
- skb_kfree_head net/core/skbuff.c:1046 [inline]
- skb_free_head+0x13c/0x3a0 net/core/skbuff.c:1060
- skb_release_data+0x9f7/0xac0 net/core/skbuff.c:1087
- skb_release_all net/core/skbuff.c:1152 [inline]
- __kfree_skb+0x6b/0x260 net/core/skbuff.c:1166
- consume_skb+0x83/0x230 net/core/skbuff.c:1398
- skb_free_datagram+0x1e/0x30 net/core/datagram.c:324
- netlink_recvmsg+0xad1/0xfe0 net/netlink/af_netlink.c:1974
- sock_recvmsg_nosec net/socket.c:1078 [inline]
- sock_recvmsg+0x2dc/0x390 net/socket.c:1100
- ____sys_recvmsg+0x193/0x610 net/socket.c:2850
- ___sys_recvmsg+0x20b/0x850 net/socket.c:2892
- __sys_recvmsg net/socket.c:2925 [inline]
- __do_sys_recvmsg net/socket.c:2931 [inline]
- __se_sys_recvmsg net/socket.c:2928 [inline]
- __x64_sys_recvmsg+0x20e/0x3d0 net/socket.c:2928
- x64_sys_call+0x35f0/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:48
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Bytes 0-17 of 18 are uninitialized
-Memory access of size 18 starts at ffff88811a0f1000
-
-CPU: 1 UID: 0 PID: 5441 Comm: dhcpcd Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+- Eric
 
