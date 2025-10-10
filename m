@@ -1,76 +1,117 @@
-Return-Path: <linux-kernel+bounces-848169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85265BCCCB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:44:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB62BCCCBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 13:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A344254CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB19919E5FE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 11:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9408285CBB;
-	Fri, 10 Oct 2025 11:44:53 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB103287275;
+	Fri, 10 Oct 2025 11:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gikhRvMl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220704414
-	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 11:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7CB1494CC;
+	Fri, 10 Oct 2025 11:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760096693; cv=none; b=eJbI301p4/ipwk2Ckuhs9Iib8r3rtjLzsJHn3bqYH3M/bGIAxslTij+n8xgZgBL8M0ghTaT9YrSWu7qC2NOZQll8O8FBv/SGJqkAtU5kKt2pQp21jGOH8SSe6uvobazF6d5rJXBxzC0O2+xrekXSps2eldLYaudkJf6JPnpTOTI=
+	t=1760096720; cv=none; b=OnyYcdfyskMmNpfALVCURKlqTLNfcd2YpTpmPuClidgcyUn0CmT6GqxjLYfItUEimsI65oqJTiLYgWRuBa372UkPtN0UY8ImHTefcboaapJyt1cDCV471FJr0yjxivdwU2yzIEogJXu2ke9zyhMr36qXAvjGHWHuqEU2cYO1Yfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760096693; c=relaxed/simple;
-	bh=TL5jMOTAeFsRvHAwOtmEOLeCIjnhJJpPxhu6/rUezI4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JBMQ4U4kBoze7SwDcf7lQzXIniEkVsUqFS7jQAUP9bmXpvbsRqMCtAwPD4qZ5iCYFIYW18nD75VQAUEpZSW7eK4nQMHNSvKrePnlaOAq7AXeW0yAmz97VGNcDmVtJ2jhKva1dBzxwBDXAIZ/kq+SeBmvOzXkqQAk4eGCdm0yv2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42f86e96381so53066575ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:44:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760096691; x=1760701491;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TL5jMOTAeFsRvHAwOtmEOLeCIjnhJJpPxhu6/rUezI4=;
-        b=Vx4L7u+2Q1PUcU/LO/TrlLy350mAmq0KWE1bnQfJMjangbRz221jqnGv+5EuelUY0a
-         VoZAljX4xB1YuynPpWWnT59VqUbnZZKfMBVG/bJgI6JPAzrP9OiGnHZvNMHppkzB5Pya
-         oSqHQgZhkgp2IT4j63Pfqj8ymL9M2owuLqvA1AlDVMaVvIi3m155YvId70WXSrvX74A1
-         NgqSpuQOXN4aL0XyvXuL0zxqPaxSSM4GqylITmgdhD+ZBCoK0y4Y/Iz3xqhH4f/x9yCv
-         STGh0nvni6a3NhpyuwdK4ETEHBKcHr3a/cLzzzz1Vy3qllNnCm76D678W88YtAEFVJRB
-         DXyw==
-X-Gm-Message-State: AOJu0YxiC7jf3GV6ApeHGAqvEOPxLG1x6jX8YcEBjD8ZD1I39oNTqkRQ
-	b1giqCVtaBYpJziu0kZJexLoIaP4st9qiTMDBTZbpwFQGS3+GBc/ivA284sA7XBslQIigdhC8JY
-	MYLkctGV+GVXCqkmN+J9N7D3X/BztGx0aEaq/9eRmFocLjWT1QN2GjFgzAxk=
-X-Google-Smtp-Source: AGHT+IFnmW23il90FNDqziOI+7qb5W+bTbzlG6ny95BtM6VSypokNQCCGkW/wKUbpEqQCipshufXzSBe4cGB2buQOUcz5i/SJDU9
+	s=arc-20240116; t=1760096720; c=relaxed/simple;
+	bh=ziouyjwySw3UWuW8tL6Q6l7Pc4+Kgy16ZCEvsUCbGbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=af4dyyr2340V9eaUx5MO3D3xPTZLDgRDCSV+RsDMJuGjQIUufHH1wJecHmJ+wW5zDH7J2HGh2E8Q/myejMmHNfSx1XhIcnAkXbaq5Gw3FbdZWCVBfaeNm31Jqnf8Y0+SOYi9q4WPcw3OUzyGW1Wd0v+pRLy/u1j69TNygdsYFCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gikhRvMl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C38C4CEF1;
+	Fri, 10 Oct 2025 11:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760096719;
+	bh=ziouyjwySw3UWuW8tL6Q6l7Pc4+Kgy16ZCEvsUCbGbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gikhRvMlwqEPykhS9jg3m/YakpwPEgbjbuQnlVW5St6YgVs/a78tSLo36C54z+YDc
+	 TmSZE4vCfvYHq5tmQcNjHMt99Q0ym81gtY/MV0S8i60V8Qh/oA0FYmYlT9VMEd32FV
+	 p6tjOX8tPn+01Qh9Zjw2lW+R5+VO/HxCc3oCIFxabB4O8lsGAzC9o4zvP2YT9SzlxY
+	 FPzgHpERkWSyLdMY/AsZNd27o59eJ0UsmKFHskJz9kiy9569QA4mpNhvS/2FkMUjeV
+	 8WdGegJDyk+zmFkuFzxfyUp9FBoCjTuskW+UkOjaccXj7wG2KiLbhbJIxJG0y6V2yR
+	 5iNrrjzBy84bQ==
+Date: Fri, 10 Oct 2025 13:45:13 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr
+ syscalls
+Message-ID: <20251010-schachfiguren-blutkonserven-9707ac22a0e2@brauner>
+References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
+ <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
+ <20251009172041.GA6174@frogsfrogsfrogs>
+ <q6phvrrl2fumjwwd66d5glauch76uca4rr5pkvl2dwaxzx62bm@sjcixwa7r6r5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8f:b0:427:b642:235 with SMTP id
- e9e14a558f8ab-42f87374f3bmr115826455ab.10.1760096691193; Fri, 10 Oct 2025
- 04:44:51 -0700 (PDT)
-Date: Fri, 10 Oct 2025 04:44:51 -0700
-In-Reply-To: <67afa060.050a0220.21dd3.0052.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e8f1b3.050a0220.91a22.016a.GAE@google.com>
-Subject: Forwarded: UBSAN: shift-out-of-bounds in sg_build_indirect
-From: syzbot <syzbot+270f1c719ee7baab9941@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <q6phvrrl2fumjwwd66d5glauch76uca4rr5pkvl2dwaxzx62bm@sjcixwa7r6r5>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Oct 10, 2025 at 12:05:04PM +0200, Andrey Albershteyn wrote:
+> On 2025-10-09 10:20:41, Darrick J. Wong wrote:
+> > On Wed, Oct 08, 2025 at 02:44:18PM +0200, Andrey Albershteyn wrote:
+> > > These syscalls call to vfs_fileattr_get/set functions which return
+> > > ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
+> > > inode. For syscalls EOPNOTSUPP would be more appropriate return error.
+> > > 
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > > ---
+> > >  fs/file_attr.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/fs/file_attr.c b/fs/file_attr.c
+> > > index 460b2dd21a85..5e3e2aba97b5 100644
+> > > --- a/fs/file_attr.c
+> > > +++ b/fs/file_attr.c
+> > > @@ -416,6 +416,8 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+> > >  	}
+> > >  
+> > >  	error = vfs_fileattr_get(filepath.dentry, &fa);
+> > > +	if (error == -ENOIOCTLCMD)
+> > 
+> > Hrm.  Back in 6.17, XFS would return ENOTTY if you called ->fileattr_get
+> > on a special file:
+> > 
+> > int
+> > xfs_fileattr_get(
+> > 	struct dentry		*dentry,
+> > 	struct file_kattr	*fa)
+> > {
+> > 	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
+> > 
+> > 	if (d_is_special(dentry))
+> > 		return -ENOTTY;
+> > 	...
+> > }
+> > 
+> > Given that there are other fileattr_[gs]et implementations out there
+> > that might return ENOTTY (e.g. fuse servers and other externally
+> > maintained filesystems), I think both syscall functions need to check
+> > for that as well:
+> > 
+> > 	if (error == -ENOIOCTLCMD || error == -ENOTTY)
+> > 		return -EOPNOTSUPP;
+> 
+> Make sense (looks like ubifs, jfs and gfs2 also return ENOTTY for
+> special files), I haven't found ENOTTY being used for anything else
+> there
 
-***
-
-Subject: UBSAN: shift-out-of-bounds in sg_build_indirect
-Author: kshitijvparanjape@gmail.com
-
-#syz test
+I'm folding this in.
 
