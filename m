@@ -1,90 +1,133 @@
-Return-Path: <linux-kernel+bounces-848901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C77FBCEC7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A811BCEC8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C7FC34ED54
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 23:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D94983E0835
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8362EA47E;
-	Fri, 10 Oct 2025 23:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7999E552;
+	Sat, 11 Oct 2025 00:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NzdwH1n5"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkTaRb9G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A5727FB2F;
-	Fri, 10 Oct 2025 23:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A296111A8;
+	Sat, 11 Oct 2025 00:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760140667; cv=none; b=gptf/FcOPoJ1IlkMRTCQp3vIT5/hVVKpGJKXnZ71HGniQTYzMCbeWm07hI52aOCxQVXvqN5/0gFBoU2V4le/To2xWur6HOa9M1m2w9WbyfRKMxq1ee/dJr0/iRE3dSG6AGOouNoZNdXUDyKvbE0AEfYseYw8+2WekiWg7lbDqCY=
+	t=1760140923; cv=none; b=Bp2wFTgH0UFIHLdElTYQ5L6GsNdaLlZ2uZ44lcHcJGvzCc4r5vvF2Ze1eDsfAV6zhtl7GEVV7Sr0IBo+vDB/Ph8u9KSUDilWGvHA2U8dnPxskx8WfDBXxA2RAE4dtrhraCbhNXbML1HfdwEkSR9sC1oDZqQ9N+Rj5tM4Ynx3r6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760140667; c=relaxed/simple;
-	bh=dN3O/eRcSJ8pvlqe+Qc1o3R9+nVl7l4ABYLURk0fPMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gQCy6+7nzMXameZpF9OuYhey+YhLKqr25/1kDSK4eLGhSA5c6o8yaI+QCimFJdqjySJ42mlGEI+i22BHGxMM46ydBvin8fipLkVmmwxZcYxihx/dwLTfHnWvJi9TT92PcvspbHrDUH5EZKCMjTOaTI8Jir3IAwY6NfWpA140sis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NzdwH1n5; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=HgqYiAk62nEUPgGef5NNfJTUURXX9WcPG3XzwfzVYVk=; b=NzdwH1n5XSFfLDx2
-	LltVrhHkI9X5N5e7mya3M/RpMTwE6yKIZK+TlrzHL9zAGamtrJOKCJC1or3so5uFVqXxDwE80rnls
-	nXJyhAH2coORgYWGhQCunNx1fW4G9n1dZA85V3k2M7YJoyucnSSBGYkU2wHjJ7oWnJISNpvSJdVsP
-	LPKzFjezCNHAW1SYP8o6SEOM1ZVvca4R97KR8EWAEXqVGJLmu9nMWvU5mCfiuSbbRM1eGDpRPKa1m
-	UJTg0cdblS+SAOW0tHrr2+ljtax+7FKSItWc7f9jiYCeNNIdj7DAkKLPDZQ+Z6osIC+/ymCsJd7NX
-	xssklnuH5aCzGj5Bcw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1v7MzR-00FnsM-1R;
-	Fri, 10 Oct 2025 23:57:37 +0000
-From: linux@treblig.org
-To: loic.poulain@oss.qualcomm.com,
-	jeff.johnson@oss.qualcomm.com
-Cc: linux-kernel@vger.kernel.org,
-	wcn36xx@lists.infradead.org,
-	linux-wireless@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] MAINTAINERS: wcn36xx: Add linux-wireless list
-Date: Sat, 11 Oct 2025 00:57:35 +0100
-Message-ID: <20251010235735.350638-1-linux@treblig.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760140923; c=relaxed/simple;
+	bh=97luAzmYrWuVvl8+wQcQMdNLrZMIJtCogPvCBYkvxDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0QZ/pxds+YcWuk6UuuY3uaD3voxxxC0XU3SDK41yLgKy6xYA5LBpme0cpWnFFo7SgMRuwPzPsYH0n4L5OUanXVnUK5BlVgtxA35cZ7L8a8wR0CKACI5WFr/KA8X3dNuo4/pPMQx4dskV34QKs8NsSOJQ3vClvLj0VZIZB+alZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkTaRb9G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E35AC4CEF1;
+	Sat, 11 Oct 2025 00:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760140922;
+	bh=97luAzmYrWuVvl8+wQcQMdNLrZMIJtCogPvCBYkvxDE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gkTaRb9GM6iP6MptnJB+GK5jSM3ndtkcIDuBC0irctDFE9qHkuXhHhmQ3PlV60DBO
+	 LbWJlfFkwzZuqn3VmF/k6FftaXISXA08GM1m6auro+bK8kdKbkvhkj36hfwWtO5YWz
+	 GjlK2SJFhV4ECBhn8V14ulwLYMFxJ/vVIjAWG4wtr9jHBtcv1bwwLix9MF086OSkAG
+	 GK8ydz3Cld8B3drv7N+q3SX8NxYegeB3BNqbe5SKMXC9XN5O6ufqT5LFI7cYnuH4jI
+	 1Qe0SGyMgIaCoorhcoyP76tIK7wyqzopLwLpbw7Vpv7h3yYw5UCEMCE2pMMu3FmvnP
+	 EE5+X70/ohf4A==
+Message-ID: <cae78078-e8f8-402c-a9f5-f9a9731e4a0a@kernel.org>
+Date: Sat, 11 Oct 2025 02:01:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 03/10] dt-bindings: phy: qcom-m31-eusb2: Add Glymur
+ compatible
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
+ conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
+ dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org, vkoul@kernel.org,
+ gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
+ <20251006222002.2182777-4-wesley.cheng@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251006222002.2182777-4-wesley.cheng@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 07/10/2025 00:19, Wesley Cheng wrote:
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: qcom,sm8750-m31-eusb2-phy
+> +    then:
+> +      required:
+> +        - clocks
+> +        - clock-names
 
-The wcn36xx is a wireless device but doesn't have the wireless
-list in its MAINTAINERS entry.
-Add it.
+Nothing in commit msg explains why the new phy can run magically without
+any clock. Seems unlikely, hardware does not work like that, so this
+seems wrong.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e4886604631d..f681f8b60f4f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21306,6 +21306,7 @@ F:	drivers/media/platform/qcom/venus/
- QUALCOMM WCN36XX WIRELESS DRIVER
- M:	Loic Poulain <loic.poulain@oss.qualcomm.com>
- L:	wcn36xx@lists.infradead.org
-+L:	linux-wireless@vger.kernel.org
- S:	Supported
- W:	https://wireless.wiki.kernel.org/en/users/Drivers/wcn36xx
- F:	drivers/net/wireless/ath/wcn36xx/
--- 
-2.51.0
+Also, don't combine USB patches into other subsystems. I already asked
+about this qcom few times.
 
+Best regards,
+Krzysztof
 
