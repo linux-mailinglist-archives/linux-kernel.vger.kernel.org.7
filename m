@@ -1,151 +1,238 @@
-Return-Path: <linux-kernel+bounces-849192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DEBBCF785
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:49:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61D6BCF79A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AEB84E2F61
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E03F421182
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8333827A11E;
-	Sat, 11 Oct 2025 14:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA7127E058;
+	Sat, 11 Oct 2025 14:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rpe+Vwbt"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0bJ6elz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61734BA2D
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17A91CFBA
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760194153; cv=none; b=OWCzDzR+SSk9glU8HEfEIC6nSoUN9QTQIF7MJZGgGrAL+pxJcrBk9QmV5/xnLa75rZqotB01tAz2kLYMpRKoP8sWJpdnhwKoMa2wFHDRs8RSVRsGml2oyngJrH4Mk4Y+DyTRc58PKqkBND/+pkwqojne5rAtFLy/oZnKjxePxNs=
+	t=1760194389; cv=none; b=iosDUOZEl0Gp6SDc9VokpwdNPsfcS3LRRFcFWmzTRJCOYDWELaDMaQzZbZd08ZkD25N9WgYNSI+tZ/pLNTqaInNq5JVfOBo4PQil+knGFtMB5CHoOjFlYS9A1sSaMt9ZeL590ViEhVmHJQoQ5+eqNhiB/SYp47NKC6w1DD6YP9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760194153; c=relaxed/simple;
-	bh=2LERlmS1vY1U+NW2HOrpEvvqS8bG+J6MpZoickTEyAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iPtWNOw4hXfTFdv60fITGBGDhncxLTgJLsoAL5e6z7g1HeZCMnSeRU4/UwYlnIxDruDxdRqinRtYyiMRo4gyeTyGghVch+xmYRw4o/Jh6ngml4lgwX5Kqf4rFxkz5/MqdsTPf/3mU8/C4LSR94fYnQ+2nhiDgiJn99+otPuieFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rpe+Vwbt; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760194149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZxYRLUTD2uxRCoYKFaakgljNkh+iJSv3MNQujQNqkSw=;
-	b=rpe+VwbtbpQlkCr9fqr7XX3PxCviZbVyag+t8RzbZhF+Q7kytqER/wbOIhjib6ChhTFUWO
-	bYrAY+Z0Th3f9C1LqpLdvS/QLuL7GbimMaEGhNFE0v+NYIBUlMXKnMdD8ngCaHVBNTsWSa
-	2dy71SokltYlrJK2P4lJ7UGarD38YMk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH] keys: Remove redundant less-than-zero checks
-Date: Sat, 11 Oct 2025 16:48:24 +0200
-Message-ID: <20251011144824.1257-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1760194389; c=relaxed/simple;
+	bh=2o6Y4QMJ3kwR1b61kfI6whELDPLh1xqPYbhOWSGGHiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZMjmRKezZlTsUMK4vAWtNQeCBWZsx7dFGJWszwQEyX4++pWn6bRttV6rojS9tVcL/t+clln7ykRLyUE9IJmj4+5rEK1a7tAg4MaFA/JZT+c+mw0bx4Er2UCwlbu0MiECTUKgqbTokcFpueQhuPe9ywiVyUsM2QtcIpj+UxU1y/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0bJ6elz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C55C4AF09
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760194389;
+	bh=2o6Y4QMJ3kwR1b61kfI6whELDPLh1xqPYbhOWSGGHiI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F0bJ6elzU6UqeDjG9Kkz9AGHwQhI7yEQaKN51HdqSnWX4wO/BMRc3XP6R/suT6KIj
+	 1nUjMx27Hx6Egu/ysr/jyYcddXj/otGIXXT13NZ19AWCmzECst+JWdVrOehX3XvT/S
+	 YE3BtNMMDN7SVgKpc6j/13St7awvl/DefYfNgu3pLLqEjERtgQZpG8AYOFzZmlKde2
+	 ityQXYqSKRhn5ZQJwD4lmtR5S3hhUxED1s/kkuX3lfN5TZvMa+gtCk395BicBA7mgY
+	 iH0KT69qi5LD0xKnxJPovAsgecWB45niSfRU+6cUe+To8WXeEfj1R2IH1CupxrR//a
+	 8t/4FbYnfaiNw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57992ba129eso3602483e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:53:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWW8D2m55I01zq91sOWbrCHiCMZF1O1hT3BtAkEp+4kN74HqPO6HB9dsEdLsKe+gi+aF1QumOHktpgWHaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxLPe0DylF8sUcp6qz1A8em+5NPSFyb6OFFBEgqwHYTW80HQfX
+	7mDah7UuE7SeCY+dOHpAVtXSIglYMa8nNFJkN0nbgPd6GfDP0QUE9ZtQZ5SGeeeqBzSlr+rvaFO
+	jJrcuX7HOJYMFIQx9ZpQ0oGfQKTTvPPo=
+X-Google-Smtp-Source: AGHT+IHd5tWMLT5Jd4S2AgeDrABowzME9iw/I95pcSe82Sob1tRy3izojgxncoXwecsm4I+jk8GvAwtA52c5jB+Jez4=
+X-Received: by 2002:a05:6512:159c:b0:55b:8afb:e644 with SMTP id
+ 2adb3069b0e04-5906dd6fb34mr4724115e87.31.1760194387810; Sat, 11 Oct 2025
+ 07:53:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <68ea2595.a70a0220.b3ac9.0006.GAE@google.com>
+In-Reply-To: <68ea2595.a70a0220.b3ac9.0006.GAE@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 11 Oct 2025 07:52:55 -0700
+X-Gmail-Original-Message-ID: <CAMj1kXErR15QWWZXFXjmXgRrxG0Fj_Qjk7OQzbUU+oR7g27RLw@mail.gmail.com>
+X-Gm-Features: AS18NWBD8rnIAn6CYsNx800gL6dJWf7ONo_MN0mDMcLg4nt9U0znDH1flp3bTyc
+Message-ID: <CAMj1kXErR15QWWZXFXjmXgRrxG0Fj_Qjk7OQzbUU+oR7g27RLw@mail.gmail.com>
+Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in aes_encrypt (6)
+To: syzbot <syzbot+22bff16a8f91d65e2e58@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The local variables 'size_t datalen' are unsigned and cannot be less
-than zero. Remove the redundant conditions.
+#syz set subsystems: ext4, fscrypt
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/keys/big_key.c                   | 2 +-
- security/keys/encrypted-keys/encrypted.c  | 4 ++--
- security/keys/trusted-keys/trusted_core.c | 4 ++--
- security/keys/user_defined.c              | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index c3367622c683..d46862ab90d6 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -66,7 +66,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 
- 	BUILD_BUG_ON(sizeof(*payload) != sizeof(prep->payload.data));
- 
--	if (datalen <= 0 || datalen > 1024 * 1024 || !prep->data)
-+	if (datalen == 0 || datalen > 1024 * 1024 || !prep->data)
- 		return -EINVAL;
- 
- 	/* Set an arbitrary quota */
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index d70f71d37f5f..57f88ae000ba 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -786,7 +786,7 @@ static int encrypted_instantiate(struct key *key,
- 	size_t datalen = prep->datalen;
- 	int ret;
- 
--	if (datalen <= 0 || datalen > 32767 || !prep->data)
-+	if (datalen == 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
- 
- 	datablob = kmalloc(datalen + 1, GFP_KERNEL);
-@@ -847,7 +847,7 @@ static int encrypted_update(struct key *key, struct key_preparsed_payload *prep)
- 
- 	if (key_is_negative(key))
- 		return -ENOKEY;
--	if (datalen <= 0 || datalen > 32767 || !prep->data)
-+	if (datalen == 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
- 
- 	buf = kmalloc(datalen + 1, GFP_KERNEL);
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index e2d9644efde1..b1680ee53f86 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -157,7 +157,7 @@ static int trusted_instantiate(struct key *key,
- 	int key_cmd;
- 	size_t key_len;
- 
--	if (datalen <= 0 || datalen > 32767 || !prep->data)
-+	if (datalen == 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
- 
- 	orig_datablob = datablob = kmalloc(datalen + 1, GFP_KERNEL);
-@@ -240,7 +240,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
- 	p = key->payload.data[0];
- 	if (!p->migratable)
- 		return -EPERM;
--	if (datalen <= 0 || datalen > 32767 || !prep->data)
-+	if (datalen == 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
- 
- 	orig_datablob = datablob = kmalloc(datalen + 1, GFP_KERNEL);
-diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
-index 749e2a4dcb13..686d56e4cc85 100644
---- a/security/keys/user_defined.c
-+++ b/security/keys/user_defined.c
-@@ -61,7 +61,7 @@ int user_preparse(struct key_preparsed_payload *prep)
- 	struct user_key_payload *upayload;
- 	size_t datalen = prep->datalen;
- 
--	if (datalen <= 0 || datalen > 32767 || !prep->data)
-+	if (datalen == 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
- 
- 	upayload = kmalloc(sizeof(*upayload) + datalen, GFP_KERNEL);
--- 
-2.51.0
-
+On Sat, 11 Oct 2025 at 02:38, syzbot
+<syzbot+22bff16a8f91d65e2e58@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    917167ed1211 Merge tag 'xtensa-20251010' of https://github..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10f55304580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3b820eb4c6dd8482
+> dashboard link: https://syzkaller.appspot.com/bug?extid=22bff16a8f91d65e2e58
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> userspace arch: i386
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f8b165efe52b/disk-917167ed.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/01b56300cdc7/vmlinux-917167ed.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/6c32d21e8075/bzImage-917167ed.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+22bff16a8f91d65e2e58@syzkaller.appspotmail.com
+>
+> EXT4-fs error (device loop5): ext4_orphan_get:1418: comm syz.5.10451: bad orphan inode 131083
+> EXT4-fs (loop5): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
+> =====================================================
+> BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:150 [inline]
+> BUG: KMSAN: uninit-value in aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:283
+>  subshift lib/crypto/aes.c:150 [inline]
+>  aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:283
+>  aesti_encrypt+0x7d/0xf0 crypto/aes_ti.c:31
+>  crypto_ecb_crypt crypto/ecb.c:23 [inline]
+>  crypto_ecb_encrypt2+0x13f/0x300 crypto/ecb.c:40
+>  crypto_lskcipher_crypt_sg+0x3a9/0x930 crypto/lskcipher.c:188
+>  crypto_lskcipher_encrypt_sg+0x8b/0xc0 crypto/lskcipher.c:207
+>  crypto_skcipher_encrypt+0x111/0x1e0 crypto/skcipher.c:194
+>  xts_encrypt+0x2e1/0x570 crypto/xts.c:269
+>  crypto_skcipher_encrypt+0x187/0x1e0 crypto/skcipher.c:195
+>  fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
+>  fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
+>  ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
+>  mpage_submit_folio fs/ext4/inode.c:2080 [inline]
+>  mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
+>  mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
+>  ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
+>  ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
+>  do_writepages+0x3ef/0x860 mm/page-writeback.c:2604
+>  filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+>  __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+>  file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
+>  generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
+>  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+>  ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
+>  vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
+>  generic_write_sync include/linux/fs.h:3046 [inline]
+>  ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
+>  ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+>  do_iter_readv_writev+0x9de/0xc20 fs/read_write.c:-1
+>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+>  do_pwritev fs/read_write.c:1153 [inline]
+>  __do_compat_sys_pwritev2 fs/read_write.c:1298 [inline]
+>  __se_compat_sys_pwritev2 fs/read_write.c:1290 [inline]
+>  __ia32_compat_sys_pwritev2+0x43d/0x6b0 fs/read_write.c:1290
+>  ia32_sys_call+0x1810/0x4310 arch/x86/include/generated/asm/syscalls_32.h:380
+>  do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+>  __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
+>  do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
+>  do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+>
+> Uninit was stored to memory at:
+>  le128_xor include/crypto/b128ops.h:69 [inline]
+>  xts_xor_tweak+0x566/0xbd0 crypto/xts.c:123
+>  xts_xor_tweak_pre crypto/xts.c:135 [inline]
+>  xts_encrypt+0x278/0x570 crypto/xts.c:268
+>  crypto_skcipher_encrypt+0x187/0x1e0 crypto/skcipher.c:195
+>  fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
+>  fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
+>  ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
+>  mpage_submit_folio fs/ext4/inode.c:2080 [inline]
+>  mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
+>  mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
+>  ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
+>  ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
+>  do_writepages+0x3ef/0x860 mm/page-writeback.c:2604
+>  filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+>  __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+>  file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
+>  generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
+>  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+>  ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
+>  vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
+>  generic_write_sync include/linux/fs.h:3046 [inline]
+>  ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
+>  ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+>  do_iter_readv_writev+0x9de/0xc20 fs/read_write.c:-1
+>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+>  do_pwritev fs/read_write.c:1153 [inline]
+>  __do_compat_sys_pwritev2 fs/read_write.c:1298 [inline]
+>  __se_compat_sys_pwritev2 fs/read_write.c:1290 [inline]
+>  __ia32_compat_sys_pwritev2+0x43d/0x6b0 fs/read_write.c:1290
+>  ia32_sys_call+0x1810/0x4310 arch/x86/include/generated/asm/syscalls_32.h:380
+>  do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+>  __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
+>  do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
+>  do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+>
+> Uninit was created at:
+>  __alloc_frozen_pages_noprof+0x689/0xf00 mm/page_alloc.c:5206
+>  alloc_pages_mpol+0x328/0x860 mm/mempolicy.c:2416
+>  alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
+>  alloc_pages_noprof mm/mempolicy.c:2507 [inline]
+>  folio_alloc_noprof+0x109/0x360 mm/mempolicy.c:2517
+>  filemap_alloc_folio_noprof+0x9d/0x420 mm/filemap.c:1020
+>  __filemap_get_folio+0xb45/0x1930 mm/filemap.c:2012
+>  write_begin_get_folio include/linux/pagemap.h:784 [inline]
+>  ext4_write_begin+0x6d9/0x2d70 fs/ext4/inode.c:1318
+>  generic_perform_write+0x362/0x1050 mm/filemap.c:4242
+>  ext4_buffered_write_iter+0x61a/0xce0 fs/ext4/file.c:299
+>  ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+>  do_iter_readv_writev+0x9de/0xc20 fs/read_write.c:-1
+>  vfs_writev+0x52a/0x1500 fs/read_write.c:1057
+>  do_pwritev fs/read_write.c:1153 [inline]
+>  __do_compat_sys_pwritev2 fs/read_write.c:1298 [inline]
+>  __se_compat_sys_pwritev2 fs/read_write.c:1290 [inline]
+>  __ia32_compat_sys_pwritev2+0x43d/0x6b0 fs/read_write.c:1290
+>  ia32_sys_call+0x1810/0x4310 arch/x86/include/generated/asm/syscalls_32.h:380
+>  do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+>  __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
+>  do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
+>  do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+>
+> CPU: 1 UID: 0 PID: 8113 Comm: syz.5.10451 Tainted: G        W           syzkaller #0 PREEMPT(none)
+> Tainted: [W]=WARN
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+> =====================================================
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
 
