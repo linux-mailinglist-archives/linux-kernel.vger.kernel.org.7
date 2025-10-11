@@ -1,192 +1,312 @@
-Return-Path: <linux-kernel+bounces-849155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24190BCF4E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:04:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277BABCF4F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5E9D406117
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4054319A0324
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11E626E6E6;
-	Sat, 11 Oct 2025 12:04:50 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6BF267AF1;
+	Sat, 11 Oct 2025 12:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mlTouuYn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC5C1F3BA4;
-	Sat, 11 Oct 2025 12:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244A53FC2;
+	Sat, 11 Oct 2025 12:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760184290; cv=none; b=kbZ66TnfhF+WaPgArNuQGxz59fwnuOyncMMXLS5mPxbh7iSv9atcw9c0VanaP0ldvT1tryJwWK2N78reVbqa7AAomXrUjLc9YhOeMnzDBj5WldqycwJsv4vcvfhU+/nYHSGSF5P7Bueb2G+Xh5tY/VZg9DNvUfGDltUa7d9AWfo=
+	t=1760184540; cv=none; b=b8PgCKke9kRhVwh0kE6/4+XeOjIFgnatZ/OorWp2Do1WzmajO6NdV23oF6F4Bz/Uqqhz+/gf53QWFu86mYgJjG5H2r2bzs0DcCiZB/bKnHuoRrCCImRhAoooK7ExXs4QbGNjntJKU/gVOFPUS6jFCrRAh9mg2Cc+eAA40hHlAAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760184290; c=relaxed/simple;
-	bh=KxskEjVwkXKRdFE3D2R/m92ezMP7L/SFnTaFKz8we0M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sk/5XHoe0jfFYn6Oolx90uMlli3lkOO6FNCe1fmjpfhAN4QsFYJ3HTOk5QaPuZ165lzyUUeW+bEfOD6HmVYHSg+PRcLCaCPAmlJXphajR5hhaH4FTWDI9UFSHyFz7uWS5vYLN5rSStZb5j3T3Fp075gEx7KIW6WF6i09tvHeEhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-CC: "corbet@lwn.net" <corbet@lwn.net>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "lance.yang@linux.dev" <lance.yang@linux.dev>,
-	"paulmck@kernel.org" <paulmck@kernel.org>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"mingo@kernel.org" <mingo@kernel.org>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"kees@kernel.org" <kees@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"feng.tang@linux.alibaba.com" <feng.tang@linux.alibaba.com>,
-	"pauld@redhat.com" <pauld@redhat.com>, "joel.granados@kernel.org"
-	<joel.granados@kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [????] Re: [PATCH][v2] hung_task: Panic after fixed number of
- hung tasks
-Thread-Topic: [????] Re: [PATCH][v2] hung_task: Panic after fixed number of
- hung tasks
-Thread-Index: AQHcMDksdcRioXB8tEOzfxW7SI8WgLSozsCAgBQcxiA=
-Date: Sat, 11 Oct 2025 12:03:23 +0000
-Message-ID: <2f26d112e8834d378dd00f20cc384f39@baidu.com>
-References: <20250928053137.3412-1-lirongqing@baidu.com>
- <20250929094739.e2d49113f52a315a900a2cd7@kernel.org>
-In-Reply-To: <20250929094739.e2d49113f52a315a900a2cd7@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1760184540; c=relaxed/simple;
+	bh=w3xGrX+1VRhr0RQ7XQ9cpiXJorK5YeJAkemidrbd/88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cYamq352bl6B5CexgtDbTCs+qOigBChfwCbx9unTB9xsXmvEtFXKsA5arZspeu2wSpDw5+L0q7Jh/6qxcB02upQP4MDpdqizkjcC1IF/CwuGz+MtahR3jGsxlBNKQbtz6X7IV06GooKax1tOEmPnDPn4sA448k3kXGoX58HAGg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mlTouuYn; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760184535; x=1791720535;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=w3xGrX+1VRhr0RQ7XQ9cpiXJorK5YeJAkemidrbd/88=;
+  b=mlTouuYnBiBzZeIKRa01Seg292YASQ/BfldqzDhEk/hCYyAFp1oq07HL
+   OWOCCGLGwxHOwDBkyGWcDfydiHD2to1ONpqfPKz1s2guA87ydq1gxzUSU
+   +7FyZMNdgVEXFYcRwPeKfu6fdiSe6dsZ25xVd+1HKSt5RIM1pQJ/fgnjB
+   KeF5nk3e8QvSs/lFkzfEyjxWJ7h6rqtTPZgvCERNtdwrIUkCZUmw5mlAW
+   bfr8wALEPzepq8ojwUt/BNKOYsHipj7OlMA+2bdiY7Pofz/4yEhU/iXIk
+   DDi5Z3Vj4q/LP5/gfkqmUnKKNHobq3z+TInORfSlQJbCpFVzXRzlP+i9M
+   A==;
+X-CSE-ConnectionGUID: Qa2v9vZLRK2Ruwbo90GKRw==
+X-CSE-MsgGUID: IzsnQJimT6GYs1JMs+TKgg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="87847224"
+X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
+   d="scan'208";a="87847224"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 05:08:54 -0700
+X-CSE-ConnectionGUID: r+kwUlfHQ+akfi6i8DtZIQ==
+X-CSE-MsgGUID: C+4Uk8xpTlySaGgoG7jdow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
+   d="scan'208";a="180767626"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 11 Oct 2025 05:08:50 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7YP1-0003kf-1O;
+	Sat, 11 Oct 2025 12:08:47 +0000
+Date: Sat, 11 Oct 2025 20:07:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, john.johansen@canonical.com,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	mic@digikod.net, kees@kernel.org, stephen.smalley.work@gmail.com,
+	casey@schaufler-ca.com, takedakn@nttdata.co.jp,
+	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org,
+	rdunlap@infradead.org, linux-api@vger.kernel.org,
+	apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org,
+	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
+Subject: Re: [PATCH v6 1/5] Wire up lsm_config_self_policy and
+ lsm_config_system_policy syscalls
+Message-ID: <202510111947.0ObJ6YUH-lkp@intel.com>
+References: <20251010132610.12001-2-maxime.belair@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.50.46
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010132610.12001-2-maxime.belair@canonical.com>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFzYW1pIEhpcmFtYXRz
-dSA8bWhpcmFtYXRAa2VybmVsLm9yZz4NCj4gU2VudDogMjAyNcTqOdTCMjnI1SA4OjQ4DQo+IFRv
-OiBMaSxSb25ncWluZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+IENjOiBjb3JiZXRAbHduLm5l
-dDsgYWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZzsgbGFuY2UueWFuZ0BsaW51eC5kZXY7DQo+IHBh
-dWxtY2tAa2VybmVsLm9yZzsgcGF3YW4ua3VtYXIuZ3VwdGFAbGludXguaW50ZWwuY29tOyBtaW5n
-b0BrZXJuZWwub3JnOw0KPiBkYXZlLmhhbnNlbkBsaW51eC5pbnRlbC5jb207IHJvc3RlZHRAZ29v
-ZG1pcy5vcmc7IGtlZXNAa2VybmVsLm9yZzsNCj4gYXJuZEBhcm5kYi5kZTsgZmVuZy50YW5nQGxp
-bnV4LmFsaWJhYmEuY29tOyBwYXVsZEByZWRoYXQuY29tOw0KPiBqb2VsLmdyYW5hZG9zQGtlcm5l
-bC5vcmc7IGxpbnV4LWRvY0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmcNCj4gU3ViamVjdDogWz8/Pz9dIFJlOiBbUEFUQ0hdW3YyXSBodW5nX3Rhc2s6IFBh
-bmljIGFmdGVyIGZpeGVkIG51bWJlciBvZiBodW5nDQo+IHRhc2tzDQo+IA0KPiBPbiBTdW4sIDI4
-IFNlcCAyMDI1IDEzOjMxOjM3ICswODAwDQo+IGxpcm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUu
-Y29tPiB3cm90ZToNCj4gDQo+ID4gRnJvbTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUu
-Y29tPg0KPiA+DQo+ID4gQ3VycmVudGx5LCB3aGVuIGh1bmdfdGFza19wYW5pYyBpcyBlbmFibGVk
-LCBrZXJuZWwgd2lsbCBwYW5pYw0KPiA+IGltbWVkaWF0ZWx5IHVwb24gZGV0ZWN0aW5nIHRoZSBm
-aXJzdCBodW5nIHRhc2suIEhvd2V2ZXIsIHNvbWUgaHVuZw0KPiA+IHRhc2tzIGFyZSB0cmFuc2ll
-bnQgYW5kIHRoZSBzeXN0ZW0gY2FuIHJlY292ZXIgZnVsbHksIHdoaWxlIG90aGVycyBhcmUNCj4g
-PiB1bnJlY292ZXJhYmxlIGFuZCB0cmlnZ2VyIGNvbnNlY3V0aXZlIGh1bmcgdGFzayByZXBvcnRz
-LCBhbmQgYSBwYW5pYyBpcw0KPiBleHBlY3RlZC4NCj4gPg0KPiA+IFRoaXMgY29tbWl0IGFkZHMg
-YSBuZXcgc3lzY3RsIHBhcmFtZXRlciBodW5nX3Rhc2tfY291bnRfdG9fcGFuaWMgdG8NCj4gPiBh
-bGxvd3Mgc3BlY2lmeWluZyB0aGUgbnVtYmVyIG9mIGNvbnNlY3V0aXZlIGh1bmcgdGFza3MgdGhh
-dCBtdXN0IGJlDQo+ID4gZGV0ZWN0ZWQgYmVmb3JlIHRyaWdnZXJpbmcgYSBrZXJuZWwgcGFuaWMu
-IFRoaXMgcHJvdmlkZXMgZmluZXIgY29udHJvbA0KPiA+IGZvciBlbnZpcm9ubWVudHMgd2hlcmUg
-dHJhbnNpZW50IGhhbmdzIG1heWJlIGhhcHBlbiBidXQgcGVyc2lzdGVudA0KPiA+IGhhbmdzIHNo
-b3VsZCBzdGlsbCBiZSBmYXRhbC4NCj4gDQo+IElJVUMsIHBlcmhhcHMgdGhlcmUgYXJlIG11bHRp
-cGxlIGdyb3VwcyB0aGF0IHJlcXVpcmUgZGlmZmVyZW50IHRpbWVvdXRzIGZvcg0KPiBoYW5nIGNo
-ZWNrcywgYW5kIHlvdSB3YW50IHRvIHNldCB0aGUgaHVuZyB0YXNrIHRpbWVvdXQgdG8gbWF0Y2gg
-dGhlIHNob3J0ZXINCj4gb25lLCBidXQgaWdub3JlIHRoZSBsb25nZXIgb25lcyBhdCB0aGF0IHBv
-aW50Lg0KPiANCj4gSWYgc28sIHRoaXMgaXMgZXNzZW50aWFsbHkgYSBwcm9ibGVtIHdpdGggYSBs
-b25nIHByb2Nlc3MgdGhhdCBpcyBwZXJmb3JtZWQgdW5kZXINCj4gVEFTS19VTklOVEVSUlVQVElC
-TEUuIElkZWFsbHksIHRoZSBwcm9ncmVzcyBvZiBzdWNoIHByb2Nlc3Mgc2hvdWxkIGJlDQo+IGNo
-ZWNrZWQgcGVyaW9kaWNhbGx5IGFuZCB0aGUgaGFuZyBjaGVjayBzaG91bGQgYmUgcmVzZXQgdW5s
-ZXNzIGl0IGlzIHJlYWwNCj4gYmxvY2tlZC4NCj4gQnV0IHRoaXMgaXMgbm90IGN1cnJlbnRseSBp
-bXBsZW1lbnRlZC4gKEZvciBleGFtcGxlLCBkZXBlbmRpbmcgb24gdGhlIG1lZGlhLA0KPiBpdCBt
-YXkgbm90IGJlIHBvc3NpYmxlIHRvIGNoZWNrIHdoZXRoZXIgbG9uZyBJTyBpcyBiZWluZw0KPiBw
-ZXJmb3JtZWQuKQ0KPiANCj4gVGhlIGh1bmdfdGFza3Mgd2lsbCBldmVuIHNpbXVsYXRlIHRoZXNl
-IHR5cGVzIG9mIGhhbmdzIGFzIHRhc2sgaGFuZy11cHMuIEJ1dCBpZg0KPiB5b3Ugc2V0IGEgbG9u
-ZyBkZXRlY3Rpb24gdGltZSBhY2NvcmRpbmdseSwgeW91IHdpbGwgYWxzbyBoYXZlIHRvIHdhaXQg
-dW50aWwgdGhhdA0KPiBkZXRlY3Rpb24gdGltZSBmb3IgaGFuZ3MgdGhhdCBvY2N1ciBpbiBhIHNo
-b3J0IHBlcmlvZCBvZiB0aW1lLg0KPiANCj4gVGhlIGh1bmcgdGFza3Mgb24gb25lIG1ham9yIGxv
-Y2sgY2FuIHNwcmVhZCBpbiBhIGRvbWlubyBlZmZlY3QuDQo+IFNvIHNldHRpbmcgYSByZWFzb25h
-Ymx5IHNob3J0IGRldGVjdGlvbiB0aW1lLCBidXQgbm90IHBhbmlja2luZyB1bnRpbCB0aGVyZSBh
-cmUNCj4gZW5vdWdoIG9mIHRoZW0sIHNlZW1zIGxpa2UgYSByZWFzb25hYmxlIHN0cmF0ZWd5Lg0K
-PiBCdXQgaW4gdGhpcyBjYXNlLCBJIHRoaW5rIHdlIGFsc28gbmVlZCBhICJoYXJkIHRpbWVvdXQg
-bGltaXQiDQo+IG9mIGh1bmcgdGFza3MsIHdoaWNoIHdpbGwgZGV0ZWN0IGxvbmdlciBvbmVzLiBB
-bmQgYWxzbyB5b3Ugc2hvdWxkIHVzZSBwZWFrDQo+IHZhbHVlIG5vdCBhY2N1bXVsYXRpb24gdmFs
-dWUuDQo+IA0KPiBJZiBpdCBpcyByZWFsbHkgdHJhbnNpZW50ICh0aHVzLCBpdCBpcyBub3QgaHVu
-ZyksIGFjY3VtdWxhdGlvbiBvZiBzdWNoIG5vcm1hbCBidXQNCj4ganVzdCBzbG93IG9wZXJhdGlv
-biB3aWxsIHN0aWxsIGtpY2sgaHVuZ190YXNrcy4NCj4gDQoNCg0KSXMgaXQgcmVhc29uYWJsZSB0
-byBkZXRlY3QgdGhlIGV4aXN0ZW5jZSBvZiBhIGh1bmcgdGFzayBjb250aW51b3VzbHkgZm9yIGEg
-Y2VydGFpbiBudW1iZXIgb2YgdGltZXMgdG8gdHJpZ2dlciBwYW5pYz8NCg0KTGlrZQ0KDQpkaWZm
-IC0tZ2l0IGEva2VybmVsL2h1bmdfdGFzay5jIGIva2VybmVsL2h1bmdfdGFzay5jDQppbmRleCBk
-MTdjZDNmLi4wNDViZWY1IDEwMDY0NA0KLS0tIGEva2VybmVsL2h1bmdfdGFzay5jDQorKysgYi9r
-ZXJuZWwvaHVuZ190YXNrLmMNCkBAIC0zMDQsNiArMzA0LDggQEAgc3RhdGljIHZvaWQgY2hlY2tf
-aHVuZ191bmludGVycnVwdGlibGVfdGFza3ModW5zaWduZWQgbG9uZyB0aW1lb3V0KQ0KICAgICAg
-ICBpbnQgbWF4X2NvdW50ID0gc3lzY3RsX2h1bmdfdGFza19jaGVja19jb3VudDsNCiAgICAgICAg
-dW5zaWduZWQgbG9uZyBsYXN0X2JyZWFrID0gamlmZmllczsNCiAgICAgICAgc3RydWN0IHRhc2tf
-c3RydWN0ICpnLCAqdDsNCisgICAgICAgdW5zaWduZWQgbG9uZyBwcmVfZGV0ZWN0X2NvdW50ID0g
-c3lzY3RsX2h1bmdfdGFza19kZXRlY3RfY291bnQ7DQorICAgICAgIHN0YXRpYyB1bnNpZ25lZCBs
-b25nIGNvbnRpZ3VvdXNfZGV0ZWN0X2NvdW50Ow0KDQogICAgICAgIC8qDQogICAgICAgICAqIElm
-IHRoZSBzeXN0ZW0gY3Jhc2hlZCBhbHJlYWR5IHRoZW4gYWxsIGJldHMgYXJlIG9mZiwNCkBAIC0z
-MjYsNiArMzI4LDE1IEBAIHN0YXRpYyB2b2lkIGNoZWNrX2h1bmdfdW5pbnRlcnJ1cHRpYmxlX3Rh
-c2tzKHVuc2lnbmVkIGxvbmcgdGltZW91dCkNCg0KICAgICAgICAgICAgICAgIGNoZWNrX2h1bmdf
-dGFzayh0LCB0aW1lb3V0KTsNCiAgICAgICAgfQ0KKw0KKyAgICAgICBpZiAoc3lzY3RsX2h1bmdf
-dGFza19kZXRlY3RfY291bnQgIT0gcHJlX2RldGVjdF9jb3VudCkgew0KKyAgICAgICAgICAgICAg
-IGNvbnRpZ3VvdXNfZGV0ZWN0X2NvdW50Kys7DQorICAgICAgICAgICAgICAgaWYgKHN5c2N0bF9t
-YXhfaHVuZ190YXNrX3RvX3BhbmljICYmDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IGNvbnRpZ3VvdXNfZGV0ZWN0X2NvdW50ID4gc3lzY3RsX21heF9odW5nX3Rhc2tfdG9fcGFuaWMp
-DQorICAgICAgICAgICAgICAgICAgICAgICBodW5nX3Rhc2tfY2FsbF9wYW5pYyA9IDE7DQorICAg
-ICAgIH0NCisgICAgICAgZWxzZQ0KKyAgICAgICAgICAgICAgIGNvbnRpZ3VvdXNfZGV0ZWN0X2Nv
-dW50ID0gMDsNCiAgdW5sb2NrOg0KICAgICAgICByY3VfcmVhZF91bmxvY2soKTsNCiAgICAgICAg
-aWYgKGh1bmdfdGFza19zaG93X2xvY2spDQoNCg0KDQotTGkNCg0KPiBUaGFuayB5b3UsDQo+IA0K
-PiA+DQo+ID4gQWNrZWQtYnk6IExhbmNlIFlhbmcgPGxhbmNlLnlhbmdAbGludXguZGV2Pg0KPiA+
-IFNpZ25lZC1vZmYtYnk6IExpIFJvbmdRaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4NCj4gPiAt
-LS0NCj4gPiBEaWZmIHdpdGggdjE6IGNoYW5nZSBkb2N1bWVudGF0aW9uIGFzIExhbmNlIHN1Z2dl
-c3RlZA0KPiA+DQo+ID4gIERvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUvc3lzY3RsL2tlcm5lbC5y
-c3QgfCAgOCArKysrKysrKw0KPiA+ICBrZXJuZWwvaHVuZ190YXNrLmMgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgMTQgKysrKysrKysrKysrKy0NCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAyMSBp
-bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9hZG1pbi1ndWlkZS9zeXNjdGwva2VybmVsLnJzdA0KPiA+IGIvRG9jdW1lbnRhdGlv
-bi9hZG1pbi1ndWlkZS9zeXNjdGwva2VybmVsLnJzdA0KPiA+IGluZGV4IDhiNDllYWIuLjk4YjQ3
-YTcgMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9hZG1pbi1ndWlkZS9zeXNjdGwva2Vy
-bmVsLnJzdA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUvc3lzY3RsL2tlcm5l
-bC5yc3QNCj4gPiBAQCAtNDA1LDYgKzQwNSwxNCBAQCBUaGlzIGZpbGUgc2hvd3MgdXAgaWYNCj4g
-YGBDT05GSUdfREVURUNUX0hVTkdfVEFTS2BgIGlzIGVuYWJsZWQuDQo+ID4gIDEgUGFuaWMgaW1t
-ZWRpYXRlbHkuDQo+ID4gID0gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PQ0KPiA+DQo+ID4gK2h1bmdfdGFza19jb3VudF90b19wYW5pYw0KPiA+ICs9PT09
-PT09PT09PT09PT09PT09PT0NCj4gPiArDQo+ID4gK1doZW4gc2V0IHRvIGEgbm9uLXplcm8gdmFs
-dWUsIGEga2VybmVsIHBhbmljIHdpbGwgYmUgdHJpZ2dlcmVkIGlmIHRoZQ0KPiA+ICtudW1iZXIg
-b2YgZGV0ZWN0ZWQgaHVuZyB0YXNrcyByZWFjaGVzIHRoaXMgdmFsdWUuDQo+ID4gKw0KPiA+ICtO
-b3RlIHRoYXQgc2V0dGluZyBodW5nX3Rhc2tfcGFuaWM9MSB3aWxsIHN0aWxsIGNhdXNlIGFuIGlt
-bWVkaWF0ZQ0KPiA+ICtwYW5pYyBvbiB0aGUgZmlyc3QgaHVuZyB0YXNrLg0KPiANCj4gV2hhdCBo
-YXBwZW4gaWYgaXQgaXMgMD8NCj4gDQo+ID4NCj4gPiAgaHVuZ190YXNrX2NoZWNrX2NvdW50DQo+
-ID4gID09PT09PT09PT09PT09PT09PT09PQ0KPiA+IGRpZmYgLS1naXQgYS9rZXJuZWwvaHVuZ190
-YXNrLmMgYi9rZXJuZWwvaHVuZ190YXNrLmMgaW5kZXgNCj4gPiA4NzA4YTEyLi44N2E2NDIxIDEw
-MDY0NA0KPiA+IC0tLSBhL2tlcm5lbC9odW5nX3Rhc2suYw0KPiA+ICsrKyBiL2tlcm5lbC9odW5n
-X3Rhc2suYw0KPiA+IEBAIC04Myw2ICs4Myw4IEBAIHN0YXRpYyB1bnNpZ25lZCBpbnQgX19yZWFk
-X21vc3RseQ0KPiA+IHN5c2N0bF9odW5nX3Rhc2tfYWxsX2NwdV9iYWNrdHJhY2U7DQo+ID4gIHN0
-YXRpYyB1bnNpZ25lZCBpbnQgX19yZWFkX21vc3RseSBzeXNjdGxfaHVuZ190YXNrX3BhbmljID0N
-Cj4gPiAgCUlTX0VOQUJMRUQoQ09ORklHX0JPT1RQQVJBTV9IVU5HX1RBU0tfUEFOSUMpOw0KPiA+
-DQo+ID4gK3N0YXRpYyB1bnNpZ25lZCBpbnQgX19yZWFkX21vc3RseSBzeXNjdGxfaHVuZ190YXNr
-X2NvdW50X3RvX3BhbmljOw0KPiA+ICsNCj4gPiAgc3RhdGljIGludA0KPiA+ICBodW5nX3Rhc2tf
-cGFuaWMoc3RydWN0IG5vdGlmaWVyX2Jsb2NrICp0aGlzLCB1bnNpZ25lZCBsb25nIGV2ZW50LA0K
-PiA+IHZvaWQgKnB0cikgIHsgQEAgLTIxOSw3ICsyMjEsOSBAQCBzdGF0aWMgdm9pZCBjaGVja19o
-dW5nX3Rhc2soc3RydWN0DQo+ID4gdGFza19zdHJ1Y3QgKnQsIHVuc2lnbmVkIGxvbmcgdGltZW91
-dCkNCj4gPg0KPiA+ICAJdHJhY2Vfc2NoZWRfcHJvY2Vzc19oYW5nKHQpOw0KPiA+DQo+ID4gLQlp
-ZiAoc3lzY3RsX2h1bmdfdGFza19wYW5pYykgew0KPiA+ICsJaWYgKHN5c2N0bF9odW5nX3Rhc2tf
-cGFuaWMgfHwNCj4gPiArCSAgICAoc3lzY3RsX2h1bmdfdGFza19jb3VudF90b19wYW5pYyAmJg0K
-PiA+ICsJICAgICAoc3lzY3RsX2h1bmdfdGFza19kZXRlY3RfY291bnQgPj0NCj4gPiArc3lzY3Rs
-X2h1bmdfdGFza19jb3VudF90b19wYW5pYykpKSB7DQo+ID4gIAkJY29uc29sZV92ZXJib3NlKCk7
-DQo+ID4gIAkJaHVuZ190YXNrX3Nob3dfbG9jayA9IHRydWU7DQo+ID4gIAkJaHVuZ190YXNrX2Nh
-bGxfcGFuaWMgPSB0cnVlOw0KPiA+IEBAIC0zODgsNiArMzkyLDE0IEBAIHN0YXRpYyBjb25zdCBz
-dHJ1Y3QgY3RsX3RhYmxlIGh1bmdfdGFza19zeXNjdGxzW10gPSB7DQo+ID4gIAkJLmV4dHJhMgkJ
-PSBTWVNDVExfT05FLA0KPiA+ICAJfSwNCj4gPiAgCXsNCj4gPiArCQkucHJvY25hbWUJPSAiaHVu
-Z190YXNrX2NvdW50X3RvX3BhbmljIiwNCj4gPiArCQkuZGF0YQkJPSAmc3lzY3RsX2h1bmdfdGFz
-a19jb3VudF90b19wYW5pYywNCj4gPiArCQkubWF4bGVuCQk9IHNpemVvZihpbnQpLA0KPiA+ICsJ
-CS5tb2RlCQk9IDA2NDQsDQo+ID4gKwkJLnByb2NfaGFuZGxlcgk9IHByb2NfZG9pbnR2ZWNfbWlu
-bWF4LA0KPiA+ICsJCS5leHRyYTEJCT0gU1lTQ1RMX1pFUk8sDQo+ID4gKwl9LA0KPiA+ICsJew0K
-PiA+ICAJCS5wcm9jbmFtZQk9ICJodW5nX3Rhc2tfY2hlY2tfY291bnQiLA0KPiA+ICAJCS5kYXRh
-CQk9ICZzeXNjdGxfaHVuZ190YXNrX2NoZWNrX2NvdW50LA0KPiA+ICAJCS5tYXhsZW4JCT0gc2l6
-ZW9mKGludCksDQo+ID4gLS0NCj4gPiAyLjkuNA0KPiA+DQo+IA0KPiANCj4gLS0NCj4gTWFzYW1p
-IEhpcmFtYXRzdSAoR29vZ2xlKSA8bWhpcmFtYXRAa2VybmVsLm9yZz4NCg==
+Hi Maxime,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 9c32cda43eb78f78c73aee4aa344b777714e259b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-B-lair/Wire-up-lsm_config_self_policy-and-lsm_config_system_policy-syscalls/20251010-213606
+base:   9c32cda43eb78f78c73aee4aa344b777714e259b
+patch link:    https://lore.kernel.org/r/20251010132610.12001-2-maxime.belair%40canonical.com
+patch subject: [PATCH v6 1/5] Wire up lsm_config_self_policy and lsm_config_system_policy syscalls
+config: sh-randconfig-001-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111947.0ObJ6YUH-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111947.0ObJ6YUH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510111947.0ObJ6YUH-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/umh.c:9:0:
+>> include/linux/syscalls.h:994:45: error: expected ';', ',' or ')' before 'u32'
+              u32 __user size, u32 common_flags u32 flags);
+                                                ^~~
+--
+   In file included from kernel/fork.c:56:0:
+>> include/linux/syscalls.h:994:45: error: expected ';', ',' or ')' before 'u32'
+              u32 __user size, u32 common_flags u32 flags);
+                                                ^~~
+   kernel/fork.c: In function '__do_sys_clone3':
+   kernel/fork.c:3135:2: warning: #warning clone3() entry point is missing, please fix [-Wcpp]
+    #warning clone3() entry point is missing, please fix
+     ^~~~~~~
+
+
+vim +994 include/linux/syscalls.h
+
+   817	
+   818	/* CONFIG_MMU only */
+   819	asmlinkage long sys_swapon(const char __user *specialfile, int swap_flags);
+   820	asmlinkage long sys_swapoff(const char __user *specialfile);
+   821	asmlinkage long sys_mprotect(unsigned long start, size_t len,
+   822					unsigned long prot);
+   823	asmlinkage long sys_msync(unsigned long start, size_t len, int flags);
+   824	asmlinkage long sys_mlock(unsigned long start, size_t len);
+   825	asmlinkage long sys_munlock(unsigned long start, size_t len);
+   826	asmlinkage long sys_mlockall(int flags);
+   827	asmlinkage long sys_munlockall(void);
+   828	asmlinkage long sys_mincore(unsigned long start, size_t len,
+   829					unsigned char __user * vec);
+   830	asmlinkage long sys_madvise(unsigned long start, size_t len, int behavior);
+   831	asmlinkage long sys_process_madvise(int pidfd, const struct iovec __user *vec,
+   832				size_t vlen, int behavior, unsigned int flags);
+   833	asmlinkage long sys_process_mrelease(int pidfd, unsigned int flags);
+   834	asmlinkage long sys_remap_file_pages(unsigned long start, unsigned long size,
+   835				unsigned long prot, unsigned long pgoff,
+   836				unsigned long flags);
+   837	asmlinkage long sys_mseal(unsigned long start, size_t len, unsigned long flags);
+   838	asmlinkage long sys_mbind(unsigned long start, unsigned long len,
+   839					unsigned long mode,
+   840					const unsigned long __user *nmask,
+   841					unsigned long maxnode,
+   842					unsigned flags);
+   843	asmlinkage long sys_get_mempolicy(int __user *policy,
+   844					unsigned long __user *nmask,
+   845					unsigned long maxnode,
+   846					unsigned long addr, unsigned long flags);
+   847	asmlinkage long sys_set_mempolicy(int mode, const unsigned long __user *nmask,
+   848					unsigned long maxnode);
+   849	asmlinkage long sys_migrate_pages(pid_t pid, unsigned long maxnode,
+   850					const unsigned long __user *from,
+   851					const unsigned long __user *to);
+   852	asmlinkage long sys_move_pages(pid_t pid, unsigned long nr_pages,
+   853					const void __user * __user *pages,
+   854					const int __user *nodes,
+   855					int __user *status,
+   856					int flags);
+   857	asmlinkage long sys_rt_tgsigqueueinfo(pid_t tgid, pid_t  pid, int sig,
+   858			siginfo_t __user *uinfo);
+   859	asmlinkage long sys_perf_event_open(
+   860			struct perf_event_attr __user *attr_uptr,
+   861			pid_t pid, int cpu, int group_fd, unsigned long flags);
+   862	asmlinkage long sys_accept4(int, struct sockaddr __user *, int __user *, int);
+   863	asmlinkage long sys_recvmmsg(int fd, struct mmsghdr __user *msg,
+   864				     unsigned int vlen, unsigned flags,
+   865				     struct __kernel_timespec __user *timeout);
+   866	asmlinkage long sys_recvmmsg_time32(int fd, struct mmsghdr __user *msg,
+   867				     unsigned int vlen, unsigned flags,
+   868				     struct old_timespec32 __user *timeout);
+   869	asmlinkage long sys_wait4(pid_t pid, int __user *stat_addr,
+   870					int options, struct rusage __user *ru);
+   871	asmlinkage long sys_prlimit64(pid_t pid, unsigned int resource,
+   872					const struct rlimit64 __user *new_rlim,
+   873					struct rlimit64 __user *old_rlim);
+   874	asmlinkage long sys_fanotify_init(unsigned int flags, unsigned int event_f_flags);
+   875	#if defined(CONFIG_ARCH_SPLIT_ARG64)
+   876	asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+   877	                                unsigned int mask_1, unsigned int mask_2,
+   878					int dfd, const char  __user * pathname);
+   879	#else
+   880	asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+   881					  u64 mask, int fd,
+   882					  const char  __user *pathname);
+   883	#endif
+   884	asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name,
+   885					      struct file_handle __user *handle,
+   886					      void __user *mnt_id, int flag);
+   887	asmlinkage long sys_open_by_handle_at(int mountdirfd,
+   888					      struct file_handle __user *handle,
+   889					      int flags);
+   890	asmlinkage long sys_clock_adjtime(clockid_t which_clock,
+   891					struct __kernel_timex __user *tx);
+   892	asmlinkage long sys_clock_adjtime32(clockid_t which_clock,
+   893					struct old_timex32 __user *tx);
+   894	asmlinkage long sys_syncfs(int fd);
+   895	asmlinkage long sys_setns(int fd, int nstype);
+   896	asmlinkage long sys_pidfd_open(pid_t pid, unsigned int flags);
+   897	asmlinkage long sys_sendmmsg(int fd, struct mmsghdr __user *msg,
+   898				     unsigned int vlen, unsigned flags);
+   899	asmlinkage long sys_process_vm_readv(pid_t pid,
+   900					     const struct iovec __user *lvec,
+   901					     unsigned long liovcnt,
+   902					     const struct iovec __user *rvec,
+   903					     unsigned long riovcnt,
+   904					     unsigned long flags);
+   905	asmlinkage long sys_process_vm_writev(pid_t pid,
+   906					      const struct iovec __user *lvec,
+   907					      unsigned long liovcnt,
+   908					      const struct iovec __user *rvec,
+   909					      unsigned long riovcnt,
+   910					      unsigned long flags);
+   911	asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
+   912				 unsigned long idx1, unsigned long idx2);
+   913	asmlinkage long sys_finit_module(int fd, const char __user *uargs, int flags);
+   914	asmlinkage long sys_sched_setattr(pid_t pid,
+   915						struct sched_attr __user *attr,
+   916						unsigned int flags);
+   917	asmlinkage long sys_sched_getattr(pid_t pid,
+   918						struct sched_attr __user *attr,
+   919						unsigned int size,
+   920						unsigned int flags);
+   921	asmlinkage long sys_renameat2(int olddfd, const char __user *oldname,
+   922				      int newdfd, const char __user *newname,
+   923				      unsigned int flags);
+   924	asmlinkage long sys_seccomp(unsigned int op, unsigned int flags,
+   925				    void __user *uargs);
+   926	asmlinkage long sys_getrandom(char __user *buf, size_t count,
+   927				      unsigned int flags);
+   928	asmlinkage long sys_memfd_create(const char __user *uname_ptr, unsigned int flags);
+   929	asmlinkage long sys_bpf(int cmd, union bpf_attr __user *attr, unsigned int size);
+   930	asmlinkage long sys_execveat(int dfd, const char __user *filename,
+   931				const char __user *const __user *argv,
+   932				const char __user *const __user *envp, int flags);
+   933	asmlinkage long sys_userfaultfd(int flags);
+   934	asmlinkage long sys_membarrier(int cmd, unsigned int flags, int cpu_id);
+   935	asmlinkage long sys_mlock2(unsigned long start, size_t len, int flags);
+   936	asmlinkage long sys_copy_file_range(int fd_in, loff_t __user *off_in,
+   937					    int fd_out, loff_t __user *off_out,
+   938					    size_t len, unsigned int flags);
+   939	asmlinkage long sys_preadv2(unsigned long fd, const struct iovec __user *vec,
+   940				    unsigned long vlen, unsigned long pos_l, unsigned long pos_h,
+   941				    rwf_t flags);
+   942	asmlinkage long sys_pwritev2(unsigned long fd, const struct iovec __user *vec,
+   943				    unsigned long vlen, unsigned long pos_l, unsigned long pos_h,
+   944				    rwf_t flags);
+   945	asmlinkage long sys_pkey_mprotect(unsigned long start, size_t len,
+   946					  unsigned long prot, int pkey);
+   947	asmlinkage long sys_pkey_alloc(unsigned long flags, unsigned long init_val);
+   948	asmlinkage long sys_pkey_free(int pkey);
+   949	asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+   950				  unsigned mask, struct statx __user *buffer);
+   951	asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
+   952				 int flags, uint32_t sig);
+   953	asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
+   954	asmlinkage long sys_open_tree_attr(int dfd, const char __user *path,
+   955					   unsigned flags,
+   956					   struct mount_attr __user *uattr,
+   957					   size_t usize);
+   958	asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
+   959				       int to_dfd, const char __user *to_path,
+   960				       unsigned int ms_flags);
+   961	asmlinkage long sys_mount_setattr(int dfd, const char __user *path,
+   962					  unsigned int flags,
+   963					  struct mount_attr __user *uattr, size_t usize);
+   964	asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
+   965	asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
+   966				     const void __user *value, int aux);
+   967	asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
+   968	asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags);
+   969	asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
+   970					       siginfo_t __user *info,
+   971					       unsigned int flags);
+   972	asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
+   973	asmlinkage long sys_landlock_create_ruleset(const struct landlock_ruleset_attr __user *attr,
+   974			size_t size, __u32 flags);
+   975	asmlinkage long sys_landlock_add_rule(int ruleset_fd, enum landlock_rule_type rule_type,
+   976			const void __user *rule_attr, __u32 flags);
+   977	asmlinkage long sys_landlock_restrict_self(int ruleset_fd, __u32 flags);
+   978	asmlinkage long sys_memfd_secret(unsigned int flags);
+   979	asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
+   980						    unsigned long home_node,
+   981						    unsigned long flags);
+   982	asmlinkage long sys_cachestat(unsigned int fd,
+   983			struct cachestat_range __user *cstat_range,
+   984			struct cachestat __user *cstat, unsigned int flags);
+   985	asmlinkage long sys_map_shadow_stack(unsigned long addr, unsigned long size, unsigned int flags);
+   986	asmlinkage long sys_lsm_get_self_attr(unsigned int attr, struct lsm_ctx __user *ctx,
+   987					      u32 __user *size, u32 flags);
+   988	asmlinkage long sys_lsm_set_self_attr(unsigned int attr, struct lsm_ctx __user *ctx,
+   989					      u32 size, u32 flags);
+   990	asmlinkage long sys_lsm_list_modules(u64 __user *ids, u32 __user *size, u32 flags);
+   991	asmlinkage long sys_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
+   992						   u32 __user size, u32 common_flags, u32 flags);
+   993	asmlinkage long sys_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
+ > 994						     u32 __user size, u32 common_flags u32 flags);
+   995	
+   996	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
