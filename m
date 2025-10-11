@@ -1,134 +1,131 @@
-Return-Path: <linux-kernel+bounces-849326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A55EBCFD6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:53:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0F8BCFD6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 01:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24709404EB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 22:52:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57F384E3670
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 23:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58908257849;
-	Sat, 11 Oct 2025 22:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF9423AE87;
+	Sat, 11 Oct 2025 23:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZ2W0G13"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JV9AFx7Q"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8052494D8;
-	Sat, 11 Oct 2025 22:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6CD4A32
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 23:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760223169; cv=none; b=ljmP2o0Ava5Df+TMrR6PeGOM9j13hxBleZJYa9ygs5vVFHoDdaZNq31a0NOqfqvdpZpNQKA7isj98PvC5O3zWPP2asvEJqguV6+NnXc2BWzKdUiXwJlWvTx3X7lQlR++zTic15bFHuB3/YHAxgDrFfW1LEkN8mr14B9zWgtGoOs=
+	t=1760224180; cv=none; b=uGITaqeueLg3os/Usw15F8cR1XD93Ht8V37w6O054qHFbgLiXmQ73i53uubfDgRQze6HNsp6aDxkfyijfbOYZIxfzYhqE2CnqjauKH/QLbpvBzx30kjK4LAS1NKKMA2jaYlIsxA5R7PActusM8UtedneqksLhDlatLbIRQmSc2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760223169; c=relaxed/simple;
-	bh=HetozuPvBPzpEzFnud6d+gPP7gQysdnjnk4oDQH188M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k04NDPE2sNUtuEQCPmfbF5wGLEhlIl+HFFOnDciIqgYoZlYdZ/oBj/iJrdDoNYgTF3wi7faXdMCXBPlSn/LUlsH2s64vlL+bUDfhe3Eaxw2bH+1rpWF4LSfL6308eVKkIUs/3PCHpd/8QEIvTbI9xZ6JbY8HDJiT4Jx4/lUpkcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZ2W0G13; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760223168; x=1791759168;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=HetozuPvBPzpEzFnud6d+gPP7gQysdnjnk4oDQH188M=;
-  b=AZ2W0G13pj4xPBx6Mr2QmcOdsG73U4B4XEgJYDEX/qkm4sqW+sQ3wU+h
-   /r6n5PGR8Cfl/9PoIrFe85EYI9g/rt/fdrtLiEWHO/2rr0cu6BQHcWhkR
-   G3/XhwDfzPzM6iJc15/HPogc227rFwUh44qua3FJi9huwI4skhyOFCsIT
-   rIqm4+ZprFPuXN3wyo5W/yQ8Ep+mWNRX3yM0FxOmd55fpkw2ei33Zux9p
-   cD/Zur2/2tnfmEPa7XE/JwAd46aHlMC6ei6HxNdk4QBBmv3D3xBrhWb3K
-   zAYbnhmyKYEkoKS6d+d2xrec/202itnjhP+iLkKf1KZGdY/fpJ0eNXMJG
-   A==;
-X-CSE-ConnectionGUID: lCA3oXwYRMSPvU428zBaaQ==
-X-CSE-MsgGUID: 9Zo0Wy5wQB6Jh0T+P5rDPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11579"; a="80045091"
-X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="80045091"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 15:52:46 -0700
-X-CSE-ConnectionGUID: ECh9xyt7RkS8QF1ZJ5WDxQ==
-X-CSE-MsgGUID: SS9rZIXDSQqly8dy7fyNkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="186548737"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 11 Oct 2025 15:52:41 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7iS7-000423-1F;
-	Sat, 11 Oct 2025 22:52:39 +0000
-Date: Sun, 12 Oct 2025 06:52:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	Matthew Brost <matthew.brost@intel.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Lukasz Laguna <lukasz.laguna@intel.com>,
-	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-Subject: Re: [PATCH 08/26] drm/xe/pf: Add minimalistic migration descriptor
-Message-ID: <202510120634.LMJaAJ9S-lkp@intel.com>
-References: <20251011193847.1836454-9-michal.winiarski@intel.com>
+	s=arc-20240116; t=1760224180; c=relaxed/simple;
+	bh=kwIziZXW/b3GUweXf89b2mnDrh6hjt4lnUKaaWXhI2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R2891GZeZJV6m2kdJqmO7gQnpOKF1x7Mc/J3Kqmgx6HOnsM1Df9eekDufUVFtNfBjUt9e3DX/L2Kx0lLYRN0fNiTM6sgLovwik/awLkXIBJJvEitAfEdrkNPrxECxDhnGuWRKhOncC+oy5XZ1k+YL0CS0Nmr0nww8RHkXs8eDiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JV9AFx7Q; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6394938e0ecso5049611a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 16:09:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1760224177; x=1760828977; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2xRuevGbELiV5K/IQ/amUfqczSe5GiGmwjfYw+TDgk=;
+        b=JV9AFx7QtIKv1jdjt3vkbEUPJ+KDkKnF6fQf/hGYrCo/EewhFPnCNxZL8lQvP4cstU
+         JZtRF/1zqDgLAg6+SvxE+oPWY5p3uQ7WzUO5lKYnZQLqSdRgjKvwXkr7l7pDpyWYhyaE
+         rf5iBAsAbgcnyoOJryk8PvZpGUOtI5HTjaiu4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760224177; x=1760828977;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n2xRuevGbELiV5K/IQ/amUfqczSe5GiGmwjfYw+TDgk=;
+        b=l2hTdR7hhJ1CpH9y+pusEL4h3swbUMIYcIMt+7CVmq4udZ/I/n8qt6JGZ/ZwGqWv3P
+         Yq1xZL/F1NSzcV9ystmticBYk4b/IFhl0t8o/q9iLPqSCOlUNOOfln6+tlsRSj0Dda8w
+         T71oFU5LNzmZjxz21AHPIECUyn2zq7spIDp6vT315g7qa3EVoUOVI2TlPfAnzgG0r/yG
+         8LNdVUgEk1KQfI1lrEyc27ijk97G2DdX+Ao9JTs3KjQGdmm6ZyW/gazoQSSr7RDMA7nk
+         qH34lfX4YDg6ZO/gSJxU9DIx45Qh1CbvFr+QSj+WQBH6igpLnIWk6zg1LjuyW0ujErQ2
+         FAWQ==
+X-Gm-Message-State: AOJu0YxfrU+VV9+ZfbQCEELx3bFT3hM9t2DYIyw2my1K3nmn11ibQyBJ
+	UGQ3eNnDoyBlKc/3aEKIcZAVxyCvh+/w3ZWRuVR16xjqq5XWY3bPPn8unfqjXaXRykMS+OCwgOe
+	KdLVtDy0=
+X-Gm-Gg: ASbGncuawMcoSemTBt3BWxur1Bt6cMXwVxs1jgUK2Fi2+rWR5oRpTYcqJ+4mSkqhSIS
+	CzGOFFHaDa1BbgXChGBKJQTj8EMlj0iSUYC7f/85CT1lILl2xmByLcHoWXLk7Kufb5gxIKap+IH
+	oI1DgH3CNAWwwOh5Dcon8ZGaT5QvqV/e0ZwPhEVv4V57Q4NQFcR6KsfaiP+54TqOtX0nfbgQDrQ
+	AXINI6vVsM3Ucxl9SqcAUa/3jgmWT8NrtAIzFMVFABsPVQ8rPRdTeebRaDMykuTTcdriS1tlbCZ
+	MoI0fq/cz9m1WsQ/8HbD/KTA1UqJw4y8o0YfPjrPmiv5XMnzPEtKmMSwIsB8xzVLgl5rTjzlswX
+	QteOhcdve3qaTKClo6mD99KxpbkMsqxMQtAMpaQwYtAKc8dwUbYviKHPyBPfpWx1Wp+Fe2CBSWG
+	xrECa+1FgB/rd0pWsMNurHz1iSng==
+X-Google-Smtp-Source: AGHT+IEeT7vSt4WrCmhObgiFADX4HyEbO9WYmUeJFzyda9cRgM8ILOQzMHTpsDhfj+HmJy2JT4pu8Q==
+X-Received: by 2002:a05:6402:210b:b0:639:ea7d:f675 with SMTP id 4fb4d7f45d1cf-639ea7e625emr11430586a12.9.1760224176671;
+        Sat, 11 Oct 2025 16:09:36 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5235e7ebsm5641020a12.1.2025.10.11.16.09.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Oct 2025 16:09:35 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-639e34ffa69so4776659a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 16:09:35 -0700 (PDT)
+X-Received: by 2002:a05:6402:354e:b0:639:fb11:9952 with SMTP id
+ 4fb4d7f45d1cf-639fb119c26mr10082623a12.3.1760224175190; Sat, 11 Oct 2025
+ 16:09:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251011193847.1836454-9-michal.winiarski@intel.com>
+References: <20251011155240.59f0ff07@gandalf.local.home>
+In-Reply-To: <20251011155240.59f0ff07@gandalf.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 11 Oct 2025 16:09:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whYZVoEdfO1PmtbirPdBMTV9Nxt9f09CK0k6S+HJD3Zmg@mail.gmail.com>
+X-Gm-Features: AS18NWCNr9tSx5dq64gGFkTrOZmlQjQOwrWHOlF_QnSSXvtjAT3TcwkGGDt9DBk
+Message-ID: <CAHk-=whYZVoEdfO1PmtbirPdBMTV9Nxt9f09CK0k6S+HJD3Zmg@mail.gmail.com>
+Subject: Re: [GIT PULL] tracing: A couple more fixes to v6.18
+To: Steven Rostedt <rostedt@goodmis.org>, Kees Cook <kees@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Michał,
+On Sat, 11 Oct 2025 at 12:52, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> +       /* cnt includes both the entry->id and the data behind it. */
+> +       size = struct_size(entry, buf, cnt - sizeof(entry->id));
 
-kernel test robot noticed the following build warnings:
+This seems very non-intuitive.
 
-[auto build test WARNING on drm-xe/drm-xe-next]
-[also build test WARNING on next-20251010]
-[cannot apply to awilliam-vfio/next drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master awilliam-vfio/for-linus v6.17]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Why isn't it just saying
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Winiarski/drm-xe-pf-Remove-GuC-version-check-for-migration-support/20251012-034301
-base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
-patch link:    https://lore.kernel.org/r/20251011193847.1836454-9-michal.winiarski%40intel.com
-patch subject: [PATCH 08/26] drm/xe/pf: Add minimalistic migration descriptor
-config: riscv-randconfig-002-20251012 (https://download.01.org/0day-ci/archive/20251012/202510120634.LMJaAJ9S-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251012/202510120634.LMJaAJ9S-lkp@intel.com/reproduce)
+    size = cnt + offsetof(struct raw_data_entry, id);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510120634.LMJaAJ9S-lkp@intel.com/
+which would seem to be much more straightforward than saying "go to
+the end, and then subtract out the size of this entry" - which then
+relies on the entry being the last thing in the struct.
 
-All warnings (new ones prefixed by >>):
+And if somebody wants to have a helper like
 
-   Warning: drivers/gpu/drm/xe/xe_sriov_pf_migration_data.c:273 function parameter 'xe' not described in 'xe_sriov_pf_migration_data_read'
-   Warning: drivers/gpu/drm/xe/xe_sriov_pf_migration_data.c:383 function parameter 'xe' not described in 'xe_sriov_pf_migration_data_write'
->> Warning: drivers/gpu/drm/xe/xe_sriov_pf_migration_data.c:457 function parameter 'xe' not described in 'xe_sriov_pf_migration_data_process_desc'
-   Warning: drivers/gpu/drm/xe/xe_sriov_pf_migration_data.c:545 function parameter 'xe' not described in 'xe_sriov_pf_migration_data_save_init'
+   #define struct_offset(s,memb) (offsetof(typeof(*(s)), memb))
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+in order to get some kind of "typesafe offsetof", to go with 'struct
+size' then by all means.. That would make it be just
+
+    size = cnt + struct_offset(entry, id);
+
+which looks fairly legible and logical, and would go with the comment
+(and would pair fairly well with our other "struct_xyz()" helpers, I
+think).
+
+I've pulled this, I just reacted to how odd that calculation looked.
+It makes very little sense  to me, since the calculation really has
+_nothing_ do with the size of the struct, and you explicitly have to
+play tricks to get the offset that way.
+
+         Linus
 
