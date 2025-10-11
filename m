@@ -1,391 +1,375 @@
-Return-Path: <linux-kernel+bounces-849189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC651BCF773
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:40:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038B0BCF779
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 383C83B3864
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72C5D189B52E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38D727C178;
-	Sat, 11 Oct 2025 14:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D0E27B345;
+	Sat, 11 Oct 2025 14:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knlhwKEU"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kcIbzNPV"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D56800
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F93231A30;
+	Sat, 11 Oct 2025 14:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760193639; cv=none; b=W0YcxKuvX4Kl83+cz3RIccSk1ZScwl0pbeCEIBILnP6EGmVP0z24Qp5/HsPZr1xvbrMrHJ9Md3oxAc/2S6O0pCCPxWI0kQFwwBE420EEBkaKhOgG8qiXtxCie/LRtcQYd5mnMmILhtW4I3pEP8oLpUk6Y5QVdruP7+Wb9WAqGPI=
+	t=1760194028; cv=none; b=f4ZjK2kpPg0oTf+Ycg8mTjC+54yYEHYSoIJiXlDf7kn/b7y4g23XlZG5xsZDSNcuDDSSzf59z5YyDlq8gvVjamGniInqZ8uvaFUhvqVdQrx2OJw0WBOfigAyqb4edGt21IuCXmENjNdwjOGDwAa5RtJAHrGpYbw60J8+se/csao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760193639; c=relaxed/simple;
-	bh=oLQSnAlJlsYDjmmmAf4TakNV9ImPLYoXrO4RVN5kZOc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hykgo78+q9eN9MDIyNnfcK0/C8wTiYTEKhYcdi6qJPNyqhw6KnQfq2Yg8J4j/JvdLe6Tb4EnJknvBNhaSCjmLbVwAvIRx9BpvP7A1+hc/L2WB4NNg78qYAT3uFel+qy7XjPLf0lhu+HOzV1Afk/Pqg9tgo3svFJxrVlVm2h2saM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knlhwKEU; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27edcbcd158so32982145ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760193637; x=1760798437; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gl+ae1b3aiy4YJ4vxFhTeoZVmvj8iAgFv13VRfipKes=;
-        b=knlhwKEUUDP7BvwSUbYomqPZwbmAYd4I9IzdcVemRUw+PeTe4wah0yFoAQQF7Kkrxd
-         p8tOb+RwFApLDnzyshy1gUgdYPIq/aPl0MCWZX8eJdG/V6IWwysupnZD8bAZz0mTYyfr
-         9LRc/84uZ2z1iJ3/iE1+UjAxy6AstOD3AirLOi5EEZRxwwZRvIWY18xzERO3XUY9FU8q
-         Jl4qEWEPTXGBxP5Ada6x7d//wY/8taRxGc3cMMBQY1VYoRXctANbRvuu4YbaxHoBxAUt
-         yUi2CMCxGFfFiwgcpU2LGVbQbJaUBorm/cPY9sbjoQ8qsWQC4Dl3fXQxMiiPmf7HHqmj
-         57vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760193637; x=1760798437;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gl+ae1b3aiy4YJ4vxFhTeoZVmvj8iAgFv13VRfipKes=;
-        b=JoK3/BgXVYHTbafXOQGnAzE4YzEIxaJ87n8m4ZVqR+5YoZPFLEWjzYU4pog0FRaFvg
-         4/SdU3u2cvL2jjMvWAsuKqQCDca2ZMNcL+QTdYp/2vowvuEaGzndQBo4sKVnyclDfhAF
-         LwjK54EqAub6PaN18WFzh8YDEyDFulaNiXMYmVYusjjJztpDIvD8AcGzupXRnwQo+/i+
-         rMZmC+GQ2IVRvZHdkl0uf/aFfPqJn1XqPwGPVpRWx9TZWeihBJeDA+JsjYm8rgHR/scL
-         oO080xTMkq+wgXC6XbNmRfiGjq0UddLc7BraMfas7vEwtMQJ3eISV9SPsjYQ7xCJp76L
-         d1nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlyq0u6xB+wN5DFZ7gDDJqeCmn44fx2j28ml5h8smjyEFmWFLd7a5/q+TaOmvgwTYfGh3AUV1ppIeprgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw05V555HyHEgEl5bAqymWAHkLJg2PQNe8Ecv3Hh3ajgkO88Icr
-	vyErrqDohG/IM+4xw99rjWiexDmHsmn5vMFksk6W85GwdnHhlnIcXnSE
-X-Gm-Gg: ASbGncsrm4pPN6eMeRt2mPzXkx7LU5p5J+zkpJDWcppx3M2/KUscGfFhBSvf5gfax+/
-	oTe3WBxmzVyMtoObE43Mf6TQrC70VRwTOCdteU8i/9DQFoYSz2R5qbGpmcln5b5S/vIuXXwT9U1
-	yZeYzja7fN3zbb5dMvHQF3wp8ZaPcAzmZquV2kw7Cf/AZ9sJShQ4B+VvbKl2h1W4MH9h6YLKDar
-	DnY3vScyJAH+jcPR4/k4oTqpBEKcpg9f5vKwHhmK8nMOZkIzDA1OAQRVHaZmgG3ctTa8DqGKzkj
-	MRwsYURAyx384UHAWaAEVU5oKF5OUOANtA9bFz32BbnC+L5tnoThpxyhIx9FQPa9PDO1Z0isav2
-	/KmNrYQLnRiI4iI7sm/MiJ2AFtnv3vGCBpnpTUH++wPEf6EI+OD8=
-X-Google-Smtp-Source: AGHT+IGzzau/mcdSdFO8lAk2rHCjKfAo88tRGKmQOZgSFMkk8lLXKA/0TUsBf/w56T4nxl6liJ70Lg==
-X-Received: by 2002:a17:903:8cc:b0:267:e3af:ae67 with SMTP id d9443c01a7336-29027238ef6mr187745315ad.14.1760193636698;
-        Sat, 11 Oct 2025 07:40:36 -0700 (PDT)
-Received: from n.. ([2401:4900:1c0e:53b:a256:f673:325:bb08])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08e2dsm85442275ad.74.2025.10.11.07.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 07:40:36 -0700 (PDT)
-From: mrigendrachaubey <mrigendra.chaubey@gmail.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mrigendrachaubey <mrigendra.chaubey@gmail.com>
-Subject: [PATCH] arm64: Fix typos and spelling errors in comments
-Date: Sat, 11 Oct 2025 20:10:04 +0530
-Message-Id: <20251011144004.14946-1-mrigendra.chaubey@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760194028; c=relaxed/simple;
+	bh=6ROqezrawUAo54k0Q9wo7e3pvws5UWXMBfZUYg8H/WA=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=hqnhQnzOHck59x/NvngJg5ck3brUe1NULyIbCq3Ql8McWbrsf3QOcJdIKPHYeP4dW8oSbTk8lWklMTTkBfwqQwESWsZTeQI2VpomI8f3Zkmt6SHMt3ad5bVYDvAHNpp8K9LQgonvCEKTxTzBAXEKlh4xlBVp10/9Jo9bu8pyRQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=kcIbzNPV; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1760194023;
+	bh=6ROqezrawUAo54k0Q9wo7e3pvws5UWXMBfZUYg8H/WA=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=kcIbzNPViGjdfCTsaFhX4i9+jq5BcB7XdYIKxW0I3+r/Up6lpHhgiYyVga//E7u0b
+	 MZj0XCZfAQRx+Oojtlj2+lMvt2avgZS8ozQjk2Ckdiw6DoOG1I3x1kTWbRq6DWhObN
+	 Geu26kgNgMAM6OlX0us0S3fHR7CY7KKm57EMeqJM=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 05F261C0586;
+	Sat, 11 Oct 2025 10:47:02 -0400 (EDT)
+Message-ID: <6e77e31acee95ebcba03c54dc1b34173cbaf831e.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for the 6.17+ merge window
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Sat, 11 Oct 2025 10:47:02 -0400
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-This patch corrects several minor typographical and spelling errors
-in comments across multiple arm64 source files.
+Fixes only in drivers (ufs, mvsas, qla2xxx, target) that came in just
+before or during the merge window.  The most important one is the
+qla2xxx which reverts a conversion to fix flexible array member
+warnings that went up in this merge window but which turned out on
+further testing to be causing data corruption.
 
-No functional changes.
+The patch is available here:
 
-Signed-off-by: mrigendrachaubey <mrigendra.chaubey@gmail.com>
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
+
+The short changelog is:
+
+Daniel Lee (1):
+      scsi: ufs: sysfs: Make HID attributes visible
+
+Duoming Zhou (1):
+      scsi: mvsas: Fix use-after-free bugs in mvs_work_queue
+
+Hoyoung Seo (1):
+      scsi: ufs: core: Include UTP error in INT_FATAL_ERRORS
+
+John Meneghini (1):
+      Revert "scsi: qla2xxx: Fix memcpy() field-spanning write issue"
+
+Marek Szyprowski (1):
+      scsi: ufs: core: Fix PM QoS mutex initialization
+
+Peter Wang (1):
+      scsi: ufs: core: Fix runtime suspend error deadlock
+
+Wang Haoran (1):
+      scsi: target: target_core_configfs: Add length check to avoid buffer =
+overflow
+
+And the diffstat:
+
+ drivers/scsi/mvsas/mv_init.c          |  2 +-
+ drivers/scsi/qla2xxx/qla_def.h        | 10 ++++------
+ drivers/scsi/qla2xxx/qla_isr.c        | 17 +++++++++--------
+ drivers/scsi/qla2xxx/qla_nvme.c       |  2 +-
+ drivers/scsi/qla2xxx/qla_os.c         |  5 ++---
+ drivers/target/target_core_configfs.c |  2 +-
+ drivers/ufs/core/ufs-sysfs.c          |  2 +-
+ drivers/ufs/core/ufs-sysfs.h          |  1 +
+ drivers/ufs/core/ufshcd.c             | 16 +++++++++++++---
+ include/ufs/ufshci.h                  |  4 +++-
+ 10 files changed, 36 insertions(+), 25 deletions(-)
+
+with full diff below.
+
+Regards,
+
+James
+
 ---
- arch/arm64/include/asm/assembler.h  | 4 ++--
- arch/arm64/include/asm/cpufeature.h | 4 ++--
- arch/arm64/include/asm/el2_setup.h  | 2 +-
- arch/arm64/include/asm/pgtable.h    | 4 ++--
- arch/arm64/include/asm/suspend.h    | 2 +-
- arch/arm64/kernel/acpi.c            | 2 +-
- arch/arm64/kernel/cpufeature.c      | 2 +-
- arch/arm64/kernel/ftrace.c          | 2 +-
- arch/arm64/kernel/machine_kexec.c   | 2 +-
- arch/arm64/kernel/probes/uprobes.c  | 2 +-
- arch/arm64/kernel/sdei.c            | 2 +-
- arch/arm64/kernel/smp.c             | 4 ++--
- arch/arm64/kernel/traps.c           | 2 +-
- arch/arm64/kvm/arch_timer.c         | 2 +-
- arch/arm64/kvm/hyp/nvhe/ffa.c       | 2 +-
- arch/arm64/kvm/mmu.c                | 2 +-
- arch/arm64/kvm/nested.c             | 2 +-
- arch/arm64/net/bpf_jit_comp.c       | 2 +-
- 18 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-index 23be85d93348..b8b1229e05e5 100644
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -371,7 +371,7 @@ alternative_endif
-  * [start, end) with dcache line size explicitly provided.
-  *
-  * 	op:		operation passed to dc instruction
-- * 	domain:		domain used in dsb instruciton
-+ * 	domain:		domain used in dsb instruction
-  * 	start:          starting virtual address of the region
-  * 	end:            end virtual address of the region
-  *	linesz:		dcache line size
-@@ -412,7 +412,7 @@ alternative_endif
-  * [start, end)
-  *
-  * 	op:		operation passed to dc instruction
-- * 	domain:		domain used in dsb instruciton
-+ * 	domain:		domain used in dsb instruction
-  * 	start:          starting virtual address of the region
-  * 	end:            end virtual address of the region
-  * 	fixup:		optional label to branch to on user fault
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index e223cbf350e4..71ba4a47ab18 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -199,7 +199,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *    registers (e.g, SCTLR, TCR etc.) or patching the kernel via
-  *    alternatives. The kernel patching is batched and performed at later
-  *    point. The actions are always initiated only after the capability
-- *    is finalised. This is usally denoted by "enabling" the capability.
-+ *    is finalised. This is usually denoted by "enabling" the capability.
-  *    The actions are initiated as follows :
-  *	a) Action is triggered on all online CPUs, after the capability is
-  *	finalised, invoked within the stop_machine() context from
-@@ -251,7 +251,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
- #define ARM64_CPUCAP_SCOPE_LOCAL_CPU		((u16)BIT(0))
- #define ARM64_CPUCAP_SCOPE_SYSTEM		((u16)BIT(1))
- /*
-- * The capabilitiy is detected on the Boot CPU and is used by kernel
-+ * The capability is detected on the Boot CPU and is used by kernel
-  * during early boot. i.e, the capability should be "detected" and
-  * "enabled" as early as possibly on all booting CPUs.
-  */
-diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-index b37da3ee8529..f593ce79fe15 100644
---- a/arch/arm64/include/asm/el2_setup.h
-+++ b/arch/arm64/include/asm/el2_setup.h
-@@ -28,7 +28,7 @@
- 	 * Fruity CPUs seem to have HCR_EL2.E2H set to RAO/WI, but
- 	 * don't advertise it (they predate this relaxation).
- 	 *
--	 * Initalize HCR_EL2.E2H so that later code can rely upon HCR_EL2.E2H
-+	 * Initialize HCR_EL2.E2H so that later code can rely upon HCR_EL2.E2H
- 	 * indicating whether the CPU is running in E2H mode.
- 	 */
- 	mrs_s	x1, SYS_ID_AA64MMFR4_EL1
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index aa89c2e67ebc..36bf4655bc3d 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -432,7 +432,7 @@ bool pgattr_change_is_safe(pteval_t old, pteval_t new);
-  *   1      0      |   1           0          1
-  *   1      1      |   0           1          x
-  *
-- * When hardware DBM is not present, the sofware PTE_DIRTY bit is updated via
-+ * When hardware DBM is not present, the software PTE_DIRTY bit is updated via
-  * the page fault mechanism. Checking the dirty status of a pte becomes:
-  *
-  *   PTE_DIRTY || (PTE_WRITE && !PTE_RDONLY)
-@@ -598,7 +598,7 @@ static inline int pte_protnone(pte_t pte)
- 	/*
- 	 * pte_present_invalid() tells us that the pte is invalid from HW
- 	 * perspective but present from SW perspective, so the fields are to be
--	 * interpretted as per the HW layout. The second 2 checks are the unique
-+	 * interpreted as per the HW layout. The second 2 checks are the unique
- 	 * encoding that we use for PROT_NONE. It is insufficient to only use
- 	 * the first check because we share the same encoding scheme with pmds
- 	 * which support pmd_mkinvalid(), so can be present-invalid without
-diff --git a/arch/arm64/include/asm/suspend.h b/arch/arm64/include/asm/suspend.h
-index 0cde2f473971..e65f33edf9d6 100644
---- a/arch/arm64/include/asm/suspend.h
-+++ b/arch/arm64/include/asm/suspend.h
-@@ -23,7 +23,7 @@ struct cpu_suspend_ctx {
-  * __cpu_suspend_enter()'s caller, and populated by __cpu_suspend_enter().
-  * This data must survive until cpu_resume() is called.
-  *
-- * This struct desribes the size and the layout of the saved cpu state.
-+ * This struct describes the size and the layout of the saved cpu state.
-  * The layout of the callee_saved_regs is defined by the implementation
-  * of __cpu_suspend_enter(), and cpu_resume(). This struct must be passed
-  * in by the caller as __cpu_suspend_enter()'s stack-frame is gone once it
-diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-index 7aca29e1d30b..d1ac0e58651c 100644
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -133,7 +133,7 @@ static int __init acpi_fadt_sanity_check(void)
- 
- 	/*
- 	 * FADT is required on arm64; retrieve it to check its presence
--	 * and carry out revision and ACPI HW reduced compliancy tests
-+	 * and carry out revision and ACPI HW reduced compliance tests
- 	 */
- 	status = acpi_get_table(ACPI_SIG_FADT, 0, &table);
- 	if (ACPI_FAILURE(status)) {
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 5ed401ff79e3..5c673778e28f 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1002,7 +1002,7 @@ static void __init sort_ftr_regs(void)
- 
- /*
-  * Initialise the CPU feature register from Boot CPU values.
-- * Also initiliases the strict_mask for the register.
-+ * Also initialises, the strict_mask for the register.
-  * Any bits that are not covered by an arm64_ftr_bits entry are considered
-  * RES0 for the system-wide value, and must strictly match.
-  */
-diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
-index 5adad37ab4fa..5a1554a44162 100644
---- a/arch/arm64/kernel/ftrace.c
-+++ b/arch/arm64/kernel/ftrace.c
-@@ -492,7 +492,7 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
- 		return ret;
- 
- 	/*
--	 * When using mcount, callsites in modules may have been initalized to
-+	 * When using mcount, callsites in modules may have been initialized to
- 	 * call an arbitrary module PLT (which redirects to the _mcount stub)
- 	 * rather than the ftrace PLT we'll use at runtime (which redirects to
- 	 * the ftrace trampoline). We can ignore the old PLT when initializing
-diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 6f121a0164a4..239c16e3d02f 100644
---- a/arch/arm64/kernel/machine_kexec.c
-+++ b/arch/arm64/kernel/machine_kexec.c
-@@ -251,7 +251,7 @@ void crash_post_resume(void)
-  * marked as Reserved as memory was allocated via memblock_reserve().
-  *
-  * In hibernation, the pages which are Reserved and yet "nosave" are excluded
-- * from the hibernation iamge. crash_is_nosave() does thich check for crash
-+ * from the hibernation image. crash_is_nosave() does thich check for crash
-  * dump kernel and will reduce the total size of hibernation image.
-  */
- 
-diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
-index 2799bdb2fb82..941668800aea 100644
---- a/arch/arm64/kernel/probes/uprobes.c
-+++ b/arch/arm64/kernel/probes/uprobes.c
-@@ -131,7 +131,7 @@ void arch_uprobe_abort_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
- 	struct uprobe_task *utask = current->utask;
- 
- 	/*
--	 * Task has received a fatal signal, so reset back to probbed
-+	 * Task has received a fatal signal, so reset back to probed
- 	 * address.
- 	 */
- 	instruction_pointer_set(regs, utask->vaddr);
-diff --git a/arch/arm64/kernel/sdei.c b/arch/arm64/kernel/sdei.c
-index 95169f7b6531..965b03fedfb8 100644
---- a/arch/arm64/kernel/sdei.c
-+++ b/arch/arm64/kernel/sdei.c
-@@ -202,7 +202,7 @@ unsigned long sdei_arch_get_entry_point(int conduit)
- /*
-  * do_sdei_event() returns one of:
-  *  SDEI_EV_HANDLED -  success, return to the interrupted context.
-- *  SDEI_EV_FAILED  -  failure, return this error code to firmare.
-+ *  SDEI_EV_FAILED  -  failure, return this error code to firmware.
-  *  virtual-address -  success, return to this address.
-  */
- unsigned long __kprobes do_sdei_event(struct pt_regs *regs,
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 68cea3a4a35c..a0bfe624f899 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -350,7 +350,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
- 
- 	/*
- 	 * Now that the dying CPU is beyond the point of no return w.r.t.
--	 * in-kernel synchronisation, try to get the firwmare to help us to
-+	 * in-kernel synchronisation, try to get the firmware to help us to
- 	 * verify that it has really left the kernel before we consider
- 	 * clobbering anything it might still be using.
- 	 */
-@@ -523,7 +523,7 @@ int arch_register_cpu(int cpu)
- 
- 	/*
- 	 * Availability of the acpi handle is sufficient to establish
--	 * that _STA has aleady been checked. No need to recheck here.
-+	 * that _STA has already been checked. No need to recheck here.
- 	 */
- 	c->hotpluggable = arch_cpu_is_hotpluggable(cpu);
- 
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 681939ef5d16..914282016069 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -922,7 +922,7 @@ void __noreturn panic_bad_stack(struct pt_regs *regs, unsigned long esr, unsigne
- 	__show_regs(regs);
- 
- 	/*
--	 * We use nmi_panic to limit the potential for recusive overflows, and
-+	 * We use nmi_panic to limit the potential for recursive overflows, and
- 	 * to get a better stack trace.
- 	 */
- 	nmi_panic(NULL, "kernel stack overflow");
-diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-index dbd74e4885e2..ebcb7f1a55ee 100644
---- a/arch/arm64/kvm/arch_timer.c
-+++ b/arch/arm64/kvm/arch_timer.c
-@@ -815,7 +815,7 @@ static void timer_set_traps(struct kvm_vcpu *vcpu, struct timer_map *map)
- 		tpt = tpc = true;
- 
- 	/*
--	 * For the poor sods that could not correctly substract one value
-+	 * For the poor sods that could not correctly subtract one value
- 	 * from another, trap the full virtual timer and counter.
- 	 */
- 	if (has_broken_cntvoff() && timer_get_offset(map->direct_vtimer))
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 4e16f9b96f63..0ee7ebb2485e 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -115,7 +115,7 @@ static void ffa_set_retval(struct kvm_cpu_context *ctxt,
- 	 *
- 	 * FFA-1.3 introduces 64-bit variants of the CPU cycle management
- 	 * interfaces. Moreover, FF-A 1.3 clarifies that SMC32 direct requests
--	 * complete with SMC32 direct reponses which *should* allow us use the
-+	 * complete with SMC32 direct responses which *should* allow us use the
- 	 * function ID sent by the caller to determine whether to return x8-x17.
- 	 *
- 	 * Note that we also cannot rely on function IDs in the response.
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 7cc964af8d30..9a6a80c3fbe5 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -1755,7 +1755,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 
- 	/*
- 	 * Check if this is non-struct page memory PFN, and cannot support
--	 * CMOs. It could potentially be unsafe to access as cachable.
-+	 * CMOs. It could potentially be unsafe to access as cacheable.
- 	 */
- 	if (vm_flags & (VM_PFNMAP | VM_MIXEDMAP) && !pfn_is_map_memory(pfn)) {
- 		if (is_vma_cacheable) {
-diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-index 7a045cad6bdf..4c16dbbd6e90 100644
---- a/arch/arm64/kvm/nested.c
-+++ b/arch/arm64/kvm/nested.c
-@@ -85,7 +85,7 @@ int kvm_vcpu_init_nested(struct kvm_vcpu *vcpu)
- 	/*
- 	 * Let's treat memory allocation failures as benign: If we fail to
- 	 * allocate anything, return an error and keep the allocated array
--	 * alive. Userspace may try to recover by intializing the vcpu
-+	 * alive. Userspace may try to recover by initializing the vcpu
- 	 * again, and there is no reason to affect the whole VM for this.
- 	 */
- 	num_mmus = atomic_read(&kvm->online_vcpus) * S2_MMU_PER_VCPU;
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index ab83089c3d8f..3cfdb77fb47c 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -3053,7 +3053,7 @@ bool bpf_jit_supports_exceptions(void)
- 	/* We unwind through both kernel frames starting from within bpf_throw
- 	 * call and BPF frames. Therefore we require FP unwinder to be enabled
- 	 * to walk kernel frames and reach BPF frames in the stack trace.
--	 * ARM64 kernel is aways compiled with CONFIG_FRAME_POINTER=y
-+	 * ARM64 kernel is always, compiled with CONFIG_FRAME_POINTER=y
- 	 */
- 	return true;
+diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+index 2c72da6b8cf0..7f1ad305eee6 100644
+--- a/drivers/scsi/mvsas/mv_init.c
++++ b/drivers/scsi/mvsas/mv_init.c
+@@ -124,7 +124,7 @@ static void mvs_free(struct mvs_info *mvi)
+ 	if (mvi->shost)
+ 		scsi_host_put(mvi->shost);
+ 	list_for_each_entry(mwq, &mvi->wq_list, entry)
+-		cancel_delayed_work(&mwq->work_q);
++		cancel_delayed_work_sync(&mwq->work_q);
+ 	kfree(mvi->rsvd_tags);
+ 	kfree(mvi);
  }
--- 
-2.34.1
+diff --git a/drivers/scsi/qla2xxx/qla_def.h b/drivers/scsi/qla2xxx/qla_def.=
+h
+index 604e66bead1e..cb95b7b12051 100644
+--- a/drivers/scsi/qla2xxx/qla_def.h
++++ b/drivers/scsi/qla2xxx/qla_def.h
+@@ -4890,7 +4890,9 @@ struct purex_item {
+ 			     struct purex_item *pkt);
+ 	atomic_t in_use;
+ 	uint16_t size;
+-	uint8_t iocb[] __counted_by(size);
++	struct {
++		uint8_t iocb[64];
++	} iocb;
+ };
+=20
+ #include "qla_edif.h"
+@@ -5099,6 +5101,7 @@ typedef struct scsi_qla_host {
+ 		struct list_head head;
+ 		spinlock_t lock;
+ 	} purex_list;
++	struct purex_item default_item;
+=20
+ 	struct name_list_extended gnl;
+ 	/* Count of active session/fcport */
+@@ -5127,11 +5130,6 @@ typedef struct scsi_qla_host {
+ #define DPORT_DIAG_IN_PROGRESS                 BIT_0
+ #define DPORT_DIAG_CHIP_RESET_IN_PROGRESS      BIT_1
+ 	uint16_t dport_status;
+-
+-	/* Must be last --ends in a flexible-array member. */
+-	TRAILING_OVERLAP(struct purex_item, default_item, iocb,
+-		uint8_t __default_item_iocb[QLA_DEFAULT_PAYLOAD_SIZE];
+-	);
+ } scsi_qla_host_t;
+=20
+ struct qla27xx_image_status {
+diff --git a/drivers/scsi/qla2xxx/qla_isr.c b/drivers/scsi/qla2xxx/qla_isr.=
+c
+index 4559b490614d..c4c6b5c6658c 100644
+--- a/drivers/scsi/qla2xxx/qla_isr.c
++++ b/drivers/scsi/qla2xxx/qla_isr.c
+@@ -1077,17 +1077,17 @@ static struct purex_item *
+ qla24xx_alloc_purex_item(scsi_qla_host_t *vha, uint16_t size)
+ {
+ 	struct purex_item *item =3D NULL;
++	uint8_t item_hdr_size =3D sizeof(*item);
+=20
+ 	if (size > QLA_DEFAULT_PAYLOAD_SIZE) {
+-		item =3D kzalloc(struct_size(item, iocb, size), GFP_ATOMIC);
++		item =3D kzalloc(item_hdr_size +
++		    (size - QLA_DEFAULT_PAYLOAD_SIZE), GFP_ATOMIC);
+ 	} else {
+ 		if (atomic_inc_return(&vha->default_item.in_use) =3D=3D 1) {
+ 			item =3D &vha->default_item;
+ 			goto initialize_purex_header;
+ 		} else {
+-			item =3D kzalloc(
+-				struct_size(item, iocb, QLA_DEFAULT_PAYLOAD_SIZE),
+-				GFP_ATOMIC);
++			item =3D kzalloc(item_hdr_size, GFP_ATOMIC);
+ 		}
+ 	}
+ 	if (!item) {
+@@ -1127,16 +1127,17 @@ qla24xx_queue_purex_item(scsi_qla_host_t *vha, stru=
+ct purex_item *pkt,
+  * @vha: SCSI driver HA context
+  * @pkt: ELS packet
+  */
+-static struct purex_item *
+-qla24xx_copy_std_pkt(struct scsi_qla_host *vha, void *pkt)
++static struct purex_item
++*qla24xx_copy_std_pkt(struct scsi_qla_host *vha, void *pkt)
+ {
+ 	struct purex_item *item;
+=20
+-	item =3D qla24xx_alloc_purex_item(vha, QLA_DEFAULT_PAYLOAD_SIZE);
++	item =3D qla24xx_alloc_purex_item(vha,
++					QLA_DEFAULT_PAYLOAD_SIZE);
+ 	if (!item)
+ 		return item;
+=20
+-	memcpy(&item->iocb, pkt, QLA_DEFAULT_PAYLOAD_SIZE);
++	memcpy(&item->iocb, pkt, sizeof(item->iocb));
+ 	return item;
+ }
+=20
+diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvm=
+e.c
+index 065f9bcca26f..316594aa40cc 100644
+--- a/drivers/scsi/qla2xxx/qla_nvme.c
++++ b/drivers/scsi/qla2xxx/qla_nvme.c
+@@ -1308,7 +1308,7 @@ void qla2xxx_process_purls_iocb(void **pkt, struct rs=
+p_que **rsp)
+=20
+ 	ql_dbg(ql_dbg_unsol, vha, 0x2121,
+ 	       "PURLS OP[%01x] size %d xchg addr 0x%x portid %06x\n",
+-	       item->iocb[3], item->size, uctx->exchange_address,
++	       item->iocb.iocb[3], item->size, uctx->exchange_address,
+ 	       fcport->d_id.b24);
+ 	/* +48    0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+ 	 * ----- -----------------------------------------------
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 98a5c105fdfd..9a2f328200ab 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -6459,10 +6459,9 @@ void qla24xx_process_purex_rdp(struct scsi_qla_host =
+*vha,
+ void
+ qla24xx_free_purex_item(struct purex_item *item)
+ {
+-	if (item =3D=3D &item->vha->default_item) {
++	if (item =3D=3D &item->vha->default_item)
+ 		memset(&item->vha->default_item, 0, sizeof(struct purex_item));
+-		memset(&item->vha->__default_item_iocb, 0, QLA_DEFAULT_PAYLOAD_SIZE);
+-	} else
++	else
+ 		kfree(item);
+ }
+=20
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_=
+core_configfs.c
+index 0904ecae253a..b19acd662726 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -2774,7 +2774,7 @@ static ssize_t target_lu_gp_members_show(struct confi=
+g_item *item, char *page)
+ 			config_item_name(&dev->dev_group.cg_item));
+ 		cur_len++; /* Extra byte for NULL terminator */
+=20
+-		if ((cur_len + len) > PAGE_SIZE) {
++		if ((cur_len + len) > PAGE_SIZE || cur_len > LU_GROUP_NAME_BUF) {
+ 			pr_warn("Ran out of lu_gp_show_attr"
+ 				"_members buffer\n");
+ 			break;
+diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
+index 0086816b27cd..c040afc6668e 100644
+--- a/drivers/ufs/core/ufs-sysfs.c
++++ b/drivers/ufs/core/ufs-sysfs.c
+@@ -1949,7 +1949,7 @@ static umode_t ufs_sysfs_hid_is_visible(struct kobjec=
+t *kobj,
+ 	return	hba->dev_info.hid_sup ? attr->mode : 0;
+ }
+=20
+-static const struct attribute_group ufs_sysfs_hid_group =3D {
++const struct attribute_group ufs_sysfs_hid_group =3D {
+ 	.name =3D "hid",
+ 	.attrs =3D ufs_sysfs_hid,
+ 	.is_visible =3D ufs_sysfs_hid_is_visible,
+diff --git a/drivers/ufs/core/ufs-sysfs.h b/drivers/ufs/core/ufs-sysfs.h
+index 8d94af3b8077..6efb82a082fd 100644
+--- a/drivers/ufs/core/ufs-sysfs.h
++++ b/drivers/ufs/core/ufs-sysfs.h
+@@ -14,5 +14,6 @@ void ufs_sysfs_remove_nodes(struct device *dev);
+=20
+ extern const struct attribute_group ufs_sysfs_unit_descriptor_group;
+ extern const struct attribute_group ufs_sysfs_lun_attributes_group;
++extern const struct attribute_group ufs_sysfs_hid_group;
+=20
+ #endif
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index b2e103aa4e62..127b691402f9 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -6673,6 +6673,14 @@ static void ufshcd_err_handler(struct work_struct *w=
+ork)
+ 	}
+ 	spin_unlock_irqrestore(hba->host->host_lock, flags);
+=20
++	ufshcd_rpm_get_noresume(hba);
++	if (hba->pm_op_in_progress) {
++		ufshcd_link_recovery(hba);
++		ufshcd_rpm_put(hba);
++		return;
++	}
++	ufshcd_rpm_put(hba);
++
+ 	ufshcd_err_handling_prepare(hba);
+=20
+ 	spin_lock_irqsave(hba->host->host_lock, flags);
+@@ -8472,6 +8480,8 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
+ 				DEVICE_DESC_PARAM_EXT_UFS_FEATURE_SUP) &
+ 				UFS_DEV_HID_SUPPORT;
+=20
++	sysfs_update_group(&hba->dev->kobj, &ufs_sysfs_hid_group);
++
+ 	model_index =3D desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
+=20
+ 	err =3D ufshcd_read_string_desc(hba, model_index,
+@@ -10661,6 +10671,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *=
+mmio_base, unsigned int irq)
+ 	 */
+ 	spin_lock_init(&hba->clk_gating.lock);
+=20
++	/* Initialize mutex for PM QoS request synchronization */
++	mutex_init(&hba->pm_qos_mutex);
++
+ 	/*
+ 	 * Set the default power management level for runtime and system PM.
+ 	 * Host controller drivers can override them in their
+@@ -10749,9 +10762,6 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *=
+mmio_base, unsigned int irq)
+=20
+ 	mutex_init(&hba->wb_mutex);
+=20
+-	/* Initialize mutex for PM QoS request synchronization */
+-	mutex_init(&hba->pm_qos_mutex);
+-
+ 	init_rwsem(&hba->clk_scaling_lock);
+=20
+ 	ufshcd_init_clk_gating(hba);
+diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
+index 612500a7088f..e64b70132101 100644
+--- a/include/ufs/ufshci.h
++++ b/include/ufs/ufshci.h
+@@ -180,6 +180,7 @@ static inline u32 ufshci_version(u32 major, u32 minor)
+ #define UTP_TASK_REQ_COMPL			0x200
+ #define UIC_COMMAND_COMPL			0x400
+ #define DEVICE_FATAL_ERROR			0x800
++#define UTP_ERROR				0x1000
+ #define CONTROLLER_FATAL_ERROR			0x10000
+ #define SYSTEM_BUS_FATAL_ERROR			0x20000
+ #define CRYPTO_ENGINE_FATAL_ERROR		0x40000
+@@ -199,7 +200,8 @@ static inline u32 ufshci_version(u32 major, u32 minor)
+ 				CONTROLLER_FATAL_ERROR |\
+ 				SYSTEM_BUS_FATAL_ERROR |\
+ 				CRYPTO_ENGINE_FATAL_ERROR |\
+-				UIC_LINK_LOST)
++				UIC_LINK_LOST |\
++				UTP_ERROR)
+=20
+ /* HCS - Host Controller Status 30h */
+ #define DEVICE_PRESENT				0x1
 
 
