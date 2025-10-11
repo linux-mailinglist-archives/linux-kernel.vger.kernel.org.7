@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-849009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5856CBCF024
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB2FBCF021
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BEC2424642
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4169742444E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7031C1B142D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2916121770C;
 	Sat, 11 Oct 2025 05:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NBvRNDia"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vk+03wve"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA3542A96;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E99D4C97;
 	Sat, 11 Oct 2025 05:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760160802; cv=none; b=RC3WJvuqyw/CapVR9FGpZ4Fi6/vB4v5T69EJBMjYbIfTGwitEO+Dv/Rz4sHSw2Ze590BIbm8zPMI67kdMBAzuF0LP15E1QdgxM1TJR5Pbsyl2nxv57swNK+/TIlJGFIOAOQ1c7KI8O2FFPOvmNSFTf4Ymwfd1mIL/YuKH/pBDa8=
+	t=1760160802; cv=none; b=ELVsUhG+ICeFYsvidkHO+L6nK/u/Xr4yIG6yikJ2V+0SB4AsNo/tduc/s4kxFiLqNkcwhVNqNW/f+61e5EbXahT2q4h70z8LXaGndMvklMw/TkSxM+2dKMO8WHNW1+Uw60ys9bRHPEWStl40C8tbnuSH2ZvIz/APJW8P8/mMyes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760160802; c=relaxed/simple;
-	bh=i9MQD2vi87alMgAlFMVJwNlAR7uWjr5N9wlOTw9xWUo=;
+	bh=tICeZKtlPTGn6MN+AocuuzSNU12FNBC7lzLtzqfGuwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ev9DIYUTuQqehbiEsl2vTMx1vtCMJIwdao6ehVL7UhGf4s+9e7i6R5Cfmgb8bTDUJZkt55A5NcRfMCJOaq3Apr6R6IoykaizWpXcX9A4+DiZLmTp7T5m72td7cE1/KMOer3oOjkFKOYxbPuNCUqtn+98eiulthwanL6lg0VAXPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NBvRNDia; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJZ5HEiMYNygs2J1e5pSyTgz4eE2/EGjZXiFD4S/V5+5hL6+E+I94Ndy9MwGgX86DUw+276fRj9TdzaPcYJVbENjiSpHY0U0nvEpZqCuB4GndFvbV7uQmeqZzsZwUKiJ6HWCK4h9atqBViJIurQB4YV6/lZhQkluXGeSnIOsR+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vk+03wve; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,47 +35,49 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1760160801; x=1791696801;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=i9MQD2vi87alMgAlFMVJwNlAR7uWjr5N9wlOTw9xWUo=;
-  b=NBvRNDia1GOlTEdnOYCKTU764RTf/bGkDyPQW14WYsTxwj0s/qXNFfkn
-   Npx8ImCALwSOERMPOOiX0kg9tNr4Wm2bDspYPgno/FIlUrb/04t9ucHuz
-   brDlrPju2xlxLUTIL8ZYK9faeAwphyNB1ZoZXgm96JrkUsb3+QgWqA8Wj
-   GybfdnuZxIBwnrVGeeNEmRfIQXaBvQw00EtIiLOu949dyWyop9J66pelq
-   Yq/BgkntOMkDuifvBLARCmWvcdoVLyJmagDukl3qSCzHH62RHQlZZvmHD
-   M2rpurHOvrQ6hFgGasGILnl2Cb2DrnWRcgV0QbITG19ujOKEOeM0ZS9gJ
+  bh=tICeZKtlPTGn6MN+AocuuzSNU12FNBC7lzLtzqfGuwQ=;
+  b=Vk+03wvenVJslzJufj+yYpmkYn0JVZ/nEPuJbKUbJK3Z0fKdgb48oLKJ
+   /T1HpInqBmky9zJf+zAUItkquPt4cwOi/fc2OsRHiJkdl/14SCGZnmbUH
+   8ag9SYYDk6STR3Wguy7Ok+uXvLZf+X5ILO++TC95G0OAcA62bhBcIbFg7
+   FHjfklxaU88v+414PYatXXsuIe/i6GsZM0QsVV2rEmmhxroMDWAeZNkr/
+   R5OLCmec5J42zYVkvQGZtzBps1AjLUVnk70Y3P9gt1UuXKke6OTS1o6Hb
+   MgGQa5umARsOep/s34WF+QSKEUQ5xjV1lbdhBesBAJ438O67OXDKTWo/n
    Q==;
-X-CSE-ConnectionGUID: kJyyUjA+QbGJk8ovYGoc/A==
-X-CSE-MsgGUID: JMfdkV3jR5atvHhOzy/PBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="73060199"
+X-CSE-ConnectionGUID: 5umLwW28TQqDSy6DWzWGRQ==
+X-CSE-MsgGUID: 85Uuk/EKSpSa5nrHsZwUwg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="62416212"
 X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="73060199"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 22:33:20 -0700
-X-CSE-ConnectionGUID: hm20f+lUTteEogIs84GaQg==
-X-CSE-MsgGUID: KQgz213TSu6dzQ/MgUIx8w==
+   d="scan'208";a="62416212"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 22:33:20 -0700
+X-CSE-ConnectionGUID: IPZXp56TS/iOLDMQYGX7lQ==
+X-CSE-MsgGUID: C0av3SMDRfSz2cMTpx53hg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="180968712"
+   d="scan'208";a="212094623"
 Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 10 Oct 2025 22:33:16 -0700
+  by fmviesa001.fm.intel.com with ESMTP; 10 Oct 2025 22:33:16 -0700
 Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1v7SEE-0003Xl-08;
+	id 1v7SEE-0003Xj-04;
 	Sat, 11 Oct 2025 05:33:14 +0000
-Date: Sat, 11 Oct 2025 13:32:50 +0800
+Date: Sat, 11 Oct 2025 13:32:51 +0800
 From: kernel test robot <lkp@intel.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, lgirdwood@gmail.com,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com, wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: Re: [PATCH v8 6/9] regulator: Add support for MediaTek MT6373 SPMI
- PMIC Regulators
-Message-ID: <202510111324.JD1amFXO-lkp@intel.com>
-References: <20251003091158.26748-7-angelogioacchino.delregno@collabora.com>
+To: Sven =?iso-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	Sven =?iso-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>
+Subject: Re: [PATCH 16/16] media: rockchip: rga: add rga3 support
+Message-ID: <202510111354.QeqIltfU-lkp@intel.com>
+References: <20251007-spu-rga3-v1-16-36ad85570402@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,65 +86,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003091158.26748-7-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20251007-spu-rga3-v1-16-36ad85570402@pengutronix.de>
 
-Hi AngeloGioacchino,
+Hi Sven,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on broonie-regulator/for-next]
-[also build test ERROR on lee-mfd/for-mfd-next jic23-iio/togreg lee-leds/for-leds-next lee-mfd/for-mfd-fixes linus/master v6.17 next-20251010]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test WARNING on afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/dt-bindings-regulator-Document-MediaTek-MT6316-PMIC-Regulators/20251003-171606
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-patch link:    https://lore.kernel.org/r/20251003091158.26748-7-angelogioacchino.delregno%40collabora.com
-patch subject: [PATCH v8 6/9] regulator: Add support for MediaTek MT6373 SPMI PMIC Regulators
-config: alpha-randconfig-r073-20251009 (https://download.01.org/0day-ci/archive/20251011/202510111324.JD1amFXO-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111324.JD1amFXO-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Sven-P-schel/media-rockchip-rga-use-clk_bulk-api/20251010-104411
+base:   afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328
+patch link:    https://lore.kernel.org/r/20251007-spu-rga3-v1-16-36ad85570402%40pengutronix.de
+patch subject: [PATCH 16/16] media: rockchip: rga: add rga3 support
+config: riscv-randconfig-002-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111354.QeqIltfU-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111354.QeqIltfU-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510111324.JD1amFXO-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510111354.QeqIltfU-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
-   `xe_configfs_exit' referenced in section `.data.rel.ro' of drivers/gpu/drm/xe/xe_module.o: defined in discarded section `.exit.text' of drivers/gpu/drm/xe/xe_configfs.o
-   alpha-linux-ld: drivers/regulator/mt6373-regulator.o: in function `mt6373_spmi_remove':
-   drivers/regulator/mt6373-regulator.c:598:(.text+0x6b0): undefined reference to `spmi_device_remove'
->> alpha-linux-ld: drivers/regulator/mt6373-regulator.c:598:(.text+0x6b8): undefined reference to `spmi_device_remove'
-   alpha-linux-ld: drivers/regulator/mt6373-regulator.o: in function `mt6373_spmi_register_regmap':
-   drivers/regulator/mt6373-regulator.c:624:(.text+0x93c): undefined reference to `spmi_device_alloc'
->> alpha-linux-ld: drivers/regulator/mt6373-regulator.c:624:(.text+0x940): undefined reference to `spmi_device_alloc'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.o: in function `regmap_spmi_base_read':
-   drivers/base/regmap/regmap-spmi.c:26:(.text+0x11c): undefined reference to `spmi_register_read'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:26:(.text+0x124): undefined reference to `spmi_register_read'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.o: in function `regmap_spmi_base_gather_write':
-   drivers/base/regmap/regmap-spmi.c:46:(.text+0x1f0): undefined reference to `spmi_register_zero_write'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:46:(.text+0x1f4): undefined reference to `spmi_register_zero_write'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:56:(.text+0x220): undefined reference to `spmi_register_write'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:56:(.text+0x228): undefined reference to `spmi_register_write'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.o: in function `regmap_spmi_ext_read':
-   drivers/base/regmap/regmap-spmi.c:124:(.text+0x3f0): undefined reference to `spmi_ext_register_read'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:124:(.text+0x404): undefined reference to `spmi_ext_register_read'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:136:(.text+0x444): undefined reference to `spmi_ext_register_readl'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:136:(.text+0x458): undefined reference to `spmi_ext_register_readl'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.o: in function `regmap_spmi_ext_gather_write':
-   drivers/base/regmap/regmap-spmi.c:164:(.text+0x528): undefined reference to `spmi_ext_register_write'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:164:(.text+0x53c): undefined reference to `spmi_ext_register_write'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:176:(.text+0x57c): undefined reference to `spmi_ext_register_writel'
-   alpha-linux-ld: drivers/base/regmap/regmap-spmi.c:176:(.text+0x590): undefined reference to `spmi_ext_register_writel'
+>> drivers/media/platform/rockchip/rga/rga3-hw.c:144:15: warning: variable 'src_h' set but not used [-Wunused-but-set-variable]
+     144 |         unsigned int src_h, src_w, dst_h, dst_w;
+         |                      ^
+>> drivers/media/platform/rockchip/rga/rga3-hw.c:144:22: warning: variable 'src_w' set but not used [-Wunused-but-set-variable]
+     144 |         unsigned int src_h, src_w, dst_h, dst_w;
+         |                             ^
+>> drivers/media/platform/rockchip/rga/rga3-hw.c:144:29: warning: variable 'dst_h' set but not used [-Wunused-but-set-variable]
+     144 |         unsigned int src_h, src_w, dst_h, dst_w;
+         |                                    ^
+>> drivers/media/platform/rockchip/rga/rga3-hw.c:144:36: warning: variable 'dst_w' set but not used [-Wunused-but-set-variable]
+     144 |         unsigned int src_h, src_w, dst_h, dst_w;
+         |                                           ^
+   4 warnings generated.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for REGMAP_SPMI
-   Depends on [n]: SPMI [=n]
-   Selected by [y]:
-   - REGULATOR_MT6316 [=y] && REGULATOR [=y] && (SPMI [=n] || COMPILE_TEST [=y])
-   - REGULATOR_MT6373 [=y] && REGULATOR [=y] && (SPMI [=n] || COMPILE_TEST [=y])
+
+vim +/src_h +144 drivers/media/platform/rockchip/rga/rga3-hw.c
+
+   137	
+   138	static void rga3_cmd_set_win0_format(struct rga_ctx *ctx)
+   139	{
+   140		u32 *cmd = ctx->rga->cmdbuf_virt;
+   141		const struct rga3_fmt *in = ctx->in.fmt;
+   142		const struct rga3_fmt *out = ctx->out.fmt;
+   143		const struct v4l2_format_info *in_fmt, *out_fmt;
+ > 144		unsigned int src_h, src_w, dst_h, dst_w;
+   145		bool r2y, y2r;
+   146		u8 rd_format;
+   147		unsigned int reg;
+   148	
+   149		src_h = ctx->in.crop.height;
+   150		src_w = ctx->in.crop.width;
+   151		dst_h = ctx->out.crop.height;
+   152		dst_w = ctx->out.crop.width;
+   153	
+   154		in_fmt = v4l2_format_info(in->fourcc);
+   155		out_fmt = v4l2_format_info(out->fourcc);
+   156		r2y = v4l2_is_format_rgb(in_fmt) && v4l2_is_format_yuv(out_fmt);
+   157		y2r = v4l2_is_format_yuv(in_fmt) && v4l2_is_format_rgb(out_fmt);
+   158	
+   159		if (in->semi_planar)
+   160			rd_format = RGA3_RDWR_FORMAT_SEMI_PLANAR;
+   161		else
+   162			rd_format = RGA3_RDWR_FORMAT_INTERLEAVED;
+   163	
+   164		reg = RGA3_WIN0_RD_CTRL - RGA3_FIRST_CMD_REG;
+   165		cmd[reg >> 2] |= FIELD_PREP(RGA3_WIN_PIC_FORMAT, in->hw_format)
+   166			      |  FIELD_PREP(RGA3_WIN_YC_SWAP, in->yc_swap)
+   167			      |  FIELD_PREP(RGA3_WIN_RBUV_SWAP, in->rbuv_swap)
+   168			      |  FIELD_PREP(RGA3_WIN_RD_FORMAT, rd_format)
+   169			      |  FIELD_PREP(RGA3_WIN_R2Y, r2y)
+   170			      |  FIELD_PREP(RGA3_WIN_Y2R, y2r)
+   171			      |  FIELD_PREP(RGA3_WIN_CSC_MODE, RGA3_WIN_CSC_MODE_BT601_F);
+   172	}
+   173	
 
 -- 
 0-DAY CI Kernel Test Service
