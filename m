@@ -1,238 +1,105 @@
-Return-Path: <linux-kernel+bounces-848906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053A9BCECAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:09:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA40FBCECB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9B73E2131
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:09:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 64F9E3507CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2188C13B;
-	Sat, 11 Oct 2025 00:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CD7DF59;
+	Sat, 11 Oct 2025 00:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3up2+qx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rim2KHyJ"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC11B184E;
-	Sat, 11 Oct 2025 00:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CC229A2
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760141340; cv=none; b=fOHKE1Q4AsNGhiyJgZd3IEBHqN/01swgoOJ2mPHCU8SccIxeK9OCGmFZyaYvlDM3q4wtqW7caUZya2GAl4js6HZYA4H5wYAw0V4Hl7EbukMnjkoxNW4SdGeA8ASCA5pWFz1J9fj/0tbeFQfAN7E+v3Kzl5tzLk4NBIpRXDrTUW8=
+	t=1760141429; cv=none; b=QLr3+OpfIZTY+NhOHzkyA6pnDyka93vr+H06nQvWJQ4cfd7heX4+dgoNVdS42UEuTwqN/6y1aQBsCCxliA4RWYZgmg4bKVUFJrBJeUHWZCczLkMM2xaytn66eLt8gT68ioY/uSSXh8TPaIDVIlLJfWkta2bl0O4AUJJsfU2VhHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760141340; c=relaxed/simple;
-	bh=vVjv/jkicIgDmt3y7lRnnSSaepw4Ybyi1G9k7ei9veA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e4OjEWXJPTpQMiNI6QIBec9u9m6tdKtTDAtCjp8iEBEHujbteHa/5+ZnX68aEY3d8cOPb5wii3h/HLKf8SOVdRW3CjoNvKrQicekcYhzrkZqiMnR3jHVK7mn06V2JJjcqgE1hsvK1Dmb3Ha8mmHAcjKSLnQO1xw2lJSKrlpfYAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3up2+qx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E01FC4CEF1;
-	Sat, 11 Oct 2025 00:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760141339;
-	bh=vVjv/jkicIgDmt3y7lRnnSSaepw4Ybyi1G9k7ei9veA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G3up2+qx9y2G3wkWHB1NdGx1RVFwoeM8rBaVOD+ERCM94xt9KZkJo4zsqvAUcrhu/
-	 z2jAG5PrSDjQKMW0Fat8WDvUZ/AFXzHSUrxOlK3zHswrlSk12pY1+vcz+mUgc0hxY/
-	 Vfnwhug2ar83M+h+j5byUex/Y7676kzze0Z0m+UaWl4JtUCIvaQFiE9A9CxaMTLT3W
-	 I/ZB4GvG5qPDfrUkreGnCAN4B/YtdsYnejogva+04eYSux8k5RnLgSiq01C9xA4XMM
-	 KAM12MZlrEHqhUSHyFOzUm1+jNEVhld48VB5I9cGvBOEBXaOiRzqG46c/KDHyNbTVH
-	 kPqD2gjcYNgCA==
-Message-ID: <066a9598-ad30-4327-be68-87299bba6fda@kernel.org>
-Date: Sat, 11 Oct 2025 02:08:49 +0200
+	s=arc-20240116; t=1760141429; c=relaxed/simple;
+	bh=vhsuxk96WAH/RhC3vemDEb946RpngHOAqABSwAfzGbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RTjgQ37BDCYA2V6armN59YNVKACZgJhUoVHb9M9M0Lyp0Rxm4VnuJ7POA7syFDhA/esSwWntTEoyp9Ux46ULLWCcmYbisfbXANcZLpe7XP4NUlNXPqbr6Qxk+HDuV/HubRa0dOvwM10bL0DXHAVEtxX2HrM1rV6LtkbEIEqbBTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rim2KHyJ; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ece1102998so1508597f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760141427; x=1760746227; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vhsuxk96WAH/RhC3vemDEb946RpngHOAqABSwAfzGbw=;
+        b=Rim2KHyJ98x00469RxPskdsO24wkT5bUkS/IVMDwqFgXGfDWdCQd87enYHrWLdF6PV
+         tACAWst80nC0jp4uSqvSJPTnQOVnEub3hq//b3JHEVipyzPBv0qxCoT/rk6+E5Zuag9O
+         /LiN1x5iZ6xlLPVl/6GkmWqDJbUkUQim0esp57vEej28UBxEt/l6nkjDZ8tYckXPH+GS
+         idmiADkcshQBExGuX/Pv32Sr6lq8CTxih58YbEfhFdADivnZeGcpSOk13wGrD82nGFHU
+         wsBqY94E0e1OyyTnRljsimMRpR6QS8RM3RjnOPfp9h/8WXC7FnuxpP1JlHpwrS5o3bLo
+         7Ebg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760141427; x=1760746227;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vhsuxk96WAH/RhC3vemDEb946RpngHOAqABSwAfzGbw=;
+        b=POaXmQV0tU7J+66wVbQ92+aT5qKnRpYzZxFCtIngrnHL+upLjSkDbNbkMbq4204DJZ
+         18YnZDqOl+5/EFUcuQQ3sRaqprDalx/jBWu6fKFKDvNQpcHKl6sCeRiNiufdkhPIyvr9
+         Cc88VLducsTKsMPzOt2xhe1KOea/MKbt14auQ3ktbD/ogsf2L4g72CyQ/o6S6xLtEnyT
+         55NiHLlZE4uiaiSWfIQRMnLqQEU3BD8HSr8CSJrtME5NoEX78yYste9jXfaCy26+R9qG
+         r5Gqi6QvTOL+LJXKRCTMX4fDlaNvAfqEFQDL0EtD0QGUopCsEyREGgCPNHG0zf5c+K3Z
+         5unw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5NjapXtP4BcqzuYdWQjK72HZ8Gd06Fv0InRaPrYFYItk2XPFGLxhIMM7y1VOoZREHOVn5KoeHM+DSbeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZedD0e80jRjBLBomfQrpwhkrM1FXLJvXw0kTju82Y49YrIXJ/
+	gA2fZEd7EMDwDZcMVwvNUFNMWSP7ZUJe11ZOXl+zNg1oBHqeAUEjE6cGFTt+lF1VR5kaf1xH7Us
+	Aah0yciJNtMyDrG6I2PaOlNi9lvgEojkxAGKyvCLB
+X-Gm-Gg: ASbGncsOf9KRSmDw7AtxKs8gUeH+yEYJV8HphtSetP5hYidbmKBFUf+04GhhB5Dp3cj
+	8zj5GhmmAso9AX68UgG2HNbxuWQiV+y748rslUihIKl98a9rKtnc2jVkreexrxws2gKZwnnLk5E
+	urELkBCB5NW9ilCvC2fL+x8/ukBGoZAB7ypy309YdY23pwEvDa8TRSObx6mxgprP7HDuSLz1moa
+	0HP25upAsUj4HD5hMBMtJIOhUnyoGLXNMoaY/gX4ESjr/VArFTXn9RsHBpbvW5GqdA/a0gJXfWQ
+	81VcatFz
+X-Google-Smtp-Source: AGHT+IE+ZGXJMaXhPli5PfF8e59JjiGHyX8ap1P7iYMH4TowQfmU4UEUloQ42CoLYo3lvX2UUV72pFmKUq2N6vrDDqY=
+X-Received: by 2002:a05:6000:290d:b0:405:ed47:b22b with SMTP id
+ ffacd0b85a97d-42666abb50fmr7632735f8f.10.1760141426475; Fri, 10 Oct 2025
+ 17:10:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251010201607.1190967-1-royluo@google.com>
- <20251010201607.1190967-2-royluo@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251010201607.1190967-2-royluo@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251009010312.2203812-1-jthies@google.com> <20251009010312.2203812-3-jthies@google.com>
+ <alnlmxbcv3ivhh7iolfqsurhknnm2o6i6waxq7kuhmzcbeljr5@a4wy3prshu3c>
+In-Reply-To: <alnlmxbcv3ivhh7iolfqsurhknnm2o6i6waxq7kuhmzcbeljr5@a4wy3prshu3c>
+From: Jameson Thies <jthies@google.com>
+Date: Fri, 10 Oct 2025 17:10:13 -0700
+X-Gm-Features: AS18NWD3EfN8pP57xJObsE8Nw-y-Yhc8QT1UxXovpeEXkcrZFbmuYOLzuOBOTJU
+Message-ID: <CAMFSARdzoZrv4oXxVAYRcZJgxdLcrTMVAVGa=D8H=9c1vZ0zKQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] usb: typec: cros_ec_ucsi: Load driver from OF and
+ ACPI definitions
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
+	robh@kernel.org, bleung@chromium.org, heikki.krogerus@linux.intel.com, 
+	ukaszb@chromium.org, tzungbi@kernel.org, devicetree@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/10/2025 22:16, Roy Luo wrote:
-> Document the device tree bindings for the DWC3 USB controller found in
-> Google Tensor SoCs, starting with the G5 generation.
-> 
-> The Tensor G5 silicon represents a complete architectural departure from
-> previous generations (like gs101), including entirely new clock/reset
-> schemes, top-level wrapper and register interface. Consequently,
-> existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitating
-> this new device tree binding.
-> 
-> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
-> Dual-Role Device single port with hibernation support.
+Hi Dmitry,
+on early ChromeOS devices using this driver it gets added as a
+subdevice of the cros_ec_dev mfd. But, we want to change this to load
+the device from OF/ACPI nodes. The issue here is that older devices
+which don't define the OF/ACPI nodes to load cros_ec_ucsi will still
+need to add the device through cros_ec_dev.
 
-You still mix, completely unnecessarily, subsystems. For Greg this is
-actually even undesired, but regardless don't do this for any cases
-because it just makes everything slower or more difficult to apply.
-
-Really, think how maintainers should deal with your patches.
-
-> 
-> Signed-off-by: Roy Luo <royluo@google.com>
-> ---
->  .../bindings/usb/google,gs5-dwc3.yaml         | 141 ++++++++++++++++++
->  1 file changed, 141 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> new file mode 100644
-> index 000000000000..6fadea7f41e8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> @@ -0,0 +1,141 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright (c) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description:
-> +  Describes the DWC3 USB controller block implemented on Google Tensor SoCs,
-> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the controller
-> +  features Dual-Role Device single port with hibernation add-on.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,gs5-dwc3
-> +
-> +  reg:
-> +    items:
-> +      - description: Core DWC3 IP registers.
-> +      - description: USB host controller configuration registers.
-> +      - description: USB custom interrrupts control registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dwc3_core
-> +      - const: host_cfg
-> +      - const: usbint_cfg
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Core DWC3 interrupt.
-> +      - description: High speed power management event for remote wakeup from hibernation.
-> +      - description: Super speed power management event for remote wakeup from hibernation.
-
-Wrap at 80 (see coding style) or just shorten these.
-
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: dwc_usb3
-
-So just "core"?
-
-> +      - const: hs_pme
-> +      - const: ss_pme
-> +
-> +  clocks:
-> +    items:
-> +      - description: Non-sticky module clock.
-> +      - description: Sticky module clock.
-> +      - description: USB2 PHY APB clock.
-
-This looks wrong. This is not the USB2 phy, so how can it consume APB clock?
-
-> +
-> +  clock-names:
-> +    items:
-> +      - const: non_sticky
-> +      - const: sticky
-> +      - const: u2phy_apb
-> +
-> +  resets:
-> +    items:
-> +      - description: Non-sticky module reset.
-> +      - description: Sticky module reset.
-> +      - description: USB2 PHY APB reset.
-
-This as well.
-
-> +      - description: DRD bus reset.
-> +      - description: Top-level reset.
-> +
-> +  reset-names:
-> +    items:
-> +      - const: non_sticky
-> +      - const: sticky
-> +      - const: u2phy_apb
-> +      - const: drd_bus
-> +      - const: top
-
-
-Best regards,
-Krzysztof
+So cros_ec_ucsi needs to support multiple methods of being
+instantiated, and going through cros_ec_dev creates an intermediary
+device in the path which doesn't exist when the driver is loaded
+through OF/ACPI. I'll add a comment explaining this in the v4 series.
 
