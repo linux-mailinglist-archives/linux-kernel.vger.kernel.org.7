@@ -1,227 +1,248 @@
-Return-Path: <linux-kernel+bounces-849096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A297BCF319
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4D4BCF349
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA1E84E11E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:38:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F2C04E7286
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0A0253958;
-	Sat, 11 Oct 2025 09:38:36 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F251124DCE6;
+	Sat, 11 Oct 2025 09:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u566ZNOs"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48FC24DCE6
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51E620D4FC
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760175516; cv=none; b=DSIB/iLf9h98qtbq5tW44GjOGyux643yKWgfh5J0bMeQHMCY3mm8WeFDVuRoeEmb4YIGMZdg38ToAENHzLmLH43eGSTtr2I+GxgWSYDnpPHJKO967YmKpGk9rx2IEj8SQ/TTwsRZH41pWNt1LPQ8/aPVw7UXPYzc09D41DvVwPY=
+	t=1760175776; cv=none; b=FCbb5xwc0vUBZWeNAroqAGvSArstcFdb/J2GkASx1HL/Z0upmvO52Hb+V5CRYlwmamzkBWHlbPBzcvTNkHzpK9Yv1FmGyeRbcs0MVlnqH/zkMKv4ggPXukpIeDKRpkj+wEHiit7qUUUlq/gZZjtS9D2P6Evmsl7hR0L1jufcGMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760175516; c=relaxed/simple;
-	bh=ZWZC3HR46WYmZ+8wzKB+Mk3y8cRFGoWt9AmI9Ho+J1U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TBcuv1tA9uKAyWMLGGxbYsT6NDpGwREh/2qc9u87Eywa2My7VEWvKqI3Q/q7Dc9Ddw4JLs+EmiSj4svhHQSQHjZ9Js/qXlsAPbYeWCoY/sugFTs8ERRtKsyrclH6x/nnWY5NWZOt9xsATQMm1ufLyEfMjgjHBx/lhufu4MSS76Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-93e37fa67deso3273139f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 02:38:30 -0700 (PDT)
+	s=arc-20240116; t=1760175776; c=relaxed/simple;
+	bh=1zk7erYHL8lm0V68rDHyG6F3LtPe6VGnCa/0/zviKuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t55onY2Uwh9b4zL5XqjZA8Mwx4/qdehekRcfpgToKTNsdNAFb3RMsUYrMP82RSn44mcYYyb21B2OSYINAwJt98DvAX/wABEEUCFzqBKY6C0S5mmoqbCO2KHjAwvEW6MF+6zsn+UvXj5/9WbVnSUawWOXv+YMgEOUTvQP/rKVn/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u566ZNOs; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-79ad9aa2d95so42768466d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 02:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760175770; x=1760780570; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2KA5u3TUp00NYLA35LfzmhRHb51uTtRNeQp/w7ddecs=;
+        b=u566ZNOsRuP8n7PFaWFwz7pARUMwOpUbQBt2nW6JOd+K1jqOAN0ezgph5m2NYhM4gB
+         T++gUnp1TbcfzRGouynsRCO9Ndw6EHXm9fcPSlqLTgQrOTdCl62BvhDfeY/dTqgSjrib
+         +RkIICGc4muphoSkrUaqbcuWUywq8SGaD5ck5Y3ooy6MR+ShCaJZOwMXOkqTf6NKRe5b
+         /hPgudG7hQv4itc2pT7MP7rvXOK8qU5LaMktw9qoX8QQjMhIXf+nAtH3qtASpBj3TTrr
+         RJ1TwbASxZZJvRQEQc7rVrVKh9+8i4ZRx3+o85C37crqN21AcV2/APU9Ptgi/FTfmJuT
+         uEMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760175510; x=1760780310;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qpbRsa3rH9NfN3OftlUqfAnYoUCJIa24fvvL2Z31K3Q=;
-        b=T3d8q/zawrH6fKT0FPqEemXm1wyrxcnmHZ3OcLWT/zqDgrthYBYopI+ZxWfI9OcaYo
-         apuhVHHx+HFSZRyHjC4E4U9awbsSxuftzV3SBmgtaYUcviMy1//QmVz/disTp19DY8Yz
-         iWv4vDJfcLWmfcjLFooKEVWLUQmdNHD0h0Dy3Fkgblh4ZGa9xGaHOFGPUrA+0I5H/Lgs
-         vwxEhMxmin601WHo3gw6M4seYg/lhgOUnpCXQX/Q6h93IaM/103wBEpmtyZNsOZ6UmEv
-         d1ke9SuN7KRcgFgBUlUzRrkMW733ipvaG+1NmBzh2eNcd0elfhPbsdRCm3QWdHDOV4kX
-         UdDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXD+jugIFlVH970JC+OMkbe+ukCU5Ws6Bt/3/hncVGnt/iUjwaIhbbpvI8LmWyN3SPr6fPkr2KNqiGLKQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD0I16zcxQjJo5yc1aNaCuyO6mUk1kQ+ms8Ea5hdjpyQ/TQRYn
-	uA/Gz2TxQ3owaVDTRLsDF+yqSpdgh897eMxGYj7bxPIbg/2lhGz0z7c0qCtS8ZO9Dlf+p4qUJIc
-	kAJ0vUpR0AvD4ADefoaGBLrkBskvIo/hWUTa5MnRK4Kk8RAl2fZdOH1LJyFA=
-X-Google-Smtp-Source: AGHT+IHM/rntsLiZunZBSSBSqNrgrOW90+ZD6KjWJ/TgxEWZl1XjzGEoPljnpS68ATEB6KSEPhYXN6gw68sIgn/2djy8mER+yCED
+        d=1e100.net; s=20230601; t=1760175770; x=1760780570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2KA5u3TUp00NYLA35LfzmhRHb51uTtRNeQp/w7ddecs=;
+        b=MdZwTz87W8qHAD1XjoS0Miw6aZ9/iNXCqmwzb2ZkwGZKm/XqBjNtDUn9/8+/GUDQGI
+         TT8XY4Ee/zW+muKtzFUH+/jlzEgCU9FRFb09Sl01wsgai0bcYypXc68nc7y6T4VneUJM
+         RIARLy63ePJNVHytuvcmaI8BOW9xLgyPc4lsSxXbh5t9bug2nrMCVI+TNoj/m+Uti3Ms
+         9FCzL7/T0cxa+Y1Vo8Qgc3vOIgOo0F8nzoVouuYGnAoucPVWmetCmYpMkj+ok6apx9hv
+         9SQBQY7qjKu74Sr1e8yCKdN9aqn+j0DenB204VljAnjWUIZKdQFYFRF6a6UKQzZ/LmLb
+         mM+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVpKBAmIuGxGiIHjge0l0bebvgGNmTZXg+7BnLr3tcjacLSfWQ57DehkzubKn4PtbjV8rsRc/6eZNNBxYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBLr32s9hz7y8o5oZXgCQtv+KX3wLOazvB6rncazyWXArguc9H
+	Qx1jyLD0rB5jw7O5qJTdABZYAUgiOpzn1O1UxbU7eTK4ZDu+GPjs8IOqKkm2h/y1vtoDtOjJwr8
+	3qtd00M/8h5xaGiWLV3QDjIM1r9HTbtYb3SwRN6Qu
+X-Gm-Gg: ASbGnctYaTYjMFYNj+1t+2maMrNBLSKbGGYpfcVN9Jda3LLsa1JGN4QYh8J9KZuTw5k
+	g66QwipwsMEh2giNbjJV5S5sxvUXgMCLF1cNqhiS5FWi7K7ID/g2CP3Z3rzm8aLTOXYVCFKuPGA
+	bkI1ScFhzK6hBTMn91rODo5Nrww+oRClxw/SJASi++pqnD+L0rJ8/NgmUleRlN6n76DD/0iY4Ah
+	P0ra6PYW505miRN+lvDhRLqlu2XHn16
+X-Google-Smtp-Source: AGHT+IEED7dHBeVXIcW+XT93z7Hf3i3zMcQ6Vt38katNZs1vD6UoQfiDEwwBOYw5pzjJNb5ZZ/ccNgaRmmC/Kn11320=
+X-Received: by 2002:a05:622a:1301:b0:4e0:296e:8cbb with SMTP id
+ d75a77b69052e-4e6ead5c713mr201176921cf.64.1760175769177; Sat, 11 Oct 2025
+ 02:42:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d16:b0:921:2f68:fa4 with SMTP id
- ca18e2360f4ac-93bd182ffbcmr2029171639f.4.1760175509938; Sat, 11 Oct 2025
- 02:38:29 -0700 (PDT)
-Date: Sat, 11 Oct 2025 02:38:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ea2595.a70a0220.b3ac9.0006.GAE@google.com>
-Subject: [syzbot] [crypto?] KMSAN: uninit-value in aes_encrypt (6)
-From: syzbot <syzbot+22bff16a8f91d65e2e58@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <681a1770.050a0220.a19a9.000d.GAE@google.com> <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
+In-Reply-To: <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Sat, 11 Oct 2025 02:42:37 -0700
+X-Gm-Features: AS18NWA0areIK1P_LAC0ovg1dEL8hxEocjKD533OSOIsICc3MFc3HHnf4RoapQo
+Message-ID: <CANn89iLjjtXV3ZMxfQDb1bbsVJ6a_Chexu4FwqeejxGTwsR_kg@mail.gmail.com>
+Subject: Re: [syzbot] [net?] [mm?] INFO: rcu detected stall in
+ inet_rtm_newaddr (2)
+To: syzbot <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com>, 
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>, Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, hdanton@sina.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Oct 11, 2025 at 12:41=E2=80=AFAM syzbot
+<syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following issue on:
+>
+> HEAD commit:    18a7e218cfcd Merge tag 'net-6.18-rc1' of git://git.kernel=
+...
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12504dcd98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ab7fa743df0=
+ec1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D51cd74c5dfeafd6=
+5e488
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14d2a542580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D142149e258000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/7a01e6dce97e/dis=
+k-18a7e218.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5e1b7e41427f/vmlinu=
+x-18a7e218.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/69b558601209/b=
+zImage-18a7e218.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com
+>
+> sched: DL replenish lagged too much
+> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> rcu:    0-...!: (2 GPs behind) idle=3D7754/1/0x4000000000000000 softirq=
+=3D15464/15465 fqs=3D1
+> rcu:    (detected by 1, t=3D10502 jiffies, g=3D11321, q=3D371 ncpus=3D2)
+> Sending NMI from CPU 1 to CPUs 0:
+> NMI backtrace for cpu 0
+> CPU: 0 UID: 0 PID: 5948 Comm: syz-executor Not tainted syzkaller #0 PREEM=
+PT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 10/02/2025
+> RIP: 0010:rb_insert_color_cached include/linux/rbtree.h:113 [inline]
+> RIP: 0010:rb_add_cached include/linux/rbtree.h:183 [inline]
+> RIP: 0010:timerqueue_add+0x1a8/0x200 lib/timerqueue.c:40
+> Code: e7 31 f6 e8 6a 0c de f6 42 80 3c 2b 00 74 08 4c 89 f7 e8 7b 0a de f=
+6 4d 89 26 4d 8d 7e 08 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 <74> 08 4c 89 ff=
+ e8 5e 0a de f6 4d 89 27 4d 85 e4 40 0f 95 c5 eb 07
+> RSP: 0018:ffffc90000007cf0 EFLAGS: 00000046
+> RAX: 1ffff110170c4f83 RBX: 1ffff110170c4f82 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88805de72358
+> RBP: 0000000000000000 R08: ffff88805de72357 R09: 0000000000000000
+> R10: ffff88805de72340 R11: ffffed100bbce46b R12: ffff88805de72340
+> R13: dffffc0000000000 R14: ffff8880b8627c10 R15: ffff8880b8627c18
+> FS:  000055557c657500(0000) GS:ffff888125d0f000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000200000000600 CR3: 000000002ee76000 CR4: 00000000003526f0
+> Call Trace:
+>  <IRQ>
+>  __run_hrtimer kernel/time/hrtimer.c:1794 [inline]
+>  __hrtimer_run_queues+0x656/0xc60 kernel/time/hrtimer.c:1841
+>  hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
+>  __sysvec_apic_timer_interrupt+0x108/0x410 arch/x86/kernel/apic/apic.c:10=
+58
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inli=
+ne]
+>  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.=
+h:702
+> RIP: 0010:pv_vcpu_is_preempted arch/x86/include/asm/paravirt.h:579 [inlin=
+e]
+> RIP: 0010:vcpu_is_preempted arch/x86/include/asm/qspinlock.h:63 [inline]
+> RIP: 0010:owner_on_cpu include/linux/sched.h:2282 [inline]
+> RIP: 0010:mutex_spin_on_owner+0x189/0x360 kernel/locking/mutex.c:361
+> Code: b6 04 30 84 c0 0f 85 59 01 00 00 48 8b 44 24 08 8b 18 48 8b 44 24 4=
+8 42 80 3c 30 00 74 0c 48 c7 c7 90 8c fa 8d e8 a7 cd 88 00 <48> 83 3d ff 27=
+ 5e 0c 00 0f 84 b9 01 00 00 48 89 df e8 41 e0 d5 ff
+> RSP: 0018:ffffc900034c7428 EFLAGS: 00000246
+> RAX: 1ffffffff1bf5192 RBX: 0000000000000001 RCX: ffffffff819c6588
+> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff8f4df8a0
+> RBP: 1ffffffff1e9bf14 R08: ffffffff8f4df8a7 R09: 1ffffffff1e9bf14
+> R10: dffffc0000000000 R11: fffffbfff1e9bf15 R12: ffffffff8f4df8a0
+> R13: ffffffff8f4df8f0 R14: dffffc0000000000 R15: ffff8880267a9e40
+>  mutex_optimistic_spin kernel/locking/mutex.c:464 [inline]
+>  __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+>  __mutex_lock+0x311/0x1350 kernel/locking/mutex.c:760
+>  rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+>  inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:978
+>  rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6954
+>  netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+>  netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+>  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+>  sock_sendmsg_nosec net/socket.c:727 [inline]
+>  __sock_sendmsg+0x21c/0x270 net/socket.c:742
+>  __sys_sendto+0x3bd/0x520 net/socket.c:2244
+>  __do_sys_sendto net/socket.c:2251 [inline]
+>  __se_sys_sendto net/socket.c:2247 [inline]
+>  __x64_sys_sendto+0xde/0x100 net/socket.c:2247
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7faade790d5c
+> Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8=
+b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff=
+ ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
+> RSP: 002b:00007ffdd2e3b670 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+> RAX: ffffffffffffffda RBX: 00007faadf514620 RCX: 00007faade790d5c
+> RDX: 0000000000000028 RSI: 00007faadf514670 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 00007ffdd2e3b6c4 R09: 000000000000000c
+> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+> R13: 0000000000000000 R14: 00007faadf514670 R15: 0000000000000000
+>  </TASK>
+> rcu: rcu_preempt kthread timer wakeup didn't happen for 10499 jiffies! g1=
+1321 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402
+> rcu:    Possible timer handling issue on cpu=3D0 timer-softirq=3D4286
+> rcu: rcu_preempt kthread starved for 10500 jiffies! g11321 f0x0 RCU_GP_WA=
+IT_FQS(5) ->state=3D0x402 ->cpu=3D0
+> rcu:    Unless rcu_preempt kthread gets sufficient CPU time, OOM is now e=
+xpected behavior.
+> rcu: RCU grace-period kthread stack dump:
+> task:rcu_preempt     state:I stack:27224 pid:16    tgid:16    ppid:2     =
+ task_flags:0x208040 flags:0x00080000
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5325 [inline]
+>  __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
+>  __schedule_loop kernel/sched/core.c:7011 [inline]
+>  schedule+0x165/0x360 kernel/sched/core.c:7026
+>  schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
+>  rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
+>  rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
+>  kthread+0x711/0x8a0 kernel/kthread.c:463
+>  ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+>
+>
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-syzbot found the following issue on:
+Yet another taprio report.
 
-HEAD commit:    917167ed1211 Merge tag 'xtensa-20251010' of https://github..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f55304580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b820eb4c6dd8482
-dashboard link: https://syzkaller.appspot.com/bug?extid=22bff16a8f91d65e2e58
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f8b165efe52b/disk-917167ed.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/01b56300cdc7/vmlinux-917167ed.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6c32d21e8075/bzImage-917167ed.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+22bff16a8f91d65e2e58@syzkaller.appspotmail.com
-
-EXT4-fs error (device loop5): ext4_orphan_get:1418: comm syz.5.10451: bad orphan inode 131083
-EXT4-fs (loop5): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
-=====================================================
-BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:150 [inline]
-BUG: KMSAN: uninit-value in aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:283
- subshift lib/crypto/aes.c:150 [inline]
- aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:283
- aesti_encrypt+0x7d/0xf0 crypto/aes_ti.c:31
- crypto_ecb_crypt crypto/ecb.c:23 [inline]
- crypto_ecb_encrypt2+0x13f/0x300 crypto/ecb.c:40
- crypto_lskcipher_crypt_sg+0x3a9/0x930 crypto/lskcipher.c:188
- crypto_lskcipher_encrypt_sg+0x8b/0xc0 crypto/lskcipher.c:207
- crypto_skcipher_encrypt+0x111/0x1e0 crypto/skcipher.c:194
- xts_encrypt+0x2e1/0x570 crypto/xts.c:269
- crypto_skcipher_encrypt+0x187/0x1e0 crypto/skcipher.c:195
- fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
- fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
- ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
- mpage_submit_folio fs/ext4/inode.c:2080 [inline]
- mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
- mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
- ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
- ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
- do_writepages+0x3ef/0x860 mm/page-writeback.c:2604
- filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
- __filemap_fdatawrite_range mm/filemap.c:422 [inline]
- file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
- generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
- ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
- ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
- vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
- generic_write_sync include/linux/fs.h:3046 [inline]
- ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
- ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
- do_iter_readv_writev+0x9de/0xc20 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_pwritev fs/read_write.c:1153 [inline]
- __do_compat_sys_pwritev2 fs/read_write.c:1298 [inline]
- __se_compat_sys_pwritev2 fs/read_write.c:1290 [inline]
- __ia32_compat_sys_pwritev2+0x43d/0x6b0 fs/read_write.c:1290
- ia32_sys_call+0x1810/0x4310 arch/x86/include/generated/asm/syscalls_32.h:380
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-Uninit was stored to memory at:
- le128_xor include/crypto/b128ops.h:69 [inline]
- xts_xor_tweak+0x566/0xbd0 crypto/xts.c:123
- xts_xor_tweak_pre crypto/xts.c:135 [inline]
- xts_encrypt+0x278/0x570 crypto/xts.c:268
- crypto_skcipher_encrypt+0x187/0x1e0 crypto/skcipher.c:195
- fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
- fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
- ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
- mpage_submit_folio fs/ext4/inode.c:2080 [inline]
- mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
- mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
- ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
- ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
- do_writepages+0x3ef/0x860 mm/page-writeback.c:2604
- filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
- __filemap_fdatawrite_range mm/filemap.c:422 [inline]
- file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
- generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
- ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
- ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
- vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
- generic_write_sync include/linux/fs.h:3046 [inline]
- ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
- ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
- do_iter_readv_writev+0x9de/0xc20 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_pwritev fs/read_write.c:1153 [inline]
- __do_compat_sys_pwritev2 fs/read_write.c:1298 [inline]
- __se_compat_sys_pwritev2 fs/read_write.c:1290 [inline]
- __ia32_compat_sys_pwritev2+0x43d/0x6b0 fs/read_write.c:1290
- ia32_sys_call+0x1810/0x4310 arch/x86/include/generated/asm/syscalls_32.h:380
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-Uninit was created at:
- __alloc_frozen_pages_noprof+0x689/0xf00 mm/page_alloc.c:5206
- alloc_pages_mpol+0x328/0x860 mm/mempolicy.c:2416
- alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
- alloc_pages_noprof mm/mempolicy.c:2507 [inline]
- folio_alloc_noprof+0x109/0x360 mm/mempolicy.c:2517
- filemap_alloc_folio_noprof+0x9d/0x420 mm/filemap.c:1020
- __filemap_get_folio+0xb45/0x1930 mm/filemap.c:2012
- write_begin_get_folio include/linux/pagemap.h:784 [inline]
- ext4_write_begin+0x6d9/0x2d70 fs/ext4/inode.c:1318
- generic_perform_write+0x362/0x1050 mm/filemap.c:4242
- ext4_buffered_write_iter+0x61a/0xce0 fs/ext4/file.c:299
- ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
- do_iter_readv_writev+0x9de/0xc20 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_pwritev fs/read_write.c:1153 [inline]
- __do_compat_sys_pwritev2 fs/read_write.c:1298 [inline]
- __se_compat_sys_pwritev2 fs/read_write.c:1290 [inline]
- __ia32_compat_sys_pwritev2+0x43d/0x6b0 fs/read_write.c:1290
- ia32_sys_call+0x1810/0x4310 arch/x86/include/generated/asm/syscalls_32.h:380
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-CPU: 1 UID: 0 PID: 8113 Comm: syz.5.10451 Tainted: G        W           syzkaller #0 PREEMPT(none) 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+If taprio can not be fixed, perhaps we should remove it from the
+kernel, or clearly marked as broken.
+(Then ask syzbot to no longer include it)
 
