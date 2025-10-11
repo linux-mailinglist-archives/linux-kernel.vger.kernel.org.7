@@ -1,193 +1,244 @@
-Return-Path: <linux-kernel+bounces-849084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77F9BCF2BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:01:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064B8BCF2C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45F374E846E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2CB7189FAA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3FD233707;
-	Sat, 11 Oct 2025 09:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8B8221FAC;
+	Sat, 11 Oct 2025 09:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zdqX0Wlf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AIsr5yR7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zdqX0Wlf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AIsr5yR7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W5kMi6s9"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F5A29A2
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B13221D92
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760173308; cv=none; b=naT/etKEP+ffrVnCHbtKXORJgE41JPb/+vOJW7yKaToUZ8JhmuMGNUNjbpRIuycT+hjXOW+pH0TStk0NVW/2Mj0KeTCo0Tt0vJvB6sUtpHmz4Ls91OYLV8HDHli0AQOGqS3xP3pjkazk2Vq9VQqWtjHTlQhLkz8quvoPQjHVt4o=
+	t=1760173440; cv=none; b=tP2gqeQuzVS5+Woaej23NjZvgDgjfoHLBri10OX1tYkURY388x3AJdOMaW9dbtV3vratLKmM3RjykBNUxb6CoNwuX6UqVvY6dkA5/dVOJvO+XIpX1uLibuyiGraDdPZ5EPx5kXtFiE4aVVzjBjD8YYhUVQuHhhvU1y2N1hz9sgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760173308; c=relaxed/simple;
-	bh=cLbUoQZvA0JPuArqJtC6Msx7WvzT90wDbMbUxSh+gAE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=UG+PUyPdSCP39oj8FREEgOBskTM1K9DpoD2MUxYV7lrKViSWmZf6QxRjgJAlNn3kYfL5eXtdwlo/uJsaIgZD+vy09c8UQULlDpTn73au8z5wnuAPFBEXmcGXbM1biImObXc6dPyxD3lEJ2KQiUcnHGUoiX3oKB9VLHeW+7mP5MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zdqX0Wlf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AIsr5yR7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zdqX0Wlf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AIsr5yR7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 58FF2211CF;
-	Sat, 11 Oct 2025 09:01:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760173301; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eTLbl2b226xZ5INaE8Vg7caBgv/GfAbCanwyLTd4Am4=;
-	b=zdqX0Wlfh27b/HrsFcWYeI3jzO8dLmYy9T/FLlTLzeDvZMMZO7eCn6bpl8CfmNw9L0dBLv
-	uelbDoL1xD6NCG4Vex6yYzVyL1xHNefAgi/umYEJgqOPq/b54xMkuSNFa18Uk7ImwgLcBu
-	afDpU2rBLj0W6upaIbT/9rCPn49098Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760173301;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eTLbl2b226xZ5INaE8Vg7caBgv/GfAbCanwyLTd4Am4=;
-	b=AIsr5yR7jH/9JrOmyHYatE376cKsfC2/AhuxumCKisu+G5O11D3k9Gzns8jRcPLJcMDO+u
-	SqdLxzrfkSxH8GDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760173301; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eTLbl2b226xZ5INaE8Vg7caBgv/GfAbCanwyLTd4Am4=;
-	b=zdqX0Wlfh27b/HrsFcWYeI3jzO8dLmYy9T/FLlTLzeDvZMMZO7eCn6bpl8CfmNw9L0dBLv
-	uelbDoL1xD6NCG4Vex6yYzVyL1xHNefAgi/umYEJgqOPq/b54xMkuSNFa18Uk7ImwgLcBu
-	afDpU2rBLj0W6upaIbT/9rCPn49098Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760173301;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eTLbl2b226xZ5INaE8Vg7caBgv/GfAbCanwyLTd4Am4=;
-	b=AIsr5yR7jH/9JrOmyHYatE376cKsfC2/AhuxumCKisu+G5O11D3k9Gzns8jRcPLJcMDO+u
-	SqdLxzrfkSxH8GDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 37FF713693;
-	Sat, 11 Oct 2025 09:01:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aMrfDPUc6miCGAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Sat, 11 Oct 2025 09:01:41 +0000
-Message-ID: <903ea271-9413-40ed-93cd-104062c18a84@suse.cz>
-Date: Sat, 11 Oct 2025 11:01:40 +0200
+	s=arc-20240116; t=1760173440; c=relaxed/simple;
+	bh=p4o0vlMg3rayPmvEZ+r6StpN2AzXfZ4MZ7VvyG5in28=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Od6Ty9QNGZdOdoaJ5snFTeIY1+DHQB7eQA2dhlbr1MTv+JhwiOfpuoe45SQ+rlENGK9qWNHgn+QVJwdPn987qaWIvJGCnsUEWeQL6e/km+lgrmW+R9FEQnUoMhTI2ncgavrPnJ+AufO+kq+n5RgpHPuYWgOlxVM9xUc3gp+FjB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W5kMi6s9; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b5515eaefceso2413546a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 02:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760173434; x=1760778234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yri33TAsrDTYHqwIA4g0BnNHEsdzEHDprcYUwbRN96A=;
+        b=W5kMi6s9DBxKii/8Dnkv1WsTRiEPRFKcZH4yryt+BWOiel/U4ZjvUv7ui7VGGTRyvD
+         SPzDbgXxtw3ZEp5KsnmHTnfxNqbE3OKqFLcalTRBpHu0QereKtJ50ACgC1/2bU7giXFf
+         3K4GebdhJ57zowxLYOzYYq2AnxctLKg3lE1HYbWw1AanVlCTDOO760DK6dRVir0S3pxO
+         1ndHFozBnk3Qnxs+tS/VSVdbxla/YVAN3Hp8LDZV+CalG59QmztG7y96al4D4iqNzipk
+         iAMQSWEby8XHGFXAZ3LNKmgTIVdJm9stlZLC8LHBcSXnl7kEsTOqIZGLHJtJmr5/Rp21
+         fvVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760173434; x=1760778234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yri33TAsrDTYHqwIA4g0BnNHEsdzEHDprcYUwbRN96A=;
+        b=CtCZ64ba5y1MNmno1KnDRz0hTaL2zTJiJ/o8IB99RgGkVwVI0oKs5+C25VYchvbU0B
+         dkSLJA0H0KhKZXR6FyCCgXJ9DtlRzSvEF5uw6nkOugT/76S+rNWwAt8V5Ab+GhZGWgRu
+         OoEHnm2zqw1IVEPJ2rDvTxAUZ+T3oyVs3S7cH6ua1wZO6Ss1ynXbEXLvAb+QE8GP+Paw
+         Yv9ry1e5YgE8hxto21auLbvFftxfrCfYuq6eKvtIE3qXjTD80G3z6w6zTNNVwI3Ndy2V
+         OQ8BW8sRYcfsoU0AXvaiuxyr4LKYNywHqqNf6sLvcsNzhL77AnfoTSpvFPFWa6W7pI5Q
+         dl+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXdmElf6d+U86LD9Pu1vZ+l12yjAMWlrT9G79SozU50L+eyuFsnNcBMrtkH0/yI5UcIwiA6dEWTwWDZ28M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCflA4Q7ik2I/6grat8ymMF4XsEJMV+lFoM6P4YtEWYSk9Grtm
+	wAgWSLKotqvEib+hCfWVSbRIPW1TuCwqjleu7KaRiPEUp7MhM85k/cir8NZMwvT0Ae0mhb6p/oH
+	JWOPvhsMGcMwncHvNBjsyEUPVPPcxRQVsKOcKZJVL5w==
+X-Gm-Gg: ASbGncsBMzHKqAXmrL/hotoAW6452KE72pF5ZKCwhiyUVwjorNXv2BQrHy5VxugGWL0
+	sx2Z8qqHrJ6YPzQRI/BsdgNDK6/W9OUho/glp1IOn6KMoQOwYRsb7XqNbHU0ye0ss7gjDpHutbK
+	A1bWOGV3aXS5s1FoUZyJ0yF2+SvMYIKQxx2YBZgbeBW9BKx1ALBYpeMateiH6oeXa0ElB8I12ri
+	pneoSECpmQ+uNTDukHZ+4Mz62RRbmp2AYgZTT7FMLQi2n2yl3MrmOO88BAhoCQyxQEndOg2lX1l
+	JRt2piGEpif+1fDTxZGOGRlrT3HE
+X-Google-Smtp-Source: AGHT+IEo5Uyde0HdTIg46Mgc3EqcXiuM1A8u34PuNf1I6GxmDtVoPKQmvw+unuf5pGI573VZJcnBBhHNPh3KrFJA1Qc=
+X-Received: by 2002:a17:903:2d0:b0:271:45c0:9ec8 with SMTP id
+ d9443c01a7336-290273ecac2mr179583115ad.37.1760173434235; Sat, 11 Oct 2025
+ 02:03:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab hotfix for 6.18-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>,
- Christoph Lameter <cl@gentwo.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, Phil Auld <pauld@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+References: <20251010131333.420766773@linuxfoundation.org>
+In-Reply-To: <20251010131333.420766773@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 11 Oct 2025 14:33:42 +0530
+X-Gm-Features: AS18NWDBQvhzum4m4HTsjHhNVPJw2a1osUi_zNgxe-rnq14n1mvchBBU1cUGBj8
+Message-ID: <CA+G9fYuSvzpfBzJJp_Y0wQL6J7qTK=0mDPpBZu1rMM5s_UhrOg@mail.gmail.com>
+Subject: Re: [PATCH 6.16 00/41] 6.16.12-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Fri, 10 Oct 2025 at 18:49, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.12 release.
+> There are 41 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 12 Oct 2025 13:13:18 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.16.12-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-here's the NULL pointer deref hotfix in the form of a PR
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18-rc1-hotfix
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Obviously it wasn't in -next yet and was just sent out formally for review,
-and it's weekend so that's an unfortunate timing. Releasing rc1 might
-however mean more exposure to such memoryless node systems so I didn't want
-to delay. You can decide to pull or wait.
+## Build
+* kernel: 6.16.12-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: e006d63d59f243154aba844a31f8ac8afd93484a
+* git describe: v6.16.10-57-ge006d63d59f2
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16=
+.10-57-ge006d63d59f2
 
-Sorry for the trouble and thanks,
-Vlastimil
+## Test Regressions (compared to v6.16.10-15-g13cc90c947b1)
 
-======================================
+## Metric Regressions (compared to v6.16.10-15-g13cc90c947b1)
 
-* Fix for NULL pointer dereferences in sheaves code on some systems with
-  memoryless nodes (Vlastimil Babka)
+## Test Fixes (compared to v6.16.10-15-g13cc90c947b1)
 
-----------------------------------------------------------------
-Vlastimil Babka (1):
-      slab: fix barn NULL pointer dereference on memoryless nodes
+## Metric Fixes (compared to v6.16.10-15-g13cc90c947b1)
 
- mm/slub.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 51 insertions(+), 14 deletions(-)
+## Test result summary
+total: 166603, pass: 141637, fail: 5024, skip: 19942, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 57 total, 50 passed, 7 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 39 passed, 1 failed
+* riscv: 25 total, 23 passed, 2 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 46 passed, 3 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
