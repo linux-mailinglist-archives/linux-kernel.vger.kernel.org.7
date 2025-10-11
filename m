@@ -1,96 +1,136 @@
-Return-Path: <linux-kernel+bounces-848916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C87EBCECF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:26:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBA1BCECFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9AD9D4E9C31
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA013E7BCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9680C18C2C;
-	Sat, 11 Oct 2025 00:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAB3179A3;
+	Sat, 11 Oct 2025 00:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4gzIHUA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hDH8fMnL"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBC2632;
-	Sat, 11 Oct 2025 00:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4860E134AC;
+	Sat, 11 Oct 2025 00:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760142364; cv=none; b=tueiI0zQdDQCbihU9prQbJBAAjS6ArTTr7ue21ma6Tnu02/TQ3KfUDq9y7+MokCsnYYgDyS2MQ9+1AeAh3S3of0a284RANcrw+G9f4SSftmAHBdtjNi+UKpro1urrG5PXOSpbWSh5Ps1R7V7YbMyVzvuaK338XA68wl26/MS9oE=
+	t=1760142394; cv=none; b=Zj8AGqiabtGpD/gLIQlHT8ZsgZt3VA/eYv3z6hZET1KOzOzi/Yb+VVR1o+MkwylJkt3xKYRCXtAADP9glZT2To9LdKx5E1EfNF6J54heuvwlgL7aptVsDGSdMvJSW7rTU+Y0pWhwPHRQWq9DTBMJJFhXMSOKIIEIVMQhnqG2ybg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760142364; c=relaxed/simple;
-	bh=a5wJqs0eOxV6rB7lBPt6rh8/vvfUgqZ9BRXbh1bNfAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhspdL5UcF8G0sdftanJexIIQz8c7V2a6cjo4/8DIVTlRheBBVZeMsKWiaGLS1CyJJ2fjiTzBp3o6bOCSgT47eo4Xc733SP9eLBk5WAsIfepRQofsesfq/wCHlUU+Zayo92+YcdXxMBWMV2S6TMP2m/dbBW5Bs/+L+5QkRjibuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4gzIHUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 204A8C4CEF1;
-	Sat, 11 Oct 2025 00:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760142363;
-	bh=a5wJqs0eOxV6rB7lBPt6rh8/vvfUgqZ9BRXbh1bNfAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L4gzIHUASD2/NUpmVY7jeGjEt1CQSkPwkivcBznUf2iilYwrcmorh4ukLMHxr4Bm2
-	 EHhaDBIQUn3sVHBKmsWtWTeR+H8KU5mpr/7M9l+1z9LKpslcYdwQYFen1vWdKH1hY2
-	 Kw1fgyVmJYiA1H3o34BsRLXDX4ALRhOBgW0AKyQq7qMhiWuYyVe6cEoIgs0KmRKAub
-	 nQBFqtddncQKQCVZGqfyPCT7HpackyxLoUwZS1yvkyMfdEPLKgod7OPwIQ/cJP5Gjx
-	 nl/gSP/Xl1rI2Mj+ypHKziCyoaKiRLhseF4SpKr0lFi8iQwCAjJLPGsxdO6hLOItxH
-	 NjNQWaRo8VHcQ==
-Date: Fri, 10 Oct 2025 17:26:01 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] crypto, lib/crypto: Add SHAKE128/256 support and
- move SHA3 to lib/crypto
-Message-ID: <20251011002601.GB20823@quark>
-References: <20251001152826.GB1592@sol>
- <20250926141959.1272455-1-dhowells@redhat.com>
- <20250926195958.GA2163@sol>
- <2636609.1759410884@warthog.procyon.org.uk>
- <20251002162705.GB1697@sol>
+	s=arc-20240116; t=1760142394; c=relaxed/simple;
+	bh=iNSlIhaRzlk9zJ6qBTWKy3/g9z6Y+BykiDt9//5NypQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KzmjdxSy2FvaXrfo2Xc9SPKdLT4LcAUXvbLIZc8uBRGDcIOB7QPNH3zE4UPDzTOKCgE3Mvn/AbtOIlizLBi1HHDWOkJ9CRk7PzIeGJO5gJtia2MW2j0jl6J2SKh7Ah1OTheg7Y2FzprVFMawzAZ7yq3c+iZwnsz/gR/QZZSn4hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hDH8fMnL; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59B0Q50l873552;
+	Fri, 10 Oct 2025 19:26:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760142366;
+	bh=R/p3aeZ2469/VM/d0M9zdk0kPze0+6RFg7wHHi/c7B0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=hDH8fMnLgbrB7LY0TQ3tcyNLCT4MT2KL3fZvuefzeNZtAkw8uovEQYun2vfA5zu4w
+	 a/SxisuUxhrcbzY2RlpyIuu2/J0vNyvWBDQyMZhwCSSFvbNc0QSZwtT2nR/sigzwUg
+	 ijSyUGBEe2Zd69Lg0WzAypRs/Rgs5wioZQFvieyI=
+Received: from DLEE208.ent.ti.com (dlee208.ent.ti.com [157.170.170.97])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59B0Q5I02575496
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 10 Oct 2025 19:26:05 -0500
+Received: from lewvowa02.ent.ti.com (10.180.75.80) by DLEE208.ent.ti.com
+ (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.20; Fri, 10 Oct
+ 2025 19:26:05 -0500
+Received: from DLEE213.ent.ti.com (157.170.170.116) by lewvowa02.ent.ti.com
+ (10.180.75.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.55; Fri, 10 Oct
+ 2025 19:26:05 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE213.ent.ti.com
+ (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 10 Oct 2025 19:26:05 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59B0Q4s02432767;
+	Fri, 10 Oct 2025 19:26:04 -0500
+Message-ID: <a8a35f8f-e962-4a2d-ac56-46306c0c1658@ti.com>
+Date: Fri, 10 Oct 2025 19:26:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002162705.GB1697@sol>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] remoteproc: core: Removed unused headers
+To: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20251010-remoteproc-cleanup-v2-0-7cecf1bfd81c@nxp.com>
+ <20251010-remoteproc-cleanup-v2-3-7cecf1bfd81c@nxp.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20251010-remoteproc-cleanup-v2-3-7cecf1bfd81c@nxp.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi David,
-
-On Thu, Oct 02, 2025 at 09:27:05AM -0700, Eric Biggers wrote:
-> On Thu, Oct 02, 2025 at 02:14:44PM +0100, David Howells wrote:
-> > Eric Biggers <ebiggers@kernel.org> wrote:
-> > 
-> > > Have you had a chance to read this reply?
-> > 
-> > I have.
-> > 
-> > You held up your implementation of sha256 and sha224 as an example of how it
-> > perhaps should be implemented:
-> > 
-> > 	It would be worth considering separating the APIs for the different
-> > 	algorithms that are part of SHA-3, similar to what I did with SHA-224
-> > 	and SHA-256.
-> > 
-> > so I have followed that.  That defines a type for each, so I'll leave it at
-> > that.
+On 10/10/25 7:24 AM, Peng Fan wrote:
+> There is no user of crc32.h, debugfs.h, of_reserved_mem.h, virtio_ids.h,
+> so remove from the included headers.
 > 
-> In v3, you were pretty clear that you don't like the six-types solution:
+> No functional changes.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Let me know if you have a new version of this patchset planned.
-Otherwise I'll work on cleaning it up and finishing the remaining parts,
-like incorporating the arch-optimized SHA-3 code.
+Acked-by: Andrew Davis <afd@ti.com>
 
-- Eric
+>   drivers/remoteproc/remoteproc_core.c | 4 ----
+>   1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index f7d21e99d171667d925de769db003c4e13fe8fe8..8004a480348378abef78ad5641a8c8b5766c20a6 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -17,8 +17,6 @@
+>   #define pr_fmt(fmt)    "%s: " fmt, __func__
+>   
+>   #include <asm/byteorder.h>
+> -#include <linux/crc32.h>
+> -#include <linux/debugfs.h>
+>   #include <linux/delay.h>
+>   #include <linux/device.h>
+>   #include <linux/dma-mapping.h>
+> @@ -30,14 +28,12 @@
+>   #include <linux/module.h>
+>   #include <linux/mutex.h>
+>   #include <linux/of_platform.h>
+> -#include <linux/of_reserved_mem.h>
+>   #include <linux/panic_notifier.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/rculist.h>
+>   #include <linux/remoteproc.h>
+>   #include <linux/slab.h>
+>   #include <linux/string.h>
+> -#include <linux/virtio_ids.h>
+>   #include <linux/virtio_ring.h>
+>   
+>   #include "remoteproc_internal.h"
+> 
+
 
