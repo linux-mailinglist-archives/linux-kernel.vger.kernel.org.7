@@ -1,244 +1,150 @@
-Return-Path: <linux-kernel+bounces-849074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BDDBCF266
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:40:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20ACBCF272
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30035427B5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:40:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5077189D8AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CC5239E6F;
-	Sat, 11 Oct 2025 08:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C0523D7D1;
+	Sat, 11 Oct 2025 08:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fK2C+Pq8"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5DuNRQt"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CF8223DFD
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6216A22D78A
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760172002; cv=none; b=XLX4vF+CTOHs2vjW4AIJnw/dHzwA/pCYbWbBR7uQYU/MD+yeaexMGbEyRQFbEUMcvors84V3EfRRGQqKzaFQQkktK06xO7QSzy17Mm+8F8dP5APtWC5RcrqmrTXK2l0cYzzJZHdfzZt+PV2Oj7/U7iGYkLGTVOfnH0pux27j1ok=
+	t=1760172239; cv=none; b=sT8Zy7EanvrrVFFMhtHspXdYdNUVnLMtOkcj74W3xTGyNInjDzVZR3arb6XsNO7m5dgirXKeAkh1vpDmp7fuDYXryHtFMWh6AMxdD1TZLqi2rUaJiXGyNwHz8dQmJFiwu6g5L4jxdxLwy+VhrN0WsooUGZE72QedhEEXGsmaBEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760172002; c=relaxed/simple;
-	bh=swXtNkDF0FL3cU8HnGgzyI0EVBiiiSrQRFIrdvPgPTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n9vS10Mw/Y8rHLp7iRG6KQJIopIdUuo8fja1VvID5kEscq15btdJMe6w3aLRmOGkyoJPn0u3EkGZixZVlDiCKmJN55vIXxsKU8PFDpSt4b48R6VNkaKzmCBQubYyy5gjDU9B6NMlCQYc1Ksqo+5x/BrgrAEZylEQM6UoyYY0Xvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fK2C+Pq8; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-782e93932ffso2615134b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:39:56 -0700 (PDT)
+	s=arc-20240116; t=1760172239; c=relaxed/simple;
+	bh=nIQkVkS00h/ZO5JRy6iR8QPChIVXZPi7LdPe3MlLTBo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uvNQ4tFiRoaneC9hGiMYNzXBddUXKmmEqJijt3mLqTr+Bnfj0DwjW9Y8Szh6pjLdDoiVmR0w1QvwfK18zlxIeh5P0IfkkYnKJBFUqwAnI2cNAU2ubTNtz0dRLvZ9xznwQ59QS2tIxkBXL5L1Xu8ZlV+ghuNskFhdS64ecGxWpLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O5DuNRQt; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77f605f22easo2493154b3a.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760171996; x=1760776796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sVXSsfvT0etGlmUWNsUkD8HWlAPhEcr1Pl7r8v1EiJ4=;
-        b=fK2C+Pq8lppVyjYNh/grF4e4dUhk20P0JBHlY94vVgn+IV77DpE2XV2bcHMFcq4MN0
-         6Z0J+r9WdRHQP5BrMgljVJK6/ymxVGeeelPaVieT5ipUR8LIR021Ub+ij8qbYnfNiT05
-         zYHVPhIc5Ifq3C1Q95/OHUg93dgdl5J9hsZ+mcVN7Z/v/mhPZBLD89VJQKhrCoqtye5v
-         1fgeOaui/1LZNbfWL5ULD8tKidgdhC/P5W4in1lulaNNOWcBPqIK0FfneRwO4Rmusoro
-         1VF4IM4E+IqzhfIGklRIAb4ZOSMWh5tr0flIt8hysdUeTzpsh/cuJUS1SScXZPcLF8Pv
-         AfZQ==
+        d=gmail.com; s=20230601; t=1760172233; x=1760777033; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqCd8yW9EYi9BPy6lU/qWlREPsP6CT/SF7s5Ft32XtM=;
+        b=O5DuNRQtwvGH5+igVtg+6vsBk/2wnFLdS5+Ei+kZIGED2MX67fS9D53HV/p/Fi1k+D
+         LHiWVtFKetOSTdNIDl2d8IW29fXquialQiDQY7N4tVJM89WryinaHrMBHTILLTek6dkE
+         iYk9sqFAhSP1rh8BfFUmPpOqaAuSKSCRjaPdlw/TSRySVgZWQs5nPp3Zusb++XMxef6y
+         5r1y13HatTxSup5ukmRwXDxhVi06OUoDJ3mMVi3Y1tzBORjXfAgOYOrYLMAuzTpEiul0
+         Pca7FRKmI/kw5ZBvIN1NsPcHRyOCOQpD6sg+tPO+uVKgF+qRXxxLYwqimoLJB07WKsIx
+         jpXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760171996; x=1760776796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sVXSsfvT0etGlmUWNsUkD8HWlAPhEcr1Pl7r8v1EiJ4=;
-        b=ZXyCRwixRaRsQK7IfqFaOIQanULHe2oZHSXqegKnPZY9LV78YidxqmeRQcK5ZKnN74
-         ImaV1q9C3RzYofbzr0kUBDOgQmSF/Xz7+ZTxljQJ2xVSM7d9JLI6UW5PS0oOtgEgtOEo
-         HLHc0nDBUm+mbiWjRMz+zJrKOLW6D4mzv2CNfRaycyi5dewqMBUTixsgR+oBSIkvMHyH
-         ckgdKlIs4EScPy/zdklUSt8ypNSxpeij/d4TsuvdamBl6/s8uhZJZkoMA9itQyeuCbNe
-         Zaq1RF/epQPe1xl/KfzU0dIWr0GU2+OCSk7CekQLU5JOryRuOk25jOmGcRP9VxTZh1o3
-         /eaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOLd29nxzb8GFs751dvoyMyOZqBF1RCpjZ/oRXFxkgEVGvvP5M2GfR/zsGiBuyWJRPr2gy7Shkucz5Dqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz16gZDqzbngaVYcHRTqr7Ku0MBmZtWyIyxje54820/cw7dyu8g
-	cwQK/Kwb46gtRQ3JMzzdFXIRf9t8bcefkmiJz24OSdSNQqddJDjjhSZP3jZVZ+i05lxxEYJ6Z44
-	c/opb2BCl1LHJVDq5lU68BIhOmf0D+5V9gF/iEoK8TA==
-X-Gm-Gg: ASbGncuFk6Rx5PM6GiJKxZGo24fjz4Q8zfY5DmV/moD0W4s9V4C7oiYS0LWiX8WNQw4
-	LiNW6LLmNJHQtQSND4I6LZbGbWfiA3nUYIZX3+ywxSNj02cR68FYYajF+FBYg9jdP4tj9y2OuN5
-	qODa/d1SlV1BE04jnXUC+bJDAblNSxOyJ+NBqNnl81iMd3NCmTSEth1poSxXZ+PBkP79f70ktJ8
-	hPlgPW4oCyJeOSEfio2V4GAT4Sn3EdmJH3LE5SMxAJup7w7NOJ7fUnUPsSgAFYQ641839rLMTmb
-	UCH0nInQ6OCF/5ieYRG6if/D6e2g
-X-Google-Smtp-Source: AGHT+IEWSSNNR67J2Tri1k5iIkSgRur7iBrdXo0jF5zYqoAUkAI0CEF7pto+xF3B6vHgeUJ+4fZofUvRANEko+90ns0=
-X-Received: by 2002:a17:903:b4e:b0:28e:acf2:a782 with SMTP id
- d9443c01a7336-290273edf3amr155968555ad.37.1760171996152; Sat, 11 Oct 2025
- 01:39:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760172233; x=1760777033;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VqCd8yW9EYi9BPy6lU/qWlREPsP6CT/SF7s5Ft32XtM=;
+        b=NpR+rAQ3RxsUNscuuJYbYWd2PghM5IflrgdJI5a6UgJJbrxPeP3gV+P527fNVpi2+8
+         XiZm5/TMYZHfEDWTEbJNLzrpt0OHHT6L2Rwk4Oj7PCQf/KvXp2MDe5nLCMopN7zyeJGk
+         F3PkAs59EBe4h77t5KNQ4NWGZbSdHwKi6EmnZSuGYkIoP1lFj4sJMdu4eAYX0cNNkQaw
+         emSg+6qLXT8VaMIZNGxBPaoRUIWy57w3AJ58ZZV7bF24cw4KsN2TIyToZ667iKN+76RZ
+         4L49wDA5yVYGeo3unMwDUyEqaxECWbQRG13nI1pYVutTUwCD59TCQKfnO4zGQpHPInBR
+         0P4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWLdG9p2IwwVvY77yKZZ443deyaEZ90RqzzNHTf/J0/LVWqF76N60uRdxntBvN/S6mQMDrbeu7x61G64Yo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWK+OYqWqOfRYxomEHaptlqpVWjFAGX3ZG+3qgZoN9203r1vsw
+	m3mqWANSRz30TBAN7q8klP9PymxjU5hauhC3BLqLcg6/WvKlOJa4DDaUELYOzg==
+X-Gm-Gg: ASbGnctJy5TWTJWLAbpbT0rGJju+OmupAlyDGJnBJ+hUlT+29+t6kgROgazb0SNKhH+
+	bi+Y9P+zLbkCVny9xBZRJyw4f+CNHTqSj98aQRmcLq3VhdPOuiqbbBGAgj09/0HG9zKZwGumyvm
+	i9Gmscn7YXHgKMfAMAisBnnh6q898HrHFbFukdYpeYU45u2OMZVbNEX3g1iaPZUgJq0T3PmsgHM
+	Y49YPWBm2zzzJry0Q06CffI9EuDG9c+OI4TicGb3hBCofei28bTX19S+jkVgm5eAiu12bWKf9tE
+	wXMYroGJpXBmPh6WqPJ2wTZaKaFA6SUDpCFfDCXG2/Gg5rv5qVVC4fWVi3kJsaEO1Ht4alCPG46
+	dtXVyQkw+VdltNybwA0+BRtIBi3vyGykunEnFQsLFsViQ+XPi5HyEm5CTSSYhu6Mg8sfj
+X-Google-Smtp-Source: AGHT+IGTnRLwiun6qqczOPoNp2kFINO5SVtG6H2filW9Od839rhihT2CIxXWcMLbKI3mPbR5HTEQEg==
+X-Received: by 2002:a05:6a20:939e:b0:2fb:add5:5583 with SMTP id adf61e73a8af0-32da8133300mr20569059637.24.1760172233455;
+        Sat, 11 Oct 2025 01:43:53 -0700 (PDT)
+Received: from Black-Pearl.localdomain ([157.50.164.155])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7992d09659esm5401090b3a.45.2025.10.11.01.43.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 01:43:53 -0700 (PDT)
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+Subject: [PATCH v3 0/2] dt-bindings: mmc: ti,omap2430-sdhci: Add json
+ schema for the text binding
+Date: Sat, 11 Oct 2025 08:40:22 +0000
+Message-Id: <20251011-ti-sdhci-omap-v3-0-9487ef2de559@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010131331.204964167@linuxfoundation.org>
-In-Reply-To: <20251010131331.204964167@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 11 Oct 2025 14:09:44 +0530
-X-Gm-Features: AS18NWD-nh6ACoVYAo2FqFeMvXPVdFpklauhx_xomL920GlPKUaJYF10ev9HgC0
-Message-ID: <CA+G9fYuMpQ1bskoCuteZYUTgMyDVo5EFRePDyQov77UEvURYUA@mail.gmail.com>
-Subject: Re: [PATCH 6.17 00/26] 6.17.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPYX6mgC/13M0QqDIBiG4VsZHu8fapm6o93H2IGY1g8rQ0M2o
+ nufxWCjw++D91lIchFdItfTQqLLmDCMZVTnE7G9GTsH2JZNOOWCCqZhRkhtbxHCYCbQVHpVSy9
+ FRUlppug8vnbv/ii7xzSH+N75zLb3K/HqIGUGDBotbOOcsVKqWzcYfF5sGMgmZf6rNVXHmgMFy
+ TWXStNacf9fr+v6AddTdwzoAAAA
+X-Change-ID: 20250519-ti-sdhci-omap-907f847f7530
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>, 
+ Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+ Charan Pedumuru <charan.pedumuru@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Fri, 10 Oct 2025 at 18:47, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.17.2 release.
-> There are 26 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 12 Oct 2025 13:13:18 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.17.2-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.17.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Create a YAML binding for ti,omap2430-sdhci and fix vmmc-supply
+property typo for a DTS file.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+---
+Note: The property "ti,needs-special-reset" was not removed from DTS cause it will
+      disrupt the compilation for other compatibles as the node &mmc is used for all
+      compatibles for some DTS files.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Changes in v3:
+- Reverted the changes on removing ti,needs-special-reset, ti,needs-special-hs-handling
+  cap-mmc-dual-data-rate from the DTS.
+- Fixed a typo to resolve the errors identified by dtb_check.
+- Changed commit message to justify the modified changes.
+- Defined if-then statements for compatibles to add required properties.
+- Removed "ti-hwmods" property from the YAML.
+- Link to v2: https://lore.kernel.org/r/20250908-ti-sdhci-omap-v2-0-72927890482f@gmail.com
 
-## Build
-* kernel: 6.17.2-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 8902adbbfd36cec55ff7b00116d287c06bda347c
-* git describe: v6.17-43-g8902adbbfd36
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.17.y/build/v6.17=
--43-g8902adbbfd36
+Changes in v2:
+- Changed MAINTAINERS to "Kishon Vijay Abraham".
+- Renamed the YAML file name to "ti,omap2430-sdhci.yaml" from
+  "sdhci-omap.yaml".
+- Dropped unnecessary or unused properties from DTS and made these
+  changes as a seperate commit as there is no user of it.
+- Removed previously defined properties like ti,needs-special-reset,
+  ti,needs-special-hs-handling and cap-mmc-dual-data-rate from the YAML.
+- Changed the commit message to elaborate the reasons for modifications.
+- Removed the pattern property for pinctrl and redefined it in a regular format.
+- Modified the description of the property "clock-frequency".
+- Changed the subject line for the binding patch.
+- Link to v1: https://lore.kernel.org/r/20250523-ti-sdhci-omap-v1-1-695c6eeac778@gmail.com
 
-## Test Regressions (compared to v6.17-16-ge7da5b86b53d)
+---
+Charan Pedumuru (2):
+      arm: dts: ti: omap: am335x-pepper: Fix vmmc-supply property typo
+      dt-bindings: mmc: ti,omap2430-sdhci: convert to DT schema
 
-## Metric Regressions (compared to v6.17-16-ge7da5b86b53d)
+ .../devicetree/bindings/mmc/sdhci-omap.txt         |  43 -----
+ .../devicetree/bindings/mmc/ti,omap2430-sdhci.yaml | 202 +++++++++++++++++++++
+ arch/arm/boot/dts/ti/omap/am335x-pepper.dts        |   2 +-
+ 3 files changed, 203 insertions(+), 44 deletions(-)
+---
+base-commit: ed61cb3d78d585209ec775933078e268544fe9a4
+change-id: 20250519-ti-sdhci-omap-907f847f7530
 
-## Test Fixes (compared to v6.17-16-ge7da5b86b53d)
+Best regards,
+-- 
+Charan Pedumuru <charan.pedumuru@gmail.com>
 
-## Metric Fixes (compared to v6.17-16-ge7da5b86b53d)
-
-## Test result summary
-total: 164414, pass: 138312, fail: 4644, skip: 21458, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 138 passed, 1 failed
-* arm64: 57 total, 50 passed, 7 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 23 passed, 2 failed
-* s390: 22 total, 21 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 46 passed, 3 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
