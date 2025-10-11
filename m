@@ -1,215 +1,190 @@
-Return-Path: <linux-kernel+bounces-848926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC614BCED5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:51:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C81DBCED60
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4D819E2495
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B9A40366B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAC054758;
-	Sat, 11 Oct 2025 00:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA9D3EA8D;
+	Sat, 11 Oct 2025 00:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XEeqoph7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JFicWbmx"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E946434BA54;
-	Sat, 11 Oct 2025 00:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C9C1A58D;
+	Sat, 11 Oct 2025 00:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760143852; cv=none; b=OGpIEEgMXiYsOm3GPa6vrH+n2YlSFkDJcq0QFjVDrqhUKWC2n2n+87CuUbgyZO5Z3zufk+XRDVmX2Iz6gblDvAxihH8VI/JyW2FkFe5uFCy4nAXv85os+ZVtA4UsLsGDqrwk0riMYGV56tmZS2De/8+cuqZ+zY+7xof24xBydN8=
+	t=1760143905; cv=none; b=jvCPJuBpeRKAO9gHug9hVuzP6wyWYSlST2Z4XBjIB2vQGsz/BrdqJyRazARb23Xn6fjOQW+OIgG0yOK//ICrqa7eMVM5wwNymAkGCLEqoJOY/04B4ihR9OFJSDORzS1XGdIE1+0zGsA/oYu9/4BlTIFt0czc8Kj1P8H57dO0uFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760143852; c=relaxed/simple;
-	bh=9mgsASjVFIeADDVrI9fvFoRPP0l3FSfJJNlhNk/Q2lY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8MmPCle69wOpCRvP2NKGYjR7TZnDZSzBICcdLbykPzWwL1Wp6+LO9sOf9CJvn33911SeeWNMbMvsiK727EnWOeu/tVO46n4c4ustAvPX4fJmj8QAUMMpLExKs/Ii32oeeozZBWoQvArdnolm+uNy1/FLVeh83WzsOJekrgV3P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XEeqoph7; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760143851; x=1791679851;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9mgsASjVFIeADDVrI9fvFoRPP0l3FSfJJNlhNk/Q2lY=;
-  b=XEeqoph7gRAkA4rrZXR3jJnqF6on56XjUr9bKB/kuDbnbknQ86IHfIfv
-   FIdbXENInCIb/9vM8rbK/nHC9EBAP1f0pj51ap0E5EZEuH45ISVV8T6TZ
-   bRBs3+IqK31nrl5EUKYHozi7amTKIjJs4EhHo5J/CHY2AqxzlPM4K//tp
-   TO/IhP819iuhDqoia+r2FaVOaRq0hRhODagxnwZcIGUva0Er8kzW7Vxj9
-   3Gz2qkxLcFmlsOM21iPYBWaP8tve+uJY872QcAnGiAiRKLkdMcBi64UB2
-   u6m1Vzyf9uMgUwOMg4Dsk8SbG2sI4ljdVfMH06Xt2XH31oLv8lpaquu8h
-   g==;
-X-CSE-ConnectionGUID: /sj7BvMlTIOwkKzOI3ShXg==
-X-CSE-MsgGUID: wbVqwJVGS4CO+a4TYvIiNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66194856"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="66194856"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 17:50:50 -0700
-X-CSE-ConnectionGUID: XAAY603OTAq3vXDWwrrrVg==
-X-CSE-MsgGUID: j9ZDNPDASAWyNKWZhItqmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="181529200"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 10 Oct 2025 17:50:46 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7Noq-0003LT-2A;
-	Sat, 11 Oct 2025 00:50:44 +0000
-Date: Sat, 11 Oct 2025 08:50:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alice Ryhl <aliceryhl@google.com>, acsjakub@amazon.de
-Cc: oe-kbuild-all@lists.linux.dev, akpm@linux-foundation.org,
-	axelrasmussen@google.com, chengming.zhou@linux.dev,
-	david@redhat.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterx@redhat.com,
-	xu.xin16@zte.com.cn, rust-for-linux@vger.kernel.org,
-	Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH] mm: use enum for vm_flags
-Message-ID: <202510110850.4VXzbsF7-lkp@intel.com>
-References: <20251007162136.1885546-1-aliceryhl@google.com>
+	s=arc-20240116; t=1760143905; c=relaxed/simple;
+	bh=PcWwEoRtHrMpSGu/sGV3oon0GvVzCR3+1AHcqBklnIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PuXVL1ViyFSTNvJacEuG2HZG0FM4tALGHIjTgdUajfx1wStm121mLsB/4KcRNwxlK3whi/saZd/Zun4bjXQVLn2TYhaPyE0v2c63hfqoAiu0pLYFypCCHgx8F7urBTpIW8F6niMWvelySaas13297nBkD8Tp22RQEBx6bAhPIm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JFicWbmx; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4a134193-ee55-434c-98a9-ca3052bab11b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760143897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PIam4ujNL/Ie85vosujHwjjM/d/jgUrGDFalDqtFhCU=;
+	b=JFicWbmx54XTw/3fjNm3twhl80Llah6xCiNTVQWu57Zfig07BK7KIF1sA5K+kWewZWoWcQ
+	627kNzvNqbtU7YIE8uduiQAaIo241BI2XIQ6bkOhkvV0FD1Ka5I3VAkvkctMG2brKhnYGL
+	q7tp57h1/xyuEBS0FsiiITxLfQFoCV4=
+Date: Sat, 11 Oct 2025 08:51:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007162136.1885546-1-aliceryhl@google.com>
+Subject: Re: [PATCH v4 0/4] reparent the THP split queue
+To: Zi Yan <ziy@nvidia.com>, akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ david@redhat.com, lorenzo.stoakes@oracle.com, harry.yoo@oracle.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ lance.yang@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
+References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
+ <925E0247-2976-4D85-A8AA-E8C92C64CED4@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <925E0247-2976-4D85-A8AA-E8C92C64CED4@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Alice,
+Hi Zi,
 
-kernel test robot noticed the following build warnings:
+On 10/11/25 12:25 AM, Zi Yan wrote:
+> On 3 Oct 2025, at 12:53, Qi Zheng wrote:
+> 
 
-[auto build test WARNING on akpm-mm/mm-everything]
+[snip]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/mm-use-enum-for-vm_flags/20251010-095004
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251007162136.1885546-1-aliceryhl%40google.com
-patch subject: [PATCH] mm: use enum for vm_flags
-config: powerpc64-randconfig-r111-20251011 (https://download.01.org/0day-ci/archive/20251011/202510110850.4VXzbsF7-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510110850.4VXzbsF7-lkp@intel.com/reproduce)
+>>
+> 
+> Hi Qi,
+> 
+> I got CPU soft locks when run "echo 3 | sudo tee /proc/sys/vm/drop_caches"
+> with today's mm-new on a freshly booted system. Reverting Patch 3 (and Patch 4)
+> of your patchset solves the issue.
+> 
+> My config file is attached. My kernel relevant kernel parameters are:
+> "cgroup_no_v1=all transparent_hugepage=always thp_shmem=2M:always".
+> The machine is a 8GB 8-core x86_64 VM.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510110850.4VXzbsF7-lkp@intel.com/
+Thanks for your report. I'm on vacation and will be back in two days,
+I'll try to reproduce it locally and fix it.
 
-sparse warnings: (new ones prefixed by >>)
->> fs/proc/task_mmu.c:1184:5: sparse: sparse: undefined preprocessor identifier 'VM_HIGH_ARCH_3'
->> fs/proc/task_mmu.c:1187:5: sparse: sparse: undefined preprocessor identifier 'VM_HIGH_ARCH_4'
-   fs/proc/task_mmu.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
-   include/linux/rcupdate.h:897:25: sparse: sparse: context imbalance in 'proc_get_vma' - unexpected unlock
-   fs/proc/task_mmu.c:309:9: sparse: sparse: context imbalance in 'm_start' - different lock contexts for basic block
-   include/linux/rcupdate.h:897:25: sparse: sparse: context imbalance in 'm_stop' - unexpected unlock
+And hi Andrew, please help drop this patch set from mm-new first.
 
-vim +/VM_HIGH_ARCH_3 +1184 fs/proc/task_mmu.c
+Thanks,
+Qi
 
-e070ad49f31155 Mauricio Lin       2005-09-03  1120  
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1121  static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1122  {
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1123  	/*
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1124  	 * Don't forget to update Documentation/ on changes.
-5778ace04e6f07 Brahmajit Das      2024-10-05  1125  	 *
-5778ace04e6f07 Brahmajit Das      2024-10-05  1126  	 * The length of the second argument of mnemonics[]
-5778ace04e6f07 Brahmajit Das      2024-10-05  1127  	 * needs to be 3 instead of previously set 2
-5778ace04e6f07 Brahmajit Das      2024-10-05  1128  	 * (i.e. from [BITS_PER_LONG][2] to [BITS_PER_LONG][3])
-5778ace04e6f07 Brahmajit Das      2024-10-05  1129  	 * to avoid spurious
-5778ace04e6f07 Brahmajit Das      2024-10-05  1130  	 * -Werror=unterminated-string-initialization warning
-5778ace04e6f07 Brahmajit Das      2024-10-05  1131  	 *  with GCC 15
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1132  	 */
-5778ace04e6f07 Brahmajit Das      2024-10-05  1133  	static const char mnemonics[BITS_PER_LONG][3] = {
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1134  		/*
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1135  		 * In case if we meet a flag we don't know about.
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1136  		 */
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1137  		[0 ... (BITS_PER_LONG-1)] = "??",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1138  
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1139  		[ilog2(VM_READ)]	= "rd",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1140  		[ilog2(VM_WRITE)]	= "wr",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1141  		[ilog2(VM_EXEC)]	= "ex",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1142  		[ilog2(VM_SHARED)]	= "sh",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1143  		[ilog2(VM_MAYREAD)]	= "mr",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1144  		[ilog2(VM_MAYWRITE)]	= "mw",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1145  		[ilog2(VM_MAYEXEC)]	= "me",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1146  		[ilog2(VM_MAYSHARE)]	= "ms",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1147  		[ilog2(VM_GROWSDOWN)]	= "gd",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1148  		[ilog2(VM_PFNMAP)]	= "pf",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1149  		[ilog2(VM_LOCKED)]	= "lo",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1150  		[ilog2(VM_IO)]		= "io",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1151  		[ilog2(VM_SEQ_READ)]	= "sr",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1152  		[ilog2(VM_RAND_READ)]	= "rr",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1153  		[ilog2(VM_DONTCOPY)]	= "dc",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1154  		[ilog2(VM_DONTEXPAND)]	= "de",
-8614d6c5eda005 Jason A. Donenfeld 2022-12-05  1155  		[ilog2(VM_LOCKONFAULT)]	= "lf",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1156  		[ilog2(VM_ACCOUNT)]	= "ac",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1157  		[ilog2(VM_NORESERVE)]	= "nr",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1158  		[ilog2(VM_HUGETLB)]	= "ht",
-b6fb293f2497a9 Jan Kara           2017-11-01  1159  		[ilog2(VM_SYNC)]	= "sf",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1160  		[ilog2(VM_ARCH_1)]	= "ar",
-d2cd9ede6e193d Rik van Riel       2017-09-06  1161  		[ilog2(VM_WIPEONFORK)]	= "wf",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1162  		[ilog2(VM_DONTDUMP)]	= "dd",
-424037b77519d1 Daniel Kiss        2020-03-16  1163  #ifdef CONFIG_ARM64_BTI
-424037b77519d1 Daniel Kiss        2020-03-16  1164  		[ilog2(VM_ARM64_BTI)]	= "bt",
-424037b77519d1 Daniel Kiss        2020-03-16  1165  #endif
-ec8e41aec13005 Naoya Horiguchi    2013-11-12  1166  #ifdef CONFIG_MEM_SOFT_DIRTY
-ec8e41aec13005 Naoya Horiguchi    2013-11-12  1167  		[ilog2(VM_SOFTDIRTY)]	= "sd",
-ec8e41aec13005 Naoya Horiguchi    2013-11-12  1168  #endif
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1169  		[ilog2(VM_MIXEDMAP)]	= "mm",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1170  		[ilog2(VM_HUGEPAGE)]	= "hg",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1171  		[ilog2(VM_NOHUGEPAGE)]	= "nh",
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1172  		[ilog2(VM_MERGEABLE)]	= "mg",
-16ba6f811dfe44 Andrea Arcangeli   2015-09-04  1173  		[ilog2(VM_UFFD_MISSING)]= "um",
-16ba6f811dfe44 Andrea Arcangeli   2015-09-04  1174  		[ilog2(VM_UFFD_WP)]	= "uw",
-9f3419315f3cdc Catalin Marinas    2019-11-27  1175  #ifdef CONFIG_ARM64_MTE
-9f3419315f3cdc Catalin Marinas    2019-11-27  1176  		[ilog2(VM_MTE)]		= "mt",
-9f3419315f3cdc Catalin Marinas    2019-11-27  1177  		[ilog2(VM_MTE_ALLOWED)]	= "",
-9f3419315f3cdc Catalin Marinas    2019-11-27  1178  #endif
-5212213aa5a235 Ram Pai            2018-03-27  1179  #ifdef CONFIG_ARCH_HAS_PKEYS
-c1192f84284146 Dave Hansen        2016-02-12  1180  		/* These come out via ProtectionKey: */
-c1192f84284146 Dave Hansen        2016-02-12  1181  		[ilog2(VM_PKEY_BIT0)]	= "",
-c1192f84284146 Dave Hansen        2016-02-12  1182  		[ilog2(VM_PKEY_BIT1)]	= "",
-c1192f84284146 Dave Hansen        2016-02-12  1183  		[ilog2(VM_PKEY_BIT2)]	= "",
-9f82f15ddfdd60 Joey Gouly         2024-08-22 @1184  #if VM_PKEY_BIT3
-c1192f84284146 Dave Hansen        2016-02-12  1185  		[ilog2(VM_PKEY_BIT3)]	= "",
-9f82f15ddfdd60 Joey Gouly         2024-08-22  1186  #endif
-2c9e0a6fa2bb75 Ram Pai            2018-03-27 @1187  #if VM_PKEY_BIT4
-2c9e0a6fa2bb75 Ram Pai            2018-03-27  1188  		[ilog2(VM_PKEY_BIT4)]	= "",
-c1192f84284146 Dave Hansen        2016-02-12  1189  #endif
-5212213aa5a235 Ram Pai            2018-03-27  1190  #endif /* CONFIG_ARCH_HAS_PKEYS */
-7677f7fd8be766 Axel Rasmussen     2021-05-04  1191  #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
-7677f7fd8be766 Axel Rasmussen     2021-05-04  1192  		[ilog2(VM_UFFD_MINOR)]	= "ui",
-7677f7fd8be766 Axel Rasmussen     2021-05-04  1193  #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
-bcc9d04e749a8c Mark Brown         2024-10-01  1194  #ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
-54007f818206dc Yu-cheng Yu        2023-06-12  1195  		[ilog2(VM_SHADOW_STACK)] = "ss",
-399ab86ea55039 Jeff Xu            2024-06-14  1196  #endif
-d175ee98fe545d Christophe Leroy   2024-09-02  1197  #if defined(CONFIG_64BIT) || defined(CONFIG_PPC32)
-9651fcedf7b92d Jason A. Donenfeld 2022-12-08  1198  		[ilog2(VM_DROPPABLE)] = "dp",
-d175ee98fe545d Christophe Leroy   2024-09-02  1199  #endif
-d175ee98fe545d Christophe Leroy   2024-09-02  1200  #ifdef CONFIG_64BIT
-399ab86ea55039 Jeff Xu            2024-06-14  1201  		[ilog2(VM_SEALED)] = "sl",
-54007f818206dc Yu-cheng Yu        2023-06-12  1202  #endif
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1203  	};
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1204  	size_t i;
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1205  
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1206  	seq_puts(m, "VmFlags: ");
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1207  	for (i = 0; i < BITS_PER_LONG; i++) {
-c1192f84284146 Dave Hansen        2016-02-12  1208  		if (!mnemonics[i][0])
-c1192f84284146 Dave Hansen        2016-02-12  1209  			continue;
-5778ace04e6f07 Brahmajit Das      2024-10-05  1210  		if (vma->vm_flags & (1UL << i))
-5778ace04e6f07 Brahmajit Das      2024-10-05  1211  			seq_printf(m, "%s ", mnemonics[i]);
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1212  	}
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1213  	seq_putc(m, '\n');
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1214  }
-834f82e2aa9a8e Cyrill Gorcunov    2012-12-17  1215  
+> 
+> The kernel log:
+> 
+> [   36.441539] watchdog: BUG: soft lockup - CPU#0 stuck for 26s! [tee:810]
+> [   36.441549] Modules linked in:
+> [   36.441566] CPU: 0 UID: 0 PID: 810 Comm: tee Not tainted 6.17.0-mm-everything-2024-01-29-07-19-no-mglru+ #526 PREEMPT(voluntary)
+> [   36.441570] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
+> [   36.441574] RIP: 0010:_raw_spin_unlock_irqrestore+0x19/0x40
+> [   36.441592] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
+> [   36.441594] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
+> [   36.441598] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
+> [   36.441601] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
+> [   36.441602] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
+> [   36.441603] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
+> [   36.441604] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
+> [   36.441606] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
+> [   36.441607] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   36.441608] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
+> [   36.441614] Call Trace:
+> [   36.441616]  <TASK>
+> [   36.441619]  deferred_split_scan+0x1e0/0x480
+> [   36.441627]  ? _raw_spin_unlock_irqrestore+0xe/0x40
+> [   36.441630]  ? kvfree_rcu_queue_batch+0x96/0x1c0
+> [   36.441634]  ? do_raw_spin_unlock+0x46/0xd0
+> [   36.441639]  ? kfree_rcu_monitor+0x1da/0x2c0
+> [   36.441641]  ? list_lru_count_one+0x47/0x90
+> [   36.441644]  do_shrink_slab+0x153/0x360
+> [   36.441649]  shrink_slab+0xd3/0x390
+> [   36.441652]  drop_slab+0x7d/0x130
+> [   36.441655]  drop_caches_sysctl_handler+0x98/0xb0
+> [   36.441660]  proc_sys_call_handler+0x1c7/0x2c0
+> [   36.441664]  vfs_write+0x221/0x450
+> [   36.441669]  ksys_write+0x6c/0xe0
+> [   36.441672]  do_syscall_64+0x50/0x200
+> [   36.441675]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   36.441678] RIP: 0033:0x7f7fe36e7687
+> [   36.441685] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+> [   36.441686] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> [   36.441688] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
+> [   36.441689] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
+> [   36.441690] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
+> [   36.441691] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+> [   36.441692] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
+> [   36.441694]  </TASK>
+> [   64.441531] watchdog: BUG: soft lockup - CPU#0 stuck for 53s! [tee:810]
+> [   64.441537] Modules linked in:
+> [   64.441545] CPU: 0 UID: 0 PID: 810 Comm: tee Tainted: G             L      6.17.0-mm-everything-2024-01-29-07-19-no-mglru+ #526 PREEMPT(voluntary)
+> [   64.441548] Tainted: [L]=SOFTLOCKUP
+> [   64.441552] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
+> [   64.441555] RIP: 0010:_raw_spin_unlock_irqrestore+0x19/0x40
+> [   64.441565] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
+> [   64.441566] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
+> [   64.441568] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
+> [   64.441570] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
+> [   64.441571] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
+> [   64.441572] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
+> [   64.441573] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
+> [   64.441574] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
+> [   64.441576] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   64.441577] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
+> [   64.441581] Call Trace:
+> [   64.441583]  <TASK>
+> [   64.441591]  deferred_split_scan+0x1e0/0x480
+> [   64.441598]  ? _raw_spin_unlock_irqrestore+0xe/0x40
+> [   64.441599]  ? kvfree_rcu_queue_batch+0x96/0x1c0
+> [   64.441603]  ? do_raw_spin_unlock+0x46/0xd0
+> [   64.441607]  ? kfree_rcu_monitor+0x1da/0x2c0
+> [   64.441610]  ? list_lru_count_one+0x47/0x90
+> [   64.441613]  do_shrink_slab+0x153/0x360
+> [   64.441618]  shrink_slab+0xd3/0x390
+> [   64.441621]  drop_slab+0x7d/0x130
+> [   64.441624]  drop_caches_sysctl_handler+0x98/0xb0
+> [   64.441629]  proc_sys_call_handler+0x1c7/0x2c0
+> [   64.441632]  vfs_write+0x221/0x450
+> [   64.441638]  ksys_write+0x6c/0xe0
+> [   64.441641]  do_syscall_64+0x50/0x200
+> [   64.441645]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   64.441648] RIP: 0033:0x7f7fe36e7687
+> [   64.441654] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+> [   64.441656] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> [   64.441658] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
+> [   64.441659] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
+> [   64.441660] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
+> [   64.441661] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+> [   64.441662] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
+> [   64.441663]  </TASK>
+> 
+> 
+> 
+> --
+> Best Regards,
+> Yan, Zi
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
