@@ -1,263 +1,162 @@
-Return-Path: <linux-kernel+bounces-848950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A52BCEE2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:44:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F19DBCEE34
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8763E84E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80DE3E8476
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340F415624B;
-	Sat, 11 Oct 2025 01:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CDE145A1F;
+	Sat, 11 Oct 2025 01:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7Vq8n/8"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q4zKOOYv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C8A126BF1
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D85148850;
+	Sat, 11 Oct 2025 01:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760147045; cv=none; b=C1oOlmbsATzs7XwQfUgQ7rQkYyNpPA7ebrFmfFmGFokJ4m4mRRerpVCapRO2uQrnY0NnxgnF9Yg13OEQVYbCQG1llRRty3Ujb2vaR/jFk9GkbYqYIPqaHyfEzk2+lwpwmYxqB3ZS5+W4SuSLPVkQrjVmOFtlX1O7IT6dDzPOrtI=
+	t=1760147099; cv=none; b=qeGSlTd6Lf3Lobtcs7Va8DoJWmIiWleZasSyQ5w9rwY/1eIF6jNVqZRAkG0epgTmdaWE3lAgDw5wX13LYxY7xldjKh/6L+JgDmPGSCQ39a/RUM265RFTcPsHr7oc5d1P12OOHKxqfjz1apN/BSMweSnPk7uPTimY0/Cmu/R/9YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760147045; c=relaxed/simple;
-	bh=T+IdLzRTTxOQ0Z7SCLa56SnM6nhwUwKs07m9AmkVVyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lgDz2QjTCz2iumSkIxbclctTN09j22MUdXTNjmItSQfFa0OXTQmZkTEGxEFkFhVSCHVH4LXUokFcNCrWsSUtL8brpHWfj8EFBk722gpcEZyBZvm0QyQke1iy/gI3P+tSunll6qD3na7pRzvBJsfkeVDvDCtvMOAutcq7EBDbkrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7Vq8n/8; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-583a520bd81so1053215137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 18:44:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760147042; x=1760751842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lZhc66zsxEtV1w8Yg5Xh9+RLE7pB3ih7eNk7XgCUWWk=;
-        b=J7Vq8n/8XeoyYAq6UM7v4iusmsqiPV3dCbTwxuZw7EXzoIcuILlPXwCC+KlCQZ5uLA
-         RrPq/PfJzICjcTOM7U15uj/kqrVbmGvV+ZZ0S8BAAaSCEblz4QFq+Mo8r1cf8HUwamwf
-         Pdom9uwpmo5vTEYs/90loRY1KGL1f+WJFWHv8pk5GSAgW5CLPKc7LiI2XcIFC4W5dDER
-         opbcR008ve17+P/H7s2h16+MZd3iKSf+QlEnK7eP+JVRMUNBV4wEKBjbv85SocJa1UVa
-         t1whWnojqaNG0oUQ9cb2TlRJ0gBoVGnt8u+/JpD31c1K6jfgRxTz9vpBTEqFvAfOEyvc
-         IQWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760147042; x=1760751842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lZhc66zsxEtV1w8Yg5Xh9+RLE7pB3ih7eNk7XgCUWWk=;
-        b=NGWunsshMALsrwg/DYFW4EvguJm5GcKPI753j8wFkyjv97nS1oNsarA1BnGpJawbFx
-         EdZbtuVrYjjvk1MILvpqwBawrufA+1Fk5SZR89XwQSrZ9P9cv+iyiWIxfM5B7sbeTC1R
-         Bxee4f4L5916WRk3lqdALzVGNt58OeFCDXk8+faCAmTCERXupSKUtEd8ryT7J1Z+K27N
-         7Gk7fi32RtvdlPJ5dSvuYmkYsV83pgSHmAkR87REAAag/tpx3fzR9GAGuTYwu73fSIxh
-         a8wuHKzC0wyWTW+HKkfNo1kzcuBQcaeu3i3hht2/9pyb+wxYGt2Blx5/Gs6tT5cwhysl
-         WRig==
-X-Forwarded-Encrypted: i=1; AJvYcCVqkT2nUoKr+Ya6MlRGlqS4Tby2/AuiQhuhJibaEMzdP55yaL/1LzPEiCqBhWssrKqytdYPcyNR3N7uUXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT5dsBy/t8CUKIpZ2f47fz3JUxzUAcg6DHpDI2Iz0UWrATBX3s
-	8T/bNvPke2/15/2EZEBPBvJYR6hgxktDu+AGcTr/0icXi0cc497Itz6C1pkzcvXG1/ngjjMVRZE
-	rivg3nTLMapN/cSamQqrYpUm24lDVwDI=
-X-Gm-Gg: ASbGncvzxDV6LXwOH8wtiqTNoPFetlhkE/irmBrw9gzKXy9rlR2hir4xnolTyKSbC7e
-	v8YPr3aEO0DkCKln6eTl0lQC0yG7zvCShgYjwHg0NPF43JYc2yvjY292wTjUjW1i0niMvt3h/L3
-	Cvj97tbcLMnXoUHvD09J8ZDsavOf3g5Mw5RCuwam84y6DUHvFX8cbe/X1UPmVbbcjCTtrVo3m1F
-	8UNsZ9z5i+IcWumf4Oy4k9Q7eOU0o/t
-X-Google-Smtp-Source: AGHT+IE7mG3LNkxY+CyodDwm/x4ptJOMQVJ+H4EmrH8p/RVIObpZc3vVfG1SaOV6rlrj3vGwgT1jiZxnhaAD3dJIuBQ=
-X-Received: by 2002:a05:6102:6cf:b0:524:b344:748d with SMTP id
- ada2fe7eead31-5d5e23474fcmr5780092137.17.1760147041875; Fri, 10 Oct 2025
- 18:44:01 -0700 (PDT)
+	s=arc-20240116; t=1760147099; c=relaxed/simple;
+	bh=/bQg4XYN/VovXgBh/08m6D9aPhrDbsZ8VtYXirz0fbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHCQLC/jTFoucKAwWu/pqGPbCI2gTvlQ/Fy+VFjD+GMJosl1KMDwNS+afRFDM34tdJddZrAUq2vRTKXxVJvp1VdaxV3puTa1FxX2RzYE2UD+K/J17nUyNMo8W/tPGmdKkF2sccT+CRLb1IB2zXmMJm0QelRJ/gJMW/gACKqdbtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q4zKOOYv; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760147098; x=1791683098;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/bQg4XYN/VovXgBh/08m6D9aPhrDbsZ8VtYXirz0fbc=;
+  b=Q4zKOOYvnuyYw/EKj9grtVmwXQ/QV4aK/vgSDiOKMotMcQUSwIzG06DB
+   kio4Kymlfgdd9j9QMiNrqYKtS/98A1He0jzTAa2mIiKmWuVMru+vYHW3P
+   n2tnL350m4YevHoh1gM1Chag5rO4PzG1WxFa7jQTOEG3LCy/3TNZAOCdA
+   Rdnl9+MkajNApuIbZYHYAyOJIg5IE3sObwoBmstgoYbt7YprHdE7peckc
+   i6DMsgQnU5NTp8dqchLgSKTl8ruZEXWx6Sxa1EnhzPiUT82IvV7HSuiGe
+   zeELxNGWZGbyk7MPEfIQI0LyOoasokKxG5NHykV1YHV4Ru6J6VIDdc8eS
+   Q==;
+X-CSE-ConnectionGUID: ToJQ88ZFTf2sZqhObSR2EA==
+X-CSE-MsgGUID: 5OmWwhfnTqKWPxMi3wpFnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="61399377"
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="61399377"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 18:44:57 -0700
+X-CSE-ConnectionGUID: 3obdzLB0Rd+Ap+7tCig8Cw==
+X-CSE-MsgGUID: noIfFSMPTtGCHB3Stmar0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="211761163"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 10 Oct 2025 18:44:54 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7OfD-0003Ot-39;
+	Sat, 11 Oct 2025 01:44:51 +0000
+Date: Sat, 11 Oct 2025 09:43:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vaibhav Gupta <vaibhavgupta40@gmail.com>, Michael Buesch <m@bues.ch>
+Cc: oe-kbuild-all@lists.linux.dev, Vaibhav Gupta <vaibhavgupta40@gmail.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] driver: gpio-bt8xx: use generic PCI PM
+Message-ID: <202510110924.dUQeeRV6-lkp@intel.com>
+References: <20251010105338.664564-1-vaibhavgupta40@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011013312.20698-1-changfengnan@bytedance.com> <CALWNXx-gGbAFCNywLZZUNmenTHQGFuapvNe-7irRGnRFJuNUcA@mail.gmail.com>
-In-Reply-To: <CALWNXx-gGbAFCNywLZZUNmenTHQGFuapvNe-7irRGnRFJuNUcA@mail.gmail.com>
-From: fengnan chang <fengnanchang@gmail.com>
-Date: Sat, 11 Oct 2025 09:43:51 +0800
-X-Gm-Features: AS18NWCBO3jy7FdLyGcQVogGXlatyQB1qaqtXtY1KzxOp2alt1gh71U3rIH7rWo
-Message-ID: <CALWNXx_Lt1CLTaxh+xcd24_nTp-DOaOezUkQ=Vv_Snq3vx2MuA@mail.gmail.com>
-Subject: Re: [PATCH] block: enable per-cpu bio cache by default
-To: Fengnan Chang <changfengnan@bytedance.com>, linux-block@vger.kernel.org
-Cc: axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	asml.silence@gmail.com, willy@infradead.org, djwong@kernel.org, 
-	hch@infradead.org, ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010105338.664564-1-vaibhavgupta40@gmail.com>
 
-cc more maillist
+Hi Vaibhav,
 
-On Sat, Oct 11, 2025 at 9:36=E2=80=AFAM fengnan chang <fengnanchang@gmail.c=
-om> wrote:
->
-> The attachment is result of fio test ext4/xfs with
-> libaio/sync/io_uring on null_blk and
->  nvme.
->
-> On Sat, Oct 11, 2025 at 9:33=E2=80=AFAM Fengnan Chang
-> <changfengnan@bytedance.com> wrote:
-> >
-> > Per cpu bio cache was only used in the io_uring + raw block device,
-> > after commit 12e4e8c7ab59 ("io_uring/rw: enable bio caches for IRQ
-> > rw"),  bio_put is safe for task and irq context, bio_alloc_bioset is
-> > safe for task context and no one calls in irq context, so we can enable
-> > per cpu bio cache by default.
-> >
-> > Benchmarked with t/io_uring and ext4+nvme:
-> > taskset -c 6 /root/fio/t/io_uring  -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1
-> > -X1 -n1 -P1  /mnt/testfile
-> > base IOPS is 562K, patch IOPS is 574K. The CPU usage of bio_alloc_biose=
-t
-> > decrease from 1.42% to 1.22%.
-> >
-> > The worst case is allocate bio in CPU A but free in CPU B, still use
-> > t/io_uring and ext4+nvme:
-> > base IOPS is 648K, patch IOPS is 647K.
-> >
-> > Also use fio test ext4/xfs with libaio/sync/io_uring on null_blk and
-> > nvme, no obvious performance regression.
-> >
-> > Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
-> > ---
-> >  block/bio.c        | 26 ++++++++++++--------------
-> >  block/blk-map.c    |  4 ++++
-> >  block/fops.c       |  4 ----
-> >  include/linux/fs.h |  3 ---
-> >  io_uring/rw.c      |  1 -
-> >  5 files changed, 16 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/block/bio.c b/block/bio.c
-> > index 3b371a5da159..16b20c10cab7 100644
-> > --- a/block/bio.c
-> > +++ b/block/bio.c
-> > @@ -513,20 +513,18 @@ struct bio *bio_alloc_bioset(struct block_device =
-*bdev, unsigned short nr_vecs,
-> >         if (WARN_ON_ONCE(!mempool_initialized(&bs->bvec_pool) && nr_vec=
-s > 0))
-> >                 return NULL;
-> >
-> > -       if (opf & REQ_ALLOC_CACHE) {
-> > -               if (bs->cache && nr_vecs <=3D BIO_INLINE_VECS) {
-> > -                       bio =3D bio_alloc_percpu_cache(bdev, nr_vecs, o=
-pf,
-> > -                                                    gfp_mask, bs);
-> > -                       if (bio)
-> > -                               return bio;
-> > -                       /*
-> > -                        * No cached bio available, bio returned below =
-marked with
-> > -                        * REQ_ALLOC_CACHE to particpate in per-cpu all=
-oc cache.
-> > -                        */
-> > -               } else {
-> > -                       opf &=3D ~REQ_ALLOC_CACHE;
-> > -               }
-> > -       }
-> > +       opf |=3D REQ_ALLOC_CACHE;
-> > +       if (bs->cache && nr_vecs <=3D BIO_INLINE_VECS) {
-> > +               bio =3D bio_alloc_percpu_cache(bdev, nr_vecs, opf,
-> > +                                            gfp_mask, bs);
-> > +               if (bio)
-> > +                       return bio;
-> > +               /*
-> > +                * No cached bio available, bio returned below marked w=
-ith
-> > +                * REQ_ALLOC_CACHE to participate in per-cpu alloc cach=
-e.
-> > +                */
-> > +       } else
-> > +               opf &=3D ~REQ_ALLOC_CACHE;
-> >
-> >         /*
-> >          * submit_bio_noacct() converts recursion to iteration; this me=
-ans if
-> > diff --git a/block/blk-map.c b/block/blk-map.c
-> > index 23e5d5ebe59e..570a7ca6edd1 100644
-> > --- a/block/blk-map.c
-> > +++ b/block/blk-map.c
-> > @@ -255,6 +255,10 @@ static struct bio *blk_rq_map_bio_alloc(struct req=
-uest *rq,
-> >  {
-> >         struct bio *bio;
-> >
-> > +       /*
-> > +        * Even REQ_ALLOC_CACHE is enabled by default, we still need th=
-is to
-> > +        * mark bio is allocated by bio_alloc_bioset.
-> > +        */
-> >         if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <=3D BIO_INLINE=
-_VECS)) {
-> >                 bio =3D bio_alloc_bioset(NULL, nr_vecs, rq->cmd_flags, =
-gfp_mask,
-> >                                         &fs_bio_set);
-> > diff --git a/block/fops.c b/block/fops.c
-> > index ddbc69c0922b..090562a91b4c 100644
-> > --- a/block/fops.c
-> > +++ b/block/fops.c
-> > @@ -177,8 +177,6 @@ static ssize_t __blkdev_direct_IO(struct kiocb *ioc=
-b, struct iov_iter *iter,
-> >         loff_t pos =3D iocb->ki_pos;
-> >         int ret =3D 0;
-> >
-> > -       if (iocb->ki_flags & IOCB_ALLOC_CACHE)
-> > -               opf |=3D REQ_ALLOC_CACHE;
-> >         bio =3D bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
-> >                                &blkdev_dio_pool);
-> >         dio =3D container_of(bio, struct blkdev_dio, bio);
-> > @@ -326,8 +324,6 @@ static ssize_t __blkdev_direct_IO_async(struct kioc=
-b *iocb,
-> >         loff_t pos =3D iocb->ki_pos;
-> >         int ret =3D 0;
-> >
-> > -       if (iocb->ki_flags & IOCB_ALLOC_CACHE)
-> > -               opf |=3D REQ_ALLOC_CACHE;
-> >         bio =3D bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
-> >                                &blkdev_dio_pool);
-> >         dio =3D container_of(bio, struct blkdev_dio, bio);
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 601d036a6c78..18ec41732186 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -365,8 +365,6 @@ struct readahead_control;
-> >  /* iocb->ki_waitq is valid */
-> >  #define IOCB_WAITQ             (1 << 19)
-> >  #define IOCB_NOIO              (1 << 20)
-> > -/* can use bio alloc cache */
-> > -#define IOCB_ALLOC_CACHE       (1 << 21)
-> >  /*
-> >   * IOCB_DIO_CALLER_COMP can be set by the iocb owner, to indicate that=
- the
-> >   * iocb completion can be passed back to the owner for execution from =
-a safe
-> > @@ -399,7 +397,6 @@ struct readahead_control;
-> >         { IOCB_WRITE,           "WRITE" }, \
-> >         { IOCB_WAITQ,           "WAITQ" }, \
-> >         { IOCB_NOIO,            "NOIO" }, \
-> > -       { IOCB_ALLOC_CACHE,     "ALLOC_CACHE" }, \
-> >         { IOCB_DIO_CALLER_COMP, "CALLER_COMP" }, \
-> >         { IOCB_AIO_RW,          "AIO_RW" }, \
-> >         { IOCB_HAS_METADATA,    "AIO_HAS_METADATA" }
-> > diff --git a/io_uring/rw.c b/io_uring/rw.c
-> > index af5a54b5db12..fa7655ab9097 100644
-> > --- a/io_uring/rw.c
-> > +++ b/io_uring/rw.c
-> > @@ -856,7 +856,6 @@ static int io_rw_init_file(struct io_kiocb *req, fm=
-ode_t mode, int rw_type)
-> >         ret =3D kiocb_set_rw_flags(kiocb, rw->flags, rw_type);
-> >         if (unlikely(ret))
-> >                 return ret;
-> > -       kiocb->ki_flags |=3D IOCB_ALLOC_CACHE;
-> >
-> >         /*
-> >          * If the file is marked O_NONBLOCK, still allow retry for it i=
-f it
-> > --
-> > 2.39.5 (Apple Git-154)
-> >
-> >
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linus/master v6.17 next-20251010]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Vaibhav-Gupta/driver-gpio-bt8xx-use-generic-PCI-PM/20251010-185625
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20251010105338.664564-1-vaibhavgupta40%40gmail.com
+patch subject: [PATCH v1] driver: gpio-bt8xx: use generic PCI PM
+config: loongarch-randconfig-002-20251011 (https://download.01.org/0day-ci/archive/20251011/202510110924.dUQeeRV6-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510110924.dUQeeRV6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510110924.dUQeeRV6-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpio/gpio-bt8xx.c: In function 'bt8xxgpio_suspend':
+>> drivers/gpio/gpio-bt8xx.c:233:19: error: 'struct bt8xxgpio' has no member named 'saved_outen'
+     233 |                 bg->saved_outen = bgread(BT848_GPIO_OUT_EN);
+         |                   ^~
+>> drivers/gpio/gpio-bt8xx.c:234:19: error: 'struct bt8xxgpio' has no member named 'saved_data'
+     234 |                 bg->saved_data = bgread(BT848_GPIO_DATA);
+         |                   ^~
+   drivers/gpio/gpio-bt8xx.c: In function 'bt8xxgpio_resume':
+   drivers/gpio/gpio-bt8xx.c:254:19: error: 'struct bt8xxgpio' has no member named 'saved_outen'
+     254 |         bgwrite(bg->saved_outen, BT848_GPIO_OUT_EN);
+         |                   ^~
+   drivers/gpio/gpio-bt8xx.c:61:41: note: in definition of macro 'bgwrite'
+      61 | #define bgwrite(dat, adr)       writel((dat), bg->mmio+(adr))
+         |                                         ^~~
+   drivers/gpio/gpio-bt8xx.c:255:19: error: 'struct bt8xxgpio' has no member named 'saved_data'
+     255 |         bgwrite(bg->saved_data & bg->saved_outen,
+         |                   ^~
+   drivers/gpio/gpio-bt8xx.c:61:41: note: in definition of macro 'bgwrite'
+      61 | #define bgwrite(dat, adr)       writel((dat), bg->mmio+(adr))
+         |                                         ^~~
+   drivers/gpio/gpio-bt8xx.c:255:36: error: 'struct bt8xxgpio' has no member named 'saved_outen'
+     255 |         bgwrite(bg->saved_data & bg->saved_outen,
+         |                                    ^~
+   drivers/gpio/gpio-bt8xx.c:61:41: note: in definition of macro 'bgwrite'
+      61 | #define bgwrite(dat, adr)       writel((dat), bg->mmio+(adr))
+         |                                         ^~~
+
+
+vim +233 drivers/gpio/gpio-bt8xx.c
+
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  226  
+2213c7a2cb81b2 drivers/gpio/gpio-bt8xx.c Vaibhav Gupta       2025-10-10  227  static int __maybe_unused bt8xxgpio_suspend(struct device *dev)
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  228  {
+2213c7a2cb81b2 drivers/gpio/gpio-bt8xx.c Vaibhav Gupta       2025-10-10  229  	struct pci_dev *pdev = to_pci_dev(dev);
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  230  	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  231  
+b9a557d05a7dde drivers/gpio/gpio-bt8xx.c Bartosz Golaszewski 2025-03-10  232  	scoped_guard(spinlock_irqsave, &bg->lock) {
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25 @233  		bg->saved_outen = bgread(BT848_GPIO_OUT_EN);
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25 @234  		bg->saved_data = bgread(BT848_GPIO_DATA);
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  235  
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  236  		bgwrite(0, BT848_INT_MASK);
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  237  		bgwrite(~0x0, BT848_INT_STAT);
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  238  		bgwrite(0x0, BT848_GPIO_OUT_EN);
+b9a557d05a7dde drivers/gpio/gpio-bt8xx.c Bartosz Golaszewski 2025-03-10  239  	}
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  240  
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  241  	return 0;
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  242  }
+ff1d5c2f0268f4 drivers/gpio/bt8xxgpio.c  Michael Buesch      2008-07-25  243  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
