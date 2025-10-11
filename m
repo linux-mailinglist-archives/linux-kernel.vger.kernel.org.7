@@ -1,164 +1,130 @@
-Return-Path: <linux-kernel+bounces-849161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFB2BCF514
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:16:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330EFBCF560
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 453D234C063
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E38A189DD52
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6929C276050;
-	Sat, 11 Oct 2025 12:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2792773EA;
+	Sat, 11 Oct 2025 12:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTz6wyv4"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="PNae96UE"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4FD26E714
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 12:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC6F265609
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 12:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760184986; cv=none; b=Sl5zhNYJkwLzYSljdm23HVjK7MDjM71VO5N4tpv6vzYE5jV2CuryH6VCSRWVGrnVw/YVFhOjhOMKgcLZWSUsCLcGOQeJrnWDqyUGk0BLi7QfbNTZBi9R71v4aVHR50EnodzkBhfRXFKwAW8wjKkCEfE7kTVMtpADi1U+cljhXb0=
+	t=1760186066; cv=none; b=OR4QRgBVay9yplnl57kr5U62OS3sPPBxIzDVZo9DYNduU+1aY3/C/v+ERK6QhGr4o05WUJPV8LKJ2MoRMne4EwflX+yoxhvA7JLBiF0pT+aKQbsmm8MN8J1z6Ff+KUvlncf0CmqnQEiIB0lcOADLoN8xPh5JTrcyZMeW2GhQuVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760184986; c=relaxed/simple;
-	bh=ZI5TPYuH5aD9kbrYTudi2phDOrMMRofUz8Yd8NjZ24o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uf3XLttV1g3mP7AKWHeHc3OI5/JWVtzLbgI8GJgjlc4o5BCFkJQGHkeSBS/kihGA3bpTNpppXiz2jeSejJ7C0MmL+egBa3hLqReGqUq/HymyCR+Y/Tzsz9SkfQGLuD52ylqcXWksg+PGLKhJUNIOfrrEHwMyXogNrhqE/ZVB0h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTz6wyv4; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso3635231e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760184979; x=1760789779; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LyZodhLATiu/3uXx9NUchp//hn18ZJQh1emvghIBVhE=;
-        b=nTz6wyv4OTCIFS5KZDzHaTfWcm7iYS8otbfo/6px1hY2ppiF66VHb2o0CXGpRY7Bio
-         2hiC6lZrVv7wqEUEdx7i0JNCFtkiy8mHCT/tRyGor59OA0h13hEYZ+gJnryi/hIdA17K
-         0uLMLZLh/NNIYbWdvwrqwQqocExKN56KnUguqQMierJOuSKmyjHvySxIhA1ei+M58+fu
-         KX6Fp+ItvmdTYixk8gUhFAj9+zNcsjMdBNxCUw+N1ZlvVPpcFGIH2zA420TR7eTE/rZr
-         EvhC4n+KMoCHEr3AM1cF5RUgOUB7NbqAlH5PUQvKZCVTICw82IRr30KpNWNzicxKBkkB
-         MtNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760184979; x=1760789779;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LyZodhLATiu/3uXx9NUchp//hn18ZJQh1emvghIBVhE=;
-        b=Xs3VumcTLWfVYh19A7VWyvdGOqbtwjY+5DeGDZO+RbVdv5pSBL7W3qC6IJ1jOiBZn4
-         nQRtelvMfcn6XEt0RYFJl9RJD5DVJl4jcTAtHWEz9ehuEztdRcAHsxutUMv6SXS76vr9
-         +5vsiK4Fre/URAf0LJc6FGHMUdnb5ZnoObMIHPZXyr4qQpkiHBHhNqCwqS5J4pMY6ezq
-         wkWsoFYTPPJXw2sU3mhie8+yPPsu2dyB60hBycyfn2ZO55pnG8fj2WIyzvqeeZsDDTV7
-         ggREeyRpiy0Dw3vIvYxnhceJVQa13/wbGZ/wPE2gsbWhL5SBoZn40HUp37Ncal6VBFUK
-         WMGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmLSPc3L/R0friQIIxbWMVGUFkQl6xVSG80IGaQiQmflB8LLXemQSMKw4c+gvYL8MgUvn5Bi6shW7jMuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyR9U9uG2SrsrLXb/9ysRisqg0NJvHxOHm0xjNkOpfGtV8ei4c
-	QnrWLUObNuduTVuCQWTuP58Da2H1xlc8N5byKTA2V5voi2yVDWobb4XE
-X-Gm-Gg: ASbGncsZbvhJ/Hi7yEIwiJbPEoUd/WJiJP6X2SCJ3PuACuUXxI3IlQutt/uixOPWGI1
-	jNu7NstrDGdD7B5OvlqpmXZhwLPlv19GmvPZXMjmVgYyG95Vqesflyl3erUNaOIDcU4w1tmOPiX
-	OIYVtaHFs+nM5iysFhkOzUI2micKWLLN28wnLEStqP7qA2YJ4t9gRz7I/Pc5cZ1rkJvbe/0CAIe
-	PmA/QtDJt8P00u1XGm+DnJrdjLCFM2bDrZt8f7csk2xRqjvgKb5ayfeYmW74OMZS0gyWds155s6
-	LWWyEF++Hg4igeGaH6A3/fzT227fYEcJYtNhOE42onZePrm5m/SH3PTGWei1Rm0H/f3VC5rPzzR
-	Ol5QA5HgCFbJSH6TeRDZ7747NvaPS/uGd62X6JFcV9q+sbN231udDw8f3OZJGN3As
-X-Google-Smtp-Source: AGHT+IFdHSvkObU+tPl9CDJXrWAsVL6tubVC9+zULoMNnufCMnqy+TEO+WOSC6ej7Kbq74CPdF/EkA==
-X-Received: by 2002:a05:6512:3dac:b0:586:7f:a141 with SMTP id 2adb3069b0e04-5906d88e732mr3805999e87.18.1760184979187;
-        Sat, 11 Oct 2025 05:16:19 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5908858456dsm1862610e87.124.2025.10.11.05.16.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Oct 2025 05:16:18 -0700 (PDT)
-Message-ID: <6f6fbebf-bdb6-402d-8aa1-9f33eae914ed@gmail.com>
-Date: Sat, 11 Oct 2025 14:16:16 +0200
+	s=arc-20240116; t=1760186066; c=relaxed/simple;
+	bh=w1xca3l/z4TtwsDn7iSaDrhnal0StFB6JzF76Ro/aPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=t8tUIYupCHxQZC58BxGpicFbgoeQK0I2pMLfpxUvIVvXZrlYss/IiIen5toPWNTCxoNABXOPg72l8Jiiv3wDSRUozYFpfri2u77s+08wJ71j+DQ/lvoU/Z70SNQfXlSUc+7W8Vz1vDaXefyINAqafyL1STofUyJuYByvrd/C0h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=PNae96UE; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 3EFD2104C1D6
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 17:54:53 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 3EFD2104C1D6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1760185493; bh=w1xca3l/z4TtwsDn7iSaDrhnal0StFB6JzF76Ro/aPk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PNae96UEPy7cfyGP26EFLlMbwRRotdUEGsL2XoWTnscQrdlJv2InWr3EF8M9EssmB
+	 iF3YlnsKe1bdYQ5v6sbiRO8moEmZhDS5sFqXQSGKzctymYEcK+eZ+JBI5lAy2RfSDv
+	 llg2bvy/VQfJO68pC7iPN/J/8Xe+GLtPrDn7V+W0=
+Received: (qmail 21247 invoked by uid 510); 11 Oct 2025 17:54:53 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.543363 secs; 11 Oct 2025 17:54:53 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 11 Oct 2025 17:54:49 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id A5B9F36003B;
+	Sat, 11 Oct 2025 17:54:48 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 672F51E81664;
+	Sat, 11 Oct 2025 17:54:48 +0530 (IST)
+Date: Sat, 11 Oct 2025 17:54:43 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: jic23@kernel.org, dlechner@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
+	andy@kernel.org, marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
+	salah.triki@gmail.com
+Cc: skhan@linuxfoundation.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	akhileshpatilvnit@gmail.com
+Subject: [PATCH 0/2] iio: pressure: add driver and bindings for adp810
+Message-ID: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] leds: leds-lp50xx: allow LED 0 to be added to module bank
-To: Christian Hitz <christian@klarinett.li>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>
-Cc: Christian Hitz <christian.hitz@bbv.ch>, stable@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251008123222.1117331-1-christian@klarinett.li>
-Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <20251008123222.1117331-1-christian@klarinett.li>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Christian,
+This patch series adds support for aosong adp810 differential pressure and
+temperature sensor driver in the IIO subsystem.
 
-On 10/8/25 14:32, Christian Hitz wrote:
-> From: Christian Hitz <christian.hitz@bbv.ch>
-> 
-> led_banks contains LED module number(s) that should be grouped into the
-> module bank. led_banks is 0-initialized.
-> By checking the led_banks entries for 0, un-set entries are detected.
-> But a 0-entry also indicates that LED module 0 should be grouped into the
-> module bank.
-> 
-> By only iterating over the available entries no check for unused entries
-> is required and LED module 0 can be added to bank.
-> 
-> Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
-> Cc: stable@vger.kernel.org
-> ---
->   drivers/leds/leds-lp50xx.c | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-> index 94f8ef6b482c..d50c7f3e8f99 100644
-> --- a/drivers/leds/leds-lp50xx.c
-> +++ b/drivers/leds/leds-lp50xx.c
-> @@ -341,17 +341,15 @@ static int lp50xx_brightness_set(struct led_classdev *cdev,
->   	return ret;
->   }
->   
-> -static int lp50xx_set_banks(struct lp50xx *priv, u32 led_banks[])
-> +static int lp50xx_set_banks(struct lp50xx *priv, u32 led_banks[], int num_leds)
->   {
->   	u8 led_config_lo, led_config_hi;
->   	u32 bank_enable_mask = 0;
->   	int ret;
->   	int i;
->   
-> -	for (i = 0; i < priv->chip_info->max_modules; i++) {
-> -		if (led_banks[i])
-> -			bank_enable_mask |= (1 << led_banks[i]);
-> -	}
-> +	for (i = 0; i < num_leds; i++)
-> +		bank_enable_mask |= (1 << led_banks[i]);
+Patch 1: Adds bindings for this hardware.
+Patch 2: Adds driver code with device tree support.
 
-Probably the first idea was to have a bitmask indicating which bank
-to enable, but it ended up in having array of bank ids in DT with no
-related adjustment in the driver.
+Overview of adp810:
+This is digital differential pressure and temperature sensor from aosong under
+the brand name of ASAIR. This sensor can measure pressure from -500 to +500Pa
+and temperature from -40 to +85 degree. It provides simple protocol to measure
+readings over I2C bus interface.
 
-This patch deserves Fixes tag.
+How to read from sensor (Protocol)?
+To read from sensor, i2c master needs to send measure command 0x372d to
+start the data acquisition. Then host/master should wait for minimum 10ms for data
+to be ready before reading. Post this delay i2c master can read 9 bytes of
+measurement data which includes - pressure(u16): crc(u8): temperature(u16): crc(u8)
+scale factor (u16): crc(8).
+Host/master can optionally verify crc for data integrity. Read sequence can be
+terminated anytime by sending NAK.
 
->   
->   	led_config_lo = bank_enable_mask;
->   	led_config_hi = bank_enable_mask >> 8;
-> @@ -405,7 +403,7 @@ static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
->   			return ret;
->   		}
->   
-> -		ret = lp50xx_set_banks(priv, led_banks);
-> +		ret = lp50xx_set_banks(priv, led_banks, num_leds);
->   		if (ret) {
->   			dev_err(priv->dev, "Cannot setup banked LEDs\n");
->   			return ret;
+Datasheet: https://aosong.com/userfiles/files/media/Datasheet%20ADP810-Digital.pdf
 
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Testing:
+Driver is tested on Texas Instruments am62x sk board by connecting sensor at i2c-2.
+Data communication is validated with i2c bus at 100KHz and 400KHz using logic analyzer.
+Sensor values are read using iio subsystem's sysfs interface.
+
+Looking forward for feedback and suggestions.
+
+Regards,
+Akhilesh
+
+Akhilesh Patil (2):
+  dt-bindings: iio: pressure: Add Aosong adp810
+  iio: pressure: adp810: Add driver for adp810 sensor
+
+ .../bindings/iio/pressure/aosong,adp810.yaml  |  46 ++++
+ MAINTAINERS                                   |   7 +
+ drivers/iio/pressure/Kconfig                  |  12 +
+ drivers/iio/pressure/Makefile                 |   1 +
+ drivers/iio/pressure/adp810.c                 | 205 ++++++++++++++++++
+ 5 files changed, 271 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
+ create mode 100644 drivers/iio/pressure/adp810.c
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.34.1
 
 
