@@ -1,76 +1,188 @@
-Return-Path: <linux-kernel+bounces-849018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57658BCF065
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:20:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590A4BCF06E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D643A904F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:20:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D3E3834CA94
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57482045B7;
-	Sat, 11 Oct 2025 06:20:35 +0000 (UTC)
-Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C008C8F0;
+	Sat, 11 Oct 2025 06:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lYKA2+ih"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EACC8F0;
-	Sat, 11 Oct 2025 06:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1902A2147E6
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 06:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760163635; cv=none; b=MGkhWcYX6kcbdzERb7T1QGrTUoLNkQvEmke9ocv+c8hQSD6ZLLT190CxddJD/p/f85i3H04E5WPPBYU3K++N8ZSXAzn1mgOiNjGbWkt+P3Sw9U1f/rp2c6ZNtDULpZt45HMfidbxccQJ86MlA9gpoADgYUGADmbZo6wbWvVEumA=
+	t=1760164233; cv=none; b=jgaM2IT7R8CVdRS0qNr/ih+dBQDU3xk/AvTxL0ZyEBgnRHnSYKQn6qeAI/t3P68wu9wMJd38f2b40S7w5pEHKESrWjXET1gDTkA3rkRVP5Y52OXRQ4zj3vuSqoLkJvlPZxLREjgPMOqdsDyHEqGP1qCnQDgN3nLHkR6KZF5GM2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760163635; c=relaxed/simple;
-	bh=b5mNr+QpS/ldW7yUf18x34s39JDTI8le8/CkGPCyGvw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B56nNfeFfNvRhDDOE53b3Us5GD34ieKbW+WNd5uRjeAVLgaICPhTAcoiUgksC9BXDkhaleZDR3SlmOF7ywMtv5cnmaLCl8ZhrqekayR5X7GOtsvEUtlD/ReicemrVEKpXHv0PJBRavnxXOv/iUvqexDvv9fsnWuQ4QnOccGLSwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
-Received: from blala.de (localhost [127.0.0.1])
-	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 59B6Q8uV013636;
-	Sat, 11 Oct 2025 06:26:08 GMT
-Received: (from akurz@localhost)
-	by blala.de (8.15.2/8.15.2/Submit) id 59B6Q8Hu013635;
-	Sat, 11 Oct 2025 06:26:08 GMT
-From: Alexander Kurz <akurz@blala.de>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alexander Kurz <akurz@blala.de>
-Subject: [PATCH] rtc: Kconfig: add MC34708 to mc13xxx help text
-Date: Sat, 11 Oct 2025 06:26:05 +0000
-Message-Id: <20251011062605.13591-1-akurz@blala.de>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1760164233; c=relaxed/simple;
+	bh=864487Lbses3g7FYfEk5gBAA1Q+2nTEqyXpo9mwJjwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RFLeOOtG2xBrzttOfg84j8MCpblzwzRQ008aKLg3ctVHKJyGBkbJpPetpN80saVO81Xy9I0i9zBMXYyCTSAApF2CvDDW09BwqqNhWdk8/7Ze2ChNWdE+Np8XSDbeTpSLnedI+X7bvynDYQHc024fSy9KURx8N3yhdZMgl6exJLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lYKA2+ih; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760164232; x=1791700232;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=864487Lbses3g7FYfEk5gBAA1Q+2nTEqyXpo9mwJjwM=;
+  b=lYKA2+ihJ6znCQFxkbDRkCch4QUn7V0ti3CA8+nYDrHI2sWZNYKQbx0n
+   LS3Ac4RrgA/HF7d8BHJ40zGSQy5NkuPxsz4tgqC8Tq5Xk0FNVgYyiKXPH
+   GtmvR6zOCYeun7LkkGHutDShBfq6z8kS1ccHyiQbp97RCS+pZsHUTRiu5
+   vXN2F3r5FZaTSp3ofaRg/01wXLZJoqBVGsG6TP/AGERT2/2VWaW7Q6Ldn
+   yHD70yW1NTflUUUFlkvDXiLtVnVgliJPs8n2pTVL6HMZ/azJjTTgc9qNt
+   piOUnigfFEQMQdSLLvOY2JQtXjuu6imGZz2qFEr1QgkxEfps7jlFa7mVT
+   A==;
+X-CSE-ConnectionGUID: rv/h5IrBTv654iGoEzT9JA==
+X-CSE-MsgGUID: ykM6McuLQKKagdHdXZRjew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62295796"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62295796"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 23:30:32 -0700
+X-CSE-ConnectionGUID: lPvOecqbQc6xhQki/BPBGg==
+X-CSE-MsgGUID: AgL/RN86S3CGZ7GQ+tjQxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="180389437"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 23:30:26 -0700
+Message-ID: <ce126bc8-7672-4071-96b5-9652e736175b@linux.intel.com>
+Date: Sat, 11 Oct 2025 14:26:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/8] x86/mm: Use 'ptdesc' when freeing PMD pages
+To: Dave Hansen <dave.hansen@intel.com>, David Hildenbrand
+ <david@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
+Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+ <20250919054007.472493-4-baolu.lu@linux.intel.com>
+ <9648e990-18e0-4aed-8110-b02f4b45aa47@redhat.com>
+ <e4c0c578-50e9-4e65-8e7f-7a6d995b22e0@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <e4c0c578-50e9-4e65-8e7f-7a6d995b22e0@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-MC34708 is one of the three mfd devices supported by DRV_MC13XXX.
-Update Kconfig accordingly.
+On 10/10/25 03:31, Dave Hansen wrote:
+> On 10/9/25 12:25, David Hildenbrand wrote:
+>>>
+>>> @@ -750,8 +750,8 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+>>>          for (i = 0; i < PTRS_PER_PMD; i++) {
+>>>            if (!pmd_none(pmd_sv[i])) {
+>>> -            pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
+>>> -            pte_free_kernel(&init_mm, pte);
+>>> +            pt = page_ptdesc(pmd_page(pmd_sv[i]));
+>>> +            pagetable_dtor_free(pt);
+>>
+>> There is pmd_ptdesc() which does
+>>
+>>      page_ptdesc(pmd_pgtable_page(pmd));
+>>
+>> It's buried in a
+>>
+>>      #if defined(CONFIG_SPLIT_PMD_PTLOCKS)
+>>
+>> Can't we just make that always available so we can use it here?
+> 
+> Yes, that looks like a good idea. I never noticed pmd_ptdesc() when I
+> was writing this for sure.
 
-Signed-off-by: Alexander Kurz <akurz@blala.de>
----
- drivers/rtc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I updated the patch like this,
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 4a8dc8d0a4b7..28f2450d2518 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1739,7 +1739,7 @@ config RTC_DRV_MC13XXX
- 	tristate "Freescale MC13xxx RTC"
- 	help
- 	  This enables support for the RTCs found on Freescale's PMICs
--	  MC13783 and MC13892.
-+	  MC13783, MC13892 and MC34708.
- 
- config RTC_DRV_MPC5121
- 	tristate "Freescale MPC5121 built-in RTC"
--- 
-2.39.5
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6a0bb7fc3148..a0850dc6878e 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3203,8 +3203,6 @@ pte_t *pte_offset_map_rw_nolock(struct mm_struct 
+*mm, pmd_t *pmd,
+         ((unlikely(pmd_none(*(pmd))) && __pte_alloc_kernel(pmd))? \
+                 NULL: pte_offset_kernel(pmd, address))
 
+-#if defined(CONFIG_SPLIT_PMD_PTLOCKS)
+-
+  static inline struct page *pmd_pgtable_page(pmd_t *pmd)
+  {
+         unsigned long mask = ~(PTRS_PER_PMD * sizeof(pmd_t) - 1);
+@@ -3216,6 +3214,8 @@ static inline struct ptdesc *pmd_ptdesc(pmd_t *pmd)
+         return page_ptdesc(pmd_pgtable_page(pmd));
+  }
+
++#if defined(CONFIG_SPLIT_PMD_PTLOCKS)
++
+  static inline spinlock_t *pmd_lockptr(struct mm_struct *mm, pmd_t *pmd)
+  {
+         return ptlock_ptr(pmd_ptdesc(pmd));
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index ddf248c3ee7d..c830ccbc2fd8 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -729,7 +729,7 @@ int pmd_clear_huge(pmd_t *pmd)
+  int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+  {
+         pmd_t *pmd, *pmd_sv;
+-       pte_t *pte;
++       struct ptdesc *pt;
+         int i;
+
+         pmd = pud_pgtable(*pud);
+@@ -750,8 +750,8 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+
+         for (i = 0; i < PTRS_PER_PMD; i++) {
+                 if (!pmd_none(pmd_sv[i])) {
+-                       pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
+-                       pte_free_kernel(&init_mm, pte);
++                       pt = pmd_ptdesc(&pmd_sv[i]);
++                       pagetable_dtor_free(pt);
+                 }
+         }
+
+@@ -772,15 +772,15 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+   */
+  int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+  {
+-       pte_t *pte;
++       struct ptdesc *pt;
+
+-       pte = (pte_t *)pmd_page_vaddr(*pmd);
++       pt = pmd_ptdesc(pmd);
+         pmd_clear(pmd);
+
+         /* INVLPG to clear all paging-structure caches */
+         flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
+
+-       pte_free_kernel(&init_mm, pte);
++       pagetable_dtor_free(pt);
+
+         return 1;
+  }
+
+Thanks,
+baolu
 
