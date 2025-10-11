@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-849075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20ACBCF272
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:44:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25918BCF27E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5077189D8AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D389E3E1876
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C0523D7D1;
-	Sat, 11 Oct 2025 08:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C67E23ABAF;
+	Sat, 11 Oct 2025 08:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5DuNRQt"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qo0dZ229"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6216A22D78A
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07F323AE9A
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760172239; cv=none; b=sT8Zy7EanvrrVFFMhtHspXdYdNUVnLMtOkcj74W3xTGyNInjDzVZR3arb6XsNO7m5dgirXKeAkh1vpDmp7fuDYXryHtFMWh6AMxdD1TZLqi2rUaJiXGyNwHz8dQmJFiwu6g5L4jxdxLwy+VhrN0WsooUGZE72QedhEEXGsmaBEo=
+	t=1760172244; cv=none; b=S1ojN+NPjWpJta+2TEbP+oqr1K70fVGDU+a72lIDxBsFZxYrfv7L7tyWROHH6gHlQ/RGBQCEM1eUQGYLVlZQox6q2eY8locn4meed7qJwunYT57gA26o3E+i9VX6Ebbo6RizPvO+8RYwgxWM2UfzweIuz5tY4DYZbPiBEahqaqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760172239; c=relaxed/simple;
-	bh=nIQkVkS00h/ZO5JRy6iR8QPChIVXZPi7LdPe3MlLTBo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uvNQ4tFiRoaneC9hGiMYNzXBddUXKmmEqJijt3mLqTr+Bnfj0DwjW9Y8Szh6pjLdDoiVmR0w1QvwfK18zlxIeh5P0IfkkYnKJBFUqwAnI2cNAU2ubTNtz0dRLvZ9xznwQ59QS2tIxkBXL5L1Xu8ZlV+ghuNskFhdS64ecGxWpLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O5DuNRQt; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1760172244; c=relaxed/simple;
+	bh=WupZjDzp+mYLUnPliPNHAA8llyM+D76W7Nv/oh/99/Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TCMKsvEAx1H9BMpj65P7bW7qmP0EQOCmM05QKsJPxVdqvFbIDQuUyN7jGy1Za5BB8joHNCG35XBLzGNjOeezeTxRiArkJRtIPsMk59dgr5GFzZWhiPq0hC9gg8j65MyfPbpEhHZidGDcN6KCagiMBclFIxm/mgwRC+5d6+2ShBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qo0dZ229; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77f605f22easo2493154b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:43:54 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3304dd2f119so2252639a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760172233; x=1760777033; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqCd8yW9EYi9BPy6lU/qWlREPsP6CT/SF7s5Ft32XtM=;
-        b=O5DuNRQtwvGH5+igVtg+6vsBk/2wnFLdS5+Ei+kZIGED2MX67fS9D53HV/p/Fi1k+D
-         LHiWVtFKetOSTdNIDl2d8IW29fXquialQiDQY7N4tVJM89WryinaHrMBHTILLTek6dkE
-         iYk9sqFAhSP1rh8BfFUmPpOqaAuSKSCRjaPdlw/TSRySVgZWQs5nPp3Zusb++XMxef6y
-         5r1y13HatTxSup5ukmRwXDxhVi06OUoDJ3mMVi3Y1tzBORjXfAgOYOrYLMAuzTpEiul0
-         Pca7FRKmI/kw5ZBvIN1NsPcHRyOCOQpD6sg+tPO+uVKgF+qRXxxLYwqimoLJB07WKsIx
-         jpXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760172233; x=1760777033;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1760172239; x=1760777039; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VqCd8yW9EYi9BPy6lU/qWlREPsP6CT/SF7s5Ft32XtM=;
-        b=NpR+rAQ3RxsUNscuuJYbYWd2PghM5IflrgdJI5a6UgJJbrxPeP3gV+P527fNVpi2+8
-         XiZm5/TMYZHfEDWTEbJNLzrpt0OHHT6L2Rwk4Oj7PCQf/KvXp2MDe5nLCMopN7zyeJGk
-         F3PkAs59EBe4h77t5KNQ4NWGZbSdHwKi6EmnZSuGYkIoP1lFj4sJMdu4eAYX0cNNkQaw
-         emSg+6qLXT8VaMIZNGxBPaoRUIWy57w3AJ58ZZV7bF24cw4KsN2TIyToZ667iKN+76RZ
-         4L49wDA5yVYGeo3unMwDUyEqaxECWbQRG13nI1pYVutTUwCD59TCQKfnO4zGQpHPInBR
-         0P4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWLdG9p2IwwVvY77yKZZ443deyaEZ90RqzzNHTf/J0/LVWqF76N60uRdxntBvN/S6mQMDrbeu7x61G64Yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWK+OYqWqOfRYxomEHaptlqpVWjFAGX3ZG+3qgZoN9203r1vsw
-	m3mqWANSRz30TBAN7q8klP9PymxjU5hauhC3BLqLcg6/WvKlOJa4DDaUELYOzg==
-X-Gm-Gg: ASbGnctJy5TWTJWLAbpbT0rGJju+OmupAlyDGJnBJ+hUlT+29+t6kgROgazb0SNKhH+
-	bi+Y9P+zLbkCVny9xBZRJyw4f+CNHTqSj98aQRmcLq3VhdPOuiqbbBGAgj09/0HG9zKZwGumyvm
-	i9Gmscn7YXHgKMfAMAisBnnh6q898HrHFbFukdYpeYU45u2OMZVbNEX3g1iaPZUgJq0T3PmsgHM
-	Y49YPWBm2zzzJry0Q06CffI9EuDG9c+OI4TicGb3hBCofei28bTX19S+jkVgm5eAiu12bWKf9tE
-	wXMYroGJpXBmPh6WqPJ2wTZaKaFA6SUDpCFfDCXG2/Gg5rv5qVVC4fWVi3kJsaEO1Ht4alCPG46
-	dtXVyQkw+VdltNybwA0+BRtIBi3vyGykunEnFQsLFsViQ+XPi5HyEm5CTSSYhu6Mg8sfj
-X-Google-Smtp-Source: AGHT+IGTnRLwiun6qqczOPoNp2kFINO5SVtG6H2filW9Od839rhihT2CIxXWcMLbKI3mPbR5HTEQEg==
-X-Received: by 2002:a05:6a20:939e:b0:2fb:add5:5583 with SMTP id adf61e73a8af0-32da8133300mr20569059637.24.1760172233455;
-        Sat, 11 Oct 2025 01:43:53 -0700 (PDT)
+        bh=H8kUPDmdGFI5dlB1Y4l1vU9fWBs35HJfqSRekTM7U1A=;
+        b=Qo0dZ229E/eq+7ywW972jK8byHgbfnOq29CXOGodzABs/1NVKhK4dXPtiQK11s19sL
+         4IACOZVSTxNPiB/J9mxmOigspTOefa5f8F3gMng/IonoqBqmWyBDGdwba7vkKZh8EIRx
+         rQZvKbaGCn96JhEU980upuVi2Ug/wbkQSCC7qBMB7qBbVrEfUm7Rlbbiq0mKwSE6GsVh
+         Fm5PKJ8zKcICV/IyVtGchCloSyVaBdwq7bMstu1YTq7EA+UoBUbYJz328d+kPMb9OW+m
+         tfLbaTCFZBIV2qRlXDx5jg2nRJPfTSm+NLKM3n5UmG3HYeWz0sjSRVdv3HiLW73sP+cG
+         V4AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760172239; x=1760777039;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H8kUPDmdGFI5dlB1Y4l1vU9fWBs35HJfqSRekTM7U1A=;
+        b=UiDPisQMZk9+MRVZnHtDxCG8phSqIzDCrbU0QrdfwPOSkZoGCccBqBfTPWiCb3nWE+
+         cL7KdK3BVuHYUfKjGeL6aSH5983X4/1aYqQgq6CzuZhbNaBN4NS6fAl2WBU/i/tkGFEK
+         fZDYUt9y0YdcDaHntG1NWdgCE3Gnr7qZDUfomLhnxHfVusoUHLJfJarcvaDfF+rzCZhH
+         9ZnCokSeVL8EyRthlA+Dub10mbKX27PJa9VypcLBYlmjcE+3EJH5TLitdAWOseyd1xj4
+         G/x8ye5aCqkqE3lIrGIChdIk0xWetx9P3vc5cKtQfEnv2b2044zpSr0XM+JqaQ+Gs3IF
+         RuxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMF3iPMAhHBamTK4U6JQpXOqKXQyrLRbPvLUu27+hk8Y/g/ufftoTvEAkn+HThrWUfSco8Ik0wqEJumfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0G9FGSiVIR4IAJ47JgHk6kSNDbRHQ2OD0072LjhdPdwxP7MAa
+	KKC1wBlRmjnnqsytMzgPg/8Id6vBJjQme3dxvIn5tXSXPhVRe92qdCRGUTur4A==
+X-Gm-Gg: ASbGnctAJOkXBZ6CGOcG6BvfxLhlDjq6oo4ReyAJ55DwB7LwbVpoV9mtc0/v5nKp1rL
+	xGuZuyrn0ciUORRRf702A8Jaa4sn39j3oSpWXqQE0BLWtoLhnCY0IIRJNSMXIAdIpsGWbH9Kbfl
+	MQyQGslgEFVZebBKa1OwBe5IYFV+H4fReaUSFigQHu4j2zhj9fhkXkSizHviiMMYVPshcDg+M5w
+	Z+Xms5zbuBlEPBh92MVGXKBgPB3FTf4iJ0FsZZ5wpwvxg1QsiKjULRT2NFf0VYfI1RKjHh9GrDR
+	Gl3u+e+c+E6ECkocsDuUjZ0ykviSwklxXYkPotYnOaNCB4WGXJlrUwynqC2hk3usEOhQyy1xrZJ
+	8J0I+Rc8lPMVNc/klkznRQx98d+lPgBc52NyiMK1D7P9zsbvBQ+PXgb3Fj/qwoiG+tRUecShlBd
+	6rsmA=
+X-Google-Smtp-Source: AGHT+IEEOTuflRqQKofgn/Jm+9c1ebGng0TIvOwkuJKhNdEWd6yjANpMqEqY0yHrWn9gQeTyxzynFg==
+X-Received: by 2002:a17:90b:1a87:b0:339:f09b:d36f with SMTP id 98e67ed59e1d1-33b513a1e0fmr19026440a91.28.1760172238813;
+        Sat, 11 Oct 2025 01:43:58 -0700 (PDT)
 Received: from Black-Pearl.localdomain ([157.50.164.155])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7992d09659esm5401090b3a.45.2025.10.11.01.43.48
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7992d09659esm5401090b3a.45.2025.10.11.01.43.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 01:43:53 -0700 (PDT)
+        Sat, 11 Oct 2025 01:43:58 -0700 (PDT)
 From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Subject: [PATCH v3 0/2] dt-bindings: mmc: ti,omap2430-sdhci: Add json
- schema for the text binding
-Date: Sat, 11 Oct 2025 08:40:22 +0000
-Message-Id: <20251011-ti-sdhci-omap-v3-0-9487ef2de559@gmail.com>
+Date: Sat, 11 Oct 2025 08:40:23 +0000
+Subject: [PATCH v3 1/2] arm: dts: ti: omap: am335x-pepper: Fix vmmc-supply
+ property typo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,11 +85,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPYX6mgC/13M0QqDIBiG4VsZHu8fapm6o93H2IGY1g8rQ0M2o
- nufxWCjw++D91lIchFdItfTQqLLmDCMZVTnE7G9GTsH2JZNOOWCCqZhRkhtbxHCYCbQVHpVSy9
- FRUlppug8vnbv/ii7xzSH+N75zLb3K/HqIGUGDBotbOOcsVKqWzcYfF5sGMgmZf6rNVXHmgMFy
- TWXStNacf9fr+v6AddTdwzoAAAA
-X-Change-ID: 20250519-ti-sdhci-omap-907f847f7530
+Message-Id: <20251011-ti-sdhci-omap-v3-1-9487ef2de559@gmail.com>
+References: <20251011-ti-sdhci-omap-v3-0-9487ef2de559@gmail.com>
+In-Reply-To: <20251011-ti-sdhci-omap-v3-0-9487ef2de559@gmail.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>, 
@@ -98,53 +98,29 @@ Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
  Charan Pedumuru <charan.pedumuru@gmail.com>
 X-Mailer: b4 0.14.2
 
-Create a YAML binding for ti,omap2430-sdhci and fix vmmc-supply
-property typo for a DTS file.
+Rectify a typo for the property "vmmc-supply" to resolve the errors
+detected by dtb_check.
 
 Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
 ---
-Note: The property "ti,needs-special-reset" was not removed from DTS cause it will
-      disrupt the compilation for other compatibles as the node &mmc is used for all
-      compatibles for some DTS files.
+ arch/arm/boot/dts/ti/omap/am335x-pepper.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v3:
-- Reverted the changes on removing ti,needs-special-reset, ti,needs-special-hs-handling
-  cap-mmc-dual-data-rate from the DTS.
-- Fixed a typo to resolve the errors identified by dtb_check.
-- Changed commit message to justify the modified changes.
-- Defined if-then statements for compatibles to add required properties.
-- Removed "ti-hwmods" property from the YAML.
-- Link to v2: https://lore.kernel.org/r/20250908-ti-sdhci-omap-v2-0-72927890482f@gmail.com
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-pepper.dts b/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
+index e7d561a527fdd9eeb15237ddee4c8db1dfd48edd..10d54e0ad15a7ff9770ad02c224b4b47aa5040de 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
+@@ -347,7 +347,7 @@ &mmc3 {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&wireless_pins>;
+-	vmmmc-supply = <&v3v3c_reg>;
++	vmmc-supply = <&v3v3c_reg>;
+ 	bus-width = <4>;
+ 	non-removable;
+ 	dmas = <&edma_xbar 12 0 1
 
-Changes in v2:
-- Changed MAINTAINERS to "Kishon Vijay Abraham".
-- Renamed the YAML file name to "ti,omap2430-sdhci.yaml" from
-  "sdhci-omap.yaml".
-- Dropped unnecessary or unused properties from DTS and made these
-  changes as a seperate commit as there is no user of it.
-- Removed previously defined properties like ti,needs-special-reset,
-  ti,needs-special-hs-handling and cap-mmc-dual-data-rate from the YAML.
-- Changed the commit message to elaborate the reasons for modifications.
-- Removed the pattern property for pinctrl and redefined it in a regular format.
-- Modified the description of the property "clock-frequency".
-- Changed the subject line for the binding patch.
-- Link to v1: https://lore.kernel.org/r/20250523-ti-sdhci-omap-v1-1-695c6eeac778@gmail.com
-
----
-Charan Pedumuru (2):
-      arm: dts: ti: omap: am335x-pepper: Fix vmmc-supply property typo
-      dt-bindings: mmc: ti,omap2430-sdhci: convert to DT schema
-
- .../devicetree/bindings/mmc/sdhci-omap.txt         |  43 -----
- .../devicetree/bindings/mmc/ti,omap2430-sdhci.yaml | 202 +++++++++++++++++++++
- arch/arm/boot/dts/ti/omap/am335x-pepper.dts        |   2 +-
- 3 files changed, 203 insertions(+), 44 deletions(-)
----
-base-commit: ed61cb3d78d585209ec775933078e268544fe9a4
-change-id: 20250519-ti-sdhci-omap-907f847f7530
-
-Best regards,
 -- 
-Charan Pedumuru <charan.pedumuru@gmail.com>
+2.51.0
 
 
