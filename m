@@ -1,118 +1,117 @@
-Return-Path: <linux-kernel+bounces-848985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32845BCEF69
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:47:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58568BCEF6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB2C3E597A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E665F19A3F60
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4F41DE3B7;
-	Sat, 11 Oct 2025 03:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DEC1DED63;
+	Sat, 11 Oct 2025 03:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7UmDJJq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nu3YoxKx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FDF7D07D
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 03:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F973D6F;
+	Sat, 11 Oct 2025 03:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760154427; cv=none; b=Lpmvng+qyXJ7TqquqvDO2LbhQ/hwVUA7IhHQyZeQJJWfQ9XTMt5PlesQmRoqMJr4VehGhx7aAw6lBL03Efs4hKVoHWue5tAcDNJG3wXt5nDqyFjFn5RhDBJ2ApJ68u2omYREhCE1aB5rpU0BlgdB6zc0WdTLUlhtlKr/Tnlz4ZY=
+	t=1760154427; cv=none; b=XAP6tXWhiwuuCJXz20agxMlvsbp5LdKFtWUo09X1YY5gRMX07ExEYppFkpxzmOtuJnFGZDZUwv9xfdlEEcNSzlkuVVY4zW3I6U5bgA5Ug8YeypCyKlqWGPSmpmSTDGUx/e90tyCSGViUqESXDn+zkKOVH9HXwKV8EPIxDvpUPdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760154427; c=relaxed/simple;
-	bh=Y9R6jnrHx6wNiJ6fkibSYMWyr5pV3Dkc0hSiZh5ugqE=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=qMtcXnzZHlEJXUgT/Zc2apzgcURx03qAokTpxL6fqUzvnEbjqORdhUfOOSREXM9yzp3mTZMX5Vzd4qsG1i2bA5JgyoMfUJ+pFLwGlUtn78MmkNVuTgsJm/ZpIN8oES4K2A89tLFbIYUwUEXW/rMn2tqAW1wtDTCnS9GD7/zU6rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7UmDJJq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFDAC4CEF4;
+	bh=o8tTvTn6Jw4Ls8asZavAxXg3pyAe0oCWkJfumpXw6eA=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=DW3COHmPC3wFr7ppEx5TNg7mFgM0njC9W48VJyBOsgW1BNff49nURBccJJEQQEiUr04ORSSKyE26OBU/1DH6oYKTlr3Q8DjJnMP/G0Ufs9Kf/5+VW07B/pcTLYyHNhkzbRZegm2kV1YV2T9ZM87WPn1ECIs4mL+KnBkB7+VKpDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nu3YoxKx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01D4C4CEF5;
 	Sat, 11 Oct 2025 03:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760154426;
-	bh=Y9R6jnrHx6wNiJ6fkibSYMWyr5pV3Dkc0hSiZh5ugqE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=p7UmDJJqAJ4fmUYHZlCeOkxV31J/sxo0CwbEJbWi8oif9fEbq4RH6Miuos2G9Wk2A
-	 tUUVuY/TBfy5YaYINZYy0sWqemosbysC/s253EyKCaIZ9NgW/Zzo/p1V7YtvshziC5
-	 sTIzcuF691GjyAnreEA/Dp2MLg/MaCszRHJKI+XuFDykGxqS2bi1gwjxMASe+ogFAE
-	 LQY4W2OVjf1HKaptF5Ao4SlMROjCiyeJ5iZKKi3AFPkmEAMPGT60wouv1KXHcJutNV
-	 NVeuRyOwshtotSkqndjcn/9ZRWuvDcB1sZE1iq7Zy0iISJz5D4D6OjHJIg+445/bhV
-	 jcKS5tUSyR0Dg==
+	bh=o8tTvTn6Jw4Ls8asZavAxXg3pyAe0oCWkJfumpXw6eA=;
+	h=Date:From:To:Cc:Subject:References:From;
+	b=Nu3YoxKxJicl6mi7OPnjypBWskbqy7bbCSb55Fq+7SkSgP2udo7T4tp46NiqwcnQu
+	 2kn8TQIPx0qs0jTe7TNZEIK6Dsw9Ea2klQ00Kdv3rnLXviYZsti5SZ6K8vXPLWiEU/
+	 txbNE4MQ8InvqYdsw0oKZ36HnNIzifXmpMshBLHQ7cQFd41dMFAVFxLUSHWHwO8Mjt
+	 v3QC1JOQPRH7J9yArOeeOR55/NFYLO0B41xc6mqLmkzFqc68EBV8ETZ7947Jk+Z2NU
+	 S/Qm7ud4aY5LazuDd0Ktysn3qqQvDHu+Z2uq5VpAYcz2FdELEw2oH30WB5mjlE0hEp
+	 x+4G0vA7qdXog==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1v7QZa-00000000jYR-36RV;
+	id 1v7QZa-00000000jYx-3qBK;
 	Fri, 10 Oct 2025 23:47:10 -0400
-Message-ID: <20251011034633.619611825@kernel.org>
+Message-ID: <20251011034710.768448162@kernel.org>
 User-Agent: quilt/0.68
-Date: Fri, 10 Oct 2025 23:46:33 -0400
+Date: Fri, 10 Oct 2025 23:46:34 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-linus][PATCH 0/2] tracing: A couple of fixes for v6.18
+ Andrew Morton <akpm@linux-foundation.org>,
+ stable@vger.kernel.org,
+ syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com
+Subject: [for-linus][PATCH 1/2] tracing: Fix tracing_mark_raw_write() to use buf and not ubuf
+References: <20251011034633.619611825@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+From: Steven Rostedt <rostedt@goodmis.org>
+
+The fix to use a per CPU buffer to read user space tested only the writes
+to trace_marker. But it appears that the selftests are missing tests to
+the trace_maker_raw file. The trace_maker_raw file is used by applications
+that writes data structures and not strings into the file, and the tools
+read the raw ring buffer to process the structures it writes.
+
+The fix that reads the per CPU buffers passes the new per CPU buffer to
+the trace_marker file writes, but the update to the trace_marker_raw write
+read the data from user space into the per CPU buffer, but then still used
+then passed the user space address to the function that records the data.
+
+Pass in the per CPU buffer and not the user space address.
+
+TODO: Add a test to better test trace_marker_raw.
+
+Cc: stable@vger.kernel.org
+Fixes: 64cf7d058a00 ("tracing: Have trace_marker use per-cpu data to read user space")
+Reported-by: syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68e973f5.050a0220.1186a4.0010.GAE@google.com/
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 0fd582651293..bbb89206a891 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -7497,12 +7497,12 @@ tracing_mark_raw_write(struct file *filp, const char __user *ubuf,
+ 	if (tr == &global_trace) {
+ 		guard(rcu)();
+ 		list_for_each_entry_rcu(tr, &marker_copies, marker_list) {
+-			written = write_raw_marker_to_buffer(tr, ubuf, cnt);
++			written = write_raw_marker_to_buffer(tr, buf, cnt);
+ 			if (written < 0)
+ 				break;
+ 		}
+ 	} else {
+-		written = write_raw_marker_to_buffer(tr, ubuf, cnt);
++		written = write_raw_marker_to_buffer(tr, buf, cnt);
+ 	}
+ 
+ 	return written;
+-- 
+2.51.0
 
 
-tracing fixes for v6.18:
-
-- Fix tracing_mark_raw_write() to use per CPU buffer
-
-  The fix to use the per CPU buffer to copy from user space was needed for
-  both the trace_maker and trace_maker_raw file. The trace_maker file is
-  used to write ASCII text into the trace buffer, but the trace_maker_raw is
-  used to write binary structures directly into the ring buffer.
-
-  The fix for reading from user space into per CPU buffers properly fixed
-  the trace_marker write function, but the trace_marker_raw file wasn't
-  fixed properly. The user space data was correctly written into the per CPU
-  buffer, but the code that wrote into the ring buffer still used the user
-  space pointer and not the per CPU buffer that had the user space data
-  already written.
-
-  There are several tests in the test suite to test the trace_marker file
-  but it appears that there's no tests that test the trace_marker_raw file
-  (this needs to be fixed), and this bug was missed.
-
-- Stop the fortify string warning from writing into trace_marker_raw
-
-  After converting the copy_from_user_nofault() into a memcpy(), another
-  issue appeared. As writes to the trace_marker_raw expects binary data, the
-  first entry is a 4 byte identifier. The entry structure is defined as:
-
-  struct {
-	struct trace_entry ent;
-	int id;
-	char dynamic_array[];
-  };
-
-  The size of this structure is reserved on the ring buffer and the pointer
-  to the structure on the ring buffer is assigned to "entry". Then the data
-  is copied via a memcpy() with:
-
-  memcpy(&entry->id, buf, size);
-
-  But the fortify string detects that the size is bigger than the size of
-  the entry->id and produces a false positive warning.
-
-  Hide the write from fortify string with:
-
-  void *ptr = entry;
-  ptr += offsetof(typeof(*entry), id);
-  memcpy(ptr, buf, size);
-
-
-Steven Rostedt (2):
-      tracing: Fix tracing_mark_raw_write() to use buf and not ubuf
-      tracing: Stop fortify-string from warning in tracing_mark_raw_write()
-
-----
- kernel/trace/trace.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
 
