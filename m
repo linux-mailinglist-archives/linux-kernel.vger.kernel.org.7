@@ -1,141 +1,87 @@
-Return-Path: <linux-kernel+bounces-849265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C63BCFAFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:40:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1303BBCFB05
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8643B9E55
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:40:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 928EF34A879
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEE7246793;
-	Sat, 11 Oct 2025 18:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513F1283145;
+	Sat, 11 Oct 2025 18:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CVweedLz"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="zFYmH1VC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB96178F39
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A757F2AD3E;
+	Sat, 11 Oct 2025 18:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760208047; cv=none; b=ExEHOawo+Gs+JGDO0nLHI/8vtbiBzNZmTASSNT2KClq0D03iX4VZqG0pkt/n2v00sbh0kM9vbYnPhVcAb3pFmHkeIJW6TdXQWWCikDRK93A2tQqf0WReGdwLT9pjJXtDxVmrs7lXkzjHj7/b8lYYwf/sq5SvGGJtto+r+LOAxOs=
+	t=1760208267; cv=none; b=COiyrRwo6GPTIYf72rPM4MHOVIhHfDJ3wsIrMNvrASg6TAsFel6QysIBggfiduhdifwTeBEic5HBC6RJW84r0ulmYSxOprIQpDNQg2yhTrMTU2EVc5J9AF40fOkLuZOmJHapOfvgu6a84H9Dc6nfg2kj9QyTR0cDs5Mn+hS13Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760208047; c=relaxed/simple;
-	bh=pO7KNdAOsuji38pm2Lu9N5Pz4CdKc7UKPBBoeNts2+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zd/NylT4jxkJpvVu8Mrg/7pqWwYFNSeH/gFXBILWtm0Uva5Dc2Tum9RZY361EacZtbn5SH3lQkLene36dvWpcf19VWJql/zxv2tg51dCaSEzNIm31IiJLHFd2scKK0dS1tXy2ajJZp6Htnn6fiAYBZhlqNomLeI+QqeTQxsB/1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CVweedLz; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59BFbTan006769;
-	Sat, 11 Oct 2025 18:40:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=aQ6zLQ2hYaS0Ge5ungKTmqoAWJhfR
-	ULBrc+DvtUdyUA=; b=CVweedLzMkUlWyRA1oblakAKQAo75bFJXKLbBV0+To7NV
-	SnlX95s7sV5pYiF2KKr6Mz/M0EH8xyPm8ChgtmrKD5vtsAoLPQ8gPnj+IKeWS/ek
-	V2/1+x8vOkZMwjxctQEtEeCF+IPuvPjALlohNx3G0F2RlSz3EspOnKZhZxyM4b39
-	J03ZWFnnI915U8LlAP26x2y2BISDzUTAESbbbD/4Vr2PztgdmS27ZXpznRoeKHKg
-	Excy2rySo7g7gUHz68/OF/L518iesLX+wE3nzEM70TPWTKt41oLlAChh/Tu12b2b
-	1rewCrwdJj75uxdDjS/02lrSwOx3iBsXe4k28VZxQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qf47gg4p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 11 Oct 2025 18:40:38 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59BCYdTJ009793;
-	Sat, 11 Oct 2025 18:40:37 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49qdpc6kkx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 11 Oct 2025 18:40:37 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59BIebGa007943;
-	Sat, 11 Oct 2025 18:40:37 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49qdpc6kkp-1;
-	Sat, 11 Oct 2025 18:40:37 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: david@redhat.com, eperezma@redhat.com, mst@redhat.com, jasowang@redhat.com,
-        xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] virtio-mem: fix typos in virtio_mem struct comments
-Date: Sat, 11 Oct 2025 11:40:28 -0700
-Message-ID: <20251011184033.616751-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1760208267; c=relaxed/simple;
+	bh=1p8xeKkByaFAhzoZotQIc5TBKhsxRGdNh53mRIgRCcY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Sjvw6bGjuuBF/7y8CU0t95TVyjS6jzkb+3udm36TbL9mxy+0pwQFCEZzZ7fRBAnE1QwuU0Xt1tBB1Df6xyLETtFIsqPxc/Ryzr/1X0ZBbFKjfo03zBPrTGGVtxpPadeG30MQYQppJrc5mo1hqxX1tY6fWENLN2qPYUvZPuWp6TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=zFYmH1VC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23738C4CEF4;
+	Sat, 11 Oct 2025 18:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1760208267;
+	bh=1p8xeKkByaFAhzoZotQIc5TBKhsxRGdNh53mRIgRCcY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=zFYmH1VCQ/IBqhPNUa6SXH6vlSm9qm7zALTXxZycHwKXH8zMFEqqzNZsDPcJlBmIo
+	 36bmMJbb6vw6mmTeR/OIryN3IU5jInqbZQWf9gEp3myog6tlv+X2nAu4zkPAVOgxCX
+	 yqN2HWe7/17Of/QgMGb0aprUKGer7RSAQeurSMWA=
+Date: Sat, 11 Oct 2025 11:44:26 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-s390
+ <linux-s390@vger.kernel.org>, Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v3 0/4] Support dynamic (de)configuration of memory
+Message-Id: <20251011114426.5313b7cb6951618c20ab62ca@linux-foundation.org>
+In-Reply-To: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
+References: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-11_03,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 phishscore=0
- adultscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510110106
-X-Authority-Analysis: v=2.4 cv=SK9PlevH c=1 sm=1 tr=0 ts=68eaa4a7 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=x6icFKpwvdMA:10 a=yPCof4ZbAAAA:8 a=ep7tjsRKnRn20hCSCwQA:9 cc=ntf
- awl=host:12092
-X-Proofpoint-GUID: 9TXDq4_2dfbjp8rTuqYhev3PhkGXW-qY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNiBTYWx0ZWRfX//z2fEkkoUNL
- QxusU/+Dd86AMgxirCg5h2Rh9+f2jOdtF5tPZ4rW2CeFhvOto1FY2KQ5caJM5zAHCOevkFuzibu
- Rs7c24Si+BrZU+hMA9Ky+TBcJq/yo/OJFnu8j5Rz0Zbh7ZbQ4XX2V8t4LQsDDhazPtcDIuHOqts
- qqF1Z38QbQEMUBUQk7VGdr9TvCj1LoQB3HbcvsiCW3A3ak26v0VB0IIWMxgPE/h3iHqCxFb75KK
- QFVDd3gheRi7ADbUvZ2+9surlAbZHPiX7k6tV13k/W5ftv9YrUl7HzIoJxYoQegpv3Ft7jKgCPb
- pCICNh++i3GrAFF+V4Riimkqk8YG4khtFTE7H0ioSe9QUAT5zbNhRTfaJ1spkh64MTwwAXaTSDs
- qg2strmZzcL26KNB6INvAti3vbKPLwiCPcUZT7zvwSaqWqrn68k=
-X-Proofpoint-ORIG-GUID: 9TXDq4_2dfbjp8rTuqYhev3PhkGXW-qY
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Correct minor typos in comments within the virtio_mem driver:
-- "bock" -> "block"
-- "valued" -> "value"
-- "actipn" -> "action"
+On Fri, 10 Oct 2025 10:51:43 +0200 Sumanth Korikkar <sumanthk@linux.ibm.com> wrote:
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/virtio/virtio_mem.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Hi,
+> 
+> Patchset provides a new interface for dynamic configuration and
+> deconfiguration of hotplug memory on s390, allowing with/without
+> memmap_on_memory support. It is a follow up on the discussion with David
+> when introducing memmap_on_memory support for s390 and support dynamic
+> (de)configuration of memory:
+> 
+> ...
+>
+>  arch/s390/mm/pgalloc.c         |   2 +
+>  arch/s390/mm/vmem.c            |  21 +--
+>  drivers/base/memory.c          |  23 +--
+>  drivers/s390/char/sclp_mem.c   | 288 +++++++++++++++++++++++----------
+>  include/linux/memory.h         |   9 --
+>  include/linux/memory_hotplug.h |  18 +--
+>  include/linux/memremap.h       |   1 -
+>  mm/memory_hotplug.c            |  17 +-
+>  mm/sparse.c                    |   3 +-
+>  9 files changed, 225 insertions(+), 157 deletions(-)
 
-diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
-index 1688ecd69a04..800cc7f9805d 100644
---- a/drivers/virtio/virtio_mem.c
-+++ b/drivers/virtio/virtio_mem.c
-@@ -164,7 +164,7 @@ struct virtio_mem {
- 			unsigned long first_mb_id;
- 			/* Id of the last usable memory block of this device. */
- 			unsigned long last_usable_mb_id;
--			/* Id of the next memory bock to prepare when needed. */
-+			/* Id of the next memory block to prepare when needed. */
- 			unsigned long next_mb_id;
- 
- 			/* The subblock size. */
-@@ -240,7 +240,7 @@ struct virtio_mem {
- 	/* An error occurred we cannot handle - stop processing requests. */
- 	bool broken;
- 
--	/* Cached valued of is_kdump_kernel() when the device was probed. */
-+	/* Cached value of is_kdump_kernel() when the device was probed. */
- 	bool in_kdump;
- 
- 	/* The driver is being removed. */
-@@ -1080,7 +1080,7 @@ static int virtio_mem_memory_notifier_cb(struct notifier_block *nb,
- 		atomic64_sub(size, &vm->offline_size);
- 		/*
- 		 * Start adding more memory once we onlined half of our
--		 * threshold. Don't trigger if it's possibly due to our actipn
-+		 * threshold. Don't trigger if it's possibly due to our action
- 		 * (e.g., us adding memory which gets onlined immediately from
- 		 * the core).
- 		 */
--- 
-2.50.1
-
+I can add this to mm.git in the usual fashion, but the s390 tree would
+be a better place from a testing point of view?
 
