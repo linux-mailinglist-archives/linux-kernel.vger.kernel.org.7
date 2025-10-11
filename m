@@ -1,395 +1,395 @@
-Return-Path: <linux-kernel+bounces-848918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECEC3BCED00
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:29:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60304BCED15
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6913E7C68
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:29:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3B104E962E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014BB1548C;
-	Sat, 11 Oct 2025 00:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7715225D6;
+	Sat, 11 Oct 2025 00:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PnVjNzE4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wR20Rtuc"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88925632
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BB9B640;
+	Sat, 11 Oct 2025 00:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760142556; cv=none; b=rzDtVIOC7Zv2dQ3nPP+jNCZlGS8a6ryf5dYYIVp+c43c8HcBrQaHl7HmdGI/HSERcLGusw9Km2d56jbseiLodgXLUE5dfO9b8LCM9qC9q4VeXXEKwhUgNQymD3Cv8Tw1w9lm9XWybKQY70F27ReuhA6JaXdMQV2s4w13FsilT10=
+	t=1760142871; cv=none; b=ARYqIC5ukTp+CI7XJgoG0x8rAjpJ8cVtoB29m30raRNjj5kIJ/2iDBv4tjU1ABgkEGPoty01/eZ2MXKaepnT/BzdU3Z29XDAPrmZ+K3T3yzUMfSjzXwmKJPh6wLgArJUykRKztE+GsWHhrwD6zkYyiN7EDrLCPJ6mFqsWT9qVME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760142556; c=relaxed/simple;
-	bh=nJPkko1t8OZBp4EpqJyu/7G0WHvVmwVpWHBanJWh0rA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bygu3yDRPJ1nz+bbvkwjkcxLlydfQivfWrYSpWTdzvggOdWAGZjYHlrYxIoObpqSN9xW4KuawVTOhpq4U5rbscXjapCLlwayn4wlM5nh4zoLrGHwQh8aB2wwQFfl/8oywP5Q+CaZF6JMZA0RVi3RTHHKSnPgd3UvpR9V2bKws0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PnVjNzE4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760142552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YGBdS36q9u92C+dNsmvvGg5yj0CMbWzvorswoVbSWII=;
-	b=PnVjNzE4Icr0DrHy1qCxOQ1FuPey2dUKwMgkPViXERUclK11prglrcBD01C5dhu8LlOxKA
-	SKGxpkviz30YPc38MMRKxx18csSijWoTHnV99NYaMj6bPwYxDizzjOuuNKvNDCUE4qcMhY
-	AGttvni9EF1ThXnT6B1rDdcwodbcymo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-153-z5qoH3zLM4KIDZtqxRG1NA-1; Fri,
- 10 Oct 2025 20:29:08 -0400
-X-MC-Unique: z5qoH3zLM4KIDZtqxRG1NA-1
-X-Mimecast-MFC-AGG-ID: z5qoH3zLM4KIDZtqxRG1NA_1760142547
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10CC11800365;
-	Sat, 11 Oct 2025 00:29:07 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.64.71])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1DAC81955F22;
-	Sat, 11 Oct 2025 00:29:04 +0000 (UTC)
-Date: Fri, 10 Oct 2025 20:29:02 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Christoph Lameter <cl@gentwo.org>
-Subject: Re: Boot fails with 59faa4da7cd4 and 3accabda4da1
-Message-ID: <20251011002902.GA479718@pauld.westford.csb>
-References: <20251010151116.GA436967@pauld.westford.csb>
- <CAHk-=wg1xK+Br=FJ5QipVhzCvq7uQVPt5Prze6HDhQQ=QD_BcQ@mail.gmail.com>
- <e4f2a3e3-649a-423b-9696-6406ef56340f@suse.cz>
- <20251010184259.GB436967@pauld.westford.csb>
- <b63f1f40-a8f5-4b54-b025-d8d1daf78c9b@suse.cz>
+	s=arc-20240116; t=1760142871; c=relaxed/simple;
+	bh=IxlU8/Y1MczDW264TcdbL2aQybxS1KFKgGDhR6BuU+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VBVCEUV+/xCQzIrB4yzkJpmVPVoaZ3GBsAxIF5I05ovg35cEsuvnDqOreYlJY/wz5H+JJn3gGNLAtuDoczx2ElPnXHw/uJfdC58HpFIvg/F0iVSFOD4lVzhCJ2+K9AmIA7mcPIhnNbDc2dLOJWZSW7iAYHClb1RyW68XibRlHzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wR20Rtuc; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59B0YEVF353860;
+	Fri, 10 Oct 2025 19:34:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760142854;
+	bh=5tb0FkjK5oEDROBMYZswPGbop5JJW+q0ySTeHcMG0ig=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=wR20Rtuc81AJEmDFXfeQ5LQwC919WRlBMrpLJ8gpQp/ir94OTK3njFl65NdnY6UK5
+	 gHmSg+evbjaef78EBCtqUxCbYROYI6XhDvW0e5LHWtnwUbiS6028AxIqSz51hus/s1
+	 UWmG8E1glShbppLTS/ILeFjo57nYkKUX4WgKxX8U=
+Received: from DLEE205.ent.ti.com (dlee205.ent.ti.com [157.170.170.85])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59B0YEsI1165764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 10 Oct 2025 19:34:14 -0500
+Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 10 Oct
+ 2025 19:34:14 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 10 Oct 2025 19:34:14 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59B0YDrX2676927;
+	Fri, 10 Oct 2025 19:34:13 -0500
+Message-ID: <3b7ab4c5-7dfc-41f9-bf6d-6deabfe97338@ti.com>
+Date: Fri, 10 Oct 2025 19:34:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b63f1f40-a8f5-4b54-b025-d8d1daf78c9b@suse.cz>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to simplify
+ lock handling
+To: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20251010-remoteproc-cleanup-v2-0-7cecf1bfd81c@nxp.com>
+ <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Vlastimil,
-
-On Sat, Oct 11, 2025 at 12:22:39AM +0200 Vlastimil Babka wrote:
-> On 10/10/25 20:42, Phil Auld wrote:
-> > On Fri, Oct 10, 2025 at 08:27:30PM +0200 Vlastimil Babka wrote:
-> >> On 10/10/25 20:19, Linus Torvalds wrote:
-> >> > On Fri, 10 Oct 2025 at 08:11, Phil Auld <pauld@redhat.com> wrote:
-> >> >>
-> >> >> After several days of failed boots I've gotten it down to these two
-> >> >> commits.
-> >> >>
-> >> >> 59faa4da7cd4 maple_tree: use percpu sheaves for maple_node_cache
-> >> >> 3accabda4da1 mm, vma: use percpu sheaves for vm_area_struct cache
-> >> >>
-> >> >> The first is such an early failure it's silent. With just 3acca I
-> >> >> get :
-> >> >>
-> >> >> [    9.341152] BUG: kernel NULL pointer dereference, address: 0000000000000040
-> >> >> [    9.348115] #PF: supervisor read access in kernel mode
-> >> >> [    9.353264] #PF: error_code(0x0000) - not-present page
-> >> >> [    9.358413] PGD 0 P4D 0
-> >> >> [    9.360959] Oops: Oops: 0000 [#1] SMP NOPTI
-> >> >> [    9.365154] CPU: 21 UID: 0 PID: 818 Comm: kworker/u398:0 Not tainted 6.17.0-rc3.slab+ #5 PREEMPT(voluntary)
-> >> >> [    9.374982] Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.26.0 07/30/2025
-> >> >> [    9.382641] RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
-> >> >> [    9.388048] Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
-> >> > 
-> >> > That decodes to
-> >> > 
-> >> >    0:           mov    0x10(%rsi),%rax
-> >> >    4:           mov    0x8(%rsi),%rsi
-> >> >    8:           test   %rax,%rax
-> >> >    b:           je     0x18
-> >> >    d:           mov    0x18(%rax),%ecx
-> >> >   10:           test   %ecx,%ecx
-> >> >   12:           jne    0xfd
-> >> >   18:           movslq %gs:0x250eee4(%rip),%rax
-> >> >   20:           mov    0xe0(%r14,%rax,8),%rax
-> >> >   28:*          mov    0x40(%rax),%r13          <-- trapping instruction
-> >> >   2c:           mov    %r13,%rdi
-> >> >   2f:           call   0xffffffffffff81e4
-> >> >   34:           mov    %rax,%rbp
-> >> >   37:           test   %rax,%rax
-> >> >   3a:           je     0x59
-> >> > 
-> >> > which is the code around that barn_replace_empty_sheaf() call.
-> >> > 
-> >> > In particular, the trapping instruction is from get_barn(), it's the "->barn" in
-> >> > 
-> >> >         return get_node(s, numa_mem_id())->barn;
-> >> > 
-> >> > so it looks like 'get_node()' is returning NULL here:
-> >> > 
-> >> >         return s->node[node];
-> >> > 
-> >> > That 0x250eee4(%rip) is from "get_node()" becoming
-> >> > 
-> >> >   18:           movslq  %gs:numa_node(%rip), %rax  # node
-> >> >   20:           mov    0xe0(%r14,%rax,8),%rax # ->node[node]
-> >> > 
-> >> > instruction, and then that ->barn dereference is the trapping
-> >> > instruction that tries to read node->barn:
-> >> > 
-> >> >   28:*          mov    0x40(%rax),%r13   # node->barn
-> >> > 
-> >> > but I did *not* look into why s->node[node] would be NULL.
-> >> > 
-> >> > Over to you Vlastimil,
-> >> 
-> >> Thanks, yeah will look ASAP. I suspect the "nodes with zero memory" is
-> >> something that might not be handled well in general on x86. I know powerpc
-> >> used to do these kind of setups first and they have some special handling,
-> >> so numa_mem_id() would give you the closest node with memory in there and I
-> >> suspect it's not happening here. CPU 21 is node 6 so it's one of those
-> >> without memory. I'll see if I can simulate this with QEMU and what's the
-> >> most sensible fix
-> >>
-> > 
-> > Thanks for taking a look.  I thought the NPS4 thing might be playing a role.
+On 10/10/25 7:24 AM, Peng Fan wrote:
+> Replace manual mutex_lock/unlock and error-handling patterns with cleanup.h
+> macros (ACQUIRE, ACQUIRE_ERR, and scoped_guard) to streamline lock
+> management. As a result, several goto labels and redundant error paths are
+> eliminated.
 > 
-> From what I quickly found I understood that NPS4 is supposed to create extra
-> numa nodes per socket (4 instead of 1) and interleave the memory between
-> them. So it seems weird to me it would assign everything to one node and
-> leave 3 others memoryless?
->
-
-That I don't know. Someone from AMD might be able to help there. This system
-has had its BIOS and other bits updated just a couple of months ago but
-this numa layout has been there since I've been using the system (several
-years now).
-
-> > I'm happy to take any test/fix code you have for a spin on this system. 
->  
-> Thanks. Here's a candidate fix in case you can test. I'll finalize it
-> tomorrow. The slab performance won't be optimal on cpus on those memoryless
-> nodes, that's why I'd like to figure out if it's a BIOS bug or not. If
-> memoryless nodes are really intended we should look into initializing things
-> so that numa_mem_id() works as expected and points to nearest populated
-> node.
-
-The below does the trick. It boots and I ran a suite of stress-ng tests
-for sanity. Any performance it's getting now is better than it was when it
-wouldn't boot :)
-
-Tested-by: Phil Auld <pauld@redhat.com>
-
-
-Cheers,
-Phil
-
+> No functional changes.
 > 
-> ----8<----
-> From 097c6251882bf5537162d17b6726575288ba9715 Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Sat, 11 Oct 2025 00:13:20 +0200
-> Subject: [PATCH] slab: fix NULL pointer when trying to access barn
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  mm/slub.c | 60 +++++++++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 47 insertions(+), 13 deletions(-)
+>   drivers/remoteproc/remoteproc_core.c | 113 ++++++++++++++---------------------
+>   1 file changed, 45 insertions(+), 68 deletions(-)
 > 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 135c408e0515..bd3c2821e6c3 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -507,7 +507,12 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
->  /* Get the barn of the current cpu's memory node */
->  static inline struct node_barn *get_barn(struct kmem_cache *s)
->  {
-> -	return get_node(s, numa_mem_id())->barn;
-> +	struct kmem_cache_node *n = get_node(s, numa_mem_id());
-> +
-> +	if (!n)
-> +		return NULL;
-> +
-> +	return n->barn;
->  }
->  
->  /*
-> @@ -4982,6 +4987,10 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
->  	}
->  
->  	barn = get_barn(s);
-> +	if (!barn) {
-> +		local_unlock(&s->cpu_sheaves->lock);
-> +		return NULL;
-> +	}
->  
->  	full = barn_replace_empty_sheaf(barn, pcs->main);
->  
-> @@ -5153,13 +5162,20 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
->  	if (unlikely(pcs->main->size == 0)) {
->  
->  		struct slab_sheaf *full;
-> +		struct node_barn *barn;
->  
->  		if (pcs->spare && pcs->spare->size > 0) {
->  			swap(pcs->main, pcs->spare);
->  			goto do_alloc;
->  		}
->  
-> -		full = barn_replace_empty_sheaf(get_barn(s), pcs->main);
-> +		barn = get_barn(s);
-> +		if (!barn) {
-> +			local_unlock(&s->cpu_sheaves->lock);
-> +			return allocated;
-> +		}
-> +
-> +		full = barn_replace_empty_sheaf(barn, pcs->main);
->  
->  		if (full) {
->  			stat(s, BARN_GET);
-> @@ -5314,6 +5330,7 @@ kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
->  {
->  	struct slub_percpu_sheaves *pcs;
->  	struct slab_sheaf *sheaf = NULL;
-> +	struct node_barn *barn;
->  
->  	if (unlikely(size > s->sheaf_capacity)) {
->  
-> @@ -5355,8 +5372,11 @@ kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
->  		pcs->spare = NULL;
->  		stat(s, SHEAF_PREFILL_FAST);
->  	} else {
-> +		barn = get_barn(s);
-> +
->  		stat(s, SHEAF_PREFILL_SLOW);
-> -		sheaf = barn_get_full_or_empty_sheaf(get_barn(s));
-> +		if (barn)
-> +			sheaf = barn_get_full_or_empty_sheaf(barn);
->  		if (sheaf && sheaf->size)
->  			stat(s, BARN_GET);
->  		else
-> @@ -5426,7 +5446,7 @@ void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
->  	 * If the barn has too many full sheaves or we fail to refill the sheaf,
->  	 * simply flush and free it.
->  	 */
-> -	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES ||
-> +	if (!barn || data_race(barn->nr_full) >= MAX_FULL_SHEAVES ||
->  	    refill_sheaf(s, sheaf, gfp)) {
->  		sheaf_flush_unused(s, sheaf);
->  		free_empty_sheaf(s, sheaf);
-> @@ -5943,10 +5963,9 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
->   * put the full sheaf there.
->   */
->  static void __pcs_install_empty_sheaf(struct kmem_cache *s,
-> -		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty)
-> +		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty,
-> +		struct node_barn *barn)
->  {
-> -	struct node_barn *barn;
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 8004a480348378abef78ad5641a8c8b5766c20a6..dd859378f6ff6dec2728980cc82d31687aa7a3dc 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -17,6 +17,7 @@
+>   #define pr_fmt(fmt)    "%s: " fmt, __func__
+>   
+>   #include <asm/byteorder.h>
+> +#include <linux/cleanup.h>
+>   #include <linux/delay.h>
+>   #include <linux/device.h>
+>   #include <linux/dma-mapping.h>
+> @@ -1830,13 +1831,14 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>   	struct device *dev = &rproc->dev;
+>   	int ret;
+>   
+> -	ret = mutex_lock_interruptible(&rproc->lock);
+> +	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+> +	ret = ACQUIRE_ERR(mutex_intr, &lock);
+>   	if (ret)
+>   		return ret;
+>   
+>   	/* State could have changed before we got the mutex */
+>   	if (rproc->state != RPROC_CRASHED)
+> -		goto unlock_mutex;
+> +		return ret;
+>   
+>   	dev_err(dev, "recovering %s\n", rproc->name);
+>   
+> @@ -1845,8 +1847,6 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>   	else
+>   		ret = rproc_boot_recovery(rproc);
+>   
+> -unlock_mutex:
+> -	mutex_unlock(&rproc->lock);
+>   	return ret;
+>   }
+>   
+> @@ -1864,25 +1864,19 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>   
+>   	dev_dbg(dev, "enter %s\n", __func__);
+>   
+> -	mutex_lock(&rproc->lock);
 > -
->  	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
->  
->  	/* This is what we expect to find if nobody interrupted us. */
-> @@ -5956,8 +5975,6 @@ static void __pcs_install_empty_sheaf(struct kmem_cache *s,
->  		return;
->  	}
->  
-> -	barn = get_barn(s);
-> -
->  	/*
->  	 * Unlikely because if the main sheaf had space, we would have just
->  	 * freed to it. Get rid of our empty sheaf.
-> @@ -6002,6 +6019,11 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
->  	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
->  
->  	barn = get_barn(s);
-> +	if (!barn) {
-> +		local_unlock(&s->cpu_sheaves->lock);
-> +		return NULL;
-> +	}
-> +
->  	put_fail = false;
->  
->  	if (!pcs->spare) {
-> @@ -6084,7 +6106,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
->  	}
->  
->  	pcs = this_cpu_ptr(s->cpu_sheaves);
-> -	__pcs_install_empty_sheaf(s, pcs, empty);
-> +	__pcs_install_empty_sheaf(s, pcs, empty, barn);
->  
->  	return pcs;
->  }
-> @@ -6121,8 +6143,9 @@ bool free_to_pcs(struct kmem_cache *s, void *object)
->  
->  static void rcu_free_sheaf(struct rcu_head *head)
->  {
-> +	struct kmem_cache_node *n;
->  	struct slab_sheaf *sheaf;
-> -	struct node_barn *barn;
-> +	struct node_barn *barn = NULL;
->  	struct kmem_cache *s;
->  
->  	sheaf = container_of(head, struct slab_sheaf, rcu_head);
-> @@ -6139,7 +6162,11 @@ static void rcu_free_sheaf(struct rcu_head *head)
->  	 */
->  	__rcu_free_sheaf_prepare(s, sheaf);
->  
-> -	barn = get_node(s, sheaf->node)->barn;
-> +	n = get_node(s, sheaf->node);
-> +	if (!n)
-> +		goto flush;
-> +
-> +	barn = n->barn;
->  
->  	/* due to slab_free_hook() */
->  	if (unlikely(sheaf->size == 0))
-> @@ -6157,11 +6184,12 @@ static void rcu_free_sheaf(struct rcu_head *head)
->  		return;
->  	}
->  
-> +flush:
->  	stat(s, BARN_PUT_FAIL);
->  	sheaf_flush_unused(s, sheaf);
->  
->  empty:
-> -	if (data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES) {
-> +	if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES) {
->  		barn_put_empty_sheaf(barn, sheaf);
->  		return;
->  	}
-> @@ -6191,6 +6219,10 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
->  		}
->  
->  		barn = get_barn(s);
-> +		if (!barn) {
-> +			local_unlock(&s->cpu_sheaves->lock);
-> +			goto fail;
-> +		}
->  
->  		empty = barn_get_empty_sheaf(barn);
->  
-> @@ -6304,6 +6336,8 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
->  		goto do_free;
->  
->  	barn = get_barn(s);
-> +	if (!barn)
-> +		goto no_empty;
->  
->  	if (!pcs->spare) {
->  		empty = barn_get_empty_sheaf(barn);
-> -- 
-> 2.51.0
-> 
-> 
+> -	if (rproc->state == RPROC_CRASHED) {
+> +	scoped_guard(mutex, &rproc->lock) {
 
--- 
+Not sure this one is worth switching to scoped_guard as is doesn't save
+us needing the goto out label. Plus it adds indent to a bunch of lines.
+
+>   		/* handle only the first crash detected */
+> -		mutex_unlock(&rproc->lock);
+> -		return;
+> -	}
+> +		if (rproc->state == RPROC_CRASHED)
+> +			return;
+>   
+> -	if (rproc->state == RPROC_OFFLINE) {
+>   		/* Don't recover if the remote processor was stopped */
+> -		mutex_unlock(&rproc->lock);
+> -		goto out;
+> -	}
+> -
+> -	rproc->state = RPROC_CRASHED;
+> -	dev_err(dev, "handling crash #%u in %s\n", ++rproc->crash_cnt,
+> -		rproc->name);
+> +		if (rproc->state == RPROC_OFFLINE)
+> +			goto out;
+>   
+> -	mutex_unlock(&rproc->lock);
+> +		rproc->state = RPROC_CRASHED;
+> +		dev_err(dev, "handling crash #%u in %s\n", ++rproc->crash_cnt,
+> +			rproc->name);
+> +	}
+>   
+>   	if (!rproc->recovery_disabled)
+>   		rproc_trigger_recovery(rproc);
+> @@ -1915,23 +1909,21 @@ int rproc_boot(struct rproc *rproc)
+>   
+>   	dev = &rproc->dev;
+>   
+> -	ret = mutex_lock_interruptible(&rproc->lock);
+> +	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+> +	ret = ACQUIRE_ERR(mutex_intr, &lock);
+>   	if (ret) {
+>   		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>   		return ret;
+>   	}
+>   
+>   	if (rproc->state == RPROC_DELETED) {
+> -		ret = -ENODEV;
+>   		dev_err(dev, "can't boot deleted rproc %s\n", rproc->name);
+> -		goto unlock_mutex;
+> +		return -ENODEV;
+>   	}
+>   
+>   	/* skip the boot or attach process if rproc is already powered up */
+> -	if (atomic_inc_return(&rproc->power) > 1) {
+> -		ret = 0;
+> -		goto unlock_mutex;
+> -	}
+> +	if (atomic_inc_return(&rproc->power) > 1)
+> +		return 0;
+>   
+>   	if (rproc->state == RPROC_DETACHED) {
+>   		dev_info(dev, "attaching to %s\n", rproc->name);
+> @@ -1955,8 +1947,7 @@ int rproc_boot(struct rproc *rproc)
+>   downref_rproc:
+>   	if (ret)
+>   		atomic_dec(&rproc->power);
+> -unlock_mutex:
+> -	mutex_unlock(&rproc->lock);
+> +
+>   	return ret;
+>   }
+>   EXPORT_SYMBOL(rproc_boot);
+> @@ -1987,26 +1978,24 @@ int rproc_shutdown(struct rproc *rproc)
+>   	struct device *dev = &rproc->dev;
+>   	int ret;
+>   
+> -	ret = mutex_lock_interruptible(&rproc->lock);
+> +	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+> +	ret = ACQUIRE_ERR(mutex_intr, &lock);
+>   	if (ret) {
+>   		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>   		return ret;
+>   	}
+>   
+> -	if (rproc->state != RPROC_RUNNING &&
+> -	    rproc->state != RPROC_ATTACHED) {
+> -		ret = -EINVAL;
+> -		goto out;
+> -	}
+> +	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED)
+
+I liked this better as two lines
+
+if (rproc->state != RPROC_RUNNING &&
+     rproc->state != RPROC_ATTACHED) {
+
+> +		return -EINVAL;
+>   
+>   	/* if the remote proc is still needed, bail out */
+>   	if (!atomic_dec_and_test(&rproc->power))
+> -		goto out;
+> +		return ret;
+>   
+>   	ret = rproc_stop(rproc, false);
+>   	if (ret) {
+>   		atomic_inc(&rproc->power);
+> -		goto out;
+> +		return ret;
+>   	}
+>   
+>   	/* clean up all acquired resources */
+> @@ -2021,8 +2010,7 @@ int rproc_shutdown(struct rproc *rproc)
+>   	kfree(rproc->cached_table);
+>   	rproc->cached_table = NULL;
+>   	rproc->table_ptr = NULL;
+> -out:
+> -	mutex_unlock(&rproc->lock);
+> +
+>   	return ret;
+>   }
+>   EXPORT_SYMBOL(rproc_shutdown);
+> @@ -2052,27 +2040,25 @@ int rproc_detach(struct rproc *rproc)
+>   	struct device *dev = &rproc->dev;
+>   	int ret;
+>   
+> -	ret = mutex_lock_interruptible(&rproc->lock);
+> +	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+> +	ret = ACQUIRE_ERR(mutex_intr, &lock);
+>   	if (ret) {
+>   		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>   		return ret;
+>   	}
+>   
+>   	if (rproc->state != RPROC_ATTACHED) {
+> -		ret = -EINVAL;
+> -		goto out;
+> +		return -EINVAL;
+>   	}
+
+The above becomes one line, so you can drop the { }
+
+Andrew
+
+>   
+>   	/* if the remote proc is still needed, bail out */
+> -	if (!atomic_dec_and_test(&rproc->power)) {
+> -		ret = 0;
+> -		goto out;
+> -	}
+> +	if (!atomic_dec_and_test(&rproc->power))
+> +		return 0;
+>   
+>   	ret = __rproc_detach(rproc);
+>   	if (ret) {
+>   		atomic_inc(&rproc->power);
+> -		goto out;
+> +		return ret;
+>   	}
+>   
+>   	/* clean up all acquired resources */
+> @@ -2087,8 +2073,7 @@ int rproc_detach(struct rproc *rproc)
+>   	kfree(rproc->cached_table);
+>   	rproc->cached_table = NULL;
+>   	rproc->table_ptr = NULL;
+> -out:
+> -	mutex_unlock(&rproc->lock);
+> +
+>   	return ret;
+>   }
+>   EXPORT_SYMBOL(rproc_detach);
+> @@ -2192,7 +2177,8 @@ int rproc_set_firmware(struct rproc *rproc, const char *fw_name)
+>   
+>   	dev = rproc->dev.parent;
+>   
+> -	ret = mutex_lock_interruptible(&rproc->lock);
+> +	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+> +	ret = ACQUIRE_ERR(mutex_intr, &lock);
+>   	if (ret) {
+>   		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>   		return -EINVAL;
+> @@ -2200,28 +2186,22 @@ int rproc_set_firmware(struct rproc *rproc, const char *fw_name)
+>   
+>   	if (rproc->state != RPROC_OFFLINE) {
+>   		dev_err(dev, "can't change firmware while running\n");
+> -		ret = -EBUSY;
+> -		goto out;
+> +		return -EBUSY;
+>   	}
+>   
+>   	len = strcspn(fw_name, "\n");
+>   	if (!len) {
+>   		dev_err(dev, "can't provide empty string for firmware name\n");
+> -		ret = -EINVAL;
+> -		goto out;
+> +		return -EINVAL;
+>   	}
+>   
+>   	p = kstrndup(fw_name, len, GFP_KERNEL);
+> -	if (!p) {
+> -		ret = -ENOMEM;
+> -		goto out;
+> -	}
+> +	if (!p)
+> +		return -ENOMEM;
+>   
+>   	kfree_const(rproc->firmware);
+>   	rproc->firmware = p;
+>   
+> -out:
+> -	mutex_unlock(&rproc->lock);
+>   	return ret;
+>   }
+>   EXPORT_SYMBOL(rproc_set_firmware);
+> @@ -2316,9 +2296,8 @@ int rproc_add(struct rproc *rproc)
+>   	}
+>   
+>   	/* expose to rproc_get_by_phandle users */
+> -	mutex_lock(&rproc_list_mutex);
+> -	list_add_rcu(&rproc->node, &rproc_list);
+> -	mutex_unlock(&rproc_list_mutex);
+> +	scoped_guard(mutex, &rproc_list_mutex)
+> +		list_add_rcu(&rproc->node, &rproc_list);
+>   
+>   	return 0;
+>   
+> @@ -2582,16 +2561,14 @@ int rproc_del(struct rproc *rproc)
+>   	/* TODO: make sure this works with rproc->power > 1 */
+>   	rproc_shutdown(rproc);
+>   
+> -	mutex_lock(&rproc->lock);
+> -	rproc->state = RPROC_DELETED;
+> -	mutex_unlock(&rproc->lock);
+> +	scoped_guard(mutex, &rproc->lock)
+> +		rproc->state = RPROC_DELETED;
+>   
+>   	rproc_delete_debug_dir(rproc);
+>   
+>   	/* the rproc is downref'ed as soon as it's removed from the klist */
+> -	mutex_lock(&rproc_list_mutex);
+> -	list_del_rcu(&rproc->node);
+> -	mutex_unlock(&rproc_list_mutex);
+> +	scoped_guard(mutex, &rproc_list_mutex)
+> +		list_del_rcu(&rproc->node);
+>   
+>   	/* Ensure that no readers of rproc_list are still active */
+>   	synchronize_rcu();
+> 
 
 
