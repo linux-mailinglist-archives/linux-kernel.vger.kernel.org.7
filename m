@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-849067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C65BCF242
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:29:18 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CFBABCF23F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C8DC4EA043
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:28:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E379034C62D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06FC23E347;
-	Sat, 11 Oct 2025 08:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8312823C4F3;
+	Sat, 11 Oct 2025 08:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZM4REZ1R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BnzaxpOp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA77523AE9A
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2567C23BCE4
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760171315; cv=none; b=EovoaMUbH2VPZbRTAgXs0tZXdsg2FLP2tt08qHcFMMMGMcpSk8dhPJs7HV0VPNsRGXEigzQpNyIN6bBb3CZAjl2dqMka/iuAZMrf4lbC3hG1xl/KdL1w3VpWJV8qlXUzHPOa9I/yTC06Pqq4O7yz6hm5LsP+TXiwLGnjj7SJRK8=
+	t=1760171317; cv=none; b=DCbj+vLPyDIBSEijpZw8xwkTl5B7UQq79vLP4K2d0P17MuqCz6FHlj5ROuQWejTh46+N5FnIq9Ufne7uruWaE4lFvJsKl4PwZRdB4T76HG5U/f2J+YP+Xac8dspWRwy58qhBn5xy2CRE82D3Zcwgo4YMKdORtdB9EK6tCGe/zOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760171315; c=relaxed/simple;
-	bh=LRfI47UB2UnyFYw/FWC26NL7Yq0N9R5zYg3HcLRgkdM=;
+	s=arc-20240116; t=1760171317; c=relaxed/simple;
+	bh=jRcrQx61y9kXssdrhnsAAhEbZBbsrGaVtE/xowsZG3U=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YCCKgkWBDlARYys6K03L43mfPpB1QeTmL9orey9wp/gN816V+cx1u7QGm95vBnnknfOktCHOR8wpRbLUrQ61agNSnzm9yerWCATEDBfIeoBne4gLb3Cn8OdqyAYJPsRz2KVEjP3umjSElVzwO0CV76fBGI9dOFqthcF9vdO58Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZM4REZ1R; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=puZzYPrljfh0Jvl0kSUr5Q98nwpPPxFI85K5+XFbxvi6xVzz9HHXZt2i8zfWuU5HwOLwnwTEKOC+E+TrUDOBoVr5tpWf23DxJoYxCPKDgJvx+CULng1khiITocvJNs3UADQKoNJ6MvTIHnMFjrXzw7EU8p6g9tFxNFwciyVgqMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BnzaxpOp; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760171308;
+	s=mimecast20190719; t=1760171311;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rHj98cou2Y19csOC6HqCSeOGSHvHBg7RYgMNCaj5iUM=;
-	b=ZM4REZ1RUaVDjhOsW/6NfWsVufy6YL+hOdT4mVaz/DlG7EtRpgLtklsvRPQf/vvlCMnghT
-	ORZopC3rq675yQ+YdHPXZ+6O3TVRNirtyxkgejA/SBUjZJnH/GAuH04yNBWMosgt2iMC5Y
-	4IYloiWGnX3vg4ZROKff0azw/e41NUc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=izEDGnACaGb+UE+AiB6Iu8Q3+pibeALVxmn3zVNoFFk=;
+	b=BnzaxpOpgvmnxtctGld9OIFFFhmtCaxpcvn2B0CqTTZIUNAbhIB25xmV2AMoCGeyEn9sZY
+	eWHtGaljRO75Jc6RqlmbFqYoYv0QCNh6XqVoj641eTACrnZzgmvfaA22OS2U62/9nmJ61c
+	zVZVUCdQtH7RGSr3cHiDviBybbI7X10=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-380-dytZ8QJDPaWMDnCZlGNPKg-1; Sat, 11 Oct 2025 04:28:27 -0400
-X-MC-Unique: dytZ8QJDPaWMDnCZlGNPKg-1
-X-Mimecast-MFC-AGG-ID: dytZ8QJDPaWMDnCZlGNPKg_1760171306
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e4fa584e7so15385735e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:28:26 -0700 (PDT)
+ us-mta-475-UqCaJ_ZRM2CK26Q5PcLKmw-1; Sat, 11 Oct 2025 04:28:29 -0400
+X-MC-Unique: UqCaJ_ZRM2CK26Q5PcLKmw-1
+X-Mimecast-MFC-AGG-ID: UqCaJ_ZRM2CK26Q5PcLKmw_1760171308
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f7b5c27d41so1720040f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:28:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760171306; x=1760776106;
+        d=1e100.net; s=20230601; t=1760171308; x=1760776108;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rHj98cou2Y19csOC6HqCSeOGSHvHBg7RYgMNCaj5iUM=;
-        b=q9horJUFLVBo5QvZHtlhOrYW8mwsdrbpS7f5QFF4uwpzywvIRVKwTYO7fdzWDM4MuO
-         tnDnu68YxE33eITtpofN3b17xqCf5zaacHSCgQNps6Zu3/ZO2hrtwj8HILTMAjx64SBJ
-         cpo52HAvDAJbmsK9RAt1sK6q1jXooOziSZwalFXwN62Y1iu1lJ5vHXuFF4b+yxmDnewk
-         0Zrmsn4NcH0GoJ12EB4ZUj2E8mSNEvd3Ls1rLlbeztfwg5F45+C4MukOv/cg0Y+dc2A0
-         xtexiR5jrQ6k26v04uK0G3NeDZa/h6lx7Nl77RGNZMYOr2czTgt4s+G8zHLLyqdCVOIw
-         A0ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVQS9Q/0SFn3HZT4SyfnsjgQjd745P4/gpEgOet+Qmv5/tLB+hSsKtSca5za58qq471BmYE7hcXsQ27548=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypszC02yrrhPfmg4Me9gAWs9Um7ybq1QW7G5gb8int34kFfak9
-	mJyux9ZNEI/aPzaFJAXRP6tj03te7dQx/b62Sf05/SyC1FsZeaYbE+G1IFW/Ot1xAtIvyt5spkr
-	dTr8EOvOA4t4/GjZOQFURcwkOR7lcXFXHc/+O98mi1dtSa79OhnVrIM5xINglL0TlyA==
-X-Gm-Gg: ASbGncuYD/2uneLQACPLAVXwCxlQEiU6/+2aLHFLIbQMqgThrHm0U5N/VACI1oCpQEw
-	ginVB8QHtZNfkJZIbc35nXuZvXU2AOwEG0jj7GRx2dNz84eWvTyFZIrfEyF0i0iw7PgQpUBMClf
-	AzfaYEvcIXB8/Sr82Xy3QPLv15vQ2MU6/G5H3QfK9i9p13QCr+xGnkMHMliUHVHNVC5WzyRxVgm
-	ifDM7c67goPu3cXBLgCJCpwmUhQa7gSMMZvo21aMrL4MUWsFhebgZafnr0G+wI02Fw9YWrFHOKQ
-	ZS2ojwCXbRRpro+llJyANiuMq0ZB2+QYy1oKEIInSDZq
-X-Received: by 2002:a05:6000:4305:b0:3ec:d78d:8fcc with SMTP id ffacd0b85a97d-42666ab85a7mr8999682f8f.14.1760171305776;
-        Sat, 11 Oct 2025 01:28:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqokUQUSflqj2ie1uzhEOzTJOaDkXEKNoBKE1a5t+pgJEbZNk3LxtrY+4KW6G+rzLsLPIdSg==
-X-Received: by 2002:a05:6000:4305:b0:3ec:d78d:8fcc with SMTP id ffacd0b85a97d-42666ab85a7mr8999670f8f.14.1760171305390;
-        Sat, 11 Oct 2025 01:28:25 -0700 (PDT)
+        bh=izEDGnACaGb+UE+AiB6Iu8Q3+pibeALVxmn3zVNoFFk=;
+        b=B7ocj51EsEHhQegu9EjPGJNyO40cAPC0VJOKtH/+g/DuZ4ESH3yBPdFNuXnO4TQntj
+         C4uLnZdFI8+f0Aez0a5lo8NrQYWOIZ0dHIDvclr5IFZo4zyYeijn1OyJkC4nbU0HYjZ1
+         dYwQl/TJk5Xk7UtyLGcwt5Q2Zrqyxfav/TC1InOQzGDgMdauRfjaNXNaBgkq0O2NoGhM
+         Zw6/RfvQnZd1Mn6uGThmQtzC3mjo6/vABF7Tk6tEAjrbAj8vtxoYBtMLtA02/Kx5Xv1C
+         Z9LZlATca6ZkyL6ACiu0nv+HAXIPNFicXUipQ06jUaA3xeiCW6z8bdZQJ8kmdQrW5PYZ
+         EcBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Fl/+WKvl0DN2JKOP0gpnK87xBhMGAHu5R1/pTwhN1BDFg2FAC0C+Gb3DMFLrndJ9NqarndqiLoLabMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7p7dU9EkYZrOxuURLwTx/N2QzfqYKwCowNUKwW93QQOAImcK4
+	LRRYjc3MYHm54GwcsQR53Qj9BJjWwEeV7Y+BdGWcKl40KM4pjIEYenPkh7VSo7+q0t0AwGI8ZKA
+	Qkx+IOQyPdZp7kV3YD5sajJGyVTP2ZzT0EaUXzaLRXzTtIeKoHZbHcOwlYfyefv+xMw==
+X-Gm-Gg: ASbGncviqQF746JVBIdxqznRiCVXadTw/A48LU7b5ck1Kd9OGGdFCEJijTe7564kpqG
+	pwYKThfztzO1s3dN6Y18+RAD9xkFSVVPrMJzwgbolgS9onrtxRuj1x9xZAmN+rf3JXAiuFEGoPj
+	Dcrq7BOtxj4Opy5wdqlDCCNsMG/QiG//hwmsViHovlfhlX1Q89ghqrEPLOIpFil6KnkUTNQITfd
+	/D+UnQ0eeNEFwoSAj2lu+8RBqULJcd4JiIkkD3dL9PtdCi3COaySIdJsQquFdtCNv1TiM0khhxs
+	C7wch2b/x6vzo/NnH2zYJA/I5Nxx65iiNft/wCyIrwTK
+X-Received: by 2002:a05:6000:2f86:b0:404:2fe4:3a80 with SMTP id ffacd0b85a97d-425829ee8c7mr11070489f8f.25.1760171308256;
+        Sat, 11 Oct 2025 01:28:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6+EqJMpQvaelkIXVEWLlIUO2XxTYtzFkl/y1HXogC30uU15snwvq85P0+PcPFAzDMeu1IWA==
+X-Received: by 2002:a05:6000:2f86:b0:404:2fe4:3a80 with SMTP id ffacd0b85a97d-425829ee8c7mr11070479f8f.25.1760171307888;
+        Sat, 11 Oct 2025 01:28:27 -0700 (PDT)
 Received: from localhost ([2a00:a041:e2eb:5500:8728:d68a:a687:c89b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5d0006sm8022580f8f.34.2025.10.11.01.28.24
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5d0006sm8022580f8f.34.2025.10.11.01.28.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 01:28:25 -0700 (PDT)
+        Sat, 11 Oct 2025 01:28:27 -0700 (PDT)
 From: Costa Shulyupin <costa.shul@redhat.com>
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Tomas Glozar <tglozar@redhat.com>,
@@ -87,9 +87,9 @@ To: Steven Rostedt <rostedt@goodmis.org>,
 	Tiezhu Yang <yangtiezhu@loongson.cn>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] tools/rtla: Replace timerlat_hist_usage("...") with fatal("...")
-Date: Sat, 11 Oct 2025 11:27:36 +0300
-Message-ID: <20251011082738.173670-4-costa.shul@redhat.com>
+Subject: [PATCH v2 4/5] tools/rtla: Replace osnoise_top_usage("...") with fatal("...")
+Date: Sat, 11 Oct 2025 11:27:37 +0300
+Message-ID: <20251011082738.173670-5-costa.shul@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251011082738.173670-1-costa.shul@redhat.com>
 References: <20251011082738.173670-1-costa.shul@redhat.com>
@@ -106,43 +106,44 @@ to the user to show it on error. Now that the usage help has
 become very long, it is too noisy to dump the complete help text
 for each typo after the error message itself.
 
-Replace timerlat_hist_usage("...\n") with fatal("...") on errors.
+Replace osnoise_top_usage("...") with fatal("...") on errors.
 
-Remove the already unused 'usage' argument from timerlat_hist_usage().
+Remove the already unused 'usage' argument from osnoise_top_usage().
 
 Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
 
 ---
 
 Changes since v1:
-- fatal() prints "\n" insteasd of caller as suggested by Crystal Wood
+- fatal() prints "\n" insteasd of caller as suggested Crystal Wood
 ---
- tools/tracing/rtla/src/timerlat_hist.c | 32 +++++++++++---------------
- 1 file changed, 13 insertions(+), 19 deletions(-)
+ tools/tracing/rtla/src/osnoise_top.c | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
 
-diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-index ab5d8ca4593c..71557f5751a6 100644
---- a/tools/tracing/rtla/src/timerlat_hist.c
-+++ b/tools/tracing/rtla/src/timerlat_hist.c
-@@ -710,7 +710,7 @@ timerlat_print_stats(struct osnoise_tool *tool)
+diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
+index 87f282e8c145..f0782c5ed0b1 100644
+--- a/tools/tracing/rtla/src/osnoise_top.c
++++ b/tools/tracing/rtla/src/osnoise_top.c
+@@ -257,7 +257,7 @@ osnoise_print_stats(struct osnoise_tool *top)
  /*
-  * timerlat_hist_usage - prints timerlat top usage message
+  * osnoise_top_usage - prints osnoise top usage message
   */
--static void timerlat_hist_usage(char *usage)
-+static void timerlat_hist_usage(void)
+-static void osnoise_top_usage(struct osnoise_params *params, char *usage)
++static void osnoise_top_usage(struct osnoise_params *params)
  {
  	int i;
  
-@@ -766,18 +766,12 @@ static void timerlat_hist_usage(char *usage)
+@@ -296,9 +296,6 @@ static void osnoise_top_usage(struct osnoise_params *params, char *usage)
  		NULL,
  	};
  
 -	if (usage)
 -		fprintf(stderr, "%s\n", usage);
 -
- 	fprintf(stderr, "rtla timerlat hist: a per-cpu histogram of the timer latency (version %s)\n",
- 			VERSION);
- 
+ 	if (params->mode == MODE_OSNOISE) {
+ 		fprintf(stderr,
+ 			"rtla osnoise top: a per-cpu summary of the OS noise (version %s)\n",
+@@ -318,9 +315,6 @@ static void osnoise_top_usage(struct osnoise_params *params, char *usage)
  	for (i = 0; msg[i]; i++)
  		fprintf(stderr, "%s\n", msg[i]);
  
@@ -152,102 +153,84 @@ index ab5d8ca4593c..71557f5751a6 100644
  	exit(EXIT_SUCCESS);
  }
  
-@@ -884,7 +878,7 @@ static struct common_params
+@@ -403,7 +397,7 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
  		case 'c':
  			retval = parse_cpu_set(optarg, &params->common.monitored_cpus);
  			if (retval)
--				timerlat_hist_usage("\nInvalid -c cpu list\n");
+-				osnoise_top_usage(params, "\nInvalid -c cpu list\n");
 +				fatal("Invalid -c cpu list");
  			params->common.cpus = optarg;
  			break;
  		case 'C':
-@@ -901,7 +895,7 @@ static struct common_params
- 			params->common.hist.bucket_size = get_llong_from_str(optarg);
- 			if (params->common.hist.bucket_size == 0 ||
- 			    params->common.hist.bucket_size >= 1000000)
--				timerlat_hist_usage("Bucket size needs to be > 0 and <= 1000000\n");
-+				fatal("Bucket size needs to be > 0 and <= 1000000");
- 			break;
- 		case 'D':
- 			config_debug = 1;
-@@ -909,7 +903,7 @@ static struct common_params
+@@ -422,7 +416,7 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
  		case 'd':
  			params->common.duration = parse_seconds_duration(optarg);
  			if (!params->common.duration)
--				timerlat_hist_usage("Invalid -D duration\n");
-+				fatal("Invalid -D duration");
+-				osnoise_top_usage(params, "Invalid -d duration\n");
++				fatal("Invalid -d duration");
  			break;
  		case 'e':
  			tevent = trace_event_alloc(optarg);
-@@ -925,11 +919,11 @@ static struct common_params
- 			params->common.hist.entries = get_llong_from_str(optarg);
- 			if (params->common.hist.entries < 10 ||
- 			    params->common.hist.entries > 9999999)
--				timerlat_hist_usage("Entries must be > 10 and < 9999999\n");
-+				fatal("Entries must be > 10 and < 9999999");
+@@ -436,7 +430,7 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
  			break;
  		case 'h':
  		case '?':
--			timerlat_hist_usage(NULL);
-+			timerlat_hist_usage();
+-			osnoise_top_usage(params, NULL);
++			osnoise_top_usage(params);
  			break;
  		case 'H':
  			params->common.hk_cpus = 1;
-@@ -949,12 +943,12 @@ static struct common_params
+@@ -447,12 +441,12 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
  		case 'p':
- 			params->timerlat_period_us = get_llong_from_str(optarg);
- 			if (params->timerlat_period_us > 1000000)
--				timerlat_hist_usage("Period longer than 1 s\n");
-+				fatal("Period longer than 1 s");
+ 			params->period = get_llong_from_str(optarg);
+ 			if (params->period > 10000000)
+-				osnoise_top_usage(params, "Period longer than 10 s\n");
++				fatal("Period longer than 10 s");
  			break;
  		case 'P':
  			retval = parse_prio(optarg, &params->common.sched_param);
  			if (retval == -1)
--				timerlat_hist_usage("Invalid -P priority");
+-				osnoise_top_usage(params, "Invalid -P priority");
 +				fatal("Invalid -P priority");
  			params->common.set_sched = 1;
  			break;
+ 		case 'q':
+@@ -461,7 +455,7 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
+ 		case 'r':
+ 			params->runtime = get_llong_from_str(optarg);
+ 			if (params->runtime < 100)
+-				osnoise_top_usage(params, "Runtime shorter than 100 us\n");
++				fatal("Runtime shorter than 100 us");
+ 			break;
  		case 's':
-@@ -1004,7 +998,7 @@ static struct common_params
+ 			params->common.stop_us = get_llong_from_str(optarg);
+@@ -489,7 +483,7 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
  				if (retval)
  					fatal("Error adding trigger %s", optarg);
  			} else {
--				timerlat_hist_usage("--trigger requires a previous -e\n");
+-				osnoise_top_usage(params, "--trigger requires a previous -e\n");
 +				fatal("--trigger requires a previous -e");
  			}
  			break;
- 		case '7': /* filter */
-@@ -1013,7 +1007,7 @@ static struct common_params
+ 		case '1': /* filter */
+@@ -498,7 +492,7 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
  				if (retval)
  					fatal("Error adding filter %s", optarg);
  			} else {
--				timerlat_hist_usage("--filter requires a previous -e\n");
+-				osnoise_top_usage(params, "--filter requires a previous -e\n");
 +				fatal("--filter requires a previous -e");
  			}
  			break;
- 		case '8':
-@@ -1060,10 +1054,10 @@ static struct common_params
- 		fatal("rtla needs root permission");
+ 		case '2':
+@@ -520,7 +514,7 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
+ 				fatal("Invalid action %s", optarg);
+ 			break;
+ 		default:
+-			osnoise_top_usage(params, "Invalid option");
++			fatal("Invalid option");
+ 		}
+ 	}
  
- 	if (params->common.hist.no_irq && params->common.hist.no_thread)
--		timerlat_hist_usage("no-irq and no-thread set, there is nothing to do here");
-+		fatal("no-irq and no-thread set, there is nothing to do here");
- 
- 	if (params->common.hist.no_index && !params->common.hist.with_zeros)
--		timerlat_hist_usage("no-index set with with-zeros is not set - it does not make sense");
-+		fatal("no-index set with with-zeros is not set - it does not make sense");
- 
- 	/*
- 	 * Auto analysis only happens if stop tracing, thus:
-@@ -1072,7 +1066,7 @@ static struct common_params
- 		params->no_aa = 1;
- 
- 	if (params->common.kernel_workload && params->common.user_workload)
--		timerlat_hist_usage("--kernel-threads and --user-threads are mutually exclusive!");
-+		fatal("--kernel-threads and --user-threads are mutually exclusive!");
- 
- 	/*
- 	 * If auto-analysis or trace output is enabled, switch from BPF mode to
 -- 
 2.51.0
 
