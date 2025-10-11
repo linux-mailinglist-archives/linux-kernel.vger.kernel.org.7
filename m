@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-849186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49814BCF755
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:30:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A162BCF75B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DCB9406225
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:30:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9544F4E37CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3125A27C854;
-	Sat, 11 Oct 2025 14:30:11 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB52F23A99F;
+	Sat, 11 Oct 2025 14:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuG9WHBO"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD3286347;
-	Sat, 11 Oct 2025 14:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A167519DFAB
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760193010; cv=none; b=ZxurTww8tYki6D16iqXRf1qOtLK4mK0AMQSPLei7cBEyrqAnCoLOX5VpGU1TEStkxTIzDzQW5q3V0qC8LZoDzKNZU6X3Mr2t8k0Ckuji0AsrOW2Cj3iFE26N7F76awGEjc6BK6bTuNJA2K8wxikiWOQRSB9Pn2BhJVXj3clYZ6s=
+	t=1760193080; cv=none; b=t8/pHHg28RGzpHq8IUOkyvcEWuzoKCkuknOwkpMNQoL5TDUUh7XehEuhy2nTVOeYLkTi1Dkg7XIzYW7rohe1g6IQ0YbL5aNzuCs0B/qkleCR0vhVStwYWjLcFy3T0J/44INp/349sywz2oVy8t+MHbMlgfZ3adWCPX8Zc1z25TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760193010; c=relaxed/simple;
-	bh=wczVGQH1eHpzXRC3+L/CdGXCe/iIQeLXs4DV7ZAvwck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5UIKSISCffuF5ZxQEuo4lNiERNVBqCKUGtkkB4xLFvAjLxQTYD21UnrYVbL2g3LepSd29xSHm19TRM3GYOn/bTBDF3cjvbQyIwVMU0hF6VWU5+nZD22xpK8dqHu1Ms4+PGI5s2mox0REwQb6MueVogsPuwHFIAdizHI3Ov8kCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
-	id A522160742; Sat, 11 Oct 2025 16:30:06 +0200 (CEST)
-Date: Sat, 11 Oct 2025 16:30:06 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-	sdf@fomichev.me
-Subject: Re: [PATCH net 2/2] net: core: split unregister_netdevice list into
- smaller chunks
-Message-ID: <aOpp7n2E9ZVS6RJh@strlen.de>
-References: <20251010135412.22602-1-fw@strlen.de>
- <20251010135412.22602-3-fw@strlen.de>
- <aOmK5i5e_Oi93JiO@mini-arch>
+	s=arc-20240116; t=1760193080; c=relaxed/simple;
+	bh=XpzWd88TyI/XLI7Lya1GQD+iwyqcUR7IMgGr5vh19aQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nNPNufv25+MWbsqJykVcJT2XduXlpMOuAUOYJrQGlmIidytiOIjwN/KGO+XBSw534Jci9Vb7CKT0ITBUlulGiiHyQHrxlGfuMQs7whQQzxLYLRaMK8K5AjFD4seuwLwM+XZBn7T4u+7nGrG8D+6nVlM7etdDHwdPJJH2dVsjNmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HuG9WHBO; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-634a3327ff7so6098845a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760193077; x=1760797877; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GVMNRIG9FUKK8HBhJ3beHD14SK0gN6MU+q62w8zRjfA=;
+        b=HuG9WHBOSxFZeoW6SqTTgPLZFNJFZDiq6yQ5ScTPhBXdiEYxXatVomVXZGV8kSYU0V
+         sd27AHj2+QFWq3HZToB3dtyRDMdcjWVCHNDn4ekFNGd8JUjCR4Ja8shx3NQZGNbHHv02
+         sAdll3L/Ut6XHTFja96PbO0tPpvN+E3W6nT4b4GbdtsqgZYwWXENy5SuhtZU8XWDVPCj
+         cMwE3z4FC820k7oKPi1qLXCY3EDvgxTOpsz6qv2p53vIYoSMrOglzWPCh+gglmeydbJ0
+         6acLJouIgjSCoZ1eS8CDpojZyvfomcaNeW3RUDNkGXhoH0neiXuQeAoKkMHYa22kjItx
+         XKDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760193077; x=1760797877;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GVMNRIG9FUKK8HBhJ3beHD14SK0gN6MU+q62w8zRjfA=;
+        b=QQydvL8ZMFvMa5RtazsrO80qoZJASX90iImlFRonu4uco92TzxC1qYN7Y6kmVl1OSV
+         hRMZ9jfuxsS+BzKT7HTtkVOJlmHfS1jgWx0kpCd1vAuI+fC1CUCAJVb8qznLFsFNvpsZ
+         8UPvHG3mMBvl6Ig6lrNcXhMwykOGupZfzF2/LmhEWIUq0ZgGdRDhGj5Zfw0zAi1PtrV/
+         Lk0pa994Q8FFvxdHF0OwmHkTvNTZU2p9JKz42fOtPnaBviwjhe6DzCrgmEDMi4peDVA+
+         ysk1neYEHJuVWrZ/7tdqaqHSiNWXpJRmX2GtwZ7wHuypxULdX91ogTNfnp3xl1+oB5E3
+         SnhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEgwOJNho5UFK06/Sdm31fjIY4XSTrzv+KVD0os3MsRcruLw/+sBSQAqvztSH0EU+vC5nt8jjaVy0eSpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPzkGe/ZqHV9zpcbFWOYoQhnhiztfpKWOtxBWf8CwGYd5WOD2l
+	FIepPritzYxD1KAl+V1VEEBU/ixP+DMn9BaaEpDzr4DCw0GE3xvBHMCD6pe+Nb2qNsG7pSAeTTV
+	jC5vN3TrQAVRgYiQNTO8KmP+1O+Wm5t4=
+X-Gm-Gg: ASbGnctiIaBc71Cp4J6jWf8xlMWwiMH85NbXmn1yo41MoaWCzsSur14H1kXkBXa6bok
+	pueDalQm9QVy3cWfDmSObLHcjAlDFTlSmcY/EQYYYmb5ju8Tym2DKJmb8kd9sdLlJc6ooJ7IRsA
+	DVYn53CVGXPvnQ0CF5SPVIN9Q+7albqXczDYQyDFvQQ38Mq1wyvDNZPpn2iitqi+iuNnhXSnXLb
+	fzin2xQocGPJ8IvGzKUea4OEQ==
+X-Google-Smtp-Source: AGHT+IHQvYIGg8dXvD2lz4y+qIlbjzYNb68twp7Yek0JvWJpIPtcgD0w142zadNgWyCvxFKj8ZxQdlP+k13p0MDYtR4=
+X-Received: by 2002:a17:907:9407:b0:b39:2424:c699 with SMTP id
+ a640c23a62f3a-b50acb0cc7cmr1519173166b.58.1760193076912; Sat, 11 Oct 2025
+ 07:31:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOmK5i5e_Oi93JiO@mini-arch>
+References: <20251010191055.28708-1-rodrigo.gobbi.7@gmail.com>
+In-Reply-To: <20251010191055.28708-1-rodrigo.gobbi.7@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 11 Oct 2025 17:30:40 +0300
+X-Gm-Features: AS18NWC_RKLNboheFfBHXqm4NJ2o3N7E8VOiWl4ZcI2QzXvoRMJ20WcAp6ctO2o
+Message-ID: <CAHp75VeZuKWxocVq21PCmPdP1P=wQQ75veOzyW-YJ+WW=HAaSQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: imu: bmi270: fix dev_err_probe error msg
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: lanzano.alex@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, ~lkcamp/patches@lists.sr.ht, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Stanislav Fomichev <stfomichev@gmail.com> wrote:
-> On 10/10, Florian Westphal wrote:
-> > +static void unregister_netdevice_close_many_lockdep(struct list_head *head)
-> > +{
-> > +#ifdef CONFIG_LOCKDEP
-> > +	unsigned int lock_depth = lockdep_depth(current);
-> > +	unsigned int lock_count = lock_depth;
-> > +	struct net_device *dev, *tmp;
-> > +	LIST_HEAD(done_head);
-> > +
-> > +	list_for_each_entry_safe(dev, tmp, head, unreg_list) {
-> > +		if (netdev_need_ops_lock(dev))
-> > +			lock_count++;
-> > +
-> > +		/* we'll run out of lockdep keys, reduce size. */
-> > +		if (lock_count >= MAX_LOCK_DEPTH - 1) {
-> > +			LIST_HEAD(tmp_head);
-> > +
-> > +			list_cut_before(&tmp_head, head, &dev->unreg_list);
-> > +			unregister_netdevice_close_many(&tmp_head);
-> > +			lock_count = lock_depth;
-> > +			list_splice_tail(&tmp_head, &done_head);
-> > +		}
-> > +	}
-> > +
-> > +	unregister_netdevice_close_many(head);
-> > +
-> > +	list_for_each_entry_safe_reverse(dev, tmp, &done_head, unreg_list)
-> > +		list_move(&dev->unreg_list, head);
-> > +#else
-> > +	unregister_netdevice_close_many(head);
-> > +#endif
-> 
-> 
-> Any reason not to morph the original code to add this 'no more than 8 at a
-> time' constraint? Having a separate lockdep path with list juggling
-> seems a bit fragile.
-> 
-> 1. add all ops locked devs to the list
-> 2. for each MAX_LOCK_DEPTH (or 'infinity' in the case of non-lockdep)
->   2.1 lock N devs
->   2.2 netif_close_many
->   2.3 unlock N devs
-> 3. ... do the non-ops-locked ones
-> 
-> This way the code won't diverge too much I hope.
+On Fri, Oct 10, 2025 at 10:11=E2=80=AFPM Rodrigo Gobbi
+<rodrigo.gobbi.7@gmail.com> wrote:
+>
+> The bmi270 can be connected to I2C or a SPI interface. If it is a SPI,
+> during probe, if devm_regmap_init() fails, it should print the "spi"
+> term rather "i2c".
 
-I think that having extra code for LOCKDEP (which means debug kernel
-that often also includes k?san, kmemleak etc. is ok.
+rather than
 
-I was more concerned with having no changes to normal (non-lockdep)
-kernel.
+...
 
-Let me try again, I tried to do your solution above before going with
-this extra lockdep-only juggling but I ended up making a mess.
+>         if (IS_ERR(regmap))
+>                 return dev_err_probe(dev, PTR_ERR(regmap),
+> -                                    "Failed to init i2c regmap");
+> +                                    "Failed to init spi regmap");
+
+While at it, add a trailing \n.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
