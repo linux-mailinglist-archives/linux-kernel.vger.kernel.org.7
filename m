@@ -1,184 +1,117 @@
-Return-Path: <linux-kernel+bounces-849331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1119ABCFDD5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 01:36:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F09BCFDDE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 01:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C948349159
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 23:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015CB3B8B24
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 23:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDECC2494ED;
-	Sat, 11 Oct 2025 23:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FYoWAPvE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386124DCE6;
+	Sat, 11 Oct 2025 23:37:49 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC51193077;
-	Sat, 11 Oct 2025 23:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A04F193077
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 23:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760225752; cv=none; b=P+OynZ1eo/4n8Z+e0bv877A/zXnoG5uhfSTrZ4nY5SWB2xneO92FedlJOtNcm3IlV2xlU2w19ogmnmqzu4a2pICSnYOUO0VfsB8bZJAXaxssUqjX4jUk3/zY2zd88AQYbKiICNZeQ6eyUTqkchX6v18R3V8sSFNYV1xEsj+6DB4=
+	t=1760225869; cv=none; b=Pr1EDeevnUPF9QJHvgv4rlOEUc6w42ODkYTIGU1fAsuyOP18snMP2wdJ+DA9aLhgw/PTj5dImrDZkoaGuV5gpnsQLgbM6Yrwr5ezt7zr1+L9NMvKGoCAbqydJiIPHoz9NEczV+HUPHaIKiOycDEJbRE1FDocdd2yuBZs/49851U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760225752; c=relaxed/simple;
-	bh=D2nnX9A3bAt550p64cwu/V8sO85/EYtXZJ1Lk2moVMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=up3BpLSeSjhRq55OgVEIg7Jsa8nXy364BtaXbCd2z/3yFpzqAbQzL/ixbEMYPhieIw7vsAB4PuSF5rcSW+g0SXhJeI7IS7pYU5Wr54sKU73+/enTvTIQiWNOYjXC0oweOMU+VKABu9oo2nbk9OFYI5lzCelOpbDcXVi/o/T2bUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FYoWAPvE; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760225751; x=1791761751;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=D2nnX9A3bAt550p64cwu/V8sO85/EYtXZJ1Lk2moVMw=;
-  b=FYoWAPvEsgwQlSwfTn5CikOnP2uT/DOQrdTsCfbxdK/dZyyjq3PPrRLH
-   1mVjOs9CGZuShT6+PpLBQMLGXCTITWUdPcION1UqZQ2JhWi4pd+FebNf6
-   cPudxvV/DBmTrKNWPALZ1iLP2k9Wcylb5k4GfmEbQZD8M0Ot6hnbsgO+q
-   xKi8lbyDtgLMbhG7j4/1H8QeGFiPkekQc2T4RNTes76BNFDZnRDzo5vsv
-   ubqeo/ZKe3DOXW3GfZRU+PkbEfYM6jD2UYA8VpEikVF0aFVM0t8MD9Upd
-   j5SN8uDpRw948t0S31bR+GMoj/2JAi5NIRCPGCxU9ww38kRphROfLpdiw
-   Q==;
-X-CSE-ConnectionGUID: 8PCdS4pDTn+A08pLsoYzsA==
-X-CSE-MsgGUID: WsvzXQHlT/GhCF0GFb9WPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11579"; a="73847647"
-X-IronPort-AV: E=Sophos;i="6.19,222,1754982000"; 
-   d="scan'208";a="73847647"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 16:35:50 -0700
-X-CSE-ConnectionGUID: si1EuU/VSBOZG4J0EGxbtw==
-X-CSE-MsgGUID: hCpMIkXNTvWDe3JgxTXqtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,222,1754982000"; 
-   d="scan'208";a="185281302"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 11 Oct 2025 16:35:44 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7j7l-00042l-36;
-	Sat, 11 Oct 2025 23:35:41 +0000
-Date: Sun, 12 Oct 2025 07:35:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	Matthew Brost <matthew.brost@intel.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Lukasz Laguna <lukasz.laguna@intel.com>,
-	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-Subject: Re: [PATCH 11/26] drm/xe: Allow the caller to pass guc_buf_cache size
-Message-ID: <202510120724.osgbcJi5-lkp@intel.com>
-References: <20251011193847.1836454-12-michal.winiarski@intel.com>
+	s=arc-20240116; t=1760225869; c=relaxed/simple;
+	bh=/yt9wz/bKCgC/MdzNv4boGLac0GxXQHyqJ8nBB901BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eolJhjP2VHPvnh8Ud1E2GqdVOHpx1Q238nvElu1BHy+1UekHHts8sNlNsMGQe6OpRMSnVzyfewyqWKswZu21/iaYmLdAVxAaw/tio1fnrH3466GUc7rc80B8G6rKUiRMIjUFADGnuWeg1AhD6r8Ya0bhI5Qvo5Aih94z/L1RAnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 931F0882C8;
+	Sat, 11 Oct 2025 23:37:44 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id BC65C2002A;
+	Sat, 11 Oct 2025 23:37:42 +0000 (UTC)
+Date: Sat, 11 Oct 2025 19:37:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] tracing: A couple more fixes to v6.18
+Message-ID: <20251011193742.410cea9d@gandalf.local.home>
+In-Reply-To: <CAHk-=whYZVoEdfO1PmtbirPdBMTV9Nxt9f09CK0k6S+HJD3Zmg@mail.gmail.com>
+References: <20251011155240.59f0ff07@gandalf.local.home>
+	<CAHk-=whYZVoEdfO1PmtbirPdBMTV9Nxt9f09CK0k6S+HJD3Zmg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251011193847.1836454-12-michal.winiarski@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: BC65C2002A
+X-Stat-Signature: y18ofbi18bamomnszzgqni3j5zx3zpw8
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+NN+VDvmlpiKs9XTZJB4MUCxquDF2APPg=
+X-HE-Tag: 1760225862-563824
+X-HE-Meta: U2FsdGVkX18rTPQUdi6vfbFKfu5er9MXON0rFTFZ9M6c7Onvc22w56s5WgkWH0VLYDd+4oeWm1K+uqzxm9nSE7QAHXjX+Eg5+Sl0S4UO9CgL6J6/1+3VUlACypIWHmjXPyLf4ko7WQ/JZNTDyPCPtqMr672b1FGv4+lKhQS94cDN7wtxdRQUdpQV9ycOHX9RiBdpSqh2uDmCCJ6kyw+GdOkQY4T/Lp1rj5/own5/uOY+oS4vv1qX09p/0HPaSehgyl4njNyFgvENGFu+OGqXsRj28G+rzC41lTuR7/vTgUwGvVTI7SsiIaRMcdV3o3nAgersH9A8gfmOzv56vFEWJ5qCA6Kdzcdnoq7J+gyI+OiKRHBPuPkCqIhi3GSKd24Hr17O30+cTKdjqeyOdM+CvKHA9JveAIhUtussv+C3nbL+PgetRFirw96yWOS0z5/u
 
-Hi Michał,
+On Sat, 11 Oct 2025 16:09:18 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-kernel test robot noticed the following build errors:
+> On Sat, 11 Oct 2025 at 12:52, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > +       /* cnt includes both the entry->id and the data behind it. */
+> > +       size = struct_size(entry, buf, cnt - sizeof(entry->id));  
+> 
+> This seems very non-intuitive.
+> 
+> Why isn't it just saying
+> 
+>     size = cnt + offsetof(struct raw_data_entry, id);
+> 
+> which would seem to be much more straightforward than saying "go to
+> the end, and then subtract out the size of this entry" - which then
+> relies on the entry being the last thing in the struct.
+> 
+> And if somebody wants to have a helper like
+> 
+>    #define struct_offset(s,memb) (offsetof(typeof(*(s)), memb))
+> 
+> in order to get some kind of "typesafe offsetof", to go with 'struct
+> size' then by all means.. That would make it be just
+> 
+>     size = cnt + struct_offset(entry, id);
+> 
+> which looks fairly legible and logical, and would go with the comment
+> (and would pair fairly well with our other "struct_xyz()" helpers, I
+> think).
+> 
+> I've pulled this, I just reacted to how odd that calculation looked.
+> It makes very little sense  to me, since the calculation really has
+> _nothing_ do with the size of the struct, and you explicitly have to
+> play tricks to get the offset that way.
 
-[auto build test ERROR on drm-xe/drm-xe-next]
-[also build test ERROR on next-20251010]
-[cannot apply to awilliam-vfio/next drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master awilliam-vfio/for-linus v6.17]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I could make this change for the next merge window.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Winiarski/drm-xe-pf-Remove-GuC-version-check-for-migration-support/20251012-034301
-base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
-patch link:    https://lore.kernel.org/r/20251011193847.1836454-12-michal.winiarski%40intel.com
-patch subject: [PATCH 11/26] drm/xe: Allow the caller to pass guc_buf_cache size
-config: riscv-randconfig-002-20251012 (https://download.01.org/0day-ci/archive/20251012/202510120724.osgbcJi5-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251012/202510120724.osgbcJi5-lkp@intel.com/reproduce)
+I originally was going to change it to:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510120724.osgbcJi5-lkp@intel.com/
+	size = sizeof(*entry) + cnt - sizeof(entry->id);
 
-All error/warnings (new ones prefixed by >>):
+But figured using a macro would be better.
 
-   In file included from drivers/gpu/drm/xe/xe_guc_buf.c:180:
->> drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c:75:61: error: too many arguments provided to function-like macro invocation
-      75 |         KUNIT_ASSERT_EQ(test, 0, xe_guc_buf_cache_init(&guc->buf), SZ_8K);
-         |                                                                    ^
-   include/kunit/test.h:1358:9: note: macro 'KUNIT_ASSERT_EQ' defined here
-    1358 | #define KUNIT_ASSERT_EQ(test, left, right) \
-         |         ^
-   In file included from drivers/gpu/drm/xe/xe_guc_buf.c:180:
->> drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c:75:2: error: use of undeclared identifier 'KUNIT_ASSERT_EQ'; did you mean 'KUNIT_ASSERTION'?
-      75 |         KUNIT_ASSERT_EQ(test, 0, xe_guc_buf_cache_init(&guc->buf), SZ_8K);
-         |         ^~~~~~~~~~~~~~~
-         |         KUNIT_ASSERTION
-   include/kunit/assert.h:27:2: note: 'KUNIT_ASSERTION' declared here
-      27 |         KUNIT_ASSERTION,
-         |         ^
-   In file included from drivers/gpu/drm/xe/xe_guc_buf.c:180:
->> drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c:75:2: warning: expression result unused [-Wunused-value]
-      75 |         KUNIT_ASSERT_EQ(test, 0, xe_guc_buf_cache_init(&guc->buf), SZ_8K);
-         |         ^~~~~~~~~~~~~~~
-   1 warning and 2 errors generated.
+Honestly, I didn't like either solution. But having a:
 
+	size = struct_offset(entry, id) + cnt
 
-vim +75 drivers/gpu/drm/xe/tests/xe_guc_buf_kunit.c
+Would probably look better.
 
-    51	
-    52	static int guc_buf_test_init(struct kunit *test)
-    53	{
-    54		struct xe_pci_fake_data fake = {
-    55			.sriov_mode = XE_SRIOV_MODE_PF,
-    56			.platform = XE_TIGERLAKE, /* some random platform */
-    57			.subplatform = XE_SUBPLATFORM_NONE,
-    58		};
-    59		struct xe_ggtt *ggtt;
-    60		struct xe_guc *guc;
-    61	
-    62		test->priv = &fake;
-    63		xe_kunit_helper_xe_device_test_init(test);
-    64	
-    65		ggtt = xe_device_get_root_tile(test->priv)->mem.ggtt;
-    66		guc = &xe_device_get_gt(test->priv, 0)->uc.guc;
-    67	
-    68		KUNIT_ASSERT_EQ(test, 0,
-    69				xe_ggtt_init_kunit(ggtt, DUT_GGTT_START,
-    70						   DUT_GGTT_START + DUT_GGTT_SIZE));
-    71	
-    72		kunit_activate_static_stub(test, xe_managed_bo_create_pin_map,
-    73					   replacement_xe_managed_bo_create_pin_map);
-    74	
-  > 75		KUNIT_ASSERT_EQ(test, 0, xe_guc_buf_cache_init(&guc->buf), SZ_8K);
-    76	
-    77		test->priv = &guc->buf;
-    78		return 0;
-    79	}
-    80	
+But again, it can probably wait till 6.19.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- Steve
 
