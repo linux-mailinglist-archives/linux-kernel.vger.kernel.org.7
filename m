@@ -1,186 +1,118 @@
-Return-Path: <linux-kernel+bounces-849303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F41FBCFC71
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 21:50:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B7BBCFC47
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 21:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D65C3A4138
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 19:46:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 645EE4EAA48
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 19:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372772857F2;
-	Sat, 11 Oct 2025 19:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01210284892;
+	Sat, 11 Oct 2025 19:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOUhoJ8T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upoTlwYD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6744B284885;
-	Sat, 11 Oct 2025 19:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5284E20296C;
+	Sat, 11 Oct 2025 19:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760211778; cv=none; b=c4RXi7izFUoZ4fyOKDOUcqydoYTVkCo8e6CmmObIi9EKfPWt2PqHpaMbJB53Y5xunfMqugGDV8vgx/FEA5dhzQu8INY/4ybvolqhh3bLaq8g2WhdHe+8f1Fwd7A3ryT7GVdFpf6qew2QhKLjfP23ixxdot8M39AOkBONptAiKTM=
+	t=1760211810; cv=none; b=mhDXv9jlcECq1LAGp7/oQ00ocLRfjSFryeCZAMHNIU36BkTbVs3U5B5hMP/J5f+XHZ2zPJoTGVCSV0l82UtIfayD8DjAFq3wOZmHgMDXxpgDh/Wp4Kng3sASXvqVdMDFVqqkPsPGkMKyLi7onf2XiMaVssXP32tUJsdjwyZslVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760211778; c=relaxed/simple;
-	bh=nbdxwXzqxo6DmTyCIx/vNo1nHdzL60uNPQJyGsnpHd4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=gy/WeZSvt2mQ3s20EFQWUrdoQU0h9JzUycpDkYjrRGgdcdI7EsioWJ04NBsXOuG02HHWt24w55bphbMB+uke4P9aCqOkzrRyyZcf8SaIG3MliTQlkNKpE0YwWtNFQXD3EP/Y0TfYwUE7u4k1sSVEsJFUpCFrcV8WaUasEOp5Ll0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOUhoJ8T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B021C4CEFE;
-	Sat, 11 Oct 2025 19:42:58 +0000 (UTC)
+	s=arc-20240116; t=1760211810; c=relaxed/simple;
+	bh=nUg2lj2FDA74GnWLIi3HhN5FD/fRKPsazJJBetmYtkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NZNDPtjzpkaT5pgGY/GQiI0R6oyGX9mN9+PLUek76jHe9Ko/fFmIXaFnV4XiVM1mh/pXlNNHRT16hxVSTad8wxvATGqKLgQZWOHhSKKgEbPW0sru6nkA+39DlT9nVigBxvz8UkKaiQ9I53yzFBj6eH95pmcRUHlvSRSi7jX9px0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upoTlwYD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2813C4CEF4;
+	Sat, 11 Oct 2025 19:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760211778;
-	bh=nbdxwXzqxo6DmTyCIx/vNo1nHdzL60uNPQJyGsnpHd4=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=GOUhoJ8TTjU/7GpM/M4dgtAfYNiPtSFIFuZJY5N8/F8Tg4nAZ34B7yyZdPfpEt5c3
-	 WKIfGNfP3MxxkDX9Tfj8ryEwmZjngOlrkaZBJgjAUCgG90c3xMEo42MZRz5awnkG4v
-	 9xVwIqcQFlRdJC1CQZIQTqhnnO1xwd/YGC9LTEwivmqaOxldowRhPxn64ZGDKqG/mf
-	 YXUjHzRD6YKb6LLHarqwjYfuhMW1G7jD2BF1JgVy2Rq8iffrJv3X9oLkt9t33J9BD5
-	 R1tVWAHSa0jE+D50LU0Kio1fp0n+hYb97caFvOrs99qhngnknJLXq7bOTdMlJx3/n1
-	 XjYRLKQhuQC8Q==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1v7fUX-0000000022O-23rP;
-	Sat, 11 Oct 2025 15:42:57 -0400
-Message-ID: <20251011194257.341582199@kernel.org>
-User-Agent: quilt/0.68
-Date: Sat, 11 Oct 2025 15:42:38 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- stable@vger.kernel.org,
- syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com
-Subject: [for-linus][PATCH v2 2/2] tracing: Stop fortify-string from warning in tracing_mark_raw_write()
-References: <20251011194236.326710166@kernel.org>
+	s=k20201202; t=1760211809;
+	bh=nUg2lj2FDA74GnWLIi3HhN5FD/fRKPsazJJBetmYtkU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=upoTlwYDl/xVDZb33Xpu+6RPmX+ZTXPtNWZttoDmL1HOYL55s7bZ+F67w4d9E1vJy
+	 bRUTzow3ACykzMTIrd9bK+DDYl524PqLggVs9o0swdUjkCcdt6fEU+t7CfSAe56L2s
+	 lTsqDeA+XEk9cOc8DgqawZBA9lGKHYnd4KHYNRXAJnlFfiQ4EmCYO8PrjRzCM5z9Rm
+	 Z39sIgOcf2YlKwLyTocxY1wZKfObjGtXrOyU+KVvtk6TMIFlTZakuP3CImLApRkNU1
+	 FslYjabWhazUQTtbFdnKg7a3ekhisfz8j8pqI/CFSV75SVkEmhCyrBWXoILPYudltZ
+	 CAJWTqyYcLsig==
+Date: Sat, 11 Oct 2025 12:43:25 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Nicolas Schier <nsc@kernel.org>,
+	linux-kbuild@vger.kernel.org
+Subject: [GIT PULL] Kbuild fixes for 6.18 #1
+Message-ID: <20251011194325.GA1123518@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi Linus,
 
-The way tracing_mark_raw_write() records its data is that it has the
-following structure:
+Please pull the initial round of fixes for Kbuild for 6.18. Everything
+but the final change has been in -next for a couple of cycles but I
+wanted to record some last minute tags so it is recently rebased.
 
-  struct {
-	struct trace_entry;
-	int id;
-	char buf[];
-  };
+If there are any issues, please let me know.
 
-But memcpy(&entry->id, buf, size) triggers the following warning when the
-size is greater than the id:
+Cheers,
+Nathan
 
- ------------[ cut here ]------------
- memcpy: detected field-spanning write (size 6) of single field "&entry->id" at kernel/trace/trace.c:7458 (size 4)
- WARNING: CPU: 7 PID: 995 at kernel/trace/trace.c:7458 write_raw_marker_to_buffer.isra.0+0x1f9/0x2e0
- Modules linked in:
- CPU: 7 UID: 0 PID: 995 Comm: bash Not tainted 6.17.0-test-00007-g60b82183e78a-dirty #211 PREEMPT(voluntary)
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
- RIP: 0010:write_raw_marker_to_buffer.isra.0+0x1f9/0x2e0
- Code: 04 00 75 a7 b9 04 00 00 00 48 89 de 48 89 04 24 48 c7 c2 e0 b1 d1 b2 48 c7 c7 40 b2 d1 b2 c6 05 2d 88 6a 04 01 e8 f7 e8 bd ff <0f> 0b 48 8b 04 24 e9 76 ff ff ff 49 8d 7c 24 04 49 8d 5c 24 08 48
- RSP: 0018:ffff888104c3fc78 EFLAGS: 00010292
- RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000000000
- RDX: 0000000000000000 RSI: 1ffffffff6b363b4 RDI: 0000000000000001
- RBP: ffff888100058a00 R08: ffffffffb041d459 R09: ffffed1020987f40
- R10: 0000000000000007 R11: 0000000000000001 R12: ffff888100bb9010
- R13: 0000000000000000 R14: 00000000000003e3 R15: ffff888134800000
- FS:  00007fa61d286740(0000) GS:ffff888286cad000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000560d28d509f1 CR3: 00000001047a4006 CR4: 0000000000172ef0
- Call Trace:
-  <TASK>
-  tracing_mark_raw_write+0x1fe/0x290
-  ? __pfx_tracing_mark_raw_write+0x10/0x10
-  ? security_file_permission+0x50/0xf0
-  ? rw_verify_area+0x6f/0x4b0
-  vfs_write+0x1d8/0xdd0
-  ? __pfx_vfs_write+0x10/0x10
-  ? __pfx_css_rstat_updated+0x10/0x10
-  ? count_memcg_events+0xd9/0x410
-  ? fdget_pos+0x53/0x5e0
-  ksys_write+0x182/0x200
-  ? __pfx_ksys_write+0x10/0x10
-  ? do_user_addr_fault+0x4af/0xa30
-  do_syscall_64+0x63/0x350
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7fa61d318687
- Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
- RSP: 002b:00007ffd87fe0120 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
- RAX: ffffffffffffffda RBX: 00007fa61d286740 RCX: 00007fa61d318687
- RDX: 0000000000000006 RSI: 0000560d28d509f0 RDI: 0000000000000001
- RBP: 0000560d28d509f0 R08: 0000000000000000 R09: 0000000000000000
- R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000006
- R13: 00007fa61d4715c0 R14: 00007fa61d46ee80 R15: 0000000000000000
-  </TASK>
- ---[ end trace 0000000000000000 ]---
+----------------------------------------------------------------
 
-This is because fortify string sees that the size of entry->id is only 4
-bytes, but it is writing more than that. But this is OK as the
-dynamic_array is allocated to handle that copy.
+The following changes since commit 2ea77fca84f07849aa995271271340d262d0c2e9:
 
-The size allocated on the ring buffer was actually a bit too big:
+  modpost: Initialize builtin_modname to stop SIGSEGVs (2025-09-28 07:54:07 -0400)
 
-  size = sizeof(*entry) + cnt;
+are available in the Git repository at:
 
-But cnt includes the 'id' and the buffer data, so adding cnt to the size
-of *entry actually allocates too much on the ring buffer.
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-fixes-6.18-1
 
-Change the allocation to:
+for you to fetch changes up to b0f2942a16017f88395d768afedd7373860968ce:
 
-  size = struct_size(entry, buf, cnt - sizeof(entry->id));
+  kbuild: Use '--strip-unneeded-symbol' for removing module device table symbols (2025-10-10 14:50:35 -0700)
 
-and the memcpy() to unsafe_memcpy() with an added justification.
+----------------------------------------------------------------
+Kbuild fixes for 6.18 #1
 
-Cc: stable@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/20251011112032.77be18e4@gandalf.local.home
-Fixes: 64cf7d058a00 ("tracing: Have trace_marker use per-cpu data to read user space")
-Reported-by: syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/68e973f5.050a0220.1186a4.0010.GAE@google.com/
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+- Fix UAPI types check in headers_check.pl
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index bbb89206a891..eb256378e65b 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -7441,7 +7441,8 @@ static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
- 	ssize_t written;
- 	size_t size;
- 
--	size = sizeof(*entry) + cnt;
-+	/* cnt includes both the entry->id and the data behind it. */
-+	size = struct_size(entry, buf, cnt - sizeof(entry->id));
- 
- 	buffer = tr->array_buffer.buffer;
- 
-@@ -7455,7 +7456,10 @@ static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
- 		return -EBADF;
- 
- 	entry = ring_buffer_event_data(event);
--	memcpy(&entry->id, buf, cnt);
-+	unsafe_memcpy(&entry->id, buf, cnt,
-+		      "id and content already reserved on ring buffer"
-+		      "'buf' includes the 'id' and the data."
-+		      "'entry' was allocated with cnt from 'id'.");
- 	written = cnt;
- 
- 	__buffer_unlock_commit(buffer, event);
--- 
-2.51.0
+- Only enable -Werror for hostprogs with CONFIG_WERROR / W=e
 
+- Ignore fsync() error when output of gen_init_cpio is a pipe
 
+- Several little build fixes for recent modules.builtin.modinfo series
+
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+
+----------------------------------------------------------------
+Dmitry Safonov (1):
+      gen_init_cpio: Ignore fsync() returning EINVAL on pipes
+
+Geert Uytterhoeven (1):
+      kbuild: uapi: Strip comments before size type check
+
+Nathan Chancellor (6):
+      scripts/Makefile.extrawarn: Respect CONFIG_WERROR / W=e for hostprogs
+      kbuild: Restore pattern to avoid stripping .rela.dyn from vmlinux
+      kbuild: Add '.rel.*' strip pattern for vmlinux
+      s390/vmlinux.lds.S: Move .vmlinux.info to end of allocatable sections
+      Merge patch series "kbuild: Fixes for fallout from recent modules.builtin.modinfo series"
+      kbuild: Use '--strip-unneeded-symbol' for removing module device table symbols
+
+ arch/s390/kernel/vmlinux.lds.S | 44 +++++++++++++++++++++---------------------
+ scripts/Makefile.extrawarn     |  8 +++++---
+ scripts/Makefile.vmlinux       |  7 +++++--
+ usr/gen_init_cpio.c            |  5 ++++-
+ usr/include/headers_check.pl   |  2 ++
+ 5 files changed, 38 insertions(+), 28 deletions(-)
 
