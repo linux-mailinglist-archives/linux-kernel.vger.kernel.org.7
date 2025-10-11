@@ -1,134 +1,157 @@
-Return-Path: <linux-kernel+bounces-848997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68066BCEFBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:11:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D85EBCEFC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FD224E137C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 04:11:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FD174E6B49
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 04:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2954A1DF994;
-	Sat, 11 Oct 2025 04:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FEB1C3C11;
+	Sat, 11 Oct 2025 04:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRuz2D9o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="KW5EKoBu"
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BDA34BA49;
-	Sat, 11 Oct 2025 04:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A96334BA49;
+	Sat, 11 Oct 2025 04:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760155852; cv=none; b=n/ibeOuzk16+wv7jCq3ltWWTqht2QWZE1P5Qp8Qg6K6lZNBpa7aAhRVI3gR1YvdARgrmT3HdzJn7Oi7ysi3tF8WBGHh3UuZaJTFOss9udRydSrjXaOAJPaaBdKoR0dNenO2jiXH9eqvdrsmyGKlcMThE/NL5sVQeT39/CjiLDpo=
+	t=1760155947; cv=none; b=iL/lNxMN+AbX7CV+Vp7AQZQYpq++1LpX9OKJ0GHAMLpxkv3JxtS02iSvai7A3uOjIyF7raOdAU03n3FaYsIVr632HXn3VyWHEqzj1FZ73tNb05rS1G+wFMrLz0B5UTRyzsJZJjY678PPDlw9lM1n00cnH+Dzh/0C30p9lL9fhE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760155852; c=relaxed/simple;
-	bh=1TcDCsDbWWLfOUPUJCIkonnjk/XXqEKJQPgi+pm+cMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/YsLYTggvKd6hCx6MRYIziRr4NXPMg28YA6QcBYgiHvLD4+0MqTZ3GrFN4jxaLVPP799MXa5DmL3XxJefcbQ0jKfiXxgS+tSPZ5rFH0C4RMqWwEpaXxwBNrcgY4faDgZph476C2Z/SdQQSV8hqoUiXnFrWuXdIeHG/svmgLe58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRuz2D9o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA7AC4CEF4;
-	Sat, 11 Oct 2025 04:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760155852;
-	bh=1TcDCsDbWWLfOUPUJCIkonnjk/XXqEKJQPgi+pm+cMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bRuz2D9oWCkn1JDYcV2fFoPaclEDopN3AmhMfY+PW28wkRq8wFQ81I/2gJrnvKjly
-	 4czS0kGWXIlkcxWqJmR0Uc2nXZvnJJVhTWySefeHGoVLaaV6d/HXqmgo7Dw03H0iA6
-	 TY3Fw/us9I4nMcvDf2iN2ihB5AmUdHQEG26377EvngzpAvDomQ1yz6ynszBUgLuEP4
-	 O5AHzLQcB0f/E0ths3bebydoQN7AUsh85DZ7NAhIiat7YnJO0zSCGdHklx/wOh/AJm
-	 QOftBUIfL/GsaoWMYjCNlyEQXtmQ1NOAi/jySKGIflO0hw5whnF0HNkKKZXdtAV6bt
-	 iTLcbzundEfVQ==
-Date: Fri, 10 Oct 2025 21:10:50 -0700
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abraham I <kishon@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 2/3] dt-bindings: PCI: qcom: Enforce check for PHY,
- PERST# and WAKE# properties
-Message-ID: <3euh4nn2ceyigu3fd46f42ibsyep3c2m7b66uqezwvdkzoh5jo@t2b3rty3dzhs>
-References: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
- <20251010-pci-binding-v1-2-947c004b5699@oss.qualcomm.com>
- <176012477191.896715.1769779927734963381.robh@kernel.org>
+	s=arc-20240116; t=1760155947; c=relaxed/simple;
+	bh=ulYOqSKIubs9K2wu/jlWOyDKb/l4q1WVrGP0tS/yfWI=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dEeOJaMoc56ergm87cF2Ppamkff85eRminWqaJmSrdkEhazDVjcWjp0FkQ3U0MdOK4Wd+BnLl4DwTxVdY4soo4QSuwqo+3PtIYi+/DlKx+yc5OW1SFSB5LYWMdNLlbRc2Wn/649govIVPLdZvPaalrYVJAFreCm7rnJMPebwMFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=KW5EKoBu; arc=none smtp.client-ip=113.46.200.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=ygFS1bldtMkr5dFGTAJA64zNslwuK13Ve5ak8PbmFps=;
+	b=KW5EKoBu0ELPnLe7ewEVMD/Rw+7ZwHyBBfHXllC7O9UycE3vBbIFbbHCOSHRKJMKoYpk2vnAw
+	9owfJMl95t95dJi44FzsWsNTrTwPS7dhFFXUYYhW/npBheqwJmbFqhINODkboOWabiuK+7oWuLv
+	v8V7af/tBTSbFiTlSppR7CE=
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4ck9Cf4d1gz12LDR;
+	Sat, 11 Oct 2025 12:11:26 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 26A4A1402CA;
+	Sat, 11 Oct 2025 12:12:14 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 11 Oct 2025 12:12:13 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 11 Oct 2025 12:12:12 +0800
+Subject: Re: [PATCH 2/2] mm/memory-failure: improve large block size folio
+ handling.
+To: Zi Yan <ziy@nvidia.com>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
+	<nao.horiguchi@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett"
+	<Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
+	<ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+	<baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, "Matthew Wilcox
+ (Oracle)" <willy@infradead.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <david@redhat.com>,
+	<jane.chu@oracle.com>, <kernel@pankajraghav.com>,
+	<syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+References: <20251010173906.3128789-1-ziy@nvidia.com>
+ <20251010173906.3128789-3-ziy@nvidia.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <934db898-5244-50b9-7ef7-b42f1e40ddca@huawei.com>
+Date: Sat, 11 Oct 2025 12:12:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <176012477191.896715.1769779927734963381.robh@kernel.org>
+In-Reply-To: <20251010173906.3128789-3-ziy@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-On Fri, Oct 10, 2025 at 02:33:23PM -0500, Rob Herring (Arm) wrote:
+On 2025/10/11 1:39, Zi Yan wrote:
+> Large block size (LBS) folios cannot be split to order-0 folios but
+> min_order_for_folio(). Current split fails directly, but that is not
+> optimal. Split the folio to min_order_for_folio(), so that, after split,
+> only the folio containing the poisoned page becomes unusable instead.
 > 
-> On Fri, 10 Oct 2025 11:25:48 -0700, Manivannan Sadhasivam wrote:
-> > Currently, the binding supports specifying the PHY, PERST#, WAKE#
-> > properties in two ways:
-> > 
-> > 1. Controller node (deprecated)
-> > 	- phys
-> > 	- perst-gpios
-> > 	- wake-gpios
-> > 
-> > 2. Root Port node
-> > 	- phys
-> > 	- reset-gpios
-> > 	- wake-gpios
-> > 
-> > But there is no check to make sure that the both variants are not mixed.
-> > For instance, if the Controller node specifies 'phys', 'reset-gpios',
-> > 'wake-gpios' or if the Root Port node specifies 'phys', 'perst-gpios',
-> > 'wake-gpios', then the driver will fail as reported. Hence, enforce the
-> > check in the binding to catch these issues.
-> > 
-> > It is also possible that DTs could have 'phys' property in Controller node
-> > and 'reset-gpios/wake-gpios' properties in the Root Port node. It will also
-> > be a problem, but it is not possible to catch these cross-node issues in
-> > the binding.
-> > 
-> > Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > Closes: https://lore.kernel.org/linux-pci/8f2e0631-6c59-4298-b36e-060708970ced@oss.qualcomm.com
-> > Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  .../devicetree/bindings/pci/qcom,pcie-common.yaml    | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sc8180x.example.dtb: pcie@1c00000 (qcom,pcie-sc8180x): 'oneOf' conditional failed, one must be fixed:
-> 	'perst-gpios' is a required property
-> 	'wake-gpios' is a required property
-> 	False schema does not allow [[4294967295]]
-> 	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc8180x.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sc8180x.example.dtb: pcie@1c00000 (qcom,pcie-sc8180x): Unevaluated properties are not allowed ('#address-cells', '#interrupt-cells', '#size-cells', 'bus-range', 'device_type', 'dma-coherent', 'interconnect-names', 'interconnects', 'interrupt-map', 'interrupt-map-mask', 'iommu-map', 'linux,pci-domain', 'num-lanes', 'phy-names', 'phys', 'power-domains', 'ranges' were unexpected)
-> 	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc8180x.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.example.dtb: pcie@1c08000 (qcom,pcie-sc7280): pcie@0: 'oneOf' conditional failed, one must be fixed:
-> 	'wake-gpios' is a required property
-> 	False schema does not allow [[4294967295]]
-> 	False schema does not allow [[4294967295, 2, 1]]
-> 	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.example.dtb: pcie@1c08000 (qcom,pcie-sc7280): Unevaluated properties are not allowed ('#address-cells', '#interrupt-cells', '#size-cells', 'bus-range', 'device_type', 'dma-coherent', 'interrupt-map', 'interrupt-map-mask', 'iommu-map', 'linux,pci-domain', 'num-lanes', 'pcie@0', 'power-domains', 'ranges', 'vddpe-3v3-supply' were unexpected)
-> 	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
-> 
+> For soft offline, do not split the large folio if it cannot be split to
+> order-0. Since the folio is still accessible from userspace and premature
+> split might lead to potential performance loss.
 
-I need to add the missing properties to the example nodes in these bindings.
+Thanks for your patch.
 
-- Mani
+> 
+> Suggested-by: Jane Chu <jane.chu@oracle.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>  mm/memory-failure.c | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index f698df156bf8..443df9581c24 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
+>   * there is still more to do, hence the page refcount we took earlier
+>   * is still needed.
+>   */
+> -static int try_to_split_thp_page(struct page *page, bool release)
+> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
+> +		bool release)
+>  {
+>  	int ret;
+>  
+>  	lock_page(page);
+> -	ret = split_huge_page(page);
+> +	ret = split_huge_page_to_list_to_order(page, NULL, new_order);
+>  	unlock_page(page);
+>  
+>  	if (ret && release)
+> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flags)
+>  	folio_unlock(folio);
+>  
+>  	if (folio_test_large(folio)) {
+> +		int new_order = min_order_for_split(folio);
+>  		/*
+>  		 * The flag must be set after the refcount is bumped
+>  		 * otherwise it may race with THP split.
+> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int flags)
+>  		 * page is a valid handlable page.
+>  		 */
+>  		folio_set_has_hwpoisoned(folio);
+> -		if (try_to_split_thp_page(p, false) < 0) {
+> +		/*
+> +		 * If the folio cannot be split to order-0, kill the process,
+> +		 * but split the folio anyway to minimize the amount of unusable
+> +		 * pages.
+> +		 */
+> +		if (try_to_split_thp_page(p, new_order, false) || new_order) {
+> +			/* get folio again in case the original one is split */
+> +			folio = page_folio(p);
 
--- 
-மணிவண்ணன் சதாசிவம்
+If original folio A is split and the after-split new folio is B (A != B), will the
+refcnt of folio A held above be missing? I.e. get_hwpoison_page() held the extra refcnt
+of folio A, but we put the refcnt of folio B below. Is this a problem or am I miss
+something?
+
+Thanks.
+.
+
 
