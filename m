@@ -1,150 +1,111 @@
-Return-Path: <linux-kernel+bounces-849108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F86DBCF38A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:27:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12060BCF395
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CB419A0D05
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459DD189B81D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61496258EDE;
-	Sat, 11 Oct 2025 10:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3362223AE93;
+	Sat, 11 Oct 2025 10:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5Tjplfe"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OCNHXvTl"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDE6257849
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 10:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01982221287
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 10:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760178467; cv=none; b=uqhTmsSCVb8GiO9WfGz615yKjHu581IDYySb6lKZlPK8ZJXginabaWWfmc2uu5ric5GALPgTIJtHug4Bf+yvZ3Ys5iegSkUx7YdFkW5x75PeZj/Zz3lB9+4y61kW5BSIC6+1ZLEUDhl/jn6fy5SThD1qUU9WZYk4WkLA2IVmfjw=
+	t=1760178735; cv=none; b=LkLsAEbN6wuk51gnLNoX0jhP59XT7Nxb+jPLDxoAoR5S1HY5V3RECGvcy9vW9gC1y/GUZV7z+qF1DHHh2bS28iZzktX+8unI9tTD03Zde7SlOlrEBWOgFtERUDx9dvxlJIA26WlTuVKnwvAKiOdHQC42SvwfR/9QelCa/rR0urE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760178467; c=relaxed/simple;
-	bh=LO/zKHiwH9pV77xNhnL2eijeftuXrDQ6YZ4Vabk0NRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SSSS7x0LyCHEAZkramjM8hwDCQd/FCY+syzZeTQ2iOkT2HneDQUPI0jvatIanIhy++XyAKz3mZ5aPbLzV3TwW9PEhbxFWpAGXTKrIDLaok/9w1VrZVyqsW4nUMkGZIr2+Kf+211kEBZfANoxt0TvlgE9Ypk9xjoYVzNzGDKjsLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5Tjplfe; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso5231492a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 03:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760178461; x=1760783261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iZCFVzYHZ2h0JIUQU0arhlSFw5b6cu6XyQY71uLY2mU=;
-        b=I5TjplfecKrlBKN/bMuFxM4QY9bhtP/zPcpw4iv3pOqnUGXdlo/VXeZReKEV1MB4wq
-         mkUGoQkHzlMgMGRsHzSG+j4LKP/+w1HbE2N7HU92ZuLvMavtHYjh5Smol89fbghOexTT
-         mEdeXjPeVP6fn0GabzW6CQQAVytgBl8Q3RBm1bwx1Zo66qPXLOyix7QDHezVfIAk8pFl
-         HNiUJjlv9cwiNlaFWiURCTcaldRPosImk4elhe4mEezOR7bcqpOBzIfNya4omWYEfrYG
-         vbYbWTAqEMmLKYRPXk0Vg82y4iT/DW1DPsoyV6v8ELuL3Acz0dZXe61ru9Lv3igp07FG
-         6hWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760178461; x=1760783261;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iZCFVzYHZ2h0JIUQU0arhlSFw5b6cu6XyQY71uLY2mU=;
-        b=Z1C+VGEpa/bS9L82tvTzDvtnUtN/a8scWRPxebX7a4CtuM8m58dAyPxWwON0dMW3JP
-         T3a5Z29ur8+1Cyeb52qRhZPsKkQTVjRjBI141++tpmuzQ/8mI//vi+vYE9IGRm/d2L/W
-         GAojCN4T1Uu9ibUwL9YIGUHvTy0g3UwAAuO3AGR9dZWgX7O/bfuYLkK7ystiX0ASkFTV
-         V11zdV16ww2Oa6pEagIk8rosnbMVvDj0PoHqghmtCsIaLIrkkVJh1BIQGfkpQiteaV9I
-         Sjxe/a1Ghcq1m/fkQomsbRxDHapAUsFD9FfNLgh4xmbRpnVPR6Fyj1USxGK55LozilPb
-         gwgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwUJ0oqU98RWa60IHNRzdbtR7HbOchuJq/Y2QKP/hcw8eIALSth7xPqA9OvKOdekeCxsYKX+HR59vox98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXKHlBYjRCQK6uwIYMWTkaSHgmXdV87sEBajHkkEQYKuTiKCLv
-	/UnYHuGve9YqxocPSc2o5NplWxP1qtc2OZDezt+N0PZ6wZnZD9XWumCuJGvjrg==
-X-Gm-Gg: ASbGncvnTz9al/YpKwqdw/6lWs2d0N66V+FVPWjDYV9Sxx8HowZOjQDQFL4UbuqInF/
-	eLZDnxm6oRejiZNmjvNVdM37McdPyj3CgpZv+O8pum30jZQ7x/Ztw0IC6HqzIzteArRNVwZjlbd
-	zAnzpU1H/uY5q5587FluRW0p5K83pXX9xiVIK3NHG/DaUgY4vAVeNDGoeXi5uwdcYklC0OGKUtP
-	9/gW5BkqE3+sJ2R55d82/yvX+yn5G/F2icKSxsrd/H7ZmqtyRkP30K6T7Gcn08DX7WypycUsY3N
-	jCFyK3CXHr5WtmIL2v2tt9ZbA7pq9Zhqp1xmyr/7pM/tmhha/+B7Vn8KQNmIBkxnCzdhtkIFPbF
-	MvRIi8GMLI5HV+kEDKRWeaKTFCx0jB/2Whc8srF44kqLZBS4RzviLRm4QOPSK4fDNnUztgbJMHQ
-	==
-X-Google-Smtp-Source: AGHT+IGDpGQ1keH41V5u7okn0umUzJaDZ4pIXQPpFP/RgbssUfZTewtEXcOU16HUhZmJhf/y3/QSQg==
-X-Received: by 2002:a05:6402:40c8:b0:62b:63f8:cdbb with SMTP id 4fb4d7f45d1cf-639d5c4c1e1mr12894658a12.25.1760178460551;
-        Sat, 11 Oct 2025 03:27:40 -0700 (PDT)
-Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c132567sm4471906a12.33.2025.10.11.03.27.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 03:27:40 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Samuel Holland <samuel@sholland.org>,
- Richard GENOUD <richard.genoud@bootlin.com>
-Cc: Wentao Liang <vulab@iscas.ac.cn>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/15] dt-bindings: mtd: sunxi: Add new compatible
-Date: Sat, 11 Oct 2025 12:27:38 +0200
-Message-ID: <12756400.O9o76ZdvQC@jernej-laptop>
-In-Reply-To: <195f3b01-93d9-41da-aa9e-826e82889d83@bootlin.com>
-References:
- <20251010084042.341224-1-richard.genoud@bootlin.com>
- <02864e41-cbf7-42e1-87ba-95bdac6d9e6d@kernel.org>
- <195f3b01-93d9-41da-aa9e-826e82889d83@bootlin.com>
+	s=arc-20240116; t=1760178735; c=relaxed/simple;
+	bh=2/6vQ2M8GA04r5ne5JBaZS7VOi+wRTeERQJ4rP3DspM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FwlLaWYkibhfkSId6gWE6d4/z7jBMFlQ1mPYHtWbveaTMugi1nCRyEAqK5DAduS/WYn/WRcBlr0a3QQbhseel/9Vp+79Tx3qDSLIW8CJfPbD7y/q44p/fmI0lp0egB8cpaS6UpJCMfvtn2tUT/HNTwRixGpjwnRDtdNyrGdRic4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OCNHXvTl; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=khamaVxLyFWfGo
+	ToFxOhc1bRpojNKYYX5jLKClNZej4=; b=OCNHXvTlau2mX5bxk+8AskpULXka8V
+	GeQZgWCjV8q78gwGEjWtbC+Dgt6Ehs5T6X/CsvJw53R//2EdDSqqqUFcW+m44Bkw
+	b+fKXKtCziZE0qYEPXBpC56r2YwtYHf95jcsjxCkwyPi1bjUtrrVogSlKcq5VJt7
+	OM23DDCqZ1uhkB0xW4TTJ+izjU/DBbK2NMR8ZwEsi7N1+XfL8K/UQkjS86Qz156e
+	BC/8fHFGfPkNs+qMbNYIUuQTolcp9+1UzKbWZDqj/szd3Z//4DdPsmp1AkjLWbdh
+	gvPV1MpVmt7/qyqmqTLt4fZ9Ulos2BQjvcKQm59sR9GkSQ/ddOp0lBKg==
+Received: (qmail 1793365 invoked from network); 11 Oct 2025 12:31:57 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Oct 2025 12:31:57 +0200
+X-UD-Smtp-Session: l3s3148p1@l8kwi99AIqsujntw
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH] Revert "i2c: boardinfo: Annotate code used in init phase only"
+Date: Sat, 11 Oct 2025 12:31:53 +0200
+Message-ID: <20251011103153.2354-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This reverts commit 1a2b423be6a89dd07d5fc27ea042be68697a6a49 because we
+got a regression report and need time to find out the details.
 
-Dne petek, 10. oktober 2025 ob 12:18:56 Srednjeevropski poletni =C4=8Das je=
- Richard GENOUD napisal(a):
-> Le 10/10/2025 =C3=A0 10:49, Krzysztof Kozlowski a =C3=A9crit :
-> > On 10/10/2025 10:40, Richard Genoud wrote:
-> >> +
-> >>   properties:
-> >>     compatible:
-> >>       enum:
-> >>         - allwinner,sun4i-a10-nand
-> >>         - allwinner,sun8i-a23-nand-controller
-> >> +      - allwinner,sun50i-h616-nand-controller
-> >=20
-> >=20
-> > Also:
-> > 1. missing new line - why did you remove it?
-> > 2. Keep existing sunxi preferred order of entries. In other platforms it
-> > is alphanumerical, not natural. In case sunxi uses something else, just
-> > be sure you use sunxi order.
+Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Closes: https://lore.kernel.org/r/29ec0082-4dd4-4120-acd2-44b35b4b9487@oss.qualcomm.com
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/i2c-boardinfo.c | 4 ++--
+ include/linux/i2c.h         | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Sunxi order is from oldest generation to newest and then alphabetically
-by soc name.
-
-This is already correctly ordered.
-
-Best regards,
-Jernej
-
-> ok, make sens
->=20
-> Thanks!
->=20
-> >=20
-> > Best regards,
-> > Krzysztof
->=20
->=20
->=20
-
-
-
+diff --git a/drivers/i2c/i2c-boardinfo.c b/drivers/i2c/i2c-boardinfo.c
+index 338800321f8b..4df8ad092df3 100644
+--- a/drivers/i2c/i2c-boardinfo.c
++++ b/drivers/i2c/i2c-boardinfo.c
+@@ -22,7 +22,7 @@ EXPORT_SYMBOL_GPL(__i2c_board_lock);
+ LIST_HEAD(__i2c_board_list);
+ EXPORT_SYMBOL_GPL(__i2c_board_list);
+ 
+-int __i2c_first_dynamic_bus_num __ro_after_init;
++int __i2c_first_dynamic_bus_num;
+ EXPORT_SYMBOL_GPL(__i2c_first_dynamic_bus_num);
+ 
+ 
+@@ -48,7 +48,7 @@ EXPORT_SYMBOL_GPL(__i2c_first_dynamic_bus_num);
+  * The board info passed can safely be __initdata, but be careful of embedded
+  * pointers (for platform_data, functions, etc) since that won't be copied.
+  */
+-int __init i2c_register_board_info(int busnum, struct i2c_board_info const *info, unsigned len)
++int i2c_register_board_info(int busnum, struct i2c_board_info const *info, unsigned len)
+ {
+ 	int status;
+ 
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 11a19241e360..20fd41b51d5c 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -499,7 +499,7 @@ static inline struct i2c_client *i2c_verify_client(struct device *dev)
+  * Modules for add-on boards must use other calls.
+  */
+ #ifdef CONFIG_I2C_BOARDINFO
+-int __init
++int
+ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+ 			unsigned n);
+ #else
+-- 
+2.47.2
 
 
