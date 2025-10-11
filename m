@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-849333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450E1BCFDE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 01:40:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF60BCFDE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 01:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9DAC8349832
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 23:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B23A9402BE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 23:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBD6253954;
-	Sat, 11 Oct 2025 23:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF5B256C88;
+	Sat, 11 Oct 2025 23:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Q4cj9JAE"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="vsxGsCVa"
+Received: from smtp153-163.sina.com.cn (smtp153-163.sina.com.cn [61.135.153.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FFE249E5
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 23:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E12242D6C
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 23:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760225995; cv=none; b=dmH24fs/ngBBJxDLO9vWJbZYqj1nkC3WMyvPe3Sc7u66Le0atyMbX74exfJ928acYt3Z6Zy5b+pyfxzbPXrT4J1dTBmucbHwIwVVWt37ElLWjQSaMeU/qQZrjBcZ/IwyvOjVKAcNRvqLckJGp6PE/Du+TO7xTZhE9mAFPAwb8/s=
+	t=1760226095; cv=none; b=OGoQrLvzIJMF8+bJ7pMgj5894ENxDcFSv76uxpG4K8kM7Jh6lYT3OnbkqyM4vBGSy1iAH9K0mLZDRGcOITg/a15dczMlqjxYJDPujtkJa7+OkEN2gehwrggicqlvmaizCG9T+fX4x06u9Ujbc1+J55BT+lhzTeUntTpF5DO6yk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760225995; c=relaxed/simple;
-	bh=J5NX/zpaqm1r6Se4egZRb/6Ra/IaUWAajSgsJ8bYk7Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RH8W0DqL5zjUfq+GU5KUTfebcAoYurCbJ3yt5kQTC23gMEVVqfovG98eAIqtDekKUzl0Ih3qNgcyEcr4Q6XujPZ2YX1N8Xq8/A52woSiHckizFLARtXr3MxCaqocf6vz8j8cH7KVQ5V9Ibf+wB2gUbyGsdOMtDP4vim10721N54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Q4cj9JAE; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62ec5f750f7so5507972a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 16:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1760225991; x=1760830791; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRY+VeQJvbqXDMrouI/ueVQrpkwIkq9BAJztVrIWWBA=;
-        b=Q4cj9JAE7zOp2ooLzhaNZrGwNF9474SpB/QtHFiU+OSVnTgUyitThe2pWIWqiaa47B
-         fyJj5XHTGHWrLhcGVTwGM/bddAHllHqfs964NKO96G+syAvq20KGrjsgPIjaJnhWow9O
-         +hUNTER9PR8IOIORU4SkvhHOLF0N3gCP95Gf8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760225991; x=1760830791;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hRY+VeQJvbqXDMrouI/ueVQrpkwIkq9BAJztVrIWWBA=;
-        b=MLcaEOqcx/WAovyrc2Zwg9MhD0uV2tM7utwo9GCs1cj1vM84TVn2Sj+bwnAlV7Fkqe
-         /4O7lonZQYKrbGqaao0a/yiSBDfOkNVVxNGqPhs+N7nwuXya3MoOOkeuhIS8ybZ4VpLh
-         Qw3hfcAAX8Ok2vIoCBS38qvZG7NJtQTmX6a/ffncuCuOv8oD626La+kc1bsqSXHbbhnW
-         0lLfBToWRyTdmqFZbXFxgINCFB6Iq+0Box073JKf3uSvqOAEOVdeW/819SnccH8uqGUq
-         hPECUK4F7GHuNy5R+bn/IfQE6g+tHuW++xAuJ0K2Xk0TV9HsawLwclputW97474TX6xD
-         WYmA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4IW1PKLBTQohqqKdN5cgtTvmK6XViYilglkxNXkdyhRhP4tR9RPTX/xXDIdAaZcKWjn+fytWUMve9ALQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkEcUNKQ8Fg6QcWAHlep9wfYNwJzw0G58Kcih8ghHKpGAo2dNf
-	G+N862UxvEhPUq1l5YOW29myl0/nqsOhuWXCjVzHPI7JWv6qjhk6r0yafK6qS4/9wgbLuwlWYxL
-	eJJQ2aEg=
-X-Gm-Gg: ASbGnctJlAHwt3SbYzRdFZdtujzQOye5haDAzh7jNfU6kkUfOPw1qNRH6xlsmoTYLgG
-	l9gvgIjv+3zVyKDQhbsvB7UE+wts1Zd5mboPOE9AS00q/lUbc4Bx7PGxdstTjYkXhjp8PUk5R4Z
-	oCodFstqBp5VT7ELDm3pSWrd+RMZPmE/rpb5iyXP3AgIiNXfiH6K6XeXobcjFOYE7NaVp9K66Qp
-	MMwW9Lb+29girm6r3Gd6YZBv/NDZWMyRV9TZtDh13viOxCQklaph9xam8TZC5SYll79PtOJBmD3
-	9iWKe744vVfhGTDFOyhmK/N8+K/SCN5V2B2Om1QfYmib3FkF2oE2HxscYstEteM8phT6Ls8HOzv
-	FKheP18zH6izOR/4GAT05OB4mr33UmIKP6Jm3M7VOqt1xqDib9iqoVJW1e70oc/k5TkEWEiTAnz
-	vkHJcyD9PpPdij3Txy9ID+ci7yBA==
-X-Google-Smtp-Source: AGHT+IF51GIOzK97sl7l/9dnUjQWIYYGyEjuz0qBCAHrlnY7AWvjYzq1Mgt1lOWQ9x/fwTEzMj4Qfg==
-X-Received: by 2002:a17:907:3f14:b0:b41:3c27:e3ca with SMTP id a640c23a62f3a-b50aa4909admr1618832766b.7.1760225991049;
-        Sat, 11 Oct 2025 16:39:51 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cacc16sm592380266b.8.2025.10.11.16.39.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Oct 2025 16:39:50 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so528377166b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 16:39:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV+0ljNUnArw9foJmSUgve+TdQw+7wsudgv90rFtSnJLexHU3e0g7KkstzNpginEHTCVVeCW8fP7CnmCk8=@vger.kernel.org
-X-Received: by 2002:a17:907:72d4:b0:b3b:110c:d343 with SMTP id
- a640c23a62f3a-b50aa492035mr1591992666b.8.1760225990167; Sat, 11 Oct 2025
- 16:39:50 -0700 (PDT)
+	s=arc-20240116; t=1760226095; c=relaxed/simple;
+	bh=+BgaisoJpkMJRcrw4zm/dOKBPWo38wqDjpde9doKT6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=B6kp/HP2JIPKbykkkmlWFnz8B6uEHKjxXrWlY9gF92QixdK0g1iF/8Gl4acrtWS91dLBOrGECwQ2EtceMymTHHM9JVndxkmvr7/uiyCxmzH8nceyeuIalH26xNB6zxANhNPti0UkeGc4K+sIdq1iYaDNmrxZKpb4RciwWRCwb4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=vsxGsCVa; arc=none smtp.client-ip=61.135.153.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1760226088;
+	bh=ixMJ4H8Ln9X+7kZmTOGyuMjN/YJrJMUvqkp2MDOpWO4=;
+	h=From:Subject:Date:Message-ID;
+	b=vsxGsCVaNTv/6ML2VYPOI5F+px/E9hjZ0oaza0imReZvPmrDyinRLDnLD4Dqq3ocP
+	 uoznuh7mHd4i+UIbaBXmdAjgSUddmP9m1Qljh9pe5kB0O/dJ6VFVOl/QlsvPKNHMuK
+	 7taV+7Zgbu9iL6zJe6e/mw4yY7aSKpZLmyb6wiHE=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68EAEB1B00001BA5; Sat, 12 Oct 2025 07:41:17 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7920164456699
+X-SMAIL-UIID: 2CABCCB3694F44FFBBD46C5BB5C6B241-20251012-074117-1
+From: Hillf Danton <hdanton@sina.com>
+To: ast@kernel.org,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: syzbot <syzbot+ad76dbe500667f3a4e17@syzkaller.appspotmail.com>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_delete_elem (2)
+Date: Sun, 12 Oct 2025 07:41:05 +0800
+Message-ID: <20251011234106.8522-1-hdanton@sina.com>
+In-Reply-To: <68e92928.050a0220.3897dc.0194.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011155240.59f0ff07@gandalf.local.home> <CAHk-=whYZVoEdfO1PmtbirPdBMTV9Nxt9f09CK0k6S+HJD3Zmg@mail.gmail.com>
- <20251011193742.410cea9d@gandalf.local.home>
-In-Reply-To: <20251011193742.410cea9d@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 11 Oct 2025 16:39:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whAVAYU9=4HvuNv-USJqaJYajio11_JdD+S-9XVZi3MNA@mail.gmail.com>
-X-Gm-Features: AS18NWBsViTWPHDEgBFPSO8n_ihN2VHKRFj5-kxAg5MF5DB0CO_h0lqdV3R6he4
-Message-ID: <CAHk-=whAVAYU9=4HvuNv-USJqaJYajio11_JdD+S-9XVZi3MNA@mail.gmail.com>
-Subject: Re: [GIT PULL] tracing: A couple more fixes to v6.18
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kees Cook <kees@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 11 Oct 2025 at 16:37, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> But again, it can probably wait till 6.19.
+On Fri, 10 Oct 2025 08:41:28 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    fd94619c4336 Merge tag 'zonefs-6.18-rc1' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14ff8ee2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e2b03b8b7809165e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ad76dbe500667f3a4e17
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/201636e25a0b/disk-fd94619c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b63e3832240c/vmlinux-fd94619c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/11fc378734e8/bzImage-fd94619c.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+ad76dbe500667f3a4e17@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt))
 
-Definitely. I added Kees, because he did those other 'struct_xyz()'
-macros, but yeah, this is not one of those "last day of the 6.18 merge
-window" things.
+Did bpf help find out anything wrong in softirq?
 
-              Linus
+> WARNING: CPU: 0 PID: 5969 at kernel/softirq.c:176 __local_bh_disable_ip+0x3d9/0x540 kernel/softirq.c:176
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5969 Comm: syz.1.2 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+> RIP: 0010:__local_bh_disable_ip+0x3d9/0x540 kernel/softirq.c:176
+> Code: 0f b6 04 28 84 c0 0f 85 56 01 00 00 83 3d 52 9b 32 0d 00 75 19 90 48 c7 c7 c0 b7 c9 8a 48 c7 c6 00 b8 c9 8a e8 f8 5f fe ff 90 <0f> 0b 90 90 90 e9 7b ff ff ff 90 0f 0b 90 e9 71 fe ff ff e8 cf 84
+> RSP: 0018:ffffc900056bf940 EFLAGS: 00010246
+> RAX: f63c8546519c3800 RBX: 1ffff92000ad7f30 RCX: 0000000000080000
+> RDX: ffffc9000d891000 RSI: 00000000000093ed RDI: 00000000000093ee
+> RBP: ffffc900056bfa48 R08: 0000000000000000 R09: 0000000000000000
+> R10: dffffc0000000000 R11: ffffed101710487b R12: ffff88803c911e00
+> R13: dffffc0000000000 R14: ffff88803c91294c R15: 1ffff11007922529
+> FS:  00007fe7c46d66c0(0000) GS:ffff888127020000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b30217ff8 CR3: 000000001dfd6000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  local_bh_disable include/linux/bottom_half.h:20 [inline]
+>  spin_lock_bh include/linux/spinlock_rt.h:87 [inline]
+>  __sock_map_delete net/core/sock_map.c:421 [inline]
+>  sock_map_delete_elem+0xaf/0x170 net/core/sock_map.c:452
+>  bpf_prog_e78d8a1634f5e22d+0x46/0x4e
+>  bpf_dispatcher_nop_func include/linux/bpf.h:1350 [inline]
+>  __bpf_prog_run include/linux/filter.h:721 [inline]
+>  bpf_prog_run include/linux/filter.h:728 [inline]
+>  bpf_prog_run_pin_on_cpu include/linux/filter.h:745 [inline]
+>  bpf_flow_dissect+0x225/0x720 net/core/flow_dissector.c:1024
+>  bpf_prog_test_run_flow_dissector+0x37c/0x5c0 net/bpf/test_run.c:1425
+>  bpf_prog_test_run+0x2cd/0x340 kernel/bpf/syscall.c:4673
+>  __sys_bpf+0x562/0x860 kernel/bpf/syscall.c:6152
+>  __do_sys_bpf kernel/bpf/syscall.c:6244 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:6242 [inline]
+>  __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6242
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
