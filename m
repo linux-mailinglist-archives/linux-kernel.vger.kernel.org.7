@@ -1,105 +1,243 @@
-Return-Path: <linux-kernel+bounces-849088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02847BCF2D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:11:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95907BCF2B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE4504E5BD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:11:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 038034E88AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7E123AE87;
-	Sat, 11 Oct 2025 09:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBB720FA9C;
+	Sat, 11 Oct 2025 09:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="iYjUpjD8"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2bipZOH"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D171DE3DB
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589B219D087
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760173903; cv=none; b=jbL1KqUfoEbbXRZCqbIqe7jHYZBK61sbn6GjUyRZ7RWw2kkO7IRf+DpEB3hV+3cHAqF5pfhr99VGIvXikGOKTQetCN+lS0CZ/gh8I9NiYgV1eT45SyITFFrX0KaO8oUEK+AcZ9jUzwHjeWoXhb6vDBEw3aJ1/XVlSMFjzsyZOdA=
+	t=1760173207; cv=none; b=JAxE9l5MJtQFn5aZP3uoGkpK93vLZQEOQrn5vePicC00wDJWdu2z//KHqpCprUpjHLHttooy01Cymf8U84O6B9p0Ka6XgtghMolddan9nS9Cg26arre8Ha45w1u5Jx2KrtydSnRw2KQAXp1lHgeeZ3nNnQr/a/1Hp9szr42PbG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760173903; c=relaxed/simple;
-	bh=mKTlX9D0tm+y4NmacTtIsSpod4z9mjx0gYmGrQhxiCk=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=iOR+92hZG+pQc6s9p5UozMuC4hpApWnok3n9IHDlgn6tFKVbW/bXA94+eoHsai43bJqwoEvdbCZ7vjxg0WSLGyrkD7z5j6wdwT1NlWsJRLf/mKC/kGAUnS8XhKZc3PAJdt/w9Rgy7xkKQnCQ0eCIgKmVuAFW0IvcbL16mPHHF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=iYjUpjD8; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1760173888; bh=hB1yQ2wvDFnVAsGe8+bw7k5KCIcmWa16me/L/2WKyo8=;
-	h=From:To:Cc:Subject:Date;
-	b=iYjUpjD89F2JA0EMJfTJexOom1mO0zviNge15ya/wrwrV1pK3ey5SlbZDM45StSVP
-	 V42KLuxcm+slHBL8YzbKsgvGXo9/Y90QfXhwySQ5U/XlGpczt3VgOugipv8U/69uzm
-	 cFLqsspahmoghmdHn56ub/6+j4F3xomaBf587awg=
-Received: from localhost.localdomain ([116.128.244.171])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id E8928AA2; Sat, 11 Oct 2025 16:58:09 +0800
-X-QQ-mid: xmsmtpt1760173089t8bh2rky8
-Message-ID: <tencent_8CD1019C5E0B59CEF696BDBFC006361C2407@qq.com>
-X-QQ-XMAILINFO: M9IkCq5LT1vIe2oY6YYeV7yycxlQfvPNYmK83Qsdmo2TB1jEO8WB4/882QOu0T
-	 uaacG/mse7T6ab6hUcxDiffzo0m4C2fsnvToojWXb+ICY/h8LWZ90FElTqMNKjPgPNENP0c2oEXg
-	 pfjrmaTEQW/rAcsKrUzQ7DRqU40XBAEQxFmpDNoAHk0iQ81epwmXUmIofoZaPl8jMiT6IiZgLh5y
-	 eUqxEgJwZjFW5nW85uTVYcCpG+l3SXrjAL9iNfymkvnplkbG01hbQDfscDhqGXKMZb2hAO7/j5tv
-	 eW3f7V1YccuogU2BQuFSW4uHdTKTTRTsCuedY7wGjSSfvHeFc0cqOW/rayFoBc/3765dcEDAhlg0
-	 lufsB3GGhjYESLlWH9TIOH52/o5vUSNDh1dhpw9i7cIvdDEjUYmeeXHbO/7c9QozFeXPjvpz+a8g
-	 inuUWJWZF0cgodO9lOcGDfnjGAgb8rPht/IhGvT0PCACHznYqeKqjp4VdzgLm7dUqQK5bPUBn6Nr
-	 O30X5mBGOZOnikOjnNEVVsttfF6Rgl74vIH5ppfUWSlkkjm4euxiJmxKej9zkMHmOE5BJMF3QUVE
-	 1drml3g5qUIzNdFYiD5soKMegVggZihnhQCklb7IxPEb0FRxe0T33hyI22Poe0ZLl8N+nErKCXYY
-	 nCG8zEU4fJD/wPSugDewpAH7XRlanwyD+hTA4orKaxBAMf5rVOZsfF8KkO/0xmKDZ4qsltQB0FWD
-	 XXfUYqa0U9wkvWHPA22Y8nFIJbVc++6chPBZ4gc01UC/It11fieZ9gETYXlj/mZ9VbXKp5HTbbes
-	 e3o82IhI0JnLLWnTDpyCrnVvroAP8Wus8zZ5QJdGQzyvSP66432MTYjVA4ek7pn69DosQxNpqdZ8
-	 Y4rZs1KBdpLcM8NM772BdlZqF+4yLbKdTD6/rFfFSyqCcTZKmAu+Q39agEjEvCDnXdk1n1GA36jh
-	 bW+Rsn/gbfUElfkz2nBF1Ox13eQtuelVMn09oc73NOiv4Co0wt5C+AS99m3m24WTOsr65XSgGoBq
-	 knCqr2aaTiInuW0Jvc6e30wr6ujAM8U7xevVkZi9rK1AEz48MEVjnNmVDEbi1QoGbrcp03fTxfgz
-	 g/lP8s0VbaXHXDn9VpdTI0RCE0tmVBPHX0MyY8
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Haofeng Li <920484857@qq.com>
-To: John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	Haofeng Li <13266079573@163.com>
-Subject: [Question] About off-by-one error in tk_aux_sysfs_init() loop
-Date: Sat, 11 Oct 2025 16:58:08 +0800
-X-OQ-MSGID: <20251011085808.777213-1-920484857@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1760173207; c=relaxed/simple;
+	bh=zuajZvg1GfmhlxobaMZIGMtoZrguMr6AvFfamYTmViE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8yMjEFJznDeDsDCdDEgWSYq8SDLGno1nAQR/6I3ll7j+DUiTVZi+5W+ZK4lvjB+svNfZZWiqcEVMKfgVl/nGSby1yff6VRpyNwCFlN21DKBx+g7rq3deYu3KCQoMzkMAssDMPYb+I6odqE/xgZZ4RNsTd8bUzkTjai48HinolU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2bipZOH; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26c209802c0so27505825ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 02:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760173201; x=1760778001; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mb7NVdVWR6Oqus/up8k+fb1OsLddvjLBoX6iFlO25NQ=;
+        b=j2bipZOHlpxwFASS5yIZ3ngnwhh090nk+fGHc6cF1+lypa61Ou3aT7UXU+ZZBJLuUL
+         yoyc+TrBQq/r4yxjp+NnNHqgrcMB0qeySy+wGhpiGxdPVdjTfCGzkvJYA0vuTSuA02//
+         FKirGuMpNo3Hr5JytVRdqL511KSttyOm24FyM1oiWaB4uWoFoPnUJPQRcnsrTnWMO1iD
+         M/luy0kGCZLN3wDZ7pQKkJddPbI7jpVoUKr+K3HpvsC2oCbKTY2W4SR645GQGuYmzIgi
+         Sh7lp11SeqCRLFl/uYMlXSLyFsHHVF6geQuYFIMgTgxkravhR/vfRPlE5sozz9C52353
+         NZ5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760173201; x=1760778001;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mb7NVdVWR6Oqus/up8k+fb1OsLddvjLBoX6iFlO25NQ=;
+        b=gBobLSO0fIu7b+dc1gvS+zoaUQvUV1Zo9ejDvw9x3IAkKx5tzoWCGaprdMttgtyGvo
+         v27eIdQUeudU1DqcvmOYKrsmGE/ZgiQcRKyDHR8DgrSCYOseVBsq0Q1RRWJdLmse1lUt
+         fV8fUAmqGTyu8MhWsL54aCJzXDrrsJ3E4+YN7g+m0DwriY9Hrg+gLuMAVJUElm0IYrVm
+         7Q+1ykhTOSINp2NGucaZGH4LeUmR9mhN3l1lmz/7nIDyXJsw3JXNzyW8tgJg+9QNZFfj
+         +cKgsSdHHMZHZ7cgkdwnfqsUeCoyA67jOwU1nbAmqsF4qOFXlhVei7y8S/PKb3c0ZaO6
+         SF+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXqczUXkcks+Qxi7YkSNdMXiEQNMv1n+LFRycEIXIxL67/FTRfARubSfxfiL0RUsPe7Cg0JOBjx4Brf6fE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKhDistA2THdBrEWysP1lrEfnRy6eevQBFaFe9NywmKsK/4RXQ
+	5XKU7HevlG1ZGGIGB1JqCy8NrohgdZHuUmNeQSpC9DlsisMQ1dJcDDKMO48W3jJIYNowuxIH7Zg
+	P7rhT4yLRZzOJv46At3z8U3PABXkZTdQGeRnvH5H5iQ==
+X-Gm-Gg: ASbGncscsSdCI9TC+NyOghwwaD7CvggXBCd/sInB3lzZ+AOF5026nRX82ks2nt8ImSw
+	SNTdtORm1aKv5HJ8tfIioDr/MDi1CQp+U0jkijLF2gwcbHK75DEenK188JYIRQfZJOMl/gv6kux
+	ZFtYwZAMSBiEwpph5gdSdnrY/nIfTWLQ82zU8GOT3+NxVmVxdKP0BSWZqgLVX4X9UqCL6OiWByz
+	Xtw/kliBFQ36oSq9BYTpiV0yCH1KyFrWZco3USDuU8PnKnlWA7sY/7/PHpayf9AKDrhm06g5ext
+	GHb5vboScVFu0XaZ3g==
+X-Google-Smtp-Source: AGHT+IHIh+NtbdhBJPGvp+PdsKgznE3j6MW/wih7cdcg3jXx7CDE5Ab8+HYyON/WjHGgLkjljP/zfUAk/pZ0KlbqthI=
+X-Received: by 2002:a17:902:c94f:b0:271:479d:3ddc with SMTP id
+ d9443c01a7336-290273748efmr210402125ad.15.1760173200610; Sat, 11 Oct 2025
+ 02:00:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251010131331.785281312@linuxfoundation.org>
+In-Reply-To: <20251010131331.785281312@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 11 Oct 2025 14:29:48 +0530
+X-Gm-Features: AS18NWCh-0xz9_-woYeOmtt1_Loq4Or6bloaX3lxvECbB3fpRYG7edD9-6QdfCU
+Message-ID: <CA+G9fYsgsDXS-x7eV04QS0dpRcA2fWKHk7GOgcsQs+0UT7kgAA@mail.gmail.com>
+Subject: Re: [PATCH 6.12 00/35] 6.12.52-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, 10 Oct 2025 at 18:51, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.52 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 12 Oct 2025 13:13:18 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.52-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-While reviewing the timekeeping sysfs initialization code, 
-I noticed that in tk_aux_sysfs_init() the loop condition 
-i <= MAX_AUX_CLOCKS appears to iterate one more time than intended.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Code in tk_aux_sysfs_init():
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-for (int i = 0; i <= MAX_AUX_CLOCKS; i++) {
-    char id[2] = { [0] = '0' + i, };
-    struct kobject *clk = kobject_create_and_add(id, auxo);
-    // ...
-}
-With MAX_AUX_CLOCKS defined as 8, this loop runs 9 times (i = 0 to 8),
-creating sysfs nodes for 9 auxiliary clocks. However, according 
-to the comments, the kernel only supports up to 8 auxiliary clocks.
+## Build
+* kernel: 6.12.52-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: f7ad21173a1934329ac5bf0c8b5443d5666d3ce6
+* git describe: v6.12.50-47-gf7ad21173a19
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+.50-47-gf7ad21173a19
 
-This seems like an off-by-one error that could lead to creating one 
-more sysfs node than actually supported by the architecture constraints.
+## Test Regressions (compared to v6.12.50-11-g791ab27b9c00)
 
-Would it make sense to change the loop condition to i < MAX_AUX_CLOCKS 
-to properly align with the intended 8-clock limit?
+## Metric Regressions (compared to v6.12.50-11-g791ab27b9c00)
 
-Thanks for your time and consideration.
+## Test Fixes (compared to v6.12.50-11-g791ab27b9c00)
 
-Thanks,
-Haofeng Li
+## Metric Fixes (compared to v6.12.50-11-g791ab27b9c00)
 
+## Test result summary
+total: 154823, pass: 131476, fail: 4882, skip: 17920, xfail: 545
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 57 total, 50 passed, 7 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 39 passed, 1 failed
+* riscv: 25 total, 23 passed, 2 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 46 passed, 3 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
