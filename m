@@ -1,109 +1,268 @@
-Return-Path: <linux-kernel+bounces-849103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C506BCF368
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:00:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA6CBCF36F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C9A63A52D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:00:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9AF74E3D4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305A823BCE3;
-	Sat, 11 Oct 2025 10:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB10190664;
+	Sat, 11 Oct 2025 10:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipWja8p6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y89WU1Nt"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878A91DE4CD;
-	Sat, 11 Oct 2025 10:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94520239E81
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 10:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760176821; cv=none; b=itGDQDfws2J4GnCp/fbQ3cAxQHpCJnfokR9gLfyz0sESxMXOOz5T5ZqfKyzpaA27KhKYVekuMLBtM/nD5s48/bRjtvMVH37kAUNqxQYHAGkOtCdeYvCNhChLNqd8UAhV7qwX0OsVRhQ5iCFSvv2q7NeRv1uXbCnWqxCROKCtUpc=
+	t=1760177130; cv=none; b=AnqYid4UhEJq/iyO36XdXPVxfWQBFbaHAjz5BBu9tzIF8x3w4Wzkx4bt++vNaK8y/fpIU+OTb1J/DT26lWhdFFjXfGd1TrYVoCI+Hix5w7jZsgrcWRADKgKWFTXWRp8bglQE8+B4H0Ja6zIZtcycQSppQO4NzhAAiuqZQnSHCTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760176821; c=relaxed/simple;
-	bh=7yk3MyybYlBVgFNRCla3ShEZ9hQTXp85epGyYGmllnE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OnxAknfhfjZD25kYW/Sx8KV15QnYVyH/xt7nFu6oxqPx7cJ5HG8McKA1yECKrKmsAR5mfEEixMV4VtpeID/pP8G04qIUu1BsCRtR6LxtsY5ULDQ7FOO9VV0ElVrY5YCgKIllQVprMKSJtUF/Ui8up7XTrkfwwvrtNpg6bbcEWPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipWja8p6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07757C4CEF4;
-	Sat, 11 Oct 2025 10:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760176821;
-	bh=7yk3MyybYlBVgFNRCla3ShEZ9hQTXp85epGyYGmllnE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ipWja8p6NiPSUbYJhlW2Sa3QetWXS8an+AnAX6jaIAiL6o8yPrCeARTxCT73z7Ill
-	 8FBYVVlvvp3/1ja1SR1A1BmoeevXImnndsTQie6tS15RU3qgGrYt9Bm7qqrtBKw2Mo
-	 DAZxK3NbpaLI/zdDVmatyexWWCozkr/ZzzHaE4lhflhkkeulsLgVfOjRnQN5I1mXvF
-	 SptpvrMb1YvBj56OxmBKxXjMZd00DX1/8l44TqwmCpGPvF9ltz32/LB1jfnXDIQfJD
-	 geopXXVCzxhBd6BWlfknTWZlqnUfC5DJ/6sTybJcSOruLlbdaqnOsKD5pUyXAgEUud
-	 hu7d1704Oby6g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v7WOg-0000000D7RR-38KY;
-	Sat, 11 Oct 2025 10:00:18 +0000
-Date: Sat, 11 Oct 2025 11:00:11 +0100
-Message-ID: <87sefpoj10.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1760177130; c=relaxed/simple;
+	bh=yD7RQeZGhHxZZG7dRcZTyZ46jmCy1pYpkl90r+yN++A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ues5Pt++G8REg/XdC+K8+rXdTQkNCHiOhwEzhGFcxoQZe+cDIWCulfYqq7j7IDZjIh7UIfEjdEsaD9Q/inigIItSwu2U9emJW8gjjjyzoLbim5I1EOrQq5hUJv0IByzcu6SFD0AL/M0b3BzCwW8JAWAa9D+AS7LNjLqx2GaGkaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y89WU1Nt; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso1972925f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 03:05:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760177123; x=1760781923; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YXYaUmEOzuGL83duQA4oeQUvQii86pnI5j6WSpb5AXg=;
+        b=Y89WU1Nt3v0dpsDLjnTv69WOJFVC05Knoiwt4dHQS8nwp2CsLOqvWNsk36RNaEdWIT
+         bDKVm5VjmJMtW8fs0NcV10ilc3OZL5HRlkqppS5hEzzcPMRJkM1apEPYAjCcie/jYuw6
+         nKm5stq3PKE8BX1KuD0sLRBQm3vvzdJGKE14LyytyKxlWnV8bHT7ivHSAvukyLnD7tLP
+         /NEZidtIj+UI+fBxG+lkNLqMS83wmQyMDNAlo6igWvKAa23DIsrssDv23BT3mhCf1qYD
+         ckpYNxwHVJdhgbuJXN1KKlV6hw8gTYjXRiUbQY5FWG3iiTMRnhXFSgw65GANb1AlTDN5
+         wl6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760177123; x=1760781923;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YXYaUmEOzuGL83duQA4oeQUvQii86pnI5j6WSpb5AXg=;
+        b=PmBpQGJEoGtbmHo4QPwVDZ714I9QsX6PGVG0ylvmMatGpYavrEe9tER2VEk52BMaXu
+         AYjWkN1urNO0MBlzbGziRzjwTLDsNm81lYgMG/zcEA4YyMlgmJOsp1Dh9NmimAcu8ODQ
+         YX54K4Mp8u6KqqxX7CKhXV9tTPKm7CduVYtfeA6nyJMsMfld6o+4w3dpZyl/VsyIoRZA
+         N/1sPGybhsQUOeXDqflq4oD7pdhRxwaC96i5XtsBUbMyVBQ65Fv76EinICPC3vCplWOi
+         +XfNova4sCgxQpqqnYUagN5TMwpzrBG9h0Wf1ulPiQwI3Ej1dL4UmEE2j9/JAiMRRxgW
+         s+SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5peBgeLJXIISfR7BEQuF6fgmyhmOomac5zAUpH+Thy0VIukB0hU1bRc2pIE8vWVWKJm7BXIa2FopGoaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9lny94DExgtG53tjsZkajh+EJC8Lt6DZxAXWPFCytZTxmIChz
+	n9d32IXs0IvtW4Pfjw/PZDrBU5o9Nm/4KKcE2xLuySQ/RfJxlHd1x4njseeq7Qkw
+X-Gm-Gg: ASbGncvcn8sDXiC8JqIOclpJRLNFMvd+dDLmnmstlrwtEXFX80Ia9YemRxiTadEqKtj
+	MlVs/eI5QRCBoBtL5Oz/S03IholP1+jwFqZyyG6i5nkLRmX9m9LydC1r79aiyx+NpstMQ6YgIwY
+	kV007Xoa2aOW61ToqMdJsI+IVd00l5LlEwjOc0QQwgGf52bMuqB/9zbF7EQawL8r+bWgcPUgO/L
+	yVgbG1WKxpHxAcVzjbrf5uIN/N70t2whPqhxPo8PVsmeWNjtsN9FT8mCMjNc4nSbd+i9jl6+f6N
+	Jrm8HMq06U8JqvrxucpsF0WcWzHL48d+AsJ6HMVpD17U5p+XvFfNAr1JYkcgOpRf3nJ2RPbPTrg
+	AVVj1QGlATwDKbh0PBqtyQvHIWA36Yp4EtE5iw3mZixZsIAkKafYkyUWNs1YfBzOuC59ZbbJT66
+	k6d/xJ0iol+uoZ
+X-Google-Smtp-Source: AGHT+IED+xW+ElM2Jk98y4tVQY3+aEOn3kG6bLSCsaiJiU9WRcJ/Fl4ROiHdoOx3iLBNRTWKdp4WQg==
+X-Received: by 2002:a05:6000:2dc7:b0:3fa:ebaf:4c53 with SMTP id ffacd0b85a97d-42582a055f0mr12786285f8f.29.1760177122484;
+        Sat, 11 Oct 2025 03:05:22 -0700 (PDT)
+Received: from michalis-linux (adsl-75.176.58.251.tellas.gr. [176.58.251.75])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57cc0esm8322319f8f.6.2025.10.11.03.05.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 03:05:21 -0700 (PDT)
+Date: Sat, 11 Oct 2025 13:05:21 +0300
+From: Michail Tatas <michail.tatas@gmail.com>
+To: vishal.bhakta@broadcom.com, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-	<86qzvcxi3j.wl-maz@kernel.org>
-	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
-	<86o6qgxayt.wl-maz@kernel.org>
-	<86ms60x7w7.wl-maz@kernel.org>
-	<us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
-	<86bjmeyh5m.wl-maz@kernel.org>
-	<graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Subject: scsi: vmw_pvscsi: fix license+checkpatch warnings
+Message-ID: <aOor4Y2zzTBLr5NA@michalis-linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 10 Oct 2025 16:03:01 +0100,
-Thierry Reding <thierry.reding@gmail.com> wrote:
-> 
-> On Fri, Oct 10, 2025 at 03:18:13PM +0100, Marc Zyngier wrote:
-> > 
-> > CPU hotplug is the main area of concern, and I'm pretty sure it breaks
-> > this distribution mechanism (or the other way around). Another thing
-> > is that if firmware isn't aware that 1:N interrupts can (or should)
-> > wake-up a CPU from sleep, bad things will happen. Given that nobody
-> > uses 1:N, you can bet that any bit of privileged SW (TF-A,
-> > hypervisors) is likely to be buggy (I've already spotted bugs in KVM
-> > around this).
-> 
-> Okay, I can find out if CPU hotplug is a common use-case on these
-> devices, or if we can run some tests with that.
+As suggested by checkpatch
+  Fix licence by adding GPL and removing the address of the Free Software Foundation
+  Changed unsigned -> unsigned int
+  Added some newlines
 
-It's not so much whether CPU hotplug is of any use to your particular
-box, but whether this has any detrimental impact on *any* machine
-doing CPU hotplug.
+Signed-off-by: Michail Tatas <michail.tatas@gmail.com>
+---
+ drivers/scsi/vmw_pvscsi.c | 42 +++++++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-To be clear, this stuff doesn't go in if something breaks, no matter
-how small.
-
-	M.
-
+diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
+index 32242d86cf5b..6091777dd37b 100644
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+  * Linux driver for VMware's para-virtualized SCSI HBA.
+  *
+@@ -12,11 +13,6 @@
+  * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
+  * NON INFRINGEMENT.  See the GNU General Public License for more
+  * details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+- *
+  */
+ 
+ #include <linux/kernel.h>
+@@ -76,16 +72,16 @@ struct pvscsi_adapter {
+ 	struct work_struct		work;
+ 
+ 	struct PVSCSIRingReqDesc	*req_ring;
+-	unsigned			req_pages;
+-	unsigned			req_depth;
++	unsigned int		req_pages;
++	unsigned int		req_depth;
+ 	dma_addr_t			reqRingPA;
+ 
+ 	struct PVSCSIRingCmpDesc	*cmp_ring;
+-	unsigned			cmp_pages;
++	unsigned int		cmp_pages;
+ 	dma_addr_t			cmpRingPA;
+ 
+ 	struct PVSCSIRingMsgDesc	*msg_ring;
+-	unsigned			msg_pages;
++	unsigned int		msg_pages;
+ 	dma_addr_t			msgRingPA;
+ 
+ 	struct PVSCSIRingsState		*rings_state;
+@@ -325,9 +321,9 @@ static void ll_device_reset(const struct pvscsi_adapter *adapter, u32 target)
+ }
+ 
+ static void pvscsi_create_sg(struct pvscsi_ctx *ctx,
+-			     struct scatterlist *sg, unsigned count)
++			     struct scatterlist *sg, unsigned int count)
+ {
+-	unsigned i;
++	unsigned int i;
+ 	struct PVSCSISGElement *sge;
+ 
+ 	BUG_ON(count > PVSCSI_MAX_NUM_SG_ENTRIES_PER_SEGMENT);
+@@ -348,8 +344,8 @@ static int pvscsi_map_buffers(struct pvscsi_adapter *adapter,
+ 			      struct pvscsi_ctx *ctx, struct scsi_cmnd *cmd,
+ 			      struct PVSCSIRingReqDesc *e)
+ {
+-	unsigned count;
+-	unsigned bufflen = scsi_bufflen(cmd);
++	unsigned int count;
++	unsigned int bufflen = scsi_bufflen(cmd);
+ 	struct scatterlist *sg;
+ 
+ 	e->dataLen = bufflen;
+@@ -415,13 +411,13 @@ static void pvscsi_unmap_buffers(const struct pvscsi_adapter *adapter,
+ 				 struct pvscsi_ctx *ctx)
+ {
+ 	struct scsi_cmnd *cmd;
+-	unsigned bufflen;
++	unsigned int bufflen;
+ 
+ 	cmd = ctx->cmd;
+ 	bufflen = scsi_bufflen(cmd);
+ 
+ 	if (bufflen != 0) {
+-		unsigned count = scsi_sg_count(cmd);
++		unsigned int count = scsi_sg_count(cmd);
+ 
+ 		if (count != 0) {
+ 			scsi_dma_unmap(cmd);
+@@ -487,7 +483,7 @@ static void pvscsi_setup_all_rings(const struct pvscsi_adapter *adapter)
+ {
+ 	struct PVSCSICmdDescSetupRings cmd = { 0 };
+ 	dma_addr_t base;
+-	unsigned i;
++	unsigned int i;
+ 
+ 	cmd.ringsStatePPN   = adapter->ringStatePA >> PAGE_SHIFT;
+ 	cmd.reqRingNumPages = adapter->req_pages;
+@@ -877,11 +873,12 @@ static int pvscsi_abort(struct scsi_cmnd *cmd)
+  */
+ static void pvscsi_reset_all(struct pvscsi_adapter *adapter)
+ {
+-	unsigned i;
++	unsigned int i;
+ 
+ 	for (i = 0; i < adapter->req_depth; i++) {
+ 		struct pvscsi_ctx *ctx = &adapter->cmd_map[i];
+ 		struct scsi_cmnd *cmd = ctx->cmd;
++
+ 		if (cmd) {
+ 			scmd_printk(KERN_ERR, cmd,
+ 				    "Forced reset on cmd %p\n", cmd);
+@@ -1037,15 +1034,15 @@ static void pvscsi_process_msg(const struct pvscsi_adapter *adapter,
+ 	struct Scsi_Host *host = adapter->host;
+ 	struct scsi_device *sdev;
+ 
+-	printk(KERN_INFO "vmw_pvscsi: msg type: 0x%x - MSG RING: %u/%u (%u) \n",
++	printk(KERN_INFO "vmw_pvscsi: msg type: 0x%x - MSG RING: %u/%u (%u)\n",
+ 	       e->type, s->msgProdIdx, s->msgConsIdx, s->msgNumEntriesLog2);
+ 
+ 	BUILD_BUG_ON(PVSCSI_MSG_LAST != 2);
+ 
+ 	if (e->type == PVSCSI_MSG_DEV_ADDED) {
+ 		struct PVSCSIMsgDescDevStatusChanged *desc;
+-		desc = (struct PVSCSIMsgDescDevStatusChanged *)e;
+ 
++		desc = (struct PVSCSIMsgDescDevStatusChanged *)e;
+ 		printk(KERN_INFO
+ 		       "vmw_pvscsi: msg: device added at scsi%u:%u:%u\n",
+ 		       desc->bus, desc->target, desc->lun[1]);
+@@ -1065,6 +1062,7 @@ static void pvscsi_process_msg(const struct pvscsi_adapter *adapter,
+ 		scsi_host_put(host);
+ 	} else if (e->type == PVSCSI_MSG_DEV_REMOVED) {
+ 		struct PVSCSIMsgDescDevStatusChanged *desc;
++
+ 		desc = (struct PVSCSIMsgDescDevStatusChanged *)e;
+ 
+ 		printk(KERN_INFO
+@@ -1164,6 +1162,7 @@ static bool pvscsi_setup_req_threshold(struct pvscsi_adapter *adapter,
+ 		return false;
+ 	} else {
+ 		struct PVSCSICmdDescSetupReqCall cmd_msg = { 0 };
++
+ 		cmd_msg.enable = enable;
+ 		printk(KERN_INFO
+ 		       "vmw_pvscsi: %sabling reqCallThreshold\n",
+@@ -1204,7 +1203,7 @@ static irqreturn_t pvscsi_shared_isr(int irq, void *devp)
+ static void pvscsi_free_sgls(const struct pvscsi_adapter *adapter)
+ {
+ 	struct pvscsi_ctx *ctx = adapter->cmd_map;
+-	unsigned i;
++	unsigned int i;
+ 
+ 	for (i = 0; i < adapter->req_depth; ++i, ++ctx)
+ 		free_pages((unsigned long)ctx->sgl, get_order(SGL_SIZE));
+@@ -1328,7 +1327,7 @@ static u32 pvscsi_get_max_targets(struct pvscsi_adapter *adapter)
+ 	header->hostStatus = BTSTAT_INVPARAM;
+ 	header->scsiStatus = SDSTAT_CHECK;
+ 
+-	pvscsi_write_cmd_desc(adapter, PVSCSI_CMD_CONFIG, &cmd, sizeof cmd);
++	pvscsi_write_cmd_desc(adapter, PVSCSI_CMD_CONFIG, &cmd, sizeof(cmd));
+ 
+ 	if (header->hostStatus == BTSTAT_SUCCESS &&
+ 	    header->scsiStatus == SDSTAT_GOOD) {
+@@ -1489,6 +1488,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	INIT_LIST_HEAD(&adapter->cmd_pool);
+ 	for (i = 0; i < adapter->req_depth; i++) {
+ 		struct pvscsi_ctx *ctx = adapter->cmd_map + i;
++
+ 		list_add(&ctx->list, &adapter->cmd_pool);
+ 	}
+ 
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
