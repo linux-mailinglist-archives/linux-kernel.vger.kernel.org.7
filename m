@@ -1,50 +1,43 @@
-Return-Path: <linux-kernel+bounces-849012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941DDBCF03C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:57:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E0CBCF0EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 521F934D4F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C0E4279C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2F21F1313;
-	Sat, 11 Oct 2025 05:57:32 +0000 (UTC)
-Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9853224AF0;
+	Sat, 11 Oct 2025 07:21:23 +0000 (UTC)
+Received: from out198-4.us.a.mail.aliyun.com (out198-4.us.a.mail.aliyun.com [47.90.198.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694411400C;
-	Sat, 11 Oct 2025 05:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67A7223DC1
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760162252; cv=none; b=cb1XlHBa5At2aFHGKE7Lb4nRuAzNAo6c9Er0XR0lMnS84vkb+a2RoIEI420uB17G43RN1qwsJLjjd5Mog8y5QctfeSYStD/DFKjXagB4ewlKDDiGcnPqskyuUi+a3LSHm7JMLyFuS3pIVOJfGM/PD/g3F1obdVIMQM4yUUAk4To=
+	t=1760167283; cv=none; b=cp+wYe9bGdd1J4awKCO4tk3J1ioiX765mbdjzV1xfkf2N8Nla9AeUSWoUn21KvG+RFI0rPe8+hPHVMRgCQ4jwXHfRdoVnppW0iITtnJU4m3SLnBYMZc7c1trPttpeLsMrEyOnYKbhsWZJ24P+w3rIGWWNduWjXRv7yBDVVL1lNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760162252; c=relaxed/simple;
-	bh=/TLxbFVcOffd2gCQWR1V7rl8jK9Kvl2ZEoVFOrfAQj0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MlqXaPyijd9Mw9S7nXIdgu1vmnTwfqjDXZjDy0ZQfh/kH1ZUJQkRhHRZkQz9S/XFLxPsw5QeWiCIqSKN3FHno7jrv7rZ058F/u/2L9aazFwoc3i/RDnmYvVNdQQhCLR2TKVEAnF2doHQr5EmHg4vc1qeAeoYDAbHEmzhV11Zjuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
-Received: from blala.de (localhost [127.0.0.1])
-	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 59B62q4o013399;
-	Sat, 11 Oct 2025 06:02:52 GMT
-Received: (from akurz@localhost)
-	by blala.de (8.15.2/8.15.2/Submit) id 59B62qfq013398;
-	Sat, 11 Oct 2025 06:02:52 GMT
-From: Alexander Kurz <akurz@blala.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
-Subject: [PATCH] ARM: dts: imx53: enable PMIC RTC on imx53-qsrb
-Date: Sat, 11 Oct 2025 06:02:51 +0000
-Message-Id: <20251011060251.13356-1-akurz@blala.de>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1760167283; c=relaxed/simple;
+	bh=YdOiYu7obpIa5YzfqCzwa1W0M/nPPslaTDPEE0zv3cc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f4yKJ6BYpFb7gT+hLHY2a3/m4qYahS16+xPev2Biy5ViofuNNR6bubW9vuoB5XPRItXvrNGZl0NgBcvF3lq79NIjyh5t2m22hLNzvBIyaQlXPCGhK2845Zps6zFVmecAPZKNe3rRZqrNfTZG2EC7BJjPihOAqNXJ+OhPudotNuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com; spf=pass smtp.mailfrom=allwinnertech.com; arc=none smtp.client-ip=47.90.198.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allwinnertech.com
+Received: from SunxiBot.allwinnertech.com(mailfrom:michael@allwinnertech.com fp:SMTPD_---.exm99hc_1760163588 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Sat, 11 Oct 2025 14:19:50 +0800
+From: Michael Wu <michael@allwinnertech.com>
+To: myungjoo.ham@samsung.com,
+	cw00.choi@samsung.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] extcon: Fixed extcon duplicate issue
+Date: Sat, 11 Oct 2025 13:37:19 +0800
+Message-Id: <20251011053719.87055-1-michael@allwinnertech.com>
+X-Mailer: git-send-email 2.29.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,28 +46,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The RTC inside mc34708 is supported by RTC_DRV_MC13XXX since v3.6-rc1.
-Enable the PMIC RTC on the imx53-qsrb. Without a battery the RTC may be
-powered via the micro-USB connector when main 5V power is not available.
+extcon_dev_ids may re-alloc to another while this device unregister not complete
 
-Signed-off-by: Alexander Kurz <akurz@blala.de>
+The right timing shows below:
+on extcon_dev_register: ida_alloc -> device_register
+on extcon_dev_unregister: device_unregister -> ida_free
+
+stack information when an error occurs:
+sysfs: cannot create duplicate filename '/class/extcon/extcon1'
+CPU: 7 PID: 222 Comm: init Not tainted 6.6.77-android15-8-g9fab1123989e-ab13366090-4k #1 bbfe3ef014a40c2f67534a3e01169790ce021aeb
+Hardware name: sun60iw2 (DT)
+Call trace:
+ dump_backtrace+0xe8/0x108
+ show_stack+0x18/0x28
+ dump_stack_lvl+0x50/0x6c
+ dump_stack+0x18/0x24
+ sysfs_warn_dup+0x68/0x88
+ sysfs_do_create_link_sd+0x94/0xdc
+ sysfs_create_link+0x30/0x48
+ device_add_class_symlinks+0xb4/0x12c
+ device_add+0x1e0/0x48c
+ device_register+0x20/0x34
+ extcon_dev_register+0x3b8/0x5c4
+ devm_extcon_dev_register+0x4c/0x94
+
+Signed-off-by: Michael Wu <michael@allwinnertech.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/extcon/extcon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts b/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts
-index 2f06ad61a766..6938ad6dbc2c 100644
---- a/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx53-qsrb.dts
-@@ -28,6 +28,7 @@ pmic: mc34708@8 {
- 		reg = <0x08>;
- 		interrupt-parent = <&gpio5>;
- 		interrupts = <23 IRQ_TYPE_LEVEL_HIGH>;
-+		fsl,mc13xxx-uses-rtc;
- 		regulators {
- 			sw1_reg: sw1a {
- 				regulator-name = "SW1";
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index e7f55c021e562..c08f642d7f5ee 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -1371,10 +1371,10 @@ void extcon_dev_unregister(struct extcon_dev *edev)
+ 		return;
+ 	}
+ 
+-	ida_free(&extcon_dev_ids, edev->id);
+-
+ 	device_unregister(&edev->dev);
+ 
++	ida_free(&extcon_dev_ids, edev->id);
++
+ 	if (edev->mutually_exclusive && edev->max_supported) {
+ 		for (index = 0; edev->mutually_exclusive[index];
+ 				index++)
 -- 
-2.39.5
+2.29.0
 
 
