@@ -1,148 +1,87 @@
-Return-Path: <linux-kernel+bounces-849156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55076BCF4ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C013BCF4FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72ACB423100
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:09:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174C6406928
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83CB26E702;
-	Sat, 11 Oct 2025 12:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a+AI6rwX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687B826E701;
+	Sat, 11 Oct 2025 12:11:12 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF71F25F96B;
-	Sat, 11 Oct 2025 12:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17921684A4
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 12:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760184539; cv=none; b=kbc13T026IFSqX96CF0Mwmbbgu/lm+qPAG0PDkCY5+Vmt6gOeRquAyOIO8eDLq3VQWzMSCnaG7pgqHrFUyMK4Wf7inscMdzYhsYoBdIhvSoB01m8j1auyp6Id8xwtF28C2BT5hZzcto9D5cYrsz3oHVF3uFG6dR/Om0O9N4XQik=
+	t=1760184672; cv=none; b=uFT6p7Nqnmy18hWtJ+kiV7znFot/V4tgFIJKrctSmnBRxTW8NEVAaEfWkVNtQOHsbifIIOLUvYn17nX974UHdCK6DJcH1VXwNRq0QgIkFH9gjqWWbZxW81gfpV1w2mrXccQ5URaW+rxeUm/WPq57cM2MO4WqAjQHSZUtSc2DSeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760184539; c=relaxed/simple;
-	bh=HzDha1bDCleO+Hcw70n/+eAgjNrBHJmlLvT0DS03OIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TzC2v6qOtUlV3fDjHrtFWBjnGiKtFVNx1WrGPJoaKo/VMUOm8+A+qXyeg92R6REr7c1DWhu06ON35avdDZVWp4+GCQOj1cjOk31Hjqk8nM4eyWElWZcLj8Pyc5bRXQ5IM56x2DNNXdgd2seCtYHqk/+O1TDb2nyN279U2dr06xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a+AI6rwX; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760184533; x=1791720533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HzDha1bDCleO+Hcw70n/+eAgjNrBHJmlLvT0DS03OIc=;
-  b=a+AI6rwX/bkqHjVFX8cFhJmq08/M6IrtjXIqwljSnaqnaX/Ui4gNwGY4
-   SutOzQEVHtyu0wgPL+Y9kw+xTgZc/vcCK6wPXQxV24Ev31k7pE4ea16x3
-   JGxhNip8wU81z9OO0XEWimAZ3dMfiay2qJROa+MivbdWHpEblWLk49KAL
-   N5uty3Fg/3dZCTw/PNyChn1SfDeFMPL4YPlDei2eXI/RE7/QnTSjltZP7
-   DPy79/9caq44qLnboVV9p5+cDMJOLeVgn/QlmixUzMwc+bKcF/KXxXZks
-   lfNKQSdsxMMT5wMrjodBFEfPhH+LR3fF8+G1mNqV6sdvTvoRObuN+yNiF
-   g==;
-X-CSE-ConnectionGUID: PJto0Se6SUGTBGZuANiQFQ==
-X-CSE-MsgGUID: UcolVEvrSw2RzXdkiJULow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="72997284"
-X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="72997284"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 05:08:53 -0700
-X-CSE-ConnectionGUID: yKzoTVSTShW3UGSNe+sIzw==
-X-CSE-MsgGUID: 5+ipT8PjTQuR6BkH3h88kg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="186472719"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 11 Oct 2025 05:08:49 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7YP1-0003kd-1K;
-	Sat, 11 Oct 2025 12:08:47 +0000
-Date: Sat, 11 Oct 2025 20:07:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Praveen K Paladugu <prapal@linux.microsoft.com>, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	tglx@linutronix.de, mingo@redhat.com, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	arnd@arndb.de
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	anbelski@linux.microsoft.com, prapal@linux.microsoft.com
-Subject: Re: [PATCH 2/2] hyperv: Enable clean shutdown for root partition
- with MSHV
-Message-ID: <202510111934.lcAG5ZAN-lkp@intel.com>
-References: <20251009160501.6356-3-prapal@linux.microsoft.com>
+	s=arc-20240116; t=1760184672; c=relaxed/simple;
+	bh=ViLBxRzvncMncy4TnsZsFgcX2U2il8NJbKbCRKFML/M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UeSQE7y4gM2H3BHvvzjbYtebLc3RZK9iJudsI+ic9F8w4/042qUH9K5pTcd1tNbBEXFPP5HzfIjzp4iu4tJKKj/qDnOdFSjGa2/fLVQRFCikNXtMG2CaWDdpEDYvNVUh4WP7qLzwvVE+0lC35k9HFUFTl/WJOK9GlZDWytm9+NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42486b1d287so226744225ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:11:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760184666; x=1760789466;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mj9iqvasaGaDRq383sgneJKHkYKHNGAemKNjEN6kCwM=;
+        b=n0E4mk/GcmBJl8+8kUJMgWh2KQi88wFid9JO+B4/DsgB1KmfqzcS/48wuyVma/4yw1
+         wF4IembZn7qhVMpaizu0c5Iay3rryybK8Echy2xqx/POM2lJ67CpM8C7468Obuvl0juN
+         zHe23Oxj6TFNzw+7chgNiPdOhB0O8E8W60nzX23ioWoEBTkElmpy94vXzfnCTCy6UBsF
+         eCg7hL12PTJrLMKY8W2Rf5WlUn4oXqBibM5dRVk6GyORbCGVe6VV2J0lcVveBOwomAj9
+         DU0HRZUHQSMT0JPDdv0BesB4TC4+2we0aII16OLsG2/NUQVCLPsGXDVDSebNjbHBCK/K
+         S4zw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/WyoEFnCTdvdR5M+RPnKJxX6PA/BJmzDb5bkSgMB0NwyOFAvJQGvUivlj9iufYmAHpAtUfdyoqHQM8cE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZcA6aXtFZ5vXsFYVCu+ZYqbr7dLy2KRUQLBFtLxJu97tEMZmq
+	hCJZvk/HIvE9uK9g1G4VwPfbrgK+CM7wxawKPu+Z0QgDff7IZb5lZApvO2mhHrB3q6Y6YQ/8xkh
+	0t7xADfdV+TywDPwjy/wXBluyQ/LnEOR3HnbGx8Vagb54PNkTie83b+lcI2Q=
+X-Google-Smtp-Source: AGHT+IEjLzrx9M9XUNYNxzXxCP3IxprruqOtOxpvwj2or+6pH5lw9/7zVS26dX8ObP4eROHa29iPrWuvjxwy+GiZ/eeTq+68pGJW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009160501.6356-3-prapal@linux.microsoft.com>
+X-Received: by 2002:a05:6e02:1a09:b0:42f:9501:69e with SMTP id
+ e9e14a558f8ab-42f95010904mr117367385ab.20.1760184666027; Sat, 11 Oct 2025
+ 05:11:06 -0700 (PDT)
+Date: Sat, 11 Oct 2025 05:11:06 -0700
+In-Reply-To: <91f995c8-75e3-4b02-a7f1-be266a90b061@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ea495a.050a0220.ac43.0000.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_write_end_io
+From: syzbot <syzbot+803dd716c4310d16ff3a@syzkaller.appspotmail.com>
+To: chao@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Praveen,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-[auto build test WARNING on tip/x86/core]
-[also build test WARNING on arnd-asm-generic/master soc/for-next linus/master v6.17 next-20251010]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reported-by: syzbot+803dd716c4310d16ff3a@syzkaller.appspotmail.com
+Tested-by: syzbot+803dd716c4310d16ff3a@syzkaller.appspotmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Praveen-K-Paladugu/hyperv-Add-definitions-for-MSHV-sleep-state-configuration/20251010-122914
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20251009160501.6356-3-prapal%40linux.microsoft.com
-patch subject: [PATCH 2/2] hyperv: Enable clean shutdown for root partition with MSHV
-config: arm64-randconfig-003-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111934.lcAG5ZAN-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111934.lcAG5ZAN-lkp@intel.com/reproduce)
+Tested on:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510111934.lcAG5ZAN-lkp@intel.com/
+commit:         591c8102 allow to sanity check in f2fs_write_end_io
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b469e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9acaa7b581f88665
+dashboard link: https://syzkaller.appspot.com/bug?extid=803dd716c4310d16ff3a
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-All warnings (new ones prefixed by >>):
-
-   drivers/hv/hv_common.c:944:50: error: too few arguments provided to function-like macro invocation
-     944 |         acpi_os_set_prepare_sleep(&hv_acpi_sleep_handler);
-         |                                                         ^
-   include/linux/acpi.h:1165:9: note: macro 'acpi_os_set_prepare_sleep' defined here
-    1165 | #define acpi_os_set_prepare_sleep(func, pm1a_ctrl, pm1b_ctrl) do { } while (0)
-         |         ^
-   drivers/hv/hv_common.c:944:2: error: use of undeclared identifier 'acpi_os_set_prepare_sleep'; did you mean 'acpi_os_enter_sleep'?
-     944 |         acpi_os_set_prepare_sleep(&hv_acpi_sleep_handler);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |         acpi_os_enter_sleep
-   include/acpi/acpiosxf.h:326:13: note: 'acpi_os_enter_sleep' declared here
-     326 | acpi_status acpi_os_enter_sleep(u8 sleep_state, u32 rega_value, u32 regb_value);
-         |             ^
-   drivers/hv/hv_common.c:945:2: error: call to undeclared function 'acpi_os_set_prepare_extended_sleep'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     945 |         acpi_os_set_prepare_extended_sleep(&hv_acpi_extended_sleep_handler);
-         |         ^
->> drivers/hv/hv_common.c:944:2: warning: expression result unused [-Wunused-value]
-     944 |         acpi_os_set_prepare_sleep(&hv_acpi_sleep_handler);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning and 3 errors generated.
-
-
-vim +944 drivers/hv/hv_common.c
-
-   939	
-   940	int hv_sleep_notifiers_register(void)
-   941	{
-   942		int ret;
-   943	
- > 944		acpi_os_set_prepare_sleep(&hv_acpi_sleep_handler);
- > 945		acpi_os_set_prepare_extended_sleep(&hv_acpi_extended_sleep_handler);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
