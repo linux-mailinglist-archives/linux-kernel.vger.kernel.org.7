@@ -1,174 +1,129 @@
-Return-Path: <linux-kernel+bounces-848963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D11DBCEEAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 04:58:17 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C255BCEEB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AEE422C77
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:58:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2322A34EF1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEAE1A5B92;
-	Sat, 11 Oct 2025 02:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BF01ACEDA;
+	Sat, 11 Oct 2025 03:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h5ZwjEFg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BcG4JDpH"
+Received: from mail-m3292.qiye.163.com (mail-m3292.qiye.163.com [220.197.32.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8101B1957FC;
-	Sat, 11 Oct 2025 02:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BBE3FC2;
+	Sat, 11 Oct 2025 03:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760151490; cv=none; b=g2OVHIjd7sQHSiGiS1FuG8E1p3EydzdPLCM8uYfvoEptY2twe5Ah3u4VtvzvT0iUFoOAb797k5kVpR1QtDznoSqf/dvTIor8eqFP6ZXa9IbGGKI/jC5JyR1aKKIur0mDNM4TYJEFJpbYQKO001aEYFeZWnA9VpCNOSua+rSDGs4=
+	t=1760151923; cv=none; b=i4X9bT5FRvhWOtvK2J5oaCx2nBiVg1ARCZ62ZqxXYeyrhccBCi7rR62o1hUwYVUzy8iRbpeHoPRhSJfhMUqcSCemAEZb3q6b5H99LA82yMjJ5muCaYrq5LZyI81yGlbuRRdwyZ+i9g2lrYV6oCP5f3/wbkudN8b+6n8fZBnWOj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760151490; c=relaxed/simple;
-	bh=n3Cf2XbDxUMzoSgHrQU9R6SSN64Mq364sx/VyZ4IhmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCq0A0JsSTS5KchuuI8DlIemdBUj7LpKiRBDVEvbVgjrenfSzBudl3oyhkdS79mYN5JvxBJz6qHSyS65NgpVG1jKAHr6RPecHi3gPwvnHCMUMkktcvYiLwM1czPEtr7PEYgGbvpI5iRVIGFwlJ+8CEzymgrw/l9qdvWKmKrEvhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h5ZwjEFg; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760151488; x=1791687488;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n3Cf2XbDxUMzoSgHrQU9R6SSN64Mq364sx/VyZ4IhmQ=;
-  b=h5ZwjEFg4v885bhFR6KzxZj/fVVo0QmQYEBCj4x8S71fEJFdI1dASU06
-   zFzIpOTjNqmpxQm2g7TidzOJQA5uPLo2+4KZ1U/KM1K46mUqCYHy+dcg9
-   dSKHe+6GL98nfSb0Y9gtaTHEzfkvvYQFEPU0DUOQ7qMGRP8tz+FtLKEC4
-   YLldkWSZB+rc7FKW4SRs3eNFXkNyaVibW6WLLRLMs74bDpzzsf5zClGAk
-   V7WdzVE1OLrpd8K5vkh46HKyiE9X3FqRKQmVzoQWNGiU7b20OQLdmNH6T
-   Ff3J681rZ8fHoYcaTotchlpOzB7DB4MD2P6nwgWss5XFkGYQO7R1Ai5EW
-   g==;
-X-CSE-ConnectionGUID: zXDQaE2eSvGtQCD1z3Mrvw==
-X-CSE-MsgGUID: b/Nq6Qz7RLeo9IF5GwUxig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="62267674"
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="62267674"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 19:58:07 -0700
-X-CSE-ConnectionGUID: YrfVI3RNRcqF0tl0N/g1FA==
-X-CSE-MsgGUID: kzR2Jx+RQBOJsvHCexOGmw==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 10 Oct 2025 19:58:01 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7Pny-0003S7-2G;
-	Sat, 11 Oct 2025 02:57:58 +0000
-Date: Sat, 11 Oct 2025 10:57:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	alexandru.elisei@arm.com, peterx@redhat.com, sj@kernel.org,
-	rppt@kernel.org, mhocko@suse.com, corbet@lwn.net, axboe@kernel.dk,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
-	jack@suse.cz, willy@infradead.org, m.szyprowski@samsung.com,
-	robin.murphy@arm.com, hannes@cmpxchg.org,
-	zhengqi.arch@bytedance.com, shakeel.butt@linux.dev,
-	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
-	minchan@kernel.org, surenb@google.com, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] mm/tests: add cleancache kunit test
-Message-ID: <202510111059.aKceYLLH-lkp@intel.com>
-References: <20251010011951.2136980-6-surenb@google.com>
+	s=arc-20240116; t=1760151923; c=relaxed/simple;
+	bh=IjSGK6tISxai0JQVwUngNoeu6jw5RLorQnjtddZIBu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dVIjYXFqCWPy3gJOlivjEQ3BcqIsywJAM0XJZNF/n+fgps0i1c0ypdIrlKkMrnlCMapi/J28a3LQbCenyKGifqe2cURdMzgTX4lG3jLWmule3OS1Ut0HIqHf0kxS6Ap7O6Sao4n1cUCT7wAk/ruHezRqTw73PHy4qRqykg0BJmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BcG4JDpH; arc=none smtp.client-ip=220.197.32.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 258448df5;
+	Sat, 11 Oct 2025 11:05:09 +0800 (GMT+08:00)
+Message-ID: <7a0e519b-40ac-4b43-8b9d-f553f12149ab@rock-chips.com>
+Date: Sat, 11 Oct 2025 11:05:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010011951.2136980-6-surenb@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: add RK3588 DP carrier from
+ Theobroma Systems
+To: Quentin Schulz <quentin.schulz@cherry.de>,
+ Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20250723190904.37792-1-heiko@sntech.de>
+ <20250723190904.37792-3-heiko@sntech.de>
+ <0582b7bc-e5b2-4b5e-821e-8d2c4301579f@cherry.de>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <0582b7bc-e5b2-4b5e-821e-8d2c4301579f@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a99d13ab5e803a3kunmd5ed0f611cf2f8
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRgdTVZDGR9ISxgdS05MTRhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=BcG4JDpHNH8v0B4VgRuWcBKp5Y0HoHiVdkW0aQ0sem1Laa/IbTNu7NbRpVErCbTBGKlINOF02NVd6bq8nOwYlmjqwfWzrHCawRddnNsSe71Ib8WxSaWhAw33Q+c7CHL3++68jO1O071FK4IIyiTo1yYhitwDBGsB9j0f6LtEpso=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=JciJ+fW3A6ZS6ImbDuDBfmOW2HRfOeNCg82yAvl2wII=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi Suren,
+Hi Quentin,
 
-kernel test robot noticed the following build warnings:
+On 7/25/2025 8:29 PM, Quentin Schulz wrote:
+> Hi Heiko,
+> 
+> On 7/23/25 9:09 PM, Heiko Stuebner wrote:
+>> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+>>
+>> The DisplayPort carrier is a very simple baseboard only providing serial,
+>> ethernet and a displayport output.
+>>
+>> But its main functionality is that it routes the Analogix eDP controller
+>> to this DisplayPort output, which allows to test that controller simply
+>> by hooking it up to a suitable monitor.
+>>
+>> The Analogix-DP controller supports eDP 1.3 and DP 1.2, so can drive
+>> both eDP displays as well as full DP monitors. It does not support DP+
+>> so passive DP-to-HDMI adapters won't work.
+>>
+> 
+> I tested this on master (2942242dde896) + v2 of the eDP driver as listed 
+> in the cover letter, or with v3 of the eDP driver + 
+> 48f05c3b4b701ae7687fd44d462c88b7ac67e952 and in both cases I have weird 
+> behaviors.
+> 
+> First, `reboot` is stuck for a very long time before actually rebooting. 
+> I think you have a stacktrace when you tried yourself, I don't so cannot 
+> send one.
+> 
+> Also, I tested on two different DP displays, one has a green tint, the 
+> other one purple. When trying out other resolutions with modetest, the 
+> kernel would often crash (no trace, just nothing on console, SSH dead). 
+> Note that the same HW setup with downstream kernel from https:// 
+> git.theobroma-systems.com/tiger-linux.git/log/?h=linux-6.1-stan-rkr3.2- 
+> tiger works just fine. I would assume this has nothing to do with this 
+> Device Tree patch here but rather the eDP patches missing some bits maybe?
+> 
+> @Damon do you have some idea?
+> 
 
-[auto build test WARNING on 70478cb9da6fc4e7b987219173ba1681d5f7dd3d]
+Apologies for the delayed reply. :-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Suren-Baghdasaryan/mm-implement-cleancache/20251010-134501
-base:   70478cb9da6fc4e7b987219173ba1681d5f7dd3d
-patch link:    https://lore.kernel.org/r/20251010011951.2136980-6-surenb%40google.com
-patch subject: [PATCH 5/8] mm/tests: add cleancache kunit test
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20251011/202510111059.aKceYLLH-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111059.aKceYLLH-lkp@intel.com/reproduce)
+Since the patch series has been updated to v6, could you please rebase 
+these patches? I will then conduct further investigation into this issue.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510111059.aKceYLLH-lkp@intel.com/
+> The display with green tint is a Iiyama ProLite XU2294HSU and the one 
+> with the purple tint is a Dell P2319H if that helps.
+> 
+> modetest output: https://paste.debian.net/1387797/.
+> modetest output with downstream kernel: https://paste.debian.net/1387798/
+> 
+> The Device Tree looks good to me otherwise.
+> 
 
-All warnings (new ones prefixed by >>):
+Best regards,
+Damon
 
->> mm/tests/cleancache_kunit.c:358:6: warning: variable 'unused' set but not used [-Wunused-but-set-variable]
-     358 |         int unused = 0;
-         |             ^
-   1 warning generated.
-
-
-vim +/unused +358 mm/tests/cleancache_kunit.c
-
-   353	
-   354	static void cleancache_backend_api_test(struct kunit *test)
-   355	{
-   356		struct folio *folio;
-   357		LIST_HEAD(folios);
- > 358		int unused = 0;
-   359		int used = 0;
-   360	
-   361		/* Store inode folios into cleancache */
-   362		fill_cleancache(test);
-   363	
-   364		/* Get all donated folios back */
-   365		for (int fidx = 0; fidx < FOLIO_COUNT; fidx++) {
-   366			KUNIT_EXPECT_EQ(test, cleancache_backend_get_folio(test_data.pool_id,
-   367							test_data.pool_folios[fidx]),  0);
-   368			set_page_refcounted(&test_data.pool_folios[fidx]->page);
-   369		}
-   370	
-   371		/* Try putting a refcounted folio */
-   372		KUNIT_EXPECT_NE(test, cleancache_backend_put_folio(test_data.pool_id,
-   373						test_data.pool_folios[0]), 0);
-   374	
-   375		/* Put some of the folios back into cleancache */
-   376		for (int fidx = 0; fidx < FOLIOS_PER_INODE; fidx++) {
-   377			folio_ref_freeze(test_data.pool_folios[fidx], 1);
-   378			KUNIT_EXPECT_EQ(test, cleancache_backend_put_folio(test_data.pool_id,
-   379							test_data.pool_folios[fidx]), 0);
-   380		}
-   381	
-   382		/* Put the rest back into cleancache but keep half of folios still refcounted */
-   383		for (int fidx = FOLIOS_PER_INODE; fidx < FOLIO_COUNT; fidx++) {
-   384			if (fidx % 2) {
-   385				folio_ref_freeze(test_data.pool_folios[fidx], 1);
-   386				unused++;
-   387			} else {
-   388				used++;
-   389			}
-   390			list_add(&test_data.pool_folios[fidx]->lru, &folios);
-   391		}
-   392		KUNIT_EXPECT_NE(test, cleancache_backend_put_folios(test_data.pool_id,
-   393						&folios), 0);
-   394		/* Used folios should be still in the list */
-   395		KUNIT_EXPECT_EQ(test, list_count_nodes(&folios), used);
-   396	
-   397		/* Release refcounts and put the remaining folios into cleancache */
-   398		list_for_each_entry(folio, &folios, lru)
-   399			folio_ref_freeze(folio, 1);
-   400		KUNIT_EXPECT_EQ(test, cleancache_backend_put_folios(test_data.pool_id,
-   401						&folios), 0);
-   402		KUNIT_EXPECT_TRUE(test, list_empty(&folios));
-   403	}
-   404	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
