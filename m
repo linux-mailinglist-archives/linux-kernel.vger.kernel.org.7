@@ -1,166 +1,151 @@
-Return-Path: <linux-kernel+bounces-849191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB8CBCF782
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:48:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DEBBCF785
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EAFD3B8C2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:48:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AEB84E2F61
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B9127A11E;
-	Sat, 11 Oct 2025 14:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8333827A11E;
+	Sat, 11 Oct 2025 14:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLlMKRHb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rpe+Vwbt"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9517231A30
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61734BA2D
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760194098; cv=none; b=ONqmxinXTzUyryoKdUuVObyqYlLrRcY72+GmcI870PRMO1pQD+MPGLb4FEPHlxSVLebKEeItQfW1HP17vdk8Z5fDB+D/EjMT+l86eD8AYRD1pEA4GrPdyKFbosNNLYMyg5eC4f6MzhILJVUrkZE76UbwAe6nIJrJL7Z3UkxiYio=
+	t=1760194153; cv=none; b=OWCzDzR+SSk9glU8HEfEIC6nSoUN9QTQIF7MJZGgGrAL+pxJcrBk9QmV5/xnLa75rZqotB01tAz2kLYMpRKoP8sWJpdnhwKoMa2wFHDRs8RSVRsGml2oyngJrH4Mk4Y+DyTRc58PKqkBND/+pkwqojne5rAtFLy/oZnKjxePxNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760194098; c=relaxed/simple;
-	bh=wXStBs+UvcT5ZrTpS1/1ckIwHRUEME48TSqbgkHwb+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s+lBGhTjBx8AxiuYGlP6N8XHIzsleca6tgZnOFnaouJyPldFLSvAaXXlJYKC91QPKYK7xwSKqkZF0Qe2EE4eKk+o+OaZX2HWGHx07d3G7qWwrJZ96RkD6I/yvgP9CWN0BmrhoCWwANyRHKpD/WSi/DqkY4bcWuCrajribRyV6Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLlMKRHb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90366C19421
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760194098;
-	bh=wXStBs+UvcT5ZrTpS1/1ckIwHRUEME48TSqbgkHwb+4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oLlMKRHb9j5zca9gdcHz3nPcO7CWeuLIPHjl65qT2ulkC1tRQIFninovONVjG/+pi
-	 xlJPV9b35BmCBiYDnvjtYkvfsgCKLcTv7aU+UCPAwJCFH7e1YRwQTWuw6+AFLPJbp7
-	 6oId1EXpdBUig96uubNo6+DPOd34dH5Ho3jy47trzx19Tz9FKDIdc08BH5215KlMAO
-	 zHfV8cUJzMgeAaEn4t0CPuAh9YsvD1QkbTWrBBFig6M94acAuabpGdlZl+HL27+pn2
-	 3aabXazeHX5eCCzxiN1jZeB7tQKIrXZGDduFarAG2uocTIPF/JGfdVEBLr14vZyNOc
-	 veOWX/dRp43Pw==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3682ac7f33fso34621401fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:48:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWWv+zVMakoIy6WpJbp4RndbjeOu4enPTtvcgMcleW83K6tVZoyJkW0uRzDM6owfll9LjB1lqNuBFV0lvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRtaDwpYB/NYdig/ZC5Ua0fq+2jnkCCb8v5CCA412gUp3s0hK3
-	i0I8WwKLqMxYHHs0mTNkHgbT3APZ4jP22F9hIltEssGvgL8HaIM7v926tw6HbOdPXqN00/VqDDr
-	Xj51TQ05D8Shs3uMNtIY0802FWofzdhk=
-X-Google-Smtp-Source: AGHT+IHYOhl0vOE2LTdwiTtFP0Fr+VU2h59AG96E/Zqsb1S5Qep9A2cRFtxP03lVo9G+6+RIphfLphc9aa7av4+nnEQ=
-X-Received: by 2002:a2e:b8c1:0:b0:372:8d09:d53f with SMTP id
- 38308e7fff4ca-375f52a306emr52589131fa.20.1760194096892; Sat, 11 Oct 2025
- 07:48:16 -0700 (PDT)
+	s=arc-20240116; t=1760194153; c=relaxed/simple;
+	bh=2LERlmS1vY1U+NW2HOrpEvvqS8bG+J6MpZoickTEyAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iPtWNOw4hXfTFdv60fITGBGDhncxLTgJLsoAL5e6z7g1HeZCMnSeRU4/UwYlnIxDruDxdRqinRtYyiMRo4gyeTyGghVch+xmYRw4o/Jh6ngml4lgwX5Kqf4rFxkz5/MqdsTPf/3mU8/C4LSR94fYnQ+2nhiDgiJn99+otPuieFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rpe+Vwbt; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760194149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZxYRLUTD2uxRCoYKFaakgljNkh+iJSv3MNQujQNqkSw=;
+	b=rpe+VwbtbpQlkCr9fqr7XX3PxCviZbVyag+t8RzbZhF+Q7kytqER/wbOIhjib6ChhTFUWO
+	bYrAY+Z0Th3f9C1LqpLdvS/QLuL7GbimMaEGhNFE0v+NYIBUlMXKnMdD8ngCaHVBNTsWSa
+	2dy71SokltYlrJK2P4lJ7UGarD38YMk=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Subject: [PATCH] keys: Remove redundant less-than-zero checks
+Date: Sat, 11 Oct 2025 16:48:24 +0200
+Message-ID: <20251011144824.1257-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
- <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
- <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
- <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
- <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn> <CAMj1kXFLyBbRL+pAAQ6be6dxqFPiyw_Ug8qNQWaicZQ235HE=A@mail.gmail.com>
- <8091e8fa-3483-af39-2f7a-e4eb62b0944f@loongson.cn> <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
- <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
- <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn> <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
-In-Reply-To: <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 11 Oct 2025 07:48:04 -0700
-X-Gmail-Original-Message-ID: <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
-X-Gm-Features: AS18NWBtlErlqiroFax4UVMcNYMWDvSx1dti0RxYcAZ5hVrwUXFzJJzynSJJpSU
-Message-ID: <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, 11 Oct 2025 at 00:43, Huacai Chen <chenhuacai@kernel.org> wrote:
->
-> On Sat, Oct 11, 2025 at 3:29=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.=
-cn> wrote:
-> >
-> > On 2025/10/11 =E4=B8=8A=E5=8D=8811:40, Ard Biesheuvel wrote:
-> > > On Fri, 10 Oct 2025 at 19:54, Huacai Chen <chenhuacai@kernel.org> wro=
-te:
-> > >>
-> > >> On Sat, Oct 11, 2025 at 9:13=E2=80=AFAM Tiezhu Yang <yangtiezhu@loon=
-gson.cn> wrote:
-> > >>>
-> > >>> On 2025/10/11 =E4=B8=8A=E5=8D=8812:25, Ard Biesheuvel wrote:
-> > >>> ...
-> > >>>> Why do we need both (1) and (2)?
-> > >>>
-> > >>> Not both, either (1) or (2).
-> > >>> Which one do you prefer? Or any other suggestions?
-> > >>>
-> > >>> Taking all of the considerations in balance, we should decide
-> > >>> what is the proper way.
-> > >> As a summary, there are three methods:
-> > >> (1) Only link libstub with vmlinux.o during the final vmlinux link.
-> > >> (2) Remove the attribute __noreturn for real_kernel_entry() and add =
-while (1).
-> > >> (3) Ignore "__efistub_" prefix in objtool.
-> > >>
-> > >> Josh prefers method (1), I prefer method (3) but also accept method
-> > >> (1) if it is not only specific to loongarch.
-> > >>
-> > >
-> > > This is a false positive warning in objtool, which complains about a
-> > > function that falls through, even though that can never happen in
-> > > reality.
-> > >
-> > > To me, it is not acceptable to modify how vmlinux.o is constructed
-> > > also for other architectures, in order to hide some of its constituen=
-t
-> > > parts from objtool, which do not use objtool to begin with.
-> > >
-> > >
-> > > If you are not willing to fix objtool, I suggest fixing the loongarch
-> > > code like this:
-> >
-> > Thank you.
-> >
-> > > --- a/drivers/firmware/efi/libstub/loongarch.c
-> > > +++ b/drivers/firmware/efi/libstub/loongarch.c
-> > > @@ -10,7 +10,7 @@
-> > >   #include "efistub.h"
-> > >   #include "loongarch-stub.h"
-> > >
-> > > -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cm=
-dline,
-> > > +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
-> > >                                            unsigned long systab);
-> > >
-> > >   efi_status_t check_platform_features(void)
-> > > @@ -81,4 +81,6 @@
-> > >
-> > >          real_kernel_entry(true, (unsigned long)cmdline_ptr,
-> > >                            (unsigned long)efi_system_table);
-> > > +
-> > > +       return EFI_LOAD_ERROR;
-> > >   }
-> >
-> > I tested the above changes, the falls through objtool warning can
-> > be fixed because efi_boot_kernel() ends with a return instruction,
-> > I think this is reasonable.
-> >
-> > efi_boot_kernel() has a return value, there are "return status" in
-> > other parts of efi_boot_kernel(), it should also return at the end
-> > of efi_boot_kernel() in theory, although we should never get here.
-> >
-> > If there are more comments, please let me know.
-> I still don't want LoongArch to be a special case, which means
-> efi_boot_kernel() in fdt.c, jump_kernel_func in riscv.c and
-> enter_kernel in arm64.c should also be modified.
->
+The local variables 'size_t datalen' are unsigned and cannot be less
+than zero. Remove the redundant conditions.
 
-You have made LoongArch a special case by adding objtool support,
-which  arm64 and RISC-V do not have.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/keys/big_key.c                   | 2 +-
+ security/keys/encrypted-keys/encrypted.c  | 4 ++--
+ security/keys/trusted-keys/trusted_core.c | 4 ++--
+ security/keys/user_defined.c              | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-So NAK to changing arm64 and RISC-V as well.
+diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+index c3367622c683..d46862ab90d6 100644
+--- a/security/keys/big_key.c
++++ b/security/keys/big_key.c
+@@ -66,7 +66,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+ 
+ 	BUILD_BUG_ON(sizeof(*payload) != sizeof(prep->payload.data));
+ 
+-	if (datalen <= 0 || datalen > 1024 * 1024 || !prep->data)
++	if (datalen == 0 || datalen > 1024 * 1024 || !prep->data)
+ 		return -EINVAL;
+ 
+ 	/* Set an arbitrary quota */
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index d70f71d37f5f..57f88ae000ba 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -786,7 +786,7 @@ static int encrypted_instantiate(struct key *key,
+ 	size_t datalen = prep->datalen;
+ 	int ret;
+ 
+-	if (datalen <= 0 || datalen > 32767 || !prep->data)
++	if (datalen == 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+ 	datablob = kmalloc(datalen + 1, GFP_KERNEL);
+@@ -847,7 +847,7 @@ static int encrypted_update(struct key *key, struct key_preparsed_payload *prep)
+ 
+ 	if (key_is_negative(key))
+ 		return -ENOKEY;
+-	if (datalen <= 0 || datalen > 32767 || !prep->data)
++	if (datalen == 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+ 	buf = kmalloc(datalen + 1, GFP_KERNEL);
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index e2d9644efde1..b1680ee53f86 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -157,7 +157,7 @@ static int trusted_instantiate(struct key *key,
+ 	int key_cmd;
+ 	size_t key_len;
+ 
+-	if (datalen <= 0 || datalen > 32767 || !prep->data)
++	if (datalen == 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+ 	orig_datablob = datablob = kmalloc(datalen + 1, GFP_KERNEL);
+@@ -240,7 +240,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+ 	p = key->payload.data[0];
+ 	if (!p->migratable)
+ 		return -EPERM;
+-	if (datalen <= 0 || datalen > 32767 || !prep->data)
++	if (datalen == 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+ 	orig_datablob = datablob = kmalloc(datalen + 1, GFP_KERNEL);
+diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
+index 749e2a4dcb13..686d56e4cc85 100644
+--- a/security/keys/user_defined.c
++++ b/security/keys/user_defined.c
+@@ -61,7 +61,7 @@ int user_preparse(struct key_preparsed_payload *prep)
+ 	struct user_key_payload *upayload;
+ 	size_t datalen = prep->datalen;
+ 
+-	if (datalen <= 0 || datalen > 32767 || !prep->data)
++	if (datalen == 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+ 	upayload = kmalloc(sizeof(*upayload) + datalen, GFP_KERNEL);
+-- 
+2.51.0
+
 
