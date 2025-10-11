@@ -1,156 +1,100 @@
-Return-Path: <linux-kernel+bounces-849335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F24BCFDF6
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 01:55:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AB7BCFDFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12EF3AF7B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 23:55:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC2884E37E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8736D241114;
-	Sat, 11 Oct 2025 23:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="cZPv5ltc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xqj4BxKJ"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD7A1F0E26;
+	Sun, 12 Oct 2025 00:00:10 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD8D41A8F;
-	Sat, 11 Oct 2025 23:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6042BAF9;
+	Sun, 12 Oct 2025 00:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760226926; cv=none; b=egRerkGvvucnHtB0PAmf1siiGXt2O7KItJsr6fMQW45A2YeWCGlh1A0VdCGRADMhGliM3o1r/AWr2FahMekuAyUKONURDdgHPGwvdPVmCDYpnG3Fiig8kLBV5uGnYyntsPtXFGXe0Bky/7CPthDJQHj+XorQ+DaMvGYUyTLvwtM=
+	t=1760227209; cv=none; b=qeyVz1E1ok+pBMeWuCg5bsK6GaYTip4MZ6xxRAe/z2S0wdqF6uAAM8lwl61BBdBO0pHV/eLZ2+6M7ojRFh2HhTlS8LUcHzWRgO04I3DppJ+OycHbNJ+LhLgqlfRNWapPzupPm+R+28/QbPlGM/yRPUqzRlfe2V2aAvA95y2I8AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760226926; c=relaxed/simple;
-	bh=V/2Xx326HMa2PTQwJA8IjPpo3xaH9n2wt03hVqQJeAs=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=ho0zG6k+FwTGfgbdWFYLCHuHPaRGNJ1csU87QCmbmr3TH5Pu8GNFVXW9pctvIV1c1Qy/mIlAQvb2ZUPYUKbmkMGNPd78jAa9yvqo/dOktu6tJRqFyOYeOBCjaPUirnEhmMi1u2kmSWE5kHiyaVWGbrpN8BCfOTuBwaKVLfaxy50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=cZPv5ltc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xqj4BxKJ; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id EDD251D00169;
-	Sat, 11 Oct 2025 19:55:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Sat, 11 Oct 2025 19:55:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1760226922; x=1760313322; bh=V/2Xx326HMa2PTQwJA8IjPpo3xaH9n2wt03
-	hVqQJeAs=; b=cZPv5ltcZfaM6YrbWHbq3BT6E1GZEZ2JdJo6ZFTrE94sDs1NiIW
-	ydTw+21UagyhLxcSzjKt9XavLzvIrSX2hmWc2YPDcZyaAcoYr6BV4xgGhS2pQhu+
-	3twzubWyYGAPnxzHzGq/uJ1Jg/uzLfw2aqPyyNb5k2RzQ20fa+otcXNrwszQL3et
-	QzBux8Ck7IM3MivzpajFJdvT0ee0OSw/fV+mJDMQ6eNP5NhRCIJCwv/1Sgv5Wo80
-	roLUESabL4UqA7bgUSiEy19BRoYGjPsdR9G5+pErUfll76oapyUK6wRe8kSQniB9
-	mDcMPh7CJOOOz+U13XkLpwvlpN7mE6458ww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760226922; x=
-	1760313322; bh=V/2Xx326HMa2PTQwJA8IjPpo3xaH9n2wt03hVqQJeAs=; b=x
-	qj4BxKJlpY7CDrB4759BmpfCqS3bPSEkZlB8G/qBLw6GVZm/6XHXLeZTgqYIsMwo
-	zMh92/6RSESkz2EL+yUi1CuOXu6YJzzuvd7RJQInhi6utEvKJWixoAZQQsWUC17K
-	2FnI8Q5OJQr2c9eEyqhaKdqb7cJoE9Dm+CqT7t3W26u5sKqk2vApAgEfEhAEEzdB
-	H2elNqyaayJirgjAJzL/2SzPcPvjFHvldy+hOUd2eMqy+6BIqmowxCP4hNz4GaVw
-	B6h/5R06HCgE7hRslW4u6jVlryRewNUHIsLvXe8CJo4torgKOqXYXMk7xPR2m31M
-	82ndJY3pj+MCPEVwnXTnw==
-X-ME-Sender: <xms:au7qaL0cN7m_4-L-hBaFaJ2ZKFrlaBfOHbGHbgYpASCNgBAk6bubtg>
-    <xme:au7qaPC_EdJGbJ34OgjX5YY2P5Z8X8il0Bbj6R41WOHfChSpfLfK8ZH9kmNoBrs1m
-    pG6dCFKRUT3ZhrwaubgUBahUC49N6e_2uLmx-g1YzgpcpSpBXg>
-X-ME-Received: <xmr:au7qaAKJwPY3BZkgeKoGBEhzMoi6QYtUamAKr3TZU-rcJUdoVetSb3rSGb4YDDi4wejSrBfV-1hAYCX8mrhti5-0qWBfUGLBXSBQo--KAqbw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudefvdeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpegtgfgghffvvefujghffffkrhesthhqre
-    dttddtjeenucfhrhhomheppfgvihhluehrohifnhcuoehnvghilhgssehofihnmhgrihhl
-    rdhnvghtqeenucggtffrrghtthgvrhhnpeeljedtfeegueekieetudevheduveefffevud
-    etgfetudfhgedvgfdtieeguedujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggprhgtph
-    htthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhnfhhs
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhomhesthgrlhhpvgih
-    rdgtohhmpdhrtghpthhtohepohhkohhrnhhivghvsehrvgguhhgrthdrtghomhdprhgtph
-    htthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegu
-    rghirdhnghhosehorhgrtghlvgdrtghomhdprhgtphhtthhopehjlhgrhihtohhnsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehshiiikhgrlhhlvghrsehgohhoghhlvghgrhho
-    uhhpshdrtghomhdprhgtphhtthhopehkmhdrkhhimhduhedtfeesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:au7qaAnYiyZKrzCXB1El8NknSgV-ri2nbygfPMCTGDw0IRMz0Y_OJg>
-    <xmx:au7qaBYO9swBN8AZJV1vinOBgnjrgYUzqNxki9fcy87_8uTxolDPtQ>
-    <xmx:au7qaE-qf91iSkimOtmzqwnXypR8Rf8f7IZvvNNZn355ONEGGJoCaQ>
-    <xmx:au7qaIa22PhPA2800GPClvI0NzUCMIbkgrmgLP2Hc8K4uIb7mwS2jQ>
-    <xmx:au7qaBn_NhNop60wc5tdI24ifB-KUpfRplca47N4BNtqS_3M1nbZMHoT>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 11 Oct 2025 19:55:19 -0400 (EDT)
+	s=arc-20240116; t=1760227209; c=relaxed/simple;
+	bh=aavCBw3tMB4GSqTIYmXAC5JXt7peBZI8vCwgtaP7AAw=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=l4P8XDj6LRfbmF2n8kceySRYaJio7VPgSoFFWgTcR6yFlPR0iAG6con6kvbuz26L/UGjjX0PRCDSMrmTcR55GyAKXmvrQaUaCSq7pmy42OYyWob6FO3xwKxQ8pZMFCLT1VQ5She0IwWhr+cbnqGmv4EdRlh/94utJaSMuU+/NUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Kees Cook <kees@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	"corbet@lwn.net" <corbet@lwn.net>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "lance.yang@linux.dev" <lance.yang@linux.dev>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>, "paulmck@kernel.org"
+	<paulmck@kernel.org>, "pawan.kumar.gupta@linux.intel.com"
+	<pawan.kumar.gupta@linux.intel.com>, "mingo@kernel.org" <mingo@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>, "arnd@arndb.de" <arnd@arndb.de>,
+	"feng.tang@linux.alibaba.com" <feng.tang@linux.alibaba.com>,
+	"pauld@redhat.com" <pauld@redhat.com>, "joel.granados@kernel.org"
+	<joel.granados@kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?utf-8?B?UkU6IFvlpJbpg6jpgq7ku7ZdIFJlOiBbUEFUQ0hdW3YyXSBodW5nX3Rhc2s6?=
+ =?utf-8?Q?_Panic_after_fixed_number_of_hung_tasks?=
+Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IFtQQVRDSF1bdjJdIGh1bmdfdGFzazogUGFu?=
+ =?utf-8?Q?ic_after_fixed_number_of_hung_tasks?=
+Thread-Index: AQHcMDksdcRioXB8tEOzfxW7SI8WgLS7pGyAgABZ+wCAANv20IAA1bKw
+Date: Sat, 11 Oct 2025 23:58:56 +0000
+Message-ID: <6c4905288f374bf2ad48492cd03c473e@baidu.com>
+References: <20250928053137.3412-1-lirongqing@baidu.com>
+ <d8c6762c-e08c-4b7a-92e9-7dad17ad0b49@infradead.org>
+ <B0A75949-C40A-49E7-83BD-58D6BD5A1493@kernel.org>
+ <1729312f8358451ba32eabdea86a7820@baidu.com>
+In-Reply-To: <1729312f8358451ba32eabdea86a7820@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: =?utf-8?b?6rmA6rCV66+8?= <km.kim1503@gmail.com>
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, okorniev@redhat.com,
- Dai.Ngo@oracle.com, tom@talpey.com, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-Subject: Re: [BUG] After unloading the nfsd module, a use-after-free occurred
- due to Objects remaining on __kmem_cache_shutdown().
-In-reply-to:
- <CAGfirffSOjQtJ=FhZ1bhmqDMtdm2UAgvo9TdJNY5hU4KJXQ+pw@mail.gmail.com>
-References:
- <CAGfirffSOjQtJ=FhZ1bhmqDMtdm2UAgvo9TdJNY5hU4KJXQ+pw@mail.gmail.com>
-Date: Sun, 12 Oct 2025 10:55:15 +1100
-Message-id: <176022691571.1793333.714819698603408503@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+X-FEAS-Client-IP: 172.31.3.14
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Sun, 12 Oct 2025, =EA=B9=80=EA=B0=95=EB=AF=BC wrote:
-> Dear Linux kernel developers and maintainers,
->=20
-> Hello,
-> This bug was discovered through syzkaller.
-
-I don't think this is a bug.
-Passing O_TRUNC to delete_module(), or passing -f to rmmod is documented
-a "dangerous" and "extremely dangerous" respectively.
-
-If you do something that is dangerous, you should expect bad things to
-happen.
-
-Presumably the nfsd exit_module function is failing because something is
-still in use - as it is allowed to do - and the module is being removed
-anyway.
-
-i.e. the "bug" report is invalid.
-
-NeilBrown
-
->=20
-> Kernel driver involved: nfsd
->=20
-> Version detected by syzkaller:
-> - Commit version: cd5a0afbdf8033dc83786315d63f8b325bdba2fd
->=20
-> Details
-> If the test driver is forcibly unloaded, objects remain in memory,
-> which can later lead to issues such as use-after-free.
-> Additionally, This issue can be easily reproduced with the following comman=
-d.
-> $ sudo rmmod -f nfsd
-> Note: Since the nfsd service is running internally with open ports and
-> mounted shares, it may affect this issue. Therefore, the boot log is
-> attached as a file.
->=20
-> Please let me know if any further information is required.
->=20
-> Best Regards,
-> GangMin Kim.
->=20
-
+DQoNCj4gDQo+IA0KPiA+IE9uIE9jdG9iZXIgMTAsIDIwMjUgNToyNTowNSBQTSBQRFQsIFJhbmR5
+IER1bmxhcA0KPiA+IDxyZHVubGFwQGluZnJhZGVhZC5vcmc+DQo+ID4gd3JvdGU6DQo+ID4gPkhp
+LA0KPiA+ID4NCj4gPiA+T24gOS8yNy8yNSAxMDozMSBQTSwgbGlyb25ncWluZyB3cm90ZToNCj4g
+PiA+PiBGcm9tOiBMaSBSb25nUWluZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ID4gPj4NCj4g
+PiA+PiBDdXJyZW50bHksIHdoZW4gaHVuZ190YXNrX3BhbmljIGlzIGVuYWJsZWQsIGtlcm5lbCB3
+aWxsIHBhbmljDQo+ID4gPj4gaW1tZWRpYXRlbHkgdXBvbiBkZXRlY3RpbmcgdGhlIGZpcnN0IGh1
+bmcgdGFzay4gSG93ZXZlciwgc29tZSBodW5nDQo+ID4gPj4gdGFza3MgYXJlIHRyYW5zaWVudCBh
+bmQgdGhlIHN5c3RlbSBjYW4gcmVjb3ZlciBmdWxseSwgd2hpbGUgb3RoZXJzDQo+ID4gPj4gYXJl
+IHVucmVjb3ZlcmFibGUgYW5kIHRyaWdnZXIgY29uc2VjdXRpdmUgaHVuZyB0YXNrIHJlcG9ydHMs
+IGFuZCBhDQo+ID4gPj4gcGFuaWMgaXMNCj4gPiBleHBlY3RlZC4NCj4gPiA+Pg0KPiA+ID4+IFRo
+aXMgY29tbWl0IGFkZHMgYSBuZXcgc3lzY3RsIHBhcmFtZXRlciBodW5nX3Rhc2tfY291bnRfdG9f
+cGFuaWMgdG8NCj4gPiA+PiBhbGxvd3Mgc3BlY2lmeWluZyB0aGUgbnVtYmVyIG9mIGNvbnNlY3V0
+aXZlIGh1bmcgdGFza3MgdGhhdCBtdXN0IGJlDQo+ID4gPj4gZGV0ZWN0ZWQNCj4gPg0KPiA+IFdo
+eSBtYWtlIGEgbmV3IHN5c2N0bD8gQ2FuJ3QgeW91IGp1c3QgdXNlIGh1bmdfdGFza19wYW5pYyBh
+bmQgcmFpc2UNCj4gPiB0aGUgbWF4IHRvIElOVF9NQVg/DQo+ID4NCj4gDQoNClNvcnJ5LCBJIG1p
+c3VuZGVyc3RhbmQgYXQgZmlyc3QuDQoNCkknbSBub3Qgc3VyZSBpZiB0aGlzIHN5c2N0bCBodW5n
+X3Rhc2tfcGFuaWMgY2FuIGJlIG1vZGlmaWVkLCBhbmQgaWYgY2hhbmdlZCwgQk9PVFBBUkFNX0hV
+TkdfVEFTS19QQU5JQyBzaG91bGQgYmUgY2hhbmdlZCwgYW5kIHdoZXRoZXIgYm90aCBjaGFuZ2lu
+ZyB3aWxsIGNhdXNlIGlzc3VlcyBmb3IgdXNlcnMgPw0KDQpJZiBubyBvbmUgb2JqZWN0cywgSSB3
+aWxsIHJldXNlIGh1bmdfdGFza19wYW5pYyAsIGFuZCBub3QgYWRkaW5nIGEgbmV3IHN5c2N0bA0K
+DQpUaGFua3MNCg0KLUxpDQoNCj4gDQo+IEhvd2V2ZXIsIHRoaXMgd2lsbCBwcmV2ZW50IHRoZSBw
+cmludGluZyBvZiBodW5nIHRhc2sgd2FybmluZ3MuIEh1bmcgdGFzaw0KPiB3YXJuaW5ncyBhcmUg
+dmVyeSB1c2VmdWwgZm9yIGlkZW50aWZ5aW5nIHdoaWNoIHRhc2tzIGFyZSBoYW5naW5nIGFuZCB3
+aGVyZQ0KPiB0aGV5IGFyZSBzdHVjay4NCj4gDQo+IElmIHRoZXJlIGlzIHRoaXMgZnVuY3Rpb24s
+IEkgaG9wZSB0byBzaG9ydGVuIHN5c2N0bF9odW5nX3Rhc2tfdGltZW91dF9zZWNzIHRvDQo+IGdp
+dmUgbW9yZSBpbmZvcm1hdGlvbi4NCj4gDQo+IEFuZCByY3UgaGFzIHRoZSBzaW1pbGFyIGZ1bmN0
+aW9uIGFzIGRmZTU2NDA0NWM2NTNkICIocmN1OiBQYW5pYyBhZnRlciBmaXhlZA0KPiBudW1iZXIg
+b2Ygc3RhbGxzKSINCj4gDQo+IC1MaQ0KPiANCg0K
 
