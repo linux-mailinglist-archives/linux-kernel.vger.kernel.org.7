@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-849137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372E3BCF47D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:31:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10625BCF486
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D38D425B30
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:31:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E4A114E959E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863552367D1;
-	Sat, 11 Oct 2025 11:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CF825A341;
+	Sat, 11 Oct 2025 11:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lNiMk2+L"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGLMg5bH"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659C023717F
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD2B220F5C
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760182298; cv=none; b=Bd0lQHKoG3Tu15fRBOpfrGe0NDjpawgK0ue0BA/G8vr1T0pcyneVzkUiI46Fm2IQ5MvWo06ZEJSQWEHkSsf07yG0d4A1MMh22v4uLLqNXAP2J8Gn80MvzqDaRHBLoPB9h3zL2jGl6M30dSZZVvv6bZH0LUlhxULhL7OJAey4IJg=
+	t=1760182339; cv=none; b=UQEB/yHrbVVVulvfsx9LqeY/SSUVdqmLmq0ndccv0n/707jergIG2qzHgMiQUKOSoVAggjA4YWfSaOiXHWYsug3uTrIJYVNC9J3Hc5wnHkVCSbqav0uHYXvdNBhWlsY39/f2ALJwAUTOqfqN7XCKKKh6wZw7gjX3K8Nse0aWSWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760182298; c=relaxed/simple;
-	bh=5RI+zDeyw3XTRljWW1rsNdQl1VRKEKQFrpl8fx9pYt8=;
+	s=arc-20240116; t=1760182339; c=relaxed/simple;
+	bh=ZpdfRoBap7LNXkf5zLdbDNb3gQIfNj+XPTaqjYigr+0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lu9ACQ32a5m70zBmpTscBNmE87K9e+1IzRdVSPleGQG9aDBP3NqbGX2GhOXPDh6juIcaijZeRk2tC0Q/NkezPbtO0fY+JQeHCMKJQxfJ7jcWp5ToVWahNCntTua05/vKAstkgt7eAxI1Af6V7koou6Haz/aqHrh82UYWpCgjpnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lNiMk2+L; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso2088984f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 04:31:33 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLRXv/MpBkbgLI51rMZmBPp+PL/fvCsvybmeaEj7Iak0QscllWnaF4mEctCagIH5guQOL5IzAHiGFbMqVWSIB2E6g112VqhCe2oyYI+gW9xeM6g6PecBngtgUqlQCIUFP6A7yrnD5hCAWGqBjsUYYiEPqtXqXeNIpVLFtMAPyI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZGLMg5bH; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso1990906f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 04:32:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760182292; x=1760787092; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mNTGbfmugn5jBn7rCYmZzAG7du6mX8yV8hZzW+D5Gyc=;
-        b=lNiMk2+LNE09jjuUfwBiCAjb+yGdyW1G4D+glgpbl4ggbxVNED30YsEmhQrXmijbLS
-         yXfqEJn9QD5slBHBywuCTDA096QY1C6JjoVWcaV7TQBNf0VCUEGKkUP9qBv4QUaxP5Ph
-         kEQDsNk+elcUXmYEuaiNsa9Chkv3q+Eb1QJIF3VW54xdMKyAOL8uhNzLYYK91DvQqCrr
-         5Cdvg/f3qVi0vgAsYG3Ix3gvlXFi5/Qa5Z8wGYgeusIFvN7EtCo5dw5tapmAJVwUsRKi
-         I+xeV3PKrZMAfInLzaxn3lo7py3jmpTnMB8NhFlmVYl1X+FQA9NysyfXgqgr6eUErdEW
-         OCmg==
+        d=gmail.com; s=20230601; t=1760182333; x=1760787133; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/WhtfIdoyiawysQgDo2chqo5YvMHlXM3yb3ox9uDzOo=;
+        b=ZGLMg5bHZxPrHPZfZWcK2S87Z2xCBD0g/VOGQ6mMCp0A6K0yq15Rec1KimnVGKyjeg
+         3qMoT+9NaYGra17GIggBdqpNpRsj6iRn/OC647KCo78fxKooNf82ZO28RGlYm0p34g3V
+         FiZVLN8MmMRgrc/fUtu6QgoS++yLUks4tnspOWG6XB3o1V5DYeHhDJQ0rh7kem+WEDXS
+         ziEMqDncVfKmFOuG8ywTFT+Veoee0XlHIBfB/izdcIVVvyJrU5rPZreB32krjbIn7eZY
+         Kb3m4DA5SADsmuCd148TQsy5r4xfJ64/D6AJ1BLH8/KSw5o/onGXTgDpO1S2LF8fa1aF
+         Skug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760182292; x=1760787092;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mNTGbfmugn5jBn7rCYmZzAG7du6mX8yV8hZzW+D5Gyc=;
-        b=cZMlhaaB5q63w1gGIfTIxkGgo/ZBTIik9+Qa9Aht6m9dbuA9OE4ufqH7jH2tFwaFKP
-         tdRfmJg+pPepj09LKfdWCl4V3GsKOkHSwEdxLPLZ9Cy0eli5n+XLkobzDDus/AKwSDmu
-         0UofTOJx4aCfGI1V/XvsHgcNvvBSv0ZCuNsiw6tOdG/SkVVA6qTTFevr6DRpCWRR+O0O
-         RxWibA2YbEGoY8JRKAD7oqAZj7vcAMm8Ah0GfXGvMb5v0Q+neTU51FZYcOOpmvjyoANf
-         b/o1tlrNXvCDe/SqViTbLwfigNdgKVRnMcnB0O4d7wLgZAvi00twYEv5epKJsxckSZZx
-         LKeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGk/8G4Kx7i1IS4eggMuQyOl4+guGrv3xPRMsFBKsRh2NtTKbXFOx9LMPeyWXYKCkadgU1IxPwhnPmoTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcAgtx4OPYxweigSXnhIFscz5BvGbmPRpN5HZmZorgc6yQ18d7
-	N5yV5cWmMDQVtcJ8XemLQKIczzEZ/fFn8SdoqVZpiTnlOigchFD/kaElu8Ti3e5em4M=
-X-Gm-Gg: ASbGncsxdXWMThX1rXOqryRi6ryMIFgw93oUOXnHVNYNtPj8dyEaxgQ6TMoGSdxoood
-	HP4xpNns10ANQqPXVRmNO+fCs4FmSc79D41r/0Xcv4oZkSdBWQITZoiWKxItjG79O4YJhlFhnEF
-	1bSnj9CqamWqMdEZrbC12K3Hif5cHur4QDRvHB/0/8/IcfD7wEP96oO0sfP/etEW4vaBmw9NWrb
-	PpVoONRZ/IMOUIKrg27Qy/vUCUw5aetYN1xG/Nb9m7XOe+RaDw3bZgwBAsIJslpHTiztfyAlq52
-	dIRZKD6epeHOVBgg1xlqsWXMolezBqJSsZ0XfpB+b6sdBSrJ7njLp9RltQjuzt9hpRdgdfywKpW
-	681bltZyHnvZpncU+QOegbcfWZWG2ZAmp+8bjlR4kiQ==
-X-Google-Smtp-Source: AGHT+IFCjuGBYnCDqcmxB9IrSM+BqDe9Q2x6ToeA46ZBK1ltHn2SzcZl6eRhCx5sKgenvc7B4y15cw==
-X-Received: by 2002:a05:6000:4305:b0:3c8:d236:26bd with SMTP id ffacd0b85a97d-42666ac2ce9mr9301019f8f.11.1760182291588;
-        Sat, 11 Oct 2025 04:31:31 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d4bbsm8686681f8f.2.2025.10.11.04.31.27
+        d=1e100.net; s=20230601; t=1760182333; x=1760787133;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/WhtfIdoyiawysQgDo2chqo5YvMHlXM3yb3ox9uDzOo=;
+        b=ZkxRYUf0wmFC8rlvbaqVKlhsbc6kKen4HR59haaae5r9U7e2xpf6GtdAB3+BYp1Um3
+         auy/rHNe4dc0ZnXkLV7tyR1BXGuCAFXMBhI0bw8NGognOD8TY9OzyKnICheI2hLgvoYo
+         +VXWKwtIJrjAPuKkQfKTC8IVII+/sa3JgJmkfs1pdfn0+yJ8zBDi5AIgHOIQB0X5V0v+
+         7/W2LwX0wYTvZ4mdfWSmddD6GOzErFvIbrKrabxMn3vSrTVXTmQpI9LwEW9dQdUbZnkv
+         Q43YWcJxSMc15xRDAMpg/UbQZzpBf07FehDT/CDEAGtpxQXHT6fMh8f169EQg0oGkYkK
+         bU1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWfFWX3dN4Qgku44MKmw240zMaoV9TkWw65HbWQ3rJV1FdynRAxPlU6l4x9AKUW5WaRozXwrziXHoSCt3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwODBchRppXRGY3ru6fNNRUIicB1HvgicheZM9QL/ohakHHPENz
+	Ww+zhOSmxaRch6yblvAjE9QPQLbzBKqyLHa4USEu2/nlFF4S+0ocMEIK
+X-Gm-Gg: ASbGncvN+fefDJ+lqcIRrMQ3c2YrI6Ur4C8UgL1Nd3FT54TIzHbX8XN7UFYPc46KO9N
+	mA7sW7kh1ed3Y801EP9tYlL9JvR8TtLkNR95Ke/39SgjYSjsigJf56v2vTuKTsOOzBiVYGUv8ts
+	ZYSsTZo8WaZZm+TVPOv4H8SYskCvgNUXxhq3DexyEuS8nRKAgtB14ICiAf1HoSwoXuthydXT4lm
+	E8dXH0n8Rp3ZiRTtpbR1oXbCkvAn+ArI4Oa/H18UdaVueKgNmxfU8X78h15udjPrv2GrsJZISeE
+	tm78mqzONOquo8abLgZ+Pzijsfxn5U335Qie37+FyFmUuyP98CIYP3iHSmfjTjRKA5n/WS2dUQX
+	gJU9tHQ3Zq7xr98WpeGeQsD9IOfjAi/vPM39RfxrERCh+BruanJQ4
+X-Google-Smtp-Source: AGHT+IF7DO50xv43OfmrBovVOqHhm6Smo19LkroOnjaPG77MXlD2olVAe7mIm+QWfvK5CGw0ung3Eg==
+X-Received: by 2002:a5d:588b:0:b0:425:86c2:7b4a with SMTP id ffacd0b85a97d-4266d0da0a8mr8912169f8f.24.1760182332662;
+        Sat, 11 Oct 2025 04:32:12 -0700 (PDT)
+Received: from gmail.com ([51.154.250.0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582a9csm8676910f8f.12.2025.10.11.04.32.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 04:31:28 -0700 (PDT)
-Date: Sat, 11 Oct 2025 14:31:27 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Subject: Re: [PATCH 09/24] arm64: dts: qcom: glymur-crd: Add RPMH regulator
- rails
-Message-ID: <sean5dkqku4norpl5llaps6wd3qjcxbb5kodjgvh4dshjkqvt2@jtlqhser6hsn>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
+        Sat, 11 Oct 2025 04:32:12 -0700 (PDT)
+Date: Sat, 11 Oct 2025 11:32:11 +0000
+From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+To: Michael =?utf-8?B?QsO8c2No?= <mb@bues.ch>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] driver: gpio-bt8xx: use generic PCI PM
+Message-ID: <aOpAO7j0Uyo6FPcu@gmail.com>
+References: <20251010105338.664564-1-vaibhavgupta40@gmail.com>
+ <202510110924.dUQeeRV6-lkp@intel.com>
+ <20251011122612.4fa7c97a@barney>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251011122612.4fa7c97a@barney>
 
-On 25-09-25 12:02:17, Pankaj Patil wrote:
-> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+On Sat, Oct 11, 2025 at 12:26:12PM +0200, Michael Büsch wrote:
+> On Sat, 11 Oct 2025 09:43:54 +0800
+> kernel test robot <lkp@intel.com> wrote:
 > 
-> Add RPMH regulator rails for Glymur CRD.
+> > Hi Vaibhav,
+> > 
+> > kernel test robot noticed the following build errors:
 > 
-> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/glymur-crd.dts | 332 ++++++++++++++++++++++++++++++++
->  1 file changed, 332 insertions(+)
+> >    drivers/gpio/gpio-bt8xx.c: In function 'bt8xxgpio_suspend':
+> > >> drivers/gpio/gpio-bt8xx.c:233:19: error: 'struct bt8xxgpio' has no member named 'saved_outen'  
+> >      233 |                 bg->saved_outen = bgread(BT848_GPIO_OUT_EN);
+> >          |                   ^~
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> index 4561c0b87b017cba0a1db8814123a070b37fd434..e89b81dcb4f47b78307fa3ab6831657cf6491c89 100644
-> --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> @@ -6,6 +6,7 @@
->  /dts-v1/;
->  
->  #include "glymur.dtsi"
-> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->  
->  / {
->  	model = "Qualcomm Technologies, Inc. Glymur CRD";
-> @@ -66,3 +67,334 @@ chosen {
->  &tlmm {
->  	gpio-reserved-ranges = <4 4>, <10 2>, <44 4>; /*Security SPI (TPM)*/
->  };
-> +
-> +&apps_rsc {
-> +
-> +	vph_pwr: vph-pwr-regulator {
+> 
+> It looks like the
+> #ifdef CONFIG_PM
+> must be removed from struct bt8xxgpio definition.
+> 
+> -- 
+> Michael Büsch
+> https://bues.ch/
 
-dtbs_check gives this:
+Hello Michael,
 
-arch/arm64/boot/dts/qcom/glymur-crd.dtb: rsc@18900000 (qcom,rpmh-rsc): 'vph-pwr-regulator' does not match any of the regexes: '^pinctrl-[0-9]+$', '^regulators(-[0-9])?$'
-        from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+Ah yes, this macro somehow got overlooked by me. I will send a v2.
+Thanks for the review!
 
-so node name needs to be regulator-vph-pwr instead.
+Regards,
+Vaibhav
 
