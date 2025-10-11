@@ -1,147 +1,151 @@
-Return-Path: <linux-kernel+bounces-849159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC60EBCF4FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:14:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2700ABCF505
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 340A94E5590
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:14:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01AF94E5F32
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3526E703;
-	Sat, 11 Oct 2025 12:14:09 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431D327605C;
+	Sat, 11 Oct 2025 12:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I7rB2hXL"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C5F25A341
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 12:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAAC26E714
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 12:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760184849; cv=none; b=nV2+WN+Zp1UlQopdOAKbFlarDzmdMZigDFQhPjnPF79ErPxKJCz0q7DEeazDbm3hEV3CwDkpKn0fT/jJibvH9I4epN36QG3TqtuXDLBDFUkKLjyoWjdiaK+ZygwzOMTxFVdPbekj/RiJE80X1wnHtT6iJmTUIAosCj77lh3zCio=
+	t=1760184969; cv=none; b=eb2XBHTTGi+/OvYDT58u4yAFZMgp2NcXWR1ccNrF83v/KHw4EWVY+S4IOY8yIyWZ0rEyS6xPMffbzZs3xM5XWSQombSWZ1loO15PEJwX2b/Y5UcrfIMXJI93PXeVOj6Uh2sQKH6S6jVvuk6XnBNqpZAXkaYpOaq5GQ+wa+9oVZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760184849; c=relaxed/simple;
-	bh=I83F9V5VIqbMSQpBHpapT0keh4blZrNPM0QbwjF4L1o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=S4Z7gFgTP6bvSsEMNjguPBG5wP2uNJDFGnOFEYp+eD3UoEj/mA/0ON8iXaqp0QCD5u6X/gamTnk7m9CO6iexxPkQs5k8oqJfs9ycJcGgXeGwOyijXn+1BsZmdJC0Azf/N/diD5Hm14VQdiddlvI21QGsyqghiN4SXOihr1g4d34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42e71d1a064so112007375ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:14:03 -0700 (PDT)
+	s=arc-20240116; t=1760184969; c=relaxed/simple;
+	bh=K9ZlGYLFyygWWlQdxL4k3DB105kYgCqHlL4sa73rs4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBpPPHIE4qOPtLChQ9alKEHYIxeCQj7Yw2CCBfMQWYSgsV3LtaWdnNfhyY1lz3qmKJDZF31XHjzeu+OBgrKXxVdsFwrauJUx7riUksQLHNzXNUTpZrx/IPPXI2RQCvilFBfAYRpF0d0618M9mDSVJrAJcrVyj7chQW07/wtVLlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I7rB2hXL; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e48d6b95fso26619455e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:16:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760184962; x=1760789762; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ESeZUlMWivezlE3DeTyuSwyLVdykZbSbBsQ6LPdbgI0=;
+        b=I7rB2hXLuU7CFe5+R8xQOXQpkumabMvRefO44qtV6FQsT+CmXsB4eLOyk6byWrIgAf
+         bTYVAcNGD+XOxMM21qOx636SJbXhOslgtnULK68DD0S5yzBuMEQJPnPCwPOAvuonPQxs
+         c0wMi+8z/vEld8iqDblKV/6c0S03YIS0YTJTNsq2V0H4MZwagRoMI3deYeaDhrp1cllO
+         Twbg5NTyQpVx13D19ZzgfeWd4Z4pDHkRlAKlL28/LH7xse/JPnyQ46z1ZC9AptBGJCxZ
+         QHx/i+4wSTeHDE8tU86hen6x3tmzm3vYa58jl4/NXg9YXDoDDIgY4d5nZTuR8ao5Wvi5
+         7oQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760184842; x=1760789642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KhdvdAIKmb7EyDvB1NfLmZRsfzM9p7ea1YK3oXkXXZE=;
-        b=rT9a72S8y0zbLEV2PnZDkoOi+TE/wq1ftTKbc8FDQKSRTQT01RVL16k/PB2O+1lF7/
-         8uK/1KNjdW3ivPgbzY9tPFzbTMNuzAhbkliCl8SSFXiLehJchmxrCXSnjLPuohutSyZV
-         TgqKky98JKo8TycGZIRcBkaiXaiuFNwcTbvb52SyZpQOmc8kbQX3Ez+6wJC27oUTO8+A
-         DtrdlVlKm4ETT9iWaLTB5+dbrGoIX0VRGCkdNwPqIB8t5DvPzBVrYpWRFtup4o2E/3Ny
-         zWqE9iGO+oGJFhHK2J/Q67KpPnDdJ6WlFfZTyt6W0Ix5cXN5jrvTVnD3yBpJANfPac31
-         IFJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaFX2x7T5XkCPo4MKIz8LKb2XJEIAVoJW0KcHZeGSdlQyiaBMXrwCp5ef7X8ThOUVrCrZPwYA+xOquQ4E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrE1XX2ni67DxAk1awNccgcyuP2g0C8YKecwpekQ4/+yy9GVP8
-	223My9ieKUq5p5xBW8eK7tk5VK0kNPwNglQsf5mBxtLwFd9DpFykM4FKu2I5C944UF82msBoyZ0
-	ig513F7mjdbELFTesziyP8BQ/GOY3VLX+JwVqsvHcdzFxpBi4REYvm5vOgxg=
-X-Google-Smtp-Source: AGHT+IH1MDthq3EMrDnp8OvYUq701u0npKQ2sXSPoI3Z3+UBzuuJuoOb+hae+yKBPaq/ZkYhLiVzfxXVqXlwqK4Q14nXTamiaOnW
+        d=1e100.net; s=20230601; t=1760184962; x=1760789762;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ESeZUlMWivezlE3DeTyuSwyLVdykZbSbBsQ6LPdbgI0=;
+        b=q1epuv6CLFk9Pf14RJSqtIbYxkk8m1ZHZjPcQAYxnCfR1wZkjAmz18ctL4rwCau15p
+         a7osHAwSij2q1Ly3NXb4dyhuBHvjpA2BUzGDWMu9cU84cggTWxZCUP3rJVcvr3q3L8Eg
+         aF6zOKPFcidcLc5Pwadso31T6LTqI6yKbPagZi/jmaUp3bcjTYT/IOX5aGt4R+UIu/DO
+         uFVPot0uov8rN0E1kQOrRk+mlHOKkMf82yRwNA3tuIFId4zKCkwnRHHj64DNz6CordW3
+         nWcDElfUaObeaZeGXcRcc6SkmYv9tHnu+vBtM025RFP8xnYhSVwcJM/riUm1YE4/kkvl
+         a35Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUywZz2yOubnkTvFLVxPhFgmsNwqd/FDSLjz4pgD79wb/pG1KUSLUg/H3mJ+PGZwFkEIofQTPwKKNACpb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIXtLMxms1CGPrEf1CLpM93UXXSvz3Zc7q0chkJ9Cc7/f5SIDL
+	XYzlUXswuWZMNaxVKUoPJWGgKftbuqRkGayRLUmYkyzdq8wQb6+pntfyYeTsHEtdGvU=
+X-Gm-Gg: ASbGncs/74vyc2Xz8hcsIfeTQFF54zVrccyQovxr3hj1tABaTn6fEnRYIO0/EvngvuE
+	/cDhqRVpGFd+0HKiGZMTZENsndDF8pHwIVfItqaTuaw4ER1EpAdnMrezt4ATRd2SMHr5KzxpYkC
+	5Bd5pgS0117EDNeejZT71uRvMGZ4lQxqx9ErlCq+E9mIjRj5o4Qk/mcCLCBv+2TDUu6GqP5a9aK
+	CfJZoq7NyisJuE1R5EGS1SuufoveDXYj4AroIRdT/Z6++t4AtzL+jBCSlzXG6qEnSwoh01GhdAA
+	KcCfm3YDS2DOg7onksTb5n2iMZmYv4DVCP718hWo8IdK8qIqWce7wflKCHW6FgGJa8iJm0d4kOx
+	7HTti5HGiF/pschWOScYSFsH0bPcoKvHtXpCU+R7xFQMD+ARW8mV6
+X-Google-Smtp-Source: AGHT+IF0eKdBuninlOSWd/RRES96gVi6uKKSkT94wSVAQclPilU8XlMKpntgxCzH3mwQj1GRHiXV8Q==
+X-Received: by 2002:a05:600c:4ec8:b0:46d:27b7:e7e5 with SMTP id 5b1f17b1804b1-46fa9b08d79mr103124925e9.32.1760184962016;
+        Sat, 11 Oct 2025 05:16:02 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482b99fsm93739915e9.3.2025.10.11.05.15.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 05:15:58 -0700 (PDT)
+Date: Sat, 11 Oct 2025 15:15:56 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Wenbin Yao <wenbin.yao@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	konrad.dybcio@oss.qualcomm.com, qiang.yu@oss.qualcomm.com, 
+	Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: PCI: qcom: Document the Glymur PCIe
+ Controller
+Message-ID: <w2r4yh2mgdjytteawyyh6h3kyxy36bnbfbfw4wir7jju7grldx@rypy6qjjy3a3>
+References: <20250903-glymur_pcie5-v4-0-c187c2d9d3bd@oss.qualcomm.com>
+ <20250903-glymur_pcie5-v4-2-c187c2d9d3bd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1707:b0:425:e850:b2e3 with SMTP id
- e9e14a558f8ab-42f874537cemr167780825ab.32.1760184842592; Sat, 11 Oct 2025
- 05:14:02 -0700 (PDT)
-Date: Sat, 11 Oct 2025 05:14:02 -0700
-In-Reply-To: <CAHxc4btH53u7Y3DRFmaiF3-pqumZi1swOgEi0r2_4=bTnKfjSw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ea4a0a.050a0220.1186a4.0012.GAE@google.com>
-Subject: Re: [syzbot] [fs?] [mm?] kernel BUG in __filemap_add_folio
-From: syzbot <syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com>
-To: dileepsankhla.ds@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-glymur_pcie5-v4-2-c187c2d9d3bd@oss.qualcomm.com>
 
-Hello,
+On 25-09-03 23:22:03, Wenbin Yao wrote:
+> From: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> 
+> On the Qualcomm Glymur platform the PCIe host is compatible with the DWC
+> controller present on the X1E80100 platform. So document the PCIe
+> controllers found on Glymur and use the X1E80100 compatible string as a
+> fallback in the schema.
+> 
+> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> Signed-off-by: Wenbin Yao <wenbin.yao@oss.qualcomm.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> index 257068a1826492a7071600d03ca0c99babb75bd9..8600f2c74cb81bcb924fa2035d992c3bd147db31 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> @@ -16,7 +16,12 @@ description:
+>  
+>  properties:
+>    compatible:
+> -    const: qcom,pcie-x1e80100
+> +    oneOf:
+> +      - const: qcom,pcie-x1e80100
+> +      - items:
+> +          - enum:
+> +              - qcom,glymur-pcie
+> +          - const: qcom,pcie-x1e80100
+>  
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in mpage_readahead
+The cnoc_sf_axi clock is not found on Glymur, at least according to this:
 
-------------[ cut here ]------------
-kernel BUG at ./include/linux/pagemap.h:1398!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 15521 Comm: syz-executor273 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__readahead_folio include/linux/pagemap.h:1398 [inline]
-RIP: 0010:readahead_folio include/linux/pagemap.h:1424 [inline]
-RIP: 0010:mpage_readahead+0x399/0x590 fs/mpage.c:367
-Code: 24 84 c0 74 08 3c 03 0f 8e 61 01 00 00 44 8b 7b 20 89 ef 44 89 fe e8 f6 a2 72 ff 41 39 ef 0f 83 9f fd ff ff e8 68 a8 72 ff 90 <0f> 0b e8 60 a8 72 ff 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1
-RSP: 0018:ffffc9000e897640 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffc9000e897af8 RCX: ffffffff8248e65a
-RDX: ffff888078074880 RSI: ffffffff8248e668 RDI: 0000000000000004
-RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000004
-R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc9000e897b1c R14: fffff52001d12f63 R15: 0000000000000001
-FS:  0000555574632380(0000) GS:ffff8881246b5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbdedf84130 CR3: 00000000697eb000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- read_pages+0x1c4/0xc70 mm/readahead.c:160
- page_cache_ra_unbounded+0x5d2/0x7d0 mm/readahead.c:264
- do_page_cache_ra mm/readahead.c:327 [inline]
- page_cache_ra_order+0xa28/0xd60 mm/readahead.c:532
- do_sync_mmap_readahead mm/filemap.c:3304 [inline]
- filemap_fault+0x152e/0x2930 mm/filemap.c:3445
- __do_fault+0x10d/0x490 mm/memory.c:5152
- do_shared_fault mm/memory.c:5637 [inline]
- do_fault mm/memory.c:5711 [inline]
- do_pte_missing+0x1a6/0x3ba0 mm/memory.c:4234
- handle_pte_fault mm/memory.c:6052 [inline]
- __handle_mm_fault+0x152a/0x2a50 mm/memory.c:6195
- handle_mm_fault+0x589/0xd10 mm/memory.c:6364
- do_user_addr_fault+0x60c/0x1370 arch/x86/mm/fault.c:1336
- handle_page_fault arch/x86/mm/fault.c:1476 [inline]
- exc_page_fault+0x5c/0xb0 arch/x86/mm/fault.c:1532
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7fbdeded986d
-Code: 03 00 b9 03 10 12 00 45 31 c0 48 ba 80 00 00 00 00 20 00 00 48 b8 2f 64 65 76 2f 6e 75 6c 48 c7 c6 9c ff ff ff bf 01 01 00 00 <48> 89 02 48 b8 88 00 00 00 00 20 00 00 c7 00 6c 62 30 00 31 c0 e8
-RSP: 002b:00007ffc828830a0 EFLAGS: 00010246
-RAX: 6c756e2f7665642f RBX: 0000000000000000 RCX: 0000000000121003
-RDX: 0000200000000080 RSI: ffffffffffffff9c RDI: 0000000000000101
-RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000000000002000
-R10: 0000000000000013 R11: 0000000000000206 R12: 0000000000078a5d
-R13: 00007ffc828830bc R14: 00007ffc828830d0 R15: 00007ffc828830c0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__readahead_folio include/linux/pagemap.h:1398 [inline]
-RIP: 0010:readahead_folio include/linux/pagemap.h:1424 [inline]
-RIP: 0010:mpage_readahead+0x399/0x590 fs/mpage.c:367
-Code: 24 84 c0 74 08 3c 03 0f 8e 61 01 00 00 44 8b 7b 20 89 ef 44 89 fe e8 f6 a2 72 ff 41 39 ef 0f 83 9f fd ff ff e8 68 a8 72 ff 90 <0f> 0b e8 60 a8 72 ff 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1
-RSP: 0018:ffffc9000e897640 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffc9000e897af8 RCX: ffffffff8248e65a
-RDX: ffff888078074880 RSI: ffffffff8248e668 RDI: 0000000000000004
-RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000004
-R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc9000e897b1c R14: fffff52001d12f63 R15: 0000000000000001
-FS:  0000555574632380(0000) GS:ffff8881246b5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbdedf84130 CR3: 00000000697eb000 CR4: 00000000003526f0
+https://lore.kernel.org/all/20250925-v3_glymur_introduction-v1-19-24b601bbecc0@oss.qualcomm.com/
 
+And dtbs_check reports the following:
 
-Tested on:
+arch/arm64/boot/dts/qcom/glymur-crd.dtb: pci@1b40000 (qcom,glymur-pcie): clock-names: ['aux', 'cfg', 'bus_master', 'bus_slave', 'slave_q2a', 'noc_aggr'] is too short
+        from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
 
-commit:         9dd1835e Merge tag 'dma-mapping-6.17-2025-09-09' of gi..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17224dcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c53bac41b8ca5327
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d3cc33ef7a77041efa6
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=124659e2580000
+One more thing:
 
+arch/arm64/boot/dts/qcom/glymur-crd.dtb: pci@1b40000 (qcom,glymur-pcie): max-link-speed: 5 is not one of [1, 2, 3, 4]
+        from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
+
+max-link-speed = <5> isn't yet supported and of_pci_get_max_link_speed returns -EINVAL and sets pci->max_link_speed to that
+without checking the error.
+
+So I guess fun stuff is happening based on that later on ...
 
