@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-849246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76628BCFAA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:20:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A16BCFAAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0334075D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:19:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34D6D4ED2A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C779328725E;
-	Sat, 11 Oct 2025 18:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A7A287275;
+	Sat, 11 Oct 2025 18:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Loa6o7d1"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y9YkqrBb"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13BA28505C
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3802857E0
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760206711; cv=none; b=EhBerRhJhQXPW7xGyw0P5bxJnRZLdUKLIQ12NKKqVw4ZWFGkcALuZ8VykNWnycAafmMkb5kBWaZT15xr3ZuPia1hqPYipqCAVEd34Wn9NgZ7h0Lqr4/FQP1HOI9Yp9naliJ5jjs5uaj5L1/4fJBsGwV0wle3JatN24KLVnEBxK8=
+	t=1760206711; cv=none; b=t2IkYrrS4OEW0rLnZ4Ph2aLp/ob7UBcUobZQPFlHPmpcJEG5m0pUt/86mOssLKuYpjefjiUDrjFelfxhjAxq8hkNJqtOEMJPbTz+zzT3SsVZRdrqKE8v+5YoRbLqXRQPim2ll3DhWUtUyVjcOo+wuodh/CEa974mbGOLa7mTgCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760206711; c=relaxed/simple;
-	bh=QoFubbb8wiPjhz5y3pWF+17tV+P2bIxeqL8wpFi1nfk=;
+	bh=XiIsNrTg0GfmfpcWJwni6hIdWkEEq9nbQ2y28gcjQcw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XF3a1nw/8EN0FU+PNi1yIJ/227PxHRBRy24uDZNEkqQuRuIG35Ap7GIvbGG+L1n9ZlEPV0A8eM5UvEqTGNXZktaeA+OJjX4avu9hw9uu6rqowoIWWNlLa6/0iuozmn5jhIZJJqDbWB7j1stg+x51fnwnSbNrDkb2H27S3usCnzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Loa6o7d1; arc=none smtp.client-ip=198.175.65.17
+	 MIME-Version; b=CFlB5zhIcHUsbSOo/sD1pZdSFz7frR0zFFzgb5/20MqZiItU17WC0G8ifB7ANEAoWHl+sZ1UBTS2HXkckShm7SoSJJXvPBbw6XxQCBJK6yrElYIzS1CzXKAx7vBmkFFghPyfHOK4JpsmMAKYxqatpcWaHZwO7N1+tqHPYDwlFpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y9YkqrBb; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1760206709; x=1791742709;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=QoFubbb8wiPjhz5y3pWF+17tV+P2bIxeqL8wpFi1nfk=;
-  b=Loa6o7d1Mzs3ouslW83UWTdxmyggGuWTcpizCbNq+GcghqOrvTfXSRIV
-   0EP9sedHVH3VdKCqAQHV/ZX3VHfUXCRKy9+NcdVchFLL8bKi/9buFRwhw
-   ZWmkcnGopsf975TA51MaL7sh2sNrOAvPuHmiA1plKNFBBesobcOlf5xbr
-   aZ9W/S+Mv3Ykf28JPDwOIYzvtKZi5pCgwvqz5wqJHrujBfUq//kuxX1xD
-   44PevqjxkAnPNbnm/C3CdQgNXiNta5xW/ZKmACOzIkYXaOsL8kl9jvdQl
-   4VJ6pV7RaGBpMqmBXGMhRqdKmN0HSByZ1kvmH46v45jRNYG2/U+7kgbrO
-   A==;
-X-CSE-ConnectionGUID: 7OsmkTE2T2eIFyDjRKp/ig==
-X-CSE-MsgGUID: oqLf97jbSIOB+8Rk4LLqqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339788"
+  bh=XiIsNrTg0GfmfpcWJwni6hIdWkEEq9nbQ2y28gcjQcw=;
+  b=Y9YkqrBbsakXirsuA3GK7ppNmtxnJk2cm0iimpzRLvMdIlTwXGPf3Jxq
+   CO6EwYbc/Esxx5TDgaH0h7SVW6eQY5e38xqt9oEwqeMZQtQ13URaPfC2Q
+   Mwk/v0qwxo5jXbC8xa2O9JpbH1ZyVCsabZmLtbPS2e8WfQbQS4lgRoeof
+   RbwLkRXbWC69JnwGxh3aUM7ZF9q8ziMLuIK7nYhL3utheouiHtWkbs+nW
+   RBMmwNo592e9Wh6g7Ht+Vdc051U+njdgUo7aZRqY6DlKoIGZaJJSG2c0W
+   jAF73DWLcSoTQT2Ii9M9dPOTvOCcojIDgIVpILvlasXm0wG4u+s+OJFGn
+   Q==;
+X-CSE-ConnectionGUID: bcFBDLOoTw6TYukUkbI3wQ==
+X-CSE-MsgGUID: 0WEdTBqUR0WG7HuYHYySDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339807"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62339788"
+   d="scan'208";a="62339807"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 11:18:28 -0700
-X-CSE-ConnectionGUID: jHLQbWxOTR2E4C2/k5j7Wg==
-X-CSE-MsgGUID: sQhO8wOTQIuj4/5Og2eBgw==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 11:18:29 -0700
+X-CSE-ConnectionGUID: teKUgYrNS8ayzrTmALf01w==
+X-CSE-MsgGUID: OBuR3uU9Q8qKO64uzC8h4Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="185487222"
+   d="scan'208";a="185487230"
 Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:27 -0700
+  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:28 -0700
 From: Tim Chen <tim.c.chen@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -86,9 +86,9 @@ Cc: Tim Chen <tim.c.chen@linux.intel.com>,
 	Adam Li <adamli@os.amperecomputing.com>,
 	Tim Chen <tim.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 10/19] sched/fair: Prioritize tasks preferring destination LLC during balancing
-Date: Sat, 11 Oct 2025 11:24:47 -0700
-Message-Id: <ca1946de63ad9f0ae99e079a74d70c55879cc0b6.1760206683.git.tim.c.chen@linux.intel.com>
+Subject: [PATCH 11/19] sched/fair: Identify busiest sched_group for LLC-aware load balancing
+Date: Sat, 11 Oct 2025 11:24:48 -0700
+Message-Id: <fcdf37780eeb409cf10925f8b8dcef486c92b218.1760206683.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1760206683.git.tim.c.chen@linux.intel.com>
 References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
@@ -100,100 +100,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-During LLC load balancing, first check for tasks that prefer the
-destination LLC and balance them to it before others.
+The load balancer selects the busiest sched_group and migrates tasks
+to less busy groups to distribute load across CPUs.
 
-Mark source sched groups containing tasks preferring non local LLCs
-with the group_llc_balance flag. This ensures the load balancer later
-pulls or pushes these tasks toward their preferred LLCs.
+With cache-aware scheduling enabled, the busiest sched_group is
+the one with most tasks preferring the destination LLC. If
+the group has the llc_balance flag set, cache aware load balancing is
+triggered.
+
+Introduce the helper function update_llc_busiest() to identify the
+sched_group with the most tasks preferring the destination LLC.
 
 Co-developed-by: Chen Yu <yu.c.chen@intel.com>
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- kernel/sched/fair.c | 43 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 41 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index cbd1e97bca4b..af7b578eaa06 100644
+index af7b578eaa06..8469ec528cb1 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -9822,8 +9822,7 @@ static __maybe_unused enum llc_mig can_migrate_llc_task(int src_cpu, int dst_cpu
- 	else
- 		return mig_unrestricted;
+@@ -10877,6 +10877,23 @@ static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
  
--	return can_migrate_llc(src_cpu, dst_cpu,
--			       task_util(p), to_pref);
-+	return can_migrate_llc(src_cpu, dst_cpu, task_util(p), to_pref);
- }
- 
- #else
-@@ -10394,6 +10393,7 @@ struct sg_lb_stats {
- 	enum group_type group_type;
- 	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
- 	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
-+	unsigned int group_llc_balance;		/* Tasks should be moved to preferred LLC */
- 	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int nr_numa_running;
-@@ -10849,11 +10849,45 @@ static void record_sg_llc_stats(struct lb_env *env,
- 	if (unlikely(READ_ONCE(sd_share->capacity) != sgs->group_capacity))
- 		WRITE_ONCE(sd_share->capacity, sgs->group_capacity);
+ 	return false;
  }
 +
-+/*
-+ * Do LLC balance on sched group that contains LLC, and have tasks preferring
-+ * to run on LLC in idle dst_cpu.
-+ */
-+static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-+			       struct sched_group *group)
++static bool update_llc_busiest(struct lb_env *env,
++			       struct sg_lb_stats *busiest,
++			       struct sg_lb_stats *sgs)
 +{
-+	struct sched_domain *child = env->sd->child;
-+	int llc;
++	int idx;
 +
-+	if (!sched_cache_enabled())
++	/* Only the candidate with llc_balance needs to be taken care of */
++	if (!sgs->group_llc_balance)
 +		return false;
 +
-+	if (env->sd->flags & SD_SHARE_LLC)
-+		return false;
-+
-+	/* only care about task migration among LLCs */
-+	if (child && !(child->flags & SD_SHARE_LLC))
-+		return false;
-+
-+	llc = llc_idx(env->dst_cpu);
-+	if (sgs->nr_pref_llc[llc] > 0 &&
-+	    can_migrate_llc(env->src_cpu, env->dst_cpu, 0, true) == mig_llc)
-+		return true;
-+
-+	return false;
++	/*
++	 * There are more tasks that want to run on dst_cpu's LLC.
++	 */
++	idx = llc_idx(env->dst_cpu);
++	return sgs->nr_pref_llc[idx] > busiest->nr_pref_llc[idx];
 +}
  #else
  static inline void record_sg_llc_stats(struct lb_env *env, struct sg_lb_stats *sgs,
  				       struct sched_group *group)
+@@ -10888,6 +10905,13 @@ static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
  {
+ 	return false;
  }
 +
-+static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-+			       struct sched_group *group)
++static bool update_llc_busiest(struct lb_env *env,
++			       struct sg_lb_stats *busiest,
++			       struct sg_lb_stats *sgs)
 +{
 +	return false;
 +}
  #endif
  
  /**
-@@ -10954,6 +10988,11 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 	sgs->group_type = group_classify(env->sd->imbalance_pct, group, sgs);
+@@ -11035,6 +11059,17 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+ 	     sds->local_stat.group_type != group_has_spare))
+ 		return false;
  
- 	record_sg_llc_stats(env, sgs, group);
++	/* deal with prefer LLC load balance, if failed, fall into normal load balance */
++	if (update_llc_busiest(env, busiest, sgs))
++		return true;
 +
-+	/* Check for tasks in this group can be moved to their preferred LLC */
-+	if (!local_group && llc_balance(env, sgs, group))
-+		sgs->group_llc_balance = 1;
++	/*
++	 * If the busiest group has tasks with LLC preference,
++	 * skip normal load balance.
++	 */
++	if (busiest->group_llc_balance)
++		return false;
 +
- 	/* Computing avg_load makes sense only when group is overloaded */
- 	if (sgs->group_type == group_overloaded)
- 		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
+ 	if (sgs->group_type > busiest->group_type)
+ 		return true;
+ 
+@@ -11942,9 +11977,11 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
+ 	/*
+ 	 * Try to move all excess tasks to a sibling domain of the busiest
+ 	 * group's child domain.
++	 * Also do so if we can move some tasks that prefer the local LLC.
+ 	 */
+ 	if (sds.prefer_sibling && local->group_type == group_has_spare &&
+-	    sibling_imbalance(env, &sds, busiest, local) > 1)
++	    (busiest->group_llc_balance ||
++	    sibling_imbalance(env, &sds, busiest, local) > 1))
+ 		goto force_balance;
+ 
+ 	if (busiest->group_type != group_overloaded) {
 -- 
 2.32.0
 
