@@ -1,174 +1,118 @@
-Return-Path: <linux-kernel+bounces-848984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E22BCEF63
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:41:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32845BCEF69
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6DF934F353
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB2C3E597A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFE51DF985;
-	Sat, 11 Oct 2025 03:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4F41DE3B7;
+	Sat, 11 Oct 2025 03:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W3K/hw7Y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7UmDJJq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4061A0BF3;
-	Sat, 11 Oct 2025 03:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FDF7D07D
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 03:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760154092; cv=none; b=ThdjwXVbdWQyoTpOTTaHP0NoCY6Kb5VrKYbTXyPqZt1uUY5DGwJN3JBG/4llIC74GXbmPkcBm7Vwpnmx0UlMpbNy2smNdC0XqjRmszE62IJqU65NsJYIe4C2HlpUOU/Fgh53b+wOrxcS6JM2Bngp3l5c3jL8xpjed6pauxg79iQ=
+	t=1760154427; cv=none; b=Lpmvng+qyXJ7TqquqvDO2LbhQ/hwVUA7IhHQyZeQJJWfQ9XTMt5PlesQmRoqMJr4VehGhx7aAw6lBL03Efs4hKVoHWue5tAcDNJG3wXt5nDqyFjFn5RhDBJ2ApJ68u2omYREhCE1aB5rpU0BlgdB6zc0WdTLUlhtlKr/Tnlz4ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760154092; c=relaxed/simple;
-	bh=ber6fiQTrdqgt8W8VtTzVq1nCOhWhNwPiCVVPRg5OhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j2aw9YHeWspvoe88bg8TDulanJyzwyxxSFnn3ZoBO1p2UIbKHHcPyqIPOToCZLC2iNQuT08uqVaQ9I9ticAtaNnRJ+4YE9td/fQ+ut5LwAD1kUA/mqz8HnDMEvy5LSJUUW97eoMMPLY9uApjeNOSp7NeTTqqxGtCtvbQ6jzISpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W3K/hw7Y; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760154091; x=1791690091;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ber6fiQTrdqgt8W8VtTzVq1nCOhWhNwPiCVVPRg5OhA=;
-  b=W3K/hw7YCf4sTsPDwNT8tueQMaIyjAFQJ2exeAPowrLHQSy0HYXGv12A
-   v5doXFr4PsKs0EW7yAK8sfb8xiWCSSBWw2K26hHjH+ELoI/RlBUksAj8z
-   fek0zzsu4Hcy+uqTqLrrhud2k6Ywb99RHMOW1Ev/ERhJYdOXNv4udG4AW
-   uv4DveMCw7o0/sjDJnbFrlqVS8Ffe+YhaKTguepF+0IS1xwnAGZPyk2TS
-   J8yxFF6PPXdfTjuLYgo+Bu6ncYEYMB4ayutaHAO+5NqAqH98zE/d2Jr6n
-   rZjrmDBZYKkQXsw1OHnoKSsokR2cV85sG/xMPg189iqTmOXKiJZnnjU85
-   Q==;
-X-CSE-ConnectionGUID: hlVyb01uQFygcWeSnTN8DQ==
-X-CSE-MsgGUID: UqSHODbiSX6LUtKzZvvaSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="62412956"
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="62412956"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 20:41:30 -0700
-X-CSE-ConnectionGUID: X3ap3ACpQYGaEF1ewEIjDg==
-X-CSE-MsgGUID: Oj42qTq1Qee92Plxx+rlKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="181550746"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 20:41:26 -0700
-Message-ID: <d6b3e9e4-5a53-44d8-a740-c1826d8da24b@linux.intel.com>
-Date: Sat, 11 Oct 2025 11:41:24 +0800
+	s=arc-20240116; t=1760154427; c=relaxed/simple;
+	bh=Y9R6jnrHx6wNiJ6fkibSYMWyr5pV3Dkc0hSiZh5ugqE=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=qMtcXnzZHlEJXUgT/Zc2apzgcURx03qAokTpxL6fqUzvnEbjqORdhUfOOSREXM9yzp3mTZMX5Vzd4qsG1i2bA5JgyoMfUJ+pFLwGlUtn78MmkNVuTgsJm/ZpIN8oES4K2A89tLFbIYUwUEXW/rMn2tqAW1wtDTCnS9GD7/zU6rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7UmDJJq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFDAC4CEF4;
+	Sat, 11 Oct 2025 03:47:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760154426;
+	bh=Y9R6jnrHx6wNiJ6fkibSYMWyr5pV3Dkc0hSiZh5ugqE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=p7UmDJJqAJ4fmUYHZlCeOkxV31J/sxo0CwbEJbWi8oif9fEbq4RH6Miuos2G9Wk2A
+	 tUUVuY/TBfy5YaYINZYy0sWqemosbysC/s253EyKCaIZ9NgW/Zzo/p1V7YtvshziC5
+	 sTIzcuF691GjyAnreEA/Dp2MLg/MaCszRHJKI+XuFDykGxqS2bi1gwjxMASe+ogFAE
+	 LQY4W2OVjf1HKaptF5Ao4SlMROjCiyeJ5iZKKi3AFPkmEAMPGT60wouv1KXHcJutNV
+	 NVeuRyOwshtotSkqndjcn/9ZRWuvDcB1sZE1iq7Zy0iISJz5D4D6OjHJIg+445/bhV
+	 jcKS5tUSyR0Dg==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1v7QZa-00000000jYR-36RV;
+	Fri, 10 Oct 2025 23:47:10 -0400
+Message-ID: <20251011034633.619611825@kernel.org>
+User-Agent: quilt/0.68
+Date: Fri, 10 Oct 2025 23:46:33 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/2] tracing: A couple of fixes for v6.18
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] tools headers: Remove unused kvm_perf.h copies
-To: James Clark <james.clark@linaro.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Leo Yan <leo.yan@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20250910-james-tools-header-cleanup-v1-0-7ae4bedc99e0@linaro.org>
- <20250910-james-tools-header-cleanup-v1-1-7ae4bedc99e0@linaro.org>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250910-james-tools-header-cleanup-v1-1-7ae4bedc99e0@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
 
-On 9/10/2025 9:30 PM, James Clark wrote:
-> These have been unused since commit 162607ea20fa ("perf kvm/{x86,s390}:
-> Remove dependency on uapi/kvm_perf.h") in favour of dynamic discovery.
-> Remove the unused headers to reduce consistency checking overhead and
-> noise.
->
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  tools/arch/s390/include/uapi/asm/kvm_perf.h | 22 ----------------------
->  tools/arch/x86/include/uapi/asm/kvm_perf.h  | 17 -----------------
->  tools/perf/check-headers.sh                 |  2 --
->  3 files changed, 41 deletions(-)
->
-> diff --git a/tools/arch/s390/include/uapi/asm/kvm_perf.h b/tools/arch/s390/include/uapi/asm/kvm_perf.h
-> deleted file mode 100644
-> index 84606b8cc49e4..0000000000000
-> --- a/tools/arch/s390/include/uapi/asm/kvm_perf.h
-> +++ /dev/null
-> @@ -1,22 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> -/*
-> - * Definitions for perf-kvm on s390
-> - *
-> - * Copyright 2014 IBM Corp.
-> - * Author(s): Alexander Yarygin <yarygin@linux.vnet.ibm.com>
-> - */
-> -
-> -#ifndef __LINUX_KVM_PERF_S390_H
-> -#define __LINUX_KVM_PERF_S390_H
-> -
-> -#include <asm/sie.h>
-> -
-> -#define DECODE_STR_LEN 40
-> -
-> -#define VCPU_ID "id"
-> -
-> -#define KVM_ENTRY_TRACE "kvm:kvm_s390_sie_enter"
-> -#define KVM_EXIT_TRACE "kvm:kvm_s390_sie_exit"
-> -#define KVM_EXIT_REASON "icptcode"
-> -
-> -#endif
-> diff --git a/tools/arch/x86/include/uapi/asm/kvm_perf.h b/tools/arch/x86/include/uapi/asm/kvm_perf.h
-> deleted file mode 100644
-> index 125cf5cdf6c5f..0000000000000
-> --- a/tools/arch/x86/include/uapi/asm/kvm_perf.h
-> +++ /dev/null
-> @@ -1,17 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> -#ifndef _ASM_X86_KVM_PERF_H
-> -#define _ASM_X86_KVM_PERF_H
-> -
-> -#include <asm/svm.h>
-> -#include <asm/vmx.h>
-> -#include <asm/kvm.h>
-> -
-> -#define DECODE_STR_LEN 20
-> -
-> -#define VCPU_ID "vcpu_id"
-> -
-> -#define KVM_ENTRY_TRACE "kvm:kvm_entry"
-> -#define KVM_EXIT_TRACE "kvm:kvm_exit"
-> -#define KVM_EXIT_REASON "exit_reason"
-> -
-> -#endif /* _ASM_X86_KVM_PERF_H */
-> diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-> index be519c433ce47..6eacc02fbb1b3 100755
-> --- a/tools/perf/check-headers.sh
-> +++ b/tools/perf/check-headers.sh
-> @@ -40,13 +40,11 @@ declare -a FILES=(
->    "arch/s390/include/uapi/asm/perf_regs.h"
->    "arch/x86/include/uapi/asm/perf_regs.h"
->    "arch/x86/include/uapi/asm/kvm.h"
-> -  "arch/x86/include/uapi/asm/kvm_perf.h"
->    "arch/x86/include/uapi/asm/svm.h"
->    "arch/x86/include/uapi/asm/unistd.h"
->    "arch/x86/include/uapi/asm/vmx.h"
->    "arch/powerpc/include/uapi/asm/kvm.h"
->    "arch/s390/include/uapi/asm/kvm.h"
-> -  "arch/s390/include/uapi/asm/kvm_perf.h"
->    "arch/s390/include/uapi/asm/sie.h"
->    "arch/arm/include/uapi/asm/kvm.h"
->    "arch/arm64/include/uapi/asm/kvm.h"
+tracing fixes for v6.18:
 
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+- Fix tracing_mark_raw_write() to use per CPU buffer
+
+  The fix to use the per CPU buffer to copy from user space was needed for
+  both the trace_maker and trace_maker_raw file. The trace_maker file is
+  used to write ASCII text into the trace buffer, but the trace_maker_raw is
+  used to write binary structures directly into the ring buffer.
+
+  The fix for reading from user space into per CPU buffers properly fixed
+  the trace_marker write function, but the trace_marker_raw file wasn't
+  fixed properly. The user space data was correctly written into the per CPU
+  buffer, but the code that wrote into the ring buffer still used the user
+  space pointer and not the per CPU buffer that had the user space data
+  already written.
+
+  There are several tests in the test suite to test the trace_marker file
+  but it appears that there's no tests that test the trace_marker_raw file
+  (this needs to be fixed), and this bug was missed.
+
+- Stop the fortify string warning from writing into trace_marker_raw
+
+  After converting the copy_from_user_nofault() into a memcpy(), another
+  issue appeared. As writes to the trace_marker_raw expects binary data, the
+  first entry is a 4 byte identifier. The entry structure is defined as:
+
+  struct {
+	struct trace_entry ent;
+	int id;
+	char dynamic_array[];
+  };
+
+  The size of this structure is reserved on the ring buffer and the pointer
+  to the structure on the ring buffer is assigned to "entry". Then the data
+  is copied via a memcpy() with:
+
+  memcpy(&entry->id, buf, size);
+
+  But the fortify string detects that the size is bigger than the size of
+  the entry->id and produces a false positive warning.
+
+  Hide the write from fortify string with:
+
+  void *ptr = entry;
+  ptr += offsetof(typeof(*entry), id);
+  memcpy(ptr, buf, size);
 
 
+Steven Rostedt (2):
+      tracing: Fix tracing_mark_raw_write() to use buf and not ubuf
+      tracing: Stop fortify-string from warning in tracing_mark_raw_write()
+
+----
+ kernel/trace/trace.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
