@@ -1,97 +1,180 @@
-Return-Path: <linux-kernel+bounces-849120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94EB2BCF3F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:55:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93261BCF3F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 401EA34BA54
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:55:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CB57834BAD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4E226056A;
-	Sat, 11 Oct 2025 10:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207F226059B;
+	Sat, 11 Oct 2025 10:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOQRhB9c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="X1f3Vrv3"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36F7217704;
-	Sat, 11 Oct 2025 10:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB9F2253A1;
+	Sat, 11 Oct 2025 10:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760180145; cv=none; b=c4wPgQr63cB5BHRfgNg65NIy8LLbOjtJ+mVIhptuoT8YK0NF1H2hevISnVMTf/LFKPNjpEE2JwylrJEQIRQ8zUYxs8BuuuHY0tTpb+3TX2/jZsIC8ZPqpVPNGQ3iA3rJQFgXAgncqtHjRZRMjPW05ZwErtgMpk8Wo9s5XuQc7sw=
+	t=1760180197; cv=none; b=ly1SyL/FONGF2LQCw6o2RM287Y59tq2HR7DCVRxr1Lkjlig/v8ueuTCixBWB0uOtpoCE50W0nHMd46ZChLjeDbsI0NXEpVS+KQlKVogbDKFXjTsAbXcsd+MP3etGIDMM25MWdEYeEVRg3uQQPuASI8DN5g2+GbYMCr2b0aOh9Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760180145; c=relaxed/simple;
-	bh=mKgumnN5JvK5ersxi0+Taf+9sDmVrG1lW66Pvvsl1pY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfxVAWSgirxNSd2EMkz6Nefprsly1sNx/pnqerU07HEyzrbJNY/Pw3kmVX+ZyXg/PzzI0gSeGzPucyZv+Tuh/f0yry4OzYHQWdkDAvt8wVxaLogX7JrcC0mUr0DQVupcKqdgnje+sOR1RG8zJcsGECSEk3Vja1KLNFqaxknvvCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOQRhB9c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE03FC4CEF4;
-	Sat, 11 Oct 2025 10:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760180145;
-	bh=mKgumnN5JvK5ersxi0+Taf+9sDmVrG1lW66Pvvsl1pY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GOQRhB9cygYtSyxJ/XY/dOt04fP329fWM6pr9/I+R0Zlv7SP/wo8n0pMs36tfEq2o
-	 Q+1FRFIEJoecfDakx+sFjcs7kOrnyP/SAhIZg4uZKAhcvTEphIHn5PqrvNQOgQ5dwm
-	 GfcT9SaTpCmOqrpCdvykE95Y6jo37cnwiW7aJpY7z3CXwAWENiG+1KoyrJR1EO5uG4
-	 MCrQDZn5NT+7qFvDaoDKVd2lFngxXKzvBeoeparfMvuRjl4k8UuvD0nj4YAo+9xlNH
-	 mMhiFaYKRtI93qiisBQMPd1V9jS+kWJyFumRkIKIqeB5XOBdmuL4UGkrdE3XpBgrv+
-	 UiSkk8BMfo/oQ==
-Date: Sat, 11 Oct 2025 11:55:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.6 00/28] 6.6.111-rc1 review
-Message-ID: <aOo3rYORhhblfiP5@finisterre.sirena.org.uk>
-References: <20251010131330.355311487@linuxfoundation.org>
+	s=arc-20240116; t=1760180197; c=relaxed/simple;
+	bh=u0GrzsxZ5xneQUO9cG+wrZy59SAQcDG3WwePM64zvbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dqSWcPSRdje6UKR0Tn9T4EKwamcWmr0Vxdkoz02jhR5crRlkMJzRRFfVinFAC06EgAGVNPMk1BYe1ENH7Ke8bYekUdzXz/bO/oT6c/CKM5pyA0x8ztW37s0PDFH7QUyGGDZHsmp33YemnNkHGprcSe5h5dBxTqcTNacREFX6McQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=X1f3Vrv3; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ckLBt5lpbz9tVW;
+	Sat, 11 Oct 2025 12:56:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760180182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VlD2P0vh4QctxwHfq2M6FdIuQFnDksvOeT2RgNmErfA=;
+	b=X1f3Vrv31VGri0Z6FGxkPdP5J7eAfFCyaidp+0O9tyPB+QRlnjPuiZE0OLaoc2pkXabqxx
+	aBoI2NvWS9ZspjF/smBrgY+54n/CN1W338BD9T5A6Qrh3Dhf0AVNUcdCd6ALNio3dHFSgn
+	HE/u/0V3Z1DBIFSP4FJD2EPEqaefW/VTGP8W6MUvQm3I29uV7irxwqJ4c5YTNiZevza5ba
+	NZcpQVW/y7e55Jh9HTBhxpf1LtitaDntIACqUhs3oHp01IGtH/n7XadsQUwbA7FXZ8YRrI
+	yDjW8+ZytcQfT41dM2nvEgZpdARVH/p8dpp7yzzG+aGgo1bbFVKXcTsw/jZ+jQ==
+Message-ID: <2c431e9a-9e2f-4583-bf03-142b56439a47@mailbox.org>
+Date: Sat, 11 Oct 2025 12:56:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dJmC80PMygARyTnE"
-Content-Disposition: inline
-In-Reply-To: <20251010131330.355311487@linuxfoundation.org>
-X-Cookie: If in doubt, mumble.
+Subject: Re: [EXT] Re: [PATCH v2 0/8] Add support for Wave6 video codec driver
+To: Ming Qian <ming.qian@nxp.com>, Nicolas Dufresne <nicolas@ndufresne.ca>,
+ Nas Chung <nas.chung@chipsnmedia.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+ "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ dl-linux-imx <linux-imx@nxp.com>,
+ "jackson.lee@chipsnmedia.com" <jackson.lee@chipsnmedia.com>,
+ "lafley.kim@chipsnmedia.com" <lafley.kim@chipsnmedia.com>
+References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
+ <f03d0ae0-d28b-4b06-8f63-9d06f15c0522@mailbox.org>
+ <fcfa00b5ae102d76b02ce1667d27822e6d2c3c81.camel@ndufresne.ca>
+ <472aac3c-9d3e-4892-8d6c-665fa6793464@mailbox.org>
+ <59e87d8e346bb16b225382b9a4500e1b16bbf776.camel@ndufresne.ca>
+ <PAXPR04MB825499BA447B4000AB8329A6E703A@PAXPR04MB8254.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <PAXPR04MB825499BA447B4000AB8329A6E703A@PAXPR04MB8254.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 3fbf18e32a64d5ad371
+X-MBO-RS-META: fgs43jn9dqyou4fmp6oizdaezrust547
 
+On 9/5/25 3:22 AM, Ming Qian wrote:
 
---dJmC80PMygARyTnE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello everyone,
 
-On Fri, Oct 10, 2025 at 03:16:18PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.111 release.
-> There are 28 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---dJmC80PMygARyTnE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjqN60ACgkQJNaLcl1U
-h9DvtwgAgGjvov+B6hSOR55wKM00CrlvW49MNpV5772NAJ4c7b2BHh2dLb/y4Se1
-MVtyO5daRBaN2GUXTfK0XIT4d6Ay2LpNDG1n0VatVNkk04RncJlc+0byP7ePZEbX
-TgpGKqiySGoiaSXe78kmtfD5tdoHbjh0FE/y62gygEl4ntczmH9B3YoDN6elxkNY
-YTKXlRp+uTj2knPbLEY4hz917M1ltpdaPNdhwB0XeU9KSanzhA9yVL2FOLRZeAeO
-sxHmK90mWXsSZjLcc3TG3Frls7JrOclqXKSukq/MrcyOiAg+vI0rRQaw0w/1uLXu
-oK/rRi1qE8dPEyedkEiTY2j5rgl0eg==
-=lmfC
------END PGP SIGNATURE-----
-
---dJmC80PMygARyTnE--
+>>>> Le mercredi 03 septembre 2025 à 23:47 +0200, Marek Vasut a écrit :
+>>>>> On 4/22/25 11:31 AM, Nas Chung wrote:
+>>>>>> This patch series introduces support for the Chips&Media Wave6
+>>>>>> video codec IP, a completely different hardware architecture compared
+>> to Wave5.
+>>>>>>
+>>>>>> The wave6 driver is a M2M stateful encoder/decoder driver.
+>>>>>> It supports various video formats, including H.264 and H.265,
+>>>>>> for both encoding and decoding.
+>>>>>> While other versions of the Wave6 IP may support VP9 decoding
+>>>>>> and
+>>>>>> AV1 decoding and encoding those formats are not implemented or
+>>>>>> validated in this driver at this time.
+>>>>>>
+>>>>>> On NXP i.MX SoCs, the Wave6 IP functionality is split between two
+>> regions:
+>>>>>> VPU Control region, Manages shared resources such as firmware
+>> memory.
+>>>>>> VPU Core region, Provides encoding and decoding capabilities.
+>>>>>> The VPU core cannot operate independently without the VPU control
+>> region.
+>>>>>>
+>>>>>> This driver has been tested with GStreamer on:
+>>>>>> - NXP i.MX95 board
+>>>>>> - pre-silicon FPGA environment
+>>>>>>
+>>>>>> Test results for decoder fluster:
+>>>>>> - JVT-AVC_V1, Ran 77/135 tests successfully              in
+>>>>>> 35.519 secs
+>>>>>> - JVT-FR-EXT, Ran 25/69 tests successfully               in
+>>>>>> 17.725 secs
+>>>>>> - JCT-VC-HEVC_V1, Ran 132/147 tests successfully         in
+>>>>>> 81.549 secs
+>>>>>> - All failures are due to unsupported hardware features:
+>>>>>> -- 10bit, Resolutions higher than 4K, FMO, MBAFF
+>>>>>> -- Extended profile, Field encoding and High422 sreams.
+>>>>>>
+>>>>>> Test results for v4l2-compliance:
+>>>>>> v4l2-compliance 1.29.0-5359, 64 bits, 64-bit time_t
+>>>>>> v4l2-compliance SHA: 2a91a869eb8a 2025-04-12 11:35:53
+>>>>>>
+>>>>>> Compliance test for wave6-dec device /dev/video0:
+>>>>>>                    fail:
+>>>>>> ../utils/v4l2-compliance/v4l2-test-controls.cpp(1180):
+>>>>>> !have_source_change || !have_eos
+>>>>>>            test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL Total
+>>>>>> for wave6-dec device /dev/video0: 48, Succeeded: 47, Failed: 1,
+>>>>>> Warnings: 0
+>>>>>>
+>>>>>> Compliance test for wave6-enc device /dev/video1:
+>>>>>>                    fail:
+>>>>>> ../utils/v4l2-compliance/v4l2-test-controls.cpp(1169):
+>>>>>> node->codec_mask & STATEFUL_ENCODER
+>>>>>>            test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL Total
+>>>>>> for wave6-enc device /dev/video1: 48, Succeeded: 47, Failed: 1,
+>>>>>> Warnings: 0
+>>>>>>
+>>>>>> Note: the failures are all related with the eos event.
+>>>>>
+>>>>> For what its worth, the whole series:
+>>>>>
+>>>>> Tested-by: Marek Vasut <marek.vasut@mailbox.org> # NXP i.MX95 rev.
+>>>>> A0
+>>>>
+>>>> Do you mind sharing what tests you have done ? Are you confirming
+>>>> the same fluster and compliance results, have you done more ? Since
+>>>> this is largely inspired on Wave5, I'd like to see people testing
+>>>> real-world playback, with seeks, dynamic resolution changes, data
+>>>> lost. On Wave5, latest performance patches leads to crash or hangs.
+>>> I did not use fluster this time, I used h264 decode of 1920x1080 60
+>>> FPS stream. The pipeline was very basic, something along the lines of:
+>>>
+>>> gst-launch-1.0 -v filesrc location=/test.mp4 ! qtdemux ! h264parse !
+>>> v4l2h264dec ! fpsdisplaysink text-overlay=false video-sink=waylandsink
+>>
+>> Thanks for the detail. Since you have a running setup, perhaps consider testing
+>> with the following, left/right keyboard arrow will let you jump around in the
+>> media.
+>>
+>>   gst-play-1.0 --audiosink=fakeaudiosink --videosink=waylandsink /test.mp4
+>>
+>> That would at least cover seeking use cases. I provided Nas a stream that
+>> aggressively do resolution changes to reproduce a Wave5 crash, I would expect
+>> him to test and report against Wave6 too. If you'd like to have that sample, let
+>> me know, its not very big, and free, but I'd rather not do attachements over the
+>> mailing list.
+> 
+> Would you please share the stream to me? I want to test this resolution-change case too.
+How can we proceed with the wave6 driver upstreaming ?
 
