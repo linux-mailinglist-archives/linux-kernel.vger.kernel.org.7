@@ -1,120 +1,134 @@
-Return-Path: <linux-kernel+bounces-849321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92A4BCFD2F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:26:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED27BCFD38
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 575843BD475
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 22:26:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9140B4E23B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 22:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B1A234963;
-	Sat, 11 Oct 2025 22:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEAB242D7F;
+	Sat, 11 Oct 2025 22:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SsfPHkma"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iEH1qPYD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38970188580
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 22:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066DB1F9F47;
+	Sat, 11 Oct 2025 22:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760221584; cv=none; b=RzbODyaV884pUWILDcN3fhY2GnhDLKtqtLhLpWY0QbcTbD1c60u35hgH3N7X4WePEAm8WAERHFyK61yuJiGj5NrrCf2aqVumOiWzQwrrAzNk9ykgL+HyoisLmkaIYriMfGWu4sSte8OA/T3tqR29+k9rsvQK2Pftzq+aukxfdIY=
+	t=1760221788; cv=none; b=NpO9Tvj5PQmOM5a+d++DidCAEm6+TG73zFnd7P7/ERao7iLPU3WDgk7HF5VmMchebXQAEhizTnBlLLN9Sa1RF1/HISs/LA0NyC1sIvnV1kcBeugt0RNZSk5+jKJ88Fq1uP5WPeJLb4EZ6DXrNlGfkEoHTfBnw3/Cy4N/y/msmoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760221584; c=relaxed/simple;
-	bh=7FznruyfzlyBCeC27qhDWNgCMsIWQBwvjajm92XpwT0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fYSn1wDgDR59PjOkBGxNn/KbnnVGWEyscOm8UWwZOfKYAo5nsBSlfBKHAVVnNPM8cm+56fpe7crDU973ovQ/ZZyEG2BVSk4gUWg7FHDeUKFG+S2rlnTndOG07L6iO0I9jfvbsOefB25RJmJrK2HTmeFnlkTodC7KA2tNrAg2R0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SsfPHkma; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=FsgbOcMfTE/oFgBmBmKbPG0YjKvTmsKKa/N4VIyTa1g=; b=SsfPHkma+/xD3q+qYv/PrSfN8s
-	wrSiwA3/igbPmUDt/uSeODXXx8vqkw8MkwuwRzDmv3VXKXq8NmjpjIRQG65Oi41n8oDPaaana2Br4
-	aNqVO4EUOG3DRJvbesksXg9htw931Zf10YqI5fjc0rTLRJ4PyticzX4NRjzDU2xJurYkK2kDx/v4D
-	Zt9XRzdX/hMiELKazqvKIwpNOc0YXC5JdBCgZv2jn/zUXIwagQDSEgQ5iEyKMv10Am/MCWhMFBFe/
-	X3wnXusNH+Jt4bxTSl25IuZazQjH1o+ptJKY/5xa7dbghfor39JZg1EJUTWvmeEvUINfAf1eXpBUk
-	7Ci7IY8Q==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v7i2f-0000000AscZ-2xL0;
-	Sat, 11 Oct 2025 22:26:21 +0000
-Message-ID: <c0a5bfb6-4976-45e3-a936-b7a914bbe5a5@infradead.org>
-Date: Sat, 11 Oct 2025 15:26:21 -0700
+	s=arc-20240116; t=1760221788; c=relaxed/simple;
+	bh=9ftHdqHrokZcQXhNcrNBSsyfRb38s2MdEhcqUsS5UxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzp9VWNp8K87o8rUB4OCAe9ObPFUzNQPe12sHuxp4tVHjGuyOn5NkHPiEakmYBSO/2LeRDznUNQhdvZ2joXW9zmxrPR9UwJ1FMa9+XbuSG5Z/zjGA8u5TI6MaQSascaVnyrCSX0AeqnUhRuSKHM9oaRA6T2Lg8byesVwVjwfYo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iEH1qPYD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760221786; x=1791757786;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=9ftHdqHrokZcQXhNcrNBSsyfRb38s2MdEhcqUsS5UxA=;
+  b=iEH1qPYDh+bttozWoB9budNuMO0KxcnYiyunQLEeFZeFyekztSmHT8xi
+   s77AKp9Ksu31UT15gaGTmSU6u8xFJ6fhXC35lW8l9OPsIMv7AFslgMZYy
+   wZl6SNOLPCkIDvkFw7HOOByPlKh9dXQFXeZpIRn1ohMTWlFsShv43bYMo
+   PIdcvvWmuF2icDwoFnZ6iUucqTkb4Jq8u095V4rhINp6cqVvV+Iw98ezm
+   38TGqsYBwF8oU5F9bqdfozKjQgmza7Sr3zjzvocCEFBqPFC/ZR0MJcgXh
+   GMAMsHZxUeKr8WmYgLCpcTcuh5PyI1V7ENITU47+QQC7rnWo8qgJZk8DX
+   A==;
+X-CSE-ConnectionGUID: i8MXDAvzTW6aB9U7D8AEPA==
+X-CSE-MsgGUID: 83FeOSn9S0u9mV1hKqhQ6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11579"; a="72660435"
+X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
+   d="scan'208";a="72660435"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 15:29:45 -0700
+X-CSE-ConnectionGUID: 6aRIkqUKSgqrljdR0Y68Gg==
+X-CSE-MsgGUID: VJALYLfTRNSHXLaG4Pa2/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
+   d="scan'208";a="181682031"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 11 Oct 2025 15:29:40 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7i5p-00041T-2l;
+	Sat, 11 Oct 2025 22:29:37 +0000
+Date: Sun, 12 Oct 2025 06:28:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	Matthew Brost <matthew.brost@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Lukasz Laguna <lukasz.laguna@intel.com>,
+	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+Subject: Re: [PATCH 07/26] drm/xe/pf: Add support for encap/decap of
+ bitstream to/from packet
+Message-ID: <202510120631.vW6dpp07-lkp@intel.com>
+References: <20251011193847.1836454-8-michal.winiarski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools: fix == bashism in kernel-chktaint
-From: Randy Dunlap <rdunlap@infradead.org>
-To: Kevin Locke <kevin@kevinlocke.name>, Jonathan Corbet <corbet@lwn.net>,
- Thorsten Leemhuis <linux@leemhuis.info>
-Cc: linux-kernel@vger.kernel.org
-References: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
- <f5949227-7bd3-4fd0-b873-e79d0768a1be@infradead.org>
-Content-Language: en-US
-In-Reply-To: <f5949227-7bd3-4fd0-b873-e79d0768a1be@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251011193847.1836454-8-michal.winiarski@intel.com>
 
+Hi Michał,
 
+kernel test robot noticed the following build warnings:
 
-On 10/11/25 3:07 PM, Randy Dunlap wrote:
-> 
-> 
-> On 10/11/25 2:04 PM, Kevin Locke wrote:
->> When /bin/sh is a shell other than bash, invoking kernel-chktaint with
->> at least one argument may produce error messages such as the following
->> (produced by [dash] with argument 1024):
->>
->>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
->>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
->>
->> This occurs because the == operator is not specified for [test in POSIX]
->> and is not supported by all shells, as noted by shellcheck [SC3014].
->>
->> To fix the issue and avoid the error message, replace == with =.
->>
->> [dash]: https://git.kernel.org/pub/scm/utils/dash/dash.git
->> [test in POSIX]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
->> [SC3014]: https://www.shellcheck.net/wiki/SC3014
->>
->> Signed-off-by: Kevin Locke <kevin@kevinlocke.name>
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+[auto build test WARNING on drm-xe/drm-xe-next]
+[also build test WARNING on next-20251010]
+[cannot apply to awilliam-vfio/next drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master awilliam-vfio/for-linus v6.17]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-and
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Winiarski/drm-xe-pf-Remove-GuC-version-check-for-migration-support/20251012-034301
+base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
+patch link:    https://lore.kernel.org/r/20251011193847.1836454-8-michal.winiarski%40intel.com
+patch subject: [PATCH 07/26] drm/xe/pf: Add support for encap/decap of bitstream to/from packet
+config: riscv-randconfig-002-20251012 (https://download.01.org/0day-ci/archive/20251012/202510120631.vW6dpp07-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251012/202510120631.vW6dpp07-lkp@intel.com/reproduce)
 
-> Thanks.
-> 
->> ---
->>  tools/debugging/kernel-chktaint | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
->> index e7da0909d0970..051608a63d9f1 100755
->> --- a/tools/debugging/kernel-chktaint
->> +++ b/tools/debugging/kernel-chktaint
->> @@ -19,7 +19,7 @@ EOF
->>  }
->>  
->>  if [ "$1"x != "x" ]; then
->> -	if  [ "$1"x == "--helpx" ] || [ "$1"x == "-hx" ] ; then
->> +	if  [ "$1"x = "--helpx" ] || [ "$1"x = "-hx" ] ; then
->>  		usage
->>  		exit 1
->>  	elif  [ $1 -ge 0 ] 2>/dev/null ; then
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510120631.vW6dpp07-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/gpu/drm/xe/xe_sriov_pf_migration_data.c:272 function parameter 'xe' not described in 'xe_sriov_pf_migration_data_read'
+>> Warning: drivers/gpu/drm/xe/xe_sriov_pf_migration_data.c:382 function parameter 'xe' not described in 'xe_sriov_pf_migration_data_write'
+>> Warning: drivers/gpu/drm/xe/xe_sriov_pf_migration_data.c:467 function parameter 'xe' not described in 'xe_sriov_pf_migration_data_save_init'
 
 -- 
-~Randy
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
