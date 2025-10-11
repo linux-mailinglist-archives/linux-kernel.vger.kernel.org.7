@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-849236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94531BCFA87
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:18:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39642BCFA8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E463AB3F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:18:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2693A4E8DC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAB027E7FC;
-	Sat, 11 Oct 2025 18:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3C283C90;
+	Sat, 11 Oct 2025 18:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HqT5FdN/"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fA7dEfIE"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B631DA3D
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46062169AD2
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760206702; cv=none; b=qLy4yfx4vmKSOBavBPpATmBHrFhjBX9wjh7g1SCU8bux4Osro+LDIMMr6EawzjHUMkqvqXo6betzOXrC48a2/D+4wugcCsiHQ0+f0eYX76vK8kwink91QF10TV0X/gMcLqnr35BLeUBKuo0BiQUIOktgxo8OctzVE3qI6OF0R8s=
+	t=1760206703; cv=none; b=RpWLRsxlJTzhlJSNJ6YDnnOidsJ7oCIJ0QG0EXS7VFoOFFRWiuWYlsET6M5MjOkyE+dnQih3vxbVtcm+li+EdUZBeyP5FVticeDHkmuoWPHZblewToySaE5iRFgZqZZMrF2/g7ww+IHVQ3wb1PmaWoyqrDBaIo5To0g72h92TRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760206702; c=relaxed/simple;
-	bh=YBoJzan/gmG9QHrZPy40hh/j69+WO1ndfoO9IWlzk/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ilm6V5igVpvzTFZU9762z7iZLU4ugB64DWdRJrRfVqz8Gk0+sx3rPWYxRKtRUiejsGvYcbLO3GMs4pktgyNtX2S7od/nwLggga5ri7VVC1POv2cTctvdigp+KG0aJMozxlC2PvyA60A9BP0wZwmJuIpn+x0rJ825mh3qCnCwCOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HqT5FdN/; arc=none smtp.client-ip=198.175.65.17
+	s=arc-20240116; t=1760206703; c=relaxed/simple;
+	bh=eCGUZmunSjVOsoqwxe8kKF4T+jrOyKsftgZkbuwe1Jo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QJa7XLmNRAgs2IV6jX9+J3RTiz2TA7hXn5NgC4yjWKV75coBs2eumwHZZgG2HlZqrxNZy2yyHAMM73rFnrDZIvG+RpHWxcfbJopVHrre/vMQ3HJJFjQUmhaAwWCfX+5CuF2S3mkLLbQPk1FwQMpFRQzmQi7ZRNOguwaR+/BIBvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fA7dEfIE; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760206699; x=1791742699;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=YBoJzan/gmG9QHrZPy40hh/j69+WO1ndfoO9IWlzk/0=;
-  b=HqT5FdN/IKfW87bjmOpLlMagnLgiWdYEOjgdMGdF40JNrxxrXXZikpb0
-   w0aQibHBkMeEzrTqPGdBo3QFNcOw5k5Z2Wt9wA3fcDVy88QoX+AAheVBR
-   YfVP6zO+KQDPGXT8bBgSX3usUA+acHk+jtf0l2aL2Cih/OyA1pjlh7A12
-   awgkI7LAEZhKdsb5BEM4LDb0CGljXQU8lFrnrZQbKtSiEuLoBzWarqHwU
-   AcOD6pF8YEwVp/oF0ICa2GK1Nrd7j9FxeUMf/03/03PGc/dW9Ey8mce4R
-   3YddLBZp+e9Np1jqkMO45rRe61LG28gK2YhR9qALiK8++aAQ3SzpaZ/sM
-   A==;
-X-CSE-ConnectionGUID: 6Bx89yd9STiAOFB0n26CEQ==
-X-CSE-MsgGUID: iJmfJNBAT8eTUbYTpnYUgw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339595"
+  t=1760206701; x=1791742701;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=eCGUZmunSjVOsoqwxe8kKF4T+jrOyKsftgZkbuwe1Jo=;
+  b=fA7dEfIE91ULN1jqc64owLAysrWyqWsDA5nuO1+sgcIA15Yn8yYj6iw4
+   55VPKl3g+xYXhPmGyE7a0LZvFUc9YG3ckmUpqO0pvf6oo1RJcM13mS3yi
+   KNsM4bbd9aFpNPTftzZGqryw94QrGirzar7JNUNOk0MJqRkziOVPLHnOi
+   iVfGn7SOaI4LzDDzlorOXwaeFstT3f2UVe0Cr2vAWBdxYyDop0Z+G9hqb
+   BhSDn+aeXU8OqAYP/xGpt3Ce8cbnDhTJhA+r5jzej1xMspSEeS1p/SQOm
+   slC+k3w/mm9HPugo6aL39ZyshlQHrAN4qvnJBJT/5GnR6bFHs9O0IKtHz
+   w==;
+X-CSE-ConnectionGUID: AwkM8kCOR6yXxOyCyDBj4Q==
+X-CSE-MsgGUID: FBEmDsF5QKC61vf0MqpBmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339614"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62339595"
+   d="scan'208";a="62339614"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 11:18:18 -0700
-X-CSE-ConnectionGUID: ttBN86lQQc+XCClrx5PuLA==
-X-CSE-MsgGUID: z0ojiq6OTPqgDcj3YjNKwQ==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 11:18:19 -0700
+X-CSE-ConnectionGUID: HGgPT3dBQFm59TiA7l3rfA==
+X-CSE-MsgGUID: SlOHviQzSgGRjsbScX9f4Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="185487174"
+   d="scan'208";a="185487181"
 Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:17 -0700
+  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:19 -0700
 From: Tim Chen <tim.c.chen@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
 	K Prateek Nayak <kprateek.nayak@amd.com>,
 	"Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
 	Juri Lelli <juri.lelli@redhat.com>,
 	Dietmar Eggemann <dietmar.eggemann@arm.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
@@ -77,6 +77,7 @@ Cc: Tim Chen <tim.c.chen@linux.intel.com>,
 	Tingyin Duan <tingyin.duan@gmail.com>,
 	Vern Hao <vernhao@tencent.com>,
 	Len Brown <len.brown@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
 	Aubrey Li <aubrey.li@intel.com>,
 	Zhao Liu <zhao1.liu@intel.com>,
 	Chen Yu <yu.chen.surf@gmail.com>,
@@ -85,10 +86,12 @@ Cc: Tim Chen <tim.c.chen@linux.intel.com>,
 	Adam Li <adamli@os.amperecomputing.com>,
 	Tim Chen <tim.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 00/19] Cache Aware Scheduling 
-Date: Sat, 11 Oct 2025 11:24:37 -0700
-Message-Id: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+Subject: [PATCH 01/19] sched/fair: Add infrastructure for cache-aware load balancing
+Date: Sat, 11 Oct 2025 11:24:38 -0700
+Message-Id: <865b852e3fdef6561c9e0a5be9a94aec8a68cdea.1760206683.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,328 +101,566 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-There had been 4 RFC postings of this patch set. We've incorporated
-the feedbacks and comments and now would like to post this patch set
-for consideration of inclusion to mainline. The patches are based on
-the original patch proposed by Peter[1].
+From: "Peter Zijlstra (Intel)" <peterz@infradead.org>
 
-The goal of the patch series is to aggregate tasks sharing data
-to the same LLC cache domain, thereby reducing cache bouncing and
-cache misses, and improve data access efficiency. In the current
-implementation, threads within the same process are considered
-as entities that potentially share resources.
+Cache-aware load balancing aims to aggregate tasks with potential
+shared resources into the same cache domain. This approach enhances
+cache locality, thereby optimizing system performance by reducing
+cache misses and improving data access efficiency.
+
+In the current implementation, threads within the same process are
+considered as entities that potentially share resources.
+Cache-aware load balancing monitors the CPU occupancy of each cache
+domain for every process. Based on this monitoring, it endeavors to
+migrate threads within a given process to its cache-hot domains,
+with the goal of maximizing cache locality.
+
+It is an attempt at modelling cache affinity. While the patch series
+only targets LLC, it could very well be extended to clusters (L2),
+or other kind of domains grouping inside a node.
+
+As it stands, the mechanism only computes a CPU within the LLC that
+has the highest recent runtime; this CPU is then used in the load
+balance path in subsequent patches to steer toward this LLC.
+
+More elaborate measures could be added later in NUMA_BALANCING: for
+example, migrating task A to its preferred LLC when it has spare CPU
+capacity, or swapping task A with another running task B in task A’s
+preferred LLC.
+
+Originally-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ include/linux/mm_types.h |  44 ++++++
+ include/linux/sched.h    |   4 +
+ init/Kconfig             |  11 ++
+ kernel/fork.c            |   6 +
+ kernel/sched/core.c      |   6 +
+ kernel/sched/fair.c      | 288 +++++++++++++++++++++++++++++++++++++++
+ kernel/sched/features.h  |   1 +
+ kernel/sched/sched.h     |   8 ++
+ 8 files changed, 368 insertions(+)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 08bc2442db93..3ca557c2f36d 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -927,6 +927,11 @@ struct mm_cid {
+ };
+ #endif
  
-The changes from v4 RFC patches are minor. Most are commit log and
-and code clean ups per feedbacks. Several bugs were fixed:
-1. A memory leak of not freeing cache aware scheduling structure when struct mm is freed.
-2. A false sharing regression involving nr_running_avg.
-3. Bug for initializing cache aware scheduling structures for system with no L3.
-
-Peter suggested enhancing the patch set to allow task aggregation into
-secondary LLCs when the preferred LLC becomes overloaded. We have not
-implemented that in this version. In our previous testing, maintaining
-stable LLC preferences proved important to avoid excessive task
-migrations, which can undermine cache locality benefits. Additionally,
-migrating tasks between primary and secondary LLCs often caused cache
-bouncing, making the locality gains from using a secondary LLC marginal.
-We would have to take a closer look to see if such scheme can 
-can be done without the such problems. 
-
-The following tunables control under /sys/kernel/debug/sched/ control
-the behavior of cache aware scheduling:
-
-1. llc_aggr_tolerance Controls how aggressive we aggregate tasks to
-their preferred LLC, based on a process's RSS size and number of running
-threads.  Processes that have smaller memory footprint and fewer number
-of tasks will benefit better from aggregation.  Varies between 0 to 100
-        0:  Cache aware scheduling is disabled 1:  Process with RSS
-        greater than LLC size,
-	    or running threads more than number of cpu cores/LLC skip
-	    aggregation
-	100:  Aggressive; a process's threads are aggregated regardless of
-	      RSS or running threads.
-For example, with a 32MB L3 cache 8 cores in L3:
-    llc_aggr_tolerance=1 -> process with RSS > 32MB, or nr_running_avg >
-    8 are skipped.  llc_aggr_tolerance=99 -> process with RSS > 784GB
-    or nr_running_avg > 785 are skipped.  784GB = (1 + (99 - 1) * 256)
-    * 32MB.
-     785  = (1 + (99 - 1) * 8).
-
-Currently this knob is a global control. Considering that different workloads have
-different requirements for task consolidation, it would be ideal to introduce
-per process control for this knob via prctl in the future.
++struct mm_sched {
++	u64 runtime;
++	unsigned long epoch;
++};
++
+ struct kioctx_table;
+ struct iommu_mm_data;
+ struct mm_struct {
+@@ -1017,6 +1022,17 @@ struct mm_struct {
+ 		 */
+ 		raw_spinlock_t cpus_allowed_lock;
+ #endif
++#ifdef CONFIG_SCHED_CACHE
++		/*
++		 * Track per-cpu-per-process occupancy as a proxy for cache residency.
++		 * See account_mm_sched() and ...
++		 */
++		struct mm_sched __percpu *pcpu_sched;
++		raw_spinlock_t mm_sched_lock;
++		unsigned long mm_sched_epoch;
++		int mm_sched_cpu;
++#endif
++
+ #ifdef CONFIG_MMU
+ 		atomic_long_t pgtables_bytes;	/* size of all page tables */
+ #endif
+@@ -1436,6 +1452,34 @@ static inline unsigned int mm_cid_size(void)
+ static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask) { }
+ #endif /* CONFIG_SCHED_MM_CID */
  
-2. llc_overload_pct, llc_imb_pct
-We'll always try to move a task to its preferred LLC if an LLC's average core
-utilization is below llc_overload_pct (default to 50%). Otherwise, the utilization
-of preferred LLC has to be not more than llc_imb_pct (default to 20%) to move a task
-to it. This is to prevent overloading on the preferred LLC.
++#ifdef CONFIG_SCHED_CACHE
++void mm_init_sched(struct mm_struct *mm, struct mm_sched __percpu *pcpu_sched);
++
++static inline int mm_alloc_sched_noprof(struct mm_struct *mm)
++{
++	struct mm_sched __percpu *pcpu_sched = alloc_percpu_noprof(struct mm_sched);
++
++	if (!pcpu_sched)
++		return -ENOMEM;
++
++	mm_init_sched(mm, pcpu_sched);
++	return 0;
++}
++
++#define mm_alloc_sched(...)	alloc_hooks(mm_alloc_sched_noprof(__VA_ARGS__))
++
++static inline void mm_destroy_sched(struct mm_struct *mm)
++{
++	free_percpu(mm->pcpu_sched);
++	mm->pcpu_sched = NULL;
++}
++#else /* !CONFIG_SCHED_CACHE */
++
++static inline int mm_alloc_sched(struct mm_struct *mm) { return 0; }
++static inline void mm_destroy_sched(struct mm_struct *mm) { }
++
++#endif /* CONFIG_SCHED_CACHE */
++
+ struct mmu_gather;
+ extern void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm);
+ extern void tlb_gather_mmu_fullmm(struct mmu_gather *tlb, struct mm_struct *mm);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f8188b833350..d7ddb7ce6c4b 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1400,6 +1400,10 @@ struct task_struct {
+ 	unsigned long			numa_pages_migrated;
+ #endif /* CONFIG_NUMA_BALANCING */
  
-3. llc_epoch_period
-Controls how often the scheduler collect LLC occupancy of a process (default to 10 msec)
++#ifdef CONFIG_SCHED_CACHE
++	struct callback_head		cache_work;
++#endif
++
+ #ifdef CONFIG_RSEQ
+ 	struct rseq __user *rseq;
+ 	u32 rseq_len;
+diff --git a/init/Kconfig b/init/Kconfig
+index e3eb63eadc87..4e625db7920a 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -970,6 +970,17 @@ config NUMA_BALANCING
  
-4. llc_epoch_affinity_timeout
-Detect that if a process has not run for llc_epoch_affinity_timeout (default to 50 msec),
-it loses its cache preference.
-
-Test results:
-The first test platform is a 2 socket Intel Sapphire Rapids with 30
-cores per socket. The DRAM interleaving is enabled in the BIOS so it
-essential has one NUMA node with two last level caches. There are 60
-CPUs associated with each last level cache.
-
-The second test platform is a AMD Milan. There are 2 Nodes and 64 CPUs
-per node. Each node has 8 CCXs and each CCX has 8 CPUs.
-
-The third test platform is a AMD Genoa. There are 4 Nodes and 32 CPUs per node.
-Each node has 2 CCXs and each CCX has 16 CPUs.
-
-[TL;DR]
-Sappire Rapids:
-hackbench shows significant improvement when there is 1 group
-with different number of fd pairs(threads) within this process.
-schbench shows overall wakeup latency improvement.
-ChaCha20-xiangshan shows ~10% throughput improvement. Other
-micro-workloads did not show much difference.
-
-Milan:
-No obvious difference is observed so far.
-
-Genoa:
-ChaCha20-xiangshan shows 44% throughput improvement.
-
-[Sapphire Rapids details]
-
-[hackbench]
-Hackbench show overall improvement when there is only 1
-group, with different number of fd(pairs). This is the
-expected behavior because this test scenario would benefit
-from cache aware load balance most. Other number of groups
-shows not much difference(using default fd = 20).
-
-       groups              baseline            sched_cache
-Min       1      37.5960 (   0.00%)     26.4340 (  29.69%)
-Min       3      38.7050 (   0.00%)     38.6920 (   0.03%)
-Min       5      39.4550 (   0.00%)     38.6280 (   2.10%)
-Min       7      51.4270 (   0.00%)     50.6790 (   1.45%)
-Min       12     62.8540 (   0.00%)     63.6590 (  -1.28%)
-Min       16     74.0160 (   0.00%)     74.7480 (  -0.99%)
-Amean     1      38.4768 (   0.00%)     26.7146 *  30.57%*
-Amean     3      39.0750 (   0.00%)     39.5586 (  -1.24%)
-Amean     5      41.5178 (   0.00%)     41.2766 (   0.58%)
-Amean     7      52.1164 (   0.00%)     51.5152 (   1.15%)
-Amean     12     63.9052 (   0.00%)     64.0420 (  -0.21%)
-Amean     16     74.5812 (   0.00%)     75.4318 (  -1.14%)
-BAmean-99 1      38.2027 (   0.00%)     26.5500 (  30.50%)
-BAmean-99 3      38.8725 (   0.00%)     39.2225 (  -0.90%)
-BAmean-99 5      41.1898 (   0.00%)     41.0037 (   0.45%)
-BAmean-99 7      51.8645 (   0.00%)     51.4453 (   0.81%)
-BAmean-99 12     63.6317 (   0.00%)     63.9307 (  -0.47%)
-BAmean-99 16     74.4528 (   0.00%)     75.2113 (  -1.02%)
-
-[schbench]
-Wakeup Latencies 99.0th improvement is observed.
-
-threads          baseline             sched_cache          change
-1                13.80(1.10)          14.80(2.86)          -7.25%
-2                12.00(1.00)          8.00(2.12)           +33.33%
-4                9.00(0.00)           5.60(0.89)           +37.78%
-8                9.00(0.00)           6.40(1.14)           +28.89%
-16               9.20(0.45)           6.20(0.84)           +32.61%
-32               9.60(0.55)           7.00(0.71)           +27.08%
-64               10.80(0.45)          8.40(0.55)           +22.22%
-128              12.60(0.55)          11.40(0.55)          +9.52%
-239              14.00(0.00)          14.20(0.45)          -1.43%
-
-[stream]
-No much difference is observed.
-                             baseline                     sc
-GB/sec copy-2        35.00 (   0.00%)       34.79 (  -0.60%)
-GB/sec scale-2       24.04 (   0.00%)       23.90 (  -0.58%)
-GB/sec add-2         28.98 (   0.00%)       28.92 (  -0.22%)
-GB/sec triad-2       28.32 (   0.00%)       28.31 (  -0.04%)
-
-[netperf]
-No much difference is observed(consider the stdev).
-
-         nr_pairs          netperf                netperf
-
-Hmean     60      1023.44 (   0.00%)     1021.87 (  -0.15%)
-BHmean-99 60      1023.78 (   0.00%)     1022.22 (  -0.15%)
-Hmean     120      792.09 (   0.00%)      793.75 (   0.21%)
-BHmean-99 120      792.36 (   0.00%)      794.04 (   0.21%)
-Hmean     180      513.42 (   0.00%)      513.53 (   0.02%)
-BHmean-99 180      513.81 (   0.00%)      513.80 (  -0.00%)
-Hmean     240      387.09 (   0.00%)      387.33 (   0.06%)
-BHmean-99 240      387.18 (   0.00%)      387.45 (   0.07%)
-Hmean     300      316.04 (   0.00%)      315.68 (  -0.12%)
-BHmean-99 300      316.12 (   0.00%)      315.77 (  -0.11%)
-Hmean     360      496.38 (   0.00%)      455.49 (  -8.24%)
-BHmean-99 360      499.88 (   0.00%)      458.17 (  -8.34%)
-Hmean     420      497.32 (   0.00%)      501.84 (   0.91%)
-BHmean-99 420      499.90 (   0.00%)      504.56 (   0.93%)
-Hmean     480      417.62 (   0.00%)      432.25 (   3.50%)
-BHmean-99 480      419.96 (   0.00%)      434.43 (   3.45%)
-
-In above case of 360 pairs, although there is a performance
-drop of 8.24%, the corresponding:
-HCoeffVar   360    23.78 (   0.00%)       29.52 ( -24.15%)
-shows that the regression is within the run-to-run variance.
-
-[Milan details]
-
-default settings:
-[hackbench]
-
-Min       1      50.8170 (   0.00%)     51.1890 (  -0.73%)
-Min       3      59.3610 (   0.00%)     58.6080 (   1.27%)
-Min       5      94.9760 (   0.00%)     96.0210 (  -1.10%)
-Min       7     123.3270 (   0.00%)    124.1680 (  -0.68%)
-Min       12    179.2000 (   0.00%)    181.8390 (  -1.47%)
-Min       16    238.8680 (   0.00%)    242.6390 (  -1.58%)
-Amean     1      51.6614 (   0.00%)     51.3630 (   0.58%)
-Amean     3      60.1886 (   0.00%)     59.4542 (   1.22%)
-Amean     5      95.7602 (   0.00%)     96.8338 (  -1.12%)
-Amean     7     124.0332 (   0.00%)    124.4406 (  -0.33%)
-Amean     12    181.0324 (   0.00%)    182.9220 (  -1.04%)
-Amean     16    239.5556 (   0.00%)    243.3556 *  -1.59%*
-BAmean-99 1      51.5335 (   0.00%)     51.3338 (   0.39%)
-BAmean-99 3      59.7848 (   0.00%)     59.0958 (   1.15%)
-BAmean-99 5      95.6698 (   0.00%)     96.5450 (  -0.91%)
-BAmean-99 7     123.8478 (   0.00%)    124.3760 (  -0.43%)
-BAmean-99 12    180.8035 (   0.00%)    182.5135 (  -0.95%)
-BAmean-99 16    239.1933 (   0.00%)    243.0570 (  -1.62%)
-
-[schbench]
-
-threads          baseline             sched_cache          change
-1                12.00(2.00)          11.00(0.71)          +8.33%
-2                12.40(0.89)          13.80(0.84)          -11.29%
-4                14.20(0.45)          14.80(0.45)          -4.23%
-8                16.00(0.00)          15.80(0.45)          +1.25%
-16               16.00(0.00)          16.00(0.71)          0.00%
-32               19.40(0.55)          18.60(0.55)          +4.12%
-63               22.20(0.45)          23.20(0.45)          -4.50%
-
-[stream]
-No obvious difference is found.
-export STREAM_SIZE=$((128000000))
-
-                     baseline               sched_cache
-GB/sec copy-16       726.48 (   0.00%)      715.60 (  -1.50%)
-GB/sec scale-16      577.71 (   0.00%)      577.03 (  -0.12%)
-GB/sec add-16        678.85 (   0.00%)      672.87 (  -0.88%)
-GB/sec triad-16      735.52 (   0.00%)      729.05 (  -0.88%)
-
-
-[netperf]
-No much difference is observed.
-
-         nr_pairs          baseline           sched_cache
-Hmean     32       755.98 (   0.00%)      755.17 (  -0.11%)
-BHmean-99 32       756.42 (   0.00%)      755.40 (  -0.13%)
-Hmean     64       677.38 (   0.00%)      669.75 (  -1.13%)
-BHmean-99 64       677.50 (   0.00%)      669.86 (  -1.13%)
-Hmean     96       498.52 (   0.00%)      496.73 (  -0.36%)
-BHmean-99 96       498.69 (   0.00%)      496.93 (  -0.35%)
-Hmean     128      604.38 (   0.00%)      604.22 (  -0.03%)
-BHmean-99 128      604.87 (   0.00%)      604.87 (   0.00%)
-Hmean     160      471.67 (   0.00%)      468.29 (  -0.72%)
-BHmean-99 160      474.34 (   0.00%)      471.05 (  -0.69%)
-Hmean     192      381.18 (   0.00%)      384.88 (   0.97%)
-BHmean-99 192      383.30 (   0.00%)      386.82 (   0.92%)
-Hmean     224      327.79 (   0.00%)      326.05 (  -0.53%)
-BHmean-99 224      329.85 (   0.00%)      327.87 (  -0.60%)
-Hmean     256      284.61 (   0.00%)      300.52 (   5.59%)
-BHmean-99 256      286.41 (   0.00%)      302.06 (   5.47%)
-
-[Genoa details]
-[ChaCha20-xiangshan]
-ChaCha20-xiangshan is a simple benchmark using a static build of an
-8-thread Verilator of XiangShan(RISC-V). The README file can be
-found here[2]. The score depends on how aggressive the user set the
-/sys/kernel/debug/sched/llc_aggr_tolerance. Using the default values,
-there is no much difference observed. While setting the
-/sys/kernel/debug/sched/llc_aggr_tolerance to 100, 44% improvment is
-observed.
-
-baseline:
-Host time spent: 50,868ms
-
-sched_cache:
-Host time spent: 28,349ms
-
-The time has been reduced by 44%.
-
-Thanks to everyone who participated and provided valuable suggestions for
-the previous versions. Your comments and tests on the latest version are
-also greatly appreciated in advance.
-
-Tim
-
-[1] https://lore.kernel.org/lkml/20250325120952.GJ36322@noisy.programming.kicks-ass.net/
-
-[2] https://github.com/yu-chen-surf/chacha20-xiangshan/blob/master/README.eng.md
-
-RFC v4:
-[3] https://lore.kernel.org/all/cover.1754712565.git.tim.c.chen@linux.intel.com/
-
-RFC v3
-[4] https://lore.kernel.org/all/cover.1750268218.git.tim.c.chen@linux.intel.com/
-
-RFC v2:
-[5] https://lore.kernel.org/lkml/cover.1745199017.git.yu.c.chen@intel.com/
-
-
-Chen Yu (7):
-  sched/fair: Record per-LLC utilization to guide cache-aware scheduling
-    decisions
-  sched/fair: Introduce helper functions to enforce LLC migration policy
-  sched/fair: Introduce a static key to enable cache aware only for
-    multi LLCs
-  sched/fair: Exclude processes with many threads from cache-aware
-    scheduling
-  sched/fair: Disable cache aware scheduling for processes with high
-    thread counts
-  sched/fair: Avoid cache-aware scheduling for memory-heavy processes
-  sched/fair: Add user control to adjust the tolerance of cache-aware
-    scheduling
-
-Peter Zijlstra (Intel) (1):
-  sched/fair: Add infrastructure for cache-aware load balancing
-
-Tim Chen (11):
-  sched/fair: Add LLC index mapping for CPUs
-  sched/fair: Assign preferred LLC ID to processes
-  sched/fair: Track LLC-preferred tasks per runqueue
-  sched/fair: Introduce per runqueue task LLC preference counter
-  sched/fair: Count tasks prefering each LLC in a sched group
-  sched/fair: Prioritize tasks preferring destination LLC during
-    balancing
-  sched/fair: Identify busiest sched_group for LLC-aware load balancing
-  sched/fair: Add migrate_llc_task migration type for cache-aware
-    balancing
-  sched/fair: Handle moving single tasks to/from their preferred LLC
-  sched/fair: Consider LLC preference when selecting tasks for load
-    balancing
-  sched/fair: Respect LLC preference in task migration and detach
-
- include/linux/cacheinfo.h      |   21 +-
- include/linux/mm_types.h       |   45 ++
- include/linux/sched.h          |    5 +
- include/linux/sched/topology.h |    4 +
- include/linux/threads.h        |   10 +
- init/Kconfig                   |   20 +
- init/init_task.c               |    3 +
- kernel/fork.c                  |    6 +
- kernel/sched/core.c            |   18 +
- kernel/sched/debug.c           |   56 ++
- kernel/sched/fair.c            | 1022 +++++++++++++++++++++++++++++++-
- kernel/sched/features.h        |    1 +
- kernel/sched/sched.h           |   27 +
- kernel/sched/topology.c        |   61 +-
- 14 files changed, 1283 insertions(+), 16 deletions(-)
-
+ 	  This system will be inactive on UMA systems.
+ 
++config SCHED_CACHE
++	bool "Cache aware load balance"
++	default y
++	depends on SMP
++	help
++	  When enabled, the scheduler will attempt to aggregate tasks from
++	  the same process onto a single Last Level Cache (LLC) domain when
++	  possible. This improves cache locality by keeping tasks that share
++	  resources within the same cache domain, reducing cache misses and
++	  lowering data access latency.
++
+ config NUMA_BALANCING_DEFAULT_ENABLED
+ 	bool "Automatically enable NUMA aware memory/task placement"
+ 	default y
+diff --git a/kernel/fork.c b/kernel/fork.c
+index c4ada32598bd..9cd6efe2926d 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -680,6 +680,7 @@ void __mmdrop(struct mm_struct *mm)
+ 	cleanup_lazy_tlbs(mm);
+ 
+ 	WARN_ON_ONCE(mm == current->active_mm);
++	mm_destroy_sched(mm);
+ 	mm_free_pgd(mm);
+ 	mm_free_id(mm);
+ 	destroy_context(mm);
+@@ -1079,6 +1080,9 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+ 	if (mm_alloc_cid(mm, p))
+ 		goto fail_cid;
+ 
++	if (mm_alloc_sched(mm))
++		goto fail_sched;
++
+ 	if (percpu_counter_init_many(mm->rss_stat, 0, GFP_KERNEL_ACCOUNT,
+ 				     NR_MM_COUNTERS))
+ 		goto fail_pcpu;
+@@ -1088,6 +1092,8 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+ 	return mm;
+ 
+ fail_pcpu:
++	mm_destroy_sched(mm);
++fail_sched:
+ 	mm_destroy_cid(mm);
+ fail_cid:
+ 	destroy_context(mm);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index be00629f0ba4..79d15e904d12 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4520,6 +4520,7 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 	p->wake_entry.u_flags = CSD_TYPE_TTWU;
+ 	p->migration_pending = NULL;
+ 	init_sched_mm_cid(p);
++	init_sched_mm(p);
+ }
+ 
+ DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
+@@ -8821,6 +8822,11 @@ void __init sched_init(void)
+ 
+ 		rq->core_cookie = 0UL;
+ #endif
++#ifdef CONFIG_SCHED_CACHE
++		raw_spin_lock_init(&rq->cpu_epoch_lock);
++		rq->cpu_epoch_next = jiffies;
++#endif
++
+ 		zalloc_cpumask_var_node(&rq->scratch_mask, GFP_KERNEL, cpu_to_node(i));
+ 	}
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a059315c..a2ea002f4fd6 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1152,6 +1152,8 @@ void post_init_entity_util_avg(struct task_struct *p)
+ 	sa->runnable_avg = sa->util_avg;
+ }
+ 
++static inline void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec);
++
+ static s64 update_se(struct rq *rq, struct sched_entity *se)
+ {
+ 	u64 now = rq_clock_task(rq);
+@@ -1174,6 +1176,7 @@ static s64 update_se(struct rq *rq, struct sched_entity *se)
+ 
+ 		trace_sched_stat_runtime(running, delta_exec);
+ 		account_group_exec_runtime(running, delta_exec);
++		account_mm_sched(rq, donor, delta_exec);
+ 
+ 		/* cgroup time is always accounted against the donor */
+ 		cgroup_account_cputime(donor, delta_exec);
+@@ -1193,6 +1196,289 @@ static s64 update_se(struct rq *rq, struct sched_entity *se)
+ 	return delta_exec;
+ }
+ 
++#ifdef CONFIG_SCHED_CACHE
++
++/*
++ * XXX numbers come from a place the sun don't shine -- probably wants to be SD
++ * tunable or so.
++ */
++#define EPOCH_PERIOD	(HZ / 100)	/* 10 ms */
++#define EPOCH_LLC_AFFINITY_TIMEOUT	5	/* 50 ms */
++
++static int llc_id(int cpu)
++{
++	if (cpu < 0)
++		return -1;
++
++	return per_cpu(sd_llc_id, cpu);
++}
++
++void mm_init_sched(struct mm_struct *mm, struct mm_sched __percpu *_pcpu_sched)
++{
++	unsigned long epoch;
++	int i;
++
++	for_each_possible_cpu(i) {
++		struct mm_sched *pcpu_sched = per_cpu_ptr(_pcpu_sched, i);
++		struct rq *rq = cpu_rq(i);
++
++		pcpu_sched->runtime = 0;
++		pcpu_sched->epoch = rq->cpu_epoch;
++		epoch = rq->cpu_epoch;
++	}
++
++	raw_spin_lock_init(&mm->mm_sched_lock);
++	mm->mm_sched_epoch = epoch;
++	mm->mm_sched_cpu = -1;
++
++	/*
++	 * The update to mm->pcpu_sched should not be reordered
++	 * before initialization to mm's other fields, in case
++	 * the readers may get invalid mm_sched_epoch, etc.
++	 */
++	smp_store_release(&mm->pcpu_sched, _pcpu_sched);
++}
++
++/* because why would C be fully specified */
++static __always_inline void __shr_u64(u64 *val, unsigned int n)
++{
++	if (n >= 64) {
++		*val = 0;
++		return;
++	}
++	*val >>= n;
++}
++
++static inline void __update_mm_sched(struct rq *rq, struct mm_sched *pcpu_sched)
++{
++	lockdep_assert_held(&rq->cpu_epoch_lock);
++
++	unsigned long n, now = jiffies;
++	long delta = now - rq->cpu_epoch_next;
++
++	if (delta > 0) {
++		n = (delta + EPOCH_PERIOD - 1) / EPOCH_PERIOD;
++		rq->cpu_epoch += n;
++		rq->cpu_epoch_next += n * EPOCH_PERIOD;
++		__shr_u64(&rq->cpu_runtime, n);
++	}
++
++	n = rq->cpu_epoch - pcpu_sched->epoch;
++	if (n) {
++		pcpu_sched->epoch += n;
++		__shr_u64(&pcpu_sched->runtime, n);
++	}
++}
++
++static unsigned long __no_profile fraction_mm_sched(struct rq *rq, struct mm_sched *pcpu_sched)
++{
++	guard(raw_spinlock_irqsave)(&rq->cpu_epoch_lock);
++
++	__update_mm_sched(rq, pcpu_sched);
++
++	/*
++	 * Runtime is a geometric series (r=0.5) and as such will sum to twice
++	 * the accumulation period, this means the multiplcation here should
++	 * not overflow.
++	 */
++	return div64_u64(NICE_0_LOAD * pcpu_sched->runtime, rq->cpu_runtime + 1);
++}
++
++static inline
++void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
++{
++	struct mm_struct *mm = p->mm;
++	struct mm_sched *pcpu_sched;
++	unsigned long epoch;
++
++	if (!sched_feat(SCHED_CACHE))
++		return;
++
++	if (p->sched_class != &fair_sched_class)
++		return;
++	/*
++	 * init_task and kthreads don't having mm
++	 */
++	if (!mm || !mm->pcpu_sched)
++		return;
++
++	pcpu_sched = per_cpu_ptr(p->mm->pcpu_sched, cpu_of(rq));
++
++	scoped_guard (raw_spinlock, &rq->cpu_epoch_lock) {
++		__update_mm_sched(rq, pcpu_sched);
++		pcpu_sched->runtime += delta_exec;
++		rq->cpu_runtime += delta_exec;
++		epoch = rq->cpu_epoch;
++	}
++
++	/*
++	 * If this task hasn't hit task_cache_work() for a while, or it
++	 * has only 1 thread, invalidate its preferred state.
++	 */
++	if (epoch - READ_ONCE(mm->mm_sched_epoch) > EPOCH_LLC_AFFINITY_TIMEOUT ||
++	    get_nr_threads(p) <= 1) {
++		if (mm->mm_sched_cpu != -1)
++			mm->mm_sched_cpu = -1;
++	}
++}
++
++static void task_tick_cache(struct rq *rq, struct task_struct *p)
++{
++	struct callback_head *work = &p->cache_work;
++	struct mm_struct *mm = p->mm;
++
++	if (!sched_feat(SCHED_CACHE))
++		return;
++
++	if (!mm || !mm->pcpu_sched)
++		return;
++
++	if (mm->mm_sched_epoch == rq->cpu_epoch)
++		return;
++
++	guard(raw_spinlock)(&mm->mm_sched_lock);
++
++	if (work->next == work) {
++		task_work_add(p, work, TWA_RESUME);
++		WRITE_ONCE(mm->mm_sched_epoch, rq->cpu_epoch);
++	}
++}
++
++static void get_scan_cpumasks(cpumask_var_t cpus, int cache_cpu,
++			      int pref_nid, int curr_cpu)
++{
++#ifdef CONFIG_NUMA_BALANCING
++	/* First honor the task's preferred node. */
++	if (pref_nid != NUMA_NO_NODE)
++		cpumask_or(cpus, cpus, cpumask_of_node(pref_nid));
++#endif
++
++	/* Next honor the task's cache CPU if it is not included. */
++	if (cache_cpu != -1 && !cpumask_test_cpu(cache_cpu, cpus))
++		cpumask_or(cpus, cpus,
++			   cpumask_of_node(cpu_to_node(cache_cpu)));
++
++	/*
++	 * Lastly make sure that the task's current running node is
++	 * considered.
++	 */
++	if (!cpumask_test_cpu(curr_cpu, cpus))
++		cpumask_or(cpus, cpus, cpumask_of_node(cpu_to_node(curr_cpu)));
++}
++
++static void __no_profile task_cache_work(struct callback_head *work)
++{
++	struct task_struct *p = current;
++	struct mm_struct *mm = p->mm;
++	unsigned long m_a_occ = 0;
++	unsigned long curr_m_a_occ = 0;
++	int cpu, m_a_cpu = -1, cache_cpu,
++	    pref_nid = NUMA_NO_NODE, curr_cpu;
++	cpumask_var_t cpus;
++
++	WARN_ON_ONCE(work != &p->cache_work);
++
++	work->next = work;
++
++	if (p->flags & PF_EXITING)
++		return;
++
++	if (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
++		return;
++
++	curr_cpu = task_cpu(p);
++	cache_cpu = mm->mm_sched_cpu;
++#ifdef CONFIG_NUMA_BALANCING
++	if (static_branch_likely(&sched_numa_balancing))
++		pref_nid = p->numa_preferred_nid;
++#endif
++
++	scoped_guard (cpus_read_lock) {
++		get_scan_cpumasks(cpus, cache_cpu,
++				  pref_nid, curr_cpu);
++
++		for_each_cpu(cpu, cpus) {
++			/* XXX sched_cluster_active */
++			struct sched_domain *sd = per_cpu(sd_llc, cpu);
++			unsigned long occ, m_occ = 0, a_occ = 0;
++			int m_cpu = -1, i;
++
++			if (!sd)
++				continue;
++
++			for_each_cpu(i, sched_domain_span(sd)) {
++				occ = fraction_mm_sched(cpu_rq(i),
++							per_cpu_ptr(mm->pcpu_sched, i));
++				a_occ += occ;
++				if (occ > m_occ) {
++					m_occ = occ;
++					m_cpu = i;
++				}
++			}
++
++			/*
++			 * Compare the accumulated occupancy of each LLC. The
++			 * reason for using accumulated occupancy rather than average
++			 * per CPU occupancy is that it works better in asymmetric LLC
++			 * scenarios.
++			 * For example, if there are 2 threads in a 4CPU LLC and 3
++			 * threads in an 8CPU LLC, it might be better to choose the one
++			 * with 3 threads. However, this would not be the case if the
++			 * occupancy is divided by the number of CPUs in an LLC (i.e.,
++			 * if average per CPU occupancy is used).
++			 * Besides, NUMA balancing fault statistics behave similarly:
++			 * the total number of faults per node is compared rather than
++			 * the average number of faults per CPU. This strategy is also
++			 * followed here.
++			 */
++			if (a_occ > m_a_occ) {
++				m_a_occ = a_occ;
++				m_a_cpu = m_cpu;
++			}
++
++			if (llc_id(cpu) == llc_id(mm->mm_sched_cpu))
++				curr_m_a_occ = a_occ;
++
++			cpumask_andnot(cpus, cpus, sched_domain_span(sd));
++		}
++	}
++
++	if (m_a_occ > (2 * curr_m_a_occ)) {
++		/*
++		 * Avoid switching mm_sched_cpu too fast.
++		 * The reason to choose 2X is because:
++		 * 1. It is better to keep the preferred LLC stable,
++		 *    rather than changing it frequently and cause migrations
++		 * 2. 2X means the new preferred LLC has at least 1 more
++		 *    busy CPU than the old one(200% vs 100%, eg)
++		 * 3. 2X is chosen based on test results, as it delivers
++		 *    the optimal performance gain so far.
++		 */
++		mm->mm_sched_cpu = m_a_cpu;
++	}
++
++	free_cpumask_var(cpus);
++}
++
++void init_sched_mm(struct task_struct *p)
++{
++	struct callback_head *work = &p->cache_work;
++
++	init_task_work(work, task_cache_work);
++	work->next = work;
++}
++
++#else
++
++static inline void account_mm_sched(struct rq *rq, struct task_struct *p,
++				    s64 delta_exec) { }
++
++void init_sched_mm(struct task_struct *p) { }
++
++static void task_tick_cache(struct rq *rq, struct task_struct *p) { }
++
++#endif
++
+ /*
+  * Used by other classes to account runtime.
+  */
+@@ -13031,6 +13317,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ 	if (static_branch_unlikely(&sched_numa_balancing))
+ 		task_tick_numa(rq, curr);
+ 
++	task_tick_cache(rq, curr);
++
+ 	update_misfit_status(curr, rq);
+ 	check_update_overutilized_status(task_rq(curr));
+ 
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 3c12d9f93331..d2af7bfd36bf 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -87,6 +87,7 @@ SCHED_FEAT(TTWU_QUEUE, true)
+  */
+ SCHED_FEAT(SIS_UTIL, true)
+ 
++SCHED_FEAT(SCHED_CACHE, true)
+ /*
+  * Issue a WARN when we do multiple update_rq_clock() calls
+  * in a single rq->lock section. Default disabled because the
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index be9745d104f7..2ded8d3d0ecc 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1166,6 +1166,12 @@ struct rq {
+ 	u64			clock_pelt_idle_copy;
+ 	u64			clock_idle_copy;
+ #endif
++#ifdef CONFIG_SCHED_CACHE
++	raw_spinlock_t		cpu_epoch_lock ____cacheline_aligned;
++	u64			cpu_runtime;
++	unsigned long		cpu_epoch;
++	unsigned long		cpu_epoch_next;
++#endif
+ 
+ 	atomic_t		nr_iowait;
+ 
+@@ -3790,6 +3796,8 @@ static inline void task_tick_mm_cid(struct rq *rq, struct task_struct *curr) { }
+ static inline void init_sched_mm_cid(struct task_struct *t) { }
+ #endif /* !CONFIG_SCHED_MM_CID */
+ 
++extern void init_sched_mm(struct task_struct *p);
++
+ extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
+ extern int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
+ static inline
 -- 
 2.32.0
 
