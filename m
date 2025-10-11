@@ -1,129 +1,135 @@
-Return-Path: <linux-kernel+bounces-849139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC537BCF489
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 372E3BCF47D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652AA3BE47A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:33:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D38D425B30
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D258D256C88;
-	Sat, 11 Oct 2025 11:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863552367D1;
+	Sat, 11 Oct 2025 11:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="xV6K/r7M"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lNiMk2+L"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53834220F5C
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659C023717F
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760182391; cv=none; b=YX5gHgjdBX4O3ki46XYf7qRfIihP1xsWDckHmR+dMa9kbpR/fkLZCuYdJMMtMkxycqkQbKwIxbUpKbudeoFDX/uqZBsqo+r7H4xwD7wo47Q/QXlsQ7ZqN4o/4Gye4thkT7OebZlkk+weYiUXkStEwIISGTsbY5jhpqZP6+kp5jA=
+	t=1760182298; cv=none; b=Bd0lQHKoG3Tu15fRBOpfrGe0NDjpawgK0ue0BA/G8vr1T0pcyneVzkUiI46Fm2IQ5MvWo06ZEJSQWEHkSsf07yG0d4A1MMh22v4uLLqNXAP2J8Gn80MvzqDaRHBLoPB9h3zL2jGl6M30dSZZVvv6bZH0LUlhxULhL7OJAey4IJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760182391; c=relaxed/simple;
-	bh=njLdoOsQgjGl45Zn8spr984yQtbE3EPPNbhi6u72PtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KUvk9ItZTFpGKJKt/uZLuaE7tr41hduy5lk33Gvm9qFlqWoyW4E0c3LyGB8JUzI9WPj5gcB1K9ekjjyBnIsRDoCHpUIxpfz7JoBlzyDic7M67CQ61ajDPbPhWn3u7ehaDjwkQPxkCyMVKoLF470eMocjnlUICfMJ6/W5boGWwxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=xV6K/r7M; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5004b.ext.cloudfilter.net ([10.0.29.208])
-	by cmsmtp with ESMTPS
-	id 7ILUvfPQaaPqL7XovvD3Bw; Sat, 11 Oct 2025 11:31:29 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 7Xouv63PVBc9y7XouvTbGi; Sat, 11 Oct 2025 11:31:29 +0000
-X-Authority-Analysis: v=2.4 cv=ZcMdNtVA c=1 sm=1 tr=0 ts=68ea4011
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=VoBekJB99Y0dKvRsJJIA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yUhxFDibat/XsHQKidB+DYuFneb9Ro2PNlfhJUOiv1c=; b=xV6K/r7MukWR0sUL5Q4lJU1SMu
-	0/eXNB1vJycL0iEAJtblF1cT5Zb++cbUyW9dUbda1aSmNbxdzVdXcjs1rHFc3FyCW/tgYfd/LJxYK
-	d07DP9V7ZAPKM8VBXs0YqigLgDAWXrzDPGhDzdoRsiEiXck2dER0AiJ1dqp9qU66bg/+ZWO0tqXyC
-	p9yimf715Yf8rY2kW9KpyMr8A/phBcTWcEYzfeZD8MmlYZSRUcDQgSrGFf6hXfz8q9GZ9Zr7xngNy
-	mNkb9HFCmbanZ6+t4Uq0HshCWxew2/AtvXecuCDXAOg5WF+wWNrzmWk90VCsNaXzSQlBEfHJ7fcX8
-	dwY5709g==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:58038 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1v7Xot-00000000r3K-3Stm;
-	Sat, 11 Oct 2025 05:31:27 -0600
-Message-ID: <e2b940fe-a279-4ecd-81da-b739035a0248@w6rz.net>
-Date: Sat, 11 Oct 2025 04:31:25 -0700
+	s=arc-20240116; t=1760182298; c=relaxed/simple;
+	bh=5RI+zDeyw3XTRljWW1rsNdQl1VRKEKQFrpl8fx9pYt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lu9ACQ32a5m70zBmpTscBNmE87K9e+1IzRdVSPleGQG9aDBP3NqbGX2GhOXPDh6juIcaijZeRk2tC0Q/NkezPbtO0fY+JQeHCMKJQxfJ7jcWp5ToVWahNCntTua05/vKAstkgt7eAxI1Af6V7koou6Haz/aqHrh82UYWpCgjpnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lNiMk2+L; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso2088984f8f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 04:31:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760182292; x=1760787092; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNTGbfmugn5jBn7rCYmZzAG7du6mX8yV8hZzW+D5Gyc=;
+        b=lNiMk2+LNE09jjuUfwBiCAjb+yGdyW1G4D+glgpbl4ggbxVNED30YsEmhQrXmijbLS
+         yXfqEJn9QD5slBHBywuCTDA096QY1C6JjoVWcaV7TQBNf0VCUEGKkUP9qBv4QUaxP5Ph
+         kEQDsNk+elcUXmYEuaiNsa9Chkv3q+Eb1QJIF3VW54xdMKyAOL8uhNzLYYK91DvQqCrr
+         5Cdvg/f3qVi0vgAsYG3Ix3gvlXFi5/Qa5Z8wGYgeusIFvN7EtCo5dw5tapmAJVwUsRKi
+         I+xeV3PKrZMAfInLzaxn3lo7py3jmpTnMB8NhFlmVYl1X+FQA9NysyfXgqgr6eUErdEW
+         OCmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760182292; x=1760787092;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mNTGbfmugn5jBn7rCYmZzAG7du6mX8yV8hZzW+D5Gyc=;
+        b=cZMlhaaB5q63w1gGIfTIxkGgo/ZBTIik9+Qa9Aht6m9dbuA9OE4ufqH7jH2tFwaFKP
+         tdRfmJg+pPepj09LKfdWCl4V3GsKOkHSwEdxLPLZ9Cy0eli5n+XLkobzDDus/AKwSDmu
+         0UofTOJx4aCfGI1V/XvsHgcNvvBSv0ZCuNsiw6tOdG/SkVVA6qTTFevr6DRpCWRR+O0O
+         RxWibA2YbEGoY8JRKAD7oqAZj7vcAMm8Ah0GfXGvMb5v0Q+neTU51FZYcOOpmvjyoANf
+         b/o1tlrNXvCDe/SqViTbLwfigNdgKVRnMcnB0O4d7wLgZAvi00twYEv5epKJsxckSZZx
+         LKeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGk/8G4Kx7i1IS4eggMuQyOl4+guGrv3xPRMsFBKsRh2NtTKbXFOx9LMPeyWXYKCkadgU1IxPwhnPmoTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcAgtx4OPYxweigSXnhIFscz5BvGbmPRpN5HZmZorgc6yQ18d7
+	N5yV5cWmMDQVtcJ8XemLQKIczzEZ/fFn8SdoqVZpiTnlOigchFD/kaElu8Ti3e5em4M=
+X-Gm-Gg: ASbGncsxdXWMThX1rXOqryRi6ryMIFgw93oUOXnHVNYNtPj8dyEaxgQ6TMoGSdxoood
+	HP4xpNns10ANQqPXVRmNO+fCs4FmSc79D41r/0Xcv4oZkSdBWQITZoiWKxItjG79O4YJhlFhnEF
+	1bSnj9CqamWqMdEZrbC12K3Hif5cHur4QDRvHB/0/8/IcfD7wEP96oO0sfP/etEW4vaBmw9NWrb
+	PpVoONRZ/IMOUIKrg27Qy/vUCUw5aetYN1xG/Nb9m7XOe+RaDw3bZgwBAsIJslpHTiztfyAlq52
+	dIRZKD6epeHOVBgg1xlqsWXMolezBqJSsZ0XfpB+b6sdBSrJ7njLp9RltQjuzt9hpRdgdfywKpW
+	681bltZyHnvZpncU+QOegbcfWZWG2ZAmp+8bjlR4kiQ==
+X-Google-Smtp-Source: AGHT+IFCjuGBYnCDqcmxB9IrSM+BqDe9Q2x6ToeA46ZBK1ltHn2SzcZl6eRhCx5sKgenvc7B4y15cw==
+X-Received: by 2002:a05:6000:4305:b0:3c8:d236:26bd with SMTP id ffacd0b85a97d-42666ac2ce9mr9301019f8f.11.1760182291588;
+        Sat, 11 Oct 2025 04:31:31 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d4bbsm8686681f8f.2.2025.10.11.04.31.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 04:31:28 -0700 (PDT)
+Date: Sat, 11 Oct 2025 14:31:27 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Subject: Re: [PATCH 09/24] arm64: dts: qcom: glymur-crd: Add RPMH regulator
+ rails
+Message-ID: <sean5dkqku4norpl5llaps6wd3qjcxbb5kodjgvh4dshjkqvt2@jtlqhser6hsn>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.17 00/26] 6.17.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251010131331.204964167@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20251010131331.204964167@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v7Xot-00000000r3K-3Stm
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:58038
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 16
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPd4swHrLaIAQjlM2Ycd78vKAF9ef2m9Sx5cySYjNfAbOl9UnOAnPiNCbukVHUqB38Ko3dQ03DOA52Ep4bn5ziYZkRKgaWdRW96OSAXdnIeoi8dnUDuN
- EfoCM8gpNgCCY5Xg0l2WEJQ24oHwX4OMgUdCQ+NeCPZORZZZRKu6ibdfyt9A3KMBEPy462nL7HA1eGa2B8kmNBJs6E6sDs3SYK8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
 
-On 10/10/25 06:15, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.17.2 release.
-> There are 26 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 12 Oct 2025 13:13:18 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 25-09-25 12:02:17, Pankaj Patil wrote:
+> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> 
+> Add RPMH regulator rails for Glymur CRD.
+> 
+> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/glymur-crd.dts | 332 ++++++++++++++++++++++++++++++++
+>  1 file changed, 332 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/dts/qcom/glymur-crd.dts
+> index 4561c0b87b017cba0a1db8814123a070b37fd434..e89b81dcb4f47b78307fa3ab6831657cf6491c89 100644
+> --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
+> +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
+> @@ -6,6 +6,7 @@
+>  /dts-v1/;
+>  
+>  #include "glymur.dtsi"
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>  
+>  / {
+>  	model = "Qualcomm Technologies, Inc. Glymur CRD";
+> @@ -66,3 +67,334 @@ chosen {
+>  &tlmm {
+>  	gpio-reserved-ranges = <4 4>, <10 2>, <44 4>; /*Security SPI (TPM)*/
+>  };
+> +
+> +&apps_rsc {
+> +
+> +	vph_pwr: vph-pwr-regulator {
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+dtbs_check gives this:
 
-Tested-by: Ron Economos <re@w6rz.net>
+arch/arm64/boot/dts/qcom/glymur-crd.dtb: rsc@18900000 (qcom,rpmh-rsc): 'vph-pwr-regulator' does not match any of the regexes: '^pinctrl-[0-9]+$', '^regulators(-[0-9])?$'
+        from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
 
+so node name needs to be regulator-vph-pwr instead.
 
