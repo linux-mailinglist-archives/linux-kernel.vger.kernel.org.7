@@ -1,104 +1,109 @@
-Return-Path: <linux-kernel+bounces-849235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0BCBCFA80
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:16:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF8D6BCFAB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9E59E34A1DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F9318912C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E6027D784;
-	Sat, 11 Oct 2025 18:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E84284665;
+	Sat, 11 Oct 2025 18:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="LWCJ4YL8"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DmGGkDAW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9511957FC
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797E627B338
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760206557; cv=none; b=oQqCZDsYqbsUPfRQq6M8llxiJHRdzf+GL19vR2yRNxxjUbcUDmWMgkL1NIegic6sp/TxaX+hN0TWlkXGUAzZnZujmlpTDMPH2IZhzIAwb1hD/9mtccppk8pX7MN5qkBHVpOXbE6RnhKEKMbdXkGdfn/DcgKHbMlMO+a2czyJyVQ=
+	t=1760206740; cv=none; b=ErruOphWOkywStpu2wYAgvkNIjy6mtWqoxwQDVyHxmGHdF2r00DUEURs9ynJqxQ9EnsfK57jmwOH6BXjh0prtXqmtdWqbHBa92uixBBXc+z9sUXfPA4uv+V9+DAqGebQZhzXHclfU1NYu8au7P5/w5DSAktI7lwX6i0tCMO+wWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760206557; c=relaxed/simple;
-	bh=TX7cRtWMuDg6zUqF5l/AgCTzPSwbXr51IrjeoCjsPIA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jbCc2Ozb2R/mA6BK6T1NRYQ83IjV54fUoXCfm0kd4vu6o917YEIly3PRz01FIwsjDPz1AM5hvGmw/2xPWVE3pBPydmUlrNZS56UIPnALXguxklMqmsYkWy5I2OCkmSp0JudD/1TJKLhHkGmfflkIKo4YctiMxBOlrsBwozeFZ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=LWCJ4YL8; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59B97qB41458941
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:15:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=L1C29Ctmx9qCKv+di4pj
-	qiXnnC/V+sqZE21wYALDeSA=; b=LWCJ4YL8/bC2F3pgYQud75r9F31NoIeUVhrR
-	flm9CRmfaMeL9D14HlRxqtEVZOAcGj9cb6Vck84A0ugIzlhuJYkhDgIxKyjLmL6K
-	OyEmc17w7tBsLp+WuxzRJqU0TSiWV+ZGUKYSQpFOFBh3kHTKNIRXvHvXUzWIXOIJ
-	rGyz8Uba9o2CvP8mfmScTGpJvYf9Ef9BGxX4O9Sd9uO/Z1RLsvGEVVAImcwNhTGY
-	6ud4fj+K61bix2Q2Ihl68CRGG2lwQIHG073rB8ve0HB3mG7LaXiPm+3eN9/681k1
-	9BAfWncitJNUdv/bls8Y4c3Z4c44XY66Qe35Aw12h1Vx3V8FxA==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49qmb8ssp8-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:15:54 -0700 (PDT)
-Received: from twshared23637.05.prn5.facebook.com (2620:10d:c0a8:1c::11) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Sat, 11 Oct 2025 18:15:52 +0000
-Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
-	id 818C7F5FBD1; Sat, 11 Oct 2025 11:15:48 -0700 (PDT)
-Date: Sat, 11 Oct 2025 11:15:48 -0700
-From: Alex Mastro <amastro@fb.com>
-To: kernel test robot <lkp@intel.com>
-CC: Alex Williamson <alex.williamson@redhat.com>,
-        <oe-kbuild-all@lists.linux.dev>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Alejandro
- Jimenez <alejandro.j.jimenez@oracle.com>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] vfio/type1: handle DMA map/unmap up to the
- addressable limit
-Message-ID: <aOqe1JMVG5bg/iwU@devgpu015.cco6.facebook.com>
-References: <20251010-fix-unmap-v3-3-306c724d6998@fb.com>
- <202510111953.naYvy8XB-lkp@intel.com>
+	s=arc-20240116; t=1760206740; c=relaxed/simple;
+	bh=MPdjkQnoZTr/N788IvZN1eosYtsrWQ4gFL5Wool50+I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RoxWi6NVgqVIotbasbEraPhqq2Ld+Vj+eymAUC6mJO/+KfGOIQHsTaeyymTlBejj8bQrbAgLaf1evtOSQN9px58hhs1MbrrgE53JZX1jBDArJ6O9cC4tRDjkNyYdtwgnJi50HXdjl9Ao8qyed9kvlt8R/B4k27bGzULtfZkNpZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DmGGkDAW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53A3CC4CEF4;
+	Sat, 11 Oct 2025 18:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1760206739;
+	bh=MPdjkQnoZTr/N788IvZN1eosYtsrWQ4gFL5Wool50+I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DmGGkDAWyxw6viSxHi+wXwHoIs/wtxfbFrp8PXdOaFKdhHAkvu640pgNrP1RuzKPX
+	 rd64pTypgtTSHWy/PY7AV4KGqcwGqw74ou1UGkZekuM1MP/fL7rCqfc1RnbghdfCKl
+	 ZyScDxgh35p+cvheSFmMIKwnMBMwtAqhDjC8zWP0=
+Date: Sat, 11 Oct 2025 11:18:58 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: david@redhat.com, lorenzo.stoakes@oracle.com, linmiaohe@huawei.com,
+ tony.luck@intel.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, baohua@kernel.org, nao.horiguchi@gmail.com,
+ farrah.chen@intel.com, jiaqiyan@google.com, lance.yang@linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] mm: prevent poison consumption when splitting
+ THP
+Message-Id: <20251011111858.952f08213da2a9018cfbe2b3@linux-foundation.org>
+In-Reply-To: <20251011075520.320862-1-qiuxu.zhuo@intel.com>
+References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+	<20251011075520.320862-1-qiuxu.zhuo@intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <202510111953.naYvy8XB-lkp@intel.com>
-X-FB-Internal: Safe
-X-Proofpoint-GUID: 6MqcVwWx4V3UqbNjswLnAu9xaf4V0N1k
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDEwMyBTYWx0ZWRfX5OXuefohTT/N
- iwrtyRy5QiO1M44+z2+wNi6KWHmOPvzT4fnlv7Bg7hjg5Yr5xISisVHHBQcb4UTWHXmOZRKynL7
- AFsFmmYkSQCsXFsv4adAj/sAVhFcm9RE1lQz4kyoEd8iIbqbDQoQc7A78BUWdWj1o+aqZ/RJbN7
- tjeZbJvJiOyzFNrD0h8pS4y+oBQUjttC/a5KBAlySG060i6V1/Fm9MahPCRB3dsIiCIwTDUivOC
- 2IcJnxP6fCBxKx7P4dEs6Neyw624lGFaueakYZFwqT1u0rh+Qf05iTfyVOAf1CpcG9QNBE355PP
- xhM8J1teSGt62yhgMzkKjFnu3zO1rTjJqVd2dHqj7wX2jwfoAGlYWF3LJFv3kIqLrURHlbr9Enx
- SZUQ2P2kwRX1cyIs9lQHH658fEATuw==
-X-Authority-Analysis: v=2.4 cv=M/NA6iws c=1 sm=1 tr=0 ts=68ea9eda cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=yATVoKGFPd4u651EB8cA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: 6MqcVwWx4V3UqbNjswLnAu9xaf4V0N1k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-11_03,2025-10-06_01,2025-03-28_01
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 11, 2025 at 07:57:07PM +0800, kernel test robot wrote:
-> >> include/linux/limits.h:25:25: warning: conversion from 'long long unsigned int' to 'dma_addr_t' {aka 'unsigned int'} changes value from '18446744073709551615' to '4294967295' [-Woverflow]
->       25 | #define U64_MAX         ((u64)~0ULL)
->          |                         ^
->    drivers/vfio/vfio_iommu_type1.c:1361:28: note: in expansion of macro 'U64_MAX'
->     1361 |                 iova_end = U64_MAX;
->          |                            ^~~~~~~
+On Sat, 11 Oct 2025 15:55:19 +0800 Qiuxu Zhuo <qiuxu.zhuo@intel.com> wrote:
 
-I see. I suppose it should be ~(dma_addr_t)0 . I don't see a DMA_ADDR_MAX.
+> When performing memory error injection on a THP (Transparent Huge Page)
+> mapped to userspace on an x86 server, the kernel panics with the following
+> trace. The expected behavior is to terminate the affected process instead
+> of panicking the kernel, as the x86 Machine Check code can recover from an
+> in-userspace #MC.
+> 
+>   mce: [Hardware Error]: CPU 0: Machine Check Exception: f Bank 3: bd80000000070134
+>   mce: [Hardware Error]: RIP 10:<ffffffff8372f8bc> {memchr_inv+0x4c/0xf0}
+>   mce: [Hardware Error]: TSC afff7bbff88a ADDR 1d301b000 MISC 80 PPIN 1e741e77539027db
+>   mce: [Hardware Error]: PROCESSOR 0:d06d0 TIME 1758093249 SOCKET 0 APIC 0 microcode 80000320
+>   mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+>   mce: [Hardware Error]: Machine check: Data load in unrecoverable area of kernel
+>   Kernel panic - not syncing: Fatal local machine check
+> 
+> The root cause of this panic is that handling a memory failure triggered by
+> an in-userspace #MC necessitates splitting the THP. The splitting process
+> employs a mechanism, implemented in try_to_map_unused_to_zeropage(), which
+> reads the sub-pages of the THP to identify zero-filled pages. However,
+> reading the sub-pages results in a second in-kernel #MC,
+
+Well that sounds dumb.  To me this suggests a lack of selftesting code.
+Perhaps someone could prepare a test for this case.
+
+> occurring before
+> the initial memory_failure() completes, ultimately leading to a kernel
+> panic. See the kernel panic call trace on the two #MCs.
+> 
+> ...
+>
+> Reported-by: Farrah Chen <farrah.chen@intel.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Tested-by: Farrah Chen <farrah.chen@intel.com>
+> Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+
+Yes please, a Fixes: would be good.
+
+> +	if (folio_contain_hwpoisoned_page(folio))
+
+Offtopic, that should have been "folio_contains_hwpoisoned_page".
+
+
 
