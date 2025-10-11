@@ -1,192 +1,96 @@
-Return-Path: <linux-kernel+bounces-848909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8665EBCECC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:11:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B6DBCECD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08D9235051E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C170019A44D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97E2F513;
-	Sat, 11 Oct 2025 00:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29A4DF72;
+	Sat, 11 Oct 2025 00:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxfNSz1M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSqpPW+n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D1129408;
-	Sat, 11 Oct 2025 00:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397B53C2F
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760141469; cv=none; b=PHz4TksfaUZX/eo6p2k5LhegA0Uz17WUbstOmVrayvqZhyE4bmJ/Y87euaJ7+GAF08GrpE1BJHdBmwFbc8zRdZ+miGGZ4xJtC/hMeGvJoT6Ui5zdPgSIfwOSBfdIkAOZ2vo3Vo8R5uhyjOeXlkJpCrTOCvjCQ+UjJzEH7GgRJqk=
+	t=1760141861; cv=none; b=ET2TGC3i7B2P0kaRiqzy36ovpd575z6VNgA1cTWP76Ca6oCMWPow6gjSp5D5oFm5VkovsK+VjY9ZN3D5UUsIN2bbsYHRn+9PQNmB50AMWj18Ren0K4Jfq/8BhRPYpTJYXYeTeI2LofUFFTJN4CxAJPmFXyQeO7BovdrlyCVT+Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760141469; c=relaxed/simple;
-	bh=PTZ7z5rFBEl2/QXVABRVVG+x/hnQk/3BWqNmlYNQWU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c8+QvvaZzxWansOeRn4THkG3R8kJlxevzUzIFZwww5E91xX9IlewvgpOxvahlORfMJFGQU/XDnjTmToQl9ffJnzL+holp1wW4772dDSRuroAW6vR8DJQ1VBAvQ3ehBMmm9mQ74DHtaZ8wX9eS+ghKg627K6F/vW3DY+PB85qguA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxfNSz1M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3FF8C4CEF1;
-	Sat, 11 Oct 2025 00:11:00 +0000 (UTC)
+	s=arc-20240116; t=1760141861; c=relaxed/simple;
+	bh=aurbYv/vTkfn9HIChUPF+R+B5adUjKdvTNF0+vMzUMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QwunDDYuFsT1EIxmqdNpqV2k2za40xiTNa2vh0/ufzQqs5ToLzEfzWWAImRf8YKgpUtz0puff/n1Z3EKx0QO1z5b2oZNiGpBGpiisJ6OPMK5LDjhUAzGOhzMKXzrgOGbpwIV0mH9aao+4OkCZDMLPFQvZvw31TsdYgGrmfQ3KF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSqpPW+n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD4E7C116C6
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760141468;
-	bh=PTZ7z5rFBEl2/QXVABRVVG+x/hnQk/3BWqNmlYNQWU0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CxfNSz1Mwm/dDZDOCfVVLjauOb3Kpa+ysqqhFneuLCIs6lx5Ysi9Z0+J5Yt/vuY/V
-	 r8ZRdwOrYEHn1vv5tbyVIepu8G2WVtr/3qjgxq5Ftl6nip1elpALDf/91Wzsz+tIUt
-	 xul5p6wiPpPH93mBd5sy8Ni817ogzglw4/iP0NUZt+XB8ZhwPkupo0Vinn73p7QE8f
-	 3TkCAhuCwWRMfdqYUyC5XTzVrwn2jAIELx4OV4x+Z6tSxObbj6FwQ7sUGKTK9N3Vsd
-	 mRtWtwuGvfJPO3WJGJLStnlRw3Myo+3o+e3INWD2gEcwnWQEkSHGvhGSSn1OV0Ue19
-	 UQut4jnbu8KGw==
-Message-ID: <75756635-b374-4441-8526-175210e01163@kernel.org>
-Date: Sat, 11 Oct 2025 02:10:58 +0200
+	s=k20201202; t=1760141860;
+	bh=aurbYv/vTkfn9HIChUPF+R+B5adUjKdvTNF0+vMzUMk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dSqpPW+nHOMzDlK4YBIAjoI+HWIfEPZOFSsVyRGg1Cv9hT5Yzgc4+3sl9yyPp371Y
+	 8/5pfYgUH5MpAztQI92PHBlZTTPhXN0woqvSZD0ofbx0YA/LqzQKjSAI/fjHqcvOaQ
+	 GhZMKh7swwUejL0SZZV+jVGYlHuEMFPbAKALMja/hVuUkTTid+YVyDPYtIufkOFJ7Z
+	 +1/Ig8VliyZh7sigtaJvfXBqzXV3ix8wIx2JSh9j4SPLp71PZ7CgowF+n4GsSoWlcp
+	 RxwDcFcrlvBuyiLehrTm9GWCwqrbxDRagQTqqYNn59QyxI3EY2GH8hrFikt9RslPQT
+	 F9bPvtqEi6wVQ==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57a604fecb4so3317518e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:17:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXioE4ywGAPprNO4bYBHA2mT8L3yTjavtMahWMs/63jeyBlNjyWyByF9rYgdgRV8NYI4hC/DDaZAZ64F4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzPI9fJu5JxY92qR1GCfN2NpSizBUF9GLD2yRo75Az2jnejhIR
+	XcFDS7eGbCucdt4jBgqLilLOwXoWYxvRpZTH7LmgycO69Lfw7mWILE0HO/PZAhHKZnouw5mmzFm
+	IOqnvsjwoseeRDVKa+qIRa2lSDpcKHvk=
+X-Google-Smtp-Source: AGHT+IFYoBXl8MLluMTfeFwJa+NEuCYmEcZBESbt41XDIJLh5zc+uZZNMpU3+8nz0NSO+UX0bF6jbyWWcJ32afRcmkw=
+X-Received: by 2002:a05:6512:2247:b0:587:94d4:9f7 with SMTP id
+ 2adb3069b0e04-5906dafcef9mr4486420e87.57.1760141859021; Fri, 10 Oct 2025
+ 17:17:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251010201607.1190967-1-royluo@google.com>
- <20251010201607.1190967-4-royluo@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251010201607.1190967-4-royluo@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251011001047.51886-1-ebiggers@kernel.org>
+In-Reply-To: <20251011001047.51886-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 10 Oct 2025 17:17:26 -0700
+X-Gmail-Original-Message-ID: <CAMj1kXEcVSbib2G9hByCcMqvGVvqCcvgLJR09kGpHfVUJo7Jcg@mail.gmail.com>
+X-Gm-Features: AS18NWBgw-3ehwGSdcD9jpkVDhSrROiFc_n2ExAQIc6Y2SSjkNyUqzxOoNatpdo
+Message-ID: <CAMj1kXEcVSbib2G9hByCcMqvGVvqCcvgLJR09kGpHfVUJo7Jcg@mail.gmail.com>
+Subject: Re: [PATCH v2] lib/crypto: Add FIPS self-tests for SHA-1 and SHA-2
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, Vegard Nossum <vegard.nossum@oracle.com>, 
+	Joachim Vandersmissen <git@jvdsn.com>, David Howells <dhowells@redhat.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/10/2025 22:16, Roy Luo wrote:
-> +  reg:
-> +    items:
-> +      - description: USB2 PHY configuration registers.
-> +      - description: DisplayPort top-level registers.
-> +      - description: USB top-level configuration registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: u2phy_cfg
-> +      - const: dp_top
-> +      - const: usb_top_cfg
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  orientation-switch:
-> +    type: boolean
-> +    description:
-> +      Indicates the PHY as a handler of USB Type-C orientation changes
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - "#phy-cells"
-> +  - clocks
-> +  - resets
-> +  - power-domains
-> +  - orientation-switch
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        usb_phy: usb_phy@c410000 {
-> +            compatible = "google,gs5-usb-phy";
-> +            reg = <0 0x0c450014 0 0xc>,
-> +                  <0 0x0c637000 0 0xa0>,
+On Fri, 10 Oct 2025 at 17:12, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Add FIPS cryptographic algorithm self-tests for all SHA-1 and SHA-2
+> algorithms.  Following the "Implementation Guidance for FIPS 140-3"
+> document, to achieve this it's sufficient to just test a single test
+> vector for each of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
+>
+> Just run these tests in the initcalls, following the example of e.g.
+> crypto/kdf_sp800108.c.  Note that this should meet the FIPS self-test
+> requirement even in the built-in case, given that the initcalls run
+> before userspace, storage, network, etc. are accessible.
+>
+> This does not fix a regression, seeing as lib/ has had SHA-1 support
+> since 2005 and SHA-256 support since 2018.  Neither ever had FIPS
+> self-tests.  Moreover, fips=1 support has always been an unfinished
+> feature upstream.  However, with lib/ now being used more widely, it's
+> now seeing more scrutiny and people seem to want these now.
+>
+> Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 
-You probably miss DP support and this does not belong here.
-
-> +                  <0 0x0c45002c 0 0x4>;
-
-That's not a separate address space. I really, really doubt that
-hardware engineers came with address spaces of one word long.
-
-> +            reg-names = "u2phy_cfg", "dp_top", "usb_top_cfg";
-> +            #phy-cells = <1>;
-> +            clocks = <&hsion_usb2_phy_reset_clk>;
-> +            resets = <&hsion_resets_usb2_phy>;
-> +            power-domains = <&hsio_n_usb_pd>;
-> +            orientation-switch;
-> +        };
-> +    };
-> +...
-
-
-Best regards,
-Krzysztof
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
