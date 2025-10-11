@@ -1,122 +1,370 @@
-Return-Path: <linux-kernel+bounces-849105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8C7BCF37D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3584ABCF383
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC9343A4C10
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4261319A2814
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1811C257846;
-	Sat, 11 Oct 2025 10:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA47256C88;
+	Sat, 11 Oct 2025 10:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VebE0nXN"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E5kSCWll"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C01A23D7E8
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 10:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DB523D7E8;
+	Sat, 11 Oct 2025 10:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760178024; cv=none; b=iMKmrf2E4kgB+NJzTW5nsSva430bGJFjwKjbdcUuSy0p4Kmmf5IIo/KfIYf6tIWUViWgdbjyzogcz533aVOoVMpMFTBSBiQEBnMthYuPFiKEEWq3FTKQ3ca+gGgLrwUPJaIB3KBgXrd9uauMdNoDSKa2l3oPL4hmmJw27L37S+E=
+	t=1760178232; cv=none; b=aw9OfAcKr7Z+3hFdsxcp1fTVqtLiHadiyi9OwTCEinldVP10U8qBS1ZEhPVwNrLgXYcmSXrJY8Hmx6DIdbzpD67y8cGbgIf+XTMPPkVlI37pdkMbmIBGz/QdBXNd8e9DWeeFUR3uv9sDlC7pq7uBKRy2cg5UkZmDKkFBqYAgfj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760178024; c=relaxed/simple;
-	bh=kH6m3q9Go+WlNJw/7g8dG1h/aaEJpSAxzZprEUvs9Nc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uqNFE6fUdGhjaB1wKbYCseaN9sjlr8tP0ZZBxBGkMHtHau/7TlrglRXWjY2Pz71y8Ph5qQH0ZGzh5uETtBrlrIPvZLGscCSMKcLnjelIXar6SWabDYC/a8JcQAGGIovm9jZPbsfbllw03AyUivKlelNdO+KsPS0Ij/9bjlnQuns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VebE0nXN; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so520279766b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 03:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760178017; x=1760782817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kH6m3q9Go+WlNJw/7g8dG1h/aaEJpSAxzZprEUvs9Nc=;
-        b=VebE0nXNeIr2YNLJhPwkR7q+thpqkMZoXp6Cjwa451Zw5JlqfiLSuEQ/ltSVXPMp+O
-         Ac10saPyWFjLjiBF9Cq9f0Q1cutGOEhnND+PLDeYRIKRhtH3X/PiaADd9pIxLwIw5Vnt
-         6v+o5KwjmyDw9bzfSHzYnUsyP4n3OrMCqDicYj/wTpp7loC4MEiPlr1W5V72mOrYbBHz
-         lZ9QzfDcLqvRCbz+IGgKYsSt6RwiEntKR1DtQ5z8StmF/ogXIYJvS/UrL5F1BeY8wr1T
-         uv79TCQW5rbAswOmdnyho5Cm55FIrS1xoBl3WCaPW5SEq2xIP5RDaW/HtkxKPOe0CIl0
-         IaBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760178017; x=1760782817;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kH6m3q9Go+WlNJw/7g8dG1h/aaEJpSAxzZprEUvs9Nc=;
-        b=fT1E95m7V9BWzNOsF8aa+sdmc6/A4uASmrxKrD9hTsaXpAUIMTSN/07sSu79fsHQRa
-         FBPIzmqcSxzxD5hyLbzmxBueT+OjagXSikuoHF1slOqlQgNNkQkPR+/fuozSsv6pp1PT
-         hlxHBUFgvKRDuTQt6Q3n0aMJuAfaYBZynEO07hUosG4zFI2hy5I+ot/vAto8upwLziWo
-         s/uCS7iFuHu+hMikbaXyTuK2FSr9icTJOXoYwbJbAgDtYMQhO29N5VlDgX8U9h8T5wxM
-         jc+20aK1pRo85iFthKQSiFaCVVYjdsj/7y3ydH1Z6xsesXIKmYiZG0uVRy+z941dUoKn
-         cdYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhftDLhg3s/pzzKyud1WsSf3JdkwmbvyGXICWrClZ00YD6NgS1Rz/d6UCdcZSnNwfu292crd3iVFstiqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQor1ct7F06Mn7IBvxup/Lh4Q4BERgxU+P8GIS1XwJrublOW3o
-	v5WyedsdsbbQFfdZEMMUXFbDABJfnqdNLBde3xD7z3uCOwQzceHqrIC1
-X-Gm-Gg: ASbGncuhoBZCjPRUNzey2Y6hGcw+XbheHoIOkG5zjLcK4pt+ok1GrLIlp9VZHdd18qk
-	ZPN/gvo9QVteQroLCMNxzAwKsKrnaxyPjfSnlMLHW1wRnNpecTopXOSrDgtsff2IEhSodkNJf88
-	Yhu77nV6WeZ6wPOL18893LcatTKX5xM8TgAusAbPwElWiAigUHt7HvtjK1g/s9tQPvEibBCGL2y
-	HBpNWRHiUFGytZasRY/8rRg7NrDtiZfffROUkC/jKCwvgkj1UkiGL8y2/APaQbPb83ccT5VWncp
-	c6zEQqt/DLOa0dP8HbXDRJ0EViwmYV/2ISao/z3N0S6QL2efXiJe1J4XH1wQT0SuLsLpJh/pq96
-	JEYsymgBiOSQ27NLvxja0OCnNBbPk8L7I2eqB8xMVyGWX85/3P1Vqt4/U5qFmQeI=
-X-Google-Smtp-Source: AGHT+IHolFmrbsPL01Gij9mDgcL6wtIFQuNZ62CxZG1hurbWV+WEoYmcgYDEtNQjTwVOdmXwqzHL9A==
-X-Received: by 2002:a17:907:6d25:b0:b40:52:19c2 with SMTP id a640c23a62f3a-b50aaa9c937mr1500673066b.20.1760178016637;
-        Sat, 11 Oct 2025 03:20:16 -0700 (PDT)
-Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12a8esm454077866b.42.2025.10.11.03.20.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 03:20:16 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Richard Genoud <richard.genoud@bootlin.com>
-Cc: Wentao Liang <vulab@iscas.ac.cn>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Richard Genoud <richard.genoud@bootlin.com>
-Subject:
- Re: [PATCH 01/15] mtd: rawnand: sunxi: Remove superfluous register readings
-Date: Sat, 11 Oct 2025 12:15:03 +0200
-Message-ID: <12756386.O9o76ZdvQC@jernej-laptop>
-In-Reply-To: <20251010084042.341224-2-richard.genoud@bootlin.com>
-References:
- <20251010084042.341224-1-richard.genoud@bootlin.com>
- <20251010084042.341224-2-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1760178232; c=relaxed/simple;
+	bh=7xxrjwQLnAEK+AEZDLjrFqRqjtY9w5ULoaYVjJZBy7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LSFaIHhFV/R6fbQoSm5GqcurVmLwIok80ArpIqbc0oG1p4bVikKaSOLg/5O7ATVXI/JLY2C7EkFtmkd+rsBroQUkfvYvfOlt0Lk3GevI09HpxMsmMi/IGG3rhzXMxDiOYDKjYbK2d8z6q7xzPNAxT4npO0lAf5e9/DN1VxYh/34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E5kSCWll; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760178227; x=1791714227;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7xxrjwQLnAEK+AEZDLjrFqRqjtY9w5ULoaYVjJZBy7I=;
+  b=E5kSCWlljeHCWb0bwwS08eg7s6j+CqCc0BDNPcYE5DObhmdYslni4JHL
+   d826DkBAzY8Rd1I4tL2u2LcOKL577S5+w0txqnQ6SNqQcm3iI6Y2bjeda
+   idsN6gh7NayYpvu6Rj/kjOLHAfUlGgRxcXZaQrdL1vCdSlC2FfQXJkgi9
+   lBLkIJcz0Tcb541hf4bh0RiZ/k4/+ytK/qJA7Ak7vrvymm3KJsJ+CAUyd
+   ULbeo+XtRg8WX2V7Z1vmYEA5FjY2u19UxMyaSHWn5ojmSj0yvbzmYZqRI
+   +klu1W+28lWLEnQW0xLWiybtGZV0tpLNpLzkVLJsKkhWLu5FNtg9bHBVX
+   A==;
+X-CSE-ConnectionGUID: 3vQt0FP+SF69y8nQtk1xZA==
+X-CSE-MsgGUID: PKbOn+iATM6eQWhCvx9Dnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="73068036"
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="73068036"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 03:23:46 -0700
+X-CSE-ConnectionGUID: q15MogiAQ/m4KIDBFh45bg==
+X-CSE-MsgGUID: +j2+D1jDREGAw53FMXAyQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="186459433"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 11 Oct 2025 03:23:41 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7WlG-0003hz-2R;
+	Sat, 11 Oct 2025 10:23:38 +0000
+Date: Sat, 11 Oct 2025 18:23:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, david@redhat.com,
+	jane.chu@oracle.com, kernel@pankajraghav.com,
+	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Cc: oe-kbuild-all@lists.linux.dev, ziy@nvidia.com,
+	akpm@linux-foundation.org, mcgrof@kernel.org,
+	nao.horiguchi@gmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] mm/memory-failure: improve large block size folio
+ handling.
+Message-ID: <202510111805.rg0AewVk-lkp@intel.com>
+References: <20251010173906.3128789-3-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010173906.3128789-3-ziy@nvidia.com>
 
-Dne petek, 10. oktober 2025 ob 10:40:28 Srednjeevropski poletni =C4=8Das je=
- Richard Genoud napisal(a):
-> The register NFC_REG_ECC_CTL was read twice and the result was not used,
-> then a third time with a mask applied.
-> Removing those calls didn't change the behavior.
->=20
-> Tested on H616 SoC, scrambling enabled.
->=20
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+Hi Zi,
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+kernel test robot noticed the following build errors:
 
-Best regards,
-Jernej
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.17 next-20251010]
+[cannot apply to akpm-mm/mm-everything]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Zi-Yan/mm-huge_memory-do-not-change-split_huge_page-target-order-silently/20251011-014145
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20251010173906.3128789-3-ziy%40nvidia.com
+patch subject: [PATCH 2/2] mm/memory-failure: improve large block size folio handling.
+config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20251011/202510111805.rg0AewVk-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111805.rg0AewVk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510111805.rg0AewVk-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/memory-failure.c: In function 'memory_failure':
+>> mm/memory-failure.c:2278:33: error: implicit declaration of function 'min_order_for_split' [-Wimplicit-function-declaration]
+    2278 |                 int new_order = min_order_for_split(folio);
+         |                                 ^~~~~~~~~~~~~~~~~~~
 
 
+vim +/min_order_for_split +2278 mm/memory-failure.c
+
+  2147	
+  2148	/**
+  2149	 * memory_failure - Handle memory failure of a page.
+  2150	 * @pfn: Page Number of the corrupted page
+  2151	 * @flags: fine tune action taken
+  2152	 *
+  2153	 * This function is called by the low level machine check code
+  2154	 * of an architecture when it detects hardware memory corruption
+  2155	 * of a page. It tries its best to recover, which includes
+  2156	 * dropping pages, killing processes etc.
+  2157	 *
+  2158	 * The function is primarily of use for corruptions that
+  2159	 * happen outside the current execution context (e.g. when
+  2160	 * detected by a background scrubber)
+  2161	 *
+  2162	 * Must run in process context (e.g. a work queue) with interrupts
+  2163	 * enabled and no spinlocks held.
+  2164	 *
+  2165	 * Return:
+  2166	 *   0             - success,
+  2167	 *   -ENXIO        - memory not managed by the kernel
+  2168	 *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
+  2169	 *   -EHWPOISON    - the page was already poisoned, potentially
+  2170	 *                   kill process,
+  2171	 *   other negative values - failure.
+  2172	 */
+  2173	int memory_failure(unsigned long pfn, int flags)
+  2174	{
+  2175		struct page *p;
+  2176		struct folio *folio;
+  2177		struct dev_pagemap *pgmap;
+  2178		int res = 0;
+  2179		unsigned long page_flags;
+  2180		bool retry = true;
+  2181		int hugetlb = 0;
+  2182	
+  2183		if (!sysctl_memory_failure_recovery)
+  2184			panic("Memory failure on page %lx", pfn);
+  2185	
+  2186		mutex_lock(&mf_mutex);
+  2187	
+  2188		if (!(flags & MF_SW_SIMULATED))
+  2189			hw_memory_failure = true;
+  2190	
+  2191		p = pfn_to_online_page(pfn);
+  2192		if (!p) {
+  2193			res = arch_memory_failure(pfn, flags);
+  2194			if (res == 0)
+  2195				goto unlock_mutex;
+  2196	
+  2197			if (pfn_valid(pfn)) {
+  2198				pgmap = get_dev_pagemap(pfn);
+  2199				put_ref_page(pfn, flags);
+  2200				if (pgmap) {
+  2201					res = memory_failure_dev_pagemap(pfn, flags,
+  2202									 pgmap);
+  2203					goto unlock_mutex;
+  2204				}
+  2205			}
+  2206			pr_err("%#lx: memory outside kernel control\n", pfn);
+  2207			res = -ENXIO;
+  2208			goto unlock_mutex;
+  2209		}
+  2210	
+  2211	try_again:
+  2212		res = try_memory_failure_hugetlb(pfn, flags, &hugetlb);
+  2213		if (hugetlb)
+  2214			goto unlock_mutex;
+  2215	
+  2216		if (TestSetPageHWPoison(p)) {
+  2217			res = -EHWPOISON;
+  2218			if (flags & MF_ACTION_REQUIRED)
+  2219				res = kill_accessing_process(current, pfn, flags);
+  2220			if (flags & MF_COUNT_INCREASED)
+  2221				put_page(p);
+  2222			action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
+  2223			goto unlock_mutex;
+  2224		}
+  2225	
+  2226		/*
+  2227		 * We need/can do nothing about count=0 pages.
+  2228		 * 1) it's a free page, and therefore in safe hand:
+  2229		 *    check_new_page() will be the gate keeper.
+  2230		 * 2) it's part of a non-compound high order page.
+  2231		 *    Implies some kernel user: cannot stop them from
+  2232		 *    R/W the page; let's pray that the page has been
+  2233		 *    used and will be freed some time later.
+  2234		 * In fact it's dangerous to directly bump up page count from 0,
+  2235		 * that may make page_ref_freeze()/page_ref_unfreeze() mismatch.
+  2236		 */
+  2237		if (!(flags & MF_COUNT_INCREASED)) {
+  2238			res = get_hwpoison_page(p, flags);
+  2239			if (!res) {
+  2240				if (is_free_buddy_page(p)) {
+  2241					if (take_page_off_buddy(p)) {
+  2242						page_ref_inc(p);
+  2243						res = MF_RECOVERED;
+  2244					} else {
+  2245						/* We lost the race, try again */
+  2246						if (retry) {
+  2247							ClearPageHWPoison(p);
+  2248							retry = false;
+  2249							goto try_again;
+  2250						}
+  2251						res = MF_FAILED;
+  2252					}
+  2253					res = action_result(pfn, MF_MSG_BUDDY, res);
+  2254				} else {
+  2255					res = action_result(pfn, MF_MSG_KERNEL_HIGH_ORDER, MF_IGNORED);
+  2256				}
+  2257				goto unlock_mutex;
+  2258			} else if (res < 0) {
+  2259				res = action_result(pfn, MF_MSG_GET_HWPOISON, MF_IGNORED);
+  2260				goto unlock_mutex;
+  2261			}
+  2262		}
+  2263	
+  2264		folio = page_folio(p);
+  2265	
+  2266		/* filter pages that are protected from hwpoison test by users */
+  2267		folio_lock(folio);
+  2268		if (hwpoison_filter(p)) {
+  2269			ClearPageHWPoison(p);
+  2270			folio_unlock(folio);
+  2271			folio_put(folio);
+  2272			res = -EOPNOTSUPP;
+  2273			goto unlock_mutex;
+  2274		}
+  2275		folio_unlock(folio);
+  2276	
+  2277		if (folio_test_large(folio)) {
+> 2278			int new_order = min_order_for_split(folio);
+  2279			/*
+  2280			 * The flag must be set after the refcount is bumped
+  2281			 * otherwise it may race with THP split.
+  2282			 * And the flag can't be set in get_hwpoison_page() since
+  2283			 * it is called by soft offline too and it is just called
+  2284			 * for !MF_COUNT_INCREASED.  So here seems to be the best
+  2285			 * place.
+  2286			 *
+  2287			 * Don't need care about the above error handling paths for
+  2288			 * get_hwpoison_page() since they handle either free page
+  2289			 * or unhandlable page.  The refcount is bumped iff the
+  2290			 * page is a valid handlable page.
+  2291			 */
+  2292			folio_set_has_hwpoisoned(folio);
+  2293			/*
+  2294			 * If the folio cannot be split to order-0, kill the process,
+  2295			 * but split the folio anyway to minimize the amount of unusable
+  2296			 * pages.
+  2297			 */
+  2298			if (try_to_split_thp_page(p, new_order, false) || new_order) {
+  2299				/* get folio again in case the original one is split */
+  2300				folio = page_folio(p);
+  2301				res = -EHWPOISON;
+  2302				kill_procs_now(p, pfn, flags, folio);
+  2303				put_page(p);
+  2304				action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
+  2305				goto unlock_mutex;
+  2306			}
+  2307			VM_BUG_ON_PAGE(!page_count(p), p);
+  2308			folio = page_folio(p);
+  2309		}
+  2310	
+  2311		/*
+  2312		 * We ignore non-LRU pages for good reasons.
+  2313		 * - PG_locked is only well defined for LRU pages and a few others
+  2314		 * - to avoid races with __SetPageLocked()
+  2315		 * - to avoid races with __SetPageSlab*() (and more non-atomic ops)
+  2316		 * The check (unnecessarily) ignores LRU pages being isolated and
+  2317		 * walked by the page reclaim code, however that's not a big loss.
+  2318		 */
+  2319		shake_folio(folio);
+  2320	
+  2321		folio_lock(folio);
+  2322	
+  2323		/*
+  2324		 * We're only intended to deal with the non-Compound page here.
+  2325		 * The page cannot become compound pages again as folio has been
+  2326		 * splited and extra refcnt is held.
+  2327		 */
+  2328		WARN_ON(folio_test_large(folio));
+  2329	
+  2330		/*
+  2331		 * We use page flags to determine what action should be taken, but
+  2332		 * the flags can be modified by the error containment action.  One
+  2333		 * example is an mlocked page, where PG_mlocked is cleared by
+  2334		 * folio_remove_rmap_*() in try_to_unmap_one(). So to determine page
+  2335		 * status correctly, we save a copy of the page flags at this time.
+  2336		 */
+  2337		page_flags = folio->flags.f;
+  2338	
+  2339		/*
+  2340		 * __munlock_folio() may clear a writeback folio's LRU flag without
+  2341		 * the folio lock. We need to wait for writeback completion for this
+  2342		 * folio or it may trigger a vfs BUG while evicting inode.
+  2343		 */
+  2344		if (!folio_test_lru(folio) && !folio_test_writeback(folio))
+  2345			goto identify_page_state;
+  2346	
+  2347		/*
+  2348		 * It's very difficult to mess with pages currently under IO
+  2349		 * and in many cases impossible, so we just avoid it here.
+  2350		 */
+  2351		folio_wait_writeback(folio);
+  2352	
+  2353		/*
+  2354		 * Now take care of user space mappings.
+  2355		 * Abort on fail: __filemap_remove_folio() assumes unmapped page.
+  2356		 */
+  2357		if (!hwpoison_user_mappings(folio, p, pfn, flags)) {
+  2358			res = action_result(pfn, MF_MSG_UNMAP_FAILED, MF_FAILED);
+  2359			goto unlock_page;
+  2360		}
+  2361	
+  2362		/*
+  2363		 * Torn down by someone else?
+  2364		 */
+  2365		if (folio_test_lru(folio) && !folio_test_swapcache(folio) &&
+  2366		    folio->mapping == NULL) {
+  2367			res = action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+  2368			goto unlock_page;
+  2369		}
+  2370	
+  2371	identify_page_state:
+  2372		res = identify_page_state(pfn, p, page_flags);
+  2373		mutex_unlock(&mf_mutex);
+  2374		return res;
+  2375	unlock_page:
+  2376		folio_unlock(folio);
+  2377	unlock_mutex:
+  2378		mutex_unlock(&mf_mutex);
+  2379		return res;
+  2380	}
+  2381	EXPORT_SYMBOL_GPL(memory_failure);
+  2382	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
