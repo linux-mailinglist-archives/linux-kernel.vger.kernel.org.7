@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-849253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1588FBCFABB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:21:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BEABCFAC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37663AE4B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:21:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A3684EB042
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A393F28E5F3;
-	Sat, 11 Oct 2025 18:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E11295DB8;
+	Sat, 11 Oct 2025 18:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lrCuBiww"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eyspbvXX"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBF228B400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC76C28C03B
 	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760206717; cv=none; b=YyEz/CWTR29mSwIUaPFMfMePzkOh+JM5Sy6daDO5bi2qr7vVNV19xi6LQHHFuh3wAPmGhaJZO0psSS/hmmAhEm9YYTN/Jgc2pWxCyI+xWhQCLC7I/PnTVjCiCQif4wqMsrxoWCBWSb2OUxPbQQvBrskdsdNoyUkJX7OfjisrPEo=
+	t=1760206717; cv=none; b=Gsl1htdC3Y7gJ6c3ywcidI/bSse8yUz6irs7/iI8KWV8rK5Ae95mMS6V4kE386ZpRZ64YVuSevPlw/gCCcGexlKVEsnpJGvjAMVnB6E3r26Sb5PQDcAwlJhgczIF0vnORN//ryXKWaGJdpyTLOi1a78IAJp76Mm0Cc1+XjF2rGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760206717; c=relaxed/simple;
-	bh=1ZlncHncPiFtSdZrBk62iQ7LoAdWu/umRn9XHDFyiec=;
+	bh=RPMOV8sl+NtxUoril7y0k9+l4VyTXFWW/dE0ALAKhro=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cDrry+jPMrDILm/r9QUVZNGIrsE561nMMRjz9ay5n5LBA0g4KQ5jFwtQhbKMvroO4a5axJHedJTHbl6aSfvc0uCnQwzJq+eaxxOqXVEOWsoi3zdhUNBrxg97Vqp+GrazIyVFmuyXj145vhjyv4Ug8nfP5dYxkUNSPkfjany2j50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lrCuBiww; arc=none smtp.client-ip=198.175.65.17
+	 MIME-Version; b=hT0pK7n3dH+PZ5LGb1wwP8mkt2A7mUf1PCIeydCbZfOqNSbSKOwNGkxWRp3xr4aPGGtMx1eK61Xyt7h2YGrFfvdSUCRdLGNS2BunlIUuq8SqGdxHIK829DTsOGKBUbEPWJzj/d6E4FC8xaBfUuz6ugBEq47VdX8vEtuc1XwNFis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eyspbvXX; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760206715; x=1791742715;
+  t=1760206716; x=1791742716;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=1ZlncHncPiFtSdZrBk62iQ7LoAdWu/umRn9XHDFyiec=;
-  b=lrCuBiwwXTTaUUesVoUKShmqNypNMcjFctaFnNlL8Jy17kFhV1UkeZza
-   ZuX0GXcNA+d1mgjVrCdwx7TgVROgGBNK4U8k00nbzT6TvTcewZUk7QGtM
-   ze+FjZ8AcXNEy5AhOAJw/Pg8vbtTnZ1loNcqp57iteVrKQqHWUMDyfSYU
-   8P+nCqWidGuZDOqQcaEjQH4wD2Jn2+QsEcLHNMZnZLw6R3C8jci7hl1aG
-   MGxs8mPuw6pSR4ah1MI8YVoYS5wwLulLaJK/V5D02tGg7pdRILUMNtqsB
-   x0389trQkin/UccLwrCAMIGVL3znx7/2JW/py3nOY6EKojcOWTOyEIt0N
-   Q==;
-X-CSE-ConnectionGUID: WfwYlMtNQVe279pYYOUBnA==
-X-CSE-MsgGUID: AjSkDrsURkOZNf5ZbyXbNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339923"
+  bh=RPMOV8sl+NtxUoril7y0k9+l4VyTXFWW/dE0ALAKhro=;
+  b=eyspbvXX6JZaLuPx9mP9k7AsJvdPNK3nA7Eu1n1ZjnjSeOqzlt2GEvCx
+   IIbDfmBwRBwDACT7YDm/5WXc6cuJLsO02ejx9sBoouGuZkUHl1/nB7J2O
+   i/e0/jcb0J2buciIQ3OvuzUhegT0ZaiQoJUm0tinSNJAyHv/2LoJKLT6E
+   1wncP9sm103omUQyz2nIdzytwxhPLCdaTXt3R4jfGDM0HbNy1TRA5Ex3O
+   eiDpNNIsPslVI7J8r5viBVFuJFJIfp1atbqNY5xQ3zDqGyLEqF5FJMEHK
+   BGBjTx2SYuiM3sv4eOtztesROh9S4vRoc6wieYXXgBwOgrHLMjZB8S3CI
+   A==;
+X-CSE-ConnectionGUID: 15+3n+5PQLG8KotmRvuIMw==
+X-CSE-MsgGUID: Dj1GwDBDRtWs7ASTeti8MA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339940"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62339923"
+   d="scan'208";a="62339940"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
   by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 11:18:35 -0700
-X-CSE-ConnectionGUID: ezHUeA30SCiDTeB7wo76Nw==
-X-CSE-MsgGUID: YeYwMr00ThmPUWDQc0+YAw==
+X-CSE-ConnectionGUID: O+LhKbX0QNyBYwHUAp0ttw==
+X-CSE-MsgGUID: PfPvzLkATc2Ca+B9H6Dwng==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="185487255"
+   d="scan'208";a="185487259"
 Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:34 -0700
+  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:35 -0700
 From: Tim Chen <tim.c.chen@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -86,9 +86,9 @@ Cc: Chen Yu <yu.c.chen@intel.com>,
 	Adam Li <adamli@os.amperecomputing.com>,
 	Tim Chen <tim.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 17/19] sched/fair: Disable cache aware scheduling for processes with high thread counts
-Date: Sat, 11 Oct 2025 11:24:54 -0700
-Message-Id: <a098a60d9b4fc8ccea3392096f8bb0cf03af070b.1760206683.git.tim.c.chen@linux.intel.com>
+Subject: [PATCH 18/19] sched/fair: Avoid cache-aware scheduling for memory-heavy processes
+Date: Sat, 11 Oct 2025 11:24:55 -0700
+Message-Id: <00da49fd590b95baad0525660bda4c0ba178243d.1760206683.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1760206683.git.tim.c.chen@linux.intel.com>
 References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
@@ -102,81 +102,157 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen Yu <yu.c.chen@intel.com>
 
-If the number of active threads within the process
-exceeds the number of Cores(divided by SMTs number)
-in the LLC, do not enable cache-aware scheduling.
-This is because there is a risk of cache contention
-within the preferred LLC when too many threads are
-present.
+Prateek and Tingyin reported that memory-intensive workloads (such as
+stream) can saturate memory bandwidth and caches on the preferred LLC
+when sched_cache aggregates too many threads.
 
-Reported-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+To mitigate this, estimate a process's memory footprint by comparing
+its RSS (anonymous and shared pages) to the size of the LLC. If RSS
+exceeds the LLC size, skip cache-aware scheduling.
+
+Note that RSS is only an approximation of the memory footprint.
+By default, the comparison is strict, but a later patch will allow
+users to provide a hint to adjust this threshold.
+
+According to the test from Adam, some systems do not have shared L3
+but with shared L2 as clusters. In this case, the L2 becomes the LLC[1].
+
+Link[1]: https://lore.kernel.org/all/3cb6ebc7-a2fd-42b3-8739-b00e28a09cb6@os.amperecomputing.com/
+
+Co-developed-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- kernel/sched/fair.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ include/linux/cacheinfo.h | 21 ++++++++++------
+ kernel/sched/fair.c       | 51 ++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 61 insertions(+), 11 deletions(-)
 
+diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+index c8f4f0a0b874..82d0d59ca0e1 100644
+--- a/include/linux/cacheinfo.h
++++ b/include/linux/cacheinfo.h
+@@ -113,18 +113,11 @@ int acpi_get_cache_info(unsigned int cpu,
+ 
+ const struct attribute_group *cache_get_priv_group(struct cacheinfo *this_leaf);
+ 
+-/*
+- * Get the cacheinfo structure for the cache associated with @cpu at
+- * level @level.
+- * cpuhp lock must be held.
+- */
+-static inline struct cacheinfo *get_cpu_cacheinfo_level(int cpu, int level)
++static inline struct cacheinfo *_get_cpu_cacheinfo_level(int cpu, int level)
+ {
+ 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
+ 	int i;
+ 
+-	lockdep_assert_cpus_held();
+-
+ 	for (i = 0; i < ci->num_leaves; i++) {
+ 		if (ci->info_list[i].level == level) {
+ 			if (ci->info_list[i].attributes & CACHE_ID)
+@@ -136,6 +129,18 @@ static inline struct cacheinfo *get_cpu_cacheinfo_level(int cpu, int level)
+ 	return NULL;
+ }
+ 
++/*
++ * Get the cacheinfo structure for the cache associated with @cpu at
++ * level @level.
++ * cpuhp lock must be held.
++ */
++static inline struct cacheinfo *get_cpu_cacheinfo_level(int cpu, int level)
++{
++	lockdep_assert_cpus_held();
++
++	return _get_cpu_cacheinfo_level(cpu, level);
++}
++
+ /*
+  * Get the id of the cache associated with @cpu at level @level.
+  * cpuhp lock must be held.
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 79d109f8a09f..6b8eace79eee 100644
+index 6b8eace79eee..46dfcd2a01b3 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1240,6 +1240,18 @@ static inline int pref_llc_idx(struct task_struct *p)
+@@ -1240,6 +1240,38 @@ static inline int pref_llc_idx(struct task_struct *p)
  	return llc_idx(p->preferred_llc);
  }
  
-+static bool exceed_llc_nr(struct mm_struct *mm, int cpu)
++static bool exceed_llc_capacity(struct mm_struct *mm, int cpu)
 +{
-+	int smt_nr = 1;
++	struct cacheinfo *ci;
++	unsigned long rss;
++	unsigned int llc;
 +
-+#ifdef CONFIG_SCHED_SMT
-+	if (sched_smt_active())
-+		smt_nr = cpumask_weight(cpu_smt_mask(cpu));
-+#endif
++	/*
++	 * get_cpu_cacheinfo_level() can not be used
++	 * because it requires the cpu_hotplug_lock
++	 * to be held. Use _get_cpu_cacheinfo_level()
++	 * directly because the 'cpu' can not be
++	 * offlined at the moment.
++	 */
++	ci = _get_cpu_cacheinfo_level(cpu, 3);
++	if (!ci) {
++		/*
++		 * On system without L3 but with shared L2,
++		 * L2 becomes the LLC.
++		 */
++		ci = _get_cpu_cacheinfo_level(cpu, 2);
++		if (!ci)
++			return true;
++	}
 +
-+	return ((mm->nr_running_avg * smt_nr) > per_cpu(sd_llc_size, cpu));
++	llc = ci->size;
++
++	rss = get_mm_counter(mm, MM_ANONPAGES) +
++		get_mm_counter(mm, MM_SHMEMPAGES);
++
++	return (llc <= (rss * PAGE_SIZE));
 +}
 +
- static void account_llc_enqueue(struct rq *rq, struct task_struct *p)
+ static bool exceed_llc_nr(struct mm_struct *mm, int cpu)
  {
- 	int pref_llc;
-@@ -1385,10 +1397,12 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
- 
- 	/*
- 	 * If this task hasn't hit task_cache_work() for a while, or it
--	 * has only 1 thread, invalidate its preferred state.
-+	 * has only 1 thread, or has too many active threads, invalidate
-+	 * its preferred state.
+ 	int smt_nr = 1;
+@@ -1402,7 +1434,8 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
  	 */
  	if (epoch - READ_ONCE(mm->mm_sched_epoch) > EPOCH_LLC_AFFINITY_TIMEOUT ||
--	    get_nr_threads(p) <= 1) {
-+	    get_nr_threads(p) <= 1 ||
-+	    exceed_llc_nr(mm, cpu_of(rq))) {
+ 	    get_nr_threads(p) <= 1 ||
+-	    exceed_llc_nr(mm, cpu_of(rq))) {
++	    exceed_llc_nr(mm, cpu_of(rq)) ||
++	    exceed_llc_capacity(mm, cpu_of(rq))) {
  		if (mm->mm_sched_cpu != -1)
  			mm->mm_sched_cpu = -1;
  	}
-@@ -1467,6 +1481,11 @@ static void __no_profile task_cache_work(struct callback_head *work)
- 	if (p->flags & PF_EXITING)
+@@ -1486,6 +1519,14 @@ static void __no_profile task_cache_work(struct callback_head *work)
  		return;
+ 	}
  
-+	if (get_nr_threads(p) <= 1) {
-+		mm->mm_sched_cpu = -1;
++	/*
++	 * Do not check exceed_llc_nr() because
++	 * the active number of threads needs to
++	 * been updated anyway.
++	 */
++	if (exceed_llc_capacity(mm, curr_cpu))
 +		return;
-+	}
 +
  	if (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
  		return;
  
-@@ -9826,6 +9845,10 @@ static enum llc_mig can_migrate_llc_task(int src_cpu, int dst_cpu,
+@@ -9845,8 +9886,12 @@ static enum llc_mig can_migrate_llc_task(int src_cpu, int dst_cpu,
  	if (cpu < 0 || cpus_share_cache(src_cpu, dst_cpu))
  		return mig_unrestricted;
  
-+	 /* skip cache aware load balance for single/too many threads */
-+	if (get_nr_threads(p) <= 1 || exceed_llc_nr(mm, dst_cpu))
-+		return mig_unrestricted;
-+
+-	 /* skip cache aware load balance for single/too many threads */
+-	if (get_nr_threads(p) <= 1 || exceed_llc_nr(mm, dst_cpu))
++	/*
++	 * skip cache aware load balance for single/too many threads
++	 * or large footprint.
++	 */
++	if (get_nr_threads(p) <= 1 || exceed_llc_nr(mm, dst_cpu) ||
++	    exceed_llc_capacity(mm, dst_cpu))
+ 		return mig_unrestricted;
+ 
  	if (cpus_share_cache(dst_cpu, cpu))
- 		to_pref = true;
- 	else if (cpus_share_cache(src_cpu, cpu))
 -- 
 2.32.0
 
