@@ -1,162 +1,401 @@
-Return-Path: <linux-kernel+bounces-849059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1C2BCF1B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:59:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CC2BCF0F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF23F19A0471
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E842419A3D17
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C2A2356D9;
-	Sat, 11 Oct 2025 07:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651C02264AB;
+	Sat, 11 Oct 2025 07:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XWb1ip0w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bavYcjmR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A42929A2
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D79190664;
+	Sat, 11 Oct 2025 07:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760169573; cv=none; b=NY6KLDooKgz8WD/OCNP2VWqFjOoTcHJvhb9/Coo112M9SBMy/aELlX1QdVzlVahdKZ/LYOmASRYQ8GQqI6M+HZTfRLquF7Hs6jRLN9BYevoUkuhxxHhiSHHd38mdZaO24DaWG/89PMiTiZ1lEBaOTTThueTEVcx01rc85SvaSho=
+	t=1760167378; cv=none; b=HV2621AZbTDRugZc6JhkdKwRpmDQVeBUhdiAC6uIvtMl1Tqd5PzMRBYOQTlCaTZC53FvoIBtMi+CjDzRCJmaCTuwlhRv6XmtssxF3Q3Udy3LZErkdHVv9iXwbRZcF9iIKlRMs2EIpRXTjotHY793TKcGL0DkPDkveaSS7VehvIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760169573; c=relaxed/simple;
-	bh=8v1LnbbHFIfqA7vJouybB86oy19ps3TIzwxEhAJtQTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Rz2g3JTz/DD8RaSSDG97lvx85ICuXvaNk/SovUirxT/K590svfDsxpB5xM19i/+5Z+JvkGTsgzqiw8lLbV9N0ESYh5qDCxBag6oeOa099FPqRfxrDQuZeMnxs8KdMiWiQN5bmi91adDD3ax7FK0ThA92U9MDEHifQmGD0DFNyak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XWb1ip0w; arc=none smtp.client-ip=192.198.163.12
+	s=arc-20240116; t=1760167378; c=relaxed/simple;
+	bh=b3qf/NYfNHNwzgYRj3PowTalddvmLd+4t/fXPuL0kaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DuvzXp4PKht9EbBNjLsc8R079tZx5qBYOdv2CRZxqAUWIF1y6AzSOf5LunakXXIEeOT2ejudwuCnVptsWRqgE0d+wxrOSpR3BlGLcr7vVibNOGgxJjK61TKUwiKQc2o14fjYFfesKiD0RMvdRMB18ndUlUGlveoZeZ1r43NKDAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bavYcjmR; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760169572; x=1791705572;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=8v1LnbbHFIfqA7vJouybB86oy19ps3TIzwxEhAJtQTk=;
-  b=XWb1ip0woz78a0bGDmpDB0MJc4tep717FhafTNq1eCaoAugUrrYvKUwU
-   Fpz0nC+vQbVaRnUsi1f4TSokkKYvyQYLHhV3c2BepDDOVw524/FjxgE1H
-   /VeS3j0JkgU7QNis3+WzAwAgFXVTGhCvshZSH4PXKPYV4jiW5ZosT3fhY
-   VwDvIw8ezFIbhT5vZ8BlLFA5ZZjb4fJD8Dtum78EHLe3ZIKgxpI6yMuob
-   RmRzaqFvU1HWYuRP0puiMf1QdEI2vL9pc6BSrV5qk4XqKZaZ7NjP7LEXu
-   Ig42lUgKIhvA3gVNnCPpmcfblqFPYj9MoTDwdg2Pml5pT0VeKxvf8/59p
-   w==;
-X-CSE-ConnectionGUID: wIN/080HTfSzfSYsJWi6NA==
-X-CSE-MsgGUID: pttbQWbvTrO47CSzRAn4YA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="66234320"
+  t=1760167377; x=1791703377;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=b3qf/NYfNHNwzgYRj3PowTalddvmLd+4t/fXPuL0kaM=;
+  b=bavYcjmRRbSnLamZCe/Pfmpf6D+BPeYTEtiFUqyM245MfiM/uYYDoLf2
+   xKPISffSXWC2RBB91eAVcjKQ3ZadZAJmKYp+Pkgdg/uBfbIo76KMapGMt
+   LSK4/U77GCkA3N3Mtd9rRJry5DAl/nY1iqygF5y2K9OlQ9AEmcQGJnPf2
+   LjosWFU/9/5YtvONbXdLf+jIAJdGETs00DX9aJtE0WMYKVYw+HoIcJX09
+   2VZWmrL6HvvklpmhKSEawTruS34s2TXvN63nOzeIptclRXQ72EWs7mIxd
+   fLYjASb52EVGnHfUP5jgqYvjGq/o9ECrw8ZkAwYwC5SlrJ1d5bRXCEbD1
+   Q==;
+X-CSE-ConnectionGUID: xvlkCHhTQeqDe8lqfvZPSA==
+X-CSE-MsgGUID: Pg0L0jDnRSCijGklrzkUrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="73483582"
 X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="66234320"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 00:59:32 -0700
-X-CSE-ConnectionGUID: NeCWoKbJSHav64IBGy1+OQ==
-X-CSE-MsgGUID: 16ccj2lkTQWTxVQBuwpw9A==
+   d="scan'208";a="73483582"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 00:22:56 -0700
+X-CSE-ConnectionGUID: xrHx0WzbQ++mGMvlaBYOsg==
+X-CSE-MsgGUID: o8GXu74iRnqWGdlQmF6x9A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="186270708"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 11 Oct 2025 00:59:30 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7UVi-0003cx-2t;
-	Sat, 11 Oct 2025 07:59:26 +0000
-Date: Sat, 11 Oct 2025 15:58:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>
-Subject: include/linux/stddef.h:8:14: warning: passing argument 5 of
- 'drm_gpusvm_init' makes integer from pointer without a cast
-Message-ID: <202510111506.HRLvzZmk-lkp@intel.com>
+   d="scan'208";a="181577002"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by fmviesa008.fm.intel.com with ESMTP; 11 Oct 2025 00:22:51 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	pan.deng@intel.com,
+	zhiguo.zhou@intel.com,
+	jiebin.sun@intel.com,
+	thomas.falcon@intel.com,
+	dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 1/2] perf tools c2c: Add annotation support to perf c2c report
+Date: Sat, 11 Oct 2025 16:16:24 +0800
+Message-ID: <20251011081625.1953652-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <aOkFWaFD42Jy7V0f@google.com>
+References: <aOkFWaFD42Jy7V0f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0739473694c4878513031006829f1030ec850bc2
-commit: 10aa5c80603088d10c2cd5e7e27d561a8fb59c7e drm/gpusvm, drm/xe: Fix userptr to not allow device private pages
-date:   8 days ago
-config: x86_64-randconfig-r123-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111506.HRLvzZmk-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111506.HRLvzZmk-lkp@intel.com/reproduce)
+Perf c2c report currently specified the code address and source:line
+information in the cacheline browser, while it is lack of annotation
+support like perf report to directly show the disassembly code for
+the particular symbol shared that same cacheline. This patches add
+a key 'a' binding to the cacheline browser which reuse the annotation
+browser to show the disassembly view for easier analysis of cacheline
+contentions.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510111506.HRLvzZmk-lkp@intel.com/
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
+Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
+Reviewed-by: Pan Deng <pan.deng@intel.com>
+Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
+Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
+---
+ tools/perf/Documentation/perf-c2c.txt |   7 ++
+ tools/perf/builtin-c2c.c              | 139 +++++++++++++++++++++++++-
+ 2 files changed, 141 insertions(+), 5 deletions(-)
 
-All warnings (new ones prefixed by >>):
-
-   In file included from include/uapi/linux/posix_types.h:5,
-                    from include/uapi/linux/types.h:14,
-                    from include/linux/types.h:6,
-                    from include/linux/objtool_types.h:7,
-                    from include/linux/objtool.h:5,
-                    from include/linux/instrumentation.h:7,
-                    from arch/x86/include/asm/bug.h:6,
-                    from include/linux/bug.h:5,
-                    from include/linux/mmdebug.h:5,
-                    from include/linux/mm.h:6,
-                    from include/linux/pagemap.h:8,
-                    from include/drm/ttm/ttm_tt.h:30,
-                    from drivers/gpu/drm/xe/xe_bo.h:9,
-                    from drivers/gpu/drm/xe/xe_bo.c:6:
-   drivers/gpu/drm/xe/xe_svm.h: In function 'xe_svm_init':
->> include/linux/stddef.h:8:14: warning: passing argument 5 of 'drm_gpusvm_init' makes integer from pointer without a cast [-Wint-conversion]
-       8 | #define NULL ((void *)0)
-         |              ^~~~~~~~~~~
-         |              |
-         |              void *
-   drivers/gpu/drm/xe/xe_svm.h:217:38: note: in expansion of macro 'NULL'
-     217 |                                NULL, NULL, 0, 0, 0, NULL, NULL, 0);
-         |                                      ^~~~
-   In file included from drivers/gpu/drm/xe/xe_bo_types.h:11,
-                    from drivers/gpu/drm/xe/xe_bo.h:11:
-   include/drm/drm_gpusvm.h:254:35: note: expected 'long unsigned int' but argument is of type 'void *'
-     254 |                     unsigned long mm_start, unsigned long mm_range,
-         |                     ~~~~~~~~~~~~~~^~~~~~~~
-   include/linux/stddef.h:8:14: warning: passing argument 10 of 'drm_gpusvm_init' makes integer from pointer without a cast [-Wint-conversion]
-       8 | #define NULL ((void *)0)
-         |              ^~~~~~~~~~~
-         |              |
-         |              void *
-   drivers/gpu/drm/xe/xe_svm.h:217:59: note: in expansion of macro 'NULL'
-     217 |                                NULL, NULL, 0, 0, 0, NULL, NULL, 0);
-         |                                                           ^~~~
-   include/drm/drm_gpusvm.h:257:59: note: expected 'int' but argument is of type 'void *'
-     257 |                     const unsigned long *chunk_sizes, int num_chunks);
-         |                                                       ~~~~^~~~~~~~~~
-   In file included from drivers/gpu/drm/xe/xe_res_cursor.h:38,
-                    from drivers/gpu/drm/xe/xe_bo.c:34:
-   drivers/gpu/drm/xe/xe_svm.h:216:16: error: too many arguments to function 'drm_gpusvm_init'
-     216 |         return drm_gpusvm_init(&vm->svm.gpusvm, "Xe SVM (simple)", &vm->xe->drm,
-         |                ^~~~~~~~~~~~~~~
-   include/drm/drm_gpusvm.h:251:5: note: declared here
-     251 | int drm_gpusvm_init(struct drm_gpusvm *gpusvm,
-         |     ^~~~~~~~~~~~~~~
-
-
-vim +/drm_gpusvm_init +8 include/linux/stddef.h
-
-^1da177e4c3f41 Linus Torvalds   2005-04-16  6  
-^1da177e4c3f41 Linus Torvalds   2005-04-16  7  #undef NULL
-^1da177e4c3f41 Linus Torvalds   2005-04-16 @8  #define NULL ((void *)0)
-6e218287432472 Richard Knutsson 2006-09-30  9  
-
-:::::: The code at line 8 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
-
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
-
+diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
+index f4af2dd6ab31..40b0f71a2c44 100644
+--- a/tools/perf/Documentation/perf-c2c.txt
++++ b/tools/perf/Documentation/perf-c2c.txt
+@@ -143,6 +143,13 @@ REPORT OPTIONS
+ 	feature, which causes cacheline sharing to behave like the cacheline
+ 	size is doubled.
+ 
++-M::
++--disassembler-style=::
++	Set disassembler style for objdump.
++
++--objdump=<path>::
++        Path to objdump binary.
++
+ C2C RECORD
+ ----------
+ The perf c2c record command setup options related to HITM cacheline analysis
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 9e9ff471ddd1..e4841cce55e6 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -45,6 +45,8 @@
+ #include "pmus.h"
+ #include "string2.h"
+ #include "util/util.h"
++#include "util/symbol.h"
++#include "util/annotate.h"
+ 
+ struct c2c_hists {
+ 	struct hists		hists;
+@@ -62,6 +64,7 @@ struct compute_stats {
+ 
+ struct c2c_hist_entry {
+ 	struct c2c_hists	*hists;
++	struct evsel		*evsel;
+ 	struct c2c_stats	 stats;
+ 	unsigned long		*cpuset;
+ 	unsigned long		*nodeset;
+@@ -225,6 +228,12 @@ he__get_c2c_hists(struct hist_entry *he,
+ 	return hists;
+ }
+ 
++static void c2c_he__set_evsel(struct c2c_hist_entry *c2c_he,
++				struct evsel *evsel)
++{
++	c2c_he->evsel = evsel;
++}
++
+ static void c2c_he__set_cpu(struct c2c_hist_entry *c2c_he,
+ 			    struct perf_sample *sample)
+ {
+@@ -275,6 +284,21 @@ static void compute_stats(struct c2c_hist_entry *c2c_he,
+ 		update_stats(&cstats->load, weight);
+ }
+ 
++/*
++ * Return true if annotation is possible. When list is NULL,
++ * it means that we are called at the c2c_browser level,
++ * in that case we allow annotation to be initialized. When list
++ * is non-NULL, it means that we are called at the cacheline_browser
++ * level, in that case we allow annotation only if use_browser
++ * is set and symbol information is available.
++ */
++static bool perf_c2c__has_annotation(struct perf_hpp_list *list)
++{
++	if (use_browser != 1)
++		return false;
++	return !list || list->sym;
++}
++
+ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 				union perf_event *event,
+ 				struct perf_sample *sample,
+@@ -334,8 +358,11 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 	c2c_he__set_cpu(c2c_he, sample);
+ 	c2c_he__set_node(c2c_he, sample);
++	c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 	hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
++	if (perf_c2c__has_annotation(NULL))
++		addr_map_symbol__inc_samples(mem_info__iaddr(mi), sample, evsel);
+ 	ret = hist_entry__append_callchain(he, sample);
+ 
+ 	if (!ret) {
+@@ -371,6 +398,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 		c2c_he__set_cpu(c2c_he, sample);
+ 		c2c_he__set_node(c2c_he, sample);
++		c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 		hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
+ 		ret = hist_entry__append_callchain(he, sample);
+@@ -1997,6 +2025,9 @@ static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name, stru
+ 	if (dim == &dim_dso)
+ 		hpp_list->dso = 1;
+ 
++	if (dim == &dim_symbol || dim == &dim_iaddr)
++		hpp_list->sym = 1;
++
+ 	perf_hpp_list__register_sort_field(hpp_list, &c2c_fmt->fmt);
+ 	return 0;
+ }
+@@ -2550,6 +2581,40 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
+ }
+ 
+ #ifdef HAVE_SLANG_SUPPORT
++
++static int perf_c2c__toggle_annotation(struct hist_browser *browser)
++{
++	struct hist_entry *he = browser->he_selection;
++	struct symbol *sym = NULL;
++	struct annotated_source *src = NULL;
++	struct c2c_hist_entry *c2c_he = NULL;
++
++	if (!perf_c2c__has_annotation(he->hists->hpp_list)) {
++		ui_browser__help_window(&browser->b, "No annotation support");
++		return 0;
++	}
++
++	if (he == NULL) {
++		ui_browser__help_window(&browser->b, "No entry selected for annotation");
++		return 0;
++	}
++
++	sym = he->ms.sym;
++	if (sym == NULL) {
++		ui_browser__help_window(&browser->b, "Can not annotate, no symbol found");
++		return 0;
++	}
++
++	src = symbol__hists(sym, 0);
++	if (src == NULL) {
++		ui_browser__help_window(&browser->b, "Failed to initialize annotation source");
++		return 0;
++	}
++
++	c2c_he = container_of(he, struct c2c_hist_entry, he);
++	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL);
++}
++
+ static void c2c_browser__update_nr_entries(struct hist_browser *hb)
+ {
+ 	u64 nr_entries = 0;
+@@ -2617,6 +2682,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 	" ENTER         Toggle callchains (if present) \n"
+ 	" n             Toggle Node details info \n"
+ 	" s             Toggle full length of symbol and source line columns \n"
++	" a             Toggle annotation view \n"
+ 	" q             Return back to cacheline list \n";
+ 
+ 	if (!he)
+@@ -2651,6 +2717,9 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 			c2c.node_info = (c2c.node_info + 1) % 3;
+ 			setup_nodes_header();
+ 			break;
++		case 'a':
++			perf_c2c__toggle_annotation(browser);
++			break;
+ 		case 'q':
+ 			goto out;
+ 		case '?':
+@@ -3006,6 +3075,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *display = NULL;
+ 	const char *coalesce = NULL;
+ 	bool no_source = false;
++	const char *disassembler_style = NULL, *objdump_path = NULL;
+ 	const struct option options[] = {
+ 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
+ 		   "file", "vmlinux pathname"),
+@@ -3033,6 +3103,10 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
+ 		    "Enable LBR callgraph stitching approach"),
+ 	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
++	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
++		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
++	OPT_STRING(0, "objdump", &objdump_path, "path",
++		   "objdump binary to use for disassembly and annotations"),
+ 	OPT_PARENT(c2c_options),
+ 	OPT_END()
+ 	};
+@@ -3040,6 +3114,12 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *output_str, *sort_str = NULL;
+ 	struct perf_env *env;
+ 
++	annotation_options__init();
++
++	err = hists__init();
++	if (err < 0)
++		goto out;
++
+ 	argc = parse_options(argc, argv, options, report_c2c_usage,
+ 			     PARSE_OPT_STOP_AT_NON_OPTION);
+ 	if (argc)
+@@ -3052,6 +3132,27 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (c2c.stats_only)
+ 		c2c.use_stdio = true;
+ 
++	/**
++	 * Annotation related options disassembler_style, objdump_path are set
++	 * in the c2c_options, so we can use them here.
++	 */
++	if (disassembler_style) {
++		annotate_opts.disassembler_style = strdup(disassembler_style);
++		if (!annotate_opts.disassembler_style) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
++	if (objdump_path) {
++		annotate_opts.objdump_path = strdup(objdump_path);
++		if (!annotate_opts.objdump_path) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
++
+ 	err = symbol__validate_sym_arguments();
+ 	if (err)
+ 		goto out;
+@@ -3126,6 +3227,38 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (err)
+ 		goto out_mem2node;
+ 
++	if (c2c.use_stdio)
++		use_browser = 0;
++	else
++		use_browser = 1;
++
++	/*
++	 * Only in the TUI browser we are doing integrated annotation,
++	 * so don't allocate extra space that won't be used in the stdio
++	 * implementation.
++	 */
++	if (perf_c2c__has_annotation(NULL)) {
++		int ret = symbol__annotation_init();
++
++		if (ret < 0)
++			goto out_mem2node;
++		/*
++		 * For searching by name on the "Browse map details".
++		 * providing it only in verbose mode not to bloat too
++		 * much struct symbol.
++		 */
++		if (verbose > 0) {
++			/*
++			 * XXX: Need to provide a less kludgy way to ask for
++			 * more space per symbol, the u32 is for the index on
++			 * the ui browser.
++			 * See symbol__browser_index.
++			 */
++			symbol_conf.priv_size += sizeof(u32);
++		}
++		annotation_config__init();
++	}
++
+ 	if (symbol__init(env) < 0)
+ 		goto out_mem2node;
+ 
+@@ -3135,11 +3268,6 @@ static int perf_c2c__report(int argc, const char **argv)
+ 		goto out_mem2node;
+ 	}
+ 
+-	if (c2c.use_stdio)
+-		use_browser = 0;
+-	else
+-		use_browser = 1;
+-
+ 	setup_browser(false);
+ 
+ 	err = perf_session__process_events(session);
+@@ -3210,6 +3338,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ out_session:
+ 	perf_session__delete(session);
+ out:
++	annotation_options__exit();
+ 	return err;
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.1
+
 
