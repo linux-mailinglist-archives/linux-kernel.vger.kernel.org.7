@@ -1,250 +1,313 @@
-Return-Path: <linux-kernel+bounces-849232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E984BCFA6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:05:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5174BCFA74
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60609348ADB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:05:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 636854E203F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A922820B2;
-	Sat, 11 Oct 2025 18:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84472283146;
+	Sat, 11 Oct 2025 18:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AlLyFKur"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011045.outbound.protection.outlook.com [52.101.62.45])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jd8oV4KP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0186A2AD0D;
-	Sat, 11 Oct 2025 18:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760205888; cv=fail; b=cgVZ/DvXGSCXuLbtN9hmtAa8pTf5uEIWNWf+/0pGQisbNoA2HSmuTk83obxoj/B8Pe3eU63GZCkzX9aaKVFWk/GqHnRQwTzrk/zd/eU6mY79WP0MPkFAKMnkIfSFVYO48l+/ltbRHq2zMbamFfs11kOWZ9SMuUpOcGYTYjFaYQc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760205888; c=relaxed/simple;
-	bh=I0qoBnCC68GvLd2unx9uJoRrgoJEdiZp62ZVHoX/rAY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IFHJYNFOv9P0Ykt4yaxEIiYEymCNcPbrC/bWrz/JRIh8TeZvd9kV/nG8Mf83z9txW7tpgTF8OtupICJaDd401E3Ek/P7y8xrmS571XOcJStcSF87TbucErWnls06nfSd32UHfRbGjiQIq0vr2BincBFT6QdUTWLCxlOsSwaXJlA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AlLyFKur; arc=fail smtp.client-ip=52.101.62.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T4y+1o3TBeL1+WkXjeRSWnZYbmjo51xoWAIrdWguZ9n01vKGSGzZ7EeS++73HwtV4trhwjsTn/FUIv+sDQnOdHDC1xpV9EGxmrM9/HViDNFMPWH3quJHG+Q8Gqpe+IJs2SdhP7/ilGzwMtOObyhNhMsPpATCf7RNnzY31NyKECwryAgGwDwlSFnmqXqZncYYC3fKwkP20tMKSX8X/f48790ew6j5SLbmeKY6MGWFfCha5flkr0InvrwekrkeRwmsAdliCwPaIyt0L2DNYSIfuM8KpMlWtMOUzXjb02Mi7tAl/e2j+Cz1PPUBgYnq28I0ENNxnUbBLbvgu5+9hBhiaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z9ujf9zl02XPCLvrdJMvpgXS3dPvRBPt6sU46BWRWp0=;
- b=goAOrFkImp6+VlidCvo8GVZok/L/+2ETHsJpC3qu36B7lVoaUDOuAwLg3HhJNwpZZemA0hZSo9ROyXWAhIqIqLlDhhkWFKaQ8GwEwLHPy5Q6BKPexle0h2qfSxC3ij/SWquvWaENDfqTTwxNFc1S3lXnNmmHu10Z3AJJXEkEaAJqnKS4+oxWr1mJgazZC4YnLQ+SGN1N9T3OhIzw0XBoBxgX3FujE9qwKBFUiBSUBgNGhgnA2EuNO4ZOHzClhTwb9ktcwa0QoxvYsOK5AsbnsalZeFm0IW5XZn2EeEaEsXUEd56SqLYvQXcB2uSwF0EIN3Hf91A0tWV981xbVRF+NQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z9ujf9zl02XPCLvrdJMvpgXS3dPvRBPt6sU46BWRWp0=;
- b=AlLyFKurk82TV2MolgDh3TSvUWKNU0jk9QOYiAvwQrpuYrqTbJF1PWvhA6mDaRYJiuts3pdOMMbqhVKhRGSmbZkcnQYDLP95d9yoVldxg63hDhX3GjibOUZmOB455SMuLqcc6ARm3kt94dDM2j5CDz5FlsQn6uknuegnQlzFYGs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PR12MB8301.namprd12.prod.outlook.com (2603:10b6:208:40b::13)
- by CY5PR12MB6551.namprd12.prod.outlook.com (2603:10b6:930:41::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.11; Sat, 11 Oct
- 2025 18:04:44 +0000
-Received: from IA0PR12MB8301.namprd12.prod.outlook.com
- ([fe80::e929:57f5:f4db:5823]) by IA0PR12MB8301.namprd12.prod.outlook.com
- ([fe80::e929:57f5:f4db:5823%4]) with mapi id 15.20.9203.009; Sat, 11 Oct 2025
- 18:04:44 +0000
-Message-ID: <57e1b0de-00d4-4137-a56b-5135ece6736e@amd.com>
-Date: Sat, 11 Oct 2025 23:34:36 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 kvm-next] KVM: guest_memfd: use kvm_gmem_get_index() in
- more places and smaller cleanups
-To: Sean Christopherson <seanjc@google.com>
-Cc: pbonzini@redhat.com, david@redhat.com, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250902080307.153171-2-shivankg@amd.com>
- <aOlCBEw1DpdLlWA1@google.com>
-Content-Language: en-US
-From: "Garg, Shivank" <shivankg@amd.com>
-In-Reply-To: <aOlCBEw1DpdLlWA1@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1PR01CA0155.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:68::25) To IA0PR12MB8301.namprd12.prod.outlook.com
- (2603:10b6:208:40b::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F6725743E;
+	Sat, 11 Oct 2025 18:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760206341; cv=none; b=Q6AKoaI4cbDZ7GILnDCawjWOi4Tl/1MyTSG2bXPiujoMtuKZESqJQwjBNwHda9CjTL0iRnulravz+btX2NRz1T7+GrUboXnSMtQ2MbpKbcAPTu6PjH9QLT4+O/kcFWiCLlIZqh6rXIH0PuD7hpJXai+mMUkC/Wj496RWaM2suJY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760206341; c=relaxed/simple;
+	bh=BMEM84Vsl+AZjQZHYwCJyliKbPqM1CAEDf4jo/Gn5jE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uthuFQO3nDqrsWvZ+AS+R92zwwBVXBwHa5e90VYUZ6OAHnH08f/4HiYpBEU23MyDuTrLoeICOMzej3+Pq5zNX3iMZ9ZviWKYvrlAnHRSMsTqu8YSv0ltpF1u/BJfZpFdAiHKnd1Wofi+ZE2yzp35icLg5OPl9VU7rfupLEHA8Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jd8oV4KP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10347C4CEF4;
+	Sat, 11 Oct 2025 18:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760206341;
+	bh=BMEM84Vsl+AZjQZHYwCJyliKbPqM1CAEDf4jo/Gn5jE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Jd8oV4KPkTksQdoXdaaD11OYDhydZLvqylFwIw7GbKdfMsU2yLUIJa3SdLBb6iA1V
+	 9s8W28UtU+Yj6+4P5IE19DUvO1giC1w13ZJI36fLlOrkKNKhrE47RzqhtCQgn+kTzY
+	 MpXsE3sUqFu/1TpMleoOLJOqMtV9jI3b2DNGYEwp3AcvIy1ZXQMAp9n9hIS3WHJ5QJ
+	 vxQN6pzmpaI/lPGCfEvn8+3R2RrLcgo+Iosb/9C6ybUGuT2f3xO99nh8owPm2EoS5y
+	 rCSliSo8WXdyO1tpxnjjbUhMyF02OkYEdQiTUSLvwCJ7YQzpcAN3s7Ru76DAd8pBeX
+	 mM55WQlJ6u7bQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: dm-devel@lists.linux.dev,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] dm-crypt: Use MD5 library instead of crypto_shash
+Date: Sat, 11 Oct 2025 11:10:42 -0700
+Message-ID: <20251011181042.81455-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR12MB8301:EE_|CY5PR12MB6551:EE_
-X-MS-Office365-Filtering-Correlation-Id: a2099eb4-e157-4887-094d-08de08f0a7ec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OS9LV0d1cWsxcnJsb3pHNFNQK3ltaWxWQ283RmJzQUc1a3ZvRjJDWlE0RmlY?=
- =?utf-8?B?aG9zanVPL010K1V3Y2RWaEtUL0k3Qk5iV1ZuM0R1M2RxWUMrdnZZcURQYVNY?=
- =?utf-8?B?ZDBlWXc3RWNzWm5KTVZRVXNDVnE1bjYrbHdxeUZteFdiQ25ZQWhkaUV0elVz?=
- =?utf-8?B?OFZhQzJTRklHV3FQVFhyR0k2UFNoOGgrT0Y4MW0zU09qWXhoV1l2QzRnclZv?=
- =?utf-8?B?VW5kamV4MHl4L1Q0RlZVM21PZkdqQUl5ZXlZaGdieVJWWjdvYVBHaFNuemlS?=
- =?utf-8?B?Ry8xS1RCdjBCMTJScGVqTzFGTFBoOWkzY2tjazI0SUkra09QTVJWN0VtcWNR?=
- =?utf-8?B?Y2RYOGlDb1lJc3BHZFlEajRndDJXTnRoc0laNU1xb3dFVE9MaGdzMVphdHpm?=
- =?utf-8?B?SG1PM3BVOTlVTVhzMWkrNCtzR3lhaEptK1FFTnVjdWFKOHRoejErQXVEVTR6?=
- =?utf-8?B?Z1hWcWk0RG5GY05JSThqT3R6N29nTmpML213UXpGbnpzbklieDV6NUpUNnI1?=
- =?utf-8?B?WDROVWNlVmIzVUZHcy95aUQ1WUdacjlkeS9hNUhNRjJnRzI4bU9BQjVKTXg0?=
- =?utf-8?B?eFJsZXRyWHYzVC9ZS3hGVnJSNW1ndzZPYzJoOVltMEg1TnJEWlVMYnJjRDgx?=
- =?utf-8?B?RHBuYnZNSHQrWVJ5K01rR08zY25SYVcySFpnWGZzV1JkOXBqMHMwM25oQTlx?=
- =?utf-8?B?TzhsWmxSNGhGQnhpWUFuellzQ20zekwyZi8yWHhnRHdLRnlqeWN3SE4yWmo2?=
- =?utf-8?B?MWJ6WTlmclZScTJoT1lxbEhsczBuVzY4UzVQcmliNVBGaktHUGVHK1Z4VlJ5?=
- =?utf-8?B?SEZtUUFMZGRvSnFka0tiWUEvRmZDcDhHajRRMnZTTE1NVm1YNkRJS2t1YXBD?=
- =?utf-8?B?Z2VXZUJuSmc2V01xNEV5bjYvQ1daODFwNHI3dldHbVpSblJVL05rYWV2Y0tp?=
- =?utf-8?B?dng5TTQ3blptclNxd3NhamJQQm9remgwMEE3MkoxM0VrSVNlSExGVVBKamV2?=
- =?utf-8?B?ZGpZTHpSSnlvMk45TWNkbzY3YW1tREZSNHVKeTJEc1lyVFlNdUUyNVd1L1cy?=
- =?utf-8?B?SkdEbmVacGc1WjQzbmwxRDlzWk9XSklBWkUzNm5MTFlCejJqWFdyMUNDK0R6?=
- =?utf-8?B?VDhSRzJuVHBLcldyT3Y0cE1MZXF0WlFJK3dJTnRrTkdiN1FwcEo4ZHIydlR2?=
- =?utf-8?B?NllLUWtYL0xsVUFLSVZaVXBvZWJGOHVWQU0xSDBQZjFzUzdzOUEwWnVRdkx4?=
- =?utf-8?B?cjQ5bHh6a05QVTkvaEoyMSt2NjhwNmtoczdMbUt5dWxXMGJzVHl0dUNsWUJs?=
- =?utf-8?B?d0xTWnZ6bkdtVkFRdHdJQ2FCNFlXR2wvdW5pdFJQK0srVk5OYTk1dXRISUNz?=
- =?utf-8?B?N1JzY2xxVnRBbEUvcHh5cWxLRHdRT2pxRld4cWQxMWtFZmlDOGVBNmtNR3pB?=
- =?utf-8?B?bE1yMmNsak9OQ2xtdkV5T2NpNFBMOTB0QkhIeEo0a1FheGVMUUdOYnZXd0wx?=
- =?utf-8?B?V2pydFJWbGhoQ1p4amw1c2RvS2RGQmxyYmJiTzNnQS9UTzI3cTdIaFFzcDlZ?=
- =?utf-8?B?em1uNXFwWUVVdEU0aVkzYlpGdWJyYnM3emRCOTg3c0xXWVIwTUR0R3Bra1hy?=
- =?utf-8?B?b092MzhoOFJlY3ZvWTlnODhreVZqZ1JIWjFZMmJhM3d6cSsxZnlFNWF0L1FH?=
- =?utf-8?B?QjFJWHZNZ01VblpKQlR2K2ROMmtGYXJrOWMxcStRK2w3am0xWEkwQWxYY21W?=
- =?utf-8?B?NWlhRkJoVnhkTzM5bjJ4TDJ6ZlE2L1ExVEFQSitQOFdIQjVzNnJkM09zTzRB?=
- =?utf-8?B?SGZIMzB6NmtYb1RzQVdIcE1XcXpLdG9VTWdPYXZHQlJ5MzN3cjRZVzNhbThF?=
- =?utf-8?B?NmhNTythczRaYlRadTF4cHRLVGNyWExwYjlyeDZZQ3VPRnlIMzhWZXh5b1p6?=
- =?utf-8?Q?avoB2OZd+650T9BBmP1JwgN09VGNXuYG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8301.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z0pSVlRDbzRlUlJqcGtKZjJGNkdBSlhoakdiMGZYWmVSeWdzUnJJZnVDZWV3?=
- =?utf-8?B?ZzFUeHYrUmhIZ1A3RENDU3FBZ2pVc05NblFWQVplYjZsVU5tdVNiV1BLQVdi?=
- =?utf-8?B?S1o1emcrZElHZ3RlMnNpeTUveUZ6ZklrY2pyaHRoM1E0QnkySC9Eb2UwV2tD?=
- =?utf-8?B?ZmVhWVFVRFljZXA1UnE1aUJKMVk1Y0poay9vMER5VHRtaUx5dUNIaDNuUWp4?=
- =?utf-8?B?RFhialdDRXhiZGU4L1hQUG96YTZNczdEY0dWS0paQmdxckM1QTdHeXBOZEdj?=
- =?utf-8?B?NEloN2U2Z1JVWXlvUHhtZ25IMElxWTB3SXJQRGtOS2JVS0RHNUxJUUZEYXU4?=
- =?utf-8?B?VE03cUZYbEZFcnMxaGVwYUhSWFRNOUplK1gyR3hiVDhta25ZWUJHT0lTOG8x?=
- =?utf-8?B?T2pFcndPZUFuREZ1ZHBwTjErV1B2QVpHRWJwTjc2ZUphNkJHbWh4TFlRaXRn?=
- =?utf-8?B?OGZrczRUNjFsTUd3dG9NSC9jaWhHOTU5bklhUktTNFYxbDgwcHJCZ1ZuaWV1?=
- =?utf-8?B?TTVxUWszNmhtWXBYVHZ6NFBVYWZOaXh5d0RtUmdkUHR4Q2l3YzBTRUpjbnIz?=
- =?utf-8?B?dTgzblpuQnFOb3JwWFBJOVA5a3Z5c1hpa3NyNjJ3VXgvUCtja3c4VTdtZHVj?=
- =?utf-8?B?aHBOQ1I2c0NlRmhSbHM5aDZRdUFzcXUyVndpYjcyM2RmQjNHT2taemtMb0Qv?=
- =?utf-8?B?V2oxMTk0dDl6NTFxa0h2ZU9lSW01UmVqSlhwa2VndW5JbG5CVnFCN0Q4YW9F?=
- =?utf-8?B?cTBFQnU3bkFVRGpYa2x3TG9RTUNNWWp3L2N6SlFpdG5vRnBZUkFFdU9yZG9I?=
- =?utf-8?B?c0xCb24ycFVYVHAwSVM1bDYwMmtrR1B2TFRwcENtWlFiZnFqcVROWmdIdkhB?=
- =?utf-8?B?ZmpNRVFuTDdLVmJmeUxqdEV6azFKelhnMytFS09SNXUwWnFCRHhBeXNDYUc3?=
- =?utf-8?B?MDJJa3k4ZTlueTJKY0VQemFmd3pyamIzcG9qTDBkOEdWMjZWWTlONGd6cGdz?=
- =?utf-8?B?NkxuV2hlR1g1b3VFU095cS82S3V1VjV0VHBuREJUYXlBbDdseGZVcE5uc2ZM?=
- =?utf-8?B?aHFYTzBRaVgycEc3Z0JVcnZpcVAyV2hJMVp1c3FYSFUxdkxneXdYbEpjMkVl?=
- =?utf-8?B?R3k5b29lb09uYkxDSHlBdG01L3ZDQ3hnYndIcWlBZ2ZWaE9VOWtuMko0S3dJ?=
- =?utf-8?B?QXFsNzZPVkNsMzdhZGRmMHV4UjZFNHdZYUZwNVNtbjdtWExiUjJMdERNZ1VL?=
- =?utf-8?B?RXFCdC9XVjY3RitQSkRmRVZia2pjRnNMOFhmWmxPRGxkdDFvamFPSm1tS1Na?=
- =?utf-8?B?Q0hRWmVSZkRVdXdvUDhuL0JuTG9PMGViZE4zMm1OZEpWUXE0cHVkMEVtc0RC?=
- =?utf-8?B?bHdjSXl6cXFVQ2M3bTdQa1htenVHY0Ivd1Q5R1IreERGN0g1K2hqZzN6Y3Zz?=
- =?utf-8?B?ZWJSSHUwcDRaRFpEWlQ3VytPd1VSY3lHTkVoUWFSUDU2VzRnWTc3TmllTjJG?=
- =?utf-8?B?eW9qMW4zdVU2ZWswbUZHQ2NFVkwvYXd0N29NS3Riak5rY1l4Rnd3Z3JETmxm?=
- =?utf-8?B?eW1XNVlYYWlIYnZVanBWNlBQa3JPTTYxNm1pbkJlSW5PYUpXK0d5TUQvelZI?=
- =?utf-8?B?bk4xU3B4OE55d2czZW1NSW1wU3VqM25XQUprMk83UFpVemlYekl5MzNzTXZq?=
- =?utf-8?B?Vy82a3ZDZ3pGYTg3SW9udDlNUGZuYXpOdU90WURjL3JXZzVwK0FvUUMvZFZn?=
- =?utf-8?B?eUlpYWhYK2x4R2VuamN2ZThQT0IvRG5KdHpwRWxYUGVuVVlGelRaL3h2R25F?=
- =?utf-8?B?NVJ2bVdHVlBtY2RpSkN3VXNVc1RBUElKV1p0OFVqOXZTWkg2cUY2VG91alJq?=
- =?utf-8?B?Q21JMmpWRnZiVDBWL0duK2ZPaXNZK1FOUUJFSlU4Q0xPWThOSzVKamlTRjli?=
- =?utf-8?B?b3dQS0Rmc2tBbGQ0MUpiNFE2MDd4Mkk3U1hLaXEydGpYQ2VsVTVZWVFTMm5z?=
- =?utf-8?B?dFRRVkJUWHBXbytjdjdwNWlnNXRZWit5NGczQVorekF6eW1FUENpZ0czTUlw?=
- =?utf-8?B?ODNXTDI2OFdOQitJd0tJZmlJb2c1b0EyNlJxUTFmMW92ajJwL1MyM0NQZUph?=
- =?utf-8?Q?UxvpeTv/3zWLiZjkyH6pfKCeF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2099eb4-e157-4887-094d-08de08f0a7ec
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8301.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2025 18:04:44.3344
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zwgYgdO1peDaDt5Y7FR3CF8eTQObeZEm1bkmKQhYjaK/e5F6p4n8rpX8KcGVM5I3MxYvh+rxsQfQDnF+6IhBsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6551
+Content-Transfer-Encoding: 8bit
 
+The lmk IV mode, which dm-crypt supports for Loop-AES compatibility,
+involves an MD5 computation.  Update its implementation to use the MD5
+library API instead of crypto_shash.  This has many benefits, such as:
 
+- Simpler code.  Notably, much of the error-handling code is no longer
+  needed, since the library functions can't fail.
 
-On 10/10/2025 10:57 PM, Sean Christopherson wrote:
-> TL;DR: Please split this into three patches, call out the use of
-> kvm_gmem_get_index() in kvm_gmem_prepare_folio, and unless someone feels strongly
-> about the ULONG_MAX change, just drop it.
-> 
-> On Tue, Sep 02, 2025, Shivank Garg wrote:
->> Move kvm_gmem_get_index() to the top of the file and make it available for
->> use in more places.
-> 
-> Not just "in more places", specifically for kvm_gmem_prepare_folio().  And this
-> also has kvm_gmem_prepare_folio() _use_ the helper.  That detail matters, because
-> without having actual user, such code movement would be completely arbitrary and
-> likely pointless churn.  E.g. AFAICT, it's not needed for the NUMA support or
-> even for the WIP-but-functional in-place conversion patches I have.
-> 
->> Remove redundant initialization of the gmem variable because it's already
->> initialized.
->>
->> Replace magic number -1UL with ULONG_MAX.
-> 
-> This is quite clearly three distinct patches.  Yes, they're trivial, but that's
-> exactly why they should be split up: it takes so, so little brain power to review
-> super trivial patches.  Bundling such patches together almost always increases
-> the total review cost relative to if they are split up.  I.e. if split, the cost
-> is A + B + C, but bundled together, the cost is A + B + C + X, where 'X' is the
-> extra effort it takes to figure out what changes go with what part of the changelog.
-> And sometimes (and for me, it's the case here), X > A + B + C, which makes for
-> grumpy reviewers.
-> 
-> Case in point, it took me way too long to spot the new use of kvm_gmem_get_index()
-> in kvm_gmem_prepare_folio(), due to the noise from the other changes getting in
-> the way.
-> 
-> More importantly, bundling things together like this makes it an all-or-nothing
-> proposition.  That matters, because I don't want to take the ULONG_MAX change.
-> The -1 pattern is meaningful (at least, IMO), as KVM is very specifically
-> invalidating 0 => 0xffffffff_ffffffff.  I don't love hiding those details behind
-> ULONG_MAX.  I realize it's a somewhat silly position, because xarray uses ULONG_MAX
-> for it's terminal value, but it gets weird in the guest_memfd code because @end is
-> used for both the xarray and for gfn range sent over to KVM.
-> 
-> Amusingly, the -1UL is also technically wrong, because @end is exclusive.  AFAIK
-> it's not actually possible to populate offset -1, so it's a benign off-by-one,
-> but I think super duper technically, we would want something absurd like this:
-> 
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index cfbb2f1aa1ab..f4d15cda2029 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -231,12 +231,13 @@ static void __kvm_gmem_invalidate_begin(struct gmem_file *f, pgoff_t start,
->                                         pgoff_t end,
->                                         enum kvm_gfn_range_filter attr_filter)
->  {
-> +       pgoff_t last  = end == -1UL ? ULONG_MAX : end;
->         bool flush = false, found_memslot = false;
->         struct kvm_memory_slot *slot;
->         struct kvm *kvm = f->kvm;
->         unsigned long index;
->  
-> -       xa_for_each_range(&f->bindings, index, slot, start, end - 1) {
-> +       xa_for_each_range(&f->bindings, index, slot, start, last) {
->                 pgoff_t pgoff = slot->gmem.pgoff;
->  
->                 struct kvm_gfn_range gfn_range = {
-> 
+- Reduced stack usage.  crypt_iv_lmk_one() now allocates only 112 bytes
+  on the stack instead of 520 bytes.
 
+- The library functions are strongly typed, preventing bugs like
+  https://lore.kernel.org/r/f1625ddc-e82e-4b77-80c2-dc8e45b54848@gmail.com
 
-Thanks for the detailed feedback and review, Sean.
-I didn't think enough about this from a reviewer/maintainer's perspective.
-I'll split this up, make suggested changes, drop the ULONG_MAX
-change, and rebase on kvm-x86 gmem for v3.
+- Slightly improved performance, as the library provides direct access
+  to the MD5 code without unnecessary overhead such as indirect calls.
 
-Thanks again,
-Shivank
+To preserve the existing behavior of lmk support being disabled when the
+kernel is booted with "fips=1", make crypt_iv_lmk_ctr() check
+fips_enabled itself.  Previously it relied on crypto_alloc_shash("md5")
+failing.  (I don't know for sure that lmk *actually* needs to be
+disallowed in FIPS mode; this just preserves the existing behavior.)
+
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ drivers/md/Kconfig    |  1 +
+ drivers/md/dm-crypt.c | 76 ++++++++++++-------------------------------
+ 2 files changed, 22 insertions(+), 55 deletions(-)
+
+diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
+index 104aa53550905..dcd232a2ca244 100644
+--- a/drivers/md/Kconfig
++++ b/drivers/md/Kconfig
+@@ -297,10 +297,11 @@ config DM_CRYPT
+ 	depends on (TRUSTED_KEYS || TRUSTED_KEYS=n)
+ 	select CRC32
+ 	select CRYPTO
+ 	select CRYPTO_CBC
+ 	select CRYPTO_ESSIV
++	select CRYPTO_LIB_MD5 # needed by lmk IV mode
+ 	help
+ 	  This device-mapper target allows you to create a device that
+ 	  transparently encrypts the data on it. You'll need to activate
+ 	  the ciphers you're going to use in the cryptoapi configuration.
+ 
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 5ef43231fe77f..04a553529dc27 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -19,10 +19,11 @@
+ #include <linux/blk-integrity.h>
+ #include <linux/crc32.h>
+ #include <linux/mempool.h>
+ #include <linux/slab.h>
+ #include <linux/crypto.h>
++#include <linux/fips.h>
+ #include <linux/workqueue.h>
+ #include <linux/kthread.h>
+ #include <linux/backing-dev.h>
+ #include <linux/atomic.h>
+ #include <linux/scatterlist.h>
+@@ -118,11 +119,10 @@ struct iv_benbi_private {
+ 	int shift;
+ };
+ 
+ #define LMK_SEED_SIZE 64 /* hash + 0 */
+ struct iv_lmk_private {
+-	struct crypto_shash *hash_tfm;
+ 	u8 *seed;
+ };
+ 
+ #define TCW_WHITENING_SIZE 16
+ struct iv_tcw_private {
+@@ -463,14 +463,10 @@ static int crypt_iv_null_gen(struct crypt_config *cc, u8 *iv,
+ 
+ static void crypt_iv_lmk_dtr(struct crypt_config *cc)
+ {
+ 	struct iv_lmk_private *lmk = &cc->iv_gen_private.lmk;
+ 
+-	if (lmk->hash_tfm && !IS_ERR(lmk->hash_tfm))
+-		crypto_free_shash(lmk->hash_tfm);
+-	lmk->hash_tfm = NULL;
+-
+ 	kfree_sensitive(lmk->seed);
+ 	lmk->seed = NULL;
+ }
+ 
+ static int crypt_iv_lmk_ctr(struct crypt_config *cc, struct dm_target *ti,
+@@ -481,26 +477,24 @@ static int crypt_iv_lmk_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 	if (cc->sector_size != (1 << SECTOR_SHIFT)) {
+ 		ti->error = "Unsupported sector size for LMK";
+ 		return -EINVAL;
+ 	}
+ 
+-	lmk->hash_tfm = crypto_alloc_shash("md5", 0,
+-					   CRYPTO_ALG_ALLOCATES_MEMORY);
+-	if (IS_ERR(lmk->hash_tfm)) {
+-		ti->error = "Error initializing LMK hash";
+-		return PTR_ERR(lmk->hash_tfm);
++	if (fips_enabled) {
++		ti->error = "LMK support is disabled due to FIPS";
++		/* ... because it uses MD5. */
++		return -EINVAL;
+ 	}
+ 
+ 	/* No seed in LMK version 2 */
+ 	if (cc->key_parts == cc->tfms_count) {
+ 		lmk->seed = NULL;
+ 		return 0;
+ 	}
+ 
+ 	lmk->seed = kzalloc(LMK_SEED_SIZE, GFP_KERNEL);
+ 	if (!lmk->seed) {
+-		crypt_iv_lmk_dtr(cc);
+ 		ti->error = "Error kmallocing seed storage in LMK";
+ 		return -ENOMEM;
+ 	}
+ 
+ 	return 0;
+@@ -512,11 +506,11 @@ static int crypt_iv_lmk_init(struct crypt_config *cc)
+ 	int subkey_size = cc->key_size / cc->key_parts;
+ 
+ 	/* LMK seed is on the position of LMK_KEYS + 1 key */
+ 	if (lmk->seed)
+ 		memcpy(lmk->seed, cc->key + (cc->tfms_count * subkey_size),
+-		       crypto_shash_digestsize(lmk->hash_tfm));
++		       MD5_DIGEST_SIZE);
+ 
+ 	return 0;
+ }
+ 
+ static int crypt_iv_lmk_wipe(struct crypt_config *cc)
+@@ -527,99 +521,71 @@ static int crypt_iv_lmk_wipe(struct crypt_config *cc)
+ 		memset(lmk->seed, 0, LMK_SEED_SIZE);
+ 
+ 	return 0;
+ }
+ 
+-static int crypt_iv_lmk_one(struct crypt_config *cc, u8 *iv,
+-			    struct dm_crypt_request *dmreq,
+-			    u8 *data)
++static void crypt_iv_lmk_one(struct crypt_config *cc, u8 *iv,
++			     struct dm_crypt_request *dmreq, u8 *data)
+ {
+ 	struct iv_lmk_private *lmk = &cc->iv_gen_private.lmk;
+-	SHASH_DESC_ON_STACK(desc, lmk->hash_tfm);
+-	union {
+-		struct md5_state md5state;
+-		u8 state[CRYPTO_MD5_STATESIZE];
+-	} u;
++	struct md5_ctx ctx;
+ 	__le32 buf[4];
+-	int i, r;
+ 
+-	desc->tfm = lmk->hash_tfm;
+-
+-	r = crypto_shash_init(desc);
+-	if (r)
+-		return r;
++	md5_init(&ctx);
+ 
+-	if (lmk->seed) {
+-		r = crypto_shash_update(desc, lmk->seed, LMK_SEED_SIZE);
+-		if (r)
+-			return r;
+-	}
++	if (lmk->seed)
++		md5_update(&ctx, lmk->seed, LMK_SEED_SIZE);
+ 
+ 	/* Sector is always 512B, block size 16, add data of blocks 1-31 */
+-	r = crypto_shash_update(desc, data + 16, 16 * 31);
+-	if (r)
+-		return r;
++	md5_update(&ctx, data + 16, 16 * 31);
+ 
+ 	/* Sector is cropped to 56 bits here */
+ 	buf[0] = cpu_to_le32(dmreq->iv_sector & 0xFFFFFFFF);
+ 	buf[1] = cpu_to_le32((((u64)dmreq->iv_sector >> 32) & 0x00FFFFFF) | 0x80000000);
+ 	buf[2] = cpu_to_le32(4024);
+ 	buf[3] = 0;
+-	r = crypto_shash_update(desc, (u8 *)buf, sizeof(buf));
+-	if (r)
+-		return r;
++	md5_update(&ctx, (u8 *)buf, sizeof(buf));
+ 
+ 	/* No MD5 padding here */
+-	r = crypto_shash_export(desc, &u.md5state);
+-	if (r)
+-		return r;
+-
+-	for (i = 0; i < MD5_HASH_WORDS; i++)
+-		__cpu_to_le32s(&u.md5state.hash[i]);
+-	memcpy(iv, &u.md5state.hash, cc->iv_size);
+-
+-	return 0;
++	cpu_to_le32_array(ctx.state.h, ARRAY_SIZE(ctx.state.h));
++	memcpy(iv, ctx.state.h, cc->iv_size);
+ }
+ 
+ static int crypt_iv_lmk_gen(struct crypt_config *cc, u8 *iv,
+ 			    struct dm_crypt_request *dmreq)
+ {
+ 	struct scatterlist *sg;
+ 	u8 *src;
+-	int r = 0;
+ 
+ 	if (bio_data_dir(dmreq->ctx->bio_in) == WRITE) {
+ 		sg = crypt_get_sg_data(cc, dmreq->sg_in);
+ 		src = kmap_local_page(sg_page(sg));
+-		r = crypt_iv_lmk_one(cc, iv, dmreq, src + sg->offset);
++		crypt_iv_lmk_one(cc, iv, dmreq, src + sg->offset);
+ 		kunmap_local(src);
+ 	} else
+ 		memset(iv, 0, cc->iv_size);
+-
+-	return r;
++	return 0;
+ }
+ 
+ static int crypt_iv_lmk_post(struct crypt_config *cc, u8 *iv,
+ 			     struct dm_crypt_request *dmreq)
+ {
+ 	struct scatterlist *sg;
+ 	u8 *dst;
+-	int r;
+ 
+ 	if (bio_data_dir(dmreq->ctx->bio_in) == WRITE)
+ 		return 0;
+ 
+ 	sg = crypt_get_sg_data(cc, dmreq->sg_out);
+ 	dst = kmap_local_page(sg_page(sg));
+-	r = crypt_iv_lmk_one(cc, iv, dmreq, dst + sg->offset);
++	crypt_iv_lmk_one(cc, iv, dmreq, dst + sg->offset);
+ 
+ 	/* Tweak the first block of plaintext sector */
+-	if (!r)
+-		crypto_xor(dst + sg->offset, iv, cc->iv_size);
++	crypto_xor(dst + sg->offset, iv, cc->iv_size);
+ 
+ 	kunmap_local(dst);
+-	return r;
++	return 0;
+ }
+ 
+ static void crypt_iv_tcw_dtr(struct crypt_config *cc)
+ {
+ 	struct iv_tcw_private *tcw = &cc->iv_gen_private.tcw;
+
+base-commit: 8bd9238e511d02831022ff0270865c54ccc482d6
+-- 
+2.51.0
+
 
