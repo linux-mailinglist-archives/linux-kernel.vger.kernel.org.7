@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-849101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE1EBCF34F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:51:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D57BCF35E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28A74266CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:51:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6CDE4E43EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD19F2459C5;
-	Sat, 11 Oct 2025 09:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F0F253B64;
+	Sat, 11 Oct 2025 09:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HVFFH7t4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKIp3WXP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CE92264BA;
-	Sat, 11 Oct 2025 09:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D1723B62C;
+	Sat, 11 Oct 2025 09:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760176284; cv=none; b=ju33NXQKdLl4HqlfgsrtVc1t5Ywrm6c2u/2LvNcl9l6tPgUH+oLWgzgoJk7QJ2sWmnv2q2bs9NIQRojVBATmYke7das3JaXXMrUmC6AwXwVOtuXUT+GrfwtGX6hgWZRPjh5HY446pcS4uNNLuFwBvk1kV7B/Ba2PcazmqK1Meh4=
+	t=1760176371; cv=none; b=XtbTuOG12BssWPGSj5Yc0p3N17emZf2jKhcVgGTrrH3v9nop3ajYu+4CT71U5tiIjOh4RnjTVvqcBFr61oEqFlZBGE3oTfYanen7TGe6SCI0h5aBHed5PXZxA8kFR9xm8C9Qgvombvctwucofxuf7wcNE5aaqU8BzJ+uLkWxlfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760176284; c=relaxed/simple;
-	bh=c9Dv+k+WMCSOf8X6lgtRzh+GIEDTCEfsKKsqpy5DtgY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LFZ1LpSYMQMj+WlCna053Lc0yREEtvToQY12ALvBJFf/TteoKOKVgnswZlU3QGKt/zB+MILPu4lfPzgwE0m8S6rwUdYTWtGAJJQQ2i2SLP+RIYNLRDKJfIhhIKgxsHHfOhFj/zf6YlD+1h28NCE710BkB9bF8wxsuxKfOmvA+Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HVFFH7t4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D9C3C4CEF4;
-	Sat, 11 Oct 2025 09:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1760176283; bh=c9Dv+k+WMCSOf8X6lgtRzh+GIEDTCEfsKKsqpy5DtgY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=HVFFH7t4IbeOeYpE7oFhoTrTSTiq+JB44fZO3iNJxrgAwB0rcKL+vpsllW3JEJgPw
-	 ijA87JB9sMAM3SpGOTzuPb192g6A7vqnJg37V3/oNXnIr0zBziMIJEF4wVyRGzZdJ5
-	 yctVVcMVQZCvNb9GDeKqb8XmVQJsyEIa11aKmJeg=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 738DFCCA476;
-	Sat, 11 Oct 2025 09:51:23 +0000 (UTC)
-From: Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
-Date: Sat, 11 Oct 2025 17:51:18 +0800
-Subject: [PATCH] ALSA: usb-audio: apply quirk for Huawei Technologies Co.,
- Ltd. CM-Q3
+	s=arc-20240116; t=1760176371; c=relaxed/simple;
+	bh=jc9YZsle3WLAtfJzis9aeE92ql/1xDWBDtwmj5gNJAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fig4F6yQuHU5qOTW3pUXvu4SZUFZCZpwfVqedPbA183eQ7QcSUfLrAyRlHjJ6qnq4Wm7lR3Navg4d0mMuCpbwuTrv97B5eA463UVCOw70Umpcwbd5Dc4YMJT9g+JxsMpuu5OZALjnQ2q02oDK4x3V8fAN2wiiWPxGaV/JO+toLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKIp3WXP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29EEC4CEF8;
+	Sat, 11 Oct 2025 09:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760176370;
+	bh=jc9YZsle3WLAtfJzis9aeE92ql/1xDWBDtwmj5gNJAA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HKIp3WXPyfB84fp5zyGifttUxZkr0IRSM8nxihrtsvt7E6XHkmbbAnNWInWsXujB5
+	 qEjcRPqrWHlTRdfwShTF9rntiupGS24f4CZPNQqT3U9OqDxsZch6q6dYr9Wy+XICyt
+	 QVa2XvBCsQwYGtHpwTpvyFTr2d4dMZ5VBQ6l4yfUkirsva0UBaOg9TRE5UNdCDx7ua
+	 Dqq6nYx46JrPIF2RBClntQI1JNg0e5R7RWuKKiPWOIVrM7JdaFYuWcWGx2Mkwzs5Jt
+	 dMQA9xuobUFlt7sfiatKA8LtVFFAQ9+Y9zOmfn8IJ4QXK/q5S3BpWt0SbWZYYWo/J+
+	 NYexfH06tu+xg==
+Message-ID: <0beae4dd-2feb-4891-b7b0-0f63db8f5615@kernel.org>
+Date: Sat, 11 Oct 2025 11:52:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/6] Battery temperature ADC plumbing on Qualcomm
+ platforms
+To: David Lechner <dlechner@baylibre.com>,
+ Luca Weiss <luca.weiss@fairphone.com>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Jens Reidel <adrian@mainlining.org>,
+ Casey Connolly <casey.connolly@linaro.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
+ <c770c799-4318-4c40-bd62-3cefbbbef731@baylibre.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <c770c799-4318-4c40-bd62-3cefbbbef731@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251011-sound_quirk-v1-1-d693738108ee@linux.dev>
-X-B4-Tracking: v=1; b=H4sIAJUo6mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDA0ND3eL80ryU+MLSzKJsXbNEC2MjM2MjUxNTQyWgjoKi1LTMCrBp0bG
- 1tQD01tW+XQAAAA==
-X-Change-ID: 20251011-sound_quirk-6a8326325451
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, zhanjun@uniontech.com, niecheng1@uniontech.com, 
- anguoli@uniontech.com, zhaochengyi@uniontech.com, fengyuan@uniontech.com, 
- Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760176282; l=1832;
- i=cryolitia.pukngae@linux.dev; s=20250730; h=from:subject:message-id;
- bh=c9Dv+k+WMCSOf8X6lgtRzh+GIEDTCEfsKKsqpy5DtgY=;
- b=wbp7xEW18wbmtw1ngB9hiPnogk1zwwypB0R5ze/0nCz7RPFSzg38kofd2SAaZfo+CLgutOA/t
- +SKFP291munD1kixPWbiEcz6xwMIQ5abOt9OQ3Pq9q3D4bahtbTm5MD
-X-Developer-Key: i=cryolitia.pukngae@linux.dev; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia.pukngae@linux.dev/20250730
- with auth_id=540
 
-There're several different actual hardwares sold by Huawei, using the
-same USB ID 12d1:3a07.
+Hi All,
 
-The first one we found, having a volume control named "Headset Playback
-Volume", reports a min value -15360, and will mute iff setting it to
--15360. It can be simply fixed by quirk flag MIXER_PLAYBACK_MIN_MUTE,
-which we have already submitted previously.[1]
+Luca thank you for Cc-ing me.
 
-The second one we found today, having a volume control named "PCM
-Playback Volume", reports its min -11520 and res 256, and will mute
-when less than -11008. Because of the already existing quirk flag, we
-can just set its min to -11264, and the new minimum value will still
-not be available to userspace, so that userspace's minimum will be the
-correct -11008.
+On 10-Oct-25 10:56 PM, David Lechner wrote:
+> On 10/10/25 6:21 AM, Luca Weiss wrote:
+>> This is an RFC which implements a potential solution to get battery
+>> temperature readings working on for example smartphones with Qualcomm
+>> SoCs.
+>>
+> 
+> ...
+> 
+>> 3. Add temperature-lookup-table as property to simple-battery
+>>
+>> Since the NTC is a part of the battery pack, adding a
+>> temperature-lookup-table property to simple-battery would make sense
+>> instead of having this lookup table be standalone in the
+>> generic-adc-thermal node. However being able to re-use the existing code
+>> in generic-adc-thermal lead me to the current proposal.
+>>
+> Did you consider creating a specific compatible string for the battery pack?
+> Then the battery node could have the io-channels property for the ADC
+> connected to the temperature sensor. Then a specific battery driver could
+> handle the conversion as needed rather than filling the devicetree with
+> conversion tables.
 
-1. https://lore.kernel.org/all/20250903-sound-v1-3-d4ca777b8512@uniontech.com/
+That will require a driver update, filling the driver (and thus memory)
+with conversion tables each time a new battery model (one model phone
+can have multiple battery revisions) comes out.
 
-Tested-by: Guoli An <anguoli@uniontech.com>
-Signed-off-by: Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
----
- sound/usb/mixer.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+That seems undesirable. To me these conversion tables are very much
+something which belongs in DT rather then being hardcoded in
+the driver.
 
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index 34bcbfd8b54e66abc0229eefd354eb7bc4c01576..ae412e651faf905c9f7d600de8e19c51995cd3f9 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1189,6 +1189,13 @@ static void volume_control_quirks(struct usb_mixer_elem_info *cval,
- 			cval->min = -14208; /* Mute under it */
- 		}
- 		break;
-+	case USB_ID(0x12d1, 0x3a07): /* Huawei Technologies Co., Ltd. CM-Q3 */
-+		if (!strcmp(kctl->id.name, "PCM Playback Volume")) {
-+			usb_audio_info(chip,
-+				       "set volume quirk for Huawei Technologies Co., Ltd. CM-Q3\n");
-+			cval->min = -11264; /* Mute under it */
-+		}
-+		break;
- 	}
- }
- 
+Also contrast this to ACPI where there actually is a mechanism defined
+for thermal lookup tables and there all these things typically just
+work when the ACPI tables are written properly. IMHO we want to move
+more towards this direction where things just work without requiring
+kernel code changes for every new model.
 
----
-base-commit: 7e9827afc78073096149cf3565ba668fe2ef4831
-change-id: 20251011-sound_quirk-6a8326325451
+And we already have a mechanism in DT to map an ADC voltage to
+a temperature in the generic-adc-thermal driver.
 
-Best regards,
--- 
-Cryolitia PukNgae <cryolitia.pukngae@linux.dev>
+So all that is left to do really is to come up with a clean way
+to export the temperature from the generic-adc-thermal driver
+to the generic-adc-battery driver.
+
+> The simple-battery bindings are already far from simple! So I would not
+> be inclined to add more to it.
+
+I think we all agree on this and we also don't want to duplicate
+the generic-adc-thermal bindings + code implementing that functionality.
+
+IMHO not wanting to duplicate the bindings + functionality applies to
+both: a) directly exporting an IIO temp channel from the ADC driver and
+b) adding volt -> temp mapping functionality to the simple-battery bindings.
+
+So that basically leaves us with coming up with a way for
+the generic-adc-battery code to consume the temperature coming out of
+the generic-adc-thermal code and there are 2 ways to do this:
+
+1. Modify the generic-adc-thermal driver to export an IIO channel
+2. Modify the thermal-zone core to allow referencing to a thermal-zone
+   with a phandle *and* modify generic-adc-battery to be able to
+   optionally get the temperature from a thermal-zone instead of
+   from an IIO-channel
+
+Of these two options 1. clear is the most KISS option. SO I agree with
+Luca that 1. as implemented in this series is the best way forward.
+
+Regards,
+
+Hans
 
 
 
