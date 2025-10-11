@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-849102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D57BCF35E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:53:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C506BCF368
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6CDE4E43EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C9A63A52D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F0F253B64;
-	Sat, 11 Oct 2025 09:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305A823BCE3;
+	Sat, 11 Oct 2025 10:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKIp3WXP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipWja8p6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D1723B62C;
-	Sat, 11 Oct 2025 09:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878A91DE4CD;
+	Sat, 11 Oct 2025 10:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760176371; cv=none; b=XtbTuOG12BssWPGSj5Yc0p3N17emZf2jKhcVgGTrrH3v9nop3ajYu+4CT71U5tiIjOh4RnjTVvqcBFr61oEqFlZBGE3oTfYanen7TGe6SCI0h5aBHed5PXZxA8kFR9xm8C9Qgvombvctwucofxuf7wcNE5aaqU8BzJ+uLkWxlfo=
+	t=1760176821; cv=none; b=itGDQDfws2J4GnCp/fbQ3cAxQHpCJnfokR9gLfyz0sESxMXOOz5T5ZqfKyzpaA27KhKYVekuMLBtM/nD5s48/bRjtvMVH37kAUNqxQYHAGkOtCdeYvCNhChLNqd8UAhV7qwX0OsVRhQ5iCFSvv2q7NeRv1uXbCnWqxCROKCtUpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760176371; c=relaxed/simple;
-	bh=jc9YZsle3WLAtfJzis9aeE92ql/1xDWBDtwmj5gNJAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fig4F6yQuHU5qOTW3pUXvu4SZUFZCZpwfVqedPbA183eQ7QcSUfLrAyRlHjJ6qnq4Wm7lR3Navg4d0mMuCpbwuTrv97B5eA463UVCOw70Umpcwbd5Dc4YMJT9g+JxsMpuu5OZALjnQ2q02oDK4x3V8fAN2wiiWPxGaV/JO+toLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKIp3WXP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29EEC4CEF8;
-	Sat, 11 Oct 2025 09:52:45 +0000 (UTC)
+	s=arc-20240116; t=1760176821; c=relaxed/simple;
+	bh=7yk3MyybYlBVgFNRCla3ShEZ9hQTXp85epGyYGmllnE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OnxAknfhfjZD25kYW/Sx8KV15QnYVyH/xt7nFu6oxqPx7cJ5HG8McKA1yECKrKmsAR5mfEEixMV4VtpeID/pP8G04qIUu1BsCRtR6LxtsY5ULDQ7FOO9VV0ElVrY5YCgKIllQVprMKSJtUF/Ui8up7XTrkfwwvrtNpg6bbcEWPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipWja8p6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07757C4CEF4;
+	Sat, 11 Oct 2025 10:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760176370;
-	bh=jc9YZsle3WLAtfJzis9aeE92ql/1xDWBDtwmj5gNJAA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HKIp3WXPyfB84fp5zyGifttUxZkr0IRSM8nxihrtsvt7E6XHkmbbAnNWInWsXujB5
-	 qEjcRPqrWHlTRdfwShTF9rntiupGS24f4CZPNQqT3U9OqDxsZch6q6dYr9Wy+XICyt
-	 QVa2XvBCsQwYGtHpwTpvyFTr2d4dMZ5VBQ6l4yfUkirsva0UBaOg9TRE5UNdCDx7ua
-	 Dqq6nYx46JrPIF2RBClntQI1JNg0e5R7RWuKKiPWOIVrM7JdaFYuWcWGx2Mkwzs5Jt
-	 dMQA9xuobUFlt7sfiatKA8LtVFFAQ9+Y9zOmfn8IJ4QXK/q5S3BpWt0SbWZYYWo/J+
-	 NYexfH06tu+xg==
-Message-ID: <0beae4dd-2feb-4891-b7b0-0f63db8f5615@kernel.org>
-Date: Sat, 11 Oct 2025 11:52:43 +0200
+	s=k20201202; t=1760176821;
+	bh=7yk3MyybYlBVgFNRCla3ShEZ9hQTXp85epGyYGmllnE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ipWja8p6NiPSUbYJhlW2Sa3QetWXS8an+AnAX6jaIAiL6o8yPrCeARTxCT73z7Ill
+	 8FBYVVlvvp3/1ja1SR1A1BmoeevXImnndsTQie6tS15RU3qgGrYt9Bm7qqrtBKw2Mo
+	 DAZxK3NbpaLI/zdDVmatyexWWCozkr/ZzzHaE4lhflhkkeulsLgVfOjRnQN5I1mXvF
+	 SptpvrMb1YvBj56OxmBKxXjMZd00DX1/8l44TqwmCpGPvF9ltz32/LB1jfnXDIQfJD
+	 geopXXVCzxhBd6BWlfknTWZlqnUfC5DJ/6sTybJcSOruLlbdaqnOsKD5pUyXAgEUud
+	 hu7d1704Oby6g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v7WOg-0000000D7RR-38KY;
+	Sat, 11 Oct 2025 10:00:18 +0000
+Date: Sat, 11 Oct 2025 11:00:11 +0100
+Message-ID: <87sefpoj10.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+In-Reply-To: <graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+	<86qzvcxi3j.wl-maz@kernel.org>
+	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+	<86o6qgxayt.wl-maz@kernel.org>
+	<86ms60x7w7.wl-maz@kernel.org>
+	<us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+	<86bjmeyh5m.wl-maz@kernel.org>
+	<graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/6] Battery temperature ADC plumbing on Qualcomm
- platforms
-To: David Lechner <dlechner@baylibre.com>,
- Luca Weiss <luca.weiss@fairphone.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Jens Reidel <adrian@mainlining.org>,
- Casey Connolly <casey.connolly@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
- <c770c799-4318-4c40-bd62-3cefbbbef731@baylibre.com>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <c770c799-4318-4c40-bd62-3cefbbbef731@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi All,
-
-Luca thank you for Cc-ing me.
-
-On 10-Oct-25 10:56 PM, David Lechner wrote:
-> On 10/10/25 6:21 AM, Luca Weiss wrote:
->> This is an RFC which implements a potential solution to get battery
->> temperature readings working on for example smartphones with Qualcomm
->> SoCs.
->>
+On Fri, 10 Oct 2025 16:03:01 +0100,
+Thierry Reding <thierry.reding@gmail.com> wrote:
 > 
-> ...
+> On Fri, Oct 10, 2025 at 03:18:13PM +0100, Marc Zyngier wrote:
+> > 
+> > CPU hotplug is the main area of concern, and I'm pretty sure it breaks
+> > this distribution mechanism (or the other way around). Another thing
+> > is that if firmware isn't aware that 1:N interrupts can (or should)
+> > wake-up a CPU from sleep, bad things will happen. Given that nobody
+> > uses 1:N, you can bet that any bit of privileged SW (TF-A,
+> > hypervisors) is likely to be buggy (I've already spotted bugs in KVM
+> > around this).
 > 
->> 3. Add temperature-lookup-table as property to simple-battery
->>
->> Since the NTC is a part of the battery pack, adding a
->> temperature-lookup-table property to simple-battery would make sense
->> instead of having this lookup table be standalone in the
->> generic-adc-thermal node. However being able to re-use the existing code
->> in generic-adc-thermal lead me to the current proposal.
->>
-> Did you consider creating a specific compatible string for the battery pack?
-> Then the battery node could have the io-channels property for the ADC
-> connected to the temperature sensor. Then a specific battery driver could
-> handle the conversion as needed rather than filling the devicetree with
-> conversion tables.
+> Okay, I can find out if CPU hotplug is a common use-case on these
+> devices, or if we can run some tests with that.
 
-That will require a driver update, filling the driver (and thus memory)
-with conversion tables each time a new battery model (one model phone
-can have multiple battery revisions) comes out.
+It's not so much whether CPU hotplug is of any use to your particular
+box, but whether this has any detrimental impact on *any* machine
+doing CPU hotplug.
 
-That seems undesirable. To me these conversion tables are very much
-something which belongs in DT rather then being hardcoded in
-the driver.
+To be clear, this stuff doesn't go in if something breaks, no matter
+how small.
 
-Also contrast this to ACPI where there actually is a mechanism defined
-for thermal lookup tables and there all these things typically just
-work when the ACPI tables are written properly. IMHO we want to move
-more towards this direction where things just work without requiring
-kernel code changes for every new model.
+	M.
 
-And we already have a mechanism in DT to map an ADC voltage to
-a temperature in the generic-adc-thermal driver.
-
-So all that is left to do really is to come up with a clean way
-to export the temperature from the generic-adc-thermal driver
-to the generic-adc-battery driver.
-
-> The simple-battery bindings are already far from simple! So I would not
-> be inclined to add more to it.
-
-I think we all agree on this and we also don't want to duplicate
-the generic-adc-thermal bindings + code implementing that functionality.
-
-IMHO not wanting to duplicate the bindings + functionality applies to
-both: a) directly exporting an IIO temp channel from the ADC driver and
-b) adding volt -> temp mapping functionality to the simple-battery bindings.
-
-So that basically leaves us with coming up with a way for
-the generic-adc-battery code to consume the temperature coming out of
-the generic-adc-thermal code and there are 2 ways to do this:
-
-1. Modify the generic-adc-thermal driver to export an IIO channel
-2. Modify the thermal-zone core to allow referencing to a thermal-zone
-   with a phandle *and* modify generic-adc-battery to be able to
-   optionally get the temperature from a thermal-zone instead of
-   from an IIO-channel
-
-Of these two options 1. clear is the most KISS option. SO I agree with
-Luca that 1. as implemented in this series is the best way forward.
-
-Regards,
-
-Hans
-
-
+-- 
+Without deviation from the norm, progress is not possible.
 
