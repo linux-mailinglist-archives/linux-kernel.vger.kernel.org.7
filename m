@@ -1,106 +1,181 @@
-Return-Path: <linux-kernel+bounces-849196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05710BCF7AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:57:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DAABCF7C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 17:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC40E3BAAE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:57:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 520634E4242
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 15:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3236D27E070;
-	Sat, 11 Oct 2025 14:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D531027BF89;
+	Sat, 11 Oct 2025 15:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="hOOMkz/N"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsHAGq8d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C732F29;
-	Sat, 11 Oct 2025 14:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287921E480
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 15:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760194648; cv=none; b=FOybSi7s06ysBDARsLNol0Iy9XrjfZAREthAb7ofhD4xNyXuHo0C49+nfFH2cUu3nwZmhq1GblS4UEEhH6ozLZEZFldowlI4dzBy1CfrVj+5xUyqPUNS13wCG8V9BqCRvZ/r5nFvtBjkuMZLYBibN8RE9HT2YdYn3ihW/WS8Jsg=
+	t=1760194901; cv=none; b=WervNXglDlofGQFAAk8nLQfvqglfWr1I/aRxZD0oHAhtv+dKxWKKhVHKLnVHuzR4CK6B9LTztffG80cJHQ2BIWnnKZewalKEj9zFgvsklp1MC9n0aFcge04qi/jW4onJvB1sBNWMkEAIySMazYAa37z8qRlhckB+bqQatdSFyA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760194648; c=relaxed/simple;
-	bh=/kmmVCY+6fLWjnNRslBr1xg2f4CGGA+58gQPdY5F8EI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3LCXEynNX71KEPy9vCdxeKUcSWDMTBl9b91X0yn0FttK+CAU7rj0FWSqCM61Bk8Qcuh/yVlE/JU4ycJxjQsezhLHN76THKheQKprJnznHTIi/PIaODlI5NrH31hf8BcAjvl1CBwMTsFmXdHCWzNpe5Lk9NboHvA4BBYBboJ7Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=hOOMkz/N; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.10])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id D18AB40762F5;
-	Sat, 11 Oct 2025 14:57:22 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru D18AB40762F5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1760194642;
-	bh=ymA85Q5gcbWAp8GP4xroF8s5mtp2IUluyFeJzNchXjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hOOMkz/NzBYgBDp9qSND/pFuthT+8dLNTZSPAvBHSEehUlbH/c4qK+tKIpk5hMe8j
-	 VNs79qyGzDVTms9x1DHNkcJrHdkM8XSqbxjwgiuddj4J0r2A9FB6wsInop9Y8elnIu
-	 jXxtR5lPybXAjd//gTGTPUyCZ+jT4BPkvcOw4sJw=
-Date: Sat, 11 Oct 2025 17:57:22 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, 
-	Zong-Zhe Yang <kevin_yang@realtek.com>, Po-Hao Huang <phhuang@realtek.com>, 
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH rtw-next v2 0/7] wifi: rtw89: improvements for USB part
-Message-ID: <20251011171303-6e37619c4071ee0bae4f9675-pchelkin@ispras>
-References: <20251002200857.657747-1-pchelkin@ispras.ru>
- <88f30433-98fa-4f9a-bbe3-9d630b72c2e4@gmail.com>
+	s=arc-20240116; t=1760194901; c=relaxed/simple;
+	bh=l+BZFi7FQ0gPIfmUyKUU89IcSli2ZdE01CP6ZymDA1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O7cDTUwZbw5ljquB7yqkitCUNmQotu2MCHFuAHwRfOQzIGQzrAYhInEoTzE4lhQ5j87rBhue3pUhuI0pr6vaip/q8k9AK60kyrLLNLlyxXVsvaij4LaSGNOqNecERqLDzRRs+4HlwYOcszmQGio5aqyRkOby1b3P1KZyBUWVCSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsHAGq8d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00831C4CEF4
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 15:01:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760194901;
+	bh=l+BZFi7FQ0gPIfmUyKUU89IcSli2ZdE01CP6ZymDA1U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tsHAGq8dCVb2hVSocMgxqr7qyYj5+AKGnNNotgILXaJcZW20HJ9zHbk5bc8MAasJB
+	 DGIgOAcZoh181a0g3qHUSjhsInio82Gzpz/0bSDpc9HMowZhB0UYG+wL685LcxiDHA
+	 GHDirQ4tLupNMXXJCX07tPelAY0JHllVubWToOWC0fFxRIJMyQebl/4kfn7XL/tLpe
+	 i1SUOxXGMViX3cjRPGrAnFt4WJkRMR9jfqaGHwAoSrdQ+L1QfCD3gFsPaLtCJvgOg0
+	 8t04jZiPVC8y3aEqpyCX99zqFY0hHt3A+faZRg0StkoJRoQQdFmqX0a8kNyNzCZZfQ
+	 ilr5qP68oSOFA==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-639e1e8c8c8so5774368a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:01:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKsFZ2+05TPysf0r12jsdxkBG4WEdjP2nCCOjidt8Fa6KYm4SzrYFRMGmrDbAKbU/asqfSQ8/4mL6pLMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrV5HiS5mzkf00r2kQN68kO8LVk5usEc2UzizJMgcX91jCZeHn
+	+8DmYXzyRlMlLr9XxSDZmRWDLB5qsHlc14hRWEghoLAfrjcKeel5V6QPkKD9WwiK910dfbSEvPr
+	WNxGR6jwMJufMW2hOcnPZFZiacwAz4iU=
+X-Google-Smtp-Source: AGHT+IHAAjGILFWSLd2horNFRfV9fxdmdzWYj3ySTCm2Rj6N1tAB750HNgdkpDddPHK+8MUEnYbHC/EcCmKKJlMNNAU=
+X-Received: by 2002:a05:6402:254f:b0:637:e4d1:aeff with SMTP id
+ 4fb4d7f45d1cf-639d5c3ebc3mr15509926a12.19.1760194899593; Sat, 11 Oct 2025
+ 08:01:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <88f30433-98fa-4f9a-bbe3-9d630b72c2e4@gmail.com>
+References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
+ <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
+ <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
+ <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
+ <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn> <CAMj1kXFLyBbRL+pAAQ6be6dxqFPiyw_Ug8qNQWaicZQ235HE=A@mail.gmail.com>
+ <8091e8fa-3483-af39-2f7a-e4eb62b0944f@loongson.cn> <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
+ <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
+ <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn> <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
+ <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
+In-Reply-To: <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 11 Oct 2025 23:01:28 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
+X-Gm-Features: AS18NWAB1PQYI1FQztjMtlWlWvM53GRJ5zRkwYU-MM98Alr4NPAHm_TfvKHj05U
+Message-ID: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
+Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 04. Oct 20:37, Bitterblue Smith wrote:
-> I tested these patches with RTL8851BU, RTL8832AU, RTL8832BU, RTL8832CU, and
-> RTL8912AU. They all work, with a few additions.
-> 
-> Before these patches RTL8851BU and RTL8832AU would remain "connected" when
-> I power off the router. That's because they don't have beacon filtering in
-> the firmware and the null frames sent by mac80211 were always marked with
-> IEEE80211_TX_STAT_ACK. With these patches they disconnect immediately when
-> I power off the router. So that works nicely.
-> 
+On Sat, Oct 11, 2025 at 10:48=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+>
+> On Sat, 11 Oct 2025 at 00:43, Huacai Chen <chenhuacai@kernel.org> wrote:
+> >
+> > On Sat, Oct 11, 2025 at 3:29=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongso=
+n.cn> wrote:
+> > >
+> > > On 2025/10/11 =E4=B8=8A=E5=8D=8811:40, Ard Biesheuvel wrote:
+> > > > On Fri, 10 Oct 2025 at 19:54, Huacai Chen <chenhuacai@kernel.org> w=
+rote:
+> > > >>
+> > > >> On Sat, Oct 11, 2025 at 9:13=E2=80=AFAM Tiezhu Yang <yangtiezhu@lo=
+ongson.cn> wrote:
+> > > >>>
+> > > >>> On 2025/10/11 =E4=B8=8A=E5=8D=8812:25, Ard Biesheuvel wrote:
+> > > >>> ...
+> > > >>>> Why do we need both (1) and (2)?
+> > > >>>
+> > > >>> Not both, either (1) or (2).
+> > > >>> Which one do you prefer? Or any other suggestions?
+> > > >>>
+> > > >>> Taking all of the considerations in balance, we should decide
+> > > >>> what is the proper way.
+> > > >> As a summary, there are three methods:
+> > > >> (1) Only link libstub with vmlinux.o during the final vmlinux link=
+.
+> > > >> (2) Remove the attribute __noreturn for real_kernel_entry() and ad=
+d while (1).
+> > > >> (3) Ignore "__efistub_" prefix in objtool.
+> > > >>
+> > > >> Josh prefers method (1), I prefer method (3) but also accept metho=
+d
+> > > >> (1) if it is not only specific to loongarch.
+> > > >>
+> > > >
+> > > > This is a false positive warning in objtool, which complains about =
+a
+> > > > function that falls through, even though that can never happen in
+> > > > reality.
+> > > >
+> > > > To me, it is not acceptable to modify how vmlinux.o is constructed
+> > > > also for other architectures, in order to hide some of its constitu=
+ent
+> > > > parts from objtool, which do not use objtool to begin with.
+> > > >
+> > > >
+> > > > If you are not willing to fix objtool, I suggest fixing the loongar=
+ch
+> > > > code like this:
+> > >
+> > > Thank you.
+> > >
+> > > > --- a/drivers/firmware/efi/libstub/loongarch.c
+> > > > +++ b/drivers/firmware/efi/libstub/loongarch.c
+> > > > @@ -10,7 +10,7 @@
+> > > >   #include "efistub.h"
+> > > >   #include "loongarch-stub.h"
+> > > >
+> > > > -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long =
+cmdline,
+> > > > +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
+> > > >                                            unsigned long systab);
+> > > >
+> > > >   efi_status_t check_platform_features(void)
+> > > > @@ -81,4 +81,6 @@
+> > > >
+> > > >          real_kernel_entry(true, (unsigned long)cmdline_ptr,
+> > > >                            (unsigned long)efi_system_table);
+> > > > +
+> > > > +       return EFI_LOAD_ERROR;
+> > > >   }
+> > >
+> > > I tested the above changes, the falls through objtool warning can
+> > > be fixed because efi_boot_kernel() ends with a return instruction,
+> > > I think this is reasonable.
+> > >
+> > > efi_boot_kernel() has a return value, there are "return status" in
+> > > other parts of efi_boot_kernel(), it should also return at the end
+> > > of efi_boot_kernel() in theory, although we should never get here.
+> > >
+> > > If there are more comments, please let me know.
+> > I still don't want LoongArch to be a special case, which means
+> > efi_boot_kernel() in fdt.c, jump_kernel_func in riscv.c and
+> > enter_kernel in arm64.c should also be modified.
+> >
+>
+> You have made LoongArch a special case by adding objtool support,
+> which  arm64 and RISC-V do not have.
+>
+> So NAK to changing arm64 and RISC-V as well.
+Hmmm, I want to know whether this problem is an objtool issue or an
+efistub issue in essence. If it is an objtool issue, we should fix
+objtool and don't touch efistub. If it is an efistub issue, then we
+should modify efistub (but not specific to LoongArch, when RISC-V and
+ARM64 add objtool they will meet the same issue).
 
-Glad to hear, thanks for the insight.
-
-> What doesn't work is TX reports for management frames. Currently rtw89
-> doesn't configure the firmware to provide TX reports for the management
-> queue. That can be enabled with SET_CMC_TBL_MGQ_RPT_EN for the wifi 6 chips
-> and with CCTLINFO_G7_W0_MGQ_RPT_EN for RTL8922AU.
-
-I'll investigate. Looks like the enabling of the management part should go
-to rtw89_fw_h2c_default_cmac_tbl().
-
-Btw, could you give a quick hint please on how I can check during testing
-that the reporting facility works properly for all cases needed?  By far
-I've dealt with iw utility and debugging printks incorporated into rtw89
-but it doesn't look sufficient anymore..
-
-> 
-> The other thing that doesn't work is the TX reports are different for
-> RTL8852CU and RTL8922AU. It's only a small difference for RTL8852CU:
-> 
-> #define RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT_V1 GENMASK(15, 10)
-> 
-> RTL8922AU is more strange. It needs something like this:
-> 
-> #define RTW89_C2H_MAC_TX_RPT_W12_TX_STATE_V2 GENMASK(9, 8)
-> #define RTW89_C2H_MAC_TX_RPT_W12_SW_DEFINE_V2 GENMASK(15, 12)
-> #define RTW89_C2H_MAC_TX_RPT_W14_DATA_TX_CNT_V2 GENMASK(15, 10)
-> 
-> The C2H is 80 bytes here (header included).
-
-rtw89_mac_c2h_tx_rpt() needs to account for different types of C2H report
-formats, bah.  Will add this missing part.
+Huacai
 
