@@ -1,212 +1,149 @@
-Return-Path: <linux-kernel+bounces-849057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EF0BCF1A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:57:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE82ABCF1B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DFE189FA4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:57:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEDEF4E777E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B59235074;
-	Sat, 11 Oct 2025 07:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16AE238C0B;
+	Sat, 11 Oct 2025 07:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMI+C+rC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="hiki661m"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B114C81
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760169445; cv=none; b=ta12daN+ruISM7P3712+GlPhQnaZVLv83L4tzS4KamWGZapfm/MNyCgT1mrE976YWzGklBZAQEAMIjQdoKWvor/IU3WjJDLPauKXc5HUhQVdNjs45sh30edPegYFI9wPReVe7w53jjCSV6k4Dg5LlvdJTt6IBUpYxcNswCaquDY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760169445; c=relaxed/simple;
-	bh=VZeBBNGnMP2xHvygAST1ORNwMzxG9wGMo9aWFTR0gjQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G4hO1rxi8FUHidAovU40afjGiolWNvzz1KYV3RopLoZztmFbsH6MfyxUrLdZYhTIM2hgYrYLvslalWvlTMEjR5YfKPaoXY/epkJQ5S9NukRvxUAIpGZr0ZKXYP/j+IkFCkkOMHFkdd9gRgCW/E1vduEKbDnpqDkl5RdimMndwbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMI+C+rC; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760169444; x=1791705444;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VZeBBNGnMP2xHvygAST1ORNwMzxG9wGMo9aWFTR0gjQ=;
-  b=mMI+C+rCa7K4BceQO2BkXiIpxwdR8bW3AugdsPM8HocnESlR4Sw2rlhB
-   urhiLU8jRl++AXw7YlsJNWLLe00y/S6QpGRv8q/l4qZiP3Mtt+rs/wyIi
-   aDTETjQZ+EM7GGTpnmHc30rF5PGJtTZPQPJnHi8tk3cVelKZ64eXQ97He
-   jSXZcKNNXrxFR2PdT4r61pqM1VVu+D/gLoMaXef+lYEvmdxgtBrmdbYY1
-   pkXWnTCacjx2rLMo4G4WuE+GrNVk02Iu7XBjWSd4D2vAT/ES6L8PTXbcl
-   822AJq0cWrHRQ29GP/MjsDrCBiXuXCOLADHUYof27uf/cuVjbzjz2kSBe
-   w==;
-X-CSE-ConnectionGUID: YPt3V+8pQ0a74InBKVz+rg==
-X-CSE-MsgGUID: 9UlJqNyZT1yYNXfjvRCxTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="73720049"
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="73720049"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 00:57:23 -0700
-X-CSE-ConnectionGUID: f4aFtuF4Q7Oimd3Bl0Dp7Q==
-X-CSE-MsgGUID: yRxpbkLMQm+ToIR+7324Bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="180742084"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 00:57:19 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	linmiaohe@huawei.com,
-	tony.luck@intel.com
-Cc: qiuxu.zhuo@intel.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	nao.horiguchi@gmail.com,
-	farrah.chen@intel.com,
-	jiaqiyan@google.com,
-	lance.yang@linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] mm: prevent poison consumption when splitting THP
-Date: Sat, 11 Oct 2025 15:55:19 +0800
-Message-ID: <20251011075520.320862-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
-References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725682367B5;
+	Sat, 11 Oct 2025 07:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760169475; cv=pass; b=T1snV7P6z08MYQAYImHSGEIyR2lAnGa0t7Ge37oAbzBKgTKbx20DSR10JKQaKNsoA5bv7Y8/bdvSInR0mkeC7+d2lGB7aHoHz34cIIRiVXfgzTN0uSgVCYgcYyJQkyMLRJDTYIIQTsz0bcBShs5kUvLAe4a+dq45HOFCsyyDx0s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760169475; c=relaxed/simple;
+	bh=uZRQZy0oMNeA7ShdMfkq03Evjw3bTuH1YwjVhZwPVf8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QzUtJa26htZfs0yb4nL9/vzbVlJaoWPAwOzi6MVPw51kWBPsveTooU3db0qh2oqgAr+l8WIsKk3tUxbEk4xF64Zi3P5iALOQtc1eUV1EdJk8BLlimIczN94QM322wG8Ok1OQNYJdYC2Y09a5XxBkuYV7W6pyonYWZyWKwmijID0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=hiki661m; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760169446; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KLl1+e+W9DzaoLYJzbMiO+O4s8HsZP3p9CwUndYoD+5DAstyBx7vEDq6NO9esSXLuGBmO4vjde+as/e0soTpuf7kAnK+8E7IJx+E5oCM3HmHiaeukGrrhiJk6bMc0VePbLVuMtmz3/E2UwZG5GZT2v+qNdJg2Vlx1GCvfFaZL3o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760169446; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=T8D9JSmjoAYBStsc1vhdarg1O0rJKit5HAJi7BCHXNI=; 
+	b=YMujKQP4mm5PtNOhEaGYZ5xuDL/TUvVWfuIX7aciWq6fbNWyZZoRneJVOMl4k+ZoCWeK6qpMKj49CVm/gEvQpNZekC8MOjKAsNMMMr8y6+7PuKlAwFTL8Y0KTVnjxWE3jfrCFUbotjPuFtj38umH+V5cMBUaGPD2fVFasjDAArg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
+	dmarc=pass header.from=<sjoerd@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760169446;
+	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=T8D9JSmjoAYBStsc1vhdarg1O0rJKit5HAJi7BCHXNI=;
+	b=hiki661mfVPG5vQuxCUrKp4b9mhLeonNq8bnkGxHq05iBV7aBX4Z7ACWoYFpcFqc
+	dJxjLUptDbelZ0S6Kf6A7s8tg6h6ii+NL7ThCswSP57Qjyds/lC6I0/cxZ5uZNGHitK
+	5cRsY1j0zQ1hFKZ7XwfQ7TZnDzmlnVtYD9OBeKVM=
+Received: by mx.zohomail.com with SMTPS id 1760169443955726.6866621828841;
+	Sat, 11 Oct 2025 00:57:23 -0700 (PDT)
+Message-ID: <5137227fee0bb06dac3558b0d2db47972785df48.camel@collabora.com>
+Subject: Re: [PATCH] drm/mediatek: fix device use-after-free on unbind
+From: Sjoerd Simons <sjoerd@collabora.com>
+To: Johan Hovold <johan@kernel.org>, Chun-Kuang Hu
+ <chunkuang.hu@kernel.org>,  Philipp Zabel <p.zabel@pengutronix.de>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,  CK Hu <ck.hu@mediatek.com>, Ma
+ Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Date: Sat, 11 Oct 2025 09:57:20 +0200
+In-Reply-To: <20251006093937.27869-1-johan@kernel.org>
+References: <20251006093937.27869-1-johan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-5 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-When performing memory error injection on a THP (Transparent Huge Page)
-mapped to userspace on an x86 server, the kernel panics with the following
-trace. The expected behavior is to terminate the affected process instead
-of panicking the kernel, as the x86 Machine Check code can recover from an
-in-userspace #MC.
+On Mon, 2025-10-06 at 11:39 +0200, Johan Hovold wrote:
+> A recent change fixed device reference leaks when looking up drm
+> platform device driver data during bind() but failed to remove a partial
+> fix which had been added by commit 80805b62ea5b ("drm/mediatek: Fix
+> kobject put for component sub-drivers").
+>=20
+> This results in a reference imbalance on component bind() failures and
+> on unbind() which could lead to a user-after-free.
+>=20
+> Make sure to only drop the references after retrieving the driver data
+> by effectively reverting the previous partial fix.
+>=20
+> Note that holding a reference to a device does not prevent its driver
+> data from going away so there is no point in keeping the reference.
 
-  mce: [Hardware Error]: CPU 0: Machine Check Exception: f Bank 3: bd80000000070134
-  mce: [Hardware Error]: RIP 10:<ffffffff8372f8bc> {memchr_inv+0x4c/0xf0}
-  mce: [Hardware Error]: TSC afff7bbff88a ADDR 1d301b000 MISC 80 PPIN 1e741e77539027db
-  mce: [Hardware Error]: PROCESSOR 0:d06d0 TIME 1758093249 SOCKET 0 APIC 0 microcode 80000320
-  mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-  mce: [Hardware Error]: Machine check: Data load in unrecoverable area of kernel
-  Kernel panic - not syncing: Fatal local machine check
+Thanks for correcting my "fix". This looks better and i can confirm it fixe=
+s the issue :)
 
-The root cause of this panic is that handling a memory failure triggered by
-an in-userspace #MC necessitates splitting the THP. The splitting process
-employs a mechanism, implemented in try_to_map_unused_to_zeropage(), which
-reads the sub-pages of the THP to identify zero-filled pages. However,
-reading the sub-pages results in a second in-kernel #MC, occurring before
-the initial memory_failure() completes, ultimately leading to a kernel
-panic. See the kernel panic call trace on the two #MCs.
-
-  First Machine Check occurs // [1]
-    memory_failure()         // [2]
-      try_to_split_thp_page()
-        split_huge_page()
-          split_huge_page_to_list_to_order()
-            __folio_split()  // [3]
-              remap_page()
-                remove_migration_ptes()
-                  remove_migration_pte()
-                    try_to_map_unused_to_zeropage()  // [4]
-                      memchr_inv()                   // [5]
-                        Second Machine Check occurs  // [6]
-                          Kernel panic
-
-[1] Triggered by accessing a hardware-poisoned THP in userspace, which is
-    typically recoverable by terminating the affected process.
-
-[2] Call folio_set_has_hwpoisoned() before try_to_split_thp_page().
-
-[3] Pass the RMP_USE_SHARED_ZEROPAGE remap flag to remap_page().
-
-[4] Try to map the unused THP to zeropage.
-
-[5] Re-access sub-pages of the hw-poisoned THP in the kernel.
-
-[6] Triggered in-kernel, leading to a panic kernel.
-
-In Step[2], memory_failure() sets the poisoned flag on the sub-page of the
-THP by TestSetPageHWPoison() before calling try_to_split_thp_page().
-
-As suggested by David Hildenbrand, fix this panic by not accessing to the
-poisoned sub-page of the THP during zeropage identification, while
-continuing to scan unaffected sub-pages of the THP for possible zeropage
-mapping. This prevents a second in-kernel #MC that would cause kernel
-panic in Step[4].
-
-[ Credits to Andrew Zaborowski <andrew.zaborowski@intel.com> for his
-  original fix that prevents passing the RMP_USE_SHARED_ZEROPAGE flag
-  to remap_page() in Step[3] if the THP has the has_hwpoisoned flag set,
-  avoiding access to the entire THP for zero-page identification. ]
-
-Reported-by: Farrah Chen <farrah.chen@intel.com>
-Suggested-by: David Hildenbrand <david@redhat.com>
-Tested-by: Farrah Chen <farrah.chen@intel.com>
-Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
-v1 -> v2:
-  - Apply David Hildenbrand's fix suggestion.
-
-  - Update the commit message to reflect the new fix.
-
-  - Add David Hildenbrand's "Suggested-by:" tag.
-
-  - Remove Andrew Zaborowski's SoB but add credits to him in the commit message.
-    [ I cannot reach him to get his SoB for the completely rewritten commit
-      message and new fix approach. ]
-
- mm/huge_memory.c | 3 +++
- mm/migrate.c     | 3 ++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9c38a95e9f09..2bf5178cca96 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -4121,6 +4121,9 @@ static bool thp_underused(struct folio *folio)
- 	if (khugepaged_max_ptes_none == HPAGE_PMD_NR - 1)
- 		return false;
- 
-+	if (folio_contain_hwpoisoned_page(folio))
-+		return false;
-+
- 	for (i = 0; i < folio_nr_pages(folio); i++) {
- 		kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
- 		if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 9e5ef39ce73a..393fc2ffc96e 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -305,8 +305,9 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
- 	pte_t newpte;
- 	void *addr;
- 
--	if (PageCompound(page))
-+	if (PageCompound(page) || PageHWPoison(page))
- 		return false;
-+
- 	VM_BUG_ON_PAGE(!PageAnon(page), page);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
-
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
--- 
-2.43.0
-
+Reviewed-By: Sjoerd Simons <sjoerd@collabora.com>
+Tested-By: Sjoerd Simons <sjoerd@collabora.com>
+=20
+>=20
+> Fixes: 1f403699c40f ("drm/mediatek: Fix device/node reference count leaks=
+ in
+> mtk_drm_get_all_drm_priv")
+> Reported-by: Sjoerd Simons <sjoerd@collabora.com>
+> Link: https://lore.kernel.org/r/20251003-mtk-drm-refcount-v1-1-3b3f2813b0=
+db@collabora.com
+> Cc: stable@vger.kernel.org
+> Cc: Ma Ke <make24@iscas.ac.cn>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+> =C2=A0drivers/gpu/drm/mediatek/mtk_drm_drv.c | 10 ----------
+> =C2=A01 file changed, 10 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/med=
+iatek/mtk_drm_drv.c
+> index 384b0510272c..a94c51a83261 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -686,10 +686,6 @@ static int mtk_drm_bind(struct device *dev)
+> =C2=A0	for (i =3D 0; i < private->data->mmsys_dev_num; i++)
+> =C2=A0		private->all_drm_private[i]->drm =3D NULL;
+> =C2=A0err_put_dev:
+> -	for (i =3D 0; i < private->data->mmsys_dev_num; i++) {
+> -		/* For device_find_child in mtk_drm_get_all_priv() */
+> -		put_device(private->all_drm_private[i]->dev);
+> -	}
+> =C2=A0	put_device(private->mutex_dev);
+> =C2=A0	return ret;
+> =C2=A0}
+> @@ -697,18 +693,12 @@ static int mtk_drm_bind(struct device *dev)
+> =C2=A0static void mtk_drm_unbind(struct device *dev)
+> =C2=A0{
+> =C2=A0	struct mtk_drm_private *private =3D dev_get_drvdata(dev);
+> -	int i;
+> =C2=A0
+> =C2=A0	/* for multi mmsys dev, unregister drm dev in mmsys master */
+> =C2=A0	if (private->drm_master) {
+> =C2=A0		drm_dev_unregister(private->drm);
+> =C2=A0		mtk_drm_kms_deinit(private->drm);
+> =C2=A0		drm_dev_put(private->drm);
+> -
+> -		for (i =3D 0; i < private->data->mmsys_dev_num; i++) {
+> -			/* For device_find_child in mtk_drm_get_all_priv() */
+> -			put_device(private->all_drm_private[i]->dev);
+> -		}
+> =C2=A0		put_device(private->mutex_dev);
+> =C2=A0	}
+> =C2=A0	private->mtk_drm_bound =3D false;
 
