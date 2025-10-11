@@ -1,243 +1,246 @@
-Return-Path: <linux-kernel+bounces-849082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95907BCF2B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:00:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA19FBCF2B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 038034E88AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98B1189F0D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBB720FA9C;
-	Sat, 11 Oct 2025 09:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F416D19D087;
+	Sat, 11 Oct 2025 09:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2bipZOH"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OfxBEWPv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589B219D087
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26DC29A2;
+	Sat, 11 Oct 2025 09:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760173207; cv=none; b=JAxE9l5MJtQFn5aZP3uoGkpK93vLZQEOQrn5vePicC00wDJWdu2z//KHqpCprUpjHLHttooy01Cymf8U84O6B9p0Ka6XgtghMolddan9nS9Cg26arre8Ha45w1u5Jx2KrtydSnRw2KQAXp1lHgeeZ3nNnQr/a/1Hp9szr42PbG0=
+	t=1760173246; cv=none; b=icmLCQ2W8Uo+tdywKWouDpjAIh13PG3O/DicF5zwpjnU3Qao3FCjyNwADUhcT3AQnW4eUdITEpMveWZy3jRhi/3/mCiGJVxDShS1mjABuy+UA70JkyjwWrZolhIntG/T/hA5OchB4Z0067zc4Czcd0smacMwdgs1MZW2ptqf8K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760173207; c=relaxed/simple;
-	bh=zuajZvg1GfmhlxobaMZIGMtoZrguMr6AvFfamYTmViE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P8yMjEFJznDeDsDCdDEgWSYq8SDLGno1nAQR/6I3ll7j+DUiTVZi+5W+ZK4lvjB+svNfZZWiqcEVMKfgVl/nGSby1yff6VRpyNwCFlN21DKBx+g7rq3deYu3KCQoMzkMAssDMPYb+I6odqE/xgZZ4RNsTd8bUzkTjai48HinolU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2bipZOH; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26c209802c0so27505825ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 02:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760173201; x=1760778001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mb7NVdVWR6Oqus/up8k+fb1OsLddvjLBoX6iFlO25NQ=;
-        b=j2bipZOHlpxwFASS5yIZ3ngnwhh090nk+fGHc6cF1+lypa61Ou3aT7UXU+ZZBJLuUL
-         yoyc+TrBQq/r4yxjp+NnNHqgrcMB0qeySy+wGhpiGxdPVdjTfCGzkvJYA0vuTSuA02//
-         FKirGuMpNo3Hr5JytVRdqL511KSttyOm24FyM1oiWaB4uWoFoPnUJPQRcnsrTnWMO1iD
-         M/luy0kGCZLN3wDZ7pQKkJddPbI7jpVoUKr+K3HpvsC2oCbKTY2W4SR645GQGuYmzIgi
-         Sh7lp11SeqCRLFl/uYMlXSLyFsHHVF6geQuYFIMgTgxkravhR/vfRPlE5sozz9C52353
-         NZ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760173201; x=1760778001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mb7NVdVWR6Oqus/up8k+fb1OsLddvjLBoX6iFlO25NQ=;
-        b=gBobLSO0fIu7b+dc1gvS+zoaUQvUV1Zo9ejDvw9x3IAkKx5tzoWCGaprdMttgtyGvo
-         v27eIdQUeudU1DqcvmOYKrsmGE/ZgiQcRKyDHR8DgrSCYOseVBsq0Q1RRWJdLmse1lUt
-         fV8fUAmqGTyu8MhWsL54aCJzXDrrsJ3E4+YN7g+m0DwriY9Hrg+gLuMAVJUElm0IYrVm
-         7Q+1ykhTOSINp2NGucaZGH4LeUmR9mhN3l1lmz/7nIDyXJsw3JXNzyW8tgJg+9QNZFfj
-         +cKgsSdHHMZHZ7cgkdwnfqsUeCoyA67jOwU1nbAmqsF4qOFXlhVei7y8S/PKb3c0ZaO6
-         SF+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXqczUXkcks+Qxi7YkSNdMXiEQNMv1n+LFRycEIXIxL67/FTRfARubSfxfiL0RUsPe7Cg0JOBjx4Brf6fE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKhDistA2THdBrEWysP1lrEfnRy6eevQBFaFe9NywmKsK/4RXQ
-	5XKU7HevlG1ZGGIGB1JqCy8NrohgdZHuUmNeQSpC9DlsisMQ1dJcDDKMO48W3jJIYNowuxIH7Zg
-	P7rhT4yLRZzOJv46At3z8U3PABXkZTdQGeRnvH5H5iQ==
-X-Gm-Gg: ASbGncscsSdCI9TC+NyOghwwaD7CvggXBCd/sInB3lzZ+AOF5026nRX82ks2nt8ImSw
-	SNTdtORm1aKv5HJ8tfIioDr/MDi1CQp+U0jkijLF2gwcbHK75DEenK188JYIRQfZJOMl/gv6kux
-	ZFtYwZAMSBiEwpph5gdSdnrY/nIfTWLQ82zU8GOT3+NxVmVxdKP0BSWZqgLVX4X9UqCL6OiWByz
-	Xtw/kliBFQ36oSq9BYTpiV0yCH1KyFrWZco3USDuU8PnKnlWA7sY/7/PHpayf9AKDrhm06g5ext
-	GHb5vboScVFu0XaZ3g==
-X-Google-Smtp-Source: AGHT+IHIh+NtbdhBJPGvp+PdsKgznE3j6MW/wih7cdcg3jXx7CDE5Ab8+HYyON/WjHGgLkjljP/zfUAk/pZ0KlbqthI=
-X-Received: by 2002:a17:902:c94f:b0:271:479d:3ddc with SMTP id
- d9443c01a7336-290273748efmr210402125ad.15.1760173200610; Sat, 11 Oct 2025
- 02:00:00 -0700 (PDT)
+	s=arc-20240116; t=1760173246; c=relaxed/simple;
+	bh=NmICyN7z5pd3yUB5P/aHf1eTN2vJpiuLtAiyWdk719s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mprrcxH30YB2Lu9SB6CA0WV1LiohkirFmtP/v2rfd5+QD8Opm+5ljKXGpn8VGryiGd7FE0CLWt3y9fOSrISFAnyFTELxlzUUjabv0XUSbJPJNUtX4U0kpO79YhYIlWQeNhySPpYNM5bhrbVJ6whKFmUOxuZvo2GBLnVFC8bq6rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OfxBEWPv; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760173241; x=1791709241;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NmICyN7z5pd3yUB5P/aHf1eTN2vJpiuLtAiyWdk719s=;
+  b=OfxBEWPvucB9HGTXoh9O9ARboa7XhHXkYDKAdBAcM2ghE/o5COWTeesK
+   9VpElkak2p/kYuooLPu2IYHFe+fmiRi0HB5SNbUdTMyDSRl2XOxu3zFbC
+   APavLQjNJx3sP0f0Y8ERYdEMPVA0WSkAojrY8DoHdAzkJ2dpYrsdCpKmT
+   xFkzPjh9vCvMW5PF0xkTMYUoTCL2TWWAaDNzv54MUGW/Nw6cS3EJOVf7e
+   YWxAXvE5kl6hr+nG/XWkLitTOD86emAK3SqkXcnr7jSkXx/OPwH8pPXuS
+   JxYS2MGiiTrZldY/rq1pXyiY01p6agAe1GbJxCWM+x7XbOd1aDhq1eai1
+   Q==;
+X-CSE-ConnectionGUID: 2IBvG2czTjmRPk5fhA+Vgg==
+X-CSE-MsgGUID: hpSG8A7zTPGLniwD6OGWUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="62277601"
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="62277601"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 02:00:40 -0700
+X-CSE-ConnectionGUID: 4mnZvWzqSiqoAc10AJdWXw==
+X-CSE-MsgGUID: GTrHiaj5QCSB0FokPuEspA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="181590217"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 11 Oct 2025 02:00:34 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7VSq-0003f5-06;
+	Sat, 11 Oct 2025 09:00:32 +0000
+Date: Sat, 11 Oct 2025 17:00:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, david@redhat.com,
+	jane.chu@oracle.com, kernel@pankajraghav.com,
+	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Cc: oe-kbuild-all@lists.linux.dev, ziy@nvidia.com,
+	akpm@linux-foundation.org, mcgrof@kernel.org,
+	nao.horiguchi@gmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
+ target order silently.
+Message-ID: <202510111633.onu4Yaey-lkp@intel.com>
+References: <20251010173906.3128789-2-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010131331.785281312@linuxfoundation.org>
-In-Reply-To: <20251010131331.785281312@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 11 Oct 2025 14:29:48 +0530
-X-Gm-Features: AS18NWCh-0xz9_-woYeOmtt1_Loq4Or6bloaX3lxvECbB3fpRYG7edD9-6QdfCU
-Message-ID: <CA+G9fYsgsDXS-x7eV04QS0dpRcA2fWKHk7GOgcsQs+0UT7kgAA@mail.gmail.com>
-Subject: Re: [PATCH 6.12 00/35] 6.12.52-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010173906.3128789-2-ziy@nvidia.com>
 
-On Fri, 10 Oct 2025 at 18:51, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.52 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 12 Oct 2025 13:13:18 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.52-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Zi,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+kernel test robot noticed the following build errors:
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.17 next-20251010]
+[cannot apply to akpm-mm/mm-everything]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-## Build
-* kernel: 6.12.52-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: f7ad21173a1934329ac5bf0c8b5443d5666d3ce6
-* git describe: v6.12.50-47-gf7ad21173a19
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
-.50-47-gf7ad21173a19
+url:    https://github.com/intel-lab-lkp/linux/commits/Zi-Yan/mm-huge_memory-do-not-change-split_huge_page-target-order-silently/20251011-014145
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20251010173906.3128789-2-ziy%40nvidia.com
+patch subject: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*() target order silently.
+config: parisc-allnoconfig (https://download.01.org/0day-ci/archive/20251011/202510111633.onu4Yaey-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111633.onu4Yaey-lkp@intel.com/reproduce)
 
-## Test Regressions (compared to v6.12.50-11-g791ab27b9c00)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510111633.onu4Yaey-lkp@intel.com/
 
-## Metric Regressions (compared to v6.12.50-11-g791ab27b9c00)
+All errors (new ones prefixed by >>):
 
-## Test Fixes (compared to v6.12.50-11-g791ab27b9c00)
+   mm/truncate.c: In function 'truncate_inode_partial_folio':
+>> mm/truncate.c:229:14: error: too many arguments to function 'try_folio_split'; expected 3, have 4
+     229 |         if (!try_folio_split(folio, split_at, NULL, min_order)) {
+         |              ^~~~~~~~~~~~~~~                        ~~~~~~~~~
+   In file included from include/linux/mm.h:1081,
+                    from arch/parisc/include/asm/cacheflush.h:5,
+                    from include/linux/cacheflush.h:5,
+                    from include/linux/highmem.h:8,
+                    from include/linux/bvec.h:10,
+                    from include/linux/blk_types.h:10,
+                    from include/linux/writeback.h:13,
+                    from include/linux/backing-dev.h:16,
+                    from mm/truncate.c:12:
+   include/linux/huge_mm.h:588:19: note: declared here
+     588 | static inline int try_folio_split(struct folio *folio, struct page *page,
+         |                   ^~~~~~~~~~~~~~~
+   mm/truncate.c:259:25: error: too many arguments to function 'try_folio_split'; expected 3, have 4
+     259 |                         try_folio_split(folio2, split_at2, NULL, min_order);
+         |                         ^~~~~~~~~~~~~~~                          ~~~~~~~~~
+   include/linux/huge_mm.h:588:19: note: declared here
+     588 | static inline int try_folio_split(struct folio *folio, struct page *page,
+         |                   ^~~~~~~~~~~~~~~
 
-## Metric Fixes (compared to v6.12.50-11-g791ab27b9c00)
 
-## Test result summary
-total: 154823, pass: 131476, fail: 4882, skip: 17920, xfail: 545
+vim +/try_folio_split +229 mm/truncate.c
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 137 passed, 2 failed
-* arm64: 57 total, 50 passed, 7 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 23 passed, 2 failed
-* s390: 22 total, 21 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 46 passed, 3 failed
+   179	
+   180	/*
+   181	 * Handle partial folios.  The folio may be entirely within the
+   182	 * range if a split has raced with us.  If not, we zero the part of the
+   183	 * folio that's within the [start, end] range, and then split the folio if
+   184	 * it's large.  split_page_range() will discard pages which now lie beyond
+   185	 * i_size, and we rely on the caller to discard pages which lie within a
+   186	 * newly created hole.
+   187	 *
+   188	 * Returns false if splitting failed so the caller can avoid
+   189	 * discarding the entire folio which is stubbornly unsplit.
+   190	 */
+   191	bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+   192	{
+   193		loff_t pos = folio_pos(folio);
+   194		size_t size = folio_size(folio);
+   195		unsigned int offset, length;
+   196		struct page *split_at, *split_at2;
+   197		unsigned int min_order;
+   198	
+   199		if (pos < start)
+   200			offset = start - pos;
+   201		else
+   202			offset = 0;
+   203		if (pos + size <= (u64)end)
+   204			length = size - offset;
+   205		else
+   206			length = end + 1 - pos - offset;
+   207	
+   208		folio_wait_writeback(folio);
+   209		if (length == size) {
+   210			truncate_inode_folio(folio->mapping, folio);
+   211			return true;
+   212		}
+   213	
+   214		/*
+   215		 * We may be zeroing pages we're about to discard, but it avoids
+   216		 * doing a complex calculation here, and then doing the zeroing
+   217		 * anyway if the page split fails.
+   218		 */
+   219		if (!mapping_inaccessible(folio->mapping))
+   220			folio_zero_range(folio, offset, length);
+   221	
+   222		if (folio_needs_release(folio))
+   223			folio_invalidate(folio, offset, length);
+   224		if (!folio_test_large(folio))
+   225			return true;
+   226	
+   227		min_order = mapping_min_folio_order(folio->mapping);
+   228		split_at = folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZE);
+ > 229		if (!try_folio_split(folio, split_at, NULL, min_order)) {
+   230			/*
+   231			 * try to split at offset + length to make sure folios within
+   232			 * the range can be dropped, especially to avoid memory waste
+   233			 * for shmem truncate
+   234			 */
+   235			struct folio *folio2;
+   236	
+   237			if (offset + length == size)
+   238				goto no_split;
+   239	
+   240			split_at2 = folio_page(folio,
+   241					PAGE_ALIGN_DOWN(offset + length) / PAGE_SIZE);
+   242			folio2 = page_folio(split_at2);
+   243	
+   244			if (!folio_try_get(folio2))
+   245				goto no_split;
+   246	
+   247			if (!folio_test_large(folio2))
+   248				goto out;
+   249	
+   250			if (!folio_trylock(folio2))
+   251				goto out;
+   252	
+   253			/*
+   254			 * make sure folio2 is large and does not change its mapping.
+   255			 * Its split result does not matter here.
+   256			 */
+   257			if (folio_test_large(folio2) &&
+   258			    folio2->mapping == folio->mapping)
+   259				try_folio_split(folio2, split_at2, NULL, min_order);
+   260	
+   261			folio_unlock(folio2);
+   262	out:
+   263			folio_put(folio2);
+   264	no_split:
+   265			return true;
+   266		}
+   267		if (folio_test_dirty(folio))
+   268			return false;
+   269		truncate_inode_folio(folio->mapping, folio);
+   270		return true;
+   271	}
+   272	
 
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
