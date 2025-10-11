@@ -1,220 +1,108 @@
-Return-Path: <linux-kernel+bounces-848940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E390BCEDBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:20:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18B5BCEDC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5511A61E1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:21:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C2A34EE3E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC688248C;
-	Sat, 11 Oct 2025 01:20:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9E1249EB;
+	Sat, 11 Oct 2025 01:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T01UExVZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3027034BA57;
-	Sat, 11 Oct 2025 01:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4188D70810
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760145642; cv=none; b=btfo6rJdq6GG2Nvz9cktqtTE27+TZjo0PrE3weyo/lhqesnVjW92dvvP58evbGOuqbf79q+wOQF+BnBomux0h/b8+wWRfY9F9d1cJ3GX+EMp1Ye1uaO9lY/jI4sEkbLGjvxAeZfiv/fhXeChWBIAX2VgM8MBwXC6CA+TRkA+Xdg=
+	t=1760145655; cv=none; b=ZumGybtkUGihr5isoecZzwuMaKM5owJ7g9t/zYf3WVBxCGeIredBUFYruhjDDMNbOWraY96hlJxgNbIrtwr3I1blp3k6tpuVmZPQehB9xKNcteBmz7gJ1VmrFVUGkhdTjJsSaDWHfD9DrskwGlDxsRhjCFOe89iSVDrSTAMSLDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760145642; c=relaxed/simple;
-	bh=3fhpvZ3VfMyWFc+BjLgInTMsIfV04gcVoPmD/6ASl3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C8S8OoOLF0DccJ8Xv2GURjV/Uu/I7mm2OcS6xbLH3eng6FM05q2pRbVZHv5jFr9gBpV3E3gOOoStQYiTM8TTVI7EFsIcslPsBxMeCBwqJuaGwQox0rocmM7vHFm8y7ci3xFxEFUyW1ZRSq6kv4Z77+VLnJAEnH4WGRaMyg4wZho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ck5Ps3kbnzYQtrB;
-	Sat, 11 Oct 2025 09:20:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B69261A0843;
-	Sat, 11 Oct 2025 09:20:36 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP4 (Coremail) with SMTP id gCh0CgA3+mHisOlo+on_CQ--.8318S3;
-	Sat, 11 Oct 2025 09:20:36 +0800 (CST)
-Message-ID: <021b2564-4f1d-4dd7-b98c-569668c8359a@huaweicloud.com>
-Date: Sat, 11 Oct 2025 09:20:33 +0800
+	s=arc-20240116; t=1760145655; c=relaxed/simple;
+	bh=y9WNkEncxs9vy/jzuB8be6UmUxCBNijCFrAxWLBKTZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTI9wk+Gh6mmZDyG5Zl6Dmh1qnQD5BMi9/VuVTmLpvXK6NFBATGzB32f9WVT02566zUpTvQ9km1f0lr7VdXGYVSaC8hKfB/XWIb8V2aBzQDZECLhXeOxq7O/gyl8LML34MhZdajk86ttdwSdr7K6qHXjAEjCO1XjwUKV3tL6sxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T01UExVZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0CFBC4CEF1;
+	Sat, 11 Oct 2025 01:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760145654;
+	bh=y9WNkEncxs9vy/jzuB8be6UmUxCBNijCFrAxWLBKTZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T01UExVZBnxlqudLuczXYZtC2DsHml4FMWEfi/RkYd1QL1jblYgFbZfOhKdC8oGjh
+	 DAiLYRfQMEzirExSXrOfIeyR0h388muvS/9n8PWR6r+/EwGJoQkdrv2vlSopZ0J0Ar
+	 WpNHOg9e3Nae3UeWSASjZxXeQd7ulXIMb184VhpKy8L1QXhNgz/7OC7r/MhpDS6X7r
+	 pBQ6/9p85LoonCkdgVVLbJRREUfHyTIyHSnLBMFDLdnAu21UwpXFd9UXMZ9OHMaQib
+	 35MgnihrbM7PpqNcSvIlfIvrZfJWCQJ0RYLaypy9nIsh8/C9jdLsJi/CZjIZltkPyy
+	 po2fZknunxxjw==
+Date: Fri, 10 Oct 2025 18:20:52 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Klaus Kusche <klaus.kusche@computerix.info>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
+Message-ID: <ewuawnlm44vqdxjm6iqtw4m5wvbqzcdblxkpwmozwf4ydhzzko@7rdo5ncnzjdb>
+References: <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
+ <20251007230821.5shpa3pusyzaohb2@desk>
+ <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
+ <20251009053336.ghcmhgsprtkgydas@desk>
+ <xhxfkzrrn62xkd6moiapfueookui5f63x4lmzgkmnf3mbxilb5@kk4rylukegii>
+ <jlwwd3ohjr7a6lnd4ehu4lp7ys7tm7f6rlaxyc75725thvil4k@pf3bm243ncys>
+ <zrbzofjxeuioxhbruhaoacbyfbpclkbntiblg6jjirr4v2c2uu@aeyo5bdb44et>
+ <LV3PR12MB9265E186460C170527D1D6B594EFA@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <4bjplxwz3ixsrdh3tvaz4danwrku26fbt5mr6yqhmzv5i34v5r@kyggtyietezp>
+ <LV3PR12MB92652219EEB4C090230E33D794EFA@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/12] ext4: introduce mext_move_extent()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20251010103326.3353700-1-yi.zhang@huaweicloud.com>
- <20251010103326.3353700-10-yi.zhang@huaweicloud.com>
- <pkhkxgsoa3e3svcwudqo5jckurdqnhkdd6ckbkvgp424lxfcvn@h4nazw5rrd77>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <pkhkxgsoa3e3svcwudqo5jckurdqnhkdd6ckbkvgp424lxfcvn@h4nazw5rrd77>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgA3+mHisOlo+on_CQ--.8318S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFy7tryrJFy8tr13JFykuFg_yoW7ArW5pF
-	WxCF1DKrWkJa4I9r1Ivw4kXFyxK3y7Gr47Cr4fWFy7CFWqvFyrKFWUKa15uFy8CrW8G3Wj
-	vF40yr9rW3s8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
-	DUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB92652219EEB4C090230E33D794EFA@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On 10/10/2025 9:38 PM, Jan Kara wrote:
-> On Fri 10-10-25 18:33:23, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When moving extents, the current move_extent_per_page() process can only
->> move extents of length PAGE_SIZE at a time, which is highly inefficient,
->> especially when the fragmentation of the file is not particularly
->> severe, this will result in a large number of unnecessary extent split
->> and merge operations. Moreover, since the ext4 file system now supports
->> large folios, using PAGE_SIZE as the processing unit is no longer
->> practical.
->>
->> Therefore, introduce a new move extents method, mext_move_extent(). It
->> moves one extent of the origin inode at a time, but not exceeding the
->> size of a folio. The parameters for the move are passed through the new
->> mext_data data structure, which includes the origin inode, donor inode,
->> the mapping extent of the origin inode to be moved, and the starting
->> offset of the donor inode.
->>
->> The move process is similar to move_extent_per_page() and can be
->> categorized into three types: MEXT_SKIP_EXTENT, MEXT_MOVE_EXTENT, and
->> MEXT_COPY_DATA. MEXT_SKIP_EXTENT indicates that the corresponding area
->> of the donor file is a hole, meaning no actual space is allocated, so
->> the move is skipped. MEXT_MOVE_EXTENT indicates that the corresponding
->> areas of both the origin and donor files are unwritten, so no data needs
->> to be copied; only the extents are swapped. MEXT_COPY_DATA indicates
->> that the corresponding areas of both the origin and donor files contain
->> data, so data must be copied. The data copying is performed in three
->> steps: first, the data from the original location is read into the page
->> cache; then, the extents are swapped, and the page cache is rebuilt to
->> reflect the index of the physical blocks; finally, the dirty page cache
->> is marked and written back to ensure that the data is written to disk
->> before the metadata is persisted.
->>
->> One important point to note is that the folio lock and i_data_sem are
->> held only during the moving process. Therefore, before moving an extent,
->> it is necessary to check whether the sequence cookie of the area to be
->> moved has changed while holding the folio lock. If a change is detected,
->> it indicates that concurrent write-back operations may have occurred
->> during this period, and the type of the extent to be moved can no longer
->> be considered reliable. For example, it may have changed from unwritten
->> to written. In such cases, return -ESTALE, and the calling function
->> should reacquire the move extent of the original file and retry the
->> movement.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Fri, Oct 10, 2025 at 09:13:56PM +0000, Kaplan, David wrote:
+> > It makes it clearer *why* retpolines are enabled: to mitigate Spectre v2
+> > for older hardware.  (Though, frustratingly, retpolines have made a
+> > comeback thanks to ITS.)
 > 
-> ...
-> 
->> +static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
->> +{
->> +	struct inode *orig_inode = mext->orig_inode;
->> +	struct inode *donor_inode = mext->donor_inode;
->> +	struct ext4_map_blocks *orig_map = &mext->orig_map;
->> +	unsigned int blkbits = orig_inode->i_blkbits;
->> +	struct folio *folio[2] = {NULL, NULL};
->> +	loff_t from, length;
->> +	enum mext_move_type move_type = 0;
->> +	handle_t *handle;
->> +	u64 r_len = 0;
->> +	unsigned int credits;
->> +	int ret, ret2;
->> +
->> +	*m_len = 0;
->> +	credits = ext4_chunk_trans_extent(orig_inode, 0) * 2;
->> +	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, credits);
->> +	if (IS_ERR(handle))
->> +		return PTR_ERR(handle);
->> +
->> +	ret = mext_move_begin(mext, folio, &move_type);
->> +	if (ret)
->> +		goto stop_handle;
->> +
->> +	if (move_type == MEXT_SKIP_EXTENT)
->> +		goto unlock;
->> +
->> +	/*
->> +	 * Copy the data. First, read the original inode data into the page
->> +	 * cache. Then, release the existing mapping relationships and swap
->> +	 * the extent. Finally, re-establish the new mapping relationships
->> +	 * and dirty the page cache.
->> +	 */
->> +	if (move_type == MEXT_COPY_DATA) {
->> +		from = offset_in_folio(folio[0],
->> +				((loff_t)orig_map->m_lblk) << blkbits);
->> +		length = ((loff_t)orig_map->m_len) << blkbits;
->> +
->> +		ret = mext_folio_mkuptodate(folio[0], from, from + length);
->> +		if (ret)
->> +			goto unlock;
->> +	}
->> +
->> +	if (!filemap_release_folio(folio[0], 0) ||
->> +	    !filemap_release_folio(folio[1], 0)) {
->> +		ret = -EBUSY;
->> +		goto unlock;
->> +	}
->> +
->> +	/* Move extent */
->> +	ext4_double_down_write_data_sem(orig_inode, donor_inode);
->> +	*m_len = ext4_swap_extents(handle, orig_inode, donor_inode,
->> +				   orig_map->m_lblk, mext->donor_lblk,
->> +				   orig_map->m_len, 1, &ret);
->> +	ext4_double_up_write_data_sem(orig_inode, donor_inode);
->> +
->> +	/* A short-length swap cannot occur after a successful swap extent. */
->> +	if (WARN_ON_ONCE(!ret && (*m_len != orig_map->m_len)))
->> +		ret = -EIO;
->> +
->> +	if (!(*m_len) || (move_type == MEXT_MOVE_EXTENT))
->> +		goto unlock;
->> +
->> +	/* Copy data */
->> +	length = (*m_len) << blkbits;
->> +	ret = mext_folio_mkwrite(orig_inode, folio[0], from, from + length);
->> +	if (ret)
->> +		goto repair_branches;
-> 
-> I think you need to be careful here and below to not overwrite 'ret' if it
-> is != 0. So something like:
-> 
-> 	ret2 = mext_folio_mkwrite(..)
-> 	if (ret2) {
-> 		if (!ret)
-> 			ret = ret2;
-> 		goto repair_branches;
-> 	}
-> 
-> and something similar below. Otherwise the patch looks good to me.
-> 
-> 								Honza
+> I don't think you mean 'enabled' here, you mean why they're being
+> built into the kernel?  If retpolines are being enabled at runtime,
+> that is reported via sysfs.
 
-OK, although overwrite 'ret' seems fine, it's better to keep it.
+Right, I meant compiled in.
 
-Thanks,
-Yi.
+> > If I know I won't be running my kernel on old HW, this would make it
+> > easy to phase out old mitigations that are no longer needed, that
+> > otherwise uglify the code and might affect performance even when they're
+> > disabled at runtime.
+> 
+> To check if I'm understanding right, is the idea that if you have an
+> ALTERNATIVE that is based on some feature flag (like
+> X86_FEATURE_CLEAR_CPU_BUF) but your kernel is built without any
+> support for those mitigations that need that then that macro would
+> essentially get deleted at compile time so you don't have the extra
+> NOPs?  That seems useful.
 
+If we decide we care enough about removing those NOPs, then yes, that
+would be a use case.  We could wrap the CLEAR_CPU_BUFFERS definition
+with #ifdef CONFIG_UGLY_CLEAR_CPU_BUFFERS or whatever.
 
+> And if you don't need any retpoline support then you remove retpolines
+> from your compile options?
+
+Right.
+
+-- 
+Josh
 
