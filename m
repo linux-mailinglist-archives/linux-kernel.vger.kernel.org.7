@@ -1,167 +1,114 @@
-Return-Path: <linux-kernel+bounces-849099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED006BCF328
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:39:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AF7BCF322
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9F4408044
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:39:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BB1019A16CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08760257846;
-	Sat, 11 Oct 2025 09:38:45 +0000 (UTC)
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D4924BBE4;
+	Sat, 11 Oct 2025 09:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WnZ7HDOR"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45739257848
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527052441B8
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 09:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760175524; cv=none; b=ZYEuEu5aMV5LCbnRCvqx6euxgpPfTtYF5fBZQU/EK5MfQ6Xhr92tCaV3u4tuPxl9mPQJceAn+GF3o3CrCcLQUjTfIG1BuAGapbBn+J376lv+MPeV3kbfR1YKp0RaQdo8AaCAyLoNGjXUQKCC/Fy46wOJ5O5p0ECSyJdnRImqUB0=
+	t=1760175523; cv=none; b=UV33PElvvihmy/pcr+Z6W+r5Rx2UbuVNlIODJDEBQHY8Vy+t8zvAAkRO0ZPIdFVkAqV906zlLIUsMP86BdTigfGJcyEgdeMNi2aoyViiTq7NusskNTOgr/+7iFq11Cy8Zs8EGWXC2IJA6vV9WkoKyKALkUQcyCrcpuRAWaLWHvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760175524; c=relaxed/simple;
-	bh=bTB9DzoWH3QIpeBu4xYDTQAzXlJCXk6gbv+o+fe1N3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X/F3LDDjDXNgCOZXEECCd9Af54oFPQCQv6DpxGkFc1T9XukllOdAOoIhP4uBXhEQK8BSi1PGfuH7cyHhU1xJNxTeWCHQrucxDQqi7/miRZ9oPQEdBnHgjgk5IepJe3l/yGhkK1Kt05E9bFroQyRz94tEnqae2Ni9/XUXy9XdOgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-271d1305ad7so46911335ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 02:38:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760175519; x=1760780319;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TVV/uiMu0xHtlKgwsYx2mXd0JzCW14CDL0hbQStIbj4=;
-        b=flzlqLsoJAXdUmXBawN2k/Pbhp31S1ji/C+xrLodDHWCnlKn5giBzF9QiW8K3atwHa
-         LAlD3pr30QKtmt8vRdT7lx4wXUqUCOX2qyvfzuWxjxuBnD2by9TgJCk1XLbnn4ayTsV+
-         78hurOTWqZ8Y2K8HpveyJnarDedGr/lyrGHD7fkrMoOptJbKlFH3xlq/VzHLqDD5TETw
-         NBBGGEUATVhz3a4gBV50nwNjlmGQl5OiUFoXxc4B37R5Z+hO0B4hBQgy7QnLtrW8dPBD
-         XjBgZAFLLmRor03xYrmMyl1MoY1fWBRA1E3VidL11twRy+AexQqPSVYMvSdITujDk8Cp
-         jCXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMG4opV6iN7H4wwXD+oOyjPPEdv6xNb348sSzyEiySEK8v9gChutmUwFhOLCqfK58R6Hevzv0drvs9eTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyStbJc3jHnpqwDvmxErFj6exayi7rCJMvxJYKfLqZvBwDyn4lu
-	pLt8TvAA7IlUD1KEI6x+IaF1tYqIZhR/S3XdEczQuEHvCSZrpBl4LYSyAcv3wnXvxyQ=
-X-Gm-Gg: ASbGncswIPnvLxiQvozobHaTG0WWbC4EJ/l27lQyT7VL4mhFEhfwOwjMSZhT2r8I7Ny
-	tJy0Y73gXM2OHenMBjnmd5t5yVKT598PpFsPa5QmgfG8TDbq99qLyz0ipSHXTPakNQ3hbobiMXK
-	qgPCW34MBqnGvDHKt+ph/WOu30KA5+Vn94q7xPYuh8MxsOQ5RdFPGr9CixszTSIt/5Pt8hURuT9
-	kRpWF17gc4dldmLPFUtQGxes5yd939rUx3kn6S0ff0rIfg5X9Ug7H9UcrrN/1pRVw3ihl8jVdv5
-	j4u8LvKKES30WS7k3DZJbz4uaNh+mCB5CU6zX6L522DnGEARzAPQieKO5tXAGIHfl5uGzprm/Eg
-	+IxBbK0YcS6wGaXI4UHamjCWxt3PWllWU2fJ71ROujE3yJRi4cpcgIH+R4Adv/ZZE
-X-Google-Smtp-Source: AGHT+IHpGLpU8M9LjptzuKQ5BOFJfe6J4j9z7uO9gDV2SVJTv45LojULgBTU28zYulg26XhrRR4Gpw==
-X-Received: by 2002:a17:903:3807:b0:269:4741:6d33 with SMTP id d9443c01a7336-2902737a672mr193197825ad.23.1760175518554;
-        Sat, 11 Oct 2025 02:38:38 -0700 (PDT)
-Received: from power-ThinkBook-15-G2-ITL.. ([116.128.244.171])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b6262df70sm5663168a91.1.2025.10.11.02.38.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 02:38:38 -0700 (PDT)
-From: Xueqin Luo <luoxueqin@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@kernel.org,
-	lenb@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [PATCH RESEND v3 2/2] PM: hibernate: make compression threads configurable
-Date: Sat, 11 Oct 2025 17:38:08 +0800
-Message-ID: <1764e5db50a9e6a7809f0ec59a7b59e66c1f155f.1757680816.git.luoxueqin@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1757680816.git.luoxueqin@kylinos.cn>
-References: <cover.1757680816.git.luoxueqin@kylinos.cn>
+	s=arc-20240116; t=1760175523; c=relaxed/simple;
+	bh=LG9wB+ondeCChCLh10s+uBs1cacK5MZiiGqo+RBQwzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HVVMvv39HPbh3W7aaqzsV/ui6hLXB46krU7AT8I6qk0MzNzMOvcn24hwp6mhFeadfBLUA9WVa0jS9Fur04sXXZJbIwObOoeIJYVQvPSukYBTsn16IlYgT5fflLzApvbdZrKCNSgAKv1j+I5//j6n7ZRNJBN4MDgH0kmxf//f9N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WnZ7HDOR; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760175515;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bU9ccrGCxLrD5q9ZcZ92Iy4RlaTWTf5iyTMrPa72q+g=;
+	b=WnZ7HDORXRw0FkzY9RY5Hx8Lv3cOFBm336RWJnRpjIUiK2INkFvHgzAft+IaFLiQRSzeaU
+	U4xxGNBNVa4j1hj8Dgg4zdJHYbKlR9ZPlhV57nYVbBNlvS0GkSghei13pvQ6cwiLxcNSGu
+	vQos+1NrIOp8uHZjz9O/j9CWOsSnxG0=
+Date: Sat, 11 Oct 2025 17:38:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory
+ failures
+Content-Language: en-US
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: Longlong Xia <xialonglong2025@163.com>, nao.horiguchi@gmail.com,
+ akpm@linux-foundation.org, wangkefeng.wang@huawei.com, xu.xin16@zte.com.cn,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Longlong Xia <xialonglong@kylinos.cn>, david@redhat.com
+References: <20251009070045.2011920-1-xialonglong2025@163.com>
+ <20251009070045.2011920-2-xialonglong2025@163.com>
+ <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
+ <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
+ <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The number of compression/decompression threads has a direct impact on
-hibernate image generation and resume latency. Using more threads can
-reduce overall resume time, but on systems with fewer CPU cores it may
-also introduce contention and reduce efficiency.
 
-Performance was evaluated on an 8-core ARM system, averaged over 10 runs:
 
-    cmp_threads   hibernate time (s)   resume time (s)
-    --------------------------------------------------
-          3             12.14              18.86
-          4             12.28              17.48
-          5             11.09              16.77
-          6             11.08              16.44
+On 2025/10/11 17:23, Miaohe Lin wrote:
+> On 2025/10/11 15:52, Lance Yang wrote:
+>> @Miaohe
+>>
+>> I'd like to raise a concern about a potential hardware failure :)
+> 
+> Thanks for your thought.
+> 
+>>
+>> My tests show that if the shared zeropage (or huge zeropage) gets marked
+>> with HWpoison, the kernel continues to install it for new mappings.
+>> Surprisingly, it does not kill the accessing process ...
+> 
+> Have you investigated the cause? If user space writes to shared zeropage,
+> it will trigger COW and a new page will be installed. After that, reading
+> the newly allocated page won't trigger memory error. In this scene, it does
+> not kill the accessing process.
 
-With 5–6 threads, resume latency improves by approximately 12% compared
-to the default 3-thread configuration, with negligible impact on
-hibernate time.
+Not write just read :)
 
-Introduce a new kernel parameter `cmp_threads=` that allows users and
-integrators to tune the number of compression/decompression threads at
-boot. This provides a way to balance performance and CPU utilization
-across a wide range of hardware without recompiling the kernel.
+> 
+>>
+>> The concern is, once the page is no longer zero-filled due to the hardware
+>> failure, what will happen? Would this lead to silent data corruption for
+>> applications that expect to read zeros?
+> 
+> IMHO, once the page is no longer zero-filled due to the hardware failure, later
+> any read will trigger memory error and memory_failure should handle that.
 
-Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
----
- kernel/power/swap.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+I've only tested injecting an error on the shared zeropage using 
+corrupt-pfn:
 
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index f8c13f5672ec..dfa9b7c0f96c 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -519,8 +519,8 @@ static int swap_writer_finish(struct swap_map_handle *handle,
- 				CMP_HEADER, PAGE_SIZE)
- #define CMP_SIZE	(CMP_PAGES * PAGE_SIZE)
- 
--/* Maximum number of threads for compression/decompression. */
--#define CMP_THREADS	3
-+/* Default number of threads for compression/decompression. */
-+static int cmp_threads = 3;
- 
- /* Minimum/maximum number of pages for read buffering. */
- #define CMP_MIN_RD_PAGES	1024
-@@ -741,7 +741,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = (void *)__get_free_page(GFP_NOIO | __GFP_HIGH);
- 	if (!page) {
-@@ -1257,7 +1257,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = vmalloc_array(CMP_MAX_RD_PAGES, sizeof(*page));
- 	if (!page) {
-@@ -1697,3 +1697,19 @@ static int __init swsusp_header_init(void)
- }
- 
- core_initcall(swsusp_header_init);
-+
-+static int __init cmp_threads_setup(char *str)
-+{
-+	int rc = kstrtouint(str, 0, &cmp_threads);
-+
-+	if (rc)
-+		return rc;
-+
-+	if (cmp_threads < 1)
-+		cmp_threads = 1;
-+
-+	return 1;
-+
-+}
-+
-+__setup("cmp_threads=", cmp_threads_setup);
--- 
-2.43.0
+echo $PFN > /sys/kernel/debug/hwpoison/corrupt-pfn
+
+But no memory error was triggered on a subsequent read ...
+
+Anyway, I'm trying to explore other ways to simulate hardware failure :)
+
+Thanks,
+Lance
 
 
