@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-849123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A175CBCF405
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:59:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E65BCF3FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E105519A1085
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A6BE19A1E71
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6942609D9;
-	Sat, 11 Oct 2025 10:59:34 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCC7262FC7;
+	Sat, 11 Oct 2025 10:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGfz06Hv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8D421D590;
-	Sat, 11 Oct 2025 10:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717832609D9;
+	Sat, 11 Oct 2025 10:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760180373; cv=none; b=MnbDiXg0rj0kraJuOEj4ZbTT2lJFloGAZZgmwcYrzz4dew1xOtyOKLXEMgOPou44eB0rL0xC3EzVdD5Eq/WvQeET636IrtKYxOdJlB+vfh9r0CoZw3A5fByLl04Pslvx/3jKt2KwcxQeyopzIv8ScU7JCI84PGT1B6J87ZKDDwM=
+	t=1760180320; cv=none; b=DRgBASTh2ttzI2amIOSBK/YpK2+Extw7rzAzBLn5d8X6htGIX6im+PjYKhDO58rpL5sPbvcd/6j0ZuxuXMHOGMgFjorbwbnEq2eJxPVe2U6J3aMToFEoaspgFY4S6Itzrp843BMLgI2q8NBINPASfP+fVA9hF/ICL8g1QDuw5zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760180373; c=relaxed/simple;
-	bh=p18314kQrqNwtFjDlrJ/pGINPw/6EePuRm3jLz/Kdkc=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OTJ+K2Wf7kR+p7PrgAx+sIGS3NaA6y0C4UFJQegDSb3CsJIgZoVPO5P8y5ReI2fHU+69exAonD+Y6vHtfe3My7aoCtvCFWSZDzzGFCt2INpfYNbRKa3S1rRjHWbt0cfe+al2uN15/hQyLsU82iTlovI6DZlD8GSW/kcJGuEuCX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Kees Cook <kees@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"corbet@lwn.net" <corbet@lwn.net>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "lance.yang@linux.dev" <lance.yang@linux.dev>,
-	"mhiramat@kernel.org" <mhiramat@kernel.org>, "paulmck@kernel.org"
-	<paulmck@kernel.org>, "pawan.kumar.gupta@linux.intel.com"
-	<pawan.kumar.gupta@linux.intel.com>, "mingo@kernel.org" <mingo@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"feng.tang@linux.alibaba.com" <feng.tang@linux.alibaba.com>,
-	"pauld@redhat.com" <pauld@redhat.com>, "joel.granados@kernel.org"
-	<joel.granados@kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?utf-8?B?UkU6IFvlpJbpg6jpgq7ku7ZdIFJlOiBbUEFUQ0hdW3YyXSBodW5nX3Rhc2s6?=
- =?utf-8?Q?_Panic_after_fixed_number_of_hung_tasks?=
-Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IFtQQVRDSF1bdjJdIGh1bmdfdGFzazogUGFu?=
- =?utf-8?Q?ic_after_fixed_number_of_hung_tasks?=
-Thread-Index: AQHcMDksdcRioXB8tEOzfxW7SI8WgLS7pGyAgABZ+wCAANv20A==
-Date: Sat, 11 Oct 2025 10:57:41 +0000
-Message-ID: <1729312f8358451ba32eabdea86a7820@baidu.com>
-References: <20250928053137.3412-1-lirongqing@baidu.com>
- <d8c6762c-e08c-4b7a-92e9-7dad17ad0b49@infradead.org>
- <B0A75949-C40A-49E7-83BD-58D6BD5A1493@kernel.org>
-In-Reply-To: <B0A75949-C40A-49E7-83BD-58D6BD5A1493@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1760180320; c=relaxed/simple;
+	bh=gKzLw5WiDHoxnaijYiNZW+6p1FnRihU6FQJfeqTadHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BjJcr8+Ox8tXAp1rZxEaT/PXVCHluhoPRSrpIBQa5fVwxBl7Q2LmvRBuP2/KMStAuJxRjNhVlUZDXr3/K1IJH+ofhVygGyj1n8KyZeOuKoXS0Xe/iALwkwsAz7PkOB2qkVArnh7vaowjNcJrCIvmxBTKfBFUYyjsplvk1g4UC5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGfz06Hv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C68C4CEF4;
+	Sat, 11 Oct 2025 10:58:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760180320;
+	bh=gKzLw5WiDHoxnaijYiNZW+6p1FnRihU6FQJfeqTadHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oGfz06HvWzAPKav4InSAzm/+y+awRDzM/ZWPBgQEOWFjSRffJmlWE1K0r/m6NHbJ2
+	 wJT5Ir9XXqCD2GgsUvuNqMqyq9pj/h7Mp6iM0TcvN1OsOVjDe7++YPwoQebacPKOmo
+	 JeUtP2OttZWw+aLOiE2rv3/Sv/bIbS/4xME5acFIRvATvdHmGQdqP4XXDJ8171gAIa
+	 YrEjHStLSc+7iqiSxGtLFo4p8eQYOammEN6IRbLxXIcB6z61zCeRkjtXkhqjuGK8dk
+	 nDjgjPP86WDSPuhEP5zEeaV167U0ivrI3u4lZlVt4jXvmxGVKefmfph2KF+8yTLV6O
+	 kE4i7F3IvmbgA==
+Date: Sat, 11 Oct 2025 11:58:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.12 00/35] 6.12.52-rc1 review
+Message-ID: <aOo4XZJKLSmbNO-8@finisterre.sirena.org.uk>
+References: <20251010131331.785281312@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.3.13
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xSGS5eN43E63Hjrv"
+Content-Disposition: inline
+In-Reply-To: <20251010131331.785281312@linuxfoundation.org>
+X-Cookie: If in doubt, mumble.
 
-DQo+IE9uIE9jdG9iZXIgMTAsIDIwMjUgNToyNTowNSBQTSBQRFQsIFJhbmR5IER1bmxhcCA8cmR1
-bmxhcEBpbmZyYWRlYWQub3JnPg0KPiB3cm90ZToNCj4gPkhpLA0KPiA+DQo+ID5PbiA5LzI3LzI1
-IDEwOjMxIFBNLCBsaXJvbmdxaW5nIHdyb3RlOg0KPiA+PiBGcm9tOiBMaSBSb25nUWluZyA8bGly
-b25ncWluZ0BiYWlkdS5jb20+DQo+ID4+DQo+ID4+IEN1cnJlbnRseSwgd2hlbiBodW5nX3Rhc2tf
-cGFuaWMgaXMgZW5hYmxlZCwga2VybmVsIHdpbGwgcGFuaWMNCj4gPj4gaW1tZWRpYXRlbHkgdXBv
-biBkZXRlY3RpbmcgdGhlIGZpcnN0IGh1bmcgdGFzay4gSG93ZXZlciwgc29tZSBodW5nDQo+ID4+
-IHRhc2tzIGFyZSB0cmFuc2llbnQgYW5kIHRoZSBzeXN0ZW0gY2FuIHJlY292ZXIgZnVsbHksIHdo
-aWxlIG90aGVycw0KPiA+PiBhcmUgdW5yZWNvdmVyYWJsZSBhbmQgdHJpZ2dlciBjb25zZWN1dGl2
-ZSBodW5nIHRhc2sgcmVwb3J0cywgYW5kIGEgcGFuaWMgaXMNCj4gZXhwZWN0ZWQuDQo+ID4+DQo+
-ID4+IFRoaXMgY29tbWl0IGFkZHMgYSBuZXcgc3lzY3RsIHBhcmFtZXRlciBodW5nX3Rhc2tfY291
-bnRfdG9fcGFuaWMgdG8NCj4gPj4gYWxsb3dzIHNwZWNpZnlpbmcgdGhlIG51bWJlciBvZiBjb25z
-ZWN1dGl2ZSBodW5nIHRhc2tzIHRoYXQgbXVzdCBiZQ0KPiA+PiBkZXRlY3RlZA0KPiANCj4gV2h5
-IG1ha2UgYSBuZXcgc3lzY3RsPyBDYW4ndCB5b3UganVzdCB1c2UgaHVuZ190YXNrX3BhbmljIGFu
-ZCByYWlzZSB0aGUgbWF4DQo+IHRvIElOVF9NQVg/DQo+IA0KDQoNCkhvd2V2ZXIsIHRoaXMgd2ls
-bCBwcmV2ZW50IHRoZSBwcmludGluZyBvZiBodW5nIHRhc2sgd2FybmluZ3MuIEh1bmcgdGFzayB3
-YXJuaW5ncyBhcmUgdmVyeSB1c2VmdWwgZm9yIGlkZW50aWZ5aW5nIHdoaWNoIHRhc2tzIGFyZSBo
-YW5naW5nIGFuZCB3aGVyZSB0aGV5IGFyZSBzdHVjay4NCg0KSWYgdGhlcmUgaXMgdGhpcyBmdW5j
-dGlvbiwgSSBob3BlIHRvIHNob3J0ZW4gc3lzY3RsX2h1bmdfdGFza190aW1lb3V0X3NlY3MgdG8g
-Z2l2ZSBtb3JlIGluZm9ybWF0aW9uLg0KDQpBbmQgcmN1IGhhcyB0aGUgc2ltaWxhciBmdW5jdGlv
-biBhcyBkZmU1NjQwNDVjNjUzZCAiKHJjdTogUGFuaWMgYWZ0ZXIgZml4ZWQgbnVtYmVyIG9mIHN0
-YWxscykiDQoNCi1MaQ0KDQoNCg==
+
+--xSGS5eN43E63Hjrv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Oct 10, 2025 at 03:16:02PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.52 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--xSGS5eN43E63Hjrv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjqOFwACgkQJNaLcl1U
+h9AK/gf/SaWj81AhU+6p/4Ne64RhrBIJUek3HH7Cb5zxgbFR/ZtVsWNo+QmhJrPY
+rxl66ROHZxHOe9wFsK5Vm5ZJHbZ29KQNysGXQRsRYJPlCV4AvGN7Nj0zW0SBwPcy
+DGVRhDKQRubbSHPYHZdRca3TER28OR1KPYGQpLhGwkPGlniyhdSjxL8XbHzM6Mio
+dsItvxOS1S7BQM+wCESpEfcDGsR+vJJCQoASrcVX2FgiuPeam+tgIFVNPPNGuir/
+enDu2CN7EZLXE2y/DXbwFEPz7yVnevavN53KJFvpOKdu4VppIsnK6OBP/jbM4Ro9
+YmVBnywvTZVA6orBwfVw7JneCmbS3w==
+=Bjyw
+-----END PGP SIGNATURE-----
+
+--xSGS5eN43E63Hjrv--
 
