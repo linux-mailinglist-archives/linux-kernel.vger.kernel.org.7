@@ -1,212 +1,99 @@
-Return-Path: <linux-kernel+bounces-849205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF40BCF817
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 17:59:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2EBBCF81B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C7E84E1A25
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 15:59:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C17DF4E2FD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C4A27EFEB;
-	Sat, 11 Oct 2025 15:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA8127E041;
+	Sat, 11 Oct 2025 16:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHGQKRIH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="kyQAP5R0"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C19C27A919
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 15:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FD223D7E8
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 16:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760198349; cv=none; b=BMXpfpvc85axp7pNatKUsW1J726qFyBj6Kl9wXjrjI4AyQ7co8y7CI5jC9qFI0ExPAN2vtTV6+ofl8bs9IR+ArR/9rPPns/Bfo+gfPtofL2dXZ2gency2uyEwczM1Y9XDT3gyW5USVOSXZQHrDG/CEHtA/x13NjqqhsFWtrNGuA=
+	t=1760198787; cv=none; b=gmFa1JztCf+3VptDAyMkNdIxSTmh/mXfLyBHjqxWuOnymwJYe/YWaO0s6PsAE/hzCH1QzVhDghpcXC/K48kbX+cY6mkdBj0Gt3x5hKMhG6Be0sDvnnxlAKIzS1lSXVs+OLt9VvwkOqsXnysN9kesqffWEncfgei11v3z8821/wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760198349; c=relaxed/simple;
-	bh=FMP8VZ8gA8szkAuFWTgf4lD8+bKkcaaQoNiLGdi+x8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e1voPDTQZUdSXU3XTnArTjAv4nQxTbpKMtZICvifficf8T5qYsJ2c6PB9rjY5fso9hM1oAD++PWsHbtcw47xtzNoPDlW/tUstJU47mCFtPGeVF3gsMF85vlELRnT32PQXD9JS7Xw6K29fFmgsE7JruTzlBCGAJ4uOSAOlidJwyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHGQKRIH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD17BC4AF0B
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 15:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760198348;
-	bh=FMP8VZ8gA8szkAuFWTgf4lD8+bKkcaaQoNiLGdi+x8Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GHGQKRIHweQ7PZMVovdL3iYLbmpFP9KKXvT7q02FDt6cXW0P69kn5Mw8QcpaNB1B8
-	 m6IygR0VmI8zPuyzvxrK1h0pe3A32eDEpPvCY732dmtDbkD6Zs+C5JnVs7jr5nxNXe
-	 NXC7vhUFAVTAgDzMg+sqiAXHNsFxUtBJdYwnvZvXJ1UFKczzNsfLUK9pJ1v6aPANZD
-	 vQM4Ll99H7Pk/CsITHNEPb/wzhX/k+wB3r+xBDUUMPGd+GCyiUWkDJ+2IHWxJZm6ag
-	 wfaCps6geQcvo2qmRjhe0CWyO34pPZnoZP9lj8ibMdy8qFuZaln/cENRQCFQzdInCS
-	 kN6FXpXaYfeDw==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5906665139cso3817737e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:59:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEOjCan7gI9PUVvCnIHIv0v/282/thB8dFtoz7d57ChZHLDu6blDTtP6AeSGnEx7xZlkS8Hm6EBk1/fE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlXKE1wIAsgJzOnWUaodMjyYQOlk4wBBRbqVZcsMVmwTwZhWwg
-	mRY51rSMdXwEiedMPTcbwaLtiTuGcUwmX3CMVV9Pcl+OwWtUFUhEKw/NJ4JNB9AEG5R3jA2ji3k
-	7x3FTEJePtPTZtWyuKnummQxCYmeEA6c=
-X-Google-Smtp-Source: AGHT+IHd5fznoov3yvP+tErzIhmwiFjGEZONVFkecfMa35ml0OgDZ88tcqRJ52S0xdOyn0JZVXsG2S6/tycTHC1Itx8=
-X-Received: by 2002:a05:6512:6c1:b0:57a:f38a:397b with SMTP id
- 2adb3069b0e04-5906db03666mr4327444e87.3.1760198347099; Sat, 11 Oct 2025
- 08:59:07 -0700 (PDT)
+	s=arc-20240116; t=1760198787; c=relaxed/simple;
+	bh=rN0VA7WHvWr95YTZl4jyj8/DRwg+FCiMIs7MsHjYVTk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AqXNKIo7QHcgEsJbaeG28KGISWKzWBGmMR5Wc085gNOki55qwOjPutH+ANngLtzykSQFA8WadvCCv/+NZmO0c6+ZTS9o8IvLi9Zw3GjltoXiH9QHMaIGGrG1IesKQs9iARPuvxuFAKGSgNVNfnQqQzN7OEL8UlDb/217u+UJi5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=kyQAP5R0; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id C5EC0240027
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 17:59:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760198379; bh=075p0rTLucZmvaXWjrxbWoj/6tMybuSUrg/SEF8SJsY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=kyQAP5R0kbWLcMvdLruOaii9pILTswu/sBUB4xQkPpSqFUcSJt4M80DCEJQeLqPMZ
+	 typ1jEpTkjH8rFUI/VKPtBxWf6kLNnX+GaUQh7S9W+ArwoIGDwGGjvHowRyhhdnH2U
+	 4kRsQccJhrJElhCC2a+V4GQnZKH8rVS4ihFpSAmi/P3U9juuvI+RzOVdifT0PNu0G6
+	 zFpP9hI8bB8bx1LaYPnfhXLoM79uP1kbM648y8ifuRh+21krNDosZWaPG5Voa372st
+	 d2KIzzw5TjioNFjvqL6V73gLrFJNlpk0xK3ygeswI4/iQ6uiq9YWkGR7gRqaqhgNwJ
+	 AMtQmxQOKiV8w==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4ckSwq26Qfz6v1n;
+	Sat, 11 Oct 2025 17:59:39 +0200 (CEST)
+From: =?UTF-8?q?Martin=20Kepplinger-Novakovi=C4=87?= <martink@posteo.de>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Martin=20Kepplinger-Novakovi=C4=87?= <martink@posteo.de>
+Subject: [PATCH 2/3] MAINTAINERS: Apply name and email address changes for Martin
+Date: Sat, 11 Oct 2025 15:59:39 +0000
+Message-ID: <20251011155903.7442-2-martink@posteo.de>
+In-Reply-To: <20251011155903.7442-1-martink@posteo.de>
+References: <20251011155903.7442-1-martink@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
- <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
- <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
- <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
- <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn> <CAMj1kXFLyBbRL+pAAQ6be6dxqFPiyw_Ug8qNQWaicZQ235HE=A@mail.gmail.com>
- <8091e8fa-3483-af39-2f7a-e4eb62b0944f@loongson.cn> <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
- <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
- <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn> <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
- <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com> <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
-In-Reply-To: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 11 Oct 2025 08:58:55 -0700
-X-Gmail-Original-Message-ID: <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
-X-Gm-Features: AS18NWAdTcjhG-nlKj9-SJF_h7OC6cz6ubjlCu1ov6qw2W9Mvr0vP5hoof0hvXo
-Message-ID: <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, 11 Oct 2025 at 08:01, Huacai Chen <chenhuacai@kernel.org> wrote:
->
-> On Sat, Oct 11, 2025 at 10:48=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org>=
- wrote:
-> >
-> > On Sat, 11 Oct 2025 at 00:43, Huacai Chen <chenhuacai@kernel.org> wrote=
-:
-> > >
-> > > On Sat, Oct 11, 2025 at 3:29=E2=80=AFPM Tiezhu Yang <yangtiezhu@loong=
-son.cn> wrote:
-> > > >
-> > > > On 2025/10/11 =E4=B8=8A=E5=8D=8811:40, Ard Biesheuvel wrote:
-> > > > > On Fri, 10 Oct 2025 at 19:54, Huacai Chen <chenhuacai@kernel.org>=
- wrote:
-> > > > >>
-> > > > >> On Sat, Oct 11, 2025 at 9:13=E2=80=AFAM Tiezhu Yang <yangtiezhu@=
-loongson.cn> wrote:
-> > > > >>>
-> > > > >>> On 2025/10/11 =E4=B8=8A=E5=8D=8812:25, Ard Biesheuvel wrote:
-> > > > >>> ...
-> > > > >>>> Why do we need both (1) and (2)?
-> > > > >>>
-> > > > >>> Not both, either (1) or (2).
-> > > > >>> Which one do you prefer? Or any other suggestions?
-> > > > >>>
-> > > > >>> Taking all of the considerations in balance, we should decide
-> > > > >>> what is the proper way.
-> > > > >> As a summary, there are three methods:
-> > > > >> (1) Only link libstub with vmlinux.o during the final vmlinux li=
-nk.
-> > > > >> (2) Remove the attribute __noreturn for real_kernel_entry() and =
-add while (1).
-> > > > >> (3) Ignore "__efistub_" prefix in objtool.
-> > > > >>
-> > > > >> Josh prefers method (1), I prefer method (3) but also accept met=
-hod
-> > > > >> (1) if it is not only specific to loongarch.
-> > > > >>
-> > > > >
-> > > > > This is a false positive warning in objtool, which complains abou=
-t a
-> > > > > function that falls through, even though that can never happen in
-> > > > > reality.
-> > > > >
-> > > > > To me, it is not acceptable to modify how vmlinux.o is constructe=
-d
-> > > > > also for other architectures, in order to hide some of its consti=
-tuent
-> > > > > parts from objtool, which do not use objtool to begin with.
-> > > > >
-> > > > >
-> > > > > If you are not willing to fix objtool, I suggest fixing the loong=
-arch
-> > > > > code like this:
-> > > >
-> > > > Thank you.
-> > > >
-> > > > > --- a/drivers/firmware/efi/libstub/loongarch.c
-> > > > > +++ b/drivers/firmware/efi/libstub/loongarch.c
-> > > > > @@ -10,7 +10,7 @@
-> > > > >   #include "efistub.h"
-> > > > >   #include "loongarch-stub.h"
-> > > > >
-> > > > > -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned lon=
-g cmdline,
-> > > > > +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
-> > > > >                                            unsigned long systab);
-> > > > >
-> > > > >   efi_status_t check_platform_features(void)
-> > > > > @@ -81,4 +81,6 @@
-> > > > >
-> > > > >          real_kernel_entry(true, (unsigned long)cmdline_ptr,
-> > > > >                            (unsigned long)efi_system_table);
-> > > > > +
-> > > > > +       return EFI_LOAD_ERROR;
-> > > > >   }
-> > > >
-> > > > I tested the above changes, the falls through objtool warning can
-> > > > be fixed because efi_boot_kernel() ends with a return instruction,
-> > > > I think this is reasonable.
-> > > >
-> > > > efi_boot_kernel() has a return value, there are "return status" in
-> > > > other parts of efi_boot_kernel(), it should also return at the end
-> > > > of efi_boot_kernel() in theory, although we should never get here.
-> > > >
-> > > > If there are more comments, please let me know.
-> > > I still don't want LoongArch to be a special case, which means
-> > > efi_boot_kernel() in fdt.c, jump_kernel_func in riscv.c and
-> > > enter_kernel in arm64.c should also be modified.
-> > >
-> >
-> > You have made LoongArch a special case by adding objtool support,
-> > which  arm64 and RISC-V do not have.
-> >
-> > So NAK to changing arm64 and RISC-V as well.
-> Hmmm, I want to know whether this problem is an objtool issue or an
-> efistub issue in essence. If it is an objtool issue, we should fix
-> objtool and don't touch efistub. If it is an efistub issue, then we
-> should modify efistub (but not specific to LoongArch, when RISC-V and
-> ARM64 add objtool they will meet the same issue).
->
+Update to new surname addition and currently used email address.
 
-It is an objtool issue in essence.
+Signed-off-by: Martin Kepplinger-Novaković <martink@posteo.de>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The generated code looks like this
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8cb7a124f6e8..8740d6d04714 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11574,7 +11574,7 @@ T:	git git://linuxtv.org/media.git
+ F:	drivers/media/i2c/hi556.c
+ 
+ HYNIX HI846 SENSOR DRIVER
+-M:	Martin Kepplinger <martin.kepplinger@puri.sm>
++M:	Martin Kepplinger-Novakovic <martink@posteo.de>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/i2c/hi846.c
+@@ -15536,7 +15536,7 @@ F:	include/media/imx.h
+ MEDIA DRIVERS FOR FREESCALE IMX7/8
+ M:	Rui Miguel Silva <rmfrfs@gmail.com>
+ M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+-M:	Martin Kepplinger <martin.kepplinger@puri.sm>
++M:	Martin Kepplinger-Novakovic <martink@posteo.de>
+ R:	Purism Kernel Team <kernel@puri.sm>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+-- 
+2.47.3
 
-9000000001743080: ff b7 fe 57   bl      -332 <__efistub_kernel_entry_addres=
-s>
-9000000001743084: 26 03 c0 28   ld.d    $a2, $s2, 0
-9000000001743088: 87 00 15 00   move    $a3, $a0
-900000000174308c: 04 04 80 03   ori     $a0, $zero, 1
-9000000001743090: c5 02 15 00   move    $a1, $fp
-9000000001743094: e1 00 00 4c   jirl    $ra, $a3, 0
-
-9000000001743098 <__efistub_exit_boot_func>:
-9000000001743098: 63 c0 ff 02   addi.d  $sp, $sp, -16
-
-There is nothing wrong with this code, given that the indirect call is
-to a __noreturn function, and so the fact that it falls through into
-__efistub_exit_boot_func() is not a problem.
-
-Even though the compiler does nothing wrong here, it would be nice if
-it would emit some kind of UD or BRK instruction after such a call, if
-only to make the backtrace more reliable. But the code is fine, and
-objtool simply does not have the information it needs to determine
-that the indirect call is of a variety that never returns.
-
-So I don't mind fixing it in the code, but only for LoongArch, given
-that the problem does not exist on arm64 or RISC-V.
 
