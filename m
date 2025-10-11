@@ -1,218 +1,141 @@
-Return-Path: <linux-kernel+bounces-849178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25499BCF5AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 15:23:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D932FBCF5C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 15:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 11004349DAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:23:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86EC74E1C71
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F550278753;
-	Sat, 11 Oct 2025 13:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SvvX37TD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA4D2652B7
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 13:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBD527AC34;
+	Sat, 11 Oct 2025 13:37:35 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8088917BA6;
+	Sat, 11 Oct 2025 13:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760188979; cv=none; b=C/E6AlHLuR/dZBaXSgSScdBNz1UjT+G/kdBnQvrnFXL+tGrggVBD462FbtRCnewzXns6hpEztAp0OUpDhVw39TSTHZImauhfmTw/pOuKml+3AvnuSP6JmwZRvjPq7Zb7gZIk+mTu9qs5Hkl0dP6dKsdhFQxvZ3naot0rJS/zxAg=
+	t=1760189855; cv=none; b=SYlCqX98WrmIeqYAkYVNoaJi9b2T8dKMBuwbJyzCeDlRgTDt+tewXlNOdna5O2xVzl4v2r8eGhP4MdNIfEa08eGq2mDMMRpdSLu+SAvCHFj0zF6YKgv/55H2W+YvEaQARatFoDdfLvKIijSu4/pRhN5lRURb18NzdNFA7KDShx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760188979; c=relaxed/simple;
-	bh=AEBqc3nqNPRUr0hTwg73YH6qXWARfhCpyKyce0hkpW4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=GUn2nUb4VEHKOkFZH31jQqUvbuWp1fPQOHQHpET7LcUAi6ehHzh1mpzhUfFdNfVqLQDwFHVEoTRyVzNnOCfhXs6Jt79/3ktfK2+fY07nLjaFAYj1tUW6DmI7KJx6yOfOm2wUqWpbTqjltXnZ16GIEORQ6vZ4xWBszTdu2AolA/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SvvX37TD; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760188978; x=1791724978;
-  h=date:from:to:cc:subject:message-id;
-  bh=AEBqc3nqNPRUr0hTwg73YH6qXWARfhCpyKyce0hkpW4=;
-  b=SvvX37TDgugUXJc56FOPSdDeWKCEzAU0m+Wbw9Bm2rSePCl308tT3vKZ
-   bXW3pQXC/XbRF1xtV7w2/Zryu3QcempP2lnPALQz+waZkcMG6USi/lqks
-   fPFD6HdTpf8hCPhnLi7dILbGWzlZRF58ShLTVBFmD/31PbMd7UpKaXKs0
-   oA5xzkvtUsZGJSzVi2IjwKNCxQQfO0gkOgGLAenpUT5OQm5N+rUjGvgXy
-   hmlT7K+vNBzjmGcPlKvhVMguH5rhUo9QiyCBzTHzx6VnlfHCLb9i/vG3j
-   PJU3jeAKWEQ9lNaOqyGPNeH0J1C1O7QSD14eCd/xrTYo7YCKyf70mUW/9
-   w==;
-X-CSE-ConnectionGUID: sEjD8U3kRYqAL3IUEfaObg==
-X-CSE-MsgGUID: oWuuEe0wTji4eNo51PWJoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11579"; a="73830469"
-X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="73830469"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 06:22:58 -0700
-X-CSE-ConnectionGUID: ZRBu/bkOQS+ppGoeJn5o6A==
-X-CSE-MsgGUID: lCowRsVoScKr51lQKRuleg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="185446249"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 06:22:56 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7ZYj-0003nD-32;
-	Sat, 11 Oct 2025 13:22:53 +0000
-Date: Sat, 11 Oct 2025 21:22:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20251009] BUILD SUCCESS
- 17c1a3fdbae3916ab0b603813a960a6f164014ba
-Message-ID: <202510112116.4peUx6EP-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1760189855; c=relaxed/simple;
+	bh=4UXRUN4/aHl8eK7okIPJe/6Jy94TcSB44y4J0iGyzyc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHZ+pPHwIu75bForAq2uraLYsN6tFNxAyhHVNXdJI6KFQoZv7rpqi1HzUhYn+nAvEs7QIgWNL7HbMsJkbUSWpIp/ITmRt9VNjm5lzSZOQzHEDvPJ1zEYfXtBcB+No0wRK8qgSqA0aEiQBSKH1M69Ph1L37GQBixJQRvpUtq7aHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: 2dRnejWVSDq8kVNahavXrw==
+X-CSE-MsgGUID: 9mkm2THkTfmTh6FGQaBpTg==
+X-IronPort-AV: E=Sophos;i="6.19,221,1754928000"; 
+   d="scan'208";a="154948290"
+Date: Sat, 11 Oct 2025 21:36:04 +0800
+From: Owen Gu <guhuinan@xiaomi.com>
+To: Michal Pecio <michal.pecio@gmail.com>
+CC: Oliver Neukum <oneukum@suse.com>, Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <usb-storage@lists.one-eyed-alien.net>,
+	<linux-kernel@vger.kernel.org>, Yu Chen <chenyu45@xiaomi.com>
+Subject: Re: [PATCH] fix urb unmapping issue when the uas device is remove
+ during ongoing data transfer
+Message-ID: <aOpdRAGzuPViOYBu@oa-guhuinan-2.localdomain>
+References: <20250930045309.21588-1-guhuinan@xiaomi.com>
+ <20251007225718.3c8b2cd8.michal.pecio@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251007225718.3c8b2cd8.michal.pecio@gmail.com>
+X-ClientProxiedBy: BJ-MBX04.mioffice.cn (10.237.8.124) To BJ-MBX05.mioffice.cn
+ (10.237.8.125)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20251009
-branch HEAD: 17c1a3fdbae3916ab0b603813a960a6f164014ba  scsi: libsas/aci94xx: Avoid multiple -Wflex-array-member-not-at-end warnings
+On Tue, Oct 07, 2025 at 10:57:18PM +0200, Michal Pecio wrote:
+> On Tue, 30 Sep 2025 12:53:08 +0800, guhuinan wrote:
+> > From: Owen Gu <guhuinan@xiaomi.com>
+> > 
+> > When a UAS device is unplugged during data transfer, there is
+> > a probability of a system panic occurring. The root cause is
+> > an access to an invalid memory address during URB callback handling.
+> > Specifically, this happens when the dma_direct_unmap_sg() function
+> > is called within the usb_hcd_unmap_urb_for_dma() interface, but the
+> > sg->dma_address field is 0 and the sg data structure has already been
+> > freed.
+> > 
+> > The SCSI driver sends transfer commands by invoking uas_queuecommand_lck()
+> > in uas.c, using the uas_submit_urbs() function to submit requests to USB.
+> > Within the uas_submit_urbs() implementation, three URBs (sense_urb,
+> > data_urb, and cmd_urb) are sequentially submitted. Device removal may
+> > occur at any point during uas_submit_urbs execution, which may result
+> > in URB submission failure. However, some URBs might have been successfully
+> > submitted before the failure, and uas_submit_urbs will return the -ENODEV
+> > error code in this case. The current error handling directly calls
+> > scsi_done(). In the SCSI driver, this eventually triggers scsi_complete()
+> > to invoke scsi_end_request() for releasing the sgtable. The successfully
+> > submitted URBs, when being completed (giveback), call
+> > usb_hcd_unmap_urb_for_dma() in hcd.c, leading to exceptions during sg
+> > unmapping operations since the sg data structure has already been freed.
+> > 
+> > This patch modifies the error condition check in the uas_submit_urbs()
+> > function. When a UAS device is removed but one or more URBs have already
+> > been successfully submitted to USB, it avoids immediately invoking
+> > scsi_done(). Instead, it waits for the successfully submitted URBs to
+> > complete , and then triggers the scsi_done() function call within
+> > uas_try_complete() after all pending URB operations are finalized.
+> > 
+> > Signed-off-by: Yu Chen <chenyu45@xiaomi.com>
+> > Signed-off-by: Owen Gu <guhuinan@xiaomi.com>
+> 
+> Hi,
+> 
+> Was this situation seen in the wild and/or reproduced, or only
+> predicted theoretically? Was the patch tested?
+>
 
-elapsed time: 1444m
+This problem occurs in real testing environments with low probability
+when the UAS device is unplugged during data transmission. Current
+patches have been tested and can resolve this issue. However, as
+Oliver mentioned in his response, if the resetting flag is set to 1
+at this time, it might prevent scsi_done() from being called, which
+was not considered in Patch V1.
 
-configs tested: 126
-configs skipped: 4
+> I wonder what happens to the submitted URBs when scsi_done() is
+> not called. Since the command URB was not submitted (or else we
+> wouldn't be here I guess?) the device shouldn't have selected this
+> stream before disconnection and it seems that the xHC won't try
+> to move data on those URBs, so they won't complete with -EPROTO.
+> 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Submitted URBs will be processed through usb_disable_endpoint()
+during device removal, eventually triggering usb_kill_urb() in the
+usb_disconnect() workflow. This will invoke the completion interface
+through usb_hcd_giveback_urb(), returning -ESHUTDOWN to the UAS driver. 
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20251010    gcc-12.5.0
-arc                   randconfig-002-20251010    gcc-8.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20251010    gcc-8.5.0
-arm                   randconfig-002-20251010    gcc-13.4.0
-arm                   randconfig-003-20251010    gcc-8.5.0
-arm                   randconfig-004-20251010    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20251010    gcc-14.3.0
-arm64                 randconfig-002-20251010    clang-19
-arm64                 randconfig-003-20251010    clang-17
-arm64                 randconfig-004-20251010    gcc-15.1.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20251010    gcc-15.1.0
-csky                  randconfig-002-20251010    gcc-10.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20251010    clang-22
-hexagon               randconfig-002-20251010    clang-18
-i386                             allmodconfig    gcc-14
-i386                              allnoconfig    gcc-14
-i386                             allyesconfig    gcc-14
-i386        buildonly-randconfig-001-20251010    gcc-14
-i386        buildonly-randconfig-002-20251010    clang-20
-i386        buildonly-randconfig-003-20251010    clang-20
-i386        buildonly-randconfig-004-20251010    gcc-14
-i386        buildonly-randconfig-005-20251010    gcc-14
-i386        buildonly-randconfig-006-20251010    gcc-14
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20251010    clang-22
-loongarch             randconfig-002-20251010    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                        m5272c3_defconfig    gcc-15.1.0
-m68k                            mac_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251010    gcc-11.5.0
-nios2                 randconfig-002-20251010    gcc-9.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           alldefconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251010    gcc-8.5.0
-parisc                randconfig-002-20251010    gcc-12.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                        fsp2_defconfig    gcc-15.1.0
-powerpc               randconfig-001-20251010    clang-22
-powerpc               randconfig-002-20251010    gcc-15.1.0
-powerpc               randconfig-003-20251010    clang-22
-powerpc64             randconfig-001-20251010    clang-22
-powerpc64             randconfig-002-20251010    gcc-14.3.0
-powerpc64             randconfig-003-20251010    gcc-13.4.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251010    clang-22
-riscv                 randconfig-002-20251010    gcc-9.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20251010    gcc-14.3.0
-s390                  randconfig-002-20251010    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                        apsh4ad0a_defconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                ecovec24-romimage_defconfig    gcc-15.1.0
-sh                    randconfig-001-20251010    gcc-15.1.0
-sh                    randconfig-002-20251010    gcc-15.1.0
-sh                        sh7757lcr_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251010    gcc-11.5.0
-sparc                 randconfig-002-20251010    gcc-8.5.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251010    clang-20
-sparc64               randconfig-002-20251010    gcc-10.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251010    gcc-14
-um                    randconfig-002-20251010    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251010    clang-20
-x86_64      buildonly-randconfig-002-20251010    clang-20
-x86_64      buildonly-randconfig-003-20251010    clang-20
-x86_64      buildonly-randconfig-004-20251010    clang-20
-x86_64      buildonly-randconfig-005-20251010    gcc-14
-x86_64      buildonly-randconfig-006-20251010    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251010    gcc-8.5.0
-xtensa                randconfig-002-20251010    gcc-9.5.0
+> Will they sit there stuck until SCSI core times out and aborts
+> the command? That's poor UX, speaking from experience here.
+> 
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+After applying the current patch, testing has shown that failed commands
+in the UAS driver for which scsi_done() was not called after submission
+will be completed 30 seconds after a SCSI command timeout occurs.
+We will optimize this issue in patch V2, which is currently under testing.
+
+> Maybe it would make sense to unlink them? Unlinking Streams URBs
+> is a sensitive topic because it's forbidden if they can become
+> the Current Stream, but in this case it looks like they can't.
+> 
+> Or am I missing something?
+> 
+> Regards,
+> Michal
+Dear,
+
+Sorry for the delayed response to this issue.We anticipate
+uploading an updated patch V2 next week.
+
+Regards
 
