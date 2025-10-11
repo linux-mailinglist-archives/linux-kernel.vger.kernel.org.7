@@ -1,82 +1,91 @@
-Return-Path: <linux-kernel+bounces-849077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB64BCF284
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:44:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1403BCF28D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5DB3E1916
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:44:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4CDD334CD07
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA7A23E32D;
-	Sat, 11 Oct 2025 08:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3C01F63FF;
+	Sat, 11 Oct 2025 08:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNE4Yrq0"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AIKQhx7c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4wrBLIUc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AIKQhx7c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4wrBLIUc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB8C24467E
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE045190664
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760172253; cv=none; b=MKVdgswlxJq3y/aF7I2xAE+zAFpdJnExSuOUb4xVj0jUHUGmhLKNYdapQxkC0sHks3IbgBL0RI5LZ+P7dOY6xtw9lVaOGQAS0Ck+WrjrU03ctWdLfzjhXxiSAVKCfQzwi51BYYheaa4hBT/BFngBBqDF3ZVlkzzHutLj7JM4SYI=
+	t=1760172367; cv=none; b=KvmufLaKFj5p/23CIB8y05EExVZyub5hT42ow2i4VuKWoIqXhxf6jkPjqtLZr1tRGnBeqIN85o683uHAadKEB3Y4f9zPzpKxlmS2ifJTXOSTANf+Qj33Fwen+dpf8xzGkka/PW8lYC35VUd6xIgXPR8wfjnP8wrkTJpUbQPoXUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760172253; c=relaxed/simple;
-	bh=q9sxAETe5OIqVHt+Y4pP5JV4H10TxiWkP+aj8IEeAQI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FJB7W98hPmhj2TYvKaB/jcOizIn5zbOfV5JcF70KW2CDxu4RH/3JaSY0o/NmzrVaaIm2iaNdKMNDcpkXMWiLNC+vdr+G+SwPcQ/PnpolhWXsuSpy6QKikiJtLfPcyqRigEVXenJtJN6OJGo3nzaPK9MvhxWiPfxaPwvMD0mXs/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNE4Yrq0; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7835321bc98so2775371b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760172247; x=1760777047; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g4PDXn+JxUar3PSQB1k+NUTfw6C2jsat1FHf88GiI/Y=;
-        b=kNE4Yrq0T8f77iHdPJ2xMbv7SCHpB/2oiJyFQN3zyOvxc4HKoYckOweT5HhLHcH8HB
-         VrRxFhK5bFTfbdudl7uGxjD4fHNcGU62ARddWU3tCOCtHKrm+Gt/gB6T0btCqb69dB5O
-         MroS1vlwGXz1Lvy93XzIYRbqBY4sdMg11ty5dxqYYVNdKC+WNmGd56JRYbB0UkFqZTVm
-         xTucVdO842uJuY1KKJ4HV//Qa/qyrELz/7UJk8tF8fIrP0bnS2I1GX1fkYkQd9Ptq9y/
-         iKrnTLEiLYwvaowalNwdmUuh02BOEEitpfLoCCPJ3/VegJB7QGNFE+soJLoRhw2YWoa9
-         SCgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760172247; x=1760777047;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g4PDXn+JxUar3PSQB1k+NUTfw6C2jsat1FHf88GiI/Y=;
-        b=KK/iMmhxlbnHYSwyYgoJt7WOnwbAiMYvLi0Pgl1iY1t/XGGnbvOrgUK9UitqeDBkU3
-         5wclRoIkejEWQI/g6AA8PJyloQbCnTu+gsGqW/LIwQ0ZBU8dtwZNmCLOzwsmbnGsnwrS
-         D5VXgvrgCDvRbm3vzMGGwp9wh4oRb0pBOmhkoKtyg1VpQqUbF46dBduV1pjeJXoH9Gbn
-         VF6URZ7jS4v6F69SVWuKJFGP2m9ugwjn7Ar/zqptzBBmrIXAq0b0aQJ3Ixd/3RMv97Ig
-         6T5AED4azmrN86zUQ7xzbrJjKfoQ+fYKpwROMlRXBFMAc2qgNYLCwcG3zEauW1xKNwHi
-         XdfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5gRS6o9B2A5g1okr85z3F1o0qkpcFdMYeUkvk7LnInpWRfeiH8FxJtcutT4Hv0e+z7EhCkwN0HaMg0s4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6P20vWFna1La+hryKunevl11fbJejGyt/j0tcwlgw6W5BOr8r
-	zUFnVsmg9KTqSwRrq4FiUa4t0Q0ws7lTpXo/BITmRjAcvoAcGorhDTq/ounofQ==
-X-Gm-Gg: ASbGncvtlf7ayMnOlMWYCVb1rGyQjEb3RR3FukdykCAP6UfnkC8Qa5pUIFAotRWBrRU
-	H9sFIWx65bWHbL6p0qfMUjvwSTdQE9bFL1g7FeDTKe1T0WvAr4mc5K4bcl/7Ru2R6G0MFz2ITEI
-	wdBNT4DiWWSf0MdgzuOSi3knUjphgzZEIOiZm/E3CyoaxYcfrAdQFDedjIq8dajvIi8xHMaMsca
-	57yuFka2c7q8phB38R7HRhYVKkeF6/wvwpA08Z3IlqoApMiGUSD9Q8NSBDmPueyLOyiWMbcjwW/
-	i4LhiupKEFcg5b22y7b/2MGOoJJJsdNd/fz9qDD34GLkBPmK5DojltgWPhCmDjwBzEHT8nu/iDb
-	OYK9Jls+v2zn4aKTEYDFvRggbXJSDTIR84ooI0Ux8KyweGBM6zniDA09mPo1UOtDpufjVSYthc+
-	Knjw8=
-X-Google-Smtp-Source: AGHT+IHIBtYr4kZkVJMMgsx5CGtaN+MoT5AMsvXZeqpen1KOa5fs69vzGtUrVk4aCFZbvjs/plf8Ag==
-X-Received: by 2002:a05:6a00:2d92:b0:781:1550:1ac7 with SMTP id d2e1a72fcca58-793857098aemr18639763b3a.6.1760172247152;
-        Sat, 11 Oct 2025 01:44:07 -0700 (PDT)
-Received: from Black-Pearl.localdomain ([157.50.164.155])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7992d09659esm5401090b3a.45.2025.10.11.01.43.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 01:44:06 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Sat, 11 Oct 2025 08:40:24 +0000
-Subject: [PATCH v3 2/2] dt-bindings: mmc: ti,omap2430-sdhci: convert to DT
- schema
+	s=arc-20240116; t=1760172367; c=relaxed/simple;
+	bh=eSKr9IBJV+Ys3CLgeRLf2XJ08eOImR5qejaCPGUWui4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r2zvjoNGd8wbfGT7NwgrZ108NXOAFm0idRVzse7PnCVv+gFZbPGFFs3UtAHuVDRIfXCXZWx6FOTSenRfdYW2ygDb/zrsvEKtS9DZUUu3cbhdoRc5QX1Tq/j7bN/JGFNoT1gjTaMvz66BARysIZkNdfLAIB0oaUwJjiErTddc434=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AIKQhx7c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4wrBLIUc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AIKQhx7c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4wrBLIUc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2ABA62121D;
+	Sat, 11 Oct 2025 08:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760172353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RkiZAPfAoO2k8f8DYL/BSYfMmFd/L7etyt17voz3Rtk=;
+	b=AIKQhx7ckTirsOU68KWn8yDe/eyEsVqHI6ChyldowkisZjFAxTF6Pg76zl1glZpuMv3FyZ
+	t5XHF6+g8+GZTueYrUrRUZlQyYkfHWo+wM9zL4AdiyEXwkzVC1NUQNSKOp5u+D136P0W8S
+	k1EsTY/sPuXpcrLyFzE1+HAUZtCSGYg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760172353;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RkiZAPfAoO2k8f8DYL/BSYfMmFd/L7etyt17voz3Rtk=;
+	b=4wrBLIUcznfnH8+pKudmkb4vvtjo4Bam8x+1V+NIPjOB7Rcr6FatG6tKsxJJmvVVpCvErx
+	3bkxYcoAY1P5hQBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760172353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RkiZAPfAoO2k8f8DYL/BSYfMmFd/L7etyt17voz3Rtk=;
+	b=AIKQhx7ckTirsOU68KWn8yDe/eyEsVqHI6ChyldowkisZjFAxTF6Pg76zl1glZpuMv3FyZ
+	t5XHF6+g8+GZTueYrUrRUZlQyYkfHWo+wM9zL4AdiyEXwkzVC1NUQNSKOp5u+D136P0W8S
+	k1EsTY/sPuXpcrLyFzE1+HAUZtCSGYg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760172353;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RkiZAPfAoO2k8f8DYL/BSYfMmFd/L7etyt17voz3Rtk=;
+	b=4wrBLIUcznfnH8+pKudmkb4vvtjo4Bam8x+1V+NIPjOB7Rcr6FatG6tKsxJJmvVVpCvErx
+	3bkxYcoAY1P5hQBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1585C13693;
+	Sat, 11 Oct 2025 08:45:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QI/kBEEZ6mi3CgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sat, 11 Oct 2025 08:45:53 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Sat, 11 Oct 2025 10:45:41 +0200
+Subject: [PATCH] slab: fix barn NULL pointer dereference on memoryless
+ nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,302 +94,366 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251011-ti-sdhci-omap-v3-2-9487ef2de559@gmail.com>
-References: <20251011-ti-sdhci-omap-v3-0-9487ef2de559@gmail.com>
-In-Reply-To: <20251011-ti-sdhci-omap-v3-0-9487ef2de559@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>, 
- Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
- Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.2
+Message-Id: <20251011-null-barn-fix-v1-1-5fe5af5b8fd8@suse.cz>
+X-B4-Tracking: v=1; b=H4sIADQZ6mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0ND3bzSnBzdpMSiPN20zArdRGNzM1MLM6MUgzQTJaCegqJUoDDYvOj
+ Y2loArihwS18AAAA=
+X-Change-ID: 20251011-null-barn-fix-a3765862d0f4
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+ Suren Baghdasaryan <surenb@google.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Linus Torvalds <torvalds@linux-foundation.org>, 
+ Phil Auld <pauld@redhat.com>, Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11153; i=vbabka@suse.cz;
+ h=from:subject:message-id; bh=eSKr9IBJV+Ys3CLgeRLf2XJ08eOImR5qejaCPGUWui4=;
+ b=owGbwMvMwMG4+8GG0kuuHbMYT6slMWS8krT5sVz+13z/Wk6DckWv1p+JzQ8/3Jva9EbNOb93p
+ 5Lxt+ryTkZ/FgZGDgZLMUWW6t0nHEVnKntM8/D9CDOIlQlkirRIAwMQsDDw5SbmlRrpGOmZahvq
+ GRrqAJkMXJwCMNUTGtj/ynMummQ1z/Ssqmq59HLv76Ki2t5fFPduuKaSOpfrnvq5hDcefNl3Lqd
+ +PlZ6bLnfQwvPWO1nZ/kK3MWPbFCfcT955UO9Od0cEzwP/dMtfvr50QT25bv63/om/BJ5fPzwU7
+ f3T8Pbas08r1zvln52e7+mgn3dfaeXiztXbXnyZuEj9/3VjZmxfN2TbaZvDNdM1Wy/3bczwzng3
+ MzXLBnmT7tdZrLKZKo9/pvc7aHRPPPLjHJVbrYPiyedVa272ceqVq2SomNd/VI56OWHK1/mnM9s
+ /v7wzuslHeLfjuhOPeqWqV7pGOolVZB1aMb8lc63Ps53nHZx2wUeZbeVHe7se9ivnQ7w+SYl62y
+ 7oOKfJgA=
+X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
+ fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-Convert TI OMAP SDHCI Controller binding to YAML format.
-Changes during Conversion:
-- Define new properties like "clocks", "clock-names",
-  "ti,needs-special-reset", "ti,needs-special-hs-handling",
-  "pbias-supply", "cap-mmc-dual-data-rate" and "power-domains" to
-  resolve dtb_check errors.
-- Remove "pinctrl-names" and "pinctrl-<n>"
-  from required as they are not necessary for all DTS files.
-- Remove "ti,hwmods" property entirely from the YAML as the
-  DTS doesn't contain this property for the given compatibles and the
-  text binding is misleading.
-- Add "clocks", "clock-names", "max-frequency" and "ti,needs-special-reset"
-  to the required properties based on the compatible and the text binding
-  doesn't mention these properties as required.
-- Add missing strings like "default-rev11", "sdr12-rev11", "sdr25-rev11",
-  "hs-rev11", "sdr25-rev11" and "sleep" to pinctrl-names string array
-  to resolve errors detected by dtb_check.
+Phil reported a boot failure once sheaves become used in commits
+59faa4da7cd4 ("maple_tree: use percpu sheaves for maple_node_cache") and
+3accabda4da1 ("mm, vma: use percpu sheaves for vm_area_struct cache"):
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+ BUG: kernel NULL pointer dereference, address: 0000000000000040
+ #PF: supervisor read access in kernel mode
+ #PF: error_code(0x0000) - not-present page
+ PGD 0 P4D 0
+ Oops: Oops: 0000 [#1] SMP NOPTI
+ CPU: 21 UID: 0 PID: 818 Comm: kworker/u398:0 Not tainted 6.17.0-rc3.slab+ #5 PREEMPT(voluntary)
+ Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.26.0 07/30/2025
+ RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
+ Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
+ RSP: 0018:ffffd2d10950bdb0 EFLAGS: 00010246
+ RAX: 0000000000000000 RBX: ffff8a775dab74b0 RCX: 00000000ffffffff
+ RDX: 0000000000000cc0 RSI: ffff8a6800804000 RDI: ffff8a680004e300
+ RBP: ffffd2d10950be40 R08: 0000000000000060 R09: ffffffffb9367388
+ R10: 00000000000149e8 R11: ffff8a6f87a38000 R12: 0000000000000cc0
+ R13: 0000000000000cc0 R14: ffff8a680004e300 R15: 00000000000000c0
+ FS:  0000000000000000(0000) GS:ffff8a77a3541000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000040 CR3: 0000000e1aa24000 CR4: 00000000003506f0
+ Call Trace:
+  <TASK>
+  ? srso_return_thunk+0x5/0x5f
+  ? vm_area_alloc+0x1e/0x60
+  kmem_cache_alloc_noprof+0x4ec/0x5b0
+  vm_area_alloc+0x1e/0x60
+  create_init_stack_vma+0x26/0x210
+  alloc_bprm+0x139/0x200
+  kernel_execve+0x4a/0x140
+  call_usermodehelper_exec_async+0xd0/0x190
+  ? __pfx_call_usermodehelper_exec_async+0x10/0x10
+  ret_from_fork+0xf0/0x110
+  ? __pfx_call_usermodehelper_exec_async+0x10/0x10
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+ Modules linked in:
+ CR2: 0000000000000040
+ ---[ end trace 0000000000000000 ]---
+ RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
+ Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
+ RSP: 0018:ffffd2d10950bdb0 EFLAGS: 00010246
+ RAX: 0000000000000000 RBX: ffff8a775dab74b0 RCX: 00000000ffffffff
+ RDX: 0000000000000cc0 RSI: ffff8a6800804000 RDI: ffff8a680004e300
+ RBP: ffffd2d10950be40 R08: 0000000000000060 R09: ffffffffb9367388
+ R10: 00000000000149e8 R11: ffff8a6f87a38000 R12: 0000000000000cc0
+ R13: 0000000000000cc0 R14: ffff8a680004e300 R15: 00000000000000c0
+ FS:  0000000000000000(0000) GS:ffff8a77a3541000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000040 CR3: 0000000e1aa24000 CR4: 00000000003506f0
+ Kernel panic - not syncing: Fatal exception
+ Kernel Offset: 0x36a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+ ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+And noted "this is an AMD EPYC 7401 with 8 NUMA nodes configured such
+that memory is only on 2 of them."
+
+ # numactl --hardware
+ available: 8 nodes (0-7)
+ node 0 cpus: 0 8 16 24 32 40 48 56 64 72 80 88
+ node 0 size: 0 MB
+ node 0 free: 0 MB
+ node 1 cpus: 2 10 18 26 34 42 50 58 66 74 82 90
+ node 1 size: 31584 MB
+ node 1 free: 30397 MB
+ node 2 cpus: 4 12 20 28 36 44 52 60 68 76 84 92
+ node 2 size: 0 MB
+ node 2 free: 0 MB
+ node 3 cpus: 6 14 22 30 38 46 54 62 70 78 86 94
+ node 3 size: 0 MB
+ node 3 free: 0 MB
+ node 4 cpus: 1 9 17 25 33 41 49 57 65 73 81 89
+ node 4 size: 0 MB
+ node 4 free: 0 MB
+ node 5 cpus: 3 11 19 27 35 43 51 59 67 75 83 91
+ node 5 size: 32214 MB
+ node 5 free: 31625 MB
+ node 6 cpus: 5 13 21 29 37 45 53 61 69 77 85 93
+ node 6 size: 0 MB
+ node 6 free: 0 MB
+ node 7 cpus: 7 15 23 31 39 47 55 63 71 79 87 95
+ node 7 size: 0 MB
+ node 7 free: 0 MB
+
+Linus decoded the stacktrace to get_barn() and get_node() and determined
+that kmem_cache->node[numa_mem_id()] is NULL.
+
+The problem is due to a wrong assumption that memoryless nodes only
+exist on systems with CONFIG_HAVE_MEMORYLESS_NODES, where numa_mem_id()
+points to the nearest node that has memory. SLUB has been allocating its
+kmem_cache_node structures only on nodes with memory and so it does with
+struct node_barn.
+
+For kmem_cache_node, get_partial_node() checks if get_node() result is
+not NULL, which I assumed was for protection from a bogus node id passed
+to kmalloc_node() but apparently it's also for systems where
+numa_mem_id() (used when no specific node is given) might return a
+memoryless node.
+
+Fix the sheaves code the same way by checking the result of get_node()
+and bailing out if it's NULL. Note that cpus on such memoryless nodes
+will have degraded sheaves performance, which can be improved later,
+preferably by making numa_mem_id() work properly on such systems.
+
+Fixes: 2d517aa09bbc ("slab: add opt-in caching layer of percpu sheaves")
+Reported-and-tested-by: Phil Auld <pauld@redhat.com>
+Closes: https://lore.kernel.org/all/20251010151116.GA436967@pauld.westford.csb/
+Analyzed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAHk-%3Dwg1xK%2BBr%3DFJ5QipVhzCvq7uQVPt5Prze6HDhQQ%3DQD_BcQ@mail.gmail.com/
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- .../devicetree/bindings/mmc/sdhci-omap.txt         |  43 -----
- .../devicetree/bindings/mmc/ti,omap2430-sdhci.yaml | 202 +++++++++++++++++++++
- 2 files changed, 202 insertions(+), 43 deletions(-)
+ mm/slub.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 51 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-deleted file mode 100644
-index f91e341e6b36c410275e6f993dd08400be3fc1f8..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-+++ /dev/null
-@@ -1,43 +0,0 @@
--* TI OMAP SDHCI Controller
+diff --git a/mm/slub.c b/mm/slub.c
+index 135c408e0515..b1f15598fbfd 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -504,10 +504,18 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
+ 	return s->node[node];
+ }
+ 
+-/* Get the barn of the current cpu's memory node */
++/*
++ * Get the barn of the current cpu's closest memory node. It may not exist on
++ * systems with memoryless nodes but without CONFIG_HAVE_MEMORYLESS_NODES
++ */
+ static inline struct node_barn *get_barn(struct kmem_cache *s)
+ {
+-	return get_node(s, numa_mem_id())->barn;
++	struct kmem_cache_node *n = get_node(s, numa_mem_id());
++
++	if (!n)
++		return NULL;
++
++	return n->barn;
+ }
+ 
+ /*
+@@ -4982,6 +4990,10 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
+ 	}
+ 
+ 	barn = get_barn(s);
++	if (!barn) {
++		local_unlock(&s->cpu_sheaves->lock);
++		return NULL;
++	}
+ 
+ 	full = barn_replace_empty_sheaf(barn, pcs->main);
+ 
+@@ -5153,13 +5165,20 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
+ 	if (unlikely(pcs->main->size == 0)) {
+ 
+ 		struct slab_sheaf *full;
++		struct node_barn *barn;
+ 
+ 		if (pcs->spare && pcs->spare->size > 0) {
+ 			swap(pcs->main, pcs->spare);
+ 			goto do_alloc;
+ 		}
+ 
+-		full = barn_replace_empty_sheaf(get_barn(s), pcs->main);
++		barn = get_barn(s);
++		if (!barn) {
++			local_unlock(&s->cpu_sheaves->lock);
++			return allocated;
++		}
++
++		full = barn_replace_empty_sheaf(barn, pcs->main);
+ 
+ 		if (full) {
+ 			stat(s, BARN_GET);
+@@ -5314,6 +5333,7 @@ kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
+ {
+ 	struct slub_percpu_sheaves *pcs;
+ 	struct slab_sheaf *sheaf = NULL;
++	struct node_barn *barn;
+ 
+ 	if (unlikely(size > s->sheaf_capacity)) {
+ 
+@@ -5355,8 +5375,11 @@ kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
+ 		pcs->spare = NULL;
+ 		stat(s, SHEAF_PREFILL_FAST);
+ 	} else {
++		barn = get_barn(s);
++
+ 		stat(s, SHEAF_PREFILL_SLOW);
+-		sheaf = barn_get_full_or_empty_sheaf(get_barn(s));
++		if (barn)
++			sheaf = barn_get_full_or_empty_sheaf(barn);
+ 		if (sheaf && sheaf->size)
+ 			stat(s, BARN_GET);
+ 		else
+@@ -5426,7 +5449,7 @@ void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
+ 	 * If the barn has too many full sheaves or we fail to refill the sheaf,
+ 	 * simply flush and free it.
+ 	 */
+-	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES ||
++	if (!barn || data_race(barn->nr_full) >= MAX_FULL_SHEAVES ||
+ 	    refill_sheaf(s, sheaf, gfp)) {
+ 		sheaf_flush_unused(s, sheaf);
+ 		free_empty_sheaf(s, sheaf);
+@@ -5943,10 +5966,9 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
+  * put the full sheaf there.
+  */
+ static void __pcs_install_empty_sheaf(struct kmem_cache *s,
+-		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty)
++		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty,
++		struct node_barn *barn)
+ {
+-	struct node_barn *barn;
 -
--Refer to mmc.txt for standard MMC bindings.
+ 	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
+ 
+ 	/* This is what we expect to find if nobody interrupted us. */
+@@ -5956,8 +5978,6 @@ static void __pcs_install_empty_sheaf(struct kmem_cache *s,
+ 		return;
+ 	}
+ 
+-	barn = get_barn(s);
 -
--For UHS devices which require tuning, the device tree should have a "cpu_thermal" node which maps to the appropriate thermal zone. This is used to get the temperature of the zone during tuning.
--
--Required properties:
--- compatible: Should be "ti,omap2430-sdhci" for omap2430 controllers
--	      Should be "ti,omap3-sdhci" for omap3 controllers
--	      Should be "ti,omap4-sdhci" for omap4 and ti81 controllers
--	      Should be "ti,omap5-sdhci" for omap5 controllers
--	      Should be "ti,dra7-sdhci" for DRA7 and DRA72 controllers
--	      Should be "ti,k2g-sdhci" for K2G
--	      Should be "ti,am335-sdhci" for am335x controllers
--	      Should be "ti,am437-sdhci" for am437x controllers
--- ti,hwmods: Must be "mmc<n>", <n> is controller instance starting 1
--	     (Not required for K2G).
--- pinctrl-names: Should be subset of "default", "hs", "sdr12", "sdr25", "sdr50",
--		 "ddr50-rev11", "sdr104-rev11", "ddr50", "sdr104",
--		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
--		 "hs200_1_8v",
--- pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
--
--Optional properties:
--- dmas:		List of DMA specifiers with the controller specific format as described
--		in the generic DMA client binding. A tx and rx specifier is required.
--- dma-names:	List of DMA request names. These strings correspond 1:1 with the
--		DMA specifiers listed in dmas. The string naming is to be "tx"
--		and "rx" for TX and RX DMA requests, respectively.
--
--Deprecated properties:
--- ti,non-removable: Compatible with the generic non-removable property
--
--Example:
--	mmc1: mmc@4809c000 {
--		compatible = "ti,dra7-sdhci";
--		reg = <0x4809c000 0x400>;
--		ti,hwmods = "mmc1";
--		bus-width = <4>;
--		vmmc-supply = <&vmmc>; /* phandle to regulator node */
--		dmas = <&sdma 61 &sdma 62>;
--		dma-names = "tx", "rx";
--	};
-diff --git a/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..7683481204b2e222847244b67f9ae2684db93028
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
-@@ -0,0 +1,202 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/ti,omap2430-sdhci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 	/*
+ 	 * Unlikely because if the main sheaf had space, we would have just
+ 	 * freed to it. Get rid of our empty sheaf.
+@@ -6002,6 +6022,11 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
+ 	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
+ 
+ 	barn = get_barn(s);
++	if (!barn) {
++		local_unlock(&s->cpu_sheaves->lock);
++		return NULL;
++	}
 +
-+title: TI OMAP SDHCI Controller
+ 	put_fail = false;
+ 
+ 	if (!pcs->spare) {
+@@ -6084,7 +6109,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
+ 	}
+ 
+ 	pcs = this_cpu_ptr(s->cpu_sheaves);
+-	__pcs_install_empty_sheaf(s, pcs, empty);
++	__pcs_install_empty_sheaf(s, pcs, empty, barn);
+ 
+ 	return pcs;
+ }
+@@ -6121,8 +6146,9 @@ bool free_to_pcs(struct kmem_cache *s, void *object)
+ 
+ static void rcu_free_sheaf(struct rcu_head *head)
+ {
++	struct kmem_cache_node *n;
+ 	struct slab_sheaf *sheaf;
+-	struct node_barn *barn;
++	struct node_barn *barn = NULL;
+ 	struct kmem_cache *s;
+ 
+ 	sheaf = container_of(head, struct slab_sheaf, rcu_head);
+@@ -6139,7 +6165,11 @@ static void rcu_free_sheaf(struct rcu_head *head)
+ 	 */
+ 	__rcu_free_sheaf_prepare(s, sheaf);
+ 
+-	barn = get_node(s, sheaf->node)->barn;
++	n = get_node(s, sheaf->node);
++	if (!n)
++		goto flush;
 +
-+maintainers:
-+  - Kishon Vijay Abraham I <kishon@ti.com>
-+
-+description:
-+  For UHS devices which require tuning, the device tree should have a
-+  cpu_thermal node which maps to the appropriate thermal zone. This
-+  is used to get the temperature of the zone during tuning.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,omap2430-sdhci
-+      - ti,omap3-sdhci
-+      - ti,omap4-sdhci
-+      - ti,omap5-sdhci
-+      - ti,dra7-sdhci
-+      - ti,k2g-sdhci
-+      - ti,am335-sdhci
-+      - ti,am437-sdhci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: fck
-+      - const: mmchsdb_fck
-+
-+  dmas:
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+
-+  pinctrl-names:
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+    minItems: 1
-+    maxItems: 14
-+    items:
-+      enum:
-+        - default
-+        - default-rev11
-+        - hs
-+        - sdr12
-+        - sdr12-rev11
-+        - sdr25
-+        - sdr25-rev11
-+        - sdr50
-+        - ddr50-rev11
-+        - sdr104-rev11
-+        - ddr50
-+        - sdr104
-+        - ddr_1_8v-rev11
-+        - ddr_1_8v
-+        - ddr_3_3v
-+        - hs-rev11
-+        - hs200_1_8v-rev11
-+        - hs200_1_8v
-+        - sleep
-+
-+  pinctrl-0:
-+    maxItems: 1
-+
-+  pinctrl-1:
-+    maxItems: 1
-+
-+  pinctrl-2:
-+    maxItems: 1
-+
-+  pinctrl-3:
-+    maxItems: 1
-+
-+  pinctrl-4:
-+    maxItems: 1
-+
-+  pinctrl-5:
-+    maxItems: 1
-+
-+  pinctrl-6:
-+    maxItems: 1
-+
-+  pinctrl-7:
-+    maxItems: 1
-+
-+  pinctrl-8:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  pbias-supply:
-+    description:
-+      It is used to specify the voltage regulator that provides the bias
-+      voltage for certain analog or I/O pads.
-+
-+  cap-mmc-dual-data-rate:
-+    description:
-+      A characteristic or capability associated with MultiMediaCard (MMC)
-+      interfaces, specifically indicating that the MMC controller
-+      supports Dual Data Rate (DDR) mode.
-+    type: boolean
-+
-+  ti,needs-special-reset:
-+    description:
-+      It indicates that a specific soft reset sequence is required for
-+      certain Texas Instruments devices, particularly those with
-+      HSMMC (High-Speed MultiMediaCard) controllers.
-+    type: boolean
-+
-+  ti,needs-special-hs-handling:
-+    description:
-+      It's presence in an MMC controller's DT node signals to the Linux kernel's
-+      omap_hsmmc driver that this particular IP block requires special software
-+      handling or workarounds to correctly manage High-Speed (HS) modes like
-+      SDR25, SDR50, SDR104, DDR50.
-+    type: boolean
-+
-+  ti,non-removable:
-+    description:
-+      It indicates that a component is not meant to be easily removed or
-+      replaced by the user, such as an embedded battery or a non-removable
-+      storage slot like eMMC.
-+    type: boolean
-+    deprecated: true
-+
-+  clock-frequency:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      It represents the speed at which a clock signal associated with a device
-+      or bus operates, measured in Hertz (Hz). This value is crucial for configuring
-+      hardware components that require a specific clock speed.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+allOf:
-+  - $ref: sdhci-common.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - ti,dra7-sdhci
-+              - ti,k2g-sdhci
-+    then:
-+      required:
-+        - max-frequency
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: ti,k2g-sdhci
-+    then:
-+      required:
-+        - clocks
-+        - clock-names
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - ti,am335-sdhci
-+              - ti,am437-sdhci
-+    then:
-+      required:
-+        - ti,needs-special-reset
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    mmc@4809c000 {
-+        compatible = "ti,dra7-sdhci";
-+        reg = <0x4809c000 0x400>;
-+        interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+        max-frequency = <192000000>;
-+        sdhci-caps-mask = <0x0 0x400000>;
-+        bus-width = <4>;
-+        vmmc-supply = <&vmmc>; /* phandle to regulator node */
-+        dmas = <&sdma 61>, <&sdma 62>;
-+        dma-names = "tx", "rx";
-+    };
-+...
++	barn = n->barn;
+ 
+ 	/* due to slab_free_hook() */
+ 	if (unlikely(sheaf->size == 0))
+@@ -6157,11 +6187,12 @@ static void rcu_free_sheaf(struct rcu_head *head)
+ 		return;
+ 	}
+ 
++flush:
+ 	stat(s, BARN_PUT_FAIL);
+ 	sheaf_flush_unused(s, sheaf);
+ 
+ empty:
+-	if (data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES) {
++	if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES) {
+ 		barn_put_empty_sheaf(barn, sheaf);
+ 		return;
+ 	}
+@@ -6191,6 +6222,10 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
+ 		}
+ 
+ 		barn = get_barn(s);
++		if (!barn) {
++			local_unlock(&s->cpu_sheaves->lock);
++			goto fail;
++		}
+ 
+ 		empty = barn_get_empty_sheaf(barn);
+ 
+@@ -6304,6 +6339,8 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
+ 		goto do_free;
+ 
+ 	barn = get_barn(s);
++	if (!barn)
++		goto no_empty;
+ 
+ 	if (!pcs->spare) {
+ 		empty = barn_get_empty_sheaf(barn);
 
+---
+base-commit: f76b1683d16dcd5299a9b67d8ef45fe8d29cb2e6
+change-id: 20251011-null-barn-fix-a3765862d0f4
+
+Best regards,
 -- 
-2.51.0
+Vlastimil Babka <vbabka@suse.cz>
 
 
