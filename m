@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-849240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C434BCFA90
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:18:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D46BBCFAA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68457189A2D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:19:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96F2D4EB90B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6330928466A;
-	Sat, 11 Oct 2025 18:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6339C2857C2;
+	Sat, 11 Oct 2025 18:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BHqKXCIn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BzReY9Ll"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9FE27F75F
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E929283153
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760206705; cv=none; b=toy7mYgrkMShyfYM+pYJVnlk2kT96KNiv5DNY2SPeZNG+C4hUMbzxW+QMLoY5P4G0gxMEqPJZD1oRcx17kku+G6SaznXM9qHf6TbjE3y6E+5eW6mFGs9F7x17MH+po42oQIBeMuQONsrqKSl7XLcK2ag8qWKJC1Xr5w/c8efzqg=
+	t=1760206706; cv=none; b=l9o+r3tPneRXt3UimsPhWTyfqr4rcCBrkqPagUsuj236psyVrtVREf1eV9bh9i5x6sqiX/93/2fGTQOd3tDyAfM2x8nQDBG2tniRFTa1AjKlI5Hs36x8WGu+npNUTYaShkti1wSxrqntJys6VhwZ+aL+o6PQ3k1GyXMU2JJL3bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760206705; c=relaxed/simple;
-	bh=DdyW/r2KQaOAUhZji+A8n5cKTc9SCv7SgRP3P8o/I+A=;
+	s=arc-20240116; t=1760206706; c=relaxed/simple;
+	bh=KmODaaWe2UFjj11ibL17qZDBWmMYCsJpeBqEebS+qwU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BrQQpH91F+AYLu9pNsP5vrblllGBIiYSrf9Tqy9EYC4wS0n0udak+gKeFf8J19+3f0P2Q81tPIF74K0DC5ETs6YeanXYBydnXlUojA//lO1O300HBm7E4ONxjKjmsrUvcSI3JT5Le3EHo8kdx7whhv843/P3GIna7MP3njXDV14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BHqKXCIn; arc=none smtp.client-ip=198.175.65.17
+	 MIME-Version; b=MDjhwzZYr3m7pwdhzj9TlyV526H5WJLBGHEilCqY27+WQSI1yxnPWT6k5Mm6bFKl/0I+sfGQBi/7HzzHe1S3ts6bk23EZaJB+w94GLEZKAcc8cSHQMDIbKKzGRMgBrwPnT0sZBkKxiooppSIJhtXCA86kWL70YWS1bZ1PVuSOI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BzReY9Ll; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760206704; x=1791742704;
+  t=1760206705; x=1791742705;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=DdyW/r2KQaOAUhZji+A8n5cKTc9SCv7SgRP3P8o/I+A=;
-  b=BHqKXCInpJ9FMs87LCbtbTr8sCx+I94vOdw+YhnA01VGi2y2vrviHuha
-   44dYUBEYMQCSqJ0LZTT2V+2kshxkaTOgIYxGLcnue8xZcdvJE+tFA1vNK
-   e3l/bHsCjqNkzuXBC7xQTcdlcOk0RWIbIkbhlcUaSh6K3yuxlVHUHJcmE
-   r0xmWO+olPuADPa5P30u0Ohf3HcjIqBXZsxBvV5VI21iprKzNU2fqZx7i
-   dnB6Mbk+VkrpWYKhn8UVMBHAO40Hwj1qg7dTaTpQfAWXx8+nbbBZeHxKl
-   1QcSW4+uLMzTxhbUTINvxL6mxdB/i7FkzCBGLbgZ013YwkDLFD2+4CBnX
-   w==;
-X-CSE-ConnectionGUID: XU0Bp+klQCiSCfmyOaBeOA==
-X-CSE-MsgGUID: qUdy5aE4QB+ndas2O3JrjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339674"
+  bh=KmODaaWe2UFjj11ibL17qZDBWmMYCsJpeBqEebS+qwU=;
+  b=BzReY9LlEh9sk7OgZDcp2VjjY3mwnRzW5hp4d8rSX40TSJQm31n7pNsD
+   pGDX4pGNqIL2dKhB0TWBOakqdMqoEJBGhhFnbP0SML4ddRpmP22b3hhKk
+   66OBjK6EOlIiBTx96elcU0fwjNnZqBKTvf/i3IuC2HlilzxwoimPLi7ym
+   OqUTRkCWmlqgJ5BjvtUEaD2eb97VkiEAs6iUC5FsMQPohIZRE0ZJGIQT2
+   rLWb4YevoZUYtWiZQU/yYmcq5sU7eCp84d/YBPYTw8uDxW2au989TrB9t
+   olL4givIBdX+ieIJw7430Yz/Es1H+8Ji46MflznNqafshDKBuL8HbpSmx
+   A==;
+X-CSE-ConnectionGUID: xTVpDyXiQYmCxiG8vc8uKg==
+X-CSE-MsgGUID: ouYA76mXSo+MkfJ9ZAYryA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62339693"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62339674"
+   d="scan'208";a="62339693"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 11:18:22 -0700
-X-CSE-ConnectionGUID: veyEE6PBTGirh+PomEioDQ==
-X-CSE-MsgGUID: eht/GZN/S/ekMdaQtDO0ag==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 11:18:23 -0700
+X-CSE-ConnectionGUID: Vda9/GgFQc2uyKt8dn0epA==
+X-CSE-MsgGUID: 2SFdpXMCSGKC8Z5YqgWCow==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,221,1754982000"; 
-   d="scan'208";a="185487193"
+   d="scan'208";a="185487198"
 Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:22 -0700
+  by orviesa004.jf.intel.com with ESMTP; 11 Oct 2025 11:18:23 -0700
 From: Tim Chen <tim.c.chen@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
 	K Prateek Nayak <kprateek.nayak@amd.com>,
 	"Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Cc: Chen Yu <yu.c.chen@intel.com>,
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
 	Vincent Guittot <vincent.guittot@linaro.org>,
 	Juri Lelli <juri.lelli@redhat.com>,
 	Dietmar Eggemann <dietmar.eggemann@arm.com>,
@@ -78,17 +78,17 @@ Cc: Chen Yu <yu.c.chen@intel.com>,
 	Tingyin Duan <tingyin.duan@gmail.com>,
 	Vern Hao <vernhao@tencent.com>,
 	Len Brown <len.brown@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
 	Aubrey Li <aubrey.li@intel.com>,
 	Zhao Liu <zhao1.liu@intel.com>,
 	Chen Yu <yu.chen.surf@gmail.com>,
+	Chen Yu <yu.c.chen@intel.com>,
 	Libo Chen <libo.chen@oracle.com>,
 	Adam Li <adamli@os.amperecomputing.com>,
 	Tim Chen <tim.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/19] sched/fair: Introduce a static key to enable cache aware only for multi LLCs
-Date: Sat, 11 Oct 2025 11:24:41 -0700
-Message-Id: <ef136e6a6f5a2ef840b1f9571c47411f04705b6a.1760206683.git.tim.c.chen@linux.intel.com>
+Subject: [PATCH 05/19] sched/fair: Add LLC index mapping for CPUs
+Date: Sat, 11 Oct 2025 11:24:42 -0700
+Message-Id: <7d75af576986cf447a171ce11f5e8a15a692e780.1760206683.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1760206683.git.tim.c.chen@linux.intel.com>
 References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
@@ -100,120 +100,203 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Chen Yu <yu.c.chen@intel.com>
+Introduce an index mapping between CPUs and their LLCs. This provides
+a continuous per LLC index needed for cache-aware load balancing in
+later patches.
 
-Enable cache-aware load balancing only if at least 1 NUMA node has
-more than one LLC.
+The existing per_cpu llc_id usually points to the first CPU of the
+LLC domain, which is sparse and unsuitable as an array index. Using
+llc_id directly would waste memory.
 
-Suggested-by: Libo Chen <libo.chen@oracle.com>
-Suggested-by: Adam Li <adamli@os.amperecomputing.com>
+With the new mapping, CPUs in the same LLC share a continuous index:
+
+  per_cpu(llc_idx, CPU=0...15)  = 0
+  per_cpu(llc_idx, CPU=16...31) = 1
+  per_cpu(llc_idx, CPU=32...47) = 2
+  ...
+
+The maximum number of LLCs is limited by CONFIG_NR_LLCS. If the number
+of LLCs available exceeds CONFIG_NR_LLCS, the cache aware load balance
+is disabled. To further save memory, this array could be converted to
+dynamic allocation in the future, or the LLC index could be made NUMA
+node-wide.
+
+As mentioned by Adam, if there is no domain with SD_SHARE_LLC, the
+function update_llc_idx() should not be invoked to update the index;
+otherwise, it will generate an invalid index.
+
+Co-developed-by: Chen Yu <yu.c.chen@intel.com>
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- kernel/sched/fair.c     | 15 ++++++++++++---
- kernel/sched/sched.h    |  1 +
- kernel/sched/topology.c | 14 ++++++++++++--
- 3 files changed, 25 insertions(+), 5 deletions(-)
+ include/linux/threads.h | 10 +++++++++
+ init/Kconfig            |  9 ++++++++
+ kernel/sched/fair.c     | 11 ++++++++++
+ kernel/sched/sched.h    |  2 ++
+ kernel/sched/topology.c | 47 +++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 79 insertions(+)
 
+diff --git a/include/linux/threads.h b/include/linux/threads.h
+index 1674a471b0b4..2c9b1adfe024 100644
+--- a/include/linux/threads.h
++++ b/include/linux/threads.h
+@@ -20,6 +20,16 @@
+ /* Places which use this should consider cpumask_var_t. */
+ #define NR_CPUS		CONFIG_NR_CPUS
+ 
++#ifndef CONFIG_NR_LLCS
++#define CONFIG_NR_LLCS 1
++#endif
++
++#if CONFIG_NR_LLCS > NR_CPUS
++#define NR_LLCS		NR_CPUS
++#else
++#define NR_LLCS		CONFIG_NR_LLCS
++#endif
++
+ #define MIN_THREADS_LEFT_FOR_ROOT 4
+ 
+ /*
+diff --git a/init/Kconfig b/init/Kconfig
+index 4e625db7920a..6e4c96ccdda0 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -981,6 +981,15 @@ config SCHED_CACHE
+ 	  resources within the same cache domain, reducing cache misses and
+ 	  lowering data access latency.
+ 
++config NR_LLCS
++	int "Maximum number of Last Level Caches"
++	range 2 1024
++	depends on SMP && SCHED_CACHE
++	default 64
++	help
++	  This allows you to specify the maximum number of last level caches
++	  this kernel will support for cache aware scheduling.
++
+ config NUMA_BALANCING_DEFAULT_ENABLED
+ 	bool "Automatically enable NUMA aware memory/task placement"
+ 	default y
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index cd080468ddc9..3d643449c48c 100644
+index 3d643449c48c..61c129bde8b6 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1208,6 +1208,14 @@ static s64 update_se(struct rq *rq, struct sched_entity *se)
- __read_mostly unsigned int llc_overload_pct       = 50;
- __read_mostly unsigned int llc_imb_pct            = 20;
+@@ -1224,6 +1224,17 @@ static int llc_id(int cpu)
+ 	return per_cpu(sd_llc_id, cpu);
+ }
  
-+DEFINE_STATIC_KEY_FALSE(sched_cache_allowed);
-+
-+static inline bool sched_cache_enabled(void)
++/*
++ * continuous LLC index, starting from 0.
++ */
++static inline int llc_idx(int cpu)
 +{
-+	return sched_feat(SCHED_CACHE) &&
-+		static_branch_likely(&sched_cache_allowed);
++	if (cpu < 0)
++		return -1;
++
++	return per_cpu(sd_llc_idx, cpu);
 +}
 +
- static int llc_id(int cpu)
+ void mm_init_sched(struct mm_struct *mm, struct mm_sched __percpu *_pcpu_sched)
  {
- 	if (cpu < 0)
-@@ -1294,7 +1302,7 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
- 	struct mm_sched *pcpu_sched;
  	unsigned long epoch;
- 
--	if (!sched_feat(SCHED_CACHE))
-+	if (!sched_cache_enabled())
- 		return;
- 
- 	if (p->sched_class != &fair_sched_class)
-@@ -1330,7 +1338,7 @@ static void task_tick_cache(struct rq *rq, struct task_struct *p)
- 	struct callback_head *work = &p->cache_work;
- 	struct mm_struct *mm = p->mm;
- 
--	if (!sched_feat(SCHED_CACHE))
-+	if (!sched_cache_enabled())
- 		return;
- 
- 	if (!mm || !mm->pcpu_sched)
-@@ -10716,7 +10724,8 @@ static void record_sg_llc_stats(struct lb_env *env,
- 	struct sched_domain *sd = env->sd->child;
- 	struct sched_domain_shared *sd_share;
- 
--	if (!sched_feat(SCHED_CACHE) || env->idle == CPU_NEWLY_IDLE)
-+	if (!sched_cache_enabled() ||
-+	    env->idle == CPU_NEWLY_IDLE)
- 		return;
- 
- 	/* only care about sched domains spanning a LLC */
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index a52c96064b36..60f1e51685ec 100644
+index 60f1e51685ec..b448ad6dc51d 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -2800,6 +2800,7 @@ extern unsigned int sysctl_numa_balancing_hot_threshold;
- #ifdef CONFIG_SCHED_CACHE
- extern unsigned int llc_overload_pct;
- extern unsigned int llc_imb_pct;
-+extern struct static_key_false sched_cache_allowed;
- #endif
+@@ -2039,6 +2039,7 @@ static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
+ DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);
+ DECLARE_PER_CPU(int, sd_llc_size);
+ DECLARE_PER_CPU(int, sd_llc_id);
++DECLARE_PER_CPU(int, sd_llc_idx);
+ DECLARE_PER_CPU(int, sd_share_id);
+ DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
+ DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
+@@ -2047,6 +2048,7 @@ DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
  
- #ifdef CONFIG_SCHED_HRTICK
+ extern struct static_key_false sched_asym_cpucapacity;
+ extern struct static_key_false sched_cluster_active;
++extern int max_llcs;
+ 
+ static __always_inline bool sched_asym_cpucap_active(void)
+ {
 diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 6e2f54169e66..2675db980f70 100644
+index 2675db980f70..4bd033060f1d 100644
 --- a/kernel/sched/topology.c
 +++ b/kernel/sched/topology.c
-@@ -2444,6 +2444,7 @@ static int
- build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *attr)
- {
- 	enum s_alloc alloc_state = sa_none;
-+	bool has_multi_llcs = false;
- 	struct sched_domain *sd;
- 	struct s_data d;
- 	struct rq *rq = NULL;
-@@ -2530,10 +2531,12 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 				 * between LLCs and memory channels.
- 				 */
- 				nr_llcs = sd->span_weight / child->span_weight;
--				if (nr_llcs == 1)
-+				if (nr_llcs == 1) {
- 					imb = sd->span_weight >> 3;
--				else
-+				} else {
- 					imb = nr_llcs;
-+					has_multi_llcs = true;
-+				}
- 				imb = max(1U, imb);
- 				sd->imb_numa_nr = imb;
+@@ -659,6 +659,7 @@ static void destroy_sched_domains(struct sched_domain *sd)
+ DEFINE_PER_CPU(struct sched_domain __rcu *, sd_llc);
+ DEFINE_PER_CPU(int, sd_llc_size);
+ DEFINE_PER_CPU(int, sd_llc_id);
++DEFINE_PER_CPU(int, sd_llc_idx);
+ DEFINE_PER_CPU(int, sd_share_id);
+ DEFINE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
+ DEFINE_PER_CPU(struct sched_domain __rcu *, sd_numa);
+@@ -668,6 +669,40 @@ DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
+ DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
+ DEFINE_STATIC_KEY_FALSE(sched_cluster_active);
  
-@@ -2581,6 +2584,13 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 	if (has_cluster)
- 		static_branch_inc_cpuslocked(&sched_cluster_active);
++int max_llcs = -1;
++
++static void update_llc_idx(int cpu)
++{
++#ifdef CONFIG_SCHED_CACHE
++	int idx = -1, llc_id = -1;
++
++	if (max_llcs > NR_LLCS)
++		return;
++
++	llc_id = per_cpu(sd_llc_id, cpu);
++	idx = per_cpu(sd_llc_idx, llc_id);
++
++	/*
++	 * A new LLC is detected, increase the index
++	 * by 1.
++	 */
++	if (idx < 0) {
++		idx = max_llcs++;
++
++		if (max_llcs > NR_LLCS) {
++			if (static_branch_unlikely(&sched_cache_allowed))
++				static_branch_disable_cpuslocked(&sched_cache_allowed);
++
++			pr_warn_once("CONFIG_NR_LLCS is too small, disable cache aware load balance\n");
++			return;
++		}
++
++		per_cpu(sd_llc_idx, llc_id) = idx;
++	}
++	per_cpu(sd_llc_idx, cpu) = idx;
++#endif
++}
++
+ static void update_top_cache_domain(int cpu)
+ {
+ 	struct sched_domain_shared *sds = NULL;
+@@ -687,6 +722,10 @@ static void update_top_cache_domain(int cpu)
+ 	per_cpu(sd_llc_id, cpu) = id;
+ 	rcu_assign_pointer(per_cpu(sd_llc_shared, cpu), sds);
+ 
++	/* only update the llc index for domain with SD_SHARE_LLC */
++	if (sd)
++		update_llc_idx(cpu);
++
+ 	sd = lowest_flag_domain(cpu, SD_CLUSTER);
+ 	if (sd)
+ 		id = cpumask_first(sched_domain_span(sd));
+@@ -2452,6 +2491,14 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 	bool has_asym = false;
+ 	bool has_cluster = false;
  
 +#ifdef CONFIG_SCHED_CACHE
-+	if (has_multi_llcs) {
-+		static_branch_enable_cpuslocked(&sched_cache_allowed);
-+		pr_info("Cache aware load balance enabled.\n");
++	if (max_llcs < 0) {
++		for_each_possible_cpu(i)
++			per_cpu(sd_llc_idx, i) = -1;
++		max_llcs = 0;
 +	}
 +#endif
 +
- 	if (rq && sched_debug_verbose)
- 		pr_info("root domain span: %*pbl\n", cpumask_pr_args(cpu_map));
+ 	if (WARN_ON(cpumask_empty(cpu_map)))
+ 		goto error;
  
 -- 
 2.32.0
