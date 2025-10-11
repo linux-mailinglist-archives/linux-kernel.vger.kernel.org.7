@@ -1,206 +1,88 @@
-Return-Path: <linux-kernel+bounces-849055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE8EBCF16F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:48:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AEABCF18D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C685C189F962
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:49:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EC4FA34D5BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C01E235044;
-	Sat, 11 Oct 2025 07:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B65C229B38;
+	Sat, 11 Oct 2025 07:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YCykTuiZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sJQtuQlC"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82B51B85FD;
-	Sat, 11 Oct 2025 07:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBA3149E17
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760168914; cv=none; b=L4/ah0cqb3YotwOvnwvHLSLsNFHcQabvcuPWTx8E11staWCWTYEiB4tMilbxT1ygUagY/Y/Eh3kbynMOt6UwTECLVqsG4gHFZERyJpvdHLlZYaWX+4O9lAcAUxiHQ6fP1LVC0/U6spRFukENbjp+8vfcNXLEHC7835MrTRqeAdU=
+	t=1760169192; cv=none; b=GzkPmQnEtewg4w6fq5ECv8Oa5pVBEYtFhgqIzwOPjPtoezfdW1QvNW16EtChMNYoPr7trle5l6/nz9gU9UUz4DACNsCMWP3kXPAu+cOz1mBsey68fPXsf3GBP1SOCyksEWxxjp37Y0kP/Tbs8D6jEQezXbgl8PM5oIJtxsrTvWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760168914; c=relaxed/simple;
-	bh=LHHPf2UPJZHB06XnOCsmcRYEMeWIuhBk1mgQHMhJ01g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dkc2uB1WY2zRik7Bq1lPpAIaftySyEIDauznvmCxRAfsuoaPj6EygeCfUhhCSkeky4MD2KC6sXP0kZur3ntJUwB5mfqcM1p82wr/kONxLePWzmmiYZ9/WW4Q0dqcTAKopwkJD/Y1BphB6+RZ4KeWnSJZ6rK1SiwvHSvnCB/uPv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YCykTuiZ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760168913; x=1791704913;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LHHPf2UPJZHB06XnOCsmcRYEMeWIuhBk1mgQHMhJ01g=;
-  b=YCykTuiZ25hIfXYT2xtcmAGHHUo4NnbCAOMmykZ3nDFZgokd5WiA0nCD
-   TtDHBFxiZWdb/DC3Pi0Zf4guMGyZx0mwGdJM7R4w6hORjEii4GdZRdLmW
-   TTJtQuQN3nYf1rEKdy/qPrVBgLPbjNcd9IAJHpZhBrF6m9uAaR2aN6cDO
-   xBEWextGJJs/3GG1+Y5QIzI6/4MLb6tyYi7/DH03tXejpAV/5sJKQM6zQ
-   h/ckYfkirl0umLhm0+HVtcS+EaX5k+VnRCWyutOwmn12/w6pDNASY9kVz
-   yH1u2KnTeu2PWHHIP26igywa1nEjk9bNT7DFPtAhd85vgxPODArdEEdUq
-   g==;
-X-CSE-ConnectionGUID: oQzvBHz+S7ajz1WhwgG4Ww==
-X-CSE-MsgGUID: mn0cXySjRciEYQInxxumew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="73820260"
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="73820260"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 00:48:31 -0700
-X-CSE-ConnectionGUID: ZK1hUfyNTlGOlZ3+a5VOhg==
-X-CSE-MsgGUID: kvHUn0d+S8ip7VmHV25tLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="181168851"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 11 Oct 2025 00:48:28 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7UL4-0003ch-0V;
-	Sat, 11 Oct 2025 07:48:26 +0000
-Date: Sat, 11 Oct 2025 15:48:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ranganath V N <vnranganath.20@gmail.com>, tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: oe-kbuild-all@lists.linux.dev, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	khalid@kernel.org, Ranganath V N <vnranganath.20@gmail.com>
-Subject: Re: [PATCH] fs: ext4: fix uninitialized symbols
-Message-ID: <202510111521.OLlwqh7d-lkp@intel.com>
-References: <20251008171614.12129-1-vnranganath.20@gmail.com>
+	s=arc-20240116; t=1760169192; c=relaxed/simple;
+	bh=VWvortduSgLOuSJJ/U0S60TCcSUgKMFRvqEyQv7retc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o47a/WOtT5C3p/L1RE6INyEAjjNI7CqjnQ++N3TfzEBtIEGpGw9IlEgoEFzPV/IjEB3h30CLdp+tbvWD4zRUjAq3uux7GkzYiGV2gmiemIj5Pd554ZfRllWj4mSw8qddzQ81lGUyKDMOUR/ob2I/gOK9+evOLiE9ZM2enfOvJ7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sJQtuQlC; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Forwarded-Encrypted: i=1; AJvYcCVPHRJxf+JQnYUiJpUfgTgMoYLPeIbH6LmgO7f+wF0aQgIPFsaTMbKDbbkg8ulmh/55rYvz8r5BefxLvVU=@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760169185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VWvortduSgLOuSJJ/U0S60TCcSUgKMFRvqEyQv7retc=;
+	b=sJQtuQlCpMAImZcRW6iQh3gvN+2hC0Pw1KG3vJLefIFRDA4KJ3ZVDewRd09OvCHbABLf3P
+	Ci+mgEaOCwv93mzGGt5Uh243+Esr94r9xVlpOYU+ZjeTggNpj59HDq0hvqMjsXe7kIo9zV
+	lxQNaC1nPwKASDCYHOxyCrnP9U2trpE=
+X-Gm-Message-State: AOJu0Yw9eO4D0T8bFPle9OGZ+4OE5RMaKEC/nvJekN0XZSVsxRv3A0bn
+	djFVpVC2PAwST5JfC43SE9A9WrMKicwPxt4ZK6x05XepXOg6nCJPTS6fuE9Et2FpozxZcYomHoB
+	PIO/NlsKlGHX5dEjuGKS8SIebim/RE+A=
+X-Google-Smtp-Source: AGHT+IEL6m6ytVdwMmFOmFWKjL3kcfzvMyZdNcU/AX8xGP/3bnSV/FhnIWrS8KRjUUXicdKxpouZcuEji+pMNJPmlHg=
+X-Received: by 2002:a05:6214:4004:b0:766:ab7c:3e89 with SMTP id
+ 6a1803df08f44-87b2efc373amr198459456d6.64.1760169173408; Sat, 11 Oct 2025
+ 00:52:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008171614.12129-1-vnranganath.20@gmail.com>
+References: <20251009070045.2011920-1-xialonglong2025@163.com>
+ <20251009070045.2011920-2-xialonglong2025@163.com> <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
+In-Reply-To: <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+Date: Sat, 11 Oct 2025 15:52:16 +0800
+X-Gmail-Original-Message-ID: <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
+X-Gm-Features: AS18NWDBvflbwRJ04Gw6IWuF9bLxakSMQiCM_NYehBhsrI7LnFT20xyrjWwbYmM
+Message-ID: <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory failures
+To: linmiaohe@huawei.com
+Cc: Longlong Xia <xialonglong2025@163.com>, nao.horiguchi@gmail.com, 
+	akpm@linux-foundation.org, wangkefeng.wang@huawei.com, xu.xin16@zte.com.cn, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Longlong Xia <xialonglong@kylinos.cn>, Lance Yang <lance.yang@linux.dev>, david@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Migadu-Flow: FLOW_OUT
 
-Hi Ranganath,
+@Miaohe
 
-kernel test robot noticed the following build warnings:
+I'd like to raise a concern about a potential hardware failure :)
 
-[auto build test WARNING on tytso-ext4/dev]
-[also build test WARNING on linus/master v6.17 next-20251010]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+My tests show that if the shared zeropage (or huge zeropage) gets marked
+with HWpoison, the kernel continues to install it for new mappings.
+Surprisingly, it does not kill the accessing process ...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ranganath-V-N/fs-ext4-fix-uninitialized-symbols/20251010-065232
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/20251008171614.12129-1-vnranganath.20%40gmail.com
-patch subject: [PATCH] fs: ext4: fix uninitialized symbols
-config: i386-randconfig-063-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111521.OLlwqh7d-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111521.OLlwqh7d-lkp@intel.com/reproduce)
+The concern is, once the page is no longer zero-filled due to the hardware
+failure, what will happen? Would this lead to silent data corruption for
+applications that expect to read zeros?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510111521.OLlwqh7d-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> fs/ext4/inode.c:3547:34: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned long long [usertype] next_pblk @@     got void * @@
-   fs/ext4/inode.c:3547:34: sparse:     expected unsigned long long [usertype] next_pblk
-   fs/ext4/inode.c:3547:34: sparse:     got void *
-
-vim +3547 fs/ext4/inode.c
-
-  3540	
-  3541	static int ext4_map_blocks_atomic_write_slow(handle_t *handle,
-  3542				struct inode *inode, struct ext4_map_blocks *map)
-  3543	{
-  3544		ext4_lblk_t m_lblk = map->m_lblk;
-  3545		unsigned int m_len = map->m_len;
-  3546		unsigned int mapped_len = 0, m_flags = 0;
-> 3547		ext4_fsblk_t next_pblk = NULL;
-  3548		bool check_next_pblk = false;
-  3549		int ret = 0;
-  3550	
-  3551		WARN_ON_ONCE(!ext4_has_feature_bigalloc(inode->i_sb));
-  3552	
-  3553		/*
-  3554		 * This is a slow path in case of mixed mapping. We use
-  3555		 * EXT4_GET_BLOCKS_CREATE_ZERO flag here to make sure we get a single
-  3556		 * contiguous mapped mapping. This will ensure any unwritten or hole
-  3557		 * regions within the requested range is zeroed out and we return
-  3558		 * a single contiguous mapped extent.
-  3559		 */
-  3560		m_flags = EXT4_GET_BLOCKS_CREATE_ZERO;
-  3561	
-  3562		do {
-  3563			ret = ext4_map_blocks(handle, inode, map, m_flags);
-  3564			if (ret < 0 && ret != -ENOSPC)
-  3565				goto out_err;
-  3566			/*
-  3567			 * This should never happen, but let's return an error code to
-  3568			 * avoid an infinite loop in here.
-  3569			 */
-  3570			if (ret == 0) {
-  3571				ret = -EFSCORRUPTED;
-  3572				ext4_warning_inode(inode,
-  3573					"ext4_map_blocks() couldn't allocate blocks m_flags: 0x%x, ret:%d",
-  3574					m_flags, ret);
-  3575				goto out_err;
-  3576			}
-  3577			/*
-  3578			 * With bigalloc we should never get ENOSPC nor discontiguous
-  3579			 * physical extents.
-  3580			 */
-  3581			if ((check_next_pblk && next_pblk != map->m_pblk) ||
-  3582					ret == -ENOSPC) {
-  3583				ext4_warning_inode(inode,
-  3584					"Non-contiguous allocation detected: expected %llu, got %llu, "
-  3585					"or ext4_map_blocks() returned out of space ret: %d",
-  3586					next_pblk, map->m_pblk, ret);
-  3587				ret = -EFSCORRUPTED;
-  3588				goto out_err;
-  3589			}
-  3590			next_pblk = map->m_pblk + map->m_len;
-  3591			check_next_pblk = true;
-  3592	
-  3593			mapped_len += map->m_len;
-  3594			map->m_lblk += map->m_len;
-  3595			map->m_len = m_len - mapped_len;
-  3596		} while (mapped_len < m_len);
-  3597	
-  3598		/*
-  3599		 * We might have done some work in above loop, so we need to query the
-  3600		 * start of the physical extent, based on the origin m_lblk and m_len.
-  3601		 * Let's also ensure we were able to allocate the required range for
-  3602		 * mixed mapping case.
-  3603		 */
-  3604		map->m_lblk = m_lblk;
-  3605		map->m_len = m_len;
-  3606		map->m_flags = 0;
-  3607	
-  3608		ret = ext4_map_blocks(handle, inode, map,
-  3609				      EXT4_GET_BLOCKS_QUERY_LAST_IN_LEAF);
-  3610		if (ret != m_len) {
-  3611			ext4_warning_inode(inode,
-  3612				"allocation failed for atomic write request m_lblk:%u, m_len:%u, ret:%d\n",
-  3613				m_lblk, m_len, ret);
-  3614			ret = -EINVAL;
-  3615		}
-  3616		return ret;
-  3617	
-  3618	out_err:
-  3619		/* reset map before returning an error */
-  3620		map->m_lblk = m_lblk;
-  3621		map->m_len = m_len;
-  3622		map->m_flags = 0;
-  3623		return ret;
-  3624	}
-  3625	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Lance
 
