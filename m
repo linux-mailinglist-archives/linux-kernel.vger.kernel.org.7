@@ -1,134 +1,174 @@
-Return-Path: <linux-kernel+bounces-848983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2E2BCEF60
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:40:50 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E22BCEF63
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85CA54E4371
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:40:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6DF934F353
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15601DF963;
-	Sat, 11 Oct 2025 03:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFE51DF985;
+	Sat, 11 Oct 2025 03:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzNmc2ht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W3K/hw7Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AD01DB375
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 03:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4061A0BF3;
+	Sat, 11 Oct 2025 03:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760154040; cv=none; b=iMkgpGamBTt63n1+Xqemi9OtAZICkYQHB1aRCJ4FgsAh3H+wgLXlq61TtYg3poMdtt7pw4LaBxC5Osv+rtjYLcJB0zrf+PKydRTzHXpgHL5W1A9NwRg/mT8vBeOMkSSHY4Vw34Ch2WGp0/iMp+lc0MNITEDsj6hMND6P98jHCWw=
+	t=1760154092; cv=none; b=ThdjwXVbdWQyoTpOTTaHP0NoCY6Kb5VrKYbTXyPqZt1uUY5DGwJN3JBG/4llIC74GXbmPkcBm7Vwpnmx0UlMpbNy2smNdC0XqjRmszE62IJqU65NsJYIe4C2HlpUOU/Fgh53b+wOrxcS6JM2Bngp3l5c3jL8xpjed6pauxg79iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760154040; c=relaxed/simple;
-	bh=d8gS8wOiKMr+l/ZJJK/wQClNzHRVZjbJoYCPz75pBA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpNoNRFr4hBFmGdoZdLA608ApWcY+c+Qzh4M+cyYTQV8U21lU7vS0UmOTYp2adJhtUOtQcnLxtyvaIcChQQezSGQY1bTMg8lD3xkTEwEQZlGdtbBoQtapdIp8n26R2RqnomTk2N7NbcKcD++h1w8xBdczBs9RBR71EEPEC4/4+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzNmc2ht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEEBEC116B1
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 03:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760154039;
-	bh=d8gS8wOiKMr+l/ZJJK/wQClNzHRVZjbJoYCPz75pBA0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DzNmc2htDKTHCp3aozZ6E5kEpQ/T9k9BWOy4+jwgGV0SIndwfInOWiuXfSFiC5/5t
-	 QL0ZrMiCOK0FsZeNjSXSIG3/Br58Maj0goLA9/Q6msU1Q15XtRG+/XCdCPfCh/moCu
-	 3wN9SmB4nk5eeZ2n9d7wmFfMO1QGUzW5I1c3d7STbqXTYzS+mpV20pHVAmWvmSxSj4
-	 RkOfn0MoXV6y5yHYuCfrLF8mrUT/cWs/nH/BhFqc8TDo0dG4dA+boCphnqx3GOExuE
-	 QOttymeUokIXpaUETbAytEn+TzSZ/z6oVLixTt5MXuB/USBSphsTqedUHobjukDNnT
-	 j/m2eilL1toDw==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57992ba129eso3248703e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 20:40:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW864f+WiG+UQ3JK1ifLYwpaVu/DiNUXlcEA8WP1udZsXqjcmi4iORw8iWyvuit+7dWQWabu02vC1rH5zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE8PTnv1NrXclc963K1iB1vG3SoZPdbYVnUTHhyMESiUIs/FuJ
-	xktOfcHc9wYZG14pd90SCr0XITOVTme+hJK6fG3p1cC5V99up3/Nf9yvKWZOgj4dkf/S1whe3Y4
-	z0L6UV+yc3FkeD5izxZj4DCmfjfawkls=
-X-Google-Smtp-Source: AGHT+IFLXMYQ5g+Z7hYaE+htkOTZgcAsNtsCxDgeGT8tN/INhUQhJ+SJe8urgMafAAQJ9Ld+ELNhgSE8e7XFB5+/m9g=
-X-Received: by 2002:a05:6512:b10:b0:577:9ee:7d57 with SMTP id
- 2adb3069b0e04-5906de88ee4mr3575140e87.46.1760154038165; Fri, 10 Oct 2025
- 20:40:38 -0700 (PDT)
+	s=arc-20240116; t=1760154092; c=relaxed/simple;
+	bh=ber6fiQTrdqgt8W8VtTzVq1nCOhWhNwPiCVVPRg5OhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j2aw9YHeWspvoe88bg8TDulanJyzwyxxSFnn3ZoBO1p2UIbKHHcPyqIPOToCZLC2iNQuT08uqVaQ9I9ticAtaNnRJ+4YE9td/fQ+ut5LwAD1kUA/mqz8HnDMEvy5LSJUUW97eoMMPLY9uApjeNOSp7NeTTqqxGtCtvbQ6jzISpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W3K/hw7Y; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760154091; x=1791690091;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ber6fiQTrdqgt8W8VtTzVq1nCOhWhNwPiCVVPRg5OhA=;
+  b=W3K/hw7YCf4sTsPDwNT8tueQMaIyjAFQJ2exeAPowrLHQSy0HYXGv12A
+   v5doXFr4PsKs0EW7yAK8sfb8xiWCSSBWw2K26hHjH+ELoI/RlBUksAj8z
+   fek0zzsu4Hcy+uqTqLrrhud2k6Ywb99RHMOW1Ev/ERhJYdOXNv4udG4AW
+   uv4DveMCw7o0/sjDJnbFrlqVS8Ffe+YhaKTguepF+0IS1xwnAGZPyk2TS
+   J8yxFF6PPXdfTjuLYgo+Bu6ncYEYMB4ayutaHAO+5NqAqH98zE/d2Jr6n
+   rZjrmDBZYKkQXsw1OHnoKSsokR2cV85sG/xMPg189iqTmOXKiJZnnjU85
+   Q==;
+X-CSE-ConnectionGUID: hlVyb01uQFygcWeSnTN8DQ==
+X-CSE-MsgGUID: UqSHODbiSX6LUtKzZvvaSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="62412956"
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="62412956"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 20:41:30 -0700
+X-CSE-ConnectionGUID: X3ap3ACpQYGaEF1ewEIjDg==
+X-CSE-MsgGUID: Oj42qTq1Qee92Plxx+rlKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="181550746"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 20:41:26 -0700
+Message-ID: <d6b3e9e4-5a53-44d8-a740-c1826d8da24b@linux.intel.com>
+Date: Sat, 11 Oct 2025 11:41:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
- <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
- <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
- <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
- <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn> <CAMj1kXFLyBbRL+pAAQ6be6dxqFPiyw_Ug8qNQWaicZQ235HE=A@mail.gmail.com>
- <8091e8fa-3483-af39-2f7a-e4eb62b0944f@loongson.cn> <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
-In-Reply-To: <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 10 Oct 2025 20:40:26 -0700
-X-Gmail-Original-Message-ID: <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
-X-Gm-Features: AS18NWCSTMnmP5OepZJr1Y4u3ZHVFaMO9Ik-XYJVsvY5QDAPT-bP-GHnlwwanEk
-Message-ID: <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] tools headers: Remove unused kvm_perf.h copies
+To: James Clark <james.clark@linaro.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Leo Yan <leo.yan@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <20250910-james-tools-header-cleanup-v1-0-7ae4bedc99e0@linaro.org>
+ <20250910-james-tools-header-cleanup-v1-1-7ae4bedc99e0@linaro.org>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250910-james-tools-header-cleanup-v1-1-7ae4bedc99e0@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 10 Oct 2025 at 19:54, Huacai Chen <chenhuacai@kernel.org> wrote:
+
+On 9/10/2025 9:30 PM, James Clark wrote:
+> These have been unused since commit 162607ea20fa ("perf kvm/{x86,s390}:
+> Remove dependency on uapi/kvm_perf.h") in favour of dynamic discovery.
+> Remove the unused headers to reduce consistency checking overhead and
+> noise.
 >
-> On Sat, Oct 11, 2025 at 9:13=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongson.=
-cn> wrote:
-> >
-> > On 2025/10/11 =E4=B8=8A=E5=8D=8812:25, Ard Biesheuvel wrote:
-> > ...
-> > > Why do we need both (1) and (2)?
-> >
-> > Not both, either (1) or (2).
-> > Which one do you prefer? Or any other suggestions?
-> >
-> > Taking all of the considerations in balance, we should decide
-> > what is the proper way.
-> As a summary, there are three methods:
-> (1) Only link libstub with vmlinux.o during the final vmlinux link.
-> (2) Remove the attribute __noreturn for real_kernel_entry() and add while=
- (1).
-> (3) Ignore "__efistub_" prefix in objtool.
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  tools/arch/s390/include/uapi/asm/kvm_perf.h | 22 ----------------------
+>  tools/arch/x86/include/uapi/asm/kvm_perf.h  | 17 -----------------
+>  tools/perf/check-headers.sh                 |  2 --
+>  3 files changed, 41 deletions(-)
 >
-> Josh prefers method (1), I prefer method (3) but also accept method
-> (1) if it is not only specific to loongarch.
->
+> diff --git a/tools/arch/s390/include/uapi/asm/kvm_perf.h b/tools/arch/s390/include/uapi/asm/kvm_perf.h
+> deleted file mode 100644
+> index 84606b8cc49e4..0000000000000
+> --- a/tools/arch/s390/include/uapi/asm/kvm_perf.h
+> +++ /dev/null
+> @@ -1,22 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> -/*
+> - * Definitions for perf-kvm on s390
+> - *
+> - * Copyright 2014 IBM Corp.
+> - * Author(s): Alexander Yarygin <yarygin@linux.vnet.ibm.com>
+> - */
+> -
+> -#ifndef __LINUX_KVM_PERF_S390_H
+> -#define __LINUX_KVM_PERF_S390_H
+> -
+> -#include <asm/sie.h>
+> -
+> -#define DECODE_STR_LEN 40
+> -
+> -#define VCPU_ID "id"
+> -
+> -#define KVM_ENTRY_TRACE "kvm:kvm_s390_sie_enter"
+> -#define KVM_EXIT_TRACE "kvm:kvm_s390_sie_exit"
+> -#define KVM_EXIT_REASON "icptcode"
+> -
+> -#endif
+> diff --git a/tools/arch/x86/include/uapi/asm/kvm_perf.h b/tools/arch/x86/include/uapi/asm/kvm_perf.h
+> deleted file mode 100644
+> index 125cf5cdf6c5f..0000000000000
+> --- a/tools/arch/x86/include/uapi/asm/kvm_perf.h
+> +++ /dev/null
+> @@ -1,17 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> -#ifndef _ASM_X86_KVM_PERF_H
+> -#define _ASM_X86_KVM_PERF_H
+> -
+> -#include <asm/svm.h>
+> -#include <asm/vmx.h>
+> -#include <asm/kvm.h>
+> -
+> -#define DECODE_STR_LEN 20
+> -
+> -#define VCPU_ID "vcpu_id"
+> -
+> -#define KVM_ENTRY_TRACE "kvm:kvm_entry"
+> -#define KVM_EXIT_TRACE "kvm:kvm_exit"
+> -#define KVM_EXIT_REASON "exit_reason"
+> -
+> -#endif /* _ASM_X86_KVM_PERF_H */
+> diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+> index be519c433ce47..6eacc02fbb1b3 100755
+> --- a/tools/perf/check-headers.sh
+> +++ b/tools/perf/check-headers.sh
+> @@ -40,13 +40,11 @@ declare -a FILES=(
+>    "arch/s390/include/uapi/asm/perf_regs.h"
+>    "arch/x86/include/uapi/asm/perf_regs.h"
+>    "arch/x86/include/uapi/asm/kvm.h"
+> -  "arch/x86/include/uapi/asm/kvm_perf.h"
+>    "arch/x86/include/uapi/asm/svm.h"
+>    "arch/x86/include/uapi/asm/unistd.h"
+>    "arch/x86/include/uapi/asm/vmx.h"
+>    "arch/powerpc/include/uapi/asm/kvm.h"
+>    "arch/s390/include/uapi/asm/kvm.h"
+> -  "arch/s390/include/uapi/asm/kvm_perf.h"
+>    "arch/s390/include/uapi/asm/sie.h"
+>    "arch/arm/include/uapi/asm/kvm.h"
+>    "arch/arm64/include/uapi/asm/kvm.h"
 
-This is a false positive warning in objtool, which complains about a
-function that falls through, even though that can never happen in
-reality.
-
-To me, it is not acceptable to modify how vmlinux.o is constructed
-also for other architectures, in order to hide some of its constituent
-parts from objtool, which do not use objtool to begin with.
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
 
-If you are not willing to fix objtool, I suggest fixing the loongarch
-code like this:
-
---- a/drivers/firmware/efi/libstub/loongarch.c
-+++ b/drivers/firmware/efi/libstub/loongarch.c
-@@ -10,7 +10,7 @@
- #include "efistub.h"
- #include "loongarch-stub.h"
-
--typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdline,
-+typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
-                                          unsigned long systab);
-
- efi_status_t check_platform_features(void)
-@@ -81,4 +81,6 @@
-
-        real_kernel_entry(true, (unsigned long)cmdline_ptr,
-                          (unsigned long)efi_system_table);
-+
-+       return EFI_LOAD_ERROR;
- }
 
