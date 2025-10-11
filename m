@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-849028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4110FBCF09B
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B152CBCF09E
 	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6289D40364A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:39:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54C9C34DE0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B8022172E;
-	Sat, 11 Oct 2025 06:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92DE22332E;
+	Sat, 11 Oct 2025 06:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ft0tDwcy"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wr4tG4nA"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43EF22332E
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 06:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99845221FBF
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 06:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760164744; cv=none; b=kxqS+yjKyKAqEjuVggArY8mLfT+JHnQNO/6SEBqE//W9RAiR3kHri/DY7sKvWJrx0O+jsd9pZo3Kdn7CxYPc+rkHrXL6LOeNg/AZpuFWUjlFTvT0kfpzA1DVY6yT8lfjANYzAofhF82UxOy/iOyiC428g4gd1OWnF9Zn9Ck9FSc=
+	t=1760164748; cv=none; b=ga4EnRkySV7qvk4B4340DyN5A/wfQkPbMYeVXmNp4N9MHCmcAA7W2wrNrO9wTiMGiJuSGR4jDi9hja+nZHozvU204n3TdsI0LSzSBfyG9DCGY4G+VGxDhLLoTVjIwS4cFxfmihQlZRpTTL2WXNYGmbuIkGtHjLA+rkTrFo9RYN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760164744; c=relaxed/simple;
-	bh=g+jmgjmrR4/YskSIPfMmE2GQi0643yZ1iVOqd15YojA=;
+	s=arc-20240116; t=1760164748; c=relaxed/simple;
+	bh=7arbrLemIr4ew2lWcbkmCuP17rRxN8N6CQQQW1PRSjg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S023yO1hzyZHMAvG6ONNL1ovEiwFbYzouf7jkwTDXjjoJsHesDbXPgdvweRrOmhUl3Vev7LeuRygS3ShSHoK0dGEKE18QYFsjhLJkyBGa9Fch0NtdjTE536QZjTrJ0JQ4qHs1u7sljNoFIpxwQ9xYJ+q2zbNhm/s5UKJ8Bb5Nxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ft0tDwcy; arc=none smtp.client-ip=209.85.215.179
+	 MIME-Version; b=Gqg8tpmAjgZy3AoL6tJQz0ffJN7Y0XwERA5+AaVjRoj+zh7p6KLsOb71gkNRR0AKbjQWuxqtyT9SYh4vPqZXnb37x5x/uTAKT69s12hxFDae0Div+fXwTl+2emnhBoCCZsG04upoqYzNszpyZywcSnqKUB4zNfGXa0WXOMAq//U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wr4tG4nA; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b679450ecb6so952239a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 23:39:02 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-269639879c3so27048625ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 23:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760164742; x=1760769542; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760164745; x=1760769545; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=shA8rePJ19wVlfjQPju/k0dhMI8bALDCoGiOWjrRyo0=;
-        b=Ft0tDwcyQEFH5MP3p/bwbjW6tCR2ChKkxtiqgcrCNot+RrY8fgSo6C+KCDqCZESjqO
-         Ac8a52rhgZRO+6XU99CsHEZhHZcE/d4LZQJ7nY5BY1rmjGMqmsD0WCxaSVrR588eyB7i
-         ildADbIdRZU+23aonjY8nVRsksH3kglvBB46bbZd3tJFBIjH6GRfM2bqiRgBaVmk9TXW
-         v3jHNgnJb1QNK4FMFrt8Fa8Vh+24zZPShbxpr/uesRxm9CMPLbod1BN5gkqIYeMRosjO
-         sZqyaxWAq1Fzbp8LxHeUjdqyLcIGw07ZfWQeQ+qJNMKi/44ddsjV/Vcrbg4CLY+92n+7
-         qV8w==
+        bh=7RbdqxG92yzrMeciIeTBUuJ1kqttBeIBmVGrFI+VCiw=;
+        b=Wr4tG4nA8x+LeW0waMuaUpTRBdMPeAEFGGYqq2ZzBRu9VjqKjuJNwgFcz2GgbHQDgA
+         GzfdXP+JBFhcxdCo/0fhQ/HdIDb46szAl84qkOce4BVO9rKB13mxNl6BonQQjD3h16nY
+         UAuoJwIUIDrZwFcBmlk32+fi7crCHvCqzwYNERi80wC4AjfHQof2fn7Y0LQGYdaAeMok
+         xq1e1uGBqofC80zty71CTggdxgdESFs7dl7XdoGFNsrp5X7oAEkZGz6k2475JFVHwjyB
+         JmaUcmcI4EolgdIWYufgFesk0VLeDxkS5L5lPRpEIPgEjkusZH0ZX6+bWBUUOLVPVb/y
+         wS8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760164742; x=1760769542;
+        d=1e100.net; s=20230601; t=1760164745; x=1760769545;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=shA8rePJ19wVlfjQPju/k0dhMI8bALDCoGiOWjrRyo0=;
-        b=C4q60XGCRO4LRB8GoHF49kwJYhjHdTAuq2+zB0m4eBdZN2YOn4R/w6BeGZbD8FEuLQ
-         /L4WAJLxHSISWIafesGQuWJ/Z+20tjcaB0k5La3KqlGxBqlFuaAFQqoUGxFuAUjdFjbd
-         CvW/OCjoObPS+5KK/WJiUw1opxNadWrHlFUKhW3zCIyc4HWpDTxKdTbbSut/tP/zz+CV
-         v5opmMJmPH9BSuFhFuLe8pzNT/ek4UHUp5v8+cLmgmABHZY90bWIKQPtFRbwUarcYjfM
-         MB8MJCXOv0O3GyD/SxxwwUBBoHiWk20z09DMF95dtt7a3JEkJu9z6kzGkVib3nOGffJv
-         TaCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoMnmQtOzJVm6TOVLrWQfjcYOg/X8JAA9nP3EJ/TV+NrG/VXnbhFlfD2Zr3tHZ7PtY+0dC+VhLvdbdggE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLbh1/3KRVw0w2yk7YwNovpfcNzkJy53vveqI/RCePvLHX/4kb
-	JtQxdbVMgx9ixo4SVfvo0eWyfxrsJpPQx1Dg4s0pijT7mkJrpIu/EB0U
-X-Gm-Gg: ASbGnctNaIkbB1PpA4rKxsqK0o05Sxq0ao/Fj8LPfp5ePxQf/+zhx3bANVPrWqxWruc
-	EWQNqgUFiaVMLhvrAHj0V+X2Tnjl24MkE9wGRNGeNeleU7666nDPK9lEERWcKWGphuGSxNTyK39
-	U5chsr/DaOaE8eyHCPhiCTYaMasKmgJ0iD0HU+E8b3n/Tuw0T4zkM4JDgc5g5tjx0pge9vWaj5d
-	k7RXtS5XNWziUKqa8gja5bWHUtOCIhqqQQUYm8wwVtS1rN2LodRakkr9ALwropgJbkWhBenBnPk
-	O8vLTKT6JxhL/MUTB/27psswU/prttLiL5pgqEuWmBUzOhG9GxTltNam9lOrLtjUT7kEFYTdACi
-	XZ+Il3/m0OdNcgZ5k9/MKVThDpguqt+VbgGBMDjBbAG6jM/J6ad0zQQ8AS6uIElpqR6Yw2K6lAb
-	8mxvRHVA==
-X-Google-Smtp-Source: AGHT+IG/jpwa1wPZmeP/lKNRuLiyl56EQ08bY9BGkYBnOH/Qya4CL3BuCNt+6P0B7CVbFnypfO2IcA==
-X-Received: by 2002:a17:902:fc4f:b0:280:fe18:8479 with SMTP id d9443c01a7336-290272e0ac5mr167833545ad.51.1760164741832;
-        Fri, 10 Oct 2025 23:39:01 -0700 (PDT)
+        bh=7RbdqxG92yzrMeciIeTBUuJ1kqttBeIBmVGrFI+VCiw=;
+        b=iQ4UWjkfMP3f5DVyQQGpEdX+akEpmsd0HAE9puOlCQ4hrYva76axHzRYaLzPdWOnih
+         Y5sw45xRSq3/csrmdh7zOqzQHrbXTtTVWdf+6R3ECKsu4U4ITs1Zebbe9JZISoRDdrRY
+         u/f+46rJw+bRLxJ3OzTwjFxKMr9YLDfmcF3XDyA3xq7O+BCZ1ehGFmU4lDyDlIz+thY0
+         WwiNDY2gy/LjTux/ZDxrbQ7ropV+srId32bflT6x62q5gZHFALI/pg9hO8BgFZxS7wKq
+         jyGX6B92GyjgBhuovV17AgG7SVtzY6LgCjW9DzkZP1fySrl32W8fb2+mvhsV1h94XkWR
+         rzCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtk2CvPr5bG0vwrPWz7Q6SrQeO7H2nXJ9oP+aWbHA/jRBxcTt5MgiWCI9Cpl9bbMk2U88OPsN2AxZuos4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQP87EJtk/rb/Swhlgch3fPtcpg7+Oidwv6JgPpGNRHxeNUtpG
+	ElvIp51ogN0/d6rilK4xm1EK8hKtPFugEZM5eUIo4vCDtVL80iPVgcjl
+X-Gm-Gg: ASbGncuRh5bgyht5imoDiWBlH+SdHqotj0FW8xFj653Lp7My9k74+d2YIVcMtGMXcT2
+	XK8qLYh6dNSZo2RCopoDCxh1KVYsCal3Z0grM/0Q3aGCB5jNf4+u3zfea04pU9wHvapahTfPMzd
+	vYWj3zIUrh0g0nwnkEE3k9ZzIVJSGk/5vpfHMNFMhsMc6UKtc6ro08pe2bCs7HQg9RPo0TVVJxc
+	+5ei4eY7FhzK2k8eML3szOdGmQDpOmXJLMs288QnaPSQwJ1bAmqqC9LPe/CgXfe/z7R1o0c0wwX
+	piU9kCt2UnJwH2JEHi38xM3+gXgmT+iG1A+rlF680BulMkGv2cjieYWxqLUQ8sb+AW4H3cJ99wI
+	XtRgf0Miw3c2fIhDQRZvtzmlTKtXVqNWk0qQ91qbH97b1GOAsHfNwzeJrCcM5VZjA3goxCPt+73
+	Xry2ZYWA==
+X-Google-Smtp-Source: AGHT+IHB76D4GU47IgQDKRqpfK4084Sk1yZhLn2sQmzeSgViYiqrqYFWTIaGUTUGieei/ytOtwgbFg==
+X-Received: by 2002:a17:902:e94e:b0:279:daa1:6780 with SMTP id d9443c01a7336-2902741cf99mr193290735ad.52.1760164744934;
+        Fri, 10 Oct 2025 23:39:04 -0700 (PDT)
 Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f362efsm75647005ad.89.2025.10.10.23.39.00
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f362efsm75647005ad.89.2025.10.10.23.39.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 23:39:01 -0700 (PDT)
+        Fri, 10 Oct 2025 23:39:04 -0700 (PDT)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: mario.limonciello@amd.com
 Cc: perry.yuan@amd.com,
@@ -82,9 +82,9 @@ Cc: perry.yuan@amd.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH 1/2] platform/x86/amd: hfi: Remove unused cpumask from cpuinfo struct
-Date: Sat, 11 Oct 2025 14:38:36 +0800
-Message-Id: <20251011063837.2318535-2-visitorckw@gmail.com>
+Subject: [PATCH 2/2] platform/x86/amd: hfi: Remove redundant assignment to .owner
+Date: Sat, 11 Oct 2025 14:38:37 +0800
+Message-Id: <20251011063837.2318535-3-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251011063837.2318535-1-visitorckw@gmail.com>
 References: <20251011063837.2318535-1-visitorckw@gmail.com>
@@ -96,73 +96,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The cpus field within the struct amd_hfi_cpuinfo was allocated and set
-in the amd_hfi_online() CPU hotplug callback, and subsequently freed in
-the amd_hfi_offline() callback.
+The coccicheck tool reports the following warning for this driver:
 
-However, after being initialized, this cpumask was never read or used
-for any purpose within the driver. It represents dead code that serves
-no functional role.
+./hfi.c:509:3-8: No need to set .owner here. The core will do it.
 
-This change has no impact on the driver's functionality as the removed
-code was entirely superfluous.
+The manual assignment of .owner = THIS_MODULE; in the platform_driver
+struct is redundant. The platform_driver_register() function, which is
+called to register the driver, is a macro that automatically sets the
+driver's owner to THIS_MODULE.
+
+The driver core handles this assignment internally, making the explicit
+initialization in the struct definition unnecessary. Remove the
+unnecessary line.
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
 Build test only.
 
- drivers/platform/x86/amd/hfi/hfi.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/platform/x86/amd/hfi/hfi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-index a465ac6f607e..5d5d2cf23a75 100644
+index 5d5d2cf23a75..83863a5e0fbc 100644
 --- a/drivers/platform/x86/amd/hfi/hfi.c
 +++ b/drivers/platform/x86/amd/hfi/hfi.c
-@@ -12,7 +12,6 @@
- 
- #include <linux/acpi.h>
- #include <linux/cpu.h>
--#include <linux/cpumask.h>
- #include <linux/debugfs.h>
- #include <linux/gfp.h>
- #include <linux/init.h>
-@@ -95,7 +94,6 @@ struct amd_hfi_classes {
-  * struct amd_hfi_cpuinfo - HFI workload class info per CPU
-  * @cpu:		CPU index
-  * @apic_id:		APIC id of the current CPU
-- * @cpus:		mask of CPUs associated with amd_hfi_cpuinfo
-  * @class_index:	workload class ID index
-  * @nr_class:		max number of workload class supported
-  * @ipcc_scores:	ipcc scores for each class
-@@ -106,7 +104,6 @@ struct amd_hfi_classes {
- struct amd_hfi_cpuinfo {
- 	int		cpu;
- 	u32		apic_id;
--	cpumask_var_t	cpus;
- 	s16		class_index;
- 	u8		nr_class;
- 	int		*ipcc_scores;
-@@ -295,11 +292,6 @@ static int amd_hfi_online(unsigned int cpu)
- 
- 	guard(mutex)(&hfi_cpuinfo_lock);
- 
--	if (!zalloc_cpumask_var(&hfi_info->cpus, GFP_KERNEL))
--		return -ENOMEM;
--
--	cpumask_set_cpu(cpu, hfi_info->cpus);
--
- 	ret = amd_hfi_set_state(cpu, true);
- 	if (ret)
- 		pr_err("WCT enable failed for CPU %u\n", cpu);
-@@ -329,8 +321,6 @@ static int amd_hfi_offline(unsigned int cpu)
- 	if (ret)
- 		pr_err("WCT disable failed for CPU %u\n", cpu);
- 
--	free_cpumask_var(hfi_info->cpus);
--
- 	return ret;
- }
- 
+@@ -505,7 +505,6 @@ static int amd_hfi_probe(struct platform_device *pdev)
+ static struct platform_driver amd_hfi_driver = {
+ 	.driver = {
+ 		.name = AMD_HFI_DRIVER,
+-		.owner = THIS_MODULE,
+ 		.pm = &amd_hfi_pm_ops,
+ 		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
+ 	},
 -- 
 2.34.1
 
