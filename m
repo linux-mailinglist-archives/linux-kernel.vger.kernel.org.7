@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-849010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9139BCF02A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C545BCF033
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A12564E3955
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB2B19A1938
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79CB1E0DFE;
-	Sat, 11 Oct 2025 05:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E311B142D;
+	Sat, 11 Oct 2025 05:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3cKBFZ0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFBHzu85"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D85A1E3DDB
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1DB1400C;
+	Sat, 11 Oct 2025 05:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760161250; cv=none; b=fI8XcK3Qu2VL7Mw2qKYEo7SpUyFTZhdwBz/+rOZRWOUck1uGviWZFSuo7HLLVFskioFAOJY771HM7YwXcl/QQ31xWsCubDltbsih1PniRfK1IRJ7Xp0pUUmljSBDCsfPoyuONCn1W0WEjt5kj/w64XFORN4wvXeDPS544vM6JTw=
+	t=1760161630; cv=none; b=DLqKZqGxOJFagqBmtylhnqkk2j+Y77fcj8RxPpQ3uCR6P5AAnIv2zb9BDd4ofrbgjrJ1ruwNYSEKheqzX7HJEg2EwH2EyjMr7iueJp6fP/GTZnsIcu0IhnqN9QtApygdCBCJiaHp2GDj6w7IO3tt8r6apqUMXvaVSkrI7od+0o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760161250; c=relaxed/simple;
-	bh=T/OaJx4B2ofWilBB1mLklxLkAldO5M4FQFGMkHFdTxY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JMQJFMhVW3ZfaE2hjy3P+OeP1iKw3KAAZj1Mf06PYLtmITBBUVcSry6tS0Tl8EO2yduvKXO9/anz0noQtMO73TikV+aFeJWiiy+NvwVFGxe31Zo+EQXTwJQpQJt6g8ULyzXWLkpSerVI9PlQjCIL8UG7IGKGQ15F3JtwQBnxliM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3cKBFZ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A668BC4AF09
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:40:49 +0000 (UTC)
+	s=arc-20240116; t=1760161630; c=relaxed/simple;
+	bh=Fn8HoxZcVkSiPeP3xP5i0QPr7v7ju0gWeHOPO3Ykcuw=;
+	h=Date:From:To:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=m6DxY5v5f6EzkS4QuvNfv9m3woU09xiRD/y0s3lUgE8IPXqoLehZj/5wV92QfZGz57fENCjyguTXpsQZqyc2DpaJk8ThffW30b1kmE15qjlP2qRfeaOLnOeifWVTZ4gzG0kRCcCllAeGCw5TKB4sxRwAhi7eLGTOy5olLtsnolY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFBHzu85; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B19C4CEF4;
+	Sat, 11 Oct 2025 05:47:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760161249;
-	bh=T/OaJx4B2ofWilBB1mLklxLkAldO5M4FQFGMkHFdTxY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e3cKBFZ07hVB1BlmhR+xPWewcZDpmINGh8tqggNfG1FNoEo8QAN3Cv9yp4HZd+ctU
-	 vkdwRoE7CCyetGjNzkZnIrRBFBOW4j/0RceYNKlxpsal9oasToji+kdIy20ch1ubzY
-	 /6sT77S0NPA5IzVJIuJte81EKelproUOCIMk7iTTWnenVY8Rnc30iznY5ihTEqCmcz
-	 vCbtTjBd9Xr+Z8y0f/s+5h4mzBzMc3uqxWUwVQBNMnbS6A4L4B50qKvH/nA+C4+sEI
-	 xWwHXSgl+dArQzaZ9JKbw3XoEyzfG5m0sviZC7ajGj2idCp68zx7mDXXdpHzXHoYa2
-	 3dz9SryHzxy5g==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b403bb7843eso574601066b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:40:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUH63A0MducMlWA8v/HRTG2EetWuMPojSlRH2uWuj4x6+GtU3isQLglcEhcukVXBcl1JJrg7hI4F3rP0VI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtw0x9RIRmKSTg0269DpoNL+t95XnnhjokKVA3W2pxII6B0P16
-	yl75SbRNyR5Z0TVUtZ7YmCMXQtVWfSh8RHRrEMqNkG7CS7pSx5l507uC6k3lsZmHX3f3sUudm3X
-	1L7+bW9R14v7jsH89H8r+QzjP+r8F2Lw=
-X-Google-Smtp-Source: AGHT+IHGFXcBh1CoyxVP4/hzKESUFhziOwWatSeeN63Jf10cafnamrVulEc/CTbph30JLZDB0UYefY2NTdg+f+nHvRw=
-X-Received: by 2002:a17:907:843:b0:b40:98b1:7457 with SMTP id
- a640c23a62f3a-b50ac5d0901mr1322157266b.47.1760161248247; Fri, 10 Oct 2025
- 22:40:48 -0700 (PDT)
+	s=k20201202; t=1760161630;
+	bh=Fn8HoxZcVkSiPeP3xP5i0QPr7v7ju0gWeHOPO3Ykcuw=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=kFBHzu85w0ioPhfPpbZeubTwqbHaczDbtfjJLwCnePbw3Hnp8Mtgma2uAUfWImS3e
+	 AWeINVPBXmJqGaDxdwBj2ZQg+6gMNOzFd6vBeILER2duWR8+Msmpc+tpBTOs1QY47H
+	 5Fq1Jr0efAHY95xHYrdTKhbtS5/031BQDCLVI3nI0LjrBC4HzKBmbgZeDtMl1lR11n
+	 tBKZfB8sGRSn89gFGh3P5aSnzICjP7IVwnF9eeYBOpaxwQZ8cghn+7jQTXVAjN/n8N
+	 KnhD8HTd/pJ2H3RQL+aicZMSjaG7F2HbQNc3BQN1cgsSsgLq0DdXABbJlm7XeT++h5
+	 UCpQdSM9KMEJA==
+Date: Fri, 10 Oct 2025 22:47:08 -0700
+From: Kees Cook <kees@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, lirongqing <lirongqing@baidu.com>,
+ corbet@lwn.net, akpm@linux-foundation.org, lance.yang@linux.dev,
+ mhiramat@kernel.org, paulmck@kernel.org, pawan.kumar.gupta@linux.intel.com,
+ mingo@kernel.org, dave.hansen@linux.intel.com, rostedt@goodmis.org,
+ arnd@arndb.de, feng.tang@linux.alibaba.com, pauld@redhat.com,
+ joel.granados@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][v2] hung_task: Panic after fixed number of hung tasks
+User-Agent: K-9 Mail for Android
+In-Reply-To: <d8c6762c-e08c-4b7a-92e9-7dad17ad0b49@infradead.org>
+References: <20250928053137.3412-1-lirongqing@baidu.com> <d8c6762c-e08c-4b7a-92e9-7dad17ad0b49@infradead.org>
+Message-ID: <B0A75949-C40A-49E7-83BD-58D6BD5A1493@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010050329.796971-1-aha310510@gmail.com>
-In-Reply-To: <20251010050329.796971-1-aha310510@gmail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Sat, 11 Oct 2025 14:40:36 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_2VUniUHgstfATfdjDfLokqfjCGm+P=_72EPM2HEi0Ew@mail.gmail.com>
-X-Gm-Features: AS18NWBP7_cWe4oXpv4egI6drs7CniIntrFvTm1Ghw2MALfSovJDtjjgW0l3WRY
-Message-ID: <CAKYAXd_2VUniUHgstfATfdjDfLokqfjCGm+P=_72EPM2HEi0Ew@mail.gmail.com>
-Subject: Re: [PATCH v2] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, pali@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 2:04=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
-> In exfat_nls_to_ucs2(), if there is no NLS loss and the char-to-ucs2
-> conversion is successfully completed, the variable "i" will have the same
-> value as len.
->
-> However, exfat_nls_to_ucs2() checks p_cstring[i] to determine whether nls
-> is lost immediately after the while loop ends, so if len is FSLABEL_MAX,
-> "i" will also be FSLABEL_MAX immediately after the while loop ends,
-> resulting in an out-of-bounds read of 1 byte from the p_cstring stack
-> memory.
->
-> Therefore, to prevent this and properly determine whether nls has been
-> lost, it should be modified to check if "i" and len are equal, rather tha=
-n
-> dereferencing p_cstring.
->
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
-> Fixes: 370e812b3ec1 ("exfat: add nls operations")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  fs/exfat/nls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> index 8243d94ceaf4..de06abe426d7 100644
-> --- a/fs/exfat/nls.c
-> +++ b/fs/exfat/nls.c
-> @@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
->                 unilen++;
->         }
->
-> -       if (p_cstring[i] !=3D '\0')
-> +       if (i !=3D len)
->                 lossy |=3D NLS_NAME_OVERLEN;
-As I said before, the core problem is passing an incorrect length in the io=
-ctl
-FS_IOC_SETFSLABEL call. While your change may fix the symptom,
-it doesn't fix the root cause.
-Furthermore, NLS_NAME_OVERLEN macro is unnecessary.
-That will result in different errors when creating a file with trailing per=
-iods
-with utf8 and the other iocharset.
-Please remove it and make the same error handling for maximum length
-consistent with exfat_utf8_to_utf16().
 
+
+On October 10, 2025 5:25:05 PM PDT, Randy Dunlap <rdunlap@infradead=2Eorg>=
+ wrote:
+>Hi,
 >
->         *uniname =3D '\0';
-> --
+>On 9/27/25 10:31 PM, lirongqing wrote:
+>> From: Li RongQing <lirongqing@baidu=2Ecom>
+>>=20
+>> Currently, when hung_task_panic is enabled, kernel will panic immediate=
+ly
+>> upon detecting the first hung task=2E However, some hung tasks are tran=
+sient
+>> and the system can recover fully, while others are unrecoverable and
+>> trigger consecutive hung task reports, and a panic is expected=2E
+>>=20
+>> This commit adds a new sysctl parameter hung_task_count_to_panic to all=
+ows
+>> specifying the number of consecutive hung tasks that must be detected
+
+Why make a new sysctl? Can't you just use hung_task_panic and raise the ma=
+x to INT_MAX?
+
+-Kees
+
+>> before triggering a kernel panic=2E This provides finer control for
+>> environments where transient hangs maybe happen but persistent hangs sh=
+ould
+>> still be fatal=2E
+>>=20
+>> Acked-by: Lance Yang <lance=2Eyang@linux=2Edev>
+>> Signed-off-by: Li RongQing <lirongqing@baidu=2Ecom>
+>> ---
+>> Diff with v1: change documentation as Lance suggested
+>>=20
+>>  Documentation/admin-guide/sysctl/kernel=2Erst |  8 ++++++++
+>>  kernel/hung_task=2Ec                          | 14 +++++++++++++-
+>>  2 files changed, 21 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/Documentation/admin-guide/sysctl/kernel=2Erst b/Documentat=
+ion/admin-guide/sysctl/kernel=2Erst
+>> index 8b49eab=2E=2E98b47a7 100644
+>> --- a/Documentation/admin-guide/sysctl/kernel=2Erst
+>> +++ b/Documentation/admin-guide/sysctl/kernel=2Erst
+>> @@ -405,6 +405,14 @@ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` =
+is enabled=2E
+>>  1 Panic immediately=2E
+>>  =3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>> =20
+>> +hung_task_count_to_panic
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+>The underline length should be at least as long as the title to
+>prevent kernel-doc build warnings=2E Same length is preferred=2E
+>
+>> +
+>> +When set to a non-zero value, a kernel panic will be triggered if the
+>> +number of detected hung tasks reaches this value=2E
+>> +
+>> +Note that setting hung_task_panic=3D1 will still cause an immediate pa=
+nic
+>> +on the first hung task=2E
+>> =20
+>>  hung_task_check_count
+>>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+
+--=20
+Kees Cook
 
