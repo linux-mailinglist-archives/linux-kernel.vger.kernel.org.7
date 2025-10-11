@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-849316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487C8BCFCF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 23:59:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05911BCFCF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135791898EF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 21:59:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 978ED4E206B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 22:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E3724466C;
-	Sat, 11 Oct 2025 21:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B77221DB5;
+	Sat, 11 Oct 2025 22:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Skt3jRJv"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pjyBLm6V"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3E72405ED
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 21:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B81F2836F
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 22:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760219952; cv=none; b=KIw1tcEGmWueJWC38YVVFT6AskjDK7vkPyt09HFWppGU4WrKa12xBpIonn2NiiSAh9O15km1yJokyuAgD6JNnvyIaAw8OWr8KJugHjRGz4eO/z58ptZY6zgZFMlVE16vIvQEV/fviyvGMdDffGSUSghMOck4ZaKY7sABMKha28Y=
+	t=1760220435; cv=none; b=gpXo3nrmTI3VDEt6k1DgI6krrpBp6G+FYd9QW41q49LOqRfAsVYAi6W4t5FRg20rUb/T9kCv/58OSBkM+ZrmCypGOjpPwkr78sL61zYztqBdqGS8Sz320cNCfK2kYouiJytpJTqL8hVVtvl3TJYhgX+Y/nO3M11rW8IlEy4/ZKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760219952; c=relaxed/simple;
-	bh=2huGcfbPwSh50phjR6U4KnFgcmdQ/b5O6KDcOTP5300=;
+	s=arc-20240116; t=1760220435; c=relaxed/simple;
+	bh=JI1cw69pnium3tpK3v4HIIkuJSCB6TIdMnAeI9XTcQ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q7sZGaX3CCB/E3gLl7Ldq6kfiR+eQzPckAZIITFvJC9CRt181spQWI5KSLC7DB11FxmZQYhGUQY4Wp89JIBKPAojCk0qMmAGqNUirp5HIogvOOi6FnolGhr3drb6KIMq7aVfI5mpuaHA/u3Xth9h7iM+TEwm4RMSv7MbKgOAvR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Skt3jRJv; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e2826d5c6so18920285e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:59:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1760219947; x=1760824747; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MHThunLmw18bkcxxk1/kwdh40gHKEqGwgzIfI1FE8xY=;
-        b=Skt3jRJvuIyUKzW9KxhIfEjoB2i+X5XOGcgx1rCruiyeEQILRADAHfKweUtJK7LZ5Q
-         o/RWjr32fCZrRZeUKuFfqgHia3+mDxIvx5QW6A51OCVYg6eNg+XzKHHiLK19S35vAVTi
-         usWlKG7+j88hpi0cw/QlKR6XZxc9XSECOD1p6IYU4ol5/KB8uOBvvdJ2MBvUPa/DQ0zq
-         Wwx9vcvsEdjvepivbY3dKquTI2qALMgjbHHLBx+QUkYsX4NmKW5Z0GQO1OZM88LDyopD
-         DMlVWsVgN6cRWMrxNx8+sR8ZH9GbetnZYJ/tjyDzxt4U9KeezD4NXE1m4xrqz8iGpCaj
-         5APw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760219947; x=1760824747;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MHThunLmw18bkcxxk1/kwdh40gHKEqGwgzIfI1FE8xY=;
-        b=WboEN9lHO4Mt2wY6tZS6To9fv65JzwDI1F6D8keXI9xVQlc9ghQbOpv0cdwML2l238
-         3oD3Jlj2+hArREoYVVVx1eLM546pllJE4RMpieiAC+7CN6A5sYdepl93sqA1gRGTR7Mr
-         bxUO7fx7PcM0VZyvfKqfSgn+s9Y1jCJEcTeiUhnrvU34957ULmwrD5hKwyIJR2WlcYvR
-         POppRtfGndYsT8x17KZvDzxCtNcBA4u8h+Ad4/+QE3D9u8u1TDufCMfqkl7DhncNPwJi
-         YmIS1RvVO/zWYfP4fu8WRpVpZsZjbN9s6MAs+6cQKiXb9dV24cn2XVjB7vjvNatJOjIv
-         9PNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqiHgdq/z/FkConF4D9e2nYrHQrUD9VvG8hQwc/QQqTGeqNSvMYV0Gl/mnZJAV6gU3w2ITjadOiWJgvD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFZiP21r5qZa+rczGv1+S1B0Gy+IvkP1N6QjR84JLM35q+EdyW
-	xK/0c1/DPuUPQsFets0bEYZu0b5YJQsMEqdLAPcIpObbp1D4AnAhRVg=
-X-Gm-Gg: ASbGncv3XTzkgoIM5hJSgVmD9z0jauIPmF5weh5syZLooja3BZs11BY3/qQVt/o0/Ir
-	t5Yma3z8Y/SdgDGBT1Fwx4uamHlrefhQzwxkoKbHizU1agj+AU4q3TyBgrDc3TRbAKlzye4RHn/
-	M/1hINzcRu6xL9eBQZlPCuapQJ+IP912ZQ7srV3hAA2l6QWnJEFYVKJZJguK1AzJYTaIZHltAi2
-	MGbI2LVCSjYrgxbcBjlr5urrbYCSBNb76DcPUpxe4Vlqi2HGvBCZiYiWM5pqEEGTSEHPGAEXTY/
-	yVINeWf2BhFeCwIeQuDtxij5ohfjKwgeGENJxYiRcWPp2EmBKa555/XtPo9gUYaIMSZ/5gUjtO6
-	BTWjo6GoBHF3rTC2Ws1fijdnDHWcO790hbJEDUIlhfZ08NMeeScK7LFOB1ydx+39mhzDPWLOrKd
-	C+IdFfwdCdXvD3l59vxwJNuui/1V2zurrYBk/tMMQ=
-X-Google-Smtp-Source: AGHT+IFY8BvUEE5h0xt52mM8sCae3x2299mFEpXNCOJQAjgaAdK8tGVw0x5V3Un4+D2uFHAuzg4xjw==
-X-Received: by 2002:a05:600c:4688:b0:46e:5df4:6f16 with SMTP id 5b1f17b1804b1-46fa9b1788amr111462435e9.35.1760219947277;
-        Sat, 11 Oct 2025 14:59:07 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057b9b.dip0.t-ipconnect.de. [91.5.123.155])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49bd977sm108385825e9.11.2025.10.11.14.59.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Oct 2025 14:59:07 -0700 (PDT)
-Message-ID: <3992ab53-474d-4031-a601-259ba3966bec@googlemail.com>
-Date: Sat, 11 Oct 2025 23:59:06 +0200
+	 In-Reply-To:Content-Type; b=Esblv6lZduzN0OKhjiFzCmKAwC8b3o4ZG5r6jZA1q0nHx9wkALn5WTDchEWp0mgwQLhMnWU49sU4Dz935eIR4EXRsNWU/36rP6NSdjF0gYWCqeef4cuygyKD+iT3ay0SZdtKlEWgrUdHfv2Z4uaAxVUTICCfDsZt1oNWm8UBeIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pjyBLm6V; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=RNKr5f3nnsAaN7s9Al3Mh+8atUWEoNOpcgENWTkS71E=; b=pjyBLm6VLpDZFizFJk9KnI9bYi
+	W0zCRi87jvcMlJ2k5HDC9w8TCoMXE+j7ByDeBkEf3Atw7G0ez6eWLJG+2NCmnmD2xJTkJiYAoAKT5
+	1fdYXwLkKWrg0E/jxd3kD8BVEU+mYiF8e1K3VKMnCWHv6dZh0H9fHA0WDuT7kiR6xD5ThjvTNz3Cn
+	gL9SGdKC/+eNUsq7y/RmuYNUBUadfoEmhn+RAxtz1F5beB9EMRaoTL+P5AcdeTcZ6nDq+uosQhbOX
+	CgLWJGuJ4lsqgTFRywnjNuDIQI4ScMGtKdqp6A99ZNRAkXO31WaDvriEjEf8TCzc3xQcWIOcEL60+
+	Xu9biADw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v7hk7-0000000As0F-2gQG;
+	Sat, 11 Oct 2025 22:07:11 +0000
+Message-ID: <f5949227-7bd3-4fd0-b873-e79d0768a1be@infradead.org>
+Date: Sat, 11 Oct 2025 15:07:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.17 00/26] 6.17.2-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251010131331.204964167@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20251010131331.204964167@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Am 10.10.2025 um 15:15 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.17.2 release.
-> There are 26 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools: fix == bashism in kernel-chktaint
+To: Kevin Locke <kevin@kevinlocke.name>, Jonathan Corbet <corbet@lwn.net>,
+ Thorsten Leemhuis <linux@leemhuis.info>
+Cc: linux-kernel@vger.kernel.org
+References: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Beste Grüße,
-Peter Schneider
+
+On 10/11/25 2:04 PM, Kevin Locke wrote:
+> When /bin/sh is a shell other than bash, invoking kernel-chktaint with
+> at least one argument may produce error messages such as the following
+> (produced by [dash] with argument 1024):
+> 
+>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
+>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
+> 
+> This occurs because the == operator is not specified for [test in POSIX]
+> and is not supported by all shells, as noted by shellcheck [SC3014].
+> 
+> To fix the issue and avoid the error message, replace == with =.
+> 
+> [dash]: https://git.kernel.org/pub/scm/utils/dash/dash.git
+> [test in POSIX]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
+> [SC3014]: https://www.shellcheck.net/wiki/SC3014
+> 
+> Signed-off-by: Kevin Locke <kevin@kevinlocke.name>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  tools/debugging/kernel-chktaint | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+> index e7da0909d0970..051608a63d9f1 100755
+> --- a/tools/debugging/kernel-chktaint
+> +++ b/tools/debugging/kernel-chktaint
+> @@ -19,7 +19,7 @@ EOF
+>  }
+>  
+>  if [ "$1"x != "x" ]; then
+> -	if  [ "$1"x == "--helpx" ] || [ "$1"x == "-hx" ] ; then
+> +	if  [ "$1"x = "--helpx" ] || [ "$1"x = "-hx" ] ; then
+>  		usage
+>  		exit 1
+>  	elif  [ $1 -ge 0 ] 2>/dev/null ; then
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+~Randy
 
