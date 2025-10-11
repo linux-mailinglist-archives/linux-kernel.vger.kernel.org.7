@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-848908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7837BCECBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:10:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD28DBCECCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF7FC4E53A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:10:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71521895857
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1792C8F0;
-	Sat, 11 Oct 2025 00:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8629F111A8;
+	Sat, 11 Oct 2025 00:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="RB2DVPVU"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nI5Giac4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85194C83;
-	Sat, 11 Oct 2025 00:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60EEDF76;
+	Sat, 11 Oct 2025 00:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760141447; cv=none; b=KWFR3nxapeumEhKOWDwVYMfZVUJ39E2RSHbBj9CaLzl9Oy7Evfb0+N8dh3QEcDBhg22OQeEXMUA7ddGt9a02LbgU4ZP63eFZUkwpzXYok55bxO1KODhnJUkuIjuH593Vz3fuFK1/OhxeScr1nchy+8fBuOcYnRez6RJrptWrWZw=
+	t=1760141527; cv=none; b=ppn0E5OUNYx0gugXM4Fklix5FOITCHwj+9sOCO9CMvaIPDH5ZGs/1sw8/htKLxlJehVMWUSsVs+kSErBSXWOlYYDu5CCZWqKXPSE5UYaPbD29BdVxUNYxe0Hle/EmOm6j01Zq72Gh6fvCKhXbVdHw/6QjejRpUWIMOyqwcbdO5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760141447; c=relaxed/simple;
-	bh=6JkGx+B33muFi7i+3fkH0KGs/YlfEUjc07uhM09Pb80=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cP/UzTgF177PocJdZYClq8KLhYLKnjGLTXJ5LHnblGsjkPGG3FrWZVP8Hy1u9geEdVvukCBWx46Nq3kg4zzi9nm7wwA+RZ/ICmw82WZgN8jePLwODtlefjH8wjPv9tBFXtNao7N03bCOnzyKaZxnIrVOL/LUsfKM/SLM0dDw8mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=RB2DVPVU; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=cxvmckp001eqW77msuYCbAncWeEK7Ge75hIv96aombQ=; b=RB2DVPVUH/GPauPR
-	KCKFJzpE9uhsbBlot/DeEwasHmhV7jufgwjFhQnhaQE0iRyFr5TyFAEZJcEeiTqhKRkkd1ooceg6g
-	u3mclvT+RNM6p6l0UlGdeKw7/xTUafBeRMO1w5X8G+8Ia5B/VawDDmuqQyEb5WHCIMW5hGZokL5dn
-	i39ljr4igck/qvuNAzC5dMEyPhA2bTP/g2oUy+80txoJC+cYfPePFXUGfLOmS7ZGMzTrUKFd2sreU
-	TqlRTpksyrrKJ4t3spnaMULCs7yMnbGxoyQhD3TyyRadt+MzFqByL9M4RCSp8y7VWe8GY0yscpO1j
-	UPUb4yORx10uhEp9xw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1v7NC3-00Fnxf-06;
-	Sat, 11 Oct 2025 00:10:39 +0000
-From: linux@treblig.org
-To: loic.poulain@oss.qualcomm.com,
-	jeff.johnson@oss.qualcomm.com
+	s=arc-20240116; t=1760141527; c=relaxed/simple;
+	bh=nFF+IusTKX/qdwbbl1m8cNUw77rpHuvkWWy9T8iXdUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=koQQiWXnvI4/WdMBuGEdo9h2EwHKXr9Gb1ay1YycILnPzSmt4nGg4qTpPuBq5XNOu/oQBvXWJ34hPVWacnQR6Q73AD3aJhUujLEFVSGwMayq99sfwIK+Os6EUbkt/vBIxJjyYguf0gOtkUn38ZjnB5BqH4/gS/f1GzXULLP8q+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nI5Giac4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABBEC4CEF1;
+	Sat, 11 Oct 2025 00:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760141527;
+	bh=nFF+IusTKX/qdwbbl1m8cNUw77rpHuvkWWy9T8iXdUw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nI5Giac4Rrz7YUM7T90IAAo6BFLnnUCaELBclsp7irzUAIEgYmMKrqyPm6qWtlEk0
+	 M1ZPZHszq20PuKajBn3dt66bQbfR+jDuDfkmW3XIi7Hgv0vtp92YYGchM9SOJ7vdCq
+	 yqKKlT/9CYGGwYEEEB0KCvrxZnr1ijHIoaqPQmh6tc1qQNLSLiGKz93txBg8cnv1SO
+	 r3zwg6TpSDiwDKNJV/kRBTqyi3yNI+KQZBGJOWzSiRI8JfIkqQ5DHNmqcU0HQDYN5J
+	 xPhOhPpCw1eNZ86raTo+Ayu4e77pViuNnyYJgcELeoVH83ZZKsTwj9xnBiuKWDVnEa
+	 169+3fTTLnT4Q==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	wcn36xx@lists.infradead.org,
-	linux-wireless@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2] wifi: wcn36xx: Remove unused wcn36xx_smd_update_scan_params
-Date: Sat, 11 Oct 2025 01:10:38 +0100
-Message-ID: <20251011001038.352393-1-linux@treblig.org>
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Joachim Vandersmissen <git@jvdsn.com>,
+	David Howells <dhowells@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2] lib/crypto: Add FIPS self-tests for SHA-1 and SHA-2
+Date: Fri, 10 Oct 2025 17:10:47 -0700
+Message-ID: <20251011001047.51886-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,197 +61,295 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Add FIPS cryptographic algorithm self-tests for all SHA-1 and SHA-2
+algorithms.  Following the "Implementation Guidance for FIPS 140-3"
+document, to achieve this it's sufficient to just test a single test
+vector for each of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
 
-wcn36xx_smd_update_scan_params() last use was removed in 2020 by
-commit 5973a2947430 ("wcn36xx: Fix software-driven scan")
+Just run these tests in the initcalls, following the example of e.g.
+crypto/kdf_sp800108.c.  Note that this should meet the FIPS self-test
+requirement even in the built-in case, given that the initcalls run
+before userspace, storage, network, etc. are accessible.
 
-Remove it.
+This does not fix a regression, seeing as lib/ has had SHA-1 support
+since 2005 and SHA-256 support since 2018.  Neither ever had FIPS
+self-tests.  Moreover, fips=1 support has always been an unfinished
+feature upstream.  However, with lib/ now being used more widely, it's
+now seeing more scrutiny and people seem to want these now.
 
-This leaves the wcn36xx_hal_update_scan_params_req_ex and
-wcn36xx_hal_update_scan_params_resp structs unused.
-
-Remove them, together with the unused
-wcn36xx_hal_update_scan_params_req.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
-v2
-  Remove the unused scan structures as suggested by Jeff
 
- drivers/net/wireless/ath/wcn36xx/hal.h | 74 --------------------------
- drivers/net/wireless/ath/wcn36xx/smd.c | 60 ---------------------
- drivers/net/wireless/ath/wcn36xx/smd.h |  1 -
- 3 files changed, 135 deletions(-)
+Changed in v2: 
+    - Call them "cryptographic algorithm self-tests" instead of
+      "pre-operational self-tests".
+    - Add more details to commit message.
+    - Fix purgatory build error by omitting the tests from there.
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/hal.h b/drivers/net/wireless/ath/wcn36xx/hal.h
-index d3a9d00e65e1..ef9ea4ff891b 100644
---- a/drivers/net/wireless/ath/wcn36xx/hal.h
-+++ b/drivers/net/wireless/ath/wcn36xx/hal.h
-@@ -4484,80 +4484,6 @@ struct set_rssi_filter_resp {
- 	u32 status;
+ lib/crypto/fips.h                   | 38 +++++++++++++++++++++++++++++
+ lib/crypto/sha1.c                   | 19 ++++++++++++++-
+ lib/crypto/sha256.c                 | 26 +++++++++++++++++---
+ lib/crypto/sha512.c                 | 19 ++++++++++++++-
+ scripts/crypto/gen-fips-testvecs.py | 32 ++++++++++++++++++++++++
+ 5 files changed, 128 insertions(+), 6 deletions(-)
+ create mode 100644 lib/crypto/fips.h
+ create mode 100755 scripts/crypto/gen-fips-testvecs.py
+
+diff --git a/lib/crypto/fips.h b/lib/crypto/fips.h
+new file mode 100644
+index 0000000000000..78a1bdd33a151
+--- /dev/null
++++ b/lib/crypto/fips.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* This file was generated by: gen-fips-testvecs.py */
++
++#include <linux/fips.h>
++
++static const u8 fips_test_data[] __initconst __maybe_unused = {
++	0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
++	0x74, 0x20, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00,
++};
++
++static const u8 fips_test_key[] __initconst __maybe_unused = {
++	0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
++	0x74, 0x20, 0x6b, 0x65, 0x79, 0x00, 0x00, 0x00,
++};
++
++static const u8 fips_test_hmac_sha1_value[] __initconst __maybe_unused = {
++	0x29, 0xa9, 0x88, 0xb8, 0x5c, 0xb4, 0xaf, 0x4b,
++	0x97, 0x2a, 0xee, 0x87, 0x5b, 0x0a, 0x02, 0x55,
++	0x99, 0xbf, 0x86, 0x78,
++};
++
++static const u8 fips_test_hmac_sha256_value[] __initconst __maybe_unused = {
++	0x59, 0x25, 0x85, 0xcc, 0x40, 0xe9, 0x64, 0x2f,
++	0xe9, 0xbf, 0x82, 0xb7, 0xd3, 0x15, 0x3d, 0x43,
++	0x22, 0x0b, 0x4c, 0x00, 0x90, 0x14, 0x25, 0xcf,
++	0x9e, 0x13, 0x2b, 0xc2, 0x30, 0xe6, 0xe8, 0x93,
++};
++
++static const u8 fips_test_hmac_sha512_value[] __initconst __maybe_unused = {
++	0x6b, 0xea, 0x5d, 0x27, 0x49, 0x5b, 0x3f, 0xea,
++	0xde, 0x2d, 0xfa, 0x32, 0x75, 0xdb, 0x77, 0xc8,
++	0x26, 0xe9, 0x4e, 0x95, 0x4d, 0xad, 0x88, 0x02,
++	0x87, 0xf9, 0x52, 0x0a, 0xd1, 0x92, 0x80, 0x1d,
++	0x92, 0x7e, 0x3c, 0xbd, 0xb1, 0x3c, 0x49, 0x98,
++	0x44, 0x9c, 0x8f, 0xee, 0x3f, 0x02, 0x71, 0x51,
++	0x57, 0x0b, 0x15, 0x38, 0x95, 0xd8, 0xa3, 0x81,
++	0xba, 0xb3, 0x15, 0x37, 0x5c, 0x6d, 0x57, 0x2b,
++};
+diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
+index 5904e4ae85d24..52788278cd17f 100644
+--- a/lib/crypto/sha1.c
++++ b/lib/crypto/sha1.c
+@@ -10,10 +10,11 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/string.h>
+ #include <linux/unaligned.h>
+ #include <linux/wordpart.h>
++#include "fips.h"
+ 
+ static const struct sha1_block_state sha1_iv = {
+ 	.h = { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4 },
  };
  
--/* Update scan params - sent from host to PNO to be used during PNO
-- * scanningx */
--struct wcn36xx_hal_update_scan_params_req {
--
--	struct wcn36xx_hal_msg_header header;
--
--	/* Host setting for 11d */
--	u8 dot11d_enabled;
--
--	/* Lets PNO know that host has determined the regulatory domain */
--	u8 dot11d_resolved;
--
--	/* Channels on which PNO is allowed to scan */
--	u8 channel_count;
--	u8 channels[WCN36XX_HAL_PNO_MAX_NETW_CHANNELS];
--
--	/* Minimum channel time */
--	u16 active_min_ch_time;
--
--	/* Maximum channel time */
--	u16 active_max_ch_time;
--
--	/* Minimum channel time */
--	u16 passive_min_ch_time;
--
--	/* Maximum channel time */
--	u16 passive_max_ch_time;
--
--	/* Cb State */
--	enum phy_chan_bond_state state;
--} __packed;
--
--/* Update scan params - sent from host to PNO to be used during PNO
-- * scanningx */
--struct wcn36xx_hal_update_scan_params_req_ex {
--
--	struct wcn36xx_hal_msg_header header;
--
--	/* Host setting for 11d */
--	u8 dot11d_enabled;
--
--	/* Lets PNO know that host has determined the regulatory domain */
--	u8 dot11d_resolved;
--
--	/* Channels on which PNO is allowed to scan */
--	u8 channel_count;
--	u8 channels[WCN36XX_HAL_PNO_MAX_NETW_CHANNELS_EX];
--
--	/* Minimum channel time */
--	u16 active_min_ch_time;
--
--	/* Maximum channel time */
--	u16 active_max_ch_time;
--
--	/* Minimum channel time */
--	u16 passive_min_ch_time;
--
--	/* Maximum channel time */
--	u16 passive_max_ch_time;
--
--	/* Cb State */
--	enum phy_chan_bond_state state;
--} __packed;
--
--/* Update scan params - sent from host to PNO to be used during PNO
-- * scanningx */
--struct wcn36xx_hal_update_scan_params_resp {
--
--	struct wcn36xx_hal_msg_header header;
--
--	/* status of the request */
--	u32 status;
--} __packed;
--
- struct wcn36xx_hal_set_tx_per_tracking_req_msg {
- 	struct wcn36xx_hal_msg_header header;
- 
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-index 2cf86fc3f8fe..136acc414714 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.c
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-@@ -1127,66 +1127,6 @@ int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
- 	return ret;
+@@ -328,14 +329,30 @@ void hmac_sha1_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+ 	hmac_sha1_update(&ctx, data, data_len);
+ 	hmac_sha1_final(&ctx, out);
  }
+ EXPORT_SYMBOL_GPL(hmac_sha1_usingrawkey);
  
--static int wcn36xx_smd_update_scan_params_rsp(void *buf, size_t len)
--{
--	struct wcn36xx_hal_update_scan_params_resp *rsp;
--
--	rsp = buf;
--
--	/* Remove the PNO version bit */
--	rsp->status &= (~(WCN36XX_FW_MSG_PNO_VERSION_MASK));
--
--	if (WCN36XX_FW_MSG_RESULT_SUCCESS != rsp->status) {
--		wcn36xx_warn("error response from update scan\n");
--		return rsp->status;
--	}
--
--	return 0;
--}
--
--int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn,
--				   u8 *channels, size_t channel_count)
--{
--	struct wcn36xx_hal_update_scan_params_req_ex msg_body;
--	int ret;
--
--	mutex_lock(&wcn->hal_mutex);
--	INIT_HAL_MSG(msg_body, WCN36XX_HAL_UPDATE_SCAN_PARAM_REQ);
--
--	msg_body.dot11d_enabled	= false;
--	msg_body.dot11d_resolved = true;
--
--	msg_body.channel_count = channel_count;
--	memcpy(msg_body.channels, channels, channel_count);
--	msg_body.active_min_ch_time = 60;
--	msg_body.active_max_ch_time = 120;
--	msg_body.passive_min_ch_time = 60;
--	msg_body.passive_max_ch_time = 110;
--	msg_body.state = PHY_SINGLE_CHANNEL_CENTERED;
--
--	PREPARE_HAL_BUF(wcn->hal_buf, msg_body);
--
--	wcn36xx_dbg(WCN36XX_DBG_HAL,
--		    "hal update scan params channel_count %d\n",
--		    msg_body.channel_count);
--
--	ret = wcn36xx_smd_send_and_wait(wcn, msg_body.header.len);
--	if (ret) {
--		wcn36xx_err("Sending hal_update_scan_params failed\n");
--		goto out;
--	}
--	ret = wcn36xx_smd_update_scan_params_rsp(wcn->hal_buf,
--						 wcn->hal_rsp_len);
--	if (ret) {
--		wcn36xx_err("hal_update_scan_params response failed err=%d\n",
--			    ret);
--		goto out;
--	}
--out:
--	mutex_unlock(&wcn->hal_mutex);
--	return ret;
--}
--
- static int wcn36xx_smd_add_sta_self_rsp(struct wcn36xx *wcn,
- 					struct ieee80211_vif *vif,
- 					void *buf,
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.h b/drivers/net/wireless/ath/wcn36xx/smd.h
-index 2c1ed9e570bf..4e39df5589b3 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.h
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.h
-@@ -66,7 +66,6 @@ int wcn36xx_smd_finish_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
- int wcn36xx_smd_init_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
- 			  struct ieee80211_vif *vif);
+-#ifdef sha1_mod_init_arch
++#if defined(sha1_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+ static int __init sha1_mod_init(void)
+ {
++#ifdef sha1_mod_init_arch
+ 	sha1_mod_init_arch();
++#endif
++	if (fips_enabled) {
++		/*
++		 * FIPS cryptographic algorithm self-test.  As per the FIPS
++		 * Implementation Guidance, testing HMAC-SHA1 satisfies the test
++		 * requirement for SHA-1 too.
++		 */
++		u8 mac[SHA1_DIGEST_SIZE];
++
++		hmac_sha1_usingrawkey(fips_test_key, sizeof(fips_test_key),
++				      fips_test_data, sizeof(fips_test_data),
++				      mac);
++		if (memcmp(fips_test_hmac_sha1_value, mac, sizeof(mac)) != 0)
++			panic("sha1: FIPS self-test failed\n");
++	}
+ 	return 0;
+ }
+ subsys_initcall(sha1_mod_init);
  
--int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn, u8 *channels, size_t channel_count);
- int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
- 			      struct cfg80211_scan_request *req);
- int wcn36xx_smd_stop_hw_scan(struct wcn36xx *wcn);
+ static void __exit sha1_mod_exit(void)
+diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
+index 881b935418cea..5d6b77e7e1416 100644
+--- a/lib/crypto/sha256.c
++++ b/lib/crypto/sha256.c
+@@ -15,10 +15,11 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/string.h>
+ #include <linux/unaligned.h>
+ #include <linux/wordpart.h>
++#include "fips.h"
+ 
+ static const struct sha256_block_state sha224_iv = {
+ 	.h = {
+ 		SHA224_H0, SHA224_H1, SHA224_H2, SHA224_H3,
+ 		SHA224_H4, SHA224_H5, SHA224_H6, SHA224_H7,
+@@ -267,12 +268,12 @@ void sha256(const u8 *data, size_t len, u8 out[SHA256_DIGEST_SIZE])
+ 	sha256_final(&ctx, out);
+ }
+ EXPORT_SYMBOL(sha256);
+ 
+ /*
+- * Pre-boot environment (as indicated by __DISABLE_EXPORTS being defined)
+- * doesn't need either HMAC support or interleaved hashing support
++ * Pre-boot environments (as indicated by __DISABLE_EXPORTS being defined) just
++ * need the generic SHA-256 code.  Omit all other features from them.
+  */
+ #ifndef __DISABLE_EXPORTS
+ 
+ #ifndef sha256_finup_2x_arch
+ static bool sha256_finup_2x_arch(const struct __sha256_ctx *ctx,
+@@ -475,23 +476,40 @@ void hmac_sha256_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+ 	hmac_sha256_init_usingrawkey(&ctx, raw_key, raw_key_len);
+ 	hmac_sha256_update(&ctx, data, data_len);
+ 	hmac_sha256_final(&ctx, out);
+ }
+ EXPORT_SYMBOL_GPL(hmac_sha256_usingrawkey);
+-#endif /* !__DISABLE_EXPORTS */
+ 
+-#ifdef sha256_mod_init_arch
++#if defined(sha256_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+ static int __init sha256_mod_init(void)
+ {
++#ifdef sha256_mod_init_arch
+ 	sha256_mod_init_arch();
++#endif
++	if (fips_enabled) {
++		/*
++		 * FIPS cryptographic algorithm self-test.  As per the FIPS
++		 * Implementation Guidance, testing HMAC-SHA256 satisfies the
++		 * test requirement for SHA-224, SHA-256, and HMAC-SHA224 too.
++		 */
++		u8 mac[SHA256_DIGEST_SIZE];
++
++		hmac_sha256_usingrawkey(fips_test_key, sizeof(fips_test_key),
++					fips_test_data, sizeof(fips_test_data),
++					mac);
++		if (memcmp(fips_test_hmac_sha256_value, mac, sizeof(mac)) != 0)
++			panic("sha256: FIPS self-test failed\n");
++	}
+ 	return 0;
+ }
+ subsys_initcall(sha256_mod_init);
+ 
+ static void __exit sha256_mod_exit(void)
+ {
+ }
+ module_exit(sha256_mod_exit);
+ #endif
+ 
++#endif /* !__DISABLE_EXPORTS */
++
+ MODULE_DESCRIPTION("SHA-224, SHA-256, HMAC-SHA224, and HMAC-SHA256 library functions");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/crypto/sha512.c b/lib/crypto/sha512.c
+index d8062188be98a..605eab51aabd5 100644
+--- a/lib/crypto/sha512.c
++++ b/lib/crypto/sha512.c
+@@ -15,10 +15,11 @@
+ #include <linux/module.h>
+ #include <linux/overflow.h>
+ #include <linux/string.h>
+ #include <linux/unaligned.h>
+ #include <linux/wordpart.h>
++#include "fips.h"
+ 
+ static const struct sha512_block_state sha384_iv = {
+ 	.h = {
+ 		SHA384_H0, SHA384_H1, SHA384_H2, SHA384_H3,
+ 		SHA384_H4, SHA384_H5, SHA384_H6, SHA384_H7,
+@@ -403,14 +404,30 @@ void hmac_sha512_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+ 	hmac_sha512_update(&ctx, data, data_len);
+ 	hmac_sha512_final(&ctx, out);
+ }
+ EXPORT_SYMBOL_GPL(hmac_sha512_usingrawkey);
+ 
+-#ifdef sha512_mod_init_arch
++#if defined(sha512_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+ static int __init sha512_mod_init(void)
+ {
++#ifdef sha512_mod_init_arch
+ 	sha512_mod_init_arch();
++#endif
++	if (fips_enabled) {
++		/*
++		 * FIPS cryptographic algorithm self-test.  As per the FIPS
++		 * Implementation Guidance, testing HMAC-SHA512 satisfies the
++		 * test requirement for SHA-384, SHA-512, and HMAC-SHA384 too.
++		 */
++		u8 mac[SHA512_DIGEST_SIZE];
++
++		hmac_sha512_usingrawkey(fips_test_key, sizeof(fips_test_key),
++					fips_test_data, sizeof(fips_test_data),
++					mac);
++		if (memcmp(fips_test_hmac_sha512_value, mac, sizeof(mac)) != 0)
++			panic("sha512: FIPS self-test failed\n");
++	}
+ 	return 0;
+ }
+ subsys_initcall(sha512_mod_init);
+ 
+ static void __exit sha512_mod_exit(void)
+diff --git a/scripts/crypto/gen-fips-testvecs.py b/scripts/crypto/gen-fips-testvecs.py
+new file mode 100755
+index 0000000000000..2956f88b764ae
+--- /dev/null
++++ b/scripts/crypto/gen-fips-testvecs.py
+@@ -0,0 +1,32 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++#
++# Script that generates lib/crypto/fips.h
++#
++# Copyright 2025 Google LLC
++
++import hmac
++
++fips_test_data = b"fips test data\0\0"
++fips_test_key = b"fips test key\0\0\0"
++
++def print_static_u8_array_definition(name, value):
++    print('')
++    print(f'static const u8 {name}[] __initconst __maybe_unused = {{')
++    for i in range(0, len(value), 8):
++        line = '\t' + ''.join(f'0x{b:02x}, ' for b in value[i:i+8])
++        print(f'{line.rstrip()}')
++    print('};')
++
++print('/* SPDX-License-Identifier: GPL-2.0-or-later */')
++print(f'/* This file was generated by: gen-fips-testvecs.py */')
++print()
++print('#include <linux/fips.h>')
++
++print_static_u8_array_definition("fips_test_data", fips_test_data)
++print_static_u8_array_definition("fips_test_key", fips_test_key)
++
++for alg in 'sha1', 'sha256', 'sha512':
++    ctx = hmac.new(fips_test_key, digestmod=alg)
++    ctx.update(fips_test_data)
++    print_static_u8_array_definition(f'fips_test_hmac_{alg}_value', ctx.digest())
+
+base-commit: 8bd9238e511d02831022ff0270865c54ccc482d6
 -- 
 2.51.0
 
