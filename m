@@ -1,163 +1,163 @@
-Return-Path: <linux-kernel+bounces-849053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B54BCF15D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:43:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583EDBCF169
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6975B4E7CCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:43:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8014F19A259C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED25231827;
-	Sat, 11 Oct 2025 07:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB94A226CF1;
+	Sat, 11 Oct 2025 07:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4wvTaGv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SstRanuV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723811D63FB
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5281547F2
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760168587; cv=none; b=ku2/LP8pxT8emNjXITr8NXsPc3KiNn2+Q23Ro/mduI4ml1jXIBuby9V0Z5VJ/vkcPwuwDiRJPfjJDBX+J0K0aOJVzTfV6cYNYM7aANvqPdta9tP03ciDD0KXi0rf6EyxWPMUrdJeQ72lMjYQET3+gc4cTPxIle2ZF6hY8WhmJjk=
+	t=1760168718; cv=none; b=th05vRELdnyTKqPzZ/PJRqp0eUt1hex/qd8N7bioqQ7EwmWGqpytizHUO9bxTr0GORHCvxr7UtsdI8dRDOXyIkYPnkUXaQXksqk/fuYweZ4qSjQ1Bi9yDw754aeKnuErqVqCyMIX3CfVKWY2tcFLeLno88JaGci3uIdhQu+3Ymk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760168587; c=relaxed/simple;
-	bh=kbm4votTa6BVKLQfFvb+lq1ndb0PM/xLDZ0aG+HAUR0=;
+	s=arc-20240116; t=1760168718; c=relaxed/simple;
+	bh=IRBVhMtnvfXCNw2+CiFz+E5fMH3uE9XUiZrv2bYozgM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TlBj34dFDBJwXaH9dVGnfHpMBksMNqRVh4+jVT7+OGXTSG/WGW/Dj59UFEsJBRYjembn6c0qw80ukKScXJD8IcKacyKXQbNZsvwLQ3NZ4kQYsMsxARaXrco1vwo0RVMktdBaW4FygGMxqKZ3Fi6Bzmdeo52GzQHnraKG7hSLKBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4wvTaGv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22658C19422
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760168587;
-	bh=kbm4votTa6BVKLQfFvb+lq1ndb0PM/xLDZ0aG+HAUR0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T4wvTaGvuy8oReUd69CQDXFvrY7CrVInOc98VNnRcLPUYmHnSXE+quOCm3pTn7mnI
-	 lUYCnCiajp7hXJnE4MRw6EEgLhT8Yj/ACK0ZsD+Mv9/5oXClTCUwNHnBtkGhncLIlJ
-	 c3dydXpfo9iCJgHHLdhjPeva1+xcWx8Yz21+7kq0WmS5yT2zd9gYq1LHftXI0ntJf8
-	 Ii3jBJtD9JYStcrQISejHRLakFe1NgjXBjfmSx9QF3oxfQ86ha1Dwdi5apgcgIjwhW
-	 AkEsgIzm1HIpncpi1gzUjOBIxuXekoMQVEPnKkfZ4GX9IAmH6FUibNJ/2sRXuPVjYk
-	 kHL+fdUO2i1yw==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63963066fb0so5587339a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:43:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWBjRC5mKlg4gv1nxM1h64ACcX+ILLrAr6M7h6NBXgU90lBCSTVe6diDkCDUpzu3Rrnm3fIPrxVtUNs4K4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFwesGeTUtIbCXZXF8awPSJCPyjvX+oybxgJrGXDFa+WzNRlXx
-	8lEgVhMpHT0zdJdecttXWdzv3Q7OPneoJiu1nDnEVA/m4DSj54eALLlywZPLKxVesXauo3qtpLW
-	FBXTnsFlA8dQCUIlsp6t/8Hz/oq50tr0=
-X-Google-Smtp-Source: AGHT+IHymoFTpE0VemuGRZAWH2VyeEmGDgjl2npd4Xxrf1HM3gf6i9lmx5J4yXsxnXH2TOhTcQG67Wrs2yvvN78DNvc=
-X-Received: by 2002:a05:6402:23c9:b0:634:c03f:c605 with SMTP id
- 4fb4d7f45d1cf-639d5c75dbfmr12498031a12.36.1760168585660; Sat, 11 Oct 2025
- 00:43:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=eqLBb99ruNW1ddHL3/0m3CgPYuBTprLGYLkv2MqgkTr0wdovuspoJzafoXhzo10rIejR3IzXSEI8xCpcGc50Lr85jArNr9X5PVg6gjlm9Tr+hMevnrNT+bNZCpQjJbNhoHVbVOs42upErZyN1cZ3+8EW79d8niczLpN8izY5xfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SstRanuV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760168714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NxTjQN0BpNlhv5a09n6MH+YC+U2y/tcPRoRk2p3O6Tk=;
+	b=SstRanuV+BryCDxEWAqZ7sF0jEzUxaY80YkEL92Iivtlj2cHGsD7Lp2Ryzghk7CIR2mESv
+	K2EcFMLK9MjkYjZ0Tdzf/jY017IFyuBJqWNrMPWQepCM71ZbCUg276XStzEv+5Mla34E8/
+	IaTYJDEJqMdxbd7Pn/LrBVDJSZYx1jc=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-jHDNL737P7Wna5jR44BGhA-1; Sat, 11 Oct 2025 03:45:12 -0400
+X-MC-Unique: jHDNL737P7Wna5jR44BGhA-1
+X-Mimecast-MFC-AGG-ID: jHDNL737P7Wna5jR44BGhA_1760168711
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eb864fe90so11014862a91.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:45:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760168711; x=1760773511;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NxTjQN0BpNlhv5a09n6MH+YC+U2y/tcPRoRk2p3O6Tk=;
+        b=bKFKVCUhK3UZMnY3qw2AhObVT0z5ERP0JwbH1vlqGDoVwmxQluG1Wssh+gVSu9wsTy
+         HcE6djf/6u86i2g0fWDNn77fqRNq42zX2EuPbkNXHLnAVUm28e1sGTEuR36qXQArlRSD
+         fZDDgJXXeSGLDxZctxwx0bnJe6s0uvMSde50ppzF0H8gPXSt3RYJcqY9cqzNuu/i2RVc
+         GDEMjykW6C1W+hQKw0KeO5+F6MkGOT6c7sRriNJIFqin/Hf9qNdF3RorRx6etRoqTYcu
+         0r78gTezb08WYzt7WL3ai0nSVH3dEAhERqe3z8qw//0fOU4Ne48wrJ5JSmADXY7S/yRC
+         Ti/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXghMKjPsZYnox7XzFDFRyUhfwjmaNWlwpRGGpc56cJbQLk83MZn+PZ3VISzJRIS/zrH/QfZ2TXLHMMkVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTXF3LwC2QQMcVJKC8jXI3i8Os9gwqSBle89OMo1dW97mB4AuP
+	eTOpbow5xUotrh59zA1uLxSjSsFtUvyi+p3Htq9GjU3DD9bafBW5DrDTiRf2STPo/0oBsUG8Y+0
+	59YHP8U2E+RGKOJMO1wSqXTsdhSy85bNN0towU2D5w0fT/7lHGVK87DkrKkFOAqnfhos1z/dC+3
+	3PhHsyoDx8a/FJahdfjck6/dnQG5pjnt05TIdhrTzV
+X-Gm-Gg: ASbGnctlxb7h25oAAhDG2PPyz1iqaeFbr3qKWLjkke+OqWFyDC2Oy0VWmFpXdf1uCef
+	U3X+Suc3aYRVZ4fG/Sophva9QCOTEzO8imwPn7wRkE9RChL/vPQw8KJf64L9wBI/E+oGC8mchLC
+	6xVW66zMmezzLT9+f8xw==
+X-Received: by 2002:a17:90b:3b86:b0:329:ed5b:ecd5 with SMTP id 98e67ed59e1d1-33b5127bf42mr20371387a91.19.1760168711087;
+        Sat, 11 Oct 2025 00:45:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGPAupPV9/mFzX/1qNB5oaR43M4dJqgeJ/r/PkgJa/5EI7TRbK3laPSK2RhrFUHnAdF6FOQPBTCE8eV4xl3g0=
+X-Received: by 2002:a17:90b:3b86:b0:329:ed5b:ecd5 with SMTP id
+ 98e67ed59e1d1-33b5127bf42mr20371361a91.19.1760168710623; Sat, 11 Oct 2025
+ 00:45:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
- <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
- <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
- <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
- <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn> <CAMj1kXFLyBbRL+pAAQ6be6dxqFPiyw_Ug8qNQWaicZQ235HE=A@mail.gmail.com>
- <8091e8fa-3483-af39-2f7a-e4eb62b0944f@loongson.cn> <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
- <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com> <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn>
-In-Reply-To: <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 11 Oct 2025 15:42:56 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
-X-Gm-Features: AS18NWBO_ZPqa7QTYu89pI0P7ab6zSJ33a0XruFytsPgVagYFaP8MLg8Jqce60M
-Message-ID: <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, loongarch@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251007130622.144762-1-eperezma@redhat.com> <20251007130622.144762-2-eperezma@redhat.com>
+In-Reply-To: <20251007130622.144762-2-eperezma@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Sat, 11 Oct 2025 15:44:57 +0800
+X-Gm-Features: AS18NWCJuDEIdQcOLxJka21_V13mq6YSX8QzoVc4a0nUJ7-xdjg7EtcTcqY06a0
+Message-ID: <CACGkMEvJwcTFmDTXyXvMM1dP0OginF-FKZsksFO1DamRQJP1TQ@mail.gmail.com>
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
+Cc: mst@redhat.com, Yongji Xie <xieyongji@bytedance.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Dragos Tatulea DE <dtatulea@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 11, 2025 at 3:29=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
+On Tue, Oct 7, 2025 at 9:06=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redhat.=
+com> wrote:
 >
-> On 2025/10/11 =E4=B8=8A=E5=8D=8811:40, Ard Biesheuvel wrote:
-> > On Fri, 10 Oct 2025 at 19:54, Huacai Chen <chenhuacai@kernel.org> wrote=
-:
-> >>
-> >> On Sat, Oct 11, 2025 at 9:13=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongs=
-on.cn> wrote:
-> >>>
-> >>> On 2025/10/11 =E4=B8=8A=E5=8D=8812:25, Ard Biesheuvel wrote:
-> >>> ...
-> >>>> Why do we need both (1) and (2)?
-> >>>
-> >>> Not both, either (1) or (2).
-> >>> Which one do you prefer? Or any other suggestions?
-> >>>
-> >>> Taking all of the considerations in balance, we should decide
-> >>> what is the proper way.
-> >> As a summary, there are three methods:
-> >> (1) Only link libstub with vmlinux.o during the final vmlinux link.
-> >> (2) Remove the attribute __noreturn for real_kernel_entry() and add wh=
-ile (1).
-> >> (3) Ignore "__efistub_" prefix in objtool.
-> >>
-> >> Josh prefers method (1), I prefer method (3) but also accept method
-> >> (1) if it is not only specific to loongarch.
-> >>
-> >
-> > This is a false positive warning in objtool, which complains about a
-> > function that falls through, even though that can never happen in
-> > reality.
-> >
-> > To me, it is not acceptable to modify how vmlinux.o is constructed
-> > also for other architectures, in order to hide some of its constituent
-> > parts from objtool, which do not use objtool to begin with.
-> >
-> >
-> > If you are not willing to fix objtool, I suggest fixing the loongarch
-> > code like this:
+> An userland device implemented through VDUSE could take rtnl forever if
+> the virtio-net driver is running on top of virtio_vdpa.  Let's break the
+> device if it does not return the buffer in a longer-than-assumible
+> timeout.
 >
-> Thank you.
+> A less agressive path can be taken to recover the device, like only
+> resetting the control virtqueue.  However, the state of the device after
+> this action is taken races, as the vq could be reset after the device
+> writes the OK.  Leaving TODO anyway.
 >
-> > --- a/drivers/firmware/efi/libstub/loongarch.c
-> > +++ b/drivers/firmware/efi/libstub/loongarch.c
-> > @@ -10,7 +10,7 @@
-> >   #include "efistub.h"
-> >   #include "loongarch-stub.h"
-> >
-> > -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdl=
-ine,
-> > +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
-> >                                            unsigned long systab);
-> >
-> >   efi_status_t check_platform_features(void)
-> > @@ -81,4 +81,6 @@
-> >
-> >          real_kernel_entry(true, (unsigned long)cmdline_ptr,
-> >                            (unsigned long)efi_system_table);
-> > +
-> > +       return EFI_LOAD_ERROR;
-> >   }
+> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> ---
+>  drivers/net/virtio_net.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >
-> I tested the above changes, the falls through objtool warning can
-> be fixed because efi_boot_kernel() ends with a return instruction,
-> I think this is reasonable.
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 31bd32bdecaf..ed68ad69a019 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -3576,6 +3576,7 @@ static bool virtnet_send_command_reply(struct virtn=
+et_info *vi, u8 class, u8 cmd
+>  {
+>         struct scatterlist *sgs[5], hdr, stat;
+>         u32 out_num =3D 0, tmp, in_num =3D 0;
+> +       unsigned long end_time;
+>         bool ok;
+>         int ret;
 >
-> efi_boot_kernel() has a return value, there are "return status" in
-> other parts of efi_boot_kernel(), it should also return at the end
-> of efi_boot_kernel() in theory, although we should never get here.
+> @@ -3614,11 +3615,20 @@ static bool virtnet_send_command_reply(struct vir=
+tnet_info *vi, u8 class, u8 cmd
 >
-> If there are more comments, please let me know.
-I still don't want LoongArch to be a special case, which means
-efi_boot_kernel() in fdt.c, jump_kernel_func in riscv.c and
-enter_kernel in arm64.c should also be modified.
+>         /* Spin for a response, the kick causes an ioport write, trapping
+>          * into the hypervisor, so the request should be handled immediat=
+ely.
+> +        *
+> +        * Long timeout so a malicious device is not able to lock rtnl fo=
+rever.
+>          */
+> +       end_time =3D jiffies + 30 * HZ;
 
-Huacai
+The problem that 30 * HZ is probably long enough to trigger the
+warnings like hungtask?
 
+
+>         while (!virtqueue_get_buf(vi->cvq, &tmp) &&
+>                !virtqueue_is_broken(vi->cvq)) {
+>                 cond_resched();
+>                 cpu_relax();
+> +
+> +               if (time_after(end_time, jiffies)) {
+> +                       /* TODO Reset vq if possible? */
+> +                       virtio_break_device(vi->vdev);
+> +                       break;
+> +               }
+>         }
 >
-> Thanks,
-> Tiezhu
+>  unlock:
+> --
+> 2.51.0
 >
+
+Thansk
+
 
