@@ -1,105 +1,258 @@
-Return-Path: <linux-kernel+bounces-848907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA40FBCECB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:10:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7837BCECBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 02:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 64F9E3507CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:10:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF7FC4E53A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 00:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CD7DF59;
-	Sat, 11 Oct 2025 00:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1792C8F0;
+	Sat, 11 Oct 2025 00:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rim2KHyJ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="RB2DVPVU"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CC229A2
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85194C83;
+	Sat, 11 Oct 2025 00:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760141429; cv=none; b=QLr3+OpfIZTY+NhOHzkyA6pnDyka93vr+H06nQvWJQ4cfd7heX4+dgoNVdS42UEuTwqN/6y1aQBsCCxliA4RWYZgmg4bKVUFJrBJeUHWZCczLkMM2xaytn66eLt8gT68ioY/uSSXh8TPaIDVIlLJfWkta2bl0O4AUJJsfU2VhHw=
+	t=1760141447; cv=none; b=KWFR3nxapeumEhKOWDwVYMfZVUJ39E2RSHbBj9CaLzl9Oy7Evfb0+N8dh3QEcDBhg22OQeEXMUA7ddGt9a02LbgU4ZP63eFZUkwpzXYok55bxO1KODhnJUkuIjuH593Vz3fuFK1/OhxeScr1nchy+8fBuOcYnRez6RJrptWrWZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760141429; c=relaxed/simple;
-	bh=vhsuxk96WAH/RhC3vemDEb946RpngHOAqABSwAfzGbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RTjgQ37BDCYA2V6armN59YNVKACZgJhUoVHb9M9M0Lyp0Rxm4VnuJ7POA7syFDhA/esSwWntTEoyp9Ux46ULLWCcmYbisfbXANcZLpe7XP4NUlNXPqbr6Qxk+HDuV/HubRa0dOvwM10bL0DXHAVEtxX2HrM1rV6LtkbEIEqbBTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rim2KHyJ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ece1102998so1508597f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760141427; x=1760746227; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vhsuxk96WAH/RhC3vemDEb946RpngHOAqABSwAfzGbw=;
-        b=Rim2KHyJ98x00469RxPskdsO24wkT5bUkS/IVMDwqFgXGfDWdCQd87enYHrWLdF6PV
-         tACAWst80nC0jp4uSqvSJPTnQOVnEub3hq//b3JHEVipyzPBv0qxCoT/rk6+E5Zuag9O
-         /LiN1x5iZ6xlLPVl/6GkmWqDJbUkUQim0esp57vEej28UBxEt/l6nkjDZ8tYckXPH+GS
-         idmiADkcshQBExGuX/Pv32Sr6lq8CTxih58YbEfhFdADivnZeGcpSOk13wGrD82nGFHU
-         wsBqY94E0e1OyyTnRljsimMRpR6QS8RM3RjnOPfp9h/8WXC7FnuxpP1JlHpwrS5o3bLo
-         7Ebg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760141427; x=1760746227;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vhsuxk96WAH/RhC3vemDEb946RpngHOAqABSwAfzGbw=;
-        b=POaXmQV0tU7J+66wVbQ92+aT5qKnRpYzZxFCtIngrnHL+upLjSkDbNbkMbq4204DJZ
-         18YnZDqOl+5/EFUcuQQ3sRaqprDalx/jBWu6fKFKDvNQpcHKl6sCeRiNiufdkhPIyvr9
-         Cc88VLducsTKsMPzOt2xhe1KOea/MKbt14auQ3ktbD/ogsf2L4g72CyQ/o6S6xLtEnyT
-         55NiHLlZE4uiaiSWfIQRMnLqQEU3BD8HSr8CSJrtME5NoEX78yYste9jXfaCy26+R9qG
-         r5Gqi6QvTOL+LJXKRCTMX4fDlaNvAfqEFQDL0EtD0QGUopCsEyREGgCPNHG0zf5c+K3Z
-         5unw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5NjapXtP4BcqzuYdWQjK72HZ8Gd06Fv0InRaPrYFYItk2XPFGLxhIMM7y1VOoZREHOVn5KoeHM+DSbeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZedD0e80jRjBLBomfQrpwhkrM1FXLJvXw0kTju82Y49YrIXJ/
-	gA2fZEd7EMDwDZcMVwvNUFNMWSP7ZUJe11ZOXl+zNg1oBHqeAUEjE6cGFTt+lF1VR5kaf1xH7Us
-	Aah0yciJNtMyDrG6I2PaOlNi9lvgEojkxAGKyvCLB
-X-Gm-Gg: ASbGncsOf9KRSmDw7AtxKs8gUeH+yEYJV8HphtSetP5hYidbmKBFUf+04GhhB5Dp3cj
-	8zj5GhmmAso9AX68UgG2HNbxuWQiV+y748rslUihIKl98a9rKtnc2jVkreexrxws2gKZwnnLk5E
-	urELkBCB5NW9ilCvC2fL+x8/ukBGoZAB7ypy309YdY23pwEvDa8TRSObx6mxgprP7HDuSLz1moa
-	0HP25upAsUj4HD5hMBMtJIOhUnyoGLXNMoaY/gX4ESjr/VArFTXn9RsHBpbvW5GqdA/a0gJXfWQ
-	81VcatFz
-X-Google-Smtp-Source: AGHT+IE+ZGXJMaXhPli5PfF8e59JjiGHyX8ap1P7iYMH4TowQfmU4UEUloQ42CoLYo3lvX2UUV72pFmKUq2N6vrDDqY=
-X-Received: by 2002:a05:6000:290d:b0:405:ed47:b22b with SMTP id
- ffacd0b85a97d-42666abb50fmr7632735f8f.10.1760141426475; Fri, 10 Oct 2025
- 17:10:26 -0700 (PDT)
+	s=arc-20240116; t=1760141447; c=relaxed/simple;
+	bh=6JkGx+B33muFi7i+3fkH0KGs/YlfEUjc07uhM09Pb80=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cP/UzTgF177PocJdZYClq8KLhYLKnjGLTXJ5LHnblGsjkPGG3FrWZVP8Hy1u9geEdVvukCBWx46Nq3kg4zzi9nm7wwA+RZ/ICmw82WZgN8jePLwODtlefjH8wjPv9tBFXtNao7N03bCOnzyKaZxnIrVOL/LUsfKM/SLM0dDw8mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=RB2DVPVU; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=cxvmckp001eqW77msuYCbAncWeEK7Ge75hIv96aombQ=; b=RB2DVPVUH/GPauPR
+	KCKFJzpE9uhsbBlot/DeEwasHmhV7jufgwjFhQnhaQE0iRyFr5TyFAEZJcEeiTqhKRkkd1ooceg6g
+	u3mclvT+RNM6p6l0UlGdeKw7/xTUafBeRMO1w5X8G+8Ia5B/VawDDmuqQyEb5WHCIMW5hGZokL5dn
+	i39ljr4igck/qvuNAzC5dMEyPhA2bTP/g2oUy+80txoJC+cYfPePFXUGfLOmS7ZGMzTrUKFd2sreU
+	TqlRTpksyrrKJ4t3spnaMULCs7yMnbGxoyQhD3TyyRadt+MzFqByL9M4RCSp8y7VWe8GY0yscpO1j
+	UPUb4yORx10uhEp9xw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1v7NC3-00Fnxf-06;
+	Sat, 11 Oct 2025 00:10:39 +0000
+From: linux@treblig.org
+To: loic.poulain@oss.qualcomm.com,
+	jeff.johnson@oss.qualcomm.com
+Cc: linux-kernel@vger.kernel.org,
+	wcn36xx@lists.infradead.org,
+	linux-wireless@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH v2] wifi: wcn36xx: Remove unused wcn36xx_smd_update_scan_params
+Date: Sat, 11 Oct 2025 01:10:38 +0100
+Message-ID: <20251011001038.352393-1-linux@treblig.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009010312.2203812-1-jthies@google.com> <20251009010312.2203812-3-jthies@google.com>
- <alnlmxbcv3ivhh7iolfqsurhknnm2o6i6waxq7kuhmzcbeljr5@a4wy3prshu3c>
-In-Reply-To: <alnlmxbcv3ivhh7iolfqsurhknnm2o6i6waxq7kuhmzcbeljr5@a4wy3prshu3c>
-From: Jameson Thies <jthies@google.com>
-Date: Fri, 10 Oct 2025 17:10:13 -0700
-X-Gm-Features: AS18NWD3EfN8pP57xJObsE8Nw-y-Yhc8QT1UxXovpeEXkcrZFbmuYOLzuOBOTJU
-Message-ID: <CAMFSARdzoZrv4oXxVAYRcZJgxdLcrTMVAVGa=D8H=9c1vZ0zKQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] usb: typec: cros_ec_ucsi: Load driver from OF and
- ACPI definitions
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
-	robh@kernel.org, bleung@chromium.org, heikki.krogerus@linux.intel.com, 
-	ukaszb@chromium.org, tzungbi@kernel.org, devicetree@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry,
-on early ChromeOS devices using this driver it gets added as a
-subdevice of the cros_ec_dev mfd. But, we want to change this to load
-the device from OF/ACPI nodes. The issue here is that older devices
-which don't define the OF/ACPI nodes to load cros_ec_ucsi will still
-need to add the device through cros_ec_dev.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-So cros_ec_ucsi needs to support multiple methods of being
-instantiated, and going through cros_ec_dev creates an intermediary
-device in the path which doesn't exist when the driver is loaded
-through OF/ACPI. I'll add a comment explaining this in the v4 series.
+wcn36xx_smd_update_scan_params() last use was removed in 2020 by
+commit 5973a2947430 ("wcn36xx: Fix software-driven scan")
+
+Remove it.
+
+This leaves the wcn36xx_hal_update_scan_params_req_ex and
+wcn36xx_hal_update_scan_params_resp structs unused.
+
+Remove them, together with the unused
+wcn36xx_hal_update_scan_params_req.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+v2
+  Remove the unused scan structures as suggested by Jeff
+
+ drivers/net/wireless/ath/wcn36xx/hal.h | 74 --------------------------
+ drivers/net/wireless/ath/wcn36xx/smd.c | 60 ---------------------
+ drivers/net/wireless/ath/wcn36xx/smd.h |  1 -
+ 3 files changed, 135 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/wcn36xx/hal.h b/drivers/net/wireless/ath/wcn36xx/hal.h
+index d3a9d00e65e1..ef9ea4ff891b 100644
+--- a/drivers/net/wireless/ath/wcn36xx/hal.h
++++ b/drivers/net/wireless/ath/wcn36xx/hal.h
+@@ -4484,80 +4484,6 @@ struct set_rssi_filter_resp {
+ 	u32 status;
+ };
+ 
+-/* Update scan params - sent from host to PNO to be used during PNO
+- * scanningx */
+-struct wcn36xx_hal_update_scan_params_req {
+-
+-	struct wcn36xx_hal_msg_header header;
+-
+-	/* Host setting for 11d */
+-	u8 dot11d_enabled;
+-
+-	/* Lets PNO know that host has determined the regulatory domain */
+-	u8 dot11d_resolved;
+-
+-	/* Channels on which PNO is allowed to scan */
+-	u8 channel_count;
+-	u8 channels[WCN36XX_HAL_PNO_MAX_NETW_CHANNELS];
+-
+-	/* Minimum channel time */
+-	u16 active_min_ch_time;
+-
+-	/* Maximum channel time */
+-	u16 active_max_ch_time;
+-
+-	/* Minimum channel time */
+-	u16 passive_min_ch_time;
+-
+-	/* Maximum channel time */
+-	u16 passive_max_ch_time;
+-
+-	/* Cb State */
+-	enum phy_chan_bond_state state;
+-} __packed;
+-
+-/* Update scan params - sent from host to PNO to be used during PNO
+- * scanningx */
+-struct wcn36xx_hal_update_scan_params_req_ex {
+-
+-	struct wcn36xx_hal_msg_header header;
+-
+-	/* Host setting for 11d */
+-	u8 dot11d_enabled;
+-
+-	/* Lets PNO know that host has determined the regulatory domain */
+-	u8 dot11d_resolved;
+-
+-	/* Channels on which PNO is allowed to scan */
+-	u8 channel_count;
+-	u8 channels[WCN36XX_HAL_PNO_MAX_NETW_CHANNELS_EX];
+-
+-	/* Minimum channel time */
+-	u16 active_min_ch_time;
+-
+-	/* Maximum channel time */
+-	u16 active_max_ch_time;
+-
+-	/* Minimum channel time */
+-	u16 passive_min_ch_time;
+-
+-	/* Maximum channel time */
+-	u16 passive_max_ch_time;
+-
+-	/* Cb State */
+-	enum phy_chan_bond_state state;
+-} __packed;
+-
+-/* Update scan params - sent from host to PNO to be used during PNO
+- * scanningx */
+-struct wcn36xx_hal_update_scan_params_resp {
+-
+-	struct wcn36xx_hal_msg_header header;
+-
+-	/* status of the request */
+-	u32 status;
+-} __packed;
+-
+ struct wcn36xx_hal_set_tx_per_tracking_req_msg {
+ 	struct wcn36xx_hal_msg_header header;
+ 
+diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
+index 2cf86fc3f8fe..136acc414714 100644
+--- a/drivers/net/wireless/ath/wcn36xx/smd.c
++++ b/drivers/net/wireless/ath/wcn36xx/smd.c
+@@ -1127,66 +1127,6 @@ int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
+ 	return ret;
+ }
+ 
+-static int wcn36xx_smd_update_scan_params_rsp(void *buf, size_t len)
+-{
+-	struct wcn36xx_hal_update_scan_params_resp *rsp;
+-
+-	rsp = buf;
+-
+-	/* Remove the PNO version bit */
+-	rsp->status &= (~(WCN36XX_FW_MSG_PNO_VERSION_MASK));
+-
+-	if (WCN36XX_FW_MSG_RESULT_SUCCESS != rsp->status) {
+-		wcn36xx_warn("error response from update scan\n");
+-		return rsp->status;
+-	}
+-
+-	return 0;
+-}
+-
+-int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn,
+-				   u8 *channels, size_t channel_count)
+-{
+-	struct wcn36xx_hal_update_scan_params_req_ex msg_body;
+-	int ret;
+-
+-	mutex_lock(&wcn->hal_mutex);
+-	INIT_HAL_MSG(msg_body, WCN36XX_HAL_UPDATE_SCAN_PARAM_REQ);
+-
+-	msg_body.dot11d_enabled	= false;
+-	msg_body.dot11d_resolved = true;
+-
+-	msg_body.channel_count = channel_count;
+-	memcpy(msg_body.channels, channels, channel_count);
+-	msg_body.active_min_ch_time = 60;
+-	msg_body.active_max_ch_time = 120;
+-	msg_body.passive_min_ch_time = 60;
+-	msg_body.passive_max_ch_time = 110;
+-	msg_body.state = PHY_SINGLE_CHANNEL_CENTERED;
+-
+-	PREPARE_HAL_BUF(wcn->hal_buf, msg_body);
+-
+-	wcn36xx_dbg(WCN36XX_DBG_HAL,
+-		    "hal update scan params channel_count %d\n",
+-		    msg_body.channel_count);
+-
+-	ret = wcn36xx_smd_send_and_wait(wcn, msg_body.header.len);
+-	if (ret) {
+-		wcn36xx_err("Sending hal_update_scan_params failed\n");
+-		goto out;
+-	}
+-	ret = wcn36xx_smd_update_scan_params_rsp(wcn->hal_buf,
+-						 wcn->hal_rsp_len);
+-	if (ret) {
+-		wcn36xx_err("hal_update_scan_params response failed err=%d\n",
+-			    ret);
+-		goto out;
+-	}
+-out:
+-	mutex_unlock(&wcn->hal_mutex);
+-	return ret;
+-}
+-
+ static int wcn36xx_smd_add_sta_self_rsp(struct wcn36xx *wcn,
+ 					struct ieee80211_vif *vif,
+ 					void *buf,
+diff --git a/drivers/net/wireless/ath/wcn36xx/smd.h b/drivers/net/wireless/ath/wcn36xx/smd.h
+index 2c1ed9e570bf..4e39df5589b3 100644
+--- a/drivers/net/wireless/ath/wcn36xx/smd.h
++++ b/drivers/net/wireless/ath/wcn36xx/smd.h
+@@ -66,7 +66,6 @@ int wcn36xx_smd_finish_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
+ int wcn36xx_smd_init_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
+ 			  struct ieee80211_vif *vif);
+ 
+-int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn, u8 *channels, size_t channel_count);
+ int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
+ 			      struct cfg80211_scan_request *req);
+ int wcn36xx_smd_stop_hw_scan(struct wcn36xx *wcn);
+-- 
+2.51.0
+
 
