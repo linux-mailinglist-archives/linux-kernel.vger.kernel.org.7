@@ -1,38 +1,51 @@
-Return-Path: <linux-kernel+bounces-849320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4392BCFD2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:21:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92A4BCFD2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C31A44E059B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 22:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 575843BD475
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 22:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2676B223DCE;
-	Sat, 11 Oct 2025 22:21:44 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B1A234963;
+	Sat, 11 Oct 2025 22:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SsfPHkma"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F78188580
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 22:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38970188580
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 22:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760221303; cv=none; b=CCvnLQcVeuLfpG7gWZbMgmsQgdMKaMeFbLsDdQKESK5kzq7Q+T5/eaUgioPdhjOD7MQZZQX/w949nXy+xVzV4xf3W4aQ4aqWzrffg9phXVl0DA1xiemApfAw/0WmhOW0fJTXJzYBWDrYlLJF9L+QefTvKMVS8QxQaUL8S4eRN2o=
+	t=1760221584; cv=none; b=RzbODyaV884pUWILDcN3fhY2GnhDLKtqtLhLpWY0QbcTbD1c60u35hgH3N7X4WePEAm8WAERHFyK61yuJiGj5NrrCf2aqVumOiWzQwrrAzNk9ykgL+HyoisLmkaIYriMfGWu4sSte8OA/T3tqR29+k9rsvQK2Pftzq+aukxfdIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760221303; c=relaxed/simple;
-	bh=4+LjS1OMT/h8Rh+c/hjPk9/YtD1yGkpZtFnFNWpv6Sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZN56uXND/Rvv8sV0mnKw/RmALuwZWO7vXlRf7KILvB/b71uVl4w9woNwB1QvcdLbhWCxy1gCsu+lcruwNJrL9yMQQva6ZPZXFv1P15Nx+JHogKPhTAXTZ+NbHU0T0xRoJtwjBCSvHADNzYmUVF6r8qtiuaZXam+/3QL3JDajh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.107] (unknown [114.241.81.247])
-	by APP-01 (Coremail) with SMTP id qwCowAB3zZ9c2OpoVz65DQ--.4665S2;
-	Sun, 12 Oct 2025 06:21:16 +0800 (CST)
-Message-ID: <60069cae-64fb-45de-8b74-e9a42a4b01b6@iscas.ac.cn>
-Date: Sun, 12 Oct 2025 06:21:16 +0800
+	s=arc-20240116; t=1760221584; c=relaxed/simple;
+	bh=7FznruyfzlyBCeC27qhDWNgCMsIWQBwvjajm92XpwT0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fYSn1wDgDR59PjOkBGxNn/KbnnVGWEyscOm8UWwZOfKYAo5nsBSlfBKHAVVnNPM8cm+56fpe7crDU973ovQ/ZZyEG2BVSk4gUWg7FHDeUKFG+S2rlnTndOG07L6iO0I9jfvbsOefB25RJmJrK2HTmeFnlkTodC7KA2tNrAg2R0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SsfPHkma; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=FsgbOcMfTE/oFgBmBmKbPG0YjKvTmsKKa/N4VIyTa1g=; b=SsfPHkma+/xD3q+qYv/PrSfN8s
+	wrSiwA3/igbPmUDt/uSeODXXx8vqkw8MkwuwRzDmv3VXKXq8NmjpjIRQG65Oi41n8oDPaaana2Br4
+	aNqVO4EUOG3DRJvbesksXg9htw931Zf10YqI5fjc0rTLRJ4PyticzX4NRjzDU2xJurYkK2kDx/v4D
+	Zt9XRzdX/hMiELKazqvKIwpNOc0YXC5JdBCgZv2jn/zUXIwagQDSEgQ5iEyKMv10Am/MCWhMFBFe/
+	X3wnXusNH+Jt4bxTSl25IuZazQjH1o+ptJKY/5xa7dbghfor39JZg1EJUTWvmeEvUINfAf1eXpBUk
+	7Ci7IY8Q==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v7i2f-0000000AscZ-2xL0;
+	Sat, 11 Oct 2025 22:26:21 +0000
+Message-ID: <c0a5bfb6-4976-45e3-a936-b7a914bbe5a5@infradead.org>
+Date: Sat, 11 Oct 2025 15:26:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -40,76 +53,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] riscv: Use __riscv_has_extension_{likely,unlikely}
-To: Conor Dooley <conor@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Paul Walmsley <pjw@kernel.org>,
- Charlie Jenkins <charlie@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>,
- =?UTF-8?Q?Christoph_M=C3=BCllner?= <christoph.muellner@vrull.eu>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251011-riscv-altn-helper-wip-v3-0-d40ddaa1985a@iscas.ac.cn>
- <20251011-buffing-never-4911edc10600@spud>
+Subject: Re: [PATCH] tools: fix == bashism in kernel-chktaint
+From: Randy Dunlap <rdunlap@infradead.org>
+To: Kevin Locke <kevin@kevinlocke.name>, Jonathan Corbet <corbet@lwn.net>,
+ Thorsten Leemhuis <linux@leemhuis.info>
+Cc: linux-kernel@vger.kernel.org
+References: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
+ <f5949227-7bd3-4fd0-b873-e79d0768a1be@infradead.org>
 Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20251011-buffing-never-4911edc10600@spud>
+In-Reply-To: <f5949227-7bd3-4fd0-b873-e79d0768a1be@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowAB3zZ9c2OpoVz65DQ--.4665S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr4DKFWfJry7Xw4kZr1fJFb_yoW8WFWkpF
-	ZxXas0kF1kJw42q34kZr4DXF4FqrWfGw45JrnxKry7Z390yryfKrsayayY9F1j9rZYqw4j
-	vF40vwn3Zr95ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvGb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
-	C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
-	wI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjxUqiFxDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
 
-On 10/11/25 19:28, Conor Dooley wrote:
-> On Sat, Oct 11, 2025 at 07:35:42AM +0800, Vivian Wang wrote:
->> There are about a dozen uses of asm goto in arch/riscv just to select
->> between two code paths with the alternative mechanism. Convert them to
->> the existing helpers __riscv_has_extension_{likely,unlikely}.
+
+On 10/11/25 3:07 PM, Randy Dunlap wrote:
+> 
+> 
+> On 10/11/25 2:04 PM, Kevin Locke wrote:
+>> When /bin/sh is a shell other than bash, invoking kernel-chktaint with
+>> at least one argument may produce error messages such as the following
+>> (produced by [dash] with argument 1024):
 >>
->> In each case, I have preserved the existing code's choice of asm goto
->> pattern while picking between "likely" and "unlikely", namely:
+>>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
+>>     ./kernel-chktaint: 22: [: 1024x: unexpected operator
 >>
->>   ALTERNATIVE("j %l[no]", "nop", ...)   -> "likely"
->>   ALTERNATIVE("nop", "j %l[yes]", ...)  -> "unlikely"
+>> This occurs because the == operator is not specified for [test in POSIX]
+>> and is not supported by all shells, as noted by shellcheck [SC3014].
 >>
->> Since the helpers are just implementations of these patterns, the
->> performance should be the same as before.
-> Can you explain why you're opting for the __ variant, instead of the one
-> without __? They should do the same thing in your cases, and resolve to
-> the alternative, since the non-alternative function call will be
-> unreachable and the assert is compiletime. There's currently no users of
-> the __ prefixed versions outside of other extension detection helpers, and
-> I think it should probably be kept that way if possible.
+>> To fix the issue and avoid the error message, replace == with =.
+>>
+>> [dash]: https://git.kernel.org/pub/scm/utils/dash/dash.git
+>> [test in POSIX]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
+>> [SC3014]: https://www.shellcheck.net/wiki/SC3014
+>>
+>> Signed-off-by: Kevin Locke <kevin@kevinlocke.name>
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
-I agree that it's preferable to use the non-__ functions. I'll do that
-in the next version.
+and
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-The only real reason I had used the __ versions is so that it would be
-equivalent to existing code, although as you said these should be
-equivalent since the uses are already guarded behind.
+> Thanks.
+> 
+>> ---
+>>  tools/debugging/kernel-chktaint | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+>> index e7da0909d0970..051608a63d9f1 100755
+>> --- a/tools/debugging/kernel-chktaint
+>> +++ b/tools/debugging/kernel-chktaint
+>> @@ -19,7 +19,7 @@ EOF
+>>  }
+>>  
+>>  if [ "$1"x != "x" ]; then
+>> -	if  [ "$1"x == "--helpx" ] || [ "$1"x == "-hx" ] ; then
+>> +	if  [ "$1"x = "--helpx" ] || [ "$1"x = "-hx" ] ; then
+>>  		usage
+>>  		exit 1
+>>  	elif  [ $1 -ge 0 ] 2>/dev/null ; then
+> 
 
-The "pgtable" code currently isn't guarded behind CONFIG_ALTERNATIVE,
-although now that I think about it, it should actually be preferable to
-do a runtime check than to do a TLB cleaning, so that one should
-probably be non-__ as well.
-
-Thanks,
-Vivian "dramforever" Wang
-
+-- 
+~Randy
 
