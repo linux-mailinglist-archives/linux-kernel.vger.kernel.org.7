@@ -1,116 +1,126 @@
-Return-Path: <linux-kernel+bounces-848989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013D7BCEF7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:49:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE07BCEF87
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B09704E59C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA113E6EA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0D1DE3B7;
-	Sat, 11 Oct 2025 03:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8081F0995;
+	Sat, 11 Oct 2025 03:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tw53tR5X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJRxCmFn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1358B3D6F;
-	Sat, 11 Oct 2025 03:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3E51386C9;
+	Sat, 11 Oct 2025 03:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760154544; cv=none; b=dJeFO8yFjwwAbLi2MQectRJZq3U9v+wggxAPF9gWMnH0fHzR5tThxRzuTRvmLXia/DqZEZAfLw5x3a0x3mzZjeM5P0sNKFHX7WD/bW5b4XOSHchZIThakjbBneRPd2c98bulshM4wU6+ZH7c1zpPPFRFOm5VcYm4YB7jr219Qe8=
+	t=1760154759; cv=none; b=nH4IQrmneigIgVO8Umy+z/QGW01P+lj2eu1AMO11PsKPwjSe9waM1OUD8dCk899m4GTwpx7hP0RHDHvf56ud97Gg4QFFpdvAWoY4my3AbNp1Yy7SjWyo9i5FfmnBiB+egOFCTf4JdeKZmzsKdDXfEG4BgNeh41DOVDSfoDs2WUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760154544; c=relaxed/simple;
-	bh=rnrQ3OGk44itas8W4eJo4nmGnOlFqBBc9NPO6lnnEDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bEYdLgnjK6XY5iYgciYqhyI3aarWbZ6HC/cDI8z9cYnY59eD39J5CAjdwdxqvUcKwzlX03UYK98AitWXkgQ/VkKl581NcpfTVd9cl/56HybiGt07zPeXpCHRvfsb+d11i1iDTz0dlyC5RiDAjjz3YPUvo4MQeB8XPY44pJEKMUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tw53tR5X; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760154543; x=1791690543;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rnrQ3OGk44itas8W4eJo4nmGnOlFqBBc9NPO6lnnEDA=;
-  b=Tw53tR5X+oOqiWli0E0V87VHh0FLrd+N7vi5AIZ1w9jnTh+X2Du6K5Za
-   tCHX+DH5lLr3EtL70n5yYn7US0iyLMoBi6IE/zQSrLUEVRUY1Qraqw77E
-   L9+M2dI7nKgbTwuLWuNEUMAGPYLXdZ3MOKPUY6pEnP4458CtqwG08QWOz
-   OIaAudqUcVCmBeJqC9Ad/+XU2NFJyx7KB0YKpNiXuis3vIeclTaCL2HbZ
-   ysicmxsJV+wxDXE2Ge3KE/zJMIOBGgY82iGlih0W2WBiiW2t18bcPRtPP
-   YHtJDoVA6jh/bz6SoVWQu1k0/k5C2F+lo45SXEaYlaHDIxYCLGwCju+Ms
-   A==;
-X-CSE-ConnectionGUID: JUsCNzkdQK6eM/HTTeXe6A==
-X-CSE-MsgGUID: u4aVOm/STk2j9YLBZj5nOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66200985"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="66200985"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 20:49:03 -0700
-X-CSE-ConnectionGUID: EexjwlGBQFW2ha7So1UJag==
-X-CSE-MsgGUID: BNBriDgxQWeMF3uoqckbCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="180812312"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 20:48:58 -0700
-Message-ID: <4ecf3e76-27f8-47fd-a07d-7da2489af55f@linux.intel.com>
-Date: Sat, 11 Oct 2025 11:48:56 +0800
+	s=arc-20240116; t=1760154759; c=relaxed/simple;
+	bh=hulNd+pnlUUnyZl/m4BGBqIYtQlsI75DRGszkd55yuA=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=FD2cVUmgZkTBnxdMYLeC50apxYmiyObYOByrk3ujtqmOROymbPk2laDuaJVoAPN8BbjYs4szl1usa/pfCUwjdYB3vr+abxKNKk02uGi/CwVS4if9GgrX8Be6TniusJQvDcpxIral1gItK7yfnZ7patNM0Rx6niCA/GbowawOJA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJRxCmFn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53353C4CEFE;
+	Sat, 11 Oct 2025 03:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760154759;
+	bh=hulNd+pnlUUnyZl/m4BGBqIYtQlsI75DRGszkd55yuA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WJRxCmFnURtmRhltIstXmc25hR+i8HUALgFO3pLjQIsHPXNhbxpDxWcAFShP+qdqs
+	 Aj5IpNSMrjaYetF0CorCh4YFyw3Fdr24Ml9PF/vC+MWR8tR45Rq8XjAF4ttn56wXcR
+	 XOwzYIRpeeyx2ZhtuE29Wvwy4QI7sNMU9/pbcHUgrjYtWqQ/nNViKKUYRry2jofZlV
+	 bB8rP6mL/hmExuH0tumeTrcu2MT0faHYhOYZz48Tzou/mgwznp3l9JauANmo35JK+I
+	 mT+pibN4dZb8sKOQZqgZY8MToX05h88Z/SWX85JYDJ2Aewzk2UlimeLUxEUw80/xkB
+	 2XYRmeZdx2l3w==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1v7Qex-00000000jfj-1UmG;
+	Fri, 10 Oct 2025 23:52:43 -0400
+Message-ID: <20251011035141.552201166@kernel.org>
+User-Agent: quilt/0.68
+Date: Fri, 10 Oct 2025 23:51:41 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 0/2] tracing: A couple of fixes for v6.18
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tools: Fix bool return value in gzip_is_compressed()
-To: Miaoqian Lin <linmq006@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20250828104652.53724-1-linmq006@gmail.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250828104652.53724-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+
+[ Sorry for the dup, but I used the wrong script to send the other one.
+  It hasn't gone through my tests to add the "for-linus" tag yet :-p ]
+
+tracing fixes for v6.18:
+
+- Fix tracing_mark_raw_write() to use per CPU buffer
+
+  The fix to use the per CPU buffer to copy from user space was needed for
+  both the trace_maker and trace_maker_raw file. The trace_maker file is
+  used to write ASCII text into the trace buffer, but the trace_maker_raw is
+  used to write binary structures directly into the ring buffer.
+
+  The fix for reading from user space into per CPU buffers properly fixed
+  the trace_marker write function, but the trace_marker_raw file wasn't
+  fixed properly. The user space data was correctly written into the per CPU
+  buffer, but the code that wrote into the ring buffer still used the user
+  space pointer and not the per CPU buffer that had the user space data
+  already written.
+
+  There are several tests in the test suite to test the trace_marker file
+  but it appears that there's no tests that test the trace_marker_raw file
+  (this needs to be fixed), and this bug was missed.
+
+- Stop the fortify string warning from writing into trace_marker_raw
+
+  After converting the copy_from_user_nofault() into a memcpy(), another
+  issue appeared. As writes to the trace_marker_raw expects binary data, the
+  first entry is a 4 byte identifier. The entry structure is defined as:
+
+  struct {
+	struct trace_entry ent;
+	int id;
+	char dynamic_array[];
+  };
+
+  The size of this structure is reserved on the ring buffer and the pointer
+  to the structure on the ring buffer is assigned to "entry". Then the data
+  is copied via a memcpy() with:
+
+  memcpy(&entry->id, buf, size);
+
+  But the fortify string detects that the size is bigger than the size of
+  the entry->id and produces a false positive warning.
+
+  Hide the write from fortify string with:
+
+  void *ptr = entry;
+  ptr += offsetof(typeof(*entry), id);
+  memcpy(ptr, buf, size);
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/urgent
+
+Head SHA1: 649f416690a79861b646e304ccdee0465fec65b6
 
 
-On 8/28/2025 6:46 PM, Miaoqian Lin wrote:
-> gzip_is_compressed() returns -1 on error but is declared as bool.
-> And -1 gets converted to true, which could be misleading.
-> Return false instead to match the declared type.
->
-> Fixes: 88c74dc76a30 ("perf tools: Add gzip_is_compressed function")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->  tools/perf/util/zlib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/perf/util/zlib.c b/tools/perf/util/zlib.c
-> index 78d2297c1b67..1f7c06523059 100644
-> --- a/tools/perf/util/zlib.c
-> +++ b/tools/perf/util/zlib.c
-> @@ -88,7 +88,7 @@ bool gzip_is_compressed(const char *input)
->  	ssize_t rc;
->  
->  	if (fd < 0)
-> -		return -1;
-> +		return false;
->  
->  	rc = read(fd, buf, sizeof(buf));
->  	close(fd);
+Steven Rostedt (2):
+      tracing: Fix tracing_mark_raw_write() to use buf and not ubuf
+      tracing: Stop fortify-string from warning in tracing_mark_raw_write()
 
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-
-
+----
+ kernel/trace/trace.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
