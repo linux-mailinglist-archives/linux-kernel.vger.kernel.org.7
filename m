@@ -1,188 +1,153 @@
-Return-Path: <linux-kernel+bounces-849021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590A4BCF06E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF78BBCF06B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D3E3834CA94
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:30:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 11CC834CA8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C008C8F0;
-	Sat, 11 Oct 2025 06:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CA621323C;
+	Sat, 11 Oct 2025 06:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lYKA2+ih"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OkwYArIG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dpPxog55";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LYfhIj3E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EWw9EcQJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1902A2147E6
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 06:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E32DC8F0
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 06:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760164233; cv=none; b=jgaM2IT7R8CVdRS0qNr/ih+dBQDU3xk/AvTxL0ZyEBgnRHnSYKQn6qeAI/t3P68wu9wMJd38f2b40S7w5pEHKESrWjXET1gDTkA3rkRVP5Y52OXRQ4zj3vuSqoLkJvlPZxLREjgPMOqdsDyHEqGP1qCnQDgN3nLHkR6KZF5GM2Y=
+	t=1760164231; cv=none; b=YSkexmyVbiG5upLKoQDiHahBzN97FNY6JCmZhZIp0ZKcA4B7UNN9PeeBNCQipxqhUSBNlpNfuPfBdgiZwGT31lI60ZXqp+GTxahJ2s4W05SMU7vq8NRFoxi4LuxTVLvar15kXz9mUgoB8zwhrGZDxHwEjU538lUFgTYcBJ1AvcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760164233; c=relaxed/simple;
-	bh=864487Lbses3g7FYfEk5gBAA1Q+2nTEqyXpo9mwJjwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RFLeOOtG2xBrzttOfg84j8MCpblzwzRQ008aKLg3ctVHKJyGBkbJpPetpN80saVO81Xy9I0i9zBMXYyCTSAApF2CvDDW09BwqqNhWdk8/7Ze2ChNWdE+Np8XSDbeTpSLnedI+X7bvynDYQHc024fSy9KURx8N3yhdZMgl6exJLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lYKA2+ih; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760164232; x=1791700232;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=864487Lbses3g7FYfEk5gBAA1Q+2nTEqyXpo9mwJjwM=;
-  b=lYKA2+ihJ6znCQFxkbDRkCch4QUn7V0ti3CA8+nYDrHI2sWZNYKQbx0n
-   LS3Ac4RrgA/HF7d8BHJ40zGSQy5NkuPxsz4tgqC8Tq5Xk0FNVgYyiKXPH
-   GtmvR6zOCYeun7LkkGHutDShBfq6z8kS1ccHyiQbp97RCS+pZsHUTRiu5
-   vXN2F3r5FZaTSp3ofaRg/01wXLZJoqBVGsG6TP/AGERT2/2VWaW7Q6Ldn
-   yHD70yW1NTflUUUFlkvDXiLtVnVgliJPs8n2pTVL6HMZ/azJjTTgc9qNt
-   piOUnigfFEQMQdSLLvOY2JQtXjuu6imGZz2qFEr1QgkxEfps7jlFa7mVT
-   A==;
-X-CSE-ConnectionGUID: rv/h5IrBTv654iGoEzT9JA==
-X-CSE-MsgGUID: ykM6McuLQKKagdHdXZRjew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62295796"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62295796"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 23:30:32 -0700
-X-CSE-ConnectionGUID: lPvOecqbQc6xhQki/BPBGg==
-X-CSE-MsgGUID: AgL/RN86S3CGZ7GQ+tjQxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="180389437"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 23:30:26 -0700
-Message-ID: <ce126bc8-7672-4071-96b5-9652e736175b@linux.intel.com>
-Date: Sat, 11 Oct 2025 14:26:53 +0800
+	s=arc-20240116; t=1760164231; c=relaxed/simple;
+	bh=3aN7aOCB0J/gSZUuDE9BjwChjumxOWgHjaDMf44O3Fg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gH7XCxzWTWMQGvj2M3SGgHikqrTlARQ/US5pCjI68nRa/ndUvfQaL6tFVdGY8Sy8n2iJNsT2xbT70fLcZ8MsMKDLBxHEuk3SPzVzeEjMKOk6HETI51VRs4kxFyxQBbUVzXRREsJCHAqg2+SzFcWIqaHGvLYatsPZFGP37DYtR7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OkwYArIG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dpPxog55; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LYfhIj3E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EWw9EcQJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 087EE2123E;
+	Sat, 11 Oct 2025 06:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760164227; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kMunO0FeGlF1r1p7kWQNyUcoA0ePxiC/C1d6SeWYXTY=;
+	b=OkwYArIGcBrCdWn8W0kWFgvOdGRnOaAZDpwkdLCnlb9A/bPQ/6PJXNpJxeby+UEnlr1n5B
+	OTGlvAmXUwugwEk+F+X8C3ugrm4iZv+81XTh6ZhmHw/z386kjVvwNU3SSMHlrzwpgEek3v
+	PSBi5GDnURjno7od6+1xl1Yr3LmRIfM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760164227;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kMunO0FeGlF1r1p7kWQNyUcoA0ePxiC/C1d6SeWYXTY=;
+	b=dpPxog55EcR35vweGLAPKiuTM5Jlo9iXIjM1mlCgeoghhZbABaLKLa77DzIMobx024qfAA
+	h1tLlV7JthTN93Bg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760164226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kMunO0FeGlF1r1p7kWQNyUcoA0ePxiC/C1d6SeWYXTY=;
+	b=LYfhIj3EG5ZWa1ZtpWHIbLSe+o046J94Px0wriOcJwfyYozZbKn15u35uTShNY03Imi0o3
+	9y6B1oukxwK1PxI8wp72ts37QPZbqWHMLsHXCAfZ4X9E+ZE3so5xyXZsH1IyvYboL8Ssmy
+	O78yE+3jvRKjQ1MB1mmBxFlIqVqrgHI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760164226;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kMunO0FeGlF1r1p7kWQNyUcoA0ePxiC/C1d6SeWYXTY=;
+	b=EWw9EcQJgfzLMl1t6CNu5S4Inv0HlHX1eKpxLfbdY+QodACF48N90SODTMPL0ciiXVX22k
+	1N+ta40aTojw/hCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B22F313693;
+	Sat, 11 Oct 2025 06:30:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ppswKoH56WiHDQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 11 Oct 2025 06:30:25 +0000
+Date: Sat, 11 Oct 2025 08:30:25 +0200
+Message-ID: <87ms5y9chq.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Denis Arefev <arefev@swemel.ru>
+Cc: David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Stefan Binding <sbinding@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: cs35l41: Fix NULL pointer dereference in cs35l41_get_acpi_mute_state()
+In-Reply-To: <20251007073832.3662-1-arefev@swemel.ru>
+References: <20251007073832.3662-1-arefev@swemel.ru>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/8] x86/mm: Use 'ptdesc' when freeing PMD pages
-To: Dave Hansen <dave.hansen@intel.com>, David Hildenbrand
- <david@redhat.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
-Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
- <20250919054007.472493-4-baolu.lu@linux.intel.com>
- <9648e990-18e0-4aed-8110-b02f4b45aa47@redhat.com>
- <e4c0c578-50e9-4e65-8e7f-7a6d995b22e0@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <e4c0c578-50e9-4e65-8e7f-7a6d995b22e0@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[swemel.ru:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On 10/10/25 03:31, Dave Hansen wrote:
-> On 10/9/25 12:25, David Hildenbrand wrote:
->>>
->>> @@ -750,8 +750,8 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
->>>          for (i = 0; i < PTRS_PER_PMD; i++) {
->>>            if (!pmd_none(pmd_sv[i])) {
->>> -            pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
->>> -            pte_free_kernel(&init_mm, pte);
->>> +            pt = page_ptdesc(pmd_page(pmd_sv[i]));
->>> +            pagetable_dtor_free(pt);
->>
->> There is pmd_ptdesc() which does
->>
->>      page_ptdesc(pmd_pgtable_page(pmd));
->>
->> It's buried in a
->>
->>      #if defined(CONFIG_SPLIT_PMD_PTLOCKS)
->>
->> Can't we just make that always available so we can use it here?
+On Tue, 07 Oct 2025 09:38:31 +0200,
+Denis Arefev wrote:
 > 
-> Yes, that looks like a good idea. I never noticed pmd_ptdesc() when I
-> was writing this for sure.
+> Return value of a function acpi_evaluate_dsm() is dereferenced  without
+> checking for NULL, but it is usually checked for this function.
+> 
+> acpi_evaluate_dsm() may return NULL, when acpi_evaluate_object() returns
+> acpi_status other than ACPI_SUCCESS, so add a check to prevent the crach.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 447106e92a0c ("ALSA: hda: cs35l41: Support mute notifications for CS35L41 HDA")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Denis Arefev <arefev@swemel.ru>
 
-I updated the patch like this,
+Applied now.  Thanks.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 6a0bb7fc3148..a0850dc6878e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3203,8 +3203,6 @@ pte_t *pte_offset_map_rw_nolock(struct mm_struct 
-*mm, pmd_t *pmd,
-         ((unlikely(pmd_none(*(pmd))) && __pte_alloc_kernel(pmd))? \
-                 NULL: pte_offset_kernel(pmd, address))
 
--#if defined(CONFIG_SPLIT_PMD_PTLOCKS)
--
-  static inline struct page *pmd_pgtable_page(pmd_t *pmd)
-  {
-         unsigned long mask = ~(PTRS_PER_PMD * sizeof(pmd_t) - 1);
-@@ -3216,6 +3214,8 @@ static inline struct ptdesc *pmd_ptdesc(pmd_t *pmd)
-         return page_ptdesc(pmd_pgtable_page(pmd));
-  }
-
-+#if defined(CONFIG_SPLIT_PMD_PTLOCKS)
-+
-  static inline spinlock_t *pmd_lockptr(struct mm_struct *mm, pmd_t *pmd)
-  {
-         return ptlock_ptr(pmd_ptdesc(pmd));
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ddf248c3ee7d..c830ccbc2fd8 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -729,7 +729,7 @@ int pmd_clear_huge(pmd_t *pmd)
-  int pud_free_pmd_page(pud_t *pud, unsigned long addr)
-  {
-         pmd_t *pmd, *pmd_sv;
--       pte_t *pte;
-+       struct ptdesc *pt;
-         int i;
-
-         pmd = pud_pgtable(*pud);
-@@ -750,8 +750,8 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
-
-         for (i = 0; i < PTRS_PER_PMD; i++) {
-                 if (!pmd_none(pmd_sv[i])) {
--                       pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
--                       pte_free_kernel(&init_mm, pte);
-+                       pt = pmd_ptdesc(&pmd_sv[i]);
-+                       pagetable_dtor_free(pt);
-                 }
-         }
-
-@@ -772,15 +772,15 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
-   */
-  int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
-  {
--       pte_t *pte;
-+       struct ptdesc *pt;
-
--       pte = (pte_t *)pmd_page_vaddr(*pmd);
-+       pt = pmd_ptdesc(pmd);
-         pmd_clear(pmd);
-
-         /* INVLPG to clear all paging-structure caches */
-         flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
-
--       pte_free_kernel(&init_mm, pte);
-+       pagetable_dtor_free(pt);
-
-         return 1;
-  }
-
-Thanks,
-baolu
+Takashi
 
