@@ -1,100 +1,335 @@
-Return-Path: <linux-kernel+bounces-849268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C35BBCFB29
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A6BBCFB35
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 20:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F17B94E3E3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:52:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B80894E1565
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 18:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC224283C83;
-	Sat, 11 Oct 2025 18:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9541283FEB;
+	Sat, 11 Oct 2025 18:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eY//RnJ/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osDNwxFA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418C9246793;
-	Sat, 11 Oct 2025 18:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E036B1A08BC;
+	Sat, 11 Oct 2025 18:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760208751; cv=none; b=P+Uin6oJV5s1y6vnjvOS2n9XGWGAcPcZ3/CX/cPA9zDXWSGxsATe3vhG8fbMoW93KT7XJE0FjNS5bD1hpWb7RNG3epRAzqHnQP7mUlGhlPZv998GPIr8VMvkewoaSDMGjmqunxLpPyEDwaU+JxT89CDMgs0ESJ72MUf6mDEXAsY=
+	t=1760208842; cv=none; b=KSi5on3hXEhghV+WTxOgHpi69Hi7EZ4QRYg0QvIXxMY04BhA+dcXU2z5mYieH1ES45XuAqA+GyCoQnirV6iQDhFkPRmnV79C9oX5+sq9ayC8vUt3s3kstw4Kt6dWHTLsM8oi9rK9yE47OVRShHaJEApfAZYFe4dbFq7KT9m/iUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760208751; c=relaxed/simple;
-	bh=0h4gT68eVwzFNQ4ql0PAM2G2QU1YrCNWrtkdF0+rzXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKSk0tUI65G9imgvVNBqRnGUWBDjcLZdqqZCDzFur63ZoQdsD7O3f2g5oZNXY34a8vCsQGrz2k2uNpTYYCFbHPL9Zb2kwko9JU59sfNdokof3r6KWYpEOzIGSC1EnLhdX0cIsWUzPxvZIg7ZGBW+hctxHc+AHgh+7r6BaC6/LEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eY//RnJ/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8YkkRvntH2lmBxGMbxu5YEt1wQu1wmRQ+IfMdCf3sZk=; b=eY//RnJ/RGfTAsy/4wBgGpvT5V
-	68rPc2HiL/gE2jWbClfukl8YGAJuFw8zBulvwWzWVpgoSb5k2Q3JGz2BIoo8Foro+AXdVEWYx1RQr
-	F0dkxvJLpxCQsY4N8b0ShZ5QJhZ6GHDNEvk8XqJov3GFPeJ+AuEoCByLaj+Lx9dyotGY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v7ehW-00AgHw-E5; Sat, 11 Oct 2025 20:52:18 +0200
-Date: Sat, 11 Oct 2025 20:52:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] virtio: dwords->qwords
-Message-ID: <c4aa4304-b675-4a60-bb7e-adcf26a8694d@lunn.ch>
-References: <cover.1760008797.git.mst@redhat.com>
- <350d0abfaa2dcdb44678098f9119ba41166f375f.1760008798.git.mst@redhat.com>
- <26d7d26e-dd45-47bb-885b-45c6d44900bb@lunn.ch>
- <20251009093127-mutt-send-email-mst@kernel.org>
- <6ca20538-d2ab-4b73-8b1a-028f83828f3e@lunn.ch>
- <20251011134052-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1760208842; c=relaxed/simple;
+	bh=ZDHerQX1xzL1R2lvg6yrBKlxguHuXZpw14dmUVI4wBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YUwbsTfAKtrVcv0h8VFuh67mPESYx8a2GdVujjLqgOZ4KfmvNnyl4Eq/Aclqz6QUweRiGG9sYXuDRF3zCiCpzqNBgiUzuCQtAU2koRieDD3ap8+aaUbXVRkSVP5ClBQhkK4wYf/KNNnnIbKXZCucJ9NrhhcpmrpChE9Dk8mPOAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osDNwxFA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04CD2C4CEF4;
+	Sat, 11 Oct 2025 18:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760208840;
+	bh=ZDHerQX1xzL1R2lvg6yrBKlxguHuXZpw14dmUVI4wBM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=osDNwxFAFMiGvx62KgNYcodsPWDwltx447QUq1o1X7a8m2+lZn2gSm2CaKX4ZWO0+
+	 et4pWJJCk/NSNrtkYQUX6W4GngpXY/rmE43GP7tiXucdorOGPkTtEVJkZeX6z5hiXI
+	 mqc6JDMth65LBw9ggRLeAMglXQO2yXHYPxElaZ10s6wa8j7BIyyEQUvuZNkSZ6md1T
+	 EGJA458qkk+A9kdxNGkpdadFCJK2dzIq3rMgZLwCXGUN1Rhve9ENzPDCzJQn60spou
+	 sorcvqCRdwu5IMoTsnBK8FKNtmHUn8DwYKCEkSx4Xkb2DpPJ+s8LhQ8GG8IJYcH+Ak
+	 rNV+81APhprtA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-nfs@vger.kernel.org,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] nfsd: Use MD5 library instead of crypto_shash
+Date: Sat, 11 Oct 2025 11:52:25 -0700
+Message-ID: <20251011185225.155625-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251011134052-mutt-send-email-mst@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-> That's not spec, that's linux driver. The spec is the source of truth.
+Update NFSD's support for "legacy client tracking" (which uses MD5) to
+use the MD5 library instead of crypto_shash.  This has several benefits:
 
-Right, lets follow this.
+- Simpler code.  Notably, much of the error-handling code is no longer
+  needed, since the library functions can't fail.
 
-I'm looking at
+- Improved performance due to reduced overhead.  A microbenchmark of
+  nfs4_make_rec_clidname() shows a speedup from 1455 cycles to 425.
 
-https://docs.oasis-open.org/virtio/virtio/v1.3/csd01/virtio-v1.3-csd01.html
+- The MD5 code can now safely be built as a loadable module when nfsd is
+  built as a loadable module.  (Previously, nfsd forced the MD5 code to
+  built-in, presumably to work around the unreliablity of the name-based
+  loading.)  Thus, select MD5 from the tristate option NFSD if
+  NFSD_LEGACY_CLIENT_TRACKING, instead of from the bool option NFSD_V4.
 
-Is that correct?
+To preserve the existing behavior of legacy client tracking support
+being disabled when the kernel is booted with "fips=1", make
+nfsd4_legacy_tracking_init() return an error if fips_enabled.  I don't
+know if this is truly needed, but it preserves the existing behavior.
 
-That document does not have a definition of word. However, what is
-interesting is section "4.2.2 MMIO Device Register Layout"
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ fs/nfsd/Kconfig       |  3 +-
+ fs/nfsd/nfs4recover.c | 82 ++++++++-----------------------------------
+ 2 files changed, 16 insertions(+), 69 deletions(-)
 
-DeviceFeaturesSel 0x014
+diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
+index e134dce45e350..380a4caa33a73 100644
+--- a/fs/nfsd/Kconfig
++++ b/fs/nfsd/Kconfig
+@@ -3,10 +3,11 @@ config NFSD
+ 	tristate "NFS server support"
+ 	depends on INET
+ 	depends on FILE_LOCKING
+ 	depends on FSNOTIFY
+ 	select CRC32
++	select CRYPTO_LIB_MD5 if NFSD_LEGACY_CLIENT_TRACKING
+ 	select CRYPTO_LIB_SHA256 if NFSD_V4
+ 	select LOCKD
+ 	select SUNRPC
+ 	select EXPORTFS
+ 	select NFS_COMMON
+@@ -75,12 +76,10 @@ config NFSD_V3_ACL
+ config NFSD_V4
+ 	bool "NFS server support for NFS version 4"
+ 	depends on NFSD && PROC_FS
+ 	select FS_POSIX_ACL
+ 	select RPCSEC_GSS_KRB5
+-	select CRYPTO
+-	select CRYPTO_MD5
+ 	select GRACE_PERIOD
+ 	select NFS_V4_2_SSC_HELPER if NFS_V4_2
+ 	help
+ 	  This option enables support in your system's NFS server for
+ 	  version 4 of the NFS protocol (RFC 3530).
+diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+index e2b9472e5c78c..dbc0aecef95e3 100644
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -30,13 +30,14 @@
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+ 
+-#include <crypto/hash.h>
++#include <crypto/md5.h>
+ #include <crypto/sha2.h>
+ #include <linux/file.h>
++#include <linux/fips.h>
+ #include <linux/slab.h>
+ #include <linux/namei.h>
+ #include <linux/sched.h>
+ #include <linux/fs.h>
+ #include <linux/module.h>
+@@ -90,61 +91,22 @@ static void
+ nfs4_reset_creds(const struct cred *original)
+ {
+ 	put_cred(revert_creds(original));
+ }
+ 
+-static int
++static void
+ nfs4_make_rec_clidname(char dname[HEXDIR_LEN], const struct xdr_netobj *clname)
+ {
+ 	u8 digest[MD5_DIGEST_SIZE];
+-	struct crypto_shash *tfm;
+-	int status;
+ 
+ 	dprintk("NFSD: nfs4_make_rec_clidname for %.*s\n",
+ 			clname->len, clname->data);
+-	tfm = crypto_alloc_shash("md5", 0, 0);
+-	if (IS_ERR(tfm)) {
+-		status = PTR_ERR(tfm);
+-		goto out_no_tfm;
+-	}
+ 
+-	status = crypto_shash_tfm_digest(tfm, clname->data, clname->len,
+-					 digest);
+-	if (status)
+-		goto out;
++	md5(clname->data, clname->len, digest);
+ 
+ 	static_assert(HEXDIR_LEN == 2 * MD5_DIGEST_SIZE + 1);
+ 	sprintf(dname, "%*phN", MD5_DIGEST_SIZE, digest);
+-
+-	status = 0;
+-out:
+-	crypto_free_shash(tfm);
+-out_no_tfm:
+-	return status;
+-}
+-
+-/*
+- * If we had an error generating the recdir name for the legacy tracker
+- * then warn the admin. If the error doesn't appear to be transient,
+- * then disable recovery tracking.
+- */
+-static void
+-legacy_recdir_name_error(struct nfs4_client *clp, int error)
+-{
+-	printk(KERN_ERR "NFSD: unable to generate recoverydir "
+-			"name (%d).\n", error);
+-
+-	/*
+-	 * if the algorithm just doesn't exist, then disable the recovery
+-	 * tracker altogether. The crypto libs will generally return this if
+-	 * FIPS is enabled as well.
+-	 */
+-	if (error == -ENOENT) {
+-		printk(KERN_ERR "NFSD: disabling legacy clientid tracking. "
+-			"Reboot recovery will not function correctly!\n");
+-		nfsd4_client_tracking_exit(clp->net);
+-	}
+ }
+ 
+ static void
+ __nfsd4_create_reclaim_record_grace(struct nfs4_client *clp,
+ 		const char *dname, int len, struct nfsd_net *nn)
+@@ -180,13 +142,11 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+ 	if (test_and_set_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
+ 		return;
+ 	if (!nn->rec_file)
+ 		return;
+ 
+-	status = nfs4_make_rec_clidname(dname, &clp->cl_name);
+-	if (status)
+-		return legacy_recdir_name_error(clp, status);
++	nfs4_make_rec_clidname(dname, &clp->cl_name);
+ 
+ 	status = nfs4_save_creds(&original_cred);
+ 	if (status < 0)
+ 		return;
+ 
+@@ -374,13 +334,11 @@ nfsd4_remove_clid_dir(struct nfs4_client *clp)
+ 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
+ 
+ 	if (!nn->rec_file || !test_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
+ 		return;
+ 
+-	status = nfs4_make_rec_clidname(dname, &clp->cl_name);
+-	if (status)
+-		return legacy_recdir_name_error(clp, status);
++	nfs4_make_rec_clidname(dname, &clp->cl_name);
+ 
+ 	status = mnt_want_write_file(nn->rec_file);
+ 	if (status)
+ 		goto out;
+ 	clear_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags);
+@@ -601,10 +559,15 @@ nfsd4_legacy_tracking_init(struct net *net)
+ 	if (net != &init_net) {
+ 		pr_warn("NFSD: attempt to initialize legacy client tracking in a container ignored.\n");
+ 		return -EINVAL;
+ 	}
+ 
++	if (fips_enabled) {
++		pr_warn("NFSD: legacy client tracking is disabled due to FIPS\n");
++		return -EINVAL;
++	}
++
+ 	status = nfs4_legacy_state_init(net);
+ 	if (status)
+ 		return status;
+ 
+ 	status = nfsd4_load_reboot_recovery_data(net);
+@@ -657,25 +620,20 @@ nfs4_recoverydir(void)
+ }
+ 
+ static int
+ nfsd4_check_legacy_client(struct nfs4_client *clp)
+ {
+-	int status;
+ 	char dname[HEXDIR_LEN];
+ 	struct nfs4_client_reclaim *crp;
+ 	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
+ 	struct xdr_netobj name;
+ 
+ 	/* did we already find that this client is stable? */
+ 	if (test_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
+ 		return 0;
+ 
+-	status = nfs4_make_rec_clidname(dname, &clp->cl_name);
+-	if (status) {
+-		legacy_recdir_name_error(clp, status);
+-		return status;
+-	}
++	nfs4_make_rec_clidname(dname, &clp->cl_name);
+ 
+ 	/* look for it in the reclaim hashtable otherwise */
+ 	name.data = kmemdup(dname, HEXDIR_LEN, GFP_KERNEL);
+ 	if (!name.data) {
+ 		dprintk("%s: failed to allocate memory for name.data!\n",
+@@ -1264,17 +1222,14 @@ nfsd4_cld_check(struct nfs4_client *clp)
+ 	if (crp)
+ 		goto found;
+ 
+ #ifdef CONFIG_NFSD_LEGACY_CLIENT_TRACKING
+ 	if (nn->cld_net->cn_has_legacy) {
+-		int status;
+ 		char dname[HEXDIR_LEN];
+ 		struct xdr_netobj name;
+ 
+-		status = nfs4_make_rec_clidname(dname, &clp->cl_name);
+-		if (status)
+-			return -ENOENT;
++		nfs4_make_rec_clidname(dname, &clp->cl_name);
+ 
+ 		name.data = kmemdup(dname, HEXDIR_LEN, GFP_KERNEL);
+ 		if (!name.data) {
+ 			dprintk("%s: failed to allocate memory for name.data!\n",
+ 				__func__);
+@@ -1315,15 +1270,12 @@ nfsd4_cld_check_v2(struct nfs4_client *clp)
+ 
+ #ifdef CONFIG_NFSD_LEGACY_CLIENT_TRACKING
+ 	if (cn->cn_has_legacy) {
+ 		struct xdr_netobj name;
+ 		char dname[HEXDIR_LEN];
+-		int status;
+ 
+-		status = nfs4_make_rec_clidname(dname, &clp->cl_name);
+-		if (status)
+-			return -ENOENT;
++		nfs4_make_rec_clidname(dname, &clp->cl_name);
+ 
+ 		name.data = kmemdup(dname, HEXDIR_LEN, GFP_KERNEL);
+ 		if (!name.data) {
+ 			dprintk("%s: failed to allocate memory for name.data\n",
+ 					__func__);
+@@ -1692,15 +1644,11 @@ nfsd4_cltrack_legacy_recdir(const struct xdr_netobj *name)
+ 		/* just return nothing if output will be truncated */
+ 		kfree(result);
+ 		return NULL;
+ 	}
+ 
+-	copied = nfs4_make_rec_clidname(result + copied, name);
+-	if (copied) {
+-		kfree(result);
+-		return NULL;
+-	}
++	nfs4_make_rec_clidname(result + copied, name);
+ 
+ 	return result;
+ }
+ 
+ static char *
 
-Device (host) features word selection.
-Writing to this register selects a set of 32 device feature bits accessible by reading from DeviceFeatures.
+base-commit: 0739473694c4878513031006829f1030ec850bc2
+-- 
+2.51.0
 
-and
-
-DriverFeaturesSel 0x024
-
-Activated (guest) features word selection
-Writing to this register selects a set of 32 activated feature bits accessible by writing to DriverFeatures.
-
-I would interpret this as meaning a feature word is a u32. Hence a
-DWORD is a u64, as the current code uses.
-
-	Andrew
 
