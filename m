@@ -1,188 +1,129 @@
-Return-Path: <linux-kernel+bounces-849051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D651BCF151
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:41:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26AE6BCF154
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F2E4B34D196
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BABF43B17A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1774022F74E;
-	Sat, 11 Oct 2025 07:41:27 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A270622FDEA;
+	Sat, 11 Oct 2025 07:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScfPwGuN"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E6E1D63FB
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A69226CF1
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760168486; cv=none; b=YHnz/+AP6m6FWLOK8KGrKepc66xvJM215hem8J2r/M+ge9R3HF2po7GzjPPcHhL8yG/T+nRpEEk7UMiYx4Oa74c2F+9STkUEJKK+xRsGZ1DSLmrdQW7TESGrYkA+pSRJYno/jOBbxGtvbdljKd1/C+nN53CcDUQAC2FUyo1UqxA=
+	t=1760168556; cv=none; b=jNC+2388GQC7+cX4C95qIfCGW3N5IbYW4u5usaSdaxrfKp33yD7q5ljhOTpcWEvMebgVvLY2eJ938qCMzqsHv///kbNLCtf56IiB/eUUfTpVxp3NMIjlyrV17IRGYg68u+aw3ehvVh0Uqcyp+aH0XlXVOve/C3mn0s7fb3SIIvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760168486; c=relaxed/simple;
-	bh=pMAjfqcp2hLedn/bsekOK2W0WAWHeDvvIQcaKymX7QA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LLjgnVoLTFvOTnlQ/e5ktYJhBFiEhNhodPcf49P8FpiadHTq8tzM15KD1Bqc+Re/9YwSq6GNIoZnA0AMGbHoysCW+pRqFkwHJ9RC1/VdfAn7g5raTYtxgrVlOON9B/zGfqAkiPuhrabLwWBwLLkzeHQdvqzqz1hSXtabDHKTDWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-9143e8a4c5eso1865776239f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:41:24 -0700 (PDT)
+	s=arc-20240116; t=1760168556; c=relaxed/simple;
+	bh=NpFtc9Ia/VUtbsEj0nTLyL2x93ej74vMvRzTFZH2utg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BXdKRpmqhYg0nkPPoBey2oCiE/CH8Oul6SYsv9JhCSC4kmG3vs+inJZyt+HsjIS0K9h7aE19RG9wHOVhO5vOiFkERr9119OyFUDNaTqUFkzGrOyujtsl6Trz3uQU8I57902YnJr3A9hNWoMNxSDaLeg3UKGo+cNp2fbk99ZtenY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScfPwGuN; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-27ee41e0798so44638715ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 00:42:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760168554; x=1760773354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZO3ywerteuN+FePy9qJsgDAwYZUo+tnTmcRp4rGvok=;
+        b=ScfPwGuNXzOFkqxCqjzP1QHJgD/OA83Tyc2X7WYB/V8R3tzou8bbKlueu+mWDNNoqd
+         4ZbMKPhgXpaSVTtRPzaWjJN9Ew3Kt7mIFIcfBoxYvkaeY9pFir1bgDC4++i7lhSJnELH
+         RfR86+oGCMS7G2e2BArNkzx99DFksKyIDI7KqCiURdBS/Xipzj+HhpUjBUpZAFQ/5xm4
+         BwY/vjmEygJfWk+lsPM5D99JR2YoSphqiDY8Qg2UDn+JMoXrFL9oxcsoehigwu9Mgphh
+         W/42bvy6LzM6Crrlby3bK9T40msOMEqWWvWCaCl7w3cjwDjPAm+RWuZ41Dvxw4He1yc7
+         wEgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760168484; x=1760773284;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWuIqc/0zJGOLb+8dYLjY02do3cnq49EH2FPnh9oElY=;
-        b=F+HiFCRWhVKCkDDqZR3g+8mZubKQx08azIJ3+YxkD5P0ul5qIkSEwaIM838vNGyVZi
-         yg4+FYvTZVrfCIvkoGdSpARLmyYUiaLphvlrjux5ye73VIjQxTyIWPUOwUmDgGExCQVU
-         s4zIGWFRgWtC91Nnm/ZdWeEtgmCle+ZH9xvLFJObTxKAPaMUFufuDf0NLfmYKBWYU/Mf
-         JLOgn3lW7BGBq1uSPZoKSR0notj+JqZqfFYlL5rX7lgGWEydofVmlhYYLgGg0NZcGsrz
-         KtM2RMNl/BIaYnjUh1BI+ubqRvIGQ2dJIocb8BQ/NXRHMqgDhc3Yy6x50THZ+0uyuDQG
-         6xDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW99fUxqxMIoAs8HiZZkQ+Fm+zWbPvHoBIAoElwemi3IBEMXDgAnJBVINU8wd8hW2aLKiBaID6NNxY6ycM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0OmaGcQ3zl6cChkWmHzZHyjWUvoKMxWHu6PcSA+AFxlFuBWcf
-	Sx7pGKoCEHxQuBTwKM/wYVdVndOAaY12VIkGN+5IllSIF+W0NuipM1/vibDCT07pEeqYAMI7idC
-	jyEzzZuU4Kyx+IxKFOFzI6CBAA6/2AWkSak5FuILNUc1l2P1g2DIMYjhzLhE=
-X-Google-Smtp-Source: AGHT+IEaHgOk+hcnpLNjCLvzHAVDmi8xOnlZJWvJ4LF4EeGkOu9Z/a3C/IvUMn+OQHpDUGzgp3Os72pjRQUmulOZjdXBXC33px3X
+        d=1e100.net; s=20230601; t=1760168554; x=1760773354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cZO3ywerteuN+FePy9qJsgDAwYZUo+tnTmcRp4rGvok=;
+        b=q6WhiFtqvpH46o0MR6+hccENZ3k+8KoBINMH5oRJTKSgsu9g3meLvQXKx+7XAdusVj
+         8L4Qc1+KljKvaGEt2vB1How25+eGfjEW+z4GUingXLUCgicbcSYbBVLGm1PGHaKWxKUT
+         iGst6dzZGXWzBJQCUOXmRCyFkk74bQglVh25hufTLN/Fg8zvXf6O0BBuhlvxU+60bVOa
+         aoJ0Xo8Qj8oXeKTYXtHn3aiAVEp04InuYjg8+6xxG3IHkzdi3DvrfJ527ZXmbGzDwr0h
+         CYayGifvUEFgYgG6mdll+m4YfcSin8x/uFXVmuLplTqm5CKGouHg8PRPM8BJhyS7//75
+         FGeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyID0JfJ2W9hB2/P2Q6bW/gVOC2JHl2x0Mi7F5HQr5dszOwIWWlpdV7KCHvhYJtHbh1k4dIOgJ4MlIvi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzspC2uG5AyGu+ku2/w/bNZiyMBPKoZ5ZoHUH5tig6QASccMlqX
+	Zhm4LkEGlSC382ZFzerpDZlU3C09RZUEqAGfxUITfH/+6355CA5qMtgM
+X-Gm-Gg: ASbGncu6eJQY5sd0rE7DRAUU5knLsunPQhfAyuhWnelWjhe/o5FeLEqMQxoZh4Lqn+s
+	M0jhEUzdjB6az6YNpAJYhDvJMADiWC68g7a1+ZPNmmsUH3pNWzdGiMVlg1cCy7JBDo82Uku+2o5
+	JN+E+RXeqC5Fn9ezEVaKS8yTcN7mPPFO9hc6CpMubZgBG+wDujGLo3tDJW3Th3pA2o0a9ZGPWrm
+	63mEcmz6w4PPZ+CPx2Yyg9/HTY6IKT1tMo/itzRiwPwf1NL75QgdeU/kK2Bm5jjFk9Wolr7BI3m
+	2KtAHH9jkKckjRKJoPdOkCpGr6zIlNNnYF5NZJl7a+RkIWuyQe3hbcVNT+VtRONG513EzyVjTw+
+	oGkIxqNPYFpqE48fpy6NFG4TQBXX3nZZUEusdFTgavTdC45/QbyBdqHIeH3H0eEfgx9cFL0YE7E
+	Y2tSHvoJY/I7AkxmfADGGZzbCb6mJsc34=
+X-Google-Smtp-Source: AGHT+IHVzsN4OObaUacV8+iwbdoA5hLuvUY03lsbXr/AKHdhX4aXGovoDEJRDGRsbYt7U199Icby8Q==
+X-Received: by 2002:a17:902:f607:b0:25c:7434:1c03 with SMTP id d9443c01a7336-290273568e4mr188544205ad.10.1760168553718;
+        Sat, 11 Oct 2025 00:42:33 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:87ea:a5ed:8e4:bfcc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de6e2asm77493045ad.23.2025.10.11.00.42.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 00:42:32 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: heming.zhao@suse.com,
+	joseph.qi@linux.alibaba.com,
+	mark@fasheh.com,
+	jlbec@evilplan.org
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com
+Subject: Re: [PATCH] ocfs2: fix stale extent map cache during COW operations
+Date: Sat, 11 Oct 2025 13:12:26 +0530
+Message-ID: <20251011074226.821546-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c264:0:b0:42e:452f:5321 with SMTP id
- e9e14a558f8ab-42f8735a25amr170283275ab.9.1760168484125; Sat, 11 Oct 2025
- 00:41:24 -0700 (PDT)
-Date: Sat, 11 Oct 2025 00:41:24 -0700
-In-Reply-To: <681a1770.050a0220.a19a9.000d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
-Subject: Re: [syzbot] [net?] [mm?] INFO: rcu detected stall in
- inet_rtm_newaddr (2)
-From: syzbot <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	hdanton@sina.com, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    18a7e218cfcd Merge tag 'net-6.18-rc1' of git://git.kernel...
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12504dcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61ab7fa743df0ec1
-dashboard link: https://syzkaller.appspot.com/bug?extid=51cd74c5dfeafd65e488
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d2a542580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142149e2580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7a01e6dce97e/disk-18a7e218.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5e1b7e41427f/vmlinux-18a7e218.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/69b558601209/bzImage-18a7e218.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com
-
-sched: DL replenish lagged too much
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	0-...!: (2 GPs behind) idle=7754/1/0x4000000000000000 softirq=15464/15465 fqs=1
-rcu: 	(detected by 1, t=10502 jiffies, g=11321, q=371 ncpus=2)
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5948 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:rb_insert_color_cached include/linux/rbtree.h:113 [inline]
-RIP: 0010:rb_add_cached include/linux/rbtree.h:183 [inline]
-RIP: 0010:timerqueue_add+0x1a8/0x200 lib/timerqueue.c:40
-Code: e7 31 f6 e8 6a 0c de f6 42 80 3c 2b 00 74 08 4c 89 f7 e8 7b 0a de f6 4d 89 26 4d 8d 7e 08 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 <74> 08 4c 89 ff e8 5e 0a de f6 4d 89 27 4d 85 e4 40 0f 95 c5 eb 07
-RSP: 0018:ffffc90000007cf0 EFLAGS: 00000046
-RAX: 1ffff110170c4f83 RBX: 1ffff110170c4f82 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88805de72358
-RBP: 0000000000000000 R08: ffff88805de72357 R09: 0000000000000000
-R10: ffff88805de72340 R11: ffffed100bbce46b R12: ffff88805de72340
-R13: dffffc0000000000 R14: ffff8880b8627c10 R15: ffff8880b8627c18
-FS:  000055557c657500(0000) GS:ffff888125d0f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000600 CR3: 000000002ee76000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- __run_hrtimer kernel/time/hrtimer.c:1794 [inline]
- __hrtimer_run_queues+0x656/0xc60 kernel/time/hrtimer.c:1841
- hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
- __sysvec_apic_timer_interrupt+0x108/0x410 arch/x86/kernel/apic/apic.c:1058
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
- sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:pv_vcpu_is_preempted arch/x86/include/asm/paravirt.h:579 [inline]
-RIP: 0010:vcpu_is_preempted arch/x86/include/asm/qspinlock.h:63 [inline]
-RIP: 0010:owner_on_cpu include/linux/sched.h:2282 [inline]
-RIP: 0010:mutex_spin_on_owner+0x189/0x360 kernel/locking/mutex.c:361
-Code: b6 04 30 84 c0 0f 85 59 01 00 00 48 8b 44 24 08 8b 18 48 8b 44 24 48 42 80 3c 30 00 74 0c 48 c7 c7 90 8c fa 8d e8 a7 cd 88 00 <48> 83 3d ff 27 5e 0c 00 0f 84 b9 01 00 00 48 89 df e8 41 e0 d5 ff
-RSP: 0018:ffffc900034c7428 EFLAGS: 00000246
-RAX: 1ffffffff1bf5192 RBX: 0000000000000001 RCX: ffffffff819c6588
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff8f4df8a0
-RBP: 1ffffffff1e9bf14 R08: ffffffff8f4df8a7 R09: 1ffffffff1e9bf14
-R10: dffffc0000000000 R11: fffffbfff1e9bf15 R12: ffffffff8f4df8a0
-R13: ffffffff8f4df8f0 R14: dffffc0000000000 R15: ffff8880267a9e40
- mutex_optimistic_spin kernel/locking/mutex.c:464 [inline]
- __mutex_lock_common kernel/locking/mutex.c:602 [inline]
- __mutex_lock+0x311/0x1350 kernel/locking/mutex.c:760
- rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
- inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:978
- rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6954
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:742
- __sys_sendto+0x3bd/0x520 net/socket.c:2244
- __do_sys_sendto net/socket.c:2251 [inline]
- __se_sys_sendto net/socket.c:2247 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2247
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faade790d5c
-Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-RSP: 002b:00007ffdd2e3b670 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007faadf514620 RCX: 00007faade790d5c
-RDX: 0000000000000028 RSI: 00007faadf514670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffdd2e3b6c4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007faadf514670 R15: 0000000000000000
- </TASK>
-rcu: rcu_preempt kthread timer wakeup didn't happen for 10499 jiffies! g11321 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-rcu: 	Possible timer handling issue on cpu=0 timer-softirq=4286
-rcu: rcu_preempt kthread starved for 10500 jiffies! g11321 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:I stack:27224 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00080000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5325 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
- __schedule_loop kernel/sched/core.c:7011 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7026
- schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Content-Transfer-Encoding: 8bit
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Hi Heming,
+
+Thank you for the detailed analysis and feedback.
+
+I appreciate your review. However, I'm trying to understand your explanation 
+better. You mentioned that step 5 (write with zeros) cleans the file data 
+and causes the refcount flag mismatch. 
+
+Looking at the C reproducer, I see:
+- Step 7: copy_file_range() creates reflinked extent (flags=0x2)
+- Step 8: ioctl(fd, 0x40406f06, ...) which is FITRIM
+- Step 9: write() triggers the BUG_ON
+
+In my analysis, step 8 (FITRIM) calls ocfs2_move_extents() -> 
+__ocfs2_move_extents_range() -> ocfs2_move_extent() -> __ocfs2_move_extent().
+
+Inside __ocfs2_move_extent() at line 50, I found:
+    replace_rec.e_flags = ext_flags & ~OCFS2_EXT_REFCOUNTED;
+
+This explicitly clears the OCFS2_EXT_REFCOUNTED flag when writing to disk, 
+but the extent cache is not invalidated afterward.
+
+Could you help me understand:
+1. How does the write operation in step 5 clear the refcount flag on disk?
+2. Are you suggesting there might be two separate bugs - one in the FITRIM 
+   path (which v2 fixes) and another in a different path (which v1 would fix)?
+
+My v2 patch has been merged into linux-next. If you believe v1 addresses a 
+different bug scenario, I'm happy to submit it as an additional patch.
+
+Thanks for your time and expertise!
+
+Best regards,
+Deepanshu
 
