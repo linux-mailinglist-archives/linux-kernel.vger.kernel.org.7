@@ -1,170 +1,127 @@
-Return-Path: <linux-kernel+bounces-849008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB2FBCF021
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:33:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9139BCF02A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4169742444E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:33:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A12564E3955
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 05:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2916121770C;
-	Sat, 11 Oct 2025 05:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79CB1E0DFE;
+	Sat, 11 Oct 2025 05:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vk+03wve"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3cKBFZ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E99D4C97;
-	Sat, 11 Oct 2025 05:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D85A1E3DDB
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760160802; cv=none; b=ELVsUhG+ICeFYsvidkHO+L6nK/u/Xr4yIG6yikJ2V+0SB4AsNo/tduc/s4kxFiLqNkcwhVNqNW/f+61e5EbXahT2q4h70z8LXaGndMvklMw/TkSxM+2dKMO8WHNW1+Uw60ys9bRHPEWStl40C8tbnuSH2ZvIz/APJW8P8/mMyes=
+	t=1760161250; cv=none; b=fI8XcK3Qu2VL7Mw2qKYEo7SpUyFTZhdwBz/+rOZRWOUck1uGviWZFSuo7HLLVFskioFAOJY771HM7YwXcl/QQ31xWsCubDltbsih1PniRfK1IRJ7Xp0pUUmljSBDCsfPoyuONCn1W0WEjt5kj/w64XFORN4wvXeDPS544vM6JTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760160802; c=relaxed/simple;
-	bh=tICeZKtlPTGn6MN+AocuuzSNU12FNBC7lzLtzqfGuwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJZ5HEiMYNygs2J1e5pSyTgz4eE2/EGjZXiFD4S/V5+5hL6+E+I94Ndy9MwGgX86DUw+276fRj9TdzaPcYJVbENjiSpHY0U0nvEpZqCuB4GndFvbV7uQmeqZzsZwUKiJ6HWCK4h9atqBViJIurQB4YV6/lZhQkluXGeSnIOsR+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vk+03wve; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760160801; x=1791696801;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tICeZKtlPTGn6MN+AocuuzSNU12FNBC7lzLtzqfGuwQ=;
-  b=Vk+03wvenVJslzJufj+yYpmkYn0JVZ/nEPuJbKUbJK3Z0fKdgb48oLKJ
-   /T1HpInqBmky9zJf+zAUItkquPt4cwOi/fc2OsRHiJkdl/14SCGZnmbUH
-   8ag9SYYDk6STR3Wguy7Ok+uXvLZf+X5ILO++TC95G0OAcA62bhBcIbFg7
-   FHjfklxaU88v+414PYatXXsuIe/i6GsZM0QsVV2rEmmhxroMDWAeZNkr/
-   R5OLCmec5J42zYVkvQGZtzBps1AjLUVnk70Y3P9gt1UuXKke6OTS1o6Hb
-   MgGQa5umARsOep/s34WF+QSKEUQ5xjV1lbdhBesBAJ438O67OXDKTWo/n
-   Q==;
-X-CSE-ConnectionGUID: 5umLwW28TQqDSy6DWzWGRQ==
-X-CSE-MsgGUID: 85Uuk/EKSpSa5nrHsZwUwg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="62416212"
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="62416212"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 22:33:20 -0700
-X-CSE-ConnectionGUID: IPZXp56TS/iOLDMQYGX7lQ==
-X-CSE-MsgGUID: C0av3SMDRfSz2cMTpx53hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
-   d="scan'208";a="212094623"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 10 Oct 2025 22:33:16 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7SEE-0003Xj-04;
-	Sat, 11 Oct 2025 05:33:14 +0000
-Date: Sat, 11 Oct 2025 13:32:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sven =?iso-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel@pengutronix.de,
-	Sven =?iso-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>
-Subject: Re: [PATCH 16/16] media: rockchip: rga: add rga3 support
-Message-ID: <202510111354.QeqIltfU-lkp@intel.com>
-References: <20251007-spu-rga3-v1-16-36ad85570402@pengutronix.de>
+	s=arc-20240116; t=1760161250; c=relaxed/simple;
+	bh=T/OaJx4B2ofWilBB1mLklxLkAldO5M4FQFGMkHFdTxY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JMQJFMhVW3ZfaE2hjy3P+OeP1iKw3KAAZj1Mf06PYLtmITBBUVcSry6tS0Tl8EO2yduvKXO9/anz0noQtMO73TikV+aFeJWiiy+NvwVFGxe31Zo+EQXTwJQpQJt6g8ULyzXWLkpSerVI9PlQjCIL8UG7IGKGQ15F3JtwQBnxliM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3cKBFZ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A668BC4AF09
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760161249;
+	bh=T/OaJx4B2ofWilBB1mLklxLkAldO5M4FQFGMkHFdTxY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e3cKBFZ07hVB1BlmhR+xPWewcZDpmINGh8tqggNfG1FNoEo8QAN3Cv9yp4HZd+ctU
+	 vkdwRoE7CCyetGjNzkZnIrRBFBOW4j/0RceYNKlxpsal9oasToji+kdIy20ch1ubzY
+	 /6sT77S0NPA5IzVJIuJte81EKelproUOCIMk7iTTWnenVY8Rnc30iznY5ihTEqCmcz
+	 vCbtTjBd9Xr+Z8y0f/s+5h4mzBzMc3uqxWUwVQBNMnbS6A4L4B50qKvH/nA+C4+sEI
+	 xWwHXSgl+dArQzaZ9JKbw3XoEyzfG5m0sviZC7ajGj2idCp68zx7mDXXdpHzXHoYa2
+	 3dz9SryHzxy5g==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b403bb7843eso574601066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 22:40:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUH63A0MducMlWA8v/HRTG2EetWuMPojSlRH2uWuj4x6+GtU3isQLglcEhcukVXBcl1JJrg7hI4F3rP0VI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywtw0x9RIRmKSTg0269DpoNL+t95XnnhjokKVA3W2pxII6B0P16
+	yl75SbRNyR5Z0TVUtZ7YmCMXQtVWfSh8RHRrEMqNkG7CS7pSx5l507uC6k3lsZmHX3f3sUudm3X
+	1L7+bW9R14v7jsH89H8r+QzjP+r8F2Lw=
+X-Google-Smtp-Source: AGHT+IHGFXcBh1CoyxVP4/hzKESUFhziOwWatSeeN63Jf10cafnamrVulEc/CTbph30JLZDB0UYefY2NTdg+f+nHvRw=
+X-Received: by 2002:a17:907:843:b0:b40:98b1:7457 with SMTP id
+ a640c23a62f3a-b50ac5d0901mr1322157266b.47.1760161248247; Fri, 10 Oct 2025
+ 22:40:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007-spu-rga3-v1-16-36ad85570402@pengutronix.de>
+References: <20251010050329.796971-1-aha310510@gmail.com>
+In-Reply-To: <20251010050329.796971-1-aha310510@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sat, 11 Oct 2025 14:40:36 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_2VUniUHgstfATfdjDfLokqfjCGm+P=_72EPM2HEi0Ew@mail.gmail.com>
+X-Gm-Features: AS18NWBP7_cWe4oXpv4egI6drs7CniIntrFvTm1Ghw2MALfSovJDtjjgW0l3WRY
+Message-ID: <CAKYAXd_2VUniUHgstfATfdjDfLokqfjCGm+P=_72EPM2HEi0Ew@mail.gmail.com>
+Subject: Re: [PATCH v2] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, pali@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sven,
+On Fri, Oct 10, 2025 at 2:04=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
+ wrote:
+>
+> In exfat_nls_to_ucs2(), if there is no NLS loss and the char-to-ucs2
+> conversion is successfully completed, the variable "i" will have the same
+> value as len.
+>
+> However, exfat_nls_to_ucs2() checks p_cstring[i] to determine whether nls
+> is lost immediately after the while loop ends, so if len is FSLABEL_MAX,
+> "i" will also be FSLABEL_MAX immediately after the while loop ends,
+> resulting in an out-of-bounds read of 1 byte from the p_cstring stack
+> memory.
+>
+> Therefore, to prevent this and properly determine whether nls has been
+> lost, it should be modified to check if "i" and len are equal, rather tha=
+n
+> dereferencing p_cstring.
+>
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
+> Fixes: 370e812b3ec1 ("exfat: add nls operations")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  fs/exfat/nls.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+> index 8243d94ceaf4..de06abe426d7 100644
+> --- a/fs/exfat/nls.c
+> +++ b/fs/exfat/nls.c
+> @@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
+>                 unilen++;
+>         }
+>
+> -       if (p_cstring[i] !=3D '\0')
+> +       if (i !=3D len)
+>                 lossy |=3D NLS_NAME_OVERLEN;
+As I said before, the core problem is passing an incorrect length in the io=
+ctl
+FS_IOC_SETFSLABEL call. While your change may fix the symptom,
+it doesn't fix the root cause.
+Furthermore, NLS_NAME_OVERLEN macro is unnecessary.
+That will result in different errors when creating a file with trailing per=
+iods
+with utf8 and the other iocharset.
+Please remove it and make the same error handling for maximum length
+consistent with exfat_utf8_to_utf16().
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Sven-P-schel/media-rockchip-rga-use-clk_bulk-api/20251010-104411
-base:   afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328
-patch link:    https://lore.kernel.org/r/20251007-spu-rga3-v1-16-36ad85570402%40pengutronix.de
-patch subject: [PATCH 16/16] media: rockchip: rga: add rga3 support
-config: riscv-randconfig-002-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111354.QeqIltfU-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111354.QeqIltfU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510111354.QeqIltfU-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/media/platform/rockchip/rga/rga3-hw.c:144:15: warning: variable 'src_h' set but not used [-Wunused-but-set-variable]
-     144 |         unsigned int src_h, src_w, dst_h, dst_w;
-         |                      ^
->> drivers/media/platform/rockchip/rga/rga3-hw.c:144:22: warning: variable 'src_w' set but not used [-Wunused-but-set-variable]
-     144 |         unsigned int src_h, src_w, dst_h, dst_w;
-         |                             ^
->> drivers/media/platform/rockchip/rga/rga3-hw.c:144:29: warning: variable 'dst_h' set but not used [-Wunused-but-set-variable]
-     144 |         unsigned int src_h, src_w, dst_h, dst_w;
-         |                                    ^
->> drivers/media/platform/rockchip/rga/rga3-hw.c:144:36: warning: variable 'dst_w' set but not used [-Wunused-but-set-variable]
-     144 |         unsigned int src_h, src_w, dst_h, dst_w;
-         |                                           ^
-   4 warnings generated.
-
-
-vim +/src_h +144 drivers/media/platform/rockchip/rga/rga3-hw.c
-
-   137	
-   138	static void rga3_cmd_set_win0_format(struct rga_ctx *ctx)
-   139	{
-   140		u32 *cmd = ctx->rga->cmdbuf_virt;
-   141		const struct rga3_fmt *in = ctx->in.fmt;
-   142		const struct rga3_fmt *out = ctx->out.fmt;
-   143		const struct v4l2_format_info *in_fmt, *out_fmt;
- > 144		unsigned int src_h, src_w, dst_h, dst_w;
-   145		bool r2y, y2r;
-   146		u8 rd_format;
-   147		unsigned int reg;
-   148	
-   149		src_h = ctx->in.crop.height;
-   150		src_w = ctx->in.crop.width;
-   151		dst_h = ctx->out.crop.height;
-   152		dst_w = ctx->out.crop.width;
-   153	
-   154		in_fmt = v4l2_format_info(in->fourcc);
-   155		out_fmt = v4l2_format_info(out->fourcc);
-   156		r2y = v4l2_is_format_rgb(in_fmt) && v4l2_is_format_yuv(out_fmt);
-   157		y2r = v4l2_is_format_yuv(in_fmt) && v4l2_is_format_rgb(out_fmt);
-   158	
-   159		if (in->semi_planar)
-   160			rd_format = RGA3_RDWR_FORMAT_SEMI_PLANAR;
-   161		else
-   162			rd_format = RGA3_RDWR_FORMAT_INTERLEAVED;
-   163	
-   164		reg = RGA3_WIN0_RD_CTRL - RGA3_FIRST_CMD_REG;
-   165		cmd[reg >> 2] |= FIELD_PREP(RGA3_WIN_PIC_FORMAT, in->hw_format)
-   166			      |  FIELD_PREP(RGA3_WIN_YC_SWAP, in->yc_swap)
-   167			      |  FIELD_PREP(RGA3_WIN_RBUV_SWAP, in->rbuv_swap)
-   168			      |  FIELD_PREP(RGA3_WIN_RD_FORMAT, rd_format)
-   169			      |  FIELD_PREP(RGA3_WIN_R2Y, r2y)
-   170			      |  FIELD_PREP(RGA3_WIN_Y2R, y2r)
-   171			      |  FIELD_PREP(RGA3_WIN_CSC_MODE, RGA3_WIN_CSC_MODE_BT601_F);
-   172	}
-   173	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+>         *uniname =3D '\0';
+> --
 
