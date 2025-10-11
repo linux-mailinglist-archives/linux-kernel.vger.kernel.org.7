@@ -1,207 +1,220 @@
-Return-Path: <linux-kernel+bounces-848939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CC4BCEDB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:19:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E390BCEDBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 03:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CB7D534F04F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5511A61E1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 01:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E566514A62B;
-	Sat, 11 Oct 2025 01:18:49 +0000 (UTC)
-Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020105.outbound.protection.outlook.com [52.101.196.105])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC688248C;
+	Sat, 11 Oct 2025 01:20:42 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26D83AC1C
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760145529; cv=fail; b=TBR9sTmOXPlOBtSp6TofhwwTiUhRW7NsGbMR3N7cMepRnPTC006Beqeh7Mi4YCgshYhdUTU8+xTPp0VlDQK8EkwYiYvq+8xKg15i6wsAivOGYE9AbYzwndyOaF6So+1Z3UoImJJlDpYU7TRf+Trp/IeZ2Rt1rtMA40Y0nkHw5mc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760145529; c=relaxed/simple;
-	bh=JCPfdAde5HJbo+HFwdqg14ONjiKvVzKrs48SBRg93tE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TRd1k7nhy6jeMFvM0cdeNy4YdEiBPamaeYF+LOnhUxq4h21j762nvcogFxr40huH550OnE14JpEsVRzEpy3fyCRXZ1NRiBjGyLSOOHMBv/rD90qIsBFp8IBz231UJgl+11cT/Jy95BX3Slgja28rkvLl14Jse00uXs3zO7fN/aw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.196.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fTBK/LMiridDAKqJhBzevqDtFEWHBFyMsj3tdSW0+UFAMxmXgzY8Pa3EBtC5/k/KSZq//AYerfpG/qC9XUqzcUaHGCcP8sWgfxkiR6Qd47VeySaOM+eLO1Vkj2IKxsyQ0sdwfLgE51bgvEflW37oueg1M8TjwA290Jw+nzSJnOvGJIRjbxuGqrPPIQzkVVzwVyu59R57IhNu3TKlGsN+NYSKab3dpP4xLj20gnHN8i6vRmk18LHNcXCcB4uPUVPjxDQWT/68FAbWT2uSKiagG+LfEQzeSBVl36uGDJhA5Hm1JTOdFHwT3OgNo9XA14QUxRcl7oIMTFCTQoVpk+UrCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N+k1r6Z2KYnj3lSV0jVIkTiiHXhhJ1GZLfZHqrGW7xE=;
- b=T3U4qXHSdoBkOooCWhw+GgT4/68fan/jybTHOeNYmhsbOe/7+twMlBbcwLPwe0MNcEsSHO9vZj62nIHGmSf2tDLXWh7vc9Rf+q9evQRsDZAN+JWNgZViSobKvcF4xCVJvg6R/yvHaNZDepjLAgWeCac9AYSqPiCb2dHguHNUA0UjQ2WW4TdYNoVK9OQicKKRoSX1Z2a+bZBGJ7kwUwevnVyunTIool3qUeGDeJE0hDsNb42h1vnueJckrAUyhEcUqGJEo3yv8YQnal7FJmuDHDIAC7CaiW6Hz9XVx70PTsaB7Xc4kq8qb6wVohsWu6SIa6K6/L2/IGaH2Jz+v2aS7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LO0P123MB7766.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:42c::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Sat, 11 Oct
- 2025 01:18:45 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9203.009; Sat, 11 Oct 2025
- 01:18:45 +0000
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: gregkh@linuxfoundation.org,
-	nathan@kernel.org,
-	rafael@kernel.org,
-	dakr@kernel.org
-Cc: riel@surriel.com,
-	frederic@kernel.org,
-	atomlin@atomlin.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] tick/nohz: avoid showing '(null)' if nohz_full= not set
-Date: Fri, 10 Oct 2025 21:18:30 -0400
-Message-ID: <20251011011830.6670-3-atomlin@atomlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251011011830.6670-1-atomlin@atomlin.com>
-References: <20251011011830.6670-1-atomlin@atomlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL0PR02CA0056.namprd02.prod.outlook.com
- (2603:10b6:207:3d::33) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3027034BA57;
+	Sat, 11 Oct 2025 01:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760145642; cv=none; b=btfo6rJdq6GG2Nvz9cktqtTE27+TZjo0PrE3weyo/lhqesnVjW92dvvP58evbGOuqbf79q+wOQF+BnBomux0h/b8+wWRfY9F9d1cJ3GX+EMp1Ye1uaO9lY/jI4sEkbLGjvxAeZfiv/fhXeChWBIAX2VgM8MBwXC6CA+TRkA+Xdg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760145642; c=relaxed/simple;
+	bh=3fhpvZ3VfMyWFc+BjLgInTMsIfV04gcVoPmD/6ASl3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8S8OoOLF0DccJ8Xv2GURjV/Uu/I7mm2OcS6xbLH3eng6FM05q2pRbVZHv5jFr9gBpV3E3gOOoStQYiTM8TTVI7EFsIcslPsBxMeCBwqJuaGwQox0rocmM7vHFm8y7ci3xFxEFUyW1ZRSq6kv4Z77+VLnJAEnH4WGRaMyg4wZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ck5Ps3kbnzYQtrB;
+	Sat, 11 Oct 2025 09:20:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B69261A0843;
+	Sat, 11 Oct 2025 09:20:36 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP4 (Coremail) with SMTP id gCh0CgA3+mHisOlo+on_CQ--.8318S3;
+	Sat, 11 Oct 2025 09:20:36 +0800 (CST)
+Message-ID: <021b2564-4f1d-4dd7-b98c-569668c8359a@huaweicloud.com>
+Date: Sat, 11 Oct 2025 09:20:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LO0P123MB7766:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16616748-81de-4ad3-188c-08de08641f7c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cFBqeWtWbnRyS0dSY3NYVkxHT1hHQWtnTVRJVUd6SUcwczZ5enUrRWR0MDJ3?=
- =?utf-8?B?MjUrVmFMQnhnQlZUdDZtaGpWa2JidWpqODZPcjQ4dzdQRWdhU0IwaUFBMlcr?=
- =?utf-8?B?QjA0cEViUGpJME1DaUVpTnBVd0RVSjhNR2J6ZDJZRlVWWGNGRFAvTTF5dFVN?=
- =?utf-8?B?M1BZS1U4UmFKWi9ROEtsdWJ2bjBFQldLNGsvS1FLZ002bWFoQlFiZFNoK0xv?=
- =?utf-8?B?Um9tbGwrNzhGaVNzOHdjemVGamR2alJwTzJaYU41bng5ekc1eExNUTM3a1Np?=
- =?utf-8?B?R1hkRmN2SDF4dG5zd0xuZVhoRUpqQWVFbDlUaEh6UVZJeW8wWWhRcEhEbjNL?=
- =?utf-8?B?S3ZKcmZ6SFhPeW9OMjR3eStKazFxUEZML0cyUURzazJodE1rKzgwZ095ejh4?=
- =?utf-8?B?SVRKWWhIYVloS2hYeHQxZU5SSUJZamIvUW9FN00wa3I1bUNGaU4yTm9xdlho?=
- =?utf-8?B?cS9zMHlZUndSem9TdFFYdGtYanlUeXhoT3d0Z3pZemZnbXBScDdBaGFLNmM3?=
- =?utf-8?B?Y1ZQTEZyaEpEN3VHMEhhS0lGMUcwa2RpazRGd2JnWERaZExCZVIzMlZscVRy?=
- =?utf-8?B?aHBkMFI4WXVKbGdaME1GVWgvZGhGOVI4MURhd2ZFalhxLzgzdWhUZktUUFdC?=
- =?utf-8?B?b0lwTG5lV3FQKzNWWGwyd2txRnVtTGFaY29HQi9lV0hjSHpWMVBNcjNxcUZ2?=
- =?utf-8?B?NWRva0xLVExFTDRlOURMaFAxMGc0VTk2V2pUdFJuT3NRbnVBTEpGV1d0dlZF?=
- =?utf-8?B?Z2Y2ZmZ5WENQK3VCVG9oN1Z2WUhITlVpaG5aamVvYmttbk5GOVprQWYxUWt3?=
- =?utf-8?B?OEI1V2t5YlFpS2xaajRaTE82emFWK0Z4STZQTFlyUzh2OVZxZ3l6aFh3T3Jn?=
- =?utf-8?B?NmJkajVYWTVSc01IK0dYQXNPNXdGaEJzT2VLNWQ0L2tPT0IyMUs4REUzZjdq?=
- =?utf-8?B?SXczckRnVVdTaEdQenVVcHBZMjJUZDVNdVhSYTl1bEM5OGo5YmowdFhaODlp?=
- =?utf-8?B?UGVabHl2bnFNM3dzVFFhQVdRLzE2bHliNUZQSWxhL05KbGFQNHVYWGVmNU10?=
- =?utf-8?B?d0UrY0hWWWI2QmVsWHlmVnUvbFdRNGsxODMxalZid2UrUlFNcXh4TE83a0VQ?=
- =?utf-8?B?Tnk0cWZjaXdvUXZnbWI4ejVvSFNZam1wRGhPb1lZQVRFUHpnMzFmakVqbHRs?=
- =?utf-8?B?U0dEZEVMUGVvWEpIeU5GU2JjWGc2b0cxc3liTENVWTRpcCtHME0yd2kyTFhl?=
- =?utf-8?B?Vk00UnN6am1NeUlEMnVuQldrWHBCS2xkcC9SYXpvLzNrSWJtcURUTHhVWEdX?=
- =?utf-8?B?NzFMVmFhUHNNb0NnaGFsazZqVmNUYWE0VW9xYndRRGFUa05JbGhaV3hheGtZ?=
- =?utf-8?B?ZVZaaUw2OEF6YVNYc0VoZGk3bnd4djgyekRNVnlJK3BTMHovNDI0NkJQYUVY?=
- =?utf-8?B?RnltV2RWektsZ3lxOSthZ3JOeFM4NGxlWU9LaWJCUmQxSTJJTTRnN3dCemdY?=
- =?utf-8?B?VVZ6YkJ5eE92bDJIQ3BuR2Z5d0pEamJWc0krQitvZ2Ryd0VQbmNveDB0ODRn?=
- =?utf-8?B?dGJodWZVSmhxeW5YV0ZXc1Ntczk3eUpMQm9yelYyUmpjVk5HT01lSzU2NlJq?=
- =?utf-8?B?VkRRNGxacXZPQmdGQTZ6RzJmellQbFlKWi81WW4vTFZkaHNLdC9UWXhTSWhG?=
- =?utf-8?B?bTVveUhFOUZ6b3JFRWgybW9YN1BkRUEwcnRmV1Y4SFRTQU84SGJnV0doWU10?=
- =?utf-8?B?UURKdTJyVkZ4QkdTeXNTR0g3S28zSnQvaWxuZ1g0TlFIU0x1aFMwWU56cmtU?=
- =?utf-8?B?WElTaUtHeHNYeWVxbG00M3BzdUZVVE9KaXlqNU5FdG1vVW9WeU5iQ2hxUG0v?=
- =?utf-8?B?dGhqckcxTGJkbnNyRWN0UXkveUY3MUFwMHlDVlIyZ0lmS2Jja2xDU29uV09W?=
- =?utf-8?Q?QfFhTNrQ05rMbfvlAcPlfHjxNwfQtJva?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aG5FTUwzcWIrMzdUZWhRb2JIV1p2bUpLNUs0QTBoclZpMFJNK3dFbjdtSkpG?=
- =?utf-8?B?WHRkRldSUTVzRjlzODRjUWxnbGtZQ1ZlMmdLdGZxNVVnQ0JhSmU0U04yd2gw?=
- =?utf-8?B?UWYwVkVZcFdmNDc4NVkzMEZaaThDVUNheGNKbndPamZEemltd3FtcmFiQlps?=
- =?utf-8?B?dVN1WDM3bDNPcElJQ1laMHpoUWY0akU1djVxaS9mTzhyVWw1MjZYUjNncGpX?=
- =?utf-8?B?MVEvVE1vMEFybWEvOFlpSHFLY0YzK2o5TlpjOHRKeWUveWFSMGJOdlVDSFgx?=
- =?utf-8?B?Q29PcVlkT3RJMTdtMC9UditNMGY1QWZJNVVobU9uenl0ZFFWUjVzVDRPL0xv?=
- =?utf-8?B?R0dsQVFBSFh2R3lwUkhtc3FDRk1TSkYwelN4OGdTa3hmNitoOG9ZN2xEY01S?=
- =?utf-8?B?dHlKMmNrNlJublc3bHFXTHY1Y2U4TldIMUtjenlpSGptWktZTTA3ZnZISzdR?=
- =?utf-8?B?NTJLNkhJNVpPZ2UySVR1QkN2eXdMUlc2VFNIclJtWmF0MkdHZmU4cXRqUnkx?=
- =?utf-8?B?ZXFOU3dNR0JwQkVWNGt1M0hQSGpxd0tuZGExUDJva3VmME1rODVkUzZCbk9a?=
- =?utf-8?B?eXh6NnBxdnczcXRaamlvL2NCdE5WSnVjbTEwbVBYZHEzdHFXOUlXMUtiNmFx?=
- =?utf-8?B?WmROWVFJMVhoNzVvYnlqN3FDcWpaYmt6VEduQlc5SEprZHpvTTRGSG44VHdm?=
- =?utf-8?B?aFpTS0t4TnpWVTJhSmJCNC8xOExxMmNXbWVGWE5haWc4ZWkyLzdqc3dpL0JJ?=
- =?utf-8?B?Q1FvUGRjTUkzTTR0ZlcxVS9lQjgyMlI5V0NHQTUyVS9SMFZVRVBORXcxaXdr?=
- =?utf-8?B?amFCTkZrTS8zbWNsRFJML1oxMTZjZFJETGFuOFpQdDBnOEMySjArbW8wbko3?=
- =?utf-8?B?VGJnSDhpM2FjWE9hdFh1ODh3NUVQRm5oOVh1anpCbS9ONTc2TkRtWGFTZ1JE?=
- =?utf-8?B?K213dGIzSWppZnppU0F5SWZkRGFDUk92b3AwdC8zbXFaSWxQc2lXb3ppNU5o?=
- =?utf-8?B?QU9SSEF3dElick5STG5KWjRKUHVmT1RFeFFteElvSXVVUS9LOWs4aCtpRVJw?=
- =?utf-8?B?THJadnpHT1NiTC81dE5xeUpGTXBYbC8vRndMbEV6ZkNtQlBkbUJpRVhYZVlu?=
- =?utf-8?B?aXdzWnp1T25Idk8vcEhxanRjV2Z6R0NIQjloMGM4TkVVcnM5ZXRXMVFMVlYw?=
- =?utf-8?B?Q3RhZ3oxZDBFcmdWMngvMTlwRVErbUh5eHljWHVuMmhJdDIyb1o2UzVnczFB?=
- =?utf-8?B?eHZodmJGQnI1U1ZDRXBIUGNzTTdvcXN4Zk5neEtCZWxVSWpEV21hYy9CSkJL?=
- =?utf-8?B?d0dWZUxGRHJmSW1LV011STNqSkR2VFVCWmppU1pTU3Z3ZVpLK2hBOVczOUFa?=
- =?utf-8?B?ejU5cjE1YWFtVW5OOW5UVTBEdDAvVVlPZGZXRXlodUh2ZGxTMFVXVVhoeVBi?=
- =?utf-8?B?T3ZTU1BKZmM3cWdqZlRTS2R0Q0hMTE9tQ2l0VzBRVFI3bnEvUVRFSkhOaTYx?=
- =?utf-8?B?TlFuSmZsNlkxS3lFSGd4RHc0V3NmY1d5MmUyY2Q3SkhUd1hnM3FnZDRTdkF6?=
- =?utf-8?B?SzJuSTFYb2xqcnJZL0VLTFpaYVh6VWIxbUZCeTdiVk1XaUc4ZHdzdjVlcGVL?=
- =?utf-8?B?OTBBOUROYjc1dGFiNThGcEZ2RTI2Y0M3dW9PVHFOekVZdzlQNGttVkZlcDEz?=
- =?utf-8?B?azBFSDMvMDczcWFvdUJoMmhVSE1PckRvbmpsREpTVE9IQytYSklicldpQzd2?=
- =?utf-8?B?Z3BIeVBSSjVmY1hCN2Iwejc0UlVTQ3gwRWpXaUhZZVRZSGpULytvc01MeU5l?=
- =?utf-8?B?WDVvYnhpS3ZTM3UvOEVzZFBuRENvanVmaERwWlhpZGN5ZUNWTlM4MGlPamwy?=
- =?utf-8?B?WXZxSFRGSlMvZ2xQUXZaMFZsbEtWK2dLZGo3SWsybk56d29zSVZGeUl2R2xn?=
- =?utf-8?B?UWhkZUswT0pGVUgyMzNyMUx3dTQzK3l6U1JwMTFmNG5kWERlSFl5SGg0UDJE?=
- =?utf-8?B?bm9jczN6WTdPUmkzc0tFTzJEVE85ZjZhOEl4MTJqSWNyWTcydlJhYkFFWFBE?=
- =?utf-8?B?NFpPVXMvQmpTNWlrell0NTR5aHFBSnoxY3dKZ2k3Z1RYUVhGNXJUWElKaU4r?=
- =?utf-8?Q?eF8kNYOlpQfRZ9zSknafNza55?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16616748-81de-4ad3-188c-08de08641f7c
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2025 01:18:45.5296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B2j2nuq1gUShXHyV8T9tRQry/cCj2I5nQlT5z3s4ddMIeJ4prQxlkoqoRAVEajZ6wqP7RMmvjaGAMkW9pXUmGw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P123MB7766
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/12] ext4: introduce mext_move_extent()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20251010103326.3353700-1-yi.zhang@huaweicloud.com>
+ <20251010103326.3353700-10-yi.zhang@huaweicloud.com>
+ <pkhkxgsoa3e3svcwudqo5jckurdqnhkdd6ckbkvgp424lxfcvn@h4nazw5rrd77>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <pkhkxgsoa3e3svcwudqo5jckurdqnhkdd6ckbkvgp424lxfcvn@h4nazw5rrd77>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgA3+mHisOlo+on_CQ--.8318S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3GFy7tryrJFy8tr13JFykuFg_yoW7ArW5pF
+	WxCF1DKrWkJa4I9r1Ivw4kXFyxK3y7Gr47Cr4fWFy7CFWqvFyrKFWUKa15uFy8CrW8G3Wj
+	vF40yr9rW3s8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-In the context of CONFIG_NO_HZ_FULL=y, tick_nohz_full_mask (of type
-cpumask_var_t) is initialised to 0. Memory is only allocated to the cpumask
-data structure, in tick_nohz_full_setup(), when Linux kernel boot-time
-parameter "nohz_full=" is correctly specified (see housekeeping_setup()).
-If "nohz_full=" is not set and an attempt is made to read
-/sys/devices/system/cpu/nohz_full, '(null)' can be displayed:
+On 10/10/2025 9:38 PM, Jan Kara wrote:
+> On Fri 10-10-25 18:33:23, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When moving extents, the current move_extent_per_page() process can only
+>> move extents of length PAGE_SIZE at a time, which is highly inefficient,
+>> especially when the fragmentation of the file is not particularly
+>> severe, this will result in a large number of unnecessary extent split
+>> and merge operations. Moreover, since the ext4 file system now supports
+>> large folios, using PAGE_SIZE as the processing unit is no longer
+>> practical.
+>>
+>> Therefore, introduce a new move extents method, mext_move_extent(). It
+>> moves one extent of the origin inode at a time, but not exceeding the
+>> size of a folio. The parameters for the move are passed through the new
+>> mext_data data structure, which includes the origin inode, donor inode,
+>> the mapping extent of the origin inode to be moved, and the starting
+>> offset of the donor inode.
+>>
+>> The move process is similar to move_extent_per_page() and can be
+>> categorized into three types: MEXT_SKIP_EXTENT, MEXT_MOVE_EXTENT, and
+>> MEXT_COPY_DATA. MEXT_SKIP_EXTENT indicates that the corresponding area
+>> of the donor file is a hole, meaning no actual space is allocated, so
+>> the move is skipped. MEXT_MOVE_EXTENT indicates that the corresponding
+>> areas of both the origin and donor files are unwritten, so no data needs
+>> to be copied; only the extents are swapped. MEXT_COPY_DATA indicates
+>> that the corresponding areas of both the origin and donor files contain
+>> data, so data must be copied. The data copying is performed in three
+>> steps: first, the data from the original location is read into the page
+>> cache; then, the extents are swapped, and the page cache is rebuilt to
+>> reflect the index of the physical blocks; finally, the dirty page cache
+>> is marked and written back to ensure that the data is written to disk
+>> before the metadata is persisted.
+>>
+>> One important point to note is that the folio lock and i_data_sem are
+>> held only during the moving process. Therefore, before moving an extent,
+>> it is necessary to check whether the sequence cookie of the area to be
+>> moved has changed while holding the folio lock. If a change is detected,
+>> it indicates that concurrent write-back operations may have occurred
+>> during this period, and the type of the extent to be moved can no longer
+>> be considered reliable. For example, it may have changed from unwritten
+>> to written. In such cases, return -ESTALE, and the calling function
+>> should reacquire the move extent of the original file and retry the
+>> movement.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> ...
+> 
+>> +static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
+>> +{
+>> +	struct inode *orig_inode = mext->orig_inode;
+>> +	struct inode *donor_inode = mext->donor_inode;
+>> +	struct ext4_map_blocks *orig_map = &mext->orig_map;
+>> +	unsigned int blkbits = orig_inode->i_blkbits;
+>> +	struct folio *folio[2] = {NULL, NULL};
+>> +	loff_t from, length;
+>> +	enum mext_move_type move_type = 0;
+>> +	handle_t *handle;
+>> +	u64 r_len = 0;
+>> +	unsigned int credits;
+>> +	int ret, ret2;
+>> +
+>> +	*m_len = 0;
+>> +	credits = ext4_chunk_trans_extent(orig_inode, 0) * 2;
+>> +	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, credits);
+>> +	if (IS_ERR(handle))
+>> +		return PTR_ERR(handle);
+>> +
+>> +	ret = mext_move_begin(mext, folio, &move_type);
+>> +	if (ret)
+>> +		goto stop_handle;
+>> +
+>> +	if (move_type == MEXT_SKIP_EXTENT)
+>> +		goto unlock;
+>> +
+>> +	/*
+>> +	 * Copy the data. First, read the original inode data into the page
+>> +	 * cache. Then, release the existing mapping relationships and swap
+>> +	 * the extent. Finally, re-establish the new mapping relationships
+>> +	 * and dirty the page cache.
+>> +	 */
+>> +	if (move_type == MEXT_COPY_DATA) {
+>> +		from = offset_in_folio(folio[0],
+>> +				((loff_t)orig_map->m_lblk) << blkbits);
+>> +		length = ((loff_t)orig_map->m_len) << blkbits;
+>> +
+>> +		ret = mext_folio_mkuptodate(folio[0], from, from + length);
+>> +		if (ret)
+>> +			goto unlock;
+>> +	}
+>> +
+>> +	if (!filemap_release_folio(folio[0], 0) ||
+>> +	    !filemap_release_folio(folio[1], 0)) {
+>> +		ret = -EBUSY;
+>> +		goto unlock;
+>> +	}
+>> +
+>> +	/* Move extent */
+>> +	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+>> +	*m_len = ext4_swap_extents(handle, orig_inode, donor_inode,
+>> +				   orig_map->m_lblk, mext->donor_lblk,
+>> +				   orig_map->m_len, 1, &ret);
+>> +	ext4_double_up_write_data_sem(orig_inode, donor_inode);
+>> +
+>> +	/* A short-length swap cannot occur after a successful swap extent. */
+>> +	if (WARN_ON_ONCE(!ret && (*m_len != orig_map->m_len)))
+>> +		ret = -EIO;
+>> +
+>> +	if (!(*m_len) || (move_type == MEXT_MOVE_EXTENT))
+>> +		goto unlock;
+>> +
+>> +	/* Copy data */
+>> +	length = (*m_len) << blkbits;
+>> +	ret = mext_folio_mkwrite(orig_inode, folio[0], from, from + length);
+>> +	if (ret)
+>> +		goto repair_branches;
+> 
+> I think you need to be careful here and below to not overwrite 'ret' if it
+> is != 0. So something like:
+> 
+> 	ret2 = mext_folio_mkwrite(..)
+> 	if (ret2) {
+> 		if (!ret)
+> 			ret = ret2;
+> 		goto repair_branches;
+> 	}
+> 
+> and something similar below. Otherwise the patch looks good to me.
+> 
+> 								Honza
 
-    ❯ cat /sys/devices/system/cpu/nohz_full
-    (null)
+OK, although overwrite 'ret' seems fine, it's better to keep it.
 
-This patch changes the output to print a newline (or 0x0A) instead of
-'(null)', making it consistent with print_cpus_isolated() behaviour.
+Thanks,
+Yi.
 
-Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
----
- drivers/base/cpu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index c792ec66462d..e3cb47eae982 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -305,7 +305,10 @@ static ssize_t nohz_full_show(struct device *dev,
- 				    struct device_attribute *attr,
- 				    char *buf)
- {
--	return sysfs_emit(buf, "%*pbl\n", cpumask_pr_args(tick_nohz_full_mask));
-+	if (cpumask_available(tick_nohz_full_mask))
-+		return sysfs_emit(buf, "%*pbl\n",
-+				  cpumask_pr_args(tick_nohz_full_mask));
-+	return sysfs_emit(buf, "\n");
- }
- static DEVICE_ATTR_RO(nohz_full);
- #endif
--- 
-2.49.0
 
 
