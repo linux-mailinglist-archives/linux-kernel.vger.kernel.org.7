@@ -1,254 +1,131 @@
-Return-Path: <linux-kernel+bounces-849069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3813ABCF245
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6946ABCF254
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 10:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0042E4269FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBF0D42790A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B08424502C;
-	Sat, 11 Oct 2025 08:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390F92367D6;
+	Sat, 11 Oct 2025 08:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I592Bp9Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+mu330a"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A69223D7CA
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA251547CC
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 08:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760171319; cv=none; b=QdTvdJFAJ8qNTCv1fMzMp5uNWZuws5C6v3x2HnbW73yEk6kPv8K4f3qIa4cTkENTWDo6g87oJVp78YJSQpCqfyxWUBSL/xeQVtzVJULNiHaVHBSMpAfX6IbrAdws5s6YZyTaJSLmEcIyV9O52aWaSD1A3CjDdHdTALw5OX4tq4I=
+	t=1760171514; cv=none; b=LO5keRmD9BacTfh7kH3pwznpAxlKdJlMgqHQfJPPgGYmccVDnllqLXzy+tnzjvDFCtZiETKDSm1tr+e3tvn6NLpxukQS/VioUgu+mwp+x4Ryh3QhaiRCJbMsHaxTbjZjepq8wdFaj75OeuhDwjfBmBYA0Xg3ZBVP13nrNoSimrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760171319; c=relaxed/simple;
-	bh=lMxJsTBvYIIRzV2ysIaeaApJyW/Xxwl8lAvSVzlHlhs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gU8TwigpvOd8WWMlFVZiLkk6UIjTnoaXvsrjmNvwtlIP9E7S3f+9FR0cBOmycqMeHJtAlUY5AiMZa/MUbRKo3KuXGc3cmYwjGtdttuG80Ax6EfTlAqvDkzA6g58MV7fLSJwGQEwG6eRLd5MMT5MNkLKLHsxw3NMhqyUTxxAk62U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I592Bp9Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760171313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aOj4qrsjoSEV40FZCa/GgcbP7ZbPD06dUm2Vl71DoUE=;
-	b=I592Bp9QcB4bXuDrx1dutBzAwOzTC9tTPH8+We2nUR6i05WSGF3QYU03qokyllxghaR5kk
-	Qp08GWMcWqBBMZiw44zGP9mEiV3MnYgRCI0Ou6A4yzj8tkRQb1ra0Ap5SP0MOFz+0RHQ7O
-	ME+N/9TDKCysL8OKrID0sWHuKIkdOH0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-401-kw7vALKyP-KUq3WxGQHQpA-1; Sat, 11 Oct 2025 04:28:31 -0400
-X-MC-Unique: kw7vALKyP-KUq3WxGQHQpA-1
-X-Mimecast-MFC-AGG-ID: kw7vALKyP-KUq3WxGQHQpA_1760171311
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e4c8fa2b1so12112695e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:28:31 -0700 (PDT)
+	s=arc-20240116; t=1760171514; c=relaxed/simple;
+	bh=XgCQ9pI6qjLRbY6gYT8jTdFJ43IhBMEiV2kVAMWGn90=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hUUf4ROLpGk2A0X/JWlS0TKLCZOUtbmOD/+tpRGskugUk6dKMw9J61vYjxXPtbZLpGDRb1k85dao1IpHj9VhOLFXK1Ovb1kFgagEul8itBIMLIdZzA+/1cmbREJq7I15LLeLu4mGOyHYFd6Zy2ZvKppdWmJHRLxoUYR0A6HOxrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+mu330a; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54b21395093so1893649e0c.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 01:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760171508; x=1760776308; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XgCQ9pI6qjLRbY6gYT8jTdFJ43IhBMEiV2kVAMWGn90=;
+        b=P+mu330aSNpI/2ALViKsC2i6zYP+8pDZqWOm6lCCZgoPmZ1VkAw/7eCOvfqBUU0F85
+         //kBGn5PhqWz1J3VHhJDHcK7gaY0rzmohHuk78Am4Y0F/d2k8U3JWFR5V1jktgz8XYhJ
+         1AwQD9RwD776UMSNoCBcYH1Gi2YvF4e0sXZ2EX8yvi+WrIrckaOOPAulre+Vux3KYnLX
+         0yFn4Zf6jo5jokhcnTU9uIbgZfK6dBCMY7jZYChVYxYsuI9nQ5n6zm0tEPa6jofto0Td
+         3VHItanKyFbBA5dar09dihgugttJCOlGk+bAyrVmcOxBm7B1U95ce47QBtxaGYdz+c7B
+         URKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760171311; x=1760776111;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aOj4qrsjoSEV40FZCa/GgcbP7ZbPD06dUm2Vl71DoUE=;
-        b=MqYzY9I2OLYF9/nJLPL2TnIrdrnpiNqxLq5fG7Nb3Iy/C1EG9UEfpBqPBjiBaZHE4J
-         rq/8oHfodQre6BN6V8Ri3bK4nhlEV9GQWZt/gixoB85LT/+1OqUl1+BIP9z04y9dvPmQ
-         gESjGemCDeG68OsAmzcfxgV4YSckxLB1zPKVGl7zSdaWTTq/4Th/pfU3MW5MTM660Wiu
-         bA1x4Tk0aRWaJ1/hWXtLsXlinNjXWjaLMXe27a/5D0STjoC34/MO0BP4iZ8XYP0p+FCw
-         9zMQ/mIRZ/HOHG5N3IDzzhDXZZiWaGiuZ4tCZL6Ufgyiq8nYpWflCD5q64bDRNvQ7QQJ
-         Hl1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX+ptRZqHW6CNYlxzLdqYIZEUXYBGgl0da34ILNQcrFqYNTDHUJTrPDFdOuY3LkZA+DsLPheHrX3/+9BFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhvvFa8sJBT7RXZU4Mb7yDoex+e3WHE8GYw54Pc2PZhHcaq/4e
-	U6ri/FgDhCK1Dcaf1ikJbmS6nz+6d7+7c+61lLLi51Zo5zMZA+rcqPCnzQM8NfuIF3BYNZLKAWk
-	5V7agLqhQTstLlriwpSry/1xVCIGj63/2rrOAQUxOUEgsOftnkz0hV3G0PWd1WiJbHA==
-X-Gm-Gg: ASbGncv2tOTkYmqS/lkJ0OP5qCo1wteWTC6IhRShk0jsfoBgDvWPyAVXj5G+RHmCk4D
-	+JG0Wmcij5yciSJZPfd1V3fy3T/cYvuwcmpyF/m2FgUKnrthYK/23v69QquARAJqstnlLcf73eJ
-	yeUQTFsiNCqJn5J5EL2XTBzsWNzcrcqtX8XeXYxA6wCzIcLrHgYcGgC9JgKIVA9DWf084bWR5yP
-	K10ZkaHL6mfPaNN2a48neOnAKMP1m4fHBNlpfYZDRW2XDYujxPrRY86O4/EKxwAYVMZqJWFU5Hi
-	bN2tjmkBggGlWGSIiu/Emh2SrpEjV8sWLCvRTWdn4Q3G
-X-Received: by 2002:a05:600c:5306:b0:46e:3d41:5fe7 with SMTP id 5b1f17b1804b1-46fa9afbd48mr94401205e9.29.1760171310582;
-        Sat, 11 Oct 2025 01:28:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFK5DqK5p00Q8fy/jT6hCAziOfIB4t7V7rJVh/6m2CXm+TH90wdKa0CBAPVz1Kvu+HBjsP2vw==
-X-Received: by 2002:a05:600c:5306:b0:46e:3d41:5fe7 with SMTP id 5b1f17b1804b1-46fa9afbd48mr94400995e9.29.1760171310146;
-        Sat, 11 Oct 2025 01:28:30 -0700 (PDT)
-Received: from localhost ([2a00:a041:e2eb:5500:8728:d68a:a687:c89b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5d0006sm8022580f8f.34.2025.10.11.01.28.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 01:28:29 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Crystal Wood <crwood@redhat.com>,
-	John Kacur <jkacur@redhat.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] tools/rtla: Replace osnoise_hist_usage("...") with fatal("...")
-Date: Sat, 11 Oct 2025 11:27:38 +0300
-Message-ID: <20251011082738.173670-6-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251011082738.173670-1-costa.shul@redhat.com>
-References: <20251011082738.173670-1-costa.shul@redhat.com>
+        d=1e100.net; s=20230601; t=1760171508; x=1760776308;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XgCQ9pI6qjLRbY6gYT8jTdFJ43IhBMEiV2kVAMWGn90=;
+        b=u3i9E2CRywtBHOFbeorZITRetW5dY+UZ4EByiwkExF9Y/4fs+JJAjiybPc3sEECM0M
+         PuAjRxWwrr7QMi80FLLma5iwwBBbK51HXuLOs49R+PInnittOO6hCcFkVR/mjaoTbByU
+         iPeGE4fIsewR/VUDi3LRuYWA5FdpSVbMsyLSI//DIJe8K+HkgBNJLY3K1CP+ICF7NWtK
+         97AmV/V+5WcMoxkW/oe62tk5kK7BzklpKKiPNIcpQCTsaqjIhSsXbhHS7dDy4E96OGjq
+         2DZmFh2Mc49j1DDOo53i3o5C4258UHB+osSQ0/bHbJj9eID8yOOr4LpMNemq0VSaZGS7
+         Jl3w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6syGD30T5XWt3uHCS1JhWwYeCTQyho8wiAWIC3HkKdu/VF6HC+poJel1YVmRBF7yj5um9yhtximsO2T4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuQiVFdabnb9wcIWm7IfHgk+5Mj9n/ZtCAWQLQbdm6I8rGB2At
+	q8xzK9kkPKw8KCQBsiWiZ/lSDQDKkhm7gxZ5AxstYQQjYA9c2K25o/yyZDJ7r95s2/0W0af1+PK
+	QgJ1vwHA6f57qXdX7GOszIZgHQt4ddpaL7In0
+X-Gm-Gg: ASbGncu2WhpiW15/ZTJZKyP5EzQidduvT0/mK3DEppCpgqqrzralXfY+G/vPDfDWv/o
+	lOkItUU4wdc3P/ZHHhpTYWaZIbgq6h6lW4uvfapWDdRJGlznmTkJmy+PRzrP9sfEpoBytz/1E2y
+	JE/SXYbMwXLX3qZp6rNNq3PU5AJMNRKcJSbGjKV8ePoikF7VkoEULhBXVcO9zxHoRAFPqGQr41h
+	0kPvMjNComAJ5H6reayI+odjCYHfDf9cy+cwAh8HwlBPxrj7LuBq/+ArDfBNfp3aLnU+tpXaEsM
+	rYBx350XwiPKDcqMROKw+heEvg==
+X-Google-Smtp-Source: AGHT+IFejl2oruWpHZ0awY4yEWw3zCcPlWZ16r46QzwtfB7PY9nnCyu3jvPHC5L7g+95uxSL/bKMRFASRVgMxtquJdI=
+X-Received: by 2002:a05:6122:a0e:b0:552:361e:25fd with SMTP id
+ 71dfb90a1353d-554b9193d05mr6615340e0c.2.1760171508129; Sat, 11 Oct 2025
+ 01:31:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Octavia Togami <octavia.togami@gmail.com>
+Date: Sat, 11 Oct 2025 01:31:37 -0700
+X-Gm-Features: AS18NWByaqnuJUTWmTTuzsDkaPpU8PWj6jMDq5RN-D7gigcpvQ72G62InwV-zrI
+Message-ID: <CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com>
+Subject: [REGRESSION] bisected: perf: hang when using async-profiler caused by
+ perf: Fix the POLL_HUP delivery breakage
+To: stable@vger.kernel.org
+Cc: regressions@lists.linux.dev, peterz@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-A long time ago, when the usage help was short, it was a favor
-to the user to show it on error. Now that the usage help has
-become very long, it is too noisy to dump the complete help text
-for each typo after the error message itself.
+Using async-profiler
+(https://github.com/async-profiler/async-profiler/) on Linux
+6.17.1-arch1-1 causes a complete hang of the CPU. This has been
+reported by many people at https://github.com/lucko/spark/issues/530.
+spark is a piece of software that uses async-profiler internally.
 
-Replace osnoise_hist_usage("...") with fatal("...") on errors.
+As seen in https://github.com/lucko/spark/issues/530#issuecomment-3339974827,
+this was bisected to 18dbcbfabfffc4a5d3ea10290c5ad27f22b0d240 perf:
+Fix the POLL_HUP delivery breakage. Reverting this commit on 6.17.1
+fixed the issue for me.
 
-Remove the already unused 'usage' argument from osnoise_hist_usage().
+Steps to reproduce:
+1. Get a copy of async-profiler. I tested both v3 (affects older spark
+versions) and v4.1 (latest at time of writing). Unarchive it, this is
+<async-profiler-dir>.
+2. Set kernel parameters kernel.perf_event_paranoid=1 and
+kernel.kptr_restrict=0 as instructed by
+https://github.com/async-profiler/async-profiler/blob/fb673227c7fb311f872ce9566769b006b357ecbe/docs/GettingStarted.md
+3. Install a version of Java that comes with jshell, i.e. Java 9 or
+newer. Note: jshell is used for ease of reproduction. Any Java
+application that is actively running will work.
+4. Run `printf 'int acc; while (true) { acc++; }' | jshell -`. This
+will start an infinitely running Java process.
+5. Run `jps` and take the PID next to the text RemoteExecutionControl
+-- this is the process that was just started.
+6. Attach async-profiler to this process by running
+`<async-profiler-dir>/bin/asprof -d 1 <PID>`. This will run for one
+second, then the system should freeze entirely shortly thereafter.
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+I triggered a sysrq crash while the system was frozen, and the output
+I found in journalctl afterwards is at
+https://gist.github.com/octylFractal/76611ee76060051e5efc0c898dd0949e
+I'm not sure if that text is actually from the triggered crash, but it
+seems relevant. If needed, please tell me how to get the actual crash
+report, I'm not sure where it is.
 
----
+I'm using an AMD Ryzen 9 5900X 12-Core Processor. Given that I've seen
+no Intel reports, it may be AMD specific. I don't have an Intel CPU on
+hand to test with.
 
-Changes since v1:
-- fatal() prints "\n" insteasd of caller as suggested Crystal Wood
----
- tools/tracing/rtla/src/osnoise_hist.c | 32 +++++++++++----------------
- 1 file changed, 13 insertions(+), 19 deletions(-)
-
-diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
-index 31a2c9cf97f5..b0b7f04c3871 100644
---- a/tools/tracing/rtla/src/osnoise_hist.c
-+++ b/tools/tracing/rtla/src/osnoise_hist.c
-@@ -421,7 +421,7 @@ osnoise_print_stats(struct osnoise_tool *tool)
- /*
-  * osnoise_hist_usage - prints osnoise hist usage message
-  */
--static void osnoise_hist_usage(char *usage)
-+static void osnoise_hist_usage(void)
- {
- 	int i;
- 
-@@ -467,18 +467,12 @@ static void osnoise_hist_usage(char *usage)
- 		NULL,
- 	};
- 
--	if (usage)
--		fprintf(stderr, "%s\n", usage);
--
- 	fprintf(stderr, "rtla osnoise hist: a per-cpu histogram of the OS noise (version %s)\n",
- 			VERSION);
- 
- 	for (i = 0; msg[i]; i++)
- 		fprintf(stderr, "%s\n", msg[i]);
- 
--	if (usage)
--		exit(EXIT_FAILURE);
--
- 	exit(EXIT_SUCCESS);
- }
- 
-@@ -564,12 +558,12 @@ static struct common_params
- 			params->common.hist.bucket_size = get_llong_from_str(optarg);
- 			if (params->common.hist.bucket_size == 0 ||
- 			    params->common.hist.bucket_size >= 1000000)
--				osnoise_hist_usage("Bucket size needs to be > 0 and <= 1000000\n");
-+				fatal("Bucket size needs to be > 0 and <= 1000000");
- 			break;
- 		case 'c':
- 			retval = parse_cpu_set(optarg, &params->common.monitored_cpus);
- 			if (retval)
--				osnoise_hist_usage("\nInvalid -c cpu list\n");
-+				fatal("Invalid -c cpu list");
- 			params->common.cpus = optarg;
- 			break;
- 		case 'C':
-@@ -588,7 +582,7 @@ static struct common_params
- 		case 'd':
- 			params->common.duration = parse_seconds_duration(optarg);
- 			if (!params->common.duration)
--				osnoise_hist_usage("Invalid -D duration\n");
-+				fatal("Invalid -D duration");
- 			break;
- 		case 'e':
- 			tevent = trace_event_alloc(optarg);
-@@ -604,11 +598,11 @@ static struct common_params
- 			params->common.hist.entries = get_llong_from_str(optarg);
- 			if (params->common.hist.entries < 10 ||
- 			    params->common.hist.entries > 9999999)
--				osnoise_hist_usage("Entries must be > 10 and < 9999999\n");
-+				fatal("Entries must be > 10 and < 9999999");
- 			break;
- 		case 'h':
- 		case '?':
--			osnoise_hist_usage(NULL);
-+			osnoise_hist_usage();
- 			break;
- 		case 'H':
- 			params->common.hk_cpus = 1;
-@@ -619,18 +613,18 @@ static struct common_params
- 		case 'p':
- 			params->period = get_llong_from_str(optarg);
- 			if (params->period > 10000000)
--				osnoise_hist_usage("Period longer than 10 s\n");
-+				fatal("Period longer than 10 s");
- 			break;
- 		case 'P':
- 			retval = parse_prio(optarg, &params->common.sched_param);
- 			if (retval == -1)
--				osnoise_hist_usage("Invalid -P priority");
-+				fatal("Invalid -P priority");
- 			params->common.set_sched = 1;
- 			break;
- 		case 'r':
- 			params->runtime = get_llong_from_str(optarg);
- 			if (params->runtime < 100)
--				osnoise_hist_usage("Runtime shorter than 100 us\n");
-+				fatal("Runtime shorter than 100 us");
- 			break;
- 		case 's':
- 			params->common.stop_us = get_llong_from_str(optarg);
-@@ -670,7 +664,7 @@ static struct common_params
- 				if (retval)
- 					fatal("Error adding trigger %s", optarg);
- 			} else {
--				osnoise_hist_usage("--trigger requires a previous -e\n");
-+				fatal("--trigger requires a previous -e");
- 			}
- 			break;
- 		case '5': /* filter */
-@@ -679,7 +673,7 @@ static struct common_params
- 				if (retval)
- 					fatal("Error adding filter %s", optarg);
- 			} else {
--				osnoise_hist_usage("--filter requires a previous -e\n");
-+				fatal("--filter requires a previous -e");
- 			}
- 			break;
- 		case '6':
-@@ -701,7 +695,7 @@ static struct common_params
- 				fatal("Invalid action %s", optarg);
- 			break;
- 		default:
--			osnoise_hist_usage("Invalid option");
-+			fatal("Invalid option");
- 		}
- 	}
- 
-@@ -712,7 +706,7 @@ static struct common_params
- 		fatal("rtla needs root permission");
- 
- 	if (params->common.hist.no_index && !params->common.hist.with_zeros)
--		osnoise_hist_usage("no-index set and with-zeros not set - it does not make sense");
-+		fatal("no-index set and with-zeros not set - it does not make sense");
- 
- 	return &params->common;
- }
--- 
-2.51.0
-
+/proc/version: Linux version 6.17.1-arch1-1 (linux@archlinux) (gcc
+(GCC) 15.2.1 20250813, GNU ld (GNU Binutils) 2.45.0) #1 SMP
+PREEMPT_DYNAMIC Mon, 06 Oct 2025 18:48:29 +0000
+Operating System: Arch Linux
+uname -mi: x86_64 unknown
 
