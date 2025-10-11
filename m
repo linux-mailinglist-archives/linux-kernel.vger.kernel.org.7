@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-849174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C1ABCF572
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:48:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFEEBCF57B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B0F425CF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35EBE406C7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 12:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A4627AC43;
-	Sat, 11 Oct 2025 12:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216862797A1;
+	Sat, 11 Oct 2025 12:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2p2WGfW"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFvouBAU"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF0927990E
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 12:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392B7277CA5
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 12:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760186916; cv=none; b=GpegiLOwEB6ytzZsIFSEc2AEAHHvnVGyHI9UR1IVZMI1HUZ+JhGG5XV40BWBuefVljB3OoCk4X4dUqvKhW1p04MCZYXr5ljxd/r6KfirFVEhrEp2qJx7KgqSczpk9Cc86tqA7lcGvm/D3MnMbrOc2PxbHRH+DjksmsKs/w5ttZY=
+	t=1760187517; cv=none; b=rQOBGz4DYuNx1fMxkWVjJHTP5f67cBxb9kXvuX27tkXCoqcQtSvWPoBVF6F5UCE4g4FJwyvh661OLBDpSjiCLM2p/i7g2aY/k7fUpGicO2FNJ/LSNz+IyDPP6x/h7wepOKz3wPvNsDQrFf9XTm9ZJuhJ83BCeQoUyKsIqgwFb2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760186916; c=relaxed/simple;
-	bh=oLFwtnz4/1nYejwJpMumUq3xNTQyfLYnC0l0ONQtxX0=;
+	s=arc-20240116; t=1760187517; c=relaxed/simple;
+	bh=BflumSUt1Df+Pt4sylcVPf1fNVvDZusLNi5LKPKa6gA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qWU/Sfp2Wip8DULZu7+TFWdt9cSw90FYv8xIRfvEsPmR1aDEMcuVD+J3ifpBQQoyZErKScXQ793HBK4FUvVBtdI7NojCXk1DAqPurIEjpUq8Ie17iUS3tdTJ3R4L5H4Oe7NT5FdgHOSXH9ZK6/teVqV8Qy3+8m8r9YOwPxLsvvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2p2WGfW; arc=none smtp.client-ip=209.85.216.49
+	 MIME-Version; b=c56RZ+WAjlvPYOh6lOnhtR9XCZjJCbvQwOwrea2zB4dIY0qLQ5XB59iRRdbMo/vvKmC0orkCOuA67O66goo5n8/oXVnWPyFBrKMlBeEDOFYqkwdo7RMDB94nU8IYmxl/VD7Tg9O8PhDhE/Pa63s5WKMneRVrUVJWrRUc7nkynow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFvouBAU; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso2550038a91.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:48:29 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e384dfde0so28191845e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 05:58:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760186909; x=1760791709; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760187509; x=1760792309; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VfZcdpoJrjBJZWXof4dHLVFSEs9CKFeUZZ3CpQmMUvQ=;
-        b=O2p2WGfWt3yjLh8/Ao9g9tEJFBuFsdrvTbKWdu6yVn46saiIX4FQp/4HjdP7uFiYfD
-         I0t5DUZ0SZJfVimxsXvXv7bO+KTgyZ/jzkpcdP7FaqKmVroXGzL98mRrajBLDOKxN31i
-         JIZOGYBF8LIXHNtyaL1Nz86Mnx6m7LgAtqBsdzR5WTgbT0mbJSnMYvFgnWf5hbbQe4KN
-         QvjtNX9DyX5yAws2t3BAZ+FxYlp99it79yteHk9/IdcxiEtNJGZbYyAvttcXlhbdQyHl
-         lQKd7iDw3b5KBTRPANu1/QXghIWRJy4iXzAgZH4znkdEfQjbkBYBS4Fd51ybRABtSlXj
-         21sQ==
+        bh=PP2cVBqxTHo4iOzKU9RsvBFv1wvTlNYcCHBA/GUcdj0=;
+        b=kFvouBAURiOb52ypVkX3Qw2tC9MgKYxQGA1Ie6iZXb/WdMxU0/Sxv2+E1JpXuu/ocA
+         wz8NldianPzBkmtcCSFAB5rpC+QqCkZDgMjiBHM9k526BtPsxUcl4Ar/sMrOJ/rjjyB1
+         0uEL2EE3cJFs2SNQHm5w6EG4SlZIi77K6UNsNrYSb35p53R7kOcLEXxj0flIxfJbK/mp
+         prX+ZyGpmPjt+xpWhG7LNdp/DnknQ9ZeohJrbbXjSPBLQocxvgAVylCP3TIBt7RatT56
+         bE68RMMkIqs4a70ibQoDuMchyAR529aLrZSLOOiEtLw0lIbvsPAme9zPPa6lrV0FpisH
+         UJiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760186909; x=1760791709;
+        d=1e100.net; s=20230601; t=1760187509; x=1760792309;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VfZcdpoJrjBJZWXof4dHLVFSEs9CKFeUZZ3CpQmMUvQ=;
-        b=qur82x54FoknXvfAzqjZgng1/JeTErb92ZvrYH2plKlYKkgdRhlwnuoup0PQ3w8K1v
-         pA9FJwn4Xs7QcgZZiaAQ37Y18sk3xCAJawjluS4xoOt47ed8ABKa9fDDlo27D8df3nAZ
-         ROb7KyEwg0FGrTvKv5J5iFvRTRUsG6U0GRuAEYsSPjyk70X9TSUhQ/H0K/eUzXGwd8US
-         0c5zrKQbRo8XONVT+HeEw2vgszWHkjJC9f44OYdliGgA5L+CwFDH1GKq9880W5sxaX4d
-         A/3i2N5cWyqO5pXw3EjJCMEQJ3hHliRqY+hHxwEKieOuCM6GLeyv2J3IAMJDNiH83mVx
-         hWNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNB3FBa4oAisQ6OQE2nA6/s6G/vPDbN7OfPl48Je9E+xAz+gqIvCE0RuGx4ZoY8oxiH2a+WZDr+EdVRz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxouaCDagyfhq1fd4hRozH3L/2dkKh1QQl714Nded6DCENSdXTI
-	dpP5IEmzLDmjW40D76AHaNF36KcWC/y6FG9W6XmOcoV7QOOJ4/v16Et1
-X-Gm-Gg: ASbGncvSRKcTMy2BCdVUw0gPanfmP9crz4YSWsHyCDZRCmF4v3eUQPafzLPRgFPncCC
-	/OjH22XIABiYQeXgJziz30CXkDWQFYst00CXMRhs/z3/ba+76TF1ZTU/WzmQ88ZNgJ1Wr5UtSxx
-	PWK+jr0idbtVUlflXX0AE4Sc0uJRpy6f00qMTeQUgrbhETNa8V8I8rh12/Zgqr+nnnBWz9VWdVQ
-	l99Tloe16Y/RJ97BmzVdazokegXqeeF7A0562bfay3W3X0KvCSC2w/S0Ovrc9kILQpMMPBc15xD
-	H/6y014yaNrUQ03KxxWTgAVHXL7KKLwVaZGeZMx0N34JMS292jpwYKtE4KpP/wW+1BDalrwLgVH
-	HRVVtYc7TfOGnCNykbAGBubxEgh8K3xeTvalvHjNaN0Z2GWjFZJe7
-X-Google-Smtp-Source: AGHT+IE3AHxFWYswoEKawHh8CnypL++DQF/QW93jEt7+3yabRyzSQz8VviBzvqWHPD7rOO//5c4gKA==
-X-Received: by 2002:a17:90b:3a8a:b0:32e:a8b7:e9c with SMTP id 98e67ed59e1d1-33b5139a3aamr21550746a91.29.1760186909071;
-        Sat, 11 Oct 2025 05:48:29 -0700 (PDT)
-Received: from fedora ([2405:201:3017:a80:4151:fa75:b28e:228e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61ac7af3sm6246199a91.17.2025.10.11.05.48.23
+        bh=PP2cVBqxTHo4iOzKU9RsvBFv1wvTlNYcCHBA/GUcdj0=;
+        b=szqdGoV9pQBvnUNiDBZGQTvVvjA2lf0SQ8pmtB1gsgD8Sd0JPBEhpXLyA67372tEo2
+         tAveE2tIGrwmjqyBZEFSrvxo2wUJms1yEhlbD9+zIZYsR3/YXv0ezXDi1axJY6fvc95+
+         1bqAYb5CODKCK6DN+EqedALtafY79ZZOX2RYFmi/pHjEmmK7uHUdnlC7OWxKgHvSGx+3
+         kxrqls9AjkRJQbIFm7SDoWMySY+/qiB37+SkZm2D1ZCCTXTm9xUAG093YHW52xgKWSSB
+         eZwuiM6o95Azb09Kqml256jcOxjo3+8qnpFj25UHWNzclciXIULs5k/u9F+lZ/n8YvKZ
+         c9Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXdiOf9CIzypnB0Fl4EG46bX9DTf0Yen01eKFjxHxJpEMpMron1yH1VuMtJ1YAyffsjUgMKqMraFZQAH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsjcixAbBxL1LGYavRV7cGwe0b6N1apY/m/SPa5zzNaLg8o3w8
+	deUImN7977shdpgMaDRN9sTveaidHVWwX/UNQd+vnEneLiSsvmM0m92b
+X-Gm-Gg: ASbGnctsq3Ay6eo0uEs5unDmMgSVAsGhqc+1d8SL+k3PvQREf2WW6EUWzGtKBOgIOIm
+	7G0/b2D2ROyJ9u78ImCEi2wib40HvMC2FhSfoji6V5HQ1/6LZF2YbPdwgGOGLAnYiDnFXnxZ6fl
+	m+u0Z4whHzPpgLJS1HfxFb9+2wYE5q4S8BA0HTKAjyEAPcmJPMbPZQkXs+n6H808cD4iw+ndGvH
+	HfZkuwr37CMr7nbWulMKxAPcM/He5voGVPBpXayIo877L9SodiGCoXBgPzoFDH1IXKWsvAc71DD
+	81IU/hdKXLAhKY9vcaf7aYDJP27nAE/pWXJCYeXQqsmrdb4fIQqXbrMzQ9CJEBVTadYLmmpI4kc
+	46rRTPdrQ7LrgwoxbNvGDOqpiiQALLwlDa+wxcVGgkCoxm9YUseXG81MAj8OGvYM+iA==
+X-Google-Smtp-Source: AGHT+IFypDFEfHT4k6jCPST2r0F14x52GIJv5i+x39HBd4euooCKsMtk4pEX4/z7HuGjqI5IAYoavA==
+X-Received: by 2002:a05:600c:4e47:b0:46e:652e:16a1 with SMTP id 5b1f17b1804b1-46fa9a8b482mr104336315e9.7.1760187509283;
+        Sat, 11 Oct 2025 05:58:29 -0700 (PDT)
+Received: from dev-linux.homserver.local ([51.154.250.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb4982c10sm89708785e9.5.2025.10.11.05.58.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 05:48:28 -0700 (PDT)
-From: Bhavik Sachdev <b.sachdev1904@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Bhavik Sachdev <b.sachdev1904@gmail.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Jan Kara <jack@suse.cz>,
-	John Garry <john.g.garry@oracle.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andrei Vagin <avagin@gmail.com>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: [PATCH v2 1/1] statmount: accept fd as a parameter
-Date: Sat, 11 Oct 2025 18:16:11 +0530
-Message-ID: <20251011124753.1820802-2-b.sachdev1904@gmail.com>
+        Sat, 11 Oct 2025 05:58:28 -0700 (PDT)
+From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+To: Michael Buesch <m@bues.ch>
+Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] driver: gpio-bt8xx: use generic PCI PM
+Date: Sat, 11 Oct 2025 12:57:53 +0000
+Message-ID: <20251011125802.1068043-1-vaibhavgupta40@gmail.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251011124753.1820802-1-b.sachdev1904@gmail.com>
-References: <20251011124753.1820802-1-b.sachdev1904@gmail.com>
+In-Reply-To: <20251011143123.094043ed@barney>
+References: <20251011143123.094043ed@barney>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,229 +94,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_FD
-flag. When a valid fd is provided and STATMOUNT_FD is set, statmount
-will return mountinfo about the mount the fd is on.
+Switch to the new generic PCI power management framework and remove legacy
+callbacks like .suspend() and .resume(). With the generic framework, the
+standard PCI related work like:
+	- pci_save/restore_state()
+	- pci_enable/disable_device()
+	- pci_set_power_state()
+is handled by the PCI core and this driver should implement only gpio-bt8xx
+specific operations in its respective callback functions.
 
-This even works for "unmounted" mounts (mounts that have been umounted
-using umount2(mnt, MNT_DETACH)), if you have access to a file descriptor
-on that mount. These "umounted" mounts will have no mountpoint hence we
-return "[detached]" and the mnt_ns_id to be 0.
-
-Co-developed-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
+Signed-off-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
 ---
- fs/namespace.c             | 80 ++++++++++++++++++++++++++++----------
- include/uapi/linux/mount.h |  8 ++++
- 2 files changed, 67 insertions(+), 21 deletions(-)
+ drivers/gpio/gpio-bt8xx.c | 29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d82910f33dc4..eb82a22cffd5 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5207,6 +5207,12 @@ static int statmount_mnt_root(struct kstatmount *s, struct seq_file *seq)
+diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
+index 05401da03ca3..70b49c385b43 100644
+--- a/drivers/gpio/gpio-bt8xx.c
++++ b/drivers/gpio/gpio-bt8xx.c
+@@ -52,10 +52,8 @@ struct bt8xxgpio {
+ 	struct pci_dev *pdev;
+ 	struct gpio_chip gpio;
+ 
+-#ifdef CONFIG_PM
+ 	u32 saved_outen;
+ 	u32 saved_data;
+-#endif
+ };
+ 
+ #define bgwrite(dat, adr)	writel((dat), bg->mmio+(adr))
+@@ -224,9 +222,9 @@ static void bt8xxgpio_remove(struct pci_dev *pdev)
+ 	pci_disable_device(pdev);
+ }
+ 
+-#ifdef CONFIG_PM
+-static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
++static int __maybe_unused bt8xxgpio_suspend(struct device *dev)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+ 
+ 	scoped_guard(spinlock_irqsave, &bg->lock) {
+@@ -238,23 +236,13 @@ static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
+ 		bgwrite(0x0, BT848_GPIO_OUT_EN);
+ 	}
+ 
+-	pci_save_state(pdev);
+-	pci_disable_device(pdev);
+-	pci_set_power_state(pdev, pci_choose_state(pdev, state));
+-
  	return 0;
  }
  
-+static int statmount_mnt_point_detached(struct kstatmount *s, struct seq_file *seq)
-+{
-+	seq_puts(seq, "[detached]");
-+	return 0;
-+}
-+
- static int statmount_mnt_point(struct kstatmount *s, struct seq_file *seq)
+-static int bt8xxgpio_resume(struct pci_dev *pdev)
++static int __maybe_unused bt8xxgpio_resume(struct device *dev)
  {
- 	struct vfsmount *mnt = s->mnt;
-@@ -5262,7 +5268,10 @@ static int statmount_sb_source(struct kstatmount *s, struct seq_file *seq)
- static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
- {
- 	s->sm.mask |= STATMOUNT_MNT_NS_ID;
--	s->sm.mnt_ns_id = ns->ns.ns_id;
-+	if (ns)
-+		s->sm.mnt_ns_id = ns->ns.ns_id;
-+	else
-+		s->sm.mnt_ns_id = 0;
- }
- 
- static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
-@@ -5431,7 +5440,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
- 		break;
- 	case STATMOUNT_MNT_POINT:
- 		offp = &sm->mnt_point;
--		ret = statmount_mnt_point(s, seq);
-+		if (!s->root.mnt && !s->root.dentry)
-+			ret = statmount_mnt_point_detached(s, seq);
-+		else
-+			ret = statmount_mnt_point(s, seq);
- 		break;
- 	case STATMOUNT_MNT_OPTS:
- 		offp = &sm->mnt_opts;
-@@ -5572,29 +5584,33 @@ static int grab_requested_root(struct mnt_namespace *ns, struct path *root)
- 
- /* locks: namespace_shared */
- static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
--			struct mnt_namespace *ns)
-+			struct mnt_namespace *ns, unsigned int flags)
- {
- 	struct mount *m;
- 	int err;
- 
- 	/* Has the namespace already been emptied? */
--	if (mnt_ns_id && mnt_ns_empty(ns))
-+	if (!(flags & STATMOUNT_FD) && mnt_ns_id && mnt_ns_empty(ns))
- 		return -ENOENT;
- 
--	s->mnt = lookup_mnt_in_ns(mnt_id, ns);
--	if (!s->mnt)
--		return -ENOENT;
-+	if (!(flags & STATMOUNT_FD)) {
-+		s->mnt = lookup_mnt_in_ns(mnt_id, ns);
-+		if (!s->mnt)
-+			return -ENOENT;
-+	}
- 
--	err = grab_requested_root(ns, &s->root);
++	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+-	int err;
+-
+-	pci_set_power_state(pdev, PCI_D0);
+-	err = pci_enable_device(pdev);
 -	if (err)
 -		return err;
-+	if (ns) {
-+		err = grab_requested_root(ns, &s->root);
-+		if (err)
-+			return err;
-+	}
+-	pci_restore_state(pdev);
  
- 	/*
- 	 * Don't trigger audit denials. We just want to determine what
- 	 * mounts to show users.
- 	 */
- 	m = real_mount(s->mnt);
--	if (!is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
-+	if (ns && !is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
- 	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
+ 	guard(spinlock_irqsave)(&bg->lock);
  
-@@ -5718,12 +5734,12 @@ static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+@@ -267,10 +255,8 @@ static int bt8xxgpio_resume(struct pci_dev *pdev)
+ 
+ 	return 0;
  }
- 
- static int copy_mnt_id_req(const struct mnt_id_req __user *req,
--			   struct mnt_id_req *kreq)
-+			   struct mnt_id_req *kreq, unsigned int flags)
- {
- 	int ret;
- 	size_t usize;
- 
--	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER1);
-+	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER2);
- 
- 	ret = get_user(usize, &req->size);
- 	if (ret)
-@@ -5738,6 +5754,11 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
- 		return ret;
- 	if (kreq->spare != 0)
- 		return -EINVAL;
-+	if (flags & STATMOUNT_FD) {
-+		if (kreq->fd < 0)
-+			return -EINVAL;
-+		return 0;
-+	}
- 	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
- 	if (kreq->mnt_id <= MNT_UNIQUE_ID_OFFSET)
- 		return -EINVAL;
-@@ -5788,23 +5809,37 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- {
- 	struct mnt_namespace *ns __free(mnt_ns_release) = NULL;
- 	struct kstatmount *ks __free(kfree) = NULL;
-+	struct vfsmount *fd_mnt;
- 	struct mnt_id_req kreq;
- 	/* We currently support retrieval of 3 strings. */
- 	size_t seq_size = 3 * PATH_MAX;
- 	int ret;
- 
--	if (flags)
-+	if (flags & ~STATMOUNT_FD)
- 		return -EINVAL;
- 
--	ret = copy_mnt_id_req(req, &kreq);
-+	ret = copy_mnt_id_req(req, &kreq, flags);
- 	if (ret)
- 		return ret;
- 
--	ns = grab_requested_mnt_ns(&kreq);
--	if (!ns)
--		return -ENOENT;
-+	if (flags & STATMOUNT_FD) {
-+		CLASS(fd_raw, f)(kreq.fd);
-+		if (fd_empty(f))
-+			return -EBADF;
-+		fd_mnt = fd_file(f)->f_path.mnt;
-+		ns = real_mount(fd_mnt)->mnt_ns;
-+		if (ns)
-+			refcount_inc(&ns->passive);
-+		else
-+			if (!ns_capable_noaudit(fd_file(f)->f_cred->user_ns, CAP_SYS_ADMIN))
-+				return -ENOENT;
-+	} else {
-+		ns = grab_requested_mnt_ns(&kreq);
-+		if (!ns)
-+			return -ENOENT;
-+	}
- 
--	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
-+	if (ns && (ns != current->nsproxy->mnt_ns) &&
- 	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
- 		return -ENOENT;
- 
-@@ -5817,8 +5852,11 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 	if (ret)
- 		return ret;
- 
-+	if (flags & STATMOUNT_FD)
-+		ks->mnt = fd_mnt;
+-#else
+-#define bt8xxgpio_suspend NULL
+-#define bt8xxgpio_resume NULL
+-#endif /* CONFIG_PM */
 +
- 	scoped_guard(namespace_shared)
--		ret = do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns);
-+		ret = do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns, flags);
++static DEFINE_SIMPLE_DEV_PM_OPS(bt8xxgpio_pm_ops, bt8xxgpio_suspend, bt8xxgpio_resume);
  
- 	if (!ret)
- 		ret = copy_statmount_to_user(ks);
-@@ -5957,7 +5995,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
- 	if (!access_ok(mnt_ids, nr_mnt_ids * sizeof(*mnt_ids)))
- 		return -EFAULT;
- 
--	ret = copy_mnt_id_req(req, &kreq);
-+	ret = copy_mnt_id_req(req, &kreq, 0);
- 	if (ret)
- 		return ret;
- 
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 7fa67c2031a5..dfe8b8e7fa8d 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -201,11 +201,14 @@ struct mnt_id_req {
- 	__u64 mnt_id;
- 	__u64 param;
- 	__u64 mnt_ns_id;
-+	__s32 fd;
-+	__u32 spare2;
+ static const struct pci_device_id bt8xxgpio_pci_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT848) },
+@@ -286,8 +272,7 @@ static struct pci_driver bt8xxgpio_pci_driver = {
+ 	.id_table	= bt8xxgpio_pci_tbl,
+ 	.probe		= bt8xxgpio_probe,
+ 	.remove		= bt8xxgpio_remove,
+-	.suspend	= bt8xxgpio_suspend,
+-	.resume		= bt8xxgpio_resume,
++	.driver.pm	= &bt8xxgpio_pm_ops,
  };
  
- /* List of all mnt_id_req versions. */
- #define MNT_ID_REQ_SIZE_VER0	24 /* sizeof first published struct */
- #define MNT_ID_REQ_SIZE_VER1	32 /* sizeof second published struct */
-+#define MNT_ID_REQ_SIZE_VER2	40 /* sizeof third published struct */
- 
- /*
-  * @mask bits for statmount(2)
-@@ -232,4 +235,9 @@ struct mnt_id_req {
- #define LSMT_ROOT		0xffffffffffffffff	/* root mount */
- #define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
- 
-+/*
-+ * @flag bits for statmount(2)
-+ */
-+#define STATMOUNT_FD		0x0000001U /* want mountinfo for given fd */
-+
- #endif /* _UAPI_LINUX_MOUNT_H */
+ module_pci_driver(bt8xxgpio_pci_driver);
 -- 
 2.51.0
 
