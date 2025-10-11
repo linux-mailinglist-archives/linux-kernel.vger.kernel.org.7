@@ -1,252 +1,391 @@
-Return-Path: <linux-kernel+bounces-849188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB4FBCF76D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC651BCF773
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 16:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE7E407622
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:33:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 383C83B3864
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 14:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A1A279355;
-	Sat, 11 Oct 2025 14:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38D727C178;
+	Sat, 11 Oct 2025 14:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UjrCKKxZ"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knlhwKEU"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2BD27C854;
-	Sat, 11 Oct 2025 14:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D56800
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 14:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760193176; cv=none; b=Nfo8sBUulQZPXSa7TftU5MY+XeCTft5CNu5bd/CcbNlw88Me4QSsgk7/C0JVTr69HYy5XsN3wg1vK/uDP94ONlWg1gUFtexONnzDseZFvhCJjwuoR+40td2KGrcf33HBY8bavm1Cj4ufZjL/zZqyyH6J5VWegfPh7iN3GT2boo8=
+	t=1760193639; cv=none; b=W0YcxKuvX4Kl83+cz3RIccSk1ZScwl0pbeCEIBILnP6EGmVP0z24Qp5/HsPZr1xvbrMrHJ9Md3oxAc/2S6O0pCCPxWI0kQFwwBE420EEBkaKhOgG8qiXtxCie/LRtcQYd5mnMmILhtW4I3pEP8oLpUk6Y5QVdruP7+Wb9WAqGPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760193176; c=relaxed/simple;
-	bh=Rg//Celz7bZVYwFutchuLMutpRd3KAuXCKgvp9l+Sp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uu7KhF7fwvhAZJltRif9BGFK95Mz2SLkT8ozXXphoFME8ZMfzDNZ7A1VTVR5mJCsLDvU+Je/CgURhssyb+CQJXXtWmyXIiYfqdyC191hCrOSU0uKDWXgaOLd9PQ5K9iKpAkfwWpQbZVawd0+xnhLtDASt+MA5a+uPElJQ5QqclU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UjrCKKxZ; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d25340e3-2017-4614-a472-c5c7244c7ce4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760193160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W6DAktFf8ux13w20eariAQM5EE06H68osCBE8i4364c=;
-	b=UjrCKKxZ7HfUt7+I13g5vfVRPU1qXFULaDafrS7I83LwXVt6aH0moEoYrW9v3fMHyte3Lc
-	JIVb1vAXalk/iAX9JV1paqTF7GbCKdZcWmZHtsHe0AsdOKnwoKmIv3g4EwebnsComkRoff
-	oN69fjYfPJQ1nqoEOUx/q55njQikJ+A=
-Date: Sat, 11 Oct 2025 16:32:34 +0200
+	s=arc-20240116; t=1760193639; c=relaxed/simple;
+	bh=oLQSnAlJlsYDjmmmAf4TakNV9ImPLYoXrO4RVN5kZOc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hykgo78+q9eN9MDIyNnfcK0/C8wTiYTEKhYcdi6qJPNyqhw6KnQfq2Yg8J4j/JvdLe6Tb4EnJknvBNhaSCjmLbVwAvIRx9BpvP7A1+hc/L2WB4NNg78qYAT3uFel+qy7XjPLf0lhu+HOzV1Afk/Pqg9tgo3svFJxrVlVm2h2saM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knlhwKEU; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27edcbcd158so32982145ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760193637; x=1760798437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gl+ae1b3aiy4YJ4vxFhTeoZVmvj8iAgFv13VRfipKes=;
+        b=knlhwKEUUDP7BvwSUbYomqPZwbmAYd4I9IzdcVemRUw+PeTe4wah0yFoAQQF7Kkrxd
+         p8tOb+RwFApLDnzyshy1gUgdYPIq/aPl0MCWZX8eJdG/V6IWwysupnZD8bAZz0mTYyfr
+         9LRc/84uZ2z1iJ3/iE1+UjAxy6AstOD3AirLOi5EEZRxwwZRvIWY18xzERO3XUY9FU8q
+         Jl4qEWEPTXGBxP5Ada6x7d//wY/8taRxGc3cMMBQY1VYoRXctANbRvuu4YbaxHoBxAUt
+         yUi2CMCxGFfFiwgcpU2LGVbQbJaUBorm/cPY9sbjoQ8qsWQC4Dl3fXQxMiiPmf7HHqmj
+         57vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760193637; x=1760798437;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gl+ae1b3aiy4YJ4vxFhTeoZVmvj8iAgFv13VRfipKes=;
+        b=JoK3/BgXVYHTbafXOQGnAzE4YzEIxaJ87n8m4ZVqR+5YoZPFLEWjzYU4pog0FRaFvg
+         4/SdU3u2cvL2jjMvWAsuKqQCDca2ZMNcL+QTdYp/2vowvuEaGzndQBo4sKVnyclDfhAF
+         LwjK54EqAub6PaN18WFzh8YDEyDFulaNiXMYmVYusjjJztpDIvD8AcGzupXRnwQo+/i+
+         rMZmC+GQ2IVRvZHdkl0uf/aFfPqJn1XqPwGPVpRWx9TZWeihBJeDA+JsjYm8rgHR/scL
+         oO080xTMkq+wgXC6XbNmRfiGjq0UddLc7BraMfas7vEwtMQJ3eISV9SPsjYQ7xCJp76L
+         d1nA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlyq0u6xB+wN5DFZ7gDDJqeCmn44fx2j28ml5h8smjyEFmWFLd7a5/q+TaOmvgwTYfGh3AUV1ppIeprgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw05V555HyHEgEl5bAqymWAHkLJg2PQNe8Ecv3Hh3ajgkO88Icr
+	vyErrqDohG/IM+4xw99rjWiexDmHsmn5vMFksk6W85GwdnHhlnIcXnSE
+X-Gm-Gg: ASbGncsrm4pPN6eMeRt2mPzXkx7LU5p5J+zkpJDWcppx3M2/KUscGfFhBSvf5gfax+/
+	oTe3WBxmzVyMtoObE43Mf6TQrC70VRwTOCdteU8i/9DQFoYSz2R5qbGpmcln5b5S/vIuXXwT9U1
+	yZeYzja7fN3zbb5dMvHQF3wp8ZaPcAzmZquV2kw7Cf/AZ9sJShQ4B+VvbKl2h1W4MH9h6YLKDar
+	DnY3vScyJAH+jcPR4/k4oTqpBEKcpg9f5vKwHhmK8nMOZkIzDA1OAQRVHaZmgG3ctTa8DqGKzkj
+	MRwsYURAyx384UHAWaAEVU5oKF5OUOANtA9bFz32BbnC+L5tnoThpxyhIx9FQPa9PDO1Z0isav2
+	/KmNrYQLnRiI4iI7sm/MiJ2AFtnv3vGCBpnpTUH++wPEf6EI+OD8=
+X-Google-Smtp-Source: AGHT+IGzzau/mcdSdFO8lAk2rHCjKfAo88tRGKmQOZgSFMkk8lLXKA/0TUsBf/w56T4nxl6liJ70Lg==
+X-Received: by 2002:a17:903:8cc:b0:267:e3af:ae67 with SMTP id d9443c01a7336-29027238ef6mr187745315ad.14.1760193636698;
+        Sat, 11 Oct 2025 07:40:36 -0700 (PDT)
+Received: from n.. ([2401:4900:1c0e:53b:a256:f673:325:bb08])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08e2dsm85442275ad.74.2025.10.11.07.40.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 07:40:36 -0700 (PDT)
+From: mrigendrachaubey <mrigendra.chaubey@gmail.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mrigendrachaubey <mrigendra.chaubey@gmail.com>
+Subject: [PATCH] arm64: Fix typos and spelling errors in comments
+Date: Sat, 11 Oct 2025 20:10:04 +0530
+Message-Id: <20251011144004.14946-1-mrigendra.chaubey@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
- TLB flushing
-To: David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, "Roy, Patrick"
- <roypat@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- "joey.gouly@arm.com" <joey.gouly@arm.com>,
- "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
- "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "luto@kernel.org" <luto@kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "willy@infradead.org" <willy@infradead.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
- "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
- "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
- "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
- <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>,
- "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "andrii@kernel.org" <andrii@kernel.org>,
- "martin.lau@linux.dev" <martin.lau@linux.dev>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>,
- "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
- "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
- "kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@fomichev.me"
- <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
- "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
- "peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
- <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>,
- "shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com"
- <seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "Cali, Marco" <xmarcalx@amazon.co.uk>,
- "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
- "Thomson, Jack" <jackabt@amazon.co.uk>,
- "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
- "tabba@google.com" <tabba@google.com>,
- "ackerleytng@google.com" <ackerleytng@google.com>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-3-roypat@amazon.co.uk>
- <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
- <c1875a54-0c87-450f-9370-29e7ec4fea3d@redhat.com>
- <82bff1c4-987f-46cb-833c-bd99eaa46e7a@intel.com>
- <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
- <c88514c3-e15f-4853-8acf-15e7b4b979f4@linux.dev>
- <aNZwmPFAxm_HRYpC@willie-the-truck>
- <5d11b5f7-3208-4ea8-bbff-f535cf62d576@redhat.com>
- <be89abc6-97ca-47d8-b8e7-95f58ab9cc67@linux.dev>
- <f13e06f3-3c7b-4993-b33a-a6921c14231b@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Patrick Roy <patrick.roy@linux.dev>
-Content-Language: en-US
-In-Reply-To: <f13e06f3-3c7b-4993-b33a-a6921c14231b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Hey all,
+This patch corrects several minor typographical and spelling errors
+in comments across multiple arm64 source files.
 
-sorry it took me a while to get back to this, turns out moving
-internationally is move time consuming than I expected.
+No functional changes.
 
-On Mon, 2025-09-29 at 12:20 +0200, David Hildenbrand wrote:
-> On 27.09.25 09:38, Patrick Roy wrote:
->> On Fri, 2025-09-26 at 21:09 +0100, David Hildenbrand wrote:
->>> On 26.09.25 12:53, Will Deacon wrote:
->>>> On Fri, Sep 26, 2025 at 10:46:15AM +0100, Patrick Roy wrote:
->>>>> On Thu, 2025-09-25 at 21:13 +0100, David Hildenbrand wrote:
->>>>>> On 25.09.25 21:59, Dave Hansen wrote:
->>>>>>> On 9/25/25 12:20, David Hildenbrand wrote:
->>>>>>>> On 25.09.25 20:27, Dave Hansen wrote:
->>>>>>>>> On 9/24/25 08:22, Roy, Patrick wrote:
->>>>>>>>>> Add an option to not perform TLB flushes after direct map manipulations.
->>>>>>>>>
->>>>>>>>> I'd really prefer this be left out for now. It's a massive can of worms.
->>>>>>>>> Let's agree on something that works and has well-defined behavior before
->>>>>>>>> we go breaking it on purpose.
->>>>>>>>
->>>>>>>> May I ask what the big concern here is?
->>>>>>>
->>>>>>> It's not a _big_ concern.
->>>>>>
->>>>>> Oh, I read "can of worms" and thought there is something seriously problematic :)
->>>>>>
->>>>>>> I just think we want to start on something
->>>>>>> like this as simple, secure, and deterministic as possible.
->>>>>>
->>>>>> Yes, I agree. And it should be the default. Less secure would have to be opt-in and documented thoroughly.
->>>>>
->>>>> Yes, I am definitely happy to have the 100% secure behavior be the
->>>>> default, and the skipping of TLB flushes be an opt-in, with thorough
->>>>> documentation!
->>>>>
->>>>> But I would like to include the "skip tlb flushes" option as part of
->>>>> this patch series straight away, because as I was alluding to in the
->>>>> commit message, with TLB flushes this is not usable for Firecracker for
->>>>> performance reasons :(
->>>>
->>>> I really don't want that option for arm64. If we're going to bother
->>>> unmapping from the linear map, we should invalidate the TLB.
->>>
->>> Reading "TLB flushes result in a up to 40x elongation of page faults in
->>> guest_memfd (scaling with the number of CPU cores), or a 5x elongation
->>> of memory population,", I can understand why one would want that optimization :)
->>>
->>> @Patrick, couldn't we use fallocate() to preallocate memory and batch the TLB flush within such an operation?
->>>
->>> That is, we wouldn't flush after each individual direct-map modification but after multiple ones part of a single operation like fallocate of a larger range.
->>>
->>> Likely wouldn't make all use cases happy.
->>>
->>
->> For Firecracker, we rely a lot on not preallocating _all_ VM memory, and
->> trying to ensure only the actual "working set" of a VM is faulted in (we
->> pack a lot more VMs onto a physical host than there is actual physical
->> memory available). For VMs that are restored from a snapshot, we know
->> pretty well what memory needs to be faulted in (that's where @Nikita's
->> write syscall comes in), so there we could try such an optimization. But
->> for everything else we very much rely on the on-demand nature of guest
->> memory allocation (and hence direct map removal). And even right now,
->> the long pole performance-wise are these on-demand faults, so really, we
->> don't want them to become even slower :(
-> 
-> Makes sense. I guess even without support for large folios one could implement a kind of "fault" around: for example, on access to one addr, allocate+prepare all pages in the same 2 M chunk, flushing the tlb only once after adjusting all the direct map entries.
-> 
->>
->> Also, can we really batch multiple TLB flushes as you suggest? Even if
->> pages are at consecutive indices in guest_memfd, they're not guaranteed
->> to be continguous physically, e.g. we couldn't just coalesce multiple
->> TLB flushes into a single TLB flush of a larger range.
-> 
-> Well, you there is the option on just flushing the complete tlb of course :) When trying to flush a range you would indeed run into the problem of flushing an ever growing range.
+Signed-off-by: mrigendrachaubey <mrigendra.chaubey@gmail.com>
+---
+ arch/arm64/include/asm/assembler.h  | 4 ++--
+ arch/arm64/include/asm/cpufeature.h | 4 ++--
+ arch/arm64/include/asm/el2_setup.h  | 2 +-
+ arch/arm64/include/asm/pgtable.h    | 4 ++--
+ arch/arm64/include/asm/suspend.h    | 2 +-
+ arch/arm64/kernel/acpi.c            | 2 +-
+ arch/arm64/kernel/cpufeature.c      | 2 +-
+ arch/arm64/kernel/ftrace.c          | 2 +-
+ arch/arm64/kernel/machine_kexec.c   | 2 +-
+ arch/arm64/kernel/probes/uprobes.c  | 2 +-
+ arch/arm64/kernel/sdei.c            | 2 +-
+ arch/arm64/kernel/smp.c             | 4 ++--
+ arch/arm64/kernel/traps.c           | 2 +-
+ arch/arm64/kvm/arch_timer.c         | 2 +-
+ arch/arm64/kvm/hyp/nvhe/ffa.c       | 2 +-
+ arch/arm64/kvm/mmu.c                | 2 +-
+ arch/arm64/kvm/nested.c             | 2 +-
+ arch/arm64/net/bpf_jit_comp.c       | 2 +-
+ 18 files changed, 22 insertions(+), 22 deletions(-)
 
-In the last guest_memfd upstream call (over a week ago now), we've
-discussed the option of batching and deferring TLB flushes, while
-providing a sort of "deadline" at which a TLB flush will
-deterministically be done.  E.g. guest_memfd would keep a counter of how
-many pages got direct map zapped, and do a flush of a range that
-contains all zapped pages every 512 allocated pages (and to ensure the
-flushes even happen in a timely manner if no allocations happen for a
-long time, also every, say, 5 seconds or something like that). Would
-that work for everyone? I briefly tested the performance of
-batch-flushes with secretmem in QEMU, and its within of 30% of the "no
-TLB flushes at all" solution in a simple benchmark that just memsets
-2GiB of memory.
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 23be85d93348..b8b1229e05e5 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -371,7 +371,7 @@ alternative_endif
+  * [start, end) with dcache line size explicitly provided.
+  *
+  * 	op:		operation passed to dc instruction
+- * 	domain:		domain used in dsb instruciton
++ * 	domain:		domain used in dsb instruction
+  * 	start:          starting virtual address of the region
+  * 	end:            end virtual address of the region
+  *	linesz:		dcache line size
+@@ -412,7 +412,7 @@ alternative_endif
+  * [start, end)
+  *
+  * 	op:		operation passed to dc instruction
+- * 	domain:		domain used in dsb instruciton
++ * 	domain:		domain used in dsb instruction
+  * 	start:          starting virtual address of the region
+  * 	end:            end virtual address of the region
+  * 	fixup:		optional label to branch to on user fault
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index e223cbf350e4..71ba4a47ab18 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -199,7 +199,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+  *    registers (e.g, SCTLR, TCR etc.) or patching the kernel via
+  *    alternatives. The kernel patching is batched and performed at later
+  *    point. The actions are always initiated only after the capability
+- *    is finalised. This is usally denoted by "enabling" the capability.
++ *    is finalised. This is usually denoted by "enabling" the capability.
+  *    The actions are initiated as follows :
+  *	a) Action is triggered on all online CPUs, after the capability is
+  *	finalised, invoked within the stop_machine() context from
+@@ -251,7 +251,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+ #define ARM64_CPUCAP_SCOPE_LOCAL_CPU		((u16)BIT(0))
+ #define ARM64_CPUCAP_SCOPE_SYSTEM		((u16)BIT(1))
+ /*
+- * The capabilitiy is detected on the Boot CPU and is used by kernel
++ * The capability is detected on the Boot CPU and is used by kernel
+  * during early boot. i.e, the capability should be "detected" and
+  * "enabled" as early as possibly on all booting CPUs.
+  */
+diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+index b37da3ee8529..f593ce79fe15 100644
+--- a/arch/arm64/include/asm/el2_setup.h
++++ b/arch/arm64/include/asm/el2_setup.h
+@@ -28,7 +28,7 @@
+ 	 * Fruity CPUs seem to have HCR_EL2.E2H set to RAO/WI, but
+ 	 * don't advertise it (they predate this relaxation).
+ 	 *
+-	 * Initalize HCR_EL2.E2H so that later code can rely upon HCR_EL2.E2H
++	 * Initialize HCR_EL2.E2H so that later code can rely upon HCR_EL2.E2H
+ 	 * indicating whether the CPU is running in E2H mode.
+ 	 */
+ 	mrs_s	x1, SYS_ID_AA64MMFR4_EL1
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index aa89c2e67ebc..36bf4655bc3d 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -432,7 +432,7 @@ bool pgattr_change_is_safe(pteval_t old, pteval_t new);
+  *   1      0      |   1           0          1
+  *   1      1      |   0           1          x
+  *
+- * When hardware DBM is not present, the sofware PTE_DIRTY bit is updated via
++ * When hardware DBM is not present, the software PTE_DIRTY bit is updated via
+  * the page fault mechanism. Checking the dirty status of a pte becomes:
+  *
+  *   PTE_DIRTY || (PTE_WRITE && !PTE_RDONLY)
+@@ -598,7 +598,7 @@ static inline int pte_protnone(pte_t pte)
+ 	/*
+ 	 * pte_present_invalid() tells us that the pte is invalid from HW
+ 	 * perspective but present from SW perspective, so the fields are to be
+-	 * interpretted as per the HW layout. The second 2 checks are the unique
++	 * interpreted as per the HW layout. The second 2 checks are the unique
+ 	 * encoding that we use for PROT_NONE. It is insufficient to only use
+ 	 * the first check because we share the same encoding scheme with pmds
+ 	 * which support pmd_mkinvalid(), so can be present-invalid without
+diff --git a/arch/arm64/include/asm/suspend.h b/arch/arm64/include/asm/suspend.h
+index 0cde2f473971..e65f33edf9d6 100644
+--- a/arch/arm64/include/asm/suspend.h
++++ b/arch/arm64/include/asm/suspend.h
+@@ -23,7 +23,7 @@ struct cpu_suspend_ctx {
+  * __cpu_suspend_enter()'s caller, and populated by __cpu_suspend_enter().
+  * This data must survive until cpu_resume() is called.
+  *
+- * This struct desribes the size and the layout of the saved cpu state.
++ * This struct describes the size and the layout of the saved cpu state.
+  * The layout of the callee_saved_regs is defined by the implementation
+  * of __cpu_suspend_enter(), and cpu_resume(). This struct must be passed
+  * in by the caller as __cpu_suspend_enter()'s stack-frame is gone once it
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index 7aca29e1d30b..d1ac0e58651c 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -133,7 +133,7 @@ static int __init acpi_fadt_sanity_check(void)
+ 
+ 	/*
+ 	 * FADT is required on arm64; retrieve it to check its presence
+-	 * and carry out revision and ACPI HW reduced compliancy tests
++	 * and carry out revision and ACPI HW reduced compliance tests
+ 	 */
+ 	status = acpi_get_table(ACPI_SIG_FADT, 0, &table);
+ 	if (ACPI_FAILURE(status)) {
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 5ed401ff79e3..5c673778e28f 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1002,7 +1002,7 @@ static void __init sort_ftr_regs(void)
+ 
+ /*
+  * Initialise the CPU feature register from Boot CPU values.
+- * Also initiliases the strict_mask for the register.
++ * Also initialises, the strict_mask for the register.
+  * Any bits that are not covered by an arm64_ftr_bits entry are considered
+  * RES0 for the system-wide value, and must strictly match.
+  */
+diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
+index 5adad37ab4fa..5a1554a44162 100644
+--- a/arch/arm64/kernel/ftrace.c
++++ b/arch/arm64/kernel/ftrace.c
+@@ -492,7 +492,7 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
+ 		return ret;
+ 
+ 	/*
+-	 * When using mcount, callsites in modules may have been initalized to
++	 * When using mcount, callsites in modules may have been initialized to
+ 	 * call an arbitrary module PLT (which redirects to the _mcount stub)
+ 	 * rather than the ftrace PLT we'll use at runtime (which redirects to
+ 	 * the ftrace trampoline). We can ignore the old PLT when initializing
+diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+index 6f121a0164a4..239c16e3d02f 100644
+--- a/arch/arm64/kernel/machine_kexec.c
++++ b/arch/arm64/kernel/machine_kexec.c
+@@ -251,7 +251,7 @@ void crash_post_resume(void)
+  * marked as Reserved as memory was allocated via memblock_reserve().
+  *
+  * In hibernation, the pages which are Reserved and yet "nosave" are excluded
+- * from the hibernation iamge. crash_is_nosave() does thich check for crash
++ * from the hibernation image. crash_is_nosave() does thich check for crash
+  * dump kernel and will reduce the total size of hibernation image.
+  */
+ 
+diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
+index 2799bdb2fb82..941668800aea 100644
+--- a/arch/arm64/kernel/probes/uprobes.c
++++ b/arch/arm64/kernel/probes/uprobes.c
+@@ -131,7 +131,7 @@ void arch_uprobe_abort_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ 	struct uprobe_task *utask = current->utask;
+ 
+ 	/*
+-	 * Task has received a fatal signal, so reset back to probbed
++	 * Task has received a fatal signal, so reset back to probed
+ 	 * address.
+ 	 */
+ 	instruction_pointer_set(regs, utask->vaddr);
+diff --git a/arch/arm64/kernel/sdei.c b/arch/arm64/kernel/sdei.c
+index 95169f7b6531..965b03fedfb8 100644
+--- a/arch/arm64/kernel/sdei.c
++++ b/arch/arm64/kernel/sdei.c
+@@ -202,7 +202,7 @@ unsigned long sdei_arch_get_entry_point(int conduit)
+ /*
+  * do_sdei_event() returns one of:
+  *  SDEI_EV_HANDLED -  success, return to the interrupted context.
+- *  SDEI_EV_FAILED  -  failure, return this error code to firmare.
++ *  SDEI_EV_FAILED  -  failure, return this error code to firmware.
+  *  virtual-address -  success, return to this address.
+  */
+ unsigned long __kprobes do_sdei_event(struct pt_regs *regs,
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 68cea3a4a35c..a0bfe624f899 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -350,7 +350,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
+ 
+ 	/*
+ 	 * Now that the dying CPU is beyond the point of no return w.r.t.
+-	 * in-kernel synchronisation, try to get the firwmare to help us to
++	 * in-kernel synchronisation, try to get the firmware to help us to
+ 	 * verify that it has really left the kernel before we consider
+ 	 * clobbering anything it might still be using.
+ 	 */
+@@ -523,7 +523,7 @@ int arch_register_cpu(int cpu)
+ 
+ 	/*
+ 	 * Availability of the acpi handle is sufficient to establish
+-	 * that _STA has aleady been checked. No need to recheck here.
++	 * that _STA has already been checked. No need to recheck here.
+ 	 */
+ 	c->hotpluggable = arch_cpu_is_hotpluggable(cpu);
+ 
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 681939ef5d16..914282016069 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -922,7 +922,7 @@ void __noreturn panic_bad_stack(struct pt_regs *regs, unsigned long esr, unsigne
+ 	__show_regs(regs);
+ 
+ 	/*
+-	 * We use nmi_panic to limit the potential for recusive overflows, and
++	 * We use nmi_panic to limit the potential for recursive overflows, and
+ 	 * to get a better stack trace.
+ 	 */
+ 	nmi_panic(NULL, "kernel stack overflow");
+diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+index dbd74e4885e2..ebcb7f1a55ee 100644
+--- a/arch/arm64/kvm/arch_timer.c
++++ b/arch/arm64/kvm/arch_timer.c
+@@ -815,7 +815,7 @@ static void timer_set_traps(struct kvm_vcpu *vcpu, struct timer_map *map)
+ 		tpt = tpc = true;
+ 
+ 	/*
+-	 * For the poor sods that could not correctly substract one value
++	 * For the poor sods that could not correctly subtract one value
+ 	 * from another, trap the full virtual timer and counter.
+ 	 */
+ 	if (has_broken_cntvoff() && timer_get_offset(map->direct_vtimer))
+diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+index 4e16f9b96f63..0ee7ebb2485e 100644
+--- a/arch/arm64/kvm/hyp/nvhe/ffa.c
++++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+@@ -115,7 +115,7 @@ static void ffa_set_retval(struct kvm_cpu_context *ctxt,
+ 	 *
+ 	 * FFA-1.3 introduces 64-bit variants of the CPU cycle management
+ 	 * interfaces. Moreover, FF-A 1.3 clarifies that SMC32 direct requests
+-	 * complete with SMC32 direct reponses which *should* allow us use the
++	 * complete with SMC32 direct responses which *should* allow us use the
+ 	 * function ID sent by the caller to determine whether to return x8-x17.
+ 	 *
+ 	 * Note that we also cannot rely on function IDs in the response.
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index 7cc964af8d30..9a6a80c3fbe5 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -1755,7 +1755,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 
+ 	/*
+ 	 * Check if this is non-struct page memory PFN, and cannot support
+-	 * CMOs. It could potentially be unsafe to access as cachable.
++	 * CMOs. It could potentially be unsafe to access as cacheable.
+ 	 */
+ 	if (vm_flags & (VM_PFNMAP | VM_MIXEDMAP) && !pfn_is_map_memory(pfn)) {
+ 		if (is_vma_cacheable) {
+diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+index 7a045cad6bdf..4c16dbbd6e90 100644
+--- a/arch/arm64/kvm/nested.c
++++ b/arch/arm64/kvm/nested.c
+@@ -85,7 +85,7 @@ int kvm_vcpu_init_nested(struct kvm_vcpu *vcpu)
+ 	/*
+ 	 * Let's treat memory allocation failures as benign: If we fail to
+ 	 * allocate anything, return an error and keep the allocated array
+-	 * alive. Userspace may try to recover by intializing the vcpu
++	 * alive. Userspace may try to recover by initializing the vcpu
+ 	 * again, and there is no reason to affect the whole VM for this.
+ 	 */
+ 	num_mmus = atomic_read(&kvm->online_vcpus) * S2_MMU_PER_VCPU;
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index ab83089c3d8f..3cfdb77fb47c 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -3053,7 +3053,7 @@ bool bpf_jit_supports_exceptions(void)
+ 	/* We unwind through both kernel frames starting from within bpf_throw
+ 	 * call and BPF frames. Therefore we require FP unwinder to be enabled
+ 	 * to walk kernel frames and reach BPF frames in the stack trace.
+-	 * ARM64 kernel is aways compiled with CONFIG_FRAME_POINTER=y
++	 * ARM64 kernel is always, compiled with CONFIG_FRAME_POINTER=y
+ 	 */
+ 	return true;
+ }
+-- 
+2.34.1
 
-I think something like this, together with the batch-flushing at the end
-of fallocate() / write() as David suggested above should work for
-Firecracker.
-
->> There's probably other things we can try. Backing guest_memfd with
->> hugepages would reduce the number TLB flushes by 512x (although not all
->> users of Firecracker at Amazon [can] use hugepages).
-> 
-> Right.
-> 
->>
->> And I do still wonder if it's possible to have "async TLB flushes" where
->> we simply don't wait for the IPI (x86 terminology, not sure what the
->> mechanism on arm64 is). Looking at
->> smp_call_function_many_cond()/invlpgb_kernel_range_flush() on x86, it
->> seems so? Although seems like on ARM it's actually just handled by a
->> single instruction (TLBI) and not some interprocess communication
->> thingy. Maybe there's a variant that's faster / better for this usecase?
-> 
-> Right, some architectures (and IIRC also x86 with some extension) are able to flush remote TLBs without IPIs.
-> 
-> Doing a quick search, there seems to be some research on async TLB flushing, e.g., [1].
-> 
-> In the context here, I wonder whether an async TLB flush would be
-> significantly better than not doing an explicit TLB flush: in both
-> cases, it's not really deterministic when the relevant TLB entries
-> will vanish: with the async variant it might happen faster on average
-> I guess.
-
-I actually did end up playing around with this a while ago, and it made
-things slightly better performance wise, but it was still too bad to be
-useful :(
-
-> 
-> [1] https://cs.yale.edu/homes/abhishek/kumar-taco20.pdf
->
-
-Best, 
-Patrick
 
