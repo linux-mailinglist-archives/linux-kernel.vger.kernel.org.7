@@ -1,165 +1,123 @@
-Return-Path: <linux-kernel+bounces-849022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7C9BCF07A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:31:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E178BCF07D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873543BF572
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:30:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 688264E1149
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 06:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19811D6188;
-	Sat, 11 Oct 2025 06:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179F521930A;
+	Sat, 11 Oct 2025 06:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zt5AUOJE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wjZWLBRz";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zt5AUOJE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wjZWLBRz"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GpuRKwpb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A611A7AE3
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 06:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18221FBEA6
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 06:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760164247; cv=none; b=cIGsdPlN3pr5629zLxMNW8xARtWaWmtkwT1spH/HYIW0ddCVKNHJLz8OvBjJEW5Hag7X2TG1hE0nr5Cpw4/fd4nHD7tjf2PaaQG9pkhow4pItCzcIb34RRQfAUH39KTsCYgagJ1dA8+TIU/ukh13AKnWpKV5dt2wnfUwrBT+BaU=
+	t=1760164474; cv=none; b=jL9/fu04Da6mnBJ2q+6X24KEJkYM4qD5zubftlaJ+gdYoWsfl3YLs4TGkOQbfSXVZ1YEYNVX9rugoQXgmeGej34JFs2n+DkIXjY9HvUVIfsY9SX35nDkqCxbtzWLTGCLw2NXh4zqP/8H5PG1rF8au7vXLq6QmXV8u0iGh18hLp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760164247; c=relaxed/simple;
-	bh=u1LF+Ti3AAEtLlFrb9ScnJ7ruknF7L8hxWlfKPV/hro=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eJvJcaF1PCJdatDGvH45kbjrfTrowIF60pDS+668+6psyqQu6IOC7Y3sjuFrD2oFIEErXYSJNmfSCdBS1oCLUztJg1t3Hgo6LyO3h1kKs8wf/ailK7cQS+Lb8GHS3U1h8CIHObtBxwUbYYfp3F10M2WPBcUzKEYFk/8VmJCdSac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zt5AUOJE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wjZWLBRz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zt5AUOJE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wjZWLBRz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B59DE1F394;
-	Sat, 11 Oct 2025 06:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760164243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZqzxnXW+bK68xaupaKeMgqc9JSRzxKgcBWYyvqmLiQs=;
-	b=Zt5AUOJEj97VtCNWyZMa62Bp9rBJPu0fPk2Hi93Wgh0KOuYVK0fi8YQIbaq7KSk/AzYWdl
-	BmpjftPZKI4Nj67lBFfT+H53C6JsZ3q9lA2RTpABDeE0D48WUbDHV00+OV3gaRL4Pa9GGB
-	xyA3z5POZ0+IZwxi6u6ObQlBG6GFgkw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760164243;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZqzxnXW+bK68xaupaKeMgqc9JSRzxKgcBWYyvqmLiQs=;
-	b=wjZWLBRzug6BnvP64dt1xQwdjg30w7bW5OHTLS+GrSHMWquNKRQmS6PNZAVXDaMvVOZgWQ
-	8motOrRi1JA5LMDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760164243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZqzxnXW+bK68xaupaKeMgqc9JSRzxKgcBWYyvqmLiQs=;
-	b=Zt5AUOJEj97VtCNWyZMa62Bp9rBJPu0fPk2Hi93Wgh0KOuYVK0fi8YQIbaq7KSk/AzYWdl
-	BmpjftPZKI4Nj67lBFfT+H53C6JsZ3q9lA2RTpABDeE0D48WUbDHV00+OV3gaRL4Pa9GGB
-	xyA3z5POZ0+IZwxi6u6ObQlBG6GFgkw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760164243;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZqzxnXW+bK68xaupaKeMgqc9JSRzxKgcBWYyvqmLiQs=;
-	b=wjZWLBRzug6BnvP64dt1xQwdjg30w7bW5OHTLS+GrSHMWquNKRQmS6PNZAVXDaMvVOZgWQ
-	8motOrRi1JA5LMDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 679B113693;
-	Sat, 11 Oct 2025 06:30:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vnz8F5P56WiWDgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 11 Oct 2025 06:30:43 +0000
-Date: Sat, 11 Oct 2025 08:30:43 +0200
-Message-ID: <87ldli9ch8.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Denis Arefev <arefev@swemel.ru>
-Cc: David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: hda: Fix missing pointer check in hda_component_manager_init function
-In-Reply-To: <20251009105050.20806-1-arefev@swemel.ru>
-References: <20251009105050.20806-1-arefev@swemel.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1760164474; c=relaxed/simple;
+	bh=ZHoGBUbqzplr1SqOVtjjpzhNhjDVkJ8UthME/KpzTy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eub0Nv6PRKQay5YJ2KdV1w5pg2EbBZK0ggiq3gAW+G6y0yPOIU4WGNHb5nFi3Wc5JjdvpZRLlqStS1YsY+Us5J97hnYEafdqkQNqeK/5/3Gnrt7ukIUVCBNpO9V5cdqBHCiNRhvVM4FFbA0yGiWt+tO8yH/fywGwFZMaTJnEqAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GpuRKwpb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760164473; x=1791700473;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZHoGBUbqzplr1SqOVtjjpzhNhjDVkJ8UthME/KpzTy8=;
+  b=GpuRKwpb5feBKRsoFo8CU4lzGAf7o8B9JPDmBlq9vLjFtgUypJexDd1M
+   hP3B/qb2ceBE8JOjPmKX+MRPrJbQbbas848jPnsT+KmUmeMmLqu41d6sj
+   0P0BwT+l2KCIdLBGhxfS1rk3QjQJkONSDWjIKra7Vi+0fmswPvLySsD9t
+   A/nTZm81q84KG0pjJun6n7uoGo22kLG+gM4smZ0BuZYsPaYgyqHDo15K9
+   pi8DbCMIghrTQ5+NrQHF1Jyaly3IGLw5BwIWu8EUj69jvCVYF+VBZMe9F
+   PIzOTYfkqdQ6Q5LxHcR5GARz9shDOFFV6ok0j2ATeOHVV7hlFh4UFuvXA
+   Q==;
+X-CSE-ConnectionGUID: rzFwYRQHTsGSIDT8F33gLA==
+X-CSE-MsgGUID: LENzIS5yRJ29GZ5Mjprm0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="87838073"
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="87838073"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 23:34:32 -0700
+X-CSE-ConnectionGUID: VcSPh3W0SuyKVz7g68oZuw==
+X-CSE-MsgGUID: hnXs8JcbTyOib7kc4CEhjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="204824426"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 23:34:27 -0700
+Message-ID: <7a001cb9-fb09-487c-bfa9-e2d329b0f6a8@linux.intel.com>
+Date: Sat, 11 Oct 2025 14:30:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,swemel.ru:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/8] mm: Introduce deferred freeing for kernel page
+ tables
+To: David Hildenbrand <david@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
+ Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
+Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+ <20250919054007.472493-7-baolu.lu@linux.intel.com>
+ <5b494700-a3af-4feb-8c5f-1ca424ad9841@redhat.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <5b494700-a3af-4feb-8c5f-1ca424ad9841@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 09 Oct 2025 12:50:47 +0200,
-Denis Arefev wrote:
+On 10/10/25 23:47, David Hildenbrand wrote:
+> On 19.09.25 07:40, Lu Baolu wrote:
+>> From: Dave Hansen <dave.hansen@linux.intel.com>
+>>
+>> This introduces a conditional asynchronous mechanism, enabled by
+>> CONFIG_ASYNC_PGTABLE_FREE. When enabled, this mechanism defers the 
+>> freeing
+>> of pages that are used as page tables for kernel address mappings. These
+>> pages are now queued to a work struct instead of being freed immediately.
+>>
 > 
-> The __component_match_add function may assign the 'matchptr' pointer
-> the value ERR_PTR(-ENOMEM), which will subsequently be dereferenced.
+> Okay, I now looked at patch #8 and I think the whole reason of this 
+> patch is "batch-free page tables to minimize the impact of an expensive 
+> cross-page table operation" which is a single TLB flush.
 > 
-> The call stack leading to the error looks like this:
+>> This deferred freeing provides a safe context for a future patch to add
 > 
-> hda_component_manager_init
-> |-> component_match_add
->     |-> component_match_add_release
->         |-> __component_match_add ( ... ,**matchptr, ... )
->             |-> *matchptr = ERR_PTR(-ENOMEM);       // assign
-> |-> component_master_add_with_match( ...  match)
->     |-> component_match_realloc(match, match->num); // dereference
+> So I would claridy here instead something like
 > 
-> Add IS_ERR() check to prevent the crash.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: ae7abe36e352 ("ALSA: hda/realtek: Add CS35L41 support for Thinkpad laptops")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Denis Arefev <arefev@swemel.ru>
-> ---
-> V1 -> V2:
-> Changed tag Fixes
-> Add print to log an error it as Stefan Binding <sbinding@opensource.cirrus.com> suggested
+> "This deferred freeing allows for batch-freeing of page tables, 
+> providing a safe context for performing a single expensive operation 
+> (TLB flush) for a batch of kernel page tables instead of performing that 
+> expensive operation for each page table."
 
-Applied now.  Thanks.
+The commit message has been updated, and CONFIG_ASYNC_PGTABLE_FREE has
+been replaced with CONFIG_ASYNC_KERNEL_PGTABLE_FREE. Thank you for the
+comments.
 
-
-Takashi
+Thanks,
+baolu
 
