@@ -1,149 +1,162 @@
-Return-Path: <linux-kernel+bounces-849058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE82ABCF1B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:58:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1C2BCF1B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 09:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEDEF4E777E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 07:58:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF23F19A0471
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 08:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16AE238C0B;
-	Sat, 11 Oct 2025 07:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C2A2356D9;
+	Sat, 11 Oct 2025 07:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="hiki661m"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XWb1ip0w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725682367B5;
-	Sat, 11 Oct 2025 07:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760169475; cv=pass; b=T1snV7P6z08MYQAYImHSGEIyR2lAnGa0t7Ge37oAbzBKgTKbx20DSR10JKQaKNsoA5bv7Y8/bdvSInR0mkeC7+d2lGB7aHoHz34cIIRiVXfgzTN0uSgVCYgcYyJQkyMLRJDTYIIQTsz0bcBShs5kUvLAe4a+dq45HOFCsyyDx0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760169475; c=relaxed/simple;
-	bh=uZRQZy0oMNeA7ShdMfkq03Evjw3bTuH1YwjVhZwPVf8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QzUtJa26htZfs0yb4nL9/vzbVlJaoWPAwOzi6MVPw51kWBPsveTooU3db0qh2oqgAr+l8WIsKk3tUxbEk4xF64Zi3P5iALOQtc1eUV1EdJk8BLlimIczN94QM322wG8Ok1OQNYJdYC2Y09a5XxBkuYV7W6pyonYWZyWKwmijID0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=hiki661m; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760169446; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KLl1+e+W9DzaoLYJzbMiO+O4s8HsZP3p9CwUndYoD+5DAstyBx7vEDq6NO9esSXLuGBmO4vjde+as/e0soTpuf7kAnK+8E7IJx+E5oCM3HmHiaeukGrrhiJk6bMc0VePbLVuMtmz3/E2UwZG5GZT2v+qNdJg2Vlx1GCvfFaZL3o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760169446; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=T8D9JSmjoAYBStsc1vhdarg1O0rJKit5HAJi7BCHXNI=; 
-	b=YMujKQP4mm5PtNOhEaGYZ5xuDL/TUvVWfuIX7aciWq6fbNWyZZoRneJVOMl4k+ZoCWeK6qpMKj49CVm/gEvQpNZekC8MOjKAsNMMMr8y6+7PuKlAwFTL8Y0KTVnjxWE3jfrCFUbotjPuFtj38umH+V5cMBUaGPD2fVFasjDAArg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
-	dmarc=pass header.from=<sjoerd@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760169446;
-	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=T8D9JSmjoAYBStsc1vhdarg1O0rJKit5HAJi7BCHXNI=;
-	b=hiki661mfVPG5vQuxCUrKp4b9mhLeonNq8bnkGxHq05iBV7aBX4Z7ACWoYFpcFqc
-	dJxjLUptDbelZ0S6Kf6A7s8tg6h6ii+NL7ThCswSP57Qjyds/lC6I0/cxZ5uZNGHitK
-	5cRsY1j0zQ1hFKZ7XwfQ7TZnDzmlnVtYD9OBeKVM=
-Received: by mx.zohomail.com with SMTPS id 1760169443955726.6866621828841;
-	Sat, 11 Oct 2025 00:57:23 -0700 (PDT)
-Message-ID: <5137227fee0bb06dac3558b0d2db47972785df48.camel@collabora.com>
-Subject: Re: [PATCH] drm/mediatek: fix device use-after-free on unbind
-From: Sjoerd Simons <sjoerd@collabora.com>
-To: Johan Hovold <johan@kernel.org>, Chun-Kuang Hu
- <chunkuang.hu@kernel.org>,  Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  CK Hu <ck.hu@mediatek.com>, Ma
- Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Date: Sat, 11 Oct 2025 09:57:20 +0200
-In-Reply-To: <20251006093937.27869-1-johan@kernel.org>
-References: <20251006093937.27869-1-johan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-5 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A42929A2
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 07:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760169573; cv=none; b=NY6KLDooKgz8WD/OCNP2VWqFjOoTcHJvhb9/Coo112M9SBMy/aELlX1QdVzlVahdKZ/LYOmASRYQ8GQqI6M+HZTfRLquF7Hs6jRLN9BYevoUkuhxxHhiSHHd38mdZaO24DaWG/89PMiTiZ1lEBaOTTThueTEVcx01rc85SvaSho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760169573; c=relaxed/simple;
+	bh=8v1LnbbHFIfqA7vJouybB86oy19ps3TIzwxEhAJtQTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Rz2g3JTz/DD8RaSSDG97lvx85ICuXvaNk/SovUirxT/K590svfDsxpB5xM19i/+5Z+JvkGTsgzqiw8lLbV9N0ESYh5qDCxBag6oeOa099FPqRfxrDQuZeMnxs8KdMiWiQN5bmi91adDD3ax7FK0ThA92U9MDEHifQmGD0DFNyak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XWb1ip0w; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760169572; x=1791705572;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8v1LnbbHFIfqA7vJouybB86oy19ps3TIzwxEhAJtQTk=;
+  b=XWb1ip0woz78a0bGDmpDB0MJc4tep717FhafTNq1eCaoAugUrrYvKUwU
+   Fpz0nC+vQbVaRnUsi1f4TSokkKYvyQYLHhV3c2BepDDOVw524/FjxgE1H
+   /VeS3j0JkgU7QNis3+WzAwAgFXVTGhCvshZSH4PXKPYV4jiW5ZosT3fhY
+   VwDvIw8ezFIbhT5vZ8BlLFA5ZZjb4fJD8Dtum78EHLe3ZIKgxpI6yMuob
+   RmRzaqFvU1HWYuRP0puiMf1QdEI2vL9pc6BSrV5qk4XqKZaZ7NjP7LEXu
+   Ig42lUgKIhvA3gVNnCPpmcfblqFPYj9MoTDwdg2Pml5pT0VeKxvf8/59p
+   w==;
+X-CSE-ConnectionGUID: wIN/080HTfSzfSYsJWi6NA==
+X-CSE-MsgGUID: pttbQWbvTrO47CSzRAn4YA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11578"; a="66234320"
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="66234320"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2025 00:59:32 -0700
+X-CSE-ConnectionGUID: NeCWoKbJSHav64IBGy1+OQ==
+X-CSE-MsgGUID: 16ccj2lkTQWTxVQBuwpw9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,220,1754982000"; 
+   d="scan'208";a="186270708"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 11 Oct 2025 00:59:30 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7UVi-0003cx-2t;
+	Sat, 11 Oct 2025 07:59:26 +0000
+Date: Sat, 11 Oct 2025 15:58:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>
+Subject: include/linux/stddef.h:8:14: warning: passing argument 5 of
+ 'drm_gpusvm_init' makes integer from pointer without a cast
+Message-ID: <202510111506.HRLvzZmk-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 2025-10-06 at 11:39 +0200, Johan Hovold wrote:
-> A recent change fixed device reference leaks when looking up drm
-> platform device driver data during bind() but failed to remove a partial
-> fix which had been added by commit 80805b62ea5b ("drm/mediatek: Fix
-> kobject put for component sub-drivers").
->=20
-> This results in a reference imbalance on component bind() failures and
-> on unbind() which could lead to a user-after-free.
->=20
-> Make sure to only drop the references after retrieving the driver data
-> by effectively reverting the previous partial fix.
->=20
-> Note that holding a reference to a device does not prevent its driver
-> data from going away so there is no point in keeping the reference.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0739473694c4878513031006829f1030ec850bc2
+commit: 10aa5c80603088d10c2cd5e7e27d561a8fb59c7e drm/gpusvm, drm/xe: Fix userptr to not allow device private pages
+date:   8 days ago
+config: x86_64-randconfig-r123-20251011 (https://download.01.org/0day-ci/archive/20251011/202510111506.HRLvzZmk-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510111506.HRLvzZmk-lkp@intel.com/reproduce)
 
-Thanks for correcting my "fix". This looks better and i can confirm it fixe=
-s the issue :)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510111506.HRLvzZmk-lkp@intel.com/
 
-Reviewed-By: Sjoerd Simons <sjoerd@collabora.com>
-Tested-By: Sjoerd Simons <sjoerd@collabora.com>
-=20
->=20
-> Fixes: 1f403699c40f ("drm/mediatek: Fix device/node reference count leaks=
- in
-> mtk_drm_get_all_drm_priv")
-> Reported-by: Sjoerd Simons <sjoerd@collabora.com>
-> Link: https://lore.kernel.org/r/20251003-mtk-drm-refcount-v1-1-3b3f2813b0=
-db@collabora.com
-> Cc: stable@vger.kernel.org
-> Cc: Ma Ke <make24@iscas.ac.cn>
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
-> =C2=A0drivers/gpu/drm/mediatek/mtk_drm_drv.c | 10 ----------
-> =C2=A01 file changed, 10 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/med=
-iatek/mtk_drm_drv.c
-> index 384b0510272c..a94c51a83261 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -686,10 +686,6 @@ static int mtk_drm_bind(struct device *dev)
-> =C2=A0	for (i =3D 0; i < private->data->mmsys_dev_num; i++)
-> =C2=A0		private->all_drm_private[i]->drm =3D NULL;
-> =C2=A0err_put_dev:
-> -	for (i =3D 0; i < private->data->mmsys_dev_num; i++) {
-> -		/* For device_find_child in mtk_drm_get_all_priv() */
-> -		put_device(private->all_drm_private[i]->dev);
-> -	}
-> =C2=A0	put_device(private->mutex_dev);
-> =C2=A0	return ret;
-> =C2=A0}
-> @@ -697,18 +693,12 @@ static int mtk_drm_bind(struct device *dev)
-> =C2=A0static void mtk_drm_unbind(struct device *dev)
-> =C2=A0{
-> =C2=A0	struct mtk_drm_private *private =3D dev_get_drvdata(dev);
-> -	int i;
-> =C2=A0
-> =C2=A0	/* for multi mmsys dev, unregister drm dev in mmsys master */
-> =C2=A0	if (private->drm_master) {
-> =C2=A0		drm_dev_unregister(private->drm);
-> =C2=A0		mtk_drm_kms_deinit(private->drm);
-> =C2=A0		drm_dev_put(private->drm);
-> -
-> -		for (i =3D 0; i < private->data->mmsys_dev_num; i++) {
-> -			/* For device_find_child in mtk_drm_get_all_priv() */
-> -			put_device(private->all_drm_private[i]->dev);
-> -		}
-> =C2=A0		put_device(private->mutex_dev);
-> =C2=A0	}
-> =C2=A0	private->mtk_drm_bound =3D false;
+All warnings (new ones prefixed by >>):
+
+   In file included from include/uapi/linux/posix_types.h:5,
+                    from include/uapi/linux/types.h:14,
+                    from include/linux/types.h:6,
+                    from include/linux/objtool_types.h:7,
+                    from include/linux/objtool.h:5,
+                    from include/linux/instrumentation.h:7,
+                    from arch/x86/include/asm/bug.h:6,
+                    from include/linux/bug.h:5,
+                    from include/linux/mmdebug.h:5,
+                    from include/linux/mm.h:6,
+                    from include/linux/pagemap.h:8,
+                    from include/drm/ttm/ttm_tt.h:30,
+                    from drivers/gpu/drm/xe/xe_bo.h:9,
+                    from drivers/gpu/drm/xe/xe_bo.c:6:
+   drivers/gpu/drm/xe/xe_svm.h: In function 'xe_svm_init':
+>> include/linux/stddef.h:8:14: warning: passing argument 5 of 'drm_gpusvm_init' makes integer from pointer without a cast [-Wint-conversion]
+       8 | #define NULL ((void *)0)
+         |              ^~~~~~~~~~~
+         |              |
+         |              void *
+   drivers/gpu/drm/xe/xe_svm.h:217:38: note: in expansion of macro 'NULL'
+     217 |                                NULL, NULL, 0, 0, 0, NULL, NULL, 0);
+         |                                      ^~~~
+   In file included from drivers/gpu/drm/xe/xe_bo_types.h:11,
+                    from drivers/gpu/drm/xe/xe_bo.h:11:
+   include/drm/drm_gpusvm.h:254:35: note: expected 'long unsigned int' but argument is of type 'void *'
+     254 |                     unsigned long mm_start, unsigned long mm_range,
+         |                     ~~~~~~~~~~~~~~^~~~~~~~
+   include/linux/stddef.h:8:14: warning: passing argument 10 of 'drm_gpusvm_init' makes integer from pointer without a cast [-Wint-conversion]
+       8 | #define NULL ((void *)0)
+         |              ^~~~~~~~~~~
+         |              |
+         |              void *
+   drivers/gpu/drm/xe/xe_svm.h:217:59: note: in expansion of macro 'NULL'
+     217 |                                NULL, NULL, 0, 0, 0, NULL, NULL, 0);
+         |                                                           ^~~~
+   include/drm/drm_gpusvm.h:257:59: note: expected 'int' but argument is of type 'void *'
+     257 |                     const unsigned long *chunk_sizes, int num_chunks);
+         |                                                       ~~~~^~~~~~~~~~
+   In file included from drivers/gpu/drm/xe/xe_res_cursor.h:38,
+                    from drivers/gpu/drm/xe/xe_bo.c:34:
+   drivers/gpu/drm/xe/xe_svm.h:216:16: error: too many arguments to function 'drm_gpusvm_init'
+     216 |         return drm_gpusvm_init(&vm->svm.gpusvm, "Xe SVM (simple)", &vm->xe->drm,
+         |                ^~~~~~~~~~~~~~~
+   include/drm/drm_gpusvm.h:251:5: note: declared here
+     251 | int drm_gpusvm_init(struct drm_gpusvm *gpusvm,
+         |     ^~~~~~~~~~~~~~~
+
+
+vim +/drm_gpusvm_init +8 include/linux/stddef.h
+
+^1da177e4c3f41 Linus Torvalds   2005-04-16  6  
+^1da177e4c3f41 Linus Torvalds   2005-04-16  7  #undef NULL
+^1da177e4c3f41 Linus Torvalds   2005-04-16 @8  #define NULL ((void *)0)
+6e218287432472 Richard Knutsson 2006-09-30  9  
+
+:::::: The code at line 8 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
+
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
