@@ -1,129 +1,142 @@
-Return-Path: <linux-kernel+bounces-849143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FD0BCF496
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C89CBCF4A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 13:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4102B19A0AD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6232442593B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 Oct 2025 11:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850C8263F4E;
-	Sat, 11 Oct 2025 11:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C83626B08F;
+	Sat, 11 Oct 2025 11:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="JGGM1pd8"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJ1psErk"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443AA1D435F
-	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181BB26561E
+	for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 11:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760182669; cv=none; b=LQ3R7z95xDd5iVT5+U1ErAKYw59WCQu50E4uUzXD8kBmcnfH4KMIeNK8ubARpivtEWU6ooxfC5blzNWVZQEO0aoQsSWhCd26zWWX82+F7coYf/tYIgs+ECJU1P4RnMj7FAoGZ1Vz/uIneQj8n6lLubi3dOhGWpVsPkP5RmK4GC8=
+	t=1760183006; cv=none; b=KM6R59YrZ1EwvnUpKyj/OMrKwTIQoDKTlzW4XRZsE6Q2SPLA5ltJinE4+ENy3F1VdD2+LufDAPMxO44P/ghrCA5rAUeUbHsre/ErrltDnMzvEmpQ9Hwys3HJBmxMQWc+1FUdfbJtOrpPwJ2ZT/O7JXgqTyjeO368VSRWJ5RP9fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760182669; c=relaxed/simple;
-	bh=bRdrc/g9qQlktXDwT+VPM6NnLYJ3NloT0R97Z/JIeik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lSeN0kg15hTrKyk6WBIMXg9AjWOdN7hHZdF4zmgSXCkFGek3OajOlS8S01XHJXcL7TNi1ppf3n1ojvoYwvjLhYdXnZEYi63BmgM0RSxVLWdtCqlouTW1vJi9/ABnA24ZZteesxVKeu+tIpz63cOy8eCtKRzzHs7895BwoHiK5Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=JGGM1pd8; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
-	by cmsmtp with ESMTPS
-	id 7WOSvtyj0Zx2i7XuqvkoPX; Sat, 11 Oct 2025 11:37:36 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 7Xupvt0520HUD7Xuqv91vn; Sat, 11 Oct 2025 11:37:36 +0000
-X-Authority-Analysis: v=2.4 cv=TIhFS0la c=1 sm=1 tr=0 ts=68ea4180
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=VoBekJB99Y0dKvRsJJIA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+hJibs8dQk2A3ttBHAPuQzvPEqntnziRNoKw8ZyU7BI=; b=JGGM1pd8aEdr1yyvT165feRpp1
-	RZWeoWja3503gY/HpUReO+LDgYK7aqBFeuNdABOVNJT7BnGuFeEw4cmOPpLAJFRGeQ7VcyJlhcFJI
-	32aCbC5WyWe/asYI8wSlIglLtequsJ+4EZiTqBorFP+jRTPiiDtZscbTAdDnj1VIRcyyMb4XhQNVy
-	BpMHUKFIdnVywhj3GmF89YBvMIoj9j66aqNgDkWul/EqwS2jBg7jLh6HMR8OUIyUtsMEGn8U01Ki+
-	iNtt3TfUBhFyMTAFE916o50GKOuyjVBnoeqgSjiiU5zxSXWh67eotXv87IyuwC/V9eugYF0RrG14p
-	fFOxXYZg==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:53622 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1v7Xup-00000000seB-0dTE;
-	Sat, 11 Oct 2025 05:37:35 -0600
-Message-ID: <ee159df6-ef77-486c-bf5e-5e6941d88a6f@w6rz.net>
-Date: Sat, 11 Oct 2025 04:37:33 -0700
+	s=arc-20240116; t=1760183006; c=relaxed/simple;
+	bh=VNyemAc7vyXNsAZSmjzs75LPZtRSVe13x1Us9A7Fhtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5c+K7D9L9DNCb9MDsITDKkmpBx9DGCu/fv0MLl4c2140cEahQAtfAPpQqkAh/N229J8T/tNxcyUOBvm9YQOiQ0BMfi7ReIVoL+Fw21I4Azl8wXagm9GJ8IASy9rrms+5W2vFkBL9XlOVvikpz8XcV7aUzDi05H9zsunh/wuWXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJ1psErk; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e48d6b95fso26443635e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 04:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760182998; x=1760787798; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hY5uvSgS29Hcw6WzxbdNBonbA1Uf41cjYtAAQjFbEX8=;
+        b=HJ1psErkwauja7VgHlCCoAoabklIaYojylsuzqa9yMqJ0YakJkSP+HiUUOszBLnQZL
+         mOa1hTv+YHHLVu2MFqoSIdfp8KQqQ6Cb0DNWKvWdbqyxCRm3a0o6+FDijVZYjyZW/lEg
+         jRyEArW4094vwid7TwRMiP0cb/qpls3PVRNxFcMP6eEu32/9N4/fsGGL3f88nBmjpHWq
+         5JyJsqnz6nYCHbvgMdQLAcaPWn0buHUVp6YhohulXngGEpky7v5d+1vStpDu9iqVhPB0
+         Z1lU+hBrRuuqZFma8umwWxpmtkBOxSZpavtai1jvuFPzJxe4bte3YsBS52jfb5j4IjUk
+         DKvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760182998; x=1760787798;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hY5uvSgS29Hcw6WzxbdNBonbA1Uf41cjYtAAQjFbEX8=;
+        b=Ls3lXnJQn+wf82Zy9GDxsIt4qdC0EYktdPzWWNZG18JiDI/i53nD0DOAFPHeVdWz3R
+         fzA8ZTNX9EbZIOhJUT7w4VJZQXeM+3LHU/ZfTGRv87UpF6z2o9cZh3vfP5TpWiyv2F70
+         hCNvs71Y15p+8mQHunbO9T2Rv7R7EY3KwEoU9g/fTJwo8+P046KshkwJdKyNL27aAdp0
+         KH36prfg+Dk28c1g0UwICd9B/rx9M7A6KwU1TeyvmnzQ2wmz9IjWTBJM75Muw4cHgm/S
+         +mW2DNOEkBh0gTVxjGuHYtnutin5odjk2mq3HU0mIyClCYwwOHaQcR43to+uMj11D8Ux
+         rU+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVT1j3pKI9yX1u+RhARyWaRuNVEigEX4oS0Hw3TkN7d2BA/FqboYz0YicWhLSDSeFeCqdkl5WuNCOyhYpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrFmk6VF9kn1rstaUz834XASAAFyj6/k9oo4S+fdDymi0xFTzM
+	44p3ixRcn6CxA/uLtdYLdXP5VDrOzMYCz3HAqFa2uGsx4MEm5zwDCpkuzol0FG/3+NM=
+X-Gm-Gg: ASbGncu/Nq/tiuz27zvHsAxskqcVtI002ZBCGzr4wPzYN0PeRpf+NZkvPcm8hIJfM+u
+	etThgO11KOySKbfPtCQoCSOSaVSaPnLbYkIZO1yrBkIt/mHamA8S8T5vohe3s6/LMZEWTqcJLz8
+	Xd+KxG9+HXGoLrxb+m+P3QMciSB1K5jd3tH3gkGxGt0GoTuTJNBhpAE6rmtW3LIgyp6akVdIuI5
+	EAVcJPirk2fUb3cKGmcdrJRAcKW1exkMouPmGTwj5q8Z1h2rqfS2TbuWdFhhQr4bAz0tSDpNTHL
+	fUBUBZRlHHhZ4pk2oHUxWD9U1b2DuDjwhaOtOPk2edMeFyGMC3YzoQOb4pAAnxjSQ+cDbFNENiv
+	gxkHSrMTs0Ddq3EtbX0sslj74zTJNBeEkPSkRmsym4tbvXyVLPTra
+X-Google-Smtp-Source: AGHT+IFRCrBmD7s1cgzkGkuICLV7U1JPlNpBXYM/m0v9awapqHAnkU1llQHTFmawWVqgaD2lMT2oZQ==
+X-Received: by 2002:a05:600c:34c5:b0:46e:3d5a:d15d with SMTP id 5b1f17b1804b1-46fa9b064bcmr89831475e9.26.1760182997632;
+        Sat, 11 Oct 2025 04:43:17 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb48a5bf9sm90105195e9.18.2025.10.11.04.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 04:43:15 -0700 (PDT)
+Date: Sat, 11 Oct 2025 14:43:14 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+Subject: Re: [PATCH 19/24] arm64: dts: qcom: glymur: Add support for PCIe5
+Message-ID: <ilr7iaasabiwynzdu4ca6bhcyu5ubznc4yw4chfa3hkqsxjauw@2y6smgstv624>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-19-24b601bbecc0@oss.qualcomm.com>
+ <da2vvejbqdteaszzwyktczqivjblyawzh2k2giyoxdxlxcdrcb@fkuqivjmaggf>
+ <aOiw75D0RhDNLZLQ@hu-qianyu-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 00/41] 6.16.12-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251010131333.420766773@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20251010131333.420766773@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v7Xup-00000000seB-0dTE
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:53622
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 35
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfDziDT48g5L8kvpfu578uejxEUVqu/GZz0jFoOtj0LYXxzxFjEzRuoaHpdUBgAcyp/AdnF85DQtjpGwniwclGP3frVU6OhozldRuXcLWrRiJoG++QQRY
- 11+obEBXLhLOHLR3QAh516mDU7EoNH39UnruAO/VKHYvlSL5TEUI80Ezh4vZ0IaE7O+x9o4XXLIf1YCTv+u4g9bwoBTPSaQWokc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOiw75D0RhDNLZLQ@hu-qianyu-lv.qualcomm.com>
 
-On 10/10/25 06:15, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.12 release.
-> There are 41 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 12 Oct 2025 13:13:18 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.12-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 25-10-10 00:08:31, Qiang Yu wrote:
+> On Wed, Oct 08, 2025 at 04:36:59PM +0300, Abel Vesa wrote:
+> > On 25-09-25 12:02:27, Pankaj Patil wrote:
+> > > From: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> > > 
+> > > Describe PCIe5 controller and PHY. Also add required system resources like
+> > > regulators, clocks, interrupts and registers configuration for PCIe5.
+> > > 
+> > > Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> > > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/glymur.dtsi | 208 ++++++++++++++++++++++++++++++++++-
+> > >  1 file changed, 207 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > > index e6e001485747785fd29c606773cba7793bbd2a5c..17a07d33b9396dba00e61a3b4260fa1a535600f2 100644
+> > > --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > > @@ -951,7 +951,7 @@ gcc: clock-controller@100000 {
+> > >  				 <0>,
+> > >  				 <0>,
+> > >  				 <0>,
+> > > -				 <0>;
+> > > +				 <&pcie5_phy>;
+> > >  			#clock-cells = <1>;
+> > >  			#reset-cells = <1>;
+> > >  			#power-domain-cells = <1>;
+> > > @@ -2511,6 +2511,212 @@ pcie_west_slv_noc: interconnect@1920000 {
+> > >  			#interconnect-cells = <2>;
+> > >  		};
+> > >  
+> > > +		pcie5: pci@1b40000 {
+> > > +			device_type = "pci";
+> > > +			compatible = "qcom,glymur-pcie", "qcom,pcie-x1e80100";
+> > 
+> > The first compatible is definitely "qcom,pcie-glymur".
+> 
+> According to Documentation/devicetree/bindings/arm/qcom-soc.yaml
+> the preferred order is qcom,socname-ipblock.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Fair enough.
 
-Tested-by: Ron Economos <re@w6rz.net>
-
+Now I wonder what happened when we added the one for x1e80100.
 
