@@ -1,164 +1,88 @@
-Return-Path: <linux-kernel+bounces-849472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D632BD032A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:11:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3B2BD032D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E1A13B4F8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BDC63B497D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE1A27BF6C;
-	Sun, 12 Oct 2025 14:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcrscV4W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805A127BF85;
+	Sun, 12 Oct 2025 14:12:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCE918E377;
-	Sun, 12 Oct 2025 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24EE27B34B
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760278298; cv=none; b=EuZZe2FXsQZTuJgjsYXV7SoDcyD/4jMljrjq3OIBtWWu/M6BUiF7bzqQoxzOllcIUhVV4jQSepbt9QXhatDoOcou/vtYXwGCnDM4Cc0m0EsPdFIZZcaBG0ASaLuOWSrVyG7Ip+JmPr5QBzq6Z6xwS9g5SD4HimVvmBXET5RD9XM=
+	t=1760278328; cv=none; b=DRrm49ivyIFNx2CAq8AkGY0EKJsL1vIoyB41EBV+SbkOfNjSBXe8oXSrc9Y8nvao8teT3NCqd0EPvliaWoYxtjc6AtmnmIQd974Y+DNsJZLHoFtWU2q8Imk8fzh+s9j8E9YzjF0YzN58x8YYXZStzcnXHC6VlnQdypM8z5l/96M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760278298; c=relaxed/simple;
-	bh=cpelgZlbzwGj7MhV3R29pEzBYDKWbCZbtyCbea316yw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uIwyZ8eqExCff7CjYyB6Xmn7s7eID+ur8Bw/NXX3ZpPBciSINoLdXup5B6kyulX+8OqBWGgK0W7IM0AREEACiqG+b0zrgjL56Z9fvqylpHiJ4N+emPazvQTM8MrmyZnz1cJeqLnvaYRjFiPM5ORCoD12+DszARJhYjMdidwmSF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tcrscV4W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 858A9C4CEFE;
-	Sun, 12 Oct 2025 14:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760278298;
-	bh=cpelgZlbzwGj7MhV3R29pEzBYDKWbCZbtyCbea316yw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tcrscV4W83if8LTwyuRjmTM5YSu2pAwlGYVJc6W+mqxxmoWztAVEB/OouUnTjgP+s
-	 B6r7P9zVfVCBwYqievXwiBX6z4HX6uI6/alEoaypZfU+uBIVTQ7+3EIt922+phIAle
-	 2QVVx1iBqIv/1hsmOXHGBFO24PqPmFxCXGhbJ3XN/GIRadQj6BZf8sInj6UCOLCich
-	 BzAfl+DwJPqdqeB4pu/D0xFSUIxEToNkBWfEYtuTWQVEkcF8k4ZqFfbhNI1GTYli7+
-	 TYbEsRet2MPTglesbsumJKR/62qZGsa3AQS7V2QQeflhc+Om9XgouT/oxPnSVmYHVG
-	 RRbH/lsQvL6VQ==
-Date: Sun, 12 Oct 2025 15:11:30 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Shrikant <raskar.shree97@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- matt@ranostay.sg, skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH 1/2] dt-bindings: iio: max30100: Add pulse-width
- property
-Message-ID: <20251012151130.797450e3@jic23-huawei>
-In-Reply-To: <CAHc1_P7MU=BYf_8sbZqikpXpfuvAtLNJ2E_hmi-50ohoh+gQcg@mail.gmail.com>
-References: <20251004015623.7019-1-raskar.shree97@gmail.com>
-	<20251004015623.7019-2-raskar.shree97@gmail.com>
-	<20251004141231.632c311d@jic23-huawei>
-	<CAHc1_P7MU=BYf_8sbZqikpXpfuvAtLNJ2E_hmi-50ohoh+gQcg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760278328; c=relaxed/simple;
+	bh=nX4O3uUcK6ZipMLDSJkzeCTn9A9UVfoPzYGFK2WE+9U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LhvCJhUciwXfw5CMMaUwdRaEeX8/6g+bZicU8dlMj7yS6WHSts+N5YD6CKe+GZWC/b7mOAwPCFKY1By4XvQX6+qePEQelhMKu+PM5htsbgG36KSywgDXI9IgBkcI9WVhblXmdjRKR8HS5zryWdDNwfAWgQVbktVkwF4aTkV+inw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-429278a11f7so101053955ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 07:12:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760278324; x=1760883124;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=prMwi4/uP8EjOJSzZzzk1SRjOCYQsn3DcDxJQoB9hfU=;
+        b=tOSgQl4x+/FJeXxg2/fcQo5q9VknfsI8yj/2KW0ZxT+vVrTF3/ZktOn3srlUUubZhS
+         HIFK3EBP0VsKYXNzdzsQgJ/QRn7ufS50Thzo99HgmW3rbBioRZ6OSO+32repPTLEUxyb
+         cs/xG0sj8yqjxTACFXKKWFfFM8cmFCmaBMA/j01J5CL1tmyLogeGzHlVAe6rfuiwZ1Ef
+         KFVbC+plApZXhUOzneHkBbLsRETP2F+C/u51NpJUAH3QieiyXuGtfEMRYiXtqxuqlBQm
+         uXUPYRmlSabMgcKkmi/SXPvEoQ3IdRcKvjFO1vUD+rFjbIXXpAXr/DFIBlvMqTqpcHWg
+         6m1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjCozQiFaZYtQ6I6hhTRGDUPZLYejdTSVyv5tqcA0vuHUeocaFclWp67KMHrmRt6IBqIA6Kdjs8z90wRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyaXJWHYgQ9o6TM6MsJ2v3Vkx283+ToS67qeQskYlyS5nzFS/G
+	kA6A3uFKUa2Cb5WxbUeHCv7RA5Eiky1Y74BWa3P4jbz/leQmb+SONJjjq5E4hlbUgO+XBSYlMhi
+	FlejLBNZAATKDtrphUaHuYZaLFZhZPOXdjcGSz3cjkRl7MZh7Kr5mND1OKmA=
+X-Google-Smtp-Source: AGHT+IGzbG5MpmQoIBWocJW2Lx04LONWJicVapUWVT5wTbqeqteULZY78fAcCAmAmZsonu1WoNoEUJi5OqgXLpPRlJ4BRr67lOnQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1b0d:b0:424:6c8e:617f with SMTP id
+ e9e14a558f8ab-42f87368781mr153050785ab.8.1760278323890; Sun, 12 Oct 2025
+ 07:12:03 -0700 (PDT)
+Date: Sun, 12 Oct 2025 07:12:03 -0700
+In-Reply-To: <20251012135929.59982-1-contact@arnaud-lcm.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ebb733.050a0220.91a22.01d8.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Write in __bpf_get_stackid
+From: syzbot <syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com>
+To: contact@arnaud-lcm.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 6 Oct 2025 08:34:03 +0530
-Shrikant <raskar.shree97@gmail.com> wrote:
+Hello,
 
-> On Sat, Oct 4, 2025 at 6:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
-> wrote:
-> >
-> > On Sat,  4 Oct 2025 07:26:22 +0530
-> > Shrikant Raskar <raskar.shree97@gmail.com> wrote:
-> > =20
-> > > The MAX30100 sensor supports multiple LED pulse widths (200us, 400us,
-> > > 800us, 1600us). These settings affect measurement resolution and power
-> > > consumption. Until now, the driver always defaulted to 1600us.
-> > >
-> > > Introduce a new device tree property `maxim,pulse-width` that allows
-> > > users to select the desired pulse width in microseconds from device
-> > > tree.
-> > >
-> > > Valid values are: 200, 400, 800, 1600.
-> > >
-> > > This prepares for driver changes that read this property and configure
-> > > the SPO2 register accordingly.
-> > >
-> > > Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com> =20
-> > Hi Shrikant,
-> >
-> > Explain why this is in some way related to characteristics of how the
-> > system containing this chip is built (wiring, lenses etc).  Otherwise
-> > this might instead be something that should be controlled from userspace
-> > not firmware.
-> >
-> > Also, give a little more on why we care about controlling it at all.
-> > Is there a usecase where power use of this chip matters?  Mostly I'd ex=
-pect
-> > it to be in measurement equipment with relatively short measuring perio=
-ds.
-> >
-> > Jonathan =20
-> Hi Jonathan,
->=20
-> Thanks for the feedback.
->=20
-> The pulse width configuration is indeed dependent on the hardware integra=
-tion
-> of the MAX30100. It affects how much optical energy the LEDs emit per sam=
-ple,
-> which in turn depends on physical factors such as:
->=20
->  - The type and thickness of the optical window or lens covering the sens=
-or
->  - The distance between the LED and photodiode
->  - The reflectivity of the skin/contact surface
->=20
-> For example:
->  - A smartwatch/wearable ring with a thin glass window can operate
-> with 200=E2=80=93400 =C2=B5s pulses to
->    save power, while
->  - A medical-grade pulse oximeter or a sensor mounted behind a thicker
->    protective layer may require 800=E2=80=931600 =C2=B5s for reliable sig=
-nal amplitude.
->=20
-> I believe it would be appropriate to describe these fixed,
-> board-specific characteristics in the Device Tree,
-> since they are determined by the hardware design rather than being
-> runtime or user-controlled parameters.
->=20
-> Would it be okay if I send v2 of the patch with the above explanation
-> included in the commit message?
-Hi Shrikant,
+syzbot tried to test the proposed patch but the build/boot failed:
 
-I'd have this excellent detail + examples summarised in the patch descripti=
-on
-and also a small amount of description in the actual binding even if that j=
-ust says
-something like
-   Description:
-     Pulse width in... . Appropriate pulse width is dependant on factors
-     such as optical window absorption, distances and expected reflectivity
-     of skin / contact surface.
-That's just a quick mash up of what you have above, feel free to not use th=
-is
-particular text!=20
+failed to apply patch:
+checking file kernel/bpf/stackmap.c
+patch: **** unexpected end of file in patch
 
-The inclusion of target surface reflectivity in there makes me thing that
-for some applications we may also need userspace tweaking or some algorithm=
-ic
-way to increase or decrease the value according to skin characteristics. Ho=
-wever
-I guess maybe it isn't that sensitive.
 
-Jonathan
 
->=20
-> Thanks and regards,
-> Shrikant
+Tested on:
+
+commit:         67029a49 Merge tag 'trace-v6.18-3' of git://git.kernel..
+git tree:       bpf
+kernel config:  https://syzkaller.appspot.com/x/.config?x=412ee2f8b704a5e6
+dashboard link: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=102629e2580000
 
 
