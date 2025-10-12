@@ -1,187 +1,143 @@
-Return-Path: <linux-kernel+bounces-849358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C078BCFEAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:26:47 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D865BCFEB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EBB44E32D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:26:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5557C349517
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A741DF252;
-	Sun, 12 Oct 2025 02:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9B21D5174;
+	Sun, 12 Oct 2025 02:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5XhThr1"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cerwEU3u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396ED1DE4DC
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 02:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D60B3398B
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 02:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760235996; cv=none; b=D9Pg3xeIbWM4GvJstb/dN62CP10vqbEq+lWTDswctS3R3qUFMZIixCxIubyFlDGNo1KdJeY/0tn8+EKknws7xJra33Mn46OQ/NH8f70K6TNeo2hdXLC/0rrxIeUE0AenjGP3NpSsys9WKc06OfoPDLt6j3AfeVrl82eb1gz700k=
+	t=1760236285; cv=none; b=dzsI6HFRzIsAJKmIauEJL2ugLphxvFVEOb8kCrhA+4QxxQYnEFutUqy+H8mlT/tPuTMCYrB77+uyLm/3SOW7uOwpkcgTkKHtF9evTpt7TSLNDkaWYtnPJRue7q6U+Q+mp1byCh6dUOas/m9psyyLuhITB877auHsdyxcmyN1ulQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760235996; c=relaxed/simple;
-	bh=T3O+FvgSCE0ciL32Lxybza6PkMpzWQQ+tRJLN6YZEiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GSooNQ/uMBn/e2jtg8R5Ww72G6ImgvQQSA/UkI39os7pnu3pQFWtO0vN9bkemMF9sRrBALgccQ0o46qYYkv9MT1tux64fblAcUML9lklOyXmXaxrvbEC9i8+G0uObEnzFbQZRZPsksm7XDdgYaE8To17x9ifuQT+gDFB33tD9pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5XhThr1; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77f343231fcso2034407b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 19:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760235994; x=1760840794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfXUkC2C3C9BwOnkDvFBK7i0+SebLg1iuS2buoBW7lc=;
-        b=C5XhThr1mOJC0GQC/cJMyFMx+BHLe9/A7TVcKprt7jZ446mkihD8o1Y+iP4Xy5H/H3
-         +0EN8uc94dc7s2ZJDHj6V9PVHmvEMnhG73fXBNJs8m9iOufCkeLkYzWJHy8ir3Q4efDk
-         5JqS9UubY36AO2Af3YKquvLBKO84twNxKqmVnxyuDFIVJhiMYv8pJhIHY+zNiOKhKP+X
-         8hW0Ma3InuDNje6Ork5YhsOgVdlz/SsLOMrOftnv6SYTMzDHixhRaIVF6ya6qPVQXprm
-         yDa92bsbqQdm4+IUNF5YwEkZv0IIa70Zlu26HKwitwb76XqysI5TfWLIJt/Z19UeGD4i
-         g9jg==
+	s=arc-20240116; t=1760236285; c=relaxed/simple;
+	bh=l7rSw51HVVDUeWtxRvKBKLJ6CNxGhzR/CcWNOHEaFF0=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DsULAhVuXWC3dFSvjsxtooDPJym1G14KL14DdZeVqJM/lzP7E2lAiDUI+37P1IPmFxxbI9U2UBmR4mBq7A9IQa+2Zy6T5WgZ8IldGgK1onIKMj8XVYgC3OodzSNmticz4mfjBJfbAgQNjO8tvPFV8yrGehb2tKqaHjg/BG8qda4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cerwEU3u; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760236281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANDZ/rFmKG4qmurj0/jTIlbT5FBdoiK7XWV5SVqAIis=;
+	b=cerwEU3u75vcCWSPkf+9Jj+4OE8D30V0IgTN2zmwrXVRBB7A2k1in5TX50lRc+6WLTgmKC
+	DDRE0fGQUwEdj4pk0zSv2IWqAskVBqeBxqsRZ4DFlZa/lgPvXnyQNlOvDfYwW83wEuW+IW
+	uQGUl3q2OFpGdJbSrc/v35qCmkWVqeg=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-Xd2pp6nlOf6iXJ2BRCtlGw-1; Sat, 11 Oct 2025 22:31:20 -0400
+X-MC-Unique: Xd2pp6nlOf6iXJ2BRCtlGw-1
+X-Mimecast-MFC-AGG-ID: Xd2pp6nlOf6iXJ2BRCtlGw_1760236280
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-85dd8633b1bso2265465785a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 19:31:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760235994; x=1760840794;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bfXUkC2C3C9BwOnkDvFBK7i0+SebLg1iuS2buoBW7lc=;
-        b=iT0RsLnYGIIbiKsJzjKIXUGvdzhLirEgKBgfqDB+UE1QygdeFQx/G5lmJpvps/OcH1
-         JDyHmEhlhIcRuNToNYkUgg7QlRFyf/5SMIcwFXJjl+5KJbeEZmy+8uNqTpB8Y6RnVoSX
-         FVZYjmEoC8nDnAmj+IZs7WhnHaytiQ92XsWGOfezqVr63jpXyEfaHtE3zTOeY89YmiQy
-         aA3kI8P/5gZyLCfZEWvBPeUZpoAmdMK07v3yk/WPgDLeIQUm45dHZtVvmCcuvH2q2rVO
-         6Jb0Ememy+UDC9fb/k3FEK8SX4qnSKmsfXeC7eaiGoaPuyJoTqitOaYoNuB5yiIbIDMQ
-         ui6A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3m3jh+nmaSqL5wbJx8xl6q0qBlU9JgebXtdkbS+Akh9Bfdt30RFZbTEI6lTK/QWRt1klloieFfLl0p2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI99CxADwxL4L63kcBMs644+D4gnlGgTIi0pROpUKpuu57UpbV
-	BsgCz87kCkRBaoSquOPQjAQyTGmkXb3al4WLbIj6FhTx/9rkHnjXKphg
-X-Gm-Gg: ASbGncuW9wQvv8XzeR37sU9fl4xwVZu78zKYcOLFuUSdoCFamXjeqtl94Nh/JDBvSBF
-	w+XlLRfQLuU+gfoKV/6Q1qBEd/F8o2h21xsNqx/hbs9aSg2CfR/DbrzZrPx7AjwQiZZWJHl+xcF
-	SKgBeq6R1C9gydtcPEtO4kBIeCnFZCR4/ohEPN+BwCQQd4J1q8E02ZJzcl370xanzMYMh9p3ueM
-	MsYcoA0OyPf/uHILGaQGclhgVPO4YUdRbnq+3O9dsG68AXhvB+p62vIK9M2osIYSfk8QASY6CEF
-	FmE5J3UZherQ0IHPUawwpNS5BnjKaUBcEUh/SRi8XEjWjHHdaS7kMkbl4T7KNQoFLOaFiLXcaFN
-	5BRSJsQkt4MqiJBwGK80rminYhNzoEey2lKJ+2X+IWwwdI6gkzmNeAn65I4k00XYq4K5g
-X-Google-Smtp-Source: AGHT+IHZ9NyGaDIFzKfo3jw9RHib9r8nk9b6aSs/8IZVATsbwnwanfHCirNVwYIHZT/pMIdteZPgFw==
-X-Received: by 2002:a05:6a00:391a:b0:77e:8130:fda with SMTP id d2e1a72fcca58-79385ddc9f9mr22273636b3a.13.1760235994437;
-        Sat, 11 Oct 2025 19:26:34 -0700 (PDT)
-Received: from localhost.localdomain ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d9992ddsm7180489b3a.80.2025.10.11.19.26.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 19:26:33 -0700 (PDT)
-From: Longbin Li <looong.bin@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Longbin Li <looong.bin@gmail.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Ze Huang <huangze@whut.edu.cn>
-Cc: devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v1 3/3] riscv: dts: sophgo: Add USB support for cv18xx
-Date: Sun, 12 Oct 2025 10:25:54 +0800
-Message-ID: <20251012022555.6240-4-looong.bin@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251012022555.6240-1-looong.bin@gmail.com>
-References: <20251012022555.6240-1-looong.bin@gmail.com>
+        d=1e100.net; s=20230601; t=1760236280; x=1760841080;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ANDZ/rFmKG4qmurj0/jTIlbT5FBdoiK7XWV5SVqAIis=;
+        b=CX7PClb1ynP0QrmlRCguhXBWPgauxbxTpJKZBr70Un7RigN7wQH6VxtzgsRZWDk7b4
+         wpCgEdldubWf8IMh4rt48pOWfAtrLNcEXTpTduryK3TgBzxyzsFTcMRTZZvhhujO6a2S
+         XNMpoDwUosnLjKbWWof5BvADJdDuYbwfd3g//awX7qRGcNwFoQK7BNpwLemI9AFh2Vum
+         QaQQS+cWGz+AS5a1W0i3FZ0wL+/4GuBlt8IKXN8r3LRzcqrpvqKeqhwxFNpKfbycyoVj
+         wfE7tuC2l9tok63PAIXYxCwYXT0wZMC6DcEjWrSMUmlJpUCT3ImZnq0tVhBBKdG/p3nx
+         +Jgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUj2aw3BuN5AMxuo5vMBvYGYjzpnExeX4KiVd3WUvKyQFd9cu32l9tfrVmutyst6p7qi0hjZnWpczy8/Oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhWySMt22ICZNEZLi0TQOnbjjSgY51QtmB5MVI0aJAb2kPfdvU
+	m/FvuvR9mzoGhvOZRs9yG37CsoQtw/erAzDBD4b8fCU15MiWIvJWnNWjSKXDMyVHUzwr+GICnUP
+	TSGGfHdPU406LF/7RqM0N7tW5lZ31I/rozwGP8z2UR1ibDCjODDypB/EGTwMoQQxinQ==
+X-Gm-Gg: ASbGnctKU7yJ5JHUcxHi2MS5kboygoqbF0RS2i3HKa7KcFnfJZNaHVizTO2aHYR4Dab
+	okk5+wQWsLXB8Alvl+E7suGL5WnlDxMFz2TVqR4XBJPTpVtAesN/wvdSSo3Z9nfAMZzpLhAETsH
+	YgA8tIBZCZXNTeuZoWAbGxWY8G60GY+d0Ri9doA1cMt2/hDaVzjwSu6j//AwPwxWAE5wRW1TxS2
+	3pSTZT4CHbnTjw0KQ55lErHLlVF/ZqpZPTXYmqxqJCadEeROMF4/z/dZ+0p5THzSXkrQ7aqiqUX
+	apfxRE2HOqPT/SL46k/mqPbA+mrUeu8LXEsc8zohUmf8MnoOi7GMaPCE05k9cisuVXN04l9uHN/
+	M5HaZWwRLzPo=
+X-Received: by 2002:ac8:7d94:0:b0:4e7:20ff:f6a4 with SMTP id d75a77b69052e-4e720fffa61mr10796121cf.22.1760236279855;
+        Sat, 11 Oct 2025 19:31:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYNybsHlv/tGtfXco8Tock5SYweIbYfS3o3L689rKkOFFdn9GyUFbtfrWjD6Y/9bMhNbv/vQ==
+X-Received: by 2002:ac8:7d94:0:b0:4e7:20ff:f6a4 with SMTP id d75a77b69052e-4e720fffa61mr10795961cf.22.1760236279485;
+        Sat, 11 Oct 2025 19:31:19 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e70d134a3csm38910601cf.9.2025.10.11.19.31.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Oct 2025 19:31:18 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <957be7c9-7860-4824-b491-88cb9741dfab@redhat.com>
+Date: Sat, 11 Oct 2025 22:31:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lock: Add doc comments for spin_lock_irq()
+To: Daroc Alden <daroc@lwn.net>, Waiman Long <llong@redhat.com>
+Cc: corbet@lwn.net, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ "open list:LOCKING PRIMITIVES" <linux-kernel@vger.kernel.org>
+References: <20251010215403.743811-1-daroc@lwn.net>
+ <4482c890-f082-4946-b6ab-a7b57b02db22@redhat.com>
+ <20251011142804.29da9591@azalea>
+Content-Language: en-US
+In-Reply-To: <20251011142804.29da9591@azalea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add USB controller node for cv18xx and enable it for Huashan Pi, milkv-duo.
+On 10/11/25 2:28 PM, Daroc Alden wrote:
+> On Fri, 10 Oct 2025 23:15:50 -0400
+> Waiman Long <llong@redhat.com> wrote:
+>
+>> On 10/10/25 5:53 PM, Daroc Alden wrote:
+>>> The commonly used spin_lock_irq(), spin_lock_irqsave(),
+>>> spin_unlock_irq(), and spin_unlock_irqrestore() functions do not
+>>> currently have any documentation; this commit adds kerneldoc
+>>> comments to these four functions describing when their behavior and
+>>> when they are appropriate to use.
+>>>
+>>> Signed-off-by: Daroc Alden <daroc@lwn.net>
+>> This patch looks fine. Just wonder why just
+>> spin_lock_irq()/spin_lock_irqsave() and not
+>> spin_lock()/spin_lock_bh() as these functions also don't have
+>> kerneldoc comments. Also spin_lock_irqsave() is a macro and not
+>> actually a function, maybe we should mention that in the comment.
+>>
+> Because I had to research spin_lock_irq()/spin_lock_irqsave() for a
+> recent article, and therefore felt confident that I understood how they
+> behaved and what should go in the doc comment.
+>
+> If you — as a more experienced kernel person — can describe how/why the
+> _bh() variants are used, I'm happy to add doc comments for them as
+> well. My current understanding is that they interact with whatever is
+> left of the "big kernel lock". Is that right?
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Signed-off-by: Longbin Li <looong.bin@gmail.com>
----
- arch/riscv/boot/dts/sophgo/cv1800b-milkv-duo.dts |  5 +++++
- arch/riscv/boot/dts/sophgo/cv180x.dtsi           | 16 ++++++++++++++++
- .../riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts |  5 +++++
- .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts   |  5 +++++
- 4 files changed, 31 insertions(+)
+"bh" in spin_lock_bh() stands for bottom half which is essentially what 
+what is being done in the softIRQ context. So spin_lock_bh() just 
+prevents the softIRQ code from being executed. This is my understanding, 
+but I may have missed other use cases of spin_lock_bh(). Others can 
+chime in if there is more to say. Anyway, I am fine with adding more 
+comments to spinlock code.
 
-diff --git a/arch/riscv/boot/dts/sophgo/cv1800b-milkv-duo.dts b/arch/riscv/boot/dts/sophgo/cv1800b-milkv-duo.dts
-index 9feb520eaec4..0e6d79e6e3a4 100644
---- a/arch/riscv/boot/dts/sophgo/cv1800b-milkv-duo.dts
-+++ b/arch/riscv/boot/dts/sophgo/cv1800b-milkv-duo.dts
-@@ -100,3 +100,8 @@ &uart0 {
- 	pinctrl-names = "default";
- 	status = "okay";
- };
-+
-+&usb {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-diff --git a/arch/riscv/boot/dts/sophgo/cv180x.dtsi b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-index 42303acb2b39..1b2b1969a648 100644
---- a/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-@@ -432,6 +432,22 @@ dmac: dma-controller@4330000 {
- 			status = "disabled";
- 		};
+Cheers, Longman
 
-+		usb: usb@4340000 {
-+			compatible = "sophgo,cv1800b-usb";
-+			reg = <0x04340000 0x10000>;
-+			clocks = <&clk CLK_AXI4_USB>, <&clk CLK_APB_USB>;
-+			clock-names = "otg", "utmi";
-+			g-np-tx-fifo-size = <32>;
-+			g-rx-fifo-size = <536>;
-+			g-tx-fifo-size = <768 512 512 384 128 128>;
-+			interrupts = <SOC_PERIPHERAL_IRQ(14) IRQ_TYPE_LEVEL_HIGH>;
-+			phys = <&usbphy>;
-+			phy-names = "usb2-phy";
-+			resets = <&rst RST_USB>;
-+			reset-names = "dwc2";
-+			status = "disabled";
-+		};
-+
- 		rtc@5025000 {
- 			compatible = "sophgo,cv1800b-rtc", "syscon";
- 			reg = <0x5025000 0x2000>;
-diff --git a/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts b/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts
-index 4a5835fa9e96..aedf79f47407 100644
---- a/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts
-+++ b/arch/riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts
-@@ -86,3 +86,8 @@ &sdhci1 {
- &uart0 {
- 	status = "okay";
- };
-+
-+&usb {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-diff --git a/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts b/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts
-index 86a712b953a5..b1853770d017 100644
---- a/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts
-@@ -93,3 +93,8 @@ &uart0 {
- 	pinctrl-names = "default";
- 	status = "okay";
- };
-+
-+&usb {
-+	dr_mode = "host";
-+	status = "okay";
-+};
---
-2.51.0
 
