@@ -1,228 +1,89 @@
-Return-Path: <linux-kernel+bounces-849526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B5DBD0560
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:17:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B38BD056C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AAFC3AB072
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:16:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D0E1888AFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2182D77EA;
-	Sun, 12 Oct 2025 15:15:52 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691CB2D73A5;
+	Sun, 12 Oct 2025 15:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaeAustd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC55B2D7814;
-	Sun, 12 Oct 2025 15:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E33217A2EC;
+	Sun, 12 Oct 2025 15:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760282146; cv=none; b=HjWYQj2xYmRpYFbom2gY5nmXFGa4oHCmEUqOHTku0HWCI0yL0y0kq6YNAqx+aFP4V9yHigeNo19ippU+MHCwkkK+q2lauOub6d+Ho2r707vwlcanCzPm7JmxLDpg4Msc4NGlAd7pUp10xDO7H6b1bsSBTRAFhCmx9zZmr00SOTo=
+	t=1760282282; cv=none; b=E0G/PDlSoZ2eagbmNHWFjQQMoPy2LtvBevezNMIsKSJTqljoHH2scQqpze88lSbAmPO5sVLPq2Hn7j8Jl3YUgICiVqMY4cSEMVHu7zj5AkiUYXUkkFi1/WmREMdebNQOiWZ0fqpJ1EbSDN6ZWOSZaSfEiE89D8Wwc3vOpYv3ufI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760282146; c=relaxed/simple;
-	bh=Xf8YDORNtEKfBSYe5NMLOToggAz3uvjWZVx2WzEpT+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iFZBLlwWnBKdFcDna4GWKy0Q2uITu4TieuU7zz55rl4S8F+lAAi3/tsux44e9aKMM8X+8H5Jy35HrlYmcC1tu1cSoqMtQJC6VGa+WUX8aRMcFFnMxqMqbcs16Pa1G2bbl8O0bUPtwed4b5ROl0l3wX0m8JdYGn/3liZ9vpFI5ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: zesmtpgz9t1760281854t649e598b
-X-QQ-Originating-IP: t2iYRrmfbAzIz6LLFoW8zbJCqK90/3jYCzsloHhDGI0=
-Received: from localhost.localdomain ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 12 Oct 2025 23:10:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14456546733879225036
-From: chenxiaosong@chenxiaosong.com
-To: stfrench@microsoft.com,
-	metze@samba.org,
-	pali@kernel.org,
-	linkinjeon@kernel.org,
-	smfrench@gmail.com,
-	sfrench@samba.org,
-	senozhatsky@chromium.org,
-	tom@talpey.com,
-	pc@manguebit.org,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	bharathsm@microsoft.com,
-	zhangguodong@kylinos.cn
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ChenXiaoSong <chenxiaosong@kylinos.cn>
-Subject: [PATCH 22/22] smb: move FILE_SYSTEM_POSIX_INFO to common/cifspdu.h
-Date: Sun, 12 Oct 2025 23:09:15 +0800
-Message-ID: <BAD128CECF6CEF50+20251012150915.2992220-23-chenxiaosong@chenxiaosong.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251012150915.2992220-1-chenxiaosong@chenxiaosong.com>
-References: <20251012150915.2992220-1-chenxiaosong@chenxiaosong.com>
+	s=arc-20240116; t=1760282282; c=relaxed/simple;
+	bh=Jl8wbestm5JCwGJh7lwNqWSGyJflr3YZZ8ibRMTTmAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cVZNXPO07Yt+aL4XKwKLlQZek3jtCsTgjuTVdAtqECBzWPlJ4Obznp5+6GIdJvfyRiKGFBN1jsKzm3JZr6AcTX/XCNzgmziXlqNK/k1EoJmBxu4ipmHxcXVhfURC06UuYTTf0NbJqOY/Til/Cam8FtYB+UQpOsQkrNAXreeqTec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaeAustd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FDC9C4CEE7;
+	Sun, 12 Oct 2025 15:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760282279;
+	bh=Jl8wbestm5JCwGJh7lwNqWSGyJflr3YZZ8ibRMTTmAA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MaeAustd6R/gg1rhKmyO55MwhT3SPNsbrZLSjQ920VuZkJHP1FI8SAQcyCGne66AV
+	 3vDbApjjO9PR8XQR1yQM97SYRFqBqrYn9QhY33Iu6uhTrnkR+gc0X899FULHafZRY8
+	 pXe46BUocoE1/BCmNA4hVjBuc0hs2fen/ADvBo1xiju8yj9yJoGBCKZshr9kPmEERE
+	 4T22pfjEqruLlhQmihgZPlObG95M0q08KHtsuLLnN3Ri3jBrNAStR4Br+Ser+drQ7E
+	 CjHzx6MwE2aT2c1oqsFY+1Q7aUj2yLAXsLvW/s543gUN6o0zKFFmgnk0R88yMmg0wB
+	 yql3ryBXWbrbw==
+Date: Sun, 12 Oct 2025 16:17:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 14/19] iio: accel: bma220: add i2c module
+Message-ID: <20251012161750.1c06b57f@jic23-huawei>
+In-Reply-To: <20251005-b4-bma220_improvements-v4-14-0f449ba31585@subdimension.ro>
+References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
+	<20251005-b4-bma220_improvements-v4-14-0f449ba31585@subdimension.ro>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: MjgrMiwCCJklvnP89b1VoWtIgI+JAZqJlW4zCrRRAR8LGAGfay7GDltd
-	Xq9fK0oLUbN20cmcxuIgTF5tSTgJRH9jqztEIpDr6ZNwvCntmAqDm35aBefspJl50+sGuJN
-	RG8kKEY4dVz9XMkAv3ALytvPhKkl3vMhUJWxoJ4FrvLhmkfjbAFIWu72Gd5zE8S2sO7zAqI
-	jyGOcdhw/gDeHhUAJUSQIo1saWm/wk+eYINxPRj73jFKE9nas0v0+peRHVkD2bXeLvBvV9K
-	dRYa1k9EOS9KWBvsBXDJ98aFfMJ8SSajAxPy18T4TGERReOqUH4B3SbI/5dgmG4YrxAk5Vc
-	x1cm5cMmEZwMP8yBpeGWAW/IYOJwT4Zu9Hd67sk590VXZED+OlRqurzwrO6YvT+gtDitJAt
-	tWasMydW48hlKl0ad6cASO10MIW7++AFdmqe7GM0K7CygDwTcYTbuLcmEN8k1rVgYN3sgAW
-	4pZ7doRRwyXX62+LCG3XhSqh6aZpll1CpDK36Ebcmv0njUaSU63D5NI6/Au4kIYjZ1XPoR5
-	EG3+c5e0rCR/pyjsPlPyIqdFC/SdqXWztAR5kDu4DvTwN+ULPhWs9LdzCmO4IXwrLW3748e
-	SBjmuXiiMP+gSOUBVF/2uHqtbpREKmKABGFnYWzYNdeqpXXI5VKDE0nZ8Fh17/cRfYQFenh
-	y3C9HLznzUie1zi8Rx6fmeeCGYk7n1Y+lwwyKmKehvUAJwNylq9KHtZfa+V/J+iL91FiU2e
-	x02x25uXsQ6sWSA7YrSmdm+ZXwzVFfPaZumn4vq6P3Krn0rlW5FX9S2lisRL78mhYAY+LJ+
-	eo6LTk+xalaJ8UX7Dw17uUsZNQYOSEfC8/ZU67TtGJFXoMkaEPL0s7K3GeePzk41TbdJEgp
-	MkT1ZrlhLKMMdmbT541EaR5xNmFu6/aamT43Y5L12K8j1SZhjhDVm9IrEenRbsySx7zo7c1
-	/wqJu/wG2exjmKyq921afzeX+LR9OxlwIcT8pRtb0vLpl4f+H/lffhS46ZpB843OEuRCvGW
-	ZP6CeJPHT0vYFwrwRGsnQrRmfnHd4WXM6hitWEEw==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+On Sun, 05 Oct 2025 16:12:23 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-Rename "struct filesystem_posix_info" to "FILE_SYSTEM_POSIX_INFO",
-then move duplicate definitions to common header file.
+> Add the bma220_i2c module.
+> 
+> Note that this kernel module transparently shifts all register addresses
+> 1 bit to the left, so all functions will operate based on the SPI memory
+> map.
+> 
+> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
+Applied. Note that it was only when I reached here I realized I failed
+to add the bma220.h when hand applying things earlier.  Anyhow I went
+back and fixed that up, but there a few little differences in ordering.
+I took the view it was close enough that I didn't go back and do it a 3rd time.
+Nothing affects eventual state, just position of the temporary struct spi_device;
+forwards declaration I think.
 
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
----
- fs/smb/client/cifspdu.h    | 22 ----------------------
- fs/smb/common/cifspdu.h    | 23 +++++++++++++++++++++++
- fs/smb/server/smb2pdu.c    |  4 ++--
- fs/smb/server/smb_common.h | 23 -----------------------
- 4 files changed, 25 insertions(+), 47 deletions(-)
+Anyhow, after that this applied cleanly so all good
 
-diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-index 68e3af176add..ab23a233153a 100644
---- a/fs/smb/client/cifspdu.h
-+++ b/fs/smb/client/cifspdu.h
-@@ -1866,28 +1866,6 @@ typedef struct {
- 
- #define CIFS_POSIX_EXTENSIONS           0x00000010 /* support for new QFSInfo */
- 
--typedef struct {
--	/* For undefined recommended transfer size return -1 in that field */
--	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
--	__le32 BlockSize;
--    /* The next three fields are in terms of the block size.
--	(above). If block size is unknown, 4096 would be a
--	reasonable block size for a server to report.
--	Note that returning the blocks/blocksavail removes need
--	to make a second call (to QFSInfo level 0x103 to get this info.
--	UserBlockAvail is typically less than or equal to BlocksAvail,
--	if no distinction is made return the same value in each */
--	__le64 TotalBlocks;
--	__le64 BlocksAvail;       /* bfree */
--	__le64 UserBlocksAvail;   /* bavail */
--    /* For undefined Node fields or FSID return -1 */
--	__le64 TotalFileNodes;
--	__le64 FreeFileNodes;
--	__le64 FileSysIdentifier;   /* fsid */
--	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
--	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
--} __attribute__((packed)) FILE_SYSTEM_POSIX_INFO;
--
- /* DeviceType Flags */
- #define FILE_DEVICE_CD_ROM              0x00000002
- #define FILE_DEVICE_CD_ROM_FILE_SYSTEM  0x00000003
-diff --git a/fs/smb/common/cifspdu.h b/fs/smb/common/cifspdu.h
-index b4ca0c36cf84..853e03f395be 100644
---- a/fs/smb/common/cifspdu.h
-+++ b/fs/smb/common/cifspdu.h
-@@ -329,6 +329,29 @@ typedef struct {
- 	__le32 BytesPerSector;
- } __attribute__((packed)) FILE_SYSTEM_INFO;	/* size info, level 0x103 */
- 
-+typedef struct {
-+	/* For undefined recommended transfer size return -1 in that field */
-+	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
-+	__le32 BlockSize;
-+	/* The next three fields are in terms of the block size.
-+	 * (above). If block size is unknown, 4096 would be a
-+	 * reasonable block size for a server to report.
-+	 * Note that returning the blocks/blocksavail removes need
-+	 * to make a second call (to QFSInfo level 0x103 to get this info.
-+	 * UserBlockAvail is typically less than or equal to BlocksAvail,
-+	 * if no distinction is made return the same value in each
-+	 */
-+	__le64 TotalBlocks;
-+	__le64 BlocksAvail;       /* bfree */
-+	__le64 UserBlocksAvail;   /* bavail */
-+	/* For undefined Node fields or FSID return -1 */
-+	__le64 TotalFileNodes;
-+	__le64 FreeFileNodes;
-+	__le64 FileSysIdentifier;   /* fsid */
-+	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
-+	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
-+} __attribute__((packed)) FILE_SYSTEM_POSIX_INFO;
-+
- /* See MS-CIFS 2.2.8.2.5 */
- typedef struct {
- 	__le32 DeviceType;
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 065e0daaa91b..d49cd1ad1d70 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -5626,14 +5626,14 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
- 	}
- 	case FS_POSIX_INFORMATION:
- 	{
--		struct filesystem_posix_info *info;
-+		FILE_SYSTEM_POSIX_INFO *info;
- 
- 		if (!work->tcon->posix_extensions) {
- 			pr_err("client doesn't negotiate with SMB3.1.1 POSIX Extensions\n");
- 			path_put(&path);
- 			return -EOPNOTSUPP;
- 		} else {
--			info = (struct filesystem_posix_info *)(rsp->Buffer);
-+			info = (FILE_SYSTEM_POSIX_INFO *)(rsp->Buffer);
- 			info->OptimalTransferSize = cpu_to_le32(stfs.f_bsize);
- 			info->BlockSize = cpu_to_le32(stfs.f_bsize);
- 			info->TotalBlocks = cpu_to_le64(stfs.f_blocks);
-diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-index 4f48dbf9c13b..d349b3443219 100644
---- a/fs/smb/server/smb_common.h
-+++ b/fs/smb/server/smb_common.h
-@@ -107,29 +107,6 @@ struct file_id_both_directory_info {
- 	char FileName[];
- } __packed;
- 
--struct filesystem_posix_info {
--	/* For undefined recommended transfer size return -1 in that field */
--	__le32 OptimalTransferSize;  /* bsize on some os, iosize on other os */
--	__le32 BlockSize;
--	/* The next three fields are in terms of the block size.
--	 * (above). If block size is unknown, 4096 would be a
--	 * reasonable block size for a server to report.
--	 * Note that returning the blocks/blocksavail removes need
--	 * to make a second call (to QFSInfo level 0x103 to get this info.
--	 * UserBlockAvail is typically less than or equal to BlocksAvail,
--	 * if no distinction is made return the same value in each
--	 */
--	__le64 TotalBlocks;
--	__le64 BlocksAvail;       /* bfree */
--	__le64 UserBlocksAvail;   /* bavail */
--	/* For undefined Node fields or FSID return -1 */
--	__le64 TotalFileNodes;
--	__le64 FreeFileNodes;
--	__le64 FileSysIdentifier;   /* fsid */
--	/* NB Namelen comes from FILE_SYSTEM_ATTRIBUTE_INFO call */
--	/* NB flags can come from FILE_SYSTEM_DEVICE_INFO call   */
--} __packed;
--
- struct smb_version_ops {
- 	u16 (*get_cmd_val)(struct ksmbd_work *swork);
- 	int (*init_rsp_hdr)(struct ksmbd_work *swork);
--- 
-2.43.0
+Thanks,
 
+Jonathan
 
