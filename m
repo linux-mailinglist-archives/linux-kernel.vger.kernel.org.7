@@ -1,306 +1,296 @@
-Return-Path: <linux-kernel+bounces-849384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B2BBCFFA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 08:08:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8F0BCFFAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 08:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9354F4E1288
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 06:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5B818960F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 06:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8582135B9;
-	Sun, 12 Oct 2025 06:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA642135B9;
+	Sun, 12 Oct 2025 06:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="jUsOG/I+"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uHwX2M6a"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5277210F59
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 06:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5A478F51
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 06:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760249323; cv=none; b=O/BXJyzl8SWb3AWZ+CjR/TJQaXCXqJm3h2qrupODXv7G45F+fLvMAtLz7XROrji/lhIiKA9dTpcT685oTiXagaJpVA5M0RhBJ/KlbXtsojdHyCK02N7wYbzMNvAYas6QHlwaO83VMQsp9Qz8h62yDgmOmPTL7loGFWmbPOU/e90=
+	t=1760249484; cv=none; b=owGL1THqD6l9Gcn/wtFZzhzvDH4ZNoncLoVxvHsmhCV5+JjbBzpKzbBdlT6OgeHGyYiRNjQiVD8neqx3dJXn3IOfRIfLuFZjAGf+zUUFnsB789lbzHQmcvKDatuSW2Rj7J+tk9NlVSyK91nTyBkHAgmUyhjdy1KQSxIRcJdPbtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760249323; c=relaxed/simple;
-	bh=h09Zml4zY0LyRZrAd0HGgZ/qvE6dlMqgAPDyiTqBdZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7lZluLuQ2M02rm/57/kidv2hn+z8QXnIu/ZdFmRU53khdm0Bf0HMIcrMrM1uZEcGqQ0QYUaF90KTiAibC/3oENvQ8dWsaMjn/zCM6dboeC32hegCaZJKDX06wTDXYyZ+aHKxpfdfRTSe6BmjPPG/pzygd7+/gh9SqkIS7bUqFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=jUsOG/I+; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b63148d25c3so2258019a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 23:08:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1760249321; x=1760854121; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GaG3CIPvScrkRcCVnxVI9r9n+cKmILGcLdj9ri4mORs=;
-        b=jUsOG/I+FHveWUTWTXwRsHVwbOF9Y7/t98ym7g8b8BHaXPn3QdlsVv/vzvoFz/fdP/
-         tcraaNO4OSgXsp6W4EqCt9fyOpB9FcWgwzClGMPwhE4YOJC0qn3A3ccw6taZS9ewukPk
-         +FV2i3P9j3R1ECbeRwVYsei7iNDAppgRmPnWZ0v0MR3qyO0pQDYCTE6Ek6ZEhIxOlyGq
-         tPdh+b4SHlNlKgr/ow34gVdESiR+8saqCpWqxsvHzqCWzVpykvghR+48nQG+FzVTd8DS
-         o703oxwRc1gOBHtZkEhwOM7vxYmPynPLB4FY5nSI+h2WYfOw8GiFlUVGyBQQrGZzdWfs
-         6HYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760249321; x=1760854121;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GaG3CIPvScrkRcCVnxVI9r9n+cKmILGcLdj9ri4mORs=;
-        b=CMIu0OUyI4q3E8yU1u6LfVHPDvHg/b18PPshBChfAVhK5vNj3tCpnlD36a0oh2RmMA
-         HQBVxtCrIcnh2gi5LS6C6Zr8464Sqnnu+e6UkjrpHtYFBvrmDRrcaFvSy4WIIFoIgieG
-         nirCkjeH4JNAE7vfM5j1w2YBBn1Hioy4xm5aJJEFrWAbA6JMne6Lv+2wnEuZEDa2wQ8a
-         gbIsPMy/+GDIuqBvYuqfPjpNtdGOeyds8TdpcYYCFnZBLhrtYCnGZvVzd+VVBPmsjfBH
-         m2GM7geAQIKIdmDjtcB/tCDsxPKIOVrJvdAxC7rdbWUEKZoAGNLWD6xN/sswBLIW1Ws0
-         7lYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXg1SvevgZpStHo/YQCTsoJlChpU2J6Yh9d2Ax82xZ1k88A6BbTn0V1C9acsFDAx6saw5+jMLpHUq1lcl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCq1UIdYqmxVmzOOYO235maVEKGWCMTXWo7k0YqyKeJcRa98Ua
-	f9kuJIdX9SatU/l0PfN07av11j8hCUY7g2I/VBJ9aWmz+90mPk5A7w59S/Aqk3InCiEx
-X-Gm-Gg: ASbGncs91Q/MVZqm01yswQgjgW5kv62l1v3zOAd5h1bo6fi41JQWGSS/ZE3fWwvA2xn
-	aEWkd75gIEautN72cpTUHsMQ45E5GFnZkgi/eoa3XLIdxhmgvXdHDP7Z9oxkbJWhiu6eI6o6Fps
-	n5gA7QQ4IDpC582gdhYsQgXH/G3y5Z2s+zrhfqjv18PYkdhYkniUZYwstZidJkMu3HBu1zftDS/
-	ILMoJWHgGHfhYsRDfcWBxO11Kn2yLLDEl60ACc4iagh5o5LtGGlBUF63RtC2TjoLvlhOQOXRNbE
-	15iLUZr8jvQ0kYDfMX0yCn0KVv0j+sIIeK7O7xIr8dQpFTAE+qycnfBZx7dtmIA8Ik8DWHmzq/D
-	EVNUdMb275jvK7IDkILdXW+He9zYkIR6sbV01SVJW99VhNH7lWEKWi+Q=
-X-Google-Smtp-Source: AGHT+IGhKEjO4N8N1w5O5HATeeVcKIyS6/qcZDUuJjfl146ApoB62Mq25IN+pyjyIOFOpn69zqXUVw==
-X-Received: by 2002:a17:903:2ac5:b0:269:4752:e21f with SMTP id d9443c01a7336-28ec9caf23cmr223929385ad.22.1760249320716;
-        Sat, 11 Oct 2025 23:08:40 -0700 (PDT)
-Received: from sultan-box ([142.147.89.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626d15bfsm7682777a91.19.2025.10.11.23.08.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 23:08:40 -0700 (PDT)
-Date: Sat, 11 Oct 2025 23:08:36 -0700
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, mario.limonciello@amd.com,
-	richard.gong@amd.com, anson.tsao@amd.com,
-	Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>,
-	Alexey Zagorodnikov <xglooom@gmail.com>
-Subject: Re: [PATCH v4 5/7] media: platform: amd: isp4 video node and buffers
- handling added
-Message-ID: <aOtF5C2p0KGTQSji@sultan-box>
-References: <20250911100847.277408-1-Bin.Du@amd.com>
- <20250911100847.277408-6-Bin.Du@amd.com>
- <aNzP2LH0OwUkMtGb@sultan-box>
- <c28eb905-b578-4512-aa9c-37281d3a0ee4@amd.com>
+	s=arc-20240116; t=1760249484; c=relaxed/simple;
+	bh=cMQvbjIqDeAcB1198DCEO7hiNKtamu2PyHOIWQoPD+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NtlK2VKbpmBhsFUcOokZgn76ZKQZbpB8D99ZexT5lFmOQBE2hc8XFxiCdvxjZVpRPG/hqM7Sbu45WPv+05lNx4FoHBSgRyE1DUqbXvlbhP4IM8JVKBiMcqkKGM3Zdebr2FSdpbDk9O+m+niRkdHDku7cCGFDgKRPBujRjzdNk6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uHwX2M6a; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Gm-Message-State: AOJu0YzTC3M+jzQkrlxz83Ls355beFYecjnaGWa8iCSX07mvnnldOSLG
+	Dqx9G1Fxzv/c9Hhk2+0LIzhH+Xui6QZMiTl5m4ywKJNahBGhAziClk/jg5nywas2x2gj1v3Z6qW
+	cq/+zN9de0QOTvXdkfVJ8BYETd5Dxv0s=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760249477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=foNWJ4E25V51roHi1w2GGGZKjeKD6i3dCTeTVLACyRo=;
+	b=uHwX2M6aj1Vux6fE+cpAFxSqbnhX9tUJr7CMyifjwjlnPK4mKX3sxxCYQb9Ah09i+dNYQU
+	FRzU4LST0xVavJKF7Zob/dBnoXHlSsX6e5OOSoh8EGK3F1Ugr9qknl2W8LSRHysjeXtpEn
+	UxknZje92JsdUVUlu89C4iFiDwhGLwo=
+X-Google-Smtp-Source: AGHT+IGS0m07WNkCv+xO8uTbgSUz2CohzI7fDRMEZdBsffTcs/wloxbDLAkjPyEDGkuh6+Hjmc9gNd3T1rXw4qkFyCk=
+X-Received: by 2002:ad4:5ca4:0:b0:77c:a783:c9c6 with SMTP id
+ 6a1803df08f44-87b21015103mr220167516d6.3.1760249475096; Sat, 11 Oct 2025
+ 23:11:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c28eb905-b578-4512-aa9c-37281d3a0ee4@amd.com>
+References: <20251001065707.920170-1-balbirs@nvidia.com> <20251001065707.920170-2-balbirs@nvidia.com>
+In-Reply-To: <20251001065707.920170-2-balbirs@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+Date: Sun, 12 Oct 2025 14:10:37 +0800
+X-Gmail-Original-Message-ID: <CABzRoyYJXVdgTdoz9uYxeYHeejU1bbe6_rQnvbKns7fjvz_kqQ@mail.gmail.com>
+X-Gm-Features: AS18NWC8_Z-3ZIKnbl1wff6T8kbSmzYyB0uKsUmMixJLXumxkUIzTUIiVVMKwFw
+Message-ID: <CABzRoyYJXVdgTdoz9uYxeYHeejU1bbe6_rQnvbKns7fjvz_kqQ@mail.gmail.com>
+Subject: Re: [v7 01/16] mm/zone_device: support large zone device private folios
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Ralph Campbell <rcampbell@nvidia.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Francois Dugast <francois.dugast@intel.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Oct 11, 2025 at 05:30:43PM +0800, Du, Bin wrote:
-> On 10/1/2025 2:53 PM, Sultan Alsawaf wrote:
-> > On Thu, Sep 11, 2025 at 06:08:45PM +0800, Bin Du wrote:
-> > > +
-> > > +/* Sizes must be in increasing order */
-> > > +static const struct v4l2_frmsize_discrete isp4vid_frmsize[] = {
-> > > +	{640, 360},
-> > > +	{640, 480},
-> > > +	{1280, 720},
-> > > +	{1280, 960},
-> > > +	{1920, 1080},
-> > > +	{1920, 1440},
-> > > +	{2560, 1440},
-> > > +	{2880, 1620},
-> > > +	{2880, 1624},
-> > > +	{2888, 1808},
-> > > +};
-> > > +
-> > > +static const u32 isp4vid_formats[] = {
-> > > +	V4L2_PIX_FMT_NV12,
-> > > +	V4L2_PIX_FMT_YUYV
-> > > +};
-> > > +
-> > > +/* timeperframe list */
-> > > +static const struct v4l2_fract isp4vid_tpfs[] = {
-> > > +	{.numerator = 1, .denominator = ISP4VID_MAX_PREVIEW_FPS}
-> > 
-> > Add a space after { and a space before }.
-> > 
-> > Also, it is more common to see v4l2_fract initialized without specifying the
-> > struct member names.
-> > 
-> > To summarize, change to `{ 1, ISP4VID_MAX_PREVIEW_FPS }`
-> > 
-> 
-> Will follow your advice. Seems no explicit description about this in "Linux
-> kernel coding style" and both spacing options after { are common in the
-> current kernel code.
+Hi Balbir,
 
-True, it's not explicitly stated in "Linux kernel coding style", but it _is_
-specified in the .clang-format [1][2] via `Cpp11BracedListStyle: false`. And in
-my experience, it's much more common to see spaces padded inside braced lists.
+Just one nit below :)
 
-> > > +};
-> > > +
-> > > +static void isp4vid_handle_frame_done(struct isp4vid_dev *isp_vdev,
-> > > +				      const struct isp4if_img_buf_info *img_buf,
-> > > +				      bool done_suc)
-> > > +{
-> > > +	struct isp4vid_capture_buffer *isp4vid_buf;
-> > 
-> > Rename isp4vid_buf to isp_buf like in isp4vid_qops_start_streaming().
-> > 
-> 
-> Seems isp4vid_buf appears to be more descriptive, plan to rename isp_buf in
-> isp4vid_qops_start_streaming to isp4vid_buf, what do you think?
+On Wed, Oct 1, 2025 at 3:43=E2=80=AFPM Balbir Singh <balbirs@nvidia.com> wr=
+ote:
+>
+> Add routines to support allocation of large order zone device folios
+> and helper functions for zone device folios, to check if a folio is
+> device private and helpers for setting zone device data.
+>
+> When large folios are used, the existing page_free() callback in
+> pgmap is called when the folio is freed, this is true for both
+> PAGE_SIZE and higher order pages.
+>
+> Zone device private large folios do not support deferred split and
+> scan like normal THP folios.
+>
+> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Cc: Rakie Kim <rakie.kim@sk.com>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: Gregory Price <gourry@gourry.net>
+> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Dev Jain <dev.jain@arm.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mika Penttil=C3=A4 <mpenttil@redhat.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Francois Dugast <francois.dugast@intel.com>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+> Cc: Alex Deucher <alexander.deucher@amd.com>
+> Cc: "Christian K=C3=B6nig" <christian.koenig@amd.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  arch/powerpc/kvm/book3s_hv_uvmem.c       |  2 +-
+>  drivers/gpu/drm/amd/amdkfd/kfd_migrate.c |  2 +-
+>  drivers/gpu/drm/drm_pagemap.c            |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_dmem.c   |  2 +-
+>  include/linux/memremap.h                 | 10 ++++++++-
+>  lib/test_hmm.c                           |  2 +-
+>  mm/memremap.c                            | 26 ++++++++++++++----------
+>  mm/rmap.c                                |  6 +++++-
+>  8 files changed, 34 insertions(+), 18 deletions(-)
+>
+> diff --git a/arch/powerpc/kvm/book3s_hv_uvmem.c b/arch/powerpc/kvm/book3s=
+_hv_uvmem.c
+> index 03f8c34fa0a2..91f763410673 100644
+> --- a/arch/powerpc/kvm/book3s_hv_uvmem.c
+> +++ b/arch/powerpc/kvm/book3s_hv_uvmem.c
+> @@ -723,7 +723,7 @@ static struct page *kvmppc_uvmem_get_page(unsigned lo=
+ng gpa, struct kvm *kvm)
+>
+>         dpage =3D pfn_to_page(uvmem_pfn);
+>         dpage->zone_device_data =3D pvt;
+> -       zone_device_page_init(dpage);
+> +       zone_device_page_init(dpage, 0);
+>         return dpage;
+>  out_clear:
+>         spin_lock(&kvmppc_uvmem_bitmap_lock);
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/a=
+md/amdkfd/kfd_migrate.c
+> index 79251f22b702..d0e2cae33035 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+> @@ -217,7 +217,7 @@ svm_migrate_get_vram_page(struct svm_range *prange, u=
+nsigned long pfn)
+>         page =3D pfn_to_page(pfn);
+>         svm_range_bo_ref(prange->svm_bo);
+>         page->zone_device_data =3D prange->svm_bo;
+> -       zone_device_page_init(page);
+> +       zone_device_page_init(page, 0);
+>  }
+>
+>  static void
+> diff --git a/drivers/gpu/drm/drm_pagemap.c b/drivers/gpu/drm/drm_pagemap.=
+c
+> index 1da55322af12..31c53f724e25 100644
+> --- a/drivers/gpu/drm/drm_pagemap.c
+> +++ b/drivers/gpu/drm/drm_pagemap.c
+> @@ -196,7 +196,7 @@ static void drm_pagemap_get_devmem_page(struct page *=
+page,
+>                                         struct drm_pagemap_zdd *zdd)
+>  {
+>         page->zone_device_data =3D drm_pagemap_zdd_get(zdd);
+> -       zone_device_page_init(page);
+> +       zone_device_page_init(page, 0);
+>  }
+>
+>  /**
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nou=
+veau/nouveau_dmem.c
+> index ca4932a150e3..53cc1926b9da 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> @@ -318,7 +318,7 @@ nouveau_dmem_page_alloc_locked(struct nouveau_drm *dr=
+m)
+>                         return NULL;
+>         }
+>
+> -       zone_device_page_init(page);
+> +       zone_device_page_init(page, 0);
+>         return page;
+>  }
+>
+> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+> index e5951ba12a28..d2487a19cba2 100644
+> --- a/include/linux/memremap.h
+> +++ b/include/linux/memremap.h
+> @@ -206,7 +206,7 @@ static inline bool is_fsdax_page(const struct page *p=
+age)
+>  }
+>
+>  #ifdef CONFIG_ZONE_DEVICE
+> -void zone_device_page_init(struct page *page);
+> +void zone_device_page_init(struct page *page, unsigned int order);
+>  void *memremap_pages(struct dev_pagemap *pgmap, int nid);
+>  void memunmap_pages(struct dev_pagemap *pgmap);
+>  void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)=
+;
+> @@ -215,6 +215,14 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pf=
+n);
+>  bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
+>
+>  unsigned long memremap_compat_align(void);
+> +
+> +static inline void zone_device_folio_init(struct folio *folio, unsigned =
+int order)
+> +{
+> +       zone_device_page_init(&folio->page, order);
+> +       if (order)
+> +               folio_set_large_rmappable(folio);
+> +}
+> +
+>  #else
+>  static inline void *devm_memremap_pages(struct device *dev,
+>                 struct dev_pagemap *pgmap)
+> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+> index 83e3d8208a54..24d82121cde8 100644
+> --- a/lib/test_hmm.c
+> +++ b/lib/test_hmm.c
+> @@ -627,7 +627,7 @@ static struct page *dmirror_devmem_alloc_page(struct =
+dmirror_device *mdevice)
+>                         goto error;
+>         }
+>
+> -       zone_device_page_init(dpage);
+> +       zone_device_page_init(dpage, 0);
+>         dpage->zone_device_data =3D rpage;
+>         return dpage;
+>
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 46cb1b0b6f72..e45dfb568710 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -416,20 +416,19 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>  void free_zone_device_folio(struct folio *folio)
+>  {
+>         struct dev_pagemap *pgmap =3D folio->pgmap;
+> +       unsigned long nr =3D folio_nr_pages(folio);
+> +       int i;
+>
+>         if (WARN_ON_ONCE(!pgmap))
+>                 return;
+>
+>         mem_cgroup_uncharge(folio);
+>
+> -       /*
+> -        * Note: we don't expect anonymous compound pages yet. Once suppo=
+rted
+> -        * and we could PTE-map them similar to THP, we'd have to clear
+> -        * PG_anon_exclusive on all tail pages.
+> -        */
+>         if (folio_test_anon(folio)) {
+> -               VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
+> -               __ClearPageAnonExclusive(folio_page(folio, 0));
+> +               for (i =3D 0; i < nr; i++)
+> +                       __ClearPageAnonExclusive(folio_page(folio, i));
+> +       } else {
+> +               VM_WARN_ON_ONCE(folio_test_large(folio));
+>         }
+>
+>         /*
+> @@ -456,8 +455,8 @@ void free_zone_device_folio(struct folio *folio)
+>         case MEMORY_DEVICE_COHERENT:
+>                 if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
+>                         break;
+> -               pgmap->ops->page_free(folio_page(folio, 0));
+> -               put_dev_pagemap(pgmap);
+> +               pgmap->ops->page_free(&folio->page);
+> +               percpu_ref_put_many(&folio->pgmap->ref, nr);
 
-Either way is fine so long as it is consistent. It's just my own personal
-preference to use shorter variable names, especially for pointers, which is why
-I suggested isp_buf. :)
+Nit: &pgmap->ref here for consistency?
 
-> > > +
-> > > +	buf->dev = dev;
-> > > +	buf->dbuf = dbuf;
-> > > +	buf->size = size;
-> > > +
-> > > +	dev_dbg(dev, "attach dmabuf of isp user bo 0x%llx size %ld",
-> > > +		dbg_buf->gpu_addr, dbg_buf->size);
-> > > +
-> > > +	return buf;
-> > > +}
-> > > +
-> > > +static void isp4vid_vb2_unmap_dmabuf(void *mem_priv)
-> > > +{
-> > > +	struct isp4vid_vb2_buf *buf = mem_priv;
-> > > +	struct iosys_map map = IOSYS_MAP_INIT_VADDR(buf->vaddr);
-> > > +
-> > > +	dev_dbg(buf->dev, "unmap dmabuf of isp user bo 0x%llx size %ld",
-> > > +		buf->gpu_addr, buf->size);
-> > > +
-> > > +	dma_buf_vunmap_unlocked(buf->dbuf, &map);
-> > > +	buf->vaddr = NULL;
-> > > +}
-> > > +
-> > > +static int isp4vid_vb2_map_dmabuf(void *mem_priv)
-> > > +{
-> > > +	struct isp4vid_vb2_buf *mmap_buf = NULL;
-> > 
-> > Remove unnecessary initialization of `mmap_buf`, and combine it onto one line
-> > with `buf`:
-> > 
-> 
-> Sure, will remove unnecessary initialization of `mmap_buf, but i'd rather
-> not combine because it is mentioned in "Linux kernel coding style" that "to
-> this end, use just one data declaration per line (no commas for multiple
-> data declarations). This leaves you room for a small comment on each item,
-> explaining its use.", what do you think?
-
-Huh, that quote is odd, as it's quite common in the kernel to declare multiple
-local variables of the same type on one line. In fact, Linus has done this
-himself [3][4].
-
-I think it's better to put `mmap_buf` on the same line because the type name is
-quite long, so declaring `buf` and `mmap_buf` on the same line makes it easier
-to see that they are exactly the same type.
-
-Also, creating a new line for every local variable declaration would really
-bloat a lot of code around the kernel and hurt readability. That quote from
-"Linux kernel coding style" was added almost *20 years* ago (commit b3fc9941fbc6
-"[PATCH] CodingStyle updates"), so maybe it is just obsolete.
-
-> > > +	if (ret) {
-> > > +		dev_err(v4l2_dev->dev, "fail to fill buffer size: %d\n", ret);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	ret = isp4vid_set_fmt_2_isp(isp_sdev, &isp_vdev->format);
-> > > +	if (ret) {
-> > > +		dev_err(v4l2_dev->dev, "fail init format :%d\n", ret);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	/* Initialize the video_device struct */
-> > > +	isp_vdev->vdev.entity.name = vdev_name;
-> > > +	isp_vdev->vdev.entity.function = MEDIA_ENT_F_IO_V4L;
-> > > +	isp_vdev->vdev_pad.flags = MEDIA_PAD_FL_SINK;
-> > > +	ret = media_entity_pads_init(&isp_vdev->vdev.entity, 1,
-> > > +				     &isp_vdev->vdev_pad);
-> > > +
-> > > +	if (ret) {
-> > > +		dev_err(v4l2_dev->dev, "init media entity pad fail:%d\n", ret);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE |
-> > > +			    V4L2_CAP_STREAMING | V4L2_CAP_IO_MC;
-> > > +	vdev->entity.ops = &isp4vid_vdev_ent_ops;
-> > > +	vdev->release = video_device_release_empty;
-> > > +	vdev->fops = &isp4vid_vdev_fops;
-> > > +	vdev->ioctl_ops = &isp4vid_vdev_ioctl_ops;
-> > > +	vdev->lock = NULL;
-> > > +	vdev->queue = q;
-> > > +	vdev->v4l2_dev = v4l2_dev;
-> > > +	vdev->vfl_dir = VFL_DIR_RX;
-> > > +	strscpy(vdev->name, vdev_name, sizeof(vdev->name));
-> > > +	video_set_drvdata(vdev, isp_vdev);
-> > > +
-> > > +	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-> > > +	if (ret)
-> > > +		dev_err(v4l2_dev->dev, "register video device fail:%d\n", ret);
-> > 
-> > No error handling?
-> > 
-> 
-> Not necessary here because the caller isp4sd_init() will handle this.
-
-This doesn't seem to be the case; in fact, isp4sd_init() doesn't seem to handle
-any of the error cleanup for isp4vid_dev_init().
-
-I started looking deeper at it and saw that vb2_queue_release() is never called
-to clean up after vb2_queue_init(). See my next comment below about changing
-video_unregister_device() to vb2_video_unregister_device(), which calls
-vb2_queue_release().
-
-And isp4sd_init() calls media_entity_cleanup() for the subdev, not the vdev.
-So you need to add `media_entity_cleanup(&isp_vdev->vdev.entity)`.
-
-To summarize, make the following changes to isp4vid_dev_init():
-
-1. On error starting from isp4vid_fill_buffer_size(), call vb2_queue_release()
-   to do cleanup for vb2_queue_init().
-
-2. When video_register_device() fails, do cleanup for media_entity_pads_init()
-   by adding `media_entity_cleanup(&isp_vdev->vdev.entity)`.
-
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +void isp4vid_dev_deinit(struct isp4vid_dev *isp_vdev)
-> > > +{
-> > > +	video_unregister_device(&isp_vdev->vdev);
-> > > +}
-
-I just noticed: isp4vid_dev_deinit() should call vb2_video_unregister_device()
-instead of video_unregister_device().
-
-See the comment in include/media/videobuf2-v4l2.h [5]:
-
- * If the driver uses vb2_fop_release()/_vb2_fop_release(), then it should use
- * vb2_video_unregister_device() instead of video_unregister_device().
-
-Since vb2_fop_release() is used, vb2_video_unregister_device() should be used.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/.clang-format?h=v6.17#n61
-[2] https://clang.llvm.org/docs/ClangFormatStyleOptions.html#cpp11bracedliststyle
-[3] https://github.com/torvalds/linux/commit/fe673d3f5bf1fc50cdc4b754831db91a2ec10126#diff-b7746cf0f2ab471c30d08fe3391b7d3ba45adbe7616e4fae0504b29f40b49dd5L1747-R1747
-[4] https://github.com/torvalds/linux/commit/d7fe75cbc23c7d225eee2ef04def239b6603dce7#diff-b8c8d3c5770869f743e155faac7cccc97082918c3e092ffdf592efa796725c79L2019-R2019
-[5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/media/videobuf2-v4l2.h?h=v6.17#n360
-
-Sultan
+Cheers,
+Lance
 
