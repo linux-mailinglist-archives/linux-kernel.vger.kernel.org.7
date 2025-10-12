@@ -1,157 +1,174 @@
-Return-Path: <linux-kernel+bounces-849629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D902BD08AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:37:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02173BD08B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2FD3BBF02
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:37:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF8EB4E3576
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3162EDD7E;
-	Sun, 12 Oct 2025 17:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036A12EDD7E;
+	Sun, 12 Oct 2025 17:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i10D8LAz"
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Z6PSS6q7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55501DF252
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 17:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE41DF252;
+	Sun, 12 Oct 2025 17:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760290653; cv=none; b=nNhJJgs/vENj/oKDY0tFFcidHySDiZegw5U5SeeHqgV7fRzCRb70oIUmJoAOR1EjyjWQhMR5Q0wqYanmBIdN2l7ATUfSbiMp/9xoNRgRnQq7A4+Np5ASyPwNxzyuBLplQQCEzR33Nmzpfcg/QgbF6YClM1l7YAlDgBN3pyPQqfI=
+	t=1760290743; cv=none; b=eRdmj5P2bLGmAIaGT0+9lziWLyzkWnjIJDUVARmxEaZf9edvUgOzx5NVXPPe6l7bvhQLzi49huf2QwY92Om02yK16cE+VjDv5itb7eBTa00Ss3KISZe2o0oiYzf53g/tCYpCCt5orK7Kk2ddA56C2sGN2ZMfZDse07J4v4UBY3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760290653; c=relaxed/simple;
-	bh=wQf6CUx6iYNtn0zMxIL285xU6GTttxgQB+eMaEn+Nqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SW7jJ/KGEjOxAiQZS4wbPCZCWKYEpbm7icqAZCTarBU/EopW2gAuKth5iOoLb2lE3WnMBUOU3ryDLQM/uOr4AC7EebYVmJuDJ0dL3cBlp4Tt5IA4L+nmDRo66vD3TatWV0mHLZnicE8erejXRQBLPqED1Yci0G6cofL8zL7qU+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i10D8LAz; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-634cef434beso7100418a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 10:37:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760290648; x=1760895448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HjN46mR7vmbfRcA2+LhyFdkXLDPT8VQfkzRMb9fR+Rg=;
-        b=i10D8LAzgSz5tmgbQycsZnksVhgTLRSff7nDR8WEHKl56VqacKuVViXYgHdLGw7qr6
-         +WglBTINupcFWC0WNHYED19lDFMXmaB+X06lxi6u6RHVtSNj8KyNUN891znZsT4CPt7r
-         6OJiBZnlZ0G9mb2Rg0GavlyAwlnFKpZByhRKxkKgQ3KeSH1iYH9gKD63n4QCcRp9ZZIX
-         WZgc1GdfwIJpjhDur22iGOkrpcG2J6z12LIYodqO+4yAx++Y6pOeDVFIF8Ljg3V4eHLn
-         1MwT00JzXl0nctbG2/N23Oqp6W7EWp3tcOQ+9IeJdjGn3n/6oFaevGFb7tbsX6r+fI4J
-         STTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760290648; x=1760895448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HjN46mR7vmbfRcA2+LhyFdkXLDPT8VQfkzRMb9fR+Rg=;
-        b=RrZktV6as2kaEp/gXoxHA7KASrAt2z77JrKRirw97MIbCu0MwZEW2gkZugwiaoHFPg
-         LTwa1cUUGaQKA5D+bk+tIUdGEl4Rns6amXAWxANqQrUf2agVRYaVw+4vlnI38BkzNmQY
-         twFQzbgha8kKkUkDEJ7swZPMf1137WfyLZ9d2w6u2ZPlmX3kGPeMPgnCoGkyqH1QQCmR
-         c24FN3qxP5jVyotCz1FoHzH7QH7WsNw8LFFT9gQWK+C+gA59FmKbxH7+q+Ovy0cn6Fsh
-         60Gzz1AhkpyjPfu/f3KLVCkJUkbkeVzjLGJqNmYKSt3OsrY7oVhZ06xNY7xZ1/L0TVEL
-         uKhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaMJTDcZK3iPaMcUAlHxNpcKsFtCcLQA0M8XXeudvla9buColnGJJNLZe1OBoH0UpX8prSvGN5kS1Xho0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDSh0Ub6PlG7F21KR7LyUM3b28EDN/778M0AwFSK2sKz+ZfeBF
-	6TCMNjgUrxuraB/lvyJNtL96NWtdu+/jG8jQyF5wrivslKJR0Pvh/ZD0LLpjqHLXD728IhVbJIv
-	UfFd9guin6H0TwnAI6rVBPbNNMRS92VA=
-X-Gm-Gg: ASbGncv0Xa8lgNWGYNmTd6qIiNEntv+qJ1ANvYhU27MIuYw2MebakR0awY3pEntxHYn
-	nRcwDdfWwyhhYc0ihFFfwxQrgo/wVAec1/0himZrDmZElfhlbqetZYHjPynJN/JDInQPGlkP1DS
-	U5oHhnx7mU8S1Dz8FXkHLx6HMfo3CLUFRDQcH2EepObbVb+tJYK9Z9H54wKLhWh1x+LHYr6nYeZ
-	xGelO5u3ZOBjzJseN9LXKwwBuS1dT2JUoCx
-X-Google-Smtp-Source: AGHT+IGFP/EgOGkWxqjUos/OJLXKzFze7OmeAssC7kBZ/7quZxkALgbxBsS2MKonlO9lkxUJo4zvtwxsst0X4NFCXYo=
-X-Received: by 2002:a17:906:c143:b0:b40:bdc3:ca04 with SMTP id
- a640c23a62f3a-b50baba84camr2323169866b.0.1760290647947; Sun, 12 Oct 2025
- 10:37:27 -0700 (PDT)
+	s=arc-20240116; t=1760290743; c=relaxed/simple;
+	bh=5I7ykGiAAOk6BgGy8HWD3BZzlBv59Rkn365TTJ8b+KA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XTk2Knw0J+v00PAuY/PHbWvzeO5p/pREpIDwtHGGk3cJMHqhB8pdixO0poX8HVMIGq/uJ7YEXEV7LXPXrhJS+1qctZsEJbHsWBfynzv/dkND9ua/hzOBFtjhgulgQRlwe/V2WSXd9pcOStV6nrtB1mJ+k/L9DXFMGbI+h2DjaG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Z6PSS6q7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CCUFda003614;
+	Sun, 12 Oct 2025 17:38:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=764uBY9ag12bRJrfxTMRZfhol4GFWWG44oa
+	B8K1Qi2A=; b=Z6PSS6q7oDAyymmAYdvh2gNcCI0GMXtbnG+QSK0nRqaUn0En4IH
+	+6FTHPEj+TZ1jUd/t9an9roaysbkq1VPvXK+YYz6jNRVEnMbGM3ZDkKt0e394k57
+	NxxuKFooDJe5nM3TMqJsWMdlrPhXdaSDaqAVLMZgRShXnbtOVWIZMBg8ULEgIJOP
+	+0BSRlauZi3hi7VBUsgcWbWcuVrKI30Z1OhkcfJv27qd2wrBJMDsBNMsTS8+GG2P
+	F1mOcHQF/kVmrJlNM/CwGgEKkkn05L2/AyF8+Zx0L/Ph/SWAA9W7yTi8OoLlj7BJ
+	J2dxGQOyRlI+QASfjaZPuq5PYCyPDzWQg1A==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qgh628jd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 Oct 2025 17:38:35 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59CHcVPt007557;
+	Sun, 12 Oct 2025 17:38:31 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 49qgakks6h-1;
+	Sun, 12 Oct 2025 17:38:31 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59CHcVm5007551;
+	Sun, 12 Oct 2025 17:38:31 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 59CHcU0x007550;
+	Sun, 12 Oct 2025 17:38:31 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id 3540B603540; Sun, 12 Oct 2025 23:08:30 +0530 (+0530)
+From: Nitin Rawat <nitin.rawat@oss.qualcomm.com>
+To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, bvanassche@acm.org,
+        konrad.dybcio@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Nitin Rawat <nitin.rawat@oss.qualcomm.com>
+Subject: [PATCH V1] ufs: ufs-qcom: Fix UFS OCP issue during UFS power down(PC=3)
+Date: Sun, 12 Oct 2025 23:08:28 +0530
+Message-ID: <20251012173828.9880-1-nitin.rawat@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008031737.7321-1-raskar.shree97@gmail.com>
- <20251008031737.7321-2-raskar.shree97@gmail.com> <20251012180644.019616c9@jic23-huawei>
-In-Reply-To: <20251012180644.019616c9@jic23-huawei>
-From: Shrikant <raskar.shree97@gmail.com>
-Date: Sun, 12 Oct 2025 23:07:16 +0530
-X-Gm-Features: AS18NWBpLXveHlQdIhTnFbX7i56JOrqOKowAXbKZ3PnsuA7_QAtU4BLr2PqKRcI
-Message-ID: <CAHc1_P4L2oiM09YhewH69GHcVW667b0xW5eeH9+UY0xi2aO28w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: max30100: Add pulse-width property
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, matt@ranostay.sg, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=H/zWAuYi c=1 sm=1 tr=0 ts=68ebe79b cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=ldyrZXJ3T4YXRkzK03AA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyNiBTYWx0ZWRfXwOb+7oYHDYRZ
+ GkVtvz60AXbHXxpfuUiSQLOC6KuPp3DSHCxikOnwRh2r0hO1SXJn8mGbOefMNJzkktMXpp9l/ct
+ NWghO3LxFGM+4U7DQG7euxrBNnbm+rYJDODc6YeWs9pO91YPctAfl9bmMGVqLmpa8dpmY4+7gUQ
+ Nsy6CBXsKWsAwMowYk4I5XXxwdtxnpJGeckn+TW9r3EtkTQlMngqsQxv8X3SDucv/ciDObGrGu9
+ JcJ/JEf+2yRwqeK1YJJLHc8EEBzjSyVaLxynmLLEbYKgnD65gP789sLLy2cv1DlCFwtg+AG6zva
+ URrLQvoBEZq7UiYt1lDyIKYRWbeXcORZWoIFbEmMdufSUD7tz4cTPpTtRlRb3dXjnJjG5Y4tx5K
+ wzqb2+LigHAmsYX0oKZ7EJwVAcktEQ==
+X-Proofpoint-ORIG-GUID: t9-cGvjqQYsJIZ1ukQAkVF7_xzYK2pQ9
+X-Proofpoint-GUID: t9-cGvjqQYsJIZ1ukQAkVF7_xzYK2pQ9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-12_07,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ clxscore=1011 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110026
 
-On Sun, Oct 12, 2025 at 10:36=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
-> wrote:
->
-> On Wed,  8 Oct 2025 08:47:36 +0530
-> Shrikant Raskar <raskar.shree97@gmail.com> wrote:
->
-> > The appropriate LED pulse width for the MAX30100 depends on
-> > board-specific optical and mechanical design (lens, enclosure,
-> > LED-to-sensor distance) and the trade-off between measurement
-> > resolution and power consumption. Encoding it in Device Tree
-> > documents these platform choices and ensures consistent behavior.
-> >
-> > Tested on: Raspberry Pi 3B + MAX30100 breakout board.
-> >
-> > Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
-> >
-> > Changes since v1:
-> > Add unit suffix.
-> > Drop redundant description.
-> >
-> > Link to v1:
-> > https://lore.kernel.org/all/20251004015623.7019-2-raskar.shree97@gmail.=
-com/
-> > ---
-> >  .../devicetree/bindings/iio/health/maxim,max30100.yaml      | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/health/maxim,max3010=
-0.yaml b/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml
-> > index 967778fb0ce8..5c651a0151cc 100644
-> > --- a/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml
-> > @@ -27,6 +27,11 @@ properties:
-> >        LED current whilst the engine is running. First indexed value is
-> >        the configuration for the RED LED, and second value is for the I=
-R LED.
-> >
-> > +  maxim,pulse-width-us:
-> > +    maxItems: 1
-> > +    description: Pulse width in microseconds
-> I continued the discussion on v1 but just to make sure it is not
-> missed, add a bit more here briefly touching on factors that govern what
-> the right value is here.
-I have considered the feedback from v1 and updated the description
-with suggested factors. I have shared the v3 patches with updates for your
-review.
-Thanks and Regards,
-Shrikant
->
-> > +    enum: [200, 400, 800, 1600]
-> > +
-> >  additionalProperties: false
-> >
-> >  required:
-> > @@ -44,6 +49,7 @@ examples:
-> >              compatible =3D "maxim,max30100";
-> >              reg =3D <0x57>;
-> >              maxim,led-current-microamp =3D <24000 50000>;
-> > +            maxim,pulse-width-us =3D <1600>;
-> >              interrupt-parent =3D <&gpio1>;
-> >              interrupts =3D <16 2>;
-> >          };
->
+According to UFS specifications, the power-off sequence for a UFS
+device includes:
+
+- Sending an SSU command with Power_Condition=3 and await a
+  response.
+- Asserting RST_N low.
+- Turning off REF_CLK.
+- Turning off VCC.
+- Turning off VCCQ/VCCQ2.
+
+As part of ufs shutdown , after the SSU command completion, asserting
+hardware reset (HWRST) triggers the device firmware to wake up and
+execute its reset routine. This routine initializes hardware blocks
+and takes a few milliseconds to complete. During this time, the
+ICCQ draws a large current.
+
+This large ICCQ current may cause issues for the regulator which
+is supplying power to UFS, because the turn off request from UFS
+driver to the regulator framework will be immediately followed by
+low power mode(LPM) request by regulator framework. This is done
+by framework because UFS which is the only client is requesting
+for disable. So if the rail is still in the process of shutting down
+while ICCQ exceeds LPM current thresholds, and LPM mode is activated
+in hardware during this state, it may trigger an overcurrent
+protection (OCP) fault in the regulator.
+
+To prevent this, a 10ms delay is added after asserting HWRST. This
+allows the reset operation to complete while power rails remain active
+and in high-power mode.
+
+Currently there is no way for Host to query whether the reset is
+completed or not and hence this the delay is based on experiments
+with Qualcomm UFS controllers across multiple UFS vendors.
+
+Signed-off-by: Nitin Rawat <nitin.rawat@oss.qualcomm.com>
+---
+ drivers/ufs/host/ufs-qcom.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 89a3328a7a75..cb54628be466 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -744,8 +744,21 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+
+
+ 	/* reset the connected UFS device during power down */
+-	if (ufs_qcom_is_link_off(hba) && host->device_reset)
++	if (ufs_qcom_is_link_off(hba) && host->device_reset) {
+ 		ufs_qcom_device_reset_ctrl(hba, true);
++		/*
++		 * After sending the SSU command, asserting the rst_n
++		 * line causes the device firmware to wake up and
++		 * execute its reset routine.
++		 *
++		 * During this process, the device may draw current
++		 * beyond the permissible limit for low-power mode (LPM).
++		 * A 10ms delay, based on experimental observations,
++		 * allows the UFS device to complete its hardware reset
++		 * before transitioning the power rail to LPM.
++		 */
++		usleep_range(10000, 11000);
++	}
+
+ 	return ufs_qcom_ice_suspend(host);
+ }
+--
+2.50.1
+
 
