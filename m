@@ -1,121 +1,172 @@
-Return-Path: <linux-kernel+bounces-849731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566F8BD0C16
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF67BD0C2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15A23BEF54
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8511894DAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFB922D9F7;
-	Sun, 12 Oct 2025 20:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3282356D9;
+	Sun, 12 Oct 2025 20:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ENJ3H1/D"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTI0f5z3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A0A222564
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 20:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D712214204;
+	Sun, 12 Oct 2025 20:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760301550; cv=none; b=rJavV0eyIfS6y2U001tRQElgz45QPH6+lZzSDNSM6Jrsnvk0gnsmmUmZfv0uWOl9TlQ6fMgqkhGdct97KQx/7nlvDOuphhsXXfrFwibDsAktoHhCfST6VhOTN2pIEseOTT67+1tMzosBmBmNt0AOQ8wxlzJW8ndL8O1Pv3CjoMQ=
+	t=1760301892; cv=none; b=U76TIyd+BT1YcRlJDSfc0XnoKQjmZEWCp+tt76j1XZnWzU45luPPwdoW1HvRMCtighlXzAlnYp9oE+rxCcEgbh3hu1PISFDmT6UYGL+hL69PMWu5QE2KwF0dDKVU0NA2fHc6IauMfQHoxtMoKrW8mXTJNz8nlutUzgf5mTn+iaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760301550; c=relaxed/simple;
-	bh=lXpCMeLAuG7JE8yPh1RARhwCCjUzt/EJoeAJ9PZU5cI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HmgPD1LNCzEctq4KYWyTGrnk7/Vlbh53A5OK2qxD2V5ePj4CbftUS9MC4aLDTmJAUjp8HGGkmQt3JihTkCH2RRrH5HRByCxQFsEm3ri2EyZe6Mkv5TwrGUW3W8gdn2AEvIu86pTmDGb5VeIDKX7re9feL72M3n33jZMfaytfyI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ENJ3H1/D; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760301544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wa+ZvF07uqoBdmRF0RsswANJIIDhlDOXe9AbX7GaHgo=;
-	b=ENJ3H1/DP9HbQdOto0jsi9bacB5f3LPrpTKm8Gcj48TdveEsWHQAZcDTV6DQe+ShTApZBA
-	iub0wV6kYrta41n0drGCuNYIWGTp/y17e2wroCuaVx1V9TmtwhNC9OITZBTnjk6VMCTvmi
-	9+/V2+nTv8UFDeLTdJl/Dzf+LpbxoFQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: David Howells <dhowells@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] crypto: asymmetric_keys - simplify asymmetric_key_hex_to_key_id
-Date: Sun, 12 Oct 2025 22:38:41 +0200
-Message-ID: <20251012203841.60230-2-thorsten.blum@linux.dev>
-In-Reply-To: <20251012203841.60230-1-thorsten.blum@linux.dev>
-References: <20251012203841.60230-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1760301892; c=relaxed/simple;
+	bh=d/vNpme0tbgody0yNnwPtQwOUw1cH14ElX7Rodm/NMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PtId9uB0/V0KBKqJ6DQfZr/EM5g1/URkuFiIhEJ75Z6ImDgdenswC6S/SvWPimK1y9TM8nfJKGIWXBqMcEV+K8u9LPf/yfImHoMmSR0GP7DVOxD/rRyzuD0SFNOrgDlBVWgofdQ6Kf+sXrh8gKXhXRFbapbmAne8Cal/U/4gjT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTI0f5z3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6EE8C4CEE7;
+	Sun, 12 Oct 2025 20:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760301891;
+	bh=d/vNpme0tbgody0yNnwPtQwOUw1cH14ElX7Rodm/NMg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FTI0f5z3Z1KfTrV0mm2jA5mdCci0eZSQitoS7vCVOkW2zr+18VyfzI079X5F/fmEJ
+	 mTt8DX+wBehsQkOKzp3I4oUT0dcZRTNdwAhOpKpN6wNJWR3ou1L9PL3JnJ9ygqU+cd
+	 0yt1xZUG0cYl2SpVd4Ld6nOTbPtlEHUG39qyAOB/OaskKxIoxk95EPFMBkZqOm29SA
+	 9h9mizSuAPsAZPF5iK+3+EjkNiu8wnJSfcOdXbocgCLSmLifOIV6CXD2bGzjFP5Sja
+	 xsMkYUm3Q3kfeHqfV/A3KzeBrjOPCM2/vYE7EiumsBNHmbCuPHQXRw8Ph2K3LIsr/K
+	 5vAz2pILFsKTg==
+Message-ID: <3c1eb276-abde-4af4-ab39-c934c30aa447@kernel.org>
+Date: Sun, 12 Oct 2025 21:44:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
+To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Robin Murphy <robin.murphy@arm.com>
+Cc: joro@8bytes.org, will@kernel.org, saravanak@google.com,
+ conor+dt@kernel.org, robh@kernel.org, mchehab@kernel.org,
+ krzk+dt@kernel.org, abhinav.kumar@linux.dev,
+ vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ bjorn.andersson@oss.qualcomm.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
+ <aec0f40a-8346-4194-8b18-1022fe3366bb@arm.com>
+ <0d0560cc-9757-4c7b-8de4-170148d99481@oss.qualcomm.com>
+ <ead7cf8b-fbc4-4242-a9da-b313dded1abc@arm.com>
+ <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
+ <9d3eeb9f-b8ea-48e5-a1d9-0865f63ef991@arm.com>
+ <fhb4woejzh3r6v5dxvdiopnsbuwstucfuuzbiymxg4wrxrjc7t@dt3z3utq6lwd>
+ <0zcQcB2YYWH_ufElq3ptqtLsGDsxvMEAkHCt_jYaSpwV597VFc22pFWzyMz0rSY-DKqWCQgOCiKpsIRNA0Fisw==@protonmail.internalid>
+ <c863f6a7-b117-4444-ae6d-1d525b572be2@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <c863f6a7-b117-4444-ae6d-1d525b572be2@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use struct_size() to calculate the number of bytes to allocate for the
-asymmetric key id. Add a local variable to store the hex data length
-instead of recalculating it.
+On 10/10/2025 20:53, Charan Teja Kalla wrote:
+> I don't want to dilute what Dmitry is saying here, but the below is what
+> i can make out of Robin comments, please CMIW:
+> 
+> iommu {
+> 	#iommu-cells = <2>;
+> }
+> 
+> video {
+>     iommu = <iommu sid1 mask1>, <iommu sid2 mask2>;
+>     #iommu-map-cells = 2; /* does it look weird to define here, even if
+> it is SMMU property? */
+>     iommu-map = <0 smmu sid3 mask3>,
+> 	       <0 smmu sid4 mask4>;
+> };
 
-Return and forward the error code from __asymmetric_key_hex_to_key_id()
-directly instead of manually returning -EINVAL.
 
-No functional change.
+This whole iommu-map thing is a wrong direction, its a workaround.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+It stems from here:
+
+1. Vikash posted a series adding a platform device
+  
+https://lore.kernel.org/linux-media/20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com/
+
+    The two objectives of this are
+
+    a. Allow Linux, the APPS as qcom calls it,@ EL1 or EL2
+       to setup iommu entries for function_ids that are
+       not the APPS @ EL1/EL2.
+       For example the APPS running in TEE or one of the
+       various co-processors - like say the Compute DSP cDSP.
+
+    b. Allowing for each device to have a full IOVA range.
+
+2. Krzysztof queried about changing _existing_ entries e.g.
+  
+https://lore.kernel.org/linux-media/6fd3fa34-69e1-484f-ad6f-8caa852f1a6c@kernel.org/
+
+    The point about ABI breakage.
+
+3. This proposal to introduce iommu-map as a workaround
+    Gets the FUNCTION_ID APPS v cDSP v TZ into the DT
+
+    So it solves 1/a I'm not sure it solves 1/b
+
+    However if you were designing from scratch you wouldn't
+    have a motivation to assign this additional property.
+
+    The motivation is to not break the ABI I think.
+
+4. Robin said
+
+    "And if you want individual StreamIDs for logical functions to be
+     attachable to distinct contexts then those functions absolutely
+     must be visible to the IOMMU layer and the SMMU driver as
+     independent devices"
+
+5. If you think about this, its actually the right long term solution
+
+    - Individual devices means something like:
+
+      video-codec@aa00000 {
+          /* Any SID mapping to S1_VIDEO_HLOS belongs here */
+          compatible = "qcom,sm8550-iris";
+          iommus = <&apps_smmu 0x1947 0x0000>;
+      };
+
+      video-codec-non-pixel {
+          /* Any SID mapping to S1_VIDEO_HLOS_P belongs here */
+          compatible = "qcom,sm8550-iris-non-pixel";
+          iommus = <&apps_smmu 0x1940 0x0000>;
+      };
+
+    - Or do something like that above again in platform code.
+
+6. We should on introduction of a new SoC
+
+    - Fix the iommus = <> for "qcom,newsoc-iris" to contain
+      only what is pertinent to S1_VIDEO_HLOS
+
+    - Make new devices in the DT for each FUNCTION_ID
+
+    - Then look at how - if - that fix can be brought back to Lemans
+
+My problem with introducing the iommu-map is that it bakes into the 
+video codec definitions a fixup which then gets carried forward.
+
+But the right thing to do is individual devices so, let's do that and 
+worry about how to back-port that fix to older SoCs once done.
+
 ---
-Changes in v2:
-- Keep 'ret' and forward the errno from __asymmetric_key_hex_to_key_id()
-  as suggested by Lukas
-- Link to v1: https://lore.kernel.org/lkml/20251007185220.234611-3-thorsten.blum@linux.dev/
----
- crypto/asymmetric_keys/asymmetric_type.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index bd96f799757d..abd5cf419f83 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -229,6 +229,7 @@ struct asymmetric_key_id *asymmetric_key_hex_to_key_id(const char *id)
- {
- 	struct asymmetric_key_id *match_id;
- 	size_t asciihexlen;
-+	size_t hexlen;
- 	int ret;
- 
- 	if (!*id)
-@@ -237,14 +238,14 @@ struct asymmetric_key_id *asymmetric_key_hex_to_key_id(const char *id)
- 	if (asciihexlen & 1)
- 		return ERR_PTR(-EINVAL);
- 
--	match_id = kmalloc(sizeof(struct asymmetric_key_id) + asciihexlen / 2,
--			   GFP_KERNEL);
-+	hexlen = asciihexlen / 2;
-+	match_id = kmalloc(struct_size(match_id, data, hexlen), GFP_KERNEL);
- 	if (!match_id)
- 		return ERR_PTR(-ENOMEM);
--	ret = __asymmetric_key_hex_to_key_id(id, match_id, asciihexlen / 2);
-+	ret = __asymmetric_key_hex_to_key_id(id, match_id, hexlen);
- 	if (ret < 0) {
- 		kfree(match_id);
--		return ERR_PTR(-EINVAL);
-+		return ERR_PTR(ret);
- 	}
- 	return match_id;
- }
--- 
-2.51.0
-
+bod
 
