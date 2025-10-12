@@ -1,156 +1,158 @@
-Return-Path: <linux-kernel+bounces-849373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518FFBCFF46
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 05:14:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BDDBCFF4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 05:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 125654E4AFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 03:14:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72C4C4E0649
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 03:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7611E7C27;
-	Sun, 12 Oct 2025 03:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824241E8332;
+	Sun, 12 Oct 2025 03:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqg7uJpF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ov2euuR5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C652B2D7;
-	Sun, 12 Oct 2025 03:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FBD1D86FF;
+	Sun, 12 Oct 2025 03:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760238841; cv=none; b=aGGy7M63YysNegXZwmoYBcW7yl5tfVtkYbtctM5tZfXihsDy8+oM+GAGDsSzD47Btj/O0xQwQIf0YYuG8qOPj2U3VjzH6exzZda7NOJjh2Taek1I9XXp8dJ02wfRJu9FpFOY4LsjJ7e0+ksNFzcbjgYrMCUtP6bBzYXP+3z0wjI=
+	t=1760239613; cv=none; b=Gc3L3HKb87GrhrQqI20nuwJ0c0ytCyb3vzXC+nC4ZJX4bLJqfYPf1XjETxItNNR4ZcmKlhdKEiTROId5Ror+uKp65CLs2UOTq64rW9S+Nhg0kUA7xEwhuaDPB859yGyJSFn7aupMKUcLamh8x4QoWnCN8TAtZ6bTCmPpG9HQiMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760238841; c=relaxed/simple;
-	bh=AqIIbQlxKbU2WQho2l73lLQz55TApllCEK2yK6AOY6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CC0gYW5DyJc1jM1VuGU5Voxvj0hNy/dhzJJoUeR37j9SwgMT4ii7DP+MikMhxTCy7fuiC6u4Vl7kdatVq55Dmih/g1G7ut+levpJOwF8YnuUyECV+VNMbmpXt1KO76Oog8KaGwWWUxdTaXi2dPuDr896XucnR0xyY/7TFXGwVFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqg7uJpF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7013C4CEE7;
-	Sun, 12 Oct 2025 03:13:55 +0000 (UTC)
+	s=arc-20240116; t=1760239613; c=relaxed/simple;
+	bh=hmpKvvJnF/u4D2UEAsYNRteDpX+9tDZCPdRWNpkWycM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Fax2KvkUpvlj1YJGSdgSXLG99BIX85Tdq5m056xhsdRRmgtbppl0MuK4tNMg0kylp0pUtdJfWvBgc2VTzXSIbdEpNkprsJyGp1rdKuJzwSavs1fwwMsssdJ1v02E7mKUYtJzR5ThMcf4q9xZUSbthsI4cilOe/Zw2B3UF+kClhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ov2euuR5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857A9C4CEE7;
+	Sun, 12 Oct 2025 03:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760238841;
-	bh=AqIIbQlxKbU2WQho2l73lLQz55TApllCEK2yK6AOY6k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uqg7uJpFRhWdH0Vie31JMI6soO+mZIeEukoAIY9tsx3aeTeHMjYT/ol6Kk8KzdTGk
-	 sQO0ZZ8bovMM9hRnTOkkpGKHxYBxxONK02Lz81RvzXFbW0G5CPPMKPLGph9ZVZ7nYI
-	 1gsJJG3eX/w333r1qkmThub76tpkBYZCHK1PrDViSyBTKDubx3uK+kd/ICBHP7+r4J
-	 vesM4+v4c77RILKgfKm6oT/dwfhzDZkW+irV2kzm0Yj9afPJFiMuLwWZ0wogcABq3P
-	 3lTyTuImL0v/eE/wBJL/HCaB2RtuHXJJHsidP3tymC4kctxkgYS8og4zo5INWe2z8u
-	 ofgo/oAO3KExw==
-Message-ID: <aa5d7fb2-2143-43b1-8780-87b69479a17b@kernel.org>
-Date: Sun, 12 Oct 2025 05:13:53 +0200
+	s=k20201202; t=1760239613;
+	bh=hmpKvvJnF/u4D2UEAsYNRteDpX+9tDZCPdRWNpkWycM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ov2euuR5vcyePyIcKmrkeL+xiWlvOf7D+01p1JSK6QEBs2WeHXGfpYIYscmSrMnX7
+	 2V4Xh8yRRZ87h3WVNirgO0yjPAh4Udus31ZPQWRpdMh4EKzC+2IsgfGHYuIEQ41/0I
+	 4m+84lq5NeViQCeAlgZmwRKWg3wiWQvRhT4PU/LEg6GbiaTxA45hMdSVWhhlT5w9Zh
+	 kkKSAZuzvBaWszxHhcIPwpTNHXvYwGGLD4mXqxKNz4xKeXQR8DdRgd8mYTkj61gCbs
+	 DJCPxvSwBXjE8Ba7ouNEttLeGL///4icaZ+N0I5KRyHinyo/mAIMklQp1BySnSPGGM
+	 +PO1gzGiaBJdg==
+Date: Sun, 12 Oct 2025 12:26:48 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: syzbot <syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ mathieu.desnoyers@efficios.com, rostedt@goodmis.org,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [trace?] WARNING in write_raw_marker_to_buffer
+Message-Id: <20251012122648.d6ca8923c4ef5bc9fc483e9f@kernel.org>
+In-Reply-To: <68e973f5.050a0220.1186a4.0010.GAE@google.com>
+References: <68e973f5.050a0220.1186a4.0010.GAE@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: pressure: Add Aosong adp810
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, jic23@kernel.org,
- dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
- marcelo.schmitt1@gmail.com, vassilisamir@gmail.com, salah.triki@gmail.com
-Cc: skhan@linuxfoundation.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- akhileshpatilvnit@gmail.com
-References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
- <5ddfc7d318a7d3a42cfce4a33ad62f3d2be91a11.1760184859.git.akhilesh@ee.iitb.ac.in>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <5ddfc7d318a7d3a42cfce4a33ad62f3d2be91a11.1760184859.git.akhilesh@ee.iitb.ac.in>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 11/10/2025 14:25, Akhilesh Patil wrote:
-> +---
-> +$id: http://devicetree.org/schemas/iio/pressure/aosong,adp810.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: aosong adp810 differential pressure sensor
-> +
-> +maintainers:
-> +  - Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> +
-> +description: |
-
-If there is going to be any new version, drop |.
+Hi,
 
 
-> +  ADP810 is differential pressure and temperature sensor. It has I2C bus interface
+This happens because we replaced (non field size check)
+copy_from_user_nofault() to memcpy. So I think we need a cast
+to void * there.
 
-Wrap at 80 (see coding style).
+On Fri, 10 Oct 2025 14:00:37 -0700
+syzbot <syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com> wrote:
+
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    5472d60c129f Merge tag 'trace-v6.18-2' of git://git.kernel..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1239b458580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e7dba95d4cdd903c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9a2ede1643175f350105
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eec52f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122e9892580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/fbf444614257/disk-5472d60c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/f129612e3b8b/vmlinux-5472d60c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8095ae997ffa/bzImage-5472d60c.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9a2ede1643175f350105@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> memcpy: detected field-spanning write (size 2655) of single field "&entry->id" at kernel/trace/trace.c:7458 (size 4)
+> WARNING: CPU: 0 PID: 6004 at kernel/trace/trace.c:7458 write_raw_marker_to_buffer.isra.0+0x2d4/0x330 kernel/trace/trace.c:7458
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 6004 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+> RIP: 0010:write_raw_marker_to_buffer.isra.0+0x2d4/0x330 kernel/trace/trace.c:7458
+> Code: ff e8 30 74 fa ff c6 05 b4 7e aa 0e 01 90 b9 04 00 00 00 48 c7 c2 e0 1e 93 8b 4c 89 e6 48 c7 c7 40 1f 93 8b e8 6d fc b8 ff 90 <0f> 0b 90 90 e9 d7 fe ff ff e8 6e 04 62 00 e9 da fd ff ff e8 64 04
+> RSP: 0018:ffffc90003837c40 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: ffff88813ff34018 RCX: ffffffff817a5e58
+> RDX: ffff888031d73c80 RSI: ffffffff817a5e65 RDI: 0000000000000001
+> RBP: ffff88813ff34010 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000a5f
+> R13: ffff88813ff18c00 R14: 0000000000000000 R15: 0000200000000040
+> FS:  000055558e5ff500(0000) GS:ffff8881249e6000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b30263fff CR3: 0000000034638000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  tracing_mark_raw_write+0x2da/0x4a0 kernel/trace/trace.c:7500
+>  vfs_write+0x2a0/0x11d0 fs/read_write.c:684
+>  ksys_write+0x1f8/0x250 fs/read_write.c:738
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f18a0b8eec9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fff2b2d2c28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007f18a0de5fa0 RCX: 00007f18a0b8eec9
+> RDX: 0000000000000a5f RSI: 0000200000000040 RDI: 0000000000000003
+> RBP: 00007f18a0c11f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f18a0de5fa0 R14: 00007f18a0de5fa0 R15: 0000000000000003
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, just skip it entirely
-(please do not feel offended by me posting it here - no bad intentions
-intended, no patronizing, I just want to avoid wasted efforts). If you
-do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here ('b4 trailers -u ...'). However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for tags received on the version they apply.
-
-Full context and explanation:
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
-</form letter>
-
-
-Best regards,
-Krzysztof
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
