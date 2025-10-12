@@ -1,103 +1,146 @@
-Return-Path: <linux-kernel+bounces-849680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D02BD0A57
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:05:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC53BD0A60
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 402B63BD01F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:05:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E54414E8686
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726012EE274;
-	Sun, 12 Oct 2025 19:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BE52ED15F;
+	Sun, 12 Oct 2025 19:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIXOgDSG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koUnk/1M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75661A275;
-	Sun, 12 Oct 2025 19:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6A41A275;
+	Sun, 12 Oct 2025 19:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760295920; cv=none; b=bAUfdHY0rfvV54c2IPxBbFIOBNyvsUthVWD7HnhS8FN3bkFkrqVGZoxdA+heqx2zdewqtay5zEC/Jv2V65gUw1i4KNvTnob5wXYkE2n6eMgZ/mljm0he3uLWl1AP40MFacIVz7lFHVzoPovw6ZIOj2Plh5392kqY0yPV1qVji5I=
+	t=1760296019; cv=none; b=m6TIoNzivCwGoOu7MF2xxyO/Ww4dmIloRFmUo3ErR02i5u3hdpC9is4I6gS6oGjp3Jd9vlh+jjBWOx/QTda+2Dx6S5rcAkqLU5QmCYKFCKXxzfTGFQV31A22O8MU/ri+UDaha8Y059OEm4/Tz7bUg0KFzer6GPPJ2A5Z/2ddZs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760295920; c=relaxed/simple;
-	bh=cDrMWNtk5yJUv7e601R2iazOPWEXAHlkDtfs9dDAh2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lBHVFyIvIPArnDlV24wvNiooWtTbkcQ5hwgFIi1uHfuxDdJLf4UciBDfWZfj4xURA/l2DvA2RtFODdq8I6mNhOUAAsE8gH9+WrVBDf+zKQGRj0y4EdpSPADOK4tgY1kk6hKSKLAtFWV3U/t4KPtz0WtZFYBxufWQ6EED6sWu10k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIXOgDSG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F38FC4CEE7;
-	Sun, 12 Oct 2025 19:05:17 +0000 (UTC)
+	s=arc-20240116; t=1760296019; c=relaxed/simple;
+	bh=DnR0msbAZQb+cqUGYPlAa9RGqHdYtjRoz9MBPzHQDIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nPM7ox2ww5A9tt1cvzgsjLJZInFSR+tqeUDSM6qSGDAZfK5QKF8NngBSxfpOkmjRHBCfnqmuJqStRnOp7HmTXW2I4Sv9eAY+wdrbybAIaDKGX03Ya3AnjMsw6i5I7qxCmXDIIsjpJSy5tOG6xFHWHazIm8ENJnPMazCCppANQcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koUnk/1M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B92D5C4CEE7;
+	Sun, 12 Oct 2025 19:06:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760295920;
-	bh=cDrMWNtk5yJUv7e601R2iazOPWEXAHlkDtfs9dDAh2o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IIXOgDSGlMuzFfohRKdv9U+TarOuK64YSi6JTZBl1ET7rzr7QkJvJhg/1a/IFgwsr
-	 qa4jQfTklT6LiQwHDsj1AzHAXkoRYdiCqw2iR723mkiFjZn6MSH7/s9CSklxYbZzHg
-	 iytz5Q7N5QGpFCBEBqxc/2m4UM87PGMvZYeS5nIIHDFXpa9geHYuEsEbf/OUv9C0UO
-	 agRNov93ZouX1K96dU37R1Htd5Gwbw/gK6cWge+PYc9ylw/xAkraS4vy7sMAiLJDt1
-	 mt2gPl2L74ezOIUvOUyArJrb3COQSzwFsTgIRKQ6EgcKm8g738+Zrro4r/Q7l9JeST
-	 10cDbxvIbvJ5w==
-Date: Sun, 12 Oct 2025 20:05:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: lanzano.alex@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: imu: bmi270: fix dev_err_probe error msg
-Message-ID: <20251012200511.0a622220@jic23-huawei>
-In-Reply-To: <20251010191055.28708-1-rodrigo.gobbi.7@gmail.com>
-References: <20251010191055.28708-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1760296018;
+	bh=DnR0msbAZQb+cqUGYPlAa9RGqHdYtjRoz9MBPzHQDIE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=koUnk/1MK6Oa1TymZBtnRqXIiDLZyuCW5goUBwiCYEdMIsu3ki0zr5T2RYMPjZsZ6
+	 CuNpcNu6da6S/LH0gASrPQSh+yGvJC79jELyQ+vBanWk/QPdKMXbYYbUUr3+EczDL0
+	 Mi48QmgwAZF2GBDufa3xPISdwziEpGSdwXaBPLLE+9LkrLvz9L8oO303YMb83z9K7O
+	 YYLwOhOpts41G3RBqxPi3fQXy+C2bH5bYWjPTzTHZNv42VwxNOgSYkrwvqX/Ro8RbX
+	 btQIZYq4INTruynJFf/9ltxXPc2H218RjqQPkNatxjMcsmybz/Z/JdwymQjUBWxvqc
+	 uirkp/OlP/Hrw==
+Message-ID: <65c24236-044c-4b65-baaa-dc0011ea69d8@kernel.org>
+Date: Sun, 12 Oct 2025 14:06:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 2/4] PCI/VGA: Replace vga_is_firmware_default() with a
+ screen info check
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>
+References: <20250811162606.587759-1-superm1@kernel.org>
+ <20250811162606.587759-3-superm1@kernel.org> <20251012182302.GA3412@sol>
+ <1be1a119-1fbd-435f-bb27-70f48d677ebf@kernel.org> <20251012184717.GB3412@sol>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20251012184717.GB3412@sol>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 10 Oct 2025 16:06:46 -0300
-Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com> wrote:
 
-> The bmi270 can be connected to I2C or a SPI interface. If it is a SPI,
-> during probe, if devm_regmap_init() fails, it should print the "spi"
-> term rather "i2c".
+
+On 10/12/25 1:47 PM, Eric Biggers wrote:
+> On Sun, Oct 12, 2025 at 01:37:33PM -0500, Mario Limonciello wrote:
+>>
+>>
+>> On 10/12/25 1:23 PM, Eric Biggers wrote:
+>>> Hi,
+>>>
+>>> On Mon, Aug 11, 2025 at 11:26:04AM -0500, Mario Limonciello (AMD) wrote:
+>>>> vga_is_firmware_default() checks firmware resources to find the owner
+>>>> framebuffer resources to find the firmware PCI device.  This is an
+>>>> open coded implementation of screen_info_pci_dev().  Switch to using
+>>>> screen_info_pci_dev() instead.
+>>>>
+>>>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>>>> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>>> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
+>>>
+>>> I'm getting a black screen on boot on mainline, and it bisected to this
+>>> commit.  Reverting this commit fixed it.
+>>>
+>>> Please revert.
+>>>
+>>> - Eric
+>>
+>> Can you please share more information about your issue before we jump
+>> straight into a revert?  What kind of hardware do you have?  Perhaps a
+>> kernel log from mainline and another from mainline with the revert could
+>> help identify what's going on?
+>>
+>> A revert might be the right solution, but I would rather fix the issue if
+>> it's plausible to do so.
 > 
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> ---
-> Just fixing this little "typo", definitely it was copied from the bmi270_i2c.c [1],
-> which has the same dev_err_probe logic.
-> Tks and regards.
+> Relevant hardware is:
+>      AMD Ryzen 9 9950X 16-Core Processor
+>      Radeon RX 9070
 > 
-> [1] https://github.com/torvalds/linux/blob/master/drivers/iio/imu/bmi270/bmi270_i2c.c#L30
-
-Given the confusion this could cause I'm thinking this should go to stable.
-It needs a fixes tag.
-
-thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/imu/bmi270/bmi270_spi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The following message appears in the good log but not the bad log:
 > 
-> diff --git a/drivers/iio/imu/bmi270/bmi270_spi.c b/drivers/iio/imu/bmi270/bmi270_spi.c
-> index 19dd7734f9d0..5e625586681d 100644
-> --- a/drivers/iio/imu/bmi270/bmi270_spi.c
-> +++ b/drivers/iio/imu/bmi270/bmi270_spi.c
-> @@ -60,7 +60,7 @@ static int bmi270_spi_probe(struct spi_device *spi)
->  				  &bmi270_spi_regmap_config);
->  	if (IS_ERR(regmap))
->  		return dev_err_probe(dev, PTR_ERR(regmap),
-> -				     "Failed to init i2c regmap");
-> +				     "Failed to init spi regmap");
->  
->  	return bmi270_core_probe(dev, regmap, chip_info);
->  }
+>      fbcon: amdgpudrmfb (fb0) is primary device
+> 
+> I don't have CONFIG_SCREEN_INFO enabled, so the commit changed
+> vga_is_firmware_default() to always return false.
 
+Thanks, that definitely explains it.
+
+> 
+> If DRM_AMDGPU depends on SCREEN_INFO now, it needs to select it.
+> 
+> - Eric
+
+Well the question now is which driver should actually select it.
+
+Although it manifested for you in amdgpu, I don't think this is going to 
+be an amdgpu unique issue.
+
+Maybe this:
+
+diff --git a/drivers/video/fbdev/core/Kconfig 
+b/drivers/video/fbdev/core/Kconfig
+index 006638eefa41..ce2544924b0e 100644
+--- a/drivers/video/fbdev/core/Kconfig
++++ b/drivers/video/fbdev/core/Kconfig
+@@ -5,6 +5,7 @@
+
+  config FB_CORE
+         select VIDEO
++       select SCREEN_INFO
+         tristate
+
+  config FB_NOTIFY
 
