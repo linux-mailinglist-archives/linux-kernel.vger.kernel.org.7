@@ -1,138 +1,151 @@
-Return-Path: <linux-kernel+bounces-849659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CADBD0993
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:12:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5E1BD0927
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E449F3A9AD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04ED1892797
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26E02EFDAF;
-	Sun, 12 Oct 2025 18:12:30 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AC62EF65A;
+	Sun, 12 Oct 2025 18:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTUvlY9E"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C422EFD95;
-	Sun, 12 Oct 2025 18:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648B718B0F
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 18:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760292750; cv=none; b=axEHPFx2nyzqwx0COyWrtJv45lxx4pkYYz6gi6850Q2CLbW+rI3JLWsDy2MflZx27Tu+TplTzcapfngT3mwR6t4CjueXVS49b7L1/feCpO4d+/1DyJn4Z/wmZxhhQweKuMNpHqHaToBVQmJWn0WVCgs4DIWFLoUcEAdJMMJmlAU=
+	t=1760292392; cv=none; b=fnQ8BLvi3n2wPqfqfwFsdFCbbfskzf6xl5ixRTTjZFxSvcP2E3qb0yYwU8lGCFRDvMv04NLJHHu65tCOzAv5HfDvL/99+Od/AWSPv34u0qfRUHq0gXBPAccrG6VSG0/zLXF+31MoBdrUq76YECUmkFEqfbifqyTilh8yaj0pDco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760292750; c=relaxed/simple;
-	bh=uPMJA6y1kb6LmPS8fuc3+PnIZOvHfdZfmIsgWf92J2o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:Content-Type; b=uoUI1ujjzDXjGZu+Wjjd+wofbE9bevfsdk1SknXYInh4uUrZKOuKVryINHhZky84Am0tH+OhAri4iLCLVz+rkDn0LlgDSkwLUwh8OZHKNKs//uDebvkTBIqTf+uNVY/64TXJUAS4hzoBQ7H30kJaEMASdzygAVlE4SfrLuJ9VZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.104] (213.87.133.64) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sun, 12 Oct
- 2025 20:56:59 +0300
-Message-ID: <3eb40848-3bec-42ca-845b-c66d4b53cedc@omp.ru>
-Date: Sun, 12 Oct 2025 20:56:58 +0300
+	s=arc-20240116; t=1760292392; c=relaxed/simple;
+	bh=AhJj9IOMJeJTvwqvszPfrlnQUsLrStlttldkdSZULDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VU7tRsW1JF9mDhHLp21PyWJcDBuCQ8ck2kgpe6EajZow59RbtTn4KJAkLo7xAhVqERf/dTmSUYKdjXwIu58Hmy2DgZKz4UkB2zeuEw+GXGSkSTsW3leB75Bnn44W8zHriFOOmo4E+oYV5ICx2oiLQHEKt9qchlTj6JBwT9Yr8zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTUvlY9E; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b6271ea3a6fso2242816a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 11:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760292391; x=1760897191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MKnvs8CIxUPKhz7oYwulrB+BjUViG59C+RwVWWt6TkA=;
+        b=fTUvlY9Er8V2O6kgtYIGN19ZnjJkwB9SR5otXbr6P8bUK0XAbm+ncIyjIAoV9OuzG9
+         EfjIlAe9tt/UJfXmoZ+sYCAL5V9LlXK0KJAYD/lkf6VaGdbMYJFCRGHQb7hec2V3E/bM
+         7wuD+zgdE4NX+qJzwggtRF+yEbhiewXZid7VVnYVviXFs+3owMRZiNlNbWPkCSko9ruG
+         Nc2gkV3Wus8SuVUYA/nxKSNVH0pPWfZNEC56JmHa4YPyjQ3JG9WuwTUrycO7UJ1PBrLG
+         KioMwewF7V9GsJ7CeHXZKObnth2e7PGaYjw4OaBrxD9lfOjKx2p8yJ24aIigjSY9qlw6
+         5BJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760292391; x=1760897191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MKnvs8CIxUPKhz7oYwulrB+BjUViG59C+RwVWWt6TkA=;
+        b=XKr45TQi3osY/Sj939PbGikB7Ff2ETGnTmysCHvtc7vuc3NnLmQoc8EutF6vK46P0K
+         E5gxPUmOsJSRCGqTMZ7WisZV0xs8CQWeuC4hxxzrncS2fUnQSEoeyzc7tgG7BA2oEiQo
+         dRFTlxx4SQBO2djJ/xxJskdaZl167lBccCvl8fuO06oNMdblUTZOnoVUC2+8WVWHgPsx
+         9tja/gSMDOMmSkBf3t4tbgSol47t3V93ZP69HiyWzBj7G0pVCe9IjVDLJJmUZwJBzqVo
+         crBcE20o4aS4LVy0bt6i2oJv1R+XNTHQ0sEH6zmMK6OY0W0wxuhT3MLOSwpjSEkdlWr2
+         CZ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUexarGtoebkQmUryaxx5iy7WwMbVZlv8TNf+2FHmbjf9dReuMBJ1fUffvKVd0heyfkmyf7AZf9h3BNMe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYhdyQSP/gfUJUbUWH9Ga7tRyL7NtS9P/4gsoEnUbql1HFK30s
+	f23JX/hdz05aLghamOlkjQZHJqgaK8tHQEMRcq+20V3mmmjL2MAf0w5U
+X-Gm-Gg: ASbGncsnO8WQK8aDI3GwLjL49lHM6sia2m2HwI/eRudPA+VvjvXbZ8z3VTa0ZWSjfgw
+	lvshe33YTfu/RhswwAYVoV/dMnRuB+nIeuRWEEddOQIutAPY3wKytKHku0Sq8gfu0YCNamqeSyZ
+	kcRxq0eBV74OWrD6hEk08TgE6a9BYPmW+v26j/6kLq9c/D2O8Pfxr++U+P587m5VXVWHvs8pubA
+	QdcQ3cs1fnh0fwfMBkGQaJmjHy62bJWmcorakV/sMvo9XejUBLZiFaVwZEnNqVrJq4jMAO5zNLW
+	sJ0ECqMJ3VqVuGAGdJyfxYcKIEhp6KChIJ46d6OdivweCBugmrt8NdWSUKiucPGGRXDqptjcpFi
+	EJLmPO4e/mJDUUwktYhxT99Ose+PPkTEhIwNcppbaWkPpFNQQiDo=
+X-Google-Smtp-Source: AGHT+IFmhUIDI5YazfRri8S6Ev/488WoKLYdvCvSR4xvF4/ODpw6sSz7qfzRIKyIqHTq65Xm/DzsGw==
+X-Received: by 2002:a17:903:19e8:b0:28e:ccd7:dd61 with SMTP id d9443c01a7336-29027305380mr229717425ad.57.1760292390563;
+        Sun, 12 Oct 2025 11:06:30 -0700 (PDT)
+Received: from akshayaj-lenovo.. ([223.233.65.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f56c0fsm111734345ad.104.2025.10.12.11.06.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Oct 2025 11:06:30 -0700 (PDT)
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+To: dan@dlrobertson.com,
+	jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org
+Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
+	shuah@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6] iio: accel: bma400: Refactor GENINTR config and register macros
+Date: Sun, 12 Oct 2025 23:36:07 +0530
+Message-ID: <20251012180619.195244-1-akshayaj.lkd@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v2] serial: 8250_mtk: correct max baud rate in set_termios()
- method
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
-	<jirislaby@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <lvc-project@linuxtesting.org>, Fedor
- Pchelkin <pchelkin@ispras.ru>
-Content-Language: en-US
-Organization: Open Mobile Platform
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/12/2025 17:43:35
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 197008 [Oct 12 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 71 0.3.71
- ee78c3da48e828d2b9b16d6d0b31328b8b240a3c
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.133.64 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.133.64
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 10/12/2025 17:46:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 10/12/2025 3:34:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 
-Mediatek MT798x datasheets (that I was able to get my hands on) claim
-the maximum supported baud rate to be 3 Mbps, while commit 81bb549fdf14
-("serial: 8250_mtk: support big baud rate.") claimed it to be 4 Mbps --
-however, it then passed undivided port->uartclk to uart_get_baud_rate()
-for the maximum baud rate, while the datasheets do mention up to 52 MHz
-as the baud clock's frequency.  This means that an integer overflow will
-happen (when multiplying the baud variable by 256) if a baud rate higher
-than 16777215 bps is passed via termios->c_ospeed. Pass the correct max
-baud rate of 3 Mbps or port->uartclk, whichever happens to be less...
+This series refactors the BMA400 driver with a focus on generic interrupt
+configuration and related register usage. The main changes reduce
+usage of hard-coded values by introducing macros and formula-based
+register addressing, and add a centralized lookup indexed on iio event
+direction.
 
-Found by Linux Verification Center (linuxtesting.org) with the Svace static
-analysis tool.
+Alongside these updates, the series also reorganizes and renames register
+and field macros for consistency with the datasheet, and extends comments
+for additional clarity.
 
-Fixes: 81bb549fdf14 ("serial: 8250_mtk: support big baud rate.")
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+All patches are pure refactoring. No functional changes are intended.
 
----
-The patch is against the master branch of Linus Torvalds' linux.git repo
-(I'm unable to use the other repos on git.kernel.org and I have to update
-Linus' repo from GitHub).
+Akshay Jindal (6):
+  iio: accel: bma400: Reorganize and rename register and field macros
+  iio: accel: bma400: Use macros for generic event configuration values
+  iio: accel: bma400: Use index-based register addressing and lookup
+  iio: accel: bma400: Replace bit shifts with FIELD_PREP() and FIELD_GET()
+  iio: accel: bma400: Rename activity_event_en() to generic_event_en()
+  iio: accel: bma400: Add detail to comments in GEN INTR configuration
 
-Changes in version 2:
-- changed the approach to the problem (and hence rewrote the description);
-- removed "the" article from the subject for brevity.
+Changes since v4:
+- Add INT_STATx field macros corresponding to used INT_CONFIGx fields.
+- Make INT_STATx field macro names consistent with others.
+- Tied the INT_STATx field to correct INT_STAT register.
+- Modified changelog of PATCH 1/6 due to addition of INT_STATx fields.
+- Modified changelog of PATCH 4/6.
 
- drivers/tty/serial/8250/8250_mtk.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v3:
+- Insert a new patch into the patch series for replacing explicit bit
+  shifts with FIELD_GET and FIELD_PREP macros
+- Assigned explicit values to reg field enums introduced.
 
-Index: linux/drivers/tty/serial/8250/8250_mtk.c
-===================================================================
---- linux.orig/drivers/tty/serial/8250/8250_mtk.c
-+++ linux/drivers/tty/serial/8250/8250_mtk.c
-@@ -358,7 +358,7 @@ mtk8250_set_termios(struct uart_port *po
- 	 */
- 	baud = uart_get_baud_rate(port, termios, old,
- 				  port->uartclk / 16 / UART_DIV_MAX,
--				  port->uartclk);
-+				  min(3000000U, port->uartclk));
- 
- 	if (baud < 115200) {
- 		serial_port_out(port, MTK_UART_HIGHS, 0x0);
+Changes since v2:
+- Split single patch into five smaller patches as suggested
+- Addressed review comments related to trailing comma [Patch 2/5]
+- Extended renaming of macros to TAP_CONFIG registers [Patch 1/5]
+- Addressed review comment received regarding write then replace in
+  activity_event_en() [Patch 3/5]
+
+Testing Summary:
+- Tested on raspberrypi 4b and 7-semi bma400 sensor breakout board.
+- Since no functional impact is there, so before functionality is
+  expected to be equal to after change functionality.
+- Tested mapping of GEN1 and GEN2 both on INT1 pin as before.
+- Tested both activity and inactivity detection by setting attributes
+  events/in_accel_mag_falling_en as well as events/in_accel_mag_rising_en.
+- Did read and writes on various attributes such that write_event_config(),
+  write_event_value() and read_event_value() callbacks are triggered.
+
+ drivers/iio/accel/bma400.h      | 155 +++++++++-----
+ drivers/iio/accel/bma400_core.c | 349 ++++++++++++++++++--------------
+ 2 files changed, 292 insertions(+), 212 deletions(-)
+
+-- 
+2.43.0
+
 
