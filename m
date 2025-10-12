@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-849366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD69BCFEF5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 05:04:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9479DBCFF01
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 05:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5B889348A0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 03:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990AA18962F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 03:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC9A1C861D;
-	Sun, 12 Oct 2025 03:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BA81E231E;
+	Sun, 12 Oct 2025 03:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBGDoE6K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iY4pqfbJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D982B2D7;
-	Sun, 12 Oct 2025 03:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBBF2B2D7;
+	Sun, 12 Oct 2025 03:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760238236; cv=none; b=g32NKBKhvpCmXA9wnetbtssLd4iPBCjffU77W5vUHD10x9p87YZk7e8oPyEaTXvjlbJIP/RjpE9czRHmc470KDCKKwap+x2SA+zir+0C498FeWZ/VQ7xougjkVJzTsjgQ0WvmFPcFUifRBWkd0r9hkSfIdvogD/9oNMP5jU+RHg=
+	t=1760238376; cv=none; b=Qzn15O7/wYhcwsG+Tj4iSLYS2yZ/Kfeh7C3pFQVdR4CGljxLLhV8bZnDRUAc9f1Wmm/0FPN5Qycrl/Kn9Zb6TZ4RwHjX6KuQMPblOAXoDJSX40QIoEHyvHfa19j5a52BtFN4AhPEemmm2/flclAoQj0HfdrUa8kxmjiUL0MsSYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760238236; c=relaxed/simple;
-	bh=SZVkkewNXdYOKTm/xJ4ImkuY+McMUm1jxAPnOzBZZOs=;
+	s=arc-20240116; t=1760238376; c=relaxed/simple;
+	bh=oJBIBGmGc2UVG1f9io7PwU/NblfEGrzQ2juq1Q6617g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=urRvPhwZFOSYx+XIK/latWgfhEvc5zbCQElvg5yCehr4p5dlMiUzlVy5yR54OqCLQJ37R/iQXeSzZdHG09qHHyqCcKmJh6TO8Ux1Uk7F4guWBVAXOndkpmT0K4oNoHby/HeOpKRMkDhEHCd2oDMW0rNwyeNioW7wXQ0QJtpeS7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBGDoE6K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22026C4CEF9;
-	Sun, 12 Oct 2025 03:03:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=UvfnZPicbg1PqfnXQWgAMGckM/L1ukvZhPcECS7MIKH/jBIg/MvIst69vX/ghQrT7j0MeA0dD5X1aHuWCBLYUh/08f7esOuYYyrmRkrgc7gxaFaYTrMuWcKyO+cDqosQkPYSHIC4sqFp11BG1vh1gRAc4GmpW9zjKpxabDQ4L2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iY4pqfbJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4B7C4CEF9;
+	Sun, 12 Oct 2025 03:06:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760238235;
-	bh=SZVkkewNXdYOKTm/xJ4ImkuY+McMUm1jxAPnOzBZZOs=;
+	s=k20201202; t=1760238376;
+	bh=oJBIBGmGc2UVG1f9io7PwU/NblfEGrzQ2juq1Q6617g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cBGDoE6K7+pLJY2Idn+3bX5kcsyaodK4WE3iiHK7cwHtF34W3qvGbg4S+BtYG/lmi
-	 Sb1S+DRrXZbF930wpiRUhBWSlmyo3JDQ+q2nRhzktGW6pVKTXEohJfzj71tRJ8pIOU
-	 tAgFRAqOEJPCJWT/pf2Oi49BYFLnMDPyTSnCdxFxu1ks58wmTeDqUWQQT+shZ7vIF/
-	 xUgJ088hwBQResz0HwFqW7u+t7JS8xjIGQ6mbJ9SLlSu5v63KR/0/ADxf/BrQ1K+BP
-	 zfqT6WJYK3NGzk8hD0TMTzb2HWHimNM4Z2inF8OnSz95fKNYp7LtkyvZYwNbrlql/p
-	 Ivtb73oCMGH5A==
-Message-ID: <32553bb9-c5cd-431b-80fb-45f7e35d66db@kernel.org>
-Date: Sun, 12 Oct 2025 05:03:46 +0200
+	b=iY4pqfbJkcEADLLq4wIpu9FgTvyCUOGIMOf8e/JXAsEMiYutDl3mTIiP2qTuWnwSu
+	 qfauMkaqm16kaEytB8FJmI692U2YAQJDxSZYvz4ukiYvvBdhUqwtCnoSr9xQFfUKAG
+	 6rxAl0vbJU7OpTWb1IOJT9xYbXRRlfOv+QcUqMfvxHemX3qAeDeIMwqCNSr2SxHzBg
+	 fRkQ9niEr0VXhPBLQvmeLfQbK6It/xV6YpfbPhCRd2Cn6gaahdrsoiC6b+EyK2JeuS
+	 7/NO1VE2HXwAPFL+ieNPqMet42h+xBP9ehHxBcqeT0KqZ26VY5IVH3UkJjIV5fPURV
+	 mRt1ZVzVzrMcQ==
+Message-ID: <adc9094e-08b2-4c07-9c80-118a6ffdc4fd@kernel.org>
+Date: Sun, 12 Oct 2025 05:06:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: aspeed: add ASRock X470D4U BMC
-To: Tan Siewert <tan@siewert.io>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 3/9] dt-bindings: clock: qcom: Add Kaanapali Global clock
+ controller
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Zev Weiss <zev@bewilderbeest.net>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20251011112124.17588-1-tan@siewert.io>
- <20251011112124.17588-2-tan@siewert.io>
+ <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+References: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
+ <20250924-knp-clk-v1-3-29b02b818782@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,38 +109,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251011112124.17588-2-tan@siewert.io>
+In-Reply-To: <20250924-knp-clk-v1-3-29b02b818782@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/10/2025 13:21, Tan Siewert wrote:
-> Document ASRock's X470D4U BMC board compatible.
+On 25/09/2025 00:58, Jingyi Wang wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
 > 
-> Signed-off-by: Tan Siewert <tan@siewert.io>
+> Add device tree bindings for the global clock controller on Qualcomm
+> Kaanapali platform.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 > ---
-> v2: No changes
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, just skip it entirely
-(please do not feel offended by me posting it here - no bad intentions
-intended, no patronizing, I just want to avoid wasted efforts). If you
-do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here ('b4 trailers -u ...'). However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for tags received on the version they apply.
-
-Full context and explanation:
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
-</form letter>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
