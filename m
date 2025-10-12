@@ -1,176 +1,329 @@
-Return-Path: <linux-kernel+bounces-849561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235C2BD0655
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B51A3BD0667
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62FE3BC5FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0D63BDF20
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2F82EBBB8;
-	Sun, 12 Oct 2025 15:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551CE2EBDE6;
+	Sun, 12 Oct 2025 15:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I61ilg8x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kH5zVxr+"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC61EF091;
-	Sun, 12 Oct 2025 15:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9EB2EBDC4
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 15:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760283864; cv=none; b=WLq4IWvggCffY6wDnx2R2rAykXC9kK+vnu++4DQ6jnZrpdIjoU8/y9CDbt5ar7FBYZ+4JStJsDD0Q2MZbGHVIDTMEOcK1H88AiXYYhdeDOpq8qPLdrGwdbNdtpol98B4SyPy4GXM6pG7j3jebL1HUymNN8V1Wg1R9x+pvq3SYG4=
+	t=1760284050; cv=none; b=qdE5expUMxxRTcaVC1XJIr1eXjf49OjgiqHpCJ5NDI8i4a7z4B/hWgCTGDkyw0ZhdCG7NXzi17uFqbNPnsl0xjyZov8g5GLsmlqwI/srYg3YxrK6aMWhA3moUDHnIS64XZQfRbRItvRdixB7EFuwQ8O0C4RcUSkHLxxQhk6RmCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760283864; c=relaxed/simple;
-	bh=jvMiToE63eManCA44zRL5tk+r48YRGBD/0Ye03AuOng=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gaz9dZ5N/3yCI1KJECC6QTaJUIX80jK4iksVzOWGxOmTTVPSXIXufZPg7v3NdCPLru9aFRlxg+rGHGhOwn8j357L9jllU2RaLOCs4AGNdEY3DI+3LT5yOYA+oepO0MtpgfiBbEkDeOSSR8TEIeK1inH+/MY+Vpy4e9PVeZC0w3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I61ilg8x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73342C4CEFE;
-	Sun, 12 Oct 2025 15:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760283863;
-	bh=jvMiToE63eManCA44zRL5tk+r48YRGBD/0Ye03AuOng=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I61ilg8xv9CdF3M06RRH1H/pC9Dmkl+FaWbiZ4+MMijkNvFZP9u4ZafOUDCwHyfXf
-	 Wu44t9dXC8O3CLY3v5Kv1VOqm1bsR2fHhkRgYc201n8yFgdGtQRbW5ejP40g6JizBf
-	 aMUZxBxQ2Q9SGzPpOyKlhw0Mb7qlOefuqJAUn/2NFqw4B/bbFLrsZjZpG4ze3u47Wj
-	 +PD1amoGpp4UMY21U4lvctO3duF+dOi7IPCd/PfRO6Inmgh8UP0vcuXJ/Qin10h2wM
-	 I+nCRd44qu+JJt6vTacuoYVTSNVAPL8UXZ/JMBpZZuKxFs5cMbdZsRSjRhGLG4hPpt
-	 9A/ki0jGD/13g==
-Date: Sun, 12 Oct 2025 16:44:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Eddie James <eajames@linux.ibm.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
- robh@kernel.org, andy@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com
-Subject: Re: [PATCH v9] dt-bindings: iio: Add Infineon DPS310 sensor
- documentation
-Message-ID: <20251012164413.0084ad6d@jic23-huawei>
-In-Reply-To: <20251007191612.80164-1-eajames@linux.ibm.com>
-References: <20251007191612.80164-1-eajames@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760284050; c=relaxed/simple;
+	bh=exlwIlnptpeiyfxs9T3hCP4vc9RhYuW8ZNwPxkPequU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nc+syomV41CDrGbWiy/h6GxjwsN1wW5m2HR+u5Aile83ypPHskrZeig2Vycc6/8dAclhaNmvAxjWFsTnDhRi7jcKfuN5Z9eQrLUpTpKMSmCrEJ3PKPbSTE3nwQp/Olfbqk4wDJZJfz+RocabPHH58SAXXbd5bRc7dVa8RuKfuqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kH5zVxr+; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Gm-Message-State: AOJu0YxClXqxVOnL4nTIAhEqmwdzwjKZoztmQKK0TiVjIl0bQco/l7RZ
+	xVMVrPhcc1AJRl02MqwpwBvQgu8AAJQTWFEuuimp3OUVeu0mVkG4H2CKoD5tpE0xi59CdqvJR1G
+	qPx1LIJKxDYlBuuVr02dIs3AJhwgwNWc=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760284043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Jx1siiS1fIaEuoSsnbHqhfsPiky05Z0AF/a/E5n05I=;
+	b=kH5zVxr+uqlHd8yXB9QKLi3uSxEZFWXkl4aeJRJpMNSJWFQpbWtSEKNTq3NWpTN2RmaOa6
+	7hGvqvsgsPqCVMEM76uv9Ss5p29t4bN7mVahFTqhe1Vx1vp7xEv02+zypXjLidrZ6Zcaas
+	j91gws/IjuI558kDbG/WPYgVDrLFdMg=
+X-Google-Smtp-Source: AGHT+IGU4is0tfGyAf+Y4eW/H1uhqTUANrqoJRsnGW1pXXpN0gbGnn4Uzr/64CQuR05MJPbhXZu3PZbIRbRVL68AkiE=
+X-Received: by 2002:a05:6214:2121:b0:782:3caf:668e with SMTP id
+ 6a1803df08f44-87b2efa9a8fmr222378096d6.40.1760284037401; Sun, 12 Oct 2025
+ 08:47:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251001065707.920170-1-balbirs@nvidia.com> <20251001065707.920170-4-balbirs@nvidia.com>
+In-Reply-To: <20251001065707.920170-4-balbirs@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+Date: Sun, 12 Oct 2025 23:46:39 +0800
+X-Gmail-Original-Message-ID: <CABzRoyYg1o8Oyjx1AQ8or-Vxm94zQXeAx7mWco2qs7=w4mBcMw@mail.gmail.com>
+X-Gm-Features: AS18NWAW-r80P4VIv9gONLI57HYmyaK4SvQH1hgWyVYA6Kk8PKp1BoVJHXMPTaE
+Message-ID: <CABzRoyYg1o8Oyjx1AQ8or-Vxm94zQXeAx7mWco2qs7=w4mBcMw@mail.gmail.com>
+Subject: Re: [v7 03/16] mm/huge_memory: add device-private THP support to PMD operations
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Ralph Campbell <rcampbell@nvidia.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Francois Dugast <francois.dugast@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Tue,  7 Oct 2025 14:16:12 -0500
-Eddie James <eajames@linux.ibm.com> wrote:
-
-> The DPS310 is a barometric pressure and temperature sensor with
-> an I2C interface. Remove it from trivial-devices.yaml and add its
-> own documentation to allow for consumers of this device such as
-> the iio/hwmon bridge.
-> 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-LGTM
-
-Applied to the testing branch of iio.git. I'll rebase that on rc1 once available
-and then push out as togreg which is the one linux-next picks up.
-
-Thanks,
-
-Jonathan
-
+On Wed, Oct 1, 2025 at 4:20=E2=80=AFPM Balbir Singh <balbirs@nvidia.com> wr=
+ote:
+>
+> Extend core huge page management functions to handle device-private THP
+> entries.  This enables proper handling of large device-private folios in
+> fundamental MM operations.
+>
+> The following functions have been updated:
+>
+> - copy_huge_pmd(): Handle device-private entries during fork/clone
+> - zap_huge_pmd(): Properly free device-private THP during munmap
+> - change_huge_pmd(): Support protection changes on device-private THP
+> - __pte_offset_map(): Add device-private entry awareness
+>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Cc: Rakie Kim <rakie.kim@sk.com>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: Gregory Price <gourry@gourry.net>
+> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Dev Jain <dev.jain@arm.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mika Penttil=C3=A4 <mpenttil@redhat.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Francois Dugast <francois.dugast@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Acked-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
 > ---
->  .../iio/pressure/infineon,dps310.yaml         | 54 +++++++++++++++++++
->  .../devicetree/bindings/trivial-devices.yaml  |  2 -
->  MAINTAINERS                                   |  1 +
->  3 files changed, 55 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
-> new file mode 100644
-> index 0000000000000..e5d1e6c489393
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/pressure/infineon,dps310.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  include/linux/swapops.h | 32 +++++++++++++++++++++++
+>  mm/huge_memory.c        | 56 ++++++++++++++++++++++++++++++++++-------
+>  mm/pgtable-generic.c    |  2 +-
+>  3 files changed, 80 insertions(+), 10 deletions(-)
+>
+> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> index 64ea151a7ae3..2687928a8146 100644
+> --- a/include/linux/swapops.h
+> +++ b/include/linux/swapops.h
+> @@ -594,10 +594,42 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+>  }
+>  #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>
+> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRAT=
+ION)
 > +
-> +title: Infineon DPS310 barometric pressure and temperature sensor
+> +/**
+> + * is_pmd_device_private_entry() - Check if PMD contains a device privat=
+e swap entry
+> + * @pmd: The PMD to check
+> + *
+> + * Returns true if the PMD contains a swap entry that represents a devic=
+e private
+> + * page mapping. This is used for zone device private pages that have be=
+en
+> + * swapped out but still need special handling during various memory man=
+agement
+> + * operations.
+> + *
+> + * Return: 1 if PMD contains device private entry, 0 otherwise
+> + */
+> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> +{
+> +       return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_ent=
+ry(pmd));
+> +}
 > +
-> +maintainers:
-> +  - Eddie James <eajames@linux.ibm.com>
+> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
 > +
-> +description:
-> +  The DPS310 is a barometric pressure and temperature sensor with an I2C
-> +  interface.
+> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> +{
+> +       return 0;
+> +}
 > +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - infineon,dps310
+> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
 > +
-> +  reg:
-> +    maxItems: 1
+>  static inline int non_swap_entry(swp_entry_t entry)
+>  {
+>         return swp_type(entry) >=3D MAX_SWAPFILES;
+>  }
+>
+> +static inline int is_pmd_non_present_folio_entry(pmd_t pmd)
+> +{
+> +       return is_pmd_migration_entry(pmd) || is_pmd_device_private_entry=
+(pmd);
+> +}
 > +
-> +  "#io-channel-cells":
-> +    const: 0
+>  #endif /* CONFIG_MMU */
+>  #endif /* _LINUX_SWAPOPS_H */
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 1b81680b4225..8e0a1747762d 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1703,17 +1703,45 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struc=
+t mm_struct *src_mm,
+>         if (unlikely(is_swap_pmd(pmd))) {
+>                 swp_entry_t entry =3D pmd_to_swp_entry(pmd);
+>
+> -               VM_BUG_ON(!is_pmd_migration_entry(pmd));
+> -               if (!is_readable_migration_entry(entry)) {
+> -                       entry =3D make_readable_migration_entry(
+> -                                                       swp_offset(entry)=
+);
+> +               VM_WARN_ON(!is_pmd_non_present_folio_entry(pmd));
 > +
-> +  vdd-supply:
-> +    description:
-> +      Voltage supply for the chip's analog blocks.
+> +               if (is_writable_migration_entry(entry) ||
+> +                   is_readable_exclusive_migration_entry(entry)) {
+> +                       entry =3D make_readable_migration_entry(swp_offse=
+t(entry));
+>                         pmd =3D swp_entry_to_pmd(entry);
+>                         if (pmd_swp_soft_dirty(*src_pmd))
+>                                 pmd =3D pmd_swp_mksoft_dirty(pmd);
+>                         if (pmd_swp_uffd_wp(*src_pmd))
+>                                 pmd =3D pmd_swp_mkuffd_wp(pmd);
+>                         set_pmd_at(src_mm, addr, src_pmd, pmd);
+> +               } else if (is_device_private_entry(entry)) {
+> +                       /*
+> +                        * For device private entries, since there are no
+> +                        * read exclusive entries, writable =3D !readable
+> +                        */
+> +                       if (is_writable_device_private_entry(entry)) {
+> +                               entry =3D make_readable_device_private_en=
+try(swp_offset(entry));
+> +                               pmd =3D swp_entry_to_pmd(entry);
 > +
-> +  vddio-supply:
-> +    description:
-> +      Digital voltage supply for the chip's digital blocks and I/O interface.
+> +                               if (pmd_swp_soft_dirty(*src_pmd))
+> +                                       pmd =3D pmd_swp_mksoft_dirty(pmd)=
+;
+> +                               if (pmd_swp_uffd_wp(*src_pmd))
+> +                                       pmd =3D pmd_swp_mkuffd_wp(pmd);
+> +                               set_pmd_at(src_mm, addr, src_pmd, pmd);
+> +                       }
 > +
-> +required:
-> +  - compatible
-> +  - reg
+> +                       src_folio =3D pfn_swap_entry_folio(entry);
+> +                       VM_WARN_ON(!folio_test_large(src_folio));
 > +
-> +additionalProperties: false
+> +                       folio_get(src_folio);
+> +                       /*
+> +                        * folio_try_dup_anon_rmap_pmd does not fail for
+> +                        * device private entries.
+> +                        */
+> +                       folio_try_dup_anon_rmap_pmd(src_folio, &src_folio=
+->page,
+> +                                                       dst_vma, src_vma)=
+;
+>                 }
 > +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
+>                 add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>                 mm_inc_nr_ptes(dst_mm);
+>                 pgtable_trans_huge_deposit(dst_mm, dst_pmd, pgtable);
+> @@ -2211,15 +2239,16 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct v=
+m_area_struct *vma,
+>                         folio_remove_rmap_pmd(folio, page, vma);
+>                         WARN_ON_ONCE(folio_mapcount(folio) < 0);
+>                         VM_BUG_ON_PAGE(!PageHead(page), page);
+> -               } else if (thp_migration_supported()) {
+> +               } else if (is_pmd_non_present_folio_entry(orig_pmd)) {
+>                         swp_entry_t entry;
+>
+> -                       VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
+>                         entry =3D pmd_to_swp_entry(orig_pmd);
+>                         folio =3D pfn_swap_entry_folio(entry);
+>                         flush_needed =3D 0;
+> -               } else
+> -                       WARN_ONCE(1, "Non present huge pmd without pmd mi=
+gration enabled!");
 > +
-> +        dps: pressure-sensor@76 {
-> +          compatible = "infineon,dps310";
-> +          reg = <0x76>;
-> +          #io-channel-cells = <0>;
-> +          vdd-supply = <&vref1>;
-> +          vddio-supply = <&vref2>;
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-> index 58ff948d93c96..a76c58f3b1de4 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -127,8 +127,6 @@ properties:
->            - ibm,cffps2
->              # IBM On-Chip Controller hwmon device
->            - ibm,p8-occ-hwmon
-> -            # Infineon barometric pressure and temperature sensor
-> -          - infineon,dps310
->              # Infineon IR36021 digital POL buck controller
->            - infineon,ir36021
->              # Infineon IRPS5401 Voltage Regulator (PMIC)
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3773c74b31d6d..bde80ddb99e9d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12217,6 +12217,7 @@ INFINEON DPS310 Driver
->  M:	Eddie James <eajames@linux.ibm.com>
->  L:	linux-iio@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
->  F:	drivers/iio/pressure/dps310.c
->  
->  INFINEON PEB2466 ASoC CODEC
+> +                       if (!thp_migration_supported())
+> +                               WARN_ONCE(1, "Non present huge pmd withou=
+t pmd migration enabled!");
+> +               }
+>
+>                 if (folio_test_anon(folio)) {
+>                         zap_deposited_table(tlb->mm, pmd);
+> @@ -2239,6 +2268,12 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm=
+_area_struct *vma,
+>                                 folio_mark_accessed(folio);
+>                 }
+>
+> +               if (folio_is_device_private(folio)) {
+> +                       folio_remove_rmap_pmd(folio, &folio->page, vma);
+> +                       WARN_ON_ONCE(folio_mapcount(folio) < 0);
+> +                       folio_put(folio);
+> +               }
 
+IIUC, a device-private THP is always anonymous, right? would it make sense
+to move this folio_is_device_private() block inside the folio_test_anon()
+check above?
+
+> +
+>                 spin_unlock(ptl);
+>                 if (flush_needed)
+>                         tlb_remove_page_size(tlb, &folio->page, HPAGE_PMD=
+_SIZE);
+> @@ -2367,7 +2402,7 @@ int change_huge_pmd(struct mmu_gather *tlb, struct =
+vm_area_struct *vma,
+>                 struct folio *folio =3D pfn_swap_entry_folio(entry);
+>                 pmd_t newpmd;
+>
+> -               VM_BUG_ON(!is_pmd_migration_entry(*pmd));
+> +               VM_WARN_ON(!is_pmd_non_present_folio_entry(*pmd));
+>                 if (is_writable_migration_entry(entry)) {
+>                         /*
+>                          * A protection check is difficult so
+> @@ -2380,6 +2415,9 @@ int change_huge_pmd(struct mmu_gather *tlb, struct =
+vm_area_struct *vma,
+>                         newpmd =3D swp_entry_to_pmd(entry);
+>                         if (pmd_swp_soft_dirty(*pmd))
+>                                 newpmd =3D pmd_swp_mksoft_dirty(newpmd);
+> +               } else if (is_writable_device_private_entry(entry)) {
+> +                       entry =3D make_readable_device_private_entry(swp_=
+offset(entry));
+> +                       newpmd =3D swp_entry_to_pmd(entry);
+>                 } else {
+>                         newpmd =3D *pmd;
+>                 }
+> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+> index 567e2d084071..0c847cdf4fd3 100644
+> --- a/mm/pgtable-generic.c
+> +++ b/mm/pgtable-generic.c
+> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long ad=
+dr, pmd_t *pmdvalp)
+>
+>         if (pmdvalp)
+>                 *pmdvalp =3D pmdval;
+> -       if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
+> +       if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
+>                 goto nomap;
+>         if (unlikely(pmd_trans_huge(pmdval)))
+>                 goto nomap;
+> --
+> 2.51.0
+>
+>
 
