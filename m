@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-849478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574EEBD035E
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:21:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF85CBD0364
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C2918929FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E13F3B47AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41C828467B;
-	Sun, 12 Oct 2025 14:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWhe122P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468B12848A6;
+	Sun, 12 Oct 2025 14:22:08 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32378283FF0;
-	Sun, 12 Oct 2025 14:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698FA28469D
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760278873; cv=none; b=frsDypQNh1uqQ30HVT9xyk3XU3dt9bo0cXsPSKiT0m7BjpXUM9sAnD4H1+KhToINR0aST1AKFlQju982pXrRi6xJpD94rwidkXRmi9WfWIVQjgT7m+wzcxdMld6ij84TfzZ5xibGuAc1npXRc61gWsQqF0lstHA/QXQLi/L4zbA=
+	t=1760278927; cv=none; b=NCLEAI4i/n3WJnWBvlyPDzZ7zEhryu0H7BxWC7y/EcHlOcmQWj/htwTkrYc2ET0rC1WQic3J1mTCuBMKTlgV9GIJbJSBNP82PNqzNvPGVxamDEmnApkubraFj4LWoxqa10gkhmjfeYy0A5CNYIUlcN2YogjGR3q3FfDLiFqFrCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760278873; c=relaxed/simple;
-	bh=XExy5QelfgLgYyiwtAQ2Cv9cu6aIqLKW8004SlSBVnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XI2m04V5c+577XrgO6Axue5wz/oFpt0uUWeHsu8RA+BvyzVUhhn6iBLjQTUoF8h+36669R8Y5kM0P64GMI4lY8y0Be7R1/x75qqk5IDtC+SRWyNLcCp9cslf2jk165k/indhk0x4UupmR22xSfpAtKldKKWpXPxtjmNLVoQtzVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWhe122P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AFA4C4CEE7;
-	Sun, 12 Oct 2025 14:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760278873;
-	bh=XExy5QelfgLgYyiwtAQ2Cv9cu6aIqLKW8004SlSBVnM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rWhe122PVNC25hKVlxZfuUV4jejEe6oHLEw+0qhlV07I9gTQ5I4hyeWMPwFeLcpS9
-	 JzCsExrfO46VwVJ9faLY3FkjZCZMKnqYebcBk6bCvNjuR4glitIeuKNiDO1h3AQMjg
-	 ZFWym3xv6+DuefTbYBpspwyJbr2lnnoWHV0f4i5lKgVRyYW/ZVtl8queq0J/P/nssz
-	 36mtfTxwn0Umshy1UJePpLAZniPFNqw4L0NRTIN5m6uK1krxCli7Sa+LpHrEvIiCzq
-	 zTDq9e+YBuKMKzW6PXJekmir9HEFLmv102fTTA9K0N9te8hIT/lBB9Ap/NdLlpvp6C
-	 tkwMOanaAoshQ==
-Date: Sun, 12 Oct 2025 15:21:03 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/19] iio: accel: bma220: remove incorrect
- kernel-doc marking
-Message-ID: <20251012152103.6b1ca4e9@jic23-huawei>
-In-Reply-To: <20251005-b4-bma220_improvements-v4-1-0f449ba31585@subdimension.ro>
-References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
-	<20251005-b4-bma220_improvements-v4-1-0f449ba31585@subdimension.ro>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760278927; c=relaxed/simple;
+	bh=9pESG64miPasLo7bV0CQgEu8LhHCXPWVa/VPYfrhM1U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cuXgQbiDkveJZIfzYYAbkNJERTNMF5wIQgTeK+rwAMDpLQKpB7fnMaGjjZ5YoFrlh5dX2R+BnIk3ny7JMTWXWAct6pcRU1NfSuedTPJU03kcILbftt1aeYO6S+GABe2rymZBXYy/FHVHoZTye5ENgEHuH1fCBUlPEhHr445XYCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4257567fb7cso113011855ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 07:22:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760278925; x=1760883725;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U0rSnZy6IeqJJ4+YGSwK6X2T8neJu8Zh87YZ79NTSbY=;
+        b=nMHr01nyui5FyzVOpSp656G8aNAoKGFekJZaYNOXDKiHV7qaibJtWen4p9X/wrlrb4
+         B8rx9JiGWCuaD0pDgpwswShqdmtrpDJvoU95iQk9NWc6nFD3xKnXMDiVmPF8t7sshdP1
+         9otRTFNvB6g40NxscgyuVyUq/3BqMajMGLSZ7HPOiQBYwtvpbLZkOe5D/gqTv+bk6L5q
+         p461wlZ+gxnZRMP4olYz/7WSlLx4S3sufSfhtkBlhcFwwx6Vj3Jv4K+mfakoRpavNLyV
+         rNChZBcuTrtPs8wCus626mzAEBy0Vm7UsA87tbIdAbho5+4kj/F+JgmBCfJXVxch5OMJ
+         D3FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6rOTAogssF319K6E/pZTtbviTm8syYD9CMXWlhCN8pB0WVWsb+3rHulOy/W7IE8FpWES/iFgYgOTaZV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydsWyC9b0d3XLTqrf26x2urD/wjOeUELZ+5z3Ke78elPk+vfac
+	TVEcjbfRpQYrbv080BfhkNKll3edpsr1u9Cav7pFiNcBv+gw8CNzqZ7fMhNFaljXeCSoIdTiCmD
+	LwBTkg5UJPVQx/JPHF4CrQk3vfhyviqCqByjtJXitNufKiWPr1q/S5Puuv0o=
+X-Google-Smtp-Source: AGHT+IEOWVreDJCAhWA6Zb9zMGM0Ep8ZtoYXbNbJhScWAxb5UUqEZQDZ24kOeejx3drWf4EUBDskyIE9dfZCe8SyAQ+ioqPyW0JO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:12c5:b0:426:39a:90f1 with SMTP id
+ e9e14a558f8ab-42f873d62c7mr207144655ab.18.1760278925708; Sun, 12 Oct 2025
+ 07:22:05 -0700 (PDT)
+Date: Sun, 12 Oct 2025 07:22:05 -0700
+In-Reply-To: <20251012135649.59492-1-contact@arnaud-lcm.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ebb98d.050a0220.91a22.01d9.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Write in __bpf_get_stackid
+From: syzbot <syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com>
+To: bpf@vger.kernel.org, contact@arnaud-lcm.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 05 Oct 2025 16:12:10 +0300
-Petre Rodan <petre.rodan@subdimension.ro> wrote:
+Hello,
 
-> Remove incorrect use of kernel-doc marking.
-> 
-> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-hi Petre,
+Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
 
-I'm going to pick these up as I read through them (if they are good to go!)
+Tested on:
 
-Applied this one,
+commit:         67029a49 Merge tag 'trace-v6.18-3' of git://git.kernel..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=16848c58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=308983f9c02338e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=175d3304580000
 
-Thanks,
-
-Jonathan
-
-> ---
-> v4 - split from bigger patch (Andy)
-> ---
->  drivers/iio/accel/bma220_spi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/accel/bma220_spi.c b/drivers/iio/accel/bma220_spi.c
-> index 01592eebf05bb6b002d44c41cca1d2dd5f28350c..505ad70912571ba629f91e56a92898d8320e976f 100644
-> --- a/drivers/iio/accel/bma220_spi.c
-> +++ b/drivers/iio/accel/bma220_spi.c
-> @@ -223,7 +223,7 @@ static int bma220_power(struct spi_device *spi, bool up)
->  {
->  	int i, ret;
->  
-> -	/**
-> +	/*
->  	 * The chip can be suspended/woken up by a simple register read.
->  	 * So, we need up to 2 register reads of the suspend register
->  	 * to make sure that the device is in the desired state.
-> 
-
+Note: testing is done by a robot and is best-effort only.
 
