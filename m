@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-849730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C09BD0C04
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:36:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9A1BD0C1C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A05189597F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:37:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029E53BF02F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8145222A4D5;
-	Sun, 12 Oct 2025 20:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9750F23875D;
+	Sun, 12 Oct 2025 20:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rIecwSds"
-Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ve1Cgubv"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD7319CCFC;
-	Sun, 12 Oct 2025 20:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4836222F14C
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 20:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760301410; cv=none; b=tIrBcNqg039dnUGPH0wZrbAVeU5VRQev/ce7xThMGjHYJAqAZzxmYUl1laqjCD9dC5+/cMeVRmpiMaPt13iug3tX2CwrCj1unkicztGR6RHFh/7nSo4FQxdR+bZqwZ1hJ+pO/VqwdFFy1l1dVgUuNQSS63OmLSaMqqByS7P/UwY=
+	t=1760301553; cv=none; b=uHi5d1UWrKjZ1jONKm2cAm8ysPzCorNO9EWsLm/sWZEiW7M26X0fJHReqIbtN9i+0n7BgSBBma9PdnmgH75N0MbX4N1jy9VjS6hqA6FYo8MGkmaWZbCXl7exhgKX+BoKWYMPa4kW9hrxcmlqa+bALbBZr/RBxrqQ8AIjTQrYIB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760301410; c=relaxed/simple;
-	bh=3VEMiJN+f8AXiW5vvqX1vWzwUHbrPRFw5t07fiqVhWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BTd6pMxaQXbBevz+3ZvgdvTCiXnK6SSsxSwK5s2R1eKJm8vyjcd71zugsqO1gEdJENc64Igiql+A1jFSt0V9sFxpt02vTdqxdk0w9IVQoJ7LQBhWNfESpi4VUaUFBdu13XBjJXqVEzovvmZLB9PqYhnuvsZDOg1KDGDrAAwQRFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rIecwSds; arc=none smtp.client-ip=80.12.242.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id 82nvv5XdMA5xR82nwvnlT0; Sun, 12 Oct 2025 22:36:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1760301398;
-	bh=4D8Uhhp5TYXB9cD1KefCal6Y2TqrBc7OXDaDGeAMLII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=rIecwSds61SpEeCCHleqGVkotONOD999cdZtSdKuQ42mAXwsAFYBRPCdCtPjfF1XM
-	 PqEUA/9iY4x7OVmt8URR9i6/g3oAKngj+2BvgOzzBq1uhRzL45dTsOqhlE2B/eOAwq
-	 QTySE8jLOPkhzWHJBc/WiRX3W6MGQ0/JhiUE41KXTe4dnsaQgoQGP5qY/0WnfWA2Hd
-	 6TvGmbf743sdDzSreLnDwliDvx3BEHvHpcMjWgB7gvj8PS90NXzA6MG0X+TdapemAh
-	 Io1G4e0ftSCYpaFF5XVHeIuyvNVZ30oI8Tts8QU5GhOxyEVF6IEn9g4tRHi0pmikIN
-	 g0mIfpAr1Kanw==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 12 Oct 2025 22:36:38 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <bd7b1078-4e58-4403-97e3-ac3a4765c51a@wanadoo.fr>
-Date: Sun, 12 Oct 2025 22:36:30 +0200
+	s=arc-20240116; t=1760301553; c=relaxed/simple;
+	bh=YIkTgYn9i2yw0iFaIALqYXIa9CMh1bynZaoWnsC+ihU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IY+o3omlIkIHkxjcLs4KWzWpFS+NTG3DzNgDHrlYcUUsquvt8Qm6Oclgf0TzrUJExGcRrgmmmNFuJ+S5gYNg3/IE5fkj+NmyfUyL+s/h92Cjx68MiZpDzMFifTGbdEfJI72HxmtTbtBgm8L59WY88jj1vXWLwR8Lfq9AbGEmdRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ve1Cgubv; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760301538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FKhJ/WufXxLbU2grf7XLNEYhgrmN020loyUIXPWxv7U=;
+	b=ve1Cgubv0YcbugdHFD/N9LGuipVUBqST1XmwsuU84PKVu2uM3x+m1bkJTcWy2AAarJi8+l
+	c7hO7tTAUiGx2wGD4AH7FzxgTuboVUdpgh7uNLpfzF6T5/ZIpDTGqrojsT0uGVSiGDBRvD
+	JCcCTaLZvjt7DEBEcWZn77cEA2mT55U=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: David Howells <dhowells@redhat.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Vivek Goyal <vgoyal@redhat.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	stable@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] crypto: asymmetric_keys - prevent overflow in asymmetric_key_generate_id
+Date: Sun, 12 Oct 2025 22:38:40 +0200
+Message-ID: <20251012203841.60230-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/22] smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
-To: chenxiaosong@chenxiaosong.com, stfrench@microsoft.com, metze@samba.org,
- pali@kernel.org, linkinjeon@kernel.org, smfrench@gmail.com,
- sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
- pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com,
- bharathsm@microsoft.com, zhangguodong@kylinos.cn
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
- ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20251012161749.2994033-1-chenxiaosong@chenxiaosong.com>
- <66942D4891D3E571+20251012161749.2994033-7-chenxiaosong@chenxiaosong.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <66942D4891D3E571+20251012161749.2994033-7-chenxiaosong@chenxiaosong.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Le 12/10/2025 à 18:17, chenxiaosong@chenxiaosong.com a écrit :
-> From: ZhangGuoDong <zhangguodong@kylinos.cn>
-> 
-> Replace the constant of client with SMB1_PROTO_NUMBER, then move the
-> macro definition from server/smb_common.h to common/cifsglob.h.
-> 
-> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
-> Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Use check_add_overflow() to guard against a potential integer overflow
+when adding the binary blob lengths in asymmetric_key_generate_id() and
+return -EOVERFLOW accordingly. This prevents a possible buffer overflow
+when copying data from potentially malicious X.509 fields that can be
+arbitrarily large, such as ASN.1 INTEGER serial numbers, issuer names,
+etc.
 
-Hi,
+Also use struct_size() to calculate the number of bytes to allocate for
+the new asymmetric key id.
 
-even if I reviewed and commented on this patch, I never gave an explicit 
-R-b.
+Cc: stable@vger.kernel.org
+Fixes: 7901c1a8effb ("KEYS: Implement binary asymmetric key ID handling")
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Changes in v2:
+- Use check_add_overflow() and error out as suggested by Lukas
+- Update patch description
+- Add Fixes: tag and @stable for backporting
+- Link to v1: https://lore.kernel.org/lkml/20251007185220.234611-2-thorsten.blum@linux.dev/
+---
+ crypto/asymmetric_keys/asymmetric_type.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-And as I'm cited in this v2, being in To: or Cc: of this updated version 
-would have been appreciated.
-
-No hard-feeling.
-
-CJ
-
-> ---
->   fs/smb/client/misc.c       | 2 +-
->   fs/smb/common/cifsglob.h   | 2 ++
->   fs/smb/server/smb_common.h | 1 -
->   3 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-> index dda6dece802a..68607b7a68ca 100644
-> --- a/fs/smb/client/misc.c
-> +++ b/fs/smb/client/misc.c
-> @@ -318,7 +318,7 @@ static int
->   check_smb_hdr(struct smb_hdr *smb)
->   {
->   	/* does it have the right SMB "signature" ? */
-> -	if (*(__le32 *) smb->Protocol != cpu_to_le32(0x424d53ff)) {
-> +	if (*(__le32 *) smb->Protocol != SMB1_PROTO_NUMBER) {
->   		cifs_dbg(VFS, "Bad protocol string signature header 0x%x\n",
->   			 *(unsigned int *)smb->Protocol);
->   		return 1;
-> diff --git a/fs/smb/common/cifsglob.h b/fs/smb/common/cifsglob.h
-> index 371160fec1cd..5928d35c7f30 100644
-> --- a/fs/smb/common/cifsglob.h
-> +++ b/fs/smb/common/cifsglob.h
-> @@ -9,6 +9,8 @@
->   #ifndef _COMMON_CIFS_GLOB_H
->   #define _COMMON_CIFS_GLOB_H
->   
-> +#define SMB1_PROTO_NUMBER		cpu_to_le32(0x424d53ff)
-> +
->   struct smb_version_values {
->   	char		*version_string;
->   	__u16		protocol_id;
-> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-> index 9c0db206624b..6d427dbed5fd 100644
-> --- a/fs/smb/server/smb_common.h
-> +++ b/fs/smb/server/smb_common.h
-> @@ -151,7 +151,6 @@
->   		FILE_EXECUTE | FILE_DELETE_CHILD | \
->   		FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES)
->   
-> -#define SMB1_PROTO_NUMBER		cpu_to_le32(0x424d53ff)
->   #define SMB_COM_NEGOTIATE		0x72
->   #define SMB1_CLIENT_GUID_SIZE		(16)
->   
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
+index ba2d9d1ea235..bd96f799757d 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -11,6 +11,7 @@
+ #include <crypto/public_key.h>
+ #include <linux/seq_file.h>
+ #include <linux/module.h>
++#include <linux/overflow.h>
+ #include <linux/slab.h>
+ #include <linux/ctype.h>
+ #include <keys/system_keyring.h>
+@@ -141,12 +142,14 @@ struct asymmetric_key_id *asymmetric_key_generate_id(const void *val_1,
+ 						     size_t len_2)
+ {
+ 	struct asymmetric_key_id *kid;
++	size_t len;
+ 
+-	kid = kmalloc(sizeof(struct asymmetric_key_id) + len_1 + len_2,
+-		      GFP_KERNEL);
++	if (check_add_overflow(len_1, len_2, &len))
++		return ERR_PTR(-EOVERFLOW);
++	kid = kmalloc(struct_size(kid, data, len), GFP_KERNEL);
+ 	if (!kid)
+ 		return ERR_PTR(-ENOMEM);
+-	kid->len = len_1 + len_2;
++	kid->len = len;
+ 	memcpy(kid->data, val_1, len_1);
+ 	memcpy(kid->data + len_1, val_2, len_2);
+ 	return kid;
+-- 
+2.51.0
 
 
