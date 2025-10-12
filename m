@@ -1,100 +1,92 @@
-Return-Path: <linux-kernel+bounces-849337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9E1BCFE10
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:42:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52168BCFE1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 03:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AED018966FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 00:42:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9E3B4E1FE5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 01:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751A116D4EF;
-	Sun, 12 Oct 2025 00:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3446015CD7E;
+	Sun, 12 Oct 2025 01:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuGbCC7L"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUK2BSZW"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120572A1C7
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 00:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0662249E5
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 01:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760229714; cv=none; b=hgDg9aZtM2qLnb8ojhROR83xjZMw9jzprTQI8WIHjzxQT4fltsfVagonzfRjSjmap88giywKHiPt1XM+ll5FZiCsVgrCvZLR1PwgltFtNCuNUEU8aL55Whtc1ky4Krk/M6fT60N7HY5n5oU/FFK4nEzMXr2rrzdJfm90WvPJWNU=
+	t=1760232222; cv=none; b=XGHG5dEhT5XlGPJkZS+kdaRemDQLBscoCcH4YN5ELYDb53SGqvjuzO1tYWGRmbr68UrfNZ2Kn6BKtqZZQSTZrUJUqjJgmrYgp0yJLEUGUn3uC0nop7TFUTyekNENpvCz2VRroZIEQ/7W0m2fk854mL6a2D8+6RaVqhdiHJm+jTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760229714; c=relaxed/simple;
-	bh=aZnv9BVlTL8LmT7lpNUNVSVlA/I7ZSaPKJXfly6ijs0=;
+	s=arc-20240116; t=1760232222; c=relaxed/simple;
+	bh=MD94H4RcdYRMTqwGsiu6utu1+4vXMCNygaD4pQnT7O8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bk75VCQpomx7SN/pGA6W7ZfViOPj9xZlpdKnrGBSC+aEJqwkO95WRvA/9FWsuJ88WcuuK99F2fKxxjRhgXboG7oPyzJMOPDno/j6u/+M6OSCwawCVPyoCdE6cfy7ltoD4wy+G3r8VbIZrEFLP35ZSLGYJ/ccL0MFNP2dzvb1nTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuGbCC7L; arc=none smtp.client-ip=209.85.218.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxUx1Vccm6IMed71TQe3pLBWYIxEAbJ75h98LYlDD1KQ57y6DnXtjKb1ci8yBIsEKuJvQQtbYeVNsUqw4CgPUDRRolYz0dTr37UEty+7+O1lZuBdHYnVG6rXCFt7BebeU0jbkdaPas101pnP4m991ncfyF0pq3GNOy/2YnLB/zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUK2BSZW; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b48d8deaef9so570307466b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 17:41:52 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b472842981fso399023466b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 18:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760229711; x=1760834511; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760232219; x=1760837019; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TbPiPr4v+tNnfGsd/T5+fk/qepklVVg1akCeQzWqFsk=;
-        b=RuGbCC7LxLS0Zas78Q4xA/cMdV8/l0feiE1udtflQATL9cIyHbYBtIuJcrAByFW0zh
-         pE5jGVixcQHv2yTSyqJ+1pw/eT8/KosZFti9NMmrahukxAThm6d3EiPmos1sbGzT+OzJ
-         x4Aak4Kjc2xVEmZ9rpHwqzG+ZPxX+44RvLVTtd8/4NqDWU1v/uIiAdqjZPS3HSYPc/O9
-         rzZM34KG3XOF5IDK0CPqTeHquwgoGqtgM30M9EGaORRr58/ysxFDuNx1+2lE5pfAe+vz
-         aS+MI4hcDmmpVeeJV/YDiYntrQGr2o42ZgBFArAsUlxTg9hDTKwROv1qLSYR5o55X7mG
-         rMDA==
+        bh=M9pUt0AntXuvLlR5iztP7t7IKQSEW9xSg2klSL9Fwb0=;
+        b=PUK2BSZWINzTPy3ZCELi8i/bZzlta0jb73nLjwc/Vqxmaje0Cv2/syoNdeGxGFLx7O
+         AI2uveFOK+Q94s3IUQ8tlbaXMdc1kT/HVc+tvR0yHigSDEF2eRdtfWJZTmR73zkJrSw2
+         a9dcdeCbnHMY+xUFrj+gsiaWwLIJ8dBiSrcBUBvph/eZaM/zIFU2cZZva3tnhJjkvZ4q
+         qaBqR6pzIQEW70AZ+Hc0K0o8s0JgQYCC9q/P2p5YKrbJtMrj+/7zBD1554x5HgPFDZ03
+         /LKpWQRJrRfBizW4gFQut+iA5vBWg9ByQJdqXmfOBtj7N5Z5H4tjxl7JPlux9LtUwspv
+         UZXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760229711; x=1760834511;
+        d=1e100.net; s=20230601; t=1760232219; x=1760837019;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=TbPiPr4v+tNnfGsd/T5+fk/qepklVVg1akCeQzWqFsk=;
-        b=eKrYjU3+RiobgLfaCrivZexZl7XTLjss63J3MWtQfoK+4kllMyPmzk5WxsQohCu3Z5
-         sXe6VSiPa7NcikVlY6N+hkHvdu17evQQLUs+m9DGeaiFLrN/55CTZtGpMtMm73vsY1H4
-         QLAYi6zkyTXPfZzCKgtgEPXfmehxs3WhAvp2mVakyVSp4mhKt/qCfY5sEl2udUBP4h3q
-         dzsdSlagOwHglZZDF51H92w+2Zj0Cgsil/3uTclPRYGFTzVkVQhzTHmtNaulA8A/0N3/
-         mnmn4ktpgPyZ6a1DjwDsKu6JjGyefrZQTP8/ejn3BMqVU+hJg5m5jGz5HUPU3fk2SZ6M
-         CN1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU7eALt7iiFdRgYxwOvhhGZqDcjmudRh76ENmhse/3+OEFuhwiBXm1rfFrB0wusoO1UXA/CAlAfjcC2yGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx1b986VXc4JzZi4BXLj1hp8EoVs3FswKseXcqyckBbsS51BYr
-	4dhoWdyxLdNO+KbnPPtrne1PKqo+HrQM1FcuVHqrqJZVls312Z8qkzr8
-X-Gm-Gg: ASbGncsi8LiILmDDdSsJDNEZ35ZV3VzPrl+wsraYqbS9l7ZZ/wE6glkLMISuj2ranQj
-	n6HcUiXv7nz/eTdhjoYnW++LpqUjEZw2Q5ai54Tm6lV2clPt2Kvl/Ad+yN+wzfPAfDMIie0r0tD
-	e7pF4kCiKf+GJeCc5LDvTBF3zqzUb1WWzVYjd+7Ut1T5k0ZM/NCTEW6lBPGM/LB6CxgZ7v+o+XH
-	Mjgr9u8Sv9PgrmUWSv6m2c8GTghu/wRA6mK7wVBPu72cOWyx3Ke2VcgjxFjEEWr44bm2fBGMaNA
-	fZcmgy5x4d1zSAGXiQ0HzL4weHMwhtn9apDzFP1gk+Nsc+l/bL7vq9qTJMqasRTxtqOuOhH6gXO
-	07DmZqabjbdBrqnHTAUtDacwOPVEjIhhYIAtKfYJg
-X-Google-Smtp-Source: AGHT+IF2dF7uUP71zJe0AxIJHcNbD6vVscz6n/gJk2c5+tQVcfEKjcPR39Xn8LvDwnX+VoFZq//T9A==
-X-Received: by 2002:a17:907:948d:b0:b3f:294c:2467 with SMTP id a640c23a62f3a-b50aa79397dmr1784338766b.10.1760229711049;
-        Sat, 11 Oct 2025 17:41:51 -0700 (PDT)
+        bh=M9pUt0AntXuvLlR5iztP7t7IKQSEW9xSg2klSL9Fwb0=;
+        b=E1Mdme32BUyLZJDrasDdwu327cE2cNvt0gRu8z8hd5TtfoawJsfbn/Z8z0pRAd2l3R
+         XlbIqUKq21mE2lRg8pyyUx6rFrRy7h5DRkUDn+49GvJMJZnSFcrIVo9TcQ1ck2tdgpFg
+         YHhZ69W6dAtFBE7XydU+IliRNg2CtMADwLEiCQBQ/fk992Bj6NAH/Ti16s23pXZ7sz5y
+         VGoHxK5+edYtQwMS2Bfr83QZBs178ItUicF1H8iGj/K9OSGjDNqAD3pVPbKeSOKgjnii
+         8qcXTBpVEUQJX9CcUtclcSHKkaEQ/NwMUu7zms9d2ZxKHv6pA4ilU1HSt38OL3g918CB
+         pu+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVEbSvKii1oeT+0xLu4Ft3t5SM+7qXGwTppwkfhIaBvyEcvfAygRDRecztn3/eIn+CbSwz47emtiHVMfkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtSh2d8Jb3z4tP3B2ptR0QR61dGUMd72ht/Rni/Lkv9LSSg53W
+	r5jMC0rqwkkgbjOO92PozGD7h4oeuwSyFMyznkyx3iv2nIhhfVqjwsnN
+X-Gm-Gg: ASbGnctC2mq9Y+0zYkpZSyxK2hF9Hy5ep7D7uZ37JLF981RxdfJInKv2F0X3gjdamgj
+	Nd+o5dChZkuSOKCgY1xgOtSRDQxAdBvfXhJsD1zb89Uu4eZXVRPOBS5/GXYEy8SCQYoyJTwEwwn
+	3XSp7IEv9BNpWQ/gLGgJyMm7HyRi+IiE4/OtR5NX/2H7Ckv6BmOBnzL7uvSSNMOXJj0RmqOA5bX
+	f5O8nDa4PPj121wSl0VJyN0W1fILytQ5tBy/0fSeyMVqDR1prZxA2yqnoxzKS30Q66Ly+G8yM03
+	Esg9p9ekAWJn5nMQqoNkbAjtdRjqHi5zPBJ2MWplAMPT8kGVC3A+Sj0wFf0L9qqUIseOqTelF7P
+	MsEnU96xS9NjQzS9qK7PHfpeeybXJ53PbY7us4oxg3XfNiWoUlKc=
+X-Google-Smtp-Source: AGHT+IF71vBBTgT683rCNca8U2cQqwxYPV3YtliFuu+HnIfiaWNkbjXN5AsySJ/bIvljzSu4EpvYpA==
+X-Received: by 2002:a17:907:d01:b0:b07:c5b1:b129 with SMTP id a640c23a62f3a-b50aa69e3d1mr1631820166b.1.1760232219099;
+        Sat, 11 Oct 2025 18:23:39 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d65d6994sm605672666b.28.2025.10.11.17.41.50
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12ce1sm602637966b.57.2025.10.11.18.23.38
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 11 Oct 2025 17:41:50 -0700 (PDT)
-Date: Sun, 12 Oct 2025 00:41:50 +0000
+        Sat, 11 Oct 2025 18:23:38 -0700 (PDT)
+Date: Sun, 12 Oct 2025 01:23:38 +0000
 From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
-	kernel@pankajraghav.com,
-	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
-	mcgrof@kernel.org, nao.horiguchi@gmail.com,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
- target order silently.
-Message-ID: <20251012004150.sujjmfkleibhvlxl@master>
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+	linmiaohe@huawei.com, tony.luck@intel.com, ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	baohua@kernel.org, nao.horiguchi@gmail.com, farrah.chen@intel.com,
+	jiaqiyan@google.com, lance.yang@linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] mm: prevent poison consumption when splitting THP
+Message-ID: <20251012012338.p5z2oyyymjxa4wni@master>
 Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251010173906.3128789-1-ziy@nvidia.com>
- <20251010173906.3128789-2-ziy@nvidia.com>
+References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+ <20251011075520.320862-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,63 +95,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251010173906.3128789-2-ziy@nvidia.com>
+In-Reply-To: <20251011075520.320862-1-qiuxu.zhuo@intel.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Fri, Oct 10, 2025 at 01:39:05PM -0400, Zi Yan wrote:
->Page cache folios from a file system that support large block size (LBS)
->can have minimal folio order greater than 0, thus a high order folio might
->not be able to be split down to order-0. Commit e220917fa507 ("mm: split a
->folio in minimum folio order chunks") bumps the target order of
->split_huge_page*() to the minimum allowed order when splitting a LBS folio.
->This causes confusion for some split_huge_page*() callers like memory
->failure handling code, since they expect after-split folios all have
->order-0 when split succeeds but in really get min_order_for_split() order
->folios.
+On Sat, Oct 11, 2025 at 03:55:19PM +0800, Qiuxu Zhuo wrote:
+[...]
 >
->Fix it by failing a split if the folio cannot be split to the target order.
+>diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>index 9c38a95e9f09..2bf5178cca96 100644
+>--- a/mm/huge_memory.c
+>+++ b/mm/huge_memory.c
+>@@ -4121,6 +4121,9 @@ static bool thp_underused(struct folio *folio)
+> 	if (khugepaged_max_ptes_none == HPAGE_PMD_NR - 1)
+> 		return false;
+> 
+>+	if (folio_contain_hwpoisoned_page(folio))
+>+		return false;
+>+
+> 	for (i = 0; i < folio_nr_pages(folio); i++) {
+> 		kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
+> 		if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
+>diff --git a/mm/migrate.c b/mm/migrate.c
+>index 9e5ef39ce73a..393fc2ffc96e 100644
+>--- a/mm/migrate.c
+>+++ b/mm/migrate.c
+>@@ -305,8 +305,9 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+> 	pte_t newpte;
+> 	void *addr;
+> 
+>-	if (PageCompound(page))
+>+	if (PageCompound(page) || PageHWPoison(page))
+> 		return false;
+>+
+> 	VM_BUG_ON_PAGE(!PageAnon(page), page);
+> 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> 	VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
 >
->Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks")
->[The test poisons LBS folios, which cannot be split to order-0 folios, and
->also tries to poison all memory. The non split LBS folios take more memory
->than the test anticipated, leading to OOM. The patch fixed the kernel
->warning and the test needs some change to avoid OOM.]
->Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
->Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@google.com/
->Signed-off-by: Zi Yan <ziy@nvidia.com>
->---
-> include/linux/huge_mm.h | 28 +++++-----------------------
-> mm/huge_memory.c        |  9 +--------
-> mm/truncate.c           |  6 ++++--
-> 3 files changed, 10 insertions(+), 33 deletions(-)
->
->diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->index 8eec7a2a977b..9950cda1526a 100644
->--- a/include/linux/huge_mm.h
->+++ b/include/linux/huge_mm.h
->@@ -394,34 +394,16 @@ static inline int split_huge_page_to_list_to_order(struct page *page, struct lis
->  * Return: 0: split is successful, otherwise split failed.
->  */
 
-It is better to update the document of try_folio_split()
+The code change LGTM.
 
-> static inline int try_folio_split(struct folio *folio, struct page *page,
->-		struct list_head *list)
->+		struct list_head *list, unsigned int order)
-> {
->-	int ret = min_order_for_split(folio);
->-
->-	if (ret < 0)
->-		return ret;
->-
->-	if (!non_uniform_split_supported(folio, 0, false))
->+	if (!non_uniform_split_supported(folio, order, false))
-> 		return split_huge_page_to_list_to_order(&folio->page, list,
->-				ret);
->-	return folio_split(folio, ret, page, list);
->+				order);
->+	return folio_split(folio, order, page, list);
-> }
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+
+>base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+>-- 
+>2.43.0
+>
 
 -- 
 Wei Yang
