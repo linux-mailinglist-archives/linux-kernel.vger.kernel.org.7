@@ -1,175 +1,254 @@
-Return-Path: <linux-kernel+bounces-849665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD61DBD09CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:24:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FE7BD09D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE763BA7B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433FA3BA7BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AC62F1FD5;
-	Sun, 12 Oct 2025 18:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5CF2ECE84;
+	Sun, 12 Oct 2025 18:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zy4G4+OC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="de4C4baI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1292EFDA2;
-	Sun, 12 Oct 2025 18:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760293474; cv=none; b=imHd9OPqi2hEGcJGk80ct1RXVsTKMRPIv4PWyGGr/R/xkyqEsUE/AajLNT+arUQFhqgZGE+i4D7Cj8ROuaxy9UxzjPrmTrHOzJfUVqmAkU6SinzvoedrqKBBJsnjsbbEjuiYheCqJlounoY/0BHdkBEmclySyI8PDUvKbiXx2Gg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760293474; c=relaxed/simple;
-	bh=txxPlbpyx3vQKhi9nz3pfg6ck8R1K4SwlLeAQZv2X7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cDzjkSxTo71Q7WR8ddH2sqa8MIJA27luqrenJh+iSLUgGlbkgbbAzNYjKUj1ZNMRkTgkRNiBHJ53HUuCvf5+Ea32zkQaDI3uy+LcNIBivb+xQXjA1YWj4KEXpTvZAJ+CshSv0BmdKxWslEbihHjrAlC2DYTDGye2hwj0lkx18oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zy4G4+OC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED81C4CEE7;
-	Sun, 12 Oct 2025 18:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760293474;
-	bh=txxPlbpyx3vQKhi9nz3pfg6ck8R1K4SwlLeAQZv2X7c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Zy4G4+OCIG/0CdyakHTuZLbFC5q8C1zoD6N1vQKl/4OOToHtevVoYp+TepcMqz5pP
-	 HzU+blhg+y7/Y1DeKvV8l2bC4epgP9muK5dnGDQPadfeKmvLrHnZLXT+ZI+AW/Tz+2
-	 A0c6Vu+FKUqrmV+1HQjp+LakYH2czp6R6GGbOqQZ58PVhtKvENAdeLfneVeQUIamWg
-	 SS75X3zojQIC7ieqk4MVS4eQY4LOhDxYhrDBG5A0YTjezW3Jms+F0H2CF83u0sm+Vs
-	 JmlBysNay4kFAWBGvoEHSBL8LP8DIUGYgF1Zkn8qXW0jiicWDIwPWmX+ZEQY+B6d+4
-	 Wf3TQ+DbDZWzw==
-Date: Sun, 12 Oct 2025 19:24:22 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Hans de Goede <hansg@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Luca Weiss
- <luca.weiss@fairphone.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui
- <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Bjorn
- Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Jens Reidel <adrian@mainlining.org>, Casey Connolly
- <casey.connolly@linaro.org>, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 0/6] Battery temperature ADC plumbing on Qualcomm
- platforms
-Message-ID: <20251012192422.46775ad1@jic23-huawei>
-In-Reply-To: <0beae4dd-2feb-4891-b7b0-0f63db8f5615@kernel.org>
-References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
-	<c770c799-4318-4c40-bd62-3cefbbbef731@baylibre.com>
-	<0beae4dd-2feb-4891-b7b0-0f63db8f5615@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9110017BA1;
+	Sun, 12 Oct 2025 18:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760293939; cv=fail; b=jmeWC7qRSv9otAu1+HWkRscZ0SQ09WNG8quV2vfJZD8pqURd3JlVLTIINfLRKJYIgeUMv4F4X0iDEoGlEXOV+JbcV0XXrnyrGLlICz+Xa6CoHq0o4DVr8Hr5hr0pEVl/Rzf6dYCVTjmuJksgm/b9R4EdZXl0ZkEVG4fIAILdTHc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760293939; c=relaxed/simple;
+	bh=H1YAMw1qXfNE/MiyWhrefyH6lQNMnCz0zRNiCgAiBUk=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hzObEGu2eVpPkikElhsnSLT/swoKu3N3U2wQ3Td33gL7sQ82vsFz4RUuYNYvpGDjX2Bw8dKwx2XW/zoO/2Vm1I/9R5cri2D9zktZuN3UDLgwRs4rD+TFyd9HLE0Ms7nJYCZs35Tdkrt0yce6DDMs2btTH2NoUMvmHCZseu8nTMI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=de4C4baI; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760293937; x=1791829937;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=H1YAMw1qXfNE/MiyWhrefyH6lQNMnCz0zRNiCgAiBUk=;
+  b=de4C4baIvluU74CTOqoq+Dw+ZqkrzsMWuNHm4renfjoZZzr4eNzf9OGY
+   zE9uyrsADZly6SWB77THB72u+9z2mltAtJaJpoEhLRLOowilDyeSKuRWC
+   mLWn437+YKySUpFOUYYP/CoE5cvJHyfHZE3fNJgQkxhrk6uWsgmZj5ePa
+   MlFSWCdlXUyqPTLBM+DFIZNCMzJSJwVSeCmbFvhxazkGu1Xz5/jZ1TSo5
+   +X/D7YNRO5v44LZ9d3tx22OlVQ2lk27bpWgpuM06vNEssxtFyumG5z1Sg
+   G9s8OhFH3rUHCQLsM48pIiLNKBetysW43HnaObtNBC0A57kodI2Rd+NF8
+   g==;
+X-CSE-ConnectionGUID: xe9qxFoTQzGlmCsNlTvdlg==
+X-CSE-MsgGUID: PXo8JNYlRZuIkMWpB+t2NA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="79886310"
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="79886310"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 11:32:17 -0700
+X-CSE-ConnectionGUID: zvWeovgIQjiHjWpOM2hvBA==
+X-CSE-MsgGUID: +07EVr37TC2VGFa71uYTrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="185680283"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 11:32:16 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 12 Oct 2025 11:32:15 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Sun, 12 Oct 2025 11:32:15 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.67) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 12 Oct 2025 11:32:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JHnKpYZFD6TDtuA5gAwM1T1WmzjgPvkm7iR6WxlFJAmDIdECJdsfC7LhN4QGwgb2CrOZ4TpM6eh27h2TR8E61VJIUWPnDKHendoeZO+XPppH1SXnJ/hB21qEpmgr37EolbtJQl6i/Q9CpDqb0fyfda2nYYnjI8O+vOCHUk/rYJngFka8RZDEK+jaoUe5+INFct3iXZnPdM8W90xYAcbVrqhlGvPHY+1EoOj2yhPcy4taCCWnZ2nPV4o4RK3OIsgdbzTjAxlET2hQnENlnvT6n7Raip6YCIgv/gsA3UVBCTQraP7VVf3GCMWWnlCZG9g40yggqO+eSbRuI28C0YV+8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7UqlnZVEW9XPPOtpN0sHtavlv5fpHxmVMkb+5WnT1KQ=;
+ b=YkVu/91/WDecmD8R/eIkZEfRQa4aSaX19FBAPKWZxiArUTMg56Pg2nSEynVc5kvtSHghru9BhUymAUk5pDRXvugtwqz0LC9DmDAhrABl4iH4tvVA2K1yuzQeDTK4rTq7ivQB9McqbmcDjPG8cnq37nAkCxgpvcSM230Ih1561FVeqIQ7qHA9kp7MNycZaj+YH6C4bkMBjQZ0aqmAep3R6ANO1McXRCZduPe9lLX+ldoMo1hndEYlsBf/y6yMI80Bjby0pBkZYXw5DkywzkamsuIBJE18cwRlxs2kZTUkiS7I3IaRWKfv+UtxTNDJ3LY5ksDss/bNRcNaw3KkGFtlGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV2PR11MB6024.namprd11.prod.outlook.com (2603:10b6:408:17a::16)
+ by PH0PR11MB4775.namprd11.prod.outlook.com (2603:10b6:510:34::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Sun, 12 Oct
+ 2025 18:32:13 +0000
+Received: from LV2PR11MB6024.namprd11.prod.outlook.com
+ ([fe80::dc22:ef1e:53e2:f00f]) by LV2PR11MB6024.namprd11.prod.outlook.com
+ ([fe80::dc22:ef1e:53e2:f00f%4]) with mapi id 15.20.9203.009; Sun, 12 Oct 2025
+ 18:32:13 +0000
+Message-ID: <8d7f5004-c38a-48d6-a469-f32e0ec805fe@intel.com>
+Date: Sun, 12 Oct 2025 20:31:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/26] drm/xe/pf: Remove GuC version check for migration
+ support
+To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
+ Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, Matthew Brost
+	<matthew.brost@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, "Joonas
+ Lahtinen" <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>
+References: <20251011193847.1836454-1-michal.winiarski@intel.com>
+ <20251011193847.1836454-2-michal.winiarski@intel.com>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <20251011193847.1836454-2-michal.winiarski@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BE1P281CA0183.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:8d::17) To MN0PR11MB6011.namprd11.prod.outlook.com
+ (2603:10b6:208:372::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR11MB6024:EE_|PH0PR11MB4775:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba30972c-ae27-471c-9bef-08de09bda023
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RVVqV3NXUndoeHhGU1NmaFNPWXpOSm9ZS3UwRGlod1cyNHhzcDU3dUZDSFB0?=
+ =?utf-8?B?dHlhdS9leFhteWdGRy9RVEREOUt6eWNpRnJnd1JBNWt5dC9kazBsL3R2MXpv?=
+ =?utf-8?B?SzUwSHRRYXFaNXNLSWU5UFcvZGpabElVNUNxNlIwRElnRUlRWHV5VTBXS0VU?=
+ =?utf-8?B?MStZcVZ2T3VCYVQxNG5jQWxNZkQwMnBud1dlYmZsSER3MXBuVXNiSlBtSnRZ?=
+ =?utf-8?B?RE5wZWZCR0F3QTVtSXRKQmtLQVhqQlBhSzlCMzB5cFNiS3dibmM4cDFiZzdC?=
+ =?utf-8?B?bEs4czFtdzF0dTFtMFVLblp5V1haTmZJM3l0Wm1RNWxpVjd1U3MzcStTRGNl?=
+ =?utf-8?B?MG5BSjUwL2tqTlV6aVl3dXBnYjNXSzdnem8zUStEMFp6b2haR1BYa3htSjdQ?=
+ =?utf-8?B?a0JpVzRHMGdKeXFCTittcUk2ZUt0MGI1MGZvbW43N3drV1N4UUI5QkxnQk0v?=
+ =?utf-8?B?MktVUHNMa2hmTldNVHhmdnNWVnJ6M0lRcWlwZ0xWNDVoKzRJQWRiaU1iWnow?=
+ =?utf-8?B?U3pGQWxmNGJBbmdIc285S2xsSmNGRzAxM0lLZ3NtSkhBVlVFam9qOTZxMHRJ?=
+ =?utf-8?B?RmhaRXk0R3BMWlFaZzBtR1o5OG5rdm92aWZMb1RrdndHUjMzazJwL2VEcUpB?=
+ =?utf-8?B?dHpHUERGejMvejhpNFgyMm1veWxQaHNNVDdMeVJROHJWWE90UURIY21qbC9v?=
+ =?utf-8?B?WUI3NWcwNHUvdGJmNUc3cmdtdHRiTkdmTHhkVS9zVUg5MlVJb01ORm1iMjV4?=
+ =?utf-8?B?YmhWNUdjajVKM2lYZ0I3VDc3d1BJYzhjcUlEMnpwQ29xajBCMnNaTnZ5T1k1?=
+ =?utf-8?B?TVZObnJqejZrTnVJVkt6bGdOczFlL3N2Q2Y2RGcwYWxSaUxWSzBrdmpUYzFK?=
+ =?utf-8?B?Z0x3cjVwOWtrTndlRHU5cnkrd1puano5M1NiUUo0amJpU1g2SVBxUllKQ0ph?=
+ =?utf-8?B?U01rY3BOY3RqVFo0VGZQV3ZNWlh2bGJ4cERweGJvRklGUWJ1SERELzllcjhM?=
+ =?utf-8?B?YzJkMkttYXorR1BWYjVNMUdYNzJ5TDNHK2Z3VFlwRDlkbjhQYitNSjhlYUQr?=
+ =?utf-8?B?SEtWbGlmNG5mOENmZUpNQytYNTQrWDZWOGNsZFRyMjY1eGtadGxxRmlueHVL?=
+ =?utf-8?B?UTU3K3A5QXJCTEdoa2MxVE1VQm92QzAzWWEvL2pEM0M1U1hPUkl5WVNnQnpz?=
+ =?utf-8?B?TDZud08zQWpwd3pGY2h2TDhhVjBEL0R4bzUyS2RGZ2FYSDN2em9yeUpEOWQz?=
+ =?utf-8?B?VllMTzZaQnlzQmRKRStJM250aUpGUjRvam5KbFd4YkZDSEJFZ3Y3R0tkcjln?=
+ =?utf-8?B?MmhpMFAzTXdqTW1OczNkVWlFQlRDVlBvbjJaSG5tSFdxZzlUWFZvNk1KekU2?=
+ =?utf-8?B?d3A0OTYwQ3k4V0RnbmZoRExIRGMwUnc2aUFCd2taTTZ4elduZWpZV2NuTHVy?=
+ =?utf-8?B?MFRyL3FUVTR5MDBkRGFEOC9mZ1VyclA1S05PTTg4aXdEcHhvWnIrTWxUaHo0?=
+ =?utf-8?B?dUoySm4rdGFpTm1VbDJNOXVPYnhWVEZibjU1OFNoaVhObi9HVzhnUUpuSDRL?=
+ =?utf-8?B?SWdEdEFKVHBXMDllVzNCSjR5eVlTcjlzcXZrTVMxZGdkbW9adWptMjVBUVVG?=
+ =?utf-8?B?VHNyOHR0TnM5UjZJT3NuWE51MGJOTkY1SWZuaXliYk05Yk9aSlhSMC9hQkV6?=
+ =?utf-8?B?T003TXBSMGd1ajFrdlk1QzdyVEdTL2VOYXYweDdJdmltOGNERnBqT0FZTGNH?=
+ =?utf-8?B?ZlhLUHUzajc0bGdGc0pvbW5WODhnbzNJL3YwK2R6N3hWMDRwZDlaa3RaWUQ4?=
+ =?utf-8?B?TlI1QWc2cEVHZ3lqVkM0RnRhQ25udHY2eGZEdUZaOG96WC9NaEpDZzNPZTJR?=
+ =?utf-8?B?MWZzVkxRUzNabjhVa1BLRUdkWjYxQnJ6eGFjVWJqOHNzaHF2ZVZjVkhXTFFV?=
+ =?utf-8?B?Z2lFdEwyaUh5ZHRhNWQ2YjhlNmp6R0l4eTh1U2pCVjExRkxhcVJ2VDR5Vkd4?=
+ =?utf-8?Q?8yEYcuBrH1i1KNuRWCnDUjECXVmV/I=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR11MB6024.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?clYwem1sV01ZaHZOT0VuNGowaXNUd3ZYUFJTOFhhVGJxbk5VVVJLNjVUb2JP?=
+ =?utf-8?B?ME1XRDE5b3dkNzJUNHpkOGJKNmIzUHZpT1pmQi92MUVTUWkyN2NlRVN1TkZH?=
+ =?utf-8?B?aEFqbFMzQzFQWjdYOFRmd2FRTUNhMlhXYnRRVGp3akRmZUZwaFE2OXlkSVUv?=
+ =?utf-8?B?TjlyUDMwSktITmpsYUhSTENmcHVjTEFiRlVvZkQvTG9tU1FldktySmx2STV2?=
+ =?utf-8?B?WUgzVXl2ck1IdHdvSk41YzlJblUxUk9SRWZsZnBDaklTTTdBWlJxclVFK1M0?=
+ =?utf-8?B?Ry95bjRDQWtwQzd1ZnU1b1ZPb1Y5eEZWcnNWZTdmdCtSdlJKZGN2K0h6VDRN?=
+ =?utf-8?B?QXV1eDk1amczWUkrU2d5QWZXZDFlOXdJRDRVOVpGQnNTNEpmSDU0NTJ2NDE3?=
+ =?utf-8?B?Q3BuSithRzgvRGo5KzJyKzVQT1hnbHNINkUybG41OHZkaFNiT3pxOENmWGtZ?=
+ =?utf-8?B?UjM0bXM0bld3OWtMR2ordXNacWMrSUlNelV2ajh0RjBydW5wTUNCbXZiWTJ6?=
+ =?utf-8?B?anV0UWpzOS8vYzRDbDBJc25RRVBCUXlFdzVXdGZMeWprNC9XejI5eDhZaXVn?=
+ =?utf-8?B?eUs1R2huUyt5b0xsQ0VtRjFyeXhuaFd1T3liUlZwUjhseGpUcmt1UVZCZENL?=
+ =?utf-8?B?VmVTd3JmV3ZRQzNRWitWVlVkS1JLSHBGWmV0OWRVTWNjY09kUE9KUUVYVFJ1?=
+ =?utf-8?B?TTRqTzU4YU1NRXRIdTlhNy9jNnJmNHY1QWVyVnZCVTFaMEJ1UnlOWkw2c1Bx?=
+ =?utf-8?B?NzBSWmR6N25mVVFmR3RvbG5JYUpFQnRFMUxZWjloS3FZR243YmNudzZWbTVi?=
+ =?utf-8?B?NTdUM0JHRGh6SDNiZG1HbzNwT0ZkWXJOelNDaEtGT3JLRjY4Q05yU1JSb2V3?=
+ =?utf-8?B?R0pPMUdzOXUrU2c4eGc3VW5KNHh6dFFodENZWW9WRi8vNlNrc0xZRVo2ZEtB?=
+ =?utf-8?B?eVZDWjNNZE56b1o1dzhtRzhQM0xkS3o0MFF5TERhNjlpZFJ5R0Z4Nm55K2F2?=
+ =?utf-8?B?NnFKYVlXVTRHY200S0tMRkNTV2lGYjVuaTFOekozR2FwOUhxMFp4NWlXU1Ev?=
+ =?utf-8?B?cnlMTXJzOVF1dG52bFB3KzlIZExYNGw1N2RzdXVWQzhiSDkwSGlweWpLUXFM?=
+ =?utf-8?B?NlFwVE1jYndBUkxhbkNtTXlhWklqVTRMSENBbEtPRkpoVFZsVkdWaEtRdit6?=
+ =?utf-8?B?WHE3N1FvUzhubUYyYVdPZDZHNWRaeGUyUG1uRlk5ZDBNSFVrWERxYTdKK1ZF?=
+ =?utf-8?B?QzE5Y2syOHp4blZoclVvSXhLWG1ySjJuVEFXRCtzMmJhQ0hzcU90SVF3dlgv?=
+ =?utf-8?B?eExhMlhlaWZoR3BBZ2JsaWRQQlk1Zy9YbWFMMGxZNmEybHZwdjdqUjdmUHZx?=
+ =?utf-8?B?SFlzZWJEQ0d3YS9EUGI1TDZrY1lWYk5sWWYzb0pDN2xJdEdnejVuWHozV1dV?=
+ =?utf-8?B?NVBLb09HY1RGckdBaWZ6dDdkL3A0cFhJNnRPT0tCU21QdzJGM0U1TnQ0VEl1?=
+ =?utf-8?B?Zm13N3FjaTVTMVZmYzkzNEZjM3J5eHBibjZLU0l4ZDNWb2MvNDdKWklVMUw2?=
+ =?utf-8?B?UlNQZndkR1RtTUVYdnRVV1JyajllWm00aFNqYWpmTndyTlAvYXhsWDJKSHFW?=
+ =?utf-8?B?UDR4Zk52cmQ3ZlY2TXlVNks1M2FZRW9KZUFEL0JlSzJ1OFozS1dZd3ZVSUpr?=
+ =?utf-8?B?UkhGZU43MFRzYUljeWVocktBZEVLOWdJa3NmUkZ2UmVXL2JtVjdyR1JMR21w?=
+ =?utf-8?B?d3dHbEs2MzY5UFZLTUVSOGQ2andvdTFEdVAwbFJ6bFFQMjRHVGJlOGZObXBZ?=
+ =?utf-8?B?RjZ5ejNUMDkxeHh1VTJlK3JKcTEydDZpUnVlYlhROVBVY2k0N01keXNUa2Nk?=
+ =?utf-8?B?c2tUVGRnNmhYSTM5VXdZU3lYNWRkSWxhdlNxWWhsamdISGxVc1U4VmJXVzlw?=
+ =?utf-8?B?b0VJK3YzSVhqT1NsNGdCR2RRbFdveVcrWmhWVTNyNzdSL1g0REVSRVBXdTFw?=
+ =?utf-8?B?cWc4MmdoTjhwQzRqdXBWb08wc2RuVWtJL1MvUCtZWjFoY2NXRFErek1MbzN6?=
+ =?utf-8?B?NEVOMjFya3pMSUFrTUY3Z1lKVWVvV0lEWnJ2ajNPQXY1WG9KSTVROE9zMytt?=
+ =?utf-8?B?M2dQZVNrN3lobHBJZGVMMzVQcStMUHlySVpqZjgwRXJlVStGTGp0R05FeXVK?=
+ =?utf-8?B?U3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba30972c-ae27-471c-9bef-08de09bda023
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2025 18:32:13.0034
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ANgI8kNKRYUYvLkTyMXr4C7NBInAYO/f1OV/qpbYKamxCKuZ+1uhkg+dM5itHwygvyScn9aiPAUHiZQBWoI7+0UZtAhoc8AKzobSAmZREBo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4775
+X-OriginatorOrg: intel.com
 
-On Sat, 11 Oct 2025 11:52:43 +0200
-Hans de Goede <hansg@kernel.org> wrote:
-
-> Hi All,
-> 
-> Luca thank you for Cc-ing me.
-> 
-> On 10-Oct-25 10:56 PM, David Lechner wrote:
-> > On 10/10/25 6:21 AM, Luca Weiss wrote:  
-> >> This is an RFC which implements a potential solution to get battery
-> >> temperature readings working on for example smartphones with Qualcomm
-> >> SoCs.
-> >>  
-> > 
-> > ...
-> >   
-> >> 3. Add temperature-lookup-table as property to simple-battery
-> >>
-> >> Since the NTC is a part of the battery pack, adding a
-> >> temperature-lookup-table property to simple-battery would make sense
-> >> instead of having this lookup table be standalone in the
-> >> generic-adc-thermal node. However being able to re-use the existing code
-> >> in generic-adc-thermal lead me to the current proposal.
-> >>  
-> > Did you consider creating a specific compatible string for the battery pack?
-> > Then the battery node could have the io-channels property for the ADC
-> > connected to the temperature sensor. Then a specific battery driver could
-> > handle the conversion as needed rather than filling the devicetree with
-> > conversion tables.  
-> 
-> That will require a driver update, filling the driver (and thus memory)
-> with conversion tables each time a new battery model (one model phone
-> can have multiple battery revisions) comes out.
-> 
-> That seems undesirable. To me these conversion tables are very much
-> something which belongs in DT rather then being hardcoded in
-> the driver.
-> 
-> Also contrast this to ACPI where there actually is a mechanism defined
-> for thermal lookup tables and there all these things typically just
-> work when the ACPI tables are written properly. IMHO we want to move
-> more towards this direction where things just work without requiring
-> kernel code changes for every new model.
-> 
-> And we already have a mechanism in DT to map an ADC voltage to
-> a temperature in the generic-adc-thermal driver.
-> 
-> So all that is left to do really is to come up with a clean way
-> to export the temperature from the generic-adc-thermal driver
-> to the generic-adc-battery driver.
-> 
-> > The simple-battery bindings are already far from simple! So I would not
-> > be inclined to add more to it.  
-> 
-> I think we all agree on this and we also don't want to duplicate
-> the generic-adc-thermal bindings + code implementing that functionality.
-> 
-> IMHO not wanting to duplicate the bindings + functionality applies to
-> both: a) directly exporting an IIO temp channel from the ADC driver and
-> b) adding volt -> temp mapping functionality to the simple-battery bindings.
-> 
-> So that basically leaves us with coming up with a way for
-> the generic-adc-battery code to consume the temperature coming out of
-> the generic-adc-thermal code and there are 2 ways to do this:
-> 
-> 1. Modify the generic-adc-thermal driver to export an IIO channel
-
-Other than the fact this is embedded in an existing driver, this is just
-a case of modelling an analog sensor in IIO. There's an ancient accelerometer
-that does this and the analog fronted ends handle things like potential dividers
-which are similar but with far simpler DT than this.
-
-So conceptually I have no problem with the approach.
-
-If we were starting from scratch we might have had an explicit representation
-of the thermal sensor analog part (like our accelerometer), and then done
-
-Generic temperature device sensor driver is consumer of the ADC channel.
-generic-adc-thermal is consumer of the generic temp device sensor.
-
-But retrofitting that split may be a pain (I haven't looked at this though so
-maybe not!)
 
 
+On 10/11/2025 9:38 PM, Michał Winiarski wrote:
+> Since commit 4eb0aab6e4434 ("drm/xe/guc: Bump minimum required GuC
+> version to v70.29.2"), the minimum GuC version required by the driver
+> is v70.29.2, which should already include everything that we need for
+> migration.
+> Remove the version check.
+> 
+> Suggested-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> ---
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> index 44cc612b0a752..a5bf327ef8889 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> @@ -384,9 +384,6 @@ ssize_t xe_gt_sriov_pf_migration_write_guc_state(struct xe_gt *gt, unsigned int
+>  
+>  static bool pf_check_migration_support(struct xe_gt *gt)
+>  {
+> -	/* GuC 70.25 with save/restore v2 is required */
+> -	xe_gt_assert(gt, GUC_FIRMWARE_VER(&gt->uc.guc) >= MAKE_GUC_VER(70, 25, 0));
+> -
 
-> 2. Modify the thermal-zone core to allow referencing to a thermal-zone
->    with a phandle *and* modify generic-adc-battery to be able to
->    optionally get the temperature from a thermal-zone instead of
->    from an IIO-channel
-> 
-> Of these two options 1. clear is the most KISS option. SO I agree with
-> Luca that 1. as implemented in this series is the best way forward.
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
+alternatively we can move this assert to guc_action_vf_save_restore()
+to double check we try that on older firmware, but either way,
+
+Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+
+>  	/* XXX: for now this is for feature enabling only */
+>  	return IS_ENABLED(CONFIG_DRM_XE_DEBUG);
+>  }
 
 
