@@ -1,113 +1,156 @@
-Return-Path: <linux-kernel+bounces-849379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DB3BCFF7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 07:31:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055D6BCFF85
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 07:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE5204E1655
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 05:31:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674993B86F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 05:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DEA1EFF8D;
-	Sun, 12 Oct 2025 05:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9X4K/Is"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D65E2080C1;
+	Sun, 12 Oct 2025 05:45:30 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D9A13D638
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 05:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF17D29408
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 05:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760247101; cv=none; b=hxDKJa/btYdE9AsAUrBJZdFvVNZcqo8iXJvDsHRLI8qiohbAwPNGu+h5OCuEk9+nybZ2/53qwji5dmp80nMuXiVMuqKdPNSr6t3tdpjAASTOuLq4fv9oVwNZLgcqeXVRGYjeFacjJ2c28TMhr9LNPl+2zxMjdsCA5YZ6mP4J8eY=
+	t=1760247929; cv=none; b=MmqUpn0qfgif82gY4yUYVp8zqZliStcssgq0t1TOGVLMWOYMPxYMKl4EkFJXdEMANqScRVOT0xOza9VqtfPlrpE274XbF4R2P5Gv5HnvHa4+7Ku3PPz8cwa4zb+194NDGv+IdDQyKivCFPenxQnXUikHXjfGvV9fAWM31I/uztg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760247101; c=relaxed/simple;
-	bh=nCLq+DEhLRJEZWZMV+X3bkQFsa5jy4fUB1Ka/mPQCGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lJbcEheRvIetOxJiohJCcercfbycgX1R5plfkd/SE4y4C8d4k+qTYSd4X8zV/wKzrqBYIAlHrIBcQM8Ugp46WqZAxKppg3+gukoEQjh1S5lc6gZ6X8+UKb5AFOc8/Plxa7NA5EmaPVemjEPI4XGinW+ypOi+LGxBdIyzweMnL70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9X4K/Is; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32ecc50f573so716589a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 22:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760247099; x=1760851899; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V315Oz2UwZma7KgfzSEN+KehYy049Dd9a5YOBN+/BjE=;
-        b=N9X4K/IsmO8u3o/D9ulIXP1nUD9bGiyvJHkE8Q6ccAipWNKcAQrO1Nuh/FsOiFi7TS
-         FZLiYAk7rqnPlscwcp/Xjf1WpKqkmW7jyg9hv26GpRI0d1sp4oqIhAuBzbpcNl/8EXzU
-         Wt+vXlPMCpimlORYx9WbZkPu6XIoDhyS6Zb/+hICvrwnvmPI4fmvIPd+o9kr94iOMQ96
-         LSTUkJ+2U3VjqoJHX+9BzbFMDBaRXUO+ro4IqL6viX7DFsh2z00UXcjCLXPhZjzV2lDd
-         4PGcIboN/nHdxcuJX1qeBE07YKPbOjAYGmX6aRS8s1zYdp5+X7G79J5/pcyu4Qi2BjfE
-         tmXg==
+	s=arc-20240116; t=1760247929; c=relaxed/simple;
+	bh=gp8LenUMte1A4A/tTEeRWcbl106OnJf3sIEYqLdI6J8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H+RRdSCy+gwQnWIiku04cK8dSWON7ruLe4YtsdXyY6w4HL3KoHBMedbz1rMF+7gf+cJ6v6qPFYoeOzaVezwQVBXOak+x2+w6xBc0chJRNMr6PA86mXMZgD/gk/0yqpAitH5RF5+/y5veXP/umRRNDdUnc7dVl6XAkR9UEqPY9Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9286199b46fso958275139f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 22:45:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760247099; x=1760851899;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V315Oz2UwZma7KgfzSEN+KehYy049Dd9a5YOBN+/BjE=;
-        b=mxdaJt77hGCMZOvheaLwWh1boglzW2YF5JG81btkBesrdAkQSGUddqaajgGvtF1YkE
-         bejaqeJZ6V5nS/29fs8aFXR4BVZ/BkPuocYIBj7SHRzp6YTeCiSw+lcEbLlNYAC9uhId
-         gKjJXMg3N3NTooWvFJ9Smgj24DYHfW3GKRSCCJ6FYxwPypWBQTzLXLX9R/45Z0ttYTyz
-         pRSoHt+RGMcj+18Aiq0sppVXdqaLqsAiOfGffJODkEhlY6RtqDiiArHiG/TgrsuEIZov
-         E+p5Vm45v9DW7ErIreuoNpXKEmogWmpmoBmtI/FZparObXqxIVAvTgVUfqITrLXwhZV4
-         PC6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXrSLwU+3BK897F9sCHEa0r+Vl9zzq7kCaO+JFvqxT1fV7aH477k96DEVl940ea+5xky04pi5Ust4ZPi68=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/XF9Ikex/eWf+COSXXUpa1Q3dDoy4KG+8aeHwM9sp7HFXkaHN
-	XJ+SnHqhl5DFi/8PhUOTB5Q7oz5WXafNoK60iqlpdX2X0N2uXn4J9Hp/
-X-Gm-Gg: ASbGncsogjee/aA0rc7V57qjVRcPTCnI99lyT3Pysv5vhbnQpKBNKqVrpFhpXfLlFR+
-	V6anSjDfUzPHvngMCvxiqDbBEvsmecUt7REiEXVcFPI7LdPnT3sb7ukrUYryJEEADDzcXk5Wwas
-	Lyf70hgoJAGem/uXgpNWxxVLOVEgG20Zx040NzpGZf1QhjxY/olkEbt38dRLE0h9DQWX8e9P+hF
-	gw9VpUEY62wdBIFqSsIhCj020jd16MEWIta3P6ap6Exb7N2LkhDJApzIm8LlLbdwD0iLbQvThOk
-	OFzp4qI/taT370b/nsld31B+TP43ktsb5pbXJrLSI25woqOVv88O9iddg6uqvbdOq5tYt+N4eVe
-	qIKvPJQv+K6qc3dY5IhKFW5eHTCV4CxQMaLPznAKTHbyNZhMuVEk=
-X-Google-Smtp-Source: AGHT+IGdgMMmNCve6hIXzVGxikslohoV+pMEGgcopaw46XiTYHSuaq6+3cVVsGeG9CQvShDrq4immg==
-X-Received: by 2002:a17:90b:1b42:b0:32e:64ca:e849 with SMTP id 98e67ed59e1d1-33b513990d5mr12118698a91.8.1760247098812;
-        Sat, 11 Oct 2025 22:31:38 -0700 (PDT)
-Received: from elitemini ([2400:4050:d860:9700:ff1c:3f53:c7ab:f611])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61b12756sm8028789a91.25.2025.10.11.22.31.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Oct 2025 22:31:38 -0700 (PDT)
-Date: Sun, 12 Oct 2025 14:31:34 +0900
-From: Masaharu Noguchi <nogunix@gmail.com>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: chao@kernel.org, corbet@lwn.net, jaegeuk@kernel.org,
-	linux-doc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: f2fs: wrap tables in literal code blocks
- to fix LaTeX build
-Message-ID: <aOs9NiaXVrcO83dz@elitemini>
-References: <20251011172415.114599-1-nogunix@gmail.com>
- <12aa7858-b05b-415f-a76b-c18848a9a784@gmail.com>
+        d=1e100.net; s=20230601; t=1760247927; x=1760852727;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kK2CnYH5zvuo9IgsxeF65PkGa9yTkiuirnHBLni/oBs=;
+        b=Eanozf/6UFye8ZXF0OocZ59whvaU9dUW4taqaUoIbcLnTjM1woxSa9qIuDZFPkENxq
+         LhArg8zVAVZZZ/Rx3ANzjBLKJs4NfsdpRomabzlX0VVWuD9GoUbmcGJWWTnSx+TtUVNx
+         Xg20ut/ExnXpLGqSrPgOHH2rITds9ORPMm2GwKeR6RWIWtHCR4hevsj50YXReWTeEUrT
+         HmCXGrGWntkrVtV2HC9Uc2+Wj0q4OcJJ+ji/Z8P5JaK2t5BIKdjScj27vG5OwN6rQNiH
+         j9mv0/IaPziKrQgjmi+qOCuatHO2Roje0uuv4eDW8W3KVWsXAix1WDit0Ns8XjI8tMK6
+         u95g==
+X-Forwarded-Encrypted: i=1; AJvYcCXQBxmiTuU1NNTqCSaoDIQB2Aaf0IIDpzKG8n+AT3O8xxpPZda9kllA8NBO24Z1DIkOwyO1ATYdtKpF1OM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgggbC8fVzuu/lKIl/adT/hTdLfnA/g7gbfGgxSZavPdnqFjJm
+	AMB8pPFKgcAQP9Uz0B7FJY6KiZ3Q2fIxJSqUwOjcLZrU9h7IbyE2ea4JLF9vdCaeI4ARD0PPHNG
+	XU1iz8GSrwJljKHeyrgVYE0PibI70/K4UIYYN5UlH7c/6oQ+uQ1yKU35+bjc=
+X-Google-Smtp-Source: AGHT+IEKoTp+fIzhtzRDnRW+0jiB2FzyIi8xjphMzU40sggh8385cHq25Snsx5B7p8S9tdKrEiBHZICoMUvL3sY5tb8KG2gPQNV6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12aa7858-b05b-415f-a76b-c18848a9a784@gmail.com>
+X-Received: by 2002:a05:6602:2b03:b0:93b:ba4a:3b67 with SMTP id
+ ca18e2360f4ac-93bd199182emr2167690739f.18.1760247927182; Sat, 11 Oct 2025
+ 22:45:27 -0700 (PDT)
+Date: Sat, 11 Oct 2025 22:45:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68eb4077.050a0220.ac43.0005.GAE@google.com>
+Subject: [syzbot] [gfs2?] WARNING in chown_common
+From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gfs2@lists.linux.dev, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-Thank you for your detailed feedback regarding the f2fs.rst issue.
+syzbot found the following issue on:
 
-I have tested the current mainline (without my patch) using
-Sphinx 8.3.0+ (commit ab8303f4bb13) and Docutils 0.21.2
-on Python 3.13.7.
+HEAD commit:    98906f9d850e Merge tag 'rtc-6.18' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e10c58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2d7b4143707d3a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ab9b34580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e10c58580000
 
-The pdfdocs build now completes successfully, and the nested
-tables in f2fs.rst no longer cause any LaTeX errors.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-98906f9d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d82186923244/vmlinux-98906f9d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a23e980d2d8e/bzImage-98906f9d.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/b2d6dc77aff3/mount_2.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=13e03892580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/96cd0ec46a20/mount_8.gz
 
-It seems that the problem has been resolved in the upcoming
-Sphinx 8.3 release, as you mentioned.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
 
-Thanks again for your kind guidance.
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888036665058, owner = 0x0, curr 0xffff88803e332480, list empty
+WARNING: CPU: 0 PID: 5699 at kernel/locking/rwsem.c:1381 __up_write kernel/locking/rwsem.c:1380 [inline]
+WARNING: CPU: 0 PID: 5699 at kernel/locking/rwsem.c:1381 up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
+Modules linked in:
+CPU: 0 UID: 0 PID: 5699 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
+RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
+Code: d0 48 c7 c7 20 ff 6a 8b 48 c7 c6 40 01 6b 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 b3 36 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 94 61 9e 8f 80 e1 07 80 c1 03
+RSP: 0018:ffffc9000d4b7c30 EFLAGS: 00010296
+RAX: e0ff97a6af656400 RBX: ffff888036665058 RCX: ffff88803e332480
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa650 R12: 0000000000000000
+R13: ffff8880366650b0 R14: ffff888036665058 R15: 1ffff11006ccca0c
+FS:  00007f2b1bd9b6c0(0000) GS:ffff88808d301000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f63d120f000 CR3: 000000004fe06000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:990 [inline]
+ chown_common+0x418/0x5c0 fs/open.c:793
+ do_fchownat+0x161/0x270 fs/open.c:822
+ __do_sys_lchown fs/open.c:847 [inline]
+ __se_sys_lchown fs/open.c:845 [inline]
+ __x64_sys_lchown+0x85/0xa0 fs/open.c:845
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2b1c78eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2b1bd9b038 EFLAGS: 00000246 ORIG_RAX: 000000000000005e
+RAX: ffffffffffffffda RBX: 00007f2b1c9e6360 RCX: 00007f2b1c78eec9
+RDX: 000000000000ee01 RSI: 0000000000000000 RDI: 00002000000006c0
+RBP: 00007f2b1c811f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f2b1c9e63f8 R14: 00007f2b1c9e6360 R15: 00007ffe60c7e2c8
+ </TASK>
 
-Best regards,  
-Masaharu Noguchi
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
