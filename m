@@ -1,93 +1,134 @@
-Return-Path: <linux-kernel+bounces-849397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F35BD0058
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 09:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94231BD0061
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 09:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 993D94E0F79
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 07:34:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DF6C4E2867
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 07:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557BC224AE0;
-	Sun, 12 Oct 2025 07:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="Ap4mKUSw"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C460221FB2;
+	Sun, 12 Oct 2025 07:35:11 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC8C2236FA
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 07:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE43221D596;
+	Sun, 12 Oct 2025 07:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760254428; cv=none; b=Yg+JU7t6K/+PYX6LCPMWdR0GlNA5rfj4K54yi/J5zoyLANuZZaKLl2PaNt1AlQPHXyuOvZkufdh4oE7ir5tsl1+/UJ2BqVPbCdprec2Wle4nkdFH0Lwkl5tIHd8AJ0U++E/xPGcEPsyWZR8FB73YEKPLULWAjmfuLwcie323nBU=
+	t=1760254510; cv=none; b=MVOHPl9dMUR8uNjxLhPA5lFQKj9XMeO8koNf2SdcCz2aq+7yc76TM5mQ93WRbZ2CekzO5RAFlFgvQccvLFCoCFHJ+Ur3L5ci4OlrzqFjwA8XzsVf0sk6ZWAKnyCbT9VJDibzwKEzZQMrAbCzwmBU4IUVIs4cZG6geF2ViAxiTG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760254428; c=relaxed/simple;
-	bh=o6Krl45XALcFc+4s7K8Ll5ecQ8kjyAQErwhMcmzQJJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eRiG3EwEWZYpT5h8Zt1XLPaeXH6BESq0dO8omLu30qgOwaJZvXtuCqmdPXxo4hQsuUfe3dCxXjvN/A+L3DLb/1hPymEeeDSe/pALUlRvlvQLz8uN6/TnxKNVbqV0fShe3qc1eiUMlzELghmqYiy777covDyYF8k/2moaP4FxbYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=Ap4mKUSw; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 799BF240103
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 09:33:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760254417; bh=aF5ZMX3vFZFd5CUhN4D6QEcI/dgKVJ/xw2JACBB6noQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:From;
-	b=Ap4mKUSweBPoDyZb2N3CfWInSTdNXyJuntlwOz65i088COZrJUG8ylj6zK2YrQ5Po
-	 PbQk2KiOlxal6/B0RVHyJfDw5jlC5IEDU4tuZfRbejlusOefFyNQzkC3OLGWfcsxQn
-	 dCVQ7vggT8zqKptSGt1gwTBL3bZOC7WOYyOsckS35amGFlu+bUsdgY5Gn65uNSB6ft
-	 iAtcc5CTBj/WzT4oTgDOG0vG1MgDIdLylgV/gXLm8Ou3stm9rI9c+ur6tQWLJS2InV
-	 WT+PA96SbTIxOlUzdHwuRD9cLfZcKQ5/a3AJE2Gz59QWM5xAZRXCfVvWzkw9kkbw8o
-	 Fb0QR7f7Wa0dA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cksfS6mGLz9rxF;
-	Sun, 12 Oct 2025 09:33:36 +0200 (CEST)
-From: =?UTF-8?q?Martin=20Kepplinger-Novakovi=C4=87?= <martink@posteo.de>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Martin=20Kepplinger-Novakovi=C4=87?= <martink@posteo.de>
-Subject: [PATCH 3/3] dt-bindings: media: imx8mq-mipi-csi2: update Martin's contact information
-Date: Sun, 12 Oct 2025 07:33:37 +0000
-Message-ID: <20251012073314.9035-3-martink@posteo.de>
-In-Reply-To: <20251012073314.9035-1-martink@posteo.de>
-References: <20251012073314.9035-1-martink@posteo.de>
+	s=arc-20240116; t=1760254510; c=relaxed/simple;
+	bh=o6tyA3/YxVabiXapleK9xx0h/rI5xhFsgTrkc3SOF1M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jADVdYog13/gYHLpk5d2rQi4Q/EiaiIaWsyQUWfzayX21nhzxxmU9IY4pmLrHpZBCr8BRULr5XcEW4Wmb4BN7Ildcn+jtj06MmpXS0LRyS5Y+Qtjh1ZQy33PpzbNGR2BQH66wfufDatjmcPXIlpq7lffprXzg/w+ety3Q/BTK/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59C7Ywho024093;
+	Sun, 12 Oct 2025 16:34:58 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59C7YwkB024090
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 12 Oct 2025 16:34:58 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ddd2cd94-683f-462b-a475-cc04462e9bdd@I-love.SAKURA.ne.jp>
+Date: Sun, 12 Oct 2025 16:34:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bfs: Verify inode mode when loading from disk
+To: Tigran Aivazian <aivazian.tigran@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <a5f67878-33ca-4433-9c05-f508f0ca5d0a@I-love.SAKURA.ne.jp>
+ <CAK+_RL=ybNZz3z-Fqxhxg+0fnuA1iRd=MbTCZ=M3KbSjFzEnVg@mail.gmail.com>
+ <CAK+_RLkaet_oCHAb1gCTStLyzA5oaiqKHHi=dCFLsM+vydN2FA@mail.gmail.com>
+ <340c759f-d102-4d46-b1f2-a797958a89e4@I-love.SAKURA.ne.jp>
+ <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Update surname and email address in order to be reachable.
+On 2025/10/12 1:29, Tigran Aivazian wrote:
+>> Which pattern (just adding a new "if", or adding "else" with "if" and "else if" updated,
+>> or replace the 0x0000FFFF mask with 0x00000FFF) do you prefer?
+> 
+> There is also the fourth way, see the patch below. It makes it as
+> explicit as possible that vtype value is the authoritative one and
+> sets the type bits from vtype by keeping (in i_mode) only the
+> permission/suid/sgid/sticky bits upfront. What do you think?
 
-Signed-off-by: Martin Kepplinger-Novaković <martink@posteo.de>
----
- .../devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml         | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Well, I feel that we should choose "replace the 0x0000FFFF mask with
+0x00000FFF" approach, for situation might be worse than HFS+ case.
 
-diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-index 3389bab266a9..9d9b697e936a 100644
---- a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-+++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: NXP i.MX8MQ MIPI CSI-2 receiver
+HFS+ explicitly explains that all bits are 0 when that field is not initialized.
+
+  If the S_IFMT field (upper 4 bits) of the fileMode field is zero, then
+  Mac OS X assumes that the permissions structure is uninitialized, and
+  internally uses default values for all of the fields. 
+
+But "BFS inodes" in https://martin.hinner.info/fs/bfs/bfs-structure.html did not
+say that SCO UnixWare sets 0 to the unused 23 bits when writing to disk.
+
+  32bit int 	mode 	File mode, rwxrwxrwx (only low 9 bits used) 
+
+This means that the unused 23 bits might be random, and therefore we can't
+trust S_IFMT bits. Please see the patch shown below.
+
+ fs/bfs/inode.c |   19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
+index 1d41ce477df5..984b365df046 100644
+--- a/fs/bfs/inode.c
++++ b/fs/bfs/inode.c
+@@ -61,7 +61,19 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
+ 	off = (ino - BFS_ROOT_INO) % BFS_INODES_PER_BLOCK;
+ 	di = (struct bfs_inode *)bh->b_data + off;
  
- maintainers:
--  - Martin Kepplinger <martin.kepplinger@puri.sm>
-+  - Martin Kepplinger-Novakovic <martink@posteo.de>
+-	inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
++	/*
++	 * https://martin.hinner.info/fs/bfs/bfs-structure.html explains that
++	 * BFS in SCO UnixWare environment used only lower 9 bits of di->i_mode
++	 * value. This means that, although bfs_write_inode() saves whole
++	 * inode->i_mode bits (which include S_IFMT bits and S_IS{UID,GID,VTX}
++	 * bits), middle 7 bits of di->i_mode value can be garbage when these
++	 * bits were not saved by bfs_write_inode().
++	 * Since we can't tell whether middle 7 bits are garbage, use only
++	 * lower 12 bits (i.e. tolerate S_IS{UID,GID,VTX} bits possibly being
++	 * garbage) and reconstruct S_IFMT bits for Linux environment from
++	 * di->i_vtype value.
++	 */
++	inode->i_mode = 0x00000FFF & le32_to_cpu(di->i_mode);
+ 	if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
+ 		inode->i_mode |= S_IFDIR;
+ 		inode->i_op = &bfs_dir_inops;
+@@ -71,6 +83,11 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
+ 		inode->i_op = &bfs_file_inops;
+ 		inode->i_fop = &bfs_file_operations;
+ 		inode->i_mapping->a_ops = &bfs_aops;
++	} else {
++		brelse(bh);
++		printf("Unknown vtype=%u %s:%08lx\n",
++		       le32_to_cpu(di->i_vtype), inode->i_sb->s_id, ino);
++		goto error;
+ 	}
  
- description: |-
-   This binding covers the CSI-2 RX PHY and host controller included in the
--- 
-2.47.3
+ 	BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
 
 
