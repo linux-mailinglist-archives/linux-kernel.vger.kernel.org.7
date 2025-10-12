@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-849671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C1BBD0A0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:41:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18CEBD0A12
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C1664E4145
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DEE43AB13B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D532F0C48;
-	Sun, 12 Oct 2025 18:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43872EC0BC;
+	Sun, 12 Oct 2025 18:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krOIPd4f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmaE5Xb0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9375809;
-	Sun, 12 Oct 2025 18:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491011C5D59;
+	Sun, 12 Oct 2025 18:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760294488; cv=none; b=OU+wXTuElifw4g9KppFVpnqcBKbV1THoVvRRRtY0QljIaL8ozV6bsiIBgJ3jVIKpNzl3jP5yiknzq7J7so3a8jrLxGKfQRiFnYVXK1FU6fkkWRZ/AFCVZZrY+i6H+uXyFAE3KQR4kMeXxlKP5FgpV2ONO7Ek/Rz6SWsrx5Pljfo=
+	t=1760294735; cv=none; b=WE2IZX7TR9jtOkoEwNxmstfiBH0snb7AovvPoIrp8bCln7hjoT8J05RXj1eiB1KBj+ayElpT6cLNlqVonnsGwpz6GGs3lUxy3gQuQkCajwVlYPK0i7/5QpLQhQZTidG/bNo6IVy3DwI+S0l3ZzGwCIxGpYsQrsu4qEuGhdb1ilc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760294488; c=relaxed/simple;
-	bh=PoUFRD1yzrjYJCi3ArphUQMDmoTrK9yIQsCtPXBJOks=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UMJCV/GKkRbcHc6ojUOeMzve3NAhRzJ/0gO4oCf3xmhz8ab+MvrsNXmivATvE3pQ5pvF4OPufTKQu9ECXXxINKEInbuDiaSkxPqWE3bOmAiR6woDeptLBlxJTs4WBz/eUVR3KLoc/E6LWxyeWCmqT6J52v1MnvwuWT4Q55IaKhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krOIPd4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDB7C4CEE7;
-	Sun, 12 Oct 2025 18:41:19 +0000 (UTC)
+	s=arc-20240116; t=1760294735; c=relaxed/simple;
+	bh=B4eXxmYnDWmtMin5Q/RChD69gPK+UfsPc4ZA1HjS348=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gZaw8pVH4mm2Y+/qb3KAbhYP4YhStHFFFJ5YeQup1A65b3EO3WZMw0Y7kfDw9wqgfX6TwrOi2fMjyVJaDmBPk1jhO6D8YM/4Z1LVhHX0l0Zz8r6Bhe7+ScVlup9X3gPtNpZSVq6s9cp4s56jhGSm6hpI9BOqONUjWUAWjcsugPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmaE5Xb0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18561C4CEE7;
+	Sun, 12 Oct 2025 18:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760294487;
-	bh=PoUFRD1yzrjYJCi3ArphUQMDmoTrK9yIQsCtPXBJOks=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=krOIPd4f4lyc27ACoYSnNCwCsujV1k6HK7G8mhBaU8D+fmiS+vu7emBKFtr+9Q9gQ
-	 C5MHEabrspBaERkLsNUHpszwwGT6gCzCUyzIx+8e461sNDdO5fJ2uVkuG8+1LJuH9P
-	 2fTucsdyNWjDEe7GzmpyKNGUWLzzIL7VsDshJNDQK+Y5U/XanapgdNbYb/gfmzB8N/
-	 /CIm+68VaDiByKwhKevpvQm7I+1PvR8tKHp+MagE/hj6T0CplhxbH1hGe30WYxED42
-	 T2RI7qfx7r8s+Z1H615AF9JCEMMtfuVSOa4SbmUo4Mk51H11xzd+60HO8HwUsoWeY2
-	 ziBIH32MkxkWw==
-Date: Sun, 12 Oct 2025 19:41:14 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Bjorn
- Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Hans de Goede <hansg@kernel.org>, Jens Reidel <adrian@mainlining.org>,
- Casey Connolly <casey.connolly@linaro.org>,
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 3/6] thermal/drivers/generic-adc: Register as IIO
- device
-Message-ID: <20251012194114.094a61a3@jic23-huawei>
-In-Reply-To: <20251010-bat-temp-adc-v1-3-d51ec895dac6@fairphone.com>
-References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
-	<20251010-bat-temp-adc-v1-3-d51ec895dac6@fairphone.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=k20201202; t=1760294734;
+	bh=B4eXxmYnDWmtMin5Q/RChD69gPK+UfsPc4ZA1HjS348=;
+	h=Date:From:To:Cc:Subject:From;
+	b=FmaE5Xb0KbgFecfDqv/02JaL/BqvGb5CnF2rPPYBdZfkJefIAL8i6YGDts0HdEAnC
+	 hq1dQfPe410hYInFcDaNve4Y1M8R1XHTkvB1WhHlvuT7+fy+1UxXKZrJl6noGkryr3
+	 6/IOt8w5AV8v8ksKZvNWcKlN8VaCxTlX+zQbGxg/CD/Ik3Jss+kT2bNUmupkaoXffX
+	 yHmP+avlSQvsyz5tVnPnlfpLSI2R1DGRJvkgV78fdomdjhIPHzNlMcS02iPstkUCjg
+	 Unv5Cq8jriYQ2cAJ2QuZMoI/lHE/GRiYwF6x00atzE6ZmdXtlsvKRiMH36p7bLZAnd
+	 DvhFsxEH0kOAA==
+Date: Sun, 12 Oct 2025 20:45:31 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.18-rc1-hotfix
+Message-ID: <aOv3S1lkcqj1BncF@ninjato>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lBo/YgF45IPmDLH1"
+Content-Disposition: inline
 
-On Fri, 10 Oct 2025 13:22:01 +0200
-Luca Weiss <luca.weiss@fairphone.com> wrote:
 
-> Register an IIO channel to allow reading the temperature using the IIO
-> interface.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-Just one question below.
+--lBo/YgF45IPmDLH1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  static int gadc_thermal_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct gadc_thermal_info *gti;
-> +	struct iio_dev *indio_dev;
-> +	struct gadc_iio *data;
->  	int ret;
->  
->  	if (!dev->of_node) {
-> @@ -153,6 +192,23 @@ static int gadc_thermal_probe(struct platform_device *pdev)
->  
->  	devm_thermal_add_hwmon_sysfs(dev, gti->tz_dev);
->  
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(indio_dev);
-> +	data->gti = gti;
-> +
-> +	indio_dev->name = pdev->name;
-what does this end up as?
+The following changes since commit 98906f9d850e4882004749eccb8920649dc98456:
 
-obviously we don't really care what name the user space interface we
-aren't using advertises but this should be something part number like.
+  Merge tag 'rtc-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux (2025-10-11 11:56:47 -0700)
 
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &gadc_adc_info;
-> +	indio_dev->channels = gadc_adc_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(gadc_adc_channels);
-> +
-> +	ret = devm_iio_device_register(dev, indio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to register IIO device\n");
-> +
->  	return 0;
->  }
->  
-> 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.18-rc1-hotfix
+
+for you to fetch changes up to a8482d2c9071d75c920eba0db36428898250ea57:
+
+  Revert "i2c: boardinfo: Annotate code used in init phase only" (2025-10-11 23:57:33 +0200)
+
+----------------------------------------------------------------
+i2c-for-6.18-rc1-hotfix
+
+One revert because of a regression in the I2C core which has sadly not
+showed up during its time in -next.
+
+----------------------------------------------------------------
+Wolfram Sang (1):
+      Revert "i2c: boardinfo: Annotate code used in init phase only"
+
+ drivers/i2c/i2c-boardinfo.c | 4 ++--
+ include/linux/i2c.h         | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+--lBo/YgF45IPmDLH1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjr90sACgkQFA3kzBSg
+KbZQOBAAippMWPcsPt6nMj8OfGs49/CLCrTBn/3TVJXWvkRGIAowA8nPVpkOc73z
+BxBYXdVSG8D252p/9SRShx2dsiHHGZGQ+zTaE8eVXG6BiqWcSngt4c8N+z7yqf7v
+HPzz9i8lJ1aLm5BT2B076RWHykK3sVUkezchtm/mjP912mpuTm3/qMzCJeTx0kB9
+i0jR+UvK0gwdhP1CPD+UnTZ3gN1Yti9p1CjL35H1w8K7J5oZJ8NW3xxsG/qFJ+87
+HlH4RKGH/R9nDkBErrJmR+KZwhtADXEtFnXhEuKEzNiiIb7Np4lgO0XtUtmVQoFJ
+eC/8xXl/NKlLW3QIzLbqmiaBcWqLjmKBGZtGEYTI68V1K+69z56J2sWuP33tyZ/J
+eNm/LGJx0VYp692QI76pskNb4odCHKGO2jWjidIfXafOQjpwAEzT4OIinS5PWg5V
+WiMRISU7CFs9lq688mrj9xyyxSkUHV36vAjtTkPejr7Lg7m08SKUNhpKyyX5z2sO
+sn3CaTBs1Nci81fDwX4XyggQXniiVwhPWKXcnwpbqxCZFGuiELcKKv7yWmTfjYYj
+tazeGZfxzXELgObyNaViQSk+nsT1jmDJOWgrKXrCD+mmKX3JquOJ+Vpl3UJJV7uD
+ANl+ibes7ZGr1pF1Ti3iwoRcm8T8SZSos/XiDPBllOVfsgQOLSY=
+=X+3J
+-----END PGP SIGNATURE-----
+
+--lBo/YgF45IPmDLH1--
 
