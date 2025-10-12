@@ -1,81 +1,137 @@
-Return-Path: <linux-kernel+bounces-849531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E352EBD0581
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:20:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C470BD0590
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBB854EA3DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:20:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A499188C9D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0A72E1726;
-	Sun, 12 Oct 2025 15:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1582EB5CF;
+	Sun, 12 Oct 2025 15:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0zgHRwX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eSSTVyWZ"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970E92E0923;
-	Sun, 12 Oct 2025 15:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A357A2EAB89;
+	Sun, 12 Oct 2025 15:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760282439; cv=none; b=fFwcIkTLZG+Y0XRf5W9oMvJHAMV6wd595orkL6/ckKMHESKnSVwv00/CseI2m84COy9XBkd6hEc3USIDrP4087sxAJQpbdTVs6WRMPnONzHs+FbLA9a/pYpNXnLoRODIXXeehUAhnpSBpvAhmZAF7oG0fAo1s0oNH0v3qvkt2ak=
+	t=1760282554; cv=none; b=Pa2dONwwnzI1bLf+sNdx36oDtopRU9grcIaCYvBEDI6uhGVd/DUp2r1WbzHUJUj1XOx8rqC50dL+PqLP+tLlYZmVSI+JQvLoif/SxmuG0g9yU4uEqhnjktkdXYW/3jnGOIfGN9hHmw6gPnCDIS38OblvpV+fTXJt5TEbrK4HZXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760282439; c=relaxed/simple;
-	bh=883lbv62pR3Im17Uj4oimrcwwxfR6KmlWo9rLSWutvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NGA3sfzBq2jTQ9DsxXm7cirX07PuKKvnciXtr683N8gExCXip+1jtYXf8XWaH2kgnUP/hsyCcoaVyAg7FGlwCo5BAGYoxsAa0LMcgNfd49hAHlVMlUvFyLCyxk6jvShM7jOmjEFSgnEEzY2HBAivxgQdnqaGqT+0ShOJhwjFNtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0zgHRwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9374C4CEE7;
-	Sun, 12 Oct 2025 15:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760282439;
-	bh=883lbv62pR3Im17Uj4oimrcwwxfR6KmlWo9rLSWutvQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I0zgHRwXcHTm9gHND/XXPayerq8yO8Ty7kRWrXJOXRjk+3919vy6oEz83vFBFwvLZ
-	 v++tze5JqrFGcberuZtAhW9KUa56OltFyu0eLxdV6SwNHU9OKoFhrbX3OG2sdINE/E
-	 DD8SATF1QF8INl9JYw5lqjPZXSDgdesDd2rWwFPAdNzIP/vHswqvxsXuOdV5PnyLqB
-	 zsgaDKtg1zyLrQwgkCvDJ3qqLzofIyJsddSDoSNNUfRNE2uyHlbRiwCVFAuTjiBokT
-	 JxeUo0+VcEKfU8WsdFW25ykS7I394Jy+U9OJ3Z2ciDF5He5H9PUJFD9dRGDAAxWgsY
-	 6Gcn9P/bby+QQ==
-Date: Sun, 12 Oct 2025 16:20:29 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 15/19] iio: accel: bma220: add i2c watchdog feature
-Message-ID: <20251012162029.55b9d9a6@jic23-huawei>
-In-Reply-To: <20251005-b4-bma220_improvements-v4-15-0f449ba31585@subdimension.ro>
-References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
-	<20251005-b4-bma220_improvements-v4-15-0f449ba31585@subdimension.ro>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760282554; c=relaxed/simple;
+	bh=voksv3xS9cC10qHQisa35sISpwJAUFIrohI9c28FaKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ue0XIN0HRrtrBECesY//O1xtFznacsgFCkPDWe00bK6Wr7eKOD+0SDy+rvt4aV+tPfrJIKYLMqqbQOlgYAF4GJsOBwGnddYaaC4jXKxZiJ03pu3woBHq3DGYokAY7KAok7T/g42WF/s0fRwAn/+jXgmVaP2TKB16b48pKRjagVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eSSTVyWZ; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id 7xskvbzKdtqv07xskv6kz4; Sun, 12 Oct 2025 17:21:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1760282475;
+	bh=gWox/geFsIe4RTFbehyzmuN0+a+GcfkLr4VeZjCh/Lg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=eSSTVyWZdyuq2YkVQk3tpZrlRbIdvZoC/U2B5jpKsHc1/NSTokDAcwg/qMIH3piNE
+	 dUc24coC/C5cbom1UPQV+uNwOkUwfmsiA0WY0McJaL0BZrI3KjhnCdw9ywRmUB+2c1
+	 1Yw7AdbC7aBDizS9BTb/AuQfANDDrfU31ie3nVfrFxzL/ePCpqmsY/LcPkedSGkBoH
+	 oUnLEhM9IKHAU/VIRUaP13OPUhhpBq6s2D3e6Fr642JueN0ewQS54wcKunVG+Aq1kJ
+	 zUEk4RKGnHpiFT3rCUx8AdeeAIzuwgXe6oaIfemaKsoKcN+i6ThBJvM76nYBfGnoHm
+	 gvZxXr0KfQzVQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 12 Oct 2025 17:21:15 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <d03c64d2-46c0-42d8-8f88-28669e921c95@wanadoo.fr>
+Date: Sun, 12 Oct 2025 17:21:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/22] smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
+To: chenxiaosong@chenxiaosong.com, stfrench@microsoft.com, metze@samba.org,
+ pali@kernel.org, linkinjeon@kernel.org, smfrench@gmail.com,
+ sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
+ pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com,
+ bharathsm@microsoft.com, zhangguodong@kylinos.cn
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ChenXiaoSong <chenxiaosong@kylinos.cn>
+References: <20251012150915.2992220-1-chenxiaosong@chenxiaosong.com>
+ <2AC3F0FD2E1F3D39+20251012150915.2992220-7-chenxiaosong@chenxiaosong.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <2AC3F0FD2E1F3D39+20251012150915.2992220-7-chenxiaosong@chenxiaosong.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 05 Oct 2025 16:12:24 +0300
-Petre Rodan <petre.rodan@subdimension.ro> wrote:
-
-> Sometimes the sensor gets stuck and enters a condition in which it pulls
-> SDA low, thus making the entire i2c bus unusable.
-> This problem is mitigated by activating a 1ms watchdog implemented in
-> the sensor.
+Le 12/10/2025 à 17:08, chenxiaosong@chenxiaosong.com a écrit :
+> From: ZhangGuoDong <zhangguodong@kylinos.cn>
 > 
-> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
-Applied.
+> Replace the constant of client with SMB1_PROTO_NUMBER, then move the
+> macro definition from server/smb_common.h to common/cifsglob.h, maybe
+> the server will use this macro definition in the future.
+> 
+> Co-developed-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Signed-off-by: ZhangGuoDong <zhangguodong@kylinos.cn>
+> ---
+>   fs/smb/client/misc.c       | 2 +-
+>   fs/smb/common/cifsglob.h   | 2 ++
+>   fs/smb/server/smb_common.h | 1 -
+>   3 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+> index dda6dece802a..15be9d8738ab 100644
+> --- a/fs/smb/client/misc.c
+> +++ b/fs/smb/client/misc.c
+> @@ -318,7 +318,7 @@ static int
+>   check_smb_hdr(struct smb_hdr *smb)
+>   {
+>   	/* does it have the right SMB "signature" ? */
+> -	if (*(__le32 *) smb->Protocol != cpu_to_le32(0x424d53ff)) {
+> +	if (*(__le32 *) smb->Protocol != cpu_to_le32(SMB1_PROTO_NUMBER)) {
 
-Thanks.
+Should this be SMB1_PROTO_NUMBER?
+(without cpu_to_le32())
 
-J
+CJ
+
+>   		cifs_dbg(VFS, "Bad protocol string signature header 0x%x\n",
+>   			 *(unsigned int *)smb->Protocol);
+>   		return 1;
+> diff --git a/fs/smb/common/cifsglob.h b/fs/smb/common/cifsglob.h
+> index 371160fec1cd..5928d35c7f30 100644
+> --- a/fs/smb/common/cifsglob.h
+> +++ b/fs/smb/common/cifsglob.h
+> @@ -9,6 +9,8 @@
+>   #ifndef _COMMON_CIFS_GLOB_H
+>   #define _COMMON_CIFS_GLOB_H
+>   
+> +#define SMB1_PROTO_NUMBER		cpu_to_le32(0x424d53ff)
+> +
+>   struct smb_version_values {
+>   	char		*version_string;
+>   	__u16		protocol_id;
+> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+> index 9c0db206624b..6d427dbed5fd 100644
+> --- a/fs/smb/server/smb_common.h
+> +++ b/fs/smb/server/smb_common.h
+> @@ -151,7 +151,6 @@
+>   		FILE_EXECUTE | FILE_DELETE_CHILD | \
+>   		FILE_READ_ATTRIBUTES | FILE_WRITE_ATTRIBUTES)
+>   
+> -#define SMB1_PROTO_NUMBER		cpu_to_le32(0x424d53ff)
+>   #define SMB_COM_NEGOTIATE		0x72
+>   #define SMB1_CLIENT_GUID_SIZE		(16)
+>   
+
 
