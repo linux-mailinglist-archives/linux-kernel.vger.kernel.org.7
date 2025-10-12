@@ -1,151 +1,156 @@
-Return-Path: <linux-kernel+bounces-849618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4FBBD0823
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:02:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD735BD0828
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14FA21896602
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:03:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75AFD346C65
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B532EC547;
-	Sun, 12 Oct 2025 17:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280192ECD0E;
+	Sun, 12 Oct 2025 17:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6M5COTO"
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEEDutV8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429ED23E23C
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 17:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7842319258E;
+	Sun, 12 Oct 2025 17:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760288563; cv=none; b=mVmXa1WHVJKmvn/AHmfbgp5VjbN5szlvCfx7heZagdQiw+9Mraj+Nq7njqzJ+zxj3x+WmO8kWYZe6TGfgTnuf9VaIwTWtPjdouplkcMywA+wfK/wnKnt80Z6MZeZB/7qG87Cfrlf4SR9xWKaqyRcFDsQX/3OXYYaHyEcb2pWZxk=
+	t=1760288618; cv=none; b=lMJ9qoUG2f8+xbbq6ah8lhELUW61hH4xIgXbqWUgHm1SEOg2wPXZsgQqul517p8El1d4dUgnSp/+rYxJHoFWW1Sx3Oq95RJfqlSt9VjaMJR7hOAgu+I2AXB/NgMyyN1chp+iw28YIPXZQPYvWulkx+B3pGPimozG/RtELN8BdY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760288563; c=relaxed/simple;
-	bh=fzoINW0yQf7mFi6Ce0cd67Ul/S7imhSgcKeCXM8ejzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cl2ow2oW2r90qpQ1JnDhm+j8iKQs1GyHu+j4iZrlBBLE7bv4bkYWB6FGPJpp0598W2abk2wpjS/tn33OcYactUTT+7VvU4xFtDzk9UizyE70vMbygxRIFYDYhaN75N/Nqa7QcFMzb5Zh0eUNqO39CE68F4scAzoIUI1iDNzV3+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6M5COTO; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-63bbf5f77daso3483094d50.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 10:02:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760288561; x=1760893361; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/knOw+O1ez/psbJ8n6qPMWfaibnPUlgK1U5bFjqZ0Y=;
-        b=E6M5COTOOHik+2wE6Y3QwYZUCGctx2RtzbMpiTTUV/e613CHGefGqOA5+jCVhWtAHG
-         zhTJKMUeZtwedaEdL23mcgqynoez2LNpOnbD0PN5+4ch2pAertYeDi93pCzqmZrNmPz8
-         D96/cxjwNWVlKRcWn5Vv1ul8GRhw31WQcBFOmp9Dk6iZ2QrECJsTS/wrp4xB3pinAzqk
-         F6jlfku+qXOrzi/FiPx3EtJph/juUiwLPbj8Hid6RqnnpXs3361tMkXckV/Y3et3KdBg
-         0vtTM7L0UE8ToJuEg2vz4ApaBz8Rn4mr6ch43E+05bW59x2wrXUuc/P/ZGVy0BioAgkr
-         Pk1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760288561; x=1760893361;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4/knOw+O1ez/psbJ8n6qPMWfaibnPUlgK1U5bFjqZ0Y=;
-        b=pMobGgd33O+23vkuYTd6g03bOEqKFGW1LJpn2ry7AMJ3uesXwwUNLC6ntpvhvwMp94
-         +DjzbyzqYogx/YQMYEIZVTFLqyzt71tY2l0yo5HCbOzG6OHPssLASmvd2n4tg8U9G50h
-         yREO+koQdjtRJGk/HrFVca+eSfq2+XW52P7Yod4/qiHA8DSNwDJC7rjk/lFCWNX4g3s9
-         Q16DjJDweleW+TbV7mI087JETCgWQ5hKCB5vFiuY0WMyhE2MYltNdQONI1hfv8Eix7N6
-         sYGiuRrcqeAMSCoYcgfig1IS0USDYajLz3rwmd24LIJKznnbeISYnyVIGzx3CB/rSors
-         ZkNQ==
-X-Gm-Message-State: AOJu0Yw0MzgBFvizlMs4N2Wdorx/uCGfvjKnPIr291IIKVoDHSqbDae/
-	NGh6BRU0yQjs843VtbzQ91hwd9c+MZHxkFti20hafW9eRse0K3daZBd8DIZGscFBqqu4R4HMfL8
-	GAFFYT/PTxedvPHapa8gF1g9ggt7N7GY=
-X-Gm-Gg: ASbGncsM5UOAiC1hdVWccg9xjJWYPLnOX7D1+qN6ks3as+q2MpskK43dOOxOLeYGgaQ
-	JuDEout6vAb4HmmVPRrvG27UgwxF89mClrFHAiSabnnmnOZwddPoI8Xh8XA7HJ49wf4Kq1cO7lk
-	bQFaSK3rC/DfnMHhRPMMYKu89Spa4Jh6J0PVyj6fmX/QTuwpsFe/EqKxrN6jr1sPdCgoksgkRic
-	7pu1IJVAQVmjgtbfB9ChXgn0GfFE12auZE=
-X-Google-Smtp-Source: AGHT+IFo+0lgBz6b0uIaeffB4CHFL5q8ijSM8dQ79T0H7f1iYlbW9aB9Z3CLXE5OXLEWTpzLM/gt7jwXbYkkxvwuesA=
-X-Received: by 2002:a53:ac0b:0:b0:633:ac5d:2a03 with SMTP id
- 956f58d0204a3-63ccb7fb237mr12767510d50.6.1760288560982; Sun, 12 Oct 2025
- 10:02:40 -0700 (PDT)
+	s=arc-20240116; t=1760288618; c=relaxed/simple;
+	bh=drlLQGlwLQo2pYW3pURe98GZgeWSVpXQQiStRl+tcvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qXbasHB2HjJeUK/IXomoNdutWr2Ak4bFG1dOTw60U91ZrFwMQGC/tBnr05TLUzb3oT5CqoUYfASaJgU9s0YylUJl8k9FYc9KYDKQ0s81H088HKGEPZ1LAIbArbmcqp1jlAomCYcMT/MjgexO0PllgeDo4OjxH5dea7QvDvwwEWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEEDutV8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218E6C4CEF8;
+	Sun, 12 Oct 2025 17:03:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760288618;
+	bh=drlLQGlwLQo2pYW3pURe98GZgeWSVpXQQiStRl+tcvs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FEEDutV8crqRGBHnLSYU+7zC5L/vb02ZyzH38InOMP7klwj600fQPtjdnAea+l7Lu
+	 D0A78tRChRSuHZmelmiysDNSBHE4+K7eF3TGRZrr4ydDDqV0CZBIY7IqNM/bFu5IT9
+	 zRqR09CgmYEbIQoQDRx1+2NiiOGpavmaUdsUSkKdioFzsujuTfu9m84DumgCnGe/Ox
+	 8ta3Uy3g4oW4yTSmnhDySLdL+Goch1dEdmPO++bmCgO14qD7lyvtdE49v9PalDziiy
+	 zfYlRwK1c3BuziZXLNYEjgxoADov1UGRLGfIQqqPul2mRYgQlRUpKIZK80OFHjtEIp
+	 W0hLwyT/jhDkg==
+Date: Sun, 12 Oct 2025 18:03:27 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+ devicetree@vger.kernel.org, Carlos Song <carlos.song@nxp.com>, Adrian
+ Fluturel <fluturel.adrian@gmail.com>
+Subject: Re: [PATCH v5 0/5] i3c: Add basic HDR mode support
+Message-ID: <20251012180327.5d94dda2@jic23-huawei>
+In-Reply-To: <20251007-i3c_ddr-v5-0-444184f7725e@nxp.com>
+References: <20251007-i3c_ddr-v5-0-444184f7725e@nxp.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a5f67878-33ca-4433-9c05-f508f0ca5d0a@I-love.SAKURA.ne.jp>
- <CAK+_RL=ybNZz3z-Fqxhxg+0fnuA1iRd=MbTCZ=M3KbSjFzEnVg@mail.gmail.com>
- <CAK+_RLkaet_oCHAb1gCTStLyzA5oaiqKHHi=dCFLsM+vydN2FA@mail.gmail.com>
- <340c759f-d102-4d46-b1f2-a797958a89e4@I-love.SAKURA.ne.jp>
- <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com> <ddd2cd94-683f-462b-a475-cc04462e9bdd@I-love.SAKURA.ne.jp>
-In-Reply-To: <ddd2cd94-683f-462b-a475-cc04462e9bdd@I-love.SAKURA.ne.jp>
-From: Tigran Aivazian <aivazian.tigran@gmail.com>
-Date: Sun, 12 Oct 2025 18:02:30 +0100
-X-Gm-Features: AS18NWAXMnlVYzjcH6651G1CLcNpAFUYTk5F0bL21vafeWU9e0ABz61d0SA3M2E
-Message-ID: <CAK+_RLmwT5EHC6aajJxG0_ccPe7YhnWkd_wOPhhCz3mGo8Ub_g@mail.gmail.com>
-Subject: Re: [PATCH] bfs: Verify inode mode when loading from disk
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 12 Oct 2025 at 08:35, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Well, I feel that we should choose "replace the 0x0000FFFF mask with
-> 0x00000FFF" approach, for situation might be worse than HFS+ case.
-> ...
-> -       inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
-> +       /*
-> +        * https://martin.hinner.info/fs/bfs/bfs-structure.html explains that
-> +        * BFS in SCO UnixWare environment used only lower 9 bits of di->i_mode
-> +        * value. This means that, although bfs_write_inode() saves whole
-> +        * inode->i_mode bits (which include S_IFMT bits and S_IS{UID,GID,VTX}
-> +        * bits), middle 7 bits of di->i_mode value can be garbage when these
-> +        * bits were not saved by bfs_write_inode().
-> +        * Since we can't tell whether middle 7 bits are garbage, use only
-> +        * lower 12 bits (i.e. tolerate S_IS{UID,GID,VTX} bits possibly being
-> +        * garbage) and reconstruct S_IFMT bits for Linux environment from
-> +        * di->i_vtype value.
-> +        */
-> +       inode->i_mode = 0x00000FFF & le32_to_cpu(di->i_mode);
->         if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
->                 inode->i_mode |= S_IFDIR;
->                 inode->i_op = &bfs_dir_inops;
-> @@ -71,6 +83,11 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
->                 inode->i_op = &bfs_file_inops;
->                 inode->i_fop = &bfs_file_operations;
->                 inode->i_mapping->a_ops = &bfs_aops;
-> +       } else {
-> +               brelse(bh);
-> +               printf("Unknown vtype=%u %s:%08lx\n",
-> +                      le32_to_cpu(di->i_vtype), inode->i_sb->s_id, ino);
-> +               goto error;
->         }
+On Tue, 07 Oct 2025 16:06:12 -0400
+Frank Li <Frank.Li@nxp.com> wrote:
 
-Agreed -- given that historical BFS may leave those "middle 7 bits"
-uninitialised, we shouldn't trust any S_IFMT coming off disk. Masking
-to the lower 12 bits and reconstructing type from vtype is the right
-thing to do.
+> Add basic HDR mode support, only support private transfer, not support
+> CCC command.
+> 
+> Update i3c framework API to allow pass down mode and extend driver callback
+> function.
+> 
+> Implement HDR transfer in svc i3c master driver.
+> 
+> Simplifed HDR flow is (ref i3c spec line 5514) Figure 129
+> 
+> <--              SDR            ---> | <--- HDR
+> START 0x7E RnW(0) ACK CCC(ENTHDR0) T   HDR-CMD(00-7f write, 80--ff read)
+> 
+>                                     ----> |  
+> HDR-DATA HDR-CRC HDR-RESTART .... HDR-EXIT
+> 
+> Note: HDR-CMD is 16bit data, which included 7bit slave address and 8bit
+> read/write command.
+> 
+> svc hardware can auto issue SDR part.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Two optional tiny nits for readability:
+Whilst there will probably have to be a v6 for the ACPI ID issue in patch 5,
+I'd like to ask the question of how are we planning to merge this?
 
-  * use a symbolic mask for the 12 bits we keep:
-        inode->i_mode = le32_to_cpu(di->i_mode) &
-                (S_IRWXU | S_IRWXG | S_IRWXO | S_ISUID | S_ISGID | S_ISVTX);
+Maybe an immutable branch either in IIO or I3C trees that the other one picks up?
 
-  * cache the endianness conversions:
-        u32 dmode = le32_to_cpu(di->i_mode);
-        u32 dvtype = le32_to_cpu(di->i_vtype);
-        inode->i_mode = dmode & (S_IRWXU | S_IRWXG | S_IRWXO |
-                                 S_ISUID | S_ISGID | S_ISVTX);
-        if (dvtype == BFS_VDIR) { ... } else if (dvtype == BFS_VREG) { ... }
-        else {
-                brelse(bh);
-                printf("Unknown vtype=%u mode=0%07o %s:%08lx\n",
-                       dvtype, dmode, inode->i_sb->s_id, ino);
-                goto error;
-        }
+It's a new driver so could gamble on taking the IIO driver the I3C tree but even
+then I'd like a topic / immutable branch in case any IIO wide refactors or similar
+hit this cycle.
 
-With or without those nits, your approach looks good to me.
+Thanks,
 
-Reviewed-by: Tigran Aivazian <aivazian.tigran@gmail.com>
+Jonathan
+
+> ---
+> Changes in v5:
+> - Just realized missed CC mail list devicetree@vger.kernel.org and resend
+> - Link to v4: https://lore.kernel.org/r/20251007-i3c_ddr-v4-0-3afea5105775@nxp.com
+> 
+> Changes in v4:
+> - use master's hdr_cap to check HDR cap.
+> - add mmc5603 support.
+> - Link to v3: https://lore.kernel.org/r/20250930-i3c_ddr-v3-0-b627dc2ef172@nxp.com
+> 
+> Changes in v3:
+> - Add new patch for change rnw to union for svc.
+> - Detial changes see each patch's change log.
+> - Link to v2: https://lore.kernel.org/r/20250924-i3c_ddr-v2-0-682a0eb32572@nxp.com
+> 
+> Changes in v2:
+> - Add sensor driver, which use HDR mode read/write data.
+> - change priv_xfer to i3c_xfer.
+> - Link to v1: https://lore.kernel.org/r/20250129-i3c_ddr-v1-0-028a7a5d4324@nxp.com
+> 
+> ---
+> Frank Li (5):
+>       i3c: Add HDR API support
+>       i3c: master: svc: Replace bool rnw with union for HDR support
+>       i3c: master: svc: Add basic HDR mode support
+>       dt-bindings: trivial-devices: add MEMSIC 3-axis magnetometer
+>       iio: magnetometer: Add mmc5633 sensor
+> 
+>  .../devicetree/bindings/trivial-devices.yaml       |   4 +
+>  drivers/i3c/device.c                               |  27 +-
+>  drivers/i3c/internals.h                            |   6 +-
+>  drivers/i3c/master.c                               |  19 +-
+>  drivers/i3c/master/svc-i3c-master.c                |  96 +++-
+>  drivers/iio/magnetometer/Kconfig                   |  12 +
+>  drivers/iio/magnetometer/Makefile                  |   1 +
+>  drivers/iio/magnetometer/mmc5633.c                 | 579 +++++++++++++++++++++
+>  include/linux/i3c/device.h                         |  34 +-
+>  include/linux/i3c/master.h                         |   4 +
+>  10 files changed, 745 insertions(+), 37 deletions(-)
+> ---
+> base-commit: 5248ab97a6dd1dc6856422f6b1595baaf4fa85ce
+> change-id: 20250129-i3c_ddr-b15488901eb8
+> 
+> Best regards,
+> --
+> Frank Li <Frank.Li@nxp.com>
+> 
+
 
