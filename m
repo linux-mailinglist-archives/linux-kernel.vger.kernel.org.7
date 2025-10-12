@@ -1,82 +1,105 @@
-Return-Path: <linux-kernel+bounces-849504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72A0BD0490
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:06:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1075FBD0563
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8518C1892962
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:06:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 757FA4E9DCD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C10C296BB9;
-	Sun, 12 Oct 2025 15:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/wV17n/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A5B1DB13A;
+	Sun, 12 Oct 2025 15:18:19 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4D81D5CD4;
-	Sun, 12 Oct 2025 15:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B0A2D5C8B;
+	Sun, 12 Oct 2025 15:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760281584; cv=none; b=REcQnaOWSpg+zGk38Uwi7P2ZzVNHI9b3borQgAtdNwy2t2rSF2+wMdpVHdYpvKs81vO6l0Uv1rUEqVpjIpAP8J53+oKiZYvWO4RCcqNsoUs0JLjo1XH0ecAInhjik9CLMvNl0TqBorIHS0qfegJd/PboWveblwk+gkX6fUKdqyo=
+	t=1760282295; cv=none; b=sKIfZJWunkL7NSwGCSOHTQVYRh+XYfR/os5Eyh84/DQTMnQQL5ownYSb6+Wv6wQnKZp7G+mBHVch904nyIvOn+s+XXWu1Wc8Urr6q5qr7Vw4iHHtiiKv3QXA89U2l0uxAowVGL1zn8+DitiJ+CtQQgcpq08UtXqOpTgSz4/uE4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760281584; c=relaxed/simple;
-	bh=QNg9G/nkvSS563f/f2I34o28v/wp4zJ3b8ht7+bMuzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UDPYFVg93Upt1iiuf71lbw6W6LlU6FSI3AWu/wSt5zMyiyggkrZfCF1Jp+ZnZMwMeZPQnfVpS4jot8u6YYg9O0rrmL/2rhbfZpPqCt80G5G3nFK96azwOeCQt9zaXP/BicR7yY7CyrrHgykg5rTvYTJwLIDqQW0RmOW1UA2oyuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/wV17n/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 380EAC4CEE7;
-	Sun, 12 Oct 2025 15:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760281583;
-	bh=QNg9G/nkvSS563f/f2I34o28v/wp4zJ3b8ht7+bMuzc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u/wV17n/iEY6XYIQr3tebI0r3HB994fPhQj1pU0QPbUNhblp2SzlD5IeI2p7zMf0U
-	 qtRIDMdhZkBaHU1tORd6BPpSPvdmhv8WTFEnoz5YGoc23TV3oIWFe5Tx+EwaZ/7CV1
-	 nMUpc1peqVgIEEs+t0pz41pnLv6NLtd3kUKRA/e25FL6mDEDnpaqSYl27OQHd5SaxG
-	 XT6r+bT2YtxWKcPDinHUMDOuTw4RdZ/EMYU+ZvWX4HHJwbMgl41sBH84bGsz3Dm9Tw
-	 Ab5OlRrh6W4OJPZRZai5YWMqJ6wpPhWPcnZNNAJXp7oaD6sUuAmZp5SCNcyqhLyW2s
-	 YPjbrcppMeJBQ==
-Date: Sun, 12 Oct 2025 16:06:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 12/19] iio: accel: bma220: populate buffer ts in
- trigger handler
-Message-ID: <20251012160618.4cd15ad3@jic23-huawei>
-In-Reply-To: <20251005-b4-bma220_improvements-v4-12-0f449ba31585@subdimension.ro>
-References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
-	<20251005-b4-bma220_improvements-v4-12-0f449ba31585@subdimension.ro>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760282295; c=relaxed/simple;
+	bh=wt77LmNnwFo6UI841ru/pL7ok7hvQWJrGnshi+TZyig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXMep0J1QALAcJOr8eb2EvtFrpT9mOhm7o17OSc1H8RlbZtYkUK07/wGuGYZgVpN0sQaYW4CEAlDHNlPCzSAqi4vOIOlEPlvF7upOFi3Hc0BFEpk0mSXlVaXiROlPGttaEIjMwF8FFybh+kOaNrSXAUPrEZGw3QWEWS7TeHWP2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 6224D758; Sun, 12 Oct 2025 10:07:45 -0500 (CDT)
+Date: Sun, 12 Oct 2025 10:07:45 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] apparmor: Replace sprintf/strcpy with scnprintf/strscpy
+ in aa_policy_init
+Message-ID: <aOvEQVqYUnMXrMxI@mail.hallyn.com>
+References: <20251011164645.46822-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011164645.46822-2-thorsten.blum@linux.dev>
 
-On Sun, 05 Oct 2025 16:12:21 +0300
-Petre Rodan <petre.rodan@subdimension.ro> wrote:
-
-> Populate buffer timestamps in trigger handler since not all
-> triggers can run the top half handler that provides
-> pf->timestamp.
+On Sat, Oct 11, 2025 at 06:46:46PM +0200, Thorsten Blum wrote:
+> strcpy() is deprecated and sprintf() does not perform bounds checking
+> either. Although an overflow is unlikely, it's better to proactively
+> avoid it by using the safer strscpy() and scnprintf(), respectively.
 > 
-> Fixes failing unit test that triggers based on the INT signal.
+> Additionally, unify memory allocation for 'hname' to simplify and
+> improve aa_policy_init().
 > 
-> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
-I hope that we will at somepoint get the generic code that would make this unnecessary
-but it's not there yet so fair enough.
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Applied.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+
+> ---
+>  security/apparmor/lib.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+> index 82dbb97ad406..acf7f5189bec 100644
+> --- a/security/apparmor/lib.c
+> +++ b/security/apparmor/lib.c
+> @@ -478,19 +478,17 @@ bool aa_policy_init(struct aa_policy *policy, const char *prefix,
+>  		    const char *name, gfp_t gfp)
+>  {
+>  	char *hname;
+> +	size_t hname_sz;
+>  
+> +	hname_sz = (prefix ? strlen(prefix) + 2 : 0) + strlen(name) + 1;
+>  	/* freed by policy_free */
+> -	if (prefix) {
+> -		hname = aa_str_alloc(strlen(prefix) + strlen(name) + 3, gfp);
+> -		if (hname)
+> -			sprintf(hname, "%s//%s", prefix, name);
+> -	} else {
+> -		hname = aa_str_alloc(strlen(name) + 1, gfp);
+> -		if (hname)
+> -			strcpy(hname, name);
+> -	}
+> +	hname = aa_str_alloc(hname_sz, gfp);
+>  	if (!hname)
+>  		return false;
+> +	if (prefix)
+> +		scnprintf(hname, hname_sz, "%s//%s", prefix, name);
+> +	else
+> +		strscpy(hname, name, hname_sz);
+>  	policy->hname = hname;
+>  	/* base.name is a substring of fqname */
+>  	policy->name = basename(policy->hname);
+> -- 
+> 2.51.0
 
