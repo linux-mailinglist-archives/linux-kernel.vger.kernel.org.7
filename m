@@ -1,305 +1,201 @@
-Return-Path: <linux-kernel+bounces-849611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6D1BD07F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE4FBD07FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2FE218927C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51F91893261
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED272EC564;
-	Sun, 12 Oct 2025 16:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAFF1CD15;
+	Sun, 12 Oct 2025 16:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cg32WJQJ"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BR6XTV9T"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310FD2868AD
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 16:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD2B34BA39
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 16:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760287782; cv=none; b=BmiV1zCd6WkRg/pIHflK5WftStwy9OZfVZt9cXSFwsdioxgxMVI3KpFPz1eAlvukgGy3x9hxkKICDYZvg4yJL1Po3DFfWrfvv9JarrEdRtK9yp15qwsLr10vwxd5VJP1kFWqy1tyn3zjXT7wjQBVyksepFKlPZyRzJph243GeX0=
+	t=1760287981; cv=none; b=UdpMyR4LJC5Im8BqSmUoKDvlO+Kzy73ER7x5GZxozqELilJnhEUzesv5C/2KM9g+q5To/W1R7N+xhov5qrFQ0jA2b2Oukq+Ufl2ufCuS/f0E3vnyN4Xy4yUlI/Tj7MX0CPjsz4QaXBEFRmLV7wCPY8p7HpyrYX3TFgOeT3X7AmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760287782; c=relaxed/simple;
-	bh=tiWfYworwbCzMlDp45VXYsASaB3UQxOBPjunH6YFFPo=;
+	s=arc-20240116; t=1760287981; c=relaxed/simple;
+	bh=is6hqOlUkMzHTcnRZLMTBo5nWV2BPzV5Tey9TxfEm6U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rW2rKvMJmNE1v0rkCfMNcOyWSsSPGd35d5Ea4k3vB690rSVj7OgOb4reJaW50B8olOGU9nwneHgzZglQYHx7dSkmkLQnINdBFQ1y8CTlIzHn+rlDvHuA18EfPcFZd/jeffdwEcoY48nuXxWoWXcKu0Os+tk9HV9Oac/pxXkYQUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cg32WJQJ; arc=none smtp.client-ip=209.85.218.51
+	 To:Cc:Content-Type; b=YisALlH6T9kUo09ELctRjPPvrZK6I49IoYZPrTFXmbo6ZBI4yhSQ0j2v+iy8DCp5bjvSGH4l9DMDkK1ltfF65azA+gcCr8PPE1hHAqPwVP9nY00l1o26aFQMkYQaWcHYVSnF04onlMsB2QtDGlHaV4gWQ0QWf0fh79alqwpzxis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BR6XTV9T; arc=none smtp.client-ip=209.85.218.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b3e44f22f15so505776166b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 09:49:38 -0700 (PDT)
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b457d93c155so562568266b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 09:52:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760287777; x=1760892577; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760287978; x=1760892778; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7XOt9pYTGZkZSu2ppNvovLspExBwSC4+Ysww8r0Eiy4=;
-        b=Cg32WJQJVNciVdgVVJsRyx3LnNWO7Ik6GRhlCS0qsXRra1jqIiN6LX6NtTve7kNZQv
-         EsdawzzSfoLljXrEN6lJlSoXpk52tTfKBphW+cy/SY1JuB++mV+R7Zy5MKq8/2QfULRV
-         X98IcaydM3OcWgvN+wCTiA0IDoIwM0SFo0jPQbg8UcggFUWjVzFBoMF4RTg6TS9Z3gs4
-         oK0RZi1YCNbJFAvbzNuupfWfCy8GI1NOrx1PHXoDR/dLPOPRHYSWuPrcZ3sxxDVDpbvm
-         aEQkq5q5M9lvBgoAdTJuBlPiMP2Mrc4Yg/rkv8K79mLiXaP47K8La5rx1AB9EogvG8ml
-         zoAQ==
+        bh=9JZxGJaBIG3WMNgOZk70IosVrcFGLTtGDI3zyIQtP54=;
+        b=BR6XTV9TPGsCSsCXhUaHq2QW0sq08dFwDbXfd7zBz8v7PFy5s9Kq8fXSv5565AOn4Y
+         5XT1yRKB7IYwmBtUOC97BjgfqeECAG3KWJ96JYaGUtyiLv6fSDIwYKhY+LR7DeoJjQeQ
+         fNSYAgdLvjekMdhlULKceP3kCIbbYx1vc7VV3okYYHsNZPd/2qd5wZ3MakJwg1opjKBt
+         D+JXY/YWFzXJO4G3LB17sjS5PFbwLiYB46aQQMMKXL7Gk8ZgZo6V/LnFWxBi+OTnpe06
+         w1Vq4nRziatDjwJCmca1G+5niaNMATm5GRSwmZC6gfSrYi8XnpiL8jDdQL4cc5md+x1n
+         Hxiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760287777; x=1760892577;
+        d=1e100.net; s=20230601; t=1760287978; x=1760892778;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7XOt9pYTGZkZSu2ppNvovLspExBwSC4+Ysww8r0Eiy4=;
-        b=UFg5OgQ2GxlzZh+DeAuPvYjpga8c/om2Ds7i8m4LB7Vb8I1lxTiHXTk79HevkajCaY
-         rXzaiPzflNkvfkfycF8SDKTEUqTgRbO5XSaq3tO6FbGmtYxmENsCIooQHhZwudtZFpoq
-         fovuQmdFO9VbXvdlNARaWboS17na4buA1zM3H7vAZsELE8g+p2LDMtfiLuMhG3lp7wDa
-         TudbFE/kr05O/CLngWjp/Wc8wjLa37mR0FQ+u5hZzZToDAjwz+IwmbMP40RatgLqsjDn
-         EG6sdmRuo1UkP2NlbDnmYpJ5BhCwNiOoCIEjpnM2xGB4IXts8vZFqBUCmaOIuqVsEKM/
-         S+LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOGF3YDb1ktgG88br+pszMUGJ1ntc0UXRyxieU1z9rz8ZBepqiSOrk8d1/l7w8GlG4Shm8TGpeOk1r6ZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzrjL47QcfG+n8dNO7KnOY0tBB3xvNhJ3OCU4Vb+k6aWLKPPo4
-	cSwxY3qcpnTo/CIJny1jcZAOOgg8qb58eB1duBofFWfZxDIRL+p4BPAeqzYPdtwkqc3cD2Nd3jS
-	YX+uGIRmN1GYVyP7PUN0dAkRYujf6HTc=
-X-Gm-Gg: ASbGnctBxQOA6F6ZEkJKZKRT8JntJV5Bqpd+Pwc+g8wBFGbfjlngJuWKIR9u9y2o/Xh
-	8MZJCMn9v6iy/MXybCv/oCRuV8yORGxvA2phnq8Cs/j+9ZNoe+HgEh2ofixxDFABiY2hAejAV7i
-	L/zaSx+Sk5i852Z4AhOGsEJa8wb14o6qiWcHxonYawwIOj475/ahLupb9tHD4VvSjIa3k639BLO
-	2aF39pO7n8s73kQnAqTlnef1r01y22tsw/yQLIZZTnvIEc=
-X-Google-Smtp-Source: AGHT+IFTBvuUZZbE9a7cb6P3kpA3ULFLR99Myk3ietqEoRXe6pHxUxt7cTci1SYV2hJKjY+FPJBIPxKpPjiWn+9LOME=
-X-Received: by 2002:a17:907:3daa:b0:b45:60ad:daf9 with SMTP id
- a640c23a62f3a-b50a9a6cb4fmr2086829166b.3.1760287776995; Sun, 12 Oct 2025
- 09:49:36 -0700 (PDT)
+        bh=9JZxGJaBIG3WMNgOZk70IosVrcFGLTtGDI3zyIQtP54=;
+        b=DPaii+vGM2EBRSZlkQWvzi6e1Q8AMQ17BpruBKqzdDyr8+a+BESXYFXP8wLBTAHclM
+         xFnHqIRDPaCC5iCMLOlxETb1rWEw+kJHZBb9YgGogj9v8hOEo64u9lUC2PT5is9MrSFM
+         suBiG9JRtG1+6UyZuhjFUlStsmqUl67tEBr5EUtt8MWwevBME0f29tWM4uvspwsMFUzX
+         pBMogepmCmx3JbI+Zuhne+uSoWKY1nAz1cz+q/lyRCoVQZJWszEXV/mCd6dvnxoHLGBS
+         nVkaRBJ5EOSYtk136W8xp5pUrVkgTipGtdGCAji5hVtLdkwXFggUuu7+83CmdNRB9Ze5
+         HHJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmsrCyZssUGFzisu7K8BK4nrBx2t+BUeiWljqU5GbmTlrDfBFmfaMVD1a3djHOf7E9VCrZidBGc68A588=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDorupFumM6o42MRiuZF/jRIkoHyaLvN9iZLZixrnybqjQZY05
+	VQm6H2ElVHaNRfGSFY2cHJR+nI1LCRvMsJJlsvSsw+HrbcRFm4jO3aGDaP/jcADOxIusxY4H4FQ
+	LM/u0YONNlnL5Hd4biY5WpFgxn6mYrhk=
+X-Gm-Gg: ASbGncso/TI6GHimLaymE/LzMIvLdsSz/aY6wMwYd4cX5If/sU8mwhRWMGH/jLChMLz
+	WP8MnNvQlpC9jxbUWe/tzoPMMiBidd9LYWx8/BgiNioZX4l2sB1luyfuja2mxethrkt9ALbLT7g
+	yjiwKnqVcxuNoNQLvt3peTa/yO7uYsGVYuFcWfTUZSKA/n+q86laEW6FbisoVhYl/yra4i6HfQN
+	YZHaALDNC6YkjqH0iFR42aV79HPlxV/9h+hwSN7GAWocsc=
+X-Google-Smtp-Source: AGHT+IHYC6gZQ7sVGps73WqhA1pssx5WiOdWA9NawCEncOKl23yyV6N76hIZIr600VGaUVKRCSjt6piNcz8DHQRfwsg=
+X-Received: by 2002:a17:907:7f8a:b0:b46:897b:d759 with SMTP id
+ a640c23a62f3a-b50abaa3309mr2018683466b.40.1760287977711; Sun, 12 Oct 2025
+ 09:52:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com> <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
-In-Reply-To: <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 13 Oct 2025 00:49:00 +0800
-X-Gm-Features: AS18NWCVRaNfz5cs2rL1M42T2Yq0PAar6obsHH9qXEUUMhQYTgqXJVDIsOQCkgM
-Message-ID: <CAMgjq7BD6SOgALj2jv2SVtNjWLJpT=1UhuaL=qxvDCMKUy68Hw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during allocation
-To: Chris Li <chrisl@kernel.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251004015623.7019-1-raskar.shree97@gmail.com>
+ <20251004015623.7019-2-raskar.shree97@gmail.com> <20251004141231.632c311d@jic23-huawei>
+ <CAHc1_P7MU=BYf_8sbZqikpXpfuvAtLNJ2E_hmi-50ohoh+gQcg@mail.gmail.com> <20251012151130.797450e3@jic23-huawei>
+In-Reply-To: <20251012151130.797450e3@jic23-huawei>
+From: Shrikant <raskar.shree97@gmail.com>
+Date: Sun, 12 Oct 2025 22:22:46 +0530
+X-Gm-Features: AS18NWB6k3kWKKLVTx0bu_UemQDkCkAOaqI3qRe-tlwz4EjAekbo6ZOk5wZIcpw
+Message-ID: <CAHc1_P7heCXwgH1tnqKTPAg0RpTPEM9Q4NUsGoOJMk6gqyXnmA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: max30100: Add pulse-width property
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, matt@ranostay.sg, 
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2025 at 5:10=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
+On Sun, Oct 12, 2025 at 7:41=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
 >
-> Hi Kairui,
+> On Mon, 6 Oct 2025 08:34:03 +0530
+> Shrikant <raskar.shree97@gmail.com> wrote:
 >
-> First of all, your title is a bit misleading:
-> "do not perform synchronous discard during allocation"
->
-> You still do the synchronous discard, just limited to order 0 failing.
->
-> Also your commit did not describe the behavior change of this patch.
-> The behavior change is that, it now prefers to allocate from the
-> fragment list before waiting for the discard. Which I feel is not
-> justified.
->
-> After reading your patch, I feel that you still do the synchronous
-> discard, just now you do it with less lock held.
-> I suggest you just fix the lock held issue without changing the
-> discard ordering behavior.
->
-> On Mon, Oct 6, 2025 at 1:03=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wro=
-te:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation
-> > fast path"), swap allocation is protected by a local lock, which means
-> > we can't do any sleeping calls during allocation.
-> >
-> > However, the discard routine is not taken well care of. When the swap
-> > allocator failed to find any usable cluster, it would look at the
-> > pending discard cluster and try to issue some blocking discards. It may
-> > not necessarily sleep, but the cond_resched at the bio layer indicates
-> > this is wrong when combined with a local lock. And the bio GFP flag use=
-d
-> > for discard bio is also wrong (not atomic).
->
-> If lock is the issue, let's fix the lock issue.
->
-> > It's arguable whether this synchronous discard is helpful at all. In
-> > most cases, the async discard is good enough. And the swap allocator is
-> > doing very differently at organizing the clusters since the recent
-> > change, so it is very rare to see discard clusters piling up.
->
-> Very rare does not mean this never happens. If you have a cluster on
-> the discarding queue, I think it is better to wait for the discard to
-> complete before using the fragmented list, to reduce the
-> fragmentation. So it seems the real issue is holding a lock while
-> doing the block discard?
->
-> > So far, no issues have been observed or reported with typical SSD setup=
+> > On Sat, Oct 4, 2025 at 6:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> > >
+> > > On Sat,  4 Oct 2025 07:26:22 +0530
+> > > Shrikant Raskar <raskar.shree97@gmail.com> wrote:
+> > >
+> > > > The MAX30100 sensor supports multiple LED pulse widths (200us, 400u=
+s,
+> > > > 800us, 1600us). These settings affect measurement resolution and po=
+wer
+> > > > consumption. Until now, the driver always defaulted to 1600us.
+> > > >
+> > > > Introduce a new device tree property `maxim,pulse-width` that allow=
 s
-> > under months of high pressure. This issue was found during my code
-> > review. But by hacking the kernel a bit: adding a mdelay(100) in the
-> > async discard path, this issue will be observable with WARNING triggere=
-d
-> > by the wrong GFP and cond_resched in the bio layer.
->
-> I think that makes an assumption on how slow the SSD discard is. Some
-> SSD can be really slow. We want our kernel to work for those slow
-> discard SSD cases as well.
->
-> > So let's fix this issue in a safe way: remove the synchronous discard i=
-n
-> > the swap allocation path. And when order 0 is failing with all cluster
-> > list drained on all swap devices, try to do a discard following the swa=
-p
->
-> I don't feel that changing the discard behavior is justified here, the
-> real fix is discarding with less lock held. Am I missing something?
-> If I understand correctly, we should be able to keep the current
-> discard ordering behavior, discard before the fragment list. But with
-> less lock held as your current patch does.
->
-> I suggest the allocation here detects there is a discard pending and
-> running out of free blocks. Return there and indicate the need to
-> discard. The caller performs the discard without holding the lock,
-> similar to what you do with the order =3D=3D 0 case.
->
-> > device priority list. If any discards released some cluster, try the
-> > allocation again. This way, we can still avoid OOM due to swap failure
-> > if the hardware is very slow and memory pressure is extremely high.
+> > > > users to select the desired pulse width in microseconds from device
+> > > > tree.
+> > > >
+> > > > Valid values are: 200, 400, 800, 1600.
+> > > >
+> > > > This prepares for driver changes that read this property and config=
+ure
+> > > > the SPO2 register accordingly.
+> > > >
+> > > > Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+> > > Hi Shrikant,
+> > >
+> > > Explain why this is in some way related to characteristics of how the
+> > > system containing this chip is built (wiring, lenses etc).  Otherwise
+> > > this might instead be something that should be controlled from usersp=
+ace
+> > > not firmware.
+> > >
+> > > Also, give a little more on why we care about controlling it at all.
+> > > Is there a usecase where power use of this chip matters?  Mostly I'd =
+expect
+> > > it to be in measurement equipment with relatively short measuring per=
+iods.
+> > >
+> > > Jonathan
+> > Hi Jonathan,
 > >
-> > Cc: <stable@vger.kernel.org>
-> > Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast =
-path")
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  mm/swapfile.c | 40 +++++++++++++++++++++++++++++++++-------
-> >  1 file changed, 33 insertions(+), 7 deletions(-)
+> > Thanks for the feedback.
 > >
-> > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > index cb2392ed8e0e..0d1924f6f495 100644
-> > --- a/mm/swapfile.c
-> > +++ b/mm/swapfile.c
-> > @@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entry(st=
-ruct swap_info_struct *si, int o
-> >                         goto done;
-> >         }
+> > The pulse width configuration is indeed dependent on the hardware integ=
+ration
+> > of the MAX30100. It affects how much optical energy the LEDs emit per s=
+ample,
+> > which in turn depends on physical factors such as:
 > >
-> > -       /*
-> > -        * We don't have free cluster but have some clusters in discard=
-ing,
-> > -        * do discard now and reclaim them.
-> > -        */
-> > -       if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_discard=
-(si))
-> > -               goto new_cluster;
+> >  - The type and thickness of the optical window or lens covering the se=
+nsor
+> >  - The distance between the LED and photodiode
+> >  - The reflectivity of the skin/contact surface
+> >
+> > For example:
+> >  - A smartwatch/wearable ring with a thin glass window can operate
+> > with 200=E2=80=93400 =C2=B5s pulses to
+> >    save power, while
+> >  - A medical-grade pulse oximeter or a sensor mounted behind a thicker
+> >    protective layer may require 800=E2=80=931600 =C2=B5s for reliable s=
+ignal amplitude.
+> >
+> > I believe it would be appropriate to describe these fixed,
+> > board-specific characteristics in the Device Tree,
+> > since they are determined by the hardware design rather than being
+> > runtime or user-controlled parameters.
+> >
+> > Would it be okay if I send v2 of the patch with the above explanation
+> > included in the commit message?
+> Hi Shrikant,
 >
-> Assume you follow my suggestion.
-> Change this to some function to detect if there is a pending discard
-> on this device. Return to the caller indicating that you need a
-> discard for this device that has a pending discard.
-> Add an output argument to indicate the discard device "discard" if needed=
-.
+> I'd have this excellent detail + examples summarised in the patch descrip=
+tion
+> and also a small amount of description in the actual binding even if that=
+ just says
+> something like
+>    Description:
+>      Pulse width in... . Appropriate pulse width is dependant on factors
+>      such as optical window absorption, distances and expected reflectivi=
+ty
+>      of skin / contact surface.
+> That's just a quick mash up of what you have above, feel free to not use =
+this
+> particular text!
+>
+Thanks for your response. Sure, I will update the description in the
+binding and will
+update the commit message describing the details and examples. I will share=
+ the
+updated version of the patch shortly.
+> The inclusion of target surface reflectivity in there makes me thing that
+> for some applications we may also need userspace tweaking or some algorit=
+hmic
+> way to increase or decrease the value according to skin characteristics. =
+However
+> I guess maybe it isn't that sensitive.
+Need to check on this point.
 
-The problem I just realized is that, if we just bail out here, we are
-forbidding order 0 to steal if there is any discarding cluster. We
-just return here to let the caller handle the discard outside
-the lock.
-
-It may just discard the cluster just fine, then retry from free clusters.
-Then everything is fine, that's the easy part.
-
-But it might also fail, and interestingly, in the failure case we need
-to try again as well. It might fail with a race with another discard,
-in that case order 0 steal is still feasible. Or it fail with
-get_swap_device_info (we have to release the device to return here),
-in that case we should go back to the plist and try other devices.
-
-This is doable but seems kind of fragile, we'll have something like
-this in the folio_alloc_swap function:
-
-local_lock(&percpu_swap_cluster.lock);
-if (!swap_alloc_fast(&entry, order))
-    swap_alloc_slow(&entry, order, &discard_si);
-local_unlock(&percpu_swap_cluster.lock);
-
-+if (discard_si) {
-+    if (get_swap_device_info(discard_si)) {
-+        swap_do_scheduled_discard(discard_si);
-+        put_swap_device(discard_si);
-+        /*
-+         * Ignoring the return value, since we need to try
-+         * again even if the discard failed. If failed due to
-+         * race with another discard, we should still try
-+         * order 0 steal.
-+         */
-+    } else {
-+        discard_si =3D NULL;
-+        /*
-+         * If raced with swapoff, we should try again too but
-+         * not using the discard device anymore.
-+         */
-+    }
-+    goto again;
-+}
-
-And the `again` retry we'll have to always start from free_clusters again,
-unless we have another parameter just to indicate that we want to skip
-everything and jump to stealing, or pass and reuse the discard_si
-pointer as return argument to cluster_alloc_swap_entry as well,
-as the indicator to jump to stealing directly.
-
-It looks kind of strange. So far swap_do_scheduled_discard can only
-fail due to a race with another successful discard, so retrying is
-safe and won't run into an endless loop. But it seems easy to break,
-e.g. if we may handle bio alloc failure of discard request in the
-future. And trying again if get_swap_device_info failed makes no sense
-if there is only one device, but has to be done here to cover
-multi-device usage, or we have to add more special checks.
-
-swap_alloc_slow will be a bit longer too if we want to prevent
-touching plist again:
-+/*
-+ * Resuming after trying to discard cluster on a swap device,
-+ * try the discarded device first.
-+ */
-+si =3D *discard_si;
-+if (unlikely(si)) {
-+    *discard_si =3D NULL;
-+    if (get_swap_device_info(si)) {
-+        offset =3D cluster_alloc_swap_entry(si, order, SWAP_HAS_CACHE,
-&need_discard);
-+        put_swap_device(si);
-+        if (offset) {
-+            *entry =3D swp_entry(si->type, offset);
-+            return true;
-+        }
-+        if (need_discard) {
-+            *discard_si =3D si;
-+            return false;
-+        }
-+    }
-+}
-
-The logic of the workflow jumping between several functions might also
-be kind of hard to follow. Some cleanup can be done later though.
-
-Considering the discard issue is really rare, I'm not sure if this is
-the right way to go? How do you think?
-
-BTW: The logic of V1 can be optimized a little bit to let discards also
-happen with order > 0 cases too. That seems closer to what the current
-upstream kernel was doing except: Allocator prefers to try another
-device instead of waiting for discard, which seems OK?
-And order 0 steal can happen without waiting for discard.
-Fragmentation under extreme pressure might not be that
-serious an issue if we are having really slow SSDs, and
-might even be no longer an issue if we have a generic
-solution for frags?
+Thanks and regards,
+ Shrikant
 
