@@ -1,87 +1,75 @@
-Return-Path: <linux-kernel+bounces-849479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF85CBD0364
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00D3BD0376
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E13F3B47AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593C13B79BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468B12848A6;
-	Sun, 12 Oct 2025 14:22:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75694285077;
+	Sun, 12 Oct 2025 14:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/Dx+WOF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698FA28469D
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF5D28469A;
+	Sun, 12 Oct 2025 14:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760278927; cv=none; b=NCLEAI4i/n3WJnWBvlyPDzZ7zEhryu0H7BxWC7y/EcHlOcmQWj/htwTkrYc2ET0rC1WQic3J1mTCuBMKTlgV9GIJbJSBNP82PNqzNvPGVxamDEmnApkubraFj4LWoxqa10gkhmjfeYy0A5CNYIUlcN2YogjGR3q3FfDLiFqFrCI=
+	t=1760278933; cv=none; b=iwaBRagkcMFj5XqQTkogrFCY73xX+quKAFPWzZj9jXZO9KczkjnVc1ZgTE8Oy8T1pwC0SxsMSh5oHhQGUG9fRvrz7bV0Jj8/+SCSBYRyc8/Mde73ZlsbBbSrN6or0hVFs6Q7T5OIuCR35guhXyzx7OO2DGNWC3XWsVolnq5U8o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760278927; c=relaxed/simple;
-	bh=9pESG64miPasLo7bV0CQgEu8LhHCXPWVa/VPYfrhM1U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cuXgQbiDkveJZIfzYYAbkNJERTNMF5wIQgTeK+rwAMDpLQKpB7fnMaGjjZ5YoFrlh5dX2R+BnIk3ny7JMTWXWAct6pcRU1NfSuedTPJU03kcILbftt1aeYO6S+GABe2rymZBXYy/FHVHoZTye5ENgEHuH1fCBUlPEhHr445XYCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4257567fb7cso113011855ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 07:22:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760278925; x=1760883725;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U0rSnZy6IeqJJ4+YGSwK6X2T8neJu8Zh87YZ79NTSbY=;
-        b=nMHr01nyui5FyzVOpSp656G8aNAoKGFekJZaYNOXDKiHV7qaibJtWen4p9X/wrlrb4
-         B8rx9JiGWCuaD0pDgpwswShqdmtrpDJvoU95iQk9NWc6nFD3xKnXMDiVmPF8t7sshdP1
-         9otRTFNvB6g40NxscgyuVyUq/3BqMajMGLSZ7HPOiQBYwtvpbLZkOe5D/gqTv+bk6L5q
-         p461wlZ+gxnZRMP4olYz/7WSlLx4S3sufSfhtkBlhcFwwx6Vj3Jv4K+mfakoRpavNLyV
-         rNChZBcuTrtPs8wCus626mzAEBy0Vm7UsA87tbIdAbho5+4kj/F+JgmBCfJXVxch5OMJ
-         D3FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6rOTAogssF319K6E/pZTtbviTm8syYD9CMXWlhCN8pB0WVWsb+3rHulOy/W7IE8FpWES/iFgYgOTaZV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydsWyC9b0d3XLTqrf26x2urD/wjOeUELZ+5z3Ke78elPk+vfac
-	TVEcjbfRpQYrbv080BfhkNKll3edpsr1u9Cav7pFiNcBv+gw8CNzqZ7fMhNFaljXeCSoIdTiCmD
-	LwBTkg5UJPVQx/JPHF4CrQk3vfhyviqCqByjtJXitNufKiWPr1q/S5Puuv0o=
-X-Google-Smtp-Source: AGHT+IEOWVreDJCAhWA6Zb9zMGM0Ep8ZtoYXbNbJhScWAxb5UUqEZQDZ24kOeejx3drWf4EUBDskyIE9dfZCe8SyAQ+ioqPyW0JO
+	s=arc-20240116; t=1760278933; c=relaxed/simple;
+	bh=P9GPkAGwQpqroO8w0rXgiEyyDDU97Dt+fSA9fOo0iio=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uGfhbVfKoRpYxOFDezgK5nSqnTh6VlSk5+Yt+bk1/iQ4MXJf/Xh4srzKeqqqjkorHOl3riuQAvD3tVKP2IMTjEk2QE6WiZEYfWLBeV9aCPSJnKv7mf3fJY6s/qEfm0ayj8TwaR5h5sdvxtrn3b+aq8DMlgwjJnmVpz6WhuRojmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/Dx+WOF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93541C19421;
+	Sun, 12 Oct 2025 14:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760278933;
+	bh=P9GPkAGwQpqroO8w0rXgiEyyDDU97Dt+fSA9fOo0iio=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J/Dx+WOFQRAnfp3KzRVnuGs2xoq1KHBBVLaNg3rbAUG2Pl065mdQ+vce22Urpksa3
+	 hTgZdiJ+LdTEIoYKDNykER293pWSRTznSMjCiOls+RtrirmgDYwOwFheXup2eumarl
+	 DUaorp1HQMV/LdwKI4CScCuUUZ8R4CAmhJRF9ViD2ep8viJ2ux1j255UjieKP5N1ZV
+	 rPizObVw+EC2O3iqQu1Jm1rpmBLQWRW4MMUuIM/Dc4thVOPaRfOQwx+/WJeqa/qwPE
+	 bp4xANHOj+RUv1yhHSJ3h5LTJmSYqmPPGy3zgkjYTNGgzh3/zp9B3w+j1JXcz6zLbi
+	 mbc+YfD+eYsqw==
+Date: Sun, 12 Oct 2025 15:22:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 02/19] iio: accel: bma220: relax constraints during
+ probe()
+Message-ID: <20251012152205.5cf855c9@jic23-huawei>
+In-Reply-To: <20251005-b4-bma220_improvements-v4-2-0f449ba31585@subdimension.ro>
+References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
+	<20251005-b4-bma220_improvements-v4-2-0f449ba31585@subdimension.ro>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c5:b0:426:39a:90f1 with SMTP id
- e9e14a558f8ab-42f873d62c7mr207144655ab.18.1760278925708; Sun, 12 Oct 2025
- 07:22:05 -0700 (PDT)
-Date: Sun, 12 Oct 2025 07:22:05 -0700
-In-Reply-To: <20251012135649.59492-1-contact@arnaud-lcm.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ebb98d.050a0220.91a22.01d9.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Write in __bpf_get_stackid
-From: syzbot <syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com>
-To: bpf@vger.kernel.org, contact@arnaud-lcm.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Sun, 05 Oct 2025 16:12:11 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         67029a49 Merge tag 'trace-v6.18-3' of git://git.kernel..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=16848c58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=308983f9c02338e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=175d3304580000
-
-Note: testing is done by a robot and is best-effort only.
+> Do not return error if the chip id being read is not the expected one.
+> 
+> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
+Applied.
 
