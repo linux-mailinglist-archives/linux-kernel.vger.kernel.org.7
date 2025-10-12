@@ -1,175 +1,301 @@
-Return-Path: <linux-kernel+bounces-849424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F259BD013F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED071BD0142
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D21D04E1FA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 11:21:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9E454E2F5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 11:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE4E25DB0D;
-	Sun, 12 Oct 2025 11:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8217F25A2A5;
+	Sun, 12 Oct 2025 11:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GcXCQQar"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiYwTjA1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9022033997;
-	Sun, 12 Oct 2025 11:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC3E18A6D4
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 11:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760268106; cv=none; b=nY9oJ3WEV4CcL3A3r1hc6tKkq2wwZoos32NQHZ+QFBavu9xW5xaFbOXCSVlASRjnDJRSetVKOiui5J+D/pcXROcBBH5lnxl42yfqwfza/G0+ELd5eVhDhsIL71IFrGycaXv2+DawcU9pEqeTovJKcvjBNVY1K35xgvilBUGsThA=
+	t=1760268209; cv=none; b=HWofhFU9qgCHDDOad1O4AfXynUTZEC+kNAnjOc6wWC//FXlQHr8ZDiFvqoILbgLBdIQB99bJLuewTILVVYpcL+tWl+vFiapoKcwxc/sIAlDhNItmQpL0kcmwX5zrmWe+W30PnvQmit6ZcP+iXH7IR3fSGAuIP81hzQZY1UiCem8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760268106; c=relaxed/simple;
-	bh=YfpC+a4Dff0vR7Ch7T3ozqz7no80II+OsKF8d5lxzks=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=kLwZPZt1WgVs/r/XfhKSCULR17EMP/FcYf4pDpxWXVpaIMxfJz5Ucs49FAj/+9uutTN+9yZBQxfSCLIFKzXBWpMOeAXdL4SvDrIumjw57TUXQiduVbeXbmAKaznF98mQgajMD8XxWezgJ3B7eV2HBy1MPztwiX+VlRHX8oAPF+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GcXCQQar; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760268088; x=1760872888; i=markus.elfring@web.de;
-	bh=aUOzrzjwZqa5izViXxsF+ytFq5IlIakuG+i3WAMC1l8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GcXCQQarj/Z6CYX4RcV6hgEeRQekCGf9S6NaKkmhfHz2Ub0d7iEFSBeqzNHWgY3d
-	 xfLqO2UnaKoiOWpmwLuYIS2qdtyqxY2yRIfhw1KKyCWYVBiP3SEcaOngYfuOB+Bsd
-	 GNyXZVxSkjlNEx0qzRpiFmEbcjI+qMVJ+kCPCCuHrGGTFTQQQq6PIg6jOl2zREXcI
-	 3D7zcyQ7x5f0cLJMVQGkrJZmLnttumzjzo/z2QwDMqH2ghIar9PtOunX/5rmHsdIr
-	 ZPbIJQdUv0sy1j7cvidQVsFsiQqY7yVhni8U/3hOePt7g+aokBUUdohGHdcLkyElt
-	 nKO4TKrcnxIvdZRJKg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MwR4R-1uHrLx1337-0105rJ; Sun, 12
- Oct 2025 13:21:28 +0200
-Message-ID: <27a45b25-98ba-4229-a257-2d29c88d975c@web.de>
-Date: Sun, 12 Oct 2025 13:21:23 +0200
+	s=arc-20240116; t=1760268209; c=relaxed/simple;
+	bh=T76ciC7MvD6Uq6qKE1gKRXHkh8/nQlep+GS6D4H+5gU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=durcCTueifA9PX0X+Hl5zqJ6OLKgFC6LrqLXpcD8M9gBmnqDKLkT+N9YbyeMZAfkHh78C3Iv3gwv6EqJtlpL4ja7BeGeW4/8LC8QdIcAUrTtC/UwteNJkxDJo5qYIkH3Bzuqbaq0FSdnsdIxbTJ3CFEdsLelzl1XhnMZQOWxpvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiYwTjA1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A78BC19421
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 11:23:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760268209;
+	bh=T76ciC7MvD6Uq6qKE1gKRXHkh8/nQlep+GS6D4H+5gU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BiYwTjA1WXiDDZ6k1pLc0b+PVyq6vXvaXJOZF4TiaEg3k2huYIgxz5uiIWihe7xx0
+	 argw5VZRtvF7yvFH0XbmOvh0rZc5EIGTsLQphvKJutV+Re/G93hVAnGO/5Vd5s/oV9
+	 BpVI41JFcsEueP3VZuSaN5D1ccT/o0TFTic9XbmluMz1UuFcuYBBBwteLFMr+aqlHW
+	 1ddfWukU9fy6Xto3ZNWKhaDND0UbOc23zwq/V6B3oWgI4q8NIj9J3LJ5Uhc8IKvH5F
+	 0/hDSffDn5lByMu0/A6fKW6w/j0c0gjpfd5s+MEWpAB9/vhUnj99cOFfrDLdMa3mmb
+	 8b438qCPpYpnw==
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so40568425e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 04:23:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGDyCyNJJ9of9XaO1iSDR/2U+eEmy/tu/Tq1yJDQ7hIV7OdJeutzfOMCcZYUgXyJLHMZdt+GGEywL4DNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKDqPhUYHwx+mXiinvCaJ3Kpc4Pjqk2Bcov0E8DIP/rkyMx3DY
+	f3ZHaqxpg4TNqznZ2aY6OvLuOBAHwbRcYhVI142HcN8emcdlHulddaDLnw+x9o9o0n/4VDJWGsr
+	ZS/AqTWbE6ftUDTUOXLh49Bm2K4Shs+8=
+X-Google-Smtp-Source: AGHT+IHWkSwxpRdIU93ruDljUo6L3O36dcwVKmHU88EIC562kkwkQS6D3HE2q9MMHT5O3SbUtodlQg41kAKRXUo7tRc=
+X-Received: by 2002:a05:600c:1c23:b0:45b:6b57:5308 with SMTP id
+ 5b1f17b1804b1-46fa9a892a0mr122801735e9.7.1760268207732; Sun, 12 Oct 2025
+ 04:23:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Baolin Liu <liubaolin@kylinos.cn>, linux-nfs@vger.kernel.org,
- Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@kernel.org>
-Cc: Baolin Liu <liubaolin12138@163.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <20251012083957.532330-1-liubaolin12138@163.com>
-Subject: Re: [PATCH] NFS: Fix possible NULL pointer dereference in
- nfs_inode_remove_request()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251012083957.532330-1-liubaolin12138@163.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20251009134514.8549-1-cuiyunhui@bytedance.com>
+In-Reply-To: <20251009134514.8549-1-cuiyunhui@bytedance.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Sun, 12 Oct 2025 19:23:15 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTJD3G1gyh8ucf6OSp2Y0=xHKGRLQakrTwqiLbzG+G0uw@mail.gmail.com>
+X-Gm-Features: AS18NWD6MJ72Wu3veu27hAB-l8__trDKgDBlFxv_dFmO-FnASlGZT1S2onigZrQ
+Message-ID: <CAJF2gTTJD3G1gyh8ucf6OSp2Y0=xHKGRLQakrTwqiLbzG+G0uw@mail.gmail.com>
+Subject: Re: [PATCH RFC] riscv: add support for Ziccid
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com, 
+	peterz@infradead.org, jpoimboe@kernel.org, jbaron@akamai.com, ardb@kernel.org, 
+	willy@infradead.org, ziy@nvidia.com, akpm@linux-foundation.org, 
+	bjorn@rivosinc.com, ajones@ventanamicro.com, parri.andrea@gmail.com, 
+	cleger@rivosinc.com, yongxuan.wang@sifive.com, inochiama@gmail.com, 
+	samuel.holland@sifive.com, charlie@rivosinc.com, conor.dooley@microchip.com, 
+	yikming2222@gmail.com, andybnac@gmail.com, yury.norov@gmail.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yBC/qJx23cexGqClviB4d1DrcRagOSR1t06ZR+vq4G7lwNyzZ8i
- 0fONvgWlixWjdARqVWdAx400xMrV/DGduQNFB4dc2hQGS81KhulLSo0oa2jD3WedmgvWCnZ
- RJjIbpiY2RO0i9not5ILLos8sTLxEfP6We8p1JsojsOvgHV/AZ6KFrWyBde8L4vzy9nPD6V
- xdhb22XYS2UQSApVeq/Sg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mHhsOVlrdQ0=;TUVMJfH52BdJwt6UUKCJLb9VqJb
- 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
 
-=E2=80=A6
-> Fix this by checking folio before using it or calling
-> folio_end_dropbehind().
+On Thu, Oct 9, 2025 at 9:45=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedance.com>=
+ wrote:
+>
+> The Ziccid extension provides hardware synchronization between
+> Dcache and Icache. With this hardware support, there's no longer
+> a need to trigger remote hart execution of fence.i via IPI.
+Ziccid only means I/D $ coherent, we still need "fence.i" & IPI to
+flush the instructions stalled in the pipeline.
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.17#n145
-
-
-=E2=80=A6
+>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
 > ---
->  fs/nfs/write.c | 11 ++++++-----
-=E2=80=A6
+>  arch/riscv/include/asm/cacheflush.h |  4 ++--
+>  arch/riscv/include/asm/hwcap.h      |  1 +
+>  arch/riscv/include/asm/switch_to.h  | 10 ++++++++++
+>  arch/riscv/kernel/cpufeature.c      |  1 +
+>  arch/riscv/kernel/ftrace.c          |  2 +-
+>  arch/riscv/kernel/hibernate.c       |  2 +-
+>  arch/riscv/kernel/jump_label.c      |  2 +-
+>  arch/riscv/mm/cacheflush.c          | 16 ++++++++++++++--
+>  8 files changed, 31 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm=
+/cacheflush.h
+> index 0092513c3376c..3a8cdf30bb4b1 100644
+> --- a/arch/riscv/include/asm/cacheflush.h
+> +++ b/arch/riscv/include/asm/cacheflush.h
+> @@ -68,7 +68,7 @@ static inline void flush_cache_vmap(unsigned long start=
+, unsigned long end)
+>
+>  #else /* CONFIG_SMP */
+>
+> -void flush_icache_all(void);
+> +void flush_icache_all(bool force);
+>  void flush_icache_mm(struct mm_struct *mm, bool local);
+>
+>  #endif /* CONFIG_SMP */
+> @@ -80,7 +80,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local);
+>  #define flush_icache_range flush_icache_range
+>  static inline void flush_icache_range(unsigned long start, unsigned long=
+ end)
+>  {
+> -       flush_icache_all();
+> +       flush_icache_all(false);
+>  }
+>
+>  extern unsigned int riscv_cbom_block_size;
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwca=
+p.h
+> index affd63e11b0a3..ad97d8955b501 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -106,6 +106,7 @@
+>  #define RISCV_ISA_EXT_ZAAMO            97
+>  #define RISCV_ISA_EXT_ZALRSC           98
+>  #define RISCV_ISA_EXT_ZICBOP           99
+> +#define RISCV_ISA_EXT_ZICCID           100
+>
+>  #define RISCV_ISA_EXT_XLINUXENVCFG     127
+>
+> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/=
+switch_to.h
+> index 0e71eb82f920c..b8a9e455efe9e 100644
+> --- a/arch/riscv/include/asm/switch_to.h
+> +++ b/arch/riscv/include/asm/switch_to.h
+> @@ -98,7 +98,17 @@ static inline bool switch_to_should_flush_icache(struc=
+t task_struct *task)
+>         bool stale_thread =3D task->thread.force_icache_flush;
+>         bool thread_migrated =3D smp_processor_id() !=3D task->thread.pre=
+v_cpu;
+>
+> +       asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICC=
+ID, 1)
+> +                : : : : ziccid);
+> +
+>         return thread_migrated && (stale_mm || stale_thread);
+> +
+> +ziccid:
+> +       /*
+> +        * Process switching writes to SATP, which flushes the pipeline,
+> +        * so only the thread scenario is considered.
+> +        */
+> +       return thread_migrated && stale_thread;
+>  #else
+>         return false;
+>  #endif
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
+e.c
+> index 67b59699357da..2da82aa2dbf0a 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -540,6 +540,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D {
+>         __RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+>         __RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
+>         __RISCV_ISA_EXT_DATA(svvptc, RISCV_ISA_EXT_SVVPTC),
+> +       __RISCV_ISA_EXT_DATA(ziccid, RISCV_ISA_EXT_ZICCID),
+>  };
+>
+>  const size_t riscv_isa_ext_count =3D ARRAY_SIZE(riscv_isa_ext);
+> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+> index 8d18d6727f0fc..431448e818363 100644
+> --- a/arch/riscv/kernel/ftrace.c
+> +++ b/arch/riscv/kernel/ftrace.c
+> @@ -43,7 +43,7 @@ void arch_ftrace_update_code(int command)
+>  {
+>         command |=3D FTRACE_MAY_SLEEP;
+>         ftrace_modify_all_code(command);
+> -       flush_icache_all();
+> +       flush_icache_all(false);
+>  }
+>
+>  static int __ftrace_modify_call(unsigned long source, unsigned long targ=
+et, bool validate)
+> diff --git a/arch/riscv/kernel/hibernate.c b/arch/riscv/kernel/hibernate.=
+c
+> index 671b686c01587..388f10e187bae 100644
+> --- a/arch/riscv/kernel/hibernate.c
+> +++ b/arch/riscv/kernel/hibernate.c
+> @@ -153,7 +153,7 @@ int swsusp_arch_suspend(void)
+>         } else {
+>                 suspend_restore_csrs(hibernate_cpu_context);
+>                 flush_tlb_all();
+> -               flush_icache_all();
+> +               flush_icache_all(true);
+>
+>                 /*
+>                  * Tell the hibernation core that we've just restored the=
+ memory.
+> diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_labe=
+l.c
+> index b4c1a6a3fbd28..680b29f4c09c4 100644
+> --- a/arch/riscv/kernel/jump_label.c
+> +++ b/arch/riscv/kernel/jump_label.c
+> @@ -51,5 +51,5 @@ bool arch_jump_label_transform_queue(struct jump_entry =
+*entry,
+>
+>  void arch_jump_label_transform_apply(void)
+>  {
+> -       flush_icache_all();
+> +       flush_icache_all(false);
+>  }
+> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+> index d83a612464f6c..01f9f7a45e8d2 100644
+> --- a/arch/riscv/mm/cacheflush.c
+> +++ b/arch/riscv/mm/cacheflush.c
+> @@ -12,19 +12,24 @@
+>  #ifdef CONFIG_SMP
+>
+>  #include <asm/sbi.h>
+> +#include <asm/alternative-macros.h>
+>
+>  static void ipi_remote_fence_i(void *info)
+>  {
+>         return local_flush_icache_all();
+>  }
+>
+> -void flush_icache_all(void)
+> +void flush_icache_all(bool force)
+>  {
+>         local_flush_icache_all();
+>
+>         if (num_online_cpus() < 2)
+>                 return;
+>
+> +       if (!force)
+> +               asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0,
+> +                       RISCV_ISA_EXT_ZICCID, 1)
+> +                       : : : : ziccid);
+>         /*
+>          * Make sure all previous writes to the D$ are ordered before mak=
+ing
+>          * the IPI. The RISC-V spec states that a hart must execute a dat=
+a fence
+> @@ -41,6 +46,7 @@ void flush_icache_all(void)
+>                 sbi_remote_fence_i(NULL);
+>         else
+>                 on_each_cpu(ipi_remote_fence_i, NULL, 1);
+> +ziccid:;
+>  }
+>  EXPORT_SYMBOL(flush_icache_all);
+>
+> @@ -61,13 +67,17 @@ void flush_icache_mm(struct mm_struct *mm, bool local=
+)
+>
+>         preempt_disable();
+>
+> +       local_flush_icache_all();
+> +
+> +       asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICC=
+ID, 1)
+> +                : : : : ziccid);
+> +
+>         /* Mark every hart's icache as needing a flush for this MM. */
+>         mask =3D &mm->context.icache_stale_mask;
+>         cpumask_setall(mask);
+>         /* Flush this hart's I$ now, and mark it as flushed. */
+>         cpu =3D smp_processor_id();
+>         cpumask_clear_cpu(cpu, mask);
+> -       local_flush_icache_all();
+>
+>         /*
+>          * Flush the I$ of other harts concurrently executing, and mark t=
+hem as
+> @@ -91,6 +101,8 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+>                 on_each_cpu_mask(&others, ipi_remote_fence_i, NULL, 1);
+>         }
+>
+> +ziccid:;
+> +
+>         preempt_enable();
+>  }
+>
+> --
+> 2.39.5
+>
 
-Can a summary phrase like =E2=80=9CPrevent null pointer dereference in nfs=
-_inode_remove_request()=E2=80=9D
-be nicer?
 
-
-Will development interests grow for the application of scope-based resourc=
-e management?
-https://elixir.bootlin.com/linux/v6.17.1/source/include/linux/spinlock.h#L=
-565-L567
-
-Regards,
-Markus
+--=20
+Best Regards
+ Guo Ren
 
