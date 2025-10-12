@@ -1,124 +1,59 @@
-Return-Path: <linux-kernel+bounces-849487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CCBBD03F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:30:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1CBBD03FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4176D4E8F4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:30:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 413514E95DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE97A287512;
-	Sun, 12 Oct 2025 14:30:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AE32882B7;
+	Sun, 12 Oct 2025 14:31:10 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ED4C2D1
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381F41F8724
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760279436; cv=none; b=ZOmP9Ij6WbiEUY6dhF6SLYlRJt9FMdpOKUc9ENZDq2GJ3vCuMmJ21g0iKMMdRh64BkzMNQOUzoY69R/IIW0kXKdz6AYWJwL0irk8ZG4ACrwJ5iFnSikQD9blldfDn5BnlmuqV8KNngdRHOcb3iVhjxcNoir8BCTFgulRYZNuMG0=
+	t=1760279470; cv=none; b=O1j3f9Fe61VFlUeGGJAXCe2bAV3R0Y99YCPtLhOkbR3Vvv0y+wftTvSpDLpZUrsMQrZHLGqOFEi5Yq98yKcll6nQ3lQA5TDwcYtBYlVF3601hFA30bBLjObTIMXRwUASWWfT/f185QzmZnmv7HVHj2MbZRfh26zisDQ6u3vFkQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760279436; c=relaxed/simple;
-	bh=yqb/NPmy5gD6pVb6IkeAsxHMeFbpmoPcjmcGPUy8viU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPoJM4+/dqqozQJk+3BRCgBUFQ64+LC0SMwEoDiPVJHCKNwHY4gArnp+Xvg2Y0cGfyAg64nVxd0tNnK36CWFxvZ6xdz/Pe7BIYAZcFDyxhtU5ojj5v8KSUf4TAoscvrAuo5eeET4/7MwzYaa5vWQIzgVnAHssYmeWYnaRyGl+FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v7x5a-0004vt-0T; Sun, 12 Oct 2025 16:30:22 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v7x5Z-003EVW-0q;
-	Sun, 12 Oct 2025 16:30:21 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id E20B74840B7;
-	Sun, 12 Oct 2025 14:30:20 +0000 (UTC)
-Date: Sun, 12 Oct 2025 16:30:20 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] can: add Transmitter Delay Compensation (TDC)
- documentation
-Message-ID: <20251012-impartial-nimble-warthog-69b223-mkl@pengutronix.de>
-References: <20251012-can-fd-doc-v1-0-86cc7d130026@kernel.org>
+	s=arc-20240116; t=1760279470; c=relaxed/simple;
+	bh=6nn6CFENw1TmzuI2ZbpTAwx9fK5bAaKppwvr4TvmrMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=r40prBnxNWA4Uf1lQjOxMvjReAcXeiil1pAsQ7v8pLKQ45+srxzocHb9TGmaX5VBdXOjszkck4DK0thLDFJ0gHfnVy72X0gclTXWEYJ//BKIDv98mlL0wpMleL08Fa4A3jEoaG/DIx41SEC6sp0/P2oBDgFb9BVMDN2SbCiiQKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from 7cf34ddaca59.ant.amazon.com (unknown [89.100.17.9])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id DE27D40439;
+	Sun, 12 Oct 2025 14:31:05 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 89.100.17.9) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud lecomte <contact@arnaud-lcm.com>
+To: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	contact@arnaud-lcm.com
+Subject: Test
+Date: Sun, 12 Oct 2025 15:31:04 +0100
+Message-ID: <20251012143104.66463-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <688809c1.a00a0220.b12ec.00b7.GAE@google.com>
+References: <688809c1.a00a0220.b12ec.00b7.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g6joyd45bjqhurai"
-Content-Disposition: inline
-In-Reply-To: <20251012-can-fd-doc-v1-0-86cc7d130026@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <176027946640.6469.17563743397479746742@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-
---g6joyd45bjqhurai
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/2] can: add Transmitter Delay Compensation (TDC)
- documentation
-MIME-Version: 1.0
-
-On 12.10.2025 20:23:41, Vincent Mailhol wrote:
-> TDC was added to the kernel in 2021 but I never took time to update
-> the documentation. The year is now 2025... As we say: "better late
-> than never"!
->=20
-> The first patch is a small clean up which fixes an incorrect statement
-> concerning the CAN DLC, the second patch is the real thing and adds
-> the documentation of how to use the ip tool to configure the TDC.
->=20
-> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-
-Added to linux-can.
-
-Thanks,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---g6joyd45bjqhurai
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjru3kACgkQDHRl3/mQ
-kZyzEwf/UO+I0gwibduyqyu7e/jM2ytjQ6MHjsjWxbWrKa4u3itF1t9Y/YtwcKT9
-fUdIqXsbNOI27n6m5EWuhJbdP4MGT5Zy8K7kSxswWzMgZtT4B7f9V6hnUPN81vSn
-/nzpojfjuF+AYcW1sYTzsLY5Ae0jIdqSgo94bMHjKJ4qiyEggDiVS/ueTkdj9uLr
-fY5nkuA2JGTCCmJLwPekXbqP2dnPKtpECA7WaX9kFOl9HQnTtDPGBstD7kAJimmC
-pRrgK+K37TSJ9QHqRCJWuKGjZLhb01tl66DaC5cfX48FJNRuvHFGcWN4gX894xaF
-VTNHv77UIWH+TGm82Q0b/N0qqJQOug==
-=qxb0
------END PGP SIGNATURE-----
-
---g6joyd45bjqhurai--
+#syz test: git@github.com:ArnaudLcm/linux.git bpf-slab-fix
 
