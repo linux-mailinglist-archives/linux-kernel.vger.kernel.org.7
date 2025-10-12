@@ -1,190 +1,124 @@
-Return-Path: <linux-kernel+bounces-849670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFD0BD09F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:38:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C1BBD0A0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A2A74E883F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:38:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C1664E4145
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147852EF665;
-	Sun, 12 Oct 2025 18:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D532F0C48;
+	Sun, 12 Oct 2025 18:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hX4m8CBx"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krOIPd4f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B8B1F03C5
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 18:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9375809;
+	Sun, 12 Oct 2025 18:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760294297; cv=none; b=as3d2WMj+u9qU+If1dOaLvVf+J0E31b/wAHhctHUiKLLuwCWTA4JUWJ5ZIZUHL1topIgDoSXOreAccoxKef5NYBhHpF/HiXkgA2KlKFLek8LHnCBnuKMswxIW2ZNZ9vnVN4RpUqlgPedRcCZYpjnCwM8KQvy/V6LVuxSwmFaGkg=
+	t=1760294488; cv=none; b=OU+wXTuElifw4g9KppFVpnqcBKbV1THoVvRRRtY0QljIaL8ozV6bsiIBgJ3jVIKpNzl3jP5yiknzq7J7so3a8jrLxGKfQRiFnYVXK1FU6fkkWRZ/AFCVZZrY+i6H+uXyFAE3KQR4kMeXxlKP5FgpV2ONO7Ek/Rz6SWsrx5Pljfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760294297; c=relaxed/simple;
-	bh=uQUkzfZR4PJiFUZmTs3kpHMobAqAZ8tDwNcgCtPeYDs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WGlcSOXBmpKSqCJnNPojoZVEcmzHzFMue9EhBd2pgFVAtJ6bUIhkFj7dsgqk/IVg1X27r6C3zCUQOWggQ5k4dEEJoZm0gopuHmiFfvMFJaAHf+zwjfJqivEnde43+GoHyMrXgUjR/mfGBEAT0BZeEimdSoKbwiav2Cj7Kn0TZQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hX4m8CBx; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-793021f348fso3121468b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 11:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760294294; x=1760899094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RdM5hdZmStu6wP/lPTHT68dpyLc/oyOsPR/mfyzBd4E=;
-        b=hX4m8CBxcRwbwdrFsawvvRn9lfkltGNw5Y53K1+vTEklk8AcKbwnkt1V14YJviy4Ps
-         ULETSycL2VlzKuL8cxa9ZEWljaTRNJJeW4zEzwGonK0EgUAc1FgaTLk/3XFpgYgEWExm
-         jWhezLQ+JH0IH/wOR5G2YGBOGYdX77aqBO8heSYxCmV4bQYImRiJDmN3wrLaVewAmmVK
-         OgSoa6Yjga8GqRgLnLIdi7f7fM1fDJvECqVVHmkHCxEj3uySBl4ouktArHmjYtaCFKCr
-         Qtnt2uSCZpcXBkZvafncCBH3HgyWVKeuc3KKveR19HiWnXrQVtvelOkub5PYZMy6Mwio
-         tLPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760294294; x=1760899094;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RdM5hdZmStu6wP/lPTHT68dpyLc/oyOsPR/mfyzBd4E=;
-        b=w0tLEaB7g4IcWaTShizyEtpVTK0DIezw6KZhWZfxuqGVQPk5RzPRye4YLvr3bJQQgT
-         jf5dxiGsM9PknclfFucrYs/f0cgLiQ4G3lSy+CtGWZTqi810zd69uMPi/+tciE9OxHTg
-         jjdl/FPWc/9NDJr2Z81ADUhYjtqjS5sSPbTwmE3WO5KB/qCATSruOyCA4cfZC67KARnl
-         1iEwsfBvEmmbW+DMGiAW66gQ9TXLAFeVCLqbl/Ja4fpL+82RSSr+xPZog6qNvVNxTApm
-         /sywy+Kz4a8MOuuS9oid4Q6+5thBepOJVsVJZCH9s2WjcSyfaZ2Xo3xiLAqVQFQjWjB/
-         1L3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWC4PLrNAx93zmGlnk0v2879R2KYQybomTbh/qMbw0+ifqWbBZFZ7RAAq+Jl+fo5VYtpf2zqN6+ZXOzuQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWT/UQy5pgyhoZk1N5POzXMmC8OFrTE2C89n6DQnI+vEmt/iWh
-	0JS4rCd45e1gKEZz6KmNX0cn5y8OJzaHAhOoKy0lxPTchuV5c/TWm1tj
-X-Gm-Gg: ASbGncuA0ylFxEHoFjzgJkMM9zXc50Xn4DBSy2ikU78Wiks0SXMuKsOFN3db8OMbS1Q
-	Iv4yRpwMRn6kb57cd+ks4HVStKWuF15ysi0r9vn4lPXV7MJKDxewYEKsn5JFVQVoRiO2TzMk/zX
-	bepr8DBaOGIhIA4XEJmyesUnxLv9RC0WoKbia2oxlmE8U3TBhELCbUcNgdSU2vgsCVw82x80rw3
-	dJN+4s1aP8F6NWqVE4JFhr6cNM+FRmmBUh74C90pBFEk4fzIzX5F20bgDHQB9fDe7tvwrTAtx2i
-	NFoQfmHq26wx6tEgW9c9WKrNeXwrSZRsDbLSalMBmcULzeCoiCtUXr81Wg6KCRrK7QzGtYZULmW
-	MSoFgYtMP+7s1GeJBsr7q8M4VfhyCh4QQDNNlhO6Y0au3aFyI
-X-Google-Smtp-Source: AGHT+IGD4qq0d7J+6TgXoMmi4zHj5Ov0A4tbqkUnz7sBexTic8piA6fopsWY2ndvOzIISYPoIaFSqw==
-X-Received: by 2002:a05:6a00:3d52:b0:781:1a9f:aee7 with SMTP id d2e1a72fcca58-79385709970mr22178082b3a.2.1760294294103;
-        Sun, 12 Oct 2025 11:38:14 -0700 (PDT)
-Received: from rakuram-MSI.. ([2409:40f4:310f:1e2f:de73:6871:5bf8:3f34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e1336sm8982904b3a.59.2025.10.12.11.38.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 11:38:13 -0700 (PDT)
-From: Rakuram Eswaran <rakuram.e96@gmail.com>
-To: u.kleine-koenig@baylibre.com
-Cc: chenhuacai@kernel.org,
-	dan.carpenter@linaro.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	lkp@intel.com,
-	rakuram.e96@gmail.com,
-	skhan@linuxfoundation.org,
-	ulf.hansson@linaro.org,
-	zhoubinbin@loongson.cn
-Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in pxamci_probe() 
-Date: Mon, 13 Oct 2025 00:07:52 +0530
-Message-ID: <20251012183804.15171-1-rakuram.e96@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: xxtrhbv5qm2crtvc5ejpgu5caadsmms3rfulmosjwq7lumrko3@5mlcpk24hymm
-References: <xxtrhbv5qm2crtvc5ejpgu5caadsmms3rfulmosjwq7lumrko3@5mlcpk24hymm>
+	s=arc-20240116; t=1760294488; c=relaxed/simple;
+	bh=PoUFRD1yzrjYJCi3ArphUQMDmoTrK9yIQsCtPXBJOks=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UMJCV/GKkRbcHc6ojUOeMzve3NAhRzJ/0gO4oCf3xmhz8ab+MvrsNXmivATvE3pQ5pvF4OPufTKQu9ECXXxINKEInbuDiaSkxPqWE3bOmAiR6woDeptLBlxJTs4WBz/eUVR3KLoc/E6LWxyeWCmqT6J52v1MnvwuWT4Q55IaKhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krOIPd4f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDB7C4CEE7;
+	Sun, 12 Oct 2025 18:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760294487;
+	bh=PoUFRD1yzrjYJCi3ArphUQMDmoTrK9yIQsCtPXBJOks=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=krOIPd4f4lyc27ACoYSnNCwCsujV1k6HK7G8mhBaU8D+fmiS+vu7emBKFtr+9Q9gQ
+	 C5MHEabrspBaERkLsNUHpszwwGT6gCzCUyzIx+8e461sNDdO5fJ2uVkuG8+1LJuH9P
+	 2fTucsdyNWjDEe7GzmpyKNGUWLzzIL7VsDshJNDQK+Y5U/XanapgdNbYb/gfmzB8N/
+	 /CIm+68VaDiByKwhKevpvQm7I+1PvR8tKHp+MagE/hj6T0CplhxbH1hGe30WYxED42
+	 T2RI7qfx7r8s+Z1H615AF9JCEMMtfuVSOa4SbmUo4Mk51H11xzd+60HO8HwUsoWeY2
+	 ziBIH32MkxkWw==
+Date: Sun, 12 Oct 2025 19:41:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Bjorn
+ Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Hans de Goede <hansg@kernel.org>, Jens Reidel <adrian@mainlining.org>,
+ Casey Connolly <casey.connolly@linaro.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 3/6] thermal/drivers/generic-adc: Register as IIO
+ device
+Message-ID: <20251012194114.094a61a3@jic23-huawei>
+In-Reply-To: <20251010-bat-temp-adc-v1-3-d51ec895dac6@fairphone.com>
+References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
+	<20251010-bat-temp-adc-v1-3-d51ec895dac6@fairphone.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> >
-> > I do not see the need for this code change. "if (host->dma_chan_tx)" will
-> > skip "dma_release_channel(host->dma_chan_tx)" since dma_chan_tx is already
-> > NULL. This code change does not add anything.
->
-> Yes, stand alone this change doesn't make sense, but if we want to drop
->
->         host->dma_chan_tx = NULL
->
-> in the error path above, this change is needed. Maybe then even
->
->         if (host->dma_chan_rx)
->
-> and
->
->         if (host->dma_chan_rx)
->
-> can be dropped.
+On Fri, 10 Oct 2025 13:22:01 +0200
+Luca Weiss <luca.weiss@fairphone.com> wrote:
 
-Hello Uwe, 
+> Register an IIO channel to allow reading the temperature using the IIO
+> interface.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+Just one question below.
 
-I had one quick follow-up before sending v2.
+>  static int gadc_thermal_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct gadc_thermal_info *gti;
+> +	struct iio_dev *indio_dev;
+> +	struct gadc_iio *data;
+>  	int ret;
+>  
+>  	if (!dev->of_node) {
+> @@ -153,6 +192,23 @@ static int gadc_thermal_probe(struct platform_device *pdev)
+>  
+>  	devm_thermal_add_hwmon_sysfs(dev, gti->tz_dev);
+>  
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(indio_dev);
+> +	data->gti = gti;
+> +
+> +	indio_dev->name = pdev->name;
+what does this end up as?
 
-Regarding the devm_clk_get() error path —
-you mentioned that setting host->clk = NULL; is redundant since host is 
-devm-managed and the function returns immediately afterward.
+obviously we don't really care what name the user space interface we
+aren't using advertises but this should be something part number like.
 
-> I am not sure that sounds right. Looking at the code for
-> __devm_clk_get(), if devres_alloc() fails, it returns -ENOMEM. If any of
-> the other steps after a successful devres_alloc() fail, code goes
-> through possibly clk_put() if needed and then devres_free(). So the
-> resources are already freed at this point before the return to
-> pxamci_probe(). The only thing left to do is to set host->clk to NULL
-> since it would be set to an error pointer at this point.
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &gadc_adc_info;
+> +	indio_dev->channels = gadc_adc_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(gadc_adc_channels);
+> +
+> +	ret = devm_iio_device_register(dev, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to register IIO device\n");
+> +
+>  	return 0;
+>  }
+>  
+> 
 
-Khalid pointed out that when __devm_clk_get() fails after allocating a 
-devres entry, the internal cleanup (clk_put() + devres_free()) ensures 
-resources are released, but host->clk would still hold an ERR_PTR() 
-value at that point.
-
-His suggestion was that setting it to NULL might be a harmless defensive 
-step to avoid any accidental later dereference.
-
-For now, I have dropped the redundant NULL assignment from 
-host->dma_chan_rx = NULL and directly returning the ERR_PTR instead of 
-storing in a return variable. 
-
-Below I have appended proposed changes for v2.
-
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index 26d03352af63..eb46a4861dbe 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -653,8 +653,9 @@ static int pxamci_probe(struct platform_device *pdev)
- 
- 	host->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(host->clk)) {
-+		ret = PTR_ERR(host->clk);
- 		host->clk = NULL;
--		return PTR_ERR(host->clk);
-+		return ret;
- 	}
- 
- 	host->clkrate = clk_get_rate(host->clk);
-@@ -705,7 +706,6 @@ static int pxamci_probe(struct platform_device *pdev)
- 
- 	host->dma_chan_rx = dma_request_chan(dev, "rx");
- 	if (IS_ERR(host->dma_chan_rx)) {
--		host->dma_chan_rx = NULL;
- 		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
- 				     "unable to request rx dma channel\n");
- 	}
-
-Would you prefer that I:
-
-1. Remove the host->clk = NULL; assignment for consistency (as you initially 
-suggested), or
-
-2. Keep it in v2 for defensive clarity, as Khalid reasoned?
-
-I just wanted to confirm your preference before resending, to keep v2 aligned.
-
-Thanks again for your time and detailed feedback!
-
-Best regards,
-Rakuram
 
