@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-849698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F574BD0B63
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:25:18 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E55BD0B66
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 597FA4EAC53
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:25:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9261C3479AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688182F6176;
-	Sun, 12 Oct 2025 19:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0E12F7463;
+	Sun, 12 Oct 2025 19:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVI/UJK+"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mu+Y2JKc"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D672F549C
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0FC2F60B6
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760297032; cv=none; b=gL67qcYds2OoL4AZU5W5fVa0qQyig8dbnj9DZP+ZT96sP4/lCP8S1okRG8bdxjPVd2pZWWDoLYet0mS3ODldSSiokANGMxmaP9ECd9cniPpCtP8mCUaMbSrr5juo7cgM/hYNtQz84qD/tkDae6smdo6xh6aR4NsB0Nn40sQxHWA=
+	t=1760297034; cv=none; b=GsFL1OGBYW4mcHzpQgUOZtarCe/tTfR4uBrj5Umtayvfu5lLnN5q1UQigqUbZ81wSMTo3YlcRX/bHoTJ6xfMGwoicfo21QvyVeAgXvwAK5sRGryGR7mmVv6en78PNQc8SHtmjYZFs51xCX23mDh7JLHkdVNy6muJQNscLVJB51A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760297032; c=relaxed/simple;
-	bh=5DSQADF6PYceeHGtb5MtZGmBEcXfqbbawxpIMOZcwi4=;
+	s=arc-20240116; t=1760297034; c=relaxed/simple;
+	bh=aUmmA0K5M3pKV/DONNVTH0LdjYjNZicMZg+Z8mCeaio=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jm0EaNbxCTdOFkCi+LDy9nmP02pRMMD6PsXNGYtTgcTYU1Ztvj5n5wf2ZJPz77xmx7fyFjBFwjnfjPVpxRT1v6dSE2OUYrPd80Y0FGRYEzjDF4qvRXGpLGDj0t6fACu9LgWp9JBAR7JA71mmJlBF1Msi7bdNQz0DLo5KFXS2AEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVI/UJK+; arc=none smtp.client-ip=209.85.208.41
+	 MIME-Version; b=lj+t+3rUYgDuFtMlXDMh9Wsx265vVb1ymQMOk6fYShZ3BtBANQ6gUOjBlhMlB4gO87wJVcvY6MGVW43HA7m2Y8dHjdmihvcsg77BO3NS5K0O1J06++dSOZ/khaHqahvMHbrUvfHAHFRt0JsTT1QM5qTvUnFl5udiDxsRiEA2oRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mu+Y2JKc; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-639df8d869fso6717842a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 12:23:50 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3b27b50090so653285166b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 12:23:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760297029; x=1760901829; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760297031; x=1760901831; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S9SmCp0RhICJrtT3B0EVlMoJ5KkuRntCLc/b84MPeMA=;
-        b=VVI/UJK+L54hXF6ysdizD+bKxKxDlLObUdUVAxafbSIJQgbI+2GFwjoTPjRRNicp5d
-         /nOGUTt/FoNFU8Df0ZY/qJmOFVgo6qrmEvIz+YbDNgy+epDl5wj79mh7L4jwCvBjGZqo
-         EXZGHsI0mqlhA9FWUCe2+zFd+BXd9DHM3Qql6p5Yl6oUzpENNZ2tZDbNWOLS3v7q4toW
-         U5D8h+QoXPnkl1QTnBge8pv4advm/a41/uv+t8XU7id01+WMF1IfJHAO6wvR+cEWtVgO
-         unxmmRSz7Y/YnCqJsZ2HxOnD1DEmuiIkDYglaGMzxo38c5YZMa8TTv2YaR1Fd0Fa2B5t
-         XoqA==
+        bh=4j2gKZWvQ3G/p6x29ljxN7hGavAjse3Wea8WQURA1i4=;
+        b=mu+Y2JKc39vr9cqEuIU8L0Hn57TUq3MfAzekdPXqKnc73ELwZW3khXcD5N6OLs5beO
+         d+4ggT/vy9osnRnAVje/HFUBSWGYgc+kU8C+pDAsI06N1vjUxCyb57KUzXaQsahPSMvB
+         SJ/WbKEy/V3iCA96ckdliQ6dL9V4l8m93HHTe9+q9O9fhEvvpXjiRYfW85Y7zrnZBDOP
+         kKNPPd9pE/J+hz1Y4+xM6PhAHm0i3/R28CTl2T0KVdKafeV4CYxdadLeN0MdalOqLM7S
+         QZBKZelMbaSNtZUMUXqa4bcsD9VD1UHhKtOJx31M7PV2EDywKCU188UBFB/PqZgziw9z
+         Popg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760297029; x=1760901829;
+        d=1e100.net; s=20230601; t=1760297031; x=1760901831;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S9SmCp0RhICJrtT3B0EVlMoJ5KkuRntCLc/b84MPeMA=;
-        b=qCkcZ5kdr4AsBpjlJ+RyaRxc0+pBjtuDHiKp78BTU24uwYzQiTjrHfeOhO1g1YqKF9
-         thPcugOExG0QcIYVW9Wbfr97adDc84ffv3ONcJLikEt3LItnl5ODF3bE/MYfSV5sYZBn
-         qjhfnZgWMepSPuvwRbbi8jk4Q8V/aeMedaNWx2pEwR67jqnqQpN3m100Qz4S0eOhEitj
-         3v0aJ1u7ovKqdTElcQOTqxzNQwfnbTUfyXLg6cBD+BHAUaBCKSzRyJXpRSycNGtgJi7h
-         0OfAQ42f++Hdn1mTKz7NOafUp+NklEQB3XPV9ynUjYy/zNw4ENwKZFhIGlRiuDPOehOi
-         TgWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBXrStTxzpHanDOtoywsqx+yxnQSOSZalRoBMWI3OvHc5hPbw1KyogMfQHEyOp7wffuxFD/RDcmet+J04=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2yh6xTFfcG+SFXi2Scvd27QVj+kcq5QWkIfKWjO0XzF9sJ5D9
-	Ya8wVtAKZZqN7lhmJm482y5j2rYPfpeCKDMx2Ly1HEQa3AJ7AbRQIwEm
-X-Gm-Gg: ASbGncsgQISYwDqhoiDDa2U4J4wi9b5pojGfFrClKxFq5l8GZ0qq20xw/0uE6m9Hmzq
-	0k43AuTcb9tAKXbzj7SWoyb8xLmCHeAB1XSntRf+GJIlGlf9Mmzwggs7UXv6D94Y1TFJOlJ9dHe
-	tEc+GJ7SkGuCibdEwvkKuUrfu02cHrpzAK23/dm0Gqdj5iCzgERpQjwaMyoAuS88QoQDBwxQ8NV
-	3zfSkVrlm+Ut2PwOZdrkRbLfNef+R1/DQdfTnPxOFrvmatXSPJtd16h6cm9V1QYLqZisEWck/tn
-	Fht1taMcYGAd81hKfB/CRPVbXfvOjWQuiJyS881alo/0cTtoZ+7oGxCqwOPib1LwqVmNxUCWW4K
-	5U2p4gdAWC47DT7Yv+3dj3O2qwLtjt0bknNyQ8IYU4WkW7EyxArG+KOQeGi500Im0W+WJ62aRNN
-	4igPOa9ohxQWsZjgYNvu/FUXt9QHlx3AQ7VH3e1VKyBA==
-X-Google-Smtp-Source: AGHT+IF7Qq6jQqzYZdDrJkaw6UlpFKkxTue0qnLTmhRFyadA1ihDqW2+FAH2PNlrJyvCEAGwchJGLg==
-X-Received: by 2002:a17:907:980f:b0:b3e:c99b:c78a with SMTP id a640c23a62f3a-b50ac5d07e0mr2126585466b.54.1760297029128;
-        Sun, 12 Oct 2025 12:23:49 -0700 (PDT)
+        bh=4j2gKZWvQ3G/p6x29ljxN7hGavAjse3Wea8WQURA1i4=;
+        b=QHNgQmAozUVqyMjjiI+Y+u7CFrnk+I3Jtu/sUOKuak25Mj/dvVLVY/U4ZVk+/QJcjE
+         O/F1M8KzKQkQoufbW98FPKBse4Rey48/e6jZONtvYD3QamYaj1y+TWgN3yZ6F6WlmMcr
+         JuViXd+8J/Q3Pq7aQYOtI4wan/n/A0YUviEAmmQLPWILCKujDQO7owCzwGmZmFUNYokL
+         6OLWbvG0RRCzbu5R2wUo3cVviwrNZyZsfzU+T5m4ZEy1Scn3hvf26buIqWjXP/UoczeP
+         vxtwO6YUdmdiOBFmU2GQXBqSK3d0fBRUan0+bp0/MQGiGcG+A7Q2uW77z04ZvBBuvH5l
+         JpZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtO4JPxz434KouHavr7MVzvzwm+ThAeKLqL0+1tmjFMLoy/X220qkKUa8p2ua4RkjoH4GgkCSWArOUkLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjrAUe300rmUSVNxHTIDwZncPW8GSQrhvzMp4rzxhtQ9gCZL+e
+	Gob5PUNe2glktvhKXkvhfVWKr3oHJgWF8ZywIcg2JP4aXKQmfSh/5rAm
+X-Gm-Gg: ASbGncs+ESeMfYFHyNYEkROUaqEGL7uYN5e5kvCfIS2IBfn64caL1nNAOK8EjLOu0dq
+	7/exP0MdkyeB0QdZqKAItIXYYGW2EFIZM0A0ldbs4vcayypjhxW58fySKI+ktbK4A+dZpDTVWip
+	UQAN0qVRnkgvqScdZBokxaG3Zbzev62Ed8qqufa6D5QuwjW541wwIdM9ObIx4HFhShAbCv+A7JP
+	jLej5yik76ZfISUAs0zAD/1ybmu4lNjXkaR4ojpFInQscun50F6cqb35p9MFeQyy5/jXTDpa+gz
+	rEBBRKjNroTDK/FkOTYLd9T3Rja9hJoouKaUYk9q1p/y0SDurr+XFho/FSiCPae1FHSZFCEPivs
+	mkBI4h3l9CLSHlWMn24uC2qIjVr8jJ9oRtfS+2d7aEMMduJyWQsVctDz2LAOo4vX16SYkEbaLi7
+	BmE6JEmAfJ18jkWkk771c9wIeHqAXxcMMrr+jE15VY6Q==
+X-Google-Smtp-Source: AGHT+IEs/WFctDa89+D/WqWhY5uZ3WvAavRVXRQFM/TxuoPg9kA4sKepU26nxFXJKsHh5KgVUQFpfg==
+X-Received: by 2002:a17:907:724a:b0:b04:5b0a:5850 with SMTP id a640c23a62f3a-b50ac1c3f18mr2033310866b.40.1760297030814;
+        Sun, 12 Oct 2025 12:23:50 -0700 (PDT)
 Received: from jernej-laptop (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d67d8283sm760176466b.38.2025.10.12.12.23.47
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d67d8283sm760176466b.38.2025.10.12.12.23.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 12:23:48 -0700 (PDT)
+        Sun, 12 Oct 2025 12:23:50 -0700 (PDT)
 From: Jernej Skrabec <jernej.skrabec@gmail.com>
 To: mripard@kernel.org,
 	wens@csie.org
@@ -86,9 +86,9 @@ Cc: maarten.lankhorst@linux.intel.com,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: [PATCH 08/30] drm/sun4i: ui layer: Write attributes in one go
-Date: Sun, 12 Oct 2025 21:23:08 +0200
-Message-ID: <20251012192330.6903-9-jernej.skrabec@gmail.com>
+Subject: [PATCH 09/30] drm/sun4i: vi layer: Write attributes in one go
+Date: Sun, 12 Oct 2025 21:23:09 +0200
+Message-ID: <20251012192330.6903-10-jernej.skrabec@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251012192330.6903-1-jernej.skrabec@gmail.com>
 References: <20251012192330.6903-1-jernej.skrabec@gmail.com>
@@ -100,29 +100,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It turns out that none of the UI channel registers were meant to be
+It turns out that none of the VI channel registers were meant to be
 read. Mostly it works fine but sometimes it returns incorrect values.
 
-Rework UI layer code to write all registers in one go to avoid reads.
+Rework VI layer code to write all registers in one go to avoid reads.
 
 This rework will also allow proper code separation.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 ---
- drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 50 +++++++++-----------------
- 1 file changed, 16 insertions(+), 34 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 71 ++++++++++----------------
+ 1 file changed, 27 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-index 12c83c54f9bc..8634d2ee613a 100644
---- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-@@ -25,25 +25,27 @@
- #include "sun8i_ui_scaler.h"
+diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+index 1f4fa63ef153..dcc4429368d6 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+@@ -18,34 +18,35 @@
+ #include "sun8i_vi_layer.h"
  #include "sun8i_vi_scaler.h"
  
--static void sun8i_ui_layer_update_alpha(struct sun8i_mixer *mixer, int channel,
+-static void sun8i_vi_layer_update_alpha(struct sun8i_mixer *mixer, int channel,
 -					int overlay, struct drm_plane *plane)
-+static void sun8i_ui_layer_update_attributes(struct sun8i_mixer *mixer,
++static void sun8i_vi_layer_update_attributes(struct sun8i_mixer *mixer,
 +					     int channel, int overlay,
 +					     struct drm_plane *plane)
  {
@@ -135,65 +135,100 @@ index 12c83c54f9bc..8634d2ee613a 100644
 +	fmt = state->fb->format;
 +	sun8i_mixer_drm_format_to_hw(fmt->format, &hw_fmt);
  
--	mask = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK |
--		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK;
++	val = hw_fmt << SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_OFFSET;
++	if (!fmt->is_yuv)
++		val |= SUN8I_MIXER_CHAN_VI_LAYER_ATTR_RGB_MODE;
++	val |= SUN8I_MIXER_CHAN_VI_LAYER_ATTR_EN;
+ 	if (mixer->cfg->de_type >= SUN8I_MIXER_DE3) {
+-		mask = SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK |
+-		       SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_MASK;
+-		val = SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA
+-			(plane->state->alpha >> 8);
 -
--	val = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(plane->state->alpha >> 8);
+-		val |= (plane->state->alpha == DRM_BLEND_ALPHA_OPAQUE) ?
++		val |= SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA(state->alpha >> 8);
++		val |= (state->alpha == DRM_BLEND_ALPHA_OPAQUE) ?
+ 			SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_PIXEL :
+ 			SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_COMBINED;
 -
--	val |= (plane->state->alpha == DRM_BLEND_ALPHA_OPAQUE) ?
-+	val = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(state->alpha >> 8);
-+	val |= (state->alpha == DRM_BLEND_ALPHA_OPAQUE) ?
- 		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_PIXEL :
- 		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_COMBINED;
-+	val |= hw_fmt << SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_OFFSET;
-+	val |= SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN;
- 
--	regmap_update_bits(mixer->engine.regs,
--			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch_base, overlay),
--			   mask, val);
+-		regmap_update_bits(mixer->engine.regs,
+-				   SUN8I_MIXER_CHAN_VI_LAYER_ATTR(ch_base,
+-								  overlay),
+-				   mask, val);
+ 	} else if (mixer->cfg->vi_num == 1) {
+-		regmap_update_bits(mixer->engine.regs,
+-				   SUN8I_MIXER_FCC_GLOBAL_ALPHA_REG,
+-				   SUN8I_MIXER_FCC_GLOBAL_ALPHA_MASK,
+-				   SUN8I_MIXER_FCC_GLOBAL_ALPHA
+-					(plane->state->alpha >> 8));
++		regmap_write(mixer->engine.regs,
++			     SUN8I_MIXER_FCC_GLOBAL_ALPHA_REG,
++			     SUN8I_MIXER_FCC_GLOBAL_ALPHA(state->alpha >> 8));
+ 	}
++
 +	regmap_write(mixer->engine.regs,
-+		     SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch_base, overlay), val);
++		     SUN8I_MIXER_CHAN_VI_LAYER_ATTR(ch_base, overlay), val);
  }
  
- static void sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
-@@ -111,24 +113,6 @@ static void sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ static void sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+@@ -194,23 +195,14 @@ static u32 sun8i_vi_layer_get_csc_mode(const struct drm_format_info *format)
  	}
  }
  
--static void sun8i_ui_layer_update_formats(struct sun8i_mixer *mixer, int channel,
+-static void sun8i_vi_layer_update_formats(struct sun8i_mixer *mixer, int channel,
 -					  int overlay, struct drm_plane *plane)
--{
--	struct drm_plane_state *state = plane->state;
--	const struct drm_format_info *fmt;
--	u32 val, ch_base, hw_fmt;
++static void sun8i_vi_layer_update_colors(struct sun8i_mixer *mixer, int channel,
++					 int overlay, struct drm_plane *plane)
+ {
+ 	struct drm_plane_state *state = plane->state;
+-	u32 val, ch_base, csc_mode, hw_fmt;
+ 	const struct drm_format_info *fmt;
 -
 -	ch_base = sun8i_channel_base(mixer, channel);
--
--	fmt = state->fb->format;
++	u32 csc_mode;
+ 
+ 	fmt = state->fb->format;
 -	sun8i_mixer_drm_format_to_hw(fmt->format, &hw_fmt);
 -
--	val = hw_fmt << SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_OFFSET;
+-	val = hw_fmt << SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_OFFSET;
 -	regmap_update_bits(mixer->engine.regs,
--			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch_base, overlay),
--			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_MASK, val);
--}
+-			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR(ch_base, overlay),
+-			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_MASK, val);
 -
- static void sun8i_ui_layer_update_buffer(struct sun8i_mixer *mixer, int channel,
- 					 int overlay, struct drm_plane *plane)
- {
-@@ -220,12 +204,10 @@ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
+ 	csc_mode = sun8i_vi_layer_get_csc_mode(fmt);
+ 	if (csc_mode != SUN8I_CSC_MODE_OFF) {
+ 		sun8i_csc_set_ccsc_coefficients(mixer, channel, csc_mode,
+@@ -220,15 +212,6 @@ static void sun8i_vi_layer_update_formats(struct sun8i_mixer *mixer, int channel
+ 	} else {
+ 		sun8i_csc_enable_ccsc(mixer, channel, false);
+ 	}
+-
+-	if (!fmt->is_yuv)
+-		val = SUN8I_MIXER_CHAN_VI_LAYER_ATTR_RGB_MODE;
+-	else
+-		val = 0;
+-
+-	regmap_update_bits(mixer->engine.regs,
+-			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR(ch_base, overlay),
+-			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR_RGB_MODE, val);
+ }
+ 
+ static void sun8i_vi_layer_update_buffer(struct sun8i_mixer *mixer, int channel,
+@@ -340,12 +323,12 @@ static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
  	if (!new_state->crtc || !new_state->visible)
  		return;
  
-+	sun8i_ui_layer_update_attributes(mixer, layer->channel,
++	sun8i_vi_layer_update_attributes(mixer, layer->channel,
 +					 layer->overlay, plane);
- 	sun8i_ui_layer_update_coord(mixer, layer->channel,
+ 	sun8i_vi_layer_update_coord(mixer, layer->channel,
  				    layer->overlay, plane);
--	sun8i_ui_layer_update_alpha(mixer, layer->channel,
+-	sun8i_vi_layer_update_alpha(mixer, layer->channel,
 -				    layer->overlay, plane);
--	sun8i_ui_layer_update_formats(mixer, layer->channel,
+-	sun8i_vi_layer_update_formats(mixer, layer->channel,
 -				      layer->overlay, plane);
- 	sun8i_ui_layer_update_buffer(mixer, layer->channel,
++	sun8i_vi_layer_update_colors(mixer, layer->channel,
++				     layer->overlay, plane);
+ 	sun8i_vi_layer_update_buffer(mixer, layer->channel,
  				     layer->overlay, plane);
  }
 -- 
