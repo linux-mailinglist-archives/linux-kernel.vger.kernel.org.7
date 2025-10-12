@@ -1,49 +1,95 @@
-Return-Path: <linux-kernel+bounces-849625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5099BD0875
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:20:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8EABD0884
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B1D004E52DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:20:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F820347CA6
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564DE2ED860;
-	Sun, 12 Oct 2025 17:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CF52D3A6A;
+	Sun, 12 Oct 2025 17:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2vx+H1V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYJDlZOP"
+Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFE72EC55C;
-	Sun, 12 Oct 2025 17:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B785F27B33B
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 17:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760289619; cv=none; b=VvBTcmltJMT/krG17MeQms7awMJMNTG7eussTBYXXodqx2+42Ey+bONbsr4AUDQvy0a3lTDVgJxYfFuvf2MCBRTXjeDj1jEb9w+eJE+iHwV84GNGeRH04YQhAd0nGEcJcxxpV2mzPoQkoHDtE8ZsLPg7f86JQMAKF1PjT/aHVic=
+	t=1760290253; cv=none; b=nMNjyIeKEfrZlH7j48Ss05am6NO2dAlfwI0NKviz1cExhXVDDBHHrt1+QamG5gJ3dwbDiWyRESGZUJizpt9VMBUI2GSj5IZFQfAmdAkWxCFsuUHkBalXbBTNppyOTSq7H0pot1aWUGSwEhB6SglhOmft608IUlwuWjt2to3ThJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760289619; c=relaxed/simple;
-	bh=0Yhqw/WpUTQj+vAuDvTHp3aIUOR0Gj80cWsQtkFzs3M=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TZnBiCyXlmJ2oLNLygdyLp+9J5QZthSfpgA3VU1RKpEBeqBajVqp9C3m8MnxIWdSnA0vooqnGlG7mrGgwEDySVfq3LTlAtQX3soCV6aLa5ITs0Ovw/4M9QFuY+x4vS4RR+qmBtZJ9vlk/JKXkxrW+z+1YrhC3ok7Ko+8iR49dNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2vx+H1V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EBFBC4CEE7;
-	Sun, 12 Oct 2025 17:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760289619;
-	bh=0Yhqw/WpUTQj+vAuDvTHp3aIUOR0Gj80cWsQtkFzs3M=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=a2vx+H1VW3lHb0/EWN4Y+UwNY060kww2kdLP3SWRi4AThtcAwW3CkS6GJCV0SE8aB
-	 HgoOetpYACGBrEq1NN0zUl7SF6/hGpXxhUsiVkx7K3rULqc1Mx9Wgq062w3jyKpwfx
-	 y6DhyXWdDX50WT4dN4uGXCCxRcYJMJBudHfh4FjIibK1BEKiXhzxntVjZWCxQHOo/5
-	 mwS6sTY3jMeBXcNQII5+K2txf46uoeksG4sQcL3tXjNKtml5/gMxiIvB3wZrT63i6C
-	 IHR8fs6vXqfM50OW2doCyDqIy264vF3OYtBwJKBauaQyaj44nltJkCuj4upMdOe/XG
-	 cVBLCh/rj//Zw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD5A3809A1C;
-	Sun, 12 Oct 2025 17:20:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760290253; c=relaxed/simple;
+	bh=gzP73eKDgJq0OXCIKtEvkLfNMbdAuUvkBODtFN2PhFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fe12t8HtgT16JBKtsjccYJTqWfa9OxwEVNip2DtVIDbZ5pY+T+qMq1y5iUZmS0FGOhjYWdXKW0WBDxgsvTYHL9FjQsOItJaQwEgIOwuDcsHS+jLlMQXHeRho8gYBpc1F68HfedKMVK5/doG/9TUVuX60IRFF7SIyxiviv+3eswM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYJDlZOP; arc=none smtp.client-ip=209.85.216.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-339e71ccf48so4962205a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 10:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760290251; x=1760895051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a66RlRrFvTTKMeb9fHGsG8vzY8MvLsI+lGOp/Fg2CSg=;
+        b=HYJDlZOPN4QdWiAOpXErzJP9jSIL2IbDBb5UozjrECl19/1i8DsD8EjKXs1w0P2gfU
+         cUrXtZ9iCHs14s04IaVBn10yWE92tmPffTLSbjiTykq2Fczf6UGZW67qx/dusxtevTpA
+         wU+gaAwGaDVr9QcJ0YrqGEmm1jI5BUasuykJkgGll7Ihc6NPchx4w4UzTxhxB1ffONbN
+         fckwQrZynkLhf7CfdqJzIt5Tlba5l52oY32H5K15BEpix9qGEpCK0WC5S4vTFV0zSDoV
+         LX20bg3uF3xRTKgXjPIbVwnrqlrkGMhuk5tN6CSMFd5nnG8OOrAdIlq80TqARU95FxQq
+         2PtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760290251; x=1760895051;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a66RlRrFvTTKMeb9fHGsG8vzY8MvLsI+lGOp/Fg2CSg=;
+        b=QPGCrlkvbhukOIkR0MydP+JoZ8NPQan3/IFZffCgI45fepgixVnkJE80/ZBbROrFRF
+         jUDMyu8VJbsfVcec3+qICczZaxcTxyF6wgEvfOQZYTsMJArqD2seX8LNp0HgjfZu3hWf
+         cyPX2r9whNA2j8z/M+XLDOcRbFtywFn/5Q9ni2hBk6WB1nPG2snnvgdetyod9zzJOTXg
+         IzUi+AB5nMf46PWVFX3P12fpc5+zcFOtGfBoj9R/deYIAlMFVp0GckxV3l5Po8wiHEbu
+         UpxZ97Wg3uBS8o5klkcv9N5XyV/N/rVSqgh0j8DE4axJZh9G3pKxm6MuGjw7cp6HvfiW
+         8nrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZMdr73KArs8PqAZg9B7/MKCRIntL3ZirOLz228ivxb6xftI250Rmyd4wDo1MYob5O9BpcccvflBLC7xg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOd5SvjN1f4hWYulCvi5uvjLl9eNJ+JRyOYZKuFladEXCFKfiQ
+	1c0g5ePAweMSkMZlErSOFWEy471R9Zctq5JKId3vhYFd45HSL5ACceU5
+X-Gm-Gg: ASbGncuDotGUsyC1Mjh0FjLjM8TRLV6aCYWfhsilog0spLmd2S3m5x+KLh6QHt+FGwe
+	su+at9t7XvQCw+QpmAbxceGQb4+tIzP0wQm045kdqDSz02m14KmdefVHZOk/q69gDcmojhnQ55r
+	XUM2MXZ3M66m2M2qjhkEfSGBEW+2Yy1fbDN9CW79ZhjtYsMQfIPfO8UDwHjrrF6WMGpei638Tvd
+	0SHj6MTXcFxNInj504/jW0KJtowzHzq8MzIgJim1hMgvaBTZnqjGaNtPlQbe+iGE+odLj9Wmb2P
+	lKdHXUvMTqMvs6x4I4EC/KZbOfHcI+5KLp8SwV21AXQcg6rzuzee8JmAQVbY8eYNIz7gZ/vvJui
+	cSQB5MVgDDJpKJBpFt2Qp9zLwgxlRVcQNbcERxbrORvc+
+X-Google-Smtp-Source: AGHT+IFWBRH6VbicjAATB63VVFZLQLGTV6p9y+k3koTCoCdtyT6rF2oBp0hHGijhX3XmV73xokjn1w==
+X-Received: by 2002:a17:90b:3d87:b0:32e:d011:ea1c with SMTP id 98e67ed59e1d1-33b51112272mr28805345a91.15.1760290250919;
+        Sun, 12 Oct 2025 10:30:50 -0700 (PDT)
+Received: from Ubuntu24.. ([103.187.64.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09ace5sm9030616b3a.53.2025.10.12.10.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Oct 2025 10:30:50 -0700 (PDT)
+From: Shrikant Raskar <raskar.shree97@gmail.com>
+To: jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	matt@ranostay.sg,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Shrikant Raskar <raskar.shree97@gmail.com>
+Subject: [PATCH v3 0/2] iio: health: max30100: Add DT LED pulse-width support
+Date: Sun, 12 Oct 2025 23:00:33 +0530
+Message-ID: <20251012173035.12536-1-raskar.shree97@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,49 +97,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM write timeout
- error(-ETIMEDOUT) in lan78xx_write_raw_eeprom
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176028960551.1702266.1263953075322899185.git-patchwork-notify@kernel.org>
-Date: Sun, 12 Oct 2025 17:20:05 +0000
-References: <20251009053009.5427-1-bhanuseshukumar@gmail.com>
-In-Reply-To: <20251009053009.5427-1-bhanuseshukumar@gmail.com>
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-Cc: Thangaraj.S@microchip.com, Rengarajan.S@microchip.com,
- UNGLinuxDriver@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- o.rempel@pengutronix.de, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com, stable@vger.kernel.org
 
-Hello:
+Add Device Tree support for configuring the LED pulse-width of the MAX30100
+sensor, and updates the driver to read and apply this property. 
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+Testing:
+- Verify DT property read successfully in probe().
+- Verify default fallback to 1600 us when DT property is omitted.
+- Confirm SPO2_CONFIG register programmed correctly using regmap_read().
+- Validate different DT pulse-width values (200, 400, 800, 1600 us)
+  are applied correctly.
+- Validate probe() failure for invalid LED pulse-width
+- Tested-on: Raspberry Pi 3B + MAX30100 breakout board
 
-On Thu,  9 Oct 2025 11:00:09 +0530 you wrote:
-> The function lan78xx_write_raw_eeprom failed to properly propagate EEPROM
-> write timeout errors (-ETIMEDOUT). In the timeout  fallthrough path, it first
-> attempted to restore the pin configuration for LED outputs and then
-> returned only the status of that restore operation, discarding the
-> original timeout error saved in ret.
-> 
-> As a result, callers could mistakenly treat EEPROM write operation as
-> successful even though the EEPROM write had actually timed out with no
-> or partial data write.
-> 
-> [...]
+Changelog:
+Changes from v2:
+- Fix DT binding schema errors
+- Add default value
+- Remove changelog from commit message
+- Add missing header file
 
-Here is the summary with links:
-  - net: usb: lan78xx: Fix lost EEPROM write timeout error(-ETIMEDOUT) in lan78xx_write_raw_eeprom
-    https://git.kernel.org/netdev/net/c/d5d790ba1558
+Shrikant Raskar (2):
+  dt-bindings: iio: health: max30100: Add LED pulse-width property
+  iio: health: max30100: Make LED pulse-width configurable via DT
 
-You are awesome, thank you!
+ .../bindings/iio/health/maxim,max30100.yaml   |  8 ++++
+ drivers/iio/health/max30100.c                 | 38 +++++++++++++++++--
+ 2 files changed, 43 insertions(+), 3 deletions(-)
+
+
+base-commit: 8bd9238e511d02831022ff0270865c54ccc482d6
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
 
