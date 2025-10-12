@@ -1,301 +1,102 @@
-Return-Path: <linux-kernel+bounces-849425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED071BD0142
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:23:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323B0BD0148
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9E454E2F5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 11:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50BE61894EA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 11:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8217F25A2A5;
-	Sun, 12 Oct 2025 11:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC1A2686A0;
+	Sun, 12 Oct 2025 11:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiYwTjA1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXoJd0fb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC3E18A6D4
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 11:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCD31BDCF;
+	Sun, 12 Oct 2025 11:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760268209; cv=none; b=HWofhFU9qgCHDDOad1O4AfXynUTZEC+kNAnjOc6wWC//FXlQHr8ZDiFvqoILbgLBdIQB99bJLuewTILVVYpcL+tWl+vFiapoKcwxc/sIAlDhNItmQpL0kcmwX5zrmWe+W30PnvQmit6ZcP+iXH7IR3fSGAuIP81hzQZY1UiCem8=
+	t=1760268259; cv=none; b=Y2EWD5KV7Qhr7GfRMXFByuoQGCt+VFp837hXMZ1YvUegGNmWhyz6hWTM5rzYRtGNRpRUqBfczn+yPXNPKogdJP71bWBGQ/yTrsvPpGrtNgrcKG1A82WnEmlaXVOFEnp8u5rGKqslTkyU1ZXrbkdx5SA0B836w2Uoz/ARF6FmfLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760268209; c=relaxed/simple;
-	bh=T76ciC7MvD6Uq6qKE1gKRXHkh8/nQlep+GS6D4H+5gU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=durcCTueifA9PX0X+Hl5zqJ6OLKgFC6LrqLXpcD8M9gBmnqDKLkT+N9YbyeMZAfkHh78C3Iv3gwv6EqJtlpL4ja7BeGeW4/8LC8QdIcAUrTtC/UwteNJkxDJo5qYIkH3Bzuqbaq0FSdnsdIxbTJ3CFEdsLelzl1XhnMZQOWxpvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiYwTjA1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A78BC19421
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 11:23:29 +0000 (UTC)
+	s=arc-20240116; t=1760268259; c=relaxed/simple;
+	bh=8nM7M2R/YQ3nyq7zzGBKueK5f2+Hfv0nMSpOfEVEQaQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fiJ4jAUzIR3ZT9rpV8Xv51YDl9Uw5aukDQWR8MjDA/VzCC0JmvPaQP7r/bgtbMfgo2AuU+PHRwmxXt5/woo5PcQh0eOi94Op7p0ms503NaCmiAUpDbc82HWGDis36l63TBwjqr7n08KrEnt8yY/S2MGXQyQv0LB5E+A90vu5vVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXoJd0fb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B553BC4CEE7;
+	Sun, 12 Oct 2025 11:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760268209;
-	bh=T76ciC7MvD6Uq6qKE1gKRXHkh8/nQlep+GS6D4H+5gU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BiYwTjA1WXiDDZ6k1pLc0b+PVyq6vXvaXJOZF4TiaEg3k2huYIgxz5uiIWihe7xx0
-	 argw5VZRtvF7yvFH0XbmOvh0rZc5EIGTsLQphvKJutV+Re/G93hVAnGO/5Vd5s/oV9
-	 BpVI41JFcsEueP3VZuSaN5D1ccT/o0TFTic9XbmluMz1UuFcuYBBBwteLFMr+aqlHW
-	 1ddfWukU9fy6Xto3ZNWKhaDND0UbOc23zwq/V6B3oWgI4q8NIj9J3LJ5Uhc8IKvH5F
-	 0/hDSffDn5lByMu0/A6fKW6w/j0c0gjpfd5s+MEWpAB9/vhUnj99cOFfrDLdMa3mmb
-	 8b438qCPpYpnw==
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so40568425e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 04:23:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGDyCyNJJ9of9XaO1iSDR/2U+eEmy/tu/Tq1yJDQ7hIV7OdJeutzfOMCcZYUgXyJLHMZdt+GGEywL4DNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKDqPhUYHwx+mXiinvCaJ3Kpc4Pjqk2Bcov0E8DIP/rkyMx3DY
-	f3ZHaqxpg4TNqznZ2aY6OvLuOBAHwbRcYhVI142HcN8emcdlHulddaDLnw+x9o9o0n/4VDJWGsr
-	ZS/AqTWbE6ftUDTUOXLh49Bm2K4Shs+8=
-X-Google-Smtp-Source: AGHT+IHWkSwxpRdIU93ruDljUo6L3O36dcwVKmHU88EIC562kkwkQS6D3HE2q9MMHT5O3SbUtodlQg41kAKRXUo7tRc=
-X-Received: by 2002:a05:600c:1c23:b0:45b:6b57:5308 with SMTP id
- 5b1f17b1804b1-46fa9a892a0mr122801735e9.7.1760268207732; Sun, 12 Oct 2025
- 04:23:27 -0700 (PDT)
+	s=k20201202; t=1760268259;
+	bh=8nM7M2R/YQ3nyq7zzGBKueK5f2+Hfv0nMSpOfEVEQaQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=UXoJd0fbYXHk5p5EC+wddbp8jtXvhNU0lylNvxhq3JulMP5GhB6U3Pc6iAoMciwzA
+	 7G5C0DOCqJI8HWUMEQfSxkmKKNxX2gFPWFFJFPKLQd/+Li/QkbwB41ptn8Q/tIlFQ+
+	 wz6pLQw08TC+PY807gXxz55rnIuy1DEKeePHgFVorGQjWrm5wMves+skkE50L1YbB4
+	 KFE3pWUB1o0BlsgdODqK0G5T30+lqUMnU4vr6YOYyddBBFX71OxVxIaBoXM8K9QUqo
+	 uFkyEzKjQQl0xY19OGQXCBDgw87BYpzC7/r8Rs59LPw+KX8+5coVRKJp7YXPfWHcFJ
+	 eUDywDOa9o9iA==
+From: Vincent Mailhol <mailhol@kernel.org>
+Subject: [PATCH 0/2] can: add Transmitter Delay Compensation (TDC)
+ documentation
+Date: Sun, 12 Oct 2025 20:23:41 +0900
+Message-Id: <20251012-can-fd-doc-v1-0-86cc7d130026@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009134514.8549-1-cuiyunhui@bytedance.com>
-In-Reply-To: <20251009134514.8549-1-cuiyunhui@bytedance.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Sun, 12 Oct 2025 19:23:15 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTJD3G1gyh8ucf6OSp2Y0=xHKGRLQakrTwqiLbzG+G0uw@mail.gmail.com>
-X-Gm-Features: AS18NWD6MJ72Wu3veu27hAB-l8__trDKgDBlFxv_dFmO-FnASlGZT1S2onigZrQ
-Message-ID: <CAJF2gTTJD3G1gyh8ucf6OSp2Y0=xHKGRLQakrTwqiLbzG+G0uw@mail.gmail.com>
-Subject: Re: [PATCH RFC] riscv: add support for Ziccid
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com, 
-	peterz@infradead.org, jpoimboe@kernel.org, jbaron@akamai.com, ardb@kernel.org, 
-	willy@infradead.org, ziy@nvidia.com, akpm@linux-foundation.org, 
-	bjorn@rivosinc.com, ajones@ventanamicro.com, parri.andrea@gmail.com, 
-	cleger@rivosinc.com, yongxuan.wang@sifive.com, inochiama@gmail.com, 
-	samuel.holland@sifive.com, charlie@rivosinc.com, conor.dooley@microchip.com, 
-	yikming2222@gmail.com, andybnac@gmail.com, yury.norov@gmail.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL2P62gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0Mj3eTEPN20FN2U/GRdM0ujVPOklBQzYzNLJaCGgqLUtMwKsGHRsbW
+ 1ABKej6tcAAAA
+X-Change-ID: 20251012-can-fd-doc-692e7bdd6369
+To: Oliver Hartkopp <socketcan@hartkopp.net>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+ linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Vincent Mailhol <mailhol@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=885; i=mailhol@kernel.org;
+ h=from:subject:message-id; bh=8nM7M2R/YQ3nyq7zzGBKueK5f2+Hfv0nMSpOfEVEQaQ=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDBmv+28ov+oLcrP6Znxw7zLzUq+LZx43bKi6z8wznXl/K
+ nevqHlPRykLgxgXg6yYIsuyck5uhY5C77BDfy1h5rAygQxh4OIUgImoMzP893knUn3yyrTiIpft
+ DLntB06vK/Xs614dMo/5xcH3l4Wl/jIyXPEW9OV7/rxbP0O0c0P3hUt7w3b8vZB9c/WL/okCreq
+ zOQE=
+X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 
-On Thu, Oct 9, 2025 at 9:45=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedance.com>=
- wrote:
->
-> The Ziccid extension provides hardware synchronization between
-> Dcache and Icache. With this hardware support, there's no longer
-> a need to trigger remote hart execution of fence.i via IPI.
-Ziccid only means I/D $ coherent, we still need "fence.i" & IPI to
-flush the instructions stalled in the pipeline.
+TDC was added to the kernel in 2021 but I never took time to update
+the documentation. The year is now 2025... As we say: "better late
+than never"!
 
->
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  arch/riscv/include/asm/cacheflush.h |  4 ++--
->  arch/riscv/include/asm/hwcap.h      |  1 +
->  arch/riscv/include/asm/switch_to.h  | 10 ++++++++++
->  arch/riscv/kernel/cpufeature.c      |  1 +
->  arch/riscv/kernel/ftrace.c          |  2 +-
->  arch/riscv/kernel/hibernate.c       |  2 +-
->  arch/riscv/kernel/jump_label.c      |  2 +-
->  arch/riscv/mm/cacheflush.c          | 16 ++++++++++++++--
->  8 files changed, 31 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm=
-/cacheflush.h
-> index 0092513c3376c..3a8cdf30bb4b1 100644
-> --- a/arch/riscv/include/asm/cacheflush.h
-> +++ b/arch/riscv/include/asm/cacheflush.h
-> @@ -68,7 +68,7 @@ static inline void flush_cache_vmap(unsigned long start=
-, unsigned long end)
->
->  #else /* CONFIG_SMP */
->
-> -void flush_icache_all(void);
-> +void flush_icache_all(bool force);
->  void flush_icache_mm(struct mm_struct *mm, bool local);
->
->  #endif /* CONFIG_SMP */
-> @@ -80,7 +80,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local);
->  #define flush_icache_range flush_icache_range
->  static inline void flush_icache_range(unsigned long start, unsigned long=
- end)
->  {
-> -       flush_icache_all();
-> +       flush_icache_all(false);
->  }
->
->  extern unsigned int riscv_cbom_block_size;
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwca=
-p.h
-> index affd63e11b0a3..ad97d8955b501 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -106,6 +106,7 @@
->  #define RISCV_ISA_EXT_ZAAMO            97
->  #define RISCV_ISA_EXT_ZALRSC           98
->  #define RISCV_ISA_EXT_ZICBOP           99
-> +#define RISCV_ISA_EXT_ZICCID           100
->
->  #define RISCV_ISA_EXT_XLINUXENVCFG     127
->
-> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/=
-switch_to.h
-> index 0e71eb82f920c..b8a9e455efe9e 100644
-> --- a/arch/riscv/include/asm/switch_to.h
-> +++ b/arch/riscv/include/asm/switch_to.h
-> @@ -98,7 +98,17 @@ static inline bool switch_to_should_flush_icache(struc=
-t task_struct *task)
->         bool stale_thread =3D task->thread.force_icache_flush;
->         bool thread_migrated =3D smp_processor_id() !=3D task->thread.pre=
-v_cpu;
->
-> +       asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICC=
-ID, 1)
-> +                : : : : ziccid);
-> +
->         return thread_migrated && (stale_mm || stale_thread);
-> +
-> +ziccid:
-> +       /*
-> +        * Process switching writes to SATP, which flushes the pipeline,
-> +        * so only the thread scenario is considered.
-> +        */
-> +       return thread_migrated && stale_thread;
->  #else
->         return false;
->  #endif
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index 67b59699357da..2da82aa2dbf0a 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -540,6 +540,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D {
->         __RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
->         __RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
->         __RISCV_ISA_EXT_DATA(svvptc, RISCV_ISA_EXT_SVVPTC),
-> +       __RISCV_ISA_EXT_DATA(ziccid, RISCV_ISA_EXT_ZICCID),
->  };
->
->  const size_t riscv_isa_ext_count =3D ARRAY_SIZE(riscv_isa_ext);
-> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-> index 8d18d6727f0fc..431448e818363 100644
-> --- a/arch/riscv/kernel/ftrace.c
-> +++ b/arch/riscv/kernel/ftrace.c
-> @@ -43,7 +43,7 @@ void arch_ftrace_update_code(int command)
->  {
->         command |=3D FTRACE_MAY_SLEEP;
->         ftrace_modify_all_code(command);
-> -       flush_icache_all();
-> +       flush_icache_all(false);
->  }
->
->  static int __ftrace_modify_call(unsigned long source, unsigned long targ=
-et, bool validate)
-> diff --git a/arch/riscv/kernel/hibernate.c b/arch/riscv/kernel/hibernate.=
-c
-> index 671b686c01587..388f10e187bae 100644
-> --- a/arch/riscv/kernel/hibernate.c
-> +++ b/arch/riscv/kernel/hibernate.c
-> @@ -153,7 +153,7 @@ int swsusp_arch_suspend(void)
->         } else {
->                 suspend_restore_csrs(hibernate_cpu_context);
->                 flush_tlb_all();
-> -               flush_icache_all();
-> +               flush_icache_all(true);
->
->                 /*
->                  * Tell the hibernation core that we've just restored the=
- memory.
-> diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_labe=
-l.c
-> index b4c1a6a3fbd28..680b29f4c09c4 100644
-> --- a/arch/riscv/kernel/jump_label.c
-> +++ b/arch/riscv/kernel/jump_label.c
-> @@ -51,5 +51,5 @@ bool arch_jump_label_transform_queue(struct jump_entry =
-*entry,
->
->  void arch_jump_label_transform_apply(void)
->  {
-> -       flush_icache_all();
-> +       flush_icache_all(false);
->  }
-> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-> index d83a612464f6c..01f9f7a45e8d2 100644
-> --- a/arch/riscv/mm/cacheflush.c
-> +++ b/arch/riscv/mm/cacheflush.c
-> @@ -12,19 +12,24 @@
->  #ifdef CONFIG_SMP
->
->  #include <asm/sbi.h>
-> +#include <asm/alternative-macros.h>
->
->  static void ipi_remote_fence_i(void *info)
->  {
->         return local_flush_icache_all();
->  }
->
-> -void flush_icache_all(void)
-> +void flush_icache_all(bool force)
->  {
->         local_flush_icache_all();
->
->         if (num_online_cpus() < 2)
->                 return;
->
-> +       if (!force)
-> +               asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0,
-> +                       RISCV_ISA_EXT_ZICCID, 1)
-> +                       : : : : ziccid);
->         /*
->          * Make sure all previous writes to the D$ are ordered before mak=
-ing
->          * the IPI. The RISC-V spec states that a hart must execute a dat=
-a fence
-> @@ -41,6 +46,7 @@ void flush_icache_all(void)
->                 sbi_remote_fence_i(NULL);
->         else
->                 on_each_cpu(ipi_remote_fence_i, NULL, 1);
-> +ziccid:;
->  }
->  EXPORT_SYMBOL(flush_icache_all);
->
-> @@ -61,13 +67,17 @@ void flush_icache_mm(struct mm_struct *mm, bool local=
-)
->
->         preempt_disable();
->
-> +       local_flush_icache_all();
-> +
-> +       asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICC=
-ID, 1)
-> +                : : : : ziccid);
-> +
->         /* Mark every hart's icache as needing a flush for this MM. */
->         mask =3D &mm->context.icache_stale_mask;
->         cpumask_setall(mask);
->         /* Flush this hart's I$ now, and mark it as flushed. */
->         cpu =3D smp_processor_id();
->         cpumask_clear_cpu(cpu, mask);
-> -       local_flush_icache_all();
->
->         /*
->          * Flush the I$ of other harts concurrently executing, and mark t=
-hem as
-> @@ -91,6 +101,8 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
->                 on_each_cpu_mask(&others, ipi_remote_fence_i, NULL, 1);
->         }
->
-> +ziccid:;
-> +
->         preempt_enable();
->  }
->
-> --
-> 2.39.5
->
+The first patch is a small clean up which fixes an incorrect statement
+concerning the CAN DLC, the second patch is the real thing and adds
+the documentation of how to use the ip tool to configure the TDC.
 
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+---
+Vincent Mailhol (2):
+      can: remove false statement about 1:1 mapping between DLC and length
+      can: add Transmitter Delay Compensation (TDC) documentation
 
---=20
-Best Regards
- Guo Ren
+ Documentation/networking/can.rst | 67 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 63 insertions(+), 4 deletions(-)
+---
+base-commit: 67029a49db6c1f21106a1b5fcdd0ea234a6e0711
+change-id: 20251012-can-fd-doc-692e7bdd6369
+
+Best regards,
+-- 
+Vincent Mailhol <mailhol@kernel.org>
+
 
