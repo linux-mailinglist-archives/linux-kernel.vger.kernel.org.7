@@ -1,257 +1,343 @@
-Return-Path: <linux-kernel+bounces-849414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC00BD00F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 12:02:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CE6BD00FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 12:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F02F4E3C96
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 10:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214B818871F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 10:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1992609EE;
-	Sun, 12 Oct 2025 10:02:29 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C442737E0;
+	Sun, 12 Oct 2025 10:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZI+gZSyt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15451E0DE8
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 10:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0D61E260D;
+	Sun, 12 Oct 2025 10:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760263348; cv=none; b=mfzmXuK4EXCGS2Ot+fbQ2QMUyPkvnbiWupPbbx1bNBChVqk77JYOmMdpknknCpZiqteiL2cf313ZIKxPcZwKTa03/GIP3T9DefmUb+njJapomNZCeYN3Q3+6Rr8ACFNLkL9gFjlrmeL/VWqy2gMVU802tr7KMcMwE9cBVWyAn3o=
+	t=1760265664; cv=none; b=Zzfy61x4xOBOLwkIE+sPncpiGnBw4R7HCwy62JqV1xBRc4JVrN/x6tMBhqUmNn4eK6Fa/3/oUyjDXYs7AoDk57PZrL04YXcgZIjK0rn47qo5NQq6SErhIM6D3bubLoORIXuQRPXijgvKPEjIBbW8vFEgw3JvAXM3OkqoK+KYDLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760263348; c=relaxed/simple;
-	bh=OdkLd1I+EBYThmSe0I1aHv9HruomWel25clqWoCxYJc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AF0Q7tzeFTeyJkN3Z2PoOx2V7+gZ4L4xZ58syhoohLxJafafAouFSNlgYL4BDENj9+aTVGPDEly9ZU5SRU1eaOuIlU73x/Eg4FAPmG92GgyMdrqq0upGMabFJLVelb3rx5yc0yARdW41AilOYrvIdc9nSlZFJ3ImbogeskdiulM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42f71a09b2cso106133165ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 03:02:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760263346; x=1760868146;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8inZ+mxfoQeGzYTANyypkKww5kkO+VORwCxx0cMU1Lo=;
-        b=JoiDi0e6RlnwYfEJs/ZnBU+2EDt73My4dGWZPjM/CQGzRVLS712kSrlD9F8Ifk79j8
-         KbdMyqQ6TA3XBjW7bOAVc0zwCyNraFseEiEKCzVyrMyDNV+62+aQS7rgc0dMIT0qgEez
-         bqweOhQHP8zptLMyiczbhyDf0hCggefhCZrPbsM8GsKps0YRwLmBFO+wsE6bfUXQfLsQ
-         7cOh42Ni/7mcu2LCm/DdLCgZjmygkjrp034dxKM9/QoSXiggwxAxKJRges7+dhArRHog
-         tLYjOQbf2/n+3bPVTiH1VgNZ2iTbaYIYFmsYXzvEFa2lJxA6SXL2E3HVWQbwfjs13TU5
-         pXbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmUG1a7JIPQrkeHYQk8SP4D3pbSVqLXBNLBT7xI3IsnJRgbvmBT2z4FehxOP7wUaLk2v4JbGtUiqHpHM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKRUVBhtQ6b9gL7+nODHHvnmo3jes4O5E9uUf84Zz1EiMAvfJ3
-	1B15dxne2Qb0ErwB2bWwtV2qZs+kqzdwcLMprJaRPhgZ63OVLFBC6SmkL7TAXn5jLjQ4n6Qb8US
-	4G5UDmG8BVVHxN5JGFiAJRZ19X6dzwYzD8KE+B47dHSS489ogGNApvSa6hok=
-X-Google-Smtp-Source: AGHT+IG6OWO1AhwSSuGVsjgfZ70l5VInCthpUN6b+ByBCk9KJNzIV5GopI2UlC8XR98YMxOrxln3Lo5boDABcE9IQKcPrrUGmqtK
+	s=arc-20240116; t=1760265664; c=relaxed/simple;
+	bh=6XZ2TepMGYVcVHdXOwYD9BHbnutdWTq3FqUNdlx3Khg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=STTPsvoICKtawhW/DQs3qcZG68iWpsXFh3BYTlQgt0rjaFl7Zg835kkwNXzCk3faGKeZdkyzai8ccu7Vfv7SgZw7rB2pTRkYPThSwTyt6glXrDuDDZ6OCCqWPiwuG2CX0KMYwIFTZP3jL70yiEu9dfI8zicZQvnreT4X0dcHWAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZI+gZSyt; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760265661; x=1791801661;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6XZ2TepMGYVcVHdXOwYD9BHbnutdWTq3FqUNdlx3Khg=;
+  b=ZI+gZSytVzh3GpodcMWuprjz6CM9yGbQF8E5rViFdxBhRHUapanIDs/X
+   1djWyBdRAOdo45p6u9bbbGKlKlq0pqTgAAOmipKyHLMrprdwR4SdS+QGi
+   ViqcKR8RlKzWQbtfIGPqDgYYfLXEymIPt0YFQuQ8AQMkKhMUv+HcVw2z2
+   MUz/DV7e2w6LpnuBCBZcK/v0SVJXH/tnyL0mYTa1a5wrFJVyqv14oHCSO
+   v2G5ifjoaDwTNo97oa3xV3uSCGln8kimHAPlfqVGe9wo9BK0QEqXE0zYJ
+   1hZouxXRf4D4H+2Yayp1UGc4JkguzfOqGxukeufXswAnCqmtRfgaDpXwn
+   A==;
+X-CSE-ConnectionGUID: 32Y+OeTSS8Gr1ZkGtfNhPw==
+X-CSE-MsgGUID: dd0m7/GDTIiXLlFJpsO2Gw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11579"; a="61457193"
+X-IronPort-AV: E=Sophos;i="6.19,223,1754982000"; 
+   d="scan'208";a="61457193"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 03:41:00 -0700
+X-CSE-ConnectionGUID: vwmq1nJRQi+Ue/vAP1l63A==
+X-CSE-MsgGUID: a+9iheqfT/uCpHMSjG3ShA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,223,1754982000"; 
+   d="scan'208";a="212318719"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 12 Oct 2025 03:40:55 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v7tVV-0004Kd-1V;
+	Sun, 12 Oct 2025 10:40:53 +0000
+Date: Sun, 12 Oct 2025 18:40:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Probst <markus.probst@posteo.de>,
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Markus Probst <markus.probst@posteo.de>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] rust: leds: add basic led classdev abstractions
+Message-ID: <202510121801.TbAguq2S-lkp@intel.com>
+References: <20251010225349.734350-3-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1446:b0:42f:a7ee:4930 with SMTP id
- e9e14a558f8ab-42fa7ee500bmr67166875ab.8.1760263345955; Sun, 12 Oct 2025
- 03:02:25 -0700 (PDT)
-Date: Sun, 12 Oct 2025 03:02:25 -0700
-In-Reply-To: <67d84663.050a0220.2ca2c6.0020.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68eb7cb1.050a0220.ac43.0009.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: wild-memory-access Read in l2cap_connect_cfm
-From: syzbot <syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com>
-To: hdanton@sina.com, johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010225349.734350-3-markus.probst@posteo.de>
 
-syzbot has found a reproducer for the following issue on:
+Hi Markus,
 
-HEAD commit:    2b763d465239 Add linux-next specific files for 20251010
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=175829e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=0e4ebcc970728e056324
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f63304580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1384067c580000
+kernel test robot noticed the following build errors:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6a00344625c3/disk-2b763d46.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cd34c500f8eb/vmlinux-2b763d46.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/660905c62cb2/bzImage-2b763d46.xz
+[auto build test ERROR on lee-leds/for-leds-next]
+[also build test ERROR on v6.17]
+[cannot apply to rust/rust-next rust/alloc-next linus/master next-20251010]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Probst/rust-add-basic-Pin-Vec-T-A-abstractions/20251011-065458
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/20251010225349.734350-3-markus.probst%40posteo.de
+patch subject: [PATCH v3 2/2] rust: leds: add basic led classdev abstractions
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20251012/202510121801.TbAguq2S-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251012/202510121801.TbAguq2S-lkp@intel.com/reproduce)
 
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-kobject: kobject_add_internal failed for hci0:201 with -EEXIST, don't try to register things with the same name in the same directory.
-Bluetooth: hci0: failed to register connection device
-==================================================================
-BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1623 [inline]
-BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0x6e4/0x1040 net/bluetooth/l2cap_core.c:7304
-Read of size 8 at addr ffff888071324480 by task kworker/u9:1/5146
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510121801.TbAguq2S-lkp@intel.com/
 
-CPU: 1 UID: 0 PID: 5146 Comm: kworker/u9:1 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: hci0 hci_rx_work
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1623 [inline]
- l2cap_connect_cfm+0x6e4/0x1040 net/bluetooth/l2cap_core.c:7304
- hci_connect_cfm+0x95/0x140 include/net/bluetooth/hci_core.h:2106
- le_conn_complete_evt+0xfb8/0x1500 net/bluetooth/hci_event.c:5789
- hci_le_conn_complete_evt+0x187/0x450 net/bluetooth/hci_event.c:5815
- hci_event_func net/bluetooth/hci_event.c:7560 [inline]
- hci_event_packet+0x78f/0x1200 net/bluetooth/hci_event.c:7617
- hci_rx_work+0x46a/0xe80 net/bluetooth/hci_core.c:4099
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+All errors (new ones prefixed by >>):
 
-Allocated by task 5146:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:417
- kasan_kmalloc include/linux/kasan.h:262 [inline]
- __kmalloc_cache_noprof+0x3d5/0x6f0 mm/slub.c:5725
- kmalloc_noprof include/linux/slab.h:957 [inline]
- kzalloc_noprof include/linux/slab.h:1094 [inline]
- l2cap_chan_create+0x50/0x760 net/bluetooth/l2cap_core.c:445
- l2cap_sock_alloc net/bluetooth/l2cap_sock.c:1906 [inline]
- l2cap_sock_new_connection_cb+0x182/0x2b0 net/bluetooth/l2cap_sock.c:1485
- l2cap_connect_cfm+0x37a/0x1040 net/bluetooth/l2cap_core.c:7287
- hci_connect_cfm+0x95/0x140 include/net/bluetooth/hci_core.h:2106
- le_conn_complete_evt+0xfb8/0x1500 net/bluetooth/hci_event.c:5789
- hci_le_conn_complete_evt+0x187/0x450 net/bluetooth/hci_event.c:5815
- hci_event_func net/bluetooth/hci_event.c:7560 [inline]
- hci_event_packet+0x78f/0x1200 net/bluetooth/hci_event.c:7617
- hci_rx_work+0x46a/0xe80 net/bluetooth/hci_core.c:4099
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>> error[E0277]: the trait bound `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>: LedOps` is not satisfied
+   --> rust/doctests_kernel_generated.rs:6097:6
+   |
+   6097 | /      KBox::pin_init(led::Device::new(
+   6098 | |          None,
+   6099 | |          None,
+   6100 | |          led::InitData::new()
+   6101 | |              .default_label(c_str!("my_led")),
+   6102 | |          MyLedOps,
+   6103 | |      ))
+   | |_______^ the trait `LedOps` is not implemented for `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   |
+   = help: the trait `LedOps` is implemented for `MyLedOps`
+   note: required by a bound in `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::Device`
+   --> rust/kernel/led.rs:26:22
+   |
+   26   | pub struct Device<T: LedOps> {
+   |                      ^^^^^^ required by this bound in `Device`
+--
+>> error[E0277]: `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>` cannot be shared between threads safely
+   --> rust/doctests_kernel_generated.rs:6097:6
+   |
+   6097 | /      KBox::pin_init(led::Device::new(
+   6098 | |          None,
+   6099 | |          None,
+   6100 | |          led::InitData::new()
+   6101 | |              .default_label(c_str!("my_led")),
+   6102 | |          MyLedOps,
+   6103 | |      ))
+   | |_______^ `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>` cannot be shared between threads safely
+   |
+   = help: within `FwNode`, the trait `Sync` is not implemented for `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>`
+   note: required because it appears within the type `Opaque<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>`
+   --> rust/kernel/types.rs:324:12
+   |
+   324  | pub struct Opaque<T> {
+   |            ^^^^^^
+   note: required because it appears within the type `FwNode`
+   --> rust/kernel/device/property.rs:35:12
+   |
+   35   | pub struct FwNode(Opaque<bindings::fwnode_handle>);
+   |            ^^^^^^
+   = note: required for `&FwNode` to implement `Send`
+   note: required because it appears within the type `Option<&FwNode>`
+   --> /opt/cross/rustc-1.88.0-bindgen-0.72.0/rustup/toolchains/1.88.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/option.rs:589:10
+   |
+   589  | pub enum Option<T> {
+   |          ^^^^^^
+   note: required because it appears within the type `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   --> rust/kernel/led.rs:36:12
+   |
+   36   | pub struct InitData<'a> {
+   |            ^^^^^^^^
+   = note: required for `Device<InitData<'_>>` to implement `Send`
+   note: required by a bound in `Devres`
+   --> rust/kernel/devres.rs:108:22
+   |
+   108  | pub struct Devres<T: Send> {
+   |                      ^^^^ required by this bound in `Devres`
+   = note: the full name for the type has been written to 'rust/doctests_kernel_generated.long-type-938713932875159562.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+--
+>> error[E0107]: missing generics for struct `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::Device`
+   --> rust/doctests_kernel_generated.rs:6096:47
+   |
+   6096 |  fn register_my_led() -> Result<Pin<KBox<led::Device>>> {
+   |                                               ^^^^^^ expected 1 generic argument
+   |
+   note: struct defined here, with 1 generic parameter: `T`
+   --> rust/kernel/led.rs:26:12
+   |
+   26   | pub struct Device<T: LedOps> {
+   |            ^^^^^^ -
+   help: add missing generic argument
+   |
+   6096 |  fn register_my_led() -> Result<Pin<KBox<led::Device<T>>>> {
+   |                                                     +++
+--
+>> error[E0277]: the trait bound `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>: LedOps` is not satisfied
+   --> rust/doctests_kernel_generated.rs:6100:10
+   |
+   6097 |        KBox::pin_init(led::Device::new(
+   |                       ---------------- required by a bound introduced by this call
+   ...
+   6100 | /          led::InitData::new()
+   6101 | |              .default_label(c_str!("my_led")),
+   | |_____________________________________________^ the trait `LedOps` is not implemented for `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   |
+   = help: the trait `LedOps` is implemented for `MyLedOps`
+   note: required by a bound in `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::Device::<T>::new`
+   --> rust/kernel/led.rs:168:9
+   |
+   168  | impl<T: LedOps> Device<T> {
+   |         ^^^^^^ required by this bound in `Device::<T>::new`
+   ...
+   172  |     pub fn new<'a>(
+   |            --- required by a bound in this associated function
+--
+>> error[E0277]: the trait bound `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>: LedOps` is not satisfied
+   --> rust/doctests_kernel_generated.rs:6097:21
+   |
+   6097 |        KBox::pin_init(led::Device::new(
+   |  _____________________^
+   6098 | |          None,
+   6099 | |          None,
+   6100 | |          led::InitData::new()
+   6101 | |              .default_label(c_str!("my_led")),
+   6102 | |          MyLedOps,
+   6103 | |      ))
+   | |______^ the trait `LedOps` is not implemented for `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   |
+   = help: the trait `LedOps` is implemented for `MyLedOps`
+   note: required by a bound in `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::Device<T>`
+   --> rust/kernel/led.rs:168:9
+   |
+   168  | impl<T: LedOps> Device<T> {
+   |         ^^^^^^ required by this bound in `Device<T>`
+--
+>> error[E0277]: the trait bound `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>: LedOps` is not satisfied
+   --> rust/doctests_kernel_generated.rs:6097:6
+   |
+   6097 |      KBox::pin_init(led::Device::new(
+   |      ^^^^^^^^^^^^^^ the trait `LedOps` is not implemented for `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   |
+   = help: the trait `LedOps` is implemented for `MyLedOps`
+   note: required by a bound in `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::Device`
+   --> rust/kernel/led.rs:26:22
+   |
+   26   | pub struct Device<T: LedOps> {
+   |                      ^^^^^^ required by this bound in `Device`
+--
+>> error[E0277]: `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>` cannot be shared between threads safely
+   --> rust/doctests_kernel_generated.rs:6097:6
+   |
+   6097 |      KBox::pin_init(led::Device::new(
+   |      ^^^^^^^^^^^^^^ `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>` cannot be shared between threads safely
+   |
+   = help: within `FwNode`, the trait `Sync` is not implemented for `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>`
+   note: required because it appears within the type `Opaque<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>`
+   --> rust/kernel/types.rs:324:12
+   |
+   324  | pub struct Opaque<T> {
+   |            ^^^^^^
+   note: required because it appears within the type `FwNode`
+   --> rust/kernel/device/property.rs:35:12
+   |
+   35   | pub struct FwNode(Opaque<bindings::fwnode_handle>);
+   |            ^^^^^^
+   = note: required for `&FwNode` to implement `Send`
+   note: required because it appears within the type `Option<&FwNode>`
+   --> /opt/cross/rustc-1.88.0-bindgen-0.72.0/rustup/toolchains/1.88.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/option.rs:589:10
+   |
+   589  | pub enum Option<T> {
+   |          ^^^^^^
+   note: required because it appears within the type `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   --> rust/kernel/led.rs:36:12
+   |
+   36   | pub struct InitData<'a> {
+   |            ^^^^^^^^
+   = note: required for `Device<InitData<'_>>` to implement `Send`
+   note: required by a bound in `Devres`
+   --> rust/kernel/devres.rs:108:22
+   |
+   108  | pub struct Devres<T: Send> {
+   |                      ^^^^ required by this bound in `Devres`
+   = note: the full name for the type has been written to 'rust/doctests_kernel_generated.long-type-938713932875159562.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+--
+>> error[E0277]: the trait bound `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>: LedOps` is not satisfied
+   --> rust/doctests_kernel_generated.rs:6097:6
+   |
+   6097 |      KBox::pin_init(led::Device::new(
+   |      ^^^^ the trait `LedOps` is not implemented for `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   |
+   = help: the trait `LedOps` is implemented for `MyLedOps`
+   note: required by a bound in `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::Device`
+   --> rust/kernel/led.rs:26:22
+   |
+   26   | pub struct Device<T: LedOps> {
+   |                      ^^^^^^ required by this bound in `Device`
+--
+>> error[E0277]: `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>` cannot be shared between threads safely
+   --> rust/doctests_kernel_generated.rs:6097:6
+   |
+   6097 |      KBox::pin_init(led::Device::new(
+   |      ^^^^ `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>` cannot be shared between threads safely
+   |
+   = help: within `FwNode`, the trait `Sync` is not implemented for `UnsafeCell<MaybeUninit<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>>`
+   note: required because it appears within the type `Opaque<rust_doctest_kernel_alloc_kbox_rs_7::kernel::bindings::fwnode_handle>`
+   --> rust/kernel/types.rs:324:12
+   |
+   324  | pub struct Opaque<T> {
+   |            ^^^^^^
+   note: required because it appears within the type `FwNode`
+   --> rust/kernel/device/property.rs:35:12
+   |
+   35   | pub struct FwNode(Opaque<bindings::fwnode_handle>);
+   |            ^^^^^^
+   = note: required for `&FwNode` to implement `Send`
+   note: required because it appears within the type `Option<&FwNode>`
+   --> /opt/cross/rustc-1.88.0-bindgen-0.72.0/rustup/toolchains/1.88.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/option.rs:589:10
+   |
+   589  | pub enum Option<T> {
+   |          ^^^^^^
+   note: required because it appears within the type `rust_doctest_kernel_alloc_kbox_rs_7::kernel::led::InitData<'_>`
+   --> rust/kernel/led.rs:36:12
+   |
+   36   | pub struct InitData<'a> {
+   |            ^^^^^^^^
+   = note: required for `Device<InitData<'_>>` to implement `Send`
+   note: required by a bound in `Devres`
+   --> rust/kernel/devres.rs:108:22
+   |
+   108  | pub struct Devres<T: Send> {
+   |                      ^^^^ required by this bound in `Devres`
+   = note: the full name for the type has been written to 'rust/doctests_kernel_generated.long-type-938713932875159562.txt'
+   = note: consider using `--verbose` to print the full type name to the console
 
-Freed by task 6092:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- __kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:587
- kasan_save_free_info mm/kasan/kasan.h:406 [inline]
- poison_slab_object mm/kasan/common.c:252 [inline]
- __kasan_slab_free+0x5c/0x80 mm/kasan/common.c:284
- kasan_slab_free include/linux/kasan.h:234 [inline]
- slab_free_hook mm/slub.c:2515 [inline]
- slab_free mm/slub.c:6574 [inline]
- kfree+0x19a/0x6d0 mm/slub.c:6781
- l2cap_sock_cleanup_listen+0xea/0x3e0 net/bluetooth/l2cap_sock.c:1468
- l2cap_sock_release+0x6a/0x210 net/bluetooth/l2cap_sock.c:1426
- __sock_release net/socket.c:662 [inline]
- sock_close+0xc3/0x240 net/socket.c:1455
- __fput+0x44c/0xa70 fs/file_table.c:468
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888071324000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 1152 bytes inside of
- freed 2048-byte region [ffff888071324000, ffff888071324800)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x71320
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88813fe27000 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88813fe27000 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea0001c4c801 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5935, tgid 5935 (kworker/1:4), ts 91888484672, free_ts 91755679836
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1850
- prep_new_page mm/page_alloc.c:1858 [inline]
- get_page_from_freelist+0x2365/0x2440 mm/page_alloc.c:3884
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5183
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:3031 [inline]
- allocate_slab+0x96/0x3a0 mm/slub.c:3204
- new_slab mm/slub.c:3258 [inline]
- ___slab_alloc+0xe94/0x18a0 mm/slub.c:4628
- __slab_alloc+0x65/0x100 mm/slub.c:4747
- __slab_alloc_node mm/slub.c:4823 [inline]
- slab_alloc_node mm/slub.c:5234 [inline]
- __do_kmalloc_node mm/slub.c:5603 [inline]
- __kmalloc_node_track_caller_noprof+0x5c7/0x800 mm/slub.c:5713
- kmalloc_reserve+0x136/0x290 net/core/skbuff.c:601
- __alloc_skb+0x142/0x2d0 net/core/skbuff.c:670
- alloc_skb include/linux/skbuff.h:1383 [inline]
- mld_newpack+0x13c/0xc40 net/ipv6/mcast.c:1775
- add_grhead+0x5a/0x2a0 net/ipv6/mcast.c:1886
- add_grec+0x1452/0x1740 net/ipv6/mcast.c:2025
- mld_send_cr net/ipv6/mcast.c:2148 [inline]
- mld_ifc_work+0x6ed/0xd60 net/ipv6/mcast.c:2693
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
-page last free pid 6090 tgid 6090 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1394 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2906
- __slab_free+0x2e7/0x390 mm/slub.c:5924
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x97/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:352
- kasan_slab_alloc include/linux/kasan.h:252 [inline]
- slab_post_alloc_hook mm/slub.c:4947 [inline]
- slab_alloc_node mm/slub.c:5246 [inline]
- kmem_cache_alloc_noprof+0x367/0x6e0 mm/slub.c:5253
- getname_flags+0xb8/0x540 fs/namei.c:146
- getname include/linux/fs.h:2922 [inline]
- do_sys_openat2+0xbc/0x1c0 fs/open.c:1431
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_openat fs/open.c:1468 [inline]
- __se_sys_openat fs/open.c:1463 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1463
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888071324380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888071324400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888071324480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff888071324500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888071324580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
