@@ -1,108 +1,91 @@
-Return-Path: <linux-kernel+bounces-849768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5600BD0D54
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:59:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179FBBD0D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78653BC0E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E9B18935F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8943B24634F;
-	Sun, 12 Oct 2025 22:59:11 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E0D2EBB86;
+	Sun, 12 Oct 2025 23:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="tBxvfyM5"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC1F4C85;
-	Sun, 12 Oct 2025 22:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1592E212568
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760309951; cv=none; b=TeEbK5UckIgqYDnOPfUgoJT4M5umTl2lBD1vsgRc1iJEJAkKI0Rp39p2JpFqHsE5ug0YgFh33wpiKpQZVquWi9xCdKxwc9HXD78C+nY8p77qKjs0JTSknmGEf6Cf2Kf9jYS4yizSi/xYCHo2pXa/ndzyhEmi9OLg18basT0fV4k=
+	t=1760310537; cv=none; b=PUcdl3nSu2eBWfbZK5krH4mUTQDnyKB7fUy6dVaRwiVOyb0V43IZct5Z4Zk71TNkyWmUFMaVKDjHLKazNBEzGgP/f+F26Fx6F3raod59ipg7LLA/xxM1hb8LV6a1K5W+5dCoXr+sLrqLbjHWFz4z1dyb3P1PYzMViDvF81WdbIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760309951; c=relaxed/simple;
-	bh=O9/xMq/WsWwt6BhdaZP+0IQk2PmNkJ/e+71vzrgkOOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vq26vVTZ+pWb87vqkdiBCtU+aFlbiCL8nDfGhpxlVlOtNVbY1pwJgSN39rkrb+jgYEqVsmWj7WVvZr7JwTg0R6FpGVdOcXao6tLIJANfthCCDfr4tjGtBW2XtET4TKQ/a4PRdwUZiVoamPerXCw42qLqDeyxBKSWMCqrD9mvKYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: zesmtpgz3t1760309901tf1369bb2
-X-QQ-Originating-IP: MvtMcZy8FSuveoXRjmYKGRWu3Gd3/PHMHPUpYLPI0AU=
-Received: from [192.168.3.223] ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 13 Oct 2025 06:58:20 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15561149925438105871
-Message-ID: <56E522C05F8E6468+9e555719-8b1e-47a6-8d60-b6a7e89fd91b@chenxiaosong.com>
-Date: Mon, 13 Oct 2025 06:58:20 +0800
+	s=arc-20240116; t=1760310537; c=relaxed/simple;
+	bh=FrgeO9jAQ13cWTQoQ8ZjMCCa9xelIk+ejwmInmLMfpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oHNURiK/WburFDAJLw8wJ2JQErmWCdoTR3iHHMS4aJdA/u5gX6dSpl7vKoGNykJ4cphMIadMe3/4O5rV/hotRlHPBJARtIL7yfCeOxcO1i9UpoKYAspIBIs7YwOu1ZpJDDwjVseWj9sJPxtNSfK9mgWbjbfb0X9dTQ1YVqe3x4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=tBxvfyM5; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1760310533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qfhZrhYFtMSLWRRAHazHk/R5uWWKEYTL6cwb+TfTWeI=;
+	b=tBxvfyM5iX0sxh8othw28Ip5LCQ81nppXf8uXsHR4bUpDvVo10RzQeLk5zZtQ6pwiE6Hfp
+	vXFuixsc4Qylvon+Nuehb5QefLnTP/7meW2FgC2aE+4O+QtT3b30MUaX64gnPA2mDiSE26
+	e55DPcnNGjXHSSFjlXJv+mT3bam6mJxhtKjhRTEwM0HBzWYLRIpBaqgxgBHcuePvsdorYy
+	v9sRUkJ19sQGjJ04foe8fuCJHOZ143xsBiepgROMyula/yv/Mfq/B3qkG+kTskxHIy9XcJ
+	qQ4VvlyoXEcqZlTixoDJ66KFLLKKGlsz2H0X71JEQZDgzGGRqaSewpl8emWR5Q==
+From: Val Packett <val@packett.cool>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Val Packett <val@packett.cool>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-x1e80100: Enable runtime PM
+Date: Sun, 12 Oct 2025 20:06:59 -0300
+Message-ID: <20251012230822.16825-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/22] smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- stfrench@microsoft.com, metze@samba.org, pali@kernel.org,
- linkinjeon@kernel.org, smfrench@gmail.com, sfrench@samba.org,
- senozhatsky@chromium.org, tom@talpey.com, pc@manguebit.org,
- ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com,
- zhangguodong@kylinos.cn
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
- ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20251012161749.2994033-1-chenxiaosong@chenxiaosong.com>
- <66942D4891D3E571+20251012161749.2994033-7-chenxiaosong@chenxiaosong.com>
- <bd7b1078-4e58-4403-97e3-ac3a4765c51a@wanadoo.fr>
-Content-Language: en-US
-From: chenxiaosong <chenxiaosong@chenxiaosong.com>
-In-Reply-To: <bd7b1078-4e58-4403-97e3-ac3a4765c51a@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: M6HsUa4FHJpkREuH6gKmoKadHC2GeyeFVXQD1ZZH1o0+wu4TWXSYuyeu
-	ShYRK44jqH5ITPzFw+F1jfvbMLgCf4HV8eE9IOEO8YC5BbdodOqn/pugq2C6zBujiWoEZ1R
-	Me5eXtGs/SYwceMKT1GHenumWgq4W0LxRnOEPNyoXEfK4ZNptRjvmvejtrkayM6Ad5mQDEy
-	FyNHNFS2u88okb6w1lJ4VAKtfQJKp4vdQv/1itBh/ZwuCuRbuJP1RexlSGNa7xrKU4wvdFi
-	WDJYNw3GsCr7S3fT1ejoVohnz33MQFpWq3lHggFjXAye1kraDBSC+T7WUBjcntyet7NgYm8
-	fSFkN5+HLgap79ahWQ2s6w2aQtIH3tXXdgPQ4ADZmmtU4B6AYOChV+8byErfPsE8I+UBigI
-	4QuBk1WdH9+Mmdo2NqYgK1z/dubhgLtc4hZEe3cSpoPlEmxtPUMWcWB1o+7XjROvzqqM/lT
-	4rnlAc8NVkpRaeI/wmJaEuW8hegQ/01InAZsWzpF4Z6GwVM8F313H5QEyxQ/tNtjIaQcgiC
-	AEOhQHLIfv/in+Q828wE0W65IVdhobR3AarRvrkgAy3z1CYFe/69mFF5pj6qQcMjg1fF1Tt
-	UyxOV0L/1TeN+rABwz+Yb7l11NZ7riAUxWscAXvKjjJa7xduRV3WV3YQPNeJJVZTOIxuJcD
-	U4NapQa9K7mF++tj6XKQZZnraBp6lF1sDyyj6SLxPylHVlMVn+FfqZZNCqRaGBFNfPsfL3k
-	LfE+ARi7nMmDKVcJFzd7DS2vE+R76y6nsLlezcY+/8qOGJaYXTrKVdsxc2FIYtQDitChdhP
-	VuR01US3fzHtYmzZ0xj0ucbMYOWBaFnykbn/e4PdzIUDBznwBJgDDG7X0NevXv2z0vlmIRl
-	RVgYmQhDVFGxZQN5nT5NatRmun/UpNN4gaEMT9GT3B1nuLmHp4asTbcXGZw7MuSRcSS3/+1
-	i7qthzjUszR31kEF/jOEp9rWJXIs0UIB8ThlZ5tu+KNGd8RRTua7By3GebhoWDRP51zZFq0
-	zR7jU5dIh5mX7z9en4fnDEhYxL54SqObWlViYcSLZMwjPQLJaAPpWTNojhkCbazHrO7TUAD
-	g==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-Migadu-Flow: FLOW_OUT
 
-Hi Christophe,
+Enable the main clock controller driver to participate in runtime
+power management.
 
-Thank you for taking the time to review and comment. Apologies — it was 
-my oversight not to list you in the "To:" of v2, and I should have used 
-"Suggested-by:" rather than "Reviewed-by:".
+Signed-off-by: Val Packett <val@packett.cool>
+---
+Seems like this would be one of the prerequisites for actually reaching
+deeper power states.. I've been running with this patch on a Dell
+Latitude 7455 for quite a while, did not see any harm for sure.
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 2025/10/13 04:36, Christophe JAILLET wrote:
-> 
-> Hi,
-> 
-> even if I reviewed and commented on this patch, I never gave an explicit 
-> R-b.
-> 
-> And as I'm cited in this v2, being in To: or Cc: of this updated version 
-> would have been appreciated.
-> 
-> No hard-feeling.
-> 
-> CJ
-> 
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index 301fc9fc32d8..96bb604c6378 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -6721,6 +6721,7 @@ static const struct qcom_cc_desc gcc_x1e80100_desc = {
+ 	.num_resets = ARRAY_SIZE(gcc_x1e80100_resets),
+ 	.gdscs = gcc_x1e80100_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(gcc_x1e80100_gdscs),
++	.use_rpm = true,
+ };
+ 
+ static const struct of_device_id gcc_x1e80100_match_table[] = {
+-- 
+2.51.0
 
 
