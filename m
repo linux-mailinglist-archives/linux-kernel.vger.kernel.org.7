@@ -1,159 +1,92 @@
-Return-Path: <linux-kernel+bounces-849361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BEDBCFECB
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:49:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163DCBCFECE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA0E18938DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:49:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD9494E2AD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800B71D514B;
-	Sun, 12 Oct 2025 02:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8jKIF0O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E551DE4E5;
+	Sun, 12 Oct 2025 02:53:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DA34BA41;
-	Sun, 12 Oct 2025 02:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB471A2630
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 02:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760237332; cv=none; b=tthbVpWMLfePN8yV41UHBd6vZsp1+tz4PnCWsUCL/eLpOXkD2ktewE0UGVSEFQdnVAVNZO/19WBYM8UynzhC3PvE5NHGvScz6K4+GNt3lkoIOUBJuvxYcRtcsfk3Gyy20rq0r7tm9ahOIUQJZWJ0Lal252PI0tM4YutRcKy7v6E=
+	t=1760237584; cv=none; b=Fu733qx/XVUKZvV5zcxvLarzTdgZK/ovYQpjBmVwcU3BEEu7YOh+2aR6qDicQjIb+4uV8kNeHodvdbtLLoIMflR2txMNmy3QuIcnjKvKnSVZVGMuZP3oc9giNgkOMI6zajGNI58Mqy85eWTQry4XcUbeAQwXTy51tDlB63y+Wyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760237332; c=relaxed/simple;
-	bh=kPDBhwA9avKqp5qDWVWZtY+bRRHa1f3G/FsLBM160tM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LX3Jm7/P2zGFoI0TUqmgx+HKyNI95JrC7J14jLgxaZNua8TEbWev0rJveFwBrsZak1s40XzUh8XU0EatnctmBmWUDD5lvjAWXXoVTo24MhmczcYyFlUgyYOMalI++MeobqoXF5Ila/8rkwWcttJusXNHBtpL9nGKju+ZkZIKLIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8jKIF0O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC476C4CEF4;
-	Sun, 12 Oct 2025 02:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760237331;
-	bh=kPDBhwA9avKqp5qDWVWZtY+bRRHa1f3G/FsLBM160tM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J8jKIF0OStEzqRcUMQ0zCRK8NRv4RTZgAOPEWCn76XP/Bb5XwwkB+PUu0gIovEuJd
-	 LvD6z2G2IUdmJgXQXLifNsS5g/AT6/bxUb/BJaOmTCkvJdWrMXo/8bbZQGWC18Lk87
-	 L3TtE7Jmdv0Hwa5JAH8R9Pr29/WtH64g+d87xHZ9I9SrWbnlNmpG07EEb5JHbPpVQV
-	 T4F6+Gte0HGt7L7nx/O1jkbJ8yj9QWebvWkLwkrIn63LUA8MgH1XW+5YW7uqCoCN+A
-	 N1aM5rG40JxaOVj8ms763QUfEdKGx8i0RvfoI3wVKlSYZpOkp+9ei4ygmluybe72KS
-	 1McB3OM2Z9SHg==
-Message-ID: <9746976a-ade4-4551-920c-ffbb914a4e10@kernel.org>
-Date: Sun, 12 Oct 2025 04:48:41 +0200
+	s=arc-20240116; t=1760237584; c=relaxed/simple;
+	bh=7BJjU8mvRZTO3CSraVklA+BVU855Jmx35bucmD12j8s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lP0AD/T9WC7hboImOTU2tYEFCcB5zU3fUioQ/vjw7qG3dxlprRXOoIOJdGeNEsstKNk4yElINTrPhXdnZ/Q3CEZ3iJ0n73XCRbUOWqb28xQJECQ+BPVny78j8NE0xF4DEn1NlvbGyGS7A0Oo63/fuKD84Vwnm2CZ0UQUXq0pnbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-91b3cc5aa6aso2005388239f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 19:53:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760237582; x=1760842382;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=POMw7ZBLU0e1mkn6ITfoldLxK4uCmWFVIYgnY1nu5E8=;
+        b=nhjXLelr7W97nuvZIZy3lCKHYgaAVCg2dGIf5k+lejTnw4q1mCByIxKe3ipl5oaFJg
+         aXUZjhrv5MGfS6aaZXllSsFDXv2PqN1MgQUDIANzNjnhWhB945XHo1mgfA97opwsdXtg
+         pjZS1ZOCTtJ8CpUoUfqt6RaS5uD6N0oMSB2qzai8ztNtgyWpPXjpp5fESdpYPiTKaEF/
+         1I9vYrBSuss2OAhJF3AE6UPtTQ44D7GgPtBoV5G94o/jwnZ5LGX+Lm9pNzDZ/FBBUCIV
+         hkRTBDlpFYbtrD+X7C9sJs1awoGYdPrs3euMireft/MIRG9ZkXuBvJJjpRPhtaX5Zhco
+         XE7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXpvymRjo0vV+eUw87UkJz1Kkx4WkWyMx4id8CFIVLC8meprlBySEgWlGCIifRYzkPpLX549aeTrQMgmVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/FhsrnFxT2pEbzRqKWkO0D2MDsde4kh4THwezTs1ANjC5PMu4
+	WzDYmx5snWtyYCajqgqZSl2DdbvHkUGrhS6IQBIsGFWPW77UZFbv/sI1FW7CaD7HIAFuSbVChF4
+	rXamVcVBup3VIBrvj7wTGMi9Fy5nlpzGCHmW+/mSUr1oimpones+IOUQ+1Qo=
+X-Google-Smtp-Source: AGHT+IGqV0tPIVVdEjjAOeDHjFSsyZFT0ykscgyvsHYo2mV1t+Vehl/zrV8TZ9Q5Jm5BJ8acjYmW9IU1jCBhRzvqgTCKTWGetdYt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 15/15] arm: dts: airoha: en7523: add SNAND node
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
-References: <20251010204500.1625215-1-mikhail.kshevetskiy@iopsys.eu>
- <20251010204500.1625215-16-mikhail.kshevetskiy@iopsys.eu>
- <34899379-9788-4ac8-8b62-e9f47b4d49d9@kernel.org>
- <10802039-ca65-41c0-88fa-51db6d86aabd@iopsys.eu>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <10802039-ca65-41c0-88fa-51db6d86aabd@iopsys.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1488:b0:42e:2c30:285b with SMTP id
+ e9e14a558f8ab-42f873d1c4bmr168499695ab.20.1760237582254; Sat, 11 Oct 2025
+ 19:53:02 -0700 (PDT)
+Date: Sat, 11 Oct 2025 19:53:02 -0700
+In-Reply-To: <684196cd.050a0220.2461cf.001e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68eb180e.a70a0220.b3ac9.0010.GAE@google.com>
+Subject: Re: [syzbot] [kvm-x86?] WARNING in kvm_apic_accept_events
+From: syzbot <syzbot+b1784a9a955885da51cd@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	pbonzini@redhat.com, seanjc@google.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/10/2025 07:01, Mikhail Kshevetskiy wrote:
-> On 11.10.2025 02:42, Krzysztof Kozlowski wrote:
->> On 10/10/2025 22:45, Mikhail Kshevetskiy wrote:
->>> Add SNAND node to enable support of attached SPI-NAND on the EN7523 SoC.
->>>
->>> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
->>> ---
->>>  arch/arm/boot/dts/airoha/en7523.dtsi | 21 +++++++++++++++++++++
->>>  1 file changed, 21 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/airoha/en7523.dtsi b/arch/arm/boot/dts/airoha/en7523.dtsi
->>> index b523a868c4ad..78e351eb787a 100644
->>> --- a/arch/arm/boot/dts/airoha/en7523.dtsi
->>> +++ b/arch/arm/boot/dts/airoha/en7523.dtsi
->>> @@ -203,4 +203,25 @@ pcie_intc1: interrupt-controller {
->>>  			#interrupt-cells = <1>;
->>>  		};
->>>  	};
->>> +
->>> +	spi_ctrl: spi@1fa10000 {
->>> +		compatible = "airoha,en7581-snand";
->> NAK, now I found this... Respond to comments instead of ignoring them.
->>
->> Three versions within few hours, that's not acceptable. Outside of the
->> merge window the expectation is minimum 24h difference. Within merge
->> window this is just spamming.
-> 
-> 
-> I already lost any hope to merge this to linux-3.18, so no problem.
-> 
-> Could you and Rob explain me this compatible issue? I got a feeling that
-> Rob telling me to keep "airoha,en7581-snand" compatible while you are
-> telling the opposite. As for me the use of "airoha,en7523-snand" or
-> maybe "airoha,en75xx-snand" for both en7523 & en7581 chips is the best.
-> 
-> Is there any policy? Could you provide a link?
+syzbot suspects this issue was fixed by commit:
 
-The policy is described in writing bindings. I also explained it in
-greater details in my recent OSSEU introductory talk. You need two
-compatibles.
+commit 0fe3e8d804fdcc09ef44fbffcad8c39261a03470
+Author: Sean Christopherson <seanjc@google.com>
+Date:   Thu Jun 5 19:50:17 2025 +0000
 
-Best regards,
-Krzysztof
+    KVM: x86: Move INIT_RECEIVED vs. INIT/SIPI blocked check to KVM_RUN
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1585c9e2580000
+start commit:   64980441d269 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=26abb92f9ef9d1d0
+dashboard link: https://syzkaller.appspot.com/bug?extid=b1784a9a955885da51cd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12200c0c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fd31d4580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: KVM: x86: Move INIT_RECEIVED vs. INIT/SIPI blocked check to KVM_RUN
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
