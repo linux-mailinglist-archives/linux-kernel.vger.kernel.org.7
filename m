@@ -1,275 +1,169 @@
-Return-Path: <linux-kernel+bounces-849434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F8EBD0197
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:54:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBC0BD01A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3C4C1892F60
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 11:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F553B68C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 11:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD97C2749D9;
-	Sun, 12 Oct 2025 11:54:17 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6298027467D;
+	Sun, 12 Oct 2025 11:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qHVJmeih"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F16214807;
-	Sun, 12 Oct 2025 11:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A232746A;
+	Sun, 12 Oct 2025 11:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760270057; cv=none; b=hB1Ivlh/nLr6j/wAXhw8e/jisT6M16V62mTXCY26Zpk+aT9QTvDuhpkOzcu51tKptYaF2MkYEwNjDsbCOlYd9jeSSyAHt9z+xmCoMti6avpr83NIdKE/6C2N/1HaPidlyDsat5fttHHaxuhAqyuSJRI/jWPPFt1vGFQoqe9S5rY=
+	t=1760270305; cv=none; b=RRnjW25vsglfZaiEY62kroJptf9giM87nIZLCqbsBFZedkFs4R655Zv41sz37ZW7Su9N6RdGFSQSLFYG3cy6cJmfNIai5NehRBLV1KuhxYWB4F7mFoPuZ4sZqP5bfL+6y7dAOCLQZbXGqKlRgS2Yjh5/wj91q/E0b/OUOkDFaW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760270057; c=relaxed/simple;
-	bh=g/lsp42oyDVgXy4RMAqncFSNCkuiqBE+xgpVOAv+6cc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZnvYQIajnYRmJ9tWsqNfP0l+K7/Dg6bWUIqgTWYRlZ5KoCoFR+KBPycDLOLgy6JpveKbEnpLmtAQe7dyF2GbMofZ9gBgZLO9zfcNlZPx8ReLBDUQQyXOreJDSlf7lJWs5M9OybBIA4vpodwPsKmHTPRt+2sJ1fX1GggEpRZV9sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: Jonathan Corbet <corbet@lwn.net>, Russell King <linux@armlinux.org.uk>,
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Andrew Morton <akpm@linux-foundation.org>, Lance Yang <lance.yang@linux.dev>,
-	Masami Hiramatsu <mhiramat@kernel.org>, "Jason A . Donenfeld"
-	<Jason@zx2c4.com>, Shuah Khan <shuah@kernel.org>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Petr Mladek <pmladek@suse.com>, Randy Dunlap
-	<rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Feng Tang
-	<feng.tang@linux.alibaba.com>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, Kees Cook <kees@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Li RongQing <lirongqing@baidu.com>, Phil Auld
-	<pauld@redhat.com>, Joel Granados <joel.granados@kernel.org>, Jakub Kicinski
-	<kuba@kernel.org>, Simon Horman <horms@kernel.org>, Anshuman Khandual
-	<anshuman.khandual@arm.com>, Stanislav Fomichev <sdf@fomichev.me>, "Liam R .
- Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>, David Hildenbrand <david@redhat.com>, Florian
- Westphal <fw@strlen.de>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <wireguard@lists.zx2c4.com>,
-	<netdev@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-Subject: [PATCH][v3] hung_task: Panic after fixed number of hung tasks
-Date: Sun, 12 Oct 2025 19:50:35 +0800
-Message-ID: <20251012115035.2169-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1760270305; c=relaxed/simple;
+	bh=NwikYSMObjIckD/B3pq/U2VJ6Lh9h44qwNONqewjv6o=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=CWBfVP1U8/D2+uGrZs8a6/oLugp7t3+zhu5q0BE3BlpMR4XiMEIPyYq7kL24qXbRSx/sZ6lY+kBqNbGDsK3pm6+1TED+EKFq8hvVQU1DR14uRUtnpCMLmnyLgr0x+uPGYbI82GD0HFdddVT6emZDsmIw7pvsvlh8B8usORbOBGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qHVJmeih; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760270278; x=1760875078; i=markus.elfring@web.de;
+	bh=hWtOLCQ+DGp3AMt9iKbzx4fDPilVO7oW59bVfPk8WXY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qHVJmeih23Os/I38PWaqNUX6p+3AzJwXrLyQ+HE0wwImszIef65txOedGWyMD09c
+	 IErtrTzHPCqU8YZm3wxl5T7FJMpUsYAqLpJ25alXTtyYuzLcH3kQMCxCH7ErIk922
+	 hmBJutwwEez34Dr5WDp+rAbYk08ez/8Ynkmy6bwLFnm5D2pT4dPDRVhPnwWpuPCEC
+	 8xH6PMtAyxfCh/bxCesIZrkuNTCYYBcDVpu+z5F4qrRvziqXgsOLqBIkV/h7lM/Su
+	 Rv/xaUDKghcIGGx+27erbRocc6xxw0hE6KOtBtx9DxBreKzt85V9Bd2Ys801QAjp3
+	 1xsrdRMWLGpDYtmN6Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLzn1-1uq6i71PG5-00Rrna; Sun, 12
+ Oct 2025 13:57:58 +0200
+Message-ID: <fcf6c291-63d2-4270-881f-1e97d3854ae4@web.de>
+Date: Sun, 12 Oct 2025 13:57:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjkjy-exc11.internal.baidu.com (172.31.51.11) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+User-Agent: Mozilla Thunderbird
+To: Ranganath V N <vnranganath.20@gmail.com>, linux-hwmon@vger.kernel.org,
+ =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
+ Jean Delvare <jdelvare@suse.com>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ David Hunter <david.hunter.linux@gmail.com>, khalid@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251012-my_driver_work-v1-1-9e5fe6de51f4@gmail.com>
+Subject: Re: [PATCH] hwmon: sht3x: initialize variable 'ret' in
+ update_interval_write().
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251012-my_driver_work-v1-1-9e5fe6de51f4@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Z+Pmwq2nSn2kFJKajdydpxDocwirtx38mu+1JsOG1QOJgqxJBea
+ lcR/17xWKM+3f7090Kj5TcsJs7ppXiUciDvZDEEnXVmjwc7q6tSxp5+X4JR+w1I79HnEb+D
+ aE/Z23CE+10DMZIJwVn10sAL34WtVFc+nnsLplq+pD2ebAADBccNQNx1c8Z200aEimBB1cP
+ NBC+iAmCxqWMCSFsyMXYA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NzaA7Gv4ewc=;s8d0gQYNeCJ7bDnhJBF5BAY5NiY
+ 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
+ SJq/L3tcefnJRUwJE=
 
-From: Li RongQing <lirongqing@baidu.com>
+=E2=80=A6
+> To address this, initialize 'ret' to 'SHT3X_CMD_LENGTH'. this makes
 
-Currently, when 'hung_task_panic' is enabled, the kernel panics
-immediately upon detecting the first hung task. However, some hung
-tasks are transient and the system can recover, while others are
-persistent and may accumulate progressively.
+                                                           Make?
 
-This patch extends the 'hung_task_panic' sysctl to allow specifying
-the number of hung tasks that must be detected before triggering
-a kernel panic. This provides finer control for environments where
-transient hangs may occur but persistent hangs should still be fatal.
 
-The sysctl can be set to:
-- 0: disabled (never panic)
-- 1: original behavior (panic on first hung task)
-- N: panic when N hung tasks are detected
+> the no-operation path return success while keeping the existing error
+> to all other paths.
+=E2=80=A6
 
-This maintains backward compatibility while providing more flexibility
-for handling different hang scenarios.
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17#n94
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
-Diff with v2: not add new sysctl, extend hung_task_panic
-
- Documentation/admin-guide/kernel-parameters.txt      | 20 +++++++++++++-------
- Documentation/admin-guide/sysctl/kernel.rst          |  3 ++-
- arch/arm/configs/aspeed_g5_defconfig                 |  2 +-
- kernel/configs/debug.config                          |  2 +-
- kernel/hung_task.c                                   | 16 +++++++++++-----
- lib/Kconfig.debug                                    | 10 ++++++----
- tools/testing/selftests/wireguard/qemu/kernel.config |  2 +-
- 7 files changed, 35 insertions(+), 20 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a51ab46..7d9a8ee 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1992,14 +1992,20 @@
- 			the added memory block itself do not be affected.
- 
- 	hung_task_panic=
--			[KNL] Should the hung task detector generate panics.
--			Format: 0 | 1
-+			[KNL] Number of hung tasks to trigger kernel panic.
-+			Format: <int>
-+
-+			Set this to the number of hung tasks that must be
-+			detected before triggering a kernel panic.
-+
-+			0: don't panic
-+			1: panic immediately on first hung task
-+			N: panic after N hung tasks are detect
- 
--			A value of 1 instructs the kernel to panic when a
--			hung task is detected. The default value is controlled
--			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
--			option. The value selected by this boot parameter can
--			be changed later by the kernel.hung_task_panic sysctl.
-+			The default value is controlled by the
-+			CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time option. The value
-+			selected by this boot parameter can be changed later by the
-+			kernel.hung_task_panic sysctl.
- 
- 	hvc_iucv=	[S390]	Number of z/VM IUCV hypervisor console (HVC)
- 				terminal devices. Valid values: 0..8
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index f3ee807..0a8dfab 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -397,7 +397,8 @@ a hung task is detected.
- hung_task_panic
- ===============
- 
--Controls the kernel's behavior when a hung task is detected.
-+When set to a non-zero value, a kernel panic will be triggered if the
-+number of detected hung tasks reaches this value
- This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
- 
- = =================================================
-diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
-index 61cee1e..c3b0d5f 100644
---- a/arch/arm/configs/aspeed_g5_defconfig
-+++ b/arch/arm/configs/aspeed_g5_defconfig
-@@ -308,7 +308,7 @@ CONFIG_PANIC_ON_OOPS=y
- CONFIG_PANIC_TIMEOUT=-1
- CONFIG_SOFTLOCKUP_DETECTOR=y
- CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
--CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
- CONFIG_WQ_WATCHDOG=y
- # CONFIG_SCHED_DEBUG is not set
- CONFIG_FUNCTION_TRACER=y
-diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
-index e81327d..9f6ab7d 100644
---- a/kernel/configs/debug.config
-+++ b/kernel/configs/debug.config
-@@ -83,7 +83,7 @@ CONFIG_SLUB_DEBUG_ON=y
- #
- # Debug Oops, Lockups and Hangs
- #
--# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC=0
- # CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
- CONFIG_DEBUG_ATOMIC_SLEEP=y
- CONFIG_DETECT_HUNG_TASK=y
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index b2c1f14..3929ed9 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -81,7 +81,7 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
-  * hung task is detected:
-  */
- static unsigned int __read_mostly sysctl_hung_task_panic =
--	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
-+	CONFIG_BOOTPARAM_HUNG_TASK_PANIC;
- 
- static int
- hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
-@@ -218,8 +218,11 @@ static inline void debug_show_blocker(struct task_struct *task, unsigned long ti
- }
- #endif
- 
--static void check_hung_task(struct task_struct *t, unsigned long timeout)
-+static void check_hung_task(struct task_struct *t, unsigned long timeout,
-+		unsigned long prev_detect_count)
- {
-+	unsigned long total_hung_task;
-+
- 	if (!task_is_hung(t, timeout))
- 		return;
- 
-@@ -229,9 +232,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 	 */
- 	sysctl_hung_task_detect_count++;
- 
-+	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
- 	trace_sched_process_hang(t);
- 
--	if (sysctl_hung_task_panic) {
-+	if (sysctl_hung_task_panic &&
-+			(total_hung_task >= sysctl_hung_task_panic)) {
- 		console_verbose();
- 		hung_task_show_lock = true;
- 		hung_task_call_panic = true;
-@@ -300,6 +305,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	int max_count = sysctl_hung_task_check_count;
- 	unsigned long last_break = jiffies;
- 	struct task_struct *g, *t;
-+	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
- 
- 	/*
- 	 * If the system crashed already then all bets are off,
-@@ -320,7 +326,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 			last_break = jiffies;
- 		}
- 
--		check_hung_task(t, timeout);
-+		check_hung_task(t, timeout, prev_detect_count);
- 	}
-  unlock:
- 	rcu_read_unlock();
-@@ -389,7 +395,7 @@ static const struct ctl_table hung_task_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
-+		.extra2		= SYSCTL_INT_MAX,
- 	},
- 	{
- 		.procname	= "hung_task_check_count",
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 3034e294..077b9e4 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1258,12 +1258,14 @@ config DEFAULT_HUNG_TASK_TIMEOUT
- 	  Keeping the default should be fine in most cases.
- 
- config BOOTPARAM_HUNG_TASK_PANIC
--	bool "Panic (Reboot) On Hung Tasks"
-+	int "Number of hung tasks to trigger kernel panic"
- 	depends on DETECT_HUNG_TASK
-+	default 0
- 	help
--	  Say Y here to enable the kernel to panic on "hung tasks",
--	  which are bugs that cause the kernel to leave a task stuck
--	  in uninterruptible "D" state.
-+	  The number of hung tasks must be detected to trigger kernel panic.
-+
-+	  - 0: Don't trigger panic
-+	  - N: Panic when N hung tasks are detected
- 
- 	  The panic can be used in combination with panic_timeout,
- 	  to cause the system to reboot automatically after a
-diff --git a/tools/testing/selftests/wireguard/qemu/kernel.config b/tools/testing/selftests/wireguard/qemu/kernel.config
-index 936b18b..0504c11 100644
---- a/tools/testing/selftests/wireguard/qemu/kernel.config
-+++ b/tools/testing/selftests/wireguard/qemu/kernel.config
-@@ -81,7 +81,7 @@ CONFIG_WQ_WATCHDOG=y
- CONFIG_DETECT_HUNG_TASK=y
- CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
- CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
--CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
- CONFIG_PANIC_TIMEOUT=-1
- CONFIG_STACKTRACE=y
- CONFIG_EARLY_PRINTK=y
--- 
-2.9.4
-
+Regards,
+Markus
 
