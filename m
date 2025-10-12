@@ -1,160 +1,203 @@
-Return-Path: <linux-kernel+bounces-849778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2803EBD0DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:51:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BAFBD0DAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0D0F4E3FE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDDA1890F14
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A782EB5C6;
-	Sun, 12 Oct 2025 23:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A56231827;
+	Sun, 12 Oct 2025 23:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw3Mm/SA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqEUk2/A"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53182848AA
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC2578F54
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760313072; cv=none; b=dMGvdjMFODkZ1R90YjVMCwvWImPK+q9QsTEp7ImEvi99nhwuldmSAnJDQmulFai9WSZGj00oVP9zKmuKlNLDrwDw/hpIPLNbxjQIoD9luZdmuHJf0FEHmC9qF1Yk5cIL73bUaS4kKUn3uTz800P6t60egwC9LIZbRxt4s7oPepk=
+	t=1760313133; cv=none; b=AlGpX2PWZP0mc+zd9TTrcQDvrEII/soTg09tXPlySOnqN1dtBhbfLHm7ikrPyITFhgpAMYEBxMoeZzd3ufNW5+VUOhdfPwOOrFvqRFh/Zx/G0MpErL9i2DVM+zVcoyA1SS2zHTiIrS+fgk2dLhnaBOSCRRVd5xqMSuTASW1FTdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760313072; c=relaxed/simple;
-	bh=1hhfwvgv5qJC+AoyphWDuLXE10eJqEn11Hz3jk9+lyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dutKn+Bza1rBnODzN5pWk3xmH9JB8B/sfUktAqc+799DHfo6VNkv9VLfkzyzx3Pz5dwpBwVqABztlW5r6cKK7MGCDEg4kqFpHhjoqoP2v3dxlx4w57dFWX1D6VQEO8Wil7GAfTuIrFbaHb8f+wcfEU7y6lobdmUA053o+M85wJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw3Mm/SA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F461C16AAE
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760313072;
-	bh=1hhfwvgv5qJC+AoyphWDuLXE10eJqEn11Hz3jk9+lyE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kw3Mm/SA/tcRTDDQ0+CmcuVqmFGAuU0e/hwAnKAkWFj22IGpBtaPzugH872mSVTQb
-	 riasJyANRBjXFE8o+aXAwjpPj3x6Tbx6YvdSGbmpXAYNuvUN8+xPuS0V+v/wN88BYu
-	 ip0LhTlEgS4fC+2S5nYhcGdaV7itc1jDE83y4qLbhhqG+UmtH3z3gIziL4rSUzO+Ek
-	 3Smcj1v8vBPx/PsEZwwjKtqlYi2rRrInX31DlH3k57PrclKlPOHBcytiNRbeGsQdai
-	 mZ71XQcwerid2o+5XcFcP3tBXL06oDHyqP2+WDlyr196XolE/a4c32t0yhWGu3IxTt
-	 2anadroMn7fGw==
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42557c5cedcso1929371f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 16:51:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULmuUUiirG/syNlsK+jLkz7VnLyVIsGNSgjbUgnNuxhgOUT6eQJjQfOIVBfaJBg6JGe5lXhepPtOerTBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAwDMAOaokEeWYfSa5sWDit7V6v6GcHRUJxxZRIi+hAusb8Xlg
-	J0rOEvMBaJOKm+Db8Tgag3yMBqpnZ0NuiK05WAtrh3F4qEtV8T/VEBGnryjNmU8vhKWAATAvf0g
-	OkBIGxt/3EYRvGyW3S5TlXXgEJlNJnFw=
-X-Google-Smtp-Source: AGHT+IEYzBXknTykBQ1N4HifJ4EJ5ABEr2IxiSGzoS1xGp1F6TYtaXxoMPgsPrk1p0g+88PANj1vgBGlykuqRZRGutI=
-X-Received: by 2002:a5d:64c8:0:b0:3e7:63b0:bf3c with SMTP id
- ffacd0b85a97d-4266e7c6209mr14072627f8f.27.1760313070758; Sun, 12 Oct 2025
- 16:51:10 -0700 (PDT)
+	s=arc-20240116; t=1760313133; c=relaxed/simple;
+	bh=meZgRIRgGz4kT6BLLs0o6i52wiB4LpglawytCW2OZGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DGKsWSA+MC+JIlZhy5AMlrOszdfazTwRmS8gPufG4o3UqLzGd6xPRt7Gr/NUIFnwX0b7aupQpYZLr0gyfz7IhBWJpdelWO5ERpfLePowFU6cNVeGHpX3QxB20MWLjoA2BN+Rq9OG5K4w9kkptr5LdNrAITbIGOGLohWfxKRe8T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqEUk2/A; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-27c369f8986so33305525ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 16:52:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760313131; x=1760917931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MA/CbTkvaa4YBWZa6ClbOJLv6rpKecbHiMNcj6ecb0w=;
+        b=mqEUk2/AuEB6gNEDWzWvUFkf87Zhbnhpy0jYwml3apu6MSjqaMooNAJKRyfcur7+VH
+         yactych9irKWM2xMcaldbj6ocESp+WNhG3NLqt8rc2W0/mWh6Jz6UL3Y+Wc5n/2xIW58
+         CVtSQoveql93xMLY/IyBDyzJ45Cq1ECV9QcmcwHseuRaZ8gaF6MGBhUiRReGJ1I1Rv6I
+         YwECY6UEIfT1Cf7eYQcMaJ8K/PWWu5cC4a617zpT9FmKv8CPA2H+WtxMARbRMC7q/+BT
+         tfVAhkB83pBOq8nxdiI7rzSHvJvqX1F0ohjRNDeAK5e4ZWn25R+1CopHuyszxGxK0HRC
+         eFMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760313131; x=1760917931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MA/CbTkvaa4YBWZa6ClbOJLv6rpKecbHiMNcj6ecb0w=;
+        b=lG1m7APpB1TaZnAuf87IyoGUkZowRNuVfRVJ3Ek12liqPKsbupes81gm9svZE2sgaD
+         JPjGDWpY0fkM8kY7YmO4AxSZ5BIweUGj7CxR5N8zIhnwbCA/KtcoeIBxNp01bt2bPJxj
+         7P5DtqR4/U4f6DZN3tg9IoT6ASOR6Dim4+dc8ta3Y/46uuPcbO2fzKLbVZCj/d9jjchD
+         sCRIv6GYU8U0c5EFnPkbC1qQzvZKugHJWZwW1WoNPwypDY+e7OeoiPFCkZdJ3dDa9e+Z
+         PNKk79nU3EzvxewKO19dmQH7K4Wo/AIpVAvHSnm5HI4on8GfKcPZ10EoaksgPSGfuyDc
+         Hgjw==
+X-Forwarded-Encrypted: i=1; AJvYcCX95+gx9bdlBvBUZTwvfDoBtzOnDYi+Vomx/BRJsmq1uqJwOmkmZf48hs+nmX3Exg289CGjC/3uDZK6qQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP4sHygAEmBXHLHBAptmoqeta53dHhaXkiWzzEDUoLyCIPfBmC
+	KDq/WgA2X5Hq7aQ2OUHiWqJt/BK9jAmMtLbQBFvGvB7JUsdE3e0W8nJs
+X-Gm-Gg: ASbGnctRCywRj2T1V8+VbS4OIdoshx4NYyzJrdSeALHIIMPmTGYpBQeixM5CNigJfRW
+	qe/F+goaT7GRGbfe5pvmrNC2NN8OvyVkeINWbfTqnszXAQlq3xwyr/gZCjdP/Nv4R+jtbi4g76I
+	Cm/T1cSETujwYHMZZmrxpM6MudkMzn6FfrVcCMq9quZaJcPRxyz2wTMKY9hYiTHYjFRMYBwJMer
+	mDw9zivsd8nHUE2fOpN77CX4tWvKJfH5pYKKoYVdp/ojd26K2HIFSLWYUDz19W4AHPdlmnjansn
+	AUf5ZQzF1reFohohNNAqZ3mG6pRorf7HUik9IrjOS6hAJci5gYf4cm+pcGgzu+7DH75Z/DC+fom
+	8d3d+m14rD067qho224pQYuEO4h7QanuC9yApFekbHPxGt4sSSKcu
+X-Google-Smtp-Source: AGHT+IHV3IN7oxo5m4JFeu31RH0eXwkx56/6n6hqO9lCyu5p7QOagyZjRIlPKlg22PYDzOg2LNf42Q==
+X-Received: by 2002:a17:902:b18f:b0:269:6052:3536 with SMTP id d9443c01a7336-290273ffc80mr169583425ad.45.1760313131089;
+        Sun, 12 Oct 2025 16:52:11 -0700 (PDT)
+Received: from fedora ([172.59.161.218])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034dea083sm116576985ad.24.2025.10.12.16.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Oct 2025 16:52:10 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: alex@digriz.org.uk
+Cc: andrew@lunn.ch,
+	sebastian.hesselbarth@gmail.com,
+	gregory.clement@bootlin.com,
+	linux@armlinux.org.uk,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v1] arm: mach-orion5x: ts78xx: simplify support configuration with table
+Date: Sun, 12 Oct 2025 16:51:47 -0700
+Message-ID: <20251012235147.325532-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011155746.1558731-1-guoren@kernel.org> <CAK9=C2UrYg+sHsDqkmz7f7KnaREU7hXF4rbON002cnAti_pDXg@mail.gmail.com>
-In-Reply-To: <CAK9=C2UrYg+sHsDqkmz7f7KnaREU7hXF4rbON002cnAti_pDXg@mail.gmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Mon, 13 Oct 2025 07:50:58 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com>
-X-Gm-Features: AS18NWANYCTOkqbOuxt6SoWPohB4_pnla1E2x3tWojPPEfaEypOaOFajbNCOlnA
-Message-ID: <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Add pgprot_dmacoherent definition
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: samuel.holland@sifive.com, david@redhat.com, yongxuan.wang@sifive.com, 
-	cuiyunhui@bytedance.com, luxu.kernel@bytedance.com, paul.walmsley@sifive.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, palmer@dabbelt.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 12, 2025 at 11:51=E2=80=AFPM Anup Patel <apatel@ventanamicro.co=
-m> wrote:
->
-> On Sat, Oct 11, 2025 at 9:28=E2=80=AFPM <guoren@kernel.org> wrote:
-> >
-> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> >
-> > RISC-V Svpbmt Standard Extension for Page-Based Memory Types
-> > defines three modes:
-> >
-> >  Mode | Value | Requested Memory Attributes
-> >  PMA  |   0   | None
-> >  NC   |   1   | Non-cacheable, idempotent, weakly-ordered (RVWMO),
-> >       |       | main memory
-> >  IO   |   2   | Non-cacheable, non-idempotent, strongly-ordered
-> >       |       | (I/O ordering), I/O
-> >
-> > The pgprot_dmacoherent default uses the IO memory attribute if there
-> > is no asm definition, but IO is not for main memory according to
-> > Svpbmt rules.
-> >
-> > This commit corrects pgprot_dmacoherent with the NC memory attribute,
-> > which satisfies performance improvement and prevents using the IO
-> > attribute to access main memory.
-> >
-> > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
->
-> I had sent the same patch on Aug 20 and you had provided
-> Tested-by to that patch.
->
-> If you had concerns with my patch then you could have provided
-> comments but you choose to hijack it and change authorship.
-I didn't find your patch at first, so I sent it out. When I discovered
-your patch, I gave the Tested-by to yours.
-I've added the abandoned reply to this thread. Have you seen that [1]?
+Replace switch statement based configuration with a lookup table approach.
+The table is iterated through matching the correct configuration instead of
+setting the configuration on a case by case basis.
 
-[1] https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEGWrw=
-9ERRLYYA@mail.gmail.com/
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+ arch/arm/mach-orion5x/ts78xx-fpga.h  |  7 ++++
+ arch/arm/mach-orion5x/ts78xx-setup.c | 60 +++++++++++++++-------------
+ 2 files changed, 40 insertions(+), 27 deletions(-)
 
->
-> Regards,
-> Anup
->
-> > ---
-> >  arch/riscv/include/asm/pgtable.h | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/=
-pgtable.h
-> > index 29e994a9afb6..2a84479de81b 100644
-> > --- a/arch/riscv/include/asm/pgtable.h
-> > +++ b/arch/riscv/include/asm/pgtable.h
-> > @@ -654,6 +654,15 @@ static inline pgprot_t pgprot_writecombine(pgprot_=
-t _prot)
-> >         return __pgprot(prot);
-> >  }
-> >
-> > +/*
-> > + * DMA allocations for non-coherent devices use what the RISC-V archit=
-ecture
-> > + * call "Non-Cacheable" memory attribute, which permits idempotent, we=
-akly-ordered
-> > + * (RVWMO), main memory. This is different from "I/O" memory attribute=
- which is
-> > + * intended for MMIO access with Non-cacheable, non-idempotent, strong=
-ly-ordered
-> > + * (I/O ordering), I/O attributes.
-> > + */
-> > +#define pgprot_dmacoherent pgprot_writecombine
-> > +
-> >  /*
-> >   * Both Svade and Svadu control the hardware behavior when the PTE A/D=
- bits need to be set. By
-> >   * default the M-mode firmware enables the hardware updating scheme wh=
-en only Svadu is present in
-> > --
-> > 2.40.1
-> >
-> >
+diff --git a/arch/arm/mach-orion5x/ts78xx-fpga.h b/arch/arm/mach-orion5x/ts78xx-fpga.h
+index 2f4fe3ca5c1a..e35c63382b4c 100644
+--- a/arch/arm/mach-orion5x/ts78xx-fpga.h
++++ b/arch/arm/mach-orion5x/ts78xx-fpga.h
+@@ -40,3 +40,10 @@ struct ts78xx_fpga_data {
+ 
+ 	struct fpga_devices	supports;
+ };
++
++struct ts78xx_fpga_support_config {
++	u32 id;
++	bool rtc_present;
++	bool nand_present;
++	bool rng_present;
++};
+diff --git a/arch/arm/mach-orion5x/ts78xx-setup.c b/arch/arm/mach-orion5x/ts78xx-setup.c
+index af810e7ccd79..cd8e15cf6a13 100644
+--- a/arch/arm/mach-orion5x/ts78xx-setup.c
++++ b/arch/arm/mach-orion5x/ts78xx-setup.c
+@@ -325,6 +325,18 @@ static void ts78xx_ts_rng_unload(void)
+ /*****************************************************************************
+  * FPGA 'hotplug' support code
+  ****************************************************************************/
++static const struct ts78xx_fpga_support_config ts78xx_fpga_support_table[] = {
++	{ TS7800_REV_1, 1, 1, 1 },
++	{ TS7800_REV_2, 1, 1, 1 },
++	{ TS7800_REV_3, 1, 1, 1 },
++	{ TS7800_REV_4, 1, 1, 1 },
++	{ TS7800_REV_5, 1, 1, 1 },
++	{ TS7800_REV_6, 1, 1, 1 },
++	{ TS7800_REV_7, 1, 1, 1 },
++	{ TS7800_REV_8, 1, 1, 1 },
++	{ TS7800_REV_9, 1, 1, 1 },
++};
++
+ static void ts78xx_fpga_devices_zero_init(void)
+ {
+ 	ts78xx_fpga.supports.ts_rtc.init = 0;
+@@ -334,36 +346,30 @@ static void ts78xx_fpga_devices_zero_init(void)
+ 
+ static void ts78xx_fpga_supports(void)
+ {
+-	/* TODO: put this 'table' into ts78xx-fpga.h */
+-	switch (ts78xx_fpga.id) {
+-	case TS7800_REV_1:
+-	case TS7800_REV_2:
+-	case TS7800_REV_3:
+-	case TS7800_REV_4:
+-	case TS7800_REV_5:
+-	case TS7800_REV_6:
+-	case TS7800_REV_7:
+-	case TS7800_REV_8:
+-	case TS7800_REV_9:
++	const struct ts78xx_fpga_support_config *cfg = NULL;
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(ts78xx_fpga_support_table); i++) {
++		if (ts78xx_fpga_support_table[i].id == ts78xx_fpga.id) {
++			cfg = &ts78xx_fpga_support_table[i];
++			break;
++		}
++	}
++
++	if (cfg) {
++		ts78xx_fpga.supports.ts_rtc.present = cfg->rtc_present;
++		ts78xx_fpga.supports.ts_nand.present = cfg->nand_present;
++		ts78xx_fpga.supports.ts_rng.present = cfg->rng_present;
++	} else if (((ts78xx_fpga.id >> 8) & 0xffffff) == TS7800_FPGA_MAGIC) {
++		pr_warn("unrecognised FPGA revision 0x%.2x\n",
++			ts78xx_fpga.id & 0xff);
+ 		ts78xx_fpga.supports.ts_rtc.present = 1;
+ 		ts78xx_fpga.supports.ts_nand.present = 1;
+ 		ts78xx_fpga.supports.ts_rng.present = 1;
+-		break;
+-	default:
+-		/* enable devices if magic matches */
+-		switch ((ts78xx_fpga.id >> 8) & 0xffffff) {
+-		case TS7800_FPGA_MAGIC:
+-			pr_warn("unrecognised FPGA revision 0x%.2x\n",
+-				ts78xx_fpga.id & 0xff);
+-			ts78xx_fpga.supports.ts_rtc.present = 1;
+-			ts78xx_fpga.supports.ts_nand.present = 1;
+-			ts78xx_fpga.supports.ts_rng.present = 1;
+-			break;
+-		default:
+-			ts78xx_fpga.supports.ts_rtc.present = 0;
+-			ts78xx_fpga.supports.ts_nand.present = 0;
+-			ts78xx_fpga.supports.ts_rng.present = 0;
+-		}
++	} else {
++		ts78xx_fpga.supports.ts_rtc.present = 0;
++		ts78xx_fpga.supports.ts_nand.present = 0;
++		ts78xx_fpga.supports.ts_rng.present = 0;
+ 	}
+ }
+ 
+-- 
+2.51.0
 
-
-
---=20
-Best Regards
- Guo Ren
 
