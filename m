@@ -1,267 +1,78 @@
-Return-Path: <linux-kernel+bounces-849562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48977BD0661
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86836BD066A
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D8C61893C21
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5E13BDF71
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9D92EBDD7;
-	Sun, 12 Oct 2025 15:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E259D2EC08B;
+	Sun, 12 Oct 2025 15:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="xjptzmFT"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/aXtZGp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974CB279918
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 15:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAB62EBDE0
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 15:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760284023; cv=none; b=TXxK5Kj6nSlFZIaBq1lXenHAzrm0bl1ad+2VBrY9qIiQi6GbR2mdVV4SKxN8VMdsRpBAXKp1pk6nE5ujGFPFF5zYNFEXYwhFh+N9bpcGgdmAFdR9sZkeYINqjSgYW9g2K0ukrEMmT3QdY9NL0p8Dqv0viP62uh8djxb3+cxLfeE=
+	t=1760284137; cv=none; b=XZ9xdZqQxCitzJPx+lNVn7SvqJt4ldHTwByKZbtFsLHuD7B/Vkb23YtGvxJxCJYBy/z/gu0bD6xVdPyAO3ZgNcNOtotVgGMJuAzUTUdHNv9T4tz5feaMmnuoShRUBSxFFtmIt7nil+/p1Dd4ld+8I18L7vqew0NaEHIlxKf5rUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760284023; c=relaxed/simple;
-	bh=vUWaG8gjp+90UimZuidE/FOfQW2L1C5infpgnLgV1oA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HHNSifRgkCOt+Vjlug48iok0vRtIFRHDan5c5QqM+TA8uHn7jBYe1H6f++YPTsAIR3I6itqi09hIQpVczkihpt71q8ieatyQ43tbvBvoqsArgLoHGJ3U0ExdGi4/lbTbHN/DpKzqd3byLmZ40Vsqot4mQWOzo8ErPDgws1QcYSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=xjptzmFT; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-28e8c5d64d8so31967515ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 08:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1760284019; x=1760888819; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j4GxUB3mXIOijnAo4Jh/QDcKjXyJblUTMk9gLfFdbCM=;
-        b=xjptzmFTQbK+0m5s0FRZM19eMwzOC9c15/d/IvGWMDZ4A3AtqTawUPTG4xzbyD85TN
-         gEOQ0R8aM5ngO++wXvmjDzLnACs9wFgSYRbnlp+0Lm5ihOmLK4rWqAgvzupZ+ZQjoFBU
-         h7MW8dDdmduReciH7upzzrvYcs8yUBRfbvEhZidBDr98l8LW472bje5I3BXR6exIJR9H
-         5R8rItli0lkwT8z0HWgdXxqQdgNpSY7eTGut6moc5/Hdak7X90A/nS1EQ/T0aWT3xj25
-         Lv7NNSLnEh4eQ8cBidxxVCIkWDEC0IMu9sHHRnp3OQ/bxQF+piqFL7sid1MJHZTfdqdu
-         9jXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760284019; x=1760888819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j4GxUB3mXIOijnAo4Jh/QDcKjXyJblUTMk9gLfFdbCM=;
-        b=l7Ywl/28l2jbMlbWMRKnHbWStcl/Kw0g6UnUnWhKNwOL4bJxm14U5DP0uCgFf3Ilf5
-         RrAsDgivdwWyXobAPTk5xBwNgYiEHJWj5m2ITtNIOtqDEUE8tuDELS9UjbBMpjDYdjuB
-         VCWlW9SHPj2l7Q5rhUuqvNbUvzPNBJKixvL0ULPzyquBFkFWhOMwUz3mvoUbk6hkQ4o9
-         dDaqhRWpkklkCyWMzjZGCLiVgDr8TLvGl3gUxg6TeiwuoN8r2lcdg6u7KbvqpMiZ5SY/
-         6S8cWhlchFrXgTaSh+Ex9G6Gc9WWOZSbSZdlaNmIk4f0ey9HrTc7SXy4H8Q6oJrEGJDy
-         gFNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoGO0nWI6kArSKx92vyrPiPlHB8YA7/exGM8t5yYpJ7nKXtwfqklw2XWzlfnmIBrRLzVvXbDh7C3IWkaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXm4hzO02xg/DsRS9f8SCxYxl/KYY7041zuqKwikkcCQF9isLQ
-	qWK4Ly9Dn6aQf9swLbVliPgnoUTDMvd9iU++L2EA2mj9bAiempCGVHf0Ic7qY8gVWtO+AyDMQih
-	17QgM8/Ii0yOpEUMtvZhWajoqzQ5FO32j4WrjOaUK
-X-Gm-Gg: ASbGncvLKsHYEhmw5lFASJPykLedY63lSUEOZl/DsAjgSk3MdnrKOIJ5iOobXGdvvJf
-	usievTJKMGwFPfC3VIBNw1M1M3AECl7A7g4FgMca+F3eUIkIowxNAd6GZjCeHOz5LMK4vUFRVx9
-	/9UfwE7kLoWxMgToJwBjQ0lJx7V3OSG9R0DXUd+yqgttiHyUFMUIqD4yG8GopueDUE4DGMDilWD
-	xdMBf1rCrGs4nRg3mPkbtQWGcqu8vP7D09EIwrIa6/rocYkoZpjOJptnyUslkIRyVKvxEI//aMm
-	Bw==
-X-Google-Smtp-Source: AGHT+IEsvkIHji5FXS3k4mVFSuiV2wODeo+ujiKNFe0QTizQr/lk/JboIRcTN5Hm3VjE5u/54mBRs8ZXlewlr2/MopQ=
-X-Received: by 2002:a17:902:f64a:b0:277:9193:f2da with SMTP id
- d9443c01a7336-29027356c8emr245366775ad.5.1760284019230; Sun, 12 Oct 2025
- 08:46:59 -0700 (PDT)
+	s=arc-20240116; t=1760284137; c=relaxed/simple;
+	bh=S+Ew3tLKlqxb4YL6S7ydfD68wBlUOVrrompXqUMYVEY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mAJMsI5auIUbOiihPyuYIK0gLA1Kq6RCgg9y0hZFkDrvCPXT0SH13xJXa/8ai/4UfE3y9/UlwbzDvqa7DO54XCT0+kqZSp7qVWEFvGKLK/Y+6wf1hoIQW6h6VASYH58o/ZF0PSAnqvzlCd085C0KA2eGqKeo3Ca3UMRkYRy/4oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/aXtZGp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9060CC4CEE7;
+	Sun, 12 Oct 2025 15:48:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760284137;
+	bh=S+Ew3tLKlqxb4YL6S7ydfD68wBlUOVrrompXqUMYVEY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=c/aXtZGpBNTwtOidCO+7TtKsA+fmrfZmIu3P3eF0vSFbfdAYPVXlHDkVzk4hkIetD
+	 JOWoFIAkAkWHO+oer8IjH9FbRy7NUWL+9CJrM8vCOm1qch+fdzwWd7wYGCbJwDmSEX
+	 VsrYOOjph4ixCLBhdwojtD0owSRBVGN5ybkawRqsgEq7ZOjGWV9edbCxuxGhuPIRFu
+	 eNnW0P0TCeLd6FcbJ9hJeiKQTczc2j7Ox4nhykvlnqMbjIdMwpWCfAHjOOfdoK7AG7
+	 +zXbbkz+MHExVw6qAde4WQOI0RIIPn1iPNX6X3sf4a4WAYGjzyZJsAaRyYK2QfKybh
+	 iphmYgcg4nL3w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EF23809A1C;
+	Sun, 12 Oct 2025 15:48:45 +0000 (UTC)
+Subject: Re: [GIT PULL] irq/urgent for v6.18-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20251012093441.GAaOt2McdE_lAqjRUy@fat_crate.local>
+References: <20251012093441.GAaOt2McdE_lAqjRUy@fat_crate.local>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20251012093441.GAaOt2McdE_lAqjRUy@fat_crate.local>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.18_rc1
+X-PR-Tracked-Commit-Id: f75e07bf5226da640fa99a0594687c780d9bace4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8765f467912ff0d4832eeaf26ae573792da877e7
+Message-Id: <176028412367.1681778.1072677199351555642.pr-tracker-bot@kernel.org>
+Date: Sun, 12 Oct 2025 15:48:43 +0000
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <681a1770.050a0220.a19a9.000d.GAE@google.com> <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
- <CANn89iLjjtXV3ZMxfQDb1bbsVJ6a_Chexu4FwqeejxGTwsR_kg@mail.gmail.com>
-In-Reply-To: <CANn89iLjjtXV3ZMxfQDb1bbsVJ6a_Chexu4FwqeejxGTwsR_kg@mail.gmail.com>
-From: Jamal Hadi Salim <jhs@mojatatu.com>
-Date: Sun, 12 Oct 2025 11:46:48 -0400
-X-Gm-Features: AS18NWDhOrXzge47KDe52C44MpGP1jFq2C5UW5hu7ElSnyjdHaEd7xaH1FLGrCk
-Message-ID: <CAM0EoMnGLqKU7AnsgS00SEgU0eq71f-kiqNniCNyfiyAfNm8og@mail.gmail.com>
-Subject: Re: [syzbot] [net?] [mm?] INFO: rcu detected stall in
- inet_rtm_newaddr (2)
-To: Eric Dumazet <edumazet@google.com>
-Cc: syzbot <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com>, 
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>, davem@davemloft.net, dsahern@kernel.org, 
-	hdanton@sina.com, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 11, 2025 at 5:42=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Sat, Oct 11, 2025 at 12:41=E2=80=AFAM syzbot
-> <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com> wrote:
-> >
-> > syzbot has found a reproducer for the following issue on:
-> >
-> > HEAD commit:    18a7e218cfcd Merge tag 'net-6.18-rc1' of git://git.kern=
-el...
-> > git tree:       net-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12504dcd980=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ab7fa743d=
-f0ec1
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D51cd74c5dfeaf=
-d65e488
-> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7=
-976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14d2a5425=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D142149e2580=
-000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/7a01e6dce97e/d=
-isk-18a7e218.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/5e1b7e41427f/vmli=
-nux-18a7e218.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/69b558601209=
-/bzImage-18a7e218.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com
-> >
-> > sched: DL replenish lagged too much
-> > rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> > rcu:    0-...!: (2 GPs behind) idle=3D7754/1/0x4000000000000000 softirq=
-=3D15464/15465 fqs=3D1
-> > rcu:    (detected by 1, t=3D10502 jiffies, g=3D11321, q=3D371 ncpus=3D2=
-)
-> > Sending NMI from CPU 1 to CPUs 0:
-> > NMI backtrace for cpu 0
-> > CPU: 0 UID: 0 PID: 5948 Comm: syz-executor Not tainted syzkaller #0 PRE=
-EMPT(full)
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 10/02/2025
-> > RIP: 0010:rb_insert_color_cached include/linux/rbtree.h:113 [inline]
-> > RIP: 0010:rb_add_cached include/linux/rbtree.h:183 [inline]
-> > RIP: 0010:timerqueue_add+0x1a8/0x200 lib/timerqueue.c:40
-> > Code: e7 31 f6 e8 6a 0c de f6 42 80 3c 2b 00 74 08 4c 89 f7 e8 7b 0a de=
- f6 4d 89 26 4d 8d 7e 08 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 <74> 08 4c 89 =
-ff e8 5e 0a de f6 4d 89 27 4d 85 e4 40 0f 95 c5 eb 07
-> > RSP: 0018:ffffc90000007cf0 EFLAGS: 00000046
-> > RAX: 1ffff110170c4f83 RBX: 1ffff110170c4f82 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88805de72358
-> > RBP: 0000000000000000 R08: ffff88805de72357 R09: 0000000000000000
-> > R10: ffff88805de72340 R11: ffffed100bbce46b R12: ffff88805de72340
-> > R13: dffffc0000000000 R14: ffff8880b8627c10 R15: ffff8880b8627c18
-> > FS:  000055557c657500(0000) GS:ffff888125d0f000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000200000000600 CR3: 000000002ee76000 CR4: 00000000003526f0
-> > Call Trace:
-> >  <IRQ>
-> >  __run_hrtimer kernel/time/hrtimer.c:1794 [inline]
-> >  __hrtimer_run_queues+0x656/0xc60 kernel/time/hrtimer.c:1841
-> >  hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
-> >  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
-> >  __sysvec_apic_timer_interrupt+0x108/0x410 arch/x86/kernel/apic/apic.c:=
-1058
-> >  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [in=
-line]
-> >  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
-> >  </IRQ>
-> >  <TASK>
-> >  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentr=
-y.h:702
-> > RIP: 0010:pv_vcpu_is_preempted arch/x86/include/asm/paravirt.h:579 [inl=
-ine]
-> > RIP: 0010:vcpu_is_preempted arch/x86/include/asm/qspinlock.h:63 [inline=
-]
-> > RIP: 0010:owner_on_cpu include/linux/sched.h:2282 [inline]
-> > RIP: 0010:mutex_spin_on_owner+0x189/0x360 kernel/locking/mutex.c:361
-> > Code: b6 04 30 84 c0 0f 85 59 01 00 00 48 8b 44 24 08 8b 18 48 8b 44 24=
- 48 42 80 3c 30 00 74 0c 48 c7 c7 90 8c fa 8d e8 a7 cd 88 00 <48> 83 3d ff =
-27 5e 0c 00 0f 84 b9 01 00 00 48 89 df e8 41 e0 d5 ff
-> > RSP: 0018:ffffc900034c7428 EFLAGS: 00000246
-> > RAX: 1ffffffff1bf5192 RBX: 0000000000000001 RCX: ffffffff819c6588
-> > RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff8f4df8a0
-> > RBP: 1ffffffff1e9bf14 R08: ffffffff8f4df8a7 R09: 1ffffffff1e9bf14
-> > R10: dffffc0000000000 R11: fffffbfff1e9bf15 R12: ffffffff8f4df8a0
-> > R13: ffffffff8f4df8f0 R14: dffffc0000000000 R15: ffff8880267a9e40
-> >  mutex_optimistic_spin kernel/locking/mutex.c:464 [inline]
-> >  __mutex_lock_common kernel/locking/mutex.c:602 [inline]
-> >  __mutex_lock+0x311/0x1350 kernel/locking/mutex.c:760
-> >  rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
-> >  inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:978
-> >  rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6954
-> >  netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
-> >  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
-> >  netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
-> >  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
-> >  sock_sendmsg_nosec net/socket.c:727 [inline]
-> >  __sock_sendmsg+0x21c/0x270 net/socket.c:742
-> >  __sys_sendto+0x3bd/0x520 net/socket.c:2244
-> >  __do_sys_sendto net/socket.c:2251 [inline]
-> >  __se_sys_sendto net/socket.c:2247 [inline]
-> >  __x64_sys_sendto+0xde/0x100 net/socket.c:2247
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > RIP: 0033:0x7faade790d5c
-> > Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48=
- 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 =
-ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-> > RSP: 002b:00007ffdd2e3b670 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-> > RAX: ffffffffffffffda RBX: 00007faadf514620 RCX: 00007faade790d5c
-> > RDX: 0000000000000028 RSI: 00007faadf514670 RDI: 0000000000000003
-> > RBP: 0000000000000000 R08: 00007ffdd2e3b6c4 R09: 000000000000000c
-> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-> > R13: 0000000000000000 R14: 00007faadf514670 R15: 0000000000000000
-> >  </TASK>
-> > rcu: rcu_preempt kthread timer wakeup didn't happen for 10499 jiffies! =
-g11321 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402
-> > rcu:    Possible timer handling issue on cpu=3D0 timer-softirq=3D4286
-> > rcu: rcu_preempt kthread starved for 10500 jiffies! g11321 f0x0 RCU_GP_=
-WAIT_FQS(5) ->state=3D0x402 ->cpu=3D0
-> > rcu:    Unless rcu_preempt kthread gets sufficient CPU time, OOM is now=
- expected behavior.
-> > rcu: RCU grace-period kthread stack dump:
-> > task:rcu_preempt     state:I stack:27224 pid:16    tgid:16    ppid:2   =
-   task_flags:0x208040 flags:0x00080000
-> > Call Trace:
-> >  <TASK>
-> >  context_switch kernel/sched/core.c:5325 [inline]
-> >  __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
-> >  __schedule_loop kernel/sched/core.c:7011 [inline]
-> >  schedule+0x165/0x360 kernel/sched/core.c:7026
-> >  schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
-> >  rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
-> >  rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
-> >  kthread+0x711/0x8a0 kernel/kthread.c:463
-> >  ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >  </TASK>
-> >
-> >
-> > ---
-> > If you want syzbot to run the reproducer, reply with:
-> > #syz test: git://repo/address.git branch-or-commit-hash
-> > If you attach or paste a git patch, syzbot will apply it before testing=
-.
->
-> Yet another taprio report.
->
-> If taprio can not be fixed, perhaps we should remove it from the
-> kernel, or clearly marked as broken.
-> (Then ask syzbot to no longer include it)
+The pull request you sent on Sun, 12 Oct 2025 11:34:41 +0200:
 
-Agreed on the challenge with taprio.
-We need the stakeholders input: Vinicius - are you still working in
-this space? Vladimir you also seem to have interest (or maybe nxp
-does) in this?
-At a minimum, we should mark it as broken unless the stakeholders want
-to actively fix these issues.
-Would syzbot still look at it if it was marked broken?
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.18_rc1
 
-cheers,
-jamal
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8765f467912ff0d4832eeaf26ae573792da877e7
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
