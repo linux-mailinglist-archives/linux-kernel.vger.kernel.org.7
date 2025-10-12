@@ -1,114 +1,90 @@
-Return-Path: <linux-kernel+bounces-849724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E2BBD0BDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:56:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB99BBD0BDE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0879F1896EB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:56:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC4624E4386
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224412EBBA3;
-	Sun, 12 Oct 2025 19:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E89A2ECD34;
+	Sun, 12 Oct 2025 19:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lRmFaMe/"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="HoHMdWtr"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CF41509A0
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1537E1509A0
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760298974; cv=none; b=YsMIshTQ7YB27/v+E59lsr1mUu55SKWSV0/axs19+Yeo+TgtZr+h3oxF0z/nQYyP3zCghLIv80TRSJBEw5x9cnCj0V0OWKGD4V4yQECOgKLesYp8lZz7fdcwH8DlhgCxAr4If57dPI2Vw16a1Cv85Q+8ZQ9JqZ86TGuPEtqdP1I=
+	t=1760299068; cv=none; b=a1KXXIIE++XHJCXaJWYBHsS3nM8y6+KqJxdkEGX+TxW0DMWHaOld1dAquz2zt6UjLSW0Ar1WCJJwoKL5qb/62idAVWKWxlpyFkZqAM8b9BtfuM3p7q/nhasI2DBg1AxhjSKh8Qs11y5r6KXYyrmlre6Stq+vN4OjTbsJAhYPOss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760298974; c=relaxed/simple;
-	bh=rLv/ZL2NBVvf9mLYXm9Of1NE2v/PPNOYA2cCKfAYuSE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMldyYDutXBKuhNWQxnRVKKCgEa/e1ZUX6ZyR/1twXzzf3FFIbZk/gwub3gzNz2KM1nYTvU76ntddp2h9cUGxK303NnE+sdKoAM/EugthdlmLnglZgs5TPsKe0xpbtMaGQF6qHdUi/b8edHEy0XcYZ06htKRal6TLkUzPGNHUgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lRmFaMe/; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760298968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nwPjdHOW4dMG1T40eFmU0S20/6YP0v1nsjLRSvlumqM=;
-	b=lRmFaMe/r96b5PSFLPOJlOmLetbJZ5sVbbBssHGRKkAyQv/yvLbnRCzsuX14hXf4VIeW68
-	injMi22daXCMaSkVYEwO0MpJJUwnNbVwLTQDBzwV21Xdf2XMKxxRg/EcnZHLjLplUFFD8B
-	JHNxIzUMnUusoY1mx9gg9/NAtYYNfgw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Jason Andryuk <jason.andryuk@amd.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/xen/xenbus: Replace deprecated strcpy in xenbus_transaction_end
-Date: Sun, 12 Oct 2025 21:55:09 +0200
-Message-ID: <20251012195514.39003-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1760299068; c=relaxed/simple;
+	bh=gCLk5c6ldi0yie6zeA0N3pqyyIaQvO6v6fdlz4qoT0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nglxLJbRIigKkqahxYVrdjQUfgSsKOHirk3u3GeIwGDSbWsThdtafnlz0BqetCVmsJWop1V99de2hyGK18lYy9F4JkGAPtg2EwS2BrccxEyTlw3Hnmy9RLCnXLTiQuDm/oiLlxTpLT7iZE8NHXfcwQU0Gz+7Lq/Spu/l63i6Ruo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=HoHMdWtr; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-113-184.bstnma.fios.verizon.net [173.48.113.184])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 59CJvVqW004342
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 Oct 2025 15:57:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1760299053; bh=LvrlMRA4RhyctjL+VzTW41Dwbxad1RspvWf+dp5Ot2s=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=HoHMdWtrdff1SHCtcqX6wdtmVUa/u1jD6A49uOJg8jSruFjKV+2XyDEyr6I5RPa98
+	 QLuH29Q9Xilf+dEfUrjR9gd5O0HCs8r55dCssTZ+0vTRm0N8QE1kN1weHGFUvC9zDT
+	 PCuS1NrQH9Y9ND79nHd4YPtARvRu/wyeEGquMGF9ylAeNJZ6zjzGE1fLOOps5YePwk
+	 btx+ZB6iD5k3mwhoeygyLAKbf4i2iPT3Iz1DBaK+SuqNszxThAjMuBoocYC+Ho3f3R
+	 LudxDLCe2wZrNtOResiH0LjbROfgzNcvc7639EiXEdAPow48QsgvAeTT1nPL8P9Xw4
+	 bXgDq/W6Ay+5w==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 7FE332E00D9; Sun, 12 Oct 2025 15:57:31 -0400 (EDT)
+Date: Sun, 12 Oct 2025 15:57:31 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        srivathsa.d.dara@oracle.com, linux-kernel@vger.kernel.org,
+        Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [PATCH] ext4/060: Skip for dax devices on non-4k page sizes
+Message-ID: <20251012195731.GG354523@mit.edu>
+References: <20251011134708.2426769-1-ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011134708.2426769-1-ojaswin@linux.ibm.com>
 
-strcpy() is deprecated; use strscpy() instead. Fix the function comment
-and use bool instead of int while we're at it.
+On Sat, Oct 11, 2025 at 07:17:08PM +0530, Ojaswin Mujoo wrote:
+> This test tries to trigger an ext4 corruption by resizing past the
+> meta_bg size (8GB on 4k blocksize) in ext4. Since the test is sensistive
+> to the size and FS layout it hardcodes the 4kb blocksize ignoring user's
+> $MKFS_OPTIONS. While this is okay for most cases it fails for dax based
+> filesystems where system pagesize is non-4k.
+> 
+> One way to work past this is to make the test blocksize agnostic, but
+> since we still need the disk to be as big as the meta_bg size, this
+> means for blocksize=64kb filesystems we need a scratch disk of ~4TB
+> which is not feasible.
+> 
+> Hence, just skip the test if fsdax is used in a non-4k page size system.
+> 
+> Reported-by: Disha Goel <disgoel@linux.ibm.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/xen/xenbus/xenbus_xs.c | 9 +++------
- include/xen/xenbus.h           | 2 +-
- 2 files changed, 4 insertions(+), 7 deletions(-)
+Makes sense to me.
 
-diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-index 528682bf0c7f..970302b3dcc6 100644
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -546,16 +546,13 @@ int xenbus_transaction_start(struct xenbus_transaction *t)
- EXPORT_SYMBOL_GPL(xenbus_transaction_start);
- 
- /* End a transaction.
-- * If abandon is true, transaction is discarded instead of committed.
-+ * If abort is true, transaction is discarded instead of committed.
-  */
--int xenbus_transaction_end(struct xenbus_transaction t, int abort)
-+int xenbus_transaction_end(struct xenbus_transaction t, bool abort)
- {
- 	char abortstr[2];
- 
--	if (abort)
--		strcpy(abortstr, "F");
--	else
--		strcpy(abortstr, "T");
-+	strscpy(abortstr, abort ? "F" : "T");
- 
- 	return xs_error(xs_single(t, XS_TRANSACTION_END, abortstr, NULL));
- }
-diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
-index 7dab04cf4a36..c94caf852aea 100644
---- a/include/xen/xenbus.h
-+++ b/include/xen/xenbus.h
-@@ -158,7 +158,7 @@ int xenbus_exists(struct xenbus_transaction t,
- 		  const char *dir, const char *node);
- int xenbus_rm(struct xenbus_transaction t, const char *dir, const char *node);
- int xenbus_transaction_start(struct xenbus_transaction *t);
--int xenbus_transaction_end(struct xenbus_transaction t, int abort);
-+int xenbus_transaction_end(struct xenbus_transaction t, bool abort);
- 
- /* Single read and scanf: returns -errno or num scanned if > 0. */
- __scanf(4, 5)
--- 
-2.51.0
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
 
