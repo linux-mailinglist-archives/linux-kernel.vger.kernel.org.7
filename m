@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-849636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36218BD08E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA2EBD08F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F0784E7DD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB243ABCB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1322ED860;
-	Sun, 12 Oct 2025 17:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA522EDD62;
+	Sun, 12 Oct 2025 17:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfUimi7H"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JNeDVYcs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4663722097
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 17:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BECE2C187;
+	Sun, 12 Oct 2025 17:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760291414; cv=none; b=NFKqXPHVQj3xAQ8OjmsGf+B7rFt5+GIhzS7r6UjvgXQcELoN1jTIDFHbipV99osBFs+lcQx+O3tGdK/1K76IyxMsb7DmWmP/a16qAaQrkiXoCdZIJhi8oSv5A2/99Q0OP2XARn3AfyUXt3R709SZUzXa+wBgheGigjoBxnLAtow=
+	t=1760291546; cv=none; b=G/oyW7e2DVN63XGfRUb1/t34Yjbn3y9vaUnZI8EiE9O5aSlIrpS8Jo2NNc7raKU1kq5brCZ5NA4JVyWCMYgn3VBjtNDb0LnTM8q+mNjnF/bLxTRp93tJYlZQ8/bsz9OgnRAy4vRx7WrinCihc5sr+amghXhcrZoG5N6dca2vL6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760291414; c=relaxed/simple;
-	bh=0XtKuLa8UiwNtFQOHtGYSF9Ae5RbWbAtQVc8rTPpTUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rEaPRSNfHkNHgXaI722edBlS9aS7JKtVaJAZnGSx+YAiuDLdvc0UiGNAze+veBqJxgvnhRRntkY476akSn7xLh/U0TX9zLw8e54p4NPJXGu+sQlNd3X3dfYxr5AHcCLleNuwdEY8EEte6e3M18GymQUCN/d4Wz3w+nivOO0vyRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfUimi7H; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33255011eafso3659779a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 10:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760291411; x=1760896211; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KG7cZkr2V/oLoitCh7Ph/07kt3ygxpCQRJaIzYce2jQ=;
-        b=ZfUimi7Hpkun05Xe/cPHRo5tfzkZtNzLlFfCUj1gbO6OQRuCrlmqakPJ6ZfEI9aB/X
-         E/tDQCRiyYyLgtY6SBDyTjTa9XY0h/jWTbb8NG5v/27gIBXCniKp3zhpPko6Dma+Nfsh
-         ts044QQnOEIxhfj865cGBLxnxDmfFYl7GCr73fas6YYhp+7lKzqQVXOjXl5deuhad7kD
-         Vw1832uipXDofqs/97kbGLcHvDvNSRHNEXI0MFdoRR0UK6YKyNDpfJ0Epm4+dsWmGZRe
-         ypm+u24hapuyY8stJu3+aec50PJOAtY0AvPp5U+olSq4TevAmQWnC60R4dZtcbA1Jfp+
-         e13A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760291411; x=1760896211;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KG7cZkr2V/oLoitCh7Ph/07kt3ygxpCQRJaIzYce2jQ=;
-        b=RC2fhkxzjPbBqVWtKt25a2uzyxvBvmyQ/NJQqtfl+LS3PxEhnqzpWYUoL2wqu/UXbj
-         AdzvVkMBcZ1satN17afcalGjFqsH1VcGPIISLkAWnRZX6oJKHQ09DSevufAKqK46BFGK
-         8sY9y5MwLzBPRvjdoOsOFXSVTmOiOo1/jtPTWksSsuPnjOvvHO8HQY2TAG38JJ37ah70
-         IYO21IjNQNZTUC9MHK6qXijG2kEKlCqH0vTvDSvL3ZBqz78DzKD9ZQLgufz30WMEq0gv
-         7BOw4M18Q0v+ZkMHteiyBJKGrOROmshcDA8Es0Hec0oE5hlmkeYKfL0Frl9TYTJ5XgFk
-         SKvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7wP78R6/Dcxiz/97vy5c73pt3TFhN9AJHCWx+XpUfyDJ7W2YmpchczWrj+AS72xMeZy6ztLq0hl2QICE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAPoBBQM1alX2i9YA8yTkdkCVoQdRwLLxBvNV3p0vNO83sJURW
-	a6Q90LTbzVAou+1I8hw/PeRa4bUGG0TbV0Ti+LjHTa9O8H0Pq2eEMWr2
-X-Gm-Gg: ASbGncusMlGvweuEsyZWhCxAB16J8dv7xmYQjyb34azA42sUDtNObrdbY9CpgdFdiFU
-	ryBzZcXzvkuKsU+arqtxRwbcSmHf0nWSO0RSLcxOYCXDj3hXFZHzGZTYtjPGeWjaUYq2udj3/gs
-	DjZGsO1gCHaLE0hXJGSCKGs8fg10yu2OK4eEYtDg3A+EZxiRwEm7ulxMsqKoYhxjLAcOc8xEUPL
-	D8nd3BTBx2G/kMbjdZ7zE/FNCgGOaou+Tz3liHNyw2PnN1nkMBH9UbbFPZJ8V7RoQaBCOlwSLi9
-	Szr1BdHl1vxpOncpzOy0cqY9gRcpx1aCoqsX9xftUZCqFD1g7cOXgULfnrlprDEUhxb/JrVD9FK
-	9oX75dlkC2zemZtPSPiXUXrEGk5yavT0Nsox62vuHkGUcecnsJq7BRqIXpjYTK3HX
-X-Google-Smtp-Source: AGHT+IFPUnweijrn2pOw98DIoWtnaMWpi9PLMftd6tmmurmdLN2gURd0KnujjCj0/eqqy8Ofu8hbtQ==
-X-Received: by 2002:a17:90b:1d89:b0:330:797a:f504 with SMTP id 98e67ed59e1d1-33b5114d664mr25165948a91.3.1760291411356;
-        Sun, 12 Oct 2025 10:50:11 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626d15e2sm9407269a91.21.2025.10.12.10.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 10:50:10 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 12 Oct 2025 10:50:08 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Cryolitia PukNgae <cryolitia@uniontech.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH] hwmon: gpd-fan: Fix return value when
- platform_get_resource() fails
-Message-ID: <917278e0-cb6b-481b-8d1f-04b693668273@roeck-us.net>
-References: <20251010204359.94300-1-harshit.m.mogalapalli@oracle.com>
+	s=arc-20240116; t=1760291546; c=relaxed/simple;
+	bh=Kq7+TXsEp9MxTBtUIkkyGyKxLT5bS9KsBzxp+fFgEiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WuCC3z2cu3cc1GCXjHCTu4vZJKESO3PDGd/wqBxoLVklYE7F0b9Vo5+X+a9rcP/vepb79hX//ZHKX518QS6yTt/kOfvX4ZkhcegvuMjZj89Hh7U7lYP2kjQKuDPQevmol9WYpRz93Q95kDayZw6fs4UQelqH981GMNBIA/fj0cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JNeDVYcs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999C0C4CEE7;
+	Sun, 12 Oct 2025 17:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760291546;
+	bh=Kq7+TXsEp9MxTBtUIkkyGyKxLT5bS9KsBzxp+fFgEiM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JNeDVYcsLucu374qwIc98ky1coLXZn5eQ/oTPuVR2GsUY7LJ2777lIl+m9Xhvai55
+	 8S565gVpx4K7tE+6XFtSVzcXpnGZd7lEJ9GDVGulPhuViFu/c9HtikUiIgPa3K/q+5
+	 iA6RnsK1i6rz9fquGpxvX+MLSVW0coPh5IfvPsQsPOgXiT/6FXwKeEVjwAfphocVWH
+	 n+iBt9oooIfpnAzmhf5BCoXPpoRNbZiU08E6xoDDLW9yTUOkBNnF3reHnbAjs7zMkF
+	 eaHkWx3UfZ8D3FIwahVha+A51KkPQB49qHVHybpEz1bIjXw0QEEP/SlS3Q7YJlPlGC
+	 TCvU2hARt/qpw==
+Date: Sun, 12 Oct 2025 18:52:16 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Shuhao Fu <sfual@cse.ust.hk>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: Fix pm runtime clean-up in sun4i_gpadc_probe
+Message-ID: <20251012185216.6268c201@jic23-huawei>
+In-Reply-To: <CAHp75VdKLoCyYHZsEpkmXNJQ5QSpA_crrWR+MS4-=xmn=g9azw@mail.gmail.com>
+References: <aOaWpVGZSCY6kN-6@homelab>
+	<CAHp75VdKLoCyYHZsEpkmXNJQ5QSpA_crrWR+MS4-=xmn=g9azw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010204359.94300-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 01:43:59PM -0700, Harshit Mogalapalli wrote:
-> When platform_get_resource() fails it returns NULL and not an error
-> pointer, accordingly change the error handling.
-> 
-> Fixes: 0ab88e239439 ("hwmon: add GPD devices sensor driver")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+On Wed, 8 Oct 2025 19:57:47 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Applied.
+> On Wed, Oct 8, 2025 at 7:52=E2=80=AFPM Shuhao Fu <sfual@cse.ust.hk> wrote:
+> >
+> > In `sun4i_gpadc_probe`, in case of thermal register failure, the runtime
+> > PM usage counter would not be decreased, resulting in a possible
+> > inconsistency of runtime PM state.
+> >
+> > Fixes: b0a242894f11 ("iio: adc: sun4i-gpadc-iio: register in the therma=
+l after registering in pm") =20
+>=20
+> This might fix this problem, but it doesn't fix the whole mess in the
+> probe with devm/non-devm ordering.
+>=20
 
-Guenter
+Mostly this looks simple to fix.  Starting with devm_iio_map_register() ins=
+tead
+of the non devm version.
+Then devm_pm_runtime_enable().  However, I have no idea why we need a pm_ru=
+ntime_put()
+in the exit path.  Maybe it's messing with the parent power?  There isn't a=
+ matching
+get.
+
+Anyone have this hardware to hand for testing if we try to fix this up full=
+y?
+
+Jonathan
+
+
 
