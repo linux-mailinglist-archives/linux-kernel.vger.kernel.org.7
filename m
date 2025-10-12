@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-849769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D646BD0D57
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:00:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5600BD0D54
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EEDD4E27CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78653BC0E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EBB26D4C7;
-	Sun, 12 Oct 2025 23:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="d7BEYUEs"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8943B24634F;
+	Sun, 12 Oct 2025 22:59:11 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07E2267B12
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC1F4C85;
+	Sun, 12 Oct 2025 22:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760310033; cv=none; b=OsLymuC/XVpLwrsFvbaPpZxVdYSgnEoKfkTg6Da/fOsmHgQU6mEIFmGUl6iWMxEFyQpvtTFUnU1/B/yFKwx465npbl2gNKqYPlk4aM5ZXvjhDOVeZg3LAGE/3xEIxEewsSkvweeOgYhhj7JOIg0OGarCapTcKmnbtL+mV5rZftY=
+	t=1760309951; cv=none; b=TeEbK5UckIgqYDnOPfUgoJT4M5umTl2lBD1vsgRc1iJEJAkKI0Rp39p2JpFqHsE5ug0YgFh33wpiKpQZVquWi9xCdKxwc9HXD78C+nY8p77qKjs0JTSknmGEf6Cf2Kf9jYS4yizSi/xYCHo2pXa/ndzyhEmi9OLg18basT0fV4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760310033; c=relaxed/simple;
-	bh=xBxOL6GSKm0r8z1iwoA7xEGS2FmKZDzoECqzDmPVf3o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JiIL8BQNcS/XtlBbOoAv6QAWrB+YWJ8VSjmkp1TLOdeBXykV1TkA5N3JBuoDY2Hntef+fqSkOrQkfhqEB41lba6MUt18GZdSwReENP7X8ymAFnrvuKMfHK696qG+pkVUO7phzXYKwg2VTKZp9HojvoOboD2f9vJHlKinmPl7RmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=d7BEYUEs; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1760310023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qIoVkGj2UHyWzPI843jLHd2BzKmlHU2zQ8mu8tlxYAE=;
-	b=d7BEYUEsstX8rorULLNw/MCWuvPOTUiNIZwd6jbMbHJ8rAMfCCtPTIEloF5J1u0dKkg0SO
-	DD8VpHwX6Km98cF554Y79U8az/OTHUi+4D8NtoLh/J2DoYUiLezgNYk45eSCL9pqacZsoS
-	XDH3neFtSuGJR15qalzfg60JdE4G4rd+9eErRHTyNabgp+2gR/jKQg5a3QHQwMeHWN3Ovt
-	YmzEDta6g6uXoNsdTdygqlA2vRhIQlrOodG5H75HbPEv6WvnAHodPfBJED0j+P4+gFtT3/
-	X935d7EXHw8sI9iGq9Tzpy3BB6R7T5xyxkIGpdwirYWbPTGv1LwFb0mrd1hxFQ==
-From: Val Packett <val@packett.cool>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Val Packett <val@packett.cool>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: x1e80100: add system power domain SS3 state
-Date: Sun, 12 Oct 2025 19:54:12 -0300
-Message-ID: <20251012225950.15475-1-val@packett.cool>
+	s=arc-20240116; t=1760309951; c=relaxed/simple;
+	bh=O9/xMq/WsWwt6BhdaZP+0IQk2PmNkJ/e+71vzrgkOOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vq26vVTZ+pWb87vqkdiBCtU+aFlbiCL8nDfGhpxlVlOtNVbY1pwJgSN39rkrb+jgYEqVsmWj7WVvZr7JwTg0R6FpGVdOcXao6tLIJANfthCCDfr4tjGtBW2XtET4TKQ/a4PRdwUZiVoamPerXCw42qLqDeyxBKSWMCqrD9mvKYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: zesmtpgz3t1760309901tf1369bb2
+X-QQ-Originating-IP: MvtMcZy8FSuveoXRjmYKGRWu3Gd3/PHMHPUpYLPI0AU=
+Received: from [192.168.3.223] ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 13 Oct 2025 06:58:20 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15561149925438105871
+Message-ID: <56E522C05F8E6468+9e555719-8b1e-47a6-8d60-b6a7e89fd91b@chenxiaosong.com>
+Date: Mon, 13 Oct 2025 06:58:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/22] smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ stfrench@microsoft.com, metze@samba.org, pali@kernel.org,
+ linkinjeon@kernel.org, smfrench@gmail.com, sfrench@samba.org,
+ senozhatsky@chromium.org, tom@talpey.com, pc@manguebit.org,
+ ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com,
+ zhangguodong@kylinos.cn
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ChenXiaoSong <chenxiaosong@kylinos.cn>
+References: <20251012161749.2994033-1-chenxiaosong@chenxiaosong.com>
+ <66942D4891D3E571+20251012161749.2994033-7-chenxiaosong@chenxiaosong.com>
+ <bd7b1078-4e58-4403-97e3-ac3a4765c51a@wanadoo.fr>
+Content-Language: en-US
+From: chenxiaosong <chenxiaosong@chenxiaosong.com>
+In-Reply-To: <bd7b1078-4e58-4403-97e3-ac3a4765c51a@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: M6HsUa4FHJpkREuH6gKmoKadHC2GeyeFVXQD1ZZH1o0+wu4TWXSYuyeu
+	ShYRK44jqH5ITPzFw+F1jfvbMLgCf4HV8eE9IOEO8YC5BbdodOqn/pugq2C6zBujiWoEZ1R
+	Me5eXtGs/SYwceMKT1GHenumWgq4W0LxRnOEPNyoXEfK4ZNptRjvmvejtrkayM6Ad5mQDEy
+	FyNHNFS2u88okb6w1lJ4VAKtfQJKp4vdQv/1itBh/ZwuCuRbuJP1RexlSGNa7xrKU4wvdFi
+	WDJYNw3GsCr7S3fT1ejoVohnz33MQFpWq3lHggFjXAye1kraDBSC+T7WUBjcntyet7NgYm8
+	fSFkN5+HLgap79ahWQ2s6w2aQtIH3tXXdgPQ4ADZmmtU4B6AYOChV+8byErfPsE8I+UBigI
+	4QuBk1WdH9+Mmdo2NqYgK1z/dubhgLtc4hZEe3cSpoPlEmxtPUMWcWB1o+7XjROvzqqM/lT
+	4rnlAc8NVkpRaeI/wmJaEuW8hegQ/01InAZsWzpF4Z6GwVM8F313H5QEyxQ/tNtjIaQcgiC
+	AEOhQHLIfv/in+Q828wE0W65IVdhobR3AarRvrkgAy3z1CYFe/69mFF5pj6qQcMjg1fF1Tt
+	UyxOV0L/1TeN+rABwz+Yb7l11NZ7riAUxWscAXvKjjJa7xduRV3WV3YQPNeJJVZTOIxuJcD
+	U4NapQa9K7mF++tj6XKQZZnraBp6lF1sDyyj6SLxPylHVlMVn+FfqZZNCqRaGBFNfPsfL3k
+	LfE+ARi7nMmDKVcJFzd7DS2vE+R76y6nsLlezcY+/8qOGJaYXTrKVdsxc2FIYtQDitChdhP
+	VuR01US3fzHtYmzZ0xj0ucbMYOWBaFnykbn/e4PdzIUDBznwBJgDDG7X0NevXv2z0vlmIRl
+	RVgYmQhDVFGxZQN5nT5NatRmun/UpNN4gaEMT9GT3B1nuLmHp4asTbcXGZw7MuSRcSS3/+1
+	i7qthzjUszR31kEF/jOEp9rWJXIs0UIB8ThlZ5tu+KNGd8RRTua7By3GebhoWDRP51zZFq0
+	zR7jU5dIh5mX7z9en4fnDEhYxL54SqObWlViYcSLZMwjPQLJaAPpWTNojhkCbazHrO7TUAD
+	g==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-Add the same PSCI state as seen on other Oryon-based SoCs like SM8750
-and Glymur, seems to work fine on Hamoa as well.
+Hi Christophe,
 
-Signed-off-by: Val Packett <val@packett.cool>
----
-Tested on a Dell Latitude 7455:
+Thank you for taking the time to review and comment. Apologies — it was 
+my oversight not to list you in the "To:" of v2, and I should have used 
+"Suggested-by:" rather than "Reviewed-by:".
 
-/sys/kernel/debug/pm_genpd/power-domain-system/idle_states:
-State          Time Spent(ms) Usage      Rejected   Above      Below
-S0             69476          23006      195        21562      0
-
-Seems to mostly be used in system suspend, though I've occasionally seen
-the counter increment a little bit during runtime as well.
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 3cf2568def3f..fab8104147bd 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -303,6 +303,14 @@ cluster_cl5: cluster-sleep-1 {
- 				exit-latency-us = <4000>;
- 				min-residency-us = <7000>;
- 			};
-+
-+			domain_ss3: domain-sleep-0 {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x0200c354>;
-+				entry-latency-us = <2800>;
-+				exit-latency-us = <4400>;
-+				min-residency-us = <10150>;
-+			};
- 		};
- 	};
- 
-@@ -449,7 +457,7 @@ cluster_pd2: power-domain-cpu-cluster2 {
- 
- 		system_pd: power-domain-system {
- 			#power-domain-cells = <0>;
--			/* TODO: system-wide idle states */
-+			domain-idle-states = <&domain_ss3>;
- 		};
- 	};
- 
--- 
-2.51.0
+On 2025/10/13 04:36, Christophe JAILLET wrote:
+> 
+> Hi,
+> 
+> even if I reviewed and commented on this patch, I never gave an explicit 
+> R-b.
+> 
+> And as I'm cited in this v2, being in To: or Cc: of this updated version 
+> would have been appreciated.
+> 
+> No hard-feeling.
+> 
+> CJ
+> 
 
 
