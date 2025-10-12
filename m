@@ -1,134 +1,91 @@
-Return-Path: <linux-kernel+bounces-849398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94231BD0061
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 09:35:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73ACDBD006A
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 09:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DF6C4E2867
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 07:35:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDD01895EE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 07:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C460221FB2;
-	Sun, 12 Oct 2025 07:35:11 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E562D23BCE3;
+	Sun, 12 Oct 2025 07:38:49 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE43221D596;
-	Sun, 12 Oct 2025 07:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804EF1BD9F0;
+	Sun, 12 Oct 2025 07:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760254510; cv=none; b=MVOHPl9dMUR8uNjxLhPA5lFQKj9XMeO8koNf2SdcCz2aq+7yc76TM5mQ93WRbZ2CekzO5RAFlFgvQccvLFCoCFHJ+Ur3L5ci4OlrzqFjwA8XzsVf0sk6ZWAKnyCbT9VJDibzwKEzZQMrAbCzwmBU4IUVIs4cZG6geF2ViAxiTG4=
+	t=1760254729; cv=none; b=SpXnyZMEjJWrBakCw0JrVhkirVzj8m4UdeEZ4hQ9X+4wzd2fHsxMl/ECGuEmxXi/oRTTIdHa8pLv/5qKBkE/l8JvLNohkpHLP1PA563MNaI5vRGuypebE7whYya/9PiXnq2PPaTJMJjgw2Og53rv9SP63xws90pZF2Li4FfK+RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760254510; c=relaxed/simple;
-	bh=o6tyA3/YxVabiXapleK9xx0h/rI5xhFsgTrkc3SOF1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jADVdYog13/gYHLpk5d2rQi4Q/EiaiIaWsyQUWfzayX21nhzxxmU9IY4pmLrHpZBCr8BRULr5XcEW4Wmb4BN7Ildcn+jtj06MmpXS0LRyS5Y+Qtjh1ZQy33PpzbNGR2BQH66wfufDatjmcPXIlpq7lffprXzg/w+ety3Q/BTK/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59C7Ywho024093;
-	Sun, 12 Oct 2025 16:34:58 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59C7YwkB024090
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 12 Oct 2025 16:34:58 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <ddd2cd94-683f-462b-a475-cc04462e9bdd@I-love.SAKURA.ne.jp>
-Date: Sun, 12 Oct 2025 16:34:56 +0900
+	s=arc-20240116; t=1760254729; c=relaxed/simple;
+	bh=B6TTQY2b105FO3hvPVhRwnkmJUx6GedqVg3l81uMnnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzMPnDuuAhBWlzwi7d/CLrBAECIpVTLhIkLKwBYmj8SQ4/HGW1Gtwjws9d1/QmFRzAZSEz8sjcMzss0GMoLF/miEL2S/DWiAuTsv8tvW3Cv6wNDCmARvoju0DWyP+0aRq6U/ukJ4DLwTdohBjvHc2lqWIYkOrvUHcQm2AUrLsQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id AB6DD2C048AF;
+	Sun, 12 Oct 2025 09:38:44 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 97ADB4A12; Sun, 12 Oct 2025 09:38:44 +0200 (CEST)
+Date: Sun, 12 Oct 2025 09:38:44 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: David Howells <dhowells@redhat.com>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] crypto: asymmetric_keys - prevent overflow in
+ asymmetric_key_generate_id
+Message-ID: <aOtbBJtU2NixkYuE@wunner.de>
+References: <20251007185220.234611-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bfs: Verify inode mode when loading from disk
-To: Tigran Aivazian <aivazian.tigran@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <a5f67878-33ca-4433-9c05-f508f0ca5d0a@I-love.SAKURA.ne.jp>
- <CAK+_RL=ybNZz3z-Fqxhxg+0fnuA1iRd=MbTCZ=M3KbSjFzEnVg@mail.gmail.com>
- <CAK+_RLkaet_oCHAb1gCTStLyzA5oaiqKHHi=dCFLsM+vydN2FA@mail.gmail.com>
- <340c759f-d102-4d46-b1f2-a797958a89e4@I-love.SAKURA.ne.jp>
- <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007185220.234611-2-thorsten.blum@linux.dev>
 
-On 2025/10/12 1:29, Tigran Aivazian wrote:
->> Which pattern (just adding a new "if", or adding "else" with "if" and "else if" updated,
->> or replace the 0x0000FFFF mask with 0x00000FFF) do you prefer?
-> 
-> There is also the fourth way, see the patch below. It makes it as
-> explicit as possible that vtype value is the authoritative one and
-> sets the type bits from vtype by keeping (in i_mode) only the
-> permission/suid/sgid/sticky bits upfront. What do you think?
+On Tue, Oct 07, 2025 at 08:52:20PM +0200, Thorsten Blum wrote:
+> +++ b/crypto/asymmetric_keys/asymmetric_type.c
+> @@ -141,12 +142,13 @@ struct asymmetric_key_id *asymmetric_key_generate_id(const void *val_1,
+>  						     size_t len_2)
+>  {
+>  	struct asymmetric_key_id *kid;
+> +	size_t len;
+>  
+> -	kid = kmalloc(sizeof(struct asymmetric_key_id) + len_1 + len_2,
+> -		      GFP_KERNEL);
+> +	len = size_add(len_1, len_2);
+> +	kid = kmalloc(struct_size(kid, data, len), GFP_KERNEL);
+>  	if (!kid)
+>  		return ERR_PTR(-ENOMEM);
 
-Well, I feel that we should choose "replace the 0x0000FFFF mask with
-0x00000FFF" approach, for situation might be worse than HFS+ case.
+This should error out on overflow, rather than continuing with a
+SIZE_MAX length.  So how about using check_add_overflow() instead
+of size_add() and returning -EOVERFLOW if that returns true?
 
-HFS+ explicitly explains that all bits are 0 when that field is not initialized.
+asymmetric_key_generate_id() is invoked, among other things, with
+the raw serial number from the X.509 certificate, which is an
+ASN.1 INTEGER, which can be arbitrarily large.  (You may want to
+mention that in the commit message.)  So checking for overflows
+does seem to make sense to guard against maliciously crafted
+certificates.
 
-  If the S_IFMT field (upper 4 bits) of the fileMode field is zero, then
-  Mac OS X assumes that the permissions structure is uninitialized, and
-  internally uses default values for all of the fields. 
+Thanks,
 
-But "BFS inodes" in https://martin.hinner.info/fs/bfs/bfs-structure.html did not
-say that SCO UnixWare sets 0 to the unused 23 bits when writing to disk.
-
-  32bit int 	mode 	File mode, rwxrwxrwx (only low 9 bits used) 
-
-This means that the unused 23 bits might be random, and therefore we can't
-trust S_IFMT bits. Please see the patch shown below.
-
- fs/bfs/inode.c |   19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index 1d41ce477df5..984b365df046 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -61,7 +61,19 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 	off = (ino - BFS_ROOT_INO) % BFS_INODES_PER_BLOCK;
- 	di = (struct bfs_inode *)bh->b_data + off;
- 
--	inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
-+	/*
-+	 * https://martin.hinner.info/fs/bfs/bfs-structure.html explains that
-+	 * BFS in SCO UnixWare environment used only lower 9 bits of di->i_mode
-+	 * value. This means that, although bfs_write_inode() saves whole
-+	 * inode->i_mode bits (which include S_IFMT bits and S_IS{UID,GID,VTX}
-+	 * bits), middle 7 bits of di->i_mode value can be garbage when these
-+	 * bits were not saved by bfs_write_inode().
-+	 * Since we can't tell whether middle 7 bits are garbage, use only
-+	 * lower 12 bits (i.e. tolerate S_IS{UID,GID,VTX} bits possibly being
-+	 * garbage) and reconstruct S_IFMT bits for Linux environment from
-+	 * di->i_vtype value.
-+	 */
-+	inode->i_mode = 0x00000FFF & le32_to_cpu(di->i_mode);
- 	if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
- 		inode->i_mode |= S_IFDIR;
- 		inode->i_op = &bfs_dir_inops;
-@@ -71,6 +83,11 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_op = &bfs_file_inops;
- 		inode->i_fop = &bfs_file_operations;
- 		inode->i_mapping->a_ops = &bfs_aops;
-+	} else {
-+		brelse(bh);
-+		printf("Unknown vtype=%u %s:%08lx\n",
-+		       le32_to_cpu(di->i_vtype), inode->i_sb->s_id, ino);
-+		goto error;
- 	}
- 
- 	BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
-
+Lukas
 
