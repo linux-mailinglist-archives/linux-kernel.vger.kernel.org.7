@@ -1,207 +1,106 @@
-Return-Path: <linux-kernel+bounces-849477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E725BD0355
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 574EEBD035E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E54051895030
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C2918929FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD0F283CA7;
-	Sun, 12 Oct 2025 14:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41C828467B;
+	Sun, 12 Oct 2025 14:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Co8vOhR4"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWhe122P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C631283CBE
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32378283FF0;
+	Sun, 12 Oct 2025 14:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760278827; cv=none; b=RgWrJ+Opcdm7bw1J1/iqhF4ugBMwPMebJhvpaYkFxIuOY4VOORfKeGI0pVnsabY+oG9h+73J531s3VMrPf+7T7xDONu/ngBmGu1FLYVfexo+x843xHjEaOoN5YajqY163iPXwsi6levxkTZaGaV/X9IRxVG2mvnKeJGtEqkBcmQ=
+	t=1760278873; cv=none; b=frsDypQNh1uqQ30HVT9xyk3XU3dt9bo0cXsPSKiT0m7BjpXUM9sAnD4H1+KhToINR0aST1AKFlQju982pXrRi6xJpD94rwidkXRmi9WfWIVQjgT7m+wzcxdMld6ij84TfzZ5xibGuAc1npXRc61gWsQqF0lstHA/QXQLi/L4zbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760278827; c=relaxed/simple;
-	bh=2k6zfbV5v2cf+4wgu/XCSpdhWf+Wu46HVvzRy5EuNf8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mI5zcLo3MezwCddO1jGOiqAdRs7UmRO02xokTT4812oBkU4EOWPwuHWuNOyE2pTKwOQXlM+H66FmuIbdgzzexiCxST5enAvHQrf85dGbS3Ojn/Ex6PnDilbWGGSQY8Kr1ovy/0RTk84L390HtC5i/vjwdKfcFnBMrG6EB9drWVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Co8vOhR4; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27c369f898fso47016305ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 07:20:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760278824; x=1760883624; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hfkmdzafh7+VHjG0RAeg5sF4FBAljqq3jIvcOzngZlg=;
-        b=Co8vOhR4jNm0dn3Aoz4mtvMDX+V3QoxoynHZgrs3wbB7HQ2mTAI/77rJPCTa3ldC2J
-         o9HkYQfL7s7fD/xprG06pkSlybgXnnbF+aTXrt6is8hrCOcfgE76euD/tQ1+TDld5Qcf
-         PmFIeiCp/EgefscWXP9AKCQKLDUcD3EFmwmiXwL1LlPLxKGVP7lWFpRyMFvD/0qcJA5q
-         mu2Jrbd7cVWTRQQRC4ZU/ggQUPBf7AkyLmT0XqtyHgsyQGBWsXeNfPW14TmRmwhQR7p/
-         ii7Aib7KVOI7wG0dc7eYhwLShseVFT+/eiHLlriKcIrnONnokn84BNUe/e/3N5V6V7mF
-         4ouQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760278824; x=1760883624;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hfkmdzafh7+VHjG0RAeg5sF4FBAljqq3jIvcOzngZlg=;
-        b=nDfUnGhqnO4RaDtcDkD+rxYTxuOcznNNS3VLTkSlnyCAuudqFsIpWtUEwpHIBerB37
-         agv2RYNlgQK6yQ7Of0Dz+bHYh3JASYSxzVHNBwDG9H4NcHxXYorWGm28FF0rFhVhPbgG
-         9kpTlnXuKL3k5bR0mZJdMLdLLwFdnb5TcpNOs4NDsaLKcaU4iqVYDmD8f2M+b3xwumjK
-         4J88z0nXYB3uMpPfb95/QgokjFmo6TN00viEJTtQru6VabkUSERENjb0viPRwWO38kYi
-         AtWqtjQGQW7lst41D5mWupOy98oeRLhbkbeJljh9NqIYYabBydlanMDMKCNBTZqQmuAx
-         NTQA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6TWwrjKDD/AP7IP2gj8XsLfFGzeztHzyANZ9QWOBa7oVdGgyLSvMBGx2xC8iRmo0wyD2hWh9bXnOkBu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpUsXgof6/DOVzLEXYD+ef1PqCar8l4fPbmjfRBPoY+5zq+n7/
-	POOUO5gMeuMn/EGESr9QOK9A7vokZ7/+qlRHxQfpekkk061goF+6z82I
-X-Gm-Gg: ASbGncvATfL0qKGx8BfHBXgQL/8OKFvIGLQEhKU57Z7Xig1VO+Xma6sUGIcSg6tjEw7
-	dfFsxdpW9oQF2sn89ihRVP1tONmRyVaNcv4IvBmu33XT4pm6co3ttOgyFBdHaXPvabtb8u2uVTI
-	8mP77RX1qSAo1RtMlvt0xgte13ZLOKQh3e8mHn4WZztKyuifsqyX/4AYVdaKNOFz+9F1jn1dcp2
-	wqhQJgRHIbHAn2q50RF0Q7jFHW9LVOVUvT3Gax+nG7pk4UlieIE3fOq6J72svFSK1JRSUYGO04J
-	9yaCFGqoo5Gx35N246n9rtol+I0JkWA96z7n894c6YiO5RLWY1kW/Q/aUOR+qc//2fF3tip9qjC
-	ImkkdFrqS6A6q1nRsS7qjq86iWAKQ9I2yu3ohwQiG/GtSAgJmHYLketu8qQ==
-X-Google-Smtp-Source: AGHT+IFjutP7obK0TADVT6/jr5reX7v34JHSR9gBVaHhK88qEC2UiRaBIKkiBy1t0yjPHCjcIVALCw==
-X-Received: by 2002:a17:902:e786:b0:26e:7468:8a99 with SMTP id d9443c01a7336-290272c18e1mr224136745ad.36.1760278824509;
-        Sun, 12 Oct 2025 07:20:24 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([49.128.169.246])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f089a3sm108167325ad.76.2025.10.12.07.20.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 07:20:24 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	linux-block@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>
-Subject: [PATCH v2] rust: block: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Sun, 12 Oct 2025 19:50:12 +0530
-Message-Id: <20251012142012.166230-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760278873; c=relaxed/simple;
+	bh=XExy5QelfgLgYyiwtAQ2Cv9cu6aIqLKW8004SlSBVnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XI2m04V5c+577XrgO6Axue5wz/oFpt0uUWeHsu8RA+BvyzVUhhn6iBLjQTUoF8h+36669R8Y5kM0P64GMI4lY8y0Be7R1/x75qqk5IDtC+SRWyNLcCp9cslf2jk165k/indhk0x4UupmR22xSfpAtKldKKWpXPxtjmNLVoQtzVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWhe122P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AFA4C4CEE7;
+	Sun, 12 Oct 2025 14:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760278873;
+	bh=XExy5QelfgLgYyiwtAQ2Cv9cu6aIqLKW8004SlSBVnM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rWhe122PVNC25hKVlxZfuUV4jejEe6oHLEw+0qhlV07I9gTQ5I4hyeWMPwFeLcpS9
+	 JzCsExrfO46VwVJ9faLY3FkjZCZMKnqYebcBk6bCvNjuR4glitIeuKNiDO1h3AQMjg
+	 ZFWym3xv6+DuefTbYBpspwyJbr2lnnoWHV0f4i5lKgVRyYW/ZVtl8queq0J/P/nssz
+	 36mtfTxwn0Umshy1UJePpLAZniPFNqw4L0NRTIN5m6uK1krxCli7Sa+LpHrEvIiCzq
+	 zTDq9e+YBuKMKzW6PXJekmir9HEFLmv102fTTA9K0N9te8hIT/lBB9Ap/NdLlpvp6C
+	 tkwMOanaAoshQ==
+Date: Sun, 12 Oct 2025 15:21:03 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/19] iio: accel: bma220: remove incorrect
+ kernel-doc marking
+Message-ID: <20251012152103.6b1ca4e9@jic23-huawei>
+In-Reply-To: <20251005-b4-bma220_improvements-v4-1-0f449ba31585@subdimension.ro>
+References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
+	<20251005-b4-bma220_improvements-v4-1-0f449ba31585@subdimension.ro>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Update call sites in the block subsystem to import `ARef` and
-`AlwaysRefCounted` from `sync::aref` instead of `types`.
+On Sun, 05 Oct 2025 16:12:10 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-This aligns with the ongoing effort to move `ARef` and
-`AlwaysRefCounted` to sync.
+> Remove incorrect use of kernel-doc marking.
+> 
+> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
 
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1173
-Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
----
-Changelog:
-v1 -> v2:
-Rebased it on top of the latest linux-next upstream commit
-Dropped 1/7 from the subject as it might lead to confusion of it being a series
-Link of v1: https://lore.kernel.org/lkml/20250716090712.809750-1-shankari.ak0208@gmail.com/
+hi Petre,
 
-The original patch of moving ARef and AlwaysRefCounted to sync::aref is here:
-(commit 07dad44aa9a93)
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+I'm going to pick these up as I read through them (if they are good to go!)
 
+Applied this one,
 
-Gradually the re-export from types.rs will be eliminated in the
-future cycle.
----
- 
- drivers/block/rnull/rnull.rs       | 3 +--
- rust/kernel/block/mq.rs            | 5 ++---
- rust/kernel/block/mq/operations.rs | 4 ++--
- rust/kernel/block/mq/request.rs    | 8 ++++++--
- 4 files changed, 11 insertions(+), 9 deletions(-)
+Thanks,
 
-diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
-index 1ec694d7f1a6..a9d5e575a2c4 100644
---- a/drivers/block/rnull/rnull.rs
-+++ b/drivers/block/rnull/rnull.rs
-@@ -17,8 +17,7 @@
-     error::Result,
-     pr_info,
-     prelude::*,
--    sync::Arc,
--    types::ARef,
-+    sync::{aref::ARef, Arc},
- };
- use pin_init::PinInit;
- 
-diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-index 637018ead0ab..1fd0d54dd549 100644
---- a/rust/kernel/block/mq.rs
-+++ b/rust/kernel/block/mq.rs
-@@ -20,7 +20,7 @@
- //! The kernel will interface with the block device driver by calling the method
- //! implementations of the `Operations` trait.
- //!
--//! IO requests are passed to the driver as [`kernel::types::ARef<Request>`]
-+//! IO requests are passed to the driver as [`kernel::sync::aref::ARef<Request>`]
- //! instances. The `Request` type is a wrapper around the C `struct request`.
- //! The driver must mark end of processing by calling one of the
- //! `Request::end`, methods. Failure to do so can lead to deadlock or timeout
-@@ -61,8 +61,7 @@
- //!     block::mq::*,
- //!     new_mutex,
- //!     prelude::*,
--//!     sync::{Arc, Mutex},
--//!     types::{ARef, ForeignOwnable},
-+//!     sync::{aref::ARef, Arc, Mutex},
- //! };
- //!
- //! struct MyBlkDevice;
-diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
-index f91a1719886c..8ad46129a52c 100644
---- a/rust/kernel/block/mq/operations.rs
-+++ b/rust/kernel/block/mq/operations.rs
-@@ -9,8 +9,8 @@
-     block::mq::{request::RequestDataWrapper, Request},
-     error::{from_result, Result},
-     prelude::*,
--    sync::Refcount,
--    types::{ARef, ForeignOwnable},
-+    sync::{aref::ARef, Refcount},
-+    types::ForeignOwnable,
- };
- use core::marker::PhantomData;
- 
-diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
-index c5f1f6b1ccfb..ce3e30c81cb5 100644
---- a/rust/kernel/block/mq/request.rs
-+++ b/rust/kernel/block/mq/request.rs
-@@ -8,8 +8,12 @@
-     bindings,
-     block::mq::Operations,
-     error::Result,
--    sync::{atomic::Relaxed, Refcount},
--    types::{ARef, AlwaysRefCounted, Opaque},
-+    sync::{
-+        aref::{ARef, AlwaysRefCounted},
-+        atomic::Relaxed,
-+        Refcount,
-+    },
-+    types::Opaque,
- };
- use core::{marker::PhantomData, ptr::NonNull};
+Jonathan
 
-base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae 
--- 
-2.34.1
+> ---
+> v4 - split from bigger patch (Andy)
+> ---
+>  drivers/iio/accel/bma220_spi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/accel/bma220_spi.c b/drivers/iio/accel/bma220_spi.c
+> index 01592eebf05bb6b002d44c41cca1d2dd5f28350c..505ad70912571ba629f91e56a92898d8320e976f 100644
+> --- a/drivers/iio/accel/bma220_spi.c
+> +++ b/drivers/iio/accel/bma220_spi.c
+> @@ -223,7 +223,7 @@ static int bma220_power(struct spi_device *spi, bool up)
+>  {
+>  	int i, ret;
+>  
+> -	/**
+> +	/*
+>  	 * The chip can be suspended/woken up by a simple register read.
+>  	 * So, we need up to 2 register reads of the suspend register
+>  	 * to make sure that the device is in the desired state.
+> 
 
 
