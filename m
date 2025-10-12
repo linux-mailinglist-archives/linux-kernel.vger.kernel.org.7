@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-849493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B33BD042A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:42:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE09BD0436
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A96F3A5B15
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:42:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C92EE4E92F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572812877CB;
-	Sun, 12 Oct 2025 14:42:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3F828D8ED;
+	Sun, 12 Oct 2025 14:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dasN7jn1"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE13279918
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071594502F;
+	Sun, 12 Oct 2025 14:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760280125; cv=none; b=kiFb0emcxAjDqrvZksLHR/U9Jc0ahrwrqNsljDj2sxFV1cp1w6Jet07HCWclQsY9ZJPpijlL7K1JryeLJ0wkqfaIFLMVwZuajSqrjWg8lVWDFRUoHs9EEH9s28dV/B0XyPaKJegvH4K2m/lJ4G+KjRmwDiBmbWH+tyne3zQkWEk=
+	t=1760280467; cv=none; b=cs4l+E0yVxNL8n85nxCNrjhRhycdhgKWByTBUw6DTeJzojjsXu9p0+pu4h91gO9dvLN+zrll5umqbj/t1mjj32vwTTJtV3Ib14LatH09aSv6egBCWUb9X2dV/UnUYT6J7QaO1LsFVZ4eCRaZ0n5pdQp/+FeHGGs1EMSf7FTLZlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760280125; c=relaxed/simple;
-	bh=5FKwHJS6myM1RrvPV4CJRH9CCCNggAcNjjLCeLWAxgY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=V5xZQtAfIQ/U3eSfkYSOSBReGgWz8PgtypvJ+P7R3KmgSvsErOOYnzE6+zl3RpT3vWlt2FhvWtURVJs3t4QKpznHNZj/aqxHU87mi7QPt5LiIX5ovb12fCtjpJE6YTSmNwjOByo3tu0m9efjlv02RBntLKEWI/vqKr611ZzlQdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-91b3cc5aa6aso2110139239f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 07:42:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760280122; x=1760884922;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iHCAw8jL278fZzz1pADJfk5MuUXk9m7inbwe4Grfrmw=;
-        b=UqhYimhJysxvkdkdfE9MwV9WqSvzzusa+skOqRoRGtvj0mfpHSRM5B6c6awTjGG0OT
-         BHPqBH8xpkKA4YrKeMRdL9CpOs9xLAWMgxyeTbPA0Z8VtRyLNd2fZe9ULOu/7FZS8PTm
-         1H24m2+d9H++SFY18jIhsgRy/TzojDQgUkJzxP5oLMzmrGXZxJv7jlK0j4yKvf+AIxut
-         9ai6aM4Jo8fzNz/pFeUBTUHFhkFqiQ4q7FkvV6lw0Y76WbkR0hcnC5jEWJpiZtctZol3
-         parXC1YuQT7UaFMko9ODtGh7cYSjeRzHDM0YI3o4OzH1pGSmEnHsUDd09jII1c9r28o7
-         3Hkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXk4JKhWyogb6YFY2F2rlLEX1N7Jbh9VPX0rKEd258TVic39KTlIGafBwxWTMw7Tprk5tKbqktqBoitBSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP8awxJhf5zDs+A7Y+AwUHMyvpyEiobt5V/B3HTswVqAyQuo6C
-	z7hla1jM/JH3xkV5rlrDH/YXbgk3120OxrVEEZvBShPfEZhKb4p71RCQpE262VfjW1YnxyggHhF
-	AIjZxarzCayDpmFl6kcADLa+VcIxk8/9Ajc8Vf7IVdxM9OS38sCwPAqjJVsY=
-X-Google-Smtp-Source: AGHT+IGegfJiu7krZthcS32gPhcEz3dB58Obw7t1kqbgjHOBccxyTpMxdezbLV8LJqSZbFShe1MpO23sfHjUay1H0vdXfHJpQKNd
+	s=arc-20240116; t=1760280467; c=relaxed/simple;
+	bh=ihc+tpb606q//94OiNEimFyArARuU0UuhAOgM5Ga4lY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uTovZHKnzkg9RDlzz8bBnxe9JMqhsWD1fo61eL3E96IVyS5Iy/5N/Zj2StR+RJVicwWF7jjE3TCcO6Mqio5I39FoqqvKUgSU1c//jSpO0tjF82NrgSuOVt/gbWouaRaIr+V2oCgq88xh2Hf29UmGutucWPta7krTmT11wqBlfXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dasN7jn1; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=1mDmpetLfcmCLrx3e9s6mnKckfazX8FDZfhsC08rMO4=; b=dasN7jn1nmObOGthEs+V8nWAcM
+	7eSj26kfkIRsDviBGcNcLGIxgAWSG2FCEaJ+xe5NyUqnqcwWKnWYmUZhquWsjMRxXF1FgKqZnAEda
+	+Q6FRZfPFKjrkilBeShRwTCavpT+ky2wAeCARDLjaS6xPdPTukqRccLK2zKwW5ZgVPtY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v7xMC-00AiTb-MG; Sun, 12 Oct 2025 16:47:32 +0200
+Date: Sun, 12 Oct 2025 16:47:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] can: add Transmitter Delay Compensation (TDC)
+ documentation
+Message-ID: <1b53ea33-1c57-40e9-bc55-619d691e4c32@lunn.ch>
+References: <20251012-can-fd-doc-v1-0-86cc7d130026@kernel.org>
+ <20251012-can-fd-doc-v1-2-86cc7d130026@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:4815:b0:8e0:cc1b:f680 with SMTP id
- ca18e2360f4ac-93bd1989d2amr2394244639f.13.1760280122757; Sun, 12 Oct 2025
- 07:42:02 -0700 (PDT)
-Date: Sun, 12 Oct 2025 07:42:02 -0700
-In-Reply-To: <20251012143104.66463-1-contact@arnaud-lcm.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ebbe3a.050a0220.ac43.000c.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Write in __bpf_get_stackid
-From: syzbot <syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com>
-To: contact@arnaud-lcm.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251012-can-fd-doc-v1-2-86cc7d130026@kernel.org>
 
-Hello,
+On Sun, Oct 12, 2025 at 08:23:43PM +0900, Vincent Mailhol wrote:
+> Back in 2021, support for CAN TDC was added to the kernel in series [1]
+> and in iproute2 in series [2]. However, the documentation was never
+> updated.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Hi Vincent
 
-failed to checkout kernel repo git@github.com:ArnaudLcm/linux.git/bpf-slab-fix: failed to run ["git" "fetch" "--force" "ba1896969eb5f998e94092c59b6927ec7a6f3b5f" "bpf-slab-fix"]: exit status 128
+I also don't see anything in man ip-link, nor ip link help. Maybe you
+can add this documentation as well?
 
-
-Tested on:
-
-commit:         [unknown 
-git tree:       git@github.com:ArnaudLcm/linux.git bpf-slab-fix
-kernel config:  https://syzkaller.appspot.com/x/.config?x=412ee2f8b704a5e6
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-compiler:       
-
-Note: no patches were applied.
+	Andrew
 
