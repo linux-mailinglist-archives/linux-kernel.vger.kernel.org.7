@@ -1,254 +1,87 @@
-Return-Path: <linux-kernel+bounces-849755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7EBABD0CB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:25:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFC2BD0CBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9CCAA4E9A9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6483A2CB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184BF2D4B5A;
-	Sun, 12 Oct 2025 21:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v1T6rivl"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891633B186;
+	Sun, 12 Oct 2025 21:30:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F34624E4D4
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 21:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE1A23D7D3
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 21:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760304274; cv=none; b=YRk6kNYXEaBx+Xjo+WKO/tCbCSg9Z125saKfeANPSlvxE9XEq0gQ5ll3PHxTUbWfjgHxyIOvsEIxuNVyJhfJq2ewKyzCKMVQZORGUQmwTxRzpYVOiwqVF4t3W5H6ylvZV4Mm90TkdSvHngy8k0qXEI19DSXXtNCZn2hXiMycccM=
+	t=1760304605; cv=none; b=YErezxsbwB90K16DKeE2OrqqZyS4fjHiHG8DyZ8w52n6Zk0Hb7cKZ2MaTKEwAzxQcN3mFprx6otn8EeROiu+aaGHi9nLHLxqAnTAwKdTjju6YVcKTX3QP4qPqMCIYlasujYVljXsuR4zsi210tvahgFqepYhvGafCDgyKv73OW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760304274; c=relaxed/simple;
-	bh=kZ2kxPL0DwQa6FaA47JtKYNl7J+Rv40MhInzKCJkN7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i3e0rR8Pfda40HHNLsXmnr9n4P1J3nvGHfb3Rc9ZAZnMPMVG1t6ocd3XP+azXAVFripcWQq/F3x50k8LXRfDfu4yAAD/q47CIfX7h8Dd4PRZ7s4qDF2RiT6ol+E9OE7XbUE/lTF41AWP7vr5MV9BntkPN8QOYcjYjnZfOIpVCF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v1T6rivl; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760304270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JbmcSlWYwAKTQNHjQETLXgL9nJD2V6VdefvVxWJt/kY=;
-	b=v1T6rivlNK6uKJv5b6AWznx0aqWs34w8q4MBH7gTxte1s5xikFXl4mVHQsC7bCibi4i1FO
-	NXGBxiiL/GC2omdTp2ORO6btAk6fTDjXQ2G+SZdTzcYYBeM+fR+voZVzrz1FG4z1xnJFsw
-	YjsPAJDyX2A1avXSyaVfO4y5lRght2c=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH v2 8/8] generix-radix-tree: Overflow checking
-Date: Sun, 12 Oct 2025 17:24:11 -0400
-Message-ID: <20251012212414.3225948-9-kent.overstreet@linux.dev>
-In-Reply-To: <20251012212414.3225948-1-kent.overstreet@linux.dev>
-References: <20251012212414.3225948-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1760304605; c=relaxed/simple;
+	bh=7HD8J8WIvZoID8gPeuviIKrpyU8beCLKGG+uCNS6vLw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=E+rRPXBEEcSuizZ71lJvW0+YwD4UUNmLQNslTzZqWV2BXfFVQfTnFvT33oin0mM7HtGFon8Pru8ElFFpLzNa8lybhIfJ/1/z+ajk3wwonfa8IlD3VaAjDf8Y/qAzu0TANh+sEglGM56cjZ8CUcAK1ePvTgjo6IcpfLtdZoggasU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4257e203f14so292200735ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:30:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760304602; x=1760909402;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iooRg4KZrYD32xeyWBg0UydIyxiIUYKFjxEH2FU/ZFA=;
+        b=JgBuKh1Vc0nFW4wtsMMcUxHQwnPEk9fNRTE2YZhozp5+r1l4QISH6w090eBe76Xurq
+         rwYOOQvWR9BtwSPDD5LeWaWhyLsOE+MjWTKFqdHp9kx3x1w1NYP1y6CXVBP4abfcZZzM
+         F306VagQHP6waSOPudoyRCs0k0shWDYSQgjsOOcM5fkpDb+QXEy+t2KllmVV22ulGcCE
+         Tuj+echpZ8+xx6d4Dg8hIIPD/RSr2FD208ylfzZp6pEpHcpsePZ+AvLY9R9wR16azxnV
+         I6W1loVuzfANXGeUDZJOUXPHyTrjw4KOU6cW0DK5nqEamFcHZYzLWDUoLl1O6grvAQcZ
+         jf/g==
+X-Gm-Message-State: AOJu0Yz7lRfbz/Qnk3UqYETgdlnnVlu1of5PKMUpkDV7GpN8Qp+Z3etb
+	ktbBBbhWb5uNhwoihlE5LjFnCcGCaBoD6P/RXj4U1VHdGBdpjsm9Q2RxdqVSTqLc0m5TG6Z8DmI
+	sDjMRE6zmNx/qKceaxym84gUHwibluLUXqn1JqpWcAG6xRG7UcIJRDKmEWOs=
+X-Google-Smtp-Source: AGHT+IFFX6XI8HP9o1VLvonL1HmmGNfaBvRVNFwXDuNHD0v9ls6ab1lagln+Gbw6JoUJxJlAXZCOK5P6Mg+BPXftq65YSFuC0KyV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1d8b:b0:430:9707:ef2f with SMTP id
+ e9e14a558f8ab-430970822bcmr10751235ab.25.1760304601932; Sun, 12 Oct 2025
+ 14:30:01 -0700 (PDT)
+Date: Sun, 12 Oct 2025 14:30:01 -0700
+In-Reply-To: <CAHjv_asDFA+tuP5HBd7j8uW5oS9Etm-oJOCMUv-Yn_eimXmuCQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ec1dd9.a70a0220.b3ac9.0016.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_delete_entry (2)
+From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zlatistiv@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Internally, genradixes index based on the byte offset into the radix
-tree - index * obj_size - which means accidental overflows are a real
-concern.
+Hello,
 
-This was noticed in bcachefs where we were using them to index inode
-numbers, for hardlink checking/detection.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- include/linux/generic-radix-tree.h | 110 +++++++++++++++++------------
- 1 file changed, 65 insertions(+), 45 deletions(-)
+Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
 
-diff --git a/include/linux/generic-radix-tree.h b/include/linux/generic-radix-tree.h
-index 5b51c3d582d6..52b012efe8f4 100644
---- a/include/linux/generic-radix-tree.h
-+++ b/include/linux/generic-radix-tree.h
-@@ -155,20 +155,27 @@ void __genradix_free(struct __genradix *);
-  */
- #define genradix_free(_radix)	__genradix_free(&(_radix)->tree)
- 
--static inline size_t __idx_to_offset(size_t idx, size_t obj_size)
-+static inline bool __idx_to_offset(size_t idx, size_t obj_size, size_t *offset)
- {
-+	/*
-+	 * XXX: check for overflow, we have a bug in multiple places where we
-+	 * assume idx fits in 64 bits (because it's an inode number; already a
-+	 * bug on 32 bit) - but we then multiply by the object size and we
-+	 * overflow
-+	 */
- 	if (__builtin_constant_p(obj_size))
- 		BUILD_BUG_ON(obj_size > GENRADIX_NODE_SIZE);
- 	else
- 		BUG_ON(obj_size > GENRADIX_NODE_SIZE);
- 
- 	if (!is_power_of_2(obj_size)) {
--		size_t objs_per_page = GENRADIX_NODE_SIZE / obj_size;
-+		size_t objs_per_page = GENRADIX_NODE_SIZE / obj_size, node, node_offset;
- 
--		return (idx / objs_per_page) * GENRADIX_NODE_SIZE +
--			(idx % objs_per_page) * obj_size;
-+		return  check_mul_overflow(idx / objs_per_page, GENRADIX_NODE_SIZE, &node) ? true :
-+			check_mul_overflow(idx % objs_per_page, obj_size, &node_offset) ? true :
-+			check_add_overflow(node, node_offset, offset);
- 	} else {
--		return idx * obj_size;
-+		return check_mul_overflow(idx, obj_size, offset);
- 	}
- }
- 
-@@ -179,8 +186,8 @@ static inline size_t __idx_to_offset(size_t idx, size_t obj_size)
- #define __genradix_page_remainder(_radix)			\
- 	(GENRADIX_NODE_SIZE % sizeof((_radix)->type[0]))
- 
--#define __genradix_idx_to_offset(_radix, _idx)			\
--	__idx_to_offset(_idx, __genradix_obj_size(_radix))
-+#define __genradix_idx_to_offset(_radix, _idx, _offset)		\
-+	__idx_to_offset(_idx, __genradix_obj_size(_radix), _offset)
- 
- static inline void *__genradix_ptr_inlined(struct __genradix *radix, size_t offset)
- {
-@@ -202,9 +209,13 @@ static inline void *__genradix_ptr_inlined(struct __genradix *radix, size_t offs
- }
- 
- #define genradix_ptr_inlined(_radix, _idx)			\
--	(__genradix_cast(_radix)				\
--	 __genradix_ptr_inlined(&(_radix)->tree,		\
--			__genradix_idx_to_offset(_radix, _idx)))
-+({								\
-+	size_t _offset;						\
-+	!__genradix_idx_to_offset(_radix, _idx, &_offset)	\
-+	? __genradix_cast(_radix)				\
-+	  __genradix_ptr_inlined(&(_radix)->tree, _offset)	\
-+	: NULL;							\
-+})
- 
- void *__genradix_ptr(struct __genradix *, size_t);
- 
-@@ -216,28 +227,39 @@ void *__genradix_ptr(struct __genradix *, size_t);
-  * Returns a pointer to entry at @_idx, or NULL if that entry does not exist.
-  */
- #define genradix_ptr(_radix, _idx)				\
--	(__genradix_cast(_radix)				\
--	 __genradix_ptr(&(_radix)->tree,			\
--			__genradix_idx_to_offset(_radix, _idx)))
-+({								\
-+	size_t _offset;						\
-+	!__genradix_idx_to_offset(_radix, _idx, &_offset)	\
-+	? __genradix_cast(_radix)				\
-+	  __genradix_ptr(&(_radix)->tree, _offset)		\
-+	: NULL;							\
-+})
- 
- void *__genradix_ptr_alloc(struct __genradix *, size_t,
- 			   struct genradix_node **, gfp_t);
- 
--#define genradix_ptr_alloc_inlined(_radix, _idx, _gfp)			\
--	(__genradix_cast(_radix)					\
--	 (__genradix_ptr_inlined(&(_radix)->tree,			\
--			__genradix_idx_to_offset(_radix, _idx)) ?:	\
--	  __genradix_ptr_alloc(&(_radix)->tree,				\
--			__genradix_idx_to_offset(_radix, _idx),		\
--			NULL, _gfp)))
--
- #define genradix_ptr_alloc_preallocated_inlined(_radix, _idx, _new_node, _gfp)\
--	(__genradix_cast(_radix)					\
--	 (__genradix_ptr_inlined(&(_radix)->tree,			\
--			__genradix_idx_to_offset(_radix, _idx)) ?:	\
--	  __genradix_ptr_alloc(&(_radix)->tree,				\
--			__genradix_idx_to_offset(_radix, _idx),		\
--			_new_node, _gfp)))
-+({								\
-+	size_t _offset;						\
-+	!__genradix_idx_to_offset(_radix, _idx, &_offset)	\
-+	? __genradix_cast(_radix)				\
-+	 (__genradix_ptr_inlined(&(_radix)->tree, _offset) ?:	\
-+	  __genradix_ptr_alloc(&(_radix)->tree, _offset,	\
-+			_new_node, _gfp))			\
-+	: NULL;							\
-+})
-+
-+#define genradix_ptr_alloc_inlined(_radix, _idx, _gfp)		\
-+	genradix_ptr_alloc_preallocated_inlined(_radix, _idx, NULL, _gfp)
-+
-+#define genradix_ptr_alloc_preallocated(_radix, _idx, _new_node, _gfp)		\
-+({										\
-+	size_t _offset;								\
-+	!__genradix_idx_to_offset(_radix, _idx, &_offset)			\
-+	? __genradix_cast(_radix)						\
-+	  __genradix_ptr_alloc(&(_radix)->tree, _offset, _new_node, _gfp)	\
-+	: NULL;									\
-+})
- 
- /**
-  * genradix_ptr_alloc - get a pointer to a genradix entry, allocating it
-@@ -248,17 +270,8 @@ void *__genradix_ptr_alloc(struct __genradix *, size_t,
-  *
-  * Returns a pointer to entry at @_idx, or NULL on allocation failure
-  */
--#define genradix_ptr_alloc(_radix, _idx, _gfp)			\
--	(__genradix_cast(_radix)				\
--	 __genradix_ptr_alloc(&(_radix)->tree,			\
--			__genradix_idx_to_offset(_radix, _idx),	\
--			NULL, _gfp))
--
--#define genradix_ptr_alloc_preallocated(_radix, _idx, _new_node, _gfp)\
--	(__genradix_cast(_radix)				\
--	 __genradix_ptr_alloc(&(_radix)->tree,			\
--			__genradix_idx_to_offset(_radix, _idx),	\
--			_new_node, _gfp))
-+#define genradix_ptr_alloc(_radix, _idx, _gfp)				\
-+	genradix_ptr_alloc_preallocated(_radix, _idx, NULL, _gfp)
- 
- struct genradix_iter {
- 	size_t			offset;
-@@ -271,10 +284,15 @@ struct genradix_iter {
-  * @_idx:	index to start iterating from
-  */
- #define genradix_iter_init(_radix, _idx)			\
--	((struct genradix_iter) {				\
-+({								\
-+	size_t _offset;						\
-+	__genradix_idx_to_offset(_radix, _idx, &_offset);	\
-+								\
-+	(struct genradix_iter) {				\
- 		.pos	= (_idx),				\
--		.offset	= __genradix_idx_to_offset((_radix), (_idx)),\
--	})
-+		.offset	= _offset,				\
-+	};							\
-+})
- 
- void *__genradix_iter_peek(struct genradix_iter *, struct __genradix *, size_t);
- 
-@@ -394,9 +412,11 @@ int __genradix_prealloc(struct __genradix *, size_t, gfp_t);
-  * Returns 0 on success, -ENOMEM on failure
-  */
- #define genradix_prealloc(_radix, _nr, _gfp)			\
--	 __genradix_prealloc(&(_radix)->tree,			\
--			__genradix_idx_to_offset(_radix, _nr + 1),\
--			_gfp)
--
-+({								\
-+	size_t _offset;						\
-+	!__genradix_idx_to_offset(_radix, _nr + 1, &_offset)	\
-+	? __genradix_prealloc(&(_radix)->tree, _offset, _gfp)	\
-+	: -ENOMEM;						\
-+})
- 
- #endif /* _LINUX_GENERIC_RADIX_TREE_H */
--- 
-2.51.0
+Tested on:
 
+commit:         bf45a62b Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=12058c58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=714d45b6135c308e
+dashboard link: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14598c58580000
+
+Note: testing is done by a robot and is best-effort only.
 
