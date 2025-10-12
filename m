@@ -1,296 +1,144 @@
-Return-Path: <linux-kernel+bounces-849385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8F0BCFFAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 08:11:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE88FBCFFB2
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 08:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5B818960F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 06:11:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53DC3348DE9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 06:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA642135B9;
-	Sun, 12 Oct 2025 06:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CED213E9C;
+	Sun, 12 Oct 2025 06:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uHwX2M6a"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzU84/YN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5A478F51
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 06:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0858878F51
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 06:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760249484; cv=none; b=owGL1THqD6l9Gcn/wtFZzhzvDH4ZNoncLoVxvHsmhCV5+JjbBzpKzbBdlT6OgeHGyYiRNjQiVD8neqx3dJXn3IOfRIfLuFZjAGf+zUUFnsB789lbzHQmcvKDatuSW2Rj7J+tk9NlVSyK91nTyBkHAgmUyhjdy1KQSxIRcJdPbtE=
+	t=1760249516; cv=none; b=SLl89VThzTrgam9KSQW4JkkLOTgGTVh9Kmx7bVrXTfEZPKIE+EdXPIbTf9DtuVESewXudh5IxrFShouE5eQyh3JHxV8HkYy3mjIOMJjZn8Ecc2waOrlu2bKMaIRcWvP+k1mv75jFpcI4esVpO1lPf4SzRTwK8fhmje7K6awUYo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760249484; c=relaxed/simple;
-	bh=cMQvbjIqDeAcB1198DCEO7hiNKtamu2PyHOIWQoPD+4=;
+	s=arc-20240116; t=1760249516; c=relaxed/simple;
+	bh=5ola3YDxnYdWqEmDLUEc5xfcVUT9cazJU910mw2Lbgs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NtlK2VKbpmBhsFUcOokZgn76ZKQZbpB8D99ZexT5lFmOQBE2hc8XFxiCdvxjZVpRPG/hqM7Sbu45WPv+05lNx4FoHBSgRyE1DUqbXvlbhP4IM8JVKBiMcqkKGM3Zdebr2FSdpbDk9O+m+niRkdHDku7cCGFDgKRPBujRjzdNk6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uHwX2M6a; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Gm-Message-State: AOJu0YzTC3M+jzQkrlxz83Ls355beFYecjnaGWa8iCSX07mvnnldOSLG
-	Dqx9G1Fxzv/c9Hhk2+0LIzhH+Xui6QZMiTl5m4ywKJNahBGhAziClk/jg5nywas2x2gj1v3Z6qW
-	cq/+zN9de0QOTvXdkfVJ8BYETd5Dxv0s=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760249477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=foNWJ4E25V51roHi1w2GGGZKjeKD6i3dCTeTVLACyRo=;
-	b=uHwX2M6aj1Vux6fE+cpAFxSqbnhX9tUJr7CMyifjwjlnPK4mKX3sxxCYQb9Ah09i+dNYQU
-	FRzU4LST0xVavJKF7Zob/dBnoXHlSsX6e5OOSoh8EGK3F1Ugr9qknl2W8LSRHysjeXtpEn
-	UxknZje92JsdUVUlu89C4iFiDwhGLwo=
-X-Google-Smtp-Source: AGHT+IGS0m07WNkCv+xO8uTbgSUz2CohzI7fDRMEZdBsffTcs/wloxbDLAkjPyEDGkuh6+Hjmc9gNd3T1rXw4qkFyCk=
-X-Received: by 2002:ad4:5ca4:0:b0:77c:a783:c9c6 with SMTP id
- 6a1803df08f44-87b21015103mr220167516d6.3.1760249475096; Sat, 11 Oct 2025
- 23:11:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=mR2uZkgzWLNXe/aPeBHg8WYykq4tbSR0wZ166EXo/fmPHsUrp8s9sHmYzopb5AZBi6ojeNS1y4DEiVENeZxpQMa7Yn1dzu2/ON3OoQ+FYFuC8lGR6SAxxEPuP/stMbEumuC5BE0APLVZ3UpgmZdILBZ6m5EjfhIYE/onwjb+BjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzU84/YN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80101C4CEF8
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 06:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760249515;
+	bh=5ola3YDxnYdWqEmDLUEc5xfcVUT9cazJU910mw2Lbgs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rzU84/YNrD2fWtDD/A8jNqlT+n3IknG2aNgbHc30iBGsUbymW8vDEQhzCFIN0qj5V
+	 WfJGTL4YjoEA8I+BPMe1Jw6AccxJjU1UgC6bnuylNFw4sEWDu0X6Q3M98FdXcBFBzj
+	 6SHJegyUA0VZjmnKoj1C8Un0FEoErYfRkM6pcuR6WMF1ULhkQrKx9AzK7qupKPE/WH
+	 JpHGZrNYSCGqZ9eEy9C5K28Dtf9xnxkCM0zQx7FPQsQPBmI/mgn7owmH2zmLsxfkoL
+	 hDmmByqEhiorgZIpgMy3LPLyYyTRRSdpOpavoT6jLBCGxxkPBWmJkMPy1MA8CHy0cD
+	 XVOFlbuPhneMQ==
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e2e363118so26730845e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 23:11:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV42RYu8kQxklpXSdM6uD5tJys0qC0teWRe2YPfpfCPJ4zzaSVus2rNuSvA3s9eCuvLX2l+vMyyCieOxVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDu2nURjgEej2XWM9rdqwvsMnE2h4MfB9byVOGTencxF5MvBU1
+	GGl2gccurTh4RpFETAcRtKmKYYEg//MLd8c3b7B8EVQv6Fx6NIK1dAnFnKNdIxzPhaY5adBemoS
+	xxrdmoj8xElW++whDDrj/G8waIvrALNA=
+X-Google-Smtp-Source: AGHT+IEKlteG9lfVBg9j7ASH6OTe/Dfj1NndFuZm+KdXyn0SVroBvLiRXYmPyV6peIPu9DVdV+AM6j/uCc8jUqMSTVQ=
+X-Received: by 2002:a05:600c:4506:b0:45b:8a0e:cda9 with SMTP id
+ 5b1f17b1804b1-46fa9a8638dmr118651305e9.2.1760249514038; Sat, 11 Oct 2025
+ 23:11:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001065707.920170-1-balbirs@nvidia.com> <20251001065707.920170-2-balbirs@nvidia.com>
-In-Reply-To: <20251001065707.920170-2-balbirs@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-Date: Sun, 12 Oct 2025 14:10:37 +0800
-X-Gmail-Original-Message-ID: <CABzRoyYJXVdgTdoz9uYxeYHeejU1bbe6_rQnvbKns7fjvz_kqQ@mail.gmail.com>
-X-Gm-Features: AS18NWC8_Z-3ZIKnbl1wff6T8kbSmzYyB0uKsUmMixJLXumxkUIzTUIiVVMKwFw
-Message-ID: <CABzRoyYJXVdgTdoz9uYxeYHeejU1bbe6_rQnvbKns7fjvz_kqQ@mail.gmail.com>
-Subject: Re: [v7 01/16] mm/zone_device: support large zone device private folios
-To: Balbir Singh <balbirs@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mm@kvack.org, akpm@linux-foundation.org, 
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
-	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
-	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Ralph Campbell <rcampbell@nvidia.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>, 
-	Matthew Brost <matthew.brost@intel.com>, Francois Dugast <francois.dugast@intel.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+References: <20251011155746.1558731-1-guoren@kernel.org>
+In-Reply-To: <20251011155746.1558731-1-guoren@kernel.org>
+From: Guo Ren <guoren@kernel.org>
+Date: Sun, 12 Oct 2025 14:11:42 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEGWrw9ERRLYYA@mail.gmail.com>
+X-Gm-Features: AS18NWCt3-Wrv4mHE1rXWP8VmFtwVh1Eop_f8YJ4Ep4VwD8YYMjDGc5QM5wrH6o
+Message-ID: <CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEGWrw9ERRLYYA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Add pgprot_dmacoherent definition
+To: samuel.holland@sifive.com, david@redhat.com, yongxuan.wang@sifive.com, 
+	cuiyunhui@bytedance.com, luxu.kernel@bytedance.com
+Cc: paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	palmer@dabbelt.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
 
-Hi Balbir,
+Anup's patch has solved this:
+https://lore.kernel.org/linux-riscv/20250820152316.1012757-1-apatel@ventana=
+micro.com/
 
-Just one nit below :)
+So, I abandon this patch.
 
-On Wed, Oct 1, 2025 at 3:43=E2=80=AFPM Balbir Singh <balbirs@nvidia.com> wr=
-ote:
+On Sat, Oct 11, 2025 at 11:58=E2=80=AFPM <guoren@kernel.org> wrote:
 >
-> Add routines to support allocation of large order zone device folios
-> and helper functions for zone device folios, to check if a folio is
-> device private and helpers for setting zone device data.
+> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 >
-> When large folios are used, the existing page_free() callback in
-> pgmap is called when the folio is freed, this is true for both
-> PAGE_SIZE and higher order pages.
+> RISC-V Svpbmt Standard Extension for Page-Based Memory Types
+> defines three modes:
 >
-> Zone device private large folios do not support deferred split and
-> scan like normal THP folios.
+>  Mode | Value | Requested Memory Attributes
+>  PMA  |   0   | None
+>  NC   |   1   | Non-cacheable, idempotent, weakly-ordered (RVWMO),
+>       |       | main memory
+>  IO   |   2   | Non-cacheable, non-idempotent, strongly-ordered
+>       |       | (I/O ordering), I/O
 >
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mika Penttil=C3=A4 <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> Cc: Alex Deucher <alexander.deucher@amd.com>
-> Cc: "Christian K=C3=B6nig" <christian.koenig@amd.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+> The pgprot_dmacoherent default uses the IO memory attribute if there
+> is no asm definition, but IO is not for main memory according to
+> Svpbmt rules.
+>
+> This commit corrects pgprot_dmacoherent with the NC memory attribute,
+> which satisfies performance improvement and prevents using the IO
+> attribute to access main memory.
+>
+> Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
 > ---
->  arch/powerpc/kvm/book3s_hv_uvmem.c       |  2 +-
->  drivers/gpu/drm/amd/amdkfd/kfd_migrate.c |  2 +-
->  drivers/gpu/drm/drm_pagemap.c            |  2 +-
->  drivers/gpu/drm/nouveau/nouveau_dmem.c   |  2 +-
->  include/linux/memremap.h                 | 10 ++++++++-
->  lib/test_hmm.c                           |  2 +-
->  mm/memremap.c                            | 26 ++++++++++++++----------
->  mm/rmap.c                                |  6 +++++-
->  8 files changed, 34 insertions(+), 18 deletions(-)
+>  arch/riscv/include/asm/pgtable.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> diff --git a/arch/powerpc/kvm/book3s_hv_uvmem.c b/arch/powerpc/kvm/book3s=
-_hv_uvmem.c
-> index 03f8c34fa0a2..91f763410673 100644
-> --- a/arch/powerpc/kvm/book3s_hv_uvmem.c
-> +++ b/arch/powerpc/kvm/book3s_hv_uvmem.c
-> @@ -723,7 +723,7 @@ static struct page *kvmppc_uvmem_get_page(unsigned lo=
-ng gpa, struct kvm *kvm)
->
->         dpage =3D pfn_to_page(uvmem_pfn);
->         dpage->zone_device_data =3D pvt;
-> -       zone_device_page_init(dpage);
-> +       zone_device_page_init(dpage, 0);
->         return dpage;
->  out_clear:
->         spin_lock(&kvmppc_uvmem_bitmap_lock);
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/a=
-md/amdkfd/kfd_migrate.c
-> index 79251f22b702..d0e2cae33035 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> @@ -217,7 +217,7 @@ svm_migrate_get_vram_page(struct svm_range *prange, u=
-nsigned long pfn)
->         page =3D pfn_to_page(pfn);
->         svm_range_bo_ref(prange->svm_bo);
->         page->zone_device_data =3D prange->svm_bo;
-> -       zone_device_page_init(page);
-> +       zone_device_page_init(page, 0);
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pg=
+table.h
+> index 29e994a9afb6..2a84479de81b 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -654,6 +654,15 @@ static inline pgprot_t pgprot_writecombine(pgprot_t =
+_prot)
+>         return __pgprot(prot);
 >  }
 >
->  static void
-> diff --git a/drivers/gpu/drm/drm_pagemap.c b/drivers/gpu/drm/drm_pagemap.=
-c
-> index 1da55322af12..31c53f724e25 100644
-> --- a/drivers/gpu/drm/drm_pagemap.c
-> +++ b/drivers/gpu/drm/drm_pagemap.c
-> @@ -196,7 +196,7 @@ static void drm_pagemap_get_devmem_page(struct page *=
-page,
->                                         struct drm_pagemap_zdd *zdd)
->  {
->         page->zone_device_data =3D drm_pagemap_zdd_get(zdd);
-> -       zone_device_page_init(page);
-> +       zone_device_page_init(page, 0);
->  }
->
->  /**
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nou=
-veau/nouveau_dmem.c
-> index ca4932a150e3..53cc1926b9da 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> @@ -318,7 +318,7 @@ nouveau_dmem_page_alloc_locked(struct nouveau_drm *dr=
-m)
->                         return NULL;
->         }
->
-> -       zone_device_page_init(page);
-> +       zone_device_page_init(page, 0);
->         return page;
->  }
->
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index e5951ba12a28..d2487a19cba2 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -206,7 +206,7 @@ static inline bool is_fsdax_page(const struct page *p=
-age)
->  }
->
->  #ifdef CONFIG_ZONE_DEVICE
-> -void zone_device_page_init(struct page *page);
-> +void zone_device_page_init(struct page *page, unsigned int order);
->  void *memremap_pages(struct dev_pagemap *pgmap, int nid);
->  void memunmap_pages(struct dev_pagemap *pgmap);
->  void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)=
-;
-> @@ -215,6 +215,14 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pf=
-n);
->  bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
->
->  unsigned long memremap_compat_align(void);
+> +/*
+> + * DMA allocations for non-coherent devices use what the RISC-V architec=
+ture
+> + * call "Non-Cacheable" memory attribute, which permits idempotent, weak=
+ly-ordered
+> + * (RVWMO), main memory. This is different from "I/O" memory attribute w=
+hich is
+> + * intended for MMIO access with Non-cacheable, non-idempotent, strongly=
+-ordered
+> + * (I/O ordering), I/O attributes.
+> + */
+> +#define pgprot_dmacoherent pgprot_writecombine
 > +
-> +static inline void zone_device_folio_init(struct folio *folio, unsigned =
-int order)
-> +{
-> +       zone_device_page_init(&folio->page, order);
-> +       if (order)
-> +               folio_set_large_rmappable(folio);
-> +}
-> +
->  #else
->  static inline void *devm_memremap_pages(struct device *dev,
->                 struct dev_pagemap *pgmap)
-> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
-> index 83e3d8208a54..24d82121cde8 100644
-> --- a/lib/test_hmm.c
-> +++ b/lib/test_hmm.c
-> @@ -627,7 +627,7 @@ static struct page *dmirror_devmem_alloc_page(struct =
-dmirror_device *mdevice)
->                         goto error;
->         }
+>  /*
+>   * Both Svade and Svadu control the hardware behavior when the PTE A/D b=
+its need to be set. By
+>   * default the M-mode firmware enables the hardware updating scheme when=
+ only Svadu is present in
+> --
+> 2.40.1
 >
-> -       zone_device_page_init(dpage);
-> +       zone_device_page_init(dpage, 0);
->         dpage->zone_device_data =3D rpage;
->         return dpage;
->
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index 46cb1b0b6f72..e45dfb568710 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -416,20 +416,19 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
->  void free_zone_device_folio(struct folio *folio)
->  {
->         struct dev_pagemap *pgmap =3D folio->pgmap;
-> +       unsigned long nr =3D folio_nr_pages(folio);
-> +       int i;
->
->         if (WARN_ON_ONCE(!pgmap))
->                 return;
->
->         mem_cgroup_uncharge(folio);
->
-> -       /*
-> -        * Note: we don't expect anonymous compound pages yet. Once suppo=
-rted
-> -        * and we could PTE-map them similar to THP, we'd have to clear
-> -        * PG_anon_exclusive on all tail pages.
-> -        */
->         if (folio_test_anon(folio)) {
-> -               VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
-> -               __ClearPageAnonExclusive(folio_page(folio, 0));
-> +               for (i =3D 0; i < nr; i++)
-> +                       __ClearPageAnonExclusive(folio_page(folio, i));
-> +       } else {
-> +               VM_WARN_ON_ONCE(folio_test_large(folio));
->         }
->
->         /*
-> @@ -456,8 +455,8 @@ void free_zone_device_folio(struct folio *folio)
->         case MEMORY_DEVICE_COHERENT:
->                 if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
->                         break;
-> -               pgmap->ops->page_free(folio_page(folio, 0));
-> -               put_dev_pagemap(pgmap);
-> +               pgmap->ops->page_free(&folio->page);
-> +               percpu_ref_put_many(&folio->pgmap->ref, nr);
 
-Nit: &pgmap->ref here for consistency?
 
-Cheers,
-Lance
+--=20
+Best Regards
+ Guo Ren
 
