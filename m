@@ -1,90 +1,175 @@
-Return-Path: <linux-kernel+bounces-849664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA53BD09BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD61DBD09CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 20:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A3E3B8400
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:24:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE763BA7B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB162ECE97;
-	Sun, 12 Oct 2025 18:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AC62F1FD5;
+	Sun, 12 Oct 2025 18:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eM2ElECy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zy4G4+OC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C136234BA41;
-	Sun, 12 Oct 2025 18:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1292EFDA2;
+	Sun, 12 Oct 2025 18:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760293472; cv=none; b=TLBj9rVxySirI/C39IDTKvimfIEn7q/ORZKMLb9il6v/f0g9KU3ZBn5ELhdWmi9swaHktfIzpudlj160f8z65XkXnld39HEdOPPrItSIF087JOMB8T5jx1Fhs0mz6d1PsDDMADijEO+ymdozPgvJzurybjEiFFF/3KM/aO319ZU=
+	t=1760293474; cv=none; b=imHd9OPqi2hEGcJGk80ct1RXVsTKMRPIv4PWyGGr/R/xkyqEsUE/AajLNT+arUQFhqgZGE+i4D7Cj8ROuaxy9UxzjPrmTrHOzJfUVqmAkU6SinzvoedrqKBBJsnjsbbEjuiYheCqJlounoY/0BHdkBEmclySyI8PDUvKbiXx2Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760293472; c=relaxed/simple;
-	bh=jNQMPq5aHPw4UwMfE4/hvuN3ivslT2Wdd5P0OwmUHgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kih3srttM+DQUHnSI2sFZ4rqC3Pdbr8rHUhvtG7f1fR1gbaqGfB5pN+CDu7+l/GcQXCv+iMdG6fsuAgnnJvqb1X7PPJ7DSRyge32r+m6PSYY9hOVwk3rvatZ6ciz61QgrMYu57F67t7cP2vX0a6sQr953mk2IEBTRscfp/eHWPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eM2ElECy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE24C4CEF1;
-	Sun, 12 Oct 2025 18:24:31 +0000 (UTC)
+	s=arc-20240116; t=1760293474; c=relaxed/simple;
+	bh=txxPlbpyx3vQKhi9nz3pfg6ck8R1K4SwlLeAQZv2X7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cDzjkSxTo71Q7WR8ddH2sqa8MIJA27luqrenJh+iSLUgGlbkgbbAzNYjKUj1ZNMRkTgkRNiBHJ53HUuCvf5+Ea32zkQaDI3uy+LcNIBivb+xQXjA1YWj4KEXpTvZAJ+CshSv0BmdKxWslEbihHjrAlC2DYTDGye2hwj0lkx18oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zy4G4+OC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED81C4CEE7;
+	Sun, 12 Oct 2025 18:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760293472;
-	bh=jNQMPq5aHPw4UwMfE4/hvuN3ivslT2Wdd5P0OwmUHgM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eM2ElECya3orR0xr9EftJ7TQ9BqZoahTwmsb75SOFovYEf+NGbL+SOv5TLYP1+FRB
-	 cQQvCuihohSRFEHE3xmJBhExrUoXSDKxiVVqVDoS+1MDmsWZykLnwkCkOL54zz36Ts
-	 XLpgcVL/DhSQWd8wi2QEYtCF1TCRJmfaAanDEj+2q6yClkEtjKy2NSEP5AacYxGAUE
-	 R/nncmAyWTm5gEkmAntzn3XlmyNJG1MP1su8ont6UWlswqDkxMNb3lyLgyM5CMovQX
-	 vvCxRhHumAPLPixoIqeVvLyKw/TDh9EaJkggN9rdM/dMkvzyw2UTHNue5L4WxuWOc7
-	 Sze3A7+bpUUIw==
-Date: Sun, 12 Oct 2025 11:23:02 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Mario Limonciello (AMD)" <superm1@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	Daniel Dadap <ddadap@nvidia.com>
-Subject: Re: [PATCH v10 2/4] PCI/VGA: Replace vga_is_firmware_default() with
- a screen info check
-Message-ID: <20251012182302.GA3412@sol>
-References: <20250811162606.587759-1-superm1@kernel.org>
- <20250811162606.587759-3-superm1@kernel.org>
+	s=k20201202; t=1760293474;
+	bh=txxPlbpyx3vQKhi9nz3pfg6ck8R1K4SwlLeAQZv2X7c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Zy4G4+OCIG/0CdyakHTuZLbFC5q8C1zoD6N1vQKl/4OOToHtevVoYp+TepcMqz5pP
+	 HzU+blhg+y7/Y1DeKvV8l2bC4epgP9muK5dnGDQPadfeKmvLrHnZLXT+ZI+AW/Tz+2
+	 A0c6Vu+FKUqrmV+1HQjp+LakYH2czp6R6GGbOqQZ58PVhtKvENAdeLfneVeQUIamWg
+	 SS75X3zojQIC7ieqk4MVS4eQY4LOhDxYhrDBG5A0YTjezW3Jms+F0H2CF83u0sm+Vs
+	 JmlBysNay4kFAWBGvoEHSBL8LP8DIUGYgF1Zkn8qXW0jiicWDIwPWmX+ZEQY+B6d+4
+	 Wf3TQ+DbDZWzw==
+Date: Sun, 12 Oct 2025 19:24:22 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Hans de Goede <hansg@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Luca Weiss
+ <luca.weiss@fairphone.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui
+ <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Bjorn
+ Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Jens Reidel <adrian@mainlining.org>, Casey Connolly
+ <casey.connolly@linaro.org>, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 0/6] Battery temperature ADC plumbing on Qualcomm
+ platforms
+Message-ID: <20251012192422.46775ad1@jic23-huawei>
+In-Reply-To: <0beae4dd-2feb-4891-b7b0-0f63db8f5615@kernel.org>
+References: <20251010-bat-temp-adc-v1-0-d51ec895dac6@fairphone.com>
+	<c770c799-4318-4c40-bd62-3cefbbbef731@baylibre.com>
+	<0beae4dd-2feb-4891-b7b0-0f63db8f5615@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811162606.587759-3-superm1@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Sat, 11 Oct 2025 11:52:43 +0200
+Hans de Goede <hansg@kernel.org> wrote:
 
-On Mon, Aug 11, 2025 at 11:26:04AM -0500, Mario Limonciello (AMD) wrote:
-> vga_is_firmware_default() checks firmware resources to find the owner
-> framebuffer resources to find the firmware PCI device.  This is an
-> open coded implementation of screen_info_pci_dev().  Switch to using
-> screen_info_pci_dev() instead.
+> Hi All,
 > 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> Luca thank you for Cc-ing me.
+> 
+> On 10-Oct-25 10:56 PM, David Lechner wrote:
+> > On 10/10/25 6:21 AM, Luca Weiss wrote:  
+> >> This is an RFC which implements a potential solution to get battery
+> >> temperature readings working on for example smartphones with Qualcomm
+> >> SoCs.
+> >>  
+> > 
+> > ...
+> >   
+> >> 3. Add temperature-lookup-table as property to simple-battery
+> >>
+> >> Since the NTC is a part of the battery pack, adding a
+> >> temperature-lookup-table property to simple-battery would make sense
+> >> instead of having this lookup table be standalone in the
+> >> generic-adc-thermal node. However being able to re-use the existing code
+> >> in generic-adc-thermal lead me to the current proposal.
+> >>  
+> > Did you consider creating a specific compatible string for the battery pack?
+> > Then the battery node could have the io-channels property for the ADC
+> > connected to the temperature sensor. Then a specific battery driver could
+> > handle the conversion as needed rather than filling the devicetree with
+> > conversion tables.  
+> 
+> That will require a driver update, filling the driver (and thus memory)
+> with conversion tables each time a new battery model (one model phone
+> can have multiple battery revisions) comes out.
+> 
+> That seems undesirable. To me these conversion tables are very much
+> something which belongs in DT rather then being hardcoded in
+> the driver.
+> 
+> Also contrast this to ACPI where there actually is a mechanism defined
+> for thermal lookup tables and there all these things typically just
+> work when the ACPI tables are written properly. IMHO we want to move
+> more towards this direction where things just work without requiring
+> kernel code changes for every new model.
+> 
+> And we already have a mechanism in DT to map an ADC voltage to
+> a temperature in the generic-adc-thermal driver.
+> 
+> So all that is left to do really is to come up with a clean way
+> to export the temperature from the generic-adc-thermal driver
+> to the generic-adc-battery driver.
+> 
+> > The simple-battery bindings are already far from simple! So I would not
+> > be inclined to add more to it.  
+> 
+> I think we all agree on this and we also don't want to duplicate
+> the generic-adc-thermal bindings + code implementing that functionality.
+> 
+> IMHO not wanting to duplicate the bindings + functionality applies to
+> both: a) directly exporting an IIO temp channel from the ADC driver and
+> b) adding volt -> temp mapping functionality to the simple-battery bindings.
+> 
+> So that basically leaves us with coming up with a way for
+> the generic-adc-battery code to consume the temperature coming out of
+> the generic-adc-thermal code and there are 2 ways to do this:
+> 
+> 1. Modify the generic-adc-thermal driver to export an IIO channel
 
-I'm getting a black screen on boot on mainline, and it bisected to this
-commit.  Reverting this commit fixed it.
+Other than the fact this is embedded in an existing driver, this is just
+a case of modelling an analog sensor in IIO. There's an ancient accelerometer
+that does this and the analog fronted ends handle things like potential dividers
+which are similar but with far simpler DT than this.
 
-Please revert.
+So conceptually I have no problem with the approach.
 
-- Eric
+If we were starting from scratch we might have had an explicit representation
+of the thermal sensor analog part (like our accelerometer), and then done
+
+Generic temperature device sensor driver is consumer of the ADC channel.
+generic-adc-thermal is consumer of the generic temp device sensor.
+
+But retrofitting that split may be a pain (I haven't looked at this though so
+maybe not!)
+
+
+
+> 2. Modify the thermal-zone core to allow referencing to a thermal-zone
+>    with a phandle *and* modify generic-adc-battery to be able to
+>    optionally get the temperature from a thermal-zone instead of
+>    from an IIO-channel
+> 
+> Of these two options 1. clear is the most KISS option. SO I agree with
+> Luca that 1. as implemented in this series is the best way forward.
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+
 
