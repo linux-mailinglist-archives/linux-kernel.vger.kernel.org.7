@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-849360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0635BCFEC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:46:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BEDBCFECB
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 998EE4E2151
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA0E18938DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 02:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0171D514B;
-	Sun, 12 Oct 2025 02:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800B71D514B;
+	Sun, 12 Oct 2025 02:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfzR8v8f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8jKIF0O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B7E34BA41;
-	Sun, 12 Oct 2025 02:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DA34BA41;
+	Sun, 12 Oct 2025 02:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760237171; cv=none; b=pmcVjGQHsAnvX3rKoGEdEH0wFzi8/GGSj+bMstvbb3uhGsB63yrhA1AGsLGBKo/VTv+vU7UurvTRS8fNbw6eanOAHqfrj2nkWBTOEwYXF8RsAtYSGJpMSMPlPm7ksW+oapFZNaHCUTKsXCD8yywtsRuSaj0JjqHFqencgO86RIM=
+	t=1760237332; cv=none; b=tthbVpWMLfePN8yV41UHBd6vZsp1+tz4PnCWsUCL/eLpOXkD2ktewE0UGVSEFQdnVAVNZO/19WBYM8UynzhC3PvE5NHGvScz6K4+GNt3lkoIOUBJuvxYcRtcsfk3Gyy20rq0r7tm9ahOIUQJZWJ0Lal252PI0tM4YutRcKy7v6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760237171; c=relaxed/simple;
-	bh=97y8CLaEqPcGlAOhyFl3DhHr/P0M/87L3FqQSYGMBFM=;
+	s=arc-20240116; t=1760237332; c=relaxed/simple;
+	bh=kPDBhwA9avKqp5qDWVWZtY+bRRHa1f3G/FsLBM160tM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RC29khWQF2Wf9PLGqupHRhuu/u2zi/lVEvDt/1wzNxAK1xNBWlFhvKoFZtxVDq+GdTolG9s5zOSVAIuUjQsrviy1uVk084IRku4qsFg33Rvpd2lGk/ywn8nZldxx151jmG1OTrfo0/19igooc4UXbbayr/WtyOLvGg+JtWB5PRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfzR8v8f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFEA6C4CEF4;
-	Sun, 12 Oct 2025 02:46:04 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LX3Jm7/P2zGFoI0TUqmgx+HKyNI95JrC7J14jLgxaZNua8TEbWev0rJveFwBrsZak1s40XzUh8XU0EatnctmBmWUDD5lvjAWXXoVTo24MhmczcYyFlUgyYOMalI++MeobqoXF5Ila/8rkwWcttJusXNHBtpL9nGKju+ZkZIKLIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8jKIF0O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC476C4CEF4;
+	Sun, 12 Oct 2025 02:48:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760237168;
-	bh=97y8CLaEqPcGlAOhyFl3DhHr/P0M/87L3FqQSYGMBFM=;
+	s=k20201202; t=1760237331;
+	bh=kPDBhwA9avKqp5qDWVWZtY+bRRHa1f3G/FsLBM160tM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HfzR8v8fvMIMxramujDPwrJg/N+OcvmArt4IcayW/zvJHd7LWskcNMG/epj70HCbB
-	 q+3ObCGy6a0Ew/492y9vDhhAos5mrXdy5uImwTIVoP6w8m8XT5zh7Oru/f4Oo6NXah
-	 JhxbOBUBkACj+z4GBpl0tBLVLO7Rd1uYBgW+TDm0yFcfsKPA8D1//HOrMM3Uq6RUCT
-	 oZ+NKqFR3Bv/0M3ppWdpF2yZHG3gVgR49NM1LM1D2D4DI1jq2nfD9QwITNltym0m4L
-	 nxWJrnKcBXpIGvrfSr6+ILd542lOKIBcrfluy7Rwt44iFkc4Hx5aYE1jdLWoP6TkHk
-	 IxBS7m6NNWpBQ==
-Message-ID: <912c0ccd-40cd-402e-ac9f-f86be48aa072@kernel.org>
-Date: Sun, 12 Oct 2025 04:46:02 +0200
+	b=J8jKIF0OStEzqRcUMQ0zCRK8NRv4RTZgAOPEWCn76XP/Bb5XwwkB+PUu0gIovEuJd
+	 LvD6z2G2IUdmJgXQXLifNsS5g/AT6/bxUb/BJaOmTCkvJdWrMXo/8bbZQGWC18Lk87
+	 L3TtE7Jmdv0Hwa5JAH8R9Pr29/WtH64g+d87xHZ9I9SrWbnlNmpG07EEb5JHbPpVQV
+	 T4F6+Gte0HGt7L7nx/O1jkbJ8yj9QWebvWkLwkrIn63LUA8MgH1XW+5YW7uqCoCN+A
+	 N1aM5rG40JxaOVj8ms763QUfEdKGx8i0RvfoI3wVKlSYZpOkp+9ei4ygmluybe72KS
+	 1McB3OM2Z9SHg==
+Message-ID: <9746976a-ade4-4551-920c-ffbb914a4e10@kernel.org>
+Date: Sun, 12 Oct 2025 04:48:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/24] arm64: dts: qcom: glymur: Add QUPv3 configuration
- for serial engines
-To: Abel Vesa <abel.vesa@linaro.org>,
- Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-4-24b601bbecc0@oss.qualcomm.com>
- <3af57kktkwevbxkno4o54w3o2qajoco5x7dlj3ckepcutlzmdh@2bnqqxndbvf3>
- <odjto4fjqoi5ct33unring22s3p6vwnbrafyrcmrppwcdnm4zq@aabot4m6q2rm>
+Subject: Re: [PATCH v9 15/15] arm: dts: airoha: en7523: add SNAND node
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
+References: <20251010204500.1625215-1-mikhail.kshevetskiy@iopsys.eu>
+ <20251010204500.1625215-16-mikhail.kshevetskiy@iopsys.eu>
+ <34899379-9788-4ac8-8b62-e9f47b4d49d9@kernel.org>
+ <10802039-ca65-41c0-88fa-51db6d86aabd@iopsys.eu>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,34 +109,50 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <odjto4fjqoi5ct33unring22s3p6vwnbrafyrcmrppwcdnm4zq@aabot4m6q2rm>
+In-Reply-To: <10802039-ca65-41c0-88fa-51db6d86aabd@iopsys.eu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/10/2025 13:11, Abel Vesa wrote:
-> On 25-10-11 14:06:44, Abel Vesa wrote:
->> On 25-09-25 12:02:12, Pankaj Patil wrote:
->>> From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->>> +			dma-channels = <16>;
->>> +			dma-channel-mask = <0x3f>;
->>> +			#dma-cells = <3>;
->>> +			iommus = <&apps_smmu 0xd76 0x0>;
->>> +			status = "ok";
+On 11/10/2025 07:01, Mikhail Kshevetskiy wrote:
+> On 11.10.2025 02:42, Krzysztof Kozlowski wrote:
+>> On 10/10/2025 22:45, Mikhail Kshevetskiy wrote:
+>>> Add SNAND node to enable support of attached SPI-NAND on the EN7523 SoC.
+>>>
+>>> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+>>> ---
+>>>  arch/arm/boot/dts/airoha/en7523.dtsi | 21 +++++++++++++++++++++
+>>>  1 file changed, 21 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/airoha/en7523.dtsi b/arch/arm/boot/dts/airoha/en7523.dtsi
+>>> index b523a868c4ad..78e351eb787a 100644
+>>> --- a/arch/arm/boot/dts/airoha/en7523.dtsi
+>>> +++ b/arch/arm/boot/dts/airoha/en7523.dtsi
+>>> @@ -203,4 +203,25 @@ pcie_intc1: interrupt-controller {
+>>>  			#interrupt-cells = <1>;
+>>>  		};
+>>>  	};
+>>> +
+>>> +	spi_ctrl: spi@1fa10000 {
+>>> +		compatible = "airoha,en7581-snand";
+>> NAK, now I found this... Respond to comments instead of ignoring them.
 >>
->> s/ok/okay/
->>
->> Everywhere actually.
->>
+>> Three versions within few hours, that's not acceptable. Outside of the
+>> merge window the expectation is minimum 24h difference. Within merge
+>> window this is just spamming.
 > 
-> Actually no. Maybe drop entirely like Konrad already suggested.
 > 
-> But then everywhere else you do "ok" please replace with "okay",
-> otherwise dtbs_check complains.
+> I already lost any hope to merge this to linux-3.18, so no problem.
+> 
+> Could you and Rob explain me this compatible issue? I got a feeling that
+> Rob telling me to keep "airoha,en7581-snand" compatible while you are
+> telling the opposite. As for me the use of "airoha,en7523-snand" or
+> maybe "airoha,en75xx-snand" for both en7523 & en7581 chips is the best.
+> 
+> Is there any policy? Could you provide a link?
 
-
-I actually wonder how this passed any dtbs tests... or it wasn't tested
-at all?
-
+The policy is described in writing bindings. I also explained it in
+greater details in my recent OSSEU introductory talk. You need two
+compatibles.
 
 Best regards,
 Krzysztof
