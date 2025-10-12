@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-849764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2E9BD0D2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:47:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911F1BD0D27
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879B43B7E44
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:47:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7A9D4E2A04
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 22:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ACC23956E;
-	Sun, 12 Oct 2025 22:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB39241139;
+	Sun, 12 Oct 2025 22:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="O+Uv3TnQ"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caOQX94I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026D1547E7
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 22:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BCF1547E7;
+	Sun, 12 Oct 2025 22:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760309261; cv=none; b=MF3n6sDwEG6dwdABHLdt31RLSjZiUEAID2zNGkVFkujCexILSqtoxPS5TW7n5RuvfngBlteaRJF7faeQJbuLD+YImEID6EkjSFBjG5W21xYmlcc5oyMkvXpeNlAppL8z0usGN5hU5Ds+I/UlzzHeYgUdq3XEiwoSVqXrdiARbck=
+	t=1760309219; cv=none; b=diquc/7OkP4yp0fqU7bfzQDaUwAcKodLf21/jfeOxbRafH1XsSfVzf7xMR85OH8gq2HvvYf5N0zuL7RmYYLCdIvezutHIquF9x0Y00dtsIT57tWCpwwStVVfkr7NoABsTkzpSgIv8t6LXFiX/IyJSVz2Ei2QEaMmYme0WSVQTt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760309261; c=relaxed/simple;
-	bh=EyPG3Fi950uiyAJD5Mohk3oQRg/ePz+PGzh3DjGatOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fYmzNXmxZMMMSqCwlWwOoHroKVKPZ6D+5N+gjGJU2LKyyFX/FI84DXpYNm6ByYpuZwxKjr28XVkNcu6rX8ZWSGbihHNjDl455g1YHz3xcLHBwYoa/GmK0JSBtUxMn+24g3jMgjtW6fw+OtnfHHmMsBGUIcY2ZZQFyjauTD+VQIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=O+Uv3TnQ; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1760309256;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bcjVnsy37RIrdVgMtxg7YSO76T0MhxQKRy53qIOEJRA=;
-	b=O+Uv3TnQt7MwbJw+HsFtOncgRcYm6qsFe0yqil7KNbWr9PGWi75Rv0zeAspofP8jhunsPn
-	UftV6XtJ1pWqgCl5uybdT5CXQEo14ua4rD2TWUie2DD9x3Z1VNQZKvOfaxjDMdgKf1Tdxq
-	v/jYRdNO/AOV/UvP0Z8KtZe3VxZjINEVfHvg5KRNX8n0RZyFP3YmLcI6xDisZ9iuR3HHPj
-	jp9sAqs7OVp0EqXbA+/ThVVjtgYzFBfnbdEX7meYjmTTXFASaFIy8Ps3IX8j/GcglX/Lcs
-	Ypd5wt1IPfgm3i3dhSVx6eImdSSPORjI9UP0y9kHHnTCnZp+od9QZGHIvZ6GSw==
-From: Val Packett <val@packett.cool>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Val Packett <val@packett.cool>,
-	Laurentiu Tudor <laurentiu.tudor1@dell.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: qcom: x1-dell-thena: Add missing pinctrl for eDP HPD
-Date: Sun, 12 Oct 2025 19:40:08 -0300
-Message-ID: <20251012224706.14311-1-val@packett.cool>
+	s=arc-20240116; t=1760309219; c=relaxed/simple;
+	bh=ObOyoiDDbtj2jx060wHnGYAhzHjfZaoTmQXkMKGc3ZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uXctImQwkUKIp52abPT1X1LfpL0t0WD8Bf2QeOpdoLxBN5KD0WkKgV/w1PpGSKuRQBlnJRV0cn9pp3Y8oGPdyYfXN429T3R/77OTSvRAW9qrc2ojBjnUN9+fSTwQZzPr0pxkONNX9IDrIK7P5WuhKJ35n03Ca4UM/oInLoyXZOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caOQX94I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56406C4CEE7;
+	Sun, 12 Oct 2025 22:46:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760309219;
+	bh=ObOyoiDDbtj2jx060wHnGYAhzHjfZaoTmQXkMKGc3ZQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=caOQX94ItQhFAAMc0+griLkXxNMzoOb4icFMyY1rZekI/7Jq7mJkcnR5PvuPDDMSG
+	 V/74+y2wG8M7TUttrT6lRguTKg2O+IBCDqWvE6GcU7TeoR6Ck/k1lMjK9uzHUUH1BA
+	 TNqzT9vCg+wi/3Ar/jTazIUxpVTApm3LcJsJ5z4FVN3dzQx8JE/Vw76fwOzWvlV8EE
+	 2tOnalESHo+Zk/coN23TgUnqKtSi/mcUcWt933i0G+TU3Kl6/WlrAJcxx6Kg3PyZeO
+	 8v0KDYL66eadRXxiABC/4D1yM/H0E26Le4obia3XYy59+glE0OW5hNKlysNVZvJEAr
+	 gSsBezHNdeW3g==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] docs: rust: quick-start: add Debian 13 (Trixie)
+Date: Mon, 13 Oct 2025 00:46:45 +0200
+Message-ID: <20251012224645.1148411-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,39 +63,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The commit a41d23142d87 ("arm64: dts: qcom: x1e80100-dell-xps13-9345:
-Add missing pinctrl for eDP HPD") has applied this change to a very
-similar machine, so apply it here too.
+Debian 13 (released 2025-08-09) packages Rust 1.85.0 [1], which is recent
+enough to build Linux.
 
-This allows us not to rely on the boot firmware to set up the pinctrl
-for the eDP HPD line of the internal display.
+Thus document it.
 
-Fixes: e7733b42111c ("arm64: dts: qcom: Add support for Dell Inspiron 7441 / Latitude 7455")
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Val Packett <val@packett.cool>
+In fact, we are planning to propose that the minimum supported Rust
+version in Linux follows Debian Stable releases, with Debian 13 being
+the first one we upgrade to, i.e. Rust 1.85.
+
+Link: https://www.debian.org/News/2025/20250809 [1]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
-v2: fixed commit msg style, pulled R-b
-v1: https://lore.kernel.org/all/20250927032330.21091-1-val@packett.cool/
----
- arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/rust/quick-start.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi b/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-index ef83e87e1b7a..0aad80a1159c 100644
---- a/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-@@ -1104,6 +1104,9 @@ &mdss_dp1_out {
- &mdss_dp3 {
- 	/delete-property/ #sound-dai-cells;
+diff --git a/Documentation/rust/quick-start.rst b/Documentation/rust/quick-start.rst
+index 155f7107329a..152289f0bed2 100644
+--- a/Documentation/rust/quick-start.rst
++++ b/Documentation/rust/quick-start.rst
+@@ -39,8 +39,8 @@ of the box, e.g.::
+ Debian
+ ******
  
-+	pinctrl-0 = <&edp0_hpd_default>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
+-Debian Testing and Debian Unstable (Sid), outside of the freeze period, provide
+-recent Rust releases and thus they should generally work out of the box, e.g.::
++Debian 13 (Trixie), as well as Testing and Debian Unstable (Sid) provide recent
++Rust releases and thus they should generally work out of the box, e.g.::
  
- 	aux-bus {
+ 	apt install rustc rust-src bindgen rustfmt rust-clippy
+ 
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
 2.51.0
 
