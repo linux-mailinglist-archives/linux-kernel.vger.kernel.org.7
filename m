@@ -1,235 +1,167 @@
-Return-Path: <linux-kernel+bounces-849376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C4BCFF57
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 06:07:27 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E24BCFF5E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 06:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0713BCD2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:07:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D765C348501
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 04:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A421F4C99;
-	Sun, 12 Oct 2025 04:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A84B1F5617;
+	Sun, 12 Oct 2025 04:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewb1yZ9f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nwvm8NQP"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3817413635C;
-	Sun, 12 Oct 2025 04:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32921EB9FA
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 04:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760242037; cv=none; b=YwZsRBRdo6kuXRLKMkZBOdNBFPEIVsukxGBUOXjHr538SWWsP+heQd/zDEN43do4CjCMwvuB1PDQ0x/GF0yPHW1mfXCITxI2l+vbFs2w5ybb3/7zmIsZscXQWWC9B6ONn2x9QB8DmQxb4EN/iMIC66u4gD02nc7+5I36rS1bGkk=
+	t=1760243046; cv=none; b=iJS7/xArHSj2RNGl44CJv+kkXxy8XBf3Oglk/0qyJhBA4cz+kxGdCkNSPk/PT2xRF9Y9J2/k9J1qDEkbS8Qf7uQMQZnL6GMORBv+/DhUdrFhCenCT7i1eXiLrcudbGoe3CFr0QLf1ipKqSmh7HUrrjefc0dj7oBwIHPI9COJp0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760242037; c=relaxed/simple;
-	bh=/UMxQdx/gWs1AItzfIRruowFpZD/XTJl3spYEPThPc4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OlZylbSf/unf8wk1+L85Yv3ZCXbeCZTjYqsRNWqJngbiQl30IK1wjHagVVgvkVb4wfIf7I4VkI7TmDp7R8goMBf8xJcvDOjebdaZ6i5EfYSpBosq+S90bZvpzH8TI2hrfTvbdTiVNGeylFnCA9jrn1w+eXzvkcvKR4ENaSmmWCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewb1yZ9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F5DC4CEE7;
-	Sun, 12 Oct 2025 04:07:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760242035;
-	bh=/UMxQdx/gWs1AItzfIRruowFpZD/XTJl3spYEPThPc4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ewb1yZ9fXQjGRG6PhrNskTFHNZDTSg50OclEHFs4xR94Jd5r+6xgu4iTZ6l54GUqa
-	 hWiiZ2CUF3G7jeR2arVYjcf0LJwhN6j5dZXboy+msj7tSx/6h05LsvbF+MSxznQX2z
-	 mDi7LRRaCIx6P5+Ha1bYJpc6CsfFkqaPmUHvXHDx1d1LVbCvmH2YZTrNgdk6hAH9HU
-	 3a2mX/vtZH9pqkGZRXryd1m5/xroIZmvqFyY0MBM1PPAZSnOkU+YcQL8qCcwTOMN30
-	 PbUrYuouxykZ51SE4J8nBdAPwkPchy4pH0w42x4ONa6btJAkhOn/jKSoE/lrQSzq7e
-	 eSoTVR+zacN+w==
-Date: Sun, 12 Oct 2025 13:07:11 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- jiang.biao@linux.dev, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] tracing: fprobe: optimization for entry only
- case
-Message-Id: <20251012130711.0ea063ac467cb5833a81bd54@kernel.org>
-In-Reply-To: <20251010033847.31008-2-dongml2@chinatelecom.cn>
-References: <20251010033847.31008-1-dongml2@chinatelecom.cn>
-	<20251010033847.31008-2-dongml2@chinatelecom.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760243046; c=relaxed/simple;
+	bh=04BZizl5UtwUt/m67Kt6kTCQKad8YV8N4XAYQtSkgtg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bUJYp8m1cQagC3xCDhoq+H6rOc1TZOMbxwS9W60HycMV6brZvyDNobWDm0qaVJu3O/z9yTk6Wr0K6MMaUTImdC3i8oLTxx7YG+HJegxrTDgvpM5KeuWhAslcb5nwYfMIxIDneI7qtuF19AKMjTE9Jio0dWiPl7LDEkE64+dXJcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nwvm8NQP; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e3f213b59so53325e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 Oct 2025 21:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760243042; x=1760847842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q31C64dvExcLvA+pvLaqKGJxfqiu7mgCUQLhcnfrebk=;
+        b=Nwvm8NQPOXUsUofWy8THU1JSsDsJFE2qAWq8V7p2UOEWosjOYIBN8+ZKBk81uxdGi0
+         9Oe+5ehKhTUzxYV0WMb7V7L9u7wtJ4/gj3vyLaYlT+Rdb9TN8tbEJTtoUIKjjiDcHvj/
+         Ay046w+WiNv/pBO/9QmwMN5trvzl+Brm+Oshym1DZsxns8u6HVNAqXKyQ/z94lXWt7Jw
+         NsIm/ByxjmTkdPYMwNfVWFg9TUg7Z01cwuvDAjUB7zYr00rVSpDWHoXioyUFtx08F5fL
+         YEeym0RruIm5gmzGxT2OuK0xTmtrgz0lbCvqvJXRQmQ1WceQN6VqdrrAwXDZXVM3MlFM
+         lUmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760243042; x=1760847842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q31C64dvExcLvA+pvLaqKGJxfqiu7mgCUQLhcnfrebk=;
+        b=iuYP4YIKwrd7lXL0PN+zhWWrSfMyBKuhEJ5urFoWMAebvtk6bKZMGmLYQJ6nmQ+Gff
+         GKx9TrE0ZiD8pdSbL0fMvSjmqtVAUR+LRnzj5udwtHSfqDfQetyKV4KVTYrdecUrQf7h
+         DKKZ6WbvqclAaBes8PeE9aKqiWKzzBJ6cisc63g66W4S1t+J2+9f/6U9LOeRL+eovdds
+         Zw95JiF/CzKHCF3rru1Z3eeAo7DLDWznTFet5YbkW8EYu5lt0AdcmP2CVlWKX1EfnMkI
+         3HMBa8iKwQCpmIJyvLEZqhw20cZtkC3oKvHB3XnDEh6oNr/7u0nlJbsKGlXpEYOw3VUf
+         FUBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzEx2ETKIcHQy8BAgaf0MlhDo1FngMu0f8MssjwVVq4UuW2bn+3lyX31i/aq657HS7GEMrQgRo5px9gFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj4esduN+oLpazp9uevuyzXVXGAqQ3U/q6rt865UQdkdHvXiXP
+	2VIB84khECOUZysuSuEQ6datoN7RkeuFEMMQV2LbuDw9JQN1CaPtieTyMdyBcxK3E65AAxcn+60
+	Ktl+eoVmrSluV5X5plJuXFynhQ9H42grYkjvu/fBY
+X-Gm-Gg: ASbGncs+CEGNUyP4QRRuW8+fsURLFhVVpLMjHYu/PiHqiLLyYqMy3FImdQt+x0hnz+F
+	zvY6r0kPrzSYktoV41jp6/x6+A1IJpeaVUQJaSt6ARXhGe/2R3ZS62nYwyOjdY+MrsbUAERsIhQ
+	WIrhUKvb4QH3duaKbIVEM9rI38qhxJs/fuY1dr5MVR3t3R6UP7VJFQjJT51DLfAvfy60TKFgXpc
+	jJiWW9Zy5Dk3RnqlCyKhhAdlGpDdU4h7QM7FB3lBUC+ThRoMlxhw69XotyY6WRh61ovYAwRpwln
+X-Google-Smtp-Source: AGHT+IGvsstjeffMbp1ePFQhQfhyz1w3TBL7Vrpso3NyYJuEzW6XJ+XIKOWxbfWeymVsMQNNGLjg2FcyDIgoAeFr/5c=
+X-Received: by 2002:a05:600d:60d2:b0:45f:2e6d:c9ee with SMTP id
+ 5b1f17b1804b1-46fa9b5c782mr7327035e9.6.1760243041944; Sat, 11 Oct 2025
+ 21:24:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+ <8ef5e3fd-2ee8-453a-b8ae-584e3d606aa4@redhat.com> <20251012013707.ukkczekcmhntrot2@master>
+In-Reply-To: <20251012013707.ukkczekcmhntrot2@master>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Sat, 11 Oct 2025 21:23:49 -0700
+X-Gm-Features: AS18NWDNNlba9cWDLAJfo9IaE8VDGLe4DW6zFS7qQrYqn3KDTM-KUFsGnG9Bxpw
+Message-ID: <CACw3F53kD_Toxwvb-WXsfhxLYwKovGoPKVV5z-_r6S77a=hH-A@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm: prevent poison consumption when splitting THP
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>, akpm@linux-foundation.org, 
+	lorenzo.stoakes@oracle.com, linmiaohe@huawei.com, tony.luck@intel.com, 
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, 
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org, 
+	nao.horiguchi@gmail.com, farrah.chen@intel.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Andrew Zaborowski <andrew.zaborowski@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Menglong,
+On Sat, Oct 11, 2025 at 6:37=E2=80=AFPM Wei Yang <richard.weiyang@gmail.com=
+> wrote:
+>
+> On Mon, Sep 29, 2025 at 09:34:12AM +0200, David Hildenbrand wrote:
+> >On 28.09.25 05:28, Qiuxu Zhuo wrote:
+> [...]
+> >
+> >Hm, I wonder if we should actually check in try_to_map_unused_to_zeropag=
+e()
+> >whether the page has the hwpoison flag set. Nothing wrong with scanning
+> >non-affected pages.
+> >
+> >In thp_underused() we should just skip the folio entirely I guess, so ke=
+ep
+> >it simple.
+> >
+> >So what about something like this:
+> >
+> >diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >index 9c38a95e9f091..d4109fd7fa1f2 100644
+> >--- a/mm/huge_memory.c
+> >+++ b/mm/huge_memory.c
+> >@@ -4121,6 +4121,9 @@ static bool thp_underused(struct folio *folio)
+> >        if (khugepaged_max_ptes_none =3D=3D HPAGE_PMD_NR - 1)
+> >                return false;
+> >+       folio_contain_hwpoisoned_page(folio)
+> >+               return false;
+> >+
+>
+> One question.
+>
+> When hardware detect error, it would immediately trigger memory_failure()=
+? Or
+> it will wait until the memory is accessed?
 
-On Fri, 10 Oct 2025 11:38:46 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+Hardware detecting a memory error usually results in a poison
+generation event. Kernel expects to receive such poison generation
+event from modern platforms, then kicks off memory_failure without any
+poison context, e.g. the current process cannot be assumed to be the
+"culprit".
 
-> For now, fgraph is used for the fprobe, even if we need trace the entry
-> only. However, the performance of ftrace is better than fgraph, and we
-> can use ftrace_ops for this case.
-> 
-> Then performance of kprobe-multi increases from 54M to 69M. Before this
-> commit:
-> 
->   $ ./benchs/run_bench_trigger.sh kprobe-multi
->   kprobe-multi   :   54.663 ± 0.493M/s
-> 
-> After this commit:
-> 
->   $ ./benchs/run_bench_trigger.sh kprobe-multi
->   kprobe-multi   :   69.447 ± 0.143M/s
-> 
-> Mitigation is disable during the bench testing above.
-> 
-
-Thanks for updating!
-
-This looks good to me. Just a nit comment below;
-
-[...]
-> @@ -379,11 +380,82 @@ static void fprobe_return(struct ftrace_graph_ret *trace,
->  NOKPROBE_SYMBOL(fprobe_return);
->  
->  static struct fgraph_ops fprobe_graph_ops = {
-> -	.entryfunc	= fprobe_entry,
-> +	.entryfunc	= fprobe_fgraph_entry,
->  	.retfunc	= fprobe_return,
->  };
->  static int fprobe_graph_active;
->  
-> +/* ftrace_ops callback, this processes fprobes which have only entry_handler. */
-> +static void fprobe_ftrace_entry(unsigned long ip, unsigned long parent_ip,
-> +	struct ftrace_ops *ops, struct ftrace_regs *fregs)
-> +{
-> +	struct fprobe_hlist_node *node;
-> +	struct rhlist_head *head, *pos;
-> +	struct fprobe *fp;
-> +	int bit;
-> +
-> +	bit = ftrace_test_recursion_trylock(ip, parent_ip);
-> +	if (bit < 0)
-> +		return;
-> +
-
-nit: We'd better to explain why we need this here too;
-
-	/*
-	 * ftrace_test_recursion_trylock() disables preemption, but
-	 * rhltable_lookup() checks whether rcu_read_lcok is held.
-	 * So we take rcu_read_lock() here.
-	 */
-
-> +	rcu_read_lock();
-> +	head = rhltable_lookup(&fprobe_ip_table, &ip, fprobe_rht_params);
-> +
-> +	rhl_for_each_entry_rcu(node, pos, head, hlist) {
-> +		if (node->addr != ip)
-> +			break;
-> +		fp = READ_ONCE(node->fp);
-> +		if (unlikely(!fp || fprobe_disabled(fp) || fp->exit_handler))
-> +			continue;
-> +
-> +		if (fprobe_shared_with_kprobes(fp))
-> +			__fprobe_kprobe_handler(ip, parent_ip, fp, fregs, NULL);
-> +		else
-> +			__fprobe_handler(ip, parent_ip, fp, fregs, NULL);
-> +	}
-> +	rcu_read_unlock();
-> +	ftrace_test_recursion_unlock(bit);
-> +}
-> +NOKPROBE_SYMBOL(fprobe_ftrace_entry);
-
-Thank you,
-
-> +
-> +static struct ftrace_ops fprobe_ftrace_ops = {
-> +	.func	= fprobe_ftrace_entry,
-> +	.flags	= FTRACE_OPS_FL_SAVE_REGS,
-> +};
-> +static int fprobe_ftrace_active;
-> +
-> +static int fprobe_ftrace_add_ips(unsigned long *addrs, int num)
-> +{
-> +	int ret;
-> +
-> +	lockdep_assert_held(&fprobe_mutex);
-> +
-> +	ret = ftrace_set_filter_ips(&fprobe_ftrace_ops, addrs, num, 0, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!fprobe_ftrace_active) {
-> +		ret = register_ftrace_function(&fprobe_ftrace_ops);
-> +		if (ret) {
-> +			ftrace_free_filter(&fprobe_ftrace_ops);
-> +			return ret;
-> +		}
-> +	}
-> +	fprobe_ftrace_active++;
-> +	return 0;
-> +}
-> +
-> +static void fprobe_ftrace_remove_ips(unsigned long *addrs, int num)
-> +{
-> +	lockdep_assert_held(&fprobe_mutex);
-> +
-> +	fprobe_ftrace_active--;
-> +	if (!fprobe_ftrace_active)
-> +		unregister_ftrace_function(&fprobe_ftrace_ops);
-> +	if (num)
-> +		ftrace_set_filter_ips(&fprobe_ftrace_ops, addrs, num, 1, 0);
-> +}
-> +
->  /* Add @addrs to the ftrace filter and register fgraph if needed. */
->  static int fprobe_graph_add_ips(unsigned long *addrs, int num)
->  {
-> @@ -498,9 +570,12 @@ static int fprobe_module_callback(struct notifier_block *nb,
->  	} while (node == ERR_PTR(-EAGAIN));
->  	rhashtable_walk_exit(&iter);
->  
-> -	if (alist.index > 0)
-> +	if (alist.index > 0) {
->  		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
->  				      alist.addrs, alist.index, 1, 0);
-> +		ftrace_set_filter_ips(&fprobe_ftrace_ops,
-> +				      alist.addrs, alist.index, 1, 0);
-> +	}
->  	mutex_unlock(&fprobe_mutex);
->  
->  	kfree(alist.addrs);
-> @@ -733,7 +808,11 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num)
->  	mutex_lock(&fprobe_mutex);
->  
->  	hlist_array = fp->hlist_array;
-> -	ret = fprobe_graph_add_ips(addrs, num);
-> +	if (fp->exit_handler)
-> +		ret = fprobe_graph_add_ips(addrs, num);
-> +	else
-> +		ret = fprobe_ftrace_add_ips(addrs, num);
-> +
->  	if (!ret) {
->  		add_fprobe_hash(fp);
->  		for (i = 0; i < hlist_array->size; i++) {
-> @@ -829,7 +908,10 @@ int unregister_fprobe(struct fprobe *fp)
->  	}
->  	del_fprobe_hash(fp);
->  
-> -	fprobe_graph_remove_ips(addrs, count);
-> +	if (fp->exit_handler)
-> +		fprobe_graph_remove_ips(addrs, count);
-> +	else
-> +		fprobe_ftrace_remove_ips(addrs, count);
->  
->  	kfree_rcu(hlist_array, rcu);
->  	fp->hlist_array = NULL;
-> -- 
-> 2.51.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>
+> >        for (i =3D 0; i < folio_nr_pages(folio); i++) {
+> >                kaddr =3D kmap_local_folio(folio, i * PAGE_SIZE);
+> >                if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
+> >diff --git a/mm/migrate.c b/mm/migrate.c
+> >index 9e5ef39ce73af..393fc2ffc96e5 100644
+> >--- a/mm/migrate.c
+> >+++ b/mm/migrate.c
+> >@@ -305,8 +305,9 @@ static bool try_to_map_unused_to_zeropage(struct pag=
+e_vma_mapped_walk *pvmw,
+> >        pte_t newpte;
+> >        void *addr;
+> >-       if (PageCompound(page))
+> >+       if (PageCompound(page) || PageHWPoison(page))
+> >                return false;
+> >+
+> >        VM_BUG_ON_PAGE(!PageAnon(page), page);
+> >        VM_BUG_ON_PAGE(!PageLocked(page), page);
+> >        VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
+> >
+> >
+> >--
+> >Cheers
+> >
+> >David / dhildenb
+> >
+>
+> --
+> Wei Yang
+> Help you, Help me
+>
 
