@@ -1,106 +1,176 @@
-Return-Path: <linux-kernel+bounces-849560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B816BD0641
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:34:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235C2BD0655
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B4404E9D38
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62FE3BC5FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E119C2EB858;
-	Sun, 12 Oct 2025 15:34:50 +0000 (UTC)
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.65.254])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2F82EBBB8;
+	Sun, 12 Oct 2025 15:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I61ilg8x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF351EF091;
-	Sun, 12 Oct 2025 15:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.65.254
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC61EF091;
+	Sun, 12 Oct 2025 15:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760283285; cv=none; b=sBrrt+Ah/dLU18ThRyPmqFb6AmHyrFpcd0aOORnDd7qMb3HMk5f7F1JsRG2FrtGL7Rh0T95ee/02LBLinLMY9J8MOsX8wHbHRjqN8ImGEs9qCgI1ZQ+a0skV705U8Bx2alolJ704Ss1MfX8m6tf/y4nDl79XTIrDXe2hQRVIPbo=
+	t=1760283864; cv=none; b=WLq4IWvggCffY6wDnx2R2rAykXC9kK+vnu++4DQ6jnZrpdIjoU8/y9CDbt5ar7FBYZ+4JStJsDD0Q2MZbGHVIDTMEOcK1H88AiXYYhdeDOpq8qPLdrGwdbNdtpol98B4SyPy4GXM6pG7j3jebL1HUymNN8V1Wg1R9x+pvq3SYG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760283285; c=relaxed/simple;
-	bh=rFEmoy7d0Mmlnjo9o3/eglsjDXhVOxYL8WXs9SOdLzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LYYNMc/3mlrdOsIshRXBXvl+AVQLmcCkdeUG69hGwsHPEjB4TK7CdlqJFYumaKJeqEEF3Q0z9jTfuuDRmESpzPYg4Is35HKXiR9y/lmrtfyLgQDUXwCl3N/XRAhwpRirvgjxx64in+oFc4wJlYsHLrmoWfuZkXftB71OvCPXe6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=43.155.65.254
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: zesmtpgz7t1760283240t1d9f9c2c
-X-QQ-Originating-IP: DQzoWmT303r8f2j4nzHEzqyFNwEkd5RQW5qPYqwS4Aw=
-Received: from [192.168.0.103] ( [220.202.230.216])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 12 Oct 2025 23:33:59 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16739186247763136303
-Message-ID: <7A6DE7EAED2A073C+7e132ed4-089d-4fff-873c-de03ea76c4c4@chenxiaosong.com>
-Date: Sun, 12 Oct 2025 23:33:58 +0800
+	s=arc-20240116; t=1760283864; c=relaxed/simple;
+	bh=jvMiToE63eManCA44zRL5tk+r48YRGBD/0Ye03AuOng=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gaz9dZ5N/3yCI1KJECC6QTaJUIX80jK4iksVzOWGxOmTTVPSXIXufZPg7v3NdCPLru9aFRlxg+rGHGhOwn8j357L9jllU2RaLOCs4AGNdEY3DI+3LT5yOYA+oepO0MtpgfiBbEkDeOSSR8TEIeK1inH+/MY+Vpy4e9PVeZC0w3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I61ilg8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73342C4CEFE;
+	Sun, 12 Oct 2025 15:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760283863;
+	bh=jvMiToE63eManCA44zRL5tk+r48YRGBD/0Ye03AuOng=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I61ilg8xv9CdF3M06RRH1H/pC9Dmkl+FaWbiZ4+MMijkNvFZP9u4ZafOUDCwHyfXf
+	 Wu44t9dXC8O3CLY3v5Kv1VOqm1bsR2fHhkRgYc201n8yFgdGtQRbW5ejP40g6JizBf
+	 aMUZxBxQ2Q9SGzPpOyKlhw0Mb7qlOefuqJAUn/2NFqw4B/bbFLrsZjZpG4ze3u47Wj
+	 +PD1amoGpp4UMY21U4lvctO3duF+dOi7IPCd/PfRO6Inmgh8UP0vcuXJ/Qin10h2wM
+	 I+nCRd44qu+JJt6vTacuoYVTSNVAPL8UXZ/JMBpZZuKxFs5cMbdZsRSjRhGLG4hPpt
+	 9A/ki0jGD/13g==
+Date: Sun, 12 Oct 2025 16:44:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Eddie James <eajames@linux.ibm.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+ robh@kernel.org, andy@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com
+Subject: Re: [PATCH v9] dt-bindings: iio: Add Infineon DPS310 sensor
+ documentation
+Message-ID: <20251012164413.0084ad6d@jic23-huawei>
+In-Reply-To: <20251007191612.80164-1-eajames@linux.ibm.com>
+References: <20251007191612.80164-1-eajames@linux.ibm.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/22] smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- stfrench@microsoft.com, metze@samba.org, pali@kernel.org,
- linkinjeon@kernel.org, smfrench@gmail.com, sfrench@samba.org,
- senozhatsky@chromium.org, tom@talpey.com, pc@manguebit.org,
- ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com,
- zhangguodong@kylinos.cn
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
- ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20251012150915.2992220-1-chenxiaosong@chenxiaosong.com>
- <2AC3F0FD2E1F3D39+20251012150915.2992220-7-chenxiaosong@chenxiaosong.com>
- <d03c64d2-46c0-42d8-8f88-28669e921c95@wanadoo.fr>
-Content-Language: en-US
-From: chenxiaosong <chenxiaosong@chenxiaosong.com>
-In-Reply-To: <d03c64d2-46c0-42d8-8f88-28669e921c95@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: NbgfBr2LDT8MT9/MG+Eb31ZCS8dttLVn+rgzVnUJBIZPjPV5fMtdfwS8
-	qaF/e4g/QqAtaEePFU4/PA1yGddj5gRil5c8DEXfnnPz7SZk3z9wQVsyHVQsukhpcPkAaL9
-	FKkSpywvj9g/VcfXYrXFkXbO+1EvOk6UATEEJi4Y0aCSjKYseAZwhWOkrJjS8VjtNal/CdB
-	OJikMW+Qe6nDjXZMzhdPlEyifkrsK8PUXoM3cjwgSOAGWg6dDXEEn11i7GJjk2oDiLdDKtj
-	WZk7mz22mVBKEC9pHTQkW+9iudherg879L9gQEAvfjFK8G1hY+WxJ+Vbxqdf6OzTg8cdv8N
-	hMXuybOxgcISx51Ea4GRfAtoOM96/nVUUu50OV88tT9mbd2873Dv1COjenif3DuyiJ2vlEM
-	pujdXe1BSLHq3ROaGzB6gyrSVKQfhtiT3ENBXsx+6BV7vMr0hbK3plocwugrLubxDft0nfV
-	eHRD0XrFe35vQKhaFKNO4oEH/RviLvCWpwNQP6rPVuk0zpnVXZKGgQ2rxgjKvakUoiG2/Xl
-	3vj1c/4vdTnDGtYIa+ZPGyAbMZBJH51ujq+BXrxYgqAxbyIYlAJkQ/J6jsqbO96J9bR8oOT
-	qN3wQUvzyaUlbiunRljfz9Q/Y/D1wGNj0JAv4f//60c80geCRGIWp9DOG2rjRQLcPoAlysm
-	vrROB38bPo0O1ob06SQsW9jlAzVbegFgViuH3YF0ZGNG3zyS5v+cAFkgCDQxwAS8iLtEhiz
-	4ZYfXUgdzOVlGCaBaE9q9vBTNl34nEwaK5QGwUsoA4+7OcVCZakdhxg4PnnLd6Ezq/P2WqJ
-	bjzj3FFhoj3+2ER8hVlhbxkIvktADfZ6QOQcsFacJb0RIZO4ipRdN2yu2HMjz0riQQUKh+a
-	vasB2OwmC48o4jVo1K3uCM3Ogmg5XXNZabWLyNvXVKFk1r/3KDTe9ZCMODzC5QvsMj1kF/F
-	lQlDkeiTbSYOx1gxOt+qtInjzeqwXv0znbi1601CuteSYV0ZlAAr4m/QOaCeNzcEyj/6KC+
-	nq8OygEAlfPYiyCDcsxAFbBnhYmMAGiFMzZGgEWEl5R4aOyoVmh3XuLfO64icCcz+/7ddW8
-	o4ksUpNURf3bzPyMoqJOl8=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-SPAM: true
-X-QQ-RECHKSPAM: 3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Yes, "cpu_to_le32()" should not be present, I'll send v2 patchset.
+On Tue,  7 Oct 2025 14:16:12 -0500
+Eddie James <eajames@linux.ibm.com> wrote:
 
-Thanks for reply.
-
-On 2025/10/12 23:21, Christophe JAILLET wrote:
-> Le 12/10/2025 à 17:08, chenxiaosong@chenxiaosong.com a écrit :
-
->>       /* does it have the right SMB "signature" ? */
->> -    if (*(__le32 *) smb->Protocol != cpu_to_le32(0x424d53ff)) {
->> +    if (*(__le32 *) smb->Protocol != cpu_to_le32(SMB1_PROTO_NUMBER)) {
+> The DPS310 is a barometric pressure and temperature sensor with
+> an I2C interface. Remove it from trivial-devices.yaml and add its
+> own documentation to allow for consumers of this device such as
+> the iio/hwmon bridge.
 > 
-> Should this be SMB1_PROTO_NUMBER?
-> (without cpu_to_le32())
-> 
-> CJ
-> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+LGTM
 
+Applied to the testing branch of iio.git. I'll rebase that on rc1 once available
+and then push out as togreg which is the one linux-next picks up.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  .../iio/pressure/infineon,dps310.yaml         | 54 +++++++++++++++++++
+>  .../devicetree/bindings/trivial-devices.yaml  |  2 -
+>  MAINTAINERS                                   |  1 +
+>  3 files changed, 55 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+> new file mode 100644
+> index 0000000000000..e5d1e6c489393
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/pressure/infineon,dps310.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Infineon DPS310 barometric pressure and temperature sensor
+> +
+> +maintainers:
+> +  - Eddie James <eajames@linux.ibm.com>
+> +
+> +description:
+> +  The DPS310 is a barometric pressure and temperature sensor with an I2C
+> +  interface.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - infineon,dps310
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#io-channel-cells":
+> +    const: 0
+> +
+> +  vdd-supply:
+> +    description:
+> +      Voltage supply for the chip's analog blocks.
+> +
+> +  vddio-supply:
+> +    description:
+> +      Digital voltage supply for the chip's digital blocks and I/O interface.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        dps: pressure-sensor@76 {
+> +          compatible = "infineon,dps310";
+> +          reg = <0x76>;
+> +          #io-channel-cells = <0>;
+> +          vdd-supply = <&vref1>;
+> +          vddio-supply = <&vref2>;
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 58ff948d93c96..a76c58f3b1de4 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -127,8 +127,6 @@ properties:
+>            - ibm,cffps2
+>              # IBM On-Chip Controller hwmon device
+>            - ibm,p8-occ-hwmon
+> -            # Infineon barometric pressure and temperature sensor
+> -          - infineon,dps310
+>              # Infineon IR36021 digital POL buck controller
+>            - infineon,ir36021
+>              # Infineon IRPS5401 Voltage Regulator (PMIC)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3773c74b31d6d..bde80ddb99e9d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12217,6 +12217,7 @@ INFINEON DPS310 Driver
+>  M:	Eddie James <eajames@linux.ibm.com>
+>  L:	linux-iio@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/iio/pressure/infineon,dps310.yaml
+>  F:	drivers/iio/pressure/dps310.c
+>  
+>  INFINEON PEB2466 ASoC CODEC
 
 
