@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-849678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967EEBD0A45
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:00:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C51A5BD0A4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A583018977DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:00:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DA23BBA78
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B39F2F1FD3;
-	Sun, 12 Oct 2025 19:00:10 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9342EF665;
+	Sun, 12 Oct 2025 19:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDPpBt+b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B631F03C9
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32A41A275;
+	Sun, 12 Oct 2025 19:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760295610; cv=none; b=YZRobqTy0+PlV4ogRfUqw5NXDpOq7TRkM828ZUJqU6SaKPJl+mrIrq20J4eIdI1I/ZzrcCu9Au1063ZyYcFQtRIfokasdn9omvSADexB6MOkJryAxKdmfgr5J7DCWzOTLu9IslGbOl8e4VMZobOyKrW9T/d82I+3VhHYv3u0oN0=
+	t=1760295740; cv=none; b=PAJqARc87u8iPltMM0PShGtxL51wnvzQuTWgTJfJIZ2xL1tiQ2GZE2qo9z+ASDJxIvIwjADTDnViylU6uvuKfk+7W7TwgOZKWRDgjf+noSPEJnf/UGeToSA9wUBc2gyIZO94VOoV+Xqrl5YGWbHpW4R4cU1J4n7HezEpZwNOrDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760295610; c=relaxed/simple;
-	bh=Pt3ZB83Q3mfKRpOu3a30iXqtlMYmHF2EzgkJHVQE4TM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TPd+rVa6NWUd8HEWcri8RJvhXdX/hOo5lkV7hB8JAOp5KAFlVzdfc9ykKLR0583EZFpz8cDAfm7qvA2hSA5kpmZEby9G0q0vEiIBCI8BcOpFSL91VlVx9zABx1PCrwxxFnkiEj77xNnvMFFz/rVveu5kiEM4fg9CdjTQhv71OzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42f8824b65fso251341405ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 12:00:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760295604; x=1760900404;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcJVBjs2ChGoReimlqt8lYiH1ukMGH92wGhJJIL/roA=;
-        b=P1TU7vE3g41cp9HHcc60L5G09LmiPdTwZ2GBW+FBOmgOWiU8ZuLuFhtLgdv1x8HXQZ
-         4224zJpBq9zUo59Th3QcT0T2Cja+KFDUMU7HDiVw1e7keDiJU3csDUCqQj49vgmd63uv
-         ayqTM/7s/qE2KtXGGALOpvOiY8b6T/RqV6NOhsQVv0HS9RKSFKfkjz4ku7n/gko+M6dY
-         e9UzNo//DHoB+zCgrrrH9eJaVD7PGh6kZendupLAzbEy0QBvXdXc0m8kuWidyP/DX+kw
-         mRiuToLaLSFAGbcG5C1HYqEfDpZkZj0WOPLJ94qprIWVFU6bqvl9SJEAS2ZqT/Zm0O6B
-         mJAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWBID7ZzCSUXZRjSMPrNLItHiwmPPNImd6L0oY+9AymQtKzQLzA9ACltG3+BesSLyiUPd2kKGwN1aY1Ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/BI8q1F3aukw0czsaZtkyW94EOPWbhtSAFWsfLqWJESO0S3KX
-	lxdLDuoM9m8RGGCe8zvvoxZJbfbW1txciObZtn6eXQ+aBO/Ft39YKqn8mBZbO3xRsDiPJkbbq0E
-	ZruYBforXwnxNkhtV0m7r/prwWnXXxuYfjAuNS0i9yg2YpMnmIAX+Aeq4a40=
-X-Google-Smtp-Source: AGHT+IHZuNtemUzT33hMZvox1iRge2hv5hQFESvK5Ke3OkprcLTQOXp/1StbpSfeo77zazlQ4FPyJi5J2a+Y4DMOm9aofNP/h78A
+	s=arc-20240116; t=1760295740; c=relaxed/simple;
+	bh=T2d7uJPk5zDWBAlwmh0QUxrkKWoRtML4gbEucNeFsIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YP6TgHkiJKMfeZDORHRsT2ob55gbfuaz+Ielb79E/CL/GUHH0IoGd+Oev0bWac6+NeURdAO2e/oVs6KI2aR7edt65PxbSgaRuefGNMjfA9PXunMmRFWalkaqr8ieZ+3Q7/SAxLgk9tFPdojUeHw9MxT+9P8Vi5Cz7n4tDVanZt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDPpBt+b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA45C4CEE7;
+	Sun, 12 Oct 2025 19:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760295740;
+	bh=T2d7uJPk5zDWBAlwmh0QUxrkKWoRtML4gbEucNeFsIU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cDPpBt+bCtMeJ4arqW/DvhpHGMZb6nFtLSToteoLUjbniz/GOrIOj62plxvXFW2RJ
+	 s3t23i6Z0iI75B3f5UrYMOnLfjB0kbq6RldcuvcLJaAN32mve6JEV1FCP6xmw+w4mu
+	 gcUoOtjks5pQc6+yG/0zt2vWSR6gP2EgqLJypjnOTBKr0T7YwTu8qnLU9ifV8NWn3U
+	 Hwgsm5cn9W8ZDNokPKLbQklbA5CSLAlYU+gvH3m69xdWUtPOrGefYG+aIp81NYsx9F
+	 ssi36Uz/cdl3PolexNSVA3syEHRQPeSTMqat8jj+fUTPUF6SDrzYR77YLJooh+tpYC
+	 HS99D73qfHC/g==
+Date: Sun, 12 Oct 2025 20:02:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=  <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Kyungmin Park  <kyungmin.park@samsung.com>,
+ Karol Wrona <k.wrona@samsung.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio:common:ssp_sensors: Fix an error handling path
+ ssp_probe()
+Message-ID: <20251012200211.19170a6f@jic23-huawei>
+In-Reply-To: <3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
+References: <6fdd39e3763a6e0e700982ac6ed63a5748a4ce67.1760122717.git.christophe.jaillet@wanadoo.fr>
+	<3e91c2a282499f862ed7d27842d5bc2ee461ebf8.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e04:b0:42f:9e92:a44a with SMTP id
- e9e14a558f8ab-42f9e92bb52mr111706485ab.22.1760295604614; Sun, 12 Oct 2025
- 12:00:04 -0700 (PDT)
-Date: Sun, 12 Oct 2025 12:00:04 -0700
-In-Reply-To: <20251012174221.72873-1-contact@arnaud-lcm.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ebfab4.a70a0220.b3ac9.0012.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Write in __bpf_get_stackid
-From: syzbot <syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com>
-To: contact@arnaud-lcm.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, 10 Oct 2025 19:56:41 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Fri, 2025-10-10 at 20:58 +0200, Christophe JAILLET wrote:
+> > If an error occurs after a successful mfd_add_devices() call, it should=
+ be
+> > undone by a corresponding mfd_remove_devices() call, as already done in=
+ the
+> > remove function.
+> >=20
+> > Fixes: 50dd64d57eee ("iio: common: ssp_sensors: Add sensorhub driver")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Applied to my temporary fixes branch (I'll rebase on rc1) and marked
+for stable.
 
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Thanks,
 
-Tested on:
+Jonathan
 
-commit:         ad94c972 bpf: fix stackmap overflow check in __bpf_get..
-git tree:       https://github.com/ArnaudLcm/linux.git bpf-slab-fix
-console output: https://syzkaller.appspot.com/x/log.txt?x=1618b304580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4aff57b5083a987a
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>=20
+> > =C2=A0drivers/iio/common/ssp_sensors/ssp_dev.c | 4 +++-
+> > =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > b/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > index 1e167dc673ca..da09c9f3ceb6 100644
+> > --- a/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > +++ b/drivers/iio/common/ssp_sensors/ssp_dev.c
+> > @@ -503,7 +503,7 @@ static int ssp_probe(struct spi_device *spi)
+> > =C2=A0	ret =3D spi_setup(spi);
+> > =C2=A0	if (ret < 0) {
+> > =C2=A0		dev_err(&spi->dev, "Failed to setup spi\n");
+> > -		return ret;
+> > +		goto err_setup_spi;
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	data->fw_dl_state =3D SSP_FW_DL_STATE_NONE;
+> > @@ -568,6 +568,8 @@ static int ssp_probe(struct spi_device *spi)
+> > =C2=A0err_setup_irq:
+> > =C2=A0	mutex_destroy(&data->pending_lock);
+> > =C2=A0	mutex_destroy(&data->comm_lock);
+> > +err_setup_spi:
+> > +	mfd_remove_devices(&spi->dev);
+> > =C2=A0
+> > =C2=A0	dev_err(&spi->dev, "Probe failed!\n");
+> > =C2=A0 =20
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
