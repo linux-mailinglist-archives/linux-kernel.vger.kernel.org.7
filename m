@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-849400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587EBBD007B
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 10:24:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0F7BD008E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 10:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 966774E2DE7
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 08:24:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1EB2634887C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 08:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAE7258EC3;
-	Sun, 12 Oct 2025 08:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A73257835;
+	Sun, 12 Oct 2025 08:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="dy0RQGhT"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZbddNYzX"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE22A23B62C;
-	Sun, 12 Oct 2025 08:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7627B79F2;
+	Sun, 12 Oct 2025 08:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760257476; cv=none; b=kqTx61Zb1MNO+HdxawxLDxPTDgkTqItRXtiytTruHOriYiNtBwHe+b2Euvv0beJPJer74R0Z0kFjAq8KLfhoCtvYU2PqnxyC0BovkMjYhUVmr8NIt9cd9hzra0JmPDV4bgyHqQurO34oq4AdKBxmZfYCbvN1PnEd7Asnx+Kdu94=
+	t=1760258429; cv=none; b=ZhQRPAp/m/9f3wDZgM4yOdsSEMy5dcu+E8Kir2dVMixzINnnKDUbOg0XFX20xCG9+lunAoWlYfzNW17bgUis+6+2ixdcCAzDckRXzfSdQ5UQN0+TpGnA1ucL7JS35n9Lmjs/LVLxwsbgjz7+7GDnMjtmWWazpeqDm/RURDDGdSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760257476; c=relaxed/simple;
-	bh=FBbIun+3fHA8LljlIqTp4GIrvNglfpYAuuvY4cbNA7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=It4LB9mLJe8l7+fttZSmYMB9mva0GzPzVVMHf/MxFBOAQPGuTLGNsSTzgT3/rpV0QHnpVn9tC2g4Mvu1OzoZ5VwhhG90ma/RniXE+QJu7DvkjWV0xGZDraQ7cbUDNC71/Eee6bVNMUqyVbcG9sDljI+AcwFKtxT6PVy0xJxQFJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=dy0RQGhT; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cktnB1zFXz9t3C;
-	Sun, 12 Oct 2025 10:24:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1760257470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lZhwgTQSJZh4wRAyKM1kTP6Jj9b7XQ1HM2VBmL39PJQ=;
-	b=dy0RQGhT6nKswPw1srr82MB1hCkNXTtUaCs4Mmjo1DKImT1Jf4xVR81H9dpu2YEYbYnJ+b
-	DS+hmMBDDJiGaiyaTax9ykxk4nVliFl8jyVkINFBrBn6Rw5aHUuHe8rwkzn8EA9yD+37eh
-	cBu5QoS4Bh1RXILDr5+ryJIomHRfmG+f6Qhnt/9uc+bk1tibuRdYt3XUhfhPq4tN+WoWWw
-	9R9KCLhy0ew+GRkUEoGn2Qvd3yngfiEOLWUpKplkiJV8P3DRs9whceFiY74yyCbYLOY3mK
-	Ruwln2Ag5PA1Xu8CHECQwqNfVVOLAnTYg+e3qZ7oQ3ASY1EcNrGjNj8J8XPoCg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Sun, 12 Oct 2025 10:24:19 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com, 
-	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org, 
-	mcgrof@kernel.org, nao.horiguchi@gmail.com, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
- target order silently.
-Message-ID: <e64diq7jjemybcwr2kgmfrp7xxj6osfdnjmpozilhyjjrt4g6m@brocsk7dnbgp>
-References: <20251010173906.3128789-1-ziy@nvidia.com>
- <20251010173906.3128789-2-ziy@nvidia.com>
+	s=arc-20240116; t=1760258429; c=relaxed/simple;
+	bh=Jqb59cTQV+C+1BT1Q882TXl01Q52T6wD10sKvxB3OVk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ttNm9IWm11NVZ9e19FQ2oLqYEqzKpdHlSKv8OADgiQaiWif7cLsJpzxEAgSP1Xr4J6O50V46vEu++TSovQyd9o4cxwPjtF8nxO6dlCFT+yY1hlnRPD/rZ3vPQFQ7/FlIZyidjJPPGhsr7fcdz5GiZfHs0buPcMtPH10WM/xo9bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZbddNYzX; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ZC
+	QZh48Hq1KrwP074ezfu1Hg5jq6qmtAxdjN7qhoNUI=; b=ZbddNYzXk9mSx94rUf
+	THyJ9ptjjpfZoKo9o2wFdDFByScE6zE2GK2nsGqxYhvT4BDFsqmFIdFuO6zNwOpH
+	60pYlaHeiCwhGk0vb89V+pLE1vbYqdPL7wwNvPcU2AyttlMxr6da1jeYSeqMCrH7
+	kJAvxmYwuI0vn/waTc7eGZBmw=
+Received: from liubaolin-VMware-Virtual-Platform.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3J4xgaetou6fWDg--.27826S2;
+	Sun, 12 Oct 2025 16:40:01 +0800 (CST)
+From: Baolin Liu <liubaolin12138@163.com>
+To: trondmy@kernel.org,
+	anna@kernel.org
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: [PATCH v1] NFS: Fix possible NULL pointer dereference in nfs_inode_remove_request()
+Date: Sun, 12 Oct 2025 16:39:57 +0800
+Message-Id: <20251012083957.532330-1-liubaolin12138@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010173906.3128789-2-ziy@nvidia.com>
-X-Rspamd-Queue-Id: 4cktnB1zFXz9t3C
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3J4xgaetou6fWDg--.27826S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr13Ww1rtFW7uw4xZr4ktFb_yoW8Gw18pF
+	Z8GF90grs5Xrn8XF4kZan2ya1jqa40g3y8AFyxGw43Z3ZxCrnIg3WUtFyrXFZ8JF4xJFs3
+	XF4UAa45ZF4jy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UQBMiUUUUU=
+X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiUg-kymjrWk--MQAAsr
 
-On Fri, Oct 10, 2025 at 01:39:05PM -0400, Zi Yan wrote:
-> Page cache folios from a file system that support large block size (LBS)
-> can have minimal folio order greater than 0, thus a high order folio might
-> not be able to be split down to order-0. Commit e220917fa507 ("mm: split a
-> folio in minimum folio order chunks") bumps the target order of
-> split_huge_page*() to the minimum allowed order when splitting a LBS folio.
-> This causes confusion for some split_huge_page*() callers like memory
-> failure handling code, since they expect after-split folios all have
-> order-0 when split succeeds but in really get min_order_for_split() order
-> folios.
-> 
-> Fix it by failing a split if the folio cannot be split to the target order.
-> 
-> Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks")
-> [The test poisons LBS folios, which cannot be split to order-0 folios, and
-> also tries to poison all memory. The non split LBS folios take more memory
-> than the test anticipated, leading to OOM. The patch fixed the kernel
-> warning and the test needs some change to avoid OOM.]
-> Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@google.com/
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
-LGTM with the suggested changes to the !CONFIG_THP try_folio_split().
+From: Baolin Liu <liubaolin@kylinos.cn>
 
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+nfs_page_to_folio(req->wb_head) may return NULL in certain conditions,
+but the function dereferences folio->mapping and calls
+folio_end_dropbehind(folio) unconditionally. This may cause a NULL
+pointer dereference crash.
+
+Fix this by checking folio before using it or calling
+folio_end_dropbehind().
+
+Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+---
+ fs/nfs/write.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 0fb6905736d5..e148308c1923 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -739,17 +739,18 @@ static void nfs_inode_remove_request(struct nfs_page *req)
+ 	nfs_page_group_lock(req);
+ 	if (nfs_page_group_sync_on_bit_locked(req, PG_REMOVE)) {
+ 		struct folio *folio = nfs_page_to_folio(req->wb_head);
+-		struct address_space *mapping = folio->mapping;
+ 
+-		spin_lock(&mapping->i_private_lock);
+ 		if (likely(folio)) {
++			struct address_space *mapping = folio->mapping;
++
++			spin_lock(&mapping->i_private_lock);
+ 			folio->private = NULL;
+ 			folio_clear_private(folio);
+ 			clear_bit(PG_MAPPED, &req->wb_head->wb_flags);
+-		}
+-		spin_unlock(&mapping->i_private_lock);
++			spin_unlock(&mapping->i_private_lock);
+ 
+-		folio_end_dropbehind(folio);
++			folio_end_dropbehind(folio);
++		}
+ 	}
+ 	nfs_page_group_unlock(req);
+ 
+-- 
+2.39.2
+
 
