@@ -1,100 +1,203 @@
-Return-Path: <linux-kernel+bounces-849617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA833BD081D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:01:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E2EBD0814
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9789C3BE205
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946FE1893272
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873152ECD14;
-	Sun, 12 Oct 2025 17:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570B12EC558;
+	Sun, 12 Oct 2025 17:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPumCKzn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bw8DY+5P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA76328D850;
-	Sun, 12 Oct 2025 17:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970BD19258E;
+	Sun, 12 Oct 2025 17:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760288506; cv=none; b=tDq0X5M9BLy+D5Iv7+QjHxmUtH7JtS0k99PJ+UhzwsEqy6KtVqZaK5Mqr5YBxFGDrM35r/PnZ70DIVrYFOUo/NPXqdHv/L8s4zLu8A810MSqUI3fv6E2SWOXzH29eZTgYFyMOi+F569T2tfDwRWTT63Hk8lgt5+XJQ09P9XcQIk=
+	t=1760288490; cv=none; b=kikj0EDJLlKMosKGZ5ovetQUvZUfI/9ilp0verFUK2KvQAy65pHPKybXqs4i1pyKqtd6vqlxmSdzULEkKxmEF+3PZvO5122uMvYnS+yG3TPxR5qvowXOqiujNs28Ku/xBKMVohWqCTtVEUyyF79z6fsmcO6kGgF5MJPStpm2NFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760288506; c=relaxed/simple;
-	bh=/kYsYzPqYcYMuoMIPOGDWTNrVr0GssulRb1i/fDzlL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fBnd9QyIKhTz0tMKYTd11f8zNo5GwsRPf1m2SCA+ZV+RKRy5YuCUJiVdnmszepTNI+2Cn+0JurPJkay9VSdIQ2de4/ynR0Oaj6AJR205Wn3BrVFBfzk8VIKr44JcZJtabLYHB2BaK3PqMhuEVbJ0SMYddiENFfRKIX4WywDm0+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPumCKzn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347BCC4CEE7;
-	Sun, 12 Oct 2025 17:01:46 +0000 (UTC)
+	s=arc-20240116; t=1760288490; c=relaxed/simple;
+	bh=K5u3yiOfDjFXa37+LYFs7qYjcwjZgMOR4ZuK/iED6As=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oZ08jnSUKaeQJA79+spo4A7AkMTFz+NnRNwj3+EGLbBfpJiMuL4iz9wc9IIAfSWsHWQYKxEku5U8+Di+2GsjzUmSg6OqfPwKJwhzasDN/0j9MASyHCKzDIZdaZFmxHsh7JSqjrCe+pu+qOO4bw7WmWl563elJ/cwjew3P5XaKKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bw8DY+5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16CAC4CEE7;
+	Sun, 12 Oct 2025 17:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760288506;
-	bh=/kYsYzPqYcYMuoMIPOGDWTNrVr0GssulRb1i/fDzlL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fPumCKznmZFuEL/nz8PcIbdhjX+W4ksMwQxt2zMhDmFYLNTKd7fpOYLf+635uFXet
-	 kJ/CUOTSuNcJ4dypd3YjzpdVYIdPtzlKragpw3RIm/Frq/kgYQtKGBgm3zITBjkvyz
-	 O1y7FwLEUCp6fKb/CbNLng69Rx3wKry/gJH8+MKvhrPhvQg1/6lfYVAq7VS17MUKBd
-	 Su9JEuxzkfsc/NHWGersRd/jN2c89Wbl8xBL0DEOtiLKKZcet9v53anasuw+XZD1yg
-	 j2OmPcmrqf9c+uhaA5BBUJKhuhYlr0XXzQW5ydXEWvfTa+4L/xozV85CVmzv9CfPo+
-	 9FLU9JCx4p5Sw==
-Date: Sun, 12 Oct 2025 10:00:18 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Use MD5 library instead of crypto_shash
-Message-ID: <20251012170018.GA1609@sol>
-References: <20251011185225.155625-1-ebiggers@kernel.org>
- <582606e8b6699aeacae8ae4dcf9f990b4c0b5210.camel@kernel.org>
+	s=k20201202; t=1760288489;
+	bh=K5u3yiOfDjFXa37+LYFs7qYjcwjZgMOR4ZuK/iED6As=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bw8DY+5Pfpg1R8UcoCM122hWFKDBhgU/9yRH5uMR2xTdxsTiAHJYzlsRP3MBuKA+A
+	 1vC8hsLHvHS8Y9CKurr179lLopG66hDKWRvayvIVlenefGSmSmolBu6NvD0wFa2g2P
+	 tHsRtrKTcpYKgf3fhYOBTXjeSH7oyPUpYmBgxd7J4TCyAzOIaUViw03aT+zDxMQQ7R
+	 2uIIGrC+43oI46R6FK5ilRpWBwiHowZmi4KWxMWqCaYfqExkzK7BBY6QXjESm/+AxQ
+	 T8IiRBgRG52FACaeaTCQm5qqw76XYtgo4lbx1AhpkBuaS/geUgQiSZqeHCRHeNSlAi
+	 EH8Z4I6ygOE2Q==
+Date: Sun, 12 Oct 2025 18:01:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+ devicetree@vger.kernel.org, Carlos Song <carlos.song@nxp.com>, Adrian
+ Fluturel <fluturel.adrian@gmail.com>
+Subject: Re: [PATCH v5 5/5] iio: magnetometer: Add mmc5633 sensor
+Message-ID: <20251012180119.312191fd@jic23-huawei>
+In-Reply-To: <20251007-i3c_ddr-v5-5-444184f7725e@nxp.com>
+References: <20251007-i3c_ddr-v5-0-444184f7725e@nxp.com>
+	<20251007-i3c_ddr-v5-5-444184f7725e@nxp.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <582606e8b6699aeacae8ae4dcf9f990b4c0b5210.camel@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 12, 2025 at 07:12:26AM -0400, Jeff Layton wrote:
-> On Sat, 2025-10-11 at 11:52 -0700, Eric Biggers wrote:
-> > Update NFSD's support for "legacy client tracking" (which uses MD5) to
-> > use the MD5 library instead of crypto_shash.  This has several benefits:
-> > 
-> > - Simpler code.  Notably, much of the error-handling code is no longer
-> >   needed, since the library functions can't fail.
-> > 
-> > - Improved performance due to reduced overhead.  A microbenchmark of
-> >   nfs4_make_rec_clidname() shows a speedup from 1455 cycles to 425.
-> > 
-> > - The MD5 code can now safely be built as a loadable module when nfsd is
-> >   built as a loadable module.  (Previously, nfsd forced the MD5 code to
-> >   built-in, presumably to work around the unreliablity of the name-based
-> >   loading.)  Thus, select MD5 from the tristate option NFSD if
-> >   NFSD_LEGACY_CLIENT_TRACKING, instead of from the bool option NFSD_V4.
-> > 
-> > To preserve the existing behavior of legacy client tracking support
-> > being disabled when the kernel is booted with "fips=1", make
-> > nfsd4_legacy_tracking_init() return an error if fips_enabled.  I don't
-> > know if this is truly needed, but it preserves the existing behavior.
-> > 
+On Tue, 07 Oct 2025 16:06:17 -0400
+Frank Li <Frank.Li@nxp.com> wrote:
+
+> Add mmc5633 sensor basic support.
+> - Support read 20 bits X/Y/Z magnetic.
+> - Support I3C HDR mode to send start measurememt command.
+> - Support I3C HDR mode to read all sensors data by one command.
 > 
-> FIPS is pretty draconian about algorithms, AIUI. We're not using MD5 in
-> a cryptographically significant way here, but the FIPS gods won't bless
-> a kernel that uses MD5 at all, so I think it is needed.
+> Co-developed-by: Carlos Song <carlos.song@nxp.com>
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> Co-developed-by: Adrian Fluturel <fluturel.adrian@gmail.com>
+> Signed-off-by: Adrian Fluturel <fluturel.adrian@gmail.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-If it's not being used for a security purpose, then I think you can just
-drop the fips_enabled check.  People are used to the old API where MD5
-was always forbidden when fips_enabled, but it doesn't actually need to
-be that strict.  For this patch I wasn't certain about the use case
-though, so I just opted to preserve the existing behavior for now.  A
-follow-on patch to remove the check could make sense.
+Until now I missed the ACPI IDs that look to be almost certainly invalid.
+See below.
 
-- Eric
+
+> ---
+> Change in V4
+> - use { 1, 2000 }
+> - Add _US for timeout
+> - Use GEN_MASK for MMC5633_CTRL1_BW_MASK
+> - Use { } for terminator.
+> - remove !!
+> - fix mix tab and space
+> - add mmc5603 (merge https://lore.kernel.org/all/20251003000731.22927-1-fluturel.adrian@gmail.com/)
+> - add tempature measure support
+> 
+> Change in v3
+> - remove mmc5633_hw_set
+> - make -> Make
+> - change indention for mmc5633_samp_freq
+> - use u8 arrary to handle dword data
+> - get_unaligned_be16() to get raw data
+> - add helper function to check if i3c support hdr
+> - use read_avail() callback
+> 
+> change in v2
+> - new patch
+
+> diff --git a/drivers/iio/magnetometer/mmc5633.c b/drivers/iio/magnetometer/mmc5633.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9b04cba6dbf633b7e0d136629a5aebffd072a68d
+> --- /dev/null
+> +++ b/drivers/iio/magnetometer/mmc5633.c
+
+
+> +static int mmc5633_write_raw(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan, int val,
+> +			     int val2, long mask)
+> +{
+> +	struct mmc5633_data *data = iio_priv(indio_dev);
+> +	int i, ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		i = mmc5633_get_samp_freq_index(data, val, val2);
+> +		if (i < 0)
+> +			return -EINVAL;
+> +
+> +		scoped_guard(mutex, &data->mutex) {
+> +			ret = regmap_update_bits(data->regmap, MMC5633_REG_CTRL1,
+> +						 MMC5633_CTRL1_BW_MASK,
+> +						 FIELD_PREP(MMC5633_CTRL1_BW_MASK, i));
+> +			if (ret)
+> +				return ret;
+> +		};
+> +		return ret;
+
+Trivial but to get here it must be 0 so make that apparent via
+		return 0;
+Then everyone can see the 'good' exit really easily.
+
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+> +static const struct i2c_device_id mmc5633_i2c_id[] = {
+> +	{ "mmc5603" },
+> +	{ "mmc5633" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, mmc5633_i2c_id);
+> +
+> +static const struct acpi_device_id mmc5633_acpi_match[] = {
+
+Guess I missed these in previous versions. Sorry about that!
+
+Where do these come from? 
+
+MMC is not a registered PNP ID according to
+https://uefi.org/PNP_ID_List?pnp_search=mmc
+
+So are these in the wild? If they are provide the DSDT snippet
+and a reference for where.  Also add a comment after the ID to provide
+one device on which it is used.
+
+ACPI IDs can take two valid forms. (1)   A 4 letter prefix that is
+a registered ACPI ID.  e.g. HISI is the HiSilicon one I use for
+the day job. And 4 digits that must be unique.  Typically each company
+has a tracker for this and a process to get one assigned.
+(2) A 3 letter PNP ID.  Similar otherwise.  Memsic has neither
+unless issued very recently. 
+
+So if these turn up on a device that uses ACPI either the manufacturer
+of that should get MEMSIC to follow process to get an ID or use their
+own.  It's common to find random sensors with IDs from device manufacturers
+for this reason.  Here NXP could use their own ID for example.
+They have a registered PNP ID which is the obvious NXP.  To do that
+though you need to make sure you get a unique ID.
+
+
+
+> +	{ "MMC5603", 0 },
+> +	{ "mmc5633", 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, mmc5633_acpi_match);
+> +
+> +static struct i2c_driver mmc5633_i2c_driver = {
+> +	.driver = {
+> +		.name = "mmc5633_i2c",
+> +		.of_match_table = mmc5633_of_match,
+> +		.acpi_match_table = mmc5633_acpi_match,
+> +		.pm = pm_sleep_ptr(&mmc5633_pm_ops),
+> +	},
+> +	.probe = mmc5633_i2c_probe,
+> +	.id_table =  mmc5633_i2c_id,
+
+Really trivial but there is a extra space after the =
+
 
