@@ -1,227 +1,131 @@
-Return-Path: <linux-kernel+bounces-849460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8C6BD02D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:36:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 728C6BD02DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C311892D32
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:36:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6151894018
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C258248F73;
-	Sun, 12 Oct 2025 13:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823A825A343;
+	Sun, 12 Oct 2025 13:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pAECxGU9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWe1PD6w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C861ACECE;
-	Sun, 12 Oct 2025 13:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30B82222AB;
+	Sun, 12 Oct 2025 13:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760276158; cv=none; b=JQV//WF4jYy6epQ3vIWhxtdVQkMJJU+oTsQLEApJx0y5EBIolx597EOxLsbOddykb4iuzFh+CbIfCNSqfg2cPXeEiO6enyXixSfGcZKD7FXU3qz5u0I9zpBbShX8Jwygvnr+O4StXvZJzkyaU5qqNhygcnK4MG9bYjTde81b9W4=
+	t=1760276653; cv=none; b=rvWlU+0QAByKhIKRrqSsJQCOkqPZAE3bNPw1X56ctgbtKs9MVO+5Yzxxy+oJaSYa61Dvfd/eWiAgEksAwKmqvctgk01c+w/108Vu4RCWAnrvj+AmcnlFOf6Gm3AiHVGJ5vlcp8kCNZSV/kn+bp/W1fBGhoxWQl5Emf28qH68X58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760276158; c=relaxed/simple;
-	bh=GghfE5YM8TPbJhlO+2xIBisZv3B2f12hUO1Bx8PrXLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WkIC9dSeR8MvYeTAsmU0TVbQ7heIcQXC0iyyQl63/4Z/mTAq6oyjtxLDFUTSFntc2c3/TT2Ehn1bvqKsavx1aKo+7VEjuHUGeMk9fZeLfLgWtOPSuavUbTGEpz1j5VzNQy8icNtjfnDDbfJ0bANHspiXBvV4rs/hUfM1dho+nk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pAECxGU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898D3C4CEE7;
-	Sun, 12 Oct 2025 13:35:56 +0000 (UTC)
+	s=arc-20240116; t=1760276653; c=relaxed/simple;
+	bh=JnK63l8hmNWYAsScvjeBVfiFGGZjVlHP7sX5T97XKTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lCzuWFuSRY180aQC6Q23A2MIP42cddT3FMG/pN3ntiqEzorWAhIva3B3uhr0qq7iqrRRPtahUecdGCLbc8D2R+lgFLEzL7E0bvfLiwTOMt8sYLFMXUnAoxiVc+sAN0Q3NN3incjMJ524VLBaZTveD4d7fw6RhPxGLho6uBfqAAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWe1PD6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2660CC4CEE7;
+	Sun, 12 Oct 2025 13:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760276158;
-	bh=GghfE5YM8TPbJhlO+2xIBisZv3B2f12hUO1Bx8PrXLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pAECxGU9OkQcPU+8dyn7p2VwNKW9t1u2RPkZCjYkeF3DWqa97ZmnU+4SbDQSbdRd/
-	 x0MndA1vj1z9/Vz3kx9X4rA227OseTyfTZpYX4rTBcAZw9JANEFhwqXd+rx/vTdeKT
-	 STd2eGaLORGUkqgoN/dg95hBcK1rfLmIjGUwGzF0iGYHPRNmFp3iprjacZoAiUOyzq
-	 SSJs7hq8Rfo8yrYewA8t6zNi7Pk7MMJ+BcIC9o5uyKcWbF/0HUgv4VAej33lMtI0uR
-	 lpLRcdxeDNXtuJwH7jbAmcfLLKSSmNVPvrnFVaedhsjOaV+iwn74DSJlOP3nSXkVZN
-	 J45esfaTvGLdA==
-Date: Sun, 12 Oct 2025 14:35:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: mmc: ti,da830-mmc: convert to DT schema
-Message-ID: <20251012-nickname-morale-e1e21796f1f1@spud>
-References: <20251011-davinci-mmc-v2-1-355da3e25123@gmail.com>
+	s=k20201202; t=1760276652;
+	bh=JnK63l8hmNWYAsScvjeBVfiFGGZjVlHP7sX5T97XKTs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VWe1PD6wObQH01lOGgV/gYeSLrXXVgaTuCvzKIgC5v00c2nhG9XxTMgWttl3VTN7L
+	 WZeRYcv0C58ISI7Vsve59ckf3jC+7CnAe0u1RGbnO60kqLFllP7nwieID7YRjI4u3P
+	 PJQHtNw8qJs2mOIEzAoEg+SSzj7HA2obzrx1IvuxFJ3SqQS4ihvkKaHTDmBNGhL0V/
+	 4BL0w3rmIMf1OCPZX/YPxd33kiatRawXv4arVFJ/h6TVtNFi+xJMz6bMK+2KYRhfcN
+	 s7qEU61qsCx3gNxePRKFhwV8oq7VNkq+RNOWiznm0+B/Q47bA3+DKZaq/6qjsQxNJW
+	 IhwWStlMjhykg==
+Message-ID: <28a8131b-5bc5-470d-b419-9857044fdeed@kernel.org>
+Date: Sun, 12 Oct 2025 15:44:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PY52Dy33OnbvwAen"
-Content-Disposition: inline
-In-Reply-To: <20251011-davinci-mmc-v2-1-355da3e25123@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] dt-bindings: media: imx8mq-mipi-csi2: update Martin's
+ contact information
+To: =?UTF-8?Q?Martin_Kepplinger-Novakovi=C4=87?= <martink@posteo.de>,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251012073314.9035-1-martink@posteo.de>
+ <20251012073314.9035-3-martink@posteo.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251012073314.9035-3-martink@posteo.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
---PY52Dy33OnbvwAen
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Oct 11, 2025 at 08:52:07AM +0000, Charan Pedumuru wrote:
-> Convert TI Highspeed MMC host controller binding to YAML format. Define
-> 'clocks' and 'interrupts' properties to resolve errors identified by
-> 'dt_check' and 'dtb_check'.
->=20
-> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+On 12/10/2025 09:33, Martin Kepplinger-Novaković wrote:
+> Update surname and email address in order to be reachable.
+> 
+> Signed-off-by: Martin Kepplinger-Novaković <martink@posteo.de>
 > ---
-> Changes in v2:
-> - Modified the commit message.
-> - Removed 'interrupts' from required properties following the old binding.
-> - Changed the maintainer for the binding to "Conor Dooley".
+>  .../devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml         | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> index 3389bab266a9..9d9b697e936a 100644
+> --- a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> +++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: NXP i.MX8MQ MIPI CSI-2 receiver
+>  
+>  maintainers:
+> -  - Martin Kepplinger <martin.kepplinger@puri.sm>
+> +  - Martin Kepplinger-Novakovic <martink@posteo.de>
 
-Bro, what? Where did that come from? I know nothing about this device at
-all. Find someone from TI to put there.
+Please squash the media patches. It's the same subsystem.
 
-Conor.
-
-
-> - Link to v1: https://lore.kernel.org/r/20250523-davinci-mmc-v1-1-ceebd83=
-52d9c@gmail.com
-> ---
->  .../devicetree/bindings/mmc/davinci_mmc.txt        | 32 ------------
->  .../devicetree/bindings/mmc/ti,da830-mmc.yaml      | 61 ++++++++++++++++=
-++++++
->  2 files changed, 61 insertions(+), 32 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt b/Docu=
-mentation/devicetree/bindings/mmc/davinci_mmc.txt
-> deleted file mode 100644
-> index 516fb0143d4c21d1c8e44a8846d55ea5458d7b74..0000000000000000000000000=
-000000000000000
-> --- a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt
-> +++ /dev/null
-> @@ -1,32 +0,0 @@
-> -* TI Highspeed MMC host controller for DaVinci
-> -
-> -The Highspeed MMC Host Controller on TI DaVinci family
-> -provides an interface for MMC, SD and SDIO types of memory cards.
-> -
-> -This file documents the properties used by the davinci_mmc driver.
-> -
-> -Required properties:
-> -- compatible:
-> - Should be "ti,da830-mmc": for da830, da850, dm365
-> - Should be "ti,dm355-mmc": for dm355, dm644x
-> -
-> -Optional properties:
-> -- bus-width: Number of data lines, can be <1>, <4>, or <8>, default <1>
-> -- max-frequency: Maximum operating clock frequency, default 25MHz.
-> -- dmas: List of DMA specifiers with the controller specific format
-> -	as described in the generic DMA client binding. A tx and rx
-> -	specifier is required.
-> -- dma-names: RX and TX  DMA request names. These strings correspond
-> -	1:1 with the DMA specifiers listed in dmas.
-> -
-> -Example:
-> -mmc0: mmc@1c40000 {
-> -	compatible =3D "ti,da830-mmc",
-> -	reg =3D <0x40000 0x1000>;
-> -	interrupts =3D <16>;
-> -	bus-width =3D <4>;
-> -	max-frequency =3D <50000000>;
-> -	dmas =3D <&edma 16
-> -		&edma 17>;
-> -	dma-names =3D "rx", "tx";
-> -};
-> diff --git a/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml b/Do=
-cumentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..1a97c3e447fd10f14bfe0af9e=
-22f9479304f0f26
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/ti,da830-mmc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI Highspeed MMC host controller for DaVinci
-> +
-> +description:
-> +  The Highspeed MMC Host Controller on TI DaVinci family
-> +  provides an interface for MMC, SD and SDIO types of memory cards.
-> +
-> +allOf:
-> +  - $ref: mmc-controller.yaml
-> +
-> +maintainers:
-> +  - Conor Dooley <conor+dt@kernel.org>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,da830-mmc
-> +      - ti,dm355-mmc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 2
-> +
-> +  dmas:
-> +    maxItems: 2
-> +
-> +  dma-names:
-> +    items:
-> +      - const: rx
-> +      - const: tx
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    mmc@1c40000 {
-> +        compatible =3D "ti,da830-mmc";
-> +        reg =3D <0x40000 0x1000>;
-> +        interrupts =3D <16 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <17 IRQ_TYPE_LEVEL_HIGH>;
-> +        bus-width =3D <4>;
-> +        max-frequency =3D <50000000>;
-> +        dmas =3D <&edma 16>, <&edma 17>;
-> +        dma-names =3D "rx", "tx";
-> +    };
-> +...
->=20
-> ---
-> base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
-> change-id: 20250523-davinci-mmc-c704440c3dd0
->=20
-> Best regards,
-> --=20
-> Charan Pedumuru <charan.pedumuru@gmail.com>
->=20
-
---PY52Dy33OnbvwAen
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOuutgAKCRB4tDGHoIJi
-0h/IAP0WtzbV+IXLwg7uVoHCeHVViaX/soKA93a6GBGYZf3TXAD/U+kDgIw5N/cW
-C7kCChsy3b48ylOjF6m55Qm37cnz7Qk=
-=dLIn
------END PGP SIGNATURE-----
-
---PY52Dy33OnbvwAen--
+Best regards,
+Krzysztof
 
