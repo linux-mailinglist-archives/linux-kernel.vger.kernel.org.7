@@ -1,201 +1,145 @@
-Return-Path: <linux-kernel+bounces-849612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE4FBD07FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C388BD0800
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51F91893261
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9585E189325F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAFF1CD15;
-	Sun, 12 Oct 2025 16:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7382E27AC4D;
+	Sun, 12 Oct 2025 16:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BR6XTV9T"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BEg4aZ4f"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD2B34BA39
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 16:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E6F1CD15;
+	Sun, 12 Oct 2025 16:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760287981; cv=none; b=UdpMyR4LJC5Im8BqSmUoKDvlO+Kzy73ER7x5GZxozqELilJnhEUzesv5C/2KM9g+q5To/W1R7N+xhov5qrFQ0jA2b2Oukq+Ufl2ufCuS/f0E3vnyN4Xy4yUlI/Tj7MX0CPjsz4QaXBEFRmLV7wCPY8p7HpyrYX3TFgOeT3X7AmQ=
+	t=1760288007; cv=none; b=EOq6na43I894yCMojnIjz1OKpSvZpBxc+8TYTuDP+tCAUPoaw7C0P9/XWNSrzHZ4iYXbfB+MR2RU4rn9Dok9wLNk7rPs4S7NN10iiY35jcT+xa/XAvDaNsEfBFekMs3gQpUeUgEW98837GndlYAmdBe0ecMr7VQ6k7ukqd7dNlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760287981; c=relaxed/simple;
-	bh=is6hqOlUkMzHTcnRZLMTBo5nWV2BPzV5Tey9TxfEm6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YisALlH6T9kUo09ELctRjPPvrZK6I49IoYZPrTFXmbo6ZBI4yhSQ0j2v+iy8DCp5bjvSGH4l9DMDkK1ltfF65azA+gcCr8PPE1hHAqPwVP9nY00l1o26aFQMkYQaWcHYVSnF04onlMsB2QtDGlHaV4gWQ0QWf0fh79alqwpzxis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BR6XTV9T; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b457d93c155so562568266b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 09:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760287978; x=1760892778; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9JZxGJaBIG3WMNgOZk70IosVrcFGLTtGDI3zyIQtP54=;
-        b=BR6XTV9TPGsCSsCXhUaHq2QW0sq08dFwDbXfd7zBz8v7PFy5s9Kq8fXSv5565AOn4Y
-         5XT1yRKB7IYwmBtUOC97BjgfqeECAG3KWJ96JYaGUtyiLv6fSDIwYKhY+LR7DeoJjQeQ
-         fNSYAgdLvjekMdhlULKceP3kCIbbYx1vc7VV3okYYHsNZPd/2qd5wZ3MakJwg1opjKBt
-         D+JXY/YWFzXJO4G3LB17sjS5PFbwLiYB46aQQMMKXL7Gk8ZgZo6V/LnFWxBi+OTnpe06
-         w1Vq4nRziatDjwJCmca1G+5niaNMATm5GRSwmZC6gfSrYi8XnpiL8jDdQL4cc5md+x1n
-         Hxiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760287978; x=1760892778;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9JZxGJaBIG3WMNgOZk70IosVrcFGLTtGDI3zyIQtP54=;
-        b=DPaii+vGM2EBRSZlkQWvzi6e1Q8AMQ17BpruBKqzdDyr8+a+BESXYFXP8wLBTAHclM
-         xFnHqIRDPaCC5iCMLOlxETb1rWEw+kJHZBb9YgGogj9v8hOEo64u9lUC2PT5is9MrSFM
-         suBiG9JRtG1+6UyZuhjFUlStsmqUl67tEBr5EUtt8MWwevBME0f29tWM4uvspwsMFUzX
-         pBMogepmCmx3JbI+Zuhne+uSoWKY1nAz1cz+q/lyRCoVQZJWszEXV/mCd6dvnxoHLGBS
-         nVkaRBJ5EOSYtk136W8xp5pUrVkgTipGtdGCAji5hVtLdkwXFggUuu7+83CmdNRB9Ze5
-         HHJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmsrCyZssUGFzisu7K8BK4nrBx2t+BUeiWljqU5GbmTlrDfBFmfaMVD1a3djHOf7E9VCrZidBGc68A588=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDorupFumM6o42MRiuZF/jRIkoHyaLvN9iZLZixrnybqjQZY05
-	VQm6H2ElVHaNRfGSFY2cHJR+nI1LCRvMsJJlsvSsw+HrbcRFm4jO3aGDaP/jcADOxIusxY4H4FQ
-	LM/u0YONNlnL5Hd4biY5WpFgxn6mYrhk=
-X-Gm-Gg: ASbGncso/TI6GHimLaymE/LzMIvLdsSz/aY6wMwYd4cX5If/sU8mwhRWMGH/jLChMLz
-	WP8MnNvQlpC9jxbUWe/tzoPMMiBidd9LYWx8/BgiNioZX4l2sB1luyfuja2mxethrkt9ALbLT7g
-	yjiwKnqVcxuNoNQLvt3peTa/yO7uYsGVYuFcWfTUZSKA/n+q86laEW6FbisoVhYl/yra4i6HfQN
-	YZHaALDNC6YkjqH0iFR42aV79HPlxV/9h+hwSN7GAWocsc=
-X-Google-Smtp-Source: AGHT+IHYC6gZQ7sVGps73WqhA1pssx5WiOdWA9NawCEncOKl23yyV6N76hIZIr600VGaUVKRCSjt6piNcz8DHQRfwsg=
-X-Received: by 2002:a17:907:7f8a:b0:b46:897b:d759 with SMTP id
- a640c23a62f3a-b50abaa3309mr2018683466b.40.1760287977711; Sun, 12 Oct 2025
- 09:52:57 -0700 (PDT)
+	s=arc-20240116; t=1760288007; c=relaxed/simple;
+	bh=LlyHJvp8ly5araPsUHQAHkaqhEJoeP1+TACVZyIyLhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWqFDPmc2NhjEQiqDwfg5VfiPwdIlzMQ20XcCC5FEnX5QQ4PwbIMvXEYE+sAjMcLhd+uCchSolDS7j0+TBxLpKQguWKLUTJwiOXCMMNuZt0ydcqNBKHSSRFmRF+9SjJAd1c8GNJam5CXsDoJvrdabYoDPhKpdZ9eOtT2IKo/PZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BEg4aZ4f; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59C2h43V008641;
+	Sun, 12 Oct 2025 16:53:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=k+IjG48gXSLZIvwDyRg49bJXm99WAp
+	KLTC/kWT+9feE=; b=BEg4aZ4fP6EnZ2EVZY0lRk8okP+8i9pqnPizPqbdniuclI
+	HgnzgWDzO4IzJdk/XINJDlUmfb8ov3rwfshO5yMlJLxJvIn8FA6OI4ydzJ0Cn9SK
+	pDSj4GhAJoV0LuSn/uU0oA9NGLx1xNOTdFhaRv4KiFHODTEK5pjr4YadUc6tEyoF
+	e6YJlhu3gMaWgLlbKilS3pHadoUZQbrBayKQXo1x+0KgrBRHc2LVbkCU9vOsCJxo
+	IfmW+pIOFct5PVFyVDqLNnABTC86FduF0q+GzmC/dksM+QHXGsvq+lAvEqSwtQO7
+	Y2hiot4VjSUUbndyBpnfxjQMUHEQGBZdf+Elwq/g==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qewtn9s0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 Oct 2025 16:53:17 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59CD761C019531;
+	Sun, 12 Oct 2025 16:53:16 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r2jma90h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 Oct 2025 16:53:16 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59CGrC1p8389034
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 12 Oct 2025 16:53:12 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4A99120132;
+	Sun, 12 Oct 2025 16:53:12 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BD0D920131;
+	Sun, 12 Oct 2025 16:53:11 +0000 (GMT)
+Received: from osiris (unknown [9.87.155.90])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 12 Oct 2025 16:53:11 +0000 (GMT)
+Date: Sun, 12 Oct 2025 18:53:10 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sumanth Korikkar <sumanthk@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v3 0/4] Support dynamic (de)configuration of memory
+Message-ID: <20251012165310.56572A3d-hca@linux.ibm.com>
+References: <20251010085147.2175918-1-sumanthk@linux.ibm.com>
+ <20251011114426.5313b7cb6951618c20ab62ca@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251004015623.7019-1-raskar.shree97@gmail.com>
- <20251004015623.7019-2-raskar.shree97@gmail.com> <20251004141231.632c311d@jic23-huawei>
- <CAHc1_P7MU=BYf_8sbZqikpXpfuvAtLNJ2E_hmi-50ohoh+gQcg@mail.gmail.com> <20251012151130.797450e3@jic23-huawei>
-In-Reply-To: <20251012151130.797450e3@jic23-huawei>
-From: Shrikant <raskar.shree97@gmail.com>
-Date: Sun, 12 Oct 2025 22:22:46 +0530
-X-Gm-Features: AS18NWB6k3kWKKLVTx0bu_UemQDkCkAOaqI3qRe-tlwz4EjAekbo6ZOk5wZIcpw
-Message-ID: <CAHc1_P7heCXwgH1tnqKTPAg0RpTPEM9Q4NUsGoOJMk6gqyXnmA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: max30100: Add pulse-width property
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, matt@ranostay.sg, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011114426.5313b7cb6951618c20ab62ca@linux-foundation.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 01PQDja_xbgElKHR2TdnRKhXwIJDSUh8
+X-Authority-Analysis: v=2.4 cv=Kr1AGGWN c=1 sm=1 tr=0 ts=68ebdcfd cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=amVAB9R6KjWVUBAK2OEA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 01PQDja_xbgElKHR2TdnRKhXwIJDSUh8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfX7ZI9a5FEts5A
+ /3agJNK2lThnDOJjuxKDdY0M3Nw9T+g5llBvVulTJD0GcVMHJju+mWB8tDZeTXpdtgeDFesVfSm
+ geySesNVRllwQdGCOeqfTlf4B49oLSNCwOG/cZtor6v4qfG+332qOdXRt5vY68xitl3P4J6GTJ8
+ SB7QuV4dLJey6QPuTN5H8YzGZX5/0iSrkAgPosxwV9SjKdTigRZo2ZYVQhRjCx1jlbtcpPyndST
+ NJFdjp6C7kQnCrj92j1xCDZrtTAssr+3i89A5mtoU9rEPVU2Lslb2knWUbJQKdWHIrjhV4UaKGd
+ /P80iFEGTFdNFdaqFNmtyo0jwKlr+CqsYTKKrwZ3NJohJTRaUKfGTFPu+NvggQgwRbWRwQWfW5i
+ ZC7M+S657oSeVpkQv08bZEglkEJZSg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-12_06,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
-On Sun, Oct 12, 2025 at 7:41=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Mon, 6 Oct 2025 08:34:03 +0530
-> Shrikant <raskar.shree97@gmail.com> wrote:
->
-> > On Sat, Oct 4, 2025 at 6:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
-rg> wrote:
-> > >
-> > > On Sat,  4 Oct 2025 07:26:22 +0530
-> > > Shrikant Raskar <raskar.shree97@gmail.com> wrote:
-> > >
-> > > > The MAX30100 sensor supports multiple LED pulse widths (200us, 400u=
-s,
-> > > > 800us, 1600us). These settings affect measurement resolution and po=
-wer
-> > > > consumption. Until now, the driver always defaulted to 1600us.
-> > > >
-> > > > Introduce a new device tree property `maxim,pulse-width` that allow=
-s
-> > > > users to select the desired pulse width in microseconds from device
-> > > > tree.
-> > > >
-> > > > Valid values are: 200, 400, 800, 1600.
-> > > >
-> > > > This prepares for driver changes that read this property and config=
-ure
-> > > > the SPO2 register accordingly.
-> > > >
-> > > > Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
-> > > Hi Shrikant,
-> > >
-> > > Explain why this is in some way related to characteristics of how the
-> > > system containing this chip is built (wiring, lenses etc).  Otherwise
-> > > this might instead be something that should be controlled from usersp=
-ace
-> > > not firmware.
-> > >
-> > > Also, give a little more on why we care about controlling it at all.
-> > > Is there a usecase where power use of this chip matters?  Mostly I'd =
-expect
-> > > it to be in measurement equipment with relatively short measuring per=
-iods.
-> > >
-> > > Jonathan
-> > Hi Jonathan,
+On Sat, Oct 11, 2025 at 11:44:26AM -0700, Andrew Morton wrote:
+> On Fri, 10 Oct 2025 10:51:43 +0200 Sumanth Korikkar <sumanthk@linux.ibm.com> wrote:
+> > Patchset provides a new interface for dynamic configuration and
+> > deconfiguration of hotplug memory on s390, allowing with/without
+> > memmap_on_memory support. It is a follow up on the discussion with David
+> > when introducing memmap_on_memory support for s390 and support dynamic
+> > (de)configuration of memory:
+> > 
+> > ...
 > >
-> > Thanks for the feedback.
-> >
-> > The pulse width configuration is indeed dependent on the hardware integ=
-ration
-> > of the MAX30100. It affects how much optical energy the LEDs emit per s=
-ample,
-> > which in turn depends on physical factors such as:
-> >
-> >  - The type and thickness of the optical window or lens covering the se=
-nsor
-> >  - The distance between the LED and photodiode
-> >  - The reflectivity of the skin/contact surface
-> >
-> > For example:
-> >  - A smartwatch/wearable ring with a thin glass window can operate
-> > with 200=E2=80=93400 =C2=B5s pulses to
-> >    save power, while
-> >  - A medical-grade pulse oximeter or a sensor mounted behind a thicker
-> >    protective layer may require 800=E2=80=931600 =C2=B5s for reliable s=
-ignal amplitude.
-> >
-> > I believe it would be appropriate to describe these fixed,
-> > board-specific characteristics in the Device Tree,
-> > since they are determined by the hardware design rather than being
-> > runtime or user-controlled parameters.
-> >
-> > Would it be okay if I send v2 of the patch with the above explanation
-> > included in the commit message?
-> Hi Shrikant,
->
-> I'd have this excellent detail + examples summarised in the patch descrip=
-tion
-> and also a small amount of description in the actual binding even if that=
- just says
-> something like
->    Description:
->      Pulse width in... . Appropriate pulse width is dependant on factors
->      such as optical window absorption, distances and expected reflectivi=
-ty
->      of skin / contact surface.
-> That's just a quick mash up of what you have above, feel free to not use =
-this
-> particular text!
->
-Thanks for your response. Sure, I will update the description in the
-binding and will
-update the commit message describing the details and examples. I will share=
- the
-updated version of the patch shortly.
-> The inclusion of target surface reflectivity in there makes me thing that
-> for some applications we may also need userspace tweaking or some algorit=
-hmic
-> way to increase or decrease the value according to skin characteristics. =
-However
-> I guess maybe it isn't that sensitive.
-Need to check on this point.
+> >  arch/s390/mm/pgalloc.c         |   2 +
+> >  arch/s390/mm/vmem.c            |  21 +--
+> >  drivers/base/memory.c          |  23 +--
+> >  drivers/s390/char/sclp_mem.c   | 288 +++++++++++++++++++++++----------
+> >  include/linux/memory.h         |   9 --
+> >  include/linux/memory_hotplug.h |  18 +--
+> >  include/linux/memremap.h       |   1 -
+> >  mm/memory_hotplug.c            |  17 +-
+> >  mm/sparse.c                    |   3 +-
+> >  9 files changed, 225 insertions(+), 157 deletions(-)
+> 
+> I can add this to mm.git in the usual fashion, but the s390 tree would
+> be a better place from a testing point of view?
 
-Thanks and regards,
- Shrikant
+It is not only about the testing point of view. We also want the
+correspondig util-linux changes upstream - there may (or much more likely
+may not) feedback which could require additional changes. Which means we
+would going back and forth.
+
+I think it is easiest to move forward with the s390 tree because of this.
 
