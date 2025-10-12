@@ -1,582 +1,865 @@
-Return-Path: <linux-kernel+bounces-849744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C572BD0C7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:05:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC85BD0C8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B603BEEF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:04:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09E2C4E46AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4671231832;
-	Sun, 12 Oct 2025 21:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5D923B63C;
+	Sun, 12 Oct 2025 21:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IJYg1Vl5"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fiPzyomC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1296722259D
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 21:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760303095; cv=none; b=l3CYQ+omma7HdqD0ZokIeEMsUDQ6MM+qh9N69egGO13HnK2BxpeKMRaAAiB3/E61EiR5qShFJ39eHGkxn7PmM/GdZmw1Uh6R0d3CY1GTKHD+T8G2M09ugyAx5FdQauOeEcUV+dJ3cO7nSL8cquXtTQTnbDlZBq5fw9TLUGQDQTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760303095; c=relaxed/simple;
-	bh=Wsx81Jwr40pBRc5fpPdkjW/CW8fnr+YziZRR1JW5Pc4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=kQE4t5DjIjodBkehg5U0IiWuWx4RqQgMO6dwJYDLV1/S+SgJ+kwE8tghfzG/oEdE3lUey/iNQmZSmdcqCipf9F3yGB++2buaAr5ZlOLWjhpZoBgHwvzRq2+4YxaZir7cBSPI3ux9BqoiWKZg6c/poPB81pvrJEPsKtuByzAo0NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IJYg1Vl5; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b00a9989633so658418466b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1760303090; x=1760907890; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wZJZQb+xzAg+0vfNtGb3WvHkTKEVL9ZwMdnB6mWyBDI=;
-        b=IJYg1Vl5zlU0Kt+B/jv4r7nhr6FKcgvRQc5VK4vH3xB1iWHKRFwMN77zk0VS3tM8ZV
-         ChXAemzzYLuWjsSeI/U+3ytkw5MzGoRB1K4kX5CfDk0hsn180c8XuLsrjtxUBvJXHMb3
-         rboNHGCC6BUXn/DcVb2KORjfSxHLhlnx2gAAQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760303090; x=1760907890;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wZJZQb+xzAg+0vfNtGb3WvHkTKEVL9ZwMdnB6mWyBDI=;
-        b=dLvca2cVJKrlcSabfRWOL9Oyvw4Tf5zQ23/SVP6sGxp5rRip2A2sk/HsjYKRE/tegF
-         OtAdFMt9srQABcCnv+HHm5+SL87fkHXbxXJCum98MfPqwIFMcpNzmX3SV3beBhtxCjIA
-         lsP7Kb4uudTqPDsKOWlbANVATB7E8yei4+4iAFbGYuJH16zQ0m4yloEH/9PZn9LJBtBE
-         i0N7KBMkaVrHSlruIqbjpIy6GbhdopSngGYZ5jh8zt1bmq4nDJeinjbtvhcNhYqFMJuX
-         LL3fA0sDvnfQ2vjc1xzqYow3mz04RWJl9o7IId1KbIXuf0ctUUWvY87bj//UNbKMre/A
-         yPPw==
-X-Gm-Message-State: AOJu0Yx8MSbsC+g5dgscdosVDXRvx6Y1oOk0Ffy5IcOD6FLPfeXmEOSt
-	AoI87woSh4x7kaY/VSjnxjSxBH5Dkkxg0gcpjR1WQ9/l9tPbaL6aDNnxvDVw1s89BG/ZPoAT9ju
-	vT1n3sO4=
-X-Gm-Gg: ASbGncv0oRFoxHlqcbijHNJfoVVgnjf3x8rvjOOHIqi2F3pQSNUHEwDbAONqgsLahIV
-	CHmZD9Iyd2NRAcFYvRSBqjDHgo/C22daNm12Y96GH2LTT0gGl53Vx4A1h9EIwip7nc3eHhpqgSL
-	r+0RZQcN9hdyJbyYner0FmeGE03uHgLWr4PGI/fcNR8IHMAnMlZDEErFVSIFl/4hvE4Y6mLWg62
-	h744cQF6ToyouH4LJUFp2ly9ygRaQkxTiobiXFJ4hzpPDzxeyFK0emhg8joQ0QkL0TF65FyL/jq
-	Dgex8w67EsFFOZjj0V7UwpVQk5g0t4s0+/WqJQ8zvsrjOJeVjX20T2cPJ63YLotEAwTHDWeQitj
-	KNIkb6WXUeKKE4NPJng6SQCINsetyQkNmCfI6knARboelXfCzcQvSe3O0Roc3ZY5U45ETYXLXH5
-	tuxFtXv4kYiOwR/rw=
-X-Google-Smtp-Source: AGHT+IGTEfjngl+GPhdzeFrY1bPJXXZu/BIFx1ksv4p82VDjFUBXXzBF8TNZKgP2ANV/wyRz5RCwIg==
-X-Received: by 2002:a17:907:d7ca:b0:b07:e348:8278 with SMTP id a640c23a62f3a-b4f4310677amr2180758666b.25.1760303089927;
-        Sun, 12 Oct 2025 14:04:49 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d67d5c2bsm777407066b.37.2025.10.12.14.04.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Oct 2025 14:04:49 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-631df7b2dffso8121354a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:04:49 -0700 (PDT)
-X-Received: by 2002:aa7:d45a:0:b0:62f:8bad:76e5 with SMTP id
- 4fb4d7f45d1cf-639baf07534mr16070266a12.5.1760303088539; Sun, 12 Oct 2025
- 14:04:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A488D21FF49;
+	Sun, 12 Oct 2025 21:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760303234; cv=fail; b=UIByAlqUITLn8G2XvINrxMxCdT7wzOIm2EhcK8OF+dvFUHhg+2leLHpB9SvnGnNYdW73kM0qvZNPG0gHYwllpe/qJ24DZ5INcdcPl11B+eBRAzg2nGc0O48Yq03eLyYJyjEZumibN+8DIa7uBXIPpYehTt8jsSpA+9fGzFz6xsE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760303234; c=relaxed/simple;
+	bh=x3B7NmRkDUC8ZOutb85y3FuUq4LrqgscmvCgzx94DC0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jWtVibbFVmU39rjvfHhZ32dtLE4kleDWIvtrSUxW7Okd5YJgily7kfdT+KMLSBNnzGK6pfiCcJ1ZNsW5b3i372lSTr5m7fs3705lvGnELqKugTp/IWm2vQjCNISoeOBivlC006YdFmKs0R+lVqhEwoPzzY+WrjtGpKs9u1ki/PA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fiPzyomC; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760303232; x=1791839232;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=x3B7NmRkDUC8ZOutb85y3FuUq4LrqgscmvCgzx94DC0=;
+  b=fiPzyomCtgD7jWe9hELkWS8ZKc9BDUsb67vl72vdaUIIeM1VHPSi0Ydz
+   Y/ycok5b2Jj09V85Ls4hvORHpC1UHaJwTHuVbok9pyArSeshbpOmESlhr
+   /Gg+YtQU01bDKKCMnb3/Wv5bo1yNq6io4PD1crdZvdRjwBXFwfe0RGqU0
+   G4kID5KXciJxllrNY3/5+Smh5te3UEduw63OrvNXzVZjSF4qc1rzxtB8h
+   mxextD32mFC0fQSr/ihXmiFHrBWnFc3mKfSoiCGAH4u1s4365gh/kisRN
+   tnLNUDmQRWOdzFazzz3grNpDMTFJf2Q0eneC430SBSrJCHDsiH+batDVo
+   w==;
+X-CSE-ConnectionGUID: P9XhoM0nRQ2E1gL5/J6b5A==
+X-CSE-MsgGUID: t48iA2VyTWS2O35oQlLR4Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="62334894"
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="62334894"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 14:07:10 -0700
+X-CSE-ConnectionGUID: Kwwp4abbSTSng2YXwed4ew==
+X-CSE-MsgGUID: mgu6wMa0TL62eW2mmw1row==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="212400717"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 14:07:09 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 12 Oct 2025 14:07:08 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Sun, 12 Oct 2025 14:07:08 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.41) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Sun, 12 Oct 2025 14:07:08 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sK1d5QHuDWEoiKfmMHfkPWanjR3mpkk2m5Nx6UfUTKqTRXcTPjFJ2LMT+494cFgfn4ubLyNbjO/RAv7JZEM+TQSEgYJ7rQbBH8SuNkIZjpZDMtIj7FDnlxdovevAu7jq8ZQWfL3pdnvpcfE0ldoKu//zsg4eTtAQ4F3weZJPu16Y+SXvqFcopKEfcg+LQH0EaS/lG50tU68k5e8c9jpOoqHaHOG6kEyCiUwMETwQq2mDmlE0rsLECwh1jC0aeK+VJZQ1zxM5k8UahZqJxsDKF7alERfPFsYVcU9uqTBXpjlA6b7sLjN9OsEj4hLPuXB1OSKIgLi0+weWhOOIShRtCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fq4C6JkwE/mCNDFqJWktSVTQhrT4yFzR9X/UpCDuueI=;
+ b=PJETcgVLTcodUXZYhekhAJGRssRwtnRMM+qdZxjVJEm1Jcpxzygx63NOvp4rRXeAedLa9fLSTUZ31U0reUD2ExI0hPmvKqyeeRc/KElw/6aQz5peFvmFIExt6bhpdwmrrVdfO33xORZZRHSyDfg/Y5A8BT6lT/XY1LB6CTMGPbMAdHp+sDqanANCdJ31AtbzzSJ0kJHRqtEEiNo+GZvG2MfQHRLippgZAb0dzy4RKP1RLJ08/580psf6eTjEbbtSbMCRIup3GCdwAPj0SeU6Zy0Mtm+cdY9URRYlpxCLvIULedo6kwDb+mlI3nVjDFkeAxvoH9ZUPa7MwGT4wLt2cA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
+ by DM4PR11MB6096.namprd11.prod.outlook.com (2603:10b6:8:af::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Sun, 12 Oct
+ 2025 21:07:06 +0000
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9203.009; Sun, 12 Oct 2025
+ 21:07:06 +0000
+Message-ID: <2f39ed42-57b0-41fc-8577-d7a73814bb95@intel.com>
+Date: Sun, 12 Oct 2025 23:06:59 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/26] drm/xe/pf: Add data structures and handlers for
+ migration rings
+To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
+ Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, Matthew Brost
+	<matthew.brost@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, "Joonas
+ Lahtinen" <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>
+References: <20251011193847.1836454-1-michal.winiarski@intel.com>
+ <20251011193847.1836454-6-michal.winiarski@intel.com>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <20251011193847.1836454-6-michal.winiarski@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VIZP296CA0017.AUTP296.PROD.OUTLOOK.COM
+ (2603:10a6:800:2a8::9) To MN0PR11MB6011.namprd11.prod.outlook.com
+ (2603:10b6:208:372::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 12 Oct 2025 14:04:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whPJTtX5u1m47fPUD2g2Dc=Did_6OqCVj6OQPKFgfKn9g@mail.gmail.com>
-X-Gm-Features: AS18NWB5mfb-hQFMFYtdzU3goTWhdIDz5JCKJ0B0n4EHVDD3WJB5HrQ4Pv_YsO0
-Message-ID: <CAHk-=whPJTtX5u1m47fPUD2g2Dc=Did_6OqCVj6OQPKFgfKn9g@mail.gmail.com>
-Subject: Linux 6.18-rc1
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Two weeks have passed, and 6.18-rc1 has been tagged and pushed out.
-
-Things look fairly normal: size-wise this is pretty much right in the
-middle of the pack, and nothing particular stands out in the shortlog
-of merges this merge window appended below. About half the diff is
-drivers, with the res being all over: vfs and filesystems, arch
-updates (although much of that is actually devicetree stuff, so it's
-arguably more driver-related), tooling, rust support etc etc.
-
-This was one of the good merge windows where I didn't end up having to
-bisect any particular problem on nay of the machines I was testing.
-Let's hope that success mostly translates to the bigger picture too.
-
-                 Linus
-
----
-
-Al Viro (7):
-    vfs mount updates
-    fs_context updates
-    nfsctl updates
-    finish_no_open updates
-    d_name audit update
-    misc non-vfs updates
-    file->f_path constification
-
-Alex Williamson (2):
-    VFIO updates
-    more VFIO updates
-
-Alexander Gordeev (2):
-    s390 updates
-    more s390 updates
-
-Alexandre Belloni (2):
-    i3c updates
-    RTC updates
-
-Alexei Starovoitov (3):
-    bpf updates
-    bpf fixes
-    bpf fixes
-
-Amir Goldstein (1):
-    overlayfs updates
-
-Andreas Gruenbacher (1):
-    gfs2 updates
-
-Andreas Hindborg (1):
-    configfs update
-
-Andreas Larsson (1):
-    sparc updates
-
-Andrew Morton (5):
-    MM updates
-    non-MM updates
-    more MM updates
-    misc fixes
-    more updates
-
-Anna Schumaker (1):
-    NFS client updates
-
-Ard Biesheuvel (1):
-    EFI updates
-
-Arnaldo Carvalho de Melo (1):
-    perf tools updates
-
-Arnd Bergmann (7):
-    new SoC support
-    SoC dt updates
-    SoC defconfig updates
-    SoC driver updates
-    ARM SoC updates
-    asm-generic updates
-    SoC build fix
-
-Bartosz Golaszewski (2):
-    gpio updates
-    gpio fixes
-
-Benjamin Tissoires (1):
-    HID updates
-
-Bjorn Andersson (2):
-    remoteproc updates
-    rpmsg updates
-
-Bjorn Helgaas (2):
-    pci updates
-    pci fix
-
-Borislav Petkov (13):
-    EDAC updates
-    x86 instruction decoder update
-    x86 build updates
-    x86 asm update
-    x86 microcode loading updates
-    x86 RAS updates
-    x86 mitigation updates
-    x86 cpuid updates
-    x86 resource control updates
-    x86 SEV and apic updates
-    x86 cleanups
-    more x86 updates
-    irq fixes
-
-Carlos Maiolino (1):
-    xfs updates
-
-Christian Brauner (12):
-    misc vfs updates
-    vfs mount updates
-    vfs inode updates
-    vfs iomap updates
-    pidfs updates
-    vfs rust updates
-    vfs workqueue updates
-    copy_process updates
-    afs updates
-    namespace updates
-    vfs writeback updates
-    vfs async directory updates
-
-Chuck Lever (1):
-    nfsd updates
-
-Corey Minyard (1):
-    IPMI updates
-
-Damien Le Moal (2):
-    ata updates
-    zonefs update
-
-Daniel Thompson (1):
-    kgdb updates
-
-Danilo Krummrich (1):
-    driver core updates
-
-Dave Airlie (3):
-    drm updates
-    drm fixes
-    more drm fixes
-
-Dave Hansen (3):
-    x86 TDX updates
-    x86 mm update
-    x86 entry updates
-
-Dave Jiang (1):
-    CXL updates
-
-Dave Kleikamp (1):
-    jfs updates
-
-David Sterba (2):
-    btrfs updates
-    btrfs fixes
-
-David Teigland (1):
-    dlm updates
-
-Dinh Nguyen (1):
-    NIOS2 updates
-
-Dmitry Torokhov (1):
-    input updates
-
-Dominique Martinet (1):
-    9p updates
-
-Eric Biggers (4):
-    fscrypt updates
-    CRC updates
-    crypto library updates
-    interleaved SHA-256 hashing support
-
-Gao Xiang (1):
-    erofs updates
-
-Geert Uytterhoeven (1):
-    m68k updates
-
-Greg KH (7):
-    tty/serial updates
-    USB / Thunderbolt updates
-    staging driver updates
-    Char/Misc/IIO/Binder updates
-    tty driver fix
-    staging driver fixes
-    char/misc fixes
-
-Guenter Roeck (1):
-    hwmon updates
-
-Helge Deller (2):
-    fbdev updates
-    parisc updates
-
-Herbert Xu (3):
-    crypto updates
-    crypto fixes
-    crypto fixes
-
-Huacai Chen (1):
-    LoongArch updates
-
-Ilpo J=C3=A4rvinen (1):
-    x86 platform driver updates
-
-Ilya Dryomov (1):
-    ceph updates
-
-Ingo Molnar (3):
-    scheduler updates
-    performance events updates
-    locking updates
-
-Ira Weiny (1):
-    libnvdimm updates
-
-Jaegeuk Kim (1):
-    f2fs updates
-
-James Bottomley (2):
-    SCSI updates
-    SCSI fixes
-
-Jan Kara (2):
-    fsnotify updates
-    udf and quota updates
-
-Jarkko Sakkinen (2):
-    keys updates
-    tpm updates
-
-Jason Gunthorpe (3):
-    fwctl updates
-    iommufd updates
-    rdma updates
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|DM4PR11MB6096:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30885973-40ba-45fc-46d0-08de09d34ca0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RC9YU1FVMjVlQmRPV1BsdHo3dkFURnYrWndIQVpTRXZWYk41Ly9kNlRVREQv?=
+ =?utf-8?B?ZDJIWUlYbWx4OVlDWmRZdmJEU0dLTzFUNjJhck5PbkFVRDJLYVFuSGt1eXNQ?=
+ =?utf-8?B?SGwxVmdOZHhGUVU0cTVzQ1prVXVGWExNQkxCUyttWWpUVkdWU3I4NEV4RUo3?=
+ =?utf-8?B?ZE9JQ3dYdXE0WGdTUUMvRzlYblFJclN0ekpBbWxNOHpDUkFDTVEvYzUvNlQr?=
+ =?utf-8?B?ZmpZVjcxRVp5cUxZSXVna1VEWDZQSk5RcmEzRW1pdGhRNW4yRFlFaTl5QVdQ?=
+ =?utf-8?B?Y05zaUc5OVRHbU56QjdpOUFwMEVYejkxbWJ6ZmxHSFRDMTgwV093YU1xRUNE?=
+ =?utf-8?B?eVFlOG5Ub0YveEtjcUp1WjR4Si9ZMGh4TGttY0J6QzZ4WFoySmhPeG1TZ3hM?=
+ =?utf-8?B?WlZ3MWM4WmJSQXQxeVY3Q3FYeVFKemtGOGlycHptaU1UT1A3RFJQbGEwczE3?=
+ =?utf-8?B?TGhaMmNuWmZmeER0ejZ5L09Cb1ZJTGZMeDFubitUWkZWYzBDRkZHaTdKdlBI?=
+ =?utf-8?B?WXNnREFmdWVYU2tyd01QbFJoRmhuY3NydzFUUjl0N3VWZ2dGbUpLYnQ3akJJ?=
+ =?utf-8?B?VDgzbWJ2cVVlL21RRDFJeElwbFh2SDFMSVNSNXZFNWVvSEl2Wkk5cWlTaXhB?=
+ =?utf-8?B?b3E1NkwwM3hLT1hFQWtNM1FiSzJVSHJjVkQrVGIwMlB1b0VCYnRzb1RTUDk0?=
+ =?utf-8?B?Mk1rRjAyZEVkM0ZxZklxR0RPTFA2ZXYzYy80d0xTT3VYK05mMnZGSkVtU2x4?=
+ =?utf-8?B?bnVNWFAzc052VVRkZ0F4UVZENFJmOTlJUXNabWtWanU0ZktBMlJMWCtFQlFK?=
+ =?utf-8?B?VDRXa2ZXQUYrV0VndTVDbml4MVlXVlRyckIxRDlLNnZUOTBocGFLQ1NRVkpP?=
+ =?utf-8?B?V2VRYmhTaUZHaTJFc3Zxa081VlpWdS9pTHB3WHdmSi9FZ29FYmhWSkZBWWJC?=
+ =?utf-8?B?aURCeER0enA5S3pNQXdYcWJLbGk4VllZR3gxRlUzNzRVMWFGZ1pPWldsSG5p?=
+ =?utf-8?B?VDJ4RkFuTVhRNDVHYmNuck82Z3paWnFEaHNrRFdrUm85M1B1M0M0d0QzemlK?=
+ =?utf-8?B?ZXVPU2dvZ2FyQTd0R0Q4bzQ0OVdGekRqL0RmYXNpdHNlekFKUzNTak5PM3VB?=
+ =?utf-8?B?L1FkTUcvYVBncUFZN0EzaEVWdVpUWnNYbFF0UFVlaEJVNWlSZEhPZkJXUy9T?=
+ =?utf-8?B?UkpuanZodFAyZmtUNjk2anVlTjdMWVpFYmlsZWgrbmZyRkpqbG8veFM1SnJC?=
+ =?utf-8?B?S3ZZc2lweXZPbmFESURqeEJJWE9vclQwWjN3VTU3ZDN1RnZhZkszcWZXb2c3?=
+ =?utf-8?B?cjUvWkxIV1g1L09PVHVBb3BSNHFBajBxUXNBcnhRYUZMY3NSRGxKd2Zxd0h0?=
+ =?utf-8?B?Wm1pSUp1MFhwQUhDRldhTWZDbHBtWDBGZ3VEV2ZLbERiWHdBMEpuWERMTWFy?=
+ =?utf-8?B?RFhTdGUwbThFZmRnVnhVY1NNcVZNYWNaWWJTaXd3cVZWYUhiOUxmRElUc21k?=
+ =?utf-8?B?a0hxUzF2UUNzSUZnNDNEcGNYbHI5WnJxckw4cWNsdXRYZmlIUmlyTnVIRkRR?=
+ =?utf-8?B?MzNFTzdjMVNWUzlqT1VkdGQxMHlnSHUvWHV1TUVRajhRUk05NWoxZWNBWDBZ?=
+ =?utf-8?B?c25BVXl0TG5Dc1g4VXJQVS82Y2ZKODdGNEYybFpkbHVDWVJienFjM1FHS3VC?=
+ =?utf-8?B?VUJ4cytiaEwvZk5VMGpXZ3FicGlsV1JaSHJ3NzViN1lUZUlVaGdPZWNKSGRV?=
+ =?utf-8?B?UFRXdjByTWNUdXhIa1RkQXhXWFJOVHlscVNTMEdYdHRQN1orTWNDUE9qMXRS?=
+ =?utf-8?B?SG5rQkVlTDZlTi96RlJVbEE1RnpJT3ltbCtWRzluSUI2Wkprcm9GRWJnOVdD?=
+ =?utf-8?B?dkV4RXQ2WWlmdU1KNlV2Umwwd3BQc3JnWU1pazBUaENkenNUTnRmTlo1STRQ?=
+ =?utf-8?B?Q0p5K1lHNytwZ25sUURYOE1pL2ROZnY2bWtHendoTmZ1U2NhQWxvZm9YMWtX?=
+ =?utf-8?Q?4Yl/Z4fl5Ug6fKfDv/BqL7LnC5HUCg=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OUtPdjJOZytiS0JJbWsrVlVYbkRMNzVwTHY4TnV5TlB6STg3VlJONG5jZDBk?=
+ =?utf-8?B?dlBKY08vY1QxOWJSUk5wS0taYWFlVFNkbVAzaG1wdXJIRVpJOGhoMWtLdkFX?=
+ =?utf-8?B?M3RPbDd3dCtIM0N1dHl4aTNjQUJzOFdjbWFDeVdrWmhRWEcrWUZvaXNJR1JS?=
+ =?utf-8?B?RC8yWjl1MW0xaGVFRkJkZ01YbEtObTBVNjBhSWh4Yit6QU1GSUZOelJOQTBZ?=
+ =?utf-8?B?c2VkVFZMdHpsNGtjUVZPZmtwNjRMREZSbkJueU5ScGpwR3ZOQTViTGxReUxO?=
+ =?utf-8?B?OTFFTE9JdHZYM3JPVzd2TWgzOHhzeDlEVUNRUTFFdzlWOTZJRWt2bFZlV002?=
+ =?utf-8?B?VWdyRHdzdU5rSUQ2dkdseEt6NWN2SVRQRnNBQ0Z3cktSVHhCbU5sNHQxWHNt?=
+ =?utf-8?B?S2w5SFU2WjV3QzN2RVI4T1UyY1l5cFViMzk4VlRtVElIdUhLOHltdTlzekZ1?=
+ =?utf-8?B?OFBrRStTNlVkbkNwaWs4bmllc3F3bFVwRDdONHdNS3lOU1d2RnlnZTdrUXZn?=
+ =?utf-8?B?Y0EwTm5wQ0ZvNU9jMldYY0QvL3k5MExlL2dVa2VDV2h0b1JwT3pWQUtzYnZa?=
+ =?utf-8?B?aVBlamllNFN6YWpvZHUrbGFLRldpdkxheXU0Vm5YSjR3akRhYlY0YThZTDF1?=
+ =?utf-8?B?eklMUXd4dS9Jc3NpbFNYSlQ4VnBEWjY1TU9xaHJ0NmFJTHBvTEk5aFg3MWpL?=
+ =?utf-8?B?UEJ6bWc4dGRaYmUxbmpNaG5seUE3eG5ZYzB4OEQ2am9FSDFMZEVlOGF0eGk2?=
+ =?utf-8?B?UitoZE5tY0p1bTlIRUtZN083ZUlyeFFmRTBFSnBmVm55STJ0TVU0OXhFSXht?=
+ =?utf-8?B?YlhLRFM2MzBrVnNUSUtYUXdJT3VVbjFWK0xLTm80NE41azJTR05OQ1FEV3RJ?=
+ =?utf-8?B?QmlRTjBwQWZlUk9vbktQSXMwTExHSFNQU2ZaR0E1VFBtMUlGYnhVaUt1cXdG?=
+ =?utf-8?B?dkhDVzlQajJSQzZlQ2ViN0FsVGJ2S3dBMXZZdVpGOFAyS1UxMWRUVkRjVldw?=
+ =?utf-8?B?Q3dJRk9OYXlVeE1tVzh5MkRFU1A1aEk2cS9YYjA4alRUUWRGdldFUmhVZnZh?=
+ =?utf-8?B?U3hKcDVpU2dpNmZBRjc5aCtTeG5vM2tqdmNmYndzbzlxMkdlUStabEhHR3ZG?=
+ =?utf-8?B?V2hFZmFFR2Vlb1lEUEFjaEtIMFZ4UG13UTV2SnBJVXZFQ2ljczVsNUZZMXVD?=
+ =?utf-8?B?ejVOaG9QR0hUOU1XOW4yVjFjUzAvT1M3cFFhV0hocjJhWEVtVTVLY2Rsc3Fs?=
+ =?utf-8?B?eGI1UStuQk1yYTl5M3VwcThBai9ucW1TZ3ErL2FuSjhjU3FGOWNOL0JLaDJ2?=
+ =?utf-8?B?S1NFUzhaemQ4UkRzSHJGWUN2a21CUVBtUU5nTHVZc1dZQkl4a3ZvWTlrL0xa?=
+ =?utf-8?B?djM2Y0NZVStNSzEvS3prRmpPK1RGd0hKR29xeXk0L2Q3azZUelUzWUhVMTlB?=
+ =?utf-8?B?b1ZlaHg1NmJWeGoxOW9mSVQ3WDFjZGpUbUZKQysxcHFqUEZab2Z4U1MzbW9k?=
+ =?utf-8?B?NzJjdjJZVG0zbCtEZTZFOXU4aDMwZ0FuaXlBTXhDbEJvWHA5cXhPUVNEbmtk?=
+ =?utf-8?B?a0kvTDh2WTZNYXZhcEhzc0kwSENHOUpva1hBYlAxUTNWb1Mrb3BFWWpEWHlY?=
+ =?utf-8?B?d0wybC8xMVBZQ0UyZWpuOG5hY1FOVDNRYjdlVUJnMUdEcFFtTGRqbm5aSjBZ?=
+ =?utf-8?B?OUp1WVJSK1VDRDE2bThnbzFHdnJYek9FbHJpNnc0S1lyN2w1ZkFxdEUvNGRm?=
+ =?utf-8?B?a0RaVFhmRXVlNFNwN0JmSElCdENmQ0dZT0hDOEhycTVmRVBGdmVvVzdHWnVO?=
+ =?utf-8?B?aTNmYnpSQVVMQ2FsZW1zc3QwSU0xV3A0dkgyS05sSEpzLzZCUFhOOE5uT3JX?=
+ =?utf-8?B?UWNlWjBvTFh6MzA4QXprbHVhVVBOU2RrREZqZ251cVp3MVgyZ1c3OGMrYnlp?=
+ =?utf-8?B?K1pWclc3STlKNkhTL29QUlhEUEhXNzhsckFLZDZOdWJ2TXVSaTZBdlVjSTJH?=
+ =?utf-8?B?Q2Noc1hESmtORjZ1UWxpc3FlTDIzTkwvUGQyNVVhMFh2aXNMcTNNYXFaNmYy?=
+ =?utf-8?B?YXE2TUYwaHBiRXZZN0tXYUZhWldMUG9XbG9JSWdCWjRWNVRBQ3dFLzJKUWNa?=
+ =?utf-8?B?aVUzb2NSa0pPRTMwV3VsbzByZi9WYnU2clQrcXBzVjRqTmVpM2lYcUQ5cGhm?=
+ =?utf-8?B?a2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30885973-40ba-45fc-46d0-08de09d34ca0
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2025 21:07:06.3009
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yMg5+fC1RNFjeZz0egSJPMhP9Z2h5JHG4331eII7Vgbs2xdvCxf3sSOd3Cy+wbWYM56fXYkCqHl5vSgvV7JP/LIq9MCe8vsZzqDWTa1TNbA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6096
+X-OriginatorOrg: intel.com
+
+
+
+On 10/11/2025 9:38 PM, Michał Winiarski wrote:
+> Migration data is queued in a per-GT ptr_ring to decouple the worker
+> responsible for handling the data transfer from the .read()/.write()
+> syscalls.
+
+... from the .read() and .write() syscalls.
+
+> Add the data structures and handlers that will be used in future
+> commits.
+> 
+> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> ---
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c   |   4 +
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c | 163 ++++++++++++++++++
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h |   9 +
+>  .../drm/xe/xe_gt_sriov_pf_migration_types.h   |   5 +-
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_types.h     |   3 +
+>  drivers/gpu/drm/xe/xe_sriov_pf_migration.c    | 147 ++++++++++++++++
+>  drivers/gpu/drm/xe/xe_sriov_pf_migration.h    |  20 +++
+>  .../gpu/drm/xe/xe_sriov_pf_migration_types.h  |  37 ++++
+>  drivers/gpu/drm/xe/xe_sriov_pf_types.h        |   3 +
+>  9 files changed, 390 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> index 44df984278548..16a88e7599f6d 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> @@ -19,6 +19,7 @@
+>  #include "xe_guc_ct.h"
+>  #include "xe_sriov.h"
+>  #include "xe_sriov_pf_control.h"
+> +#include "xe_sriov_pf_migration.h"
+>  #include "xe_sriov_pf_service.h"
+>  #include "xe_tile.h"
+>  
+> @@ -388,6 +389,8 @@ static bool pf_enter_vf_wip(struct xe_gt *gt, unsigned int vfid)
+>  
+>  static void pf_exit_vf_wip(struct xe_gt *gt, unsigned int vfid)
+>  {
+> +	struct wait_queue_head *wq = xe_sriov_pf_migration_waitqueue(gt_to_xe(gt), vfid);
+> +
+>  	if (pf_exit_vf_state(gt, vfid, XE_GT_SRIOV_STATE_WIP)) {
+>  		struct xe_gt_sriov_control_state *cs = pf_pick_vf_control(gt, vfid);
+
+we can declare wq here
+
+>  
+> @@ -399,6 +402,7 @@ static void pf_exit_vf_wip(struct xe_gt *gt, unsigned int vfid)
+>  		pf_exit_vf_resume_wip(gt, vfid);
+>  
+>  		complete_all(&cs->done);
+> +		wake_up_all(wq);
+>  	}
+>  }
+>  
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> index f8604b172963e..af5952f42fff1 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> @@ -7,6 +7,7 @@
+>  
+>  #include "abi/guc_actions_sriov_abi.h"
+>  #include "xe_bo.h"
+> +#include "xe_gt_sriov_pf_control.h"
+>  #include "xe_gt_sriov_pf_helpers.h"
+>  #include "xe_gt_sriov_pf_migration.h"
+>  #include "xe_gt_sriov_printk.h"
+> @@ -15,6 +16,17 @@
+>  #include "xe_sriov.h"
+>  #include "xe_sriov_pf_migration.h"
+>  
+> +#define XE_GT_SRIOV_PF_MIGRATION_RING_TIMEOUT (HZ * 20)
+> +#define XE_GT_SRIOV_PF_MIGRATION_RING_SIZE 5
+> +
+> +static struct xe_gt_sriov_pf_migration *pf_pick_gt_migration(struct xe_gt *gt, unsigned int vfid)
+> +{
+> +	xe_gt_assert(gt, IS_SRIOV_PF(gt_to_xe(gt)));
+> +	xe_gt_assert(gt, vfid <= xe_sriov_pf_get_totalvfs(gt_to_xe(gt)));
+> +
+> +	return &gt->sriov.pf.vfs[vfid].migration;
+> +}
+> +
+>  /* Return: number of dwords saved/restored/required or a negative error code on failure */
+>  static int guc_action_vf_save_restore(struct xe_guc *guc, u32 vfid, u32 opcode,
+>  				      u64 addr, u32 ndwords)
+> @@ -382,6 +394,142 @@ ssize_t xe_gt_sriov_pf_migration_write_guc_state(struct xe_gt *gt, unsigned int
+>  }
+>  #endif /* CONFIG_DEBUG_FS */
+>  
+> +/**
+> + * xe_gt_sriov_pf_migration_ring_empty() - Check if a migration ring is empty
+> + * @gt: the &struct xe_gt
+> + * @vfid: the VF identifier
+> + *
+> + * Return: true if the ring is empty, otherwise false.
+> + */
+> +bool xe_gt_sriov_pf_migration_ring_empty(struct xe_gt *gt, unsigned int vfid)
+> +{
+> +	return ptr_ring_empty(&pf_pick_gt_migration(gt, vfid)->ring);
+> +}
+> +
+> +/**
+> + * xe_gt_sriov_pf_migration_produce() - Add migration data packet to migration ring
+> + * @gt: the &struct xe_gt
+> + * @vfid: the VF identifier
+> + * @data: &struct xe_sriov_pf_migration_data packet
+> + *
+> + * If the ring is full, wait until there is space in the ring.
+> + *
+> + * Return: 0 on success or a negative error code on failure.
+> + */
+> +int xe_gt_sriov_pf_migration_ring_produce(struct xe_gt *gt, unsigned int vfid,
+> +					  struct xe_sriov_pf_migration_data *data)
+> +{
+> +	struct xe_gt_sriov_pf_migration *migration = pf_pick_gt_migration(gt, vfid);
+> +	struct wait_queue_head *wq = xe_sriov_pf_migration_waitqueue(gt_to_xe(gt), vfid);
+> +	unsigned long timeout = XE_GT_SRIOV_PF_MIGRATION_RING_TIMEOUT;
+> +	int ret;
+> +
+> +	xe_gt_assert(gt, data->tile == gt->tile->id);
+> +	xe_gt_assert(gt, data->gt == gt->info.id);
+> +
+> +	while (1) {
+> +		ret = ptr_ring_produce(&migration->ring, data);
+> +		if (ret == 0) {
+
+		if (!ret)
+			break;
+> +			wake_up_all(wq);
+> +			break;
+> +		}
+> +
+> +		if (!xe_gt_sriov_pf_control_check_vf_data_wip(gt, vfid))
+> +			return -EINVAL;
+> +
+> +		ret = wait_event_interruptible_timeout(*wq,
+> +						       !ptr_ring_full(&migration->ring),
+> +						       timeout);
+> +		if (ret == 0)
+> +			return -ETIMEDOUT;
+> +
+> +		timeout = ret;
+> +	}
+> +
+
+	wake_up_all(wq);
+	return 0;
+
+> +	return ret;
+> +}
+> +
+> +/**
+> + * xe_gt_sriov_pf_migration_consume() - Get migration data packet from migration ring
+> + * @gt: the &struct xe_gt
+> + * @vfid: the VF identifier
+> + *
+> + * If the ring is empty, wait until there are new migration data packets to process.
+> + *
+> + * Return: Pointer to &struct xe_sriov_pf_migration_data on success,
+> + *	   ERR_PTR(-ENODATA) if ring is empty and no more migration data is expected,
+> + *	   ERR_PTR value in case of error.
+> + */
+> +struct xe_sriov_pf_migration_data *
+> +xe_gt_sriov_pf_migration_ring_consume(struct xe_gt *gt, unsigned int vfid)
+> +{
+> +	struct xe_gt_sriov_pf_migration *migration = pf_pick_gt_migration(gt, vfid);
+> +	struct wait_queue_head *wq = xe_sriov_pf_migration_waitqueue(gt_to_xe(gt), vfid);
+> +	unsigned long timeout = XE_GT_SRIOV_PF_MIGRATION_RING_TIMEOUT;
+> +	struct xe_sriov_pf_migration_data *data;
+> +	int ret;
+> +
+> +	while (1) {
+> +		data = ptr_ring_consume(&migration->ring);
+> +		if (data) {
+> +			wake_up_all(wq);
+> +			break;
+> +		}
+> +
+> +		if (!xe_gt_sriov_pf_control_check_vf_data_wip(gt, vfid))
+> +			return ERR_PTR(-ENODATA);
+> +
+> +		ret = wait_event_interruptible_timeout(*wq,
+> +					 !ptr_ring_empty(&migration->ring) ||
+> +					 !xe_gt_sriov_pf_control_check_vf_data_wip(gt, vfid),
+> +					 timeout);
+> +		if (ret == 0)
+> +			return ERR_PTR(-ETIMEDOUT);
+> +
+> +		timeout = ret;
+> +	}
+> +
+> +	return data;
+> +}
+> +
+> +/**
+> + * xe_gt_sriov_pf_migration_consume_nowait() - Get migration data packet from migration ring
+> + * @gt: the &struct xe_gt
+> + * @vfid: the VF identifier
+> + *
+> + * Similar to xe_gt_sriov_pf_migration_consume(), but doesn't wait until more data is available.
+> + *
+> + * Return: Pointer to &struct xe_sriov_pf_migration_data on success,
+> + *	   ERR_PTR(-EAGAIN) if ring is empty but migration data is expected,
+> + *	   ERR_PTR(-ENODATA) if ring is empty and no more migration data is expected,
+> + *	   ERR_PTR value in case of error.
+> + */
+> +struct xe_sriov_pf_migration_data *
+> +xe_gt_sriov_pf_migration_ring_consume_nowait(struct xe_gt *gt, unsigned int vfid)
+> +{
+> +	struct xe_gt_sriov_pf_migration *migration = pf_pick_gt_migration(gt, vfid);
+> +	struct wait_queue_head *wq = xe_sriov_pf_migration_waitqueue(gt_to_xe(gt), vfid);
+> +	struct xe_sriov_pf_migration_data *data;
+> +
+> +	data = ptr_ring_consume(&migration->ring);
+> +	if (data) {
+> +		wake_up_all(wq);
+> +		return data;
+> +	}
+> +
+> +	if (!xe_gt_sriov_pf_control_check_vf_data_wip(gt, vfid))
+> +		return ERR_PTR(-ENODATA);
+> +
+> +	return ERR_PTR(-EAGAIN);
+> +}
+> +
+> +static void pf_gt_migration_cleanup(struct drm_device *dev, void *arg)
+
+no need for the "pf" prefix
+
+and if this is only about ptr_ring, then it could be:
+
+static void action_ring_cleanup(...)
+{
+	struct ptr_ring *r = arg;
+
+	ptr_ring_cleanup(r, NULL);
+}
+
+> +{
+> +	struct xe_gt_sriov_pf_migration *migration = arg;
+> +
+> +	ptr_ring_cleanup(&migration->ring, NULL);
+> +}
+> +
+>  /**
+>   * xe_gt_sriov_pf_migration_init() - Initialize support for VF migration.
+>   * @gt: the &xe_gt
+> @@ -393,6 +541,7 @@ ssize_t xe_gt_sriov_pf_migration_write_guc_state(struct xe_gt *gt, unsigned int
+>  int xe_gt_sriov_pf_migration_init(struct xe_gt *gt)
+>  {
+>  	struct xe_device *xe = gt_to_xe(gt);
+> +	unsigned int n, totalvfs;
+>  	int err;
+>  
+>  	xe_gt_assert(gt, IS_SRIOV_PF(xe));
+> @@ -404,5 +553,19 @@ int xe_gt_sriov_pf_migration_init(struct xe_gt *gt)
+>  	if (err)
+>  		return err;
+>  
+> +	totalvfs = xe_sriov_pf_get_totalvfs(xe);
+> +	for (n = 0; n <= totalvfs; n++) {
+> +		struct xe_gt_sriov_pf_migration *migration = pf_pick_gt_migration(gt, n);
+> +
+> +		err = ptr_ring_init(&migration->ring,
+> +				    XE_GT_SRIOV_PF_MIGRATION_RING_SIZE, GFP_KERNEL);
+> +		if (err)
+> +			return err;
+> +
+> +		err = drmm_add_action_or_reset(&xe->drm, pf_gt_migration_cleanup, migration);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> index 09faeae00ddbb..1e4dc46413823 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> @@ -9,11 +9,20 @@
+>  #include <linux/types.h>
+>  
+>  struct xe_gt;
+> +struct xe_sriov_pf_migration_data;
+>  
+>  int xe_gt_sriov_pf_migration_init(struct xe_gt *gt);
+>  int xe_gt_sriov_pf_migration_save_guc_state(struct xe_gt *gt, unsigned int vfid);
+>  int xe_gt_sriov_pf_migration_restore_guc_state(struct xe_gt *gt, unsigned int vfid);
+>  
+> +bool xe_gt_sriov_pf_migration_ring_empty(struct xe_gt *gt, unsigned int vfid);
+> +int xe_gt_sriov_pf_migration_ring_produce(struct xe_gt *gt, unsigned int vfid,
+> +					  struct xe_sriov_pf_migration_data *data);
+> +struct xe_sriov_pf_migration_data *
+> +xe_gt_sriov_pf_migration_ring_consume(struct xe_gt *gt, unsigned int vfid);
+> +struct xe_sriov_pf_migration_data *
+> +xe_gt_sriov_pf_migration_ring_consume_nowait(struct xe_gt *gt, unsigned int vfid);
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  ssize_t xe_gt_sriov_pf_migration_read_guc_state(struct xe_gt *gt, unsigned int vfid,
+>  						char __user *buf, size_t count, loff_t *pos);
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration_types.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration_types.h
+> index fdc5a31dd8989..8434689372082 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration_types.h
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration_types.h
+> @@ -7,6 +7,7 @@
+>  #define _XE_GT_SRIOV_PF_MIGRATION_TYPES_H_
+>  
+>  #include <linux/mutex.h>
+> +#include <linux/ptr_ring.h>
+>  #include <linux/types.h>
+>  
+>  /**
+> @@ -27,9 +28,11 @@ struct xe_gt_sriov_state_snapshot {
+>  /**
+>   * struct xe_gt_sriov_pf_migration - GT-level data.
+>   *
+> - * Used by the PF driver to maintain non-VF specific per-GT data.
+> + * Used by the PF driver to maintain per-VF migration data.
+
+we try to match struct name with the sub-component name, not use it as per-VF name
+
+if you want to have struct for the per-VF data, pick a different name, maybe:
+
+	struct xe_gt_sriov_pf_migration_state
+
+or just reuse one that you plan to remove later:
+
+	struct xe_gt_sriov_state_snapshot
+
+>   */
+>  struct xe_gt_sriov_pf_migration {
+> +	/** @ring: queue containing VF save / restore migration data */
+> +	struct ptr_ring ring;
+>  };
+>  
+>  #endif
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_types.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_types.h
+> index 9a856da379d39..fbb08f8030f7f 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_types.h
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_types.h
+> @@ -33,6 +33,9 @@ struct xe_gt_sriov_metadata {
+>  
+>  	/** @snapshot: snapshot of the VF state data */
+>  	struct xe_gt_sriov_state_snapshot snapshot;
+> +
+> +	/** @migration: */
+
+missing description
+
+> +	struct xe_gt_sriov_pf_migration migration;
+>  };
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
+> index cf6a210d5597a..347682f29a03c 100644
+> --- a/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
+> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
+> @@ -4,7 +4,35 @@
+>   */
+>  
+>  #include "xe_sriov.h"
+> +#include <drm/drm_managed.h>
+> +
+> +#include "xe_device.h"
+> +#include "xe_gt_sriov_pf_control.h"
+> +#include "xe_gt_sriov_pf_migration.h"
+> +#include "xe_pm.h"
+> +#include "xe_sriov_pf_helpers.h"
+>  #include "xe_sriov_pf_migration.h"
+> +#include "xe_sriov_printk.h"
+> +
+> +static struct xe_sriov_pf_migration *pf_pick_migration(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	xe_assert(xe, IS_SRIOV_PF(xe));
+> +	xe_assert(xe, vfid <= xe_sriov_pf_get_totalvfs(xe));
+> +
+> +	return &xe->sriov.pf.vfs[vfid].migration;
+> +}
+> +
+> +/**
+> + * xe_sriov_pf_migration_waitqueue - Get waitqueue for migration
+> + * @xe: the &struct xe_device
+> + * @vfid: the VF identifier
+> + *
+> + * Return: pointer to the migration waitqueue.
+> + */
+> +wait_queue_head_t *xe_sriov_pf_migration_waitqueue(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	return &pf_pick_migration(xe, vfid)->wq;
+> +}
+>  
+>  /**
+>   * xe_sriov_pf_migration_supported() - Check if SR-IOV VF migration is supported by the device
+> @@ -35,9 +63,128 @@ static bool pf_check_migration_support(struct xe_device *xe)
+>   */
+>  int xe_sriov_pf_migration_init(struct xe_device *xe)
+>  {
+> +	unsigned int n, totalvfs;
+> +
+>  	xe_assert(xe, IS_SRIOV_PF(xe));
+>  
+>  	xe->sriov.pf.migration.supported = pf_check_migration_support(xe);
+> +	if (!xe_sriov_pf_migration_supported(xe))
+> +		return 0;
+> +
+> +	totalvfs = xe_sriov_pf_get_totalvfs(xe);
+> +	for (n = 1; n <= totalvfs; n++) {
+> +		struct xe_sriov_pf_migration *migration = pf_pick_migration(xe, n);
+> +
+> +		init_waitqueue_head(&migration->wq);
+> +	}
+>  
+>  	return 0;
+>  }
+> +
+> +static bool pf_migration_empty(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	struct xe_gt *gt;
+> +	u8 gt_id;
+> +
+> +	for_each_gt(gt, xe, gt_id) {
+> +		if (!xe_gt_sriov_pf_migration_ring_empty(gt, vfid))
+> +			return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static struct xe_sriov_pf_migration_data *
+> +pf_migration_consume(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	struct xe_sriov_pf_migration_data *data;
+> +	struct xe_gt *gt;
+> +	u8 gt_id;
+> +	bool no_data = true;
+> +
+> +	for_each_gt(gt, xe, gt_id) {
+> +		data = xe_gt_sriov_pf_migration_ring_consume_nowait(gt, vfid);
+> +
+> +		if (!IS_ERR(data))
+> +			return data;
+> +		else if (PTR_ERR(data) == -EAGAIN)
+> +			no_data = false;
+> +	}
+> +
+> +	if (no_data)
+> +		return ERR_PTR(-ENODATA);
+> +
+> +	return ERR_PTR(-EAGAIN);
+> +}
+> +
+> +/**
+> + * xe_sriov_pf_migration_consume() - Consume a SR-IOV VF migration data packet from the device
+> + * @xe: the &struct xe_device
+> + * @vfid: the VF identifier
+> + *
+> + * If there is no migration data to process, wait until more data is available.
+> + *
+> + * Return: Pointer to &struct xe_sriov_pf_migration_data on success,
+> + *	   ERR_PTR(-ENODATA) if ring is empty and no more migration data is expected,
+
+can we use NULL as indication of no data ? then all ERR_PTR will be errors
+
+> + *	   ERR_PTR value in case of error.
+> + *
+> + * Return: 0 on success or a negative error code on failure.
+> + */
+> +struct xe_sriov_pf_migration_data *
+> +xe_sriov_pf_migration_consume(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	struct xe_sriov_pf_migration *migration = pf_pick_migration(xe, vfid);
+> +	unsigned long timeout = HZ * 5;
+> +	struct xe_sriov_pf_migration_data *data;
+> +	int ret;
+> +
+> +	if (!IS_SRIOV_PF(xe))
+> +		return ERR_PTR(-ENODEV);
+
+this is "PF" function, we shouldn't get here if we are not a PF
+
+use assert here, and make sure the caller verifies the PF mode
+
+> +
+> +	while (1) {
+> +		data = pf_migration_consume(xe, vfid);
+> +		if (!IS_ERR(data) || PTR_ERR(data) != -EAGAIN)
+> +			goto out;
+> +
+> +		ret = wait_event_interruptible_timeout(migration->wq,
+> +						       !pf_migration_empty(xe, vfid),
+> +						       timeout);
+> +		if (ret == 0) {
+> +			xe_sriov_warn(xe, "VF%d Timed out waiting for migration data\n", vfid);
+> +			return ERR_PTR(-ETIMEDOUT);
+> +		}
+> +
+> +		timeout = ret;
+> +	}
+> +
+> +out:
+> +	return data;
+> +}
+> +
+> +/**
+> + * xe_sriov_pf_migration_produce() - Produce a SR-IOV VF migration data packet for device to process
+> + * @xe: the &struct xe_device
+> + * @vfid: the VF identifier
+> + * @data: VF migration data
+> + *
+> + * If the underlying data structure is full, wait until there is space.
+> + *
+> + * Return: 0 on success or a negative error code on failure.
+> + */
+> +int xe_sriov_pf_migration_produce(struct xe_device *xe, unsigned int vfid,
+> +				  struct xe_sriov_pf_migration_data *data)
+> +{
+> +	struct xe_gt *gt;
+> +
+> +	if (!IS_SRIOV_PF(xe))
+> +		return -ENODEV;
+> +
+> +	gt = xe_device_get_gt(xe, data->gt);
+> +	if (!gt || data->tile != gt->tile->id) {
+> +		xe_sriov_err_ratelimited(xe, "VF%d Unknown GT - tile_id:%d, gt_id:%d\n",
+> +					 vfid, data->tile, data->gt);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return xe_gt_sriov_pf_migration_ring_produce(gt, vfid, data);
+> +}
+> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_migration.h b/drivers/gpu/drm/xe/xe_sriov_pf_migration.h
+> index d3058b6682192..f2020ba19c2da 100644
+> --- a/drivers/gpu/drm/xe/xe_sriov_pf_migration.h
+> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_migration.h
+> @@ -7,12 +7,18 @@
+>  #define _XE_SRIOV_PF_MIGRATION_H_
+>  
+>  #include <linux/types.h>
+> +#include <linux/wait.h>
+>  
+>  struct xe_device;
+>  
+>  #ifdef CONFIG_PCI_IOV
+>  int xe_sriov_pf_migration_init(struct xe_device *xe);
+>  bool xe_sriov_pf_migration_supported(struct xe_device *xe);
+> +struct xe_sriov_pf_migration_data *
+> +xe_sriov_pf_migration_consume(struct xe_device *xe, unsigned int vfid);
+> +int xe_sriov_pf_migration_produce(struct xe_device *xe, unsigned int vfid,
+> +				  struct xe_sriov_pf_migration_data *data);
+> +wait_queue_head_t *xe_sriov_pf_migration_waitqueue(struct xe_device *xe, unsigned int vfid);
+>  #else
+>  static inline int xe_sriov_pf_migration_init(struct xe_device *xe)
+>  {
+> @@ -22,6 +28,20 @@ static inline bool xe_sriov_pf_migration_supported(struct xe_device *xe)
+>  {
+>  	return false;
+>  }
+> +static inline struct xe_sriov_pf_migration_data *
+> +xe_sriov_pf_migration_consume(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	return ERR_PTR(-ENODEV);
+> +}
+> +static inline int xe_sriov_pf_migration_produce(struct xe_device *xe, unsigned int vfid,
+> +						struct xe_sriov_pf_migration_data *data)
+> +{
+> +	return -ENODEV;
+> +}
+> +wait_queue_head_t *xe_sriov_pf_migration_waitqueue(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	return ERR_PTR(-ENODEV);
+> +}
+
+didn't fully check, but do we really need all these stubs?
+likely those functions will be called from other real PF-only functions
+
+>  #endif
+>  
+>  #endif
+> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_migration_types.h b/drivers/gpu/drm/xe/xe_sriov_pf_migration_types.h
+> index e69de29bb2d1d..80fdea32b884a 100644
+> --- a/drivers/gpu/drm/xe/xe_sriov_pf_migration_types.h
+> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_migration_types.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Copyright © 2025 Intel Corporation
+> + */
+> +
+> +#ifndef _XE_SRIOV_PF_MIGRATION_TYPES_H_
+> +#define _XE_SRIOV_PF_MIGRATION_TYPES_H_
+> +
+> +#include <linux/types.h>
+> +#include <linux/wait.h>
+> +
+
+add kernel-doc
+
+> +struct xe_sriov_pf_migration_data {
+> +	struct xe_device *xe;
+> +	void *vaddr;
+> +	size_t remaining;
+> +	size_t hdr_remaining;
+> +	union {
+> +		struct xe_bo *bo;
+> +		void *buff;
+> +	};
+> +	__struct_group(xe_sriov_pf_migration_hdr, hdr, __packed,
+> +		u8 version;
+> +		u8 type;
+> +		u8 tile;
+> +		u8 gt;
+> +		u32 flags;
+> +		u64 offset;
+> +		u64 size;
+> +	);
+> +};
+> +
+> +struct xe_sriov_pf_migration {
+> +	/** @wq: waitqueue used to avoid busy-waiting for snapshot production/consumption */
+> +	wait_queue_head_t wq;
+> +};
+> +
+> +#endif
+> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_types.h b/drivers/gpu/drm/xe/xe_sriov_pf_types.h
+> index 2d2fcc0a2f258..b3ae21a5a0490 100644
+> --- a/drivers/gpu/drm/xe/xe_sriov_pf_types.h
+> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_types.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/types.h>
+>  
+> +#include "xe_sriov_pf_migration_types.h"
+>  #include "xe_sriov_pf_service_types.h"
+>  
+>  /**
+> @@ -17,6 +18,8 @@
+>  struct xe_sriov_metadata {
+>  	/** @version: negotiated VF/PF ABI version */
+>  	struct xe_sriov_pf_service_version version;
+> +	/** @migration: migration data */
+> +	struct xe_sriov_pf_migration migration;
+>  };
+>  
+>  /**
 
-Jassi Brar (1):
-    mailbox updates
-
-Jens Axboe (4):
-    io_uring updates
-    block updates
-    io_uring fixes
-    block fixes
-
-Joerg Roedel (1):
-    iommu updates
-
-Johannes Berg (1):
-    uml updates
-
-Jon Mason (1):
-    NTB updates
-
-Jonathan Corbet (1):
-    documentation updates
-
-Juergen Gross (1):
-    xen updates
-
-Kees Cook (6):
-    ffs const-attribute cleanups
-    execve updates
-    seccomp update
-    hardening updates
-    tiny pstore update
-    hardening fixes
-
-Konstantin Komarov (1):
-    ntfs3 updates
-
-Lee Jones (3):
-    MFD updates
-    LED updates
-    backlight updates
-
-Linus Walleij (1):
-    pin control updates
-
-Madhavan Srinivasan (1):
-    powerpc updates
-
-Marco Elver (1):
-    Kernel Concurrency Sanitizer (KCSAN) update
-
-Marek Szyprowski (2):
-    dma-mapping updates
-    dma-mapping fixes
-
-Mark Brown (3):
-    regmap updates
-    regulator updates
-    spi updates
-
-Masami Hiramatsu (1):
-    probe fix
-
-Mauro Carvalho Chehab (1):
-    media updates
-
-Max Filippov (1):
-    Xtensa updates
-
-Michael Tsirkin (1):
-    virtio updates
-
-Michal Simek (1):
-    microblaze updates
-
-Miguel Ojeda (1):
-    rust updates
-
-Mike Marshall (1):
-    orangefs updates
-
-Mike Rapoport (1):
-    mm-init update
-
-Miklos Szeredi (1):
-    fuse updates
-
-Mikulas Patocka (2):
-    device mapper updates
-    hpfs updates
-
-Mimi Zohar (1):
-    integrity updates
-
-Miquel Raynal (1):
-    MTD updates
-
-Namjae Jeon (1):
-    exfat updates
-
-Nathan Chancellor (2):
-    Kbuild updates
-    Kbuild fixes
-
-Paolo Abeni (2):
-    networking updates
-     networking fixes
-
-Paolo Bonzini (2):
-    kvm updates
-    x86 kvm updates
-
-Paul McKenney (1):
-    RCU updates
-
-Paul Moore (3):
-    audit updates
-    selinux updates
-    lsm updates
-
-Paul Walmsley (1):
-    more RISC-V updates
-
-Paul Walmsley
- (1):
-    RISC-V updates
-
-Petr Mladek (1):
-    printk updates
-
-Rafael Wysocki (6):
-    power management updates
-    ACPI updates
-    thermal control updates
-    more power management updates
-    more ACPI updates
-    more thermal control updates
-
-Rob Herring (2):
-    devicetree updates
-    devicetree fixes
-
-Russell King (1):
-    ARM development updates
-
-Sebastian Reichel (2):
-    HSI update
-    power supply and reset updates
-
-Shuah Khan (2):
-    kunit updates
-    kselftest updates
-
-Stafford Horne (1):
-    OpenRISC updates
-
-Stephen Boyd (1):
-    clk updates
-
-Steve French (4):
-    smb restructuring updates
-    smb server fixes
-    smb client updates
-    more smb client updates
-
-Steven Rostedt (3):
-    tracing updates
-    tracing clean up and fixes
-    tracing fixes
-
-Steven Rostedt
- (1):
-    tracing tools updates
-
-Takashi Iwai (2):
-    sound updates
-    sound fixes
-
-Takashi Sakamoto (1):
-    firewire updates
-
-Ted Ts'o (1):
-    ext4 updates
-
-Tejun Heo (3):
-    sched_ext updates
-    workqueue updates
-    cgroup updates
-
-Thomas Bogendoerfer (1):
-    MIPS updates
-
-Thomas Gleixner (9):
-    TIF bit unification updates
-    rseq updates
-    irq core updates
-    irq chip driver updates
-    smp doc fixlet
-    futex updates
-    timer core updates
-    clocksource updates
-    VDSO updates
-
-Thomas Wei=C3=9Fschuh (1):
-    nolibc updates
-
-Tzung-Bi Shih (1):
-    chrome platform updates
-
-Ulf Hansson (2):
-    pmdomain updates
-    MMC updates
-
-Uwe Kleine-K=C3=B6nig (1):
-    pwm updates
-
-Viacheslav Dubeyko (1):
-    hfs updates
-
-Vinod Koul (3):
-    soundwire updates
-    phy updates
-    dmaengine updates
-
-Vlastimil Babka (3):
-    slab updates
-    slab fixes
-    slab fix
-
-Wei Liu (1):
-    hyperv updates
-
-Will Deacon (2):
-    arm64 updates
-    arm64 fixes
-
-Wim Van Sebroeck (1):
-    watchdog updates
-
-Wolfram Sang (3):
-    i2c updates
-    more i2c updates
-    i2c fix
-
-Yury Norov (1):
-    bitmap updates
 
