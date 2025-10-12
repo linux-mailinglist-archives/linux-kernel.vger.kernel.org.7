@@ -1,191 +1,114 @@
-Return-Path: <linux-kernel+bounces-849757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8A2BD0CC5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:32:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917A8BD0CC8
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5827E3B83D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:32:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F130B341A73
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47D223ABB0;
-	Sun, 12 Oct 2025 21:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B1623ABB0;
+	Sun, 12 Oct 2025 21:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRK/gecj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAwiNVTo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE184BE49;
-	Sun, 12 Oct 2025 21:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655C6BE49;
+	Sun, 12 Oct 2025 21:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760304715; cv=none; b=fXte267ZGCeM+SMq93xfG+ojNG2y2se38986th61iK2yDHUTSZ04y0vip3eo4UgQuhHIDi1UTNKTAlgbCV5RPiE/6okV3OWT61894UmfJLTZ9Po976DrH69wTQzystz/j7SE0BQUMf3KXM7UmkP0ftggM2e362+t/bHaOTzEoU4=
+	t=1760304762; cv=none; b=Y8HpR12XuOVZ18D5xmtZgmX8IqyyIrJz8ZL6RG44Y6ZkD5S+lGsu0ZX5zNFfBZmvwDew51Uw+dw9Z35TKvkMHAAfV4vXvRDNTXPMMfTOj/jaNZIqnsfUh8vZLC1AJyp6GQ4gKK4Is/QVB5pjvVV9IJ4ri2PhhK2CIW44UVYMSVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760304715; c=relaxed/simple;
-	bh=fbT54186VjkUDXY7U0Duys4FLq0KRJ5Rvgvyy7ATokk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Aj/37GZDOWxlsAkottmlPVygRRLBeO4/86OCOGLDissjEFCS+EXpVR7uekpxrMuAIHHXdCPetKxrcCqi6DzcvRDrGau3qruGgId7LJzA6Ui52GxN+kuRPVaMb5Y7YZCvQMUstFd2WpfhDx8weuiRwyM+VzrZQ49n38uAKP5+2OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRK/gecj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2182C4CEE7;
-	Sun, 12 Oct 2025 21:31:50 +0000 (UTC)
+	s=arc-20240116; t=1760304762; c=relaxed/simple;
+	bh=vZ/jGHMNdvuCwaAUoyyIPpQwHwlXk1nejjZpkhEcaAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pA+0GwdZd3xDKC04KaXZBJUmqVTxRHC8Rv4fohRxsF8xPUCVH/P5mcowcSxrxDX+/jDyWZStXIVRi7oMAhmWoIPWaxlK0Uyz3RPkwwnOLIZF8ozznfjIVjDwYHP1jEMvjVHd8VhJ0jwbBWS4sMxGmZv4bN7xBUAK5hAMX4VIBlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAwiNVTo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F442C4CEE7;
+	Sun, 12 Oct 2025 21:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760304714;
-	bh=fbT54186VjkUDXY7U0Duys4FLq0KRJ5Rvgvyy7ATokk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=qRK/gecj4jZgT2O4KXO7kHAPoJuyPTsWAhNcj2xrDWidsd0MipLtoQIlzXqrMMTjn
-	 NdHgtTDLPuzN5DUROu8rCRvFH9QtL3olkf7eDa1OQ0l0JylTPPS5H3S5kki2LR5XI/
-	 0FOqJjZEz03OQE0iHU6Ts4O66AjL2hRO6rEjTLS17YzD1ARkbSvNerY18HZNxfb7tZ
-	 r/ETOJrF+KAt6j/kmJ2HLFyRuwTPjMcv1ROXJMqJ8wTFsFbWAmwo4JnJSUOI0ei8Ew
-	 r9aowFU2FMxS0jj2ccvNOpxVTs9YpUv++PVHQWKOF7uZdSOBj9MpGAGGlp1A4knWY6
-	 r2smo/nT/k4PQ==
+	s=k20201202; t=1760304762;
+	bh=vZ/jGHMNdvuCwaAUoyyIPpQwHwlXk1nejjZpkhEcaAo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CAwiNVToAPclQUZgcNzwpVdbE2GIKreM++X3r7VPCZOG5FAF1lBa89svYrdNOm6JS
+	 9qW279yhqY0EAIsovcok6HsnBnzJcFdDzWRdKd2YcenseMNeNSVlsynJ1KXtNSuIIz
+	 68xtkgj9LLN/2g+/cPHQmmLLs0mX3Y+eh6sVqn5V2wmPLmM3unycBE90pJqXCC7GPQ
+	 aiu7xqgAkQqlT2Ur+CYlftkkS5pDRUQ7eihiGJebUsTN2+KeVsMf6lRRdgCPvORWv2
+	 WJOuFBugNzqJR/jJoPUnPjGwGRazyY/jg3Om3FaeRI+I6CxEi7dVIOK638dXJ9xPfk
+	 RykaZD1fe2Y2g==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <christian@brauner.io>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust_binder: clean Clippy `mem-replace-with-default` warning
+Date: Sun, 12 Oct 2025 23:32:30 +0200
+Message-ID: <20251012213230.1139674-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 12 Oct 2025 23:31:48 +0200
-Message-Id: <DDGNXV9KS3RS.2WHS4OOYM6DOP@kernel.org>
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
- <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Uladzislau
- Rezki" <urezki@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
- <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] rust: add basic Pin<Vec<T, A>> abstractions
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Markus Probst" <markus.probst@posteo.de>, "Danilo Krummrich"
- <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Lee Jones" <lee@kernel.org>, "Pavel Machek"
- <pavel@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20251012145221.172116-1-markus.probst@posteo.de>
- <20251012145221.172116-2-markus.probst@posteo.de>
- <DDGHGF4XOJQG.2MVGBMPK0KUQE@kernel.org>
- <e550b0862e9ea87e50688d1ec8f623638d170a3a.camel@posteo.de>
-In-Reply-To: <e550b0862e9ea87e50688d1ec8f623638d170a3a.camel@posteo.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun Oct 12, 2025 at 6:57 PM CEST, Markus Probst wrote:
-> From what I can tell, there is no way to get a `Pin<&mut Vec<T, A>>`
-> from a `&mut Pin<Vec<T, A>>`. We can only get `Pin<&mut [T]>` which is
-> not usable in our case.
+Starting with Rust 1.87.0, Clippy reports:
 
-Hmm yeah that's true.
+      CLIPPY     drivers/android/binder/rust_binder_main.o
+    error: replacing a value of type `T` with `T::default()` is better expressed using `core::mem::take`
+       --> drivers/android/binder/node.rs:690:32
+        |
+    690 |             _unused_capacity = mem::replace(&mut inner.freeze_list, KVVec::new());
+        |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `core::mem::take(&mut inner.freeze_list)`
+        |
+        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#mem_replace_with_default
+        = note: `-D clippy::mem-replace-with-default` implied by `-D warnings`
+        = help: to override `-D warnings` add `#[allow(clippy::mem_replace_with_default)]`
 
-> If there is way, without the extension trait or an extra struct, I
-> would be happy to implement it.
+Thus clean it up as suggested.
 
-So I tried to look for the usage site of this and I found this usage in
-your v1:
-
-    +        let mut leds =3D KPinnedVec::with_capacity(
-    +            Atmega1608LedAddress::VALUES.len() * Atmega1608LedId::VALU=
-ES.len(),
-    +            GFP_KERNEL,
-    +        )?;
-    +
-    +        let mut i =3D 0;
-    +        for addr in Atmega1608LedAddress::VALUES {
-    +            let mode_lock =3D Arc::pin_init(new_mutex!(()), GFP_KERNEL=
-)?;
-    +
-    +            for id in Atmega1608LedId::VALUES {
-    +                let Some(child) =3D
-    +                    fwnode.get_child_by_name(&CString::try_from_fmt(fm=
-t!("led@{i}"))?)
-    +                else {
-    +                    continue;
-    +                };
-    +
-    +                let client =3D ARef::clone(&client);
-    +                let mode_lock =3D Arc::clone(&mode_lock);
-    +
-    +                leds.push_pin_init(LedClassDev::new(
-    +                    Some(idev),
-    +                    None,
-    +                    LedInitData::new().fwnode(&child),
-    +                    Atmega1608Led {
-    +                        addr,
-    +                        id,
-    +                        client,
-    +
-    +                        mode_lock,
-    +                    },
-    +                ))?;
-    +                i +=3D 1;
-    +            }
-    +        }
-    +        Ok(KBox::new(Self { client, leds }, GFP_KERNEL)?.into())
-
-And I think using `Vec` for this is just wrong. `Vec` is a data
-structure that supports growing and shrinking the allocation. But you
-just need a fixed size buffer that holds all your data. Do you think
-that `Pin<Box<[LedClassDev]>>` would suffice if it had proper support
-from pin-init?
-
-Also, please don't top-post [1] and take a look at your mail client
-configuration, it puts lots of extra `> ` at the end which looks pretty
-strange [2].
-
-[1]: https://docs.kernel.org/process/submitting-patches.html#use-trimmed-in=
-terleaved-replies-in-email-discussions
-[2]: https://lore.kernel.org/all/e550b0862e9ea87e50688d1ec8f623638d170a3a.c=
-amel@posteo.de
-
+Fixes: eafedbc7c050 ("rust_binder: add Rust Binder driver")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
-Cheers,
-Benno
+ drivers/android/binder/node.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Thanks
-> - Markus Probst
->
-> On Sun, 2025-10-12 at 18:26 +0200, Benno Lossin wrote:
->> On Sun Oct 12, 2025 at 4:52 PM CEST, Markus Probst wrote:
->> > @@ -109,6 +111,21 @@ pub struct Vec<T, A: Allocator> {
->> > =C2=A0=C2=A0=C2=A0=C2=A0 _p: PhantomData<A>,
->> > =C2=A0}
->> > =C2=A0
->> > +/// Extension for Pin<Vec<T, A>>
->> > +pub trait PinnedVecExt<T> {
->>=20
->> Why is this an extension trait? Couldn't we directly implement this
->> on
->> `Vec<T>` with `self: Pin<&mut Self>`?
->>=20
->> ---
->> Cheers,
->> Benno
->>=20
->> > +=C2=A0=C2=A0=C2=A0 /// Pin-initializes P and appends it to the back o=
-f the
->> > [`Vec`] instance without reallocating.
->> > +=C2=A0=C2=A0=C2=A0 fn push_pin_init<E: From<PushError<P>>, P: PinInit=
-<T, E>>(&mut
->> > self, init: P) -> Result<(), E>;
->> > +
->> > +=C2=A0=C2=A0=C2=A0 /// Shortens the vector, setting the length to `le=
-n` and drops
->> > the removed values.
->> > +=C2=A0=C2=A0=C2=A0 /// If `len` is greater than or equal to the curre=
-nt length,
->> > this does nothing.
->> > +=C2=A0=C2=A0=C2=A0 ///
->> > +=C2=A0=C2=A0=C2=A0 /// This has no effect on the capacity and will no=
-t allocate.
->> > +=C2=A0=C2=A0=C2=A0 fn truncate(&mut self, len: usize);
->> > +
->> > +=C2=A0=C2=A0=C2=A0 /// Removes the last element from a vector and dro=
-ps it
->> > returning true, or false if it is empty.
->> > +=C2=A0=C2=A0=C2=A0 fn pop(&mut self) -> bool;
->> > +}
->> > +
->> > =C2=A0/// Type alias for [`Vec`] with a [`Kmalloc`] allocator.
->> > =C2=A0///
->> > =C2=A0/// # Examples
+diff --git a/drivers/android/binder/node.rs b/drivers/android/binder/node.rs
+index ade895ef791e..08d362deaf61 100644
+--- a/drivers/android/binder/node.rs
++++ b/drivers/android/binder/node.rs
+@@ -687,7 +687,7 @@ pub(crate) fn remove_freeze_listener(&self, p: &Arc<Process>) {
+             );
+         }
+         if inner.freeze_list.is_empty() {
+-            _unused_capacity = mem::replace(&mut inner.freeze_list, KVVec::new());
++            _unused_capacity = mem::take(&mut inner.freeze_list);
+         }
+     }
+ 
+
+base-commit: 8765f467912ff0d4832eeaf26ae573792da877e7
+-- 
+2.51.0
+
 
