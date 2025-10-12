@@ -1,98 +1,142 @@
-Return-Path: <linux-kernel+bounces-849606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548A4BD07C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFF0BD07CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 18:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 830A14EED24
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:28:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849F43A8610
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386182ED17B;
-	Sun, 12 Oct 2025 16:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745FB2EC0B4;
+	Sun, 12 Oct 2025 16:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dz6FM0IK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GWd29rGa"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354F92EC54E;
-	Sun, 12 Oct 2025 16:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FF628DF0B;
+	Sun, 12 Oct 2025 16:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760286474; cv=none; b=qWVgPfELXTI/5kjmrSKfkvS3jmDh+TFqVag3PGbsNYcWKrERN335Qj74h5+FeIL9rwHSqCnL0Mk7YBsesAyA2bWtwEp3dxDTds2+JczmiK44/ACPOxbutQ3R3QQW+UZaksApqHGKSVswxtRAxFMOyE3eCyeRrxM8i7frELx8puQ=
+	t=1760287228; cv=none; b=MyDz9LrvX1IDiaSJf5YHEwav42r+5WqmmcyGmxRa6mdObJLN+tPzzu7BLT0Sjgl0VKs7Fq+nODNyols95N1bD39DyfwKQkozqCB64R4RRkyJW3gksIOJ0WXD7rxs/YkG1xSUGf/FaR8FxpMtNP3CbXn4lof5d3h9sLoyveEcXOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760286474; c=relaxed/simple;
-	bh=cmP+8n5wAxoO8Qpo2YpOVTk4GDyax34FMdL6dF8jsHs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=BTRSQpQIaRGtiw1R3b2QO+oytdSnx9pFWx8k5cqwz2EYg0GWqCep9SRv5Jv7Ak84g4PPg3Ug5EvApG1S2O89+2Swf68gSta2ndaFzfNCDEVbF74VV4ZIUN2gcEOeXDtXViXNJ4keAGWoY7WyTjbaXpx/FiZKbuOyPxMVCv5xZFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dz6FM0IK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B97C4CEE7;
-	Sun, 12 Oct 2025 16:27:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760286473;
-	bh=cmP+8n5wAxoO8Qpo2YpOVTk4GDyax34FMdL6dF8jsHs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Dz6FM0IKW5XmV1bUxLizHfXy/mYXpqTjjbePAqVFygNLTC7CIET0hgkcRFpTpOuoM
-	 pqqYCWQgFb2AAFOG5T95ipVfYeWnE8FpVdJh5FbKBCTLFrJcMoCf8+KgtIAoHvnQhi
-	 Q8rALukaXkyUtbu70joJI4kNcM6DJav9JL9S7wGtsVgqVvRTrro8aQ3AiBLVtL7AV5
-	 5OckmOlHYHczKt+ZY1x5UuS+bIAConDXDNpyMJqJPcIFHtr54Hgdv6aAJzmzDnxKwv
-	 BCUrSkTOGlFiapUMfg7ZLXSputoDwnI7orluOnO1/4eNUA2+X+NYP+EDHumpwlHjPT
-	 9wk3sunlbjyPA==
+	s=arc-20240116; t=1760287228; c=relaxed/simple;
+	bh=jWCc18PpdJfGMKi+sdi7sqDK+rRMDn7pLGWGjIeo37w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDyNgqw+ZdFYnY85+9ZZ980dSl15mv6cGmbIWAN4zAdgtDJk4qrjML5LQDKYXMgGJtVytyoBan8noxDa9RfdMg/Z2QCS4Ps3qUfEkqRropMZWIadrcK8AFXVR5jJycXnTdg7PuWcxoVVyzEw3XJQimCbzCapBjqbyHbxnyImCnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GWd29rGa; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=dKcY5QMuB4ui9FZBXGralraAi/Id1gyrnGStgEz8INg=; b=GWd29rGaML08LkDM
+	segaT8sJ6fdzVERpv7ftMrSu37HYqJ9XyouPGfYylAvMgCMU3JE5KmOoFYN3muXHy1gE6i6hb9mPg
+	AjwEZYu4wm7bzs1rtN2Gj1n6AflFjolK+A8gkx2Ckv+8nrSZ1v7X88VScNedGKwX4U1+Vxggla8fR
+	z/cDc/8Q5TMy/krdnNYll39E1taV/NkgnpvuHqc9+/IjOS4MaLyYafHds1I4QX8bDzP/zVPGxsa2x
+	GKO8IL3uUDKjU/X6Ulrjwe2Wi7rS+0chhXNjWXYqlr7EsH4P0MQarenVkYc+gjCdnOQ1vq1LT0sfU
+	Ji0AyDmwPBebRA+xUg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1v7z7I-00FwA9-0O;
+	Sun, 12 Oct 2025 16:40:16 +0000
+Date: Sun, 12 Oct 2025 16:40:16 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: johannes@sipsolutions.net, linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wifi: mac80211: Remove unused wdev_to_ieee80211_vif
+Message-ID: <aOvZ8FHp7-tliei2@gallifrey>
+References: <20250619005229.291961-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 12 Oct 2025 18:27:47 +0200
-Message-Id: <DDGHH3LYULXQ.1GHK75Q9GK2W6@kernel.org>
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
- <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Uladzislau
- Rezki" <urezki@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
- <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH v4 0/2] rust: leds: add led classdev abstractions
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Markus Probst" <markus.probst@posteo.de>, "Danilo Krummrich"
- <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Lee Jones" <lee@kernel.org>, "Pavel Machek"
- <pavel@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20251012145221.172116-1-markus.probst@posteo.de>
-In-Reply-To: <20251012145221.172116-1-markus.probst@posteo.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20250619005229.291961-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 16:39:51 up 168 days, 53 min,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Sun Oct 12, 2025 at 4:52 PM CEST, Markus Probst wrote:
-> This patch series has previously been contained in
-> https://lore.kernel.org/rust-for-linux/20251008181027.662616-1-markus.pro=
-bst@posteo.de/T/#t
-> which added a rust written led driver for a microcontroller via i2c.
->
-> As the reading and writing to the i2c client via the register!
-> macro has not been implemented yet [1], the patch series will only
-> contain the additional abstractions required.
->
-> [1] https://lore.kernel.org/rust-for-linux/DDDS2V0V2NVJ.16ZKXCKUA1HUV@ker=
-nel.org/
->
-> The following changes were made:
-> * add basic Pin<Vec<T, A>> abstractions, that allow to initialize PinInit=
- items with
->   the guarantee that these will never be moved.
->
-> * add basic led classdev abstractions to register and unregister leds
->
-> Changes since v3:
-> * fixed kunit tests failing because of example in documentation
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> wdev_to_ieee80211_vif() was added in 2013 by
+> commit ad7e718c9b4f ("nl80211: vendor command support")
+> but has remained unused.
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Please give time for more feedback before sending a new version.
+Hi,
+  Gentle ping on this one please.
 
----
-Cheers,
-Benno
+Dave
+
+> ---
+>  include/net/mac80211.h | 13 -------------
+>  net/mac80211/util.c    | 11 -----------
+>  2 files changed, 24 deletions(-)
+> 
+> diff --git a/include/net/mac80211.h b/include/net/mac80211.h
+> index 286c944d90ad..544a28336b93 100644
+> --- a/include/net/mac80211.h
+> +++ b/include/net/mac80211.h
+> @@ -2112,19 +2112,6 @@ static inline bool ieee80211_vif_is_mesh(struct ieee80211_vif *vif)
+>  	return false;
+>  }
+>  
+> -/**
+> - * wdev_to_ieee80211_vif - return a vif struct from a wdev
+> - * @wdev: the wdev to get the vif for
+> - *
+> - * This can be used by mac80211 drivers with direct cfg80211 APIs
+> - * (like the vendor commands) that get a wdev.
+> - *
+> - * Return: pointer to the wdev, or %NULL if the given wdev isn't
+> - * associated with a vif that the driver knows about (e.g. monitor
+> - * or AP_VLAN interfaces.)
+> - */
+> -struct ieee80211_vif *wdev_to_ieee80211_vif(struct wireless_dev *wdev);
+> -
+>  /**
+>   * ieee80211_vif_to_wdev - return a wdev struct from a vif
+>   * @vif: the vif to get the wdev for
+> diff --git a/net/mac80211/util.c b/net/mac80211/util.c
+> index 27d414efa3fd..39a25fe20959 100644
+> --- a/net/mac80211/util.c
+> +++ b/net/mac80211/util.c
+> @@ -857,17 +857,6 @@ void ieee80211_iterate_stations_mtx(struct ieee80211_hw *hw,
+>  }
+>  EXPORT_SYMBOL_GPL(ieee80211_iterate_stations_mtx);
+>  
+> -struct ieee80211_vif *wdev_to_ieee80211_vif(struct wireless_dev *wdev)
+> -{
+> -	struct ieee80211_sub_if_data *sdata = IEEE80211_WDEV_TO_SUB_IF(wdev);
+> -
+> -	if (!ieee80211_sdata_running(sdata) ||
+> -	    !(sdata->flags & IEEE80211_SDATA_IN_DRIVER))
+> -		return NULL;
+> -	return &sdata->vif;
+> -}
+> -EXPORT_SYMBOL_GPL(wdev_to_ieee80211_vif);
+> -
+>  struct wireless_dev *ieee80211_vif_to_wdev(struct ieee80211_vif *vif)
+>  {
+>  	if (!vif)
+> -- 
+> 2.49.0
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
