@@ -1,213 +1,107 @@
-Return-Path: <linux-kernel+bounces-849455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8730BD028C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:04:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5EEBD029C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F3DA4E16DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928061893027
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D25D274FF1;
-	Sun, 12 Oct 2025 13:04:26 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6A2274B5A;
+	Sun, 12 Oct 2025 13:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ditdHmn1"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A7C1D435F;
-	Sun, 12 Oct 2025 13:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84AB17A2FB
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 13:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760274265; cv=none; b=rdIQg921+ghXkfkp0avWAYd6DPgK2C+NznoIGT7U1zbr727dZoai5rwxD/FTMocKa+GTAdmGjqufY/7MC8sN+W8N/+H4xbZTpPxIdhn49hUcrYtGGDd3fWEsXHOE6Oaw9iJpPNTAatd0eY7wRp2O3YCq2ZcXdthJhM1yr7Yr0Lc=
+	t=1760275404; cv=none; b=MDjn/oPKHu12vILc+UA8sQsnjXthosfGMRObof4OUjSkx2HN0F0NRgml5lZTsGJXNp3QQFAkXIYOuIqd8gcp5ZzKkb6v3fIefMFkBs+jzcpHrjqrGc2gT8Zy/xTgEYVwo8TPL45i4ItWol2BhxWJQ6tA7ihbZeBdy1oUahiXWkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760274265; c=relaxed/simple;
-	bh=7K0CSndsKi9wrce/Dppdiz0oKjEKooFoUI1e8ENfAZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e6XwiQTLyeDhKEdsZSL9HR/4VQiL1DsGRFj34NOqBdSAkX9aWAFWR4FMA3NsPvRJEM2jW6jRe3Qgkh52pTF7EQ1cCYHIli68B56X7Y43vloCRMMRh998eDa3qVBDIS3laCbMN0pn58DtrIx3yOZmcm7pczPLy0AbHoCE/nnO1GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from 7cf34ddaca59.ant.amazon.com (unknown [89.100.17.9])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id E374442344;
-	Sun, 12 Oct 2025 13:04:19 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 89.100.17.9) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud lecomte <contact@arnaud-lcm.com>
-To: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Syz Test
-Date: Sun, 12 Oct 2025 14:04:18 +0100
-Message-ID: <20251012130418.49730-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <688809c1.a00a0220.b12ec.00b7.GAE@google.com>
-References: <688809c1.a00a0220.b12ec.00b7.GAE@google.com>
+	s=arc-20240116; t=1760275404; c=relaxed/simple;
+	bh=xW7vrgIMkFpkvysk3qIyoknOdvPYvzPU/rmAHSKgUhk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=RzqBQ1tddoWuWXP8FPN7SGgJCtlmNBJFz99aLXdwiCGuVt8U+YCLIyCWJnc5y+tdruE/JabM6deqHtqXr94JcMgdeEStnZ+qf2CwZgXMfwo2EVHslUGhs8NthsK0nvnKEmXmPxPWIYYUNEp+u3KoaBhwaVRjruQKApOmBxeB6A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ditdHmn1; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760275389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0VTZ3wDaUKClfqe3G2M5ryu4iWYV/VPU2x3dyoai7Wc=;
+	b=ditdHmn1apksGr14p9GLn5bw0GfuwIdty4zG9l+y5vjJSaGlb+dGdPPIHYLYpH3jtKJqBP
+	dx2ZNjIz92Tq4QQWqCOqO7L4/hCn11ZhdQJZirhALhV4JqTMIiElTFxAriM1eikmrDvNwQ
+	BLehygD8621E03NMLx4E1JhRJ0rtCNc=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <176027426038.31666.1128274319158937673@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH 2/2] crypto: asymmetric_keys - simplify
+ asymmetric_key_hex_to_key_id
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <aOuavtSpoNLWHoMS@wunner.de>
+Date: Sun, 12 Oct 2025 15:23:02 +0200
+Cc: David Howells <dhowells@redhat.com>,
+ Ignat Korchagin <ignat@cloudflare.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ keyrings@vger.kernel.org,
+ linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <A0C349D1-C7FA-40C6-971B-910122B1AAE1@linux.dev>
+References: <20251007185220.234611-2-thorsten.blum@linux.dev>
+ <20251007185220.234611-3-thorsten.blum@linux.dev>
+ <aOuavtSpoNLWHoMS@wunner.de>
+To: Lukas Wunner <lukas@wunner.de>
+X-Migadu-Flow: FLOW_OUT
 
-#syz test
+On 12. Oct 2025, at 14:10, Lukas Wunner wrote:
+> On Tue, Oct 07, 2025 at 08:52:21PM +0200, Thorsten Blum wrote:
+>> Use struct_size() to calculate the number of bytes to allocate for the
+>> asymmetric key id.
+> 
+> Why?  To what end?  To guard against an overflow?
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 3615c06b7dfa..c0ee51db8eed 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -42,6 +42,28 @@ static inline int stack_map_data_size(struct bpf_map *map)
-                sizeof(struct bpf_stack_build_id) : sizeof(u64);
- }
+I find struct_size() to be more readable because it explicitly
+communicates the relationship between the flexible array member 'data'
+and 'asciihexlen / 2', which the open-coded version doesn't.
 
-+/**
-+ * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
-+ * @size:  Size of the buffer/map value in bytes
-+ * @elem_size:  Size of each stack trace element
-+ * @flags:  BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
-+ *
-+ * Return: Maximum number of stack trace entries that can be safely stored
-+ */
-+static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, u64 flags)
-+{
-+       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+       u32 max_depth;
-+       u32 curr_sysctl_max_stack = READ_ONCE(sysctl_perf_event_max_stack);
-+
-+       max_depth = size / elem_size;
-+       max_depth += skip;
-+       if (max_depth > curr_sysctl_max_stack)
-+               return curr_sysctl_max_stack;
-+
-+       return max_depth;
-+}
-+
- static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
- {
-        u64 elem_size = sizeof(struct stack_map_bucket) +
-@@ -251,8 +273,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
- {
-        struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
-        struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-+       u32 hash, id, trace_nr, trace_len, i, max_depth;
-        u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
--       u32 hash, id, trace_nr, trace_len, i;
-        bool user = flags & BPF_F_USER_STACK;
-        u64 *ips;
-        bool hash_matches;
-@@ -261,7 +283,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
-                /* skipping more than usable stack trace */
-                return -EFAULT;
+'sizeof(struct asymmetric_key_id) + asciihexlen / 2' works because the
+flexible array 'data' is an unsigned char (1 byte). This will probably
+never change, but struct_size() would still work even if it did change
+to a data type that isn't exactly 1 byte.
 
--       trace_nr = trace->nr - skip;
-+       max_depth = stack_map_calculate_max_depth(map->value_size, stack_map_data_size(map), flags);
-+       trace_nr = min_t(u32, trace->nr - skip, max_depth - skip);
-        trace_len = trace_nr * sizeof(u64);
-        ips = trace->ip + skip;
-        hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
-@@ -300,20 +323,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
-           u64, flags)
- {
--       u32 max_depth = map->value_size / stack_map_data_size(map);
--       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+       u32 elem_size = stack_map_data_size(map);
-        bool user = flags & BPF_F_USER_STACK;
-        struct perf_callchain_entry *trace;
-        bool kernel = !user;
-+       u32 max_depth;
+Additionally, struct_size() has some extra compile-time checks (e.g.,
+__must_be_array()).
 
-        if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
-                               BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
-                return -EINVAL;
+>> -	ret = __asymmetric_key_hex_to_key_id(id, match_id, asciihexlen / 2);
+>> -	if (ret < 0) {
+>> +	if (__asymmetric_key_hex_to_key_id(id, match_id, hexlen) < 0) {
+>> 		kfree(match_id);
+>> 		return ERR_PTR(-EINVAL);
+>> 	}
+> 
+> If anything, return ret instead of removing the ret variable.
+> The only negative return value of __asymmetric_key_hex_to_key_id()
+> is -EINVAL, hence that's returned directly here.
 
--       max_depth += skip;
--       if (max_depth > sysctl_perf_event_max_stack)
--               max_depth = sysctl_perf_event_max_stack;
--
-+       max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-        trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
-                                   false, false);
+Ok, I'll change this in v2.
 
-@@ -390,15 +410,11 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
-                return -EFAULT;
+Thanks,
+Thorsten
 
-        nr_kernel = count_kernel_ip(trace);
-+       __u64 nr = trace->nr; /* save original */
-
-        if (kernel) {
--               __u64 nr = trace->nr;
--
-                trace->nr = nr_kernel;
-                ret = __bpf_get_stackid(map, trace, flags);
--
--               /* restore nr */
--               trace->nr = nr;
-        } else { /* user */
-                u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
-
-@@ -409,6 +425,10 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
-                flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
-                ret = __bpf_get_stackid(map, trace, flags);
-        }
-+
-+       /* restore nr */
-+       trace->nr = nr;
-+
-        return ret;
- }
-
-@@ -426,7 +446,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
-                            struct perf_callchain_entry *trace_in,
-                            void *buf, u32 size, u64 flags, bool may_fault)
- {
--       u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
-+       u32 trace_nr, copy_len, elem_size, max_depth;
-        bool user_build_id = flags & BPF_F_USER_BUILD_ID;
-        bool crosstask = task && task != current;
-        u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-@@ -458,21 +478,20 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
-                goto clear;
-        }
-
--       num_elem = size / elem_size;
--       max_depth = num_elem + skip;
--       if (sysctl_perf_event_max_stack < max_depth)
--               max_depth = sysctl_perf_event_max_stack;
-+       max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
-
-        if (may_fault)
-                rcu_read_lock(); /* need RCU for perf's callchain below */
-
--       if (trace_in)
-+       if (trace_in) {
-                trace = trace_in;
--       else if (kernel && task)
-+               trace->nr = min_t(u32, trace->nr, max_depth);
-+       } else if (kernel && task) {
-                trace = get_callchain_entry_for_task(task, max_depth);
--       else
-+       } else {
-                trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
-                                           crosstask, false);
-+       }
-
-        if (unlikely(!trace) || trace->nr < skip) {
-                if (may_fault)
-@@ -481,7 +500,6 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
-        }
-
-        trace_nr = trace->nr - skip;
--       trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
-        copy_len = trace_nr * elem_size;
-
-        ips = trace->ip + skip;
---
-2.47.3
 
