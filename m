@@ -1,174 +1,95 @@
-Return-Path: <linux-kernel+bounces-849630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02173BD08B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:39:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7041ABD08C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF8EB4E3576
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:39:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F5FB4E9592
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036A12EDD7E;
-	Sun, 12 Oct 2025 17:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A122EE5FD;
+	Sun, 12 Oct 2025 17:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Z6PSS6q7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrKYMwmC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE41DF252;
-	Sun, 12 Oct 2025 17:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9896885260;
+	Sun, 12 Oct 2025 17:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760290743; cv=none; b=eRdmj5P2bLGmAIaGT0+9lziWLyzkWnjIJDUVARmxEaZf9edvUgOzx5NVXPPe6l7bvhQLzi49huf2QwY92Om02yK16cE+VjDv5itb7eBTa00Ss3KISZe2o0oiYzf53g/tCYpCCt5orK7Kk2ddA56C2sGN2ZMfZDse07J4v4UBY3A=
+	t=1760290866; cv=none; b=quPw4cUM0SXsKwd5YEXCQro/MDG90d2sIuvQK8nbSBSY30lIAmKdUK7Ga3umkb4eMq3sLJ4RXOEjpmtKjKFXQqXdmjEq4a8mIorRPHI2993b3sOLHheqWAPacErjAt4hUu8uz2JHrm7nvE4QS+Mb1UZ6FUGhKKgKZNJDSP/PNMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760290743; c=relaxed/simple;
-	bh=5I7ykGiAAOk6BgGy8HWD3BZzlBv59Rkn365TTJ8b+KA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XTk2Knw0J+v00PAuY/PHbWvzeO5p/pREpIDwtHGGk3cJMHqhB8pdixO0poX8HVMIGq/uJ7YEXEV7LXPXrhJS+1qctZsEJbHsWBfynzv/dkND9ua/hzOBFtjhgulgQRlwe/V2WSXd9pcOStV6nrtB1mJ+k/L9DXFMGbI+h2DjaG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Z6PSS6q7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CCUFda003614;
-	Sun, 12 Oct 2025 17:38:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=764uBY9ag12bRJrfxTMRZfhol4GFWWG44oa
-	B8K1Qi2A=; b=Z6PSS6q7oDAyymmAYdvh2gNcCI0GMXtbnG+QSK0nRqaUn0En4IH
-	+6FTHPEj+TZ1jUd/t9an9roaysbkq1VPvXK+YYz6jNRVEnMbGM3ZDkKt0e394k57
-	NxxuKFooDJe5nM3TMqJsWMdlrPhXdaSDaqAVLMZgRShXnbtOVWIZMBg8ULEgIJOP
-	+0BSRlauZi3hi7VBUsgcWbWcuVrKI30Z1OhkcfJv27qd2wrBJMDsBNMsTS8+GG2P
-	F1mOcHQF/kVmrJlNM/CwGgEKkkn05L2/AyF8+Zx0L/Ph/SWAA9W7yTi8OoLlj7BJ
-	J2dxGQOyRlI+QASfjaZPuq5PYCyPDzWQg1A==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qgh628jd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 Oct 2025 17:38:35 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59CHcVPt007557;
-	Sun, 12 Oct 2025 17:38:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 49qgakks6h-1;
-	Sun, 12 Oct 2025 17:38:31 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59CHcVm5007551;
-	Sun, 12 Oct 2025 17:38:31 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 59CHcU0x007550;
-	Sun, 12 Oct 2025 17:38:31 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
-	id 3540B603540; Sun, 12 Oct 2025 23:08:30 +0530 (+0530)
-From: Nitin Rawat <nitin.rawat@oss.qualcomm.com>
-To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
-        martin.petersen@oracle.com, bvanassche@acm.org,
-        konrad.dybcio@oss.qualcomm.com
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Nitin Rawat <nitin.rawat@oss.qualcomm.com>
-Subject: [PATCH V1] ufs: ufs-qcom: Fix UFS OCP issue during UFS power down(PC=3)
-Date: Sun, 12 Oct 2025 23:08:28 +0530
-Message-ID: <20251012173828.9880-1-nitin.rawat@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1760290866; c=relaxed/simple;
+	bh=LMxUQeujUaXa15JA24eIE1Gd7RWwHhOJc9uGZ2F7jnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZvYeCryEXVKUGKBWjVnwUlP6b8tOk/aaRkzULLHIGetTL3qRAq8E2e67kTEl2xmGOb8XMgfgzPe0B6o+sbJfKn5UuIIu0m14tYOORjmz1aFq8yB+00AgksnwG+fHKhq6kj+KAFDuandESISvXRReEDKgm5cOWElSKb+0oE4PIoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrKYMwmC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D930DC4CEE7;
+	Sun, 12 Oct 2025 17:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760290863;
+	bh=LMxUQeujUaXa15JA24eIE1Gd7RWwHhOJc9uGZ2F7jnw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jrKYMwmCm2KPnwV4jp4h3aCw0NcPMBuwBSX0gFXsSQmUi3tUt4eIVoBgzvX6PHr/Z
+	 Hp+4a/a4QY6YEAZhedvVQDzDbvILE9hz/0oHXGNyboPyKd1aAPzsp9LrbEYlIr6Ia+
+	 lPLFMFQ75VULKUZIPzDIJVSenY3xX0MWtMyrxfVU56ND0MbHdEYROvd1FBJi5HuI0r
+	 +A6ka7/ipHargNWDKP7JlCVYcQ+/Rmknsrzhesli0lbjU3Tf9QHCPrevCncEffNll9
+	 Rh6IKjOfC56QifpWJ0cUu7l4oC8F6/P/M00hbNh66E7FEk8OMnpki54pp3KABaj6b1
+	 Z8tgnRkc565iw==
+Date: Sun, 12 Oct 2025 18:40:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <ukleinek@kernel.org>, <michael.hennerich@analog.com>,
+ <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
+ <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v4 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
+ and ADAQ4224
+Message-ID: <20251012184050.5e350077@jic23-huawei>
+In-Reply-To: <7e51e036ba930284c74cf42afd53b17d49093654.1759929814.git.marcelo.schmitt@analog.com>
+References: <cover.1759929814.git.marcelo.schmitt@analog.com>
+	<7e51e036ba930284c74cf42afd53b17d49093654.1759929814.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=H/zWAuYi c=1 sm=1 tr=0 ts=68ebe79b cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=ldyrZXJ3T4YXRkzK03AA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyNiBTYWx0ZWRfXwOb+7oYHDYRZ
- GkVtvz60AXbHXxpfuUiSQLOC6KuPp3DSHCxikOnwRh2r0hO1SXJn8mGbOefMNJzkktMXpp9l/ct
- NWghO3LxFGM+4U7DQG7euxrBNnbm+rYJDODc6YeWs9pO91YPctAfl9bmMGVqLmpa8dpmY4+7gUQ
- Nsy6CBXsKWsAwMowYk4I5XXxwdtxnpJGeckn+TW9r3EtkTQlMngqsQxv8X3SDucv/ciDObGrGu9
- JcJ/JEf+2yRwqeK1YJJLHc8EEBzjSyVaLxynmLLEbYKgnD65gP789sLLy2cv1DlCFwtg+AG6zva
- URrLQvoBEZq7UiYt1lDyIKYRWbeXcORZWoIFbEmMdufSUD7tz4cTPpTtRlRb3dXjnJjG5Y4tx5K
- wzqb2+LigHAmsYX0oKZ7EJwVAcktEQ==
-X-Proofpoint-ORIG-GUID: t9-cGvjqQYsJIZ1ukQAkVF7_xzYK2pQ9
-X-Proofpoint-GUID: t9-cGvjqQYsJIZ1ukQAkVF7_xzYK2pQ9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-12_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- clxscore=1011 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110026
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-According to UFS specifications, the power-off sequence for a UFS
-device includes:
+On Wed, 8 Oct 2025 10:51:37 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
-- Sending an SSU command with Power_Condition=3 and await a
-  response.
-- Asserting RST_N low.
-- Turning off REF_CLK.
-- Turning off VCC.
-- Turning off VCCQ/VCCQ2.
+> ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
+> PGA (programmable gain amplifier) that scales the input signal prior to it
+> reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
+> and A1) that set one of four possible signal gain configurations.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+> Change log v3 -> v4
+> - Now only documenting GPIO setup to control ADAQ PGA pins.
 
-As part of ufs shutdown , after the SSU command completion, asserting
-hardware reset (HWRST) triggers the device firmware to wake up and
-execute its reset routine. This routine initializes hardware blocks
-and takes a few milliseconds to complete. During this time, the
-ICCQ draws a large current.
+A comment on a change log is my only contribution to review of this
+version (I didn't have anything else to say!)
 
-This large ICCQ current may cause issues for the regulator which
-is supplying power to UFS, because the turn off request from UFS
-driver to the regulator framework will be immediately followed by
-low power mode(LPM) request by regulator framework. This is done
-by framework because UFS which is the only client is requesting
-for disable. So if the rail is still in the process of shutting down
-while ICCQ exceeds LPM current thresholds, and LPM mode is activated
-in hardware during this state, it may trigger an overcurrent
-protection (OCP) fault in the regulator.
+Fully agree on separating that issue out.
 
-To prevent this, a 10ms delay is added after asserting HWRST. This
-allows the reset operation to complete while power rails remain active
-and in high-power mode.
+When we do implement it I 'hope' that whatever we/you come up
+with there can be generic enough that at most we'd just using
+it an extra example for this binding.  I.e. I'd expect it
+to be mostly documented somewhere generic.
 
-Currently there is no way for Host to query whether the reset is
-completed or not and hence this the delay is based on experiments
-with Qualcomm UFS controllers across multiple UFS vendors.
+I liked the detailed explanation later in the thread btw.
 
-Signed-off-by: Nitin Rawat <nitin.rawat@oss.qualcomm.com>
----
- drivers/ufs/host/ufs-qcom.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 89a3328a7a75..cb54628be466 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -744,8 +744,21 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
-
-
- 	/* reset the connected UFS device during power down */
--	if (ufs_qcom_is_link_off(hba) && host->device_reset)
-+	if (ufs_qcom_is_link_off(hba) && host->device_reset) {
- 		ufs_qcom_device_reset_ctrl(hba, true);
-+		/*
-+		 * After sending the SSU command, asserting the rst_n
-+		 * line causes the device firmware to wake up and
-+		 * execute its reset routine.
-+		 *
-+		 * During this process, the device may draw current
-+		 * beyond the permissible limit for low-power mode (LPM).
-+		 * A 10ms delay, based on experimental observations,
-+		 * allows the UFS device to complete its hardware reset
-+		 * before transitioning the power rail to LPM.
-+		 */
-+		usleep_range(10000, 11000);
-+	}
-
- 	return ufs_qcom_ice_suspend(host);
- }
---
-2.50.1
-
+Jonathan
 
