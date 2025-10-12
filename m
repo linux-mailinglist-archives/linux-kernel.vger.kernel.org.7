@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-849721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AD4BD0BAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:29:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D439DBD0BB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9D1E4ED609
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CA518953CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 19:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BFE2F3C0F;
-	Sun, 12 Oct 2025 19:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ir/i7x9S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF43A21D011;
+	Sun, 12 Oct 2025 19:36:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112E52EDD78;
-	Sun, 12 Oct 2025 19:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AB934BA53
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760297104; cv=none; b=PqWis5jPLOYGuTMCoMw/dh26PmYkNoypKjUU1aWuwGqPdoFm7SRHSOmvAf9QqIBXR4uj+WdEB2h00ylj55XQP+BKiku8J+m9pP7OhbjuVpQER0+7iHGTjkvxYbmSZsWJBfqnrjXiSGD4snVXy4WZ28RtvVYddoncAc6Vp4i6RvY=
+	t=1760297764; cv=none; b=AZpcrI/rpoJjLnYrrTRX4iK3qRLdnzoD6MIMOnaUvtcdrq2I0O3aJuAlRhlzQ2/feGbvsEwFJy+f4M6k2rkXWdCQEGPuifZK5SJwrUU6RyZYW3dguVXFjqpMF7mvWO/bddmD3M8/dDvA2WXa/ohl0R7GYMpm1ADy/H9+Td6zTgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760297104; c=relaxed/simple;
-	bh=bUeIQzQMvtVSx2wlqAfCOMciN9kUQ2iGtUINKzACuuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rPfTh8BWgbmNWZX/lSlxZbSLx/0Oi3tDat6kbb2Kx3jkHtIloMIiemYyC4MaMQGhxgjCOSFD2J8oSlJjQhL0vsQ6wNXKa/My79IWDS5GterSqsmMXPVJ9CtxfKSNF9AAGXXwmvK2q0dvXS5EAyxG/e6TW+2lZQpLVhdfsy1SaOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ir/i7x9S; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760297102; x=1791833102;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bUeIQzQMvtVSx2wlqAfCOMciN9kUQ2iGtUINKzACuuM=;
-  b=Ir/i7x9S6C4xO2PgOAQDbIL6u2t7uzwK5+OZZozWnJXm5/OgE4uA9/TE
-   fxZDdnCUTK0XfH2zqvt8aZRJM2vIsMjOVReh+WdANfRGa3TsEEfFsId06
-   Az4AZtkcN1G9JNyNE6r0Dtw03wD3tC+1DMq36pi0iIFxfyL68C4FH0LjW
-   bEG0+sgtGreHs+SP2NCgrV2zqM6I4oR7M9app/iOk2AAnsSBTtZHT1D/m
-   mZpRgeM2Jor6OHHNWCe0FvokUYXe9nCYjiX0BoeXMpVMu+6kVn6kPfrBg
-   lmNHq2X6EouZ+pY7RDw2c0BmWZjjXBFc5v0eNdvbO1Nl9eOjk0c7JhRvJ
-   g==;
-X-CSE-ConnectionGUID: cu9JRMdyRJO30E9l/RuyDA==
-X-CSE-MsgGUID: 9G/f9YBIRV6JmraURsgcAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="73128673"
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="73128673"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 12:25:01 -0700
-X-CSE-ConnectionGUID: uXC0FsY1Q4mxJbSbMfk11A==
-X-CSE-MsgGUID: uFBe9pJFSSCDRWNUq8rVtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="185831798"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 12 Oct 2025 12:24:59 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v81ge-0004Yd-1o;
-	Sun, 12 Oct 2025 19:24:56 +0000
-Date: Mon, 13 Oct 2025 03:24:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <lumag@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] media: iris: enable support for SC7280 platform
-Message-ID: <202510130211.Ujh708qh-lkp@intel.com>
-References: <20251012-iris-sc7280-v2-8-d53a1a4056c3@oss.qualcomm.com>
+	s=arc-20240116; t=1760297764; c=relaxed/simple;
+	bh=bbAz+UnQBwKB/SkhKhtDHWDEOr6GM+CrsQODJwSlmyM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=E645VP5c8K5RuCXUQT5XDvNK2GBHGm3zmcotAlwt/lQ/OGOljdXi7oWsFRM9m64vRJ/lFhp7FhqGxv1ad1HQkqLF/1nnNFivRp9+sZJayYvk+dY4w7VY87uS/1px4Xuy2c6zzSra1aqmI/Zqh9ysHeg42f+FAWXlHbblHelibZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8ea63b6f262so2248677439f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 12:36:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760297762; x=1760902562;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+tWU7hca7Qia6AgYbQxTwRtnfqa7PHkj7qA5UkWnjxk=;
+        b=SrSVpNI09uxPQYlEadT1AsgnM5Fh5qk1Xh9UfqC07T1g6Qqu+Uym3lBqedQvlJLjxP
+         4YhU9K852seHuXf5tUa9eupHWvFVE/0e54mC7Q19zNadBYzl/qrhKGYNtcA82fl3zKLI
+         i6g+/CisIZs9621xVDRer8SUpVF5DjMwSOtHh0i0gPFkVUA0e8IH1q/7IMMGIP6ZJSI7
+         2fG3Jqwcvl3qQO/DRdezkU9WBsZvFxmJVrbTmAYvtbsrlKox5zqsS0fzD/y77lum4YLV
+         EglNZi2qrG+jRn1XzsS/4duNqhFS9djSmLFsnVuZ4UTcDlYPhYflnXa/fz+60ibjNkSF
+         vekA==
+X-Gm-Message-State: AOJu0Yw2rCvn65Es5x73lCAbgvAgQXKxOgS9+aFcjhaHHU483QaGftbN
+	q1pCyHiIgJoaV+w+fVFvCaBScrWzT7xDpLl+D3HqK22Hw+E8zU/qQtZmZ5NI4OasoGeFwd3GM7I
+	x2LZN6lwk0VIi3P6tw8NtGJCS0FiNpakSSDY51PcogrvZHI1ueI99C5KeDpo=
+X-Google-Smtp-Source: AGHT+IEyA3DhTXKkuqx/S4GaptQv/zkHdAqOL8NcA7Z7fEAH1uw8tas50plAQOJeFQ5vUWlWsvvRhXq412V3G9z6OL006qyH44FU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251012-iris-sc7280-v2-8-d53a1a4056c3@oss.qualcomm.com>
+X-Received: by 2002:a05:6602:3f8f:b0:91e:c3a4:5378 with SMTP id
+ ca18e2360f4ac-93bd186b08cmr2432819439f.6.1760297762110; Sun, 12 Oct 2025
+ 12:36:02 -0700 (PDT)
+Date: Sun, 12 Oct 2025 12:36:02 -0700
+In-Reply-To: <aOv1RisRR1z1JJ1M@rpthibeault-XPS-13-9305>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ec0322.050a0220.91a22.01df.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_bh
+From: syzbot <syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dmitry,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-[auto build test ERROR on 0b2f041c47acb45db82b4e847af6e17eb66cd32d]
+Reported-by: syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
+Tested-by: syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/media-iris-turn-platform-caps-into-constants/20251013-002837
-base:   0b2f041c47acb45db82b4e847af6e17eb66cd32d
-patch link:    https://lore.kernel.org/r/20251012-iris-sc7280-v2-8-d53a1a4056c3%40oss.qualcomm.com
-patch subject: [PATCH v2 8/8] media: iris: enable support for SC7280 platform
-config: arm64-randconfig-002-20251013 (https://download.01.org/0day-ci/archive/20251013/202510130211.Ujh708qh-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251013/202510130211.Ujh708qh-lkp@intel.com/reproduce)
+Tested on:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510130211.Ujh708qh-lkp@intel.com/
+commit:         8765f467 Merge tag 'irq_urgent_for_v6.18_rc1' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11cd067c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=39fff07f4c8dbdba
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a2ba6b7b66340cff225
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12535b34580000
 
-All errors (new ones prefixed by >>):
-
->> drivers/media/platform/qcom/iris/iris_platform_gen1.c:15:10: fatal error: iris_platform_sc7280.h: No such file or directory
-    #include "iris_platform_sc7280.h"
-             ^~~~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-
-
-vim +15 drivers/media/platform/qcom/iris/iris_platform_gen1.c
-
-    14	
-  > 15	#include "iris_platform_sc7280.h"
-    16	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: testing is done by a robot and is best-effort only.
 
