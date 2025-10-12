@@ -1,212 +1,227 @@
-Return-Path: <linux-kernel+bounces-849459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B7BBD02C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B8C6BD02D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 427C01892E1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C311892D32
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 13:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0417E188596;
-	Sun, 12 Oct 2025 13:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C258248F73;
+	Sun, 12 Oct 2025 13:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="GYdvTvuI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JZk6iema"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pAECxGU9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46CE2EAE3
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 13:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C861ACECE;
+	Sun, 12 Oct 2025 13:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760276025; cv=none; b=n6WiYlqWumDeATWPLcEzQ7NpQX+y9b6Q2VOzX1yicpswT79IA5Tmg/YYbzKOjjA6kmvoEkjTfrDSvPA59+4ceNtDQsfFW0wdvefdFlxZfRVsupWvKNzhjHDrW8XcXZ/vdwOz1fjAAYB8+8PxAJWH8/jL5uWTGH+wtXI39npMk4g=
+	t=1760276158; cv=none; b=JQV//WF4jYy6epQ3vIWhxtdVQkMJJU+oTsQLEApJx0y5EBIolx597EOxLsbOddykb4iuzFh+CbIfCNSqfg2cPXeEiO6enyXixSfGcZKD7FXU3qz5u0I9zpBbShX8Jwygvnr+O4StXvZJzkyaU5qqNhygcnK4MG9bYjTde81b9W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760276025; c=relaxed/simple;
-	bh=Ww5plqoNeNO1cU6mKtLyHrtk8QN93Cdv2cblf0oYPJg=;
+	s=arc-20240116; t=1760276158; c=relaxed/simple;
+	bh=GghfE5YM8TPbJhlO+2xIBisZv3B2f12hUO1Bx8PrXLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tdi0kbPzWlQTG4mE5Y5t1OeLdImxZMV92b7117CD8wfckcyxFK4JZCbVAtLVjLR8T614rAVoIy+3BnhnuD2P0dd04tVR2yojdn2DEoqgVBMDfzF5d6Ed9wVII/NS1jrhtnjJVYQbqHBStPDrqjL4Gq6kzLneBjK3Eo3Ks+xPOac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=GYdvTvuI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JZk6iema; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B1C4D7A00D4;
-	Sun, 12 Oct 2025 09:33:41 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Sun, 12 Oct 2025 09:33:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1760276021; x=1760362421; bh=WLOCDyMr2h
-	FKeVuMRVe8+2z9soTconDeuvbennxCXRY=; b=GYdvTvuIgaxhdKELz3DLpQST4q
-	dl7J2zysVb8n9tJ/BdViBKLPSG7wwEs/+0ijfEG8gtgZ4bGg5jsOMX/csm9IraC/
-	4/ze8SBN+4tWT0UVuEA2qoVvYPMAjWfCZ7uLGefuMw3QMb7Q3nWJOPGp+QxNkrxE
-	6Fb6iq3PdafzYOaJ9xkFYFEaCeGPHkwoVAwCJOW6a3rZD6g9iLaKMsbU1ZVLgyMe
-	CpTG6wDzPEOereV+NmqO8g6syfR036Ph5FqbO0xndAMznUWJPjMQame1gPTuwUp8
-	zQUk7lrYOTIBGMAqp4gNJYanipw3Xs+g2mfF+VwjJbIHMiY4KLVSWr4HLzmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760276021; x=1760362421; bh=WLOCDyMr2hFKeVuMRVe8+2z9soTconDeuvb
-	ennxCXRY=; b=JZk6iemaf2Igw4rURPW39zUigWKIQw/wKkrXNTRmMW/0qeVEPC9
-	xjzSLKFVNEvspRoHJw7VXW4XFZtiH2KWrZLYbZkFqLqJt29t5hMMDSKrJgR9e9I2
-	AsgddeaUUjhjtF8iMXUN1fsddYkLygYc7i2cxfznOEpVhwKbuN/QzdT/RuTz/njS
-	orCmyK8qSAszXvjuDAo9zuE4T6SsWCyp5325KarRVZ3rUicCNHErKDNJrS9AM89f
-	8rS1HyiBTmZrsNpCI06hXQKxFydTLzhv+GJ6v2s3N7uacMPTieWM5QorWFt1AAqD
-	3TcxbPTYI8spoU3OKE2F5yR0BLXc81j32FA==
-X-ME-Sender: <xms:M67raO_H7_9CxSIkVVjYIxr5kajMi6G-8lH1-noCcymbZ8EKKy6gRQ>
-    <xme:M67raNMYk9gK6iDYrGCamdv-_s9UTnfQBnP-8N-KFWm6nX1PlsJd2XHUAxZe5nV5q
-    KPIzTK_SzTKsgvTQHV0N8Ftn4zb_ystIt1SagiJzyo0RiVNq6vRRzc>
-X-ME-Received: <xmr:M67raK0_b7Haee385PeeWdbZlETWnAGqUlkl8JY55C-fJtnVmqTPx5TYyZYdgW1ln2Ldct-peo_VwfiRSlrQv9FlfwDmzmSLULw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudegledtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
-    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgud
-    euffelfeekgeeukedtheekjeettdfftddujefhvdehtefgiefgledtueefjeenucffohhm
-    rghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedu
-    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdp
-    rhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugesrg
-    hrnhgusgdruggvpdhrtghpthhtohepphgrnhhkrghjrdguuhgsvgihsehsrghmshhunhhg
-    rdgtohhmpdhrtghpthhtohephhgvihhkohesshhnthgvtghhrdguvgdprhgtphhtthhope
-    hlihhvihhurdguuhgurghusegrrhhmrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhh
-    ohhllhgrsegrrhhmrdgtohhmpdhrtghpthhtoheplhhpihgvrhgrlhhishhisehkvghrnh
-    gvlhdrohhrgh
-X-ME-Proxy: <xmx:M67raGfWdQpDopDNEBK-DmDT32-jqH8nVHiR2BC8iobSZ8G_GtmA_w>
-    <xmx:M67raLYRwBswDOBl2WOvODzP5eD4CuKRh9iXRhUwRcxibtqBxnHffQ>
-    <xmx:M67raLWMscTU9YJoqhxDorc6TvXXphYdVeE1pf3-njdcbfLbP50ZEg>
-    <xmx:M67raOSMjM-qP-9YPYqVjks970XbOLLDbrIl-Kir-OnNxMJPQJqMUQ>
-    <xmx:Na7raHdNm4Mu4-irwylHsP2TIRk89KD3IJnT_RasnQdAzYfvks86i-im>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 12 Oct 2025 09:33:38 -0400 (EDT)
-Date: Sun, 12 Oct 2025 15:33:37 +0200
-From: Janne Grunau <j@jannau.net>
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Pankaj Dubey <pankaj.dubey@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>, Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	John Madieu <john.madieu.xa@bp.renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	asahi@lists.linux.dev
-Subject: Re: [PATCH v2 2/3] mfd: syscon: Remove the platform driver support
-Message-ID: <20251012133337.GA897177@robin.jannau.net>
-References: <20241217-syscon-fixes-v2-0-4f56d750541d@kernel.org>
- <20241217-syscon-fixes-v2-2-4f56d750541d@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WkIC9dSeR8MvYeTAsmU0TVbQ7heIcQXC0iyyQl63/4Z/mTAq6oyjtxLDFUTSFntc2c3/TT2Ehn1bvqKsavx1aKo+7VEjuHUGeMk9fZeLfLgWtOPSuavUbTGEpz1j5VzNQy8icNtjfnDDbfJ0bANHspiXBvV4rs/hUfM1dho+nk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pAECxGU9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898D3C4CEE7;
+	Sun, 12 Oct 2025 13:35:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760276158;
+	bh=GghfE5YM8TPbJhlO+2xIBisZv3B2f12hUO1Bx8PrXLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pAECxGU9OkQcPU+8dyn7p2VwNKW9t1u2RPkZCjYkeF3DWqa97ZmnU+4SbDQSbdRd/
+	 x0MndA1vj1z9/Vz3kx9X4rA227OseTyfTZpYX4rTBcAZw9JANEFhwqXd+rx/vTdeKT
+	 STd2eGaLORGUkqgoN/dg95hBcK1rfLmIjGUwGzF0iGYHPRNmFp3iprjacZoAiUOyzq
+	 SSJs7hq8Rfo8yrYewA8t6zNi7Pk7MMJ+BcIC9o5uyKcWbF/0HUgv4VAej33lMtI0uR
+	 lpLRcdxeDNXtuJwH7jbAmcfLLKSSmNVPvrnFVaedhsjOaV+iwn74DSJlOP3nSXkVZN
+	 J45esfaTvGLdA==
+Date: Sun, 12 Oct 2025 14:35:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: mmc: ti,da830-mmc: convert to DT schema
+Message-ID: <20251012-nickname-morale-e1e21796f1f1@spud>
+References: <20251011-davinci-mmc-v2-1-355da3e25123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PY52Dy33OnbvwAen"
 Content-Disposition: inline
-In-Reply-To: <20241217-syscon-fixes-v2-2-4f56d750541d@kernel.org>
+In-Reply-To: <20251011-davinci-mmc-v2-1-355da3e25123@gmail.com>
 
-On Tue, Dec 17, 2024 at 12:11:41PM -0600, Rob Herring (Arm) wrote:
-> The platform driver is dead code. It is not used by DT platforms since
-> commit bdb0066df96e ("mfd: syscon: Decouple syscon interface from
-> platform devices") which said:
-> 
->     For non-DT based platforms, this patch keeps syscon platform driver
->     structure so that syscon can be probed and such non-DT based drivers
->     can use syscon_regmap_lookup_by_pdev API and access regmap handles.
->     Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
->     we can completely remove platform driver of syscon, and keep only helper
->     functions to get regmap handles.
-> 
-> The last user of syscon_regmap_lookup_by_pdevname() was removed in 2018.
-> syscon_regmap_lookup_by_pdevname() was then removed in 2019, but that
-> commit failed to remove the rest of the platform driver.
 
-This removed the only driver claiming pmgr nodes on Apple silicon
-platforms. The nodes use compatible strings of the form
+--PY52Dy33OnbvwAen
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-compatible = "apple,t8103-pmgr", "apple,pmgr", "syscon", "simple-mfd";
+On Sat, Oct 11, 2025 at 08:52:07AM +0000, Charan Pedumuru wrote:
+> Convert TI Highspeed MMC host controller binding to YAML format. Define
+> 'clocks' and 'interrupts' properties to resolve errors identified by
+> 'dt_check' and 'dtb_check'.
+>=20
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+> ---
+> Changes in v2:
+> - Modified the commit message.
+> - Removed 'interrupts' from required properties following the old binding.
+> - Changed the maintainer for the binding to "Conor Dooley".
 
-The description still holds as the removal of the driver did not result
-in functional changes and went unnoticed. The missing driver became 
-apparent with pmdomain's sync_state() support in 6.17 which prints
-following messages on a M1 mac mini
+Bro, what? Where did that come from? I know nothing about this device at
+all. Find someone from TI to put there.
 
-| [   11.789419] apple-pmgr-pwrstate 23b700000.power-management:power-controller@420: sync_state() pending due to 23d280000.power-management
-| [   11.792414] apple-pmgr-pwrstate 23b700000.power-management:power-controller@448: sync_state() pending due to 23d280000.power-management
+Conor.
 
-None of the other compatible are claimed by any driver. There is no
-driver for "apple,t8103-pmgr" or "apple,pmgr" and simple-pm-bus.c binds
-"simple-mfd" only if it is the first compatible string.
 
-The easiest solution would be to probe via simple-pm-bus.c if the device
-is compatible with "apple,pmgr". The generic compatible is justified by
-not having any device specific code. The other option would by to add
-the growing list of SoC specific "apple,*-pmgr" compatibles to the match
-table.
-The alternative of writing an Apple pmgr driver which does nothing
-except successfully probing devices does not look appealing.
+> - Link to v1: https://lore.kernel.org/r/20250523-davinci-mmc-v1-1-ceebd83=
+52d9c@gmail.com
+> ---
+>  .../devicetree/bindings/mmc/davinci_mmc.txt        | 32 ------------
+>  .../devicetree/bindings/mmc/ti,da830-mmc.yaml      | 61 ++++++++++++++++=
+++++++
+>  2 files changed, 61 insertions(+), 32 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt b/Docu=
+mentation/devicetree/bindings/mmc/davinci_mmc.txt
+> deleted file mode 100644
+> index 516fb0143d4c21d1c8e44a8846d55ea5458d7b74..0000000000000000000000000=
+000000000000000
+> --- a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt
+> +++ /dev/null
+> @@ -1,32 +0,0 @@
+> -* TI Highspeed MMC host controller for DaVinci
+> -
+> -The Highspeed MMC Host Controller on TI DaVinci family
+> -provides an interface for MMC, SD and SDIO types of memory cards.
+> -
+> -This file documents the properties used by the davinci_mmc driver.
+> -
+> -Required properties:
+> -- compatible:
+> - Should be "ti,da830-mmc": for da830, da850, dm365
+> - Should be "ti,dm355-mmc": for dm355, dm644x
+> -
+> -Optional properties:
+> -- bus-width: Number of data lines, can be <1>, <4>, or <8>, default <1>
+> -- max-frequency: Maximum operating clock frequency, default 25MHz.
+> -- dmas: List of DMA specifiers with the controller specific format
+> -	as described in the generic DMA client binding. A tx and rx
+> -	specifier is required.
+> -- dma-names: RX and TX  DMA request names. These strings correspond
+> -	1:1 with the DMA specifiers listed in dmas.
+> -
+> -Example:
+> -mmc0: mmc@1c40000 {
+> -	compatible =3D "ti,da830-mmc",
+> -	reg =3D <0x40000 0x1000>;
+> -	interrupts =3D <16>;
+> -	bus-width =3D <4>;
+> -	max-frequency =3D <50000000>;
+> -	dmas =3D <&edma 16
+> -		&edma 17>;
+> -	dma-names =3D "rx", "tx";
+> -};
+> diff --git a/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml b/Do=
+cumentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1a97c3e447fd10f14bfe0af9e=
+22f9479304f0f26
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/ti,da830-mmc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI Highspeed MMC host controller for DaVinci
+> +
+> +description:
+> +  The Highspeed MMC Host Controller on TI DaVinci family
+> +  provides an interface for MMC, SD and SDIO types of memory cards.
+> +
+> +allOf:
+> +  - $ref: mmc-controller.yaml
+> +
+> +maintainers:
+> +  - Conor Dooley <conor+dt@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,da830-mmc
+> +      - ti,dm355-mmc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 2
+> +
+> +  dmas:
+> +    maxItems: 2
+> +
+> +  dma-names:
+> +    items:
+> +      - const: rx
+> +      - const: tx
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    mmc@1c40000 {
+> +        compatible =3D "ti,da830-mmc";
+> +        reg =3D <0x40000 0x1000>;
+> +        interrupts =3D <16 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <17 IRQ_TYPE_LEVEL_HIGH>;
+> +        bus-width =3D <4>;
+> +        max-frequency =3D <50000000>;
+> +        dmas =3D <&edma 16>, <&edma 17>;
+> +        dma-names =3D "rx", "tx";
+> +    };
+> +...
+>=20
+> ---
+> base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
+> change-id: 20250523-davinci-mmc-c704440c3dd0
+>=20
+> Best regards,
+> --=20
+> Charan Pedumuru <charan.pedumuru@gmail.com>
+>=20
 
-There is second problem though. The device link between
-23b700000.power-management:power-controller@420 and
-23d280000.power-management should not exist in the first place. See
-following excerpt from arch/arm64/boot/dts/apple/{t8103,t8103-pmgr}.dtsi
-omitting only unrelated child nodes.
+--PY52Dy33OnbvwAen
+Content-Type: application/pgp-signature; name="signature.asc"
 
-/ {
-	pmgr: power-management@23b700000 {
-		compatible = "apple,t8103-pmgr", "apple,pmgr", "syscon", "simple-mfd";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		reg = <0x2 0x3b700000 0 0x14000>;
+-----BEGIN PGP SIGNATURE-----
 
-		ps_atc0_common: power-controller@420 {
-			compatible = "apple,t8103-pmgr-pwrstate", "apple,pmgr-pwrstate";
-			reg = <0x420 4>;
-			#power-domain-cells = <0>;
-			#reset-cells = <0>;
-			label = "atc0_common";
-		};
-	};
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOuutgAKCRB4tDGHoIJi
+0h/IAP0WtzbV+IXLwg7uVoHCeHVViaX/soKA93a6GBGYZf3TXAD/U+kDgIw5N/cW
+C7kCChsy3b48ylOjF6m55Qm37cnz7Qk=
+=dLIn
+-----END PGP SIGNATURE-----
 
-	pmgr_mini: power-management@23d280000 {
-		compatible = "apple,t8103-pmgr", "apple,pmgr", "syscon", "simple-mfd";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		reg = <0x2 0x3d280000 0 0x4000>;
-
-		ps_atc0_usb: power-controller@98 {
-			compatible = "apple,t8103-pmgr-pwrstate", "apple,pmgr-pwrstate";
-			reg = <0x98 4>;
-			#power-domain-cells = <0>;
-			#reset-cells = <0>;
-			label = "atc0_usb";
-			power-domains = <&ps_atc0_usb_aon>, <&ps_atc0_common>;
-		};
-	};
-}
-
-To my understanding the fw_devlinks should only exists between
-&ps_atc0_common and &ps_atc0_usb. Herve Codina reports and posts a patch
-for what sounds to be the same issue in [1] for simple-pm-bus. I can't
-reproduce the report though. As soon as simple-pm-bus successfully
-probes the pmgr devices the spurious devlinks are gone.
-
-So I think this needs to be fixed in either of/platform.c for all
-devices handled in of_platform_default_populate() or in
-driver-core/devlink considering the issue appears without driver for the
-bus device.
-
-Janne
-
-[1]: https://lore.kernel.org/lkml/20250613134817.681832-6-herve.codina@bootlin.com/
+--PY52Dy33OnbvwAen--
 
