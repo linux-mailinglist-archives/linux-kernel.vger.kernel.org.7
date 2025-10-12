@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-849780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C40BD0DBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:55:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2803EBD0DAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A1D3B67E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:55:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0D0F4E3FE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B18272E41;
-	Sun, 12 Oct 2025 23:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A782EB5C6;
+	Sun, 12 Oct 2025 23:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="T7waS6er"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw3Mm/SA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19227EEB3
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53182848AA
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760313298; cv=none; b=dstcvuaZcSqdVcoPGZddsgbk0VBfwy9oMBdDWLUVrJE9RMy5uIprgNC77Ac1Tw9YZu3WT/+uJmu6Ydi5yRNNaXNDGnSN9PR0cxeoDJ53OpSZrYCni59LusKs5KlwHghy9FAsm82EQR8R6rC/rfdQxkT5BiLjjLztWHC5VOAJa9o=
+	t=1760313072; cv=none; b=dMGvdjMFODkZ1R90YjVMCwvWImPK+q9QsTEp7ImEvi99nhwuldmSAnJDQmulFai9WSZGj00oVP9zKmuKlNLDrwDw/hpIPLNbxjQIoD9luZdmuHJf0FEHmC9qF1Yk5cIL73bUaS4kKUn3uTz800P6t60egwC9LIZbRxt4s7oPepk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760313298; c=relaxed/simple;
-	bh=iTyFt5ez1lBly+//wwjoO3grAFk0FSahGRzQMVVcmnE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uMiPm9akLs7SqngkHY1aUBJpJZcBZvspKFtevlUXmWjf7S0zOccbi8Mz3CBrSkNTal+O+DCp2g/jgfxt15b0JWCexPwjPNWjQu+khwnaE4mT/XbjIjkd9KTpLalfdgt9LDmYTKBmJzlDrYf0BKXOx4CYJAnqjOtBuRhifAdKRFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=T7waS6er; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1760313284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8CxAXJfbAsaYoAMPHJQ53bKHUsu2eren/sXR8daUSJM=;
-	b=T7waS6erCcjJDvfRPTw6OjDLCboUisABvyYtd7kQzntiXik1ZN4FmwYgHNFszvMlF7sd+U
-	rlgtpsCViyX2wLM/LKf7H9G9gqHt/3GvOU8L3JyWD67+XmriamrvkMk0+ASYDkH5LomUmd
-	34H7FP4PaKxyBnmadq0Kqmkw3sdMxqHFAiqLcK1kxipyL5FU16VvUJ8Jtz9q1rFLb1hxnG
-	9eD7ZL7FFggMLljWzjSwj7Wnc5qpMcyIAUqusQxQaxwO2exOB3Qa9Mn7Ozx/iTqHNeSE93
-	2jDTerGDrcR+9HQRC+zzhGVMZPNdlx0oPpu0Bmiio90jTdLb3UastuTMS8P3WQ==
-From: Val Packett <val@packett.cool>
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	"Bryan O'Donoghue" <bod@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>,
-	Vedang Nagar <quic_vnagar@quicinc.com>
-Cc: Val Packett <val@packett.cool>,
-	linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: iris: set default size when S_FMT is called with zero size
-Date: Sun, 12 Oct 2025 20:50:41 -0300
-Message-ID: <20251012235330.20897-1-val@packett.cool>
+	s=arc-20240116; t=1760313072; c=relaxed/simple;
+	bh=1hhfwvgv5qJC+AoyphWDuLXE10eJqEn11Hz3jk9+lyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dutKn+Bza1rBnODzN5pWk3xmH9JB8B/sfUktAqc+799DHfo6VNkv9VLfkzyzx3Pz5dwpBwVqABztlW5r6cKK7MGCDEg4kqFpHhjoqoP2v3dxlx4w57dFWX1D6VQEO8Wil7GAfTuIrFbaHb8f+wcfEU7y6lobdmUA053o+M85wJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw3Mm/SA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F461C16AAE
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:51:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760313072;
+	bh=1hhfwvgv5qJC+AoyphWDuLXE10eJqEn11Hz3jk9+lyE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kw3Mm/SA/tcRTDDQ0+CmcuVqmFGAuU0e/hwAnKAkWFj22IGpBtaPzugH872mSVTQb
+	 riasJyANRBjXFE8o+aXAwjpPj3x6Tbx6YvdSGbmpXAYNuvUN8+xPuS0V+v/wN88BYu
+	 ip0LhTlEgS4fC+2S5nYhcGdaV7itc1jDE83y4qLbhhqG+UmtH3z3gIziL4rSUzO+Ek
+	 3Smcj1v8vBPx/PsEZwwjKtqlYi2rRrInX31DlH3k57PrclKlPOHBcytiNRbeGsQdai
+	 mZ71XQcwerid2o+5XcFcP3tBXL06oDHyqP2+WDlyr196XolE/a4c32t0yhWGu3IxTt
+	 2anadroMn7fGw==
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42557c5cedcso1929371f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 16:51:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULmuUUiirG/syNlsK+jLkz7VnLyVIsGNSgjbUgnNuxhgOUT6eQJjQfOIVBfaJBg6JGe5lXhepPtOerTBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAwDMAOaokEeWYfSa5sWDit7V6v6GcHRUJxxZRIi+hAusb8Xlg
+	J0rOEvMBaJOKm+Db8Tgag3yMBqpnZ0NuiK05WAtrh3F4qEtV8T/VEBGnryjNmU8vhKWAATAvf0g
+	OkBIGxt/3EYRvGyW3S5TlXXgEJlNJnFw=
+X-Google-Smtp-Source: AGHT+IEYzBXknTykBQ1N4HifJ4EJ5ABEr2IxiSGzoS1xGp1F6TYtaXxoMPgsPrk1p0g+88PANj1vgBGlykuqRZRGutI=
+X-Received: by 2002:a5d:64c8:0:b0:3e7:63b0:bf3c with SMTP id
+ ffacd0b85a97d-4266e7c6209mr14072627f8f.27.1760313070758; Sun, 12 Oct 2025
+ 16:51:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251011155746.1558731-1-guoren@kernel.org> <CAK9=C2UrYg+sHsDqkmz7f7KnaREU7hXF4rbON002cnAti_pDXg@mail.gmail.com>
+In-Reply-To: <CAK9=C2UrYg+sHsDqkmz7f7KnaREU7hXF4rbON002cnAti_pDXg@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 13 Oct 2025 07:50:58 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com>
+X-Gm-Features: AS18NWANYCTOkqbOuxt6SoWPohB4_pnla1E2x3tWojPPEfaEypOaOFajbNCOlnA
+Message-ID: <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Add pgprot_dmacoherent definition
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: samuel.holland@sifive.com, david@redhat.com, yongxuan.wang@sifive.com, 
+	cuiyunhui@bytedance.com, luxu.kernel@bytedance.com, paul.walmsley@sifive.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, palmer@dabbelt.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-According to 4.5.1.5 of the M2M stateful decoder UAPI documentation,
-providing the width and the height is "required only if it cannot be
-parsed from the stream", otherwise zero can be passed.
+On Sun, Oct 12, 2025 at 11:51=E2=80=AFPM Anup Patel <apatel@ventanamicro.co=
+m> wrote:
+>
+> On Sat, Oct 11, 2025 at 9:28=E2=80=AFPM <guoren@kernel.org> wrote:
+> >
+> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+> >
+> > RISC-V Svpbmt Standard Extension for Page-Based Memory Types
+> > defines three modes:
+> >
+> >  Mode | Value | Requested Memory Attributes
+> >  PMA  |   0   | None
+> >  NC   |   1   | Non-cacheable, idempotent, weakly-ordered (RVWMO),
+> >       |       | main memory
+> >  IO   |   2   | Non-cacheable, non-idempotent, strongly-ordered
+> >       |       | (I/O ordering), I/O
+> >
+> > The pgprot_dmacoherent default uses the IO memory attribute if there
+> > is no asm definition, but IO is not for main memory according to
+> > Svpbmt rules.
+> >
+> > This commit corrects pgprot_dmacoherent with the NC memory attribute,
+> > which satisfies performance improvement and prevents using the IO
+> > attribute to access main memory.
+> >
+> > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+>
+> I had sent the same patch on Aug 20 and you had provided
+> Tested-by to that patch.
+>
+> If you had concerns with my patch then you could have provided
+> comments but you choose to hijack it and change authorship.
+I didn't find your patch at first, so I sent it out. When I discovered
+your patch, I gave the Tested-by to yours.
+I've added the abandoned reply to this thread. Have you seen that [1]?
 
-The iris driver would only set the state fields to DEFAULT_WIDTH/HEIGHT
-once upon init, but they would get overwritten with zeroes from one S_FMT
-call and the next S_FMT call would already see zeroes in place of the
-defaults. For clients that used that sequence and did not pass a size,
-such as rpi-ffmpeg, this would then result in REQBUFS failing due to
-the zero size remembered in the state.
+[1] https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEGWrw=
+9ERRLYYA@mail.gmail.com/
 
-Fix by explicitly falling back to the defaults in S_FMT.
+>
+> Regards,
+> Anup
+>
+> > ---
+> >  arch/riscv/include/asm/pgtable.h | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/=
+pgtable.h
+> > index 29e994a9afb6..2a84479de81b 100644
+> > --- a/arch/riscv/include/asm/pgtable.h
+> > +++ b/arch/riscv/include/asm/pgtable.h
+> > @@ -654,6 +654,15 @@ static inline pgprot_t pgprot_writecombine(pgprot_=
+t _prot)
+> >         return __pgprot(prot);
+> >  }
+> >
+> > +/*
+> > + * DMA allocations for non-coherent devices use what the RISC-V archit=
+ecture
+> > + * call "Non-Cacheable" memory attribute, which permits idempotent, we=
+akly-ordered
+> > + * (RVWMO), main memory. This is different from "I/O" memory attribute=
+ which is
+> > + * intended for MMIO access with Non-cacheable, non-idempotent, strong=
+ly-ordered
+> > + * (I/O ordering), I/O attributes.
+> > + */
+> > +#define pgprot_dmacoherent pgprot_writecombine
+> > +
+> >  /*
+> >   * Both Svade and Svadu control the hardware behavior when the PTE A/D=
+ bits need to be set. By
+> >   * default the M-mode firmware enables the hardware updating scheme wh=
+en only Svadu is present in
+> > --
+> > 2.40.1
+> >
+> >
 
-Fixes: b530b95de22c ("media: iris: implement s_fmt, g_fmt and try_fmt ioctls")
-Link: https://github.com/jc-kynesim/rpi-ffmpeg/issues/103
-Signed-off-by: Val Packett <val@packett.cool>
----
-Somehow Venus didn't have this issue and didn't explicitly handle this..
 
-I'm not familiar with this code so if there's a better way to comply
-with the UAPI requirements by just not even getting to overwrite the
-state with the provided 0 size, I could not figure it out.
 
-Still, let's get this fixed one way or another.
-
-Thanks,
-~val
----
- drivers/media/platform/qcom/iris/iris_vdec.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
-index ae13c3e1b426..6be09d82e24d 100644
---- a/drivers/media/platform/qcom/iris/iris_vdec.c
-+++ b/drivers/media/platform/qcom/iris/iris_vdec.c
-@@ -196,6 +196,11 @@ int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
- 	if (vb2_is_busy(q))
- 		return -EBUSY;
- 
-+	if (f->fmt.pix_mp.width == 0 && f->fmt.pix_mp.height == 0) {
-+		f->fmt.pix_mp.width = DEFAULT_WIDTH;
-+		f->fmt.pix_mp.height = DEFAULT_HEIGHT;
-+	}
-+
- 	iris_vdec_try_fmt(inst, f);
- 
- 	switch (f->type) {
--- 
-2.51.0
-
+--=20
+Best Regards
+ Guo Ren
 
