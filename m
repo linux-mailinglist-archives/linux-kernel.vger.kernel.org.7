@@ -1,87 +1,191 @@
-Return-Path: <linux-kernel+bounces-849756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFC2BD0CBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:30:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8A2BD0CC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 23:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6483A2CB9
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5827E3B83D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 21:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891633B186;
-	Sun, 12 Oct 2025 21:30:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47D223ABB0;
+	Sun, 12 Oct 2025 21:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRK/gecj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE1A23D7D3
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 21:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE184BE49;
+	Sun, 12 Oct 2025 21:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760304605; cv=none; b=YErezxsbwB90K16DKeE2OrqqZyS4fjHiHG8DyZ8w52n6Zk0Hb7cKZ2MaTKEwAzxQcN3mFprx6otn8EeROiu+aaGHi9nLHLxqAnTAwKdTjju6YVcKTX3QP4qPqMCIYlasujYVljXsuR4zsi210tvahgFqepYhvGafCDgyKv73OW0=
+	t=1760304715; cv=none; b=fXte267ZGCeM+SMq93xfG+ojNG2y2se38986th61iK2yDHUTSZ04y0vip3eo4UgQuhHIDi1UTNKTAlgbCV5RPiE/6okV3OWT61894UmfJLTZ9Po976DrH69wTQzystz/j7SE0BQUMf3KXM7UmkP0ftggM2e362+t/bHaOTzEoU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760304605; c=relaxed/simple;
-	bh=7HD8J8WIvZoID8gPeuviIKrpyU8beCLKGG+uCNS6vLw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=E+rRPXBEEcSuizZ71lJvW0+YwD4UUNmLQNslTzZqWV2BXfFVQfTnFvT33oin0mM7HtGFon8Pru8ElFFpLzNa8lybhIfJ/1/z+ajk3wwonfa8IlD3VaAjDf8Y/qAzu0TANh+sEglGM56cjZ8CUcAK1ePvTgjo6IcpfLtdZoggasU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4257e203f14so292200735ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:30:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760304602; x=1760909402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iooRg4KZrYD32xeyWBg0UydIyxiIUYKFjxEH2FU/ZFA=;
-        b=JgBuKh1Vc0nFW4wtsMMcUxHQwnPEk9fNRTE2YZhozp5+r1l4QISH6w090eBe76Xurq
-         rwYOOQvWR9BtwSPDD5LeWaWhyLsOE+MjWTKFqdHp9kx3x1w1NYP1y6CXVBP4abfcZZzM
-         F306VagQHP6waSOPudoyRCs0k0shWDYSQgjsOOcM5fkpDb+QXEy+t2KllmVV22ulGcCE
-         Tuj+echpZ8+xx6d4Dg8hIIPD/RSr2FD208ylfzZp6pEpHcpsePZ+AvLY9R9wR16azxnV
-         I6W1loVuzfANXGeUDZJOUXPHyTrjw4KOU6cW0DK5nqEamFcHZYzLWDUoLl1O6grvAQcZ
-         jf/g==
-X-Gm-Message-State: AOJu0Yz7lRfbz/Qnk3UqYETgdlnnVlu1of5PKMUpkDV7GpN8Qp+Z3etb
-	ktbBBbhWb5uNhwoihlE5LjFnCcGCaBoD6P/RXj4U1VHdGBdpjsm9Q2RxdqVSTqLc0m5TG6Z8DmI
-	sDjMRE6zmNx/qKceaxym84gUHwibluLUXqn1JqpWcAG6xRG7UcIJRDKmEWOs=
-X-Google-Smtp-Source: AGHT+IFFX6XI8HP9o1VLvonL1HmmGNfaBvRVNFwXDuNHD0v9ls6ab1lagln+Gbw6JoUJxJlAXZCOK5P6Mg+BPXftq65YSFuC0KyV
+	s=arc-20240116; t=1760304715; c=relaxed/simple;
+	bh=fbT54186VjkUDXY7U0Duys4FLq0KRJ5Rvgvyy7ATokk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Aj/37GZDOWxlsAkottmlPVygRRLBeO4/86OCOGLDissjEFCS+EXpVR7uekpxrMuAIHHXdCPetKxrcCqi6DzcvRDrGau3qruGgId7LJzA6Ui52GxN+kuRPVaMb5Y7YZCvQMUstFd2WpfhDx8weuiRwyM+VzrZQ49n38uAKP5+2OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRK/gecj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2182C4CEE7;
+	Sun, 12 Oct 2025 21:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760304714;
+	bh=fbT54186VjkUDXY7U0Duys4FLq0KRJ5Rvgvyy7ATokk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=qRK/gecj4jZgT2O4KXO7kHAPoJuyPTsWAhNcj2xrDWidsd0MipLtoQIlzXqrMMTjn
+	 NdHgtTDLPuzN5DUROu8rCRvFH9QtL3olkf7eDa1OQ0l0JylTPPS5H3S5kki2LR5XI/
+	 0FOqJjZEz03OQE0iHU6Ts4O66AjL2hRO6rEjTLS17YzD1ARkbSvNerY18HZNxfb7tZ
+	 r/ETOJrF+KAt6j/kmJ2HLFyRuwTPjMcv1ROXJMqJ8wTFsFbWAmwo4JnJSUOI0ei8Ew
+	 r9aowFU2FMxS0jj2ccvNOpxVTs9YpUv++PVHQWKOF7uZdSOBj9MpGAGGlp1A4knWY6
+	 r2smo/nT/k4PQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8b:b0:430:9707:ef2f with SMTP id
- e9e14a558f8ab-430970822bcmr10751235ab.25.1760304601932; Sun, 12 Oct 2025
- 14:30:01 -0700 (PDT)
-Date: Sun, 12 Oct 2025 14:30:01 -0700
-In-Reply-To: <CAHjv_asDFA+tuP5HBd7j8uW5oS9Etm-oJOCMUv-Yn_eimXmuCQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ec1dd9.a70a0220.b3ac9.0016.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_delete_entry (2)
-From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zlatistiv@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 12 Oct 2025 23:31:48 +0200
+Message-Id: <DDGNXV9KS3RS.2WHS4OOYM6DOP@kernel.org>
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
+ <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Uladzislau
+ Rezki" <urezki@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] rust: add basic Pin<Vec<T, A>> abstractions
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Markus Probst" <markus.probst@posteo.de>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Lee Jones" <lee@kernel.org>, "Pavel Machek"
+ <pavel@kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20251012145221.172116-1-markus.probst@posteo.de>
+ <20251012145221.172116-2-markus.probst@posteo.de>
+ <DDGHGF4XOJQG.2MVGBMPK0KUQE@kernel.org>
+ <e550b0862e9ea87e50688d1ec8f623638d170a3a.camel@posteo.de>
+In-Reply-To: <e550b0862e9ea87e50688d1ec8f623638d170a3a.camel@posteo.de>
 
-Hello,
+On Sun Oct 12, 2025 at 6:57 PM CEST, Markus Probst wrote:
+> From what I can tell, there is no way to get a `Pin<&mut Vec<T, A>>`
+> from a `&mut Pin<Vec<T, A>>`. We can only get `Pin<&mut [T]>` which is
+> not usable in our case.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hmm yeah that's true.
 
-Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+> If there is way, without the extension trait or an extra struct, I
+> would be happy to implement it.
 
-Tested on:
+So I tried to look for the usage site of this and I found this usage in
+your v1:
 
-commit:         bf45a62b Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12058c58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=714d45b6135c308e
-dashboard link: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14598c58580000
+    +        let mut leds =3D KPinnedVec::with_capacity(
+    +            Atmega1608LedAddress::VALUES.len() * Atmega1608LedId::VALU=
+ES.len(),
+    +            GFP_KERNEL,
+    +        )?;
+    +
+    +        let mut i =3D 0;
+    +        for addr in Atmega1608LedAddress::VALUES {
+    +            let mode_lock =3D Arc::pin_init(new_mutex!(()), GFP_KERNEL=
+)?;
+    +
+    +            for id in Atmega1608LedId::VALUES {
+    +                let Some(child) =3D
+    +                    fwnode.get_child_by_name(&CString::try_from_fmt(fm=
+t!("led@{i}"))?)
+    +                else {
+    +                    continue;
+    +                };
+    +
+    +                let client =3D ARef::clone(&client);
+    +                let mode_lock =3D Arc::clone(&mode_lock);
+    +
+    +                leds.push_pin_init(LedClassDev::new(
+    +                    Some(idev),
+    +                    None,
+    +                    LedInitData::new().fwnode(&child),
+    +                    Atmega1608Led {
+    +                        addr,
+    +                        id,
+    +                        client,
+    +
+    +                        mode_lock,
+    +                    },
+    +                ))?;
+    +                i +=3D 1;
+    +            }
+    +        }
+    +        Ok(KBox::new(Self { client, leds }, GFP_KERNEL)?.into())
 
-Note: testing is done by a robot and is best-effort only.
+And I think using `Vec` for this is just wrong. `Vec` is a data
+structure that supports growing and shrinking the allocation. But you
+just need a fixed size buffer that holds all your data. Do you think
+that `Pin<Box<[LedClassDev]>>` would suffice if it had proper support
+from pin-init?
+
+Also, please don't top-post [1] and take a look at your mail client
+configuration, it puts lots of extra `> ` at the end which looks pretty
+strange [2].
+
+[1]: https://docs.kernel.org/process/submitting-patches.html#use-trimmed-in=
+terleaved-replies-in-email-discussions
+[2]: https://lore.kernel.org/all/e550b0862e9ea87e50688d1ec8f623638d170a3a.c=
+amel@posteo.de
+
+---
+Cheers,
+Benno
+
+> Thanks
+> - Markus Probst
+>
+> On Sun, 2025-10-12 at 18:26 +0200, Benno Lossin wrote:
+>> On Sun Oct 12, 2025 at 4:52 PM CEST, Markus Probst wrote:
+>> > @@ -109,6 +111,21 @@ pub struct Vec<T, A: Allocator> {
+>> > =C2=A0=C2=A0=C2=A0=C2=A0 _p: PhantomData<A>,
+>> > =C2=A0}
+>> > =C2=A0
+>> > +/// Extension for Pin<Vec<T, A>>
+>> > +pub trait PinnedVecExt<T> {
+>>=20
+>> Why is this an extension trait? Couldn't we directly implement this
+>> on
+>> `Vec<T>` with `self: Pin<&mut Self>`?
+>>=20
+>> ---
+>> Cheers,
+>> Benno
+>>=20
+>> > +=C2=A0=C2=A0=C2=A0 /// Pin-initializes P and appends it to the back o=
+f the
+>> > [`Vec`] instance without reallocating.
+>> > +=C2=A0=C2=A0=C2=A0 fn push_pin_init<E: From<PushError<P>>, P: PinInit=
+<T, E>>(&mut
+>> > self, init: P) -> Result<(), E>;
+>> > +
+>> > +=C2=A0=C2=A0=C2=A0 /// Shortens the vector, setting the length to `le=
+n` and drops
+>> > the removed values.
+>> > +=C2=A0=C2=A0=C2=A0 /// If `len` is greater than or equal to the curre=
+nt length,
+>> > this does nothing.
+>> > +=C2=A0=C2=A0=C2=A0 ///
+>> > +=C2=A0=C2=A0=C2=A0 /// This has no effect on the capacity and will no=
+t allocate.
+>> > +=C2=A0=C2=A0=C2=A0 fn truncate(&mut self, len: usize);
+>> > +
+>> > +=C2=A0=C2=A0=C2=A0 /// Removes the last element from a vector and dro=
+ps it
+>> > returning true, or false if it is empty.
+>> > +=C2=A0=C2=A0=C2=A0 fn pop(&mut self) -> bool;
+>> > +}
+>> > +
+>> > =C2=A0/// Type alias for [`Vec`] with a [`Kmalloc`] allocator.
+>> > =C2=A0///
+>> > =C2=A0/// # Examples
 
