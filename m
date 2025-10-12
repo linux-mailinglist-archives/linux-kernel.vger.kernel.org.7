@@ -1,105 +1,148 @@
-Return-Path: <linux-kernel+bounces-849529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1075FBD0563
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:18:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A36BD04BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 17:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 757FA4E9DCD
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:18:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D4114E4D5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 15:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A5B1DB13A;
-	Sun, 12 Oct 2025 15:18:19 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A222951A7;
+	Sun, 12 Oct 2025 15:11:26 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B0A2D5C8B;
-	Sun, 12 Oct 2025 15:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FDB25783C;
+	Sun, 12 Oct 2025 15:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760282295; cv=none; b=sKIfZJWunkL7NSwGCSOHTQVYRh+XYfR/os5Eyh84/DQTMnQQL5ownYSb6+Wv6wQnKZp7G+mBHVch904nyIvOn+s+XXWu1Wc8Urr6q5qr7Vw4iHHtiiKv3QXA89U2l0uxAowVGL1zn8+DitiJ+CtQQgcpq08UtXqOpTgSz4/uE4A=
+	t=1760281886; cv=none; b=LZVm5Aazxe9afqIyQSinibSEx/KCOsdP5dctgNxeNysX2YuKLZbNXVeBsByE8NcQYn2u/K5WWYUeupXoisKECu5zebaRQxzhIsCibu8AthTGroe9eVIOa4sZiCo0qoP4f9rJchV/8nBzbQxZ53H6exBtB42h+wo6FLoSHaSJAQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760282295; c=relaxed/simple;
-	bh=wt77LmNnwFo6UI841ru/pL7ok7hvQWJrGnshi+TZyig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXMep0J1QALAcJOr8eb2EvtFrpT9mOhm7o17OSc1H8RlbZtYkUK07/wGuGYZgVpN0sQaYW4CEAlDHNlPCzSAqi4vOIOlEPlvF7upOFi3Hc0BFEpk0mSXlVaXiROlPGttaEIjMwF8FFybh+kOaNrSXAUPrEZGw3QWEWS7TeHWP2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 6224D758; Sun, 12 Oct 2025 10:07:45 -0500 (CDT)
-Date: Sun, 12 Oct 2025 10:07:45 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] apparmor: Replace sprintf/strcpy with scnprintf/strscpy
- in aa_policy_init
-Message-ID: <aOvEQVqYUnMXrMxI@mail.hallyn.com>
-References: <20251011164645.46822-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1760281886; c=relaxed/simple;
+	bh=toPJUQGQckanKBCiL2gAj47zyAZroYxByxfffvtJJ3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S6tDBdwplATI4pgoyMhBbQ6ZSE8gV55YxSb1U7sSFvH/h4WmQaUTaN1F6YGzAdJLGCePRjAY7csG3qwMAhE6/FhcFaAux9btTuHTJ0dM4aQ3lLqyOxBDz9nuyaTjBLRuwQdvczrK3EbziEgjPe/RHIucqlaFevB1gml8TELkZek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: zesmtpgz9t1760281785t43493b85
+X-QQ-Originating-IP: D7TbCbcfgwGXY/7iY3QOX8lSAR5REi3HyNLAcQ19+B4=
+Received: from localhost.localdomain ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 12 Oct 2025 23:09:43 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15230841216352007273
+From: chenxiaosong@chenxiaosong.com
+To: stfrench@microsoft.com,
+	metze@samba.org,
+	pali@kernel.org,
+	linkinjeon@kernel.org,
+	smfrench@gmail.com,
+	sfrench@samba.org,
+	senozhatsky@chromium.org,
+	tom@talpey.com,
+	pc@manguebit.org,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	bharathsm@microsoft.com,
+	zhangguodong@kylinos.cn
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ChenXiaoSong <chenxiaosong@kylinos.cn>
+Subject: [PATCH 00/22] smb: fix some bugs, move duplicate definitions to common header file
+Date: Sun, 12 Oct 2025 23:08:53 +0800
+Message-ID: <76A15C078023E21F+20251012150915.2992220-1-chenxiaosong@chenxiaosong.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251011164645.46822-2-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: MRY6qckr/MVJXoU2Wg6njFqiq7kHb7oh3aOzo753nk915H0A3VlrchWs
+	fs4m6IZcT2ChlwAcqoTClysBXDZszMRmQ7FMJKAatmZw7uspOFf3yJvt+qBvJb5WuVHGf/M
+	moP5OrQjerJoqN5XUPjvprEDZaE42pUyZkkykdz6gYv/kUoBJKk+84UvJqzsWdTg8WLf8Sh
+	o9ixybyG1E7rDl5UPMuxkFn4bB0Oyz5b5w8YJROigF+MBLuIzV5rJK/yOiQdyG+M00mPkRs
+	kQCCmlY9wmLWlSjNoP/l52em9lq3P6DyWCjd/iZA3XWM2errTUnWx4NnWFD0FjcSku8KnjU
+	KwwYM+l2EuagRjqiv4LB5EelcpCDSgJ32wC2f3F035pxmffRwgSF/RFQ8T1tcoezpT9jVry
+	f2ecY8ag+OYhu1M3m82xTE2iXgER9hA8eHDd7s3mXeZlZ7wVckPYb6GVLpfzH978YMI80P0
+	hCR4+M34PaSCUlejEZzAd2ZQekwuNY9OpSBDUxrRkt+oFcmsW4jGEb9DnlERiR/JEyPSjBs
+	Lcv+jKNdbnvCdJS8Zenyw/Ogg2HCgI16/SS6ckWpxCBbj+VpUGxPsLjOaM6jux85YUI1BCa
+	8c6zNO9x3V+f0/UTx/W/UjfEWOrdW8F+loPH7KcvAViwnLfnBhO+EeyTTJ1tq2XQZpsvMWJ
+	fotRzpSn/El7AzbmGFECwzR8Qh1qqmgse11hEAciy/3utrkINvk7pzZ4YlbILbBHOO3oaGS
+	EnE2wspTk10OSbvNea/XQm5KjjX/lAW2Dy1BVrYVqSejxJ0oVYVAcoQq69VeKxSHeJEAMwE
+	BqooWmwJ0sT6+BL3p3qU5vOSrf2hQZBv4Npq6FREKjSd6tgit2L5TdKaRExtaaMzgiXO3R/
+	GlQRbBGpwmT4BH++OA3UYdN3TeaFZBKT8SmeWTbLJfI1b3r1mvHXoXf/KzRX25TX0M9yd5m
+	dAnPLKNTsY4UeGhyslSiGSElnMoVafJWPyIQ=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On Sat, Oct 11, 2025 at 06:46:46PM +0200, Thorsten Blum wrote:
-> strcpy() is deprecated and sprintf() does not perform bounds checking
-> either. Although an overflow is unlikely, it's better to proactively
-> avoid it by using the safer strscpy() and scnprintf(), respectively.
-> 
-> Additionally, unify memory allocation for 'hname' to simplify and
-> improve aa_policy_init().
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+Fix some bugs of smb server.
 
-> ---
->  security/apparmor/lib.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-> index 82dbb97ad406..acf7f5189bec 100644
-> --- a/security/apparmor/lib.c
-> +++ b/security/apparmor/lib.c
-> @@ -478,19 +478,17 @@ bool aa_policy_init(struct aa_policy *policy, const char *prefix,
->  		    const char *name, gfp_t gfp)
->  {
->  	char *hname;
-> +	size_t hname_sz;
->  
-> +	hname_sz = (prefix ? strlen(prefix) + 2 : 0) + strlen(name) + 1;
->  	/* freed by policy_free */
-> -	if (prefix) {
-> -		hname = aa_str_alloc(strlen(prefix) + strlen(name) + 3, gfp);
-> -		if (hname)
-> -			sprintf(hname, "%s//%s", prefix, name);
-> -	} else {
-> -		hname = aa_str_alloc(strlen(name) + 1, gfp);
-> -		if (hname)
-> -			strcpy(hname, name);
-> -	}
-> +	hname = aa_str_alloc(hname_sz, gfp);
->  	if (!hname)
->  		return false;
-> +	if (prefix)
-> +		scnprintf(hname, hname_sz, "%s//%s", prefix, name);
-> +	else
-> +		strscpy(hname, name, hname_sz);
->  	policy->hname = hname;
->  	/* base.name is a substring of fqname */
->  	policy->name = basename(policy->hname);
-> -- 
-> 2.51.0
+In order to maintain the code more easily, move some duplicate definitions
+to common header file.
+
+Add some MS documentation references for macro and struct definitions.
+
+ZhangGuoDong (10):
+  smb/server: fix possible memory leak in smb2_read()
+  smb/server: fix possible refcount leak in smb2_sess_setup()
+  smb: move some duplicate definitions to common/cifsglob.h
+  smb: move smb_version_values to common/cifsglob.h
+  smb: move get_rfc1002_len() to common/cifsglob.h
+  smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
+  smb: move some duplicate definitions to common/smb2pdu.h
+  smb: move smb_sockaddr_in and smb_sockaddr_in6 to common/smb2pdu.h
+  smb: move copychunk definitions to common/smb2pdu.h
+  smb: move resume_key_ioctl_rsp to common/smb2pdu.h
+
+ChenXiaoSong (12):
+  smb: move smb2_file_network_open_info to common/smb2pdu.h
+  smb: move some duplicate definitions to common/cifspdu.h
+  smb: move file access permission bits definitions to common/cifspdu.h
+  smb: move SMB frame definitions to common/cifspdu.h
+  smb: move FILE_SYSTEM_ATTRIBUTE_INFO to common/cifspdu.h
+  smb: move FILE_SYSTEM_DEVICE_INFO to common/cifspdu.h
+  smb: move FILE_SYSTEM_INFO to common/cifspdu.h
+  smb: move FILE_DIRECTORY_INFO to common/cifspdu.h
+  smb: move FILE_FULL_DIRECTORY_INFO to common/cifspdu.h
+  smb: move FILE_BOTH_DIRECTORY_INFO to common/cifspdu.h
+  smb: move SEARCH_ID_FULL_DIR_INFO to common/cifspdu.h
+  smb: move FILE_SYSTEM_POSIX_INFO to common/cifspdu.h
+
+ fs/smb/client/cifsacl.c       |   4 +-
+ fs/smb/client/cifsglob.h      |  47 +---
+ fs/smb/client/cifspdu.h       | 436 +-------------------------------
+ fs/smb/client/cifssmb.c       |  10 +-
+ fs/smb/client/cifstransport.c |   8 +-
+ fs/smb/client/connect.c       |   2 +-
+ fs/smb/client/misc.c          |   2 +-
+ fs/smb/client/smb2ops.c       |  18 +-
+ fs/smb/client/smb2pdu.h       |  80 +-----
+ fs/smb/common/cifsglob.h      |  68 +++++
+ fs/smb/common/cifspdu.h       | 464 ++++++++++++++++++++++++++++++++++
+ fs/smb/common/smb2pdu.h       |  98 ++++++-
+ fs/smb/server/smb2misc.c      |   2 +-
+ fs/smb/server/smb2ops.c       |  32 +--
+ fs/smb/server/smb2pdu.c       | 114 +++++----
+ fs/smb/server/smb2pdu.h       |  67 -----
+ fs/smb/server/smb_common.c    |  10 +-
+ fs/smb/server/smb_common.h    | 304 +---------------------
+ fs/smb/server/smbacl.c        |   2 +-
+ fs/smb/server/vfs.c           |   2 +-
+ 20 files changed, 735 insertions(+), 1035 deletions(-)
+ create mode 100644 fs/smb/common/cifsglob.h
+ create mode 100644 fs/smb/common/cifspdu.h
+
+-- 
+2.43.0
+
 
