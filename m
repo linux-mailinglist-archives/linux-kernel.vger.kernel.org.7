@@ -1,137 +1,104 @@
-Return-Path: <linux-kernel+bounces-849489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D212BD0406
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:32:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B47ABD040F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 16:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE3C7347F22
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F3718966A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 Oct 2025 14:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BD7288C95;
-	Sun, 12 Oct 2025 14:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAB928CF56;
+	Sun, 12 Oct 2025 14:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1s89k26"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qo4dNGGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC350288500
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 14:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF98289E17;
+	Sun, 12 Oct 2025 14:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760279531; cv=none; b=iEfG8Sr0FUuFoPLrbWjun+YZ4v2c/lVks25lQW1XtC4oCR/dMSToGaUzBd7+YL4NcyaaZK6gFJrB99W2YbVT2agBaSy1c9py+Q1urUwwrL5veIZQMXTk629Jn5M/xYhD7OQropH7xY81Mgx6IA3GigXbLBgEAlecdVlWIV+BFUY=
+	t=1760279700; cv=none; b=DsM1DpEUfIv2e2m6ujLMvrUABfP//tca9uY6/Y/GT7db7Ytl4Hbn8OwMTdDE/gILmDjSdqzqvIIdZHwwWLXP/vl7/wIe0fqlBvPFMITUepi0S8gzbfX1EowXUCg1c1eV5wUVKpXXQjJq71yoozQoBkNtT2wnKdNiNXVuiwU9HdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760279531; c=relaxed/simple;
-	bh=exVDaTCv2o9KGqW9+Cgff31C7B8DfZakECaMCpf1bfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvR3UxkPFjkwnV6UGJNhMRkUAtZyoRYMIP5HQl5ShRodm0KyOrmMciKHkZ2Rja+0B1Anw+ttyTl0q4nMe1JZaNBIZkzPSpcY7hyESvKNrfTIlw5YgswItiY8zu/M2XFUMmu4kC9gqGWoCeH2tAno+5NHhN7TQ60iGw/2odAxJlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1s89k26; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-795773ac2a2so39310976d6.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 07:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760279528; x=1760884328; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lafAVcrEHvdofnatEPGKT/Xtct7Xl7DSjL6fT41f0Sw=;
-        b=K1s89k26nbYzSwwGw7yMYiYrRjewHFeqMCWTkxii0Kk1TGe8AJjnPIhBf9DswDh9AP
-         Pc8PZkqx8PU/oLLaaseQlS2cn+adpK50u3OR+RUldZVfZbHOgIHTkf2j22hZCKR1/bY8
-         K+WzATCb/aJGKL21QkWActjsYo1QICYWvUqnwm7Y23ReLGJMDnVIHhQ2nCvoLuAZDF4k
-         MFpNBR0+2pc6q0LW7u3kXC9ZmsMz65gusX7+PngKjBo7pwiyG8Q3ip7uRmtL6kKVKXvC
-         P35XoF+hOLRCfEMQFis3zy8k4eGD4BO0dwAafZG96RutusvGhhC7+CY8MhB04M5dSkS+
-         lJbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760279528; x=1760884328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lafAVcrEHvdofnatEPGKT/Xtct7Xl7DSjL6fT41f0Sw=;
-        b=NCA9jCTgCQjGWxHDZ9VyiL4pSMKkkZD9DFaZAJsJobWo1I5QSUiLOh6LSuoe5F/o+i
-         LjzTGyLp4loVvs4NJ1NXFOtH8i2LukG+H8K86JGvv8yTUwHpR8FkMXzKrFuerYNdmSIU
-         /FY0gCWjzVH9ItQ8NZHIAQNN6bFYkfVkRyvL6jicybvCW1LERPKMQuVELIiu6UTGWFEj
-         S+JRWexHx690gIUFUx4QdKi5xjPzcRmJqWmFiY1/S/nmi+KE3pKd/hLyoryzmyL2LrJY
-         3YFYA5CqMukuh7WLcW/sZ+z3+jStr6EBCf5d22w0svMSQm1gSUijRW0wwKiqGDlIMlrO
-         32DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7OtT8gHtj4OGgsQRva3ojlnV/+v/3lazqgToQcViD4cKjE5krYutSwuVpj/ASEG5dKiEHGWUYzpx7/0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF45o6k+wKfqjlpXMqO6hm505rGxvo/8xn9kPZeTeXvprH5RQO
-	Stuq38U1yfAYk1LTMzGOqWaCf/G+6CA9dGrSCDgJANRWCJ+TDbazbEO2
-X-Gm-Gg: ASbGncskKjyBX73ibUczMau9VGJB5iwAMWXZ49rbDUUGPLuyQWIfVI8l/wO3n61WV57
-	GjPIbssG2N9RT43+bFGlQ13c5eMXf+9bpnzkRDIKihJQjNhOHsSdC6AAFPIfh01ZJy2qJF8GaKf
-	4JNiRCkjzUoN2/oXELvq8WSQEk4++fjyoojvdealXDPf7Ai4NXjd7ItZXQrN5GVwg4jZEGN+V8h
-	F5CEHkf4bV1HhZ44xbvffTIyTPn4QVh7qboETphlhtFERVQBF0sfPlr0/f3NQckdoH5A71uZtmi
-	ClOmFvADwV4T6UTREXGDCAvtDE5jP/dn50aDdV5IUERKad6FyR5NirYiiPa/6POWIJgWCtZls7h
-	GK0pElIGm156tz+ADkRjH4LTvSf/pHSpzV+/RuP41RVxWakMLvqtL
-X-Google-Smtp-Source: AGHT+IGylxeC57G3HP7/1vZXTCP0woc3CF/bb9piQD8YyNw88k6+Ampz6Ayo2XWXeOakyOz8ZMmEgA==
-X-Received: by 2002:a05:622a:30f:b0:4e7:222e:6725 with SMTP id d75a77b69052e-4e7222e7357mr20155591cf.8.1760279527640;
-        Sun, 12 Oct 2025 07:32:07 -0700 (PDT)
-Received: from gmail.com ([2600:4041:4491:2000:f887:3bb2:9bc6:cbb0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87bc35930f3sm54042686d6.43.2025.10.12.07.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 07:32:07 -0700 (PDT)
-Date: Sun, 12 Oct 2025 23:32:05 +0900
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com, shuah@kernel.org,
-	hca@linux.ibm.com, corbet@lwn.net,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] tracing: fprobe: require explicit [GROUP/]EVENT
- for list/wildcard
-Message-ID: <aOu75evMUGF8pBxE@gmail.com>
-References: <20251004235001.133111-1-seokwoo.chung130@gmail.com>
- <20251004235001.133111-3-seokwoo.chung130@gmail.com>
- <20251008095316.cf24f13a84a454ddbf530120@kernel.org>
+	s=arc-20240116; t=1760279700; c=relaxed/simple;
+	bh=l6cJBzlu9I/0I58UBpVR1NGyNtzR+Z7Gf2+2io9LKQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LwDUbXyYc7yt/AUgbt+5tq4EcN4BeSDzsFXoNlG5lVlnQ/o3E84UtG3oSAJG6Rnb9Zc8VrwqgpX2hDPRH2UM3GvICRvJtKwfSejjImp3k5i+wCiNZWzUi5oLb1U6TmwIxxdhsps/z2V3bVUq7v2oLAVknwW1tZOQOoVSqTjMWEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qo4dNGGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0405C4CEFE;
+	Sun, 12 Oct 2025 14:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760279700;
+	bh=l6cJBzlu9I/0I58UBpVR1NGyNtzR+Z7Gf2+2io9LKQk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qo4dNGGT/5amHAH3fINTUqtfSCUQgPPX5Xy7Lfakc2HREWXHa51OIMpKlAFC5IiPs
+	 SU4WauDdDVAxPX74NE8nmSLnXDzMyyN86vlvfU1qHvOEYqCZacNxNKbkGrZD5NLVz8
+	 bSUzFLXyxnUIlfRAh2YC9V+EZUaLyVPeI5sUbVoVYBvLUO+vmnChTaHiOvPAUs/TP9
+	 HfLrIipZlQQsD7Y3ObO5bCpkJVgIpRjQ0imYlQoIFMXERCHn5LeJkYMl3nrm+vqwbp
+	 V5yWaY7vmSsKuuxdMguCj4xdKdgQ0Sgjp0f4pKqOZKEpqzvrEaH6lHjhmbqK7EP9R+
+	 KbZ4SssdT4keA==
+Date: Sun, 12 Oct 2025 15:34:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/19] iio: accel: bma220: cleanup includes
+Message-ID: <20251012153452.15451c13@jic23-huawei>
+In-Reply-To: <20251005-b4-bma220_improvements-v4-6-0f449ba31585@subdimension.ro>
+References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
+	<20251005-b4-bma220_improvements-v4-6-0f449ba31585@subdimension.ro>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008095316.cf24f13a84a454ddbf530120@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 08, 2025 at 09:53:16AM +0900, Masami Hiramatsu wrote:
-> This should be a part of [3/5], because when bisecting, the test will check the
-> README file and check the feature.
+On Sun, 05 Oct 2025 16:12:15 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
+
+> Tweak includes based on requirements.
 > 
-> Thank you,
+> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
+see next patch. I tweaked this as below
+> ---
+> v4 split from bigger patch (Andy)
+> ---
+>  drivers/iio/accel/bma220_spi.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/accel/bma220_spi.c b/drivers/iio/accel/bma220_spi.c
+> index 45ac0d7ee27de65b204bd2766f26024e4ed57f4c..abff24a48e5aaa5efb05cdf1924ffea24f4da4c5 100644
+> --- a/drivers/iio/accel/bma220_spi.c
+> +++ b/drivers/iio/accel/bma220_spi.c
+> @@ -6,9 +6,10 @@
+>   */
+>  
+>  #include <linux/bits.h>
+
+#include <linux/errno.h>
+
+which otherwise was added in next patch with no related code changes that I could spot.
+It definitely should be here for EBUSY etc.
+
+> -#include <linux/kernel.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm.h>
+>  #include <linux/types.h>
+>  #include <linux/spi/spi.h>
+>  
 > 
 
-Ok. I will fold the readme_msg change in [3/5] (the patch that
-introduces :entry|:exit and keeps %return for single-symbol input) so
-the tracefs README matches the feature during bisection and for tests.
-
-> On Sun,  5 Oct 2025 08:46:56 +0900
-> Ryan Chung <seokwoo.chung130@gmail.com> wrote:
-> 
-> > Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> > ---
-> >  kernel/trace/trace.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> > index b3c94fbaf002..ac0d3acc337e 100644
-> > --- a/kernel/trace/trace.c
-> > +++ b/kernel/trace/trace.c
-> > @@ -5524,7 +5524,8 @@ static const char readme_msg[] =
-> >  	"\t           r[maxactive][:[<group>/][<event>]] <place> [<args>]\n"
-> >  #endif
-> >  #ifdef CONFIG_FPROBE_EVENTS
-> > -	"\t           f[:[<group>/][<event>]] <func-name>[%return] [<args>]\n"
-> > +	"\t           f[:[<group>/][<event>]] <func-name>[:entry|:exit] [<args>]\n"
-> > +	"\t                (single symbols still accept %return)\n"
-> >  	"\t           t[:[<group>/][<event>]] <tracepoint> [<args>]\n"
-> >  #endif
-> >  #ifdef CONFIG_HIST_TRIGGERS
-> > -- 
-> > 2.43.0
-> > 
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
