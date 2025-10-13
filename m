@@ -1,80 +1,87 @@
-Return-Path: <linux-kernel+bounces-850220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7769BD247C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:25:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73749BD2482
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B273B6C70
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:24:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F4D04EE33A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838262FD7A7;
-	Mon, 13 Oct 2025 09:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A782FD7A3;
+	Mon, 13 Oct 2025 09:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bBoCCieI"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S0ij7b++"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7117F2FD7A3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4B72DEA76
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760347460; cv=none; b=NiPHRS/a/FEYfzai5TZnMh0YrtqFX8uJ5ojUzqnrEeQAIeSQ63TKLSoxwwiXD1oq53R7FJeppiykUoXLiZ4KXFap8KfsHvPxYjZwBvimOTWD0GXQr6+u3K5ZKEPgVG4RlXUACcqj6psED9BEU0ERtL+hPIpaJ4vbgj9xGWyysuA=
+	t=1760347533; cv=none; b=aopw8oopz0V8p3GI7/VxVZxLjUwRlg0FT8vDFIP5gN/9FFSqrRKrtAil+ZEhvvfY4rR4Xjsj72ouAjJCykY8yRJZBNUAZaAAmAGksNnX/tfVnDg6hUieFFEyVclSjDcQrC78UYlizr4AOCTov6/xHN40CzUvOWz3O9nYdkS3DC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760347460; c=relaxed/simple;
-	bh=RDKO3CyqyzhvakuwAtJ5SoV+8aPiDDeg6AuS6/rUCE4=;
+	s=arc-20240116; t=1760347533; c=relaxed/simple;
+	bh=Ob2d9io577xcnAqVuhKaNBwuYz2xbznkyYqNTpDewf4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FBsYZ5WUiv5GUt+bbga7yyAQ77Cwr7uINGLxtF/7FCuq4YNxTUljhOcBnvFLy9646ZxKb9oQTvIAM7Hlu8AQ3wCyOSUpTWJkZPfKaBu78ZxWa5e3+8LWillqkAIPZtHjX4rfaErHk8Va+yyIV5TMSeL5llm+E6HZi1KT5IHTAyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bBoCCieI; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so36036825e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760347457; x=1760952257; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RDKO3CyqyzhvakuwAtJ5SoV+8aPiDDeg6AuS6/rUCE4=;
-        b=bBoCCieIxEs80EPW6GH4qwjBBsZ2ByCro+mH0sgcI1+BmsWJCydNIcYwwD3IwZAVaG
-         suuoh75uWk2/SHwqSX3D0Xa/xRAgogU6yHpGkttdbzePP5oN67Zf8kawJQYWakQjfWO6
-         bh1ouT9c8eaa9ufb+ZGklHUumRpRcx4Xl8HOisB2pysUf+QB1sPhctf3MFgSZOCqgSxq
-         uAbpgigjC5jMzwLYFUCyED50vcwcniVX+eXcegxOyJK/h5q1O2NgYAA9AXaYhvSrcDRV
-         rrCGFd6nkqqJGNVPY5OtysupamPN2T4VLbotxzTROXJ04KyEQ57DDUyF0eUWuOQ0cq05
-         IBAA==
+	 In-Reply-To:Content-Type; b=YyEpKPAGv27a0Y9Z5khu9y7IDbUK4s5X24m5EJRAiKDO9g2kw8F+tQzYZ6EYWKhdyd/OhuCJIrhzm014SXsJy8Yw4A2efLtf7vS3BItCSBTrevEoio12xkSZniNy7cNORo1dDrmoaUqjvgrYx2pSoiTJTpXHsEAjmhkcWlbm2Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S0ij7b++; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760347530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=45f1b0mXkQ/bXJiKQOO3KwWzxkP9Zc+3arM6UV73Zeg=;
+	b=S0ij7b++GrKYD/OFjigALGJzqK52R9uGwGYNTz7rBXNLEqV4wYFqKexkuMaIkoQVg9Mg24
+	lany2uy4H6B7imPvaiGyGDTIQtIjVgS8iWaj/DtbEmohE+eHSZEGaLTqkxWX8HtcQT3SdV
+	/2kU6ESYtqlvXsSs/V4tfTxRrCM3eC4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-117-gtK1NNtLPauBOCrwBTLrIw-1; Mon, 13 Oct 2025 05:25:28 -0400
+X-MC-Unique: gtK1NNtLPauBOCrwBTLrIw-1
+X-Mimecast-MFC-AGG-ID: gtK1NNtLPauBOCrwBTLrIw_1760347527
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso3248251f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:25:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760347457; x=1760952257;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RDKO3CyqyzhvakuwAtJ5SoV+8aPiDDeg6AuS6/rUCE4=;
-        b=lEFM1BVGKFiXYhHkZKB5lKA6Suhd1XQ+5yghISsZ4Q3nNLeW4CL9BCtYn5kPgEhU83
-         /JbvC0YmSxH0Vw3esJhj5kWYW9SyXWbJD85llv42kZRr0Ai690/b34gMUWJhXN0KeV3e
-         OoWYl4tWjwVVaRA7e+oeQXzVzPSQg0IWDRlLOyrWWofRuHJRSCgAT7Q3yPbOHCbQGZcg
-         6KeKl1TzGOolnG39aEhZkf0+4aHT5YYf5zKsxEx0cxIn1UFjIH0y+Eepm71ni9XWirmA
-         AE5M3sWpWoX/AebsZPCW7IyAIqrlwy0C6jlMLk7dWVZsUlj3Y9RiD+flHRGGyYpj6x3x
-         9eCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnXslea0JhJOrVMC6SGTeK2Cb24aLS9gvHawHocShZe3/rPFjP7TnlvDjdIfTySP6rDG6l8Ejc2uwPPjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg0XcC7FVk7BrYmMYvaiY9YQv9acdBPCFkTEUN3HhLCaGeTdjM
-	Q+TlXfKJMPCKkFL83L+KM2JpY/ggU89KpHnpdU7hLrUFZn/kAbInRUpSgYsJhQweSFI=
-X-Gm-Gg: ASbGncvHqkTL5IZofCmLCF2CAiA4gfIosWm+TGAmie478FPDfvyzbm5E+3h2xNfOTcZ
-	jM4yqI7btI+OY0JxyFeOkk36/90AQmHRgodK6iIga4LJ6dS41rdxandseeIGzEJIjvPexEPWRRf
-	mFIM7YBSw+gsycXrJ9NNeyCIt5mBZUqZEd1rDjLaQfkiKcgMCKXrIpwtsCqY97EeI/4YS6mB7Bx
-	CblpHr1F0NYyHpvYlohH8poscpvaG+ISXt9BwDyyZmDYsuTo1zR8Se69ud2VyBq8Yzh7Dm6YZdx
-	aOwRN7fXzTNTSWUiSgNYp2ASHaw4sOoDB/evX+bWMsn8EvYKktQie6W6PUBfuAIOfSGnKVOdc3y
-	dqAJqtuNt9eU7/hQLs8Abym9HUZYWMMDuThvqiloFg4lqLb/HN5f9X4ig3Aw/Z+dboRhw+k8gqW
-	bY5OOTXku+shWcRsyAUNB2x1X2wOY7NLvaEd6U3nSMg27ZjIy42sc6KX1L5uZ2i5I=
-X-Google-Smtp-Source: AGHT+IE999RS83wgM/jkQhKuoMODNuQrc6RYGtNr/tj0Tz7qZq7NRTO5fQ3tcB/e6Xd8+p0qiAfDEA==
-X-Received: by 2002:a05:600c:8b4c:b0:46f:b42e:ed86 with SMTP id 5b1f17b1804b1-46fb42eee22mr83730185e9.39.1760347456663;
-        Mon, 13 Oct 2025 02:24:16 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49bdfd0sm176522245e9.10.2025.10.13.02.24.16
+        d=1e100.net; s=20230601; t=1760347527; x=1760952327;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=45f1b0mXkQ/bXJiKQOO3KwWzxkP9Zc+3arM6UV73Zeg=;
+        b=dRGixa3NYqiOvmA4/X3LXmwGIfQnkrGa4s06LdbTPLr9KmefG49ZZsYDDUQHlmQJVf
+         Z8Z4KQyFsiHCUgYzZIE85tXHgsj9nAEsEnz1oUMj5mCXyCK8Y6hA94kM6NXNlVGqF1JL
+         4RvNt7ihKr1O1Lr3L0TdACtXpKV/cHsASku/8bZ58CVeQvW0gJrVvu5pWDLqsftOyLSu
+         nfJURtNBHL7JpNNPEmIxNMQG4If+unDuAp96uGlFakr0MGFzCSTFXTKgorVbHLo4iQd7
+         8Tybs+QFuSzfhsLU/9yh0bZxTo4QmsH8E94kJePHZ88FdQfK/y5pIDtDFCp1ka7vIGdM
+         qTNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQsKy1NP1frPKDXh5d8CA7EzZETaD3ARGJQzTBIqBQigihZcrGZViBrEHEVyfl1b02DcOBHdrK630QmTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpiPTFUEGluV/+u+V0M7j8yjuqBCehNu3qBr1EzrtObwN7EGm/
+	83CxwxaaYMGoqNnsptwKGtU+Hns/Oc8yiCfdBBcYuBK2RqN8K6yMntTX4OejwtWnJ2pnmgaHe4D
+	IvOC8Bus4kMv4OaPDNR12Mev1KniNuGFJ+QVZmTjHl2Uk/dx/NAZuj6sP95MdTKSp1g==
+X-Gm-Gg: ASbGncshMA8K7l4FgT3DUOulF/cXjZqFKxhwNph/FqwfWLSlEJimvI6j13Anx5/OOAf
+	zz5zc0knHn/mBUg6gnAF2lOSggad2wWgrV+gzvQr8AsVkVj161bz5b/w0A2MeP88wyme4g26qB9
+	41AB3ujOM5LNZMrlNTsj2rMpAU+qQtIY7tyrV4O8KFOWafNEyFAS1rMhzkmbjd8tNdnYDLPoN6x
+	UMHoi7BxijM0PY0H1ZJ1PGRVXwfRmb0liEdJYnCyiwnD/DQ6q7EaZWIiUzy8iYTS5ae1Ms+HOGQ
+	tJFhkelcF0dp4hry0c4cqqKEwfuRBqadv6B/dgB7HpJSyVbirT9lvMiCFtflbpuBoThNksfAXz1
+	B+rs=
+X-Received: by 2002:a5d:5f54:0:b0:3ee:1586:6c73 with SMTP id ffacd0b85a97d-42667177de1mr12847264f8f.19.1760347527116;
+        Mon, 13 Oct 2025 02:25:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFYg9XjYPSU7V3J15wqS0ZRoHv9WaUOniN3wcI031rVOGGwlPRCDH+RKYRnwAJfJ5gFX+HfUg==
+X-Received: by 2002:a5d:5f54:0:b0:3ee:1586:6c73 with SMTP id ffacd0b85a97d-42667177de1mr12847240f8f.19.1760347526728;
+        Mon, 13 Oct 2025 02:25:26 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb492e6ddsm194397015e9.0.2025.10.13.02.25.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 02:24:16 -0700 (PDT)
-Message-ID: <2cce7bee-af02-4850-b1a8-b7f2cf3f1efb@suse.com>
-Date: Mon, 13 Oct 2025 11:24:15 +0200
+        Mon, 13 Oct 2025 02:25:26 -0700 (PDT)
+Message-ID: <3e6500dc-723f-4682-9e37-b28bc78a2bdb@redhat.com>
+Date: Mon, 13 Oct 2025 11:25:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,232 +89,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/xen/xenbus: Replace deprecated strcpy in
- xenbus_transaction_end
-To: Jan Beulich <jbeulich@suse.com>
-Cc: linux-hardening@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Jason Andryuk <jason.andryuk@amd.com>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Thorsten Blum <thorsten.blum@linux.dev>
-References: <20251012195514.39003-2-thorsten.blum@linux.dev>
- <ebee3406-d515-4e29-9d7c-f54bdb143080@suse.com>
- <65bad926-22fc-41da-b9c4-5857a002b377@suse.com>
- <13cbd826-540e-4352-8e0d-ae0c9fbd2faa@suse.com>
+Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory
+ failures
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Longlong Xia <xialonglong2025@163.com>, nao.horiguchi@gmail.com,
+ akpm@linux-foundation.org, wangkefeng.wang@huawei.com, xu.xin16@zte.com.cn,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Longlong Xia <xialonglong@kylinos.cn>, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, Miaohe Lin <linmiaohe@huawei.com>, qiuxu.zhuo@intel.com
+References: <20251009070045.2011920-1-xialonglong2025@163.com>
+ <20251009070045.2011920-2-xialonglong2025@163.com>
+ <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
+ <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
+ <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
+ <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
+ <839b72b8-55dc-4f4e-b1da-6f24ecf9446f@huawei.com>
+ <f12dfacb-05dd-4b22-90eb-fcc1a8ed552b@linux.dev>
+ <bd374ac3-05a2-41ae-8043-cc3575fb13c0@linux.dev>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <13cbd826-540e-4352-8e0d-ae0c9fbd2faa@suse.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------VOS7NuzCrLtN1GiTjf9Y1UPB"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------VOS7NuzCrLtN1GiTjf9Y1UPB
-Content-Type: multipart/mixed; boundary="------------5mlYFgxXSIL0gWIqUV1kH0Ax";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Jan Beulich <jbeulich@suse.com>
-Cc: linux-hardening@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Jason Andryuk <jason.andryuk@amd.com>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Thorsten Blum <thorsten.blum@linux.dev>
-Message-ID: <2cce7bee-af02-4850-b1a8-b7f2cf3f1efb@suse.com>
-Subject: Re: [PATCH] drivers/xen/xenbus: Replace deprecated strcpy in
- xenbus_transaction_end
-References: <20251012195514.39003-2-thorsten.blum@linux.dev>
- <ebee3406-d515-4e29-9d7c-f54bdb143080@suse.com>
- <65bad926-22fc-41da-b9c4-5857a002b377@suse.com>
- <13cbd826-540e-4352-8e0d-ae0c9fbd2faa@suse.com>
-In-Reply-To: <13cbd826-540e-4352-8e0d-ae0c9fbd2faa@suse.com>
-Autocrypt-Gossip: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJ3BBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AAIQkQoDSui/t3IH4WIQQ+pJkfkcoLMCa4X6CgNK6L+3cgfgn7AJ9DmMd0SMJE
- ePbc7/m22D2v04iu7ACffXTdZQhNl557tJuDXZSBxDmW/tLOwU0EWTecRBAIAIK5OMKMU5R2
- Lk2bbjgX7vyQuCFFyKf9rC/4itNwhYWFSlKzVj3WJBDsoi2KvPm7AI+XB6NIkNAkshL5C0kd
- pcNd5Xo0jRR5/WE/bT7LyrJ0OJWS/qUit5eNNvsO+SxGAk28KRa1ieVLeZi9D03NL0+HIAtZ
- tecfqwgl3Y72UpLUyt+r7LQhcI/XR5IUUaD4C/chB4Vq2QkDKO7Q8+2HJOrFIjiVli4lU+Sf
- OBp64m//Y1xys++Z4ODoKh7tkh5DxiO3QBHG7bHK0CSQsJ6XUvPVYubAuy1XfSDzSeSBl//C
- v78Fclb+gi9GWidSTG/4hsEzd1fY5XwCZG/XJJY9M/sAAwUH/09Ar9W2U1Qm+DwZeP2ii3Ou
- 14Z9VlVVPhcEmR/AFykL9dw/OV2O/7cdi52+l00reUu6Nd4Dl8s4f5n8b1YFzmkVVIyhwjvU
- jxtPyUgDOt6DRa+RaDlXZZmxQyWcMv2anAgYWGVszeB8Myzsw8y7xhBEVV1S+1KloCzw4V8Z
- DSJrcsZlyMDoiTb7FyqxwQnM0f6qHxWbmOOnbzJmBqpNpFuDcz/4xNsymJylm6oXiucHQBAP
- Xb/cE1YNHpuaH4SRhIxwQilCYEznWowQphNAbJtEKOmcocY7EbSt8VjXTzmYENkIfkrHRyXQ
- dUm5AoL51XZljkCqNwrADGkTvkwsWSvCSQQYEQIACQUCWTecRAIbDAAKCRCgNK6L+3cgfuef
- AJ9wlZQNQUp0KwEf8Tl37RmcxCL4bQCcC5alCSMzUBJ5DBIcR4BY+CyQFAs=
-
---------------5mlYFgxXSIL0gWIqUV1kH0Ax
-Content-Type: multipart/mixed; boundary="------------PFM0mkBhHcO1BbIdHg08Ek5p"
-
---------------PFM0mkBhHcO1BbIdHg08Ek5p
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <bd374ac3-05a2-41ae-8043-cc3575fb13c0@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 
-T24gMTMuMTAuMjUgMTA6MjIsIEphbiBCZXVsaWNoIHdyb3RlOg0KPiBPbiAxMy4xMC4yMDI1
-IDA5OjM2LCBKw7xyZ2VuIEdyb8OfIHdyb3RlOg0KPj4gT24gMTMuMTAuMjUgMDg6NTksIEph
-biBCZXVsaWNoIHdyb3RlOg0KPj4+IE9uIDEyLjEwLjIwMjUgMjE6NTUsIFRob3JzdGVuIEJs
-dW0gd3JvdGU6DQo+Pj4+IC0tLSBhL2RyaXZlcnMveGVuL3hlbmJ1cy94ZW5idXNfeHMuYw0K
-Pj4+PiArKysgYi9kcml2ZXJzL3hlbi94ZW5idXMveGVuYnVzX3hzLmMNCj4+Pj4gQEAgLTU0
-NiwxNiArNTQ2LDEzIEBAIGludCB4ZW5idXNfdHJhbnNhY3Rpb25fc3RhcnQoc3RydWN0IHhl
-bmJ1c190cmFuc2FjdGlvbiAqdCkNCj4+Pj4gICAgRVhQT1JUX1NZTUJPTF9HUEwoeGVuYnVz
-X3RyYW5zYWN0aW9uX3N0YXJ0KTsNCj4+Pj4gICAgDQo+Pj4+ICAgIC8qIEVuZCBhIHRyYW5z
-YWN0aW9uLg0KPj4+PiAtICogSWYgYWJhbmRvbiBpcyB0cnVlLCB0cmFuc2FjdGlvbiBpcyBk
-aXNjYXJkZWQgaW5zdGVhZCBvZiBjb21taXR0ZWQuDQo+Pj4+ICsgKiBJZiBhYm9ydCBpcyB0
-cnVlLCB0cmFuc2FjdGlvbiBpcyBkaXNjYXJkZWQgaW5zdGVhZCBvZiBjb21taXR0ZWQuDQo+
-Pj4+ICAgICAqLw0KPj4+PiAtaW50IHhlbmJ1c190cmFuc2FjdGlvbl9lbmQoc3RydWN0IHhl
-bmJ1c190cmFuc2FjdGlvbiB0LCBpbnQgYWJvcnQpDQo+Pj4+ICtpbnQgeGVuYnVzX3RyYW5z
-YWN0aW9uX2VuZChzdHJ1Y3QgeGVuYnVzX3RyYW5zYWN0aW9uIHQsIGJvb2wgYWJvcnQpDQo+
-Pj4+ICAgIHsNCj4+Pj4gICAgCWNoYXIgYWJvcnRzdHJbMl07DQo+Pj4+ICAgIA0KPj4+PiAt
-CWlmIChhYm9ydCkNCj4+Pj4gLQkJc3RyY3B5KGFib3J0c3RyLCAiRiIpOw0KPj4+PiAtCWVs
-c2UNCj4+Pj4gLQkJc3RyY3B5KGFib3J0c3RyLCAiVCIpOw0KPj4+DQo+Pj4gV2hpbGUgYXQg
-bGVhc3QgaW4gcHJpbmNpcGxlIGEgY29tcGlsZXIgbWlnaHQgYmUgYWJsZSB0byB0cmFuc2Zv
-cm0gdGhpcyBpbnRvDQo+Pj4gY29kZSBub3QgdXNpbmcgYW55IGxpYnJhcnkgZnVuY3Rpb24g
-YXQgYWxsLCAuLi4NCj4+Pg0KPj4+PiArCXN0cnNjcHkoYWJvcnRzdHIsIGFib3J0ID8gIkYi
-IDogIlQiKTsNCj4+Pg0KPj4+IC4uLiB0aGUgdXNlIG9mIGEgbiBvbi1zdGFuZGFyZCBmdW5j
-dGlvbiAod2l0aG91dCBlcXVpdmFsZW50IGNvbXBpbGVyIGJ1aWx0aW4pDQo+Pj4gZG9lc24n
-dCBwZXJtaXQgdGhpcy4gSU9XIHdoeSBub3Qgc2ltcGx5IHN3aXRjaCB0byBlLmcuDQo+Pj4N
-Cj4+PiAgICAgICBjaGFyIGFib3J0c3RyWzJdID0geyBbMF0gPSBhYm9ydCA/ICdGJyA6ICdU
-JyB9Ow0KPj4NCj4+IEkgd291bGQgZXZlbiBnbyBmdXJ0aGVyIGFuZCBkcm9wIGFib3J0c3Ry
-W10gY29tcGxldGVseToNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy94ZW4veGVuYnVz
-L3hlbmJ1c194cy5jIGIvZHJpdmVycy94ZW4veGVuYnVzL3hlbmJ1c194cy5jDQo+PiBpbmRl
-eCA1Mjg2ODJiZjBjN2YuLmM4OTFhZjcxNjVmNSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMv
-eGVuL3hlbmJ1cy94ZW5idXNfeHMuYw0KPj4gKysrIGIvZHJpdmVycy94ZW4veGVuYnVzL3hl
-bmJ1c194cy5jDQo+PiBAQCAtNTUwLDE0ICs1NTAsOCBAQCBFWFBPUlRfU1lNQk9MX0dQTCh4
-ZW5idXNfdHJhbnNhY3Rpb25fc3RhcnQpOw0KPj4gICAgICovDQo+PiAgICBpbnQgeGVuYnVz
-X3RyYW5zYWN0aW9uX2VuZChzdHJ1Y3QgeGVuYnVzX3RyYW5zYWN0aW9uIHQsIGludCBhYm9y
-dCkNCj4+ICAgIHsNCj4+IC0gICAgICAgY2hhciBhYm9ydHN0clsyXTsNCj4+IC0NCj4+IC0g
-ICAgICAgaWYgKGFib3J0KQ0KPj4gLSAgICAgICAgICAgICAgIHN0cmNweShhYm9ydHN0ciwg
-IkYiKTsNCj4+IC0gICAgICAgZWxzZQ0KPj4gLSAgICAgICAgICAgICAgIHN0cmNweShhYm9y
-dHN0ciwgIlQiKTsNCj4+IC0NCj4+IC0gICAgICAgcmV0dXJuIHhzX2Vycm9yKHhzX3Npbmds
-ZSh0LCBYU19UUkFOU0FDVElPTl9FTkQsIGFib3J0c3RyLCBOVUxMKSk7DQo+PiArICAgICAg
-IHJldHVybiB4c19lcnJvcih4c19zaW5nbGUodCwgWFNfVFJBTlNBQ1RJT05fRU5ELCBhYm9y
-dCA/ICJGIiA6ICJUIiwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIE5VTEwpKTsNCj4+
-ICAgIH0NCj4+ICAgIEVYUE9SVF9TWU1CT0xfR1BMKHhlbmJ1c190cmFuc2FjdGlvbl9lbmQp
-Ow0KPiANCj4gSG1tLCB3aGljaCB4c19zaW5nbGUoKSBpbmRlZWQgdGFrZXMgYSBjb25zdCBj
-aGFyICosIGl0IHRoZW4gY2FzdHMgYXdheSBjb25zdC0NCj4gbmVzcyBiZWZvcmUgaGFuZGlu
-ZyB0byB4c190YWxrdigpLg0KDQpZZXMsIHRoZSBjYXN0IGlzIG5lZWRlZCBhcyB4c190YWxr
-digpIGNhbiBoYW5kbGUgcmVhZHMgYW5kIHdyaXRlcy4gTm8gcHJvYmxlbSBpbg0KdGhpcyBj
-YXNlLCBhcyB0aGUgc3RyaW5nIGlzIG9ubHkgcmVhZCBieSB4c190YWxrdigpICh3cml0ZSB0
-eXBlIG9wZXJhdGlvbikuDQoNCg0KSnVlcmdlbg0K
---------------PFM0mkBhHcO1BbIdHg08Ek5p
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+On 13.10.25 11:15, Lance Yang wrote:
+> @David
+> 
+> Cc: MM CORE folks
+> 
+> On 2025/10/13 12:42, Lance Yang wrote:
+> [...]
+> 
+> Cool. Hardware error injection with EINJ was the way to go!
+> 
+> I just ran some tests on the shared zero page (both regular and huge), and
+> found a tricky behavior:
+> 
+> 1) When a hardware error is injected into the zeropage, the process that
+> attempts to read from a mapping backed by it is correctly killed with a
+> SIGBUS.
+> 
+> 2) However, even after the error is detected, the kernel continues to
+> install
+> the known-poisoned zeropage for new anonymous mappings ...
+> 
+> 
+> For the shared zeropage:
+> ```
+> [Mon Oct 13 16:29:02 2025] mce: Uncorrected hardware memory error in
+> user-access at 29b8cf5000
+> [Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: Sending SIGBUS to
+> read_zeropage:13767 due to hardware memory corruption
+> [Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: recovery action
+> for already poisoned page: Failed
+> ```
+> And for the shared huge zeropage:
+> ```
+> [Mon Oct 13 16:35:34 2025] mce: Uncorrected hardware memory error in
+> user-access at 1e1e00000
+> [Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: Sending SIGBUS to
+> read_huge_zerop:13891 due to hardware memory corruption
+> [Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: recovery action for
+> already poisoned page: Failed
+> ```
+> 
+> Since we've identified an uncorrectable hardware error on such a critical,
+> singleton page, should we be doing something more?
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+I mean, regarding the shared zeropage, we could try walking all page 
+tables of all processes and replace it be a fresh shared zeropage.
 
-xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjri
-oyspZKOBycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2
-kaV2KL9650I1SJvedYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i
-1TXkH09XSSI8mEQ/ouNcMvIJNwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/B
-BLUVbDa4+gmzDC9ezlZkTZG2t14zWPvxXP3FAp2pkW0xqG7/377qptDmrk42GlSK
-N4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEBAAHNHEp1ZXJnZW4gR3Jvc3Mg
-PGpnQHBmdXBmLm5ldD7CwHkEEwECACMFAlOMcBYCGwMHCwkIBwMCAQYVCAIJCgsE
-FgIDAQIeAQIXgAAKCRCw3p3WKL8TL0KdB/93FcIZ3GCNwFU0u3EjNbNjmXBKDY4F
-UGNQH2lvWAUy+dnyThpwdtF/jQ6j9RwE8VP0+NXcYpGJDWlNb9/JmYqLiX2Q3Tye
-vpB0CA3dbBQp0OW0fgCetToGIQrg0MbD1C/sEOv8Mr4NAfbauXjZlvTj30H2jO0u
-+6WGM6nHwbh2l5O8ZiHkH32iaSTfN7Eu5RnNVUJbvoPHZ8SlM4KWm8rG+lIkGurq
-qu5gu8q8ZMKdsdGC4bBxdQKDKHEFExLJK/nRPFmAuGlId1E3fe10v5QL+qHI3EIP
-tyfE7i9Hz6rVwi7lWKgh7pe0ZvatAudZ+JNIlBKptb64FaiIOAWDCx1SzR9KdWVy
-Z2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+wsB5BBMBAgAjBQJTjHCvAhsDBwsJ
-CAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/Ey/HmQf/RtI7kv5A2PS4
-RF7HoZhPVPogNVbC4YA6lW7DrWf0teC0RR3MzXfy6pJ+7KLgkqMlrAbN/8Dvjoz7
-8X+5vhH/rDLa9BuZQlhFmvcGtCF8eR0T1v0nC/nuAFVGy+67q2DH8As3KPu0344T
-BDpAvr2uYM4tSqxK4DURx5INz4ZZ0WNFHcqsfvlGJALDeE0LhITTd9jLzdDad1pQ
-SToCnLl6SBJZjDOX9QQcyUigZFtCXFst4dlsvddrxyqT1f17+2cFSdu7+ynLmXBK
-7abQ3rwJY8SbRO2iRulogc5vr/RLMMlscDAiDkaFQWLoqHHOdfO9rURssHNN8WkM
-nQfvUewRz80hSnVlcmdlbiBHcm9zcyA8amdyb3NzQG5vdmVsbC5jb20+wsB5BBMB
-AgAjBQJTjHDXAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgECF4AACgkQsN6d1ii/
-Ey8PUQf/ehmgCI9jB9hlgexLvgOtf7PJnFOXgMLdBQgBlVPO3/D9R8LtF9DBAFPN
-hlrsfIG/SqICoRCqUcJ96Pn3P7UUinFG/I0ECGF4EvTE1jnDkfJZr6jrbjgyoZHi
-w/4BNwSTL9rWASyLgqlA8u1mf+c2yUwcGhgkRAd1gOwungxcwzwqgljf0N51N5Jf
-VRHRtyfwq/ge+YEkDGcTU6Y0sPOuj4Dyfm8fJzdfHNQsWq3PnczLVELStJNdapwP
-OoE+lotufe3AM2vAEYJ9rTz3Cki4JFUsgLkHFqGZarrPGi1eyQcXeluldO3m91NK
-/1xMI3/+8jbO0tsn1tqSEUGIJi7ox80eSnVlcmdlbiBHcm9zcyA8amdyb3NzQHN1
-c2UuZGU+wsB5BBMBAgAjBQJTjHDrAhsDBwsJCAcDAgEGFQgCCQoLBBYCAwECHgEC
-F4AACgkQsN6d1ii/Ey+LhQf9GL45eU5vOowA2u5N3g3OZUEBmDHVVbqMtzwlmNC4
-k9Kx39r5s2vcFl4tXqW7g9/ViXYuiDXb0RfUpZiIUW89siKrkzmQ5dM7wRqzgJpJ
-wK8Bn2MIxAKArekWpiCKvBOB/Cc+3EXE78XdlxLyOi/NrmSGRIov0karw2RzMNOu
-5D+jLRZQd1Sv27AR+IP3I8U4aqnhLpwhK7MEy9oCILlgZ1QZe49kpcumcZKORmzB
-TNh30FVKK1EvmV2xAKDoaEOgQB4iFQLhJCdP1I5aSgM5IVFdn7v5YgEYuJYx37Io
-N1EblHI//x/e2AaIHpzK5h88NEawQsaNRpNSrcfbFmAg987ATQRTjHAWAQgAyzH6
-AOODMBjgfWE9VeCgsrwH3exNAU32gLq2xvjpWnHIs98ndPUDpnoxWQugJ6MpMncr
-0xSwFmHEgnSEjK/PAjppgmyc57BwKII3sV4on+gDVFJR6Y8ZRwgnBC5mVM6JjQ5x
-Dk8WRXljExRfUX9pNhdE5eBOZJrDRoLUmmjDtKzWaDhIg/+1Hzz93X4fCQkNVbVF
-LELU9bMaLPBG/x5q4iYZ2k2ex6d47YE1ZFdMm6YBYMOljGkZKwYde5ldM9mo45mm
-we0icXKLkpEdIXKTZeKDO+Hdv1aqFuAcccTg9RXDQjmwhC3yEmrmcfl0+rPghO0I
-v3OOImwTEe4co3c1mwARAQABwsBfBBgBAgAJBQJTjHAWAhsMAAoJELDendYovxMv
-Q/gH/1ha96vm4P/L+bQpJwrZ/dneZcmEwTbe8YFsw2V/Buv6Z4Mysln3nQK5ZadD
-534CF7TDVft7fC4tU4PONxF5D+/tvgkPfDAfF77zy2AH1vJzQ1fOU8lYFpZXTXIH
-b+559UqvIB8AdgR3SAJGHHt4RKA0F7f5ipYBBrC6cyXJyyoprT10EMvU8VGiwXvT
-yJz3fjoYsdFzpWPlJEBRMedCot60g5dmbdrZ5DWClAr0yau47zpWj3enf1tLWaqc
-suylWsviuGjKGw7KHQd3bxALOknAp4dN3QwBYCKuZ7AddY9yjynVaD5X7nF9nO5B
-jR/i1DG86lem3iBDXzXsZDn8R3/CwO0EGAEIACAWIQSFEmdy6PYElKXQl/ew3p3W
-KL8TLwUCWt3w0AIbAgCBCRCw3p3WKL8TL3YgBBkWCAAdFiEEUy2wekH2OPMeOLge
-gFxhu0/YY74FAlrd8NAACgkQgFxhu0/YY75NiwD/fQf/RXpyv9ZX4n8UJrKDq422
-bcwkujisT6jix2mOOwYBAKiip9+mAD6W5NPXdhk1XraECcIspcf2ff5kCAlG0DIN
-aTUH/RIwNWzXDG58yQoLdD/UPcFgi8GWtNUp0Fhc/GeBxGipXYnvuWxwS+Qs1Qay
-7/Nbal/v4/eZZaWs8wl2VtrHTS96/IF6q2o0qMey0dq2AxnZbQIULiEndgR625EF
-RFg+IbO4ldSkB3trsF2ypYLij4ZObm2casLIP7iB8NKmQ5PndL8Y07TtiQ+Sb/wn
-g4GgV+BJoKdDWLPCAlCMilwbZ88Ijb+HF/aipc9hsqvW/hnXC2GajJSAY3Qs9Mib
-4Hm91jzbAjmp7243pQ4bJMfYHemFFBRaoLC7ayqQjcsttN2ufINlqLFPZPR/i3IX
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+But then, the page might also be used for other things (I/O etc), the 
+shared zeropage is allocated by the architecture, we'd have to make 
+is_zero_pfn() succeed on the old+new page etc ...
 
---------------PFM0mkBhHcO1BbIdHg08Ek5p--
+So a lot of work for little benefit I guess? The question is how often 
+we would see that in practice. I'd assume we'd see it happen on random 
+kernel memory more frequently where we can really just bring down the 
+whole machine.
 
---------------5mlYFgxXSIL0gWIqUV1kH0Ax--
+-- 
+Cheers
 
---------------VOS7NuzCrLtN1GiTjf9Y1UPB
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+David / dhildenb
 
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjsxT8FAwAAAAAACgkQsN6d1ii/Ey+y
-/gf9GK6Lwa46fzJStSHQj8UzSzffMHs65l/p8SyVO4BOK0xkmcVilZOPmSh4fteTkbha5gbYvRkJ
-n59yHIvJZyESdE8/E+hSbXF35xOj7KVE89G/95aJZfG8Ez0HaD4XAsfvX+K7tnkewjkmEaNTuvyI
-N7kD/SVDs9P3xmt2b56KxLOWDZ+mBjsv3aQAGj/mbeeewlZhqhZPiKbSu0EVxI8KJqeelDvp6+kt
-G0QYfDW6u2d8yGDSvW56tDFf/EynXOJ5P7Rk8j2x+lDXWsHGqkQg/l1xR0LeoTReOswojHcJrH4K
-alJkUz1yhZAQWY41bBfECdnvZ4CFxMmoehCTeq3oQQ==
-=icgx
------END PGP SIGNATURE-----
-
---------------VOS7NuzCrLtN1GiTjf9Y1UPB--
 
