@@ -1,127 +1,224 @@
-Return-Path: <linux-kernel+bounces-850527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192B1BD31B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:55:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773C0BD31B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 185E33C3914
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:55:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE1524F2487
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C062F4A00;
-	Mon, 13 Oct 2025 12:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4AC25F7BF;
+	Mon, 13 Oct 2025 12:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Okjf1fVl"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GkjrowLX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bOc3W2YK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GkjrowLX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bOc3W2YK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C211F2E2F0D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70582C21EB
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760360105; cv=none; b=bm/Nq+VF6xV7QKtxegQKrkICRfdWmzkvxB4S38ZFOPPOH3fyrk8LOnXkXIlUv7/LNVZ6VmSkr5KjB5g6zPubHe8Ps4pRv+UnrVotLDxlC3RzQVKfEZAwI/eEBaGYW3PP4Rg4vSTHLcy2UYyfL8TdlavyGyXl64rrceHB7p9rkkk=
+	t=1760360115; cv=none; b=ed9I1NXOe66ZZyf3/3KPfp68tM/f7wFz90/Q731wpzHSkczZcpd2PnZknwCU5IC8YBQpiiJZPI91e+OriQtlIu206PMlXmN2d6t1wC6g8QDpaozFoT8pgloiJtjtqfkJjX+WqI/wEeFebuVAu9uRKU5Pe6hAKkrm+hcPbxmiE6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760360105; c=relaxed/simple;
-	bh=zt5hEVCNrevPsGcQxcV2hsOEGoKsyrOWbNv+dHo88K0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TrzmLSNnq8fhLV1TasPDELxEzQ/5YtjWPH/7VAODb4Zbm8EaOv3XMkX8s9KkXSklClzSUFX6gzjdgB5O4CHGweTSh3nlr67DCkvIQ5CPzt0apC0LK7kMZeG197nu0zTxZ4WIH0T0JQRlQV9DISYpfkaWAV0KQsVSvostNoMZmcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Okjf1fVl; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-371e4858f74so49466231fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760360101; x=1760964901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zt5hEVCNrevPsGcQxcV2hsOEGoKsyrOWbNv+dHo88K0=;
-        b=Okjf1fVloCuwHYEltROxYnd2pFlknVZ7B7amVFMf0TvT29v/ZiaAu6yGqj5UhRkVsn
-         ldb1ZANPVDzhdk/9R+GUouwe+TNHn+3l0DK3VyNfmWYTMntT0PHCCSd69gP4bNqIRdwg
-         vsqql6iGaU5+sQMlqO+LgXskAmil8/7G41ybn9gB10A0EhvSmglVy/1d2tvwzF3eRqnc
-         6vGgrM89ZkpYHBlb76aFnODpgWdWmx41QDNzf/VQ3itHnWcyyaGOK/iwp/ZVlKvU98Pm
-         2iw4Wd5j4GFnUQCt8OQqkyENvX2EtsDnsjQ/GuWzUeGWpeLQ8ll73tc2PHzwjCYtNlK0
-         jF6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760360101; x=1760964901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zt5hEVCNrevPsGcQxcV2hsOEGoKsyrOWbNv+dHo88K0=;
-        b=FN3iMOcZ2SJjVTrVyJF/yFYWzj4sGw1UVS6YxK1rRHNp11gYPhoIhsyzIuXXBEXQJ2
-         B8V6tMXWXrN8YWaQ8IeoaVN36n2998/o2RnkSyCBTfWUBn1ooDwl+l3JRti5qd8Maq3F
-         nmtNzWHZNrPFo7Jynat2tBjZ9DgVjqeD6Q3dZxoJxPp7+pjcCM7VM5/usl6ueyYjAujf
-         Y2DK7cqJqHGLBr6JVsx/XfblnRccHeGbp4ZUe7cZ69ZddttI551ofHHIK6BVTko7z2vU
-         tmMEzh/fkPqSJabeu2Kl9XJAI+J3iHvqXO96vISXGmAEy1zBOWTxHZ3tpphhYDToBtUC
-         szAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW06A3ixxAUDO5m4NOfw5ognk7nNUCd2y7x37pR/8RqP2AUBRC0uOQLC4OAK0+X5Uedl/Vl4QeNQnFhEEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfZeolcDam1ZoFk6EzkWv02MagoTBZJdgIfMpM1wFar+hx4EGK
-	sZhQCM6LrPFNyWNNjbjB/imvfNlT2MGWBW1TXQl1wRe6X3LSRc/iiyIFdo2grontCK2U2c5DMgc
-	NHBsExrU/WVm/FVWsP1lQDyBNnm7tIya4+3O3ZgcC8w==
-X-Gm-Gg: ASbGncshlPASyUUX7P2wLq8oVowFutETnkC9Wgl52vtocu1oKKoGVbicaBTvUdd31Gm
-	W1HT+SR+r7Xz8n4XkFhfvP477ffCaGXLA8Dc0wcFHSGbKmfVhVk1fzIOH9qnHbHshLiLZwhbj07
-	6FaMp7sKCmoL5Yqg1wgA4I6SlWBi4OZ9HvJpyksGKSKts070s6PxrhZVajuEsZ9Wj5Q2HR2le8V
-	mdnSoaUkSwS5LYlCrlGJaFeyxlci4SNGPLI5EH8
-X-Google-Smtp-Source: AGHT+IEMJbNvilXOpoOIRQel6Q25owiZoIco1Kl5SF8iRX9hi7hR5hiR4i5XlKv+PrII6XXrbQ676HBjigByg+VgGMM=
-X-Received: by 2002:a2e:b88e:0:b0:36c:2899:7a33 with SMTP id
- 38308e7fff4ca-3760a29e503mr52205261fa.5.1760360100831; Mon, 13 Oct 2025
- 05:55:00 -0700 (PDT)
+	s=arc-20240116; t=1760360115; c=relaxed/simple;
+	bh=reg7Z3akc/I0/Vb1LKApTqMmb4SHdhZ87+xYPS82tbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LLLlGmV4f71jF7WuF9HLYNLnJrtVs1h56/SaJPSeykO0p/gu9mXh3KFxnIIkAvdYUPsnxGBUUKNFG0ZWRJqvLqA3uEFdSWj3SeVOap1It5SgFKBPLBEsWxYZFDM4pkvCE725MGCfyTHbBsXWzdYixImdzDCtCS9/vF5/UbsHz/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GkjrowLX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bOc3W2YK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GkjrowLX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bOc3W2YK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B15AC1F388;
+	Mon, 13 Oct 2025 12:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760360108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VVs9OlIdsU9AL1nGyPEm5DWgQn1j1x2cPiqI2MlPSgA=;
+	b=GkjrowLX9VfY+zWLkJxV4K4xBqmYfLzN4bsM/hBAprVZOAZ1HpwGsx4xncjcfhA3F0GKeK
+	6HqsDsC6du2/QHiQp0Zx66S945eNt/Dxf75uKYyFyDM8n5SpWgbKykgLDX4h9ZTjaIwOYb
+	XYcMIH9A5KI7B9ya57CAHC4EazwrcD8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760360108;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VVs9OlIdsU9AL1nGyPEm5DWgQn1j1x2cPiqI2MlPSgA=;
+	b=bOc3W2YKBsyCMgUHW3O4ZkGQ/iSS246oALbWzNY1y7DNc/kp3FvbITaEErC9jDPhLXLslI
+	ZGayQBVuCD582ZDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GkjrowLX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bOc3W2YK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760360108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VVs9OlIdsU9AL1nGyPEm5DWgQn1j1x2cPiqI2MlPSgA=;
+	b=GkjrowLX9VfY+zWLkJxV4K4xBqmYfLzN4bsM/hBAprVZOAZ1HpwGsx4xncjcfhA3F0GKeK
+	6HqsDsC6du2/QHiQp0Zx66S945eNt/Dxf75uKYyFyDM8n5SpWgbKykgLDX4h9ZTjaIwOYb
+	XYcMIH9A5KI7B9ya57CAHC4EazwrcD8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760360108;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VVs9OlIdsU9AL1nGyPEm5DWgQn1j1x2cPiqI2MlPSgA=;
+	b=bOc3W2YKBsyCMgUHW3O4ZkGQ/iSS246oALbWzNY1y7DNc/kp3FvbITaEErC9jDPhLXLslI
+	ZGayQBVuCD582ZDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9AB651374A;
+	Mon, 13 Oct 2025 12:55:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7oR4Jaz27GhsOwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 13 Oct 2025 12:55:08 +0000
+Message-ID: <d200e79a-9bc0-4b52-bb38-50f5695fe780@suse.cz>
+Date: Mon, 13 Oct 2025 14:55:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759824376.git.mazziesaccount@gmail.com> <ed65074dbedaf2b503d789b38bd9710926d08a55.1759824376.git.mazziesaccount@gmail.com>
-In-Reply-To: <ed65074dbedaf2b503d789b38bd9710926d08a55.1759824376.git.mazziesaccount@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 14:54:49 +0200
-X-Gm-Features: AS18NWAwGCk0eH0iAHoOmmcayEjfv4yeRrMRzIvsPRl7tRPyzzsktlv39DuLW9c
-Message-ID: <CACRpkdZSiZ_74Ar+tRzVSwRW=6XoUpODyxqZDFyrc-0pcHkaPg@mail.gmail.com>
-Subject: Re: [RFC PATCH 09/13] gpio: Support ROHM BD72720 gpios
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm/page_alloc: Clarify batch tuning in
+ zone_batchsize
+Content-Language: en-US
+To: Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>, Brendan Jackman
+ <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
+ Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel-team@meta.com
+References: <20251009192933.3756712-1-joshua.hahnjy@gmail.com>
+ <20251009192933.3756712-2-joshua.hahnjy@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <20251009192933.3756712-2-joshua.hahnjy@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B15AC1F388
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-On Tue, Oct 7, 2025 at 10:34=E2=80=AFAM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
+On 10/9/25 21:29, Joshua Hahn wrote:
+> Recently while working on another patch about batching
+> free_pcppages_bulk [1], I was curious why pcp->batch was always 63 on my
+> machine. This led me to zone_batchsize(), where I found this set of
+> lines to determine what the batch size should be for the host:
+> 
+> 	batch = min(zone_managed_pages(zone) >> 10, SZ_1M / PAGE_SIZE);
+> 	batch /= 4;		/* We effectively *= 4 below */
+> 	if (batch < 1)
+> 		batch = 1;
+> 
+> All of this is good, except the comment above which says "We effectively
+> *= 4 below". Nowhere else in the function zone_batchsize(), is there a
+> corresponding multipliation by 4. Looking into the history of this, it
+> seems like Dave Hansen had also noticed this back in 2013 [1]. Turns out
+> there *used* to be a corresponding *= 4, which was turned into a *= 6
+> later on to be used in pageset_setup_from_batch_size(), which no longer
+> exists.
+> 
+> Despite this mismatch not being corrected in the comments, it seems that
+> getting rid of the /= 4 leads to a performance regression on machines
+> with less than 250G memory and 176 processors. As such, let us preserve
+> the functionality but clean up the comments.
+> 
+> Fold the /= 4 into the calculation above: bitshift by 10+2=12, and
+> instead of dividing 1MB, divide 256KB and adjust the comments
+> accordingly. No functional change intended.
+> 
+> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
-> The ROHM BD72720 has 6 pins which may be configured as GPIOs. The
-> GPIO1 ... GPIO5 and EPDEN pins. The configuration is done to OTP at the
-> manufacturing, and it can't be read at runtime. The device-tree is
-> required to tell the software which of the pins are used as GPIOs.
->
-> Keep the pin mapping static regardless the OTP. This way the user-space
-> can always access the BASE+N for GPIO(N+1) (N =3D 0 to 4), and BASE + 5
-> for the EPDEN pin. Do this by setting always the number of GPIOs to 6,
-> and by using the valid-mask to invalidate the pins which aren't configure=
-d
-> as GPIOs.
->
-> First two pins can be set to be either input or output by OTP. Direction
-> can't be changed by software. Rest of the pins can be set as outputs
-> only. All of the pins support generating interrupts.
->
-> Support the Input/Output state getting/setting and the output mode
-> configuration (open-drain/push-pull).
->
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Nice use of valid-mask here!
-I don't know about the special pin binding but the driver
-looks good.
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
 
