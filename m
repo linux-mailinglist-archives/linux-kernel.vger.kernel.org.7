@@ -1,145 +1,153 @@
-Return-Path: <linux-kernel+bounces-851413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B329BD6629
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:38:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A23CBD6638
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC080350948
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:38:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E4664F4641
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792EA2EDD76;
-	Mon, 13 Oct 2025 21:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7632EF65C;
+	Mon, 13 Oct 2025 21:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ISUOs2Ip"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHFFebKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5C02DE1F0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52AD246778;
+	Mon, 13 Oct 2025 21:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391498; cv=none; b=RAj7qS4M/oqyNq36dnoKj/7Hw3h+bv/SWyCk8qMkJqAs3EuQ6rzZj8lGGCShWAr+Vt3MlksfHikoXW5uPEPvNafrqCgXt+JcGJjlFukmWNWY3Y71h4gQ4h89hBXI4LB3eC79ghWs7FtMQ6MWhcg1wUSFw7nGbIAgC4XVmQ47Br0=
+	t=1760391634; cv=none; b=dcsQ5iXL+g9xaZDRGrM/j08h/XMXZYpilOt7plz4OZ/bX8S8gCJAH4abXFP5XFr1LaphcKbCuv/c1Qz5nZF2ALBY0ker2oUZaz2pDD34U9zZe/9PgqKFKQ6olop2WkOVnGSUybcSbXAVqKQI1DyPEJoVgVdyCHTShvuKKSGuYDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391498; c=relaxed/simple;
-	bh=pECFziXIhSdziHO8AnV7jP8nihk0dFHntK2WI54iu1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q/N4Vx0nZJluCtqi60Jmh39Eg2x6SFyIOPGSA1IUWV1H6lhOPawTgEYv29f1CRs8nk8Fo6R1M0JvRgF+Zg7bgsApJlrSXrqaRO0Cx2cX1T0kTtjA3oK958dtEtgVUdlOGNknQEeOFQfgKY+882Y1BWlfM8GaeP2AS6uWFgjNJmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ISUOs2Ip; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3cf98c31-4475-4e4a-8ce0-bc9c62922313@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760391484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gWGxPhiuc07ov79HbmH+SO4fH0CF737w7R6sHM69aMo=;
-	b=ISUOs2Ip2da67r7nxHfXeRWMbeyMY0blBbjnfFfmYRpJ3fE3gJmrPs54TqC3pholQwqqxn
-	hQ5HajFfDCb9GuwNEIv64PjCZeSbAFAEyu0+hCGONLuuqT6rfX0HST16t53c+wzcmcKubl
-	2HCZZ3AqHJRt1UyRQGROdXATYhGm4wY=
-Date: Mon, 13 Oct 2025 14:37:54 -0700
+	s=arc-20240116; t=1760391634; c=relaxed/simple;
+	bh=lSBBgblcFkXBDIkspp2NfyRR5bmbe73dKuE4WTS8jDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=d5dNi61uV6IerjR9QsknmRjkKBjZAfFXqia+80UQct8lWuujHcpJElVxr2IUYnixmNEMXNWOEv8HHPXEtgty5Z2usF/0nFyRfyxNVe2Wpfp4kEgqvOEla44BwubkVFK0fVS1OE+XYmCKD55q8vf43p/DzjN1MbeJ2BMG+AO70Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHFFebKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36141C4CEE7;
+	Mon, 13 Oct 2025 21:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760391634;
+	bh=lSBBgblcFkXBDIkspp2NfyRR5bmbe73dKuE4WTS8jDQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bHFFebKjDxDGEhGMg8dyCjd/ziBHfpvK4q3BORNkHxy6RFK/HkSlHnxHNZaJcU+fv
+	 zgYNkeG2NOCR2WMjzuK10Vf/JLGyt3NSAxSKOUzzT0w5JTXWhTMH32B9e0gORUeeLa
+	 1B12+EA2ExEmvA5CComPNc2hUZJEl5zFi6c8BmDYcKkO8PvsZJvnDB/9hor3cQUOGU
+	 /QUyqn6Dvok+J5IxdL81O7iIDzDNtYNb4ulIBvHSzB54DBrMiFmeTWmaggQA1X05Jp
+	 C15zzfjFk3IQ5Xx8Mer/RaiJfA7uvnXQ2Osayog3FfNYUjEDiteOy940e15RnpuBah
+	 9q8TNLDolTX2g==
+Date: Mon, 13 Oct 2025 16:40:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: mani@kernel.org, kwilczynski@kernel.org, kishon@kernel.org,
+	bhelgaas@google.com, cassel@kernel.org, Frank.Li@nxp.com,
+	dlemoal@kernel.org, christian.bruel@foss.st.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: endpoint: pci-epf-test: Fix sleeping function
+ being called from atomic context
+Message-ID: <20251013214033.GA865945@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next RFC 0/2] Pass external callchain entry to
- get_perf_callchain
-Content-Language: en-GB
-To: Jiri Olsa <olsajiri@gmail.com>, Tao Chen <chen.dylane@linux.dev>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20251013174721.2681091-1-chen.dylane@linux.dev>
- <aO1j747N7pkBTBAb@krava>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <aO1j747N7pkBTBAb@krava>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930023809.7931-1-bhanuseshukumar@gmail.com>
 
+On Tue, Sep 30, 2025 at 08:08:09AM +0530, Bhanu Seshu Kumar Valluri wrote:
+> When Root Complex(RC) triggers a Doorbell MSI interrupt to Endpoint(EP) it triggers a warning
+> in the EP. pci_endpoint kselftest target is compiled and used to run the Doorbell test in RC.
+> 
+> [  474.686193] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:271
+> [  474.710934] Call trace:
+> [  474.710995]  __might_resched+0x130/0x158
+> [  474.711011]  __might_sleep+0x70/0x88
+> [  474.711023]  mutex_lock+0x2c/0x80
+> [  474.711036]  pci_epc_get_msi+0x78/0xd8
+> [  474.711052]  pci_epf_test_raise_irq.isra.0+0x74/0x138
+> [  474.711063]  pci_epf_test_doorbell_handler+0x34/0x50
+> 
+> The BUG arises because the EP's pci_epf_test_doorbell_handler is making an
+> indirect call to pci_epc_get_msi, which uses mutex inside, from interrupt context.
+> 
+> To fix the issue convert hard irq handler to a threaded irq handler to allow it
+> to call functions that can sleep during bottom half execution. Register threaded
+> irq handler with IRQF_ONESHOT to keep interrupt line disabled until the threaded
+> irq handler completes execution.
+> 
+> Fixes: eff0c286aa91 ("PCI: endpoint: pci-epf-test: Add doorbell test support")
+> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
 
+Thanks for the fix!  It looks like you posted it during the v6.18
+merge window, so it was a little bit too late to be included in the
+v6.18 changes, but it looks like good v6.19 material.
 
-On 10/13/25 1:41 PM, Jiri Olsa wrote:
-> On Tue, Oct 14, 2025 at 01:47:19AM +0800, Tao Chen wrote:
->> Background
->> ==========
->> Alexei noted we should use preempt_disable to protect get_perf_callchain
->> in bpf stackmap.
->> https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
->>
->> A previous patch was submitted to attempt fixing this issue. And Andrii
->> suggested teach get_perf_callchain to let us pass that buffer directly to
->> avoid that unnecessary copy.
->> https://lore.kernel.org/bpf/20250926153952.1661146-1-chen.dylane@linux.dev
->>
->> Proposed Solution
->> =================
->> Add external perf_callchain_entry parameter for get_perf_callchain to
->> allow us to use external buffer from BPF side. The biggest advantage is
->> that it can reduce unnecessary copies.
->>
->> Todo
->> ====
->> If the above changes are reasonable, it seems that get_callchain_entry_for_task
->> could also use an external perf_callchain_entry.
->>
->> But I'm not sure if this modification is appropriate. After all, the
->> implementation of get_callchain_entry in the perf subsystem seems much more
->> complex than directly using an external buffer.
->>
->> Comments and suggestions are always welcome.
->>
->> Tao Chen (2):
->>    perf: Use extern perf_callchain_entry for get_perf_callchain
->>    bpf: Pass external callchain entry to get_perf_callchain
-> hi,
-> I can't get this applied on bpf-next/master, what do I miss?
+Can you please:
 
-This path is not based on top of latest bpf/bpf-next tree.
-The current diff:
+  - Rebase to pci/main (v6.18-rc1)
+  - Add a space before each "("
+  - Remove the timestamps because they're unnecessary distraction
+  - Add "()" after function names in commit log
+  - s/irq/IRQ/
+  - Rewrap the commit log to fit in 75 columns
+  - Rewrap the code below to fit in 78 columns because most of the
+    rest of the file does
+  - Carry Niklas' Reviewed-by when you post the v3
 
-  struct perf_callchain_entry *
--get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
--		   u32 max_stack, bool crosstask, bool add_mark)
-+get_perf_callchain(struct pt_regs *regs, struct perf_callchain_entry *external_entry,
-+		   u32 init_nr, bool kernel, bool user, u32 max_stack, bool crosstask,
-+		   bool add_mark)
-  {
-
-The actual signature in kernel/events/callchain.c
-
-struct perf_callchain_entry *
-get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
-                    u32 max_stack, bool crosstask, bool add_mark)
-{
-
-
->
-> thanks,
-> jirka
->
->
->>   include/linux/perf_event.h |  5 +++--
->>   kernel/bpf/stackmap.c      | 19 +++++++++++--------
->>   kernel/events/callchain.c  | 18 ++++++++++++------
->>   kernel/events/core.c       |  2 +-
->>   4 files changed, 27 insertions(+), 17 deletions(-)
->>
->> -- 
->> 2.48.1
->>
-
+> ---
+>  Note : It is compiled and tested on TI am642 board.
+> 
+>  Change log. V1->V2: 
+>   Trimmed Call trace to include only essential calls.
+>   Used 12 digit commit ID in fixes tag.
+>   Steps to reproduce the bug are removed from commit log.
+>   Link to V1: https://lore.kernel.org/all/20250917161817.15776-1-bhanuseshukumar@gmail.com/
+>  	
+>  Warnings can be reproduced by following steps below.
+>  *On EP side:
+>  1. Configure the pci-epf-test function using steps given below
+>    mount -t configfs none /sys/kernel/config
+>    cd /sys/kernel/config/pci_ep/
+>    mkdir functions/pci_epf_test/func1
+>    echo 0x104c > functions/pci_epf_test/func1/vendorid
+>    echo 0xb010 > functions/pci_epf_test/func1/deviceid
+>    echo 32 > functions/pci_epf_test/func1/msi_interrupts
+>    echo 2048 > functions/pci_epf_test/func1/msix_interrupts
+>    ln -s functions/pci_epf_test/func1 controllers/f102000.pcie-ep/
+>    echo 1 > controllers/f102000.pcie-ep/start
+> 
+>  *On RC side:
+>  1. Once EP side configuration is done do pci rescan.
+>    echo 1 > /sys/bus/pci/rescan
+>  2. Run Doorbell MSI test using pci_endpoint_test kselftest app.
+>   ./pci_endpoint_test -r pcie_ep_doorbell.DOORBELL_TEST
+>   Note: Kernel is compiled with CONFIG_DEBUG_KERNEL enabled.
+> 
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index e091193bd8a8..c9e2eb930ad3 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -725,8 +725,8 @@ static void pci_epf_test_enable_doorbell(struct pci_epf_test *epf_test,
+>  	if (bar < BAR_0)
+>  		goto err_doorbell_cleanup;
+>  
+> -	ret = request_irq(epf->db_msg[0].virq, pci_epf_test_doorbell_handler, 0,
+> -			  "pci-ep-test-doorbell", epf_test);
+> +	ret = request_threaded_irq(epf->db_msg[0].virq, NULL, pci_epf_test_doorbell_handler,
+> +				   IRQF_ONESHOT, "pci-ep-test-doorbell", epf_test);
+>  	if (ret) {
+>  		dev_err(&epf->dev,
+>  			"Failed to request doorbell IRQ: %d\n",
+> -- 
+> 2.34.1
+> 
 
