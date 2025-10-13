@@ -1,172 +1,176 @@
-Return-Path: <linux-kernel+bounces-850061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290E5BD1C0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D18FBD1C10
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD613A1964
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F661894552
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C5827F19F;
-	Mon, 13 Oct 2025 07:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3842E719E;
+	Mon, 13 Oct 2025 07:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMs1HnXQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4R3k1LZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689F6610B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32ED1B4F09;
+	Mon, 13 Oct 2025 07:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760339728; cv=none; b=lnf3IqLmqf+WfxJylIxforJXQtrhTaVDq4EkZTtkx0UdNZT+2xx7v8rtBoAXMq5H7NSZJCr3ft7RLQET0B5jq1Ygk72zak2z3+4S9wQIEBnauMmSC0rHjyT/XGA4XhBxQFDWgnkflOifJPmfTKERD+e7MVnkH3iHCSiJmPfXb/M=
+	t=1760339888; cv=none; b=USItf5F7/ePmJBeIBA3pqpSxD8xcQQPYj8RY+Mfl91P5ut7oBPCD5f+50VHC2aAfM9GPSEcWPMRQ7wA3dlJXCUsripruXfdNYJAHTAoovG60NcCKg0C3imQra66ZGXzQmIlRs7OFPKwAVlxy3/iGdXKe035bzQ8p9y0ZrpgADxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760339728; c=relaxed/simple;
-	bh=uvOYiLSxO8hALg+pTzVPPipnk2Sbv0WPw08PuGx/Bl8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XnpJip93vpwrxWCS1YnUhFbjrGcLfftn3gfcHL5Amu2+OzKGueY2d8tZ8v+HFvmc3FzYG3HB2HWRPVSPdjHG56NTDX6WVa58juNv3z5nVubiH2dmJNHSeaxhRS2B3SUYF9AlFXnN/zp9Pwc9uvb1hliYwQgEnmU7mytiO2JSd4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMs1HnXQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0523DC4CEE7;
-	Mon, 13 Oct 2025 07:15:28 +0000 (UTC)
+	s=arc-20240116; t=1760339888; c=relaxed/simple;
+	bh=YLv5InJLlW0GnvCcW21BMvEaiqUu0JrGPOOfzqOIL7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qe6NVzm3+fGJtEEwYvHBIDPUA+F1WBs4T2H8oaYlbchAlH4cH2nlRTgcAiv4hUpRpWpDf3ZLpQzxqQsXjg1aEXkEER9ADJ4lo93o87a/PfTPmyJ5lBhd5PqZdVbF16Zm2d0SIOY17l8Yb6XdGijl1XMyV0t/XatEXQ1YdXRmrX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4R3k1LZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E43EAC4CEE7;
+	Mon, 13 Oct 2025 07:17:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760339728;
-	bh=uvOYiLSxO8hALg+pTzVPPipnk2Sbv0WPw08PuGx/Bl8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vMs1HnXQwkSeF94h3e7R10x0EspzZ1aioKalEcHuTuqAYkzk/H3Ef1JVV2Gu7P8vb
-	 QpSDLQ/DHEkz9ig8iRGrQvGe4jsDDDbpShHMr83UahC3G/WbMNdxvA0cMAESvjz++m
-	 gu0RYAVaNSpoYLv6gME5VJqKhgyxZTWtaxGLnyu9GOCrsA9HB9T9jLOx+CxVkBHqVB
-	 MkPeWDfLT5RYcv6zeS45dTzMz1NF2llSOHnXyeLR29rDScU8iBs4qYhDwtA+Mg308O
-	 uhQiuiA++IyByh1o6D7PflLrgjpYlU07SaV+1Pfo/rMGkzOnG80KjvsoO7EIsKT0CG
-	 7QI1lLNVLpJSg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v8CmD-0000000DQvL-2UPH;
-	Mon, 13 Oct 2025 07:15:25 +0000
-Date: Mon, 13 Oct 2025 08:15:25 +0100
-Message-ID: <868qhfxofm.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Jinqian Yang <yangjinqian1@huawei.com>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
+	s=k20201202; t=1760339887;
+	bh=YLv5InJLlW0GnvCcW21BMvEaiqUu0JrGPOOfzqOIL7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X4R3k1LZHzpGoa3CGNOP1VANnxZgqbYFTh3O1uI0UOUZI6egZH7DS9iXzCNanfPj6
+	 5l4hRVdl8kug78iGi503BMwTf4nOfB4vvPqzfQblO8bANCTR0IepYFAi8pg4PmXcJl
+	 v5mRsMXje08tODxTmyA5OIz0MV0Bp+hR52IAzNGX/P+svL+EdB5DLwEoWOUND+O6Kf
+	 YuSG4fNpL6qP9OxqgNyTvU+dffpgHu93yEHMZLAsR25uNDeEeJ6nise1nSkPELIGCx
+	 VGgNLmvwA2eaX+H2UuCy8fUgkQfgvKdAEN9XvtoacZlIyOarhWxcIvseAbwa+xrPpj
+	 rWlSnFWp2aHtA==
+Date: Mon, 13 Oct 2025 10:17:55 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	jiangkunkun <jiangkunkun@huawei.com>,
-	Zhou Wang <wangzhou1@hisilicon.com>,
-	liuyonglong <liuyonglong@huawei.com>
-Subject: Re: [Question] QEMU VM fails to restart repeatedly with VFIO passthrough on GICv4.1
-In-Reply-To: <5269ecde-be8e-4920-a76f-882da1475d5d@huawei.com>
-References: <5269ecde-be8e-4920-a76f-882da1475d5d@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+	iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v5 2/8] mm: Actually mark kernel page table pages
+Message-ID: <aOynozGF70jD3bo_@kernel.org>
+References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+ <20250919054007.472493-3-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yangjinqian1@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com, tglx@linutronix.de, yuzenghui@huawei.com, jiangkunkun@huawei.com, wangzhou1@hisilicon.com, liuyonglong@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919054007.472493-3-baolu.lu@linux.intel.com>
 
-On Mon, 13 Oct 2025 03:56:20 +0100,
-Jinqian Yang <yangjinqian1@huawei.com> wrote:
+On Fri, Sep 19, 2025 at 01:40:00PM +0800, Lu Baolu wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
 > 
-> Hi, all
+> Now that the API is in place, mark kernel page table pages just
+> after they are allocated. Unmark them just before they are freed.
 > 
-> On a GICv4.1 environment running kernel 6.16, when launching VMs with
-> QEMU and passing through VF devices, after repeatedly booting and
-> killing the VMs hundreds of times, the host reports call traces and the
-> VMs become unresponsive. The call traces show VFIO call stacks.
+> Note: Unconditionally clearing the 'kernel' marking (via
+> ptdesc_clear_kernel()) would be functionally identical to what
+> is here. But having the if() makes it logically clear that this
+> function can be used for kernel and non-kernel page tables.
 > 
-> [14201.974880] BUG: Bad page map in process qemu-system-aar
-> pte:fefefefefefefefe pmd:8000820b1ba0403
-> [14201.974895] addr:0000fffdd7400000 vm_flags:80240644bb
-> anon_vma:0000000000000000 mapping:ffff08208e9b7758 index:401eed6a
-> [14201.974905] file:[vfio-device] fault:vfio_pci_mmap_page_fault
-> [vfio_pci_core] mmap:vfio_device_fops_mmap [vfio] mmap_prepare: 0x0
-> read_folio:0x0
-> [14201.974923] CPU: 2 UID: 0 PID: 50408 Comm: qemu-system-aar Kdump:
-> loaded Tainted: G           O        6.16.0-rc4+ #1 PREEMPT
-> [14201.974926] Tainted: [O]=OOT_MODULE
-> [14201.974927] Hardware name: To be filled by O.E.M. To be filled by
-> O.E.M./To be filled by O.E.M., BIOS HixxxxEVB V3.4.7 09/04/2025
-> [14201.974928] Call trace:
-> [14201.974929]  show_stack+0x20/0x38 (C)
-> [14201.974934]  dump_stack_lvl+0x80/0xf8
-> [14201.974938]  dump_stack+0x18/0x28
-> [14201.974940]  print_bad_pte+0x138/0x1d8
-> [14201.974943]  vm_normal_page+0xa4/0xd0
-> [14201.974945]  unmap_page_range+0x648/0x1110
-> [14201.974947]  unmap_single_vma.constprop.0+0x90/0x118
-> [14201.974948]  zap_page_range_single_batched+0xbc/0x180
-> [14201.974950]  zap_page_range_single+0x60/0xa0
-> [14201.974952]  unmap_mapping_range+0x114/0x140
-> [14201.974953]  vfio_pci_zap_and_down_write_memory_lock+0x3c/0x58
-> [vfio_pci_core]
-> [14201.974957]  vfio_basic_config_write+0x214/0x2d8 [vfio_pci_core]
-> [14201.974959]  vfio_pci_config_rw+0x1d8/0x1290 [vfio_pci_core]
-> [14201.974962]  vfio_pci_rw+0x118/0x200 [vfio_pci_core]
-> [14201.974965]  vfio_pci_core_write+0x28/0x40 [vfio_pci_core]
-> [14201.974968]  vfio_device_fops_write+0x3c/0x58 [vfio]
-> [14201.974971]  vfs_write+0xd8/0x400
-> [14201.974973]  __arm64_sys_pwrite64+0xac/0xe0
-> [14201.974974]  invoke_syscall+0x50/0x120
-> [14201.974976]  el0_svc_common.constprop.0+0xc8/0xf0
-> [14201.974978]  do_el0_svc+0x24/0x38
-> [14201.974979]  el0_svc+0x38/0x130
-> [14201.974982]  el0t_64_sync_handler+0xc8/0xd0
-> [14201.974984]  el0t_64_sync+0x1ac/0x1b0
-> [14201.975025] Disabling lock debugging due to kernel taint
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+> ---
+>  include/asm-generic/pgalloc.h | 18 ++++++++++++++++++
+>  include/linux/mm.h            |  3 +++
+>  2 files changed, 21 insertions(+)
 > 
-> This value (0xfefefefefefefefe) is very special - it's a "poison" value.
-> QEMU or the VFIO driver may have attempted to access or manipulate a
-> page that has already been freed.
+> diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
+> index 3c8ec3bfea44..b9d2a7c79b93 100644
+> --- a/include/asm-generic/pgalloc.h
+> +++ b/include/asm-generic/pgalloc.h
+> @@ -28,6 +28,8 @@ static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
+>  		return NULL;
+>  	}
+>  
+> +	ptdesc_set_kernel(ptdesc);
+> +
+>  	return ptdesc_address(ptdesc);
+>  }
+>  #define __pte_alloc_one_kernel(...)	alloc_hooks(__pte_alloc_one_kernel_noprof(__VA_ARGS__))
+> @@ -146,6 +148,10 @@ static inline pmd_t *pmd_alloc_one_noprof(struct mm_struct *mm, unsigned long ad
+>  		pagetable_free(ptdesc);
+>  		return NULL;
+>  	}
+> +
+> +	if (mm == &init_mm)
+> +		ptdesc_set_kernel(ptdesc);
+> +
+>  	return ptdesc_address(ptdesc);
+>  }
+>  #define pmd_alloc_one(...)	alloc_hooks(pmd_alloc_one_noprof(__VA_ARGS__))
+> @@ -179,6 +185,10 @@ static inline pud_t *__pud_alloc_one_noprof(struct mm_struct *mm, unsigned long
+>  		return NULL;
+>  
+>  	pagetable_pud_ctor(ptdesc);
+> +
+> +	if (mm == &init_mm)
+> +		ptdesc_set_kernel(ptdesc);
+> +
+>  	return ptdesc_address(ptdesc);
+>  }
+>  #define __pud_alloc_one(...)	alloc_hooks(__pud_alloc_one_noprof(__VA_ARGS__))
+> @@ -233,6 +243,10 @@ static inline p4d_t *__p4d_alloc_one_noprof(struct mm_struct *mm, unsigned long
+>  		return NULL;
+>  
+>  	pagetable_p4d_ctor(ptdesc);
+> +
+> +	if (mm == &init_mm)
+> +		ptdesc_set_kernel(ptdesc);
+> +
+>  	return ptdesc_address(ptdesc);
+>  }
+>  #define __p4d_alloc_one(...)	alloc_hooks(__p4d_alloc_one_noprof(__VA_ARGS__))
+> @@ -277,6 +291,10 @@ static inline pgd_t *__pgd_alloc_noprof(struct mm_struct *mm, unsigned int order
+>  		return NULL;
+>  
+>  	pagetable_pgd_ctor(ptdesc);
+> +
+> +	if (mm == &init_mm)
+> +		ptdesc_set_kernel(ptdesc);
+> +
+>  	return ptdesc_address(ptdesc);
+>  }
+>  #define __pgd_alloc(...)	alloc_hooks(__pgd_alloc_noprof(__VA_ARGS__))
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 1ae97a0b8ec7..f3db3a5ebefe 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2895,6 +2895,9 @@ static inline void pagetable_free(struct ptdesc *pt)
+>  {
+>  	struct page *page = ptdesc_page(pt);
+>  
+> +	if (ptdesc_test_kernel(pt))
+> +		ptdesc_clear_kernel(pt);
+> +
+>  	__free_pages(page, compound_order(page));
+>  }
+>  
+> -- 
+> 2.43.0
 > 
-> Thanks in advance for any insights!
-
-I have no insight whatsoever, but there is very little in this report
-to go on. So here are the questions you should ask yourself:
-
-- How specific is this to GICv4.1?
-
-- Does it stop triggering if you disable direct injection?
-
-- What makes you think this value is explicitly a poison value rather
-  than some other data?
-
-- Who writes this "poison" data?
-
-- Does it reproduce on 6.17 rather than a dodgy 6.16-rc4?
-
-- What operation was QEMU performing on the device when this happens?
-
-- Using what devices passed to the guest?
-
-- What do the usual debug options (KASAN, lockdep) report?
-
-- What is so specific about this HW?
-
-- What is this out-of-tree module?
-
-- Have you tried without it?
-
-These are the questions I'd ask myself before even posting something,
-because each and every one of them is relevant. There are probably
-more, but once you have answered these question, you should be able to
-figure out what the gaps are in your understanding of the problem.
-
-Thanks,
-
-	M.
 
 -- 
-Without deviation from the norm, progress is not possible.
+Sincerely yours,
+Mike.
 
