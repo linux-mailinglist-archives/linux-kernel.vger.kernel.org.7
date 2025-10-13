@@ -1,189 +1,232 @@
-Return-Path: <linux-kernel+bounces-851373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A09DBD64E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:59:27 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58EEBD64E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68EE218A750E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:59:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DE20334FE19
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD0A2EBDC7;
-	Mon, 13 Oct 2025 20:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749941D88A4;
+	Mon, 13 Oct 2025 20:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gNZRzhsN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BDVoypSt"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E87D1CAA92
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8242F1FC8
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760389158; cv=none; b=Xfl2dnTIKlLVgX/qpYqHGOZ4o6QP0n/0UyA0cAHZdiQC/ievPhSiWtBgDErPZ3zS9mZjqibJpX/ETDSa10hTSI5C9Fc1YCnDMIqDh4dsh4Qf4VeHSghJeGvVOJwpeYCgZJJreO6wGBl/toU929IIPAh/wSFoPEwpYEskKCijRbA=
+	t=1760389166; cv=none; b=h1TCQrv60489TZ0ihmePktA2FX1grgTqnr7pTQsudKisEZBHK5HTbyrFw44ir70XhpDbh3gjYH/doN1Fwclm646N9dowz0FXK2HVJQ4cYt1TZX5F3YDADHvggMOoCJ96FEWaVla9Mr4yieFNxIh+9o4DoLGNaCMELOD1VidaL4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760389158; c=relaxed/simple;
-	bh=F6Rs8Om+koD8eX7FMENUXtv2uSuMCXLJo1Xg8ht+esM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=piBMIIa621MFkFPUNB+yrjaBHucdXcdt0+eOvgQS5up8cwbeHQc5ImYxmb2SZIuSQJFgCwjXBaP+VTenT07Pr98WvGVIi28jBLOvLW7IBZ3WsRqE+uHt+3bPsRmSgYbVLzA9+TRST9B3AcPBSX8IipV30/Q9w2YjpZE4g3xESPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gNZRzhsN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DHD87U020493
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:59:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ySrLifkltjX1MyeBlHP2PYxG
-	vJxVD9I05Z9UyzULgc0=; b=gNZRzhsNzNZJIeN27FEt2JANa184xNXwZi/jDXia
-	NReWbxnQFjpMau9jGzG0g0/UaxGJpbiVHMrVEV+iSVfvK1DuBSeBFeGjYZL/u+Ls
-	cuOqmcePe6AIB+j1fN46U9FZEq0XU6AD04DoAqweAAJnr0vTtYUr4UcUutEAr+m7
-	5r8KgHAmHvCq7vmGeKwH9841UM8bKj3ajBStl+50SdcpfZFYaF1pSfBeJ1KrhQ/x
-	pO4/EpY46lDd4f5SzYCQ2JB1M0/3yZni831wCb/4SbWcf6/cny36rA1kJUfC05E0
-	9bjlutOVTVHICrMQmSD7CWc/CgnnB4gbAlYreyDytXs5kA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd8x7tp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:59:14 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8544316ef6aso608534785a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:59:14 -0700 (PDT)
+	s=arc-20240116; t=1760389166; c=relaxed/simple;
+	bh=V0o0YdnKfawFG0S/LxD4c2ONmIHjSbuWqAGiMW/MfF8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IIFuqF/7wXWzQm9wCnzYfzbkRZIMXoZm//2C185j+KMfIfFjmEudhdOQ69o+BR6aBhjForjus3dvB49OnwjkNQgikizIQkcyr2rMoXMwGzv1Jxd9dvHO8UvlTrPyyQj4j7C8vvDefyMIy0QO5XeNveVmubWuzQVoJnH9R2eaeuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BDVoypSt; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339ee7532b9so24085457a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760389162; x=1760993962; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rsLbcQxnVzBTofG5buFKjSgLgx+LWk9MVyYKn5hZEiw=;
+        b=BDVoypStYj4vZ/RT7BvmXGvUPmRDE8Rne14rBjZ0c8GFRa06gn3M5/O6iLjLmB2jZr
+         5JsQ0/L3/GmrVQu+26oC7B450qEK2QdDMfWv4mIyOMVA/LpIYpm3VNKcu2b2wwen8g4s
+         ylwygoNWHQ0zMz5qyJ/PM7c7VH/AZtNx5ot80cGcrXgCNKS9tYaBc4TeLAk3wc7GRNXP
+         jycltPhJStfhtVb2l5D6KHZXoQKjxoj82o9QMyfS2Btv45ho95Q+fdc6Sn83mQrUBDlu
+         a2yLTqc75SpG9snOb2/INL6oAT1IBkWc9PiiUQcDi5rBFfueFegxzBl1jFY/ikn5wY2M
+         92vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760389153; x=1760993953;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ySrLifkltjX1MyeBlHP2PYxGvJxVD9I05Z9UyzULgc0=;
-        b=XzEhrCVkp9fJ/UhXuyckV3SaAzsX4gITxr1SmTeYEmEUZysMPrCBxehgnozEcYZDPq
-         3Z4/NkFB1MKt+rKeC4jBJnvz/Kaz9tg7G1EW76tJsAVdfcZREk2LKAlfTFO2b2SFlCiC
-         4SYfoV0/Cpej9EEJO3dSr1zAYB1YLGFa8KlSsKdnA5P8DbcZLwu3Hi8s1SfAiPbmin/n
-         kab2hHfl2noZNAm1uuzB8S3kxOTJL3JIakjMGOiTTOGxDT99xRCqai0b9chIKntWGBlE
-         lf1oHO9N3kTH7ogY90UdfCIq+i40sFWjl1EIm10oQ57tVXTsHxl7nvAIXfBaJLQTbs4h
-         iNUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxce9ce/07HtAPkLZX3Pg64r3y69XrzrJUEXp4w4JqxanY13n+jiCZr41xHfRWsHBhM0WE1zhEsDtDDJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkizQvfcfHR8+DPuLTF9OiizDTRgxCNXp0+nfzRNp5N8+cv1+3
-	YUAodyj6HmJbPfTXd15XZs0JqShndrazGQvVbZmTkZ+wCsINZn8a+wumHLfnTZg08AHJ0YBWNMp
-	ZhHSrvNpW5g0tfD+AgfUmFM2RfjJc5Gqh9t8+gkgPdIvHi3WFAy6EuogUj51uEDcVop4=
-X-Gm-Gg: ASbGnct8+tCnrMzsjgkv1uQg2lTLA+RkxfYZs+XexN3OZbtRcj20ziBroGTtZaZLSA0
-	I+X0LZ+Vya7r5TlysX+m7gdYenjCs/K5AmT8yFz8ITr/hGC4+62eGe3mBQPxc1RJHMECAyd1a9c
-	kpMn+syP0127qQf29iFO5KW46uoE8acsty7osb6rn/tIM4ZC81m6sG/jFYDV8Zy4AF0y5dgrmGW
-	FxzOEhP6IqNbnJ3jbVWyqaL0y0pLb4BVL6qgAFHPwqUxXlQXqvdwbNmqHSlVVYoWrhazVPudIhB
-	2qVzQRWTbeoSv/6JgpT8hvukm6RVa5eygja705JNPcOZQ2OK243WPxEeCZRiqCn7fOQ35oZzuXh
-	AFOQtWm8QCf0P6sk4/u7Tk4WQtP9G3xtQ7K4IynIkoU7fOC1LLBLU
-X-Received: by 2002:a05:620a:17ac:b0:85c:bb2:ad9c with SMTP id af79cd13be357-88353b33b3emr2867039585a.53.1760389153340;
-        Mon, 13 Oct 2025 13:59:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDcNjBXnK6hzJ9vsR2bUTJhKX6nknppdpL1zRylepA4C0kgR1fgp6jvWThoAE+XD38Yq28FA==
-X-Received: by 2002:a05:620a:17ac:b0:85c:bb2:ad9c with SMTP id af79cd13be357-88353b33b3emr2867037285a.53.1760389152901;
-        Mon, 13 Oct 2025 13:59:12 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881f8651sm4441041e87.30.2025.10.13.13.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 13:59:12 -0700 (PDT)
-Date: Mon, 13 Oct 2025 23:59:10 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-Message-ID: <lq2etybizdf3jqregv2gj64u3kwdtmz3ly23c7wy4chjue7agx@2n6ehezkahz3>
-References: <20251013143658.25243-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.b5126fec-b83c-46dd-9f18-6b82f3894607@emailsignatures365.codetwo.com>
- <20251013143658.25243-3-mike.looijmans@topic.nl>
+        d=1e100.net; s=20230601; t=1760389162; x=1760993962;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rsLbcQxnVzBTofG5buFKjSgLgx+LWk9MVyYKn5hZEiw=;
+        b=sQSD+MpEtfU3OSVH/VQrdKhUHJKUS5lkcYtp1nUIP7q9ZJNO2G5R2L0fSu4U8uoUay
+         13/p/rTaFAhU7iCAczYdOWYPDTlB4v8XTBjpG3hJf3yEdQsRmLS6wTs2ji1Sb3UU7Tcc
+         7AYKn2RZKVL1i/zLpAOlXPlASeVnlYojGpXQ/iujp7E3Px9kv+HR6/xHWOqBpuq+YWIk
+         sArMAlBsETIQQMMitbofDwjLdbVTqeh4/UTKmXJbBQExFtaGX1S2qu5MXRU561LBzEwA
+         5sjVOwDTHA9RQSHk2A0nIuc5yUlNLD4owVaIuI99pNJhLGKNEhz6pKeijiaLnG2XhDbP
+         k7WA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEw2QpSf5aO2Q77DiaIhzK4/6LOgyB1iYsDeDqR6YmLHe7F7xtertVnZb/xynVRbafOrRPKl4NYGsz9sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwguaAbokAUu86vw6kz+vrMMi7IbGFHczMMoohEIYVESs2orziR
+	4pcvnlGVJcolQWobMbPokncCJo4ab70CkVLUM2+3/+tMo4nyGm73OquQt19HJQmNs2C+9xApwkk
+	RxRzQVg==
+X-Google-Smtp-Source: AGHT+IH3W7hslsSg1ZfruAgSMSPE57JiY/2SS4XyoAzw59MpeXjInd8g5McNYn7d63ASeoC/WcTr2wqSW2U=
+X-Received: from pjyu10.prod.google.com ([2002:a17:90a:e00a:b0:330:793a:2e77])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38ce:b0:32e:23fe:fa51
+ with SMTP id 98e67ed59e1d1-33b511188e7mr30269535a91.9.1760389162357; Mon, 13
+ Oct 2025 13:59:22 -0700 (PDT)
+Date: Mon, 13 Oct 2025 13:59:21 -0700
+In-Reply-To: <ffc9e29aa6b9175bde23a522409a731d5de5f169.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013143658.25243-3-mike.looijmans@topic.nl>
-X-Proofpoint-ORIG-GUID: eUvZoTsac-_1DG_ViIM0uh3lhNodz_-8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX237sMNna9MYZ
- ikhB8QK1oT0hvdE02LkoSO6Uoq3NUz+uk8lm0vcPq2vmtrgwmFiDwU9PSTkZfKlTJUf/HRdJnIP
- HHvVVYYsF3Kko8ac6FwIDSdpp2BLfawFldy+fn68mXJGCOkf9blL8qtlVSFY2GNLRlZuGUB07Kw
- rKKgOH2qk+jiKeo7h0P9uCnunxdH+mAyqeh0cNjRpt2d20MDGpvP4qlQKu0L9snj8MBv4wuwrQC
- z6jmZi4Zc8CwCfAYkTRLQ2m68pv3cHzbbBl2DrjiqACsFG6UYw3SY3FYRf4aEES72w1mdyQ/4lF
- vMQfybCQ2GPZ8z0e4nWdrIwSVAf6Hrsjvv3GTpYKSAuYMjMWGYYrfhQUX1fqx+vg7CfAsNSYydG
- vcDHsOAc+gE5rB+5fnlqngLCgaVALQ==
-X-Proofpoint-GUID: eUvZoTsac-_1DG_ViIM0uh3lhNodz_-8
-X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68ed6822 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=Z6EfDJrRAAAA:8 a=EUspDBNiAAAA:8 a=vJdPPGod3d2eY7P0RLwA:9
- a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=GLvejNd0Yr38jcbvy3o4:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_07,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+Mime-Version: 1.0
+References: <20251010220403.987927-1-seanjc@google.com> <20251010220403.987927-4-seanjc@google.com>
+ <ffc9e29aa6b9175bde23a522409a731d5de5f169.camel@intel.com>
+Message-ID: <aO1oKWbjeswQ-wZO@google.com>
+Subject: Re: [RFC PATCH 3/4] KVM: x86/tdx: Do VMXON and TDX-Module
+ initialization during tdx_init()
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Chao Gao <chao.gao@intel.com>, 
+	Kai Huang <kai.huang@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dan J Williams <dan.j.williams@intel.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "xin@zytor.com" <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Oct 13, 2025 at 04:36:50PM +0200, Mike Looijmans wrote:
-> The tmds181 and sn65dp159 are "retimers" and hence can be considered
-> HDMI-to-HDMI bridges. Typical usage is to convert the output of an
-> FPGA into a valid HDMI signal, and it will typically be inserted
-> between an encoder and hdmi-connector.
+On Mon, Oct 13, 2025, Rick P Edgecombe wrote:
+> On Fri, 2025-10-10 at 15:04 -0700, Sean Christopherson wrote:
+> > @@ -3524,34 +3453,31 @@ static int __init __tdx_bringup(void)
+> >  	if (td_conf->max_vcpus_per_td < num_present_cpus()) {
+> >  		pr_err("Disable TDX: MAX_VCPU_PER_TD (%u) smaller than number of logical CPUs (%u).\n",
+> >  				td_conf->max_vcpus_per_td, num_present_cpus());
+> > -		goto get_sysinfo_err;
+> > +		return -EINVAL;
+> >  	}
+> >  
+> >  	if (misc_cg_set_capacity(MISC_CG_RES_TDX, tdx_get_nr_guest_keyids()))
+> > -		goto get_sysinfo_err;
+> > +		return -EINVAL;
+> >  
+> >  	/*
+> > -	 * Leave hardware virtualization enabled after TDX is enabled
+> > -	 * successfully.  TDX CPU hotplug depends on this.
+> > +	 * TDX-specific cpuhp callback to disallow offlining the last CPU in a
+> > +	 * packing while KVM is running one or more TDs.  Reclaiming HKIDs
+> > +	 * requires doing PAGE.WBINVD on every package, i.e. offlining all CPUs
+> > +	 * of a package would prevent reclaiming the HKID.
+> >  	 */
+> > +	r = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "kvm/cpu/tdx:online",
+> > +			      tdx_online_cpu, tdx_offline_cpu);
 > 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> ---
-> 
-> Changes in v7:
-> Add DRM_DISPLAY_HELPER to Kconfig
-> 
-> Changes in v6:
-> Add DRM_DISPLAY_HDMI_HELPER to Kconfig
-> Change "ti,mode" to "ti,retimer-mode"
-> 
-> Changes in v5:
-> Really added vcc/vdd regulator support
-> "oe" gpio is now "reset" (reversed logic)
-> devicetree enums ti,equalizer and ti,mode
-> Always disable HDMI_SEL (formerly "dvi-mode")
-> 
-> Changes in v4:
-> dev_err_probe, this_module, of_match_ptr
-> Use fallback compatible
-> Add vcc-supply and vdd-supply
-> 
-> Changes in v3:
-> Lower-case hex values and use defines for EYESCAN registers
-> Remove equalizer code (unlikely to be used)
-> Remove attributes (no longer useful, undocumented)
-> Fix build for 6.17 kernel
-> Use devm_drm_bridge_alloc
-> Sort includes and add linux/bitfield.h
-> Check chip type and complain on mismatch
-> 
-> Changes in v2:
-> Use atomic_enable/disable
-> Use #defines for bit fields in registers
-> Allow HDMI 2 compliance
-> Filter modes on clock range
-> Use cross-over pixel frequency instead of manual overides
-> Devicetree bindings according to standards
-> 
->  drivers/gpu/drm/bridge/Kconfig      |  13 +
->  drivers/gpu/drm/bridge/Makefile     |   1 +
->  drivers/gpu/drm/bridge/ti-tmds181.c | 427 ++++++++++++++++++++++++++++
->  3 files changed, 441 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/ti-tmds181.c
-> 
+> Could pass NULL instead of tdx_online_cpu() and delete this version of
+> tdx_online_cpu().
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Oh, nice, I didn't realize (or forgot) the startup call is optional.
+ 
+> Also could remove the error handling too.
 
+No.  Partly on prinicple, but also because CPUHP_AP_ONLINE_DYN can fail if the
+kernel runs out of dynamic entries (currently limited to 40).  The kernel WARNs
+if it runs out of entries, but KVM should still do the right thing.
 
--- 
-With best wishes
-Dmitry
+> Also, can we name the two tdx_offline_cpu()'s differently? This one is all about
+> keyid's being in use. tdx_hkid_offline_cpu()?
+
+Ya.  And change the description to "kvm/cpu/tdx:hkid_packages"?  Or something
+like that.
+
+> > +	if (r < 0)
+> > +		goto err_cpuhup;
+> > +
+> > +	tdx_cpuhp_state = r;
+> >  	return 0;
+> >  
+> > -get_sysinfo_err:
+> > -	__tdx_cleanup();
+> > -tdx_bringup_err:
+> > -	kvm_disable_virtualization();
+> > +err_cpuhup:
+> > +	misc_cg_set_capacity(MISC_CG_RES_TDX, 0);
+> >  	return r;
+> >  }
+> >  
+> > -void tdx_cleanup(void)
+> > -{
+> > -	if (enable_tdx) {
+> > -		misc_cg_set_capacity(MISC_CG_RES_TDX, 0);
+> > -		__tdx_cleanup();
+> > -		kvm_disable_virtualization();
+> > -	}
+> > -}
+> > -
+> >  int __init tdx_bringup(void)
+> >  {
+> >  	int r, i;
+> > @@ -3563,6 +3489,16 @@ int __init tdx_bringup(void)
+> >  	if (!enable_tdx)
+> >  		return 0;
+> >  
+> > +	if (!cpu_feature_enabled(X86_FEATURE_TDX_HOST_PLATFORM)) {
+> > +		pr_err("TDX not supported by the host platform\n");
+> > +		goto success_disable_tdx;
+> > +	}
+> > +
+> > +	if (!cpu_feature_enabled(X86_FEATURE_OSXSAVE)) {
+> > +		pr_err("OSXSAVE is required for TDX\n");
+> > +		return -EINVAL;
+> 
+> Why change this condition from goto success_disable_tdx?
+
+Ah, a copy+paste goof.  I originally moved the code to tdx_enable(), then realized
+it as checking OSXSAVE, not XSAVE, and so needed to be done later in boot.  When
+I copied it back to KVM, I forgot to restore the goto.
+
+> >  	r = __tdx_bringup();
+> > -	if (r) {
+> > -		/*
+> > -		 * Disable TDX only but don't fail to load module if the TDX
+> > -		 * module could not be loaded.  No need to print message saying
+> > -		 * "module is not loaded" because it was printed when the first
+> > -		 * SEAMCALL failed.  Don't bother unwinding the S-EPT hooks or
+> > -		 * vm_size, as kvm_x86_ops have already been finalized (and are
+> > -		 * intentionally not exported).  The S-EPT code is unreachable,
+> > -		 * and allocating a few more bytes per VM in a should-be-rare
+> > -		 * failure scenario is a non-issue.
+> > -		 */
+> > -		if (r == -ENODEV)
+> > -			goto success_disable_tdx;
+> > -
+> > +	if (r)
+> >  		enable_tdx = 0;
+> > -	}
+> >  
+> 
+> I think the previous discussion was that there should be a probe and enable
+> step. We could not fail KVM init if TDX is not supported (probe), but not try to
+> cleanly handle any other unexpected error (fail enabled).
+> 
+> The existing code mostly has the "probe" type checks in tdx_bringup(), and the
+> "enable" type checks in __tdx_bringup(). But now the gutted __tdx_bringup() is
+> very probe-y. Ideally we could separate these into named "install" and "probe"
+> functions. I don't know if this would be good to do this as part of this series
+> or later though.
+> 
+> >  	return r;
+> >  
+> > 
+> > 
+> 
+> [snip]
+> 
+> >  
+> >  /*
+> >   * Add a memory region as a TDX memory block.  The caller must make sure
+> >   * all memory regions are added in address ascending order and don't
+> >   * overlap.
+> >   */
+> > -static int add_tdx_memblock(struct list_head *tmb_list, unsigned long start_pfn,
+> > -			    unsigned long end_pfn, int nid)
+> > +static __init int add_tdx_memblock(struct list_head *tmb_list,
+> > +				   unsigned long start_pfn,
+> > +				   unsigned long end_pfn, int nid)
+> 
+> One easy thing to break this up would be to do this __init adjustments in a
+> follow on patch.
+
+Ya, for sure. 
 
