@@ -1,198 +1,210 @@
-Return-Path: <linux-kernel+bounces-850494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB51EBD2FAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:32:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741B9BD2FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58F8F3C55C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:31:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 606B14F13CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFBE264F9F;
-	Mon, 13 Oct 2025 12:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBB327732;
+	Mon, 13 Oct 2025 12:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UDWRACod"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RG5gfZkD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1F327732
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028941F1534
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760358704; cv=none; b=Wbpsc8EiAYf/iCs50QIMyl2bEL7dnJSsC2mAZ51HABhJYXnHK/5mMeqFh+8HbgU74kTHTOrAylEPaNn5l0n3eMbLgSEq8VEVV48w78ShMEUXuN2Dcur/KX9lgKLAndih3KG6WmgFEoeSrnOX5OREGMmjrBkXgWXjlHvMy8+gQ6E=
+	t=1760358711; cv=none; b=VTWE5hJmKb7Yx6vBdaonNkPcncK2rq6UQgkzuBzy99rMBsBL8Mxx5KY7tihkmvap/EaxhNk6omchD8Ygqa/kabc6zc1ljpFOzAFSnhxqxr2UjulFbOEsGQF+KopDN6XYu0n3DSW+OtnCNNRm7nU4y/2BPKCNNwlzaDeyW/pX+iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760358704; c=relaxed/simple;
-	bh=aLIYcFa7UxscQgcjQ0eNijAq6ndbZdSSSR6fkKvSbXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBekvb2vNHRgb80yORR/gCi/3XQPSMIs00esTINHeyIHBDTIsLc1N16cA6NjyP/Jg7U/eEUpuG1enkA4IsaG5FhsAjym4RruRTTuUYmUuP04SUts1g/054QeSZf2tIs885uqzeSZmqjXLDrmc1PkWWcPn1DwZYx2AdQ612h3370=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UDWRACod; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760358701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8dwWTFnY01JMgC2QZA9VOzV/hbuJXScWrhj4pWb1ZI0=;
-	b=UDWRACodHEaMgoMazZNTXdzqwdi8oZVMWVwoVMCwf789rhjxn4vlcuwJNvymYFwdUoQNBD
-	pYVQJ6hKi0V7GucssyP97cmAwhRD1KNfTArWmzj9LJ7VPHPb0+b/HNt/Q52ipx6J+5lyYY
-	303KpDkxEh1HToIr4epQrS3S+XH9DR8=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-516-CFQlNKfUMEOcInJjPc-gFA-1; Mon, 13 Oct 2025 08:31:39 -0400
-X-MC-Unique: CFQlNKfUMEOcInJjPc-gFA-1
-X-Mimecast-MFC-AGG-ID: CFQlNKfUMEOcInJjPc-gFA_1760358698
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-42558f501adso3295641f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:31:39 -0700 (PDT)
+	s=arc-20240116; t=1760358711; c=relaxed/simple;
+	bh=dz8cx89HDxIcaxrZuEu5Yd98IbJB0V8Lfkh5M8KCFsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDIkJ0LdjzX0w93LXlJAMaMUlB/GKJdBCawbUiDPxPyaXt+e3mO0U0esDzXTYrF4zXWBDoLT+56TacoU92aMpJNJoTwrebiVdXL+eVpg1P0yR4XMPr64tGIb62QIc0Wv7xPbyTvlfv+GwPF5JTqiORAfYXxJbZVWfcFDofNcw18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RG5gfZkD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DA1orO000380
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:31:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cYNxqbays5cmz2HSt+aik4gYTlT8HzRJE2TAcbJc00E=; b=RG5gfZkDPqOcbesY
+	rfVW6bPEGX9tzIziEyGZZR8sGsmTBwq27ET3o7go0P3gkwiHQmViKW2ezPPKShIU
+	5PRayu/Zk0QPs0Li9tMb/in2D4S0jkp/yDhgXdrVJFHDtoeZiVmWK9wIAKhPWRoy
+	ezlE3z89gkWNjqJ3Twrwo25XY1kDNgvzl9AaDWNBBXkurwP8PGATBG8DLk+83/7K
+	CCNpEt+RhRRO9hvVxPiOlf1eopM1xx6h8HLnb2iqF4UaJ9p8o+TWtdFmE7Rgf/TX
+	YJzAEjSzx02ty/fzRU1OtLfFwyJMN1n/jeYwzcNLyGpjPh3UkWytZyU49Ql+WTBT
+	qSIJdg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfervhd0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:31:48 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-856c1aa079bso2241583985a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:31:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760358698; x=1760963498;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8dwWTFnY01JMgC2QZA9VOzV/hbuJXScWrhj4pWb1ZI0=;
-        b=nQNQEjQYa7ijVzKBMiOUVGS6qTVeG2Mf3EdBMdaX8M5Ezsnv3YYMbgMcUrrj1SMQPn
-         Vlda+I4dRbzs6c+jQCPTjnVmRcJX1wI8x5etjmmo1xI0scx7otyWVYQvrVAxsF2zmljc
-         zmq6CxEaFGcRTOq+HSmK9yhYc13itEl9S+k/wzJGsJaDKc6WKEiLc3aOHmohwT3CxKqZ
-         6eEESpsxPTMZNKZF/8210yM0C1XXD0yfqQJ06GOJ8gigP8JPpdF28AK4R9NJqcvUfJ8o
-         Ah6pNleSQEInxWhLjGxp77VmhAm3jniRpEv8czaV+9hbSv7y7nFFDjO8bvQgn3xYiIQq
-         J0Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCXI5uK43t5rHnOoqkIVXeeew5T/2jjO4R83MIEQ0bIUVaTpVB8zr9fkizu6jBgNMW3Os9DyVdnE/FXpYXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsSsX1gqcq9X/hqnehWdcEO9vu1PjG4vjFJ6t2coMkxYpklIEY
-	gWoiyCwJCOcQRAYdqXvfXsYjcu1Z4puCmMRV4J5dATLczXEVnisWy12h8+zzW1pRtWjwpYJ86VQ
-	unOZumnsq+hmLmRm4mdTjQ1XWb1zwFPsDWQGOf9leFh4BtrQaJnwsWVqL7hjmTZWMWQ==
-X-Gm-Gg: ASbGncsCqIAMwUVnzmHCiXRCK2AgaCpuZrmmV8fXALM2d1v7Pk/85J2Zq++H2OPJ2P+
-	N5NRXM1oA8xiMnhpyJxukUVk2G8FrfvGA2f4pT49rJoFAwxAd8E8IFR+jc/OaS39Smr1fubzGVe
-	T7mu1F5BodqPXvob+cq1cXbUqzwu45Z5EVcmiHhsTBeSWf4yd/nntWD1B63E76r3QBlkAdGVW91
-	kzd+F91LEMBtBxlV5wwC8ljZv53xvyCqLrN6XT4Y48tXm2DmbWqoUTT5B7CJiToRkKo2PxMcIaJ
-	DL1xoeCM7U0FFoiXhreEtFF01t4s8/IkmmqH1Cl11PDTSkw4PtPYOuk5D/f41TXbEIxyK5jktVv
-	a4Aw=
-X-Received: by 2002:a05:6000:25c6:b0:3fa:5925:4b11 with SMTP id ffacd0b85a97d-4266e8dd4a0mr13112711f8f.42.1760358698272;
-        Mon, 13 Oct 2025 05:31:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+rKhnncBM0Pv8kGyJiO+9pTdjKjpw6DAdSdAl+kaHZP46I4ToxAgGKi/qAMrrlAgZkXO50w==
-X-Received: by 2002:a05:6000:25c6:b0:3fa:5925:4b11 with SMTP id ffacd0b85a97d-4266e8dd4a0mr13112679f8f.42.1760358697872;
-        Mon, 13 Oct 2025 05:31:37 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e1284sm18037134f8f.45.2025.10.13.05.31.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 05:31:37 -0700 (PDT)
-Message-ID: <dfc18351-bb77-4099-bcdd-eb2bd4f1bea5@redhat.com>
-Date: Mon, 13 Oct 2025 14:31:35 +0200
+        d=1e100.net; s=20230601; t=1760358708; x=1760963508;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cYNxqbays5cmz2HSt+aik4gYTlT8HzRJE2TAcbJc00E=;
+        b=EW5ifQrc33bR5zipWaqRldbl+zE0wCvYUkaOZIuXW/taCFX1SDHQszKT7awBXk6nSm
+         9VpA7XVfLuYmptuLANPSC9+Yp7sTbvzd+W9U0Sc85i8gcHE1+Sne8ZI7rTxwMAc6KDHR
+         26JtjXithL/eSP7eQxEi05TqcKcCOHRxBv7Qocuc3qYCiYyenUDUDDpgiptU/MDuXAOz
+         LOe8f1vKvRH5CSjIIKI0W14pRUvuThFBueDg6Vs+hV6wVIC7qAacIpZdhsoQvJBN4jtD
+         V2KdinIEUdjXkBF6riyjz578ToHtVkFYuxov+NrCFT9gfkHD7loo9YTmxmF3JdZrXLkT
+         U9oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiAwpGokvgLqD9vjrzIJ5Y33SDW7QTUDuUCu6MMOeYC72X5YPg41kqjev+5epruOmhjGYcV295D2/Bjsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylLJ8tzdyat0vVOJTtjesvxjsNNynkaxt+GdZig8622KsI8wlj
+	KwRJAcsIN9+RDmJcmStCyicY0G4s9qmMyttd7pvmlcsnBwusR6qFLNREjcC/pMGsnc8B1yqmKmh
+	OyJE9atMW4LkwT+oWDJtOu5hm4x2kKtEimWjZpHRyGB6zFSuHLnkExReo8spuQsq93KE=
+X-Gm-Gg: ASbGncufajVWZ8AhNzgysRrQjERBEckb4UD2tpLdA3JaT3rC2x5WeluKh74vSEG8Ylx
+	SiB4/jIT2ZoAyw53VgCl3csIZ/perl3OwMThcyRNi3cPiuVb/DqoSA4oJ1Lbg/i+OHXKnIsshqM
+	15oSElxdWFdkNAXNBcU2Oyymuug/epvUTwZXOsbxRLeF3N9/oOXDcspvGZRwZAH+85MymqTe4jA
+	fDG7+WIe68Qu8yAWAOi6jIxvY4zwQNUGqNy1XtnN5wd4cSurmGiOrmLpTcS6stnwYAsfj/o5265
+	CR7sNKhuEs3/duZVy5yqRIgIJ+YoeA+1KDAlXv4oiH71kL1rw1r7N0+0g6scdapZRurIs4LQZJ4
+	uDwnoZ6umDmbD4Du2TTZ+ZFSaKEboeqo4BaEP51oFhmLpV+iYnWBV
+X-Received: by 2002:a05:620a:3954:b0:813:3a81:1a49 with SMTP id af79cd13be357-8820b47d622mr3460912885a.12.1760358707782;
+        Mon, 13 Oct 2025 05:31:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxWv8jBSeEMJrjh9fglJwfOjWcpLkZZq9O6emnAaN6L/NdN9TASZgfwtditG4j7n9Ie4Y6Dg==
+X-Received: by 2002:a05:620a:3954:b0:813:3a81:1a49 with SMTP id af79cd13be357-8820b47d622mr3460906385a.12.1760358707218;
+        Mon, 13 Oct 2025 05:31:47 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762e7b47ddsm31234111fa.21.2025.10.13.05.31.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 05:31:46 -0700 (PDT)
+Date: Mon, 13 Oct 2025 15:31:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Junjie Cao <caojunjie650@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Antonino Maniscalco <antomani103@gmail.com>,
+        Jonathan Marek <jonathan@marek.ca>, Eugene Lepshy <fekz115@gmail.com>,
+        Jun Nie <jun.nie@linaro.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH 2/3] drm/msm/dsi: support DSC configurations with
+ slice_per_pkt > 1
+Message-ID: <icj24ghckurcunjormsfhhscng4wfcxiyadl2z5xduitxxqqmp@iws3pssew5dx>
+References: <20251001135914.13754-1-caojunjie650@gmail.com>
+ <20251001135914.13754-3-caojunjie650@gmail.com>
+ <cwgn24f6tnmytd4omr2tul4e5jjin3ijji3ff3qkumqm2xe3t3@ntayu3m5kai3>
+ <CAK6c68jBwykcWZm3ckm3nwab-X9Are4rD-eauE4rXA2+XvuX1w@mail.gmail.com>
+ <9cafccd5-35d4-46c5-aa57-1b0b8ec116e8@oss.qualcomm.com>
+ <CAK6c68iV=n3BvMMa30FuehbMs7-U01s0saZnsYwPVoiyw0VTrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC RFC PATCH] mm: convert VM flags from macros to enum
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Ye Liu <ye.liu@linux.dev>, Andrew Morton <akpm@linux-foundation.org>,
- Ye Liu <liuye@kylinos.cn>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20251011093054.886460-1-ye.liu@linux.dev>
- <809f552d-3282-4746-ba49-066d2bd8d44f@lucifer.local>
- <7ca0960f-9d1a-4ba4-b074-a6502578b82e@redhat.com>
- <d619784b-b967-4795-aad9-6e79d4191b83@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <d619784b-b967-4795-aad9-6e79d4191b83@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK6c68iV=n3BvMMa30FuehbMs7-U01s0saZnsYwPVoiyw0VTrg@mail.gmail.com>
+X-Authority-Analysis: v=2.4 cv=R64O2NRX c=1 sm=1 tr=0 ts=68ecf134 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=RAbU-raeAAAA:8
+ a=pGLkceISAAAA:8 a=Vo2vBpsxqBqMA0PNVwMA:9 a=lqcHg5cX4UMA:10 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+ a=JiizpSU_mAIq9zsZDqn2:22
+X-Proofpoint-GUID: 5A374p9Vq5bxrINLX9bn5YbV1BsXXu5P
+X-Proofpoint-ORIG-GUID: 5A374p9Vq5bxrINLX9bn5YbV1BsXXu5P
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX5sJdYW1Q5IVs
+ y23ealjk1sfdfcQHmV8jqZgGxLN4rxgElx/OmAlA/iXRfSZwjsi3U/kJF1ua+pwHptmxShdEoFI
+ ewmgv4Ga1yQIvw5MqfA987bVqRwNaJ+8+2ixKss7R3F3ZgJUsGNVeJLQUPOFbM3Iz4dDZB/YosH
+ rGbMawhmSpPo4uox9hOeSpv24ParOdnSrYUiihsqnfpWfHTdFwQA8s/haVCZsOPFu5pNqflpV8W
+ 1/Wlznh36YuVk/ICsvtX3walbpeGP60kTmUehoZPciUItZzqddzxhUUXfSqrRxZqHrefas6nWm5
+ fnzepA/IG4b6tQW4qszevbjlTspEO9eQd1n/zPaVGmBqMB56KocRvpZjWNAjA6wW2dm4z99qT2M
+ V3e5V9ucR8AI38tDdVtMBra9aP/jow==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
 
-On 13.10.25 13:33, Lorenzo Stoakes wrote:
-> On Mon, Oct 13, 2025 at 01:12:20PM +0200, David Hildenbrand wrote:
->> On 13.10.25 13:04, Lorenzo Stoakes wrote:
->>> On Sat, Oct 11, 2025 at 05:30:52PM +0800, Ye Liu wrote:
->>>> From: Ye Liu <liuye@kylinos.cn>
->>>>
->>>> Hello MM maintainers and drgn community,
->>>>
->>>> This RFC proposes to convert VM_* flags from #define macros to enum
->>>> vm_flags. The motivation comes from recent drgn development where we
->>>> encountered difficulties in implementing VM flag parsing due to the
->>>> current macro-based approach.
->>>
->>> This isn't going to work sorry, it's not valid to have flag values as an enum
->>
->> I don't follow, can you elaborate? IIRC, the compiler will use an integer
->> type to back the enum that will fit all values.
+On Mon, Oct 13, 2025 at 07:04:43PM +0800, Junjie Cao wrote:
+> Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> 于2025年10月13日周一 17:39写道：
+> > On 13/10/2025 04:52, 曹俊杰 wrote:
+> > >  >Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com
+> > > <mailto:dmitry.baryshkov@oss.qualcomm.com>> 于2025年10月2日周四 10:04写道：
+> > >  >On Wed, Oct 01, 2025 at 09:59:13PM +0800, Junjie Cao wrote:
+> > >  >> From: Jun Nie <jun.nie@linaro.org <mailto:jun.nie@linaro.org>>
+> > >  >>
+> > >  >> Some panels support multiple slice to be sent in a single DSC
+> > > packet. And
+> > >  >> this feature is a must for specific panels, such as JDI LPM026M648C.
+> > > Add a
+> > >  >> dsc_slice_per_pkt member into struct mipi_dsi_device and support the
+> > >  >> feature in msm mdss driver.
+> > >  >>
+> > >  >> Co-developed-by: Jonathan Marek <jonathan@marek.ca
+> > > <mailto:jonathan@marek.ca>>
+> > >  >> Signed-off-by: Jonathan Marek <jonathan@marek.ca
+> > > <mailto:jonathan@marek.ca>>
+> > >  >> Signed-off-by: Jun Nie <jun.nie@linaro.org <mailto:jun.nie@linaro.org>>
+> > >  >> Signed-off-by: Junjie Cao <caojunjie650@gmail.com
+> > > <mailto:caojunjie650@gmail.com>>
+> > >  >> ---
+> > >  >>  drivers/gpu/drm/msm/dsi/dsi_host.c | 25 ++++++++++---------------
+> > >  >>  include/drm/drm_mipi_dsi.h         |  2 ++
+> > >  >>  2 files changed, 12 insertions(+), 15 deletions(-)
+> > >  >
+> > >  >Please extract the generic part, so that it can be merged through a
+> > >  >generic tree.
+> > >  >
+> > >
+> > > Sorry, I don't get it.  The generic part, generic tree? Do you mean
+> > > the drm tree? `slice_per_pkt >= 2` is seen on the panels of these
+> > > tablets that are equipped with qcom chips. I don't know if these
+> > > panels are used on other platforms, and if it is necessary to do it
+> > > in drm.
+> >
+> > There are two changes here:
+> > - MIPI DSI header change
+> > - msm DSI driver
+> >
+> > I've asked to split it to those two commits so that he change for
+> > drm_mipi_dsi.h is more obvious for reviewers and so that it can be
+> > merged through a drm-misc tree (or through drm-msm tree provided it gets
+> > a necessary ack).
+> >
 > 
-> switch (flags) {
-> 	case VAL1:
-> 	case VAL2:
-> 	etc.
-> }
+> Thanks for your clear explanation.
 > 
-> Is broken (compiler will say you cover all cases when you don't...)
-
-I assume you mean theoretically, because there is no such code, right?
-
+> I don't mind to add the field separately. But should I submit it
+> with the panel driver together? Otherwise, this field is unused
+> for a while.
 > 
-> An enum implies independent values that exhaustively describe all state, however
-> these flag values are not that - they're intended to be bit fields.
-> 
+> However, as you mentioned, this is not a part of standard, neither
+> mipi dsi nor VESA DSC. Recently, only Qualcomm devices require it
+> to calculate parameters, then we use them to program registers. Why
+> don't we parse the field from devicetree?
 
-Observe how we use an enum for FOLL_* flags, vm_fault_reason, fault_flag 
-and probably other things.
-
-But more importantly,
-
-enum pageflags { ... :)
+Because the value is uniquelly identified by the panel's compat string.
 
 -- 
-Cheers
-
-David / dhildenb
-
+With best wishes
+Dmitry
 
