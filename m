@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-850283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C76BD264F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BA8BD2619
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609FA18951BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193043AD7A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79FA52FF168;
-	Mon, 13 Oct 2025 09:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GygZDbCz"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EE92FDC3B;
+	Mon, 13 Oct 2025 09:52:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F1B2FF15A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2907C22F14C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760349297; cv=none; b=tRyC8sKMRwepN4WWhDGk2BnOTf79hrhsnYH9grQBDdFtlAx7QJA1SREBClekbtvzA0wtuxzRlqL08nWtIyZs8i45oTouAwnFpRwfpaNo7nLSRSUXvq3fNY8mg7Rdn7nozQnjB0aPn1lgK1S8Ce3UOHdY/5eTYoaiQtRSYVIm+XY=
+	t=1760349128; cv=none; b=nLEtIcsJgrhcHbyx1SaZU+cGAxwTlRaexmGh2/QLgrUQ0WVeySrME21HG6zUppiIzJ1fsSLHmOvwPtSUcaqyUOtEL6nDsCzwSrEfj6ENnHaNxwF86twzvx3+TmXZGsruq0QinEzlFrFJ3Zs4hnLJIz0J7HcJo3SvIpObUBKkZL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760349297; c=relaxed/simple;
-	bh=135EOhoKTKFqwmoxLeVvMWCOwk5PnK2lNA1ueQEBRko=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HBJZhvGWXKOb7JqHeQb2cLE2gqgpYnYrDQZlrfSEPYuQMXb+nqSuYgGX+ETo7J9RUb1tgo6ElwTCojgNTuH+hxFMilHKxO5iajQHKSGW1q3kqX0x1JjzLfJbzNt3qf/MBv13yxsbsjp7OscboYL6w19DdQMJ21e4IkDNlPvvFDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GygZDbCz; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78125ed4052so4771342b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:54:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760349296; x=1760954096; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1XBTCn0qOLXBNC2zwAF6b8+Yyipiu86tjZBownPcTO0=;
-        b=GygZDbCzK6vE6txljvNPxQjYxdgzvscY/znuMmt0a8HxSDSPsR3yF+g6qHB3VvYQtp
-         6LpEWEK+FzE706ZQEFFpT6WnP3wGeeMXVrHDgPR6nyL8WntxVHN5EDZ1Q8lRKbAnKmpD
-         /gEb7JnpZPUvxx749+K3Jj42AYG3YyPzEK38qh4gXvf+beiJ8TcoiZBYRHsTFpajHAaz
-         d2NKWOEwE+5tVk7lXopcty6Rodn6TnTuT1NoNb1+bXaFHeqNCDXb+aZ4uRUK+u/Jrrtx
-         lTo4txFVdAh7VqgYbCO/P2VbgdZriTyqzfpRuT8BWnKQTMqZtPErn5MUEP4z2zKV1NcF
-         Iyyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760349296; x=1760954096;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1XBTCn0qOLXBNC2zwAF6b8+Yyipiu86tjZBownPcTO0=;
-        b=o+J7CGMsjd6pxN8DfhnWE265h1oPjBBeVQTynRNAcQgxqNbojR1LB5oUgJS1aY1leS
-         Ac2HbntbYjoEJvawJAfV9ma3NS0DGSV6IZ+N/8rtyAFBoj2xYyNV3BvlNPcUNHu5Xf0Y
-         K6afqIYZPvV4FTPHJAjyjLuWlDbB5XxX/6G6LRberujjnaUjsoFd+Yxxu20ydexf13Ae
-         BOpwRe+ADucHDfXjjjU03Lbijlevxt62lDFIaZ81BIGgTN8ix4yYzxbMd6/P2NkU1Mz/
-         TZPVXd6bU3526Kd4E2cxUHtSauNmhlPBWm6kWMqrx+bIfDKrsnr2EV8BAUeoP0YrHXwd
-         m3eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwJD8w5U5mAkszKV9EpqnIFuxzW+McKPhmGvuVwLCpp0GQuHm8I2oR2LXUU0KVg7+LYgrqFMCDpObDiX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn22cEAzn7QWxRjVBb3XxklxKMfZh30wjwMP2gcgm2W0k5RpFJ
-	lupKiu5ivUaKLzRSwGUCRSalWRWgHkhizVKJ/zFRuS1p6Jz4irFFDlRA
-X-Gm-Gg: ASbGncsn7xSz2LjTiZUXP3Af2EsaBideVgkYD4+bNkP0Z1f6/jyrPzIrpxMahHDK74g
-	a4BsM249YiDy2FT6HfbMYfn/3yJyAcozFcEVndOru4xkbh0V6qnuA7ljiVSCz6vQLwmT9BifyPE
-	ElOJkERRaeat/2Zo0+Li4y1X07oND1eQ/G8kPG3aOyIYE/h3Nyz3prqz88TNCl6KuWkmns2W4Ig
-	Vr2IcBKxvlhvafbaW0Shk2xrklyqjU0cgEi4cJH2RO8g/rVpNA5TxGq8BoWuYK3tdjUkO+KD1mL
-	WUtYmpAWBn68bAAvo9RygoVu4MwLZjhZZkeMj5LykW2t17YjetoRmlmFzF7iJsTO8cxTOFb1wml
-	/OHTwbuu4KccjeS3JqkLy6UrE96Qyk431jnuhlRQ47R7AtAESvMqjD3LZnTcpPV+X
-X-Google-Smtp-Source: AGHT+IHCOC2UNw504vBDm8gMi8seqOaSIpg2GtFp/hPeTYk7Ed41YoQAxobGkgEagxM0zCsu3LNgjQ==
-X-Received: by 2002:a05:6a20:3d1c:b0:245:ff00:5332 with SMTP id adf61e73a8af0-32da80da55dmr25664345637.7.1760349295737;
-        Mon, 13 Oct 2025 02:54:55 -0700 (PDT)
-Received: from archlinux ([36.255.84.60])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678ddfeb7fsm8975030a12.19.2025.10.13.02.54.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 02:54:55 -0700 (PDT)
-From: Madhur Kumar <madhurkumar004@gmail.com>
-To: nphamcs@gmail.com,
-	hannes@cmpxchg.org,
-	shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Madhur Kumar <madhurkumar004@gmail.com>
-Subject: [PATCH RESEND] selftests/cachestat: add tmpshmcstat file to .gitignore
-Date: Mon, 13 Oct 2025 15:21:49 +0530
-Message-ID: <20251013095149.1386628-1-madhurkumar004@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760349128; c=relaxed/simple;
+	bh=ZE8I0omPAhpLklJEufsFutIeIgqDicG2eGMKv68bvCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbywKBOe4CARb+2CgSJb+MwmKfPto3hJafXoPT6ImJXlkv3ipuFtVM9yZP5WXnfUD9ztg9i5n8gZYSVvTAJB4KUM5ZjHjPJ5MEeCg7GRi2nZ3pVs6j01l5PWtht3vhahTwNoiobIhHHf8CJgpJg1HdkNq2gGL3WBzG6/G5QL0II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v8FDc-0005rG-Rl; Mon, 13 Oct 2025 11:51:52 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v8FDb-003MYD-2A;
+	Mon, 13 Oct 2025 11:51:51 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 5A2E1484A28;
+	Mon, 13 Oct 2025 09:51:51 +0000 (UTC)
+Date: Mon, 13 Oct 2025 11:51:51 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
+	linux-can@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
+ transceiver
+Message-ID: <20251013-unyielding-turquoise-mamba-76a0ea-mkl@pengutronix.de>
+References: <20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com>
+ <20251013-tja1145-support-v3-2-4a9d245fe067@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qdg74qywuxcudsqt"
+Content-Disposition: inline
+In-Reply-To: <20251013-tja1145-support-v3-2-4a9d245fe067@liebherr.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add the tmpshmcstat file to .gitignore to avoid
-accidentally staging the build artifact
 
-Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
----
- tools/testing/selftests/cachestat/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+--qdg74qywuxcudsqt
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
+ transceiver
+MIME-Version: 1.0
 
-diff --git a/tools/testing/selftests/cachestat/.gitignore b/tools/testing/selftests/cachestat/.gitignore
-index d6c30b43a4bb..abbb13b6e96b 100644
---- a/tools/testing/selftests/cachestat/.gitignore
-+++ b/tools/testing/selftests/cachestat/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- test_cachestat
-+tmpshmcstat
--- 
-2.51.0
+On 13.10.2025 11:19:19, Dimitri Fedrau via B4 Relay wrote:
+> Add basic driver support for NXPs TJA1145 CAN transceiver which brings the
+> PHY up/down by switching to normal/standby mode using SPI commands.
 
+The PHY supports standby and sleep mode. Does the PHY framework provide
+a way to configure this?
+
+Why do you put the transceiver into standby not in sleep mode?
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--qdg74qywuxcudsqt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjsy7MACgkQDHRl3/mQ
+kZzcWgf+OHX9MypGBZgJ7rndD9uqn3kqkAol7HambwaSnG5pp6Xn2gW/xl0Z9U9V
+pSA4CYciskgb/k5CXq16yyR3mgxElA8JWCE6R5gg0TC+Cf37zQy2tCxc2Kzp6e2g
+tNVxMeJyjowlFBN63AUyfWA3V98OiHMhdwOYKQ1vSWTYSa6FsOHAdlGJZGjblMXv
+74ffibAy8JXsIOC9McNvssCIQi/VdhwQOW5PlzJI6A1BpbHz3aQgwKLv/aKIx8J2
+DbaCFWR/kmKwzbEjsque/rhFvSF9JqaSFkvxdoY5YMVODMzlS0bhCMZ+Y1ugUUPi
+ZJngsX/6GrL/kDyydwEZxZl/umdeuA==
+=GoOc
+-----END PGP SIGNATURE-----
+
+--qdg74qywuxcudsqt--
 
