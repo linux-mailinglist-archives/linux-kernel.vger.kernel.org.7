@@ -1,299 +1,245 @@
-Return-Path: <linux-kernel+bounces-850769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EC1BD3A6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:47:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AFEBD3D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390EF189D2BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:47:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368733B28C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C4E2DA75A;
-	Mon, 13 Oct 2025 14:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87633309F0F;
+	Mon, 13 Oct 2025 14:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b="XejZ1RHl"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023126.outbound.protection.outlook.com [52.101.83.126])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kukn3Z9N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367F61F1313;
-	Mon, 13 Oct 2025 14:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.126
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366238; cv=fail; b=jYHORi2LMt6Zq5RtPzDtaMzU8QN4BCGIEf6AFcRavT1hvbkW6k1ngMoot9QupP1tR8MrfYuifUoCWxZeoNtESaxsdbWTsA3AGDU+77gFv745U80W2DJuzaAdU+sjU5BoQlyfSVIaINpoX5AltaST8HXRN3Rdsj4kc29kRzUs/ow=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366238; c=relaxed/simple;
-	bh=4yBUrwTHFxKn490BM7J5ShoQ2iESKMgcwITqLvAohVc=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version:
-	 References; b=mCQqu2dqKQcyNLJQpJtNg3sFDk9lNwz7OZ/Xd+BPI/s5opU6hN2Uj+Ght8gxLpfubWaHae5LL7S6DjZed2aAl3Nlh+cl8X2H3S8+qxTdU1ozIRpoGmL0wBRgTOwFhRbzkkJ0Rsul/6ERcIh5NcHW+PT7C965TksOG5YygNO0GqI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl; spf=pass smtp.mailfrom=topic.nl; dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b=XejZ1RHl; arc=fail smtp.client-ip=52.101.83.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=topic.nl
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TUL7nQkqr9qJUxVUp93x/oh/kzF9YWAflZ0gd98P9I0mF84ZgfKfAZVaIDdwpiAHRAQQsiwMFFbnioqgun8dX21wGXoY6y1t9uh+Lu9KKIYjKjQiafxryjmV/RoWkRCEDf0FJ7q/F4VXAXWsxQmMwanSd4J1KyJULQ4650457YKSnIWBjr3XRz2b268ZyAixTxDP2/0/oUj5kgtoHK1e8IYcSgTMUUgtFkWDgykEkHCVJTrtNA872vXC2gQHJuyy7aH6as8xe3xp9ra8se0wjG+J2BD92W+PgZcVOeqGyb40qXQsRc/GCKj7Urg3dS1lE7VSLpXSQ2nMVeUeCFenxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LQBgpt0koFNtwYCHmh+6eSg3DeIvTpzvwMN+etWE4UI=;
- b=TanRBd1D9+OqICFHa9kAiq88TpMAXD2sZQhElm/JfPC5kW3gHiMdz/95fWGOcAy5vyNSBItDNiqsJOys5nMNSGHwYQeWmtNPB28QDZNxsRLoFX1aiPq7BhDtJzXi34gO1ARL0MhBF5QGPvQU3P5Z3sSb0QhkV90S6mHN9WDBZK2K9hb5WPxiT4KNIH0SD4Hir1V5GA8oJ+8H/wAjz4j+7JsOnkCr1Z1UV4lWZIeZuH9Hv2uTfE8SuvLASsw+OyKBo488Qt+FUtWksowFs9PruQKDXH5RPmAynML5SBRMgudcosZkp0ZqCF8zv99S7BEsiFHwe+PdPftcRBeWqBTvnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 13.93.42.39) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=topic.nl;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=topic.nl; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LQBgpt0koFNtwYCHmh+6eSg3DeIvTpzvwMN+etWE4UI=;
- b=XejZ1RHlR1NIE6Pg6qTSone1RikikYsbUL4tuncKBHua0n8SL6QUzdfRIyZQpx5vIbxclcDqcfKDQAzu/XG9zUVG6m6U9c33H8oMPDA3nnqjx9xwOSOGup/SKGWYI5tHmlYcyfl4ge+o0Ay+3HgDwZrG1dzI7M66sPFTQ95n0TE2X1dkg1euWRM21opC+d009scuFontIRT8xepgQ+afG3Rz9+hcETsFyqBo4Zo1oT/mswolhzJHVPPmIYe0/bJ30iHst2lJ6moXPyk6pZzvj5ef9VT6YFBPrSt6/1Li2SqU/UkLm1vLxyWfSh1o/Y71jt2gieHt/+6S8kj9usOvOA==
-Received: from DUZPR01CA0200.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b6::10) by AM9PR04MB8633.eurprd04.prod.outlook.com
- (2603:10a6:20b:43c::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 14:37:12 +0000
-Received: from DB1PEPF000509E2.eurprd03.prod.outlook.com
- (2603:10a6:10:4b6:cafe::43) by DUZPR01CA0200.outlook.office365.com
- (2603:10a6:10:4b6::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Mon,
- 13 Oct 2025 14:37:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 13.93.42.39)
- smtp.mailfrom=topic.nl; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=topic.nl;
-Received-SPF: Pass (protection.outlook.com: domain of topic.nl designates
- 13.93.42.39 as permitted sender) receiver=protection.outlook.com;
- client-ip=13.93.42.39; helo=westeu12-emailsignatures-cloud.codetwo.com; pr=C
-Received: from westeu12-emailsignatures-cloud.codetwo.com (13.93.42.39) by
- DB1PEPF000509E2.mail.protection.outlook.com (10.167.242.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:37:12 +0000
-Received: from AS8PR07CU003.outbound.protection.outlook.com (40.93.65.52) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Mon, 13 Oct 2025 14:37:11 +0000
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=topic.nl;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by GV1PR04MB10195.eurprd04.prod.outlook.com (2603:10a6:150:1a8::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 14:37:04 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::b067:7ceb:e3d7:6f93]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::b067:7ceb:e3d7:6f93%5]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 14:37:04 +0000
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: dri-devel@lists.freedesktop.org
-CC: Mike Looijmans <mike.looijmans@topic.nl>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 0/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-Date: Mon, 13 Oct 2025 16:36:48 +0200
-Message-ID: <20251013143658.25243-1-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: AM8P190CA0002.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:219::7) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35142749D7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760366222; cv=none; b=seaQ1Prm6BA9P3ey3VcnWc39D/6zwef0ZsBq51BHkMjXQ1ldQ0CyoWNQHp0eD3shSAB0YLrdhPxBgrQhpUwur1MLerrCr7t8wOUzPbyjZWZzAxgs5CrEoTVzpgRaCJ/uRWcVKRsmYQWSYVUOs86sQfxC4rcJ2miWgB8tk8kPBB0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760366222; c=relaxed/simple;
+	bh=PYNJouYZOnK80Bm/nJhe6SqANkwVgSKIenFusl8KFig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N3+QB4IG+Tbdtjge7P7tz9tNi3jL+6rwKjuMmsIxcU/YYyoirexIZFUCr1SFvjeOWi4Kd/htuojDN4gB1+uuwlYNG+b8L7f+mHbNYixUb6DdRWZCx/GkTrdfIBSdOYdJVzr4WVT2Km1Jl0hQRte+PrBVho2pBd3m1OvSUgV1ZSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kukn3Z9N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54019C116C6
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760366222;
+	bh=PYNJouYZOnK80Bm/nJhe6SqANkwVgSKIenFusl8KFig=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Kukn3Z9Nzn2a5qoTTWwJ/2BFDGKq6Hd6Tyj77mRtqIMsChRoV1cxnS/z77xrFAS9k
+	 cy1DZbQFvPz+hBnECAVPg3R1xpsKtHqdJma1tUnQTElIHCBJsyUpX863yzITiXff8r
+	 lpeDt7yn8JTEw8cyTK9DA11L+pfaC5PtKGiLf2fuYEnZO8WtaLR+bXkKoTtCduyn/G
+	 U1eK1K/+BayvVHa4olVwlsDCDIRO3/Xp1ZoKj1RihdUp8oGunNXC3he2yXtcQxyj9Q
+	 zP1Yvvy/Td63mI2NJ+oO8kIfaltgxJlP+V5ZYAUHVJGn/usPYFHB+/lH7fUIoF3ZIC
+	 cV2yUCSycTDfQ==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5818de29d15so5363909e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:37:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDPM4D4UkPsMcmziZFkN5MiLK5QKO5nl2isV31QR804yPXAAWL0IFI47Pelu3W8NsWJERTIC9HxmWDRQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlAj2rdY4wohqLfV/lCM09zBePhnqewmae14Rog+GSfpCx9IzV
+	sHFpJT1annVaKH8F+CgfGdsPU8e9wufQjoiVLWAM0mBZqBvXR1eAMUMIlsviwRYGmC0Qstkf25E
+	/Dusjens/PbZiI7nQN4UwFICmwMPg0mQ=
+X-Google-Smtp-Source: AGHT+IGEEOZ9VfTQ6ngkF8TFWCWZsUsks3HYpMtK+pRGdVEaBkbYcmJuOavvMnwfEbP13CKVvY+U//cKRiULxIVuvpc=
+X-Received: by 2002:a05:6512:3d23:b0:58b:189:871e with SMTP id
+ 2adb3069b0e04-5906dc12463mr5914777e87.3.1760366220623; Mon, 13 Oct 2025
+ 07:37:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM8PR04MB7779:EE_|GV1PR04MB10195:EE_|DB1PEPF000509E2:EE_|AM9PR04MB8633:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71e254a5-bab9-495f-73a9-08de0a65ff37
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?2dwDaL84B94n9fFXj6TQ4BTb4i7D60dvaZKWiMwJbISNopIURvLjZl2LKFQ8?=
- =?us-ascii?Q?aEG04pxCoH19ml6SPH7d2aFLswjjHdye14Q7Bl51ci6P+dDd0RMKsRUo9Gvp?=
- =?us-ascii?Q?bj58GsdFpP5CAmBdN/pMLQ/gtf1vx/C/x/nB8IesKYviO6VWneiJArdd+BmT?=
- =?us-ascii?Q?EMpTwWsccWYZYcwSP7JTxuqdgs279atjrIDdPCvIIWExDtE2+8W/x2rtFZeM?=
- =?us-ascii?Q?Hko+c0i4VV3nYSilveNIpylu1RvC8sbrsSc3AOE8gRXs7H7Kw+A+ywxLBjwz?=
- =?us-ascii?Q?fr0KYxSpmOlaUdQ4UHfEwKjxSrHrMTxkuLd09hdbksunlJcjna5oo7Ui4bjy?=
- =?us-ascii?Q?3uMlO3ECSedMJDsyGb0PyN/7FPRXPxMg/CPqW9yWkpNacCj7u2GREk62GNtc?=
- =?us-ascii?Q?JwVsCLbWCPrF/mlLbOXC5FtiO2/SDyEqLB9tpR2wlOLkwozjDGvutySHoOis?=
- =?us-ascii?Q?A93eGc+K+20zylTw7usD2wEcks4r78IfSEe0y31jgxChnxpkERpQmWrQGyxt?=
- =?us-ascii?Q?AnUri9XnsvIu4VAMMNmynLOacJ0kPilXFSXFlzj1LY9XZlDXrDzLwvoOF804?=
- =?us-ascii?Q?yzlxjJMA2Bq7r/SgG1jBkvigY+MwJkv5FjXP4+eHHPniZ9bCcuOusGYJYJcB?=
- =?us-ascii?Q?Y9qxpMXlwshEa7hXbmEwK8mk4liM+QPC4U6ObBXsAGWf9Ctb1F2fFKwRpw3M?=
- =?us-ascii?Q?k1Q+HksKAdCQNZthxoJ+nmSZwssyo7WyUttOJGh5Zz+hp1MenpDGgCuSq6MF?=
- =?us-ascii?Q?9hOR6mU1wjphgTOhycMhL8T4BVODGwtiAGN1QaxyyF4k+FgqHLMF+XJC/cP5?=
- =?us-ascii?Q?udI6LG02bM1/A8bgUg2NH5J3YRyHUP8sAnydg/OVEpSClzoI78R5w/mk++wG?=
- =?us-ascii?Q?7TkslnoVWpMoGGb+i9AX1Z4gP7sXqhJlmzgpwoJNyVZ4ucSUqo39qf5ehTHO?=
- =?us-ascii?Q?vGsbN7O1BmEkhFGTJDfQX52eM/ygAnextrSK5yCN6cJwFg6MHzQ6oHwmpyte?=
- =?us-ascii?Q?uO4NGcjInI3lZOHaWVfRtq9HtlnvXdCemdmmGrMSB5vqZPWn+lJIC2XKnOfc?=
- =?us-ascii?Q?inv0XLSIgm7pFMbT+g8hFIpfeFm3depcJRDOUBtme+rL/h8p7sw2sFKP3dyL?=
- =?us-ascii?Q?0YMeC7m/iqSBAHUwg0JmgJxYBP/MDPwK6G4GQmBHAT8NKRaSeKtbzFCLlHbq?=
- =?us-ascii?Q?zv24GpzSM9y45HvFdNiKtt52GBBIvLOdJOvs9ZIOtMkKT4UFe3Yt2RVnWDaQ?=
- =?us-ascii?Q?lG+OGlp/T59MBq0D+FmxeP9THhetWt4hYJe80YN+Eos4h9UDgj5ewqsGGInT?=
- =?us-ascii?Q?cuit8kS4Jk4xCTy+wqavwXQRJLWmxrZa5zWUglNyOx+8JRNEhjR/72sKcJ/6?=
- =?us-ascii?Q?U67n37xkD0f87dincoV1JupFQjzmjkbU3t50txufuw773gGBSyfDkuJED/aN?=
- =?us-ascii?Q?42tsi3HXK64QD+8aI7m+nU58d2AYFANZhTfpAD82u2rvIZExtGzeDE0SE50E?=
- =?us-ascii?Q?yebVYQvABXq4PwdPMo7HgtKHfMDW5Mz/tKJR?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10195
-X-CodeTwo-MessageID: 3812055f-ba43-4924-8429-6bb0005138ba.20251013143711@westeu12-emailsignatures-cloud.codetwo.com
-References:
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.838056b5-4602-4059-85b7-fe97b8a79b86@emailsignatures365.codetwo.com>
-X-CodeTwoProcessed: true
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB1PEPF000509E2.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	a1006f71-023c-4a38-7fe3-08de0a65fa7c
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|35042699022|7416014|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SS+ogqejFFC6rDxlgwhcomeJ8EPohnFO+1vAOrwF+sVlkVhVXG+c09MhV/oW?=
- =?us-ascii?Q?IAC6+XbqVBU/Rv9tk/Bq/4fw7aHQ9Xtd/uHUhoQxvoYrxVD9hjhfhO15yPtL?=
- =?us-ascii?Q?luQ/PQdl733ljEuWXNgbjHflGaAt850Z/Jx+HwiX+L2NHUvymGTa72a9x3wX?=
- =?us-ascii?Q?TrYYK14ZpMezxv0JNRNSNga6VAVyJKG28pbVJWfI42u5q9HOr/1z8LowpPF5?=
- =?us-ascii?Q?x8dlRz1D5atTUHHLXxs/aD4Dae5SXTyeXDTVKa7tcJKR3TyAjv5yrereynJL?=
- =?us-ascii?Q?zIKCDZ6Wo7rNpKlQ58j28CwmtvDftnkbr5Z8GO+JbNIQALXnT6yq5qUIkXso?=
- =?us-ascii?Q?ZOu68cvJNOqgiBLAbkHL6TDlOE4K4p6+FL6/WwcuMgXT95HqYsyYogsR0JAL?=
- =?us-ascii?Q?hmYeHLVaYWQDKQPF2xRHaTdHMlpTojyb/H3Lf8fxFpvr7ZwT/Gt6lZ7D28Zo?=
- =?us-ascii?Q?IYGnbLY9RvCBaDhs1bxJudYHGm9XWQUfXNv0E/apbBJZWWFYAmz3k1bJ+g7V?=
- =?us-ascii?Q?kBkaPp0Zsb8OBAalC76QehKrIvimFu6Y4Jw6k5LPlbbvgHnW4i83RzwzrR3I?=
- =?us-ascii?Q?IV1/JpANXGxiBPYZstdwKTe2SxhpCV4rMoydYbU49r9UOcbENwIFJeaoTRuP?=
- =?us-ascii?Q?E5CmBjS180ntcNPRDkgm9GgL+pGv7zlzWL8Dlrr9VHkFXT2nWsqHyFA0kQtM?=
- =?us-ascii?Q?V3zhfYjj2LSRFyap7CCEaIVtI+usQiVFI44DewNaIihCnSZtQrh6Ss1Ut+te?=
- =?us-ascii?Q?lqY3GNqb6Izk3DwHcjQ64ESNcA14zGebK82I4WKiTYYFUweEkfxM7/G6PvUQ?=
- =?us-ascii?Q?GBhxwyNEMHmom6dEXdOgrcNFYotEM4soHtnfVkQ7AaWpuUjNRbdHpYxToXa8?=
- =?us-ascii?Q?GEEhhdPeEMUmmOBUhBpIpVUupyibugnEp4z6AJPS5aDGITos/63kG8d8H9Tz?=
- =?us-ascii?Q?mjVghvV5YVyW2SqwvhKGfcCqUWBN1EFa80QwhxP4lMrWifN4Zh33KyKYYk1q?=
- =?us-ascii?Q?V7fkHJGjhJczudcvlUUVQ9v9vW7NBsqYJBcIYQRhzlITHFiUUwJJGMCQy0RO?=
- =?us-ascii?Q?0fy3i1QSDDb7x+9udtbXVROl93XrOMk9KiovY+3M3F/4JdGQjcofUtmMC2i1?=
- =?us-ascii?Q?Xm+633oJC/DNbsVIXhYnNKdEgs5Y+7KZucVTKs79wqwydjRDVcHfT3pH7JYO?=
- =?us-ascii?Q?g+bKm1qSnbOc7382uWgP3gmfi3r/zJ57hInuzJwttBELprebxOf/WaVKvDpc?=
- =?us-ascii?Q?+Iumvf2PpclPzWuqq9/L0TTD0tPSUUFZ2kb2UeWTF6kWEOUGW4lDDCBLYPrP?=
- =?us-ascii?Q?Od3Y4gbfEpQH6XLeMVNhZk4u9dG2YQkNmxranMboVM5NFYnHKsaKp4WWDicW?=
- =?us-ascii?Q?UmyJ6PW2QB+MScMYwlYpr0kmamuoKMKTnII6AUKgpnkhRagjnRdjTw7L+mqB?=
- =?us-ascii?Q?VE9GcMOI8FvApiAnr+dJX4MgYjhUzqLTnumQI5uzyKi7L3untjOST18xq/yI?=
- =?us-ascii?Q?QXu6A9Jx5N4+bQM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(14060799003)(35042699022)(7416014)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: topic.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:37:12.0243
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71e254a5-bab9-495f-73a9-08de0a65ff37
-X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[13.93.42.39];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509E2.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8633
+References: <20250928085506.4471-1-yangtiezhu@loongson.cn> <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
+ <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
+ <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
+ <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
+ <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn> <CAMj1kXFLyBbRL+pAAQ6be6dxqFPiyw_Ug8qNQWaicZQ235HE=A@mail.gmail.com>
+ <8091e8fa-3483-af39-2f7a-e4eb62b0944f@loongson.cn> <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
+ <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
+ <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn> <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
+ <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
+ <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
+ <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com> <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
+In-Reply-To: <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 13 Oct 2025 16:36:49 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
+X-Gm-Features: AS18NWAv9gA3fJmZoOCeAqGMe6vicknpLFzEFxHn_UczaDtdwwo0A8kcuivI9jM
+Message-ID: <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
+Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 13 Oct 2025 at 16:09, Huacai Chen <chenhuacai@kernel.org> wrote:
+>
+> On Sat, Oct 11, 2025 at 11:59=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org>=
+ wrote:
+> >
+> > On Sat, 11 Oct 2025 at 08:01, Huacai Chen <chenhuacai@kernel.org> wrote=
+:
+> > >
+> > > On Sat, Oct 11, 2025 at 10:48=E2=80=AFPM Ard Biesheuvel <ardb@kernel.=
+org> wrote:
+> > > >
+> > > > On Sat, 11 Oct 2025 at 00:43, Huacai Chen <chenhuacai@kernel.org> w=
+rote:
+> > > > >
+> > > > > On Sat, Oct 11, 2025 at 3:29=E2=80=AFPM Tiezhu Yang <yangtiezhu@l=
+oongson.cn> wrote:
+> > > > > >
+> > > > > > On 2025/10/11 =E4=B8=8A=E5=8D=8811:40, Ard Biesheuvel wrote:
+> > > > > > > On Fri, 10 Oct 2025 at 19:54, Huacai Chen <chenhuacai@kernel.=
+org> wrote:
+> > > > > > >>
+> > > > > > >> On Sat, Oct 11, 2025 at 9:13=E2=80=AFAM Tiezhu Yang <yangtie=
+zhu@loongson.cn> wrote:
+> > > > > > >>>
+> > > > > > >>> On 2025/10/11 =E4=B8=8A=E5=8D=8812:25, Ard Biesheuvel wrote=
+:
+> > > > > > >>> ...
+> > > > > > >>>> Why do we need both (1) and (2)?
+> > > > > > >>>
+> > > > > > >>> Not both, either (1) or (2).
+> > > > > > >>> Which one do you prefer? Or any other suggestions?
+> > > > > > >>>
+> > > > > > >>> Taking all of the considerations in balance, we should deci=
+de
+> > > > > > >>> what is the proper way.
+> > > > > > >> As a summary, there are three methods:
+> > > > > > >> (1) Only link libstub with vmlinux.o during the final vmlinu=
+x link.
+> > > > > > >> (2) Remove the attribute __noreturn for real_kernel_entry() =
+and add while (1).
+> > > > > > >> (3) Ignore "__efistub_" prefix in objtool.
+> > > > > > >>
+> > > > > > >> Josh prefers method (1), I prefer method (3) but also accept=
+ method
+> > > > > > >> (1) if it is not only specific to loongarch.
+> > > > > > >>
+> > > > > > >
+> > > > > > > This is a false positive warning in objtool, which complains =
+about a
+> > > > > > > function that falls through, even though that can never happe=
+n in
+> > > > > > > reality.
+> > > > > > >
+> > > > > > > To me, it is not acceptable to modify how vmlinux.o is constr=
+ucted
+> > > > > > > also for other architectures, in order to hide some of its co=
+nstituent
+> > > > > > > parts from objtool, which do not use objtool to begin with.
+> > > > > > >
+> > > > > > >
+> > > > > > > If you are not willing to fix objtool, I suggest fixing the l=
+oongarch
+> > > > > > > code like this:
+> > > > > >
+> > > > > > Thank you.
+> > > > > >
+> > > > > > > --- a/drivers/firmware/efi/libstub/loongarch.c
+> > > > > > > +++ b/drivers/firmware/efi/libstub/loongarch.c
+> > > > > > > @@ -10,7 +10,7 @@
+> > > > > > >   #include "efistub.h"
+> > > > > > >   #include "loongarch-stub.h"
+> > > > > > >
+> > > > > > > -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned=
+ long cmdline,
+> > > > > > > +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdli=
+ne,
+> > > > > > >                                            unsigned long syst=
+ab);
+> > > > > > >
+> > > > > > >   efi_status_t check_platform_features(void)
+> > > > > > > @@ -81,4 +81,6 @@
+> > > > > > >
+> > > > > > >          real_kernel_entry(true, (unsigned long)cmdline_ptr,
+> > > > > > >                            (unsigned long)efi_system_table);
+> > > > > > > +
+> > > > > > > +       return EFI_LOAD_ERROR;
+> > > > > > >   }
+> > > > > >
+> > > > > > I tested the above changes, the falls through objtool warning c=
+an
+> > > > > > be fixed because efi_boot_kernel() ends with a return instructi=
+on,
+> > > > > > I think this is reasonable.
+> > > > > >
+> > > > > > efi_boot_kernel() has a return value, there are "return status"=
+ in
+> > > > > > other parts of efi_boot_kernel(), it should also return at the =
+end
+> > > > > > of efi_boot_kernel() in theory, although we should never get he=
+re.
+> > > > > >
+> > > > > > If there are more comments, please let me know.
+> > > > > I still don't want LoongArch to be a special case, which means
+> > > > > efi_boot_kernel() in fdt.c, jump_kernel_func in riscv.c and
+> > > > > enter_kernel in arm64.c should also be modified.
+> > > > >
+> > > >
+> > > > You have made LoongArch a special case by adding objtool support,
+> > > > which  arm64 and RISC-V do not have.
+> > > >
+> > > > So NAK to changing arm64 and RISC-V as well.
+> > > Hmmm, I want to know whether this problem is an objtool issue or an
+> > > efistub issue in essence. If it is an objtool issue, we should fix
+> > > objtool and don't touch efistub. If it is an efistub issue, then we
+> > > should modify efistub (but not specific to LoongArch, when RISC-V and
+> > > ARM64 add objtool they will meet the same issue).
+> > >
+> >
+> > It is an objtool issue in essence.
+> >
+> > The generated code looks like this
+> >
+> > 9000000001743080: ff b7 fe 57   bl      -332 <__efistub_kernel_entry_ad=
+dress>
+> > 9000000001743084: 26 03 c0 28   ld.d    $a2, $s2, 0
+> > 9000000001743088: 87 00 15 00   move    $a3, $a0
+> > 900000000174308c: 04 04 80 03   ori     $a0, $zero, 1
+> > 9000000001743090: c5 02 15 00   move    $a1, $fp
+> > 9000000001743094: e1 00 00 4c   jirl    $ra, $a3, 0
+> >
+> > 9000000001743098 <__efistub_exit_boot_func>:
+> > 9000000001743098: 63 c0 ff 02   addi.d  $sp, $sp, -16
+> >
+> > There is nothing wrong with this code, given that the indirect call is
+> > to a __noreturn function, and so the fact that it falls through into
+> > __efistub_exit_boot_func() is not a problem.
+> >
+> > Even though the compiler does nothing wrong here, it would be nice if
+> > it would emit some kind of UD or BRK instruction after such a call, if
+> > only to make the backtrace more reliable. But the code is fine, and
+> > objtool simply does not have the information it needs to determine
+> > that the indirect call is of a variety that never returns.
+> So the best way is to fix the objtool?
+>
+
+I think the best solution is to fix the compiler, and ensure that call
+instructions are always followed by some undefined or debug/break
+opcode. This works around this problem, but it also ensures that the
+return address does not point to the wrong function, which may cause
+confusion in backtraces.
 
 
-In the past I've seen (and contributed to) hacks that model the chips as
-phy or even (really!) clock drivers. Since the chip usually sits between
-a signal that is (almost) HDMI and a HDMI connector, I decided to stop
-lying and write it as a DRM bridge driver.
+> >
+> > So I don't mind fixing it in the code, but only for LoongArch, given
+> > that the problem does not exist on arm64 or RISC-V.
+> You believe this problem won't exist even if they add objtool support
+> (because their objtool will be sane)?
+>
 
-Our experience with these chips is that they work best under manual control
-enabling them only once the signal is active. At low resolutions (under 4k)=
-,
-the optimal setting is usually to only use redriver mode. Setting the
-termination to 150-300 Ohms improves EMC performance at lower resolutions,
-hence the driver enables 75-150 Ohms for HDMI2 modes and defaults to
-150-300 Ohm termination for other modes.
-
-
-Changes in v7:
-Add DRM_DISPLAY_HELPER to Kconfig
-
-Changes in v6:
-Rename ti,mode to ti,retimer-mode
-Add DRM_DISPLAY_HDMI_HELPER to Kconfig
-Change "ti,mode" to "ti,retimer-mode"
-
-Changes in v5:
-ti,equalizer and ti,mode changed to enum
-Rename ti,slew-rate to slew-rate
-Make properties conditional for DP159/TMDS181
-Remove ti,dvi-mode (always set to avoid conflict)
-Really added vcc/vdd regulator support
-"oe" gpio is now "reset" (reversed logic)
-devicetree enums ti,equalizer and ti,mode
-Always disable HDMI_SEL (formerly "dvi-mode")
-
-Changes in v4:
-Use fallback compatible
-dev_err_probe, this_module, of_match_ptr
-Use fallback compatible
-Add vcc-supply and vdd-supply
-
-Changes in v3:
-Fix duplicate links
-Add vcc-supply and vdd-supply
-Fix missing type for ti,slew-rate
-Lower-case hex values and use defines for EYESCAN registers
-Remove equalizer code (unlikely to be used)
-Remove attributes (no longer useful, undocumented)
-Fix build for 6.17 kernel
-Use devm_drm_bridge_alloc
-Sort includes and add linux/bitfield.h
-Check chip type and complain on mismatch
-
-Changes in v2:
-Document driver specific bindings like slew-rate and threshold
-Use atomic_enable/disable
-Use #defines for bit fields in registers
-Allow HDMI 2 compliance
-Filter modes on clock range
-Use cross-over pixel frequency instead of manual overides
-Devicetree bindings according to standards
-
-Mike Looijmans (2):
-  dt-bindings: drm/bridge: ti-tmds181: Add TI TMDS181 and SN65DP159
-    bindings
-  drm: bridge: Add TI tmds181 and sn65dp159 driver
-
- .../bindings/display/bridge/ti,tmds181.yaml   | 170 +++++++
- drivers/gpu/drm/bridge/Kconfig                |  13 +
- drivers/gpu/drm/bridge/Makefile               |   1 +
- drivers/gpu/drm/bridge/ti-tmds181.c           | 427 ++++++++++++++++++
- 4 files changed, 611 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,tmd=
-s181.yaml
- create mode 100644 drivers/gpu/drm/bridge/ti-tmds181.c
-
---=20
-2.43.0
-
-base-commit: 53e760d8949895390e256e723e7ee46618310361
-branch: drm-ti-tmds181
-
-Met vriendelijke groet / kind regards,=0A=
-=0A=
-Mike Looijmans=0A=
-System Expert=0A=
-=0A=
-=0A=
-TOPIC Embedded Products B.V.=0A=
-Materiaalweg 4, 5681 RJ Best=0A=
-The Netherlands=0A=
-=0A=
-T: +31 (0) 499 33 69 69=0A=
-E: mike.looijmans@topic.nl=0A=
-W: www.topic.nl=0A=
-=0A=
-Please consider the environment before printing this e-mail=0A=
+It depends on the compiler.
 
