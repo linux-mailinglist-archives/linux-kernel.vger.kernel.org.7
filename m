@@ -1,313 +1,105 @@
-Return-Path: <linux-kernel+bounces-851577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF931BD6D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:57:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272C6BD6C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68D8B4F8100
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261733A5426
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE9A2EBB9A;
-	Mon, 13 Oct 2025 23:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037872EB865;
+	Mon, 13 Oct 2025 23:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Em8FOyen"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cV6k6MJ8"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0FE2FABF7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B9D271459
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760399794; cv=none; b=T+esUixwWCc462GKEsToefTlGYAUVKJMMdDeOWIzqOOePoNVfl0fKgcNMQO+m8SgnlvhcDxH4R0EbzDpxK3sIM0jI13feinBxAHLq58iE2/jnW7T27R4GNyz4y/F7UsM0ovdZGRMwCY+LU3w69YW6HZ8Q5b2R+TgPMhbTTfyx9U=
+	t=1760399614; cv=none; b=J9fbKUl5E5PwlWnptl2O/zjlDx4hl9YxfBIHZYWaJ3tnFvcBjPA43F0KC6g1im0xKz2qGe23F06iLvB9wOZrataD/VUdoh9WGppyPcDKIErbzZTCJDBBYAxvKPV40dlLc9+iF5qnJJ6Ehj7p548zIDnYMhsS0NFJjGoKofOSgdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760399794; c=relaxed/simple;
-	bh=Kd2/Hp8IfybPGmt1qPw68IvwiXdoH0oRA5Q2aXe5ddI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YEoihvHwJg598z+4KdBeP7cHTKvD5fx5Q+cFlcCyUW9BjLMqxDruSz2EsBFPommmRTpGXjzADmyHyPyF7a4lTtJXeLJQBzIr2RXIr2qd0SBNOjdZ6YSO2sppHYVoTWTjIVKr0rH9Se8IhJL6JKv+iArpW9VpPoyRy/lL2tVmQGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Em8FOyen; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-339ee7532b9so24349876a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:56:32 -0700 (PDT)
+	s=arc-20240116; t=1760399614; c=relaxed/simple;
+	bh=RIEJrE0uCmjzvjs+seL8p1hc+jZaxiG+Mobd5Medcfg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ilQZzifGJq+cuVhJhqk78iEbzkZEbQ4BPe/IzBCY2bYcDQJ5czWa3hKzNgosZAzEWEYJcexP2BvmIMWaxMgWlHJm22d1MLRXgUTVgZlYhlmOsCzjvtOc9cpIuTIaKq3qgI+XJulv3HhcfeRIqs932qaJA8ipnCB43S1ztVyZydg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cV6k6MJ8; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so40702155e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:53:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760399791; x=1761004591; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nPYU+2umQYN0e1OeO8X1leEMEVeMTLGsEK2ETVKaSgA=;
-        b=Em8FOyen0R8j3jNigIoTe3oLSaZ3z5VepioaRyEiP1FO+VScyY0R5kMn/31w/qU1Qo
-         UdxFKTuQFILYMggp35zyiiojfj9jUZYOWFIxWgF6jmO0CpbH8YKhoNKrpHp4JRieTgfC
-         JOhvUujhtZVNHdiv2tusV1lgc0Nhv7ywF9rXHwfmyShA6aL6KOBPaqx+I7hzhEmxCob9
-         Cdlxq/s8tS5YAT0nDMnYlKuzJqTyPWiVDV9gRZSYTYfHey29paIws6ceczdG8aLq1NG4
-         oTl9vo9166xQe4n9fs1PB8c7RbJMFEdMtSm5FbGlJRyL8hs7rUYZc9MicIiNtV8PBsXr
-         1SQA==
+        d=gmail.com; s=20230601; t=1760399611; x=1761004411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RIEJrE0uCmjzvjs+seL8p1hc+jZaxiG+Mobd5Medcfg=;
+        b=cV6k6MJ8Lkf+6yirLU4QU8uGgecETWdcE18APqUPjQ0tZQ6CIB5a3JifNbS1uMf19s
+         EGOD0RdmRDkyptiaPBWXE8VljBXcJizxoSX5a1y0TvOQ6+jgrzdpopELTuB3WBLMvhuV
+         81qjF9zVs/jf9GH4rOXpeUQKYbnq1b+6+ELgkGYR3nUsvqgr+Vg1kP7nYZxanGiAStgd
+         /OaRUVSCsKunR7eHyHUMHWcb0xI+BoI9afEVAKSEeV06XDqMVORTC2om5+WDr+ml/j1C
+         s9KFsPlFOLrOYV1LyQygoHvdsv9CvAVoEZWH9a8VTDx0bt87Hsmhk2l79ZSZtXaLs9y8
+         W1Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760399791; x=1761004591;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nPYU+2umQYN0e1OeO8X1leEMEVeMTLGsEK2ETVKaSgA=;
-        b=qvJClM2iM8EcNYmOdCLWIdKJ+Xhe9V2wKBVGQwOCr+QLVaSR3GsgIiOlXBm+hzpKEk
-         ahIR4ZXNTorLZXy7MR8SlZiqLAb5IV33XdKkt06DWnZUf0DxwTDbJgJ0Y25pM+rJ35S2
-         kbbGm3K0CuVjNpc+msiGhWWAQR8AwcfnUAzFgImOJ96VE+JJewV2Z03I/DhVAANXJRH/
-         NLzQSQgxo5hRcjYxjRJNLNGjDfrssyFRWw/BJvxdAfbyFwEobCLm9SHZx/nWW6UuCvvQ
-         Zvx2O9tmhNXZF4gMLH8EBXtMerY9JBovtskRui25sAQ/DEW+OeKiLhCjXm+z55THgKcy
-         QOZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWceA1t31AsJ2ZCCAqjPEepEocxXfblAKk/zOMU/KhKMR8TRkfoVGzNN/F5h2TF6a4hK3S8AF+x4GsjlVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWLxqVlsdXbUGZJU9SenHG//6ejfvTs12x0gPDdPl2B4x3rmvu
-	b9F3UWGWqyrYfQRnsAjrwT59CVV4KijxGE2KpId5Y+MrCU41bgMI20VWTja7x8M2p0AdG5Hu8Rb
-	9w/bktnxnrNOII9W1P9riHZd1dQ==
-X-Google-Smtp-Source: AGHT+IG8lrB7VX+K9dIOGBRbbEFaAljZfdwJaT5C/S0Dp/zoN1fe4Txo8ye3OLt4nWf6mVkw5tVIPzsscYSebRBbqg==
-X-Received: from pjuu4.prod.google.com ([2002:a17:90b:5864:b0:33b:51fe:1a78])
- (user=kaleshsingh job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4b8c:b0:338:3dca:e0a3 with SMTP id 98e67ed59e1d1-33b51118f99mr34203500a91.16.1760399791496;
- Mon, 13 Oct 2025 16:56:31 -0700 (PDT)
-Date: Mon, 13 Oct 2025 16:51:56 -0700
-In-Reply-To: <20251013235259.589015-1-kaleshsingh@google.com>
+        d=1e100.net; s=20230601; t=1760399611; x=1761004411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RIEJrE0uCmjzvjs+seL8p1hc+jZaxiG+Mobd5Medcfg=;
+        b=PMgx3EiFakefd24JeA2J3gwEEr8qJwwF1l3aHvZq92ou6/4fM760hr967jPPYnbqxV
+         KwINmI3N/9onERCnIfYo+oRUsP6XZYmn0DsuIUIA9RLhXQtijLTpkzZ9g+NLvSoSHBDU
+         6CfHUX3aUX9K8zI5iwYtGJ6jj/gRdgAIQuFRUHPts0DYEdwh4q6LD6nWloTKGM0azeCU
+         vNLxmY3kdiO86O8qHf61E6yIfl/phE3j8v2U3vl5ccpWhN4NfCqSN1Wc7xoVVH9XoCK4
+         LZa+mWLDSgd+nipWMJsTO9/v5BggtG49Z/zClZislt5qvRDGcA71YWaXZjAoWUgJzQh/
+         50BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOkik5/nKrye9+pARX30RM7Y1Klq2vrCoZNyh1cPmcb6oNWIFKldehs45QlYlBWOiIMcJAqhWNk5+YgQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZIKXyX9NbgzI4ll7dDZb93xBhp+JTKJAlbPr7TsNVYZl2SGbe
+	QjW68wFwpKpWQgWmBu5PTtzoYwq10+kby99TdbbGWc7VvtCDWUyoB7URTq2rVwNMm9Ig60i4pzK
+	XivlXEgHhfHrTzdDZMbJT5SVts/tqYb8=
+X-Gm-Gg: ASbGncunuCgQbaikwZeRALsaBvtRd01OKgU/tnFg/MgORiHLu+Gs1CZNdYRr9BKp4o/
+	UwbKe7xO04K7WcO1eV3mhkKTSY6wZSzquIrSUjFqEGIntrKr29mhQ2tknq/825AbU67eVsyPxne
+	3QUMEpgOjI9u8zc9qCT2aapJT6EANmB/UXHas1z1JyEfACn+jyeeNKkOceDFUpmAfLO/8WSXJkO
+	uyuSygjttVgiWOhXyC5dKo0J0WSGGWBbCB6e1ld6VkPIJaFd0XLmRchbsK94IuPnC9OJw==
+X-Google-Smtp-Source: AGHT+IG7qgaqiANTI64fKq5fdmN3jYIEH7WORYmY4wbj4MgVRoihxDtESxflM1JUMa9Wy0M8r0UWCelXBUFZ0Hk7+LY=
+X-Received: by 2002:a05:600c:5028:b0:46e:428a:b4c7 with SMTP id
+ 5b1f17b1804b1-46fa9af2ff1mr156663835e9.23.1760399610941; Mon, 13 Oct 2025
+ 16:53:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251013235259.589015-1-kaleshsingh@google.com>
-X-Mailer: git-send-email 2.51.0.760.g7b8bcc2412-goog
-Message-ID: <20251013235259.589015-6-kaleshsingh@google.com>
-Subject: [PATCH v3 5/5] mm/tracing: introduce trace_mm_insufficient_vma_slots event
-From: Kalesh Singh <kaleshsingh@google.com>
-To: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
-	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de
-Cc: kernel-team@android.com, android-mm@google.com, 
-	Kalesh Singh <kaleshsingh@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Jann Horn <jannh@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
-	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
+MIME-Version: 1.0
+References: <20251013131537.1927035-1-dolinux.peng@gmail.com> <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
+In-Reply-To: <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 13 Oct 2025 16:53:19 -0700
+X-Gm-Features: AS18NWDSXnedfjS8OY9WIaDlY9RiYWa2my_cqlC8rCnw82wSbTJtgr_XZ-TyNvI
+Message-ID: <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
+ btf_find_by_name_kind lookup
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: pengdonglin <dolinux.peng@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Needed observability on in field devices can be collected with minimal
-overhead and can be toggled on and off. Event driven telemetry can be
-done with tracepoint BPF programs.
+On Mon, Oct 13, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> Just a few observations (if we decide to do the sorting of BTF by name
+> in the kernel):
 
-The process comm is provided for aggregation across devices and tgid is
-to enable per-process aggregation per device.
-
-This allows for observing the distribution of such problems in the
-field, to deduce if there are legitimate bugs or if a bump to the limit is
-warranted.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Pedro Falcato <pfalcato@suse.de>
-Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-
----
-
-Changes in v3:
-- capture the mm pointer as the unique identifier and capture
-  the vma_count as well, instead of current task tgid, per Steve
-- Add include/trace/events/vma.h to MEMORY MAPPING section in
-  MAINTAINERS, per Lorenzo
-- rename trace_max_vma_count_exceeded() to
-  trace_mm_insufficient_vma_slots(), since this is a preemptive
-  check, per Lorenzo
-- Fix tools/testing/vma build errors, per Lorenzo
-
- MAINTAINERS                      |  1 +
- include/trace/events/vma.h       | 32 ++++++++++++++++++++++++++++++++
- mm/mmap.c                        |  5 ++++-
- mm/mremap.c                      | 10 ++++++++--
- mm/vma.c                         |  9 +++++++--
- mm/vma_internal.h                |  2 ++
- tools/testing/vma/vma_internal.h |  5 +++++
- 7 files changed, 59 insertions(+), 5 deletions(-)
- create mode 100644 include/trace/events/vma.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aa83e5893e16..d37215a8a829 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16566,6 +16566,7 @@ S:	Maintained
- W:	http://www.linux-mm.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
- F:	include/trace/events/mmap.h
-+F:	include/trace/events/vma.h
- F:	mm/interval_tree.c
- F:	mm/mincore.c
- F:	mm/mlock.c
-diff --git a/include/trace/events/vma.h b/include/trace/events/vma.h
-new file mode 100644
-index 000000000000..4540fa607f66
---- /dev/null
-+++ b/include/trace/events/vma.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM vma
-+
-+#if !defined(_TRACE_VMA_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_VMA_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(mm_insufficient_vma_slots,
-+
-+	TP_PROTO(struct mm_struct *mm),
-+
-+	TP_ARGS(mm),
-+
-+	TP_STRUCT__entry(
-+		__field(void *,	mm)
-+		__field(int,	vma_count)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->mm		= mm;
-+		__entry->vma_count	= mm->vma_count;
-+	),
-+
-+	TP_printk("mm=%p vma_count=%d", __entry->mm, __entry->vma_count)
-+);
-+
-+#endif /*  _TRACE_VMA_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/mm/mmap.c b/mm/mmap.c
-index b4eda47b88d8..4035f49ac963 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -56,6 +56,7 @@
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/mmap.h>
-+#include <trace/events/vma.h>
- 
- #include "internal.h"
- 
-@@ -374,8 +375,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 		return -EOVERFLOW;
- 
- 	/* Too many mappings? */
--	if (!vma_count_remaining(mm))
-+	if (!vma_count_remaining(mm)) {
-+		trace_mm_insufficient_vma_slots(mm);
- 		return -ENOMEM;
-+	}
- 
- 	/*
- 	 * addr is returned from get_unmapped_area,
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 14d35d87e89b..a7f440a3737f 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -30,6 +30,8 @@
- #include <asm/tlb.h>
- #include <asm/pgalloc.h>
- 
-+#include <trace/events/vma.h>
-+
- #include "internal.h"
- 
- /* Classify the kind of remap operation being performed. */
-@@ -1040,8 +1042,10 @@ static unsigned long prep_move_vma(struct vma_remap_struct *vrm)
- 	 * We'd prefer to avoid failure later on in do_munmap:
- 	 * which may split one vma into three before unmapping.
- 	 */
--	if (vma_count_remaining(current->mm) < 4)
-+	if (vma_count_remaining(current->mm) < 4) {
-+		trace_mm_insufficient_vma_slots(current->mm);
- 		return -ENOMEM;
-+	}
- 
- 	if (vma->vm_ops && vma->vm_ops->may_split) {
- 		if (vma->vm_start != old_addr)
-@@ -1817,8 +1821,10 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
- 	 * the threshold. In other words, is the current map count + 6 at or
- 	 * below the threshold? Otherwise return -ENOMEM here to be more safe.
- 	 */
--	if (vma_count_remaining(current->mm) < 6)
-+	if (vma_count_remaining(current->mm) < 6) {
-+		trace_mm_insufficient_vma_slots(current->mm);
- 		return -ENOMEM;
-+	}
- 
- 	return 0;
- }
-diff --git a/mm/vma.c b/mm/vma.c
-index b35a4607cde4..6d8cef7f4d5f 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -592,8 +592,10 @@ __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
- static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 		     unsigned long addr, int new_below)
- {
--	if (!vma_count_remaining(vma->vm_mm))
-+	if (!vma_count_remaining(vma->vm_mm)) {
-+		trace_mm_insufficient_vma_slots(vma->vm_mm);
- 		return -ENOMEM;
-+	}
- 
- 	return __split_vma(vmi, vma, addr, new_below);
- }
-@@ -1346,6 +1348,7 @@ static int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
- 		 */
- 		if (vms->end < vms->vma->vm_end &&
- 		    !vma_count_remaining(vms->vma->vm_mm)) {
-+			trace_mm_insufficient_vma_slots(vms->vma->vm_mm);
- 			error = -ENOMEM;
- 			goto vma_count_exceeded;
- 		}
-@@ -2797,8 +2800,10 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT))
- 		return -ENOMEM;
- 
--	if (!vma_count_remaining(mm))
-+	if (!vma_count_remaining(mm)) {
-+		trace_mm_insufficient_vma_slots(mm);
- 		return -ENOMEM;
-+	}
- 
- 	if (security_vm_enough_memory_mm(mm, len >> PAGE_SHIFT))
- 		return -ENOMEM;
-diff --git a/mm/vma_internal.h b/mm/vma_internal.h
-index 2f05735ff190..86823ca6857b 100644
---- a/mm/vma_internal.h
-+++ b/mm/vma_internal.h
-@@ -52,4 +52,6 @@
- 
- #include "internal.h"
- 
-+#include <trace/events/vma.h>
-+
- #endif	/* __MM_VMA_INTERNAL_H */
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 84760d901656..57e36d82b4c8 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -1493,4 +1493,9 @@ static int vma_count_remaining(const struct mm_struct *mm)
- 	return (max_count > vma_count) ? (max_count - vma_count) : 0;
- }
- 
-+/* Stub for trace_mm_insufficient_vma_slots */
-+static inline void trace_mm_insufficient_vma_slots(struct mm_struct *mm)
-+{
-+}
-+
- #endif	/* __MM_VMA_INTERNAL_H */
--- 
-2.51.0.760.g7b8bcc2412-goog
-
+iirc we discussed it in the past and decided to do sorting in pahole
+and let the kernel verify whether it's sorted or not.
+Then no extra memory is needed.
+Or was that idea discarded for some reason?
 
