@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-849811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF05DBD0F99
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:11:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B204DBD0FA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D84F24E703D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:11:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D8918841D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F019786344;
-	Mon, 13 Oct 2025 00:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BC82F84F;
+	Mon, 13 Oct 2025 00:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b="NOMei8n+"
-Received: from sender3-pp-o95.zoho.com (sender3-pp-o95.zoho.com [136.143.184.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gl19GJWA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F781CA6B;
-	Mon, 13 Oct 2025 00:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760314121; cv=pass; b=J/MSWL92o56vZgoeuXH5LPO3ZLOMAL1PjjA1pSVy+fUSBHuRAkcYoLZIFwmbnTOoRZjQ9bH66zTf4weCBMacoNNs3YobitjiFSCq9GaJxuYpohMxfbaQeoq73ySeUR+5Ridveeo0fCeX7iXVfXFu0CyY+vWMRFPvoWUObJIbXmc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760314121; c=relaxed/simple;
-	bh=Wi06P/Bn9/+iBpoHURGKN1pAxCoLMMdUIXdqzysP1m8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JCz3/ARb5EtZkZuATNz4aRUxLrJpykEvSxXdNguIOnysyUgSqp0/jKHnx3gBZgHK6nP/RzojQJdud/V0aXgf5x+fbAIl8UKt1lP/M2W6e2nsOIrGm7mxHDbbHEjQ7sEj8ua3YfZTOuxmRNtUouOiAfTFR0E3KNOh2NK9XdgaXF8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b=NOMei8n+; arc=pass smtp.client-ip=136.143.184.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760314106; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dzv3HwyObv7YfyMM/FmFOkH57jqOMdj6YvfFekN9iO1YEOWrfZuUeArYheYK/TkuWdfzpRT2a1xrfp4PASYgeY4XFSgAntjdamXpqrLQFYETHWgsCY0+B8tL3EAGLnGfwtItpiRRU6tffoLfwp0g5pP0JCjIyluP08YCyGoBtNo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760314106; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=hYU9KcNrMdpNFTyRqO6zPkVaxFkO0N2b43UVwx48zNI=; 
-	b=Wm4Kk/ZhKSfq2TArRpspN00IvK8GFvKCWWYPJbP0aP43Z7U0SoWT1/sZiFYgmSG+gTJB+JACRBJ2ax0+WW+QeG1C8OYKCB3QU1oCG9IsFAMVRjXreXb8uVheba68JpwlfvBtQWCP+jLORYPx2YZHyqxD2DAHXardJRoxFvKb+p8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=newwheatzjz@zohomail.com;
-	dmarc=pass header.from=<newwheatzjz@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760314106;
-	s=zm2022; d=zohomail.com; i=newwheatzjz@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Feedback-ID:Message-Id:Reply-To;
-	bh=hYU9KcNrMdpNFTyRqO6zPkVaxFkO0N2b43UVwx48zNI=;
-	b=NOMei8n+4GD2djXmG69iNZEFHrMVzKSXccmXO4KeD1EpsXkYPxx8qVbZFa/MZ4qv
-	r3id3J9VKzDb70yViEbMqj9ZKlnoge++FElqgmcF8iVLPPSXgrj5sufyzIpQXBi2KEP
-	UHJ3vHLPGXAPJHhGwYt32ZIHjqnzp1zWmIRibpB8=
-Received: by mx.zohomail.com with SMTPS id 1760314103093943.2840806200604;
-	Sun, 12 Oct 2025 17:08:23 -0700 (PDT)
-From: Jingzhou Zhu <newwheatzjz@zohomail.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v6 2/2] arm64: dts: qcom: Add support for Huawei MateBook E 2019
-Date: Mon, 13 Oct 2025 08:08:09 +0800
-Message-ID: <12758617.O9o76ZdvQC@debian-vmware>
-In-Reply-To: <f03e0223-2722-4d5f-897b-91209b6c12fe@oss.qualcomm.com>
-References:
- <20251008130052.11427-1-newwheatzjz@zohomail.com>
- <2386127.ElGaqSPkdT@debian-vmware>
- <f03e0223-2722-4d5f-897b-91209b6c12fe@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F112566;
+	Mon, 13 Oct 2025 00:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760314478; cv=none; b=o+/3xKJgDUPPA/Cy3fHQq7+YXIXbMgPUFpvkYbbf3xeVJqY3t98c47bL5eIok5C2VKK7zaBEGTMwaqHCPspqW/yBtcD8xNGbTRFt5oIxuY66vxJ3YMb2qs1FKJIQf2VUlVzT49dZKKUESyHr7p+Fn0CcatNFBcUGqpRbiY/JHIA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760314478; c=relaxed/simple;
+	bh=FjAXHZ+MbGBGWo6/zQ47+tjI8pX/9RPwwwUIErKcHq4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XngjDR2gfYavXBUhrSUmh6UubtXR/be79eWqoWbYpcEEW9hh964iGpSpc74L2YUWfwOsfRQXKeIs3gDBQlueE/4xYhwUhjF/8lQXbjBzchUV245gRpSs6DPlKKYj4zhJ7vgjv2Bf6Pq+1exdwhLFPmZ+vRGG1kAwNS7bRI7QsHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gl19GJWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744DBC4CEE7;
+	Mon, 13 Oct 2025 00:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760314477;
+	bh=FjAXHZ+MbGBGWo6/zQ47+tjI8pX/9RPwwwUIErKcHq4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Gl19GJWAH37jbiTuqrJKKDMfarGJoT7wQcadgU1Ompu3yfwh7Pw9nkgYBVqn4X2AV
+	 FMbd7f5LEdtMlkzJycF3xgCqxQO2vZMGdteiiqcfnz49FiQUut9YntJmZVOCLIAWCn
+	 +aY8O+Gro4QZsLNAXeu/i1uWZPXTA9tXncJ7iYATA9MQpY2JCS4+Pos558VBfxqU02
+	 m+w/KO/NsI6YNSPS6yVRELGQxQfZON7gWiYcVFoe4Efw3kig00HE7ekH9U9/N3bDu6
+	 Fcfps1LTTkTpAU5F1P5C2E8Up9ipeGkicWO4Bg4/wlP4cg63snP3292pSGLmdaPz8n
+	 IvHa91PV1X8yg==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Burak Emir <bqe@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	Yury Norov <yury.norov@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: bitmap: clean Rust 1.92.0 `unused_unsafe` warning
+Date: Mon, 13 Oct 2025 02:14:22 +0200
+Message-ID: <20251013001422.1168581-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-Feedback-ID: rr080112271c41d7473c613256de7263510000f514c26e18f414dadc8eb2fb3d860cf22eececcec16c9df3f0:zu08011227855cb91ca7b4db25dbfa089f0000e6fe65a7eeb535e139b1c5828b982f25d988c7edde31d6659a:rf08011226b8fed11e45d501d83094eaa80000df759f7e0182369704fd03cfd19338e3d56e651c37ab58b1:ZohoMail
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On Saturday, 11 October 2025 01:29:08 CST, Konrad Dybcio wrote:
-> On 10/10/25 4:52 PM, Jingzhou Zhu wrote:
-> > On Thursday, 9 October 2025 21:58:29 CST, Konrad Dybcio wrote:
-> >> Please refrain from resending if it's just to apply tags, maintainer
-> >> tools do it for you
-> >>
-> >> Konrad
-> > 
-> > Understood. This is my first time to send patches, so I'm not very familiar
-> > with the tools. Should I wait for the maintainer to pick it up, or is there
-> > anything else I should do?
-> 
-> I suppose I didn't answer your question fully in the other email.
-> 
-> TLDR: you're good to go, it should be merged in a week or so
-> 
-> Konrad
-> 
+Starting with Rust 1.92.0 (expected 2025-12-11), Rust allows to safely
+take the address of a union field [1][2]:
 
-Fully understood now. Thank you for the information!
+      CLIPPY L rust/kernel.o
+    error: unnecessary `unsafe` block
+       --> rust/kernel/bitmap.rs:169:13
+        |
+    169 |             unsafe { core::ptr::addr_of!(self.repr.bitmap) }
+        |             ^^^^^^ unnecessary `unsafe` block
+        |
+        = note: `-D unused-unsafe` implied by `-D warnings`
+        = help: to override `-D warnings` add `#[allow(unused_unsafe)]`
 
-Jingzhou Zhu
+    error: unnecessary `unsafe` block
+       --> rust/kernel/bitmap.rs:185:13
+        |
+    185 |             unsafe { core::ptr::addr_of_mut!(self.repr.bitmap) }
+        |             ^^^^^^ unnecessary `unsafe` block
 
+Thus allow both instances to clean the warning in newer compilers.
 
+Link: https://github.com/rust-lang/rust/issues/141264 [1]
+Link: https://github.com/rust-lang/rust/pull/141469 [2]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ rust/kernel/bitmap.rs | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
+index f45915694454..711b8368b38f 100644
+--- a/rust/kernel/bitmap.rs
++++ b/rust/kernel/bitmap.rs
+@@ -166,6 +166,7 @@ impl core::ops::Deref for BitmapVec {
+     fn deref(&self) -> &Bitmap {
+         let ptr = if self.nbits <= BITS_PER_LONG {
+             // SAFETY: Bitmap is represented inline.
++            #[allow(unused_unsafe, reason = "Safe since Rust 1.92.0")]
+             unsafe { core::ptr::addr_of!(self.repr.bitmap) }
+         } else {
+             // SAFETY: Bitmap is represented as array of `unsigned long`.
+@@ -182,6 +183,7 @@ impl core::ops::DerefMut for BitmapVec {
+     fn deref_mut(&mut self) -> &mut Bitmap {
+         let ptr = if self.nbits <= BITS_PER_LONG {
+             // SAFETY: Bitmap is represented inline.
++            #[allow(unused_unsafe, reason = "Safe since Rust 1.92.0")]
+             unsafe { core::ptr::addr_of_mut!(self.repr.bitmap) }
+         } else {
+             // SAFETY: Bitmap is represented as array of `unsigned long`.
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.51.0
 
 
