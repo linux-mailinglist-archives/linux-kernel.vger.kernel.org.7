@@ -1,75 +1,152 @@
-Return-Path: <linux-kernel+bounces-851132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0556BD59F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704C7BD5A10
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F4D402138
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:59:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 254D218A389E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8512C2348;
-	Mon, 13 Oct 2025 17:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169482D061B;
+	Mon, 13 Oct 2025 18:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X28Oaq/s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja6NGDEG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF8E2C15A3;
-	Mon, 13 Oct 2025 17:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694DE2C236F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760378393; cv=none; b=PfvfsnFd/PBbzP/blI5lysjqdSjD5IFSSJxmdy3Ei6PMiBaQ0dulwtOBX3gYj5bUEyw045V3hh8JLBioJ0iBS7muC8hjum+FQcGL5XS+UcqfNxa6OkCHP/5j8DJfDvG6caUJEtYUZAkOlZQlFSGkHcs3btxTHgkk5wthXNa82kk=
+	t=1760378569; cv=none; b=boyN94GA5NH18xIy/CnXetLi4WYFBI4arXf0W5CeJwTlpmh5abwtlG4AGURl3sqyGafnR7iimU4Q9pK68iMH0Ppq4isPXAfNDLo9LRJmZwMfepRcEMv6wkg3EUgKbizgUGCCjl0RDzed7lBDkqbpWnpuhWuQzGZ/QPYBmFOoVlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760378393; c=relaxed/simple;
-	bh=yAqclelQ+x2VIMbz0XIlGvwP+MQo24gNnvSAjzjeb14=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r+Zepk3b2JWQfeWm4gR6ODLC7WkARweLd8Ed7e560HN+RdTH1nAaB22qrbAb/XPHdIbKCj2kvYmVHYI/h597yB5hR7niM92jzwDgFQoyDSH0mqBeBfZw2TIlafeOMwP9gef0L3X98whHZe3ZtebSR6qszULszDIAwFSK6Ki0baU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X28Oaq/s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 498D1C4CEE7;
-	Mon, 13 Oct 2025 17:59:52 +0000 (UTC)
+	s=arc-20240116; t=1760378569; c=relaxed/simple;
+	bh=TZrmejsd8Qc3fDJmCwXu4pgxbU5JHhsZUr9HCGGMhZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sx6WhtcPgkpm65wZVCxl5vL0evlHAAC53hw0AKXgnEBEQmv6lPCZDN77V+GI2+KOYRWxePFggO0kL9TUA+0ZXC4QVcr3s8IZ6BzGAq9kzPyHRQCCuDAkLrpBmyP3xDdQJNjA0YAxhIK1qtl2idoCA644bx/zAmZLeTrygf+Vkbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ja6NGDEG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9D1C4CEFE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:02:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760378392;
-	bh=yAqclelQ+x2VIMbz0XIlGvwP+MQo24gNnvSAjzjeb14=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X28Oaq/sjjNH40Z2jBfJtI/8708lfG6tBcELB+AKGkHw+Ez+RbE69dy8Lcy+ECfgu
-	 QnymurPzMdupCGOgxlKn7DxQkZ7lcFVJ/dBD3iia/l4gPCZ23WOpJumQGyfHFFFTQD
-	 D+Mpf/8KkRlN5mOG+ojWqN+9zhqY1IJijNamAu8JCS1FztcoN5Glvsn9/1BWI4zpUL
-	 /h5SRpvwjl7miKnW5DloXGPcqDATT+fum9hR4Jr5p+cfRBExSRRvneACnPaHo/iTIa
-	 c2elzi1ZuqPGt4RgQS7OkX/0VNrX9kZe2qSZcHrSG1UGbBFDtF6MUW8CPzySJJe34L
-	 wCAD/ET1/Hhtg==
-Date: Mon, 13 Oct 2025 10:59:51 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Chris Babroski <cbabroski@nvidia.com>
-Cc: <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
- <davthompson@nvidia.com>, <edumazet@google.com>, <hkallweit1@gmail.com>,
- <linux-kernel@vger.kernel.org>, <linux@armlinux.org.uk>,
- <netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net-next v1] mlxbf_gige: report unknown speed and duplex
- when link is down
-Message-ID: <20251013105951.261afc77@kernel.org>
-In-Reply-To: <20251013151715.40715-1-cbabroski@nvidia.com>
-References: <20250826184559.89822-1-cbabroski@nvidia.com>
-	<20251013151715.40715-1-cbabroski@nvidia.com>
+	s=k20201202; t=1760378569;
+	bh=TZrmejsd8Qc3fDJmCwXu4pgxbU5JHhsZUr9HCGGMhZU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ja6NGDEGw2bWivUD7A9S9+U/F5zzOuXqlNWFUirYeXeM2+kl9+GoGsojkNb8rFWj0
+	 XO8id3Y4Pyf66NcgtxSmuUqPGLlyd57Ubf5n2/y3F77mnOAwKSy4OzBvSyW3YS4BUp
+	 vov3w1+Q781uAhuk+OI/h9o4C268KlhXm0zlEAkQw7eiZwZWY1pelHyw+jW2Pg4BQg
+	 fzxrZcWQ7T9vmFH7T2gS6c9IxXORFrBxYlWcVVpAvQPrthhcpLguojSpKNH5hTzRH2
+	 efQ+ySKcZCDaAyOjVh6SK0NVova2cG85tdcq5DHRDUdh7kP0t3PiZZo/uxDmdmyLGy
+	 Jhm5lTJIioZEg==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-64c7c78369aso2421112eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:02:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLgwRMj9dLlFZdABUBSgHQXLdrS+XfgciisWorBNbU6pjMxWCmEtWjJrxQABav9bOVesuUovEJ7nW583s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2fADZJdYdvowncJ6/jw+UJYAvuUg3ASG4JPUWhvUueBfveMp9
+	CwckEQ9b49WCNoHmLrZ/S+KQagFg+kSf/DCUG1XZN+eX2l8aoUXfX/nZM+Mb7y6+9EE361gInrL
+	5d62SM7iGIftEtf0J1YL2CnXsxnpLWxo=
+X-Google-Smtp-Source: AGHT+IFIK2zIiCmWj+z9A7dT3po9xDzK8OpX2XnJhvOZyCE36wFbIZ5uE3AgirVRJCaMN5e9hRcn4AweDoTwpAwd9/M=
+X-Received: by 2002:a05:6808:4489:b0:438:2852:73e4 with SMTP id
+ 5614622812f47-4417b417242mr9921285b6e.25.1760378568627; Mon, 13 Oct 2025
+ 11:02:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250911185314.2377124-1-wusamuel@google.com> <CAG2Kctqf=Q+nuuDqzkrOpjp+tOttf079DS_R8Q0pHU-k8DmFvA@mail.gmail.com>
+ <CAJZ5v0gtKmtiLQwi-2qaw2G4O4PF_iqz6UbUZuaknepcJ1ToZQ@mail.gmail.com>
+ <CAG2KctrK0JrP7JNUyzF72JeDgR4-GSRmJDe+yEnav=gQCAf64Q@mail.gmail.com>
+ <CAJZ5v0g_HXQjWfp=L0KetRCHMTD=QsP3wJKNZnadJic2yccCUQ@mail.gmail.com> <CAGETcx_Fn3AzZo7gNvJnPxy=CNHpqAviGdUrww++SGySuBcaZw@mail.gmail.com>
+In-Reply-To: <CAGETcx_Fn3AzZo7gNvJnPxy=CNHpqAviGdUrww++SGySuBcaZw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 13 Oct 2025 20:02:37 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hbtHxFo_z2fp9DMRDi75k6QL-kcDHD+o8zabub1YdCKg@mail.gmail.com>
+X-Gm-Features: AS18NWBnExUTFz8drgQvQPDh4MrAL1rvfeQrbwyUnfskwOYDOQM_KjoZDN--p8A
+Message-ID: <CAJZ5v0hbtHxFo_z2fp9DMRDi75k6QL-kcDHD+o8zabub1YdCKg@mail.gmail.com>
+Subject: Re: [PATCH v4] PM: Support aborting sleep during filesystem sync
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Samuel Wu <wusamuel@google.com>, Len Brown <lenb@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 13 Oct 2025 11:17:15 -0400 Chris Babroski wrote:
-> Hi Jakub,
-> 
-> Following up on this patch.
-> Any further comments or concerns?
+On Thu, Oct 2, 2025 at 12:13=E2=80=AFAM Saravana Kannan <saravanak@google.c=
+om> wrote:
+>
+> On Wed, Oct 1, 2025 at 11:22=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Wed, Oct 1, 2025 at 12:37=E2=80=AFAM Samuel Wu <wusamuel@google.com>=
+ wrote:
+> > >
+> > > On Tue, Sep 30, 2025 at 11:51=E2=80=AFAM Rafael J. Wysocki <rafael@ke=
+rnel.org> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Tue, Sep 30, 2025 at 8:30=E2=80=AFPM Samuel Wu <wusamuel@google.=
+com> wrote:
+> > > > >
+> > > > > Hi Rafael,
+> > > > >
+> > > > > Just a friendly ping on this patch. Please let me know if there's=
+ any
+> > > > > feedback or if you'd like me to make any changes.
+> > > >
+> > > > Have you seen https://lore.kernel.org/all/20250909065836.32534-1-tu=
+haowen@uniontech.com/
+> > > > ?
+> > > >
+> > > > If so, what do you think about it?
+> > >
+> > > I was following this chain
+> > > (https://lore.kernel.org/all/20250908024655.14636-1-tuhaowen@uniontec=
+h.com/),
+> > > where there is some ongoing discussion on converging the solution.
+> > >
+> > > Our changes aren't mutually exclusive, and tuhaowen can build changes
+> > > on top of ours, even indicating:
+> > > > I'm happy to work on this as a follow-up patch series after your ch=
+anges land, or we could explore a unified solution that handles both scenar=
+ios.
+> >
+> > That's fair.
+> >
+> > > These patchsets don't negate each other, so could we decouple these
+> > > two patchsets since they address different issues?
+> >
+> > Well, I'm not sure if they are really different.  After all, this is
+> > all about avoiding having to wait on an excessively long filesystem
+> > sync during suspend.
+>
+> No, it's different. We don't mind a long filesystem sync if we don't
+> have a need to abort a suspend. If it takes 25 seconds to sync the
+> filesystem but there's no need to abort it, that's totally fine. So,
+> this patch is just about allowing abort to happen without waiting for
+> file system sync to finish.
 
-Please read:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
-It will tell you that you need to send a v2 and what changes are
-expected :/
+OK, thanks for clarification.
+
+> The other patch's requirement is to always abort if suspend takes 25
+> seconds (or whatever the timeout is). IIRC, in his case, it's because
+> of a bad disk or say a USB disk getting unplugged. I'm not convinced a
+> suspend timeout is the right thing to do, but I'm not going to nack
+> it. But to implement his requirement, he can put a patch on top of
+> ours where he sets a timer and then aborts suspends if it fires.
+>
+> > I'm also not sure why it is being pursued to be honest.  Is setting
+> > /sys/power/sync_on_suspend to 0 not regarded as a viable option?
+>
+> We do want to sync on every suspend. So, we don't want to turn it off
+> completely.
+
+I wonder why though.
+
+If suspend/resume works reliably, syncing filesystems on every attempt
+to suspend the system isn't particularly useful AFAICS.
 
