@@ -1,219 +1,240 @@
-Return-Path: <linux-kernel+bounces-850513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327B3BD3086
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:46:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88150BD30C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA81A34BCA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:46:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DF8D4E8302
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E7627146B;
-	Mon, 13 Oct 2025 12:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4B827FB1B;
+	Mon, 13 Oct 2025 12:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aHP6RLDw"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPQaJiM5"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2187E25A2C9
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E13126E714
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760359567; cv=none; b=i/xIgrLBqfS4zYIk5+litfpUoPXzv7Ec6XkTPbCsfWmWvr97vkHtR+ezpnz8A5t2maFF+vahNxZ7nFp8d+Pp8zABZrmmkankQRGRv2JBi0pyXE2GfK0hVvtRveDecbcCXOZMCfzKHcI7xQF8Ui8WN7Ggk3k/lp9THyoGv3T7DxU=
+	t=1760359694; cv=none; b=QsUefAeJ2zIn5y+OkI7Bh4amOhpiOxbPIcu9SH7ezI7JAjcylDq5yd4exPWPgVXF/2wWisaRFC0Mv12kLTMLwZ5JUMI9Q9U067KJ47EBvYe4b+H2pBcPjOAFhUDFCJ0k0hWql49EMEFqJiraMGU6UgDQSDZRIqF7FIc33DiQS1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760359567; c=relaxed/simple;
-	bh=JpkIi/+vhaU0BNI9/P+j1qfp8E4UfRVJu5ZcRjrM5jA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kWSygoBtB8uFnvpz24vH0GImGMZ1MYyQyMkXZWesbqlWTrK1YvIn4ogu0vjG+6cPjyuiZlapdtAL6HSVmqtR3X8h9CWuMXzGJOqPFoFQge7bJ+hoB5oURA8Hnfs7ZjdirDmInPmHIPPdu1as12/28t098YwWFdRGzujWySypOzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aHP6RLDw; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3637d6e9923so37251061fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:46:03 -0700 (PDT)
+	s=arc-20240116; t=1760359694; c=relaxed/simple;
+	bh=998bCQ5vVclaoJfJBg10iHBupkkwTUVT6piNf84yOAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=icCsNbcoP3kODWwrr4tp3jp9HB3hK+2kFWihsRW+Fh2kPYkPwihjbaUMzUpTeoJ30gQJiO6zCCOOjSfW+kWVXSrUzg3OCU6c5oxTHWOJ0izqkTclxQfyW6GE5cS1OQWB8/SELkMcwiiZZFXXwcGka8+aqc8b63Ptb3QvEqwllLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPQaJiM5; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6394938e0ecso6819820a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760359562; x=1760964362; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yr0CAioySbg+winRW7SfP2+jGITybsbqsD8lEteT+kw=;
-        b=aHP6RLDwb0UG2uPMFu+XHDG3kF+N7eCxd/Ka/asDGgCNbHTIKKuXZSEMQW63BQP5+J
-         3Fm3A8yjdNcygmUxPD0dxoBPCRBFCkdQHaIHUNd4JKIu+KlodAf2i8fNXSdsx5WDnfUQ
-         ibmWCNbjVfzi9LjChJ/HBXACzVLhWJH7YUypITyzjf0ewOmsgJ1zqTN8R9EHXOK83hvD
-         QmEMqLweAgmok12WakNdVjOBQA6AzLEZsHo21wM1PmKh9XgpqQ5RjHHgH7vp5z1TaZDQ
-         rWTBZfkyh3L4Spo0aXEFXaJTzAY8C1DU3xjrjlpMIs4U5bxeHGSh+dxJj+9aIbcz2kr6
-         XNVQ==
+        d=gmail.com; s=20230601; t=1760359690; x=1760964490; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ME8ir36ArdJeQ8VOuoWbknt4FySWcug96E0ZWizlwFA=;
+        b=NPQaJiM5Lo6OGWnN0sekJQ4QZ8icT7kHy5wCjuym0dkVKzfis28kx64b75v9mGLDo/
+         zoo5eogYxgEXgOtQGaT2oMDpoePoE/JpN58X+ZZsU+6HwCJ/U+slBXyKhb7KT7vhsAfN
+         p/o5qSNQd+KP1ZpLRora/fHNjTsw6h+Fmo3vpYiQc3cD5eiNTyU0opPaOJaCpNtnFmlA
+         D3sw0v+duY4b0YHJ4UvYUue6o32Ddhd3WhKUtQE01hJnX0K1c1Zcl3Zeo3KqUVymCtUR
+         QBSDUGMz7u1/rw6G75VNbWBWGFPGPQiBH6gT0RG4KE6nT3gD93JYWLtXVHeS8UaesP6u
+         eUCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760359562; x=1760964362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yr0CAioySbg+winRW7SfP2+jGITybsbqsD8lEteT+kw=;
-        b=sUDuOzskiLaGJYkspn6I1k1zP+VSh/8f/ULi6+9SlL115IiaV6zsbzy/nVedKEd4aA
-         XXegc3DdqY3xJKLoOLhX67iEkLjc5Ug36e5OuUVdCq3z4mU0ZkqaHcXGzGnP+bYHii/C
-         Xv2JMuXUzz6LgC3YAM/9co/QAyWsznAVUhnz78gmVHoei/9qYuypEJPmynD0GBtexOi0
-         sOF5U4I7x9J8Rx/jhnFlZXGW2GYQbGxmrn2wzO58oQuGIoKdP03kYliz4x5ai4qkvhK7
-         xXCgf4hoz35mnysRcBCHbqxaZuMJDe5jL4vLoNJcQjkwEzf4xN3+pHGVRueCpzre1SZ2
-         +jGA==
-X-Forwarded-Encrypted: i=1; AJvYcCX67mJUIyacF51idycyEP4Jo8bZdyE6YHi8Jiv7G1GCIjkyW6jiqfTSqKG28MOn6owGkArCcgS8yt9+xCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOUPzTmu8ejd2oYFM8CTyuGNIBYy3coQaJHXvShoYG5PxxvNUY
-	spxPS+GRZC9v31W1JArg4sGqCt15CrBgLvzyJWuxDbgQOhTgW6C915DVw3g7Vtbv8khA9YFa1UR
-	kiyGD0ckDSXSBGH0g2+aIqyfSQuh/MrQbWVKB1hf0bg==
-X-Gm-Gg: ASbGncs32l13zcC908Dg+r3Vzkkxt1Nv4OVlgN91ta2t4UupbN4KUpXrqXnKaL7k7yo
-	yDvsBuqTAElrJt6BeFZniszX/y3JQSO7bjv23KpC3J268MC9AVgDe/BpaOAp2xtByy2d0kTwC8t
-	2CgDfp3l2q53+3Bbd+IKGCQPxR1OLCC3elzEkCA1VdxcLDDq1sMipKob1zVwqunZkD2FCmPTbID
-	D+v3iFFt976UbIEqMeQbBSneGQi/2jVNFCH5zNE
-X-Google-Smtp-Source: AGHT+IECEgvwWZ6twWsaItTnYS8HV/K8Xbz+foZN6OXGOnnvuhf5OIE7J2dBzITkBTeCj2Oicn8ol15+IVgCGD9o8F8=
-X-Received: by 2002:a2e:9a10:0:b0:36a:a401:628a with SMTP id
- 38308e7fff4ca-37609cf85d9mr54890731fa.6.1760359562017; Mon, 13 Oct 2025
- 05:46:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760359690; x=1760964490;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ME8ir36ArdJeQ8VOuoWbknt4FySWcug96E0ZWizlwFA=;
+        b=S7oGvHI9IojeP25v5ustWzEsmORJ1vQBzx2Re1+D6QChzhMdhczbyPpUtrkAKVbAsX
+         b3iiJBDgcPUlk5QSLoqH26AGqAlJR/U1d6Xl96ktJpQcCuDdgeznpsCD9SHEzOCCJWDM
+         rYqBrMzQNxpyTQBB7LLjn/n5bc2W2jyBNA2aYQsCENrKqux0Xzao+YEbTkfWgYyc1fBe
+         k2Eyw38HkkjTkzOKG1UH2iBXvqVVRjf1ompiNQdkIOVs5sFVvC0fWURQ44TjrlE8IjIo
+         BMYs7Y5ZrO0KHGUPaGdzlAeQCxjgelU0qKbhQWr03aC8ausx0b+JBT581GRr3LjPl+9T
+         Jniw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNO8g9iX7ZCEIJxAVv19SKpIIhGkNCJSEVsiKAd6mI173q3xRX3Gm+Ps+1CSD+B83f+D8Mo+26AtCIKss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLxyu9e/OuSCfSQGSEGhpGfEpgIQZd03WLltYUpywcuWx7Clrd
+	NuLqTcJrC82FqdlgPhY33DqU4Ly9obkkDF8x2PYj92nTNTgPA9S+BGAK
+X-Gm-Gg: ASbGnctcukiIBZgcgEJZFCdwzDldG5AqRhLECmtdEr/4EvODmkUmAB/ueyZwWylW//A
+	bO2q+KOmZW1U4ujqfd9LlzlMEKksDm3F2amQmV0umkbiEIlsQyizmo790xQ4+/YbmxmTeAaP2nX
+	jWXSi8RfS8zEKONl4RqYPtPnYzCamTHzdRai7M2iU2sQvCx4clT0LZDW28/wlgowPdb9JKBYUSS
+	sB3nHTk5HzhM/G6dgqeYscOXWpF0AnvqjaA+JCqy4u0f+vRqRh7h7aW618DMJ9MtkRaLfIsiycE
+	gxQs+TuS6AfCVASSldPVBSETmDdfnt41Yn+r/vFWQVc53XzSoE0F39qOmaaBoMaeHjhnSxD7f8Y
+	Mudgd5n2uTTDf7TV5yL4GRQvj56SCLmvAxMQExrhCRU7OaGWvpkLTeAe8KI9+6ND/TXy2wf9u/m
+	BygbZY
+X-Google-Smtp-Source: AGHT+IGhsH9Jko1f8FqT4pidOms6fn00pFogStN/Ol9Z3CUMb20PsGcKDB/1u9de4k8QmAJ4VfkJ0A==
+X-Received: by 2002:a17:906:4a85:b0:b55:c35e:e533 with SMTP id a640c23a62f3a-b55c35ee5d6mr1063241366b.12.1760359689360;
+        Mon, 13 Oct 2025 05:48:09 -0700 (PDT)
+Received: from [192.168.4.55] ([92.120.5.12])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cacba7sm916644566b.5.2025.10.13.05.48.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 05:48:08 -0700 (PDT)
+Message-ID: <1ad36baf-83af-4ab7-9f47-dd7f74d4749f@gmail.com>
+Date: Mon, 13 Oct 2025 15:48:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759824376.git.mazziesaccount@gmail.com> <19d537f9920cae5fa849b649e5bc42ba0b8e52f8.1759824376.git.mazziesaccount@gmail.com>
-In-Reply-To: <19d537f9920cae5fa849b649e5bc42ba0b8e52f8.1759824376.git.mazziesaccount@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 14:45:50 +0200
-X-Gm-Features: AS18NWBXkMvQX4UMEqrcFAQn-COI9GhJKLnUY40gmxEPa8GpJstGMsxg8s5ctP8
-Message-ID: <CACRpkdbHBQQnnTUrUzOrYxzQKCzDyy8aNK7w8OEFz-ic8ic1FQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 03/13] dt-bindings: power: supply: BD72720 managed battery
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] dt-bindings: clock: document 8ULP's SIM LPAV
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com>
+ <20250804155407.285353-4-laurentiumihalcea111@gmail.com>
+ <20250805-stereotyped-precise-vicugna-1c78ff@kuoka>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250805-stereotyped-precise-vicugna-1c78ff@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Matti,
 
-thanks for your patch!
+On 8/5/2025 10:03 AM, Krzysztof Kozlowski wrote:
+> On Mon, Aug 04, 2025 at 11:54:03AM -0400, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> Add documentation for i.MX8ULP's SIM LPAV module.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 69 +++++++++++++++++++
+>>  1 file changed, 69 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>> new file mode 100644
+>> index 000000000000..ef44f50921f8
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>> @@ -0,0 +1,69 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
+>> +
+>> +maintainers:
+>> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> +
+>> +description:
+>> +  The i.MX8ULP LPAV subsystem contains a block control module known as
+>> +  SIM LPAV, which offers functionalities such as clock gating or reset
+>> +  line assertion/de-assertion.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - fsl,imx8ulp-sim-lpav
+>> +      - const: syscon
+> Why is this syscon?
 
-On Tue, Oct 7, 2025 at 10:33=E2=80=AFAM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
 
-> The BD72720 PMIC has a battery charger + coulomb counter block. These
-> can be used to manage charging of a lithium-ion battery and to do fuel
-> gauging.
+because of the MUX child's progamming model (i.e. "mmio-mux") which needs a syscon parent.
+
+will get rid of this by using "reg-mux" instead. There shouldn't be a need for syscon anyways.
+
+
 >
-> ROHM has developed a so called "zero-correction" -algotihm to improve
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 3
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: lpav_bus
+>> +      - const: hifi_core
+>> +      - const: hifi_plat
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +    description: clock ID
+> Drop description, redundant. Look how other bindings write this.
 
-algorithm?
 
-> the fuel-gauging accuracy close to the point where battery is depleted.
-> This relies on battery specific "VDR" tables, which are measured from
-> the battery, and which describe the voltage drop rate. More thorough
-> explanation about the "zero correction" and "VDR" parameters is here:
-> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohme=
-urope.com/
+ACK. Very sorry for the easily avoidable mistakes.
+
+
 >
-> Document the VDR zero-correction specific battery properties used by the
-> BD72720 and some other ROHM chargers.
+>> +
+>> +  '#reset-cells':
+>> +    const: 1
+>> +    description: reset ID
+> Ditto
 >
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> +
+>> +  mux-controller:
+>> +    $ref: /schemas/mux/reg-mux.yaml#
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#clock-cells'
+> reset cells and mux controller.
 
-> The parameters are describing the battery voltage drop rates - so they
-> are properties of the battery, not the charger. Thus they do not belong
-> in the charger node.
 
-Right!
+I'd say the mux-controller child can stay optional since the driver allows it?
 
-> The right place for them is the battery node, which is described by the
-> generic "battery.yaml". I was not comfortable with adding these
-> properties to the generic battery.yaml because they are:
->   - Meaningful only for those charger drivers which have the VDR
->     algorithm implemented. (And even though the algorithm is not charger
->     specific, AFAICS, it is currently only used by some ROHM PMIC
->     drivers).
->   - Technique of measuring the VDR tables for a battery is not widely
->     known. AFAICS, only folks at ROHM are measuring those for some
->     customer products. We do have those tables available for some of the
->     products though (Kobo?).
 
-It would be sad if we later on have to convert it to a standard property
-because it turns out to be wider used than we know.
+As for "#reset-cells": unless CONFIG_RESET_CONTROLLER is enabled, the driver allows
 
-But I buy your reasoning!
+this property to not be specified. The whole idea was to try and make the driver more
 
-> +properties:
-> +  rohm,voltage-vdr-thresh-microvolt:
-> +    description: Threshold for starting the VDR correction
-> +
-> +  rohm,volt-drop-soc:
-> +    description: Table of capacity values matching the values in VDR tab=
-les.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+flexible in case, for whatever reason, people wouldn't want/need the reset controller bit.
 
-Which unit is this? Seems to be capacity in % *10?
+In hindsight, I think this decision makes writing the binding a bit more awkward (since the
 
-> +  rohm,volt-drop-high-temp-microvolt:
-> +    description: VDR table for high temperature
-> +
-> +  rohm,volt-drop-normal-temp-microvolt:
-> +    description: VDR table for normal temperature
-> +
-> +  rohm,volt-drop-low-temp-microvolt:
-> +    description: VDR table for low temperature
-> +
-> +  rohm,volt-drop-very-low-temp-microvolt:
-> +    description: VDR table for very low temperature
+optionality of this property depends on the value of CONFIG_RESET_CONTROLLER) so maybe
 
-Doesn't the four last properties require to be defined as uint32-array?
+we'd just be better off with having this property mandatory and modifying the driver to remove
 
-> +        rohm,volt-drop-soc =3D <1000 1000 950 900 850 800 750 700 650 60=
-0 550 500
-> +          450 400 350 300 250 200 150 100 50 00 (-50)>;
+the aforementioned flexibility?
 
-This one makes a lot of sense.
 
-> +        rohm,volt-drop-high-temp-microvolt =3D  <100 100 102 104 106 109=
- 114 124
-> +          117 107 107 109 112 116 117 108 109 109 108 109 122 126 130>;
-> +
-> +        rohm,volt-drop-normal-temp-microvolt =3D <100 100 102 105 98 100=
- 105 102
-> +          101 99 98 100 103 105 109 117 111 109 110 114 128 141 154>;
-> +
-> +        rohm,volt-drop-low-temp-microvolt =3D <100 100 98 107 112 114 11=
-8 118 112
-> +          108 108 110 111 113 117 123 131 144 157 181 220 283 399>;
-> +
-> +        rohm,volt-drop-very-low-temp-microvolt =3D <86 86 105 109 114 11=
-0 115 115
-> +          110 108 110 112 114 118 124 134 136 160 177 201 241 322 403>;
-
-I would have expected something like this, to avoid the a bit fuzzy definit=
-ions
-of high, normal, low and very low temperature either:
-
-Provide an array of temperatures in millicentigrades (I just guessed
-these temperatures, you will know the real ones!):
-
-rohm,vold-drop-temperatures-millicelsius =3D <500, 250, 100, (-50)>;
-rohm,volt-drop-microvolt-0 =3D <...>;
-rohm,volt-drop-microvolt-1 =3D <...>;
-rohm,volt-drop-microvolt-2 =3D <...>;
-rohm,volt-drop-microvolt-3 =3D <...>;
-
-Where each array correspond to the temperature, or if you wanna
-go all-out custom:
-
-rohm,volt-drop-50-celsius-microvolt =3D <...>;
-(...)
-
-So we get the actual temperature in there one way or the other.
-
-> +        rohm,voltage-vdr-thresh-microvolt =3D <4150000>;
-
-This property seems to be missing from the bindings?
-
-Yours,
-Linus Walleij
+>
+>
+>
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/imx8ulp-clock.h>
+>> +
+>> +    clock-controller@2da50000 {
+>> +        compatible = "fsl,imx8ulp-sim-lpav", "syscon";
+>> +        reg = <0x2da50000 0x10000>;
+>> +        clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
+>> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
+>> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
+>> +        clock-names = "lpav_bus", "hifi_core", "hifi_plat";
+>> +        #clock-cells = <1>;
+>> +        #reset-cells = <1>;
+> Incomplete node - missing properties/child. Post complete binding and
+> complete example.
+>
+> Best regards,
+> Krzysztof
+>
 
