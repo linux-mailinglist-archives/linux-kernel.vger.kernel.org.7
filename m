@@ -1,165 +1,205 @@
-Return-Path: <linux-kernel+bounces-849845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0DFBD1114
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:14:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7533CBD1121
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D241893F4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:14:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BCED4E5A70
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EC8203710;
-	Mon, 13 Oct 2025 01:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8923A1F8722;
+	Mon, 13 Oct 2025 01:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gQGuRgAr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yr16g2if"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B589F52F88
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22C642050
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760318054; cv=none; b=IhdidY00dBuSOWXC1AOB00+oJxuJ295PJjQKQDKIRP8G33CdSaXBxEk29VH0vj0kybCSVG1mr7mMyl+lGC7yO1SczSUWtS5JkzSKufAGcK9LtUvkZPEBiFJ7yfPozob5SkK8GANwFqr6EfRq9cwby9Mj13uPSCy3lf3iEq+we5g=
+	t=1760318235; cv=none; b=p4vYoI7hcnvSuO6hrjg2aHWF5yEacz+n7UnBdOaG/WDLyUFF6egd96btzRC8jkYmZiYBFko9OdAvwhnlwe8X6toixCBXrh5yqSoVTdeWISHMk0F2+3Oit3muW7f/Qg9+0o1FK5ajzJeiEYYQUk5G6z5J5zO5yCtKVZGVADr5kmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760318054; c=relaxed/simple;
-	bh=vYTNGVpJqfVNWqTFnghL5MAMhtBYnTD2XCWEwdgn2To=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LXZlM5geGFRpeSZ/+B3SR0lLfD8gWPIkuRyhFAayfmcb8e1FK6KHd96JKCbXAUUtwpTk7Vd2fyMXzSB1Vdx/iopKA5I0oex0W6OuBihIif+9JBKjMB7uwtvK2kX4a2BHbW2WdiogVr3sGy2hj9QndY/LUWkdCORVw37YaFByf+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gQGuRgAr; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1760318235; c=relaxed/simple;
+	bh=eLDXrWIZIZS9HoCmx0lw5R7FSldNWeUebH17d50SzwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PJMcs3FPRaxUV3eA5M1Lc8Zg8+hz0ajWV1Ev2IJZb2AA3vMszoVyBlIX5PMGuz84oH9SmomwA7Kpe6rlZ/Fwt4ibZXE3ZVxn5DoS4Qu0hxZSz1FLYTCRTSkU4TBxncqE2k0+kjTJkbD6IeLGWPHeg1IsmMlMO0dw4TxCINbgc/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yr16g2if; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CMx2Vm030228
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:14:10 GMT
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CLsrOB000713
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:17:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=vK+SJgwnOTEZYAlMkPB/qihU7mC9Y5KP7ce
-	r6c8Azng=; b=gQGuRgAr0p8shwpEcS1em5PgCzaRp7SDskDjDsJRc7IgOj83lGS
-	xZ1YUXq73s254/R5Anbp2PwBB8lWyQGUzLZXRi1A3kilMkJEIiqcmf2Wfw7/b9TY
-	qXSc3pv29gdT6dPlQix0h3b8/uwcWe3EjPHdS5sYk+aKhc+9srfqSvc+bPfCPLBh
-	wO0t4Z9b2JwjVVpk6MGbCfzTC47o39aWnZu/lyb8whnYzzNIsdiuJUFUk4cakj/r
-	gfzl+1wX1DxDyhEiCK/PUshUBjSqdcXGd7nMw22kRzoLm26ymfK4ZbBwCqIJXa80
-	mi7q31M+i9t5zRtuoWJL/MNvj2MdI6uP6ZA==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfertuhh-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Kr0l1PGyoz3ywSkxFsHdAj7RmD+86+u7L70Zpf7p2Ic=; b=Yr16g2ifz0A5E27m
+	0jOePQAkbUw+Mc4ML2vKzh1MUuAPcktIQ7xn9sza/C6bKWe10zPxoQx327O/SHQA
+	CTLvI736DXEM4y6f7seIwm6W5fhbXWdiY9u1pQwF6LAQodwKDGKZ5OIfQ6x9gDiC
+	661ShsfImEi7ndY8zYPJjOhtiQFHRuW3i7p8zPXPEP2Is/797bt/TJVEF3xfX3Sr
+	6ofPtdBccm1GS1TLp9rivdZS3EJ+aQFnv4PLUMNKhAxnAxoK4QFCPvfYkvZwKdtN
+	BUpY/aG/jTSY43IdB43KCxfv9+W7lo9bE7GIcWr7GUeuonrxV0GBkKIVBx+mlyVH
+	hMJKWw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qgdftr32-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:14:10 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4c72281674so5854965a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 18:14:09 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:17:12 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7810af03a63so13098568b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 18:17:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760318049; x=1760922849;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vK+SJgwnOTEZYAlMkPB/qihU7mC9Y5KP7cer6c8Azng=;
-        b=G8jdiUK1XGEwU0yNBAoCwSGBkaws1zBiz5sUt0dRdHXpw1vW8kZvHtKGU4KIF7clUJ
-         BhX+TFgo127QvgIBjCwpdBuFwZMzISyURm9jxClXeQarBbaKKwy4+RR3OZgU5B1j48Z2
-         iX97EHbSGBf+RnBLw/M/lVXnlZmWOHFWzCTnEq+imk80V7uq/pqCwZw69NU803SBn0A/
-         mBavZ6dbHeCdAslOpgVM/Fdt3nnKZX4QWw/OUQ2DELadOqoIQgODN++Sgr+eCjRnzivO
-         m6DyN4PdOpMNMb7181xKHiz+AUb3kYC5u3RBhMFxuTjCI8t7FL8SGCgn7UCNTWL0dhD3
-         fN+A==
-X-Forwarded-Encrypted: i=1; AJvYcCViCOu95E4WIEmxT040m8mtSInbz7p6Cr9rDYW2XAN1uJZuSbH6MNcWi7qbRVImf0vCcMUE7VvzTNLziKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH29uRz0xtwwAg/FU0bjOOIN5v9A+aGTyGfub6+UXUyWMp+ON9
-	HeNfEcF+Z1UHNoPNgq3q4fW053pGBnguzgefrBExWJU0SEYCd7RzGEbnP0oxzhR0pyXRPUgDAY6
-	R68fN8+daf41pfE5xbQzZRCUQY/X8EaIaAlMV4dihAscWatqgnJdKKtgFSZpVIH4rT9o=
-X-Gm-Gg: ASbGncsoOeJUCp9YNBRKioSq4RxEXkE1qDAvSE2xbESLeSJ08H9cQqN49ZkkKawnjs1
-	nZeD7PyhKpRRdJYu5kO0qsPRHJb1xzJTX4aHNqE5dhZalMyrSV6uEYywMbevmMjWbCkyO0+myjk
-	Cllu2aEfLQbvSrAtQkpsqr1FDYAkgX1qgHEaH1+ADGtRxB73nBa1l9iIwlAsWQlMdrxOW5JHgBK
-	uNNzvCwIwEiOL0w3ctlo/xtTmeuoqbo/USWlkQjztRflFZN+VdHdI6nw5bgJ9JEyPOdFKD+nfDP
-	q5qk+K5kG8LQr7XnuDilm5QXjHiqNPlA3tqoFI7qCEGPNKsj83I/kHU1E56F3V1hT8POzsn4BO+
-	Gtg==
-X-Received: by 2002:a05:6a21:4843:b0:32d:b925:246e with SMTP id adf61e73a8af0-32db9254d9cmr17513630637.43.1760318048826;
-        Sun, 12 Oct 2025 18:14:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2QXwY3MOrK4ad1ja2OEJVP5yyAqc35NeoeynehrZkJOMLTtorm2RzOTEzGNzwKQ3z/GLTDQ==
-X-Received: by 2002:a05:6a21:4843:b0:32d:b925:246e with SMTP id adf61e73a8af0-32db9254d9cmr17513603637.43.1760318048362;
-        Sun, 12 Oct 2025 18:14:08 -0700 (PDT)
-Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bb11ca0sm9672647b3a.32.2025.10.12.18.14.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 18:14:07 -0700 (PDT)
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Subject: [PATCH] dt-bindings: usb: qcom,snps-dwc3: Fix bindings for X1E80100
-Date: Mon, 13 Oct 2025 06:43:57 +0530
-Message-Id: <20251013011357.732151-1-krishna.kurapati@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1760318231; x=1760923031;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kr0l1PGyoz3ywSkxFsHdAj7RmD+86+u7L70Zpf7p2Ic=;
+        b=vRyg8c+1qk+/MBAKnDCGy7wiSCgD7dryXr11HIoluKKHtG7Kd8sgzcLMTYrudojgk4
+         8x/q7xZQrieWnQiT1HSdl1n8rY/vZwW8ZvKJBXudoE4ZiRegubFK0TqaChHSK+KWo4Oy
+         AxbPm4xqNmnRd7UE07fh04AAW0a3KN6a8UPxnIL0WuDrFPGHhQI2npFyw94ViNWjoe00
+         0+fdXIrgCSiaQG99xcbwJyZUz0CX4jvdPS90YGoc0U//5kv2HrkMjncnpMyNoX2nF8Mh
+         P6vi+d/KyaflV3a9x2hOuUmY4wGFW2iNQmzJDuKWXP1FAvTQqwCVV3khAEM20OhFQ12/
+         quog==
+X-Forwarded-Encrypted: i=1; AJvYcCVSA06e6tSrNbyhyGHz8h4gqRDiLdI+AObDSaBlL/QocLa6xu9z1imxASK/oCCbKSlt52N9x46jJ387eiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+8Q8o9C20tf6fynjx5aqXWqWKDcJloLWGtPdz9RIo1e5/yjMO
+	q+4B6W1QjNfmAh1wZ74Ed5TswG6do+NzCDr7ebPDDO11RHDNpRl0gZlf0dVo9gdxwdw3ZgsthkK
+	FkyGybu/I5mzIoQnKSnoa29LR4FZkqlhavxrivUX1ONaFNoFLYEpO6jrCy9CsjRb/EHU=
+X-Gm-Gg: ASbGncuzNPqcIHrQPe48CswiBqVaqTQkStGAz/lGPeMSfUBb37HI7W352Hap2BUN1Oq
+	C9s3lY+SQGD/s4KnZ0t77PbRK2dWH01GWafUiNk8AudXbqG9o7Q3gz/kanbX+pm524BhiJBYdUy
+	5xrMoxF04UL+Le7avJrtcQ11fodXVsckxkbESex1tg/D2uBqB1+OijMukwCIhDBXK2TOUqTuq4s
+	kdX62QqL7U3y49mEu+SDzVtEMD+WumjKELiGLVatl0lIRq/0iC6+ntfMvkHyBIF6/B40xOb/dmE
+	zLtj4+mU2WSXWKjTqbOZub82NKw9RyzNzjz1JiUASiW9/5ty6KCEOM37k2j3531moH9yKpvBoiT
+	S
+X-Received: by 2002:a05:6a20:94c9:b0:2fb:530a:d665 with SMTP id adf61e73a8af0-32da845feb7mr24545149637.47.1760318231231;
+        Sun, 12 Oct 2025 18:17:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbXXwK6X9WWZzaeXl2x5oqTCDc2a3vDXCVPXq5BQZntaW2UbpT4Pvzz/GZ/t/MTiejgocc2A==
+X-Received: by 2002:a05:6a20:94c9:b0:2fb:530a:d665 with SMTP id adf61e73a8af0-32da845feb7mr24545126637.47.1760318230792;
+        Sun, 12 Oct 2025 18:17:10 -0700 (PDT)
+Received: from [192.168.1.3] ([122.164.228.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df48a83sm8135399a12.31.2025.10.12.18.17.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Oct 2025 18:17:10 -0700 (PDT)
+Message-ID: <2a088c8f-5555-490e-a70d-308a876924ca@oss.qualcomm.com>
+Date: Mon, 13 Oct 2025 06:47:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=R64O2NRX c=1 sm=1 tr=0 ts=68ec5262 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=QltsTdpWXtN-n1SMwaMA:9
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-GUID: 2qGuCU5kAwKY35RM4eY2hBoDvSxKFgnH
-X-Proofpoint-ORIG-GUID: 2qGuCU5kAwKY35RM4eY2hBoDvSxKFgnH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX7tu0KSpXoUKS
- xG45+GG8i7BY3EHLOdLKeldP+J7DKzulShpNoNvCSezVhLssjSf19nYw+nAzkz3M3MzRWceilc4
- xgGiKfU2lE8zBaFGT5QRQ5ntbrAMh8Hhobu3X19bUCIvZO1exrOy3XNor9iCLp1cV8ICpViqvkR
- ysoBZZZyQNgNm1y/JDKDtJoFSAzhktZIy1GJCbN/MSeO2xl/GocyRFkk/n0UteIr+f/1mfMqCGP
- Hxvd6ephg+qPZDxvTK1Z1nF9Rsbbn1zXXil8p4eeCI/A6ngTz5d/cDE2YHT8dpWKYtWb6s8Bcd4
- fz/4ovMBXQubc3OK0pDLkB89lUSDa5HdgAKPEwvycDHt+p1jI3uZlXfMmcCyRyTupB9eRw1v7ZG
- X9iLEaL2rN9t566xGVpSi9hKGy9fAA==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: ti,hd3ss3220: Add support for
+ VBUS based on ID state
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251008175750.1770454-1-krishna.kurapati@oss.qualcomm.com>
+ <20251008175750.1770454-2-krishna.kurapati@oss.qualcomm.com>
+ <odikli6rfdyid5oqavurtqytgnwgh5hpmka2jt5tprpdw7cd72@icpnjnkfowt7>
+ <20251009131543.GA379737-robh@kernel.org>
+ <cbpne2d7yr2vpxmrrveqajlp3irzsglxroxyyjmviuci2ewted@6ewwp6yyybk5>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <cbpne2d7yr2vpxmrrveqajlp3irzsglxroxyyjmviuci2ewted@6ewwp6yyybk5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyNSBTYWx0ZWRfX1eJbQvQltpeo
+ gAtyCAFd6BnlB4PPCBNtuLj9Q3dBWOGkxciU+mBfcDAbzX1xgIDOxChr+cyxT0QnI9koAUZWDee
+ StvmwVyc1VuVjyDGJbz3tRt4LGbkJj7f/HMCdscXXczH5TgOqj75i+OzJersgsY3MbzzV6ml6dp
+ oBpUel073dsWVf9tWXa44Fv3de3y9wdVyx8gbE8CJRpudw9WIIpw9fvPktElR3BhWBiTzjSiwYu
+ g9lX7IRGmr9VJa5pTUoB6E6GFb/GDKxVh0R9ztQItjg+3iNnz6CNSQ+KZGDEyXe/IAKwy36jCEY
+ t3hJtpEGhDQm0dQiBLCN9qeY5x2M2OXN6+URJ4gyNAnzbmmNK6vLefMQTJxqvRwE5gBhESXuAMX
+ y+iCrsoDNkSlWv9xFCORe79b6uTKqA==
+X-Proofpoint-GUID: 1fK6vgLcF9vnOGUXKWtAah6_rWxzdAAl
+X-Proofpoint-ORIG-GUID: 1fK6vgLcF9vnOGUXKWtAah6_rWxzdAAl
+X-Authority-Analysis: v=2.4 cv=J4ynLQnS c=1 sm=1 tr=0 ts=68ec5318 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=8YinarrYfdS0Dhyguhy4yQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=JupwLAayHTYr5Hx-38AA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-13_01,2025-10-06_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ bulkscore=0 suspectscore=0 clxscore=1015 phishscore=0 spamscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110025
 
-Add the missing multiport controller binding to target list.
 
-Fix minItems for interrupt-names to avoid the following error on High
-Speed controller:
 
-usb@a200000: interrupt-names: ['dwc_usb3', 'pwr_event',
-'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+On 10/9/2025 8:08 PM, Dmitry Baryshkov wrote:
+> On Thu, Oct 09, 2025 at 08:15:43AM -0500, Rob Herring wrote:
+>> On Wed, Oct 08, 2025 at 09:31:59PM +0300, Dmitry Baryshkov wrote:
+>>> On Wed, Oct 08, 2025 at 11:27:49PM +0530, Krishna Kurapati wrote:
+>>>> Update the bindings to support reading ID state and VBUS, as per the
+>>>> HD3SS3220 data sheet. The ID pin is kept high if VBUS is not at VSafe0V and
+>>>> asserted low once VBUS is at VSafe0V, enforcing the Type-C requirement that
+>>>> VBUS must be at VSafe0V before re-enabling VBUS.
+>>>>
+>>>> Add id-gpios property to describe the input gpio for USB ID pin and vbus-
+>>>> supply property to describe the regulator for USB VBUS.
+>>>>
+>>>> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>>>> ---
+>>>>   .../devicetree/bindings/usb/ti,hd3ss3220.yaml       | 13 +++++++++++++
+>>>>   1 file changed, 13 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>>>> index bec1c8047bc0..c869eece39a7 100644
+>>>> --- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>>>> +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>>>> @@ -25,6 +25,19 @@ properties:
+>>>>     interrupts:
+>>>>       maxItems: 1
+>>>>   
+>>>> +  id-gpios:
+>>>> +    description:
+>>>> +      An input gpio for USB ID pin. Upon detecting a UFP device, HD3SS3220
+>>>> +      will keep ID pin high if VBUS is not at VSafe0V. Once VBUS is at VSafe0V,
+>>>> +      the HD3SS3220 will assert ID pin low. This is done to enforce Type-C
+>>>> +      requirement that VBUS must be at VSafe0V before re-enabling VBUS.
+>>>> +
+>>>
+>>> Stray empty line?
+>>>
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  vbus-supply:
+>>>> +    description: A phandle to the regulator for USB VBUS if needed when host
+>>>> +      mode or dual role mode is supported.
+>>>
+>>> Why are we adding the property here while we can use the vbus-supply of
+>>> the usb-c-connector?
+>>
+>> Normally, that's my question on both of these, too. However, it does
+>> look like both are connected to the chip. There's VBUS_DET which is
+>> connected to Vbus (thru a 900k resistor). So having these here does look
+>> like accurate representation of the h/w. The commit message should make
+>> this more clear. Honestly, that's really the only part I care about.
+>> How it works is not so important.
+> 
+> The VBUS_DET pin is used by the controller to detect the VBUS provided
+> by the USB-C partner and to identify when it's safe to turn on the
+> device's VBUS supply. I think this still fits into the description of
+> the connector's vbus-supply.
+> 
 
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
----
-The above issues were found when effort was being put in to
-flatten usb controller nodes on X1E80100.
 
- Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+Hi Dmitry,
 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml
-index dfd084ed9024..d49a58d5478f 100644
---- a/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml
-@@ -68,6 +68,7 @@ properties:
-           - qcom,sm8550-dwc3
-           - qcom,sm8650-dwc3
-           - qcom,x1e80100-dwc3
-+          - qcom,x1e80100-dwc3-mp
-       - const: qcom,snps-dwc3
- 
-   reg:
-@@ -460,8 +461,10 @@ allOf:
-     then:
-       properties:
-         interrupts:
-+          minItems: 4
-           maxItems: 5
-         interrupt-names:
-+          minItems: 4
-           items:
-             - const: dwc_usb3
-             - const: pwr_event
--- 
-2.34.1
+  In case we put the vbus supply in usb-c-connector node, is there any 
+way we can get its phandle reference in hd3 driver given that the 
+connector node is not a child or parent of port controller node.
 
+Regards,
+Krishna,
 
