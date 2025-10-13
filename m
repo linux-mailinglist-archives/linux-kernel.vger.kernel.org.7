@@ -1,130 +1,246 @@
-Return-Path: <linux-kernel+bounces-851180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15034BD5B2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44949BD5B60
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DD51890C9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8E5188C894
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EC42D6E5E;
-	Mon, 13 Oct 2025 18:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12C2D46CB;
+	Mon, 13 Oct 2025 18:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRURLY3C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cveAs0di"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078502D4B5E;
-	Mon, 13 Oct 2025 18:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA112D46CC
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760379960; cv=none; b=q2eLQE+aqls4P201OOJADZKswGzoDsh05dDRhPct35amb9sXajKQt+44JIGvlE1M+oZyvD2x6Peg+kUEU5qTkZsV86R4wGvxKfoFUZ12UIPaIhlIIrt8kVy0TRTZbroXvHSEgEHoQwGUpJ9Hs+bqXAAqtn2CjvMn/SrFwYOfMII=
+	t=1760380058; cv=none; b=PBM6AK6ADGaEIsuHe/g5hGyRJoTGnJvdheVd4RAr9gsfEG3SkxnB/Kylq4fn8rrteuFDcveDhJKp1Cg03pFS5X+GNLk58m5rp4G80GHp4gXz3V2NA5fE+FkEION1uj1YM5eXX0abYIzBvA60W1eGY9VDjE9BqwYYthkc1cEM98M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760379960; c=relaxed/simple;
-	bh=fp7n/OOANDDliKGGy2ySxRmFqBsywUsfLoN+oaMFd0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCiFtPOWjHTCkaXT0exLm3Rrre1ieoTSRvC5+g2inezNvT7hqagt7/kAP4uLRGfaZWNALg6xfBKf/YN2uH0PL66UXjUdsGyjrI0+9+MFFMNHViLlncAXZWB4EY7h+d7ospRPw8Sct9L2j2Xrynkg7lYSeRfzIajnBw41h2n+bSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRURLY3C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA8C8C4CEE7;
-	Mon, 13 Oct 2025 18:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760379959;
-	bh=fp7n/OOANDDliKGGy2ySxRmFqBsywUsfLoN+oaMFd0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aRURLY3C9C8FjB3TlBWIqqo3yWGvkrvJmuPRgQ+pKDdL05ZQApdR3TtgFSNrjvmIS
-	 TphiU/sdUT2P9f2gcv/tHfNFyHyzuUZMTrBdjXna0qFPlwr34iCTO+SvMjvHlWeKj7
-	 hXVep5z8Bjm3mnQXg9aqhr2v5zefiOGlhpwke1Jfg2Nyex4U8Fu+LW+MSNDEYTJWT3
-	 4oSrN2RKwSqoPZ5nO9Xe/LZzCvYgV0nlXru5eEiYDfAlrBDTxQkVS0+6iG1+fI8pEJ
-	 sqnqDsMR0YjHSrn2+u4VE1HvByz9tl8ed925A0TrBeLkljJrB4eTgw0vahqq7EmQGk
-	 Y+TZxGzUvnNWg==
-Date: Mon, 13 Oct 2025 19:25:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Lucas Zampieri <lzampier@redhat.com>
-Cc: devicetree@vger.kernel.org, Charles Mirabile <cmirabil@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Vivian Wang <dramforever@live.com>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: interrupt-controller: add UltraRISC
- DP1000 PLIC
-Message-ID: <20251013-commute-bountiful-208ade035c86@spud>
-References: <20251013111539.2206477-1-lzampier@redhat.com>
- <20251013111539.2206477-3-lzampier@redhat.com>
+	s=arc-20240116; t=1760380058; c=relaxed/simple;
+	bh=BIcA4osUmV/1VbMUUXeGDi2zOdw1yTeJ2CK9wzGmF+4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BkrZBDQGfqWY19IjDB4V8osHdsAoRiPxVjTD/LvzFYhFFSP4jsd0ZQYUnY2FeL9tC2VswxeTevJ5z15QgXzLvGgd9Ixq93WB8nBSG8Ph9JOQVPx0QgAEbNgOGr3mcGDjS8hKcq3UKArowa0LsuPE4NwGgl3nM/wa1q4Hrs36jqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cveAs0di; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760380053;
+	bh=BIcA4osUmV/1VbMUUXeGDi2zOdw1yTeJ2CK9wzGmF+4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=cveAs0diTCznavmi+DTpudynnyzFIosDn4AGMJvnJPUPqziS0Uy2rgoK1if1yZekL
+	 34HcPgvmF25JDHLM2rLf8msrZyJ5tH9Hl1k/93AnPEKflr/aIkM+6RVQOfW/mzr+cN
+	 63OWEQNlInMr0dcpV6yc5/rkMPXrPXSH2Ochb1RZFuVW7uTGqhNdvcuWOsyDZXaXo/
+	 Lj1y1WotdICF9Qh9vdnfhyjmfP0vYzOGliZUq4+Gp8tUPWnViOOMuqlaxN5hILMfbI
+	 jyRups+UT8H06V54a+wupmKLxHd7dvHRIhCWzV2bEWETXkySlt1Ugz/vdejz7oTQWl
+	 BOYyHDU294pkw==
+Received: from localhost (unknown [82.79.138.145])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id CBBC317E124A;
+	Mon, 13 Oct 2025 20:27:32 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v2 0/2] Introduce BACKGROUND_COLOR DRM CRTC property
+Date: Mon, 13 Oct 2025 21:27:17 +0300
+Message-Id: <20251013-rk3588-bgcolor-v2-0-25cc3810ba8c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wFtD2X/HwE536WvW"
-Content-Disposition: inline
-In-Reply-To: <20251013111539.2206477-3-lzampier@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIVE7WgC/13MSw7CIBSF4a00dywGMARw5D5MBzxbYi3mYoimY
+ e9inTn8T3K+DUrAFAqchw0w1FRSXnvwwwBuNusUSPK9gVMuqOKa4O0klCJ2cnnJSBwz0mojqLQ
+ O+umBIabXDl7H3nMqz4zv3a/su/4oTfk/VRmhJHotfdTMKx0vfV+MzWiOLt9hbK19AL42yM2wA
+ AAA
+X-Change-ID: 20250829-rk3588-bgcolor-c1a7b9a507bc
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>
+Cc: Robert Mader <robert.mader@collabora.com>, kernel@collabora.com, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ Matt Roper <matthew.d.roper@intel.com>
+X-Mailer: b4 0.14.3
 
+Some display controllers can be hardware-configured to present non-black
+colors for pixels which are not covered by any plane (or are exposed
+through transparent regions of higher planes).
 
---wFtD2X/HwE536WvW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The first patch of the series introduces the BACKGROUND_COLOR DRM
+property that can be attached to a CRTC via a dedicated helper function.
+A 64-bit ARGB color value format is also defined and can be manipulated
+with the help of a few utility macros.
 
-On Mon, Oct 13, 2025 at 12:15:37PM +0100, Lucas Zampieri wrote:
-> From: Charles Mirabile <cmirabil@redhat.com>
->=20
-> Add a new compatible string for UltraRISC DP1000 PLIC.
->=20
-> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
-> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
-> ---
->  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml        | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifiv=
-e,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/=
-sifive,plic-1.0.0.yaml
-> index 5b827bc24301..a419de50f5a8 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
-1.0.0.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
-1.0.0.yaml
-> @@ -74,6 +74,8 @@ properties:
->                - sophgo,sg2044-plic
->                - thead,th1520-plic
->            - const: thead,c900-plic
-> +      - items:
-> +          - const: ultrarisc,dp1000-plic
-> +          - const: ultrarisc,cp100-plic
+Note this is a reworked version of the patch [1] submitted (many) years
+ago by Matt Roper.  The main changes are:
 
-Based on your cover letter, this is problem not incorrect, but this fails
-the eye test and looks wrong. Please mention in your commit message that
-dp1000 is an soc and cp100 is a purchasable IP core.
+* Renamed DRM_ARGB_<COMP>() to DRM_ARGB64_GET<C>_BPC() while providing
+  convenience wrappers to extract all 16 bits of a specific color via
+  DRM_ARGB64_GET<C>()
+* Replaced drm_argb() function with DRM_ARGB64_PREP_BPC() macro, to
+  improve uAPI consistency and readability; additionally fixed a bug in
+  case of using bpc < 16: the unused least-significant bits of a given
+  component in the output value would contain the unused
+  most-significant bits of the following component in the input value,
+  instead of being set to 0
+* Replaced GENMASK_ULL(63, 0) with U64_MAX when calling
+  drm_property_create_range() to create the BACKGROUND_COLOR property
+* Moved crtc_state->bgcolor initialization from
+  __drm_atomic_helper_crtc_reset() to
+  __drm_atomic_helper_crtc_state_reset()
+* Replaced '*bgcolor*' occurrences to '*background_color*' for
+  consistency with the actual property name in both storage field and
+  helper functions names
 
-pw-bot: changes-requested
+The second patch adds background color support to the VOP2 display
+controller used in the RK3568, RK3576, and RK3588 Rockchip SoC families.
 
->        - items:
->            - const: sifive,plic-1.0.0
->            - const: riscv,plic0
-> --
-> 2.51.0
->=20
+Initially this has been validated using a modetest wrapper script [2],
+which is able to execute several tests - see an example of a generated
+report at the end.
 
---wFtD2X/HwE536WvW
-Content-Type: application/pgp-signature; name="signature.asc"
+In the meantime, the implementation on Weston side has been finalized,
+providing support for the BACKGROUND_COLOR CRTC property to the DRM
+backend via the merge request [3].  It relies on the already existing
+background-color setting in weston.ini:
 
------BEGIN PGP SIGNATURE-----
+  [shell]
+  background-color=0xAARRGGBB
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO1EMgAKCRB4tDGHoIJi
-0tGzAP0dGNd0JliXtDwRb8D0K4PzFMBq3ub1ejdol4QlhY6Z7wEA3xBHPIr6Yi17
-qe/9vOFHNa0ggaottW5iXQNZoRx2twc=
-=1jAl
------END PGP SIGNATURE-----
+All tests were performed on the Radxa boards listed below.  Please note
+that as of next-20250901, there are a few known regressions; for each
+case, I mentioned the actual problem and its related fix/workaround
+accordingly:
 
---wFtD2X/HwE536WvW--
+* ROCK 3A (RK3568)
+ - issue: broken networking
+ - fix: revert commit da114122b831 ("net: ethernet: stmmac: dwmac-rk: Make
+   the clk_phy could be used for external phy")
+
+* ROCK 4D (RK3576)
+ - issue: random freezes right after booting
+ - fix: add regulator_ignore_unused to kernel cmdline
+
+* ROCK 5B (RK3588)
+ - issue: broken networking
+ - fix: apply patch [4]
+
+[1] https://lore.kernel.org/all/20190930224707.14904-2-matthew.d.roper@intel.com/
+[2] https://gitlab.collabora.com/cristicc/linux-next/-/commits/drm-vop2-bgcolor-test
+[3] https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/1845
+[4] https://lore.kernel.org/all/20250827230943.17829-1-inochiama@gmail.com/
+
+Validation report on ROCK 5B
+============================
+
+$ tools/testing/rk-bgcol-test.sh
+
+---------------------------------------------------------------
+ Available Rockchip display connectors
+---------------------------------------------------------------
+id	type	status	crtc_id	plane_id
+85	11	2	0	34
+88	11	1	83	40
+
+Selected connector: id=88 crtc=83 plane=40
+
+---------------------------------------------------------------
+ Check initial state
+---------------------------------------------------------------
+Read BACKGROUND_COLOR prop (ARGB64): 0xffff000000000000
+    Connector: HDMI-A-2
+	background color (10bpc): r=0x0 g=0x0 b=0x0
+
+---------------------------------------------------------------
+ Set/get DRM property
+---------------------------------------------------------------
+Changing prop value to: 0xffff00000000ffff
+opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+Read BACKGROUND_COLOR prop (ARGB64): 0xffff00000000ffff
+    Connector: HDMI-A-2
+	background color (10bpc): r=0x0 g=0x0 b=0x3ff
+
+---------------------------------------------------------------
+ Plane display test 40@83:960x540+480+270
+---------------------------------------------------------------
+
+Changing prop value to 0xffffffff00000000
+Press ENTER to continue..
+opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+testing 960x540@XR24 overlay plane 40
+
+Read BACKGROUND_COLOR prop (ARGB64): 0xffffffff00000000
+    Connector: HDMI-A-2
+	background color (10bpc): r=0x3ff g=0x0 b=0x0
+
+Changing prop value to 0xffff0000ffff0000
+Press ENTER to continue..
+opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+testing 960x540@XR24 overlay plane 40
+
+Read BACKGROUND_COLOR prop (ARGB64): 0xffff0000ffff0000
+    Connector: HDMI-A-2
+	background color (10bpc): r=0x0 g=0x3ff b=0x0
+
+Changing prop value to 0xffff00000000ffff
+Press ENTER to continue..
+opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+testing 960x540@XR24 overlay plane 40
+
+Read BACKGROUND_COLOR prop (ARGB64): 0xffff00000000ffff
+    Connector: HDMI-A-2
+	background color (10bpc): r=0x0 g=0x0 b=0x3ff
+
+---------------------------------------------------------------
+ Restoring state
+---------------------------------------------------------------
+Changing prop value to: 0xffff000000000000
+opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+Read BACKGROUND_COLOR prop (ARGB64): 0xffff000000000000
+    Connector: HDMI-A-2
+	background color (10bpc): r=0x0 g=0x0 b=0x0
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v2:
+- Improved uAPI consistency and readability by introducing
+  DRM_ARGB64_PREP*() and DRM_ARGB64_GET*() helper macros
+- Updated several code comment sections
+- Referenced the counterpart Weston support in the cover letter
+- Rebased series onto v6.18-rc1
+- Link to v1: https://lore.kernel.org/r/20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com
+
+---
+Cristian Ciocaltea (2):
+      drm: Add CRTC background color property
+      drm/rockchip: vop2: Support setting custom background color
+
+ drivers/gpu/drm/drm_atomic_state_helper.c    |  1 +
+ drivers/gpu/drm/drm_atomic_uapi.c            |  4 +++
+ drivers/gpu/drm/drm_blend.c                  | 39 +++++++++++++++++++++++++---
+ drivers/gpu/drm/drm_mode_config.c            |  6 +++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 13 +++++++++-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |  4 +++
+ include/drm/drm_blend.h                      |  4 ++-
+ include/drm/drm_crtc.h                       | 12 +++++++++
+ include/drm/drm_mode_config.h                |  5 ++++
+ include/uapi/drm/drm_mode.h                  | 36 +++++++++++++++++++++++++
+ 10 files changed, 118 insertions(+), 6 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20250829-rk3588-bgcolor-c1a7b9a507bc
+
 
