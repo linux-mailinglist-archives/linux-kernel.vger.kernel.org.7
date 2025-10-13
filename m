@@ -1,333 +1,134 @@
-Return-Path: <linux-kernel+bounces-849850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56374BD115A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F381BD1163
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FDFE3B97E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0BB3B8CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08F222068F;
-	Mon, 13 Oct 2025 01:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211A3221FCC;
+	Mon, 13 Oct 2025 01:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Lqn2y+XI";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Z8ojp4Zo"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/CrhzvM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEECF186E58
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760318533; cv=fail; b=EhN2CpK2rmpU9U/5YC2bXSs+sVOLev1bodylmfghdzTTqmWXNQ9e1c36Wk3Qrbbte6tUu9U9mDR7z4fSd+FgcvqnctNAOV/QPypBIMH/ck4a2bt/tHz8JENLKiK/SS3ZgGN9hpG/Z04jDNTDxVnF+KQaTqQQ8Z5ZY4WW21wL1mQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760318533; c=relaxed/simple;
-	bh=F3hDVluSdIPrMSN7gAkBRdbgEqD4rsvzN8jdFFSLIVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EolA9SYskpElwtmhJvNXjQ6hj6Hv6z3JfOmyPSP6Fm+EtSEKz4tRFb2eMJ/e5qMvU/DgUweZxFIUx9fIpa5909EUqEkhNGTnirWWwiJFrcA3wLaa+UdjkuvGV2vtbyXCResdA8qk6I2q0eH4D7V68ox9ojFFeV/Q4zFLylXae50=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Lqn2y+XI; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Z8ojp4Zo; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59D09SEe026849;
-	Mon, 13 Oct 2025 01:21:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=EezXqBigUNt6xNZa3f
-	dUrMi455TZqbdzzh2DgZvTqiY=; b=Lqn2y+XIHZUoBXQbScPDP5+8F9Fhhl+R5A
-	DODO+W1Rzyowysi9YilzOaoQgTjmMEeO/oFdsosCWsLoRZXicl9W7QDKKUriU3HT
-	Bu/cwO2sBG3wkutNLAdIqUCSSWIzEJsamElpIpcv1fjwL6mwamUeU5QTrP9axoOT
-	qn/IR930NuSl5tGl+Ao02H6NIVGyf5c+l7QSn9WzQpOcIFzZ58SJszX7l+PwEcru
-	oVWBSUPbKaiggwteNIfp8fGPlqP8chmaX6nMojDMFwdCUG3gr3wLZmY+UBq3Ahgp
-	6bEmHn0FdPMrcG3iuAEP5IjqFj+CgHU7AtM9UH9jd4byKyxF6WxQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qdtyhc7q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Oct 2025 01:21:50 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59CMKTpo027279;
-	Mon, 13 Oct 2025 01:21:49 GMT
-Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010065.outbound.protection.outlook.com [52.101.56.65])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp6pc1t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Oct 2025 01:21:49 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YU/zchX61VXKfUR/TDdwVqpI+3qRR6PIlbYzy1xej2yS76A/r6rup+8fv6Y9D7llKEAJaxgrVrQcSW2LYaBgtrMvycYpxbgB7d/+22bsPwsQeEGLYZ6ec7FdJhND+HTFf8n4xMlCICJH7QhlJcVEiYErsuVVIpq+RqRxqi2u+6nZBsrWw6fT+ncOGAtqSQvJ37RIzdZkHIybzmv78sKKQfn5AMf4XQtZusVy//DoDrpPMjKmVPvoxYjroYLBN/7mVTLxprfLp93NWShSwWjO1bFJLIDnHRY4x5hp886bTRD5drm8T2fJGMUvfTR3Q8Cq94UTcix+4jJfnaYuHqK1OA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EezXqBigUNt6xNZa3fdUrMi455TZqbdzzh2DgZvTqiY=;
- b=LhYKEAOedVibWbgwTbg7nk5sQFqrtv5Y8JXHd4Vr0qH98LsUA97Pc+3z/G6qj7gUtlEVvNB1HuBBR/Ac8fjBlLYkzs2sQGXiFKep+BfTCQYLsT1U1ryay8Kz5PT/uECFT6M4TWH1zAvIwBaf5uRbJxhk6/welAKk5KOaOjrw5e3ez6iXQ3p/jIjRbAJeByeKEfyQfwOi5Zvnk06tRvA7HcFTupmEHNtLgkci4z2PfcDyzH3rLoR3ssvm3ntnLRB1eAqGeXTYVB8t873JagjR3kxWzuuz3FUjKAM1K+ocoyz2zd9lAXaSsVy14RE4gBCqVO2ITIZgLfsu4JBVfFJ8jw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EezXqBigUNt6xNZa3fdUrMi455TZqbdzzh2DgZvTqiY=;
- b=Z8ojp4Zo6zWcgWc/6haVVI/48HrvbPaCSdDVy9IdM5OtKelQehg9FAy3XnNuswFofc2l+wLnuDlU0EqbW6hdt9CVXwNymgQ1KIkwPKEjbceSbZhvIh51wf6JG6//aj9z1xu3Y+h4C9bGos1zX9AHqikRObOPA5tKy+k3ZCw5Z8g=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by PH7PR10MB5772.namprd10.prod.outlook.com (2603:10b6:510:130::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 01:21:46 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::c2a4:fdda:f0c2:6f71]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::c2a4:fdda:f0c2:6f71%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 01:21:46 +0000
-Date: Mon, 13 Oct 2025 10:21:36 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@gentwo.org>,
-        David Rientjes <rientjes@google.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phil Auld <pauld@redhat.com>
-Subject: Re: [PATCH] slab: fix barn NULL pointer dereference on memoryless
- nodes
-Message-ID: <aOxUIDOuOSI743sR@hyeyoo>
-References: <20251011-null-barn-fix-v1-1-5fe5af5b8fd8@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251011-null-barn-fix-v1-1-5fe5af5b8fd8@suse.cz>
-X-ClientProxiedBy: SL2PR03CA0021.apcprd03.prod.outlook.com
- (2603:1096:100:55::33) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D413186E58;
+	Mon, 13 Oct 2025 01:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760318611; cv=none; b=HPVXVEwga4T6X+ArG7upH5PnEmBwCmV3kv7RfGS3KSZfRZB09IJP7VxWBJAjpu+2GiZHSSBLpmI/Ek9tyPeRrCoK4mYPv/zdxO5uXq/Mc1EJuZ3zz6hJ9Gbyuc3qbu9bd4BB5ShKpDfJEvQhFO268t8xS+LP7W5ew2TLnl1rwaI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760318611; c=relaxed/simple;
+	bh=2T+RpTDZovDnnFeJC3VQssADtdQhSNz2oGRHMDVmGf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H5kwxOePPCDEv9EV6Rma09hTWYImdNAo5M7wUba5XHFytxce9op6rbxiRtNcZauYEcpfY4qAJlnrgWm2Y3N7Bb4wd2GaNcK2DY7gYTu6ShMZJQ75mpBgqIex82DB4uBDla5ilCCUNKEJdfZ35gsq9kK5FsakQvRshNmjY1qUAzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/CrhzvM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A48BC4CEE7;
+	Mon, 13 Oct 2025 01:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760318611;
+	bh=2T+RpTDZovDnnFeJC3VQssADtdQhSNz2oGRHMDVmGf4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l/CrhzvMsbE+WwRPfP4RBSYo0uCraOHjR7eyt5G8buLP3Cw1TdjX1ezEh6JKA6mxw
+	 PPayoHJ7/ghNUDpjf+H/i68Ul2X47OX/3icwEZ3YR5+uFoFp+6uVs8d571KXdd9RaB
+	 CkuxVkuwMysbwb6a66QgOne0L50X6cMJbTsC5uj087hgsmg8xPmDH3eEto5R38h6qr
+	 gSpIu99yvFJ587s43KroLAcXzjTeY4quBe/UfptpiqCF8Vu8pph0q/omyOx9dT4kTT
+	 cCfjNnRKapF2u3SMh1Jv6A5DD+I38P5pmSJisQbJhqXfxTd/Nkz1gSxe79veEGr8iI
+	 YrTy58B2Z3EWw==
+Message-ID: <fc343072-423f-41db-b7ee-1f1496183363@kernel.org>
+Date: Mon, 13 Oct 2025 03:23:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|PH7PR10MB5772:EE_
-X-MS-Office365-Filtering-Correlation-Id: 065c9a9b-dd77-464e-1ff4-08de09f6dfd6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xw62JzEHbebIZY3AiNelb800v8+a1n0Hdw35rA2YECNW5r1iln4NRbPB41Il?=
- =?us-ascii?Q?aZrJFvga8oRULxRg4vg/XQjF6xqJMumCa3h1cWTMfT8XTzUkzQxigr9qkcBR?=
- =?us-ascii?Q?Fnyl5Emhbhs/F1gG/9WOSieZMN5emEEbcmLndp1LxdaamfUTK06iy4FDA/PC?=
- =?us-ascii?Q?waatTB+3TIDVt2IJpDf3v46UHk8ecrTzUR08Vohaczcx3dy+bitigBQ9yqKA?=
- =?us-ascii?Q?wHrreavOsQDh3fMdxBSqyJOs3LDZ8z28vSCnNwEQbO8VTsi43i38MaSfzY9v?=
- =?us-ascii?Q?k3KJxN+mWP8fntyhsfLDp0BHL8HZD1ve1pT9qoiE/WGEEheA80pdp+YgyTnj?=
- =?us-ascii?Q?0HjQIieTPkvDimYPP2hbPP+HirgMzW+z/fq4OaeE6rNFbhmmax/cZ9VfK52w?=
- =?us-ascii?Q?LQWVWxxPdIPk+5PqTlykaGxMbeG/uAaJrneM0GXRIGtlpfoRKuI+/Kx3jpFm?=
- =?us-ascii?Q?XG/f8UIxMhinPO5q10gqoVn71A2FjUhoiqGAB3ZExk3DvuFREMpgLWNExBFO?=
- =?us-ascii?Q?6pWpf+iujqk2uLMrfTAx5APOUacxOUzaEgcEjyuafaSBpvCZ00THrJm2vA08?=
- =?us-ascii?Q?rlPx4udjk/Oy8KHvgTC3NK6oHu5If99EwBSKO2pjNPJUdiDtg3oeOta6ioO+?=
- =?us-ascii?Q?uGFyUuS/fOtRS/Jr8alXA5RPPyTaFZF2R6AQUmquXz+1vFV8eLn5NEZqVEt8?=
- =?us-ascii?Q?LYSGtN+Nlda46kP0aNA9nCYwzCoRhHx32Uc2cn2pV0iNCGpPiX1UXOFZlVHZ?=
- =?us-ascii?Q?dyhemGWSVgnEjFZAU8tB6ONrSXS5K4zajQfV5WOtvsFsq9gEkFDsmbgWSpMf?=
- =?us-ascii?Q?uO6mhmGRPdimP6uM9pZEbp1sXFqIaOVDPNXz5ffduwSxxRQutS3BgNjPMYrx?=
- =?us-ascii?Q?Qxv9TlnLmwvvoup9cyQeqcdk12hkrj9FX6Xi0weFx6trCYg2CymxRfLOfLGr?=
- =?us-ascii?Q?3ZX9rHzOoD7Ermg9zd3KZH94Grekc3b7i5Iw1+hsE9rMNE3P2nXpgeDT6SEc?=
- =?us-ascii?Q?GwseS0nZVtn9qu7d75lpmFflqLfdDj77yFOQhI7XQAmIbQO8IZztnH+Qcd+6?=
- =?us-ascii?Q?ebzDORPur7hkSxUnq7F+F+fjYhrBuErww3gGuKupqL3cAqvBiXEQhC6WcugD?=
- =?us-ascii?Q?x5EwvWcJxyHduuLIPPxRZ4ARPx37R77xbJyrserAvwdmSr4Y329m7RjcVF2x?=
- =?us-ascii?Q?Dbci+JV+7X17SQiyGIjPzZboacWpVwAbyDjLbCnh2wMFGo262qYRFudL6mm6?=
- =?us-ascii?Q?JXbGHD5KtAE64NiTl1H84EFYSkg3zWQyscp5a91dcBMD8P4McUQ2y0h7D07r?=
- =?us-ascii?Q?0yYGu6bDQgKtt0BGm3anK6Dla6sf+o9JSxoVruCPa0oY7QvwW1OcrJxXTMJJ?=
- =?us-ascii?Q?uV190GRRSjlXvT+0QwGVTNCrjzuK029lwu3CCU6dQXm/4eIM3siesaiDhl12?=
- =?us-ascii?Q?b/6tq8bkSEC5aUlT3LhGR2Mdc40r3WUvvcV8wVHHQDm5HLc3ilip3g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?L+UBmaVd7e1a/De0XBr1LqK9w3V1T7J/j+kaqj+dIla2ixZETSysVcUNTlMp?=
- =?us-ascii?Q?dXtH57Mx7j8Sg721RpkUrz16XONFnZNdwIfD+qu/k4aaOrK4nrEiZsMDH8Lm?=
- =?us-ascii?Q?fjrmgdLjrwfNdrBsnNhZv4/UczfwI4elVxCDCFkhjtPAScytlW69LmSMb2Vu?=
- =?us-ascii?Q?vow2fCwVg7S81JV4DyVRrhJ3vfudOvTMrJQX7oRvvwTn66a3CYXeDYcSU6mm?=
- =?us-ascii?Q?la09AypQ96vzzSeF2FNtxyWYYYFRXA4LXL2egH2BDF5L2oi6TXYawzBb+Avf?=
- =?us-ascii?Q?1UD+WUjTiU1tPDlWw3iea2WrZLZtL3YP5Cw44lxHKeHUBiTgi5KgsJjnLZvP?=
- =?us-ascii?Q?Hwrd+CPVnEklrwslAjOvVP+jsksPqe/1u9EycgsbJtAqbuddZtveB/PoT3oB?=
- =?us-ascii?Q?Zu4Zhj24U83kh04b2uY+2lRBmCHWFB2Ab5PD6qYIDwwevHR7ifyp6rhSMLgI?=
- =?us-ascii?Q?xjRpC7myrbIEAL2wCGd1emP45Z2thVwnUYluFUmjzRJedOnWQ7u3WViidJuy?=
- =?us-ascii?Q?59mITwikAvWC5Cw3ORPi846Q7w1waH34cRze0DuOEeGcxz6YjSJQ8i3Q61GL?=
- =?us-ascii?Q?+tLHqtulsXcU6tkAECD5+AbpsLKSyR0jdEB/+jFdbQhpxqncy4vVe6R/Qklb?=
- =?us-ascii?Q?2INX+5UBFZEGLI3yR5kGN4HEtlQanGQbMYCkJIdiJNItG+ABQFC2OH9j9m8c?=
- =?us-ascii?Q?2uNO1uVoQ0xl0uYf7fcTpLhk3qiYPBtuIS4eNqp8bMgi4kNbvG9zIgj7Q/gH?=
- =?us-ascii?Q?Zwk904/VI23MpMi69N3i9Dl+nI9y0tE7IZQvuifoOSCGEzu2ClUzX8c2xKc8?=
- =?us-ascii?Q?lSlA8LHEf1ZtX4cVL2HEz5HQItSQuskolosFNQdu04tUByIGgltmHd8j0v3a?=
- =?us-ascii?Q?FMjLtIhC9AexmJHO21WrwIjkdYvoYPcw7s+0pWLC0TYMQUgJarSKiupIeaQG?=
- =?us-ascii?Q?G8z7eNb5eYFik8/lJ98CuTrQu4YLXAJoRHVsj364apv62rEQ8zcFgBp/y3EA?=
- =?us-ascii?Q?JpOpnayv3Jc9xCOJjQdD4boIJDWMz1sVW1EAVLvS+9f8Z/08y3PinrPG87kQ?=
- =?us-ascii?Q?ECfMNoFLXavsObPs7JOgYTJYkYChBmgF5qYWWI4LtsIUwWCPHDp8pS7I4nI7?=
- =?us-ascii?Q?q3yjx5x2RKMQEOvIwQ9XVMluKUBQh8/alGAxXtx6znGyQvHyTuk/udb+J3Ij?=
- =?us-ascii?Q?faybcpk/HqeKYanfgsSLfJ9DRaJb0XQEYEa8FwtPxC6Ysm1xXcSQL98oRfjr?=
- =?us-ascii?Q?N0Jhojg2tbhjO1nUmp/+avxV+Z03odtb9mkXWiFL8spwW8OLUm9WQgxh8DDq?=
- =?us-ascii?Q?wB6G8Ek8N29WQY6pFzJDr9hglF23rM5/r/IFdwEUNBwLcYtE/peQg65RPSu8?=
- =?us-ascii?Q?9k+vRsC9je7nd7VrmFN0Yict0SnaJLmB9O864ou8gNhb9NmWcoJ8c6SMXqv0?=
- =?us-ascii?Q?dsH/cjw5/lawTZ9ijhMhyT81P3T+Q5eagkbLv7xL2pRmWGb35kCSlSVuSG+N?=
- =?us-ascii?Q?njKQqhTWr0ICOQmv5sNHBfmuN8khYtY+l7rFTmSjQ6/JdNlfqYjO405CoqBZ?=
- =?us-ascii?Q?P1nrQ8aDYOsOWEoEYBAmCU8ZOTf9/9Fd+q8aJNqD?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	g74+/Zl6m7m0dai19rqDnqvVKtL73hOe0trOYfSMMX1z7JxPE4xmJd4m2m4TWCQ1CmuyxW/XNhpF0mlKSfi1iuhMMv5XbLXS1XJZUrUc0cdRJVMS8btTHZSCJzomoiiTptP3x2kbjzOIWby4X5fMifKNxVrYr/zPjpcKzG0Y760VaUggNhduL0eRcAHco4POrdZoHH19WFkvZH+124hzh52hApwvKTqsjOwKBPQ+loUYVZ/nKVn83XE9Jv5WGxfXXfLD9rYyZH83AFKpqzjGEQ5MQWOsPAIXbki9wuYht/bYeV0Pc9V/dqZ02gp9d7JVa1+Vky4iHR6Ml6TgJZ9SBvU4cUSre+21LtKGwkaswpuqLT1KInM4rUvGDs1/bHnVBRclTciuofkzSGhYTNN8lwWhJra7GkyMqzWRhr37M6OnzXd8nWc6lzZso3EIb84C+DbUIyWxE3Xim8H5DQEAchLemYnTPbpW4+UQ854oSts1nINAYL4LuexPT3DDIykYn+8VGq+KktZEvm9smLmziCZ/zLCiwaDqG8gvg40iNNp00yPzRKs6GnfqRbn6hSqcojLBXCJbegt9qTTACby4f0D4U04CZoQS4UeUZ81ndPY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 065c9a9b-dd77-464e-1ff4-08de09f6dfd6
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 01:21:45.9092
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RSBCMX1jwnwl18nxGAHep2a/RMlRuTkay8MYsIOaB6nMiF/UIYeGu5L03uMUUP1oKQN+YjSLNt1AmHMMb38jIw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5772
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- phishscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510130004
-X-Proofpoint-GUID: Va40xJt6yDDEWlNLy662xflJPcGHTr_Q
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAwNyBTYWx0ZWRfX0tmyZoiMWxK/
- gxdugjvntrjVelVFKGRgGjSNNXJNgmCLJrFmRxAIIaBsi0nvlsbBj5jfm8/VzsKG4xmAAq8pYio
- qPYeXtmdBjKOld6Rz+Ud3mz13WO8r3RaH2NFuCGqhyW9Yf1OdkCec467pxrJL6X5UDUIzvzuL80
- OVflTB+goV44rzdoGX9CIsx4zaZ7RywRj6rxnznwnTjbd9QIN2ECniMAs+2BNwc0VnI+D2ftfeh
- 4w0nfngx3iEe3ScwX7q0fI8nlEoWTwD+6XqIvXqdzTl/4RloECPD81ogQ8yB1QWEPZWL7c1UCXf
- Eam7jHOJ4glS5zUbOSbH2YCDpO3h4IpFrD5NFrCmq39fQMJPvKbSrhdz5DWJA3HK/mDl3d6vt7q
- jnZV1pVW5WTDe8yVD09kOXekFQXAV6gwkiqONgRcFGXAEP7UplQ=
-X-Authority-Analysis: v=2.4 cv=OolCCi/t c=1 sm=1 tr=0 ts=68ec542e b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=20KFwNOVAAAA:8 a=Z4Rwk6OoAAAA:8 a=yPCof4ZbAAAA:8 a=xkoXuRbA0vtoeeWqcK4A:9
- a=CjuIK1q_8ugA:10 a=HkZW87K1Qel5hWWM3VKY:22 cc=ntf awl=host:13624
-X-Proofpoint-ORIG-GUID: Va40xJt6yDDEWlNLy662xflJPcGHTr_Q
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 11, 2025 at 10:45:41AM +0200, Vlastimil Babka wrote:
-> Phil reported a boot failure once sheaves become used in commits
-> 59faa4da7cd4 ("maple_tree: use percpu sheaves for maple_node_cache") and
-> 3accabda4da1 ("mm, vma: use percpu sheaves for vm_area_struct cache"):
-> 
->  BUG: kernel NULL pointer dereference, address: 0000000000000040
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 0 P4D 0
->  Oops: Oops: 0000 [#1] SMP NOPTI
->  CPU: 21 UID: 0 PID: 818 Comm: kworker/u398:0 Not tainted 6.17.0-rc3.slab+ #5 PREEMPT(voluntary)
->  Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.26.0 07/30/2025
->  RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
->  Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
->  RSP: 0018:ffffd2d10950bdb0 EFLAGS: 00010246
->  RAX: 0000000000000000 RBX: ffff8a775dab74b0 RCX: 00000000ffffffff
->  RDX: 0000000000000cc0 RSI: ffff8a6800804000 RDI: ffff8a680004e300
->  RBP: ffffd2d10950be40 R08: 0000000000000060 R09: ffffffffb9367388
->  R10: 00000000000149e8 R11: ffff8a6f87a38000 R12: 0000000000000cc0
->  R13: 0000000000000cc0 R14: ffff8a680004e300 R15: 00000000000000c0
->  FS:  0000000000000000(0000) GS:ffff8a77a3541000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000000000000040 CR3: 0000000e1aa24000 CR4: 00000000003506f0
->  Call Trace:
->   <TASK>
->   ? srso_return_thunk+0x5/0x5f
->   ? vm_area_alloc+0x1e/0x60
->   kmem_cache_alloc_noprof+0x4ec/0x5b0
->   vm_area_alloc+0x1e/0x60
->   create_init_stack_vma+0x26/0x210
->   alloc_bprm+0x139/0x200
->   kernel_execve+0x4a/0x140
->   call_usermodehelper_exec_async+0xd0/0x190
->   ? __pfx_call_usermodehelper_exec_async+0x10/0x10
->   ret_from_fork+0xf0/0x110
->   ? __pfx_call_usermodehelper_exec_async+0x10/0x10
->   ret_from_fork_asm+0x1a/0x30
->   </TASK>
->  Modules linked in:
->  CR2: 0000000000000040
->  ---[ end trace 0000000000000000 ]---
->  RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
->  Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
->  RSP: 0018:ffffd2d10950bdb0 EFLAGS: 00010246
->  RAX: 0000000000000000 RBX: ffff8a775dab74b0 RCX: 00000000ffffffff
->  RDX: 0000000000000cc0 RSI: ffff8a6800804000 RDI: ffff8a680004e300
->  RBP: ffffd2d10950be40 R08: 0000000000000060 R09: ffffffffb9367388
->  R10: 00000000000149e8 R11: ffff8a6f87a38000 R12: 0000000000000cc0
->  R13: 0000000000000cc0 R14: ffff8a680004e300 R15: 00000000000000c0
->  FS:  0000000000000000(0000) GS:ffff8a77a3541000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000000000000040 CR3: 0000000e1aa24000 CR4: 00000000003506f0
->  Kernel panic - not syncing: Fatal exception
->  Kernel Offset: 0x36a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
->  ---[ end Kernel panic - not syncing: Fatal exception ]---
-> 
-> And noted "this is an AMD EPYC 7401 with 8 NUMA nodes configured such
-> that memory is only on 2 of them."
-> 
->  # numactl --hardware
->  available: 8 nodes (0-7)
->  node 0 cpus: 0 8 16 24 32 40 48 56 64 72 80 88
->  node 0 size: 0 MB
->  node 0 free: 0 MB
->  node 1 cpus: 2 10 18 26 34 42 50 58 66 74 82 90
->  node 1 size: 31584 MB
->  node 1 free: 30397 MB
->  node 2 cpus: 4 12 20 28 36 44 52 60 68 76 84 92
->  node 2 size: 0 MB
->  node 2 free: 0 MB
->  node 3 cpus: 6 14 22 30 38 46 54 62 70 78 86 94
->  node 3 size: 0 MB
->  node 3 free: 0 MB
->  node 4 cpus: 1 9 17 25 33 41 49 57 65 73 81 89
->  node 4 size: 0 MB
->  node 4 free: 0 MB
->  node 5 cpus: 3 11 19 27 35 43 51 59 67 75 83 91
->  node 5 size: 32214 MB
->  node 5 free: 31625 MB
->  node 6 cpus: 5 13 21 29 37 45 53 61 69 77 85 93
->  node 6 size: 0 MB
->  node 6 free: 0 MB
->  node 7 cpus: 7 15 23 31 39 47 55 63 71 79 87 95
->  node 7 size: 0 MB
->  node 7 free: 0 MB
-> 
-> Linus decoded the stacktrace to get_barn() and get_node() and determined
-> that kmem_cache->node[numa_mem_id()] is NULL.
-> 
-> The problem is due to a wrong assumption that memoryless nodes only
-> exist on systems with CONFIG_HAVE_MEMORYLESS_NODES, where numa_mem_id()
-> points to the nearest node that has memory. SLUB has been allocating its
-> kmem_cache_node structures only on nodes with memory and so it does with
-> struct node_barn.
+On 01/10/2025 17:13, André Draszik wrote:
+>  	/*
+> @@ -93,25 +92,15 @@ static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
+>  	 * initialized, another when the timekeeping is suspended. udelay() also
+>  	 * cannot be used when the clocksource is not running on arm64, since
+>  	 * the current timer is used as cycle counter. So a simple busy loop
+> -	 * is used here in that special cases. The limit of iterations has been
+> -	 * derived from experimental measurements of various PLLs on multiple
+> -	 * Exynos SoC variants. Single register read time was usually in range
+> -	 * 0.4...1.5 us, never less than 0.4 us.
+> +	 * is used here.
+> +	 * The limit of iterations has been derived from experimental
+> +	 * measurements of various PLLs on multiple Exynos SoC variants. Single
+> +	 * register read time was usually in range 0.4...1.5 us, never less than
+> +	 * 0.4 us.
+>  	 */
+> -	if (pll_early_timeout || timekeeping_suspended) {
 
-Right, even without CONFIG_HAVE_MEMORYLESS_NODES, some nodes may not
-have N_MEMORY state (and thus no s->node[nid] allocated) if there's
-no memory attached to them.
+Please drop now pll_early_timeout, it is not used anymore.
 
-> For kmem_cache_node, get_partial_node() checks if get_node() result is
-> not NULL, which I assumed was for protection from a bogus node id passed
-> to kmalloc_node() but apparently it's also for systems where
-> numa_mem_id() (used when no specific node is given) might return a
-> memoryless node.
-> 
-> Fix the sheaves code the same way by checking the result of get_node()
-> and bailing out if it's NULL. Note that cpus on such memoryless nodes
-> will have degraded sheaves performance, which can be improved later,
-> preferably by making numa_mem_id() work properly on such systems.
->
-> Fixes: 2d517aa09bbc ("slab: add opt-in caching layer of percpu sheaves")
-> Reported-and-tested-by: Phil Auld <pauld@redhat.com>
-> Closes: https://lore.kernel.org/all/20251010151116.GA436967@pauld.westford.csb/
-> Analyzed-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Link: https://lore.kernel.org/all/CAHk-*3Dwg1xK*2BBr*3DFJ5QipVhzCvq7uQVPt5Prze6HDhQQ*3DQD_BcQ@mail.gmail.com/
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
-
-Looks good to me,
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-
--- 
-Cheers,
-Harry / Hyeonggon
+Best regards,
+Krzysztof
 
