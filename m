@@ -1,160 +1,121 @@
-Return-Path: <linux-kernel+bounces-850426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AD6BD2C10
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:19:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AEABD2C19
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D6E71885E43
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:19:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9721886E50
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EBE248F5C;
-	Mon, 13 Oct 2025 11:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670632459E7;
+	Mon, 13 Oct 2025 11:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pj2eDnLP"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4XPpfk5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C1B2AEE4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19202045B5;
+	Mon, 13 Oct 2025 11:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760354347; cv=none; b=NMrokhCdA8uF2j4mdLD0DbABN6LIniJGGo51aSYZBaff+vpH8zbohGxfFV8mqi4bX0rJcNPYqOX5jDINjARyDTWo93PtjTkymrMbpsytQV6i6LiHKMbQtmLQwhncXF7tLAm0by0dcGHUbSiLnlZ+CpqXw+DkWux7nneQucJzBoU=
+	t=1760354357; cv=none; b=LYbRBp3y/rmlVXxXl/PYiVXZ4wDn2tMz8VALP3MuYg93dhZHlFI+Oe4Rra6WTtM7XnVNN9Ey5bDq/9ZiVcivfPOJjADe2gkn4tQWvk/n9uRjhLXC/fyafJdQ5avydSIBq6evNUy1zRWAW2wheVkujtcNX6cEB6ooKGgMIxetm3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760354347; c=relaxed/simple;
-	bh=/uDJDqsulZ8CfAwm3mNMN4s/APUMd6UJmz4dZ2tJdYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uPeOiugC4GUUHsWHDIhcuvE8nedLdwTb3GHtxQovTfy2tY4g+6nGA/Biwpd2x9FQQjy46K4dRehaTWsz7wUpBemkLc/lZ4lIjIQ/YVOxhij0s1WWNQBA1PdRViA/cjEXxjttvrf0q3hbX1UMtCMsATabn0spM7jzRiOmoO/O2A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pj2eDnLP; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <bb92b36f-f1fc-425d-a6ae-f4b4cd6df37c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760354341;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=THxCn//FsVj5ixy/ZrIlSuWPhiYR+PURiUuNomHjfd0=;
-	b=pj2eDnLPEzrdXUtMyJunN6N9B9iV5uLaBDVLCoI0J9i6lNgHlS3rHAkQ7CwCxNQM+yGCL5
-	JRk9ch7wAfzLYBHPK1uhBzX0vGEstQ0aOzYDmNPSMMZdYFyNQRJr9Mzkfg+JLZecThfrYq
-	MVAXiDQg+YvY/ulbRyDvErGv7DMjauw=
-Date: Mon, 13 Oct 2025 19:18:54 +0800
+	s=arc-20240116; t=1760354357; c=relaxed/simple;
+	bh=ewqwrAQCMIZ0VP/nXg4M8cv/HRuQ3hmnE4a/FZitw6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UPKkrLJJSqJicKcgZqS1KW62+T8lNhvUIL2u/ZX5WRAg1ov0NYoSvDosMFHaW6KE9ZKsEdAUynXbix7fTM7D5YLVKu+R7MZ92tkIiLPwiG+5WF3YuaRRh1Ziee8ykC5Bpo0duo9hcFmqXeDrF/0HRumV4s0eN1AUfBMIepVG/OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4XPpfk5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0894C4CEE7;
+	Mon, 13 Oct 2025 11:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760354357;
+	bh=ewqwrAQCMIZ0VP/nXg4M8cv/HRuQ3hmnE4a/FZitw6A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=M4XPpfk54pq6FlHn1/ftqnHRbHRsseqt+idTHrzY7zK7ZKG27qB+tjdgVTbM7ohzA
+	 Fjmw8jeyB8dRv8W3kqGHZdJpOwHewBAtt44Il6wGSC7xCfom2L/HQ6BhPK2YzwDYAR
+	 1G9DmKTcMUn8ZMHTwX9M1F9oSS0sq9SqChbx2peFGsTfmmZJad1tzEuBdbhzZp6RuW
+	 Ch3MhPJaa8O+d+Vat9dDKhjx6PhyXwzqBbPfYUs8wRhmZa23NbzKxLcbmJDaA//w2w
+	 F5zrZ0Oot8SN0rcp8G1stqm9ly38Awjw9f4DXGFGlQw++5gZ1MpoFfAVfkp0KBP+lv
+	 3OLbP5u6N2+nw==
+Date: Mon, 13 Oct 2025 12:19:13 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Oct 13
+Message-ID: <aOzgMbVHy8VqJ7mb@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory
- failures
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: Longlong Xia <xialonglong2025@163.com>, nao.horiguchi@gmail.com,
- akpm@linux-foundation.org, wangkefeng.wang@huawei.com, xu.xin16@zte.com.cn,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Longlong Xia <xialonglong@kylinos.cn>, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, Miaohe Lin <linmiaohe@huawei.com>, qiuxu.zhuo@intel.com
-References: <20251009070045.2011920-1-xialonglong2025@163.com>
- <20251009070045.2011920-2-xialonglong2025@163.com>
- <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
- <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
- <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
- <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
- <839b72b8-55dc-4f4e-b1da-6f24ecf9446f@huawei.com>
- <f12dfacb-05dd-4b22-90eb-fcc1a8ed552b@linux.dev>
- <bd374ac3-05a2-41ae-8043-cc3575fb13c0@linux.dev>
- <3e6500dc-723f-4682-9e37-b28bc78a2bdb@redhat.com>
- <c129e522-853e-45c7-a064-34c25e63e610@linux.dev>
- <356ec45b-6ec9-4eb4-b5db-ca98964d8f3b@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <356ec45b-6ec9-4eb4-b5db-ca98964d8f3b@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oSiGYOY4cHKecAKp"
+Content-Disposition: inline
 
 
+--oSiGYOY4cHKecAKp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2025/10/13 19:13, David Hildenbrand wrote:
-> On 13.10.25 13:00, Lance Yang wrote:
->>
->>
->> On 2025/10/13 17:25, David Hildenbrand wrote:
->>> On 13.10.25 11:15, Lance Yang wrote:
->>>> @David
->>>>
->>>> Cc: MM CORE folks
->>>>
->>>> On 2025/10/13 12:42, Lance Yang wrote:
->>>> [...]
->>>>
->>>> Cool. Hardware error injection with EINJ was the way to go!
->>>>
->>>> I just ran some tests on the shared zero page (both regular and huge),
->>>> and
->>>> found a tricky behavior:
->>>>
->>>> 1) When a hardware error is injected into the zeropage, the process 
->>>> that
->>>> attempts to read from a mapping backed by it is correctly killed with a
->>>> SIGBUS.
->>>>
->>>> 2) However, even after the error is detected, the kernel continues to
->>>> install
->>>> the known-poisoned zeropage for new anonymous mappings ...
->>>>
->>>>
->>>> For the shared zeropage:
->>>> ```
->>>> [Mon Oct 13 16:29:02 2025] mce: Uncorrected hardware memory error in
->>>> user-access at 29b8cf5000
->>>> [Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: Sending SIGBUS to
->>>> read_zeropage:13767 due to hardware memory corruption
->>>> [Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: recovery action
->>>> for already poisoned page: Failed
->>>> ```
->>>> And for the shared huge zeropage:
->>>> ```
->>>> [Mon Oct 13 16:35:34 2025] mce: Uncorrected hardware memory error in
->>>> user-access at 1e1e00000
->>>> [Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: Sending SIGBUS to
->>>> read_huge_zerop:13891 due to hardware memory corruption
->>>> [Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: recovery action 
->>>> for
->>>> already poisoned page: Failed
->>>> ```
->>>>
->>>> Since we've identified an uncorrectable hardware error on such a
->>>> critical,
->>>> singleton page, should we be doing something more?
->>>
->>> I mean, regarding the shared zeropage, we could try walking all page
->>> tables of all processes and replace it be a fresh shared zeropage.
->>>
->>> But then, the page might also be used for other things (I/O etc), the
->>> shared zeropage is allocated by the architecture, we'd have to make
->>> is_zero_pfn() succeed on the old+new page etc ...
->>>
->>> So a lot of work for little benefit I guess? The question is how often
->>> we would see that in practice. I'd assume we'd see it happen on random
->>> kernel memory more frequently where we can really just bring down the
->>> whole machine.
->>
->> Thanks for your thoughts!
->>
->> I agree, fixing the regular zeropage is a really mess ...
->>
->> But for the huge zeropage, what if we just stop installing it once it's
->> poisoned? We could just disable it globally. Something like this:
-> 
-> We now have the static huge zero folio that could silently be used for 
-> I/O without a reference etc.
-> 
-> So I'm afraid this is all just making corner cases slightly better.
+Hi all,
 
-Ah, I see. Appreciate you taking the time to explain that!
+Changes since 20251010:
+
+None!
+
+Non-merge commits (relative to Linus' tree): 737
+ 678 files changed, 17274 insertions(+), 10983 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with an arm64
+defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
+a native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig and
+pseries_le_defconfig and i386, arm64, s390, sparc and sparc64 defconfig
+and htmldocs. And finally, a simple boot test of the powerpc
+pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+
+Below is a summary of the state of the merge.
+
+I am currently merging 407 trees (counting Linus' and 406 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--oSiGYOY4cHKecAKp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjs4DEACgkQJNaLcl1U
+h9DZmgf/fpRbVg+FwMGJwmF5lOM7qaUMG7v6aLWiTHdH8891RBvhGywJe9hyVKwb
+OFKPiddYLfB7ae1R5RRiC+lb9F9Gx5WAefwQ+666B8h6xgwhvfYmOgkbIYlJoi5K
+gv7aPKbImeLMZ4yLoQees6PLHNOlNB8FMa0Pu/IvlEtayumrH93CP5STUfo87Q+U
+WRvj76Uslc82Z28YuLwa40rPtanJLbv6qp94jyhJJkeQ9AdKCH2+BAzHqubADq8v
+PrM0eu6nkVkAy/cMnIPP/trHDNN0pxN5M7MRzv5lHW/qpU4cxpG6Y/HkNjAXAAdf
+ozEtHhG6qu1iV75SFzwXVXzwjjGbeg==
+=9mJi
+-----END PGP SIGNATURE-----
+
+--oSiGYOY4cHKecAKp--
 
