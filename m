@@ -1,197 +1,308 @@
-Return-Path: <linux-kernel+bounces-850276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0869BBD2628
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:53:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834F2BD263D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1C31885847
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67DE1887910
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD692FE05C;
-	Mon, 13 Oct 2025 09:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7B32FE041;
+	Mon, 13 Oct 2025 09:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N6oSAc2u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qw+WLgxe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5F22FDC3B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AE5239E63;
+	Mon, 13 Oct 2025 09:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760349177; cv=none; b=JhbHxAMEqGFoocQ27vu5F6vySvOQ9PfqmgiDGHXdNE28+Z680ZHIBdcnCgH/LiC/3axJuF7hHNyLBxwV46dT4yfyK+gbV4v9AZYkLhtKECpEBTXWfsOeyMV71VsfulGk1EUnADDzA5DBMFvQPjqbQz6hGA2d474ae4vtoIWeAF4=
+	t=1760349282; cv=none; b=k515P7/oAUjZm08PcSAozNO/PKbMLkmi/nEaCYKbUPuRWNFJNiDvYi3riJvfgrO0XgtEZefNbamVIl9j24KBv7hVJZ+BIslWjONNOpfpXKr+i6ndEKfvPnZen9j3IPR/Z9J18L+ZX3ZMrgxE7tTsGs4oed7ywZQ/t35y/fnaCZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760349177; c=relaxed/simple;
-	bh=Cv2pxU9WsCUo3pBsuAkVnFh3X1Cxe7DJidXgAYF03Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pcu33O5eN6N3wbIuoqlbado4aV/vp6vrQ41ZLYTsr+QeTQ5IDLmCV2nqZfDGs9ieMtAWyp7iNJszTVXkzdW5FUnZDAo75VR9zcBrMN9Rb5pf3fj6OxGUbLOMQmQDjG0a2HEpoXXSdnk8ciOwvN2jyjZUXQPj+BKHK3IsR2N3QE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N6oSAc2u; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760349174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C6mqEeRrvidObhzNRzchLNQqA+ReDntMNjcs0lPjGX4=;
-	b=N6oSAc2uct0bzdVoCIZc39peopA0MOdQEAeZ72eyOzOs2b8ZwTOfJ4RowXhRKakX/V5niH
-	ASWMcq0wnPXbUaZUJKe0Ohp8B7zKvnnFVoTbVNT9B71x+Jrkqc4FIIQFY2YLW/G+n9ps83
-	hDrkoh0hl5CBm+FMvmNqVfhqJqQrEvo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-ZhEQodsqOPeiBa16tsjcJA-1; Mon, 13 Oct 2025 05:52:53 -0400
-X-MC-Unique: ZhEQodsqOPeiBa16tsjcJA-1
-X-Mimecast-MFC-AGG-ID: ZhEQodsqOPeiBa16tsjcJA_1760349172
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-42421b15185so2955894f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:52:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760349172; x=1760953972;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C6mqEeRrvidObhzNRzchLNQqA+ReDntMNjcs0lPjGX4=;
-        b=Bl+Ty+I2hXNiMdlAPb0TB+cVxipbejMdRvpKGnTrLldnxSs12zMRx9FcAXCfdHHw+4
-         ZdkBoKM0nfGe+25HY1vBxDU1d3omacBW5lZOIBnhRBppbsHmW/tDlwPAGHeuCLiPnT2H
-         DNS32W04fGYnLRmqoEPcqi3eYih/Wrutlk/lWmmd1ti57k7h62U20BnCGIMhodbdg9Ud
-         hQx6+OgNcLT2//7sX3RaJnE0tfdEZ3T07nNg34NPKIxFesHul4yNrn0tm4O4KcO5THMS
-         hor6/c4Ba/zVFuNgil1YvB70qe3XEtfyjRfMD9iG0ph+GxJ/MTioq80U8q0DMTlwx9qP
-         U0iA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAXbwUVcmzcBCyxcNLgDaUfC9gopyq+fKqa9qWRiZiO8ESiMQWdLnALjQ0yTwfvkXzo4LfnifH5xmCk18=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5HyQOML4il1GEMJBmP6T+3TbQWjVzbJSabz5Q9FtuUpulnepm
-	myqlzeJA8/JMcka9MLWklQXWXN//BayU99p9hEId4V/9boZzhIaSdqXCDoqj6YMSZikpQqwF4Tp
-	6sE1heUa9YmWDlz4lH6SkiabAwIF1FKQS2YlO05WBjlpH0LksmoMdW3Jet4pVO4Z7/g==
-X-Gm-Gg: ASbGncvntm8npSZLYPosc3mn+icj6NqINk+nLyDybbttrYkBKx46G+IYXyHEJf+4w+D
-	bLRxLW9ICJ3or7DmzHbUP4WvQjvbMtenBEfhdiao0CbQWgAvc4ToUb0jjPZktVEMHDxL2JANEPL
-	FuoxPBdUIKzIbGb/wwSC1xzhSvmI3IrbHcoL809UtMqV8p2ihsbm+yh6hoBVjB9MvCct04bXVaS
-	ZMx9VYrjpUcYBpUyWbAPKFIXIDfts93xZ9wTMlVAh//iXwkoP1kQGnFdv6eK0xl3hT1Bz45yEBT
-	Li+T2A3/pN8La6FBXti0D1E9Yy5BtDZ0oQ==
-X-Received: by 2002:a05:6000:41c9:b0:426:d54e:7f78 with SMTP id ffacd0b85a97d-426d54e802amr4973492f8f.18.1760349171969;
-        Mon, 13 Oct 2025 02:52:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFToPVmudWTFsq6bFqEIEPs/FQujXTZ0U+mV3FlG97R8DNDTM+O9fu/M5ZF2UtsJ7uQAo9BZQ==
-X-Received: by 2002:a05:6000:41c9:b0:426:d54e:7f78 with SMTP id ffacd0b85a97d-426d54e802amr4973477f8f.18.1760349171548;
-        Mon, 13 Oct 2025 02:52:51 -0700 (PDT)
-Received: from fedora ([2a01:e0a:257:8c60:80f1:cdf8:48d0:b0a1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf790sm16929272f8f.28.2025.10.13.02.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 02:52:51 -0700 (PDT)
-Date: Mon, 13 Oct 2025 11:52:49 +0200
-From: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-To: Francesco Valla <francesco@valla.it>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
-	Harald Mommer <harald.mommer@opensynergy.com>,
-	Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>,
-	linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, virtualization@lists.linux.dev,
-	development@redaril.me
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-Message-ID: <aOzL8f4C27z361P2@fedora>
-References: <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
- <2243144.yiUUSuA9gR@fedora.fritz.box>
- <aOkqUWxiRDlm0Jzi@fedora>
- <2318164.vFx2qVVIhK@fedora.fritz.box>
+	s=arc-20240116; t=1760349282; c=relaxed/simple;
+	bh=OFh9hDOVFllt2rVDIRFxQ9NT7M4HjzwSQAiZb7BddRI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z9dzKn7AnsTyiA8t+LMX4gdV/SBkI0xyvK9tbYoaa4J58gvsi/th9aoqk/hiXWabvHZuCH2ATe2K/FE91cBG83k+3yDBx3l64NNMeqHPYL9V2M89Xv6p0C+aqZ5G4ZXqQ1FJuUaOO1Ldj6Hi0SNvwnhy5bnaGP7Kd/kMsi8r9+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qw+WLgxe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CItNjC016803;
+	Mon, 13 Oct 2025 09:54:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Z4zvsJ
+	gRbqk2uOgXGdCBLemP+s3D2MhNTErwRnrv45Y=; b=Qw+WLgxeXvUW6V8iM0+k6s
+	kA3H6QLObi5JJmvPMKCOtXTlnNKd60rJxP/orofeYoab9gjCaxJP7GQMccIJbVCw
+	64Tuei/2QQByB/2ZrCglB7QWowuw2LqoGHtcUZeogLriSmjlKmsPMlcDrBIIy7yi
+	MAmE+24pxTfxq53q51aq7ggsbbV59cJHtnwkIgO491yKyam5VyiMTAOLP3UtzXNZ
+	Q8OLEuVCXh09frmVwZ7qsJni+ZlH4osUl7uqoMUpjA4aH5r6uh3CTW2Kg1gegmzZ
+	q3or63P3s9ZlhuhF1+X0EjI5goxMTHroXjCowhFaDNzPNhTWXe+tEp6LKoirTq0w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qewtr6rj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 09:54:04 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59D9s3j8013035;
+	Mon, 13 Oct 2025 09:54:03 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qewtr6rf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 09:54:03 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59D99IXs015178;
+	Mon, 13 Oct 2025 09:54:02 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49r1jrwdnc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 09:54:02 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59D9s17c33096440
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 13 Oct 2025 09:54:01 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB3AA5805E;
+	Mon, 13 Oct 2025 09:54:01 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DC4D558052;
+	Mon, 13 Oct 2025 09:53:55 +0000 (GMT)
+Received: from [9.111.15.176] (unknown [9.111.15.176])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 13 Oct 2025 09:53:55 +0000 (GMT)
+Message-ID: <5165448792268e184e508a9c76fa0ce382a4a389.camel@linux.ibm.com>
+Subject: Re: [PATCH v1 02/20] iommu: Introduce a test_dev domain op and an
+ internal helper
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org, jgg@nvidia.com,
+        kevin.tian@intel.com
+Cc: suravee.suthikulpanit@amd.com, will@kernel.org, robin.murphy@arm.com,
+        sven@kernel.org, j@jannau.net, jean-philippe@linaro.org,
+        robin.clark@oss.qualcomm.com, dwmw2@infradead.org,
+        baolu.lu@linux.intel.com, yong.wu@mediatek.com, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, tjeznach@rivosinc.com,
+        pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+        heiko@sntech.de, mjrosato@linux.ibm.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux.dev, patches@lists.linux.dev
+Date: Mon, 13 Oct 2025 11:53:55 +0200
+In-Reply-To: <32ce256a2ece5d63e99d5858f953586859818ffc.1760312725.git.nicolinc@nvidia.com>
+References: <cover.1760312725.git.nicolinc@nvidia.com>
+	 <32ce256a2ece5d63e99d5858f953586859818ffc.1760312725.git.nicolinc@nvidia.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2318164.vFx2qVVIhK@fedora.fritz.box>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ja8dMn81Ji4yLbr55cE_Ms7S-Y6FhoQZ
+X-Authority-Analysis: v=2.4 cv=Kr1AGGWN c=1 sm=1 tr=0 ts=68eccc3c cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=Ikd4Dj_1AAAA:8 a=VnNF1IyMAAAA:8
+ a=2r8vE0gUvGf4FGDepHgA:9 a=QEXdDO2ut3YA:10 a=DXsff8QfwkrTrK3sU8N1:22
+ a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-ORIG-GUID: W_vlSK1gr5FYYE4DJOMkPdPg_D8wMkht
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfX5ZHcU7Bp3WCb
+ OcOu2OBfw8Sh3iGoeLPLO48LoatK4FR/vYxBENU6+YeNkaHuYg7bQUMAJX9bxXTbHD7H0mZb+TZ
+ 2m/uxx1NV+Q05fWL3vuFTP0nd7yoRlL5eGr6NzjGUImm95PRC68gGIQocOtzIpmCWriF8QwHXGu
+ yUpjQ/l1cBKGzGS5D4xiwB/3T3aYg4Kzoa4AgmbMqzdSwnBpbOF2YCpuuiyG1E7PtdePeweCobZ
+ Y5LaAjzvml1CN8wR1K0KIVfjU6FiS7odd8x0PckUi4/xxiigPnm2A5rBbhaCMMOoZ7PWhaZ5Bpm
+ WXdkfRFixjkEuyv75YMa5J/HWXNa6/w2gf+ZdwO8oRInZZRVgDaJZb3xjE0iVaZD2aimoYcxXPO
+ b9SXrfyC8KmYW8cwpBtmJf1mYePvDQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 clxscore=1011 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
 
-On Fri, Oct 10, 2025 at 11:20:22PM +0200, Francesco Valla wrote:
-> On Friday, 10 October 2025 at 17:46:25 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> > On Thu, Sep 11, 2025 at 10:59:40PM +0200, Francesco Valla wrote:
-> > > Hello Mikhail, Harald,
-> > > 
-> > > hoping there will be a v6 of this patch soon, a few comments:
-> > > 
-> > 
-> > I am working on the v6 by addressing the comments in this thread.
-> > 
-> > > On Monday, 8 January 2024 at 14:10:35 Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com> wrote:
-> > > 
-> > > [...]
-> > > 
-> > > > +
-> > > > +/* virtio_can private data structure */
-> > > > +struct virtio_can_priv {
-> > > > +	struct can_priv can;	/* must be the first member */
-> > > > +	/* NAPI for RX messages */
-> > > > +	struct napi_struct napi;
-> > > > +	/* NAPI for TX messages */
-> > > > +	struct napi_struct napi_tx;
-> > > > +	/* The network device we're associated with */
-> > > > +	struct net_device *dev;
-> > > > +	/* The virtio device we're associated with */
-> > > > +	struct virtio_device *vdev;
-> > > > +	/* The virtqueues */
-> > > > +	struct virtqueue *vqs[VIRTIO_CAN_QUEUE_COUNT];
-> > > > +	/* I/O callback function pointers for the virtqueues */
-> > > > +	vq_callback_t *io_callbacks[VIRTIO_CAN_QUEUE_COUNT];
-> > > > +	/* Lock for TX operations */
-> > > > +	spinlock_t tx_lock;
-> > > > +	/* Control queue lock. Defensive programming, may be not needed */
-> > > > +	struct mutex ctrl_lock;
-> > > > +	/* Wait for control queue processing without polling */
-> > > > +	struct completion ctrl_done;
-> > > > +	/* List of virtio CAN TX message */
-> > > > +	struct list_head tx_list;
-> > > > +	/* Array of receive queue messages */
-> > > > +	struct virtio_can_rx rpkt[128];
-> > > 
-> > > This array should probably be allocated dynamically at probe - maybe
-> > > using a module parameter instead of a hardcoded value as length? 
-> > > 
-> > 
-> > If I allocate this array in probe(), I would not know sdu[] in advance
-> > if I defined it as a flexible array. That made me wonder: can sdu[] be
-> > defined as flexible array for rx? 
-> > 
-> > Thanks.
-> > 
-> 
-> One thing that can be done is to define struct virtio_can_rx as:
-> 
-> struct virtio_can_rx {
-> #define VIRTIO_CAN_RX                   0x0101
-> 	__le16 msg_type;
-> 	__le16 length; /* 0..8 CC, 0..64 CAN-FD, 0..2048 CAN-XL, 12 bits */
-> 	__u8 reserved_classic_dlc; /* If CAN classic length = 8 then DLC can be 8..15 */
-> 	__u8 padding;
-> 	__le16 reserved_xl_priority; /* May be needed for CAN XL priority */
-> 	__le32 flags;
-> 	__le32 can_id;
-> 	__u8 sdu[] __counted_by(length);
-> };
-> 
-> and then allocate the rpkt[] array using the maximum length for SDU:
-> 
-> priv->rpkt = kcalloc(num_rx_buffers,
-> 		sizeof(struct virtio_can_rx) + VIRTIO_CAN_MAX_DLEN,
-> 		GFP_KERNEL);
-> 
-> In this way, the size of each member of rpkt[] is known and is thus
-> suitable for virtio_can_populate_vqs().
-> 
-> 
+On Sun, 2025-10-12 at 17:04 -0700, Nicolin Chen wrote:
+> Add a new test_dev domain op for driver to test the compatibility between
+> a domain and a device at the driver level, before calling into the actual
+> attachment/replacement of a domain. Support pasid for set_dev_pasid call.
+>=20
+> Move existing core-level compatibility tests to a helper function. Invoke
+> it prior to:
+>  * __iommu_attach_device() or its wrapper __iommu_device_set_domain()
+>  * __iommu_set_group_pasid()
 
-Thanks for your answer. What is the value of VIRTIO_CAN_MAX_DLEN? I
-can't find it nor in the code or in the spec. I guess is 64 bytes? Also,
-IIUC, using __counted_by() would not end up saving space but adding an
-extra check for the compiler. Am I right? In that case, can't I just use
-a fixed array of VIRTIO_CAN_MAX_DLEN bytes?
+Should this list also include iommu_deferred_attach()? The code does
+include it.
 
-Thanks, Matias.
+>=20
+> And keep them within the group->mutex, so drivers can simply move all the
+> sanity and compatibility tests from their attach_dev callbacks to the new
+> test_dev callbacks without concerning about a race condition.
+>=20
+> This may be a public API someday for VFIO/IOMMUFD to run a list of attach
+> tests without doing any actual attachment, which may result in a list of
+> failed tests. So encourage drivers to avoid printks to prevent kernel log
+> spam.
+>=20
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  include/linux/iommu.h |  17 +++++--
+>  drivers/iommu/iommu.c | 111 ++++++++++++++++++++++++++++++------------
+>  2 files changed, 93 insertions(+), 35 deletions(-)
+>=20
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 801b2bd9e8d49..2ec99502dc29c 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -714,7 +714,12 @@ struct iommu_ops {
+> =20
+>  /**
+>   * struct iommu_domain_ops - domain specific operations
+> - * @attach_dev: attach an iommu domain to a device
+> + * @test_dev: Test compatibility prior to an @attach_dev or @set_dev_pas=
+id call.
+> + *            A driver-level callback of this op should do a thorough sa=
+nity, to
 
+You're missing the word "check" above.
+
+> + *            make sure a device is compatible with the domain. So the f=
+ollowing
+> + *            @attach_dev and @set_dev_pasid functions would likely succ=
+eed with
+> + *            only one exception due to a temporary failure like out of =
+memory.
+
+Nit: "=E2=80=A6 only one exception =E2=80=A6" / "=E2=80=A6 like out of memo=
+ry =E2=80=A6" this sounds a
+bit odd to me because on the one hand it's one exception but then also
+a group (temporary failures).
+
+Maybe better:
+"=E2=80=A6 would likely succeed with only the exception of temporary failur=
+es
+like out of memory."?
+
+> + *            It's suggested to avoid the kernel prints in this op.
+>   *  Return:
+>   * * 0		- success
+>   * * EINVAL	- can indicate that device and domain are incompatible due t=
+o
+> @@ -722,11 +727,15 @@ struct iommu_ops {
+>   *		  driver shouldn't log an error, since it is legitimate for a
+>   *		  caller to test reuse of existing domains. Otherwise, it may
+>   *		  still represent some other fundamental problem
+> - * * ENOMEM	- out of memory
+> - * * ENOSPC	- non-ENOMEM type of resource allocation failures
+>   * * EBUSY	- device is attached to a domain and cannot be changed
+>   * * ENODEV	- device specific errors, not able to be attached
+>   * * <others>	- treated as ENODEV by the caller. Use is discouraged
+> + * @attach_dev: attach an iommu domain to a device
+> + *  Return:
+> + * * 0		- success
+> + * * ENOMEM	- out of memory
+> + * * ENOSPC	- non-ENOMEM type of resource allocation failures
+> + * * <others>	- Use is discouraged
+>   * @set_dev_pasid: set or replace an iommu domain to a pasid of device. =
+The pasid of
+>   *                 the device should be left in the old config in error =
+case.
+>   * @map_pages: map a physically contiguous set of pages of the same size=
+ to
+> @@ -751,6 +760,8 @@ struct iommu_ops {
+>   * @free: Release the domain after use.
+>   */
+>  struct iommu_domain_ops {
+> +	int (*test_dev)(struct iommu_domain *domain, struct device *dev,
+> +			ioasid_t pasid, struct iommu_domain *old);
+>  	int (*attach_dev)(struct iommu_domain *domain, struct device *dev,
+>  			  struct iommu_domain *old);
+>  	int (*set_dev_pasid)(struct iommu_domain *domain, struct device *dev,
+>=20
+--- snip ---
+> @@ -3615,6 +3657,11 @@ int iommu_replace_device_pasid(struct iommu_domain=
+ *domain,
+>  	ret =3D 0;
+> =20
+>  	if (curr_domain !=3D domain) {
+> +		ret =3D __iommu_domain_test_device(domain, dev, pasid,
+> +						 curr_domain);
+> +		if (ret)
+> +			goto out_unlock;
+> +
+>  		ret =3D __iommu_set_group_pasid(domain, group,
+>  					      pasid, curr_domain);
+>  		if (ret)
+
+Apart from the comment and commit description nits mentioned above this
+looks good to me.
+
+Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
