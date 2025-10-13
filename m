@@ -1,103 +1,133 @@
-Return-Path: <linux-kernel+bounces-850147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB8DBD20FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:31:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8772CBD21D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CF43C0E03
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:31:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 864754EB444
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8802F60A1;
-	Mon, 13 Oct 2025 08:31:31 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1712F99A5;
+	Mon, 13 Oct 2025 08:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="XnFfSoYJ"
+Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5992F2EACF0;
-	Mon, 13 Oct 2025 08:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECC92EAD10;
+	Mon, 13 Oct 2025 08:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760344290; cv=none; b=mPjyZauSFU5+vutA0ueMcX+V7+8HoOFVbxOFMcJ41sns2SH2CFlOHdw2aWvcbX8rspK9e5UhhDjR2v2foZJX8d992FJO/d+IwOksMcWmO7570Tw6CL1ARsyg6AEDhaAKAGudXyGBGCZkanZFgCO4vw3b6Ld7Sx9NJCWn0cKFPL0=
+	t=1760344685; cv=none; b=q4/rD1355ako+XZ/coBiHOK/O7/DIVBymuKRPJNn8sdopMNikCIelLzLSCw6+fM0z8wCJpURXYfnKSvrOZnY6o/2g0WgzqqT+5jbClbmuMXPbr4Cim8hSxktZg49vLcnB2AN3w+oogIBAAohx/sPqJ1Q3Nibulem4kqsXAilmOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760344290; c=relaxed/simple;
-	bh=5qxHhY7PZ7QHCzoQybgXMKX5rBZv0iExbyqZvi8fRGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mYFBrPzKKMz6NTv8WASIi71ZpmD8p1VgB1uzUXX3f/J0E1Fmuqc6z6RFPDMfh2IJqP6Y3VGRK9J23jawsXpsRk+h0quQ3jQZ7eYzvD/Qu4pfYqQBbrwVTkRFKWfXU9VYDrcPlF8Q2riUZAC1SvWlz5Eu+CZaBu9t66gG3jBJdzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 42E3B200802F;
-	Mon, 13 Oct 2025 10:31:25 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 3C2544A12; Mon, 13 Oct 2025 10:31:25 +0200 (CEST)
-Date: Mon, 13 Oct 2025 10:31:25 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Vivek Goyal <vgoyal@redhat.com>, stable@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] crypto: asymmetric_keys - prevent overflow in
- asymmetric_key_generate_id
-Message-ID: <aOy43TmVgWvzNGfB@wunner.de>
-References: <20251012203841.60230-1-thorsten.blum@linux.dev>
- <aOybIZ2iqXExpTUw@wunner.de>
- <4AF8BE0F-D400-4020-A8F6-EF61A797A24E@linux.dev>
+	s=arc-20240116; t=1760344685; c=relaxed/simple;
+	bh=6arSJg06MrMkixsEJHWkx329AWbue+1XZtRqQfyGgF8=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=ZfxD2U8qHMdPJB2v/D4UTNh9e8G8iEiUNEwAa0KzVIZcRTBYNq56bOEDTFKr+uBVj9JL7aMrQlte8xnSu0iYVB3uItHV2Ejay7MnSYJVtq2ItbVGGsFVJjwrnjpzjyUI93OglT/ZOu3jFSsEhRs70Bnk8GpM4pr0A332xnvND+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=XnFfSoYJ; arc=none smtp.client-ip=203.205.221.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1760344679;
+	bh=5fT7lo+YLGtKH01AJv/ZvxTs08zq3ei0Fpq75OwRn60=;
+	h=From:To:Cc:Subject:Date;
+	b=XnFfSoYJ5+9p+xoCq8nGHo+VhXQ+HgsdL1d7RiIBQ2BI9zdqcJenR5qUCJ7od/nf9
+	 A0h8yJl7NEwFeBahc3L/JwYaJHvAvuE1xTay+LtzTzqYoEvTPvkySmwuPWec0+XyZJ
+	 +TdTb3mnifr69puKaiSsh8Yf+Bk5updam34FRPDY=
+Received: from dcitdc.dci.com ([61.220.30.51])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 7F3AECD0; Mon, 13 Oct 2025 16:31:51 +0800
+X-QQ-mid: xmsmtpt1760344311t8ri0yeyl
+Message-ID: <tencent_EAFBEC2D1967D73F4F76B8048D2F59BB1105@qq.com>
+X-QQ-XMAILINFO: NwU6Bou9okj/GXiU9e1SiVUg8sRTWGVorLLNInsoMknKrt1oH8qSJtOqKjVH5P
+	 jjdY6eAl+wU01bENhYgYuzwZR+TrI0BywOqcPLvvCVswk+tUpn2n3L4IxPALqZMpaUT0CzGF9XMK
+	 iJbqo/EmoQOv6TTTjS0AY6H6cVVtGWArccm7PJD8QOLIT93h7Rc3NJAxfduKqS+S0iX7LwjaQZH9
+	 gE6EmJ12qqi/Qfx2nP0IIc1EilbO8M4YaHuJENMHYh9bJ+IYOpuL3ke2w0DRcN1RtMrM8el8i53E
+	 sl5yPwhTSaXLuV4UigCGAdnMrJA2C7q176hkNag24TKL2QOtKjyUDJ1wE1OL1hbU0uey1NVuE5Y8
+	 d0CYCbW8MHVVbZXsfAMeSt7NscP97ZQH14dvQ0xIcsTPpoP+PROeTjBrGqxaYRTe64B6EA3fkV5G
+	 aRPZqb7LhmdHNCpw94MEJdcGx3ijwx9qhA13WBtiVMcx6c+q5bZpFUESEuOlD+y44i+6bHH5vXgm
+	 uGRRIzQ7p/FzIwBq0gvIuvtNgA2KXGaVgt1Uwpkl9RG8X7sEwIRVhjmVyP+hjgpSO6PUOsPHYaIR
+	 lVRsJVXgUzF6BLkEGrcT1p3a/mdOtYR4k+2YW/7/sLnZqwxtG5QYKKVW1QUA50/bf5i7vnj0uYXE
+	 apBJDWecD4yFbdYIWnbVBS46iMeeoL4f69IBWLphBRp09cUe8+7vrsnJd2rt5mzklSgHiOSolnXG
+	 ZfS5PI7HwGryb4mCDVN/atgL2RdaQutGaZA6GMpK1Y615aJiYmzcdw2nZADvwmZZR1X+2jziQekz
+	 fhKEpZmGLv35uNndYoAqRDt5SY1RgVEjK+Vze+EvdOvnpVj5QnqZHP4rqzXJrzxR0p+ZY8YhW1zI
+	 jeAsXOwOvGa4zgPnSNVevRICWWM9E/L8IHP+80PhYHwivUxdSZooCZtN0TFRivi12LEspAYH2wpZ
+	 vkMeJrtszu+GTwrLkvlWXVu1AV9333ImTo8GGcFI5ti2KfTtD9o4xyZ5j2x6os
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: "Shang song (Lenovo)" <shangsong2@foxmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shangsong2@lenovo.com,
+	"Shang song (Lenovo)" <shangsong2@foxmail.com>
+Subject: [PATCH 1/1] ACPI: PRM: Skip the initialization when boot from legacy BIOS
+Date: Mon, 13 Oct 2025 04:31:40 -0400
+X-OQ-MSGID: <20251013083140.2493313-1-shangsong2@foxmail.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4AF8BE0F-D400-4020-A8F6-EF61A797A24E@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 10:23:01AM +0200, Thorsten Blum wrote:
-> On 13. Oct 2025, at 08:24, Lukas Wunner wrote:
-> > On Sun, Oct 12, 2025 at 10:38:40PM +0200, Thorsten Blum wrote:
-> >> +++ b/crypto/asymmetric_keys/asymmetric_type.c
-> >> @@ -141,12 +142,14 @@ struct asymmetric_key_id *asymmetric_key_generate_id(const void *val_1,
-> >> 						     size_t len_2)
-> >> {
-> >> 	struct asymmetric_key_id *kid;
-> >> +	size_t len;
-> >> 
-> >> -	kid = kmalloc(sizeof(struct asymmetric_key_id) + len_1 + len_2,
-> >> -		      GFP_KERNEL);
-> >> +	if (check_add_overflow(len_1, len_2, &len))
-> >> +		return ERR_PTR(-EOVERFLOW);
-> >> +	kid = kmalloc(struct_size(kid, data, len), GFP_KERNEL);
-> > 
-> > This will add (at least) 2 bytes to len (namely the size of struct
-> > asymmetric_key_id)) and may cause an overflow (even if len_1 + len_2
-> > did not overflow).
-> 
-> Could you explain which part adds "(at least) 2 bytes to len"?
+To address the confusion caused by the misleading "Failed to find VA for GUID..."
+message during legacy BIOS boot, making 'EFI_RUNTIME_SERVICES's earlier judgment
+can prevent this false alert.
 
-The struct_size() macro performs another size_add() to add the
-size of struct asymmetric_key_id (which is at least 2 bytes) to len:
+Signed-off-by: Shang song (Lenovo) <shangsong2@foxmail.com>
+---
+ drivers/acpi/prmt.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-#define struct_size(p, member, count)					\
-	__builtin_choose_expr(__is_constexpr(count),			\
-		sizeof(*(p)) + flex_array_size(p, member, count),	\
-		size_add(sizeof(*(p)), flex_array_size(p, member, count)))
-                ^^^^^^^^
+diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
+index 6792d4385eee..ec367d322ab2 100644
+--- a/drivers/acpi/prmt.c
++++ b/drivers/acpi/prmt.c
+@@ -305,11 +305,6 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
+ 	efi_status_t status;
+ 	struct prm_context_buffer context;
+ 
+-	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
+-		pr_err_ratelimited("PRM: EFI runtime services no longer available\n");
+-		return AE_NO_HANDLER;
+-	}
+-
+ 	/*
+ 	 * The returned acpi_status will always be AE_OK. Error values will be
+ 	 * saved in the first byte of the PRM message buffer to be used by ASL.
+@@ -388,6 +383,14 @@ void __init init_prmt(void)
+ 	acpi_status status;
+ 	int mc;
+ 
++	/*
++	 * Return immediately if EFI_RUNTIME_SERVICES is not enabled.
++	 */
++	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
++		pr_info("PRM: EFI runtime services unavailable, can not initialize.\n");
++		return;
++	}
++
+ 	status = acpi_get_table(ACPI_SIG_PRMT, 0, &tbl);
+ 	if (ACPI_FAILURE(status))
+ 		return;
+@@ -404,11 +407,6 @@ void __init init_prmt(void)
+ 
+ 	pr_info("PRM: found %u modules\n", mc);
+ 
+-	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
+-		pr_err("PRM: EFI runtime services unavailable\n");
+-		return;
+-	}
+-
+ 	status = acpi_install_address_space_handler(ACPI_ROOT_OBJECT,
+ 						    ACPI_ADR_SPACE_PLATFORM_RT,
+ 						    &acpi_platformrt_space_handler,
+-- 
+2.43.7
 
-So there's an addition of three numbers, yet you're only checking that
-the addition of two of them doesn't overflow.
-
-Thanks,
-
-Lukas
 
