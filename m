@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-850203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57ED8BD23A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:15:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E59BD23B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CE004EC3AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:15:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 201AD3493EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1D2FB995;
-	Mon, 13 Oct 2025 09:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59DA2FC007;
+	Mon, 13 Oct 2025 09:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MNQbpMfF"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHkZf7Dq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BBF23956A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C772C18A;
+	Mon, 13 Oct 2025 09:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760346922; cv=none; b=DGCz+z4h6bm8M6VIrk/sQLbL3y3Xp2Wst9RfrUbvE3NX8j9oDTl/F+WqOIsDn4ZkvqvDlWC9C7w2y91BsgSm2bwm2THabzoW1CA2bNSxnxb4kY9uVHugxXSLmbIlD19BQq0bb7+Y0WbTt1LcQr42jSFbapjDQbWHyGZ5Oyg4uMc=
+	t=1760347022; cv=none; b=CnSdfeRsDnzHDEaB1eNYnpxdOBmcU1srchAsJnVcZPr7a8CP9sw/6lYSarMsPkBFEefbxAsJIbTTtZFR/BLKwxlTV65IL9jefX4IJsIJojCCmKP7v9BO/TxF4hD8KX3/00NekyWQekSRNp9beBikQttJdimVy/9bfG4X4XiVMIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760346922; c=relaxed/simple;
-	bh=7U/uYJ1Bn25KT2yXUo5NMdtSLLLWGrEc4B4/9Q9wzXc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VJwqRSjBwBA64QOZmtthITYlJvs3P29BBd9u2JkpD2niTWcwv99sHIzy+QscHcrGC4Q0PP360fCMeOk9WipsmPn0b3SOtPufkFv2V191GAX59CkX2ukAgZ6b5V3Wza0OTAc/fQ1sQPsNo4Ze0dlRH6xnLruivSmuBQJM0GQIoNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MNQbpMfF; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <bd374ac3-05a2-41ae-8043-cc3575fb13c0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760346918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z3uRU6A1V0MHfLT+ewa3AKJSUpsO5lmxHPh4GX6k0hg=;
-	b=MNQbpMfFLQ2qpDDSdEkaNskbe9MHMp0xnYzedG+FVz6nyRLbQztirK+kx5Ir54ngMxaThf
-	WDc8Q/rKrID2o68szkR+UWaJ0QWxIRx9EQGrVza8abnWCj8lKlo3duhrKfY5vZdssNRneh
-	dVALp7ix5m0wpB/l+OyGFcibB55Y9ls=
-Date: Mon, 13 Oct 2025 17:15:09 +0800
+	s=arc-20240116; t=1760347022; c=relaxed/simple;
+	bh=/auT3UgIwSi0ev3BBmyrAvTGEjKox8DEHohP+Ue7Ahc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1mXzPYaFU/e2Z9GHdow3D0fjcGK4QBjEknY6Y9WIdjureiYGGGsyO/IDKQO7Bx5p37HZqHr7myik8mg396QHOqyWMkMmj3kPNenMlq216tl6Bv5Aqlqmm+RC+TUk20fm/AaOdo0N+b8m2KlHyh4lBbkgkvMCQtdmE/MUq1nt8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHkZf7Dq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC04C4CEE7;
+	Mon, 13 Oct 2025 09:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760347021;
+	bh=/auT3UgIwSi0ev3BBmyrAvTGEjKox8DEHohP+Ue7Ahc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UHkZf7DqqY0Y9WedIGvcr6spAb5M3fmj+83HQzre/CIe4aCD9af9E3/siVKO2faGU
+	 aHh4VkU8kY/xLzDLYDC4m6hCqypdMD9aBSObX6Tm1Ojd3FW4xTPvDOJ6Ay32VFhbLQ
+	 xD0vSbpZRoFbF34rPRGuUZPEB1gWW1qkFG/W/UAgILhmJKAVYx+Q1tqFMBZup5ZZR6
+	 XKYn2s7nOzL+j/RrPTQqVwj1uIjinfmeJGQpPTIKZK5xy8usHUSjvs1rFzABEGoZhO
+	 xdMasDGO4KKf7dMBJSKSPTTfOtivl3k+8dPGDkoB1Y3nZ82P2ZUj5yzbEiFsGz3Ze4
+	 Ost8ClewWTbVQ==
+Date: Mon, 13 Oct 2025 18:16:55 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Miaoqian Lin <linmq006@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Fix bool return value in gzip_is_compressed()
+Message-ID: <aOzDh4yhR5F0nMTG@google.com>
+References: <20250828104652.53724-1-linmq006@gmail.com>
+ <4ecf3e76-27f8-47fd-a07d-7da2489af55f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory
- failures
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-To: david@redhat.com
-Cc: Longlong Xia <xialonglong2025@163.com>, nao.horiguchi@gmail.com,
- akpm@linux-foundation.org, wangkefeng.wang@huawei.com, xu.xin16@zte.com.cn,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Longlong Xia <xialonglong@kylinos.cn>, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, Miaohe Lin <linmiaohe@huawei.com>, qiuxu.zhuo@intel.com
-References: <20251009070045.2011920-1-xialonglong2025@163.com>
- <20251009070045.2011920-2-xialonglong2025@163.com>
- <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
- <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
- <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
- <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
- <839b72b8-55dc-4f4e-b1da-6f24ecf9446f@huawei.com>
- <f12dfacb-05dd-4b22-90eb-fcc1a8ed552b@linux.dev>
-In-Reply-To: <f12dfacb-05dd-4b22-90eb-fcc1a8ed552b@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4ecf3e76-27f8-47fd-a07d-7da2489af55f@linux.intel.com>
 
-@David
+Hello,
 
-Cc: MM CORE folks
+On Sat, Oct 11, 2025 at 11:48:56AM +0800, Mi, Dapeng wrote:
+> 
+> On 8/28/2025 6:46 PM, Miaoqian Lin wrote:
+> > gzip_is_compressed() returns -1 on error but is declared as bool.
+> > And -1 gets converted to true, which could be misleading.
+> > Return false instead to match the declared type.
+> >
+> > Fixes: 88c74dc76a30 ("perf tools: Add gzip_is_compressed function")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> > ---
+> >  tools/perf/util/zlib.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/util/zlib.c b/tools/perf/util/zlib.c
+> > index 78d2297c1b67..1f7c06523059 100644
+> > --- a/tools/perf/util/zlib.c
+> > +++ b/tools/perf/util/zlib.c
+> > @@ -88,7 +88,7 @@ bool gzip_is_compressed(const char *input)
+> >  	ssize_t rc;
+> >  
+> >  	if (fd < 0)
+> > -		return -1;
+> > +		return false;
+> >  
+> >  	rc = read(fd, buf, sizeof(buf));
+> >  	close(fd);
+> 
+> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-On 2025/10/13 12:42, Lance Yang wrote:
-[...]
-
-Cool. Hardware error injection with EINJ was the way to go!
-
-I just ran some tests on the shared zero page (both regular and huge), and
-found a tricky behavior:
-
-1) When a hardware error is injected into the zeropage, the process that
-attempts to read from a mapping backed by it is correctly killed with a 
-SIGBUS.
-
-2) However, even after the error is detected, the kernel continues to 
-install
-the known-poisoned zeropage for new anonymous mappings ...
-
-
-For the shared zeropage:
-```
-[Mon Oct 13 16:29:02 2025] mce: Uncorrected hardware memory error in 
-user-access at 29b8cf5000
-[Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: Sending SIGBUS to 
-read_zeropage:13767 due to hardware memory corruption
-[Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: recovery action 
-for already poisoned page: Failed
-```
-And for the shared huge zeropage:
-```
-[Mon Oct 13 16:35:34 2025] mce: Uncorrected hardware memory error in 
-user-access at 1e1e00000
-[Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: Sending SIGBUS to 
-read_huge_zerop:13891 due to hardware memory corruption
-[Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: recovery action for 
-already poisoned page: Failed
-```
-
-Since we've identified an uncorrectable hardware error on such a critical,
-singleton page, should we be doing something more?
+We have 43fa1141e2c1af79 ("perf util: Fix compression checks returning -1
+as bool").
 
 Thanks,
-Lance
+Namhyung
+
 
