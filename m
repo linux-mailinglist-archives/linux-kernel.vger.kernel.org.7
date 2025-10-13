@@ -1,86 +1,73 @@
-Return-Path: <linux-kernel+bounces-850858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE59BD437B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:30:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A81BD4DEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AE0634F5D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:30:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9CCD35475B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1282FE577;
-	Mon, 13 Oct 2025 15:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B377F311C38;
+	Mon, 13 Oct 2025 15:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JU2h/kJz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="mWej291H"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A59F26F2B6;
-	Mon, 13 Oct 2025 15:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D030DD19
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760368672; cv=none; b=b/TrJgK72FzTok/3VCE/ztEhUnPr0bIjfUq4LAhsMhoNq+HprOocjBd6vcG+Dgfhm7PFmTK/lvEBcHxUgmto+GVyuFja2llSFZw7P+7OcWFQmZSydFHy2y23oAGJV3Ww+H20uC3VnMSwVFj9bB5ZWvrDZxiVIb12ucojVYF++GI=
+	t=1760369989; cv=none; b=uSZ27SgkbSigx2b4GpPFLZtYNOEQ03VmIel2olv+01xLEPWZx+lSmNxuGDE67PjPXZNxdVfYqLmNgIJgu6YLVBkbidC3BTiQYIzWJiqR/Xz0r2O4snS5hFP1xtkjjjbdhlC9OryxBarDaCMiHe4z9EG9y51NaSrQZN5FRh3i/lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760368672; c=relaxed/simple;
-	bh=VhHDC/pzCEJRdbgq2yAH6nFoNigRkEQ2qVYfCVitK70=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZbpZS337HrlsqbLf9sQzXZa3I9+Lp3GK6d447VT1VtfdRZaiMxGa/2a9x3FxGbzYACL44Dv8wevdJoAQDl3CvzUyVZBKOec64onV73KoOSWb2fFT0Sz8TDttO9C5iUD5honTk8cHWxukmjUrE9gm9gFDikHhuqNzHxUEsKu1Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JU2h/kJz; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760368671; x=1791904671;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=VhHDC/pzCEJRdbgq2yAH6nFoNigRkEQ2qVYfCVitK70=;
-  b=JU2h/kJzZ1n+g1tSYSnNcBTZnyvJqYCOv+6E+XUIRzeUmznq+z5kxCdi
-   DD1sa7isbE2pD+VixSb8S7T2emH9QbcbfngWA9uD2/+N/DG18UoPJ99gf
-   oYOZC7i7h1fvKTzT6fZxRm/I5kJSRgP84e6e+xi6sfLfPL9flrTjGlmjB
-   BF/Tbmpzc9hCDWy62vIqQO9SxawQ8pa+Ev6FR/ZXlhiByohhXj1Wjmwnb
-   njVB0cgtI7qTjNjgHOraeG5mtxQpk5DCslBOsWEh9fdXad82XQlvW1zxB
-   lqGj8bLDOMRWJS14cychcwlcJpVEHdEY1H8uMuPsVMRrxnaJsKMMswlX9
-   A==;
-X-CSE-ConnectionGUID: e4MRE0GnRRe+S8Heh8jsiA==
-X-CSE-MsgGUID: ogVJsHF2R/6OMHmHdQG6ig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="73615021"
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="73615021"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:17:50 -0700
-X-CSE-ConnectionGUID: Q8MLLu7XSYu5+JjPrcfLiw==
-X-CSE-MsgGUID: QZzQ3sRBRtmVjSVwjGGwcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="185635616"
-Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
-  by orviesa003.jf.intel.com with ESMTP; 13 Oct 2025 08:17:45 -0700
-From: Tianyou Li <tianyou.li@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	tianyou.li@intel.com,
-	wangyang.guo@intel.com,
-	pan.deng@intel.com,
-	zhiguo.zhou@intel.com,
-	jiebin.sun@intel.com,
-	thomas.falcon@intel.com,
-	dapeng1.mi@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf tools annotate: fix a crash when annotate the same symbol with 's' and 'T'
-Date: Tue, 14 Oct 2025 00:10:46 +0800
-Message-ID: <20251013161046.2075335-1-tianyou.li@intel.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1760369989; c=relaxed/simple;
+	bh=YwUQEWuGDbfNmBNRNmuhWkQfNTtxPU2EfJRzUJtttGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YOwjpftlUPpH7u9LuN5cK1apFjxYVp9GNViANqKI6UTz7BB065YkIMlMohAGbN5Q4uMJKdVv5UIMfmTYOcv8/bA6THzYElvDB73XwYZPM25c3PPkqKQHEZoI8CmbTZtWflrz7GAI2oe8UqsIM3Iov6lM5zUA4SZlKtuzr6ZmfgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=mWej291H; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DEtCTk027980;
+	Mon, 13 Oct 2025 15:10:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pps0720; bh=uIjqjo58kep0pU2OkAzHPvf81jMItmoD1vePu
+	ap55W0=; b=mWej291Ho40lbgK/RTvW0phvJJpEWcGqRas2pG24/Cbu4RlpJxEIU
+	DKjk6zvoxtrgJFXF+zaDHS5fRCrUiPlVWK61hKm/q5kCqrStgWA8gY3CZlrG8CAN
+	kZwpudGfyRERXbI97ihsSbaBzI9/Q1K/G/xIZzpAxIHNkXCH/XUJ0JpqKP3g5KhU
+	s3q4kQaZNaDa6tZX8dFEMUSnz8Ws53YE7KqD6wnUBXweCNbLXLSg79d9uDtIT5jx
+	B+qcfR7OAX9xpF4bq8AaPQ5T+zOCaRPX0KUBNMI0E4AVAXVqflSM/BIVbAXbznsT
+	lfI797I/jevgebK7hi0Ap3HHr2/WBwj0Q==
+Received: from p1lg14881.it.hpe.com (p1lg14881.it.hpe.com [16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 49s3ky04qe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 15:10:01 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 31381805E31;
+	Mon, 13 Oct 2025 15:10:01 +0000 (UTC)
+Received: from dog.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id B254A808B81;
+	Mon, 13 Oct 2025 15:10:00 +0000 (UTC)
+Received: by dog.eag.rdlabs.hpecorp.net (Postfix, from userid 200934)
+	id DB65E302F474C; Mon, 13 Oct 2025 10:09:59 -0500 (CDT)
+From: Steve Wahl <steve.wahl@hpe.com>
+To: Steve Wahl <steve.wahl@hpe.com>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
+        Kyle Meyer <kyle.meyer@hpe.com>
+Subject: [PATCH] tick/sched: Use trylock for jiffies updates by non-timekeeper CPUs
+Date: Mon, 13 Oct 2025 10:09:59 -0500
+Message-Id: <20251013150959.298288-1-steve.wahl@hpe.com>
+X-Mailer: git-send-email 2.26.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,82 +75,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: -m10UOhHm_hUTcXe_CzEHuKA2OwMkXAJ
+X-Proofpoint-ORIG-GUID: -m10UOhHm_hUTcXe_CzEHuKA2OwMkXAJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA2NiBTYWx0ZWRfX6naXhFXN2WS2
+ vZPoC/BwxN3NvdsdHZV9qkPCjMWkr1er/B89UBwmN3lwNduAGOGC2qrzCq3HKXXVqrPCn2uGKNF
+ COPXVJigX8jCzjwhvtwWBVNYCO+i7yJ0UpX7d1u83LujUfLzfI1AEHuQJMj+GYTNW0/JFAs/pZg
+ 4DZ7CdvapZ34jRBcVumfl47wmlUhFIreJLLCSNEPDQMW5QeGc5TxjaaVDmQgJeS/wt8RPPrG69w
+ 1csuRWFhV+IMJpip33AlCVwXH7IC4ZGWMZAxAyrPJ37teiYwVJ2LM552bAezHKke7dMeNzZwj/L
+ WCMSS8DHJFDnVQ2ZkVbxltD5cU6j4ZGHnUatloWL3RQRHot/ILv5cvn5y55PyhhPL0W+PUSCXe8
+ I85r/13c5C0REXy2I6oYb9jq6ymsow==
+X-Authority-Analysis: v=2.4 cv=D5xK6/Rj c=1 sm=1 tr=0 ts=68ed1649 cx=c_pps
+ a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
+ a=x6icFKpwvdMA:10 a=MvuuwTCpAAAA:8 a=H5T9noDTSo1JzFdqmQ4A:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 suspectscore=0 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130066
 
-When perf report with annotation for a symbol, press 's' and 'T', then exit
-the annotate browser. Once annoate the same symbol, the annoate browser
-will crash. Stack trace as below:
+On large NUMA systems, while running a test program that saturates the
+inter-proccesor and inter-NUMA links, acquiring the jiffies_lock can
+be very expensive.  If the cpu designated to do jiffies updates
+(tick_do_timer_cpu) gets delayed and other cpus decide to do the
+jiffies update themselves, a large number of them decide to do so at
+the same time.  The inexpensive check against tick_next_period is far
+quicker than actually acquiring the lock, so most of these get in line
+to obtain the lock.  If obtaining the lock is slow enough, this
+spirals into the vast majority of CPUs continuously being stuck
+waiting for this lock, just to obtain it and find out that time has
+already been updated by another cpu. For example, on one random entry
+to kdb by manually-injected NMI, I saw 2912 of 3840 cpus stuck here.
 
-Perf: Segmentation fault
--------- backtrace --------
-    #0 0x55d365 in ui__signal_backtrace setup.c:0
-    #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
-    #2 0x570f08 in arch__is perf[570f08]
-    #3 0x562186 in annotate_get_insn_location perf[562186]
-    #4 0x562626 in __hist_entry__get_data_type annotate.c:0
-    #5 0x56476d in annotation_line__write perf[56476d]
-    #6 0x54e2db in annotate_browser__write annotate.c:0
-    #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
-    #8 0x54dc9e in annotate_browser__refresh annotate.c:0
-    #9 0x54c03d in __ui_browser__refresh browser.c:0
-    #10 0x54ccf8 in ui_browser__run perf[54ccf8]
-    #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
-    #12 0x552293 in do_annotate hists.c:0
-    #13 0x55941c in evsel__hists_browse hists.c:0
-    #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
-    #15 0x42ff02 in cmd_report perf[42ff02]
-    #16 0x494008 in run_builtin perf.c:0
-    #17 0x494305 in handle_internal_command perf.c:0
-    #18 0x410547 in main perf[410547]
-    #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
-    #20 0x7f5ff1a29680 in __libc_start_main@@GLIBC_2.34 libc.so.6[29680]
-    #21 0x410b75 in _start perf[410b75]
+To avoid this, in tick_sched_do_timer() have cpus that are not the
+official timekeeper only try for the lock, and if it is held by
+another CPU, leave the updating of jiffies to the lock holder.  If the
+update is not yet guaranteed complete, do not reset
+ts->stalled_jiffies, so the check for stalled jiffies continues on the
+next tick.
 
-Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+With this change, manually interrupting the test I find at most one
+cpu in the tick_do_update_jiffies64 function.
+
+Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
 ---
- tools/perf/ui/browsers/annotate.c | 3 +++
- tools/perf/util/annotate.c        | 2 +-
- tools/perf/util/annotate.h        | 2 ++
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ kernel/time/tick-sched.c | 46 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 37 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 8fe699f98542..1e0873194217 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -1163,6 +1163,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index c527b421c865..706d4e235989 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -54,7 +54,7 @@ static ktime_t last_jiffies_update;
+ /*
+  * Must be called with interrupts disabled !
+  */
+-static void tick_do_update_jiffies64(ktime_t now)
++static bool _tick_do_update_jiffies64(ktime_t now, bool trylock)
+ {
+ 	unsigned long ticks = 1;
+ 	ktime_t delta, nextp;
+@@ -70,7 +70,7 @@ static void tick_do_update_jiffies64(ktime_t now)
+ 	 */
+ 	if (IS_ENABLED(CONFIG_64BIT)) {
+ 		if (ktime_before(now, smp_load_acquire(&tick_next_period)))
+-			return;
++			return true;
+ 	} else {
+ 		unsigned int seq;
+ 
+@@ -84,18 +84,24 @@ static void tick_do_update_jiffies64(ktime_t now)
+ 		} while (read_seqcount_retry(&jiffies_seq, seq));
+ 
+ 		if (ktime_before(now, nextp))
+-			return;
++			return true;
+ 	}
+ 
+ 	/* Quick check failed, i.e. update is required. */
+-	raw_spin_lock(&jiffies_lock);
++	if (trylock) {
++		/* The cpu holding the lock will do the update. */
++		if (!raw_spin_trylock(&jiffies_lock))
++			return false;
++	} else {
++		raw_spin_lock(&jiffies_lock);
++	}
+ 	/*
+ 	 * Re-evaluate with the lock held. Another CPU might have done the
+ 	 * update already.
+ 	 */
+ 	if (ktime_before(now, tick_next_period)) {
+ 		raw_spin_unlock(&jiffies_lock);
+-		return;
++		return true;
+ 	}
+ 
+ 	write_seqcount_begin(&jiffies_seq);
+@@ -147,6 +153,27 @@ static void tick_do_update_jiffies64(ktime_t now)
+ 
+ 	raw_spin_unlock(&jiffies_lock);
+ 	update_wall_time();
++	return true;
++}
++
++/*
++ * Obtains the lock and does not return until update is complete.
++ * Must be called with interrupts disabled.
++ */
++static void tick_do_update_jiffies64(ktime_t now)
++{
++	_tick_do_update_jiffies64(now, false);
++}
++
++/*
++ * This will return early if another cpu holds the lock.  On return,
++ * the update is in progress but may not have completed yet.
++ * Must be called with interrupts disabled.
++ * Returns false if update might not yet be completed.
++ */
++static bool tick_attempt_update_jiffies64(ktime_t now)
++{
++	return _tick_do_update_jiffies64(now, true);
+ }
+ 
+ /*
+@@ -239,10 +266,11 @@ static void tick_sched_do_timer(struct tick_sched *ts, ktime_t now)
+ 		ts->stalled_jiffies = 0;
+ 		ts->last_tick_jiffies = READ_ONCE(jiffies);
+ 	} else {
+-		if (++ts->stalled_jiffies == MAX_STALLED_JIFFIES) {
+-			tick_do_update_jiffies64(now);
+-			ts->stalled_jiffies = 0;
+-			ts->last_tick_jiffies = READ_ONCE(jiffies);
++		if (++ts->stalled_jiffies >= MAX_STALLED_JIFFIES) {
++			if (tick_attempt_update_jiffies64(now)) {
++				ts->stalled_jiffies = 0;
++				ts->last_tick_jiffies = READ_ONCE(jiffies);
++			}
  		}
  	}
  
-+	if (browser.arch == NULL)
-+		evsel__get_arch(evsel, &browser.arch);
-+
- 	/* Copy necessary information when it's called from perf top */
- 	if (hbt != NULL && he != &annotate_he) {
- 		annotate_he.hists = he->hists;
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index a2e34f149a07..39d6594850f1 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -980,7 +980,7 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
- 	annotation__calc_percent(notes, evsel, symbol__size(sym));
- }
- 
--static int evsel__get_arch(struct evsel *evsel, struct arch **parch)
-+int evsel__get_arch(struct evsel *evsel, struct arch **parch)
- {
- 	struct perf_env *env = evsel__env(evsel);
- 	const char *arch_name = perf_env__arch(env);
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index eaf6c8aa7f47..d4990bff29a7 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -585,4 +585,6 @@ void debuginfo_cache__delete(void);
- int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
- 			     int num_aggr, struct evsel *evsel);
- int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
-+
-+int evsel__get_arch(struct evsel *evsel, struct arch **parch);
- #endif	/* __PERF_ANNOTATE_H */
 -- 
-2.47.1
+2.26.2
 
 
