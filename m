@@ -1,280 +1,128 @@
-Return-Path: <linux-kernel+bounces-850555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4D2BD32BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:19:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45643BD3300
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53DC3C68AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F8E189C24A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB99C28C874;
-	Mon, 13 Oct 2025 13:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ctsMrDw9"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F33D30648B;
+	Mon, 13 Oct 2025 13:25:42 +0000 (UTC)
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CBF2773F8
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8581A261B9C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760361587; cv=none; b=ZvCFALffgHtE35E/soXLBpq12HyJ7EWYttvo72Nn6Ai+K2E0LzHF8CrtyGEuMNmAxpX81bVf7RN2uv5gjcCZnx8YZJLavj0CqKj82hydQfPXoekmStiguVfOjb9pw4/1+GCTAj4xfbbbGEt7KOBKhQu2yqJBb9codg93y46klXU=
+	t=1760361942; cv=none; b=ljGRKke7J4JfHq6BZl03p+4CfWxBIznMLx2ez7wxVHWwElVwiR/+AH5bhPS77Qua0OAYpfTEYnVhf5nxUbj+oNCQfqXKQGs+NnVzS2IHKXgRXsOuPQ3nx0xDARtPMM/kfChFVT69W8YPiwiLRRPDKkAE4YjVk2+Wb1mnNKPfYaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760361587; c=relaxed/simple;
-	bh=hmoG2D2uWmbK3ZnQ4PzumWQE5wxc1xo/v8u8S/CiP5Q=;
+	s=arc-20240116; t=1760361942; c=relaxed/simple;
+	bh=j4q9qC+YQd+5UBmjspKgMnDAwhjR2/wlO9bB1nGMYoA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SCZc6hd83XGXreSo1EIwjUIs+Mz4feuQsqOJSIfSn/ykFrVRyawM1piyAWjosiQqnsBzX70VrmXB8FzI7S07OXmZaAoKx09ffMN2c3WWQeQJmyTiFNta4uHclhN//IHtalPLmuITygTkNZVYTbSYSldSuD4Q3FfrYPItXgYM2Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ctsMrDw9; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-87a092251eeso66797366d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:19:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760361585; x=1760966385; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d/EEJZgh8MeXJ23MQLJxa+c7vgI4rPFQhWD8rPWK2IE=;
-        b=ctsMrDw9k4jxOspfqa3fxXRNwRqmn6sO79lirzntFS1y11LD4ltzTneZOpxlRYSswM
-         Adm5Wx8OZN6Vn4cSvK52hIYY0y34YogJHKZYd7UkNklEGsPTO/eD+WHw6JLjAZ1tfMt2
-         r6jG0K6f3LQQ6bl/gpw+gu+V1xy6kuiWDfEoaHRi40n0LD8EouPM6++OT4buFv2IjVqL
-         M9sNtUSgRWuKNPbb0apTSBJH5eryGqMLdVnRT/QW8JlvNb66pFImaDbb3fZc32JFmRwE
-         5H4zE0JLSsTKY38KcC7Extf9CKJBLxdO7sdz+ZndpqGUD7kDnh4T7nbwetN1CTBJ4BSW
-         toew==
+	 To:Cc:Content-Type; b=dg6j6M5AVAfdaclh8VGiYTL7FlCk9K1ZcsyPOiP+TZmszeTMqIbPhMHGdnnygeHJg9hmRmRSSlU0gg8IYt4N6+2uV1YEcZM7wc3ZLDIdb17/ZJGR8DSQ9HHIMpc6ttsNcga6Uv/sU8PORyDwlZ092rzvkjFyRizZ24HZ0cvpo4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-3c711b467b4so2489139fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:25:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760361585; x=1760966385;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d/EEJZgh8MeXJ23MQLJxa+c7vgI4rPFQhWD8rPWK2IE=;
-        b=paAHrgr3mWpDJGCxesTscOc2tcQ5oOr/YZVie1N6k/pd87qgJJEhfII2FWrt9UlU8R
-         RUpt6UylCyDHGLTY/R2IO5yg3b/3m9ZypcBYq8CWyvrB59ONo1NdxgZ/YBbsnLrVm19e
-         irXQ7Zzz/pH2d7cCEbS9wpH5myVP27tawsOUv+p0QQWTQB4o/SmncbnVwLshHQU5fEAo
-         Tt+NaIC8R+0Ap9Sfxfk6t92dkMMGlxV0CFv/L0s6ynt9YI1UVIdFMy+zTXpkt+43MQbx
-         23pOGZGmWlViMTWHNk60UA8f3fiXGcnI2Y7tDj8FvkzXW8AsGb8t+HSM+mRjWZOvZDBe
-         i9gA==
-X-Forwarded-Encrypted: i=1; AJvYcCVw33uRSREfPZhyRXsnYZCrb0Y9/7jVFPRGeVVyjtMr4GJzGNY1zBK7yehXkQoyyxjgSNX7deG8j1YHrcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIQTuKLwJ/N6ghYgqm+Ykcw4/OZCi2m5aQrxcDE6sTY32r0uxJ
-	y1V52zvgTFOUApuezIMtC35Wd8H6piIpm3ltOEVYCDCcI2bdgao2P9nhNHgp+1ZlV9GaUAMRvGX
-	m2ZYPLVuo691aEjSC8PVTd7h8thhbeyn1bvnBcGtB
-X-Gm-Gg: ASbGncuTn7ZdDdQ+6OdgJxhVMxKR6+3zHtTNw6cVFQYE+upg17nHnDHZbx4xe6kN9Cu
-	sqGsDrkRVMox6IRu8/Ynf0zwmNw/FOIkC/3g0q8zwubk63njrpXavr8WafgTRlloMELjyXd/Cf1
-	+AA6I2SVWA9Mm8UZWRqu/y7+tf+MO/SnAmoMrW/1qzFciI4vZPLH9ZvqmlscjuKDgGd621lVcE9
-	g46nxTc5X1vFB8gwcYExFu4Pp5yvwPDbZJWFvMDEd6kUnM8LHRJo5z5iQ6RQeo7Fq6qzfsLxFNl
-X-Google-Smtp-Source: AGHT+IGFOFnbszcLV7TMKE9XA+0FyYK4F1vsUUOPmdJlwRqTEuUndJtsgO2G2uIU5eNIQtnZia+hsgk9/Kk1UcHHzcU=
-X-Received: by 2002:ac8:758e:0:b0:4d6:c73f:de88 with SMTP id
- d75a77b69052e-4e6f396e281mr217487431cf.3.1760361584510; Mon, 13 Oct 2025
- 06:19:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760361939; x=1760966739;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tf23vMU4t6wG2q1+VMdE661hrqDXASu+puJLhVspCjs=;
+        b=a9wAtTwQP9FVrBOT5pkTDNO9TzbttuaO5G60f0o+bHb1mElB9oimcHgZEb+bCYNKhm
+         p4UKwPUh2Se6mzojJGquBqyPykK6ooqyK/AOF2gmNVeA8vgxL2GrB5ruCcH7VQvj4NpN
+         PO5VvxjI2pPnWJD45OPS2mW6qrfn6opMieKOuqOf5pZ9OsUgXf+/TubCb6FGg+h+yq+7
+         nu3tgUIyxfc5MM/ieAa13aQd+C+5Z8ATisLTnxmQfVNvKOknXxATIHbnyRmUhe45Zkz5
+         wnBKTyXLZhKscFCjcju6jfd3NquMjWEx+6vMjw74IH2poykAOLGnoOiKVwX1eiAhwDvC
+         PJBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWCnqpdmjJDGqPGK01OXnaBs/KEFccryFoPOJ5WVIL77wGAnu54JukWBaKY8DBZyvNoVsftNkkztiqCX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYkM8GUE9Nl3+llH5Rbz8AtRQKbtBhwuRCFn+u5tZWOjVB2HbJ
+	WSuioRCtGqgtIfRM4em8zjT6+TLelRQxY0UarNBkZbK5Bp1UZwC9dC8zzHBqPig/
+X-Gm-Gg: ASbGncsv1l85K+11BKFh+RB8ox8K4kRCwRXcVvUWAd2plH2piS0OOgxazz1HHDXc3LC
+	Gj6iqKqkYWnGsKgo+g/i23gGOEaovwJUt+j5lG5a2yoDWJ4FqLSLmk9VAN2cHKemcg4oRaGEZ4v
+	Kp3eIzXgHfFpVaDcf1euDTxV3D9CNoDgn+928Idx4+WVRX/SNQyvBdJjSxPG4hsPs1fkhpNZJDM
+	x9F6S9gG5BgqttGuB9Z3Q/hCMyxpNoZtqlAcGc7zPt0M+/3J/pwNx9gwh6zwXuTvmOunv9MJygW
+	/VOqel7VcGp+b+iFjc2qalsmWLlGrfklkY8sTeCDkoLFRZbcpyn1AM2eI6ZO4Emh/8q3wojYbYw
+	6w1L250c947Iz6SuQaKcg+KbKA1/3tmGNlOzs6pO+nmkz4NEN/vnf86thcIza7NARmrRYLr1P9A
+	2M1rMHxVQ=
+X-Google-Smtp-Source: AGHT+IFz+W+LOVkc/mvbRQzmf7URynKEjWPmWrJ1k+my0W8wuZsxu8KFB/utTHa5d4gcjMZOnaEaPw==
+X-Received: by 2002:a05:6870:e253:b0:35a:3ead:c6e1 with SMTP id 586e51a60fabf-3c0fad4fc0amr10583084fac.49.1760361939246;
+        Mon, 13 Oct 2025 06:25:39 -0700 (PDT)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3c8ca2a8dadsm3485067fac.26.2025.10.13.06.25.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 06:25:39 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-43f554ed252so2365321b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:25:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDVUueKuIbTerXmsmpj5ZI6s6sewlP4VTivnZX8Z/l/QwH+ZHvKh77+S5yuR+ZuIovvxIVhZG6HKrlIRY=@vger.kernel.org
+X-Received: by 2002:a05:6102:cce:b0:5a1:ea0:f56d with SMTP id
+ ada2fe7eead31-5d5e23cfeeamr7652169137.32.1760361596979; Mon, 13 Oct 2025
+ 06:19:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
- <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com> <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
- <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org> <1cd7fb11-0569-4032-905c-f887f3e0dd4c@leemhuis.info>
- <f2243a9b-e032-416b-aef8-958198ff3955@infradead.org> <CAMCVhVOm5xzN6pkX5cKMSHrMqvdCD_14+XuunAuJLENgLO1NqA@mail.gmail.com>
- <04df1bb8-8409-4ece-a21c-4c71592eb852@infradead.org>
-In-Reply-To: <04df1bb8-8409-4ece-a21c-4c71592eb852@infradead.org>
-From: Jonathan Denose <jdenose@google.com>
-Date: Mon, 13 Oct 2025 08:19:33 -0500
-X-Gm-Features: AS18NWDz6WOml_kDvWWGqpzSlWYyUNjuwuF6ooBTtjwnBUyDba4AkLfjodlq7AE
-Message-ID: <CAMCVhVMO4y9P=Y3SWvY6BvA1sUK2o=Gn6Hk2UpaueNN=6CNHZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Angela Czubak <aczubak@google.com>, "Sean O'Brien" <seobrien@google.com>, 
-	Lucas GISSOT <lucas.gissot.pro@gmail.com>
+References: <20251013094611.11745-1-johan@kernel.org> <20251013094611.11745-8-johan@kernel.org>
+In-Reply-To: <20251013094611.11745-8-johan@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Oct 2025 15:19:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUUdCMa=J+b-V5HAj4PO4n5omQrBCnDvn50Tq9k51ms7w@mail.gmail.com>
+X-Gm-Features: AS18NWDIOZWB931lytCn5d0Cwy8mTK5kbcgRvwhEnOg1TMJB2gkH-KifQAV8hzg
+Message-ID: <CAMuHMdUUdCMa=J+b-V5HAj4PO4n5omQrBCnDvn50Tq9k51ms7w@mail.gmail.com>
+Subject: Re: [PATCH 07/11] irqchip/renesas-rzg2l: Fix section mismatch
+To: Johan Hovold <johan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Changhuang Liang <changhuang.liang@starfivetech.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-kernel@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 5:52=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
->
->
-> On 10/10/25 1:30 PM, Jonathan Denose wrote:
-> > Hi all,
-> >
-> > Thanks for looking into this.
-> >
-> > On Fri, Oct 10, 2025 at 1:55=E2=80=AFPM Randy Dunlap <rdunlap@infradead=
-.org> wrote:
-> >>
-> >> Hi,
-> >>
-> >> I think I found it... see below.
-> >>
-> >>
-> >> On 10/9/25 11:48 PM, Thorsten Leemhuis wrote:
-> >>> [Top-Posting for easier consumption]
-> >>>
-> >>> Mainly writing this mail to bring Lucas GISSOT in here, who reported =
-the
-> >>> same error yesterday here:
-> >>> https://lore.kernel.org/all/aOgvA8Jiofcnk2xb@ARSENIURE.localdomain/
-> >>>
-> >>> Lucas there suggested:
-> >>> """but it seems to me that the #if IS_ENABLED(CONFIG_HID_HAPTIC) in
-> >>> hid-haptic.h should be replaced by IS_BUILTIN(CONFIG_HID_HAPTIC) and
-> >>> Kconfig updated."""
-> >>>
-> >>> And Randy: Thx for the closer investigation! It explains some of the
-> >>> "that feels odd, am I holding this wrong" feeling I had when reportin=
-g this.
-> >>>
-> >>> Ciao, Thorsten
-> >>>
-> >>> On 10/10/25 06:50, Randy Dunlap wrote:
-> >>>> On 10/9/25 7:43 AM, Thorsten Leemhuis wrote:
-> >>>>> On 8/19/25 01:08, Jonathan Denose wrote:
-> >>>>>> From: Angela Czubak <aczubak@google.com>
-> >>>>>>
-> >>>>>> Define a new structure that contains simple haptic device configur=
-ation
-> >>>>>> as well as current state.
-> >>>>>> Add functions that recognize auto trigger and manual trigger repor=
-ts
-> >>>>>> as well as save their addresses.Hi,
-> >>>>>> Verify that the pressure unit is either grams or newtons.
-> >>>>>> Mark the input device as a haptic touchpad if the unit is correct =
-and
-> >>>>>> the reports are found.
-> >>>>>>  [...]
-> >>>>>> +config HID_HAPTIC
-> >>>>>> +  tristate "Haptic touchpad support"
-> >>>>>> +  default n
-> >>>>>> +  help
-> >>>>>> +  Support for touchpads with force sensors and haptic actuators i=
-nstead of a
-> >>>>>> +  traditional button.
-> >>>>>> +  Adds extra parsing and FF device for the hid multitouch driver.
-> >>>>>> +  It can be used for Elan 2703 haptic touchpad.
-> >>>>>> +
-> >>>>>> +  If unsure, say N.
-> >>>>>> +
-> >>>>>>  menu "Special HID drivers"
-> >>>>>
-> >>>>> I suspect this change is related to a build error I ran into today:
-> >>>>>
-> >>>>>   MODPOST Module.symvers
-> >>>>> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] u=
-ndefined!
-> >>>>> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-mul=
-titouch.ko] undefined!
-> >>>>> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-m=
-ultitouch.ko] undefined!
-> >>>>> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-mult=
-itouch.ko] undefined!
-> >>>>> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multito=
-uch.ko] undefined!
-> >>>>> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multi=
-touch.ko] undefined!
-> >>>>> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multit=
-ouch.ko] undefined!
-> >>>>> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147:=
- Module.symvers] Error 1
-> >>>>>
-> >>>>> The config where this occurred had this:
-> >>>>>
-> >>>>> CONFIG_HID=3Dy
-> >>>>> CONFIG_HID_MULTITOUCH=3Dm
-> >>>>> CONFIG_HID_HAPTIC=3Dm
-> >>>>>
-> >>>>> Changing the latter to "CONFIG_HID_HAPTIC=3Dy" fixed the problem fo=
-r me.
-> >>>>
-> >>>> Sure, but that's just covering up the problem.
-> >>>>> First, I get this build error:
-> >>>>
-> >>>> ERROR: modpost: missing MODULE_LICENSE() in drivers/hid/hid-haptic.o
-> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ha=
-ptic.o
-> >>>>
-> >>
-> >> ISTM that tristate is incompatible with this newly added Makefile
-> >> line:
-> >>
-> >> +hid-$(CONFIG_HID_HAPTIC)       +=3D hid-haptic.o
-> >>
-> >> hid-* lists files that should be builtin, not loadable modules.
-> >> These should all be hid-y.  AFAIK, hid-m is not useful.
-> >> (A maintainer can correct me as needed.)
->
-> More correctly, any .o that is listed as being built as part of
-> hid.o should is going to be controlled by CONFIG_HID and should
-> not its own have a Kconfig symbol at all.
->
-> E.g. here:
->  hid-y                  :=3D hid-core.o hid-input.o hid-quirks.o
-> hid-core, hid-input, and hid-quirks don't have their own
-> Kconfig symbols.
->
->
->
-> >> So adding a MODULE_LICENSE() and MODULE_DESCRIPTION() to
-> >> hid-haptic.c and changing drivers/hid/Makefile to use
-> >> obj-$(CONFIG_HID_HAPTIC_        +=3D hid-haptic.o
-> >>
-> >> fixes the build errors for me.
-> >>
-> >> Angela, Jonathan D., is there any reason that
-> >> hid-haptic needs to be builtin instead of a loadable
-> >> module?  It's no problem for hid-multitouch.ko to call
-> >> into hid-haptic.ko (both as loadable modules) as long as
-> >> hid-haptic.ko is loaded first.
-> >>
-> > As long as hid-multitouch.ko is able to call into hid-haptic.ko I
-> > don't see any issues, but is there a way to enforce that when
-> > CONFIG_HID_HAPTIC is enabled, hid-haptic.ko will be loaded before
-> > hid-multitouch.ko?
->
-> I only know of two possibilities though there may be more.
->
-> a. use request_module(true, "hid-haptic");
->
-> This would probably be used in the hid core somewhere, afterthe device ma=
-tching is done.
->
-> b. use udev. When a device that needs hid-multitouch is
-> discovered, have udev load both hid-haptic and hid-multitouch.
->
->
-> I see that hid-haptic.h is written so that it has stubs for
-> when CONFIG_HID_HAPTIC is not enabled. Can hid-multitouch
-> operate (in a reduced capacity) when HID_HAPTIC is not enabled?
-> So that they are separate modules and hid-multitouch is not
-> dependent on hid-haptic?
->
-> There is probably a use case for hid-multitouch without having
-> hid-haptic loaded since hid-multitouch existed without having
-> hid-haptic around at all.
->
-> It seems that you want both of them loaded. And then Lucas
-> has reported a build error when HID_HAPTIC=3Dm and
-> HID_MULTITOUCH=3Dy, so either (like Lucas said) HID_HAPTIC
-> should be bool, not tristate; or in Kconfig,
-> HID_MULTITOUCH should depend on HID_HAPTIC, which would not
-> allow the problem config that Lucas reported.
-> But that forces devices that want HID_MULTITOUCH to also
-> have HID_HAPTIC loaded, even though they may not need it.
->
-The idea behind these patches was that hid-haptic would depend on
-hid-multitouch but not the other way around. I am fine changing
-HID_HAPTIC to bool. That's what I had it as initially, but I was asked
-to change it.
+Hi Johan,
 
-If everyone else is fine with that, I can send out a patch.
-> --
-> ~Randy
+On Mon, 13 Oct 2025 at 11:48, Johan Hovold <johan@kernel.org> wrote:
+> Platform drivers can be probed after their init sections have been
+> discarded so the irqchip init callbacks must not live in init.
+
+Thanks for your patch!
+
 >
---=20
-Jonathan
+> Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driver")'
+
+Unmatched trailing quote?
+This tag points to the wrong commit, the correct one is:
+
+    Fixes: d011c022efe27579 ("irqchip/renesas-rzg2l: Add support for
+RZ/Five SoC")
+
+> Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+
+For the actual change:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
