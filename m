@@ -1,541 +1,417 @@
-Return-Path: <linux-kernel+bounces-850224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610E7BD2491
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:27:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C82BD24A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2E73A5050
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927321898838
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0190D2FB0BA;
-	Mon, 13 Oct 2025 09:26:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9521FDA89
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B802FDC21;
+	Mon, 13 Oct 2025 09:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdUyppxd"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C57F1FDA89
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760347618; cv=none; b=LG0WeSzsK1AS5J3BAgm4gdp5JhN9txZSOKjnSRebJOAR9c7pL+0WyyuMPIeOQeDjQBG3mhtnKgljPSW7wuNhjuWaThJqoEANNtmdBRZs4kXowxcJtUoNbCcrKKLXqaQG/aEcvXVP1RHqWEH6jqZIbf3Z+m07I5SOd2OyOSmLDSk=
+	t=1760347670; cv=none; b=mZx4LO7qCzjFFy9sCOMLLm3qal6ecYM5MNhAPfP9QYVXmgEJDDLCdHl7hP9OVUmhS5AlCaCjdNNN8acCBwU8z233rjHN+atMfu9v+p2NmY91DqTt9h0zViFKMYeXGPBdhS04aTFTTm3mxEjSYaadw35sRnYWUVF1EOUSOYEhFSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760347618; c=relaxed/simple;
-	bh=ZU17mZkEGpBKGmJxTsyMPeF/7aXxozH1vPhbiOF9D7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gy0fkskOG7F0zKi2vLQqRgGNP9oMS2nXXBDTvCHWhRFoqEGKAsoB3XH61CHDU06Alvh60EirQxwN3/XXrXba4E8JVtqsDHKAc/mEd5pP47ZTgPod3FQTs8wmTkSB6vTdcmpAp1OAUQDhvqxzRyDth8AD6rXOkhEaaIiAmI0FQWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B79D12FC;
-	Mon, 13 Oct 2025 02:26:46 -0700 (PDT)
-Received: from [10.57.83.188] (unknown [10.57.83.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C35F3F6A8;
-	Mon, 13 Oct 2025 02:26:51 -0700 (PDT)
-Message-ID: <8ff71d51-8f42-4197-a2a9-8733f23a8669@arm.com>
-Date: Mon, 13 Oct 2025 10:26:50 +0100
+	s=arc-20240116; t=1760347670; c=relaxed/simple;
+	bh=0so9Nv2w1Nst29QNWmqGECw2nex+MrB15ihNyBFUgkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WzMyTF6hICFUYcplRTxhW7f8F5SoW9q1odcrMPr7/zY85yJT0+FunlsXSj7VJV5nCTbC6QR/GFJ/FdO0Df0/qex+c6VlWDgh1iYeiQ8cyaA3+N6fbQF98cYtYtrcDsfeZCc4o/fCG45CBNPFNdjbQx+3xFoJ4N1e9V9TZubzr3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdUyppxd; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-273a0aeed57so60781715ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760347667; x=1760952467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=33Yue8BtCN77Y+mpJdjQyPFAqeEOnq6m8WWwr+VUWDQ=;
+        b=VdUyppxd09r+n+zqg1ksN4uUZSdzc0JuXPPTTVxWDhmp6RPrmifPzON60FJ60Yp+KQ
+         Qz2+V1d9qA9ROUM4KCsNyyc4vRN2tuFgpnEExd2Wl6vhVyU2R/88FyuxtBoJjI0a9Xuc
+         95vVibctTcZi5e/T4J7AxAbKimHcQZZAQaAb7PYZBquFfkpYqnmYjwlWotR+L9r9tMdm
+         cKplSHyrIb3CfxiUCrmEVEeh/qXrpQBxCTbySqdylh2CvgEj7E+/ot5JCONCkP2CWk0q
+         vckBhzAMF8pOHe/blYshEHHIJh6ftnzjdf0Hcb7BVAUCmlzrX3Spglzy/IdzZQB7tofb
+         UzMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760347667; x=1760952467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=33Yue8BtCN77Y+mpJdjQyPFAqeEOnq6m8WWwr+VUWDQ=;
+        b=XU46n73FTHfKtjPU6OOtznFHdCSUSr0V7WjzZt2/UERNhvgclxY4WssAHFvLfDWfkx
+         mvnU7m69+jiKyDaE1EbTAzD46yNFomLGzKvhsZlLGjHPJ4ME972A+tCb6QkSd/OGd5re
+         WB6XDsYwbEdzPC2u8/dBiM4+vcW8ls2KEacp008pwiy7F5oMqgTBu9jaqRyBjHtSJbdV
+         otoPh8ymIb0Tfvz96G6Dm23/96rwLi/UjRFnZBbAtBsDDZcbLlyNodgNR0LfNItDsf8+
+         xTLKkz01AmFqQ6QK+ES/gzVEWxogTWIEcQhPtQpAgTwk9rpZbF6fcrzVeipQT5uC9eDt
+         VCMA==
+X-Gm-Message-State: AOJu0YwfvFJubVdKWAQf+p8j3OcpUtMdyfYBFb2A9qcjKkVmYkHJfgO9
+	iijDEFKUX6QJCrne3qMjviAfTkvazKTbV9qaMb3Hg9zRMqsR7vDVQ19Y
+X-Gm-Gg: ASbGncuUBx0m+TmZX3BqD6PmFGyh4IipgYJ/T6NNVhF3fxcbWNm9YVu9vCYZ/2z4DCJ
+	EDUZUcUDFGJRbf84cad8+LyFPCt5B4zl5pgOy+c7fQmTXgmXtPcnE5x7Q4OC8R0Bk3BDbwWmKL5
+	OlAFiqrzJ9pUG2khVBA+42himFgjKlt4Mfim20T4HetIRS486UGkIKmYArYwYU+rRFWhNKLZEuB
+	zrp2/8sbOvqMa8hLqcXyAaGG1J1cWRdD3dnN9RqlcqOS8v9u5/UgqqJoA+USYAqFCil8gaiNnBp
+	2KR1Ss3fGdWj6tDSllRrKoZdqlnCiekCDMy9a4FwFbMThk0HsRRhNUZvN6BR+esBqBkw4zJ1bBE
+	u0jolw9ETzIJeBPeH2Vxgsu5OMCOmrp9bedBEczTKA4+D
+X-Google-Smtp-Source: AGHT+IEVOVjuVmGlAswunThnXgHEbstlR3zgA2EaNSi9B1tFIwcbWkyGD5c8pcJmY6UIxDqFiEkzGg==
+X-Received: by 2002:a17:903:298c:b0:267:9601:dca0 with SMTP id d9443c01a7336-29027f3b996mr240561515ad.27.1760347666660;
+        Mon, 13 Oct 2025 02:27:46 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de658bsm128507125ad.22.2025.10.13.02.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 02:27:45 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id B1BED409E678; Mon, 13 Oct 2025 16:27:43 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Tracing <linux-trace-kernel@vger.kernel.org>
+Cc: Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Crystal Wood <crwood@redhat.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Gopi Krishna Menon <krishnagopi487@gmail.com>
+Subject: [PATCH] Documentation/rtla: rename common_xxx.rst files to common_xxx.txt
+Date: Mon, 13 Oct 2025 16:27:20 +0700
+Message-ID: <20251013092719.30780-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64/mm: Allow __create_pgd_mapping() to
- propagate pgtable_alloc() errors
-Content-Language: en-GB
-To: Linu Cherian <linu.cherian@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>, Dev Jain <dev.jain@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- Chaitanya S Prakash <chaitanyas.prakash@arm.com>
-References: <20251013080220.2027757-1-linu.cherian@arm.com>
- <20251013080220.2027757-2-linu.cherian@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20251013080220.2027757-2-linu.cherian@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13395; i=bagasdotme@gmail.com; h=from:subject; bh=gSBGOKA6gSHb608cBgAu3Jqy0KbAHZwaPbwuL+Hj0/w=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlvjk6suDiN48ZH7TirrMXr/T6fL3l0kvPeNSEO3o/z8 pZEnJod31HKwiDGxSArpsgyKZGv6fQuI5EL7WsdYeawMoEMYeDiFICJ3FFjZDj96cbnbW+Mpry1 Et/t7Lxvy51D7Stmb/x/TPLRpHUvZ4pPYfjDmenDKp//jeuz9NZdtV5nGd56zC1vazz2yHhP+he GZf84AQ==
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On 13/10/2025 09:02, Linu Cherian wrote:
-> From: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
-> 
-> arch_add_memory() is used to hotplug memory into a system but as a part
-> of its implementation it calls __create_pgd_mapping(), which uses
-> pgtable_alloc() in order to build intermediate page tables. As this path
-> was initally only used during early boot pgtable_alloc() is designed to
-> BUG_ON() on failure. However, in the event that memory hotplug is
-> attempted when the system's memory is extremely tight and the allocation
-> were to fail, it would lead to panicking the system, which is not
-> desirable. Hence update __create_pgd_mapping and all it's callers to be
-> non void and propagate -ENOMEM on allocation failure to allow system to
-> fail gracefully.
-> 
-> But during early boot if there is an allocation failure, we want the
-> system to panic, hence create a wrapper around __create_pgd_mapping()
-> called early_create_pgd_mapping() which is designed to panic, if ret
-> is non zero value. All the init calls are updated to use this wrapper
-> rather than the modified __create_pgd_mapping() to restore
-> functionality.
-> 
-> Signed-off-by: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
-> Signed-off-by: Linu Cherian <linu.cherian@arm.com>
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
 
-Do we need a Fixes: (and cc stable) here?
+Sphinx reports htmldocs errors:
 
-> ---
-> Changelog:
-> 
-> v2:
-> * With cleanup merged as part of, "arm64: mm: Move KPTI helpers to mmu.c"
->   changes required in patch 2 got much simplified and 
->   squashed to patch 1 itself.
-> * Make use of INVALID_PHYS_ADDR for error checks instead of 0.  
-> * Do early function return where we do not have any
->   common cleanup in return path.
-> * Remove redundant variable initialization
-> * Changed BUG_ON to panic
-> * Renamed ___create_pgd_mapping to early_create_pgd_mapping  
-> 
->  arch/arm64/mm/mmu.c | 202 ++++++++++++++++++++++++++++----------------
->  1 file changed, 129 insertions(+), 73 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index b8d37eb037fc..34602339c1bf 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -49,6 +49,8 @@
->  #define NO_CONT_MAPPINGS	BIT(1)
->  #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
->  
-> +#define INVALID_PHYS_ADDR	(-1ULL)
-> +
->  DEFINE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
->  
->  u64 kimage_voffset __ro_after_init;
-> @@ -194,11 +196,11 @@ static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
->  	} while (ptep++, addr += PAGE_SIZE, addr != end);
->  }
->  
-> -static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
-> -				unsigned long end, phys_addr_t phys,
-> -				pgprot_t prot,
-> -				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> -				int flags)
-> +static int alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
-> +			       unsigned long end, phys_addr_t phys,
-> +			       pgprot_t prot,
-> +			       phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +			       int flags)
->  {
->  	unsigned long next;
->  	pmd_t pmd = READ_ONCE(*pmdp);
-> @@ -213,6 +215,8 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
->  			pmdval |= PMD_TABLE_PXN;
->  		BUG_ON(!pgtable_alloc);
->  		pte_phys = pgtable_alloc(TABLE_PTE);
-> +		if (pte_phys == INVALID_PHYS_ADDR)
-> +			return -ENOMEM;
->  		ptep = pte_set_fixmap(pte_phys);
->  		init_clear_pgtable(ptep);
->  		ptep += pte_index(addr);
-> @@ -244,12 +248,15 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
->  	 * walker.
->  	 */
->  	pte_clear_fixmap();
-> +
-> +	return 0;
->  }
->  
-> -static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
-> -		     phys_addr_t phys, pgprot_t prot,
-> -		     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags)
-> +static int init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
-> +		    phys_addr_t phys, pgprot_t prot,
-> +		    phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags)
->  {
-> +	int ret;
->  	unsigned long next;
->  
->  	do {
-> @@ -269,22 +276,27 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
->  			BUG_ON(!pgattr_change_is_safe(pmd_val(old_pmd),
->  						      READ_ONCE(pmd_val(*pmdp))));
->  		} else {
-> -			alloc_init_cont_pte(pmdp, addr, next, phys, prot,
-> -					    pgtable_alloc, flags);
-> +			ret = alloc_init_cont_pte(pmdp, addr, next, phys, prot,
-> +						  pgtable_alloc, flags);
-> +			if (ret)
-> +				return ret;
->  
->  			BUG_ON(pmd_val(old_pmd) != 0 &&
->  			       pmd_val(old_pmd) != READ_ONCE(pmd_val(*pmdp)));
->  		}
->  		phys += next - addr;
->  	} while (pmdp++, addr = next, addr != end);
-> +
-> +	return 0;
->  }
->  
-> -static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
-> -				unsigned long end, phys_addr_t phys,
-> -				pgprot_t prot,
-> -				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> -				int flags)
-> +static int alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
-> +			       unsigned long end, phys_addr_t phys,
-> +			       pgprot_t prot,
-> +			       phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +			       int flags)
->  {
-> +	int ret;
->  	unsigned long next;
->  	pud_t pud = READ_ONCE(*pudp);
->  	pmd_t *pmdp;
-> @@ -301,6 +313,8 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
->  			pudval |= PUD_TABLE_PXN;
->  		BUG_ON(!pgtable_alloc);
->  		pmd_phys = pgtable_alloc(TABLE_PMD);
-> +		if (pmd_phys == INVALID_PHYS_ADDR)
-> +			return -ENOMEM;
->  		pmdp = pmd_set_fixmap(pmd_phys);
->  		init_clear_pgtable(pmdp);
->  		pmdp += pmd_index(addr);
-> @@ -320,20 +334,26 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
->  		    (flags & NO_CONT_MAPPINGS) == 0)
->  			__prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->  
-> -		init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
-> +		ret = init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
-> +		if (ret)
-> +			goto out;
->  
->  		pmdp += pmd_index(next) - pmd_index(addr);
->  		phys += next - addr;
->  	} while (addr = next, addr != end);
->  
-> +out:
->  	pmd_clear_fixmap();
-> +
-> +	return ret;
->  }
->  
-> -static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
-> -			   phys_addr_t phys, pgprot_t prot,
-> -			   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> -			   int flags)
-> +static int alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
-> +			  phys_addr_t phys, pgprot_t prot,
-> +			  phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +			  int flags)
->  {
-> +	int ret;
->  	unsigned long next;
->  	p4d_t p4d = READ_ONCE(*p4dp);
->  	pud_t *pudp;
-> @@ -346,6 +366,8 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
->  			p4dval |= P4D_TABLE_PXN;
->  		BUG_ON(!pgtable_alloc);
->  		pud_phys = pgtable_alloc(TABLE_PUD);
-> +		if (pud_phys == INVALID_PHYS_ADDR)
-> +			return -ENOMEM;
->  		pudp = pud_set_fixmap(pud_phys);
->  		init_clear_pgtable(pudp);
->  		pudp += pud_index(addr);
-> @@ -375,8 +397,10 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
->  			BUG_ON(!pgattr_change_is_safe(pud_val(old_pud),
->  						      READ_ONCE(pud_val(*pudp))));
->  		} else {
-> -			alloc_init_cont_pmd(pudp, addr, next, phys, prot,
-> -					    pgtable_alloc, flags);
-> +			ret = alloc_init_cont_pmd(pudp, addr, next, phys, prot,
-> +						  pgtable_alloc, flags);
-> +			if (ret)
-> +				goto out;
->  
->  			BUG_ON(pud_val(old_pud) != 0 &&
->  			       pud_val(old_pud) != READ_ONCE(pud_val(*pudp)));
-> @@ -384,14 +408,18 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
->  		phys += next - addr;
->  	} while (pudp++, addr = next, addr != end);
->  
-> +out:
->  	pud_clear_fixmap();
-> +
-> +	return ret;
+Documentation/tools/rtla/common_options.rst:58: ERROR: Undefined substitution referenced: "threshold".
+Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tool".
+Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "thresharg".
+Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tracer".
+Documentation/tools/rtla/common_options.rst:92: ERROR: Undefined substitution referenced: "tracer".
+Documentation/tools/rtla/common_options.rst:98: ERROR: Undefined substitution referenced: "actionsperf".
+Documentation/tools/rtla/common_options.rst:113: ERROR: Undefined substitution referenced: "tool".
 
-I think ret could technically be uninitialized here if we only went through the
-do/while once and took the if branch? Perhaps init it to 0?
+common_*.rst files are snippets that are intended to be included by rtla
+docs (rtla*.rst). common_options.rst in particular contains
+substitutions which depend on other common_* includes, so building it
+independently as reST source results in above errors.
 
->  }
->  
-> -static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
-> -			   phys_addr_t phys, pgprot_t prot,
-> -			   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> -			   int flags)
-> +static int alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
-> +			  phys_addr_t phys, pgprot_t prot,
-> +			  phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +			  int flags)
->  {
-> +	int ret;
->  	unsigned long next;
->  	pgd_t pgd = READ_ONCE(*pgdp);
->  	p4d_t *p4dp;
-> @@ -404,6 +432,8 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
->  			pgdval |= PGD_TABLE_PXN;
->  		BUG_ON(!pgtable_alloc);
->  		p4d_phys = pgtable_alloc(TABLE_P4D);
-> +		if (p4d_phys == INVALID_PHYS_ADDR)
-> +			return -ENOMEM;
->  		p4dp = p4d_set_fixmap(p4d_phys);
->  		init_clear_pgtable(p4dp);
->  		p4dp += p4d_index(addr);
-> @@ -418,8 +448,10 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
->  
->  		next = p4d_addr_end(addr, end);
->  
-> -		alloc_init_pud(p4dp, addr, next, phys, prot,
-> -			       pgtable_alloc, flags);
-> +		ret = alloc_init_pud(p4dp, addr, next, phys, prot,
-> +				     pgtable_alloc, flags);
-> +		if (ret)
-> +			goto out;
->  
->  		BUG_ON(p4d_val(old_p4d) != 0 &&
->  		       p4d_val(old_p4d) != READ_ONCE(p4d_val(*p4dp)));
-> @@ -427,15 +459,19 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
->  		phys += next - addr;
->  	} while (p4dp++, addr = next, addr != end);
->  
-> +out:
->  	p4d_clear_fixmap();
-> +
-> +	return ret;
->  }
->  
-> -static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
-> -					unsigned long virt, phys_addr_t size,
-> -					pgprot_t prot,
-> -					phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> -					int flags)
-> +static int __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
-> +				       unsigned long virt, phys_addr_t size,
-> +				       pgprot_t prot,
-> +				       phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +				       int flags)
->  {
-> +	int ret;
->  	unsigned long addr, end, next;
->  	pgd_t *pgdp = pgd_offset_pgd(pgdir, virt);
->  
-> @@ -444,7 +480,7 @@ static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
->  	 * within a page, we cannot map the region as the caller expects.
->  	 */
->  	if (WARN_ON((phys ^ virt) & ~PAGE_MASK))
-> -		return;
-> +		return -EINVAL;
->  
->  	phys &= PAGE_MASK;
->  	addr = virt & PAGE_MASK;
-> @@ -452,25 +488,45 @@ static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
->  
->  	do {
->  		next = pgd_addr_end(addr, end);
-> -		alloc_init_p4d(pgdp, addr, next, phys, prot, pgtable_alloc,
-> -			       flags);
-> +		ret = alloc_init_p4d(pgdp, addr, next, phys, prot, pgtable_alloc,
-> +				     flags);
-> +		if (ret)
-> +			return ret;
->  		phys += next - addr;
->  	} while (pgdp++, addr = next, addr != end);
-> +
-> +	return 0;
->  }
->  
-> -static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
-> -				 unsigned long virt, phys_addr_t size,
-> -				 pgprot_t prot,
-> -				 phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> -				 int flags)
-> +static int __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
-> +				unsigned long virt, phys_addr_t size,
-> +				pgprot_t prot,
-> +				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +				int flags)
->  {
-> +	int ret;
-> +
->  	mutex_lock(&fixmap_lock);
-> -	__create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
-> -				    pgtable_alloc, flags);
-> +	ret = __create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
-> +					  pgtable_alloc, flags);
->  	mutex_unlock(&fixmap_lock);
-> +
-> +	return ret;
->  }
->  
-> -#define INVALID_PHYS_ADDR	(-1ULL)
-> +static void early_create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
-> +				     unsigned long virt, phys_addr_t size,
-> +				     pgprot_t prot,
-> +				     phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +				     int flags)
-> +{
-> +	int ret;
-> +
-> +	ret = __create_pgd_mapping(pgdir, phys, virt, size, prot, pgtable_alloc,
-> +				   flags);
-> +	if (ret)
-> +		panic("Failed to create page tables\n");
-> +}
->  
->  static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
->  				       enum pgtable_type pgtable_type)
-> @@ -511,21 +567,13 @@ try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
->  static phys_addr_t __maybe_unused
->  pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type)
->  {
-> -	phys_addr_t pa;
-> -
-> -	pa = __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
-> -	BUG_ON(pa == INVALID_PHYS_ADDR);
-> -	return pa;
-> +	return __pgd_pgtable_alloc(&init_mm, GFP_PGTABLE_KERNEL, pgtable_type);
->  }
->  
->  static phys_addr_t
->  pgd_pgtable_alloc_special_mm(enum pgtable_type pgtable_type)
->  {
-> -	phys_addr_t pa;
-> -
-> -	pa = __pgd_pgtable_alloc(NULL, GFP_PGTABLE_KERNEL, pgtable_type);
-> -	BUG_ON(pa == INVALID_PHYS_ADDR);
-> -	return pa;
-> +	return  __pgd_pgtable_alloc(NULL, GFP_PGTABLE_KERNEL, pgtable_type);
->  }
->  
->  static void split_contpte(pte_t *ptep)
-> @@ -903,8 +951,8 @@ void __init create_mapping_noalloc(phys_addr_t phys, unsigned long virt,
->  			&phys, virt);
->  		return;
->  	}
-> -	__create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
-> -			     NO_CONT_MAPPINGS);
-> +	early_create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
-> +				 NO_CONT_MAPPINGS);
->  }
->  
->  void __init create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
-> @@ -918,8 +966,8 @@ void __init create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
->  	if (page_mappings_only)
->  		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
->  
-> -	__create_pgd_mapping(mm->pgd, phys, virt, size, prot,
-> -			     pgd_pgtable_alloc_special_mm, flags);
-> +	early_create_pgd_mapping(mm->pgd, phys, virt, size, prot,
-> +				 pgd_pgtable_alloc_special_mm, flags);
->  }
->  
->  static void update_mapping_prot(phys_addr_t phys, unsigned long virt,
-> @@ -931,8 +979,8 @@ static void update_mapping_prot(phys_addr_t phys, unsigned long virt,
->  		return;
->  	}
->  
-> -	__create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
-> -			     NO_CONT_MAPPINGS);
-> +	early_create_pgd_mapping(init_mm.pgd, phys, virt, size, prot, NULL,
-> +				 NO_CONT_MAPPINGS);
->  
->  	/* flush the TLBs after updating live kernel mappings */
->  	flush_tlb_kernel_range(virt, virt + size);
-> @@ -941,8 +989,8 @@ static void update_mapping_prot(phys_addr_t phys, unsigned long virt,
->  static void __init __map_memblock(pgd_t *pgdp, phys_addr_t start,
->  				  phys_addr_t end, pgprot_t prot, int flags)
->  {
-> -	__create_pgd_mapping(pgdp, start, __phys_to_virt(start), end - start,
-> -			     prot, early_pgtable_alloc, flags);
-> +	early_create_pgd_mapping(pgdp, start, __phys_to_virt(start), end - start,
-> +				 prot, early_pgtable_alloc, flags);
->  }
->  
->  void __init mark_linear_text_alias_ro(void)
-> @@ -1178,9 +1226,10 @@ static int __init __kpti_install_ng_mappings(void *__unused)
->  		// covers the PTE[] page itself, the remaining entries are free
->  		// to be used as a ad-hoc fixmap.
->  		//
-> -		__create_pgd_mapping_locked(kpti_ng_temp_pgd, __pa(alloc),
-> -					    KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
-> -					    kpti_ng_pgd_alloc, 0);
-> +		if (__create_pgd_mapping_locked(kpti_ng_temp_pgd, __pa(alloc),
-> +						KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
-> +						kpti_ng_pgd_alloc, 0))
-> +			panic("Failed to create page tables\n");
->  	}
->  
->  	cpu_install_idmap();
-> @@ -1233,9 +1282,9 @@ static int __init map_entry_trampoline(void)
->  
->  	/* Map only the text into the trampoline page table */
->  	memset(tramp_pg_dir, 0, PGD_SIZE);
-> -	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
-> -			     entry_tramp_text_size(), prot,
-> -			     pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPINGS);
-> +	early_create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS,
-> +				 entry_tramp_text_size(), prot,
-> +				 pgd_pgtable_alloc_init_mm, NO_BLOCK_MAPPINGS);
->  
->  	/* Map both the text and data into the kernel page table */
->  	for (i = 0; i < DIV_ROUND_UP(entry_tramp_text_size(), PAGE_SIZE); i++)
-> @@ -1877,23 +1926,30 @@ int arch_add_memory(int nid, u64 start, u64 size,
->  	if (force_pte_mapping())
->  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
->  
-> -	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-> -			     size, params->pgprot, pgd_pgtable_alloc_init_mm,
-> -			     flags);
-> +	ret = __create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-> +				   size, params->pgprot, pgd_pgtable_alloc_init_mm,
-> +				   flags);
-> +
-> +	if (ret)
-> +		goto out;
->  
->  	memblock_clear_nomap(start, size);
->  
->  	ret = __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
->  			   params);
->  	if (ret)
-> -		__remove_pgd_mapping(swapper_pg_dir,
-> -				     __phys_to_virt(start), size);
-> +		goto out;
->  	else {
->  		/* Address of hotplugged memory can be smaller */
->  		max_pfn = max(max_pfn, PFN_UP(start + size));
->  		max_low_pfn = max_pfn;
->  	}
+Rename all common_*.rst files to common_*.txt to prevent Sphinx from
+building these snippets as standalone reST source and update all include
+references accordingly.
 
-nit: given the if now does a goto, there is no need for this to be wrapped in an
-else block.
+Link: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#substitutions
+Suggested-by: Tomas Glozar <tglozar@redhat.com>
+Suggested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+Reviewed-by: Tomas Glozar <tglozar@redhat.com>
+Fixes: 05b7e10687c6 ("tools/rtla: Add remaining support for osnoise actions")
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Link: https://lore.kernel.org/r/20251008184522.13201-1-krishnagopi487@gmail.com
+[Bagas: massage commit message and apply trailers]
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+This patch targets trace/fixes branch of linux-trace.git tree.
 
-Thanks,
-Ryan
+ .../{common_appendix.rst => common_appendix.txt}     |  0
+ ...mmon_hist_options.rst => common_hist_options.txt} |  0
+ .../rtla/{common_options.rst => common_options.txt}  |  0
+ ...escription.rst => common_osnoise_description.txt} |  0
+ ...snoise_options.rst => common_osnoise_options.txt} |  0
+ ...common_timerlat_aa.rst => common_timerlat_aa.txt} |  0
+ ...scription.rst => common_timerlat_description.txt} |  0
+ ...erlat_options.rst => common_timerlat_options.txt} |  0
+ ...common_top_options.rst => common_top_options.txt} |  0
+ Documentation/tools/rtla/rtla-hwnoise.rst            |  8 ++++----
+ Documentation/tools/rtla/rtla-osnoise-hist.rst       | 10 +++++-----
+ Documentation/tools/rtla/rtla-osnoise-top.rst        | 10 +++++-----
+ Documentation/tools/rtla/rtla-osnoise.rst            |  4 ++--
+ Documentation/tools/rtla/rtla-timerlat-hist.rst      | 12 ++++++------
+ Documentation/tools/rtla/rtla-timerlat-top.rst       | 12 ++++++------
+ Documentation/tools/rtla/rtla-timerlat.rst           |  4 ++--
+ Documentation/tools/rtla/rtla.rst                    |  2 +-
+ 17 files changed, 31 insertions(+), 31 deletions(-)
+ rename Documentation/tools/rtla/{common_appendix.rst => common_appendix.txt} (100%)
+ rename Documentation/tools/rtla/{common_hist_options.rst => common_hist_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_options.rst => common_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_osnoise_description.rst => common_osnoise_description.txt} (100%)
+ rename Documentation/tools/rtla/{common_osnoise_options.rst => common_osnoise_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_timerlat_aa.rst => common_timerlat_aa.txt} (100%)
+ rename Documentation/tools/rtla/{common_timerlat_description.rst => common_timerlat_description.txt} (100%)
+ rename Documentation/tools/rtla/{common_timerlat_options.rst => common_timerlat_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_top_options.rst => common_top_options.txt} (100%)
 
->  
-> +	return 0;
-> +
-> +out:
-> +	__remove_pgd_mapping(swapper_pg_dir,
-> +			     __phys_to_virt(start), size);
->  	return ret;
->  }
->  
+diff --git a/Documentation/tools/rtla/common_appendix.rst b/Documentation/tools/rtla/common_appendix.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_appendix.rst
+rename to Documentation/tools/rtla/common_appendix.txt
+diff --git a/Documentation/tools/rtla/common_hist_options.rst b/Documentation/tools/rtla/common_hist_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_hist_options.rst
+rename to Documentation/tools/rtla/common_hist_options.txt
+diff --git a/Documentation/tools/rtla/common_options.rst b/Documentation/tools/rtla/common_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_options.rst
+rename to Documentation/tools/rtla/common_options.txt
+diff --git a/Documentation/tools/rtla/common_osnoise_description.rst b/Documentation/tools/rtla/common_osnoise_description.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_osnoise_description.rst
+rename to Documentation/tools/rtla/common_osnoise_description.txt
+diff --git a/Documentation/tools/rtla/common_osnoise_options.rst b/Documentation/tools/rtla/common_osnoise_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_osnoise_options.rst
+rename to Documentation/tools/rtla/common_osnoise_options.txt
+diff --git a/Documentation/tools/rtla/common_timerlat_aa.rst b/Documentation/tools/rtla/common_timerlat_aa.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_timerlat_aa.rst
+rename to Documentation/tools/rtla/common_timerlat_aa.txt
+diff --git a/Documentation/tools/rtla/common_timerlat_description.rst b/Documentation/tools/rtla/common_timerlat_description.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_timerlat_description.rst
+rename to Documentation/tools/rtla/common_timerlat_description.txt
+diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_timerlat_options.rst
+rename to Documentation/tools/rtla/common_timerlat_options.txt
+diff --git a/Documentation/tools/rtla/common_top_options.rst b/Documentation/tools/rtla/common_top_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_top_options.rst
+rename to Documentation/tools/rtla/common_top_options.txt
+diff --git a/Documentation/tools/rtla/rtla-hwnoise.rst b/Documentation/tools/rtla/rtla-hwnoise.rst
+index 3a7163c02ac8e8..26512b15fe7ba5 100644
+--- a/Documentation/tools/rtla/rtla-hwnoise.rst
++++ b/Documentation/tools/rtla/rtla-hwnoise.rst
+@@ -29,11 +29,11 @@ collection of the tracer output.
+ 
+ OPTIONS
+ =======
+-.. include:: common_osnoise_options.rst
++.. include:: common_osnoise_options.txt
+ 
+-.. include:: common_top_options.rst
++.. include:: common_top_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+ EXAMPLE
+ =======
+@@ -106,4 +106,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-osnoise-hist.rst b/Documentation/tools/rtla/rtla-osnoise-hist.rst
+index 1fc60ef2610677..007521c865d97e 100644
+--- a/Documentation/tools/rtla/rtla-osnoise-hist.rst
++++ b/Documentation/tools/rtla/rtla-osnoise-hist.rst
+@@ -15,7 +15,7 @@ SYNOPSIS
+ 
+ DESCRIPTION
+ ===========
+-.. include:: common_osnoise_description.rst
++.. include:: common_osnoise_description.txt
+ 
+ The **rtla osnoise hist** tool collects all **osnoise:sample_threshold**
+ occurrence in a histogram, displaying the results in a user-friendly way.
+@@ -24,11 +24,11 @@ collection of the tracer output.
+ 
+ OPTIONS
+ =======
+-.. include:: common_osnoise_options.rst
++.. include:: common_osnoise_options.txt
+ 
+-.. include:: common_hist_options.rst
++.. include:: common_hist_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+ EXAMPLE
+ =======
+@@ -65,4 +65,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-osnoise-top.rst b/Documentation/tools/rtla/rtla-osnoise-top.rst
+index b1cbd7bcd4aed2..6ccadae3894570 100644
+--- a/Documentation/tools/rtla/rtla-osnoise-top.rst
++++ b/Documentation/tools/rtla/rtla-osnoise-top.rst
+@@ -15,7 +15,7 @@ SYNOPSIS
+ 
+ DESCRIPTION
+ ===========
+-.. include:: common_osnoise_description.rst
++.. include:: common_osnoise_description.txt
+ 
+ **rtla osnoise top** collects the periodic summary from the *osnoise* tracer,
+ including the counters of the occurrence of the interference source,
+@@ -26,11 +26,11 @@ collection of the tracer output.
+ 
+ OPTIONS
+ =======
+-.. include:: common_osnoise_options.rst
++.. include:: common_osnoise_options.txt
+ 
+-.. include:: common_top_options.rst
++.. include:: common_top_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+ EXAMPLE
+ =======
+@@ -60,4 +60,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-osnoise.rst b/Documentation/tools/rtla/rtla-osnoise.rst
+index c129b206ce3484..540d2bf6c15247 100644
+--- a/Documentation/tools/rtla/rtla-osnoise.rst
++++ b/Documentation/tools/rtla/rtla-osnoise.rst
+@@ -14,7 +14,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_osnoise_description.rst
++.. include:: common_osnoise_description.txt
+ 
+ The *osnoise* tracer outputs information in two ways. It periodically prints
+ a summary of the noise of the operating system, including the counters of
+@@ -56,4 +56,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-timerlat-hist.rst b/Documentation/tools/rtla/rtla-timerlat-hist.rst
+index 4923a362129bbd..f56fe546411bd4 100644
+--- a/Documentation/tools/rtla/rtla-timerlat-hist.rst
++++ b/Documentation/tools/rtla/rtla-timerlat-hist.rst
+@@ -16,7 +16,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_timerlat_description.rst
++.. include:: common_timerlat_description.txt
+ 
+ The **rtla timerlat hist** displays a histogram of each tracer event
+ occurrence. This tool uses the periodic information, and the
+@@ -25,13 +25,13 @@ occurrence. This tool uses the periodic information, and the
+ OPTIONS
+ =======
+ 
+-.. include:: common_timerlat_options.rst
++.. include:: common_timerlat_options.txt
+ 
+-.. include:: common_hist_options.rst
++.. include:: common_hist_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+-.. include:: common_timerlat_aa.rst
++.. include:: common_timerlat_aa.txt
+ 
+ EXAMPLE
+ =======
+@@ -110,4 +110,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-timerlat-top.rst b/Documentation/tools/rtla/rtla-timerlat-top.rst
+index 50968cdd2095a1..7dbe625d0c4243 100644
+--- a/Documentation/tools/rtla/rtla-timerlat-top.rst
++++ b/Documentation/tools/rtla/rtla-timerlat-top.rst
+@@ -16,7 +16,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_timerlat_description.rst
++.. include:: common_timerlat_description.txt
+ 
+ The **rtla timerlat top** displays a summary of the periodic output
+ from the *timerlat* tracer. It also provides information for each
+@@ -26,13 +26,13 @@ seem with the option **-T**.
+ OPTIONS
+ =======
+ 
+-.. include:: common_timerlat_options.rst
++.. include:: common_timerlat_options.txt
+ 
+-.. include:: common_top_options.rst
++.. include:: common_top_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+-.. include:: common_timerlat_aa.rst
++.. include:: common_timerlat_aa.txt
+ 
+ **--aa-only** *us*
+ 
+@@ -133,4 +133,4 @@ AUTHOR
+ ------
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-timerlat.rst b/Documentation/tools/rtla/rtla-timerlat.rst
+index 20e2d259467fd0..ce9f57e038c37f 100644
+--- a/Documentation/tools/rtla/rtla-timerlat.rst
++++ b/Documentation/tools/rtla/rtla-timerlat.rst
+@@ -14,7 +14,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_timerlat_description.rst
++.. include:: common_timerlat_description.txt
+ 
+ The **rtla timerlat top** mode displays a summary of the periodic output
+ from the *timerlat* tracer. The **rtla timerlat hist** mode displays
+@@ -51,4 +51,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla.rst b/Documentation/tools/rtla/rtla.rst
+index fc0d233efcd5df..2a5fb7004ad448 100644
+--- a/Documentation/tools/rtla/rtla.rst
++++ b/Documentation/tools/rtla/rtla.rst
+@@ -45,4 +45,4 @@ AUTHOR
+ ======
+ Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+An old man doll... just what I always wanted! - Clara
 
 
