@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-850511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA5EBD305B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:41:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8756BD3064
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60E91898AAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:42:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E743AB324
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D726E154;
-	Mon, 13 Oct 2025 12:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7EC2690E7;
+	Mon, 13 Oct 2025 12:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6ir839J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZEqYQJN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FFE23F431
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55237251793
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760359303; cv=none; b=k7o9QWqLbjL8ixLBpaxEEvDZExI9bHxiMopRBoFVImbBu95ylIgCuihyDxxELadIOLjx87nNzuvRoAuX8f+wVj18BVhbj9eCmGrD8RLuAMSA6LruOZMVrLN8C3oXAKJ8T9joo57C3lWCmUn+JxYSUYcL7WBmDk3EDEw2VHdiphs=
+	t=1760359328; cv=none; b=tz7S0iG+qncXP9s1jgT6yuuq3vrED2WPFs0LLXvvCNdFHyf429ZWVLqScAl2mPZajFyHuc2NoO4AsFSFV0/0n1o1Fdv6apPmMg/LHgmoBnjNtmrWVVjOYLO1RPF9HoTEZtVWuSw3FXtfdqT0+CU29FXvUhbQInn6t7tyIC47o8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760359303; c=relaxed/simple;
-	bh=P+FLo9H2oUdAvcmAH/Tk9WRWjvzR7j+vollqwT8nQCo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cW1BrYelMUZNbnN5EPxeTPw8lXw2okIO6qtQGxUALA4ZmMnW8OAyLb7mv4NCNHBK8T2uf6dCMQYhaXpN0Bpuq5JJeVAWuO/JSfn3ZrSKlXb2ftl1Fztjq7lFTbMlhzwvwnKevIa/8AOm6THzha4DDOWsbCai2wD6uQWRTpYPOXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q6ir839J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB311C4CEE7;
-	Mon, 13 Oct 2025 12:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760359303;
-	bh=P+FLo9H2oUdAvcmAH/Tk9WRWjvzR7j+vollqwT8nQCo=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Q6ir839JhmThWsbtFveFsGpEquJHFyxEhQF6t+lBBpGF0hAA3WCrog1Vyil4IEP2j
-	 iokjQ2asxffY5+BF2cfAspQP/Ss+el9PxwOcqJ+JS9p+K9NtFrJPcbx0b97y0wtg0y
-	 n4pXXpJqaFJ4UJJWwygFFMD0EkksdrVkGMqAm3t/fi5liZdnHvKR3Xif1SgKnqL4MN
-	 7wgi6/durVE8bw/X+F7yby7JRtsqt3yOX4SHWpsbHQhaHtexUSK9BSAZa3TcipAWHH
-	 AtU22gI80m5CpWzhaxLLepWwkEMRWXweqTk34iS7WtKRvnrscbshjMYtQvRwUXSVGH
-	 xsKCA9JqkyzQg==
-Message-ID: <61a3acc4-d541-41a4-b675-67b20f125117@kernel.org>
-Date: Mon, 13 Oct 2025 20:41:39 +0800
+	s=arc-20240116; t=1760359328; c=relaxed/simple;
+	bh=UtC3ud1uDkWBT2eatRa4V31cwvWr8x1KM9nA7kHeLro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MMWQcpGfDzrTs62AQ0w9vy7SGMQ/xkPmn2pLoCisnZy3ZaGsDPEIReOINfqpYdap4lJkot//IMeishigBdLODmm6TtEFfkJzQMwpx4zTpET5qjqzK8Spu7WJ/01QhVanESP4pH7eOuoL5PoAHq001hVR+91sEwHBrlxG8JJa2wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZEqYQJN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760359326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GV6V42eNmRofCKO2ajQk2DVZzbVn5SWQi1G7vlqlVt0=;
+	b=ZZEqYQJNQ6FjdK4Wim0LyLBoWClRZV6vx/OwTuvB5GRgw0wzhWvOBU7lL4sV0TOVqjaIy7
+	GJdimnjK0KaGG1fzAPZEjk6//pVcVs3QOah0F0SJMta471ag9ZqeguThmrtNnUww+hllqh
+	avd8COkEPwtibiRi8Mooqz+EHj2mq+0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-aBchuzNVNpOSjXOyZp5WIw-1; Mon, 13 Oct 2025 08:42:04 -0400
+X-MC-Unique: aBchuzNVNpOSjXOyZp5WIw-1
+X-Mimecast-MFC-AGG-ID: aBchuzNVNpOSjXOyZp5WIw_1760359323
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e3ed6540fso27881515e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:42:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760359323; x=1760964123;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GV6V42eNmRofCKO2ajQk2DVZzbVn5SWQi1G7vlqlVt0=;
+        b=oClYIFpcqbVgHONvEV8ZMA+3hVyhBWvAIP9kAwmvSYrb0WsTXUAwQ9D/dFckdZTnJn
+         ztKJ88SziV0dzUmKzI8lUZ4cBgIggm4xz2UnEnQNgDmNfk5HREYeP1BgOm7m8vVLmDvv
+         rshSLPIC3kQIw4VwlaP26vfURyTUHeUVIIV4Y7UTXj5/tA7ltf3Bo6rggAFWN7liPG5s
+         L8ThH07ocohCuYDzrm1vBH7+iE7MGDoaNQ64lvspbZKJ0e/nO/G+siXfr0b2R4ETBFfi
+         dX1Qpofuozs+lAC6Vskb7Ar+4OzTJqsdrMMKl9AvF4wHwlrt/EFaMkc9YSp4RofQe7H5
+         p18g==
+X-Forwarded-Encrypted: i=1; AJvYcCVN6y7Qe4jjod8X5GDaSXHg1kC5wIRMcM8OkPWyjE+a5D2ExZ5nlgTlBC0pYzuitmylDa6GbeLIdNPFSpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU209M8c6bmQEm5wy2ekBtebUEafxzseh9UQJ8rAphxRQ8Khda
+	70NWEgDQERQX6gvvk0h/lqj9sMnXfu7BqL5HcGWQlxCR1Ju71m6dVpD8QN6zjgbV59WXY9PR7Bf
+	74d2oM0gs3P0I6TrtjONYZIXnsv14MwksRy8w6FO4WISL2FPQaveLBpoNmOs3rdSBFQ==
+X-Gm-Gg: ASbGncvLBp5kAkGpl+Y7Tv7J7mhjIZAE5lM8DaZWNrcq5O0AC4l+0AINmzIZ1j0sPES
+	Uqpky4EdYc+w895aEI7qXXP04dN9AXUUVEWLr7CfOyQW7tYWA/sGzWBAYGeFLD9TBcOlJZb/BUX
+	LG1MC6cO0KBU3uLT4wCMILDf2rPiNzOkYooZ2zQJaDKMJcFefQjBHIzJGU71HUZkT3jYDCM+nbn
+	xLY/d7Qfxh7zwgQ+w26j8yN551BaOQAElK+AdzGTMzwNYPKOL4spEl1OLdtBLRjA2EnzqSALGYl
+	XsoqgYNWRNFp8UhEfINs4jLToLxUkx7tLm2QTDG1lVPrim1FxKHkBxFEUybdwQQHu8FSTDkQeA4
+	nA1o=
+X-Received: by 2002:a05:600c:674a:b0:45c:b6d3:a11d with SMTP id 5b1f17b1804b1-46fa9e8dc8bmr158955105e9.1.1760359323081;
+        Mon, 13 Oct 2025 05:42:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHauSt6ruiV5Kk8L/+gHwRrp8105EYALDJNBUwgBgUbnyLWlMo37UXqi0DKsbi3Tl2D4kwzpA==
+X-Received: by 2002:a05:600c:674a:b0:45c:b6d3:a11d with SMTP id 5b1f17b1804b1-46fa9e8dc8bmr158954865e9.1.1760359322699;
+        Mon, 13 Oct 2025 05:42:02 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc78559c8sm29186175e9.4.2025.10.13.05.41.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 05:42:02 -0700 (PDT)
+Message-ID: <7176597b-006f-40ad-9421-860d80d7e696@redhat.com>
+Date: Mon, 13 Oct 2025 14:41:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,127 +89,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Subject: Re: [BUG] f2fs: divide error in f2fs_all_cluster_page_ready on v6.17
-To: "Bai, Shuangpeng" <SJB7183@PSU.EDU>,
- "jaegeuk@kernel.org" <jaegeuk@kernel.org>
-References: <44D8F7B3-68AD-425F-9915-65D27591F93F@psu.edu>
+Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
+ order selection
+To: Yafang Shao <laoar.shao@gmail.com>, Tejun Heo <tj@kernel.org>,
+ Michal Hocko <mhocko@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Zi Yan <ziy@nvidia.com>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>, baolin.wang@linux.alibaba.com,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, usamaarif642@gmail.com,
+ gutierrez.asier@huawei-partners.com, Matthew Wilcox <willy@infradead.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Amery Hung <ameryhung@gmail.com>,
+ David Rientjes <rientjes@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>,
+ lance.yang@linux.dev, Randy Dunlap <rdunlap@infradead.org>,
+ bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250930055826.9810-1-laoar.shao@gmail.com>
+ <20250930055826.9810-4-laoar.shao@gmail.com>
+ <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
+ <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com>
+ <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
+ <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com>
+ <CALOAHbD_tRSyx1LXKfFrUriH6BcRS6Hw9N1=KddCJpgXH8vZug@mail.gmail.com>
+ <96AE1C18-3833-4EB8-9145-202517331DF5@nvidia.com>
+ <f743cfcd-2467-42c5-9a3c-3dceb6ff7aa8@redhat.com>
+ <CALOAHbAY9sjG-M=nwWRdbp3_m2cx_YJCb7DToaXn-kHNV+A5Zg@mail.gmail.com>
+ <129379f6-18c7-4d10-8241-8c6c5596d6d5@redhat.com>
+ <CALOAHbD8ko104PEFHPYjvnhKL50XTtpbHL_ehTLCCwSX0HG3-A@mail.gmail.com>
+ <3577f7fd-429a-49c5-973b-38174a67be15@redhat.com>
+ <CALOAHbAeS2HzQN96UZNOCuME098=GvXBUh1P4UwUJr0U-bB5EQ@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <44D8F7B3-68AD-425F-9915-65D27591F93F@psu.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CALOAHbAeS2HzQN96UZNOCuME098=GvXBUh1P4UwUJr0U-bB5EQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/13/25 07:49, Bai, Shuangpeng wrote:
-> Hi Kernel Maintainers,
+>> I came to the same conclusion. At least it's a valid start.
+>>
+>> Maybe we would later want a global fallback BPF-THP prog if none was
+>> enabled for a specific MM.
 > 
-> Our tool found a new kernel bug "divide error in f2fs_all_cluster_page_ready". Please see the details below.
+> good idea. We can fallback to the global model when attaching pid 1.
 > 
-> Kernel commit: 6.17
-> Kernel config: attachment
-> Reproducer: attachment
+>>
+>> But I would expect to start with a per MM way of doing it, it gives you
+>> way more flexibility in the long run.
 > 
-> The reproducer triggers the crash reliably in ~500 seconds on a QEMU x86_64 VM. 
-> 
-> I’m happy to test debug patches or provide additional information.
+> THP, such as shmem and file-backed THP, are shareable across multiple
+> processes and cgroups. If we allow different BPF-THP policies to be
+> applied to these shared resources, it could lead to policy
+> inconsistencies.
 
-Hi Bai,
+Sure, but nothing new about that (e.g., VM_HUGEPAGE, VM_NOHUGEPAGE, 
+PR_GET_THP_DISABLE).
 
-Thanks for your report!
+I'd expect that we focus on anon THP as the first step either way.
 
-Could you please share scripts and images for this issue? as I can not reproduce
-w/ repro.c.
+Skimming over this series, anon memory seems to be the main focus.
 
-Thanks,
+> This would ultimately recreate a long-standing issue
+> in memcg, which still lacks a robust solution for this problem [0].
+> 
+> This suggests that applying SCOPED policies to SHAREABLE memory may be
+> fundamentally flawed ;-)
 
-> 
-> 
-> Oops: divide error: 0000 [#1] SMP KASAN PTI
-> CPU: 0 UID: 0 PID: 11441 Comm: syz.0.46 Not tainted 6.17.0 #1 PREEMPT(full)
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> RIP: 0010:f2fs_all_cluster_page_ready+0x106/0x550 fs/f2fs/compress.c:857
-> Code: 00 8b 4d 00 48 89 d8 48 c1 e8 20 74 19 48 89 d8 31 d2 48 f7 f1 48 89 d5 eb 14 48 89 5c 24 10 e8 40 a4 6d fd eb 2d 89 d8 31 d2 <f7> f1 89 d5 31 ff 48 89 ee e8 0c a9 6d fd 48 85 ed 74 0c e8 22 a4
-> RSP: 0018:ffffc90006616e60 EFLAGS: 00010246
-> RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90006617270 R08: ffffffff84552d26 R09: 0000000000000000
-> R10: ffff888155ad2000 R11: ffffffff81d2aa26 R12: 0000000000000001
-> R13: dffffc0000000000 R14: 0000000000000010 R15: ffffc90006617260
-> FS:  00007f8bac5b5640(0000) GS:ffff888220f02000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000056508a326000 CR3: 0000000117bec000 CR4: 00000000000006f0
-> Call Trace:
->  <TASK>
->  f2fs_write_cache_pages fs/f2fs/data.c:3078 [inline]
->  __f2fs_write_data_pages fs/f2fs/data.c:3290 [inline]
->  f2fs_write_data_pages+0x1c19/0x3600 fs/f2fs/data.c:3317
->  do_writepages+0x38e/0x640 mm/page-writeback.c:2634
->  filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
->  __filemap_fdatawrite_range mm/filemap.c:419 [inline]
->  file_write_and_wait_range+0x2ba/0x3e0 mm/filemap.c:794
->  f2fs_do_sync_file+0x6e6/0x1b00 fs/f2fs/file.c:294
->  generic_write_sync include/linux/fs.h:3043 [inline]
->  f2fs_file_write_iter+0x76e/0x2700 fs/f2fs/file.c:5259
->  new_sync_write fs/read_write.c:593 [inline]
->  vfs_write+0x7e9/0xe00 fs/read_write.c:686
->  ksys_write+0x19d/0x2d0 fs/read_write.c:738
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xf7/0x470 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f8bab7ae49d
-> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f8bac5b4f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007f8baba26180 RCX: 00007f8bab7ae49d
-> RDX: 000000000000ffbd RSI: 0000200000000240 RDI: 0000000000000007
-> RBP: 00007f8bab848268 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f8baba26218 R14: 00007f8baba26180 R15: 00007f8bac595000
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:f2fs_all_cluster_page_ready+0x106/0x550 fs/f2fs/compress.c:857
-> Code: 00 8b 4d 00 48 89 d8 48 c1 e8 20 74 19 48 89 d8 31 d2 48 f7 f1 48 89 d5 eb 14 48 89 5c 24 10 e8 40 a4 6d fd eb 2d 89 d8 31 d2 <f7> f1 89 d5 31 ff 48 89 ee e8 0c a9 6d fd 48 85 ed 74 0c e8 22 a4
-> RSP: 0018:ffffc90006616e60 EFLAGS: 00010246
-> RAX: 0000000000000003 RBX: 0000000000000003 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90006617270 R08: ffffffff84552d26 R09: 0000000000000000
-> R10: ffff888155ad2000 R11: ffffffff81d2aa26 R12: 0000000000000001
-> R13: dffffc0000000000 R14: 0000000000000010 R15: ffffc90006617260
-> FS:  00007f8bac5b5640(0000) GS:ffff888220f02000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000056508a326000 CR3: 0000000117bec000 CR4: 00000000000006f0
-> ----------------
-> Code disassembly (best guess):
->    0:	00 8b 4d 00 48 89    	add    %cl,-0x76b7ffb3(%rbx)
->    6:	d8 48 c1             	fmuls  -0x3f(%rax)
->    9:	e8 20 74 19 48       	call   0x4819742e
->    e:	89 d8                	mov    %ebx,%eax
->   10:	31 d2                	xor    %edx,%edx
->   12:	48 f7 f1             	div    %rcx
->   15:	48 89 d5             	mov    %rdx,%rbp
->   18:	eb 14                	jmp    0x2e
->   1a:	48 89 5c 24 10       	mov    %rbx,0x10(%rsp)
->   1f:	e8 40 a4 6d fd       	call   0xfd6da464
->   24:	eb 2d                	jmp    0x53
->   26:	89 d8                	mov    %ebx,%eax
->   28:	31 d2                	xor    %edx,%edx
-> * 2a:	f7 f1                	div    %ecx <-- trapping instruction
->   2c:	89 d5                	mov    %edx,%ebp
->   2e:	31 ff                	xor    %edi,%edi
->   30:	48 89 ee             	mov    %rbp,%rsi
->   33:	e8 0c a9 6d fd       	call   0xfd6da944
->   38:	48 85 ed             	test   %rbp,%rbp
->   3b:	74 0c                	je     0x49
->   3d:	e8                   	.byte 0xe8
->   3e:	22                   	.byte 0x22
->   3f:	a4                   	movsb  %ds:(%rsi),%es:(%rdi)
-> 
-> Best,
-> Shuangpeng
-> 
+Yeah, shared memory is usually more tricky: see mempolicy handling for 
+shmem. There, the policy is much rather glued to a file than to a process.
+
+-- 
+Cheers
+
+David / dhildenb
 
 
