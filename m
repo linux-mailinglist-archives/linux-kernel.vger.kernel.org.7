@@ -1,158 +1,96 @@
-Return-Path: <linux-kernel+bounces-851380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DE1BD650E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8AABD6523
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212DB189DCC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2828E18A2D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D6726FA57;
-	Mon, 13 Oct 2025 21:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42562EBDE0;
+	Mon, 13 Oct 2025 21:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5cLszBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="ph+PKv3F"
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0970BEADC;
-	Mon, 13 Oct 2025 21:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9314E1D88A4;
+	Mon, 13 Oct 2025 21:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760389278; cv=none; b=Ni2jDlAUcENO51HEM8z5NmWalxFqALnJW/lsPuHhhSzMohgzVZ1eNpJIHW2Je8TARy5i4l4YOhSLHp4lG2glsi+cx6nvah+Xddyz4GDa7MHYlvE6Ea+IHGTko8dmQhiQK4dgD2BZCWoNxl0KCFDZ1QZOMoQzXwUVJR9hTqqbWKw=
+	t=1760389360; cv=none; b=j3goYUE1YAaY1YuC1TbArXRh/TvGR/czs+w3JrKxYGef4Mf6vAdqytRihf50Rwx2PohZj1nYcfp8wb976q+YJ+NnEBiUbuCVu9oDqOXhD6iQYrBGedFy2c/SN2Fia6BAlSd7laKHkmsYW8PQXP42VdanEUm10I4sYWrQltC4vtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760389278; c=relaxed/simple;
-	bh=TGVwh+FVew/+FpJJ2EdB6m/QyvlMzl0yen5xz3HGn/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GXRLvNuq2Pl3nNj7WdhpgA4JiEahMnDtcUuQgVDlX1nfE0SExnFnek5Pnwt9DPndYPphmnGBAr9Z/HuApkP60ya6atXFuLMM67YC2sp2HhZlrYsQQWRlwoBhvqPVFHyqg3mrr5RXFYfUw7IAl38sFsS6UfCMapMO17HYTlLfPfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5cLszBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AF4C4CEE7;
-	Mon, 13 Oct 2025 21:01:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760389277;
-	bh=TGVwh+FVew/+FpJJ2EdB6m/QyvlMzl0yen5xz3HGn/g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=D5cLszBMrTo8qExi1Oir6bZ5++fJauged/epDqNgQGFI/AOnOHahvbR+jE2QibKCV
-	 ve56Ib86lxveshkzKUrZJ5slksjFqlc+dprFuZF/7sIdfC3LC/75B57u+lNldAA310
-	 DuckZCENOFyVWSCo0BzinI6+voDqGXrjdlSqjUnS0X/u8HAWrGbvHKwbVW1bgIydLm
-	 jcHkzaNO7Q5gnZmV11ktagitcxZsrWB2JclKTbTLxBmqPuCfrl5oMzqG7tliKaCazd
-	 OMgVT3Z3FdMkJhSS2xfyxwBNjfD2CyDL9gc8f67Tb/8Bm7JtzQqwbF/32gpT0Q+4xS
-	 Csn3VHRUIxl+A==
-Date: Mon, 13 Oct 2025 16:01:16 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Val Packett <val@packett.cool>
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Guenter Roeck <linux@roeck-us.net>, regressions@lists.linux.dev
-Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
-Message-ID: <20251013210116.GA864145@bhelgaas>
+	s=arc-20240116; t=1760389360; c=relaxed/simple;
+	bh=xOw+8rf7Uh7lk0P09CSU4b2NGtz9QYyBNMYwsaRgbWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q7DKRz231YhDw2gDgbi2yK4M7ita6uGBS75Jl2Dla3G+X58zobgV9bXz1G9cklCpVYMhqDeZH2Nj22YumuI5YGKLS1Jkf32ZpsFPqNN18+hw4JjS9qGN6PiKPz6TWhxrZmyUo+k+MNkNsuZM+Yndydzey/MjsDBzavZ3aTSBusg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=ph+PKv3F; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
+Received: from [10.50.4.39] (45-31-46-51.lightspeed.sndgca.sbcglobal.net [45.31.46.51])
+	by mailbackend.panix.com (Postfix) with ESMTPSA id 4clqYK27cCz4Pdk;
+	Mon, 13 Oct 2025 17:02:27 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
+	t=1760389350; bh=xOw+8rf7Uh7lk0P09CSU4b2NGtz9QYyBNMYwsaRgbWA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ph+PKv3FDXmPptWPX6iu36czKuB3qqyxN8Fyw18C5xVULNb6O33wQsgdOX8cG6F1X
+	 IO8lnbwqlWnay1qWDYG4r33kjoOiZYE5n7l13+9jI6GSkWgtbafY2L5j61f9V3g6hd
+	 NMLXvMmoiHYtPc/o7DGs85Uqfrm8Dc4JjLo4Yp80=
+Message-ID: <92c821fb-537a-40e6-98fc-616941b57778@panix.com>
+Date: Mon, 13 Oct 2025 14:02:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] UCSI Power Supply Updates and Bug Fixes
+To: Jameson Thies <jthies@google.com>, heikki.krogerus@linux.intel.com,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org,
+ gregkh@linuxfoundation.org, akuchynski@chromium.org,
+ abhishekpandit@chromium.org, sebastian.reichel@collabora.com,
+ linux-pm@vger.kernel.org, Kenneth C <kenny@panix.com>
+References: <20251007000007.3724229-1-jthies@google.com>
+Content-Language: en-US
+From: Kenneth Crudup <kenny@panix.com>
+In-Reply-To: <20251007000007.3724229-1-jthies@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[+cc Guenter, regressions]
 
-On Mon, Oct 06, 2025 at 05:00:25AM -0300, Val Packett wrote:
-> On 9/24/25 10:42 AM, Ilpo Järvinen wrote:
-> > Bridge windows are read twice from PCI Config Space, the first read is
-> > made from pci_read_bridge_windows() which does not setup the device's
-> > resources. It causes problems down the road as child resources of the
-> > bridge cannot check whether they reside within the bridge window or
-> > not.
-> > 
-> > Setup the bridge windows already in pci_read_bridge_windows().
-> > 
-> > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> 
-> Looks like this change has broken the WiFi (but not NVMe) on my Snapdragon
-> X1E laptop (Latitude 7455):
-> 
-> qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
-> pci_bus 0004:00: root bus resource [bus 00-ff]
-> pci_bus 0004:00: root bus resource [io  0x100000-0x1fffff] (bus address
-> [0x0000-0xfffff])
-> pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
-> pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
-> pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
-> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-> pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
-> pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
-> pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]:
-> assigned
-> pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
-> pci 0004:00:00.0: bridge window [io  0x100000-0x100fff]: assigned
-> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
-> pci 0004:00:00.0:   bridge window [mem 0x7c300000-0x7c3fffff]
-> pci 0004:00:00.0:   bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]
-> pci_bus 0004:00: resource 4 [io  0x100000-0x1fffff]
-> pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
-> pci_bus 0004:01: resource 0 [io  0x100000-0x100fff]
-> pci_bus 0004:01: resource 1 [mem 0x7c300000-0x7c3fffff]
-> pci_bus 0004:01: resource 2 [mem 0x7c400000-0x7c4fffff 64bit pref]
-> pcieport 0004:00:00.0: PME: Signaling with IRQ 186
-> pcieport 0004:00:00.0: AER: enabled with IRQ 186
-> pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
-> pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
-> pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
-> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
-> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
-> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
-> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
-> ath12k_pci 0004:01:00.0: BAR 0 [??? 0x00000000 flags 0x20000000]: can't
-> assign; bogus alignment
-> ath12k_pci 0004:01:00.0: failed to assign pci resource: -22
-> ath12k_pci 0004:01:00.0: failed to claim device: -22
-> ath12k_pci 0004:01:00.0: probe with driver ath12k_pci failed with error -22
-> 
-> 
-> For comparison, with this change reverted it works again:
-> 
-> qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
-> pci_bus 0004:00: root bus resource [bus 00-ff]
-> pci_bus 0004:00: root bus resource [io  0x0000-0xfffff]
-> pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
-> pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
-> pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> pci 0004:00:00.0:   bridge window [io  0x0000-0x0fff]
-> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-> pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
-> pci 0004:00:00.0: BAR 0 [mem 0x7c300000-0x7c300fff]: assigned
-> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> pci_bus 0004:00: resource 4 [io  0x0000-0xfffff]
-> pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
-> pcieport 0004:00:00.0: PME: Signaling with IRQ 195
-> pcieport 0004:00:00.0: AER: enabled with IRQ 195
-> pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
-> pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
-> pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
-> pci 0004:01:00.0: ASPM: DT platform, enabling L0s-up L0s-dw L1 ASPM-L1.1
-> ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
-> pci 0004:01:00.0: ASPM: DT platform, enabling ClockPM
-> pcieport 0004:00:00.0: bridge window [mem 0x7c400000-0x7c5fffff]: assigned
-> pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
-> ath12k_pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
-> ath12k_pci 0004:01:00.0: enabling device (0000 -> 0002)
-> ath12k_pci 0004:01:00.0: MSI vectors: 16
-> ath12k_pci 0004:01:00.0: Hardware name: wcn7850 hw2.0
+On 10/6/25 17:00, Jameson Thies wrote:
 
-#regzbot introduced: a43ac325c7cb ("PCI: Set up bridge resources earlier")
+> This series includes the following minor changes to power supply
+> handling by the UCSI driver.
+...
+> base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
+
+I wanted to let you know that on my Dell XPS-9320, this patchset ended 
+up spamming (i.e., hundreds) my dmesg with the following:
+
+power_supply ucsi-source-psy-USBC000:002: driver reporting unavailable 
+enum value 7
+
+... which I believe to be POWER_SUPPLY_USB_TYPE_PD_DRP .
+
+In my case it was coming from the call to 
+power_supply_show_enum_with_available() on/around line 380 in 
+.../drivers/power/supply/power_supply_sysfs.c ; I'd tried adding 
+POWER_SUPPLY_USB_TYPE_PD_DRP to con->psy_desc.usb_types in 
+ucsi_register_port_psy() in
+.../drivers/usb/typec/ucsi/psy.c thinking that may fix it with no success.
+
+LMK if you need any further info,
+
+-Kenny
+
+-- 
+Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
+County CA
+
 
