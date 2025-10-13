@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-851052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28660BD5473
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:55:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19D5BD55F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7438F18A402D
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E0FA4FEEAF
 	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA06229ACF7;
-	Mon, 13 Oct 2025 16:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FAD29B20D;
+	Mon, 13 Oct 2025 16:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="T4hxPhCE"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jF4RAZSK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764CB28B4F0;
-	Mon, 13 Oct 2025 16:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8ED1F419B;
+	Mon, 13 Oct 2025 16:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760374547; cv=none; b=GH1Ez9li1n5ZQLbHOiNRJ6zB1lvQIMbdCIgawIhAxP3Gv/MqWONoso+er2wTV+339DoceyMftOnVlaLdJpN2W11oftSiwqthfmH/qgWgiUGieWet1ezw1n64nkoLcEXx+rpOKe/kLSiVcVe3f9mekPUwriBOUMH8jvEwg/JNyug=
+	t=1760374569; cv=none; b=YvNfiAv4Iis/NIG7D52hhDV5A/98ARdgFu7TmnHYwFyzadvvxeBmouwaHfyVs2usZKEuq5Bx+E1OiYL9I+8zcgkQKO6Ezn2gHS/AxnZoHgImfdOYSNio0hmP3AYZ4oQQiSSuDFoSiOw87R1UiqTgtvJFxeq5+qSiN1QKQ12ZwOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760374547; c=relaxed/simple;
-	bh=wlwWwsOaGymy2W8eGgiEpASjFWKBeDo7iH2NE6LILLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvH9bv5J8Y2zxL+ur1nm8XGeMuo3GXa0+C5xMUkYFqvHOvnV7S1p+pebNq8u3i42DRL3OWIp70Ucj3pG4fZth/5VRA4W4rqRW3UCvtI5kHF8b2QHObNqdmH9yDowBruJkl3HoWSAnZaRgZPzylb4nvIX5ezShK4TparrmtedmVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=T4hxPhCE; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=CBULL6DgUe9CggCYIRWgvIG8dAx0oc/6eJPoZVfJcfA=; b=T4hxPhCElqyDUJn4At/i47NzZu
-	2DY8dI0GRwfjMqDSf9GAUK9rWrPMGkZStwDQEmZxpE1q8fApUkTxFxNZ1ry054Z9NLTCS4PQCjV7n
-	saL8ocOQr0vVqHRKluj481AJzVhgyiTZHjgFsKPB/AAWcvGKPkW4/xAKF5vievn+M5d4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v8Lpj-00Aoea-Hd; Mon, 13 Oct 2025 18:55:39 +0200
-Date: Mon, 13 Oct 2025 18:55:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v3 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
-Message-ID: <08a8e0d6-f486-40bd-a2f1-43e33ccde1d2@lunn.ch>
-References: <20251009222716.394806-1-shenwei.wang@nxp.com>
- <20251009222716.394806-4-shenwei.wang@nxp.com>
- <eb99d9a8-eb96-445d-899a-6e1d9b6f6c69@lunn.ch>
- <PAXPR04MB9185A829534963B22D1C49FD89EFA@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <6025be80-7007-48bb-bdd1-c8198e951400@lunn.ch>
- <PAXPR04MB918524EAA74F72D64AE0ACA489EAA@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <f5b15eeb-a183-40bc-993a-49736739c0f5@lunn.ch>
- <PAXPR04MB9185A0A5494A00280F97676C89EAA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1760374569; c=relaxed/simple;
+	bh=V/MAAI6c/W2kXvAAM5vLnSBH5PzenfxxUv7lXNVHDf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g5gNKTXcZTVEqvhu+eSP60dJQhP17iY+2Y+kdSUGIq08AHmfmdpwZu1W9queEoikFX+E1uSXP8ikLHvsYVZF2nXJ0+j76k7oU6RsRlPKTa13oJFcP5Mv5JluZmuFqAaEss1bAb4hIdlWFgmtmhVff1ypEx3w+0DTO15uPDMcsyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jF4RAZSK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06314C116B1;
+	Mon, 13 Oct 2025 16:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760374569;
+	bh=V/MAAI6c/W2kXvAAM5vLnSBH5PzenfxxUv7lXNVHDf0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jF4RAZSKXO3/wzVMsevgsaewpkLC0B2J8nl5Yc1Io10RtKWu2D4oSTPU+MWqYoBYF
+	 /vMzHsLzzH8x6Z6/XET5+J546Nm6m8OoABIkWNWYuyNJWWVxU9MFNDTlDuCvRfdQPF
+	 0IAUIcxuJuw0ZCRze57yrwXpuM0O4rChgaDoMsAp97Np/ajxwBeurSvVflzw49CXNI
+	 nd9NZeEN+XMcJRSDo1Fvu0ilsrYRjsj6hXxkqUTheVWsjPkQvjuTYdOF0GCdm2A6OE
+	 mNYWvFD34hHOxbg3rUCGQdeiikHZk5hT5giw54WGJbuJoVYMtVvGEJZTfR9r1Gmdoi
+	 Ya4LNurAJzzzw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v8LqA-0000000DaUU-2pWO;
+	Mon, 13 Oct 2025 16:56:06 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KVM: arm64: Guard PMSCR_EL1 initialization with SPE presence check
+Date: Mon, 13 Oct 2025 17:56:03 +0100
+Message-ID: <176037441177.969330.7925084033862079350.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251010174707.1684200-1-mukesh.ojha@oss.qualcomm.com>
+References: <20251010174707.1684200-1-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB9185A0A5494A00280F97676C89EAA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, catalin.marinas@arm.com, will@kernel.org, alexandru.elisei@arm.com, mukesh.ojha@oss.qualcomm.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-> > Notice how ENOPNOTSUPP can be 45, 122, 223, or 95. Returning EL2NSYNC or
-> > EDQUOT to user space is going to cause confusion...
-> >
+On Fri, 10 Oct 2025 23:17:07 +0530, Mukesh Ojha wrote:
+> Commit efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
+> does not perform sufficient check before initializing PMSCR_EL1 to 0
+> when running in VHE mode. On some platforms, this causes the system to
+> hang during boot, as EL3 has not delegated access to the Profiling
+> Buffer to the Non-secure world, nor does it reinject an UNDEF on sysreg
+> trap.
 > 
+> [...]
 
-> I think we should just follow the definitions in
-> include/uapi/asm-generic/errno.h, right?
+Applied to fixes, thanks!
 
-No.
+[1/1] KVM: arm64: Guard PMSCR_EL1 initialization with SPE presence check
+      commit: c35dd838666d47de2848639234ec32e3ba22b49f
 
-Try a make for mips, and look at includes you end up with. You will
-find it goes something like:
+Cheers,
 
-# 1 "./arch/mips/include/asm/errno.h" 1
-# 11 "./arch/mips/include/asm/errno.h"
-# 1 "./arch/mips/include/uapi/asm/errno.h" 1
-# 16 "./arch/mips/include/uapi/asm/errno.h"
-# 1 "./include/uapi/asm-generic/errno-base.h" 1
-# 17 "./arch/mips/include/uapi/asm/errno.h" 2
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
 
-and this results in
 
-#define EOPNOTSUPP      122     /* Operation not supported on transport endpoint */
-
-not what you get from asm-generic/errno.h:
-
-#define	EOPNOTSUPP	95	/* Operation not supported on transport endpoint */
-
-	Andrew
 
