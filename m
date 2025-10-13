@@ -1,165 +1,141 @@
-Return-Path: <linux-kernel+bounces-850250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6500CBD2597
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:44:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C95BD259D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832C21899FDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:44:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C94CD4EF9B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE02C2FE073;
-	Mon, 13 Oct 2025 09:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="T4Bf6HXm"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD2E2FE58F;
+	Mon, 13 Oct 2025 09:43:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0B42FE05A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34D2FE047
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348602; cv=none; b=cd5Vlf7QTDDDy2vFCg+ge+gp35rwbnk5yQN+Et0GwCtAkokZr+aAGdOgI51nWQrlMPsrdbAPBxKCf+wMiXxF/uqZUjkzwdL6iZaEBDowQ6QlB/6n00x/SZfXdwSwRT3kl8Rp5U13DPH8GQGn1GwhDOv90W+sS627xEEYzZ4qu50=
+	t=1760348626; cv=none; b=UmBC1jHBr+tXgt1TjeZMWzmi5BTsBo0cf+k7DggdfAugXmX4/9TIvCk7BOI5ywBRqiFrj6ebypFyGsFUTsaVrF+A+Z2dGmZVG3f+6THj+mIemWs8cvH7o+rVZEkI6xCeGWE2P9LN2s+F2uPEb7UBh9liBbHFBnhAxwz4kERqfaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348602; c=relaxed/simple;
-	bh=uQFbHr84ZhdOMSQ4FYkvxS8K7ZU8bAh58pAmqFc4cc4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GUhQMXKTuWixgUC264XqwCsCcEQrzCVX1McORTCq+C3QCeO603GYQm1ggWgEAFHy/x6k4PrrFYP/EvGADhU3zTOxZz238g8BX2HkII/2GvPct8Fov/UOSXBQuxD0zoZrfz+dkLRD/gwtNdTrIx3DU0p+tP4JPim8zhJvFeTmKjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=T4Bf6HXm; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso5047387e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760348598; x=1760953398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=541KDVIKt4Twpix35Nx3FbTRvhxdJEaxEaKbxcItGfk=;
-        b=T4Bf6HXmq+PLl1egItiMzppPaI9WqiqEUBNSI5/1aPFFWR1/Ao5bcqbc28vbC2AAwM
-         ZBdDdzhCQWg5PwLi8gVMjfKY48AMJ/wXcfMDnQVXN31tUAvmJJAZwUv6c/yW4SBbYez3
-         JAhgzWb/faa8kBASVVDAAD9oTR6K14+4qj7b3h/qLfcCrs8vaJPnTeNq63QQ1V/Mx6gx
-         Fs79qsCI6qB4rX1r6yB1aVwSn8iLsWazqmcoJ17wS5H7vnpiQVBJa1/aZuEXNx3lVYuB
-         7l6FyEA8UHqCIX0E074pmRy7Hnz9qjPdKLrGeI7O/ZPwevs4l3vhuesoZEN4ncvmW877
-         asBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760348598; x=1760953398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=541KDVIKt4Twpix35Nx3FbTRvhxdJEaxEaKbxcItGfk=;
-        b=PIgKMevgdPFxiDrzc97ny/tPOPQw9KO1jMsM1COIvd4fmufA04PTjXk3BRJC7UXOqa
-         pVYXxJpC9IA2HzpCwy/Gawp4CE/vilqENAAlNBjnBfQRTNsy9l9PthhNqx8LEL9adeMY
-         lNHTyBDv2qWydKo/IqBI77O/XtNuNL+c9jKfI6krYnQGxQ63hFWAwu3rmVhsKP9WE021
-         aybK6yseu4eh1Ynew4A7WYUqpOCWwYb2asjg8GPdBH5uQgJ3GLxndeZI54r4gXdJ5mFb
-         +gTBbImQzK9wy09yEn0Qwvl37ya7zK9cHllC+mDaddNWgzv5aRsXM60omE86N7daX91u
-         W+Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuueelaorQy3gvMCTkpy1R/2UH+qfm0BVa/wDzfui0Bagol8+dF/WzCpPnQft8Z4DlpbJKDof51024pfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPcMrv709+ug9jfB2g/4WrG18FoWjpAIi5ZUy8DTSx8rKHsM6A
-	z0tzwlTZxuiPYSpAy77OK+TO9I8Vkvz9v3GJiTNpSIHHf+YE43RPXG7Db2pBdJ4GUC0zN9kdWAV
-	QMTX2K4ExV2hcc2QXxE7j5UpiOJfgVtTexphyCBw3rQ==
-X-Gm-Gg: ASbGncvQhXqFGF2T43nTkj8YjETP1qMx+M5y1QXEv5AOTNyKytWvs4THZDz5qAGS+UE
-	7pfomDTv/ftsEddPdTg4vrk5D9hmZvTH9Y9drBIfZmRGYI8m6TUPcUcfNggvQR+NG9M33r9uxvC
-	eLRmlOIC7K9fzZC1SzorEQz2h6u63LOSnNecmG+J/yJ4xc6vGfDK/ll9x4zqrmY6Eh+wBVjMbgD
-	MOrFjbXBCRoESS6ezXDs9+56W2rT8UetsvzDNKrDR7e/0YGfUpuu03nvw==
-X-Google-Smtp-Source: AGHT+IGg7+s9CClC0kNjgXyQvkl0V611RaE2K1Xq/BiiwFHeo6pqu80gfj5BX4tm7WD+Gl2m99myhlwQvLt2VF9EKjY=
-X-Received: by 2002:a05:6512:230b:b0:55c:c937:1106 with SMTP id
- 2adb3069b0e04-5906d8ed820mr5300700e87.28.1760348598267; Mon, 13 Oct 2025
- 02:43:18 -0700 (PDT)
+	s=arc-20240116; t=1760348626; c=relaxed/simple;
+	bh=6I3vbFqrC8hpi6PcBC7EqlmHPrHJF/Who5etpts5xAo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bXofZ3PkrfUVrwHnC0kQoaJ+sIExv4Pp5da2KVY3OSZcDcqQwsPZb8qqFU4nEXsVoVkqjmVyUVc6+4mJMIMFoyFK2MDLFd9b+so51u8SOmvaYXQ40Q2PSnw6SAKgIwKtrjrtydX+mIXZemqUiV3x9z1VO8YPsWYn62wpE9vIVQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1v8F5i-0004bA-3c; Mon, 13 Oct 2025 11:43:42 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1v8F5h-003MXH-14;
+	Mon, 13 Oct 2025 11:43:41 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.98.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1v8F5h-00000005PWJ-148F;
+	Mon, 13 Oct 2025 11:43:41 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Date: Mon, 13 Oct 2025 11:43:40 +0200
+Subject: [PATCH v2] tcpm: switch check for role_sw device with fw_node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010-pci-binding-v1-0-947c004b5699@oss.qualcomm.com>
- <20251010-pci-binding-v1-3-947c004b5699@oss.qualcomm.com> <4532e2e6-51bd-4443-ad51-41fc02065a7d@oss.qualcomm.com>
- <yvbghnxttchfvte3nxr4ru62wqilceil2n7x7dgpa5gnm57ywu@ljrbw3c44qpw>
-In-Reply-To: <yvbghnxttchfvte3nxr4ru62wqilceil2n7x7dgpa5gnm57ywu@ljrbw3c44qpw>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 13 Oct 2025 11:43:06 +0200
-X-Gm-Features: AS18NWDXSA1oF9u0-aF8f-BfVdVBXnzMX3lhxDXthcbofRI_Rn4NpBjYuSbHa2w
-Message-ID: <CAMRc=Mf++D-jbEPmPKc1uAxeH_RZ==B1ybWy7oTWFwJ+kAcHyA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] PCI: qcom: Treat PHY and PERST# as optional for the
- new binding
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linus.walleij@linaro.org, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Abraham I <kishon@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251013-b4-ml-topic-tcpm-v2-1-63c9b2ab8a0b@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAMvJ7GgC/32NSw6DIBRFt2LeuK8B/GA66j4aBwpUX1KBACU2x
+ r2XuoAOz0nuuTtEE8hEuFU7BJMpkrMFxKUCtYx2Nki6MAgmWs5YjVOD6wuT86QwKb+ikLzppJB
+ adiOUmQ/mSduZfAyFF4rJhc/5kPnP/olljhxrpTVr274f1XT3xs7vFJyl7aoNDMdxfAGm8Bitt
+ QAAAA==
+X-Change-ID: 20251003-b4-ml-topic-tcpm-27146727d76a
+To: Badhri Jagan Sridharan <badhri@google.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel@pengutronix.de, linux-usb@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1956;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=6I3vbFqrC8hpi6PcBC7EqlmHPrHJF/Who5etpts5xAo=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBo7MnMdESNHo1oHL+TIzCTJWUxgtXZSxdrszpPq
+ C9+FgsLmk6JAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCaOzJzAAKCRC/aVhE+XH0
+ qyLdEAC0HfkrZDmd4Ins3Cm3NudISCVaNHEVcNOVnUuUwOLNExKAxfMuptvlQodUkmI8WohV4qX
+ mGybcGXt8uBYdfVQEg2RcJi+aEW5fCfQNvxI7zFGko8Itw3AWVXUD574Ay8bs2g8BWl+k9ygux6
+ SetYhpdSqhLAJM8lzpkyl7yEmIFpjIAGg4Kkw+UhPFI25JciWG8tcOOiM886JbDAtmBZUZkUKaT
+ 8qRY3dgsFYEMhkYrWYf+4upACzhMW+1ctgGVon0g3doM7Ofz49WCmxu8Ve9c8pBj2Ehb4PBnbux
+ NBG+cgCSiS2qcawhWFO/FagkrmgFW3jFf25ZCG5zxadyc0cAFH6Jaudnxv1TZucvd//Q2TN3SZe
+ Up7ni4Bz0U6u9jc91M5sObSG5q8pIa1z4/uq+i8Q/Etu5EWY4hLlLR68hkAyVRUyW0ql04wy1M7
+ Qud1GY4zM11+X76YtYGJlqfDZzRbCDwWUoc+ZIrwbYE24vk/+oFgA8cHF5PKWm5fYOaFAsZlfga
+ VBWTv3MbUjRgT5iFhbCi4BVtmjpWQPrQM357+cNR4J9pWwe4+GPAaRMkaun5pkfn5KGheVH0rQA
+ KZ/3BQBObm+vTpu2snSXmWKkb/JhL+8jcLZ3lYUy1STHgcuwKfiXpoCqDHlAASCrngZ3k0kEDum
+ b42WoCvjGL+mHcg==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sat, Oct 11, 2025 at 6:09=E2=80=AFAM Manivannan Sadhasivam <mani@kernel.=
-org> wrote:
->
-> + GPIO folks for the below API query
->
-> On Fri, Oct 10, 2025 at 08:32:51PM +0200, Konrad Dybcio wrote:
-> > On 10/10/25 8:25 PM, Manivannan Sadhasivam wrote:
-> > > Even for the new DT binding where the PHY and PERST# properties are
-> > > specified in the Root Port, both are optional. Hence, treat them as
-> > > optional in the driver too.
-> >
-> > I suppose this makes sense if the PHY is transparent to the OS
-> > or otherwise pre-programmed and PERST# is hardwired or otherwise
-> > unnecessary.. both of which I suppose aren't totally impossible..
-> >
->
-> PERST# is by definition an optional signal, but I'm not sure about why PH=
-Y is
-> not used by the controller driver.
->
-> > >
-> > > If both properties are not specified, then fall back to parsing the l=
-egacy
-> > > binding for backwards compatibility.
-> > >
-> > > Fixes: a2fbecdbbb9d ("PCI: qcom: Add support for parsing the new Root=
- Port binding")
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualc=
-omm.com>
-> > > ---
-> > >  drivers/pci/controller/dwc/pcie-qcom.c | 11 +++++++++--
-> > >  1 file changed, 9 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/con=
-troller/dwc/pcie-qcom.c
-> > > index 805edbbfe7eba496bc99ca82051dee43d240f359..d380981cf3ad78f549de3=
-dc06bd2f626f8f53920 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > @@ -1720,13 +1720,20 @@ static int qcom_pcie_parse_port(struct qcom_p=
-cie *pcie, struct device_node *node
-> > >
-> > >     reset =3D devm_fwnode_gpiod_get(dev, of_fwnode_handle(node),
-> > >                                   "reset", GPIOD_OUT_HIGH, "PERST#");
-> > > -   if (IS_ERR(reset))
-> > > +   if (IS_ERR(reset) && PTR_ERR(reset) !=3D -ENOENT)
-> > >             return PTR_ERR(reset);
-> >
-> > Please introduce an _optional variant instead
-> >
->
-> Linus, Bartosz, are you OK with devm_fwnode_gpiod_get_optional() API? Jus=
-t
-> wanted to confirm before I go ahead as there are existing users checking =
-for
-> -ENOENT explicitly. Not sure if they are doing it for a reason other than=
- the
-> absence of the _optional variant or not.
->
+When there is no port entry in the tcpci entry itself, the driver will
+trigger an error message "OF: graph: no port node found in /...../typec" .
 
-I'm fine as long as it follows the conventions established by other
-GPIOLIB _optional interfaces.
+It is documented that the dts node should contain an connector entry
+with ports and several port pointing to devices with usb-role-switch
+property set. Only when those connector entry is missing, it should
+check for port entries in the main node.
 
-Bart
+We switch the search order for looking after ports, which will avoid the
+failure message while there are explicit connector entries.
+
+Fixes: d56de8c9a17d ("usb: typec: tcpm: try to get role switch from tcpc fwnode")
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+Changes in v2:
+- fixed typos in the description
+- added fixes tag
+- added Cc: stable@vger.kernel.org
+- Link to v1: https://lore.kernel.org/r/20251003-b4-ml-topic-tcpm-v1-1-3cdd05588acb@pengutronix.de
+---
+ drivers/usb/typec/tcpm/tcpm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index b2a568a5bc9b0ba5c50b7031d8e21ee09cefa349..cc78770509dbc6460d75816f544173d6ab4ef873 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -7876,9 +7876,9 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
+ 
+ 	port->partner_desc.identity = &port->partner_ident;
+ 
+-	port->role_sw = usb_role_switch_get(port->dev);
++	port->role_sw = fwnode_usb_role_switch_get(tcpc->fwnode);
+ 	if (!port->role_sw)
+-		port->role_sw = fwnode_usb_role_switch_get(tcpc->fwnode);
++		port->role_sw = usb_role_switch_get(port->dev);
+ 	if (IS_ERR(port->role_sw)) {
+ 		err = PTR_ERR(port->role_sw);
+ 		goto out_destroy_wq;
+
+---
+base-commit: e406d57be7bd2a4e73ea512c1ae36a40a44e499e
+change-id: 20251003-b4-ml-topic-tcpm-27146727d76a
+
+Best regards,
+-- 
+Michael Grzeschik <m.grzeschik@pengutronix.de>
+
 
