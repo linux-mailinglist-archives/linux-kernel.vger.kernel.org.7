@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-851396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C63BD659F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:27:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48CEBD65A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C57C4EFDC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:27:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9B6A4ED4F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AAF2EBDE0;
-	Mon, 13 Oct 2025 21:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FD52EBDE0;
+	Mon, 13 Oct 2025 21:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8Yq9oSW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIJFx1Tr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9795A2EA17B;
-	Mon, 13 Oct 2025 21:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3B22EAB66;
+	Mon, 13 Oct 2025 21:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760390869; cv=none; b=k5ASFXY0wV2QGHm1ulFAd0B6BeDEOUzW45qp+ZEbQfYLgldCy64eJ9UicZ6YhkbUK3HCfUAmy6swhN0K5WuaenA/+45vOdYVyFYGWWILzjo3YJpXAJcb7p+tXakwMvG0q0IsUheJ4ua3qnkGTdgoF60PAHC6SZJbgj+ABVr7pao=
+	t=1760390883; cv=none; b=s7aswWgERGLVbVpPAzHwDX7cpLHI9KJxMZ+gPwVHeBXRIiYHCIeq4nNErRin5cLldkXw17ez/rnU8RKyUguigRb+N8l+fTIvXEzeCsdPzLqkdNjBDjiNRHUpT7V37kauqGWsejBB4MRBZXHx8kgKlcBkxGV9xL8dYJ8LL+xVsIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760390869; c=relaxed/simple;
-	bh=P6Br4Sjeov9gRAY608C0I9bf7O6QwhsS9+wR0FuimDc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xxwvuv8Gnwsmo/j+IAPbXBp77OG0ULkuHFoWxFMye6mxUaMi0pv+Pt24gx7++BAkt8BD3TxKk6zODCi3D4rMprPe24d8kKkmDCXAQ4KGJSaFKEk7N9vo4bc1UlYIduo1AOfwRzo8aowNDwp/BKtDpkcJxZtRXy6jKOP9EIeozR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8Yq9oSW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F89C4CEE7;
-	Mon, 13 Oct 2025 21:27:46 +0000 (UTC)
+	s=arc-20240116; t=1760390883; c=relaxed/simple;
+	bh=/vCGp4dN24zHOrwDoNn2Y3f2GKlV2uG2TwuEjOBom6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=du4jdTVDpL7jccWAyYL2cIUO1duf6sDyHhgAkix62jwj6nD1kN9v13DT+ACQ0wb+xv0Spca8jJ+XlN5QS+D2Jgogs8FJzgz23WbGqq0AnPkainUchWh0+jixF5T/BLDpc8zMXu2Lgy3A26MQ6FAuvGVog9n49ubiulCTkPZS5gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIJFx1Tr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E310C4CEE7;
+	Mon, 13 Oct 2025 21:28:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760390869;
-	bh=P6Br4Sjeov9gRAY608C0I9bf7O6QwhsS9+wR0FuimDc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=t8Yq9oSWnfRJjh0Lb0x/JSbt1d8Zxw+3/AfWDrVuBkseMOSgkiucMg4qxQ3HuW7P/
-	 BZw0vTD71eHvHchF8j2QkeaPJn09C6Qmc39fQyyiu4qn98GMYVkU5Jug3/BXM+PIne
-	 LpSHPSlWLcVQsqPbR0O+IyreOksLtx4yrwWI1dE/IAmCgdnxZYGZIf8VAV/g6I+bbM
-	 lt8emjPIxdtJRPg5yg742bMbJ8ax0HlRQgRM1BToOytYUMXl3bn8YvycqNtJtoC9XQ
-	 yCkm/Igkfbi85Kgzah/7tfk7b5Qig66BzXphySJQUH+8mrPRsXkvOF0CRakwnItDcK
-	 ZojPX0lnQnWyg==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Mon, 13 Oct 2025 14:27:36 -0700
-Subject: [PATCH] x86/mm: Ensure clear_page() variants always have
- __kcfi_typeid_ symbols
+	s=k20201202; t=1760390882;
+	bh=/vCGp4dN24zHOrwDoNn2Y3f2GKlV2uG2TwuEjOBom6Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ZIJFx1Tri7fL9usBTJ8do1OAIl55dlPPxgGzv8879OtuSZXEQocmMJuhBTt9ZnmJZ
+	 7rr/Osh9CVL5KjyPVXe30y6i8jHTMrOZzM/6dicRhIGgNCo6fucDxBBo4A7WA3ize6
+	 KszucXDO3LlfB8d1tgRwVI/S/YkQ2nbOaD0FlrvHBk/sq9P7rv4UbAgrXVfB34G2vm
+	 OnHj3EaySJoEa2UEd6xvQk5WH8lRK/a2n3r1CBwvYomRmoqEzvgo598OEDlDfXs0EU
+	 3So5a6C258p/jGkNHSJ+oct9LfP6UAAVuhCt+7ayu4rwvYXh7e72AEbvrAjeX/Yj4A
+	 J8+UxKF35KepA==
+Date: Mon, 13 Oct 2025 16:28:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ron Economos <re@w6rz.net>
+Cc: bhelgaas@google.com, rishna.chundru@oss.qualcomm.com, mani@kernel.org,
+	helgaas@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv <linux-riscv@lists.infradead.org>,
+	Paul Walmsley <pjw@kernel.org>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Conor Dooley <conor@kernel.org>, regressions@lists.linux.dev
+Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
+Message-ID: <20251013212801.GA865570@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-x86-fix-clear_page-cfi-full-lto-errors-v1-1-d69534c0be61@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMdu7WgC/x2N3QrCMAxGX2Xk2kC7uh/2KiISaqqBso50SmHs3
- Q1eHvjOdw6orMIVlu4A5a9UKauBv3QQ37S+GOVpDL3rB+98wDaPmKRhzEz62MgWMQmmT86Y94K
- sWrSin0IiGsI4Xx3Y2aZs1j90u5/nD4Xc0A54AAAA
-X-Change-ID: 20251013-x86-fix-clear_page-cfi-full-lto-errors-173faa536840
-To: Peter Zijlstra <peterz@infradead.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, Sami Tolvanen <samitolvanen@google.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2742; i=nathan@kernel.org;
- h=from:subject:message-id; bh=P6Br4Sjeov9gRAY608C0I9bf7O6QwhsS9+wR0FuimDc=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBlv8y5FhGwT/+j81ODgCsl8r3tPFkr3T/3wPUxA2WGdy
- +W+vuzGjlIWBjEuBlkxRZbqx6rHDQ3nnGW8cWoSzBxWJpAhDFycAjCRqzsYGZYnHPj99NfVUxcm
- Pj8wi+Hm68g5k1gcij7v2/m4oXlmQ9BVhv+FWocz5pRuEZU5fXYip/exD5GlueySJaGTPhu1swb
- JnuICAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <eac81c57-1164-4d74-a1b4-6f353c577731@w6rz.net>
 
-When building with CONFIG_CFI=y and CONFIG_LTO_CLANG_FULL=y, there is a
-series of errors from the various versions of clear_page() not having
-__kcfi_typeid_ symbols.
+[+cc FU740 driver folks, Conor, regressions]
 
-  $ cat kernel/configs/repro.config
-  CONFIG_CFI=y
-  # CONFIG_LTO_NONE is not set
-  CONFIG_LTO_CLANG_FULL=y
+On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
+> The SiFive FU740 PCI driver fails on the HiFive Unmatched board with Linux
+> 6.18-rc1. The error message is:
+> 
+> [    3.166624] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
+> ranges:
+> [    3.166706] fu740-pcie e00000000.pcie:       IO
+> 0x0060080000..0x006008ffff -> 0x0060080000
+> [    3.166767] fu740-pcie e00000000.pcie:      MEM
+> 0x0060090000..0x007fffffff -> 0x0060090000
+> [    3.166805] fu740-pcie e00000000.pcie:      MEM
+> 0x2000000000..0x3fffffffff -> 0x2000000000
+> [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
+> 0xdf0000000-0xdffffffff] for [bus 00-ff]
+> [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
+> [    3.579552] fu740-pcie e00000000.pcie: Failed to configure iATU in ECAM
+> mode
+> [    3.579655] fu740-pcie e00000000.pcie: probe with driver fu740-pcie
+> failed with error -22
+> 
+> The normal message (on Linux 6.17.2) is:
+> 
+> [    3.381487] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
+> ranges:
+> [    3.381584] fu740-pcie e00000000.pcie:       IO
+> 0x0060080000..0x006008ffff -> 0x0060080000
+> [    3.381682] fu740-pcie e00000000.pcie:      MEM
+> 0x0060090000..0x007fffffff -> 0x0060090000
+> [    3.381724] fu740-pcie e00000000.pcie:      MEM
+> 0x2000000000..0x3fffffffff -> 0x2000000000
+> [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 ib, align
+> 4K, limit 4096G
+> [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
+> [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+> [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+> [    3.988164] fu740-pcie e00000000.pcie: PCI host bridge to bus 0000:00
+> 
+> Reverting the following commits solves the issue.
+> 
+> 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc: Support ECAM mechanism by
+> enabling iATU 'CFG Shift Feature'
+> 
+> 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom: Prepare for the DWC ECAM
+> enablement
+> 
+> f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc: Prepare the driver for
+> enabling ECAM mechanism using iATU 'CFG Shift Feature'
 
-  $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 clean defconfig repro.config bzImage
-  ld.lld: error: undefined symbol: __kcfi_typeid_clear_page_rep
-  >>> referenced by ld-temp.o
-  >>>               vmlinux.o:(__cfi_clear_page_rep)
+As Conor pointed out, we can't fix a code regression with a DT change.
 
-  ld.lld: error: undefined symbol: __kcfi_typeid_clear_page_orig
-  >>> referenced by ld-temp.o
-  >>>               vmlinux.o:(__cfi_clear_page_orig)
-
-  ld.lld: error: undefined symbol: __kcfi_typeid_clear_page_erms
-  >>> referenced by ld-temp.o
-  >>>               vmlinux.o:(__cfi_clear_page_erms)
-
-With full LTO, it is possible for LLVM to realize that these functions
-never have their address taken (as they are only used within an
-alternative, which will make them a direct call) across the whole kernel
-and either drop or skip generating their kCFI type identification
-symbols.
-
-clear_page_{rep,orig,erms}() are defined in clear_page_64.S with
-SYM_TYPED_FUNC_START as a result of commit 2981557cb040 ("x86,kcfi: Fix
-EXPORT_SYMBOL vs kCFI"), as exported functions are free to be called
-indirectly thus need kCFI type identifiers.
-
-Use KCFI_REFERENCE with these clear_page() functions to force LLVM to
-see these functions as address-taken and generate then keep the kCFI
-type identifiers.
-
-Fixes: 2981557cb040 ("x86,kcfi: Fix EXPORT_SYMBOL vs kCFI")
-Closes: https://github.com/ClangBuiltLinux/linux/issues/2128
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
-Alternatively, these functions could move back to SYM_FUNC_START with a
-comment that they need to be exported to be called via the alternative
-in clear_page() but they are never expected to be called indirectly.
----
- arch/x86/include/asm/page_64.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index 015d23f3e01f..53f4089333f2 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -43,6 +43,9 @@ extern unsigned long __phys_addr_symbol(unsigned long);
- void clear_page_orig(void *page);
- void clear_page_rep(void *page);
- void clear_page_erms(void *page);
-+KCFI_REFERENCE(clear_page_orig);
-+KCFI_REFERENCE(clear_page_rep);
-+KCFI_REFERENCE(clear_page_erms);
- 
- static inline void clear_page(void *page)
- {
-
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251013-x86-fix-clear_page-cfi-full-lto-errors-173faa536840
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
-
+#regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the driver for enabling ECAM mechanism using iATU 'CFG Shift Feature'")
 
