@@ -1,278 +1,209 @@
-Return-Path: <linux-kernel+bounces-849913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731D8BD1518
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:19:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CD7BD1536
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C91F3A3DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0AA3B81CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269E3285C99;
-	Mon, 13 Oct 2025 03:19:23 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB35623D7F4;
-	Mon, 13 Oct 2025 03:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7891A83F9;
+	Mon, 13 Oct 2025 03:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b="JtCAD0qv"
+Received: from mail-m19731100.qiye.163.com (mail-m19731100.qiye.163.com [220.197.31.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3E28248C;
+	Mon, 13 Oct 2025 03:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760325562; cv=none; b=QQIdJ7/zqk3GTrL29NiVNNsqwnZvY9+IppPv4FV0RjA/JAbssZAz4cwzgfBh2ji3RcSprCWvTkg8Z64mdxMR9N83EaA23A0UV1UihELGxzoHDNTgTWOnJEWkAFP15eXMGRncrC2d8Uymod3MhrKxzVLYzXm3IlwxzIcwo2jVNhs=
+	t=1760326506; cv=none; b=D4+FO9LVaVnlm1ZleUJplVYb/hrEX1e2Ehi5q4L8Lm/ZF+XTFDW5p+XTY8ROs8BBFNfDUITRI2xIEJJRykYe0WDGsePHu+gxLvLdRYUSJxFuQX7hdzMlJTMlhY7coLxA9qvFWTIG0bjJVgrGSLNTN1vREXQZTjREL8nSt4nF2v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760325562; c=relaxed/simple;
-	bh=N3LHKPL5OVrA7eGEWAK9jGaZkBqysPyAEOHnkVU9HOc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=TMAqQRRcM4pFlnFnGZrrdGRW+GcQlAxW1ineif1kGnAEzQJkrtAStk1uBfpGlNa5n/m5PiYboKsIP16GpSBARk8YGeoAB0jAy0udOAMnoy+hXXTsBK2WD9fZELoZXCCvvC3p3Tqv9OE9NtwN5G4Hm8MuGxkPEHjlXffSnVftLgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.239])
-	by gateway (Coremail) with SMTP id _____8BxmdGsb+xo0G0VAA--.46182S3;
-	Mon, 13 Oct 2025 11:19:09 +0800 (CST)
-Received: from [10.20.42.239] (unknown [10.20.42.239])
-	by front1 (Coremail) with SMTP id qMiowJDxQ+Sjb+xoegPdAA--.32361S3;
-	Mon, 13 Oct 2025 11:19:01 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: KVM: Add AVEC support
-To: Bibo Mao <maobibo@loongson.cn>, chenhuacai@kernel.org
-Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev, kernel@xen0n.name,
- linux-kernel@vger.kernel.org
-References: <20251010064858.2392927-1-gaosong@loongson.cn>
- <39779e6d-2f09-4ee9-e5e0-97fc09efbbf5@loongson.cn>
-From: gaosong <gaosong@loongson.cn>
-Message-ID: <a2d41419-2268-c041-9858-9287056d7f31@loongson.cn>
-Date: Mon, 13 Oct 2025 11:18:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1760326506; c=relaxed/simple;
+	bh=svEPDG7/Qmde6PXCAlOUZOHbwwzhJEx22CAaTz9dfLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=chWyw4TJ04mKOmG+jh8W7VkjjLlM1+mzdRAGOJcTZAMOknD7pqid8tXgNnrfeXDPfherIf8xuRNEDk3pUXylHI6p2lOX5e2cIt4MgBGPCOHrVIQkzh0/C6oWkCKTZbZUbxcnBaROmsQeb5sKinEHse8sS6mP8FMIXBHR93iw49M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn; spf=pass smtp.mailfrom=cqsoftware.com.cn; dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b=JtCAD0qv; arc=none smtp.client-ip=220.197.31.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cqsoftware.com.cn
+Received: from localhost.localdomain (unknown [1.193.57.161])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25a875df5;
+	Mon, 13 Oct 2025 11:19:37 +0800 (GMT+08:00)
+From: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+To: alexs@kernel.org,
+	si.yanteng@linux.dev,
+	corbet@lwn.net
+Cc: dzm91@hust.edu.cn,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+Subject: [PATCH v2] docs/zh_CN: Add secrets coco Chinese translation
+Date: Mon, 13 Oct 2025 11:19:27 +0800
+Message-ID: <20251013031928.36643-1-zhaoshuo@cqsoftware.com.cn>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <39779e6d-2f09-4ee9-e5e0-97fc09efbbf5@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowJDxQ+Sjb+xoegPdAA--.32361S3
-X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3XrWruF15KFWDJF15CFyDurX_yoWfAF1fpr
-	1kAFWDWrWrKrn7tF1UJr1qvryUXr18tw17Xr1UtFWUJF1UJr1Yqr40gryqgF1UJw48JF18
-	Ar15JrnrZF4UJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1QV
-	y3UUUUU==
+X-HM-Tid: 0a99db94a98409d0kunm47b4f9442c5cedb
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTkxJVkwZTU1CGRhMGkNKSlYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKVUpCSFVOTFVKTUpZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSktLVU
+	pCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=JtCAD0qvvzp4t4C4q0i97WqrQ7Upf1frE3SArCYeIlhUHxWWq5/ax6qCYw3+mnlwHYSKmGtjq4s2qwrbirOX9ArN44Th6KnOdz0kYtCt7HYcqGFzh9S/VT5Xt0Yeba9G4eidVRTrfkNAJRu/Dd2d4/UJBZC7D4NBQdpNGfGESHY=; s=default; c=relaxed/relaxed; d=cqsoftware.com.cn; v=1;
+	bh=h2/6R3OlWKqibne9cw3Tz9uqHUzrB6MhtFoNxA+g9f8=;
+	h=date:mime-version:subject:message-id:from;
 
-在 2025/10/11 上午9:29, Bibo Mao 写道:
->
->
-> On 2025/10/10 下午2:48, Song Gao wrote:
->> Add cpu_has_msgint() to check whether the host cpu supported avec,
->> and restore/save CSR_MSGIS0-CSR_MSGIS3.
->>
->> Signed-off-by: Song Gao <gaosong@loongson.cn>
->> ---
->> Based-on: 
->> https://patchew.org/linux/20250930093741.2734974-1-maobibo@loongson.cn/
->> v2: fix build error.
-> It is not necessary based on this patch, you can base it on master 
-> branch. The later merged patch need based on previous version in general.
->
-Got it.
->>
->>   arch/loongarch/include/asm/kvm_host.h |  4 ++++
->>   arch/loongarch/include/asm/kvm_vcpu.h |  1 +
->>   arch/loongarch/include/uapi/asm/kvm.h |  1 +
->>   arch/loongarch/kvm/interrupt.c        |  3 +++
->>   arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
->>   arch/loongarch/kvm/vm.c               |  4 ++++
->>   6 files changed, 30 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/loongarch/include/asm/kvm_host.h 
->> b/arch/loongarch/include/asm/kvm_host.h
->> index 392480c9b958..446f1104d59d 100644
->> --- a/arch/loongarch/include/asm/kvm_host.h
->> +++ b/arch/loongarch/include/asm/kvm_host.h
->> @@ -285,6 +285,10 @@ static inline bool kvm_guest_has_lbt(struct 
->> kvm_vcpu_arch *arch)
->>       return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | 
->> CPUCFG2_MIPSBT);
->>   }
->>   +static inline bool cpu_has_msgint(void)
->> +{
->> +    return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
->> +}
->>   static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
->>   {
->>       return arch->cpucfg[6] & CPUCFG6_PMP;
->> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h 
->> b/arch/loongarch/include/asm/kvm_vcpu.h
->> index f1efd7cfbc20..3784ab4ccdb5 100644
->> --- a/arch/loongarch/include/asm/kvm_vcpu.h
->> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
->> @@ -15,6 +15,7 @@
->>   #define CPU_PMU                (_ULCAST_(1) << 10)
->>   #define CPU_TIMER            (_ULCAST_(1) << 11)
->>   #define CPU_IPI                (_ULCAST_(1) << 12)
->> +#define CPU_AVEC                        (_ULCAST_(1) << 14)
->>     /* Controlled by 0x52 guest exception VIP aligned to estat bit 
->> 5~12 */
->>   #define CPU_IP0                (_ULCAST_(1))
->> diff --git a/arch/loongarch/include/uapi/asm/kvm.h 
->> b/arch/loongarch/include/uapi/asm/kvm.h
->> index 57ba1a563bb1..de6c3f18e40a 100644
->> --- a/arch/loongarch/include/uapi/asm/kvm.h
->> +++ b/arch/loongarch/include/uapi/asm/kvm.h
->> @@ -104,6 +104,7 @@ struct kvm_fpu {
->>   #define  KVM_LOONGARCH_VM_FEAT_PV_IPI        6
->>   #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME    7
->>   #define  KVM_LOONGARCH_VM_FEAT_PTW        8
->> +#define  KVM_LOONGARCH_VM_FEAT_MSGINT        9
->>     /* Device Control API on vcpu fd */
->>   #define KVM_LOONGARCH_VCPU_CPUCFG    0
->> diff --git a/arch/loongarch/kvm/interrupt.c 
->> b/arch/loongarch/kvm/interrupt.c
->> index 8462083f0301..adc278fb3cb9 100644
->> --- a/arch/loongarch/kvm/interrupt.c
->> +++ b/arch/loongarch/kvm/interrupt.c
->> @@ -21,6 +21,7 @@ static unsigned int 
->> priority_to_irq[EXCCODE_INT_NUM] = {
->>       [INT_HWI5]    = CPU_IP5,
->>       [INT_HWI6]    = CPU_IP6,
->>       [INT_HWI7]    = CPU_IP7,
->> +    [INT_AVEC]    = CPU_AVEC,
->>   };
->>     static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int 
->> priority)
->> @@ -36,6 +37,7 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
->> unsigned int priority)
->>       case INT_IPI:
->>       case INT_SWI0:
->>       case INT_SWI1:
->> +    case INT_AVEC:
->>           set_gcsr_estat(irq);
-> Do we need cpu_has_msgint() here ? It is impossible that VMM inject 
-> INT_AVEC interrrupt on non-msgint machine such as 3C5000.
->
-yes we need , how about this?
+Translate .../security/secrets/coco.rst into Chinese.
 
-@@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
-unsigned int priority)
-         if (priority < EXCCODE_INT_NUM)
-                 irq = priority_to_irq[priority];
+Update the translation through commit d56b699d76d1
+("Documentation: Fix typos").
 
-+        if (cpu_has_msgint() && (priority == INT_AVEC)) {
-+                set_gcsr_estat(irq);
-+                return 1;
-+        }
+Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+---
+
+v2:
+
+Revise the references.
+
+ .../zh_CN/security/secrets/coco.rst           | 96 +++++++++++++++++++
+ .../zh_CN/security/secrets/index.rst          |  9 +-
+ 2 files changed, 99 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/translations/zh_CN/security/secrets/coco.rst
+
+diff --git a/Documentation/translations/zh_CN/security/secrets/coco.rst b/Documentation/translations/zh_CN/security/secrets/coco.rst
+new file mode 100644
+index 000000000000..a27bc1acdb7c
+--- /dev/null
++++ b/Documentation/translations/zh_CN/security/secrets/coco.rst
+@@ -0,0 +1,96 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. include:: ../../disclaimer-zh_CN.rst
 +
-         switch (priority) {
-         case INT_TI:
-         case INT_IPI:
-
-Thanks.
-Song Gao
-
-
->>           break;
->>   @@ -63,6 +65,7 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, 
->> unsigned int priority)
->>       case INT_IPI:
->>       case INT_SWI0:
->>       case INT_SWI1:
->> +    case INT_AVEC:
->>           clear_gcsr_estat(irq);
-> Ditto.
->
-> The others look good to me.
->
-> Regards
-> Bibo Mao
->>           break;
->>   diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->> index 30e3b089a596..226c735155be 100644
->> --- a/arch/loongarch/kvm/vcpu.c
->> +++ b/arch/loongarch/kvm/vcpu.c
->> @@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
->>           *v = GENMASK(31, 0);
->>           return 0;
->>       case LOONGARCH_CPUCFG1:
->> -        /* CPUCFG1_MSGINT is not supported by KVM */
->> -        *v = GENMASK(25, 0);
->> +        *v = GENMASK(26, 0);
->>           return 0;
->>       case LOONGARCH_CPUCFG2:
->>           /* CPUCFG2 features unconditionally supported by KVM */
->> @@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
->>           return -EINVAL;
->>         switch (id) {
->> +    case LOONGARCH_CPUCFG1:
->> +        if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
->> +            return -EINVAL;
->> +        return 0;
->>       case LOONGARCH_CPUCFG2:
->>           if (!(val & CPUCFG2_LLFTP))
->>               /* Guests must have a constant timer */
->> @@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu 
->> *vcpu, int cpu)
->>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
->>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
->> +    if (cpu_has_msgint()) {
->> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
->> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
->> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
->> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
->> +    }
->>         /* Restore Root.GINTC from unused Guest.GINTC register */
->>       write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
->> @@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu 
->> *vcpu, int cpu)
->>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
->>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
->> +    if (cpu_has_msgint()) {
->> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
->> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
->> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
->> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
->> +    }
->>         vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
->>   diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
->> index d8c813e2d72e..438885b6f2b1 100644
->> --- a/arch/loongarch/kvm/vm.c
->> +++ b/arch/loongarch/kvm/vm.c
->> @@ -37,6 +37,9 @@ static void kvm_vm_init_features(struct kvm *kvm)
->>           kvm->arch.support_features |= 
->> BIT(KVM_LOONGARCH_VM_FEAT_PV_STEALTIME);
->>       }
->>   +    if (cpu_has_msgint())
->> +        kvm->arch.support_features |= 
->> BIT(KVM_LOONGARCH_VM_FEAT_MSGINT);
->> +
->>       val = read_csr_gcfg();
->>       if (val & CSR_GCFG_GPMP)
->>           kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_PMU);
->> @@ -153,6 +156,7 @@ static int kvm_vm_feature_has_attr(struct kvm 
->> *kvm, struct kvm_device_attr *attr
->>       case KVM_LOONGARCH_VM_FEAT_PMU:
->>       case KVM_LOONGARCH_VM_FEAT_PV_IPI:
->>       case KVM_LOONGARCH_VM_FEAT_PV_STEALTIME:
->> +        case KVM_LOONGARCH_VM_FEAT_MSGINT:
->>           if (kvm_vm_support(&kvm->arch, attr->attr))
->>               return 0;
->>           return -ENXIO;
->>
->
++:Original: Documentation/security/secrets/coco.rst
++
++:翻译:
++
++ 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
++
++============
++机密计算密钥
++============
++
++本文档介绍了在EFI驱动程序和efi_secret内核模块中，机密计算密钥从固件
++到操作系统的注入处理流程。
++
++简介
++====
++
++机密计算硬件（如AMD SEV，Secure Encrypted Virtualization）允许虚拟机
++所有者将密钥注入虚拟机（VM）内存，且主机/虚拟机监控程序无法读取这些密
++钥。在SEV中，密钥注入需在虚拟机启动流程的早期阶段（客户机开始运行前）
++执行。
++
++efi_secret内核模块允许用户空间应用程序通过securityfs（安全文件系统）访
++问这些密钥。
++
++密钥数据流
++==========
++
++客户机固件可能会为密钥注入预留一块指定的内存区域，并将该区域的位置（基准
++客户机物理地址GPA和长度）在EFI配置表中，通过 ``LINUX_EFI_COCO_SECRET_AREA_GUID``
++条目（对应的GUID值为 ``adf956ad-e98c-484c-ae11-b51c7d336447`` ）的形式发布。
++固件应将此内存区域标记为 ``EFI_RESERVED_TYPE`` ，因此内核不应将其用于自身用途。
++
++虚拟机启动过程中，虚拟机管理器可向该区域注入密钥。在AMD SEV和SEV-ES中，此
++操作通过 ``KVM_SEV_LAUNCH_SECRET`` 命令执行（参见 [sev_CN]_ ）。注入的“客户机
++所有者密钥数据”应采用带GUID的密钥值表结构，其二进制格式在 ``drivers/virt/
++coco/efi_secret/efi_secret.c`` 文件的EFI密钥区域结构部分中有详细描述。
++
++内核启动时，内核的EFI驱动程序将保存密钥区域位置（来自EFI配置表）到 ``efi.coco_secret``
++字段。随后，它会检查密钥区域是否已填充：映射该区域并检查其内容是否以
++``EFI_SECRET_TABLE_HEADER_GUID`` （对应的GUID为 ``1e74f542-71dd-4d66-963e-ef4287ff173b`` ）
++开头。如果密钥区域已填充，EFI驱动程序将自动加载efi_secret内核模块，并通过securityfs将密钥
++暴露给用户空间应用程序。efi_secret文件系统接口的详细信息请参考 [secrets-coco-abi_CN]_ 。
++
++
++应用使用示例
++============
++
++假设客户机需要对加密文件进行计算处理。客户机所有者通过密钥注入机制提供解密密钥
++（即密钥）。客户机应用程序从efi_secret文件系统读取该密钥，然后将文件解密到内存中，
++接着对内容进行需要的计算。
++
++在此示例中，主机无法从磁盘镜像中读取文件，因为文件是加密的；主机无法读取解密密钥，
++因为它是通过密钥注入机制（即安全通道）传递的；主机也无法读取内存中的解密内容，因为
++这是一个机密型（内存加密）客户机。
++
++以下是一个简单的示例，展示了在客户机中使用efi_secret模块的过程，在启动时注入了
++一个包含4个密钥的EFI密钥区域::
++
++        # ls -la /sys/kernel/security/secrets/coco
++        total 0
++        drwxr-xr-x 2 root root 0 Jun 28 11:54 .
++        drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
++        -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
++        -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
++        -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
++        -r--r----- 1 root root 0 Jun 28 11:54 e6f5a162-d67f-4750-a67c-5d065f2a9910
++
++        # hd /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
++        00000000  74 68 65 73 65 2d 61 72  65 2d 74 68 65 2d 6b 61  |these-are-the-ka|
++        00000010  74 61 2d 73 65 63 72 65  74 73 00 01 02 03 04 05  |ta-secrets......|
++        00000020  06 07                                             |..|
++        00000022
++
++        # rm /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
++
++        # ls -la /sys/kernel/security/secrets/coco
++        total 0
++        drwxr-xr-x 2 root root 0 Jun 28 11:55 .
++        drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
++        -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
++        -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
++        -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
++
++
++参考文献
++========
++
++请参见 [sev-api-spec_CN]_ 以获取有关SEV ``LAUNCH_SECRET`` 操作的更多信息。
++
++.. [sev_CN] Documentation/virt/kvm/x86/amd-memory-encryption.rst
++.. [secrets-coco-abi_CN] Documentation/ABI/testing/securityfs-secrets-coco
++.. [sev-api-spec_CN] https://www.amd.com/system/files/TechDocs/55766_SEV-KM_API_Specification.pdf
++
+diff --git a/Documentation/translations/zh_CN/security/secrets/index.rst b/Documentation/translations/zh_CN/security/secrets/index.rst
+index 5ea78713f10e..38464dcb2c3c 100644
+--- a/Documentation/translations/zh_CN/security/secrets/index.rst
++++ b/Documentation/translations/zh_CN/security/secrets/index.rst
+@@ -5,13 +5,10 @@
+ 
+ :翻译:
+ 
+-=====================
++========
+ 密钥文档
+-=====================
++========
+ 
+ .. toctree::
+ 
+-
+-TODOLIST:
+-
+-* coco
++   coco
+-- 
+2.49.0
 
 
