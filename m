@@ -1,155 +1,124 @@
-Return-Path: <linux-kernel+bounces-851280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36116BD6032
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:54:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C622FBD603E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AF7D934FEB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B33405EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E132DAFC3;
-	Mon, 13 Oct 2025 19:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9072DAFDD;
+	Mon, 13 Oct 2025 19:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YygP3bz8"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="tSMPaCM3"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCFA24EAB1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4982E2D7385;
+	Mon, 13 Oct 2025 19:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760385270; cv=none; b=aRONh6gBJt12+azvLpetVeQxjILMAonqnsjPiuJlzR3FVkV+AjOvs8LfEE+HHlG5kwFPQh85ZPosMyxe1QP4Zvvx5/30kDUdAHWP6AVJYbZbpBeWvhHY2i9FZNmCuPiPDFek1ixB6hp8o7DKkkee0SiJIgX3U/YW5T2h571tQ50=
+	t=1760385314; cv=none; b=F9uhjpJ5WtAZY8im2oGs1G4XHpjiJTKD+2DC1S+LWIBaJtGu/9CHkZge5K6+5QRYyL07H8Yzm6m3xT/HBFgzkywtPLMBp7fSCwTTCML8dPRwdwn98m7/ZLXR6yRffpoPoeLBZXu1szOYUAX01QT9B4CxWcCfYmwtsVlX9H9XynQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760385270; c=relaxed/simple;
-	bh=702xTHcKSBnArYRUXhSl43M+M8Li1OOWTnkHKboTLp4=;
+	s=arc-20240116; t=1760385314; c=relaxed/simple;
+	bh=p04emB7EWJKdYHfPdfNWI5BlN1aHWFazFo2EChhEZhw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIuq3i6BubHkJttzLsJi+GHB7jreopH5E9jLjTv5H063mbJLSgHpVo4LZmc1QWPKCbYKd5OmRdvOhdRNf8SaWoy4BniumFOvre7mOlwD8vOXjfe3jKA9xbWIMCnOPX6/FUts/LRcEuqU3a+rml4rZiXAEm9nbaG0WSSC6X5yJTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YygP3bz8; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-781997d195aso3245035b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:54:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760385267; x=1760990067; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hAv6GwqJAzZpN6xxdtpR+366Re0k3BBFU9P4xZ+xJFs=;
-        b=YygP3bz8h6VmJK6M/fE16uLYn3bck8janxD20Tqp/axqnAcAyOr2kOrW/PUKefdiQq
-         gIK1OD18Wv5xphOQjLzD81NNQlXSozaDqQOM0oKH0pUYKZ/wqPOI7Z01wDstJ4KpEQFf
-         nrIUyxPbk3wOhVJTsi/w1pbUC0+KZ/X5zvIj0YnhIpXIGsj0u4D0wWC/n5c1m2VRISWN
-         sHLdTFdBZ0K6m3hgjykYFpRT1VN3OGXIb1tSPCeRcDAjrCHGqJfnqrB/bAY/hiJyC/7/
-         I1UTNwp3RSctcWewXZ7gzQ9oBsPETP39nodCBqsesbRuWDeGHuSsNj2Mhna8bbn+MWqx
-         vd4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760385267; x=1760990067;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAv6GwqJAzZpN6xxdtpR+366Re0k3BBFU9P4xZ+xJFs=;
-        b=Utr2WcZWVkdh2X4W23G47qClUbbdagV5R2CYRAyoXCelbFVj972CgHCsp/6qowOeBf
-         ORNsf+3nRUM22v7aHad2pKNEvtMjxwPu7gCUQwhtGQ+ymQEQEw3T0Dp638o3KCdLehiq
-         hU8ULKRVFIHTOvSLt3Ycczexcb+wdUwEGTe4GNbwy/2lTgwAaYE42lhyT9q+ZlvTsmjq
-         /+x/Z0Y0BrMYPhpmmgQy8tYM9R8L/ZkKrPbl//cDrTwTpT61v7oVRN1+LFb4fQuuiPqv
-         18sl4LrudlBFWdW1BW7Qjv3W3sE0oBwMaAX6ruuu523O/s82kwtCb1wso7jrgXKUrUo9
-         N8IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6VtS2Cd9b1EX6oOJkms0PWVQpHDiLu8qydl7baA8zPY5ZVL3IESRfeJy1daialyall07p4gFyQo3cv3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy56ZwYMN3dXt+C8u9c5rQHEDd+FQVVT5j8FTZJmLHNiOxa3Uzm
-	uWne3ZmWMLjiPacxUoQEbmBKNQheAJjbjcr3WPXplURGazqy+FlCCAuW
-X-Gm-Gg: ASbGnctWBXnlKk8n/7bT1FnJzKtg2SW6/zVwZ7dRpc3YjyZYkQsL+TbCz523mBgu56Q
-	G0ShKiWZCmOVVrAwa22CqALbZ/LjeXwuyxwFDC5NPtnud7Q7RUiclGUn5/TLG1wlUsDqLqIOCAP
-	MKDeEXN9O9m3r1YOOKDWdIGRWoJYyOz+1r2WQizZ6W+ibUZrk2K0pU6wXv/AykbOQXAdhn/Yg06
-	lkFzgEa3kfVx+pUb9dYu5VWk0LQX30j/fzntF5lrzhSYkecdAwKDCiB2AWUIAM3GAF7KgsIVWWH
-	Hy2aXlD8Og8WwHT+60MaI9dhugP38eLAbELlYTYYnvlGzE6mbF6hBZS/l76sI4SYBlEk5FzhOcz
-	Y6up57eG4F5dfp5kdWftCCt7vadl+7ecSnXKlFqlQHdM/+X9Hj12jLo1ucnG1YRCi
-X-Google-Smtp-Source: AGHT+IHQowLp57E0QwzAjWObp13r/o2qZgEpUfl4qciRWJZWdlUn8yKDeb4LxasXlK+bEOqryzkfUQ==
-X-Received: by 2002:a05:6a20:9144:b0:27b:dcba:a8f3 with SMTP id adf61e73a8af0-32da8154217mr30340774637.15.1760385267100;
-        Mon, 13 Oct 2025 12:54:27 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d096740sm12561009b3a.38.2025.10.13.12.54.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 12:54:26 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 13 Oct 2025 12:54:25 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
-Message-ID: <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net>
-References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com>
- <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R4RGoAawFQUXINQlaUPi5fb/xzWOGECYVnaQP/teZSHghHV/fG64lGRuhEFelTeCQEyxjyKGRcFB22qjIRJY9okUiIgyN5YxdFp0F+RDSNaUxFsM686Dr2HPVg7wxbM4JpC6Rsy91VpmqZe/eCQ6Qm1RJn+KXrBgA2XcZ7VEVpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=tSMPaCM3; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 805B71A134E;
+	Mon, 13 Oct 2025 19:55:06 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 45DA66067B;
+	Mon, 13 Oct 2025 19:55:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 10BD9102F227A;
+	Mon, 13 Oct 2025 21:54:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760385305; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ueA4Mw4ZvAdPduByR8LCFz7NV7MIajA8VN4BjDi+iYc=;
+	b=tSMPaCM3u/5AMWi6C2uaGeO7nteYc8EWKCbf8Atx+55xMokblB8D7uyqQUIN5UN0VCyf8M
+	92rSu2RHAMygLwiTzDHbfNr6o39la14ofppeSKWml+FP2LeSBi+tMVaA9t21CfewwODbPY
+	O2iuzUWMZ9m3sdCASDH/6F85ruQDAszHZA2BlFfDdR01oDoTOGJcZVTzMKsl+PR7xrtB/u
+	kCvU5b6eyw7dGzYrzu/ZYfz+585J2Rmp3YyycCPmvrqpkvXzI4JJICjnHtrTPDlVVxjYUD
+	8Lnbu5vdBtJDAqrcnk19G+o0IESLUGkvny+JXMAEGdeZnfZ8WdPwOeSuFhLf8w==
+Date: Mon, 13 Oct 2025 21:54:55 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org, Carlos Song <carlos.song@nxp.com>,
+	Adrian Fluturel <fluturel.adrian@gmail.com>
+Subject: Re: [PATCH v5 0/5] i3c: Add basic HDR mode support
+Message-ID: <2025101319545551cfb399@mail.local>
+References: <20251007-i3c_ddr-v5-0-444184f7725e@nxp.com>
+ <20251012180327.5d94dda2@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <20251012180327.5d94dda2@jic23-huawei>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
-
-On Fri, Aug 29, 2025 at 04:10:52PM +0300, Ilpo Järvinen wrote:
-> pci-legacy.c under MIPS has a copy of pci_enable_resources() named as
-> pcibios_enable_resources(). Having own copy of same functionality could
-> lead to inconsistencies in behavior, especially now as
-> pci_enable_resources() and the bridge window resource flags behavior are
-> going to be altered by upcoming changes.
+On 12/10/2025 18:03:27+0100, Jonathan Cameron wrote:
+> On Tue, 07 Oct 2025 16:06:12 -0400
+> Frank Li <Frank.Li@nxp.com> wrote:
 > 
-> The check for !r->start && r->end is already covered by the more generic
-> checks done in pci_enable_resources().
+> > Add basic HDR mode support, only support private transfer, not support
+> > CCC command.
+> > 
+> > Update i3c framework API to allow pass down mode and extend driver callback
+> > function.
+> > 
+> > Implement HDR transfer in svc i3c master driver.
+> > 
+> > Simplifed HDR flow is (ref i3c spec line 5514) Figure 129
+> > 
+> > <--              SDR            ---> | <--- HDR
+> > START 0x7E RnW(0) ACK CCC(ENTHDR0) T   HDR-CMD(00-7f write, 80--ff read)
+> > 
+> >                                     ----> |  
+> > HDR-DATA HDR-CRC HDR-RESTART .... HDR-EXIT
+> > 
+> > Note: HDR-CMD is 16bit data, which included 7bit slave address and 8bit
+> > read/write command.
+> > 
+> > svc hardware can auto issue SDR part.
+> > 
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > 
-> Call pci_enable_resources() from MIPS's pcibios_enable_device() and remove
-> pcibios_enable_resources().
+> Whilst there will probably have to be a v6 for the ACPI ID issue in patch 5,
+> I'd like to ask the question of how are we planning to merge this?
 > 
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Maybe an immutable branch either in IIO or I3C trees that the other one picks up?
+> 
+> It's a new driver so could gamble on taking the IIO driver the I3C tree but even
+> then I'd like a topic / immutable branch in case any IIO wide refactors or similar
+> hit this cycle.
+> 
 
-This patch causes boot failures when trying to boot mips images from
-ide drive in qemu. As far as I can see the interface no longer instantiates.
+I can definitively provide an immutable branch once this goes in or if
+you are more comfortable with this, I guess there is no urgency and we
+could apply this over two cycles, first the I3C part and then you can
+take the driver.
 
-Reverting this patch fixes the problem. Bisect log attached for reference.
 
-Guenter
-
----
-# bad: [3a8660878839faadb4f1a6dd72c3179c1df56787] Linux 6.18-rc1
-# good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
-git bisect start 'HEAD' 'v6.17'
-# good: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
-git bisect good 58809f614e0e3f4e12b489bddf680bfeb31c0a20
-# good: [bed0653fe2aacb0ca8196075cffc9e7062e74927] Merge tag 'iommu-updates-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux
-git bisect good bed0653fe2aacb0ca8196075cffc9e7062e74927
-# good: [6a74422b9710e987c7d6b85a1ade7330b1e61626] Merge tag 'mips_6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
-git bisect good 6a74422b9710e987c7d6b85a1ade7330b1e61626
-# bad: [522ba450b56fff29f868b1552bdc2965f55de7ed] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
-git bisect bad 522ba450b56fff29f868b1552bdc2965f55de7ed
-# bad: [256e3417065b2721f77bcd37331796b59483ef3b] Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
-git bisect bad 256e3417065b2721f77bcd37331796b59483ef3b
-# bad: [2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92] Merge tag 'pci-v6.18-changes' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci
-git bisect bad 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
-# bad: [531abff0fa53bc3a2f7f69b2693386eb6bda96e5] Merge branch 'pci/controller/qcom'
-git bisect bad 531abff0fa53bc3a2f7f69b2693386eb6bda96e5
-# bad: [fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3] Merge branch 'pci/resource'
-git bisect bad fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3
-# good: [0bb65e32495e6235a069b60e787140da99e9c122] Merge branch 'pci/p2pdma'
-git bisect good 0bb65e32495e6235a069b60e787140da99e9c122
-# bad: [ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd] PCI: Use pbus_select_window_for_type() during IO window sizing
-git bisect bad ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd
-# bad: [2ee33aa14d3f2e92ba8ae80443f2cd9b575f08cb] PCI: Always claim bridge window before its setup
-git bisect bad 2ee33aa14d3f2e92ba8ae80443f2cd9b575f08cb
-# good: [2657a0c982239fecc41d0df5a69091ca4297647c] m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
-git bisect good 2657a0c982239fecc41d0df5a69091ca4297647c
-# bad: [ae81aad5c2e17fd1fafd930e75b81aedc837f705] MIPS: PCI: Use pci_enable_resources()
-git bisect bad ae81aad5c2e17fd1fafd930e75b81aedc837f705
-# good: [754babaaf33349d9ef27bb1ac6f5d9d5a503a2a6] sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
-git bisect good 754babaaf33349d9ef27bb1ac6f5d9d5a503a2a6
-# first bad commit: [ae81aad5c2e17fd1fafd930e75b81aedc837f705] MIPS: PCI: Use pci_enable_resources()
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
