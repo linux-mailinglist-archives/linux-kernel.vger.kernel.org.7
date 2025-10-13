@@ -1,131 +1,102 @@
-Return-Path: <linux-kernel+bounces-851023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D381FBD558E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4470CBD510A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1364E423C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA5E18A50EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42FC279DB3;
-	Mon, 13 Oct 2025 16:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2FD21930A;
+	Mon, 13 Oct 2025 16:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JE5e9baQ"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7Bi9ZXe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8250622ACF3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EA020E03F;
+	Mon, 13 Oct 2025 16:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760373123; cv=none; b=UMM8DIKS0TEc6GdjM6HiJD2jSOswat8RZSlFipiFi2Q6bqEpBHNxUyY2+GTyZVcvMgKTw3wF5JZz1jPE0O9dwTyYLRfeN5TKSZ8ZY8AFG8xPUbCrO4VpOj81D1BEu8UXFa74vowez7KNKPMqOfvc9FMcADIhNp6ICe08Tg2Rirs=
+	t=1760373132; cv=none; b=BTPgQHub36Y8vpqtAyKyscRlEOL/kW4WIHAq97OsJDciKkcvKQXlYSz57Urdnh4ideEYixDiYh4FHqP/bcbRwajHS7Y2nQcU/Jnqu3oT4zjCiTV+GGKI41suLaqD+xyxhbpchLEPu26UwwZCnt6zyr6MsNuBxOXEc47UqozYh80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760373123; c=relaxed/simple;
-	bh=upittZMdgZGjKq3YijKfi9Xo2kafJXuuaI54gdgXicc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=suQt9nbGC0TDR/ptOO6OTcD0kPQjn9q2sjizSdD/VWUL8JxMK8mvKrhXg2DJxttkfhjMMaT75xwCZ+KWXd1yFYgokV7q78wZBY5gYY1iJ4V8Wadx91um2YPN6s2WQoVyQ+rIdnjiXYQj+kob5c6kdZ3GUUjtjFXhyYQDGHpjpsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JE5e9baQ; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-272b7bdf41fso98173505ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760373121; x=1760977921; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hWHQvDLvbtnNuJ5ZPW5ZERwCgThDfKad1c4XeVbuOAk=;
-        b=JE5e9baQNxELsqVxDA2IX4Ml+m9t8q3dDTSbVK2sVsa6q+2yaGJHJiCsgcNPfPZM/E
-         6evnvK2o1ftePuqojHaEraiX9b011chhCnEVNXwcFhM5EXHswft0ryss0SOMd7KYFtg6
-         RPBIUvndek4GkNCdeZ6T+zByw307D7XyPysE86ztpx0ixXGB++H4PpHvR+5X/La9Y0/y
-         lWRBroEPNSmQmz8udkoAR0B0Mym55AMbrmPOpiNeyqkrX3rr/EmDWYG/o0LIckERYzFv
-         YUcGRKcf1YWAafFmih5lSMVF68M1oUNAKjmLB76bjX1AEpwbCFzS4z06rjKb0Fzhk0YK
-         7Faw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760373121; x=1760977921;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hWHQvDLvbtnNuJ5ZPW5ZERwCgThDfKad1c4XeVbuOAk=;
-        b=wC9imhNXWPisTL7dPKRC4tDoPSMhCzdmaBQpQKOIPD41Ow77L9JLIzbejXXzvcCIz4
-         JeY4Ak37/Vt0tDK97Zbtxnnl8kNTsNFxKbzsp4jXOUL48fD6pJSTEu5+gVHX1yO2Wpke
-         qBvYzwFsKdPE4iWJ8ql1Ft4H3tIaXnOA8PvDAmEs34PMTqXnSfYG90xnVi5Ayqs+UWQE
-         pmkbdYm9ljw83HS1S6EJ4ZPuvc9NK+731SibddFYiLAF33exJamezKvWi96zCNRpyaSD
-         bvCLBKqN5QhUuQxhZU0nQzdPsIQhICKJ4ovfazML4HXQXI28pDI5tMvT0b6c+nwyIVZF
-         fFDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXc1eVjvzOLbSQJXmRBh4I0+zucjh2lXy9NiridPuJ0P6JiCpQPaJn9vKhF5gF++YkmNyCsdS2A8b/kTgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqEj988cAxYzctklCqp+3Mn4dJsuLoWNUC2tqQOfGMbbyQyFyI
-	fOVc8f+5+X6cmrvSeI4t9Z1LUbwlTGL6VSbHJ+65WsQsFZQGqtd/rKf/AJuEOu6Yta8PAXuoU7+
-	u9eo0Ew==
-X-Google-Smtp-Source: AGHT+IFGIoervvDCIFQ9baCk/TDNl+kDH2WM3OfJCpawPPFU8GQwMwV0dTeJ1XWLoXX14O/Jb5+a0MvNnnw=
-X-Received: from plsk7.prod.google.com ([2002:a17:902:ba87:b0:268:505:ab8a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc4f:b0:280:fe18:8479
- with SMTP id d9443c01a7336-290272e0ac5mr240287225ad.51.1760373120827; Mon, 13
- Oct 2025 09:32:00 -0700 (PDT)
-Date: Mon, 13 Oct 2025 09:31:59 -0700
-In-Reply-To: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
+	s=arc-20240116; t=1760373132; c=relaxed/simple;
+	bh=zr+bgcqER/5+Q21aZCKAJkLYSWYNHpUeL80F/57ebhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsdEuvOfKudpOLk2Wm1biMkc491jtbxDrFjJBDfkzXE51ctFECluftuZwugm/8n7T5p0uLnXuYENvtX3MPvewylJjVQJakZYF5SNITX1UUQeimXis59vw9BXZ1PLMVsfuf260+d0rohjMM/hyRUqZ+5zVeZlobVxBVnynXiwnk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7Bi9ZXe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF30BC4CEE7;
+	Mon, 13 Oct 2025 16:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760373131;
+	bh=zr+bgcqER/5+Q21aZCKAJkLYSWYNHpUeL80F/57ebhg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7Bi9ZXe3wMKsjur72biwT2HOE6t15YMLyr6HqlZ4U2jfwtPMHGrBL3bq4aLUK/UU
+	 1kwR4lcAN/+2gkkd9A9x7kzk2/tych2NuvXMf+vhLOOhiziTcEiJkKB6+iSkRegK8w
+	 z8NyH2lLB6Uzg5HALpmfxaG8zjNv4P+rWn8MitacfaWe2aKKEwLigSg3y5A2Awb7WU
+	 +FKBWAiC29ryJuXHgDHLm6HiFeVDEjaqAttj0Yh8S9qIzZFj7TW8kjcsFHtbpwxexj
+	 xUMZMRA+sls4awyTenRx/3QHvj6QAczWWDu07C0pmMaGTjBNWxVsOjA+vdgWJCh618
+	 2kfBV+aeju2hg==
+Date: Mon, 13 Oct 2025 09:32:11 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: XFS_ONLINE_SCRUB_STATS should depend on DEBUG_FS
+Message-ID: <20251013163211.GL6188@frogsfrogsfrogs>
+References: <69104b397a62ea3149c932bd3a9ed6fc7e4e91a0.1760345180.git.geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
-Message-ID: <aO0pf8h8k0NddyvX@google.com>
-Subject: Re: [PATCH] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Sean Christopherson <seanjc@google.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69104b397a62ea3149c932bd3a9ed6fc7e4e91a0.1760345180.git.geert@linux-m68k.org>
 
-On Mon, Oct 13, 2025, Brendan Jackman wrote:
-> Currently the tracking of the need to flush L1D for L1TF is tracked by
-> two bits: one per-CPU and one per-vCPU.
+On Mon, Oct 13, 2025 at 10:48:46AM +0200, Geert Uytterhoeven wrote:
+> Currently, XFS_ONLINE_SCRUB_STATS selects DEBUG_FS.  However, DEBUG_FS
+> is meant for debugging, and people may want to disable it on production
+> systems.  Since commit 0ff51a1fd786f47b ("xfs: enable online fsck by
+> default in Kconfig")), XFS_ONLINE_SCRUB_STATS is enabled by default,
+> forcing DEBUG_FS enabled too.
 > 
-> The per-vCPU bit is always set when the vCPU shows up on a core, so
-> there is no interesting state that's truly per-vCPU. Indeed, this is a
-> requirement, since L1D is a part of the physical CPU.
+> Fix this by replacing the selection of DEBUG_FS by a dependency on
+> DEBUG_FS, which is what most other options controlling the gathering and
+> exposing of statistics do.
 > 
-> So simplify this by combining the two bits.
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  fs/xfs/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Since this requires a DECLARE_PER_CPU() which belongs in kvm_host.h,
+> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+> index 8930d5254e1da61d..402cf7aad5ca93ab 100644
+> --- a/fs/xfs/Kconfig
+> +++ b/fs/xfs/Kconfig
+> @@ -156,7 +156,7 @@ config XFS_ONLINE_SCRUB_STATS
+>  	bool "XFS online metadata check usage data collection"
+>  	default y
+>  	depends on XFS_ONLINE_SCRUB
+> -	select DEBUG_FS
+> +	depends on DEBUG_FS
 
-No, it doesn't belong in kvm_host.h.
+Looks ok to me, though I wonder why there are so many "select DEBUG_FS"
+in the kernel?
 
-One of my biggest gripes with Google's prodkernel is that we only build with one
-.config, and that breeds bad habits and some truly awful misconceptions about
-kernel programming because engineers tend to treat that one .config as gospel.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Information *never* flows from a module to code that can _only_ be built-in, i.e.
-to the so called "core kernel".  KVM x86 can be, and _usually_ is, built as a module,
-kvm.ko.  Thus, KVM should *never* declare/provide symbols that are used by the
-core kernel, because it simply can't work (without some abusrdly stupid logic)
-when kvm.ko is built as a module:
+--D
 
-  ld: vmlinux.o: in function `common_interrupt':
-  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2b56): undefined reference to `l1tf_flush_l1d'
-  ld: vmlinux.o: in function `sysvec_x86_platform_ipi':
-  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2bf1): undefined reference to `l1tf_flush_l1d'
-  ld: vmlinux.o: in function `sysvec_kvm_posted_intr_ipi':
-  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2c81): undefined reference to `l1tf_flush_l1d'
-  ld: vmlinux.o: in function `sysvec_kvm_posted_intr_wakeup_ipi':
-  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2cd1): undefined reference to `l1tf_flush_l1d'
-  ld: vmlinux.o: in function `sysvec_kvm_posted_intr_nested_ipi':
-  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2d61): undefined reference to `l1tf_flush_l1d'
-  ld: vmlinux.o:arch/x86/include/asm/kvm_host.h:2486: more undefined references to `l1tf_flush_l1d' follow
-
-Because prodkernel's .config forces CONFIG_KVM=y (for equally awful reasons),
-Google engineers completely forget/miss that having information flow from kvm.ko
-to vmlinux is broken (though I am convinced that a large percentage of engineers
-that work (almost) exclusively on prodkernel simply have no clue about how kernel
-modules work in the first place).
-
-I am 100% in favor of dropping kvm_vcpu_arch.l1tf_flush_l1d, but the per-CPU flag
-needs to stay in IRQ stats.  The alternative would be to have KVM (un)register a
-pointer at module (un)load, but I don't see any point in doing so.  And _if_ we
-wanted to go that route, it should be done in a separate patch.
+>  	help
+>  	  If you say Y here, the kernel will gather usage data about
+>  	  the online metadata check subsystem.  This includes the number
+> -- 
+> 2.43.0
+> 
+> 
 
