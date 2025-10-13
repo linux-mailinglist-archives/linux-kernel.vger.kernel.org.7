@@ -1,115 +1,119 @@
-Return-Path: <linux-kernel+bounces-850042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337C3BD1B33
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:41:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2F1BD1B39
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DC63A8FBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:41:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374591891395
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896272E2DCD;
-	Mon, 13 Oct 2025 06:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE262E1EE0;
+	Mon, 13 Oct 2025 06:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QsnAQpmT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q5Icz6H4"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010001.outbound.protection.outlook.com [52.101.46.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336801DE4CD;
-	Mon, 13 Oct 2025 06:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0BB1DE4CD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760337657; cv=fail; b=eZ4I5D+r9Jtpi9aAbLC0u67kn5XTlB4K6rn4OUtCt+VLy+gIZ/q9D2uXBIIzjEkpBxnasWgIIkonfVmUQcUXkd2LWHZLTLNCE14P1nBw4y0JB4j785qBNAFVniFdprcGKBQoHbJxnPG68WWFQU51qJF2QjgyT/xgJRozrg/cZI0=
+	t=1760337702; cv=fail; b=Nq6aYlu5UwCy/7l8W4Tdjlgl06NovwJ7ds92SE9tC+sunFDiNAY8d8HVoLhWR7435g3pC23Ij3h6X01dt8rG0TVBNGsAe4IR/rZP0JH4kL8grTbHENJ8PJKX+pGxDhaCiMp8diZcyBd7syhqJebCgxdo9I47k0G02Kiy4V0J6fw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760337657; c=relaxed/simple;
-	bh=34pZ1iR7dhpSC5PX8Wb7/0yjY5CTUsiAp/l9NaGS61M=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AuYtZ9q62wEFw3ZHSZbNqRrbsJAyBhLPhTK4fJV1cHdJjrs6UfELvdL+htyIqEIEx6PF3e50u9LYSvSBwwmGavXzEKWZp7m/WFey+/ehtUA2p4EYUx9jBv7Prm+qIXjSZ6GtemWk2Xjfmk1H6i3v31/r3Q2egTrVSg4UgbLRBoQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QsnAQpmT; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760337655; x=1791873655;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=34pZ1iR7dhpSC5PX8Wb7/0yjY5CTUsiAp/l9NaGS61M=;
-  b=QsnAQpmTehXsVTVpntwsNlUxSFTcrstz1SLSyYxgsEKHKs752YfyLeAT
-   hcG5FWkuMyyucIQNQxTH5kAfOjF/QMiErJ4c1k7EogxLbnvomJiE6Su0M
-   mm2l5DUaLt7CgL/Kyp8EX5cPXyYM5Nn20jTkl/+920MWaKFAj+QuVoVNb
-   VpBYaDjO9rEsrlGGMgsa9RhLvd7StXhlB8rOMMg7RZKYQdnLiqZdtvbLP
-   hf4bdjLDu4gNQcimrJn8j9fsiQuS2wKeHSoM5HsHHZPR168tVfX0bBRqa
-   vkmRpb4Zap1aVGrHD4XZUOvqc6Pki35iZxijAQMEqXi4CyhG7bIVDGdem
-   w==;
-X-CSE-ConnectionGUID: 5Gh9iZZVRGCcLnk+e8Mvcg==
-X-CSE-MsgGUID: I8uyHnmQQcid6zFISItOQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="65090302"
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="65090302"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 23:40:54 -0700
-X-CSE-ConnectionGUID: FPJGdIfoR+aSaNFNRoXJKQ==
-X-CSE-MsgGUID: 3XqvKxHJSTKPBIT6ww2pQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="218629480"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 23:40:54 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 12 Oct 2025 23:40:53 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Sun, 12 Oct 2025 23:40:53 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.35) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Sun, 12 Oct 2025 23:40:53 -0700
+	s=arc-20240116; t=1760337702; c=relaxed/simple;
+	bh=fooafrgOd6mfmgMHbQqePurXP4RxEp0wu92iO5EW4tA=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=n65YO2enI7ENn5Np656ed48b5grMQB0DCRKDzsHUTfgKq5EdYf9gEoqvTrrPAoVuJ1PYPFmUZjHnqdR+cbFmucSygsx+XDHlzeAJwEMGwxsRMdtzi81ivBdXOWxEwEuZWdfkfUeL4QMDnyKo2OEMb5QYlta3XOeMfBCRYCVeml0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q5Icz6H4; arc=fail smtp.client-ip=52.101.46.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SB/dcDAhLxnuXij8zkyIhRmcTKxOm5Dfz5tsBUKEGJ3+QF2nudQ+Ob3/1Wu0QPqdoajls8HxhBHm8CCCsXRp0JOe8jtdimtJPMpxvsHBTPxTosClFYmRpuFAmEZLRwS3QdCQ9WNMGtrefyXtkP6nlSN10AS5fvGk+iND28yWy8tV5/FavYB75XWMAahJmkOFFZAb+KdpKVhoBkMPisxl7k7KYyK+b1fdRDMkqAx2C3+mfFrBhcIrb2tiCXNeVgrSuBotjuJIwR72gM4cQvzUz9IxVuKu6izo66G7ivu3dKEc8Zt+rp3Nl9RkUVLcAWagEralN0BYbhy4M+HCPs/LHw==
+ b=SBL70r5cQt2O8mEvGeh6g6oKSLOiAAzCmpbWHNsXQx1gruBfSTDw+sYZfIs1Bqs0UePXJm5OBh+xqTwRv2qBp+Ip9+G6QWr0MsuXNluSCkQBarc4wUqvWfbrelmt10frnHN2YrZdI4PrOEwdED4HDr7NvV8QoRshTMSPnJimH6E5uq5ak4hvmUz8TH+7hbiH+3rii/AfhM+UaAG46wJUyh+jy/cDinxLBC56k4xTAwgDklgooa53ieAzP3gZxs9EJIcxxKHi7UwSc2DnzpPoepsFMrDst1rwF9IKMSg8bLs06mCaa9V1khAgIeSFLuZSqZQ4/PNjNCSbWje7iqXfyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DC16vjyl0XY7Q3QkjjNYhv/4b7xlEtBSQCwOQhINP8o=;
- b=B536ros6c3cJaUr7IIJ9RfCwJdT0NBaSTm21tiX7rppV5WMZMOxP6etRplScoZhCfVtQjUCIdE9xTGGSJh/G1JIQujEwWUMMcf0h+lp4A+8hKgwwhe76QaDORdUnQBIzwnPEgfUM5QQl8trzNQ56KZnMUpsrHUcp3Nz2YnF+gtAfDq9+278eOJrXwrb9y+5EI41eNghlSnbu8FtC71qXVhe4AgfXho9omanoGKac6XgogVAnioujYMfTiNGGeq2vBM5fMhWUrMIswEUAR+7/z4UoWlBlh8qvd4KpYAiEFwxiALgtTb0DW3ITudRb3d6WnbXTKFl7hFby0LgxecFAdg==
+ bh=zpE70J6MWm+Derbaq3t1ZHfpqV2rX6h8CCp2IXBDnQQ=;
+ b=OsiOv/rTIkUvq1AZTLdmXe1xMwR1umcnFX7nRnq2tQYUn6iOfU3RYka4pPQH33tb/XSAxkdn9J56x7jM5RFYAg9A+R9nlGcsRFJipyiUcyqeu9haiTnhev7GPhHlQuZUOybheWAo7Uqu222dN0f2h0EclwUb0rcgPPt/JdTXljZ2mFRfV4fYwClVQIjZJRwxyqXEu1BtFdvvbt9ZEvkULsw28Jtbn1fhFGTRL1qJQTurYH9lLqWDOYPOndbhJkqdBjvF2oyE9G8AFKG8K/jpzOAq5xY2Mzhyg7EVyRqLdYvrZo5/HhYX802cXJVlpCzRsV6c0bn4nsu8Gom87re/Pg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zpE70J6MWm+Derbaq3t1ZHfpqV2rX6h8CCp2IXBDnQQ=;
+ b=Q5Icz6H4GeZVndqyIFzcKNXaBpK0iJYublVTU02WOHKKg5BOrJx/lrVKE7ARrMFcEqTrbYD9p+6KRcqcC+ZjBbiaeYvaSy+a/l8trWXu70yE1Kx7PwbiuMksOoavYVCZrUh3gqu+umuLkfL0xaOt9fkVjKYSODINSNJKBavdKEY=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by DS0PR11MB6447.namprd11.prod.outlook.com (2603:10b6:8:c4::16) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
+ by LV8PR12MB9262.namprd12.prod.outlook.com (2603:10b6:408:1e7::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 06:40:46 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 06:40:46 +0000
-Message-ID: <b7bcd7e2-5be5-4cb7-9971-42617f57be3e@intel.com>
-Date: Mon, 13 Oct 2025 09:40:42 +0300
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Mon, 13 Oct
+ 2025 06:41:37 +0000
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 06:41:37 +0000
+Message-ID: <3af92c11-9e8c-43bf-be92-85d1fd9280f6@amd.com>
+Date: Mon, 13 Oct 2025 08:41:28 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] mmc: sdhci: add quirk to disable bounce buffer
-To: Michael Garofalo <officialtechflashyt@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-	<ulf.hansson@linaro.org>
-References: <c895cd11-4d8d-475c-8ef8-3007f9037aef@intel.com>
- <20251010211651.85281-1-officialTechflashYT@gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable missing AMD/Xilinx drivers
+To: linux-kernel@vger.kernel.org, monstr@monstr.eu, git@amd.com,
+ linux-arm-kernel@lists.infradead.org
+References: <457c3a128e300241afd20da693d1d80a35d1ece6.1758099050.git.michal.simek@amd.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <20251010211651.85281-1-officialTechflashYT@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Michal Simek <michal.simek@amd.com>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ mpwx1d8=
+In-Reply-To: <457c3a128e300241afd20da693d1d80a35d1ece6.1758099050.git.michal.simek@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0072.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:3c2::10) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+X-ClientProxiedBy: VI1PR06CA0089.eurprd06.prod.outlook.com
+ (2603:10a6:803:8c::18) To SJ2PR12MB8109.namprd12.prod.outlook.com
+ (2603:10b6:a03:4f5::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,325 +121,318 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|DS0PR11MB6447:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38400ced-f4f9-4093-6fe7-08de0a237066
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|LV8PR12MB9262:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4968b2fe-ddb5-4b3b-e3ca-08de0a238e9d
+X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?NFd4RTlHRWQ3UnoyWFRHUU1lWmhsMVM2TWdRY01YbXRJbXVIS05NOTcrNW0x?=
- =?utf-8?B?eHhUa0diN2J1MENiY09RQXlIeXhVTFpLN3hHdmlxY1k4NTBuK3pLMk1tZ1hi?=
- =?utf-8?B?TXBITllKUWVyVEtrU0NHdFdHRUVvY3BZSHdwTFNYV3o5OHh2bnZlZUJnMVYx?=
- =?utf-8?B?KzhMSnZXRTRMYWwwWjdmdnpEZng1cW5CbDMrakEzRGtGSHllTkJoZlpJUHRB?=
- =?utf-8?B?K3NCOE9KZHdVMmplTWNrUGh4OVZtRHdlY3RQQU1NUEhoMm5UZlRYRFF4cmJW?=
- =?utf-8?B?NVVJMGJPRzVSa09qMWlIVUpSdEhsZkFxK242RDBMSXBRcFNzMUpYNVZ0eTdh?=
- =?utf-8?B?dno0ckpNblBrZXdud09TcWliVXlneWVLMUgrSlhETjcxbTdoQ2tiWlgzMjVq?=
- =?utf-8?B?WGxSQWRwaWZ3UmdLZUZpUGJqUUMyMjZRWXZkNHB3WjJFaXRpNE8zby9jd0RF?=
- =?utf-8?B?TXRpNmFsYnJOczNxZ2RnM1dsUHFSbWVLbnNDbE9CYlBackVhMFd4YW5ONHBo?=
- =?utf-8?B?aWtuUnhVTitVdS9EOXBFRTZQZ0svV0hoOGVwL0VWSVZ6OXZacTFNc1h3Wklh?=
- =?utf-8?B?U3pEYWNoYlUvL0FUNmhkalVtMkYzNHI2UXBhRDdDbDA4UUl5c2tVbzh6MUl0?=
- =?utf-8?B?UzFTaGYxUEV0WUYxZEUrT2c5Mkd1bFM0b2ZRTVdSMCsvNnlxOWxDNkhuaVdC?=
- =?utf-8?B?NGpqeW5xVndTRWRmdGZTM1hpMDNyUGlVTTdMcDgvcTFYVFo4dmZyY3VSanIv?=
- =?utf-8?B?VmpiS25LaDV3ci9kUkFGcjNUZlBWTW54SVEraWJsTkpyR29ZdlovZDYvQzRp?=
- =?utf-8?B?U2tqbHdSNUZTblV1dEcvcmdvZkRaRVhienZBM1lwMVVIQWVKK1B2V1d6dTBQ?=
- =?utf-8?B?MlRwdzZOeCtmMy9sRWlEVDNCclFVVTZqU2V6RVIzVkYxaDNzditTZVpnWWIr?=
- =?utf-8?B?MDVSUzE5RGtXd0ZjWHV0OFR4c05ZUVA3WkhaWHdtTnVEcDlrOVNlTThQOVFB?=
- =?utf-8?B?eE5haG8zVXByRFpOY25WNmNRVm9WbGM0NTZoWmtNd3NtNWdwUTN3NFFobDZQ?=
- =?utf-8?B?b0thbS9LTFpMZWVCeTNkM2pUa2d1TlV0UTcrd2dZcmlyNlBvSG05VDBPSkt3?=
- =?utf-8?B?d3lOUWNWZ05TaUNleXhuWFpPaW9uQktQWGVGbzZOY3FqTnN0Mk0wRnN4TU1o?=
- =?utf-8?B?T09MU1pCbnAzVDA3YTdKa2NIdk5WVkZPSGd4cmErUnRZVjFrRkh4YzNzeDY0?=
- =?utf-8?B?Y1N3TjN0bVZFbGJiYW14RjlvQ1ZqVmNmNzE2Q0FCaEZQTTBIaWVkRFVJWEJE?=
- =?utf-8?B?aVplVjB6dERoSEgzMko0WGpKeUhBK2J4MzdQUlZ5SFl4QnFLMUFOd3hHL2lv?=
- =?utf-8?B?QXJ3blc2WDR2ZnNMdVdtVXNZNGYxYUtNOVV1czIzQW1LTTJ4R1Z5Uy9keU0x?=
- =?utf-8?B?V2xXdUh2UC9TZkRBM2JMazhpVTVVa2dMcy91ZWlHMURKeEFxY2I5ckU0T1Br?=
- =?utf-8?B?MlhTbGlEeFEyUE96TXNDYjVXNlRYeDRvSlNkVnFMd2pWNXF1VDVMK3l5emlh?=
- =?utf-8?B?ams2NGRReE85L1NEL0UrK0JKZFEyNXg3MzRGVHNmZ2hKUElaeW5QZk5TVTZO?=
- =?utf-8?B?bC9wbjFvV0tQSDFyMGxWY0VaemhMQjkxeTVrSGpxTXJJR0xwaW5nTVdUNGE5?=
- =?utf-8?B?bCsrMzRFampKV0cwZkl2Q2dFNjZsbVh2cFc1d0EweEU3WExCN25OS1R5M2Uw?=
- =?utf-8?B?djFNZmFCRGlGa1E3a0NVT3lKMk4wT3Q0dXJIdEZIZW01UXlEUjhxS3lFZklP?=
- =?utf-8?B?ajRMNFk5Y3UzSkJjUFZaVmgyTlFHdEZDL1ZSeGo5bjNOaDJFTEpabkcra1lD?=
- =?utf-8?B?bktvSExBYTVjRStJUjgrYXNUNUVlWThZbHcvZE1CRTEyUklqd1RYazJhTEMr?=
- =?utf-8?Q?zDmSpQpi/KTUEv12UxGhYsXbtBYLDGqH?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ekk2OWgxSThLMFB3NXBTblV3bmhHNkhtU2ZOT1ZDME1BZGRxUDR2YTJ3VSt3?=
+ =?utf-8?B?Z3gvY0tCbjRma05rMXNndkVsWDdiM3dtbUxMVEk5L1czemZNUnlvaXhXVkI5?=
+ =?utf-8?B?MXFqaVRWUlNhVnR3RURzVGFCS29UdkZLNFNUaHhIajFxTDRzRWwyN0l1TG1K?=
+ =?utf-8?B?MkxGWGRxbGlHbFEwNmpjb0duSis4ZHBmeDhrWjVqdm5tWU5xNitZMmRudGMz?=
+ =?utf-8?B?QitnY0xtVnhVOGYvTE9MQlM1VnFBQ2Jlckc0cElBOGtOU2I3L3hNcWZ2OE1S?=
+ =?utf-8?B?dVhocnB0ZGxoekRZYVJmZkhhUkVKbU81UFZiM1UxcE9mV1JXREQ3RUg4VWxE?=
+ =?utf-8?B?Vks5aC93RkE3c0tvMmFnNDlIc3pnejZYemJzUjBJa1Y4a3RXUDhGUU1ROHEw?=
+ =?utf-8?B?U0tqeldWY2VoNlkvSWhnRmgrSWo0eXZ6N0tQZWpZVWx2YWtUaGVWc1d0bnQ2?=
+ =?utf-8?B?dzBscS9zekIyRkRwbjFLdERjTXNHV0lLZ2ZOUDJ3OHFadkhYQm8ycys2QlIz?=
+ =?utf-8?B?T0d3ZFpwVEhORzQrZXJ0WHBQYWtUWFIyeHlaWVBYaHkzZjFlRXZMUnBkS3Bq?=
+ =?utf-8?B?eFg4VWZLaFdRaGZIZytLMlBLZWZyWndzcjJqNlZrRWpPbEhkejRodGFjd3lV?=
+ =?utf-8?B?S1hoQlFRb0xGYnE2RDREYzlmM1pLMkNxWXVqRDcwM0J5UlpNTWtwWEh2d1BS?=
+ =?utf-8?B?bGYvbGoyTDIwdkRpdG1VZFRDOXEvYko2OVZiWjJPeWt3bzhYem9nQWlndlJk?=
+ =?utf-8?B?a0haZUl1NDl1SVcyQUVOQUg1ZHFXbUdkV2xLZlBtTXgyTTFJeGJmV3NIeXk5?=
+ =?utf-8?B?QnVkV0dZRkNXOTBCMi9Tc1RLUGVjc3hKUWhiMEswTnZwMzBkVFB3YkRXZHB2?=
+ =?utf-8?B?cXlhTGlZT0tJdXBpUm9kcWQwUXNXR05palRKa2djN2xzbkoyWUNlTlBZU2o0?=
+ =?utf-8?B?aUYrVjZESUdvZEJ1NGFZckVuU0FTcy9nWWowTk43TnFwY0o2aUhKM3h3OVlt?=
+ =?utf-8?B?b3k3QTN1ZzR5TU1ueS9ib2NLbUk2U1pyc0pabTE4M0lMY3V6YUVlMHd6aitu?=
+ =?utf-8?B?NnpnOGZmZURVSXh3MmJmWnhsWm5BR242bjB2TnQwSHZjc1VwWDV4SWpmQmxU?=
+ =?utf-8?B?YnZHSUZ6dldjWjVLRFR6alZKeDFZcmxGWHJCNGhzRU4xNTd2Y0YzVW52NHlM?=
+ =?utf-8?B?K1BVdENtaFpUVlRVWFQ2bUVtNFlRTkhPWGE1eEdMaDAyaVVxWWF5c3dSRUpp?=
+ =?utf-8?B?OTRBUVpBby9QU1oxL3djRWxBdHYrSmRGTHkxQWFqN1daL01JZm4yRCs4ZFFE?=
+ =?utf-8?B?K2VXR25hRzRSQlp1UTh1ZmRFUWxKSnoyZkVnelN1OFJjYmpVU1hkTFZtRzNP?=
+ =?utf-8?B?bjVzd1JDNHJPdjA3Y3ExalcwbmV1YmhqQjRKcVBYSUcxdWZsaUxZSlNGd2s0?=
+ =?utf-8?B?SFFrUmoyR3A2eWllTlVpSGhyWi9iUXZmbmJCMExSMkgyTGlSVy9vSXkxc1RH?=
+ =?utf-8?B?QzlGTk9CMnJSaE5BVEwybitCMU5JRUkxcFhva0dWWW1WN0JlSDhWeUNucWcx?=
+ =?utf-8?B?bW9mMi85aDdraE1BWHRnSUhaODNBc1NndUUrTlc2amJTRnI5K214dEpjS1Zs?=
+ =?utf-8?B?SUNEMzRlcVFTMXlLdHdBRkhPVFBiM1d0MEZEOUFuUFlON05yb0ZYT2J1RUw1?=
+ =?utf-8?B?NUN0VHRDK3NET3JIejZBOFI2VDRrcjg1cERzZVJ3SmNQb1RDdVhpQTJqcjFU?=
+ =?utf-8?B?THY5QWdBa3NrQ1VKWllETm53WGw5b1dJWjlwb2ppWHlXRXBBUlpIMWtYNk13?=
+ =?utf-8?B?OG9NMXZwUWoyU01WQ2tERmQ0MTRmblM2VlIvNDJQem1JaGY1K2hyOHZFYXJa?=
+ =?utf-8?B?WXBEU1RoaVlsSEtnRWdJRzVhLzBwTW83Y2NpaEMwRzcrUVVzVGhqSmQ1Unk1?=
+ =?utf-8?Q?pqvFetGvK8niG9Ix5/rWK3zeXL15mowC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NWorQjhyTThiQ3N4eXo5QjJxcnF0MkZaRTVmd0YwTDBUWlc2ejQrVGVUSUFk?=
- =?utf-8?B?czIxek9kdFhsQzR4RGN3RWJLaHJyNzdLbFV3Qk5SVG9zOStCbCtrdkE3L3VB?=
- =?utf-8?B?RGh0M2FiSC92UTJ0d3o0dzRjeWRXOGI1QzArcklmY01pNFRQT1pNRllYc2hZ?=
- =?utf-8?B?L0Q0YWR5UTdPcG9tVkJMUXRrcUd4bmlDeUxHTzNESSt1ZjR2ZHhxeURBdVVy?=
- =?utf-8?B?MEZJVUtJbGE5ZmZiWlkwWDBYZmpFRTRJYk9keWRxMm43MzVkWFVSUFFkckor?=
- =?utf-8?B?OVVNZVVqZUVpUE1XMWgySzBsNFhzaVY3VG5qV2RqT2tqQkFZeWw2SU42WEVN?=
- =?utf-8?B?a1hoVDNVVkJyMDVKSFRQL3h6QkFHV3F0OUZEVFJUaStmOWVFbGdPdjVRaWZM?=
- =?utf-8?B?bzBOeUZtYUFGOFBxVGcreFFBVTVBOWdxZDZsNldXM3ZmQ05YRXFRd0Zod0M3?=
- =?utf-8?B?OFo5SGdscmRtaSt0WENUV0ZjT0xKNmdabkd5U2gzYUJienNtd2hzMnNpSFVj?=
- =?utf-8?B?dXVoZjFoSW53SjQvWDZVNnpFbSs2bC9Cb1luWWl2UWtvOWxCbWVkWTExbUN5?=
- =?utf-8?B?QVdCRlRpRlZ4aGtaUzVMbit4VkZ6YnE1V1cza25HQndOT09zL3JkY2MyQ0tV?=
- =?utf-8?B?TnVxaDE1MmxpQ2EvK0hVaklPQTRKNDB0cVBKVVZVVytDaHFuL3AxYUF6bTZw?=
- =?utf-8?B?TmpmakV0VDk2dGdINUsxdEdwZk51RDNBUVdZTGNGbFJBVXgzQmFKSERxWktx?=
- =?utf-8?B?alVaTW5GMHBibTBLNHV5QnUxRHdSZEZCUXJ4bWl1cmxDQjFTamRoalBqNkIv?=
- =?utf-8?B?a2ZGdVRTMXRRTGZhSVlhVWtUVUVVN3IwbHlxeWxkc2tjUDZuU0xEOUtlVXh0?=
- =?utf-8?B?UDZ5SG84a20vUHJPVUhSTGJENitGbGIzWFdYd1drZHRJalBOOFYxTUE1YTZY?=
- =?utf-8?B?ZWlDa0Zna2hGVFYvVzB4MC9aUWhsTWlaaEpzU2ZLMGxlSDJKeEZLQ2d3ZDhW?=
- =?utf-8?B?NDBMeWJTcjhvRDU3Ykp4YXdwRWtKc2xNdWRRZjJqK1NFenVMZmxtaWZuT3BY?=
- =?utf-8?B?bVpwc0M0WHZjbXU1bHM1NHVWb3lnTnJKSkJrbUFEbWozR2tDU1NrNFVDUndM?=
- =?utf-8?B?clIzcmZ0cGVRb2c1SG8yOThwM0k3MUdLK1dzcVA1VXpQSzBXeDIyRytaRFlH?=
- =?utf-8?B?UHdHTXg1NG5WbUNaVXVyR0xoTjN6MnlOVUFlbzd5eWZKNTVZOC9TY0poY1c3?=
- =?utf-8?B?ZW1FOE5BMW9HdWxMSU1TaEtiK1JOTEFPRmhmYTJSNENjNndxY3k3ZkpNUUhv?=
- =?utf-8?B?bUkwdHNQbWwrckduRVNSdFpwYnlWZ3FxOVBaNko3OWl3R0VWNkhwTXBSMG9K?=
- =?utf-8?B?b05rT0h3WHdxc1UrL3ZNeEZnVzFmWWY2eVd4VTYwU0VrRmJNakFLdm9hNzJT?=
- =?utf-8?B?VXRHNUQ4YmJzcDdjalJuZzkyT0ovZXgxTHI0R3FsUFBCM09CYUcxYjF1aVRl?=
- =?utf-8?B?QkxtZVVURE5vRUFteHgvdXlEYTRhNUJOQzM2cGNVRTFoaWZFZmFRM0JIbWh4?=
- =?utf-8?B?ZHh5WHFZNHZaZEJxUktuSytsQ28weU5VQUlBbW5GWDBaTDk4OEpCa1M3TmJt?=
- =?utf-8?B?Vit6Q2pnTDk4dFBmdGk4WGZVQStkbVZWOHFSZTk2Mm5Ea2dhUXdVTE9Hc1Iv?=
- =?utf-8?B?UWh0cHJ0NlV1d1AreWxLL0xlSkZ3dDdVMkhjS3JvK2dST2wwNkgyak5FcXlY?=
- =?utf-8?B?RUpwR0EyTnY4M0JlclRocnVqUGNzZmlTTnliSk1iVWN5a0x5TmgrQnFTVTVJ?=
- =?utf-8?B?L1RDc3FQTmtOSnZ5MnVubmJxVGFHd3hjazBvaGJRQVZHcSt3NTdlOFhFUlJi?=
- =?utf-8?B?cVJiS2lVK1QrcXNlNGpXY0pVdkhZNE9uRW1WK1B6Ynd2N0hHQXQzb0FIMDdS?=
- =?utf-8?B?VEM1c1dSa21sN0ZJcDZybzBvSWY2MFlRL1lPOVdFYWR2RzlPaE81V0R6TWVo?=
- =?utf-8?B?RDBiRjdobEJRTjZHS3plZEF2UEZRL25VRysrZ0JtN3ZNNDFGQ2V4VHlpNWNE?=
- =?utf-8?B?MTJIUlJ0ME16d0dUaHlLd20yZTNmSEdVVm5BVkxkTGNXRmxmWUlWNUdCd0VE?=
- =?utf-8?B?YzhidUloV2dhY3J6L09NbUtuMFllcTJUVVBNNlVTMHMrM0Y3QyszYW90cVFr?=
- =?utf-8?B?c0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38400ced-f4f9-4093-6fe7-08de0a237066
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MHp6NkQ4UzArSG13d1Y0RjRGdEdWSjV2cjZsa29YMFBIM09EMHNiSUpkUUtn?=
+ =?utf-8?B?RldJa2t2OGtTUFA3SEhnSC9KTWliRVVsZHB2aVgva255RWNibXBNbzN3ZWFW?=
+ =?utf-8?B?S2wwU1BwWjlFVVptdFFhSllvUndscnVYanNNZEMvNGhkMkpsOXdSWXIySVpX?=
+ =?utf-8?B?NXUzR2l0Nml1bTJGTzBBelBHQXRuaFY5d1NLSnFVN0ZpV2x1Q0Ewcm1VOFAw?=
+ =?utf-8?B?d0VRNURWbzZPSkUza3ptVXBhdVdHeXJTNHJMUjl0dldFUTNqb1ZnNjE4em5y?=
+ =?utf-8?B?T0ZtRlEycm5tUmE4T3FPSlBMRm9INWJWVFowMmhERk1INnhKcldzdzgwK29K?=
+ =?utf-8?B?RDg0cHg2RHI1MkRVUWRQdCttbWJWQjBRRGNqbnF1eUdidE14V3E0czVsMU1K?=
+ =?utf-8?B?ZTN4bEMwTENMTEFHQWM5ZURyTG1yeENuNzcxSUl2TmNOZjB0SkdWYnNaVStI?=
+ =?utf-8?B?KzR6andRRk0rS0dTVHdNd0RVbzR1THRnc2JlYW45blYwM2Rqb1RDSVg5Q3Q0?=
+ =?utf-8?B?OTJKMkNsWUwrMEo3ZGlDeTMzUVlISml2L0xZbWRvaVNZRmhIbVBSbGEzN09Z?=
+ =?utf-8?B?RFFBeGFrazdjN3RxNklWVXg2eldFWWlnTUw3eU1CUEpIeXU1ckJBUU81SCtq?=
+ =?utf-8?B?cGd6cDZQbFE2RHRYblRxOGdOLzVkeTgrejVuNm4zUk9vL2l1NmFFY1MwSDRa?=
+ =?utf-8?B?K0c1Kzd4WE5PRWpGZmh6QnpxdTJYSVN2SHlKR1NMNSs5ckRPL09sbitKKzBB?=
+ =?utf-8?B?Nk1Mc0kwWHl4RlZ1ZjFsTitVbEtVcDBEeXhyeXBhNFV5eWdsTkxaNmYyank4?=
+ =?utf-8?B?U1hjanAwZ3IvYzF0cm1tQUN5aWQxcDJlS2ZNcjBxaUdOZllPZitnK25DMkY2?=
+ =?utf-8?B?TDVKM0p3aHM1cE5VSnQ1b29QeFdtMEo5YWF6UjJTRXQ3UHpBTUZKWmd5QXN5?=
+ =?utf-8?B?Nm53SitBV0M1RVFNR2huRnkyVzRaWmlLOVdCYzR1N1l2SmFIU295Q25lbHp6?=
+ =?utf-8?B?YW1QSmdCRUNRbHkrb0ZIQlNkaFd0RSsrTzFwTitFWlIzUnBKWjdxY2JPeGpB?=
+ =?utf-8?B?RFYwUE5QOUs4SmJjU1JMRjFBSTZmMEMxbEhGWnE2OHF2M0g1NmhiTTVNcUF5?=
+ =?utf-8?B?ekpsZWUxQnloYjROQ3c3aVN3VmZJK0k1SUwvL2xEeU1RUk5kN1NZK1Q5cW1k?=
+ =?utf-8?B?N2ZhemErV0RHQVIzM3FveGJmQnV4d0tTTmNCOGNFVmp0VzhiejUvSTlvZm15?=
+ =?utf-8?B?Vm96RXpzWmpLQUxVbGwzWURsOHR0bDJocVJIYTg3NGplZGdFRC9lMWZMSndY?=
+ =?utf-8?B?SlhxWGFxNjdoUTFMd2gyWTdpNUZCcUlWalUvY0VPbURDS2M1Sng0cU1jN2p2?=
+ =?utf-8?B?Y3JvSWY0c0pCSGZCUHQvbi9RN2YyR0M5RGxKQWFRK2prRFNxbVV2WmY0dXRU?=
+ =?utf-8?B?V0hSVFl1a0piTkQ4ZW5XZHNpeGhHWDJyRmFvTjJHU2FhSVFsMUtncDZPOFlP?=
+ =?utf-8?B?YTQvUnJFUnlJRENib1ZWM3d2VTVCeXByMmlJMFl1b2lZVTY3M0F4WVA0VGRD?=
+ =?utf-8?B?WCtETDVwY2o5THBQejFaODJFc2RvNGxoOVRva1hDaHF6OU5wVjhJbGV0aXJC?=
+ =?utf-8?B?dWlpTTNPNlB0bmhhTjVXNVlRelJYMkZMRk4xUlZBRDMvYW1VWnR2REN3NWVr?=
+ =?utf-8?B?WG5IODhCUXNxSU0yakNTSU9XWEpVdDZ3Z2JteDl0ems1dVNPWHU5RnM2cjY3?=
+ =?utf-8?B?cG1YakdsVVE2U0s3Z1BZN0sxN3N6TWlmYWNJTTBYZmRjQUswdFlYam8vVkp6?=
+ =?utf-8?B?dGc0OGZ5c0tjMCtteHlLKzlEZ1dJVFp2Ry9DZm1VWXp5RDRPU1hDSUpSZ2U5?=
+ =?utf-8?B?TE1lNlVzQkM1cUtqY2lTbVF2OHJLWVhyVG5ja3RFN1FmR1pMUC9xdGcwRmJD?=
+ =?utf-8?B?NFZsU1YzZFN4VnpzYVJlMjlxbG0yZWVXc3o2YjllV2hGcEMzSldwVXg4QmZw?=
+ =?utf-8?B?YllIUEoyYUNaZzB3bC9Nb2d4ZHlqYUVkd3dhTnR3dk9VekdKQk01bmVDajVT?=
+ =?utf-8?B?dGpsMnRkSXlPZ2FKY3kwc1Y3bzM1OTkrVmZaeVdGQnh3dytjMW9mS1QvNmUx?=
+ =?utf-8?Q?bowkO/2OLYfgFURbXwrpZYMgi?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4968b2fe-ddb5-4b3b-e3ca-08de0a238e9d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 06:40:46.1873
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 06:41:37.2096
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ITUNU3LyelKzw3hga6uYsU5Bs4c0OBaKfgkUt/Ay+JO3bQWgjIcHrDygL12kr9oF6r4vD+uvsYycp7HJ7WVURA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6447
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: FJUogfDHy/Ksv3Te8Vx9LdUeIl0BRgVAVZJnhE3pdideZW7xx/QfWak/TNmjTArU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9262
 
-On 11/10/2025 00:16, Michael Garofalo wrote:
->> On 08/10/2025 04:10, Michael Garofalo wrote:
->>>> On 06/10/2025 12:28, Michael Garofalo wrote:
->>>>>> On 06/10/2025 10:35, Adrian Hunter wrote:
->>>>>>> On 06/10/2025 04:36, Michael Garofalo wrote:
->>>>>>>> This patch series adds a new bit to quirks2 for disabling the bounce
->>>>>>>> buffer.  On some hardware, this is required for proper operation.  An
->>>>>>>> example of such hardware is the SDHCI controller of the Nintendo Wii's
->>>>>>>> "Hollywood" chipset.  Without this patch, the onboard Broadcom 4318
->>>>>>>> Wi-Fi fails to connect to any networks.
->>>>>>>
->>>>>>> The bounce buffer should not make any difference, so it is likely
->>>>>>> a different problem that gets hidden when the bounce buffer is not
->>>>>>> used.
->>>>>>>
->>>>>>>> Could you enable dynamic debug messages and show the messages
->>>>>>>> for the failing case?
->>>>>>>
->>>>>>> Actually will also need to see the messages in the "fixed" case
->>>>>>> to compare.
->>>>> I'm afraid I won't be able to provide those easily, at least not with the
->>>>> commands you've provided.  Since the rootfs is _also_ running from SD,
->>>>> turning on full MMC logs like this produces an obscene amount of noise
->>>>> from the storage, unrelated to the SDIO wireless.  It gets even worse with
->>>>> my original intention, which was to save the logs to SD Card, (since my USB
->>>>> Gecko serial console is rather flakey, and introduces corruption now and then),
->>>>> since it's now logging the writes of it's own logs in a permanent loop.
->>>>> If there's a way to narrow down the logs to specifically whatever portions
->>>>> you're interested in, and filter out the noise, I would happily provide it.
->>>>
->>>> Are there any error messages?
->>> If I drop the debug logs you mentioned so that I can actually see what's
->>> going on (they produce hundreds of lines / sec), here's what the Wi-Fi card
->>> actually reports with, vs without, MMC bounce buffers.  With bounce buffers on,
->>> it takes several tries to load the firmware, and it can't authenticate to any
->>> network.  I've tested and confirmed this effect on multiple consoles, across
->>> multiple reboots, on multiple Wi-Fi networks.  Meanwhile with MMC bounce buffers
->>> off, it's much more functional.
->>>
->>> Logs with MMC bounce buffers *on* (without my patches):
->>> [  168.492687] b43-sdio mmc1:0001:1: Chip ID 14e4:4318
->>> [  168.493516] ssb: Found chip with id 0x4710, rev 0x00 an package 0x00
->>> [  168.508519] ssb: WARNING: Multiple ChipCommon found
->>> [  168.510597] b43-sdio mmc1:0001:1: Sonics Silicon Backplane found on SDIO device mmc1:0001:1
->>> [  168.510886] b43-phy0: Broadcom 4710 WLAN found (core revision 9)
->>> [  168.530151] b43-phy0: Found PHY: Analog 3, Type 2 (G), Revision 7
->>> [  168.538447] b43-phy0: Found Radio: Manuf 0x17F, ID 0x2050, Revision 8, Version 0
->>> [  168.719257] Broadcom 43xx driver loaded [ Features: S ]
->>> [  168.722231] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
->>> [  168.724613] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
->>> [  168.740666] b43 ssb0:0: Direct firmware load for b43-open/pcm5.fw failed with error -2
->>> [  168.762630] ieee80211 phy0: Slected rate control algorithm 'minstrel_ht'
->>> [  176.156693] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  176.157159] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  179.993008] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  179.994373] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  186.940346] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  186.942559] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  216.368668] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  216.369135] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  221.750016] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  221.757700] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  223.437731] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
->>> [  223.437764] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
->>> [  223.648472] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
->>> [  223.859770] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
->>> [  224.064469] wlan0: authentication with da:b3:70:18:7c:14 timed out
->>> [  226.045361] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
->>> [  226.045393] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
->>> [  226.248488] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
->>> [  226.462378] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
->>> [  226.664487] wlan0: authentication with da:b3:70:18:7c:14 timed out
->>> [  250.424168] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  250.425629] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  255.806790] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  255.807256] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  257.467380] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
->>> [  257.467414] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
->>> [  257.672475] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
->>> [  257.880474] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
->>> [  258.093974] wlan0: authentication with da:b3:70:18:7c:14 timed out
->>> [  284.326415] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  284.326922] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  289.836233] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  289.837612] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  291.528250] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
->>> [  291.528283] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
->>> [  291.736473] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
->>> [  291.944482] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
->>> [  292.152470] wlan0: authentication with da:b3:70:18:7c:14 timed out
->>> <keeps trying and failing forever....>
->>>
->>> Logs with MMC bounce buffers *off* (with my patches):
->>> [  383.974268] b43-sdio mmc1:0001:1: Chip ID 14e4:4318
->>> [  383.975824] ssb: Found chip with id 0x4710, rev 0x00 and package 0x00
->>> [  383.986645] ssb: WARNING: Multiple ChipCommon found
->>> [  383.987414] b43-sdio mmc1:0001:1: Sonics Silicon Backplane found on SDIO device mmc1:0001:1
->>> [  383.987744] b43-phy0: Broadcom 4710 WLAN found (core revision 9)
->>> [  383.995898] b43-phy0: Found PHY: Analog 3, Type 2 (G), Revision 7
->>> [  383.996249] b43-phy0: Found Radio: Manuf 0x17F, ID 0x2050, Revision 8, Version 0
->>> [  384.077562] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
->>> [  384.077687] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
->>> [  384.086571] Broadcom 43xx driver loaded [ Features: S ]
->>> [  384.144620] b43 ssb0:0: Direct firmware load for b43-open/pcm5.fw failed with error -2
->>> [  384.190831] ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
->>> [  395.097838] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  395.098158] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  397.667851] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  397.668171] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  403.940787] b43-phy0: Loading OpenSource firmware version 410.31754
->>> [  403.941110] b43-phy0: Hardware crypto acceleration not supported by firmware
->>> [  405.366065] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
->>> [  405.366095] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
->>> [  405.389013] wlan0: authenticated
->>> [  405.392814] wlan0: associate with da:b3:70:18:7c:14 (try 1/3)
->>> [  405.600498] wlan0: associate with da:b3:70:18:7c:14 (try 2/3)
->>> [  405.808479] wlan0: associate with da:b3:70:18:7c:14 (try 3/3)
->>> [  406.016481] wlan0: association with da:b3:70:18:7c:14 timed out
->>> [  414.301216] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
->>> [  414.301245] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
->>> [  414.351544] wlan0: authenticated
->>> [  414.403769] wlan0: associate with da:b3:70:18:7c:14 (try 1/3)
->>> [  414.422775] wlan0: RX AssocResp from da:b3:70:18:7c:14 (capab=0x1411 status=0 aid=25)
->>> [  414.431879] wlan0: associated
->>> [  415.272393] wlan0: Limiting TX power to 36 (36 - 0) dBm as advertised by da:b3:70:18:7c:14
->>>
->>> If there's anything further that would be useful here, let me know and I'd be happy to provide them.
->>
->> Seems the SDIO function driver b43-sdio does not print any error
->> messages.  All the error paths in drivers/ssb/sdio.c print debug
->> messages instead.
->>
->> I would suggest the following, which would limit messages to
->> host mmc1 which is what is shown in message "b43-sdio mmc1:0001:1:
->> Chip ID 14e4:4318"
->>
->> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
->> index 860378bea557..2719b21783ad 100644
->> --- a/drivers/mmc/core/core.c
->> +++ b/drivers/mmc/core/core.c
->> @@ -169,33 +169,33 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
->>  	 * - The card was removed (...so just complete everything no matter
->>  	 *   if there are errors or retries)
->>  	 */
->> -	if (!err || !cmd->retries || mmc_card_removed(host->card)) {
->> +	if (host->index == 1 && (!err || !cmd->retries || mmc_card_removed(host->card))) {
->>  		mmc_should_fail_request(host, mrq);
->>  
->>  		if (!host->ongoing_mrq)
->>  			led_trigger_event(host->led, LED_OFF);
->>  
->>  		if (mrq->sbc) {
->> -			pr_debug("%s: req done <CMD%u>: %d: %08x %08x %08x %08x\n",
->> +			pr_info("%s: req done <CMD%u>: %d: %08x %08x %08x %08x\n",
->>  				mmc_hostname(host), mrq->sbc->opcode,
->>  				mrq->sbc->error,
->>  				mrq->sbc->resp[0], mrq->sbc->resp[1],
->>  				mrq->sbc->resp[2], mrq->sbc->resp[3]);
->>  		}
->>  
->> -		pr_debug("%s: req done (CMD%u): %d: %08x %08x %08x %08x\n",
->> +		pr_info("%s: req done (CMD%u): %d: %08x %08x %08x %08x\n",
->>  			mmc_hostname(host), cmd->opcode, err,
->>  			cmd->resp[0], cmd->resp[1],
->>  			cmd->resp[2], cmd->resp[3]);
->>  
->>  		if (mrq->data) {
->> -			pr_debug("%s:     %d bytes transferred: %d\n",
->> +			pr_info("%s:     %d bytes transferred: %d\n",
->>  				mmc_hostname(host),
->>  				mrq->data->bytes_xfered, mrq->data->error);
->>  		}
->>  
->>  		if (mrq->stop) {
->> -			pr_debug("%s:     (CMD%u): %d: %08x %08x %08x %08x\n",
->> +			pr_info("%s:     (CMD%u): %d: %08x %08x %08x %08x\n",
->>  				mmc_hostname(host), mrq->stop->opcode,
->>  				mrq->stop->error,
->>  				mrq->stop->resp[0], mrq->stop->resp[1],
+
+
+On 9/17/25 10:50, Michal Simek wrote:
+> Over years number of upstream drivers have grown for AMD/Xilinx SOCs
+> (ZynqMP, Versal, Versal NET) but they are not enabled by default in
+> defconfig that's why enable all drivers for these SOCs including USB5744
+> on board USB hub available on Kria ZynqMP based SOMs and Carrier Cards.
 > 
-> With these patches, I still get copious amounts of spam, but at least relevant
-> to the wifi card now.
-> Here's a hopefully useful snippet (it's just a lot of these, from what I could see),
-> from with my patches:
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> ---
 > 
-> [  154.177276] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [  154.177297] mmc1:     4 bytes transferred: 0
-> <...>
-> [  186.707195] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [  186.707217] mmc1:     20 bytes transferred: 0
-> [  186.707358] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [  186.707382] mmc1:     384 bytes transferred: 0
-> [  186.707477] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [  186.707498] mmc1:     24 bytes transferred: 0
+>   arch/arm64/configs/defconfig | 43 ++++++++++++++++++++++++++++++++++++
+>   1 file changed, 43 insertions(+)
 > 
-> And the one from without is very similar, except I noticed this pattern:
-> [   85.942269] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [   85.942299] mmc1:     4 bytes transferred: 0
-> [   85.942523] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [   85.942555] mmc1:     4 bytes transferred: 0
-> [   85.944548] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [   85.944581] mmc1:     2 bytes transferred: 0
-> [   85.944777] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [   85.945160] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
-> [   85.945187] mmc1:     2 bytes transferred: 0
-> ... occasionally, some of the requests don't have an "[x] bytes transferred: 0".
-> 
-> Hopefully these help.  I can get a capture of the entire log spam and
-> put it on on pastebin or something, if that would be more useful.
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index e3a2d37bd104..10b0c71a4e3e 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -232,6 +232,10 @@ CONFIG_PCIE_RCAR_HOST=y
+>   CONFIG_PCIE_RCAR_EP=y
+>   CONFIG_PCIE_ROCKCHIP_HOST=m
+>   CONFIG_PCI_XGENE=y
+> +CONFIG_PCIE_XILINX=y
+> +CONFIG_PCIE_XILINX_DMA_PL=y
+> +CONFIG_PCIE_XILINX_NWL=y
+> +CONFIG_PCIE_XILINX_CPM=y
+>   CONFIG_PCI_IMX6_HOST=y
+>   CONFIG_PCI_LAYERSCAPE=y
+>   CONFIG_PCI_HISI=y
+> @@ -271,6 +275,7 @@ CONFIG_QCOM_QSEECOM=y
+>   CONFIG_QCOM_QSEECOM_UEFISECAPP=y
+>   CONFIG_EXYNOS_ACPM_PROTOCOL=m
+>   CONFIG_TEGRA_BPMP=y
+> +CONFIG_ZYNQMP_FIRMWARE_DEBUG=y
+>   CONFIG_GNSS=m
+>   CONFIG_GNSS_MTK_SERIAL=m
+>   CONFIG_MTD=y
+> @@ -303,6 +308,7 @@ CONFIG_QCOM_COINCELL=m
+>   CONFIG_QCOM_FASTRPC=m
+>   CONFIG_SRAM=y
+>   CONFIG_PCI_ENDPOINT_TEST=m
+> +CONFIG_XILINX_SDFEC=m
+>   CONFIG_EEPROM_AT24=m
+>   CONFIG_EEPROM_AT25=m
+>   CONFIG_UACCE=m
+> @@ -390,6 +396,7 @@ CONFIG_DWMAC_MEDIATEK=m
+>   CONFIG_DWMAC_TEGRA=m
+>   CONFIG_TI_K3_AM65_CPSW_NUSS=y
+>   CONFIG_TI_ICSSG_PRUETH=m
+> +CONFIG_XILINX_AXI_EMAC=m
+>   CONFIG_QCOM_IPA=m
+>   CONFIG_MESON_GXL_PHY=m
+>   CONFIG_AQUANTIA_PHY=y
+> @@ -406,7 +413,9 @@ CONFIG_DP83867_PHY=y
+>   CONFIG_DP83869_PHY=m
+>   CONFIG_DP83TD510_PHY=y
+>   CONFIG_VITESSE_PHY=y
+> +CONFIG_XILINX_GMII2RGMII=m
+>   CONFIG_CAN_FLEXCAN=m
+> +CONFIG_CAN_XILINXCAN=m
+>   CONFIG_CAN_M_CAN=m
+>   CONFIG_CAN_M_CAN_PLATFORM=m
+>   CONFIG_CAN_RCAR=m
+> @@ -556,6 +565,7 @@ CONFIG_I2C_S3C2410=y
+>   CONFIG_I2C_SH_MOBILE=y
+>   CONFIG_I2C_TEGRA=y
+>   CONFIG_I2C_UNIPHIER_F=y
+> +CONFIG_I2C_XILINX=m
+>   CONFIG_I2C_RCAR=y
+>   CONFIG_I2C_CROS_EC_TUNNEL=y
+>   CONFIG_SPI=y
+> @@ -593,6 +603,8 @@ CONFIG_SPI_STM32_OSPI=m
+>   CONFIG_SPI_SUN6I=y
+>   CONFIG_SPI_TEGRA210_QUAD=m
+>   CONFIG_SPI_TEGRA114=m
+> +CONFIG_SPI_XILINX=m
+> +CONFIG_SPI_ZYNQMP_GQSPI=m
+>   CONFIG_SPI_SPIDEV=m
+>   CONFIG_SPMI=y
+>   CONFIG_SPMI_MTK_PMIF=m
+> @@ -683,6 +695,8 @@ CONFIG_GPIO_WCD934X=m
+>   CONFIG_GPIO_VF610=y
+>   CONFIG_GPIO_XGENE=y
+>   CONFIG_GPIO_XGENE_SB=y
+> +CONFIG_GPIO_XILINX=m
+> +CONFIG_GPIO_ZYNQ=m
+>   CONFIG_GPIO_MAX732X=y
+>   CONFIG_GPIO_PCA953X=y
+>   CONFIG_GPIO_PCA953X_IRQ=y
+> @@ -752,6 +766,8 @@ CONFIG_QCOM_LMH=m
+>   CONFIG_UNIPHIER_THERMAL=y
+>   CONFIG_KHADAS_MCU_FAN_THERMAL=m
+>   CONFIG_WATCHDOG=y
+> +CONFIG_XILINX_WATCHDOG=m
+> +CONFIG_XILINX_WINDOW_WATCHDOG=m
+>   CONFIG_SL28CPLD_WATCHDOG=m
+>   CONFIG_ARM_SP805_WATCHDOG=y
+>   CONFIG_ARM_SBSA_WATCHDOG=y
+> @@ -987,6 +1003,8 @@ CONFIG_DRM_LIMA=m
+>   CONFIG_DRM_PANFROST=m
+>   CONFIG_DRM_PANTHOR=m
+>   CONFIG_DRM_TIDSS=m
+> +CONFIG_DRM_ZYNQMP_DPSUB=m
+> +CONFIG_DRM_ZYNQMP_DPSUB_AUDIO=y
+>   CONFIG_DRM_POWERVR=m
+>   CONFIG_FB=y
+>   CONFIG_FB_EFI=y
+> @@ -1068,6 +1086,9 @@ CONFIG_SND_SOC_TEGRA210_MIXER=m
+>   CONFIG_SND_SOC_TEGRA_AUDIO_GRAPH_CARD=m
+>   CONFIG_SND_SOC_DAVINCI_MCASP=m
+>   CONFIG_SND_SOC_J721E_EVM=m
+> +CONFIG_SND_SOC_XILINX_I2S=m
+> +CONFIG_SND_SOC_XILINX_AUDIO_FORMATTER=m
+> +CONFIG_SND_SOC_XILINX_SPDIF=m
+>   CONFIG_SND_SOC_AK4613=m
+>   CONFIG_SND_SOC_AK4619=m
+>   CONFIG_SND_SOC_DA7213=m
+> @@ -1151,6 +1172,7 @@ CONFIG_USB_SERIAL_OPTION=m
+>   CONFIG_USB_QCOM_EUD=m
+>   CONFIG_USB_HSIC_USB3503=y
+>   CONFIG_USB_ONBOARD_DEV=m
+> +CONFIG_USB_ONBOARD_DEV_USB5744=y
+>   CONFIG_NOP_USB_XCEIV=y
+>   CONFIG_USB_MXS_PHY=m
+>   CONFIG_USB_GADGET=y
+> @@ -1248,6 +1270,8 @@ CONFIG_LEDS_TRIGGER_PANIC=y
+>   CONFIG_EDAC=y
+>   CONFIG_EDAC_GHES=y
+>   CONFIG_EDAC_LAYERSCAPE=m
+> +CONFIG_EDAC_ZYNQMP=m
+> +CONFIG_EDAC_VERSAL=m
+>   CONFIG_RTC_CLASS=y
+>   CONFIG_RTC_DRV_DS1307=m
+>   CONFIG_RTC_DRV_HYM8563=m
+> @@ -1268,6 +1292,7 @@ CONFIG_RTC_DRV_DS3232=y
+>   CONFIG_RTC_DRV_PCF2127=m
+>   CONFIG_RTC_DRV_DA9063=m
+>   CONFIG_RTC_DRV_EFI=y
+> +CONFIG_RTC_DRV_ZYNQMP=m
+>   CONFIG_RTC_DRV_CROS_EC=y
+>   CONFIG_RTC_DRV_FSL_FTM_ALARM=m
+>   CONFIG_RTC_DRV_S3C=y
+> @@ -1296,6 +1321,9 @@ CONFIG_PL330_DMA=y
+>   CONFIG_TEGRA186_GPC_DMA=y
+>   CONFIG_TEGRA20_APB_DMA=y
+>   CONFIG_TEGRA210_ADMA=m
+> +CONFIG_XILINX_DMA=m
+> +CONFIG_XILINX_ZYNQMP_DMA=m
+> +CONFIG_XILINX_ZYNQMP_DPDMA=m
+>   CONFIG_MTK_UART_APDMA=m
+>   CONFIG_QCOM_BAM_DMA=y
+>   CONFIG_QCOM_GPI_DMA=m
+> @@ -1459,6 +1487,8 @@ CONFIG_SM_VIDEOCC_8450=m
+>   CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
+>   CONFIG_CLK_RENESAS_VBATTB=m
+>   CONFIG_CLK_SOPHGO_CV1800=y
+> +CONFIG_XILINX_VCU=m
+> +CONFIG_COMMON_CLK_XLNX_CLKWZRD=m
+>   CONFIG_HWSPINLOCK=y
+>   CONFIG_HWSPINLOCK_OMAP=m
+>   CONFIG_HWSPINLOCK_QCOM=y
+> @@ -1570,6 +1600,8 @@ CONFIG_RZG2L_ADC=m
+>   CONFIG_SOPHGO_CV1800B_ADC=m
+>   CONFIG_TI_ADS1015=m
+>   CONFIG_TI_AM335X_ADC=m
+> +CONFIG_XILINX_XADC=m
+> +CONFIG_XILINX_AMS=m
+>   CONFIG_IIO_CROS_EC_SENSORS_CORE=m
+>   CONFIG_IIO_CROS_EC_SENSORS=m
+>   CONFIG_IIO_ST_LSM6DSX=m
+> @@ -1602,7 +1634,9 @@ CONFIG_PWM_TEGRA=m
+>   CONFIG_PWM_TIECAP=m
+>   CONFIG_PWM_TIEHRPWM=m
+>   CONFIG_PWM_VISCONTI=m
+> +CONFIG_PWM_XILINX=m
+>   CONFIG_SL28CPLD_INTC=y
+> +CONFIG_XILINX_INTC=y
+>   CONFIG_QCOM_PDC=y
+>   CONFIG_QCOM_MPM=y
+>   CONFIG_TI_SCI_INTR_IRQCHIP=y
+> @@ -1666,6 +1700,8 @@ CONFIG_PHY_UNIPHIER_USB3=y
+>   CONFIG_PHY_TEGRA_XUSB=y
+>   CONFIG_PHY_AM654_SERDES=m
+>   CONFIG_PHY_J721E_WIZ=m
+> +CONFIG_OMAP_USB2=m
+> +CONFIG_PHY_XILINX_ZYNQMP=m
+>   CONFIG_ARM_CCI_PMU=m
+>   CONFIG_ARM_CCN=m
+>   CONFIG_ARM_CMN=m
+> @@ -1696,14 +1732,18 @@ CONFIG_NVMEM_SNVS_LPGPR=y
+>   CONFIG_NVMEM_SPMI_SDAM=m
+>   CONFIG_NVMEM_SUNXI_SID=y
+>   CONFIG_NVMEM_UNIPHIER_EFUSE=y
+> +CONFIG_NVMEM_ZYNQMP=m
+>   CONFIG_FPGA=y
+>   CONFIG_FPGA_MGR_ALTERA_CVP=m
+>   CONFIG_FPGA_MGR_STRATIX10_SOC=m
+>   CONFIG_FPGA_BRIDGE=m
+>   CONFIG_ALTERA_FREEZE_BRIDGE=m
+> +CONFIG_XILINX_PR_DECOUPLER=m
+>   CONFIG_FPGA_REGION=m
+>   CONFIG_OF_FPGA_REGION=m
+>   CONFIG_OF_OVERLAY=y
+> +CONFIG_FPGA_MGR_ZYNQMP_FPGA=m
+> +CONFIG_FPGA_MGR_VERSAL_FPGA=m
+>   CONFIG_TEE=y
+>   CONFIG_OPTEE=y
+>   CONFIG_MUX_GPIO=m
+> @@ -1797,6 +1837,9 @@ CONFIG_CRYPTO_DEV_FSL_DPAA2_CAAM=m
+>   CONFIG_CRYPTO_DEV_QCE=m
+>   CONFIG_CRYPTO_DEV_QCOM_RNG=m
+>   CONFIG_CRYPTO_DEV_TEGRA=m
+> +CONFIG_CRYPTO_DEV_XILINX_TRNG=m
+> +CONFIG_CRYPTO_DEV_ZYNQMP_AES=m
+> +CONFIG_CRYPTO_DEV_ZYNQMP_SHA3=m
+>   CONFIG_CRYPTO_DEV_CCREE=m
+>   CONFIG_CRYPTO_DEV_HISI_SEC2=m
+>   CONFIG_CRYPTO_DEV_HISI_ZIP=m
 
-Need to know if there are any errors.  In "[x] bytes transferred: 0"
-messages, the "0" is the error code i.e. no error.  So you might be able
-to find errors like:
+Applied.
 
-	dmesg | grep 'bytes transferred' | grep -v 'bytes transferred: 0'
-
-Also the debug patch could be tweaked to show errors only:
-
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 2719b21783ad..7b18fe6d5738 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -169,7 +169,7 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
- 	 * - The card was removed (...so just complete everything no matter
- 	 *   if there are errors or retries)
- 	 */
--	if (host->index == 1 && (!err || !cmd->retries || mmc_card_removed(host->card))) {
-+	if (host->index == 1 && (err || (mrq->data && mrq->data->error))) {
- 		mmc_should_fail_request(host, mrq);
- 
- 		if (!host->ongoing_mrq)
-
+M
 
