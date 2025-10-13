@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-850998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D07EBD5518
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:01:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A2ABD5578
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D86F56677F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:19:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 485F4542778
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B7A27467D;
-	Mon, 13 Oct 2025 16:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAAD30DEC0;
+	Mon, 13 Oct 2025 16:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDoq9TU9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INDtoDFE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967A825D546;
-	Mon, 13 Oct 2025 16:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC173093A6;
+	Mon, 13 Oct 2025 16:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760371729; cv=none; b=r2HIXCms2UVaxac0Tn9Ua1ZthtaOQGEjIyuSAYy8NEgmjDsN2xn8/R9IrjUSjXkdnt1u0LXvOtUAGVWaV8IKQOxOhJ1t/dVNb7Fwm596bKjlbtdEh/s1nqiFc5MIqfc8J9dShh6iHxXeN8CK3aE4F9YB9X2ET/g0CYw9OxmFv8s=
+	t=1760371438; cv=none; b=JPQ9AMRmv/j13UvWVCKpznagkSX+gqCV3RAYNrLyO8NddtK1wu9JaGmJmrlJozIRSZ+RHk72TurcbkESj+YalKRab/zVS7PCQVlwMRgaLf1m9yShbENnTur18i+Ceu51xYdSsmYqnvowvb5EX3hSoeuaKf8aF+RAl0/ilMxNGLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760371729; c=relaxed/simple;
-	bh=Cx2ySqwhiSWfKIHSd5QaOPvH3hIGJdxoGvQgZVmjeec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4kKQSzRgaj6yAc95mGRXzChRDaq4HiELFQyhIvGoGF+xH+FW6/n+qZxRNa6TvkE54IfqMGXpv4nz9SudkqWgvYvMMlocVmvMDjo0XY+2+5BjiUjlQhQaQPlOXP4PWxOIMlxNEB3auhhjhjAwRPwULbjhDbgczLSD1i4m5Z3+zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RDoq9TU9; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760371728; x=1791907728;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Cx2ySqwhiSWfKIHSd5QaOPvH3hIGJdxoGvQgZVmjeec=;
-  b=RDoq9TU9/NXIHupMu934BdArYrd0unvxElOhN3FekHKHm44BXPWnUvEg
-   2Ptt/z/zX6Psb4rHchbn7DkJPhe2iGIhaNKml/J24Nd07FXEEpTukAnLe
-   0OVcuoyug5smWV8MAYsCs1Gf+AgfA7sCSLSO6yq0R3Mm0uRKPk7nASeku
-   A/mb4cht4KGcpEGj1AHS5yetIQv8EbECOc7mHCVTD3qmDk0/UOMozgWDj
-   I31ZQUDuLPN7DREtnG2+SM0iPAXKXjDeE1qBTPIFaAosiptHb90/29tIN
-   R3OvQ2MY8OEt0PBrxPKFGeO6Vor1EiXDOmAXXTgGSIIbt6ylXWkQ3RMPu
-   A==;
-X-CSE-ConnectionGUID: z04BLzTzSomegvg3p9cfTQ==
-X-CSE-MsgGUID: g8Okb3CTShSG4xv29rzYFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="73859888"
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="73859888"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 09:08:47 -0700
-X-CSE-ConnectionGUID: CQePt4twSyu0zXP/jxJ66A==
-X-CSE-MsgGUID: bixiefRXQ1G8y6nrbKNFjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="182396858"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 13 Oct 2025 09:08:37 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8L3S-0001b8-2e;
-	Mon, 13 Oct 2025 16:07:07 +0000
-Date: Tue, 14 Oct 2025 00:00:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Yubing Zhang <yubing.zhang@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Amit Sunil Dhamne <amitsd@google.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Peter Robinson <pbrobinson@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 4/8] phy: rockchip: phy-rockchip-typec: Add DRM AUX
- bridge
-Message-ID: <202510132306.TKsFxaNn-lkp@intel.com>
-References: <20251011033233.97-5-kernel@airkyi.com>
+	s=arc-20240116; t=1760371438; c=relaxed/simple;
+	bh=rWotubb4CBnANwxKjnVhMxklcZzF6pHwe+WDhBKK4YI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mx3ciy9w4afzskns1izRWra2/RowLe0RW5fMdKcF68Wt/od68S+icKqaywbhJM1okcF6rMeaMPP3DhypHugeESToZDsLrOQ8f+91ix5mhZtnKPhFriewsvx6HptdN6gchmXoecTT+h8h+rHFRd0IthGqf/5fmSLtbZovLKafcr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INDtoDFE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E35F7C4CEFE;
+	Mon, 13 Oct 2025 16:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760371438;
+	bh=rWotubb4CBnANwxKjnVhMxklcZzF6pHwe+WDhBKK4YI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=INDtoDFE+pjOgH/g6E2xzS7J0AOM6w7kxweMsusiOCCdbdH7hEsB+UGFAiqAaQGZq
+	 AuD9u4OIfNVSHF4CqqBqhXdf7ZXHZg4yjh6qLsdiMod7MK1QS37pmIYoSQMBrdqhXm
+	 IhKos1I8nif5ocV64OGWVr4XS7GipKFbe2yLbd77ZL4C6RLWlyOM0LtH7te0gMH0fZ
+	 FMpLPwsmPcp32rT6RfSKLtsUbdGKm+IGX6NIVNyr07REuuJl7nYHhehdUuX1+f5Cfd
+	 nXXR8hzWOin2YkXeVbr5W5enfPZAuzJcfpIfivW03KvCtl6/HXdHrNz4JMDAjGLfMY
+	 aRZhwqN3YtdiA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF789CCD18D;
+	Mon, 13 Oct 2025 16:03:57 +0000 (UTC)
+From: Sven Peter <sven@kernel.org>
+Subject: [PATCH 0/5] Apple Silicon USB3 support - dwc3
+Date: Mon, 13 Oct 2025 16:03:24 +0000
+Message-Id: <20251013-b4-aplpe-dwc3-v1-0-12a78000c014@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251011033233.97-5-kernel@airkyi.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMwi7WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0Nj3SQT3cSCnIJU3ZTyZGNdkzRzSwNDS3MTwzRLJaCegqLUtMwKsHn
+ RsbW1AN+dgqhfAAAA
+X-Change-ID: 20251013-b4-aplpe-dwc3-4f79019741f9
+To: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sven Peter <sven@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, stable@kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1811; i=sven@kernel.org;
+ h=from:subject:message-id;
+ bh=rWotubb4CBnANwxKjnVhMxklcZzF6pHwe+WDhBKK4YI=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ8ZbpYd7Mhtrgqq4uP7eSDjAe5Oh40mhc8r+3ScKNr/ep
+ HnR08qwo5SFQYyDQVZMkWX7fnvTJw/fCC7ddOk9zBxWJpAhDFycAjCRnS2MDIuq1yQ2fuqavHjV
+ 5alW85k9jS1uHLeYZ/z2ykovNZujv4MYGSbO5L1yrmPb1RniF8WmJm/Yz3Rl364lh8+Xn28uZ4+
+ TXsMCAA==
+X-Developer-Key: i=sven@kernel.org; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
+ auth_id=407
 
-Hi Chaoyi,
+Hi,
 
-kernel test robot noticed the following build errors:
+As discussed in v2 of the combined Apple Silicon USB3 support series
+this one only contains the dwc3 changes without the DTS changes.
 
-[auto build test ERROR on usb/usb-testing]
-[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.18-rc1 next-20251013]
-[cannot apply to rockchip/for-next robh/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Link to v2 of the combined series: https://lore.kernel.org/asahi/20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org/
+Changes since v2 of that series:
+- Documented all functions in glue.h
+- Fixed a typo in the example for the dt-bindings
+- Added detailed documentation about how the dwc3 hardware needs to be
+  driven on this platform to the glue driver
+- Renamed dwc3_apple.mode to state and folded in the probe check into
+  the new DWC3_APPLE_PROBE_PENDING state
+- Collected tags
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chaoyi-Chen/usb-typec-Add-default-HPD-device-when-register-DisplayPort-altmode/20251011-113608
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20251011033233.97-5-kernel%40airkyi.com
-patch subject: [PATCH v5 4/8] phy: rockchip: phy-rockchip-typec: Add DRM AUX bridge
-config: i386-buildonly-randconfig-003-20251011 (https://download.01.org/0day-ci/archive/20251013/202510132306.TKsFxaNn-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251013/202510132306.TKsFxaNn-lkp@intel.com/reproduce)
+Best,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510132306.TKsFxaNn-lkp@intel.com/
+Sven
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Sven Peter <sven@kernel.org>
+---
+Sven Peter (5):
+      dt-bindings: usb: Add Apple dwc3
+      usb: dwc3: dwc3_power_off_all_roothub_ports: Use ioremap_np when required
+      usb: dwc3: glue: Add documentation
+      usb: dwc3: glue: Allow more fine grained control over mode switches
+      usb: dwc3: Add Apple Silicon DWC3 glue layer driver
 
-   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `udphy_orien_switch_unregister':
-   phy-rockchip-typec.c:(.text+0x89a): undefined reference to `typec_switch_unregister'
-   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_orien_sw_set':
-   phy-rockchip-typec.c:(.text+0x8b9): undefined reference to `typec_switch_get_drvdata'
-   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_typec_mux_unregister':
-   phy-rockchip-typec.c:(.text+0x93a): undefined reference to `typec_mux_unregister'
-   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_typec_mux_set':
-   phy-rockchip-typec.c:(.text+0x959): undefined reference to `typec_mux_get_drvdata'
-   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_setup_typec_mux':
->> phy-rockchip-typec.c:(.text+0xac3): undefined reference to `drm_aux_bridge_register'
-   ld: phy-rockchip-typec.c:(.text+0xae6): undefined reference to `typec_mux_register'
-   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `rockchip_typec_phy_probe':
-   phy-rockchip-typec.c:(.text+0xf3f): undefined reference to `typec_switch_register'
+ .../devicetree/bindings/usb/apple,dwc3.yaml        |  80 ++++
+ MAINTAINERS                                        |   2 +
+ drivers/usb/dwc3/Kconfig                           |  11 +
+ drivers/usb/dwc3/Makefile                          |   1 +
+ drivers/usb/dwc3/core.c                            |  16 +-
+ drivers/usb/dwc3/dwc3-apple.c                      | 488 +++++++++++++++++++++
+ drivers/usb/dwc3/gadget.c                          |   2 +
+ drivers/usb/dwc3/glue.h                            | 143 ++++++
+ drivers/usb/dwc3/host.c                            |   7 +-
+ 9 files changed, 744 insertions(+), 6 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251013-b4-aplpe-dwc3-4f79019741f9
 
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Sven Peter <sven@kernel.org>
+
+
 
