@@ -1,120 +1,188 @@
-Return-Path: <linux-kernel+bounces-850833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F63BD3FBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF792BD3FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AA691896C40
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30BA018A3F81
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5860309DA5;
-	Mon, 13 Oct 2025 14:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jm4LZ0lc"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D616F30E824;
+	Mon, 13 Oct 2025 14:57:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E9230DEBA
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FE83081DB
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367408; cv=none; b=RW1PsrPtE2zrEeyUgT3tPQqnLt5pODyxkPLz3rux01NTolDpUzmKyMuc3KP3li476OcfQSw8A9BNnKCzinLE6gyXCpt/YJrsC21mXc78rfkbvKiaYBqF7RWNFMqdRKePYgF0ySQO0PoztC2rH9J60CdlVMtPDhRSUUJ5OlCiuf4=
+	t=1760367477; cv=none; b=FdBhMMG9zSNJbCirNWHPFJhFcGqIz8jIO66KQusfRDgFThodcQ6jxglaEgLu1IeZAa4q643ln4s67j8iN5u1QGMy6l4egpsZaJ4609rMn7TeOPJ33VnAjqdAfw6KFPwQPjYAeLmryifOr/sfxethfNN+3Z+6wsZTF0ICTMgnJ/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367408; c=relaxed/simple;
-	bh=AehrbhclTtoUDRENr/Bm8ZihfIN/oseRDAuymqWxuE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nleNb+WEjy19QSl4Zi75PPfzRf1uVpSV7WZwzifD9oNEtYlAOEPSKjIlmy+1PCjqCvYR1jD5S9OHxxLRt/gADBfiHATahioMXC5Kfq9xAc5GOTs0UCMtayVYDMeq4xmiaDerLYSKqY99s/+3yMyfdirmR3FXOtbyvSZns5Te0gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jm4LZ0lc; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b54f55a290cso595523766b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760367405; x=1760972205; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4aiSy7SPQKxnXOFRglf0lpkGWBCc1QdWRr3Gsnj2XNY=;
-        b=Jm4LZ0lcQYdJ9ZHsG/wCiTD6Pfh4EIP1BhafH61PTSBE/1vudWTeMWI/6dq0xMgfe7
-         qRk4PnXUIpeKgPtAgXn1w4qx8tdPaH74ppZ/G6XmUPjXrPSOpTteeCd6M+XGVMA8l+s6
-         KzL6MLH9o/VU9qCOB3u5vn9xGCR2U87yUJHnnM8FxW5fR/U3zCK0qfscxII/BkJ+OI5p
-         gUfZT0B/r3JQ+jqBsb4vvHgHN9F9kj4bAcoJ7rBBrgonqMO1QQ8yzPnWQrORLpyoQQqi
-         oqgT1KtKcdLyZBr2k7TLqib5ki+78a00ixoKWijIKtwt+e7yT6fH9TDk2bP3GQPE3X87
-         I9XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760367405; x=1760972205;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aiSy7SPQKxnXOFRglf0lpkGWBCc1QdWRr3Gsnj2XNY=;
-        b=HUdzE6YYBzVP95CWt/yF2kRl0Hbxln8w9ZRiPIu40C0V1kVvhC4GXoOYcah2V++Av+
-         wm37i+qaRUItjxZLkzBRRM4rcyCuBgS8KG3LAPRDpyBQ/wc9bGHxO0vmZOWHQv5BaWLh
-         CkU5WNw6+2QaTzfT52k7WU1ccT1t4100Py153/lnVp+4oJNSAtfOvCF0gBzg2MH2ASQF
-         9c16uoDEBfI3XIIsRPBYQA7ih3sFuFZ3mynSNXxZ53eEmGHBFCJb2HOygzXMIteaCtUl
-         Hw9m/DZZ+gvdegF6p32h44S6hK3PWJzxGFiZJ7gLB6yAfNZmtN25x9Eq7lB7tdz6nkno
-         C5rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWl0m8EfLpvLJlHsJkkbkkR3wc9LGwL6w/B8rhmScEQq1qQ0A1vO7HPmtx5iKy3UIVS/x5Tgli71wCAjFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+xGIfWw1LymNfaOyZGwXi/0AQIGGMgwxqpepSS88LheIY9AgR
-	hpX8g4AoiGr0B//GwYXqw7DijLnIIxgIHlbQUDy/mDH0HBl9jbINsjprK+Otxj6wqFKGyi3NaLt
-	O3JGX8bb1i2e37rRnVg5iWkRK1j0xFLs=
-X-Gm-Gg: ASbGncv7K6Y7h0D0PIU003Zx3FEMDBhJ9huka4vT6OjCsYrD6DO4YscUVZfHnZp2FSl
-	0Nm0/J3gZaIFOVsxZuo3x4CvK5eo4xZoLzAopfKPBOdYA9DZRjWym+hLDKExfFFdlcmEjoERKsx
-	vZsK+Cp3/GJLWENdguKgOQkJYsRT7Pt24AcY8Scno+4OScZUheIH6jgNFnN0L+JSp13dJ9ksYgQ
-	OZvloa/5hIp3fNDEWBpWs2CUjkgymY=
-X-Google-Smtp-Source: AGHT+IEn4BipHFdFQpty90yZnHdtDve94da1wmgcnb4VcuDQTWpdAlFenmdB0falhANu5gpidPUxD2j+WgGCDLtnHLE=
-X-Received: by 2002:a17:907:6d1f:b0:b41:6ab2:bc69 with SMTP id
- a640c23a62f3a-b50aaa97cf5mr2140703066b.22.1760367404418; Mon, 13 Oct 2025
- 07:56:44 -0700 (PDT)
+	s=arc-20240116; t=1760367477; c=relaxed/simple;
+	bh=KRcwaq+/XU7W8rFBdjsmHKaeEjcYfHLbae4GLMSZ7FE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Li7xF/2BBxOq332f9x8zI8sgd3QsfdaIrmqwHWrhbweAKJl17tYEZ1nB/BQ+X4n5ezeJDsGZpG+W6qOpK5BimZu517oPSrKC0WxnT5NQRPgKLTDdhM/yzE2G+E2/7hoB1C4Joxww3DOqVgpJcFEYINeaFxgvZOhh9Lm5PKvvg5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8JzO-0003Bb-Ux; Mon, 13 Oct 2025 16:57:30 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8JzN-003Ovy-2v;
+	Mon, 13 Oct 2025 16:57:29 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8JzN-00000000CO2-3Ql5;
+	Mon, 13 Oct 2025 16:57:29 +0200
+Message-ID: <c1099a8e422abbc5d12bf3f325cb9f2140c8c006.camel@pengutronix.de>
+Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, vkoul@kernel.org, 
+	kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	geert+renesas@glider.be, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, 	biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Claudiu
+ Beznea	 <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang	
+ <wsa+renesas@sang-engineering.com>
+Date: Mon, 13 Oct 2025 16:57:29 +0200
+In-Reply-To: <6d4bc69c-1571-4d98-b0d4-214c68be118e@tuxon.dev>
+References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+	 <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
+	 <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+	 <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+	 <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
+	 <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
+	 <6d4bc69c-1571-4d98-b0d4-214c68be118e@tuxon.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012100002.2959213-1-a.shimko.dev@gmail.com>
- <20251012100002.2959213-3-a.shimko.dev@gmail.com> <bf59e192acc06c88f122578e40ee64e1cafe8152.camel@pengutronix.de>
-In-Reply-To: <bf59e192acc06c88f122578e40ee64e1cafe8152.camel@pengutronix.de>
-From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Mon, 13 Oct 2025 17:56:33 +0300
-X-Gm-Features: AS18NWAykio0w701fbhEeHmzQJfNFnnKmOciJx4yZvvqyOgcP50A65S9gxbvyXk
-Message-ID: <CAOPX745BVB4oVUxz0ZYRRs3_KWT6Y6cGrMdc26v49U66+u0ReA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dmaengine: dw-axi-dmac: add reset control support
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Vinod Koul <vkoul@kernel.org>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+Hi Claudiu,
 
-On Mon, Oct 13, 2025 at 11:41=E2=80=AFAM Philipp Zabel <p.zabel@pengutronix=
-.de> wrote:
-> reset_control_assert/deassert() handle NULL pointers, so you could drop
-> the chip->has_resets flag and just
->
->         reset_control_assert(chip->resets);
->
-> unconditionally.
+On Fr, 2025-10-10 at 14:26 +0300, Claudiu Beznea wrote:
+> Hi, Philipp,
+>=20
+> On 10/8/25 15:16, Claudiu Beznea wrote:
+> > Hi, Philipp,
+> >=20
+> > On 10/8/25 13:23, Philipp Zabel wrote:
+> > > Hi Claudiu,
+> > >=20
+> > > On Mi, 2025-10-08 at 12:29 +0300, Claudiu Beznea wrote:
+> > > > Hi, Philipp,
+> > > >=20
+> > > > On 10/8/25 11:34, Philipp Zabel wrote:
+> > > > > Hi Claudiu,
+> > > > >=20
+> > > > > On Do, 2025-09-25 at 13:02 +0300, Claudiu wrote:
+> > > > > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > > > >=20
+> > > > > > On the Renesas RZ/G3S SoC, the USB PHY block has an input signa=
+l called
+> > > > > > PWRRDY. This signal is managed by the system controller and mus=
+t be
+> > > > > > de-asserted after powering on the area where USB PHY resides an=
+d asserted
+> > > > > > before powering it off.
+> > > > > >=20
+> > > > > > On power-on the USB PWRRDY signal need to be de-asserted before=
+ enabling
+> > > > > > clock and switching the module to normal state (through MSTOP s=
+upport). The
+> > > > > > power-on configuration sequence
+> > > > > The wording makes me wonder, have you considered implementing thi=
+s as a
+> > > > > power sequencing driver?
+> > > > No, haven't tried as power sequencing. At the moment this was start=
+ed I
+> > > > think the power sequencing support wasn't merged.
+> > > >=20
+> > > > The approaches considered were:
+> > > > a/ power domain
+> > > Letting a power domain control a corresponding power ready signal wou=
+ld
+> > > have been my first instinct as well.
+> > >=20
+> > > > b/ regulator
+> > > > c/ as a reference counted bit done through regmap read/writes APIs
+> > > >=20
+> > > > a and b failed as a result of discussions in the previous posted ve=
+rsions.
+> > > Could you point me to the discussion related to a?
+> > It's this one
+> > https://lore.kernel.org/all/
+> > CAPDyKFrS4Dhd7DZa2zz=3DoPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com/
 
-Thanks, I'll fix that
+Thank you! From this discussion it still isn't clear to me whether
+Ulf's suggestion of using genpd on/off notifiers was considered and why
+it was dismissed.
 
-> Why is this moved down here?
+From the DT patches it looks like there is no actual separate power
+domain for USB, just the single always-on CPG power domain (in rzg2l-
+cpg.c). Is that correct? In the thread it sounded like there were
+multiple domains.
 
-Reset operations typically require clock signals to be available. By
-moving reset after clock
-acquisition (devm_clk_get), we ensure that the clock is ready to
-operate when reset is performed.
+Is the issue that you need the PWRRDY signal to be (de)asserted
+independently from the CPG power domain enable/disable? (Why?)
 
-> If it is ok to keep the module in reset, shouldn't the reset control be
-> asserted on device remove() as well?
+Why can't the power domain provider (cpg) have the renesas,sysc-pwrrdy
+property and set the signal together with the power domain?
 
-dw_remove() has axi_dma_suspend() function, which is where the reset assert=
-ion
-occurs via reset_control_assert().
+> > > I see v2 and v3 tried to control the bit from the PHY drivers, and in
+> > > v4 we were are already back to the reset driver.
+> > v2 passed the system controller (SYSC) phandle to the USB PHYs only (th=
+ough
+> > renesas,sysc-signals DT property) where the PWRRDY bit was set. The PWR=
+RDY
+> > bit was referenced counted in the SYSC driver though regmap APIs.
+> >=20
+> > v3 used the approach from v2 but passed the renesas,sysc-signals to all=
+ the
+> > USB related drivers.
+> >=20
+> > Then, in v4, the PWRRDY refcounting was dropped and passed
+> > renesas,sysc-signals only to the USB PHY CTRL DT node in the idea that =
+this
+> > is the node that will always be probed first as all the other USB block=
+s
+> > need it and request resets from it.
+> >=20
+> > v5 and v6 kept the approach from v4 and only addressed misc comments or
+> > things that I noticed.
+>=20
+> Could you please let me know if you are OK with the approach proposed in
+> v7, so that I can start preparing a new version addressing your comments?
 
-Best regards,
-Artem Shimko
+If the PWRRDY signal is an input to the USB2PHY control block, and not
+only to the PHY blocks, I have no issue with this being handled in the
+usb2phy reset driver - iff it is not sensible to just control the
+signal from the power domain driver.
+
+If we have to handle it in the reset driver, I'd prefer to see this
+controlled with a dev_pm_genpd_add_notifier(). If that is not possible,
+I'd like to understand why.
+
+regards
+Philipp
 
