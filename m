@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-850261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5558BD25D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C35FCBD25DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B38E64EFBC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:49:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8A814EFADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B47924469B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475D62FE073;
 	Mon, 13 Oct 2025 09:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVj8hXqK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5X7CS6l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7A02F5A37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E082FB632
 	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348926; cv=none; b=qz/si2qNfrQRiNa130Qp5eJLLo3ipcxwNdBRmIYabhOCpxG8JN/dQzcbyB7fkYArP80qbHF0Z5WurufIf6LiR54YCxCNOtK0fUFjN8EYg0AGOMiPPSROwDHz/qDxUuxK3eZHHaGUnnzPmxGbDSyZeLtlzuQfxVb7IBfts6lRvN8=
+	t=1760348926; cv=none; b=mpsrTpA9Y498VmcE8LWGn4F1RajRMnIk7//lbMzfWJpzqgw970rUs7yccZTgaGY5H8uEu8YlvlAXAuEiZrlUQpHRpOUK2lMUeAkTvFD9j4TBKlIiMY/MfOEghPCnu7xJrIux1Ub7tHJk8kqIfXopE3SU5wnO2aI0GAXkz4L7JYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760348926; c=relaxed/simple;
-	bh=WjGMo4ebNiuDIVIcaRsO8MiAUno93QhyR1S9i2wJ3e0=;
+	bh=g6X8oJ5DSXDBk0NgBv7aeqsGUGeoDtV/vwL93P6tfMk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i6qxVjSWWUkj7i/SZPEomhhrwxuEYS10+i015UfiWqN3ctkX2iFr1uq1/O3PsZfBZCB+JWNAf/I2dzYmaOTzzSoNj8F5fgQrkeHgQy4OclmeRw3JbgCPQelOlMsDXEvRNhTOSCildAD98EEXFPkgWc7ragzJWUTVyB1vW5afgbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVj8hXqK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A034C4CEFE;
+	 MIME-Version; b=qdP2XCpM2SjZTICn3GCXAAw6bYCXhcy2oUxRzqVmzgKRunckv/332r4yuPbSo76Wx5neHUFxe6yNboL914dqkD4zoZdMMsvA5YrWSVDUn5Jjx2SDtQZ7cJ6s0bGNwusUdgQ8kBOL4tS717YhsI3C6fBWb6vD3B8kztmgl5pw9dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5X7CS6l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D99C19421;
 	Mon, 13 Oct 2025 09:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760348926;
-	bh=WjGMo4ebNiuDIVIcaRsO8MiAUno93QhyR1S9i2wJ3e0=;
+	bh=g6X8oJ5DSXDBk0NgBv7aeqsGUGeoDtV/vwL93P6tfMk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oVj8hXqKKbxZ6CU8Ydj7biKlWOSBYBjMpagEasi1IEQnXpO1y/byV+kJXsSX4kUzS
-	 1cJ0Pj1khrNJ6MGTZhZksF3xkU0FHfbV50nX8Y0YSu/umX/w1N9ycagFmpCECsfAwg
-	 f+0epLSRcH8bAEPqcchJ3qaXd/ZDXV6oEYy5DKDByHvjbUP4l6G+04BKWYoCR/t+gS
-	 UvlvV7UNx8AAYYza6oH5X+cjsktPTbjKXXHYxWflY3/C4DS+ZAWiiKtKLd6wXHJRzZ
-	 fmVD5KjR5ipEVA9/audg7+Pj05jXqaLSKDT2ByqIFONxeaLoJcsxXAQA3bmBS1jPkM
-	 IMovyNBa1E5Mw==
+	b=D5X7CS6la6bszhJ8EwUy3oZAODH/jy8fiSGO5O+v/14dWyadLYaP9bVRHsXrJ21ra
+	 ujdgis5J6HviDgCDu/YP0HYGYKtJuG7fdxfylh6TD7M4wnIL0fjUEXTy8QUV/LOn0x
+	 9bCWAQrO2KDNwHc4s2d/dTjKPsFP0cbaILZf0uHBvS2DofAc2eUODBLxep8Wr5zu2G
+	 sb/HT0XYQGlZKpA3liQLSODd1nG3WDZveXNUUs1UYKLud0OAQvyjPePEOZOBUd3duR
+	 RnGaTlx2I1t6iTD78uN6pr9pqubDc7aEW2SqbVOpi24H4kUcBo69vqV3HEL8/iEB4M
+	 9Zj/O/TNFCpaQ==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v8FAZ-0000000036M-2nUA;
+	id 1v8FAZ-0000000036O-3DcQ;
 	Mon, 13 Oct 2025 11:48:43 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>
@@ -60,10 +60,10 @@ Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan@kernel.org>,
-	Stanimir Varbanov <svarbanov@suse.de>
-Subject: [PATCH 02/11] irqchip/bcm2712-mip: Fix section mismatch
-Date: Mon, 13 Oct 2025 11:46:02 +0200
-Message-ID: <20251013094611.11745-3-johan@kernel.org>
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 03/11] irqchip/irq-bcm7038-l1: Fix section mismatch
+Date: Mon, 13 Oct 2025 11:46:03 +0200
+Message-ID: <20251013094611.11745-4-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20251013094611.11745-1-johan@kernel.org>
 References: <20251013094611.11745-1-johan@kernel.org>
@@ -78,26 +78,40 @@ Content-Transfer-Encoding: 8bit
 Platform drivers can be probed after their init sections have been
 discarded so the irqchip init callback must not live in init.
 
-Fixes: 32c6c054661a ("irqchip: Add Broadcom BCM2712 MSI-X interrupt controller")
-Cc: Stanimir Varbanov <svarbanov@suse.de>
+Fixes: c057c799e379 ("irqchip/irq-bcm7038-l1: Switch to IRQCHIP_PLATFORM_DRIVER")
+Cc: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/irqchip/irq-bcm2712-mip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-bcm7038-l1.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/irqchip/irq-bcm2712-mip.c b/drivers/irqchip/irq-bcm2712-mip.c
-index 256c2d59f717..8466646e5a2d 100644
---- a/drivers/irqchip/irq-bcm2712-mip.c
-+++ b/drivers/irqchip/irq-bcm2712-mip.c
-@@ -232,7 +232,7 @@ static int mip_parse_dt(struct mip_priv *mip, struct device_node *np)
- 	return ret;
+diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
+index 04fac0cc857f..e28be83872cb 100644
+--- a/drivers/irqchip/irq-bcm7038-l1.c
++++ b/drivers/irqchip/irq-bcm7038-l1.c
+@@ -219,9 +219,9 @@ static int bcm7038_l1_set_affinity(struct irq_data *d,
  }
+ #endif
  
--static int __init mip_of_msi_init(struct device_node *node, struct device_node *parent)
-+static int mip_of_msi_init(struct device_node *node, struct device_node *parent)
+-static int __init bcm7038_l1_init_one(struct device_node *dn,
+-				      unsigned int idx,
+-				      struct bcm7038_l1_chip *intc)
++static int bcm7038_l1_init_one(struct device_node *dn,
++			       unsigned int idx,
++			       struct bcm7038_l1_chip *intc)
  {
- 	struct platform_device *pdev;
- 	struct mip_priv *mip;
+ 	struct resource res;
+ 	resource_size_t sz;
+@@ -395,8 +395,7 @@ static const struct irq_domain_ops bcm7038_l1_domain_ops = {
+ 	.map			= bcm7038_l1_map,
+ };
+ 
+-static int __init bcm7038_l1_of_init(struct device_node *dn,
+-			      struct device_node *parent)
++static int bcm7038_l1_of_init(struct device_node *dn, struct device_node *parent)
+ {
+ 	struct bcm7038_l1_chip *intc;
+ 	int idx, ret;
 -- 
 2.49.1
 
