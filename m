@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-851403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D22BD65D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:31:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CABCBD65DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 410234F1DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EBA0404089
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8701E2F25EA;
-	Mon, 13 Oct 2025 21:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F6B2F28FF;
+	Mon, 13 Oct 2025 21:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7D+GZOW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU/XMEGk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04622EBDE0;
-	Mon, 13 Oct 2025 21:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABC02C21E8;
+	Mon, 13 Oct 2025 21:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391083; cv=none; b=aFbsngHQ9CN+7how29492Wqe+gaisgUKtloeLGh9V3QzFEwdSI3pp6KSMqNoCyoqgIrn5D6airIxtfupfFsNwoFyZMoM5hnwSmDMl94WJPuExdTq17inB0aP0dSfDKWCz2W2VpSDLzNTxxECo9QjqPYsnsyTE7pmJ6cCs+S+L1s=
+	t=1760391093; cv=none; b=d4/yj01iMG4B4iaJ2PmPlBphMY1856BgeNTzkMVTpqnXo3nxXKRXrssJF0X6xWGcOHIyg5P7Uo83xKYmTav/eXZssE8CNAuoYRCGAOIAzy8CAQDQTKe80BGgZirSbJ6mybAuyOYwSBCc7eTkHFrZtMo+2+gtuYXSGesj08lc2Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391083; c=relaxed/simple;
-	bh=RC1We2H5PTUbicO6BGAQ4fo/J3wXL6EboZl9psh9moc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dlS7+YpMHvMwNNe3QMUP7EjlIR4agh9d2U4MA5r7/aS0pqhISwyecUscUd+wfUWK39j1myuTQJ7E8UZH3PsLcJ+1/ga+xBJPHgGlvQLuSOSO633zZNydnwwh7TAqhOEjZOdObU7NmBIJbzqBLpT/dFGFOFV/p92mTe4vZce/K/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7D+GZOW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898BDC4CEE7;
-	Mon, 13 Oct 2025 21:31:23 +0000 (UTC)
+	s=arc-20240116; t=1760391093; c=relaxed/simple;
+	bh=Ofhm35+PLifvLZq6UdFDigfjt4NVPPfWb+OzISebhBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CPb2olssCGvMe+CvMfiRnwS/ACUDf4EzeGVcRb19oZhjs2cY9BO/+B+Kq79wcrQvlYOdfNnrQ9jUmOHFzW6FMf/+715dZyDpa8kGOxIZhOzat4bAibzPcChqOSrvglpStgLQD5fItGtELJQckR75Pjr6/eAwpsvMxJ6/VDWML0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU/XMEGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E37CC4CEE7;
+	Mon, 13 Oct 2025 21:31:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760391083;
-	bh=RC1We2H5PTUbicO6BGAQ4fo/J3wXL6EboZl9psh9moc=;
+	s=k20201202; t=1760391092;
+	bh=Ofhm35+PLifvLZq6UdFDigfjt4NVPPfWb+OzISebhBU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=N7D+GZOWzAJ5+4JPUJmlAZBtuQiYa0euidGkAQJP6U9CViEv11KETkZK54VTgMxyb
-	 xBPM18kNU5DLKZcTs20WbJYgq28o87hqeziOH2BJMuPpEuzXh6n4F205CTunhL9E8a
-	 8TZiG1r2kVe8PZRxgbvshELQOHSKHDbZEQBNdX/9afhgBmDWu81xyzh6Fr7P1Pn7ky
-	 8IlsCevOAferwKselVWeTEtsc4zFB88hEc2tK/8UecinTkvY0h9WX6CcthUcp5wj4x
-	 yjuZQxMYJ2hiFfEl6xFNq0eCFxS0CAqn2zOtZJATxIGqEpGBNpVvbRClACfBopjrF8
-	 J8513RjvSBN3Q==
+	b=jU/XMEGkQIS4sxrH1/UsHbC512W7H67W7X/hnlNK5k94chiPwAK9n1ko/dVE+fS3x
+	 OMhbgR9IOLS6BVvL7bM3bu5sRlH2SrWlTl7oEcWVa230ziq9yD/TiDZOljqs66O0sF
+	 RzG7S/auqxwdxGeFN7jEQ4l9ie6IkZd3qErD8ejfoKbncTVbOR+uancLsnEzVAnTEE
+	 vpAQfmxQQ6FHafvj3P4qkWze3q6hGQ8x3MicZF+cntPdLf8S738LEhSy/l02oM/uDE
+	 qkfZHJPKtyegTEIKCvthO5ol1wG/R7VOxf3Dz/kjnhlMxdMQO4CVku3jDiqrk2DJ5W
+	 ZhK2OMT9x7CAw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andi Shyti <andi.shyti@kernel.org>,
+To: Guenter Roeck <linux@roeck-us.net>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Khuong Dinh <khuong@os.amperecomputing.com>
-Cc: linux-i2c@vger.kernel.org,
+Cc: linux-hwmon@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: i2c: Convert apm,xgene-slimpro-i2c to DT schema
-Date: Mon, 13 Oct 2025 16:31:18 -0500
-Message-ID: <20251013213120.691285-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: hwmon: Convert apm,xgene-slimpro-hwmon to DT schema
+Date: Mon, 13 Oct 2025 16:31:26 -0500
+Message-ID: <20251013213127.692373-1-robh@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,43 +59,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert APM X-Gene slimpro-i2c binding to DT schema format. It's a
+Convert APM X-Gene slimpro-hwmon binding to DT schema format. It's a
 straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/i2c/apm,xgene-slimpro-i2c.yaml   | 36 +++++++++++++++++++
- .../bindings/i2c/i2c-xgene-slimpro.txt        | 15 --------
- 2 files changed, 36 insertions(+), 15 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/i2c/apm,xgene-slimpro-i2c.yaml
- delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-xgene-slimpro.txt
+ .../hwmon/apm,xgene-slimpro-hwmon.yaml        | 30 +++++++++++++++++++
+ .../bindings/hwmon/apm-xgene-hwmon.txt        | 14 ---------
+ 2 files changed, 30 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/apm,xgene-slimpro-hwmon.yaml
+ delete mode 100644 Documentation/devicetree/bindings/hwmon/apm-xgene-hwmon.txt
 
-diff --git a/Documentation/devicetree/bindings/i2c/apm,xgene-slimpro-i2c.yaml b/Documentation/devicetree/bindings/i2c/apm,xgene-slimpro-i2c.yaml
+diff --git a/Documentation/devicetree/bindings/hwmon/apm,xgene-slimpro-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/apm,xgene-slimpro-hwmon.yaml
 new file mode 100644
-index 000000000000..9460c64071f2
+index 000000000000..58c51626a9ce
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/apm,xgene-slimpro-i2c.yaml
-@@ -0,0 +1,36 @@
++++ b/Documentation/devicetree/bindings/hwmon/apm,xgene-slimpro-hwmon.yaml
+@@ -0,0 +1,30 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/i2c/apm,xgene-slimpro-i2c.yaml#
++$id: http://devicetree.org/schemas/hwmon/apm,xgene-slimpro-hwmon.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: APM X-Gene SLIMpro Mailbox I2C
++title: APM X-Gene SLIMpro hwmon
 +
 +maintainers:
 +  - Khuong Dinh <khuong@os.amperecomputing.com>
 +
-+description:
-+  An I2C controller accessed over the "SLIMpro" mailbox.
-+
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
-+
 +properties:
 +  compatible:
-+    const: apm,xgene-slimpro-i2c
++    const: apm,xgene-slimpro-hwmon
 +
 +  mboxes:
 +    maxItems: 1
@@ -104,34 +98,33 @@ index 000000000000..9460c64071f2
 +  - compatible
 +  - mboxes
 +
-+unevaluatedProperties: false
++additionalProperties: false
 +
 +examples:
 +  - |
-+    i2c {
-+        compatible = "apm,xgene-slimpro-i2c";
-+        mboxes = <&mailbox 0>;
++    hwmon {
++        compatible = "apm,xgene-slimpro-hwmon";
++        mboxes = <&mailbox 7>;
 +    };
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-xgene-slimpro.txt b/Documentation/devicetree/bindings/i2c/i2c-xgene-slimpro.txt
+diff --git a/Documentation/devicetree/bindings/hwmon/apm-xgene-hwmon.txt b/Documentation/devicetree/bindings/hwmon/apm-xgene-hwmon.txt
 deleted file mode 100644
-index f6b2c20cfbf6..000000000000
---- a/Documentation/devicetree/bindings/i2c/i2c-xgene-slimpro.txt
+index 59b38557f1bb..000000000000
+--- a/Documentation/devicetree/bindings/hwmon/apm-xgene-hwmon.txt
 +++ /dev/null
-@@ -1,15 +0,0 @@
--APM X-Gene SLIMpro Mailbox I2C Driver
+@@ -1,14 +0,0 @@
+-APM X-Gene hwmon driver
 -
--An I2C controller accessed over the "SLIMpro" mailbox.
+-APM X-Gene SOC sensors are accessed over the "SLIMpro" mailbox.
 -
 -Required properties :
--
-- - compatible : should be "apm,xgene-slimpro-i2c"
+- - compatible : should be "apm,xgene-slimpro-hwmon"
 - - mboxes : use the label reference for the mailbox as the first parameter.
 -	    The second parameter is the channel number.
 -
 -Example :
--	i2cslimpro {
--		compatible = "apm,xgene-slimpro-i2c";
--		mboxes = <&mailbox 0>;
+-	hwmonslimpro {
+-		compatible = "apm,xgene-slimpro-hwmon";
+-		mboxes = <&mailbox 7>;
 -	};
 -- 
 2.51.0
