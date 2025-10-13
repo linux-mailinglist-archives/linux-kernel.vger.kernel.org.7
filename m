@@ -1,125 +1,255 @@
-Return-Path: <linux-kernel+bounces-850619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BDA0BD34F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:58:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3D0BD34F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE143AC57C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:58:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 563ED4F1DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EB423717F;
-	Mon, 13 Oct 2025 13:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B769123A989;
+	Mon, 13 Oct 2025 13:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cR/pTLT/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rqRqeBgs"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012020.outbound.protection.outlook.com [52.101.48.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE181D5CEA;
-	Mon, 13 Oct 2025 13:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760363926; cv=none; b=EWxUJDUBXNT+BBUZaYIa+zC6jyi8uAc7hFItT91RM3tc2nOgTUCjMSVg2B1WwFPUG+ZjS7sSiKuzRxhuuDpG6HcPKY/qfFzXsvVk8+db7iZuPdJNd/d3uzIwbOx7ecHzAuBomArxRG4WG3GKPR3kADQSkvt3G3Zp+A9bXik3XpA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760363926; c=relaxed/simple;
-	bh=sMrKkgG+uTwi5sHHZ4cTtu282VBQzEJvwZ+YmNuz5MA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=J/DEtL0gwJwMZjNHA5J1sSn8S5Y+fCo6q/aGFSSwSUdMsEfp0fKFLdor8SYuPnXSkx4d53aVj4q+6LGZdMJjFypIVsANsMA0ttardbAnPlqrLY3893Lpn6en8x8U/ZScP2I/TAcwNTTVtyn7WQenIEfY9vECnEo3fNN5zVtbJR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cR/pTLT/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA587C4CEE7;
-	Mon, 13 Oct 2025 13:58:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760363926;
-	bh=sMrKkgG+uTwi5sHHZ4cTtu282VBQzEJvwZ+YmNuz5MA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cR/pTLT/vpOrz2kLrwv4bvlqQMcwjn6IYqZ77M8tIyBhGSIjXU3X+Ba6/VNChaLUS
-	 CEeAm+egr1YfRdMKWvhXSh0yilyNV1WupuO++XCypFMdngsyBLKGOTlG1U6VciU4M0
-	 NatKxXbZSLpFve4E67qR7QfTPy55ZSTtGIDs5Cd5qlvoFTHTYSMTOVjJTPd7ol6km2
-	 RCVvDjevQI8YSSsP1eUbTUYs27I0ieyhoz5ldlds8Mc0Aq5Xqw2lHoCUGRgaZMJuEK
-	 6zFI50ZCXW5jfCgBuovWZrCBeAqOkZLGvfM2rk5Ee50TFvugi1fdyAeT3vzVowZM8h
-	 asxk7DceP6u1w==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Jason Miu <jasonmiu@google.com>
-Cc: Chris Li <chrisl@kernel.org>,  Pratyush Yadav <pratyush@kernel.org>,
-  Bjorn Helgaas <helgaas@kernel.org>,  Pasha Tatashin
- <pasha.tatashin@soleen.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"
- <rafael@kernel.org>,  Danilo Krummrich <dakr@kernel.org>,  Len Brown
- <lenb@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-pci@vger.kernel.org,  linux-acpi@vger.kernel.org,  David Matlack
- <dmatlack@google.com>,  Pasha Tatashin <tatashin@google.com>,  Vipin
- Sharma <vipinsh@google.com>,  Saeed Mahameed <saeedm@nvidia.com>,  Adithya
- Jayachandran <ajayachandra@nvidia.com>,  Parav Pandit <parav@nvidia.com>,
-  William Tu <witu@nvidia.com>,  Mike Rapoport <rppt@kernel.org>,  Jason
- Gunthorpe <jgg@ziepe.ca>,  Leon Romanovsky <leon@kernel.org>,
-  skhawaja@google.com
-Subject: Re: [PATCH v2 00/10] LUO: PCI subsystem (phase I)
-In-Reply-To: <CAHN2nPK34YfrysN+sraiFVjU_9Lw7E-yFVF-9x+nt1OUppZX8Q@mail.gmail.com>
-	(Jason Miu's message of "Fri, 10 Oct 2025 16:49:42 -0700")
-References: <CA+CK2bAbB8YsheCwLi0ztY5LLWMyQ6He3sbYru697Ogq5+hR+Q@mail.gmail.com>
-	<20250929150425.GA111624@bhelgaas>
-	<CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
-	<CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com>
-	<mafs0a51zmzjp.fsf@kernel.org>
-	<CACePvbW9eSBY7qRz4o6Wqh0Ji0qECrFP+RDxa+nn4aHRTt1zkQ@mail.gmail.com>
-	<CAHN2nPK34YfrysN+sraiFVjU_9Lw7E-yFVF-9x+nt1OUppZX8Q@mail.gmail.com>
-Date: Mon, 13 Oct 2025 15:58:41 +0200
-Message-ID: <mafs01pn6nbse.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB0D1D5CEA;
+	Mon, 13 Oct 2025 13:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760363942; cv=fail; b=I1jXWDBxZg3ath25EfRnD6PvM/pZAbFnkOC4vvs0mSBqjBPEJiPZIGupElz7wBMQWWEMv7PBQmDGDle1EUlUQ56Zt/5KW1qSiTUBv1F198rzbCyr/8VmYyVElPfdb/Sz4WQRiKc0rwKXgo8w0VvWIwO1sT8kJEdcOG6PfHbZFRA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760363942; c=relaxed/simple;
+	bh=CmZs4CG7KDjE2FGWDX8+HfNiUg8KKOW7C+rFxAnHS2U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mSwuwBSmBbmAMsnaw+KRd8za90jRpMjnLLomFmYerHCiXKAnsZrJt1sapkOWi+nZ/j24F+W5mDyEFY0J5cyS4aM8+1eUfAe8+wAAThF7ya7xvfmDkVA6og+FzM1BLXXmfWMCuhnGxTms6yqj+Co2XJCFShNkmUAxj+HfNQ7TMfQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rqRqeBgs; arc=fail smtp.client-ip=52.101.48.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N2NleZDlAP1FbVDOCvb6B+h8AnyHySwcqeupCkw8QsPTjfnogGRmKQzcge56yHm+rVRUM28srDCuGGkOHh5wi41PvPJGyYbgpeXH6BCZ60VYb3IjrWCCCqqMrCb4THGXsa/QAfVQL2RGE41N4LyvAcWFF2oYNl3n0KRn7YvibA/LK5kWRKsIeYWLjxi90NVFdIzOAeBpCTqiD1nOwyNrG3SNKmerKhqVP9R5TIvakMIzuCn5MvRKPaDsEy9tWAAep55lraNq4DHqnmbaPpZjh0yJerXuCe4tT4kgo2HalRLcMpnDLZ3pjQddpT9xuN+DJ9FxipUR+uaW7yMoGDlqcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6YnXQGi6Hq0CNZ37wWjgHYrq6HNeSNS8iLZZFohAXzs=;
+ b=mavbPPGm8+9ZMNggO0zSDRLCmmB2p5JesWax2D5HQ5gOf8AdmSG3lLpQPjU4uxFiEVGgLrZbtymWRYGGyaLXNi920jTkqmMng3uo5Y6HuzZlm07P2DAUn8pVz9RbpU3M/UQ6OlHtpeRktBGMEYjevN5RQtl9sRFU2mZAZ+nm2U2tX7TAU1H6uqL4fcoZ3jih+o0FQh2umwvTWd1DMEoqTZeJbpEK0ROyvp6oXL1ixxM9RzosHY7ocpLGiHLrWATt/7lGvUVg8NDGyoe6fnCVl21H1L2cctZEp7KVa7RwWfLqBjdrNCh1Y3zETtQF03GJIVvSppde/27UvCgVYA09xQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6YnXQGi6Hq0CNZ37wWjgHYrq6HNeSNS8iLZZFohAXzs=;
+ b=rqRqeBgssUxjlwYUlQmpOhGIq+K1tSj0Qddl22W7tkjK0JgSrQ25aHwl5maqf05Ft3xNYvDx3J/ZOVfnsmysLeFFEwZC5uh/MzQBV5mOCO9Lk9wYR2PwMHUoMIKxpQOyGjdOfM14fU97QuZivST73KBAYZQsebFd5z+INNzu7jWf5YzqqiSkVwwVM5tfjv4lO7ma9G2rq+nVUuW04+vVqE3Z+ttUDbVssLmH/jNCLwKnKO1DN1IBYAw3rKmqNTs2iAJlIFDviu1cxgd9XpkGJE5fGSgL43ueHKXsiAVaJTDPOFbKjnmjcc0zj5zB7C/KAiQSTsur0BPbrwfG1uBX+Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by LV8PR12MB9618.namprd12.prod.outlook.com (2603:10b6:408:2a0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 13:58:57 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 13:58:57 +0000
+Message-ID: <b13c6327-bd3a-448e-8825-1cf81bb16ef5@nvidia.com>
+Date: Mon, 13 Oct 2025 09:58:56 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 3/3] gpu: nova-core: use BoundedInt
+To: Yury Norov <yury.norov@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Jesung Yang <y.j3ms.n@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feong@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20251009-bounded_ints-v2-0-ff3d7fee3ffd@nvidia.com>
+ <20251009-bounded_ints-v2-3-ff3d7fee3ffd@nvidia.com> <aOflmmHe8O6Nx9Hp@yury>
+ <DDEJ3X0C2RNH.13YEXJI3CTSPF@nvidia.com> <aOlAQaDo5HwlvRUk@yury>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aOlAQaDo5HwlvRUk@yury>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR12CA0021.namprd12.prod.outlook.com
+ (2603:10b6:208:a8::34) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|LV8PR12MB9618:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40146718-fbe2-4bdc-3943-08de0a60a76e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MGZoazZOVVhTZWd5VkVkc0JXcjhWTVV2a1hLMWdmRUI5Z2V5TG91QmNzbkdp?=
+ =?utf-8?B?S3l0K1VuUzltNjh5dEs1cHJOOGVhbzluTGFvb1NSeUI1bXU5NjlML3c3S2w2?=
+ =?utf-8?B?UFB1T216UlVVSm92cEpoSzZCZXhHTjc2VWVhVklreVpHblhUNEJ2NVRyNXRD?=
+ =?utf-8?B?TzdQT1c0eStpc1JTc2sxVjI5cENtMVRtdjhhVE5JL09tcWlkdnA0alluelc4?=
+ =?utf-8?B?Sm5OcXZsT1NWd0V2d2E0UzJPQjVuL2pHbDRpa2pjZjlZdi9GeWoyeEhuUm5a?=
+ =?utf-8?B?OXlpWGVQbWoxR2JDZ3lKcGN2b1dSYVhxQ1pLMFg1WmQxOXhFYkVRT2VuRjlp?=
+ =?utf-8?B?Z1VpNzNlWkNqU2thS3NRTFB2QmlETUlsb1JJcTNCa1RwSjNOQXVHcWp0TEtu?=
+ =?utf-8?B?TWplTlE3L2FJVUJXM0c5bG9ibGRCTW9HSXVIVXVJdWI2WXVXQVJlZ1R2YXYw?=
+ =?utf-8?B?eldCWUtNRWJYQ2tUQmxPNTQzcGlkalpXT1VHbnE1QWRGYUExRC9FMWJSb2pu?=
+ =?utf-8?B?UTNWWTdQNmcvVjhnKzlzSExzeVkyUyt5aEZlZ2kxK2JsZWNwcGpXMGtmRUt2?=
+ =?utf-8?B?UXJnUnRZN05NU0lEWk41c3NuUWF6ZXhoamFyVDlkZjZtS25YenlkSEFUUXll?=
+ =?utf-8?B?VzFoWTFQd0tSL1kvejAwWDBmRGVxQUllZkRuc1ZVVUE2RHRFUG15UGRGalNX?=
+ =?utf-8?B?WEo3aVh1QVlJcHRmaldQejV5L2dJbUdzbjgvWU9BK3p4c2U4RFI3UGhEdWdu?=
+ =?utf-8?B?YVdiS1lnZWdxRzlwdHNYazJsVWVYM1JVQ3o0MVIxOUJzVFNCdEtlckZIUDA4?=
+ =?utf-8?B?YWxLRzAyNDB2ekNPWUFEWUhaOXQyeTNmWjBQaVFDM0JVMHd0QkRxL0tYOVBT?=
+ =?utf-8?B?U3RKbi9GM2xYc2JiZkh6aFhEOWx0RHF6YnJRSVNPd0d6UTJMMmZxKzBFSDVU?=
+ =?utf-8?B?UExkdVkwTXlLWWt4Rm05djdkUk0rUW5Falp2ZE5ydUUwOEhxbUtnS1hjOVRH?=
+ =?utf-8?B?ODIyblZqV0FRRWNjZ0I1ZEJ3MkxCczFhTHBFSU0zTU03M2E5NmdmR2VDejZx?=
+ =?utf-8?B?d284NEw5WFN1Y1Mxb1N6a2R0UnNqM3p3ZWtBOTZ0MlJ1eVV4czYyemw1NlRz?=
+ =?utf-8?B?WEVlTHpmVnU3ZVRKSVkwd0xBRC9CQ1FtUVJKTloyWXZxU3gzVncrVWdLT2tu?=
+ =?utf-8?B?TlFqY2M4VVNNdmh3VXdPSW1FdVA2WjFQc0llajFFOGY1a0pZOUtKcyttMWhT?=
+ =?utf-8?B?Z3ZwU3kzdlNGbTF5OUd2elFFVmtOSUdkMmM0NGVXbkRBMERNV0FiR2g2aTBF?=
+ =?utf-8?B?UHlzYjEwZjRqS045WmhWR0lVcENOaUdoV2R4R2V3WUNDR3ltSjN2d2NQeUJk?=
+ =?utf-8?B?cE5Xd1dqSmVJNTF2T3dUdkNRWWJYYmpVZUZibE0xdnV2Zkx6WDhjWm1tOHZZ?=
+ =?utf-8?B?ZDB1VHZlODVGZDIxUTZ6QVp4eTIzRFJ2b1FwV0tYVHdVVWZaQjF5WEtndzVG?=
+ =?utf-8?B?ZWhydGtzV2loeHVDNkFnMW9zcmVBUmY1NWhGUk1mSktUNDdmNVV2YUw5OHlZ?=
+ =?utf-8?B?QU03V3dsNU5rQldGUmo2MGV5VlhlNCtpaXRkUDdYQXFOV0RoRVpKcWZUaXNL?=
+ =?utf-8?B?MHF5ZnF4azY0ZVNJZTg4Szl6L0tTa3MrSFAyUGgvWENvVjY4ZnZkLzF3cXoy?=
+ =?utf-8?B?dmtlcnZ2SE9tS3dmUlNHVmdudERxZjdzN3NOYmQxbmhIT1I4bCtKVU1QeXJT?=
+ =?utf-8?B?ZnAxaDg5TEFtdEpHWDhBa0NTVzBnenVJaktLZEhWdXdZRzAzSHlqVEVuamJp?=
+ =?utf-8?B?U1dGaHNTT3UrTW9wOUdrd05TeTlPQk55ejN2T3dWUUhNUmJKaEZNTXdkWVdV?=
+ =?utf-8?B?MjN0MEpEa0RsOWxZV0V6ZFRVYWhFK3FRWE5xeUlSeDVLd0ZRWnBCbHRoQ1ph?=
+ =?utf-8?B?T3FFaGxObW1KTmdCa3hLaHhMczU5cnR4cmN1Tzh2cGV2SUhyV1ZXY0xydmlv?=
+ =?utf-8?B?b3NWQVVHYXlBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c0RKbVJtV2RMaCtacThIcEpDZHNMY203cGFOUEp2aFUrWDl4VjJYMzZjOFpx?=
+ =?utf-8?B?ZmluQ25Kc3pKa2NINXRYV0cwdWpoTUQvWnpYSUw3aXU1bGRuS2VTVWsrQnZo?=
+ =?utf-8?B?Z2FpMUxNMC8vTEZtcTV5NC9IS1lRbUJmNTZ6RDVtY2EwaktKSUFRR2dDM0pq?=
+ =?utf-8?B?WHljVTR0V3EzVzAxZlY1YVpFbzhhQi9vWmtKUmljQlZzcmNOYmFzdEZsamtz?=
+ =?utf-8?B?aDNINWx0UWgvbXlCYjVrYzJlcnloUldIbTlUQjZ2VEhMQ0hLMEVWUVZxYmM3?=
+ =?utf-8?B?L1BSTUk0c3pIUHNmZk5YcHpjRUIrcUkwL2UxdUZCR0lxSWVNbmprRVV6bDYx?=
+ =?utf-8?B?L3lTT0VjOTFyV0tNM2lIVEtGeUZUbVZsUDNxTFdjMDR2aTJNVGJDTGJMOWs1?=
+ =?utf-8?B?cU1zdjYxOCszRWpMM3c5bXhpdThCUVhMWXlvaGw5SldNcXlCaDIwOVhBYkQ0?=
+ =?utf-8?B?Uy83ZkpZZjgwdklyeVZTTHhNeTV0aHZwZlpOUEt6STYydm10cEE3ZlRVZkRV?=
+ =?utf-8?B?NWQwM0M2TVpWSTc2TytDcFRtZzdOdHdnWVg2OGtCZmJsOVBFN09heDVhNDVi?=
+ =?utf-8?B?YUQyNUtLenUyRVk5M3Z4cGQ4dlZQcUtXK1BWdmppYkRrSW5Sakw2YlFKczdt?=
+ =?utf-8?B?dDYxZnBCUXNGSDUreXhKRmpUTFc3N3lmWFhZS3J1TlpqM2VpaWF4YXZGNUpv?=
+ =?utf-8?B?NlNQbEZFTmJEOTRKM0tZZldEMCt0K1R3eUlXc1dZNmVGSEhxT210S2Y1OXpU?=
+ =?utf-8?B?UzlBeGl0UEZRdWl1WlhWaWRjbmZjbTJSbGh3dXgyYUhIOVBUOVlBQzJVVEJi?=
+ =?utf-8?B?cmpnaGk3ZkJYR3JLSzNla28vSzNxQ2RKZmk2akhmZGxsUmt4WXBNaExRUUpo?=
+ =?utf-8?B?ZFM2Zm5TS3BvVEh5ODI3SDRJMS9jemo5L0pVelJ5UlU5WDc5WERlbTZvZ3NS?=
+ =?utf-8?B?dlNJcExheWw4Q3c4UWR5NytOZTdKK2FIc2RmeXBjbEEyTmVUcXFPVVRESkh2?=
+ =?utf-8?B?ejRLQnc0SDdDeThhN1M3TGVzd0Z2Zkg5S0p2NzNIRnVMS0M2MFM1T2pUV2RL?=
+ =?utf-8?B?bDlMZkFET2pRNUxwdHh1YlRFWVEzS213dG1QVnV2Y0ZjcmErcEJKdUhib2Mw?=
+ =?utf-8?B?QkNYZXhhSzhTV1RCUmNPN2xCSDZhTDRaRExtL014cU56dHpBblhyQzBIOFZB?=
+ =?utf-8?B?ZnYyVk10S1VjWTBiS0pZUTFlcG41ajZqZVVKMTlicXA3OThBYjg2UzZRS1py?=
+ =?utf-8?B?YmhQOFJxa28zRVJPOVNrRmFoZWNXY090NmJiWlM0UHorQzdaM1RlSmtiZDdE?=
+ =?utf-8?B?VXFPWmJWNjNpbXJRc2lRWitkREljUTh2N25Vd0Z5QWJCRjJkekhCNzZiK2x6?=
+ =?utf-8?B?b1ZXU1lNb1JCYmZkcmpJaWFmMHo1azd1cTVXR2RSV2N4dkxLYktqUEZDN05T?=
+ =?utf-8?B?SDJtN1R5NUpnRWg0VER2UzFTbWwwVDZkanNkQzhrTUlHU1d4b2Rmc0dWdXdx?=
+ =?utf-8?B?N0tvU2k1aGUwTzNrbkhzT2RHeDFNd0Q4VnVCMEp3eFlSWFlaaU54THpRZE1o?=
+ =?utf-8?B?SnpSRXk1bUFEVnkxZjhSNnN3WTB2RzBHVVZIZmZ6bGpLQ1Z0SDZtZHYvK0Jy?=
+ =?utf-8?B?SG1ROG9yN2RieTVuQThTQ3lad0taN2djL2QvUVR6RzR4TFQzWWRNQ2d1a3FE?=
+ =?utf-8?B?dys5MUlBQTVVbURoOFp5dUVmbnkyMXIzWW83VERuVWZQM2l4ZUpiR1ExL3Bj?=
+ =?utf-8?B?MFo5bGdrS25BMU9LSmtGOExKMVJmaStkOVByU2JCM2p3MGVnK0U5dVFFeGJh?=
+ =?utf-8?B?QitTNXUyMzJBQjVLNW9qUGh1Sm9OWmRqdHM1eFdwbG5melBEdWp6TjhmR2Zm?=
+ =?utf-8?B?QjVpejJ2bjd5a1lKWkVGOE91dzF1ZkUxeDE0L0lPNEE5QkQ4djd1RDZLbkE5?=
+ =?utf-8?B?L1lLU3ZBVWRsam9ic3J5R0xiQkxTWVptMzlBWXJVZ0ZwTVlwaVNlOWhqMXU5?=
+ =?utf-8?B?SEFmSm1iNE1pb3pQL0lVZ29PenlDRkZ0VVg2UjVSbTlFUDFBMTBsL1ZWbHpt?=
+ =?utf-8?B?M2t2VmVUa3RhdVZ6TlFLZXVWU1NsbUFWZzNtclhKdGNPc2hSSFh6cnFhUnRP?=
+ =?utf-8?Q?vXK77U/fIqe62blQ0KxPr+Dfh?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40146718-fbe2-4bdc-3943-08de0a60a76e
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 13:58:57.6853
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IfUkbVFy8SoIrw3RY/ODHkRSXeBGNWgAObzt7Xfk88aqpFNcctjx0BXtkMSo+tjsWCwQ2zmMYoexV9OrN5PTnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9618
 
-On Fri, Oct 10 2025, Jason Miu wrote:
+Hi Yury,
 
-> On Thu, Oct 9, 2025 at 9:19=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+On 10/10/2025 1:20 PM, Yury Norov wrote:
+[...]
+>>>>          regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
+>>>> -            .set_base((dma_start >> 40) as u16)
+>>>> +            .try_set_base(dma_start >> 40)?
+>>>>              .write(bar, &E::ID);
+>>>
+>>> Does it mean that something like the following syntax is possible?
+>>>
+>>>         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
+>>>             .try_set_base1(base1 >> 40)?        // fail here
+>>>             .try_set_base2(base2 >> 40)?        // skip
+>>>             .write(bar, &E::ID) else { pr_err!(); return -EINVAL };
+>>>
+>>> This is my main concern: Rust is advertised a as runtime-safe language
+>>> (at lease safer than C), but current design isn't safe against one of
+>>> the most common errors: type overflow.
 >>
->> On Thu, Oct 9, 2025 at 4:21=E2=80=AFPM Pratyush Yadav <pratyush@kernel.o=
-rg> wrote:
->> >
->> > On Tue, Oct 07 2025, Chris Li wrote:
->> >
->> > [...]
->> > > That will keep me busy for a while waiting for the VFIO series.
->> >
->> > I recall we talked in one of the biweekly meetings about some sanity
->> > checking of folios right before reboot (make sure they are right order,
->> > etc.) under a KEXEC_HANDOVER_DEBUG option. If you have some spare time
->> > on your hands, would be cool to see some patches for that as well :-)
->>
->> Sure, I will add that to my "nice to have" list. No promised I got
->> time to get to it with the PCI. It belong to the KHO series not PCI
->> though.
->>
+>> Not sure I understand what you mean, but if you are talking about fields
+>> overflow, this cannot happen with the current design. The non-fallible
+>> setter can only be invoked if the compiler can prove that the argument
+>> does fit withing the field. Otherwise, one has to use the fallible
+>> setter (as this chunk does, because `dma_start >> 40` can still spill
+>> over the capacity of `base`), which performs a runtime check and returns
+>> `EOVERFLOW` if the value didn't fit.
+>  
+> Yeah, this design addresses my major question to the bitfields series
+> from Joel: setters must be fallible. I played with this approach, and
+> it does exactly what I have in mind.
+> 
+> I still have a question regarding compile-time flavor of the setter.
+> In C we've got a builtin_constant_p, and use it like:
+>         
+>    static inline int set_base(unsigned int base)
+>    {
+>         BUILD_BUG_ON_ZERO(const_true(base > MAX_BASE));
+> 
+>         // Eliminated for compile-time 'base'
+>         if (base > MAX_BASE)
+>                 return -EOVERFLOW;
+> 
+>         __set_base(base);
+> 
+>         return 0;
+>    }
+> 
+> Can we do the same trick in rust? Would be nice to have a single
+> setter for both compile and runtime cases.
 
-Right. It is only a "nice to have", and not a requirement. And certainly
-not for the PCI series.
+I don't think we could combine the setter and try setter variants on the rust
+side, because the former returns Self and the latter returns Result. Also, both
+the variants already have compile time asserts which may cover what you're
+referring to.
 
->
-> Hi Pratyush, Chris,
->
-> For the folio sanity check with KEXEC_HANDOVER_DEBUG, I can follow
-> that up. Would you tell me what we like to check before reboot, I may
-> have missed some context. Thanks!
+The try setter variants in fact are not strictly needed, because the user can
+provide a bounded integer (after performing any fallible conversions on the
+caller side). Alex and me discussed adding that for a better user/caller
+experience [1].
 
-The idea is to sanity-check the preserved folios in the kexec-reboot
-flow somewhere. The main check discussed was to make sure the folios are
-of the same order as they were preserved with. This will help catch bugs
-where folios might split after being preserved.
+[1] https://lore.kernel.org/all/C35B5306-98C6-447B-A239-9D6A6C548A4F@nvidia.com/
 
-Maybe we can add some more checks too? Like making sure the folios
-aren't freed after they were preserved. But that condition is a bit
-trickier to catch. But at least the former should be simple enough to
-do as a start.
+Or did you mean something else?
 
---=20
-Regards,
-Pratyush Yadav
+thanks,
+
+ - Joel
+
+
+
+
+
 
