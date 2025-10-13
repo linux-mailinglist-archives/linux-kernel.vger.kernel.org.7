@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-851212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736A8BD5C9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:52:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6151BBD5C91
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A942188A282
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:52:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B8B1F351741
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE52D7DDC;
-	Mon, 13 Oct 2025 18:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633422D3EF1;
+	Mon, 13 Oct 2025 18:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NApMBl1T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqlCNQ7S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED412C11ED
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15931CA84;
+	Mon, 13 Oct 2025 18:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760381500; cv=none; b=YSAlwnWG1ovuLmlTrx9h8ckYSFNpK9ZnAoXnBSBU1eHucEbwGXXVcwyuST6b0LifZCfC7NBd7hUJZAvhclQZnMbZntnlcud0j/6FiDiO5qtj2vKUo4aRqAZa2SaNnqNA2PAqvaB2aGcBDybyl5755HqaZpK3oRb147T1twB9maw=
+	t=1760381491; cv=none; b=AwmQlLwTJnxZrMhnfiKXV8+rGVAS5S90QnE5IY+FzPqnCpbvsg8LuYO1zRoAZ6OKZocl8tn+0wu9q8L9CP1CqZO7cqi7caFJ3SL4NENUkiVfTvaVqYuQIsCosPjBjCSeOsLJAQFzM1DMhvP6Qtnq/RKFbtK7HqgDok964gKc/f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760381500; c=relaxed/simple;
-	bh=7Y2bMNKr8rQXdsNf91lUVGNDOpD7AY0UyDjYoYeerxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cIKZ8EcfhuTJtdouH/v1+hFHCYXX+twdb4DpEzuxUcgDgGobty3XEYhLtkGYvLCrilJQkC4g7WR+HdVj2ozz80iIPZgSNI/F4Smpfj6yxXztVYKW+NZIOvskiMlLKbs4m9jW6lDAGpDIgYqRncAuq4wgYhwHjJze/TvzkHsW0+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NApMBl1T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09385C4AF0C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:51:40 +0000 (UTC)
+	s=arc-20240116; t=1760381491; c=relaxed/simple;
+	bh=wKUpRryNaHwuge/VYu6cqa0dpbzt9KPcGiAg8S9Mfek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TaQ4nCqb5JDM5PJE3+OjxkwyoETfLdgRmB1AOVnGtdSzqtHLVmq0jre7vAT3DMJ/yYapWG3fVAg1d3vMgQxhraAkJ1N+277AymFU6j/k0ao6nWa6BAYRYdPEdG4wxxOki8TapwVGhnetAuhNxtdpxGIgSK26whBNqfUY9u32bhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqlCNQ7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2EA8C4CEE7;
+	Mon, 13 Oct 2025 18:51:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760381500;
-	bh=7Y2bMNKr8rQXdsNf91lUVGNDOpD7AY0UyDjYoYeerxk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NApMBl1THr79qcbHokhWSl1EAdEQFQjh+7lo6ecPMGbZwHrTKNvDpL2kX6Topzubn
-	 Jd8wT8kNohb0vIrJGCLo3q44ioc9riTYTqeS7jn1C5F+IvFfuYdWg7H3pxIu1gmsAE
-	 Dxx8CTG/tS3cVGCKdJRs3/xH7GpkBuyZoIg4x8PH/D3i1kRSc6dCvthw4PENVsRUD6
-	 9c5EFaqXcWF2l99mFvifbuFyd7TU7mRnm8k51ou/Gj3ZQqMtZ7oq6dB3qQ+e7G+koi
-	 k2U8/uaNC1lQmK8pBLHRTjQUlAtlIRIYtRYqQElxF3sex1/MN9NkD8VsSWpBi25kKV
-	 nJBEUL60uAIjg==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-43f715fb494so828276b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:51:39 -0700 (PDT)
-X-Gm-Message-State: AOJu0YxNGgT/vwGzvkaN14V8PrtUZPlx7KEfFPbZGMCcCqRRr8Kapdmo
-	Po+nE/z9fiCALEcCrlDOsNx0bDF6gDLwyMqbLFEUkWS8tG40+QuH2ea0i+WGuQ7CENxgr6sfkEO
-	RGXSJ1dnd55keERH+FL4zv/3OccRs6Dg=
-X-Google-Smtp-Source: AGHT+IHp04j0X8V+YZn78AWh+GE1NkZUNURdFGmB0yxPRQjsTStFnwWmD2B8Ldqps7NzxrcIRd71Se/yGCxtIOI52NA=
-X-Received: by 2002:a05:6808:2227:b0:43f:2c73:347f with SMTP id
- 5614622812f47-4417b2c44f7mr8886330b6e.1.1760381499288; Mon, 13 Oct 2025
- 11:51:39 -0700 (PDT)
+	s=k20201202; t=1760381491;
+	bh=wKUpRryNaHwuge/VYu6cqa0dpbzt9KPcGiAg8S9Mfek=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JqlCNQ7SR1xNZt066m+ygMiN6zSGwhiaUfNrW/dpJECGLWEU1ap7jTIjEz27UqYzD
+	 +8XQSc1Y8Ch7lLberp3mV3bLpAAbWDdULjglqBdkOvQL0uRk6HW9sEf0RTDc/zXjod
+	 PXyYQn9JhH9lQ9ZtsTHHc9wCyAEFicbKK7PQM8If5EwzKMzH3rcY2gCUVUZDZDM4UH
+	 diJdk9erelVGu9IofA8Acwn4/a0PGdtbS7FczWpqwqFG9eljA3a+4qsAvAPHvBwVbL
+	 KH1ScAQ7uDRBFPeC6nLoNyQ3Blomg18n9agWjAdvztNoFSRueicQmg/x72vL1PqEL0
+	 2LtqdW5lYNXrw==
+Message-ID: <4a8302a0-209f-446a-9825-36cb267c1718@kernel.org>
+Date: Mon, 13 Oct 2025 13:51:29 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919153008.324338-1-marco.crivellari@suse.com> <20250919153008.324338-2-marco.crivellari@suse.com>
-In-Reply-To: <20250919153008.324338-2-marco.crivellari@suse.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 13 Oct 2025 20:51:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
-X-Gm-Features: AS18NWDP7weQw8xJd8EY6ufmdL1fH7PzayLqxb-HH7im4vrRHXdzpJCFJzFuGd4
-Message-ID: <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] PM: WQ_UNBOUND added to pm_wq workqueue
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Len Brown <len.brown@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION 00/04] Crash during resume of pcie bridge
+To: Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, regressions@lists.linux.dev,
+ linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+References: <20251006120944.7880-1-spasswolf@web.de>
+ <8edcc464-c467-4e83-a93b-19b92a2cf193@kernel.org>
+ <4903e7c36adf377bcca289dbd3528055dc6cfb32.camel@web.de>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <4903e7c36adf377bcca289dbd3528055dc6cfb32.camel@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 19, 2025 at 5:30=E2=80=AFPM Marco Crivellari
-<marco.crivellari@suse.com> wrote:
->
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> This lack of consistentcy cannot be addressed without refactoring the API=
-.
->
-> alloc_workqueue() treats all queues as per-CPU by default, while unbound
-> workqueues must opt-in via WQ_UNBOUND.
->
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they=E2=80=99re need=
-ed and
-> reducing noise when CPUs are isolated.
->
-> This change add the WQ_UNBOUND flag to pm_wq, to make explicit this
-> workqueue can be unbound and that it does not benefit from per-cpu work.
->
-> Once migration is complete, WQ_UNBOUND can be removed and unbound will
-> become the implicit default.
->
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-> ---
->  kernel/power/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/power/main.c b/kernel/power/main.c
-> index 3cf2d7e72567..33a47ed15994 100644
-> --- a/kernel/power/main.c
-> +++ b/kernel/power/main.c
-> @@ -1056,7 +1056,7 @@ EXPORT_SYMBOL_GPL(pm_wq);
->
->  static int __init pm_start_workqueue(void)
->  {
-> -       pm_wq =3D alloc_workqueue("pm", WQ_FREEZABLE, 0);
-> +       pm_wq =3D alloc_workqueue("pm", WQ_FREEZABLE | WQ_UNBOUND, 0);
->
->         return pm_wq ? 0 : -ENOMEM;
->  }
-> --
+On 10/13/25 11:29 AM, Bert Karwatzki wrote:
+> Am Dienstag, dem 07.10.2025 um 16:33 -0500 schrieb Mario Limonciello:
+>>
+>> Can you still reproduce with amd_iommu=off?
+> 
+> Reproducing this is at all is very difficult, so I'll try to find the exact spot
+> where things break 
+> (i.e. when the pci bus breaks and no more message are transmitted
+> via netconsole) first. The current state of this search is that the crash occurs in
+> pci_pm_runtime_resume(), before pci_fixup_device() is called:
+> 
 
-Applied as 6.19 material, thanks!
+One other (unfortunate) possibility is that the timing of this crash 
+occurring is not deterministic.
+
+As an idea for debugging this issue, do you think maybe using kdumpst 
+[1] might be helpful to get more information on the state during the crash?
+
+Since NVME is missing you might need to boot off of USB or SD though so 
+that kdumpst is able to save the vmcore out of RAM.
+
+Link: 
+https://blogs.igalia.com/gpiccoli/2024/07/presenting-kdumpst-or-how-to-collect-kernel-crash-logs-on-arch-linux/ 
+[1]
+> static int pci_pm_runtime_resume(struct device *dev)
+> {
+> 	struct pci_dev *pci_dev = to_pci_dev(dev);
+> 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
+> 	pci_power_t prev_state = pci_dev->current_state;
+> 	int error = 0;
+> 	// dev_info(dev, "%s = %px\n", __func__, (void *) pci_pm_runtime_resume); // remove this so we don't get too much delay
+> 										  // This was still printed in the case of a crash
+> 										  // so the crash must happen below
+> 
+> 	/*
+> 	 * Restoring config space is necessary even if the device is not bound
+> 	 * to a driver because although we left it in D0, it may have gone to
+> 	 * D3cold when the bridge above it runtime suspended.
+> 	 */
+> 	pci_pm_default_resume_early(pci_dev);
+> 	if (!strcmp(dev_name(dev), "0000:00:01.1")) // This is the current test.
+> 		dev_info(dev, "%s %d\n", __func__, __LINE__);
+> 	pci_resume_ptm(pci_dev);
+> 
+> 	if (!pci_dev->driver)
+> 		return 0;
+> 
+> 	//if (!strcmp(dev_name(dev), "0000:00:01.1"))         // This was not printed when 6.17.0-rc6-next-20250917-gpudebug-00036-g4f7b4067c9ce
+> 	//	dev_info(dev, "%s %d\n", __func__, __LINE__); // crashed, so the crash must happen above
+> 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+> 	pci_pm_default_resume(pci_dev);
+> 
+> 	if (prev_state == PCI_D3cold)
+> 		pci_pm_bridge_power_up_actions(pci_dev);
+> 
+> 	if (pm && pm->runtime_resume)
+> 		error = pm->runtime_resume(dev);
+> 
+> 	return error;
+> }
+> 
+> 
+> Bert Karwatzki
+
 
