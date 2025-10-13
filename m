@@ -1,99 +1,121 @@
-Return-Path: <linux-kernel+bounces-850202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E5FBD23A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57ED8BD23A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2371B4EBEEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:15:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CE004EC3AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7572FC028;
-	Mon, 13 Oct 2025 09:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1D2FB995;
+	Mon, 13 Oct 2025 09:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhUruPYg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MNQbpMfF"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF8F2FC032;
-	Mon, 13 Oct 2025 09:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BBF23956A
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760346911; cv=none; b=CTdOY3Ws7CKds+9HvOWLj481q1eREsgWd8QSd3ulqblcBVbl8nZquLXljoFCA+VRWyqlewfrsMfiAs9luxmsd5YAjBAPe5AukdzQQ5pUqrdFK31JNHVk3RZ5Z7U6c2JkM8I9tzLwrF+/reuuDpLT2VQCqn61Yll4wpXvGiYwN38=
+	t=1760346922; cv=none; b=DGCz+z4h6bm8M6VIrk/sQLbL3y3Xp2Wst9RfrUbvE3NX8j9oDTl/F+WqOIsDn4ZkvqvDlWC9C7w2y91BsgSm2bwm2THabzoW1CA2bNSxnxb4kY9uVHugxXSLmbIlD19BQq0bb7+Y0WbTt1LcQr42jSFbapjDQbWHyGZ5Oyg4uMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760346911; c=relaxed/simple;
-	bh=msRnUaav7uDbDfI0p1Dhb1/vdSrsLZdUhmbjsqrEHk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hm8RyK3mqhfcfGdiG1gkwcELqr45Hby9yXz1ulA8rnZurnUIuYL2zUK4PXu3Xn9uEMMzdjrBRsxV4ElfKhKo1GAwhbtI/tM3fxjV3TW+CMNDhbuiVMEaEswHIONnLMRP4/oU9/wOPsSt5ZjOKDaXmGNtsdCzfRqzKzrrD8CmGw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhUruPYg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98786C4CEFE;
-	Mon, 13 Oct 2025 09:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760346909;
-	bh=msRnUaav7uDbDfI0p1Dhb1/vdSrsLZdUhmbjsqrEHk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GhUruPYg3qdVAZUFOmBT0D40rd0ttI1xEP8FKGYvgqVSctcV9NjmlOpxo0CS0m3t4
-	 BSxOoV6Bmdq9jTQqCD5aebpZDUyozNZ2YAn3ElO3ACNnONrZ057z01/TS+YLhc51NA
-	 mzmqy4dti3icMKPWFOQy6tfeS232C+SlvGx0DxJPyd3Njp/HkUqq+XSJUD5fKwDT0G
-	 5++fyUIkFAmvOdWJVfS62UjsOqry5KhF52B2MIhUU2k2/vig9UwPv2rp+zEIVGUr5k
-	 gDCQ6EW2RPFh23fYUizArtHEuALPrDUJ3niQrexIGUDhSORlwc3IdtyLJwkqZ80NBi
-	 bqtBN5+mDKY2g==
-Date: Mon, 13 Oct 2025 10:15:05 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] dpll: zl3073x: Handle missing or corrupted flash
- configuration
-Message-ID: <aOzDGT44n_ychCgK@horms.kernel.org>
-References: <20251008141445.841113-1-ivecera@redhat.com>
+	s=arc-20240116; t=1760346922; c=relaxed/simple;
+	bh=7U/uYJ1Bn25KT2yXUo5NMdtSLLLWGrEc4B4/9Q9wzXc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VJwqRSjBwBA64QOZmtthITYlJvs3P29BBd9u2JkpD2niTWcwv99sHIzy+QscHcrGC4Q0PP360fCMeOk9WipsmPn0b3SOtPufkFv2V191GAX59CkX2ukAgZ6b5V3Wza0OTAc/fQ1sQPsNo4Ze0dlRH6xnLruivSmuBQJM0GQIoNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MNQbpMfF; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bd374ac3-05a2-41ae-8043-cc3575fb13c0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760346918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3uRU6A1V0MHfLT+ewa3AKJSUpsO5lmxHPh4GX6k0hg=;
+	b=MNQbpMfFLQ2qpDDSdEkaNskbe9MHMp0xnYzedG+FVz6nyRLbQztirK+kx5Ir54ngMxaThf
+	WDc8Q/rKrID2o68szkR+UWaJ0QWxIRx9EQGrVza8abnWCj8lKlo3duhrKfY5vZdssNRneh
+	dVALp7ix5m0wpB/l+OyGFcibB55Y9ls=
+Date: Mon, 13 Oct 2025 17:15:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008141445.841113-1-ivecera@redhat.com>
+Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory
+ failures
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+To: david@redhat.com
+Cc: Longlong Xia <xialonglong2025@163.com>, nao.horiguchi@gmail.com,
+ akpm@linux-foundation.org, wangkefeng.wang@huawei.com, xu.xin16@zte.com.cn,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Longlong Xia <xialonglong@kylinos.cn>, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, Miaohe Lin <linmiaohe@huawei.com>, qiuxu.zhuo@intel.com
+References: <20251009070045.2011920-1-xialonglong2025@163.com>
+ <20251009070045.2011920-2-xialonglong2025@163.com>
+ <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
+ <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
+ <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
+ <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
+ <839b72b8-55dc-4f4e-b1da-6f24ecf9446f@huawei.com>
+ <f12dfacb-05dd-4b22-90eb-fcc1a8ed552b@linux.dev>
+In-Reply-To: <f12dfacb-05dd-4b22-90eb-fcc1a8ed552b@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 08, 2025 at 04:14:45PM +0200, Ivan Vecera wrote:
-> If the internal flash contains missing or corrupted configuration,
-> basic communication over the bus still functions, but the device
-> is not capable of normal operation (for example, using mailboxes).
-> 
-> This condition is indicated in the info register by the ready bit.
-> If this bit is cleared, the probe procedure times out while fetching
-> the device state.
-> 
-> Handle this case by checking the ready bit value in zl3073x_dev_start()
-> and skipping DPLL device and pin registration if it is cleared.
-> Do not report this condition as an error, allowing the devlink device
-> to be registered and enabling the user to flash the correct configuration.
-> 
-> Prior this patch:
-> [   31.112299] zl3073x-i2c 1-0070: Failed to fetch input state: -ETIMEDOUT
-> [   31.116332] zl3073x-i2c 1-0070: error -ETIMEDOUT: Failed to start device
-> [   31.136881] zl3073x-i2c 1-0070: probe with driver zl3073x-i2c failed with error -110
-> 
-> After this patch:
-> [   41.011438] zl3073x-i2c 1-0070: FW not fully ready - missing or corrupted config
-> 
-> Fixes: 75a71ecc24125 ("dpll: zl3073x: Register DPLL devices and pins")
-> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+@David
 
-I am unsure how much precedence there is for probing a device
-with very limited functionality like this. But, the approach
-does make sense to me as it provides a path for user intervention
-to address the detected problem which at any rate renders the probed
-driver inoperable.
+Cc: MM CORE folks
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+On 2025/10/13 12:42, Lance Yang wrote:
+[...]
 
-...
+Cool. Hardware error injection with EINJ was the way to go!
+
+I just ran some tests on the shared zero page (both regular and huge), and
+found a tricky behavior:
+
+1) When a hardware error is injected into the zeropage, the process that
+attempts to read from a mapping backed by it is correctly killed with a 
+SIGBUS.
+
+2) However, even after the error is detected, the kernel continues to 
+install
+the known-poisoned zeropage for new anonymous mappings ...
+
+
+For the shared zeropage:
+```
+[Mon Oct 13 16:29:02 2025] mce: Uncorrected hardware memory error in 
+user-access at 29b8cf5000
+[Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: Sending SIGBUS to 
+read_zeropage:13767 due to hardware memory corruption
+[Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: recovery action 
+for already poisoned page: Failed
+```
+And for the shared huge zeropage:
+```
+[Mon Oct 13 16:35:34 2025] mce: Uncorrected hardware memory error in 
+user-access at 1e1e00000
+[Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: Sending SIGBUS to 
+read_huge_zerop:13891 due to hardware memory corruption
+[Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: recovery action for 
+already poisoned page: Failed
+```
+
+Since we've identified an uncorrectable hardware error on such a critical,
+singleton page, should we be doing something more?
+
+Thanks,
+Lance
 
