@@ -1,379 +1,180 @@
-Return-Path: <linux-kernel+bounces-850360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93114BD29CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:47:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A32BD2A1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A82D34A130
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:47:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 448CE4E9A7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E322F302CAA;
-	Mon, 13 Oct 2025 10:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A556305064;
+	Mon, 13 Oct 2025 10:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RYr6Vd18"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WVXHlpiO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5691F302177
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AE2302CB7;
+	Mon, 13 Oct 2025 10:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760352435; cv=none; b=r/bqRmBp6ihcGJ31spZG/PqFHXxDF//rjCxrTVoG9TATcjvdoVACs+gMjY4dk91pk0Yr60+3eGYcXgyre36YQxVaV8pp9eHttu6PJ57WfSDOpfxD2sVH6BZg1ULWKD5WF6JdFjVFhqVcgfm0A4YPZLTohqcoKtiv1vn4uetNP6Y=
+	t=1760352526; cv=none; b=NVUpiMA0T7xDtqH0453YnbKkGtnCGKqpWlt8cBxK/ROKMsdDi+YDgAqczq2rGyeqF3ydHuwDSJZpy8Pon5EOMcg7M+IGGCaYNGdbnNG7JMTtUFV25y5C1ZoFIni8OHuVQKFPg/3MriTENaNxU10NTAORT/+PyPmQOBllgbacc+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760352435; c=relaxed/simple;
-	bh=gA8bxpzXimzb54QzB2Y7mbFZjhMeRaVdNxwhzfiamcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7ZPutpCm9G0RtM0l0sVhWdoH31XVK2n1kpKfxWdTkYLBXNncPy3vBYEYEog1PtemtauoliFFk4U7YZZQVPOKoxWVKd4Z8lcB5gcA1+VBrXJ4lBLX6Ap2j9khtKvZoIK8Q/PAxWPZaRPx3zkt47j99Zi48woZlHasItiVZFMgpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RYr6Vd18; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760352425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QdhIzPNclHC5KxVipZI/m9MoIOqoEgSAZQcCWFA6mvM=;
-	b=RYr6Vd18sd4f/w6vwAOmLvl0v/LcSRQEgfFLAtQHbzBOMruhdDBtPa5MAaE8/0StLVOfH3
-	7afRe/ABTBa69lj3p6gIxGCpR14EjsWIT1LbEJcQnSszjZuJRFcbAA7yRi2QB9nAbe9UZ3
-	Sy7NHxYuYyraq2CFiioSgsEEa2RU7Wk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-68-DWM-IO-2P4mVBgX2LZtp4w-1; Mon,
- 13 Oct 2025 06:47:02 -0400
-X-MC-Unique: DWM-IO-2P4mVBgX2LZtp4w-1
-X-Mimecast-MFC-AGG-ID: DWM-IO-2P4mVBgX2LZtp4w_1760352421
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB5941800372;
-	Mon, 13 Oct 2025 10:47:00 +0000 (UTC)
-Received: from aion.redhat.com (unknown [10.22.80.4])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AB6E180141C;
-	Mon, 13 Oct 2025 10:47:00 +0000 (UTC)
-Received: by aion.redhat.com (Postfix, from userid 1000)
-	id 586194B1B7D; Mon, 13 Oct 2025 06:46:58 -0400 (EDT)
-Date: Mon, 13 Oct 2025 06:46:58 -0400
-From: Scott Mayhew <smayhew@redhat.com>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Use MD5 library instead of crypto_shash
-Message-ID: <aOzYoh6hgXRGvTWV@aion>
-References: <20251011185225.155625-1-ebiggers@kernel.org>
- <5f405581-e7e2-4e77-8044-0496db85aa27@oracle.com>
+	s=arc-20240116; t=1760352526; c=relaxed/simple;
+	bh=zg8yFXwADzqe2Ocni6PsEBanWNV+IagYf/tbQ0GbOsw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=rYpWgJj2bzfhNObZ+mAkdB4UwMLncvyKG5k186Wrk21heSRseAmgQBscaAg7UrfHLmrThV7R50H3NV3FVlp0e0cDjLt82QOdYBzapEDn7qnpruJqBZcQRB0ExsAq421lU5mWe4pCUtRqqkqHnKkdXuLDg7ONHGCcN+Nv3Erd2eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WVXHlpiO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DATR62000934;
+	Mon, 13 Oct 2025 10:48:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=vDPTfyxieqvc
+	/AcS0DUTQAuWJXBDoJ66K5hUrmRpGzE=; b=WVXHlpiOBJ2f/zDCowHOu0FHebrP
+	/UFE5KMyVJ2txIpL9q3GWhvsgtcf3zAul9+M+42cP/3qD8Vs+kqbZYSOtvTHuGZZ
+	AOPhfA/9Deit/NITYNpKye5tPBtRbqsIbuvpHsYkzF3B1e3sRsqoW8CqwV59pjBY
+	6ZoMQ1OK4DIluImpmLkl/j2RnT4/9wdbKtpr+02CTGaeA9mJdiRztKGtjQMkXoUa
+	jQHWtFsSxYOuh3FMdsCbZkK2bYGZ1fiaFtpm8OytepHLKAy8ADuNgblIk1YMNjG8
+	Qhj+wShxvjwfAdu1aUp1TLImnX+l9S+tatjNQNOjrVggJR6jS+khtFX0ew==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd8va0e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 10:48:14 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59DAmAx0008956;
+	Mon, 13 Oct 2025 10:48:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 49qgakrrqw-1;
+	Mon, 13 Oct 2025 10:48:10 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59DAmAAX008936;
+	Mon, 13 Oct 2025 10:48:10 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-riteshk-hyd.qualcomm.com [10.147.241.247])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 59DAm9x6008925;
+	Mon, 13 Oct 2025 10:48:10 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2314801)
+	id F008C5000DB; Mon, 13 Oct 2025 16:18:08 +0530 (+0530)
+From: Ritesh Kumar <quic_riteshk@quicinc.com>
+To: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        jessica.zhang@oss.qualcomm.com, sean@poorly.run,
+        marijn.suijten@somainline.org, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mahap@quicinc.com, andersson@kernel.org,
+        konradybcio@kernel.org, mani@kernel.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        vkoul@kernel.org, kishon@kernel.org,
+        cros-qcom-dts-watchers@chromium.org
+Cc: Ritesh Kumar <quic_riteshk@quicinc.com>, linux-phy@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        quic_vproddut@quicinc.com
+Subject: [PATCH v2 0/3] Add edp reference clock for lemans
+Date: Mon, 13 Oct 2025 16:18:03 +0530
+Message-Id: <20251013104806.6599-1-quic_riteshk@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 93VKVXv74n-nMWCEQLg0Haq9_kvhptVl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX2VDEGTULV1PS
+ Y4phWgbZ9o3G6xMH3/egc6asF0Zh04npeILixLxAv/K0BCKbVyk1hunl13+BwgABmsJY38UpbvV
+ nUHmp8sOz5E2jRHkEzR1u8mxzMKKoiawuSNSf4nbn9fxdWzgC4tfRDfbRK6OyjziE2EIPkdgS0T
+ BfXcO5ZQzvEYVOGFWqyb8eBbl9wOxI5DtChFR5F1WDJU17v+ZD3Sz/yRlsFdQDAZgih8dIYTS3h
+ A4+EZgJdZvbzIdq6/tdD2MdjOvu8yzOY8eHYeGJLZrgrh9mjGHYWLterNV5Uq6XUXW82SYn3vXR
+ P4i531YvGA8eWmFUc4CeVw1pMr/NXfwHD1Sug5jx2jzEZt350DnQk57bf8Rrohq9ItkIOVCCWCh
+ iF6KAcv2x035kPEJL6vHuVyn8KSpIg==
+X-Proofpoint-GUID: 93VKVXv74n-nMWCEQLg0Haq9_kvhptVl
+X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68ecd8ef cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=oV43on6u2L5iXKtW-R4A:9 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f405581-e7e2-4e77-8044-0496db85aa27@oracle.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sun, 12 Oct 2025, Chuck Lever wrote:
+On lemans chipset, edp reference clock is being voted by ufs mem phy
+(ufs_mem_phy: phy@1d87000). But after commit 77d2fa54a9457
+("scsi: ufs: qcom : Refactor phy_power_on/off calls") edp reference
+clock is getting turned off, leading to below phy poweron failure on
+lemans edp phy.
 
-> On 10/11/25 2:52 PM, Eric Biggers wrote:
-> > Update NFSD's support for "legacy client tracking" (which uses MD5) to
-> > use the MD5 library instead of crypto_shash.  This has several benefits:
-> > 
-> > - Simpler code.  Notably, much of the error-handling code is no longer
-> >   needed, since the library functions can't fail.
-> > 
-> > - Improved performance due to reduced overhead.  A microbenchmark of
-> >   nfs4_make_rec_clidname() shows a speedup from 1455 cycles to 425.
-> > 
-> > - The MD5 code can now safely be built as a loadable module when nfsd is
-> >   built as a loadable module.  (Previously, nfsd forced the MD5 code to
-> >   built-in, presumably to work around the unreliablity of the name-based
-> >   loading.)  Thus, select MD5 from the tristate option NFSD if
-> >   NFSD_LEGACY_CLIENT_TRACKING, instead of from the bool option NFSD_V4.
-> > 
-> > To preserve the existing behavior of legacy client tracking support
-> > being disabled when the kernel is booted with "fips=1", make
-> > nfsd4_legacy_tracking_init() return an error if fips_enabled.  I don't
-> > know if this is truly needed, but it preserves the existing behavior.
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> 
-> No objection, but let's cross our t's and dot our i's. Scott, when you
-> have recovered from bake-a-thon, can you have a look at this one?
-> 
-> Thanks!
+[   19.830220] phy phy-aec2a00.phy.10: phy poweron failed --> -110
+[   19.842112] mdss_0_disp_cc_mdss_dptx0_link_clk status stuck at 'off'
+[   19.842131] WARNING: CPU: 2 PID: 371 at drivers/clk/qcom/clk-branch.c:87 clk_branch_toggle+0x174/0x18c
+[   19.984356] Hardware name: Qualcomm QCS9100 Ride (DT)
+[   19.989548] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   19.996697] pc : clk_branch_toggle+0x174/0x18c
+[   20.001267] lr : clk_branch_toggle+0x174/0x18c
+[   20.005833] sp : ffff8000863ebbc0
+[   20.009251] x29: ffff8000863ebbd0 x28: 0000000000000000 x27: 0000000000000000
+[   20.016579] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000001
+[   20.023915] x23: ffff0000c53de980 x22: 0000000000000001 x21: ffffb4b57fd8d710
+[   20.031245] x20: ffffb4b5bb238b88 x19: 0000000000000000 x18: ffffffffffff7198
+[   20.038584] x17: 0000000000000014 x16: ffffb4b5bb1e2330 x15: 0000000000000048
+[   20.045926] x14: 0000000000000000 x13: ffffb4b5bd386a48 x12: 0000000000000dfb
+[   20.053263] x11: 00000000000004a9 x10: ffffb4b5bd3e5a20 x9 : ffffb4b5bd386a48
+[   20.060600] x8 : 00000000ffffefff x7 : ffffb4b5bd3dea48 x6 : 00000000000004a9
+[   20.067934] x5 : ffff000eb7d38408 x4 : 40000000fffff4a9 x3 : ffff4b58fb2b7000
+[   20.075269] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000ec4fc3480
+[   20.082601] Call trace:
+[   20.085127]  clk_branch_toggle+0x174/0x18c (P)
+[   20.089705]  clk_branch2_enable+0x1c/0x28
+[   20.093829]  clk_core_enable+0x6c/0xac
+[   20.097687]  clk_enable+0x2c/0x4c
+[   20.101104]  clk_bulk_enable+0x4c/0xd8
+[   20.104964]  msm_dp_ctrl_enable_mainlink_clocks+0x184/0x24c [msm]
+[   20.111294]  msm_dp_ctrl_on_link+0xb0/0x400 [msm]
+[   20.116178]  msm_dp_display_process_hpd_high+0x110/0x190 [msm]
+[   20.122209]  msm_dp_hpd_plug_handle.isra.0+0xac/0x1c4 [msm]
+[   20.127983]  hpd_event_thread+0x320/0x5cc [msm]
+[   20.132680]  kthread+0x12c/0x204
+[   20.136011]  ret_from_fork+0x10/0x20
+[   20.139699] ---[ end trace 0000000000000000 ]---
+[   20.144489] Failed to enable clk 'ctrl_link': -16
+[   20.149340] [drm:msm_dp_ctrl_enable_mainlink_clocks [msm]] *ERROR* Unable to start link clocks. ret=-16
 
-Looks fine to me.
+This series adds support for voting the clock from lemans edp phy driver.
 
-Reviewed-by: Scott Mayhew <smayhew@redhat.com>
+---
+This series is dependent on below series:
+https://lore.kernel.org/all/20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org/
 
-I agree with Jeff - it would be nice to just remove the legacy tracking.
-I'm guessing it's still used in smaller/embedded setups?  RHEL and Fedora
-haven't had it enabled for years.  Looking at a few other distros... it's
-not enabled in OpenSUSE Leap or Tumbleweed.  It's not enabled in Debian
-Sid (but it is enabled in Trixie).
+Change in v2:
+- Rebase on top of above series. [Krzysztof]
+- Remove duplicate patches and make changes limited to lemans.
+- Link to v1: https://lore.kernel.org/all/20251009071127.26026-1-quic_riteshk@quicinc.com/
 
--Scott
-> 
-> 
-> > ---
-> >  fs/nfsd/Kconfig       |  3 +-
-> >  fs/nfsd/nfs4recover.c | 82 ++++++++-----------------------------------
-> >  2 files changed, 16 insertions(+), 69 deletions(-)
-> > 
-> > diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
-> > index e134dce45e350..380a4caa33a73 100644
-> > --- a/fs/nfsd/Kconfig
-> > +++ b/fs/nfsd/Kconfig
-> > @@ -3,10 +3,11 @@ config NFSD
-> >  	tristate "NFS server support"
-> >  	depends on INET
-> >  	depends on FILE_LOCKING
-> >  	depends on FSNOTIFY
-> >  	select CRC32
-> > +	select CRYPTO_LIB_MD5 if NFSD_LEGACY_CLIENT_TRACKING
-> >  	select CRYPTO_LIB_SHA256 if NFSD_V4
-> >  	select LOCKD
-> >  	select SUNRPC
-> >  	select EXPORTFS
-> >  	select NFS_COMMON
-> > @@ -75,12 +76,10 @@ config NFSD_V3_ACL
-> >  config NFSD_V4
-> >  	bool "NFS server support for NFS version 4"
-> >  	depends on NFSD && PROC_FS
-> >  	select FS_POSIX_ACL
-> >  	select RPCSEC_GSS_KRB5
-> > -	select CRYPTO
-> > -	select CRYPTO_MD5
-> >  	select GRACE_PERIOD
-> >  	select NFS_V4_2_SSC_HELPER if NFS_V4_2
-> >  	help
-> >  	  This option enables support in your system's NFS server for
-> >  	  version 4 of the NFS protocol (RFC 3530).
-> > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> > index e2b9472e5c78c..dbc0aecef95e3 100644
-> > --- a/fs/nfsd/nfs4recover.c
-> > +++ b/fs/nfsd/nfs4recover.c
-> > @@ -30,13 +30,14 @@
-> >  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-> >  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-> >  *
-> >  */
-> >  
-> > -#include <crypto/hash.h>
-> > +#include <crypto/md5.h>
-> >  #include <crypto/sha2.h>
-> >  #include <linux/file.h>
-> > +#include <linux/fips.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/namei.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/fs.h>
-> >  #include <linux/module.h>
-> > @@ -90,61 +91,22 @@ static void
-> >  nfs4_reset_creds(const struct cred *original)
-> >  {
-> >  	put_cred(revert_creds(original));
-> >  }
-> >  
-> > -static int
-> > +static void
-> >  nfs4_make_rec_clidname(char dname[HEXDIR_LEN], const struct xdr_netobj *clname)
-> >  {
-> >  	u8 digest[MD5_DIGEST_SIZE];
-> > -	struct crypto_shash *tfm;
-> > -	int status;
-> >  
-> >  	dprintk("NFSD: nfs4_make_rec_clidname for %.*s\n",
-> >  			clname->len, clname->data);
-> > -	tfm = crypto_alloc_shash("md5", 0, 0);
-> > -	if (IS_ERR(tfm)) {
-> > -		status = PTR_ERR(tfm);
-> > -		goto out_no_tfm;
-> > -	}
-> >  
-> > -	status = crypto_shash_tfm_digest(tfm, clname->data, clname->len,
-> > -					 digest);
-> > -	if (status)
-> > -		goto out;
-> > +	md5(clname->data, clname->len, digest);
-> >  
-> >  	static_assert(HEXDIR_LEN == 2 * MD5_DIGEST_SIZE + 1);
-> >  	sprintf(dname, "%*phN", MD5_DIGEST_SIZE, digest);
-> > -
-> > -	status = 0;
-> > -out:
-> > -	crypto_free_shash(tfm);
-> > -out_no_tfm:
-> > -	return status;
-> > -}
-> > -
-> > -/*
-> > - * If we had an error generating the recdir name for the legacy tracker
-> > - * then warn the admin. If the error doesn't appear to be transient,
-> > - * then disable recovery tracking.
-> > - */
-> > -static void
-> > -legacy_recdir_name_error(struct nfs4_client *clp, int error)
-> > -{
-> > -	printk(KERN_ERR "NFSD: unable to generate recoverydir "
-> > -			"name (%d).\n", error);
-> > -
-> > -	/*
-> > -	 * if the algorithm just doesn't exist, then disable the recovery
-> > -	 * tracker altogether. The crypto libs will generally return this if
-> > -	 * FIPS is enabled as well.
-> > -	 */
-> > -	if (error == -ENOENT) {
-> > -		printk(KERN_ERR "NFSD: disabling legacy clientid tracking. "
-> > -			"Reboot recovery will not function correctly!\n");
-> > -		nfsd4_client_tracking_exit(clp->net);
-> > -	}
-> >  }
-> >  
-> >  static void
-> >  __nfsd4_create_reclaim_record_grace(struct nfs4_client *clp,
-> >  		const char *dname, int len, struct nfsd_net *nn)
-> > @@ -180,13 +142,11 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
-> >  	if (test_and_set_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
-> >  		return;
-> >  	if (!nn->rec_file)
-> >  		return;
-> >  
-> > -	status = nfs4_make_rec_clidname(dname, &clp->cl_name);
-> > -	if (status)
-> > -		return legacy_recdir_name_error(clp, status);
-> > +	nfs4_make_rec_clidname(dname, &clp->cl_name);
-> >  
-> >  	status = nfs4_save_creds(&original_cred);
-> >  	if (status < 0)
-> >  		return;
-> >  
-> > @@ -374,13 +334,11 @@ nfsd4_remove_clid_dir(struct nfs4_client *clp)
-> >  	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
-> >  
-> >  	if (!nn->rec_file || !test_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
-> >  		return;
-> >  
-> > -	status = nfs4_make_rec_clidname(dname, &clp->cl_name);
-> > -	if (status)
-> > -		return legacy_recdir_name_error(clp, status);
-> > +	nfs4_make_rec_clidname(dname, &clp->cl_name);
-> >  
-> >  	status = mnt_want_write_file(nn->rec_file);
-> >  	if (status)
-> >  		goto out;
-> >  	clear_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags);
-> > @@ -601,10 +559,15 @@ nfsd4_legacy_tracking_init(struct net *net)
-> >  	if (net != &init_net) {
-> >  		pr_warn("NFSD: attempt to initialize legacy client tracking in a container ignored.\n");
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > +	if (fips_enabled) {
-> > +		pr_warn("NFSD: legacy client tracking is disabled due to FIPS\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> >  	status = nfs4_legacy_state_init(net);
-> >  	if (status)
-> >  		return status;
-> >  
-> >  	status = nfsd4_load_reboot_recovery_data(net);
-> > @@ -657,25 +620,20 @@ nfs4_recoverydir(void)
-> >  }
-> >  
-> >  static int
-> >  nfsd4_check_legacy_client(struct nfs4_client *clp)
-> >  {
-> > -	int status;
-> >  	char dname[HEXDIR_LEN];
-> >  	struct nfs4_client_reclaim *crp;
-> >  	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
-> >  	struct xdr_netobj name;
-> >  
-> >  	/* did we already find that this client is stable? */
-> >  	if (test_bit(NFSD4_CLIENT_STABLE, &clp->cl_flags))
-> >  		return 0;
-> >  
-> > -	status = nfs4_make_rec_clidname(dname, &clp->cl_name);
-> > -	if (status) {
-> > -		legacy_recdir_name_error(clp, status);
-> > -		return status;
-> > -	}
-> > +	nfs4_make_rec_clidname(dname, &clp->cl_name);
-> >  
-> >  	/* look for it in the reclaim hashtable otherwise */
-> >  	name.data = kmemdup(dname, HEXDIR_LEN, GFP_KERNEL);
-> >  	if (!name.data) {
-> >  		dprintk("%s: failed to allocate memory for name.data!\n",
-> > @@ -1264,17 +1222,14 @@ nfsd4_cld_check(struct nfs4_client *clp)
-> >  	if (crp)
-> >  		goto found;
-> >  
-> >  #ifdef CONFIG_NFSD_LEGACY_CLIENT_TRACKING
-> >  	if (nn->cld_net->cn_has_legacy) {
-> > -		int status;
-> >  		char dname[HEXDIR_LEN];
-> >  		struct xdr_netobj name;
-> >  
-> > -		status = nfs4_make_rec_clidname(dname, &clp->cl_name);
-> > -		if (status)
-> > -			return -ENOENT;
-> > +		nfs4_make_rec_clidname(dname, &clp->cl_name);
-> >  
-> >  		name.data = kmemdup(dname, HEXDIR_LEN, GFP_KERNEL);
-> >  		if (!name.data) {
-> >  			dprintk("%s: failed to allocate memory for name.data!\n",
-> >  				__func__);
-> > @@ -1315,15 +1270,12 @@ nfsd4_cld_check_v2(struct nfs4_client *clp)
-> >  
-> >  #ifdef CONFIG_NFSD_LEGACY_CLIENT_TRACKING
-> >  	if (cn->cn_has_legacy) {
-> >  		struct xdr_netobj name;
-> >  		char dname[HEXDIR_LEN];
-> > -		int status;
-> >  
-> > -		status = nfs4_make_rec_clidname(dname, &clp->cl_name);
-> > -		if (status)
-> > -			return -ENOENT;
-> > +		nfs4_make_rec_clidname(dname, &clp->cl_name);
-> >  
-> >  		name.data = kmemdup(dname, HEXDIR_LEN, GFP_KERNEL);
-> >  		if (!name.data) {
-> >  			dprintk("%s: failed to allocate memory for name.data\n",
-> >  					__func__);
-> > @@ -1692,15 +1644,11 @@ nfsd4_cltrack_legacy_recdir(const struct xdr_netobj *name)
-> >  		/* just return nothing if output will be truncated */
-> >  		kfree(result);
-> >  		return NULL;
-> >  	}
-> >  
-> > -	copied = nfs4_make_rec_clidname(result + copied, name);
-> > -	if (copied) {
-> > -		kfree(result);
-> > -		return NULL;
-> > -	}
-> > +	nfs4_make_rec_clidname(result + copied, name);
-> >  
-> >  	return result;
-> >  }
-> >  
-> >  static char *
-> > 
-> > base-commit: 0739473694c4878513031006829f1030ec850bc2
-> 
-> 
-> -- 
-> Chuck Lever
-> 
+---
+Ritesh Kumar (3):
+  dt-bindings: phy: qcom-edp: Add missing clock for sa8775p
+  dt-bindings: display/msm: qcom,sa8775p-mdss: update edp phy example
+  arm64: dts: qcom: lemans: Add edp reference clock for edp phy
+
+ .../bindings/display/msm/qcom,sa8775p-mdss.yaml      |  6 ++++--
+ .../devicetree/bindings/phy/qcom,edp-phy.yaml        |  1 +
+ arch/arm64/boot/dts/qcom/lemans.dtsi                 | 12 ++++++++----
+ 3 files changed, 13 insertions(+), 6 deletions(-)
+
+-- 
+2.17.1
 
 
