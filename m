@@ -1,162 +1,231 @@
-Return-Path: <linux-kernel+bounces-850448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251AFBD2D43
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:45:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32420BD2D4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A803D34B068
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:45:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9E0834B029
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F45263C9E;
-	Mon, 13 Oct 2025 11:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440E5264623;
+	Mon, 13 Oct 2025 11:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sww275n2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="i7ialYAl";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="NV+39r7V"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF5326463B;
-	Mon, 13 Oct 2025 11:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760355902; cv=none; b=RYdTdtXxpfAvzttt4mgVA81Sh2WBBomaRko8+uZmsBeS6g1vtOjVz0ZW+axe9H2vltn0EUCZowFI5chD4r7BXZgBsyHXnWc95QoMWdP5ChOEP51Hly7NCLogAigMyvvAmcVIBoAIaYY4db9n/eN3z+VHNpiVNcba7hmn+EMJaF0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760355902; c=relaxed/simple;
-	bh=zuhK6RhM0NvTiKfZF7CmXJBASTipPPGDGdDjCXE2Gow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZqdPcKEyKUf1YRpoylpLrPmQJI/fU9c3hBH1huaZVF/K3reTMOpEf9y1SYEShHNceuiKvrilZTt8YBl+SlHBexeiuK8EkFutofThq/Xp3hGyscXf6n8P4CM7jzds4UHKaYnd9tzXJCB+rAczalytdN6Ygvw21xYsbZz3MVsL6TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sww275n2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DEC9C4CEE7;
-	Mon, 13 Oct 2025 11:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760355902;
-	bh=zuhK6RhM0NvTiKfZF7CmXJBASTipPPGDGdDjCXE2Gow=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sww275n21mv+GCkMclyU+wzSUkg8/hW4s6qi2bjA/MlJt+snPvrjvfYcN40tXtQUO
-	 7Ajrdn+BaxJZdEEQbkLio9LqFsNwMRCmpsUpxqWH4P87nH79Rruy7csI+Ka2oALbkd
-	 0iZcd8jW26WaYOeIac0B+B6yTdlVGpTd6G8hK7wAP9wH3A+g7c9E1q+Ue3uq9C36PI
-	 orYNNFQd6ZdGRdGBiOvC4ffCywBHR4Te+32XxckTD8ZZeCMRLUy539E5Xq0NWUWRnO
-	 yarnbW4aIVzT2UMXfl/KcuhTBdLLnikM/taqSJIQ+d80H/tErCuCGwIdt1f/7KFeFS
-	 3E4cXzl5INREw==
-Message-ID: <0a56ad59-d83c-4697-a1ee-db25585050e3@kernel.org>
-Date: Mon, 13 Oct 2025 20:44:59 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2849320126A;
+	Mon, 13 Oct 2025 11:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760355915; cv=fail; b=Baqiey2WXDN0RjYxcvdg6Lx2FqZvpKq75ITICI3BJdhbzFyEj3jM8YMKWbSVtEjhqY14aaNOhu1Zxaj19jJHhPtQrxJVBI6WoquVnNzylFl4x6UJfKgpqo0sGBKyk0avOItjuf3SZpsYq/JWVFVsl1F8fT+6rW49ena7RzgBinA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760355915; c=relaxed/simple;
+	bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oYwQGMqSibsJAqyoHkb2EuuPndFMPf/4Xe+nPJMP5vtyBoOK9ZWNyWLS+mPRFVFdw3mcprfHjXYci6k0B1STMj+qaSC3xbIZOnUdRVero1m0+0ey05e25gvIn7CsoTRl6fcqKWIjidliKEtg1Oxo8my3/GJ/4IOSbA5PLVzDl7Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=i7ialYAl; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=NV+39r7V; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 8285C4809DD;
+	Mon, 13 Oct 2025 07:45:06 -0400 (EDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1760355906;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
+ b=i7ialYAlR4kNGPPahy5RkQVj/rvjLCDu3RfXQeOY8ST6Sw4tVsKiHUpO3Xgxt/YJ6ZN66
+ vdGqCua94qUhNmbBQ==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1760355906;
+	cv=none; b=pWp5AtkOrpB5Ft2NFJinKhXtHaiVVoh+Ib6xpygjuX1mo4ccQdJmK9OXhqiKnEtKm4OL3TWEKsLimquLOR52ktNurbUGgTuDflEQdVNfrlC7K/9pIUCAafTS6pR1qjxnSuP82o0rxHJX0oQD/rnnzZJfIednY7OCua+Bzq7GSK2cHLjD1ZT4BqeATI3OAkucQJ8tBh4vFeC7T5dxXcWVOZ50owK8o69KONjYjdqwe5np9bEN2hYsA7RPChrFBnoAVbRqYPOu4hmXjqiInUV2c/lCVS6BneY+amFo5xJoS537DftEWthy6t0rJj3IhY5zTJrt+qPhP3nIu5T6rrFohA==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1760355906; c=relaxed/simple;
+	bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=ZkkPYQl++pamZ+uT1apN/h9TlCm1qC0R+Yx3QNlIlbzIvp0kA7PBPm0KQhA7w/FljSCpWW71kbuZJsYo3jRWfkP60vWNHoyaLU0JQkGpwaGhX6AtPcRamNiFU7aPLikQIYDgOTQu9iclWTFa7ioI6Bx5FTtN5p4KNZeOURGSQoUy4fVFHi2c9Q6KJhvYCUofNTmKYok39EZgGKrT5qCfK0AbIdD3H8WNd/ifPk5PdvWijwRdhSZdMefkKlRUzQJJFgB52/66m+bZA9IrYkkzenn6j5yQRWxs9/8ukpCTUcCAbhpyZJ3ecgLZ/1JSpYNxQM4Donq51AiBOTNfUrPM7Q==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1760355906;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
+ b=NV+39r7VusSqwveMXlPPszRaeC9O1hasF99s6ANTTHFxQn1DNROW67wxOmJumLt61WUWe
+ s2BBVVZi5aoEN3KnVnZq7ilQHbI+Qj9OW2nhfAZGO+gaOND8Xqcr483941oN9H8rH98d3L0
+ fGx8OWbOzfgutDe5t/uA/uPs9GlQ4nxdsT5EgOW7DqGVXpQ0Su8qJORJAEnG/3vF9qzMYyw
+ vrTqRrZGCuvRVxLmU1XJq+c4y83vSlV8z8B9+t12WieCvBepjudBXe9Wrzfyu+p3LJjIqu3
+ daS/+iVrO9KylBKN4/WVgVLnvvJDZw/TMpXl7C6Lw5rArbY2QzqsuNKDwC+Q==
+Received: by srv8.prv.sapience.com (Postfix) id 4AB4128001B;
+	Mon, 13 Oct 2025 07:45:06 -0400 (EDT)
+Message-ID: <622d6d7401b5cfd4bd5f359c7d7dc5b3bf8785d5.camel@sapience.com>
+Subject: Re: mainline boot fail nvme/block? [BISECTED]
+From: Genes Lists <lists@sapience.com>
+To: Inochi Amaoto <inochiama@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nvme@lists.infradead.org
+Cc: linux-pci@vger.kernel.org
+Date: Mon, 13 Oct 2025 07:45:05 -0400
+In-Reply-To: <trdjd7zhpldyeurmpvx4zpgjoz7hmf3ugayybz4gagu2iue56c@zswmzvauqnxk>
+References: <4b392af8847cc19720ffcd53865f60ab3edc56b3.camel@sapience.com>
+	 <cf4e88c6-0319-4084-8311-a7ca28a78c81@kernel.dk>
+	 <3152ca947e89ee37264b90c422e77bb0e3d575b9.camel@sapience.com>
+	 <trdjd7zhpldyeurmpvx4zpgjoz7hmf3ugayybz4gagu2iue56c@zswmzvauqnxk>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-dHWcg0gEsgsjYdWNT31Y"
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] can: netlink: add CAN XL
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
- Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20251013-canxl-netlink-v1-0-f422b7e2729f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 13/10/2025 at 20:01, Vincent Mailhol wrote:
-> Following all the refactoring on the CAN netlink done in series [1],
-> [2] and [3], this is now time to finally introduce the CAN XL netlink
-> interface.
-
-I am sending this extra message to give a few additional hints on how
-to test.
-
-In addition to the mailing list, I also push this series and the
-dummy_can driver to:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mailhol/linux.git/log/?h=b4/canxl-netlink
-
-I also have a work in progress for iproute2 here:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mailhol/iproute2-next.git/log/?h=canxl-netlink
-
-I will submit the iproute2 series later on, after receiving comments
-on this series. For the moment, the iproute2 canxl is only available
-through the link above.
-
-To test, after cloning and compiling above branches, do:
-
-  modprobe dummy-can
-
-to load the driver. Then configure it, for example, this is a 500 KB/s
-nominal bittiming and a 10 MB/s XL databittiming with TMS on:
-
-  ./ip/ip link set can0 up type can bitrate 500000 xl on xbitrate 10000000 tms on
-
-If you have debug log enabled (e.g. with CONFIG_CAN_DEBUG_DEVICES),
-this is what you should see in the kernel log:
-
-  can0: Clock frequency: 160000000
-  can0: Maximum bitrate: 20000000
-  can0: MTU: 2060
-  can0: 
-  can0: Control modes:
-  can0: 	supported: 0x0001ba22
-  can0: 	enabled: 0x00009000
-  can0: 	list:
-  can0: 		listen-only: off
-  can0: 		fd: off
-  can0: 		fd-tdc-auto: off
-  can0: 		restricted-operation: off
-  can0: 		xl: on
-  can0: 		xl-tdc-auto: off
-  can0: 		xl-tms: on
-  can0: 		xl-error-signalling: off
-  can0: 
-  can0: Classical CAN nominal bittiming:
-  can0: 	bitrate: 500000
-  can0: 	sample_point: 875
-  can0: 	tq: 12
-  can0: 	prop_seg: 69
-  can0: 	phase_seg1: 70
-  can0: 	phase_seg2: 20
-  can0: 	sjw: 10
-  can0: 	brp: 2
-  can0: 
-  can0: 
-  can0: CAN XL databittiming:
-  can0: 	bitrate: 10000000
-  can0: 	sample_point: 750
-  can0: 	tq: 6
-  can0: 	prop_seg: 5
-  can0: 	phase_seg1: 6
-  can0: 	phase_seg2: 4
-  can0: 	sjw: 2
-  can0: 	brp: 1
-  can0: 	CAN XL PWM:
-  can0: 		pwms: 4
-  can0: 		pwml: 12
-  can0: 		pwmo: 0
-  can0: 
-  can0: dummy-can is up
-
-Finally, you can use a recent version of can-utils to generate some
-traffic. The driver will echo back anything it receives.
-
-I will continue to update the above branches according to the comments
-received. See these as work in progress. Use the series as posted on
-the mailing if you want something more stable.
 
 
-Yours sincerely,
-Vincent Mailhol
+--=-dHWcg0gEsgsjYdWNT31Y
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2025-10-13 at 16:46 +0800, Inochi Amaoto wrote:
+> On Fri, Oct 10, 2025 at 07:49:34PM -0400, Genes Lists wrote:
+> > On Fri, 2025-10-10 at 08:54 -0600, Jens Axboe wrote:
+> > > On 10/10/25 8:29 AM, Genes Lists wrote:
+> > > > Mainline fails to boot - 6.17.1 works fine.
+> > > > Same kernel on an older laptop without any nvme works just
+> > > > fine.
+> > > >=20
+> > > > It seems to get stuck enumerating disks within the initramfs
+> > > > created by
+> > > > dracut.
+> > > >=20
+> > > > ,
+...
+
+> > Bisect landed here. (cc linux-pci@vger.kernel.org)
+> > Hopefully it is helpful, even though I don't see MSI in lspci
+> > output
+> > (which is provided below).
+> >=20
+> > gene
+> >=20
+> >=20
+> > 54f45a30c0d0153d2be091ba2d683ab6db6d1d5b is the first bad commit
+> > commit 54f45a30c0d0153d2be091ba2d683ab6db6d1d5b (HEAD)
+> > Author: Inochi Amaoto <inochiama@gmail.com>
+> > Date:=C2=A0=C2=A0 Thu Aug 14 07:28:32 2025 +0800
+> >=20
+> > =C2=A0=C2=A0=C2=A0 PCI/MSI: Add startup/shutdown for per device domains
+> >=20
+> > =C2=A0=C2=A0=C2=A0 As the RISC-V PLIC cannot apply affinity settings wi=
+thout
+> > invoking
+> > =C2=A0=C2=A0=C2=A0 irq_enable(), it will make the interrupt unavailble =
+when used
+> > as an
+> > =C2=A0=C2=A0=C2=A0 underlying interrupt chip for the MSI controller.
+> >=20
+> > =C2=A0=C2=A0=C2=A0 Implement the irq_startup() and irq_shutdown() callb=
+acks for
+> > the
+> > PCI MSI
+> > =C2=A0=C2=A0=C2=A0 and MSI-X templates.
+> >=20
+> > =C2=A0=C2=A0=C2=A0 For chips that specify MSI_FLAG_PCI_MSI_STARTUP_PARE=
+NT, the
+> > parent
+> > startup
+> > =C2=A0=C2=A0=C2=A0 and shutdown functions are invoked. That allows the =
+interrupt
+> > on
+> > the parent
+> > =C2=A0=C2=A0=C2=A0 chip to be enabled if the interrupt has not been ena=
+bled during
+> > =C2=A0=C2=A0=C2=A0 allocation. This is necessary for MSI controllers wh=
+ich use
+> > PLIC as
+> > =C2=A0=C2=A0=C2=A0 underlying parent interrupt chip.
+> >=20
+> > =C2=A0=C2=A0=C2=A0 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> > =C2=A0=C2=A0=C2=A0 Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > =C2=A0=C2=A0=C2=A0 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > =C2=A0=C2=A0=C2=A0 Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pi=
+oneerbox
+> > =C2=A0=C2=A0=C2=A0 Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+> > =C2=A0=C2=A0=C2=A0 Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > =C2=A0=C2=A0=C2=A0 Link: https://lore.kernel.org/all/20250813232835.434=
+58-3-
+> > inochiama@gmail.com
+> >=20
+> > =C2=A0drivers/pci/msi/irqdomain.c | 52
+> > ++++++++++++++++++++++++++++++++++++++++++++++++++++
+> > =C2=A0include/linux/msi.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 2 ++
+> > =C2=A02 files changed, 54 insertions(+)
+> >=20
+> >=20
+...
+
+>=20
+>=20
+> I think this is caused by VMD device, which I have a temporary
+> solution
+> here [1]. Since I have no idea about how VMD works, I hope if anyone
+> can help to convert this as an formal fix.
+>=20
+> [1]
+> https://lore.kernel.org/all/qs2vydzm6xngul77xuwjli7h757gzfhmb4siiklzo
+> gihz5oplw@gsvgn75lib6t/
+>=20
+> Regards,
+> Inochi
+
+Thank you Inochi
+
+I tried this patch over 6.18-rc1.
+
+=C2=A0It get's further than without the patch but around the time I get
+prompted for passphrase for the luks partition
+(root is not encrypted) it crashes.=C2=A0
+
+I have uploaded 2 images I took of the screen when this happens and
+uploaded them to here:
+
+=C2=A0 =C2=A0=C2=A0https://0x0.st/KSNz.jpg
+=C2=A0 =C2=A0=C2=A0https://0x0.st/KSNi.jpg
+
+
+
+--=20
+Gene
+
+--=-dHWcg0gEsgsjYdWNT31Y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCaOzmQQAKCRA5BdB0L6Ze
+2793AQC4dSbOull9rvkIgpQMy3u8s0MnMnesKSkr8cl1aCcjhgEA8JsyZE0W3nxn
+TlbuPaLE0GUc3sJJApkeNtTtuSG0Eww=
+=3Ua6
+-----END PGP SIGNATURE-----
+
+--=-dHWcg0gEsgsjYdWNT31Y--
 
