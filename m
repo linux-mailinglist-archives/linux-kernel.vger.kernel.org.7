@@ -1,93 +1,88 @@
-Return-Path: <linux-kernel+bounces-849817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52626BD0FC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D09EBD0FCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F8E04E6DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:22:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 044984E5B31
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F028C19E97A;
-	Mon, 13 Oct 2025 00:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A18819DF8D;
+	Mon, 13 Oct 2025 00:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rOjzvtUw"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHvkMy0H"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB1F1519B4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 00:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12AD1547E7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 00:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760314961; cv=none; b=GlGuQ1SPtNTBq3a8B+ONbb9cqazzAVZevvkE3F43A8VqMMosAoyPU3FEspbkyafBflvaQrYE7RMkFF6MOWM/vvGJ5tiFlsfUnJvimvvB4cfN8xe+4W1SStg8svosWtrSk5u3524uxZCHrakZGFeTE7s9dHRhyxEaDs0FNUiJ59w=
+	t=1760315022; cv=none; b=O1RnsWzWEAR7zL5DI1coY4kywx9bOx8N4Z3tYRphu9pZ8IL9o5nQCC/BTfEgMkRyeV/R0k0pqFCXCJ7fYZWbu258cCv0a5HMH9kggYvGOthW3rv2V/S+FQl3jBQw5IHFFbNcR26jhrV7MMOeGdDoUFkuSFwcEf3O++vQoQ5NVbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760314961; c=relaxed/simple;
-	bh=+dTERHXHwlz9Q3on1s7pnMr9sQk3vgyQfbNftxESlcE=;
+	s=arc-20240116; t=1760315022; c=relaxed/simple;
+	bh=a5RwFLO0o9BBCKHa/xHutaciS3/pYIetjEk6CL5xcIk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=slpSS1BQkk/SgXTLuQCDzPFvxvI3TYdE1Uv41nbbLm9bIKIM6OIQBnjPKnoiSpBtXVfVhasEbiUCDfUQNEX1A5vUyOGotVJUxlN70w6rCqRSdaZbetoBZzC2ESPinvvTC0mQnpBVBQqbYM/8HqrLLONLTJmaJDFUvkC9YGQE3OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rOjzvtUw; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version:Content-Type; b=IdOHF5BUwYiqzhcu+9IzDhRIKNdIGiyGInqkmoavmFsZ/k2WuWt2pIgZZyXf7vf34AvLqvbWEfuGRu7rUBquswsevwRhLt6GCxAfw9i1cEMT0/DxZAMHMMOGQ7cqWWs15Sjr7aH/ug76Kpt+F32l7QZyoXL6ew19ao5W8R+f8Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHvkMy0H; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-267fa729a63so6385855ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 17:22:39 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2698d47e6e7so6427405ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 17:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760314959; x=1760919759; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760315020; x=1760919820; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UVqRhIZigralax4KbuXiwcZcRbWu9Ae0Ahc/RkKiB+M=;
-        b=rOjzvtUwp/yh9Kh5vxsDTCOVN1ux7BeMhZj/iu2ZIEnG2yKMWynzfeKQxi2boBYZfo
-         iP2Pf1lS60xMi8jpDyGch6iZwU9MEF44nvhQfNGgfA0G/Dwp3ttyk3EDLU+acZ6exYtH
-         4aVdXAeCAmtF0lxf9aByTpE9GktHtboLp9G+sm8Kv8bwhpBU28rX2W/DbnEtjugt6Quv
-         63sMOKRUEWSP+fekAEhzeMk4TD8gUZ3qMPo8pNBfc+pZV62k9cmtEF0mbuy8Qm6CcZbP
-         2oh/hvaInb/P+yP99xor92f38GTeiLu9588d/tvNTrl09qY19pbRy0eWaKfLk7JIIw9B
-         I4SQ==
+        bh=dKqus6TNCmFF/5x9N32QOMKyU8zghS5JwdNBvL267Es=;
+        b=hHvkMy0Hoeiy5OmqXer7bSMTtL0VgfxvfLYaeJEQQb+bu2FWKdBEE25/j70IXs3VyQ
+         dd9moJPdfyKipv5LehHrJswI/w1LZFowCvd/Cv/mptz8wk/cpDIWvYEt33KOzlApO0B0
+         tcAnbxapNYndh6a0ECMRfTqwOV+mZvUq9+/i/iKyOvSqaMLWjIMmLmCtWwj03bIH1Llq
+         2Kf0S+8o7JMyOvmUedMVyOyRsUq6CC18R3epH4Gdn++hNfrtltAlnJuJb7t/SOCtIHzN
+         vMd65PE4PTBd2s6yL1FEKHEk0Zq7c8rDlaRdLtGSyfItZS/XcbVFrVMI/U+M5XzQxSJC
+         +Mug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760314959; x=1760919759;
+        d=1e100.net; s=20230601; t=1760315020; x=1760919820;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UVqRhIZigralax4KbuXiwcZcRbWu9Ae0Ahc/RkKiB+M=;
-        b=ozczXXNJieWjG/E3lmnY9BXbwY4KTmfeg5iQOUpvhUV6IWeGhWAyAYniB1HuBxIlRg
-         Utf7G1/wWWYHX7Gq5OezCkOzHCFibxA5qH00VntSpXxc5w4pHbPAcIbjJm8mFts4WkOB
-         PQNRfP73p9kFhgOA1QC5awPaw7qa78JZ1BBmqorA9Mcg0behIMKt2DdrOSgDdZElLdoh
-         ewBPFFBDlFY4UdUClqLzfNEPOUepeoPkM11mOLkYZxVz5mW/RsXWqZ36pAscA/Hwg/2x
-         ImD+l3z5cieyIUmIgMesXEOPYO21MW2L1b3B40Z2BK5T61WzIGEwF+iqlyrnA2JVNPB7
-         FJaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTwEiz5KIuevhcephHX9FREwIFH7We3e15USGTOc/Hfjwp9w7cknBzYLBMpCd0B7LS5L3I5ZfujhFXMNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfd6Qws9R6u0rSj7L+xvqk9pBdPuzb0ngalOeKsq17lbkQULlp
-	1Mkye71YG15/qBsO0RhQO33jSBM8t/5R3HTkdlJUFtbwuxVBdtnwC/mc3JZayfsWJI3uxuvtPsL
-	YPoHq4/g=
-X-Gm-Gg: ASbGncuZ6oYnwm/OrV9mrXV3vuxHij8uR6k3Zr4SJUqKrzRgzN37SbntcsuyfcyhGdq
-	FaMJrKR0GNMCbaCCHPiRMtlpfO46nEazzjZLtn0OsaK0Sum7PoMluCKNX+OwRX/1RIXincmtNOT
-	Rxh7pwVx1O4wl0QZ2lAjZ8F+PBWXDgDwGtYha1wSlmWA2w8Glm3iQ2W99Gw3Plxe2fQgtp/q/ub
-	oaAoMsZ20kbLyq+zek4FdJQL4O9wU91OiNOT8VsMr2641IVDk6FZS5YwoyijzpQOgyRLEY/JuE5
-	oc8o3Io72vnqfZ70n/FUpl1dlXgp4SCkoGnyp9ps0hF1hpqNudRFPqMTgK/jfoBQNI4XGInYJeV
-	XQT/jyJD9JfaUsDaX4spUoRoLs5GPU93Qea7t79zDmlmYda4cuqZsWQIaVi0J2/4M3iiVX3c=
-X-Google-Smtp-Source: AGHT+IFK4ci2TGNbmqypL/3bygm/UTzER4LfBfP1yAru/4qRR98/cUW50Jp7i5jycMDRBEjIp5poiQ==
-X-Received: by 2002:a17:902:c404:b0:277:c230:bfca with SMTP id d9443c01a7336-290273e17bfmr142190255ad.4.1760314959008;
-        Sun, 12 Oct 2025 17:22:39 -0700 (PDT)
+        bh=dKqus6TNCmFF/5x9N32QOMKyU8zghS5JwdNBvL267Es=;
+        b=b4LKmxytntWbl5IJ11M160RZg2+UxxCuFvdsZD3kWHVjUhiiSMWWjcGxX95gvraFr3
+         Tu0Hb/ZQ9HbNhTbrZ96sLdrET79UIo/WLmDvI+ztGxCo6o/jqyyhQySXZxbf5sLuyOeK
+         QufbvrZtisLE92+RslN5imfXZVA9ver1arrXYy5V2o1y0qW5H1uI+RBKcko/ehxZxFBu
+         6QBqKw0YStq/NSpMbri6vhSf44gEwNR6Ru11CwOqkN1iggY1DUl1JlYHERlmHOiB0p/2
+         H6Hy/Jd9spDXfnWnAYCcGxdh6WQzZsRfsh0o1n4W4N2z36M1STKUUD/bxJaFnT1D7KEk
+         BJQg==
+X-Gm-Message-State: AOJu0YymZpCS+JhaKoHEyocem+rZi3otbJyVo6LZw1wMg57vr5U6G0TL
+	g9y/bYdbTPi/H1Osv45G93j5G+C8rWitayduqqrMyqAR2VaYyqyUdyD2m5wgrzWtiFw=
+X-Gm-Gg: ASbGncvEqGfjKCYDEuXVyjgYKDxtIunmCvny8HlbGV/nki45V6DCJ/GD7R13MDCmTS+
+	2Bi0O/n/lY50s9t0ag3E4nN0xm+1Mcg4IstgA6BsEiYGyJLc9dd7TiJOutZhRxhb4WyXFHxEDKJ
+	2MoFykJxxI2UUbk6B+UIVYuFsVwmKPs/oJXDCsd42r+AMrEYxGN38tS9xzBCD1kaqkXydyU2aeI
+	p9Bjx9trHhCMxwi4QxX/EeokCWWfBfO2/aybIHzH5KPE5kmqun8dbLcWLofi+y9xtfGUQUdCcUe
+	D0T3v+XLtA+nC3RXg6/8sNPksjbWsFVrgR5jIuH04WLvR1G8sqFBD4IE9xS29jBzQ5eBVHEqTtE
+	xzVQoBMWR0f2IP89mpOkrb3aqrRq4uO2NuPlrTZBtZrQdDHJxn+gbZC47JXcUxFJ4MRP3S4E=
+X-Google-Smtp-Source: AGHT+IEwhnyMgQZCD5nHRbinCVe18U8JEIiuV4xUcpNlnYoVb8AqvlfFcy82JBbvm2Dk4975Tv36Mw==
+X-Received: by 2002:a17:902:f68c:b0:267:c4fa:e269 with SMTP id d9443c01a7336-290273c4cb6mr137398585ad.1.1760315019880;
+        Sun, 12 Oct 2025 17:23:39 -0700 (PDT)
 Received: from [127.0.1.1] ([121.134.152.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f05bcasm115840285ad.84.2025.10.12.17.22.31
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f07d51sm115557775ad.69.2025.10.12.17.23.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 17:22:38 -0700 (PDT)
+        Sun, 12 Oct 2025 17:23:39 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250914114457.2610013-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250914114457.2610013-1-ivo.ivanov.ivanov1@gmail.com>
-Subject: Re: [PATCH v1 0/3] pinctrl: samsung: add exynos8890 SoC pinctrl
-Message-Id: <176031495194.9871.10054397457165667570.b4-ty@linaro.org>
-Date: Mon, 13 Oct 2025 02:22:31 +0200
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+In-Reply-To: <20250911-memory-tegra-cleanup-v2-0-d08022ff2f85@linaro.org>
+References: <20250911-memory-tegra-cleanup-v2-0-d08022ff2f85@linaro.org>
+Subject: Re: [PATCH v2 00/13] memory: tegra: Several cleanups
+Message-Id: <176031501653.10491.5665652686495806453.b4-ty@linaro.org>
+Date: Mon, 13 Oct 2025 02:23:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,24 +94,45 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Sun, 14 Sep 2025 14:44:54 +0300, Ivaylo Ivanov wrote:
-> Hey folks,
+On Thu, 11 Sep 2025 11:43:11 +0200, Krzysztof Kozlowski wrote:
+> Changes in v2:
+> - Fix commit msg copy-paste in the last commits - proper number for
+>   "tegraXXX_emc".
+> - Link to v1: https://lore.kernel.org/r/20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org
 > 
-> This patchset adds pinctrl support for the exynos8890 SoC.
-> 
-> Best regards,
-> Ivaylo
+> Few cleanups for Tegra MC/EMC drivers:
+> Deferred probe, few simplifyings and function name unification.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: pinctrl: samsung: add exynos8890 compatible
-      https://git.kernel.org/pinctrl/samsung/c/9be3b7bb7ddd4e8ed466f41c6f43de34424aeb8c
-[2/3] dt-bindings: pinctrl: samsung: add exynos8890-wakeup-eint compatible
-      https://git.kernel.org/pinctrl/samsung/c/f416d35e6522f0c08d4e866e5d6930bfd504e645
-[3/3] pinctrl: samsung: add exynos8890 SoC pinctrl configuration
-      https://git.kernel.org/pinctrl/samsung/c/5b6b7d39cee69373dc61ca22164d616e4faf60c6
+[01/13] memory: tegra124-emc: Simplify return of emc_init()
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/da722f1c9d605dffaabe2526e3e4cae3ff53401d
+[02/13] memory: tegra124-emc: Do not print error on icc_node_create() failure
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/1c9cce8a0e0bd4f383a04655bd3a4f650fc1f20f
+[03/13] memory: tegra186-emc: Do not print error on icc_node_create() failure
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/515498a3f58485321a1fa03b4eb5e6208a816e06
+[04/13] memory: tegra20-emc: Do not print error on icc_node_create() failure
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/e215d91d66a2c8c7ed8524ce6b261340149c10f0
+[05/13] memory: tegra30-emc: Do not print error on icc_node_create() failure
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/c0ca941c93527a9e96f3ba58c0970cdf94670203
+[06/13] memory: tegra30-emc: Simplify and handle deferred probe with dev_err_probe()
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/db2bd7ab1ae8c1f32a553b6eb36d6fecea41aab5
+[07/13] memory: tegra20-emc: Simplify and handle deferred probe with dev_err_probe()
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/57c9f6e29ccd44db882b943df2e72a4e54ebe0e3
+[08/13] memory: tegra186-emc: Simplify and handle deferred probe with dev_err_probe()
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/a52ddb98a674b01b6b5f2da1ed70a9f30d539f6b
+[09/13] memory: tegra124-emc: Simplify and handle deferred probe with dev_err_probe()
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/f398631b769c43fd3c575ad6270bb0109a04b85a
+[10/13] memory: tegra124-emc: Add the SoC model prefix to functions
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/e6e50496b7e77613ed5b610877f34e1197ce62da
+[11/13] memory: tegra186-emc: Add the SoC model prefix to functions
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/4ebcacbb4447cd3b05289e1e0e199a5e8ea0c6de
+[12/13] memory: tegra20-emc: Add the SoC model prefix to functions
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/5c8c19417c9777aba1bc9a1d93c95edec48d8b19
+[13/13] memory: tegra30-emc: Add the SoC model prefix to functions
+        https://git.kernel.org/krzk/linux-mem-ctrl/c/50c833c5cd9450c8c67d32883ea290dcbd633ea0
 
 Best regards,
 -- 
