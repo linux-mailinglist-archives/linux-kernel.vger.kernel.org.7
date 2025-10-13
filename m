@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-850736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE39BD39F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68449BD3A77
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC0B7188BAC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED4FD3E36AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE83274B27;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADCC30CD9E;
 	Mon, 13 Oct 2025 14:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="w3NFEseo"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010009.outbound.protection.outlook.com [52.101.46.9])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pEA4ddv8"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011048.outbound.protection.outlook.com [40.107.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08B63093BF
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E6C30C60B
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366158; cv=fail; b=V7L19LlEHxWRKvUv02gDGvzMrV8Vgj8rTbuP+yuTVUJrRMGCY3bPZaXf4V+tIUVEs3M2U929SUbKJPmkdp9DcYUfthZriRv7lk5WttikkZezcVd/GPB/eFhZos/T6jHE8vPT7ToJdWI7TIhqbhxem1DlVEN0Bn1BqBSAMIh46GU=
+	t=1760366159; cv=fail; b=ElhakQzGtCnWLyKWQTgFaGubKiUwyGM4Cd0ZOEA1fcUbI4cK9BZspq8457kUIhGXEDgAEA/evQK3l5WlWHfL94p48uBxg4KhS7UQbtvQVPuhUrCIJRpumZE63ciMGr8rI0+QIeWUBzCyXEI8ePSBLHO9nT5qD4rDmVXwkioN3pw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366158; c=relaxed/simple;
-	bh=Bbl8kCX6J85MCj8dKpwqiYhLV0vu+MTlLMpDxN8iRm0=;
+	s=arc-20240116; t=1760366159; c=relaxed/simple;
+	bh=wydbAxhO6YYK5usnmsZbTxNjoDgE02eyWLAkrN1oI14=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eprCszQ1XagYtXY25WR8ltLLqFacpQeu8Xt+UEkKfkcn563wW3ow1DPXYwprbvdhem7NdybdO0oRAnEN+lO4nyYp5Lux4862G1C+L7R1OtS7HAOfHigdMBbXWqKtVFxlknHR+k685q1lgQfPXgQEge6oNXX8yRfv5xSJK3veK3Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=w3NFEseo; arc=fail smtp.client-ip=52.101.46.9
+	 MIME-Version:Content-Type; b=Aoqhg0W7N8CqzaX8qjybSV3Yk1Dvwip/lgAyeRTjFCSpu9YLj+LfruQTY8uvaHMVPtYXt9P5jXJB6qs7NhkUkMndk6vEglcCqLM9hHf41SfLvYVPDtGUEk4j0xu/S2txgR1Uly6cd7lsBRTIsaGp2hX1GT382oHZ50PcF0kuqak=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pEA4ddv8; arc=fail smtp.client-ip=40.107.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ha518TI272SL1r1CwvpiSDKcuq7eFlg1a2I3/6EOga+4jtLTbxv7XIuNcJKauk6BnQBDDWtJ2kzL05GRJQGGxXA3tQKkzTkVXQ8wujHXag0yWRaY/T01e/C111heB70/mP2awT+ai+9I5SojMBbp+XA/xSFyM406b4rYERZmOCzbT1+MXuHXerN5xm9K32RYkUcOcjsLdzvZpnJM5s6H5XpGPKxVBA7aB1f9kVPaYzn1Yp602rFSOj4m4EnzB2GlhfLOfZHC7/Oz0wfMuJS6dPBMR08EyLmXBMcqYvbcIYfM+lAp0ynMA6IDGNVpoduMTuJIq2H2mM1q5O0nxuQgow==
+ b=VahyrFpJMMGH/vhG+4Kbgo9FhU7MYUT0KyG4dL7TZ2azJqqEbDXw35JEVbI0RSrf5lTi+0ziOINIarLpjZQl7O030MGsrMBVPpSBflVKcuYKQ0zQW5K1TrbVqGwOFQiMuKRc7bWHG7keLUQ46ZSsw5x7cFxSmk+seeqdIr2sFzHzIo+LYA7nz0h0xle6joMvktDxUYBIb9tR4W+pX9N7gMnH9ukg66WhFg7X0mq19JhoRmugx7EL86DNIuiBz/xPvJ9K2C7MrHPl9Ir/QOcs+t36EkmfyZi+Ay87rKG+npbfxSrtrWLKFAP4rQ/DQC4Oo2xsza/7wz8zUEGLM4hUvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V+wiqbSNZBc4ZwWhkNOx+S3w6yR5lYK9Lofu7gPSvag=;
- b=U/tJk3rps9O2yQFsqegQwdVzw0e/63QD8O0GnC0NHea87nkyJYVBBHqgYURRarAVdBZA0ZkxTAuJmgijATidefupYOXgMTTIhs0C5LT5DyOpBj73TZHInkS93NkvQgMfeNA8zivg6DrE3SA28VDz7Ywoc29flUgIhVmJ/CToPjtTp2L1D+PZ1WiAaZkI7ozR8WgnTAPUyaYFWtCOpT67ZCliAFn+QKIDukmAUXdw3f8WvPtFXoTuAQgJLOvjyBgq72WcldTOVTFXi2lJPVhj4i/ehoyz4gaapeptI/QL2OmMfm50emRXmyntu5vxGX0sfkk/8jjcrx05BppMx1xQKQ==
+ bh=JSl1A1Ooo2LhYmsFr9OR4ppC2CfO0Er4iKvwUAHm09o=;
+ b=GHcIJZ+zAp+EeC2jjKTLP5jsHCT1inwUZuxxAqREnC1BvUQcUcOzxoCq2INq8gTlZ11SqkXMGlwQI1rbqj0KWQ1OkxAnsizdKMXMQVf+mUcJ3NwEUDMXdBySoOnhCta75doFCM6/5vFMdpE6oGlIpFrDekzY9udGy8ZTHUIuq4zLIpaw4F6D/vIAtm24DOJKGlHVCSfVriiG4x+kYJPo7MBb4mYW1l1DHHqXXip7qtnLth05INth8Royh9l6ojb5FjLtO1CJts5s3sRGJlfmm2XReTcefdPp5ges7Yf7b06rKs9sUOQ83RWX+AV+6itULiNfcMIPRiCoGIYbZ1jPgQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V+wiqbSNZBc4ZwWhkNOx+S3w6yR5lYK9Lofu7gPSvag=;
- b=w3NFEseoSRRnr/Sbhwa4f6yqdQ0AyFAZE/dvxoFvyx+Be80NOQkOO7LqraMyLPgLj7yrAqOTGlbqPGYYYhK8TAyxhV85bheI4nzI1jia1xoGZlLGvJ3POa5rVzXJIWwyP2U3J3+HRDZkhk7ZNxYq+NjBbB8c2n4CX22jaoxXi68=
-Received: from MW4PR04CA0118.namprd04.prod.outlook.com (2603:10b6:303:83::33)
- by DS7PR12MB8274.namprd12.prod.outlook.com (2603:10b6:8:da::13) with
+ bh=JSl1A1Ooo2LhYmsFr9OR4ppC2CfO0Er4iKvwUAHm09o=;
+ b=pEA4ddv85n1wOrKySUXZfnVZalcnphxHZSPX348+uCqCj2TvMOdyfp4H2LGcidQMUKlb5wG++7Z4SPdd8gJrq7YkUu8bE0i8izLDRlYeowcno8STdDMn3X486BWIOw5QMTSBFEGDYggs0mV7enjIMXEQnbE+OUqarNeGpS3HHSo=
+Received: from MW4PR04CA0108.namprd04.prod.outlook.com (2603:10b6:303:83::23)
+ by LV8PR12MB9335.namprd12.prod.outlook.com (2603:10b6:408:1fc::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 14:35:53 +0000
+ 2025 14:35:54 +0000
 Received: from MWH0EPF000989E7.namprd02.prod.outlook.com
- (2603:10b6:303:83:cafe::4f) by MW4PR04CA0118.outlook.office365.com
- (2603:10b6:303:83::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
+ (2603:10b6:303:83:cafe::32) by MW4PR04CA0108.outlook.office365.com
+ (2603:10b6:303:83::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Mon,
  13 Oct 2025 14:35:53 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -77,9 +77,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 28/56] stop_machine: Add stop_machine_nmi()
-Date: Mon, 13 Oct 2025 09:34:16 -0500
-Message-ID: <20251013143444.3999-29-david.kaplan@amd.com>
+Subject: [RFC PATCH 29/56] x86/apic: Add self-NMI support
+Date: Mon, 13 Oct 2025 09:34:17 -0500
+Message-ID: <20251013143444.3999-30-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 References: <20251013143444.3999-1-david.kaplan@amd.com>
@@ -95,245 +95,87 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E7:EE_|DS7PR12MB8274:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4336cf78-6300-43dc-df91-08de0a65d014
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E7:EE_|LV8PR12MB9335:EE_
+X-MS-Office365-Filtering-Correlation-Id: 785c7d43-3dc4-4889-91b3-08de0a65d07a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013;
+	BCL:0;ARA:13230040|7416014|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pWcxXQqUO7g4aFBZfqFOzq+JYasimh3hOds0uiV4CCfcQiOqlHJmIDfcdyVc?=
- =?us-ascii?Q?gbPpJRfeSGVJkhkKOegS5iHKiENDvqvWJtT8Lbw+OtjqM34Rs1XNuDEsvjjN?=
- =?us-ascii?Q?8cIR3d+0LNoZ6H2lrOdxaNgINvyBkBt1lVOC7HP3/GG5Ntl0nR8wcoao+xnU?=
- =?us-ascii?Q?3EvW77UqTQpkDYBWTlkmKYQmhwkkUrxBgEph8ySxOksHRilEfinC+Ym0vFb8?=
- =?us-ascii?Q?lKJ8/LtYDXCZ8Lwzi/txlqAExkh4hSpQcHIHArQyqTz5StG5ATBP0HtAD+hq?=
- =?us-ascii?Q?hTCtQ211xGBXv31J/rQ+uKtHBeI9WazusSOv1QTs5ap1VXaoxEPS2yawYQ+G?=
- =?us-ascii?Q?+b2m3hjVafAv1ya6WGuYPRlWLymtHHC7tLejRgELLVmeYeHwecGJM9T0LRlm?=
- =?us-ascii?Q?aO0/RRfQY69IJMLr5cseOp1Dh0jJMz3ZRkTbs64Dkb+vOoqRiTHiUxYeRHqG?=
- =?us-ascii?Q?oZo2rk2Xz7gZGnqjFZBr8Gkw88eKHUe5x6jiitvhu3TieJswmatnFaE4UbPQ?=
- =?us-ascii?Q?gb7oIiPfKNWT79/4WoBQe4hmG2L5EDGCZr0WRhoTmoMtewHC1RmD+rqkDiBt?=
- =?us-ascii?Q?GQjLJJv+0zlv5MSW9voaXAY68xXCkYDUmYdaqnsRGQmXZWHAxAyXPY+5Ja49?=
- =?us-ascii?Q?zPP/sqNwk9lLnpciTvRm48LYn4yqFfC3aoRjEPuYcIBUzsNo9B5SDCqiMF9P?=
- =?us-ascii?Q?7B7uTdhYKhi9RvAdgSo8rZ5zKKqRIpidKUadACHRSvDz01L9SohYFb2COL5e?=
- =?us-ascii?Q?+MzHLRk9OcPa8tbsYolD2mfauVGsj/iKojV05FO9pSopllhBb0P525ATPNsh?=
- =?us-ascii?Q?uNZaxFUCDPAi7Pqwo+iPvY11+dgGFpjEalA05ovD7uELMWkxWaInoL6NqhcJ?=
- =?us-ascii?Q?a3xdZrNTMiCq9FnDhMfFLMFMlSLRRnciNnPmoUl/pMtWAc95/Xv0XwDMvHB6?=
- =?us-ascii?Q?9P4swMhFeGg8Er+oPXS1feaI5LNLoV8eZ/YgRcdS9up/yjIWeRbpdhsAWOzr?=
- =?us-ascii?Q?ZfNknGPN2YKuCfZsocIHGzhPQE6X7y9XM5GVHPUwmr52gGsJE55JEFIWDdbN?=
- =?us-ascii?Q?5LOAqz1xGYvob/H6A6qJkV97T+7IrvnZAWcwOTG1NYrWyM8YzR0bJLEVDDz3?=
- =?us-ascii?Q?4f3j8Vqd3p0nAEdlC5awzcQ3mwIXXqwPYliS6Z/WRk4e6vkeHUgCHsL5Xefl?=
- =?us-ascii?Q?dL0CsUEW+H7pM2eI2ofEkJEPe42cvsQPtiLMFoLPGIgRjMqmiG1/g1Fym896?=
- =?us-ascii?Q?lW3Zkx1xOvGKZLALyA5gIN7X9sL1BmClo8xV6zissq0u2oZooMUdvY1PFZcg?=
- =?us-ascii?Q?oUY6BQ4Fck5ZiuhCxm+9Zz5ACUpqtFo02DjsTA5R6wTGP8SMDivUC/yQVt7J?=
- =?us-ascii?Q?tShMx/kkcRUee73egv/D/xprcGRNepokQkhfpesTF2sYKfRZQpyoZ8VzQoAd?=
- =?us-ascii?Q?0kcodN7Cc9bbpj/JdT1263S0sFKthVQDtjM34cbIc/XHCUPzOzUxC/WOIEUy?=
- =?us-ascii?Q?XGk1hwtn5EL1h8ZuZKCtjZKfyp92owa6KvYqA+roERUkT0w4hSbpXu9MbcbV?=
- =?us-ascii?Q?QNuLDz9WpOoZzlONryU=3D?=
+	=?us-ascii?Q?S+DzPApEXeDRtVqgWniCMhJZ1vjLT7ev2c3JoFm5Mm1u+F35gV1aapfMywXz?=
+ =?us-ascii?Q?IlX33scHYAJqCDKXDrgg1ZqdlLRnRs5q5Ropnrbt8tVu5+gROF78YUYJ+KIr?=
+ =?us-ascii?Q?p6bCQfAnGdIk4VffEyzcZ8Y4Y+DwplrK3EOvB2S2t4dRAMPKodVBPfXI3Rxv?=
+ =?us-ascii?Q?HasWYROw+yFnCoEcDml6v7TyWpzjIq8AyHVuz6/4nclVO0pxcWrdrvZvrI1n?=
+ =?us-ascii?Q?780o5mxgQmyx4Fh2LUWTDwCABI+GQcRFtejdkl8fd/GEA7fTkA+VVKqHJT6o?=
+ =?us-ascii?Q?d1en8xgJJxT7y8TysEiqYJOPCB30wFHmJ3QKs+Hoo6p8+axTtPM3pyvpUgaL?=
+ =?us-ascii?Q?T/dwF2MH9INBK9or7B5B2k1Q9RCgSVjOeYT7M4duZ0rJAmD2qTAKrQA0jGab?=
+ =?us-ascii?Q?G3pdaD06TU7uGZlvya3yHJEMZbzfN+00/2jolIJ2urr/7F7MqJUyEyXku4f0?=
+ =?us-ascii?Q?6C2GaaGaT8e8AjEZ4YFBBTe/r7l/l3i7x/E9On4KlxSVez5HdJa5/IpHhHns?=
+ =?us-ascii?Q?BDBqxpQMic2bRJieUSAnsrhn6h6o7NvSUJSqr73MzJo3QO+O7mh43GnhzqWy?=
+ =?us-ascii?Q?j9kFaiqsQExdyu8268nweU3dAWnIOuF83JncxHUUAx/Pqfa6jbchTBRsDU+F?=
+ =?us-ascii?Q?fOCDj8cVfG2a+yMIsJv6m6SV3fZcArX2/SXjWCIZ5mmU2kyOCOjJ192wtwIv?=
+ =?us-ascii?Q?92hyxVpnh0VwfB7P5Ngg1MsnbAb4FIcYaeVri+cmWQkhd11E9N1fGG6AQnnj?=
+ =?us-ascii?Q?zbtABIVU8TgJ2HKanyqFUYOZWbVEOKvbcuV/LzAS6n3hQwkkuzVFxqD5It9T?=
+ =?us-ascii?Q?yvZucFvnrrx97DxU24vhb3Nxa/tCyFYAEVP61QconP0ThOfHdTq9s+P1i0sJ?=
+ =?us-ascii?Q?T1SnFBl8B/iGU2iv8RTiyxBZr3T608Am+3TRvKp2NjpFBkEAdptSzz5bf915?=
+ =?us-ascii?Q?f3lthwEnk98vd0UdJdonF3GzgY+iHaTB53bgvM/TFV128SFxaXCa89cYOkFl?=
+ =?us-ascii?Q?Xfdnxx4a0J5dGohi9eqZ6hlT0kLaPbenH96umx+hLWXfLgpXx+Q9X3seunMo?=
+ =?us-ascii?Q?ub13H9QraCURTgytvQiKwFWUJulXGlVoHV4RXno45iYIB7aWselKWaIT9SPO?=
+ =?us-ascii?Q?HzOvyV6A/o4cogQMwGM8SXvibt6v7xUDw1/0/9B+j0/tUlm/cbljq+9RIVBU?=
+ =?us-ascii?Q?g8JyW/55Zo2lka52NXf0gLyhv14Somf+f1uFQHPl24ZotPASVgftUzhMMjIs?=
+ =?us-ascii?Q?cgh+Ho8Py96MDNukO5wn89YNA2Vw9ATbcb2txw6ZPMz2MPRta4wHOnZz/LEw?=
+ =?us-ascii?Q?nTPKitIKYmvgbcKbngsfhuBomYLTJxISALYbrE/R/WdIJ83p8z6ON3Cfd17Z?=
+ =?us-ascii?Q?jCYM5f9lzTLCQ2UkwzmQU4iqc9MpcJwlVddehh1/0FM8Fu80jhj1M1PpjUud?=
+ =?us-ascii?Q?85HkiQdkBORV3dm3jycRYnpBKf+82DcnX4jAb04XBUCgQ7C3e9VVpZVlWanD?=
+ =?us-ascii?Q?SPzJePQ9IAhRZey/0jl39nnjC93SIHKDPRlBcMgWnkzE+6R0dxpsRvnJvVjb?=
+ =?us-ascii?Q?eAJm6uQn6J+nFqyBRRU=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:35:53.0779
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:35:53.7456
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4336cf78-6300-43dc-df91-08de0a65d014
+X-MS-Exchange-CrossTenant-Network-Message-Id: 785c7d43-3dc4-4889-91b3-08de0a65d07a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	MWH0EPF000989E7.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8274
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9335
 
-stop_machine_nmi() is a flavor of stop_machine() that runs the specified
-function in NMI context.  This is useful for flows that cannot tolerate any
-risk of interruption even due to an NMI.  Arch-specific code must handle
-sending the actual NMI and running the stop_machine_nmi_handler().
+Add function to send an NMI-to-self which is needed for stop_machine_nmi().
+Note that send_IPI_self() cannot be used to send an NMI so send_IPI() is
+used.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- include/linux/stop_machine.h | 32 +++++++++++++++
- kernel/stop_machine.c        | 79 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 107 insertions(+), 4 deletions(-)
+ arch/x86/kernel/apic/ipi.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
-index 72820503514c..452c45640012 100644
---- a/include/linux/stop_machine.h
-+++ b/include/linux/stop_machine.h
-@@ -141,6 +141,29 @@ int stop_machine(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus);
-  */
- int stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus);
+diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
+index 98a57cb4aa86..6d4e5aa27529 100644
+--- a/arch/x86/kernel/apic/ipi.c
++++ b/arch/x86/kernel/apic/ipi.c
+@@ -4,6 +4,7 @@
+ #include <linux/delay.h>
+ #include <linux/smp.h>
+ #include <linux/string_choices.h>
++#include <linux/stop_machine.h>
  
-+/**
-+ * stop_machine_nmi: freeze the machine and run this function in NMI context
-+ * @fn: the function to run
-+ * @data: the data ptr for the @fn()
-+ * @cpus: the cpus to run the @fn() on (NULL = any online cpu)
-+ *
-+ * Like stop_machine() but runs the function in NMI context to avoid any risk of
-+ * interruption due to NMIs.
-+ *
-+ * Protects against CPU hotplug.
-+ */
-+int stop_machine_nmi(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus);
-+
-+/**
-+ * stop_machine_cpuslocked_nmi: freeze and run this function in NMI context
-+ * @fn: the function to run
-+ * @data: the data ptr for the @fn()
-+ * @cpus: the cpus to run the @fn() on (NULL = any online cpu)
-+ *
-+ * Same as above. Must be called from within a cpus_read_lock() protected
-+ * region. Avoids nested calls to cpus_read_lock().
-+ */
-+int stop_machine_cpuslocked_nmi(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus);
- /**
-  * stop_core_cpuslocked: - stop all threads on just one core
-  * @cpu: any cpu in the targeted core
-@@ -160,6 +183,15 @@ int stop_core_cpuslocked(unsigned int cpu, cpu_stop_fn_t fn, void *data);
+ #include <asm/io_apic.h>
  
- int stop_machine_from_inactive_cpu(cpu_stop_fn_t fn, void *data,
- 				   const struct cpumask *cpus);
-+
-+bool noinstr stop_machine_nmi_handler(void);
-+void arch_send_self_nmi(void);
-+DECLARE_STATIC_KEY_FALSE(stop_machine_nmi_handler_enable);
-+static __always_inline bool stop_machine_nmi_handler_enabled(void)
-+{
-+	return static_branch_unlikely(&stop_machine_nmi_handler_enable);
-+}
-+
- #else	/* CONFIG_SMP || CONFIG_HOTPLUG_CPU */
- 
- static __always_inline int stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data,
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 3fe6b0c99f3d..d135f32528e8 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -174,6 +174,8 @@ struct multi_stop_data {
- 
- 	enum multi_stop_state	state;
- 	atomic_t		thread_ack;
-+
-+	bool			use_nmi;
- };
- 
- static void set_state(struct multi_stop_data *msdata,
-@@ -197,6 +199,42 @@ notrace void __weak stop_machine_yield(const struct cpumask *cpumask)
- 	cpu_relax();
+@@ -248,6 +249,12 @@ void default_send_IPI_self(int vector)
+ 	__default_send_IPI_shortcut(APIC_DEST_SELF, vector);
  }
  
-+struct stop_machine_nmi_ctrl {
-+	bool nmi_enabled;
-+	struct multi_stop_data *msdata;
-+	int err;
-+};
-+
-+DEFINE_STATIC_KEY_FALSE(stop_machine_nmi_handler_enable);
-+static DEFINE_PER_CPU(struct stop_machine_nmi_ctrl, stop_machine_nmi_ctrl);
-+
-+static void enable_nmi_handler(struct multi_stop_data *msdata)
++/* Self-NMI is used in stop_machine_nmi() */
++void arch_send_self_nmi(void)
 +{
-+	this_cpu_write(stop_machine_nmi_ctrl.msdata, msdata);
-+	this_cpu_write(stop_machine_nmi_ctrl.nmi_enabled, true);
++	apic->send_IPI(smp_processor_id(), NMI_VECTOR);
 +}
 +
-+void __weak arch_send_self_nmi(void)
-+{
-+	/* Arch code must implement this to support stop_machine_nmi() */
-+}
-+
-+bool noinstr stop_machine_nmi_handler(void)
-+{
-+	struct multi_stop_data *msdata;
-+	int err;
-+
-+	if (!raw_cpu_read(stop_machine_nmi_ctrl.nmi_enabled))
-+		return false;
-+
-+	raw_cpu_write(stop_machine_nmi_ctrl.nmi_enabled, false);
-+
-+	msdata = raw_cpu_read(stop_machine_nmi_ctrl.msdata);
-+	err = msdata->fn(msdata->data);
-+	raw_cpu_write(stop_machine_nmi_ctrl.err, err);
-+	return true;
-+}
-+
- /* This is the cpu_stop function which stops the CPU. */
- static int multi_cpu_stop(void *data)
- {
-@@ -234,8 +272,15 @@ static int multi_cpu_stop(void *data)
- 				hard_irq_disable();
- 				break;
- 			case MULTI_STOP_RUN:
--				if (is_active)
--					err = msdata->fn(msdata->data);
-+				if (is_active) {
-+					if (msdata->use_nmi) {
-+						enable_nmi_handler(msdata);
-+						arch_send_self_nmi();
-+						err = raw_cpu_read(stop_machine_nmi_ctrl.err);
-+					} else {
-+						err = msdata->fn(msdata->data);
-+					}
-+				}
- 				break;
- 			default:
- 				break;
-@@ -584,14 +629,15 @@ static int __init cpu_stop_init(void)
- }
- early_initcall(cpu_stop_init);
- 
--int stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data,
--			    const struct cpumask *cpus)
-+static int __stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data,
-+			    const struct cpumask *cpus, bool use_nmi)
- {
- 	struct multi_stop_data msdata = {
- 		.fn = fn,
- 		.data = data,
- 		.num_threads = num_online_cpus(),
- 		.active_cpus = cpus,
-+		.use_nmi = use_nmi,
- 	};
- 
- 	lockdep_assert_cpus_held();
-@@ -620,6 +666,18 @@ int stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data,
- 	return stop_cpus(cpu_online_mask, multi_cpu_stop, &msdata);
- }
- 
-+int stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data,
-+			    const struct cpumask *cpus)
-+{
-+	return __stop_machine_cpuslocked(fn, data, cpus, false);
-+}
-+
-+int stop_machine_cpuslocked_nmi(cpu_stop_fn_t fn, void *data,
-+				const struct cpumask *cpus)
-+{
-+	return __stop_machine_cpuslocked(fn, data, cpus, true);
-+}
-+
- int stop_machine(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus)
- {
- 	int ret;
-@@ -632,6 +690,19 @@ int stop_machine(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus)
- }
- EXPORT_SYMBOL_GPL(stop_machine);
- 
-+int stop_machine_nmi(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus)
-+{
-+	int ret;
-+
-+	cpus_read_lock();
-+	static_branch_enable_cpuslocked(&stop_machine_nmi_handler_enable);
-+	ret = stop_machine_cpuslocked_nmi(fn, data, cpus);
-+	static_branch_disable_cpuslocked(&stop_machine_nmi_handler_enable);
-+	cpus_read_unlock();
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(stop_machine_nmi);
-+
- #ifdef CONFIG_SCHED_SMT
- int stop_core_cpuslocked(unsigned int cpu, cpu_stop_fn_t fn, void *data)
+ #ifdef CONFIG_X86_32
+ void default_send_IPI_mask_sequence_logical(const struct cpumask *mask, int vector)
  {
 -- 
 2.34.1
