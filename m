@@ -1,175 +1,151 @@
-Return-Path: <linux-kernel+bounces-851350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933B9BD63DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:47:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C03BD6397
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 519C74F6BFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D86DD19A0BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D982ED87F;
-	Mon, 13 Oct 2025 20:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EE930BBA2;
+	Mon, 13 Oct 2025 20:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="kA5GN/dV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jc0sALQg"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UxSNtELP"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E88309EE6;
-	Mon, 13 Oct 2025 20:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69C230AAD7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760388029; cv=none; b=Qs9mqQ3IomuN8sN4hcQff0POnOfdL2OIo5x1cidXf2rMQDMAbvZTaDwAIDL6Pd8C0gTL/hNEWS3eV7Wst7Ea7WXjxZpO8AEIXLmqg/5h4JQndgOdVSUJ2VZQ9sfYu1A9hJD5cAl2dVW6OkBPtpFg5xmcMffZFoxF9YLU+DEHG2Y=
+	t=1760388091; cv=none; b=t7DByzeNswQxo56JYFKCh+IRJs+CvY0a8E0QGfd+OuYztpCnlwvTM4GnndBXoZqZeBWl0voIOMvRSBvl58KnbJcsUOjCbkTx2Fcpfz0P/kjM/EJ485wtofbyJY8c57/+9ERzEiFFPsYYG2lRHT+tB5mPOeL9GgCBO9ZY3K+NVQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760388029; c=relaxed/simple;
-	bh=SEcuW0g1fHV3FOuswFA2rCp0Rs0f3CmsRg0WLVV0msw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m41sCwF28ScrgNzZtsqhbPN/qhFqwk57lqDdF4jkgBPJF98bX6QUHFn5dNHa2tw3t+mWMekkSW/APAeiqptj77ZwyWjQbOyLjnIl4+GgTuBj0JUp+8wAMrgpDeu3ywPPrUcf75xa11ZwBaDbwCmuclIMAAAS1oRNBGI9QZuq36w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=kA5GN/dV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Jc0sALQg; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 84E131D000B9;
-	Mon, 13 Oct 2025 16:40:25 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Mon, 13 Oct 2025 16:40:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1760388025;
-	 x=1760474425; bh=1iExwgXKoBaPrErs1AXnNTPfeJ9+7thtk3Z9Gc3buPE=; b=
-	kA5GN/dVYAJz8Y4F+SqKvTjLJol+4/7GDJ9ea6dJu1zkf3Dq6Bevcp+Siia7CbpT
-	nDrCgsi7EXA3/gHApLX077TgNkPB5ZOl7+y06sZwQt54sPSv747f9cQ1RpqAwkZl
-	mdL4zHM18nuRCeW3u3J4aEA5khhKvqj4Xmic9TqJhFe2NXOUE64CDoZAtUKUmfMY
-	MPPt0l2TVsB6oQN30kB5M4hOGXFEPc0egNRivZoaXRTcYZe5KeJ6pDxhoZXJcVPa
-	vt5It1Y9GvJsUf3gEbtbV0Q8i2sblf5DIMNgJR6wSYYKwnzXSjItPZfBq5Fz2a/e
-	VSWUCXllUi+1kUQf9MnGMw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760388025; x=
-	1760474425; bh=1iExwgXKoBaPrErs1AXnNTPfeJ9+7thtk3Z9Gc3buPE=; b=J
-	c0sALQgyLT2QR84ijePcWbYGEExTlSFdL8pk717gIi5ECUqOdJ2oFgQgn00T8fDR
-	ocWhfEL7KNdlD7dzK7ebsOPntN7b2h2OMfWKhtqG5m06/O3G8t1lvn3fawOEhp6/
-	ECcknq2okC4jdtp0dqDFGSvh0uNDFcXyB+ICaIBlWlAKZcNMIs7e3gxW5xGVy1Xn
-	FDZWGdDU3AEDDWi8Gw7XvYknDB4wE8i8uWS7yFZV0ULm0ad7x3jhSC2HEaxdvnXh
-	rKlaAYiir5Vw9JH6jVsOllRI3pezC5R0G/gP6Z9xYbkWobIzfAXda/Z+An8tzInu
-	WHco5oD9U6gN8ScBIgClQ==
-X-ME-Sender: <xms:uWPtaJ_B_AwUzDHo7CLRyBNhwCCeDnSrDFynEOs1f_sViP1lymLQGg>
-    <xme:uWPtaHC6FOK05_vKw9dEd--WFKOvCQEjqhj2uJ-jCDRiAe1YUsI8mRi1HZ220QCf4
-    f_QwWlh31fD1-Mg1QKljg8VDbRri6s4hQl1m_PhZTO6opqYmagm>
-X-ME-Received: <xmr:uWPtaOTQCUgxnygJVBuyBxSx6VPaWFRukWbMtJMB-ulT6uZCOaYCkNi60RILsKGtenciGzuLMAaR7sgiSIgSph49qryvFvdT9K2JsPw3O0KhVkl8yEcs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudekieefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpedtuedvueduledtudekhfeuleduudeijedvveevveetuddvfeeuvdekffej
-    leeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
-    mhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjh
-    horghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhikhhlohhs
-    sehsiigvrhgvughirdhhuhdprhgtphhtthhopehgihhvvghmvgdrghhulhhusehgmhgrih
-    hlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopegsfhhoshhtvghrsehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:uWPtaOvnOlf49Zu-tHMexNBzsSzVXnsKAOM_U8fvTbyywkayFVmRBA>
-    <xmx:uWPtaK1XHrVQw92u4zHAwlkuE0fZnMJ88gPMInfujAxOpSBrRZWaJg>
-    <xmx:uWPtaPXG-ji-RaLpP9CUUHcOFKh8OnzzlOFUs4JiLd6v9pHntD9mXA>
-    <xmx:uWPtaFKwplzQy4nrbqrZh7lwma7oiIKq_xbQ7yHSd8jabYStW5XGwQ>
-    <xmx:uWPtaJUMTyYfvgd3PJdffGuT-Eb8_eWuDPZSkWUYp7xQzcaHmR4gWJVG>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 Oct 2025 16:40:24 -0400 (EDT)
-Message-ID: <54e30e4a-36c3-4775-a788-dc15e3558b9b@bsbernd.com>
-Date: Mon, 13 Oct 2025 22:40:23 +0200
+	s=arc-20240116; t=1760388091; c=relaxed/simple;
+	bh=GsSWfFlXkBsxiUZoCz6mvqXlZhLEzpwSFRwMJKX6ek4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t2HWrk1Qdfj5SsI+RdS6b+GoYZL+bOwWUX9KCPcNnci9Bo1gYXVN1V1dw5iyhGk8h9Zb4lhAPk6tP2gOcHGNbPLMuhl1bWdglA+i9nKKLuW9mu1KrAWdCnLQfGAeaTnvzvqQ912xoP5/gLS02ur6p9tArrflbz4hnv2oovsW9Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UxSNtELP; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b403bb7843eso995640766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760388088; x=1760992888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wCLtlY+GpSdapckAq80Uoda7FwoX2xkIrZqjiQg1jTI=;
+        b=UxSNtELP/KctQLvknOMJ1+RLheRIKAsMqeuMzsPGnNHZOkQlhZhuccp7kF1IQ4pBXE
+         y5kfnrMAXMCt/nZw9DzPEgvAkoPmxmrjF+O/NQc64D0CahamIUAucqFk+BIJ+i1DAXan
+         lz9+mfdjiaMTFtHqWUvhsJW2obb0oB7iAMGYK8luUbrr8F927b0EVY1En53yGR3gxXhJ
+         RaDfMGVARLqWxMN5LsuSMkSyVc/xHS9OH1iql0sdq2hegd+015elbsSDOt4w8GebaOpr
+         ITWTFtG/UducX4UVpZxOhHDurzf8sy/mcfPAZCc+VaN77UP55zNI0IKCR8roYM8GZ/LT
+         wqQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760388088; x=1760992888;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wCLtlY+GpSdapckAq80Uoda7FwoX2xkIrZqjiQg1jTI=;
+        b=GMo4Zh6/IRI8nTyYUEgMD1Uc/8iXQrHnxk7oGpGElZQ3XNddCFx7Z8JmmQaKN7bKtA
+         cUI42yVhuIB7C0o1+2elTW/ohyRUh6Jh+83bXr+nxcgzfUIfNlxAbwLLEZaMqWQspZ7G
+         oUtligYvjEqUsSJcV8JM21y9na5Lf4GOY5n17a+KcYsxAihSDNXmQsn/OjEVgDRLIhe9
+         D0TV9BGB+e+mYEsueO6DCOxRzP6YYKKJkeX0ZqmDbjCFRmwO4r0af8y9hzE1Zxm/RbTU
+         ZCLpnkOrKDwWtCIbb/wO9G281v7vEAM+cJEE4wYdXor0y2zlvC039AdbL8cl8wriKxnQ
+         VyzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLSr193zqnviDTIxZw5sGx6Fw/36rYie3Pq0uxMItzppid6fk4WiaYqQoneVUh65nBCCeEpgybay3izt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1rerDU2XD/L9mY4aK4h0mMqllx7p9oE3nBYUzjjHqS+xPcfB3
+	i2lSzUtFSdKXyybsEne4zayzCm14JciWBOCRqxB1gFdQVi4KKznA0Wl8
+X-Gm-Gg: ASbGncvxXezuEhjWCSP8hjPlxW5+hGRATboROPx6JQ0EbeJ2cGHPlODMJfGRFmCpF+Y
+	XAguHgIl2jcKhzkSOFnWHAieKJtuYx7PfTDBMOJuDs1YbeSln1mRwyZCSSGfsgT6m4Jx6TjAq4Z
+	hdaYu/xQybkzq5TxG800vZnMiqN0sLpK5FB9basv5YOvifqwUWHAYWy3PpIsBcW1eTfHwBtMPfU
+	k1/lcOpUVdhQL5El95TLOFclIAtop3pNcgOSN3JZrsFaAK0de6JEh5W8CECWYFr9v75LCSCyTPf
+	5HQO1tnpLZH2s3NM8Bhz3pjJZ7JVs3vkIJ3m5Px2izs8FbNgXmmU2Eyh/7uZMe4GdMkZFMlgfU3
+	ZmY3FfY1V0LEaYrOVq4vgjMt9Vk5hCQ==
+X-Google-Smtp-Source: AGHT+IFrDpANwGND6n4Bq/nSFTErKeDAVitiuC4/ag/cLsjoNuy/l3zpqrheKMdvIEEFGo6yIOFj0w==
+X-Received: by 2002:a17:907:7e88:b0:b3f:b7ca:26ca with SMTP id a640c23a62f3a-b50aaa96b30mr2242003166b.21.1760388087782;
+        Mon, 13 Oct 2025 13:41:27 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12b9dsm1000097266b.45.2025.10.13.13.41.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 13:41:27 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 13 Oct 2025 22:41:19 +0200
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, irogers@google.com,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	haoluo@google.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next RFC 0/2] Pass external callchain entry to
+ get_perf_callchain
+Message-ID: <aO1j747N7pkBTBAb@krava>
+References: <20251013174721.2681091-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Brian Foster <bfoster@redhat.com>
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
- <CAJnrk1ZCXcM4iDq5bN6YVK75Q4udJNytVe2OpF3DmZ_FpuR7nA@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1ZCXcM4iDq5bN6YVK75Q4udJNytVe2OpF3DmZ_FpuR7nA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013174721.2681091-1-chen.dylane@linux.dev>
 
-
-
-On 10/13/25 22:27, Joanne Koong wrote:
-> On Mon, Oct 13, 2025 at 1:16 PM Bernd Schubert <bernd@bsbernd.com> wrote:
->>
->> On 10/13/25 15:39, Miklos Szeredi wrote:
->>> On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
->>>
->>>> My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
->>>> similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
->>>> that it hasn't been invalidated.  If old_mtime is invalid or if
->>>> FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
->>>> cache is not invalidated.
->>>
->>> [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
->>> Link to complete thread:
->>> https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.com/#r]
->>>
->>> In summary: auto_inval_data invalidates data cache even if the
->>> modification was done in a cache consistent manner (i.e. write
->>> through). This is not generally a consistency problem, because the
->>> backing file and the cache should be in sync.  The exception is when
->>> the writeback to the backing file hasn't yet finished and a getattr()
->>> call triggers invalidation (mtime change could be from a previous
->>> write), and the not yet written data is invalidated and replaced with
->>> stale data.
->>>
->>> The proposed fix was to exclude concurrent reads and writes to the same region.
->>>
->>> But the real issue here is that mtime changes triggered by this client
->>> should not cause data to be invalidated.  It's not only racy, but it's
->>> fundamentally wrong.  Unfortunately this is hard to do this correctly.
->>> Best I can come up with is that any request that expects mtime to be
->>> modified returns the mtime after the request has completed.
->>>
->>> This would be much easier to implement in the fuse server: perform the
->>> "file changed remotely" check when serving a FUSE_GETATTR request and
->>> return a flag indicating whether the data needs to be invalidated or
->>> not.
->>
->> For an intelligent server maybe, but let's say one uses
->> <libfuse>/example/passthrough*, in combination with some external writes
->> to the underlying file system outside of fuse. How would passthrough*
->> know about external changes?
->>
->> The part I don't understand yet is why invalidate_inode_pages2() causes
->> an issue - it has folio_wait_writeback()?
->>
+On Tue, Oct 14, 2025 at 01:47:19AM +0800, Tao Chen wrote:
+> Background
+> ==========
+> Alexei noted we should use preempt_disable to protect get_perf_callchain
+> in bpf stackmap.
+> https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
 > 
-> This issue is for the writethrough path which doesn't use writeback.
+> A previous patch was submitted to attempt fixing this issue. And Andrii
+> suggested teach get_perf_callchain to let us pass that buffer directly to
+> avoid that unnecessary copy.
+> https://lore.kernel.org/bpf/20250926153952.1661146-1-chen.dylane@linux.dev
+> 
+> Proposed Solution
+> =================
+> Add external perf_callchain_entry parameter for get_perf_callchain to
+> allow us to use external buffer from BPF side. The biggest advantage is
+> that it can reduce unnecessary copies.
+> 
+> Todo
+> ====
+> If the above changes are reasonable, it seems that get_callchain_entry_for_task
+> could also use an external perf_callchain_entry.
+> 
+> But I'm not sure if this modification is appropriate. After all, the
+> implementation of get_callchain_entry in the perf subsystem seems much more
+> complex than directly using an external buffer.
+> 
+> Comments and suggestions are always welcome.
+> 
+> Tao Chen (2):
+>   perf: Use extern perf_callchain_entry for get_perf_callchain
+>   bpf: Pass external callchain entry to get_perf_callchain
+
+hi,
+I can't get this applied on bpf-next/master, what do I miss?
+
+thanks,
+jirka
 
 
-Oh right. So we need some kind of fuse_invalidate_pages(), that would
-wait for for all current fuse_send_write_pages() to complete? Is that
-what you meant with 'fi->writectr bias'?
-
-Thanks,
-Bernd
+> 
+>  include/linux/perf_event.h |  5 +++--
+>  kernel/bpf/stackmap.c      | 19 +++++++++++--------
+>  kernel/events/callchain.c  | 18 ++++++++++++------
+>  kernel/events/core.c       |  2 +-
+>  4 files changed, 27 insertions(+), 17 deletions(-)
+> 
+> -- 
+> 2.48.1
+> 
 
