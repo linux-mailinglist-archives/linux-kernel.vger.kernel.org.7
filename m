@@ -1,236 +1,366 @@
-Return-Path: <linux-kernel+bounces-851277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30503BD601A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:50:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BDFBD6020
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E4818A5CA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15032406F22
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C413D2DAFC0;
-	Mon, 13 Oct 2025 19:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67A02D97AF;
+	Mon, 13 Oct 2025 19:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJYFPyGn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBGmc0ng"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0552264D9;
-	Mon, 13 Oct 2025 19:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A98E2264D9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760385037; cv=none; b=a5J9iDV7AJDZIS3V+4bg1/cAH+KHJz3XqTrjsX2J8ksV1BePE7LcptmVVUY5OSNZT9O/dSu8nilJ5oOlQPpKtCoYqY+GrzoauDc3CZ5YQdQRazf9ku0tTea64IreoBdEX/uXKXzvDZA0iTgfRBwrY6BhyDGnSACHmh1S1viWcp8=
+	t=1760385051; cv=none; b=dY3RoYy2sG1TgOl07W/Ko2sgWU9JoC5gXyYKwZHwxZEa8p2Hsl658wBX/VqLwUzLms/0yI3htS7cWd6UwzDvXWEYg+igC8/hM/JQ8vtrDaPMv8Ee5wWWjzNyPmwMuTxu0pAeOUfaJ4Q3HVRk/uUEa6Lj8oufEV55lp+c9VMW+9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760385037; c=relaxed/simple;
-	bh=RTh2qQLRy2voO67dBZSLvPZprE+dNHWREq6r4yE8Mk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X4DAk2JJqYLibfIM+aNAAIxwBdPry0e8pdApYJ8Uw7dQyZRPW75d9qmE0hZQuyocWAQ4F2+ae+JLxMrDEFoUVuz1y94UOfLJVOlWGFl6YZjReaeweMwvuOzszFq18NfJe25zC0TI5IiOz4yAwrNccBS7+Zi2ebuII1T44vW4z50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJYFPyGn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB908C4CEE7;
-	Mon, 13 Oct 2025 19:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760385036;
-	bh=RTh2qQLRy2voO67dBZSLvPZprE+dNHWREq6r4yE8Mk0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LJYFPyGnKukKJNwjAB7nsV/eQ8UTkrCIhyaAvA41S2ffyHHg8+Naq4/0JoYVAkEIR
-	 0hvyWjekpPulSaXrZ35ijIsu3qxhFwz6g2EUmTr8x++VwwEetlZoVnSnoN0XVVI0uO
-	 X27A0p5q1p1ttB8E0XATjwnGKgFTm/Z0aleI8E2yA0UphczVnYqmHxtZbdbrGiowxC
-	 twIHwxRQPaDpQIeaodgiZT9GL1moLAaAPySYqmMp2vbLkM+XwnxQwfqdTV9OHD9c3L
-	 vSDBncoKwuAcRv7LXA9jIrCAQn/eO0tu0XQB9Zh/1rdfj7pszhL8LcLd+Ix22V71UT
-	 ve1lC3tV/iXOQ==
-Date: Mon, 13 Oct 2025 20:50:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/7] dt-bindings: iio: adc: Add adi,ad4062
-Message-ID: <20251013-step-quaintly-c58d8a1a460b@spud>
-References: <20251013-staging-ad4062-v1-0-0f8ce7fef50c@analog.com>
- <20251013-staging-ad4062-v1-1-0f8ce7fef50c@analog.com>
+	s=arc-20240116; t=1760385051; c=relaxed/simple;
+	bh=IpZ2LIfLn7br50AFqR+GMS2OYYPOPmfz3siYSEd3Veo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=isnfs47eCM1eZb14uSAKFMtnuVx8khfRzEr7VThTMMlQfz4mE0kc8rIqtvcV+K3N4m/Y0HfKTXTK7pE42OAFarWC+/PVuGqgCRbtX6lXelN7Mx8T47OsZDjrX9bD0rnAj3L3Oo+dRf0JgKaHIgMDyWpL2RW7YSMIAPanJYpUeNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBGmc0ng; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so5068847f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760385048; x=1760989848; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IpZ2LIfLn7br50AFqR+GMS2OYYPOPmfz3siYSEd3Veo=;
+        b=hBGmc0ngXnpGdTYGl4I/w0AJCFkOVzquNgnoNyHSHr4KJ0XFmb7S/jzQOfY+3AK/+k
+         4R0CL/tAnGPp4AnuAxX4x7I4OlHq/dKqTLbrZiK0kpzYuXCZ0q150FO9ItWRiiETVi1U
+         TP8DNCX5bcCiKUlaljhyJ0DbzTo9XXeWiu+cIiq/7oqBeWsa4uf1USKfemyIBrLRFYkP
+         IUmJvEMPMP2PN2MylgH3v3zAKMQz7RdhGI9EFLlBscGKTo+VDFrbA4zZUXWyo65CPS5g
+         WGTCMdOiu9QZawmHNTX/28Pdn+f/ckagIyWiaKU2DUQBNyhuWt2n1+kSMnP7I+HuazUE
+         XW3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760385048; x=1760989848;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IpZ2LIfLn7br50AFqR+GMS2OYYPOPmfz3siYSEd3Veo=;
+        b=YStaJyK/XRACOmlr3mBw8Xl7q27ByaXG0JvamFIqsJBncqGCSDB20olpF4XCbxkYNI
+         1khJqk8ZENTSG8BM7M49W+ew7DRpWEXvSemOn5n62l3qkAsS77BpuuNVlV24PPizf0tK
+         /DYwLheGtMyBt3901nGJM8ExD+1jwzxhZ0sEdg8eCMznbJTMOI4+xrd/hnX9jbrHS7GK
+         q67f/IyYTZmkaU7eirRxcjHbPbkeDYN6dwasVjLbNLT0tVvLWl7BHgCsG7MZM6C3xgkK
+         mlfaoCSWnMrxDBBdGDD/7cdvFMr4iGXALuCELV2c7Yn/jvTie6mzu6ShJYLecgi8um5A
+         ep6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXdEoKV1gxVBS8ryqFhPJMXa0/37RCWOZ6KoXmpdfMgErdpmadUHFl1oh9VCyaIkYsl7DxbagoWY/WAOBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1e9SFo8oF+U5f3DlG+ykHVLqkftiXMj3fy6NU/pYkMgPIPDHZ
+	UdwMGdRtAqSgR/MiD7d6BrMm0Sw4PoI05/Zvo34kjgo71ELxa1nwrgtX
+X-Gm-Gg: ASbGncvVDbHEEVjDtw76X9yHPUPTuSv4t/9RIu1voKpo+4Bu4rc2c7BsmHiAxH2yxMy
+	o+ZHF5m37wAwKwk6zrFSz5wXVA8xe8B7KRHKqPMlqT7hj7ibTdVxm/nPZYruVzXWwT7fJxkuss4
+	CJUIuldbtUctBzspvXYcleIjk5rmiPrHalFFnJaVxH4hOR7IyPXZjjMKNlUnjKxexjr/YRdwZnT
+	+Vk5SOaTvywsDn7hTY1gGHcPBftOXWIy+duEUbtZ56e6IcgdNedxKgR+a+wbv5BWfbNSo8zcTMO
+	cABCcl4TavGv+Z0CU318Qqpc9pwm+ElhaHGoSwLRmAucuVa8YpNDnzMyW5XFmxDKsfe8pvpI+mj
+	y8l+ZkFNk849w5Inuhe109VoosGO3k4NsZB3Ph/jNvcWdoe525HcPH3uXNcBYjVILTw==
+X-Google-Smtp-Source: AGHT+IFDkKfdXGMGrKifIat9/ZijU4iS6Co0IGdbV24nvBNnMccEyqzWqFXt0aEBxuJ3Vdj28WiFFA==
+X-Received: by 2002:a05:6000:26c9:b0:425:74e1:25f7 with SMTP id ffacd0b85a97d-4266e8e6d0amr14586408f8f.62.1760385047378;
+        Mon, 13 Oct 2025 12:50:47 -0700 (PDT)
+Received: from [192.168.1.121] ([176.206.100.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf70fsm19148619f8f.27.2025.10.13.12.50.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 12:50:46 -0700 (PDT)
+Message-ID: <f352e00c-50d9-4c13-941c-d6e254c44072@gmail.com>
+Date: Mon, 13 Oct 2025 21:50:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RlRwCY1q8HISHvhf"
-Content-Disposition: inline
-In-Reply-To: <20251013-staging-ad4062-v1-1-0f8ce7fef50c@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] : [PATCH v13 8/8] platform/x86: asus-armoury: add
+ ppt_* and nv_* tuning knobs
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>, linux-kernel@vger.kernel.org
+Cc: platform-driver-x86@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "Luke D . Jones" <luke@ljones.dev>,
+ Derek John Clark <derekjohn.clark@gmail.com>,
+ Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
+References: <20251013180534.1222432-1-benato.denis96@gmail.com>
+ <20251013180534.1222432-9-benato.denis96@gmail.com>
+ <cad7b458-5a7a-4975-94a1-d0c74f6f3de5@oracle.com>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <cad7b458-5a7a-4975-94a1-d0c74f6f3de5@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---RlRwCY1q8HISHvhf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/13/25 20:25, ALOK TIWARI wrote:
+>
+>
+> On 10/13/2025 11:35 PM, Denis Benato wrote:
+>> From: "Luke D. Jones" <luke@ljones.dev>
+>>
+>> Adds the ppt_* and nv_* tuning knobs that are available via WMI methods
+>> and adds proper min/max levels plus defaults.
+>>
+>> The min/max are defined by ASUS and typically gained by looking at what
+>> they allow in the ASUS Armoury Crate application - ASUS does not share
+>> the values outside of this. It could also be possible to gain the AMD
+>> values by use of ryzenadj and testing for the minimum stable value.
+>>
+>> The general rule of thumb for adding to the match table is that if the
+>> model range has a single CPU used throughout, then the DMI match can
+>> omit the last letter of the model number as this is the GPU model.
+>>
+>> If a min or max value is not provided it is assumed that the particular
+>> setting is not supported. for example ppt_pl2_sppt_min/max is not set.
+>> If a <ppt_setting>_def is not set then the default is assumed to be
+>> <ppt_setting>_max
+>>
+>> It is assumed that at least AC settings are available so that the
+>> firmware attributes will be created - if no DC table is available
+>> and power is on DC, then reading the attributes is -ENODEV.
+>>
+>> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+>> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+>> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+>> Tested-by: Mateusz Schyboll <dragonn@op.pl>
+>> ---
+>>   drivers/platform/x86/asus-armoury.c        |  296 ++++-
+>>   drivers/platform/x86/asus-armoury.h        | 1210 ++++++++++++++++++++
+>>   include/linux/platform_data/x86/asus-wmi.h |    3 +
+>>   3 files changed, 1503 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+>> index e27f964aebf8..918aea6fba1e 100644
+>> --- a/drivers/platform/x86/asus-armoury.c
+>> +++ b/drivers/platform/x86/asus-armoury.c
+>> @@ -27,6 +27,7 @@
+>>   #include <linux/mutex.h>
+>>   #include <linux/platform_data/x86/asus-wmi.h>
+>>   #include <linux/printk.h>
+>> +#include <linux/power_supply.h>
+>>   #include <linux/types.h>
+>>     #include "asus-armoury.h"
+>> @@ -45,6 +46,17 @@
+>>   #define ASUS_MINI_LED_2024_STRONG 0x01
+>>   #define ASUS_MINI_LED_2024_OFF    0x02
+>>   +/* Power tunable attribute name defines */
+>> +#define ATTR_PPT_PL1_SPL        "ppt_pl1_spl"
+>> +#define ATTR_PPT_PL2_SPPT       "ppt_pl2_sppt"
+>> +#define ATTR_PPT_PL3_FPPT       "ppt_pl3_fppt"
+>> +#define ATTR_PPT_APU_SPPT       "ppt_apu_sppt"
+>> +#define ATTR_PPT_PLATFORM_SPPT  "ppt_platform_sppt"
+>> +#define ATTR_NV_DYNAMIC_BOOST   "nv_dynamic_boost"
+>> +#define ATTR_NV_TEMP_TARGET     "nv_temp_target"
+>> +#define ATTR_NV_BASE_TGP        "nv_base_tgp"
+>> +#define ATTR_NV_TGP             "nv_tgp"
+>> +
+>>   #define ASUS_POWER_CORE_MASK    GENMASK(15, 8)
+>>   #define ASUS_PERF_CORE_MASK        GENMASK(7, 0)
+>>   @@ -73,11 +85,26 @@ struct cpu_cores {
+>>       u32 max_power_cores;
+>>   };
+>>   +struct rog_tunables {
+>> +    const struct power_limits *power_limits;
+>> +    u32 ppt_pl1_spl;            // cpu
+>> +    u32 ppt_pl2_sppt;            // cpu
+>> +    u32 ppt_pl3_fppt;            // cpu
+>> +    u32 ppt_apu_sppt;            // plat
+>> +    u32 ppt_platform_sppt;        // plat
+>> +
+>> +    u32 nv_dynamic_boost;
+>> +    u32 nv_temp_target;
+>> +    u32 nv_tgp;
+>> +};
+>> +
+>>   static struct asus_armoury_priv {
+>>       struct device *fw_attr_dev;
+>>       struct kset *fw_attr_kset;
+>>         struct cpu_cores *cpu_cores;
+>> +    /* Index 0 for DC, 1 for AC */
+>> +    struct rog_tunables *rog_tunables[2];
+>>       u32 mini_led_dev_id;
+>>       u32 gpu_mux_dev_id;
+>>       /*
+>> @@ -719,7 +746,34 @@ static ssize_t cores_efficiency_current_value_store(struct kobject *kobj,
+>>   ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
+>>               "Set the max available efficiency cores");
+>>   +/* Define helper to access the current power mode tunable values */
+>> +static inline struct rog_tunables *get_current_tunables(void)
+>> +{
+>> +    return asus_armoury
+>> +        .rog_tunables[power_supply_is_system_supplied() ? 1 : 0];
+>> +}
+>> +
+>>   /* Simple attribute creation */
+>> +ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, ATTR_PPT_PL1_SPL, ASUS_WMI_DEVID_PPT_PL1_SPL,
+>> +               "Set the CPU slow package limit");
+>> +ATTR_GROUP_ROG_TUNABLE(ppt_pl2_sppt, ATTR_PPT_PL2_SPPT, ASUS_WMI_DEVID_PPT_PL2_SPPT,
+>> +               "Set the CPU fast package limit");
+>> +ATTR_GROUP_ROG_TUNABLE(ppt_pl3_fppt, ATTR_PPT_PL3_FPPT, ASUS_WMI_DEVID_PPT_FPPT,
+>
+> why not ASUS_WMI_DEVID_PPT_PL3_FPPT ? 
+>
+I simply didn't touch anything that was not brought up, but I see that it appears to be a more consistent name.
 
-On Mon, Oct 13, 2025 at 09:27:59AM +0200, Jorge Marques wrote:
-> Add dt-bindings for AD4062 family, devices AD4060/AD4062, low-power with
-> monitor capabilities SAR ADCs. Each variant of the family differs in
-> granuality. The device contains two outputs (gp0, gp1). The outputs can
-> be configured for range of options, such as threshold and data ready.
-> The device uses a 2-wire I3C interface.
->=20
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad4062.yaml    | 83 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  6 ++
->  2 files changed, 89 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..dcf86088fc4f32de7ad681561=
-a09bad2755af04c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright 2024 Analog Devices Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4062.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD4062 ADC family device driver
-> +
-> +maintainers:
-> +  - Jorge Marques <jorge.marques@analog.com>
-> +
-> +description: |
-> +  Analog Devices AD4062 Single Channel Precision SAR ADC family
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-4060.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-4062.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad4060
-> +      - adi,ad4062
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: gp0
-> +        description: Signal coming from the GP0 pin.
-> +      - const: gp1
-> +        description: Signal coming from the GP1 pin.
+Will use that name for v14, thanks!
 
-Please move the descriptions to the interrupts property, by creating an
-items list there. I think more information should probably be provided
-about them, than just "signal coming from", perhaps referencing the
-ability for what the signal actually represents being controllable at
-runtime.
-
-> +
-> +  vdd-supply:
-> +    description: Analog power supply.
-> +
-> +  vio-supply:
-> +    description: Digital interface logic power supply.
-> +
-> +  ref-supply:
-> +    description: |
-> +      Reference voltage to set the ADC full-scale range. If not present,
-> +      vdd-supply is used as the reference voltage.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +  - vio-supply
-> +
-> +allOf:
-> +  - $ref: /schemas/i3c/i3c.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i3c {
-> +        #address-cells =3D <3>;
-> +        #size-cells =3D <0>;
-> +
-> +        ad4062: adc@0,2ee007c0000 {
-
-Remove the ad4062 label here, since there are no users.
-
-Cheers,
-Conor.
-
-pw-bot: changes-requested
-
-> +            reg =3D <0x0 0x2ee 0x7c0000>;
-> +            vdd-supply =3D <&vdd>;
-> +            vio-supply =3D <&vio>;
-> +            ref-supply =3D <&ref>;
-> +
-> +            gp1-gpios =3D <&gpio0 0 GPIO_ACTIVE_HIGH>;
-> +            gp0-gpios =3D <&gpio0 1 GPIO_ACTIVE_HIGH>;
-> +            interrupt-parent =3D <&gpio>;
-> +            interrupts =3D <0 0 IRQ_TYPE_EDGE_RISING>,
-> +                         <0 1 IRQ_TYPE_EDGE_FALLING>;
-> +            interrupt-names =3D "gp0", "gp1";
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f090c2f6e63a0d255a025885cc4573f5802ef159..afbfaeba5387b9fbfa9bf1443=
-a059c47dd596d45 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1400,6 +1400,12 @@ F:	Documentation/devicetree/bindings/iio/adc/adi,a=
-d4030.yaml
->  F:	Documentation/iio/ad4030.rst
->  F:	drivers/iio/adc/ad4030.c
-> =20
-> +ANALOG DEVICES INC AD4062 DRIVER
-> +M:	Jorge Marques <jorge.marques@analog.com>
-> +S:	Supported
-> +W:	https://ez.analog.com/linux-software-drivers
-> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
-> +
->  ANALOG DEVICES INC AD4080 DRIVER
->  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
->  L:	linux-iio@vger.kernel.org
->=20
-> --=20
-> 2.49.0
->=20
-
---RlRwCY1q8HISHvhf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO1YBwAKCRB4tDGHoIJi
-0n2pAQDQUqZKxVS/Fi8UDVh9b6mYPR3VqeiZgt0GW/NYaqmKLQD+JiTFL7Rw6HV3
-1v+YhASFyCE3ozd8V5LLvPPD5kwxaAs=
-=WHF1
------END PGP SIGNATURE-----
-
---RlRwCY1q8HISHvhf--
+>> +               "Set the CPU fastest package limit");
+>> +ATTR_GROUP_ROG_TUNABLE(ppt_apu_sppt, ATTR_PPT_APU_SPPT, ASUS_WMI_DEVID_PPT_APU_SPPT,
+>> +               "Set the APU package limit");
+>> +ATTR_GROUP_ROG_TUNABLE(ppt_platform_sppt, ATTR_PPT_PLATFORM_SPPT, ASUS_WMI_DEVID_PPT_PLAT_SPPT,
+>> +               "Set the platform package limit");
+>> +ATTR_GROUP_ROG_TUNABLE(nv_dynamic_boost, ATTR_NV_DYNAMIC_BOOST, ASUS_WMI_DEVID_NV_DYN_BOOST,
+>> +               "Set the Nvidia dynamic boost limit");
+>> +ATTR_GROUP_ROG_TUNABLE(nv_temp_target, ATTR_NV_TEMP_TARGET, ASUS_WMI_DEVID_NV_THERM_TARGET,
+>> +               "Set the Nvidia max thermal limit");
+>> +ATTR_GROUP_ROG_TUNABLE(nv_tgp, "nv_tgp", ASUS_WMI_DEVID_DGPU_SET_TGP,
+>> +               "Set the additional TGP on top of the base TGP");
+>> +ATTR_GROUP_INT_VALUE_ONLY_RO(nv_base_tgp, ATTR_NV_BASE_TGP, ASUS_WMI_DEVID_DGPU_BASE_TGP,
+>> +                 "Read the base TGP value");
+>> +
+>> +
+>>   ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_CHARGE_MODE, "0;1;2",
+>>                  "Show the current mode of charging");
+>>   @@ -746,6 +800,16 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+>>       { &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>>       { &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>>   +    { &ppt_pl1_spl_attr_group, ASUS_WMI_DEVID_PPT_PL1_SPL },
+>> +    { &ppt_pl2_sppt_attr_group, ASUS_WMI_DEVID_PPT_PL2_SPPT },
+>> +    { &ppt_pl3_fppt_attr_group, ASUS_WMI_DEVID_PPT_FPPT },
+>> +    { &ppt_apu_sppt_attr_group, ASUS_WMI_DEVID_PPT_APU_SPPT },
+>> +    { &ppt_platform_sppt_attr_group, ASUS_WMI_DEVID_PPT_PLAT_SPPT },
+>> +    { &nv_dynamic_boost_attr_group, ASUS_WMI_DEVID_NV_DYN_BOOST },
+>> +    { &nv_temp_target_attr_group, ASUS_WMI_DEVID_NV_THERM_TARGET },
+>> +    { &nv_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
+>> +    { &nv_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
+>> +
+>>       { &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
+>>       { &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+>>       { &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
+>> @@ -754,8 +818,75 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+>>       { &screen_auto_brightness_attr_group, ASUS_WMI_DEVID_SCREEN_AUTO_BRIGHTNESS },
+>>   };
+>>   +/**
+>> + * is_power_tunable_attr - Determines if an attribute is a power-related tunable
+>> + * @name: The name of the attribute to check
+>> + *
+>> + * This function checks if the given attribute name is related to power tuning.
+>> + *
+>> + * Return: true if the attribute is a power-related tunable, false otherwise
+>> + */
+>> +static bool is_power_tunable_attr(const char *name)
+>> +{
+>> +    static const char * const power_tunable_attrs[] = {
+>> +        ATTR_PPT_PL1_SPL,    ATTR_PPT_PL2_SPPT,
+>> +        ATTR_PPT_PL3_FPPT,    ATTR_PPT_APU_SPPT,
+>> +        ATTR_PPT_PLATFORM_SPPT, ATTR_NV_DYNAMIC_BOOST,
+>> +        ATTR_NV_TEMP_TARGET,    ATTR_NV_BASE_TGP,
+>> +        ATTR_NV_TGP
+>> +    };
+>> +
+>> +    for (unsigned int i = 0; i < ARRAY_SIZE(power_tunable_attrs); i++) {
+>> +        if (!strcmp(name, power_tunable_attrs[i]))
+>> +            return true;
+>> +    }
+>> +
+>> +    return false;
+>> +}
+>> +
+>> +/**
+>> + * has_valid_limit - Checks if a power-related attribute has a valid limit value
+>> + * @name: The name of the attribute to check
+>> + * @limits: Pointer to the power_limits structure containing limit values
+>> + *
+>> + * This function checks if a power-related attribute has a valid limit value.
+>> + * It returns false if limits is NULL or if the corresponding limit value is zero.
+>> + *
+>> + * Return: true if the attribute has a valid limit value, false otherwise
+>> + */
+>> +static bool has_valid_limit(const char *name, const struct power_limits *limits)
+>> +{
+>> +    u32 limit_value = 0;
+>> +
+>> +    if (!limits)
+>> +        return false;
+>> +
+>> +    if (!strcmp(name, ATTR_PPT_PL1_SPL))
+>> +        limit_value = limits->ppt_pl1_spl_max;
+>> +    else if (!strcmp(name, ATTR_PPT_PL2_SPPT))
+>> +        limit_value = limits->ppt_pl2_sppt_max;
+>> +    else if (!strcmp(name, ATTR_PPT_PL3_FPPT))
+>> +        limit_value = limits->ppt_pl3_fppt_max;
+>> +    else if (!strcmp(name, ATTR_PPT_APU_SPPT))
+>> +        limit_value = limits->ppt_apu_sppt_max;
+>> +    else if (!strcmp(name, ATTR_PPT_PLATFORM_SPPT))
+>> +        limit_value = limits->ppt_platform_sppt_max;
+>> +    else if (!strcmp(name, ATTR_NV_DYNAMIC_BOOST))
+>> +        limit_value = limits->nv_dynamic_boost_max;
+>> +    else if (!strcmp(name, ATTR_NV_TEMP_TARGET))
+>> +        limit_value = limits->nv_temp_target_max;
+>> +    else if (!strcmp(name, ATTR_NV_BASE_TGP) ||
+>> +         !strcmp(name, ATTR_NV_TGP))
+>> +        limit_value = limits->nv_tgp_max;
+>> +
+>> +    return limit_value > 0;
+>> +}
+>> +
+>>   static int asus_fw_attr_add(void)
+>>   {
+>> +    const struct power_limits *limits;
+>> +    bool should_create;
+>> +    const char *name;
+>>       int err, i;
+>>         asus_armoury.fw_attr_dev = device_create(&firmware_attributes_class, NULL, MKDEV(0, 0),
+>> @@ -812,12 +943,30 @@ static int asus_fw_attr_add(void)
+>>           if (!asus_wmi_is_present(armoury_attr_groups[i].wmi_devid))
+>>               continue;
+>>   -        err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+>> -                     armoury_attr_groups[i].attr_group);
+>> -        if (err) {
+>> -            pr_err("Failed to create sysfs-group for %s\n",
+>> -                   armoury_attr_groups[i].attr_group->name);
+>> -            goto err_remove_groups;
+>> +        /* Always create by default, unless PPT is not present */
+>> +        should_create = true;
+>> +        name = armoury_attr_groups[i].attr_group->name;
+>> +
+>> +        /* Check if this is a power-related tunable requiring limits */
+>> +        if (asus_armoury.rog_tunables[1] && asus_armoury.rog_tunables[1]->power_limits &&
+>> +            is_power_tunable_attr(name)) {
+>> +            limits = asus_armoury.rog_tunables[1]->power_limits;
+>> +            /* Check only AC, if DC is not present then AC won't be either */
+>> +            should_create = has_valid_limit(name, limits);
+>> +            if (!should_create) {
+>> +                pr_debug("Missing max value on %s for tunable: %s\n",
+>> +                     dmi_get_system_info(DMI_BOARD_NAME), name);
+>
+> dmi_get_system_info can return NULL 
+ouch! v14 here I come.
+>
+>> +            }
+>> +        }
+>> +
+>> +        if (should_create) {
+>> +            err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+>> +                armoury_attr_groups[i].attr_group);
+>> +            if (err) {
+>> +                pr_err("Failed to create sysfs-group for %s\n",
+>> +                       armoury_attr_groups[i].attr_group->name);
+>> +                goto err_remove_groups;
+>> +            }
+>>           }
+>>       }
+>>  
+> Thanks,
+> Alok 
+Thanks,
+Denis B.
 
