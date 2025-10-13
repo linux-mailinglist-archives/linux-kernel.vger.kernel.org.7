@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-850341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB75BD28EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:27:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D757BD292A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABBBB1897447
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 398F03C13DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A072715E5BB;
-	Mon, 13 Oct 2025 10:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFA72FF16F;
+	Mon, 13 Oct 2025 10:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SsolKaTe"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d1W0UT4W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BAA2FF64C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB9915E5BB;
+	Mon, 13 Oct 2025 10:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760351224; cv=none; b=bzfNljERED2LP0k/BlqQni5nsvR53dGIBUWA/ZMv57g1r22XyRgtm+IwPFrEl//pL0UkLQWk9Vo5DfmuukIvxVCxunnTbmw5DfbUOzluXN05qABHwQR+4rSNkSuVwgYgkjlpkPUG45FvhnDdmUdMBqorHko7rHR4/LgFvi1depk=
+	t=1760351286; cv=none; b=GjrO7LlNZgOTziv9Ud9CMOPke2IYHJcacsLrHxt8qRqPX79p7uR0M9EaLtaQQ7C+Uc3UNsxgMUfykMV+6kbN/Znl2nL39jmG59rnv8DAy90FNiDpM+hSK9CSDiD46JWVznUuxkCafHGuGC6mB/uYkktAKYJg8ljDyn4pyTtJUBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760351224; c=relaxed/simple;
-	bh=mYP/OQKzVS1m6M+HpUKFSESiFlsi27UhRPn0dyau2kg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GVcjoHelk3PGugCIq61gl9yIRUWeNz4Ma8YqLmuEqmE5obAtu1nG6Yg/wsMLp5O4VPbhtMD/zpCfaJsnlkQDMgpZm4YO64VsqDZQ38V/EKYX3cBqZEiWdyxlQC/9BuE8WjhqIv+0eWhocAPMLUGCapsiAN+WlXGJQQYdb5v1bHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SsolKaTe; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-373a56498b9so49824251fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:27:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760351221; x=1760956021; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RUycCPtJNwSyf8L3pkwEVzuTkjNQoDRYegjRAHgk7u8=;
-        b=SsolKaTel+wOEiH34+tTPJIPAO7a03Br/+cCmXFLjq/daH3rzWQm6FzeftLmlmiNxP
-         PbxFFyDH54AJMVAEn5YQZnDTFnZoaAPXiWaIVr2vlv+B5HcmKjb3MpR4bYZugomGzXVV
-         95czHWAvbVksRzkqABUVRn0qdj6/iOE7bsrobtNe1ilco2kYIB94GGIDfZ9iCGy2SFAQ
-         M01qxUkWogyG7UZ2lCraonpybGL31SUS7PoAnnQ1I/POtnMnE6XVej0txDchL3rv061t
-         zE4GUVRWqKnaQIqL/ArlI6yCZha6HC64v+ImMxlr+qSfb9IHlurTspnSkZr4WcedGAm8
-         uWcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760351221; x=1760956021;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RUycCPtJNwSyf8L3pkwEVzuTkjNQoDRYegjRAHgk7u8=;
-        b=PqgGXqgyokMMsaiUZMu1dX4knkFhGDoh3FiAv4mM0yQFB/SNfbRPR3UqM0nVf3nKbW
-         HJ60V5ExZwEHQGvI+8i24Gim1p2L8dx076cigMzoudilPadQb0vio9rhc3PVMIjC7b7m
-         ixv7cEeC6xn6+fu2apny4Z/fDK/8W32GeKHCXlTUG+3L2jXMxNBHXydii/P0haZft+Tk
-         jHuQecxuKgU8lLRAxkxvbcegOD5u1P/zY31NAyRQJtg/VNAh+au/gE6PU4PMaHQCZ5lD
-         kQ7ENhuL6detw2r/nZyGO55oXVn4aLaveKlJReNz60oRXIeDOQBRL4Sj7SgJWKt9o3il
-         iS0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUgQ2thugIAmvFg2DFq9pm+g4BHR3XeATTKcIBTgtYWtqmPZPYrp60q6AY2IlYWFLVHL1B1uxgWmqX8yds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySgJkk2N/cj1Wpb0/OimQYJBw9MyGsFx9tEX6GDk4vMA54AG2P
-	yg7/DeCoci8q5xEJFbWGfzGKUQJiTV3O2bSSr3Ft49nZMgBHjd81eVKgNhjsqOhjGQ3hkI9u6vQ
-	YMAvt8Pd8rakqMIBa7DtiNTQ5DroCfa9dFFuCr3S7jA==
-X-Gm-Gg: ASbGnculhMEKKFnfYMFzDgLd+jIqFYnBJaiMxR0Y0Z/GGfA/HsIMwZZ9DOTAVpN/7lU
-	OK0amtV54/RUfm6gAVex9jBP+tI4VT4jMIwV0eHmCTpIbRtPv+6UIgF3UqVN+Da9j2XLBcvzgml
-	SSqsb7HUJF9I1eXfHC84PGRdT1wD7E781peZwhlZ952ipSOV66F/8Hl5LEeknFiby4/xHHfcC9M
-	/fTwSsWHiQGhHUcHBl4xI8lgfn7HQ==
-X-Google-Smtp-Source: AGHT+IFAEsHnMAjQz8hxHe77PJ/PCdDOE9sQkCxeRCWPsKIX77lQMxoPbYN5YcgGmocyzXCOJWX9oJCl9IJt3sstsZ8=
-X-Received: by 2002:a2e:a54a:0:b0:373:c272:d986 with SMTP id
- 38308e7fff4ca-375f526e5b0mr67753781fa.17.1760351220605; Mon, 13 Oct 2025
- 03:27:00 -0700 (PDT)
+	s=arc-20240116; t=1760351286; c=relaxed/simple;
+	bh=s0w3JaZHDtFhUxNRTBxHh5RglvYahX/gtsSUHvYN60s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p9b41J0vbK3AxeJTDPcViOS7AzCg3U1RBGBBOboYxGEKx9hNCIjiCtBXIoVuFA0B7O0W3fCBROXuIY6DENbGy9pkO7ntCSYGBMEfBXyJiQdFK9qd41c9notE96hBTsL2fB6IDBeNQ+gvSxVmXz1EqS/NkqVChpM1hhXNtFNYQr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d1W0UT4W; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760351284; x=1791887284;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=s0w3JaZHDtFhUxNRTBxHh5RglvYahX/gtsSUHvYN60s=;
+  b=d1W0UT4WA/0ESYkO/0NoEwgMGnM1iJ3mzyeePytCH107nR9Ffk5r11aZ
+   39F7PMYpIyKYVcDKE+iidpQYj74SGOVBwxOiQZp/fVOqTYcV4m9xVWKda
+   VfOWgiigeK9HAT9Ugz0a8CugI/8ke24emR9ZUA12aF4wMjPTNS6VbNRvZ
+   FhEGwsUcyJUSTkI4hkAUB0ET527OVL4uh/41OGyrm556ugZCMlfB6kprr
+   cFHdsmCYZRXgG1njDFXsg3oq5/Ih38iVo2VleUC6su1ktED6eDTxpz1EJ
+   vdCS1kbaWbnkC8aNaQUCxe2cbQvzo0LLG/jrpWNJJ9bENbM/7ltYXyTYA
+   A==;
+X-CSE-ConnectionGUID: 03BksFiiS4atwkOhXkv76A==
+X-CSE-MsgGUID: 5RJ/ikreRB2Z2Jrc3hDh1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="72744233"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="72744233"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 03:28:03 -0700
+X-CSE-ConnectionGUID: CPI72lI4SLeQZnyRPzy0YQ==
+X-CSE-MsgGUID: /Zw2L53iSvO4+aRDFz7FQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="186855631"
+Received: from unknown (HELO [10.238.2.75]) ([10.238.2.75])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 03:28:00 -0700
+Message-ID: <c8c40795-a459-4218-ba78-24f057c53a51@linux.intel.com>
+Date: Mon, 13 Oct 2025 18:27:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-knp-tlmm-v1-0-acabb59ae48c@oss.qualcomm.com>
-In-Reply-To: <20250924-knp-tlmm-v1-0-acabb59ae48c@oss.qualcomm.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 12:26:49 +0200
-X-Gm-Features: AS18NWCGvuxtBzvkEQk1ZaKR73JeD7vVIfCcLysVpFERoAJPL1BMWsaJUOjyAzE
-Message-ID: <CACRpkdZOSvEaUU8AGQY19co6maeFwkqEFP+TH-=NnToJuoih9A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: qcom: Introduce Pinctrl for Kaanapali
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com, 
-	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
-	yijie.yang@oss.qualcomm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf tools: Fix bool return value in gzip_is_compressed()
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Miaoqian Lin <linmq006@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250828104652.53724-1-linmq006@gmail.com>
+ <4ecf3e76-27f8-47fd-a07d-7da2489af55f@linux.intel.com>
+ <aOzDh4yhR5F0nMTG@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aOzDh4yhR5F0nMTG@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jingyi,
 
-thanks for your patches!
-
-On Thu, Sep 25, 2025 at 1:16=E2=80=AFAM Jingyi Wang
-<jingyi.wang@oss.qualcomm.com> wrote:
-
-> Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
-> Kaanapali SoC.
+On 10/13/2025 5:16 PM, Namhyung Kim wrote:
+> Hello,
 >
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
-> Jingyi Wang (2):
->       dt-bindings: pinctrl: describe Kaanapali TLMM
->       pinctrl: qcom: add the tlmm driver for Kaanapali platforms
+> On Sat, Oct 11, 2025 at 11:48:56AM +0800, Mi, Dapeng wrote:
+>> On 8/28/2025 6:46 PM, Miaoqian Lin wrote:
+>>> gzip_is_compressed() returns -1 on error but is declared as bool.
+>>> And -1 gets converted to true, which could be misleading.
+>>> Return false instead to match the declared type.
+>>>
+>>> Fixes: 88c74dc76a30 ("perf tools: Add gzip_is_compressed function")
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+>>> ---
+>>>  tools/perf/util/zlib.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/perf/util/zlib.c b/tools/perf/util/zlib.c
+>>> index 78d2297c1b67..1f7c06523059 100644
+>>> --- a/tools/perf/util/zlib.c
+>>> +++ b/tools/perf/util/zlib.c
+>>> @@ -88,7 +88,7 @@ bool gzip_is_compressed(const char *input)
+>>>  	ssize_t rc;
+>>>  
+>>>  	if (fd < 0)
+>>> -		return -1;
+>>> +		return false;
+>>>  
+>>>  	rc = read(fd, buf, sizeof(buf));
+>>>  	close(fd);
+>> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> We have 43fa1141e2c1af79 ("perf util: Fix compression checks returning -1
+> as bool").
 
-I have applied these for v6.19!
+Good to know this has been fixed. Thanks. :)
 
-Yours,
-Linus Walleij
+
+>
+> Thanks,
+> Namhyung
+>
 
