@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-850067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC7CBD1C40
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BAABD1C44
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2113A3B22AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481AC3A6C06
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06902E888C;
-	Mon, 13 Oct 2025 07:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCB22E8897;
+	Mon, 13 Oct 2025 07:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gsJhcPFn"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJMKZ51W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681AF2E7F20
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F25A347C3;
+	Mon, 13 Oct 2025 07:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760340156; cv=none; b=efWRo2TChJeddkjo/088sxbQS0Z+dRLdy2wD1k+/o7PZFdNqO5KfNEaFOeR8gFBHZB8YNVpPkxF6737JoI62WnODH1VGMJQMk32Sm4ng8FBoEfbo+Uhp7J46gQFVKrXTQoCGOk1DYn6saUrsu2kuY/NPeivxY6m3K4gcZoyYl2c=
+	t=1760340184; cv=none; b=Oc3Cj31eNeQ+rJcAw51nTDHi0c/PhE+H1Y0y9gba+KHm2sqBBfVLwpLqkzROZPkcU5dlLbATYKd94Vs1oyobgpcD8XkZnMsb+eVnbZZjjeHwzBGzx/5MeU01ff+Wx3W00jK+ZBAFh4DZYhrMfMPHuKRwyE4c6OIen9W8GRiHML4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760340156; c=relaxed/simple;
-	bh=iS41tnuuZhOJfyWt3/L8/kZCrwR00aDmJKYBiDSjaGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RnclsUsigMDtL0uZDgRt7mke6aucvVjXv6XUeV4ybvi9VaEBNhsCAEFjFCFslXosiOBUh1hSrgsLQgKtLxBSEkENZKMyXju76SUIkZLmDgcPA11VeaxUja/lU8HrINjH0p3k8eHI5h/gbaX1x2xpJBwoIGDXbr+OMO2cMlCanJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gsJhcPFn; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=gh19
-	CUbt+mZqdDIoD3K8ujL0f4BPFWA/7f0FphTIE+Q=; b=gsJhcPFnDicgxwQZmng2
-	+DTE9wquyJ3NLsrU+ZTuwnElqhJ6Ebnr7o2SvttmR9pD+i9DbJlDTg6axlEIn6hg
-	uwaXuuFLxicmAJTywF3x/wh7FM9RkWNW+1rzimGES8K/p8pIY5RrXmF3oLgzRvqc
-	2EyBx2wxduH6Fg/f+3zlm8nm+HkwwBHK2cjjCEdW2wUbG9PvqayuZFIhs0B0+Tz8
-	29Rp59IHjypSEP9IW07lU91y2tcEcxekUAUOB8ouNEg1Zd496/aAtEfMORfAJJqY
-	8XRf1Y9ss9OGWw9z7VEFaxvtAyHsZKen0ZTVixw9pLSQNupJKZFJWUbb5c0nkaRo
-	tA==
-Received: (qmail 2414882 invoked from network); 13 Oct 2025 09:22:22 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Oct 2025 09:22:22 +0200
-X-UD-Smtp-Session: l3s3148p1@bMaZIAVBerogAwDPXwQHAL/S9V79e5yL
-Date: Mon, 13 Oct 2025 09:22:17 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC] clocksource/drivers/sh_cmt: Always leave device running
- after probe
-Message-ID: <aOyoqfOQKRh81daL@shikoro>
-References: <20251012091000.1160751-1-niklas.soderlund+renesas@ragnatech.se>
+	s=arc-20240116; t=1760340184; c=relaxed/simple;
+	bh=9zPf5jL7xmZ67FUpEk8TkOzrdoR4idKVHK+kNa92STc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TW9IWFhiFBFqkF7slPAgbFjqrRvf5AKs4H+znA3ebVSR8tIjDIFxToW3lvNE/HakYpC7eezJSKlgWNlusAZKQRiHOJJaTD9XvhLgg93DJ/rFhUozPR5NqyknQJvyxi8BrhxICGDb+t6GPFi4PI9Y5y7FRBr37uA8AxSneEwaujw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJMKZ51W; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760340183; x=1791876183;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9zPf5jL7xmZ67FUpEk8TkOzrdoR4idKVHK+kNa92STc=;
+  b=NJMKZ51Wh91ECa6GUlNOGQvZcCc+mejhNw1yyYhylaJWSudpQIQ16uml
+   4d0xkxLMcM9k4Xb5F/sNEMVbBv56m1/YYWnIw3eoEfUqQRIGsp6y0u5nD
+   TzN52mTyNRea3JA2DxY6H34/rkZSATGrfffgqe+8Jdj/OLuweIui2dy1J
+   4wiFnrknpvqvRlGDwd9cpasnEa1B+JTeHXHMmnSFtJN/0J2QffI1RH9YI
+   3cHChv9CrAC+2Xj4hCNwi8U7FR8iuS+4WEhQqR0gHS/mbmsR9z4MdmwAn
+   MpE5NtLbCtj97qLRpvYqNAjq30jRN9n5AjCmScdn/BDtsyoOB3DMQTBtY
+   w==;
+X-CSE-ConnectionGUID: YCIH0Ji9T++IjT57YPqesQ==
+X-CSE-MsgGUID: /cbLEcyeQU2yyKlMkN+q8A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="61510031"
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="61510031"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 00:23:02 -0700
+X-CSE-ConnectionGUID: hXSjsuGuR4iflDPvSpNIGg==
+X-CSE-MsgGUID: QGFSt/1dT/ylSwy5Z2UjAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="185790413"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.244.25])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 00:22:58 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Rogers <irogers@google.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Edd Barrett <edd@theunixzoo.co.uk>,
+	Laurence Tratt <laurie@tratt.net>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH RESEND 0/3] perf/core: Fix address filter match with backing files
+Date: Mon, 13 Oct 2025 10:22:41 +0300
+Message-ID: <20251013072244.82591-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TYHTGF8awE9qZkeC"
-Content-Disposition: inline
-In-Reply-To: <20251012091000.1160751-1-niklas.soderlund+renesas@ragnatech.se>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
+
+Hi
+
+Here are 3 small fixes stemming from a report that Intel PT address filters
+did not work in Docker containers:
+
+  https://lore.kernel.org/linux-perf-users/aBCwoq7w8ohBRQCh@fremen.lan
 
 
---TYHTGF8awE9qZkeC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Adrian Hunter (3):
+      perf/core: Fix address filter match with backing files
+      perf/core: Fix MMAP event path names with backing files
+      perf/core: Fix MMAP2 event device with backing files
 
-Hi Niklas,
-
-thanks for your work on these timers!
-
-> For non-PREEMPT_RT builds this is not really an issue, but for
-> PREEMPT_RT builds where normal spinlocks can sleep this might be an
-> issue. Be cautious and always leave the power and clock running after
-> probe.
-
-I am not a super-duper PM expert but this sounds pretty reasonable to
-me. Only minor comments:
-
->  		ret = -ETIMEDOUT;
-> -		goto err1;
-> +		return ret;
-
-return -ETIMEDOUT;
-
->  	if (!(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
-> -		pm_runtime_get_sync(&ch->cmt->pdev->dev);
->  		ret = sh_cmt_enable(ch);
->  	}
-
-Curly braces can go.
-
->  	if (f && !(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
->  		sh_cmt_disable(ch);
-> -		pm_runtime_put(&ch->cmt->pdev->dev);
->  	}
-
-ditto.
-
-And I don't if this is a seperate patch or not, but we could simplify
-probe a little by using 'clk_prepare_enable()'...
-
-Happy hacking,
-
-   Wolfram
+ kernel/events/core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 
---TYHTGF8awE9qZkeC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjsqKUACgkQFA3kzBSg
-KbYXjg//cNrHJwYHmq4N6DZOP4GBjiTen67p1+cbVDJgXIPS2xxy01at4dtrrWcH
-S4bzJsriSFYxbaE16k3RAkwxxzxaSQMsXI3EFfXcKRxS3Jc46n+de69Q8QRsjXZz
-/PHq3RnhXgcSp1Cbg1X1dw+gZPXlco38NfdxqGqvmfwwweIMIjc2ugxt/Bl2FsRT
-UkUgMzspYkAxMOPWbwYSSMd6Afh1waZLozjko7mhprVjhicnsG1f+EZsbEX2Snlg
-Ld23HLPLlhwv4InNRSaANMZvzLP/GdCTd1ABmTCcV0DparZEyvRWueEnlfJYQCjG
-iFI1fcWY+XblYQR9PecpAywvzerQ5NeYdxOpXMlzfpyW5F3Wv2U/AE8uhVoHrpMm
-5+es3P8sd3DEPPGPEUCb0IqXHG2F/FcIOJhVn0G0r7HE835keZiwn/ERyQ+Xr2ek
-wxOgvdgYzMMoIrpiWeqt1SA/t+ljX8KiFkF9pr/NtgqeYAk4cCFz5690FYJPM3v/
-4lNgwWIEiko/rnU1STZNvV8LYoRxxsyC4ollTeKjHY1Va8C9mRUcMqoc5b8tOsYu
-OLHbEY7qhkhdlYF9ROZvbGw6c6wvko7tHPuWESIezSx/fBH2wkBRlxHlKZA8bTLt
-KzWOjCMf2BC1PTP4wxuFIe3Xjxmtb+s3e0yKg9hPkVpRvM9lEuM=
-=fhm6
------END PGP SIGNATURE-----
-
---TYHTGF8awE9qZkeC--
+Regards
+Adrian
 
