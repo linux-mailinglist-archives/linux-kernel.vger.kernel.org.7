@@ -1,213 +1,167 @@
-Return-Path: <linux-kernel+bounces-849915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C130BD1539
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:36:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D65BD153F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D5E3AE6DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0C7189062E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C539E8248C;
-	Mon, 13 Oct 2025 03:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C461993B9;
+	Mon, 13 Oct 2025 03:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Os+4/xyI"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cgQp3Qka"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA49115A85A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6304F8248C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760326566; cv=none; b=rIk1EJ8yGtwYdjskdZWaKSSjBja/wESvskCyZ4lvyrkMNcK2pmJzIa0ZjnNC3RLuj2yHUZwokMFVi8QT+KAxNQmeLgJNtmSrzt3P0iXq7/9D3JhjgaasKhmYvn6nud+MWHeHEAI2UUMRjkBkg4bGkH84kitAbIa/xSjxI98Hlnk=
+	t=1760326772; cv=none; b=pI7I8mDw5YAzS4UP5Z2aAUGCFhnf9tnHSxwZrfNYIFpv0kfyCIu+2tfSqnXxkbIAEO9VZ/W4jvJV8i3L03hm8t0o/e1wkGbCusAgm7FAzOA5kPUBgE3jigxeyjlZZJJ0OTEZDqtnV6GIwXgOpzKvDwsRF6bbn1831OW9wKsyuaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760326566; c=relaxed/simple;
-	bh=f9x9bdauwwHlHFv2woMKTK3HCuejilzYXHNuMjrcmpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mppmw2Zr0xx83HB86Q2oCoy7ajuiVpDVD5iBZHqhPCvvVDHvVxHgl+/BU4MEvxrTjpUDX6y+dySD4kjhgYETNLPulwB0WIS6hktN3J6yUMUp1ws2kOMKYczGF6/Ji+ghZafjvMcj/aFE9rTYngdh9uqviNgNcLo7Xx+9Hns1UN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Os+4/xyI; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2478ae97-fdc9-4ccf-a666-277275189d63@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760326559;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zqf+o0zjkk8z4VatK9sTMLrk68opR8jvR1SJ/S+VKLY=;
-	b=Os+4/xyI3x85wSXRVyPO/8Ms6dPgJXk3mwPGb5J7AfmVUdK/gSN7C3ELYO5kAKq0vC/xFW
-	8Rf5OjOLhyBo0KsNjQuPQf6GRVUVJPGGhfQ6OvtvcsyDxx/4NnxwlU4nkxdR1ErmdsVjBl
-	ltyX5q6bKvzsCtYL3xWTYtFQV+y+Oxo=
-Date: Mon, 13 Oct 2025 11:35:53 +0800
+	s=arc-20240116; t=1760326772; c=relaxed/simple;
+	bh=owj08b0snyaJu7Z/ej7b3SQvC/kEJHb7oUnIpvI29uE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvX7p6iXhqyaJlbcMLxlVTnIEJGP19+GzzECDO8s4mFxIKolie87fIacIBJWU2K/Fyy+cyNF3ywSVjqxcPzXH9DAqTsOIjDQ8SBwaKA9jN1QWlZJxox8PpQbnQJhOGSln8uyf1Wu2iwEBLk+kFR9bp5EsGQR6Hgbx/GASxp1+sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cgQp3Qka; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57a59124323so4068600e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 20:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1760326768; x=1760931568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sdYDMI1cPsHPTmJq6cygabE7rcNaTT2li88ZbEVvWJs=;
+        b=cgQp3Qka/x6i3AoSluKpRlBFHcEmQ4PC3P4x3yXBfxs/nhH6T1X83eN0zHxltby9gg
+         Bb5df5TyaEj8XLj/7glb8uOqrvK4RF6UMSpz5mrB5aiN/S0l0TwUTR/dyPETQdh/tCp9
+         zf7eFm7q7XgWXtKPlFwgepDsmMexHH9Z5nkdtMsQj02k5gIjWGC4nbgBaqbJR/k7tVgM
+         VSaQUwIFV70mAFddU1UqDA+4QqMCbwCbD0WynIZ3QWyHy959TLdAMYIXRQpwy6JSW9oX
+         gMuisz14TG5TUom6JtgI4561fsvEV4lcQjqDSClZevJq4E67To0J2lPFgP550+LBIAaq
+         rn5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760326768; x=1760931568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sdYDMI1cPsHPTmJq6cygabE7rcNaTT2li88ZbEVvWJs=;
+        b=UbjHjKp2DTsY3OIemwOr5wZsVkiPdMn5xaVnSB3mkQ1ZRfzNBE8Tte6K4UJhCdTID0
+         SZ4pzptWW2m9jxBTMy8lPzNMZVzA7kGFLrxn3E/EtKfGNrWFvJr3yA85Gvv7pnp2POeL
+         UwT8DUS9vpkxcr0xAY4snwHt1faX7C6By1SRl0VSQSOPzNDMmaZKD2gh9FH0Q6cSUhP9
+         S4X1Mbrr3mCiBt1qW8A98UCOatn0t9T4LniimyHb0yLRpAcpZa1JX9VW9a8x7m16jFQQ
+         cAD9k5VLxU6dbhQkSgrpyHPOfeDWSB7vM84FXYqfWsxGZngmz8EKYCwDTTJULuLsdeJT
+         aV2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXjxLhNtdxcRx4UkrW2OwCjfvO9G6eniuPwY5s5TudjUVO76LH8gDbAuZSzs+88i4AowSTwv2POMOfaBO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS3dAP4+HjQ3/xX/nFyNHk9ehXWnG1sMBkS4te3HO/TH3ECuSS
+	+rajhSIzzZMiAypH4cOaym+28E/JyKH6zSAbHF/pqpyH3+AYmWl7uZMHXq1Xb9aPMljb8D0wGto
+	qpHw6oSBwVhoKGFcaAmSob8o380qhFFrYHK3alCQ8RA==
+X-Gm-Gg: ASbGncu4xolY6LXDXaurWj+uhKOE6N0y6Sk4WreK8+jn+0bnhcNvtWiTc2SCJHFPb/3
+	fBkHzVf7AXeogSvPP81QnMqSZjiQzARWOjad9lP3SykEF5/MJ6/33bzqJJPWRjjKoc1wAV2hz0U
+	hWhXy/tr0IrTio65b1+jmTC38V9OFRl6MFnOX29jd4UjXFNv7sYs0wo4JWOBWzjOytd60sf0BAZ
+	4xRfvMMzd8ci9uEy5ovsNxnM3N11unSqs6O
+X-Google-Smtp-Source: AGHT+IG90Qs1cuEh/SOfMtoLKRBVLNz8WEj78axMy76hDwp0zuW58bmlhJgm6WrlO/WHIWexRZc5ywYS+8FNmR+AxyI=
+X-Received: by 2002:a05:6512:6c6:b0:58b:274:d04 with SMTP id
+ 2adb3069b0e04-5906dae5fdbmr6328127e87.42.1760326767858; Sun, 12 Oct 2025
+ 20:39:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] docs/zh_CN: Add secrets coco Chinese translation
-To: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>, alexs@kernel.org, corbet@lwn.net
-Cc: dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251013031928.36643-1-zhaoshuo@cqsoftware.com.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20251013031928.36643-1-zhaoshuo@cqsoftware.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251011155746.1558731-1-guoren@kernel.org> <CAK9=C2UrYg+sHsDqkmz7f7KnaREU7hXF4rbON002cnAti_pDXg@mail.gmail.com>
+ <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com> <CAJF2gTRwW+0-nAvagfBf8U9vbUWocvCaNfYNVrCN+d2hYxdBYg@mail.gmail.com>
+In-Reply-To: <CAJF2gTRwW+0-nAvagfBf8U9vbUWocvCaNfYNVrCN+d2hYxdBYg@mail.gmail.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Mon, 13 Oct 2025 09:09:14 +0530
+X-Gm-Features: AS18NWAR5tMxamwivdBEhgrVec_x0u_27L-8bMr6wG6pbIHJBE2zcpGixkVg2YM
+Message-ID: <CAK9=C2XT1S=nb5LPVUJ=_2NtHjx1ABrwzjv2G_edYzFi46bA+Q@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Add pgprot_dmacoherent definition
+To: Guo Ren <guoren@kernel.org>
+Cc: samuel.holland@sifive.com, david@redhat.com, yongxuan.wang@sifive.com, 
+	cuiyunhui@bytedance.com, luxu.kernel@bytedance.com, paul.walmsley@sifive.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, palmer@dabbelt.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2025/10/13 上午11:19, Shuo Zhao 写道:
-> Translate .../security/secrets/coco.rst into Chinese.
+On Mon, Oct 13, 2025 at 6:00=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote:
 >
-> Update the translation through commit d56b699d76d1
-> ("Documentation: Fix typos").
+> On Mon, Oct 13, 2025 at 7:50=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote=
+:
+> >
+> > On Sun, Oct 12, 2025 at 11:51=E2=80=AFPM Anup Patel <apatel@ventanamicr=
+o.com> wrote:
+> > >
+> > > On Sat, Oct 11, 2025 at 9:28=E2=80=AFPM <guoren@kernel.org> wrote:
+> > > >
+> > > > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+> > > >
+> > > > RISC-V Svpbmt Standard Extension for Page-Based Memory Types
+> > > > defines three modes:
+> > > >
+> > > >  Mode | Value | Requested Memory Attributes
+> > > >  PMA  |   0   | None
+> > > >  NC   |   1   | Non-cacheable, idempotent, weakly-ordered (RVWMO),
+> > > >       |       | main memory
+> > > >  IO   |   2   | Non-cacheable, non-idempotent, strongly-ordered
+> > > >       |       | (I/O ordering), I/O
+> > > >
+> > > > The pgprot_dmacoherent default uses the IO memory attribute if ther=
+e
+> > > > is no asm definition, but IO is not for main memory according to
+> > > > Svpbmt rules.
+> > > >
+> > > > This commit corrects pgprot_dmacoherent with the NC memory attribut=
+e,
+> > > > which satisfies performance improvement and prevents using the IO
+> > > > attribute to access main memory.
+> > > >
+> > > > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+> > >
+> > > I had sent the same patch on Aug 20 and you had provided
+> > > Tested-by to that patch.
+> > >
+> > > If you had concerns with my patch then you could have provided
+> > > comments but you choose to hijack it and change authorship.
+> > I didn't find your patch at first, so I sent it out. When I discovered
+> > your patch, I gave the Tested-by to yours.
+> > I've added the abandoned reply to this thread. Have you seen that [1]?
+> >
+> > [1] https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WME=
+GWrw9ERRLYYA@mail.gmail.com/
 >
-> Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
-
-Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
-
-
-Thanks,
-
-Yanteng
-
-> ---
+> This patch is on Sat, Oct 11, 2025 [1]
+> Guo's Tested-by is on Sun, 12 Oct 2025 02:07:34 [2]
+> Abandon reply is on Sun, 12 Oct 2025 14:11:42 [3]
+> Gao's Tested-by is on Sun, 12 Oct 2025 18:00:36 [4]
 >
-> v2:
+> [1]: https://lore.kernel.org/all/20251011155746.1558731-1-guoren@kernel.o=
+rg/
+> [2]: https://lore.kernel.org/linux-riscv/aOtR39pl5xjyYHn1@gmail.com/
+> [3]: https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEG=
+Wrw9ERRLYYA@mail.gmail.com/
+> [4]: https://lore.kernel.org/linux-riscv/031395FE-C51C-45A7-85A3-CC4A25EB=
+6066@gmail.com/
 >
-> Revise the references.
->
->   .../zh_CN/security/secrets/coco.rst           | 96 +++++++++++++++++++
->   .../zh_CN/security/secrets/index.rst          |  9 +-
->   2 files changed, 99 insertions(+), 6 deletions(-)
->   create mode 100644 Documentation/translations/zh_CN/security/secrets/coco.rst
->
-> diff --git a/Documentation/translations/zh_CN/security/secrets/coco.rst b/Documentation/translations/zh_CN/security/secrets/coco.rst
-> new file mode 100644
-> index 000000000000..a27bc1acdb7c
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/security/secrets/coco.rst
-> @@ -0,0 +1,96 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. include:: ../../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/security/secrets/coco.rst
-> +
-> +:翻译:
-> +
-> + 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
-> +
-> +============
-> +机密计算密钥
-> +============
-> +
-> +本文档介绍了在EFI驱动程序和efi_secret内核模块中，机密计算密钥从固件
-> +到操作系统的注入处理流程。
-> +
-> +简介
-> +====
-> +
-> +机密计算硬件（如AMD SEV，Secure Encrypted Virtualization）允许虚拟机
-> +所有者将密钥注入虚拟机（VM）内存，且主机/虚拟机监控程序无法读取这些密
-> +钥。在SEV中，密钥注入需在虚拟机启动流程的早期阶段（客户机开始运行前）
-> +执行。
-> +
-> +efi_secret内核模块允许用户空间应用程序通过securityfs（安全文件系统）访
-> +问这些密钥。
-> +
-> +密钥数据流
-> +==========
-> +
-> +客户机固件可能会为密钥注入预留一块指定的内存区域，并将该区域的位置（基准
-> +客户机物理地址GPA和长度）在EFI配置表中，通过 ``LINUX_EFI_COCO_SECRET_AREA_GUID``
-> +条目（对应的GUID值为 ``adf956ad-e98c-484c-ae11-b51c7d336447`` ）的形式发布。
-> +固件应将此内存区域标记为 ``EFI_RESERVED_TYPE`` ，因此内核不应将其用于自身用途。
-> +
-> +虚拟机启动过程中，虚拟机管理器可向该区域注入密钥。在AMD SEV和SEV-ES中，此
-> +操作通过 ``KVM_SEV_LAUNCH_SECRET`` 命令执行（参见 [sev_CN]_ ）。注入的“客户机
-> +所有者密钥数据”应采用带GUID的密钥值表结构，其二进制格式在 ``drivers/virt/
-> +coco/efi_secret/efi_secret.c`` 文件的EFI密钥区域结构部分中有详细描述。
-> +
-> +内核启动时，内核的EFI驱动程序将保存密钥区域位置（来自EFI配置表）到 ``efi.coco_secret``
-> +字段。随后，它会检查密钥区域是否已填充：映射该区域并检查其内容是否以
-> +``EFI_SECRET_TABLE_HEADER_GUID`` （对应的GUID为 ``1e74f542-71dd-4d66-963e-ef4287ff173b`` ）
-> +开头。如果密钥区域已填充，EFI驱动程序将自动加载efi_secret内核模块，并通过securityfs将密钥
-> +暴露给用户空间应用程序。efi_secret文件系统接口的详细信息请参考 [secrets-coco-abi_CN]_ 。
-> +
-> +
-> +应用使用示例
-> +============
-> +
-> +假设客户机需要对加密文件进行计算处理。客户机所有者通过密钥注入机制提供解密密钥
-> +（即密钥）。客户机应用程序从efi_secret文件系统读取该密钥，然后将文件解密到内存中，
-> +接着对内容进行需要的计算。
-> +
-> +在此示例中，主机无法从磁盘镜像中读取文件，因为文件是加密的；主机无法读取解密密钥，
-> +因为它是通过密钥注入机制（即安全通道）传递的；主机也无法读取内存中的解密内容，因为
-> +这是一个机密型（内存加密）客户机。
-> +
-> +以下是一个简单的示例，展示了在客户机中使用efi_secret模块的过程，在启动时注入了
-> +一个包含4个密钥的EFI密钥区域::
-> +
-> +        # ls -la /sys/kernel/security/secrets/coco
-> +        total 0
-> +        drwxr-xr-x 2 root root 0 Jun 28 11:54 .
-> +        drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
-> +        -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
-> +        -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
-> +        -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
-> +        -r--r----- 1 root root 0 Jun 28 11:54 e6f5a162-d67f-4750-a67c-5d065f2a9910
-> +
-> +        # hd /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
-> +        00000000  74 68 65 73 65 2d 61 72  65 2d 74 68 65 2d 6b 61  |these-are-the-ka|
-> +        00000010  74 61 2d 73 65 63 72 65  74 73 00 01 02 03 04 05  |ta-secrets......|
-> +        00000020  06 07                                             |..|
-> +        00000022
-> +
-> +        # rm /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
-> +
-> +        # ls -la /sys/kernel/security/secrets/coco
-> +        total 0
-> +        drwxr-xr-x 2 root root 0 Jun 28 11:55 .
-> +        drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
-> +        -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
-> +        -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
-> +        -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
-> +
-> +
-> +参考文献
-> +========
-> +
-> +请参见 [sev-api-spec_CN]_ 以获取有关SEV ``LAUNCH_SECRET`` 操作的更多信息。
-> +
-> +.. [sev_CN] Documentation/virt/kvm/x86/amd-memory-encryption.rst
-> +.. [secrets-coco-abi_CN] Documentation/ABI/testing/securityfs-secrets-coco
-> +.. [sev-api-spec_CN] https://www.amd.com/system/files/TechDocs/55766_SEV-KM_API_Specification.pdf
-> +
-> diff --git a/Documentation/translations/zh_CN/security/secrets/index.rst b/Documentation/translations/zh_CN/security/secrets/index.rst
-> index 5ea78713f10e..38464dcb2c3c 100644
-> --- a/Documentation/translations/zh_CN/security/secrets/index.rst
-> +++ b/Documentation/translations/zh_CN/security/secrets/index.rst
-> @@ -5,13 +5,10 @@
->   
->   :翻译:
->   
-> -=====================
-> +========
->   密钥文档
-> -=====================
-> +========
->   
->   .. toctree::
->   
-> -
-> -TODOLIST:
-> -
-> -* coco
-> +   coco
+> I also asked Gao to notice your patch and give it the Tested-by tag.
+> That's why you got two Tested-by on Oct 12 after two months. So, your
+> reply, "but you choose to hijack it and change authorship," makes me
+> sad.
+
+Please have better coordination among yourselves before
+sending out patches.
+
+It makes me sad when people blindly send patches without
+noticing existing or on-going work. Sometimes it also happens
+that people are already working on things which they have
+announced in the appropriate RISE WG or RVI TG/SIG.
+
+--
+Anup
 
