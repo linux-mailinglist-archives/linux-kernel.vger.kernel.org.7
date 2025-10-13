@@ -1,339 +1,125 @@
-Return-Path: <linux-kernel+bounces-850618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110FDBD34E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:58:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDA0BD34F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C75189A1F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE143AC57C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F0823717F;
-	Mon, 13 Oct 2025 13:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EB423717F;
+	Mon, 13 Oct 2025 13:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YjapUdia"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cR/pTLT/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A6B219E8C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE181D5CEA;
+	Mon, 13 Oct 2025 13:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760363883; cv=none; b=Rql+1Oze2T1peXGzZKCEwvIVr2OXkEsy4AkkqQmVm4jUsBxfoYqui7sbRGbAswRZCv0FNv1GSl75PVMDCkfdbqwLYVAn88W5NsbzbwFiXrCws1sJpkGR1boVVs5pNteN7Jv4yJOXcFzeRBz3qeggeEmccv6Ur+85jg5IzqJ3lr8=
+	t=1760363926; cv=none; b=EWxUJDUBXNT+BBUZaYIa+zC6jyi8uAc7hFItT91RM3tc2nOgTUCjMSVg2B1WwFPUG+ZjS7sSiKuzRxhuuDpG6HcPKY/qfFzXsvVk8+db7iZuPdJNd/d3uzIwbOx7ecHzAuBomArxRG4WG3GKPR3kADQSkvt3G3Zp+A9bXik3XpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760363883; c=relaxed/simple;
-	bh=waS865E6bqXcU1VE4aJwF36kRCl6/EgWQPDYxLLng+4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=q7IoRXJ9n+VxWo7f6I7cEcNvM9PlgQOl3iMY8P7ir/S/CzptP7Geb3ogBmakXCi/iQjXF7AiYNz3jkN9/sXCuFVnAEIi78OHw0QAYZ0vs3GcHcEgjRnD6x/XRm3S6/XGiLMJ9+ca48TR4N77QK9s5DTWZrqbMyHDbfefB7RmTuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YjapUdia; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760363879;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ug6vjiQB8LIOrKeXrNBaHRXjW10rowXCs/eREvHpayA=;
-	b=YjapUdiaRqD19OMbkWrjg2F0V1b3L0YdzDAzF9x2ciE/uMEfpWbGrNU708CtFKtoWmlBRb
-	uD2Fh/5QhzxbU+yYzSIhJ9VzZoaPXHj/np+K/WJbfTelopmNLs+GC7O2IdlNwqTAtMxtSr
-	QQ/vaYjmubhdMLAI/XRv+QTa72LQfRU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-351-Yy3Aw7iDMi-RWkg-ZcAlqw-1; Mon,
- 13 Oct 2025 09:57:55 -0400
-X-MC-Unique: Yy3Aw7iDMi-RWkg-ZcAlqw-1
-X-Mimecast-MFC-AGG-ID: Yy3Aw7iDMi-RWkg-ZcAlqw_1760363874
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D0EE1800581;
-	Mon, 13 Oct 2025 13:57:54 +0000 (UTC)
-Received: from [10.44.32.107] (unknown [10.44.32.107])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C4AB830002CE;
-	Mon, 13 Oct 2025 13:57:52 +0000 (UTC)
-Date: Mon, 13 Oct 2025 15:57:49 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
-    Mike Snitzer <snitzer@kernel.org>, linux-crypto@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dm-crypt: Use MD5 library instead of crypto_shash
-In-Reply-To: <20251011181042.81455-1-ebiggers@kernel.org>
-Message-ID: <c9bbfa17-a219-9c74-02a1-1e10a95f8f46@redhat.com>
-References: <20251011181042.81455-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1760363926; c=relaxed/simple;
+	bh=sMrKkgG+uTwi5sHHZ4cTtu282VBQzEJvwZ+YmNuz5MA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=J/DEtL0gwJwMZjNHA5J1sSn8S5Y+fCo6q/aGFSSwSUdMsEfp0fKFLdor8SYuPnXSkx4d53aVj4q+6LGZdMJjFypIVsANsMA0ttardbAnPlqrLY3893Lpn6en8x8U/ZScP2I/TAcwNTTVtyn7WQenIEfY9vECnEo3fNN5zVtbJR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cR/pTLT/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA587C4CEE7;
+	Mon, 13 Oct 2025 13:58:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760363926;
+	bh=sMrKkgG+uTwi5sHHZ4cTtu282VBQzEJvwZ+YmNuz5MA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cR/pTLT/vpOrz2kLrwv4bvlqQMcwjn6IYqZ77M8tIyBhGSIjXU3X+Ba6/VNChaLUS
+	 CEeAm+egr1YfRdMKWvhXSh0yilyNV1WupuO++XCypFMdngsyBLKGOTlG1U6VciU4M0
+	 NatKxXbZSLpFve4E67qR7QfTPy55ZSTtGIDs5Cd5qlvoFTHTYSMTOVjJTPd7ol6km2
+	 RCVvDjevQI8YSSsP1eUbTUYs27I0ieyhoz5ldlds8Mc0Aq5Xqw2lHoCUGRgaZMJuEK
+	 6zFI50ZCXW5jfCgBuovWZrCBeAqOkZLGvfM2rk5Ee50TFvugi1fdyAeT3vzVowZM8h
+	 asxk7DceP6u1w==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Miu <jasonmiu@google.com>
+Cc: Chris Li <chrisl@kernel.org>,  Pratyush Yadav <pratyush@kernel.org>,
+  Bjorn Helgaas <helgaas@kernel.org>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  Danilo Krummrich <dakr@kernel.org>,  Len Brown
+ <lenb@kernel.org>,  linux-kernel@vger.kernel.org,
+  linux-pci@vger.kernel.org,  linux-acpi@vger.kernel.org,  David Matlack
+ <dmatlack@google.com>,  Pasha Tatashin <tatashin@google.com>,  Vipin
+ Sharma <vipinsh@google.com>,  Saeed Mahameed <saeedm@nvidia.com>,  Adithya
+ Jayachandran <ajayachandra@nvidia.com>,  Parav Pandit <parav@nvidia.com>,
+  William Tu <witu@nvidia.com>,  Mike Rapoport <rppt@kernel.org>,  Jason
+ Gunthorpe <jgg@ziepe.ca>,  Leon Romanovsky <leon@kernel.org>,
+  skhawaja@google.com
+Subject: Re: [PATCH v2 00/10] LUO: PCI subsystem (phase I)
+In-Reply-To: <CAHN2nPK34YfrysN+sraiFVjU_9Lw7E-yFVF-9x+nt1OUppZX8Q@mail.gmail.com>
+	(Jason Miu's message of "Fri, 10 Oct 2025 16:49:42 -0700")
+References: <CA+CK2bAbB8YsheCwLi0ztY5LLWMyQ6He3sbYru697Ogq5+hR+Q@mail.gmail.com>
+	<20250929150425.GA111624@bhelgaas>
+	<CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
+	<CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com>
+	<mafs0a51zmzjp.fsf@kernel.org>
+	<CACePvbW9eSBY7qRz4o6Wqh0Ji0qECrFP+RDxa+nn4aHRTt1zkQ@mail.gmail.com>
+	<CAHN2nPK34YfrysN+sraiFVjU_9Lw7E-yFVF-9x+nt1OUppZX8Q@mail.gmail.com>
+Date: Mon, 13 Oct 2025 15:58:41 +0200
+Message-ID: <mafs01pn6nbse.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-OK.
+On Fri, Oct 10 2025, Jason Miu wrote:
 
-I accepted the patch.
+> On Thu, Oct 9, 2025 at 9:19=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+>>
+>> On Thu, Oct 9, 2025 at 4:21=E2=80=AFPM Pratyush Yadav <pratyush@kernel.o=
+rg> wrote:
+>> >
+>> > On Tue, Oct 07 2025, Chris Li wrote:
+>> >
+>> > [...]
+>> > > That will keep me busy for a while waiting for the VFIO series.
+>> >
+>> > I recall we talked in one of the biweekly meetings about some sanity
+>> > checking of folios right before reboot (make sure they are right order,
+>> > etc.) under a KEXEC_HANDOVER_DEBUG option. If you have some spare time
+>> > on your hands, would be cool to see some patches for that as well :-)
+>>
+>> Sure, I will add that to my "nice to have" list. No promised I got
+>> time to get to it with the PCI. It belong to the KHO series not PCI
+>> though.
+>>
 
-Mikulas
+Right. It is only a "nice to have", and not a requirement. And certainly
+not for the PCI series.
 
+>
+> Hi Pratyush, Chris,
+>
+> For the folio sanity check with KEXEC_HANDOVER_DEBUG, I can follow
+> that up. Would you tell me what we like to check before reboot, I may
+> have missed some context. Thanks!
 
+The idea is to sanity-check the preserved folios in the kexec-reboot
+flow somewhere. The main check discussed was to make sure the folios are
+of the same order as they were preserved with. This will help catch bugs
+where folios might split after being preserved.
 
-On Sat, 11 Oct 2025, Eric Biggers wrote:
+Maybe we can add some more checks too? Like making sure the folios
+aren't freed after they were preserved. But that condition is a bit
+trickier to catch. But at least the former should be simple enough to
+do as a start.
 
-> The lmk IV mode, which dm-crypt supports for Loop-AES compatibility,
-> involves an MD5 computation.  Update its implementation to use the MD5
-> library API instead of crypto_shash.  This has many benefits, such as:
-> 
-> - Simpler code.  Notably, much of the error-handling code is no longer
->   needed, since the library functions can't fail.
-> 
-> - Reduced stack usage.  crypt_iv_lmk_one() now allocates only 112 bytes
->   on the stack instead of 520 bytes.
-> 
-> - The library functions are strongly typed, preventing bugs like
->   https://lore.kernel.org/r/f1625ddc-e82e-4b77-80c2-dc8e45b54848@gmail.com
-> 
-> - Slightly improved performance, as the library provides direct access
->   to the MD5 code without unnecessary overhead such as indirect calls.
-> 
-> To preserve the existing behavior of lmk support being disabled when the
-> kernel is booted with "fips=1", make crypt_iv_lmk_ctr() check
-> fips_enabled itself.  Previously it relied on crypto_alloc_shash("md5")
-> failing.  (I don't know for sure that lmk *actually* needs to be
-> disallowed in FIPS mode; this just preserves the existing behavior.)
-> 
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->  drivers/md/Kconfig    |  1 +
->  drivers/md/dm-crypt.c | 76 ++++++++++++-------------------------------
->  2 files changed, 22 insertions(+), 55 deletions(-)
-> 
-> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-> index 104aa53550905..dcd232a2ca244 100644
-> --- a/drivers/md/Kconfig
-> +++ b/drivers/md/Kconfig
-> @@ -297,10 +297,11 @@ config DM_CRYPT
->  	depends on (TRUSTED_KEYS || TRUSTED_KEYS=n)
->  	select CRC32
->  	select CRYPTO
->  	select CRYPTO_CBC
->  	select CRYPTO_ESSIV
-> +	select CRYPTO_LIB_MD5 # needed by lmk IV mode
->  	help
->  	  This device-mapper target allows you to create a device that
->  	  transparently encrypts the data on it. You'll need to activate
->  	  the ciphers you're going to use in the cryptoapi configuration.
->  
-> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-> index 5ef43231fe77f..04a553529dc27 100644
-> --- a/drivers/md/dm-crypt.c
-> +++ b/drivers/md/dm-crypt.c
-> @@ -19,10 +19,11 @@
->  #include <linux/blk-integrity.h>
->  #include <linux/crc32.h>
->  #include <linux/mempool.h>
->  #include <linux/slab.h>
->  #include <linux/crypto.h>
-> +#include <linux/fips.h>
->  #include <linux/workqueue.h>
->  #include <linux/kthread.h>
->  #include <linux/backing-dev.h>
->  #include <linux/atomic.h>
->  #include <linux/scatterlist.h>
-> @@ -118,11 +119,10 @@ struct iv_benbi_private {
->  	int shift;
->  };
->  
->  #define LMK_SEED_SIZE 64 /* hash + 0 */
->  struct iv_lmk_private {
-> -	struct crypto_shash *hash_tfm;
->  	u8 *seed;
->  };
->  
->  #define TCW_WHITENING_SIZE 16
->  struct iv_tcw_private {
-> @@ -463,14 +463,10 @@ static int crypt_iv_null_gen(struct crypt_config *cc, u8 *iv,
->  
->  static void crypt_iv_lmk_dtr(struct crypt_config *cc)
->  {
->  	struct iv_lmk_private *lmk = &cc->iv_gen_private.lmk;
->  
-> -	if (lmk->hash_tfm && !IS_ERR(lmk->hash_tfm))
-> -		crypto_free_shash(lmk->hash_tfm);
-> -	lmk->hash_tfm = NULL;
-> -
->  	kfree_sensitive(lmk->seed);
->  	lmk->seed = NULL;
->  }
->  
->  static int crypt_iv_lmk_ctr(struct crypt_config *cc, struct dm_target *ti,
-> @@ -481,26 +477,24 @@ static int crypt_iv_lmk_ctr(struct crypt_config *cc, struct dm_target *ti,
->  	if (cc->sector_size != (1 << SECTOR_SHIFT)) {
->  		ti->error = "Unsupported sector size for LMK";
->  		return -EINVAL;
->  	}
->  
-> -	lmk->hash_tfm = crypto_alloc_shash("md5", 0,
-> -					   CRYPTO_ALG_ALLOCATES_MEMORY);
-> -	if (IS_ERR(lmk->hash_tfm)) {
-> -		ti->error = "Error initializing LMK hash";
-> -		return PTR_ERR(lmk->hash_tfm);
-> +	if (fips_enabled) {
-> +		ti->error = "LMK support is disabled due to FIPS";
-> +		/* ... because it uses MD5. */
-> +		return -EINVAL;
->  	}
->  
->  	/* No seed in LMK version 2 */
->  	if (cc->key_parts == cc->tfms_count) {
->  		lmk->seed = NULL;
->  		return 0;
->  	}
->  
->  	lmk->seed = kzalloc(LMK_SEED_SIZE, GFP_KERNEL);
->  	if (!lmk->seed) {
-> -		crypt_iv_lmk_dtr(cc);
->  		ti->error = "Error kmallocing seed storage in LMK";
->  		return -ENOMEM;
->  	}
->  
->  	return 0;
-> @@ -512,11 +506,11 @@ static int crypt_iv_lmk_init(struct crypt_config *cc)
->  	int subkey_size = cc->key_size / cc->key_parts;
->  
->  	/* LMK seed is on the position of LMK_KEYS + 1 key */
->  	if (lmk->seed)
->  		memcpy(lmk->seed, cc->key + (cc->tfms_count * subkey_size),
-> -		       crypto_shash_digestsize(lmk->hash_tfm));
-> +		       MD5_DIGEST_SIZE);
->  
->  	return 0;
->  }
->  
->  static int crypt_iv_lmk_wipe(struct crypt_config *cc)
-> @@ -527,99 +521,71 @@ static int crypt_iv_lmk_wipe(struct crypt_config *cc)
->  		memset(lmk->seed, 0, LMK_SEED_SIZE);
->  
->  	return 0;
->  }
->  
-> -static int crypt_iv_lmk_one(struct crypt_config *cc, u8 *iv,
-> -			    struct dm_crypt_request *dmreq,
-> -			    u8 *data)
-> +static void crypt_iv_lmk_one(struct crypt_config *cc, u8 *iv,
-> +			     struct dm_crypt_request *dmreq, u8 *data)
->  {
->  	struct iv_lmk_private *lmk = &cc->iv_gen_private.lmk;
-> -	SHASH_DESC_ON_STACK(desc, lmk->hash_tfm);
-> -	union {
-> -		struct md5_state md5state;
-> -		u8 state[CRYPTO_MD5_STATESIZE];
-> -	} u;
-> +	struct md5_ctx ctx;
->  	__le32 buf[4];
-> -	int i, r;
->  
-> -	desc->tfm = lmk->hash_tfm;
-> -
-> -	r = crypto_shash_init(desc);
-> -	if (r)
-> -		return r;
-> +	md5_init(&ctx);
->  
-> -	if (lmk->seed) {
-> -		r = crypto_shash_update(desc, lmk->seed, LMK_SEED_SIZE);
-> -		if (r)
-> -			return r;
-> -	}
-> +	if (lmk->seed)
-> +		md5_update(&ctx, lmk->seed, LMK_SEED_SIZE);
->  
->  	/* Sector is always 512B, block size 16, add data of blocks 1-31 */
-> -	r = crypto_shash_update(desc, data + 16, 16 * 31);
-> -	if (r)
-> -		return r;
-> +	md5_update(&ctx, data + 16, 16 * 31);
->  
->  	/* Sector is cropped to 56 bits here */
->  	buf[0] = cpu_to_le32(dmreq->iv_sector & 0xFFFFFFFF);
->  	buf[1] = cpu_to_le32((((u64)dmreq->iv_sector >> 32) & 0x00FFFFFF) | 0x80000000);
->  	buf[2] = cpu_to_le32(4024);
->  	buf[3] = 0;
-> -	r = crypto_shash_update(desc, (u8 *)buf, sizeof(buf));
-> -	if (r)
-> -		return r;
-> +	md5_update(&ctx, (u8 *)buf, sizeof(buf));
->  
->  	/* No MD5 padding here */
-> -	r = crypto_shash_export(desc, &u.md5state);
-> -	if (r)
-> -		return r;
-> -
-> -	for (i = 0; i < MD5_HASH_WORDS; i++)
-> -		__cpu_to_le32s(&u.md5state.hash[i]);
-> -	memcpy(iv, &u.md5state.hash, cc->iv_size);
-> -
-> -	return 0;
-> +	cpu_to_le32_array(ctx.state.h, ARRAY_SIZE(ctx.state.h));
-> +	memcpy(iv, ctx.state.h, cc->iv_size);
->  }
->  
->  static int crypt_iv_lmk_gen(struct crypt_config *cc, u8 *iv,
->  			    struct dm_crypt_request *dmreq)
->  {
->  	struct scatterlist *sg;
->  	u8 *src;
-> -	int r = 0;
->  
->  	if (bio_data_dir(dmreq->ctx->bio_in) == WRITE) {
->  		sg = crypt_get_sg_data(cc, dmreq->sg_in);
->  		src = kmap_local_page(sg_page(sg));
-> -		r = crypt_iv_lmk_one(cc, iv, dmreq, src + sg->offset);
-> +		crypt_iv_lmk_one(cc, iv, dmreq, src + sg->offset);
->  		kunmap_local(src);
->  	} else
->  		memset(iv, 0, cc->iv_size);
-> -
-> -	return r;
-> +	return 0;
->  }
->  
->  static int crypt_iv_lmk_post(struct crypt_config *cc, u8 *iv,
->  			     struct dm_crypt_request *dmreq)
->  {
->  	struct scatterlist *sg;
->  	u8 *dst;
-> -	int r;
->  
->  	if (bio_data_dir(dmreq->ctx->bio_in) == WRITE)
->  		return 0;
->  
->  	sg = crypt_get_sg_data(cc, dmreq->sg_out);
->  	dst = kmap_local_page(sg_page(sg));
-> -	r = crypt_iv_lmk_one(cc, iv, dmreq, dst + sg->offset);
-> +	crypt_iv_lmk_one(cc, iv, dmreq, dst + sg->offset);
->  
->  	/* Tweak the first block of plaintext sector */
-> -	if (!r)
-> -		crypto_xor(dst + sg->offset, iv, cc->iv_size);
-> +	crypto_xor(dst + sg->offset, iv, cc->iv_size);
->  
->  	kunmap_local(dst);
-> -	return r;
-> +	return 0;
->  }
->  
->  static void crypt_iv_tcw_dtr(struct crypt_config *cc)
->  {
->  	struct iv_tcw_private *tcw = &cc->iv_gen_private.tcw;
-> 
-> base-commit: 8bd9238e511d02831022ff0270865c54ccc482d6
-> -- 
-> 2.51.0
-> 
-
+--=20
+Regards,
+Pratyush Yadav
 
