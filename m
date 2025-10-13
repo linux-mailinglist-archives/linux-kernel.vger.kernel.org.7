@@ -1,466 +1,169 @@
-Return-Path: <linux-kernel+bounces-850940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F1CBD4B25
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:02:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE59BD437B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D24D1896796
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:03:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AE0634F5D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5C431D378;
-	Mon, 13 Oct 2025 15:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1282FE577;
+	Mon, 13 Oct 2025 15:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="TrhEZU72"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JU2h/kJz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448A23126B7;
-	Mon, 13 Oct 2025 15:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A59F26F2B6;
+	Mon, 13 Oct 2025 15:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370002; cv=none; b=Cyfe1ZDU5OvX3KEaVxmKrJCwB3ffRnUXoXxCh6bEFoGyZk7GEqtCt7kL53vEnOISi56amM4rWF/hqZ5SxXyx+QHNdelgCiDfvzAmihrsQduzBK4OHcN/AQ62KxhY+czPX3Fo1eTAbrb5lLT96eJTSusaq2QzWsUq4ie65Iwwfuk=
+	t=1760368672; cv=none; b=b/TrJgK72FzTok/3VCE/ztEhUnPr0bIjfUq4LAhsMhoNq+HprOocjBd6vcG+Dgfhm7PFmTK/lvEBcHxUgmto+GVyuFja2llSFZw7P+7OcWFQmZSydFHy2y23oAGJV3Ww+H20uC3VnMSwVFj9bB5ZWvrDZxiVIb12ucojVYF++GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370002; c=relaxed/simple;
-	bh=sQALxnqWnyeSEMQQ0RYyI6aibdSYc8AEXRbsUuo2WO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Thz+z5bhAIew6LuJpz+wglocBNlT5Mv5o8EhNtlXOHdsVbAp/du0se8/h7AxNp95KLdBdxHTgmxlrkFdGcNLOH8ahHXPoav34sjGTbYWtnql/+EuXvTAym5MBTpflyiXM70JCHKfhvOmJWORZk3LPTCG9vbqxdJ5+LLpae8l/YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=TrhEZU72; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1760369997;
-	bh=sQALxnqWnyeSEMQQ0RYyI6aibdSYc8AEXRbsUuo2WO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TrhEZU72r/+nrE6r5eTBIaHb02eYruhwh/6Kfwag28zUhjbGvS7gY2J9HguMBB2zx
-	 yzxbwurE7SgZ32uIjUCOySMxKV2vEZSnJOPMgRzz65f9DaYC+yJQa/wsGRZp6akLo1
-	 UGg4prMxS4fcOdQpnYTNEf5NH1AmClZs5XCMwzDM=
-Date: Mon, 13 Oct 2025 17:39:55 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Jonathan Brophy <professorjonny98@gmail.com>
-Cc: lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Jonathan Brophy <professor_jonny@hotmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Radoslav Tsvetkov <rtsvetkov@gradotech.eu>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] leds: Add Virtual Color LED Group driver
-Message-ID: <7175bcaf-f588-41ec-afe6-117eceffc28d@t-8ch.de>
-References: <20251013120955.227572-1-professorjonny98@gmail.com>
- <20251013120955.227572-5-professorjonny98@gmail.com>
+	s=arc-20240116; t=1760368672; c=relaxed/simple;
+	bh=VhHDC/pzCEJRdbgq2yAH6nFoNigRkEQ2qVYfCVitK70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZbpZS337HrlsqbLf9sQzXZa3I9+Lp3GK6d447VT1VtfdRZaiMxGa/2a9x3FxGbzYACL44Dv8wevdJoAQDl3CvzUyVZBKOec64onV73KoOSWb2fFT0Sz8TDttO9C5iUD5honTk8cHWxukmjUrE9gm9gFDikHhuqNzHxUEsKu1Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JU2h/kJz; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760368671; x=1791904671;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=VhHDC/pzCEJRdbgq2yAH6nFoNigRkEQ2qVYfCVitK70=;
+  b=JU2h/kJzZ1n+g1tSYSnNcBTZnyvJqYCOv+6E+XUIRzeUmznq+z5kxCdi
+   DD1sa7isbE2pD+VixSb8S7T2emH9QbcbfngWA9uD2/+N/DG18UoPJ99gf
+   oYOZC7i7h1fvKTzT6fZxRm/I5kJSRgP84e6e+xi6sfLfPL9flrTjGlmjB
+   BF/Tbmpzc9hCDWy62vIqQO9SxawQ8pa+Ev6FR/ZXlhiByohhXj1Wjmwnb
+   njVB0cgtI7qTjNjgHOraeG5mtxQpk5DCslBOsWEh9fdXad82XQlvW1zxB
+   lqGj8bLDOMRWJS14cychcwlcJpVEHdEY1H8uMuPsVMRrxnaJsKMMswlX9
+   A==;
+X-CSE-ConnectionGUID: e4MRE0GnRRe+S8Heh8jsiA==
+X-CSE-MsgGUID: ogVJsHF2R/6OMHmHdQG6ig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="73615021"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="73615021"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:17:50 -0700
+X-CSE-ConnectionGUID: Q8MLLu7XSYu5+JjPrcfLiw==
+X-CSE-MsgGUID: QZzQ3sRBRtmVjSVwjGGwcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="185635616"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by orviesa003.jf.intel.com with ESMTP; 13 Oct 2025 08:17:45 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	pan.deng@intel.com,
+	zhiguo.zhou@intel.com,
+	jiebin.sun@intel.com,
+	thomas.falcon@intel.com,
+	dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf tools annotate: fix a crash when annotate the same symbol with 's' and 'T'
+Date: Tue, 14 Oct 2025 00:10:46 +0800
+Message-ID: <20251013161046.2075335-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013120955.227572-5-professorjonny98@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-14 01:09:48+1300, Jonathan Brophy wrote:
-> From: Jonathan Brophy <professor_jonny@hotmail.com>
-> 
-> Introduces a new driver that implements virtual LED groups,
-> aggregating multiple monochromatic LEDs into virtual groups and providing
-> priority-based control for concurrent state management.
-> 
-> Author: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-> Co Author: Jonathan Brophy <professor_jonny@hotmail.com>
-> Copyright (C) 2024 Jonathan Brophy <professor_jonny@hotmail.com>
-> 
-> Co-developed-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-> Signed-off-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-> Tested-by: Jonathan Brophy <professor_jonny@hotmail.com>
-> Signed-off-by: Jonathan Brophy <professor_jonny@hotmail.com>
-> ---
->  drivers/leds/rgb/Kconfig                   |  17 +
->  drivers/leds/rgb/Makefile                  |   1 +
->  drivers/leds/rgb/leds-group-virtualcolor.c | 439 +++++++++++++++++++++
->  3 files changed, 457 insertions(+)
->  create mode 100644 drivers/leds/rgb/leds-group-virtualcolor.c
-> 
-(...)
+When perf report with annotation for a symbol, press 's' and 'T', then exit
+the annotate browser. Once annoate the same symbol, the annoate browser
+will crash. Stack trace as below:
 
-> diff --git a/drivers/leds/rgb/leds-group-virtualcolor.c b/drivers/leds/rgb/leds-group-virtualcolor.c
-> new file mode 100644
-> index 000000000000..e11ad155d3b4
-> --- /dev/null
-> +++ b/drivers/leds/rgb/leds-group-virtualcolor.c
-> @@ -0,0 +1,439 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Virtual LED Group Driver with Priority Control
-> + *
-> + * Implements virtual LED groups by aggregating multiple
-> + * monochromatic LEDs. Provides priority-based control for managing
-> + * concurrent LED activation requests, ensuring only the highest-priority
-> + * LED state is active at any given time.
-> + *
-> + * Code created by Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-> + * Copyright (C) 2024 Jonathan Brophy <professor_jonny@hotmail.com>
-> + *
-> + */
-> +
-> +#include <linux/gpio/consumer.h>
+Perf: Segmentation fault
+-------- backtrace --------
+    #0 0x55d365 in ui__signal_backtrace setup.c:0
+    #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
+    #2 0x570f08 in arch__is perf[570f08]
+    #3 0x562186 in annotate_get_insn_location perf[562186]
+    #4 0x562626 in __hist_entry__get_data_type annotate.c:0
+    #5 0x56476d in annotation_line__write perf[56476d]
+    #6 0x54e2db in annotate_browser__write annotate.c:0
+    #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
+    #8 0x54dc9e in annotate_browser__refresh annotate.c:0
+    #9 0x54c03d in __ui_browser__refresh browser.c:0
+    #10 0x54ccf8 in ui_browser__run perf[54ccf8]
+    #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
+    #12 0x552293 in do_annotate hists.c:0
+    #13 0x55941c in evsel__hists_browse hists.c:0
+    #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
+    #15 0x42ff02 in cmd_report perf[42ff02]
+    #16 0x494008 in run_builtin perf.c:0
+    #17 0x494305 in handle_internal_command perf.c:0
+    #18 0x410547 in main perf[410547]
+    #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
+    #20 0x7f5ff1a29680 in __libc_start_main@@GLIBC_2.34 libc.so.6[29680]
+    #21 0x410b75 in _start perf[410b75]
 
-Looks unnecessary.
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+---
+ tools/perf/ui/browsers/annotate.c | 3 +++
+ tools/perf/util/annotate.c        | 2 +-
+ tools/perf/util/annotate.h        | 2 ++
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-> +#include <linux/leds.h>
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 8fe699f98542..1e0873194217 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -1163,6 +1163,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+ 		}
+ 	}
+ 
++	if (browser.arch == NULL)
++		evsel__get_arch(evsel, &browser.arch);
++
+ 	/* Copy necessary information when it's called from perf top */
+ 	if (hbt != NULL && he != &annotate_he) {
+ 		annotate_he.hists = he->hists;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a2e34f149a07..39d6594850f1 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -980,7 +980,7 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
+ 	annotation__calc_percent(notes, evsel, symbol__size(sym));
+ }
+ 
+-static int evsel__get_arch(struct evsel *evsel, struct arch **parch)
++int evsel__get_arch(struct evsel *evsel, struct arch **parch)
+ {
+ 	struct perf_env *env = evsel__env(evsel);
+ 	const char *arch_name = perf_env__arch(env);
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index eaf6c8aa7f47..d4990bff29a7 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -585,4 +585,6 @@ void debuginfo_cache__delete(void);
+ int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
+ 			     int num_aggr, struct evsel *evsel);
+ int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
++
++int evsel__get_arch(struct evsel *evsel, struct arch **parch);
+ #endif	/* __PERF_ANNOTATE_H */
+-- 
+2.47.1
 
-#include <linux/list.h>
-
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +struct virtual_led {
-> +	struct led_classdev cdev;
-> +	struct led_classdev **monochromatics;
-> +	struct leds_virtualcolor *vc_data;
-> +	int num_monochromatics;
-> +	int priority;
-> +	unsigned long blink_delay_on;
-> +	unsigned long blink_delay_off;
-> +	struct list_head list;
-> +};
-> +
-> +struct leds_virtualcolor {
-> +	struct virtual_led *vleds;
-> +	int num_vleds;
-> +	struct list_head active_leds;
-> +	struct mutex lock; // Protects access to active LEDs
-> +};
-> +
-> +static void virtual_set_monochromatic_brightness(struct virtual_led *vled,
-> +						 enum led_brightness brightness)
-> +{
-> +	int i;
-> +
-> +	if (vled->blink_delay_on || vled->blink_delay_off) {
-> +		unsigned long blink_mask = (BIT(LED_BLINK_SW) | BIT(LED_BLINK_ONESHOT) |
-> +					    BIT(LED_SET_BLINK));
-> +
-> +		/*
-> +		 * Make sure the LED is not already blinking.
-> +		 * We don't want to call led_blink_set multiple times.
-> +		 */
-> +		if (!(vled->cdev.work_flags & blink_mask))
-
-work_flags don't look they are meant to be used by drivers.
-
-> +			led_blink_set(&vled->cdev, &vled->blink_delay_on, &vled->blink_delay_off);
-> +
-> +		/* Update the blink delays if they have changed */
-> +		if (vled->blink_delay_on != vled->cdev.blink_delay_on ||
-> +		    vled->blink_delay_off != vled->cdev.blink_delay_off) {
-> +			vled->cdev.blink_delay_on = vled->blink_delay_on;
-> +			vled->cdev.blink_delay_off = vled->blink_delay_off;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < vled->num_monochromatics; i++)
-> +		led_set_brightness(vled->monochromatics[i], brightness);
-> +}
-> +
-> +static ssize_t priority_show(struct device *dev, struct device_attribute *attr, char *buf)
-> +{
-> +	struct virtual_led *vled = dev_get_drvdata(dev);
-> +
-> +	return sprintf(buf, "%d\n", vled->priority);
-
-sysfs_emit();
-
-> +}
-> +
-> +static ssize_t priority_store(struct device *dev, struct device_attribute *attr, const char *buf,
-> +			      size_t count)
-> +{
-> +	struct virtual_led *vled = dev_get_drvdata(dev);
-> +	int new_priority;
-> +	int ret;
-> +
-> +	ret = kstrtoint(buf, 10, &new_priority);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	vled->priority = new_priority;
-
-No locking?
-
-> +	return count;
-> +}
-> +
-> +static DEVICE_ATTR_RW(priority);
-> +
-> +static ssize_t blink_delay_on_show(struct device *dev, struct device_attribute *attr, char *buf)
-> +{
-> +	struct virtual_led *vled = dev_get_drvdata(dev);
-> +
-> +	return sprintf(buf, "%lu\n", vled->blink_delay_on);
-> +}
-
-Why does this have a custom blinking UAPI?
-Shouldn't it be generic?
-
-(...)
-
-> +static int leds_virtualcolor_init_vled(struct device *dev, struct device_node *child,
-> +				       struct virtual_led *vled, struct leds_virtualcolor *vc_data)
-> +{
-> +	struct led_init_data init_data = {};
-> +	u32 blink_interval;
-> +	u32 phandle_count;
-> +	u32 max_brightness;
-> +	int ret;
-> +	int i;
-
-INIT_LIST_HEAD(&vled->list);
-
-> +
-> +	ret = of_property_read_u32(child, "priority", &vled->priority);
-> +	if (ret)
-> +		vled->priority = 0;
-> +
-> +	ret = of_property_read_u32(child, "blink", &blink_interval);
-> +	if (!ret) {
-> +		vled->blink_delay_on = blink_interval;
-> +		vled->blink_delay_off = blink_interval;
-> +	}
-> +
-> +	phandle_count = of_property_count_elems_of_size(child, "leds", sizeof(u32));
-> +	if (phandle_count <= 0) {
-> +		dev_err(dev, "No monochromatic LEDs specified for virtual LED %s\n",
-> +			vled->cdev.name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	vled->num_monochromatics = phandle_count;
-> +	vled->monochromatics = devm_kcalloc(dev, vled->num_monochromatics,
-> +					    sizeof(*vled->monochromatics), GFP_KERNEL);
-> +	if (!vled->monochromatics)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < vled->num_monochromatics; i++) {
-> +		struct led_classdev *led_cdev;
-> +
-> +		led_cdev = devm_of_led_get_optional(dev, i);
-> +		if (IS_ERR(led_cdev)) {
-> +			/*
-> +			 * If the LED is not available yet, defer the probe.
-> +			 * The probe will be retried when it becomes available.
-> +			 */
-> +			if (PTR_ERR(led_cdev) == -EPROBE_DEFER)
-> +				return -EPROBE_DEFER;
-> +
-> +			ret = PTR_ERR(led_cdev);
-> +			dev_err(dev, "Failed to get monochromatic LED for %s, error %d\n",
-> +				vled->cdev.name, ret);
-> +			return ret;
-> +		}
-
-Just use dev_err_probe(), it will properly handle -EPROBE_DEFER.
-
-> +
-> +		vled->monochromatics[i] = led_cdev;
-> +	}
-> +
-> +	ret = of_property_read_u32(child, "max-brightness", &max_brightness);
-> +	if (ret)
-> +		vled->cdev.max_brightness = LED_FULL;
-> +	else
-> +		vled->cdev.max_brightness = max_brightness;
-> +
-> +	vled->cdev.brightness_set_blocking = virtual_led_brightness_set;
-> +	vled->cdev.flags = LED_CORE_SUSPENDRESUME;
-> +
-> +	init_data.fwnode = NULL; // Use OF, not fwnode
-
-Why?
-
-> +	ret = devm_led_classdev_register_ext(dev, &vled->cdev, &init_data);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register virtual LED %s\n", vled->cdev.name);
-> +		return ret;
-> +	}
-
-if (ret)
-	return dev_err_probe() ...
-
-> +
-> +	ret = device_create_file(vled->cdev.dev, &dev_attr_priority);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to create sysfs attribute for priority\n");
-> +		return ret;
-> +	}
-
-Use 'struct platform_driver::driver::dev_groups' to let the driver core
-manage your sysfs attributes instead of doing it manually.
-
-> +
-> +	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_on);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to create sysfs attribute for blink_delay_on\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_off);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to create sysfs attribute for blink_delay_off\n");
-> +		return ret;
-> +	}
-> +
-> +	vled->vc_data = vc_data;
-> +
-> +	return 0;
-> +}
-> +
-> +static int leds_virtualcolor_disable_sysfs_access(struct device *dev, struct virtual_led *vled)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < vled->num_monochromatics; i++) {
-> +		struct led_classdev *led_cdev = vled->monochromatics[i];
-> +
-> +		mutex_lock(&led_cdev->led_access);
-
-This mutex looks unnecessary.
-
-> +		led_sysfs_disable(led_cdev);
-> +		mutex_unlock(&led_cdev->led_access);
-> +
-> +		devm_add_action_or_reset(dev, restore_sysfs_write_access, led_cdev);
-
-Check for errors.
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int leds_virtualcolor_probe(struct platform_device *pdev)
-> +{
-> +	struct leds_virtualcolor *vc_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *child;
-> +	int count = 0;
-> +	int ret;
-> +
-> +	vc_data = devm_kzalloc(dev, sizeof(*vc_data), GFP_KERNEL);
-> +	if (!vc_data)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&vc_data->lock);
-
-Use devm_mutex_init(), then you can get rid of all the mutex_destroy()
-calls below.
-
-> +	INIT_LIST_HEAD(&vc_data->active_leds);
-> +
-> +	vc_data->num_vleds = of_get_child_count(dev->of_node);
-> +	if (vc_data->num_vleds == 0) {
-> +		dev_err(dev, "No virtual LEDs defined in device tree\n");
-
-return dev_err_probe();
-
-> +		ret = -EINVAL;
-> +		goto err_mutex_destroy;
-> +	}
-> +
-> +	vc_data->vleds = devm_kcalloc(dev, vc_data->num_vleds, sizeof(*vc_data->vleds), GFP_KERNEL);
-> +	if (!vc_data->vleds) {
-> +		ret = -ENOMEM;
-> +		goto err_mutex_destroy;
-> +	}
-> +
-> +	for_each_child_of_node(dev->of_node, child) {
-
-for_each_child_of_node_scoped() should be nicer.
-Also I think you should check for available, or better yet use
-for_each_available_child_of_node_scoped().
-
-> +		struct virtual_led *vled = &vc_data->vleds[count];
-> +
-> +		ret = leds_virtualcolor_init_vled(dev, child, vled, vc_data);
-> +		if (ret) {
-> +			if (ret != -EPROBE_DEFER)
-> +				dev_err(dev, "Failed to initialize virtual LED %d\n", count);
-> +
-> +			of_node_put(child);
-> +			goto err_node_put;
-> +		}
-> +
-> +		count++;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, vc_data);
-> +
-> +	if (of_property_read_bool(dev->of_node, "monochromatics-ro")) {
-
-The property should be documented.
-
-> +		int i;
-> +
-> +		for (i = 0; i < count; i++) {
-> +			struct virtual_led *vled = &vc_data->vleds[i];
-> +
-> +			ret = leds_virtualcolor_disable_sysfs_access(dev, vled);
-> +			if (ret)
-> +				goto err_node_put;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +err_node_put:
-> +	mutex_destroy(&vc_data->lock);
-> +	return ret;
-> +
-> +err_mutex_destroy:
-
-Both labels have the same code behind them.
-
-> +	mutex_destroy(&vc_data->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static void leds_virtualcolor_remove(struct platform_device *pdev)
-> +{
-> +	struct leds_virtualcolor *vc_data = platform_get_drvdata(pdev);
-> +	int i, j;
-> +
-> +	for (i = 0; i < vc_data->num_vleds; i++) {
-> +		struct virtual_led *vled = &vc_data->vleds[i];
-> +
-> +		device_remove_file(vled->cdev.dev, &dev_attr_priority);
-> +		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_on);
-> +		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_off);
-
-No need to clean up sysfs files, they will be cleaned up automatically.
-
-> +
-> +		for (j = 0; j < vled->num_monochromatics; j++) {
-> +			if (vled->monochromatics[j]) {
-> +				led_put(vled->monochromatics[j]);
-
-This is dropping the reference acquired by devm_of_led_get_optional(),
-correct? Then it is unnecessary, as the reference will be dropped
-automatically by the devres framework.
-
-> +				vled->monochromatics[j] = NULL;
-
-This looks unnecessary, the memory is going to be freed anyways.
-
-> +			}
-> +		}
-> +	}
-> +
-> +	mutex_destroy(&vc_data->lock);
-> +}
-
-(...)
 
