@@ -1,102 +1,125 @@
-Return-Path: <linux-kernel+bounces-851024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4470CBD510A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:32:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBCFBD551B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA5E18A50EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:32:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E506D545073
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2FD21930A;
-	Mon, 13 Oct 2025 16:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB02272801;
+	Mon, 13 Oct 2025 16:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7Bi9ZXe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/UdoII1"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EA020E03F;
-	Mon, 13 Oct 2025 16:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C5424A06A
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760373132; cv=none; b=BTPgQHub36Y8vpqtAyKyscRlEOL/kW4WIHAq97OsJDciKkcvKQXlYSz57Urdnh4ideEYixDiYh4FHqP/bcbRwajHS7Y2nQcU/Jnqu3oT4zjCiTV+GGKI41suLaqD+xyxhbpchLEPu26UwwZCnt6zyr6MsNuBxOXEc47UqozYh80=
+	t=1760373159; cv=none; b=otRVct7cVXkDKnCn/Stc/8jU923RzibCR/a1gePFfS6IpX06/8qSH+5U/pZ7tjC6UA+CogDt7+fPQJSQuis5EEn4Fn0/+SvbpD/MBoXBbz+/AOKFwsXIzqMHhZnMX92TN+EWWzOD0epSknblLFKKggUIu3gRIwQKGGuWebzaISU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760373132; c=relaxed/simple;
-	bh=zr+bgcqER/5+Q21aZCKAJkLYSWYNHpUeL80F/57ebhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsdEuvOfKudpOLk2Wm1biMkc491jtbxDrFjJBDfkzXE51ctFECluftuZwugm/8n7T5p0uLnXuYENvtX3MPvewylJjVQJakZYF5SNITX1UUQeimXis59vw9BXZ1PLMVsfuf260+d0rohjMM/hyRUqZ+5zVeZlobVxBVnynXiwnk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7Bi9ZXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF30BC4CEE7;
-	Mon, 13 Oct 2025 16:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760373131;
-	bh=zr+bgcqER/5+Q21aZCKAJkLYSWYNHpUeL80F/57ebhg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j7Bi9ZXe3wMKsjur72biwT2HOE6t15YMLyr6HqlZ4U2jfwtPMHGrBL3bq4aLUK/UU
-	 1kwR4lcAN/+2gkkd9A9x7kzk2/tych2NuvXMf+vhLOOhiziTcEiJkKB6+iSkRegK8w
-	 z8NyH2lLB6Uzg5HALpmfxaG8zjNv4P+rWn8MitacfaWe2aKKEwLigSg3y5A2Awb7WU
-	 +FKBWAiC29ryJuXHgDHLm6HiFeVDEjaqAttj0Yh8S9qIzZFj7TW8kjcsFHtbpwxexj
-	 xUMZMRA+sls4awyTenRx/3QHvj6QAczWWDu07C0pmMaGTjBNWxVsOjA+vdgWJCh618
-	 2kfBV+aeju2hg==
-Date: Mon, 13 Oct 2025 09:32:11 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: XFS_ONLINE_SCRUB_STATS should depend on DEBUG_FS
-Message-ID: <20251013163211.GL6188@frogsfrogsfrogs>
-References: <69104b397a62ea3149c932bd3a9ed6fc7e4e91a0.1760345180.git.geert@linux-m68k.org>
+	s=arc-20240116; t=1760373159; c=relaxed/simple;
+	bh=8PEbt7/KiisZENpthYaEwPRP3ny6x+ce9ThxH5LQ09A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DQG8pJd9RXQ1OxZ6KB8SLYLKklC/2VRgyLKfZn+7OTQQpb/cen4qoqbQ3ixvlCI+HmGsF6uk58lJk8G7mAUPHYTBjiW28734PKFTR/6tLIPweoaUpk8mkzdAVm1/6Hsbxr7VWCy+NSXJ2smYwK9fYoP6lq+K2MfF+teddkptdkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/UdoII1; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-28d18e933a9so9148445ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:32:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760373157; x=1760977957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OhkE2kxttgjbOmTglGY3wFhQ7XB/INVjgyXJP2fCnrU=;
+        b=A/UdoII1weJXtH40r0xBqkXt4/ChtPyWccPix7as/CZCDCwH6q6qe7myR5boIWx8f/
+         UMuVW5MfBQlIgNjwwmkgd4A7l6F9K+4CGCx7kh4MpHAl4L33mAIzM6FRN3kKBPJ83h++
+         m32b1hvVcAlRHlGkJ9IN1UFXfX3+5PIZpZ+m9HPm8RRsQOzqnBBvCIOh0Z/7pCoGh1fP
+         1V4Nht43Y1iMN984DFp0bR07m/0F2Ne+l+tkWYnf9x5JTD9GPrl4ZPK+r9d+0bGSQCr9
+         7+StuPswGN123ua6pa6UkJdcYXZd5ZplfwO9JnHQyJj84ix4oj3jmIg8AceSuVJ9D9wd
+         UISA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760373157; x=1760977957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OhkE2kxttgjbOmTglGY3wFhQ7XB/INVjgyXJP2fCnrU=;
+        b=aNDgAnQezjdd4nyf0zhPH9O0op3PsD1Rom7X0E3DUhbrZ2SZjXYCEhGSx0uGrjHXb2
+         vgut/Ja7FebBIkqW6IHpcoJ74XTx9Jsavwvs8NqfzZbCODfffSuWr6impBOCYwL+ODNG
+         J4BQF5ek+74jVbt3HQOhtKUaEkJlJN5DEP887rr4TUDqgEQE7hWPzpDgECbY5b+Fms5S
+         IzhLIdu7AYctn6P72zTuC5IZ4XYlO5bes/yBsb3DsJpSVpCj2A2Y56zLnCL28BFLYU8u
+         2KjMuIFpvlHMXAyxVkcjPpNf663fBwKZI1fhZmLIIpkhRH+czk1q9E7Tpd0UNd7xznXW
+         U5tA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoy0WR+G/+7Vuo6dkYL3Z/OBC73oh/gif3VFvZIeXp0x0v1Y7bNVHKVp10Y57xvcNvQBtpi5LaTi/YKmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL4Q4rHBUNSt5BwOdQI4R8nvZM3XbbMDol+SMEMFyRydDPEEvO
+	SRv9zcipO8z4Ocj3/1/k4tX3BF5lHBRHhBTNqfCxhfa7oPnvDUt+dSRr08AQaCUs83bm2dI/wag
+	mXYlmvQNx0/2XQKuFnGG+IVbPoIJ+YV8=
+X-Gm-Gg: ASbGncsJf1xDXkJnMwNXkjFTntnICgGJ/iBPVizB9KskFM3IX/M7VM06mjPbiahJ5UL
+	VcZY6L8OOqX34vOr+60exHjxn5sQQgXhm6ki+LL7Mj9L53OThogU1hDK/GNkkfDBxekCY1GCNkK
+	+uKTgjGQgh0g9GW9CEtUsugF85eisglOwRb5uH44MZ+mc7Y2yS5STMHKDcI0jnsTMZ1xEGqomn5
+	EajAAroX6LQdu0Th64kRtiS2YlGtarX0XjOLZVcG36YqhYHalUIX3AModHB7Ns2O7vSiymHt+np
+	MK9/OFBABl8r+NOCVPBKZbf7ILtiPkGWczqnJCEz3WmfsLu27yCb0+8=
+X-Google-Smtp-Source: AGHT+IFL/ZfJ4cj1Fo21vdtAWa72Ot3BxKQ8+vXwbOeeF2ANwjBEWGV/ZPwLInyjcxfIhg/pREwZw5L55MhN3eCJYLQ=
+X-Received: by 2002:a17:903:110c:b0:272:2bf1:6a1f with SMTP id
+ d9443c01a7336-290272667a9mr157087805ad.4.1760373156695; Mon, 13 Oct 2025
+ 09:32:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69104b397a62ea3149c932bd3a9ed6fc7e4e91a0.1760345180.git.geert@linux-m68k.org>
+References: <20251013155205.2004838-1-lyude@redhat.com> <20251013155205.2004838-2-lyude@redhat.com>
+ <04dc4834d38932242df86773e47030e8105461c9.camel@redhat.com>
+In-Reply-To: <04dc4834d38932242df86773e47030e8105461c9.camel@redhat.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 13 Oct 2025 18:32:24 +0200
+X-Gm-Features: AS18NWDyh_CiI5BROIDxIAOTwe9IjcgjNOybhNZ0YtVxcSx0Nj5WUlyw0Qb3tYk
+Message-ID: <CANiq72kkC+aieH-SqqGwX2iA6wZEJcysLui0JWxAmo75RZ5fiA@mail.gmail.com>
+Subject: Re: [PATCH v13 01/17] preempt: Track NMI nesting to separate per-CPU counter
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Ryo Takakura <ryotkkr98@gmail.com>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 10:48:46AM +0200, Geert Uytterhoeven wrote:
-> Currently, XFS_ONLINE_SCRUB_STATS selects DEBUG_FS.  However, DEBUG_FS
-> is meant for debugging, and people may want to disable it on production
-> systems.  Since commit 0ff51a1fd786f47b ("xfs: enable online fsck by
-> default in Kconfig")), XFS_ONLINE_SCRUB_STATS is enabled by default,
-> forcing DEBUG_FS enabled too.
-> 
-> Fix this by replacing the selection of DEBUG_FS by a dependency on
-> DEBUG_FS, which is what most other options controlling the gathering and
-> exposing of statistics do.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
->  fs/xfs/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
-> index 8930d5254e1da61d..402cf7aad5ca93ab 100644
-> --- a/fs/xfs/Kconfig
-> +++ b/fs/xfs/Kconfig
-> @@ -156,7 +156,7 @@ config XFS_ONLINE_SCRUB_STATS
->  	bool "XFS online metadata check usage data collection"
->  	default y
->  	depends on XFS_ONLINE_SCRUB
-> -	select DEBUG_FS
-> +	depends on DEBUG_FS
+On Mon, Oct 13, 2025 at 6:19=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
+:
+>
+> JFYI - This hunk shouldn't be here, it looks like there was probably a ru=
+st
+> formatting issue somewhere else in the kernel tree,
 
-Looks ok to me, though I wonder why there are so many "select DEBUG_FS"
-in the kernel?
+Yeah, one is the one that Linus kept in the tree for the merge
+conflicts discussion, while the other was probably not intentional
+(i.e. simply manually formatted) -- context and fixes in this series:
 
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+    https://lore.kernel.org/rust-for-linux/20251010174351.948650-2-ojeda@ke=
+rnel.org/
 
---D
+So, no worries, I guess it is to be expected given the tree has always
+been `rustfmt` clean.
 
->  	help
->  	  If you say Y here, the kernel will gather usage data about
->  	  the online metadata check subsystem.  This includes the number
-> -- 
-> 2.43.0
-> 
-> 
+I hope that helps.
+
+Cheers,
+Miguel
 
