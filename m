@@ -1,143 +1,240 @@
-Return-Path: <linux-kernel+bounces-850446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7343FBD2D34
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:44:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538CBBD2D3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A983B56D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:44:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E6F189D613
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA097265606;
-	Mon, 13 Oct 2025 11:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6D4263C9F;
+	Mon, 13 Oct 2025 11:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+r1K2Rb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBzXD7Z3"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8CD261B7F;
-	Mon, 13 Oct 2025 11:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC84261581
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760355868; cv=none; b=KhBGZswCgROi18cutn5QMKpM5FXefZTEuHg2t31z9oHNKCpaP7HPVKfVsRkI+qkDnAa1TQXt7NjehZORVAZa0I+Ax86Apxz9s4kmlmGQfBoExoTSOSKna2SUpkhzfKx7com/dSvLV4Hj/17l7YheDgFolriS77CVJPd3CmFscvU=
+	t=1760355884; cv=none; b=gI/4kruC7IsdKr7lYkxsJ3ATNWR2iJ2UsjtmYeVmN8CuUBuxmNElXaKLGVeQAk/6D5csQ4ZlnnV48+12dSInCeP3VIiYool5/9/cNZmRgpTlt2uu/UgU8skWz7M5wMg2m795Lfrk37yD49zWyJjoDcr89tfJZFfsT3Srsq0rjr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760355868; c=relaxed/simple;
-	bh=DHOZJDu5kEvHcvJDToMbreMDRdWVKLGK1lK3EyD6Tj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=If1SOIlUKgAKafSppFYQSMXpj9u82aKSn0GoGR39xvygGfCPWf1xN99Dagwy5iwCF6Lf8Jwiv/DQMlbIRgGcqiDIqcXLd+tIv36tEOkQrkf+hAZeNjUIu/1mTWmwtnpqBEE1lVIm1FpeRHXU+LFYRcSafIuamfXOtoXzFS3veL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+r1K2Rb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88AE7C4CEE7;
-	Mon, 13 Oct 2025 11:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760355868;
-	bh=DHOZJDu5kEvHcvJDToMbreMDRdWVKLGK1lK3EyD6Tj8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=l+r1K2RbQ1OLk6srAKulKnuIxrz82MfDezjlZY2LajQFZrvRGZPxWqNaBNEooCV2k
-	 +vHDq6e+GhaMt1TSWe3os6GFcWMH/octN8D9qaTibhpGfcHaoRamLAEVSnFuEEjOXh
-	 flUX61o/YQIa1yTLHZk26eSOmUKV4p4hAx+Lgge27ixtLFZFZE+aMaJ5LzO6cA80QD
-	 ghzCgwOXmD633MCiny6IfgXHVfG0LlKS8uXTNi88rFow6gGECvIaJWMWGyPRij19vK
-	 xu/ju4SNBfkc83k8hVyv1t73CyUdqMwPWYSYV5oBbPc02xGddcJKpnZJ3Wrv2tKiar
-	 a0FuMSuNhktZA==
-From: Mattijs Korpershoek <mkorpershoek@kernel.org>
-Date: Mon, 13 Oct 2025 13:44:10 +0200
-Subject: [PATCH v3] spi: cadence-quadspi: Fix pm_runtime unbalance on dma
- EPROBE_DEFER
+	s=arc-20240116; t=1760355884; c=relaxed/simple;
+	bh=m+468Bkpx6SzNqN/4WXzwZci+NKwPHmCNWkdu04s/WI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rt82dD3EDiTqgSanPK4NkRPeWSPVd5g84DouHz1SiWI7L6D564e1Jro8hq7iUifdmZ7fv1un6YzjMD8RSbF1LyWUsgDCZotfJjxAzcIb5albm3gwfYbxtY64vJQh2UgE9GfowU/7OQizNAxPD2mi8/9esEBIXGEmmWx7tSICyO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBzXD7Z3; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-578ecc56235so3508123e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760355880; x=1760960680; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1K17b/K8yQXfwqlp4oNmjpZOU5mgfldRYoFZRQe1+Os=;
+        b=nBzXD7Z3pdwY9D7IpyuoujXnUAyIh1t5q+vtrs8Ow2m+kBQj6Aj8DXR2t51Du40O/O
+         yU2w3pcQg+P3/eQNDIJgHLKMYf6LGcArFHgIm6CzFVrBoPSp8a8o0R6+QSFFwsdc65Vh
+         UaHcl2TlFPmeHuf/ZhS4UM7ByvnYSSR+rpemi8zeOiIaVfwD9eyUq7yopjVOBSd6NvVC
+         BuQnMn/IzeDGdWQxNOFv+4GikiyO0B0UCq/fZ4VItfOCbw+AJXbIZGjhvqM3mOoRvbs7
+         HBMgx3EHu+1mNfiQYoI3kscRCJKqCJjDXyooozdQvFQ5xzoM27vTocJ/st7UtxqkOG3n
+         R79A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760355880; x=1760960680;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1K17b/K8yQXfwqlp4oNmjpZOU5mgfldRYoFZRQe1+Os=;
+        b=XAY37xPqfMNh3AQ+2W200yULMGYbdNNZFzuT6XHq3rPgDqNqJdBqA+pVGg3dqd06/1
+         GVFgc/Y3iaqYh+1OVPa01PoTkyKfUEhXTsDU+q6xYvjk2Mf7l8dkuy/7PC45LK+zQEzp
+         jM4dbqkdPoqm1C2XJkoYZj+axIqJ9yxhtCRm4ee0CinWfqoT0+TQk2wheFiQURT4prEH
+         3CCdonmAzErLc6kZ579j5LK7wFWLcvjkKo2mfRUyK0FqmyT9mYArKuWcWs1QMElutnJ7
+         TdzEP/bE/5GiToqt7TcMH/XLD4WWfzuOapozjM/bEkSTSWQiI5aKEuwTPeRKNQrYAYz3
+         5jHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWb8tevImaURQGwP6oBUFjjLM7EAivQYEe7KK+/5VlUnqhGezgs59g0PaYOuGGlMheKeN735fnZnUkC0IM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUYlk2l58pLWqofKJ1nTkux9bcIsU1aiZqRGpGO5mJByMA1XCq
+	M7PFU1Rgs+Fx2yCHFy/46JXz6UNj8KvDTeOsv1C7RPiSfMkQQXOrQEe/yEw2vxCmOMM=
+X-Gm-Gg: ASbGncuho6mSjJE7XfUXMoq/2ob0hebGn4w+rrHgiAQei/aiGyerfRtQUwyK9sfeve4
+	CVNw1pmfWmk1a3DPrMrY8BGtmvSx2go/nb63Z2WfRZNBfTlvq7Mz84RAZp8b+MNq7nLljC6GRiy
+	6efMr2Ch2DcLiFUvY22z7i2woDtuoW79eFesbawxfmeWoKjCPILmfGbUUCd8iRLtu7eCSYug1Dg
+	Mie/5Chd/O2E318Zoj8RzkfaZuE1BCgDnjVAIBt1uNiI9OQqXNwpWS5jMksYKWQkgTtZDjxpWKW
+	Z/+xcc57ffGHR4jYP4OYBxmln2NvZT4VyJuAzayWIC7/I7nCZPQAhpugAkz20C4KRCPy7qhxtOW
+	fWooBgw6D7a5UstXUh3tAdpNevc7QvM9AoSXokVzKWl61
+X-Google-Smtp-Source: AGHT+IE3d16akBxeLLNasuVPZAcPS6yQwFuxf/4sTLdfKlAN6I/lYxBnzcpDd444DNztoAVGRjcn2g==
+X-Received: by 2002:a05:6512:682:b0:57e:3d46:d6bc with SMTP id 2adb3069b0e04-5906d773518mr4914882e87.1.1760355880260;
+        Mon, 13 Oct 2025 04:44:40 -0700 (PDT)
+Received: from [192.168.1.161] ([81.200.23.195])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4f26sm4063733e87.9.2025.10.13.04.44.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 04:44:39 -0700 (PDT)
+Message-ID: <9badd4e53ddb6166d0aa196da978bd70f61642de.camel@gmail.com>
+Subject: Re: [PATCH 2/3] hwmon: (peci/dimmtemp) add Intel Emerald Rapids
+ platform support
+From: Ivan Mikhaylov <fr0st61te@gmail.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Iwona Winiarska <iwona.winiarska@intel.com>, Guenter Roeck	
+ <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	openbmc@lists.ozlabs.org
+Date: Mon, 13 Oct 2025 14:44:34 +0300
+In-Reply-To: <0ede72a9-4555-4e4d-959d-3a505b6598ee@molgen.mpg.de>
+References: <20251006215321.5036-1-fr0st61te@gmail.com>
+	 <20251006215321.5036-3-fr0st61te@gmail.com>
+	 <0ede72a9-4555-4e4d-959d-3a505b6598ee@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-cadence-quadspi-fix-pm-runtime-v3-1-d65f18dade0d@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAnm7GgC/43Nyw6CMBCF4VchXTumFwjgyvcwLnqZQqMUbIFoC
- O9uYaUrXf6TyXcWEjE4jOSULSTg7KLrfQpxyIhupW8QnElNOOUFo7QCLQ16jfCYpImDA+ueMHQ
- QJj+6DkHZytia0bwoS5KQIWD62Acu19Sti2MfXvvezLbr3/TMgIEQSqtcVUJyPN8weLwf+9CQz
- Z75p1f/9HjyKmUsWp2LmvIvb13XN4AVKVMdAQAA
-X-Change-ID: 20251008-cadence-quadspi-fix-pm-runtime-bf8df9104577
-To: Mark Brown <broonie@kernel.org>, 
- Khairul Anuar Romli <khairul.anuar.romli@altera.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mattijs Korpershoek <mkorpershoek@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2262;
- i=mkorpershoek@kernel.org; h=from:subject:message-id;
- bh=DHOZJDu5kEvHcvJDToMbreMDRdWVKLGK1lK3EyD6Tj8=;
- b=owEBbQGS/pANAwAKARkNHbRmThk1AcsmYgBo7OYZzj+pWZd1pa0cGSlHXc2Toq9udOaGNcHL3
- z6yujhQNDaJATMEAAEKAB0WIQQu6UKnth9qvlMTrQAZDR20Zk4ZNQUCaOzmGQAKCRAZDR20Zk4Z
- NYGTCACjCqU14WZrOCzPaTAByZmo4JIPFVOMxfyiB5XRf3lnSITJU97B9s/5T2G1EXaFaxAuM0U
- lNIbqngrQmUh6XAXvGKwPufWNEoHTFmv8e+Hp5Pddj5fGLcN0iN7Sg1r3bKNV8Ly/+CoAdpv5+S
- McsuImiwDeq66mBNANnQDV/YngK6OesIZnmE6BvF1gyMXNK2z8fZ0+2qLUR3uZOPuCPp0YiEY3G
- QeFSufzNrz+C3LwrTwQlRftXEawOuRUq/g44SrQhCkJndq67GFYhAS+OlRvKiW3pVyZnvcCVbJ3
- PWdI8jZJ1v/RimUIwPzQ0cFLGx9iR6FONpmyMSDajnjIQbsU
-X-Developer-Key: i=mkorpershoek@kernel.org; a=openpgp;
- fpr=8234A35B45C0D26B31C1A2DA570338B018144F28
 
-In csqspi_probe(), when cqspi_request_mmap_dma() returns -EPROBE_DEFER,
-we handle the error by jumping to probe_setup_failed.
-In that label, we call pm_runtime_disable(), even if we never called
-pm_runtime_enable() before.
+On Tue, 2025-10-07 at 10:26 +0200, Paul Menzel wrote:
+> Dear Ivan,
+>=20
+>=20
+> Thank you for your patch.
+>=20
+> Am 06.10.25 um 23:53 schrieb Ivan Mikhaylov:
+> > Extend the functionality of hwmon (peci/dimmtemp) for Emerald
+> > Rapids
+> > platform.
+> >=20
+> > The patch has been tested on a 5S system with 16 DIMMs installed.
+>=20
+> What is 5S? 5 sockets? (Probably not.)
 
-Because of this, the driver cannot probe:
+Paul, thank your for review and sorry for late reply.
+5S - Intel 5 Series/5th Gen
 
-[    2.690018] cadence-qspi 47040000.spi: No Rx DMA available
-[    2.699735] spi-nor spi0.0: resume failed with -13
-[    2.699741] spi-nor: probe of spi0.0 failed with error -13
+>=20
+> > Verified read of DIMM temperature thresholds & temperature.
+>=20
+> Also paste the output?
+>=20
 
-Only call pm_runtime_disable() if it was enabled by adding a new
-label to handle spi_register_controller() failures.
+root@bmc:/sys/bus/peci# ls -l devices/0-30/
+lrwxrwxrwx    1 root     root             0 Oct 13 10:51 driver ->
+../../../../../../../bus/peci/drivers/peci-cpu
+drwxr-xr-x    4 root     root             0 Oct 13 10:51
+peci_cpu.cputemp.emr.48
+drwxr-xr-x    4 root     root             0 Oct 13 10:51
+peci_cpu.dimmtemp.emr.48
+drwxr-xr-x    2 root     root             0 Oct 13 10:51 power
+--w-------    1 root     root          4096 Oct 13 10:51 remove
+lrwxrwxrwx    1 root     root             0 Oct 13 10:51 subsystem ->
+../../../../../../../bus/peci
+-rw-r--r--    1 root     root          4096 Oct 13 10:51 uevent
+root@bmc:/sys/bus/peci# ls -l devices/0-31/
+lrwxrwxrwx    1 root     root             0 Oct 13 10:51 driver ->
+../../../../../../../bus/peci/drivers/peci-cpu
+drwxr-xr-x    4 root     root             0 Oct 13 10:51
+peci_cpu.cputemp.emr.49
+drwxr-xr-x    4 root     root             0 Oct 13 10:51
+peci_cpu.dimmtemp.emr.49
+drwxr-xr-x    2 root     root             0 Oct 13 10:51 power
+--w-------    1 root     root          4096 Oct 13 10:51 remove
+lrwxrwxrwx    1 root     root             0 Oct 13 10:51 subsystem ->
+../../../../../../../bus/peci
+-rw-r--r--    1 root     root          4096 Oct 13 10:51 uevent
 
-Fixes: b07f349d1864 ("spi: spi-cadence-quadspi: Fix pm runtime unbalance")
-Signed-off-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
----
-This has been tested on a AM69 SK board.
----
-Changes in v3:
-- Rebased on spi/for-6.18 (Dropped Dan's review since rebase was
-  non-trivial)
-- Link to v2: https://lore.kernel.org/r/20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org
+root@bmc:/sys/class/hwmon/hwmon3# ls
+device        of_node       subsystem     temp11_input  temp11_max  =20
+temp13_input  temp13_max    temp15_input  temp15_max    temp1_input =20
+temp1_max     temp3_input   temp3_max     temp5_input   temp5_max   =20
+temp7_input   temp7_max     temp9_input   temp9_max
+name          power         temp11_crit   temp11_label  temp13_crit =20
+temp13_label  temp15_crit   temp15_label  temp1_crit    temp1_label =20
+temp3_crit    temp3_label   temp5_crit    temp5_label   temp7_crit  =20
+temp7_label   temp9_crit    temp9_label   uevent
 
-Changes in v2:
-- Updated message to use correct Fixes tag (Dan)
-- Link to v1: https://lore.kernel.org/r/20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org
----
- drivers/spi/spi-cadence-quadspi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+root@bmc:/sys/class/hwmon/hwmon5# ls
+device        of_node       subsystem     temp11_input  temp11_max  =20
+temp13_input  temp13_max    temp15_input  temp15_max    temp1_input =20
+temp1_max     temp3_input   temp3_max     temp5_input   temp5_max   =20
+temp7_input   temp7_max     temp9_input   temp9_max
+name          power         temp11_crit   temp11_label  temp13_crit =20
+temp13_label  temp15_crit   temp15_label  temp1_crit    temp1_label =20
+temp3_crit    temp3_label   temp5_crit    temp5_label   temp7_crit  =20
+temp7_label   temp9_crit    temp9_label   uevent
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 2ce4fc136a51ce3305e478c82da6b88ad542fc8c..4209578cb3426aad6707d0a46ddb78986c5eef7d 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -2002,15 +2002,17 @@ static int cqspi_probe(struct platform_device *pdev)
- 	ret = spi_register_controller(host);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to register SPI ctlr %d\n", ret);
--		goto probe_setup_failed;
-+		goto probe_ctrl_failed;
- 	}
- 
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return 0;
-+
-+probe_ctrl_failed:
-+	pm_runtime_disable(dev);
- probe_setup_failed:
- 	cqspi_controller_enable(cqspi, 0);
--	pm_runtime_disable(dev);
- probe_reset_failed:
- 	if (cqspi->is_jh7110)
- 		cqspi_jh7110_disable_clk(pdev, cqspi);
+root@bmc:/sys/class/hwmon/hwmon3# cat temp*
+95000
+35000
+DIMM F1
+93000
+95000
+35000
+DIMM G1
+93000
+95000
+34000
+DIMM H1
+93000
+95000
+35000
+DIMM A1
+93000
+95000
+36000
+DIMM B1
+93000
+95000
+36000
+DIMM C1
+93000
+95000
+36000
+DIMM D1
+93000
+95000
+36000
 
----
-base-commit: 18a5f1af596e6ba22cd40ada449063041f3ce6d4
-change-id: 20251008-cadence-quadspi-fix-pm-runtime-bf8df9104577
+root@bmc:/sys/class/hwmon/hwmon5# cat temp*
+95000
+34000
+DIMM F1
+93000
+95000
+34000
+DIMM G1
+93000
+95000
+35000
+DIMM H1
+93000
+95000
+36000
+DIMM A1
+93000
+95000
+35000
+DIMM B1
+93000
+95000
+35000
+DIMM C1
+93000
+95000
+35000
+DIMM D1
+93000
+95000
+35000
+DIMM E1
+93000
 
-Best regards,
--- 
-Mattijs Korpershoek <mkorpershoek@kernel.org>
+Values around ~35 is temp*_input and thresholds as 93,95 for max and
+crit temepratures plus temp*_label.
 
+Guenter, I saw that you already applied other two patches, need I
+resubmit series with updated info of commit for this one or just this
+one?
+>=20
 
