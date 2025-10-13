@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-851055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55685BD5497
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF275BD54B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686C8188BFB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF951886A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7E229E11B;
-	Mon, 13 Oct 2025 16:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC2529B8DC;
+	Mon, 13 Oct 2025 16:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpb05tO7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxsY4ykY"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84A129D29A;
-	Mon, 13 Oct 2025 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBCF29B8C7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760374579; cv=none; b=R+O0JUP2wMx5/slbJanbXS+bZiEeZr4cjO8yLdIKB7+wod/eOgUsUV2awtDSCCWdVV6hwXi4vahpeLTw2+UbiJoVDWVj3nBmvOavwe+NBbVKAYdvuSGALzU3wbiPePIgSTugQQ0yBTrqFQ/Lq44l6pOGgNBooZvZDEfDW4ABkO4=
+	t=1760374667; cv=none; b=DoTKMrsapr190b4uBlS/R3GI4y6M6sZgVWCF4c17G61KVzTL6+EB+ZE80V+GKfGAIsgcObLbVLq/2LJX7FEY5WZKUayPP5vDgCKSB/sgipIjhSqcHF7S8DwlYcBYf2OZ+COXeKh0pvpaFEBkKpvOFD8Y9gclXiVsYuzQD2I2pXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760374579; c=relaxed/simple;
-	bh=oCjPIm76LeAR7DfSG4KlC7i2J3UvMls2jcJsn1nEWxs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m2LQXWxd/pPUnM+vfp0JxseFRB2GFfUbvd1Npj3vOWHnrNz8cEdhLlEUN71MyAV57/CtFdbL42EJ4NA0KlIm4BgM0vJeSpGIjCEENtdHm41U0NfkD8zFVMCnCt5HFhv1FskUEB2ECfvcGY87vNVp7xV96efrI/nejJKy7Ek6iB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpb05tO7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86924C4CEE7;
-	Mon, 13 Oct 2025 16:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760374579;
-	bh=oCjPIm76LeAR7DfSG4KlC7i2J3UvMls2jcJsn1nEWxs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qpb05tO772ZPfXZUyLLCko/z4F0vClyyZnetI+E2KnCLb9bL9xJFFyFJ7CXh0xgYl
-	 AbTeicJzvYTLc+eu6pBpQfMuP2aPiFmJiyfvBnPqFhLBjIYSfiDa63BiBll+fPH5HV
-	 OEbAvXtO/KfudobNdFhcfw5WJtjL10KOLOr4fgHlRfrIAeIK7EdMWkXqpZFLAM8mn5
-	 rvANRZEP+ytVvcMndjX4fORUEqy+yKyVMJca6Bvs8JrD2PjqK6yXsT/gN2ivg2k5WH
-	 dT9P/BpZFv+GY1mXb/rq8Op0ondmigG61hHUVVTKZlLB1XyS8MoSKb/Lb3pwLU4sSP
-	 biMkJR/8PWeHw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v8LqL-0000000DaVX-2zDr;
-	Mon, 13 Oct 2025 16:56:17 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Sascha Bischoff <Sascha.Bischoff@arm.com>
-Cc: nd <nd@arm.com>,
-	oliver.upton@linux.dev,
-	Joey Gouly <Joey.Gouly@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	yuzenghui@huawei.com
-Subject: Re: [PATCH] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3 or v3 guests
-Date: Mon, 13 Oct 2025 17:56:15 +0100
-Message-ID: <176037441180.969330.798856280799815530.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251007160704.1673584-1-sascha.bischoff@arm.com>
-References: <20251007160704.1673584-1-sascha.bischoff@arm.com>
+	s=arc-20240116; t=1760374667; c=relaxed/simple;
+	bh=uIZm0faNhTPOO/c5jIlL+XBC6TybQp8kD6+Bxh0rKbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MOPyJ5IpA5nkuDODSXoIs7xZrOBUvJ6IC1W8vU17jXttNiFSLvBoM1uDqzlm9/EOyyUUrTzJQQXaQy/9Ysx+ze321hkPS4glGzqG2dZrf0wjtiCqWJVXtB4fNOF3/p8CA3MvJ/OsvCaZt0O45UyHyVkup+e4fwiJQr+3sBa/tts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxsY4ykY; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f605f22easo3805126b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760374665; x=1760979465; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GIBQ7DXPPtVFtqnlKJKBgEnwsBKQuDpfZoq02adf1b8=;
+        b=hxsY4ykY8MBlaVfSkEmXZpmSXXCnPFOdZ/1WcsiRq0SX+mvHVCUd8xYaKMrziZEdXa
+         S9viHCYrpEFDs+/U2zzQv8j/4YM5iw0NtcZMaFwhIoewcr5Jb4ahMpcw98nCECkxEN4d
+         tgL+eafs4SEiQcvCpjNi6jwkwJ1mz88bvukoSb8lHtoRsOv5TJTcHXqNBvdURfhWo9G9
+         DsFRX/Q5zzz/iTPo+nXDAMCASICNPCXIs9nIwJI2G1YWEJXDF3phfLZkqnLRTRimELGf
+         32UYhp8gePcF34YJdCNYdYQ/Ws3lj7e3+YL4Ula4xDcPar40fv72mMAIydfzxckT16pd
+         fUiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760374665; x=1760979465;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GIBQ7DXPPtVFtqnlKJKBgEnwsBKQuDpfZoq02adf1b8=;
+        b=rNwyHOFCygZoZY0oeRNjQ41v460IkWPvMfJTuAD/SiQcHv7BcdGfj/z9eTmOceCLzD
+         lWsloF9bFudXwAv6TQOLNwwciYqyXuqRj6aL30SVcwbnmEWIpelvi1t59FbTCGLSDquw
+         InkK6snfMGPqu7M02ka51aHL9xeFBxNsW2+6ob18n3ovkGW1SL4U/MRwFDPmJA6Bo8FI
+         w+FxWiUAEv7BUDs39a0QIReEbkPzSg7QJbh6ADyndYvNQxLN1PVQmcfhlU8dtyRdIiEg
+         1RyIGvZf7hjcjRrfCzLUBsenY/IytKTllXhSWizEmRpoVQKZhGFz9eqWyot7Tmkd0Y0S
+         EVOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCsTTUVzR+ReUH/YPYPgpsAyVUvW5lej1OP1rP725MDyVbG8qG5f8F4uLXQIaKbSE+QBjU+8GJq94u8y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR8+jNe+oRnvDNAv7C2E0UI6zlqlCYx58GrRmwfXlcexHWoNJH
+	64LPFdYwqEXnaL3M0Rx6guMj6dKQQHkGYEZIKH52xf4O3h6uFub6lQJ6
+X-Gm-Gg: ASbGncu7b+av+yj1+YyNnHfwmrZza4+VgMOHw8zrRDtR4OkCycYZ4n1xQY6tXK3bRHF
+	S2P9T4rqdzUiONQr5SM2Jh4kQleCq3kJKZ0GPA2Sv7QbMzPK9CkBSaZw6qjDpbbiyHMYh0nO+F2
+	yMYDzKRNfayjbATPRn+mjhUDdsHbPhTpJN3ThY5Y7PcrUdFwEIih2vius+EYkBFG2SrMJHC4oDA
+	1AYRSf+a+bjmxJfiaqoAxi6qDOrx6wDTBiyoOtPJifyn49SIhE3Uq6Um0PhP+p+ycpA+mWOHprj
+	+5QRqYeD0bl/tN47WS2Lr0xOXAy6da5DtNGnNJvN//MKbFzfHhJfdu9UWpXjk3U1o/ibBPAa579
+	vy/KQtam4pzihPRrlyhzNphTW/dPoXOqsteDS+xyS/Cq4vBHaUgfQce4o5vubLbShdoSZ+XZtGx
+	oNVpvdxui4mYsWeg==
+X-Google-Smtp-Source: AGHT+IF/F1baTGtfkyX/X4yywp8EinMnUc951in+FzSitmy5hmr0L9dH/16lif2v07+i6Ky7Ytd7RA==
+X-Received: by 2002:a05:6a00:17a5:b0:781:1562:1f9e with SMTP id d2e1a72fcca58-793880f0678mr29157568b3a.32.1760374665325;
+        Mon, 13 Oct 2025 09:57:45 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d993340sm11936331b3a.72.2025.10.13.09.57.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 09:57:44 -0700 (PDT)
+Message-ID: <cafe0391-a33f-4bcc-b2dc-b1ac524c31ac@gmail.com>
+Date: Mon, 13 Oct 2025 09:57:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Sascha.Bischoff@arm.com, nd@arm.com, oliver.upton@linux.dev, Joey.Gouly@arm.com, Suzuki.Poulose@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/262] 6.12.53-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251013144326.116493600@linuxfoundation.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20251013144326.116493600@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 07 Oct 2025 16:07:13 +0000, Sascha Bischoff wrote:
-> The ICH_HCR_EL2 traps are used when running on GICv3 hardware, or when
-> running a GICv3-based guest using FEAT_GCIE_LEGACY on GICv5
-> hardware. When running a GICv2 guest on GICv3 hardware the traps are
-> used to ensure that the guest never sees any part of GICv3 (only GICv2
-> is visible to the guest), and when running a GICv3 guest they are used
-> to trap in specific scenarios. They are not applicable for a
-> GICv2-native guest, and won't be applicable for a(n upcoming) GICv5
-> guest.
+On 10/13/25 07:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.53 release.
+> There are 262 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> [...]
+> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.53-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Applied to fixes, thanks!
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-[1/1] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3 or v3 guests
-      commit: 3193287ddffbce29fd1a79d812f543c0fe4861d1
-
-Cheers,
-
-	M.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Without deviation from the norm, progress is not possible.
-
-
+Florian
 
