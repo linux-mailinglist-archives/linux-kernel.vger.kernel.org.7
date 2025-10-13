@@ -1,88 +1,110 @@
-Return-Path: <linux-kernel+bounces-851127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19ABBD59AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:52:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29873BD59C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A223E2ADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31D223BAC71
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D86D27FD52;
-	Mon, 13 Oct 2025 17:51:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2CB2C030E;
+	Mon, 13 Oct 2025 17:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSbLoXOE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6712821FF47
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AFD49659;
+	Mon, 13 Oct 2025 17:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760377867; cv=none; b=eBDdktHMFzS0QgU+hcJ/rBxWNjkXW6NoJJJv1nCcdQiqr40JkYmsktx9OlhJWWRQg/mDYCgel5Q3SBfQp2FMny48ORRR82T4YDDcVvXTxTceb7zWazl5GNTq9+9H0TPhb6gVoJ4gvW81nrUBDu9rELKu4N3672ZBiXA9mOgd/O0=
+	t=1760378089; cv=none; b=l0AUnOkQ/qbuXYqHJE3j5pukLJmoA1wZLR0ZERUZamGJ8/xOL/vC3XznHkDRmkE6zJhFTYTLu7rXtiYbsQP5CBFqaA7uK3QjrCP7UPhAeg/TZsg5yWkqLxbcsHG5qIWNm6QgyfUwt8d8n+yKMGQizTzbXHnL28BRXaK0oN+jhQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760377867; c=relaxed/simple;
-	bh=ESmH6PDf/y025GTVQd9tAUQWKrM82DPTtOLdH3WIVbI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rOH45RCld2Z0IYGmcteJdaDXWGeqrbrEmr1OmUWuuDxtr+dzExcwvsTw1c8hgP00cJ8MoblsAk3StmkmN17qsNAjwTf+LwNFuIqhoEDZf28QycPASlpkU2m6Un2Mumj6kYoOIXnEQXVLELE/JfAdRtK6Z/pGTYfib8PGjjnYOac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42955823202so122543235ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:51:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760377865; x=1760982665;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zpBMfdidBE3O+0BxDMwBE/bLozZX3gjRZnFgwoDa/2w=;
-        b=J+Fm0TaJz/htGOkmIZfUvouIg4Q6ji0HInMiE+sXtSsGzswJ6jPTovG1jfIMEPxFdP
-         QPQj/hBzi5lBsAXLg/pyYQ/aQfpINcrBRFcGZ9IN/u3uHqNIo57jZ9Krcj1bGKS+uYE2
-         zhQBbqz2daa53jtONXF4wCrtSFXYQuVbCB0aWYZMCaA8O0UfFis7hhdkXKXr23EQMI3C
-         TF/vbEHEzb32F2jasFb5qNFHiPZGu0OdA6+dF1kVDM4Ren2mON9k7m7NbUXV3zI3FZ48
-         ljeFPWE/ZL3WQiMnwrh4YJ77AZOam68+5XkxEjDr41lfKH0sQYZ7NZOMeG34ftok68+1
-         SBsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwilWydOPx3n2zVsvL/ARTEdnIeEYdxAsZ0wefYsKeKm7LSCNFkH6ayPGbrVX4P5vIdWvp806e173wEv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM8OWu2zfgIQ4Sl2HS2eGtciiCE5B6k9Kqt/U1UTHp4HO4fzgr
-	8ghYBBnLdd6fxgJgJ5qODrs/AeB5MHPT8q1pMSSmx67vfTFtAltgKCeg9saxA2sxG33BwMEVG+F
-	y/wPnfsUXRgcLjlVjHeMUSUzYNLqqfGcSNI05njkPtOrUEXMLWENvHW5O6+Y=
-X-Google-Smtp-Source: AGHT+IF0mRRqrrYbDkimSP3HVk6dixhTQT3Lv9MBcrqNeYt5SAiNW0Gr6ZCjlr87h57RmW7I20aL5cO0VXaaf/3qxAKYHl6kXh0n
+	s=arc-20240116; t=1760378089; c=relaxed/simple;
+	bh=EWEtJ0uVO4HZO/aJ732euBce8aoHBa3Di6u9l2h4/yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LhfhumpF/kMHaOy2VZW6k9/WSipnHbVlEpohxGO3iOaUaVMte4/bJEM7FG4hiZx5D/YU09BNz6fivq14MNcC1IEUlnGxmwY/4OivqUa8id5SexRX7bLh+4Sqb0o2K82HH0Aa44Y+7we5h8za3/YFHccHUFz+xKtjOWQ8TxwU4FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSbLoXOE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00839C4CEE7;
+	Mon, 13 Oct 2025 17:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760378088;
+	bh=EWEtJ0uVO4HZO/aJ732euBce8aoHBa3Di6u9l2h4/yI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oSbLoXOEvrilJkaTbESHRLeDE5e2R4V+3bVG0TYE+nSUAvDl1/+AOhI5ue6domWT9
+	 nQEougzn96fcv4zpP8/x/fx9NN6l2hY/cRlqpA6KIJ5PFzvrwhcfL2XO8WpILANJpV
+	 GDgdfY5uogjl4DqMM4edXdZdXoCcoOrYlqiDfe5Ie9eDMMIQctzkopFU/CkxLJFc6k
+	 jI9xuKQ0SK05N89h4C6/IqqMFtzHpi59hx0JLMPAF/gmZRhcPFkNawFZGQsceW62v0
+	 XuesLaIzifjs9IJZCRjlS28CX1iOcSelVW6nBsU5xzsmuIeY2cue6B/HndV5wcbZJ9
+	 np8BoLnKJapzg==
+Date: Mon, 13 Oct 2025 10:54:46 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Donald Hunter
+ <donald.hunter@gmail.com>, Michael Chan <michael.chan@broadcom.com>, Pavan
+ Chebbi <pavan.chebbi@broadcom.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Stanislav
+ Fomichev <sdf@fomichev.me>, Joshua Washington <joshwash@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>, Jian Shen
+ <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, Jijie Shao
+ <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>, Geetha
+ sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>,
+ hariprasad <hkelam@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Mark
+ Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Alexander
+ Duyck <alexanderduyck@fb.com>, kernel-team@meta.com, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Joe Damato <joe@dama.to>, David Wei
+ <dw@davidwei.uk>, Willem de Bruijn <willemb@google.com>, Mina Almasry
+ <almasrymina@google.com>, Breno Leitao <leitao@debian.org>, Dragos Tatulea
+ <dtatulea@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>
+Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
+ buffer providers
+Message-ID: <20251013105446.3efcb1b3@kernel.org>
+In-Reply-To: <cover.1760364551.git.asml.silence@gmail.com>
+References: <cover.1760364551.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1688:b0:424:7128:a06a with SMTP id
- e9e14a558f8ab-42f87417ff1mr260568725ab.7.1760377865528; Mon, 13 Oct 2025
- 10:51:05 -0700 (PDT)
-Date: Mon, 13 Oct 2025 10:51:05 -0700
-In-Reply-To: <20251013162906.1265465-1-listout@listout.xyz>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ed3c09.a70a0220.b3ac9.001b.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] BUG: sleeping function called from invalid
- context in sock_map_delete_elem
-From: syzbot <syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com>
-To: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, listout@listout.xyz, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Mon, 13 Oct 2025 15:54:02 +0100 Pavel Begunkov wrote:
+> Jakub Kicinski (20):
+>   docs: ethtool: document that rx_buf_len must control payload lengths
+>   net: ethtool: report max value for rx-buf-len
+>   net: use zero value to restore rx_buf_len to default
+>   net: clarify the meaning of netdev_config members
+>   net: add rx_buf_len to netdev config
+>   eth: bnxt: read the page size from the adapter struct
+>   eth: bnxt: set page pool page order based on rx_page_size
+>   eth: bnxt: support setting size of agg buffers via ethtool
+>   net: move netdev_config manipulation to dedicated helpers
+>   net: reduce indent of struct netdev_queue_mgmt_ops members
+>   net: allocate per-queue config structs and pass them thru the queue
+>     API
+>   net: pass extack to netdev_rx_queue_restart()
+>   net: add queue config validation callback
+>   eth: bnxt: always set the queue mgmt ops
+>   eth: bnxt: store the rx buf size per queue
+>   eth: bnxt: adjust the fill level of agg queues with larger buffers
+>   netdev: add support for setting rx-buf-len per queue
+>   net: wipe the setting of deactived queues
+>   eth: bnxt: use queue op config validate
+>   eth: bnxt: support per queue configuration of rx-buf-len
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I'd like to rework these a little bit.
+On reflection I don't like the single size control.
+Please hold off.
 
-Reported-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
-Tested-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         3a866087 Linux 6.18-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1017867c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b1620e3721dc97c0
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12fd652f980000
-
-Note: testing is done by a robot and is best-effort only.
+Also what's the resolution for the maintainers entry / cross posting?
 
