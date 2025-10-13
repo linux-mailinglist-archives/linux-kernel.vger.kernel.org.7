@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-850340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B89BD2917
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB75BD28EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFE654EA8B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:27:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABBBB1897447
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09FC2FF16A;
-	Mon, 13 Oct 2025 10:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A072715E5BB;
+	Mon, 13 Oct 2025 10:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="xI/WgtXI"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0AF15E5BB;
-	Mon, 13 Oct 2025 10:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SsolKaTe"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BAA2FF64C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760351219; cv=none; b=uALxhB0yBdlV3dUcWR+4hHa1B/hvaAP4q8rPaDdYLIE5zptMv+j0XTwR4+f9NfTpVCVMjEZYU4zifH5JAr2Tt5QvOJCQ5Z7vXAEgOmox2FPFxtNcf3tmrw6ygy28XS3rwDnH3CObFEOjRYSKb3k4GwQkW7yt17XgRT04f3nt780=
+	t=1760351224; cv=none; b=bzfNljERED2LP0k/BlqQni5nsvR53dGIBUWA/ZMv57g1r22XyRgtm+IwPFrEl//pL0UkLQWk9Vo5DfmuukIvxVCxunnTbmw5DfbUOzluXN05qABHwQR+4rSNkSuVwgYgkjlpkPUG45FvhnDdmUdMBqorHko7rHR4/LgFvi1depk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760351219; c=relaxed/simple;
-	bh=ABmn+fLVsctJIcVsQ8EXkfemm3Yt7M2ThU/pU1MhG9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+vEpPyBc6X6bzYFfUdsxV56axzXB7CdObPtwLr1+NTv55rT/YFp/n8xJztvyDMc2Frx+0qeypuSYU+9FJP9MqvzG3CNYMG7BZZgjiTDm5zFWnnZelWsvw+6q5YZUoLa62BJn5UzZLp4co5H+Ja4RbbpH3YdZwuyvf0IEFkkfbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=xI/WgtXI; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id C50BA14C2D3;
-	Mon, 13 Oct 2025 12:26:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1760351214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=liVWWnazWktLk7qYgIAJtTqEdttWgrGsPA7uT5rJXvE=;
-	b=xI/WgtXIs8rnlF78rRIuhG85Om82BhXX1ipNuWomu80ZemdzezlD3qOo1vHKI0MmwCyjQ4
-	TVJ+EwQfiTrv6kzqAinIkJ91eRXixNKlrUE8LQhvszZRyeUB6m8G683VMv6jAm8Pl6iepX
-	wAviR/0MKstVpFbNayZXsaPaJIEUIU2s9Jr1kVFJuzxhHSYgwmd9a6OPue1tNePOzTfl+4
-	3INJRJvvVOynG+Z/KL+Uzuf5ulq0U6HCNQo5iXp1n2OJH9uODYAVazzZouzjDOaQJsWSG5
-	Xe9K6a9ye88FRrt4/R8egH/VZXB1z5ilb7AaxJTCVj8Q7uuBTAw3+oszHhlYog==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e164d6cc;
-	Mon, 13 Oct 2025 10:26:50 +0000 (UTC)
-Date: Mon, 13 Oct 2025 19:26:35 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
-	linux_oss@crudebyte.com, eadavis@qq.com
-Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
-Message-ID: <aOzT2-e8_p92WfP-@codewreck.org>
-References: <20251010214222.1347785-1-sandeen@redhat.com>
- <20251010214222.1347785-5-sandeen@redhat.com>
+	s=arc-20240116; t=1760351224; c=relaxed/simple;
+	bh=mYP/OQKzVS1m6M+HpUKFSESiFlsi27UhRPn0dyau2kg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GVcjoHelk3PGugCIq61gl9yIRUWeNz4Ma8YqLmuEqmE5obAtu1nG6Yg/wsMLp5O4VPbhtMD/zpCfaJsnlkQDMgpZm4YO64VsqDZQ38V/EKYX3cBqZEiWdyxlQC/9BuE8WjhqIv+0eWhocAPMLUGCapsiAN+WlXGJQQYdb5v1bHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SsolKaTe; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-373a56498b9so49824251fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760351221; x=1760956021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RUycCPtJNwSyf8L3pkwEVzuTkjNQoDRYegjRAHgk7u8=;
+        b=SsolKaTel+wOEiH34+tTPJIPAO7a03Br/+cCmXFLjq/daH3rzWQm6FzeftLmlmiNxP
+         PbxFFyDH54AJMVAEn5YQZnDTFnZoaAPXiWaIVr2vlv+B5HcmKjb3MpR4bYZugomGzXVV
+         95czHWAvbVksRzkqABUVRn0qdj6/iOE7bsrobtNe1ilco2kYIB94GGIDfZ9iCGy2SFAQ
+         M01qxUkWogyG7UZ2lCraonpybGL31SUS7PoAnnQ1I/POtnMnE6XVej0txDchL3rv061t
+         zE4GUVRWqKnaQIqL/ArlI6yCZha6HC64v+ImMxlr+qSfb9IHlurTspnSkZr4WcedGAm8
+         uWcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760351221; x=1760956021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RUycCPtJNwSyf8L3pkwEVzuTkjNQoDRYegjRAHgk7u8=;
+        b=PqgGXqgyokMMsaiUZMu1dX4knkFhGDoh3FiAv4mM0yQFB/SNfbRPR3UqM0nVf3nKbW
+         HJ60V5ExZwEHQGvI+8i24Gim1p2L8dx076cigMzoudilPadQb0vio9rhc3PVMIjC7b7m
+         ixv7cEeC6xn6+fu2apny4Z/fDK/8W32GeKHCXlTUG+3L2jXMxNBHXydii/P0haZft+Tk
+         jHuQecxuKgU8lLRAxkxvbcegOD5u1P/zY31NAyRQJtg/VNAh+au/gE6PU4PMaHQCZ5lD
+         kQ7ENhuL6detw2r/nZyGO55oXVn4aLaveKlJReNz60oRXIeDOQBRL4Sj7SgJWKt9o3il
+         iS0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUgQ2thugIAmvFg2DFq9pm+g4BHR3XeATTKcIBTgtYWtqmPZPYrp60q6AY2IlYWFLVHL1B1uxgWmqX8yds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySgJkk2N/cj1Wpb0/OimQYJBw9MyGsFx9tEX6GDk4vMA54AG2P
+	yg7/DeCoci8q5xEJFbWGfzGKUQJiTV3O2bSSr3Ft49nZMgBHjd81eVKgNhjsqOhjGQ3hkI9u6vQ
+	YMAvt8Pd8rakqMIBa7DtiNTQ5DroCfa9dFFuCr3S7jA==
+X-Gm-Gg: ASbGnculhMEKKFnfYMFzDgLd+jIqFYnBJaiMxR0Y0Z/GGfA/HsIMwZZ9DOTAVpN/7lU
+	OK0amtV54/RUfm6gAVex9jBP+tI4VT4jMIwV0eHmCTpIbRtPv+6UIgF3UqVN+Da9j2XLBcvzgml
+	SSqsb7HUJF9I1eXfHC84PGRdT1wD7E781peZwhlZ952ipSOV66F/8Hl5LEeknFiby4/xHHfcC9M
+	/fTwSsWHiQGhHUcHBl4xI8lgfn7HQ==
+X-Google-Smtp-Source: AGHT+IFAEsHnMAjQz8hxHe77PJ/PCdDOE9sQkCxeRCWPsKIX77lQMxoPbYN5YcgGmocyzXCOJWX9oJCl9IJt3sstsZ8=
+X-Received: by 2002:a2e:a54a:0:b0:373:c272:d986 with SMTP id
+ 38308e7fff4ca-375f526e5b0mr67753781fa.17.1760351220605; Mon, 13 Oct 2025
+ 03:27:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251010214222.1347785-5-sandeen@redhat.com>
+References: <20250924-knp-tlmm-v1-0-acabb59ae48c@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-tlmm-v1-0-acabb59ae48c@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 Oct 2025 12:26:49 +0200
+X-Gm-Features: AS18NWCGvuxtBzvkEQk1ZaKR73JeD7vVIfCcLysVpFERoAJPL1BMWsaJUOjyAzE
+Message-ID: <CACRpkdZOSvEaUU8AGQY19co6maeFwkqEFP+TH-=NnToJuoih9A@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: qcom: Introduce Pinctrl for Kaanapali
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com, 
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Jingyi,
 
-Thanks for this V3!
+thanks for your patches!
 
-I find it much cleaner, hopefully will be easier to debug :)
-... Which turned out to be needed right away, trying with qemu's 9p
-export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
-p9_virtio_create() with fc->source == NULL, instead of the expected
-"tmp" string
-(FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
-p9_fd_create_tcp(), might be easier to test with diod if that's what you
-used)
+On Thu, Sep 25, 2025 at 1:16=E2=80=AFAM Jingyi Wang
+<jingyi.wang@oss.qualcomm.com> wrote:
 
-Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
-the same) it looks like they all define a fsparam_string "source" option
-explicitly?...
+> Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
+> Kaanapali SoC.
+>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+> Jingyi Wang (2):
+>       dt-bindings: pinctrl: describe Kaanapali TLMM
+>       pinctrl: qcom: add the tlmm driver for Kaanapali platforms
 
-Something like this looks like it works to do (+ probably make the error
-more verbose? nothing in dmesg hints at why mount returns EINVAL...)
------
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index 6c07635f5776..999d54a0c7d9 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -34,6 +34,8 @@ struct kmem_cache *v9fs_inode_cache;
-  */
- 
- enum {
-+	/* Mount-point source */
-+	Opt_source,
- 	/* Options that take integer arguments */
- 	Opt_debug, Opt_dfltuid, Opt_dfltgid, Opt_afid,
- 	/* String options */
-@@ -82,6 +84,7 @@ static const struct constant_table p9_cache_mode[] = {
-  * the client, and all the transports.
-  */
- const struct fs_parameter_spec v9fs_param_spec[] = {
-+	fsparam_string  ("source",      Opt_source),
- 	fsparam_u32hex	("debug",	Opt_debug),
- 	fsparam_uid	("dfltuid",	Opt_dfltuid),
- 	fsparam_gid	("dfltgid",	Opt_dfltgid),
-@@ -210,6 +213,14 @@ int v9fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	}
- 
- 	switch (opt) {
-+	case Opt_source:
-+                if (fc->source) {
-+			pr_info("p9: multiple sources not supported\n");
-+			return -EINVAL;
-+		}
-+		fc->source = param->string;
-+		param->string = NULL;
-+		break;
- 	case Opt_debug:
- 		session_opts->debug = result.uint_32;
- #ifdef CONFIG_NET_9P_DEBUG
------
+I have applied these for v6.19!
 
-I'll try to find some time to test a mix of actual mount options later
-this week
-
-Cheers,
--- 
-Dominique Martinet | Asmadeus
+Yours,
+Linus Walleij
 
