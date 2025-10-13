@@ -1,182 +1,256 @@
-Return-Path: <linux-kernel+bounces-851407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996C0BD65FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:33:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96306BD6603
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ECFF3BEC25
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:33:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B14844F417A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2476D1547D2;
-	Mon, 13 Oct 2025 21:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD07525DAFF;
+	Mon, 13 Oct 2025 21:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKDFaieF"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w9IDYxM3"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C165325DAFF
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546D01547D2
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391219; cv=none; b=lUBIv/hOVOOjgYw7VAvvbK6ZA2QlmZ9PMfJ2PwOr+7nKANBpXAI/s5kYT4ruhjtDK+r3QTO7DtM+fGR0yPVIoBRbTQyaiPkoHgK7vqBCsxIB1LSEO490C7cLwegh1AEypMuTdcIQX9QSrD9doHG8Mx337nIUubLmB+E6E4fWzjM=
+	t=1760391237; cv=none; b=Lv4hyNz7jrw+/AKQj1v1CY4Lf7jLALMYCSCVWRrqvSd5zHpiQLQ5PrgiUPV387CtS4cVjvqLvpnNdckzNABQmhjcXllWg+r4NkkOmJ3sDwo3AQc31EEbfeWnxl1Fku214AknK6lstqIFLpghWlTMw40lBMXKQVbxIUR7/1RHz+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391219; c=relaxed/simple;
-	bh=KtbfqF6QABNLG4G4ZFBgbcYtAla65oYtsrqmOimMNi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M1o4nVNMVCmZMGw0eTVbFLoMrPHIAOJO2GSAEfhNWUZsEPRWf14AV+O/T8u2SFMdSDjJuuqdVZZU/J1oun8GmAcPE+i0caQmwEpDECqs2FfpPs/0evlB5MIYKMu21dBWXWrXJwzBOggvBUIkEL57x32unGbsuGhSPRwZ7tscH1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKDFaieF; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42568669606so3411212f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:33:37 -0700 (PDT)
+	s=arc-20240116; t=1760391237; c=relaxed/simple;
+	bh=S+5UlcHEjrBWuJv6UsmXBiz2G9IdfwGhUo8ykHoxZRg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CSqICTIixyvI3GlbJ2/n53RoL77wdIUxIoXJL3KSticd5iGt2L0w1UdK2GpwaIY+IsaGK0usSKDVJwAAfkbgE+u8hpcg1O1hsKIoLdbgLHvkHTjwVciyoxzPlhENhie3eo1G5r8bTtq4DLvbBbUvcZAlGeoBK8usB4iBA4j5wHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w9IDYxM3; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-65033a46e9dso587839eaf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760391216; x=1760996016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ZUcfu/lY1a0PBj+NQhiKBcjA+Mj4IzkP02rncu56NU=;
-        b=YKDFaieFsQEEuljMWqCM8ez9KuRvDVU7L2WT5xZ8WwErLqpAKwFLtBdqd4wt39MnTe
-         qhs9Dzh1yGAzn/8xH5HLivs4khjh3nrjJluqLcN9wNXWO3rFxD28Us3SSpdkrgb1Ph9f
-         pwqPByB7WX6464x+Z1WdCgisUbCZclfuzp/P54oSkxuPwwXG3m8U99iTeiKmXaT2KXX+
-         V3jcnzd9Zyx/A7ShsBKBFByQUWhgeEGQVKUz7cEDhDUKKAzGJSA+rfxF9YPbi0YwS1WD
-         iC9QxcQmvX3Pcb6PxrzS/J+5tnP4Afg789iGmwOLb8W5PqYh6o99kTKczXi/Kne5hNvs
-         LkZA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760391233; x=1760996033; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wW9QX+M1STMhGWj50E44m+hCJQ0pzaTa4Qn7Dm6RkUY=;
+        b=w9IDYxM38dMuOT10Bdm9Cn8YBxJN9Dj2Hl77V3dy9I+/ENXtHfq3iiskAcgdUaH8V4
+         ec8Z3jDZPWXs2OTbnj7xZk1L0aW3GJfZHGOORLPNKHeoFl5aFf8wUvDlF7P/Hyehqe8G
+         SACx/e2tl87zpBCKnolPWGhRSHjtA6zS7HfkuAc0SCI0dVPbDtOWaizA9UxAQm9qwyPb
+         gQ395m0xeWq9fB/Fji99iuFtZkD5aEMUVKtO8aNQHocmPxuvHLYh0tRlf3GvtLenFyAt
+         k8Rh7uDq+e8+rp6k1+JylJ3HEU4+E/GHjHpU9va+N33pS9FgZ5nYeqGScsvbE+Peh0yL
+         GC+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760391216; x=1760996016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9ZUcfu/lY1a0PBj+NQhiKBcjA+Mj4IzkP02rncu56NU=;
-        b=dGFCLuREESIUkjAMVOv3BtSnsiem8DNTckpA0u/4Xc9D125wq9QSMDUPrYCluwNsJ3
-         q6ChMzKwtU87Han9jU7vnQV2hIQuPya+FBRsur9SxumUeIzkeOTpQs/jWCMQ0Qszr7eZ
-         ELDm7lsBwT6BNkHJMbmWAZJ2wXpd+Tj7WHrdE0KPy2shf+k56cafD006kc8z24eeUaHy
-         7noT5QtR0MM11U0GtWfcMptRoAClxF/eInyDD7hwAXa2p3Eww0PahnYvcpFvQGQpBXAL
-         dwxRoDk3hxcDFmrIfvPrksZV/YTFoDAJoyQjOP3l3DgYt+Xi+21GQB8O4T9I9cgmxQJJ
-         pdLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXN35idzk2lLKr7vo5G5ULDUnYVzLNJHhtFPC6nVQuWyvpgVNt88qLlhOfQylVPRoFjdgVmz5ctL8nqwCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRmPueBtDb0u2YXdXXPAsYfHPWzleMco8TH2e2SAQQBjkqPnSu
-	BsGiku/Q8SzRaBOXsClifT3AzRWcFfy/9bxEF9VrxFY09HVGemGGnfC6rMc1zWzB6AIqmfPnkOt
-	F+aoCJ/qDPzDEd/lk50PYa4FvNJV+IQg=
-X-Gm-Gg: ASbGncsfgLMgP0/Z+fw+UKw/fHez40LLI1ftZuSi3XJ9HUZRTIBxoCkZw3YqGvkDGtE
-	kmwPoBgM0k3D3ny2fukO6Bq/bFnvgIjU2dfubyjKoxxxRTKh0r2knMWebfqp+uUxsE9rtZTFbZJ
-	oJta8dTvXqLWNJC0C7XUQ1hgiKXYmxGgwbrHNHmYhsdMGdRwjxFeMku7H6QtsaE7UlKImCDOJi3
-	+OCh4eDLTcAcKlEFLc+bN12T8+2NqnXB91W45T6MYHYevwCmzDUqoQ8Y6wqpknPRmbUYQ==
-X-Google-Smtp-Source: AGHT+IHlObtCjPy8HAxyLJKUgyqBPTd1YCFgsUa+Y+27KX2893URbWswd2YijWA4M7gHzOuw6MrNZ5TM7a4jhudubqU=
-X-Received: by 2002:a05:6000:2c0e:b0:408:d453:e40c with SMTP id
- ffacd0b85a97d-4266726d9famr14296862f8f.25.1760391215858; Mon, 13 Oct 2025
- 14:33:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760391233; x=1760996033;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wW9QX+M1STMhGWj50E44m+hCJQ0pzaTa4Qn7Dm6RkUY=;
+        b=vQ2XV0xhdMQKMkZI0QYFP5J8i6yS/rOhwaOZ0NGUIw/H6z21YvXW7Nl59zRui3SZ5j
+         fmg3X0bdWTX5JC3MhPxTIkHqJKKQhsqocU/HPv1+dr0og8r4fc4goPUT3ib+QtH6en6L
+         m6Lj93S8pGjJ3ar5KcfAVNoQXy+RLKf9xBS+qXO1mfhBhJveAS4wOEElNyoEkv/kEPlf
+         W659bO6Z6HAlN2VpO5Uk0zwPBtgKF5xjus326/GEMkAYMQHExfsW1D1kdZoXGv+nmd9q
+         iJ+7EE1itFrtsHezbC09Z0/XHJWZkJj1muQEuaijGqc59b8DNgO/tdfcPzuGCgtlD0xR
+         Xajg==
+X-Gm-Message-State: AOJu0YyJF99udauqwe6vZrglcOCnA8yrrKRNAPSIiyYV4AWKnteBKaVf
+	eguMsCvBLApHXu73rGOEpL/XzGpfAbrjXPFU+x6U1E3i/xiEdn2W8OiAZ/Gr6PLfTbs=
+X-Gm-Gg: ASbGncs4wGaCs9jyCCwFnQbvqtbLOlonnjdpteOhTg8/EZDofXZpItIVkiK/JV2LxA6
+	rlO1I930wtQYxs+m7wf29Nqo4IvqN23jn9I+QohpvFkghZ2Dj1gtURjMIR5AW7rWxiKESAFSHKL
+	Lh9r0v3q0m9wEeXqVdr/WfllXSW1bQrk7r8iI6xNLRt1J3tGaPnkbNxy1LWx+j/I/fTIfZ5v9sE
+	jp3pm9UyiOctcwOEurFyIhL+0O0vNra1ZZkPOQbFSmLMZP/LU3XANIbKzv5aRX+miz6MU6u/+X7
+	jKi4QSaVvkMMB4EubdwGwSyqog3aH41cpi07n7yvqGIvsAL+j3MKpIB7NUOKH3tMTfwRB1n/J4Y
+	umyJRY0Q9OFxMkyjmXe0Cn/CAPYgC+kvHDeGZPN9qpSvQQg==
+X-Google-Smtp-Source: AGHT+IGpkPrBBYATqeDfySRA0sSXDVmAkWnG7OPAV+n75UM1ORhPMaGBH1JoStYGZGaemJfMqa34CA==
+X-Received: by 2002:a05:6870:3233:b0:319:bcee:df41 with SMTP id 586e51a60fabf-3c0f81eb379mr12307392fac.32.1760391233100;
+        Mon, 13 Oct 2025 14:33:53 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:500:9bbe:7008:41b0:ed6e])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3c8c8eecb2bsm3927676fac.20.2025.10.13.14.33.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 14:33:52 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Mon, 13 Oct 2025 16:33:43 -0500
+Subject: [PATCH] iio: test: fixed-point: new kunit test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202510101652.7921fdc6-lkp@intel.com> <692b6230-db0c-4369-85f0-539aa1c072bb@suse.cz>
-In-Reply-To: <692b6230-db0c-4369-85f0-539aa1c072bb@suse.cz>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 13 Oct 2025 14:33:24 -0700
-X-Gm-Features: AS18NWDZt8nn8SNzaUniYFQxsv0RyUfuDnFuvS487pngygUdhSUHcYIgCPrXOLo
-Message-ID: <CAADnVQJLD7+7aySxv+NtS9LMFgj-O=RhSjkF3b-X3ngwzU2K4Q@mail.gmail.com>
-Subject: Re: [linus:master] [slab] af92793e52: BUG_kmalloc-#(Not_tainted):Freepointer_corrupt
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: kernel test robot <oliver.sang@intel.com>, Alexei Starovoitov <ast@kernel.org>, oe-lkp@lists.linux.dev, 
-	kbuild test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Harry Yoo <harry.yoo@oracle.com>, kasan-dev <kasan-dev@googlegroups.com>, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIADZw7WgC/xWNwQqDMBAFf0X23IVESbH9ldKDmte6FDaSjW1B/
+ HfjcWCY2ciQBUb3ZqOMr5gkreAvDU3zoG+wxMrUujZ45x2LJC6wYvySPyIvSbSw4sefVaVwGFz
+ sMPpbfw1UK0vGKZ6Hx3PfD+tW4KFxAAAA
+X-Change-ID: 20251010-iio-tests-fixed-point-new-kunit-5a0d3eb19865
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5245; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=S+5UlcHEjrBWuJv6UsmXBiz2G9IdfwGhUo8ykHoxZRg=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBo7XA4VugKvnWZr4GhOB/sTmHYgLcH+oGWz+U66
+ 5TDllZMgi6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaO1wOAAKCRDCzCAB/wGP
+ wANIB/wKj9RIo9Lat7YTU71Z/8xS7cGismxmPzr+48um2+ur5rxJmJP2FnkjNfyobHBX9hFXTtU
+ 7ZxiUAbJWC9llbhzmo5v9MkerS1eqQyQo6cwfHhuVdm1sVAQE3Im0MsEQPYcSifG2yMQb6pjBcD
+ vR/r8ogyiinSPumaSEqPxKI0sJGsJe6fxrOq5VLJe/VqC5Kag1GDg61faMy1uvnXOoozZwMaA1d
+ 9BaadTdKS+3hd1V053jCnM0Uqc4DsYheUypTdJi67EYGiZNKPfgeHGGWRWoVpSRCh3ta+SmHvm0
+ 4arWflFQ8jLOxngmIaE9OStkje7tr6Dnf+rjcWefPRnlpFYo
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Mon, Oct 13, 2025 at 7:58=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 10/10/25 10:39, kernel test robot wrote:
-> >
-> >
-> > Hello,
-> >
-> > kernel test robot noticed "BUG_kmalloc-#(Not_tainted):Freepointer_corru=
-pt" on:
-> >
-> > commit: af92793e52c3a99b828ed4bdd277fd3e11c18d08 ("slab: Introduce kmal=
-loc_nolock() and kfree_nolock().")
-> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> >
-> > [test failed on      linus/master ec714e371f22f716a04e6ecb2a24988c92b26=
-911]
-> > [test failed on linux-next/master 0b2f041c47acb45db82b4e847af6e17eb66cd=
-32d]
-> > [test failed on        fix commit 83d59d81b20c09c256099d1c15d7da2196958=
-1bd]
-> >
-> > in testcase: trinity
-> > version: trinity-i386-abe9de86-1_20230429
-> > with following parameters:
-> >
-> >       runtime: 300s
-> >       group: group-01
-> >       nr_groups: 5
-> >
-> >
-> >
-> > config: i386-randconfig-012-20251004
-> > compiler: gcc-14
-> > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m=
- 16G
-> >
-> > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> >
-> >
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > | Closes: https://lore.kernel.org/oe-lkp/202510101652.7921fdc6-lkp@inte=
-l.com
->
-> Does this fix it?
-> ----8<----
-> From 5f467c4e630a7a8e5ba024d31065413bddf22cec Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Mon, 13 Oct 2025 16:56:28 +0200
-> Subject: [PATCH] slab: fix clearing freelist in free_deferred_objects()
->
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/slub.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index f9f7f3942074..080d27fe253f 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -6377,15 +6377,16 @@ static void free_deferred_objects(struct irq_work=
- *work)
->                 slab =3D virt_to_slab(x);
->                 s =3D slab->slab_cache;
->
-> +
-> +               /* Point 'x' back to the beginning of allocated object */
-> +               x -=3D s->offset;
->                 /*
->                  * We used freepointer in 'x' to link 'x' into df->object=
-s.
->                  * Clear it to NULL to avoid false positive detection
->                  * of "Freepointer corruption".
->                  */
-> -               *(void **)x =3D NULL;
-> +               set_freepointer(s, x, NULL);
->
-> -               /* Point 'x' back to the beginning of allocated object */
-> -               x -=3D s->offset;
->                 __slab_free(s, slab, x, x, 1, _THIS_IP_);
+Add a kunit test for iio_str_to_fixpoint(). This function has an
+unintuitive API so this is helpful to see how to use it and shows the
+various edge cases.
 
-Thanks for the fix!
-Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+When reviewing [1], I noticed that iio_str_to_fixpoint() has an odd API
+which lead me to find the bug in [2]. To make sure I was understanding
+the API correctly, I wrote a KUnit test for it. So here it is.
 
-The bot spotted it with CONFIG_SLAB_FREELIST_HARDENED=3Dy.
-It wasn't part of my tests. Sorry.
+[1]: https://lore.kernel.org/linux-iio/20251009173609.992452-3-flavra@baylibre.com/
+[2]: https://lore.kernel.org/linux-iio/20251010-iio-adc-ad7280a-fix-ad7280_store_balance_timer-v1-1-e11746735192@baylibre.com/
+---
+Discussion unrelated to the patch:
+
+I'm also a little tempted to introduce a new function that is a bit
+easier to use. Many callers of iio_str_to_fixpoint_s64() are doing
+something like int_part * 1000 + fract_part and ignoring the possibility
+of negative values which require special handling.
+
+static int iio_str_to_fixpoint_s64(const char *str, u32 decimal_places, s64 *value)
+{
+	int int_part, fract_part;
+	int ret;
+
+	ret = iio_str_to_fixpoint(str, int_pow(10, decimal_places - 1),
+				  &int_part, &fract_part);
+	if (ret)
+		return ret;
+
+	*value = (s64)int_part * int_pow(10, decimal_places) +
+		 (int_part < 0 ? -1 : 1) * fract_part;
+
+	return 0;
+}
+---
+ drivers/iio/test/Kconfig                | 13 ++++++++
+ drivers/iio/test/Makefile               |  1 +
+ drivers/iio/test/iio-test-fixed-point.c | 58 +++++++++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
+
+diff --git a/drivers/iio/test/Kconfig b/drivers/iio/test/Kconfig
+index 6e65e929791ca247df9ac993fddbb4da557d5dfa..d210067ea59199d342b15bf373e724d0aa2c55a0 100644
+--- a/drivers/iio/test/Kconfig
++++ b/drivers/iio/test/Kconfig
+@@ -4,6 +4,19 @@
+ #
+ 
+ # Keep in alphabetical order
++
++config IIO_FIXED_POINT_KUNIT_TEST
++	tristate "Test IIO fixedpoint functions" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  Build unit tests for the IIO fixed-point code.
++
++	  For more information on KUnit and unit tests in general, please refer
++	  to the KUnit documentation in Documentation/dev-tools/kunit/.
++
++	  If unsure, say N.
++
+ config IIO_GTS_KUNIT_TEST
+ 	tristate "Test IIO gain-time-scale helpers" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+diff --git a/drivers/iio/test/Makefile b/drivers/iio/test/Makefile
+index 0c846bc21acda5a487b3a6977a8e9feaef20159a..a580e78b0fe00adc65f8f9df80023d6d738d11f7 100644
+--- a/drivers/iio/test/Makefile
++++ b/drivers/iio/test/Makefile
+@@ -4,6 +4,7 @@
+ #
+ 
+ # Keep in alphabetical order
++obj-$(CONFIG_IIO_FIXED_POINT_KUNIT_TEST) += iio-test-fixed-point.o
+ obj-$(CONFIG_IIO_RESCALE_KUNIT_TEST) += iio-test-rescale.o
+ obj-$(CONFIG_IIO_FORMAT_KUNIT_TEST) += iio-test-format.o
+ obj-$(CONFIG_IIO_GTS_KUNIT_TEST) += iio-test-gts.o
+diff --git a/drivers/iio/test/iio-test-fixed-point.c b/drivers/iio/test/iio-test-fixed-point.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..edfed5434af2391a31d206fda2be0455a9e5e443
+--- /dev/null
++++ b/drivers/iio/test/iio-test-fixed-point.c
+@@ -0,0 +1,58 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Unit tests for IIO fixed-point functions
++ *
++ * Copyright (c) 2025 BayLibre, SAS
++ */
++
++#include <kunit/test.h>
++#include <linux/iio/iio.h>
++#include <linux/math.h>
++#include <linux/types.h>
++
++static void iio_test_iio_str_to_fixed_point(struct kunit *test)
++{
++	int int_part, fract_part;
++	int ret;
++
++	/* Positive value > 1 */
++	ret = iio_str_to_fixpoint("1.234", 100, &int_part, &fract_part);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, 1234);
++
++	/* Truncates rather than rounding closest. */
++	ret = iio_str_to_fixpoint("1.234567", 100, &int_part, &fract_part);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, 1234);
++
++	/* Positive value < 1 */
++	ret = iio_str_to_fixpoint("0.001", 100, &int_part, &fract_part);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, 1);
++
++	/* Negative value > -1 */
++	ret = iio_str_to_fixpoint("-0.001", 100, &int_part, &fract_part);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, -1);
++
++	/* Negative value < -1 */
++	ret = iio_str_to_fixpoint("-1.001", 100, &int_part, &fract_part);
++	KUNIT_EXPECT_EQ(test, 0, ret);
++	/* The fractional part is subtracted rather than added in this case! */
++	KUNIT_EXPECT_EQ(test, int_part * 1000 - fract_part, -1001);
++}
++
++static const struct kunit_case iio_fixed_point_test_cases[] = {
++	KUNIT_CASE(iio_test_iio_str_to_fixed_point),
++	{ }
++};
++
++static struct kunit_suite iio_fixed_point_test_suite = {
++	.name = "iio-fixed-point",
++	.test_cases = iio_fixed_point_test_cases,
++};
++kunit_test_suite(iio_fixed_point_test_suite);
++
++MODULE_AUTHOR("David Lechner <dlechner@baylibre.com>");
++MODULE_DESCRIPTION("Test IIO fixed-point functions");
++MODULE_LICENSE("GPL");
+
+---
+base-commit: a9682f53c2d1678b93a123cdaa260e955430bc5c
+change-id: 20251010-iio-tests-fixed-point-new-kunit-5a0d3eb19865
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
