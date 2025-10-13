@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-850763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8197EBD3A56
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:46:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0C6BD3A5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D0B6E34D4C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66856188F99B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A003030FF27;
-	Mon, 13 Oct 2025 14:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542953101DC;
+	Mon, 13 Oct 2025 14:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="F1c7OtZx"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011027.outbound.protection.outlook.com [40.107.208.27])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Z1oX+TC4"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011049.outbound.protection.outlook.com [40.107.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CB430F945
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E055F3101BD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366192; cv=fail; b=I7WC5qP6tLmCjoR+s8ez70HvSHx4W0ZM+09ndAZzDNXvmpbuKrrD1TTKbVVXPC6LCCR23n2dySaq0rz3PGfULr5Eb1/7cug8XXGK8OCGXxA33HD1alplWhxgAZr4A5Rrm5qmphYCbsLdZmyMW1wKGDxfiduWdzyUs5Jc4mYxbZw=
+	t=1760366200; cv=fail; b=WXWG6TerTGvE5YUYhT5BPFsRbyinAxE3sVE0vadFnmkYsJqZP9VhwMi4qTAi+ldswhrG63bWlLXws058b3jiQH1wHv2l/AeOVJY9ad5/l+LX06t97u/TYD9roqMse2s/BT46K7mSeAPgZuEd+HNaOk4BTqUXqKVE6DarSYHrl90=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366192; c=relaxed/simple;
-	bh=u8cHskI8XJHNlzYGt4nZK+b/FPY96XclSvafYkXmyag=;
+	s=arc-20240116; t=1760366200; c=relaxed/simple;
+	bh=74zPTSod4CoKFGBLkqyJOez2ahI3Uo67EsUEDW+ZaZY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JxmCbikgjdAlyDShb7HC5wKObEQ7KQKAXsHXualfVoXiL/nBrcAaC2NHbD8jtglFNLyVth4/g5idybJBtJa6sWl4TMt+AqGhC3KCeQciyQuoj9t2SuZP8JWG4Un6osE12Ai/6N4bHzX6XEnZ8IHK8ure9uwInaOg78kczkZXbe0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=F1c7OtZx; arc=fail smtp.client-ip=40.107.208.27
+	 MIME-Version:Content-Type; b=PyIhYKqINbwyGZn2m1vUGCiq3J5p1e4uwrBWUZnwOBxMoyxou2BBECz/yrFZ7hrikx6Vfil9A3vEXAksPxrAuSAaoQiF28XUpI198aOPOW/TX4bxz5QiPRVoQR1afnDjy4et8kCwoUEgTSWhwXl+FDhrolNgDd6tHrlXasR7Nio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Z1oX+TC4; arc=fail smtp.client-ip=40.107.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DkFJBj54xgFsRP+mjhY5nQMMPccaxDZGbIr9nfKHWT5bwVrO2o7nxuVLE4FWignfeIvuRnND8dO2AeUGzZvPPfJrQI+1zWJbwwm70i8nDyZv0OjbGUGKaqYmnjtWok3Lnfnsm/eue5jSSywoawWj+42mnwzsRD4YkKBK1UJ6ZUbYADehJie6WLsy5eKQlK2tdcD6OfHzUNxCoOw92A63kWBNLL1W6smBiYLa40Y0ouzEJJT20icyCLybdyxF0j/wu3Dc4Pittybw+BOJwmMqD4aWmY8L13M3j35sDgn9gyncsuq/gD4/zNYexg3AZilVwCZutQSxFhRi9m4TWlnyFQ==
+ b=Gvu1UhCh35l85TebvNKaUhYhxAoHam8UHrfuasdjiueMd1JSDRV0trD/htbM+CVLmLsKqKyavRzQzRsMa6ApAfU06qyrFaaj2CE88/IiGRbS0mvm/qTWNhC15+1HL0bn6pUAG9cKJYuk+t17HTqlRsR++h6GawRkXSMTxI+/6VLmd+ZV6WWT1hpUy5A7SaVojNfq4BjFBQIuubO2intQmw8hbNbH9Sz3RsWpj1l4PIn6MKNHta/K/4zlkUgoipmHXpUrNhcU9P3Gb54m+yOClb+Am/IyDyg3Ke9vuI8BLWCnkm/sR/mUCW5DP8aw0gVtDcU4Mg+XlB/u2gjzp2SoSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nutwp61bpO55MAgOPyw0BDaMPJxKXGVP/Si+kQR/zbg=;
- b=FGcNtZwZfIY+7m4z/UnXf8uhI8GB1BkYlo95YXu8qUgWBRU1k9bAqGTkJd4zU1dmYf3QtEB+tRQ1pSIgoQPCQ1Ya94KyqDKUKmpJ6tw9Z3MChnPE7L/ai1JVtUXJAdAt71bSiJ4FoIvJroAJyIPdkAj1mfHIY00VIIigX6bJfLGr3mXJO+QAAwNdQuaJGUXdjJu0LlMD0I/K97KB0fvnFLGVJaK9LvH8tEhASaOuLzpekVbCnbOuVf4a7fjCI/TeH3IUR+zNCaYaJkr2s7JB6ROFPedvP9AWS7FteOtdJr01fu6A6bRFNEqnsZRh9fuz+tTNTmTmFurZtKOnnOt7lg==
+ bh=V3Dw/L+pTKeH8TPtVLB6LVM6wNQcPote4OWrYX7A4I4=;
+ b=pZp83ciTGvUrTBz6+9F3IgawHoZvDt7iRuR5Txtd1P5Jj8cnqGNRdSD9NRxOJRx0sUMVUvkIRRoTsD7K2OtPkr/ZSMuWMn28VwvmwDCewQ7EVJeSamy92Pvcdl5vzsAcB7VDmyDQTATGQFOB8TZXxZHXtioYViOwdnLeWQmHNzhJk1TY+doAoYmnRBaYt5I4AXA3Ctx+eJqh0D7oXQMFKtw10necYadliaRxkizXqDcFuADl11x23AL8k26aDhq9v5MO2M+4nFDFajqlejkkK1I50Xrl5OwaenKHwiaibyiIWDg2f9tpD1y4xbXh7W2JW4uQpQBn9mO7+cAPBdjGzg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nutwp61bpO55MAgOPyw0BDaMPJxKXGVP/Si+kQR/zbg=;
- b=F1c7OtZxjJwP2VuAirKEDMCP+CJ5qQnRTYl96NTR/eRMNgK/zLtxuXC98sUSUlJIlB4p3UskoFMZfSuI+HP8eprBL4JpUb6Mfg2eByK8w0XLiet06ABGpaM1/jssVeufsySbguGxAUQrycZHlnMhfWh8pdckukHEM9du2ITag5Y=
-Received: from MW4PR04CA0072.namprd04.prod.outlook.com (2603:10b6:303:6b::17)
- by CY8PR12MB8313.namprd12.prod.outlook.com (2603:10b6:930:7d::6) with
+ bh=V3Dw/L+pTKeH8TPtVLB6LVM6wNQcPote4OWrYX7A4I4=;
+ b=Z1oX+TC4U77YrchosRubdr2zVec8baFgp80eYvq18uEKlkXL5pZ28IDXMOX4U2m191CEay0UZEM4PACpHKgOrVw2wFVA1t2zNjQDpMKZTg2FqFL1ZUZ93AhU3epUTadctLH7B3VzcY8tD5RwDEHXx10KtPLb3cc6TX/nC2D5k8Q=
+Received: from MW4PR04CA0067.namprd04.prod.outlook.com (2603:10b6:303:6b::12)
+ by BL3PR12MB6475.namprd12.prod.outlook.com (2603:10b6:208:3bb::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 14:36:23 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 14:36:24 +0000
 Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
- (2603:10b6:303:6b:cafe::db) by MW4PR04CA0072.outlook.office365.com
- (2603:10b6:303:6b::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.11 via Frontend Transport; Mon,
- 13 Oct 2025 14:36:10 +0000
+ (2603:10b6:303:6b:cafe::88) by MW4PR04CA0067.outlook.office365.com
+ (2603:10b6:303:6b::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
+ 13 Oct 2025 14:36:24 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,11 +64,11 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  MWH0EPF000989E5.mail.protection.outlook.com (10.167.241.132) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:36:23 +0000
+ 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:36:24 +0000
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 13 Oct
- 2025 07:35:57 -0700
+ 2025 07:35:58 -0700
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -77,9 +77,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 53/56] drivers/cpu: Re-patch mitigations through sysfs
-Date: Mon, 13 Oct 2025 09:34:41 -0500
-Message-ID: <20251013143444.3999-54-david.kaplan@amd.com>
+Subject: [RFC PATCH 54/56] x86/debug: Create debugfs interface to x86_capabilities
+Date: Mon, 13 Oct 2025 09:34:42 -0500
+Message-ID: <20251013143444.3999-55-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 References: <20251013143444.3999-1-david.kaplan@amd.com>
@@ -95,238 +95,140 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|CY8PR12MB8313:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1be0125-0edc-4878-d255-08de0a65e218
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|BL3PR12MB6475:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97858797-c473-4de8-803c-08de0a65e286
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
+	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YxzAMVd7oipP3LkpDxkDdZi9C0hlV40s5H8Otr0zUnoskmsVB2P/ZamLAPDR?=
- =?us-ascii?Q?RqNseWZIFQiZqQkxVrxhqxkKkahmLXeW0nGGTL+5DudqM+P1kNbf8UrmPLXl?=
- =?us-ascii?Q?n4kjIE4FRzGSrNepqaPATPNMR+JDr/HrxNubLTKF61niwLPx/6p2DgnE6f/l?=
- =?us-ascii?Q?BF3xSRhkqMlVZ86OuvnrciOurrvQItmm/RzRWhdRgS2KJ/TM7HaSnTedzGE0?=
- =?us-ascii?Q?YI2UdSBFnNC1/ARGrowgGdxU6Urz0lWKKCenDCV8iGWySCnSOTLXwAINROHc?=
- =?us-ascii?Q?36dU3y/HPa4VM04sQQX7bzagC/NfMoVD0B2c+5mBdLG69qg3d5jZQAIV5ndX?=
- =?us-ascii?Q?icLOj/OThDnEM8baWesA83F4fbZGqM/nzd8XxD4jrC8CuLmBcxdyyo1m/GBZ?=
- =?us-ascii?Q?2id+LcHObymUXd90zi2mkkFaPluXpxvYAcv0o7VhERMLx9jQnj3Gw0pyDp7i?=
- =?us-ascii?Q?yBYbrZi0BdRrSZTRR6hKpI2z/ge2B25IAbCKfBlUVWZpRyJaRwjim2o4m+Xo?=
- =?us-ascii?Q?/AkvlNBRop66AXisyyh2jhBMZIq8gWHsouQuZQpcooUdgZpT5kswCxgJkHhA?=
- =?us-ascii?Q?4EynLSLzTPOHAZ0k9vLaYz1NcmWmXAtXsDCCDQeYyQGhYgeedrTh5xpnISOq?=
- =?us-ascii?Q?4uFVB+sRC9Tijhzo1vZL/fbrqC7wDXY2KPggYbejgP7pZ3r3jNHr84waKqid?=
- =?us-ascii?Q?vwNckVgGpMR9WF1jgmpuzxUS16Ibm2o29KAPKPuBWgaAGOOZ+knjNpsYrTn/?=
- =?us-ascii?Q?kOYqm8QfgTsnIZE+IdEHiB09XQJyZg/rKqHUGfgZ5ewWQN6Z/MFjxvULt4QP?=
- =?us-ascii?Q?V4JaAIZw4ZNa/iKuphhmSsXTpu80vYbjWCc9VbXF9IkZrN8d0t9GgWz9EEiZ?=
- =?us-ascii?Q?R8nd23dQ4gC4rC+OWWuMklJlgXLMsqVcVQh56/ee9wFQrlBrapjgPtZjqXxk?=
- =?us-ascii?Q?0tTWC1e6zpnVjARh8bKoOy8cRjRfbVsd/YuugBbgR+txBqhMcITUvtc7F1o5?=
- =?us-ascii?Q?OejtoVdxV4ICl72LHcAtP5GPlOT76DK5ZydRY90RDu5IXBjV8MVHLkuvSF4W?=
- =?us-ascii?Q?b8SfSIwxRkqt+A7wuuFKKEjtf0rhyWvQ8gnHBh++UoF9Nc+9fYz5DD3nABrg?=
- =?us-ascii?Q?VG5Nfr1tVTjsHyEepLRfmc+a9bNdib7to7NZGVFF9SOSdjlDUV74RL2LYf3z?=
- =?us-ascii?Q?JzrUK/UTNc64heBZC9punYP/IvfMOzWOrjDzj7SnKX0KUWjCz6qHgKGIIBNq?=
- =?us-ascii?Q?WZS97LLRmTB9nLd9IhmehiWRgPEjxkq9S6fMQvgP2CxdlO0CBzqkJ8KpN2Hs?=
- =?us-ascii?Q?JxSFwnzi57avlAOwfMlbzmTJ0WIMeYHC1iRiyPAzsHXtlhysvLRjalp80XWA?=
- =?us-ascii?Q?lMnc6qcQybjMqPZaT4ztMKRUwOnnJ55EeeKo8SEj42F4iLB5kDlDYbw59f20?=
- =?us-ascii?Q?BUTXVZ+cIQrkKVpRBhof6fkmPgrnkZfHFyd3om2idTOt7udb5sluYQokvRuR?=
- =?us-ascii?Q?Jfu13FCMPMdebdC98QLJdWBiIO7CAiaG5ufuJzV6mMPQYBFzbXwuRdx80h9n?=
- =?us-ascii?Q?PH0fWw6maIiVQ87Iha4=3D?=
+	=?us-ascii?Q?aJkU9VR+opTSoGP87TXtrZMaOIUl7oIT2hYAsAuRROJJPtorTy/VNw4Ly+1+?=
+ =?us-ascii?Q?b+Y3ITShMtJRSno931DPLFVQwbZ7yGBax0eBVRG+CNlqulgrFQeYpsDXWOde?=
+ =?us-ascii?Q?w5a7UOjBXdmeNjmUs4+tMGQghhJhw5YipqSsJ3ubaaGBVTAT2SvfToCAz4SO?=
+ =?us-ascii?Q?GgdPdOBTWgN6JMQ1ObXD7MVNXfslE6rIlM4Cpai9aRvCfOaJclFuJvZd32bv?=
+ =?us-ascii?Q?hzGtT6ujtTpc9zngkD59F0xA2WGEM7yRqmyR1nfKj+tdPFb1h6Bnw4lwfdxx?=
+ =?us-ascii?Q?NZMSeEkqaw6JogIPdOD9kO/1iH4W1OLCXlUq+Twiec+af+epDxXCEmfMcggD?=
+ =?us-ascii?Q?unoYIPOUBaqtqzegMGGhLcU5mTefiPOYnmqL8EWNkiUQ4+S9vX8Gc/HnQaW9?=
+ =?us-ascii?Q?+/ezKr9SxWcNdLMXdqNunsCY2hseq7+GOndOLQkbla2kXtxNn+pDxxwKqmYo?=
+ =?us-ascii?Q?o2m9RPnaHP5OHM1p9jPEklysrb5I1r7r7YoJw02QH7x3CV4oul7kqvT4SoCT?=
+ =?us-ascii?Q?VrsSSZJjtpFHPn4YpSrS1kc770kYa/NTHxStcIqm8jfhVJYQMUJlRyRLRxJE?=
+ =?us-ascii?Q?+2iYbyLX4xSeGPZjDkTWTb+ZykavySKI8XdjhWQO3u0BgnF9CXxo4dL+zBZQ?=
+ =?us-ascii?Q?xBAGi1NMygtgVu/wQL966OuDNVuD/Ez/geEI8lV20wikmhaHRurXKWH/n1fW?=
+ =?us-ascii?Q?X64V8WMkV7ilhoPp32QbvsEWX8G6EeVAzwPFbOPAZY0IjfqLG84u61sPagXq?=
+ =?us-ascii?Q?K2JZM3r5LacWvX3Koh7iza5CE8BPIrAOEs349xMPAED9SpMHWixcEez+fALn?=
+ =?us-ascii?Q?BKmn1lyuT6ptOd9S05SBp9x/yAKX3C/NfX1vshjhpxGsiAIjg0nhTKqWZ2Si?=
+ =?us-ascii?Q?6w5A4w5wc7P/Y85hs/lQqHNKm74FwGnMLQGQ407L7k+Oozq0J6rmtkLcawr3?=
+ =?us-ascii?Q?dJNa50HjgIIylNjmHOYjfLRtMPITrrIDCoG6UzEEwEuAmpPEvPHfx3uV5E6F?=
+ =?us-ascii?Q?mycQzlM2FjSzb1gNeYPRk/B2kKulqoqGqHreSdau/1p7kUgwdpG+QeYzj1WJ?=
+ =?us-ascii?Q?ApwE5xIcLUNnDXklCyTBYk6buBzj4OSxKar+p9ty+nFwQ4xqv+2pKiuJjTDd?=
+ =?us-ascii?Q?FTbqWSFCROUEb1SNn/qmx8wSPophsjoEl1uHQt1EOq1mTwvmvJfpkUKbU7Z7?=
+ =?us-ascii?Q?DkwkUtZnpkCVpRyhJVctRCzAamD8mxkxJTymzLxJ4SzEQozArOkLjYoDabms?=
+ =?us-ascii?Q?MNa8UT+dhg1z3zvvW2DkaoHIk6pKb9qpy1wcVc6lAXuahCfcLTFli8od8rGf?=
+ =?us-ascii?Q?j0tFdh3UoK6jVI6atz/ArOUbNLi3840xEOmmKfmC3LuAKlXc9Ld98qypEHSh?=
+ =?us-ascii?Q?avuVjojjxTZtjhY2b34UUQiPuuPaOuAFY3cLByPBKw6KsOrr1EtYkPBzWpl4?=
+ =?us-ascii?Q?oYYNu5pERH0Gyd1YMUd+BhwAqSVeMv5beqVQNVTyOcQ9VDJ8Yc+UPba5N5KV?=
+ =?us-ascii?Q?uSJ+xFp1VRpIJP49hOVVJwY1W+4l9Z3TOwIllCvYAtSW9eZMgo6gN+WmeRiX?=
+ =?us-ascii?Q?znXJhFp6VRpIx17lbP8=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:23.3038
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:24.0225
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1be0125-0edc-4878-d255-08de0a65e218
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97858797-c473-4de8-803c-08de0a65e286
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	MWH0EPF000989E5.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8313
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6475
 
-Create a new file at /sys/devices/system/cpu/mitigations that prints the
-current set of mitigation options and can be written to in order to
-re-select mitigations.
-
-Only options related to mitigations are handled, with the file initially
-returning the relevant options from the command line.  When the file is
-written, any existing selections are discarded and the new options are
-evaluated.
+Create two debugfs files under x86/x86_cabilities that enable access to the
+X86_FEATURE_* and X86_BUG_* bits.  The X86_FEATURE_* bits are read-only
+while the X86_BUG_* bits are read-write.  This interface will allow for
+user-space test programs to verify mitigation settings are selecting the
+correct feature bits.  It will also allow for testing mitigations even on
+hardware that may not have a particular bug.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- .../ABI/testing/sysfs-devices-system-cpu      |   8 ++
- drivers/base/cpu.c                            | 113 ++++++++++++++++++
- include/linux/cpu.h                           |   3 +
- 3 files changed, 124 insertions(+)
+ arch/x86/kernel/cpu/common.c | 59 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 8aed6d94c4cd..5a0d4372e739 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -777,3 +777,11 @@ Date:		Nov 2022
- Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
- Description:
- 		(RO) the list of CPUs that can be brought online.
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index c37ff92aaec2..1755f91a5643 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -27,6 +27,7 @@
+ #include <linux/stackprotector.h>
+ #include <linux/utsname.h>
+ #include <linux/efi.h>
++#include <linux/debugfs.h>
+ 
+ #include <asm/alternative.h>
+ #include <asm/cmdline.h>
+@@ -2608,3 +2609,61 @@ void __init arch_cpu_finalize_init(void)
+ 	 */
+ 	mem_encrypt_init();
+ }
 +
-+What:		/sys/devices/system/cpu/mitigations
-+Date:		Oct 2025
-+Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-+Description:
-+		Read/write interface to control CPU mitigations.
-+
-+		See also: Documentation/admin-guide/hw-vuln/dynamic_mitigations.rst
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index fa0a2eef93ac..3f9410dee67c 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -21,6 +21,7 @@
- #include <linux/pm_qos.h>
- #include <linux/delay.h>
- #include <linux/sched/isolation.h>
-+#include <linux/filter.h>
- 
- #include "base.h"
- 
-@@ -605,6 +606,113 @@ CPU_SHOW_VULN_FALLBACK(indirect_target_selection);
- CPU_SHOW_VULN_FALLBACK(tsa);
- CPU_SHOW_VULN_FALLBACK(vmscape);
- 
 +#ifdef CONFIG_DYNAMIC_MITIGATIONS
-+static char *saved_opts;
-+
-+static int __cpu_filter_mitigation_opts(char *param, char *val,
-+		const char *unused, void *arg)
++/*
++ * The boot_cpu_data.x86_capability[] array has NCAPINTS of u32 for X86_FEATURE
++ * bits followed by NBUGINTS of u32 for X86_BUG bits.
++ *
++ * The debugfs interface allows reading the X86_FEATURE_* bits and read/writing
++ * the X86_BUG_* bits.  Note that updates to the X86_BUG_* bits may not be
++ * visible to the entire kernel until alternatives have been re-patched through
++ * the dynamic mitigation interface.
++ */
++static ssize_t bug_read(struct file *file, char __user *user_buf,
++			size_t count, loff_t *ppos)
 +{
-+	char *opt;
-+	/* Extra byte allocated for the ' ' at the end. */
-+	int len = strlen(param) + 2;
++	return simple_read_from_buffer(user_buf, count, ppos,
++				       &boot_cpu_data.x86_capability[NCAPINTS],
++				       NBUGINTS * sizeof(u32));
++}
 +
-+	if (!cpu_is_mitigation_opt(param))
-+		return 0;
++static ssize_t bug_write(struct file *file, const char __user *user_buf,
++			 size_t count, loff_t *ppos)
++{
++	return simple_write_to_buffer(&boot_cpu_data.x86_capability[NCAPINTS],
++				      NBUGINTS * sizeof(u32), ppos, user_buf,
++				      count);
++}
 +
-+	/* Extra byte allocated for the '='. */
-+	if (val)
-+		len += strlen(val) + 1;
++static ssize_t feature_read(struct file *file, char __user *user_buf,
++			size_t count, loff_t *ppos)
++{
++	return simple_read_from_buffer(user_buf, count, ppos,
++				       boot_cpu_data.x86_capability,
++				       NCAPINTS * sizeof(u32));
++}
 +
-+	opt = kmalloc(len, GFP_KERNEL);
-+	if (WARN_ON(!opt))
-+		return 0;
++static const struct file_operations dfs_bug_ops = {
++	.read		= bug_read,
++	.write		= bug_write,
++	.llseek		= default_llseek,
++};
 +
-+	if (val)
-+		sprintf(opt, "%s=%s ", param, val);
-+	else
-+		sprintf(opt, "%s ", param);
++static const struct file_operations dfs_feature_ops = {
++	.read		= feature_read,
++	.llseek		= default_llseek,
++};
 +
-+	strcat(saved_opts, opt);
-+	kfree(opt);
++static int __init x86_caps_debugfs_init(void)
++{
++	struct dentry *dir;
++
++	dir = debugfs_create_dir("x86_capabilities", arch_debugfs_dir);
++	debugfs_create_file("bugs", 0600, dir, NULL, &dfs_bug_ops);
++	debugfs_create_file("features", 0400, dir, NULL, &dfs_feature_ops);
 +
 +	return 0;
 +}
-+
-+/* Only save options related to mitigations. */
-+static void cpu_filter_mitigation_opts(const char *str)
-+{
-+	char *tmpstr;
-+	char *newline = "\n";
-+
-+	kfree(saved_opts);
-+
-+	/*
-+	 * 2 extra bytes, one for the final NULL and one for the space we add
-+	 * between each option.
-+	 */
-+	saved_opts = kmalloc(strlen(str)+2, GFP_KERNEL);
-+	tmpstr = kstrdup(str, GFP_KERNEL);
-+
-+	if (WARN_ON(!saved_opts) || WARN_ON(!tmpstr))
-+		return;
-+
-+	saved_opts[0] = '\0';
-+
-+	parse_args("mitigation filter", tmpstr, NULL, 0, 0, 0, NULL,
-+			__cpu_filter_mitigation_opts);
-+
-+	strcat(saved_opts, newline);
-+	kfree(tmpstr);
-+}
-+
-+ssize_t cpu_show_mitigation_options(struct device *dev, struct device_attribute *attr, char *buf);
-+ssize_t cpu_show_mitigation_options(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, saved_opts);
-+}
-+
-+ssize_t cpu_write_mitigation_options(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count);
-+
-+void __weak cpu_prepare_repatch_alternatives(void)
-+{
-+}
-+
-+void __weak cpu_update_alternatives(void)
-+{
-+}
-+
-+void __weak cpu_select_mitigations(void)
-+{
-+}
-+
-+ssize_t cpu_write_mitigation_options(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	/* Save and filter the provided options. */
-+	cpu_filter_mitigation_opts(buf);
-+
-+	/* Reset and re-select all mitigations */
-+	cpu_prepare_repatch_alternatives();
-+	cpu_reset_mitigations();
-+
-+	if (cpu_parse_mitigation_options(buf))
-+		pr_warn("Error parsing new options %s\n", buf);
-+
-+	cpu_select_mitigations();
-+	cpu_update_alternatives();
-+
-+	if (ebpf_jit_enabled())
-+		pr_warn("WARNING! EBPF JIT is enabled.  See Documentation/admin-guide/hw-vuln/dynamic_mitigations.rst\n");
-+
-+	return count;
-+
-+}
-+static DEVICE_ATTR(mitigations, 0644, cpu_show_mitigation_options, cpu_write_mitigation_options);
++late_initcall(x86_caps_debugfs_init);
 +#endif
-+
- static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
- static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
- static DEVICE_ATTR(spectre_v2, 0444, cpu_show_spectre_v2, NULL);
-@@ -660,6 +768,11 @@ static void __init cpu_register_vulnerabilities(void)
- 	if (dev) {
- 		if (sysfs_create_group(&dev->kobj, &cpu_root_vulnerabilities_group))
- 			pr_err("Unable to register CPU vulnerabilities\n");
-+#ifdef CONFIG_DYNAMIC_MITIGATIONS
-+		if (sysfs_create_file(&dev->kobj, &dev_attr_mitigations.attr))
-+			pr_err("Unable to register CPU vulnerability controls\n");
-+		cpu_filter_mitigation_opts(saved_command_line);
-+#endif
- 		put_device(dev);
- 	}
- }
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 6f69344465f1..99e4b08ff36d 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -210,6 +210,9 @@ enum smt_mitigations {
- 
- void cpu_reset_mitigations(void);
- void arch_cpu_reset_mitigations(void);
-+void cpu_select_mitigations(void);
-+void cpu_prepare_repatch_alternatives(void);
-+void cpu_update_alternatives(void);
- bool cpu_is_mitigation_opt(char *param);
- bool arch_is_mitigation_opt(char *param);
- int cpu_parse_mitigation_options(const char *str);
 -- 
 2.34.1
 
