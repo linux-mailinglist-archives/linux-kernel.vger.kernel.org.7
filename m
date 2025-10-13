@@ -1,191 +1,186 @@
-Return-Path: <linux-kernel+bounces-849962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E680BBD1768
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:30:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6CBBD177D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 207904E975A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:30:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A92F4E78E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD8C1D435F;
-	Mon, 13 Oct 2025 05:30:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1D62D5936
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952E72DC768;
+	Mon, 13 Oct 2025 05:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="pmL3teoT"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4282DA768
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760333410; cv=none; b=HNsMz+ZrFtu0u5NIKlWaE7Oyuk1dBU19XgcggHUOvanV5u3LUiVhdkNwmjCHt75Iq9iaVrKNsgVQM62bof6qONp5NQwMpE2fcx5DFLQjBgIbZ9s0sIHKDc3wSFvrA8MCdpS9HuKKO0j3+T+8aLyPtfVQhgZYc3gtCzgf7Tmlk+g=
+	t=1760333567; cv=none; b=jOAvrvC8tTyJBEhAYuvviUEfG8s3dgRyqtBZJVugNpzJL8XHpyFZTk1ewuwGvVnYWbHkOIQVFIyOTCdg054aBTLsufKYWfIyvmsfroFuWLKVh5LvsoShU/PAVw4EiBX9gMFT99a8R4uqmjNZXDZrP/fYl9e0ujZmipHurwpKXbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760333410; c=relaxed/simple;
-	bh=eXjFawBO75dkBlcbyIJ4YSZyLJyIPS3J1SQ+dz9pvTs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s7SWaM/5WamaFg/+gm1z1zaZ6OdRx7JJ2DJHdPfOXjJubbPISsH8rErN4w+auhvfN8z3EgJ1UrbmqrNO1pMxSFjtOBJBiKt/tgglGoUjF09Ctihy9vv0ePobMdFNpoItY12r6PIG02stMt3Wvs4/VSLQNSL0ALC575jL3LbaeZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23B6E1D15;
-	Sun, 12 Oct 2025 22:30:00 -0700 (PDT)
-Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A6A193F6A8;
-	Sun, 12 Oct 2025 22:30:04 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH V6 3/3] KVM: arm64: Move inside all required TCR_XXX macros
-Date: Mon, 13 Oct 2025 10:59:45 +0530
-Message-Id: <20251013052945.2197190-4-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251013052945.2197190-1-anshuman.khandual@arm.com>
-References: <20251013052945.2197190-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1760333567; c=relaxed/simple;
+	bh=JTNhu/382e4Fm08mYKQv1wixPN/gikMoRMPBc7fyVZg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=E+bMrdYru+QtFUwrXHImbtmGalPaAgEmTb6vaRyWHeAINy/ArpuYL9NzmlBT+qzbWP0eh3v93fDtcIFvn4EGTWZstkVQhHyE00eUPtdJMMZxQnsDMPFi6ghAUaWpt3PEzJW7vkdcS+ZbWUK8qkaDQVVktlVVKCdm0/zqigdd8tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=pmL3teoT; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59D3DWhn536898
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 22:32:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2025-q2; bh=xL6Ske1sMSqh8onRsi
+	PctKwfCuLmMf34qkpKo1FjMFg=; b=pmL3teoTQIcRkE410EWfsa4N9b0DrZGyRR
+	LEsRD/9gFg1kfXnjGHB+Z3n2xh4FGVqAGrirh4khCCVy9VQRWYJoSs2/6QQBe2oL
+	7mX22JmROHh37YCdIi6iE6B6BHKcKNJ7FYtbXojVLKfJRfJ9flnG2q8yj5a9ti8v
+	ewGRyhQZH4AgYqi7qQH3pbB1rh0D353Swl/b/55yp5Liz9FBTm/7KG5fuE8mcVfI
+	+V91LzjbidOsOsUPm7a65vNANDKql98joLEo7ddWiYQFmtB17qRYl/zPC6e6Bd5c
+	AEe7MLZ7N/jvfqKgHLAzp3Y7YI6WWwxfy/e1UwGJUkEWeje/L5bw==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49rsb6gdyw-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 22:32:45 -0700 (PDT)
+Received: from twshared30833.05.prn5.facebook.com (2620:10d:c0a8:1b::30) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Mon, 13 Oct 2025 05:32:43 +0000
+Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
+	id 9CECB102FE45; Sun, 12 Oct 2025 22:32:30 -0700 (PDT)
+From: Alex Mastro <amastro@fb.com>
+Subject: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
+ limit
+Date: Sun, 12 Oct 2025 22:32:23 -0700
+Message-ID: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOeO7GgC/23MvQ7CIBSG4VtpmMXwVyhO3odxoHCwDLYNKNE0v
+ XdpB4OJ4wfneReUIAZI6NQsKEIOKUxjGeLQIDuY8QY4uLIRI6ylhLTYhxd+jnczY8s9h04503u
+ Dyv0coXzurcu17CGkxxTfezrT7fVfJVNMsZSdUpyBEwLOvj/a6Y62RGY1UzVjmGDV6t5Cr5Vmv
+ 4xXjJKa8cI4kVYx4aTW3Zet6/oB4dbi5Q0BAAA=
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        Alejandro Jimenez
+	<alejandro.j.jimenez@oracle.com>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Alex Mastro <amastro@fb.com>
+X-Mailer: b4 0.13.0
+X-FB-Internal: Safe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAyNiBTYWx0ZWRfX3z272fsNA5mj
+ a5hUOmVdw3zf/hYdBAFcU4QZW782dUjQ3OkrpHPY7sEjgdWCVoHflN/Er+Uqp5F3zDbQrDFw0Bd
+ bXZHqGDEgsKqPldmQQ/hDNUXZIYTxcM8/6aKNY4xqtY3BZFm2FjpXly4TEDewLc7gzn5TaJPBTh
+ bhBNSgvLNeC2pSAMxT8P+hEcCjH9zznj+F/FTPW7BQ3YqyncjU/NjJ0YhxueLI5N1/G3BEBzHbC
+ dOmMXuV9srcqcB/k+k/xPKcI1Fypw29+6GfE2Q9+5bEmT2icOqATh9qKYssJZ1KcPynGKTEu2tu
+ 9RrmFhd0mj7VIq297acaYhsKrjsdvlLN5VATL8XSfFvOKFmlUuykbjmG4XFHmyYAe8Mb7VvF67B
+ cm5uItrBjHRI33EmyFGM0De4lrfgKQ==
+X-Proofpoint-ORIG-GUID: fvtHFCarfVDL0Ycaesb8dMTsERVqQSXM
+X-Authority-Analysis: v=2.4 cv=BarVE7t2 c=1 sm=1 tr=0 ts=68ec8efd cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=FOH2dFAWAAAA:8 a=LN3npHLcb8nXURrLiNkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: fvtHFCarfVDL0Ycaesb8dMTsERVqQSXM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_02,2025-10-06_01,2025-03-28_01
 
-Move all required TCR_XXX macros into KVM header (asm/kvm_arm.h) for their
-continued usage in KVM.
+This patch series aims to fix vfio_iommu_type.c to support 
+VFIO_IOMMU_MAP_DMA and VFIO_IOMMU_UNMAP_DMA operations targeting IOVA
+ranges which lie against the addressable limit. i.e. ranges where
+iova_start + iova_size would overflow to exactly zero.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: kvmarm@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Today, the VFIO UAPI has an inconsistency: The
+VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE capability of VFIO_IOMMU_GET_INFO
+reports that ranges up to the end of the address space are available
+for use, but are not really due to bugs in handling boundary conditions.
+
+For example:
+
+vfio_find_dma_first_node is called to find the first dma node to unmap
+given an unmap range of [iova..iova+size). The check at the end of the
+function intends to test if the dma result lies beyond the end of the
+unmap range. The condition is incorrectly satisfied when iova+size
+overflows to zero, causing the function to return NULL.
+
+The same issue happens inside vfio_dma_do_unmap's while loop.
+
+This bug was also reported by Alejandro Jimenez in [1][2].
+
+Of primary concern are locations in the current code which perform
+comparisons against (iova + size) expressions, where overflow to zero
+is possible.
+
+The initial list of candidate locations to audit was taken from the
+following:
+
+$ rg 'iova.*\+.*size' -n drivers/vfio/vfio_iommu_type1.c | rg -v '\- 1'
+173:            else if (start >= dma->iova + dma->size)
+192:            if (start < dma->iova + dma->size) {
+216:            if (new->iova + new->size <= dma->iova)
+1060:   dma_addr_t iova = dma->iova, end = dma->iova + dma->size;
+1233:   if (dma && dma->iova + dma->size != iova + size)
+1380:           if (dma && dma->iova + dma->size != iova + size)
+1501:           ret = vfio_iommu_map(iommu, iova + dma->size, pfn, npage,
+1504:                   vfio_unpin_pages_remote(dma, iova + dma->size, pfn,
+1721:           while (iova < dma->iova + dma->size) {
+1743:                           i = iova + size;
+1744:                           while (i < dma->iova + dma->size &&
+1754:                           size_t n = dma->iova + dma->size - iova;
+1785:                   iova += size;
+1810:           while (iova < dma->iova + dma->size) {
+1823:                   i = iova + size;
+1824:                   while (i < dma->iova + dma->size &&
+2919:           if (range.iova + range.size < range.iova)
+
+This series spend the first couple commits making mechanical preparations
+before the fix lands in the last commit.
+
+[1] https://lore.kernel.org/qemu-devel/20250919213515.917111-1-alejandro.j.jimenez@oracle.com/
+[2] https://lore.kernel.org/all/68e18f2c-79ad-45ec-99b9-99ff68ba5438@oracle.com/
+
+Signed-off-by: Alex Mastro <amastro@fb.com>
 ---
- arch/arm64/include/asm/kvm_arm.h       | 45 ++++++++++++++++++++++++++
- arch/arm64/include/asm/pgtable-hwdef.h | 45 --------------------------
- 2 files changed, 45 insertions(+), 45 deletions(-)
+Changes in v4:
+- Fix type assigned to iova_end
+- Clarify overflow checking, add checks to vfio_iommu_type1_dirty_pages
+- Consider npage==0 an error for vfio_iommu_type1_pin_pages
+- Link to v3: https://lore.kernel.org/r/20251010-fix-unmap-v3-0-306c724d6998@fb.com
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 1da290aeedce..0b2cfb13299b 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -107,6 +107,51 @@
- 
- #define MPAMHCR_HOST_FLAGS	0
- 
-+#define TCR_T0SZ_MASK		TCR_EL1_T0SZ_MASK
-+#define TCR_T1SZ_MASK		TCR_EL1_T1SZ_MASK
-+
-+#define TCR_EPD0_MASK		TCR_EL1_EPD0_MASK
-+#define TCR_EPD1_MASK		TCR_EL1_EPD1_MASK
-+
-+#define TCR_IRGN0_MASK		TCR_EL1_IRGN0_MASK
-+#define TCR_IRGN0_WBWA		(TCR_EL1_IRGN0_WBWA << TCR_EL1_IRGN0_SHIFT)
-+
-+#define TCR_ORGN0_MASK		TCR_EL1_ORGN0_MASK
-+#define TCR_ORGN0_WBWA		(TCR_EL1_ORGN0_WBWA << TCR_EL1_ORGN0_SHIFT)
-+
-+#define TCR_SH0_MASK		TCR_EL1_SH0_MASK
-+#define TCR_SH0_INNER		(TCR_EL1_SH0_INNER << TCR_EL1_SH0_SHIFT)
-+
-+#define TCR_SH1_MASK		TCR_EL1_SH1_MASK
-+
-+#define TCR_TG0_SHIFT		TCR_EL1_TG0_SHIFT
-+#define TCR_TG0_MASK		TCR_EL1_TG0_MASK
-+#define TCR_TG0_4K		(TCR_EL1_TG0_4K << TCR_EL1_TG0_SHIFT)
-+#define TCR_TG0_64K		(TCR_EL1_TG0_64K << TCR_EL1_TG0_SHIFT)
-+#define TCR_TG0_16K		(TCR_EL1_TG0_16K << TCR_EL1_TG0_SHIFT)
-+
-+#define TCR_TG1_SHIFT		TCR_EL1_TG1_SHIFT
-+#define TCR_TG1_MASK		TCR_EL1_TG1_MASK
-+#define TCR_TG1_16K		(TCR_EL1_TG1_16K << TCR_EL1_TG1_SHIFT)
-+#define TCR_TG1_4K		(TCR_EL1_TG1_4K << TCR_EL1_TG1_SHIFT)
-+#define TCR_TG1_64K		(TCR_EL1_TG1_64K << TCR_EL1_TG1_SHIFT)
-+
-+#define TCR_IPS_SHIFT		TCR_EL1_IPS_SHIFT
-+#define TCR_IPS_MASK		TCR_EL1_IPS_MASK
-+#define TCR_A1			TCR_EL1_A1
-+#define TCR_ASID16		TCR_EL1_AS
-+#define TCR_TBI0		TCR_EL1_TBI0
-+#define TCR_TBI1		TCR_EL1_TBI1
-+#define TCR_HA			TCR_EL1_HA
-+#define TCR_HD			TCR_EL1_HD
-+#define TCR_HPD0		TCR_EL1_HPD0
-+#define TCR_HPD1		TCR_EL1_HPD1
-+#define TCR_TBID0		TCR_EL1_TBID0
-+#define TCR_TBID1		TCR_EL1_TBID1
-+#define TCR_E0PD0		TCR_EL1_E0PD0
-+#define TCR_E0PD1		TCR_EL1_E0PD1
-+#define TCR_DS			TCR_EL1_DS
-+
- /* TCR_EL2 Registers bits */
- #define TCR_EL2_DS		(1UL << 32)
- #define TCR_EL2_RES1		((1U << 31) | (1 << 23))
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index d49180bb7cb3..5059abda78d8 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -231,51 +231,6 @@
- #define TCR_T0SZ(x)		((UL(64) - (x)) << TCR_EL1_T0SZ_SHIFT)
- #define TCR_T1SZ(x)		((UL(64) - (x)) << TCR_EL1_T1SZ_SHIFT)
- 
--#define TCR_T0SZ_MASK		TCR_EL1_T0SZ_MASK
--#define TCR_T1SZ_MASK		TCR_EL1_T1SZ_MASK
--
--#define TCR_EPD0_MASK		TCR_EL1_EPD0_MASK
--#define TCR_EPD1_MASK		TCR_EL1_EPD1_MASK
--
--#define TCR_IRGN0_MASK		TCR_EL1_IRGN0_MASK
--#define TCR_IRGN0_WBWA		(TCR_EL1_IRGN0_WBWA << TCR_EL1_IRGN0_SHIFT)
--
--#define TCR_ORGN0_MASK		TCR_EL1_ORGN0_MASK
--#define TCR_ORGN0_WBWA		(TCR_EL1_ORGN0_WBWA << TCR_EL1_ORGN0_SHIFT)
--
--#define TCR_SH0_MASK		TCR_EL1_SH0_MASK
--#define TCR_SH0_INNER		(TCR_EL1_SH0_INNER << TCR_EL1_SH0_SHIFT)
--
--#define TCR_SH1_MASK		TCR_EL1_SH1_MASK
--
--#define TCR_TG0_SHIFT		TCR_EL1_TG0_SHIFT
--#define TCR_TG0_MASK		TCR_EL1_TG0_MASK
--#define TCR_TG0_4K		(TCR_EL1_TG0_4K << TCR_EL1_TG0_SHIFT)
--#define TCR_TG0_64K		(TCR_EL1_TG0_64K << TCR_EL1_TG0_SHIFT)
--#define TCR_TG0_16K		(TCR_EL1_TG0_16K << TCR_EL1_TG0_SHIFT)
--
--#define TCR_TG1_SHIFT		TCR_EL1_TG1_SHIFT
--#define TCR_TG1_MASK		TCR_EL1_TG1_MASK
--#define TCR_TG1_16K		(TCR_EL1_TG1_16K << TCR_EL1_TG1_SHIFT)
--#define TCR_TG1_4K		(TCR_EL1_TG1_4K << TCR_EL1_TG1_SHIFT)
--#define TCR_TG1_64K		(TCR_EL1_TG1_64K << TCR_EL1_TG1_SHIFT)
--
--#define TCR_IPS_SHIFT		TCR_EL1_IPS_SHIFT
--#define TCR_IPS_MASK		TCR_EL1_IPS_MASK
--#define TCR_A1			TCR_EL1_A1
--#define TCR_ASID16		TCR_EL1_AS
--#define TCR_TBI0		TCR_EL1_TBI0
--#define TCR_TBI1		TCR_EL1_TBI1
--#define TCR_HA			TCR_EL1_HA
--#define TCR_HD			TCR_EL1_HD
--#define TCR_HPD0		TCR_EL1_HPD0
--#define TCR_HPD1		TCR_EL1_HPD1
--#define TCR_TBID0		TCR_EL1_TBID0
--#define TCR_TBID1		TCR_EL1_TBID1
--#define TCR_E0PD0		TCR_EL1_E0PD0
--#define TCR_E0PD1		TCR_EL1_E0PD1
--#define TCR_DS			TCR_EL1_DS
--
- /*
-  * TTBR.
-  */
+Changes in v3:
+- Fix handling of unmap_all in vfio_dma_do_unmap
+- Fix !range.size to return -EINVAL for VFIO_IOMMU_DIRTY_PAGES_FLAG_GET_BITMAP
+  - Dedup !range.size checking
+- Return -EOVERFLOW on check_*_overflow
+- Link to v2: https://lore.kernel.org/r/20251007-fix-unmap-v2-0-759bceb9792e@fb.com
+
+Changes in v2:
+- Change to patch series rather than single commit
+- Expand scope to fix more than just the unmap discovery path
+- Link to v1: https://lore.kernel.org/r/20251005-fix-unmap-v1-1-6687732ed44e@fb.com
+
+---
+Alex Mastro (3):
+      vfio/type1: sanitize for overflow using check_*_overflow
+      vfio/type1: move iova increment to unmap_unpin_* caller
+      vfio/type1: handle DMA map/unmap up to the addressable limit
+
+ drivers/vfio/vfio_iommu_type1.c | 173 +++++++++++++++++++++++++---------------
+ 1 file changed, 110 insertions(+), 63 deletions(-)
+---
+base-commit: 407aa63018d15c35a34938633868e61174d2ef6e
+change-id: 20251005-fix-unmap-c3f3e87dabfa
+
+Best regards,
 -- 
-2.25.1
+Alex Mastro <amastro@fb.com>
 
 
