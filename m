@@ -1,133 +1,99 @@
-Return-Path: <linux-kernel+bounces-851234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A153BD5DF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:04:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11AFBD5E02
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBF33B5F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:04:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 545534E6819
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243462D6E75;
-	Mon, 13 Oct 2025 19:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2166D2D373F;
+	Mon, 13 Oct 2025 19:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qusZC5sh"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E2C2C21FE;
-	Mon, 13 Oct 2025 19:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o31SYh5I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5481CA84;
+	Mon, 13 Oct 2025 19:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760382278; cv=none; b=WOkz6t6vQ3L+eNdBmqjed4uW2nPidWh+wS/ZOzwesCo+z4YKejTjJ3lNMsZSa4P31CHtl9DQWpiTwpysU8wfjDnCQxTWisvR+m2lW+Z8QRlIIBJi6PlaveorsBf8CPzI1rdqrd4sEh2E0icBOt43n7xyawxqv2mg2PKdKdlY804=
+	t=1760382348; cv=none; b=mnxpGkoBvqm2QludRZ7j86XcpIqNvcDl94+wxy0mrxRlUTPuhFVXSxz6TP9egq/bXmyAzfeewi6puI8GzNlEEYH49myr2EosA1cHtAUE+dmETp56u27Yt+v92IMxkFMPwCZQydfiR7O9S/8hrXDccOdzSie0rei6/2fc2moz1QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760382278; c=relaxed/simple;
-	bh=FIsgkB5h5ry6n2BuuRKc7KLJmszdPvD2e0mt/o5qinc=;
+	s=arc-20240116; t=1760382348; c=relaxed/simple;
+	bh=LIs+eH1h3tvAOe8qwrw54zyMOhRIOtOkXny411d9yII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thOGX3GDFm7YbxoKTi//Y6eYPnSAbaMW8kVqngRGN9qxys3DqD6ZFvizE8juBEVqnxMRhqs9kmgPJ28BxlYDzGEYmmN2MCH367m7cXFMLcXbm5HR3rDUU7cf+qGHFyU9T3Z3YGAqOHQ8fkHynPeLaMJx4/OsXUCU6k7XnEK2HnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qusZC5sh; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 9E2F014C2D3;
-	Mon, 13 Oct 2025 21:04:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1760382272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/I6JIBH6i2s+KyYmg/95gkYCV7Mkagjj3LtjeEdQzAI=;
-	b=qusZC5shpCqfOWYUxaMv2wNmODrBfb7vHdOlMuWw4wNq8DAIZ5LyH1F16/pu/8FsIuuXN5
-	zt4hHgGQ0bnv/cbcI2YtIIiT0DsoHpM0BmurlY4UvfLb98FITF7D38xnRo0ZbWQD+nwzVl
-	BFJizOk7J/nrQcnjk4caJYCVDqiVhiekB3KHSJ5/5zwGXds6Og4ljZFXeYUdrX4rZErEaz
-	5rYl6573bWAmEdNXIuiG55JGXp9TOuemmVxx1IZKdnECCXJAbzl41Bq4Nbc7NWmZMUWO+i
-	sqZtaG2dhHtNCdQAYN4xcnjc1DajKnWoeMQI+uHtn7WbKlL0FB8BnRL38WRdYw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c5a5a286;
-	Mon, 13 Oct 2025 19:04:27 +0000 (UTC)
-Date: Tue, 14 Oct 2025 04:04:12 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
-	eadavis@qq.com
-Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
-Message-ID: <aO1NLCI3kIdgWcvh@codewreck.org>
-References: <20251010214222.1347785-1-sandeen@redhat.com>
- <20251010214222.1347785-5-sandeen@redhat.com>
- <aOzT2-e8_p92WfP-@codewreck.org>
- <bc86b13e-1252-4bf0-86f9-77da37f5e37a@sandeen.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOCPWNYUvuaEs9cyt7eoh0fXSTdnmhCuc3kSElIav1s5N+NijJoKnWXxDH2JKXspC1l3yV8PG7Wb6tDtiZZMrYf+0rWpDST8md/9Z0+MJ4DfO3npuPfen47pB/ABlnoNJGUaCVIochdV1JZnyJT0ab2aSceexI40IQV9AF4Ul/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o31SYh5I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D35BEC4CEE7;
+	Mon, 13 Oct 2025 19:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760382348;
+	bh=LIs+eH1h3tvAOe8qwrw54zyMOhRIOtOkXny411d9yII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o31SYh5II/apx1pwAHROObEENAt0uVL2R+d/igjrbRC1l6fyB0WgL5TQpciG8UHKO
+	 W/3vXh/DPUBZrLvSQRmVx+OU19Na/rVpbUcVYY6bvW4Pxe1Wgql15mFZ9ru9i8e4I0
+	 Z0cVLxWUohEkynDJPnvdEWLCXu4nABVJTnROMaFBJVv2pUFQzOkSbR9cKriVGHGkdL
+	 t3IZHuVZ8cBnITFGsMtIjL7J52CWN36CCq+TxLolWWJZwv3QZSHV/YWJopIM9G93qR
+	 x5pSrK0j9IFJSq5wuINxA7SjmUuSraRoT2rUiIOTf5TRMqX/efUhn8tw+RPiOckhEu
+	 MG++8dSP3puGQ==
+Date: Mon, 13 Oct 2025 19:05:46 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: Praveen K Paladugu <prapal@linux.microsoft.com>, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de, anbelski@linux.microsoft.com
+Subject: Re: [PATCH 0/2] Add support for clean shutdown with MSHV
+Message-ID: <20251013190546.GC3862989@liuwe-devbox-debian-v2.local>
+References: <20251009160501.6356-1-prapal@linux.microsoft.com>
+ <aOg2hiWM4PZ8D1S5@skinsburskii.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bc86b13e-1252-4bf0-86f9-77da37f5e37a@sandeen.net>
+In-Reply-To: <aOg2hiWM4PZ8D1S5@skinsburskii.localdomain>
 
-Eric Sandeen wrote on Mon, Oct 13, 2025 at 01:46:42PM -0500:
-> > ... Which turned out to be needed right away, trying with qemu's 9p
-> > export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
-> > p9_virtio_create() with fc->source == NULL, instead of the expected
-> > "tmp" string
-> > (FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
-> > p9_fd_create_tcp(), might be easier to test with diod if that's what you
-> > used)
+On Thu, Oct 09, 2025 at 03:26:14PM -0700, Stanislav Kinsburskii wrote:
+> On Thu, Oct 09, 2025 at 10:58:49AM -0500, Praveen K Paladugu wrote:
+> > Add support for clean shutdown of the root partition when running on MSHV
+> > hypervisor.
+> > 
+> > Praveen K Paladugu (2):
+> >   hyperv: Add definitions for MSHV sleep state configuration
+> >   hyperv: Enable clean shutdown for root partition with MSHV
+> > 
 > 
-> I swear I tested this, but you are right, and it fails for me too.
+> There is no need to split this logic to two patches: the first one
+> doesn't make sense without the second one, so it would be better to
+> squash them.
 > 
-> Oh ... I know what this is :(
+
+I would rather keep them separate. It is a bit easier to pick out only
+the header changes that way.
+
+Wei
+
+> Thanks,
+> Stanislav
 > 
-> Introducing the "ignore unknown mount options" change in V4 caused it to
-> also ignore the unknown "source" option and report success; this made the
-> vfs think "source" was already handled in vfs_parse_fs_param() and
-> therefore it does not call vfs_parse_fs_param_source(). This has bitten
-> me before and it's a bit confusing.
-> 
-> I'm not sure how I missed this in my V4 testing, I'm very sorry.
-
-No harm done :)
-
-And thanks for the explanation, the vfs parsing being done only if the
-fs-specific parsing failed was far from obvious for me!
-
-> > Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
-> > the same) it looks like they all define a fsparam_string "source" option
-> > explicitly?...
-> 
-> Not all of them; filesystems that reject unknown options have "source"
-> handled for them in the VFS, but for filesystems like debugfs that
-> ignore unknown parameters it had to handle it explicitly. (Other
-> filesystems may do so for other reasons I suppose).
-> 
-> See also a20971c18752 which fixed a20971c18752, though the bug had
-> slightly less of an impact.
-
-(I assume the former was 3a987b88a425)
-
-> Yep, this looks correct, I think. It essentially "steals" the string from
-> the param and sets it in fc->source since the VFS won't do it for us.
-
-Yes, I copied that from nfs and it looks like debugfs does the same.
-
-> I can't help but feel like there's maybe a better treewide fix for this
-> to make it all a bit less opaque, but for now this is what other
-> filesystems do, and so I think this is the right fix for my series at
-> this point.
-
-Not much better given it does the work twice but we could return -EINVAL
-in the case Opt_source statement to optimize for code size...
-I'm not sure that's quite clearer though, I'll stick to "doing what
-everyone else" does for now and we/someone can revisit this later.
-
-> Would you like me to send an updated patch with this change, or will you
-> just fix it on your end?
-
-Happy to roll it in directly, I'll reply again when I find time to
-finish testing and push to next.
--- 
-Dominique Martinet | Asmadeus
+> >  arch/x86/hyperv/hv_init.c      |   7 ++
+> >  drivers/hv/hv_common.c         | 118 +++++++++++++++++++++++++++++++++
+> >  include/asm-generic/mshyperv.h |   1 +
+> >  include/hyperv/hvgdk_mini.h    |   4 +-
+> >  include/hyperv/hvhdk_mini.h    |  33 +++++++++
+> >  5 files changed, 162 insertions(+), 1 deletion(-)
+> > 
+> > -- 
+> > 2.51.0
+> > 
 
