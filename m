@@ -1,267 +1,212 @@
-Return-Path: <linux-kernel+bounces-849881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E408BBD1291
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F731BD138B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00FD63BE717
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089C73A729E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7896A2EBBAB;
-	Mon, 13 Oct 2025 02:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D455279355;
+	Mon, 13 Oct 2025 02:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UfjByJKw"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Bxg8VLDz"
+Received: from mail-m49203.qiye.163.com (mail-m49203.qiye.163.com [45.254.49.203])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A4280035
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6892AF00;
+	Mon, 13 Oct 2025 02:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.203
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760320907; cv=none; b=kJRso92QNmDZ/rVjLrTEDArfhHMfVw7HS2/B6QNNx3GsREQLi9r0FCZD9G/znz0lSqW6GYPogIEiGkmfCskDi7rm2dctMAzRx4AWiGondag5534DOGyWk1jChYZ+rZW3SchEwZIk8t5gaXkb3VpHTESqxQO7ENjaUnivmjIcHGA=
+	t=1760322670; cv=none; b=VtOfowuLtZclWJAfG5DIZ+tvmm8K0wJrYuvxJnau254L/L0rfts/w2voMZAFbGJSxxN1uQQn/t1lzMNMEVBx7PiPd60Io5XTcrCGE2SPqFDzvLV6+6DF6NxMb95YdNiOvGt++ZkdlIU0VaKp9Ltv0MoPpay6fij0uLWEFDwMatE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760320907; c=relaxed/simple;
-	bh=cGrDWQbl1KjpVjUGq5IAO3MhdrEeWTCMATf7WJS5b6c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TGbKNaGZ5cozGKlm1qtlc5fV6iP6rY/Y3NOQ5LHwkKfgshevK70os9uRMtquz8yLUEn0EzsUguv2xAXeSkXE5HubBtZ+xiIwXNS92J0wzwLYyMVx9LJla3cU8+P8ABxxO/EhP/JBx+spOwaqALniHJz5JQkH5Ed9DkvGmYvBkPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UfjByJKw; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-272b7bdf41fso90482205ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760320905; x=1760925705; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=idZeMEzFynmM4Yz87Kr2/ZMpJ43boOVUflCLeT840S8=;
-        b=UfjByJKwVqnF7eul3/s8KI8Q+6uY9h0g67hu9Lz9Q1I31vWkc0XoCIW9KohhhY46tf
-         WBoHN5B4RSN3m3OuA/nD86NT67Ex7gvjigEfMxDz87ijlIFDqIh6l/8bcyz5/AZwSxvD
-         A0gfIU0+qw25CET8gXixBVyVOrZz3iLYC8gwyX1FGr95RVBaeZT8K6ZKoPEuQB2yjCjE
-         A4sB0jCqK4C8yvbgmY7H5wJFpXxagGPutvQQiXxU94nK5vhhbmieau/NjLEuBfXYxRKG
-         /YnbaeKXHUUVCWRmRzaFWa6nQCcs7kvVZmxbL7WcPIL/nnvxQZa+y4eKthTkXoIXMXye
-         vKUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760320905; x=1760925705;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=idZeMEzFynmM4Yz87Kr2/ZMpJ43boOVUflCLeT840S8=;
-        b=Tk5laR97SNVzcQ3mX8xdaGsZbOw8SDRvC89cqXH9duVNqmoNCNwqWaPQGblpl8WDUG
-         g+M6pzXBh5me7G0MD5xYeOuo0wNUm2rX7U7giwPbWiI/ncwr20oz4IVOpvppRBwhZJwZ
-         zyi10MN838n716DF7KVKoC4ITTdERIxl+gEi457BGFACkkUj1lQLLQNKhirJVC0Z0QmT
-         J7E9eb2pWGIIaM39LyjbReH/LRYw39HIU48LLCGhhQnGPQmVPo2CZbqEVtH89k56SsGP
-         XH83URcxWsX/Mes7hpHDxhSTJRN1BZVxpJ/KJbNt9targEX/C35MbaZNuPGKtRvMTpWO
-         Ixgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFFSxgOPrnH7W+LP8CzP0pNJRRl+kgkCSSZJxqqJkIwBfdUwHFy05VOK01GuwHRvcpXzKmOMlnT8Lu+BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5AexC68NjKwxi70qxhQ2DAYjyao+gTehqkWXYaecgVFyDdg+1
-	BcTftOJiBqoPVOOpl9jr/FsNn5+H7wOjkmc5pZH1vDBrW+1cMoK3rrr6IkVH7PqW0VR4DTxK97n
-	liRAT+g==
-X-Google-Smtp-Source: AGHT+IF3SgXMgz0ThHHx1rlALTh1Z9Z6N/RtNr915FZ2PYaekTLVhQ9rSpxCm3gc/dRa+D3CTTt+F3bexzc=
-X-Received: from pjbsq6.prod.google.com ([2002:a17:90b:5306:b0:32b:ae4c:196c])
- (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2a87:b0:24a:d213:9e74
- with SMTP id d9443c01a7336-290272dfbb7mr264993255ad.49.1760320905070; Sun, 12
- Oct 2025 19:01:45 -0700 (PDT)
-Date: Mon, 13 Oct 2025 10:01:23 +0800
-In-Reply-To: <20251013-usbcore-tracing-v1-0-b885a3121b09@google.com>
+	s=arc-20240116; t=1760322670; c=relaxed/simple;
+	bh=o2JCMnzH629eM8sVRiJl0jK9wfTP/MeHkDbW6MKojLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R6dhlU/MRvZUhptymgIRIULnA4y8kNNJ8SO91vpD3+vtE4QzQct491M2NeUP+7p+MxbLNpYQjtpo4f3EujQSZ2DdJCotGOdgDh741pHDcrdJXQqhck6qULg/aO+feOUemNGasEVJnguuRzB0AhdopXWV4b20SirTBQ9OdMeI9lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Bxg8VLDz; arc=none smtp.client-ip=45.254.49.203
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [127.0.0.1] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25a39ad8a;
+	Mon, 13 Oct 2025 09:15:19 +0800 (GMT+08:00)
+Message-ID: <83281501-8957-4ca1-8e0e-0b72ddd74b43@rock-chips.com>
+Date: Mon, 13 Oct 2025 09:15:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251013-usbcore-tracing-v1-0-b885a3121b09@google.com>
-X-Developer-Key: i=khtsai@google.com; a=ed25519; pk=abA4Pw6dY2ZufSbSXW9mtp7xiv1AVPtgRhCFWJSEqLE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760320897; l=5685;
- i=khtsai@google.com; s=20250916; h=from:subject:message-id;
- bh=cGrDWQbl1KjpVjUGq5IAO3MhdrEeWTCMATf7WJS5b6c=; b=Vg1PNgDDOsJV4tGBIEFwbR414NtO0ueQmvT69trGfXK4aXLtRJrAZxHvFpkjqPIn/CMYzsdaf
- jMzwYaco8lPCtcF8C54VPPO5NM6LgTC1xBoBfQOsXJG/FUO2AH0weGg
-X-Mailer: b4 0.14.2
-Message-ID: <20251013-usbcore-tracing-v1-2-b885a3121b09@google.com>
-Subject: [PATCH 2/2] usb: core: Add tracepoints for device allocation and
- state changes
-From: Kuen-Han Tsai <khtsai@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Mathias Nyman <mathias.nyman@linux.intel.com>, Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kuen-Han Tsai <khtsai@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/8] phy: rockchip: phy-rockchip-typec: Add
+ typec_mux/typec_switch support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Chaoyi Chen <kernel@airkyi.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251011033233.97-1-kernel@airkyi.com>
+ <20251011033233.97-4-kernel@airkyi.com>
+ <xbblw4jfte7re2pyroanvzqv4ddwhxbgcui5ubpnw7rwuo4s4d@gkph7jqzf33o>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <xbblw4jfte7re2pyroanvzqv4ddwhxbgcui5ubpnw7rwuo4s4d@gkph7jqzf33o>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a99db22dcf303abkunm0713f548f8facb
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU0dQ1YaGklOTEIaHR4YH0xWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Bxg8VLDz1S1QU32Fy2HDcfvislNrJJ0uqNay+meHZQFma6Tad3Sto7NFGOCh3TqmeUBj54gnStcWhE8/KozzYBg4GvmPcV4rMFPnEgs/h30WSTTKCT8WXZx4iN3GJGmO7W3qhPHRjXv3jiF2QOrzKOBxLX8bcko/TH9ZA5Yh5p8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=cvq/ACMwX3OnpD71UH1+PwfyZlhDdznUFw1/2vndRWE=;
+	h=date:mime-version:subject:message-id:from;
 
-Introduce new tracepoints to the USB core to improve debuggability of
-USB device lifecycle events.
+On 10/12/2025 12:57 AM, Dmitry Baryshkov wrote:
 
-The following tracepoints are added:
+> On Sat, Oct 11, 2025 at 11:32:28AM +0800, Chaoyi Chen wrote:
+>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>
+>> This patch add support for Type-C Port Controller Manager. Each PHY
+>> will register typec_mux and typec_switch when external Type-C
+>> controller is present. Type-C events are handled by TCPM without
+>> extcon.
+>>
+>> The extcon device should still be supported.
+>>
+>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>> ---
+>>
+>> (no changes since v5)
+>>
+>> Changes in v4:
+>> - Remove notify DP HPD state by USB/DP PHY.
+>>
+>> (no changes since v3)
+>>
+>> Changes in v2:
+>> - Fix compile error when CONFIG_TYPEC is not enabled.
+>> - Notify DP HPD state by USB/DP PHY.
+>>
+>>   drivers/phy/rockchip/phy-rockchip-typec.c | 365 +++++++++++++++++++++-
+>>   1 file changed, 349 insertions(+), 16 deletions(-)
+>>
+>> @@ -850,6 +998,72 @@ static int tcphy_get_mode(struct rockchip_typec_phy *tcphy)
+>>   	return mode;
+>>   }
+>>   
+>> +#if IS_ENABLED(CONFIG_TYPEC)
+>> +static int tcphy_orien_sw_set(struct typec_switch_dev *sw,
+>> +			      enum typec_orientation orien)
+>> +{
+>> +	struct rockchip_typec_phy *tcphy = typec_switch_get_drvdata(sw);
+>> +
+>> +	mutex_lock(&tcphy->lock);
+>> +
+>> +	if (orien == TYPEC_ORIENTATION_NONE) {
+>> +		tcphy->new_mode = MODE_DISCONNECT;
+>> +		goto unlock_ret;
+>> +	}
+>> +
+>> +	tcphy->flip = (orien == TYPEC_ORIENTATION_REVERSE) ? true : false;
+>> +	tcphy->new_mode = MODE_DFP_USB;
+> Carrying over unanswered(!) comment from the previous series:
+>
+> I don't think it is correct. Orientation defines only the cable (plug)
+> orientation. You should be getting the mux events for the mode
+> selection.
 
-- usb_alloc_dev: Triggered when a new USB device structure is allocated,
-providing insights into early device setup.
-- usb_set_device_state: Triggered when the USB device state changes,
-allowing observation of the device's state transitions.
+Sorry for that, I forgot to modify this part. Will fix in v6.
 
-These tracepoints capture detailed information about the USB device,
-including its name, speed, state, bus current value, and authorized
-flag. This will aid developers in diagnosing issues related to device
-enumeration within the USB subsystem.
 
-Examples:
- usb_alloc_dev: usb 1-1 speed 0 state 1 0mA [authorized]
- usb_set_device_state: usb 1-1 speed 0 state 2 0mA [authorized]
- usb_set_device_state: usb 1-1 speed 2 state 5 500mA [authorized]
- usb_set_device_state: usb 1-1 speed 2 state 5 500mA [authorized]
- usb_set_device_state: usb 1-1 speed 2 state 6 500mA [authorized]
- usb_set_device_state: usb 1-1 speed 2 state 7 500mA [authorized]
- usb_set_device_state: usb 1-1 speed 2 state 8 500mA [authorized]
- usb_set_device_state: usb 1-1 speed 2 state 0 500mA [authorized]
+>
+>> +
+>> +unlock_ret:
+>> +	mutex_unlock(&tcphy->lock);
+>> +	return 0;
+>> +}
+>> +
+>> +static void udphy_orien_switch_unregister(void *data)
+>> +{
+>> +	struct rockchip_typec_phy *tcphy = data;
+>> +
+>> +	typec_switch_unregister(tcphy->sw);
+>> +}
+>> +
+>> @@ -1037,6 +1251,89 @@ static const struct phy_ops rockchip_dp_phy_ops = {
+>>   	.owner		= THIS_MODULE,
+>>   };
+>>   
+>> +#if IS_ENABLED(CONFIG_TYPEC)
+>> +static int tcphy_typec_mux_set(struct typec_mux_dev *mux, struct typec_mux_state *state)
+>> +{
+>> +	struct rockchip_typec_phy *tcphy = typec_mux_get_drvdata(mux);
+>> +	struct typec_displayport_data *data;
+>> +	int hpd = 0;
+>> +
+>> +	mutex_lock(&tcphy->lock);
+>> +
+>> +	switch (state->mode) {
+>> +	case TYPEC_STATE_SAFE:
+>> +		fallthrough;
+>> +	case TYPEC_STATE_USB:
+>> +		tcphy->new_mode = MODE_DFP_USB;
+>> +		phy_set_bus_width(tcphy->phys[TYPEC_PHY_DP], 0);
+>> +		break;
+>> +	case TYPEC_DP_STATE_C:
+>> +	case TYPEC_DP_STATE_E:
+> You need to check that altmode->svid is DP before checking for these
+> modes.
 
-Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
----
- drivers/usb/core/Makefile |  4 ++++
- drivers/usb/core/hub.c    |  2 ++
- drivers/usb/core/trace.c  |  6 +++++
- drivers/usb/core/trace.h  | 61 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/usb/core/usb.c    |  2 ++
- 5 files changed, 75 insertions(+)
+Okay, will fix in v6.
 
-diff --git a/drivers/usb/core/Makefile b/drivers/usb/core/Makefile
-index 766000b4939ef937a04848aa9cc45d8bb8860fe5..11647942ff3ae6c688dac043218f7d886a3e2f88 100644
---- a/drivers/usb/core/Makefile
-+++ b/drivers/usb/core/Makefile
-@@ -3,10 +3,14 @@
- # Makefile for USB Core files and filesystem
- #
- 
-+# define_trace.h needs to know how to find our header
-+CFLAGS_trace.o                  := -I$(src)
-+
- usbcore-y := usb.o hub.o hcd.o urb.o message.o driver.o
- usbcore-y += config.o file.o buffer.o sysfs.o endpoint.o
- usbcore-y += devio.o notify.o generic.o quirks.o devices.o
- usbcore-y += phy.o port.o
-+usbcore-y += trace.o
- 
- usbcore-$(CONFIG_OF)		+= of.o
- usbcore-$(CONFIG_USB_XHCI_SIDEBAND)	+= offload.o
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index ce3d94c960470e9be7979b1021551eab5fd03517..f66a197700c8b3414c624b8ec1bb94c629e3280c 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -40,6 +40,7 @@
- #include "hub.h"
- #include "phy.h"
- #include "otg_productlist.h"
-+#include "trace.h"
- 
- #define USB_VENDOR_GENESYS_LOGIC		0x05e3
- #define USB_VENDOR_SMSC				0x0424
-@@ -2159,6 +2160,7 @@ static inline void update_usb_device_state(struct usb_device *udev,
- 
- 	udev->state = new_state;
- 	update_port_device_state(udev);
-+	trace_usb_set_device_state(udev);
- }
- 
- static void recursively_mark_NOTATTACHED(struct usb_device *udev)
-diff --git a/drivers/usb/core/trace.c b/drivers/usb/core/trace.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..607bcf639d27f15a628537a86155fa92df33fa14
---- /dev/null
-+++ b/drivers/usb/core/trace.c
-@@ -0,0 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 Google LLC
-+ */
-+#define CREATE_TRACE_POINTS
-+#include "trace.h"
-diff --git a/drivers/usb/core/trace.h b/drivers/usb/core/trace.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..db6edf570640e7af0598ccf2c7bd71b187605a42
---- /dev/null
-+++ b/drivers/usb/core/trace.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2025 Google LLC
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM usbcore
-+
-+#if !defined(_USB_CORE_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _USB_CORE_TRACE_H
-+
-+#include <linux/types.h>
-+#include <linux/tracepoint.h>
-+#include <linux/usb.h>
-+
-+DECLARE_EVENT_CLASS(usb_core_log_usb_device,
-+	TP_PROTO(struct usb_device *udev),
-+	TP_ARGS(udev),
-+	TP_STRUCT__entry(
-+		__string(name, dev_name(&udev->dev))
-+		__field(enum usb_device_speed, speed)
-+		__field(enum usb_device_state, state)
-+		__field(unsigned short, bus_mA)
-+		__field(unsigned, authorized)
-+	),
-+	TP_fast_assign(
-+		__assign_str(name);
-+		__entry->speed = udev->speed;
-+		__entry->state = udev->state;
-+		__entry->bus_mA = udev->bus_mA;
-+		__entry->authorized = udev->authorized;
-+	),
-+	TP_printk("usb %s speed %d state %d %dmA [%s]",
-+		__get_str(name),
-+		__entry->speed,
-+		__entry->state,
-+		__entry->bus_mA,
-+		__entry->authorized ? "authorized" : "unauthorized")
-+);
-+
-+DEFINE_EVENT(usb_core_log_usb_device, usb_set_device_state,
-+	TP_PROTO(struct usb_device *udev),
-+	TP_ARGS(udev)
-+);
-+
-+DEFINE_EVENT(usb_core_log_usb_device, usb_alloc_dev,
-+	TP_PROTO(struct usb_device *udev),
-+	TP_ARGS(udev)
-+);
-+
-+
-+#endif /* _USB_CORE_TRACE_H */
-+
-+/* this part has to be here */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace
-+
-+#include <trace/define_trace.h>
-diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
-index b6b0b84895237e2c49b5e8015627ad2c24ee31c2..e740f7852bcdebdbcc30025dcddb16c062265d47 100644
---- a/drivers/usb/core/usb.c
-+++ b/drivers/usb/core/usb.c
-@@ -46,6 +46,7 @@
- #include <linux/dma-mapping.h>
- 
- #include "hub.h"
-+#include "trace.h"
- 
- const char *usbcore_name = "usbcore";
- 
-@@ -746,6 +747,7 @@ struct usb_device *usb_alloc_dev(struct usb_device *parent,
- #endif
- 
- 	dev->authorized = usb_dev_authorized(dev, usb_hcd);
-+	trace_usb_alloc_dev(dev);
- 	return dev;
- }
- EXPORT_SYMBOL_GPL(usb_alloc_dev);
+
+>
+>> +		tcphy->new_mode = MODE_DFP_DP;
+>> +		data = state->data;
+>> +		hpd = !!(data->status & DP_STATUS_HPD_STATE);
+>> +		phy_set_bus_width(tcphy->phys[TYPEC_PHY_DP], hpd ? 4 : 0);
+>> +		break;
+>> +	case TYPEC_DP_STATE_D:
+>> +		tcphy->new_mode = MODE_DFP_DP | MODE_DFP_USB;
+>> +		data = state->data;
+>> +		hpd = !!(data->status & DP_STATUS_HPD_STATE);
+>> +		phy_set_bus_width(tcphy->phys[TYPEC_PHY_DP], hpd ? 2 : 0);
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	mutex_unlock(&tcphy->lock);
+>> +
+>> +	return 0;
+>> +}
+>> +
 
 -- 
-2.51.0.740.g6adb054d12-goog
+Best,
+Chaoyi
 
 
