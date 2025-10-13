@@ -1,141 +1,126 @@
-Return-Path: <linux-kernel+bounces-850623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0119BD352A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:03:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C6EBD3530
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A953C40A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:03:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0614D3487CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8207E233D85;
-	Mon, 13 Oct 2025 14:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553B72580F2;
+	Mon, 13 Oct 2025 14:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJFtRhjt"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="kRJXpFJd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E7fT/E+i"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA7922A4D5
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6468823AE9B
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364196; cv=none; b=L2KxC/X2+I656FOyyCdsnU3YAQIMbKln9rUEG5hYE0MGmFl1ZpxXkP6SNg58EaMDQ42oX15XJC0TqmKiecMz8fcYVxCC41FJO4q5gNk2UrMbjiTzQ7JKxbw7xjZBCNm4OZTU/aDuGAnZldYZVwRqCuGltz/ugh2UllNpZfI629Y=
+	t=1760364199; cv=none; b=YUh6UVhbIb6hgi1uIL1AfjRovyZSz/jz3cLRWaJAA5QXifGDA2E4ipEizq/bgIrQMlUXFjAhw1WEe6BjkvOC+wtRVzjljf/2NnbnyeDwVKO9WsdiRy1o9In1VVXEnc7aBMewrE6ChBExAHVPXeLLKMxrY+iga9WvZGD8XuyRe4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364196; c=relaxed/simple;
-	bh=0pa4lQo6WdcD3iZoUXfVz3eROSCmrkBGjXHPB2KVS+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=raWDyeGzIAhh3w/8YswisITFv1ELBLABJqp+YfA5DkYAWOo2uCgDg0txNXoUPT/p4klP62Ept5X8itU/7/uh3j0c56+y13Hp98yFIqedFACdNH0lhitbXqQY05GP/2OcAxs9xKpoKHtjV98+kymfS2zc8lOX2NvdHSKQidLL7sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJFtRhjt; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-87a092251eeso67508596d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:03:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760364194; x=1760968994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EsvwD+Fi4syTXky3R6aiFFqllKikijYJhVHTrHzkF44=;
-        b=eJFtRhjt3Zu3BT7C7gTzBbfuwYP4T3t12VTDyTENXFsbjBUzQRN02xvsZezeG6cGIm
-         ry/e1bPXyoDK3XeRjqKPchiL52018EvQKKfBzuYmE5ZujY0dV0oxxl/iuXHDwPjD0s8I
-         SxqmTws10Xa64PcqVAIRA+e72Zr7QDGiDN6biP59eYn3tYuTRLsdMqH94KBn6cPvmukg
-         bL9qr1DXzWF5fHDXyUm+GgLoipLyKYZ+A5lAckwftMWbwwvW3AUjIhaeZi9MiCl1ZL6P
-         7gH5tXWzJQC3OUXwjoKXejXeom+ZgMTNTusogEAVpyEoucnaYNAoqeHmlBj8ygCnoJHr
-         8OQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760364194; x=1760968994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EsvwD+Fi4syTXky3R6aiFFqllKikijYJhVHTrHzkF44=;
-        b=PWx+3ZfRDf8Coif/2i904d5HECalmn1+95h7XmZWcOnGW1+JQKdR7B7r+CO+JlztA/
-         WNmpj8GOXMaCsLCz9F8m6oqWZOAooevi2OFVfMrKbjsEADaS2RbG0ebyh7YKiiN16Nuc
-         8fSzHzMMoQWHsNNAXT0cSCGQhaH6va47i0cBOSgcRU7GZZZotV7q6HtUu0j8ciK/K4VR
-         se91gix2ROZrOB6xakq7EGPpPOZhkc74JC3iqAmhWAcM5OrQGojdnQylb8d2/PWf9Cbj
-         PiQD7LJW6fCREfuJgvLhN/sLt9IWUwkpUFjcbB56BhKauZRM9iEVHhC1KIlj9PDDYbb2
-         IgTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1fppm/JB9nDSsnXpoWRzNiQPJ6VhZOqar/ql2cRKdRgJhw0V/pvdxvzAu4N7l5xsYLNXn4BhYBhH/OzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw54h4smlsqWtuvJuj36aqGr9LkM3uM1ww0rRj/D3mKXGxBIQcf
-	BPXsdXUwrmcZp1A5KKmFjs2bRf3v9dBDeLSSuAHX+NIlWgwjMlZ4TkJpC6NAeRKYz/gRkJN4avk
-	hCgUEeVJV0HA64pVjmsnaEUgdhuMDH64=
-X-Gm-Gg: ASbGncuFyLhdr+yOiFl6rgwREcPkWxkcg2obpX9kjbbbR5tof8OtRXbzKLbXToLRR3j
-	QC2cPUtIYnIXu9qZ0J09+cnIHqkG+C1MhNliwDRypZMlBZJ9b3tKASmBRitbU9vqBHknl3e2K0a
-	Q1SK1K3CZeRvDxyggqb0odmYmkNQKNlmEF15oBMCaAH0+hwNyGFGpujSEPs9MhKL8RKRiFHvE6D
-	brIyGdm1K1PaGGnjdMrqoBy0V4GUpFYALpCPg==
-X-Google-Smtp-Source: AGHT+IFvq5k1EuebtHjH8NtC18O9Z9IQYxbVQCJ9hJgUzNYb51sqTyvtRgLwUZEROHyWBv2AmHidhVXrKQI11wj9UYk=
-X-Received: by 2002:a05:6214:5018:b0:7e6:7392:f7df with SMTP id
- 6a1803df08f44-87b3a784170mr279102566d6.6.1760364194107; Mon, 13 Oct 2025
- 07:03:14 -0700 (PDT)
+	s=arc-20240116; t=1760364199; c=relaxed/simple;
+	bh=qFNp5MB6DWbZbp8cEbmqyi11ic80zgN1H85m+AaUgkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G/5CmtS3OXg1uPShcUjIRZbAcgYGceCw60YFhJnylOb5WxyRohxsfwrmW7WD7qkJXmo2lbHy5zX4zto087qzps5R/cWiU4D9O5O2h9BoZuJaZ5/nQl11dP2p3FuYR5iKpqPssNSpEag4ILXbtWd/uWC15H4dljrcn+6Q7R6zKA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=kRJXpFJd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E7fT/E+i; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 6A6887A0101;
+	Mon, 13 Oct 2025 10:03:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Mon, 13 Oct 2025 10:03:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm2; t=1760364195; x=1760450595; bh=0v5l7tGijz
+	2EfG0QG368LVGN6Z2/AIGcrEg8hzXalO8=; b=kRJXpFJdRrcmcQwBgL9hpXxwtJ
+	mavohww4QN0z57tdq8T6mTmyceZjnUPw9lz5iqYTq5BK21D2qWsoSHQMX+Qv1mTB
+	CCo1VeXBV83Tk3MqXMjTSbtqXpPFizHoVfvuiUd3pXscycF6hEBgD9DaA2Pk0oAE
+	iLeVddqV6hdXAS8EghpRkGuuqJvA1c8qu/L6RcvDSNm44NpeynNq6PeY0bT0Ovuf
+	oNsvOWcC55CQZh0H6x4DMiFCRue2rY54RNabcUuc0d0GcVvyOOMJB6jRlds7EPk6
+	bkurFUOph7/50y3IWSwk2vBtO67sXgW/JwVaYVT6lhqDJ5nQI1nyriktqo8Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760364195; x=1760450595; bh=0v5l7tGijz2EfG0QG368LVGN6Z2/AIGcrEg
+	8hzXalO8=; b=E7fT/E+izu+Rvy/D+jWYy7nNxqfQCRe9zaBWIx9o1LYtg4Z0VmX
+	obm129WENgXraiTPrVHR53Ipwy2hHLufm5yqkaVbCy0SBdv+aUPz/sJ4dSg7Nx3q
+	AYo3KvOf9dRD7dMDMtx3+DnV4FgeuHaRrYWO059ekZnWTUxv4fCNgaaMuaUkSGfm
+	1mzKzLHOZ0JPSEDGeilHCnYn3/KQVu9HjwCZzG/TGyx/aClPYw81RHGlo0hlWf3Q
+	XqF/CHQT2OyTiyaAqedMQWIVbdvcGBW4MZ5mhCYDumtmxPws28lKzpucvT5NPFg2
+	3W+XaX/5Q5zK31CWUXkEftMuIUREKikL7dw==
+X-ME-Sender: <xms:ogbtaABaJh18La4CwcGruwgNqQ6DPGjoGbX_RQA-OE6SJbyxQRDHYw>
+    <xme:ogbtaAebCv6xguAVecyzQeny4a76N9PnXJMDmElexGZzUhbeJx7M7xajF4eLEw1oi
+    evAquiuH74slv8WQND16ePLb7NFHEdyeywK6nt4iHAInve1KhUoRsQ>
+X-ME-Received: <xmr:ogbtaLLJBpj19TC-Ddna2OOlSQvClSqmjrRdbxVK6AoahIuIsZMROs0CqM5IUIJ22UEd2vwn9_SJmbAzXj34EH4jO9KY5iuc3iv7JC4U35VmPw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudejkeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhi
+    sehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffveekud
+    fhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrg
+    hmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvg
+    hfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:owbtaDe4yb0af412onUTiB7nJbCqoeZOsQhSbcfs3v7r28vEiOOmBQ>
+    <xmx:owbtaC2MrWq8qjJd-VG8mIYNFRe2cuRlCAXyjUgSoT82jQTnnBz1Tw>
+    <xmx:owbtaMgUI0lrAv3vLzzgnNYwPcyKqMYbnlBI4zHL9uLHtSUYzNpeHw>
+    <xmx:owbtaISReXUczATcNNF9ZkpRH6SPJczw2WUidF1h5oF9WfLzMez1qA>
+    <xmx:owbtaJ2igtKSQvjhL0e0gyyjRyrFFxeanMRO2ubDTqoWzvzBtGb-eJUm>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 Oct 2025 10:03:14 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] firewire: core: add device quirk detection
+Date: Mon, 13 Oct 2025 23:03:09 +0900
+Message-ID: <20251013140311.97159-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAP_9mL5=GmtJF3nSbfX6gRzPc=fAMrTOfMuOLyWFwq5D4OYUFw@mail.gmail.com>
- <20251013130010.143271-1-amadeus@jmu.edu.cn>
-In-Reply-To: <20251013130010.143271-1-amadeus@jmu.edu.cn>
-From: Liangbin Lian <jjm2473@gmail.com>
-Date: Mon, 13 Oct 2025 22:03:01 +0800
-X-Gm-Features: AS18NWAoIMYqp_P27rsiPm63GVautCNYpIalpnf8xGliTTm_E7ySNqCl1fUxC1Y
-Message-ID: <CAP_9mL7eaDBtVE-VUEMojG9wz34Cfa+N4Ekorj165M=_4zpPbQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de, 
-	krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Chukun Pan <amadeus@jmu.edu.cn> =E4=BA=8E2025=E5=B9=B410=E6=9C=8813=E6=97=
-=A5=E5=91=A8=E4=B8=80 21:00=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi,
->
-> > +&pinctrl {
-> > +     gmac0 {
-> > +             eth_phy0_reset_pin: eth-phy0-reset-pin {
-> > +                     rockchip,pins =3D <2 RK_PD3 RK_FUNC_GPIO &pcfg_pu=
-ll_up>;
-> > +             };
-> > +     };
->
-> Leave a blank line.
->
-> > +     gmac1 {
-> > +             eth_phy1_reset_pin: eth-phy1-reset-pin {
-> > +                     rockchip,pins =3D <2 RK_PD1 RK_FUNC_GPIO &pcfg_pu=
-ll_up>;
-> > +             };
-> > +     };
->
-> > +     gpio-leds {
-> > +             status_led_pin: status-led-pin {
-> > +                     rockchip,pins =3D
->
-> No line break required here.
->
-> > +                             <2 RK_PD7 RK_FUNC_GPIO &pcfg_pull_none>;
-> > +             };
-> > +     };
->
-> > VBUS on usb2phy0_otg is floating, this USB port only works on
-> > device (peripheral) mode.
-> > phy-supply is optional, so this should be fine, right?
->
-> Yes, if there is no log like this:
-> supply phy not found, using dummy regulator
-...
+Hi,
 
-> > VBUS on usb2phy0_otg is floating, this USB port only works on
-> > device (peripheral) mode.
-> > phy-supply is optional, so this should be fine, right?
->
-> Yes, if there is no log like this:
-> supply phy not found, using dummy regulator
+In the history of this subsystem, we have experienced some device-specific
+quirks. For example:
 
-I have checked the log, 'supply phy not found, using dummy regulator'
-not present on usb, but present on gmac.
+* afa1282a35d3 ("firewire: core: check for 1394a compliant IRM, fix inaccessibility of Sony camcorder").
+* a509e43ff338 ("firewire: core: fix unstable I/O with Canon camcorder").
+* 3a93d082bacf ("ALSA: firewire-motu: add support for MOTU Audio Express")
+
+However, there is no common mechanism to handle such quirks. This patchset
+adds a consistent approach for detecting and managing device-specific
+quirks within the subsystem.
+
+Takashi Sakamoto (2):
+  firewire: core: detect device quirk when reading configuration ROM
+  firewire: core: handle device quirk of MOTu Audio Express
+
+ drivers/firewire/core-card.c   | 21 +++------
+ drivers/firewire/core-device.c | 78 +++++++++++++++++++++++++++++++++-
+ drivers/firewire/ohci.c        | 29 +++++++++++++
+ include/linux/firewire.h       | 14 ++++++
+ 4 files changed, 126 insertions(+), 16 deletions(-)
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.51.0
+
 
