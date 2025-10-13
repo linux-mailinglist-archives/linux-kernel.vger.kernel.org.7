@@ -1,52 +1,80 @@
-Return-Path: <linux-kernel+bounces-850048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECDEDBD1B66
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:53:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE29DBD1B69
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151031896070
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:53:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAF7C4E9BB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490BB2E6CC4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BA32E6CCE;
 	Mon, 13 Oct 2025 06:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="HrVai+fR"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="S7fGJDOQ"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE162E6112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B87EADC
 	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760338387; cv=none; b=eUu5PzH76qOK0QGUmAXlNNcxSwPs/nSwi75lZpZWY77Cio+T1PHADz6EdzSNhU2wsmG4CIctUfcpSaFA5BrZIHyoKC4lNLp1cHCuvDtwXdxaJEoq7cS23gdeXq0aZ1o3OvFFqFn4TdbrKe/NXgL5HwaXsfN5NUPbPeTxK+cQ0eM=
+	t=1760338387; cv=none; b=HigJ/AE/EpeMCoxyCv10fewNACcOmegSqI6FEcd645xqx6x4sBMxn+INt6JqIT5wi4/IuvSanBP+y+Rud81qIy9G4wqKehJ9dr5MV3t6SjY6XPspxSEQfNJwcrPM9TOj9O2AIue89nGA7gqoegvpKm/7+LBl36Wqn2DMLKn6M2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760338387; c=relaxed/simple;
-	bh=edndZqK85kvCQ+ETt1152bKkiF3Pw/Due1gSLmFsAZk=;
+	bh=XWfWVvT50sWqI3yEYYBBeqvjR5ZD2au7/yuFk5dkruo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eG9dkBLXSECfWAD4KsM40ZRhHmWkrIb+fvVIdJWLobGc3nR7RwAPemMB8hGQhGA9uaeq2CLcB4su62rUz5ICZ0pSy0wqZnwOO4jktm7Z4umzFgqTBlhyDXLRUIFc6BtwIH+AKP9ih6aUABe3CunkWA76IVmOmlYoAPKxohGdE4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=HrVai+fR; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=dyvWNrMSofQW6vOHoAD711mErnFuE8Umtga4HwzFqOk=; t=1760338385;
-	x=1760770385; b=HrVai+fR2RoIJ/jgYCd2soGPzRA7yAmfZUZtk5QSuxJR/84Y67k1TycszgIgx
-	My4wa+cscGJdpTTPTwseZaCdqKeIoHtCSsDr0IG4F+NyzPFl1UTF/lx6CAiMgQkH1deGBhWXm4cMq
-	+rTsfM5A+bG+aMPSbe0eudDGXwot/zsWRiDX9JuBeVv/R9d97U3935VAJRp7/K23QKZcIemEbgrlz
-	nFgydBr6VFETKJ3eYvVXC9VsSE2qzk2/blE2C7DIA0QW0fW1l7FaaqL1sr8dXmwPtTJrCSu74y+pf
-	/e467JHc4mMarGlqgobL19XRLyDjPZXbZbXhEQjH75GhJiOaVw==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1v8CQR-00GbhT-2O;
-	Mon, 13 Oct 2025 08:52:55 +0200
-Message-ID: <47d80432-3838-4fc7-898c-9a9154080113@leemhuis.info>
-Date: Mon, 13 Oct 2025 08:52:54 +0200
+	 In-Reply-To:Content-Type; b=CW7QUP+hGGXJEVxHAecLTZkBAT/CosNGgRT1Ge2cdlKJzB75E9ARq03WalD3ALW2RuIECmg1Q4zSV0X8l0vOxb2OuacuOp4soKJngNjUWQHB9U9hfyXypS7sWNt+bZdVgGU7Wyj1OVHZBc55PMg7djKGEBzSTRQxYdKf1IrgkGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=S7fGJDOQ; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so34527175e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1760338383; x=1760943183; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rbH3h4P4XxNpCmGDtdwz6GDKeAh4p4S3SJJjZvahGmI=;
+        b=S7fGJDOQMPOQq5hVE5lEPajO2/rCG27hBFcUOGRrhtZiBOX/z70AV3proMyjzPCjtf
+         L4w+jswVR6W/QUslnCeT+8fVZ5pvNdrFmyYIkK9/dUVEoDMmOtkWT5Kr3r01GFMcbjPh
+         BkJoO0J8t2Hehvu5WYnIGQZv/MaeW8WHet0L/hWicAMhPmEVuBxH17DyYkPcp4RbJ91d
+         LmVlkdqGyjHn0KlsgmO7/amgwB0VuwewWRaFHjWXxbYkvB0OBMT5h8W4JIBRMKu0eGxn
+         BQIG6FxjEYjVxGfCFtsFY+lR5Wqy2TfCadQvL8uCQRMWrFgnqm2AEUdSrqNHKoDF5ADL
+         RN/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760338383; x=1760943183;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rbH3h4P4XxNpCmGDtdwz6GDKeAh4p4S3SJJjZvahGmI=;
+        b=LiIB4g+VeshB1L555fUMuwgddrVB65DmkAbm/rU0zltesawr7oUFrtu/tAwKOhGEC2
+         zPnMAT8iqRTlBDjlRxPulSnzq3P5coeVGWgvzCg8Q4u7irMT6SyW6l5B39QGuAVdZMe9
+         vA3MH6yLi4ulHSLyVxI/7wtwo9BTMl220OUC/atnt9/VSiGfQ34OLvIFKwvkyU2ykIJE
+         wESNYWXTLCDCWGaxEE3wKErZS3Wdq5k1kBo+hfyDuPCPkMgEFaUlqfiDijsrh1Rn+7tJ
+         ZngFJGvvz8wuQENNq8uKfP3Onx2cdjahDyIhBjT4QClNf5rWosFC8bVNDRAigTXEI18g
+         rk6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPijcX7/Tav0ffuqVyYSlcQsz11cLacVrwiCIYvnyuwIMBzrnK50vOqjVicL7PI9Ct0xnfzsPOBWoOwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCXqqAWJ+8kolmXbBDUQkpzn210N2B8dqdxF1sn7pbU7h+Z+dz
+	tudxixh4pjO+IY0Bn/2814DHgzd5SzwppZVT4aEjMnY+a0J6jLiWM3FdraoEplPu5To=
+X-Gm-Gg: ASbGnctglB7X3hFX6OtfOLtT4hKFmCq4HsXctxoPV2kvPPwE1FWn4SL67Bl7OImiKtm
+	hq0FBzsO4jwq99gTSRsDEf4ID3NfL6jVXr0cZ5ZkgOdiM+Vqtt2f//litVD/iQ09l5sAMQ9mcST
+	8PNo94z/UtQll1A6G4XsQV1s/b8YtsJ0xKD0b0QBuw6SwwpZAIxVBFl9q6nteOJEgw1nqpJ38qG
+	7xju5nKvCK7Cbd05MVdjGuVtKAoJH4FBINsc+fgr0SiKLWVmNdrQl9Qq8c4YmaEhWzYD7QJsIdS
+	6eN/qTVsLJrBF2cFuw8WoBCh9GsFRDtIJlWKin0mcdgTKOb+xC+mi2/JA8SiE2EvcjX+8vUAPpq
+	FVo1GlLPLsFAUM4/tK/rCeSkGO801jbj+QJSi6Tb5NyVtD/XTEHq69/qIUeirroSdlRn2Mskvtb
+	yiVQ5uka8Myw==
+X-Google-Smtp-Source: AGHT+IHS+mxS8XXsx5JY+2orAFN0Rw3+Bxz5ihy+z4tH7rBV7ImQGUUGN7GgYYiyXdTqtgFgFgyyAw==
+X-Received: by 2002:a05:600c:1d1b:b0:46f:b32e:4f3e with SMTP id 5b1f17b1804b1-46fb32e4fa5mr108548385e9.37.1760338383336;
+        Sun, 12 Oct 2025 23:53:03 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce589a21sm17022180f8f.23.2025.10.12.23.53.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Oct 2025 23:53:02 -0700 (PDT)
+Message-ID: <628d357c-f462-4dc8-92f2-99006b73e0c7@rivosinc.com>
+Date: Mon, 13 Oct 2025 08:53:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,88 +82,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools: fix == bashism in kernel-chktaint
-To: Kevin Locke <kevin@kevinlocke.name>, Jonathan Corbet <corbet@lwn.net>,
- Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-References: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
- JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
- apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
- QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
- OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
- Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
- Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
- sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
- /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
- rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
- ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
- FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCaOO74gUJHfEI0wAKCRBytubv
- TFg9Lc4iD/4omf2z88yGmior2f1BCQTAWxI2Em3S4EJY2+Drs8ZrJ1vNvdWgBrqbOtxN6xHF
- uvrpM6nbYIoNyZpsZrqS1mCA4L7FwceFBaT9CTlQsZLVV/vQvh2/3vbj6pQbCSi7iemXklF7
- y6qMfA7rirvojSJZ2mi6tKIQnD2ndVhSsxmo/mAAJc4tiEL+wkdaX1p7bh2Ainp6sfxTqL6h
- z1kYyjnijpnHaPgQ6GQeGG1y+TSQFKkb/FylDLj3b3efzyNkRjSohcauTuYIq7bniw7sI8qY
- KUuUkrw8Ogi4e6GfBDgsgHDngDn6jUR2wDAiT6iR7qsoxA+SrJDoeiWS/SK5KRgiKMt66rx1
- Jq6JowukzNxT3wtXKuChKP3EDzH9aD+U539szyKjfn5LyfHBmSfR42Iz0sofE4O89yvp0bYz
- GDmlgDpYWZN40IFERfCSxqhtHG1X6mQgxS0MknwoGkNRV43L3TTvuiNrsy6Mto7rrQh0epSn
- +hxwwS0bOTgJQgOO4fkTvto2sEBYXahWvmsEFdLMOcAj2t7gJ+XQLMsBypbo94yFYfCqCemJ
- +zU5X8yDUeYDNXdR2veePdS3Baz23/YEBCOtw+A9CP0U4ImXzp82U+SiwYEEQIGWx+aVjf4n
- RZ/LLSospzO944PPK+Na+30BERaEjx04MEB9ByDFdfkSbM7BTQRSeAENARAAzu/3satWzly6
- +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
- s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
- ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
- ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
- z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
- M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
- zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
- 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
- 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
- FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
- WD0tBQJo47viBQkd8QjTAAoJEHK25u9MWD0tCH8P/1b+AZ8K3D4TCBzXNS0muN6pLnISzFa0
- cWcylwxX2TrZeGpJkg14v2R0cDjLRre9toM44izLaz4SKyfgcBSj9XET0103cVXUKt6SgT1o
- tevoEqFMKKp3vjDpKEnrcOSOCnfH9W0mXx/jDWbjlKbBlN7UBVoZD/FMM5Ul0KSVFJ9Uij0Z
- S2WAg50NQi71NBDPcga21BMajHKLFzb4wlBWSmWyryXI6ouabvsbsLjkW3IYl2JupTbK3viH
- pMRIZVb/serLqhJgpaakqgV7/jDplNEr/fxkmhjBU7AlUYXe2BRkUCL5B8KeuGGvG0AEIQR0
- dP6QlNNBV7VmJnbU8V2X50ZNozdcvIB4J4ncK4OznKMpfbmSKm3t9Ui/cdEK+N096ch6dCAh
- AeZ9dnTC7ncr7vFHaGqvRC5xwpbJLg3xM/BvLUV6nNAejZeAXcTJtOM9XobCz/GeeT9prYhw
- 8zG721N4hWyyLALtGUKIVWZvBVKQIGQRPtNC7s9NVeLIMqoH7qeDfkf10XL9tvSSDY6KVl1n
- K0gzPCKcBaJ2pA1xd4pQTjf4jAHHM4diztaXqnh4OFsu3HOTAJh1ZtLvYVj5y9GFCq2azqTD
- pPI3FGMkRipwxdKGAO7tJVzM7u+/+83RyUjgAbkkkD1doWIl+iGZ4s/Jxejw1yRH0R5/uTaB MEK4
-In-Reply-To: <1531d0cd452f1870e1703c263b11d718c46b54bb.1760216665.git.kevin@kevinlocke.name>
+Subject: Re: [PATCH v7 0/5] riscv: add support for SBI Supervisor Software
+ Events
+To: Paul Walmsley <pjw@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Himanshu Chauhan <hchauhan@ventanamicro.com>,
+ Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>,
+ Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Yunhui Cui <cuiyunhui@bytedance.com>
+References: <20250908181717.1997461-1-cleger@rivosinc.com>
+ <86817f9a-c601-81e8-b95b-0f2396275f95@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <86817f9a-c601-81e8-b95b-0f2396275f95@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1760338385;56e14a06;
-X-HE-SMSGID: 1v8CQR-00GbhT-2O
+Content-Transfer-Encoding: 8bit
 
-On 10/11/25 23:04, Kevin Locke wrote:
-> When /bin/sh is a shell other than bash, invoking kernel-chktaint with
-> at least one argument may produce error messages such as the following
-> (produced by [dash] with argument 1024):
+Hi Paul,
+
+Thanks for caring about this series ;)
+
+On 10/10/2025 03:32, Paul Walmsley wrote:
+> Hi Clément, 
 > 
->     ./kernel-chktaint: 22: [: 1024x: unexpected operator
->     ./kernel-chktaint: 22: [: 1024x: unexpected operator
+> On Mon, 8 Sep 2025, Clément Léger wrote:
 > 
-> This occurs because the == operator is not specified for [test in POSIX]
-> and is not supported by all shells, as noted by shellcheck [SC3014].
+>> The SBI Supervisor Software Events (SSE) extensions provides a mechanism
+>> to inject software events from an SBI implementation to supervisor
+>> software such that it preempts all other supervisor level traps and
+>> interrupts. This extension is introduced by the SBI v3.0 specification[1].
+>>
+>> Various events are defined and can be send asynchronously to supervisor
+>> software (RAS, PMU, DEBUG, Asynchronous page fault) from SBI as well
+>> as platform specific events. Events can be either local (per-hart) or
+>> global. Events can be nested on top of each other based on priority and
+>> can interrupt the kernel at any time.
+>>
+>> First patch adds the SSE definitions. Second one adds support for SSE
+>> at arch level (entry code and stack allocations) and third one at driver
+>> level. Finally, the last patch add support for SSE events in the SBI PMU
+>> driver. Additional testing for that part is highly welcomed since there
+>> are a lot of possible path that needs to be exercised.
+>>
+>> Amongst the specific points that needs to be handle is the interruption
+>> at any point of the kernel execution and more specifically at the
+>> beginning of exception handling. Due to the fact that the exception entry
+>> implementation uses the SCRATCH CSR as both the current task struct and
+>> as the temporary register to switch the stack and save register, it is
+>> difficult to reliably get the current task struct if we get interrupted
+>> at this specific moment (ie, it might contain 0, the task pointer or tp).
+>> A fixup-like mechanism is not possible due to the nested nature of SSE
+>> which makes it really hard to obtain the original interruption site. In
+>> order to retrieve the task in a reliable manner, add an additional
+>> __sse_entry_task per_cpu array which stores the current task. Ideally,
+>> we would need to modify the way we retrieve/store the current task in
+>> exception handling so that it does not depend on the place where it's
+>> interrupted.
+>>
+>> Contrary to pseudo NMI [2], SSE does not modifies the way interrupts are
+>> handled and does not adds any overhead to existing code. Moreover, it
+>> provides "true" NMI-like interrupts which can interrupt the kernel at
+>> any time (even in exception handling). This is particularly crucial for
+>> RAS errors which needs to be handled as fast as possible to avoid any
+>> fault propagation.
+>>
+>> A test suite is available as a separate kselftest module. In order to
+>> build it, you can use the following command:
+>>
+>> $ KDIR=<build_dir> make O=build TARGETS="riscv/sse"-j $(($(nproc)-1)) -C tools/testing/selftests
+>>
+>> Then load the module using:
+>>
+>> $ sh run_sse_test.sh
+>>
+>> A KVM SBI SSE extension implementation is available at [2].
+>>
+>> Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v3.0-rc7/riscv-sbi.pdf [1]
+>> Link: https://github.com/rivosinc/linux/tree/dev/cleger/sse_kvm [2]
 > 
-> To fix the issue and avoid the error message, replace == with =.
+> I updated these to apply on Linus' current master, commit 5472d60c129f, 
+> cleaned up the checkpatch.pl --strict issues, applied Anup's pr_info() 
+> suggestion, and pushed them up here to make it convenient for folks to 
+> integrate and test:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/pjw/riscv.git/?h=riscv-experimental-for-v6.18
+> 
+> Am assuming you didn't have other changes that you wanted to make; let me 
+> know if that's not the case.
 
-Many thx for this!
+Indeed, I do not have pending modification for this series. The KVM SBI
+SSE support will be submitted later that year.
 
-Acked-by: Thorsten Leemhuis <linux@leemhuis.info>
+> 
+> I noticed that you asked for folks to do additional testing, particularly 
+> of the SBI PMU driver integration, but didn't notice any additional 
+> Tested-by:s.  It would be great if other folks on the list could do some 
+> focused testing now, particularly since we're on v7 of this series, and 
+> I'm sure others care about this.
 
-BTW, I doubt that anyone cares, but I wonder if these are really necessary:
-> [dash]: https://git.kernel.org/pub/scm/utils/dash/dash.git
-> [test in POSIX]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html
-> [SC3014]: https://www.shellcheck.net/wiki/SC3014
-And maybe they should be proper link tags (with references at the end),
-as mentioned in
-https://www.kernel.org/doc/html/latest/process/5.Posting.html (search
-for "optional-other-stuff"). But overall I guess those links are not
-really worth it.
+ I would have prefer a bit more reviews and testing before going through
+since SSE can be quite intrusive at execution time (even though the
+classic IRQ path should not be impacted, I expect mostly feedback/bugs
+from the SSE handling path itself). We'll see in a few days if people
+find such problems.
 
-Ciao, Thorsten
+Thanks,
+
+Clément
+
+
+> 
+> 
+> thanks,
+> 
+> - Paul
+> 
+
 
