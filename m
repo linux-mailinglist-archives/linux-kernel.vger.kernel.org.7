@@ -1,61 +1,79 @@
-Return-Path: <linux-kernel+bounces-850886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF07BD50FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:32:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B5BBD4D08
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A0A4819A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:43:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF9B6502626
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5D53093D7;
-	Mon, 13 Oct 2025 15:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD98E3093D1;
+	Mon, 13 Oct 2025 15:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t5ud2BXl"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nmtuxVis"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0C130648A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661AE314D3C;
+	Mon, 13 Oct 2025 15:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369240; cv=none; b=c8JLSmu38VThuJWRoPdMXDETYSAP4Y1KxFU+V9Wz8h0fdJWqbw1ui4PXLO8BF+fZ9PHkdJlMdC4wxReeIiQoz+TzCzw1pqgznBemlie/XE2KGqzr+idCJL8/r3mcV2lfMT8WaUG3VecRZgeMrEMv4dKGidUL43Mo+6V0pWrFXJs=
+	t=1760369251; cv=none; b=mx0XuAz2kXdlKVSlrLrTXUAzlAeaJv2sBGRDAs22RJizTBdmieyP9BitC85E6m581YfbmSWufwxcwmxvR5hprGWdUFM83wQqAPcUY1aBU11/pZAwjLC9V6im0rdH1qstORlQslyCuz+8Jr1wniqk/h/SMNuVjk15BGXtuVRqk74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369240; c=relaxed/simple;
-	bh=au5Zxa9P6vv155UjeHIJB4LFB8RaN28iXMoa0bi7Z1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CPWr1abolfyQ6QMBbI+sQaNg7tbg1w51DCBcvi1jVKPeUc0omc/v55zSzLliOB/jfBe5JRe0CBWdUhxTp/zQH+1zkX/SS3oIvqMx7eFIhe+wszLZTQwr45pzvXREfn8FEX18qXNd5EF3RDNRuoUqaQwgN8YwFqKh4HTQvT0n3hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t5ud2BXl; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760369226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sUj9/fl0PKZckLy/y4eN1T39rCUtbYnu7ZJ7T8cVVSc=;
-	b=t5ud2BXlDCEPZ1pxV130zo3FndtMDDhLrfBFVwETd2jkIRR1vszPGNqa9Y27dW57tBOa9X
-	XEfAKBUILypXfYlBzR6R4k2A1J+XazEjleqQ8h6WxRmB3TrVuy5w4p9IwgfGpBPxziNp2t
-	G8lr4i8D1khM26NUONWpyHkUuCs5uDw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Kees Cook <kees@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] keys: Replace deprecated strncpy in ecryptfs_fill_auth_tok
-Date: Mon, 13 Oct 2025 17:26:28 +0200
-Message-ID: <20251013152627.98231-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1760369251; c=relaxed/simple;
+	bh=uV3J+ukDhk15H89nr/D2cVuC6yRnOiEZ9jjzajCXzKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TiqbhKGbrtCQXfd7Ft6WslQozWUjw+HTD/RvUrXepaG9iRxDFnhQcJNGw2scmrxXMyu6SR5+uBexIL8fLtqxVgkUPThcb2JFib9gN12JHiUy/4WCW/7RJv0fyVv87aNNjSGUUTbhwq9a94tm4dP5iUJhpj9npgmS055IsmZLZX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nmtuxVis; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id B41404E4106B;
+	Mon, 13 Oct 2025 15:27:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 87E226067B;
+	Mon, 13 Oct 2025 15:27:27 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1A6DF102F1D5C;
+	Mon, 13 Oct 2025 17:27:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760369245; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=j9UGTJcWYSBAqp5JJLufyhsbLELsj0ohBAucYdJtZ1o=;
+	b=nmtuxVisKyZjIHulDLUKYBbUvhnneHIQkbm/QxsomgvOTckqW21U/qV47R+cuxQz+aGelx
+	wnXpsK8PmsjCiGxQZzHZlxTC0MVqceM1MQnWiir1XzM2mW5Zqg2+wHIWbcyTk6+a9Sw0tQ
+	cebrpI507mFLHBxz42FMW62LzC0F5snBRpSo+iK4cSNtTXSmoAh3SAOvuqSoQ7VbVP3RmR
+	w8yPk4FfxITQkCtHpiNhdM3BhQOxZkuX2qhLdcAFcOwETotp+WsO7nWo6efRu1lZKfgaAG
+	QOpl+q/f67D2SkrFbst4lxKntnPYWb3jhpsVcr1XYbTf1S+ePVRE3xmErxahCg==
+From: Richard Genoud <richard.genoud@bootlin.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	Johan Hovold <johan@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Richard Genoud <richard.genoud@bootlin.com>
+Subject: [PATCH v2 01/15] mtd: rawnand: sunxi: Remove superfluous register readings
+Date: Mon, 13 Oct 2025 17:26:31 +0200
+Message-ID: <20251013152645.1119308-2-richard.genoud@bootlin.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251013152645.1119308-1-richard.genoud@bootlin.com>
+References: <20251013152645.1119308-1-richard.genoud@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,60 +81,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Last-TLS-Session-Version: TLSv1.3
 
-strncpy() is deprecated for NUL-terminated destination buffers; use
-strscpy_pad() instead to retain the NUL-padding behavior of strncpy().
+The register NFC_REG_ECC_CTL was read twice and the result was not used,
+then a third time with a mask applied.
+Removing those calls didn't change the behavior.
 
-The destination buffer is initialized using kzalloc() with a 'signature'
-size of ECRYPTFS_PASSWORD_SIG_SIZE + 1. strncpy() then copies up to
-ECRYPTFS_PASSWORD_SIG_SIZE bytes from 'key_desc', NUL-padding any
-remaining bytes if needed, but expects the last byte to be zero.
+Tested on H616 SoC, scrambling enabled.
 
-strscpy_pad() also copies the source string to 'signature', and NUL-pads
-the destination buffer if needed, but ensures it's always NUL-terminated
-without relying on it being zero-initialized.
-
-strscpy_pad() automatically determines the size of the fixed-length
-destination buffer via sizeof() when the optional size argument is
-omitted, making an explicit size unnecessary.
-
-In encrypted_init(), the source string 'key_desc' is validated by
-valid_ecryptfs_desc() before calling ecryptfs_fill_auth_tok(), and is
-therefore NUL-terminated and satisfies the __must_be_cstr() requirement
-of strscpy_pad().
-
-Link: https://github.com/KSPP/linux/issues/90
-Reviewed-by: Kees Cook <kees@kernel.org>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
 ---
-Changes in v3:
-- Improve commit message
-- Link to v2: https://lore.kernel.org/lkml/20251010161340.458707-2-thorsten.blum@linux.dev/
-
-Changes in v2:
-- Improve commit message as suggested by Jarkko and Kees
-- Link to v1: https://lore.kernel.org/lkml/20251009180316.394708-3-thorsten.blum@linux.dev/
----
- security/keys/encrypted-keys/ecryptfs_format.c | 3 +--
+ drivers/mtd/nand/raw/sunxi_nand.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/security/keys/encrypted-keys/ecryptfs_format.c b/security/keys/encrypted-keys/ecryptfs_format.c
-index 8fdd76105ce3..2fc6f3a66135 100644
---- a/security/keys/encrypted-keys/ecryptfs_format.c
-+++ b/security/keys/encrypted-keys/ecryptfs_format.c
-@@ -54,8 +54,7 @@ int ecryptfs_fill_auth_tok(struct ecryptfs_auth_tok *auth_tok,
- 	auth_tok->version = (((uint16_t)(major << 8) & 0xFF00)
- 			     | ((uint16_t)minor & 0x00FF));
- 	auth_tok->token_type = ECRYPTFS_PASSWORD;
--	strncpy((char *)auth_tok->token.password.signature, key_desc,
--		ECRYPTFS_PASSWORD_SIG_SIZE);
-+	strscpy_pad(auth_tok->token.password.signature, key_desc);
- 	auth_tok->token.password.session_key_encryption_key_bytes =
- 		ECRYPTFS_MAX_KEY_BYTES;
- 	/*
--- 
-2.51.0
-
+diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
+index f6a8e8ae819d..cb12179b63a5 100644
+--- a/drivers/mtd/nand/raw/sunxi_nand.c
++++ b/drivers/mtd/nand/raw/sunxi_nand.c
+@@ -623,13 +623,12 @@ static void sunxi_nfc_randomizer_config(struct nand_chip *nand, int page,
+ 					bool ecc)
+ {
+ 	struct sunxi_nfc *nfc = to_sunxi_nfc(nand->controller);
+-	u32 ecc_ctl = readl(nfc->regs + NFC_REG_ECC_CTL);
++	u32 ecc_ctl;
+ 	u16 state;
+ 
+ 	if (!(nand->options & NAND_NEED_SCRAMBLING))
+ 		return;
+ 
+-	ecc_ctl = readl(nfc->regs + NFC_REG_ECC_CTL);
+ 	state = sunxi_nfc_randomizer_state(nand, page, ecc);
+ 	ecc_ctl = readl(nfc->regs + NFC_REG_ECC_CTL) & ~NFC_RANDOM_SEED_MSK;
+ 	writel(ecc_ctl | NFC_RANDOM_SEED(state), nfc->regs + NFC_REG_ECC_CTL);
 
