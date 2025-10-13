@@ -1,111 +1,168 @@
-Return-Path: <linux-kernel+bounces-851194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE92BD5BCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:34:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599ABBD5BC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EA334F1610
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:34:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61F564F0A19
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E07E2D73BE;
-	Mon, 13 Oct 2025 18:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3CD2D7395;
+	Mon, 13 Oct 2025 18:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nIkWXCbO"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ym8M83Gj"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B152D5929
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9432D661A
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760380475; cv=none; b=kZmWBvCmOogvhqRGAD7tNIWr418GeaTeRg+gseklbZJsASkp+h13EhsbK71sR4VOzs9wjSPzd2AYUpbGE4fZyXQb4saawlNfVSQ9WWsEDjrR0KAV5OzY5L2ZmAmcqQmx8tUSru4t6OfTQbOT8VQEM6md907BgDWklHau0nPwYSk=
+	t=1760380471; cv=none; b=c9uviO6soxO/DNiApZcqNjq5ArINPeTvCXb8i4Id7vS1qjBIE1XAGA+z/udy0Sck/vTbvTXeYlRzSIdznT3Jp0nHme+MuMSI2dcRxS0la5JdXpLwnc96Y8JMtnRg/cqFm9Uhbm3Fu1mCfVT+2zqBBmi/WCRDnu509AbBqSD7KUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760380475; c=relaxed/simple;
-	bh=Afq6cNan9t/2gw+te4XV8ANY20V5fsOBm2d4w/26+qg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e8N8X3IfIjt8QxzcYhEe0V8jyd7Wq/ThWYk4E2P5GwHEVunsjGO2m+LfKo3UprDLM6u1JDautMpjiKlzZNFy2Tli2mkgQR+OUv6zkQjzxkBFw7QU01JQDAJcGGpYtXVviOYgnskKccD23k0t7CbEKUK7Wi9ddyrpvcrjR6yThtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nIkWXCbO; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1760380471; c=relaxed/simple;
+	bh=MhcnUYIzW/AjzXhn2E+PvO698S4Cf6FqeCfg4+Wjp0k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bosKXuhycPIk3lUzViDcHKj37ejPRta917OUfjbhRng9Mp+KdbadUp3ATh8lB3jfVqy9d0qMcrFEREYo31UipVAUtc5k+Pvy18Nua+36ZpsU9AAXUdcIrzp5eRkVyI1hcB9GZBFpIafg6wvLGy2KikexYz8lqhjury3xZWi1jtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ym8M83Gj; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fa84c6916so24580a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:34:32 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b3d6645acd3so455286866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:34:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760380471; x=1760985271; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Afq6cNan9t/2gw+te4XV8ANY20V5fsOBm2d4w/26+qg=;
-        b=nIkWXCbOHSMGaBqWWJJmrgsAOXnOGgEiGblZlskaHZzFrQfFQ7My8Y2pljgDsLo61J
-         K1bpH8xUPqLhwapCb7r0SuD3oQDkVReBl/FdzbtYkpcFCLjPc0PMiYHpWnplt1Ckpnj8
-         b1g0OTjNB4LpNcb+NX8lRvMgWTwSHlg8XEP0LPkcnqGUG58bG9TLQec+1OuaPrxdWvzP
-         rHdTyhENX4Bpr+OoUl+wKntoEUpnjwWb0lTRQZXi34JvHMB8rFITJ8SaDZclYdCtb72n
-         +ot0KRy3lKiFmqGKYrUzTwDBUBg4WUs+Te/4EC5nmeEROXoNaf5cF2mJUMC1kH8+eZZU
-         cQ3w==
+        d=google.com; s=20230601; t=1760380468; x=1760985268; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ay88j/QH+hyyaDBYdXcO1dx59pcNYIrbAIsPI7MQ/r0=;
+        b=ym8M83GjNWGwF+4tsGmYsHLbaPw+5Q9ol66z0+BSv49SO2oEAvVk0y9EDa/WyxIv11
+         i5R0F1Nc26odJPK0HVY8O94K7oUEXSeVXAbvDb/GpZBzlAC4547cUecaYabC3e3bim3c
+         UVwAJ5mGmA1FqmR1OneRzlQVpbNhyZYqdNZI1VUMB6ygLh8lhun8FDksBYlzR/b6MRuR
+         a7HAH3tHmQbE5LhVgiClt62YbVp3CfK2bkWPyI0VVMh+RqGGBLrEFVIZKNPukDtAFJE3
+         +HRyzafHZEE1jCnV8WVP511z1nFi6XHzq8zbxOmUC5Ac2XLsmfuU5yXgjQP6tvmHrU7q
+         8wmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760380471; x=1760985271;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Afq6cNan9t/2gw+te4XV8ANY20V5fsOBm2d4w/26+qg=;
-        b=CVj2qmbSNIVu345KOCz5dfBFkpcQkBqjjvhgB/LHTdaFd2I8kQZBW9UH2eS+j0WYby
-         indIKaFJ8t02006hgU0ADZQTxHtcaWvnSv9kzzocvFAOG1hJc24s0KZxJFgFJxKT9OMk
-         uZnNq866eXNdZGop5/+r4DZVsKfTVgrB6ai8kH9XbssORA+82upfDGTaLdkpXZO8kgnu
-         pgDNfKoXk8zewuzPFzB2yf12U5z1YJms2V45liiEFCLCE0ZjRLx5zWvbm4zn7vCLgYHG
-         yP53jeLmUdsFjhOm6vYLiTllb4wxT42ihvzXbNirqXUvpKMzViffwIsj39tVexbgBy+B
-         7NnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWggWH2aVo71cBPT530ZMinhaxlRd0Y0P/9GJDByZLX5i0dRHvLo/pJfPJKtKIv6zKCi5x09GI9Ah/ZJXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxB2oXmcmKX4KLNELoMfB2SoOP6uInScenGnDjYE9BVO5TlLZg
-	2WThrzYHAm4gi8FaDapmZ62EIFEZJprnh4XuDgGC9GbaV/WSqJ4zX11sx2PBuWDse/0MuG0Uqn7
-	XkCxUb/nVLo+0t8Q4rpaGRiZSn4dmoh0bW6/w1Att
-X-Gm-Gg: ASbGnctmP24CNKON4SikaMyfTJZBMLAQjCGyqJzfbGMrWIEUwUHxHYrR0+aPSAJIDSW
-	LB3XZxvr2EMqIr/KsKAdZXtYKZzYUj+TxRTV8PkqAuuWclQvC0S9KDs4wvJWsjYZOxhIT4YysAk
-	5vXIR6elMHQpRcCOaUM3mhG6VdYAQJ2/ckiuxdmB+y57tDJWZTGg/kYDoG4rKFAawp93kIlhrWr
-	RawdBGCvk3Z+WoCmeP//XtpFuAzAOd/ILoo3XkD9WdXvbcQjvlMXw==
-X-Google-Smtp-Source: AGHT+IFRwNFRw95/PZ4giLCn1mM7Nqj94TnRmfK/bODb4e+FbWoWD5Kzjyueo2VriuqMV3KAw8pFMMhjt3TSmvoOwWM=
-X-Received: by 2002:aa7:c84e:0:b0:624:45d0:4b33 with SMTP id
- 4fb4d7f45d1cf-639d53090admr609561a12.7.1760380471100; Mon, 13 Oct 2025
- 11:34:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760380468; x=1760985268;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ay88j/QH+hyyaDBYdXcO1dx59pcNYIrbAIsPI7MQ/r0=;
+        b=r7mahPKZlEp3Uv+eY6MsLptZ3YNhEyIYynCVHtvtxkV66Rou7n1s+Q8IXvftBqhdzQ
+         DYRbHlMwyrYsmamwMqXVQ3xkh6+NJ+1FX5/KXDzQSJzWXHBhVZPip/6hWhTqRh5/O4dZ
+         Ljpx+N6R/FU5VdUxgYB3S9LOhp4nn3z4kpzrD2i1MP2ool4hRlPQOq6QiEK7jeAqNU4w
+         E6DaF505f8NHCLjUgkrqZIKrSbG9pWhQ5TxxVsuBWHyF1KCFJqkVy1UNpiWiixWb99LB
+         TlrxfPqgJ7QkXBSJnjrfnfvrliL5+YBPQF6RJmpEqbwSLYwhK6ge3ypDosB3dcnulK8H
+         uwcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Jjk9Gi9G5SYp9KWQGa3PeJZPfS5UD0vwMB7ZBBZ3aec+ClItkpXtHL+N87oeHhNadzbEqpKmTl6J0xU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp2yB8vzicXKSSjSKTFaMbao0rFhyhA0jINW+Nxotpy58zeaBg
+	uCMtUdRacnnYVrW3zsSbDSBU/9DAiRoccZdova6hosGEhPVyPor0GQshKswcuo4AyCAFPmxYkFj
+	8va6ZQZjtia0egqf86Q==
+X-Google-Smtp-Source: AGHT+IGe1qNQN2z1oRXedOyQR3Zfee2RXdyhLUdBm0dMR5H6rdNOgRFmc0Gkgty5AvsElHYqpi3+spY3mX20Te0=
+X-Received: from ejn19.prod.google.com ([2002:a17:906:593:b0:b3c:12c2:d0dd])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:2689:b0:b3e:bb87:772c with SMTP id a640c23a62f3a-b50aab9c912mr2457025366b.17.1760380467851;
+ Mon, 13 Oct 2025 11:34:27 -0700 (PDT)
+Date: Mon, 13 Oct 2025 18:34:27 +0000
+In-Reply-To: <20251012145221.172116-3-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-9-yosry.ahmed@linux.dev>
-In-Reply-To: <20251001145816.1414855-9-yosry.ahmed@linux.dev>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 13 Oct 2025 11:34:18 -0700
-X-Gm-Features: AS18NWBIFyEjfltOcvssGoqGJAnQhP9wY-GXD3bDQRorIl3BP8PPFn-W1mHZQBM
-Message-ID: <CALMp9eSwzYaRVa2eO-o5oyfK5Cj=0kscCPQhCxZGQ5WWYFgN-w@mail.gmail.com>
-Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
- describe EPT entries
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20251012145221.172116-1-markus.probst@posteo.de> <20251012145221.172116-3-markus.probst@posteo.de>
+Message-ID: <aO1GM4WXs37Zpm0G@google.com>
+Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
+From: Alice Ryhl <aliceryhl@google.com>
+To: Markus Probst <markus.probst@posteo.de>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 1, 2025 at 8:05=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
-wrote:
->
-> From: Yosry Ahmed <yosryahmed@google.com>
->
-> The assertions use 'hugepage' to describe a terminal EPT entry, but
-> 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
+On Sun, Oct 12, 2025 at 02:52:39PM +0000, Markus Probst wrote:
+> Implement the core abstractions needed for led class devices, including:
+> 
+> * `led::LedOps` - the trait for handling leds, including
+>   `brightness_set`, `brightness_get` and `blink_set`
+> 
+> * `led::InitData` - data set for the led class device
+> 
+> * `led::Device` - a safe wrapper around `led_classdev`
+> 
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
 
-Nit: accurate
+> +pub trait LedOps: Send + 'static + Sized {
+> +    /// If set true, [`LedOps::brightness_set`] and [`LedOps::blink_set`] must not sleep
+> +    /// and perform the operation immediately.
+> +    const BLOCKING: bool;
+> +    /// The max brightness level
+> +    const MAX_BRIGHTNESS: u32;
+> +
+> +    /// Sets the brightness level.
+> +    ///
+> +    /// See also [`LedOps::BLOCKING`]
+> +    fn brightness_set(&self, brightness: u32) -> Result<()>;
+> +
+> +    /// Gets the current brightness level.
+> +    fn brightness_get(&self) -> u32 {
+> +        build_error!(VTABLE_DEFAULT_ERROR)
+> +    }
+> +
+> +    /// Activates hardware accelerated blinking.
+> +    ///
+> +    /// delays are in milliseconds. If both are zero, a sensible default should be chosen.
+> +    /// The caller should adjust the timings in that case and if it can't match the values
+> +    /// specified exactly. Setting the brightness to 0 will disable the hardware accelerated
+> +    /// blinking.
+> +    ///
+> +    /// See also [`LedOps::BLOCKING`]
+> +    fn blink_set(&self, _delay_on: &mut usize, _delay_off: &mut usize) -> Result<()> {
+> +        build_error!(VTABLE_DEFAULT_ERROR)
+> +    }
 
-> hugepage. The distincion will be useful in coming changes that will pass
+These functions should probably take a &Device<Bound> argument so that
+they can use methods that require a bound device (such as IO).
 
-Nit: distinction
+> +impl<T: LedOps> Device<T> {
+> +    /// Registers a new led classdev.
+> +    ///
+> +    /// The [`Device`] will be unregistered on drop.
+> +    pub fn new<'a>(
+> +        parent: &'a device::Device<Bound>,
+> +        init_data: InitData<'a>,
+> +        ops: T,
+> +    ) -> impl PinInit<Devres<Self>, Error> + 'a {
+> +        Devres::new(
+> +            parent,
+> +            try_pin_init!(Self {
+> +                ops,
+> +                classdev <- Opaque::try_ffi_init(|ptr: *mut bindings::led_classdev| {
+> +                    // SAFETY: `try_ffi_init` guarantees that `ptr` is valid for write.
+> +                    // `led_classdev` gets fully initialized in-place by
+> +                    // `led_classdev_register_ext` including `mutex` and `list_head`.
+> +                    unsafe { ptr.write(bindings::led_classdev {
+> +                        max_brightness: T::MAX_BRIGHTNESS,
+> +                        brightness_set: T::BLOCKING
+> +                            .then_some(Adapter::<T>::brightness_set_callback),
+> +                        brightness_set_blocking: (!T::BLOCKING)
+> +                            .then_some(Adapter::<T>::brightness_set_blocking_callback),
+> +                        brightness_get: T::HAS_BRIGHTNESS_GET
+> +                            .then_some(Adapter::<T>::brightness_get_callback),
+> +                        blink_set: T::HAS_BLINK_SET
+> +                            .then_some(Adapter::<T>::blink_set_callback),
+> +                        .. bindings::led_classdev::default()
+> +                    }) };
 
-> the value around and 'leaf' is clearer than hugepage or page_size.
->
-> Leave the EPT bit named page_size to keep it conforming to the manual.
->
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+This doesn't look like something rustfmt would output? Could you run
+rustfmt if you haven't already. If it doesn't do anything, then please
+format it outside of the macro and move it back in.
+
+Alice
 
