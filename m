@@ -1,54 +1,80 @@
-Return-Path: <linux-kernel+bounces-850461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24A1BD2E31
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:00:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34A6BD2E37
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8B63A5B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE52189E20E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF18266B41;
-	Mon, 13 Oct 2025 12:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2798425C6F9;
+	Mon, 13 Oct 2025 12:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PON+IrG2"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MzKlObX9"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071141514DC;
-	Mon, 13 Oct 2025 12:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC5C25A343
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760356826; cv=none; b=ZEJAQbZuS1WESF4o/Tf0cnY+KQkdHoGu4xeJlqYxu3Qna/Wp0+4opjZCwaKmmm3kn7/2yQaBBijtvbIFfSQ6TzbQucl9AXJmsAQOSIiNRWQJHBcv5u9okGxJAMzTU42rmV4fJW+zimM8I/C7bXTLDJ81fCyNlpMA3LEZOevh0kE=
+	t=1760356848; cv=none; b=axV/ZDw0ghUk4dcUc1c/GUzdHq8xp9TrV7+yBHZFPpLnO9vuj1Rtr1Yx5/t31f5m+VZ097cHypfDJztwXI+2zPMeXyxUUXvPrbwGwWRWDrxkfeHG/11ADZWvLmcOkrrBJ2+BKuKrVzbEc//ZGLEmGcon3ptmmPQLgSQ4XklV/sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760356826; c=relaxed/simple;
-	bh=Sa/75UHBs4RX4OvWkXA4txcr6Kg+Ozmx3zrtf7h9Wps=;
+	s=arc-20240116; t=1760356848; c=relaxed/simple;
+	bh=/dxqBAuMFz/4ObPFc+VeEyW8NSDE0MktALoHnbWSUek=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nUvYpNFs6Tj6q+KelVupmdd3uRE2R+HHL1ygpu8rOGordHXvWftBDb/cNUCc3MxWFBtPCsqeapiRa/4+AojfWV+GoIsBo8apr/ev1lRAUZnZ31owZ2/fbDY5CEzfaLvtRG23/UsErl8o4gdhD3wq52QFgnuZ8Vt+qXLZetTWvkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PON+IrG2; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 4A1D6C093AB;
-	Mon, 13 Oct 2025 12:00:04 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3AAB3606C6;
-	Mon, 13 Oct 2025 12:00:23 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 820F8102F2263;
-	Mon, 13 Oct 2025 14:00:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760356822; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=KEly2LZ/ci8gWOTL9VFmSwxUpRyknITeUsfSdfjGXWc=;
-	b=PON+IrG2YZZ0AQmxmKPBPmPxWfanJoZDq1KF1fXAZ8TfV8PpVQIGisX1y8TfAvY9gmI00e
-	1hsO9q5JUnDEZCuZiuOCJp28t26rxy196nvxKtuakWafldeVBVvQQ3oFlQCX9qIAUqANJC
-	Juiq/PGau5tF2xD6qVCMuSG3FwE12oRqWxGIVu+44H8BSvMP6zyZf/LLk4T4Ka3iGLn6tK
-	VBfZW5GkpbLCGzuqn8+YDdKV+WRYnnY45i8BJE20v+q7Bji934nQRuhni+s/qpslGpt6aV
-	bpfT95+bUr9rBci+SfTQn52zqQegF+LBMCb8z83UstmxzOACvRNPwn4u4Mp6kQ==
-Message-ID: <7add8d87-0909-45f2-973c-299d86e26d58@bootlin.com>
-Date: Mon, 13 Oct 2025 14:00:19 +0200
+	 In-Reply-To:Content-Type; b=cyHmMQ1/ogN2j7QR/cZBO+SxyYc7woeSTton+jiTKeanBvQW+WDE8IL826Sk51BPJ9Jm/ulmr3IRqmeqFnBURYhFATR7aCL4eAJSiEkUYTdBwEbefphNecwgC/hSObSjgx5Obh8sfuPz8g0wd/zZeCqvNTXvf13qlpZF/OoLRfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MzKlObX9; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so44088885e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760356844; x=1760961644; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/dxqBAuMFz/4ObPFc+VeEyW8NSDE0MktALoHnbWSUek=;
+        b=MzKlObX9sgMojL95RWX9Pf2wdeFjSar0xXLHZa7gWC/jsTcOBgS3VXFpIDgaphvh1y
+         pqqD798JSxD/oX/UWSbl30tvAgLc8GOL82OHsvve6qappcWqgWSEeSQEKvJlxjRq+iTw
+         PH33qMEYnmHXEWzKbKzXjAerXRrqRFN3piH8yyFhJnOOKpQXdAcbcyhqgONEonN9Gf4t
+         FdSoH6Kga8fldbpAhdkpDsgZL/QBW0v7+QGQUX3PnsC5r/AUfr5sujVFV/8xG7CfqLsP
+         yheQ9dtafhfzFxcz8tJBED67He/r161xD239o6Uzm8Az5GcmWjdk47Ctdls5+HZYQinV
+         zZWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760356844; x=1760961644;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/dxqBAuMFz/4ObPFc+VeEyW8NSDE0MktALoHnbWSUek=;
+        b=r8c0/XcWKdov5CYIzdsh2WnxTfXLOOyoi3UtpTVRMc6aMm+Ou3yVtlPC6mW1shp1kS
+         rSnbY0UMT2yMB+54GGlJpQ4OtyuIfxfj1G+dY7+3PfUHwHt9xHJBg5Yh1AtjWg1R2dYF
+         LhUJ6oK3PtU1v5zguQZufgIHM1UMyfd4T3nli/IZJw6FdYqhEyTUVXoqdrbIhe2k1LKX
+         YXOgahQHwv8VbO8eNeKwOqhMGBDV6UhsaOzVPk8xf/pWKXrC5PaQ4ZTe9VXzDIyqkyJx
+         d16uiGVb9pmrwLwN8o2npIhukX0GBGcZWymqE7LXefUh9mrWD19mMe1CC/0Im7BE+Jw5
+         AqjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGlIp9Vn6cHK+FW7ek3n8jU1LvFvD1RX575GowxIDaxWWmjv+sVhl9uLrOOP8ia230edWj0WEvVxFmKLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwLv5nX/7NgdzW51rNBX0ZEDjGoZaBnYO4HN7RgUDyjSGl4O83
+	ktR4VZr27LnxiVfNPmaA/MnTX8vSWPoSxonjV3k5k5zx8MXegw3GbUSgZrR79n41wGI=
+X-Gm-Gg: ASbGncvAi3BuEqvnKuHV2JyVRVM7fBsNnq578o7z/agmyXYapJtW8ERtCKnheNgeFHZ
+	v187IhTVGtYQHUyINCp6dzh/B654AE4PfbW+fOVFgEXhuZZhEUhBHNIYBc7wCmTuJyffQqBBPPM
+	Yfu0byLr9H0V7VX9TcLRBRF/8g5f5zcaNyMNzBOJ3LrDJbJeW2lW+pyTuMdX9hTbDl+GGH4Q8p+
+	o51QfEbA+ydreiyA16jJPD2tL3v53njK2kBEBtexscZBp3iE7sgtnb464GK1tlnbrdANonO9x6i
+	zMQV5/Neen1XlxLIjJRrgzebxizqXUBTzJjpsA7vO+SU6nduqsD0HzYSYghsUSb06JG7OKdK5sQ
+	HM7DJ4qSJVKy5jOVGFyYx+h+jNaja07v9anRQpbPt9EgwTBOy4tJPU1/QmHv+307xH2H8Z1V40z
+	kreMMrvEimTxR4ETNlB/5Y2v9iEPoPO0MGOht9iw03UD349WSnTQZm8+CNGRmrE+Q=
+X-Google-Smtp-Source: AGHT+IGocgXogRM7akcTSK1xrQE9tVgR+Nty1WOVCqdVeCe6O8qvzxmQNwZZ3oohkfEaftJ6wP49/A==
+X-Received: by 2002:a05:600c:4510:b0:45d:f83b:96aa with SMTP id 5b1f17b1804b1-46fa9a8f2e1mr144516785e9.7.1760356844293;
+        Mon, 13 Oct 2025 05:00:44 -0700 (PDT)
+Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489accbsm207642235e9.14.2025.10.13.05.00.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 05:00:43 -0700 (PDT)
+Message-ID: <cf834c9b-4c2b-4851-a2c0-5885b3cf1fda@suse.com>
+Date: Mon, 13 Oct 2025 14:00:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,150 +82,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/15] mtd: nand: sunxi: move ecc strenghts in
- sunxi_nfc_caps
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>
-Cc: Wentao Liang <vulab@iscas.ac.cn>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+Subject: Re: [PATCH v2] drivers/xen/xenbus: Replace deprecated strcpy in
+ xenbus_transaction_end
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Jason Andryuk <jason.andryuk@amd.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: linux-hardening@vger.kernel.org, xen-devel@lists.xenproject.org,
  linux-kernel@vger.kernel.org
-References: <20251010084042.341224-1-richard.genoud@bootlin.com>
- <20251010084042.341224-5-richard.genoud@bootlin.com>
- <13861163.uLZWGnKmhe@jernej-laptop>
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Content-Language: en-US, fr
-Organization: Bootlin
-In-Reply-To: <13861163.uLZWGnKmhe@jernej-laptop>
+References: <20251013115129.30304-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20251013115129.30304-2-thorsten.blum@linux.dev>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------vMnIqwKGSJE0PqZfv8VIdFz0"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------vMnIqwKGSJE0PqZfv8VIdFz0
+Content-Type: multipart/mixed; boundary="------------1E9wWmb0SvyhzfRDWrCDwsNl";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Jason Andryuk <jason.andryuk@amd.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: linux-hardening@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <cf834c9b-4c2b-4851-a2c0-5885b3cf1fda@suse.com>
+Subject: Re: [PATCH v2] drivers/xen/xenbus: Replace deprecated strcpy in
+ xenbus_transaction_end
+References: <20251013115129.30304-2-thorsten.blum@linux.dev>
+In-Reply-To: <20251013115129.30304-2-thorsten.blum@linux.dev>
+
+--------------1E9wWmb0SvyhzfRDWrCDwsNl
+Content-Type: multipart/mixed; boundary="------------RRK0hufaSRgt4jr4TufFezF4"
+
+--------------RRK0hufaSRgt4jr4TufFezF4
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: base64
 
-Le 11/10/2025 à 12:41, Jernej Škrabec a écrit :
-> Hi!
-> 
-> Dne petek, 10. oktober 2025 ob 10:40:31 Srednjeevropski poletni čas je Richard Genoud napisal(a):
->> H6/H616 has more ecc strenghts.
->> This commit prepares the change.
->> No functional change.
-> 
-> Format looks weird. Reword message to something like moving ecc to caps which
-> will allow expand support for newer cores.
-> 
-> Also, there should be empty line before "No functional change."
+T24gMTMuMTAuMjUgMTM6NTEsIFRob3JzdGVuIEJsdW0gd3JvdGU6DQo+IHN0cmNweSgpIGlz
+IGRlcHJlY2F0ZWQ7IGlubGluZSB0aGUgcmVhZC1vbmx5IHN0cmluZyBpbnN0ZWFkLiBGaXgg
+dGhlDQo+IGZ1bmN0aW9uIGNvbW1lbnQgYW5kIHVzZSBib29sIGluc3RlYWQgb2YgaW50IHdo
+aWxlIHdlJ3JlIGF0IGl0Lg0KPiANCj4gTGluazogaHR0cHM6Ly9naXRodWIuY29tL0tTUFAv
+bGludXgvaXNzdWVzLzg4DQo+IFNpZ25lZC1vZmYtYnk6IFRob3JzdGVuIEJsdW0gPHRob3Jz
+dGVuLmJsdW1AbGludXguZGV2Pg0KDQpSZXZpZXdlZC1ieTogSnVlcmdlbiBHcm9zcyA8amdy
+b3NzQHN1c2UuY29tPg0KDQoNCkp1ZXJnZW4NCg==
+--------------RRK0hufaSRgt4jr4TufFezF4
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-I'll reword that
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Thanks!
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-> 
-> Best regards,
-> Jernej
-> 
->>
->> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
->> ---
->>   drivers/mtd/nand/raw/sunxi_nand.c | 20 ++++++++++++++++----
->>   1 file changed, 16 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
->> index 10a48e0d361f..198dd40f9220 100644
->> --- a/drivers/mtd/nand/raw/sunxi_nand.c
->> +++ b/drivers/mtd/nand/raw/sunxi_nand.c
->> @@ -213,11 +213,15 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
->>    *			through MBUS on A23/A33 needs extra configuration.
->>    * @reg_io_data:	I/O data register
->>    * @dma_maxburst:	DMA maxburst
->> + * @ecc_strengths:	Available ECC strengths array
->> + * @nstrengths:		Size of @ecc_strengths
->>    */
->>   struct sunxi_nfc_caps {
->>   	bool has_mdma;
->>   	unsigned int reg_io_data;
->>   	unsigned int dma_maxburst;
->> +	const u8 *ecc_strengths;
->> +	unsigned int nstrengths;
->>   };
->>   
->>   /**
->> @@ -1619,9 +1623,9 @@ static int sunxi_nand_hw_ecc_ctrl_init(struct nand_chip *nand,
->>   				       struct nand_ecc_ctrl *ecc,
->>   				       struct device_node *np)
->>   {
->> -	static const u8 strengths[] = { 16, 24, 28, 32, 40, 48, 56, 60, 64 };
->>   	struct sunxi_nand_chip *sunxi_nand = to_sunxi_nand(nand);
->>   	struct sunxi_nfc *nfc = to_sunxi_nfc(nand->controller);
->> +	const u8 *strengths = nfc->caps->ecc_strengths;
->>   	struct mtd_info *mtd = nand_to_mtd(nand);
->>   	struct nand_device *nanddev = mtd_to_nanddev(mtd);
->>   	int nsectors;
->> @@ -1645,7 +1649,7 @@ static int sunxi_nand_hw_ecc_ctrl_init(struct nand_chip *nand,
->>   
->>   		ecc->strength = bytes * 8 / fls(8 * ecc->size);
->>   
->> -		for (i = 0; i < ARRAY_SIZE(strengths); i++) {
->> +		for (i = 0; i < nfc->caps->nstrengths; i++) {
->>   			if (strengths[i] > ecc->strength)
->>   				break;
->>   		}
->> @@ -1666,7 +1670,7 @@ static int sunxi_nand_hw_ecc_ctrl_init(struct nand_chip *nand,
->>   	}
->>   
->>   	/* Add ECC info retrieval from DT */
->> -	for (i = 0; i < ARRAY_SIZE(strengths); i++) {
->> +	for (i = 0; i < nfc->caps->nstrengths; i++) {
->>   		if (ecc->strength <= strengths[i]) {
->>   			/*
->>   			 * Update ecc->strength value with the actual strength
->> @@ -1677,7 +1681,7 @@ static int sunxi_nand_hw_ecc_ctrl_init(struct nand_chip *nand,
->>   		}
->>   	}
->>   
->> -	if (i >= ARRAY_SIZE(strengths)) {
->> +	if (i >= nfc->caps->nstrengths) {
->>   		dev_err(nfc->dev, "unsupported strength\n");
->>   		return -ENOTSUPP;
->>   	}
->> @@ -2167,15 +2171,23 @@ static void sunxi_nfc_remove(struct platform_device *pdev)
->>   		dma_release_channel(nfc->dmac);
->>   }
->>   
->> +static const u8 sunxi_ecc_strengths_a10[] = {
->> +	16, 24, 28, 32, 40, 48, 56, 60, 64
->> +};
->> +
->>   static const struct sunxi_nfc_caps sunxi_nfc_a10_caps = {
->>   	.reg_io_data = NFC_REG_A10_IO_DATA,
->>   	.dma_maxburst = 4,
->> +	.ecc_strengths = sunxi_ecc_strengths_a10,
->> +	.nstrengths = ARRAY_SIZE(sunxi_ecc_strengths_a10),
->>   };
->>   
->>   static const struct sunxi_nfc_caps sunxi_nfc_a23_caps = {
->>   	.has_mdma = true,
->>   	.reg_io_data = NFC_REG_A23_IO_DATA,
->>   	.dma_maxburst = 8,
->> +	.ecc_strengths = sunxi_ecc_strengths_a10,
->> +	.nstrengths = ARRAY_SIZE(sunxi_ecc_strengths_a10),
->>   };
->>   
->>   static const struct of_device_id sunxi_nfc_ids[] = {
->>
-> 
-> 
-> 
-> 
+--------------RRK0hufaSRgt4jr4TufFezF4--
 
+--------------1E9wWmb0SvyhzfRDWrCDwsNl--
 
--- 
-Richard Genoud, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--------------vMnIqwKGSJE0PqZfv8VIdFz0
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjs6esFAwAAAAAACgkQsN6d1ii/Ey+O
+9wf9GdcUf4z3v+VEm53GypvPg2UeLJ4HA5tDBSxJ4YwSi+yZksUoxZn3cvSygw9qwfajvNldPUmQ
+rtlg0lLPlqorVV9ieTri3ERw7DGytVRjh6Us/KAbV28LK68ePMzRhl33yu0wkgBgY2k7n8l9yQaW
+C+YJU/VQFsqqLHPvYKkaIngNtVENbVdp37eYBbqlejnoYWlHTPmzzBXavo5nVpLfQcjX9v9GMXKF
+S+a3ClBkUFP6JYMcdnv3V9cXOVHX+aEO0PPv+73AkZNr4jLRhMwHBhG3lrs6EasYK1QILG3Oo3HS
+XwHUOLJp+KwZprNsNcZQp3/Zzyk4KusunKrc7dOflQ==
+=rMBF
+-----END PGP SIGNATURE-----
+
+--------------vMnIqwKGSJE0PqZfv8VIdFz0--
 
