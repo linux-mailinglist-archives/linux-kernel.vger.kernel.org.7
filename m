@@ -1,76 +1,111 @@
-Return-Path: <linux-kernel+bounces-851191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95111BD5BAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:33:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE92BD5BCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42624350F3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:33:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EA334F1610
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6502D5939;
-	Mon, 13 Oct 2025 18:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E07E2D73BE;
+	Mon, 13 Oct 2025 18:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWAE3aKD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nIkWXCbO"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B472727FE;
-	Mon, 13 Oct 2025 18:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B152D5929
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760380421; cv=none; b=SGeIdW4iHtR2+rRNBM540RQVqiIqc6aamBRWbbMobjK9/eEuz6oQR/2W4GIgnR8FdoEz1t0h3q66TUzQx9OFBspLpnlaAXR/6lR2ujy/pyluuRgFJjy7PZfqMmZmCKb5dLYh81gsAxgfdeGiTQd9OEWY2Jf4nFAbKFSCymq94cM=
+	t=1760380475; cv=none; b=kZmWBvCmOogvhqRGAD7tNIWr418GeaTeRg+gseklbZJsASkp+h13EhsbK71sR4VOzs9wjSPzd2AYUpbGE4fZyXQb4saawlNfVSQ9WWsEDjrR0KAV5OzY5L2ZmAmcqQmx8tUSru4t6OfTQbOT8VQEM6md907BgDWklHau0nPwYSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760380421; c=relaxed/simple;
-	bh=Pb1YK9uXTK5NObze1RcKWVMvmWGEUjHg2vA9rnvzUKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kfGL7cYU+HzHiNV+fsst11jra+IXwHxyuPE5JbCDNDGaW+bsg2oRjXy7kTp9zedlHDsT6VA5GMoCX7RYww1HYVCkKUQrXN7sFdHEo5MKfPq26MsMfCbaTXd42bq/eo+88abtSN4blSVGPYOOXOXxqWASd77h1o6gzD0Nk7e0hG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWAE3aKD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95E97C4CEE7;
-	Mon, 13 Oct 2025 18:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760380420;
-	bh=Pb1YK9uXTK5NObze1RcKWVMvmWGEUjHg2vA9rnvzUKU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dWAE3aKDzRZdqo1a7OrjQwQiQ3NnsQAnwAQjsVqA+aaWVRtFxgkjqXK9lb2MOjwP+
-	 i32qITcAff92/J2ndsjtFLJk20C6o1U0HkX6teNzW9ca2vTXPIpJjNYNkvPMdjjWuV
-	 Xk8TRKrYnMkYb1PGHuCo4rWM1hhGb7lA9hJjq3LQAsvoKhGKcyGuM//p+r5HOOOhYV
-	 YSnGQsGyTnp5zWZuaEIVjrbxnH6M8xOjT7yhNoiwo/XIV/+yHJ9+N/Mh4GknlYztFW
-	 DyKBVLXVBZSF0Q+EiFPenD4zbh+1aahdO0A9RUuJuTktZyNItYDY0m0838UmRQ4EcJ
-	 XZ2puAeTmwrWw==
-Date: Mon, 13 Oct 2025 08:33:39 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH sched_ext/for-6.18-fixes] sched_ext: Sync error_irq_work
- before freeing scx_sched
-Message-ID: <aO1GAxf6zhSu7qxL@slm.duckdns.org>
-References: <20251009235623.4135746-1-tj@kernel.org>
+	s=arc-20240116; t=1760380475; c=relaxed/simple;
+	bh=Afq6cNan9t/2gw+te4XV8ANY20V5fsOBm2d4w/26+qg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e8N8X3IfIjt8QxzcYhEe0V8jyd7Wq/ThWYk4E2P5GwHEVunsjGO2m+LfKo3UprDLM6u1JDautMpjiKlzZNFy2Tli2mkgQR+OUv6zkQjzxkBFw7QU01JQDAJcGGpYtXVviOYgnskKccD23k0t7CbEKUK7Wi9ddyrpvcrjR6yThtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nIkWXCbO; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fa84c6916so24580a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760380471; x=1760985271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Afq6cNan9t/2gw+te4XV8ANY20V5fsOBm2d4w/26+qg=;
+        b=nIkWXCbOHSMGaBqWWJJmrgsAOXnOGgEiGblZlskaHZzFrQfFQ7My8Y2pljgDsLo61J
+         K1bpH8xUPqLhwapCb7r0SuD3oQDkVReBl/FdzbtYkpcFCLjPc0PMiYHpWnplt1Ckpnj8
+         b1g0OTjNB4LpNcb+NX8lRvMgWTwSHlg8XEP0LPkcnqGUG58bG9TLQec+1OuaPrxdWvzP
+         rHdTyhENX4Bpr+OoUl+wKntoEUpnjwWb0lTRQZXi34JvHMB8rFITJ8SaDZclYdCtb72n
+         +ot0KRy3lKiFmqGKYrUzTwDBUBg4WUs+Te/4EC5nmeEROXoNaf5cF2mJUMC1kH8+eZZU
+         cQ3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760380471; x=1760985271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Afq6cNan9t/2gw+te4XV8ANY20V5fsOBm2d4w/26+qg=;
+        b=CVj2qmbSNIVu345KOCz5dfBFkpcQkBqjjvhgB/LHTdaFd2I8kQZBW9UH2eS+j0WYby
+         indIKaFJ8t02006hgU0ADZQTxHtcaWvnSv9kzzocvFAOG1hJc24s0KZxJFgFJxKT9OMk
+         uZnNq866eXNdZGop5/+r4DZVsKfTVgrB6ai8kH9XbssORA+82upfDGTaLdkpXZO8kgnu
+         pgDNfKoXk8zewuzPFzB2yf12U5z1YJms2V45liiEFCLCE0ZjRLx5zWvbm4zn7vCLgYHG
+         yP53jeLmUdsFjhOm6vYLiTllb4wxT42ihvzXbNirqXUvpKMzViffwIsj39tVexbgBy+B
+         7NnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWggWH2aVo71cBPT530ZMinhaxlRd0Y0P/9GJDByZLX5i0dRHvLo/pJfPJKtKIv6zKCi5x09GI9Ah/ZJXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxB2oXmcmKX4KLNELoMfB2SoOP6uInScenGnDjYE9BVO5TlLZg
+	2WThrzYHAm4gi8FaDapmZ62EIFEZJprnh4XuDgGC9GbaV/WSqJ4zX11sx2PBuWDse/0MuG0Uqn7
+	XkCxUb/nVLo+0t8Q4rpaGRiZSn4dmoh0bW6/w1Att
+X-Gm-Gg: ASbGnctmP24CNKON4SikaMyfTJZBMLAQjCGyqJzfbGMrWIEUwUHxHYrR0+aPSAJIDSW
+	LB3XZxvr2EMqIr/KsKAdZXtYKZzYUj+TxRTV8PkqAuuWclQvC0S9KDs4wvJWsjYZOxhIT4YysAk
+	5vXIR6elMHQpRcCOaUM3mhG6VdYAQJ2/ckiuxdmB+y57tDJWZTGg/kYDoG4rKFAawp93kIlhrWr
+	RawdBGCvk3Z+WoCmeP//XtpFuAzAOd/ILoo3XkD9WdXvbcQjvlMXw==
+X-Google-Smtp-Source: AGHT+IFRwNFRw95/PZ4giLCn1mM7Nqj94TnRmfK/bODb4e+FbWoWD5Kzjyueo2VriuqMV3KAw8pFMMhjt3TSmvoOwWM=
+X-Received: by 2002:aa7:c84e:0:b0:624:45d0:4b33 with SMTP id
+ 4fb4d7f45d1cf-639d53090admr609561a12.7.1760380471100; Mon, 13 Oct 2025
+ 11:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009235623.4135746-1-tj@kernel.org>
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-9-yosry.ahmed@linux.dev>
+In-Reply-To: <20251001145816.1414855-9-yosry.ahmed@linux.dev>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 13 Oct 2025 11:34:18 -0700
+X-Gm-Features: AS18NWBIFyEjfltOcvssGoqGJAnQhP9wY-GXD3bDQRorIl3BP8PPFn-W1mHZQBM
+Message-ID: <CALMp9eSwzYaRVa2eO-o5oyfK5Cj=0kscCPQhCxZGQ5WWYFgN-w@mail.gmail.com>
+Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
+ describe EPT entries
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09, 2025 at 01:56:23PM -1000, Tejun Heo wrote:
-> By the time scx_sched_free_rcu_work() runs, the scx_sched is no longer
-> reachable. However, a previously queued error_irq_work may still be pending or
-> running. Ensure it completes before proceeding with teardown.
-> 
-> Fixes: bff3b5aec1b7 ("sched_ext: Move disable machinery into scx_sched")
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+On Wed, Oct 1, 2025 at 8:05=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
+wrote:
+>
+> From: Yosry Ahmed <yosryahmed@google.com>
+>
+> The assertions use 'hugepage' to describe a terminal EPT entry, but
+> 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
 
-Applied to sched_ext/for-6.18-fixes.
+Nit: accurate
 
-Thanks.
+> hugepage. The distincion will be useful in coming changes that will pass
 
--- 
-tejun
+Nit: distinction
+
+> the value around and 'leaf' is clearer than hugepage or page_size.
+>
+> Leave the EPT bit named page_size to keep it conforming to the manual.
+>
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Reviewed-by: Jim Mattson <jmattson@google.com>
 
