@@ -1,312 +1,139 @@
-Return-Path: <linux-kernel+bounces-850870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6349BD498E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2954FBD490A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 874284FF75E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:34:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE013544EBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151AA30F7F6;
-	Mon, 13 Oct 2025 15:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147C03101B1;
+	Mon, 13 Oct 2025 15:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HTo7fZEw"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0bZDSzlp"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F85C30F7E2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B050C30EF83
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760368866; cv=none; b=p9khzKUmUluAtXu1u/feAZLFS1lImnKGoL2Yn7CYZmP/5Zqm5tDirSxLb7/NoAvoQwXY/pFEwajFszlYpAJbCIi2vete/OxU3Lm10CZCjW4aeI28PZyWp24awk3DXMxZBWKJyz/x/x0/QjogVCNxdne5s2w3xury2VhIKqz9iI0=
+	t=1760368977; cv=none; b=f8cD5P+Yv4i3o7YQfqH+Vlj8Ax6Fl8W09GL7zGGfo8J5CXZMouhKJrWmEm1Ltnzdx4tRG9TaFRlfQdxSQ0Cwqc+gpeskr4SDKt4T42wgfK4Zty5PBstvZ8Nu7XA1VB2p4JrHlQeX4D2Ggn089rPNFLOwDKOHIH4gaPznd9oNuQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760368866; c=relaxed/simple;
-	bh=uVIIcfGUtnM0AFmoNWciBQ3Oy6FcGT5tcohKaCO7Fdk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gr3xIXewARGC5FNQft5JwY6wITmYD7VtaJJvdcDYkilOFZDrj3JEVRn6PDBhRGRsGWZcBs1mPfMo9k0rIv4k+zs/tviyzezQ8zt8u2avokWuCxDv7oauQvIFzv87i2bCXegUurUwlm43MhGOypsemlRic3zJgNtJ7bl336WiERo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HTo7fZEw; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1760368977; c=relaxed/simple;
+	bh=+efmRN52iBY0si6W7g6Mnet2zmDpA8tsmPUXX/58V5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J4SfzPSyrM7mpxft4tDTSYxT2h/6QRfvoJDCMyuIkIWFGdswqb3IN23q+ZC4ouHSAGoX0J0Z8mRqCj+VZhUa2WxVXzOstkbbFrQPTBfNBuq9MN0BKQeijZe6i97obQ1OyjEn/8CX4lPeqvwCWGxaOzxmOCfKXFhOjFsAcD6a6Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0bZDSzlp; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e3a049abaso32523615e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:21:03 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27d67abd215so431225ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:22:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760368862; x=1760973662; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YIYoPCNyBFGg9vKc8jF45CxIFXipDwwSdrNJ736RRBY=;
-        b=HTo7fZEwmN/AchWolAniP+Y4PdwpMVrwbOAXne7mzNG4myDYJ5qbQ+rJ+V6PTgj/cC
-         lqduToxSwIztdVYxE5eNzqwhYLKEhizNJLcl5XjKazvgKlm8WrAyJD7LamHnmz8/Leq0
-         7cXMHVYqMlF7ly6QEH5DjrboKM8xp1zdy4Ojl2qGl/YbeAYhKYiOBMZzXbhUw2T2opIW
-         KZk8Usj+lTKDMiIb9rVeQXiakJlohU+I8aWeC+IxR1MWe8TQYs0+blaGlQq/HFcq7Em0
-         B46d0IFTGtC6l6mEWRniwIljSkUUIba3qrm2zU0pFB5UpdHyHW/yyy/8fCA7PPeC15XI
-         k7wA==
+        d=google.com; s=20230601; t=1760368975; x=1760973775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+efmRN52iBY0si6W7g6Mnet2zmDpA8tsmPUXX/58V5I=;
+        b=0bZDSzlpQEIFXhxAOFMoVzELYlYIl9kDChQx7T7905fY8wFWm+KjWmBGWS7C3HCNtZ
+         uR3A3zW6xCaFRShweSb8FpglafnQgAhmm8M0EVhgszpohu0LxUxbphTaHOL6OYc52RlV
+         g3LPsauy/9xlU3E/X+YTGoN6DruB/q6SmI/IZ52bL7eyjKQ26wHFVtoF9vOXpzDJ6Uop
+         7ppEmR3fps+aFvbUZl6Wlvi1wzGaMtWXt53ifsmvCc2uXxpada3nol4ybwhjs2aNm7CF
+         3zXtTbsxVcjcggWgpsXWM/nP7TwoehwtFKj2Ao+QH8Q3O+wYf6t07+ATuw/meJQ+5vc0
+         vC8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760368862; x=1760973662;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YIYoPCNyBFGg9vKc8jF45CxIFXipDwwSdrNJ736RRBY=;
-        b=N1i7RA/ou5vdIQVJCQUS7uSTjaFMX5mjcN+zRKODOcFS+DlcjAtbc/3DIUgjrEPZZH
-         sHUBJgbXv2KsVGWNO8zpo7yRRvgKHDU4iuhpy48Nn8v8ePjhcF3CKYwZPOBVIMKLINIi
-         mmqHGMrYeXI3QF+nPM7slp6esFbV+dEVrp+AFLemwrhE1VjOGW0VFJNI+1ERo1+wWSpS
-         0zPAQV/I9uxfR50mbf5+Dpsm0k8nh28bLHNcI4GR1phqjI6rIRTcVE1mXKgjpSqqPT48
-         HRza5wQWZ34U28fMFMDyrgykCYlShUTah53HACMduSGqdxvJwgZ+FlxpZwcINq6JMw6r
-         6tcg==
-X-Gm-Message-State: AOJu0YyE/YQEJw7htXcyQoVT41qp1VZ5bFZKoWxBN883fSjFwajC2o4R
-	v/uOYSRkKdgbr3kAwM76+pD5KDHbcaNvc8R8wkI5tHleNlyPwQNRPirOJaabxEXwjrlB2DoAwwm
-	F6m7HTDp9lpfiTQ==
-X-Google-Smtp-Source: AGHT+IFVI/ebIiE03xp+IXTAIvzD7VP5Hg6xiJr5X8tY19ifba+QDyv+tPutqETwPbUzyh9TyIvbuut1FWkifw==
-X-Received: from wmcq4.prod.google.com ([2002:a05:600c:c104:b0:46f:aa50:d6fc])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3b1b:b0:46f:b327:31c4 with SMTP id 5b1f17b1804b1-46fb3273563mr98314565e9.14.1760368862615;
- Mon, 13 Oct 2025 08:21:02 -0700 (PDT)
-Date: Mon, 13 Oct 2025 15:20:52 +0000
+        d=1e100.net; s=20230601; t=1760368975; x=1760973775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+efmRN52iBY0si6W7g6Mnet2zmDpA8tsmPUXX/58V5I=;
+        b=c1F+EHL+bjp7qpdXqKH4IWkXUE9e6h8SAH2bCM1DKmt+b0og66aAHCvj5zmrE40u1c
+         PTPZWy+ctDeXTKg2Oow56WvTbzBE4+9ed/nSphvdJhJdq5JCRpoq9LVi5ptTuXSg7cps
+         pgIagKqqF3fVGTrfbK0htaFB2XXIUgxUudzq0VWowc4CVCMvCvqmW0AkLOdBrX9IiBWW
+         2quWgpw5AgDzCrU0w044ei94WPeZb7ALfqQyJBBiFTWNAaDz45NQerOHJObIYX5q3Wfz
+         Nlo7jnwPyGhlNd0mouCbxqTt8Gjv/wZ9rxryKU04KuuDWBzTksr09svfKAoXN/E15SCx
+         OL7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWI/z7MiiQWslqWjDl3nkyiNMT6VEf1iAc9HSDhCbaNAhNNV5eHhECQHThym+FXJAgQurE1hW9C0RoJUjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT+JDaPAZgQ2m8pT7Jzq4j1tMMH6Bee6lYdBVXPEDlurrfgKA4
+	1F6BSKTI/PAtcml4SDwlgJSctXNKW42yeL2Cj0z0XOw3hm0JmbQO+Bbbwd9JuS/UyB5UyPrHkr2
+	n29a1D9vMJzBTn7NoCGmqZ+iXLYXYJLDepdp3fAo0
+X-Gm-Gg: ASbGncuYiRgWM8iw6Q4KULTEgpJSuJwUF/GkfdcrC5HfFdL9WixhIBfsX0lp7EcyISB
+	QjGKrkfq7kxbxoxTGJW9q7msTKayf0kWv44dd8LDcS3PSsAP+tWzh6nnFXV2Fwn3D+QlwqrjsH1
+	nzADJj5W1Xk9Fhvl5V1zCK+cEAqrgT64+EgqLebf/4Dv189rqOpUyFPqzFwJKVC4B6EJ30QKxyr
+	UaWWEVRVn7k1R227HVGx0I9aoSTSbdM8/Ol7Roh8LOPqycrlq4LPkRJ4+URj6O59jQI6lreeA==
+X-Google-Smtp-Source: AGHT+IEdUAiSKFrmjYar3G9IgpPKXQygapAxfBI5r4itrM9lr/rPvWOGAsk6Rix2MCTP+i8IMM+7NAuwUGCcG9YIquE=
+X-Received: by 2002:a17:902:d548:b0:25b:ce96:7109 with SMTP id
+ d9443c01a7336-290275de5a5mr22172595ad.3.1760368974498; Mon, 13 Oct 2025
+ 08:22:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIANMY7WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDA0Nj3SQT3RzDkjTdgtSi5IJSXXNLY0MLw7REUwsLEyWgpoKi1LTMCrC B0bG1tQCGPpaCYAAAAA==
-X-Change-Id: 20251013-b4-l1tf-percpu-793181fa5884
-X-Mailer: b4 0.14.2
-Message-ID: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
-Subject: [PATCH] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Brendan Jackman <jackmanb@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <aMpRqlDXXOR5qYFd@mdev> <CAP-5=fV05++2Qvcxs=+tqhTdpGK8L9e5HzVu=y+xHxy9AqLMmg@mail.gmail.com>
+ <CAD=FV=VNmjTVxcxgTQqjE7CTkK2NVGbRxFJSwv=yOHU8gj-urQ@mail.gmail.com>
+ <CAP-5=fW64xHEW+4dKU_voNv7E67nUOFm27FFBuhtFii52NiQUQ@mail.gmail.com>
+ <CAD=FV=U3ic707dLuUc+NfxtWF6-ZyRdE0OY2VA6TgvgWKCHUzg@mail.gmail.com>
+ <CAP-5=fVkw6TLjVuR3UCNs+X1cwVmYk7UFABio4oDOwfshqoP_g@mail.gmail.com>
+ <CAD=FV=UWkZx8xQD=jBkOO6h2f5tw_KCoqhHciw5hkEOYU=GM8A@mail.gmail.com>
+ <CAP-5=fXTFHcCE8pf5qgEf1AVODs2+r+_nDUOiWgdQeEgUBHzfA@mail.gmail.com>
+ <CAD=FV=VuDYiu5nL5ZeZcY2b+YXOzZtSu2E4qBBHz9fWTW8gPhg@mail.gmail.com>
+ <CAP-5=fX4=fV70N3GCdXgV6o-YoJynnSppxJp0MwdRrtsyDrs0w@mail.gmail.com>
+ <aOdbRI3BaMCbyvtv@mdev> <CAP-5=fUAato=+jyNNESCX3SjWMEEJQ697VvWiBFCi5wKs_JQCA@mail.gmail.com>
+ <a4c80b15-fed0-4ba5-acc1-240ceb7278e4@gmail.com>
+In-Reply-To: <a4c80b15-fed0-4ba5-acc1-240ceb7278e4@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 13 Oct 2025 08:22:43 -0700
+X-Gm-Features: AS18NWDlTWFT3HdpYqKdSgipTpAwpisZNXm-xTCknWJmQs9BUsH8yue1GTfzRbI
+Message-ID: <CAP-5=fUECw2RLvzPrf+jvJ24+cJOecrm_FaB1_qUJ8y5Lr1p1w@mail.gmail.com>
+Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup detector
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Doug Anderson <dianders@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>, akpm@linux-foundation.org, 
+	catalin.marinas@arm.com, maddy@linux.ibm.com, mpe@ellerman.id.au, 
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	kees@kernel.org, masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, xur@google.com, ruanjinjie@huawei.com, 
+	gshan@redhat.com, maz@kernel.org, suzuki.poulose@arm.com, 
+	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, gautam@linux.ibm.com, 
+	arnd@arndb.de, zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com, 
+	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com, 
+	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org, 
+	yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently the tracking of the need to flush L1D for L1TF is tracked by
-two bits: one per-CPU and one per-vCPU.
+On Fri, Oct 10, 2025 at 5:54=E2=80=AFAM Jinchao Wang <wangjinchao600@gmail.=
+com> wrote:
+> Addressing the PMU assumption that all counters are available would
+> resolve the issue. If perf managed reserved or pinned counters
+> internally, other users would not need to be aware of that detail.
+>
+> Alternatively, perf could provide an interface to query whether a
+> counter is pinned. Having the NMI watchdog supply that information
+> creates coupling between otherwise independent subsystems.
 
-The per-vCPU bit is always set when the vCPU shows up on a core, so
-there is no interesting state that's truly per-vCPU. Indeed, this is a
-requirement, since L1D is a part of the physical CPU.
+There are lots of ways to redesign the perf event subsystem, counters,
+etc. These things are being pushed upon. In general the API is trying
+to hide details like the scheduling counters.
 
-So simplify this by combining the two bits.
+I'm in a loop, but the change here is bad because:
+1) the use of nmi_watchdog in this way is misleading (outside of the
+perf tool) because of the name;
+2) it is bad because it is altering the way a kernel API has worked
+for close to 10 years meaning old code doesn't work as intended;
+3) it incurs extra overhead in tools.
 
-Since this requires a DECLARE_PER_CPU() which belongs in kvm_host.h,
-also move the remaining helper definitions there to live next to the
-declaration.
-
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
- arch/x86/include/asm/hardirq.h  | 26 --------------------------
- arch/x86/include/asm/idtentry.h |  1 +
- arch/x86/include/asm/kvm_host.h | 21 ++++++++++++++++++---
- arch/x86/kvm/mmu/mmu.c          |  2 +-
- arch/x86/kvm/vmx/nested.c       |  2 +-
- arch/x86/kvm/vmx/vmx.c          | 17 +++--------------
- arch/x86/kvm/x86.c              | 12 +++++++++---
- 7 files changed, 33 insertions(+), 48 deletions(-)
-
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index f00c09ffe6a95f07342bb0c6cea3769d71eecfa9..29d8fa43d4404add3b191821e42c3526b0f2c950 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -5,9 +5,6 @@
- #include <linux/threads.h>
- 
- typedef struct {
--#if IS_ENABLED(CONFIG_KVM_INTEL)
--	u8	     kvm_cpu_l1tf_flush_l1d;
--#endif
- 	unsigned int __nmi_count;	/* arch dependent */
- #ifdef CONFIG_X86_LOCAL_APIC
- 	unsigned int apic_timer_irqs;	/* arch dependent */
-@@ -68,27 +65,4 @@ extern u64 arch_irq_stat(void);
- DECLARE_PER_CPU_CACHE_HOT(u16, __softirq_pending);
- #define local_softirq_pending_ref       __softirq_pending
- 
--#if IS_ENABLED(CONFIG_KVM_INTEL)
--/*
-- * This function is called from noinstr interrupt contexts
-- * and must be inlined to not get instrumentation.
-- */
--static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
--{
--	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
--}
--
--static __always_inline void kvm_clear_cpu_l1tf_flush_l1d(void)
--{
--	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 0);
--}
--
--static __always_inline bool kvm_get_cpu_l1tf_flush_l1d(void)
--{
--	return __this_cpu_read(irq_stat.kvm_cpu_l1tf_flush_l1d);
--}
--#else /* !IS_ENABLED(CONFIG_KVM_INTEL) */
--static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void) { }
--#endif /* IS_ENABLED(CONFIG_KVM_INTEL) */
--
- #endif /* _ASM_X86_HARDIRQ_H */
-diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
-index a4ec27c6798875900cbdbba927918e70b900f63b..67fb1adadbb8ac2bd083ba6245de2e7d58b5b398 100644
---- a/arch/x86/include/asm/idtentry.h
-+++ b/arch/x86/include/asm/idtentry.h
-@@ -12,6 +12,7 @@
- #include <linux/hardirq.h>
- 
- #include <asm/irq_stack.h>
-+#include <asm/kvm_host.h>
- 
- typedef void (*idtentry_t)(struct pt_regs *regs);
- 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 48598d017d6f3f07263a2ffffe670be2658eb9cb..d93c2b9dbfbc9824cce65256f606f32e41c93167 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1055,9 +1055,6 @@ struct kvm_vcpu_arch {
- 	/* be preempted when it's in kernel-mode(cpl=0) */
- 	bool preempted_in_kernel;
- 
--	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
--	bool l1tf_flush_l1d;
--
- 	/* Host CPU on which VM-entry was most recently attempted */
- 	int last_vmentry_cpu;
- 
-@@ -2476,4 +2473,22 @@ static inline bool kvm_arch_has_irq_bypass(void)
- 	return enable_device_posted_irqs;
- }
- 
-+#if IS_ENABLED(CONFIG_KVM_INTEL)
-+
-+DECLARE_PER_CPU(bool, l1tf_flush_l1d);
-+
-+/*
-+ * This function is called from noinstr interrupt contexts
-+ * and must be inlined to not get instrumentation.
-+ */
-+static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
-+{
-+	__this_cpu_write(l1tf_flush_l1d, true);
-+}
-+
-+#else /* !IS_ENABLED(CONFIG_KVM_INTEL) */
-+static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void) { }
-+#endif /* IS_ENABLED(CONFIG_KVM_INTEL) */
-+
-+
- #endif /* _ASM_X86_KVM_HOST_H */
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 667d66cf76d5e52c22f9517914307244ae868eea..8c0dce401a42d977756ca82d249bb33c858b9c9f 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4859,7 +4859,7 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
- 	 */
- 	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d();
- 	if (!flags) {
- 		trace_kvm_page_fault(vcpu, fault_address, error_code);
- 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 76271962cb7083b475de6d7d24bf9cb918050650..5035cfdc4e55365bfabf08c704b9bff5c06267a1 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3880,7 +3880,7 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 		goto vmentry_failed;
- 
- 	/* Hide L1D cache contents from the nested guest.  */
--	vmx->vcpu.arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d();
- 
- 	/*
- 	 * Must happen outside of nested_vmx_enter_non_root_mode() as it will
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 546272a5d34da301710df1d89414f41fc9b24a1f..f982f6721dc3e0dfe046881c72732326e16fcfb3 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6673,25 +6673,14 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
- 	 * 'always'
- 	 */
- 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
--		bool flush_l1d;
--
- 		/*
- 		 * Clear the per-vcpu flush bit, it gets set again if the vCPU
- 		 * is reloaded, i.e. if the vCPU is scheduled out or if KVM
- 		 * exits to userspace, or if KVM reaches one of the unsafe
--		 * VMEXIT handlers, e.g. if KVM calls into the emulator.
-+		 * VMEXIT handlers, e.g. if KVM calls into the emulator, or from the
-+		 * interrupt handlers.
- 		 */
--		flush_l1d = vcpu->arch.l1tf_flush_l1d;
--		vcpu->arch.l1tf_flush_l1d = false;
--
--		/*
--		 * Clear the per-cpu flush bit, it gets set again from
--		 * the interrupt handlers.
--		 */
--		flush_l1d |= kvm_get_cpu_l1tf_flush_l1d();
--		kvm_clear_cpu_l1tf_flush_l1d();
--
--		if (!flush_l1d)
-+		if (!this_cpu_xchg(l1tf_flush_l1d, false))
- 			return;
- 	}
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4b8138bd48572fd161eda73d2dbdc1dcd0bcbcac..766d61516602e0f4975930224fc57b5a511281e5 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -171,6 +171,12 @@ bool __read_mostly enable_vmware_backdoor = false;
- module_param(enable_vmware_backdoor, bool, 0444);
- EXPORT_SYMBOL_FOR_KVM_INTERNAL(enable_vmware_backdoor);
- 
-+#if IS_ENABLED(CONFIG_KVM_INTEL)
-+/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
-+DEFINE_PER_CPU(bool, l1tf_flush_l1d);
-+EXPORT_SYMBOL_FOR_KVM_INTERNAL(l1tf_flush_l1d);
-+#endif
-+
- /*
-  * Flags to manipulate forced emulation behavior (any non-zero value will
-  * enable forced emulation).
-@@ -5190,7 +5196,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d();
- 
- 	if (vcpu->scheduled_out && pmu->version && pmu->event_count) {
- 		pmu->need_cleanup = true;
-@@ -8000,7 +8006,7 @@ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
- 				unsigned int bytes, struct x86_exception *exception)
- {
- 	/* kvm_write_guest_virt_system can pull in tons of pages. */
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d();
- 
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
- 					   PFERR_WRITE_MASK, exception);
-@@ -9396,7 +9402,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		return handle_emulation_failure(vcpu, emulation_type);
- 	}
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_set_cpu_l1tf_flush_l1d();
- 
- 	if (!(emulation_type & EMULTYPE_NO_DECODE)) {
- 		kvm_clear_exception_queue(vcpu);
-
----
-base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
-change-id: 20251013-b4-l1tf-percpu-793181fa5884
-
-Best regards,
--- 
-Brendan Jackman <jackmanb@google.com>
-
+Thanks,
+Ian
 
