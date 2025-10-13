@@ -1,198 +1,212 @@
-Return-Path: <linux-kernel+bounces-849933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB61EBD15E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:23:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C101BD1617
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66EF83BDD66
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:23:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D9418939D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D7D223DFD;
-	Mon, 13 Oct 2025 04:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="oB9ApiTw"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8D2155CB3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF71296BD0;
+	Mon, 13 Oct 2025 04:28:21 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F05F27F747;
+	Mon, 13 Oct 2025 04:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760329378; cv=none; b=tIg2avsjKh8RCM746PIAfeHUIoeYD/L3Q4+OmSNce3hX0F95fFO5Mr0Ff+rqpv7v4izD4x/M+la+om5bh2y1QqLjIx4MZFV25K/8iDMjL6KzPwhW6DHacTRqvua7PffVeBgzh6T7y2N1Fjj2oQkHkRBRUuekP8/ZVfQjkp1XGyY=
+	t=1760329701; cv=none; b=PYgZtWkzDh0N9dey5uLEKcs3VPiGhY0Rlapowr5S3FBU8NlLLs6Kl0P9pEhCsjVU2177c+euePw/M31/gIq8kI+q0I5yTmrf0IYG4/ilE8x1LV85H/L/fyUCTY4fUsWSTnTWFUval754ME1Dq8EH7zrmXfYwxtGhFlLyIIRympI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760329378; c=relaxed/simple;
-	bh=dKKm/ucfnF0X/yhC/W/nimiSgwNp7VgI+M2mogqYvXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jk798RW5JIbtoPq81DFtELL6ICk1VEfvVMpCVyoMGJFjxnVL4J+qX6VeU7HcbDlm8p27j/1m6uQytm5BHs2bAolG++Ko9I8TjQG7/njVhXicqzd91K87rTMhrqW30xj6bwn6ZuWc/33X8azNJ7C12lN1l+tjXdYMcF+aB6gfibc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=oB9ApiTw; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso5895942e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 21:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1760329375; x=1760934175; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LIm07Frt6UqA8OnEbW7sIR30RcCER/YlhbGsaYO7atM=;
-        b=oB9ApiTwKFmATW9nnnCytP4DuhEZ2Tj0y3m1oBB6rs8piah4JQ32SUVRa06nZmXF9v
-         yYoQIWIQ4xI8ZZZsuBTxWvLsBvi75rHwmT4D1TPfeUHLA0JbABzs1TCanyD0mRgQT7PR
-         9/Ol23I+rmOGh2ksPkkHq9snqqCad/cvlPvsnCvFs8ftkZlMkXSZTLQW9U3lCIKpiHa9
-         qnHuUKgkJ+AYtY7xq+BL/VsKGYmqGZxa+wOYRIhrVS+CGDQbKxaeS7IXvwFCRLk6Ti4Y
-         ZnuBPvNJhOaZnDEhBwiDOCL5tahOzT5s6JAA0er3MdTq5fO/5oJXdDceJ0USDb690486
-         7ocQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760329375; x=1760934175;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LIm07Frt6UqA8OnEbW7sIR30RcCER/YlhbGsaYO7atM=;
-        b=nKFmYFl6ossuJoW2Fw9RPSphVYRalJK2BvZKF26VEhgHh/hZj2mdpxu+tJxhtF7JVq
-         ajS9tDxILwpwYKJoory6L9asqPIW1t7AkdBwAxVTZ8fLiQJJbofXlE9vckGLHIgTAnZC
-         4AYokHHClFQwQTTrzCBQjDzZccfObQUZVGKpcJcXke1o4inmb/6q/Dxmd5pwsSN/UxU7
-         gn+ocZoocAzQJfbb53oYqOfM2J7bT+7BQhb+ONBK23km/d5r6nOGsFtO3IhY53E7FnHe
-         Jv8eYK2TDZHFyJO9YIuMH44lSH9iOKGKweR/qeH76TIYEcPeTheRbSP0d6ztqWrz0J0k
-         dVRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWB43uuvFyY3scWLlDjIMNNgeChDmwYaS/nvvooTDezIYvmSN2hIi/jJz6eRvQ4opbVdIrL2iCFFiy7F0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj+xG/1oOV9iHbw/Q1H75pUydlSHq3AqLer0ymSMJ+adEl0oDN
-	T6CQR9nYXHghtRrhcCJzc7OsSxH7yaDQCpXHZSuXbh95oWBRVEUybPSWsZCn0a0DqPNjZM2Diqe
-	UewUzcaC0kgZnVl33NOvDzY5QV71JSHMvPReT1f3QHw==
-X-Gm-Gg: ASbGnctz57vgJRcPQmcZ1ZlXxDTUc+d5BPM6fEjD6v6Eh3imYfpQN3N5yE0lQMVH/n8
-	gSveblFONma1bJ2EKnsG47IIotOpRTYJXxQMQH/tKBSM0HSdJbOcJ3dSxQHU6YKGyvJeYmc9SR6
-	pCsYKvnx2WpTv892wCUXLODjZv6PtY26YPgeqldE7vblaVOIxCV+FEgUt6aYapzxjoMHTi7AS73
-	pFgVZS8j9RIiSwfyozKgS3QJOgCO4wyQUNTiA==
-X-Google-Smtp-Source: AGHT+IF9GyRvwlY+za48jwaGLhv+GdYktcmtJpmyFrXoDuVmvzO8g9ax7WhUH0r6LKtiHHQUfIueiCU3VDqWez28w9s=
-X-Received: by 2002:a05:6512:e85:b0:577:a108:93ca with SMTP id
- 2adb3069b0e04-5905e3a0d18mr5694186e87.28.1760329374581; Sun, 12 Oct 2025
- 21:22:54 -0700 (PDT)
+	s=arc-20240116; t=1760329701; c=relaxed/simple;
+	bh=D2j4VRk7a14GHI55HmxdAs/3Rt4Jbr/RtZrqE5xz2U0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qsvJhXRo4vBV0qGcIBJjqCwqRpdsjhCjAgj4+kEvjQGSfvNSxe+y8Z4ti8eW5gPPemLRhkNYhYNyLLivG9yE2si+OwBnZJK9yQ6PhhlgHvxTNf5F9w/feQb+Pk4KlpffXv43fXFYvkuJm164osWeLd8yB7fCZgwGZALhQYDXeXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-b8-68ec7fdc6e98
+Date: Mon, 13 Oct 2025 13:28:07 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 09/47] arm64, dept: add support
+ CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
+Message-ID: <20251013042807.GB6925@system.software.com>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-10-byungchul@sk.com>
+ <aN_fel4Rpqz6TPsD@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911124448.1771-1-cp0613@linux.alibaba.com>
-In-Reply-To: <20250911124448.1771-1-cp0613@linux.alibaba.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Mon, 13 Oct 2025 09:52:40 +0530
-X-Gm-Features: AS18NWDCorXyTJB5-3mUpzhGpHftDP0QKH89ou3pgO4FOSJeW6Ud31hlZ5sBN1M
-Message-ID: <CAK9=C2VEKAy-pS8gy02E2AFifxBOmNPpgTodC+pyuU53Ts_0VA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] riscv: tarce: Implement riscv trace pmu driver
- and perf support
-To: guoren@kernel.org
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	cp0613@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN_fel4Rpqz6TPsD@J2N7QTR9R3>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjH955bTxs7zgoLr/bDTHfLcDpd3HhY3C0m28lwcXMJHxgJduPM
+	NkIhBVFmGBUpwSmsuhRCi6yI3KuwUycC6+LYwLFLrEJGdbSIVDqyFqaDEjJod4ox89sv//+T
+	3/s8ycuSqkZmA6s3FAlGgzZXwygoRXhd02ZfWUi3tXkaw+JCFQUN3U4GqsR6GiYXqxAs/Wsn
+	wdwXo2Bh+Q8ZxNzDCJwXjhDwT0+UAetUgIG62SMUzA69DeHJARpiviAB45EQgtZAlIDV2v1Q
+	Z/UgaJrykXBh2I9gNPAojC3OMzBiPc5A+FoDAXM9DDjK3TTUnhYp6LvVL4OJ2lMEdInvwi+W
+	M4T0BgO1XyeDve4oAdZzAwQst3bK4NfmCQrsv43SsDK1DWKOfBjuCsrA94WVgvPhqzSM+H+X
+	DrlSSUOv6ZYMxBtD0vonZkgQp6XCfXMT1DdOMDDa38CA3xmjwWRfouF6l4eC7qCXgBFbBwVX
+	+8/R0DJ+jYBIjRo8J6tp8FruIPhybga9kcMvmWsovtN1keDN11cZ3tnoRPxCy1GSN1sk+iE0
+	T/IVroO8O+Kg+J/PYL7P5pPxFd/dlPEO8QBf8WOY5l3tKXzzt7PEe5szFTtyhFx9sWB84bW9
+	Ct3tmctUgZh0qP3YSdqEwgmfIzmLue249/i47AF/1VtBxZninsZtkbY1Zrhnsde7TMY5SeIT
+	/QtSrmBJrkmN3U7PWpHIZeOVjjEizkouFU+Id4n4kIorR9jUXUXeLx7DI/WBNSvJpWBvdFYa
+	YiVW47YoG4/lUtzU9zcd58e5J/Hli1fWPJjzy/HdOTO6v+l6/H27l7IgzvaQ1vaQ1va/1oHI
+	TqTSG4rztPrc7Vt0JQb9oS0f5+eJSPq1raUrH15C9zwfDCKORZp1St3AXzoVrS0uLMkbRJgl
+	NUnK1MMhnUqZoy35VDDmZxsP5AqFg0jNUppk5YuRgzkqbp+2SNgvCAWC8UFLsPINJlS9983s
+	V7LuZUxmvmNK3Ply2cb1cKeydVfm9NDu51MyDD07nxrPHpUv1Rx7HSWESlejRQmVrtOB6vLP
+	yiqf+cTu7T7vGXt/Y2MgTRfanTaf9lFBerDouX2JHX9Sb/lte3akcq5HnuBb1D1jP5VmWFZv
+	n33p8KWsG1vTs4Lpm745pUxefFVDFeq021JIY6H2P46klOixAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH89z73Bc6ul07jDeQJUs3Y8SoM7p4Msxi/KB3LDP7sMTMxGAz
+	b2zDm2kRxcUIFCI6o7SzdLSKFEep0AkWlCHpJBjrgFWpVGWOipgKVNoxWYtDSvGWZZlfTn7n
+	/3LyfHhYUpGg0llNQZGoLVDlKWkZlu3M0q8dORZWf/T7i9XwoKwHQyxaheFcq5OGKlctBYOX
+	WxCMxqoQvJy3klDZtYhhwehhIDr3BwOLbg+CGp+RBGdHGQF/tyVomLo5g8A0FqTBHCrDMG0/
+	hcAybmUgdGsHREa7KVgMTBDwcDaMwB5MEBDsOY5goSYXLjS00zDvvUuC2TSIwDYWIGGyTTI7
+	PI8RuB3lNDyrvkrCUPBt8MemaegzfUdDxHeOgD/baKgvd1Nw3mpEoL/YSkPNeReGrifXGfBN
+	xQkYqTES0OL6Akbt4xgGqhsI6X1S6soKsJr1hDQmCTD91E3AnL2Zgd8ujmCwl64Eq3eIgqcO
+	CwPxsQ2wWF8InpYJBgJnTBguR+5SW01IeFl5GgvN7dcIofLeAi0465xImH9lREK0UU8KldXS
+	ejM8TQoV7YeExoEwLbyK3acF92w9FvobeMHgXSt0WQKMUPHLI+bLT3bLtuwT8zTFonb9p3tl
+	6qfjPfiAK+2w44SBKkWRd06iFJbnNvEXOitwkjG3km+abVpimlvFDw/PkUlOk/jU9aiky1iS
+	s2XwbufgkvEul8PHL/mJJMu5zfyI6wWRDCm4csSXtlaR/xrL+L7a4NJVksvkhxMhKcRKnME3
+	JdiknCLJtq6/qCQv5z7ge67dJqqR3PJG2/JG2/J/ux6RzShNU1Ccr9LkfbxOl6suKdAcXvdN
+	Yb4LSb/SfjRu+BlFh3b0Io5FylS5untKraBUxbqS/F7Es6QyTb7527BaId+nKjkiagtztAfz
+	RF0vymCxcoU8e5e4V8HtVxWJuaJ4QNT+5xJsSnopavznkR+fyDkZOHtcf+f5j1lnFRMtX7X2
+	RTfKfP2h9DX+eXJLaNuRnbHs3u3esgann+Ft34/1v0cdelY3MGNYvudewKCd+GxyTXnEQXm3
+	vu/+nMlMXWa+6nqr88YuWx16/uuxBarzccfMDxXZDl+7L27+8ODXp4n81LmsGY/PXlukxDq1
+	akMmqdWpXgMpcDDEkQMAAA==
+X-CFilter-Loop: Reflected
 
-Hi Guo,
+On Fri, Oct 03, 2025 at 03:36:42PM +0100, Mark Rutland wrote:
+> On Thu, Oct 02, 2025 at 05:12:09PM +0900, Byungchul Park wrote:
+> > dept needs to notice every entrance from user to kernel mode to treat
+> > every kernel context independently when tracking wait-event dependencies.
+> > Roughly, system call and user oriented fault are the cases.
+> >
+> > Make dept aware of the entrances of arm64 and add support
+> > CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64.
+> >
+> > Signed-off-by: Byungchul Park <byungchul@sk.com>
+> > ---
+> >  arch/arm64/Kconfig          | 1 +
+> >  arch/arm64/kernel/syscall.c | 7 +++++++
+> >  arch/arm64/mm/fault.c       | 7 +++++++
+> >  3 files changed, 15 insertions(+)
+> >
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index e9bbfacc35a6..a8fab2c052dc 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -281,6 +281,7 @@ config ARM64
+> >       select USER_STACKTRACE_SUPPORT
+> >       select VDSO_GETRANDOM
+> >       select VMAP_STACK
+> > +     select ARCH_HAS_DEPT_SUPPORT
+> >       help
+> >         ARM 64-bit (AArch64) Linux support.
+> >
+> > diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
+> > index c442fcec6b9e..bbd306335179 100644
+> > --- a/arch/arm64/kernel/syscall.c
+> > +++ b/arch/arm64/kernel/syscall.c
+> > @@ -7,6 +7,7 @@
+> >  #include <linux/ptrace.h>
+> >  #include <linux/randomize_kstack.h>
+> >  #include <linux/syscalls.h>
+> > +#include <linux/dept.h>
+> >
+> >  #include <asm/debug-monitors.h>
+> >  #include <asm/exception.h>
+> > @@ -96,6 +97,12 @@ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
+> >        * (Similarly for HVC and SMC elsewhere.)
+> >        */
+> >
+> > +     /*
+> > +      * This is a system call from user mode.  Make dept work with a
+> > +      * new kernel mode context.
+> > +      */
+> > +     dept_update_cxt();
+> 
+> As Mark Brown pointed out in his replies, this patch is missing a whole
+> bunch of cases and does not work correctly as-is.
+> 
+> As Dave Hansen pointed out on the x86 patch, you shouldn't do this
+> piecemeal in architecture code, and should instead work with the
+> existing context tracking, e.g. by adding logic to
+> enter_from_user_mode() and exit_to_user_mode(), or by reusing some
 
-On Thu, Sep 11, 2025 at 6:15=E2=80=AFPM <cp0613@linux.alibaba.com> wrote:
->
-> From: Chen Pei <cp0613@linux.alibaba.com>
->
-> The RISC-V Trace Specification defines a standardized framework for
-> capturing and analyzing the execution of RISC-V processors. Its main
-> uses include: instruction and data tracing, real-time debugging, etc.
-> Similar to Intel-PT and ARM-CoreSight.
->
-> According to the RISC-V Trace Control Interface specification [1].
-> There are two standard RISC-V trace protocols which will utilize
-> this RISC-V Trace Control Interface:
-> - RISC-V N-Trace (Nexus-based Trace) Specification
-> - Efficient Trace for RISC-V Specification
-> So, this is a complete guideline for any standard RISC-V trace
-> implementation.
->
-> This series of patches is mainly used to start related work and
-> communication. It completes the following tasks:
-> 1. dt-bindings completes the basic definition of riscv trace
->    component properties, but is still incomplete.
-> 2. Implemented the basic RISC-V Trace PMU driver, including
->    support for the aux buffer.
-> 3. Implemented basic support for AUXTRACE integration with perf
->    tools.
->
-> There's still more work to be done, such as:
-> 1. Complete RISC-V Trace PMU implementation.
-> 2. The perf.data generation and parsing including AUXTRACE events.
-> 3. Taking RISC-V N-Trace as an example, implement the parsing of
->    Nexus Trace data format, including support for perf report and
->    perf script commands.
-> We are still sorting out.
->
-> Any comments or suggestions are welcome.
->
-> [1] https://github.com/riscv-non-isa/tg-nexus-trace.git
->
-> Chen Pei (4):
->   dt-bindings: riscv: Add trace components description
->   riscv: event: Initial riscv trace driver support
->   tools: perf: Support perf record with aux buffer for riscv trace
->   riscv: trace: Support sink using dma buffer
->
->  .../riscv/trace/riscv,trace,encoder.yaml      |  41 +++
->  .../riscv/trace/riscv,trace,funnel.yaml       |  46 ++++
->  .../riscv/trace/riscv,trace,sink.yaml         |  37 +++
->  arch/riscv/Kbuild                             |   1 +
->  arch/riscv/Kconfig                            |   2 +
->  arch/riscv/events/Kconfig                     |  11 +
->  arch/riscv/events/Makefile                    |   3 +
->  arch/riscv/events/riscv_trace.c               | 253 ++++++++++++++++++
->  arch/riscv/events/riscv_trace.h               | 133 +++++++++
->  arch/riscv/events/riscv_trace_encoder.c       | 109 ++++++++
->  arch/riscv/events/riscv_trace_funnel.c        | 160 +++++++++++
->  arch/riscv/events/riscv_trace_sink.c          | 100 +++++++
->  tools/perf/arch/riscv/util/Build              |   3 +
->  tools/perf/arch/riscv/util/auxtrace.c         |  33 +++
->  tools/perf/arch/riscv/util/pmu.c              |  18 ++
->  tools/perf/arch/riscv/util/riscv-trace.c      | 183 +++++++++++++
->  tools/perf/arch/riscv/util/tsc.c              |  15 ++
->  tools/perf/util/Build                         |   1 +
->  tools/perf/util/auxtrace.c                    |   4 +
->  tools/perf/util/auxtrace.h                    |   1 +
->  tools/perf/util/riscv-trace.c                 | 162 +++++++++++
->  tools/perf/util/riscv-trace.h                 |  18 ++
->  22 files changed, 1334 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv,t=
-race,encoder.yaml
->  create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv,t=
-race,funnel.yaml
->  create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv,t=
-race,sink.yaml
->  create mode 100644 arch/riscv/events/Kconfig
->  create mode 100644 arch/riscv/events/Makefile
->  create mode 100644 arch/riscv/events/riscv_trace.c
->  create mode 100644 arch/riscv/events/riscv_trace.h
->  create mode 100644 arch/riscv/events/riscv_trace_encoder.c
->  create mode 100644 arch/riscv/events/riscv_trace_funnel.c
->  create mode 100644 arch/riscv/events/riscv_trace_sink.c
->  create mode 100644 tools/perf/arch/riscv/util/auxtrace.c
->  create mode 100644 tools/perf/arch/riscv/util/pmu.c
->  create mode 100644 tools/perf/arch/riscv/util/riscv-trace.c
->  create mode 100644 tools/perf/arch/riscv/util/tsc.c
->  create mode 100644 tools/perf/util/riscv-trace.c
->  create mode 100644 tools/perf/util/riscv-trace.h
->
-> --
+I will consider it.  However, I need to check if there are not any waits
+and events before enter_from_user_mode(), or after exit_to_user_mode()
+since those functions aren't the outmost functions for kernel mode C
+code anyway.
 
-Few months back we (Ventana) had informed everyone
-within RVI (particularly self-hosted trace TG) that we are
-working on Linux trace framework and drivers for the RISC-V
-community [1]. There are also publicly accessible RISE
-project pages already available for the trace efforts [2].
+	Byungchul
 
-This is yet another instance where ongoing efforts were
-totally ignored.
-
---
-Anup
-
-[1] https://lists.riscv.org/g/sig-hypervisors/message/648
-[2] https://lf-rise.atlassian.net/wiki/spaces/HOME/pages/8591251/2025+-+Ker=
-nel+and+Virtualization+Priorities
+> existing context tracking logic that's called there.
+> 
+> Mark.
 
