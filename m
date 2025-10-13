@@ -1,91 +1,95 @@
-Return-Path: <linux-kernel+bounces-851086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A5CBD57FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:31:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A25BD578C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C3E3A4749
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:20:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AFD14E4E09
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798F62EBDF9;
-	Mon, 13 Oct 2025 17:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlpwsaby"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE19B2E1EE0;
+	Mon, 13 Oct 2025 17:22:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47B5298991;
-	Mon, 13 Oct 2025 17:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F197E2BE646
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760376010; cv=none; b=teq8WUTWJvo9KxuDvIqzFFFJ8FvA9Bl6uvFzyAHoMzfjB76HeF5SHI2/Mfz/X/u4nqYbn/cxrWDr5/tFzMISYxFbk7dmy3FQJJuTsZ6BlG1KVBvR9IN3itTFRnORYsR7Nn2Auk5/8PQI3SzPZs7ZwYRinUmeYB+tnSDvC+/0LTk=
+	t=1760376124; cv=none; b=uXWdM+vC/4BRHRlKIzPwT61B9oHLchev7Y9lzB0uKFcEN18MV9f7RoDwwsPLrS138970gS0N/xsGqGBlxG42KvRSzADR/hR5cS6WrWkxDUeG4GiDrM7ZfQbevtB18Jf9XRtbHf6S7GYgdOdcuZlVgX3Bezj6+xH0xRyKaMPOocg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760376010; c=relaxed/simple;
-	bh=zavMlTcbgZfky2yOOnYd0KpinLJb3+M4w6IdqSl67Zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tecaUAFm2AqIfqE8Sa6AZRJkXyOwDj+AyiRwQmcDZTbV6YKRS8TywVRIGbuueWCHS05rSlIOkxu+vJCF5e2nOhwAZr+drNKkUTse9t+hbcJB6+Pxj4BK+l2npfjL+pcL5LQGy0IIxETfJ2Ef9VkOIk+j/a6D/v+fjfA3pSCFeUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlpwsaby; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE9DC4CEE7;
-	Mon, 13 Oct 2025 17:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760376009;
-	bh=zavMlTcbgZfky2yOOnYd0KpinLJb3+M4w6IdqSl67Zs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dlpwsaby5AyGWjzYnk4+43yGdMmkN7TdUiUdD3ZkHDDpsyo/ggdGjrrsVs80Nww5B
-	 LD6m8K42jLnN6ycPAMWB5SDLE+O80MWp+iadbhx8eR0/Baw8LLclu1N+NblmtQ6uVQ
-	 E8eoI1lv3kE/rO6582XG+9OjQc+/LGegQz7R177/XZeRscL3VBmdu1/h16qnNTzvp8
-	 74LcfdAbVvjxWFw+oQFDENXLGSn2+yU/6BnlBkRITHHE8xzlcQ42UPwiBBYEG4i5ln
-	 YIBC45FiSRRctIJ3K3/+vGe4VitEDkQ6BLrAE7xf99rFxwwxJWf6G0Tag9mGzgpOki
-	 apStSwOQg6XvQ==
-Date: Mon, 13 Oct 2025 07:20:08 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	mingo@kernel.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
-	Joel Fernandes <joelagnelf@nvidia.com>
-Subject: Re: [RFC][PATCH 2/3] sched: Add support to pick functions to take rf
-Message-ID: <aO00yNQozDw6N6jS@slm.duckdns.org>
-References: <20251006104652.630431579@infradead.org>
- <20251006105453.648473106@infradead.org>
- <CAKfTPtCC3QF5DBn0u2zpYgaCWcoP2nXcvyKMf-aGomoH08NPbA@mail.gmail.com>
- <20251008135830.GW4067720@noisy.programming.kicks-ass.net>
- <CAKfTPtDG9Fz8o1TVPe3w2eNA+Smhmq2utSA_c6X4GJJgt_dAJA@mail.gmail.com>
- <aObK2MfxPyFcovwr@slm.duckdns.org>
- <CAKfTPtApJuw=Ad8aX=p3VLvMojyoxVBVRbMG80ADXR-NVL0PTw@mail.gmail.com>
- <20251013110449.GJ4067720@noisy.programming.kicks-ass.net>
- <20251013110911.GF4068168@noisy.programming.kicks-ass.net>
- <CAKfTPtDGsS-+DZEemg6vqbQVV5Xds9TNVnOAOvyeNsw0Kn3Mzw@mail.gmail.com>
+	s=arc-20240116; t=1760376124; c=relaxed/simple;
+	bh=nsGyivXBri6OSLxxjOWh4WGz6wp5udKFYCtPrJccLx0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WSojGfOORBOieRkOQGPdypyLdDkm4o/NaehR55YYUc95v3TdIE28gEDV/T8iqKBu/ZateXUvC4O+z/O8HZKwK9wTQAAkJK0JShKlGpdRMPCXqdjGLE1VlVqaQlKrdpL0YuWb5QeJrkssVKvNsDaqACQaPC6/ggQiEnGavNq+W/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-9201572ebfbso2187598039f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:22:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760376122; x=1760980922;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IcTIroVdj0btffajsp6gtGNFiSwIhJCy9rGpAqsEW7U=;
+        b=rrA73dZ8OT+b+NOIxYoCPLSiqi0KyIefK9cHcitweM6DTbIWlQ1YOcuVAj8A4f7WJv
+         +OJMCO8yLGNn2AlwYbx01eWR7yMVKGT4GgAXvEvaMiZYH8R47k+qdVUsfwiSKXUSs4+R
+         UrfcLLxZaXgIP/1zB5S2OwJ068HJM7ABQ58D3ZHrXD0pfPE9hUxbAaz80lIEvPvT+XIi
+         rtUAFlEGmoZRFuIvtpdc98oelyp8BvFnAjpRdnUVJ3Ul5qR/X8v2oUU4x8uYbN4OJtUy
+         SLLzB7JunQOxx/BHHjfdVCd9qvmBh2zyhtMq3OlXOEWXU3Mqhr0jalPXXNNd/jycYNVj
+         61ew==
+X-Forwarded-Encrypted: i=1; AJvYcCU3wMtLiESBoQL24zouRi9O529ehrl6RSDLH8p/GVQanbyb56mAZCrX6IN50vEKd79dvTt3jxNWuul5TmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrfGi3uCviQEOeSK8rL6Dhj4wZqO0zueslWCqzFjS+dzFrHnZJ
+	P7qtNRm9vdKvqbdQZceE3eR3vynoWhADqN3r9cYbUrIZcFeth6MTE9XnIh5NXSqnY/DVjO8m5Ai
+	YtTNFJOjqbnHtPlklFOCEtZ/sZI3lr2EJ+gsYNBnkD/fOi4XhGoL0oTgxAos=
+X-Google-Smtp-Source: AGHT+IEZjRcbR2oTuA8IpjN+806A9p5IOVdRGzGHPrW6anLmhQbTzqyftrRkrZNyyXGONz8Vv4mpSMargfmhISDHou3gvOKCyfV4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDGsS-+DZEemg6vqbQVV5Xds9TNVnOAOvyeNsw0Kn3Mzw@mail.gmail.com>
+X-Received: by 2002:a05:6602:a01a:b0:893:d33f:e5ad with SMTP id
+ ca18e2360f4ac-93bd198c5d7mr2225638539f.18.1760376122164; Mon, 13 Oct 2025
+ 10:22:02 -0700 (PDT)
+Date: Mon, 13 Oct 2025 10:22:02 -0700
+In-Reply-To: <0000000000004d1b5605e3573f8e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ed353a.050a0220.ac43.003c.GAE@google.com>
+Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in dummy_timer (4)
+From: syzbot <syzbot+879882be5b42e60d4d98@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, fweisbec@gmail.com, 
+	hdanton@sina.com, hpa@zytor.com, hverkuil+cisco@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	mingo@kernel.org, mingo@redhat.com, pbonzini@redhat.com, 
+	penguin-kernel@I-love.SAKURA.ne.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	sean@mess.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	vkuznets@redhat.com, wanpengli@tencent.com, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 13, 2025 at 03:06:33PM +0200, Vincent Guittot wrote:
-...
-> > And then we have next_active_class() skip fair_sched_class entirely when
-> > scx_switch_all().
-> 
-> Ah yes you're right. fair is not called in case of scx_switched_all()
+syzbot suspects this issue was fixed by commit:
 
-Yeah, when siwtch_all this isn't an issue at all. In partial mode, the extra
-new idle may be noticeable but I don't think many people are using partial
-mode, so we can worry about it when it becomes a problem.
+commit eecd203ada43a4693ce6fdd3a58ae10c7819252c
+Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date:   Thu Jul 17 14:21:55 2025 +0000
 
-Thanks.
+    media: imon: make send_packet() more robust
 
--- 
-tejun
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15729dcd980000
+start commit:   200e340f2196 Merge tag 'pull-work.dcache' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f2886ebe3c7b3459
+dashboard link: https://syzkaller.appspot.com/bug?extid=879882be5b42e60d4d98
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156ff9f2080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178a89f2080000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: media: imon: make send_packet() more robust
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
