@@ -1,262 +1,213 @@
-Return-Path: <linux-kernel+bounces-850836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BC9BD4606
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CC6BD41FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 088345047C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434243E1687
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815373090C1;
-	Mon, 13 Oct 2025 14:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45752D3724;
+	Mon, 13 Oct 2025 14:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yARdaJDo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JGG2Btah";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V2Kj+Euk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1DkU73VJ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTk8n4Fz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BB1308F3C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D322248A5;
+	Mon, 13 Oct 2025 14:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367512; cv=none; b=NlvdOWn0LPEH0NczKIheKfC4mdaKb1dhcOlYMKj/liJ47yBjLjbHUxu3vPQJh9HU9DPb2t4PQBPk3GhCGJMxuol9JWDoIlaQTnnCT670ktz5aapSObfKF/bP6OJG/PWfQas8Vh3Mdo6M18VzXeYFgzlRumThc8S+Pm8vKxNZsIw=
+	t=1760367579; cv=none; b=dnsae1FrYPD/LZnFw6HF/lC8SqXH2fc/e5OobcwqP+OYByez5m/OSIV4s/ENbNA3rLJqyLyOKL+fwiP1HmtWGydTGBZSnlVPsU73g+PhhvxSi1eZsc2BlmmLqygUFUNtDsbNV8PoqMx64lENxOKpo1I20wq114sE9dZbxe+bWgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367512; c=relaxed/simple;
-	bh=jPKxn8StvzpFcNyP5oW1HFYYyEhT/yi2tBjyKnNthrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bUTjEMLAaXm1y5VEK/c+xajbzQOcA1rIyeVe+0dubcqa5l2kwtYVEG1wvL9l8632UQ2PqO+Zsp+4XmKXd6tcv+t2lgr25oJHjmIlo1mxwU8oOt6E3svk+MMBk0ci/4HZ4YAcFEWLKBDM85sffiTShIjplqd9ORmSIFwjMkNHWCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yARdaJDo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JGG2Btah; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V2Kj+Euk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1DkU73VJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CD49921246;
-	Mon, 13 Oct 2025 14:58:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760367509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qcvuerjXx7ZIiFOwSPYkO0MEVGe90oiiAUJVcvRd3Fc=;
-	b=yARdaJDoEym+6DuoIJ14UBqZ6qDODq3KlgbIjHdtN4KSqzlO9BHY+T4gcxRRINVn8b3CJb
-	tcHw5TQ0J42s4JC8h0hQ0mM1P1IX01SuI8nk9FXBNb9pD77fCTxOmmpzT/jnGPxFgEtg90
-	MEz8QFYWpNE6ynXunKDslm+XdokyPfw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760367509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qcvuerjXx7ZIiFOwSPYkO0MEVGe90oiiAUJVcvRd3Fc=;
-	b=JGG2Btahk4A1b6L6yzw2/gqML91UOlHl4jLbGieAHvA0XKSlxZXHvEDIu6FQMRwnGTsLTl
-	Gf0RqDZhrhEPD8Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=V2Kj+Euk;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1DkU73VJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760367508; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qcvuerjXx7ZIiFOwSPYkO0MEVGe90oiiAUJVcvRd3Fc=;
-	b=V2Kj+Eukw2Nmbfkq7SfhMit7Kpm9uyq49qc8r0IiUOuTX8wDKZxVpA2aQWiv66X77Y5pq+
-	OFkWa9dujt/MjM9caUDkTXhtcnHoFDKQ0qQNQPXKJenK20Yym8D0e8liUnlKiYw1ZACVZi
-	cWxNNz0deq2Ql9Na4yuqk0B1HWnZ91A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760367508;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qcvuerjXx7ZIiFOwSPYkO0MEVGe90oiiAUJVcvRd3Fc=;
-	b=1DkU73VJvf1A7kvmsYiY3hPW/iLjPsoX4SS/a8dvuMsZUq1t5Wm+bTfJkbxKVhFy2NRvQt
-	u2PWqLBfd1BMDvBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B01471374A;
-	Mon, 13 Oct 2025 14:58:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id d6SoKpQT7WhHNwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 13 Oct 2025 14:58:28 +0000
-Message-ID: <692b6230-db0c-4369-85f0-539aa1c072bb@suse.cz>
-Date: Mon, 13 Oct 2025 16:58:28 +0200
+	s=arc-20240116; t=1760367579; c=relaxed/simple;
+	bh=Q4amGCgEx94K8om8pN467kDbQql6OA0eh29fHknE5Fw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aZ+jas0OTgc0rEiGGeSvTi/dYegz3x7AmdEn3Ab/6681rFcn20EIoaLKejIQXAVTmNq0c1w+0pCS39p98+AbgLcZrzXNuMm0W2bhGUlZGslF6cvAwR/tsMfgf1k91D+SpIYQj2MqoDKU01DYZWaBaDsImHrqluWCPG/tlEmUUd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTk8n4Fz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EC5C4CEE7;
+	Mon, 13 Oct 2025 14:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760367578;
+	bh=Q4amGCgEx94K8om8pN467kDbQql6OA0eh29fHknE5Fw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=WTk8n4FzwfU+JNjoGVR3OOl9hk+bHZHl0+w5GZRjNYV4kcGnUqw90e8JkiIMYKBVG
+	 NcRsWksnrwcNhPIi5h+FE6/w7V49pHEpvBJWDcfp0XXxUphNZwlLcwqTdOS2Xv5h7H
+	 Ul0xhpRLHAp0v3U+9tWebDkckBTJyEpUQ7VkzJRTjJ7rMvZEqDE56NUEyhKX1KF1zu
+	 LtNnj2IWLDizfR5k0EAVLhiypzbKxwaeEPrWlIC63tsQcyvoiy5YWWAZ6X69XXqsee
+	 FAkG/CwJmqtbCg+OysuPgKOrseEsQDQlXtHMNhTe2lx3PAI0wJ8StKBXuFCzGviqs2
+	 SmK2gwrIbAo8g==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Changyuan Lyu <changyuanl@google.com>,  rppt@kernel.org,
+  akpm@linux-foundation.org,  linux-kernel@vger.kernel.org,
+  anthony.yznaga@oracle.com,  arnd@arndb.de,  ashish.kalra@amd.com,
+  benh@kernel.crashing.org,  bp@alien8.de,  catalin.marinas@arm.com,
+  corbet@lwn.net,  dave.hansen@linux.intel.com,
+  devicetree@vger.kernel.org,  dwmw2@infradead.org,  ebiederm@xmission.com,
+  graf@amazon.com,  hpa@zytor.com,  jgowans@amazon.com,
+  kexec@lists.infradead.org,  krzk@kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  luto@kernel.org,  mark.rutland@arm.com,
+  mingo@redhat.com,  pasha.tatashin@soleen.com,  pbonzini@redhat.com,
+  peterz@infradead.org,  robh@kernel.org,  rostedt@goodmis.org,
+  saravanak@google.com,  skinsburskii@linux.microsoft.com,
+  tglx@linutronix.de,  thomas.lendacky@amd.com,  will@kernel.org,
+  x86@kernel.org
+Subject: Re: [PATCH v8 01/17] memblock: add MEMBLOCK_RSRV_KERN flag
+In-Reply-To: <ef6wfr72set5wa5el3wbbu4yd5tnc4p2rhtjpb5kpmncv3xs5d@i3c5v3ciioi3>
+	(Breno Leitao's message of "Fri, 10 Oct 2025 02:33:59 -0700")
+References: <20250509074635.3187114-1-changyuanl@google.com>
+	<20250509074635.3187114-2-changyuanl@google.com>
+	<ef6wfr72set5wa5el3wbbu4yd5tnc4p2rhtjpb5kpmncv3xs5d@i3c5v3ciioi3>
+Date: Mon, 13 Oct 2025 16:59:32 +0200
+Message-ID: <mafs0wm4yluej.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [slab] af92793e52:
- BUG_kmalloc-#(Not_tainted):Freepointer_corrupt
-Content-Language: en-US
-To: kernel test robot <oliver.sang@intel.com>,
- Alexei Starovoitov <ast@kernel.org>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Harry Yoo <harry.yoo@oracle.com>, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org, linux-mm@kvack.org
-References: <202510101652.7921fdc6-lkp@intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <202510101652.7921fdc6-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: CD49921246
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim,intel.com:email];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+Content-Type: text/plain
 
-On 10/10/25 10:39, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG_kmalloc-#(Not_tainted):Freepointer_corrupt" on:
-> 
-> commit: af92793e52c3a99b828ed4bdd277fd3e11c18d08 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [test failed on      linus/master ec714e371f22f716a04e6ecb2a24988c92b26911]
-> [test failed on linux-next/master 0b2f041c47acb45db82b4e847af6e17eb66cd32d]
-> [test failed on        fix commit 83d59d81b20c09c256099d1c15d7da21969581bd]
-> 
-> in testcase: trinity
-> version: trinity-i386-abe9de86-1_20230429
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	group: group-01
-> 	nr_groups: 5
-> 
-> 
-> 
-> config: i386-randconfig-012-20251004
-> compiler: gcc-14
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202510101652.7921fdc6-lkp@intel.com
+On Fri, Oct 10 2025, Breno Leitao wrote:
 
-Does this fix it?
-----8<----
-From 5f467c4e630a7a8e5ba024d31065413bddf22cec Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 13 Oct 2025 16:56:28 +0200
-Subject: [PATCH] slab: fix clearing freelist in free_deferred_objects()
+> Hello Chanyuan, Mike,
+>
+> On Fri, May 09, 2025 at 12:46:19AM -0700, Changyuan Lyu wrote:
+>> --- a/mm/memblock.c
+>> +++ b/mm/memblock.c
+>> @@ -492,7 +492,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+>>  	 * needn't do it
+>>  	 */
+>>  	if (!use_slab)
+>> -		BUG_ON(memblock_reserve(addr, new_alloc_size));
+>> +		BUG_ON(memblock_reserve_kern(addr, new_alloc_size));
+>>  
+>>  	/* Update slab flag */
+>>  	*in_slab = use_slab;
+>> @@ -642,7 +642,7 @@ static int __init_memblock memblock_add_range(struct memblock_type *type,
+>>  #ifdef CONFIG_NUMA
+>>  			WARN_ON(nid != memblock_get_region_node(rgn));
+>>  #endif
+>> -			WARN_ON(flags != rgn->flags);
+>> +			WARN_ON(flags != MEMBLOCK_NONE && flags != rgn->flags);
+>
+> I am hitting some sporadic warnings at early boot on a production kernel
+> (6.16). Unfortunately this issue is not easily reproduce for me to test on
+> upstream.
+>
+> 	09:14:44  BIOS-provided physical RAM map:
+> 	09:14:44  BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usable
+> 	09:14:44  BIOS-e820: [mem 0x00000000000a0000-0x00000000000fffff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x0000000000100000-0x0000000064cb7fff] usable
+> 	09:14:44  BIOS-e820: [mem 0x0000000064cb8000-0x0000000064dc3fff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x0000000064dc4000-0x0000000065b13fff] usable
+> 	09:14:44  BIOS-e820: [mem 0x0000000065b14000-0x0000000065b61fff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x0000000065b62000-0x0000000065ed0fff] usable
+> 	09:14:44  BIOS-e820: [mem 0x0000000065ed1000-0x0000000065f2bfff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x0000000065f2c000-0x0000000066621fff] usable
+> 	09:14:44  BIOS-e820: [mem 0x0000000066622000-0x0000000066630fff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x0000000066631000-0x0000000068107fff] usable
+> 	09:14:44  BIOS-e820: [mem 0x0000000068108000-0x000000006819dfff] ACPI data
+> 	09:14:44  BIOS-e820: [mem 0x000000006819e000-0x000000006a48cfff] usable
+> 	09:14:44  BIOS-e820: [mem 0x000000006a48d000-0x000000006c58cfff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x000000006c58d000-0x000000006c5dcfff] ACPI data
+> 	09:14:44  BIOS-e820: [mem 0x000000006c5dd000-0x000000006cfdcfff] ACPI NVS
+> 	09:14:44  BIOS-e820: [mem 0x000000006cfdd000-0x000000006e9fcfff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x000000006e9fd000-0x000000006fffffff] usable
+> 	09:14:44  BIOS-e820: [mem 0x0000000070000000-0x000000008fffffff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x00000000fd000000-0x00000000fe7fffff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x00000000fed20000-0x00000000fed44fff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
+> 	09:14:44  BIOS-e820: [mem 0x0000000100000000-0x000000107fff655f] usable
+> 	09:14:44  BIOS-e820: [mem 0x000000107fff6560-0x000000107fff656f] type 128
+> 	09:14:44  BIOS-e820: [mem 0x000000107fff6570-0x000000107fffffff] usable
+> 	09:14:44  random: crng init done
+> 	09:14:44  ------------[ cut here ]------------
+> 	09:14:44 WARNING: CPU: 0 PID: 0 at mm/memblock.c:668 memblock_add_range (mm/memblock.c:668)
+> 	09:14:44  Modules linked in:
+> 	09:14:44  Tainted: [S]=CPU_OUT_OF_SPEC
+> 	09:14:44 RIP: 0010:memblock_add_range (mm/memblock.c:668)
+> 	09:14:44 Code: 28 80 3c 01 00 0f 84 04 fd ff ff 4c 89 ef e8 6c 77 09 00 e9 f7 fc ff ff 0f 0b 83 7c 24 1c 00 0f 85 9c fd ff ff e9 c5 fd ff ff <0f> 0b e9 be fd ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 6b fd
+> 	All code
+> 	========
+> 	0:    28 80 3c 01 00 0f        sub    %al,0xf00013c(%rax)
+> 	6:    84 04 fd ff ff 4c 89     test   %al,-0x76b30001(,%rdi,8)
+> 	d:    ef                       out    %eax,(%dx)
+> 	e:    e8 6c 77 09 00           call   0x9777f
+> 	13:    e9 f7 fc ff ff           jmp    0xfffffffffffffd0f
+> 	18:    0f 0b                    ud2
+> 	1a:    83 7c 24 1c 00           cmpl   $0x0,0x1c(%rsp)
+> 	1f:    0f 85 9c fd ff ff        jne    0xfffffffffffffdc1
+> 	25:    e9 c5 fd ff ff           jmp    0xfffffffffffffdef
+> 	2a:*    0f 0b                    ud2            <-- trapping instruction
+> 	2c:    e9 be fd ff ff           jmp    0xfffffffffffffdef
+> 	31:    44 89 f1                 mov    %r14d,%ecx
+> 	34:    80 e1 07                 and    $0x7,%cl
+> 	37:    80 c1 03                 add    $0x3,%cl
+> 	3a:    38 c1                    cmp    %al,%cl
+> 	3c:    0f                       .byte 0xf
+> 	3d:    8c 6b fd                 mov    %gs,-0x3(%rbx)
+>
+> 	Code starting with the faulting instruction
+> 	===========================================
+> 	0:    0f 0b                    ud2
+> 	2:    e9 be fd ff ff           jmp    0xfffffffffffffdc5
+> 	7:    44 89 f1                 mov    %r14d,%ecx
+> 	a:    80 e1 07                 and    $0x7,%cl
+> 	d:    80 c1 03                 add    $0x3,%cl
+> 	10:    38 c1                    cmp    %al,%cl
+> 	12:    0f                       .byte 0xf
+> 	13:    8c 6b fd                 mov    %gs,-0x3(%rbx)
+> 	09:14:44  RSP: 0000:ffffffff85e07d48 EFLAGS: 00010083 ORIG_RAX: 0000000000000000
+> 	09:14:44  RAX: 0000000000000020 RBX: 0000000000001c00 RCX: dffffc0000000000
+> 	09:14:44  RDX: 000000000009f000 RSI: 000000000009d000 RDI: ffffffff8685ebf8
+> 	09:14:44  RBP: 0000000000000002 R08: 0000000000000020 R09: 0000000000000000
+> 	09:14:44  R10: ffffffffff200570 R11: fffffbffffe400b2 R12: 000000000009d000
+> 	09:14:44  R13: 0000000000100000 R14: ffffffff8edf5ce4 R15: ffffffff8edf5ce0
+> 	09:14:44  FS:  0000000000000000(0000) GS:0000000000000000(0000) knlGS:0000000000000000
+> 	09:14:44  CR2: ffff888059e2dff8 CR3: 000000005bc1d000 CR4: 00000000000000b0
+> 	09:14:44  Call Trace:
+> 	09:14:44   <TASK>
+> 	09:14:44 ? __memblock_reserve (mm/memblock.c:936)
+> 	09:14:44 ? add_early_ima_buffer (arch/x86/kernel/setup.c:413)
+> 	09:14:44 ? parse_setup_data (arch/x86/kernel/setup.c:500)
+> 	09:14:44 ? setup_arch (arch/x86/kernel/setup.c:245 arch/x86/kernel/setup.c:958)
+> 	09:14:44 ? start_kernel (init/main.c:922)
+> 	09:14:44 ? x86_64_start_reservations (arch/x86/kernel/ebda.c:57)
+> 	09:14:44 ? x86_64_start_kernel (arch/x86/kernel/head64.c:231)
+> 	09:14:44 ? common_startup_64 (arch/x86/kernel/head_64.S:419)
+> 	09:14:44   </TASK>
+> 	....
+> 	Memory: 49640988K/66772816K available (54946K kernel code, 19058K rwdata, 22636K rodata, 2940K init, 120968K bss, 10650188K reserved, 6291456K cma-reserved)
+>
+> So, there is a memory override, and I am curious about it. Do you think it
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slub.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Yeah, it seems IMA is reserving a region that overlaps a region reserved
+by something else that doesn't use memblock_reserve_kern().
 
-diff --git a/mm/slub.c b/mm/slub.c
-index f9f7f3942074..080d27fe253f 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -6377,15 +6377,16 @@ static void free_deferred_objects(struct irq_work *work)
- 		slab = virt_to_slab(x);
- 		s = slab->slab_cache;
- 
-+
-+		/* Point 'x' back to the beginning of allocated object */
-+		x -= s->offset;
- 		/*
- 		 * We used freepointer in 'x' to link 'x' into df->objects.
- 		 * Clear it to NULL to avoid false positive detection
- 		 * of "Freepointer corruption".
- 		 */
--		*(void **)x = NULL;
-+		set_freepointer(s, x, NULL);
- 
--		/* Point 'x' back to the beginning of allocated object */
--		x -= s->offset;
- 		__slab_free(s, slab, x, x, 1, _THIS_IP_);
- 	}
- 
+> would be useful to expand this warning to dump more information about the
+> issue? (only compiled tested)
+>
+> 	if (flags != MEMBLOCK_NONE && flags != rgn->flags) {
+> 		pr_warn("memblock: Flag mismatch at region [%pa-%pa]\n",
+> 			&rgn->base, &rend);
+> 		pr_warn("  Existing region flags: %#x\n", rgn->flags);
+> 		pr_warn("  New range flags: %#x\n", flags);
+> 		pr_warn("  New range: [%pa-%pa]\n", &base, &end);
+> 		WARN_ON_ONCE(1);
+> 	}
+
+I suppose this would be useful. I think enabling memblock debug prints
+would also be helpful (using the "memblock=debug" commandline parameter)
+if it doesn't impact your production environment too much.
+
 -- 
-2.51.0
-
-
+Regards,
+Pratyush Yadav
 
