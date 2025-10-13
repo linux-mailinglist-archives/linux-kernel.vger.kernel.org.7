@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-850944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A401DBD50AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:30:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A373CBD522D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7603F547128
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:05:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70242547CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5568314B7C;
-	Mon, 13 Oct 2025 15:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7723F311589;
+	Mon, 13 Oct 2025 15:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tukaani.org header.i=@tukaani.org header.b="FdRB8NYq"
-Received: from mailscanner05.zoner.fi (mailscanner05.zoner.fi [5.44.246.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="it2pL4kr"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9B53081C7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.44.246.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F4A3112DE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370208; cv=none; b=YXuWShedG7yeLVtxzaTAWaqM+2GoL0SnJglLU8TKMwy8BO7rlOGzJKqsQgjeF9V7WLcYkTgKcOGh0HJkLNToJHPpWDm8cD9yDN4kYlGrdcN7yKEy52VjCR/zj3EhuFNIXVXkd7RUoDbwqrKevKZBIIFaH4uuHLnG8whB+3ISpSQ=
+	t=1760369986; cv=none; b=Sc6K4289FMkA/KjBRVMzUUdl1U8G7hsh9kF78IZvUJwxvp4uWl1UtK5FRF8BJKW2MJcXyg+QJLdwxgyfSVmQAqQlhMtAPD8x2IAlx12vGNZs4jmyitqWF6zai343xoEIlsqXJI/ituoqGT4S9GkxrtuSCdwstEN8QsTzpR/kg/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370208; c=relaxed/simple;
-	bh=4uBeaNecPaRo+HlRhltZmFREEiEWTHXnbloQYeG4v/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dVg7iUVZD3QhOC7EzU1Yo8R/iLwZiju/YByum9O6yuw56xnAe+NMHerlgicS6SHqKVLWzPw49HNwoouUwpSCEtdPteg6gkZ7Cp0f+o9d8kLYo13y4aAYRK1eZZmOQgiNDodFCxc/2Fr3L9qSpFp/zIDIx1Gw6GH2WpA+FVTuduM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; dkim=pass (2048-bit key) header.d=tukaani.org header.i=@tukaani.org header.b=FdRB8NYq; arc=none smtp.client-ip=5.44.246.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tukaani.org
-Received: from www25.zoner.fi (www25.zoner.fi [84.34.147.45])
-	by mailscanner05.zoner.fi (Postfix) with ESMTPS id 73F3720C1D;
-	Mon, 13 Oct 2025 18:38:01 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tukaani.org
-	; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:
-	Content-Description; bh=smqYrcBk5xx37VdH50G3Vir93uIEQ2AsNGlBAIn75vI=; b=FdRB8
-	NYqMkhR9HGNMWT+ipVZSRBHTAeFISM41aY0TvJiJowE6yi23MS6GbioSLQXEodpHz7kTqi9H++EH5
-	o5SbqPJ0Ufs9DqNltRYmHZvdm/Ijm3+wEDDLBY3v3Tv3FMGEUAJnQcECW1xCc2JDV40jR0Mu7K4yZ
-	bqxsohGBv1DlVXfle52OoPflDyI/g9Q0YGbgBhEjYcEj8eE2uRodICYB3dZIpHi/TVz6SThb3LrJm
-	v0Kb/BxKNC2mDfRApUx1DQuzU79tbEHnk+dY3I557vg1T07FehaijHoULKwXHT0CywgTs0pBYfxzE
-	bWwIHJB2SY4xp7/OEJapEbqGtT2Lg==;
-Received: from mail.zoner.fi ([84.34.147.244])
-	by www25.zoner.fi with esmtp (Exim 4.98.2)
-	(envelope-from <lasse.collin@tukaani.org>)
-	id 1v8Kcd-0000000Cxwf-2LKT;
-	Mon, 13 Oct 2025 18:38:01 +0300
-Date: Mon, 13 Oct 2025 18:38:00 +0300
-From: Lasse Collin <lasse.collin@tukaani.org>
-To: Ankan Biswas <spyjetfayed@gmail.com>
-Cc: skhan@linuxfoundation.org, khalid@kernel.org,
- david.hunter.linux@gmail.com, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev, Phillip Lougher
- <phillip@squashfs.org.uk>
-Subject: Re: [PATCH] lib/xz: remove dead IA-64 (Itanium) support code
-Message-ID: <20251013183800.7af293f5.lasse.collin@tukaani.org>
-In-Reply-To: <79cebb23-5232-49f1-a0ac-b401707c2b52@gmail.com>
-References: <20251013115136.16773-1-spyjetfayed@gmail.com>
-	<79cebb23-5232-49f1-a0ac-b401707c2b52@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760369986; c=relaxed/simple;
+	bh=zQmTVOaQ2conlnD0XZSZ6oY7jQQ4SJUuOz94+kxZw5Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mxkQHitvLK/VcQwBDwYaZLPAtI2HWg17gsiLApUm1iMqJQlp8eCckROXWSF7UWm6vSyqdF8DO72jYsSu6umGgrjxUsxxqH/+uXTEABcZJ6YquM1eAKAkNzbt3HKPmoPZQWE13FxzZ+J8o5cMGNk/t7TxqpP3SaDDh1r7EYuzGAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=it2pL4kr; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3f030846a41so3150615f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760369983; x=1760974783; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DezCksN63P76aa8HtfW+Fd8qwQxc2N6lFBI0VjqaVgQ=;
+        b=it2pL4krxHIWQJiQ6bR2s8LijadLgzoLpCZ93iZK0nvkyQtYRC+3iJd5acMpEpO+2B
+         bZOxlIsim/vhY+lUWnOoFkp74q4YFDp06xTN35GZwrlBg1/41H7x5S5jQ0aMraelEoZo
+         692mUDSxDGITv5T74Ivjf915j56ZEEZWgp9iM2td2vaN/2QRPZJnDMgTe2aN1utTwsXz
+         /VyxjtEuJWYliSWZkLdnn624ZecimmU1xYF9LkJKyYPM2doI9McfWF0xJhLtwit4DX7Z
+         XjLvdRgUE26LoME7bxyvwjMAHZvYbc40+nLddyNcL1mpw7o/7Twv/j0ZSyZd5xjylOMw
+         iCUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760369983; x=1760974783;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DezCksN63P76aa8HtfW+Fd8qwQxc2N6lFBI0VjqaVgQ=;
+        b=BhwZPfwFKg1PYn02f/4wNAnnZlA+pT9MOr/odokzuDyhsbKpYiP46NJN7mCLod+K/w
+         oZscjOzoMHCTbXKvgEtb9JqRnsVKbLURzCFrfjZg0tBhP3Bj+cRANw5lRWmWzSWkDauL
+         QqjuUmbxOSTP9iSTBI7Bu9VJ029n0PykOL0WzNczI9QNnKSCRhcWPYyb/Nmnmha2YtKy
+         sb6Q6CSWLFrskO1EOO8qFVoUJcPmdw/LOCQTiAW+JuUOcJ4/8tqLshjfqlKH75+/dQz7
+         2wUpFUSR8fRbj/te9jPaheyt62V73wYul2SeHEhaW+SVO9IUHXBBKqA+i/0jTv2NPHYk
+         UkUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE+3nxLTGxC8g4SxG6pW5Vg2M95P6FBKam9xquowO3gK7gq7DLLtkmnEsb4Cak5O+DY5vamzvT47raguI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8nkMzsyeVwX7RSq6VXNzb8/lACuVRecasCcal5pmjZDjvRYXM
+	k1a1LSLq0oLx1DPoqG4R9z+fm8KNo0Ju/Ckx/eb7imdZV7CT1zvfNaICjMskYmZhMW1qocrBN1T
+	QfW9cOUNopmv8ARi23A==
+X-Google-Smtp-Source: AGHT+IHT9D8nobwVH6g+HgY0QG4zVcAjf8Z0CihPbisBYc1GTcqFHPtDQkugsLoIe+WAtFs/dhifTn8tMXvfHZY=
+X-Received: from wror14.prod.google.com ([2002:adf:f10e:0:b0:425:f04a:4d95])
+ (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:6f04:0:b0:426:da92:d3a9 with SMTP id ffacd0b85a97d-426da92d584mr5857129f8f.46.1760369983567;
+ Mon, 13 Oct 2025 08:39:43 -0700 (PDT)
+Date: Mon, 13 Oct 2025 15:39:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
+Message-ID: <20251013153918.2206045-1-sidnayyar@google.com>
+Subject: [PATCH v2 00/10] scalable symbol flags with __kflagstab
+From: Siddharth Nayyar <sidnayyar@google.com>
+To: petr.pavlu@suse.com
+Cc: arnd@arndb.de, linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	mcgrof@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
+	samitolvanen@google.com, sidnayyar@google.com, maennich@google.com, 
+	gprocida@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-10-13 Ankan Biswas wrote:
-> Support for the IA-64 (Itanium) architecture was removed in
-> commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture").
-> 
-> This patch drops the IA-64 specific decompression code from
-> lib/xz, which was conditionally compiled with the now-obsolete
-> CONFIG_XZ_DEC_IA64 option.
+This patch series implements a mechanism for scalable exported symbol
+flags using a separate section called __kflagstab. The series introduces
+__kflagstab support, removes *_gpl sections in favor of a GPL flag,
+simplifies symbol resolution during module loading, and adds symbol
+import protection.
 
-The commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
-unconditionally disabled the IA-64 filter, which effectively dropped
-support for mounting Squashfs file systems that use XZ with the IA-64
-filter. I wasn't Cc'ed when it was committed because I wasn't in
-MAINTAINERS back then. If I had been, I might have commented that the
-commits [1] and [2] and the discussion [3] showed that keeping filters
-available for non-native archs can be desirable. But now that time has
-passed and no one has complained about the lack of IA-64 filter, it
-seems fine to remove it completely from Linux.
+Thank you Petr Pavlu for their valuable feedback.
 
-I won't remove the IA-64 filter from the upstream version of
-xz_dec_bcj.c, so this change will make those files diverge a little
-more. That's unfortunate, but they already differ by a tiny amount
-anyway.
+---
+Changes from v1:
+- added a check to ensure __kflagstab is present
+- added warnings for the obsolete *_gpl sections
+- moved protected symbol check before ref_module() call
+- moved protected symbol check failure warning to issue detection point
 
-xz_private.h line 106 checks if XZ_DEC_IA64 is defined. That line
-should be removed too. With that change:
+v1:
+https://lore.kernel.org/all/20250829105418.3053274-1-sidnayyar@google.com/
 
-    Acked-by: Lasse Collin <lasse.collin@tukaani.org>
+Siddharth Nayyar (10):
+  define kernel symbol flags
+  linker: add kflagstab section to vmlinux and modules
+  modpost: create entries for kflagstab
+  module loader: use kflagstab instead of *_gpl sections
+  modpost: put all exported symbols in ksymtab section
+  module loader: remove references of *_gpl sections
+  linker: remove *_gpl sections from vmlinux and modules
+  remove references to *_gpl sections in documentation
+  modpost: add symbol import protection flag to kflagstab
+  module loader: enforce symbol import protection
 
-[1] 5dc49c75a26b ("decompressors: make the default XZ_DEC_* config
-    match the selected architecture")
-[2] bf4d064d89ae ("lib/xz: enable all filters by default in Kconfig")
-[3] https://lore.kernel.org/lkml/20140228230017.GE14970@merlin.infradead.org/T/
+ Documentation/kbuild/modules.rst  |  11 +--
+ include/asm-generic/vmlinux.lds.h |  21 ++----
+ include/linux/export-internal.h   |  28 +++++---
+ include/linux/module.h            |   4 +-
+ include/linux/module_symbol.h     |   6 ++
+ kernel/module/internal.h          |   5 +-
+ kernel/module/main.c              | 112 +++++++++++++++---------------
+ scripts/mod/modpost.c             |  27 +++++--
+ scripts/module.lds.S              |   3 +-
+ 9 files changed, 120 insertions(+), 97 deletions(-)
 
 -- 
-Lasse Collin
+2.51.0.740.g6adb054d12-goog
+
 
