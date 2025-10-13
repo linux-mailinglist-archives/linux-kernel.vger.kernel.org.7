@@ -1,221 +1,141 @@
-Return-Path: <linux-kernel+bounces-850843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2EDBD4615
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:39:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E18BD416B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B2423167
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274C31895BC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62BB30EF9B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8627B30EF95;
 	Mon, 13 Oct 2025 15:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpQ02ceP"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VjFW7j5w"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4913730EF7B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B2727AC21;
+	Mon, 13 Oct 2025 15:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367813; cv=none; b=tuH9UsVSTFv3ZarCrPxDi3pjyK0murK1atKJMrzR+3hVpNpGXgMm97LISAm1Sstw/uV5tij4dlQHixOnGDj95qU+RGi9wjSjUWXRPNf8kqZhXmQcLZLbaU2aJj7QCUmEDZ8iCEE+Eye0AJ1HJ0nXs/U+VX/fGnxezf6onSVjI5Y=
+	t=1760367812; cv=none; b=svzRhjVNuvV0ZotTfDdveNP3zkAIL5+paNA3Y0b1GbPP+zgAkd4wc8EuAYgs1yWzg7lqDZgXZH2d3CEg2aHyjA5mZfBxryVihl3598Q/X+SV0e77c8kCiCKgooCgPSfEbBlTIJh+LPDQv1t2gAPZs1e2rOmHDu8gLMIQOXkDivQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367813; c=relaxed/simple;
-	bh=lyPLERlw8vWrCfdgV/iodmJO/gUP26Jw77ReDaknTuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E5iLx/N3IACOkaUCgUcXr0LHroMVn3GXgqqDahZTAWoSSvURCIggDRCTEzHLyB6vN/6bucc9+9r3BRgnVKm3yRqFeiZKVNmae23hZDw3oxSjV7UjgVB0eJIKVpkM+Fgr9o3jfDA96mQYGXT6GoA7vSy9xKE8ADx9MtzpHELI8QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpQ02ceP; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63babfdb52cso1663408a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760367809; x=1760972609; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J9V/zYY62mF3Jc1sYvz1gRNG552w5eZEPTjzgxmkZz0=;
-        b=ZpQ02cePZ6iDwEKZeyjTFJWekuc8SNL1VYAiNRwCHwwo3JHqxZFb/hYeYu8FWYHR9O
-         eXkrlZThhl4QsjSdeCiPM+229TWRF1tn/pGCTT+SoA9pLVRNJelHOez9pgZbkR20qZ3v
-         EcApYhI+Za25qGNm9R1EEvnTP8gDUdgLDDEtTqZYTLzWXVC1ncMSkq4etO4V3cZy/hTY
-         i1OIJLQXY8pFq3lNecAox8D45ItSXQs/SORr11PrOcm5lnXHYpRcUWKj553Dc13CnNws
-         titzqyDYj645gtAPql9cJBvj6YCMSiDj7njXYWVGulAzoLmFOCq4RZTWTr9tpzYiVhF/
-         2ABQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760367809; x=1760972609;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J9V/zYY62mF3Jc1sYvz1gRNG552w5eZEPTjzgxmkZz0=;
-        b=gywI+ZE84/qgin0rJSxh7cpvplA7JNygs4csaSGPBOU3+S/V4Hc4xk8cVftBtKNe5K
-         MDgBCjAcVE2J7anWNT7zNpvWeFcZSITTvQKQT2EYJD7sqc9j9JvHbmiS2QC4rHikNKn1
-         fjmayEQ35VtEYrWB+kxXZkLR2eOY6Lkid3TgIqX0oLNd0r/pbLkqYIThyZ8xM9KcCUWh
-         vMg5N23PwAEkoK/OHxMTYaF3x/ucr4zwpBbSiLhDpsVOaT82l0cYIydU+HBnE7Se7pkB
-         6zMCaTGeUpk051auW4/N8ZYTXNcMZcX4uNWDv5Bk7C0XwnsiDWGuQPDJAy375mg80Rn6
-         ojQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOYrBUvbnadUcOub5ujjtJJCv5SUC4SkUbTTsykkxzzcexIzbaMZSqQxlwM7o6ogMWjv6Ibpk8V1RaDzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqWjngw5Es8nhUG8ZJnAtBqTH++U5jCKzNdnJ6Asat5EzZYrim
-	kg7V4Dtrlu/WaNdg5ySruOrkUzL0ZgAz+gd0o8mdGVVGiUEoeJzbEdvl
-X-Gm-Gg: ASbGncubZMlfAhz4MVG/+xmLOcrMXNLP5PL0t6tVY5LGmYbbkcTaJThvzG7HOV36Qst
-	80toxpz9NKHVbNTFA9hPsR2zloswqcxNBckzQ9SqOoFr2yRJD10CC02ShMQvDf41QT+GW63ruKz
-	5eHGPFwUiPvwqp46b+GWqYbBA1lZFIIFdP1kKWWlLXMLZi6FoGiEmFUyUHkWpZoBBx6dWMQWSBu
-	8r2wzsKSfJVNhrOMsZ1af8ddkthRbUvjrGRFMJ1fYdPAQ4Iqc1dVhoFY3aHDvVMJ6Fmgzz+1bBE
-	FjOOLvEhd1uDBajBgB+VYsM9oIi1i3eIhL7B5r2V/dYVAcYrevlc24IKJOMKnE2YAQ5R+eOW1nt
-	Cc2wLUwcJ4IAnL5g2CI5nbZKLzjbpQhr7aSjCvV5g5b0bPMMUaPBhkyMCjScJSxFAhBW10eEY5c
-	KnhjSmnjS+
-X-Google-Smtp-Source: AGHT+IGPUxbjx1UJw3F56nxVVbUiRufE1LBjyJOtx0bj65ahQeDXudyFNDV/YxETMB9LOQKCQqoQxw==
-X-Received: by 2002:a17:907:72d3:b0:b42:9840:eac1 with SMTP id a640c23a62f3a-b50ac7e7a29mr2205488866b.49.1760367809042;
-        Mon, 13 Oct 2025 08:03:29 -0700 (PDT)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c129c4sm957903866b.41.2025.10.13.08.03.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 08:03:28 -0700 (PDT)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Artem Shimko <a.shimko.dev@gmail.com>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] dmaengine: dw-axi-dmac: add reset control support
-Date: Mon, 13 Oct 2025 18:02:33 +0300
-Message-ID: <20251013150234.3200627-3-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251013150234.3200627-1-a.shimko.dev@gmail.com>
-References: <20251013150234.3200627-1-a.shimko.dev@gmail.com>
+	s=arc-20240116; t=1760367812; c=relaxed/simple;
+	bh=G1U4VjihWrTjR/0pZxBUsKlb85UKypAyhjdzAAp6raw=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=gelQIj3DkXveBk4SusBTREyszoWb6MSuqPt8NkYbbeiXP8e9L/sucq2l+/lozhzbkScOKZZG828AWOQtkofVdifRPaV8PE5wt17EZdKyCSpC/SxoFQ0j5dU3OueF5flm8RS5stGO+XDh+R+vbd6elRGQ8yL1QdGcS4eKDIoOHgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VjFW7j5w reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4CACF557;
+	Mon, 13 Oct 2025 17:01:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1760367708;
+	bh=G1U4VjihWrTjR/0pZxBUsKlb85UKypAyhjdzAAp6raw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=VjFW7j5w3uImm2q1iWEwqGyFzq7DNfkTVBaq5lpyK2yHJ7aZC29Xfhr1ySWtwXTaA
+	 WkHQ6VshkR+fiQpIVovTbGFpBwEMHuBVTocpv9nEkNKv8sOsKQAAdkX1fA4a8tva/n
+	 KEgIrlSrlFZ6cr2flWju1lvfyogNPxedvXUY+v3Y=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251013-ptr_err-v1-10-2c5efbd82952@chromium.org>
+References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org> <20251013-ptr_err-v1-10-2c5efbd82952@chromium.org>
+Subject: Re: [PATCH 10/32] media: i2c: imx335: Use %pe format specifier
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	Julien Massot <julien.massot@collabora.com>,
+	Krzysztof =?utf-8?q?Ha=C5=82asa?= <khalasa@piap.pl>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Leon Luo <leonl@leopardimaging.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Martin Kepplinger <"mar tink"@posteo.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Niklas =?utf-8?q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
+	Yong Zhi <yong.zhi@intel.com>, Yunfei Dong <yunfei.dong@mediatek.com>
+Date: Mon, 13 Oct 2025 16:03:23 +0100
+Message-ID: <176036780330.559803.287308146210017676@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-Add proper reset control handling to the AXI DMA driver to ensure
-reliable initialization and power management. The driver now manages
-resets during probe, remove, and system suspend/resume operations.
+Quoting Ricardo Ribalda (2025-10-13 15:14:50)
+> The %pe format specifier is designed to print error pointers. It prints
+> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
+> omitting PTR_ERR().
+>=20
+> This patch fixes this cocci report:
+> ./i2c/imx335.c:1013:3-10: WARNING: Consider using %pe to print PTR_ERR()
 
-The implementation stores reset control in the chip structure and adds
-reset assert/deassert calls at the appropriate points: resets are
-deasserted during probe after clock acquisition, asserted during remove
-and error cleanup, and properly managed during suspend/resume cycles.
-Additionally, proper error handling is implemented for reset control
-operations to ensure robust behavior.
+Ohhh nice. Is this new ? First I've come across it.
 
-This ensures the controller is properly reset during power transitions
-and prevents potential issues with incomplete initialization.
 
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
- .../dma/dw-axi-dmac/dw-axi-dmac-platform.c    | 35 +++++++++++--------
- drivers/dma/dw-axi-dmac/dw-axi-dmac.h         |  1 +
- 2 files changed, 21 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index 8b7cf3baf5d3..8d9cecfc9a99 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -1321,6 +1321,8 @@ static int axi_dma_suspend(struct device *dev)
- 	axi_dma_irq_disable(chip);
- 	axi_dma_disable(chip);
- 
-+	reset_control_assert(chip->resets);
-+
- 	clk_disable_unprepare(chip->core_clk);
- 	clk_disable_unprepare(chip->cfgr_clk);
- 
-@@ -1340,6 +1342,8 @@ static int axi_dma_resume(struct device *dev)
- 	if (ret < 0)
- 		return ret;
- 
-+	reset_control_deassert(chip->resets);
-+
- 	axi_dma_enable(chip);
- 	axi_dma_irq_enable(chip);
- 
-@@ -1455,7 +1459,6 @@ static int dw_probe(struct platform_device *pdev)
- 	struct axi_dma_chip *chip;
- 	struct dw_axi_dma *dw;
- 	struct dw_axi_dma_hcfg *hdata;
--	struct reset_control *resets;
- 	unsigned int flags;
- 	u32 i;
- 	int ret;
-@@ -1487,16 +1490,6 @@ static int dw_probe(struct platform_device *pdev)
- 			return PTR_ERR(chip->apb_regs);
- 	}
- 
--	if (flags & AXI_DMA_FLAG_HAS_RESETS) {
--		resets = devm_reset_control_array_get_exclusive(&pdev->dev);
--		if (IS_ERR(resets))
--			return PTR_ERR(resets);
--
--		ret = reset_control_deassert(resets);
--		if (ret)
--			return ret;
--	}
--
- 	chip->dw->hdata->use_cfg2 = !!(flags & AXI_DMA_FLAG_USE_CFG2);
- 
- 	chip->core_clk = devm_clk_get(chip->dev, "core-clk");
-@@ -1507,18 +1500,28 @@ static int dw_probe(struct platform_device *pdev)
- 	if (IS_ERR(chip->cfgr_clk))
- 		return PTR_ERR(chip->cfgr_clk);
- 
-+	chip->resets = devm_reset_control_array_get_optional_exclusive(&pdev->dev);
-+	if (IS_ERR(chip->resets))
-+		return PTR_ERR(chip->resets);
-+
-+	ret = reset_control_deassert(chip->resets);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to deassert resets\n");
-+
- 	ret = parse_device_properties(chip);
- 	if (ret)
--		return ret;
-+		goto err_exit;
- 
- 	dw->chan = devm_kcalloc(chip->dev, hdata->nr_channels,
- 				sizeof(*dw->chan), GFP_KERNEL);
--	if (!dw->chan)
--		return -ENOMEM;
-+	if (!dw->chan) {
-+		ret = -ENOMEM;
-+		goto err_exit;
-+	}
- 
- 	ret = axi_req_irqs(pdev, chip);
- 	if (ret)
--		return ret;
-+		goto err_exit;
- 
- 	INIT_LIST_HEAD(&dw->dma.channels);
- 	for (i = 0; i < hdata->nr_channels; i++) {
-@@ -1605,6 +1608,8 @@ static int dw_probe(struct platform_device *pdev)
- 
- err_pm_disable:
- 	pm_runtime_disable(chip->dev);
-+err_exit:
-+	reset_control_assert(chip->resets);
- 
- 	return ret;
- }
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac.h b/drivers/dma/dw-axi-dmac/dw-axi-dmac.h
-index b842e6a8d90d..c74affb9f344 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac.h
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac.h
-@@ -71,6 +71,7 @@ struct axi_dma_chip {
- 	struct clk		*core_clk;
- 	struct clk		*cfgr_clk;
- 	struct dw_axi_dma	*dw;
-+	struct reset_control	*resets;
- };
- 
- /* LLI == Linked List Item */
--- 
-2.43.0
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/i2c/imx335.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> index c043df2f15fb25b3a56422092f99a1fd9a508fa9..71ed9a0d84a252ee362621c4d=
+38001508fb86d28 100644
+> --- a/drivers/media/i2c/imx335.c
+> +++ b/drivers/media/i2c/imx335.c
+> @@ -1009,8 +1009,8 @@ static int imx335_parse_hw_config(struct imx335 *im=
+x335)
+>         imx335->reset_gpio =3D devm_gpiod_get_optional(imx335->dev, "rese=
+t",
+>                                                      GPIOD_OUT_HIGH);
+>         if (IS_ERR(imx335->reset_gpio)) {
+> -               dev_err(imx335->dev, "failed to get reset gpio %ld\n",
+> -                       PTR_ERR(imx335->reset_gpio));
+> +               dev_err(imx335->dev, "failed to get reset gpio %pe\n",
+> +                       imx335->reset_gpio);
 
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
+>                 return PTR_ERR(imx335->reset_gpio);
+>         }
+> =20
+>=20
+> --=20
+> 2.51.0.760.g7b8bcc2412-goog
+>
 
