@@ -1,73 +1,93 @@
-Return-Path: <linux-kernel+bounces-850929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A81BD4DEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EB8BD4BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9CCD35475B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3FB4027A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B377F311C38;
-	Mon, 13 Oct 2025 15:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B9430F52D;
+	Mon, 13 Oct 2025 15:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="mWej291H"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsWEYKve"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D030DD19
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34E430EF96
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369989; cv=none; b=uSZ27SgkbSigx2b4GpPFLZtYNOEQ03VmIel2olv+01xLEPWZx+lSmNxuGDE67PjPXZNxdVfYqLmNgIJgu6YLVBkbidC3BTiQYIzWJiqR/Xz0r2O4snS5hFP1xtkjjjbdhlC9OryxBarDaCMiHe4z9EG9y51NaSrQZN5FRh3i/lU=
+	t=1760368826; cv=none; b=QjJUKPM3gDL9Ze6MOSE+s5RPWTl47/qarpyPikYY36u7GRzzRr6ua8U0BrVZ3w7Z9R5IslxUIFb7ZfsAzEC72qHAsL9c1wAfeLchgIoew9NTZN6FklvU4BxNgzFaQyy4QKpLPHNXlIoZZXFJJaEngiayno2t8AMFvKR1NZkRzDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369989; c=relaxed/simple;
-	bh=YwUQEWuGDbfNmBNRNmuhWkQfNTtxPU2EfJRzUJtttGY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YOwjpftlUPpH7u9LuN5cK1apFjxYVp9GNViANqKI6UTz7BB065YkIMlMohAGbN5Q4uMJKdVv5UIMfmTYOcv8/bA6THzYElvDB73XwYZPM25c3PPkqKQHEZoI8CmbTZtWflrz7GAI2oe8UqsIM3Iov6lM5zUA4SZlKtuzr6ZmfgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=mWej291H; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DEtCTk027980;
-	Mon, 13 Oct 2025 15:10:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pps0720; bh=uIjqjo58kep0pU2OkAzHPvf81jMItmoD1vePu
-	ap55W0=; b=mWej291Ho40lbgK/RTvW0phvJJpEWcGqRas2pG24/Cbu4RlpJxEIU
-	DKjk6zvoxtrgJFXF+zaDHS5fRCrUiPlVWK61hKm/q5kCqrStgWA8gY3CZlrG8CAN
-	kZwpudGfyRERXbI97ihsSbaBzI9/Q1K/G/xIZzpAxIHNkXCH/XUJ0JpqKP3g5KhU
-	s3q4kQaZNaDa6tZX8dFEMUSnz8Ws53YE7KqD6wnUBXweCNbLXLSg79d9uDtIT5jx
-	B+qcfR7OAX9xpF4bq8AaPQ5T+zOCaRPX0KUBNMI0E4AVAXVqflSM/BIVbAXbznsT
-	lfI797I/jevgebK7hi0Ap3HHr2/WBwj0Q==
-Received: from p1lg14881.it.hpe.com (p1lg14881.it.hpe.com [16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 49s3ky04qe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Oct 2025 15:10:01 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 31381805E31;
-	Mon, 13 Oct 2025 15:10:01 +0000 (UTC)
-Received: from dog.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id B254A808B81;
-	Mon, 13 Oct 2025 15:10:00 +0000 (UTC)
-Received: by dog.eag.rdlabs.hpecorp.net (Postfix, from userid 200934)
-	id DB65E302F474C; Mon, 13 Oct 2025 10:09:59 -0500 (CDT)
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Steve Wahl <steve.wahl@hpe.com>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-        Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH] tick/sched: Use trylock for jiffies updates by non-timekeeper CPUs
-Date: Mon, 13 Oct 2025 10:09:59 -0500
-Message-Id: <20251013150959.298288-1-steve.wahl@hpe.com>
-X-Mailer: git-send-email 2.26.2
+	s=arc-20240116; t=1760368826; c=relaxed/simple;
+	bh=K8AAoiZgUUO3ges/u/HpnwBtA9qJAuWVHK8IuNIXlO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VBjshjMocJ86ry4kheuqajB5gf9lMyMcPjjfbv0beGVzNAPaYHkZzAfcYQk2IoqaIa+6qxwYpuTMgR+715HoqIQHECS6dyJWe2yB+PamkGjdEMX5RI9CHXT/+o/LFl6IBaKnakrqoVMZIFeCVff6ebVzUf++CTNYRlBUdgTWTmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsWEYKve; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27c369f8986so39794335ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760368824; x=1760973624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWw3pYmfnmGvB+YkCO3yexV5qTzE3+kQSnnpQTIm/9c=;
+        b=KsWEYKve4jnlMMghMmCdHKeR6bPWaFg9Rie1liX6xmaqEy5hZipoUD7epP1zwOB8Qz
+         u/55EWfveLK6Coiwqw0QrGC5g+/d6w2z/pP4+oGHUiGebaMLTm+FUGgpb2fpcIwEK7Mu
+         Cd2SQzZHtQEVV/DUgXJdzxxvkGb5wRUFm41sLNY7FJO0GYdJCNdjs9Ijel+qHh+lFVFW
+         zApu47h2JP3DatNadGziTJ9DGpcaLXBqUt8oKtrXw4NH8c22WBkxhl7Vf8LtIXTvbO2N
+         z/opr0sBlO4ZIIeh0e8rYzSitv/TuaRTuL5PtnvKu8PertUf8uyt7DgNFonSNqOxtLlA
+         JIuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760368824; x=1760973624;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nWw3pYmfnmGvB+YkCO3yexV5qTzE3+kQSnnpQTIm/9c=;
+        b=QsqdZ2EvXcqo+Ug+8H5rRfuwfweVuGafJtrd8Mhj2hNWzlla4EMW76qOMsZ2Hh85Bf
+         2O8ye4FjJW5dVjHq9VpXevPVKaWLhrw8FHKVvEYAw0AF08vrXrGOzYh5sfbnx/JZj+75
+         Ygu/59ZEI17r9TzkYDtVziJzMQkGVcrFfMHWBxkB9dNz9JtMbjrNRRCKGp2SP9tXsCVY
+         ARY9GavCVMjTD/9BLrBl4z2qPLRCwUHG8zJL+SAQ5OwXa0zXhIoPG0ruT6DHbVEZ6Ypw
+         5vnUKIshW6vxfgd0RXa+P1FBv9wJGERNh7UrseYvyiGi5Zt0RgqOO23qsR6x4Cny3EJf
+         hyNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKlBYh2fuXxufh2+czJVYG6znoJ/lkS921DH8BXlApzwsebo0TnK8CyMo6tZThn/gJIXt+iF3G4Yj6M1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXxE8Aq0aS1QcZzsfbIUdPeEIKRYz2VnZ6ae13hLSuGblNV4fH
+	ADMiCnv5wpwMPHtHdQxiFrD5m2TZgccMiepY/oH5kiLL9vQ62F+vSyZ6
+X-Gm-Gg: ASbGnctwd+RBNzKJhOxt44/euTA4fH96hxMMnMM0+RjsEhhUEQOK3v96XOr/fUngMLW
+	Eqb+nCOq8V0WW+4YExWaTT8zHBx+qvZ9awSDcXg7UPnX3yraUqxEPuWI+jexNkYkZ1AN3mkZPfo
+	RC0zUKxBbtKztix/dNQ5MbWRxzacyY45Q9Ms/Wm2jR4aJn2nRWeZYBZ3i7H8QSO0AwICJrpvm2r
+	MV9j+VoFLETpZRVRxbi5e0pqb1g53bm8kMsWmD06s2HcMNscKhwfNTI55N43oreayTskRk6qqXf
+	d5y7GwOKMOaNf3wN/1T6luS67ay4da+Mh2wZWlVrRJIM8huLHDERfjt0C3IwhpnkveW9R6Z1Cve
+	jhpcfefwJoKVDeJpJtgYBS8NiSWDs3xlcm6jhS5baSj863EUeWQ==
+X-Google-Smtp-Source: AGHT+IED5HSARgZp3w1i5vJ/5lba5zHCV8vbpThYRazELMLhgYDV4CSz/po8MO0H+ROXoU4f3DVC/w==
+X-Received: by 2002:a17:903:3b86:b0:28e:7567:3c4b with SMTP id d9443c01a7336-29027373b18mr314146635ad.16.1760368823921;
+        Mon, 13 Oct 2025 08:20:23 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.108])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f05bcasm136560245ad.84.2025.10.13.08.20.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 08:20:23 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
+	linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v1] arm64: dts: rockchip: odroid-m1: Add pinctrl for I2S1 8ch TX path
+Date: Mon, 13 Oct 2025 20:50:03 +0530
+Message-ID: <20251013152011.131118-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,152 +95,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: -m10UOhHm_hUTcXe_CzEHuKA2OwMkXAJ
-X-Proofpoint-ORIG-GUID: -m10UOhHm_hUTcXe_CzEHuKA2OwMkXAJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA2NiBTYWx0ZWRfX6naXhFXN2WS2
- vZPoC/BwxN3NvdsdHZV9qkPCjMWkr1er/B89UBwmN3lwNduAGOGC2qrzCq3HKXXVqrPCn2uGKNF
- COPXVJigX8jCzjwhvtwWBVNYCO+i7yJ0UpX7d1u83LujUfLzfI1AEHuQJMj+GYTNW0/JFAs/pZg
- 4DZ7CdvapZ34jRBcVumfl47wmlUhFIreJLLCSNEPDQMW5QeGc5TxjaaVDmQgJeS/wt8RPPrG69w
- 1csuRWFhV+IMJpip33AlCVwXH7IC4ZGWMZAxAyrPJ37teiYwVJ2LM552bAezHKke7dMeNzZwj/L
- WCMSS8DHJFDnVQ2ZkVbxltD5cU6j4ZGHnUatloWL3RQRHot/ILv5cvn5y55PyhhPL0W+PUSCXe8
- I85r/13c5C0REXy2I6oYb9jq6ymsow==
-X-Authority-Analysis: v=2.4 cv=D5xK6/Rj c=1 sm=1 tr=0 ts=68ed1649 cx=c_pps
- a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
- a=x6icFKpwvdMA:10 a=MvuuwTCpAAAA:8 a=H5T9noDTSo1JzFdqmQ4A:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
- clxscore=1011 bulkscore=0 suspectscore=0 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130066
 
-On large NUMA systems, while running a test program that saturates the
-inter-proccesor and inter-NUMA links, acquiring the jiffies_lock can
-be very expensive.  If the cpu designated to do jiffies updates
-(tick_do_timer_cpu) gets delayed and other cpus decide to do the
-jiffies update themselves, a large number of them decide to do so at
-the same time.  The inexpensive check against tick_next_period is far
-quicker than actually acquiring the lock, so most of these get in line
-to obtain the lock.  If obtaining the lock is slow enough, this
-spirals into the vast majority of CPUs continuously being stuck
-waiting for this lock, just to obtain it and find out that time has
-already been updated by another cpu. For example, on one random entry
-to kdb by manually-injected NMI, I saw 2912 of 3840 cpus stuck here.
+Enable proper pin multiplexing for the I2S1 8-channel transmit interface by
+adding the default pinctrl configuration which esures correct signal routing
+and avoids pinmux conflicts during audio playback.
 
-To avoid this, in tick_sched_do_timer() have cpus that are not the
-official timekeeper only try for the lock, and if it is held by
-another CPU, leave the updating of jiffies to the lock holder.  If the
-update is not yet guaranteed complete, do not reset
-ts->stalled_jiffies, so the check for stalled jiffies continues on the
-next tick.
+Changes fix the error
+[  116.856643] [    T782] rockchip-pinctrl pinctrl: pin gpio1-10 already requested by affinity_hint; cannot claim for fe410000.i2s
+[  116.857567] [    T782] rockchip-pinctrl pinctrl: error -EINVAL: pin-42 (fe410000.i2s)
+[  116.857618] [    T782] rockchip-pinctrl pinctrl: error -EINVAL: could not request pin 42 (gpio1-10) from group i2s1m0-sdi1 on device rockchip-pinctrl
+[  116.857659] [    T782] rockchip-i2s-tdm fe410000.i2s: Error applying setting, reverse things back
 
-With this change, manually interrupting the test I find at most one
-cpu in the tick_do_update_jiffies64 function.
-
-Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+Fixes: 78f858447cb7 ("arm64: dts: rockchip: Add analog audio on ODROID-M1")
+Cc: Aurelien Jarno <aurelien@aurel32.net>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- kernel/time/tick-sched.c | 46 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 9 deletions(-)
+$ aplay -l
+**** List of PLAYBACK Hardware Devices ****
+card 0: HDMI [HDMI], device 0: fe400000.i2s-i2s-hifi i2s-hifi-0 [fe400000.i2s-i2s-hifi i2s-hifi-0]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 1: RK817 [Analog RK817], device 0: fe410000.i2s-rk817-hifi rk817-hifi-0 [fe410000.i2s-rk817-hifi rk817-hifi-0]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+---
+ arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index c527b421c865..706d4e235989 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -54,7 +54,7 @@ static ktime_t last_jiffies_update;
- /*
-  * Must be called with interrupts disabled !
-  */
--static void tick_do_update_jiffies64(ktime_t now)
-+static bool _tick_do_update_jiffies64(ktime_t now, bool trylock)
- {
- 	unsigned long ticks = 1;
- 	ktime_t delta, nextp;
-@@ -70,7 +70,7 @@ static void tick_do_update_jiffies64(ktime_t now)
- 	 */
- 	if (IS_ENABLED(CONFIG_64BIT)) {
- 		if (ktime_before(now, smp_load_acquire(&tick_next_period)))
--			return;
-+			return true;
- 	} else {
- 		unsigned int seq;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+index 0f844806ec54..442a2bc43ba8 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+@@ -482,6 +482,8 @@ &i2s0_8ch {
+ };
  
-@@ -84,18 +84,24 @@ static void tick_do_update_jiffies64(ktime_t now)
- 		} while (read_seqcount_retry(&jiffies_seq, seq));
- 
- 		if (ktime_before(now, nextp))
--			return;
-+			return true;
- 	}
- 
- 	/* Quick check failed, i.e. update is required. */
--	raw_spin_lock(&jiffies_lock);
-+	if (trylock) {
-+		/* The cpu holding the lock will do the update. */
-+		if (!raw_spin_trylock(&jiffies_lock))
-+			return false;
-+	} else {
-+		raw_spin_lock(&jiffies_lock);
-+	}
- 	/*
- 	 * Re-evaluate with the lock held. Another CPU might have done the
- 	 * update already.
- 	 */
- 	if (ktime_before(now, tick_next_period)) {
- 		raw_spin_unlock(&jiffies_lock);
--		return;
-+		return true;
- 	}
- 
- 	write_seqcount_begin(&jiffies_seq);
-@@ -147,6 +153,27 @@ static void tick_do_update_jiffies64(ktime_t now)
- 
- 	raw_spin_unlock(&jiffies_lock);
- 	update_wall_time();
-+	return true;
-+}
-+
-+/*
-+ * Obtains the lock and does not return until update is complete.
-+ * Must be called with interrupts disabled.
-+ */
-+static void tick_do_update_jiffies64(ktime_t now)
-+{
-+	_tick_do_update_jiffies64(now, false);
-+}
-+
-+/*
-+ * This will return early if another cpu holds the lock.  On return,
-+ * the update is in progress but may not have completed yet.
-+ * Must be called with interrupts disabled.
-+ * Returns false if update might not yet be completed.
-+ */
-+static bool tick_attempt_update_jiffies64(ktime_t now)
-+{
-+	return _tick_do_update_jiffies64(now, true);
- }
- 
- /*
-@@ -239,10 +266,11 @@ static void tick_sched_do_timer(struct tick_sched *ts, ktime_t now)
- 		ts->stalled_jiffies = 0;
- 		ts->last_tick_jiffies = READ_ONCE(jiffies);
- 	} else {
--		if (++ts->stalled_jiffies == MAX_STALLED_JIFFIES) {
--			tick_do_update_jiffies64(now);
--			ts->stalled_jiffies = 0;
--			ts->last_tick_jiffies = READ_ONCE(jiffies);
-+		if (++ts->stalled_jiffies >= MAX_STALLED_JIFFIES) {
-+			if (tick_attempt_update_jiffies64(now)) {
-+				ts->stalled_jiffies = 0;
-+				ts->last_tick_jiffies = READ_ONCE(jiffies);
-+			}
- 		}
- 	}
- 
+ &i2s1_8ch {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2s1m0_sclktx &i2s1m0_lrcktx &i2s1m0_sdi0 &i2s1m0_sdo0>;
+ 	rockchip,trcm-sync-tx-only;
+ 	status = "okay";
+ };
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
-2.26.2
+2.50.1
 
 
