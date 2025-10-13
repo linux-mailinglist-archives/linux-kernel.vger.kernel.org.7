@@ -1,192 +1,136 @@
-Return-Path: <linux-kernel+bounces-849823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE8EBD0FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:30:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C52BD1006
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECA854E05F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:30:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F6C94E2131
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 00:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45AC1547D2;
-	Mon, 13 Oct 2025 00:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8581DF258;
+	Mon, 13 Oct 2025 00:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGyqI9Sm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyTV70OP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298AC4C6E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 00:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A34211F;
+	Mon, 13 Oct 2025 00:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760315414; cv=none; b=ZQC4DcrV59IHnFxrY3T889uhqYTFob8cSrEqiw4p4jNTxXVCtf5S1ZuBqMx2L59JhKm9zqvQmWadsvATduI1SvFJZSf5oVyuo+SwDXHFm5d7XMknhUZvRgj5u0E3weSa2aaPY+uUk3Tx3rh8FLSBn9B5H665qcEH6MexRjouMVU=
+	t=1760316273; cv=none; b=RNgtYtH5ZktCjO3E7PzEbkBC4peh8lYNGEEJV1lMsna3CHlpUB+4qYBcpWA+zO6wqj90r8gpzpdWgVzqOsEm7XY4WL0qy8MyMzwKWc60wpmQzFH82GSc3OGsXJcXJ4CDzqLF0amiqdG9GYOgUSDXEbMVVTiqRtrC0visdZHMBqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760315414; c=relaxed/simple;
-	bh=Ftqnj4KaATzLCXTBXiHFa8DQwKVVMfZ4GfmyMx/ZjEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lKC5z9xWqhBpShoeGk3enCPS9FmVp81h08G1LjwFd6VUGZ3DsBpaOQuFTUOjSCh0ktFIpga6m1coYOrQ3Wc/PPkDJDeQJptJnj5SjNT+PLNwRBctWTmZxVRYrX40jpIZLGBQyegDcTgfqUqQd2BiV5VPzt4eW4VVcUEkwaor7s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGyqI9Sm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BF0FC16AAE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 00:30:12 +0000 (UTC)
+	s=arc-20240116; t=1760316273; c=relaxed/simple;
+	bh=vZIrRpa1++fpehXM29JEkhYaLWzQwzQLHpVBSIkYNso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=StHmQjsOpBIeHBGmWjgcRIRdSStr+t5W6G+FCEQyoroO9QB/qKDlUKWMwGPjxxe/DO5J3qCvBUl6uaO6xpmdA+tH00KlLEorBeoUntNJE+Bf9H+hnYvWJVy8kyf4/TqHhlNxP8MlNxmn4hfcIR0E7c37BfXJN7wZwZXC7UCTeP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyTV70OP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE9AC4CEE7;
+	Mon, 13 Oct 2025 00:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760315412;
-	bh=Ftqnj4KaATzLCXTBXiHFa8DQwKVVMfZ4GfmyMx/ZjEQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XGyqI9Sm66vBEFhZpDoexjnIsKxIQaemKUhG+yrFcf989TLgbGfnjR8v/+TBNu3DB
-	 MwTNm6jINMRxiHpxKt+RzwI+SghoXdxYKwyot7XC4bh1fXRJNY5SCMDYVnrzMP3d0/
-	 EcEJ5glyvPWLKgO7nquwTsKtfDT3jayyfHi6psy/WqbUatafKqdNYwJngQpRnYwoj5
-	 XKz+aeLMisqCUTzIfyGi0RJQjBXtGXVasofModjF1WfCnOmMq6XFu8JoR/zAxzJXhJ
-	 m+MhKqEDSELVByzu09xhtliLQIts7mhDQLqxZFSSOZpHvnYUPU7hPeSaXaCfYGG05B
-	 hm09HfsjLRYhA==
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f44000626bso2558506f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 17:30:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXvlcdKJEYfq1sNFeEeoH6zn1QU9lQlQRzgnlhZXZ8FEoSLjxZzdHFu0gWeGmCHzvPpiVbuMwXjOREjDw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJnMCD39bAlI3fvauEqlld/AGywjSgP7cuRgPo3bnZsmT0hbbm
-	KLeM9RROptuW56xpePotkMVMIhL/8BX8sER4xl009r/Msryn7Kwge8tbh9EZBiJkXEo2pXXk0TL
-	t74OwZvm6Q5ZCPY9yDMcLVBPULRl25bY=
-X-Google-Smtp-Source: AGHT+IF28hGFEYqy29BMAFT4KFXlhAWSW7TtE/VIwFlQvB8Cdfl8PzF88CzrL2eeItCVIJ5zgOvuDFGeYxdYMM4z/hs=
-X-Received: by 2002:a05:6000:2891:b0:3ee:1523:2310 with SMTP id
- ffacd0b85a97d-4266e7c203emr13067865f8f.27.1760315411080; Sun, 12 Oct 2025
- 17:30:11 -0700 (PDT)
+	s=k20201202; t=1760316272;
+	bh=vZIrRpa1++fpehXM29JEkhYaLWzQwzQLHpVBSIkYNso=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XyTV70OPWOHxAoTacgT5jMoITcw/rLk+LmvTAazRaPSmYhHbmMZnBufdI1D6IRVyw
+	 XJHl9wpiI+IsDHmA2RZrcMc1fQ/edCHcH5/XPLY4Dh42DGqzuiWMrRA902BXb8hAHi
+	 VtAK2LPgQasQrm3Exs/FTYLwDUaE5JN3Z3fxn/9ppJOEwmIICWxTif9eDEUQZY9qom
+	 B/rFQ+etwZjc3rvEr0GIMB5czmnpRUl7V4d8AuP/nBG3c00SMgTKaPTNTR/IC/oXvz
+	 /0ChoLCxLR/E2eax3pNTUsSY5qoODUAhT3U+HVzIwllmZ4m3e8kE84qjvbDDdA/7O7
+	 mquE20pDGomPQ==
+Message-ID: <14aec202-39a0-45fc-9d5f-20fb6806eca3@kernel.org>
+Date: Mon, 13 Oct 2025 02:44:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011155746.1558731-1-guoren@kernel.org> <CAK9=C2UrYg+sHsDqkmz7f7KnaREU7hXF4rbON002cnAti_pDXg@mail.gmail.com>
- <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com>
-In-Reply-To: <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Mon, 13 Oct 2025 08:29:58 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRwW+0-nAvagfBf8U9vbUWocvCaNfYNVrCN+d2hYxdBYg@mail.gmail.com>
-X-Gm-Features: AS18NWCS67Vw69jJgG0u0GE_175z0kD2HPQ7-bp5JgDUnjIYl49Fw2qPHcn4IW4
-Message-ID: <CAJF2gTRwW+0-nAvagfBf8U9vbUWocvCaNfYNVrCN+d2hYxdBYg@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Add pgprot_dmacoherent definition
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: samuel.holland@sifive.com, david@redhat.com, yongxuan.wang@sifive.com, 
-	cuiyunhui@bytedance.com, luxu.kernel@bytedance.com, paul.walmsley@sifive.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, palmer@dabbelt.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] leds: Add Virtual Color LED Group driver
+To: Jonathan Brophy <professor_jonny@hotmail.com>,
+ Jonathan Brophy <professorjonny98@gmail.com>, lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+References: <20251009084339.1586319-1-professorjonny98@gmail.com>
+ <c1d2b2f5-1755-48f3-ac02-952bda718193@kernel.org>
+ <DS0PR84MB374668EBA934375770E4A6CA9FEAA@DS0PR84MB3746.NAMPRD84.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DS0PR84MB374668EBA934375770E4A6CA9FEAA@DS0PR84MB3746.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 13, 2025 at 7:50=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote:
->
-> On Sun, Oct 12, 2025 at 11:51=E2=80=AFPM Anup Patel <apatel@ventanamicro.=
-com> wrote:
-> >
-> > On Sat, Oct 11, 2025 at 9:28=E2=80=AFPM <guoren@kernel.org> wrote:
-> > >
-> > > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> > >
-> > > RISC-V Svpbmt Standard Extension for Page-Based Memory Types
-> > > defines three modes:
-> > >
-> > >  Mode | Value | Requested Memory Attributes
-> > >  PMA  |   0   | None
-> > >  NC   |   1   | Non-cacheable, idempotent, weakly-ordered (RVWMO),
-> > >       |       | main memory
-> > >  IO   |   2   | Non-cacheable, non-idempotent, strongly-ordered
-> > >       |       | (I/O ordering), I/O
-> > >
-> > > The pgprot_dmacoherent default uses the IO memory attribute if there
-> > > is no asm definition, but IO is not for main memory according to
-> > > Svpbmt rules.
-> > >
-> > > This commit corrects pgprot_dmacoherent with the NC memory attribute,
-> > > which satisfies performance improvement and prevents using the IO
-> > > attribute to access main memory.
-> > >
-> > > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
-> >
-> > I had sent the same patch on Aug 20 and you had provided
-> > Tested-by to that patch.
-> >
-> > If you had concerns with my patch then you could have provided
-> > comments but you choose to hijack it and change authorship.
-> I didn't find your patch at first, so I sent it out. When I discovered
-> your patch, I gave the Tested-by to yours.
-> I've added the abandoned reply to this thread. Have you seen that [1]?
->
-> [1] https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEGW=
-rw9ERRLYYA@mail.gmail.com/
+On 13/10/2025 02:24, Jonathan Brophy wrote:
+> On FRI, 10 October 2025, Krzysztof Kozlowski wrote:
+> 
+> 
+>>> +	if (!ret) {
+>>> +		vled->blink_delay_on = blink_interval;
+>>> +		vled->blink_delay_off = blink_interval;
+>>> +	}
+>>> +
+>>> +	phandle_count = fwnode_property_count_u32(child_fwnode, "leds");
+>>
+>>
+>> No, don't mix OF and fwnode.
+> 
+> Thanks for the guidance I am working my way through the List if fixes and will offer a new patch set when complete.
+> 
+> Just one question is there a preference to use Device Tree (OF) functions or FWnode functions?
+> It is my under standing FWnode is newer and  more universal.
 
-This patch is on Sat, Oct 11, 2025 [1]
-Guo's Tested-by is on Sun, 12 Oct 2025 02:07:34 [2]
-Abandon reply is on Sun, 12 Oct 2025 14:11:42 [3]
-Gao's Tested-by is on Sun, 12 Oct 2025 18:00:36 [4]
+I think fwnode is better, but my comment here was - choose one.
 
-[1]: https://lore.kernel.org/all/20251011155746.1558731-1-guoren@kernel.org=
-/
-[2]: https://lore.kernel.org/linux-riscv/aOtR39pl5xjyYHn1@gmail.com/
-[3]: https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEGWr=
-w9ERRLYYA@mail.gmail.com/
-[4]: https://lore.kernel.org/linux-riscv/031395FE-C51C-45A7-85A3-CC4A25EB60=
-66@gmail.com/
-
-I also asked Gao to notice your patch and give it the Tested-by tag.
-That's why you got two Tested-by on Oct 12 after two months. So, your
-reply, "but you choose to hijack it and change authorship," makes me
-sad.
-
-Anyway, it's a vital fixup patch that resolved the bug that had
-existed for many years of svpbmt, and I hope this misunderstanding can
-draw the maintainers' attention and gain more Tested-by tags.
-
->
-> >
-> > Regards,
-> > Anup
-> >
-> > > ---
-> > >  arch/riscv/include/asm/pgtable.h | 9 +++++++++
-> > >  1 file changed, 9 insertions(+)
-> > >
-> > > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/as=
-m/pgtable.h
-> > > index 29e994a9afb6..2a84479de81b 100644
-> > > --- a/arch/riscv/include/asm/pgtable.h
-> > > +++ b/arch/riscv/include/asm/pgtable.h
-> > > @@ -654,6 +654,15 @@ static inline pgprot_t pgprot_writecombine(pgpro=
-t_t _prot)
-> > >         return __pgprot(prot);
-> > >  }
-> > >
-> > > +/*
-> > > + * DMA allocations for non-coherent devices use what the RISC-V arch=
-itecture
-> > > + * call "Non-Cacheable" memory attribute, which permits idempotent, =
-weakly-ordered
-> > > + * (RVWMO), main memory. This is different from "I/O" memory attribu=
-te which is
-> > > + * intended for MMIO access with Non-cacheable, non-idempotent, stro=
-ngly-ordered
-> > > + * (I/O ordering), I/O attributes.
-> > > + */
-> > > +#define pgprot_dmacoherent pgprot_writecombine
-> > > +
-> > >  /*
-> > >   * Both Svade and Svadu control the hardware behavior when the PTE A=
-/D bits need to be set. By
-> > >   * default the M-mode firmware enables the hardware updating scheme =
-when only Svadu is present in
-> > > --
-> > > 2.40.1
-> > >
-> > >
->
->
->
-> --
-> Best Regards
->  Guo Ren
-
-
-
---=20
-Best Regards
- Guo Ren
+Best regards,
+Krzysztof
 
