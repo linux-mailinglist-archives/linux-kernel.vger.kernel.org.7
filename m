@@ -1,187 +1,196 @@
-Return-Path: <linux-kernel+bounces-850987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2A2BD54BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:58:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7265BBD4DA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DB82582011
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:16:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A011A18A11B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF67730CD99;
-	Mon, 13 Oct 2025 16:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A34C3101B6;
+	Mon, 13 Oct 2025 15:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YHOkGjzN"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VjWOEHHS"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010000.outbound.protection.outlook.com [52.101.46.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9C830C60F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760371360; cv=none; b=iZhs3PYbx2CRsCWd/TgHsMxz75V5qfkomTqjsw0TU9imV/3Ochz7oq5W3BcUSE/DP96SESZQ1JY6+plrAuaYAHaVh4JjHQMu2boyVvShmfJnl5H7PCibo4jZd/U8IIilhldv6gRysHWjupkSagS9omenNfbXtYf0ADSVjdHKmBI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760371360; c=relaxed/simple;
-	bh=7pmScWeJxb/SA9LfgnIE+RSHfO7kt+ZDsVcv07zsRtU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CGBHed8ozmrd7Db8J0K9gaO1NVjXmtihdZEoMCmvR5rr+tF6fUKop1KWKBw3mwspUFA0K56mjDAwCX2UF33kCZabV3cgSGUCOw3MwXPrjS+RxhPadXoo27KvDEXE79GLuz7i+uuSQIqS7wFkDtQOta5ssTm9nroUh0e2Jl3e8yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YHOkGjzN; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-637dbabdb32so8619799a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760371356; x=1760976156; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=85zW8eAa0UUuhYK13qFSD0pz0Cqd0sUrz3cG+0d4BSc=;
-        b=YHOkGjzNU5nc+JsYjD4Or/MrD80ORcFAaxexfOSgtznsAonSQ99cLZ8lB5rl2PHg6r
-         9lNQwVf/fXBi5n+V2RnPcoroguhewuaJ4cF9fbboAIMODo68RwMYhqq6wATr2ASTkMiI
-         LTlE4R8F3ZUicWOiOWLDGJJjBOqKPOxFNCmOU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760371356; x=1760976156;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=85zW8eAa0UUuhYK13qFSD0pz0Cqd0sUrz3cG+0d4BSc=;
-        b=LYTmT830v6NundgJYVIhniupKUyhhKIg+lOl+B+8XpocuVRahwqejRWJzYsQINF/Uh
-         6M3wmasx/ijXo7dQhcpg1LUm2GnE01KU4tHJdnICGQAXzTYpKGvDAWWwXN15dkyF8Il6
-         3MyXfjvIjCdmoxgmZn6iZjDR0773jHms0kjeHcVXKQos+QNQtTz5l4ZTrDs7frlxm+rU
-         uM5A2frQ4Cpx/XaZPHk8YwV6cJaQpCEhewvYRyyMlKaaiuQoINn3EEbKu0VYQLHXqrCV
-         LUv364TD0CGZEOVAgKNMG2yqhgDTynZx7v3H5pCU1G5lmr7wEMulksmZr67V7sbflGA3
-         1axg==
-X-Forwarded-Encrypted: i=1; AJvYcCWewDtnorbLRG1znxjE9Fx9tNZs+mfOWlTS5ZIvfM4bdStoKz/ogs35xdio8VmsTf23cTA+YzK6lMRLFWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlrFgwuadayVXLCnl8NqYi6rmUyZkq9dTzP6ddq4b7u6I5gbus
-	4KuGiYopwjeiQ9kT1hYFn6ss2GDk4XPHHz1PW4SMYHKIOQXuYHFwwxV+mlZZqBkg0IJG+m9zbMh
-	emj7/CpAv
-X-Gm-Gg: ASbGnculN02OKPDF3OGTaNxpqe/hp2lz2v1qisXpi4W2hvUYOsbUODHoXAshyBNoqRH
-	GB1bqN9zdP5ZnMa3IZRrk02ygnw9ZnGPZebLsNRpG1jQ2VqlalgGhnKHfW8KfrSK7qubJiVHzR5
-	2/rc+f3KXfvkIS+KTipprKtsaArcH6hxNmcSeW09o+ALBOIK8SsmkPQWdjQiSZ9n9D6I4LRM3QE
-	G6YYy1822OfaOEMXRlkknh0XNK1zvtrAe1NR1GlEbC2TVlAfPqxhRJ2PZ6d65s56Z08HsGvC5GU
-	Y7efKbljLXVdoU51RAZTfuV2sIR04L3esVg2tqGRBLz0zenc5ThGHHqcKjGmfmnDyz+J4amsH8N
-	dZR23/7YCbTU6RWlRBN6JV5mce+MgvFF/ykCzAg7nZNPK1geIJGEoPjwwvJUVIoB8gD9iQVLdtj
-	S/5MkYpN11sYthAA==
-X-Google-Smtp-Source: AGHT+IHlFZuZI8vvgNUC+C61sfTbpFZB6kdxMEpW4TWPnPN2bc4kQYn48MgsCtzRCRT93nOTWpQ0tg==
-X-Received: by 2002:a05:6402:3510:b0:634:c4b5:5d7 with SMTP id 4fb4d7f45d1cf-639d5c6fadamr20346843a12.34.1760371356286;
-        Mon, 13 Oct 2025 09:02:36 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a52b0f860sm9031941a12.15.2025.10.13.09.02.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 09:02:36 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae31caso943759066b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:02:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXkHBD07SiXhSTPhYqjd5d363fJk1GH0tdvNg0PTZ7OHOHwnSHZ79rn+iXQY3SVZ5ZYjp6nQs+zx1E1qlQ=@vger.kernel.org
-X-Received: by 2002:ac2:4c50:0:b0:55f:4ac2:a58c with SMTP id
- 2adb3069b0e04-5906dc0ff30mr6173104e87.22.1760370964286; Mon, 13 Oct 2025
- 08:56:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C30305043;
+	Mon, 13 Oct 2025 15:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760370993; cv=fail; b=B7ZubLRukj5pOMvXwFGptuUiwIcc/RH2rzWRQtUj9zV9v403xIjE1K/lJPo7o+dAHxqz+WIfIOhUftrAK91U5hDfFil0+ygcRenFoaVNhhOzh5AB7uv7rLq2z8DaCo4cbMPL9QPp0AmFD23aM+GpqI7Nx0bFlzrlwjjg6iRhTCI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760370993; c=relaxed/simple;
+	bh=287gRLlLLxoq5HKytJNtlYQQuZZOdeMwWylmZ4VDVCc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NR2AUiJw9+XEeaSYbo/nqXT2esNSAZWCZtW+k2gV3WQDDqYxGx8fLfoPKY+009U8zzwi0Q/pjEIR3uGFiP0DJQriFtXBou3PJMkfTvwHUwlsCQ4KSMXk7Y5Xt6sPXfRwXEel3UHrml5Eus11fx0yrmiNTPUxfmeMSOfthG7DKUY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VjWOEHHS; arc=fail smtp.client-ip=52.101.46.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VIxtVGmDk0/vyItTTaxCsHWgwO7wlJ50wgoCMJfb0Ze7CAsZwQZopl0CU9+p9LBV5DcLBSx5adsuxJS4b6iry73Luan8cnwkvmQfAFeSZthgdQocXU6WfDgq7A4TNzpa8vPQWlNo2JF18pKPR73wBEnVxvPY5nlkX0/pigljeU2+1moJ57FW1gzAsM1I2opLIH7d4m0sF5fk5EMLtPDSkxMR/K/6ftaV4IMUFOnd73bhy+sMenKEwbSZtHWVudN9DGliZT5a1XrJ7PIpYhCXqgLLzE9gwZaUiv/ZWGlIN4LO43kHPV7v+t4GPOVm3Zd8HyzINTHBkiqNP2SrzGFagA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n698uOu8F4fZOlp0xPOas48X4hpJcpVm1dGwN5XqoxU=;
+ b=Drxndtet29puxf0XrXytHiOu6/A9sgw0YrquDLIuvv4vAqcDE3bjjj2IoXQ0bRVcZzh5SsGPHDzjmT0yyeXkpNwQthG6Sz/9/IbhhaSeDm/eGMfYlIRBqU0kW/3LWp231XyieIMsMdWw365EgcX61IyPG2lnCV5kHNmE4JegYhU+WbylOyQd4Zxu862LT0qk9+QhWE8ul+foQ9p5ZtNI5TqQfcbjapG9xrB25i0GMMk0X8Lst3PH+z8xgsGOCNcPcLO7+FN1LO3T2wzoaLP/MBjoWNdbKyUDNMRMGxXQ82TAyNOeGBrAvBfhe+Bme8qSDr6yTEVJYVz1JjG69IKXtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n698uOu8F4fZOlp0xPOas48X4hpJcpVm1dGwN5XqoxU=;
+ b=VjWOEHHSud0dW2MW6Zsxiae6pn/OZE8gNtI0u6MqmgGKRbR0eL+B7LRwTTTlzZt6C7M3X/mfOUT2JKzgOErZKgdQSmNmu/bJxcTD5hTYTeBMNTuQW/1sojlGgY0co7+FIxKoNd5h6Sm4B7Zo7UZ41Q0TZHKFoJs0MyAdrFFvCpysAuIvWaE349cpMfihmiWQLZM7ibA7kN1oX7sB2gDDrgN7sKN6+TrVSi54bZFkpDa8gaIvJGF5cJqUaRTiq1TKXEnsrX+cweG+k++HYUZkJTgMWqkWj8kNo+Z5tJo3P43R2Yvkmb4aiFL2G4yyEjoJo9wneD4vHHHsDLhQhcbfRA==
+Received: from PH7PR13CA0002.namprd13.prod.outlook.com (2603:10b6:510:174::6)
+ by DS7PR12MB5790.namprd12.prod.outlook.com (2603:10b6:8:75::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
+ 2025 15:56:27 +0000
+Received: from SN1PEPF000252A4.namprd05.prod.outlook.com
+ (2603:10b6:510:174:cafe::75) by PH7PR13CA0002.outlook.office365.com
+ (2603:10b6:510:174::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.9 via Frontend Transport; Mon,
+ 13 Oct 2025 15:56:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF000252A4.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 15:56:26 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 13 Oct
+ 2025 08:56:10 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Oct
+ 2025 08:56:09 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Mon, 13
+ Oct 2025 08:56:09 -0700
+From: David Thompson <davthompson@nvidia.com>
+To: <hansg@kernel.org>, <ilpo.jarvinen@linux.intel.com>, <vadimp@nvidia.com>
+CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<davthompson@nvidia.com>, Shravan Kumar Ramani <shravankr@nvidia.com>
+Subject: [PATCH v2] platform/mellanox: mlxbf-pmc: add sysfs_attr_init() to count_clock init
+Date: Mon, 13 Oct 2025 15:56:05 +0000
+Message-ID: <20251013155605.3589770-1-davthompson@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
- <20251013-ptr_err-v1-10-2c5efbd82952@chromium.org> <176036780330.559803.287308146210017676@ping.linuxembedded.co.uk>
-In-Reply-To: <176036780330.559803.287308146210017676@ping.linuxembedded.co.uk>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 13 Oct 2025 17:55:51 +0200
-X-Gmail-Original-Message-ID: <CANiDSCsuPkdz0=U2b_mNh4TWTNztAd9qEwJaiMRdGy1sf3UEbA@mail.gmail.com>
-X-Gm-Features: AS18NWCmgLaH0rMvCIhheSPVtWPGKkpbEBd_aB_kzUyM4RaB_yHSiy8sRs-muw0
-Message-ID: <CANiDSCsuPkdz0=U2b_mNh4TWTNztAd9qEwJaiMRdGy1sf3UEbA@mail.gmail.com>
-Subject: Re: [PATCH 10/32] media: i2c: imx335: Use %pe format specifier
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Bingbu Cao <bingbu.cao@intel.com>, 
-	Dafna Hirschfeld <dafna@fastmail.com>, Daniel Scally <djrscally@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Jacopo Mondi <jacopo+renesas@jmondi.org>, 
-	Jacopo Mondi <jacopo@jmondi.org>, Julien Massot <julien.massot@collabora.com>, 
-	=?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Leon Luo <leonl@leopardimaging.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Purism Kernel Team <kernel@puri.sm>, 
-	Rui Miguel Silva <rmfrfs@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Tianshu Qiu <tian.shu.qiu@intel.com>, Tiffany Lin <tiffany.lin@mediatek.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, Yong Zhi <yong.zhi@intel.com>, 
-	Yunfei Dong <yunfei.dong@mediatek.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A4:EE_|DS7PR12MB5790:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f2aebc8-5e9d-4b82-19d5-08de0a71110e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?wwykGEbmFkKDK2KFl07H+ZUYoQT/X2JOVuxTEjBShHN2sbc8LN4rJAmqE/Kv?=
+ =?us-ascii?Q?WTMZ6dbXlyOkELaScNebgC8FzlgDMw7nbwKms2Fq4trICAyHU4nwg9aPmqba?=
+ =?us-ascii?Q?KEBX2C/wDIY8pXHB5SLAmHHozmfpWStR5ToU6LdkB7SLs0BmMMKNr5omYFTa?=
+ =?us-ascii?Q?5V6Gr/8yUWqo0o73JpYvS59NxKIxqKyhPBvkV9Tk2ocpyQXITXDZ2pOGKDzi?=
+ =?us-ascii?Q?OgDYcbaLvb1tu6esvsHJ/3DpW67++4dxY5PqyK7YsJHLTuAI63KZ3qCrVyE3?=
+ =?us-ascii?Q?5lAu7RSznbo/ZtNxfdxqVNyR60PyipXFanLfFEUy9GAJ4z8WV36qpbqC0N1C?=
+ =?us-ascii?Q?Fr+E9nTFTOdPQXeyNp0fJWpWMehBc9SLldjZvMQ3L3VVdb1QZnRTsO8faOIr?=
+ =?us-ascii?Q?4YR5BrlaF6hMcwEo6ZHB5F1FVSQzM3Q1mENPY51vifYUtGlXxFJIJphRJRni?=
+ =?us-ascii?Q?EIE+4TFoKEM0jde5JvRoaZhDBIyZvCuk3wmjyt7oZQCEOo15mrO8AhoPXRNR?=
+ =?us-ascii?Q?OCnKUch7iVCtrsfknE+3fg2y15NZcr9KTnpqu5UhXPJFMyQXDxj5Tylzr5zq?=
+ =?us-ascii?Q?2z1ssk6+2n2GQkFGviD3bXLGnS01ETrBAcxF4VYHQNmE6zjzY1MeWjr0uQs+?=
+ =?us-ascii?Q?aIOyNwHIrqW8LQ0hXR2CaAzGkwOv9W6HPnLbLtQhROnrsNdHHdlsvevZBfJw?=
+ =?us-ascii?Q?l27Z4b/+uKknuW5s5URVdnE59zElTGp3SiOWd1Uo6hsAX5/myWu+mJifXTHu?=
+ =?us-ascii?Q?OTPqzUn3LOzmNNbV/jew1RtULbBOhk/YxWlEveqCfPQ4fizyDVb9D9TwFLWU?=
+ =?us-ascii?Q?y6PO/bmIGT7ht4GEiod2qVkBk1EUc7Th9aZk1RLAelBmNkWhljKJ006CU5Gi?=
+ =?us-ascii?Q?7OgY0oInQXqjlvpxaRwBOcO6+swW+k2eBBvqlOIzvqHem3S5LhsOKm5DRFB5?=
+ =?us-ascii?Q?oEF9XbVR7InJWXI/8xUHsSohxbpV4/BnpUcI/GScG8GbOr3VM3FH+vJwMOPU?=
+ =?us-ascii?Q?crRURGrPUR6hUNfxidvyk0UthtqYodVsvqU6OqYdO9uShpLBUTiP2aXWrKxS?=
+ =?us-ascii?Q?MVVpHmjTE/pRSnRAtEhaks70tYdFIDnFoHJcBmDx+j/1RiZEFnd4DrSB28q8?=
+ =?us-ascii?Q?cHgK57i1eMAMxZ+owJPJlmP+DbI/vy/WgStZwFLa2VzM5dZ9RK6VXs+OrxCA?=
+ =?us-ascii?Q?qdGe5Mg+Sjq79a5V8puHAQYimigQvTjHUnfntCkdPVKdDTbL9RQalSGfAks5?=
+ =?us-ascii?Q?Gp22hKv/t/IZBW0R44maGcM45nlM14XcNAgDPOFqX2zQ+GzhHjwjMaQxdqDG?=
+ =?us-ascii?Q?6TJzVutzPTv3LFqiEbQNkDQ209EUhX96APnlxq2GiD1412btuFn70Ly3qOY8?=
+ =?us-ascii?Q?WN8MZVwaCupe3PakhvsJL8JYr5JRnB3+I0L3N58QUeEnwYw+bjtnvyovn2Bw?=
+ =?us-ascii?Q?ju13mpHz7C7o5CiCAIQP83sRCQ6jIv/cgfGyI/K8LQRPw9BPMByt1lX7pIyF?=
+ =?us-ascii?Q?WqqA1hU52/n+BtVMaVFxGgyjLHJDiDPu1NBx+HBwpiCmCKEIqK1z8H1neRmI?=
+ =?us-ascii?Q?GznrKXWkSlRtz2SQ4pQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 15:56:26.5489
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f2aebc8-5e9d-4b82-19d5-08de0a71110e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5790
 
-Hi Kieran
+The lock-related debug logic (CONFIG_LOCK_STAT) in the kernel is noting
+the following warning when the BlueField-3 SOC is booted:
 
-On Mon, 13 Oct 2025 at 17:03, Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
->
-> Quoting Ricardo Ribalda (2025-10-13 15:14:50)
-> > The %pe format specifier is designed to print error pointers. It prints
-> > a symbolic error name (eg. -EINVAL) and it makes the code simpler by
-> > omitting PTR_ERR().
-> >
-> > This patch fixes this cocci report:
-> > ./i2c/imx335.c:1013:3-10: WARNING: Consider using %pe to print PTR_ERR()
->
-> Ohhh nice. Is this new ? First I've come across it.
+[   10.231318] BUG: key ffff00008a3402a8 has not been registered!
+[   10.237249] ------------[ cut here ]------------
+[   10.241914] DEBUG_LOCKS_WARN_ON(1)
+[   10.241927] WARNING: CPU: 4 PID: 592 at kernel/locking/lockdep.c:4801 lockdep_init_map_type+0x1d4/0x2a0
+<snip>
+[   10.385415] Call trace:
+[   10.385417]  lockdep_init_map_type+0x1d4/0x2a0
+[   10.385423]  __kernfs_create_file+0x84/0x140
+[   10.385428]  sysfs_add_file_mode_ns+0xcc/0x1cc
+[   10.385431]  internal_create_group+0x110/0x3d4
+[   10.385434]  internal_create_groups.part.0+0x54/0xcc
+[   10.385436]  sysfs_create_groups+0x24/0x40
+[   10.385438]  device_add+0x6e8/0x93c
+[   10.444559]  device_register+0x28/0x40
+[   10.448299]  __hwmon_device_register+0x4b0/0x8a0
+[   10.452907]  devm_hwmon_device_register_with_groups+0x7c/0xe0
+[   10.458641]  mlxbf_pmc_probe+0x1e8/0x3e0 [mlxbf_pmc]
+[   10.463598]  platform_probe+0x70/0x110
 
-It is actually from 2019:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=57f5677e535ba24b8926a7125be2ef8d7f09323c
+The mlxbf_pmc driver must call sysfs_attr_init() during the
+initialization of the "count_clock" data structure to avoid
+this warning.
 
-I just learned about it because there is a new check in coccinelle :).
+Fixes: 5efc800975d9 ("platform/mellanox: mlxbf-pmc: Add support for monitoring cycle count")
+Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+Signed-off-by: David Thompson <davthompson@nvidia.com>
+---
+v2: trimmed excess info from splat, fixed Tags section
+---
+ drivers/platform/mellanox/mlxbf-pmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-It is pretty cool, but you need to be careful to check IS_ERR(ptr)
-before doing the printk, otherwise %pe will print the pointer value.
-
-Regards!
-
->
->
->
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/i2c/imx335.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> > index c043df2f15fb25b3a56422092f99a1fd9a508fa9..71ed9a0d84a252ee362621c4d38001508fb86d28 100644
-> > --- a/drivers/media/i2c/imx335.c
-> > +++ b/drivers/media/i2c/imx335.c
-> > @@ -1009,8 +1009,8 @@ static int imx335_parse_hw_config(struct imx335 *imx335)
-> >         imx335->reset_gpio = devm_gpiod_get_optional(imx335->dev, "reset",
-> >                                                      GPIOD_OUT_HIGH);
-> >         if (IS_ERR(imx335->reset_gpio)) {
-> > -               dev_err(imx335->dev, "failed to get reset gpio %ld\n",
-> > -                       PTR_ERR(imx335->reset_gpio));
-> > +               dev_err(imx335->dev, "failed to get reset gpio %pe\n",
-> > +                       imx335->reset_gpio);
->
-> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
->
-> >                 return PTR_ERR(imx335->reset_gpio);
-> >         }
-> >
-> >
-> > --
-> > 2.51.0.760.g7b8bcc2412-goog
-> >
-
-
-
+diff --git a/drivers/platform/mellanox/mlxbf-pmc.c b/drivers/platform/mellanox/mlxbf-pmc.c
+index 4776013e0764..16a2fd9fdd9b 100644
+--- a/drivers/platform/mellanox/mlxbf-pmc.c
++++ b/drivers/platform/mellanox/mlxbf-pmc.c
+@@ -2015,6 +2015,7 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
+ 	if (pmc->block[blk_num].type == MLXBF_PMC_TYPE_CRSPACE) {
+ 		/* Program crspace counters to count clock cycles using "count_clock" sysfs */
+ 		attr = &pmc->block[blk_num].attr_count_clock;
++		sysfs_attr_init(&attr->dev_attr.attr);
+ 		attr->dev_attr.attr.mode = 0644;
+ 		attr->dev_attr.show = mlxbf_pmc_count_clock_show;
+ 		attr->dev_attr.store = mlxbf_pmc_count_clock_store;
 -- 
-Ricardo Ribalda
+2.43.0
+
 
