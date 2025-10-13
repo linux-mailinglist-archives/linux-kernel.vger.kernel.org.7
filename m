@@ -1,275 +1,126 @@
-Return-Path: <linux-kernel+bounces-850239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12D4BD2527
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:36:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648F2BD253D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9174D3A3C9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E073A4ED8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7D22FDC59;
-	Mon, 13 Oct 2025 09:36:43 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5DD2FE042;
+	Mon, 13 Oct 2025 09:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Ez1Pmdz9"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7439B2EA14E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BBC26290;
+	Mon, 13 Oct 2025 09:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348203; cv=none; b=fth3NRxktMA2+zAd9dMVSFmWktwuKD9+1Ki4JEGg8ynb2RsdfwJiTEJJr8Fi9UE1sbw3SxVKAhUtDv2MfvcuBUcERUakSbLfUPDQ8keqlm4pKFMpxopskkmQJoKHLKLO6/sBi+oeKTWAetuMBNCxNpiym4a7dnEWntGnXpo4964=
+	t=1760348306; cv=none; b=fkMfa6fKynmz0Yh6Hm4LrTMZdTP/aZJN3TNJUvHvyc4q3BtGylTO9cVAJWDMBHfTFGtAlEAveyHU1KSRAvsgjPLt+XMbl58vOCwfyHZeiOPB97YI1Vi2EiuOuxGdcU4/U0VDGvC0Ml9OqJ7TQEHinb6tJOx9owmneeHm90duqzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348203; c=relaxed/simple;
-	bh=avg9pKxSZ6687CrCL+XsvGs4bEu1PexWrKeZ/KTGD/E=;
+	s=arc-20240116; t=1760348306; c=relaxed/simple;
+	bh=TiXbg72QqgA4BnTEEMu0KGbCUDFtZ0Q5AlBXuwEH44o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfPJ4Iy2YvqULX3XoQ4NOEgYuusEBHzBTNVChatlv3vv5VMHDjjyjnTN0HIJTAo7IC9csgdVuVw6xDpTmHSaxIJi2mrHuBKi7sG03N8xyLwC0KDEmHzclJWKXlOyxyIwZsNQNqV7xWa3+jOHjyO8o51lsc8S5ZOhL95GbXw41M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v8EyX-0003N3-Tp; Mon, 13 Oct 2025 11:36:17 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v8EyX-003MWO-0T;
-	Mon, 13 Oct 2025 11:36:17 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id C50734849F0;
-	Mon, 13 Oct 2025 09:36:16 +0000 (UTC)
-Date: Mon, 13 Oct 2025 11:36:16 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
-	linux-can@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
- transceiver
-Message-ID: <20251013-marvellous-acoustic-bison-3ed5d4-mkl@pengutronix.de>
-References: <20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com>
- <20251013-tja1145-support-v3-2-4a9d245fe067@liebherr.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bKT6/1Iq9H+xYv6IAofxcDEzseUIxwEqjn6f9RdZKqpJUdrVewMztO5hZ3HpLyMQAFyq9ydszf8Ebguc99nxUIZOuxTZHWF4op4xHHWcUWiPeqQvVXBZChgA8bl6Srlg/BkhbQpeswqPVaWQVEkzUpZBOreRWiStaM8rmrSoWKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Ez1Pmdz9; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1760348293;
+	bh=FKV5rcOU3NiQueOAKmsQZIMEQoY0gM/PgsfKPak6dIU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=Ez1Pmdz9PibsVWiivzwyns05u+G7nCeT6rukKIGBRfFGeSnnvqY9hhgDfPwztSvUq
+	 E6Mb3Mtx9vqxJjpF1Ebp112LXXt3eE4yntA0+tRW51Wf4C5SukjEbx19aEQaQeyefa
+	 4cjJbFvp/DbCHLXwogP7wfH/EnKNcIZ6nchH1d/E=
+X-QQ-mid: zesmtpgz6t1760348287t76bc683d
+X-QQ-Originating-IP: 0yrPrwLnm0gGgvkYYE+D/xX95XiUkzU9yKkuKrbC1Gw=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 13 Oct 2025 17:38:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6530773640354334042
+EX-QQ-RecipientCnt: 15
+Date: Mon, 13 Oct 2025 17:38:05 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Ze Huang <huang.ze@linux.dev>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH v8 0/2] Add SpacemiT K1 USB3.0 host controller support
+Message-ID: <AB4F40590DDC4024+aOzIfRgZZpZc3HeH@kernel.org>
+References: <20250913-dwc3_generic-v8-0-b50f81f05f95@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rvnjm33t2wagghg4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013-tja1145-support-v3-2-4a9d245fe067@liebherr.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250913-dwc3_generic-v8-0-b50f81f05f95@linux.dev>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OPdvjVtisQSKo8vxOfGiiSG20Casxmv55eFfK0nCExwGRBlUDLokVU63
+	x6z55/5A/vrwgAcQ5nCgKDrhC7K+BeRhl1LA3pEG/cDe5tnZkP3iTjuZ9qbEj4bWm3OIMOW
+	lMEJBpK8nb4fIVibYU2LA9cz3pRgbiClZScGDrH2G/a/qDQeECgTuFgLirNoGL19iPFk5mp
+	mNltALaxu8eEgsMILxV7qYpL8l6XbrNxsRO0wQtmS59SfNMRej5WXgkw9HXz23/Xa8V09mu
+	9KA1mn+/wV6Or1XbJD0CqyeYxrFm8xVNDqCQ9Y8TP6ckxlB4LVQBCHBN2Mi3+UbyFomGpd2
+	rHzj2mD0qFSGz3NTa8cEBpobJJXu9UzCXwzgu+8Gt4kQBGwUI/+kCCRY0z/TYYs7Wkw4nXn
+	5+5e8oh4b0HLC6mSGyymDJg7jv4Tj5AFMeDM6l4ZUCwxoZjhN+E60Rc3Es2pBRTO/drgccr
+	TKLnIrorfORgOmbDW+XGnavdIrsQpM2S3gDVd+fn8ksWtqtHzK2cm9MbGuni0LeuosCF825
+	Aamd2Yqw9e0MjSyIghNwJIYjlbXf/Pl8W1ov+YmUuXmOwLtJorVeT4Gj3Uh+Ki2rUYTAFDq
+	+OdleMtdcPf3wGc76WfCBv2LdISvJ7xESw1cR+W0dgKVflMUYYdYLT0n0kSicTzygDaJqBs
+	zg0mCxobMyrGXpdB609NUxTCPQpeWGAoA2NdZRa7iP42ojS+fLvxzl0izMS6QVJ9xyeWKLQ
+	OlDXmxd9mXMeRRHqQGWLpPTSyK4jytIIR+WMkQ8tTmX38C4okkboO3j5+2ZpE/OeJH/6R2G
+	QbMqfRroPkaKFtFXY/xveu6o6gowYS1CaAnwqlmVJi9q1HUWqfKjJun0ILxItWnKCtxbQGw
+	VH3YuDBhzBF4zl6QbP5LkZ9vAoe2mmkhriz4bqrvdOvn4zMmm03kse5X43skkfjBR7Kq3Ns
+	Thj0rafH7SGK0uq/eh7G1cECsZFSnYzWNZ7wz52JQv+7FOzZ+FtXHiKSC0CfzpqpJW81SHn
+	jttRKzUFxqne2kyVW0at8z5GxVJtVZN716m0FxGTM0d58Ces/RvCELSGtzXmV0njYL8lSc1
+	Xiwj2X7iGEz
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-
---rvnjm33t2wagghg4
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
- transceiver
-MIME-Version: 1.0
-
-On 13.10.2025 11:19:19, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->=20
-> Add basic driver support for NXPs TJA1145 CAN transceiver which brings the
-> PHY up/down by switching to normal/standby mode using SPI commands.
->=20
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Sat, Sep 13, 2025 at 12:53:46AM +0800, Ze Huang wrote:
+> The USB 3.0 controller found in the SpacemiT K1 SoC[1] supports both USB3.0
+> Host and USB2.0 Dual-Role Device (DRD). 
+> 
+> This controller is compatible with DesignWare Core USB 3 (DWC3) driver.
+> However, constraints in the `snps,dwc3` bindings limit the ability to describe
+> hardware-specific features in a clean and maintainable way. While
+> `dwc3-of-simple` still serves as a glue layer for many platforms, it requires a
+> split device tree node structure, which is less desirable in newer platforms.
+> 
+> To promote a transition toward a flattened `dwc` node structure, this series
+> introduces `dwc3-generic-plat`, building upon prior efforts that exposed the
+> DWC3 core driver [2].
+> 
+> The device tree support for SpacemiT K1 will be submitted separately when the
+> associated PHY driver is ready.
+> 
+> This series is based on 6.17-rc1 and has been tested on BananaPi development
+> boards.
+> 
+> Link: https://developer.spacemit.com/documentation?token=AjHDwrW78igAAEkiHracBI9HnTb [1]
+> Link: https://lore.kernel.org/all/20250414-dwc3-refactor-v7-3-f015b358722d@oss.qualcomm.com [2]
+> 
+> Signed-off-by: Ze Huang <huang.ze@linux.dev>
 > ---
->  drivers/phy/Kconfig           |  10 +++
->  drivers/phy/Makefile          |   1 +
->  drivers/phy/phy-nxp-tja1145.c | 185 ++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 196 insertions(+)
->=20
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 678dd0452f0aa0597773433f04d2a9ba77474d2a..2f2c8f29cce2beb20c584adfe=
-8acfe23de14e128 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -101,6 +101,16 @@ config PHY_NXP_PTN3222
->  	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
->  	  Speed and High Speed.
-> =20
-> +config PHY_NXP_TJA1145
-> +	tristate "NXP TJA1145 CAN transceiver PHY"
-> +	select GENERIC_PHY
-> +	select REGMAP_SPI
-> +	depends on SPI
-> +	help
-> +	  This option enables support for NXPs TJA1145 CAN transceiver as a PHY.
-> +	  This driver provides function for putting the transceiver in various
-> +	  functional modes using SPI commands.
-> +
->  source "drivers/phy/allwinner/Kconfig"
->  source "drivers/phy/amlogic/Kconfig"
->  source "drivers/phy/broadcom/Kconfig"
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index bfb27fb5a494283d7fd05dd670ebd1b12df8b1a1..48eac644d1e2b20f986f80de9=
-5b40c26d080358b 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+=3D phy-snps-eusb2.o
->  obj-$(CONFIG_USB_LGM_PHY)		+=3D phy-lgm-usb.o
->  obj-$(CONFIG_PHY_AIROHA_PCIE)		+=3D phy-airoha-pcie.o
->  obj-$(CONFIG_PHY_NXP_PTN3222)		+=3D phy-nxp-ptn3222.o
-> +obj-$(CONFIG_PHY_NXP_TJA1145)		+=3D phy-nxp-tja1145.o
->  obj-y					+=3D allwinner/	\
->  					   amlogic/	\
->  					   broadcom/	\
-> diff --git a/drivers/phy/phy-nxp-tja1145.c b/drivers/phy/phy-nxp-tja1145.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4d3aa5bfcd88d5755fa37e0d4=
-2bfa8293dee2155
-> --- /dev/null
-> +++ b/drivers/phy/phy-nxp-tja1145.c
-> @@ -0,0 +1,185 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2025 Liebherr-Electronics and Drives GmbH
-> + */
-> +#include <linux/bitfield.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <linux/phy/phy.h>
-> +#include <linux/spi/spi.h>
-> +
-> +#define TJA1145_MODE_CTRL		0x01
-> +#define TJA1145_MODE_CTRL_MC		GENMASK(2, 0)
-> +#define TJA1145_MODE_CRTL_STBY		BIT(2)
-> +#define TJA1145_MODE_CRTL_NORMAL	TJA1145_MODE_CTRL_MC
-> +
-> +#define TJA1145_CAN_CTRL		0x20
-> +#define TJA1145_CAN_CTRL_CMC		GENMASK(1, 0)
-> +#define TJA1145_CAN_CTRL_ACTIVE		BIT(1)
-> +
-> +#define TJA1145_IDENT			0x7e
-> +#define TJA1145_IDENT_TJA1145T		0x70
-> +
-> +#define TJA1145_SPI_READ_BIT		BIT(0)
-> +#define TJA1145T_MAX_BITRATE		1000000
-> +
-> +static int tja1145_phy_power_on(struct phy *phy)
-> +{
-> +	struct regmap *map =3D phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	/*
-> +	 * Switch operating mode to normal which is the active operating mode.
-> +	 * In this mode, the device is fully operational.
-> +	 */
-> +	ret =3D regmap_update_bits(map, TJA1145_MODE_CTRL, TJA1145_MODE_CTRL_MC,
-> +				 TJA1145_MODE_CRTL_NORMAL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Switch to CAN operating mode active where the PHY can transmit and
-> +	 * receive data.
-> +	 */
-> +	return regmap_update_bits(map, TJA1145_CAN_CTRL, TJA1145_CAN_CTRL_CMC,
-> +				  TJA1145_CAN_CTRL_ACTIVE);
-> +}
-> +
-> +static int tja1145_phy_power_off(struct phy *phy)
-> +{
-> +	struct regmap *map =3D phy_get_drvdata(phy);
-> +
-> +	/*
-> +	 * Switch to operating mode standby, the PHY is unable to transmit or
-> +	 * receive data in standby mode.
-> +	 */
-> +	return regmap_update_bits(map, TJA1145_MODE_CTRL, TJA1145_MODE_CTRL_MC,
-> +				  TJA1145_MODE_CRTL_STBY);
-> +}
-> +
-> +static const struct phy_ops tja1145_phy_ops =3D {
-> +	.power_on =3D tja1145_phy_power_on,
-> +	.power_off =3D tja1145_phy_power_off,
-> +};
-> +
-> +static const struct regmap_range tja1145_wr_holes_ranges[] =3D {
-> +	regmap_reg_range(0x00, 0x00),
-> +	regmap_reg_range(0x02, 0x03),
-> +	regmap_reg_range(0x05, 0x05),
-> +	regmap_reg_range(0x0b, 0x1f),
-> +	regmap_reg_range(0x21, 0x22),
-> +	regmap_reg_range(0x24, 0x25),
-> +	regmap_reg_range(0x30, 0x4b),
-> +	regmap_reg_range(0x4d, 0x60),
-> +	regmap_reg_range(0x62, 0x62),
-> +	regmap_reg_range(0x65, 0x67),
-> +	regmap_reg_range(0x70, 0xff),
-> +};
-> +
-> +static const struct regmap_access_table tja1145_wr_table =3D {
-> +	.no_ranges =3D tja1145_wr_holes_ranges,
-> +	.n_no_ranges =3D ARRAY_SIZE(tja1145_wr_holes_ranges),
-> +};
-> +
-> +static const struct regmap_range tja1145_rd_holes_ranges[] =3D {
-> +	regmap_reg_range(0x00, 0x00),
-> +	regmap_reg_range(0x02, 0x02),
-> +	regmap_reg_range(0x05, 0x05),
-> +	regmap_reg_range(0x0b, 0x1f),
-> +	regmap_reg_range(0x21, 0x21),
-> +	regmap_reg_range(0x24, 0x25),
-> +	regmap_reg_range(0x30, 0x4a),
-> +	regmap_reg_range(0x4d, 0x5f),
-> +	regmap_reg_range(0x62, 0x62),
-> +	regmap_reg_range(0x65, 0x67),
-> +	regmap_reg_range(0x70, 0x7d),
-> +	regmap_reg_range(0x7f, 0xff),
-> +};
-> +
-> +static const struct regmap_access_table tja1145_rd_table =3D {
-> +	.no_ranges =3D tja1145_rd_holes_ranges,
-> +	.n_no_ranges =3D ARRAY_SIZE(tja1145_rd_holes_ranges),
-> +};
-> +
-> +
+Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
-Nitpick: double newline.
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---rvnjm33t2wagghg4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjsyA0ACgkQDHRl3/mQ
-kZx+/wgApCIChGG9fLz5bu/mdV2+ehyx3Sr5WNY6o2vsqzqoxMmgWYNViOzOyB+P
-bJWuAgOdtx/lwGbHh4nJ7VTJ9wJkDcXzaHtCPYI+ceQmu5lCSkg2dXqXOUNU8s74
-g4MMWgbQ9y6/lVhJIjAjOSUU3CI8jbI4fn9I6eIYTawoItqfv3FIzxrGFxOKqa7+
-BuwS1LYuXe7i1CojpZE6QMf5Y7Av3OCu+XHOm1JE95uSfEpb8qRjB/aqGxMWMJUg
-ySocudvRFZ2Oco/xQRmdOofXrM6TUijNCSJxCoGkpFZAMmRoBj7VfnJYTwnTGkEk
-gYZDLJKhEfAX3Xr6m6hQPl9vcoT4IQ==
-=N8i0
------END PGP SIGNATURE-----
-
---rvnjm33t2wagghg4--
+Thanks,
+Troy
 
