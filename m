@@ -1,153 +1,139 @@
-Return-Path: <linux-kernel+bounces-850184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25C7BD22D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B51BD22F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 684AD4EED04
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:58:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 962E04EEFDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779022FB628;
-	Mon, 13 Oct 2025 08:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09AA2FB614;
+	Mon, 13 Oct 2025 08:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnYVfmsw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PBlOQTQI"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B996B19E97F;
-	Mon, 13 Oct 2025 08:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338E622157B;
+	Mon, 13 Oct 2025 08:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760345921; cv=none; b=bEE9kY6kUX8ElJNPsJENNLmJquJdBeKm76Vtu/qXQyBx1Hb8fcos9bax9wDzxOV0/aybm4VqXhSeBPYkpK6GNwky+NzjqIzFObnatuG83G6k8b+lqFGnJCwNvh7DedQ/uQrSppaSpa6vdOmuVH66W4LcYyKPlBNfAG/7xvxL7PA=
+	t=1760345991; cv=none; b=gPdyS8us/GVIIygOsiKARnx6Z1sjwXfPWNvZCxAsEJk1tFPMdgXzaDQUg1yDSqVM3BMilYEE7NC9Lm+v/SANuxLmS+bP2C3UR0taGD1T+tRPRbV99733V9Vdjl0ki1wiAMeIec/SyZPAgaIg4/UYYzqt9FLqJaS24WyuAeujdBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760345921; c=relaxed/simple;
-	bh=DH6sklj59YGFbOQd5rlZb56DVFrtEVgWWMTT5kejDjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6vWisXim/jJ5jNB9BczFYmxS1vNQLVNInLC0dPolsN54lxgM4ss7NgFd7dmpLVbw0Hc3ZJxOJ1d/0zXERPS6grWi3U3Bf887pNUF0Ix0tKneJao+xF46e2tBKVhu5bRfFgkPIXDXuFVfloQyy9rG7gApkdDJnprgJ2tzfDFivw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnYVfmsw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62FDC4CEE7;
-	Mon, 13 Oct 2025 08:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760345921;
-	bh=DH6sklj59YGFbOQd5rlZb56DVFrtEVgWWMTT5kejDjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JnYVfmswyDLYsLZ339Bh2RM/wHopRsDoeGUAduANNNOlqAzfkpApM61NZIyMTP8Ql
-	 nPUCVv4g9PqCoY7JxILu8XvHinpE9Opa5srG5T6h8BB3hQJDW/2b0PlG/7bmq/zjAb
-	 SllStGpOFBdRKgML1vRJXA3N8Df83BRTZbQFx1hrDRsFJMmGqo2Olw+a2lDEjJlUnI
-	 E9P7SfSW2EeKIjuEqg7JJ7F1AbtwVm5u2gtFyCuKJhzWQNkdKSPvZBR0gL6RetAipB
-	 2Cn/827Ol7fkUYZdJzIh9r/AUzNOopf1g1A0fbpc0lh0MlYlvYqfh6xNpR+ETDkM6K
-	 FFnDmhRal482w==
-Date: Mon, 13 Oct 2025 10:58:38 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jic23@kernel.org, michael.hennerich@analog.com, nuno.sa@analog.com, 
-	eblanc@baylibre.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, corbet@lwn.net, marcelo.schmitt1@gmail.com, 
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v4 1/8] pwm: Declare waveform stubs for when PWM is not
- reachable
-Message-ID: <xklptdwk7skvil6axqeef5xs7jqeotbo5g6r62tvdfpluzozfe@sdrmdzmxoz7x>
-References: <cover.1759929814.git.marcelo.schmitt@analog.com>
- <129ff5c5b7f7be4f4f3f9cf8aa3e1957d713acb7.1759929814.git.marcelo.schmitt@analog.com>
- <cuq6eh3vcrkgr7tj3xpo7ax4ruiy4ra6fjxgu45a3eqs2jbtah@ualgnhdwxnih>
- <3cb110ab-05e5-42c3-859d-34df721d98f2@baylibre.com>
+	s=arc-20240116; t=1760345991; c=relaxed/simple;
+	bh=dQCX89rdgPzg4jBUl3wrvYTOH2c6sohap5lRrNoxgu0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=umPnuY9Tkhu7B/SoNpDlzc6+8Pg6jIHxblVgHRtczhdrfOQsqXsl2q0PnUpKg84SAlXvAwwiTv1+ZUtFNRjz+qoCHCMXa0y5yKtE4HcalSD9MDsgfeWj/Esw7h8O+Ui/5zCs/FrJmzr9rr2xqacktQbKHBBP3keZ6e7urkOD7WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PBlOQTQI; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59D8xVmL1225224;
+	Mon, 13 Oct 2025 03:59:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760345971;
+	bh=03eLz1BO3ywqvR4VvhSI4Ov3l5NVQWBbzVASFhLKhgU=;
+	h=From:To:CC:Subject:Date;
+	b=PBlOQTQIGCtbTnoUi7ay58pugJ67F5ZxNZdaE+TaWraiKo1Wjh1yIOkebBQqO5l6N
+	 lBQ+ZrS4JjV/0F4+bxYseMqAZeZnepIpZW53jtzAYC/vloOdkbVJljD3Gi9Cvy6P64
+	 WZ/ua5uSWE8DXDA2Kz0w9sr8uVlUQDIvvyZvfTfE=
+Received: from DFLE207.ent.ti.com (dfle207.ent.ti.com [10.64.6.65])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59D8xV1X3693355
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 13 Oct 2025 03:59:31 -0500
+Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Oct
+ 2025 03:59:31 -0500
+Received: from fllvem-mr07.itg.ti.com (10.64.41.89) by DFLE206.ent.ti.com
+ (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 13 Oct 2025 03:59:31 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvem-mr07.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59D8xVoX1669656;
+	Mon, 13 Oct 2025 03:59:31 -0500
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 59D8xTUB024754;
+	Mon, 13 Oct 2025 03:59:30 -0500
+From: Meghana Malladi <m-malladi@ti.com>
+To: <horms@kernel.org>, <m-malladi@ti.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net] net: ti: icssg-prueth: Fix fdb hash size configuration
+Date: Mon, 13 Oct 2025 14:29:25 +0530
+Message-ID: <20251013085925.1391999-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kj7yi3qsfu3mpkdr"
-Content-Disposition: inline
-In-Reply-To: <3cb110ab-05e5-42c3-859d-34df721d98f2@baylibre.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+The ICSSG driver does the initial FDB configuration which
+includes setting the control registers. Other run time
+management like learning is managed by the PRU's. The default
+FDB hash size used by the firmware is 512 slots which is not
+aligned with the driver's configuration. Update the driver
+FDB config to fix it.
 
---kj7yi3qsfu3mpkdr
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 1/8] pwm: Declare waveform stubs for when PWM is not
- reachable
-MIME-Version: 1.0
+Fixes: abd5576b9c57f ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
+Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+---
 
-On Fri, Oct 10, 2025 at 11:34:49AM -0500, David Lechner wrote:
-> On 10/9/25 11:58 AM, Uwe Kleine-K=F6nig wrote:
-> > Hello,
-> >=20
-> > On Wed, Oct 08, 2025 at 10:49:44AM -0300, Marcelo Schmitt wrote:
-> >> Previously, the PWM waveform consumer API would not be declared if
-> >> CONFIG_PWM was not reachable. That caused kernel builds to fail if a
-> >> consumer driver was enabled but PWM disabled. Add stubs for PWM wavefo=
-rm
-> >> functions so client drivers that use, but don't depend on PWM, can bui=
-ld if
-> >> PWM is disabled.
-> >>
-> >> Fixes: 6c5126c6406d ("pwm: Provide new consumer API functions for wave=
-forms")
-> >> Reported-by: kernel test robot <lkp@intel.com>
-> >> Closes: https://lore.kernel.org/oe-kbuild-all/202509272028.0zLNiR5w-lk=
-p@intel.com/
-> >> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> >> ---
-> >> I've included this patch in this series because it should save us from=
- being
-> >> notified by 0-day about the build failure this patch fixes. From contr=
-ibutor's
-> >> perspective, it's easier to have this patch together with the rest of =
-ad4030
-> >> series. Though, no objection if kernel maintainers decide to pick it [=
-1] through
-> >> the PWM tree.
-> >>
-> >> [1]: https://lore.kernel.org/linux-pwm/1ac0fc529e02744aacfcb9140ed597f=
-f60886f39.1759873890.git.marcelo.schmitt@analog.com/
-> >=20
-> > TL;DR: nack
-> >=20
-> > I replied to the original submission about why this patch is wrong. See
-> > there for the details.
->=20
-> If we want to avoid this patch, then it sounds like we should use:
->=20
-> #if IS_REACHABLE(CONFIG_PWM)
->=20
-> in the ADC driver around any PWM waveform code.
+Please refer trm [1] 6.4.14.12.17 section
+on how the FDB config register gets configured.
 
-Or use IS_REACHABLE(CONFIG_SPI_OFFLOAD_TRIGGER_PWM) which might be
-nearer to the actual dependency. (Hmm, but looking in the driver, it
-handles the pwm device and setting directly, I would have expected that
-code specific to SPI_OFFLOAD_TRIGGER_PWM does that and the driver
-doesn't even see the pwm.)
+[1]: https://www.ti.com/lit/pdf/spruim2
 
-Or make the driver depend on CONFIG_PWM, which is cheap.
+ drivers/net/ethernet/ti/icssg/icssg_config.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Or if the PWM support is really optional, convince me to add the stubs.
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+index da53eb04b0a4..3f8237c17d09 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_config.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+@@ -66,6 +66,9 @@
+ #define FDB_GEN_CFG1		0x60
+ #define SMEM_VLAN_OFFSET	8
+ #define SMEM_VLAN_OFFSET_MASK	GENMASK(25, 8)
++#define FDB_HASH_SIZE_MASK	GENMASK(6, 3)
++#define FDB_HASH_SIZE_SHIFT	3
++#define FDB_HASH_SIZE		3
+ 
+ #define FDB_GEN_CFG2		0x64
+ #define FDB_VLAN_EN		BIT(6)
+@@ -463,6 +466,8 @@ void icssg_init_emac_mode(struct prueth *prueth)
+ 	/* Set VLAN TABLE address base */
+ 	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
+ 			   addr <<  SMEM_VLAN_OFFSET);
++	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, FDB_HASH_SIZE_MASK,
++			   FDB_HASH_SIZE << FDB_HASH_SIZE_SHIFT);
+ 	/* Set enable VLAN aware mode, and FDBs for all PRUs */
+ 	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, (FDB_PRU0_EN | FDB_PRU1_EN | FDB_HOST_EN));
+ 	prueth->vlan_tbl = (struct prueth_vlan_tbl __force *)(prueth->shram.va +
+@@ -484,6 +489,8 @@ void icssg_init_fw_offload_mode(struct prueth *prueth)
+ 	/* Set VLAN TABLE address base */
+ 	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
+ 			   addr <<  SMEM_VLAN_OFFSET);
++	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, FDB_HASH_SIZE_MASK,
++			   FDB_HASH_SIZE << FDB_HASH_SIZE_SHIFT);
+ 	/* Set enable VLAN aware mode, and FDBs for all PRUs */
+ 	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, FDB_EN_ALL);
+ 	prueth->vlan_tbl = (struct prueth_vlan_tbl __force *)(prueth->shram.va +
 
-Best regards
-Uwe
+base-commit: 68a052239fc4b351e961f698b824f7654a346091
+-- 
+2.43.0
 
---kj7yi3qsfu3mpkdr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjsvzsACgkQj4D7WH0S
-/k56bgf/WSWV81G7CodoWUzNZZcBIxEXAYFtv7+fsWeLG81ByuKhZ+VV8Gms1I4O
-10YbsnH5lk+y5ZZzVSfYfgo9bOkbi1n17t4BwXLXiJGz7Zpu/vbgyQmVonmQ/pUm
-yBn/z8w11IdBVf5GzUm1+mUuP2w3eUkCVeimDlLquB9dGuFo9risBsV6hTEdZ2Lz
-JQ/pKnZraYjlLpkPxyA1GloJ7VLlaDCQlD7dSRBkrcDO+yaYbQ9NLLaJZllHRFxt
-kSWmjVsSYW6yLRfhramKupP5f6iXlxOFsSw+GSpPp1MWMxZwplPcfmPup+WvoduN
-wpL4bxLtovtEZV80Dy6c8rqdPEEs3w==
-=8Xqr
------END PGP SIGNATURE-----
-
---kj7yi3qsfu3mpkdr--
 
