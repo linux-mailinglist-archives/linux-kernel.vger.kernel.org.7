@@ -1,186 +1,475 @@
-Return-Path: <linux-kernel+bounces-850507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584B9BD302E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:36:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD14BD303A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 678814F16A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62833A3223
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447CD27990D;
-	Mon, 13 Oct 2025 12:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8150275AE4;
+	Mon, 13 Oct 2025 12:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Irwo3ki0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aBedwFok"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACED1F1534
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760358962; cv=none; b=c/uwldpSWjjJMc2h4FTUben01VZsv99xyj3H9KAN8/SMyhQ40ZUkHZ1uc8alyeZzPeTM+UsGInGlycr/WAXzrjl9aIY2HED/GY6AQj76MwGooPeYBfXa8YMJdu0/ycYWMAZ3bI2a4/hx4iA0SFPtNZFy9BROumf1iWpQMIzDp54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760358962; c=relaxed/simple;
-	bh=E/YPQj9r4NZkVyM3wMp0upmXvE62DobvCrhkiCXXkJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W7x1DvZr8oOjmHI2O+eRIhDDsHh/ObUXVUcYV11sS9sE9OjR1c7h4sup3ACQidJJB1vBgjAxPxBCLEKxVyzvpU9HgjLvj5Cfxz1lvEmOB4pHkXblnd3OO3bklK25onKJxi3L79QfkxjoSqN4NeMCfw+/XAUSM+hG/smFcmxiLqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Irwo3ki0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DAYqgi000534
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:36:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=u8goP0px9a8ckKVRo5TU8/0r
-	Gkad5U2lG1RKmUfiwgc=; b=Irwo3ki04+biq4RjeyRHjKxUmrs71JT5Nx4DUy+W
-	7s6k94p4fH23o1Ua75eMkZ6so8DtxU5JYsso5BwqxPsVsZTasIPZ6fhJIDYeEWmg
-	5q2qmvKgBp3+6pGwLSmGii43JqDalJxDZzt8H7GQ9XbXvOdT+QBsqT5yKxHPqkx1
-	9e2VySl9KeHULiWcBfXiwxR4KwU+LnnmglW5c1r319HSfqiwN2spJxjNnim9lGNq
-	QCRPrIg3piZ5KqsEtNwF9CcnI+yogY/5PTO1RrxUlcgNbmWCx5MfGp29KvJ/C44U
-	rIdSB9y2NHkNhJqZ34hpRvSxCUhcZGVWSSg9msKGNwvgIA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd8vjea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:36:00 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-859df490f9dso1016242485a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:36:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760358959; x=1760963759;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u8goP0px9a8ckKVRo5TU8/0rGkad5U2lG1RKmUfiwgc=;
-        b=SxmUAu6/WVYceQFXLT2iy1wifAtymCyKWlFSfrLvfRo/WaO+Ib9xZLGQ4d4S7WAnnV
-         nETSVhVu2olQTfDD3J7royFj9cVnpr8y/JlR0ySVZ6BBoFQMOK+y5uAdalHuhOZUjodK
-         NcCmAB3rC2ZW0DclzU8FsAs788Y6xR0GtCxvUtY4mjYLHTlD+EnpYF0t1tHQSXGKgtVM
-         ZTh12GRVfgH+TDgT8OTpP709dJIp6saGVXyuGabrZPixDCkGb939A1hoK7J30UDH+ZNy
-         R3k7Y0a7DhB/Zl8P2dvOUiusgh3t7aPknXWIqh9IOQ9CGH9uc4hWWa7KP79hI5Bxeckp
-         luUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSUMPiPKDIj862+ZUKsMH5vIwlRyU+K0gei6Q4julgKP9h8JBbH3qvt5cWVY5s69q01Z+FBbaeFl7D28M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKEieYjpxd6AnSuZckLGJI3+uGVsci+DG5uTxJIZ2IYPOtU4jB
-	ClfFfJGN76xkm/ffOZyst2jE6i2MsRjI6Tv/O3dr9RtGMscekr72N2SlYnU5GH2hQCoZOVtRQFl
-	Hpy6J8GoGbj7ncqdNBhNSB77KzSvt/o6GFp+iwwEmkgGdNt3kceHqGG2Rts9cYyGwu68=
-X-Gm-Gg: ASbGncviVkZJpsEE2O443dMBgZXFnnN4+1XK/JArhC+1CumkENJHG9oqXdeGMo8IHcF
-	iWcgpbcvs7N8tmqkmJNzJsR8RXdWibQMypQEUsMhv33+2bShY16KzwbHVLEJABdgJyYsoV7lZI5
-	P0fapYdH6nv/RBpmWrrYk1iQKBwXLDBWLgOOLk9hzqrvmA5AbM2vA2y/xsOWnZDo6R3NFmFG+C4
-	K2Dt3cByMwgXGejivB1PoTVRLu8o3bJElojxopOsTzgDJ0R3f0KTsWL4uHfgtWOd/nLcmIfcZhG
-	KEk0Tgzkf0bqryUGBr94LtUFtQXuU8TiUBNq9X7hxBqfzkWuAnQY34IDvoyaUAQsEBWm+6kuaCL
-	Z3qzMzSwnXpl/9kj6sa+bELzFGX6qEOLy4f8DorB+lepw7mDL+vW6
-X-Received: by 2002:a05:620a:2983:b0:864:1d18:497e with SMTP id af79cd13be357-88354ac39cbmr3044048185a.23.1760358959066;
-        Mon, 13 Oct 2025 05:35:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwoj4faJclOVnlrUN8P7wIZhl4D7mky2VyxsU8g1O5JnX3k9H6mJ7qsn8Lah7rEGjXaxUOBg==
-X-Received: by 2002:a05:620a:2983:b0:864:1d18:497e with SMTP id af79cd13be357-88354ac39cbmr3044042185a.23.1760358958586;
-        Mon, 13 Oct 2025 05:35:58 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e4dsm4084850e87.22.2025.10.13.05.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 05:35:57 -0700 (PDT)
-Date: Mon, 13 Oct 2025 15:35:56 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ritesh Kumar <quic_riteshk@quicinc.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        jessica.zhang@oss.qualcomm.com, sean@poorly.run,
-        marijn.suijten@somainline.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mahap@quicinc.com, andersson@kernel.org,
-        konradybcio@kernel.org, mani@kernel.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        vkoul@kernel.org, kishon@kernel.org,
-        cros-qcom-dts-watchers@chromium.org, linux-phy@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        quic_vproddut@quicinc.com
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: lemans: Add edp reference clock
- for edp phy
-Message-ID: <c4bhkhw6xlaqlwhbataveafav6jcsrgnazk72lkgtj3fygwqjc@4bp5w4q5sygh>
-References: <20251013104806.6599-1-quic_riteshk@quicinc.com>
- <20251013104806.6599-4-quic_riteshk@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BA43E47B;
+	Mon, 13 Oct 2025 12:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760359032; cv=fail; b=iPkI5gOwd9PfwH3Ms46adihDnN2b4RHsxOCb9BG0tOHBxWIsVAzWJ7/Bo+rqCDlg5WTvez17hUKbjlvSwpRX+8671Rm+7aHJ6sUcP4az6uLepdWdRDzD7HADsTYfp2ZuiaCIoyZIBQ/11Sfrp+5pwmiD7aU7zcV2Z4/28v/fFG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760359032; c=relaxed/simple;
+	bh=2bFjSK30GSaQGpYzSISBH7H+dQagt1aMpSJlfMaXjEE=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=G30IlDD5O60X06RVcm1GOl4oyGFdvWJ7FS2+MCBKTYqVUMhw/oU6UR5YzM5GvfAd+knl/V0BAZjUvpTpyaw7ons0A4JkJuA/Y29h1ecr4lF6EJ6LY2qQqaX4bkp3tdhfv++7ZQQG2zhF4CVz7It5FZN+LDO9Vk0TxAE1Z5lGM40=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aBedwFok; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760359031; x=1791895031;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2bFjSK30GSaQGpYzSISBH7H+dQagt1aMpSJlfMaXjEE=;
+  b=aBedwFokho8rWnoCjR1le0R8nLnYJRFg56awILveSacL4MX4dGSpZ7MI
+   Q0I4rtvKdUYPDFHQBv7sMpI0NPR2UKGl2BgprWP2VZ6r1G/Zf0dTIK9Xx
+   u4WlsDyXqqjXSBQtIoMmrLMZSH7sTzO9+udA1JZVbwW0gwEEZ2X7MJrVS
+   q8v3Zu6JJE4+Rcmah9UjjL87GGbxhiOnYUKnA04gOSvOAye57JQajdFAM
+   oySpd1qUA1GPCnlCVsgx4EZXHWYiktVTDyzax8Tag9c1Z9fq2uvyuFd6j
+   Hx+pvD+S5vP2lDRfWxoZ1J+h3648bHFps5aZg0+/sz1cTcJcEiA+ABHdd
+   Q==;
+X-CSE-ConnectionGUID: u9uTSvraSh25ZHJNsKpuJQ==
+X-CSE-MsgGUID: oxdGN5x7TNW6w/jnPOO1IQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="72754980"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="72754980"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 05:37:08 -0700
+X-CSE-ConnectionGUID: QY3IYlsKRd6qY+O/bBaMbQ==
+X-CSE-MsgGUID: Bj4yX0LSQMiuBLMmSdo8bg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="181399810"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 05:37:07 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 05:37:07 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 13 Oct 2025 05:37:07 -0700
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.64) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 05:37:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g9DpVjpEhJ9xWHYE7L4/6R5aCtV+/okbQdHyIgKG28b6OmCCD5plp6VXvnY9icWKkgBie4Vb4OXzCcEcNgPBkeIF5vqom3XjkYhg0TT92Y9PGAWBnneLS9quHPGKvtuIB0dySbHGw5lQhUzS8FjhF3ufKxdcZjQ4CSz3jJagF4khO02akeL5ppX192+puFq0GO1VvjHjYE8fEbkX3m6mY9qIS560ST6LZQL/8mlxg5FgV7r3YsyGnu+zkJ9qZkEy+YsThKYJLdnSQE9nhe12Uj5nmRLe2MIZOXo0+aRWDMY2ISfr29kiL3LCtXX0s+SpDWGbpNeOoP4r3SbhG4VtBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RmL3+L7Cl5dAckDnVUE+Iiti8aK6RZLRV+gD723tGQU=;
+ b=wrypKI5NshRRmjTPZIFF04arwJxNgYUIAIk8RX766IoeBZ3zqrAG/e5EJ/YQNuaonw9Xc5k489YK4GNOxOgj9JOqUux3tDxjHYeJOiC7P6r0ZiD/Op5Fe/rLQ1KyRSzSfw5Ng/0J8br8NU8alKxHn56mJubPVc9Gw6VH+31NdJP/KOYFY5mJdaKqo/j5ePVbvvO4tsQDFoKZySS8OqLT8itMVZz8ezF5qAmSFkZY8qrWTlb3TY+JXqh2R7iifsmiGZ26QMeYjgHgTGGkkcOOA9xxsApndoaV2AqSUrWxCcg/VcXyHicEV+CoUmHhW1CN45/dT4iHoVx/xHR5xP1jow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
+ by MW3PR11MB4716.namprd11.prod.outlook.com (2603:10b6:303:53::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.11; Mon, 13 Oct
+ 2025 12:37:04 +0000
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 12:37:03 +0000
+Message-ID: <07d33e0b-0078-4075-bc70-e09a8ec17a97@intel.com>
+Date: Mon, 13 Oct 2025 14:36:56 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/26] drm/xe/pf: Handle GGTT migration data as part of PF
+ control
+To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
+ Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, Matthew Brost
+	<matthew.brost@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, "Joonas
+ Lahtinen" <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>
+References: <20251011193847.1836454-1-michal.winiarski@intel.com>
+ <20251011193847.1836454-19-michal.winiarski@intel.com>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <20251011193847.1836454-19-michal.winiarski@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VE1PR08CA0027.eurprd08.prod.outlook.com
+ (2603:10a6:803:104::40) To MN0PR11MB6011.namprd11.prod.outlook.com
+ (2603:10b6:208:372::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013104806.6599-4-quic_riteshk@quicinc.com>
-X-Proofpoint-ORIG-GUID: WVUTSc7SEzIpSbJ_H3LzffM-kp2tvEn6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX/em69OHqzAma
- hI7GUrnXgXKSdL45u4h/AtO493Muwg5BDoEuyP6kaSaU5QmVe0VLyeWNMiRyOj7r77DFxXFeja8
- L1ICU0aKSqkLr2fC0L2wf1DEcK8XhAChJCn5EkN7JbrTB0vdTzEUXUTPw64dAaKbBltN3wvsw6q
- 9/JTeS1iB2BH89WVkE4tYJ1ysABP5WMf+MH9G/N/kQbhk6spzLzEcELyEXUdTlsIrkuJjaL7ouu
- MPNXA+4lbzEpfaGSA7Vn7H2WM8aozHH3HnVCB0AN6dx0iGX6vX2lWSZ+Yncge2JDR3K+x4TOwvi
- 4edbSTYJFjCFXMjdv6kZxhHjAg9AvXwMTlIYmODnOZP8bKrXZN5o5UUjd+8HaZp+jtkzH2NVJ/K
- l73zCTUomvVv2kHYSheBGRLWHffc7A==
-X-Proofpoint-GUID: WVUTSc7SEzIpSbJ_H3LzffM-kp2tvEn6
-X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68ecf230 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8 a=xNGN3EASD54c2UHPMiwA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|MW3PR11MB4716:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e607722-44fe-4d87-c1b3-08de0a553620
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bjN2QjJweS9zYmxEWkliY3F1djdEVGJNYlIvcHNUUUpzbFNIcm0yQlJoTlQ0?=
+ =?utf-8?B?MXFqL3p4ZXJUQWp3U2pzeUV4UkQ5S2IrQ2xOR1o3YW41MEdRaHNYVUtGR2FI?=
+ =?utf-8?B?TzdrRkkrVnkxZUhUQ3htQVRSd25LaGNKNUJkWThwTTVVNENmM3l6SFNPS2hr?=
+ =?utf-8?B?OTRrU3lKSW94ZGZkSmVjcVYrK2lEYUR0ZmZ1ZkxaRnRORFNXd0tHbHNEM1Zo?=
+ =?utf-8?B?N1pWNWpFdlN6bzQ4TU8rSWlCR2w5ZmFJdjlMS0h2OFQzcEVDZy96YjVrbjZ2?=
+ =?utf-8?B?TXNHTzdleFBJK0xQK3dQL1BlbFVobjJWM1duaGFqRjdXVDM3NUFESFRKV29M?=
+ =?utf-8?B?aDUyWndMRldFemNxY0VVTjhyYWtDOEZpM1VzaWFGSWpjakNkMk5oR2NkQmpG?=
+ =?utf-8?B?NmdGclJFVnE0d2hyYXExdmdoL1lNeTU2dXJxdG8zYUZZQzRTNHJPRGp4aWp6?=
+ =?utf-8?B?T0tpN01Xd0RVa1JnOFpwZmM4NWlFYUZhR0ZTVGJlTXRBelQySHdzN3NvcU1t?=
+ =?utf-8?B?OTRsanZCMnR1ZjB5QWFHYkkzc0RiQURqUWhmdk1meXZGQkpVT1VlQTFTTTQ3?=
+ =?utf-8?B?N3lpVDZMcUdBbW44YmpyQ25QTW03ZzA2V0dTaTZic2w0eC9XU1Vha09VM3p2?=
+ =?utf-8?B?RTl3Sy9YWWQydmMrbjR2Q3RKOElVY2Z3NmZHbFEwck12UThKOFJRUGk5ZW5l?=
+ =?utf-8?B?U0Noc29TSUo5T3lDU3VBZnEyc1hzQVdyaUo0NlBQUGlUZXloQVQwVVJLSFVU?=
+ =?utf-8?B?Vk1JMVM2bUNORjluK0lBRjRXSTVCcktWRGdUNWpVZzlLNkZlMEhpcVpHaWxr?=
+ =?utf-8?B?cUtZVWpyd0YxVjY2SjRmaWloN3BwYU1rK1JFb255NDV3cjU2dTd4eVUydWkx?=
+ =?utf-8?B?QjkrQktRUk5LZjhuNVR2dGlNNU0xaHdEa3dTQjBiNzhadGhTZXdoMWN3MHFr?=
+ =?utf-8?B?dE5qVzNCZ3JORXh0YWxuaTd6Q0k4bkF2Q1VqeUhZd3ZDWXM1WXByWlFLQWpm?=
+ =?utf-8?B?eUpYRVozTXZ0cHNza1FGV0ZJNlI1dkJXcFpGVDdCdG0xYUsrOTlEamlWRUMx?=
+ =?utf-8?B?U2ZDRFlxQkxWMVhnRjNwc1k1WW5TcGdTbXlwYjNNNm92dk9UWE5iNm9zd2Vn?=
+ =?utf-8?B?RTBUdkY3bWN5K0xEbVNXRzNFUjJNWkl4dDRYbTR6NUs3eWZlUHNKUXpibEZT?=
+ =?utf-8?B?bEhGcXFZZnl2N0RJWXJDWDVkbW1BaFVrZU5CUzdSbUEzNDNTQTUwdlIxRkZi?=
+ =?utf-8?B?MnF0Z0FpVk1tWU1JeVNuSVJEKzNWWCtnU0hzd0pVWG8yOEhQY0E1d0J2SGJ4?=
+ =?utf-8?B?VU84cm92UVlzUGVqeUtDRFZDbVRBZFZMN0Q3S09CWDhaZVlnUkVYQ1MzcTVV?=
+ =?utf-8?B?YitCYndYRmw0bHpvODE2R0FjTDFSemo2R0Jvak5SSlBnMXFud3I3cUhsSGJK?=
+ =?utf-8?B?UjlmTStySUREbzFLMlRYRlBGajNPVlBEZFh6YjRyOHJheU5GdVo1YkhCZG1z?=
+ =?utf-8?B?Z3VQbXlVNU5PMlBFeU54ZVJ6dG9zcW1ydWUwR1lvWDF2aTBtOG1yRTA2SUJO?=
+ =?utf-8?B?R3Jad1cvU2p4VlJlTmZJbmprbG1HcmI4RlFjbGdyMXV1ejcxSDJvSHNHeDNX?=
+ =?utf-8?B?UkhYTklsM1NtcnhJekZkTUdYem9GdXJQZWZud3pjVnNKeDVyZ2psK1k3S201?=
+ =?utf-8?B?cXFXNW80eGEvQlV4NG4rTDhSVnIzcjY4QTd2TllIeUtFRkczc3BiVS9FbEdN?=
+ =?utf-8?B?NzE0ZlpKait5SE9UVjBTYlBJNTVjOHo2Tit4bUVOL1pRVy85N0FTOVduaEVR?=
+ =?utf-8?B?VTJCeWYrNU45SS9UNkdIblhoNXQydnFMbE9sMWwrc1M0R2U4TXdTQXVHZnJF?=
+ =?utf-8?B?VDM0MmlGQ1Q0Z2pIb3lzVmp0MW14Z01OVWNmQ2J5Z3hIbmtocnVPNXZSRHFW?=
+ =?utf-8?B?UEtuR0k0STU3bjlPUGRkMVNKQ1BEQWVGOENWTVkwTlVvTE83TVRpZVFFMEVM?=
+ =?utf-8?Q?sVmZsSOxIiNE+05CEG4HCXms2Zae4I=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MDArbnpnVzNvU2c4ZGRRRnJtRHljSE5WbHpYckF1bHFtRGJjOGlIb01telNZ?=
+ =?utf-8?B?eHdKZDJ6eDFMQWMyOFNoNGtFcm9PeDM4NU9Nbi9zNmltRE5NYVJVbHhMVDgz?=
+ =?utf-8?B?NS9TTFZZRmI1RzdMbnlMQ2hkZWtnN21qOTN1RHNaTFBSNEhOWHhQTHNSdTcz?=
+ =?utf-8?B?RnBObWVTNGpOY0ZOY3VkdjRwYkR2eDZ0MnVFdnBZYW9wWGhPR21NTk14Z1Zo?=
+ =?utf-8?B?YU12dW9BRWUvZEZSejVDYXNHSERSUFQyMG94VEdJOHZlZ09jZWg3TkxLSnVj?=
+ =?utf-8?B?Uk8vUGxkZHhkc3JPRnB0RkdZcHg2bWRlb1F5QW9pZWRTQ1lWSkZvNUtoZzBN?=
+ =?utf-8?B?QkpZSzM3Rms5YVRkTmwrRVA3M1EvRlAvazBKOWRGakFPZElTQzM5Q1AwZXF4?=
+ =?utf-8?B?V2xkSkJYZ0d4QzIxcGg5MnQyVVNYU240N2w2RzkrUkJrdmhZNEdCdDhVcTJH?=
+ =?utf-8?B?eVRnZGhiNjZsTmwrTjE3OXhWN1hPanJjeGpDb1VZQzVDWENRUEdqSnJ5NmJK?=
+ =?utf-8?B?M1hBNm92N1pFQVd3RHNTRG1NcEEwL0pTZEoxWi9zQkJIbkR2SE5vT0NsWUgr?=
+ =?utf-8?B?eXlHWElVWjRiZ1JYc1JMSVF3ZlBtOEVlUXJqbUdCZXFIK3hFaVBPUjZJUHAr?=
+ =?utf-8?B?eHF0a1lMZWxoMWpZaWhPNUg1Y3NpMnUxRjErTU9VUGlyUldHUzV2TnZFOUJl?=
+ =?utf-8?B?R0hMVFB0Vm1HdHo0R2lQdDlBZVprQTRBRWl3RG8yQ2t1SVB2ZHNmUzRWcUNs?=
+ =?utf-8?B?eGF1dW5TTUlLdnVpcTNmS2xKWmg2UjlyTUFhcWdlYncyNkZwYnhPUm85cEFt?=
+ =?utf-8?B?Vk1MSE0vUHlrTHkvU0VaZ3luMnB2ZTk1bVFXTmJrbFVrV1QzSVQ5YjErVlRh?=
+ =?utf-8?B?Z1B2ZmFSMityc0o3RFM2UGVibnF3UldTWHY4QjB0aWhROXFucWthd3g5NjJP?=
+ =?utf-8?B?b1hKbml2eTBvbmF3Nk1lRWJwSVAzcmprTlJPK3RYMWF5aHV0RlNvUXJweFd6?=
+ =?utf-8?B?NmZzNTV5bzcxSmRoNENITWpFTll0dDJuVjlmdkpZYndGeFBMRnNCRG5zMm5F?=
+ =?utf-8?B?c1VPcW1PaFF2VGVZZTBMSzY2ZnZzWDZUYXZkbkpqSVpneEk2bkR3cTNHMUJV?=
+ =?utf-8?B?K0xDMVMwRDZkK0VnSmdiVksxUHZoWjk5TFNnam1raC9GdlBzTXJJMlY1RDlw?=
+ =?utf-8?B?RzRVcklNMm5qRThnbDJiMVVFZmZwNG01Nm1EMG9Hd0w5TXlwNlFteWlNZy9r?=
+ =?utf-8?B?MDhqQ0hlSGR1WjRQc1pYcU9TZzU5M0VaNFdwRmY1RWpYU0UwZ21xeW9rYmFV?=
+ =?utf-8?B?ZTVsZlZWNnJTbU5FV210STJpcTQ1bVdxbUx5TTRyM01GOFlTbnd1OEZJWnRa?=
+ =?utf-8?B?d0J5MmJkaGRlSXRDMWRwUzhPaSt5UjhrcUJ4UWZMczNxc2huZUNzSTk3S2Ft?=
+ =?utf-8?B?MkhleElva28wTitybnNsU0oxWTV5YWR0VmRtbGFlVUxuNzlOMUtIRmRseDlp?=
+ =?utf-8?B?Y3ZlVzdWZkxEMjB6Qk85OGV2NGUzUDB0ZUduNFE3TUg1Y2R3bFRZTS9JWUZ1?=
+ =?utf-8?B?c2hOTkt6TFRoeGJLTmdOdURyeUI0bVVoamxLOXUwbnN1dGxVSk5GeUtEbExx?=
+ =?utf-8?B?amZuUHgzTUw2UUVVQUVicncyY2Z4eWJIUmVsNm1obzBMb08zbFRtK2FaR3dN?=
+ =?utf-8?B?MHV2bEY0ME1QRXFPamdlTVF3YzVtMGJPRjdicFo5eFFIUEttSVEwKzJMQ1kv?=
+ =?utf-8?B?U2paeHN4VUpFYXVpTlpCL1BEU0ovT1Z5NC9CalVLNXlQR2ErdkNFYjRObXBp?=
+ =?utf-8?B?RkJRc0ZlNzdab0xUZnNWdFRhdXgxTnAwbkx1UmczQkZtM1lacHNIU0IvUEZr?=
+ =?utf-8?B?ZmVPWGRBTjlHRHZEUXdLdC9FTlV6K2VSL0gxYUg5L0FjY0tmenFYdTVFYzVJ?=
+ =?utf-8?B?eVJISE4yUUpVUGh6dWxXdmhncWd3TmNNYVlPblgzcHRiVTFzZllrRFF4bjF1?=
+ =?utf-8?B?T2VHMWYxa0w4OW5tMzdxR2V0MmRlMkp0MmtIL2Nsd3BkdHRkU21GZGp3QzBQ?=
+ =?utf-8?B?M1RyaytBNDRnV2psT2VBaGNUeENiZlIyaWkrdm9sSFAxT09FcWMvK2JKMlVL?=
+ =?utf-8?B?b3pPQTRJSFcvcXdYWHowR0EySTVjS1hhVWw3WXNXeCs4UzYrL29FdG5KcUZE?=
+ =?utf-8?B?SWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e607722-44fe-4d87-c1b3-08de0a553620
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 12:37:03.2522
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g6ts6I3/9UNSqs+Dw+2RpzNR5FUbfWfttDre5YaU1rlutOVD4i1W0b2pZthAkbPQ3XtWKtKSlM2aDBg0uiIgWlaUNuKDbriIruc4XYFDHRE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4716
+X-OriginatorOrg: intel.com
 
-On Mon, Oct 13, 2025 at 04:18:06PM +0530, Ritesh Kumar wrote:
-> Add edp reference clock for edp phy on lemans chipset.
 
-eDP, PHY, Fixes:foo bar baz
 
+On 10/11/2025 9:38 PM, Michał Winiarski wrote:
+> Connect the helpers to allow save and restore of GGTT migration data in
+> stop_copy / resume device state.
 > 
-> Signed-off-by: Ritesh Kumar <quic_riteshk@quicinc.com>
+> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
 > ---
->  arch/arm64/boot/dts/qcom/lemans.dtsi | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c   |  13 ++
+>  .../gpu/drm/xe/xe_gt_sriov_pf_control_types.h |   1 +
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c | 119 ++++++++++++++++++
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h |   4 +
+>  4 files changed, 137 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> index cf685cb186ed..1bcf1edd9382 100644
-> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> @@ -5034,9 +5034,11 @@
->  				      <0x0 0x0aec2000 0x0 0x1c8>;
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> index f73a3bf40037c..a74f6feca4830 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+> @@ -188,6 +188,7 @@ static const char *control_bit_to_string(enum xe_gt_sriov_control_bits bit)
+>  	CASE2STR(MIGRATION_DATA_WIP);
+>  	CASE2STR(SAVE_WIP);
+>  	CASE2STR(SAVE_DATA_GUC);
+> +	CASE2STR(SAVE_DATA_GGTT);
+>  	CASE2STR(SAVE_FAILED);
+>  	CASE2STR(SAVED);
+>  	CASE2STR(RESTORE_WIP);
+> @@ -803,6 +804,7 @@ void xe_gt_sriov_pf_control_vf_data_eof(struct xe_gt *gt, unsigned int vfid)
 >  
->  				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
-> -					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +					 <&gcc GCC_EDP_REF_CLKREF_EN>;
->  				clock-names = "aux",
-> -					      "cfg_ahb";
-> +					      "cfg_ahb",
-> +					      "ref";
+>  static void pf_exit_vf_save_wip(struct xe_gt *gt, unsigned int vfid)
+>  {
+> +	pf_escape_vf_state(gt, vfid, XE_GT_SRIOV_STATE_SAVE_DATA_GGTT);
+>  	pf_escape_vf_state(gt, vfid, XE_GT_SRIOV_STATE_SAVE_DATA_GUC);
+>  	pf_exit_vf_state(gt, vfid, XE_GT_SRIOV_STATE_SAVE_WIP);
+>  }
+> @@ -843,6 +845,13 @@ static bool pf_handle_vf_save_wip(struct xe_gt *gt, unsigned int vfid)
+>  		return true;
+>  	}
 >  
->  				#clock-cells = <1>;
->  				#phy-cells = <0>;
-> @@ -5053,9 +5055,11 @@
->  				      <0x0 0x0aec5000 0x0 0x1c8>;
+> +	if (pf_exit_vf_state(gt, vfid, XE_GT_SRIOV_STATE_SAVE_DATA_GGTT)) {
+> +		ret = xe_gt_sriov_pf_migration_ggtt_save(gt, vfid);
+> +		if (ret)
+> +			goto err;
+> +		return true;
+> +	}
+> +
+>  	xe_gt_sriov_pf_control_vf_data_eof(gt, vfid);
+>  	pf_exit_vf_save_wip(gt, vfid);
+>  	pf_enter_vf_saved(gt, vfid);
+> @@ -862,6 +871,8 @@ static bool pf_enter_vf_save_wip(struct xe_gt *gt, unsigned int vfid)
+>  		pf_enter_vf_wip(gt, vfid);
+>  		if (xe_gt_sriov_pf_migration_guc_size(gt, vfid) > 0)
+>  			pf_enter_vf_state(gt, vfid, XE_GT_SRIOV_STATE_SAVE_DATA_GUC);
+> +		if (xe_gt_sriov_pf_migration_ggtt_size(gt, vfid) > 0)
+> +			pf_enter_vf_state(gt, vfid, XE_GT_SRIOV_STATE_SAVE_DATA_GGTT);
+>  		pf_queue_vf(gt, vfid);
+>  		return true;
+>  	}
+> @@ -970,6 +981,8 @@ static int pf_handle_vf_restore_data(struct xe_gt *gt, unsigned int vfid,
+>  				     struct xe_sriov_pf_migration_data *data)
+>  {
+>  	switch (data->type) {
+> +	case XE_SRIOV_MIG_DATA_GGTT:
+> +		return xe_gt_sriov_pf_migration_ggtt_restore(gt, vfid, data);
+>  	case XE_SRIOV_MIG_DATA_GUC:
+>  		return xe_gt_sriov_pf_migration_guc_restore(gt, vfid, data);
+>  	default:
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control_types.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control_types.h
+> index b9787c425d9f6..c94ff0258306a 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_control_types.h
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_control_types.h
+> @@ -72,6 +72,7 @@ enum xe_gt_sriov_control_bits {
 >  
->  				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_AUX_CLK>,
-> -					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +					 <&gcc GCC_EDP_REF_CLKREF_EN>;
->  				clock-names = "aux",
-> -					      "cfg_ahb";
-> +					      "cfg_ahb",
-> +					      "ref";
+>  	XE_GT_SRIOV_STATE_SAVE_WIP,
+>  	XE_GT_SRIOV_STATE_SAVE_DATA_GUC,
+> +	XE_GT_SRIOV_STATE_SAVE_DATA_GGTT,
+>  	XE_GT_SRIOV_STATE_SAVE_FAILED,
+>  	XE_GT_SRIOV_STATE_SAVED,
 >  
->  				#clock-cells = <1>;
->  				#phy-cells = <0>;
-> -- 
-> 2.17.1
-> 
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> index 0c10284f0b09a..92ecf47e71bc7 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> @@ -7,6 +7,7 @@
+>  
+>  #include "abi/guc_actions_sriov_abi.h"
+>  #include "xe_bo.h"
+> +#include "xe_gt_sriov_pf_config.h"
+>  #include "xe_gt_sriov_pf_control.h"
+>  #include "xe_gt_sriov_pf_helpers.h"
+>  #include "xe_gt_sriov_pf_migration.h"
+> @@ -37,6 +38,117 @@ static void pf_dump_mig_data(struct xe_gt *gt, unsigned int vfid,
+>  	}
+>  }
+>  
+> +static int pf_save_vf_ggtt_mig_data(struct xe_gt *gt, unsigned int vfid)
+> +{
+> +	struct xe_sriov_pf_migration_data *data;
+> +	size_t size;
+> +	int ret;
+> +
+> +	size = xe_gt_sriov_pf_config_get_ggtt(gt, vfid);
+> +	if (size == 0)
+> +		return 0;
+> +	size = size / XE_PAGE_SIZE * sizeof(u64);
 
--- 
-With best wishes
-Dmitry
+maybe it would be better to avoid reusing the var and have two:
+
+	u64 alloc_size = xe_gt_sriov_pf_config_get_ggtt(...);
+	u64 pte_size = xe_ggtt_pte_size(alloc_size);
+
+> +
+> +	data = xe_sriov_pf_migration_data_alloc(gt_to_xe(gt));
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	ret = xe_sriov_pf_migration_data_init(data, gt->tile->id, gt->info.id,
+> +					      XE_SRIOV_MIG_DATA_GGTT, 0, size);
+> +	if (ret)
+> +		goto fail;
+> +
+> +	ret = xe_gt_sriov_pf_config_ggtt_save(gt, vfid, data->vaddr, size);
+> +	if (ret)
+> +		goto fail;
+> +
+> +	pf_dump_mig_data(gt, vfid, data);
+> +
+> +	ret = xe_gt_sriov_pf_migration_ring_produce(gt, vfid, data);
+> +	if (ret)
+> +		goto fail;
+> +
+> +	return 0;
+> +
+> +fail:
+> +	xe_sriov_pf_migration_data_free(data);
+> +	xe_gt_sriov_err(gt, "Unable to save VF%u GGTT data (%d)\n", vfid, ret);
+
+use %pe for errors
+
+> +	return ret;
+> +}
+> +
+> +static int pf_restore_vf_ggtt_mig_data(struct xe_gt *gt, unsigned int vfid,
+> +				       struct xe_sriov_pf_migration_data *data)
+> +{
+> +	size_t size;
+> +	int ret;
+> +
+> +	size = xe_gt_sriov_pf_config_get_ggtt(gt, vfid) / XE_PAGE_SIZE * sizeof(u64);
+> +	if (size != data->hdr.size)
+> +		return -EINVAL;
+
+do we need this ?
+
+there seems to be similar check in xe_ggtt_node_load() called by restore() below
+
+> +
+> +	pf_dump_mig_data(gt, vfid, data);
+> +
+> +	ret = xe_gt_sriov_pf_config_ggtt_restore(gt, vfid, data->vaddr, size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * xe_gt_sriov_pf_migration_ggtt_size() - Get the size of VF GGTT migration data.
+> + * @gt: the &struct xe_gt
+> + * @vfid: the VF identifier
+> + *
+> + * This function is for PF only.
+> + *
+> + * Return: size in bytes or a negative error code on failure.
+> + */
+> +ssize_t xe_gt_sriov_pf_migration_ggtt_size(struct xe_gt *gt, unsigned int vfid)
+> +{
+> +	if (gt != xe_root_mmio_gt(gt_to_xe(gt)))
+> +		return 0;
+> +
+> +	return xe_gt_sriov_pf_config_get_ggtt(gt, vfid) / XE_PAGE_SIZE * sizeof(u64);
+
+this conversion logic should be done by xe_ggtt layer helper
+> +}
+> +
+> +/**
+> + * xe_gt_sriov_pf_migration_ggtt_save() - Save VF GGTT migration data.
+> + * @gt: the &struct xe_gt
+> + * @vfid: the VF identifier
+
+since there is assert, probably you should also say: "(can't be 0)"
+
+> + *
+> + * This function is for PF only.
+> + *
+> + * Return: 0 on success or a negative error code on failure.
+> + */
+> +int xe_gt_sriov_pf_migration_ggtt_save(struct xe_gt *gt, unsigned int vfid)
+> +{
+> +	xe_gt_assert(gt, IS_SRIOV_PF(gt_to_xe(gt)));
+> +	xe_gt_assert(gt, vfid != PFID);
+> +	xe_gt_assert(gt, vfid <= xe_sriov_pf_get_totalvfs(gt_to_xe(gt)));
+> +
+> +	return pf_save_vf_ggtt_mig_data(gt, vfid);
+> +}
+> +
+> +/**
+> + * xe_gt_sriov_pf_migration_ggtt_restore() - Restore VF GGTT migration data.
+> + * @gt: the &struct xe_gt
+> + * @vfid: the VF identifier
+> + *
+> + * This function is for PF only.
+> + *
+> + * Return: 0 on success or a negative error code on failure.
+> + */
+> +int xe_gt_sriov_pf_migration_ggtt_restore(struct xe_gt *gt, unsigned int vfid,
+> +					  struct xe_sriov_pf_migration_data *data)
+> +{
+> +	xe_gt_assert(gt, IS_SRIOV_PF(gt_to_xe(gt)));
+> +	xe_gt_assert(gt, vfid != PFID);
+> +	xe_gt_assert(gt, vfid <= xe_sriov_pf_get_totalvfs(gt_to_xe(gt)));
+> +
+> +	return pf_restore_vf_ggtt_mig_data(gt, vfid, data);
+> +}
+> +
+>  /* Return: number of dwords saved/restored/required or a negative error code on failure */
+>  static int guc_action_vf_save_restore(struct xe_guc *guc, u32 vfid, u32 opcode,
+>  				      u64 addr, u32 ndwords)
+> @@ -290,6 +402,13 @@ ssize_t xe_gt_sriov_pf_migration_size(struct xe_gt *gt, unsigned int vfid)
+>  		size += sizeof(struct xe_sriov_pf_migration_hdr);
+>  	total += size;
+>  
+> +	size = xe_gt_sriov_pf_migration_ggtt_size(gt, vfid);
+> +	if (size < 0)
+> +		return size;
+> +	else if (size > 0)
+> +		size += sizeof(struct xe_sriov_pf_migration_hdr);
+> +	total += size;
+> +
+>  	return total;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> index 5df64449232bc..5bb8cba2ea0cb 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> @@ -16,6 +16,10 @@ ssize_t xe_gt_sriov_pf_migration_guc_size(struct xe_gt *gt, unsigned int vfid);
+>  int xe_gt_sriov_pf_migration_guc_save(struct xe_gt *gt, unsigned int vfid);
+>  int xe_gt_sriov_pf_migration_guc_restore(struct xe_gt *gt, unsigned int vfid,
+>  					 struct xe_sriov_pf_migration_data *data);
+> +ssize_t xe_gt_sriov_pf_migration_ggtt_size(struct xe_gt *gt, unsigned int vfid);
+> +int xe_gt_sriov_pf_migration_ggtt_save(struct xe_gt *gt, unsigned int vfid);
+> +int xe_gt_sriov_pf_migration_ggtt_restore(struct xe_gt *gt, unsigned int vfid,
+> +					  struct xe_sriov_pf_migration_data *data);
+>  
+>  ssize_t xe_gt_sriov_pf_migration_size(struct xe_gt *gt, unsigned int vfid);
+>  
+
 
