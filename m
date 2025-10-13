@@ -1,139 +1,75 @@
-Return-Path: <linux-kernel+bounces-850185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B51BD22F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15648BD2301
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 962E04EEFDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:59:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E84464EDABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09AA2FB614;
-	Mon, 13 Oct 2025 08:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189A02FA0EE;
+	Mon, 13 Oct 2025 09:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PBlOQTQI"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEPfmbhk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338E622157B;
-	Mon, 13 Oct 2025 08:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619B52FB098;
+	Mon, 13 Oct 2025 09:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760345991; cv=none; b=gPdyS8us/GVIIygOsiKARnx6Z1sjwXfPWNvZCxAsEJk1tFPMdgXzaDQUg1yDSqVM3BMilYEE7NC9Lm+v/SANuxLmS+bP2C3UR0taGD1T+tRPRbV99733V9Vdjl0ki1wiAMeIec/SyZPAgaIg4/UYYzqt9FLqJaS24WyuAeujdBI=
+	t=1760346080; cv=none; b=kpBG/uXz+Ovot2p2mBrwmpsL/IBR6xJzdNaA+MaEchZi40tCgqGfWruS2CBQKLbGRqpnyIPBFlzUxQbOQ+OIIZZ631P98n4A3FF8YcmqYnqPoIsrag3VcFMLkxId9q3IeAlP/G4SYk/A7T3DIWdOixuVAYDGeHhiLGMas0W97Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760345991; c=relaxed/simple;
-	bh=dQCX89rdgPzg4jBUl3wrvYTOH2c6sohap5lRrNoxgu0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=umPnuY9Tkhu7B/SoNpDlzc6+8Pg6jIHxblVgHRtczhdrfOQsqXsl2q0PnUpKg84SAlXvAwwiTv1+ZUtFNRjz+qoCHCMXa0y5yKtE4HcalSD9MDsgfeWj/Esw7h8O+Ui/5zCs/FrJmzr9rr2xqacktQbKHBBP3keZ6e7urkOD7WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PBlOQTQI; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59D8xVmL1225224;
-	Mon, 13 Oct 2025 03:59:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760345971;
-	bh=03eLz1BO3ywqvR4VvhSI4Ov3l5NVQWBbzVASFhLKhgU=;
-	h=From:To:CC:Subject:Date;
-	b=PBlOQTQIGCtbTnoUi7ay58pugJ67F5ZxNZdaE+TaWraiKo1Wjh1yIOkebBQqO5l6N
-	 lBQ+ZrS4JjV/0F4+bxYseMqAZeZnepIpZW53jtzAYC/vloOdkbVJljD3Gi9Cvy6P64
-	 WZ/ua5uSWE8DXDA2Kz0w9sr8uVlUQDIvvyZvfTfE=
-Received: from DFLE207.ent.ti.com (dfle207.ent.ti.com [10.64.6.65])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59D8xV1X3693355
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 13 Oct 2025 03:59:31 -0500
-Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE207.ent.ti.com
- (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Oct
- 2025 03:59:31 -0500
-Received: from fllvem-mr07.itg.ti.com (10.64.41.89) by DFLE206.ent.ti.com
- (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 13 Oct 2025 03:59:31 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by fllvem-mr07.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59D8xVoX1669656;
-	Mon, 13 Oct 2025 03:59:31 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 59D8xTUB024754;
-	Mon, 13 Oct 2025 03:59:30 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <horms@kernel.org>, <m-malladi@ti.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net] net: ti: icssg-prueth: Fix fdb hash size configuration
-Date: Mon, 13 Oct 2025 14:29:25 +0530
-Message-ID: <20251013085925.1391999-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760346080; c=relaxed/simple;
+	bh=3yfCTkEF2K27TRpkTh8vXfseBxxmeQwlUPMMM0DwyN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksbUcx3X9aaLcWCeZyQfhMNNSVVnmHtfgk9IH7sVhhHWgBoIhXAp5kLQBgNmdh5rxxChKe3NVfcvxsItlYEZxKs5k+MVKO4zixpxniAZO7hccI/xo7RiIG0ztKhkqulhWzyDLZeVTnqBqkhjwVnNTZs2LduYkq9wpLQWDADYKTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEPfmbhk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AE36C4CEFE;
+	Mon, 13 Oct 2025 09:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760346079;
+	bh=3yfCTkEF2K27TRpkTh8vXfseBxxmeQwlUPMMM0DwyN4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AEPfmbhk1vbe2dRsycUI8cBPNCBaXo5BpLwpsbcN2rkrx0+Okk6XUAz0I+6XFiH8I
+	 lt4xeXAcGTZSn0mWTxYvtH5tDTZ0d+itePReAJkDVV5YNwQG0myIiJr+NJ8DIUyCn+
+	 JVzhMBVrz+lz6hpVbmJ5VFJXceb6CAumdo2Fkxt0OW09CwYQ0e8L+cvDlfiNRuwQmW
+	 yqLQPDxKpp3D7WM8ZU7flmUJtQ0VF2cCbwOET+YIHSDiXU/wvqd7CGQu9JvXxAYpgr
+	 SqucBiGva3uzG/ZgR0U+s5FFba8ZqY/jb2Z5/NjgUWOn7y4UgO2aTwRaewC3FFiR1G
+	 Rm00uk4LNslgA==
+Date: Mon, 13 Oct 2025 11:01:14 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ntb@lists.linux.dev, imx@lists.linux.dev
+Subject: Re: [PATCH v5 1/4] PCI: endpoint: Rename aligned_size to mem_size
+Message-ID: <aOy_2l5tsOOwiv93@ryzen>
+References: <20251009-vntb_msi_doorbell-v5-0-4cfb7b6c4be1@nxp.com>
+ <20251009-vntb_msi_doorbell-v5-1-4cfb7b6c4be1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009-vntb_msi_doorbell-v5-1-4cfb7b6c4be1@nxp.com>
 
-The ICSSG driver does the initial FDB configuration which
-includes setting the control registers. Other run time
-management like learning is managed by the PRU's. The default
-FDB hash size used by the firmware is 512 slots which is not
-aligned with the driver's configuration. Update the driver
-FDB config to fix it.
+On Thu, Oct 09, 2025 at 04:54:35PM -0400, Frank Li wrote:
+> Rename the variable aligned_size to mem_size to better reflect its purpose.
+> 'aligned_size' was misleading, as it actually represents the backing memory
+> size allocated for the BAR rather than an alignment value.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Fixes: abd5576b9c57f ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
----
-
-Please refer trm [1] 6.4.14.12.17 section
-on how the FDB config register gets configured.
-
-[1]: https://www.ti.com/lit/pdf/spruim2
-
- drivers/net/ethernet/ti/icssg/icssg_config.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-index da53eb04b0a4..3f8237c17d09 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-@@ -66,6 +66,9 @@
- #define FDB_GEN_CFG1		0x60
- #define SMEM_VLAN_OFFSET	8
- #define SMEM_VLAN_OFFSET_MASK	GENMASK(25, 8)
-+#define FDB_HASH_SIZE_MASK	GENMASK(6, 3)
-+#define FDB_HASH_SIZE_SHIFT	3
-+#define FDB_HASH_SIZE		3
- 
- #define FDB_GEN_CFG2		0x64
- #define FDB_VLAN_EN		BIT(6)
-@@ -463,6 +466,8 @@ void icssg_init_emac_mode(struct prueth *prueth)
- 	/* Set VLAN TABLE address base */
- 	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
- 			   addr <<  SMEM_VLAN_OFFSET);
-+	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, FDB_HASH_SIZE_MASK,
-+			   FDB_HASH_SIZE << FDB_HASH_SIZE_SHIFT);
- 	/* Set enable VLAN aware mode, and FDBs for all PRUs */
- 	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, (FDB_PRU0_EN | FDB_PRU1_EN | FDB_HOST_EN));
- 	prueth->vlan_tbl = (struct prueth_vlan_tbl __force *)(prueth->shram.va +
-@@ -484,6 +489,8 @@ void icssg_init_fw_offload_mode(struct prueth *prueth)
- 	/* Set VLAN TABLE address base */
- 	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, SMEM_VLAN_OFFSET_MASK,
- 			   addr <<  SMEM_VLAN_OFFSET);
-+	regmap_update_bits(prueth->miig_rt, FDB_GEN_CFG1, FDB_HASH_SIZE_MASK,
-+			   FDB_HASH_SIZE << FDB_HASH_SIZE_SHIFT);
- 	/* Set enable VLAN aware mode, and FDBs for all PRUs */
- 	regmap_write(prueth->miig_rt, FDB_GEN_CFG2, FDB_EN_ALL);
- 	prueth->vlan_tbl = (struct prueth_vlan_tbl __force *)(prueth->shram.va +
-
-base-commit: 68a052239fc4b351e961f698b824f7654a346091
--- 
-2.43.0
-
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
 
