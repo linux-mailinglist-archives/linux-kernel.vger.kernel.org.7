@@ -1,194 +1,202 @@
-Return-Path: <linux-kernel+bounces-850678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53F9BD3808
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71361BD380F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8ABD4F8815
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:23:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C1074F8DF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7611EEA5F;
-	Mon, 13 Oct 2025 14:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7951D1EF36E;
+	Mon, 13 Oct 2025 14:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OxvJ9B5+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="r/s3eL7Z"
+Received: from mx-relay50-hz3.antispameurope.com (mx-relay50-hz3.antispameurope.com [94.100.134.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA542EC574
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364948; cv=none; b=VwBXftsHIv0kRlUGLYon18XB4mRU8xQN0S22t4pjekArOjsWj6HZGurrCJdgbtddrI27H1gHJb9eJp/RnjEdDTnJBUbFtyQNGtxgdj5gsprPwFDpjKn71tR9zcfv9poBBDbe+2DAyuCvwzNo2DUqIqsPN3VlBpzUYwpgrrnl4U0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364948; c=relaxed/simple;
-	bh=X6/q1bHsLK+ZhgGEzfdnTYkllaQ39VA9H94eFOB9hyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ep8/iGJVckgOaqSAa704p/NKaQsPkU6NQOOlO1cqci9diYNf2ITSACUvqEKbGDe5VX2rw9gbjr44IsOoanrtr/Op8d4LoNZsH4ZeW0j8wRsIRNEdZSVBM4oWeuAf96CZQ4EYnJJLYBkHI0U5aQjh+d5yinbYixAQfTNEf/8ob44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OxvJ9B5+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760364945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9uIgQtAlSBtKcFSO9NiV0X395eAsPo0/3pZRzpykst8=;
-	b=OxvJ9B5+Ov0+JYuUbY/CpHKdEMN8k9UsUM/YcDt+ySUsd//bH/N+I23vdQmxQPitI2GkdM
-	6rLS0m44nKF2PFpiHdY9wM8mXdrCEqqpTgZCrq+m0igJmHAkn94ZIOATPfRn8Z+HdV9pBU
-	QBvUt5nU8mDSsb6+enDMKP2R6ktuFeY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-548-l7-S2FeQP1K7k3f8vjHUUA-1; Mon, 13 Oct 2025 10:15:44 -0400
-X-MC-Unique: l7-S2FeQP1K7k3f8vjHUUA-1
-X-Mimecast-MFC-AGG-ID: l7-S2FeQP1K7k3f8vjHUUA_1760364943
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e407c600eso31032975e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:15:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760364943; x=1760969743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9uIgQtAlSBtKcFSO9NiV0X395eAsPo0/3pZRzpykst8=;
-        b=GML3oB81gjS7dJS5R0ouzyZrGvz+GnKjK7KRJIgHs0AfP0DOV2noJvnbGwtDVVGcUS
-         s7dnJVAMwQLUl//JJbwlvuHhuXEWzbqdTF0WzDL61XWijQYupYTmcOf7qYv7MpLKQiRb
-         /9glVVqEYkdXNwduIJPP74PhK1JRc++tVKtpe3uuGDwxaCZeiciKUk7QWZ7YQXsj9yLg
-         OfKKK//WRtyLjghw+mSP6vyTZzwS9o0hKlJ1xW9YgXwKcyZoDdI6LyeccNuRghB/yzAw
-         ut++/TjtXMMRjTMl5zzr7f6OQnB/bh0BTpu5ODEWYttFF8rrpO+Hc2VZbPWfhQeQwhTH
-         z8ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVnNSUzTzh8O1pOkFLjm+wkkMb95UMcWLEDRpODFQq3X2QikwSyLx5fjD3ABOyJPmyVX24C0tWIHpmG3pE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypwbZsKRDdE50pX/+/UPUSWMDu5T2xloOe80mV8uaUgR5xHXJu
-	mM/kJQA/4zuFJPUK7vAYH2AEJxf7xtIhbJzr+ByPHeT9kV57pKJGPpCzG5jajL6OWGnq3wKDVVL
-	k2cpU+oLBdIvejG6hGYuA6V0efGrBUY0hU7pTgMxalPXdj1S+O4M5H3A5h/32BHqdwA==
-X-Gm-Gg: ASbGncvnqsreQW+7NlKStVGPGYDafn4GrjZzPy8Oo9PNiZpBKTzQajbWmky5w2k7nWg
-	XHiNJg8u+ioPvY5NcZvzFnGLWtnAr5hi9bPOXYgPJe8zgVouTDdRygCDt4pQmuoXU9DFSynN7Kr
-	IkYmQAQjOlA70ALyzEjkWx6efr8lGI4Ln9OBDzOIztwPOoEEGZuszirWUTBoLcTnhDjgNpDiIhs
-	l6xCk7QjMXRsKtZNVjqysFj1dNHocHmfJ3GWQ/MT2gZob53tVP0ahJ1ZgC1mKOVfvr27tHqrM04
-	QG0BDb45ltRLaTpIIiZfDZuVIT40UdQkJg==
-X-Received: by 2002:a05:600c:502c:b0:46e:3d41:5fe6 with SMTP id 5b1f17b1804b1-46fa9a9ebb8mr139543365e9.9.1760364942888;
-        Mon, 13 Oct 2025 07:15:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFR9AfQG1bPxhSVGiAWctJCWR2+PTWw1bYga2tLxdTe6Ieug+DROBY5xi12o8AGOXPV/OiFfQ==
-X-Received: by 2002:a05:600c:502c:b0:46e:3d41:5fe6 with SMTP id 5b1f17b1804b1-46fa9a9ebb8mr139543115e9.9.1760364942471;
-        Mon, 13 Oct 2025 07:15:42 -0700 (PDT)
-Received: from fedora ([2a01:e0a:257:8c60:80f1:cdf8:48d0:b0a1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3e3520sm136542145e9.2.2025.10.13.07.15.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:15:41 -0700 (PDT)
-Date: Mon, 13 Oct 2025 16:15:40 +0200
-From: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-To: Francesco Valla <francesco@valla.it>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
-	Harald Mommer <harald.mommer@opensynergy.com>,
-	Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Damir Shaikhutdinov <Damir.Shaikhutdinov@opensynergy.com>,
-	linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, virtualization@lists.linux.dev,
-	development@redaril.me
-Subject: Re: [PATCH v5] can: virtio: Initial virtio CAN driver.
-Message-ID: <aO0JjDGk2zLlzB1E@fedora>
-References: <20240108131039.2234044-1-Mikhail.Golubev-Ciuchea@opensynergy.com>
- <2243144.yiUUSuA9gR@fedora.fritz.box>
- <aOkqUWxiRDlm0Jzi@fedora>
- <2318164.vFx2qVVIhK@fedora.fritz.box>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB483146588
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.239
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760365108; cv=pass; b=JxbqpmtqbFshr0ujoJoQcBb8GILvdw4DUfNRkLxUOWvaTV6/BkU8Qv+NQ0iUyo7OX+o6UgCKTPwuaChQBjtMuGjkUNSFN2DVWgh74E6TzgsMKDtjJEeUCSifLxRNEwwjliaE5MxBjKpJpxSDQcA3FmyqENPPdVBQCBNoemAQhkY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760365108; c=relaxed/simple;
+	bh=5ufhlfvjUyDT/EvvG3BasNRmVjK3W5wb5ZuUARDs7LM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qAFGERi6+XyCbFzu8l7zVqkvObFaV5WDgWkrgyacyLcm5hWzY+bZ+hW7Tkz46yuIZnTZOiW7WlrsbtS4hDyyA9Rsae4PjzQvKOZQUBvulYZO6UdLOuvfc/mIAaU5gPncLhqX5irjypcSFCO2PF1rNIkv62labD6LOr16MSKmBWk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=r/s3eL7Z; arc=pass smtp.client-ip=94.100.134.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate50-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com
+ smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
+ header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=vyXrVVygqMhn5Bif81+tF99rIVbrn5Q3omrjq9+Xlzs=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1760365088;
+ b=ADv+6w2OUTRW+ccitpo243pOzpd9H/E32ZmbORcSlXo0utTAjdSve7pgOlvxpGArQ5BuGebG
+ yBjk/A3C06wk4Bufknp+1vMN5b+FC1s31zkBmD0izjid2VbuWbSymfsskzh61pQTN7Lj6glSRt/
+ TN+3sZ7rfumBivXvMn3IcAnA1nKNU+va3Wx2o4mZ/Cf0adi6ZXyxE6TGlfbNa//kk2d1n3XLqEy
+ cUntRNgNt+5HcEP/9tDL2//nKDuSvNRbrzROnS1zSIaOtGWPKbZD5qisHEJbZttEHEVpUtm//22
+ 2fcPKl5eSOOVKuQ3slNyIOgwAgmtRqBUammMrfjHOWRBA==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1760365088;
+ b=CC0RRzkl7zN51iGlfjFbcAAzjASgWYFdMHiwPILLPS8XEumFOIEc8jceTYqS3HYH070tn2L5
+ 2Vr5inLixz8iH+GzWaGcQdGyDq6XbE9ooZwDRWIee5WfPqddVMDK50cPN3+Hb68Rl2px2YhNolX
+ XD0ldCqmeAWcInpzhNjuPKyJwDTz+47bKs730kXEWMlOSORFl7Zus1jeWDrtYgEK38zVKF8KbRi
+ TbUtxIYBO1szhQZWbEJUG0wfW7/lpK3YnZyTTQChNkBA7B3GW9Y8AhIMT8S/wYboorPbL1Guwgp
+ vE5n8nHh9N17xoSuXu3+wSnS+gCzO8KKSw+KpDVKW+IfQ==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay50-hz3.antispameurope.com;
+ Mon, 13 Oct 2025 16:18:08 +0200
+Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 43C43220CFE;
+	Mon, 13 Oct 2025 16:17:57 +0200 (CEST)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>,
+ Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
+ Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ anthony@amarulasolutions.com
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Anthony Brandon <anthony@amarulasolutions.com>,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Subject: Re: [PATCH v4] dmaengine: xilinx: xdma: Fix regmap max_register
+Date: Mon, 13 Oct 2025 16:17:56 +0200
+Message-ID: <2389383.ElGaqSPkdT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250903-xdma-max-reg-v4-1-894721175025@amarulasolutions.com>
+References: <20250903-xdma-max-reg-v4-1-894721175025@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2318164.vFx2qVVIhK@fedora.fritz.box>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay50-hz3.antispameurope.com with 4clfZY5vRpz2nH1K
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:ce6e0c546d8b9a92df42d712c97e6124
+X-cloud-security:scantime:2.191
+DKIM-Signature: a=rsa-sha256;
+ bh=vyXrVVygqMhn5Bif81+tF99rIVbrn5Q3omrjq9+Xlzs=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1760365087; v=1;
+ b=r/s3eL7Zj9oM+4LwFSI3a3fEc+UeOJ/c6/VJch/8oT/eacfgwIJCA/Chv8YoBAQVVYT0rXzJ
+ XTfnXLbvSj5MECwP3ohS5dNAX5xKWJXJgR+JZ+oeE1nUdbj7/n8IsU9a3Kc5IUVUVNEn5C5Rf36
+ l3x2F5dKcvCpkqbxBxxIn0xBHg9lN6Z4ipTH7931KH/kZ9znUVCWYvH7r6B6mBFletvZWE7J/kK
+ FxE4z7OSRSUT4I0XgT8BKInN86M/RFwU+u/522/wE+2hezZ/H4NTr1Pxa6feDhTBYVcy+O7+ANh
+ LgIy1cKPZ16QBlb+oV5KiqzomLYMGFTbeZZmjQ0ctDg0Q==
 
-On Fri, Oct 10, 2025 at 11:20:22PM +0200, Francesco Valla wrote:
-> On Friday, 10 October 2025 at 17:46:25 Matias Ezequiel Vara Larsen <mvaralar@redhat.com> wrote:
-> > On Thu, Sep 11, 2025 at 10:59:40PM +0200, Francesco Valla wrote:
-> > > Hello Mikhail, Harald,
-> > > 
-> > > hoping there will be a v6 of this patch soon, a few comments:
-> > > 
-> > 
-> > I am working on the v6 by addressing the comments in this thread.
-> > 
-> > > On Monday, 8 January 2024 at 14:10:35 Mikhail Golubev-Ciuchea <Mikhail.Golubev-Ciuchea@opensynergy.com> wrote:
-> > > 
-> > > [...]
-> > > 
-> > > > +
-> > > > +/* virtio_can private data structure */
-> > > > +struct virtio_can_priv {
-> > > > +	struct can_priv can;	/* must be the first member */
-> > > > +	/* NAPI for RX messages */
-> > > > +	struct napi_struct napi;
-> > > > +	/* NAPI for TX messages */
-> > > > +	struct napi_struct napi_tx;
-> > > > +	/* The network device we're associated with */
-> > > > +	struct net_device *dev;
-> > > > +	/* The virtio device we're associated with */
-> > > > +	struct virtio_device *vdev;
-> > > > +	/* The virtqueues */
-> > > > +	struct virtqueue *vqs[VIRTIO_CAN_QUEUE_COUNT];
-> > > > +	/* I/O callback function pointers for the virtqueues */
-> > > > +	vq_callback_t *io_callbacks[VIRTIO_CAN_QUEUE_COUNT];
-> > > > +	/* Lock for TX operations */
-> > > > +	spinlock_t tx_lock;
-> > > > +	/* Control queue lock. Defensive programming, may be not needed */
-> > > > +	struct mutex ctrl_lock;
-> > > > +	/* Wait for control queue processing without polling */
-> > > > +	struct completion ctrl_done;
-> > > > +	/* List of virtio CAN TX message */
-> > > > +	struct list_head tx_list;
-> > > > +	/* Array of receive queue messages */
-> > > > +	struct virtio_can_rx rpkt[128];
-> > > 
-> > > This array should probably be allocated dynamically at probe - maybe
-> > > using a module parameter instead of a hardcoded value as length? 
-> > > 
-> > 
-> > If I allocate this array in probe(), I would not know sdu[] in advance
-> > if I defined it as a flexible array. That made me wonder: can sdu[] be
-> > defined as flexible array for rx? 
-> > 
-> > Thanks.
-> > 
+Am Mittwoch, 3. September 2025, 10:56:13 CEST schrieb Anthony Brandon via B4 Relay:
+> From: Anthony Brandon <anthony@amarulasolutions.com>
 > 
-> One thing that can be done is to define struct virtio_can_rx as:
+> The max_register field is assigned the size of the register memory
+> region instead of the offset of the last register.
+> The result is that reading from the regmap via debugfs can cause
+> a segmentation fault:
 > 
-> struct virtio_can_rx {
-> #define VIRTIO_CAN_RX                   0x0101
-> 	__le16 msg_type;
-> 	__le16 length; /* 0..8 CC, 0..64 CAN-FD, 0..2048 CAN-XL, 12 bits */
-> 	__u8 reserved_classic_dlc; /* If CAN classic length = 8 then DLC can be 8..15 */
-> 	__u8 padding;
-> 	__le16 reserved_xl_priority; /* May be needed for CAN XL priority */
-> 	__le32 flags;
-> 	__le32 can_id;
-> 	__u8 sdu[] __counted_by(length);
-> };
+> tail /sys/kernel/debug/regmap/xdma.1.auto/registers
+> Unable to handle kernel paging request at virtual address ffff800082f70000
+> Mem abort info:
+>   ESR = 0x0000000096000007
+>   EC = 0x25: DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+>   FSC = 0x07: level 3 translation fault
+> [...]
+> Call trace:
+>  regmap_mmio_read32le+0x10/0x30
+>  _regmap_bus_reg_read+0x74/0xc0
+>  _regmap_read+0x68/0x198
+>  regmap_read+0x54/0x88
+>  regmap_read_debugfs+0x140/0x380
+>  regmap_map_read_file+0x30/0x48
+>  full_proxy_read+0x68/0xc8
+>  vfs_read+0xcc/0x310
+>  ksys_read+0x7c/0x120
+>  __arm64_sys_read+0x24/0x40
+>  invoke_syscall.constprop.0+0x64/0x108
+>  do_el0_svc+0xb0/0xd8
+>  el0_svc+0x38/0x130
+>  el0t_64_sync_handler+0x120/0x138
+>  el0t_64_sync+0x194/0x198
+> Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
+> ---[ end trace 0000000000000000 ]---
+> note: tail[1217] exited with irqs disabled
+> note: tail[1217] exited with preempt_count 1
+> Segmentation fault
 > 
-> and then allocate the rpkt[] array using the maximum length for SDU:
+> Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
+> Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
+> Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
+> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+
+> ---
+> Changes in v4:
+> - Reorder Reviewed-by
+> - Link to v3: https://lore.kernel.org/r/20250902-xdma-max-reg-v3-1-5fa37b8d2b15@amarulasolutions.com
 > 
-> priv->rpkt = kcalloc(num_rx_buffers,
-> 		sizeof(struct virtio_can_rx) + VIRTIO_CAN_MAX_DLEN,
-> 		GFP_KERNEL);
+> Changes in v3:
+> - Add Fixes tag
+> - Link to v2: https://lore.kernel.org/r/20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com
 > 
-> In this way, the size of each member of rpkt[] is known and is thus
-> suitable for virtio_can_populate_vqs().
+> Changes in v2:
+> - Define new constant XDMA_MAX_REG_OFFSET and use that.
+> - Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
+> ---
+>  drivers/dma/xilinx/xdma-regs.h | 1 +
+>  drivers/dma/xilinx/xdma.c      | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
+> index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
+> --- a/drivers/dma/xilinx/xdma-regs.h
+> +++ b/drivers/dma/xilinx/xdma-regs.h
+> @@ -9,6 +9,7 @@
+>  
+>  /* The length of register space exposed to host */
+>  #define XDMA_REG_SPACE_LEN	65536
+> +#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
+>  
+>  /*
+>   * maximum number of DMA channels for each direction:
+> diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+> index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
+> --- a/drivers/dma/xilinx/xdma.c
+> +++ b/drivers/dma/xilinx/xdma.c
+> @@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
+>  	.reg_bits = 32,
+>  	.val_bits = 32,
+>  	.reg_stride = 4,
+> -	.max_register = XDMA_REG_SPACE_LEN,
+> +	.max_register = XDMA_MAX_REG_OFFSET,
+>  };
+>  
+>  /**
+> 
+> ---
+> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+> change-id: 20250901-xdma-max-reg-1649c6459358
+> 
+> Best regards,
 > 
 
-From the spec, VIRTIO_CAN_MAX_DLEN shall be 2048 bytes that corresponds
-with CAN-XL frame.
 
-Matias
+
 
 
