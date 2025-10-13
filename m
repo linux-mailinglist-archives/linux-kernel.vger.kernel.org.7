@@ -1,125 +1,151 @@
-Return-Path: <linux-kernel+bounces-851482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A8ABD69B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:25:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E79DBD69B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2C03A22AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:25:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 460784ED6A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C784A2FB991;
-	Mon, 13 Oct 2025 22:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95E12FF164;
+	Mon, 13 Oct 2025 22:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v00Fjc84"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BsqtxRKS"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A172E266C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9DA2FCC04
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760394330; cv=none; b=KpKzZOQV7k3kQZTsrzZAUjyLrxYFP49RuLS+qgzh+3on10XoulgbUgouUm4BHkyWPRWbFm/ASbgHZVd97qrVrYL0nGvgudFAa20c+ytMNzXlYr0tEjd+wa3gIKluwvfxrG95qbrp6stBsOmfkktQKdbNyc4IprbJMqBSLpR+Shk=
+	t=1760394333; cv=none; b=qV5icd2rv8H3hiH/s71j/HAaMZoUwZNT+j48swS6b0Wx5ikmKc1V3OPHU6Rv/iZFTirUj6DD1DwXv0XW+W5gipLYFyj/ixOJUD1GnJyuxHomTuxeFoamyTgIbYPVXndpuF+XqrvqYCQkLmDOnGe+t/E1VNmRHm6Mbi++AdImKfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760394330; c=relaxed/simple;
-	bh=yBJ86Xpo8lfKXSxDVaXOU4LWgg+xoZBMTFx90wqe2R0=;
+	s=arc-20240116; t=1760394333; c=relaxed/simple;
+	bh=Jf/RCp0W1R16T+LuSWIfFdr0PYVVcukWFSiYEsqCGpw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e0mfIcCL0vmzS8RF0UtS8pyz4qjdHLrS+D4knLeA1Q1f7BjvK977phl05Aymk4vPHNveJ7dMN4PoUzEsRKn4E/3Q3XIp/xMLHtUIVLU4OxlMP9yhPccvEKyl2+Dci/FTgOn3KhYOpBpXsV5Kz49keHK/N2O/EMstSLj9iiKfcug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v00Fjc84; arc=none smtp.client-ip=91.218.175.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=WnegYJXLIEwo1CMpUTvp0I5jh4Utfj37XICAqKNZkRF3CGNjtch73wtss6L374woKgl0MymiQqx74pma/UIRzU5JT/19Na3E2hAu6ALrKqKbeWA7oi+rkvzc3D/OW6n3o0VfjgfMYNs9Vt87aaE1b7Cat79GIhhhH2Xt6uELSQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BsqtxRKS; arc=none smtp.client-ip=91.218.175.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 13 Oct 2025 15:25:14 -0700
+Date: Mon, 13 Oct 2025 22:25:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760394322;
+	t=1760394326;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RwYZKlSFt2TFGtm4ACaHZ9tJu+i/5nUbp4Hg7BFfIes=;
-	b=v00Fjc845Tfg/YtbSUJqnqhYCp/u8vSfS8Gy3jolcyVjPw4OT7EJXAuPp4uoVf8yEIHJCw
-	/AlKO4S4ddhigi8M5LktsJpBcZ0Tae50MwChbNJsshp2ZlM97DLNe8bn4hLAr/k7uI+R61
-	yOkKcTX+Jx3XmMbtBG3X9TWd9ZCPqAY=
+	bh=0EgIJNgp76TDPohMkfuZZJN+3BausRPObvIACd4fJ9g=;
+	b=BsqtxRKSrb4BBYtkyjI9Tp+ncPvykLYTCsnlENGKok9jyeIFE99Io7/SZCxf5Rbr3QDoN6
+	wPNl6PbzJJrOiAPZVBaurS23LIZ/4nq7RkiE4xE9FINcabn+0FVrmGCwNvWNn76Q1TsQYP
+	DPgUyx2bgSde0k8ups9L7z1CU7KrysY=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Barry Song <21cnbao@gmail.com>, 
-	Network Development <netdev@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Barry Song <v-songbaohua@oppo.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Huacai Zhou <zhouhuacai@oppo.com>, Harry Yoo <harry.yoo@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network
- buffer allocation
-Message-ID: <5ytqerlevrsaldgww6jhiqljim35bxruicrq7hj5rumt3lywto@3ejpuuar45hx>
-References: <20251013101636.69220-1-21cnbao@gmail.com>
- <927bcdf7-1283-4ddd-bd5e-d2e399b26f7d@suse.cz>
- <dhmafwxu2jj4lu6acoqdhqh46k33sbsj5jvepcfzly4c7dn2t7@ln5dgubll4ac>
- <CAADnVQKEhfFTSkn6f_PJr6xMcjB4d45E_+TsU6+945f2XD1SmA@mail.gmail.com>
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
+ describe EPT entries
+Message-ID: <ivkoh7hdl7fcp5fmehmf3kv6ebqitozunbricyed5tkt7z3ngr@qvmaytpzrskw>
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev>
+ <20251001145816.1414855-9-yosry.ahmed@linux.dev>
+ <aO1yJHcKC85mo0PQ@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQKEhfFTSkn6f_PJr6xMcjB4d45E_+TsU6+945f2XD1SmA@mail.gmail.com>
+In-Reply-To: <aO1yJHcKC85mo0PQ@google.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 13, 2025 at 02:53:17PM -0700, Alexei Starovoitov wrote:
-> On Mon, Oct 13, 2025 at 2:35 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Mon, Oct 13, 2025 at 08:30:13PM +0200, Vlastimil Babka wrote:
-[...]
-> > >
-> > > I'm a bit worried about proliferating "~__GFP_RECLAIM" allocations now that
-> > > we introduced alloc_pages_nolock() and kmalloc_nolock() where it's
-> > > interpreted as "cannot spin" - see gfpflags_allow_spinning(). Currently it's
-> > > fine for the page allocator itself where we have a different entry point
-> > > that uses ALLOC_TRYLOCK, but it can affect nested allocations of all kinds
-> > > of debugging and accounting metadata (page_owner, memcg, alloc tags for slab
-> > > objects etc). kmalloc_nolock() relies on gfpflags_allow_spinning() fully
-> > >
-> > > I wonder if we should either:
-> > >
-> > > 1) sacrifice a new __GFP flag specifically for "!allow_spin" case to
-> > > determine it precisely.
-> > >
-> > > 2) keep __GFP_KSWAPD_RECLAIM for allocations that remove it for purposes of
-> > > not being disturbing (like proposed here), but that can in fact allow
-> > > spinning. Instead, decide to not wake up kswapd by those when other
-> > > information indicates it's an opportunistic allocation
-> > > (~__GFP_DIRECT_RECLAIM, _GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC,
-> > > order > 0...)
-> > >
-> > > 3) something better?
-> > >
-> >
-> > For the !allow_spin allocations, I think we should just add a new __GFP
-> > flag instead of adding more complexity to other allocators which may or
-> > may not want kswapd wakeup for many different reasons.
+On Mon, Oct 13, 2025 at 02:41:56PM -0700, Sean Christopherson wrote:
+> On Wed, Oct 01, 2025, Yosry Ahmed wrote:
+> > From: Yosry Ahmed <yosryahmed@google.com>
+> > 
+> > The assertions use 'hugepage' to describe a terminal EPT entry, but
+> > 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
+> > hugepage.
 > 
-> That's what I proposed long ago, but was convinced that the new flag
-> adds more complexity. 
+> Yes, it's more accurate, but also less precise.  I'm guessing the assert message
+> and comment talked about hugepages because that's the type of mappings that
+> caused problems at the time.
 
-Oh somehow I thought we took that route because we are low on available
-bits.
+Given that it refers to PG_LEVEL_4K entries too, I wouldn't call it less
+precise. All callers actually create 4K mappings so it is never actually
+a hugepage in the current context :D
 
-> Looks like we walked this road far enough and
-> the new flag will actually make things simpler.
-> Back then I proposed __GFP_TRYLOCK which is not a good name.
-> How about __GFP_NOLOCK ? or __GFP_NOSPIN ?
+> 
+> Ah, actually, I bet the code was copy+pasted from virt_create_upper_pte(), in
+> which case the assumptions about wanting to create a hupage are both accurate
+> and precise.
+> 
+> > The distincion will be useful in coming changes that will pass
+> > the value around and 'leaf' is clearer than hugepage or page_size.
+> 
+> What value?
 
-Let's go with __GFP_NOLOCK as we already have nolock variants of the
-allocation APIs. 
+'leaf'. The following changes will pass 'leaf' in as a boolean instead
+of checking 'current_level == target_level' here. So passing in
+'hugepage' would be inaccurate, and 'page_size' is not as clear (but
+still works).
+
+> 
+> > Leave the EPT bit named page_size to keep it conforming to the manual.
+> > 
+> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > ---
+> >  tools/testing/selftests/kvm/lib/x86/vmx.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > index 04c4b97bcd1e7..673756b27e903 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > @@ -380,15 +380,15 @@ static void nested_create_pte(struct kvm_vm *vm,
+> >  			pte->address = vm_alloc_page_table(vm) >> vm->page_shift;
+> >  	} else {
+> >  		/*
+> > -		 * Entry already present.  Assert that the caller doesn't want
+> > -		 * a hugepage at this level, and that there isn't a hugepage at
+> > -		 * this level.
+> > +		 * Entry already present.  Assert that the caller doesn't want a
+> > +		 * leaf entry at this level, and that there isn't a leaf entry
+> > +		 * at this level.
+> >  		 */
+> >  		TEST_ASSERT(current_level != target_level,
+> > -			    "Cannot create hugepage at level: %u, nested_paddr: 0x%lx",
+> > +			    "Cannot create leaf entry at level: %u, nested_paddr: 0x%lx",
+> >  			    current_level, nested_paddr);
+> >  		TEST_ASSERT(!pte->page_size,
+> > -			    "Cannot create page table at level: %u, nested_paddr: 0x%lx",
+> > +			    "Leaf entry already exists at level: %u, nested_paddr: 0x%lx",
+> 
+> This change is flat out wrong.  The existing PRESENT PTE _might_ be a 4KiB leaf
+> entry, but it might also be an existing non-leaf page table.
+
+Hmm if pte->page_size is true then it has to be a leaf page table,
+right?
+
+If it's an existing non-leaf page table we shouldn't fail, the assertion
+here is when we try to override a leaf page table IIUC.
+
+> 
+> Instead of hacking on the nested code, can we instead tweak __virt_pg_map() to
+> work with nested TDP?  At a glance, it's already quite close, e.g. "just" needs
+> to be taught about EPT RWX bits and allow the call to pass in the root pointer.
+
+That would be ideal, I'll take a look. In case I don't have time for
+that unification, can this be a follow-up change?
+
+> 
+> >  			    current_level, nested_paddr);
+> >  	}
+> >  }
+> > -- 
+> > 2.51.0.618.g983fd99d29-goog
+> > 
 
