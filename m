@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-851159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE7FBD5ABD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C71BD5AC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 218984F1F37
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E0AF4F2E8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63A42D46DB;
-	Mon, 13 Oct 2025 18:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785122D4B7F;
+	Mon, 13 Oct 2025 18:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WZ6putqW"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dDYDMhsR"
+Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com [209.85.222.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE112D24AB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FE82D3731
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760379381; cv=none; b=mX6Q+90X6XA/fYTwBxQBhG25qoY4ocfrkSZAOee9Y4FFcqnt8JIFAZKbc+0L6ubXXuseyY9mgmnTnNxLYWy2B6/nBazlvnpLK5okduwBeu38ckcsDKwUwQI5/ohzQrBDOMw1xUtzQFOzsFUJV8+q88etmXAuW/UTeaIsLKWiBUw=
+	t=1760379382; cv=none; b=Ctdx5wWPU4Gx6REA7F5VOhtviQNc0QllfTDb15dghe7wx53NW/EB9iX1YaTsWms3hxPfEl699JSEYH8s0pRDlPC6VvBuZ9y4v6XuZ03rVQLrR0y6n2sxBZG0FxKhLVM05nmJsBf/dBgHkfAumBxCFuhiF/ixQVqr2pXQ+8WIVCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760379381; c=relaxed/simple;
-	bh=yHC8CVWMZLFswZB5BZnl64Jv+qo1EVgYh/6mmRz9jq0=;
+	s=arc-20240116; t=1760379382; c=relaxed/simple;
+	bh=hdQwasz3k/8aVmkaktfyahi7bymSRNa+aUUKjsQm7jk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mOlYK3eH5SDIkoxFR/IRl4/9inudUwRo2hWLi6jxIPpfgqqCZ9SmT35A9a1S/xd8RmfDqIrakB0PtXfqeO5Wdq84nKphMah3Pc/I5TMHx5cy93FYe7btWzFShqgJBR0pD6KOf22TReOlfdWA831DpXBaG0iP5qHMv0qAZnHf8j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WZ6putqW; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=DXhz0jeNXeOiVBjUP90hXnoNjZ9hGDtfX7dfPNJGTvvio9jssX30v08TySd5mRRHKlytPpmVcTaA5oSTU1wiVqUCkV0fdPCSE9d62F5ZQU2rnj+J5Z/0SvTd3jtDNW9S+DTZxqCs22dD7fNSKVyZ2qCJX/ml6VinFxJBwnd93ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dDYDMhsR; arc=none smtp.client-ip=209.85.222.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-77f7181dd64so76662247b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:16:18 -0700 (PDT)
+Received: by mail-qk1-f202.google.com with SMTP id af79cd13be357-871614ad3efso2301169585a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760379378; x=1760984178; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760379379; x=1760984179; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hkslBj9QnenKFXYBHLOJRKHFsiaTZNhKphNQFAB+kY=;
-        b=WZ6putqWTKCSbTcvBHkjatrKgbaB8Ici1Nnej7W01WrS41WUzlH+X66aaHMQ9gdhX6
-         bErECYRJk0WOXnE32A6ebXZZAS2Cx4HrM9Aocjjz5KhPaCA/+MQY+qgCfUAGepXP75qs
-         0Yz7IqW2xB23pTSXrqoCbGYTozgevbxS7JuCaU4vKvE5i5pxtdLrqNBR8b5KKBK/tIrS
-         4X787CXXLUN4Tk1s6iCMSOkV80ZYxHf1RWgYGK1CQC/XTXuAoJqTrGkMbRZUsKjuvMLl
-         jd++CS4wBwHoPZgtuDtXKHPhFn+5okojVQSFKWXPNUUqALC29PkrnmOF1pkZUVEdoKzj
-         CO1Q==
+        bh=iK3U66KVI+sJzm09jDANDs7sR4Zyydo9qXm47VNoMW8=;
+        b=dDYDMhsRuF+DacdAs1t4qgAAQ2MeiqJFvvAgLVPgYd8v1SO/HqWfM3sDkQnJapq+S7
+         DoGPC4Uua4YiOdMC2ofGuLTcDM/by4kstq50hEFQt/AYlTtCAYF5bVIEz44QxSwyCXqy
+         r26Zw+/P3c7FjhIzhcxNi1GDp+6WR7jn82Pagp2CMtzG1LTQYfp6UEO12WcPKiD2McMV
+         JlIQZAYhxKepSID8XzYmctSE1dCOwuh/T3VS2Mvg7Vld1Ea5rrmDHTT4+ETRQNKufl+U
+         4t/6/YOiIJn1oX2l3vsVbHpc+bvRA0UNZiUoLVbZ+IL7V0y3XIyJWunPmNvhehKW55PB
+         AGBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760379378; x=1760984178;
+        d=1e100.net; s=20230601; t=1760379379; x=1760984179;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hkslBj9QnenKFXYBHLOJRKHFsiaTZNhKphNQFAB+kY=;
-        b=mvAYC+XeImdIdLr1lxY55tesroLsZV+qpeprTRZW/fF2jstj5ZF1bnKqfaajj/5pKa
-         3sgEZTfjAo5Hbis2Bnk/HN+lgBfgnrLb0444Ez3zIU9EgvAaMUk8khqfO866y/l9m8MM
-         ESf5Pjb1zLhNEnp91s7itOzjTyARpdmdA1GNm3FE75Nfiq0s3uA3ioaQ+Xxuyzs6pUJi
-         lZqKeznzwM2iHGUUcyda56LpzznSrFM1cbrSrCfT48lhvyRG/zJhIzfV4iUyqLG8JLSb
-         sH8CMx+SrJhT6eaJqNPnfe7YCXxMxJ35vYW9bVEom3JfT3zZUPxVI+lkzPGAl+En8QUZ
-         SSQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXDvSzRmugjZeCEuKrizVTmXbbzzt3UOpqdxg9DRG5B+eXXKkvHL7JMK9yiZDsm9LEf+MVxI7kWYIdLgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkKPEEtQiUYuZ69fpnCnXkIN8rT/a4XGLMzoUWLdBtQ0X2TXUx
-	dDQ+jOOPaUvDs/QJuunU1qmmTFz12frNKiyObCoZPi+Nljs7epRTY+YcX3BS11gSwzogOLgNBbu
-	Bt7Rx5qhTKw==
-X-Google-Smtp-Source: AGHT+IHNvYc4EnpQJDa/W9ZUqFHuWghaPl58/if45oZ40Yx07rPWgPRHJhoLLoxjiElcUGodjsLfcoxze2r7
-X-Received: from ybbfx3.prod.google.com ([2002:a05:6902:2ec3:b0:ea5:d578:cf1d])
- (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690e:2145:b0:63c:f5a6:f2f6
- with SMTP id 956f58d0204a3-63cf5a706d2mr6966696d50.56.1760379378159; Mon, 13
- Oct 2025 11:16:18 -0700 (PDT)
-Date: Mon, 13 Oct 2025 18:15:58 +0000
+        bh=iK3U66KVI+sJzm09jDANDs7sR4Zyydo9qXm47VNoMW8=;
+        b=INdz+GaVR41jVxODKJH/O4CeoyaGO3OO/9LUUHDVU53HbQFbEWOLzP4T5ALPDR7Xq6
+         qUo9KALUyv7LYPo72L9ky45/ocBnKyqRyyeuKlLwSy2hoEpXPgR4lWGA1+kCNJzi6rcy
+         gWp2m4hX3BMu5p02TIG1rXx5VlCnY65DILnigT/FmWLE4dP9U1fBqf/g60OwiT7/FTYh
+         6tjuaqyWO6xbaCEtgg830fgzkvwxcMoC4KdoooMvilZJeBCWeKV7IEvjuiD8ODI0f1sk
+         Ivayv5wGU5s7/vNavVCx9ppRh8YLARiB29PHXH6OqKZvMUE9rY4SRxBg/zFwLvcGZJC3
+         qi1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV7nnezlNSwtKu+EA3hobVTJF3pQ5F7q3otAfqimVQN8yw/QayWdERNs1DcTFOWp4Z6H22oxqKYoYOHCfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3JsAv/mZ43lWC9zF4pNETsMOgbmlM9E95ilkTMfufNyj66ibH
+	BPZjYDFHb8MoSvy7Z9atW7T/PW2TalYdRVx8x6FxTS9Noeu+UWIWfB1aW4pjc2Z1RvBy8VrwSUW
+	c0U2b6BjUgw==
+X-Google-Smtp-Source: AGHT+IGc7udGKdQSdqQpU6ffFJjcbRcWgNJSXeL3L1GG7uXlpOZlJUqm14HGDZ5C/ApD9XNKSMgMASNedSBB
+X-Received: from qknrd8.prod.google.com ([2002:a05:620a:8dc8:b0:884:932e:e4b0])
+ (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:4042:b0:878:4b36:bd2f
+ with SMTP id af79cd13be357-88354013e59mr3226060385a.73.1760379379323; Mon, 13
+ Oct 2025 11:16:19 -0700 (PDT)
+Date: Mon, 13 Oct 2025 18:15:59 +0000
 In-Reply-To: <20251013181607.2745653-1-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251013181607.2745653-1-zecheng@google.com>
 X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <20251013181607.2745653-2-zecheng@google.com>
-Subject: [PATCH v4 1/9] perf annotate: Skip annotating data types to lea instructions
+Message-ID: <20251013181607.2745653-3-zecheng@google.com>
+Subject: [PATCH v4 2/9] perf annotate: Track address registers via TSR_KIND_POINTER
 From: Zecheng Li <zecheng@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -86,54 +86,175 @@ Cc: Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org, Zecheng Li <zecheng@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Introduce a helper function is_address_gen_insn() to check
-arch-dependent address generation instructions like lea in x86. Remove
-type annotation on these instructions since they are not accessing
-memory. It should be counted as `no_mem_ops`.
+Introduce TSR_KIND_POINTER to improve the data type profiler's ability
+to track pointer-based memory accesses and address register variables.
+
+TSR_KIND_POINTER represents that the location holds a pointer type to
+the type in the type state. The semantics match the `breg` registers
+that describe a memory location.
+
+This change implements handling for this new kind in mov instructions
+and in the check_matching_type() function. When a TSR_KIND_POINTER is
+moved to the stack, the stack state size is set to the architecture's
+pointer size.
 
 Signed-off-by: Zecheng Li <zecheng@google.com>
 ---
- tools/perf/util/annotate.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ tools/perf/arch/x86/annotate/instructions.c | 15 ++++-
+ tools/perf/util/annotate-data.c             | 63 ++++++++++++++++++---
+ tools/perf/util/annotate-data.h             |  1 +
+ 3 files changed, 71 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index a2e34f149a07..fb60467fa877 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2698,6 +2698,20 @@ static bool is_stack_canary(struct arch *arch, struct annotated_op_loc *loc)
- 	return false;
- }
+diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
+index da98a4e3c52c..746443e04089 100644
+--- a/tools/perf/arch/x86/annotate/instructions.c
++++ b/tools/perf/arch/x86/annotate/instructions.c
+@@ -391,7 +391,7 @@ static void update_insn_state_x86(struct type_state *state,
+ 		tsr->ok = true;
  
-+/**
-+ * Returns true if the instruction has a memory operand without
-+ * performing a load/store
-+ */
-+static bool is_address_gen_insn(struct arch *arch, struct disasm_line *dl)
-+{
-+	if (arch__is(arch, "x86")) {
-+		if (!strncmp(dl->ins.name, "lea", 3))
-+			return true;
+ 		/* To copy back the variable type later (hopefully) */
+-		if (tsr->kind == TSR_KIND_TYPE)
++		if (tsr->kind == TSR_KIND_TYPE || tsr->kind == TSR_KIND_POINTER)
+ 			tsr->copied_from = src->reg1;
+ 
+ 		pr_debug_dtp("mov [%x] reg%d -> reg%d",
+@@ -455,6 +455,19 @@ static void update_insn_state_x86(struct type_state *state,
+ 				     insn_offset, src->offset, sreg, dst->reg1);
+ 			pr_debug_type_name(&tsr->type, tsr->kind);
+ 		}
++		/* Handle dereference of TSR_KIND_POINTER registers */
++		else if (has_reg_type(state, sreg) && state->regs[sreg].ok &&
++			 state->regs[sreg].kind == TSR_KIND_POINTER &&
++			 die_get_member_type(&state->regs[sreg].type,
++					     src->offset, &type_die)) {
++			tsr->type = state->regs[sreg].type;
++			tsr->kind = TSR_KIND_TYPE;
++			tsr->ok = true;
++
++			pr_debug_dtp("mov [%x] addr %#x(reg%d) -> reg%d",
++				     insn_offset, src->offset, sreg, dst->reg1);
++			pr_debug_type_name(&tsr->type, tsr->kind);
++		}
+ 		/* Or check if it's a global variable */
+ 		else if (sreg == DWARF_REG_PC) {
+ 			struct map_symbol *ms = dloc->ms;
+diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+index 903027a6fb7d..48f3bf20070f 100644
+--- a/tools/perf/util/annotate-data.c
++++ b/tools/perf/util/annotate-data.c
+@@ -59,6 +59,10 @@ void pr_debug_type_name(Dwarf_Die *die, enum type_state_kind kind)
+ 		pr_info(" constant\n");
+ 		return;
+ 	case TSR_KIND_PERCPU_POINTER:
++		pr_info(" percpu pointer");
++		/* it also prints the type info */
++		break;
++	case TSR_KIND_POINTER:
+ 		pr_info(" pointer");
+ 		/* it also prints the type info */
+ 		break;
+@@ -578,16 +582,25 @@ void set_stack_state(struct type_state_stack *stack, int offset, u8 kind,
+ 	int tag;
+ 	Dwarf_Word size;
+ 
+-	if (dwarf_aggregate_size(type_die, &size) < 0)
++	if (kind == TSR_KIND_POINTER) {
++		/* TODO: arch-dependent pointer size */
++		size = sizeof(void *);
++	}
++	else if (dwarf_aggregate_size(type_die, &size) < 0)
+ 		size = 0;
+ 
+-	tag = dwarf_tag(type_die);
+-
+ 	stack->type = *type_die;
+ 	stack->size = size;
+ 	stack->offset = offset;
+ 	stack->kind = kind;
+ 
++	if (kind == TSR_KIND_POINTER) {
++		stack->compound = false;
++		return;
 +	}
 +
-+	return false;
-+}
++	tag = dwarf_tag(type_die);
 +
- static struct disasm_line *
- annotation__prev_asm_line(struct annotation *notes, struct disasm_line *curr)
- {
-@@ -2806,6 +2820,12 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
- 		return &stackop_type;
+ 	switch (tag) {
+ 	case DW_TAG_structure_type:
+ 	case DW_TAG_union_type:
+@@ -898,13 +911,25 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
+ 
+ 			reg = &state->regs[var->reg];
+ 
+-			/* For gp registers, skip the address registers for now */
+-			if (var->is_reg_var_addr)
++			if (reg->ok && reg->kind == TSR_KIND_TYPE &&
++			   (!is_better_type(&reg->type, &mem_die) || var->is_reg_var_addr))
+ 				continue;
+ 
+-			if (reg->ok && reg->kind == TSR_KIND_TYPE &&
+-			    !is_better_type(&reg->type, &mem_die))
++			/* Handle address registers with TSR_KIND_POINTER */
++			if (var->is_reg_var_addr) {
++				if (reg->ok && reg->kind == TSR_KIND_POINTER &&
++				    !is_better_type(&reg->type, &mem_die))
++					continue;
++
++				reg->type = mem_die;
++				reg->kind = TSR_KIND_POINTER;
++				reg->ok = true;
++
++				pr_debug_dtp("var [%"PRIx64"] reg%d addr offset %x",
++					     insn_offset, var->reg, var->offset);
++				pr_debug_type_name(&mem_die, TSR_KIND_POINTER);
+ 				continue;
++			}
+ 
+ 			orig_type = reg->type;
+ 
+@@ -1116,6 +1141,30 @@ static enum type_match_result check_matching_type(struct type_state *state,
+ 		return PERF_TMR_OK;
  	}
  
-+	if (is_address_gen_insn(arch, dl)) {
-+		istat->bad++;
-+		ann_data_stat.no_mem_ops++;
-+		return NO_TYPE;
++	if (state->regs[reg].kind == TSR_KIND_POINTER) {
++		struct strbuf sb;
++
++		strbuf_init(&sb, 32);
++		die_get_typename_from_type(&state->regs[reg].type, &sb);
++		pr_debug_dtp("(ptr->%s)", sb.buf);
++		strbuf_release(&sb);
++
++		/*
++		 * Register holds a pointer (address) to the target variable.
++		 * The type is the type of the variable it points to.
++		 */
++		*type_die = state->regs[reg].type;
++
++		dloc->type_offset = dloc->op->offset;
++
++		/* Get the size of the actual type */
++		if (dwarf_aggregate_size(type_die, &size) < 0 ||
++		    (unsigned)dloc->type_offset >= size)
++			return PERF_TMR_BAD_OFFSET;
++
++		return PERF_TMR_OK;
 +	}
 +
- 	for_each_insn_op_loc(&loc, i, op_loc) {
- 		struct data_loc_info dloc = {
- 			.arch = arch,
+ 	if (state->regs[reg].kind == TSR_KIND_PERCPU_POINTER) {
+ 		pr_debug_dtp("percpu ptr");
+ 
+diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+index df52a0a1f496..026783442056 100644
+--- a/tools/perf/util/annotate-data.h
++++ b/tools/perf/util/annotate-data.h
+@@ -35,6 +35,7 @@ enum type_state_kind {
+ 	TSR_KIND_PERCPU_BASE,
+ 	TSR_KIND_CONST,
+ 	TSR_KIND_PERCPU_POINTER,
++	TSR_KIND_POINTER,
+ 	TSR_KIND_CANARY,
+ };
+ 
 -- 
 2.51.0.788.g6d19910ace-goog
 
