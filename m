@@ -1,134 +1,173 @@
-Return-Path: <linux-kernel+bounces-851290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F15BD6090
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:11:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54874BD60B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC1C18A559D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC0B3A9538
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4152DE6ED;
-	Mon, 13 Oct 2025 20:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E292DE6F5;
+	Mon, 13 Oct 2025 20:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuyrSFDV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ew4P43LD"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010023.outbound.protection.outlook.com [40.93.198.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DF72DD5EF;
-	Mon, 13 Oct 2025 20:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760386280; cv=none; b=GPL13OIGi3fsMMbuqAirFqfFKQ/f9AaTKx/slULB8miRBdkldTuC1vlvfv4WfFJS+IRL4L4HbRMUVEBg/rC7kzq+rq/gBX9kZE/B1d/qARk5fRNGmhk+J7Vow36vN+YKYzG3LcNVIZiCZueO/v08aUXfSOs9Zhxz61saCRgvS+c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760386280; c=relaxed/simple;
-	bh=tZQgx2DdMtTPUTPXKKDWr/eIk6lu79PDjdeIsNK+WvU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=nMYLMusdEPFxD3Mct6iTrAl9G09kHrl2NgXryIDZH84v0Ru/8di0IYyUyXvBWaOZ9uEnwGoTZGr8Qr2CIw9+be985U+XZke4kLTQ7uW51NlSka4xGsExQ08GrUtInhTJXxu7COVACSGZtnSYeLD26nkYOvgdLpmTtWQ2fbvorZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuyrSFDV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A02C4CEE7;
-	Mon, 13 Oct 2025 20:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760386280;
-	bh=tZQgx2DdMtTPUTPXKKDWr/eIk6lu79PDjdeIsNK+WvU=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=JuyrSFDVR08C3I7iaETbjtr4rGnex91U7WPgT90UTxKS/lveBFlc2Ggt1SL8CWWWZ
-	 tcyGovTq4TmBzD6W19wGKrYCBB7KwWwoSoM3x0udKCK3cNmJWvPSeJu8ZlD2ctsvz8
-	 PfvH8A8ObdbngpklN2BF5YELuoDLWDh9qPMdrBaFVY6CbOe26EW49UkLBBv7V/ApSJ
-	 lJd+df4y5BfrF2mpO5XtmNjxxH2wOSHvklMOUVCq48jLQzMYRQ01w1xf4EcvIwiHcJ
-	 GsAm1PlqmqZV8v2GLV0XWYaYxjHd3PTaA1i8itGas3oFQRPMgkoU+8tJ+G3lS9uGjt
-	 H2LudypgZno3g==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C663296BDE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760386438; cv=fail; b=n0PVEIr8ZVs7SNb0EImX3vpQOUHaIOzIvsgajF0uiavCaKDIEI4igcHTUMwZhjlLwo8QRkA5NiS0lP9hXZ50vX5mxcxcJkTP9IcOZhxWzZbahhUYqomDYAY0RZg/4ABeHeZXvvZHKBVN1IM0husI6oEASQwjHxdRWLrQC28f4GY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760386438; c=relaxed/simple;
+	bh=6g2HAXGh33wTzYgXNO0HvkbiQDQQ4oJ8T1k88Y96bkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=a6l39DRntINY8JX9CownbRzMq1VI4QXx8q18Z3b9pRwiJ6CFVyP+S7zioKCjeX4ObqrkDyAmIHOPvu75v/miWYJ/p9l1F+PdC70ij+p6dj4ZLoTaQgwg9t6N+ddD6aRXZzb1+m6nMb8htKQXwDvqcNE0M3QlRkWGPhvMBMFEN5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ew4P43LD; arc=fail smtp.client-ip=40.93.198.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t0mv4OBa6R8CJoyqcfs8VHm3AFafYLqBMHRx6oTrURAVOpHskTms5w3Ro2fMiQZB0ynrZDCDjnpDaWLm1U3EfN6HuTVrn2NNI9EX7jfplR2hQmPHvJdtxZ3OqudNsx5W5P1P2DuOy+mSxnoQPXcJ2+Yzg3yaZKj5ZxDOoJjZP9vSyGygHk6M3+jx2eq0K5NxErltlNSSJP0nDouUIN3Zx/vU4AQ6Vu2AfHoHA2H0zRDccnht6j2fUHke24OGKxee4JU9hALpf1c3SO72odPmBg4TIEjQKPqNav9xLKqqNM+fDiFPKhs+Em3gcCYonhPacp1/nCcFvWMdsNdh6QCSkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QNPAQpxgFKRF37LsOG5hbvnHf8EzWhQczTEiVEromn8=;
+ b=ZBMegG+9+xF36MNeXRHfs4vhFtMvE43amrnqI+d89jWz6DbT3BjJqZJQVccw8/7NbQdbCY0PJaNFdzP1UhFziSD3X5i4qySBrjUGnJ50IPlOa6BXk1pjKQGR2y478SBCmx/nz5r9ez303vQRI65eAquvsf/USmXcHNEChc6DUUIqb4gEuWBttmsgw8L6Tod2D6PBnM9kPZInGogJTTMjLdPTidxp2gCcA7SJazJjtesMLopK8hPIN9woJtWgf61vMdmH5S7/CrMobsP6XwTX47VRJXH4KNNNmkG2rtj1TRUOVvH1LVrGMNQhIfbSAS4G2AvJI1zxQLGioKMFYrbkJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QNPAQpxgFKRF37LsOG5hbvnHf8EzWhQczTEiVEromn8=;
+ b=ew4P43LD9N+BMmhVdRCcsb5iUJY4ew7p1s+A0JV6vVxJZV+ePu7idou4AjMKkRzgU0bQR5N2Ql9DTDXrYoFShMmQbpv55AiQnxvy7sbQum6KKDtKZEB8usJa2gqVTlduqcSyTylyraWYfJjsQDkLFA9OnVHisQABh6mQEJKnmSfqzyCxNCKm6SuP/38lO2+ZSs7ld/pjQXje07PwoEUJrQfhd/5A+GCFah5ExhcUwUb/4m1sbpsZ6FgmCYsGnBjpeTCzVZ57Mm9L9S/fMSVGZ6WGse0w27IcIVzufS/Lt6Zs6AxvEozBfUk3E95imtBo0xenas5A4AScB8lfaLThiA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by LV8PR12MB9665.namprd12.prod.outlook.com (2603:10b6:408:297::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Mon, 13 Oct
+ 2025 20:13:54 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 20:13:54 +0000
+Date: Mon, 13 Oct 2025 22:13:46 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Phil Auld <pauld@redhat.com>, Emil Tsalapatis <emil@etsalapatis.com>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] sched_ext: Allocate scx_kick_cpus_pnt_seqs lazily
+ using kvzalloc()
+Message-ID: <aO1dempzw2uAWxrC@gpd4>
+References: <aOb3Hv0uPv9G7N33@slm.duckdns.org>
+ <27ed885043e6dc3e9c2feb2e9a247658@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27ed885043e6dc3e9c2feb2e9a247658@kernel.org>
+X-ClientProxiedBy: MR1P264CA0050.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:3e::22) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 13 Oct 2025 22:11:14 +0200
-Message-Id: <DDHGUQ9B4J2K.X1VXMMU6O5O4@kernel.org>
-Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
-Cc: "Markus Probst" <markus.probst@posteo.de>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Lee Jones"
- <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, "Uladzislau Rezki" <urezki@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-leds@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251012145221.172116-1-markus.probst@posteo.de>
- <20251012145221.172116-3-markus.probst@posteo.de>
- <aO1GM4WXs37Zpm0G@google.com>
-In-Reply-To: <aO1GM4WXs37Zpm0G@google.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|LV8PR12MB9665:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44198617-05f0-4e05-5183-08de0a950878
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Qsy/bnE6V4deMfcOzJfBIMkH/3IQ0BsRAyKpXh/IY3bKAPOY0a6tNYLPkmR6?=
+ =?us-ascii?Q?VQ88MKzOkPvic8kOvGEZmt5ivtHqYBctk3lKdzUwY6L9jrq0a5+ZhJfkBC6R?=
+ =?us-ascii?Q?f3k0gatRBRMiHtORtf7Dd4C/wGwXEmakbyo4LJzPB5vCjlDP1BnuMNt18g1A?=
+ =?us-ascii?Q?2K48fFastplAYUehqSpo+zwyDBc2GYuHZR+Lq0W5GiKrORj6yRj17vbJrUui?=
+ =?us-ascii?Q?O++sU9kc56uMs0uAhtqSN9Os+bQk2cuGej8S2cVLQEiyWv9L6ZUcRRyXzxZQ?=
+ =?us-ascii?Q?iw4yDTRPKkGFPayRgrLPCdtA9sqFmL/+noCaacJdo5qURegzptfN5hZZ6agE?=
+ =?us-ascii?Q?OVAQI6VuMmaNpeSOftMG9nKpqZSf4wTdPp6Gu3kRmiLb8usaXmfok4TfrvHi?=
+ =?us-ascii?Q?oBg/pjiITAhVrStx/5nJVFmY1jnjwrTVhnfS7KfluoYM3E11DDIEECtj8yyw?=
+ =?us-ascii?Q?IMvOCpyrcxnUvITqJ9Kn/bQVkqXQyoh2wYYWbPtgy1qSRNIfjE1ipTAND6fg?=
+ =?us-ascii?Q?qck4NbQ3r2Id+pr1+D08OT2RidY4IoO4z2vVJ/WBud6TWn/ibhtUDEmTeFV1?=
+ =?us-ascii?Q?XHSOI9gzF6V/weOSAdrpmXv78O2P6gqKXXtFw6xykDvsI10041i8pdma5tXW?=
+ =?us-ascii?Q?7FGWbQ04Sy8fvuHAkXkCtydOZCgCuXFZcJqgH3WtUgRebokpf9T31uX998Py?=
+ =?us-ascii?Q?A1ZVst+3xlWKQpH6DxeFwznmxmx1hTewvFjNmPGSUmSATqiitYtBmkzkDxWV?=
+ =?us-ascii?Q?plUxSxRGKfH5OG1XILhRdhD9mZwSlH6AtPri01t4z/mbMIAQkvXexORC6Kca?=
+ =?us-ascii?Q?Ds5F8m0ivp4RhutiwiwILwUjdZ5En7TACEAkCPbLQt3N0dNbJOcT1mYsBwPO?=
+ =?us-ascii?Q?vvcrlH5hM71u6vrjqpaD6yxfXXyc4Zk+jKo6Vo8pB2anWHCMqyiccXpkQXAo?=
+ =?us-ascii?Q?81lnBeCVcP8zmxN8OoLBRi+u/5YbJyGsbGyFGeiqEW26UU3WHYrtKTRfxBec?=
+ =?us-ascii?Q?CsAQ65w1CjL6Kp+6mPxp6834d/sRCSlgHE+YF71teMw0pkNwluFTc2dIrJGC?=
+ =?us-ascii?Q?VGj8voqrxoYJ/FYPLOdKJx+nOTL71cMfWM571yrxBnQ9/MlMbEO/ZZuRO4A3?=
+ =?us-ascii?Q?83b69zGMYyLWNbYpccT1SN2zb2uKmiUPX323jtG2L28A9qii6RV2Ral8MCNv?=
+ =?us-ascii?Q?68mZLeIZg1rJc8uUfbJIfrlgwpSlnRKTHCycwDI/s0CHA3wCOfOLty5AXqka?=
+ =?us-ascii?Q?3fTpFawQBP/6LI7HYSFaCmOJEwqgzdJQcRoV6S8CqaJ78tpNP23rZdZWWva/?=
+ =?us-ascii?Q?blcUTvrW4jt006qiOw9qcH6IYVyBf83z/BPllZzcPzWN0rpdbw5Pi99ipgqt?=
+ =?us-ascii?Q?dRSxKOdjmWcSY6Ybmz14o2pbEJe7DoGiNhOBsazQoqgjrfz1LqfEJyHE47rm?=
+ =?us-ascii?Q?L51AASVVVfzZorobGG+sz5mMMLOxQY9H?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wFpOCdfy+0+Bfz941yJ5g7e29Im7mrby6R4Sx9yJkp9hm3/iqOPdkY/obwoP?=
+ =?us-ascii?Q?4guYG5hD7oTUN0qJ6+8m11j8gJbB3TOxzsajy5MxJPyMg6vZZeNZg5XSVsv/?=
+ =?us-ascii?Q?IXy9im/PWn1J6VKGoQ0X9SmlEWvyolvxgBe4oitPfruoSqq17mz7rdRInSrK?=
+ =?us-ascii?Q?rZd+T7RSKWvYXiuex05lkNbWGaXYPKvvvviIC6JfGmegcUk2klFQb1Z8/23V?=
+ =?us-ascii?Q?5cAGRhG2nPE0bNMtyUgbh0ubnqwVWxlppUgrKE8BRvQB42cyNprjqfX7FGkI?=
+ =?us-ascii?Q?o//iR8XjLblwCrI/IpnvpwFDJ67UcZbjj8K71MhcNBSXRbZuCAv2HazFerna?=
+ =?us-ascii?Q?2ySQ9eYxgnx33muIsMcK+JNXAHh1mnvAfkudizMzoG31blSq9NpqUc9Cm7xZ?=
+ =?us-ascii?Q?SxL9gfdLr6SsAdbIse3elYHwh3e9AQV6ch+j6T3D59W7KvwvqI+wZanlRK2W?=
+ =?us-ascii?Q?orVhhZhVXAdNiHYIe2PFXjOQ1oKeQ0xHGL6jJUFNNOORsUgoelMf34js7cxr?=
+ =?us-ascii?Q?FyoQZtXMkq/4kZqcFYDfTBVwBCHEoLkZ518JRpwNfFc88wvlCnhSk7+iOZOL?=
+ =?us-ascii?Q?PHwJkP9xn7ri9Gcvi1Y+Fm700Dl6+6iLLK/MgBAc8HkzLGvDR91urBLJGACd?=
+ =?us-ascii?Q?3mQmZW6DJnRGE0aT4DsI1MIvP2P2f5kVCECV7VUrR9EO+oUZ9yTDlMG6RbmO?=
+ =?us-ascii?Q?lc562DVXbxnKpBSoABuzMSAyulGDizncoq3i8wlIOx2YMl06wAcbRk2xSy5h?=
+ =?us-ascii?Q?4GnKdoJSJbdqBaTEHEmoN8enrDxUkPYBoDMwVuPh/iJlwUwSzvwpOpHQNzhL?=
+ =?us-ascii?Q?rvj2hSpMRCYimkrHbHq172t3v640ON9w55N4DFiI+vvFa6r2waTX9Zi0x3wp?=
+ =?us-ascii?Q?moAgl+7/gvqF2CBP2FIfKyOWWxKd+BlL7gR3C1Io2LeXirTw3ADx3ZPnJN0Y?=
+ =?us-ascii?Q?av3i5yfdMDYwIOdtR0HpO+D2B7J4Md2SNgtb3zPTh0aiEMTHwki0EQuO1MkG?=
+ =?us-ascii?Q?km3Dqidxn2XEK8iHMN5pOejiZn8tuWpoohdj+qq5hKJjUZCNSRR4MM/YGrqB?=
+ =?us-ascii?Q?kyPd4qyjIH24BXi3WF16tmmt76mIMl9HP8Eh1Mtlf7uownYGmHOWohhJwuZM?=
+ =?us-ascii?Q?yRj772LbAILUF8jvlGzDfpVp61IhbTdw7p1SYhLA8X0Rj/zS87/1LxaBCBPZ?=
+ =?us-ascii?Q?cPVGb+BM8hNq5jBRB30qrF5sLitDPNRp7i+XK3AZNbOLtFr9HQoYLxsjoY2K?=
+ =?us-ascii?Q?jObe4QQyzDz82OK/NlMyYUVvTwocRLF4yis8/QSr9mihpQa4T7n6czIWO/Ph?=
+ =?us-ascii?Q?/QhETIziEs9/BJTES/qA0qe8sgz2bRiyhAn2YB1YZMuZWjUiaEHV4ncqRwWV?=
+ =?us-ascii?Q?7kBZNku7WER7odEmrSMVlrbbzkYxxyDaKjLWC4CruJnK2sgZiu2Bx7B7i6yU?=
+ =?us-ascii?Q?vKFEaecCzmKVysv6dnw2GQ1CZoiFhlv95c2T54Smox5UZw9a14sGUTzaGYLd?=
+ =?us-ascii?Q?TEE/unrwIyr1Ae3NIPx26im+P8n3fTXxUSDRnKhbvhcW8YEfc3KeIeAslNEN?=
+ =?us-ascii?Q?pqZrM9WmLrH4mUMDEFQd2vcJGfwFUlvnNpA2Z5SI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44198617-05f0-4e05-5183-08de0a950878
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 20:13:54.4066
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wJ6KYWFBSZO1PJkeac6USavhBMBYp+soal66irceYe9n7Cf3hCmIzxWogqujmj7O3l4dQDG1JBEEsrolRdY2kA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9665
 
-On Mon Oct 13, 2025 at 8:34 PM CEST, Alice Ryhl wrote:
-> On Sun, Oct 12, 2025 at 02:52:39PM +0000, Markus Probst wrote:
->> Implement the core abstractions needed for led class devices, including:
->>=20
->> * `led::LedOps` - the trait for handling leds, including
->>   `brightness_set`, `brightness_get` and `blink_set`
->>=20
->> * `led::InitData` - data set for the led class device
->>=20
->> * `led::Device` - a safe wrapper around `led_classdev`
->>=20
->> Signed-off-by: Markus Probst <markus.probst@posteo.de>
->
->> +pub trait LedOps: Send + 'static + Sized {
->> +    /// If set true, [`LedOps::brightness_set`] and [`LedOps::blink_set=
-`] must not sleep
->> +    /// and perform the operation immediately.
->> +    const BLOCKING: bool;
->> +    /// The max brightness level
->> +    const MAX_BRIGHTNESS: u32;
->> +
->> +    /// Sets the brightness level.
->> +    ///
->> +    /// See also [`LedOps::BLOCKING`]
->> +    fn brightness_set(&self, brightness: u32) -> Result<()>;
->> +
->> +    /// Gets the current brightness level.
->> +    fn brightness_get(&self) -> u32 {
->> +        build_error!(VTABLE_DEFAULT_ERROR)
->> +    }
->> +
->> +    /// Activates hardware accelerated blinking.
->> +    ///
->> +    /// delays are in milliseconds. If both are zero, a sensible defaul=
-t should be chosen.
->> +    /// The caller should adjust the timings in that case and if it can=
-'t match the values
->> +    /// specified exactly. Setting the brightness to 0 will disable the=
- hardware accelerated
->> +    /// blinking.
->> +    ///
->> +    /// See also [`LedOps::BLOCKING`]
->> +    fn blink_set(&self, _delay_on: &mut usize, _delay_off: &mut usize) =
--> Result<()> {
->> +        build_error!(VTABLE_DEFAULT_ERROR)
->> +    }
->
-> These functions should probably take a &Device<Bound> argument so that
-> they can use methods that require a bound device (such as IO).
+On Mon, Oct 13, 2025 at 08:44:26AM -1000, Tejun Heo wrote:
+> > Tejun Heo (1):
+> >   sched_ext: Allocate scx_kick_cpus_pnt_seqs lazily using kvzalloc()
+> 
+> Applied to sched_ext/for-6.18-fixes.
 
-Indeed!
+Meh, too late. I just noticed a bug with this. I'll send a follow-up patch.
 
-@Markus: Note that this guarantee is given by the LED device registration b=
-eing
-lifetime controlled by devres, while led_classdev_unregister() is synchroni=
-zed
-against those callbacks.
+-Andrea
 
-For the latter, please double check that this is actually the case -- I'm n=
-ot
-familiar with the LED subsystem, I'm reviewing from driver-core perspective=
-. But
-from a quick look it should be the case. :)
+> 
+> Thanks.
+> 
+> --
+> tejun
 
