@@ -1,204 +1,157 @@
-Return-Path: <linux-kernel+bounces-850050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4193BD1B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62DCBD1B7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B771897E2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60EF13A3055
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EB12E6CD1;
-	Mon, 13 Oct 2025 06:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BA02E6CCE;
+	Mon, 13 Oct 2025 06:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKHLBCNA"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IaqCnZ/l"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1C02E6CB5
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70451DE4CD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760338523; cv=none; b=hTPd1Colal+7D0+i9c4NkB1V9srjVElzzlVPXdapJ3cZN9Gc89HzYl+tqqYD5alizASN0MKsTdS9q52Aa3y9WQ2Ou6TB8NJtTTZt+VXum3v5xiZgzCvrhBv4jpsy6wnMoffZW7w7Aw1N46ovC1R3ShysleD55wFCyYVjpG3cCNg=
+	t=1760338755; cv=none; b=JSGGK0tNVz/bU0dkLts8RvV7A9G9s3uHrDZuUBz2lLcHQ3Cr/v1kiNotBU+NwUewTB4+UKRYP0MMFjNFiApN3C1LrxRJWDyuKlWY4a8qDnq695DcZfu87UAROg3dgs4PW3IXy5bH8FvrX7sh0jYlmF5qxDD8J3k1///jKp0XyxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760338523; c=relaxed/simple;
-	bh=Mcf4k2Eb5y4ExxZYFmPUQtYFXmFaCUqStDbFVKSkiyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QItYe1lXFsRjWDkvyj0wacL9t1cz67m7X+34uzCqwmXO8DVOQDpdujMkEKyzMfWcJxxb6HjOIafzAizNhKVktL7qMMd7JKPrsu3RlmBqaCavIzwjXRwauHzd/YFT2VLJpZQ6rc89+poMa5I/x1afpHeJabUqxPlf6kgVEDIOp+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKHLBCNA; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-54bbe260539so1439075e0c.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:55:21 -0700 (PDT)
+	s=arc-20240116; t=1760338755; c=relaxed/simple;
+	bh=86ECSOmfJBWcuFGxNNZ2ysv5zZ841yDUPRfso1H+2Cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i/GbfuwqnTAxuhD+Pqg6K1RHYhLrdQkZMYSUacFaFavxbS+p0CtjsQXr+wbemk0hjZOVZOUVsH2nYdVG1WAb7gvK+AkUKtcYcb3gQKyWEwZYFOxwUYl/uapiq+CetPd8A9woopsXvfES0SBiN3kFFDhYujquZOdTNoNnhLVgwqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IaqCnZ/l; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e37d6c21eso21495785e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 23:59:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760338521; x=1760943321; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RxpYz31WTohbhJuOp5dj13ArRLPeR7dWLB0V/ZD3iF4=;
-        b=fKHLBCNAlXqZEPsvFAuop3Txqv/WO11eiMuJLhfSD5Z8/+J9IaVg4OH0id43d4bn4r
-         d5MYirzIuVoTNjBfi1lYpqRIEon2CfTajoYPDT3aYXAeG0a2AQqT0nikTp8DHs3nUke+
-         aKdtMgKlXups4GdOLWxVr37EROzwsMiz54JWfa3bdVJtznPGl45aUQ0aZ/IKc6FPK/Gn
-         hXuUQINzMrtZU9hVenQdiov4mMR7CXpy75U/wnJVBbpWs5JlXk1RnEG4xGRgHL4aeHzp
-         eSYHG8hcH78RlvBkPGAT5p9Jko9Ge8znKbE37v3aACS9GFAfLRfJpmCR55tX2xs2KB2x
-         EcUg==
+        d=suse.com; s=google; t=1760338750; x=1760943550; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ZpLoWSAxU2G8AVHL931DUMQsZx2voyuF6q/+oeSly4=;
+        b=IaqCnZ/l5aYYQi1z4NvHoqKPUTgJBXmXITqIBH7AhnrJoj0FdHC+vOHJG0byNRxsLj
+         7qSR3HGN0xwaR8PdY6ntVbDwx0zWWbT7U3K8tQzcL3PyFf+OmR6TbnTQm+TsisrvYK2v
+         baJCjg93SAaSzZ5QBTBNoHyAvVaLfMj2kYaJgDMVDThDMMLHl1ejiR7i3l/h4FN0VZrj
+         DFFRIgJAQMOULiYvS8tZiMCfsuNNZO1JwS1Cr+kKEIhOUnA41fBWjJ5xx84yAxL39r8s
+         QbcMPfN2Av0tvU0qhsiCw5o0NnzO/ADHRBtnkYn7QCWMuXECOC81h/CqhNK3ze0h3ko5
+         T/0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760338521; x=1760943321;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RxpYz31WTohbhJuOp5dj13ArRLPeR7dWLB0V/ZD3iF4=;
-        b=vWsPqhOFnZrYkKd5zJJbagEirc0z/uVBAH7bEX/J+dAbk8v7AlZwb8SNI/8JVG9T68
-         GQ/ShKippCJtIXLpYsOY/YBZH6FN7l+fsau9lqrzOxUkkU51ukNngGZPlQT4WSEany4z
-         WRSpcpl1MUh6NHwJfIV/EK5a3AjSHOckrICRVsv5NufH8fL3K9NAOlhi2s31VLjmRMW/
-         iM/DtcpGM/udE2VTw3pscw87Es9Wd/WHx13Tm7USW1JhO2Apgd1ibMq0jL2dOqKZdUWL
-         MiVOrQNrPIc19RcSrh62TNZQkpYB+xb3pisumDj5dykBHhmYxlRWYSPmMPbqT2zUd6cJ
-         6trw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2aFkVfmov1Re14roYlQyO5hSarq6H0Hr0na7AbCUGSR6INUqLgtMOyyC/dHz4WV8S3bXt1LUqTbBfins=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWGqmcyCqlQFlMcKY1ko4uTL8Fzy/4fyvzXmk42BkyOXMt8BL9
-	TbHPunSO49Vw/UHHKRi6gCZXgN6jBNmUzejrgp6je2WLShdh9X3/bde4sQ+VgRp/qSS2HGDegCD
-	Q8wzlqqPvudpt+9z+HWiBWOq1A90aG4s=
-X-Gm-Gg: ASbGncvXS9yRHBi8qn7mARl8WUcUARte9M0SCpi3ZPquM/4uRtiQte6PvFZtgIxmccR
-	pHssdD6hD/SBd+Plb4hYPwXpx8BQv0z0MHL3tx3hXkj1YUATECGj9naruUePH30o5TXnAYeEv0g
-	F10zHEH9Cw//CNaPHiSY9wiN9IZTbgJ7pK7OvmsetKCxKsvRk+MuvPlEKWjl/QmFEpCZSGmImna
-	H7gxpX0L9kc8E4HkRh/ADCUAS3+kLVaseecnJwfFfz0i1HHzZGS+8ESBgdAGKbr8iCKfg==
-X-Google-Smtp-Source: AGHT+IGOMc6+OPWoHO6gIAQkEJ03P+HPqmvDc5UtZHoVumqD2rBUYak0kFEk3JXPSfK/KAJ38UkZ5IpqrXXe7FWoo04=
-X-Received: by 2002:a05:6122:d93:b0:544:87b0:d1d1 with SMTP id
- 71dfb90a1353d-554b8b03084mr6224895e0c.6.1760338520677; Sun, 12 Oct 2025
- 23:55:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760338750; x=1760943550;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ZpLoWSAxU2G8AVHL931DUMQsZx2voyuF6q/+oeSly4=;
+        b=wWcgtMgyIHj1e4Tx7t2leAoKJCC2S+e4ohDP3w6xu2PioCF8uZ5k7pM6O4zeEsyKJ4
+         lQsCg03wCHCikoIsTTg68llY1ytXzFvvAjhVtkSA1AQ8sHtBXYVF5ha/Jf0/SJj8fIoR
+         ClWRdrKXyo5x9ODX2wbUdeFATyDNLljP+81gQhc59g7ii6Urgo/dZFgbqXC1d/Ey979i
+         8J7pez1nwItMnXGDR7GQSoKP64hPu+LgD5bF0QKF8hjVgxEymI55SXNOI1rfXAj+CX8u
+         AcxyquOZdTe0BIjXKT1kGMTZV9ClNdQb58gCHTagJgypECv2zHNRsfEqYg2cyc50uW1c
+         PUXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZQyPgOyQMOAv0rWFKAPEQMsqm2w4hCPrk7yi5oRO+HsMHVHgOk4u7TgIu+IeQdU+ea0A1DNdCUo17xbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUzu4S671J0/edPMXStLfP10+8o7MJiJHlVkZpbp0o9U1vq/Mg
+	bHdgP23AUHtV56AveefBGjsKk3i1o8erdtOO0mGUblL0p4uGa0aocgrsKNCuSEoXV+2GbChTp11
+	UBWI=
+X-Gm-Gg: ASbGncunX4dgkYMA6y6UzWaTDltLRYxyLPw9LqIPt+4V3/ffbHOHeXs+0QzBkfbB8hH
+	YCKA1qNlTuPK5glayXHVtCpxcPIv+gOTxsIoGHuraAmjKhfXx4R34f3/F8gxMGNIBj/B1NMrSD0
+	syTYGS6dfL/kP2GzOMBfF6g1/wUh0JR9XlWm6bAQdI+1ZTtOSc+u7VjLCnCHmuQIfcM0nGGq6Vv
+	hsk1ZIBBqysMYPGAPgacrGXTnN6bdVWul6hLBJ4nCJMfXEdBwg4KJUN5B6YX5B0JD490do/9X+i
+	PC/BM8lLZy0kd+2GM6wO3x6r6eNbUmmcrTEgNIw9CQQTLvEhRKR2E3hn1Tf/pDobtQyiHMrE3n0
+	hYiUhJ91SAehQ99mhxeecaeMVh9W1LU8utAIUuyTNnQ+KLA5BnoVhZP+RXTqtSffR/QNzCzC16X
+	nP3wd+1Ns7cJCmGqIo+1eGMsxz/g==
+X-Google-Smtp-Source: AGHT+IH5VvluhJwPowoICILvdjdM0MHl+DmVnGQ43MOA2t6u7NnLqzoJ6LIu68iyp4i8VDiHpwKChg==
+X-Received: by 2002:a05:600c:5488:b0:46e:45f7:34fc with SMTP id 5b1f17b1804b1-46fa9b105ffmr133685265e9.29.1760338750080;
+        Sun, 12 Oct 2025 23:59:10 -0700 (PDT)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab4e22d8sm118354975e9.5.2025.10.12.23.59.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Oct 2025 23:59:09 -0700 (PDT)
+Message-ID: <ebee3406-d515-4e29-9d7c-f54bdb143080@suse.com>
+Date: Mon, 13 Oct 2025 08:59:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com>
- <8aed5e69-57b1-4a01-b90c-56402eb27b37@linux.intel.com>
-In-Reply-To: <8aed5e69-57b1-4a01-b90c-56402eb27b37@linux.intel.com>
-From: Octavia Togami <octavia.togami@gmail.com>
-Date: Sun, 12 Oct 2025 23:55:07 -0700
-X-Gm-Features: AS18NWAoz9Ux6LSe2hLCMxTynHVe4LPr0SYtTvRflAzfg_SGNukc-9z4G8Cp-ns
-Message-ID: <CAHPNGSTgahRhAg5eM=pnn45rw=TJzTz4AfeckcB2RcsPvxCeGg@mail.gmail.com>
-Subject: Re: [REGRESSION] bisected: perf: hang when using async-profiler
- caused by perf: Fix the POLL_HUP delivery breakage
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Octavia Togami <octavia.togami@gmail.com>, stable@vger.kernel.org, 
-	regressions@lists.linux.dev, peterz@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers/xen/xenbus: Replace deprecated strcpy in
+ xenbus_transaction_end
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-hardening@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Jason Andryuk <jason.andryuk@amd.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+References: <20251012195514.39003-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Jan Beulich <jbeulich@suse.com>
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+In-Reply-To: <20251012195514.39003-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-That change appears to fix the problem on my end. I ran my reproducer
-and some other tests multiple times without issue.
+On 12.10.2025 21:55, Thorsten Blum wrote:
+> --- a/drivers/xen/xenbus/xenbus_xs.c
+> +++ b/drivers/xen/xenbus/xenbus_xs.c
+> @@ -546,16 +546,13 @@ int xenbus_transaction_start(struct xenbus_transaction *t)
+>  EXPORT_SYMBOL_GPL(xenbus_transaction_start);
+>  
+>  /* End a transaction.
+> - * If abandon is true, transaction is discarded instead of committed.
+> + * If abort is true, transaction is discarded instead of committed.
+>   */
+> -int xenbus_transaction_end(struct xenbus_transaction t, int abort)
+> +int xenbus_transaction_end(struct xenbus_transaction t, bool abort)
+>  {
+>  	char abortstr[2];
+>  
+> -	if (abort)
+> -		strcpy(abortstr, "F");
+> -	else
+> -		strcpy(abortstr, "T");
 
-On Sun, Oct 12, 2025 at 7:34=E2=80=AFPM Mi, Dapeng <dapeng1.mi@linux.intel.=
-com> wrote:
->
->
-> On 10/11/2025 4:31 PM, Octavia Togami wrote:
-> > Using async-profiler
-> > (https://github.com/async-profiler/async-profiler/) on Linux
-> > 6.17.1-arch1-1 causes a complete hang of the CPU. This has been
-> > reported by many people at https://github.com/lucko/spark/issues/530.
-> > spark is a piece of software that uses async-profiler internally.
-> >
-> > As seen in https://github.com/lucko/spark/issues/530#issuecomment-33399=
-74827,
-> > this was bisected to 18dbcbfabfffc4a5d3ea10290c5ad27f22b0d240 perf:
-> > Fix the POLL_HUP delivery breakage. Reverting this commit on 6.17.1
-> > fixed the issue for me.
-> >
-> > Steps to reproduce:
-> > 1. Get a copy of async-profiler. I tested both v3 (affects older spark
-> > versions) and v4.1 (latest at time of writing). Unarchive it, this is
-> > <async-profiler-dir>.
-> > 2. Set kernel parameters kernel.perf_event_paranoid=3D1 and
-> > kernel.kptr_restrict=3D0 as instructed by
-> > https://github.com/async-profiler/async-profiler/blob/fb673227c7fb311f8=
-72ce9566769b006b357ecbe/docs/GettingStarted.md
-> > 3. Install a version of Java that comes with jshell, i.e. Java 9 or
-> > newer. Note: jshell is used for ease of reproduction. Any Java
-> > application that is actively running will work.
-> > 4. Run `printf 'int acc; while (true) { acc++; }' | jshell -`. This
-> > will start an infinitely running Java process.
-> > 5. Run `jps` and take the PID next to the text RemoteExecutionControl
-> > -- this is the process that was just started.
-> > 6. Attach async-profiler to this process by running
-> > `<async-profiler-dir>/bin/asprof -d 1 <PID>`. This will run for one
-> > second, then the system should freeze entirely shortly thereafter.
-> >
-> > I triggered a sysrq crash while the system was frozen, and the output
-> > I found in journalctl afterwards is at
-> > https://gist.github.com/octylFractal/76611ee76060051e5efc0c898dd0949e
-> > I'm not sure if that text is actually from the triggered crash, but it
-> > seems relevant. If needed, please tell me how to get the actual crash
-> > report, I'm not sure where it is.
-> >
-> > I'm using an AMD Ryzen 9 5900X 12-Core Processor. Given that I've seen
-> > no Intel reports, it may be AMD specific. I don't have an Intel CPU on
-> > hand to test with.
-> >
-> > /proc/version: Linux version 6.17.1-arch1-1 (linux@archlinux) (gcc
-> > (GCC) 15.2.1 20250813, GNU ld (GNU Binutils) 2.45.0) #1 SMP
-> > PREEMPT_DYNAMIC Mon, 06 Oct 2025 18:48:29 +0000
-> > Operating System: Arch Linux
-> > uname -mi: x86_64 unknown
->
-> It looks the issue described in the link
-> (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.inte=
-l.com/T/#u)
-> happens again but in a different way. :(
->
-> As the commit message above link described,  cpu-clock (and task-clock) i=
-s
-> a specific SW event which rely on hrtimer. The hrtimer handler calls
-> __perf_event_overflow() and then event_stop (cpu_clock_event_stop()) and
-> eventually call hrtimer_cancel() which traps into a dead loop which waits
-> for the calling hrtimer handler finishes.
->
-> As the
-> change (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@lin=
-ux.intel.com/T/#u),
-> it should be enough to just disable the event and don't need an extra eve=
-nt
-> stop.
->
-> @Octavia, could you please check if the change below can fix this issue?
-> Thanks.
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 7541f6f85fcb..883b0e1fa5d3 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -10343,7 +10343,20 @@ static int __perf_event_overflow(struct perf_eve=
-nt
-> *event,
->                 ret =3D 1;
->                 event->pending_kill =3D POLL_HUP;
->                 perf_event_disable_inatomic(event);
-> -               event->pmu->stop(event, 0);
-> +
-> +               /*
-> +                * The cpu-clock and task-clock are two special SW events=
-,
-> +                * which rely on the hrtimer. The __perf_event_overflow()
-> +                * is invoked from the hrtimer handler for these 2 events=
-.
-> +                * Avoid to call event_stop()->hrtimer_cancel() for these
-> +                * 2 events since hrtimer_cancel() waits for the hrtimer
-> +                * handler to finish, which would trigger a deadlock.
-> +                * Only disabling the events is enough to stop the hrtime=
-r.
-> +                * See perf_swevent_cancel_hrtimer().
-> +                */
-> +               if (event->attr.config !=3D PERF_COUNT_SW_CPU_CLOCK &&
-> +                   event->attr.config !=3D PERF_COUNT_SW_TASK_CLOCK)
-> +                       event->pmu->stop(event, 0);
->         }
->
->         if (event->attr.sigtrap) {
->
->
+While at least in principle a compiler might be able to transform this into
+code not using any library function at all, ...
+
+> +	strscpy(abortstr, abort ? "F" : "T");
+
+... the use of a n on-standard function (without equivalent compiler builtin)
+doesn't permit this. IOW why not simply switch to e.g.
+
+    char abortstr[2] = { [0] = abort ? 'F' : 'T' };
+
+Jan
 
