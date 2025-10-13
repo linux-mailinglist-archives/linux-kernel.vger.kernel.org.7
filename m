@@ -1,198 +1,175 @@
-Return-Path: <linux-kernel+bounces-851349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A0CBD63CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:47:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933B9BD63DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D33934FBA83
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:44:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 519C74F6BFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219D930B536;
-	Mon, 13 Oct 2025 20:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D982ED87F;
+	Mon, 13 Oct 2025 20:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jChrGbPp"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011063.outbound.protection.outlook.com [52.101.62.63])
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="kA5GN/dV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jc0sALQg"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD5B30B532
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760387810; cv=fail; b=EXK4rACuIoIw5/DutXMkGyhIigM559lkwAoQYHUlmzssgliLRmZr0vFcK9X5NOUE1aCnForS5ShGBuNtyQH32yRBvzkFcrTPP8OuemGDTaDKgkj3gJea4C4PO0Xc47EEYUIXTNLR6oW0+/4EfFS9sb021gD3rQLto7KTw2i1xwM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760387810; c=relaxed/simple;
-	bh=Qxzt7j72iV3X/Sru2P/X8DKQTRdODVtKjugdouXdSMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UHpfbRu8FPL3SdWijSryhwx3vJlXT2/sbf2oTiz3cAvzH46wxKsM4cRqwsirYBVoqQmgKVJfvNPfBcofJPzOVRS3qipW3nsIXjpiyRX0RixtcuJWqxPEyYpW/7Snwr2Zm4Pwarbiw8eGDZQcvpzd0vKVoS+zjnds78UMyiF/dLg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jChrGbPp; arc=fail smtp.client-ip=52.101.62.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PrEAoTM96QPbGG16/yXypjgaK0KYxswwzvHN1etlvSNiUDPIvMHbMlMxdI6otRiqqvl/S04GRXOU7Nm+AuOOj79peocjh4C7AH4AEFs2sF5ERZypcy3ByLIs+OINkJucgeKZPqW9L2wXQM0IEdBfDPl91xC/OFbxsBIZ/Pbw6kzuxBjGRafERxLzXEUvEivYgOdJGj/8tX1oil2mhy6p2JO0zmaynkh3LMHLmtP8qTVNDnEJytISYAIdje/Xnq0vAAXfVrh+vVYXzSVn6PPCFLC0A86dFw1k/QOW/0dpmPaTjDGvFz3n4Q6OqutOZnppijL0iZW6foAOsz2H6ZZ3Jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wCfKqtAyH7WiEJRBnKwFl0rZCOzH64oaEcl8sNOwwWI=;
- b=ssrtxNK+C0LPrhf3GEH+JmKwnJhXw40HtN30rzHD4hH1HKl9WGFeFG4dPkzo7fFUxlb0TmGYX2VHvlCL1/f09zALKm80zBhwJjOLZtoE7XdxU74xfxBn6krxFkMVz34lYkXPcS4wfB1q8J40oLfekZLWXxfgkqI+UpVefpuGE7oLEm2aUaNIKYAhVDb8F+9Dv0k6a4JQB4DqxZzAaI9oLN+PnZYsx4Jh0W2Lj5ojz2fQHw0/UwVHYnvk9Z6KPCMjuyp11P0jFCT5aCpyE98WCBrxjeUy4GSN6jcbBx2rmBtWHGo1RPAHNPrcZj0u5zAZYaTGG7N+EDJM310j5jKOcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wCfKqtAyH7WiEJRBnKwFl0rZCOzH64oaEcl8sNOwwWI=;
- b=jChrGbPpWURW/7UCnuoOm5XvccWe4fGuLWbWZWFZvOthNG8Th7obYWS6eLXH1eOQnncEqVkU07P/pili6hb3r8f3jG0/7DaRL19Hi8vBkWq+6WEjxZvWs7aEpFGxgTyXc/3rrp66TV50GV5XhTNfPPEOgXIe3+upTTGP2qFWcxU0G5gVLNyonh+mMLeShO3VjDB5aK77/5X1N0/aJEhaOWhDal4DQbR3G4mXyPbMZ+DyJhol5nv0wNpj0vg1J3Mc7NGV31PV156jUy6RAQxFjaJvX5vejsU0mt4wbSFQQSfjKQopCxjOBCB/P6KAaGD4cEl/0hm1YLyTzR/90AfrVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by CH1PR12MB9575.namprd12.prod.outlook.com (2603:10b6:610:2ad::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 20:36:43 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 20:36:42 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Phil Auld <pauld@redhat.com>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.18-fixes] sched_ext: Fix scx_kick_pseqs corruption on concurrent scheduler loads
-Date: Mon, 13 Oct 2025 22:36:34 +0200
-Message-ID: <20251013203634.47362-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MR1P264CA0190.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:57::13) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E88309EE6;
+	Mon, 13 Oct 2025 20:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760388029; cv=none; b=Qs9mqQ3IomuN8sN4hcQff0POnOfdL2OIo5x1cidXf2rMQDMAbvZTaDwAIDL6Pd8C0gTL/hNEWS3eV7Wst7Ea7WXjxZpO8AEIXLmqg/5h4JQndgOdVSUJ2VZQ9sfYu1A9hJD5cAl2dVW6OkBPtpFg5xmcMffZFoxF9YLU+DEHG2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760388029; c=relaxed/simple;
+	bh=SEcuW0g1fHV3FOuswFA2rCp0Rs0f3CmsRg0WLVV0msw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m41sCwF28ScrgNzZtsqhbPN/qhFqwk57lqDdF4jkgBPJF98bX6QUHFn5dNHa2tw3t+mWMekkSW/APAeiqptj77ZwyWjQbOyLjnIl4+GgTuBj0JUp+8wAMrgpDeu3ywPPrUcf75xa11ZwBaDbwCmuclIMAAAS1oRNBGI9QZuq36w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=kA5GN/dV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Jc0sALQg; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 84E131D000B9;
+	Mon, 13 Oct 2025 16:40:25 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Mon, 13 Oct 2025 16:40:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760388025;
+	 x=1760474425; bh=1iExwgXKoBaPrErs1AXnNTPfeJ9+7thtk3Z9Gc3buPE=; b=
+	kA5GN/dVYAJz8Y4F+SqKvTjLJol+4/7GDJ9ea6dJu1zkf3Dq6Bevcp+Siia7CbpT
+	nDrCgsi7EXA3/gHApLX077TgNkPB5ZOl7+y06sZwQt54sPSv747f9cQ1RpqAwkZl
+	mdL4zHM18nuRCeW3u3J4aEA5khhKvqj4Xmic9TqJhFe2NXOUE64CDoZAtUKUmfMY
+	MPPt0l2TVsB6oQN30kB5M4hOGXFEPc0egNRivZoaXRTcYZe5KeJ6pDxhoZXJcVPa
+	vt5It1Y9GvJsUf3gEbtbV0Q8i2sblf5DIMNgJR6wSYYKwnzXSjItPZfBq5Fz2a/e
+	VSWUCXllUi+1kUQf9MnGMw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760388025; x=
+	1760474425; bh=1iExwgXKoBaPrErs1AXnNTPfeJ9+7thtk3Z9Gc3buPE=; b=J
+	c0sALQgyLT2QR84ijePcWbYGEExTlSFdL8pk717gIi5ECUqOdJ2oFgQgn00T8fDR
+	ocWhfEL7KNdlD7dzK7ebsOPntN7b2h2OMfWKhtqG5m06/O3G8t1lvn3fawOEhp6/
+	ECcknq2okC4jdtp0dqDFGSvh0uNDFcXyB+ICaIBlWlAKZcNMIs7e3gxW5xGVy1Xn
+	FDZWGdDU3AEDDWi8Gw7XvYknDB4wE8i8uWS7yFZV0ULm0ad7x3jhSC2HEaxdvnXh
+	rKlaAYiir5Vw9JH6jVsOllRI3pezC5R0G/gP6Z9xYbkWobIzfAXda/Z+An8tzInu
+	WHco5oD9U6gN8ScBIgClQ==
+X-ME-Sender: <xms:uWPtaJ_B_AwUzDHo7CLRyBNhwCCeDnSrDFynEOs1f_sViP1lymLQGg>
+    <xme:uWPtaHC6FOK05_vKw9dEd--WFKOvCQEjqhj2uJ-jCDRiAe1YUsI8mRi1HZ220QCf4
+    f_QwWlh31fD1-Mg1QKljg8VDbRri6s4hQl1m_PhZTO6opqYmagm>
+X-ME-Received: <xmr:uWPtaOTQCUgxnygJVBuyBxSx6VPaWFRukWbMtJMB-ulT6uZCOaYCkNi60RILsKGtenciGzuLMAaR7sgiSIgSph49qryvFvdT9K2JsPw3O0KhVkl8yEcs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudekieefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpedtuedvueduledtudekhfeuleduudeijedvveevveetuddvfeeuvdekffej
+    leeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
+    mhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjh
+    horghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhikhhlohhs
+    sehsiigvrhgvughirdhhuhdprhgtphhtthhopehgihhvvghmvgdrghhulhhusehgmhgrih
+    hlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopegsfhhoshhtvghrsehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:uWPtaOvnOlf49Zu-tHMexNBzsSzVXnsKAOM_U8fvTbyywkayFVmRBA>
+    <xmx:uWPtaK1XHrVQw92u4zHAwlkuE0fZnMJ88gPMInfujAxOpSBrRZWaJg>
+    <xmx:uWPtaPXG-ji-RaLpP9CUUHcOFKh8OnzzlOFUs4JiLd6v9pHntD9mXA>
+    <xmx:uWPtaFKwplzQy4nrbqrZh7lwma7oiIKq_xbQ7yHSd8jabYStW5XGwQ>
+    <xmx:uWPtaJUMTyYfvgd3PJdffGuT-Eb8_eWuDPZSkWUYp7xQzcaHmR4gWJVG>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 Oct 2025 16:40:24 -0400 (EDT)
+Message-ID: <54e30e4a-36c3-4775-a788-dc15e3558b9b@bsbernd.com>
+Date: Mon, 13 Oct 2025 22:40:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CH1PR12MB9575:EE_
-X-MS-Office365-Filtering-Correlation-Id: c14e5bb7-c880-4627-fe6b-08de0a983812
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wYLD3IAePDCUt1X+DpFH9s1g08pHHVJNRtaSlVzb2SzIp5LkxUzoh0wv3bEa?=
- =?us-ascii?Q?vxAsXG0qcPDSne3c2MGLKVBz74v0ymk1V7ojbegQBcOEcGn1ocw2b3JBkcCV?=
- =?us-ascii?Q?Lz4K9csbDEnahb9ch0Ea+Vaqle5gALcdf1t+ay+8qG2u7WcFbh1D5xMqKo3n?=
- =?us-ascii?Q?e+57XSGBDfHAwrN4Ag9aFbeULjB3YNXoeCmHGwtcs6eBoXXk89JtbAAUfOGl?=
- =?us-ascii?Q?GatuBsvE+OvI0ZafWf2uw8PEzNgKB2HYklx77f1ynm0YrUsE5uJLwBAjG+jq?=
- =?us-ascii?Q?mAS4c0C4TaHv7umOghw/L9qc2nm31JGnyy6DZXawFQP1m6wdpQb6vhvWVyUA?=
- =?us-ascii?Q?4zeCsNvtY+MSsazNb2oH5+90ex2p6iKzjosBidPGd7q/k8w03MQD5V+GnSlM?=
- =?us-ascii?Q?zawT/haR0L+LAF4VINSC1gPsc//XvVf6IrMn5BbLUfGPT2fDVrdw4D1BL5WT?=
- =?us-ascii?Q?bUCu9i4L/AChEECFaD2aOYyFa3MHiuaLf0aCuXMLt/zpL5GFJhsUiGojNglM?=
- =?us-ascii?Q?+RLALhzCTNAbZJEwkaYKbUjzXZpQkJoGYyG+vF6uJeS+QRNkVFvIUHAA2Pvo?=
- =?us-ascii?Q?+msPPM989C50tiToSlgICdgR1p/4InwIP1HyWP9/cwJOI1f8WhgrbARScOdS?=
- =?us-ascii?Q?dZVGGibYzFIsHRfslOWaphzpEXP3DEKTDcmpfpV5vMO5IeqOxBaEC3+OWK6D?=
- =?us-ascii?Q?Ons06g0C0MvB8P5YEu3Pi5QSnrEDsZLx8SWik7qWJjEs1cDRIpFww4loOfAZ?=
- =?us-ascii?Q?XPWOJl8LUwP90zbe8HBk9VcUcrneac2z0H4W4OVj8nGiKIWaaJluq1SBVRwm?=
- =?us-ascii?Q?UaK1qbkkHrye71/d4bfCT5/9LY0ye/C1CQvgj4E8UBsj8VjsscNq2kHJh4Vb?=
- =?us-ascii?Q?W49k/LTnh2/Hze27wztrx8PCNQrrFR529imQsrcAmgllOHlT1jxY5H0Ht+Xw?=
- =?us-ascii?Q?yBYPw499NT36cwDxOYcfBc+/iI6L0JHYbCZyiCJKvHJxYEqBsNUr3OVuVKB5?=
- =?us-ascii?Q?u0edBvmnlxv+kxLKw682AKL9KnIGHTxcpiOlNWLT4KHTcFzD0TNfF+RYYaLD?=
- =?us-ascii?Q?4Zlfmeuw4HUfMGYjHGL4pghN+KdISEBnul8qaqo0ELjc3GNlI6haq7gRE6AC?=
- =?us-ascii?Q?PgMG30uGKHNkNVIughMv0L6x37GCsJzNS3RQjIFyxf4REb39bk6eL45+iJoK?=
- =?us-ascii?Q?VTVWsJKjnUVv8NeE7GdX9XQc1fbxK5ICjo9EVXJNwqGvRmPwt4GJ8qb2V3b5?=
- =?us-ascii?Q?obc1uqKhcMIqlMcreuhbfUQu4nNaEQlmiYD+STxXNtjvU4SZP8SvhHBm9CQb?=
- =?us-ascii?Q?FzbsDKaqilXVa7lQ8xxS29tOKcf9JQ4OLVdvvNgziwn2/bk3Lv77CN6mgNQI?=
- =?us-ascii?Q?1TXf1U6C4AnFmd2qWJxaZosC5waHlN1Enf/ECcTA8ahrUyaApZBKMd+dCL6W?=
- =?us-ascii?Q?M2FoaR46Ny44QyCSQFWKV7dttYajos3c?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PF1KnwXOhHwj29RNJrDApoBsDkczHSxMTLwURBqixZbSzrr7fq1e+nHK3EFO?=
- =?us-ascii?Q?+PuLimMQ17GnqfsaqPKqt7iVvBGWGlJQNn91uJs7Vj9pnBNDwBUMhTog5CTC?=
- =?us-ascii?Q?WSQ4504OELMCmCv35UIY6O2fISh+bFoNRJnXRUTUYK0EnwvaXo06J27/iyQq?=
- =?us-ascii?Q?4OYSSgGre8XCF5jWstPASFDAVWp8l9XI+jNb5JQWKA7wFIP7d6ft6bMvRJUO?=
- =?us-ascii?Q?AWxac3pe6PNi94i7af5HSy6vyc3esji62tiJUh9uDWcZIScNFsMAZ+gKaErE?=
- =?us-ascii?Q?hxgouUvpq99cceLY00Iy+qBLhScyLGskl+mVsfXTUNcHZbVYeJxy2clpWMf8?=
- =?us-ascii?Q?0yfGQbzKNxEYirlaGCO18BHmNhQSeyqUt7zPtDb5gKvxxBuckVFO3hLEAgOA?=
- =?us-ascii?Q?6rgK0WNKaJr3xybUwGS500Gkumf7DiNsAFou41cGsKHeWZcebq17in1qJjUf?=
- =?us-ascii?Q?bkvjnSbw3jTrrSM9yzo0b5em4+72LeTEvmHVrC4KGHL5BHxk6CvdBEpl92fu?=
- =?us-ascii?Q?sc8bAxPqIFm21Dl22e2qC47KWwX3jvs3e5ZPmJ7spQWbjZDghSGfsZJXG9zW?=
- =?us-ascii?Q?2oWB8vyOC7P/Vcx05OXgDQGIEz3mmiZVaqeI4Fz8lFMtK3589RnQn+ZdpG76?=
- =?us-ascii?Q?ICsImLbLt4X55k0bm0tW0+z1ilbu/u1o7eFaaukf2YruR1Gf4CQN2Iglj3h0?=
- =?us-ascii?Q?MK5iFjypIbEfIJYZl8jIrZl8nyp06Ta3M/JQriVVHocWqVMKuLn7btlAcEyk?=
- =?us-ascii?Q?v4ayYIfCOuhaRt/AhMD58VuVC3F9xZnMs8f/P8fidFA91Lx3wPqS1tlPbRpt?=
- =?us-ascii?Q?d59PL2IIG//q1zoSRiOdzk9mt7D6D+oCH2ZNeIc/qdWlfBn9d2hbm9qbARk2?=
- =?us-ascii?Q?IbHL2doI9ZcKDGR44ohROYjiExM3ZwSxehwqSjgeN3+ByRG/KYVAoJXNl6gR?=
- =?us-ascii?Q?S87dFno4Hi/Ce583kgfZTneHa+TGyyDwZSgTaJ8S4KZtcJwD8rPEVuqQjmt/?=
- =?us-ascii?Q?aYCHACWO+csv/Zl2F+GLlK/e8PhwWbmY8Nz8AUW1GI0iBBoGJwGRthBLluhn?=
- =?us-ascii?Q?0bamIL9V8Be8e1UTEG4CRA+gU/c34B7tadICtRUKJ48wQ5vGBeOJVKbxIVx1?=
- =?us-ascii?Q?tLZgj0RdqSLyy9yPOAGWQt8hGLmMZ/idKxNn1sxUONvCCWVnUyN+/xZWCyZq?=
- =?us-ascii?Q?GN5Iu8ddbbdkS2pLhcj48IhRmMw3vFsZDyw4mdVgir6DzWt9+jV94KC1YofO?=
- =?us-ascii?Q?k6uM3KLPUbeWkH9RoF8j1Y5zF7K3zaqJp3YlAomwC0dmt03XYbpFNQj8CuPy?=
- =?us-ascii?Q?dK+qKr0faWJ/4ERebrSODjFk+QYy3tgnduOrC+8cBx8A0SqrcQHoN2AC7iV6?=
- =?us-ascii?Q?llPFUNfSZ1nPr+t5SLPKF9zp2SXmp9ElxKuyyRoah7OinI8Y7RnpVyKKLIZM?=
- =?us-ascii?Q?D3iOf++vzIwYXz3CPXxhR09yYjT7ruW1ZSToOrtgH9GetMHzFxyYx1IqpkKM?=
- =?us-ascii?Q?vJL1E/xGEA8hJEbVnvHJPFz0EhvAdX9uJYYkyABxcxCJxUKDFnbew7FxuFOK?=
- =?us-ascii?Q?FVjW1jDrtujKqHyb43Jy1JCFfIAQW0K/7GFC3+OE?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c14e5bb7-c880-4627-fe6b-08de0a983812
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 20:36:42.9075
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yJv3sC6yyw7vrA2HKUN93jnd5MIll29qbEpn+pIi5lTfm+0xYEgc6GztxDEbOK/euKjbjIOW7YPqw0k2/asd3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9575
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Brian Foster <bfoster@redhat.com>
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
+ <CAJnrk1ZCXcM4iDq5bN6YVK75Q4udJNytVe2OpF3DmZ_FpuR7nA@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1ZCXcM4iDq5bN6YVK75Q4udJNytVe2OpF3DmZ_FpuR7nA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-If we load a BPF scheduler while another scheduler is already running,
-alloc_kick_pseqs() would be called again, overwriting the previously
-allocated arrays.
 
-Fix by moving the alloc_kick_pseqs() call after the scx_enable_state()
-check, ensuring that the arrays are only allocated when a scheduler can
-actually be loaded.
 
-Fixes: 14c1da3895a11 ("sched_ext: Allocate scx_kick_cpus_pnt_seqs lazily using kvzalloc()")
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On 10/13/25 22:27, Joanne Koong wrote:
+> On Mon, Oct 13, 2025 at 1:16 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+>>
+>> On 10/13/25 15:39, Miklos Szeredi wrote:
+>>> On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>>
+>>>> My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
+>>>> similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
+>>>> that it hasn't been invalidated.  If old_mtime is invalid or if
+>>>> FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
+>>>> cache is not invalidated.
+>>>
+>>> [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
+>>> Link to complete thread:
+>>> https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.com/#r]
+>>>
+>>> In summary: auto_inval_data invalidates data cache even if the
+>>> modification was done in a cache consistent manner (i.e. write
+>>> through). This is not generally a consistency problem, because the
+>>> backing file and the cache should be in sync.  The exception is when
+>>> the writeback to the backing file hasn't yet finished and a getattr()
+>>> call triggers invalidation (mtime change could be from a previous
+>>> write), and the not yet written data is invalidated and replaced with
+>>> stale data.
+>>>
+>>> The proposed fix was to exclude concurrent reads and writes to the same region.
+>>>
+>>> But the real issue here is that mtime changes triggered by this client
+>>> should not cause data to be invalidated.  It's not only racy, but it's
+>>> fundamentally wrong.  Unfortunately this is hard to do this correctly.
+>>> Best I can come up with is that any request that expects mtime to be
+>>> modified returns the mtime after the request has completed.
+>>>
+>>> This would be much easier to implement in the fuse server: perform the
+>>> "file changed remotely" check when serving a FUSE_GETATTR request and
+>>> return a flag indicating whether the data needs to be invalidated or
+>>> not.
+>>
+>> For an intelligent server maybe, but let's say one uses
+>> <libfuse>/example/passthrough*, in combination with some external writes
+>> to the underlying file system outside of fuse. How would passthrough*
+>> know about external changes?
+>>
+>> The part I don't understand yet is why invalidate_inode_pages2() causes
+>> an issue - it has folio_wait_writeback()?
+>>
+> 
+> This issue is for the writethrough path which doesn't use writeback.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index c645d47124e72..12c9c35956926 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -4577,15 +4577,15 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 
- 	mutex_lock(&scx_enable_mutex);
- 
--	ret = alloc_kick_pseqs();
--	if (ret)
--		goto err_unlock;
--
- 	if (scx_enable_state() != SCX_DISABLED) {
- 		ret = -EBUSY;
--		goto err_free_pseqs;
-+		goto err_unlock;
- 	}
- 
-+	ret = alloc_kick_pseqs();
-+	if (ret)
-+		goto err_unlock;
-+
- 	sch = scx_alloc_and_add_sched(ops);
- 	if (IS_ERR(sch)) {
- 		ret = PTR_ERR(sch);
--- 
-2.51.0
 
+Oh right. So we need some kind of fuse_invalidate_pages(), that would
+wait for for all current fuse_send_write_pages() to complete? Is that
+what you meant with 'fi->writectr bias'?
+
+Thanks,
+Bernd
 
