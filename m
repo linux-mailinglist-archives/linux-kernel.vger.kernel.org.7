@@ -1,253 +1,142 @@
-Return-Path: <linux-kernel+bounces-850539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D29FBD321E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:05:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFBABD3227
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E5B0234BEEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:05:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5B034E8ECC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AECD2E6CA5;
-	Mon, 13 Oct 2025 13:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0B22E92D6;
+	Mon, 13 Oct 2025 13:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JzZ12+v7"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eiOlibJ5"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E455270ED7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C62BCFB
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760360716; cv=none; b=XMFdaSF/wkYUBcrhtaPqcV5B9ERnKqVnZ13fXszAIxNrsnNMRCiMhOK84umvOjsgo8K9/hoV580XnGM8fJjyjxtZq4qylyYFPAL+JdqFyInnPujByH582SGeZDE8+o6lPVTFjBKG3hYNL1653oeCE/occaPiqm6eOSVb7SDTSF8=
+	t=1760360809; cv=none; b=m8NoOyZTk86jy3NPH6bpxqyx6UQn4o0UZzXUnF9ph3bv0qKvmARUfwNwlnBpJUx+6aH71nL++ml0KvnW1cUmpkNQDh1u2WVaYquci3YOVcWpz1T+yvVKT7Pfd59klAuwMgBhENj5RMxl5h/HAJhZAqSSwoBfAfehp4kiTvwbjpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760360716; c=relaxed/simple;
-	bh=OfBZdKCXLdXnDq8fdQ6ytW1UWFw/HC1A/Mu91/7QWi4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y+5vyf97fP8KrTa99Sa1PotDoGOfZccdE1yOxLgEa9qvGp2FN5ENc57Z84LNK2mPLNtL3aTkQo1UaV4wGHFZ4vcaKkIqkIND5omspDxiqP3+K33TC8izwc0LfonNUnanQh6XeQ+M0DD7x5kk3ryPCbglqb3IdNSwZpmakQwF6pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JzZ12+v7; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B0F081A132F;
-	Mon, 13 Oct 2025 13:05:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 79D57606C6;
-	Mon, 13 Oct 2025 13:05:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DA468102F224D;
-	Mon, 13 Oct 2025 15:04:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760360707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=qxp3SOl/8cQ2/Ve+mDrdRsUEubzjiO7EQKOltPp8XlU=;
-	b=JzZ12+v7YOgnrn50SuxLuwOqkPODiUsStbxKYfCO95ARPi/hikoWycKWNFk4FqCtK+w/wS
-	dTxdxT5iqiGEmELiQJtPWAmXj9utndOVshnWHtJG7ybaVSsgqxBIhiahSELWrbjqPOO1F8
-	1hJnRdGVthjB/FEXBUfQJUIo1S51zeJOtm0xSfBHaM6Xrk4vP6yaz0PE+p+Hx3kEYhbOSY
-	AYnWWUt4Hy9mKmESSktAtOblcBdm4DPEkRCsxw68G1UzAw/PHT4/XHLrbZsXe+7OVcqL5O
-	YznbQCvKoHRMJKd5nTYQK+8g1pJI/881OZbjHxzX1SdXV1JAzBhObPZoJH1GnQ==
-From: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
-Date: Mon, 13 Oct 2025 15:04:44 +0200
-Subject: [PATCH v5] mux: mmio: Add suspend and resume support
+	s=arc-20240116; t=1760360809; c=relaxed/simple;
+	bh=+JrAJiQnQesllvCVS422pN9G7kOwYoBJGo6cNnQcMxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S5ExinxWwRyDuhNtN7VkLvi64rVaTjl5Zq39P2xESdfyBSr5lSTD5roFt6eNJJwH1LjHBxi3TX86dvNVehyL//nVltV+qj0wO9utWAp3Vw1IFnjfjw38emIcMFFv05wYkIqkAr61IcEYPHeO9QqLGKcLk9sDz0YeEESEpRjqbVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eiOlibJ5; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62fca01f0d9so8641604a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760360806; x=1760965606; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TubnhjRQIQK9VyxP1w8Jz/JseEsSrSwGf9ziOFfYLUk=;
+        b=eiOlibJ5/e0rtLpSxXO6zkDLWExpzrnyXewAdxv5R2EcIo/73WXlE1Nvgjv5uhqygr
+         NNEabwXoVAxcheT+2hlbAt3Czs9xgE6ZfJIPMzfKPzpconC9lfzW6GDQYaSu0gYyTikP
+         WjB5PYP0+8+P+l2jN1Fszo+F4Z4ILnRgeD/iEg20k6c14qy0tYM3vyhODn7N2lgOGSlW
+         44nxHyJRG3kbAljXVkc0bN19+neNnsH9N957FxJp005qcFj3N6SJV81VcToqQg9kjiit
+         M4nePVHHecvWNupOhC97DyQk/wevl3ZVKB6K3yfcAbjey+9aV7lRgOJ8LUhszN9ZIIXC
+         2YRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760360806; x=1760965606;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TubnhjRQIQK9VyxP1w8Jz/JseEsSrSwGf9ziOFfYLUk=;
+        b=OOACJb50hvVi6TPZIpUEqIFlLSqPTVbXvomgsYJYwDa2Vja4p0cgoaoUZihpEfCXd/
+         zR7HHzCDFQstdO0xUAHCG5EBujGH9dgxm+L6osumfZ2ZeJonFyB65yolB2fCExQVmlio
+         FPNbnZPVhbqMTcs4hKn2MKdBOaiKj1aQQOKoqFakeHNovpuVcW5CQOEaJbnid8qtXTHn
+         0aMd7SpzPCPmNNLO3A+APmJQ2KQj1NOVvW57iyVNCGO74BdjHihXIPhaxnX3eQ+Hiz5X
+         snF8rYVyFxCfC5vWJnfrWCdAVDMWwOpQWtSvoVLEx1KbfcqtOtLnZi9UvYmyiJScjzWO
+         nBpw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5pWtDlRzbEb9ps/MddgDTgHS5o+gh+iXzMp+J7+F7ZoFcdKgIhftKyshcLWpNdWCdfxGrLdncofDQEMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxPjwJ71JjHDAUC828ui3uU1I/pMXV7wpU0lfGMZ7Ka2i0p4ud
+	uUV6L5VIE99w4VVIw4SDSTaOhEQ+bA0st/7pCzNyik3a7cScjv6jLG5A5x41jnh5adtjmZJ2zaN
+	d4bgaJ1YnuxEK4MCD2VxdI1PGZIk7v3cD70mIQxPyzq8BzI7szk820KG9ughj
+X-Gm-Gg: ASbGnctvjn8FhFiQmQm5A2HEZTgeY+9PwTjIzn7Ic/4fHxbxXH36NkpJoIaNExnX1V0
+	lU0QyFmB5hFAzzwMIkAEw9dMP4tDPG9rJ2AbOoGh/LFQMlc/OKDbtXE2y95ZddxpfrZeGrV+jnv
+	INYnB31WGa0Y0sq+Kki+mReDyDj6Jrds4X4gc9DfTW9aqj4NyEsFpcsbnBlFLWNvjMZCb8LZByE
+	xiFaXRACP3vAlyEc603JDml1TpsZbjXpbf2ZDCffMM05ZA76GwoPGJ4g+TPwUM=
+X-Google-Smtp-Source: AGHT+IEJdl7nKyjjUWp7J9J4Bp6aSrz+/GMs1soPCOuRkAB+TSp97XKDTmI2RGo+buNVNeL9bBaZ2PquGW3ObBFY6yU=
+X-Received: by 2002:a17:907:6d25:b0:b45:8370:ef10 with SMTP id
+ a640c23a62f3a-b50aaa9c419mr2027646866b.22.1760360806112; Mon, 13 Oct 2025
+ 06:06:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-mux-mmio-resume-support-v5-1-de9467ceb2b2@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAOv47GgC/43OQW7DIBAF0KtErDsVhgHbWfUeVRZAxjVSMRbYV
- qLIdy9EqqoqitrlH2be58YyJU+ZHQ83lmjz2cepBPVyYG400weBP5fMBBfIdSMhrBcIwUdIlNd
- AkNd5jmkBHKQVRqKRwrBybU0msMlMbqz3WSSoo/o0Jxr85V76fip59HmJ6Xr/w9bU6d91WwMcU
- AllB6XLsnmzMS6ffnp1MbCqbuKfkoAGqMNe8763XOKjJL8lxZG3zyVZJGe7zljH8WzbRwl/pFL
- 3XMIilQUt2nbQmtNvad/3LydlRJW5AQAA
-X-Change-ID: 20240613-mux-mmio-resume-support-4f3b2a34a32a
-To: gregkh@linuxfoundation.org
-Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org, 
- gregory.clement@bootlin.com, richard.genoud@bootlin.com, u-kumar1@ti.com, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>, 
- "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251006104652.630431579@infradead.org> <20251006105453.648473106@infradead.org>
+ <CAKfTPtCC3QF5DBn0u2zpYgaCWcoP2nXcvyKMf-aGomoH08NPbA@mail.gmail.com>
+ <20251008135830.GW4067720@noisy.programming.kicks-ass.net>
+ <CAKfTPtDG9Fz8o1TVPe3w2eNA+Smhmq2utSA_c6X4GJJgt_dAJA@mail.gmail.com>
+ <aObK2MfxPyFcovwr@slm.duckdns.org> <CAKfTPtApJuw=Ad8aX=p3VLvMojyoxVBVRbMG80ADXR-NVL0PTw@mail.gmail.com>
+ <20251013110449.GJ4067720@noisy.programming.kicks-ass.net> <20251013110911.GF4068168@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251013110911.GF4068168@noisy.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 13 Oct 2025 15:06:33 +0200
+X-Gm-Features: AS18NWAzGT3q8fm8LwBT4URFj98EAHmqBs8SLH_4hZU7YH6-erXmlA6fCUaV1_I
+Message-ID: <CAKfTPtDGsS-+DZEemg6vqbQVV5Xds9TNVnOAOvyeNsw0Kn3Mzw@mail.gmail.com>
+Subject: Re: [RFC][PATCH 2/3] sched: Add support to pick functions to take rf
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, mingo@kernel.org, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, longman@redhat.com, 
+	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com, arighi@nvidia.com, 
+	changwoo@igalia.com, cgroups@vger.kernel.org, sched-ext@lists.linux.dev, 
+	liuwenfang@honor.com, tglx@linutronix.de, 
+	Joel Fernandes <joelagnelf@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The status of each mux is read during suspend and stored in the private
-memory of the mux_chip.
-Then the state is restored during the resume.
+On Mon, 13 Oct 2025 at 13:09, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Oct 13, 2025 at 01:04:49PM +0200, Peter Zijlstra wrote:
+>
+> > Bah; so yeah, this new behaviour is better for indeed always calling
+> > newidle when it is needed, but you're also right that in case of ext
+> > this might not be ideal.
+> >
+> > So I have a pile of newidle hacks here:
+> >
+> >   https://lkml.kernel.org/r/20251010170937.GG4067720@noisy.programming.kicks-ass.net
+> >
+> > and while I don't particularly like NI_SPARE (the has_spare_tasks thing
+> > is fickle); the idea seems to have some merit for this situation --
+> > where we know we'll not be having fair tasks at all.
+> >
+> > I mean, we can always do something like this to sched_balance_newidle():
+> >
+> >       if (scx_switched_all())
+> >               return 0;
+> >
+> > Not pretty, but should do the job.
+>
+> Oh, never mind, none of this is needed.
+>
+> __pick_next_task()
+>
+>         if (scx_enabled())
+>           goto restart;
+>
+>         ...
+> restart:
+>         for_each_active_class(class) {
+>                 ...
+>         }
+>
+>
+> And then we have next_active_class() skip fair_sched_class entirely when
+> scx_switch_all().
 
-Reviewed-by: Andrew Davis <afd@ti.com>
-Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
----
-A fifth version of the series. Nothing fancy, I just rebased the series on
-v6.18-rc1 and updated my identity.
----
-Changes in v5:
-- updated my identity to credit TI
-- rebased on v6.18-rc1
-- Link to v4: https://lore.kernel.org/r/20250609-mux-mmio-resume-support-v4-1-6096277f660e@bootlin.com
+Ah yes you're right. fair is not called in case of scx_switched_all()
 
-Changes in v4:
-- rebased on v6.16-rc1
-- Link to v3: https://lore.kernel.org/r/20250407-mux-mmio-resume-support-v3-1-cb88abc04db7@bootlin.com
-
-Changes in v3:
-- rebased on v6.14-rc1.
-- Take Reviewed-by: Andrew Davis.
-- Link to v2: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com
-
-Changes in v2:
-- Remove all modifications done in the mux subsystem
-- Add a mux_mmio_set()
-- Read the status of muxes during suspend and store in the private memory
-  of the mux_chip.
-- Use this status to restore muxes during resume.
-- Link to v1: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com
----
- drivers/mux/mmio.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 73 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
-index 9993ce38a818de12237cd700e4c19359ea7f4c29..e4ddb1e619237dbb307677a20564eb08f62d11ab 100644
---- a/drivers/mux/mmio.c
-+++ b/drivers/mux/mmio.c
-@@ -15,11 +15,25 @@
- #include <linux/property.h>
- #include <linux/regmap.h>
- 
-+struct mux_mmio {
-+	struct regmap_field **fields;
-+	unsigned int *hardware_states;
-+};
-+
-+static int mux_mmio_get(struct mux_control *mux, int *state)
-+{
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-+	unsigned int index = mux_control_get_index(mux);
-+
-+	return regmap_field_read(mux_mmio->fields[index], state);
-+}
-+
- static int mux_mmio_set(struct mux_control *mux, int state)
- {
--	struct regmap_field **fields = mux_chip_priv(mux->chip);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-+	unsigned int index = mux_control_get_index(mux);
- 
--	return regmap_field_write(fields[mux_control_get_index(mux)], state);
-+	return regmap_field_write(mux_mmio->fields[index], state);
- }
- 
- static const struct mux_control_ops mux_mmio_ops = {
-@@ -43,8 +57,8 @@ static int mux_mmio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct regmap_field **fields;
- 	struct mux_chip *mux_chip;
-+	struct mux_mmio *mux_mmio;
- 	struct regmap *regmap;
- 	void __iomem *base;
- 	int num_fields;
-@@ -80,12 +94,20 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 	}
- 	num_fields = ret / 2;
- 
--	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
--				       sizeof(*fields));
-+	mux_chip = devm_mux_chip_alloc(dev, num_fields, sizeof(struct mux_mmio));
- 	if (IS_ERR(mux_chip))
- 		return PTR_ERR(mux_chip);
- 
--	fields = mux_chip_priv(mux_chip);
-+	mux_mmio = mux_chip_priv(mux_chip);
-+
-+	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
-+	if (IS_ERR(mux_mmio->fields))
-+		return PTR_ERR(mux_mmio->fields);
-+
-+	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
-+						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
-+	if (IS_ERR(mux_mmio->hardware_states))
-+		return PTR_ERR(mux_mmio->hardware_states);
- 
- 	for (i = 0; i < num_fields; i++) {
- 		struct mux_control *mux = &mux_chip->mux[i];
-@@ -115,9 +137,9 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 			return -EINVAL;
- 		}
- 
--		fields[i] = devm_regmap_field_alloc(dev, regmap, field);
--		if (IS_ERR(fields[i])) {
--			ret = PTR_ERR(fields[i]);
-+		mux_mmio->fields[i] = devm_regmap_field_alloc(dev, regmap, field);
-+		if (IS_ERR(mux_mmio->fields[i])) {
-+			ret = PTR_ERR(mux_mmio->fields[i]);
- 			dev_err(dev, "bitfield %d: failed to allocate: %d\n",
- 				i, ret);
- 			return ret;
-@@ -141,13 +163,55 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 
- 	mux_chip->ops = &mux_mmio_ops;
- 
-+	dev_set_drvdata(dev, mux_chip);
-+
- 	return devm_mux_chip_register(dev, mux_chip);
- }
- 
-+static int mux_mmio_suspend_noirq(struct device *dev)
-+{
-+	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-+	unsigned int state;
-+	int ret, i;
-+
-+	for (i = 0; i < mux_chip->controllers; i++) {
-+		ret = mux_mmio_get(&mux_chip->mux[i], &state);
-+		if (ret) {
-+			dev_err(dev, "control %u: error saving mux: %d\n", i, ret);
-+			return ret;
-+		}
-+
-+		mux_mmio->hardware_states[i] = state;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mux_mmio_resume_noirq(struct device *dev)
-+{
-+	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-+	int ret, i;
-+
-+	for (i = 0; i < mux_chip->controllers; i++) {
-+		ret = mux_mmio_set(&mux_chip->mux[i], mux_mmio->hardware_states[i]);
-+		if (ret) {
-+			dev_err(dev, "control %u: error restoring mux: %d\n", i, ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, mux_mmio_suspend_noirq, mux_mmio_resume_noirq);
-+
- static struct platform_driver mux_mmio_driver = {
- 	.driver = {
- 		.name = "mmio-mux",
- 		.of_match_table	= mux_mmio_dt_ids,
-+		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
- 	},
- 	.probe = mux_mmio_probe,
- };
-
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20240613-mux-mmio-resume-support-4f3b2a34a32a
-
-Best regards,
--- 
-Thomas Richard (TI.com) <thomas.richard@bootlin.com>
-
+>
+> So in the common ext case, we'll not hit pick_next_task_fair() at all.
 
