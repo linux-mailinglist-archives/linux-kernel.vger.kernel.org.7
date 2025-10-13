@@ -1,94 +1,77 @@
-Return-Path: <linux-kernel+bounces-850520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A5EBD3140
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:51:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E26BD317F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 74F0134BE7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:51:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7F5B4F121A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36F12E2657;
-	Mon, 13 Oct 2025 12:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C7A2DFA24;
+	Mon, 13 Oct 2025 12:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GS7Jg828"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="bko6Izia"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BD02868AD
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80BB221282;
+	Mon, 13 Oct 2025 12:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760359905; cv=none; b=oHX+FIkdhsO5yqWZ2iTZuTpeL/Mfmxw9a22GDClYd4WWcwMdpt9ZcC/Bc1qYn5Gr30droLJY0QrQf8lqsJx3ONK49rfe6tzy/bbbYwOIaTjY5+RKn/zNkOe80b+xA5GFTP9zYTVvr/WRX3Gn5N+FkY/JAWhcVEUpTudbZvu6yvY=
+	t=1760360065; cv=none; b=Yo5LdMZa2yRKoWlDw/m9CIgjOaJESAPWssVN/PkrSdNCI9KmBuAMJ6ydkvOz6BHiqtrqlA/5B1KSZyJVlciPuFzjcqdS7j9d54itfU0bF2eESwPjTPwUQZrK43GtEnCERmtv47Vkt79e+nMI19Ex+tUfVVdvNtyWxO/WSkPKFlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760359905; c=relaxed/simple;
-	bh=J/dzWtKuI6KBjBEpLOQM0goLapAMplM4s0j7SX3F+KQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TKKP35XAylKL6JwYFyNCPCsrecB9cexIzX/3o3JDfgOT0EjcPAtZ0PwlR1wfrmVnMrpdoxvBjJ+L7RP7wVp/EhfNfG1IleWTWuZk1gh7oHxZy4amQCo8l0vjVO7KRmj6EZD9gzxgkvg7Boa7RN7LS1jwZvk+ihMvlI0pyp1lGCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GS7Jg828; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33082c95fd0so5096906a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760359904; x=1760964704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qp4XEa7ToS5FljKv+e4kbXkPaJ8IiCtEps0yhLGiUvo=;
-        b=GS7Jg828Dy3pvC7EdxvX78txIDyDUBH+bLWj+ewTYxpPQt6m26mMSXAaCOXe6Sn4iK
-         wD3x/nFsbfuJemey99taA+7QrUZEEIeHcLh2jwhQC75mZwR5zjI3VnAMdT7Mxg/Tfiz5
-         7IRx73c1Ok1JyxM1MEAKDWeOT3lE4j1BgewnpQLPBMhbjSTWMnSHpAwyUKiNZKhoRrxH
-         LVn5AQI1FMFglCBipRCYgC5Ru/l64A1N7l5v7aIRsnYgiZDtLzBxFbPx9S1BRinvADtK
-         aLsxc4/z2QpcK+Sj2QCLPX1nO9iIXH4Viz0D88ZQPni/Up+YXluoEBbysLkRL62iTsgs
-         8Tkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760359904; x=1760964704;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qp4XEa7ToS5FljKv+e4kbXkPaJ8IiCtEps0yhLGiUvo=;
-        b=jVwHoeJALiub+iRGIdD+gH5Mc9YJRmJLhnxpKURixn89U/wPaz3ePV8KE1Xgmdngak
-         2XyGh5ueYmb+B49hQ7D/inqTuL9wk1nwfSBbxMIhRyy4iPjoMdsMxlTXn/8GkXnoSITG
-         9usvWOAXSLPBah6kmcWD9lC9sDOuf2pJ9eFERjguGX/PbXjSBEeQgfsyQc+NUoMYpROw
-         4xLUQHjc90LxupmaEGWhZs9me3Zy0fEEgbzEoQVi04PnSWwtqYggQoEF/SPVzcP7Bvrq
-         Bl4b5QtG3CuLx6PQixKnSkIkGI1f6/iILAjy7DW5AOr4rGztW8z7aLaTggfTCaLD3uTe
-         g8gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCyiiWUKpcFphyk1ILgmqPPK6rIH81n7clwFnzjl/UY586AnAJ8mNHa69F4sPOyR0elCCmdOoE3oUxiyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSQ2DZVpeDFjAEXx9v4IhisGEEpWvHZVAtKr0NeGkE3wEzI/1o
-	F5Pdr2th996TVcSaZzDuDQMrydvuF6ppxOCiuR9ICIHsK9at4I4S3CRa
-X-Gm-Gg: ASbGncuvkAw5+0C350GZt/2pIJpXmljhSgHgDDPnrVCfRBHnwsQ1vE7o+sRCnBUyWy9
-	XOLGjQBc4YXT0s8IgVqr6VnbtqpZrQhGscLAMOvtPx/v4s4GcwfzQP1p5xaFrKbaUIxhTqZK00c
-	qgYszVhgMGKFqk6EqIIMELJQHDtSxKXnSl37Wgm9xTVEidsQdXYePKBpPytMhwZma2t8d3yAalW
-	eD+KdYuJp7ka3azKRqXmOmFifut2LTOdYK7COpZlLYlze+GBg88s8AHGz1XmTyDQUjS5EbTGpHJ
-	lq8dYtc1Yyfq4UZYCGD7KCF955RSHD8Ths8XZIcp2R+Tpvy5F9f/rO0N2NhiBM8NsXMoaD4APy+
-	JYIBOnJSSVwB52JwcJ+crdEiKc3IXn7zK5LATUT0kglg8ySGFVuJcPnhtSMl6ag/yaA==
-X-Google-Smtp-Source: AGHT+IHCsN9tB1NFXjLxHlC1i+3jugsgr76PwZZhuE+ita/pwHESbjDT12QASzBbG7b8q5FB7Uoukw==
-X-Received: by 2002:a17:90b:17ca:b0:32b:a332:7a0a with SMTP id 98e67ed59e1d1-33b5114b648mr28154449a91.1.1760359903593;
-        Mon, 13 Oct 2025 05:51:43 -0700 (PDT)
-Received: from localhost.localdomain ([47.82.118.6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b5288043fsm9567422a91.0.2025.10.13.05.51.38
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 13 Oct 2025 05:51:42 -0700 (PDT)
-From: fuqiang wang <fuqiang.wng@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: fuqiang wang <fuqiang.wng@gmail.com>,
-	yu chen <chen.yu@easystack.com>,
-	dongxu zhang <dongxu.zhang@easystack.com>
-Subject: [PATCH RESEND] avoid hv timer fallback to sw timer if delay exceeds period
-Date: Mon, 13 Oct 2025 20:51:17 +0800
-Message-ID: <20251013125117.87739-1-fuqiang.wng@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1760360065; c=relaxed/simple;
+	bh=L7+PxtlhY9is9LjywV0tCfdUqVR49ZUEWQMdnkVGxBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hZvtKEUfHf/GgrnaCClPpWY0n/ir3aj4HPjjciFAZ14ezLPmvsRSsNPDOX9rzaJX9w+fvXR/rs3mX/GhB629Vxs9yiA9fedAuunfFieXqrdKy70n9mL8yk6zcJSMoe6uNJXRPHqH798AkRrXrCTFRO0yYfUw+25wgdVQ5Teis1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=bko6Izia; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=yfm/7rIRxrdQchuqCwWdJAFp75V4e2SbGSDW6ClnPLw=; b=bko6Iziag3XBdxPNe1n7hUydwV
+	zyEFJjI39w2KYt/2gNH4/YesyyN0SnzYw04NIMN79aupO9+PKhXRxLSdfR6UtdNAaEdCxoOsSACId
+	zQfLRxI/KxxeAi0tALO36CEQI3ehayW5Rw0sRa/8/gpNHbpOJ9nF4MtUoZnkcgQ2h9frs9RxV9nfF
+	+4HKrBl1C778yVW0OjFSx2WmDSR+MHIXJ6Wi2GGgio02rZiAeEkArDfmJTzx97phTQiMlvpC4xVyc
+	J8MFfxXNfLRIiDZsmSu3M5Nih10HqWbtP3lIsmKd1cHHJCopA62uxT48VU7XZszKfa8+sKl4a8LKW
+	MA+k1vQQ==;
+Received: from [122.175.9.182] (port=8361 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1v8I46-00000004TOu-2ksu;
+	Mon, 13 Oct 2025 08:54:15 -0400
+From: Parvathi Pudi <parvathi@couthit.com>
+To: tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	richardcochran@gmail.com
+Cc: linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	danishanwar@ti.com,
+	pratheesh@ti.com,
+	prajith@ti.com,
+	vigneshr@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	mohan@couthit.com,
+	pmohan@couthit.com,
+	basharath@couthit.com,
+	parvathi@couthit.com
+Subject: [PATCH 0/2] Add support for ICSSM Ethernet on AM57x, AM437x, and AM335x
+Date: Mon, 13 Oct 2025 18:22:42 +0530
+Message-ID: <20251013125401.1435486-1-parvathi@couthit.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,60 +79,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-When the guest uses the APIC periodic timer, if the delay exceeds the
-period, the delta will be negative. nsec_to_cycles() may then convert this
-delta into an absolute value larger than guest_l1_tsc, resulting in a
-negative tscdeadline. Since the hv timer supports a maximum bit width of
-cpu_preemption_timer_multi + 32, this causes the hv timer setup to fail and
-switch to the sw timer.
+Hi,
 
-Moreover, due to the commit 98c25ead5eda ("KVM: VMX: Move preemption timer
-<=> hrtimer dance to common x86"), if the guest is using the sw timer
-before blocking, it will continue to use the sw timer after being woken up,
-and will not switch back to the hv timer until the relevant APIC timer
-register is reprogrammed.  Since the periodic timer does not require
-frequent APIC timer register programming, the guest may continue to use the
-software timer for an extended period.
+This series adds support for ICSSM Ethernet on AM57x, AM437x and AM335x.
 
-The reproduction steps and patch verification results at link [1].
+The AM57x and AM437x IDKs support two PRU-ICSS instances, each consisting
+of two PRU cores, with each PRU-ICSS instance capable of handling two
+Ethernet ports. For the AM57x platforms, the PRU-ICSS2 node has been added
+to the am57xx-idk-common.dtsi, while for the AM437x platform, the PRU-ICSS1
+node has been added to the am437x-idk-evm.dts.
 
-[1]: https://github.com/cai-fuqiang/kernel_test/tree/master/period_timer_test
+The AM335x ICE features a single PRU-ICSS instance. A new device tree source
+file, am335x-icev2-prueth.dts, has been introduced to define the PRU-ICSS node
+for the AM335x platform.
 
-Fixes: 98c25ead5eda ("KVM: VMX: Move preemption timer <=> hrtimer dance to common x86")
-Signed-off-by: fuqiang wang <fuqiang.wng@gmail.com>
----
- arch/x86/kvm/lapic.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+This series is based on the latest next-20251010 linux-next.
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 5fc437341e03..afd349f4d933 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2036,6 +2036,9 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
- 	u64 tscl = rdtsc();
- 	ktime_t delta;
- 
-+	u64 delta_cycles_u;
-+	u64 delta_cycles_s;
-+
- 	/*
- 	 * Synchronize both deadlines to the same time source or
- 	 * differences in the periods (caused by differences in the
-@@ -2047,8 +2050,11 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
- 		ktime_add_ns(apic->lapic_timer.target_expiration,
- 				apic->lapic_timer.period);
- 	delta = ktime_sub(apic->lapic_timer.target_expiration, now);
-+	delta_cycles_u = nsec_to_cycles(apic->vcpu, abs(delta));
-+	delta_cycles_s = delta > 0 ? delta_cycles_u : -delta_cycles_u;
-+
- 	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
--		nsec_to_cycles(apic->vcpu, delta);
-+		delta_cycles_s;
- }
- 
- static void start_sw_period(struct kvm_lapic *apic)
+Thanks and Regards,
+Parvathi.
+
+Roger Quadros (2):
+  arm: dts: ti: Adds device tree nodes for PRU Cores, IEP and eCAP
+    modules of PRU-ICSS2 Instance.
+  arm: dts: ti: Adds support for AM335x and AM437x
+
+ arch/arm/boot/dts/ti/omap/Makefile            |   1 +
+ .../boot/dts/ti/omap/am335x-icev2-prueth.dts  | 533 ++++++++++++++++++
+ arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi      |  11 +
+ arch/arm/boot/dts/ti/omap/am4372.dtsi         |  11 +
+ arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts  | 137 ++++-
+ arch/arm/boot/dts/ti/omap/am57-pruss.dtsi     |  11 +
+ arch/arm/boot/dts/ti/omap/am571x-idk.dts      |   8 +-
+ arch/arm/boot/dts/ti/omap/am572x-idk.dts      |  10 +-
+ arch/arm/boot/dts/ti/omap/am574x-idk.dts      |  10 +-
+ .../boot/dts/ti/omap/am57xx-idk-common.dtsi   |  61 ++
+ 10 files changed, 783 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm/boot/dts/ti/omap/am335x-icev2-prueth.dts
+
 -- 
-2.47.0
+2.43.0
 
 
