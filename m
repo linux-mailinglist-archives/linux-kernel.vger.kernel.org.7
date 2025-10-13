@@ -1,411 +1,240 @@
-Return-Path: <linux-kernel+bounces-850921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA17BD4BD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:05:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA07BD4D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B942B4828CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:55:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 578EF566277
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C93931B102;
-	Mon, 13 Oct 2025 15:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288D431065C;
+	Mon, 13 Oct 2025 15:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="XB1W3/4Y"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kHe81I4Y"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010031.outbound.protection.outlook.com [52.101.84.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD77313548
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369748; cv=none; b=P5gETOP5p8Qt+SV+NR2dD6RwTVCSWNALoUr4tN/9QMWkWKbZq4T3jagrMejOCjwmmFB+pqwvjNA25/T1uSbenPt9vUH6SMNKuxX2XsvARsHw/emT5BJc5x12aazFyi/XyIXyMH7y4IJQ+0pSlu7wp61ikhII6hwPwTRkenroer0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369748; c=relaxed/simple;
-	bh=4aZka/RAU4QYbrbCdQ/ULFAxcWVzlo5Q0/JoKZooWf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dTHFqP+VkOArmzWmH0sbWZPIKID07AUuYembJvnzVs+6qCs2UcpMbCQfEh8mj4JEKrY5Tg8a4CehepnLQYw8F/67jSbGp1O6G6HHd/y8jxN9JCDmGjUqpAUsmegHb6rg/BsSG3gxQUw3Oz0zaox5Z6EnVCYXyGY0WbTjhsSrKws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=XB1W3/4Y; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-42f91d225c9so17699855ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1760369745; x=1760974545; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IC7TMG3lk59s+A7a4ImbP9PPZe+ugMZHmrnVEzsSLBc=;
-        b=XB1W3/4YXfKWBN7N8PXR5JDV8WMyWgKcUjwcsdPrgY3tRzgQHMu/rJwOs1ltkB6F6N
-         N5tLw1oQY6kfu7NZlggWYegFYU79szF1kEjW1pBwJ3UoJL9zCywV3YITk9VQlXasp/Nl
-         JhM13S33p6Lj/MudxFuZYEuSYvHdqx6lQAatnIKdKIDpezy1eckO8q/rvEv4ehxXGDOy
-         +kbXv/Wmq43FjKU6rXe6mtEaKBzXpw2yBVJE0CHsX7FPD+uxy4AF6MFBBm6DQU8ZHrww
-         JeKcse3k1zLEbanEEv8upLaRzAh6gla2rYRznl25m6yg0Eo5A6JwftjS59oRUhEbdO7H
-         pitg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760369745; x=1760974545;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IC7TMG3lk59s+A7a4ImbP9PPZe+ugMZHmrnVEzsSLBc=;
-        b=JzP02xbevLm+MuJ1VflyrNqF7qihpCr+kRrHu8JIdeyUbb+/N6UTUU4zFr9rPH3xZU
-         VEnwE0N+szlpDtEcFP89dPqFNSQAMQo0BIEQPfhPjmn3wTv7OVvNdJ/w2yz0rsM/otnx
-         eVV5eg6cnNppIbb4lH0M3TGSO7Ub0g+YIHA9R1uvqjVaVPeemxwt4DKhOOLpFYmj1EUT
-         l4/1bJXQJ/38CLh3xaOMwGCBqDZFV4VeCENgTqYRJza/m3HktEVigC3+CHSMGuuri+Ca
-         TdWdG1nYphTZ59vOf2eK1gnMe16wrn2vLihpqb2GJ5xVQrVcAPXfVyEVOLa08ISjE1aR
-         6C9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWVUKuFhTWKlo4ie/MSI2binBXApB39ecLVjbs1eSa+HEG0KjwORTssmJIyc7sEGqQo1IPcv06Oc7Og0rU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwelUNaE6HuurADABPKIi+t3x99fPFDXfznaoXKsqAD5Cz4hYGy
-	dOKMXshLq6pQj1/QEI43MOvfFBj36W2wHOdnCS6BjWYpub4cYUjSZlskbwSNmghakhY=
-X-Gm-Gg: ASbGncsytnT0SQBs8ErOmcqBkz2Q+LRsa532au0oVKIyER+Du2X1EZRs+Yb82dT3f6O
-	ASXgJVJHPP7VT+t+at6Bv3BASbHcXy3b8ZvzE/sIyK+SsP9r1BsAx41+potJu89ZiL9wE0Zj7Ui
-	q7kP3x3hOW1+INFmdmTmdhDLWXfJAe4x24hL9QExBejTXoSzoFwk906o8nzaoAF0N5hPePf2uls
-	8F3L1w+6bRQs4xy0bN+bDGlZwVkOL+3Jl5EeWnBY9B86LAAAQXKUy8ahNI1oQM0Q8Iyn005gXTw
-	eIWv0EYArITBBlGfgPQ1GuMnCQzlhhGzpBS4EcsL3TPDwD6QM/n5pzj473cNwEaIjvPXJSS/Pyy
-	ILP5y5uJBAQB2OkNjppldewaTaLfELVnxsQxoVtFs4PNutgVV0qvh69WWKgvO5cLvJLDjCdZ+K4
-	ftenTLtr0RKrKOmWlSfmI=
-X-Google-Smtp-Source: AGHT+IHjDpApPK7L1lugdyMLdu/ALrQ3dDMp82iS7o9Xm0eHdrN9XhJaFVaUZhe9AQe+NVGfsh4gKw==
-X-Received: by 2002:a05:6e02:1545:b0:42f:8d6c:f502 with SMTP id e9e14a558f8ab-42f8d6cf905mr216933655ab.0.1760369745223;
-        Mon, 13 Oct 2025 08:35:45 -0700 (PDT)
-Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f6c49b522sm3910266173.1.2025.10.13.08.35.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 08:35:44 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org
-Cc: dlan@gentoo.org,
-	guodong@riscstar.com,
-	pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	p.zabel@pengutronix.de,
-	christian.bruel@foss.st.com,
-	shradha.t@samsung.com,
-	krishna.chundru@oss.qualcomm.com,
-	qiang.yu@oss.qualcomm.com,
-	namcao@linutronix.de,
-	thippeswamy.havalige@amd.com,
-	inochiama@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] riscv: dts: spacemit: PCIe and PHY-related updates
-Date: Mon, 13 Oct 2025 10:35:24 -0500
-Message-ID: <20251013153526.2276556-8-elder@riscstar.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251013153526.2276556-1-elder@riscstar.com>
-References: <20251013153526.2276556-1-elder@riscstar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75343101C7;
+	Mon, 13 Oct 2025 15:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760369786; cv=fail; b=cjL/GYcOxnYJp4pTiFhe1z9+SQxqom8NWM0YxcUZtWaUavq1xXc1zn829gxwOL5yPqmWmzY8CZPCioWWITUXdt9ZrFopAVLIKvjyAts4q9Fpli+VzDY4QEyeRJSLFgQI2Mou+bVFF69se8zkl/8A3KUjzhysLRnAn7TisIMAuho=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760369786; c=relaxed/simple;
+	bh=GYYQ0IYHEhGSuiQjZsh7xZCw7uMS9dWiGan/41/QH4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=saMFJDkypRjSMcJok2auVJl4aa/HaYQ4PigsO53jqC+BYHU8alurIO7qv29uQj+dRDIdomGtqpruE8JQjdnCMomwaQBgFGxDt2rS8Ba+SwgqzERb5I4ys3aIQJc3Re07t4Vt//6FdPwh00xwrX/BrlXHl6RvxFeRGmbgElhymWU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kHe81I4Y; arc=fail smtp.client-ip=52.101.84.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OvFbMS0G1RgYH2o4BqDC144TgwGfPI7KYzq81ttQXiIIIbzySnPnOSkqOv7m9IDeGSEz5QNdsWklJcRIlEfyD3XgAPIAbA99rpmEDvZxpU+QJn4H0is8/XOePDYXYBAawKKx2trV+g1zeZOst7XV6XMtypg8qaCZL+aYbG5/f3U7Fmaety3ETyWSuBUByPCxoIQB+V86wmlO1YdqBNIBKFv0iJUT+l3rthr5KUqPYPoa3Z+irgag+gglzUU/61YUqdQrYLFfOZMwC/pp/qbrCzyU6qehH2LQe7UobKEX+YPVSLWqDkBH+Sqs8jxrkMHTzLlEKH5yh9Fqj3D3i2Mn8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PBENrIHmIHt95N2pwdrDNGTpnC/htu9Q4US9FUAtQ/k=;
+ b=mQSnTQp8IlNPRrYgO3vMryLOt7Cpoth8EQDYHgn/QztSQAVNntCW5oVcqDdHHJj+LkxpAkdQI81NP2+hyb+M0xQB36EgLf+Tbmp0Zp25OcWY5UIl39FxQnJr3Xw7JkdDSvuXo2nfEsQ7dDHaDhsQH1kiRwnkUxAz048k9o+LftdkPqnFihwAQ9/3k0IIlyftIideqfLndgW6TOsRD0kYGzUH/xiZpOuLPRvGbn1mNYiUBp704J7AprLs0cgWnEIhxjmSHN4ANUZmHopEVZS8um7wITc9MaCiyIszUZA2q/ex7IqbLt3y7xySIrahBBbCeL7edNeczQpVsp+dOd9+sg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PBENrIHmIHt95N2pwdrDNGTpnC/htu9Q4US9FUAtQ/k=;
+ b=kHe81I4Ya09QfLcjIRkuXEz183YDEmphDoK+G2rmARRyq9EFuAOwKgvFtIgSNaHvm/2z2qRXTVBelq+yCU74P6bObzVxoQkVoUJ9FBdFQwiYB01FXGuqih553FpTfYi5y5cUw22G/KtcpKUTKQshGkE3VF4TiV54tiDj0KYchfrJ/x4YOjDXL2sP4kLS/2GAHxMU6uHRRNM1ag0VysrDDghDV2iieaDXfEOXZLeGpyqF9yCjTDF2rlSTDJOU9QrKqJ9k7UZwd8kJzd6VeJQ+xkhJBLkUm6FmHssIKuVZgjfr8IHeVv8bfE6agap81g6csqsRSEZ54WCWE19WNuYiUA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by GV2PR04MB11375.eurprd04.prod.outlook.com (2603:10a6:150:2b2::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 15:36:16 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 15:36:16 +0000
+Date: Mon, 13 Oct 2025 11:35:57 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Leon Luo <leonl@leopardimaging.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Julien Massot <julien.massot@collabora.com>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH 01/32] Input: cyttsp5 - Use %pe format specifier
+Message-ID: <aO0cXYeGLwwDABP6@lizhi-Precision-Tower-5810>
+References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
+ <20251013-ptr_err-v1-1-2c5efbd82952@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-ptr_err-v1-1-2c5efbd82952@chromium.org>
+X-ClientProxiedBy: BYAPR06CA0060.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::37) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|GV2PR04MB11375:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7953d7b-1796-4b60-4f5e-08de0a6e3fd0
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|19092799006|52116014|376014|7416014|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?ia6W8a3Ozr+m4W9WupCmEbLavJhV3zayvWSi3rKzpTnT//9KPREd4fKqOTFq?=
+ =?us-ascii?Q?Z9Nz6akrA63QktegdjMw4eRWSJIcQOprkPx9WUaRkQIYsMvSqzqZ61db0W2B?=
+ =?us-ascii?Q?5lgxDepKOk40lX76bf1G9WefiT3AsKrsma6I+zKCuxTp/IMZCnbS8g9JpyPx?=
+ =?us-ascii?Q?pVa6XToPhTXMnTtCk9hMO5UXymP6Jqov61LYTQj+QjIwfinHTrrfMM570+ST?=
+ =?us-ascii?Q?HGjNEvfnsjsPqLHejgnQX3YilqsPr2RSUvXovMFL6LVGQZyk5DR5seIKhPNU?=
+ =?us-ascii?Q?kVSjwG1culdP/ZpSrCUUOhcQsoYSsVJ7PBzWsPO09M0XJdA/mY/2OG9CIQMQ?=
+ =?us-ascii?Q?ncYVkcSlt2aUs/KVPv8zAGPoNgUcnWd8XvRr+XOiV2J+qFYNSfNIJckkaB3+?=
+ =?us-ascii?Q?zb+cd1AFd48GbwPB+9wYSTB9kINarGqUomhAJkzafH6zsn+4G9zMJuJ+wnYn?=
+ =?us-ascii?Q?IgcK+7o43SG4fro3vRKku1oGenRW+nJ9ZXx7uda+qpa+2uvAQmowL/jJkNAL?=
+ =?us-ascii?Q?2pddu+SCCmKUXvn7VBqRG6Dhfz598K8fDiia7mhcwsNKLO/uT/qk4dRop81P?=
+ =?us-ascii?Q?RWYSEwq9GYN9zzOrhXhZNLNOHZ3u5maTnBy5DPbxTSoFfxA+3USOUR5+Magk?=
+ =?us-ascii?Q?zX1qEICBmJCN56tPk0ieq472eJjfvte75k7MZP/4ZCQjw/UGArvr85oTbuO9?=
+ =?us-ascii?Q?I//6qCJA2uZzWfYErCU1rgaK7sd8r9bBW5tvAgyC/e0QBktC6W1WyUv2bCf2?=
+ =?us-ascii?Q?PqNAjqYGXAw2crSstXhy23Wuoba5X2pDc8lC/3zjDkgjyMfamzsqtCfUnGe1?=
+ =?us-ascii?Q?KpZ5qzYhSn2UfLALYvZSAb8OxRyCmkcSLBktNPVNxCOXDOyrjtyXjdqLuzOL?=
+ =?us-ascii?Q?ADxKZOPgDQ5rzw8XDMWdWhDjop1zUfbfnISDEK2VrW5PWDcJ3KErdYWsUYyC?=
+ =?us-ascii?Q?3ioFSViHTwIGCb1y3lQglzNmeUUl70c+H9/cWve4X5AIOdVBHjpGlwr/hexx?=
+ =?us-ascii?Q?oDlgQAY12+/ky1SNwGO+JSET70yf7VWp+FkVNJCf+VafWZnF1JajDWQsgwSD?=
+ =?us-ascii?Q?x4d1FJvLp0H4S5aCnKWag1yzL6zEKjReMC91g8uhC/d1apXZBNeMooKJeRDg?=
+ =?us-ascii?Q?N+hptILcnGP26YLRGgcVhamkpjJtzOmdD+ltIb1fxUON4dezjdnqXh+LVdM4?=
+ =?us-ascii?Q?WyYOUEKH46wNAWPhrrOMsDl2h5iFFEApjyiEjpaZH86hU6EyggAySf413Qqp?=
+ =?us-ascii?Q?kuCYrSLelNeuXMsklKCgwe5OiQOIhV30FeoBXmbDg0xbwv5R0QRpBYaDCStT?=
+ =?us-ascii?Q?FOV0PPDvRjN4HGyDLya5w9mJxYbT7V6LvsMDOew3jKuFfzeLdhAXItOCs/1M?=
+ =?us-ascii?Q?Q4mhOSsf4+kWzFphqjxQTAUPSCGQltesy8qKhMUQ0q916hkNIWS/DiVubonH?=
+ =?us-ascii?Q?sa30tKG5AJiW6aVqZ4ZVZ4j5zoAhri5q7EgNmi9alvg4iiuZQ7rvaLDoNbm7?=
+ =?us-ascii?Q?qAcJ91mkSHcVz++48TKRJGe2vCdasnJ+Pfez?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(52116014)(376014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?LSaCJHGtdYoafO+artHRlfOjJkj3g02QuNc4h/UF7Vs060354+BEkyWpE8wa?=
+ =?us-ascii?Q?Q/z0EXXddMo64wTPXz8io5OYTQMViDuBrac4mTE+J3/y1CvJx0RxiR4xyBuP?=
+ =?us-ascii?Q?AqcSwUSg3Yaxj9B7GuN4fDKs9TD8amsmloz/j15aqh/mbHOUssh0VN2sMcA2?=
+ =?us-ascii?Q?ECXPhL+P9HOD1l/JJsh2Iu0CQvdrLGBzZ+HA9jbeQN96omk8oCRcEubJSLWJ?=
+ =?us-ascii?Q?R88nSrMku10JI0m1qE1RRpJ5bBL6Wo5f7mfYlSs2mDJ1xSzv70cTx2N8hivn?=
+ =?us-ascii?Q?zq9E28U7tCADdrwXdsplolYhY2tazl2EYIhK7rq/Mn3TGaFLStn2JUfWJqwg?=
+ =?us-ascii?Q?xr4vAlz7bHWPAFshFpwXYFYURBKkb9PfgsU7bmLcYVFJxA/RKDbLvFokuinD?=
+ =?us-ascii?Q?egT2elGTy144oAODMmeCphCyhF79xVXLo86Mhbtb1LEMyziKI/y9sW3xtmH2?=
+ =?us-ascii?Q?MHkzSjWcl1cGenE6C6SK2ZHev+X5ZUq6LV2Wqh/3yK13RZOhK+Y+XxBm81Wb?=
+ =?us-ascii?Q?oZtMb8qJ0zNi1x9xgrciPs+09RN3uwpMTFrLY/x7qosqm3NvAI6cQyweZ6j/?=
+ =?us-ascii?Q?ADCSlzTF3Li/2Q+/k691As6l1XpDpb6ifzH9qQ0iu66gOTWOnwvXTltDDdHM?=
+ =?us-ascii?Q?54RINW+aR3WnhDE6MRiEDSYpFuAFUNfQx9qYL5a9eif5Jh0hqroRLDMN4viH?=
+ =?us-ascii?Q?Vnx/PhyxJxu7jQPcKhEF/FlUojnx+AFY6vUieook+2etxoZ/V2HaIG63fF8h?=
+ =?us-ascii?Q?/Cy4bgsXImEGJXbxbOzg6YrQ5dbrg1Yc0T2NRfDdhEfumpdXlJHFHSBUJe6t?=
+ =?us-ascii?Q?cKuERws2u+z+5+iW/stgXZIWUx5emSHTryZATtrkexMIRjr0iFcccc7w55yD?=
+ =?us-ascii?Q?dNQzMgaJic69rZrMSwzwYMczjSHOXR9Rg6pSj+Zn8AB3SJsNvcnX5tlhC4/K?=
+ =?us-ascii?Q?+/b7Av0/4sKFHd1ugzAcJMRK/A+R15pS+N5RR5zKnANCTAN5niwP8l+qmjiG?=
+ =?us-ascii?Q?kC9XHF9DwxP4FW+VHWxDyP79NGPPeu77/yc9w3GEhCrspG4DuEAJ3k26XIwN?=
+ =?us-ascii?Q?MJ6sYfO0wF3G/w0gY0tUQLqDc+ZlRdomCP/D770GfdNlknWi6gK2e4F5Vrz6?=
+ =?us-ascii?Q?3liSYJ49JtCuB+2HBJM6u/n0QMvNJG9XSLGPOM1yc8ZOe2vjAZ7b9y1F559U?=
+ =?us-ascii?Q?ytHRfNtJgGS7/GeKDP1qVH0pbBPPPklB5LlX3TyxPRph/vzjJAjnVp20BG7C?=
+ =?us-ascii?Q?9tqk/mZiaVisJfFCHdq7l56FUadi+p1/djT/9BJD8lMcu7cLs107CdIXVuXj?=
+ =?us-ascii?Q?aWiAI8wY8/u/aVmwNT8xgB/klvRQtrFVZ73QTVkG7NVx4DOBxnRRmNN+ho0R?=
+ =?us-ascii?Q?CFsNnRIQHRwGDIlU4AwKbAwf3cmB7BvbbkLWcW8XToCj+2J2MHL7/mibFlu+?=
+ =?us-ascii?Q?hP65n4lgw8PEXDYTbopoTkXcycMydIPjk1Csh8jzi5rELien0t2acoLb6m+s?=
+ =?us-ascii?Q?aYvXoHLNpyD7LPNIlnNy2tyA/+jau+uX4IEZqncuIq2ln26I7hOEe7+ZfO2w?=
+ =?us-ascii?Q?muPuOI2EXr8ZJX5MoKg=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7953d7b-1796-4b60-4f5e-08de0a6e3fd0
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 15:36:16.8280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UcMBGOMpHemRBPMDZ46SFhhar0pauNNAID4ajRxmutNQJZPvQL6Lh327dNeUeS1gpMM+ACX8PaJeyA7DNRoZuQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11375
 
-Define PCIe and PHY-related Device Tree nodes for the SpacemiT K1 SoC.
+On Mon, Oct 13, 2025 at 02:14:41PM +0000, Ricardo Ribalda wrote:
+> The %pe format specifier is designed to print error pointers. It prints
+> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
+> omitting PTR_ERR()
+>
+> This patch fixes this cocci report:
+> ./cyttsp5.c:927:3-10: WARNING: Consider using %pe to print PTR_ERR()
+>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/input/touchscreen/cyttsp5.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Enable the combo PHY and the two PCIe-only PHYs on the Banana Pi BPI-F3
-board.  The combo PHY is used for USB on this board, and that will be
-enabled when USB 3 support is accepted.
+Suppose it will go though input subsystem intead of media.
+Need post seperated at difference thread?
 
-The combo PHY must perform a calibration step to determine configuration
-values used by the PCIe-only PHYs.  As a result, it must be enabled if
-either of the other two PHYs is enabled.
+Frank
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
-v2: - Added vpcie3v3-supply nodes to PCIe ports
-    - Combo PHY node is now defined earlier in the file (alphabetized)
-
- .../boot/dts/spacemit/k1-bananapi-f3.dts      |  30 ++++
- arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  33 ++++
- arch/riscv/boot/dts/spacemit/k1.dtsi          | 151 ++++++++++++++++++
- 3 files changed, 214 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 046ad441b7b4e..6d566780aed9d 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -40,6 +40,12 @@ pcie_vcc_3v3: pcie-vcc3v3 {
- 	};
- };
- 
-+&combo_phy {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie0_3_cfg>;
-+	status = "okay";
-+};
-+
- &emmc {
- 	bus-width = <8>;
- 	mmc-hs400-1_8v;
-@@ -100,6 +106,30 @@ &pdma {
- 	status = "okay";
- };
- 
-+&pcie1_phy {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie1_3_cfg>;
-+	status = "okay";
-+};
-+
-+&pcie2_phy {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie2_4_cfg>;
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	phys = <&pcie1_phy>;
-+	vpcie3v3-supply = <&pcie_vcc_3v3>;
-+	status = "okay";
-+};
-+
-+&pcie2 {
-+	phys = <&pcie2_phy>;
-+	vpcie3v3-supply = <&pcie_vcc_3v3>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_2_cfg>;
-diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-index aff19c86d5ff3..5bacb6aff23f8 100644
---- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-@@ -69,6 +69,39 @@ uart0-2-pins {
- 		};
- 	};
- 
-+	pcie0_3_cfg: pcie0-3-cfg {
-+		pcie0-3-pins {
-+			pinmux = <K1_PADCONF(54, 3)>,	/* PERST# */
-+				 <K1_PADCONF(55, 3)>,	/* WAKE# */
-+				 <K1_PADCONF(53, 3)>;	/* CLKREQ# */
-+
-+			bias-pull-up = <0>;
-+			drive-strength = <21>;
-+		};
-+	};
-+
-+	pcie1_3_cfg: pcie1-3-cfg {
-+		pcie1-3-pins {
-+			pinmux = <K1_PADCONF(59, 4)>,	/* PERST# */
-+				 <K1_PADCONF(60, 4)>,	/* WAKE# */
-+				 <K1_PADCONF(61, 4)>;	/* CLKREQ# */
-+
-+			bias-pull-up = <0>;
-+			drive-strength = <21>;
-+		};
-+	};
-+
-+	pcie2_4_cfg: pcie2-4-cfg {
-+		pcie2-4-pins {
-+			pinmux = <K1_PADCONF(62, 4)>,	/* PERST# */
-+				 <K1_PADCONF(112, 3)>,	/* WAKE# */
-+				 <K1_PADCONF(117, 4)>;	/* CLKREQ# */
-+
-+			bias-pull-up = <0>;
-+			drive-strength = <21>;
-+		};
-+	};
-+
- 	pwm14_1_cfg: pwm14-1-cfg {
- 		pwm14-1-pins {
- 			pinmux = <K1_PADCONF(44, 4)>;
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 6cdcd80a7c83b..a38c578f24004 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/clock/spacemit,k1-syscon.h>
-+#include <dt-bindings/phy/phy.h>
- 
- /dts-v1/;
- / {
-@@ -358,6 +359,48 @@ syscon_rcpu2: system-controller@c0888000 {
- 			#reset-cells = <1>;
- 		};
- 
-+		combo_phy: phy@c0b10000 {
-+			compatible = "spacemit,k1-combo-phy";
-+			reg = <0x0 0xc0b10000 0x0 0x1000>;
-+			clocks = <&vctcxo_24m>,
-+				 <&syscon_apmu CLK_PCIE0_DBI>,
-+				 <&syscon_apmu CLK_PCIE0_MASTER>,
-+				 <&syscon_apmu CLK_PCIE0_SLAVE>;
-+			clock-names = "refclk",
-+				      "dbi",
-+				      "mstr",
-+				      "slv";
-+			resets = <&syscon_apmu RESET_PCIE0_DBI>,
-+				 <&syscon_apmu RESET_PCIE0_MASTER>,
-+				 <&syscon_apmu RESET_PCIE0_SLAVE>,
-+				 <&syscon_apmu RESET_PCIE0_GLOBAL>;
-+			reset-names = "dbi",
-+				      "mstr",
-+				      "slv",
-+				      "phy";
-+			#phy-cells = <1>;
-+			spacemit,apmu = <&syscon_apmu>;
-+			status = "disabled";
-+		};
-+
-+		pcie1_phy: phy@c0c10000 {
-+			compatible = "spacemit,k1-pcie-phy";
-+			reg = <0x0 0xc0c10000 0x0 0x1000>;
-+			clocks = <&vctcxo_24m>;
-+			clock-names = "refclk";
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		pcie2_phy: phy@c0d10000 {
-+			compatible = "spacemit,k1-pcie-phy";
-+			clocks = <&vctcxo_24m>;
-+			clock-names = "refclk";
-+			reg = <0x0 0xc0d10000 0x0 0x1000>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		syscon_apbc: system-controller@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -847,6 +890,114 @@ pcie-bus {
- 			#size-cells = <2>;
- 			dma-ranges = <0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>,
- 				     <0x0 0xb8000000 0x1 0x38000000 0x3 0x48000000>;
-+			pcie0: pcie@ca000000 {
-+				compatible = "spacemit,k1-pcie";
-+				reg = <0x0 0xca000000 0x0 0x00001000>,
-+				      <0x0 0xca300000 0x0 0x0001ff24>,
-+				      <0x0 0x8f000000 0x0 0x00002000>,
-+				      <0x0 0xc0b20000 0x0 0x00001000>;
-+				reg-names = "dbi",
-+					    "atu",
-+					    "config",
-+					    "link";
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				ranges = <0x01000000 0x0 0x00000000 0x0 0x8f002000 0x0 0x00100000>,
-+					 <0x02000000 0x0 0x80000000 0x0 0x80000000 0x0 0x0f000000>;
-+				interrupts = <141>;
-+				interrupt-names = "msi";
-+				clocks = <&syscon_apmu CLK_PCIE0_DBI>,
-+					 <&syscon_apmu CLK_PCIE0_MASTER>,
-+					 <&syscon_apmu CLK_PCIE0_SLAVE>;
-+				clock-names = "dbi",
-+					      "mstr",
-+					      "slv";
-+				resets = <&syscon_apmu RESET_PCIE0_DBI>,
-+					 <&syscon_apmu RESET_PCIE0_MASTER>,
-+					 <&syscon_apmu RESET_PCIE0_SLAVE>,
-+					 <&syscon_apmu RESET_PCIE0_GLOBAL>;
-+				reset-names = "dbi",
-+					      "mstr",
-+					      "slv",
-+					      "phy";
-+				device_type = "pci";
-+				num-viewport = <8>;
-+				spacemit,apmu = <&syscon_apmu 0x03cc>;
-+				status = "disabled";
-+			};
-+
-+			pcie1: pcie@ca400000 {
-+				compatible = "spacemit,k1-pcie";
-+				reg = <0x0 0xca400000 0x0 0x00001000>,
-+				      <0x0 0xca700000 0x0 0x0001ff24>,
-+				      <0x0 0x9f000000 0x0 0x00002000>,
-+				      <0x0 0xc0c20000 0x0 0x00001000>;
-+				reg-names = "dbi",
-+					    "atu",
-+					    "config",
-+					    "link";
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				ranges = <0x01000000 0x0 0x00000000 0x0 0x9f002000 0x0 0x00100000>,
-+					 <0x02000000 0x0 0x90000000 0x0 0x90000000 0x0 0x0f000000>;
-+				interrupts = <142>;
-+				interrupt-names = "msi";
-+				clocks = <&syscon_apmu CLK_PCIE1_DBI>,
-+					 <&syscon_apmu CLK_PCIE1_MASTER>,
-+					 <&syscon_apmu CLK_PCIE1_SLAVE>;
-+				clock-names = "dbi",
-+					      "mstr",
-+					      "slv";
-+				resets = <&syscon_apmu RESET_PCIE1_DBI>,
-+					 <&syscon_apmu RESET_PCIE1_MASTER>,
-+					 <&syscon_apmu RESET_PCIE1_SLAVE>,
-+					 <&syscon_apmu RESET_PCIE1_GLOBAL>;
-+				reset-names = "dbi",
-+					      "mstr",
-+					      "slv",
-+					      "phy";
-+				device_type = "pci";
-+				num-viewport = <8>;
-+				spacemit,apmu = <&syscon_apmu 0x3d4>;
-+				status = "disabled";
-+			};
-+
-+			pcie2: pcie@ca800000 {
-+				compatible = "spacemit,k1-pcie";
-+				reg = <0x0 0xca800000 0x0 0x00001000>,
-+				      <0x0 0xcab00000 0x0 0x0001ff24>,
-+				      <0x0 0xb7000000 0x0 0x00002000>,
-+				      <0x0 0xc0d20000 0x0 0x00001000>;
-+				reg-names = "dbi",
-+					    "atu",
-+					    "config",
-+					    "link";
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				ranges = <0x01000000 0x0 0x00000000 0x0 0xb7002000 0x0 0x00100000>,
-+					 <0x42000000 0x0 0xa0000000 0x0 0xa0000000 0x0 0x10000000>,
-+					 <0x02000000 0x0 0xb0000000 0x0 0xb0000000 0x0 0x07000000>;
-+				interrupts = <143>;
-+				interrupt-names = "msi";
-+				clocks = <&syscon_apmu CLK_PCIE2_DBI>,
-+					 <&syscon_apmu CLK_PCIE2_MASTER>,
-+					 <&syscon_apmu CLK_PCIE2_SLAVE>;
-+				clock-names = "dbi",
-+					      "mstr",
-+					      "slv";
-+				resets = <&syscon_apmu RESET_PCIE2_DBI>,
-+					 <&syscon_apmu RESET_PCIE2_MASTER>,
-+					 <&syscon_apmu RESET_PCIE2_SLAVE>,
-+					 <&syscon_apmu RESET_PCIE2_GLOBAL>;
-+				reset-names = "dbi",
-+					      "mstr",
-+					      "slv",
-+					      "phy";
-+				device_type = "pci";
-+				num-viewport = <8>;
-+				spacemit,apmu = <&syscon_apmu 0x3dc>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		storage-bus {
--- 
-2.48.1
-
+>
+> diff --git a/drivers/input/touchscreen/cyttsp5.c b/drivers/input/touchscreen/cyttsp5.c
+> index 071b7c9bf566eb0b58e302a941ec085be1eb5683..47f4271395a69b8350f9be7266b57fe11d442ee3 100644
+> --- a/drivers/input/touchscreen/cyttsp5.c
+> +++ b/drivers/input/touchscreen/cyttsp5.c
+> @@ -923,8 +923,8 @@ static int cyttsp5_i2c_probe(struct i2c_client *client)
+>
+>  	regmap = devm_regmap_init_i2c(client, &config);
+>  	if (IS_ERR(regmap)) {
+> -		dev_err(&client->dev, "regmap allocation failed: %ld\n",
+> -			PTR_ERR(regmap));
+> +		dev_err(&client->dev, "regmap allocation failed: %pe\n",
+> +			regmap);
+>  		return PTR_ERR(regmap);
+>  	}
+>
+>
+> --
+> 2.51.0.760.g7b8bcc2412-goog
+>
 
