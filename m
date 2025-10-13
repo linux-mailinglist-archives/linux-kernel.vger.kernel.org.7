@@ -1,154 +1,420 @@
-Return-Path: <linux-kernel+bounces-850549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D74BD3269
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11ECBBD327B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93A084F16B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:12:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B9DC4ED75B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB442F547F;
-	Mon, 13 Oct 2025 13:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4022BCFB;
+	Mon, 13 Oct 2025 13:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rqCxKiS/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jXjc+Sjk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rqCxKiS/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jXjc+Sjk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGsESs7k"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D662FDC3C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEF92010EE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760361160; cv=none; b=Krbvlc1hd4grYhHKX1hNNHDnyJ0o0L6hug0WwiFfY0m11unLS3j9PG758SMJiw4rwHpCtEvCvz2YjWSdruHAfvqu7QIxyjWVQnj7zHD1bHO7td/GA3sx2RFv/ECf41T1j1a4x6fiWzTV08L/HqUQfgjGLxZoWmq0B87/oKWsAlI=
+	t=1760361370; cv=none; b=BI0pXa82O6B5HBsXPVZsQBUi5+ZUpazBv/n/uZipCfgKlmNDNry+8a4EVp3XxtN50akiJOQEkox3p0ZSDQ7/wQgRkMgnU/zNXMvlw4xy5UEHKpq/+V5E5aVpYyKogX1acrTJNJQpJPA24WYjcEDz3d8i5gQNzQjzPQ7dGAsZNsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760361160; c=relaxed/simple;
-	bh=rsrkkHNVmkJO6KjR1KnF9I+uM5AkIZFSZtnjgzFeh5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRf0LT/lTlYK3Cvn7QQASIbF5oWZKbqahnDNwaDONuIE9btu29CetBMlgXl77nH+2XO9qv5eqCQp2XFfY+BoUKyH91sYsn5HcoJHOx3aWCXIGTnMuD3r3wfLavqy5I1qJE64QjLoLhxxzCuRCoyLfrWXf4MEwXVfDLhR/Q5a7So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rqCxKiS/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jXjc+Sjk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rqCxKiS/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jXjc+Sjk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 565F91F452;
-	Mon, 13 Oct 2025 13:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760361156; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZUuAPVpZLv5x/RKRQlcJZBDq3mhfpECuNYSEtNn/MgM=;
-	b=rqCxKiS/Gn/U+/YMsS/R3qNyYIrVdOukE/Q+IHbjUjPlgkZYtcHDm7y4Izu5HwP3M+MqLi
-	aCTeDwOwZeIR06C854gj16lDtM337Djb2K4k8osZ6mEomFBe+wfSFKA8v8fp55FR7K3gh6
-	qtUzvNHRjUakX9YLkijfyXooBZ6YfSw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760361156;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZUuAPVpZLv5x/RKRQlcJZBDq3mhfpECuNYSEtNn/MgM=;
-	b=jXjc+SjkQ3ffSxzkSe80xw4TRLPiLMIKD5GwQMLBqW9fpa9w4q7F2SjSIEw0USCypEwamj
-	VW/kTlKX5FA4RiCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760361156; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZUuAPVpZLv5x/RKRQlcJZBDq3mhfpECuNYSEtNn/MgM=;
-	b=rqCxKiS/Gn/U+/YMsS/R3qNyYIrVdOukE/Q+IHbjUjPlgkZYtcHDm7y4Izu5HwP3M+MqLi
-	aCTeDwOwZeIR06C854gj16lDtM337Djb2K4k8osZ6mEomFBe+wfSFKA8v8fp55FR7K3gh6
-	qtUzvNHRjUakX9YLkijfyXooBZ6YfSw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760361156;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZUuAPVpZLv5x/RKRQlcJZBDq3mhfpECuNYSEtNn/MgM=;
-	b=jXjc+SjkQ3ffSxzkSe80xw4TRLPiLMIKD5GwQMLBqW9fpa9w4q7F2SjSIEw0USCypEwamj
-	VW/kTlKX5FA4RiCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4A4B1374A;
-	Mon, 13 Oct 2025 13:12:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pHwrMcP67Gg+TAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 13 Oct 2025 13:12:35 +0000
-Date: Mon, 13 Oct 2025 15:12:34 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Deepanshu Kartikey <kartikey406@gmail.com>, muchun.song@linux.dev,
-	akpm@linux-foundation.org, broonie@kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4] hugetlbfs: check for shareable lock before calling
- huge_pmd_unshare()
-Message-ID: <aOz6wqdZcEY8-ufB@localhost.localdomain>
-References: <20251013093337.4432-1-kartikey406@gmail.com>
- <bab3249a-d9f2-4f19-9493-b7560aecc3ce@redhat.com>
+	s=arc-20240116; t=1760361370; c=relaxed/simple;
+	bh=883Y4I76q2WhN5ZRrOVdXEtX/TypmR7bW/POuDLlyLE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YnpAD6rUYDEPm+Mh8L6VTYjcbeM1Z7asD2whSX1O52D5Ww7Ya83i94/nnGa86ZDcTZm2VEGx51QEkmUfzWDBj8bXvDOw/R6sxxtSkCyzQpFAOHRq5dnh5oKe90VNrX+rnTyiWp69i+HIal+e77q5vrH6awe4XWhyT7sr5uMJ6dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGsESs7k; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27c369f898fso57959345ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760361368; x=1760966168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o3wGb0jvMfnlPMFXFLvmSed44BB541lVzsxTRhu5UnU=;
+        b=RGsESs7kUknXUmCScJQKWxIEsIED+hNI9Y1ag5Gugw+/OvEMPHXBjyhPnHm+ccaM0y
+         JbUGCBXrcCRf1pDKY3DJEYB+dXco9iA+uiEaf9g4wpZHZVgSMJ45Io6SQfa5B+TRL7m2
+         BS4wJ1uqLdx6XBql4kmbSlgw8Q+5ApmqffsDsuRRq+q5PUXIKfE2Z0PaurIkAYudvbiL
+         x751ysfvohWl3mfSG4FS/7c5HNLvgHl8w2wbareL7uMjLqTSCEEQLcl54OrsaAnHLDS7
+         Pilr+rB8pFhsVtHnvRhYc5rDTvyP2CpjNgjIGboPJwZlnftNVi2/lMjyALNcd9aADC1W
+         4EMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760361368; x=1760966168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o3wGb0jvMfnlPMFXFLvmSed44BB541lVzsxTRhu5UnU=;
+        b=tEa2vw+sk5W7ao2/cfo7KSsOBrnaTQFbTEhAoFIy5ktHki4ndr0+uMgfetKvlGHFNR
+         gMZ4oKJxBRwFR3gwUffJQbca/uVuCXWJZHviE8fUNAStKhnao6ny0y+8rcPWAn1RJMH/
+         xwvMOayVtQzNUMFO7s1KhtC0A2cq832Ucp0pacXNcgwKbDDTlHG9E5GeTA8x7bdB9L0s
+         /P47F2oglO1vbR8P55Lq3DMCMDFYcE087tPDdFJ79so4U/0c/jk7XVkA1tRJWZ12pYur
+         hBtgLhaCGsxfFOO418njRMay2KYVUtYIJ4Vi080leNVh/6cVJiRuoW3eDeaiJm9jgRDO
+         81DA==
+X-Gm-Message-State: AOJu0Yx0TtGpQ9cErAUEkj6EgIC0zmjtV6iwL3FvVtYmD0DlxtBGotUW
+	1tlwVBF8QHrW8AoUC3wy5cSJgH/fQm9IPh3yNHdiCTo8+F50fZ+Kfoaf
+X-Gm-Gg: ASbGnctZvErR7Cdi0NkpMGWY/9iB7XiouxmiirAJ6d7xJKGEsGoxB87UjGCT6aUnnZU
+	o/9j+Fu/F5ZMx5vfv9z5qm6B1kBJ9bpixmd0274e0XTKizC21VbBo3jvyORIX1/tLNpaGiBTtLQ
+	upQvj+1wPc9u3ZG+nTk+rWcAYvwQGTUgdZmsmlsC3AdAQElJYVsnJRJDVj6ldIHkGQhVIya9JEv
+	lTOekbKhpMfrCsHGNg+EMHcdOmN5Q5l8YIcFoRBiL4L9uRqZ62uGXc2T2ZiIIEb+TxyqXXJpG4w
+	yE8f789h7dpYtR+m2HC0QfxgsXwjOmFIUVZzcFkia1KjMEhUjONkZ3oR7sUE2hGWAyFZLazr/tz
+	0GHgppcsattuQgg/8HuVnw2QpzIqBSscZxNhGM/mfwi4e1Z4eCm8NGZECr65yUO37x86A
+X-Google-Smtp-Source: AGHT+IEMiwZV+2vIKAiwExBNs2tsmz2gfFwGpAA1vz1ORQ1womMq9/95xrQ4f6Tr24wzbJhEBTDRgA==
+X-Received: by 2002:a17:903:1984:b0:26a:8171:dafa with SMTP id d9443c01a7336-2902723fc6bmr282140815ad.21.1760361367694;
+        Mon, 13 Oct 2025 06:16:07 -0700 (PDT)
+Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29055badc54sm67746225ad.37.2025.10.13.06.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 06:16:06 -0700 (PDT)
+From: pengdonglin <dolinux.peng@gmail.com>
+To: andrii@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	pengdonglin <dolinux.peng@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	pengdonglin <pengdonglin@xiaomi.com>
+Subject: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize btf_find_by_name_kind lookup
+Date: Mon, 13 Oct 2025 21:15:37 +0800
+Message-Id: <20251013131537.1927035-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bab3249a-d9f2-4f19-9493-b7560aecc3ce@redhat.com>
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[f26d7c75c26ec19790e7];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,linux.dev,linux-foundation.org,kernel.org,kvack.org,vger.kernel.org,syzkaller.appspotmail.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 11:54:00AM +0200, David Hildenbrand wrote:
-> On 13.10.25 11:33, Deepanshu Kartikey wrote:
-> > Hi David,
-> > 
-> > That makes a lot of sense - moving the assertions after the early return
-> > checks is cleaner since the locks are only needed when actual unsharing
-> > work happens.
-> > 
-> > Should I send a v5 with your suggested change?
-> 
-> Let's wait if the hugetlb maintainers have any preference.
+From: pengdonglin <pengdonglin@xiaomi.com>
 
-Yes, now that I look again I think your suggestion makes more sense and
-its much cleaner :-)
+Currently, when the funcgraph-args feature is in use, the
+btf_find_by_name_kind function is invoked quite frequently. However,
+this function only supports linear search. When the number of btf_type
+entries to search through is large, such as in the vmlinux BTF which
+contains over 80,000 named btf_types, it consumes a significant amount
+of time.
 
+This patch optimizes the btf_find_by_name_kind lookup by sorting BTF
+types according to their names and kinds. Additionally, it modifies
+the search direction. Now, it first searches the BTF and then its base.
+
+It should be noted that this change incurs some additional memory and
+boot-time overhead. Therefore, the option is disabled by default.
+
+Here is a test case:
+
+ # echo 1 > options/funcgraph-args
+ # echo function_graph > current_tracer
+
+Before:
+ # time cat trace | wc -l
+ 124176
+
+ real    0m16.154s
+ user    0m0.000s
+ sys     0m15.962s
+
+After:
+ # time cat trace | wc -l
+ 124176
+
+ real    0m0.948s
+ user    0m0.000s
+ sys     0m0.973s
+
+An improvement of more than 20 times can be observed.
+
+Cc: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Song Liu <song@kernel.org>
+Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+---
+ include/linux/btf.h |   1 +
+ kernel/bpf/Kconfig  |  13 ++++
+ kernel/bpf/btf.c    | 160 +++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 165 insertions(+), 9 deletions(-)
+
+diff --git a/include/linux/btf.h b/include/linux/btf.h
+index f06976ffb63f..ddc53a7ac7cd 100644
+--- a/include/linux/btf.h
++++ b/include/linux/btf.h
+@@ -220,6 +220,7 @@ bool btf_is_module(const struct btf *btf);
+ bool btf_is_vmlinux(const struct btf *btf);
+ struct module *btf_try_get_module(const struct btf *btf);
+ u32 btf_nr_types(const struct btf *btf);
++u32 btf_type_cnt(const struct btf *btf);
+ struct btf *btf_base_btf(const struct btf *btf);
+ bool btf_type_is_i32(const struct btf_type *t);
+ bool btf_type_is_i64(const struct btf_type *t);
+diff --git a/kernel/bpf/Kconfig b/kernel/bpf/Kconfig
+index eb3de35734f0..01d9d766c1dc 100644
+--- a/kernel/bpf/Kconfig
++++ b/kernel/bpf/Kconfig
+@@ -101,4 +101,17 @@ config BPF_LSM
  
-
+ 	  If you are unsure how to answer this question, answer N.
+ 
++config BPF_SORT_BTF_BY_NAME_KIND
++	bool "Sort BTF type by name and kind"
++	depends on DEBUG_INFO_BTF
++	default n
++	help
++	  Sort BTF types by name and kind to enable binary search, improving
++	  the performance of btf_find_by_name_kind. Currently applies to
++	  vmlinux and kernel module BTFs. Note that this option introduces
++	  extra memory and boot-time overhead.
++
++	  For instance, a BTF file with 80,000 named btf_types consumes
++	  approximately 312 KB of additional memory.
++
+ endmenu # "BPF subsystem"
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 0de8fc8a0e0b..aed7349e30b8 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -250,6 +250,11 @@ struct btf_struct_ops_tab {
+ 	struct bpf_struct_ops_desc ops[];
+ };
+ 
++struct btf_sorted_ids {
++	u32 cnt;
++	u32 ids[];
++};
++
+ struct btf {
+ 	void *data;
+ 	struct btf_type **types;
+@@ -268,6 +273,9 @@ struct btf {
+ 	struct btf_id_dtor_kfunc_tab *dtor_kfunc_tab;
+ 	struct btf_struct_metas *struct_meta_tab;
+ 	struct btf_struct_ops_tab *struct_ops_tab;
++#ifdef CONFIG_BPF_SORT_BTF_BY_NAME_KIND
++	struct btf_sorted_ids *sorted_ids;
++#endif
+ 
+ 	/* split BTF support */
+ 	struct btf *base_btf;
+@@ -470,6 +478,9 @@ static int btf_resolve(struct btf_verifier_env *env,
+ static int btf_func_check(struct btf_verifier_env *env,
+ 			  const struct btf_type *t);
+ 
++static int cmp_name_kind(const char *sa, u8 ka,
++			 const char *sb, u8 kb);
++
+ static bool btf_type_is_modifier(const struct btf_type *t)
+ {
+ 	/* Some of them is not strictly a C modifier
+@@ -544,22 +555,59 @@ u32 btf_nr_types(const struct btf *btf)
+ 	return total;
+ }
+ 
++u32 btf_type_cnt(const struct btf *btf)
++{
++	return btf->start_id + btf->nr_types;
++}
++
+ s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 kind)
+ {
+ 	const struct btf_type *t;
++	struct btf_sorted_ids *sorted_ids = NULL;
+ 	const char *tname;
+ 	u32 i, total;
+ 
+-	total = btf_nr_types(btf);
+-	for (i = 1; i < total; i++) {
+-		t = btf_type_by_id(btf, i);
+-		if (BTF_INFO_KIND(t->info) != kind)
+-			continue;
++	do {
++#ifdef CONFIG_BPF_SORT_BTF_BY_NAME_KIND
++		sorted_ids = btf->sorted_ids;
++#endif
++		if (sorted_ids) {
++			/* binary search */
++			u32 start, end, mid;
++			u32 *ids = sorted_ids->ids;
++			int ret;
++
++			start = 0;
++			end = sorted_ids->cnt - 1;
++			while (start <= end) {
++				mid = start + (end - start) / 2;
++				t = btf_type_by_id(btf, ids[mid]);
++				tname = btf_name_by_offset(btf, t->name_off);
++				ret = cmp_name_kind(tname, BTF_INFO_KIND(t->info),
++						    name, kind);
++				if (ret < 0)
++					start = mid + 1;
++				else if (ret > 0)
++					end = mid - 1;
++				else
++					return ids[mid];
++			}
++		} else {
++			/* linear search */
++			total = btf_type_cnt(btf);
++			for (i = btf->start_id; i < total; i++) {
++				t = btf_type_by_id(btf, i);
++				if (BTF_INFO_KIND(t->info) != kind)
++					continue;
++
++				tname = btf_name_by_offset(btf, t->name_off);
++				if (!strcmp(tname, name))
++					return i;
++			}
++		}
+ 
+-		tname = btf_name_by_offset(btf, t->name_off);
+-		if (!strcmp(tname, name))
+-			return i;
+-	}
++		btf = btf->base_btf;
++	} while (btf);
+ 
+ 	return -ENOENT;
+ }
+@@ -1737,12 +1785,29 @@ static void btf_free_struct_ops_tab(struct btf *btf)
+ 	btf->struct_ops_tab = NULL;
+ }
+ 
++#ifdef CONFIG_BPF_SORT_BTF_BY_NAME_KIND
++static void btf_free_sorted_ids(struct btf *btf)
++{
++	struct btf_sorted_ids *sorted_ids = btf->sorted_ids;
++
++	if (!sorted_ids)
++		return;
++
++	kvfree(sorted_ids);
++	btf->sorted_ids = NULL;
++}
++#else
++static void btf_free_sorted_ids(struct btf *btf)
++{}
++#endif
++
+ static void btf_free(struct btf *btf)
+ {
+ 	btf_free_struct_meta_tab(btf);
+ 	btf_free_dtor_kfunc_tab(btf);
+ 	btf_free_kfunc_set_tab(btf);
+ 	btf_free_struct_ops_tab(btf);
++	btf_free_sorted_ids(btf);
+ 	kvfree(btf->types);
+ 	kvfree(btf->resolved_sizes);
+ 	kvfree(btf->resolved_ids);
+@@ -6189,6 +6254,81 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *log, enum bpf_prog_type prog_ty
+ 	return kctx_type_id;
+ }
+ 
++#ifdef CONFIG_BPF_SORT_BTF_BY_NAME_KIND
++static int cmp_name_kind(const char *sa, u8 ka, const char *sb, u8 kb)
++{
++	return strcmp(sa, sb) ?: (ka - kb);
++}
++
++static int btf_compare_name_kind(const void *a, const void *b, const void *priv)
++{
++	const struct btf *btf = priv;
++	const struct btf_type *ba, *bb;
++	u32 ia = *(const u32 *)a;
++	u32 ib = *(const u32 *)b;
++
++	ba = btf_type_by_id(btf, ia);
++	bb = btf_type_by_id(btf, ib);
++
++	return cmp_name_kind(btf_name_by_offset(btf, ba->name_off),
++			     BTF_INFO_KIND(ba->info),
++			     btf_name_by_offset(btf, bb->name_off),
++			     BTF_INFO_KIND(bb->info));
++}
++
++static void btf_sort_by_name_kind(struct btf *btf)
++{
++	const struct btf_type *t;
++	struct btf_sorted_ids *sorted_ids;
++	const char *name;
++	u32 *ids;
++	u32 total, cnt = 0;
++	u32 i, j = 0;
++
++	total = btf_type_cnt(btf);
++	for (i = btf->start_id; i < total; i++) {
++		t = btf_type_by_id(btf, i);
++		name = btf_name_by_offset(btf, t->name_off);
++		if (str_is_empty(name))
++			continue;
++		cnt++;
++	}
++
++	/* Use linear search when the number is below the threshold */
++	if (cnt < 8)
++		return;
++
++	sorted_ids = kvmalloc(struct_size(sorted_ids, ids, cnt), GFP_KERNEL);
++	if (!sorted_ids) {
++		pr_warn("Failed to allocate memory for sorted_ids\n");
++		return;
++	}
++
++	ids = sorted_ids->ids;
++	for (i = btf->start_id; i < total; i++) {
++		t = btf_type_by_id(btf, i);
++		name = btf_name_by_offset(btf, t->name_off);
++		if (str_is_empty(name))
++			continue;
++		ids[j++] = i;
++	}
++
++	sort_r(ids, cnt, sizeof(ids[0]), btf_compare_name_kind, NULL, btf);
++
++	sorted_ids->cnt = cnt;
++	btf->sorted_ids = sorted_ids;
++}
++#else
++static int cmp_name_kind(const char *sa, u8 ka, const char *sb, u8 kb)
++{
++	return 0;
++}
++
++static void btf_sort_by_name_kind(struct btf *btf)
++{
++}
++#endif
++
+ BTF_ID_LIST_SINGLE(bpf_ctx_convert_btf_id, struct, bpf_ctx_convert)
+ 
+ static struct btf *btf_parse_base(struct btf_verifier_env *env, const char *name,
+@@ -6230,6 +6370,7 @@ static struct btf *btf_parse_base(struct btf_verifier_env *env, const char *name
+ 	if (err)
+ 		goto errout;
+ 
++	btf_sort_by_name_kind(btf);
+ 	refcount_set(&btf->refcnt, 1);
+ 
+ 	return btf;
+@@ -6362,6 +6503,7 @@ static struct btf *btf_parse_module(const char *module_name, const void *data,
+ 		base_btf = vmlinux_btf;
+ 	}
+ 
++	btf_sort_by_name_kind(btf);
+ 	btf_verifier_env_free(env);
+ 	refcount_set(&btf->refcnt, 1);
+ 	return btf;
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
