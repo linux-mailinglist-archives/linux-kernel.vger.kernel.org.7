@@ -1,224 +1,196 @@
-Return-Path: <linux-kernel+bounces-850160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67163BD21C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:37:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D057EBD21DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C18C54EF273
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:36:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02AE18877F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CF82FB99E;
-	Mon, 13 Oct 2025 08:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63D42F9C3E;
+	Mon, 13 Oct 2025 08:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl+YtXJN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lkUIJutH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED992FB97F;
-	Mon, 13 Oct 2025 08:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456962F90CE;
+	Mon, 13 Oct 2025 08:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760344536; cv=none; b=VfOAei1APVb1Nx9J5RN6gVDuUAci+ka7M5Xx8NPAaXn1z3wYrGCMstqF2N9RA4DYKqGe/8l4Ou139A839FgrMDWcBpoHfYfqhL9dLUZEpOA4DMrVODJ9jcruHzdrndTVI5azUeC/AxotXlAJbzjJ6R1sb1X0vvVUH+a3/aCF4uI=
+	t=1760344703; cv=none; b=TD7yJSTXWtJuK34JBBfsm83thGsVTlgkFP6N5JMcM2L7bQYvcfhSZuGrrnJergtQa8uzJypJ8WyNxOPdS/fk/q7EL89beX8I5HF+5Fot0Y+E9Wm0yBkBTdGN4ona8ZTQlKl/yNex3l9DahUVrsDcoOLoX4FKI4axoc4NmqwqZr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760344536; c=relaxed/simple;
-	bh=KLq6UV149iWlcbOb9BAgyPNNCpzPtwQ5QaRQCIh5ebk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bd6RroZ1p5ZbFLBKreWss+fiN5ttAfQklrRAY0sauQ8KaYqe6Y3Hutqz4ykk2X2tnwEcdUwJEcoShBybhWA5A0MrJZxAIQLKYNwUqMxWAqz7/OoOIcpTs+RthupyhlFVFzMKd+TQXcfd4Rr2x9Wego0DFvzY6x/hr+uK6eLC+nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl+YtXJN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ABFAC116B1;
-	Mon, 13 Oct 2025 08:35:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760344535;
-	bh=KLq6UV149iWlcbOb9BAgyPNNCpzPtwQ5QaRQCIh5ebk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Sl+YtXJNxiPzUTKnj5nq7CzD43piYS7wBecQAXfiXUxaN94nXtUgXkTFnKXYLWHJ2
-	 //ttm99e5QkvlcJSSlRjvk2r9KxeHpidc/j/xyNP4xZdsmAaLg+e2Cf7s9AtBqnO3C
-	 pSDXZGssVOarVlUO1MmNkp7PO/mQoofCC3ur/DX1n3LkOXiLEhvBgUevaaD7in4059
-	 rbgkE5z1rRx6XiG2IjkZty8gHd8FPYtqHixT7yFWMWDhuJ/iXCAc4S/eMw8KQlxMFc
-	 oFSXtPJSwsYIiXrcFSRAfN4eLWO4bJ0rAXdSg5aSjTmIhlPo3ZQk+0ZGJmOjZSjRzM
-	 tWecRHFZNPHQg==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Mon, 13 Oct 2025 10:35:20 +0200
-Subject: [PATCH v8 5/5] dma-buf: heaps: cma: Create CMA heap for each CMA
- reserved region
+	s=arc-20240116; t=1760344703; c=relaxed/simple;
+	bh=26t7Q08DL+2PT4vvqMsKQUPvVz73YGp900Us8qtoeII=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1jfAkSqnqLls9amXrpSEA6K8WbQIyvUc8T+K+9PNXwLdgpZxHmhWbVOpOl9Y4cx0DUnn6psA8p2L83U0MRKHgQvje4LRADtIxDW8Za+SS4DGPCyLMXv7R8hhXcvpxfrk46Gpt47vijcsi97PyP/x+7uPl+noRppjziNgwVrO2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lkUIJutH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760344701; x=1791880701;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=26t7Q08DL+2PT4vvqMsKQUPvVz73YGp900Us8qtoeII=;
+  b=lkUIJutHr9yY0H/ZYB3i2JISsNxIOfPMlTo3lDBpoVCyABBWHo6cmGGx
+   q2JXr2O9kiLGcvJiQiDo/eC0+hNpDW9uohAJN0NRsaO6CA4Mo1A7Z4rgY
+   TM3tpC5rlB2TbohWxmN79GFKSSw4aRor4+1d3Am4bf7zPk1a3icQodqmW
+   +UMR5wFNcMZ4+CLH1TotzznxNSTOkr1HB3i8DbcgWkbAEe1vyeJnk6GPP
+   1iMu5MqgrSdi0RzVMIZUGEDd/QTHqq8Po8XshtanPNHPY48ByaBfssWYE
+   ImPv9PMxp0HuThN94j4STTsiRjZHp33qCfvBgENdwqxD/LfX1vh7vT13q
+   g==;
+X-CSE-ConnectionGUID: DlGtR1eORQWz1VTKepLVpQ==
+X-CSE-MsgGUID: xaivkSxtQtKYH4So7K6qtw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="66332243"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="66332243"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 01:38:20 -0700
+X-CSE-ConnectionGUID: NM7kJcUdShCh09p123QYuA==
+X-CSE-MsgGUID: 1AgSA781SSGWq/B2gxPzRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="212172484"
+Received: from unknown (HELO [10.238.2.75]) ([10.238.2.75])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 01:38:18 -0700
+Message-ID: <30c62dee-2219-4b39-94c7-b9cc81130c9e@linux.intel.com>
+Date: Mon, 13 Oct 2025 16:38:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-dma-buf-ecc-heap-v8-5-04ce150ea3d9@kernel.org>
-References: <20251013-dma-buf-ecc-heap-v8-0-04ce150ea3d9@kernel.org>
-In-Reply-To: <20251013-dma-buf-ecc-heap-v8-0-04ce150ea3d9@kernel.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>, 
- Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
- "T.J. Mercier" <tjmercier@google.com>, Jonathan Corbet <corbet@lwn.net>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Robin Murphy <robin.murphy@arm.com>
-Cc: Andrew Davis <afd@ti.com>, Jared Kangas <jkangas@redhat.com>, 
- Mattijs Korpershoek <mkorpershoek@kernel.org>, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- iommu@lists.linux.dev, Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] bisected: perf: hang when using async-profiler
+ caused by perf: Fix the POLL_HUP delivery breakage
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Octavia Togami <octavia.togami@gmail.com>, stable@vger.kernel.org,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com>
+ <8aed5e69-57b1-4a01-b90c-56402eb27b37@linux.intel.com>
+ <20251013080531.GJ3245006@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251013080531.GJ3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Aside from the main CMA region, it can be useful to allow userspace to
-allocate from the other CMA reserved regions.
 
-Indeed, those regions can have specific properties that can be useful to
-a specific us-case.
+On 10/13/2025 4:05 PM, Peter Zijlstra wrote:
+> On Mon, Oct 13, 2025 at 10:34:27AM +0800, Mi, Dapeng wrote:
+>
+>> It looks the issue described in the link
+>> (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u)
+>> happens again but in a different way. :(
+>>
+>> As the commit message above link described,  cpu-clock (and task-clock) is
+>> a specific SW event which rely on hrtimer. The hrtimer handler calls
+>> __perf_event_overflow() and then event_stop (cpu_clock_event_stop()) and
+>> eventually call hrtimer_cancel() which traps into a dead loop which waits
+>> for the calling hrtimer handler finishes.
+>>
+>> As the
+>> change (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u),
+>> it should be enough to just disable the event and don't need an extra event
+>> stop.
+>>
+>> @Octavia, could you please check if the change below can fix this issue?
+>> Thanks.
+>>
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 7541f6f85fcb..883b0e1fa5d3 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -10343,7 +10343,20 @@ static int __perf_event_overflow(struct perf_event
+>> *event,
+>>                 ret = 1;
+>>                 event->pending_kill = POLL_HUP;
+>>                 perf_event_disable_inatomic(event);
+>> -               event->pmu->stop(event, 0);
+>> +
+>> +               /*
+>> +                * The cpu-clock and task-clock are two special SW events,
+>> +                * which rely on the hrtimer. The __perf_event_overflow()
+>> +                * is invoked from the hrtimer handler for these 2 events.
+>> +                * Avoid to call event_stop()->hrtimer_cancel() for these
+>> +                * 2 events since hrtimer_cancel() waits for the hrtimer
+>> +                * handler to finish, which would trigger a deadlock.
+>> +                * Only disabling the events is enough to stop the hrtimer.
+>> +                * See perf_swevent_cancel_hrtimer().
+>> +                */
+>> +               if (event->attr.config != PERF_COUNT_SW_CPU_CLOCK &&
+>> +                   event->attr.config != PERF_COUNT_SW_TASK_CLOCK)
+>> +                       event->pmu->stop(event, 0);
+> This is broken though; you cannot test config without first knowing
+> which PMU you're dealing with.
 
-For example, one of them platform I've been with has ECC enabled on the
-entire memory but for a specific region. Using that region to allocate
-framebuffers can be particular beneficial because enabling the ECC has a
-performance and memory footprint cost.
+Ah, yes. Just ignore this.
 
-Thus, exposing these regions as heaps user-space can allocate from and
-import wherever needed allows to cover that use-case.
 
-For now, only shared-dma-pools regions with the reusable property (ie,
-backed by CMA) are supported, but eventually we'll want to support other
-DMA pools types.
+>
+> Also, that timer really should get stopped, we can't know for certain
+> this overflow is of the timer itself or not, it could be a related
+> event.
+>
+> Something like the below might do -- but please carefully consider the
+> cases where hrtimer_try_to_cancel() might fail; in those cases we'll
+> have set HES_STOPPED and the hrtimer callback *SHOULD* observe this and
+> NORESTART.
+>
+> But I didn't check all the details.
 
-Since we collected all the CMA regions created during boot, we can
-simply iterate over all of them to create the heaps.
+The only reason that hrtimer_try_to_cancel() could fail is that the hrtimer
+callback is currently executing, so current change should be fine. 
 
-This has a weird interaction with the recent work on the CMA name, in
-particular the backward compatibility code created by commit
-854acbe75ff4 ("dma-buf: heaps: Give default CMA heap a fixed name").
 
-Indeed, the old name was either 'reserved', or the name of the
-reserved-memory region device tree node if the linux,cma-default
-property was set.
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 820127536e62..a91481d57841 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11756,7 +11756,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
+>  
+>  	event = container_of(hrtimer, struct perf_event, hw.hrtimer);
+>  
+> -	if (event->state != PERF_EVENT_STATE_ACTIVE)
+> +	if (event->state != PERF_EVENT_STATE_ACTIVE ||
+> +	    event->hw.state & PERF_HES_STOPPED)
+>  		return HRTIMER_NORESTART;
+>  
+>  	event->pmu->read(event);
+> @@ -11810,7 +11811,7 @@ static void perf_swevent_cancel_hrtimer(struct perf_event *event)
+>  		ktime_t remaining = hrtimer_get_remaining(&hwc->hrtimer);
+>  		local64_set(&hwc->period_left, ktime_to_ns(remaining));
+>  
+> -		hrtimer_cancel(&hwc->hrtimer);
+> +		hrtimer_try_to_cancel(&hwc->hrtimer);
+>  	}
+>  }
+>  
+> @@ -11854,12 +11855,14 @@ static void cpu_clock_event_update(struct perf_event *event)
+>  
+>  static void cpu_clock_event_start(struct perf_event *event, int flags)
+>  {
+> +	event->hw.state = 0;
+>  	local64_set(&event->hw.prev_count, local_clock());
+>  	perf_swevent_start_hrtimer(event);
+>  }
+>  
+>  static void cpu_clock_event_stop(struct perf_event *event, int flags)
+>  {
+> +	event->hw.state = PERF_HES_STOPPED;
+>  	perf_swevent_cancel_hrtimer(event);
+>  	if (flags & PERF_EF_UPDATE)
+>  		cpu_clock_event_update(event);
 
-In both these cases, we have now collected this region during boot, and
-we're using the same name. So we're now largely redundant with the
-code to handle backward compatibility code, and we can thus remove it
-and the associated Kconfig option.
+Besides cpu-clock, task-clock should need similar change as well. I would
+post a complete change later. 
 
-Reviewed-by: T.J. Mercier <tjmercier@google.com>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- Documentation/userspace-api/dma-buf-heaps.rst |  9 +++++---
- drivers/dma-buf/heaps/Kconfig                 | 10 --------
- drivers/dma-buf/heaps/cma_heap.c              | 33 +++++++++++++--------------
- 3 files changed, 22 insertions(+), 30 deletions(-)
-
-diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
-index 17bf6829efd7963bc849765db54d327644e8c395..b78d2faeba62cda721a1f49d49e02bcb520ad429 100644
---- a/Documentation/userspace-api/dma-buf-heaps.rst
-+++ b/Documentation/userspace-api/dma-buf-heaps.rst
-@@ -22,8 +22,11 @@ following heaps:
-    through the ``cma`` parameter, a memory region Device-Tree node with
-    the ``linux,cma-default`` property set, or through the
-    ``CMA_SIZE_MBYTES`` or ``CMA_SIZE_PERCENTAGE`` Kconfig options. Prior
-    to Linux 6.17, its name wasn't stable and could be called
-    ``reserved``, ``linux,cma``, or ``default-pool``, depending on the
--   platform. From Linux 6.17 onwards, the creation of these heaps is
--   controlled through the ``DMABUF_HEAPS_CMA_LEGACY`` Kconfig option for
--   backwards compatibility.
-+   platform.
-+
-+ - A heap will be created for each reusable region in the device tree
-+   with the ``shared-dma-pool`` compatible, using the full device tree
-+   node name as its name. The buffer semantics are identical to
-+   ``default-cma-region``.
-diff --git a/drivers/dma-buf/heaps/Kconfig b/drivers/dma-buf/heaps/Kconfig
-index bb369b38b001af51721b56e065df92825022f1f1..a5eef06c422644e8aadaf5aff2bd9a33c49c1ba3 100644
---- a/drivers/dma-buf/heaps/Kconfig
-+++ b/drivers/dma-buf/heaps/Kconfig
-@@ -10,15 +10,5 @@ config DMABUF_HEAPS_CMA
- 	depends on DMABUF_HEAPS && DMA_CMA
- 	help
- 	  Choose this option to enable dma-buf CMA heap. This heap is backed
- 	  by the Contiguous Memory Allocator (CMA). If your system has these
- 	  regions, you should say Y here.
--
--config DMABUF_HEAPS_CMA_LEGACY
--	bool "Legacy DMA-BUF CMA Heap"
--	default y
--	depends on DMABUF_HEAPS_CMA
--	help
--	  Add a duplicate CMA-backed dma-buf heap with legacy naming derived
--	  from the CMA area's devicetree node, or "reserved" if the area is not
--	  defined in the devicetree. This uses the same underlying allocator as
--	  CONFIG_DMABUF_HEAPS_CMA.
-diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
-index 2a901af635ed76cdb085915c03258c235e302792..42f88193eab9f8f4571064c7b3b8a73bca20fdf4 100644
---- a/drivers/dma-buf/heaps/cma_heap.c
-+++ b/drivers/dma-buf/heaps/cma_heap.c
-@@ -20,10 +20,12 @@
- #include <linux/err.h>
- #include <linux/highmem.h>
- #include <linux/io.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- 
- #define DEFAULT_CMA_NAME "default_cma_region"
-@@ -407,35 +409,32 @@ static int __init __add_cma_heap(struct cma *cma, const char *name)
- 	}
- 
- 	return 0;
- }
- 
--static int __init add_default_cma_heap(void)
-+static int __init add_cma_heaps(void)
- {
- 	struct cma *default_cma = dev_get_cma_area(NULL);
--	const char *legacy_cma_name;
-+	unsigned int i;
- 	int ret;
- 
--	if (!default_cma)
--		return 0;
-+	if (default_cma) {
-+		ret = __add_cma_heap(default_cma, DEFAULT_CMA_NAME);
-+		if (ret)
-+			return ret;
-+	}
- 
--	ret = __add_cma_heap(default_cma, DEFAULT_CMA_NAME);
--	if (ret)
--		return ret;
-+	for (i = 0; i < dma_areas_num; i++) {
-+		struct cma *cma = dma_areas[i];
- 
--	if (IS_ENABLED(CONFIG_DMABUF_HEAPS_CMA_LEGACY)) {
--		legacy_cma_name = cma_get_name(default_cma);
--		if (!strcmp(legacy_cma_name, DEFAULT_CMA_NAME)) {
--			pr_warn("legacy name and default name are the same, skipping legacy heap\n");
--			return 0;
-+		ret = __add_cma_heap(cma, cma_get_name(cma));
-+		if (ret) {
-+			pr_warn("Failed to add CMA heap %s", cma_get_name(cma));
-+			continue;
- 		}
- 
--		ret = __add_cma_heap(default_cma, legacy_cma_name);
--		if (ret)
--			pr_warn("failed to add legacy heap: %pe\n",
--				ERR_PTR(ret));
- 	}
- 
- 	return 0;
- }
--module_init(add_default_cma_heap);
-+module_init(add_cma_heaps);
- MODULE_DESCRIPTION("DMA-BUF CMA Heap");
-
--- 
-2.51.0
 
 
