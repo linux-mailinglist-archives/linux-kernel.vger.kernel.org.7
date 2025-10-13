@@ -1,146 +1,172 @@
-Return-Path: <linux-kernel+bounces-850060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CF1BD1C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:15:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290E5BD1C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 145E34E3274
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD613A1964
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601532E88AF;
-	Mon, 13 Oct 2025 07:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C5827F19F;
+	Mon, 13 Oct 2025 07:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Y42ft8D6"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMs1HnXQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592F32E7F20
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689F6610B
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760339706; cv=none; b=DMi1RfLT0qRGrbUlNkYMmWlwKHAZ4UY8qMvrdhgCplXnPcxXIr2HHCUXzzWid868fka0WPdHmbm97euDApTFF+cKUCQ5ZiviJQsF43m/gIR1DkHCo1UprLQTBgMY3GFbl43TnnkUiGCQ6fyMTpqnFNRpmbkFeR4VnC3i44vEs5U=
+	t=1760339728; cv=none; b=lnf3IqLmqf+WfxJylIxforJXQtrhTaVDq4EkZTtkx0UdNZT+2xx7v8rtBoAXMq5H7NSZJCr3ft7RLQET0B5jq1Ygk72zak2z3+4S9wQIEBnauMmSC0rHjyT/XGA4XhBxQFDWgnkflOifJPmfTKERD+e7MVnkH3iHCSiJmPfXb/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760339706; c=relaxed/simple;
-	bh=Dw25R2eZ8DMJQQOBcbI56rCIwt7zrBlY5WSN7481ImU=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=HR3EfiAuzIpRJqu5Xy2371wsI9vUII+xtOU6KsyudOf8RBk3o08ovUx2akT+1Z7yytqW1aUkkOLkYdAVSw1a1ZMLkZWNuhBOv3nA4HdnSzn2E3SH8Nm/H1ABuLe7J/qdNiWydMsf6GLdRQ4V0pNfpdEm5iPuE85rumVUqvtY8RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Y42ft8D6; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6001b.ext.cloudfilter.net ([10.0.30.143])
-	by cmsmtp with ESMTPS
-	id 87rIvpRZVaPqL8CllvS75Y; Mon, 13 Oct 2025 07:14:57 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 8ClkvDSUzDV658ClkvWnjG; Mon, 13 Oct 2025 07:14:56 +0000
-X-Authority-Analysis: v=2.4 cv=dLammPZb c=1 sm=1 tr=0 ts=68eca6f0
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10
- a=MNViUi8bbABe4p9O268A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:Cc:Subject:From:To:
-	MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Qz0nb/M5vgl79rSNKrhGowcyULzQUz8RfrryvD4bgsg=; b=Y42ft8D6REzMdUPE5gEaTksNaB
-	QCJmQJMDmPuxO1E1eipVBMvzqEZkKjTFMGc2FvSwgpip0v9xELSj+ecED1ccbGUfzqgcMwLqxqaCZ
-	yrXIbZJ6EW3qufkjCAkSR/ubbxI798tfQ30JJ7U3JT3rW970faxcfKZZ/iCTYuVQKf3mSW4mhb4s8
-	x4TbKiYEZigbIOjGuzRMi0379/eNSCV/cwtUBw2UIfNJYMpFT7izftR2ikHJfIo0aQi2jnie7wfHm
-	UjIEYCARacl4Y89FfHCxAhf+lWRoiHzdFoNONRsDoZOGhRtUe/hn2wi/YIuxyn6MBIi6pPTP522iN
-	wwWMjOhQ==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:41908 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1v8Clj-00000003JdT-2yvG;
-	Mon, 13 Oct 2025 01:14:55 -0600
-Message-ID: <eac81c57-1164-4d74-a1b4-6f353c577731@w6rz.net>
-Date: Mon, 13 Oct 2025 00:14:54 -0700
+	s=arc-20240116; t=1760339728; c=relaxed/simple;
+	bh=uvOYiLSxO8hALg+pTzVPPipnk2Sbv0WPw08PuGx/Bl8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XnpJip93vpwrxWCS1YnUhFbjrGcLfftn3gfcHL5Amu2+OzKGueY2d8tZ8v+HFvmc3FzYG3HB2HWRPVSPdjHG56NTDX6WVa58juNv3z5nVubiH2dmJNHSeaxhRS2B3SUYF9AlFXnN/zp9Pwc9uvb1hliYwQgEnmU7mytiO2JSd4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMs1HnXQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0523DC4CEE7;
+	Mon, 13 Oct 2025 07:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760339728;
+	bh=uvOYiLSxO8hALg+pTzVPPipnk2Sbv0WPw08PuGx/Bl8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vMs1HnXQwkSeF94h3e7R10x0EspzZ1aioKalEcHuTuqAYkzk/H3Ef1JVV2Gu7P8vb
+	 QpSDLQ/DHEkz9ig8iRGrQvGe4jsDDDbpShHMr83UahC3G/WbMNdxvA0cMAESvjz++m
+	 gu0RYAVaNSpoYLv6gME5VJqKhgyxZTWtaxGLnyu9GOCrsA9HB9T9jLOx+CxVkBHqVB
+	 MkPeWDfLT5RYcv6zeS45dTzMz1NF2llSOHnXyeLR29rDScU8iBs4qYhDwtA+Mg308O
+	 uhQiuiA++IyByh1o6D7PflLrgjpYlU07SaV+1Pfo/rMGkzOnG80KjvsoO7EIsKT0CG
+	 7QI1lLNVLpJSg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v8CmD-0000000DQvL-2UPH;
+	Mon, 13 Oct 2025 07:15:25 +0000
+Date: Mon, 13 Oct 2025 08:15:25 +0100
+Message-ID: <868qhfxofm.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jinqian Yang <yangjinqian1@huawei.com>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	jiangkunkun <jiangkunkun@huawei.com>,
+	Zhou Wang <wangzhou1@hisilicon.com>,
+	liuyonglong <liuyonglong@huawei.com>
+Subject: Re: [Question] QEMU VM fails to restart repeatedly with VFIO passthrough on GICv4.1
+In-Reply-To: <5269ecde-be8e-4920-a76f-882da1475d5d@huawei.com>
+References: <5269ecde-be8e-4920-a76f-882da1475d5d@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: bhelgaas@google.comk, rishna.chundru@oss.qualcomm.com, mani@kernel.org
-From: Ron Economos <re@w6rz.net>
-Subject: SiFive FU740 PCI driver fails on 6.18-rc1
-Cc: helgass@kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v8Clj-00000003JdT-2yvG
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:41908
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 2
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNhzOdlojiGSXcVeQe2A7AD+83rUrB1ZWRKo1ZxVaAxCZw0fJBAJl7AAwCcBmb5yZPcgE2ZnnsnzI8ABsXq4MBXlO7ENJZYXeb86HayWflQELJHW02mh
- 9mRAa7/HWZPz7xgQ9XlULaLlJ6fOwDbOHEmY3qa8NndQzVMldE/YZU3YG2WvInU0Fky0C3KRqUTOWLZQKOyDzBYUvpkZx8lX5ro=
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yangjinqian1@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com, tglx@linutronix.de, yuzenghui@huawei.com, jiangkunkun@huawei.com, wangzhou1@hisilicon.com, liuyonglong@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The SiFive FU740 PCI driver fails on the HiFive Unmatched board with 
-Linux 6.18-rc1. The error message is:
+On Mon, 13 Oct 2025 03:56:20 +0100,
+Jinqian Yang <yangjinqian1@huawei.com> wrote:
+> 
+> Hi, all
+> 
+> On a GICv4.1 environment running kernel 6.16, when launching VMs with
+> QEMU and passing through VF devices, after repeatedly booting and
+> killing the VMs hundreds of times, the host reports call traces and the
+> VMs become unresponsive. The call traces show VFIO call stacks.
+> 
+> [14201.974880] BUG: Bad page map in process qemu-system-aar
+> pte:fefefefefefefefe pmd:8000820b1ba0403
+> [14201.974895] addr:0000fffdd7400000 vm_flags:80240644bb
+> anon_vma:0000000000000000 mapping:ffff08208e9b7758 index:401eed6a
+> [14201.974905] file:[vfio-device] fault:vfio_pci_mmap_page_fault
+> [vfio_pci_core] mmap:vfio_device_fops_mmap [vfio] mmap_prepare: 0x0
+> read_folio:0x0
+> [14201.974923] CPU: 2 UID: 0 PID: 50408 Comm: qemu-system-aar Kdump:
+> loaded Tainted: G           O        6.16.0-rc4+ #1 PREEMPT
+> [14201.974926] Tainted: [O]=OOT_MODULE
+> [14201.974927] Hardware name: To be filled by O.E.M. To be filled by
+> O.E.M./To be filled by O.E.M., BIOS HixxxxEVB V3.4.7 09/04/2025
+> [14201.974928] Call trace:
+> [14201.974929]  show_stack+0x20/0x38 (C)
+> [14201.974934]  dump_stack_lvl+0x80/0xf8
+> [14201.974938]  dump_stack+0x18/0x28
+> [14201.974940]  print_bad_pte+0x138/0x1d8
+> [14201.974943]  vm_normal_page+0xa4/0xd0
+> [14201.974945]  unmap_page_range+0x648/0x1110
+> [14201.974947]  unmap_single_vma.constprop.0+0x90/0x118
+> [14201.974948]  zap_page_range_single_batched+0xbc/0x180
+> [14201.974950]  zap_page_range_single+0x60/0xa0
+> [14201.974952]  unmap_mapping_range+0x114/0x140
+> [14201.974953]  vfio_pci_zap_and_down_write_memory_lock+0x3c/0x58
+> [vfio_pci_core]
+> [14201.974957]  vfio_basic_config_write+0x214/0x2d8 [vfio_pci_core]
+> [14201.974959]  vfio_pci_config_rw+0x1d8/0x1290 [vfio_pci_core]
+> [14201.974962]  vfio_pci_rw+0x118/0x200 [vfio_pci_core]
+> [14201.974965]  vfio_pci_core_write+0x28/0x40 [vfio_pci_core]
+> [14201.974968]  vfio_device_fops_write+0x3c/0x58 [vfio]
+> [14201.974971]  vfs_write+0xd8/0x400
+> [14201.974973]  __arm64_sys_pwrite64+0xac/0xe0
+> [14201.974974]  invoke_syscall+0x50/0x120
+> [14201.974976]  el0_svc_common.constprop.0+0xc8/0xf0
+> [14201.974978]  do_el0_svc+0x24/0x38
+> [14201.974979]  el0_svc+0x38/0x130
+> [14201.974982]  el0t_64_sync_handler+0xc8/0xd0
+> [14201.974984]  el0t_64_sync+0x1ac/0x1b0
+> [14201.975025] Disabling lock debugging due to kernel taint
+> 
+> This value (0xfefefefefefefefe) is very special - it's a "poison" value.
+> QEMU or the VFIO driver may have attempted to access or manipulate a
+> page that has already been freed.
+> 
+> Thanks in advance for any insights!
 
-[    3.166624] fu740-pcie e00000000.pcie: host bridge 
-/soc/pcie@e00000000 ranges:
-[    3.166706] fu740-pcie e00000000.pcie:       IO 
-0x0060080000..0x006008ffff -> 0x0060080000
-[    3.166767] fu740-pcie e00000000.pcie:      MEM 
-0x0060090000..0x007fffffff -> 0x0060090000
-[    3.166805] fu740-pcie e00000000.pcie:      MEM 
-0x2000000000..0x3fffffffff -> 0x2000000000
-[    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem 
-0xdf0000000-0xdffffffff] for [bus 00-ff]
-[    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
-[    3.579552] fu740-pcie e00000000.pcie: Failed to configure iATU in 
-ECAM mode
-[    3.579655] fu740-pcie e00000000.pcie: probe with driver fu740-pcie 
-failed with error -22
+I have no insight whatsoever, but there is very little in this report
+to go on. So here are the questions you should ask yourself:
 
-The normal message (on Linux 6.17.2) is:
+- How specific is this to GICv4.1?
 
-[    3.381487] fu740-pcie e00000000.pcie: host bridge 
-/soc/pcie@e00000000 ranges:
-[    3.381584] fu740-pcie e00000000.pcie:       IO 
-0x0060080000..0x006008ffff -> 0x0060080000
-[    3.381682] fu740-pcie e00000000.pcie:      MEM 
-0x0060090000..0x007fffffff -> 0x0060090000
-[    3.381724] fu740-pcie e00000000.pcie:      MEM 
-0x2000000000..0x3fffffffff -> 0x2000000000
-[    3.484809] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 ib, 
-align 4K, limit 4096G
-[    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
-[    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-[    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-[    3.988164] fu740-pcie e00000000.pcie: PCI host bridge to bus 0000:00
+- Does it stop triggering if you disable direct injection?
 
-Reverting the following commits solves the issue.
+- What makes you think this value is explicitly a poison value rather
+  than some other data?
 
-0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc: Support ECAM 
-mechanism by enabling iATU 'CFG Shift Feature'
+- Who writes this "poison" data?
 
-4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom: Prepare for the DWC 
-ECAM enablement
+- Does it reproduce on 6.17 rather than a dodgy 6.16-rc4?
 
-f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc: Prepare the driver 
-for enabling ECAM mechanism using iATU 'CFG Shift Feature'
+- What operation was QEMU performing on the device when this happens?
 
+- Using what devices passed to the guest?
+
+- What do the usual debug options (KASAN, lockdep) report?
+
+- What is so specific about this HW?
+
+- What is this out-of-tree module?
+
+- Have you tried without it?
+
+These are the questions I'd ask myself before even posting something,
+because each and every one of them is relevant. There are probably
+more, but once you have answered these question, you should be able to
+figure out what the gaps are in your understanding of the problem.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
