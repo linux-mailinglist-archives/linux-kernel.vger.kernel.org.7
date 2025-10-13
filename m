@@ -1,55 +1,60 @@
-Return-Path: <linux-kernel+bounces-851400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A5DBD65BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:30:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16F2BD65C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7F53BC18E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:30:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9715F4EEA57
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896462D5955;
-	Mon, 13 Oct 2025 21:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5C52DE1F0;
+	Mon, 13 Oct 2025 21:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIrSUIuo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7zRxW/O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8936134BD;
-	Mon, 13 Oct 2025 21:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C171EFFB7;
+	Mon, 13 Oct 2025 21:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391046; cv=none; b=u8KoBHSCeaA2JnEsGnMMVzXl7KBBmaHSHI9p89SpSERbjggfAkiWmP2N/uFYYaX9GcAyBoqMZBRFmDmaPmYTMH1PozPbgFEPT8/ro30SUL3fifGlMgYhJq+clhDI7bUshH3ckH7j+9yZeGiUEunmb+Fhog9T8cSgv7XA17rY2Pg=
+	t=1760391068; cv=none; b=nWzyMNFI6eQNxY0sIpxxP0EBSHSjaoWfg60l+p5+DvmKZpZlGKW6C36idm5G2HGUffZZdHU2ZdtUliC1wjnidiZKrq3/FCgzUdr+/wZjUfHYPjybTIAcJCS3k++NbRjaBcwnQw7ZxR5fNUaU/3QdyY6BSLDHUhoCJimy131riZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391046; c=relaxed/simple;
-	bh=UXRYA9OeTpRlGCWOSO+dL5y9CcocBocJ6aM8A6/dmE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XezzFIsheFuMmkE/eSeVQ3WsEACAJ6WMeqxgpRz+9S8zDWHjynGtVjZ77+z7p01dC2IBwF61LNBSkurnJOdbE2jZpfhmsHWJ5lxUL8+bQWwZ3iVickio98UFPtlqGFcQgcBWGTDGK9/HBcwPpBa9p18UuLTP/8lXZm0JcuLNYNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIrSUIuo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5D3C4CEE7;
-	Mon, 13 Oct 2025 21:30:45 +0000 (UTC)
+	s=arc-20240116; t=1760391068; c=relaxed/simple;
+	bh=tm3f9QBVDbCyS+aclYeJleqzPEQAMHHJG+uDCCqQgJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oy+SGROprWg2gnI2kJxprD6Hr83NlLG9JKN/epdx6UA3RTa7/KSVLXv51YoEc94e2V8qBheSedUjJ7JDk+b/SEuZRaY0fsI+dBjYNl19i38PcVRJ1htt3rDqKYDTgRYaPkF1f2hXUuqC0NRRJCzYFo1BhcDCh7mAV3JHCi7S+Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7zRxW/O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E89C4CEE7;
+	Mon, 13 Oct 2025 21:31:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760391045;
-	bh=UXRYA9OeTpRlGCWOSO+dL5y9CcocBocJ6aM8A6/dmE8=;
+	s=k20201202; t=1760391067;
+	bh=tm3f9QBVDbCyS+aclYeJleqzPEQAMHHJG+uDCCqQgJ4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=aIrSUIuoRlOnmFKmaS40AJfKwtu0dHdNg8b1UvYq2CtV+D/SiFnpSGY5UnTK6e53H
-	 R4mBxcGz2CwaBB/epzuxayWPZJV8zqzDLD8q0kwlQrIafUpwApSo1SW9OxgE4vCREw
-	 nt/Qu+iN/FDhiQi9/NnRPGjvqEj9gfTNmSokBg2+jC7cB6YSWX5UzWCWlav4nIyGA/
-	 SZXBj95H/6Z71XaBa5wCmpMttXCYGMGV69XU0E5/VtuHJhbcyYOeT3EKntHJ7Tj/9l
-	 5bg54weZR9cqrl90fOUw5Irbobq3/Mf5JtUiHKP8lxsk+TS6p8VML3+TWzybOjG4ko
-	 VDOEk17CA0gBQ==
+	b=C7zRxW/OldpGB6bsfD/E8QfMMDozWGbpvrhvggrI6c16pX5nJxTeKG/l7I5jLnZ5A
+	 J7no10m9WIldGd2Nitpbb1L5TL9qRSiZK6+rLLJjmvN7nq9nlfhyiYrr50BOBrFPRM
+	 2SHf34MK8GLsHDtdMl/eVRyn6lSS7EOWHBd0/k0boegKSounp7DkKjQjR7Xz16bm29
+	 r8aChWUYAZKewzh7z2gb1yclPeiGFZsu3mLjftS5if+ERrktC88amEGljfI48nd+Re
+	 2gMkK1K2l6yzKWB8VByTV/Eps7ncrC619KJusYKsE6F3XsPdBizexLgd7R0y/UAMlv
+	 XzGVvNEELTFPA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Khuong Dinh <khuong@os.amperecomputing.com>
-Cc: dmaengine@vger.kernel.org,
+	Richard Cochran <richardcochran@gmail.com>,
+	Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: netdev@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: dma: Convert apm,xgene-storm-dma to DT schema
-Date: Mon, 13 Oct 2025 16:30:35 -0500
-Message-ID: <20251013213037.684981-1-robh@kernel.org>
+Subject: [PATCH net-next] dt-bindings: net: Convert amd,xgbe-seattle-v1a to DT schema
+Date: Mon, 13 Oct 2025 16:30:49 -0500
+Message-ID: <20251013213049.686797-2-robh@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,134 +64,251 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert APM X-Gene Storm DMA binding to DT schema format. It's a
+Convert amd,xgbe-seattle-v1a binding to DT schema format. It's a
 straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/dma/apm,xgene-storm-dma.yaml     | 59 +++++++++++++++++++
- .../devicetree/bindings/dma/apm-xgene-dma.txt | 47 ---------------
- 2 files changed, 59 insertions(+), 47 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/apm,xgene-storm-dma.yaml
- delete mode 100644 Documentation/devicetree/bindings/dma/apm-xgene-dma.txt
+ .../bindings/net/amd,xgbe-seattle-v1a.yaml    | 147 ++++++++++++++++++
+ .../devicetree/bindings/net/amd-xgbe.txt      |  76 ---------
+ 2 files changed, 147 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/amd-xgbe.txt
 
-diff --git a/Documentation/devicetree/bindings/dma/apm,xgene-storm-dma.yaml b/Documentation/devicetree/bindings/dma/apm,xgene-storm-dma.yaml
+diff --git a/Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml b/Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml
 new file mode 100644
-index 000000000000..9ca5f7848785
+index 000000000000..006add8b6410
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/apm,xgene-storm-dma.yaml
-@@ -0,0 +1,59 @@
++++ b/Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml
+@@ -0,0 +1,147 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/dma/apm,xgene-storm-dma.yaml#
++$id: http://devicetree.org/schemas/net/amd,xgbe-seattle-v1a.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: APM X-Gene Storm SoC DMA
++title: AMD XGBE Seattle v1a
 +
 +maintainers:
-+  - Khuong Dinh <khuong@os.amperecomputing.com>
++  - Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
++
++allOf:
++  - $ref: /schemas/net/ethernet-controller.yaml#
 +
 +properties:
 +  compatible:
-+    const: apm,xgene-storm-dma
++    const: amd,xgbe-seattle-v1a
 +
 +  reg:
 +    items:
-+      - description: DMA control and status registers
-+      - description: Descriptor ring control and status registers
-+      - description: Descriptor ring command registers
-+      - description: SoC efuse registers
++      - description: MAC registers
++      - description: PCS registers
++      - description: SerDes Rx/Tx registers
++      - description: SerDes integration registers (1/2)
++      - description: SerDes integration registers (2/2)
 +
 +  interrupts:
-+    items:
-+      - description: DMA error reporting interrupt
-+      - description: DMA channel 0 completion interrupt
-+      - description: DMA channel 1 completion interrupt
-+      - description: DMA channel 2 completion interrupt
-+      - description: DMA channel 3 completion interrupt
++    description: Device interrupts. The first entry is the general device
++      interrupt. If amd,per-channel-interrupt is specified, each DMA channel
++      interrupt must be specified. The last entry is the PCS auto-negotiation
++      interrupt.
++    minItems: 2
++    maxItems: 6
 +
 +  clocks:
++    items:
++      - description: DMA clock for the device
++      - description: PTP clock for the device
++
++  clock-names:
++    items:
++      - const: dma_clk
++      - const: ptp_clk
++
++  iommus:
 +    maxItems: 1
 +
++  phy-mode: true
++
 +  dma-coherent: true
++
++  amd,per-channel-interrupt:
++    description: Indicates that Rx and Tx complete will generate a unique
++      interrupt for each DMA channel.
++    type: boolean
++
++  amd,speed-set:
++    description: >
++      Speed capabilities of the device.
++        0 = 1GbE and 10GbE
++        1 = 2.5GbE and 10GbE
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1]
++
++  amd,serdes-blwc:
++    description: Baseline wandering correction enablement for each speed.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    minItems: 3
++    maxItems: 3
++    items:
++      enum: [0, 1]
++
++  amd,serdes-cdr-rate:
++    description: CDR rate speed selection for each speed.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    items:
++      - description: CDR rate for 1GbE
++      - description: CDR rate for 2.5GbE
++      - description: CDR rate for 10GbE
++
++  amd,serdes-pq-skew:
++    description: PQ data sampling skew for each speed.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    items:
++      - description: PQ skew for 1GbE
++      - description: PQ skew for 2.5GbE
++      - description: PQ skew for 10GbE
++
++  amd,serdes-tx-amp:
++    description: TX amplitude boost for each speed.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    items:
++      - description: TX amplitude for 1GbE
++      - description: TX amplitude for 2.5GbE
++      - description: TX amplitude for 10GbE
++
++  amd,serdes-dfe-tap-config:
++    description: DFE taps available to run for each speed.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    items:
++      - description: DFE taps available for 1GbE
++      - description: DFE taps available for 2.5GbE
++      - description: DFE taps available for 10GbE
++
++  amd,serdes-dfe-tap-enable:
++    description: DFE taps to enable for each speed.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    items:
++      - description: DFE taps to enable for 1GbE
++      - description: DFE taps to enable for 2.5GbE
++      - description: DFE taps to enable for 10GbE
 +
 +required:
 +  - compatible
 +  - reg
 +  - interrupts
 +  - clocks
++  - clock-names
++  - phy-mode
 +
-+additionalProperties: false
++unevaluatedProperties: false
 +
 +examples:
 +  - |
-+    dma@1f270000 {
-+        compatible = "apm,xgene-storm-dma";
-+        reg = <0x1f270000 0x10000>,
-+              <0x1f200000 0x10000>,
-+              <0x1b000000 0x400000>,
-+              <0x1054a000 0x100>;
-+        interrupts = <0x0 0x82 0x4>,
-+                    <0x0 0xb8 0x4>,
-+                    <0x0 0xb9 0x4>,
-+                    <0x0 0xba 0x4>,
-+                    <0x0 0xbb 0x4>;
-+        dma-coherent;
-+        clocks = <&dmaclk 0>;
++    ethernet@e0700000 {
++        compatible = "amd,xgbe-seattle-v1a";
++        reg = <0xe0700000 0x80000>,
++              <0xe0780000 0x80000>,
++              <0xe1240800 0x00400>,
++              <0xe1250000 0x00060>,
++              <0xe1250080 0x00004>;
++        interrupts = <0 325 4>,
++                     <0 326 1>, <0 327 1>, <0 328 1>, <0 329 1>,
++                     <0 323 4>;
++        amd,per-channel-interrupt;
++        clocks = <&xgbe_dma_clk>, <&xgbe_ptp_clk>;
++        clock-names = "dma_clk", "ptp_clk";
++        phy-mode = "xgmii";
++        mac-address = [ 02 a1 a2 a3 a4 a5 ];
++        amd,speed-set = <0>;
++        amd,serdes-blwc = <1>, <1>, <0>;
++        amd,serdes-cdr-rate = <2>, <2>, <7>;
++        amd,serdes-pq-skew = <10>, <10>, <30>;
++        amd,serdes-tx-amp = <15>, <15>, <10>;
++        amd,serdes-dfe-tap-config = <3>, <3>, <1>;
++        amd,serdes-dfe-tap-enable = <0>, <0>, <127>;
 +    };
-diff --git a/Documentation/devicetree/bindings/dma/apm-xgene-dma.txt b/Documentation/devicetree/bindings/dma/apm-xgene-dma.txt
+diff --git a/Documentation/devicetree/bindings/net/amd-xgbe.txt b/Documentation/devicetree/bindings/net/amd-xgbe.txt
 deleted file mode 100644
-index c53e0b08032f..000000000000
---- a/Documentation/devicetree/bindings/dma/apm-xgene-dma.txt
+index 9c27dfcd1133..000000000000
+--- a/Documentation/devicetree/bindings/net/amd-xgbe.txt
 +++ /dev/null
-@@ -1,47 +0,0 @@
--Applied Micro X-Gene SoC DMA nodes
+@@ -1,76 +0,0 @@
+-* AMD 10GbE driver (amd-xgbe)
 -
--DMA nodes are defined to describe on-chip DMA interfaces in
--APM X-Gene SoC.
--
--Required properties for DMA interfaces:
--- compatible: Should be "apm,xgene-dma".
--- device_type: set to "dma".
--- reg: Address and length of the register set for the device.
--  It contains the information of registers in the following order:
--  1st - DMA control and status register address space.
--  2nd - Descriptor ring control and status register address space.
--  3rd - Descriptor ring command register address space.
--  4th - Soc efuse register address space.
--- interrupts: DMA has 5 interrupts sources. 1st interrupt is
--  DMA error reporting interrupt. 2nd, 3rd, 4th and 5th interrupts
--  are completion interrupts for each DMA channels.
--- clocks: Reference to the clock entry.
+-Required properties:
+-- compatible: Should be "amd,xgbe-seattle-v1a"
+-- reg: Address and length of the register sets for the device
+-   - MAC registers
+-   - PCS registers
+-   - SerDes Rx/Tx registers
+-   - SerDes integration registers (1/2)
+-   - SerDes integration registers (2/2)
+-- interrupts: Should contain the amd-xgbe interrupt(s). The first interrupt
+-  listed is required and is the general device interrupt. If the optional
+-  amd,per-channel-interrupt property is specified, then one additional
+-  interrupt for each DMA channel supported by the device should be specified.
+-  The last interrupt listed should be the PCS auto-negotiation interrupt.
+-- clocks:
+-   - DMA clock for the amd-xgbe device (used for calculating the
+-     correct Rx interrupt watchdog timer value on a DMA channel
+-     for coalescing)
+-   - PTP clock for the amd-xgbe device
+-- clock-names: Should be the names of the clocks
+-   - "dma_clk" for the DMA clock
+-   - "ptp_clk" for the PTP clock
+-- phy-mode: See ethernet.txt file in the same directory
 -
 -Optional properties:
--- dma-coherent : Present if dma operations are coherent
+-- dma-coherent: Present if dma operations are coherent
+-- amd,per-channel-interrupt: Indicates that Rx and Tx complete will generate
+-  a unique interrupt for each DMA channel - this requires an additional
+-  interrupt be configured for each DMA channel
+-- amd,speed-set: Speed capabilities of the device
+-    0 - 1GbE and 10GbE (default)
+-    1 - 2.5GbE and 10GbE
+-
+-The MAC address will be determined using the optional properties defined in
+-ethernet.txt.
+-
+-The following optional properties are represented by an array with each
+-value corresponding to a particular speed. The first array value represents
+-the setting for the 1GbE speed, the second value for the 2.5GbE speed and
+-the third value for the 10GbE speed.  All three values are required if the
+-property is used.
+-- amd,serdes-blwc: Baseline wandering correction enablement
+-    0 - Off
+-    1 - On
+-- amd,serdes-cdr-rate: CDR rate speed selection
+-- amd,serdes-pq-skew: PQ (data sampling) skew
+-- amd,serdes-tx-amp: TX amplitude boost
+-- amd,serdes-dfe-tap-config: DFE taps available to run
+-- amd,serdes-dfe-tap-enable: DFE taps to enable
 -
 -Example:
--	dmaclk: dmaclk@1f27c000 {
--		compatible = "apm,xgene-device-clock";
--		#clock-cells = <1>;
--		clocks = <&socplldiv2 0>;
--		reg = <0x0 0x1f27c000 0x0 0x1000>;
--		reg-names = "csr-reg";
--		clock-output-names = "dmaclk";
--	};
--
--	dma: dma@1f270000 {
--			compatible = "apm,xgene-storm-dma";
--			device_type = "dma";
--			reg = <0x0 0x1f270000 0x0 0x10000>,
--			      <0x0 0x1f200000 0x0 0x10000>,
--			      <0x0 0x1b000000 0x0 0x400000>,
--			      <0x0 0x1054a000 0x0 0x100>;
--			interrupts = <0x0 0x82 0x4>,
--				     <0x0 0xb8 0x4>,
--				     <0x0 0xb9 0x4>,
--				     <0x0 0xba 0x4>,
--				     <0x0 0xbb 0x4>;
--			dma-coherent;
--			clocks = <&dmaclk 0>;
+-	xgbe@e0700000 {
+-		compatible = "amd,xgbe-seattle-v1a";
+-		reg = <0 0xe0700000 0 0x80000>,
+-		      <0 0xe0780000 0 0x80000>,
+-		      <0 0xe1240800 0 0x00400>,
+-		      <0 0xe1250000 0 0x00060>,
+-		      <0 0xe1250080 0 0x00004>;
+-		interrupt-parent = <&gic>;
+-		interrupts = <0 325 4>,
+-			     <0 326 1>, <0 327 1>, <0 328 1>, <0 329 1>,
+-			     <0 323 4>;
+-		amd,per-channel-interrupt;
+-		clocks = <&xgbe_dma_clk>, <&xgbe_ptp_clk>;
+-		clock-names = "dma_clk", "ptp_clk";
+-		phy-mode = "xgmii";
+-		mac-address = [ 02 a1 a2 a3 a4 a5 ];
+-		amd,speed-set = <0>;
+-		amd,serdes-blwc = <1>, <1>, <0>;
+-		amd,serdes-cdr-rate = <2>, <2>, <7>;
+-		amd,serdes-pq-skew = <10>, <10>, <30>;
+-		amd,serdes-tx-amp = <15>, <15>, <10>;
+-		amd,serdes-dfe-tap-config = <3>, <3>, <1>;
+-		amd,serdes-dfe-tap-enable = <0>, <0>, <127>;
 -	};
 -- 
 2.51.0
