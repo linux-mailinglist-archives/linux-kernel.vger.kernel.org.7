@@ -1,319 +1,420 @@
-Return-Path: <linux-kernel+bounces-851460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF1DBD6922
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:09:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492A0BD68F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E03F4FDCFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:07:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B73189F4E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137AB2DF13A;
-	Mon, 13 Oct 2025 21:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E8E30B53E;
+	Mon, 13 Oct 2025 21:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHzsRC1U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="RNZCApCC"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8B2309EEC;
-	Mon, 13 Oct 2025 21:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A476130ACF0
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760392695; cv=none; b=NJ0ob067Y3xHW9gjXzsloMjSTL0SA/Dy2nsvNqbnmO1b6azFRxgQAQ14nnjnd1z8b4tbmWd1Hb3rw/X1MO6N6vL7nf/WFyEgoRayKeTs1osPgwFY1vHuSU8reqLbZyZQJExpZlZTEa1jIana331ubyOmIRWaEbdrqIzaU86VoPk=
+	t=1760392698; cv=none; b=imdTJVnlayqlgspTQgG0FRTvn5Yf2IK0cFOu5ekj2kl+Pet+rtV+i+Xu16bd+Kc/bRvgpbntYe/shxrRdOrXwmHWfkmNNccQgxNziTI4PDK3fRV6tCWv6sHpAnxH3ihM9JfVAaljqmoC5MAGkahyk3sQhot/suefi2QFhMrML8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760392695; c=relaxed/simple;
-	bh=VHncSqJ4t/EK/+D2CNoYoxfnRqS1UOHPeyFflWTFuwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q3cylXYnbEmA3vfhf6MJzt1Ivbh9HUhKVS/h4NGCGB0ezBDaA6/sipF5cFaNu1mTA5/5uu+kNsQRW9Rz5R2CBpB2apL9wMIW9HW2Wq2NeiGsXmbuYd7M2GZWIl8OKtx9pR2KNEWzARYc+78Y/mRK+D+wWk7a0VMC20GWT8p+VSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHzsRC1U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86733C2BCAF;
-	Mon, 13 Oct 2025 21:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760392694;
-	bh=VHncSqJ4t/EK/+D2CNoYoxfnRqS1UOHPeyFflWTFuwo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aHzsRC1UynMiJlRGaqWrSaJpyrgNJjP1Wpp/je+9YuVEx+6g5m47fQCibEzAzW4Em
-	 +D54X8S+NYnKtRksomFW9RHOzRaFjCUikQ/TEHAPt6XBQgdM125ALpeRml1bnilkwx
-	 vUDw568I2IuVVY3veB9eFaPjegcLyP5mIe9Pzc0Mr75iABP6TmFsUC4OWyFQHnj6cE
-	 tTyPKu+63HV+U4nWHuXcLuIGqXTCclAS3W2RWPURE5kzYes//S3y3+LgwLZVwq0pRQ
-	 qug4GWZBUwNivkIV6YppLNMMYQGzUujDU1xFyKFM2MQHNvlWGrnfv6cfNtkBaQOBzr
-	 sUGCaUL92Nnig==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: thermal: Convert brcm,sr-thermal to DT schema
-Date: Mon, 13 Oct 2025 16:58:09 -0500
-Message-ID: <20251013215810.783006-1-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760392698; c=relaxed/simple;
+	bh=yLjHbFg4kWtZtlzCG8yQqA+NVQ/mb4I1yjF88dIfHcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r0GpmXFQDNzIE5NbDAreB221TEYsNQeIpgkIq1Oj62pYpWKlDdaUBiw7aLag95OMMqzJq5EG1Nhq8LVxxDKkDhuxNack+JTUdjx6e8cgLzTYoLYgZcWr3ii0jyJxi9WiHeraqPp7SnLNC/5+zcGA/JRsg0nN/iRV668qeazbHNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=RNZCApCC; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-93bd394fab0so117336539f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:58:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1760392696; x=1760997496; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V4CgO2gjUB1ReYMvMrsG9awRFMRdFdaL7/IydQKP1Oc=;
+        b=RNZCApCCNUgM20CNfDXMfHurN9Azj6UsaZqchCYxIdPwipXnj/HoryEnjBbp1a8sld
+         iO0FE0Jxx8Hk4Ve4wUYuks/CSkYC0PudrJLwhSGGdaCMxkBQz44HlcJAfSHTrlmSis8A
+         tVNQGw5i+vwaSJvJUrT+xz8d+QEWlSS4rd/jZ4jVXZvq7ZTPxdWy46DEJ3pRS/OSKXVa
+         /nBDJ0KtLLH1tMU0Ycqwec0UcyzEGUNBO+Woainit9Xk61bIiAKXEHXsccL2T8RoFbSq
+         LqaHduNQk0SKeGCpNADKAySGbQ48MVR1o8V9u2VD42FzPIrBWDlSuvCw4HplwxiWhKrx
+         v3pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760392696; x=1760997496;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4CgO2gjUB1ReYMvMrsG9awRFMRdFdaL7/IydQKP1Oc=;
+        b=gQT+LNkCkU7q6JhT2X/FRG2J2KJfcmlfHbO5LMpiJNJIfQiWngd+r2pYEdZlHjtlGN
+         LoWi/9Y1DUVHCQq4kig5Lv263go6pGTowbp5d6NAy3x2aMzPpk5gGfCWydfJfukKZk/X
+         TIvqR7k+7jwa/PHsNFD58dCHEeTnkENW4yK1P7wn/quBPDSDOxBw2e4TGWpju+I+00AO
+         dhDjc9d1dKGX+dOsYti/hIrWsjrZaz80BrUEmiahZUF3p73FGquxiQY01o3gFALXVwZq
+         ZwX5V2kotNdMa5wAYZNsqFJ5X0Qk3SaDKuIpkqBsT0qmUgJ2FOHX/zrOi69cpURew/Bi
+         uHxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5gKI0fQ4NBxZx6q4a3lY6/hjaapytmqKSpsNutwzCkWr+5iGV0bhps3xa28bcWVZQjGgnAD2cNA1jGas=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5h/nyGoviJd1X60HYv+CSJL/RYTlTG2nKDO5p+QE60fyjjz1i
+	mkK1OTNaS8KbRGlAoF+eYfckT0yU7cxdhT/LPxgqNUzP/dPdVmAYbTRJFPJdGWyqyXQ=
+X-Gm-Gg: ASbGnctUzNBSd6DncZ35ZBy0gllPldsQin4qHxiS/pPWsCC5iV7YFFvj8FIurfyMM80
+	EE1Pi8fIzMNFWEuI4N7Yto6WjfjJCNybf1noTh2ZwpKvDqpCu66rQqZ0YmgdEOnCSphroQEfyvW
+	vxznQkZXtrKmgXAG/4D9Z0dQk0mObltNQ2DjvfekX7zfrOFWVEWKtB9yxmRft6kHGcJYbwcSDVC
+	A7VAxTwMVvQ1eusDS0+kY0EtiRwoTaHRoeBV4rwVUQN8VY8K6prNK6NlFXB8TDWg6CA20skS0Io
+	Q8WuDFQSvcO924mqcPiMjYC1Fyb92iis7ItEXW/03motNx+gvN+OFah+7CD8AeEZg2nJtgsAJDx
+	IUChs04AIIDY5R1CceSxPvXf3lV0Yq00hFWGhWxdiSW56FlRMniYUWky6PV/OMhn0uIp7
+X-Google-Smtp-Source: AGHT+IEV6dAdcfXQoRvn/BXZwFufuwLnQ5+I48pbEZjHle5JG0qhVLr8+8yrpSJSElgFCsDommrYNA==
+X-Received: by 2002:a05:6602:29d4:b0:93b:a3c3:1b09 with SMTP id ca18e2360f4ac-93bd17928e4mr2919782039f.6.1760392695538;
+        Mon, 13 Oct 2025 14:58:15 -0700 (PDT)
+Received: from [100.64.0.1] ([170.85.6.207])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e25a39134sm424429139f.12.2025.10.13.14.58.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 14:58:15 -0700 (PDT)
+Message-ID: <a7f42340-63ee-4d26-ae9a-840bbbf46b05@sifive.com>
+Date: Mon, 13 Oct 2025 16:58:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] irqchip/plic: add support for UltraRISC DP1000
+ PLIC
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: alex@ghiti.fr, aou@eecs.berkeley.edu, dramforever@live.com,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ lzampier@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ tglx@linutronix.de, zhangxincheng@ultrarisc.com
+References: <1ecbd61e-6b3f-42e8-86cd-e1c589a45262@sifive.com>
+ <20251013210318.3879203-1-cmirabil@redhat.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <20251013210318.3879203-1-cmirabil@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Convert the brcm,sr-thermal binding to DT schema format. It's a
-straight-forward conversion. "polling-delay", "thermal-sensors", and
-"temperature" all apply to the thermal zones, not the sensor node.
+Hi Charles,
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/thermal/brcm,sr-thermal.txt      | 105 ---------------
- .../bindings/thermal/brcm,sr-thermal.yaml     | 121 ++++++++++++++++++
- 2 files changed, 121 insertions(+), 105 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
- create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.yaml
+On 2025-10-13 4:03 PM, Charles Mirabile wrote:
+> Hi Samuel - 
+> 
+> On Mon, Oct 13, 2025 at 02:00:29PM -0500, Samuel Holland wrote:
+>> Hi Lucas,
+>>
+>> On 2025-10-13 6:15 AM, Lucas Zampieri wrote:
+>>> From: Charles Mirabile <cmirabil@redhat.com>
+>>>
+>>> Add a new compatible for the plic found in UltraRISC DP1000 with a quirk to
+>>> work around a known hardware bug with IRQ claiming.
+>>>
+>>> When claiming an interrupt on the DP1000 PLIC all other interrupts must be
+>>> disabled before the claim register is accessed to prevent incorrect
+>>> handling of the interrupt.
+>>>
+>>> When the PLIC_QUIRK_CLAIM_REGISTER is present, during plic_handle_irq
+>>> the enable state of all interrupts is saved and then all interrupts
+>>> except for the first pending one are disabled before reading the claim
+>>> register. The interrupts are then restored before further processing of
+>>> the claimed interrupt continues.
+>>
+>> Since the workaround requires scanning the pending bits for each interrupt
+>> anyway, it would be simpler and more efficient to ignore the claim register
+>> entirely. Call generic_handle_domain_irq() for each interrupt that is (enabled
+>> AND pending), then clear the pending bit. Then you would not need to save and
+>> restore the enable registers.
+>>
+>>> The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
+>>> SoCs using UR-CP100 cores, regardless of the specific SoC implementation.
+>>> This has no impact on other platforms.
+>>>
+>>> Co-developed-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
+>>> Signed-off-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
+>>> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+>>> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
+>>> ---
+>>>  drivers/irqchip/irq-sifive-plic.c | 83 ++++++++++++++++++++++++++++++-
+>>>  1 file changed, 82 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+>>> index 9c4af7d58846..a7b51a925e96 100644
+>>> --- a/drivers/irqchip/irq-sifive-plic.c
+>>> +++ b/drivers/irqchip/irq-sifive-plic.c
+>>> @@ -49,6 +49,8 @@
+>>>  #define CONTEXT_ENABLE_BASE		0x2000
+>>>  #define     CONTEXT_ENABLE_SIZE		0x80
+>>>
+>>> +#define PENDING_BASE                    0x1000
+>>> +
+>>>  /*
+>>>   * Each hart context has a set of control registers associated with it.  Right
+>>>   * now there's only two: a source priority threshold over which the hart will
+>>> @@ -63,6 +65,7 @@
+>>>  #define	PLIC_ENABLE_THRESHOLD		0
+>>>
+>>>  #define PLIC_QUIRK_EDGE_INTERRUPT	0
+>>> +#define PLIC_QUIRK_CLAIM_REGISTER	1
+>>>
+>>>  struct plic_priv {
+>>>  	struct fwnode_handle *fwnode;
+>>> @@ -367,6 +370,82 @@ static const struct irq_domain_ops plic_irqdomain_ops = {
+>>>  	.free		= irq_domain_free_irqs_top,
+>>>  };
+>>>
+>>> +static bool dp1000_isolate_pending_irq(int nr_irq_groups, u32 ie[],
+>>> +				       void __iomem *pending,
+>>> +				       void __iomem *enable)
+>>> +{
+>>> +	u32 pending_irqs = 0;
+>>> +	int i, j;
+>>> +
+>>> +	/* Look for first pending interrupt */
+>>> +	for (i = 0; i < nr_irq_groups; i++) {
+>>> +		pending_irqs = ie[i] & readl(pending + i * sizeof(u32));
+>>> +		if (pending_irqs)
+>>> +			break;
+>>> +	}
+>>> +
+>>> +	if (!pending_irqs)
+>>> +		return false;
+>>> +
+>>> +	/* Disable all interrupts but the first pending one */
+>>> +	for (j = 0; j < nr_irq_groups; j++) {
+>>> +		u32 new_mask = 0;
+>>> +
+>>> +		if (j == i)
+>>> +			/* Extract mask with lowest set bit */
+>>> +			new_mask = (pending_irqs & -pending_irqs);
+>>> +
+>>> +		writel(new_mask, enable + j * sizeof(u32));
+>>> +	}
+>>> +
+>>> +	return true;
+>>> +}
+>>> +
+>>> +static irq_hw_number_t dp1000_get_hwirq(struct plic_handler *handler,
+>>> +					void __iomem *claim)
+>>> +{
+>>> +	void __iomem *enable = handler->enable_base;
+>>> +	void __iomem *pending = handler->priv->regs + PENDING_BASE;
+>>> +	int nr_irqs = handler->priv->nr_irqs;
+>>> +	int nr_irq_groups = DIV_ROUND_UP(nr_irqs, 32);
+>>> +	int i;
+>>> +	u32 ie[32] = { 0 };
 
-diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-deleted file mode 100644
-index 3ab330219d45..000000000000
---- a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-+++ /dev/null
-@@ -1,105 +0,0 @@
--* Broadcom Stingray Thermal
--
--This binding describes thermal sensors that is part of Stingray SoCs.
--
--Required properties:
--- compatible : Must be "brcm,sr-thermal"
--- reg : Memory where tmon data will be available.
--- brcm,tmon-mask: A one cell bit mask of valid TMON sources.
--                  Each bit represents single TMON source.
--- #thermal-sensor-cells : Thermal sensor phandler
--- polling-delay: Max number of milliseconds to wait between polls.
--- thermal-sensors: A list of thermal sensor phandles and specifier.
--                   specifier value is tmon ID and it should be
--                   in correspond with brcm,tmon-mask.
--- temperature: trip temperature threshold in millicelsius.
--
--Example:
--	tmons {
--		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges = <0x0 0x0 0x8f100000 0x100>;
--
--		tmon: tmon@0 {
--			compatible = "brcm,sr-thermal";
--			reg = <0x0 0x40>;
--			brcm,tmon-mask = <0x3f>;
--			#thermal-sensor-cells = <1>;
--		};
--	};
--
--	thermal-zones {
--		ihost0_thermal: ihost0-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <1000>;
--			thermal-sensors = <&tmon 0>;
--			trips {
--				cpu-crit {
--					temperature = <105000>;
--					hysteresis = <0>;
--					type = "critical";
--				};
--			};
--		};
--		ihost1_thermal: ihost1-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <1000>;
--			thermal-sensors = <&tmon 1>;
--			trips {
--				cpu-crit {
--					temperature = <105000>;
--					hysteresis = <0>;
--					type = "critical";
--				};
--			};
--		};
--		ihost2_thermal: ihost2-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <1000>;
--			thermal-sensors = <&tmon 2>;
--			trips {
--				cpu-crit {
--					temperature = <105000>;
--					hysteresis = <0>;
--					type = "critical";
--				};
--			};
--		};
--		ihost3_thermal: ihost3-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <1000>;
--			thermal-sensors = <&tmon 3>;
--			trips {
--				cpu-crit {
--					temperature = <105000>;
--					hysteresis = <0>;
--					type = "critical";
--				};
--			};
--		};
--		crmu_thermal: crmu-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <1000>;
--			thermal-sensors = <&tmon 4>;
--			trips {
--				cpu-crit {
--					temperature = <105000>;
--					hysteresis = <0>;
--					type = "critical";
--				};
--			};
--		};
--		nitro_thermal: nitro-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <1000>;
--			thermal-sensors = <&tmon 5>;
--			trips {
--				cpu-crit {
--					temperature = <105000>;
--					hysteresis = <0>;
--					type = "critical";
--				};
--			};
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.yaml b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.yaml
-new file mode 100644
-index 000000000000..576a627cd599
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.yaml
-@@ -0,0 +1,121 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/thermal/brcm,sr-thermal.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom Stingray Thermal Sensors
-+
-+maintainers:
-+  - Ray Jui <rjui@broadcom.com>
-+  - Scott Branden <sbranden@broadcom.com>
-+
-+allOf:
-+  - $ref: thermal-sensor.yaml#
-+
-+properties:
-+  compatible:
-+    const: brcm,sr-thermal
-+
-+  reg:
-+    maxItems: 1
-+
-+  brcm,tmon-mask:
-+    description:
-+      A one-cell bit mask of valid TMON sources. Each bit represents a single
-+      TMON source.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  '#thermal-sensor-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - brcm,tmon-mask
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    tmon: thermal-sensor@0 {
-+        compatible = "brcm,sr-thermal";
-+        reg = <0x0 0x40>;
-+        brcm,tmon-mask = <0x3f>;
-+        #thermal-sensor-cells = <1>;
-+    };
-+
-+    thermal-zones {
-+      ihost0_thermal: ihost0-thermal {
-+        polling-delay-passive = <0>;
-+        polling-delay = <1000>;
-+        thermal-sensors = <&tmon 0>;
-+        trips {
-+          cpu-crit {
-+            temperature = <105000>;
-+            hysteresis = <0>;
-+            type = "critical";
-+          };
-+        };
-+      };
-+      ihost1_thermal: ihost1-thermal {
-+        polling-delay-passive = <0>;
-+        polling-delay = <1000>;
-+        thermal-sensors = <&tmon 1>;
-+        trips {
-+          cpu-crit {
-+            temperature = <105000>;
-+            hysteresis = <0>;
-+            type = "critical";
-+          };
-+        };
-+      };
-+      ihost2_thermal: ihost2-thermal {
-+        polling-delay-passive = <0>;
-+        polling-delay = <1000>;
-+        thermal-sensors = <&tmon 2>;
-+        trips {
-+          cpu-crit {
-+            temperature = <105000>;
-+            hysteresis = <0>;
-+            type = "critical";
-+          };
-+        };
-+      };
-+      ihost3_thermal: ihost3-thermal {
-+        polling-delay-passive = <0>;
-+        polling-delay = <1000>;
-+        thermal-sensors = <&tmon 3>;
-+        trips {
-+          cpu-crit {
-+            temperature = <105000>;
-+            hysteresis = <0>;
-+            type = "critical";
-+          };
-+        };
-+      };
-+      crmu_thermal: crmu-thermal {
-+        polling-delay-passive = <0>;
-+        polling-delay = <1000>;
-+        thermal-sensors = <&tmon 4>;
-+        trips {
-+          cpu-crit {
-+            temperature = <105000>;
-+            hysteresis = <0>;
-+            type = "critical";
-+          };
-+        };
-+      };
-+      nitro_thermal: nitro-thermal {
-+        polling-delay-passive = <0>;
-+        polling-delay = <1000>;
-+        thermal-sensors = <&tmon 5>;
-+        trips {
-+          cpu-crit {
-+            temperature = <105000>;
-+            hysteresis = <0>;
-+            type = "critical";
-+          };
-+        };
-+      };
-+    };
--- 
-2.51.0
+A couple of comments since we're keeping this algorithm:
+
+There's already an appropriately-sized handler->enable_save array that can be
+reused here.
+
+>>> +	irq_hw_number_t hwirq = 0;
+>>> +
+>>> +	raw_spin_lock(&handler->enable_lock);
+>>> +
+>>> +	/* Save current interrupt enable state */
+>>> +	for (i = 0; i < nr_irq_groups; i++)
+>>> +		ie[i] = readl(enable + i * sizeof(u32));
+>>> +
+>>> +	if (!dp1000_isolate_pending_irq(nr_irq_groups, ie, pending, enable))
+>>> +		goto out;
+>>> +
+>>> +	hwirq = readl(claim);
+>>> +
+>>> +	/* Restore previous state */
+>>> +	for (i = 0; i < nr_irq_groups; i++)
+>>> +		writel(ie[i], enable + i * sizeof(u32));
+
+All of the I/O in these new functions, except the readl(claim), can use the
+{readl,writel}_relaxed I/O accessors. They don't have any ordering requirement
+with respect to main memory, just other I/O.
+
+>>> +out:
+>>> +	raw_spin_unlock(&handler->enable_lock);
+>>> +	return hwirq;
+>>> +}
+>>> +
+>>> +static irq_hw_number_t plic_get_hwirq(struct plic_handler *handler,
+>>> +				      void __iomem *claim)
+>>> +{
+>>> +	/*
+>>> +	 * Due to a hardware bug in the implementation of the claim register
+>>> +	 * in the UltraRISC DP1000 platform, other interrupts must be disabled
+>>> +	 * before reading the claim register and restored afterwards.
+>>> +	 */
+>>> +
+>>> +	if (test_bit(PLIC_QUIRK_CLAIM_REGISTER, &handler->priv->plic_quirks))
+>>> +		return dp1000_get_hwirq(handler, claim);
+>>> +
+>>> +	return readl(claim);
+>>> +}
+>>> +
+>>>  /*
+>>>   * Handling an interrupt is a two-step process: first you claim the interrupt
+>>>   * by reading the claim register, then you complete the interrupt by writing
+>>> @@ -384,7 +463,7 @@ static void plic_handle_irq(struct irq_desc *desc)
+>>>
+>>>  	chained_irq_enter(chip, desc);
+>>>
+>>> -	while ((hwirq = readl(claim))) {
+>>> +	while ((hwirq = plic_get_hwirq(handler, claim))) {
+>>
+>> This is the hot path for interrupt handling. Instead of checking for the quirk
+>> on every interrupt, please create a new function that you conditionally pass to
+>> irq_set_chained_handler(), so the quirk check only happens once at boot.
+>>
+>> Regards,
+>> Samuel
+>>
+>>>  		int err = generic_handle_domain_irq(handler->priv->irqdomain,
+>>>  						    hwirq);
+>>>  		if (unlikely(err)) {
+>>> @@ -432,6 +511,8 @@ static const struct of_device_id plic_match[] = {
+>>>  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+>>>  	{ .compatible = "thead,c900-plic",
+>>>  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+>>> +	{ .compatible = "ultrarisc,cp100-plic",
+>>> +	  .data = (const void *)BIT(PLIC_QUIRK_CLAIM_REGISTER) },
+>>>  	{}
+>>>  };
+>>>
+>>> --
+>>> 2.51.0
+>>>
+>>
+> 
+> Is something like this closer to what you had in mind? I tried it on the
+> dp1000 and it doesn't work. Obviously it is concievable that I messed up
+> the logic here, but it also might be the case that reading the claim
+> register is integral to the proper functioning of the pending bits.
+
+It's also possible that the pending bits are read only. There are existing
+implementations with both RO and RW pending bits. So the claim register might be
+the only way to clear the pending bits for edge-triggered interrupts. (For level
+interrupts, the pending bits should clear themselves, so it should be fine if
+the write is ignored.) I don't see anything wrong with the code below, but we're
+working with known-buggy hardware, so who knows.
+
+> I can confirm that a more minimal change that just moves the quirk check
+> out of the hot path is fine. Would that be acceptable even if it is not
+> the most efficient? (in essense take the hunk with new functions from
+> the original patch but revert the change to `plic_handle_irq` and then add
+> the hunk that changes probe from this proposed patch and then create
+> the `plic_handle_irq_dp1000` function as a copy of `plic_handle_irq` where
+> `dp1000_get_hwirq` is in the loop instead of `readl(claim)`).
+
+Yes, this is acceptable. Even if the workaround isn't the most efficient, it's
+at least isolated to the affected hardware. So we'll get the hardware working
+now, and the efficiency can always be revisited later.
+
+Regards,
+Samuel
+
+> Best - Charlie
+> 
+> ---
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+> index 9c4af7d58846..fcf520ed33fd 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -49,6 +49,8 @@
+>  #define CONTEXT_ENABLE_BASE		0x2000
+>  #define     CONTEXT_ENABLE_SIZE		0x80
+>  
+> +#define PENDING_BASE                    0x1000
+> +
+>  /*
+>   * Each hart context has a set of control registers associated with it.  Right
+>   * now there's only two: a source priority threshold over which the hart will
+> @@ -63,6 +65,7 @@
+>  #define	PLIC_ENABLE_THRESHOLD		0
+>  
+>  #define PLIC_QUIRK_EDGE_INTERRUPT	0
+> +#define PLIC_QUIRK_CLAIM_REGISTER	1
+>  
+>  struct plic_priv {
+>  	struct fwnode_handle *fwnode;
+> @@ -367,6 +370,53 @@ static const struct irq_domain_ops plic_irqdomain_ops = {
+>  	.free		= irq_domain_free_irqs_top,
+>  };
+>  
+> +static int dp1000_find_pending_irq(struct plic_handler *handler, void __iomem *pending)
+> +{
+> +	void __iomem *enable = handler->enable_base;
+> +	int nr_irqs = handler->priv->nr_irqs;
+> +	int nr_irq_groups = DIV_ROUND_UP(nr_irqs, 32);
+> +	u32 pending_irqs = 0;
+> +	int i;
+> +
+> +	raw_spin_lock(&handler->enable_lock);
+> +	for (i = 0; i < nr_irq_groups; i++) {
+> +		u32 enable_mask = readl(enable + i * sizeof(u32));
+> +		u32 pending_mask = readl(pending + i * sizeof(u32));
+> +		if ((pending_irqs = enable_mask & pending_mask))
+> +			break;
+> +	}
+> +	raw_spin_unlock(&handler->enable_lock);
+> +
+> +	if (!pending_irqs)
+> +		return 0;
+> +
+> +	return 32 * i + __ffs(pending_irqs);
+> +}
+> +
+> +static void plic_handle_irq_dp1000(struct irq_desc *desc)
+> +{
+> +	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
+> +	void __iomem *pending = handler->priv->regs + PENDING_BASE;
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	irq_hw_number_t hwirq;
+> +
+> +	WARN_ON_ONCE(!handler->present);
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	while ((hwirq = dp1000_find_pending_irq(handler, pending))) {
+> +		int err = generic_handle_domain_irq(handler->priv->irqdomain,
+> +						    hwirq);
+> +		__plic_toggle(pending, hwirq, 0);
+> +		if (unlikely(err)) {
+> +			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
+> +					    handler->priv->fwnode, hwirq);
+> +		}
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+>  /*
+>   * Handling an interrupt is a two-step process: first you claim the interrupt
+>   * by reading the claim register, then you complete the interrupt by writing
+> @@ -432,6 +482,8 @@ static const struct of_device_id plic_match[] = {
+>  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+>  	{ .compatible = "thead,c900-plic",
+>  	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+> +	{ .compatible = "ultrarisc,dp1000-plic",
+> +	  .data = (const void *)BIT(PLIC_QUIRK_CLAIM_REGISTER) },
+>  	{}
+>  };
+>  
+> @@ -666,12 +718,16 @@ static int plic_probe(struct fwnode_handle *fwnode)
+>  		}
+>  
+>  		if (global_setup) {
+> +			void (*handler_fn)(struct irq_desc *) = plic_handle_irq;
+> +			if (test_bit(PLIC_QUIRK_CLAIM_REGISTER, &handler->priv->plic_quirks))
+> +				handler_fn = plic_handle_irq_dp1000;
+> +
+>  			/* Find parent domain and register chained handler */
+>  			domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
+>  			if (domain)
+>  				plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
+>  			if (plic_parent_irq)
+> -				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
+> +				irq_set_chained_handler(plic_parent_irq, handler_fn);
+>  
+>  			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
+>  					  "irqchip/sifive/plic:starting",
 
 
