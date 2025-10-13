@@ -1,123 +1,190 @@
-Return-Path: <linux-kernel+bounces-850955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515AABD5572
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:04:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB18EBD4CA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E7B581ADB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:09:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60A38350AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E8827979A;
-	Mon, 13 Oct 2025 15:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838372BE7BA;
+	Mon, 13 Oct 2025 15:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBG2l7tr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyJly32o"
 Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE4622257E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45792356D9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370672; cv=none; b=iIevfgBbBDonRfYU1/zeZMctvjJiEdsxEclFXsE11inBJPJ0AzTULT0U3TzqG5+XaxsUnF9j7zrfNBsIWdjGAoWt4DahcLC3p6jdiIwprU/ODCzFzBv8OKWYArC76d5stw74vlN8N6uCFVbjreT3LI+JzBuBg0v12ojER5/jFng=
+	t=1760370791; cv=none; b=maPlUryNpnf3BOz+8RWQiij+4DuKtb8mHD63yV0/2lmPwunjPpqKpKY4UJY6T+1xD1FrE1RPAZ14UrdeU9Kc7i8WbtTz/HV0EWvxwPgukxaGmRcTW1DuWfMQXE6tAKXYib3hj/5N/sC2R3cQsnl5yKBt1HPV8Uksb/JBqwXCWUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370672; c=relaxed/simple;
-	bh=NKeqYvLIifww0mj82IUGWogUIo5n0oR13zzEhbq/V0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCDaeikc7tebpIjt1c7Uf7U74hKaM1Dr+4uEYIEeFKA3l81MSwfpBfVywVUANNNHnG3xpxEmX5ASTgtoyyyloVPuC6n3ONYWFUmZ6tfyLhbwseKsuLJ0BCCptn9CXNVAFuXT4su8OgAMd9HWT5bQSt8M7I7PrEgZBPta9NCEnA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBG2l7tr; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1760370791; c=relaxed/simple;
+	bh=BflumSUt1Df+Pt4sylcVPf1fNVvDZusLNi5LKPKa6gA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZBc5C0WzM+fWCRGxRke268vSdzv9qdrJMHzGUlXHcHBWkBz1B9zbqL4Ui2twRQAnmjgqE5u96B7cnyeHH/G0LB9nSBab7UmXejv8HaO1T7BnL9OusHZvwy7Q5B/GMysNMKoVAXFMSrwRff0SZ3DaR9l0PGF7elHM9d7ESE9LndU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyJly32o; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e2826d5c6so26574465e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:51:10 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so31478735e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760370669; x=1760975469; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vwyKKDWzG4gsyJSsWJd8GHM/HF1gjd2t0aumh3kXjrI=;
-        b=ZBG2l7trmrpJTkuaJqX0O0mOmOPPum9n/fck1S5XKoR86y6suhK4D4KQ+eKpRntsrI
-         D0tA3MAsV1ByZ1Xs2VDGFZfxQZ6oflfpW3j7KUvJQf3BBJz4l7iKCBjUMbE+iU7+Swvq
-         ejdoPat3nbwvReaHlnD6206V4eUf3mxcuop3/RVdxlrk5mzM3WPwxAFB9Jeq4BqRdj5R
-         dlX7PNdo9jkc7O6heYhtKzlZdblbqMMpXU9p/LdgS3CtInFJTpdMs2Tdi44rXciQz1wJ
-         Mx7APE8ittl/bLSWeFy2gcATKheTpxmaQ5kW8ChWwdP7yGNwDAsLSrTHBcRklbuTWvkj
-         4CSQ==
+        d=gmail.com; s=20230601; t=1760370787; x=1760975587; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PP2cVBqxTHo4iOzKU9RsvBFv1wvTlNYcCHBA/GUcdj0=;
+        b=JyJly32o1i/q8U1xL0tYQMjGOrK+w7YaLi3Zm5Q4/+4P/dLwIlkB95dvJYCWN8nuXS
+         mMlJ8CjqCjf6978NhCk6m/+XhFYqbXJSjqsSUUuXJXuxs5pn0yIbZdLErI5ncTEdo0S2
+         LDCCp9dVST1izojwVB31TtmIQTEl4aSSsLwrjy75hlrI2JtvAZgsWHUjEew5Uf08yiVH
+         QBw7Nnv0zUpxZrlRrhY+TMbOpf1E5QucF3M6qfBVN1LssfbhRc5knDil/x83FQ8xje1m
+         GZzJzDitcYDChNErPqGTKpBC+09wTNNFHlMFM8f0ueZY6KUyKKKYJ77c2dFLzTWbKpKL
+         mvkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760370669; x=1760975469;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vwyKKDWzG4gsyJSsWJd8GHM/HF1gjd2t0aumh3kXjrI=;
-        b=d2D11aoMMTQRA+Xf3lmDKHKzuXhK/LYo5NsP1Dk3TA5e0w0ZF2+HlwYhGKrxJKi2r3
-         iC4lLPe+fJ58RywpE1yQba+mPPNuHsBkWdyf4EwX2UwkxSwJ7Nks9XHcaSgs5+OoW9P5
-         hx+zkDnLWGvk9dRkdo5RtOmKJTynoIyidg8PTRPOhyMsJJjVg38r1XmqB7C405K8LbC5
-         b1BW7MU/ppnm/lerYyyHp0PjNT9bCaZwOehUGFqa/VVkrU74boLwBnBFdEW67rwTrMds
-         NLLwR8ypDi5EslQOedLD/31HXAvpBn/SdV9pvbMQTrekymlA2oGWZAHkFMkOHHciKct+
-         knrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXR2uQSVcIhL48VgCklayBLD6XjumJ8owrtTwwKHj10CrKfUANvM/mbj+lkM8In89zAekng+G+sG7Cgcqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywio/Mj5K/5VOAR83eej4UPiwPfiFMztc5CbATbGqYiGtTB2CYQ
-	wz+MLcg1uhiQOsAlPU1tKtmrlhWGdJLxKfOiVrHaOVXCDWrg6zXUKHhT
-X-Gm-Gg: ASbGncsUwSrBmPnknwK4vuLe6oij5se9hINvKLF+oV80M+a3nt4n28nf9A5j7a2V4KW
-	VFZqS8jFyVDh3bydYoIfwYRCLh6x066eZyIYblCc6OKfjXWyQN5blgIyYjw4GqV9QOZF8rBjLDo
-	vumbYlKGYRfz9kJX5WauDJ5XC+AFx3sQD1nLH6130UDXQJoRa92eqsGLDHXOTYwgXMVkVoFmNsA
-	ZDc4EicSR15SNG+W5E4NtC6ShSAaHBa23FQDUJYz90ZmydBb4/XqBBBWZF2n4F4HhDDqLmd9F9x
-	W0TWbflBWSzydzjMuubllyFK5kS4noroKJmLxkMJghM4dpFK6bqICI+Q+6v8Ly6jGH4CYMIe+k8
-	Dy44hipnc3MkwbL9PZLA532Po9y3sqHjLKL4YX8RlCu3M
-X-Google-Smtp-Source: AGHT+IHf3BqDFUdxdtDr5m2nldUhPx2Md3z5kS1xagTVE8+YxLYmc2AFaMMWKUh9GpwqhsdateVBwg==
-X-Received: by 2002:a05:600d:4301:b0:46f:aa8a:d2e7 with SMTP id 5b1f17b1804b1-46faa8ad4bamr106658795e9.4.1760370669270;
-        Mon, 13 Oct 2025 08:51:09 -0700 (PDT)
-Received: from gmail.com ([51.154.249.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484c71csm198294445e9.8.2025.10.13.08.51.08
+        d=1e100.net; s=20230601; t=1760370787; x=1760975587;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PP2cVBqxTHo4iOzKU9RsvBFv1wvTlNYcCHBA/GUcdj0=;
+        b=gjGTIJXz7PYR+4O5p7sgbV3rU/+d444CmJXiHk2UFI4qXHbNx930sUkdWMleIeoBL/
+         Lo9PURhpq+BW1AJSz7/893lTqTgUfPIMCPuQgBJLsUiOAt+RhcanReTIxLkzBsbVKj66
+         lV0FYMA32U15CdwYqoA2fSBSN84BOfvQp4O5KYflumNNywp3XJk1BHtGvz94+pV8A14C
+         dnS3opgaH6ULkGaDC/SBmTp4TnTP0Oj80y8jwt+a9iyucST3zzcDqkDCC5A6vleUOzKe
+         6CstaO1rZJOGBVcbR5txUh2Eex8PiZOKJ0bcDSpXJizDpjoHXx43ProseyT/EN4f40/3
+         5g2g==
+X-Forwarded-Encrypted: i=1; AJvYcCV05Av7pdVEDeTU6cZIUWjN5Dhnebq2n/uO7JZwr1gYNFlqVj5C2nDCWx0CLdw48n8fERGfWGUIukHgYmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoTogHYNV2nrRbPibOUNNK2ICMcb0RTcMjLnT4yY/Y/QGdPRi4
+	0ZhC2YFPLGg6mGu6/CH9U+OhmhQjgYOcF8/3ZNDUtfpbr4beIRJLdzfI
+X-Gm-Gg: ASbGncu757I+P60c6m2HvZPwFfif4iMZDkfRF/jNPlG1i2LpstO8H9+AdXTvnQjL78r
+	Ad514o2yqdX7x2BpR9hYPBTWqQPfepldjemWOQsZBpvTwt00Dz4tdPhkajpvyosKzgthZXs+kp+
+	9Ff0du+vWHe0VcGIAD0Jhn3bp66UC2OrCPzpH896Aw5hl2S8FebS7PZT9zPs9964CONgXnK7Ojh
+	Tx6xf9WvukjzAz1EhxkpoUmRXHAHOJtDq0B9g4d3bQGyvK1OJDyHjo+8hQGsYBrIKtLvIqB7YEY
+	QJMgxIqvvZxjIGQ9JkVEAN+BJHvC5NLskcOKnm6U8wyM6Y7rjxYW5ZWoXfztCuC+ss5iuHc5OLe
+	rNQKBR5UZmIxA5dU2Uq8RrW7cFLB1WcDwKrG0m7T030LVVh/cWU6/wECSY1Es2/AuYQ==
+X-Google-Smtp-Source: AGHT+IE2KvAyvfDcxqJ1Dsul6D4no3ioGcQdOMcLp37PQsjQ8g+ED7dk+ijfPAnXos4qSiImjsr++w==
+X-Received: by 2002:a05:600c:34c5:b0:46e:4ac4:b7b8 with SMTP id 5b1f17b1804b1-46fa9b05361mr144494215e9.25.1760370786927;
+        Mon, 13 Oct 2025 08:53:06 -0700 (PDT)
+Received: from dev-linux.homserver.local ([51.154.249.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb497af18sm192097675e9.3.2025.10.13.08.53.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 08:51:08 -0700 (PDT)
-Date: Mon, 13 Oct 2025 15:51:07 +0000
+        Mon, 13 Oct 2025 08:53:06 -0700 (PDT)
 From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael =?utf-8?B?QsO8c2No?= <mb@bues.ch>,
-	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
+To: Michael Buesch <m@bues.ch>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>,
 	Bjorn Helgaas <helgaas@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] driver: gpio-bt8xx: use generic PCI PM
-Message-ID: <aO0f62-RnVyKRLS-@gmail.com>
-References: <20251010105338.664564-1-vaibhavgupta40@gmail.com>
- <202510110924.dUQeeRV6-lkp@intel.com>
- <20251011122612.4fa7c97a@barney>
- <aOpAO7j0Uyo6FPcu@gmail.com>
- <CAMRc=Me2ABQUXVeHyfsDR-etyT9mdX-kqxfQDnh3msfZiS6ccQ@mail.gmail.com>
- <aOzcasDutRtw6JP9@gmail.com>
- <CAMRc=MeGbFi10f94GmmAMyLqBWWw7VmPcjaXQWDEtFgS=hvWdQ@mail.gmail.com>
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5] gpio: bt8xx: use generic PCI PM
+Date: Mon, 13 Oct 2025 15:52:59 +0000
+Message-ID: <20251013155303.1103235-1-vaibhavgupta40@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <aO0f62-RnVyKRLS-@gmail.com>
+References: <aO0f62-RnVyKRLS-@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeGbFi10f94GmmAMyLqBWWw7VmPcjaXQWDEtFgS=hvWdQ@mail.gmail.com>
 
-On Mon, Oct 13, 2025 at 05:36:17PM +0200, Bartosz Golaszewski wrote:
-> On Mon, Oct 13, 2025 at 1:03 PM Vaibhav Gupta <vaibhavgupta40@gmail.com> wrote:
-> >
-> > >
-> > > While at it: the subject should be: "gpio: bt8xx: ..."
-> > >
-> > > Bart
-> >
-> > Done in v4.
-> >
-> > Vaibhav
-> 
-> No, it was not.
-> 
-> Bartosz
+Switch to the new generic PCI power management framework and remove legacy
+callbacks like .suspend() and .resume(). With the generic framework, the
+standard PCI related work like:
+	- pci_save/restore_state()
+	- pci_enable/disable_device()
+	- pci_set_power_state()
+is handled by the PCI core and this driver should implement only gpio-bt8xx
+specific operations in its respective callback functions.
 
-Ah I see, I though you just wanted the transformation of "gpio-bt8xx:" to
-"gpio: bt8xx:". I've removed "driver:" as well in v5 from the header.
+Signed-off-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+---
+ drivers/gpio/gpio-bt8xx.c | 29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
 
-Vaibhav
+diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
+index 05401da03ca3..70b49c385b43 100644
+--- a/drivers/gpio/gpio-bt8xx.c
++++ b/drivers/gpio/gpio-bt8xx.c
+@@ -52,10 +52,8 @@ struct bt8xxgpio {
+ 	struct pci_dev *pdev;
+ 	struct gpio_chip gpio;
+ 
+-#ifdef CONFIG_PM
+ 	u32 saved_outen;
+ 	u32 saved_data;
+-#endif
+ };
+ 
+ #define bgwrite(dat, adr)	writel((dat), bg->mmio+(adr))
+@@ -224,9 +222,9 @@ static void bt8xxgpio_remove(struct pci_dev *pdev)
+ 	pci_disable_device(pdev);
+ }
+ 
+-#ifdef CONFIG_PM
+-static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
++static int __maybe_unused bt8xxgpio_suspend(struct device *dev)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+ 
+ 	scoped_guard(spinlock_irqsave, &bg->lock) {
+@@ -238,23 +236,13 @@ static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
+ 		bgwrite(0x0, BT848_GPIO_OUT_EN);
+ 	}
+ 
+-	pci_save_state(pdev);
+-	pci_disable_device(pdev);
+-	pci_set_power_state(pdev, pci_choose_state(pdev, state));
+-
+ 	return 0;
+ }
+ 
+-static int bt8xxgpio_resume(struct pci_dev *pdev)
++static int __maybe_unused bt8xxgpio_resume(struct device *dev)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+-	int err;
+-
+-	pci_set_power_state(pdev, PCI_D0);
+-	err = pci_enable_device(pdev);
+-	if (err)
+-		return err;
+-	pci_restore_state(pdev);
+ 
+ 	guard(spinlock_irqsave)(&bg->lock);
+ 
+@@ -267,10 +255,8 @@ static int bt8xxgpio_resume(struct pci_dev *pdev)
+ 
+ 	return 0;
+ }
+-#else
+-#define bt8xxgpio_suspend NULL
+-#define bt8xxgpio_resume NULL
+-#endif /* CONFIG_PM */
++
++static DEFINE_SIMPLE_DEV_PM_OPS(bt8xxgpio_pm_ops, bt8xxgpio_suspend, bt8xxgpio_resume);
+ 
+ static const struct pci_device_id bt8xxgpio_pci_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT848) },
+@@ -286,8 +272,7 @@ static struct pci_driver bt8xxgpio_pci_driver = {
+ 	.id_table	= bt8xxgpio_pci_tbl,
+ 	.probe		= bt8xxgpio_probe,
+ 	.remove		= bt8xxgpio_remove,
+-	.suspend	= bt8xxgpio_suspend,
+-	.resume		= bt8xxgpio_resume,
++	.driver.pm	= &bt8xxgpio_pm_ops,
+ };
+ 
+ module_pci_driver(bt8xxgpio_pci_driver);
+-- 
+2.51.0
+
 
