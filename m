@@ -1,122 +1,86 @@
-Return-Path: <linux-kernel+bounces-851149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722BCBD5A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:11:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8526BD5A90
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DDF14E058E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:11:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 40781350EA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502E02D12EB;
-	Mon, 13 Oct 2025 18:11:07 +0000 (UTC)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6FF2D238A;
+	Mon, 13 Oct 2025 18:12:16 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6594B1EDA2B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A39F2459D4
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760379066; cv=none; b=tFhRT+MXI7WClEvttD9S+AxLyctRa7/GVrqnUPDxwdILxf9SGaztCD+bnTvGm3izMqsugRQT7qDXY+TesAtcFj0KO5h+2xFAgPoOEhcjEXd9o3fZmN12FUWFQFCrWlst5+T8TzZeURmnPSkYRT7mTFG7XmebcL3hZol+CPB+w+c=
+	t=1760379135; cv=none; b=AGMjvrv7hoPNTM92VNSj3bThgIenSsRuuT7ivEn//D2mcBMTpnAEaXllMddgLM5RBQbGuYRcxgjYDc21CoXA0DMnFU2Gcwqjwtnw6Zo/IFqsn+37TJMGGRzH+vStpjXq0yXuUeBFI6yg3uYQQd0Z703bk8dZVaHTe7lf+P8yBX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760379066; c=relaxed/simple;
-	bh=0Bzuud3fbzTgE93y68oTL55XoEOeH0xhkZtO0YadA28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUk53SaDh5tXmjOlCSIMMhzyxv4iArPY8yonDjcWdcVzf65BE3nxGqgrkT5U+FsL43u19kqesn1RT6fnwl/17OtBm67JCQfw6nMDUho+nqO93H8WVeUjUB4fT7TeJq7Watl4Iee+NCAlVOIAXKn8KXCctryDQJxu+iKFCUbXno8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6399706fd3cso6621646a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:11:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760379064; x=1760983864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NktohjsRp1hmfKBBZVJM9FY0NL3mIXRdvn/tPXzoAnk=;
-        b=G4Y5MJ12JXTdetLpYhrqTfsU3AkqkAmzo0EqctIonlIwAM6ibcLnImsU0RnIgxlfQ8
-         JYvg6ONXnfHBzPQZ/1g/a0fahRNh8qZAUF9QIAbMMRS5Jc7zMEaqn8XZFHPHzi33OjwD
-         K7k2BQOpGK8hYsRrwELtLnnmsvS8vs/T3rG4QSQPiFPTEU2NAvOdBPzd7Th0MhflBKJP
-         NX623SE7Py3r0Li7fQrS9UAJ7QbpHSdXyOSMytK3ugCDo+MYc/VCzlmY3ryCcvea3csK
-         K1/W2C8BhHFmEpKOeDED5s4qGmbtb7Yuig9YiwsGk9IaGYJnC/O8lELpMi4AdUng5o+J
-         e/JA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPvZtuxFSvmK82o4DWRUAsE1pqP33pnbSn8Outrq2T61b70W18goAyiPeXVdeKAaiEQyb+4lAEcSknb4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuLeQiartP36WH0pj2DXLH/V7P7y3WeA9QOzv1T/UDEQodaz7d
-	Djf/VtgQk70KFBeL5ZV091XFkP+0rAk4F+nV8mSY6jSbwxqjKcA+QLSd
-X-Gm-Gg: ASbGncvtPf9QovOvJmzrfSJhAxgGvL9mGTB1K0yDFrnso+fA2Y/2+ZV/375zSnyUX7S
-	Ix10wI9pOnk9BVCmJxPqMeVddhpk0uTZXM03k4BkjhqvXRVfHfW5mhMqGE9VVdiM61IobSTOwSQ
-	Naw7ZGq7SzTOAB/VLxrBq65fUXE6vvbclyBgNkz2/OwiUhlquwd/7EVrMYvqIJoybwpSc3Vsfez
-	hAWi207fGvsZiZ4lWC/lIe+0dH11m9iWxXG2oj28SQzaDmNpmrHGWMlh4rNddv0tNHHbMAkFJ+L
-	1DqzQGYXyLjU1XcGYJiPm0krmfnb2UysyaJpxWKv1895XbMWGw2m3SOBbGrkFo9eh+vhbC7uF/V
-	ju7rOnOH3/ZhQ/Aa2Bm8CmeIYO5Dk0m5NP2Mw6073Vhh0qQ==
-X-Google-Smtp-Source: AGHT+IHbes+6c9B6vBDGbbc0VnnI9qPJtLLBClW/BkZx58Er6Zqt3ZVOHaRjm9I+D9i4QTYnlUSGfA==
-X-Received: by 2002:a17:907:7f8f:b0:b4e:a47f:7157 with SMTP id a640c23a62f3a-b50aa9a1d23mr2461363366b.19.1760379063674;
-        Mon, 13 Oct 2025 11:11:03 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12c48sm980952466b.50.2025.10.13.11.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 11:11:03 -0700 (PDT)
-Date: Mon, 13 Oct 2025 11:11:00 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
-	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, calvin@wbinvd.org, 
-	kernel-team@meta.com, jv@jvosburgh.net
-Subject: Re: [PATCH net v7 4/4] selftest: netcons: add test for netconsole
- over bonded interfaces
-Message-ID: <3aozzslkx7jpiabyvey3562i57ogqkw2wb4xfp7uazidj572p6@jg6lw5dzxxto>
-References: <20251003-netconsole_torture-v7-0-aa92fcce62a9@debian.org>
- <20251003-netconsole_torture-v7-4-aa92fcce62a9@debian.org>
- <e6764450-b0f8-4f50-b761-6321dfe2ad71@redhat.com>
+	s=arc-20240116; t=1760379135; c=relaxed/simple;
+	bh=gGrRo9gTBbpk9aISf1z9a9GPMtCKGbi1MdkO0Ti4TnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YUHO2/SZhBS1MzVV5aX1QUrkhee83MMUFW+J6Hf1FVs9LhmHvLGmax8tnr4WMh+Y+cW6P61wEJwJfXvjOBC+Dz9Do32FtP1tIoS8KKSX0qlA/Pd0YS1SVPB7fvZ4urYY4nr765gIppfMKmVHFSySuM1t/C8CeAXxgUeM02B77Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 63FA31A052D;
+	Mon, 13 Oct 2025 18:12:05 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 885D860011;
+	Mon, 13 Oct 2025 18:12:02 +0000 (UTC)
+Date: Mon, 13 Oct 2025 14:12:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "CruzZhao" <cruzzhao@linux.alibaba.com>
+Cc: "mingo" <mingo@redhat.com>, "peterz" <peterz@infradead.org>,
+ "juri.lelli" <juri.lelli@redhat.com>, "vincent.guittot"
+ <vincent.guittot@linaro.org>, "dietmar.eggemann"
+ <dietmar.eggemann@arm.com>, "bsegall" <bsegall@google.com>, "mgorman"
+ <mgorman@suse.de>, "vschneid" <vschneid@redhat.com>, "catalin.marinas"
+ <catalin.marinas@arm.com>, "will" <will@kernel.org>, "linux-kernel"
+ <linux-kernel@vger.kernel.org>, "linux-arm-kernel"
+ <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [BUG] Kernel panic in update_cfs_rq_h_load() on aarch64
+Message-ID: <20251013141206.0cf358a3@gandalf.local.home>
+In-Reply-To: <1dbc8668-4607-45ae-a286-77def1037917.cruzzhao@linux.alibaba.com>
+References: <1dbc8668-4607-45ae-a286-77def1037917.cruzzhao@linux.alibaba.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6764450-b0f8-4f50-b761-6321dfe2ad71@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 885D860011
+X-Stat-Signature: o8qbnjsogk4pfznskb7sdwi6eza4f7s3
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18a7obeNimm9thiVngEeXwfURZ9kY/r/2o=
+X-HE-Tag: 1760379122-398151
+X-HE-Meta: U2FsdGVkX1+b5IfbFdRBPPhBFpJF9rnTkKFgqRtXsuZKeXWrPK+qkjk8MIiV6cZZom1mu1Tx5qb79Z0D/5SyvBqmfcYY5Pvnt/5+/CsSIpRPhm3NMjZzXWXZarIZ9vZgcg5q+EZxLk2BAUDqW2ZcdSavvzHNMB2XSuYHbg6Cw6gd4OzNbKT3Hwh4aa734H7HLIVxPNIy26sVZuHfJQUjS6tEdGGLkV8JTP39ygCtnS5MbgXuL602jLVzIQW2JAUQjW1rmpz15Lvzbggye8/Afkg1yhvu3ftCaKq7hpckrGLwtTpY8B5oeYPWni+8jajylDzR3l3rOE8QfwzpaFj7jJ+H0wM6dbhy
 
-On Tue, Oct 07, 2025 at 11:47:22AM +0200, Paolo Abeni wrote:
-> On 10/3/25 1:57 PM, Breno Leitao wrote:
-> > +# Clean up netdevsim ifaces created for bonding test
-> > +function cleanup_bond_nsim() {
-> > +	echo "$NSIM_BOND_TX_1" > "$NSIM_DEV_SYS_DEL"
-> > +	echo "$NSIM_BOND_TX_2" > "$NSIM_DEV_SYS_DEL"
-> > +	echo "$NSIM_BOND_RX_1" > "$NSIM_DEV_SYS_DEL"
-> > +	echo "$NSIM_BOND_RX_2" > "$NSIM_DEV_SYS_DEL"
-> > +	cleanup_all_ns
-> 
-> If all devices are created in child netns, you will not need explicit
-> per device cleanup.
+On Mon, 13 Oct 2025 11:37:59 +0800
+"CruzZhao" <cruzzhao@linux.alibaba.com> wrote:
 
-Humm, that is what I was expecting as well, but, when I tried it, I found that
-the interfaces got re-pareted by the main network namespace when the namespace
-is deleted.
+> Hi, all. We are encountering a kernel panic in our production environment running Linux kernel version 5.10.134, on aarch64 architecture (aarch64 architecture only).
+> ### Summary:
+> - **Kernel Version**: [5.10.134]
 
+That's an ancient kernel. Why are you sending this to upstream?
 
-For instance, in the following example, eth1 belongs to namespace `ns1`, and
-when I delete it, it then moves to the main network namespace:
+Please test 6.17.
 
-	# ip link
+-- Steve
 
-	# ip -n ns1 link
-	3: eth1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
-	link/ether d2:3d:b3:3b:59:37 brd ff:ff:ff:ff:ff:ff
-	altname eni1np1
-
-	# ip netns delete ns1
-
-	# ip link
-	1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
-	link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-	3: eth1: <BROADCAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
-	link/ether d2:3d:b3:3b:59:37 brd ff:ff:ff:ff:ff:ff
-	altname eni1np1
+> - **Architecture**: [aarch64]
+> - **Problem Type**: panic
+> - **Reproducibility**: About 40 times per week
+> This issue leads to system-wide unresponsiveness and requires a hard reboot. We have collected the panic logs and backtraces, which I will include below for your reference. We tried to analyze the vmcore but have not found out the root cause.
+> ---
 
