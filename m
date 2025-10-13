@@ -1,146 +1,201 @@
-Return-Path: <linux-kernel+bounces-850682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115C5BD382B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:28:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBACBD37FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 595444F286F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:24:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 00CBE34CFFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E213E23D7EF;
-	Mon, 13 Oct 2025 14:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB985C96;
+	Mon, 13 Oct 2025 14:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gpr8M+m5"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="adk8FvXJ"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A051123AB90
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB80A17332C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760365414; cv=none; b=aETx+Xmtv+pXqF175uyQPhA2Fu3sb03KyVUJSxoTacgFhp5sEqB9sSQSjdYdGQrRiRnl/cXketG0U09J3VFhPdZY+zsdfvbItWsxO2WnYz5zN04t9QgjKL8r+D/LdhBGTjZ9Q46Pj+aw3Vl40kNJ9w7MknjD1nxY0xn9F3RG2d8=
+	t=1760365607; cv=none; b=pEg8uO/Cvfc06W0KAGOurJNY+Tl7HEE5dSNhFHv5NsVqgWNzp9KO+JkuihQ6P4LQ2KVMu0a3IxGCNbGJhrtJREYSpRRRzHfLH13aCo7pKPNY6MzsHvlfsfxqovH7xM4HfILkq4T/QFx3tbdG2gIO0q/6wE6fPz/aPwdrI8dOKBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760365414; c=relaxed/simple;
-	bh=dJqtEcjgvo9hPngB+YtUypzu7HzbSy5gU34M7TIkozU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qbUnVHRojx7EDpAE/1X0GpcKgdQjBHz9KM/fDbbJNHkDVJQWzTCzfMpZEooAhqs/LIY9jfI6PhvvEJt3WxmwRakpIG35Ho86ComhTi6Jt3xhdzkjRlHZL/1pfo91bXiusSO30fpFFc6JUmskvhKeLZc6Uh/PKn9cFdqKOdjhPkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gpr8M+m5; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eb2b284e4so13449654a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760365412; x=1760970212; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/IA0q+BCGyp+0QkRiU+mRotiQ2wwtZhT82w0C29Tzhk=;
-        b=Gpr8M+m5f2mYYqsCbqqH5hQ+j6qGgXMAvEFcxUXdrN/iUJo3ZpEJAJpFOLFT+M15QK
-         TvqWRhBg+9XuZkMA/59Z8L4HgifnnRICyR9cV8qXqU1GKTZNamG2Ou+um/uPHeCMHOno
-         ApQ5iUoNUelNq4Mx0T+6UMBZvib2rM3+SSrgVE9t+yywEU1coQlP+96x00DqmSBg2Vyw
-         88fJxIuSiJBG2ihmyA4Fnq53rSpJQgLFuuxOVo8Se/jl70uXqPIFrCHG7yJDr+VEUFHe
-         S0ozKwslrhxnTCdaQTyhehW9FwjhAygtGb9GBn4XBf5tiUZ6cA+FPNXfwrHtNKoqsUlC
-         wAJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760365412; x=1760970212;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/IA0q+BCGyp+0QkRiU+mRotiQ2wwtZhT82w0C29Tzhk=;
-        b=C/cNfL9mUj8vG5ZPnL/p8LE1IQhcEYODGbIgdm2hGXjMq5Vo+vpOX4At7Euq7jh9+/
-         7xy5aq2XRBGLwNtcvKkE4ufRmevnPx01QGwEQR/0yW5utZkI/jrQMGcrCmYX+yzGNTnV
-         JaOT3GgpNQ/bWK/VrjVku/tfGuo7A4j0ZwoYn/opMUjOsjGLppHWl+ThBiwNe70GzZZR
-         6DzsKinKPuDvYGfkVW5/WanSDJXtQ6NjZAXa5meMPq03gDfJ34JMcFIejiwysmAcc43t
-         ZySqP8nqdXeB7NE/CVHjZTPw98mpgBdV2hbMlb5pYCl/tq4eem+BLL3sK3fYUvlrPZz/
-         218g==
-X-Forwarded-Encrypted: i=1; AJvYcCUrwAObqcD6Xa4DZ/5QBQYYsaQTUTi/XDa+Hf+3xvFuC+LqkGHOz8LPQcWlTj8dCQdzhkqn6Pr99l9Izg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynt7elzhYuFG1c7COOSJvKqG/++5EJUJUGUd4MqyAuj5rQ22pu
-	1RX2hnIroPBVvW0vjyBcJLsvwOjvbh5W8NXgy6VFTAsbnCHaHKfaXsgOIejhxe0UzW7FcFw28U/
-	NhLv7Fw==
-X-Google-Smtp-Source: AGHT+IEtt/r42k36nNjq1mgNkzGtA8MgFLr+mcoAjoS9JXR/HT4Da0zxS7NKvGB/ApBa7EI/8Iui2bia50k=
-X-Received: from pjrx21.prod.google.com ([2002:a17:90a:bc95:b0:33b:51fe:1a81])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d89:b0:32e:c649:e583
- with SMTP id 98e67ed59e1d1-33b513b3e14mr24273677a91.22.1760365411945; Mon, 13
- Oct 2025 07:23:31 -0700 (PDT)
-Date: Mon, 13 Oct 2025 07:23:30 -0700
-In-Reply-To: <aOz1X4ywkG3nG2Up@intel.com>
+	s=arc-20240116; t=1760365607; c=relaxed/simple;
+	bh=qGI4YeTo9fQQao8bnLvvWYMsEopZTmoPXagb+twI3NU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQL+nY6MWaq8el8U7tQ4Govkh2jyi1U885fiFx6w04It9aqlcCc61M4bfs2QEQSwSeZmLlEPoiYbe6BPlCqmNOYXrImV0DHhNFQaaf4OVhXEItp6fvRZzkZ0dpNtBEMJ09mt14/Q051ZPyH3hqokNTrvVdpNkzvsLPirfwK3y/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=adk8FvXJ; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3eALa+3c29kmPtdMYGDhXSg1Qo1E/cGfndcVXHRHUG4=; b=adk8FvXJuKgiMTm6mJnijznfhu
+	eeoVSTHMu6UR51VzAs04tJTJJ+V2DLFBrog86PupauRrKf0ReL/AxRagQEzhxvGNBKaTWh/GarI0Y
+	FZrChx4s0hG1VuRIQqvp/8P5RtkCAXjytW/cXW+kfxqZ1DF+mIZxxbG4HHVvGfZsPeQ/S+jYDJOIT
+	yZK3oBTTTM4jS79GmM7SEqPgyksz3zZJ0gVJGm1zRMOe8ISLEO7CJRsqbIKN26jPsLMwFQmDkaJRr
+	NqmZ2kbpI4LGIzQaT6mC8dI5TwzBW4cJ/hRvzti8f4fBvTQfdtix5ffdclLbtQbM9PA1G11MORWLs
+	2FX46cUg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8JVW-00000004Nb7-2hNW;
+	Mon, 13 Oct 2025 14:26:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3085A300212; Mon, 13 Oct 2025 16:26:38 +0200 (CEST)
+Date: Mon, 13 Oct 2025 16:26:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>,
+	Doug Nelson <doug.nelson@intel.com>,
+	Mohini Narkhede <mohini.narkhede@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: Re: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg
+ when balance is not due
+Message-ID: <20251013142638.GM3245006@noisy.programming.kicks-ass.net>
+References: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251010220403.987927-1-seanjc@google.com> <20251010220403.987927-4-seanjc@google.com>
- <aOz1X4ywkG3nG2Up@intel.com>
-Message-ID: <aO0LYuzdRHsB7aPj@google.com>
-Subject: Re: [RFC PATCH 3/4] KVM: x86/tdx: Do VMXON and TDX-Module
- initialization during tdx_init()
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-coco@lists.linux.dev, kvm@vger.kernel.org, 
-	Dan Williams <dan.j.williams@intel.com>, Xin Li <xin@zytor.com>, 
-	Kai Huang <kai.huang@intel.com>, Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
 
-On Mon, Oct 13, 2025, Chao Gao wrote:
-> >-static int __tdx_enable(void)
-> >+static __init int tdx_enable(void)
-> > {
-> >+	enum cpuhp_state state;
-> > 	int ret;
-> > 
-> >+	if (!cpu_feature_enabled(X86_FEATURE_XSAVE)) {
-> >+		pr_err("XSAVE is required for TDX\n");
-> >+		return -EINVAL;
-> >+	}
-> >+
-> >+	if (!cpu_feature_enabled(X86_FEATURE_MOVDIR64B)) {
-> >+		pr_err("MOVDIR64B is required for TDX\n");
-> >+		return -EINVAL;
-> >+	}
-> >+
-> >+	if (!cpu_feature_enabled(X86_FEATURE_SELFSNOOP)) {
-> >+		pr_err("Self-snoop is required for TDX\n");
-> >+		return -ENODEV;
-> >+	}
-> >+
-> >+	state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "virt/tdx:online",
-> >+				  tdx_online_cpu, tdx_offline_cpu);
-> >+	if (state < 0)
-> >+		return state;
-> >+
-> > 	ret = init_tdx_module();
-> 
-> ...
-> 
-> >@@ -1445,11 +1462,6 @@ void __init tdx_init(void)
-> > 		return;
-> > 	}
-> > 
-> >-#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
-> >-	pr_info("Disable ACPI S3. Turn off TDX in the BIOS to use ACPI S3.\n");
-> >-	acpi_suspend_lowlevel = NULL;
-> >-#endif
-> >-
-> > 	/*
-> > 	 * Just use the first TDX KeyID as the 'global KeyID' and
-> > 	 * leave the rest for TDX guests.
-> >@@ -1458,22 +1470,30 @@ void __init tdx_init(void)
-> > 	tdx_guest_keyid_start = tdx_keyid_start + 1;
-> > 	tdx_nr_guest_keyids = nr_tdx_keyids - 1;
-> > 
-> >+	err = tdx_enable();
-> >+	if (err)
-> >+		goto err_enable;
-> 
-> IIRC, existing TDX modules require all CPUs to have completed per-CPU
-> initialization before TDMR/PAMT initialization.
-> 
-> But at this point, APs are not online, so tdx_enable() will fail here.
+On Thu, Oct 02, 2025 at 04:00:12PM -0700, Tim Chen wrote:
 
-Ah.  Maybe invoke tdx_enable() through a subsys_initcall() then?
+> During load balancing, balancing at the LLC level and above must be
+> serialized. 
+
+I would argue the wording here, there is no *must*, they *are*. Per the
+current rules SD_NUMA and up get SD_SERIALIZE.
+
+This is a *very* old thing, done by Christoph Lameter back when he was
+at SGI. I'm not sure this default is still valid or not. Someone would
+have to investigate. An alternative would be moving it into
+node_reclaim_distance or somesuch.
+
+> The scheduler currently checks the atomic
+> `sched_balance_running` flag before verifying whether a balance is
+> actually due. This causes high contention, as multiple CPUs may attempt
+> to acquire the flag concurrently.
+
+Right.
+
+> On a 2-socket Granite Rapids system with sub-NUMA clustering enabled
+> and running OLTP workloads, 7.6% of CPU cycles were spent on cmpxchg
+> operations for `sched_balance_running`. In most cases, the attempt
+> aborts immediately after acquisition because the load balance time is
+> not yet due.
+
+So I'm not sure I understand the situation, @continue_balancing should
+limit this concurrency to however many groups are on this domain -- your
+granite thing with SNC on would have something like 6 groups?
+
+> Fix this by checking whether a balance is due *before* trying to
+> acquire `sched_balance_running`. This avoids many wasted acquisitions
+> and reduces the cmpxchg overhead in `sched_balance_domain()` from 7.6%
+> to 0.05%. As a result, OLTP throughput improves by 11%.
+
+Yeah, I see no harm flipping this, but the Changelog needs help.
+
+> Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  kernel/sched/fair.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 8ce56a8d507f..bedd785c4a39 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -12126,13 +12126,13 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+>  
+>  		interval = get_sd_balance_interval(sd, busy);
+>  
+> -		need_serialize = sd->flags & SD_SERIALIZE;
+> -		if (need_serialize) {
+> -			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+> -				goto out;
+> -		}
+> -
+>  		if (time_after_eq(jiffies, sd->last_balance + interval)) {
+> +			need_serialize = sd->flags & SD_SERIALIZE;
+> +			if (need_serialize) {
+> +				if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+> +					goto out;
+> +			}
+> +
+>  			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+>  				/*
+>  				 * The LBF_DST_PINNED logic could have changed
+> @@ -12144,9 +12144,9 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+>  			}
+>  			sd->last_balance = jiffies;
+>  			interval = get_sd_balance_interval(sd, busy);
+> +			if (need_serialize)
+> +				atomic_set_release(&sched_balance_running, 0);
+>  		}
+> -		if (need_serialize)
+> -			atomic_set_release(&sched_balance_running, 0);
+>  out:
+>  		if (time_after(next_balance, sd->last_balance + interval)) {
+>  			next_balance = sd->last_balance + interval;
+
+Instead of making the indenting worse, could we make it better?
+
+---
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e743d9d0576c..6318834ff42a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12215,6 +12215,8 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 		}
+ 
+ 		interval = get_sd_balance_interval(sd, busy);
++		if (time_before(jiffies, sd->last_balance + interval))
++			goto out;
+ 
+ 		need_serialize = sd->flags & SD_SERIALIZE;
+ 		if (need_serialize) {
+@@ -12222,19 +12224,18 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 				goto out;
+ 		}
+ 
+-		if (time_after_eq(jiffies, sd->last_balance + interval)) {
+-			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+-				/*
+-				 * The LBF_DST_PINNED logic could have changed
+-				 * env->dst_cpu, so we can't know our idle
+-				 * state even if we migrated tasks. Update it.
+-				 */
+-				idle = idle_cpu(cpu);
+-				busy = !idle && !sched_idle_cpu(cpu);
+-			}
+-			sd->last_balance = jiffies;
+-			interval = get_sd_balance_interval(sd, busy);
++		if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
++			/*
++			 * The LBF_DST_PINNED logic could have changed
++			 * env->dst_cpu, so we can't know our idle
++			 * state even if we migrated tasks. Update it.
++			 */
++			idle = idle_cpu(cpu);
++			busy = !idle && !sched_idle_cpu(cpu);
+ 		}
++		sd->last_balance = jiffies;
++		interval = get_sd_balance_interval(sd, busy);
++
+ 		if (need_serialize)
+ 			atomic_set_release(&sched_balance_running, 0);
+ out:
 
