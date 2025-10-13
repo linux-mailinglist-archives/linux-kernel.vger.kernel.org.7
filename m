@@ -1,88 +1,131 @@
-Return-Path: <linux-kernel+bounces-851025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0D0BD5119
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:32:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D381FBD558E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C49D3510C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1364E423C00
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727382D3724;
-	Mon, 13 Oct 2025 16:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42FC279DB3;
+	Mon, 13 Oct 2025 16:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pA2g89KP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JE5e9baQ"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3484127FB2A;
-	Mon, 13 Oct 2025 16:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8250622ACF3
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760373134; cv=none; b=SkdXevQugqz6favniOBbdYpCFKlkwoKLZmU3JkWTmwuzrI2voNZbyhsNWBnFAXcV2ihbKpnl2oXoRPwUVVi8CLgl3iuo8Lyye6k16HGdMhbGGvLa/Wb2WOTTMtY47L+wa0KK1HHUsYqUFsFkfK524IdZ7Wcl0E8HmhGbx5NSf4s=
+	t=1760373123; cv=none; b=UMM8DIKS0TEc6GdjM6HiJD2jSOswat8RZSlFipiFi2Q6bqEpBHNxUyY2+GTyZVcvMgKTw3wF5JZz1jPE0O9dwTyYLRfeN5TKSZ8ZY8AFG8xPUbCrO4VpOj81D1BEu8UXFa74vowez7KNKPMqOfvc9FMcADIhNp6ICe08Tg2Rirs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760373134; c=relaxed/simple;
-	bh=iY5Uc4N1spkTNm7yswBzVuZtLtP3EszV/g3z8a10PW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEnTP4yApPptiz1TOKpHKQ0qk2dpaY5/ivE8aJaOW4A9JCE+P6y08++9FjPqimgShnGyDcSYCtTHtFbqhSm+OyJCGIfnWv0tNGSHkBKr7ZKjP0B1TkCFT+HHJxtUpLh6hO3bRNq3/wy4ur3zxZdR5izwrMk/kdcn2/KK5k1XWmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pA2g89KP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=sZscqZKkrNU08pkD7g5GNPeeLKmgl6YVw6Z3iAshFp0=; b=pA2g89KPSLdEPDFcmMTLhja5qj
-	npwWUWySPoFAPBw5jdlzu5ouH/bNi5WljygVD0FlY9joqRK77CpqTut6tvbuhtwsdJ7FGXcV3tLx6
-	TqQVLWwXXbBP0Q1GVHDceWW4NMO5Kd+7T8XUMB5ZD8nYtPTIIJNLc1GbnRaH3vL0uVkQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v8LSo-00AoSk-Pc; Mon, 13 Oct 2025 18:31:58 +0200
-Date: Mon, 13 Oct 2025 18:31:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Birger Koblitz <mail@birger-koblitz.de>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] ixgbe: Add 10G-BX support
-Message-ID: <b5dd3a3e-2420-4c7c-b690-3799fac14623@lunn.ch>
-References: <20251013-10gbx-v1-1-ab9896af3d58@birger-koblitz.de>
+	s=arc-20240116; t=1760373123; c=relaxed/simple;
+	bh=upittZMdgZGjKq3YijKfi9Xo2kafJXuuaI54gdgXicc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=suQt9nbGC0TDR/ptOO6OTcD0kPQjn9q2sjizSdD/VWUL8JxMK8mvKrhXg2DJxttkfhjMMaT75xwCZ+KWXd1yFYgokV7q78wZBY5gYY1iJ4V8Wadx91um2YPN6s2WQoVyQ+rIdnjiXYQj+kob5c6kdZ3GUUjtjFXhyYQDGHpjpsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JE5e9baQ; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-272b7bdf41fso98173505ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760373121; x=1760977921; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hWHQvDLvbtnNuJ5ZPW5ZERwCgThDfKad1c4XeVbuOAk=;
+        b=JE5e9baQNxELsqVxDA2IX4Ml+m9t8q3dDTSbVK2sVsa6q+2yaGJHJiCsgcNPfPZM/E
+         6evnvK2o1ftePuqojHaEraiX9b011chhCnEVNXwcFhM5EXHswft0ryss0SOMd7KYFtg6
+         RPBIUvndek4GkNCdeZ6T+zByw307D7XyPysE86ztpx0ixXGB++H4PpHvR+5X/La9Y0/y
+         lWRBroEPNSmQmz8udkoAR0B0Mym55AMbrmPOpiNeyqkrX3rr/EmDWYG/o0LIckERYzFv
+         YUcGRKcf1YWAafFmih5lSMVF68M1oUNAKjmLB76bjX1AEpwbCFzS4z06rjKb0Fzhk0YK
+         7Faw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760373121; x=1760977921;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hWHQvDLvbtnNuJ5ZPW5ZERwCgThDfKad1c4XeVbuOAk=;
+        b=wC9imhNXWPisTL7dPKRC4tDoPSMhCzdmaBQpQKOIPD41Ow77L9JLIzbejXXzvcCIz4
+         JeY4Ak37/Vt0tDK97Zbtxnnl8kNTsNFxKbzsp4jXOUL48fD6pJSTEu5+gVHX1yO2Wpke
+         qBvYzwFsKdPE4iWJ8ql1Ft4H3tIaXnOA8PvDAmEs34PMTqXnSfYG90xnVi5Ayqs+UWQE
+         pmkbdYm9ljw83HS1S6EJ4ZPuvc9NK+731SibddFYiLAF33exJamezKvWi96zCNRpyaSD
+         bvCLBKqN5QhUuQxhZU0nQzdPsIQhICKJ4ovfazML4HXQXI28pDI5tMvT0b6c+nwyIVZF
+         fFDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXc1eVjvzOLbSQJXmRBh4I0+zucjh2lXy9NiridPuJ0P6JiCpQPaJn9vKhF5gF++YkmNyCsdS2A8b/kTgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqEj988cAxYzctklCqp+3Mn4dJsuLoWNUC2tqQOfGMbbyQyFyI
+	fOVc8f+5+X6cmrvSeI4t9Z1LUbwlTGL6VSbHJ+65WsQsFZQGqtd/rKf/AJuEOu6Yta8PAXuoU7+
+	u9eo0Ew==
+X-Google-Smtp-Source: AGHT+IFGIoervvDCIFQ9baCk/TDNl+kDH2WM3OfJCpawPPFU8GQwMwV0dTeJ1XWLoXX14O/Jb5+a0MvNnnw=
+X-Received: from plsk7.prod.google.com ([2002:a17:902:ba87:b0:268:505:ab8a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc4f:b0:280:fe18:8479
+ with SMTP id d9443c01a7336-290272e0ac5mr240287225ad.51.1760373120827; Mon, 13
+ Oct 2025 09:32:00 -0700 (PDT)
+Date: Mon, 13 Oct 2025 09:31:59 -0700
+In-Reply-To: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013-10gbx-v1-1-ab9896af3d58@birger-koblitz.de>
+Mime-Version: 1.0
+References: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
+Message-ID: <aO0pf8h8k0NddyvX@google.com>
+Subject: Re: [PATCH] KVM: x86: Unify L1TF flushing under per-CPU variable
+From: Sean Christopherson <seanjc@google.com>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-> @@ -1678,6 +1679,26 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
->  			else
->  				hw->phy.sfp_type =
->  					ixgbe_sfp_type_1g_bx_core1;
-> +		/* Support Ethernet 10G-BX, checking the Bit Rate
-> +		 * Nominal Value as per SFF-8472 to be 12.5 Gb/s (67h) and
-> +		 * Single Mode fibre with at least 1km link length
-> +		 */
-> +		} else if ((!comp_codes_10g) && (bitrate_nominal == 0x67) &&
-> +			   (!(cable_tech & IXGBE_SFF_DA_PASSIVE_CABLE)) &&
-> +			   (!(cable_tech & IXGBE_SFF_DA_ACTIVE_CABLE))) {
-> +			status = hw->phy.ops.read_i2c_eeprom(hw,
-> +					    IXGBE_SFF_SM_LENGTH,
-> +					    &sm_length);
+On Mon, Oct 13, 2025, Brendan Jackman wrote:
+> Currently the tracking of the need to flush L1D for L1TF is tracked by
+> two bits: one per-CPU and one per-vCPU.
+> 
+> The per-vCPU bit is always set when the vCPU shows up on a core, so
+> there is no interesting state that's truly per-vCPU. Indeed, this is a
+> requirement, since L1D is a part of the physical CPU.
+> 
+> So simplify this by combining the two bits.
+> 
+> Since this requires a DECLARE_PER_CPU() which belongs in kvm_host.h,
 
-It seems like byte 15, Length (SMF), "Link length supported for single
-mode fiber, units of 100 m" should be checked here. A 255 * 100m would
-be more than 1Km, the condition you say in the comment.
+No, it doesn't belong in kvm_host.h.
 
-	Andrew
+One of my biggest gripes with Google's prodkernel is that we only build with one
+.config, and that breeds bad habits and some truly awful misconceptions about
+kernel programming because engineers tend to treat that one .config as gospel.
+
+Information *never* flows from a module to code that can _only_ be built-in, i.e.
+to the so called "core kernel".  KVM x86 can be, and _usually_ is, built as a module,
+kvm.ko.  Thus, KVM should *never* declare/provide symbols that are used by the
+core kernel, because it simply can't work (without some abusrdly stupid logic)
+when kvm.ko is built as a module:
+
+  ld: vmlinux.o: in function `common_interrupt':
+  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2b56): undefined reference to `l1tf_flush_l1d'
+  ld: vmlinux.o: in function `sysvec_x86_platform_ipi':
+  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2bf1): undefined reference to `l1tf_flush_l1d'
+  ld: vmlinux.o: in function `sysvec_kvm_posted_intr_ipi':
+  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2c81): undefined reference to `l1tf_flush_l1d'
+  ld: vmlinux.o: in function `sysvec_kvm_posted_intr_wakeup_ipi':
+  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2cd1): undefined reference to `l1tf_flush_l1d'
+  ld: vmlinux.o: in function `sysvec_kvm_posted_intr_nested_ipi':
+  arch/x86/include/asm/kvm_host.h:2486:(.noinstr.text+0x2d61): undefined reference to `l1tf_flush_l1d'
+  ld: vmlinux.o:arch/x86/include/asm/kvm_host.h:2486: more undefined references to `l1tf_flush_l1d' follow
+
+Because prodkernel's .config forces CONFIG_KVM=y (for equally awful reasons),
+Google engineers completely forget/miss that having information flow from kvm.ko
+to vmlinux is broken (though I am convinced that a large percentage of engineers
+that work (almost) exclusively on prodkernel simply have no clue about how kernel
+modules work in the first place).
+
+I am 100% in favor of dropping kvm_vcpu_arch.l1tf_flush_l1d, but the per-CPU flag
+needs to stay in IRQ stats.  The alternative would be to have KVM (un)register a
+pointer at module (un)load, but I don't see any point in doing so.  And _if_ we
+wanted to go that route, it should be done in a separate patch.
 
