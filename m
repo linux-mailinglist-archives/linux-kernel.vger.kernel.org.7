@@ -1,122 +1,286 @@
-Return-Path: <linux-kernel+bounces-850611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91EFBD3490
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:50:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC179BD3489
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6939E189DCBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:50:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A00189D6DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A192248A5;
-	Mon, 13 Oct 2025 13:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A64521D596;
+	Mon, 13 Oct 2025 13:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dVtZyAq1"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYFuwGe4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719EE18C31;
-	Mon, 13 Oct 2025 13:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760363424; cv=none; b=t/s2qcJw0PXjitnlBRAiU0qr79YAdGeeSM7Xun6QfH+hnu8t6/SQwLo/SJDKMmtAXLJLRIwsYSnwCbc9kDmD3CwdOuPdVQ67koiyPLPcQ87Mp7UPjR+Cb65aHyy9gkUWVlPtdIMx4Gevhq8VgJjbY/ylT67r3GFE08akvVe3B+s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760363424; c=relaxed/simple;
-	bh=Q1QOICvmAitfhNSSpxLWIdiy9m6p1xYa1acRvITCss4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PTrt43gkt3mNMY8Ac5w/NFFIobSmpRqJ0DGdYiWrFSIGnOYCg04ZFp3vqza0dNSoHNfTID4dOyM3tnk0XrYC3Zuc2btPnkUWpxjoF7L8w0aYytQK89a+Yx04eMA+P2ueSDrZ1+HQ9zRY++r2ummp+lkGs+MtPr+FmkJlQbyAnic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dVtZyAq1; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59DDm9DC832787;
-	Mon, 13 Oct 2025 08:48:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760363289;
-	bh=7lzWZwfkN6yG0zACVDnwclYhAVKYL7d1CxREgFPfD4Q=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=dVtZyAq1KAobqo9m+n3m7U/Tj+uw0cZzSPKchAgVfJCg7pjWwG0F3QSGB8YIQZaHI
-	 fxNNZV4fORQTBwkgYlsTzALTerl3iOmVGOALkt5kLt+K7TH5esw296npr1G7EErxrA
-	 P4c9HeXTXR2VzZauhIWmDZOyw2fBMhewiVzwI4Ec=
-Received: from DLEE204.ent.ti.com (dlee204.ent.ti.com [157.170.170.84])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59DDm9OH224766
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 13 Oct 2025 08:48:09 -0500
-Received: from DLEE211.ent.ti.com (157.170.170.113) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Oct
- 2025 08:48:08 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE211.ent.ti.com
- (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 13 Oct 2025 08:48:08 -0500
-Received: from [10.249.130.74] ([10.249.130.74])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59DDlrST2144220;
-	Mon, 13 Oct 2025 08:47:54 -0500
-Message-ID: <463668d1-a6a7-4606-af05-25384eb97caa@ti.com>
-Date: Mon, 13 Oct 2025 19:17:52 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FD41E8332;
+	Mon, 13 Oct 2025 13:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760363391; cv=fail; b=Xd+9LmAxRj5CIX9dAadL2nLnnFT4Br3MMx1QRJFhuiieVjh1cPYvnVdiF3oHlIUmTalrQLPaTeIieXXNwOcOB3rsiAPRue12/RLE8yXEI26VkHwv+xZxrwRY70cwrydbjMavkK+oXqp6mHBL6t3rYv+Bb81QP+Fv7AnEt3JB2fc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760363391; c=relaxed/simple;
+	bh=iFIUZX3a3jeeq3u5npeZvqssTqP3uzJm6liLaeDhFYU=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=l87ppCs6w6tHdymKgIQlVuNx0kyk2mk70qgcEn2gjkdwQP+FUMPaCix+XXR4SvyXMRPvMTZ0661/5LfbS6UZWUvwK3v0OBEZecAVPfYJR9qxCJsHlc22SLoVOiMMS4mq2d3eZ2YOOXY041wo+b5Dlrg21X6nlAqYbi+LNfeb6TU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYFuwGe4; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760363389; x=1791899389;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=iFIUZX3a3jeeq3u5npeZvqssTqP3uzJm6liLaeDhFYU=;
+  b=JYFuwGe4EkCwolvcJXNCNi3wgXtyCTXTiFsV9yhFYyS7kOnJsf07pxxF
+   4qm7+aJfF+AtBJclEwpZWYG2t9HJlgSFCxyAJVxG5MXV7PyQDt1+1Vv/5
+   BVq72sbdFS7BXFLIcTW2Y+MuZyTmXdhb3w1Nl+uKCaCSgWfzDtNExqxca
+   3J7E0gRU5bLWUuhqQB2xtgSbaf5CLM6DqndAAr1ltkQwgFVbvVfJj48Db
+   v9OKXY+NRYs7OelakVnnhwmr79pVorohKEqdAYnNam6UKMm6M3gDN6wYz
+   totw/BBTOciOVxjGgiz/TQ+RKdAHEg7rSIO/d/6+9xNkqsHkEjYXcPgnJ
+   g==;
+X-CSE-ConnectionGUID: kcvG580+Sy6R3/qO6/P4Qw==
+X-CSE-MsgGUID: x0ieA/9SQRCEaYvBsF9qYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66155937"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="66155937"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 06:49:48 -0700
+X-CSE-ConnectionGUID: xb/dtYZQRwqY8P1CmT8JKQ==
+X-CSE-MsgGUID: kgOhfws2TdGVqxA9pcLaXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="180746084"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 06:49:49 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 06:49:47 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 13 Oct 2025 06:49:47 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.70)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 06:49:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u20idHWBkABVVBngJwCwTg3fqGbJ318PqzSBU3JEPwxp15hxWAIl+21MM3pjharmqPKhyRi95VlksJ8CYGS9+41KHdHwunRVRkZaiviT9hbEYTBz9qJXGX2/8TNwGPYbTfJdbA883JI3AssulqzYYb+c7fkvCKFxoabiXTnTTw1fJtSS/2k93XBxFWY5Xjp+Q7iHtPQgs/oouZOhxpsdrRettxKSAFftq5rzBUYXAWulO+a2t0Ui/7SZ7Ziwfd4d+AjzEwo5qTBKFNdpvDTGepV7O4Zyjf960unMleKY+2Km1M2uPv/PXa78E4YoTpMNOWlSKaW6lcGnROEjJqnQvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2oJLyYC02tr9b+NmEAdHzR/MQchMSoQxwbWBefqTdJ4=;
+ b=Gqy4tXScGhSLi7e+2XWq+UqXeiO3kj7RVfG5zhEMEuvJI7IhgWK+I6vZS0/V1XZPUzy1dYOzmGlSySnT7z+0xIyDAckRkJNlNTegPXhys16YAM5TsCxw76E5cX+08YOKR2kkGuAHmkn9F9wcFLdTb8tNKJMGw1PW4fXmkPnbjQuArpgu8Z198eXQzgODm03XzCc787lXC3G+XGznizcENT9IZ5YwJG2aGlX46xe8P2QK1cACgkdspSBXHIQVzC7kUYRf+15Qk1ZLEX+/xfdc4K+7s2gcUqLtQBmCfU+yojQjUaU11Ad1PJfg+dviwnhubbbBum3MU8v3l1VnDwvJ8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
+ by BY1PR11MB7983.namprd11.prod.outlook.com (2603:10b6:a03:52b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
+ 2025 13:49:44 +0000
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 13:49:44 +0000
+Message-ID: <b16fcd12-784c-4201-ab42-42d1bb492da1@intel.com>
+Date: Mon, 13 Oct 2025 15:49:38 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 24/26] drm/xe/pf: Add wait helper for VF FLR
+To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
+ Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, Matthew Brost
+	<matthew.brost@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, "Joonas
+ Lahtinen" <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>
+References: <20251011193847.1836454-1-michal.winiarski@intel.com>
+ <20251011193847.1836454-25-michal.winiarski@intel.com>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <20251011193847.1836454-25-michal.winiarski@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BE1P281CA0299.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:8a::7) To MN0PR11MB6011.namprd11.prod.outlook.com
+ (2603:10b6:208:372::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm: dts: ti: Adds device tree nodes for PRU Cores,
- IEP and eCAP modules of PRU-ICSS2 Instance.
-To: Parvathi Pudi <parvathi@couthit.com>, <tony@atomide.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <richardcochran@gmail.com>
-CC: <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <danishanwar@ti.com>, <pratheesh@ti.com>, <prajith@ti.com>,
-        <vigneshr@ti.com>, <praneeth@ti.com>, <srk@ti.com>, <rogerq@ti.com>,
-        <krishna@couthit.com>, <mohan@couthit.com>, <pmohan@couthit.com>,
-        <basharath@couthit.com>, "Andrew F . Davis" <afd@ti.com>,
-        Murali Karicheri
-	<m-karicheri2@ti.com>
-References: <20251013125401.1435486-1-parvathi@couthit.com>
- <20251013125401.1435486-2-parvathi@couthit.com>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <20251013125401.1435486-2-parvathi@couthit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|BY1PR11MB7983:EE_
+X-MS-Office365-Filtering-Correlation-Id: 46d40b24-cac1-4c20-2c91-08de0a5f5dab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aEY2Z3JQcmdwdmdadHVwVDdUMTJJbGEyb3I3T215MmljU2ExVEx6ZnB0RmI5?=
+ =?utf-8?B?SzZ1N1BOMkxIRUVsWnkxQStxc3d2ZDRKcGVjZFRSSUVPREpPUm81OW9PUXVZ?=
+ =?utf-8?B?bHozeTFvSk02ZGhSV2tKVzBqSUs0L3VBWkpvdloyVCtWcmpzdy9tdjdmU0J6?=
+ =?utf-8?B?ekg1c2dMQzdBUWtrS2ZiZkE1czJPcUw5TG02dnBrK3dOTXVmTm90Q1hXcjhB?=
+ =?utf-8?B?bG00eldoT2VRbjd3ekRCZUdsM2dVc2MzKzRLK2JMd09JbVNwdGRLbCtBWExL?=
+ =?utf-8?B?alo3WFROZjNLcVRuWWV0YmlMM0xzK09ndTBFVXFlemFiZWhpS0lDcTBMMlEz?=
+ =?utf-8?B?ejhnYlpBSE5aUTQweUM3Q1JsU0tvaVRWMllHQVlKRE5wSzdESnBEMWRPRHZh?=
+ =?utf-8?B?akhuUFlwSnZIaG55MDVtS05lbXJlRGladXdrYTdqQnRzWU5adUxOQXFEMUZF?=
+ =?utf-8?B?MWl3VFIrUkFxZm5pVjgxQjB3cVEvd0RucGtqZzEzVHVUdWtkZlk4Z2NCZGg0?=
+ =?utf-8?B?U2QwV28wMTcrTE0xcjkvUUNnUEhEbmFvci9BU3hJMjN1R0cydE9KVkUrS3JW?=
+ =?utf-8?B?QkRxbHZzS08yRHdFcXZMTXlqb2pOMHRmSVAvSHMvYkVjcVAvSlBvK2w0eURM?=
+ =?utf-8?B?WlRmQzJwN201YWxtYUlwSGpjMGF1WDZGWmMyZHZENnhNUERGTzUvUDRtNTJ0?=
+ =?utf-8?B?aW8yUTRna1M2a2h2MzlNTnhVVzFNRHRtRERHbUh1cUF0b3NjT1UzWDdZWUJJ?=
+ =?utf-8?B?ME5RZW4rUzNuYS9FSE94VFhJdlBqNFU0eUtpSHd4aGFTYTZvdmZ1VjNHR1NV?=
+ =?utf-8?B?VStXc1ZhRVN4VHNzZFBPYjRxcU44Zm9GTHdWL2hSUFY3YmpveHVwZWdlSHBT?=
+ =?utf-8?B?SmJFVXBTdktEMGxGRlk3L056YndtU1JicEl3MEVnOXBucEEzdnB3ekFSMEM2?=
+ =?utf-8?B?bTJjUGp6cURwUTNINm5vNVdXUllabnJpdFBtTE0zR3Fxa3Y1bXBXckhkVUdE?=
+ =?utf-8?B?MG85dlIzdGhXcS9McFZkeTFpMGtzRzNGZXZMbE9KdWl1Y0NaNG1OZFhnbEtM?=
+ =?utf-8?B?MlJTK2J1N0UzMnVSRWl1N1FMMkpuMnduV0p4QU90enpSVHd1RjFwNjdGY3NX?=
+ =?utf-8?B?MTZlTXcyUUw1ZzVOVTlWNnJ4bGg0cnJSeVg3WVFoSWt4WWRYb3dRcy9zU0Vu?=
+ =?utf-8?B?NnVYWlJQUHgrK0Rnajh3Y1pqZlZ0MDdGbCtnV2lPdklYanVUcSt1R3ZnZFQw?=
+ =?utf-8?B?YTVsUWtPRFlwNkJwcnVSU014di9EdGs4VkZ5bU5xcEhlVlhCbDNIQ0dDNklS?=
+ =?utf-8?B?RHcvQ0N0ZmVVSmZLUzRMUjJrYVg3THA4NjdwOW92TThNRXdVZFdGK2FVNWRp?=
+ =?utf-8?B?QzRyOExFZHFLeFRFWjUzRzFQYzhabkpBYkx3YTg5ZXBNd3FBbTZHYklYcGdi?=
+ =?utf-8?B?ZFM3Yk93RVd5WFhsc21XQ2hEMnJJWWFUTThoRk5YOG93bU9yWE9abHp5VGh6?=
+ =?utf-8?B?SVlUU1dzNUxtUEVBYWpDWUlScHNuNENsOWJmRkFlcmR1KzU3Z0FSb0x3MW05?=
+ =?utf-8?B?MEUvZnQ2U1BvL2xDcStHd1dGeHF2TVM2M0xNemRLNzI5TG9wa2Y1djNOUjRy?=
+ =?utf-8?B?dllGRWFaMDlnUXQrQXYycDZrVVhmdGwzRlBEbE1aTXlMRmZhb0VzYzBkdzV2?=
+ =?utf-8?B?NHdUNllZR05FVFRoVEdPRUlQa256L21wbUxzaWR0TDhxdHBQbHAyNThlcjhO?=
+ =?utf-8?B?UU9hVkcyT3M5dUt2T0w0UDVWZkFESTJMNWFXRUlVWHA3K2NYclVucGVBZFdX?=
+ =?utf-8?B?bHNJZy95cGhoMGRFRHloWVdtc3pVRHR2cmM5emJKaHNCaUhRb3Z0RVFIT2xH?=
+ =?utf-8?B?dWZRWVBpUWpORmw5VG1OdUlhN29xWndsSmFXTVlwVitpTHJRY0FYdkVROU5N?=
+ =?utf-8?B?RmRiUkRSb0lTQnlFQzRKUHAyWWg5eTVVWXZ2aEg2SklpRm5QMzV1WkV5Y3lX?=
+ =?utf-8?Q?Xhbq+thAk6Nb/Bk59jcliPrpCIC5b0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OFZQZGpPV2JUbDI2RnFpNWMvOG4xZjVFTEpyNHJVckh1WGFQSi9aT0Z2VmR6?=
+ =?utf-8?B?WFVwN3ZvWmI1UWJtMi9UK2ZTOGtPaHovcWtqM3B2eGQ2SFpQM0dyUitYTlhR?=
+ =?utf-8?B?ZkZ5cXozZEdtYitVQnVzSnFWZTlBMEJPQjQyOVgwN3BKaXIvY3g2a3hLTjVr?=
+ =?utf-8?B?elBQbVh2NHB3YzhBRllYNW5wOGdZTkFCVjJUWDlqYllISWdvZG5LcHlQVWI1?=
+ =?utf-8?B?NGJFd0l2Z1laNlRzSVlYQzlGeWMyaldPMlJwWTYwYzZvcGhqdHFmUHJ4UEM2?=
+ =?utf-8?B?Mm5aakRDdjdKdnByRDd2MXNwRFk2Vm1wMDhiWWhtVGpaakFPRmNnOWRmM2dW?=
+ =?utf-8?B?YTQ2WlpTbU4zb0V2eStFZ1JyMWkyMCtwdFpyZzd1ZkNic1F2aVpIV0x2SU8r?=
+ =?utf-8?B?SjF0ZFpzSlUvZ05LdzNnbzkyeGNxVW54MlE1ZjFjdkhkWEhVSHBFd0ZXb3Vq?=
+ =?utf-8?B?US9zUjJoWURIUVJGaWMzRUk2dEkvWm55NnhEc3pqOFhjWlZENVdaSGtpVm0z?=
+ =?utf-8?B?eUpQNUZ5RFdJOHYzRFZJYXRQbitYQXJvallYY28vcGFFbmoyZTgwNzdodWNm?=
+ =?utf-8?B?Nm5tV245SVF0RWtDUlJlejJLZ0M4Uk0wRHQ3alRxVnRWOENJdlUyQWVOU2pV?=
+ =?utf-8?B?ZGRTS2tBUUJ1dC95RUhUZVA5L0thK0R0NjVHZUxCSEl6NFU0dzc5dWI1eWJS?=
+ =?utf-8?B?U1psUGxmQzJCVUt4THd5cTk0eUlQd25TZktsOUlqdXc5RmNBTlo3RU9xU0dD?=
+ =?utf-8?B?THRqTXJSck91Mm01bGY4TE1xazhJVXBZN2M4OTFkaW1WVGU2YVdNMkdZZHYw?=
+ =?utf-8?B?c2pENWY2aWsxcTAzT1hYd2czOXdJYVhSVTNQMk4relRvaXAveXV5a3NYTS9G?=
+ =?utf-8?B?NERaQzRSVnRtMlBGUzFMMlhkMThvZWJYakI5WCtqK2FuTENHUXZ4aUdUMitV?=
+ =?utf-8?B?am4zWFI4MEZFNVIzYnk1U3pFRGdqOWNHSTM1UGJ6dW1RV2hReENFL1Y5M3NW?=
+ =?utf-8?B?cVgvSUpKR2pXNGc0SkZMOUhHS0tsayt3enFhWE1jaWxOVzZ2eXBaZkhrUjlI?=
+ =?utf-8?B?REFzcnJ4cTR0cU15QTE1MC9tZWNkanBJbUwyOHBlQVdIWDdnUTlVbWJxcE00?=
+ =?utf-8?B?L2pMRzlEdFliaE9idlhBaGluMWpqWTk0bFFWaVRTWGhubHBFdm4yYUVUWVdH?=
+ =?utf-8?B?UHlpKzh3UFhkT25WZlBZY1Bkc0lXTWpidDZBNXVQdCtNTkZxSlJPem40RExw?=
+ =?utf-8?B?RjdMMnBQT21mOGdwOFdmLzFFVWdFcXVqdENRa3ZLOXRna2hDSExvZEFWU1F6?=
+ =?utf-8?B?UXhMcW44cittQXlGYjdUcXdoWXNiSmh1bWtZRFNtVDZjbGRGQXk1dENCSUZw?=
+ =?utf-8?B?MDJ1Z1FINmkyNnl1cnZuME5NT3lmMkRQcnFtR2ROM0RHNXcyODNBdmlOVVcw?=
+ =?utf-8?B?S3hVSlJZeC9uVXoyd1lnblFZU1MycUJIV05mdExPb2xRekRnZHc5ODRyNjBM?=
+ =?utf-8?B?ZUdiTmcvN3F6Y21wY3NtaDIwREZSUkJYdGsyem9oRldUbE03N0trSTNJaVpP?=
+ =?utf-8?B?MVFiRFRFc2FuQ1F6dGlZUysrK0dKYitmcDJqS1pEK0NhYjl2QXR4cHFqaG9Y?=
+ =?utf-8?B?dkxDTkpFWVp6L0RnNXpDZ2syTjdHc0VYQzBlR1hvckpmeUlsRldrK1lzSWU0?=
+ =?utf-8?B?LzgrRUtSR0NjeitYeG5NM08xNXprdGd6dVVaSDNubkQ4RHFDNDNZajcxMXNH?=
+ =?utf-8?B?SEl2eDZhNDZYTktwcm90YThSYmFrcHgxdXZtUG5NU1BtNGQ3eXJnenBjRzJK?=
+ =?utf-8?B?TXJWcmZMUisvWTY2bFBSdHlNdzRtbmVlREZyM2lwdEtsQ3RoMFFrUFFFV2JE?=
+ =?utf-8?B?RDVDM0U3L0hjU1dldUlFcGpNNlR1cUZRNnFONjdOTHluVXEzc0NkSGZYTjRo?=
+ =?utf-8?B?RHgrbE9Xa1hqUHRLZGRpeldsZXVrNDRybVU4Q1JycVlzS3ZrUFRqVXVXV1I3?=
+ =?utf-8?B?RlRHSC9hTUhvS0JRbExuV0YyNmxuN2tZT3lPRzdzc1hGRWNrcnlvYTlhQ2R5?=
+ =?utf-8?B?dERtekR6SUlSTUNIYUU5TDBmZnhrT3pXRWlVUjhIT2k5QXdhd3NvZmQ3R0RR?=
+ =?utf-8?B?b2ZXc2x0SS9OVzhWdm9zT1EyMm0zdzh0Rlhia214UDBUSmNHckI1M0hyVnMv?=
+ =?utf-8?B?b3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46d40b24-cac1-4c20-2c91-08de0a5f5dab
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 13:49:44.5079
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Uvfi2f5oTShC/XDkW0ivsyiMfrMwZQ1CHa5oo6U9gDUo0YIMujQ7thdM3bN9H6+fa38w0ZqYZhgLQF6wToy0qYtEEjmXj526oo7b2lRzbHI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB7983
+X-OriginatorOrg: intel.com
 
 
 
-On 10/13/2025 6:22 PM, Parvathi Pudi wrote:
-> From: Roger Quadros <rogerq@ti.com>
-> 
-> The TI Sitara AM57xx series of devices consists of 2 PRU-ICSS instances
-> (PRU-ICSS1 and PRU-ICSS2). This patch adds the device tree nodes for the
-> PRU-ICSS2 instance to support DUAL-MAC mode of operation.
-> 
-> Each PRU-ICSS instance consists of two PRU cores along with various
-> peripherals such as the Interrupt Controller (PRU_INTC), the Industrial
-> Ethernet Peripheral(IEP), the Real Time Media Independent Interface
-> controller (MII_RT), and the Enhanced Capture (eCAP) event module.
-> 
-> am57-pruss.dtsi - Adds IEP and eCAP peripheral as child nodes of
-> the PRUSS subsystem node.
-> 
-> am57xx-idk-common.dtsi - Adds PRU-ICSS2 instance node along with
-> PRU eth port information and corresponding port configuration. It includes
-> interrupt mapping for packet reception, HW timestamp collection, and
-> PRU Ethernet ports in MII mode.
-> 
-> am571x-idk.dts, am572x-idk.dts and am574x-idk.dts - GPIO configuration
-> along with delay configuration for individual PRU Ethernet port.
-> 
-> Reviewed-by: Mohan Reddy Putluru <pmohan@couthit.com>
+On 10/11/2025 9:38 PM, Michał Winiarski wrote:
+> VF FLR requires additional processing done by PF driver.
+> Add a helper to be used as part of VF driver .reset_done().
 
-Please don't carry internal review tags in upstream patches.
+this ".reset_done" part might require some explanation/update
 
--- 
-Thanks and Regards,
-Md Danish Anwar
+> 
+> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> ---
+>  drivers/gpu/drm/xe/xe_sriov_pf_control.c | 24 ++++++++++++++++++++++++
+>  drivers/gpu/drm/xe/xe_sriov_pf_control.h |  1 +
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_control.c b/drivers/gpu/drm/xe/xe_sriov_pf_control.c
+> index 10e1f18aa8b11..24845644f269e 100644
+> --- a/drivers/gpu/drm/xe/xe_sriov_pf_control.c
+> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_control.c
+> @@ -122,6 +122,30 @@ int xe_sriov_pf_control_reset_vf(struct xe_device *xe, unsigned int vfid)
+>  	return result;
+>  }
+>  
+> +/**
+> + * xe_sriov_pf_control_wait_flr() - Wait for a VF reset (FLR) to complete.
+> + * @xe: the &xe_device
+> + * @vfid: the VF identifier
+> + *
+> + * This function is for PF only.
+> + *
+> + * Return: 0 on success or a negative error code on failure.
+> + */
+> +int xe_sriov_pf_control_wait_flr(struct xe_device *xe, unsigned int vfid)
+> +{
+> +	struct xe_gt *gt;
+> +	unsigned int id;
+> +	int result = 0;
+> +	int err;
+> +
+> +	for_each_gt(gt, xe, id) {
+> +		err = xe_gt_sriov_pf_control_wait_flr(gt, vfid);
+> +		result = result ? -EUCLEAN : err;
+> +	}
+> +
+> +	return result;
+> +}
+
+one might want to call this new wait function from within xe_sriov_pf_control_reset_vf() which does both trigger/wait
+but for me it works as is, so with commit message update
+
+Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+
+> +
+>  /**
+>   * xe_sriov_pf_control_sync_flr() - Synchronize a VF FLR between all GTs.
+>   * @xe: the &xe_device
+> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_control.h b/drivers/gpu/drm/xe/xe_sriov_pf_control.h
+> index 512fd21d87c1e..c8ea54768cfaa 100644
+> --- a/drivers/gpu/drm/xe/xe_sriov_pf_control.h
+> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_control.h
+> @@ -12,6 +12,7 @@ int xe_sriov_pf_control_pause_vf(struct xe_device *xe, unsigned int vfid);
+>  int xe_sriov_pf_control_resume_vf(struct xe_device *xe, unsigned int vfid);
+>  int xe_sriov_pf_control_stop_vf(struct xe_device *xe, unsigned int vfid);
+>  int xe_sriov_pf_control_reset_vf(struct xe_device *xe, unsigned int vfid);
+> +int xe_sriov_pf_control_wait_flr(struct xe_device *xe, unsigned int vfid);
+>  int xe_sriov_pf_control_sync_flr(struct xe_device *xe, unsigned int vfid);
+>  int xe_sriov_pf_control_save_vf(struct xe_device *xe, unsigned int vfid);
+>  int xe_sriov_pf_control_wait_save_vf(struct xe_device *xe, unsigned int vfid);
 
 
