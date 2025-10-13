@@ -1,115 +1,104 @@
-Return-Path: <linux-kernel+bounces-850228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112BABD24D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C3FBD24E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582331899E35
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:30:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68BFA1899CEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764432DECA0;
-	Mon, 13 Oct 2025 09:30:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828CFBE49
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549A32FDC3B;
+	Mon, 13 Oct 2025 09:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oWA4MZYB"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E85426FA6E;
+	Mon, 13 Oct 2025 09:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760347829; cv=none; b=PC/EW0rvCJY5tDOb+nV5IwRP9gK2XVwzFmVRYoSiN3pMWG9RbnbruC13MnZbNyHgyvosMLXN7Nj10krZvGAZsVdwVtlAZqoYpK6ZxCVjPnBp42SGSx2siH/3pubJUX6wyHEypMgDLvOxGO/CvBTBSHaYfnfFpfIf3gp5SJ3RTmM=
+	t=1760347933; cv=none; b=Pu7AsyvCNph0infX43xej2MiOkwMYUpP9HAVvd+/GwpbEm4DruoAfkrYHeQt2mYh48FYgV9Z7V3nRk8J42njWWjfKnwb9U1KUHSgHRrK5Pyoj8CVQlXYjtrIGW+OKkQxqcfxKOCkm/fwJ4/4gw0WdXAFD779uWCEcdqayko1owE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760347829; c=relaxed/simple;
-	bh=hBbESBlN61qET13/+oGKrIrSgYN5bO4ucTlr8npNOww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y5t3hOmRH2GZJ8LkhMSwmVDLi6zuErczjm27VfRDG8gvt+0MIcLfONmOuIJPHUDs6HUcrocmzsDMbDIeF7vuvEzmyzDMfuuIN+JWiVLNcFG8kIwy5odNCAbaZ1iioTd4Rn7Y2ERfu1BVwaQmZRSAxqRaBPm20UfvyIMxnZsATQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C69D212FC;
-	Mon, 13 Oct 2025 02:30:18 -0700 (PDT)
-Received: from [10.57.83.188] (unknown [10.57.83.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F2BA3F6A8;
-	Mon, 13 Oct 2025 02:30:23 -0700 (PDT)
-Message-ID: <80156b07-245b-4668-9ad0-bb88cae5e85a@arm.com>
-Date: Mon, 13 Oct 2025 10:30:20 +0100
+	s=arc-20240116; t=1760347933; c=relaxed/simple;
+	bh=gJp0KJN5JsnAs44g7Qv8Flla0ZPEoI3EDaHQ5Ie/TbE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=k0xlnvWSFIQMbsaJVUSTxv164vYJINudf7s2yyyltz+5D5ep6LiO1er8EaqcgOOVCCJleNtTzJRPFIsmB8vcxdxNGQWNA4RZ8qvYVUKJjNvcJn9vJf9eAbQqSMTUqlU4Idx1MzvKSj63HLsv2jEm69ACWZAIuBau151YVcOMEag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oWA4MZYB; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760347927;
+	bh=gJp0KJN5JsnAs44g7Qv8Flla0ZPEoI3EDaHQ5Ie/TbE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=oWA4MZYBiGExivnYMXUDxTPU+xKdquwfvIIDwrBYfG+KGl9zWe9TAn80ESph/rNit
+	 +wn9QGLV+81ZMhtsp9Mq1T0uxX3r2eInBu0BCsFGY2M9ZBE8fnwTonMf2Bt+HufGpZ
+	 UHqRfvVxkV/Cet+U/y+oqGUxKMJTamPfdtk2SOuh+QZfAV6JxaHjGnTYA5VfbPfeWn
+	 QzvQtrbMTRUSijnDknZ0Nl+HzQ56kRKoL9z2/r1BQNjyv/AYqzKXOQAAcXypfxozmQ
+	 WfQWASb+hJiB264YsedQBiHVjcGBbhEZrnnLKGurpispFL+zUGJ9Fo7qGUBWM3JObN
+	 CTu6ShfYITw+w==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 847BF17E0023;
+	Mon, 13 Oct 2025 11:32:05 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, Ikjoon Jang <ikjn@chromium.org>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Julien Massot <julien.massot@collabora.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
+References: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
+Subject: Re: (subset) [PATCH v3 0/6] MediaTek devicetree/bindings warnings
+ sanitization second round
+Message-Id: <176034792547.20821.16275876241287095581.b4-ty@collabora.com>
+Date: Mon, 13 Oct 2025 11:32:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64/mm: Rename try_pgd_pgtable_alloc_init_mm
-Content-Language: en-GB
-To: Linu Cherian <linu.cherian@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>, Dev Jain <dev.jain@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Yang Shi <yang@os.amperecomputing.com>
-References: <20251013080220.2027757-1-linu.cherian@arm.com>
- <20251013080220.2027757-3-linu.cherian@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20251013080220.2027757-3-linu.cherian@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On 13/10/2025 09:02, Linu Cherian wrote:
-> With BUG_ON in pgd_pgtable_alloc_init_mm moved up to higher layer,
-> gfp flags is the only difference between try_pgd_pgtable_alloc_init_mm
-> and pgd_pgtable_alloc_init_mm. Hence rename the "try" version
-> to pgd_pgtable_alloc_init_mm_gfp.
+On Tue, 26 Aug 2025 09:39:33 +0200, Julien Massot wrote:
+> This patch series continues the effort to address Device Tree validation
+> warnings for MediaTek platforms, with a focus on MT8183. It follows the
+> initial cleanup series by Angelo
+> (https://www.spinics.net/lists/kernel/msg5780177.html).
 > 
-> Signed-off-by: Linu Cherian <linu.cherian@arm.com>
-
-One nit below, but either way:
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
-> ---
->  arch/arm64/mm/mmu.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> The patches in this set eliminate several of the remaining warnings by
+> improving or converting DT bindings to DT schema, adding missing properties,
+> and updating device tree files accordingly.
 > 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 34602339c1bf..ede591346196 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -559,7 +559,7 @@ static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm, gfp_t gfp,
->  }
->  
->  static phys_addr_t
-> -try_pgd_pgtable_alloc_init_mm(enum pgtable_type pgtable_type, gfp_t gfp)
-> +pgd_pgtable_alloc_init_mm_gfp(enum pgtable_type pgtable_type, gfp_t gfp)
->  {
->  	return __pgd_pgtable_alloc(&init_mm, gfp, pgtable_type);
->  }
+> [...]
 
-nit: Given this renaming, it might be clearer for pgd_pgtable_alloc_init_mm() to
-call pgd_pgtable_alloc_init_mm_gfp() instead of calling __pgd_pgtable_alloc()
-directly?
+Applied to v6.18-next/dts64, thanks!
 
-> @@ -594,7 +594,7 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
->  	pte_t *ptep;
->  	int i;
->  
-> -	pte_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PTE, gfp);
-> +	pte_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PTE, gfp);
->  	if (pte_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	ptep = (pte_t *)phys_to_virt(pte_phys);
-> @@ -639,7 +639,7 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
->  	pmd_t *pmdp;
->  	int i;
->  
-> -	pmd_phys = try_pgd_pgtable_alloc_init_mm(TABLE_PMD, gfp);
-> +	pmd_phys = pgd_pgtable_alloc_init_mm_gfp(TABLE_PMD, gfp);
->  	if (pmd_phys == INVALID_PHYS_ADDR)
->  		return -ENOMEM;
->  	pmdp = (pmd_t *)phys_to_virt(pmd_phys);
+[4/6] arm64: dts: mt8183: Rename nodes to match audiosys DT schema
+      commit: 872fa3ea0c0e4602e4775d0fbe84ed3d6aa60e67
+
+Cheers,
+Angelo
+
 
 
