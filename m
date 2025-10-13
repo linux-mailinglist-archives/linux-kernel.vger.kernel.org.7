@@ -1,101 +1,236 @@
-Return-Path: <linux-kernel+bounces-851276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A01BD600E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:49:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30503BD601A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B71407784
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E4818A5CA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CB62DAFC0;
-	Mon, 13 Oct 2025 19:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C413D2DAFC0;
+	Mon, 13 Oct 2025 19:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gw1RMSQ2"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJYFPyGn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D014C2C3265
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0552264D9;
+	Mon, 13 Oct 2025 19:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760384982; cv=none; b=qkKZkrt6Z1MVQQzE4ekT6zAGVxuYtf5Sr8gfwa2YhJVsoKLaJNBSiS9Uypz36dlmLRMLngFq5NftdQLYgYW3987mGwzewKu2HSe3SD65FBbVb7KeJnO5bXFCE76UZVI3QeX3GVV/X4washubR0qI98Oj94GI6cCKD5p6qDvbG/U=
+	t=1760385037; cv=none; b=a5J9iDV7AJDZIS3V+4bg1/cAH+KHJz3XqTrjsX2J8ksV1BePE7LcptmVVUY5OSNZT9O/dSu8nilJ5oOlQPpKtCoYqY+GrzoauDc3CZ5YQdQRazf9ku0tTea64IreoBdEX/uXKXzvDZA0iTgfRBwrY6BhyDGnSACHmh1S1viWcp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760384982; c=relaxed/simple;
-	bh=/DrKiXuWmXA5zXJIwBMSXqDq5Rn8SXQvuQWnNtsh0VU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D8K/B7eO4Mh4bgRFYtryTwA1utZE+g26pEWextowM9jsPTBOWVEOoYrYygCsLAzgKzXvJMyMEXz+U+BYxES3N/HiUizrxGXAhuXv87/KitmeDFMLXMzUgEKXUZCMi8u0OUf4CRGKUuYYdRFCdSgQvr/i0xQY2j7LCrXhl7mSlQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gw1RMSQ2; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so29527165e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760384979; x=1760989779; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/DrKiXuWmXA5zXJIwBMSXqDq5Rn8SXQvuQWnNtsh0VU=;
-        b=Gw1RMSQ2YLBJ5WEEzmrGrFHdpMMqWCKNVzgLrWEuH2r7COHcEhBiFKpgG7MhXsZh1x
-         OMRznKqtNJig0TvsaFUEDxWX9PPPyF6XHEXkydWLVi4k4MZ+cFe+f7HvfvQarBLvr/0H
-         JkAIf/NCTChQ3lGqbfA/Q1tLUsHKlOjzeK+3FIC97rcqRjLLOBfkMnwyrnkkn94ObFEY
-         T2kCt0DHF9cXRe109Ryrlz3zH+5Zg8sh2C0CGM7OGkcH0Iv5c7/I0ZRYAXrJzGa4Xf5u
-         E/wiwY4gNtDRs4hzlv0KJiV0prQKsLA7TkxVsMrGFSU1FqGfD4iem72/fbDgWtL5kbJ+
-         xIXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760384979; x=1760989779;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/DrKiXuWmXA5zXJIwBMSXqDq5Rn8SXQvuQWnNtsh0VU=;
-        b=DbtWcy9RCHD3fhsSyHTScESfAYOhWK/fKWyT7Oskv7y2JG5Kl9BYbvcaJlOpu3BdOW
-         w/Eo2yICqWEHSz+ltWfsesrukQzJ8/PfNiC/SGz1K9AeJHfutDmBrn25TiwGANJL/Eoh
-         pzdhW/pF0lxpwZRRTulaAWHcCzR0m8JCrtb6BYg6cBXCnfpJAPXokHytvo0AHzBR/FJe
-         Q6zn3y4wzYGVI+RtSJD0OPrYT7D6lSjPhmb+w/NAgPDxd6XiWZWZFwdpqNUvgtXfDWrX
-         vrwPqqJGZYSnj7bkmLLs9lzFZEGbUyEVfO0fAhXlNHKD2ySXG17+BDdsQFhtZKg3VWHi
-         TbMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeSD6dcE9gLODwnuiF3j82S1XCkPk5ZL/95etM7baRJ6QNMYtuM2duW+QsYXcEDhR1T4OX0kE6mAljXLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEilF6Cf2ucD7fR6fJ8w3kthF2od3oxu2pYYYPmJ66wMWQJ5wV
-	7DMEuOIqXRclW9zuiexQkKKTyG0pIm4hnJDen4s0+vL3Mi2KDVYGAthCrRFROYGg4zDzT5PA4sS
-	/Kd8iJNmFxhOaU64pkHCzXWL6+xdX5yIEVJI3dRa6
-X-Gm-Gg: ASbGncvnZU8ccdIAf59bXwB41x4Lt5GevPM28/RvK6jdx/QfGxArt79wW0HVFeupx1X
-	zZK/88zgkkOLqcBltmhlxhNAXLUr8gf33jfJl1kYuFkfgySovRG9ZML3vdX1nhuhvwsKBKJXmeI
-	jpFrNc6F1/GK9dy1O7rv6CQ8jV4tGdkLhXk8O/syPx/SMYXKOkeMeaZDtctM+mYyOJBGZvzwPAW
-	3p2J7VcRUd5iGrI9WEZ1ihcEbhRfwzWFDXSfd+qiPKO152bRz0zYGAIx3Yxwe50bdPKXX4C2g==
-X-Google-Smtp-Source: AGHT+IHY0QThJviNDN13Na0YoMT4nnE0a7l4g/aXq2yJNMMpvrw4aO2zCu7aZscq5GGO+Y0OCsnqucCGtPNGmRlRxaA=
-X-Received: by 2002:a05:600c:4e01:b0:46e:37fe:f0e6 with SMTP id
- 5b1f17b1804b1-46fa9b090d0mr180438765e9.30.1760384979034; Mon, 13 Oct 2025
- 12:49:39 -0700 (PDT)
+	s=arc-20240116; t=1760385037; c=relaxed/simple;
+	bh=RTh2qQLRy2voO67dBZSLvPZprE+dNHWREq6r4yE8Mk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4DAk2JJqYLibfIM+aNAAIxwBdPry0e8pdApYJ8Uw7dQyZRPW75d9qmE0hZQuyocWAQ4F2+ae+JLxMrDEFoUVuz1y94UOfLJVOlWGFl6YZjReaeweMwvuOzszFq18NfJe25zC0TI5IiOz4yAwrNccBS7+Zi2ebuII1T44vW4z50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJYFPyGn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB908C4CEE7;
+	Mon, 13 Oct 2025 19:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760385036;
+	bh=RTh2qQLRy2voO67dBZSLvPZprE+dNHWREq6r4yE8Mk0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LJYFPyGnKukKJNwjAB7nsV/eQ8UTkrCIhyaAvA41S2ffyHHg8+Naq4/0JoYVAkEIR
+	 0hvyWjekpPulSaXrZ35ijIsu3qxhFwz6g2EUmTr8x++VwwEetlZoVnSnoN0XVVI0uO
+	 X27A0p5q1p1ttB8E0XATjwnGKgFTm/Z0aleI8E2yA0UphczVnYqmHxtZbdbrGiowxC
+	 twIHwxRQPaDpQIeaodgiZT9GL1moLAaAPySYqmMp2vbLkM+XwnxQwfqdTV9OHD9c3L
+	 vSDBncoKwuAcRv7LXA9jIrCAQn/eO0tu0XQB9Zh/1rdfj7pszhL8LcLd+Ix22V71UT
+	 ve1lC3tV/iXOQ==
+Date: Mon, 13 Oct 2025 20:50:31 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jorge Marques <jorge.marques@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: iio: adc: Add adi,ad4062
+Message-ID: <20251013-step-quaintly-c58d8a1a460b@spud>
+References: <20251013-staging-ad4062-v1-0-0f8ce7fef50c@analog.com>
+ <20251013-staging-ad4062-v1-1-0f8ce7fef50c@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009010312.2203812-1-jthies@google.com> <20251009010312.2203812-3-jthies@google.com>
- <alnlmxbcv3ivhh7iolfqsurhknnm2o6i6waxq7kuhmzcbeljr5@a4wy3prshu3c>
- <CAMFSARdzoZrv4oXxVAYRcZJgxdLcrTMVAVGa=D8H=9c1vZ0zKQ@mail.gmail.com> <fciyxaedvyqeppldl26rsy7hogoi2zks6tq6m2yu5xerfjxo3g@u6vzsiicv5ke>
-In-Reply-To: <fciyxaedvyqeppldl26rsy7hogoi2zks6tq6m2yu5xerfjxo3g@u6vzsiicv5ke>
-From: Jameson Thies <jthies@google.com>
-Date: Mon, 13 Oct 2025 12:49:25 -0700
-X-Gm-Features: AS18NWBSBKFbpC2dPCDDX4XxbL8PoeUJPBg6KiZ18nToguJJIvN2knvCEUtPr-U
-Message-ID: <CAMFSARc7ySH4VhGbwd+CXXC9845NUkf-RE4gKeTW8D_9zNY--g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] usb: typec: cros_ec_ucsi: Load driver from OF and
- ACPI definitions
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
-	robh@kernel.org, bleung@chromium.org, heikki.krogerus@linux.intel.com, 
-	ukaszb@chromium.org, tzungbi@kernel.org, devicetree@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RlRwCY1q8HISHvhf"
+Content-Disposition: inline
+In-Reply-To: <20251013-staging-ad4062-v1-1-0f8ce7fef50c@analog.com>
 
-> IIRC, MFD devices support binding subdevices to the OF nodes. Do you
-> plan to use it? Could you possibly point out the example DTs?
 
-I'm not planning to add this, we want to move away from using the
-cros_ec_dev mfd to load cros_ec_ucsi. On upcoming devices using
-cros_ec_ucsi will just be loaded based on ACPI/DT. Regarding example
-DTs, I'll point this out in the comment.
+--RlRwCY1q8HISHvhf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 13, 2025 at 09:27:59AM +0200, Jorge Marques wrote:
+> Add dt-bindings for AD4062 family, devices AD4060/AD4062, low-power with
+> monitor capabilities SAR ADCs. Each variant of the family differs in
+> granuality. The device contains two outputs (gp0, gp1). The outputs can
+> be configured for range of options, such as threshold and data ready.
+> The device uses a 2-wire I3C interface.
+>=20
+> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad4062.yaml    | 83 ++++++++++++++++=
+++++++
+>  MAINTAINERS                                        |  6 ++
+>  2 files changed, 89 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..dcf86088fc4f32de7ad681561=
+a09bad2755af04c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2024 Analog Devices Inc.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4062.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD4062 ADC family device driver
+> +
+> +maintainers:
+> +  - Jorge Marques <jorge.marques@analog.com>
+> +
+> +description: |
+> +  Analog Devices AD4062 Single Channel Precision SAR ADC family
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+4060.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+4062.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad4060
+> +      - adi,ad4062
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: gp0
+> +        description: Signal coming from the GP0 pin.
+> +      - const: gp1
+> +        description: Signal coming from the GP1 pin.
+
+Please move the descriptions to the interrupts property, by creating an
+items list there. I think more information should probably be provided
+about them, than just "signal coming from", perhaps referencing the
+ability for what the signal actually represents being controllable at
+runtime.
+
+> +
+> +  vdd-supply:
+> +    description: Analog power supply.
+> +
+> +  vio-supply:
+> +    description: Digital interface logic power supply.
+> +
+> +  ref-supply:
+> +    description: |
+> +      Reference voltage to set the ADC full-scale range. If not present,
+> +      vdd-supply is used as the reference voltage.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +  - vio-supply
+> +
+> +allOf:
+> +  - $ref: /schemas/i3c/i3c.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i3c {
+> +        #address-cells =3D <3>;
+> +        #size-cells =3D <0>;
+> +
+> +        ad4062: adc@0,2ee007c0000 {
+
+Remove the ad4062 label here, since there are no users.
+
+Cheers,
+Conor.
+
+pw-bot: changes-requested
+
+> +            reg =3D <0x0 0x2ee 0x7c0000>;
+> +            vdd-supply =3D <&vdd>;
+> +            vio-supply =3D <&vio>;
+> +            ref-supply =3D <&ref>;
+> +
+> +            gp1-gpios =3D <&gpio0 0 GPIO_ACTIVE_HIGH>;
+> +            gp0-gpios =3D <&gpio0 1 GPIO_ACTIVE_HIGH>;
+> +            interrupt-parent =3D <&gpio>;
+> +            interrupts =3D <0 0 IRQ_TYPE_EDGE_RISING>,
+> +                         <0 1 IRQ_TYPE_EDGE_FALLING>;
+> +            interrupt-names =3D "gp0", "gp1";
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f090c2f6e63a0d255a025885cc4573f5802ef159..afbfaeba5387b9fbfa9bf1443=
+a059c47dd596d45 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1400,6 +1400,12 @@ F:	Documentation/devicetree/bindings/iio/adc/adi,a=
+d4030.yaml
+>  F:	Documentation/iio/ad4030.rst
+>  F:	drivers/iio/adc/ad4030.c
+> =20
+> +ANALOG DEVICES INC AD4062 DRIVER
+> +M:	Jorge Marques <jorge.marques@analog.com>
+> +S:	Supported
+> +W:	https://ez.analog.com/linux-software-drivers
+> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad4062.yaml
+> +
+>  ANALOG DEVICES INC AD4080 DRIVER
+>  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+>  L:	linux-iio@vger.kernel.org
+>=20
+> --=20
+> 2.49.0
+>=20
+
+--RlRwCY1q8HISHvhf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO1YBwAKCRB4tDGHoIJi
+0n2pAQDQUqZKxVS/Fi8UDVh9b6mYPR3VqeiZgt0GW/NYaqmKLQD+JiTFL7Rw6HV3
+1v+YhASFyCE3ozd8V5LLvPPD5kwxaAs=
+=WHF1
+-----END PGP SIGNATURE-----
+
+--RlRwCY1q8HISHvhf--
 
