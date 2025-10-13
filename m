@@ -1,178 +1,140 @@
-Return-Path: <linux-kernel+bounces-850248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B86BD2583
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEE9BD2588
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E45189A000
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:44:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BEF1899FB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAACA2FF163;
-	Mon, 13 Oct 2025 09:42:45 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5576C2FE067;
+	Mon, 13 Oct 2025 09:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L4O6KkFS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0C22FE59A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317052FE041
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348565; cv=none; b=mYsqNgaF/gqT/S7gVFqP6kng7jI7QLsmblP34olzhOKMw681tCvH31E88SLP+nxiwlB5WVt7iqo+4Sgs/PFkx2gQV5lcu3XXVqePPl3E0zoydAQ1WVzFh6CzxB70xWUrofahR+y0P8wgvCjZQv8KtC/b/VqV6lkYzUoTFw2H6Tw=
+	t=1760348589; cv=none; b=aID3urNWoialTJNZ1C+4qgbKS1IcDxnsMVCQ5LDxhW4ZU4nZbASNJu0FdSjro56naojQo8WrbysG6lRsgKQm+CWx1A5dLpZU8O859Do1BlumDQJny0UjiL0HwFBMoUTaypvK8qD8A32VNLgWgFwI6qc2eMXUC+hEemUI0i0nhUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348565; c=relaxed/simple;
-	bh=EAN4sWBJ5u21afjmQCOH07b3iYnwg0JD2LI+Ap4oW6k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mork6E6pKPvkpIAkPblIlS6xOlN/Da1myVlbOwsEDGgK+RzsUyO4A8O+cKZ5sFBPp5QNgy+L8PwXi3YGgxwOJxz+/r0IQke0RgT0OK9cPQbc1+MuXtWVQ5edTrUt1mGnZlzwPmSaDzwypbb6OZDjzKLM/YZD+Vn/oDE36nR8+p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63b9da76e42so1841910a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:42:43 -0700 (PDT)
+	s=arc-20240116; t=1760348589; c=relaxed/simple;
+	bh=JAorbLSuZiT53x85S0dpzWaGHVqHdTXASc19XDvMYJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+YWxIJBOrTUMUeJYmpujbB8mpbwoYfwdXmHuCSM3NCSXHeFwlwI/VM7kGM4fayJG5ZwXLVKXX3evn2da+JrS4aWfxZaIqjpn9Bd7BBH57o9z6Qm9aYQEC1qhjUXhBQCajPoGaL9cdWX2c8uy9W1iMz5s9OxEa8/T6fx+Lukwao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L4O6KkFS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59D9V6PY000493
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:43:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PRoNub5jA9Gf7w1dXnkXsq7KXaxAcgcIuaL6MaCMdgk=; b=L4O6KkFSUN0UGwxg
+	uwbjbdjSLlijcjeNnIYgyP5E5Rk//2L6Ag9bpTUMU5OQyUK8l3YyZjmiUqMIIuf6
+	dx676QqUc45cBMCm4fXWd9CqSaiIl+59nvO0b+rFjWWSr1KrA7nSMmv3EkY6Fnh7
+	mq64cK035a1tXA3RC1+CpxUPlak+0UJkqeOsAMnB+DN6HEDhKR/r+IhzKqG7UvEp
+	XWdlGG/Jz5+DTEKjmN3LhKeQxzNkyNYR9y5yV2qEtNHeP5v0iv1+inSSFwGfbUOg
+	4cfMZWbm+oYfG+mLGmhpjS/m+7qdUKp/cblKSoA1boZAWY7/UAfPSN1AeKwfFCIf
+	Tb4dEQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qferv43g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:43:07 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-860fe46b4easo248691585a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:43:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760348562; x=1760953362;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zTvGYqfZOznQ17hnioy7FCyX6Jv4eDMruKEwckMF/k4=;
-        b=h7RyUCQPKTXDbZEB7+DCM7ie1XgoEUC9XzfstTsQs0Rfp/06ep2HtLPzVaCLU7x1xd
-         YNYUNt/MHh6nwZ0HrPrEpN5ZnnfQk8OL6a45LmXCRf3cuGyzjl+IaYVjGZ1qOjAJl/LR
-         7qa+JaAn0A5wYXsJ2/YwULBbQ3R2B8YZ/J8cjVxOghYIOEzXjPEyFAxUaYwEuHQAWoio
-         eokfaJokgcaU0eECtKs5GwKwDbnhwM2J0kB1o3Mlz+0YU6Vd5JjLO4C/WE6+XN6N+aSO
-         c8Dsyz6Y9S4X/QfRJ41x59qvl80jDovU4UgKTdw1dK1g8PXyLwDXAeTzsqgQTsJCtup9
-         UbJw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1o73l8k/yv875p37bHUohgtVxK+wY8tIgBFBsQM8u9EXnTJPWh2dZ+1ivca8c83WlflPBE2K4M23bbzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVMvvobcpJJLt7OicnqSD77skf1lvGeKu+GyxI3efqxOQsWTYk
-	bHBR4zbRb1GsVcwpnT4XZ6w/IBYBwjxtxqtUJ98LSJC00gTnEQeTgCU3
-X-Gm-Gg: ASbGncsLkzVjXY2//fs0ciPuxnAXM/LYUGBSIT3ypFFGOMv5TG3VreFYnNy2DSOoIGt
-	kcr67q7Z80Ihut5F+/sYhgbfsZraoOWlagiytpA7WQkDG5FSPmRXbIwSPk679xOKt2d44AV6VrI
-	F0v99NaNQe7Ni78uoQL3rUIBLwViLZ+G8eknCUCr9DLqZ9jjYpx68T5gAmzjB+yn0vPfPjmYXds
-	qTEDHwlMivADbO2IahRkkf+lyxAcXcaV+U2Bke49uHhaqe+J05qo2yW02vEZLE3TERnvXeeUM2m
-	JZ1FWmqch7bHoQdzZ3F5rgawl2qcZg3Yq7CqyA8wygL98DGmzZJwKy2XoryJfNwUzDo4QKbR96m
-	uvRzqNYcen3Dhsy8xorRzY3uT7v8lKaukc09JeAhSIdVcEks=
-X-Google-Smtp-Source: AGHT+IFcI0cgPTqYWTOSyF+qub8t4bQnrQN0dIPm9yvFJr5D+T7COUZ+n8YwG9QqG0uQau0RjuCcuQ==
-X-Received: by 2002:a17:907:3f1c:b0:b3e:26ae:7288 with SMTP id a640c23a62f3a-b50aa48e3b6mr2185548666b.8.1760348561519;
-        Mon, 13 Oct 2025 02:42:41 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:70::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12978sm891499066b.44.2025.10.13.02.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 02:42:41 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 13 Oct 2025 02:42:29 -0700
-Subject: [PATCH net] netpoll: Fix deadlock caused by memory allocation
- under spinlock
+        d=1e100.net; s=20230601; t=1760348586; x=1760953386;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PRoNub5jA9Gf7w1dXnkXsq7KXaxAcgcIuaL6MaCMdgk=;
+        b=fJGF1A9DxG3Suf+VkKP7Ph5ZLdPWAxDNu1v8dTw0ZOJTqzo26QEAHWbrWA02ulrhlP
+         kFLZMZr6CWjd8xJEssdzE59EhWthzMiVDvkPKVNak9nGNRx2STYEcXJsOskM8J3TmcoU
+         CFxYRHDnCCvYzLXs6W9fqXA+SY4wH68mjmnwI+K0F6k5qkR+VdYH3plGTB0V/VjqTceZ
+         NPQQT5Bz+YmyUeM5uiYlRxzoevl/cAbBH7v51WghcvpfAa6rZF8c93hfZ7tk1jsUc9xy
+         EgH3LOCwIKhfhuYyVKJJJcvzEP5NvHtfwgbgdxTp71Bp1lwWYl1FAaOI6eoFahHcGL7W
+         KI1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXep3fCJ8ECWgxBDwsNtqqS9snYQvZJHJTB1av888Tp4QieN0TONIh/oMrOk40sIEaF6sKyeCp+X04d/1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD71cZUhtv8rtPuUNIZmoop5z19itCpvlbSkoHHuglw0ojpsMR
+	lBJgfzVJVA2l8G26/PV0q4y8e29q02bPbPJrwv5q2/5+wZsv3VOwn4l0Y1qIP1yPlKjtDOnERyY
+	xG4UdRc66a+sAMQDidue7GJOfvF+/T273LzQqAAWF1DySKdGb64IBSoj0VFYx7YkFuT4=
+X-Gm-Gg: ASbGncs7WKM+3n9AKQhrei+Z/jrvYo1nKvw8n+mYfy9ORAVsQjbAXwCpbMhjorXSVJD
+	vpvUPvejxq8tER97m3lwTUS9Fk9aYmNb7mnhfJ63WTI/jP6v30nAyU5SrBlH0Ycbf0nhIGSg/+M
+	5iKS58tItHe+6vUFT1aYdccqS4jBxp9PZTaQ0Pl9iY0bjc6oqcuYB9z5Jg5YRv5Tvz/9A8sGsef
+	cKNsXiQ8ijQWKisVWCz2MafhAFpE+ro796bZTDPVgTlnXOwbteRamlDAy3TaY4CXBz8+KunuRMc
+	Egr2LpIFHLFcDpvLabMLnfrBVTrJcMhtvOIUEtCZyR+8PCFac4Yslz78S9RCOM+FbfowjkrYGep
+	yDmhDxzdsAnA/mFqXUrP42A==
+X-Received: by 2002:a05:620a:40ce:b0:883:3c5c:9077 with SMTP id af79cd13be357-883543faa58mr1929904485a.13.1760348586420;
+        Mon, 13 Oct 2025 02:43:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZ37YIa8D275kZUNP9IUttcMgdGMHC6q8jTuYigjOj9p2rv1EtOiRJJX6OXhmRdZGU4PYwjQ==
+X-Received: by 2002:a05:620a:40ce:b0:883:3c5c:9077 with SMTP id af79cd13be357-883543faa58mr1929902185a.13.1760348585981;
+        Mon, 13 Oct 2025 02:43:05 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d66cc4b8sm894618366b.30.2025.10.13.02.43.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 02:43:05 -0700 (PDT)
+Message-ID: <4b4ca560-d8e8-4d89-a02c-02d4245ccc37@oss.qualcomm.com>
+Date: Mon, 13 Oct 2025 11:43:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] power: supply: qcom_battmgr: clamp charge control
+ thresholds
+To: Val Packett <val@packett.cool>, Sebastian Reichel <sre@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251012233333.19144-2-val@packett.cool>
+ <20251012233333.19144-3-val@packett.cool>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251012233333.19144-3-val@packett.cool>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-fix_netpoll_aa-v1-1-94a1091f92f0@debian.org>
-X-B4-Tracking: v=1; b=H4sIAITJ7GgC/x3M4QpAMBQG0Fe5fb+t3EmxV5G05o5bGm2SkndXz
- gOcB0WySoGjB1kuLbonOOKKEFafFjE6wxFsbVuuuTFR7ynJeezbNnlvQt+zD2203HSoCEeWqPc
- fDkhyYnzfD3aHdDplAAAA
-X-Change-ID: 20251013-fix_netpoll_aa-c991ac5f2138
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, gustavold@gmail.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2358; i=leitao@debian.org;
- h=from:subject:message-id; bh=EAN4sWBJ5u21afjmQCOH07b3iYnwg0JD2LI+Ap4oW6k=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo7MmQ6bZzDnyeA7HSB+mYJwjwJrnCAoiQRk57X
- fyT4riR3CSJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaOzJkAAKCRA1o5Of/Hh3
- bW6pD/4p6l9yBt+uGrcfQ6NLqvt5xASPh7iCV4JaBKLV8uV09l3b2HdgUaomSNb9/tCBtBAerhq
- +uS7iLu/wJ32EsGFNUl3RWZ1CAN5mnh7uaLSmQ2BxGoyOBPQsUQEo+HyHyZwAwfMwr7GbT0aYtH
- cTriHZSpvoNTCm5y4EQFaRLMVYPUKarz30D8gV86sQCdCEf5HQGm23iVnc+Z3N96HCHs3R0VOuP
- SBz/z8V6Gvd/4c1XHS9SX3JzMM7JnVxw5PyStVeuSkcRFF3030vZM8V/uR5e2sKaVHFr6iZK3vt
- 4E0fCtGil6BpxOLNeTR43ICtloqDK5ZPTUaafiK8UnzyfIQjidmLiLf//lWcG7RdobVqh+HySqh
- i1cxo63VNT7Vs0XGday/DSS4Ig7hMi9hwNw9I7BK+0mmbNRdxK533i8pZjHI2tSCR/kYinJROUh
- X7UljsCDnnJsOLNhzKocXaFFfXZ1LsNTkCnz0gnwEZqfysTENWdlTdkxNNa8g5ACfzMMG1kLJZ4
- ul/aah9w+h72WTQUTtxZxIQiT0yz5UyRzOu/KZNl/EDlqV/VZNVEl1q5Du8QCcjqWIEPJeP6PfY
- zk7qJP7fvtWW1LhuG10SBnnFhKoUY7kCaTHfunCo39W/6Pjl9fXc21btEMfWCxCctjXnEvGxbuy
- bbi0swQEe3e87Ew==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-Authority-Analysis: v=2.4 cv=R64O2NRX c=1 sm=1 tr=0 ts=68ecc9ab cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=Wbw6XCnMcsYJmrvhT80A:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: b_3Rx8mKmMp-4Kex8EW8Xjeh7v0Fx2iM
+X-Proofpoint-ORIG-GUID: b_3Rx8mKmMp-4Kex8EW8Xjeh7v0Fx2iM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX1oGEWmqHgcYH
+ VmGiYEO0QNqyoBfElHEwIJjG4YlWp1YoR7DeFXM8fvKMc1MxK8glPNSU0go9R43yXpJT/2mmDxW
+ w+kYyujp7c1d4kfJ777DIdRQl8UHYWS82GHLU2QWAriuInbOTWCtLGnEwB26JUtiy+Hg1vgx9Df
+ DFLIKOLDvlVjSn3G8ukUCjqcqhKpchMpEiTWJ8xiHOhNCPwM4/oSedgjq0ZiSz0tBx7SDG7sY6b
+ agdtikAL7uGurSW6lYO1adzhMqt1pHJeBZ+up2vJ6Now/6CC9VwqB8tB8kjEKj8IU7teGNoaWbS
+ ptfbbyO+wGjNX5lvwAa/CkndcsCTg0zXYs+ygpmjdvNbZCCAHZwKrEi7xIx6bwHyAGRUKPPEjd9
+ UCcyvWhqcIu40I5nCA119qcKvTJubQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
 
-Fix a AA deadlock in refill_skbs() where memory allocation while holding
-skb_pool->lock can trigger a recursive lock acquisition attempt.
+On 10/13/25 1:32 AM, Val Packett wrote:
+> The sysfs API documentation says that drivers "round written values to
+> the nearest supported value" for charge_control_end_threshold.
+> 
+> Let's do this for both thresholds, as userspace (e.g. upower) generally
+> does not expect these writes to fail at all.
 
-The deadlock scenario occurs when the system is under severe memory
-pressure:
+The documentation says so only for the upper bound. You should
+probably submit a patch to amend the lower one as well
 
-1. refill_skbs() acquires skb_pool->lock (spinlock)
-2. alloc_skb() is called while holding the lock
-3. Memory allocator fails and calls slab_out_of_memory()
-4. This triggers printk() for the OOM warning
-5. The console output path calls netpoll_send_udp()
-6. netpoll_send_udp() attempts to acquire the same skb_pool->lock
-7. Deadlock: the lock is already held by the same CPU
-
-Call stack:
-  refill_skbs()
-    spin_lock_irqsave(&skb_pool->lock)    <- lock acquired
-    __alloc_skb()
-      kmem_cache_alloc_node_noprof()
-        slab_out_of_memory()
-          printk()
-            console_flush_all()
-              netpoll_send_udp()
-                skb_dequeue()
-                  spin_lock_irqsave()     <- deadlock attempt
-
-Refactor refill_skbs() to never allocate memory while holding
-the spinlock.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 1da177e4c3f41 ("Linux-2.6.12-rc2")
----
- net/core/netpoll.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-index 60a05d3b7c249..788cec4d527f8 100644
---- a/net/core/netpoll.c
-+++ b/net/core/netpoll.c
-@@ -232,14 +232,26 @@ static void refill_skbs(struct netpoll *np)
- 
- 	skb_pool = &np->skb_pool;
- 
--	spin_lock_irqsave(&skb_pool->lock, flags);
--	while (skb_pool->qlen < MAX_SKBS) {
-+	while (1) {
-+		spin_lock_irqsave(&skb_pool->lock, flags);
-+		if (skb_pool->qlen >= MAX_SKBS)
-+			goto unlock;
-+		spin_unlock_irqrestore(&skb_pool->lock, flags);
-+
- 		skb = alloc_skb(MAX_SKB_SIZE, GFP_ATOMIC);
- 		if (!skb)
--			break;
-+			return;
- 
-+		spin_lock_irqsave(&skb_pool->lock, flags);
-+		if (skb_pool->qlen >= MAX_SKBS)
-+			/* Discard if len got increased (TOCTOU) */
-+			goto discard;
- 		__skb_queue_tail(skb_pool, skb);
-+		spin_unlock_irqrestore(&skb_pool->lock, flags);
- 	}
-+discard:
-+	dev_kfree_skb_any(skb);
-+unlock:
- 	spin_unlock_irqrestore(&skb_pool->lock, flags);
- }
- 
-
----
-base-commit: 0b4b77eff5f8cd9be062783a1c1e198d46d0a753
-change-id: 20251013-fix_netpoll_aa-c991ac5f2138
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+Konrad
 
