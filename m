@@ -1,270 +1,237 @@
-Return-Path: <linux-kernel+bounces-851470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B76CBD694E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:11:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCC8BD6951
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0DE94F7FC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:09:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 678234F93DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B052E9EA8;
-	Mon, 13 Oct 2025 22:08:36 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAA8309DDB;
+	Mon, 13 Oct 2025 22:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mkr7sKYr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C628613DBA0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760393315; cv=none; b=MvqoPbEdYAmGgZgIt7mhMiZtSTLmAbRNscSizLjq8KG0FDISBDZinIaTfUFV/TzafPpHPnWtKblAryN2PaKd+6fDTnsOtAms0fNU544w2Dc8nW8tcEPNuEpZZiFW/hKbrzT4i8VnECeDfTLmMECWwJYaV6pxug4MetJm9S0n4EA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760393315; c=relaxed/simple;
-	bh=kjNnr5VDlN6Wh41AKgP1HdqxVz+te2xB2CD25EOGiGI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MRyeLXd8kQccifK2BQnUr/MUh8w64ehQ0TJhBmCTTfHlNgA21Ty6CJB4kxVPoEQINqFcPLDy/NYetOwkeyglaK6Tp1GEloUIHsgg8xAn67rVou9I5SxEwyfa95TMZQ7Jov+Ou0Ta6e1fOArsd6RPqhMtTy+JKZMqDLOCMchFcPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-42f8824b65fso289179325ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:08:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760393313; x=1760998113;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zIbIgugtklvHTqqJJgJ+BdTc9znNIGMO83GoObH33ZA=;
-        b=oof82gBsadnfANbsM+6TVXSAMd7H4Sa08D79cFIeYukfKDXYeR51+C+Q5Hn5CgT4n8
-         PYjV3FHcx5o5rBdLkZotDMNC3A7Cw+y1XaD+1B3XEEW1JZ9/3hNOWyUehmk9cuSAIKnO
-         tq/P7O9hBtyB7GL9TZ/PbJhf+CWL4cgR4ZxejHJX4hH/1g3GN958I2MPA6s/e4eMyPD/
-         K91WGbTtXJVCDXT1oE0astDyc7C5tgITGboLg5JtcsBALiGoBbo0BFL8AL4ZEKOx7qwI
-         5oO0lYFFyD/IOhOqjKwjmrNjE3FrtWGY9e8pGy8JJH9c0WhB24ShZGn7Fp5KOtYp8SWI
-         XBlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGhpTa9qN7iSwdNzgKlgNhh2VgZdUCzDtBsf7vUHK7GI6QkDA3ndu/aA494PqbZDA4TtrY5ujtqVosWVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFfI+z8PSbbIKtfhaNF4DkhtgawPRwzzlhTchhQJoDME0PmCYr
-	gek6yje+yD380tOrL31/2yA/4qynN7mNL7ybld3m5MQtGLcoSdQi09sW+bu5QYOC9QVbPakTl9/
-	hluRgXADb0/z10waf04/L5ViH5FsEVEwjDLsZSYmH70hCtiDKQBpPxrD7NvM=
-X-Google-Smtp-Source: AGHT+IGwirS9dcCgq4QyeX3JxDsTTYwLGyx3bt+7kcItEESXGjdvumqlKkFUVuU4LSZJPPQ1J83SZsDSMKfqfJSaPxNpdo7iRwQG
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508743093A6;
+	Mon, 13 Oct 2025 22:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760393322; cv=fail; b=Y0RXgZEmhD9QdFcJDT2cprF3xLva0yXA8f8xBzUfAPGYrY2/yD+AIifhWHI63CQA1vI1T59jOeD7Zd4boIcsC9A+2E81L3RUIAGmiU0G63ZF+QaF4DIWep83kOsI6cwrG54ORkyHlUM+3Y5J2BdYWVGmLFY5zI2nEM6Mo1vfZiY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760393322; c=relaxed/simple;
+	bh=rRcd6IofuzVg03w7mkjNcqmPEvaBx3WhY43hhQbJ7XA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oBmVOWHIMjjVBQCs01j6L7UPYFsF8EcNtAH+i+u7nh0aHHDIdAOQt7tzgyoKKj3PFoH7VOznhSBps7rcCRugcAIrAJAoklK7kOONrJUoC0QrrW5WbC3wozT9nfQjEb9CcBSrlIBLZzU081QXIV7ITRzXuhQZb63Ho1GDcmn3SYA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mkr7sKYr; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760393321; x=1791929321;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=rRcd6IofuzVg03w7mkjNcqmPEvaBx3WhY43hhQbJ7XA=;
+  b=mkr7sKYrGXhdh7XOTBiVt3V8rx19eDnsaPuEe3p43I/S3s1fmSsZeLzK
+   uONurhjRDMg+DVakMQGzGvTJoOBsZAhgQm4vzaXPuyN+avk+4vzYzHk/r
+   gYOXKCDXZxtDBdNARV0uxmCeRDdlJNODFWJR40ryMVWSslzKAM6b6jSv8
+   GIuB/PGeDHGsfZTNtXvvm/h69SFXLkB+4Paq8Z29SmI8lBfVsQbuVwnTv
+   slsP3TWLQOkPkPPk2VuPd56eyrNI4s8w6LgpGqHMja23pFS2yIR5ckAXj
+   dUihmv/uEaTXpsHQwJ41ChHEaFbB9eUvqdXpH+fA0veqRMNDPNIa/HhaK
+   w==;
+X-CSE-ConnectionGUID: YR3qDhwERzuLa1+TzLv+rw==
+X-CSE-MsgGUID: IHCggTqDRMaiv4sGxlhHFw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62644636"
+X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; 
+   d="scan'208";a="62644636"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 15:08:40 -0700
+X-CSE-ConnectionGUID: xupZqr2FSNGAUlCqXdlnoA==
+X-CSE-MsgGUID: yS+Ker17TYCecClQhj49uw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; 
+   d="scan'208";a="187012528"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 15:08:39 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 15:08:38 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 13 Oct 2025 15:08:38 -0700
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.53) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 15:08:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MVj0qc8Ff9ZK7W+OwUDV5FkDWOI9rM5mQ+XZBrZeGkzWOjadSug+aWt7nFMIKckPXrIzFgf45Ae1hIwzI4+TeFs21qX7+uGR+DLdKvu7VwygJ+npuqbSUaJEeJbhfvEkwaIuQTQ7ixcd/jIDXs/4P2ptJsGdfJeApxb05xkyuLoSwQZz22Xn3vXLqyY0qKhg9OwqNXYh+2RsnVlHzIeYv7UkfFk9iiI/OTvR1p3CQJl761JkjEh7v4FwDPH2Ug1us5kfNvp4usxQ+Vx5woWb6REFa1pcY7H7F7hS8YSTMomSrs5kUgtVxQzXj16mi6MyCG9hcTK7gYYwZTJpwPwtbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rRcd6IofuzVg03w7mkjNcqmPEvaBx3WhY43hhQbJ7XA=;
+ b=KGlE1XC3A2+beOJF8VtsaHPCL/lX9tY6pz0PyL3S3A2+dsY/q40RobZo9BKtK78qxNvwXCpagHfv1l1Th1HQkNDSummsYsIEgXDrqFCgyMJtHCUi3GuZlovv815lWZ8kl/0yrQ3gt/azDjRrReUhd3RQMICTyCkFzYOIZJQURIRvnwjr0QBoMn+ftSMW5Qft9gjxEocI9XRXTVQj/swenvwXegKV9Rxz4nCp+WiUw5jcyClHC+wqFnPtcuEpyseIGyApQ2+edXSEfdhQ5LdlwSxBetfk62Df2JB/M1B7fYO1Ws4warEKwox6vR8HuV7S8NyQP7OvSO0nxOkLOXM+dQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by SJ2PR11MB7714.namprd11.prod.outlook.com (2603:10b6:a03:4fd::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 22:08:37 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 22:08:36 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "seanjc@google.com" <seanjc@google.com>, "x86@kernel.org"
+	<x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>
+CC: "Gao, Chao" <chao.gao@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Williams, Dan
+ J" <dan.j.williams@intel.com>, "Hunter, Adrian" <adrian.hunter@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-coco@lists.linux.dev"
+	<linux-coco@lists.linux.dev>, "xin@zytor.com" <xin@zytor.com>
+Subject: Re: [RFC PATCH 2/4] KVM: x86: Extract VMXON and EFER.SVME enablement
+ to kernel
+Thread-Topic: [RFC PATCH 2/4] KVM: x86: Extract VMXON and EFER.SVME enablement
+ to kernel
+Thread-Index: AQHcPG9+ji4Sx5eRzE+xlwAWwOAOMbTAovgA
+Date: Mon, 13 Oct 2025 22:08:36 +0000
+Message-ID: <d75130b0a0fb9602fa8712a620cb1f7e52606ea4.camel@intel.com>
+References: <20251010220403.987927-1-seanjc@google.com>
+	 <20251010220403.987927-3-seanjc@google.com>
+In-Reply-To: <20251010220403.987927-3-seanjc@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SJ2PR11MB7714:EE_
+x-ms-office365-filtering-correlation-id: 2bbb4c52-0bcf-409c-7931-08de0aa50eeb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?Uy9QTFlKMTJFblNhczZDejhXcXo5OUF3UlFKaTNHYzVmSVZVMUtTN1ppUXlS?=
+ =?utf-8?B?L1pqREhzeDJMU1ZsaW9UWXJ0c0ZROG96OFo0dHdNWWJVdEUwbkUxcStZZyt3?=
+ =?utf-8?B?Y0ZhQ0w4RWJTcGhVR2szNk9nSGRlb3NyOVJLRzRFZXQ2T0hNeWlWbERkSkNu?=
+ =?utf-8?B?RkhLWXQxeTN1WUtyblRVc1BNQ25paHJuWlFnQXdFSnRXbENMa1hCc1lmYldi?=
+ =?utf-8?B?VlBMMEpZNWtwd1hYYnl6VkpwRE10ZkdSNlN1U215d05GVUVYdW1BMFN6VndT?=
+ =?utf-8?B?MXhZS0IzMUIvbFdFdmtGa1lqTXNnVDRRWFZmSTR0THd6ODh0MWV6TmxEWVNp?=
+ =?utf-8?B?VnN5OWZuK1dLaXhGWGFXQWNsQW0wSXhYTkFMSmZDOXFYVC84TkZPeTdBNFpY?=
+ =?utf-8?B?MXF3bE5UYkc5QjZBdjl5YTkwWk5vbE1GVlgvTGozOU80Q1VBeEg5aDBvc0t0?=
+ =?utf-8?B?UlFVblN2QWhLekJ2M29raWduVCtJemhjQkdxaUNZYmxSTGY4ZzgrUEQyMGlN?=
+ =?utf-8?B?WGFLcVJNNFJBZ2NJZ3d0T0d2VlVvRk5heU5UNktuVnpCZGlXVlZwNXdpUkcw?=
+ =?utf-8?B?bHhuNzNCNFhRV3hnWmt5NjlMSys5aHJwZ1N5REFGV0dIZWEwZmJKQ1F0QTl2?=
+ =?utf-8?B?U2QySEM3TjB5WGE4THNtb0RLSDdmWXhPc2dqcWJyLzV3MUwraGJ6eGQ3UEsz?=
+ =?utf-8?B?U3hCbjNWVGVDTElIdU05b1hjY0pESWJZZXhvWXNKM2tOcUxrVGVUWm1jOUh5?=
+ =?utf-8?B?OFNoaVZOOVcxZE0zRzUvbVVNSnZKVWVjUHB1VnhzNFZPYmt3aitZa01LUVA5?=
+ =?utf-8?B?Y0pNUHNVNEoyN3R3VnlzWnVsODg5cjF5bUNVcWtBRnZWZHdNWVgzaU41bWhX?=
+ =?utf-8?B?a3M3N2VPUmNON3N0QWpSb0pJSzhyb1g4dDZPTnQxUEh6dlFjL25NWmhaYzZp?=
+ =?utf-8?B?djREUWUrREJYM1M0cWFNR3JiZkNLKzZrczMxSzlqTm9idGZJNWxVdStGVFhm?=
+ =?utf-8?B?WHEva3kzL1d5Q1VhdkNPNHBEMlQ1UDRWdzVydWc5Y2oyeUZmYTN4MWp5UDJJ?=
+ =?utf-8?B?SzdTbEo5eWJjWGRRQURUTmw3RWdPMyt3L0VwenlHOCtFc2x0L3pKNEI0SUZJ?=
+ =?utf-8?B?MFpXNWQ0Wko2SW4wTGkwSDFaTk05UEdzS25LS3Y1MFE0eVZxbXNjN2wvbzFp?=
+ =?utf-8?B?RXR6S2JwVkNXdjd1SndvWmlqRVRNcE02WmQyRlFXdlVKMzR6NmVNdnZScjF3?=
+ =?utf-8?B?NE44bTRTR2QrdldXcmFIWVRObStnQWhjUnJ3KzJ4OVVQN25UaEdjUTVobWx5?=
+ =?utf-8?B?WnNuTklmZjhTN0tUcDBpODB2U3NNUVZpMG1vcmo3cHppMVBwN2M4RTNyd3B1?=
+ =?utf-8?B?NG05a0xOc3A4SUNYMjRYbHJJVTVLTmNNUklKdGk3VXRlOGQ2a2ZlbU5oWWV5?=
+ =?utf-8?B?U2dUdlhsM2lvVXRESTN4V1VGQ3BGUzVUcUNVK0dDTnFjKzR5V2RDamVwMmRk?=
+ =?utf-8?B?TEpqejBQTG5McU9NTXpJM1ZiZElIZW13LzFDNldiQzdYMmN1RlJFY00vZ1hV?=
+ =?utf-8?B?ejZBUmtZNllLNHhkWnl0OWxwaFA2Uk5QN1ZnbGZVd20wY1dzMzNMNGpSS3RO?=
+ =?utf-8?B?bnp2aUw5em10KzFuanpGemdtaDgvZ05wUUFPWktBZXlZNlpFb2t5dE15SDRB?=
+ =?utf-8?B?cml3dFZEOXF3N3QzRUZSUEUyYlhKb3VQYmxzSGhiSE5KdDFOcW5ZRTlpY01F?=
+ =?utf-8?B?SmlHc3VUbEQyY1NZRHZTZDIza1dqbENYSnFTTmNBVWppRkR5YUpGZVRlS0tQ?=
+ =?utf-8?B?Mm5iZEtUVTB3QUFLNmlUSm9La3NMT1dSNUdFVm9IMHExSklOdjF1THl5SW94?=
+ =?utf-8?B?MkM1aE9hcnpSU3FJQ1o0VzhtZ0UrdUhSUXViUWJnd2VpR1NJcXMyRnpCeTJW?=
+ =?utf-8?B?bTcvaDhpWUdDdDhTU0Z2YlpjT2c3bE5LU0k3VVByZXRZazJqZHJKcEdYdnhx?=
+ =?utf-8?B?WDNvN2puL2V2a2YzOGkyNzJSU0JBeDE4Zlp2UFhrcHhPTVB4aGpSS080THE2?=
+ =?utf-8?Q?2+tCtf?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aFpZU1VVVHBTM1p6SXZTNzl4VXRpdHZZdlFqdDdMN3VBRVhyVmMzV0YwSXVG?=
+ =?utf-8?B?QUxlbU1IRnpHS0MwS2JFbGsycHJUY29XaE1WNEMvRW1rbjl6WXl3aERIeUt6?=
+ =?utf-8?B?VlRMOE9xd0dtclc4THUvRXJlQlVsT2d5Yms0ZkxaY2lJOW9veHEzSGJ6aWRL?=
+ =?utf-8?B?b083dk85Zmp6RUM3cU1FQ1dQaWNDRnhpa1B5SEVkdGduaVFENDNScVhHNDdu?=
+ =?utf-8?B?dnBwdFZxMytCb0RMNSsrY3dWUEVENXVnRGZoazUwZGlTTzZPUTZQUytzK2tB?=
+ =?utf-8?B?Q1BYNFd6andMbDVTVmNKOWxKelFTeVZXWG5BTWJySlBsV0RWdFhwaEs1Z0VM?=
+ =?utf-8?B?VkVSdFlORDF1RDRNSWhjZHM4MkdsdENmamVCQVhrL1pUV2kxUjE1OTJwU21M?=
+ =?utf-8?B?em1LbXVIRCtGNFArSEpTQ0dBTkZ2RVlxMVZqa0dsV29qbEc5T04rNTNkTGpv?=
+ =?utf-8?B?Qm54TmhMWm96VVdjbDEvemJUZGNVWG8zMllxbkZKMXNQTmxMejNQMGhaSGYy?=
+ =?utf-8?B?UStIbWFNNEdkeVpCUHJNRktrWmZsZk1XeVRMNlVmS3ZFVUdTRjFTK292L3R4?=
+ =?utf-8?B?bnorOWRRYzBmYjhpSlFqdURhOGJ3czcraWxUMkVtcnZMWVJNSE5ZNUM4Zis1?=
+ =?utf-8?B?VEordVhrNE9ZazNINGkzczBLdE9oNkpLV24vTURFRjh2RFFnSllSQlFSREEw?=
+ =?utf-8?B?cXhQVkwwNkxrdWVicXpNTEtOclJ0RU1zVTRBMU96K3UzamtiZ2QrZ2RLaW5z?=
+ =?utf-8?B?enRQb1BaQWpWQWF0VGs0ckE5aVk3dGJXVjg4UnVETkVzZWhFOHkzR0ovS1lL?=
+ =?utf-8?B?QkZSbU5DVlgzRTF4VW83L2Q3ZlgvNHhKZ0ZxelBWSUgrVUQzVGZiNFBEYzdY?=
+ =?utf-8?B?ay9qMURyRTFpQXFTM1QrRVBaV3lyOXorVXk0RXB5RzNmUGROYW85ZVg3VmNC?=
+ =?utf-8?B?dXY3VmVJV1JJdWl1SnlLbDlKczMyeXZSWUs2ZkZ0MDEyR0VmdmFXM2JGSU8v?=
+ =?utf-8?B?dmZtTTJDajErT2ExMGx1cmhOanRrSTBMU2V5ZUxoNzRNaVNydWV4OGJzS21p?=
+ =?utf-8?B?SkdMTTN6Qk5hSjdwZXk5N0diTnVzbFAxazJGVjFOZ3B6WFlpNXRpUmxZWWhV?=
+ =?utf-8?B?YXp2Y2VNYXNqZU5SV0dUWkJRMUNBZkNGc2VILzZDUDVQOW1OTEhMblE3bXR5?=
+ =?utf-8?B?c3FzbjhZUGpYREI3LzhhaFI5RnRJTkhITUZZMHZMU3RUdkx3ekp6Vlh3K2Zx?=
+ =?utf-8?B?S2t1Y3NkOHpWM3lkNFBOeVBaNnhVaHJCMlcybHRUSUU1RTJlRnFvK2FDeUVO?=
+ =?utf-8?B?NnQ0S1hkbCt6UUIwVHhLcGtadzRYZ1dWTVJ3QU5JSlNJWE5QZTVHNWVDWlJz?=
+ =?utf-8?B?aW5XRFhoWUVLTk4vaFRNOVFqZGJJbWxaS1hhb2cxSFZJZ2lYcVZ1cFpXUG45?=
+ =?utf-8?B?RU5WZy9XN3creW1FNTJtTy9NS1pvelRIOGZIZDFRSHFRNlVUTzVUN3ZrcENQ?=
+ =?utf-8?B?bFpJbUYza0FKa1ZVMjZ1QWpGOEo1eDdUT0ZiSjQ4Z01kRTRDV0s2ODJhdzdy?=
+ =?utf-8?B?MUR2Yk1aT0kwVERWY1Yzb1lucVJmcFZIRHlYQjlINDNwZUtPT2o5Y3g3NlZh?=
+ =?utf-8?B?Z3hwRXE5cC84d01Xbm5pME91NXlVamFsREM5RlJkNWtPQVh6eFU0VENBc1Ew?=
+ =?utf-8?B?bitna0FjcklpS0FwNzE2a2k2eHhiVnRlaG5CTVlLNUpWcXdRWE02WkFkanBq?=
+ =?utf-8?B?US9DUFpSMU5lNCtEUjEzY0JBWWpJVXRyRXYwZXVyMGQwZ1dlY0w4R2k4VUZa?=
+ =?utf-8?B?Z1liT2dFdUljeXJsQnBtMWJCWFQ1cnRBT0RJVHJlTEtxOVJZMG4zblpiZWdQ?=
+ =?utf-8?B?cUV2Ri9kY2s2QUt5NHpvRHZxWnZBQkFQQmE0V1poaU94d3ZKRXFJUDRjTDVT?=
+ =?utf-8?B?WUo5S1k1Q3N2NGVROVFWUXliMmRXOTlvc0lheEh5QjRGVTdJYVF4dmYxTEEz?=
+ =?utf-8?B?UHBoWWRBbWo4bVowNlU0Z0ZLcUl4MlQ4OUJBcEViWGIxa1JObndKekJiSzJx?=
+ =?utf-8?B?S0pmQ3NrQ2UyUkZ5ZHNKVkhQeDJOYUtJTXdtZE96WG9PS0t0U0VCOFhjWEVI?=
+ =?utf-8?B?ZlkrbTAwWk1nUXdYZnB6dk9OWjRKUWVKUElBY0s2aEpsb056UzNrekZkWG0x?=
+ =?utf-8?B?eEE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0A886935DEF238409B510580A44FE733@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b49:b0:42f:9353:c7af with SMTP id
- e9e14a558f8ab-42f9353c8bfmr202885975ab.4.1760393312850; Mon, 13 Oct 2025
- 15:08:32 -0700 (PDT)
-Date: Mon, 13 Oct 2025 15:08:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ed7860.050a0220.ac43.003d.GAE@google.com>
-Subject: [syzbot] [kernel?] INFO: task hung in p9_fd_close (3)
-From: syzbot <syzbot+ed53e35a1e9dde289579@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bbb4c52-0bcf-409c-7931-08de0aa50eeb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Oct 2025 22:08:36.9220
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: J1JwAQS6BNQE7B4j9YKKoKnKWcCdUm2nTD6XVjB79CaPMgj4n3w1Dydga04FDH4/VY6WSm9Zm8yBYlG9ecmMoo312iAlPNAtGHoWDKZSlcU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7714
+X-OriginatorOrg: intel.com
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    2b763d465239 Add linux-next specific files for 20251010
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=166ab304580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=ed53e35a1e9dde289579
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116ab304580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12758c58580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6a00344625c3/disk-2b763d46.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cd34c500f8eb/vmlinux-2b763d46.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/660905c62cb2/bzImage-2b763d46.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ed53e35a1e9dde289579@syzkaller.appspotmail.com
-
-INFO: task syz.0.20:6088 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.20        state:D stack:26696 pid:6088  tgid:6087  ppid:5996   task_flags:0x400140 flags:0x00080002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5325 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
- __schedule_loop kernel/sched/core.c:7011 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7026
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:100 [inline]
- __wait_for_common kernel/sched/completion.c:121 [inline]
- wait_for_common kernel/sched/completion.c:132 [inline]
- wait_for_completion+0x2bf/0x5d0 kernel/sched/completion.c:153
- __flush_work+0x9b9/0xbc0 kernel/workqueue.c:4273
- __cancel_work_sync+0xbe/0x110 kernel/workqueue.c:4393
- p9_conn_destroy net/9p/trans_fd.c:909 [inline]
- p9_fd_close+0x251/0x430 net/9p/trans_fd.c:944
- p9_client_create+0xd1c/0x10b0 net/9p/client.c:1060
- v9fs_session_init+0x1d7/0x19a0 fs/9p/v9fs.c:410
- v9fs_mount+0xc8/0xa50 fs/9p/vfs_super.c:122
- legacy_get_tree+0xfd/0x1a0 fs/fs_context.c:663
- vfs_get_tree+0x92/0x2b0 fs/super.c:1751
- fc_mount fs/namespace.c:1208 [inline]
- do_new_mount_fc fs/namespace.c:3651 [inline]
- do_new_mount+0x302/0xa10 fs/namespace.c:3727
- do_mount fs/namespace.c:4050 [inline]
- __do_sys_mount fs/namespace.c:4238 [inline]
- __se_sys_mount+0x313/0x410 fs/namespace.c:4215
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f91ced8eec9
-RSP: 002b:00007f91cfbb6038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f91cefe5fa0 RCX: 00007f91ced8eec9
-RDX: 0000200000000540 RSI: 0000200000000180 RDI: 0000000000000000
-RBP: 00007f91cee11f91 R08: 0000200000000580 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f91cefe6038 R14: 00007f91cefe5fa0 R15: 00007ffd736e9798
- </TASK>
-
-Showing all locks held in the system:
-2 locks held by kworker/0:0/9:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc900000e7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc900000e7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-2 locks held by kworker/0:1/10:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc900000f7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc900000f7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-2 locks held by kworker/1:0/24:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc900001e7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc900001e7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-1 lock held by khungtaskd/31:
- #0: ffffffff8e13d2e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e13d2e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #0: ffffffff8e13d2e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-2 locks held by kworker/1:2/982:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc900039f7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc900039f7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-5 locks held by kworker/u8:5/1314:
-5 locks held by kworker/u8:6/1334:
- #0: ffff8880b873a058 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:638
- #1: ffff8880b8724048 (psi_seq){-.-.}-{0:0}, at: psi_task_switch+0x53/0x880 kernel/sched/psi.c:933
- #2: ffff8880b8725958 (&base->lock){-.-.}-{2:2}, at: lock_timer_base kernel/time/timer.c:1004 [inline]
- #2: ffff8880b8725958 (&base->lock){-.-.}-{2:2}, at: __mod_timer+0x1ae/0xf30 kernel/time/timer.c:1085
- #3: ffffffff99c711e0 (&obj_hash[i].lock){-.-.}-{2:2}, at: debug_object_activate+0xbb/0x420 lib/debugobjects.c:818
- #4: ffffffff8e13d2e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #4: ffffffff8e13d2e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #4: ffffffff8e13d2e0 (rcu_read_lock){....}-{1:3}, at: class_rcu_constructor include/linux/rcupdate.h:1195 [inline]
- #4: ffffffff8e13d2e0 (rcu_read_lock){....}-{1:3}, at: unwind_next_frame+0xa5/0x2390 arch/x86/kernel/unwind_orc.c:479
-2 locks held by getty/5592:
- #0: ffff88803400a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-2 locks held by kworker/1:3/5829:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc90003f2fba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc90003f2fba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-2 locks held by kworker/1:4/5923:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc90003b9fba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc90003b9fba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-2 locks held by kworker/0:4/6056:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc900030c7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc900030c7ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-2 locks held by kworker/0:5/6192:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc90003537ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc90003537ba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-2 locks held by kworker/0:8/6344:
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
- #0: ffff88813fe55948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
- #1: ffffc900044bfba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
- #1: ffffc900044bfba0 ((work_completion)(&m->rq)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
-2 locks held by dhcpcd/6414:
- #0: ffff88802c816258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
- #0: ffff88802c816258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x33/0xd30 net/packet/af_packet.c:3197
- #1: ffffffff8e142d78 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:311 [inline]
- #1: ffffffff8e142d78 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x2f6/0x730 kernel/rcu/tree_exp.h:957
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:332 [inline]
- watchdog+0xf60/0xfa0 kernel/hung_task.c:495
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
-Code: cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d 33 e1 1b 00 f3 0f 1e fa fb f4 <e9> c8 e6 02 00 cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90000197de0 EFLAGS: 000002c6
-RAX: 1d6302149d16bc00 RBX: ffffffff8196bc07 RCX: 1d6302149d16bc00
-RDX: 0000000000000001 RSI: ffffffff8d7e9b20 RDI: ffffffff8bc079e0
-RBP: ffffc90000197f10 R08: ffff8880b8732fdb R09: 1ffff110170e65fb
-R10: dffffc0000000000 R11: ffffed10170e65fc R12: ffffffff8f9e1870
-R13: 0000000000000001 R14: 0000000000000001 R15: 1ffff11003a54b58
-FS:  0000000000000000(0000) GS:ffff888125e0b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005598ff692660 CR3: 000000000df38000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:767
- default_idle_call+0x73/0xb0 kernel/sched/idle.c:122
- cpuidle_idle_call kernel/sched/idle.c:190 [inline]
- do_idle+0x1e7/0x510 kernel/sched/idle.c:330
- cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:428
- start_secondary+0x101/0x110 arch/x86/kernel/smpboot.c:315
- common_startup_64+0x13e/0x147
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+T24gRnJpLCAyMDI1LTEwLTEwIGF0IDE1OjA0IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KDQo+ICsNCj4gK2ludCB4ODZfdmlydF9nZXRfY3B1KGludCBmZWF0KQ0KPiArew0KPiAr
+CWludCByOw0KPiArDQo+ICsJaWYgKCF4ODZfdmlydF9pbml0aWFsaXplZCkNCj4gKwkJcmV0dXJu
+IC1FT1BOT1RTVVBQOw0KPiArDQo+ICsJaWYgKHRoaXNfY3B1X2luY19yZXR1cm4odmlydHVhbGl6
+YXRpb25fbnJfdXNlcnMpID4gMSkNCj4gKwkJcmV0dXJuIDA7DQo+ICsNCj4gKwlpZiAoeDg2X3Zp
+cnRfaXNfdm14KCkgJiYgZmVhdCA9PSBYODZfRkVBVFVSRV9WTVgpDQo+ICsJCXIgPSB4ODZfdm14
+X2dldF9jcHUoKTsNCj4gKwllbHNlIGlmICh4ODZfdmlydF9pc19zdm0oKSAmJiBmZWF0ID09IFg4
+Nl9GRUFUVVJFX1NWTSkNCj4gKwkJciA9IHg4Nl9zdm1fZ2V0X2NwdSgpOw0KPiArCWVsc2UNCj4g
+KwkJciA9IC1FT1BOT1RTVVBQOw0KPiArDQo+ICsJaWYgKHIpDQo+ICsJCVdBUk5fT05fT05DRSh0
+aGlzX2NwdV9kZWNfcmV0dXJuKHZpcnR1YWxpemF0aW9uX25yX3VzZXJzKSk7DQo+ICsNCj4gKwly
+ZXR1cm4gcjsNCj4gK30NCj4gK0VYUE9SVF9TWU1CT0xfR1BMKHg4Nl92aXJ0X2dldF9jcHUpOw0K
+DQpOb3Qgc3VyZSBpZiBJIG1pc3NlZCBzb21lIHByZXZpb3VzIGRpc2N1c3Npb24gb3IgZnV0dXJl
+IHBsYW5zLCBidXQgZG9pbmcgdGhpcw0KdmlhIFg4Nl9GRUFUVVJFX0ZPTyBzZWVtcyBleGNlc3Np
+dmUuIFdlIGNvdWxkIGp1c3QgaGF2ZSB4ODZfdmlydF9nZXRfY3B1KHZvaWQpDQphZmFpY3Q/IEN1
+cmlvdXMgaWYgdGhlcmUgaXMgYSBwbGFuIGZvciBvdGhlciB0aGluZ3MgdG8gZ28gaGVyZT8NCg==
 
