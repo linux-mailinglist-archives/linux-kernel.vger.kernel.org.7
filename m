@@ -1,396 +1,283 @@
-Return-Path: <linux-kernel+bounces-850149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5417BD211D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:33:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62235BD2126
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6D31899391
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC573C24B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A402F6188;
-	Mon, 13 Oct 2025 08:33:27 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EC22F618B;
+	Mon, 13 Oct 2025 08:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d+LX+Xlw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38802F5472
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D902F6169
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760344407; cv=none; b=LqYemNJkf1DvlACXEhSvMEE0Pixn/UOIr/Pbafmd7jczvnTb1Ob/fkwFPb+2/I9Lfa0Sgq8jFuh3HpIQ4/nkOaeHeIXLfQbFEtAHbr0K+PpIuH6zttDtzYIMBsO5zMDUEQW6kawcYZOu7fCRsXrSSJ4qoYp//BK3hiUMmnu34/E=
+	t=1760344417; cv=none; b=U1DNZhCvx4jA74+nY5yNVxiwkTH0E/x8uPz9Wz49/x4zvwGVmqq1/qZhCxZNJu3tYDaKMyg9B53CDJS4S3cXSeFOH3ymfUOKIlYmgyWQL53QruAKn5iS9EPJWZJJhVH75UpMu2z3EcXmyeuLMM0hWSvuhcWYjHbZN28+2JOn5fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760344407; c=relaxed/simple;
-	bh=wXQZLc1odkcf6QcU9vPPSZuObkLbPZG6b5Ao9isTL/s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ctH96HLLiz1AIoa1SL0IY2WN5FUbvODL1W4kC3qoRg73LiPziRge7CmLSAGMPPAhtR0jPpQcT+Yj5TSBAYbULDmm524N5bpvDQgMpXXogzzDooHbWwtAcqIVrfDGLfOx5ASJX/+Daf4WISCFZ7XV/Ti6hNRPwBT5+2Anz7knjCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-429278a11f7so106844655ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:33:24 -0700 (PDT)
+	s=arc-20240116; t=1760344417; c=relaxed/simple;
+	bh=ifGEChEhgS0rXLGxIMkdm1rrqU0pnFP0HEcG4honfGE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nfUfUbWADb0u0hTEK+LGZ0EkpQxlxTrqoSUSepQflAQJUyj/aK/EI2eojqKbjL33lqkPdhkCTLorU2EU/FO7ZGXa7pvSlG7Ntvw5SqTzZKB7e3afsQgJjx0EOTe0TdO7PF0PXHnbovc8dYetc+TVl0AIxgtC2V7sMEQViEbly28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d+LX+Xlw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760344414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eHzqoTUxCIyvAxivdG8/KYPlObSpyBug5KjpaqaKlgI=;
+	b=d+LX+XlwcLl1fzLZk8G1kGUgFFmUhtFEdDn3EoSgSX4EjxcOYvFMeM0HQoFEsK7K7D89fm
+	IgL1558bqK2sndtHOd8n1lMqFJGxxJ3b4e/omDO8e3fODZ4VAtFXqrC1ftBpgHX6WLAyJI
+	P5O5oIoIS+VontvTTI7wiL4NQUUsB9I=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-171-5Vq5CHCePWmgIlT5nrQi6w-1; Mon, 13 Oct 2025 04:33:32 -0400
+X-MC-Unique: 5Vq5CHCePWmgIlT5nrQi6w-1
+X-Mimecast-MFC-AGG-ID: 5Vq5CHCePWmgIlT5nrQi6w_1760344411
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e4fa584e7so23535165e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:33:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760344404; x=1760949204;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uCv209PCyXrgwvMWYxejYyi6NbJpRieHlPfmxnoDizI=;
-        b=a0GbeQ580g/W/MKre2rXii4/WPx1APzuer5M6XkLwqv8W5EMq53Z7EID3sr+2N1Kl9
-         1yY4tlJLKNwdmTto9zjpbxEeLZA30VuJf/KrW3pmA1Yx21994xLsLwnJ67dtmEPPtD90
-         dDIdwKCSC+xNGRPfpJwUTPzrZgx+D3LnSpE6W6gdAidUsYd9B0PhRkZbAyv4wlvaUtE8
-         RrfOG6r8BVZKXcfIST0x06LGJoEq5N9l+vVvagUR5wZRjzSiEZY6vI2TGJxxtPo7NioW
-         AuUUHh9u4D3f8oue3S955Bpa5thGhcmTIsY0yBp6EZjjiJpCf9ZsMe2GnKsCoHIm7Q0s
-         Q9Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqa2yTzCmP7AwK8UM1nV9krvipvYNX11Y+kzk2dHVoQPYJ6FebPkkiBab2tw9ksrOsVvnWjL9PlTiFr7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/g06A1y7ypcV52c5qMUhMIkvhKN92AyQm5IbbcM+i/AjYo9Oj
-	41JQn50Yz/iO5u2MCwQf0Zm/eGWwYOowfqVB6gEaKHJ4n9U6CshiAR5B71sVxSL1DUqNQTok3dY
-	ubWVEFLEGQLU+2eL41q52hmGudjA0HLDj7QNsUm/Iz4L0D8erv3MOyhHOPUM=
-X-Google-Smtp-Source: AGHT+IHTMsch5aV2Nu9FAhOlJb4LF1SyaXjozUu+X+wE98mO8iFxI/LxleuilPnXweOu1amGGyU4obKifDUtObUBs73PkaPnPO08
+        d=1e100.net; s=20230601; t=1760344411; x=1760949211;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eHzqoTUxCIyvAxivdG8/KYPlObSpyBug5KjpaqaKlgI=;
+        b=KXPjzf0m2gBGkFVMv3aAoekdS7xh/oyf6PAbsMo4wGH76+cjZQiEExP4e89R89wbSx
+         TcHddMVz24ldvP84B8s8DrKu5SzYCJZQvveonBxcMjZMDDAcOd5USFkNeUYQAWQeGr3M
+         BD+cRhHRC+kvMdhQUi8Dp1RVFUdRXj2wvuYvzxnmTDPTl2VmLmyKYJX0AY6deGtupfrq
+         PhdnSSawhsASSfJcVLnKr85RQ3b8B3Wc1urUx0v/yH0pUyt+Dxkvixiu7FLeR2a9w6GY
+         Xipv4SBvdgvLGj2RfeSQW5eJx+enAcjE56lGD0cbZsAZvP7G/w7g/XwVb3xrNXWhmY6A
+         HFWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXm4APMr/BNTnUEJ9Wg0Cxz6HeUpPhPs2N5IvfHlUaGiIBn4rRhomz8HJ3KWdIQPiCTyGirN2o4IsgZqMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpBU3mgoLhyEhDKP64MBRLQf1wUPd2wmVZqbmvZtuz+m69LTzM
+	fbH0dTKTrmiItEActqTOI08ow7e2WJaVIGtAoBVXPjEC1Di4q8YtXn/E78AAk4t50Yj3iq+wY+g
+	s/3syoppXA85yB7N3ND9cT2cgwOQwn8g2xRc1Sqq4Ttinvcom9kHu9aI3e/QS/nHBVA==
+X-Gm-Gg: ASbGncspvrKC4qk4usE+tsN5HfRUQ3+XIQ8RfpZJ3uiMcQp5MMDgSuvySTYmt+2WmdH
+	8ro1el5b+SMB0BHRvyYJVsrNJoIeYii3wHOvlmxhQNoV7ZC1m95PXAlBtdMzU1xcgnAaXjIpbPP
+	sIkY8FjhbsURLnGnG8MyWZJkJexKNJajKhJP9/dEfLRZvhctb7D7wF7A2yxJMrigq2q6h++WIZO
+	QXG71CL0ajHUhTKSFUghNLvk4EE9pxft2V3zh/nAxdMg4ulR+CW1ImYhf2dZMCC8mvb2DGvN9Rl
+	sD0NVUjYqsrIq3hPqgcxBT8Tbs4J9Mqi505sXV9YiQpUm8ncNh7X2NzZJ1MJjr93ng==
+X-Received: by 2002:a05:600c:6304:b0:46f:b42e:e361 with SMTP id 5b1f17b1804b1-46fb42ee3camr82409065e9.41.1760344411396;
+        Mon, 13 Oct 2025 01:33:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7PWpqFZ4D/w/JzkBafScgM+dm2uU2KKBj/FjHvRp7y+l21OlHRHMm58CWEcdN4EUMsrfFXg==
+X-Received: by 2002:a05:600c:6304:b0:46f:b42e:e361 with SMTP id 5b1f17b1804b1-46fb42ee3camr82408935e9.41.1760344410948;
+        Mon, 13 Oct 2025 01:33:30 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e81d2sm17203089f8f.49.2025.10.13.01.33.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 01:33:30 -0700 (PDT)
+Message-ID: <041c01207d23e6f9a02702428da6f528ce66599b.camel@redhat.com>
+Subject: Re: [PATCH v2 13/20] Documentation/rv: Add documentation about
+ hybrid automata
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, Steven
+ Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
+ Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Mon, 13 Oct 2025 10:33:29 +0200
+In-Reply-To: <87jz12yimw.fsf@yellow.woof>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+	 <20250919140954.104920-14-gmonaco@redhat.com> <87jz12yimw.fsf@yellow.woof>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:378a:b0:42f:7fcc:35a8 with SMTP id
- e9e14a558f8ab-42f8736c28bmr229535705ab.12.1760344404060; Mon, 13 Oct 2025
- 01:33:24 -0700 (PDT)
-Date: Mon, 13 Oct 2025 01:33:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ecb954.050a0220.ac43.0018.GAE@google.com>
-Subject: [syzbot] [bpf?] [trace?] BUG: stack guard page was hit in br_handle_frame
-From: syzbot <syzbot+593efacb260a29c44abc@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	martin.lau@linux.dev, mathieu.desnoyers@efficios.com, 
-	mattbobrowski@google.com, mhiramat@kernel.org, netdev@vger.kernel.org, 
-	rostedt@goodmis.org, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Fri, 2025-10-10 at 15:46 +0200, Nam Cao wrote:
+> Gabriele Monaco <gmonaco@redhat.com> writes:
+> > Describe theory and implementation of hybrid automata in the dedicated
+> > page hybrid_automata.rst
+> > Include a section on how to integrate a hybrid automaton in
+> > monitor_synthesis.rst
+> > Also remove a hanging $ in deterministic_automata.rst
+> >=20
+> > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> > ---
+> This brings back bad memories from university..
 
-syzbot found the following issue on:
+:')
 
-HEAD commit:    0db4941d9dae bpf: Use rcu_read_lock_dont_migrate in bpf_sk..
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=107ef92f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e0e0bf7e51565cd
-dashboard link: https://syzkaller.appspot.com/bug?extid=593efacb260a29c44abc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> > +It is important to note that any valid hybrid automaton is a valid
+> > +deterministic automaton
+>=20
+> Perhaps remove the double "valid". Usually people use the phrase "any
+> valid A is a valid B" to say that B is a superset of A, but it is
+> opposite here.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Alright, will do.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/692372caac28/disk-0db4941d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5518b9303204/vmlinux-0db4941d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/606bc80ec5b8/bzImage-0db4941d.xz
+> > +This is a combination of both iterations of the stall example::
+> > +
+> > +=C2=A0 /* enum representation of X (set of states) to be used as index=
+ */
+> > +=C2=A0 enum states {
+> > +	dequeued =3D 0,
+>=20
+> I think you already removed this " =3D 0" in an earlier patch?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+593efacb260a29c44abc@syzkaller.appspotmail.com
+Right, missed that.
 
-bridge0: received packet on team0 with own address as source address (addr:aa:aa:aa:aa:aa:17, vlan:0)
-bridge0: received packet on team0 with own address as source address (addr:aa:aa:aa:aa:aa:17, vlan:0)
-bridge0: received packet on team0 with own address as source address (addr:aa:aa:aa:aa:aa:17, vlan:0)
-BUG: IRQ stack guard page was hit at ffffc90000a00ff8 (stack is ffffc90000a01000..ffffc90000a09000)
-Oops: stack guard page: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 12957 Comm: syz.8.2194 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:strlen+0xa/0x70 lib/string.c:417
-Code: 07 38 c1 7c db e8 b6 ea e1 f6 eb d4 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 41 57 41 56 41 54 <53> 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49
-RSP: 0018:ffffc90000a01000 EFLAGS: 00010082
-RAX: ffffffff8b6bd780 RBX: ffffffff8e13b278 RCX: ffff88805b39dac0
-RDX: ffffffff81ca8977 RSI: ffffffff8e13b260 RDI: ffffffff8b6bd780
-RBP: ffffc90000a01108 R08: ffffc90000a0122f R09: 0000000000000000
-R10: ffffc90000a01220 R11: ffffffffa02017d4 R12: 1ffff9200014020c
-R13: ffffffff81ca8977 R14: ffffffff8e00a0c0 R15: dffffc0000000000
-FS:  000055556b813500(0000) GS:ffff888125e27000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90000a00ff8 CR3: 000000003c5ce000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-Call Trace:
- <IRQ>
- __fortify_strlen include/linux/fortify-string.h:268 [inline]
- trace_event_get_offsets_lock include/trace/events/lock.h:50 [inline]
- do_perf_trace_lock include/trace/events/lock.h:50 [inline]
- perf_trace_lock+0xc2/0x3b0 include/trace/events/lock.h:50
- __do_trace_lock_release include/trace/events/lock.h:69 [inline]
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0x3b2/0x3e0 kernel/locking/lockdep.c:5879
- rcu_lock_release include/linux/rcupdate.h:341 [inline]
- rcu_read_unlock include/linux/rcupdate.h:871 [inline]
- trace_call_bpf+0x79e/0xb50 kernel/trace/bpf_trace.c:147
- perf_trace_run_bpf_submit+0x78/0x170 kernel/events/core.c:10931
- do_perf_trace_preemptirq_template include/trace/events/preemptirq.h:14 [inline]
- perf_trace_preemptirq_template+0x280/0x340 include/trace/events/preemptirq.h:14
- __do_trace_irq_enable include/trace/events/preemptirq.h:40 [inline]
- trace_irq_enable+0xee/0x110 include/trace/events/preemptirq.h:40
- trace_hardirqs_on+0x18/0x40 kernel/trace/trace_preemptirq.c:73
- __local_bh_enable_ip+0x12d/0x1c0 kernel/softirq.c:455
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- ipt_do_table+0x13dd/0x1640 net/ipv4/netfilter/ip_tables.c:357
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_slow+0xc5/0x220 net/netfilter/core.c:623
- nf_hook include/linux/netfilter.h:273 [inline]
- NF_HOOK+0x53e/0x6b0 include/linux/netfilter.h:316
- br_nf_post_routing+0xb66/0xfe0 net/bridge/br_netfilter_hooks.c:966
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_slow+0xc5/0x220 net/netfilter/core.c:623
- nf_hook include/linux/netfilter.h:273 [inline]
- NF_HOOK+0x215/0x3c0 include/linux/netfilter.h:316
- br_forward_finish+0xd3/0x130 net/bridge/br_forward.c:66
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_forward_finish+0xa40/0xe60 net/bridge/br_netfilter_hooks.c:662
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_forward_ip+0x647/0x7e0 net/bridge/br_netfilter_hooks.c:716
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_slow+0xc5/0x220 net/netfilter/core.c:623
- nf_hook include/linux/netfilter.h:273 [inline]
- NF_HOOK+0x215/0x3c0 include/linux/netfilter.h:316
- __br_forward+0x41e/0x600 net/bridge/br_forward.c:115
- deliver_clone net/bridge/br_forward.c:131 [inline]
- maybe_deliver+0xb5/0x160 net/bridge/br_forward.c:191
- br_flood+0x31a/0x6a0 net/bridge/br_forward.c:238
- br_handle_frame_finish+0x15a3/0x1c50 net/bridge/br_input.c:229
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- netif_receive_skb_internal net/core/dev.c:6278 [inline]
- netif_receive_skb+0x1cb/0x790 net/core/dev.c:6337
- NF_HOOK+0x9d/0x390 include/linux/netfilter.h:319
- br_handle_frame_finish+0x15c6/0x1c50 net/bridge/br_input.c:235
- br_nf_hook_thresh net/bridge/br_netfilter_hooks.c:-1 [inline]
- br_nf_pre_routing_finish+0x1364/0x1af0 net/bridge/br_netfilter_hooks.c:425
- NF_HOOK+0x61b/0x6b0 include/linux/netfilter.h:318
- br_nf_pre_routing+0xeb7/0x1470 net/bridge/br_netfilter_hooks.c:534
- nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:291 [inline]
- br_handle_frame+0x97f/0x14c0 net/bridge/br_input.c:442
- __netif_receive_skb_core+0x10b9/0x4380 net/core/dev.c:5966
- __netif_receive_skb_one_core net/core/dev.c:6077 [inline]
- __netif_receive_skb+0x72/0x380 net/core/dev.c:6192
- process_backlog+0x60e/0x14f0 net/core/dev.c:6544
- __napi_poll+0xc7/0x360 net/core/dev.c:7594
- napi_poll net/core/dev.c:7657 [inline]
- net_rx_action+0x5f7/0xdf0 net/core/dev.c:7784
- handle_softirqs+0x283/0x870 kernel/softirq.c:622
- do_softirq+0xec/0x180 kernel/softirq.c:523
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:450
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- fpregs_unlock arch/x86/include/asm/fpu/api.h:77 [inline]
- fpu_clone+0x53f/0xbb0 arch/x86/kernel/fpu/core.c:692
- copy_thread+0x3f5/0x9a0 arch/x86/kernel/process.c:216
- copy_process+0x18ae/0x3c00 kernel/fork.c:2190
- kernel_clone+0x21e/0x840 kernel/fork.c:2609
- __do_sys_clone3 kernel/fork.c:2911 [inline]
- __se_sys_clone3+0x256/0x2d0 kernel/fork.c:2890
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5f291c3609
-Code: d7 08 00 48 8d 3d 9c d7 08 00 e8 e2 28 f6 ff 66 90 b8 ea ff ff ff 48 85 ff 74 2c 48 85 d2 74 27 49 89 c8 b8 b3 01 00 00 0f 05 <48> 85 c0 7c 18 74 01 c3 31 ed 48 83 e4 f0 4c 89 c7 ff d2 48 89 c7
-RSP: 002b:00007fffae254858 EFLAGS: 00000206 ORIG_RAX: 00000000000001b3
-RAX: ffffffffffffffda RBX: 00007f5f291459f0 RCX: 00007f5f291c3609
-RDX: 00007f5f291459f0 RSI: 0000000000000058 RDI: 00007fffae2548a0
-RBP: 00007f5f26fb26c0 R08: 00007f5f26fb26c0 R09: 00007fffae254987
-R10: 0000000000000008 R11: 0000000000000206 R12: ffffffffffffffa8
-R13: 000000000000006e R14: 00007fffae2548a0 R15: 00007fffae254988
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:strlen+0xa/0x70 lib/string.c:417
-Code: 07 38 c1 7c db e8 b6 ea e1 f6 eb d4 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 41 57 41 56 41 54 <53> 48 c7 c0 ff ff ff ff 49 be 00 00 00 00 00 fc ff df 48 89 fb 49
-RSP: 0018:ffffc90000a01000 EFLAGS: 00010082
+> > +	/* Validate invariants in i */
+> > +=C2=A0=C2=A0=C2=A0 if (next_state =3D=3D curr_state || !res)
+> =C2=A0=C2=A0 ^^^^
+> =C2=A0=C2=A0 indentation error ;)
 
-RAX: ffffffff8b6bd780 RBX: ffffffff8e13b278 RCX: ffff88805b39dac0
-RDX: ffffffff81ca8977 RSI: ffffffff8e13b260 RDI: ffffffff8b6bd780
-RBP: ffffc90000a01108 R08: ffffc90000a0122f R09: 0000000000000000
-R10: ffffc90000a01220 R11: ffffffffa02017d4 R12: 1ffff9200014020c
-R13: ffffffff81ca8977 R14: ffffffff8e00a0c0 R15: dffffc0000000000
-FS:  000055556b813500(0000) GS:ffff888125e27000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90000a00ff8 CR3: 000000003c5ce000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	38 c1                	cmp    %al,%cl
-   2:	7c db                	jl     0xffffffdf
-   4:	e8 b6 ea e1 f6       	call   0xf6e1eabf
-   9:	eb d4                	jmp    0xffffffdf
-   b:	90                   	nop
-   c:	0f 0b                	ud2
-   e:	90                   	nop
-   f:	90                   	nop
-  10:	90                   	nop
-  11:	90                   	nop
-  12:	90                   	nop
-  13:	90                   	nop
-  14:	90                   	nop
-  15:	90                   	nop
-  16:	90                   	nop
-  17:	90                   	nop
-  18:	90                   	nop
-  19:	90                   	nop
-  1a:	90                   	nop
-  1b:	90                   	nop
-  1c:	90                   	nop
-  1d:	90                   	nop
-  1e:	90                   	nop
-  1f:	f3 0f 1e fa          	endbr64
-  23:	41 57                	push   %r15
-  25:	41 56                	push   %r14
-  27:	41 54                	push   %r12
-* 29:	53                   	push   %rbx <-- trapping instruction
-  2a:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
-  31:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
-  38:	fc ff df
-  3b:	48 89 fb             	mov    %rdi,%rbx
-  3e:	49                   	rex.WB
+Good catch.
 
+> > +Due to the complex nature of environment variables, the user needs to
+> > provide
+> > +functions to get and reset environment variables, although we provide =
+some
+> > +helpers for common types (e.g. clocks with ns or jiffy granularity).
+>=20
+> Is there theoretical reason that functions to get/set variables cannot
+> be generated? Or you just do not have time for it yet?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Not theoretical but practical, the monitor cannot always define /what/ an
+environment variable is. In case of clocks (jiffy and ns) that's easy and t=
+he
+parser does in fact generate get and reset functions, the user only needs t=
+o
+specify the measure unit as explained somewhere else.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+It is possible to add more exotic variables that don't follow common clock =
+rules
+and need different get/reset definitions. Now, in practice, that may not ha=
+ppen
+with clocks (I cannot think of an alternative clock definition), but can ha=
+ppen
+for other variables. For instance if the variable describes the preempt cou=
+nt,
+the model cannot know in advance and the user will need to supply how to re=
+ad
+that in the kernel (just like we do with tracepoints, although event names
+/might/ hint something).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+As I get it, this isn't so clear so I should probably try and reword it.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+I might just assume variables without unit but with a reset are, say, jiffy
+clocks and never expect manual definition of the reset function, but that m=
+ight
+be misleading at times: e.g. if a user wants a ns clock but forgets the uni=
+t,
+the monitor would still build.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+>=20
+> > +Since invariants are only defined as clock expirations (e.g. *clk <
+> > +threshold*), the callback for timers armed when entering the state is =
+in
+> > fact a
+> > +failure in the model and triggers a reaction. Leaving the state stops =
+the
+> > timer
+> > +and checks for its expiration, in case the callback was late.
+>=20
+> "callback for timers armed when entering the state is in fact a failure
+> in the model and triggers a reaction." - I have problem parsing this
+> sentence. How can "callback for timers" be armed? Or do you mean arming
+> timers while entering a state is a failure in the model? What is it a fai=
+lure?
 
-If you want to undo deduplication, reply with:
-#syz undup
+Right, that sentence doesn't make sense.
+We arm a timer when entering the state, expiration of such timer is a failu=
+re.
+The timer is cancelled when leaving the state, so in fact leaving the state
+before the timer expiration is the only valid behaviour.
+
+> > +It is important to note that timers introduce overhead, if the monitor=
+ has
+> > +several instances (e.g. all tasks) this can become an issue.
+> > +If the monitor is guaranteed to *eventually* leave the state and the
+> > incurred
+> > +delay to wait for the next event is acceptable, guards can be use to l=
+ower
+> > the
+> > +monitor's overhead.
+>=20
+> How about having some sort of a "background task" which periodically
+> verifies the invariants?
+
+I didn't update this part, but now timers can work also via timer wheel, wh=
+ich
+is cutting down costs by sacrificing some reactivity (not correctness thoug=
+h). I
+assume the background thread would be quite similar to what the timer wheel
+already does.
+
+But I definitely need to mention this because the timer wheel is not as hea=
+vy as
+the hrtimers and its overhead is usually acceptable (unless proven otherwis=
+e for
+a specific monitor/workload, I'd say).
+
+> > +This is the full example of the last version of the 'stall' model in D=
+OT::
+> > +
+> > +=C2=A0 digraph state_automaton {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {node [shape =3D circle] "enqueued"};
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {node [shape =3D plaintext, style=3Dinv=
+is, label=3D""] "__init_dequeued"};
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {node [shape =3D doublecircle] "dequeue=
+d"};
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {node [shape =3D circle] "running"};
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "__init_dequeued" -> "dequeued";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "enqueued" [label =3D "enqueued\nclk < =
+threshold_jiffies"];
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "running" [label =3D "running"];
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "dequeued" [label =3D "dequeued"];
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "enqueued" -> "running" [ label =3D "sw=
+itch_in" ];
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "running" -> "dequeued" [ label =3D "de=
+queue" ];
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "dequeued" -> "enqueued" [ label =3D "e=
+nqueue;reset(clk)" ];
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 { rank =3D min ;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "__init_dequeue=
+d";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "dequeued";
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> Btw, the last block (rank =3D min) doesn't seem to serve any purpose. But
+> the last time I checked months ago, the parser explodes if it is
+> removed, not sure if it still does now. But this is another reason that
+> I would like a rewrite.
+
+Mmh, that's automatically generated by Supremica and, I believe, in some mo=
+dels
+it's tuning a bit the position of nodes. Quite strange that the parser expl=
+oded,
+those lines should be completely ignored.. Still, we know the parser needs =
+this
+big refactor.
+
+Thanks,
+Gabriele
+
 
