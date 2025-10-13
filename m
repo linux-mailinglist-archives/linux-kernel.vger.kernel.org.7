@@ -1,193 +1,157 @@
-Return-Path: <linux-kernel+bounces-850950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9003FBD5020
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47108BD54A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02FC0564DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:08:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 799744FD2E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD1C221555;
-	Mon, 13 Oct 2025 15:46:55 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F2830E825;
+	Mon, 13 Oct 2025 15:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kmc+EicW"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D44B26F2BE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D284C307AEE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370414; cv=none; b=OlWxAu19Nm/Zz7YmFQYB8rWOe6IhgzXsK0/spodc8Kj/qyEeAXDAMkskJ35kfFKVHpDIdpTSNHYkIr2htJMZOUWa0s6Cn2WRGQn1C/gLgMVc86qvRxaMij92sFXUN7QxZni6TSqxVTamytiwIJkvH94sVC0aWMzMpFCus6/bVZw=
+	t=1760370474; cv=none; b=gCrut5xDXJhlynR+UCf8ADh8rd6zgwrteLXeIk8fX7dZ9RL8jZDctDCiSVZmnBD0Kj9p4RrBnfAYDlrLOWkQPcXoOyotcC8jDs/GHbaL0VhRHqYwuNyH+AUFhUqWZcNnfM06L4Y3kQDGXXpx1+mbbJoTY6p7hmcuEYP9zNeswrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370414; c=relaxed/simple;
-	bh=UlmRHBnP3MpiQ+OwZRY1Jv/J/gbcIYNu5Xl0caw6270=;
+	s=arc-20240116; t=1760370474; c=relaxed/simple;
+	bh=g6TFFFPGjr50jQR7xQx4h+CFBPxdsLdChbbFuSFu0bM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WlEmf1+fa0gmwqFItHfTflzIRubDfktBS91+czz/q7TJoUsWFfzx/0nCL36rtLr+juQVjhu/OStqm4tsBT6ZmB+E0WDAdRzuBQ7EISizPQ305IaJ9QNmoWkbqpRoHEP6CJAMYTL+xJbA+bW4GJXayqOXo9Zgf6FkAADq0Fsjlqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-554a627a257so1292835e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:46:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=lADH9VqKHsZfhSKBdvKawZlV0mehC29Dyuut6cWdB0xKIHBP/1PQLY0+4BTYYDJdgN6Xeh7pMFNRn1gUq4618xmGcrpjtlhWELpiNNt4NpHkRz9G/eZt33sZk+NAncSrO/xUOmLnCd9m9iL53Ko5j8eGJRGDF/O5ZI1C8XGdtMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kmc+EicW; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-371e4858f74so51775151fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1760370470; x=1760975270; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YBeBnLojRUp+3BGjW9hqqMrpXMlk2wEyeaFT1Bjf2RU=;
+        b=Kmc+EicWOnGGJv7h3XU37uIanIetzI2Y0gIysTNKa/jbxzrsW/u18lpFhrh7ojoUdp
+         DyUguXAGeDupQIpwgNmb7DO+NhXzZSZpVeqy/rRHSeolzqlsVu/AjK4bxGImmJk55QD3
+         io9iZfQTNBWNUciKMpgtbWdrYXU1Awjdihq7Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760370412; x=1760975212;
+        d=1e100.net; s=20230601; t=1760370470; x=1760975270;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PtJsWdibGOFQ5FzXb1Mac56uXQ5iFDLzA2u7VIR4IYY=;
-        b=qWukXU5zJ+jYKaJ3FLCDXkmHtBATrkv/AJUTQwzZh83ZSoDna1faJ/EAid8mGt8Q6D
-         0b7feKKxHGwHRIiPFCmVCGYKukwZsRl76jCBHQO82Wx5fwYZr1FfNiIUK1DTmpi0edgU
-         XCezKEEA93El0279Lb3uhYRxBCLv+qRtZPabXLr1glA30mqqa6dS1CErcV0JatPVyVlX
-         Oxze65IwEO8DCML3YTeG94ppBDFKPVk0K9HCI0+d1ni8z/jLCjYCdxjpzJQ8ow0cg8Q6
-         +lTcIP+lLdp5YAi185gPZYGaimciJMde0gRl86CopRUf6hbTwfSHDC4Y7ePVDewbTXpD
-         nS3g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5iC4tl89x8DfUIFSR889+yuAWb6B5vzuxVGoaF9nGnqhP3RsDZs+8G+XURyUoxHR/X1U0ZymKuuQIzAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza7l0SJMb+aS2kcaBhhpG0CRKwuVUB2sb8ziBvIU+tsqDodk5o
-	va4BscqNXJdZOqOfqfZwEB3SCqDlJ05MBwA4IM1nkuOO0pK9jIT1PoUpQGDscq17
-X-Gm-Gg: ASbGnct+cqFvr8c/Jw7T9Z6O2duS4znvYwYd2ovBNLXAcTc5Ci3LvvM7+rrojrnlT1C
-	ivKU9pV71oQL0VpNDJ24oYAHHUsZe++r4sL/b5Y7u9ibUXtO/YWbMKm/btc8eKMmHYa0Erw5F3j
-	yIpwwOiuIovy9IeFVH2S93+f29xUBaEXUrS0gsVwqJ+5oyNK610Ot73gT/6hUbeqCOhTTAki1w9
-	HEXBDLmnoes6Z67rq8yVYw4JG2LYYRNy45NHrt8cbsPozQTq1nhONXQyZ6WZ/MqRuxwlS3NRwAK
-	B8pLMv6M/LRDNP1ju93RYh/9RJaG+p76F7wzVen0BDpF6mTOOgaeRUZWDWzXwsgbqdRxzJmy2bp
-	C89POM28ca+lZcqYN8LotLApQt0/9cKTURgKPJmEISLQEOb0lbXh5nTfhn7wQfUHjPSlbZSnajP
-	8OA2vt35VeUKqHrw==
-X-Google-Smtp-Source: AGHT+IEqHrV/luMddyYxXmnalVe6c53JgpQlEfaGneZ+uwL3CxWmm675Smj2iu0BQAsv2CooEKH4Pw==
-X-Received: by 2002:a05:6102:a4e:b0:4f1:7946:ed52 with SMTP id ada2fe7eead31-5d5e22514cdmr6775712137.12.1760370411492;
-        Mon, 13 Oct 2025 08:46:51 -0700 (PDT)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-930bf76bcabsm2852317241.11.2025.10.13.08.46.51
+        bh=YBeBnLojRUp+3BGjW9hqqMrpXMlk2wEyeaFT1Bjf2RU=;
+        b=XeNY1zYdtfGhAGJKd26LpWs8oyAWe+BniuyVRfC4YZk5+cAt1uMr6pX+WGmO/yKNbA
+         hr/KH5lO+KA4QJAE/gTQH2O8caVaTSBrXUSBkm37Bdujl5Cv/c/Z/Zofg4y3aJHwywSg
+         eJV/hM5s4RT2L7XcY7E9F0DWzpLwJltnvoz/RFe9l44y+Kf1L1uGaIx2AlUU+2z/5qpy
+         5H/RkMxWByNavjzPLyGZycirUdRgtRrKeeBOzfLt2DGtpn8yx/PWb4dQ8T6Qzo7ulZHv
+         LSKla8tvI94psiqzuEtexdlOxIZAdWLHK0sjhMVphKqy1KPXzcZrTiIZNT+GGBgg/KjV
+         +ejQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUstZWWCgJqLGe2X+PbD4MZqDNZTMMdaWjJ9jS3b5jKIXz7XmoSHBVvMHmuyblTbQ/OfQVi/hOFfpyLACU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQcPMx+I5QukODZyGO6UEc2PBuznqzeY2I+QGYAZDPtYPvHgPg
+	xXiaXAyrz8XowNooYWDOtrYwWMa+6EpKeLQzMaqMiVqGL+s5Xj3WAnVFw8NAjBIvo4XRXmLCOYh
+	yGAsp8A==
+X-Gm-Gg: ASbGncuy6U2CLLJbvKje8g8bGoFEo5sjJQi2l7AuVgFVUVQHLqvVThJslxh0PsvsKSo
+	8G9S6Uq/ebqzsfey5eoDA6gNYphWNTU1sYVXWC7oH+djmxItQOGqGfaySREajDzKIlUx5A6qpFn
+	1cA6ZskfsuocP/Umum42b8rij+ofT+BhGyVIxN00JtCKxQqs1BrAIzoozjDmZDKvNqVV4Nkuy0I
+	GgD63p+Om8msr5U3HxOZiCDeO/iLErJRMZUHc4OW8sXf3MgAl3DzPqrfd3pGwO6DTOOzW+Amq+A
+	kUf0KZY+GYZlUyWsAYzGtc7dGjMt4a0wHebfUofB8GpTWLV5Lm3hFwGqYtgDIaRSGadVV4AM0Pl
+	1LFt8qwWVegEsAl/UWPQ8/QjzWMO38LHD8eltsvOSatR9NB5/IS2M/V0O+JiUcDhLIucDVfPt9Q
+	0xBwXOzMmnWhF6hQ==
+X-Google-Smtp-Source: AGHT+IGr2Zl7MKZN0kXSrfJFr6fD4bp4H39qej15iSs7eSK8o/ccIIPfVn1J/Z4Tc/22I/BEMtIS/Q==
+X-Received: by 2002:a2e:858d:0:b0:337:e0d9:69a0 with SMTP id 38308e7fff4ca-3760a58a767mr56356421fa.20.1760370469677;
+        Mon, 13 Oct 2025 08:47:49 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37647d7e854sm26418671fa.15.2025.10.13.08.47.48
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 08:46:51 -0700 (PDT)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso2084538137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:46:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXuvAjAVtUURAuvEt1BQSkiuRdQa+5dDCBRO7FP6RVdDdiK2l6UWnP6Q+YMJTzyA55Fcdox7tH/LmWV/Ck=@vger.kernel.org
-X-Received: by 2002:a05:6102:3e25:b0:521:b9f2:a5ca with SMTP id
- ada2fe7eead31-5d5e224f3c1mr7951324137.13.1760370410972; Mon, 13 Oct 2025
- 08:46:50 -0700 (PDT)
+        Mon, 13 Oct 2025 08:47:48 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57e03279bfeso5434944e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:47:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXohHhLBLktNKMaOcpXZzOtF4cOFzyeHjURIV2ZdTaCGHJWxcRhy2jJIIO/8G+udjAVhPlbH8aWFXcV/YE=@vger.kernel.org
+X-Received: by 2002:a05:6512:1329:b0:581:bdb8:6df9 with SMTP id
+ 2adb3069b0e04-5905e1ffebamr6390861e87.10.1760370468172; Mon, 13 Oct 2025
+ 08:47:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 Oct 2025 17:46:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
-X-Gm-Features: AS18NWCTwKq3E1BVZam3Q34YfaC1jIp6YPas2zUMEY6rkQoDMFp4o8_Br3H8oBc
-Message-ID: <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251013-dts-v1-1-5731ed92684a@chromium.org> <aO0eLbLCGLKf6sF+@lizhi-Precision-Tower-5810>
+In-Reply-To: <aO0eLbLCGLKf6sF+@lizhi-Precision-Tower-5810>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 13 Oct 2025 17:47:35 +0200
+X-Gmail-Original-Message-ID: <CANiDSCu2hdaO5r8v_GcCksepy58AJFsuLb-xxz3WYOUknvKLwg@mail.gmail.com>
+X-Gm-Features: AS18NWCpy9_8RtaLxButea2qoJBXTdgqbhebqmgYPmIE7BU8dSEVQ_qnVy1gyYw
+Message-ID: <CANiDSCu2hdaO5r8v_GcCksepy58AJFsuLb-xxz3WYOUknvKLwg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: media: fsl,imx6q-vdoa: Remove redundant quote
+To: Frank Li <Frank.li@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Prabhakar,
+Hi Frank
 
-On Mon, 29 Sept 2025 at 13:23, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, 13 Oct 2025 at 17:43, Frank Li <Frank.li@nxp.com> wrote:
 >
-> Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
-> CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
-> Registers (MRCR) where both reset and deassert actions are done via
-> read-modify-write (RMW) to the same register.
+> On Mon, Oct 13, 2025 at 02:52:20PM +0000, Ricardo Ribalda wrote:
+> > Latest dts-ci complains about this:
+> > ./Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml:19:12: [error] string value is redundantly quoted with any quotes (quoted-strings)
+> >
+> > Fix it to make our CI happy.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
 >
-> Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
-> it to reset_regs. For this SoC, the number of resets is based on the
-> number of MRCR registers rather than the number of module clocks. Also
-> add cpg_mrcr_reset_ops to implement reset, assert, and deassert using RMW
-> while holding the spinlock. This follows the RZ/T2H requirements, where
-> processing after releasing a module reset must be secured by performing
-> seven dummy reads of the same register, and where a module that is reset
-> and released again must ensure the target bit in the Module Reset Control
-> Register is set to 1.
+> Thank you fix it. I have posted at
 >
-> Update the reset controller registration to select cpg_mrcr_reset_ops for
-> RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
+> https://lore.kernel.org/imx/20250925193546.305036-1-Frank.Li@nxp.com/
+
+Sorry, I missed that one :)
+
+
+
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v3->v4:
-> - Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clarity.
-> - Updated the parameters in cpg_mrcr_set_reset_state().
-
-Thanks for the update!
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
->         return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
->  }
+> Frank
 >
-> +static int cpg_mrcr_set_reset_state(struct reset_controller_dev *rcdev,
-> +                                   unsigned long id, bool set)
-> +{
-> +       struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-> +       unsigned int reg = id / 32;
-> +       unsigned int bit = id % 32;
-> +       u32 bitmask = BIT(bit);
-> +       void __iomem *reg_addr;
-> +       unsigned long flags;
-> +       unsigned int i;
-> +       u32 val;
-> +
-> +       dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deassert", reg, bit);
-> +
-> +       spin_lock_irqsave(&priv->pub.rmw_lock, flags);
-> +
-> +       reg_addr = priv->pub.base0 + priv->reset_regs[reg];
-> +       /* Read current value and modify */
-> +       val = readl(reg_addr);
-> +       if (set)
-> +               val |= bitmask;
-> +       else
-> +               val &= ~bitmask;
-> +       writel(val, reg_addr);
-> +
-> +       /*
-> +        * For secure processing after release from a module reset, dummy read
-> +        * the same register at least seven times.
+> >  Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+> > index 511ac0d67a7f2360afe22b81d76644575081089b..988a5b3a62bdebeda6b922a986b9ac93d0933e51 100644
+> > --- a/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+> > +++ b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+> > @@ -16,7 +16,7 @@ maintainers:
+> >
+> >  properties:
+> >    compatible:
+> > -    const: "fsl,imx6q-vdoa"
+> > +    const: fsl,imx6q-vdoa
+> >
+> >    reg:
+> >      maxItems: 1
+> >
+> > ---
+> > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > change-id: 20251013-dts-83ce7f7b9e54
+> >
+> > Best regards,
+> > --
+> > Ricardo Ribalda <ribalda@chromium.org>
+> >
 
-This comment is waiting to become out-of-sync with the actual value...
 
-> +        */
-> +       for (i = 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
-> +               readl(reg_addr);
-> +
-> +       /* Verify the operation */
-> +       val = readl(reg_addr);
-> +       if ((set && !(bitmask & val)) || (!set && (bitmask & val))) {
-
-Perhaps just "set == !(bitmask & val)"? Or is that too obscure?
-
-> +               dev_err(priv->dev, "Reset register %u%02u operation failed\n", reg, bit);
-> +               spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-> +               return -EIO;
-> +       }
-> +
-> +       spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-> +
-> +       return 0;
-> +}
-
-Regardless:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Ricardo Ribalda
 
