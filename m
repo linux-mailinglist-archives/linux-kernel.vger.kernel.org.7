@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-851462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E92BD6900
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:08:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF7FBD693C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E99F189FE17
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:08:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7CBF4F8B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F550312839;
-	Mon, 13 Oct 2025 21:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727F830BBAA;
+	Mon, 13 Oct 2025 21:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmQhHQb8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbcNeNUo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACE53128B0;
-	Mon, 13 Oct 2025 21:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C461630BBB8;
+	Mon, 13 Oct 2025 21:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760392704; cv=none; b=r+/tdwSI9aA9KA0B6j53Bnj+g2tHtAohe8CvmJfX3QJ/beB/sugEBt377du8EggwrbEzqTEMXIPcUPLsL3G2ywXMUTPjhOLbCId13YNIvJHefW3g5X/fs54EcUuwBPNfCtRc8sbBD+xqwVs+ZUkohaz3Nsdg0gBAI6QYMdxabwU=
+	t=1760392718; cv=none; b=eBZfMuzRluDoIgs3xzDZ5iEBj6j23JrxBaF/o9d8cHu0uFYBH283z0E8x6d0sjs2SboK7O3jwqI30rnWWOqAtr4zSw18uDZY1rkqtljMnnKH0Iab/yTpeODy//RK8IrYbXkXD9D2bFtll1z3ReQ+KyVHRACtjBqxnW+03LmL87k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760392704; c=relaxed/simple;
-	bh=Qwwb0fxds3+U+HFZynUuoCWlS0XpHe46OziiI8ARBSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OdejldXbE0wmWsypLETgaXWDjnEiHchwxgSBFPrWdfBcHyuaf+6T8NszEgwSj8xNnqOQUlFnrBql9qiNLA/B3HhfLLG1FUHIrieENxihrFDSgzYe5D/oe24WKJnMCLRiXazP400oqh454/AKFyGN0J5Cj2Iy1fP4t749dT9kD+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmQhHQb8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33C45C2BCB1;
-	Mon, 13 Oct 2025 21:58:24 +0000 (UTC)
+	s=arc-20240116; t=1760392718; c=relaxed/simple;
+	bh=uMSlsf/xN9vHLyFVY6jJ6GNcfRBsfLxq7F6h7Yydqj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cn3npodjeNeGajUZPopzss8W7vZX0GO0k9GfhULWvPs3JAgwzY0e5dFgNRhN76kT5K3Ze8EMJIA7y9J4CypyB6LgF+EO4Jau272vHSyoqAF9nhOtTmUUoXrYzylmEJ5g5CBBKDMx8XWmcIgzWIHK65pli5lvKTpofFuTfPBABhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbcNeNUo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2492AC2BCF5;
+	Mon, 13 Oct 2025 21:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760392704;
-	bh=Qwwb0fxds3+U+HFZynUuoCWlS0XpHe46OziiI8ARBSQ=;
+	s=k20201202; t=1760392718;
+	bh=uMSlsf/xN9vHLyFVY6jJ6GNcfRBsfLxq7F6h7Yydqj8=;
 	h=From:To:Cc:Subject:Date:From;
-	b=lmQhHQb8IpHXk08n4f1k7re1bvW/g6B4N82qO223M8gwHBmaxlmpKuKY23/phuCyn
-	 GMdMJw6PxcxNmdjq4ZZwduneZIgo7/TuygWYC5yt/K/VIAz9b/JlomJ39SIEcdZ2rn
-	 mRxN85NIS8QZfoAK8wBlFh1a7lTymcsTMouS3BRCoKDIG2lxCibIDM39F4eeHx57cd
-	 OC7ymKS6WSIOu3IPGruznOeefsYAcGyECJErHSv38i1rMOdw5bvbgmXcZn+Eh1DnOd
-	 c3s0Ru109gzc6POndCJzXSLajNns60n365gQ9ZlnmKFiRqvBll2Y4ZZLiJnFCzXxsO
-	 EHalN9k97N+AQ==
+	b=PbcNeNUo1FKc2UvUI7YDnXTnyDKjC43hHFLexLDnzv7WqC2acJRNtwpuigf+K5Ibz
+	 Fodg5hFve2XRbxjjijJ5FtYGtY9eYjK5P62o0+kH2fH18Vkqp9cH3PVyWQ2EgxXfh4
+	 wmUy5QFXtUNbUMfRFx+9bQGc3sNvY/JCERQ7NaaML5/ucA8IgXSzBoMm0C30PmX/Ww
+	 lDt6XYbwvJtoow0tTF10C7CwvE9cYA9I1Ed1jBTMIfYprKCjs0kg79D9J2fR6kZsE3
+	 3DFiaDdDqOFWUNXu7acfLWBnlEXX1ZL5Kl6qD544bHCEdCk7RQFo5Pu6VHA8d4Ydv/
+	 VOfc8hLk+0N4Q==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Talel Shenhar <talel@amazon.com>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-actions@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: thermal: Convert amazon,al-thermal to DT schema
-Date: Mon, 13 Oct 2025 16:58:18 -0500
-Message-ID: <20251013215820.783272-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: power: Convert Actions Owl SPS to DT schema
+Date: Mon, 13 Oct 2025 16:58:26 -0500
+Message-ID: <20251013215834.783501-1-robh@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,128 +58,92 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Convert amazon,al-thermal binding to DT schema format. It's a
-straight-forward conversion.
+Convert the Actions S500/S700/S900 Smart Power System binding to DT
+schema format. It's a straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/thermal/amazon,al-thermal.txt    | 33 ------------
- .../bindings/thermal/amazon,al-thermal.yaml   | 50 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 51 insertions(+), 34 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/thermal/amazon,al-thermal.txt
- create mode 100644 Documentation/devicetree/bindings/thermal/amazon,al-thermal.yaml
+ .../bindings/power/actions,owl-sps.txt        | 21 ----------
+ .../bindings/power/actions,s500-sps.yaml      | 39 +++++++++++++++++++
+ 2 files changed, 39 insertions(+), 21 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/power/actions,owl-sps.txt
+ create mode 100644 Documentation/devicetree/bindings/power/actions,s500-sps.yaml
 
-diff --git a/Documentation/devicetree/bindings/thermal/amazon,al-thermal.txt b/Documentation/devicetree/bindings/thermal/amazon,al-thermal.txt
+diff --git a/Documentation/devicetree/bindings/power/actions,owl-sps.txt b/Documentation/devicetree/bindings/power/actions,owl-sps.txt
 deleted file mode 100644
-index 12fc4ef04837..000000000000
---- a/Documentation/devicetree/bindings/thermal/amazon,al-thermal.txt
+index a3571937b019..000000000000
+--- a/Documentation/devicetree/bindings/power/actions,owl-sps.txt
 +++ /dev/null
-@@ -1,33 +0,0 @@
--Amazon's Annapurna Labs Thermal Sensor
--
--Simple thermal device that allows temperature reading by a single MMIO
--transaction.
+@@ -1,21 +0,0 @@
+-Actions Semi Owl Smart Power System (SPS)
 -
 -Required properties:
--- compatible: "amazon,al-thermal".
--- reg: The physical base address and length of the sensor's registers.
--- #thermal-sensor-cells: Must be 1. See Documentation/devicetree/bindings/thermal/thermal-sensor.yaml for a description.
+-- compatible          :  "actions,s500-sps" for S500
+-                         "actions,s700-sps" for S700
+-                         "actions,s900-sps" for S900
+-- reg                 :  Offset and length of the register set for the device.
+-- #power-domain-cells :  Must be 1.
+-                         See macros in:
+-                          include/dt-bindings/power/owl-s500-powergate.h for S500
+-                          include/dt-bindings/power/owl-s700-powergate.h for S700
+-                          include/dt-bindings/power/owl-s900-powergate.h for S900
+-
 -
 -Example:
--	thermal: thermal {
--		compatible = "amazon,al-thermal";
--		reg = <0x0 0x05002860 0x0 0x1>;
--		#thermal-sensor-cells = <0x1>;
--	};
 -
--	thermal-zones {
--		thermal-z0 {
--			polling-delay-passive = <250>;
--			polling-delay = <1000>;
--			thermal-sensors = <&thermal 0>;
--			trips {
--				critical {
--					temperature = <105000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
+-		sps: power-controller@b01b0100 {
+-			compatible = "actions,s500-sps";
+-			reg = <0xb01b0100 0x100>;
+-			#power-domain-cells = <1>;
 -		};
--	};
--
-diff --git a/Documentation/devicetree/bindings/thermal/amazon,al-thermal.yaml b/Documentation/devicetree/bindings/thermal/amazon,al-thermal.yaml
+diff --git a/Documentation/devicetree/bindings/power/actions,s500-sps.yaml b/Documentation/devicetree/bindings/power/actions,s500-sps.yaml
 new file mode 100644
-index 000000000000..6b5884d74dd6
+index 000000000000..bb942817b3db
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/amazon,al-thermal.yaml
-@@ -0,0 +1,50 @@
++++ b/Documentation/devicetree/bindings/power/actions,s500-sps.yaml
+@@ -0,0 +1,39 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/thermal/amazon,al-thermal.yaml#
++$id: http://devicetree.org/schemas/power/actions,s500-sps.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Amazon Annapurna Labs Thermal Sensor
++title: Actions Semi Owl Smart Power System (SPS)
 +
 +maintainers:
-+  - Talel Shenhar <talel@amazon.com>
-+
-+description:
-+  Simple thermal device that allows temperature reading by a single MMIO
-+  transaction.
++  - Andreas Färber <afaerber@suse.de>
++  - Manivannan Sadhasivam <mani@kernel.org>
 +
 +properties:
 +  compatible:
-+    items:
-+      - const: amazon,al-thermal
++    enum:
++      - actions,s500-sps
++      - actions,s700-sps
++      - actions,s900-sps
 +
 +  reg:
 +    maxItems: 1
 +
-+  '#thermal-sensor-cells':
++  '#power-domain-cells':
 +    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#power-domain-cells'
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    thermal: thermal@5002860 {
-+        compatible = "amazon,al-thermal";
-+        reg = <0x05002860 0x1>;
-+        #thermal-sensor-cells = <0x1>;
++    power-controller@b01b0100 {
++        compatible = "actions,s500-sps";
++        reg = <0xb01b0100 0x100>;
++        #power-domain-cells = <1>;
 +    };
-+
-+    thermal-zones {
-+        z0-thermal {
-+            polling-delay-passive = <250>;
-+            polling-delay = <1000>;
-+            thermal-sensors = <&thermal 0>;
-+            trips {
-+                critical {
-+                    temperature = <105000>;
-+                    hysteresis = <2000>;
-+                    type = "critical";
-+                };
-+            };
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e72a9e529625..866305dd1368 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -973,7 +973,7 @@ F:	drivers/edac/al_mc_edac.c
- AMAZON ANNAPURNA LABS THERMAL MMIO DRIVER
- M:	Talel Shenhar <talel@amazon.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/thermal/amazon,al-thermal.txt
-+F:	Documentation/devicetree/bindings/thermal/amazon,al-thermal.yaml
- F:	drivers/thermal/thermal_mmio.c
- 
- AMAZON ETHERNET DRIVERS
 -- 
 2.51.0
 
