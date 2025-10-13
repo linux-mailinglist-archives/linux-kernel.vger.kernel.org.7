@@ -1,250 +1,197 @@
-Return-Path: <linux-kernel+bounces-850182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DA7BD22B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:56:34 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259A9BD22C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C333B2B51
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:56:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9F5C0349334
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056AE2FC013;
-	Mon, 13 Oct 2025 08:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A563F2FA0F5;
+	Mon, 13 Oct 2025 08:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oji2zlUp"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2gKTCSY"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A0C2FB985
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6837E1E7C2E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760345754; cv=none; b=ZbP8X2q1d2cwqf9xRPjoaUsCQOGZlW6iaYpWPYD0KY8FpD76A6Do5ZmUjStryKqucRTYLVj3EtJcqx15S3Qlq/ZPkMiqi4v2MlKqX4Wt+Wm7IgvRII9OQ4ELGnNza9DR725Gmzi92brJUxq0DCufaB9iwOP4EMeGT9xO/MUyZsc=
+	t=1760345850; cv=none; b=U2HfwqWKqoNqaH5gdtbcxn0qutP+R3LceSaJGT18GPzF+Qba8Rmo6WZVE1NBPEhGGH6YNVT3y2Pj/jhtv3Z7yCVO+fJQj3lhcWx62CnHwAdsoOp1YsIZNTxhfgiQcRnobb7TxjL3dLEOMU6oAU3J7JbvfEU6D54oieNGiClx8XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760345754; c=relaxed/simple;
-	bh=wNTs0h0y/mlTB3wnqH1wfrtLFenOEC7p4UTXqV1uWNo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UALKX9nNAzMzjzYwTCYI7cn4tgvEZQrqnGnDjFNzGAzD7agvBweezvFUXgJrBUy8U5s2cdE2d8vhNIvKkMeIG2Eu32at7tL0n191eWYJvTjujV63XbtDdmoKRuddGBr8zknUjLeynHK1SvCUQQNUrNZexOtGtIuqEfkW4K266lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oji2zlUp; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so4388328f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:55:51 -0700 (PDT)
+	s=arc-20240116; t=1760345850; c=relaxed/simple;
+	bh=PbjBUK1Z7pXMZ1LfaCuEVsag2X/hL916dnnkBuDLQYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L9VYrlH+3R289W369tepcpjDIKLHWby4mOaqQoUnMPmhbs7lC5rmsIbr5gU4wSTZzWV3mIksqE0Xb69y3KHbmiFQbdli4/WEkyJr/LibXY/15b6u61kzQAEHn1dnSuOQw5y19jQlGv9cTJTrvJLTxE5/kQdP9dIv6h43eo7iKjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2gKTCSY; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so3127142b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:57:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760345750; x=1760950550; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fqs1h8Bd8tnY+khxrYUQ40FHMHiv2RkeVoWTqnCne3w=;
-        b=Oji2zlUp5RUad48mlshMmLEEEzPw4A8Cwc182nhgyH/6P82VkK0lcGEB6VpjhgG2m5
-         g3sBpzsvKimxwmgKX7BOpYAt0O3pKqw39pocbQvVWDQ19S6vPkZFqtpmODE8x0PouBsw
-         jqh87F+VUATt6GwwuvUwJ+eL7q2CxVH4m9iG3vJMu/SS/y3O5LWIsv3EsHbS1SbiB+ZZ
-         yood4Qrk1HV1K63A8uNzkxje6HslPNdR3HUUZjoUZDC/hEmDS3fmbhet/+XrdNfa1ZI3
-         wsx2T2JiCWSDkz6xmo6iW4H3vcFlht4BQPbeGLnlEZKfqc7E2cCcMjIcauf69aFTbLCg
-         EeDA==
+        d=gmail.com; s=20230601; t=1760345849; x=1760950649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9i4BBpfXsDT8eFnFn/jmS3zn1/Abb7iqLYlBRwjQgWU=;
+        b=m2gKTCSYk0mI2pgteGHGkyNPjl7VDQo8t7fe/6UN19lnQ9nefk5JQ76jqzQN5rX1eg
+         4EKhD7Hx8PItYNw0drwupNGTEtZrGn5dtcwZolrZnQgxoEfvvuEFoo1AZ3cQiYUXmaY6
+         e84xCXZGgxn5S9jUWi8+FGKVFYGUmSEep2uufftGTCiK4+npHiBrO404ALJeCAuNwcmZ
+         fnKbWADEey3dUYw/uGRGaKg+3JzS9438FiMW//gHAcl4rH24A4D8SHPl9Xm9dnRXvVnF
+         iamtKjz2wXKt7zJ/7XKLfjiD6zy4YTzBXgSb3Ihf3heCyiCr7pTXjtDKHT/32phSmkBb
+         EIBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760345750; x=1760950550;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fqs1h8Bd8tnY+khxrYUQ40FHMHiv2RkeVoWTqnCne3w=;
-        b=K1SaL5hV+Wi8JL8zcouWPqwO2ZtCFj/QHFxmi5ZhWG4EDqEqP9VkFRee08MWIFCgpP
-         rpbdQ0U9Nnv0ELuKF+2kN/zrGn1fDVx0YgFApPYHZNxqGtlRhVZxOGbBJ2Mc9us8VTWG
-         gr02LXl3XqoLsPtKUFDC88Ve8aGc0QQZxazJU0xXjU1E5y3b5U/1Yhtg/VhPNe8xmslX
-         dy9ehQMJZL/mQnbzPpPhKLh+CdNLT8COZ+SMvMnpQNBoBzx5nqFcZhQG9AMeEUTaxN6x
-         gnEEsXJj3WxZLgNe47yahSEmMnQna9xmZ/ocdD//DD37zOc4TD9cJQ7/+a2sQi8uk4Ri
-         /s5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVv6fFZ9dce+0OKqeHGUAVcqui1myvxbwWjtGjPxzXpyq7T/06Xc9vLkfwwfKi88MZwTs14lEttUbNJaG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyvXoND3+nQgWRFt9EKc4W1qiAbiD5j79XgFkjz7GK14vNe3O7
-	yO1W+fYHrIWojLmt4PBU+V7dR8aD0wW24KZ59PGQODlaaaTnU8QL1j8REKsdZzckzFU=
-X-Gm-Gg: ASbGnctuNYyDu55bbkJheY804QNxHRYf8SVPsqbVo+2x1t8j4NdEM8ci/YI4/h7RubU
-	nQFV3kp6GRVatgi1JdVJ2T4R+feBBvNLDFEgrc/SoklsEIuv+HBDvZIeclhIcYY8WMcj4JcRS/p
-	oyUisbl/Kv7kpEs3QNfbmCGpTNtjH32Mr/Q223gvjuWg5Dw36XfXVYvJMtgbjnIlOy/afnxNM8C
-	e4GQBKb7F5NI7DUYE/UtaNSqw/7N1QvD1A3kkY031A60rhRdLVCawywjT1xkKruC00j/KEu9TzC
-	vbo4aIbkrvn5SCYjUOFUYQOB/dG7POcMUtfafAcEL33y048HfL8lHx9zf4ZJOeWeigH7Kr6JWSG
-	OzmfbnBeZ30FY/VKseF4rk8CvkDW/ZNMts3z2U749mP0u8Tg1gKbZtRQJQbgwepFBScNggBEOkF
-	12
-X-Google-Smtp-Source: AGHT+IGP5IDXQAmHWOWz6/zckhmsPQrndtPggKZTPs6kb5X7JCxQcZO9bc2Qh688Ni5MHdA3GNrqkw==
-X-Received: by 2002:a05:6000:24ca:b0:3ea:15cd:ac3b with SMTP id ffacd0b85a97d-4266e7e15eemr11113987f8f.30.1760345750168;
-        Mon, 13 Oct 2025 01:55:50 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482b99fsm180016185e9.3.2025.10.13.01.55.49
+        d=1e100.net; s=20230601; t=1760345849; x=1760950649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9i4BBpfXsDT8eFnFn/jmS3zn1/Abb7iqLYlBRwjQgWU=;
+        b=RVIxEJUX1C+9uX4xhr3HfPNTFZxSvbhtzwGlGYXBQ+bEglThuCe9yQIrDhf3KRupSP
+         w9h82i8onkfse3bwjumIe7l224dbsW8arMBm5ik+Krz0lol7rKjPiKs/pqhz8J8qhJeW
+         co8Y78vBGozaeaTR+rb6fSmzCl3+hqq6+mgPpJh5SVYYKWvcoTJ79Y8ub/PnxOyvISda
+         nHs+s4NejLHaGELmLjCHZsvEKaxW7tNPwx57IwwLEfM5ceHnJkyOPjvR04rRmKEWDI1C
+         1VDR8b67otIyAsFvR7LoERnw0iidcs0QlIlgjQkmV6WVyvUdzPEv7P87gcugGvOJfKUA
+         mlJA==
+X-Gm-Message-State: AOJu0YyEZ1hjZ+TVZpIoCvbrVEupEiMSmKm1WqAc6wdnaNoqKsu5oUpV
+	/SeHQS5OFhFQyJKGhUdUORhwzYYPHUYWTxSRFot+nRPEQlmbCVsl0sje
+X-Gm-Gg: ASbGnctSWBl3k6izPeKAAKeN+86MEvg5wzx06wuZ8m3UoxpK2hD5r/k/C9AJMK832K+
+	TmdEN0DfOgpHB/MnVxbJ5F0JUadwEZt2oPNeQo3b8qCVPK2bd7OChKtWQdqxPN0L0CPcyNVij3h
+	+ansgR5hnEq/GNsv+sxzsqrU5W1XkDgvipPK9NMunvcK4y/YGSgPBXc86TPBax4aY3xUsUK+A9w
+	3wMgqaA35cjZZP5teqcepX/9GocVYZEPXWfSCYPtoGIT+9VZOVlL5CN4QXT7h8JwsKKyhdLvLTJ
+	kc/MOuQNW/ciZv4z/PcWmyvVomdQva/vV//RZxGqiw+V0k00cxqykzLwssYE/BrQCDO8Xw9OMz2
+	/HVNOpBLYJpwgohXWD67gjG9Yu/Q5yj94be7UzANxvEmzmqBxruIzUow=
+X-Google-Smtp-Source: AGHT+IEchI617YKWuzuNKaFi+lyotd9RD/lcD21mjz/5MfFqEjsOczpStBEFEZvQnAKRfjX4ZFT9TA==
+X-Received: by 2002:a05:6a21:999d:b0:266:1f27:a01e with SMTP id adf61e73a8af0-32da839fe85mr26147206637.39.1760345848542;
+        Mon, 13 Oct 2025 01:57:28 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d096527sm10786617b3a.44.2025.10.13.01.57.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 01:55:49 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 13 Oct 2025 10:55:46 +0200
-Subject: [PATCH v6 3/3] arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s:
- add HDMI nodes
+        Mon, 13 Oct 2025 01:57:27 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 257F4424BFFB; Mon, 13 Oct 2025 15:57:25 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux EFI <linux-efi@vger.kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Subject: [PATCH v3] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
+Date: Mon, 13 Oct 2025 15:57:18 +0700
+Message-ID: <20251013085718.27085-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-topic-x1e80100-hdmi-v6-3-3a9c8f7506d6@linaro.org>
-References: <20251013-topic-x1e80100-hdmi-v6-0-3a9c8f7506d6@linaro.org>
-In-Reply-To: <20251013-topic-x1e80100-hdmi-v6-0-3a9c8f7506d6@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Xilin Wu <sophon@radxa.com>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3047;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=wNTs0h0y/mlTB3wnqH1wfrtLFenOEC7p4UTXqV1uWNo=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBo7L6Sb8/jIFHNl0mZLen92n4SCFHIDHBjot2TJdk7
- KJMvytmJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaOy+kgAKCRB33NvayMhJ0Q3zD/
- 9L6F7G6cDWgL+5CXPMwystvEJj2Ra0aiMFSJOtPHvXjnwBEQbVkLAdiwlj/0tWMymdThJ1Tzpp28sB
- DzF+hBVkGtYyC6qb4GFiHhPaOWfoaJMRmO8RWKCc6jY2EyDNCj9vvF6uSKh2SaSRFJRLfOPjSzJAhv
- BxQTn6/tHmtEMHoNcLBW3h8lRObtzCSywFXLz9xV+6syQT8QUkHlyKUiWXpsWjkKQEmebj5DtFtfrD
- m+o1bP2lzCYUgbvoQPAACFrqmYGSoF+EFAt+zMFyQsCOqesTpRU/KTn2CvF/byLRRCSyOJXi1VaQrK
- iGhIuxf7eOYu4PlLXCYPpD9EneX66R/PYs/nMC4kRh1eWQSY3XlHEsCYhuctIEs2ZF6wWD77XeuqIP
- o4rTF0m+QHeKOcPo7Z9p09l+yS95Qo4WihBpKmfxt1Asj1H0IBAp/Vgjnl6o8V2B5eaQDNc9ParGaH
- kHAKMEeYlCK5B4cZ4AbYPcp1YDlLA8D99rRW2W4B+hmMQh4JBQHUaCo+pHi28KXnNaQt4PkcMPJht+
- GDPddmetVnMGAcrg3TCFXNmXyvCZsVTwfcofq4pvL+8u+rZVcflG4uDnasY7BiwR16FqSnodBRV7fG
- UnqvllzaWC60JnjeDX7895JxrwIETobwi/q3uPKWBhrCfJFWho85MxKN9EmA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4509; i=bagasdotme@gmail.com; h=from:subject; bh=UnARZcEOs3ird8NeNavJwy55YoDgK0PnaYvM7PciqCM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlv9lX5Xt6xpaaw3UHTfOeuZaYXIg5dKGXmn1Z/gZs7/ nXW8j87OkpZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjARG2eGf5psv962P7G5sXlF rs1GxcMvhP9bdXes1fjufE5jsp/rQweGfyr2a24903vhpy30OmXmjt/zAksyjq2T98lU8Fu3W0t PhxMA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-The Thinkpad T14s embeds a transparent 4lanes DP->HDMI transceiver
-connected to the third QMP Combo PHY 4 lanes.
+From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
 
-Add all the data routing, disable mode switching and specify the
-QMP Combo PHY should be in DP-Only mode to route the 4 lanes to
-the underlying DP phy.
+Since the Handover Protocol was deprecated, the recommended approach is
+to provide an initrd using a UEFI boot service with the
+LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
+approach has been no more than an admonition with a link to an existing
+implementation.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Provide a short explanation of this functionality, to ease future
+implementations without having to reverse engineer existing ones.
+
+Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
+[Bagas: Don't use :ref: link to EFI stub documentation and refer to
+OVMF/edk2 implementation]
+Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 81 ++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+No changes since v2 [1].
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index 654cbce9d6ecb61c8a6e874d16385d66e362e439..7aa7ae66f49a7a179652757fd826e9d11b9b29da 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -62,6 +62,45 @@ switch-lid {
- 		};
- 	};
- 
-+	hdmi-bridge {
-+		compatible = "realtek,rtd2171";
-+
-+		pinctrl-0 = <&hdmi_hpd_default>;
-+		pinctrl-names = "default";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				hdmi_bridge_dp_in: endpoint {
-+					remote-endpoint = <&usb_1_ss2_qmpphy_out_dp>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				hdmi_bridge_tmds_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&hdmi_bridge_tmds_out>;
-+			};
-+		};
-+	};
-+
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
- 			     "qcom,sm8550-pmic-glink",
-@@ -1028,6 +1067,14 @@ &mdss_dp1_out {
- 	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
- };
- 
-+&mdss_dp2 {
-+	status = "okay";
-+};
-+
-+&mdss_dp2_out {
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+};
-+
- &mdss_dp3 {
- 	/delete-property/ #sound-dai-cells;
- 
-@@ -1317,6 +1364,12 @@ eusb6_reset_n: eusb6-reset-n-state {
- 		output-low;
- 	};
- 
-+	hdmi_hpd_default: hdmi-hpd-default-state {
-+		pins = "gpio126";
-+		function = "usb2_dp";
-+		bias-disable;
-+	};
-+
- 	tpad_default: tpad-default-state {
- 		pins = "gpio3";
- 		function = "gpio";
-@@ -1548,6 +1601,34 @@ &usb_1_ss1_qmpphy_out {
- 	remote-endpoint = <&retimer_ss1_ss_in>;
- };
- 
-+&usb_1_ss2_qmpphy {
-+	vdda-phy-supply = <&vreg_l2j_1p2>;
-+	vdda-pll-supply = <&vreg_l2d_0p9>;
-+
-+	/delete-property/ mode-switch;
-+	/delete-property/ orientation-switch;
-+
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			/delete-node/ endpoint;
-+
-+			usb_1_ss2_qmpphy_out_dp: endpoint@0 {
-+				reg = <0>;
-+
-+				data-lanes = <3 2 1 0>;
-+				remote-endpoint = <&hdmi_bridge_dp_in>;
-+			};
-+
-+			/* No USB3 lanes connected */
-+		};
-+	};
-+};
-+
- &usb_2 {
- 	status = "okay";
- };
+EFI/x86 maintainers: Would you like to apply this patch on tip/efi tree
+or let Jon handle it through docs-next instead?
 
+[1]: https://lore.kernel.org/linux-doc/20250916073244.590483-1-bagasdotme@gmail.com/
+
+ Documentation/admin-guide/efi-stub.rst |  3 ++
+ Documentation/arch/x86/boot.rst        | 38 ++++++++++++++++++++------
+ 2 files changed, 33 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/admin-guide/efi-stub.rst b/Documentation/admin-guide/efi-stub.rst
+index 090f3a185e1897..f8e7407698bd2a 100644
+--- a/Documentation/admin-guide/efi-stub.rst
++++ b/Documentation/admin-guide/efi-stub.rst
+@@ -79,6 +79,9 @@ because the image we're executing is interpreted by the EFI shell,
+ which understands relative paths, whereas the rest of the command line
+ is passed to bzImage.efi.
+ 
++.. hint::
++   It is also possible to provide an initrd using a Linux-specific UEFI
++   protocol at boot time. See :ref:`pe-coff-entry-point` for details.
+ 
+ The "dtb=" option
+ -----------------
+diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+index 77e6163288db08..32eea3d2807e1c 100644
+--- a/Documentation/arch/x86/boot.rst
++++ b/Documentation/arch/x86/boot.rst
+@@ -1431,12 +1431,34 @@ The boot loader *must* fill out the following fields in bp::
+ All other fields should be zero.
+ 
+ .. note::
+-     The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
+-     entry point, combined with the LINUX_EFI_INITRD_MEDIA_GUID based initrd
+-     loading protocol (refer to [0] for an example of the bootloader side of
+-     this), which removes the need for any knowledge on the part of the EFI
+-     bootloader regarding the internal representation of boot_params or any
+-     requirements/limitations regarding the placement of the command line
+-     and ramdisk in memory, or the placement of the kernel image itself.
++   The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
++   entry point described below.
+ 
+-[0] https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
++.. _pe-coff-entry-point:
++
++PE/COFF entry point
++===================
++
++When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed as a
++regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
++implementation details.
++
++The stub loader can request the initrd via a UEFI protocol. For this to work,
++the firmware or bootloader needs to register a handle which carries
++implementations of the ``EFI_LOAD_FILE2`` protocol and the device path
++protocol exposing the ``LINUX_EFI_INITRD_MEDIA_GUID`` vendor media device path.
++In this case, a kernel booting via the EFI stub will invoke
++``LoadFile2::LoadFile()`` method on the registered protocol to instruct the
++firmware to load the initrd into a memory location chosen by the kernel/EFI
++stub.
++
++This approach removes the need for any knowledge on the part of the EFI
++bootloader regarding the internal representation of boot_params or any
++requirements/limitations regarding the placement of the command line and
++ramdisk in memory, or the placement of the kernel image itself.
++
++For sample implementations, refer to `the original u-boot implementation`_ or
++`the OVMF implementation`_.
++
++.. _the original u-boot implementation: https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
++.. _the OVMF implementation: https://github.com/tianocore/edk2/blob/1780373897f12c25075f8883e073144506441168/OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.c
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
-2.34.1
+An old man doll... just what I always wanted! - Clara
 
 
