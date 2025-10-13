@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-850199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8E7BD2384
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DB0BD2388
 	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B34874EB1C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:13:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 527DE4EBAA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D672FBDE8;
-	Mon, 13 Oct 2025 09:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AF52FBDF7;
+	Mon, 13 Oct 2025 09:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="YKMEYGmE"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="DL+q8Czd"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C096220F2A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A6220F2A
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760346806; cv=none; b=rpg7jdrs7fo5s5Q3skocNb5HL8rycFmSZ2CiW+XwFFRxngdLDUfEOrvx5/Q3ChUg59aCNOlLZ7wVC2lEuYj+0DkpFVDIGdr6UM2V1YEC8pRWKWWd7PoX3yYJXxrp5ZG4dqAbNI6RQ5z6DKdyYX55cG4W4xarEf3hKhgcYkrFFac=
+	t=1760346814; cv=none; b=lLz6JXVRU3Kxual8YRJK7Di2DFzxB0WeucZJICLO5bcye4Oz5An+GAKs/IPBtRmyMTuf1jjiRiXIUqz8wI86O4p0hQeZxEpmFekxM7ceho1I7T6jJ9wAoDS66RdLXYspVdLCMJP8TB4kE7NkBj/Z6lYbNDjIUCwKJcm/sml9ua4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760346806; c=relaxed/simple;
-	bh=1rGLpmr2Rc988K6c4+jGB9nY9XYW/BSrv2mqDgcSFAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HvP2cXnELchSKxg4zIioFCUJKvnYiSXOIFMlCkJUOmRYZN8qcvs2ppkLaprDBrhCYHUzEPdJvl1nsLiHZT5DK1NNDhCWODCDeJRElpsys8fzPu2LA1EEgln6AXQBrDpRCNDOJ0+l5k4fnNGp2LprK/nslL8VR9FhjhR4qnGWeX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=YKMEYGmE; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1760346814; c=relaxed/simple;
+	bh=qSWrxNVvK5O9D9jD1MXkG9Dpx7QjubRRK8pdKRIn+3Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LyQgMMZEmyYC1gc+wLBSgNsNONlg161bZv/JWqYBUjBM8ShilmLxjVfx8XzpbhbNYSEW6yC95Hnv2iO/ETqHRBtd53hKGhKWjFD8ObphR0r+P5ZpPYAw4dKnn094hhg9tGHy58DAqBWhOlmPwTfBXAklPn9tbawW35BZCBhkuKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=DL+q8Czd; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3304dd2f119so3099354a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:13:24 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3322e6360bbso3684459a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:13:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1760346804; x=1760951604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=puEhtlhHdjNZJq9B7H+sgmW+MNQKHkmLHApkYcMFYqw=;
-        b=YKMEYGmEAoK1EhWXSJ7AOFGK8GcEic4r6wK6dXQ3eMmXIERcnjyeQgW1rpgKmFZ2B7
-         2hSbx5NL9bu2IVORQaVsxYD0yMvDab/QbKMs7VE6abEbMM1+KLiLJHTYDpiTm4B2+c3J
-         gs2ScpE6DzSc0MaK5KBA1Cwfww4lzaFVCDUY5xzjrPQCUn5LD/6UB5VnZyQFtyFI0qOo
-         FtGwm20n41w6dIoQjVD7rtptKUqEhVmWQWyWnXvYsc2LD+Un7ejlXRgxkbNOP4KAKTdp
-         KTTkaj6B2fit1tG/FS8cJWWMJbNJwbxzV7vtaQax6QdeaTm4uH9+LbbcB332ku4WFM5r
-         XtYQ==
+        d=sifive.com; s=google; t=1760346811; x=1760951611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I8Y70FtM73eem1DqR0aER86RyTdB5RacsbefhqzztUc=;
+        b=DL+q8Czd7lxOGQ5+uJtNLL6/3RwGUC+16ttjYF5vCztgfoRp/gKLiwyuLF+PWnjutC
+         rz5Qeetig32kPD7iIwk/oac8G4A3G7PNXneLcGyeEtFpcWmmJTgLxMAdicJtr9q7Qkre
+         kNeXltuERW+7O6IP9d48VTWhU2nQXZsFCifASsHvxsbPDq5RoGDgg7+1FN82jhDLSRFR
+         lUPu3M/5zg4U5CyyeO5FyBasASqx9epEgBQWtL3ESvnHFXwBpmudZEZL1u1vW2pFAKmU
+         k2LuGnZMDnox6sGvhksaledYdItCA2l/uTAb81zhm2N0hHyl5ruUVGb9vkifQvdxkKkQ
+         nlNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760346804; x=1760951604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=puEhtlhHdjNZJq9B7H+sgmW+MNQKHkmLHApkYcMFYqw=;
-        b=BXNuxTmE6ToNpm9GsBvwS7h693ZyfhB5rdvuaUto8mKbbJdeAvfkDUURcfLnCTs+da
-         SCRiGOaEF0mcnuVdwOd4iOLDkKF82ViqWLFM80Ucb1GCVt0rWfw6UZeVxwaWoQwAUsmM
-         y/NJ6EsV2WN2COsvz7svJduLE7q4+9xmDGbvuNhEt8N337njrWL8rmrHIi03rZAdqL5A
-         6bBaMa9M09vUdB3ramNnTfPZYdU9l8Zm3OpolmRax2e+uPchLT/CEEc8ecRA++n2i+xw
-         j1keb7PoLKkB2SOvdK32NkcbBxZG+OnnrVX/cZcTOp8ME0VrCczwdd4pQ+Z0gE7O0nxn
-         4y/Q==
-X-Gm-Message-State: AOJu0YzfzPGG8zxqP+OuFUt/rvbCpA6rf/zoNDqB89pkylakdhs0Odnn
-	UQ4DGPQ4d6Hk9RBJZsontQwOZZWjE8GhYve7I24byL/xU0hVx+lpjS9/w9OzGI6NF80FEptfJ3E
-	g/udjVkHechnKMgc5hY3z9OasoWjdFyHWzESa1TAzj3+m0AV8MymadKg1XxC/EeACJCcIn054m4
-	DuWARuGgdk0diptwC8oi6hPlw3mu5f4ZcVU9LQRHjwJneUAVGT5YcAGO8=
-X-Gm-Gg: ASbGncth3WblemXyCVQI7EL2vKxydD+H6fstvIeKUF4S6Va6lrzhNlJpTHfSo2ZxAMp
-	tbT5HuM3upb0GLKWMLhQqt+Un+pc4PxVlDON4XfKHhGm6kpDHSJG0i0tweMYvjaLFdXzfm3CFq5
-	wKrRUC8kftHWcz8CCayKTcJag/f0FvL3dr+mKzoGevd23VlournIwYustXkZIMnYTq2erTGRySw
-	YP6GXNd6hkWG3j528MV6nDIv9pHRByuXzuCnOLIF2I+OtbdrC/2P8b1SGeUVs7lxG9xbdyU6TS9
-	F8IMZNKpx9Jac96PlpPIEC2Pb2ibphGEST4Wg7l5H+QkDdEytsWrsmqjCb9ZNXrMMtKRJiscJqo
-	KLsndgBqzlZIiAcPZ1zYxdCR1TPLLxz1x7njp0BXjg/4wVntdAERZpmYuG3PSVTaCTbYnNOM=
-X-Google-Smtp-Source: AGHT+IEoj7YdDMoreA1spQJTu0BCnH14OzuerL3I7BC4yPUexYDFbRuPl/Tikz8AnuBBaxg3bqJ7SQ==
-X-Received: by 2002:a17:90b:3b90:b0:32e:3830:65e1 with SMTP id 98e67ed59e1d1-33b513be284mr29173869a91.33.1760346803844;
-        Mon, 13 Oct 2025 02:13:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760346811; x=1760951611;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I8Y70FtM73eem1DqR0aER86RyTdB5RacsbefhqzztUc=;
+        b=NPCFIcxo3Ab8cSXfBViZKFyDKh7wlcfExPApWNKWyejTKqDfxM+oyfxXW/gVCuqFGI
+         kUToy6EqpCf2XVdQ34gPVwuNyZYikxpYBWwTDCB2uaKVq5492t5mjz2Y4F4pRqReToHr
+         5fXjO7WrLKJKV7N1XCrVOGLj8chKrpTErioAIZ2XC44c4HAONvRrIQE9nQglmA9FKLMi
+         YBEci+elOYuPsjF8T3u/lqH2WyaIxvl5WOAyjboPPIBaARql9VgftDVXRzUmRYDs/U+s
+         ujFLvVvWE+4sk5Bp8sbo2I+Gl1pBHolfa/BIJ6GkFiY0sEp+VTXsqFCXy0VRnZex5/AE
+         klDw==
+X-Gm-Message-State: AOJu0Yxh1CI+5J9/d4sSGTBaX3oIZRNBSm9IP+13K2Yw7Eto2OhgTwgQ
+	8o4zNXGaUQ/Hua1aTKWzuZg1A+XVfH2g6RphbZ157EJ/6+RS99HsENNePWhwIFom9BpqA0lm3OI
+	WhAxsJJbw6Q5wnZJ682h9ppPLUoI8kYbS1fjmF3rfn6t+jgLLzYKXq6wv/4BB8gcPGT72lfcDLZ
+	DEVZPhZWVUzaWRECRcknlXbJGsaeqjuLDTFK+fMvSkTW/9HJcHU4cqYAo=
+X-Gm-Gg: ASbGncudVrvUHo4fP++tzBqfI05RSb4N4Nqn3K+7aysRBfnR2pFdIp8g6KvR1qaSdCZ
+	ERyxBzQB6z7Kp9LVWxG8OB2bFozvWiSS4Ih90tc6naNesARKB4p6LaVLZZrtrsPLbMKR/BBMPwI
+	qIkvPjHFf2LIBnb0rqBGp+0Aj7b8+LTwtFoItM2RHsTNpU05I5shrHnUoXF3Hlfc2+t75iKhZMD
+	DoDDElRfp/s+N/d22XOS8Vobs3HgYAtB5Fz+ZpydiJz1vHqxUBZXVzITXP4G5IDbgb6NTaqmeYJ
+	oQOcEPBgVwEEQCjO/XU3pEehAuCzaNCwbChyMPx7mHjXTKdAhUfPesUAFcYo8xZjMdjBSPfUo9l
+	wvXzFMI9m2ZMyuwi4NLJ8Vm9yhudyjzJ+akIL91l4NdCQA8jDIu4Kq9BJxmU+eo7fCp2Bad8=
+X-Google-Smtp-Source: AGHT+IGE6p2GX8nv0LK6w4qN/cEZpc/XaGzoZf/flFr9L0xcubk7H6sKJW7BAPJLpx7bcAcNWpCDXw==
+X-Received: by 2002:a17:90b:4a84:b0:32e:a10b:ce48 with SMTP id 98e67ed59e1d1-33b51114f9emr30667288a91.12.1760346810709;
+        Mon, 13 Oct 2025 02:13:30 -0700 (PDT)
 Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61a3cc0dsm11727220a91.9.2025.10.13.02.13.21
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61a3cc0dsm11727220a91.9.2025.10.13.02.13.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 02:13:23 -0700 (PDT)
+        Mon, 13 Oct 2025 02:13:30 -0700 (PDT)
 From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
 To: linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
@@ -82,60 +84,132 @@ Cc: greentime.hu@sifive.com,
 	Paul Walmsley <pjw@kernel.org>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v2 0/2] Optimize the allocation of vector regset
-Date: Mon, 13 Oct 2025 17:12:30 +0800
-Message-ID: <20251013091318.467864-1-yongxuan.wang@sifive.com>
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Jesse Taube <jesse@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Anna Schumaker <anna.schumaker@oracle.com>
+Subject: [PATCH v2 1/2] riscv: ptrace: Optimize the allocation of vector regset
+Date: Mon, 13 Oct 2025 17:12:31 +0800
+Message-ID: <20251013091318.467864-2-yongxuan.wang@sifive.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251013091318.467864-1-yongxuan.wang@sifive.com>
+References: <20251013091318.467864-1-yongxuan.wang@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The vector regset uses the maximum possible vlenb 8192 to allocate a
-2^18 bytes buffer to copy the vector register. But most platforms
-don’t support the largest vlenb.
+The vector regset uses the maximum possible vlen value to estimate the
+.n field. But not all the hardwares support the maximum vlen. Linux
+might wastes time to prepare a large memory buffer(about 2^6 pages) for
+the vector regset.
 
-The regset has 2 users, ptrace syscall and coredump. When handling the
-PTRACE_GETREGSET requests from ptrace syscall, Linux will prepare a
-kernel buffer which size is min(user buffer size, limit). A malicious
-user process might overwhelm a memory-constrainted system when the
-buffer limit is very large. The coredump uses regset_get_alloc() to
-get the context of vector register. But this API allocates buffer
-before checking whether the target process uses vector extension, this
-wastes time to prepare a large memory buffer.
+The regset can only copy vector registers when the process are using
+vector. Add .active callback and determine the n field of vector regset
+in riscv_v_setup_ctx_cache() doesn't affect the ptrace syscall and
+coredump. It can avoid oversized allocations and better matches real
+hardware limits.
 
-The buffer limit can be determined after getting platform vlenb in the
-early boot stage, this can let the regset buffer match real hardware
-limits. Also add .active callbacks to let the coredump skip vector part
-when target process doesn't use it.
-
-After this patchset, userspace process needs 2 ptrace syscalls to
-retrieve the vector regset with PTRACE_GETREGSET. The first ptrace call
-only reads the header to get the vlenb information. Then prepare a
-suitable buffer to get the register context. The new vector ptrace
-kselftest demonstrates it.
-
+Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Reviewed-by: Greentime Hu <greentime.hu@sifive.com>
+Reviewed-by: Andy Chiu <andybnac@gmail.com>
 ---
-v2:
-- fix issues in vector ptrace kselftest (Andy)
+ arch/riscv/include/asm/vector.h |  1 +
+ arch/riscv/kernel/ptrace.c      | 24 +++++++++++++++++++++---
+ arch/riscv/kernel/vector.c      |  2 ++
+ 3 files changed, 24 insertions(+), 3 deletions(-)
 
-Yong-Xuan Wang (2):
-  riscv: ptrace: Optimize the allocation of vector regset
-  selftests: riscv: Add test for the Vector ptrace interface
-
- arch/riscv/include/asm/vector.h               |   1 +
- arch/riscv/kernel/ptrace.c                    |  24 +++-
- arch/riscv/kernel/vector.c                    |   2 +
- tools/testing/selftests/riscv/vector/Makefile |   5 +-
- .../selftests/riscv/vector/vstate_ptrace.c    | 134 ++++++++++++++++++
- 5 files changed, 162 insertions(+), 4 deletions(-)
- create mode 100644 tools/testing/selftests/riscv/vector/vstate_ptrace.c
-
+diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
+index b61786d43c20..e7aa449368ad 100644
+--- a/arch/riscv/include/asm/vector.h
++++ b/arch/riscv/include/asm/vector.h
+@@ -51,6 +51,7 @@ void put_cpu_vector_context(void);
+ void riscv_v_thread_free(struct task_struct *tsk);
+ void __init riscv_v_setup_ctx_cache(void);
+ void riscv_v_thread_alloc(struct task_struct *tsk);
++void __init update_regset_vector_info(unsigned long size);
+ 
+ static inline u32 riscv_v_flags(void)
+ {
+diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+index 8e86305831ea..e6272d74572f 100644
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -153,6 +153,17 @@ static int riscv_vr_set(struct task_struct *target,
+ 				 0, riscv_v_vsize);
+ 	return ret;
+ }
++
++static int riscv_vr_active(struct task_struct *target, const struct user_regset *regset)
++{
++	if (!(has_vector() || has_xtheadvector()))
++		return -ENODEV;
++
++	if (!riscv_v_vstate_query(task_pt_regs(target)))
++		return 0;
++
++	return regset->n;
++}
+ #endif
+ 
+ #ifdef CONFIG_RISCV_ISA_SUPM
+@@ -184,7 +195,7 @@ static int tagged_addr_ctrl_set(struct task_struct *target,
+ }
+ #endif
+ 
+-static const struct user_regset riscv_user_regset[] = {
++static struct user_regset riscv_user_regset[] __ro_after_init = {
+ 	[REGSET_X] = {
+ 		USER_REGSET_NOTE_TYPE(PRSTATUS),
+ 		.n = ELF_NGREG,
+@@ -207,11 +218,10 @@ static const struct user_regset riscv_user_regset[] = {
+ 	[REGSET_V] = {
+ 		USER_REGSET_NOTE_TYPE(RISCV_VECTOR),
+ 		.align = 16,
+-		.n = ((32 * RISCV_MAX_VLENB) +
+-		      sizeof(struct __riscv_v_regset_state)) / sizeof(__u32),
+ 		.size = sizeof(__u32),
+ 		.regset_get = riscv_vr_get,
+ 		.set = riscv_vr_set,
++		.active = riscv_vr_active,
+ 	},
+ #endif
+ #ifdef CONFIG_RISCV_ISA_SUPM
+@@ -233,6 +243,14 @@ static const struct user_regset_view riscv_user_native_view = {
+ 	.n = ARRAY_SIZE(riscv_user_regset),
+ };
+ 
++#ifdef CONFIG_RISCV_ISA_V
++void __init update_regset_vector_info(unsigned long size)
++{
++	riscv_user_regset[REGSET_V].n = (size + sizeof(struct __riscv_v_regset_state)) /
++					sizeof(__u32);
++}
++#endif
++
+ struct pt_regs_offset {
+ 	const char *name;
+ 	int offset;
+diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
+index 901e67adf576..3ed071dab9d8 100644
+--- a/arch/riscv/kernel/vector.c
++++ b/arch/riscv/kernel/vector.c
+@@ -66,6 +66,8 @@ void __init riscv_v_setup_ctx_cache(void)
+ 	if (!(has_vector() || has_xtheadvector()))
+ 		return;
+ 
++	update_regset_vector_info(riscv_v_vsize);
++
+ 	riscv_v_user_cachep = kmem_cache_create_usercopy("riscv_vector_ctx",
+ 							 riscv_v_vsize, 16, SLAB_PANIC,
+ 							 0, riscv_v_vsize, NULL);
 -- 
 2.43.0
 
