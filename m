@@ -1,88 +1,98 @@
-Return-Path: <linux-kernel+bounces-850256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4048BD25C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:47:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D05BD25C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F5F6349E0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:47:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CDC44EFB2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1677823D7D1;
-	Mon, 13 Oct 2025 09:47:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463962EAB80;
+	Mon, 13 Oct 2025 09:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QMtTVT32"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AB92417FB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E1C199BC;
+	Mon, 13 Oct 2025 09:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348824; cv=none; b=iwz5+bEnGqh0flScqLjuHZzQJsqszNbY0UbcyWpOxKK9/tS+CPNS10vxxMpF6HlTWbYbT15w8UH2EMt6IFBOpfJGhfuZx3fpGdsrI0G1COgqHxLytiGynzSt5BlTkeeclivozaUIs02XQUiXc2v2lPkJuE8azokAk6h0iUeb8pg=
+	t=1760348845; cv=none; b=Q85UdeZBNlqOWMyfOzhaHfVVEn6VzLzdMkcl8a7mhaxAt1zzUEpf/e7r33tKwwBNgJTUnhwgt9dOcZHl3ghMvpl1RHr65nxoRRp3D2wsC3PWT1I8OAmt7tMbFQakcaUd4tYmV4odHAsuVZjdB0MfsW8DL4P8Tnjx9+ru510pnvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348824; c=relaxed/simple;
-	bh=ISX/bW+gUW4VLPw1CkdSS2M2Gev0JUif22Obp3cXhG0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=t5XrhObG4jblzaJbPhdWNrbTRuHUZCnGVptawvHgCt12Ly5ywT5PIdmuEA4HYxxjaiECDe2b/IisCHLJ12kAxWqnrw0w/jZMVnCvU/gc/lnazcJI4tQEghOOKZGU00zHL7pDVHHgSGNJ8IKqfUKrwfzQAF3upOzb+DSautUZ3Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-92c122eb2bdso886008739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:47:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760348822; x=1760953622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7yUePllVEUuAcNH/kJuUslLKWNGBeI8DJiFfZXK3dLc=;
-        b=UX9fmlTIbGvFLSOp2qF9GEI3Zb9Vy4bnG9+SSiRkfMtZOSy40CwbxplET7iJsMHnjz
-         bBqQSHLClnk1yVLGDKxL5cDTrBmvmnxODfLnT4KxgRzl0VwCSyiEEk9DMtSXzjN0RbQZ
-         5DM39zbJNec87gWFREgRe2+pTcwTBxykkEYu2YsfYd3WWX/w9Kf7D1ZFR6KLKvX5hlkh
-         EQ8U0XbJTSLOzlzswBT8thi2zwh/igQC3PlETjkp4QIetRCjy1BWM/BD8347lFmfzj/K
-         yazsm+8clOM+LzaP6nB3a95uGnU9sBOChmfDTon0Gnx8X8Tnbv8Sru7qtgEIujuHATqe
-         P42Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWx8BhS/t4eD/4Du3oOHHOz198xhH40Mb94+uqwa2SONuiXRCA+4opksOlrbLlhhTAGOqcqCqHXgMu8zBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoSNm9SWmZosATnqw6FD4e48MOV3Hdgnr4L29WyYSK1ORFB7s5
-	DTpSqo1ICWrzi7/+YHPVc0a7D+3bYW6zHLRcX9E3evjSh2/CjnbjycGUkF9cJnQHAfLXKEebX+s
-	SCySYClXvN8xu1k8XeP4ry7seMSwH5Q6STgd/qi0g2+b6GykUqqFa1evSRuY=
-X-Google-Smtp-Source: AGHT+IFSSPFkOVilVF+bVBIHghmtW0PR5jlnl9NIOO0de0z6/eV/Dh3gsmO+Oh8M3Up01Qd8tEU5EGxQZFWHwbsSfY2lsYSHBeOl
+	s=arc-20240116; t=1760348845; c=relaxed/simple;
+	bh=yyzWwMTNAcACtaKwTd+Hy6q4Ei9iZX7sevim4Y9MBwQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pZ0ZtmStOvpg3Oq/BD0ppn51BvrI6zD5KUajeFqkHDcFbDudzlbwe4NliWWRUfBv9PttQrvqlbcH0nHmD/aERsK9RUv7/DenqSPpISOuZjPO9xuq0oVOmyB9q+8X9Rle8AaBsqixJEEnZ9Jyy5zJB04G6KpLs8Lz2oF63oFF854=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QMtTVT32; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760348842;
+	bh=yyzWwMTNAcACtaKwTd+Hy6q4Ei9iZX7sevim4Y9MBwQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=QMtTVT32or9zRYbwMlw5rv+zn4LgwybdfZUUMR5Mq4w4ULIvbGqHh58Kh1A+1449T
+	 4NBk84QL3LzzZMy3aJoKoLNLO2AAlBwKgKZKRrZ0NKrtT0v+V4JRBWmwFALc1HWuPI
+	 yrXDSaa2vSUhTlIEGln7vUPtwe0qa+ok6Iidn/bf+Rqb7GlZf7TzKH+fl24mAaD5Ik
+	 OOVHwvhQgBV58RBOcmViOitrOYWCcFuuY67vmIcxPWBiEFXimiQQmjRwQG5nc5M/Tf
+	 hWWAkOlvEUIMkfmTl8lp0Twl1oxe1uShMgdSdMGshpB/QNDZ6gOfr52etu4ET69aME
+	 3G5iTa8sGT5Yg==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9E40417E1292;
+	Mon, 13 Oct 2025 11:47:19 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sean Wang <sean.wang@mediatek.com>, 
+ Cristian Cozzolino <cristian_ci@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+ phone-devel@vger.kernel.org
+In-Reply-To: <20250920-mt6582-v1-0-b887720f577d@protonmail.com>
+References: <20250920-mt6582-v1-0-b887720f577d@protonmail.com>
+Subject: Re: (subset) [PATCH 00/10] ARM: Add support for yarisxl mt6582
+ board
+Message-Id: <176034883956.23045.13247529000134209670.b4-ty@collabora.com>
+Date: Mon, 13 Oct 2025 11:47:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:168e:b0:887:690b:2594 with SMTP id
- ca18e2360f4ac-93bd17769cemr2624284239f.5.1760348822422; Mon, 13 Oct 2025
- 02:47:02 -0700 (PDT)
-Date: Mon, 13 Oct 2025 02:47:02 -0700
-In-Reply-To: <63cb0577-d542-468e-8adf-1d978ffbc465@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ecca96.050a0220.ac43.0019.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_prepare_dir_for_insert
- (2)
-From: syzbot <syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-Hello,
+On Sat, 20 Sep 2025 20:23:25 +0200, Cristian Cozzolino wrote:
+> This series adds support for Alcatel Pop C7 (OT-7041D) smartphone
+> board, named yarisxl, based on MT6582 SoC. It also includes some
+> preliminary patches. More in detail:
+> - patches 1 and 2 add support for mt6582 to platform code
+>   (verified by looking at generic mt6582 downstream source code)
+> - patches 3-6 do some maintenance work to mt6582.dtsi
+>   (I was unsure if squashing timer node patches into one)
+> - patches 7 and 8 add devicetree and dt-bindings support for yarisxl
+> 
+> [...]
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Applied to v6.18-next/arm32, thanks!
 
-Reported-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
-Tested-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
+[01/10] ARM: mediatek: add board_dt_compat entry for the MT6582 SoC
+        commit: a9ad357fb2104cc07a64d7e642f6c35b72b16405
+[02/10] ARM: mediatek: add MT6582 smp bring up code
+        commit: 7f637d718752f1b821f90170bf841c4d924b382b
 
-Tested on:
+Cheers,
+Angelo
 
-commit:         3a866087 Linux 6.18-rc1
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f14c58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5bb1f39a1998d400
-dashboard link: https://syzkaller.appspot.com/bug?extid=ded9116588a7b73c34bc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13c47304580000
 
-Note: testing is done by a robot and is best-effort only.
 
