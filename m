@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-850838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7D6BD4588
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:38:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 775EDBD45C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78EB2500E63
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:17:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38E8E505C9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E5330ACF1;
-	Mon, 13 Oct 2025 15:01:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2D830AAC5;
-	Mon, 13 Oct 2025 15:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B68B30BF7B;
+	Mon, 13 Oct 2025 15:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5KZpWXS"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E4A279DCE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367700; cv=none; b=KQq+TXNjLikXywf9doDcdEtdNu51FPJFjMprZN3j2s3dlddd7jHB6x7MsCtUrroOocbWQCapanAvDBkXCXVsswYoUHJ/SGL3Nj2LCJhEV+1I8dqO7APwQsknMKyGmDhrV+INhDGYlzHrgNdCskKD4MvTB3NKv8FDFIn5dfoaZ0U=
+	t=1760367789; cv=none; b=KgGbeZr0nohvpdmo1vTR1GbwfgoQjcZXIzrUELeMIlP2mnWAZHXyMvNluQtjdYCa/KDRpTA0RDBGcoamrBySvPQ2F99CfcAvK6rIujcFqpwmxViHgt0iJTX621N6yXeL1ldn95ihxk25zrWeR3NpmLF7mpmJf9w5V+XpvamxDD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367700; c=relaxed/simple;
-	bh=npZxGViZkB9a3DGvNWyMmq2TkbP7Rw2Im4b896H8SPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CyXnr5IJ4/fh/e9KHNPdLp/eOwZzskiZxTWd+T9W9pP45h45ghR5te5xyJl3mqH8Q4HeJf5x111Yl0JFyNTmREp7g7uv29XmwZUn0wAGPP6oXNRc7FXVq6XU0km2KTT6sAyDNNrLldjdNPcffSsYYFeuFgF6RjG+CjNavlzkIhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F32DE113E;
-	Mon, 13 Oct 2025 08:01:26 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C7523F66E;
-	Mon, 13 Oct 2025 08:01:32 -0700 (PDT)
-Date: Mon, 13 Oct 2025 16:01:29 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	"Luck, Tony" <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-Message-ID: <aO0USQCzrj//t0Gr@e133380.arm.com>
-References: <20250902162507.18520-1-Dave.Martin@arm.com>
- <aNFliMZTTUiXyZzd@e133380.arm.com>
- <aNXJGw9r_k3BB4Xk@agluck-desk3>
- <aNqQAy8nOkLRYx4F@e133380.arm.com>
- <d15d97d1-286c-4857-8688-4d8369271c2c@intel.com>
- <aNv53UmFGDBL0z3O@e133380.arm.com>
- <1c4b6b46-16f9-4887-93f5-e0f5e7f30a6f@intel.com>
- <883591c4-6301-45f6-a671-ca55974aaac0@intel.com>
+	s=arc-20240116; t=1760367789; c=relaxed/simple;
+	bh=yxmfbmFqBjhJPcGSJQ70GYxCJxcNkC5IerAsMJRG7zQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rB0yr0eZF2fFx4zUIRl1kjsSkNwT1g1+SrSWkq6xO6rPkYJcn0SvCegbKXPGq2r5FpWVuVJc+qKNAmRidCtVxYo8mSn0RMzOttnwKgrMENEoQow3ltyQCbrreRAmgQITmGc9xaVShBxYaURAveT2tWQdMnh7zNcJDlAuhZl1hug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5KZpWXS; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3b27b50090so804215166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760367786; x=1760972586; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hz2YlG98H4CyxP20y5sm8rq4XvWnKRXPRfDLzFVO22c=;
+        b=F5KZpWXSGiX0dtO5yLdxUx0cBShqBsXgLx7cFSrFGj1xcKY/GGOy8UE9/jEhQLETeP
+         BD8yGEuMYb56trEHQjg6/Syrv+8MMayy7JZqpr/y/zNom2KqH/2W5LWYmVe0UBag5ybE
+         TcTaWKpHRQ6neaUyJm59eRuxTqnDOeA1+Rkr1Ym7gL4+59BMBNpSy4A9It5gSMs5Hquh
+         gtgxcCms1M2fl7C2Zf/rTZya8HN5Z8PLlwVyM8KNMkIYtwyM7G+gXZ5MXJ6CrxvFos9y
+         375LzgOETrzV4P700Ba2HNlG7yXKfG7WpcjbgCrKg/JfPZr6M7dm7xSFUZPvtzkVQiPs
+         Hu5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760367786; x=1760972586;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hz2YlG98H4CyxP20y5sm8rq4XvWnKRXPRfDLzFVO22c=;
+        b=bZP3nouFtWof5Ewl0iCc8xd/GycDpk64tYlo81z0jQTeu1Zy34af7XHDtwMp5CtX2Y
+         LGw75EGWs0HGncMCkD/Miws7to1+GTTuAmWBTOlT3FB4AhoRCw0YKHLa4bZ65GIhg0gy
+         tYeM4dVF6q6ERFcGGw4DuzenZugwgpSNOd3eQ3CXv+e+CZEeinmedC9oiik+Ttr0Ggi8
+         CwC8JeSG2+0B0R/DuZJjaBdsQsJnf1o5Ia3ri9ukD3PheJA18pTgGFErIB5oPav9o0dM
+         s4qOunGewAFJS4uT0DfZmCKxpmqwjpcSBI8rJoP4yVTTy2QmKgwBwTiehorXqdH0s74/
+         GfjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdWGb8MLEC403uzlygvQhLOoiL+TUnd3Cz8Ntyk+588HhT93aWbVbXCxx+/oOxzI0KSYbfG92vJ2dUX7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUne/GnhwFnIXfUyQUluj9+68P2Gw6Wy1aEwW4G1o5f4gNyGu5
+	otoY6NlelKml2ny13fO+cwqm1D0gDdVa5qrnZi1QG8AJntbX1cXJdTpP
+X-Gm-Gg: ASbGncurse3D4jRH6XXPui9Tmk1uud6ElNEc8sGjBgj6yvnRCYpSPj59GWK8/JtmOYJ
+	q8vcAb5p9V/1SheMl7Yes111cdw46IbkA71BSdt9BUH0or4jOTMdYoU0xuaOB7pxYSqHwanu7Ft
+	VudVRly75V+a+Qab7ws1EPA1qWQ2JR8STm2cJtW4V/RBIgEXjPs4ViHj8Db9LWv6Gn4dAjXRxeY
+	rI0f2WnWDzPEFscjJTN8hhotIzwHp+s099mTTU2cNl/McnFq0j83Z4X5yFqyMlrYxuMwz2sI7fl
+	GLVubVi9070dkM+aDW/UOj0c9//3pxDAawBgO4dUfRwWzqCosLGo5yVfqV1C/KANT4NLStoXdaI
+	xgLYhB26HvQvFKnDg8lLXIaa1GoN55S9xYd1bLdtdcBfKtWmAMX+V0evczxPmBoR0ykUjWRifhg
+	==
+X-Google-Smtp-Source: AGHT+IHyoP91IrU6Tkmbf3ko8vntpz06pZXNHtLm+QHSlxS7L0YQX7eZaI3fQOREDGaGd1ZiF+to1A==
+X-Received: by 2002:a17:906:4550:b0:b50:b539:8be6 with SMTP id a640c23a62f3a-b50b539915dmr2017845266b.43.1760367786225;
+        Mon, 13 Oct 2025 08:03:06 -0700 (PDT)
+Received: from NB-6746.corp.yadro.com ([188.243.183.84])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c129c4sm957903866b.41.2025.10.13.08.03.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 08:03:05 -0700 (PDT)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Artem Shimko <a.shimko.dev@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2 0/2] dmaengine: dw-axi-dmac: PM cleanup and reset control support
+Date: Mon, 13 Oct 2025 18:02:31 +0300
+Message-ID: <20251013150234.3200627-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <883591c4-6301-45f6-a671-ca55974aaac0@intel.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This patch series improves the dw-axi-dmac driver in two areas:
 
-On Sun, Oct 12, 2025 at 01:15:07AM +0800, Chen, Yu C wrote:
-> On 10/11/2025 12:48 AM, Reinette Chatre wrote:
-> > Hi Dave,
-> > 
-> > On 9/30/25 8:40 AM, Dave Martin wrote:
-> > > On Mon, Sep 29, 2025 at 09:09:35AM -0700, Reinette Chatre wrote:
-> > > > On 9/29/25 6:56 AM, Dave Martin wrote:
-> > > > > On Thu, Sep 25, 2025 at 03:58:35PM -0700, Luck, Tony wrote:
-> > > > > > On Mon, Sep 22, 2025 at 04:04:40PM +0100, Dave Martin wrote:
-> 
-> [snip]
-> 
-> > > Anyway, going back to the "#" convention:
-> > > 
-> > > If the initial read of schemata has the new entries "pre-commented",
-> > > then userspace wouldn't need to know about the new entries.  It could
-> > > just tweak the MB entry (which it knows about), and write the file back:
-> > > 
-> > > 	MB: 0=43
-> > > 	# MB_HW: 0=2
-> > > 	# MB_MIN: 0=1
-> > > 	# MB_MAX: 0=2
-> > > 
-> > > then resctrl knows to ignore the hashed lines, and so reading the file
-> > > back gives:
-> > > 
-> > > 	MB: 0=43
-> > > 	# MB_HW: 0=3
-> > > 	# MB_MIN: 0=2
-> > > 	# MB_MAX: 0=3
-> 
-> 
-> May I ask if introducing the pre-commented lines is intended to prevent
-> control conflicts over the same MBA? If this is the case, I wonder if,
+Patch 1 simplifies the power management code by using modern kernel
+macros and removing redundant wrapper functions, making the code more
+maintainable and aligned with current kernel practices.
 
-Basically, yes.  Note, this is only an issue for old software that
-doesn't understand the new entries.  New software should omit the
-entries for resources that doesn't understand or doesn't want to set.
+Patch 2 adds proper reset control support to ensure reliable
+initialization and power management, handling resets during probe,
+remove, and suspend/resume operations.
 
-> instead of exposing both MB and the pre-commented MB_HW_X in one file,
-> it would be  feasible to introduce a new mount option (such as "hw") to
->  make the legacy MB and MB_HW_X mutually exclusive. If the user specifies
->  "hw" in mount option, display MB_HW_X (if available); otherwise, display
-> only the legacy "MB". This is similar to the cpufreq governor, where only
-> one governor is allowed to adjust the CPU frequency at a time.
-> 
-> thanks,
-> Chenyu
+ChangeLog:
+  v1:
+    * https://lore.kernel.org/all/20251012100002.2959213-1-a.shimko.dev@gmail.com/T/#t
+  v2:
+    * Remove has_resets flag and use reset_control_assert/deassert() unconditionally,
+    as these functions handle NULL pointers internally
+    * Replace devm_reset_control_array_get_exclusive() with
+    devm_reset_control_array_get_optional_exclusive() to handle platforms
+    without reset controls gracefully
+    * Simplify error handling by removing redundant flag checks
+    * Remove has_resets field from struct axi_dma_chip as it's no longer needed
 
-This could be done with a mount option, but I am concerned that a
-single resctrl mount might be used by different tools while it is
-mounted.  So, maybe a global control is not what we want?
+Artem Shimko (2):
+  dmaengine: dw-axi-dmac: simplify PM functions and use modern macros
+  dmaengine: dw-axi-dmac: add reset control support
 
-I'm hoping that we can design this in a way that is sufficiently
-backwards compatible that we don't need a mount option to turn it off.
+ .../dma/dw-axi-dmac/dw-axi-dmac-platform.c    | 66 ++++++++-----------
+ drivers/dma/dw-axi-dmac/dw-axi-dmac.h         |  1 +
+ 2 files changed, 30 insertions(+), 37 deletions(-)
 
-Can you think of a userspace scenario that would break, with the
-proposed design?
+-- 
+2.43.0
 
-Cheers
----Dave
 
