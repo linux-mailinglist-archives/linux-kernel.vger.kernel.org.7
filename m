@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-850743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA7ABD3A9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:49:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1103BD3A89
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E4D3E3CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:42:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7F63E80A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF4530DED0;
-	Mon, 13 Oct 2025 14:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8295930DD3A;
+	Mon, 13 Oct 2025 14:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SnWnSzm2"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012017.outbound.protection.outlook.com [40.93.195.17])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Df/M2Krf"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013063.outbound.protection.outlook.com [40.93.196.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9926F30DD1A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8530430DEC5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366164; cv=fail; b=DiraHauZdvJOgvm/Elzkqz1jdwYYqm+HEGr9o7OcNzQYZA6d4CAF8/V39Bx+JKZ/Pk8OPJPQQM8V9hslxAZe1BYAA67LUUuE4d2XGrwnNefPhrBp5XCCc79xNp9TSra0muEm3/GJ5EVHYSARP3a2r68+XqiGhclmR5+dUe8aVmE=
+	t=1760366167; cv=fail; b=fWaioqQ04mNZPsf6FPs5tusl8uVoljiuYX+07HumGhJ0s0wDXswWMWqj7yMclvDUw0XJesDIqpahp3TP3VlAtQz2k3Shp/PIB8ySifMfrdbHyxceY8bvBZ9eY3DK754uXI+dO3lEcpdrVW4lptVaOg7pQw22IpUmb4aGv6MLuy4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366164; c=relaxed/simple;
-	bh=mGW/vkSeRiwLWzSHLryU0/XYqsoGK1XpU1gMfl9robw=;
+	s=arc-20240116; t=1760366167; c=relaxed/simple;
+	bh=jUSloZLljdx9a9AljgG6stR6EyE1Wd9P3uvhd3gtOXU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b46c9mTJ9H1w2TbzTFRDPpIbczl96vFAMiHzemQiCKvHeTIjeK/uIW18lwFGNxflW0wdEHWifswr/fFQ9qeZaz23AWYK5P3cLIQ5EM2LNIXlB3qOXDknu2FswpziSdDb4+KcY7HX55u5tiq0skgY2eMZmK/Dix+Wg7p2e7aiUOw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SnWnSzm2; arc=fail smtp.client-ip=40.93.195.17
+	 MIME-Version:Content-Type; b=kNhXzjsopY0LWGZg5qSWka+4joIq3Lgs3M0KAvEoS2v2Ri62klDc2BuLF6z9BfavZamcYn61TtJxr1e7UdsDm0MfUWKJSLC0vVpvuD1P4phcs0jvzTDHBjqN2zvVhPu6KPGuQUOjttKWkR3H59bNus/o8k86Dax3QMRPAEkKicI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Df/M2Krf; arc=fail smtp.client-ip=40.93.196.63
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C8+y1kHcopM+TV19fzBAlDdcCr4NVvxr+dfANGLdi/HupZprhobFjl2kNU78rdX9s4fGWNyCExE8QTcGPuStnE/VyWLutnCGXN2B9/eGqLXa78jFAMe3qJr/PU3fUod/iO0zFQiJ5a6WlBx2Fu6EtxRm7xSMzcoVBnFJ4dYZlkkEd8o5ROenw8ts9V/XaMwAstCJvHcfjkjyUqHj3BEthYUOcGRHMPQpcVVQxGVYvgtSHhoFz7Kq2ahlJw5SKMiiDkEqnNki4blM4quYUlEEMxskzHKCweEcabZ6A1ItFiOPXhbcTBg2OyQtmuuKM5OQa6Mqw4s9F0r6tjl3HjBejA==
+ b=w9jwODXrA0EugB3rwDX8er1K37vqHg7MXnrwb3iuku3OT8pbaeX6yBHQaWDYJTydia6JnVaLhb2j6Aho6hQWV2bPH5tbmeFEJWIDfthZaU/wtIpvHW+KTK9g8zPCMdRR5KjYqyj9CMdCRsaB1bQyJD7fAb8LBq+jk3didOZ6Qju19t0ScCSqLebputRGZ1EaqZmEp5wOfZgO7mhWSTc9D+Qd72J84rkg5w0fyOUZ6PawHAO+egwP3YfAd19a5URI82mK7pVMPQduCa0cN9pP9JuvUUUo7pRM5vA16/q4kZzMsEB+/IWysDROzFynmIgwtRVkxEllwOeTlgpmcpEgAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f5A8TAb/Aqsv6GFDARqrHNFnXeHVh8cGNLik9QdaCko=;
- b=Y2agdfpwwBCDyIBgA9mwz276bnfJkdtGTOaIQC7c/7sjeJAcbLq323nJos53SG9UAKjEsDHiEP/zb2U2EGtX1OAHQaWCfWS/cmmwRrvPpfP4zLP2R0H1sQDMUrek50ld7BnZnZDhhjaPhk8xtiP+8yUFLdv0SP3dZYIP1Zv3o2NrbcpNQqh1GUe8g4Xxl8U4hHTaBpepAPowLgYeaJ6g4b6KAZ1hmbKazIG9+TpPoVBQjpmO3WiVrxsuwWoDXf2idDTHufY72lq5BrOXBBDsMUwBooJ3ALcSSvrtnrH7Oyu50YdYyWCwcyJA3+hd9HY5dtO7AYrxFtQCal+QOch7Cw==
+ bh=ZOpK0j0IQAwxerGIoz+Xhr564JYPOMyvCEw9lfo8e6I=;
+ b=dpYSoMAONwDmYA7ZlCIxNCRgypV9tGxUuAS2JD62Q1OuPQZNdIFiZ4MXywgeI8qTkhyf+yhbVdsJgRmEuAn3fMft0T29E+trj8Ai/hy3j/wbCrleyFqwpFAU9dcPpl7QDWmcojSWhkaNci8Mk7T1i6874tdPye2n6ha4ttY5bdRe/3CFPzocxKHp5XuLQFZUo4f8h1z9xVsrJZCE17LmFI4b7yM+d0Aa+YxFaOIirZZ7asSNFmPavx6PWX8Sas6oaevRbkheUYXKiTrJSjZ0ckSQv6Fs7bQ3JWOqapABzhAaRes26j3ioaDHsoSSAOLBH43tmjw7ZIBDhOJoVJrt9w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f5A8TAb/Aqsv6GFDARqrHNFnXeHVh8cGNLik9QdaCko=;
- b=SnWnSzm2lmXg4WBqGjrAyzoe4janfHTNAAmq9ihxtOPUr8yeD1YcnGQGd8SNzmeEa939NQMwxJJ8cZwA0FfHh/3nztBa+ejf3s3nSBy14P76ObZ3wXugX/Fx68J8yVfkWyfeQm9pf7vuuOKTiTm6FkNRiQ0eRZ+JyOjyRkGMYdw=
-Received: from MW4PR04CA0102.namprd04.prod.outlook.com (2603:10b6:303:83::17)
- by MW4PR12MB6973.namprd12.prod.outlook.com (2603:10b6:303:20a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Mon, 13 Oct
- 2025 14:35:58 +0000
+ bh=ZOpK0j0IQAwxerGIoz+Xhr564JYPOMyvCEw9lfo8e6I=;
+ b=Df/M2KrfRZPYKY0KrnoXJN2ioQknjvsmCXXcowhuJlubXgHgNSJl5mICwLTH6TJziRhDRFUJXrVLHtt5QAk1cKrd/tpkxt/HtHcs/Oer1j1v7Zp/wBaPqg08RMn3ROUKhiaq5BXAtSpXJxUqpQvT43cj+ogi13xrqQt9fjIUagg=
+Received: from MW4PR04CA0110.namprd04.prod.outlook.com (2603:10b6:303:83::25)
+ by DS0PR12MB8271.namprd12.prod.outlook.com (2603:10b6:8:fb::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.13; Mon, 13 Oct 2025 14:35:58 +0000
 Received: from MWH0EPF000989E7.namprd02.prod.outlook.com
- (2603:10b6:303:83:cafe::61) by MW4PR04CA0102.outlook.office365.com
- (2603:10b6:303:83::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
+ (2603:10b6:303:83:cafe::31) by MW4PR04CA0110.outlook.office365.com
+ (2603:10b6:303:83::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.11 via Frontend Transport; Mon,
  13 Oct 2025 14:35:58 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -64,11 +63,11 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  MWH0EPF000989E7.mail.protection.outlook.com (10.167.241.134) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:35:57 +0000
+ 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:35:58 +0000
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 13 Oct
- 2025 07:35:42 -0700
+ 2025 07:35:43 -0700
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -77,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 34/56] x86/alternative: Save old bytes for alternatives
-Date: Mon, 13 Oct 2025 09:34:22 -0500
-Message-ID: <20251013143444.3999-35-david.kaplan@amd.com>
+Subject: [RFC PATCH 35/56] x86/alternative: Save old bytes for retpolines
+Date: Mon, 13 Oct 2025 09:34:23 -0500
+Message-ID: <20251013143444.3999-36-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 References: <20251013143444.3999-1-david.kaplan@amd.com>
@@ -95,164 +94,156 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E7:EE_|MW4PR12MB6973:EE_
-X-MS-Office365-Filtering-Correlation-Id: c89ec11f-b3bc-45fc-fc69-08de0a65d2fe
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E7:EE_|DS0PR12MB8271:EE_
+X-MS-Office365-Filtering-Correlation-Id: a69d1c32-f999-41f1-5523-08de0a65d346
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Y+ee4I3sbr104bTqBTk8FqqzUG+gWmm/NHoqhTTDAgt0+h0p7CUzur33rqP4?=
- =?us-ascii?Q?KPIVMPaSQdstdD76Lzt+iLn/p3qgBY5uSzmTTJLuA905Ss6PT68wQMM5FiSB?=
- =?us-ascii?Q?jF09PRdYfL9Zfuf9owEJU3IQUCpKdtcsrZoXzsEAo6lqnZNN1W5C/hore+5X?=
- =?us-ascii?Q?Srs71g9X2ymUdCJEZ8GuqWGBWIMXkQdOMqWNwcxgTlR4rnA/cQmOvOhka7Aj?=
- =?us-ascii?Q?zwh+smTC5SWO3jGFJA9madbpfvqNXLWal0ocn0BuBhkvOQsolUZk24Ahqm9H?=
- =?us-ascii?Q?oxpAX9p8k8euRrtx7uWfPRQ9bg3DjdW3JfzZjcOv9sLXhvctESanqDJwo98L?=
- =?us-ascii?Q?5sZK3kP2Ajbd/YelcR1Z3ZqhtQKGLP9YEtnbRGbYJYu1mfQDBJlgZnFB3G6r?=
- =?us-ascii?Q?ShUGkBrrpUGYb/0PjApEdarb2eSznEmo0MD5KkABz5ZJNk8ervVpDWK6nmoE?=
- =?us-ascii?Q?XhFTK7ri+VsQbnbjxS6/bnfZwAvpOCg10+xsve3zFApUhYPIf5K/nGOhAGUu?=
- =?us-ascii?Q?8b46nw6Wr2iduQlL1qSA6sGW3Q265XUgGbMavoLvjzYRKNcGuFG3icTblYxR?=
- =?us-ascii?Q?lJZ71GCY55LLSNBGN5F5Y4NApp6Hp1bV9AFPOoRVlVN/V69edNx3eADir4nJ?=
- =?us-ascii?Q?NBeAcAelPAGYgvTze7/cZ/yG/UHIRZm6BM1qiQ9G8KX/jD49grJ+Q9e9XoTN?=
- =?us-ascii?Q?GabxWhMNjnzpp06f9oTvqbIzpn6arn2cbsTNDg3lmVbE6bbxN47NsmiSeh4Y?=
- =?us-ascii?Q?AUeYGsHbNKXgsdZ5eVVRdUIav5pz64O1JOBbg7NmlTPrS1AtggWsFH9u02pD?=
- =?us-ascii?Q?gUfo7OcbnYGEuoUMibjRC1zwQzt/Dxx9Ft3LKRteOYMNONnlFpBrIlKh+zbr?=
- =?us-ascii?Q?NlxzixtxHxMM10vIqTdZEg6gz9yvh8JmykFhcFZkf+o0z/umdsMeG9ZgUs9s?=
- =?us-ascii?Q?qULO9KAAyiv8MCpop1eZHTXxb/9g7q3Kw1SFX1A2UG4Y0rxL1x6zXI6ibWQr?=
- =?us-ascii?Q?CcYPz/Ky896+ES6TQH8zlynxj3cShMMNzFY0gqOYDVPCDf34Svi7jWx/BW/d?=
- =?us-ascii?Q?L22YPUI5uOJ5qIMEdmV5ryggGEbkY/smFsWLMS7f1r8DlURMhKq2UJ4g3vPX?=
- =?us-ascii?Q?CJ8/s8hIyKZ+YoxZHbYTJRS5RiL+jpS797fxWmTTazQ5Semo2NukcmcN1+i9?=
- =?us-ascii?Q?up3ZPeX7wO+JE0+SbYx00C+pfn03nniKT/S38PkJF/xphTPcDD4E64IkKt4e?=
- =?us-ascii?Q?xSTqH+kpUFwnMBCf306juVypmkgIX0TDmcUkL75V3hCEKN4VxRmLM4785Hof?=
- =?us-ascii?Q?KcdjEVBIo+5diKpUJS4tmmkGEwDz1S8ZtUOdAa5f5mj4XpXMhz4FH+5CiL51?=
- =?us-ascii?Q?7EnYNfgb9o8CBDjXMEp4fpWnc1T/tLzE1LRfJcx+7rcprmOe1bUrrcckujP7?=
- =?us-ascii?Q?FkdkXx8TT6jkY2N4/KRED40ezm2Csc3+6YHNldSpj7RIY2d4YVmoV/nlKpU7?=
- =?us-ascii?Q?4nHY38ORYV/L91++qiTgVMLRLlmb90Wk6lSkvz91KlqhHQOWo465NbG6Apxa?=
- =?us-ascii?Q?Rb8TKLCW0jPcJDDEG6g=3D?=
+	=?us-ascii?Q?eadxEHpR5xVyJXNxnOqXgDthGi05vYPUtzDNBuXj8QY+dztqsjSUWfZ+YpbG?=
+ =?us-ascii?Q?vYRG3XaFJ2qcwjn0DP+sRox30+E79dloBSQlkm7gSlQLH75CZsMhSJ34uFAj?=
+ =?us-ascii?Q?9GLeQ274aJAXi391aGz8TewxAOSdQkpMk3mk8zM3xOTHQMEUvn7qwh/9d+tR?=
+ =?us-ascii?Q?UEwOWDAP0v1GqMhXICnfeBI6hE6yFjX76s/gAGa6sJ8ZIbwRGhxwMv6klQS5?=
+ =?us-ascii?Q?jslg2x/TjMZHXxhezRf5zxBjGg5nhNtYfSSs6QntMqMkH6MhcjwVlLuzA4a8?=
+ =?us-ascii?Q?HUZmVmy3SXD5dBSMkfIjEtEbAJN/MiR/vz8iJR4WMUQsAlf4vkMdSCP9RG7T?=
+ =?us-ascii?Q?k9DG5UyINE5BTJ2y6Dak7t9s2wuBZ/0xxLfDpFiqHyVke2/tHzsxw7JCjX+Z?=
+ =?us-ascii?Q?TLgetdDzOYXdjLqh5ns4Y79GNXCxypbMXEt7iCQMW1hIdf1XB63A+ov4F5AS?=
+ =?us-ascii?Q?8ZaJp6PEH4tdmAu+yudfy0p2uLX2pdM+Nvs9Ezd1xl/ARMIYtOZKfkNhpHg/?=
+ =?us-ascii?Q?0delhzR6MNTp2auLoqDxzE8hokzJRSOrJ8FWwMpiSMM5ffPhdZ47lWXU6+II?=
+ =?us-ascii?Q?gyFICaRm68QktpQfCg9cticMzHYtuGM+5rmW1nQXRholo7XHOwbOqdBn7vxo?=
+ =?us-ascii?Q?17bpU3wgJ8xxX2W0ia+G5l5WsxkPmslO4oKMYUziemtpuwEQCBGQSt3YSGnb?=
+ =?us-ascii?Q?+sViR87UJNUdF8UlZcF9n/3XVcOy3iIML5V0Dxj6/54zpj4wNYdqwLK2i/wm?=
+ =?us-ascii?Q?gUcxUWXMjBIRyHJGmqS/C7QoSyb75eF0KKHpt7SlVzohXA7yzVF/B3WFLfOT?=
+ =?us-ascii?Q?BVgP7lGDWfQ88RS07rn0ztzVr1fzvqQAcBsPuC1TWdRTjGW3MfsHsFFgmE+/?=
+ =?us-ascii?Q?vYlQyA2a1fdb5jd0bLCHmMg9s8wq0gsjxz+yLrdUqancIJC10lBQoiFBvvee?=
+ =?us-ascii?Q?e8fNg1MzDLgkFqvpR3RJNk4LdxrEBQWOtzMqjqq8nDExaWeB5g82kA78inBW?=
+ =?us-ascii?Q?LidARy/bTsG0Ca5VxVLye+aDx1ByMjm5/0Usfimq7PCMqYb+6N6u68phzw82?=
+ =?us-ascii?Q?GKvjQZXxXgN+Y8tfwJiI0az18PPdO76OvKmv6ofNpTL6yOxC1W7C10/qLHp+?=
+ =?us-ascii?Q?MZaAoi8ajr+EpKEX9u65uFijgU5vRwO5U7K+V5y19IGVsTA9/4PAI1mcVVPf?=
+ =?us-ascii?Q?ByWQWc4CkJK/0BwSt3x5dPA7nxF/2pyRRvjJ9j3Z13Ah6mve1In3uIQdgbOn?=
+ =?us-ascii?Q?vhShz2ncJBIzM1gaQilvkQOQF+UpJ18E8t7AwZe1ScuhqOhoRFhzz2G+kJPH?=
+ =?us-ascii?Q?Pu6UXqZxBLyJpCiBlPfVltCjCMp4Ax3eMsCZaOXOFR5m/JNhL9g+fIAU+GEw?=
+ =?us-ascii?Q?euJ8HumMTLLNQpC/+8lNAi11g9jGc86NiBDesQXTy85Iz7gPv5XxSxTHGrty?=
+ =?us-ascii?Q?WPSxDKAXKOGsq2ZOKb+3yj8y5nkRC7XzJ7vpLoBRhGuI66sMfDYyqkO/pMHE?=
+ =?us-ascii?Q?TjYrPWclL3kmqoTNQTPsR9fJ7smy+cWgNw+PXujnkUItjnd1p3XhgS4QF6Pw?=
+ =?us-ascii?Q?yt0cSWRLFoOq/5BjzyY=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:35:57.9669
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:35:58.4351
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c89ec11f-b3bc-45fc-fc69-08de0a65d2fe
+X-MS-Exchange-CrossTenant-Network-Message-Id: a69d1c32-f999-41f1-5523-08de0a65d346
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	MWH0EPF000989E7.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6973
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8271
 
-Save the existing instruction bytes at each alternative site when patching.
-This is only done the first time, and these will be used later to help
-restore the code back to its original form.
+Similar to alternatives, save the original bytes when patching retpolines
+the first time.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
  arch/x86/include/asm/alternative.h |  5 ++++
- arch/x86/include/asm/module.h      |  3 +++
+ arch/x86/include/asm/module.h      |  2 ++
  arch/x86/kernel/alternative.c      | 37 +++++++++++++++++++++++++++++-
- 3 files changed, 44 insertions(+), 1 deletion(-)
+ 3 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 73fd8ebdf8d9..3ee781d61927 100644
+index 3ee781d61927..24a4afbf163b 100644
 --- a/arch/x86/include/asm/alternative.h
 +++ b/arch/x86/include/asm/alternative.h
-@@ -97,6 +97,11 @@ extern int alternatives_patched;
+@@ -102,6 +102,11 @@ struct alt_site {
+ 	u8 len;
+ };
  
- struct module;
- 
-+struct alt_site {
-+	u8 *pbytes;
++struct retpoline_site {
++	u8 bytes[6];
 +	u8 len;
-+};
++} __packed;
 +
  extern void alternative_instructions(void);
  extern void apply_alternatives(struct alt_instr *start, struct alt_instr *end,
  		struct module *mod);
 diff --git a/arch/x86/include/asm/module.h b/arch/x86/include/asm/module.h
-index 3c2de4ce3b10..2bb602f99154 100644
+index 2bb602f99154..d0c39b921408 100644
 --- a/arch/x86/include/asm/module.h
 +++ b/arch/x86/include/asm/module.h
-@@ -19,6 +19,9 @@ struct mod_arch_specific {
- 	struct orc_entry *orc_unwind;
- #endif
+@@ -21,6 +21,8 @@ struct mod_arch_specific {
  	struct its_array its_pages;
-+#ifdef CONFIG_DYNAMIC_MITIGATIONS
-+	struct alt_site *alt_sites;
-+#endif
+ #ifdef CONFIG_DYNAMIC_MITIGATIONS
+ 	struct alt_site *alt_sites;
++	struct retpoline_site *retpoline_sites;
++	int num_retpoline_sites;
+ #endif
  };
  
- #endif /* _ASM_X86_MODULE_H */
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index a821ea37fc29..8037076e9301 100644
+index 8037076e9301..a02dc6bfb696 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -301,6 +301,8 @@ static inline void its_fini_core(void) {}
- static bool __maybe_unused repatch_in_progress;
+@@ -302,6 +302,8 @@ static bool __maybe_unused repatch_in_progress;
  
  #ifdef CONFIG_DYNAMIC_MITIGATIONS
-+static struct alt_site *alt_sites;
-+
+ static struct alt_site *alt_sites;
++static struct retpoline_site *retpoline_sites;
++static int num_retpoline_sites;
+ 
  /* Do not patch __init text addresses when repatching */
  static bool should_patch(void *addr, struct module *mod)
+@@ -1036,8 +1038,36 @@ static int patch_retpoline(void *addr, struct insn *insn, u8 *bytes)
+ void __init_or_module noinline apply_retpolines(s32 *start, s32 *end, struct module *mod)
  {
-@@ -642,6 +644,27 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 	u8 insn_buff[MAX_PATCH_LEN];
- 	u8 *instr, *replacement;
- 	struct alt_instr *a, *b;
+ 	s32 *s;
 +	u32 idx = 0;
-+	struct alt_site *save_site = NULL;
-+
++	struct retpoline_site *save_site = NULL;
+ 
+-	for (s = start; s < end; s++) {
 +#ifdef CONFIG_DYNAMIC_MITIGATIONS
-+	u32 size = ((u64)end - (u64)start)/sizeof(struct alt_instr);
++	u32 size = ((u64)end - (u64)start)/4;
 +
-+	/* Main kernel text alternatives */
-+	if (!mod && !alt_sites) {
-+		alt_sites =  kcalloc(size, sizeof(struct alt_site), GFP_KERNEL);
-+		if (WARN_ON(!alt_sites))
-+			return;
-+
-+		save_site = alt_sites;
-+	} else if (mod && !mod->arch.alt_sites) {
-+		mod->arch.alt_sites =  kcalloc(size, sizeof(struct alt_site), GFP_KERNEL);
-+		if (WARN_ON(!mod->arch.alt_sites))
-+			return;
-+
-+		save_site = mod->arch.alt_sites;
-+	}
-+#endif
- 
- 	DPRINTK(ALT, "alt table %px, -> %px", start, end);
- 
-@@ -664,7 +687,7 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 	 * So be careful if you want to change the scan order to any other
- 	 * order.
- 	 */
--	for (a = start; a < end; a++) {
-+	for (a = start; a < end; a++, idx++) {
- 		int insn_buff_sz = 0;
- 
- 		/*
-@@ -687,6 +710,18 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 		BUG_ON(a->instrlen > sizeof(insn_buff));
- 		BUG_ON(a->cpuid >= (NCAPINTS + NBUGINTS) * 32);
- 
-+		if (IS_ENABLED(CONFIG_DYNAMIC_MITIGATIONS) && save_site) {
-+			/* Only save the original bytes for each location */
-+			if (a == start || (instr_va(a) != instr_va(a-1))) {
-+				save_site[idx].len = a->instrlen;
-+				save_site[idx].pbytes = kmalloc(a->instrlen, GFP_KERNEL);
-+				if (WARN_ON(!save_site[idx].pbytes))
-+					return;
-+
-+				memcpy(save_site[idx].pbytes, instr, a->instrlen);
-+			}
++	/* ITS code needs the save_site pointer even on re-patch. */
++	if (!mod) {
++		if (!retpoline_sites) {
++			retpoline_sites = kcalloc(size,	sizeof(struct retpoline_site), GFP_KERNEL);
++			if (WARN_ON(!retpoline_sites))
++				return;
 +		}
 +
- 		/*
- 		 * Patch if either:
- 		 * - feature is present
++		save_site = retpoline_sites;
++		num_retpoline_sites = size;
++	} else {
++		if (!mod->arch.retpoline_sites) {
++			mod->arch.retpoline_sites = kcalloc(size, sizeof(struct retpoline_site),
++							    GFP_KERNEL);
++			if (WARN_ON(!mod->arch.retpoline_sites))
++				return;
++		}
++
++		save_site = mod->arch.retpoline_sites;
++		mod->arch.num_retpoline_sites = size;
++	}
++#endif
++
++	for (s = start; s < end; s++, idx++) {
+ 		void *addr = (void *)s + *s;
+ 		struct insn insn;
+ 		int len, ret;
+@@ -1085,6 +1115,11 @@ void __init_or_module noinline apply_retpolines(s32 *start, s32 *end, struct mod
+ 			addr, addr, insn.length,
+ 			addr + insn.length + insn.immediate.value);
+ 
++		if (IS_ENABLED(CONFIG_DYNAMIC_MITIGATIONS) && save_site) {
++			save_site[idx].len = insn.length;
++			memcpy(save_site[idx].bytes, addr, insn.length);
++		}
++
+ 		len = patch_retpoline(addr, &insn, bytes);
+ 		if (len == insn.length) {
+ 			optimize_nops(addr, bytes, len);
 -- 
 2.34.1
 
