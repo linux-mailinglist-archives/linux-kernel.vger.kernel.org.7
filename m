@@ -1,150 +1,200 @@
-Return-Path: <linux-kernel+bounces-851465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF7FBD693C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3A8BD6909
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7CBF4F8B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C2D18A11ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727F830BBAA;
-	Mon, 13 Oct 2025 21:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbcNeNUo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7283B313260;
+	Mon, 13 Oct 2025 21:58:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C461630BBB8;
-	Mon, 13 Oct 2025 21:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0093128B0
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760392718; cv=none; b=eBZfMuzRluDoIgs3xzDZ5iEBj6j23JrxBaF/o9d8cHu0uFYBH283z0E8x6d0sjs2SboK7O3jwqI30rnWWOqAtr4zSw18uDZY1rkqtljMnnKH0Iab/yTpeODy//RK8IrYbXkXD9D2bFtll1z3ReQ+KyVHRACtjBqxnW+03LmL87k=
+	t=1760392712; cv=none; b=qswWPFbYg587B8++d3dtlZw0NXiA04BDZmSPNC7Ih3auIqJBmdsnGrUc/AS0nwh8eQZmDVyLHrhqgKA1fQwMZKKQQGftGsaP1XaK06kZ6U661wSRmTqXFeV2gJ2TNFI8E1yQw9s2Pc3h0G2Ba/Sk5XPmiDb7LxjjHbn06ZYiGJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760392718; c=relaxed/simple;
-	bh=uMSlsf/xN9vHLyFVY6jJ6GNcfRBsfLxq7F6h7Yydqj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cn3npodjeNeGajUZPopzss8W7vZX0GO0k9GfhULWvPs3JAgwzY0e5dFgNRhN76kT5K3Ze8EMJIA7y9J4CypyB6LgF+EO4Jau272vHSyoqAF9nhOtTmUUoXrYzylmEJ5g5CBBKDMx8XWmcIgzWIHK65pli5lvKTpofFuTfPBABhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbcNeNUo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2492AC2BCF5;
-	Mon, 13 Oct 2025 21:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760392718;
-	bh=uMSlsf/xN9vHLyFVY6jJ6GNcfRBsfLxq7F6h7Yydqj8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PbcNeNUo1FKc2UvUI7YDnXTnyDKjC43hHFLexLDnzv7WqC2acJRNtwpuigf+K5Ibz
-	 Fodg5hFve2XRbxjjijJ5FtYGtY9eYjK5P62o0+kH2fH18Vkqp9cH3PVyWQ2EgxXfh4
-	 wmUy5QFXtUNbUMfRFx+9bQGc3sNvY/JCERQ7NaaML5/ucA8IgXSzBoMm0C30PmX/Ww
-	 lDt6XYbwvJtoow0tTF10C7CwvE9cYA9I1Ed1jBTMIfYprKCjs0kg79D9J2fR6kZsE3
-	 3DFiaDdDqOFWUNXu7acfLWBnlEXX1ZL5Kl6qD544bHCEdCk7RQFo5Pu6VHA8d4Ydv/
-	 VOfc8hLk+0N4Q==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: power: Convert Actions Owl SPS to DT schema
-Date: Mon, 13 Oct 2025 16:58:26 -0500
-Message-ID: <20251013215834.783501-1-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760392712; c=relaxed/simple;
+	bh=dri1T1aBIrax0bSq/AiIadftoBuhkH4eiMRYwruo3cE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UTQcbgj5aMoji4v8cLkc1+ieGUuyhK9UQlYLmUatGnBYmrWSFO59h0MS7Hxb+IC/J2nNUvyjSlA0DA6ZeecgoL6ouZ+fy7e4ZzjYVk/8Zgz6N5ExHzPC6GIvv9jj7uPcYr8O5/mda1v93zPxNwP2IesJkgbJaUxlmxroN3lJBVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42486b1d287so288791225ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:58:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760392710; x=1760997510;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YTn5Q6x07H9U5K5DPRcQ35V2TEuBbiD24I9VW7bfNdU=;
+        b=l7vcAbE8Rqb7zEW40m/fTZSW0eWCZ6mqd6DdmHc5GtAfqL0A6wVP6Dz1sCZNhnZNLg
+         HNLKKzE5POHktg4l9iqq9MHSR2B3PifyxSwG19Asc9SX6fClxXcpG4/TGcVuHkH7wx3Q
+         jp4jOQvsRZWFGU4pnAIHvxjBwraYdSrvLJao2YHySZrMGRdiojsqkxagmJUfkdMURt5o
+         DE3uMtFBKtUwkwks14qUA0nv5dWEaCpwm7Nmc17ladXC6JP8IeMXotVLS6rmLBrHxth5
+         tPJsHMu0HYwOYSsWlIHYVJx0KukmaGTHrUV7AaFxwpIeKEegMCS1tHHlL3dR4z1ssmBw
+         8PRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTGRYneHWWSww8NbOoTIcip2ianc0FrWsa69XPNm3uSIZgNfgrjzHs7a8vFgL+S+PyL3DuaIgovVklkko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjajlg1VnXlUkQReBf96JBepBc7fzlgtPj1dm9FIsajsF2KF+E
+	BE3Sc0IFnVdrlZx8WXaF2bzPE5YkrTRrWej6eyhM5g+gpo5WBcskEC/NIGB1WqMJa5GzNoCqwPL
+	Tvb0rDmQizDWpA0Y63m2Ds9CulzmyOHhdYsN23VGEqydvSRW0YxaWPChT7J8=
+X-Google-Smtp-Source: AGHT+IHaxpFguq/B66A1ghbKvobMUaCj15kcEDOHi2za6akQMyPJ/+1vXW71RktKndoNDpowFCWRPKI/5+QbV/obtxSFvOh2rfZC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1707:b0:424:7bb:775c with SMTP id
+ e9e14a558f8ab-42f8741c253mr222225565ab.31.1760392710286; Mon, 13 Oct 2025
+ 14:58:30 -0700 (PDT)
+Date: Mon, 13 Oct 2025 14:58:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ed7606.a70a0220.b3ac9.0020.GAE@google.com>
+Subject: [syzbot] [input?] BUG: unable to handle kernel paging request in uinput_destroy_device
+From: syzbot <syzbot+51f9b5e3c5a307417c1b@syzkaller.appspotmail.com>
+To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Convert the Actions S500/S700/S900 Smart Power System binding to DT
-schema format. It's a straight-forward conversion.
+Hello,
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+syzbot found the following issue on:
+
+HEAD commit:    2b763d465239 Add linux-next specific files for 20251010
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f06542580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4057daadbd2196b
+dashboard link: https://syzkaller.appspot.com/bug?extid=51f9b5e3c5a307417c1b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cbf458580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5ca8031cf31f/disk-2b763d46.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/00ba418b156f/vmlinux-2b763d46.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a18ef5d6f602/bzImage-2b763d46.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+51f9b5e3c5a307417c1b@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: fffffffffffffff8
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD df3d067 
+P4D df3d067 
+PUD df3f067 
+PMD 0 
+
+Oops: Oops: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6106 Comm: syz.0.45 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:swake_up_locked kernel/sched/swait.c:30 [inline]
+RIP: 0010:complete_with_flags kernel/sched/completion.c:29 [inline]
+RIP: 0010:complete+0x99/0x1b0 kernel/sched/completion.c:52
+Code: 89 e7 e8 8a 4e 8b 00 4d 8b 3c 24 4d 39 e7 0f 84 d4 00 00 00 49 8d 7f f8 48 89 f8 48 c1 e8 03 80 3c 28 00 74 05 e8 67 4e 8b 00 <49> 8b 7f f8 be 03 00 00 00 31 d2 e8 17 5c f6 ff 4c 89 ff e8 9f eb
+RSP: 0018:ffffc90003a3fcd8 EFLAGS: 00010046
+
+RAX: 1fffffffffffffff RBX: ffffc90003bafa58 RCX: dffffc0000000000
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: fffffffffffffff8
+RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff52000747f78 R12: ffffc90003bafa98
+R13: 0000000000000001 R14: 0000000000000a06 R15: 0000000000000000
+FS:  0000555564ca1500(0000) GS:ffff888125e2b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffffffffffff8 CR3: 000000007959e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ uinput_flush_requests drivers/input/misc/uinput.c:213 [inline]
+ uinput_destroy_device+0x11a/0x8c0 drivers/input/misc/uinput.c:298
+ uinput_release+0x3b/0x50 drivers/input/misc/uinput.c:758
+ __fput+0x44c/0xa70 fs/file_table.c:468
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe54718eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe72996ff8 EFLAGS: 00000246
+ ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 000000000001bc2c RCX: 00007fe54718eec9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007fe5473e7da0 R08: 0000000000000001 R09: 00000006729972ef
+R10: 0000001b2f220000 R11: 0000000000000246 R12: 00007fe5473e5fac
+R13: 00007fe5473e5fa0 R14: ffffffffffffffff R15: 00007ffe72997110
+ </TASK>
+Modules linked in:
+CR2: fffffffffffffff8
+---[ end trace 0000000000000000 ]---
+RIP: 0010:swake_up_locked kernel/sched/swait.c:30 [inline]
+RIP: 0010:complete_with_flags kernel/sched/completion.c:29 [inline]
+RIP: 0010:complete+0x99/0x1b0 kernel/sched/completion.c:52
+Code: 89 e7 e8 8a 4e 8b 00 4d 8b 3c 24 4d 39 e7 0f 84 d4 00 00 00 49 8d 7f f8 48 89 f8 48 c1 e8 03 80 3c 28 00 74 05 e8 67 4e 8b 00 <49> 8b 7f f8 be 03 00 00 00 31 d2 e8 17 5c f6 ff 4c 89 ff e8 9f eb
+RSP: 0018:ffffc90003a3fcd8 EFLAGS: 00010046
+
+RAX: 1fffffffffffffff RBX: ffffc90003bafa58 RCX: dffffc0000000000
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: fffffffffffffff8
+RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff52000747f78 R12: ffffc90003bafa98
+R13: 0000000000000001 R14: 0000000000000a06 R15: 0000000000000000
+FS:  0000555564ca1500(0000) GS:ffff888125e2b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffffffffffff8 CR3: 000000007959e000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	89 e7                	mov    %esp,%edi
+   2:	e8 8a 4e 8b 00       	call   0x8b4e91
+   7:	4d 8b 3c 24          	mov    (%r12),%r15
+   b:	4d 39 e7             	cmp    %r12,%r15
+   e:	0f 84 d4 00 00 00    	je     0xe8
+  14:	49 8d 7f f8          	lea    -0x8(%r15),%rdi
+  18:	48 89 f8             	mov    %rdi,%rax
+  1b:	48 c1 e8 03          	shr    $0x3,%rax
+  1f:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1)
+  23:	74 05                	je     0x2a
+  25:	e8 67 4e 8b 00       	call   0x8b4e91
+* 2a:	49 8b 7f f8          	mov    -0x8(%r15),%rdi <-- trapping instruction
+  2e:	be 03 00 00 00       	mov    $0x3,%esi
+  33:	31 d2                	xor    %edx,%edx
+  35:	e8 17 5c f6 ff       	call   0xfff65c51
+  3a:	4c 89 ff             	mov    %r15,%rdi
+  3d:	e8                   	.byte 0xe8
+  3e:	9f                   	lahf
+  3f:	eb                   	.byte 0xeb
+
+
 ---
- .../bindings/power/actions,owl-sps.txt        | 21 ----------
- .../bindings/power/actions,s500-sps.yaml      | 39 +++++++++++++++++++
- 2 files changed, 39 insertions(+), 21 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/power/actions,owl-sps.txt
- create mode 100644 Documentation/devicetree/bindings/power/actions,s500-sps.yaml
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/devicetree/bindings/power/actions,owl-sps.txt b/Documentation/devicetree/bindings/power/actions,owl-sps.txt
-deleted file mode 100644
-index a3571937b019..000000000000
---- a/Documentation/devicetree/bindings/power/actions,owl-sps.txt
-+++ /dev/null
-@@ -1,21 +0,0 @@
--Actions Semi Owl Smart Power System (SPS)
--
--Required properties:
--- compatible          :  "actions,s500-sps" for S500
--                         "actions,s700-sps" for S700
--                         "actions,s900-sps" for S900
--- reg                 :  Offset and length of the register set for the device.
--- #power-domain-cells :  Must be 1.
--                         See macros in:
--                          include/dt-bindings/power/owl-s500-powergate.h for S500
--                          include/dt-bindings/power/owl-s700-powergate.h for S700
--                          include/dt-bindings/power/owl-s900-powergate.h for S900
--
--
--Example:
--
--		sps: power-controller@b01b0100 {
--			compatible = "actions,s500-sps";
--			reg = <0xb01b0100 0x100>;
--			#power-domain-cells = <1>;
--		};
-diff --git a/Documentation/devicetree/bindings/power/actions,s500-sps.yaml b/Documentation/devicetree/bindings/power/actions,s500-sps.yaml
-new file mode 100644
-index 000000000000..bb942817b3db
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/actions,s500-sps.yaml
-@@ -0,0 +1,39 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/power/actions,s500-sps.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Actions Semi Owl Smart Power System (SPS)
-+
-+maintainers:
-+  - Andreas Färber <afaerber@suse.de>
-+  - Manivannan Sadhasivam <mani@kernel.org>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - actions,s500-sps
-+      - actions,s700-sps
-+      - actions,s900-sps
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    power-controller@b01b0100 {
-+        compatible = "actions,s500-sps";
-+        reg = <0xb01b0100 0x100>;
-+        #power-domain-cells = <1>;
-+    };
--- 
-2.51.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
