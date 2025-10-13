@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-850450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C393BD2D8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:50:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C696BD2DA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C7364EF198
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:50:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07BE74E527B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51ED2571DC;
-	Mon, 13 Oct 2025 11:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B94626280A;
+	Mon, 13 Oct 2025 11:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dfBawpga"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PSjKTqJP"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEA719CCFC
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B310342AA3
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760356223; cv=none; b=JtjwmZgj+ld73vZAcmTVH+Ao6j+oyKcBmmsOYJN1TyhwhLho3lamWWnCapOHrmzUGSpuMK3oa5Hu5tqV/PXhZdB1pIkr3ScSTwm4V3NFmFfH+V2qMdx1XXmTbGxmKpVIonNLWC2dOPclXRRYbMx2lQXP9QWN84KJc993rqBFUzc=
+	t=1760356337; cv=none; b=kzjOZmHIAs8n94pkT6gstZTt6/ncARL9w8wPYOOAKgb4GerEe+xWywx/Ps4bvDGEFRhLowprLqj8ePHduY/PYNh2HI6sm5XQDwXCZqDQGuCyEXRdtstMfHtmty97BK5qD7hUqvsvNFPsOwhahj3H/XRqDiLxsqiurfGGGfKmYwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760356223; c=relaxed/simple;
-	bh=1uvQYJmL9QKe76KL2BW9+4/bK8gl99vHijqXPMD9QyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obrRctV2EvHvdnZdROUhxltqsuY6wx7y0ZBYpq1862ssFohnLH2HiDVd1gdy/cCVz/vB7KCwmev6kBRA82SyXPIdkIMGoCVtpACqM4dqigtIAp2SGyDWqC/MJk/2NsbVO2W2jA0oEX/+R/FHvIylcuNzMcCsTCtzlOVAIi3LRY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dfBawpga; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760356220;
+	s=arc-20240116; t=1760356337; c=relaxed/simple;
+	bh=V2qDYbbuoTEkBT2HL0t17NuHFHKoI+ou5Hi6gsPWzL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H8TqqJ6wYrmMLnwV3HIEff/7r/4bCDP1d2TD5+v3HFVmN9DnKPPlfkazZVvgUFiTgCw8MlBGQ8iPpVrue+ivfMxIGa0ekYPKfRTzsfOXwbhiJ5VrZFSRKq2omwA5Xy9Rn2Lh0KP8cFegyMpkt5uOYlPUjgUEIbHZ/Y6g4bgRb8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PSjKTqJP; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760356330;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qJXFC0o+1CaVi4fOfDbU8jsuMwjGsE39HDlFOYkUqXI=;
-	b=dfBawpgacDOgt3nl+GkwePx279jEw+c2HMYxaIUCi3x1qZhtA/kopI8qRrK2Leuhh/I3PF
-	ZEEPPNVin9qGjTe+XEWyXzUZ9321FFp1pH+/+UQNCSl2ziI7V9Ph9/V893mngGG8uqlCj5
-	I671nUkYyJf9gMf54YLCID/by8/BFWg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-50-_Ay75PvOOUKe6IQLG9kgKQ-1; Mon,
- 13 Oct 2025 07:50:19 -0400
-X-MC-Unique: _Ay75PvOOUKe6IQLG9kgKQ-1
-X-Mimecast-MFC-AGG-ID: _Ay75PvOOUKe6IQLG9kgKQ_1760356217
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 367E81956087;
-	Mon, 13 Oct 2025 11:50:17 +0000 (UTC)
-Received: from fedora (unknown [10.45.226.135])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0012230002CE;
-	Mon, 13 Oct 2025 11:50:12 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 13 Oct 2025 13:50:16 +0200 (CEST)
-Date: Mon, 13 Oct 2025 13:50:11 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/Uibbwg5d/wwFpFMHDXbH4NfA15Tu+IH7YaAVA/rb1c=;
+	b=PSjKTqJP9pqAYoHdIVOFzclMViJVzEjidiANqm0xzTACFLXxwbrBrac1PxqPu8OpRK7v8K
+	f5VNqEXqNzQuzlJ/I9TthmxUsJBt/QWf/pwZLjULfY+HDFyvClU5vNWjzfmBeYxGjQOAd/
+	UmVyha1g5IPcarqIKYH4G8XdsWvPncU=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Jason Andryuk <jason.andryuk@amd.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	xen-devel@lists.xenproject.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
- scoped_seqlock_read_irqsave()
-Message-ID: <aOznWZGV9qyGWoE5@redhat.com>
-References: <20251009143748.GA2704@redhat.com>
- <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
- <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
- <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
- <20251009221242.GX3419281@noisy.programming.kicks-ass.net>
- <CAHk-=whmjm0BbirO8HhT_TZQ2JJMs_FpTcT9SXXaA3NifW2a4w@mail.gmail.com>
- <20251010080327.GF4067720@noisy.programming.kicks-ass.net>
- <20251010122347.GA8798@redhat.com>
- <20251010131439.GB8798@redhat.com>
- <20251013090313.GI4067720@noisy.programming.kicks-ass.net>
+Subject: [PATCH v2] drivers/xen/xenbus: Replace deprecated strcpy in xenbus_transaction_end
+Date: Mon, 13 Oct 2025 13:51:25 +0200
+Message-ID: <20251013115129.30304-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013090313.GI4067720@noisy.programming.kicks-ass.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/13, Peter Zijlstra wrote:
->
-> On Fri, Oct 10, 2025 at 03:14:39PM +0200, Oleg Nesterov wrote:
-> > 	static inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
-> > 	{
-> > 		if (sst->state & ss_lock)
-> > 			spin_unlock(&sst->lock.lock);
-> > 		if (sst->state & ss_lock_irqsave)
-> > 			spin_unlock_irqrestore(&sst->lock.lock, sst->data);
-> > 	}
-> > 
-> > 	static inline void
-> > 	__scoped_seqlock_next(struct ss_tmp *sst, enum ss_state target)
-> > 	{
-> > 		switch (sst->state) {
-> > 		case ss_lock:
-> > 		case ss_lock_irqsave:
-> > 			sst->state |= ss_done;
-> 
-> So GCC is clever enough to see through this scheme, but Clang gets
-> confused and generates worse code. Specifically it emits the whole
-> __scoped_seqlock_cleanup() sequence, testing both bits and both unlock
-> options.
+strcpy() is deprecated; inline the read-only string instead. Fix the
+function comment and use bool instead of int while we're at it.
 
-OK, thanks and sorry for the noise then.
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/xen/xenbus/xenbus_xs.c | 14 ++++----------
+ include/xen/xenbus.h           |  2 +-
+ 2 files changed, 5 insertions(+), 11 deletions(-)
 
-> So while that additional pointer might seem wasteful, it actually makes
-> the state tracking easier and allows the compiler to more easily throw
-> away stuff.
-
-Great ;)
-
-Oleg.
+diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+index 528682bf0c7f..5d95a5f83119 100644
+--- a/drivers/xen/xenbus/xenbus_xs.c
++++ b/drivers/xen/xenbus/xenbus_xs.c
+@@ -546,18 +546,12 @@ int xenbus_transaction_start(struct xenbus_transaction *t)
+ EXPORT_SYMBOL_GPL(xenbus_transaction_start);
+ 
+ /* End a transaction.
+- * If abandon is true, transaction is discarded instead of committed.
++ * If abort is true, transaction is discarded instead of committed.
+  */
+-int xenbus_transaction_end(struct xenbus_transaction t, int abort)
++int xenbus_transaction_end(struct xenbus_transaction t, bool abort)
+ {
+-	char abortstr[2];
+-
+-	if (abort)
+-		strcpy(abortstr, "F");
+-	else
+-		strcpy(abortstr, "T");
+-
+-	return xs_error(xs_single(t, XS_TRANSACTION_END, abortstr, NULL));
++	return xs_error(xs_single(t, XS_TRANSACTION_END, abort ? "F" : "T",
++				  NULL));
+ }
+ EXPORT_SYMBOL_GPL(xenbus_transaction_end);
+ 
+diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+index 7dab04cf4a36..c94caf852aea 100644
+--- a/include/xen/xenbus.h
++++ b/include/xen/xenbus.h
+@@ -158,7 +158,7 @@ int xenbus_exists(struct xenbus_transaction t,
+ 		  const char *dir, const char *node);
+ int xenbus_rm(struct xenbus_transaction t, const char *dir, const char *node);
+ int xenbus_transaction_start(struct xenbus_transaction *t);
+-int xenbus_transaction_end(struct xenbus_transaction t, int abort);
++int xenbus_transaction_end(struct xenbus_transaction t, bool abort);
+ 
+ /* Single read and scanf: returns -errno or num scanned if > 0. */
+ __scanf(4, 5)
+-- 
+2.51.0
 
 
