@@ -1,209 +1,209 @@
-Return-Path: <linux-kernel+bounces-851078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30A5BD580A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:31:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D844EBD5702
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9011B3E846D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:12:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B1964F8731
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28532C159C;
-	Mon, 13 Oct 2025 17:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493322C11C2;
+	Mon, 13 Oct 2025 17:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="eyLEq8e0"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cDn0mz0U"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012034.outbound.protection.outlook.com [52.101.43.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49CE29D266;
-	Mon, 13 Oct 2025 17:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760375511; cv=none; b=cSiR9s72t3V5rqp0TvkpXsVNxLpIOMBHoo30/ML21Vhhn9sSUNcrmvsyUNZTx++ApRvusNEPqE3JyBj5uUT0Hp1HjghyhLmhH/5YtaKHSxDAQovKOZVkmD7CgvZrOx3eYkJEo0Of7y2MxuYKEGxkYdYzBW312EvRy2R2tWHIf6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760375511; c=relaxed/simple;
-	bh=40CFjh9kzA9585REHD+cA2lYowQDDOU8sCgEpVNrgYM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CB32C08D4;
+	Mon, 13 Oct 2025 17:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760375492; cv=fail; b=fs3aR16qS/SLXoOusM0AAft6nHEo929IDxKpQvnqbVDCX93sj3PLviduth3zqrpn0+Ts5eSedOqz7Nc7UvuqA08Rrmz7TvzX4RlzWz2JH3EsVzecczDmjH/aTk90MCANobdJ6GebLFqUyouaTrIw5wkIR84fmBzmCgmqUmW6+Hk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760375492; c=relaxed/simple;
+	bh=em39exKJ7jZsV7XS0r+rD7tf6tgFfbnSGHn2PSCwB0k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LDy+U6Uci1J51TIhNCGlbyHNdOYF/BBkxQozU7FPLXfYlxl8kRxlvHu9ulp5eKa84diXXtlxsjWEN869fiHVaM+XuXWl/ZBg0krj3XVtMXGpzCwxAWrwxD/tajc0hgb6AvRy7dGF9w03esoW1cSdS6Iz/cVfZC1qJ8/5AWHO9u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=eyLEq8e0; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4clkQy4k8Tz9tQS;
-	Mon, 13 Oct 2025 19:11:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1760375498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3wOr6yUFCcqirizRFMqUeU95gmF6JtVB3tD/YiBrl5s=;
-	b=eyLEq8e0zwq7q1RjPRySRc4b6mZTc5fcaHVaUopkm66qJlDOVuYfLay8kf71/Dm/iNFgHu
-	cHkuYBMF3DlzMUS8Q3lHvEs5vB6XDzyra4rQnyUFSGQRO6S1AyY7dfoWvbnsRlxkzlS5G4
-	zgzDghCo87CXTvOQztMSVt12BoxU7ddMq2BMiJkN9IG0WBWs7q+aIL/4xIi3lLmcknRnBL
-	ZbvpzuVVmvqpYZ2NhZ421WmGDDQRBdDll4iH2ueourg4dIfqWBKxkeYurftTR6NqfjhlIn
-	BotItPmc9oKj8yzYimBbUqBIQoloBbytVsvXJ52wOU65UkGY+NaJSZChnF01Tw==
-From: Brahmajit Das <listout@listout.xyz>
-To: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
-Cc: listout@listout.xyz,
-	andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	eddyz87@gmail.com,
-	edumazet@google.com,
-	haoluo@google.com,
-	horms@kernel.org,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	sdf@fomichev.me,
-	song@kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev,
-	Menglong Dong <menglong.dong@linux.dev>,
-	Sahil Chandna <chandna.linuxkernel@gmail.com>
-Subject: [PATCH v2] bpf: avoid sleeping in invalid context during sock_map_delete_elem path
-Date: Mon, 13 Oct 2025 22:41:22 +0530
-Message-ID: <20251013171122.1403859-1-listout@listout.xyz>
-In-Reply-To: <68af9b2b.a00a0220.2929dc.0008.GAE@google.com>
-References: <68af9b2b.a00a0220.2929dc.0008.GAE@google.com>
+	 Content-Type:MIME-Version; b=Dx2FMHRpU89KanQ5tWjgJgt7/npDKAXpJ0rqKEu1G025bYwECMmX0ZaOh309smD5Ck2SToyOOSgSNQvcT2j2W2I5mjILQEjGo4DW+S61NlS8n26ijXpALTzhwAUvH3j0ctsRcyn6ojpZDD6jZihwWhhulxxGJCB7PODcucx1KDw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cDn0mz0U; arc=fail smtp.client-ip=52.101.43.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tk4GdmEMm5EEAtdRiQJQKyFAfrQ74+iU3tE/VGgBTyWKJ63rRVHZR56yLZ7JC6+2eT1me36UrNro43coa6uZOzmcEKW2CCEAkdIaOxY3ysMj7XTymhZSLjFBEg8pSHetsTyovEamKv4064nYwI2Ihtwho07aszRLbY7lGObBPuGKLpXHv5Apsqp/GeYr5UiF0D6Ylu58+K9xBscy79/7gbr7ND1XVvJ0Cydo4fra02zTZdgHRfVFtnwhB62eDxuS8piKL0gKMsa/zCOklvgc5AtKi7SgV0HxkB8rfDN4k5lwPZ0sawM60ucxERlEKnewTiWFsVkpHUCSPU+1yCwDiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=em39exKJ7jZsV7XS0r+rD7tf6tgFfbnSGHn2PSCwB0k=;
+ b=ftsrID29Y9qRx6KGwlgza1It1MY1oMiv7RKQxdYV4y37RKGdFYGoRkcPLa4iitCKSvVnq8dTYL1RpbZAd98iUgnFFhsGaI1oMVL1GjqWfFOS28wIfyNKtqitVocdA7wVq1FlT4VALZXlFnPaVO87taKf4XKj4gzbPfL5cPoITETnCQB1kdpaQA0ey0BloQDY9ptO0Og8O20mhz4HENeEdZTk0sM1eFQVbrnFlLVb5f+Ogj/9rkQ+tl7moErqWuNPqx0vHVpT1ftG0PCn5gsTfHLGH/kEUak3aGyx4ZSe18OYU2pu/gIpnGDfbCMPZQZZUIXgUCwu+js3ZynPMiaI3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=em39exKJ7jZsV7XS0r+rD7tf6tgFfbnSGHn2PSCwB0k=;
+ b=cDn0mz0U6Uo+heBTr1Ek6L7+PhmBFWZzT4507M+cS/VjrRFfd+tVMh+1ZUmf2yfnaNBJCswmtHIPkXb3gxPX1jkDxmWvztWCUcLWfas1zGji61A71OLtVxeFELHiz965Ib/VrwlfOyrSEt2ryAtylS0+kseEGXXHik2NmtlQUxF36XmD6lhsUuYqk3A2O4VE1D9DlGzSJe+Ocn7NAI28ytfmxhz/FD28mxDieUcK87KcHB+tIe3vmFgIgLXVQiya24Ap/afHNOtEfLCzUwTlsjLebkYp838mOZUOp0O10ZepPtf4BVDjjrTfIicB5R+tPJvrtD3PMECpp+jRGyc/PA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DS0PR12MB9728.namprd12.prod.outlook.com (2603:10b6:8:226::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.12; Mon, 13 Oct 2025 17:11:27 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 17:11:27 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
+ kernel@pankajraghav.com,
+ syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
+ nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
+ target order silently.
+Date: Mon, 13 Oct 2025 13:11:25 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <F6C18E5B-F39A-4E3D-BCF4-0DA6C1ADB206@nvidia.com>
+In-Reply-To: <aOlKK0b2Ht8FrDXS@bombadil.infradead.org>
+References: <20251010173906.3128789-1-ziy@nvidia.com>
+ <20251010173906.3128789-2-ziy@nvidia.com>
+ <aOlKK0b2Ht8FrDXS@bombadil.infradead.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MN2PR03CA0028.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::33) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB9728:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74ec1ad9-5768-4989-4055-08de0a7b8bd9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Efa05MuyKNKLEoWqTBTVIGGFXoZbBX7KSc7MICpMByRh8QNmpSS6zxhx623A?=
+ =?us-ascii?Q?4DIUm1HsUJQbMFT2OxdbwL5hkkJhf7gmuOXz+22mN4lAp9jN3zJi+sl/qHqR?=
+ =?us-ascii?Q?7MPWBdtRU6p6/EJPRwKnB+8w5rILLBIUpOf+Bwn2/a39T2vMcT2WiX83bLK+?=
+ =?us-ascii?Q?0fUXYj5ps532fiCm9JPF8dUot4hatIOr5pgwPqdr0aDy7b4ZQaxFKI675+n8?=
+ =?us-ascii?Q?tk0EhAyuod0IZ+/NEKvu79NArjA05HmtQ/kiVcDkPkWIjkiEUvMS8EDEFFwQ?=
+ =?us-ascii?Q?EP2Yp4N7C7yzol+4YkNyfP3zhLsxb8KwTXwdHesnFV/P8aUksm5ia0jBDZau?=
+ =?us-ascii?Q?y1/KRVY2HP1Im0v7RpoFYIAPk8cCvHm62Np4LdQyUPWekJ4FjJ0L8tuOdz7c?=
+ =?us-ascii?Q?qgAfrgQhKCUEKARzyC00LVY0jITkKD9W4MdfveC+pkNRZ1vzQFZs6uVc3KOZ?=
+ =?us-ascii?Q?BTfmPE+/YwkDtUW2NIR0iN7QVAf6ajjllqBtwH24Iv0xLG6zIESH4DReKg9l?=
+ =?us-ascii?Q?i/1HXVsHrKUfrN2kbXP/+e0qnN2+c46yJDgynN0+55evO6u+UJq8+eQfNzgg?=
+ =?us-ascii?Q?PnhDgt7D3m7OqSas0TEzDt4Bjap3yertjqdbpSvVdwClCiXgoeu6pcAj5Icn?=
+ =?us-ascii?Q?u64R2RaTXSdN64gOJ2yheKZ0NO2UVC5+I+O3onzEutlwzhV4IIHT4XJGadSv?=
+ =?us-ascii?Q?YwoSLuOlptQEvfte0+2wBbV/i8yjKXp88HlBAY4OZPzP5UErV1oThRTnLuI3?=
+ =?us-ascii?Q?ZQFbTN5I9xiRvM8u3Nm7PrnK3FcJtyfXlCpD/xvGUTLwGpef0vruYY50MeV9?=
+ =?us-ascii?Q?i7mlXPYKZ16Ni1ZIcy82W0VqLAnni+flUIYfbetfs9tSTX84yuH4pEyNjF7L?=
+ =?us-ascii?Q?QAjKhpesjgxaO37cjFv53EHjEAPQ2Whm/FliBiVjfYNk+UaSfclMVV91oR0b?=
+ =?us-ascii?Q?MK7Yw0Jz+j0iv3//WsVyXbLABfPhrJS6HATm3Oa0WxRa29uX9HKlPrXPlPTv?=
+ =?us-ascii?Q?45nsWSFpIX1yEvRqu/DWBitwyifvA9sxk884ITfTjmCUwlNu2K8FFNSIBlMy?=
+ =?us-ascii?Q?4HkAlwnbiDNQr/aodS3venYZWNWxEBQcbZHO2RbSGYgz+w5nSPgROsWFPx/q?=
+ =?us-ascii?Q?N3elIykHWaNuOmw1HXPMqvR8FSlHUcmR7ajQpnpugEZKBnDLxeriUycIbBWR?=
+ =?us-ascii?Q?LYR0v0YOmYmQSKmgT5mDTvCMePHlPwAxOu2FaxL7qzIWuwqdCpv9WKbA4ee5?=
+ =?us-ascii?Q?Zi95nGLf7ySgHP9kkdpoHqO9WxdJaVAsA4RY0C/CRA1RJ9G1jZvPlzVpk0bU?=
+ =?us-ascii?Q?PZoL/Ms5RRSL4CCmGY0eL5Vd0KuGpALdqewnJEPt8u4l14bUjRf6dz5cB52Q?=
+ =?us-ascii?Q?jt8mMbGLkaoGAwp/avIywc41F+by6C76WkbbXTMEEc2TgC44nDBCBPAXeQ2F?=
+ =?us-ascii?Q?eC0PUvpYLMhxBE+wvo/nomgp60jLuLgm7/8Ujw4DqsiFL/6T5WtZQQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FTeOf+XLrqY6tCVPkhV4xeDLnoFtf0wg5cQVDTHjsKjlRyyNRK39hXCVu4W1?=
+ =?us-ascii?Q?kqIerqN/WVf0w2lQhZ29wSSmZKTJp8UCmqtgW4Tocl1PQGNTX0Xl39Dy2PEa?=
+ =?us-ascii?Q?tWb3StFN1DixRD8znjutsO76Vn7ayEcvcw9vuzJlCegN+zULI8Hly9Cqeqa9?=
+ =?us-ascii?Q?VYXdO2ZJVOPih9znzNZDKntHy/bN1B6Fftgl9PxGayjTW1tXlnq0Q+T6xQTM?=
+ =?us-ascii?Q?t9+iw/0gFN8h7p8MBMDVGR+I5wNBL8Pa9r2Ib1tXGUivfD7okK70cMKNVYac?=
+ =?us-ascii?Q?M04cD5HuPa5MQ8y99dN0Yh76RS6gkqS5S8AYeUVGkbO1VsvzTiwvBQmIFsaV?=
+ =?us-ascii?Q?1jzyef15IdHBEZ8QkikiWyjtswe7rdAah7gqMUoMlFcxRFcovEU8c0UDR/DC?=
+ =?us-ascii?Q?OjZip1oKofICktyxuzasWW10RPd0KCA7/2JXVULo1hEUMXrCo3glaY1IUUYA?=
+ =?us-ascii?Q?hJmPB30NmrKR38N1Rxbrg/D8eo+DkR1OQ5Av97h6Ya99Kiv+gppxwcfQEyNU?=
+ =?us-ascii?Q?KzOGNkhC2lNH1jgOXXWqiTKkYRgV++xVW0yTEAqaloxlQ7ja4BC6DNu3Rr9+?=
+ =?us-ascii?Q?QvDfUZCJnt7I5LeVEyhlvRRxUyq/njzw21Tak99PWbb1DoBBm7eTIVqKGj6A?=
+ =?us-ascii?Q?UXosLYnyzmG15MWO3jxIjxG7NftBANLCgU0v7gd+rXeR8TRwp5+xWkXtNt8s?=
+ =?us-ascii?Q?VWek9Jdr4uV/ROAf9f6We3s1DdmKunm5yDS0szxZuTvWokcPDYaqhlBrz/f3?=
+ =?us-ascii?Q?RXsS2b1VLWT8htIxprYu7FGbsyN6Lh/5eB2zcrO+dRYBpANkCxMgMCLuBxdG?=
+ =?us-ascii?Q?Bs22LDuv5nwj/7IankMIgSk207QXOhpW2IptNOJA1xSDMBqP7xFLNmnfGGzP?=
+ =?us-ascii?Q?eVL9uY2mmxpaHVAuhjRw4cHouu8q1LPVcWUiddTSXpVhUunO36G2/1RuXPQe?=
+ =?us-ascii?Q?J2qvs+gOiZJrNMGLeVklBixYaNSzJzNnbLArboH57N62RzDNhaUwlXs1gJeG?=
+ =?us-ascii?Q?4RRZPf2EoqAtUOIU/FJUbTkTMmZ+UMGFOY+fSGGI770v7uiOfZKiUQ/3L9LD?=
+ =?us-ascii?Q?kKEH7pqDERvaJzALeDPgIO8xPSx+vO8rO0IdWjGd9M0WrWpuJ3RJU5kMZopW?=
+ =?us-ascii?Q?9gChdzNhMyb8A6P/a8PWVWZsUdyd0rD6f1j3kKXWZtYsWaLTqvRKU/OHLJM9?=
+ =?us-ascii?Q?ZgWyuFgydMHRYbEiYkkJUFzAYqeX5XiPcSDskd2dM8O6G6xKe2MiP4nfqcV3?=
+ =?us-ascii?Q?+itnOdLGgmQv4cCPfBon2vw3Vocbm2TSl66arVVYFFIoPPybS8Jbi4krwJ4n?=
+ =?us-ascii?Q?tocdNC/ypBJ7NkcpYZ6j0D8yELwwTpXNNqRmxSwthxQ8wxqE/FBdfGGyqK7u?=
+ =?us-ascii?Q?YRYliGvmpDNbok6nCAYPLLRL0rhed8e5Yl/Vpv/XUW2FvnRqzirnv4geG8mv?=
+ =?us-ascii?Q?oNzSFNymTa3rr2SDOBQ5ZzJ4kiRRV8YPISh94V46ftwYnB9oUpXdeZDC1LDm?=
+ =?us-ascii?Q?wN4ljyfbttzPcpQl8d90rk5hEvMnEMyI9EO+l6bVhzmgUAQhZGYjTOvDpcZC?=
+ =?us-ascii?Q?NN5OufKAWyE9yO5T0iGGz3uKLRi6HIC0crmtm6Iz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74ec1ad9-5768-4989-4055-08de0a7b8bd9
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 17:11:27.8024
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aKt6HqhsiqgjEdu9KjTZ0j1dLOoYaJtXIY9F7aBoocZNnD1qHvz2faJs4KdSKkHx
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9728
 
-The syzkaller report exposed a BUG: “sleeping function called from
-invalid context” in sock_map_delete_elem, which happens when
-`bpf_test_timer_enter()` disables preemption but the delete path later
-invokes a sleeping function while still in that context. Specifically:
+On 10 Oct 2025, at 14:02, Luis Chamberlain wrote:
 
-- The crash trace shows `bpf_test_timer_enter()` acquiring a
-  preempt_disable path (via t->mode == NO_PREEMPT), but the symmetric
-  release path always calls migrate_enable(), mismatching the earlier
-  disable.
-- As a result, preemption remains disabled across the
-  sock_map_delete_elem path, leading to a sleeping call under an invalid
-  context. :contentReference[oaicite:0]{index=0}
+> On Fri, Oct 10, 2025 at 01:39:05PM -0400, Zi Yan wrote:
+>> Page cache folios from a file system that support large block size (LB=
+S)
+>> can have minimal folio order greater than 0, thus a high order folio m=
+ight
+>> not be able to be split down to order-0. Commit e220917fa507 ("mm: spl=
+it a
+>> folio in minimum folio order chunks") bumps the target order of
+>> split_huge_page*() to the minimum allowed order when splitting a LBS f=
+olio.
+>> This causes confusion for some split_huge_page*() callers like memory
+>> failure handling code, since they expect after-split folios all have
+>> order-0 when split succeeds but in really get min_order_for_split() or=
+der
+>> folios.
+>>
+>> Fix it by failing a split if the folio cannot be split to the target o=
+rder.
+>>
+>> Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks"=
+)
+>> [The test poisons LBS folios, which cannot be split to order-0 folios,=
+ and
+>> also tries to poison all memory. The non split LBS folios take more me=
+mory
+>> than the test anticipated, leading to OOM. The patch fixed the kernel
+>> warning and the test needs some change to avoid OOM.]
+>> Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
+>> Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@g=
+oogle.com/
+>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-To fix this, normalize the disable/enable pairing: always use
-migrate_disable()/migrate_enable() regardless of t->mode. This ensures
-that we never remain with preemption disabled unintentionally when
-entering the delete path, and avoids invalid-context sleeping.
+Thanks.
 
-Reported-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
-Suggested-by: Yonghong Song <yonghong.song@linux.dev>
-Suggested-by: Menglong Dong <menglong.dong@linux.dev>
-Co-authored-by: Sahil Chandna <chandna.linuxkernel@gmail.com>
-Signed-off-by: Brahmajit Das <listout@listout.xyz>
----
-Changes in v2:
-        - remove enum { NO_PREEMPT, NO_MIGRATE } mode
-        - Using rcu_read_lock_dont_migrate/rcu_read_unlock_migrate
-
-Changes in v1:
-        - Changes on top of Sahil's initial work based on feedback from
-        Yonghong's. i.e. remove NO_PREEMPT/NO_MIGRATE in test_run.c and use
-        migrate_disable()/migrate_enable() universally.
-        Link: https://lore.kernel.org/all/d0fdced7-a9a5-473e-991f-4f5e4c13f616@linux.dev/
-
-Please also find Sahil's v2 patch:
-        Link: https://lore.kernel.org/all/20251010075923.408195-1-chandna.linuxkernel@gmail.com/T/
----
- net/bpf/test_run.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
-
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index dfb03ee0bb62..83f97ee34419 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -29,7 +29,6 @@
- #include <trace/events/bpf_test_run.h>
- 
- struct bpf_test_timer {
--	enum { NO_PREEMPT, NO_MIGRATE } mode;
- 	u32 i;
- 	u64 time_start, time_spent;
- };
-@@ -37,11 +36,7 @@ struct bpf_test_timer {
- static void bpf_test_timer_enter(struct bpf_test_timer *t)
- 	__acquires(rcu)
- {
--	rcu_read_lock();
--	if (t->mode == NO_PREEMPT)
--		preempt_disable();
--	else
--		migrate_disable();
-+	rcu_read_lock_dont_migrate();
- 
- 	t->time_start = ktime_get_ns();
- }
-@@ -51,11 +46,7 @@ static void bpf_test_timer_leave(struct bpf_test_timer *t)
- {
- 	t->time_start = 0;
- 
--	if (t->mode == NO_PREEMPT)
--		preempt_enable();
--	else
--		migrate_enable();
--	rcu_read_unlock();
-+	rcu_read_unlock_migrate();
- }
- 
- static bool bpf_test_timer_continue(struct bpf_test_timer *t, int iterations,
-@@ -374,7 +365,7 @@ static int bpf_test_run_xdp_live(struct bpf_prog *prog, struct xdp_buff *ctx,
- 
- {
- 	struct xdp_test_data xdp = { .batch_size = batch_size };
--	struct bpf_test_timer t = { .mode = NO_MIGRATE };
-+	struct bpf_test_timer t = {};
- 	int ret;
- 
- 	if (!repeat)
-@@ -404,7 +395,7 @@ static int bpf_test_run(struct bpf_prog *prog, void *ctx, u32 repeat,
- 	struct bpf_prog_array_item item = {.prog = prog};
- 	struct bpf_run_ctx *old_ctx;
- 	struct bpf_cg_run_ctx run_ctx;
--	struct bpf_test_timer t = { NO_MIGRATE };
-+	struct bpf_test_timer t = {};
- 	enum bpf_cgroup_storage_type stype;
- 	int ret;
- 
-@@ -1377,7 +1368,7 @@ int bpf_prog_test_run_flow_dissector(struct bpf_prog *prog,
- 				     const union bpf_attr *kattr,
- 				     union bpf_attr __user *uattr)
- {
--	struct bpf_test_timer t = { NO_PREEMPT };
-+	struct bpf_test_timer t = {};
- 	u32 size = kattr->test.data_size_in;
- 	struct bpf_flow_dissector ctx = {};
- 	u32 repeat = kattr->test.repeat;
-@@ -1445,7 +1436,7 @@ int bpf_prog_test_run_flow_dissector(struct bpf_prog *prog,
- int bpf_prog_test_run_sk_lookup(struct bpf_prog *prog, const union bpf_attr *kattr,
- 				union bpf_attr __user *uattr)
- {
--	struct bpf_test_timer t = { NO_PREEMPT };
-+	struct bpf_test_timer t = {};
- 	struct bpf_prog_array *progs = NULL;
- 	struct bpf_sk_lookup_kern ctx = {};
- 	u32 repeat = kattr->test.repeat;
--- 
-2.51.0
-
+--
+Best Regards,
+Yan, Zi
 
