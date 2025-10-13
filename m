@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-850432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D00BD2C49
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD09BD2C4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FB904F0F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C398C1894343
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B2125A340;
-	Mon, 13 Oct 2025 11:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA65251793;
+	Mon, 13 Oct 2025 11:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkVyQxiP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iu7JmbDX"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB142566E2;
-	Mon, 13 Oct 2025 11:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665D7257827
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760354578; cv=none; b=DIYk15TJTClTkX8e+DSYA7d8Bg/EWbptrYQz6rOXaJl0blBjsXEl3/RKJEGgFkFvWJO2tgYSfcyuQ0oaRkQUbT/xUbYm9z6ZZspYxMgqyDzWEj3UPPO6U0H2vyLfLfy7/COm/30BycCGEuMvmY/DfOmGYD5yVslc7oN4+s+ptjM=
+	t=1760354592; cv=none; b=s14jvQ7KBOzlkQELtqVpPVIJHuMlqKX3mqBZ9MdhbXoC88uraYJOofee9g0CCOw5NBCo66VwYTN3ubFxFrjLmCjBbvgji1dYCCiVBXc6GIqH049DwWH3aMK9va7IZrpIdMi/3ms5GRynhLFRaUyO6uIACJ35g0T3CEScxe8yKNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760354578; c=relaxed/simple;
-	bh=KbCxcwDKL/GeB6jYxqFpthgYhe0x51XcSoROJKA1bcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llRSUJih0NzXqkHXn1XYHRn+acGsVZywD2Wj6fH5aw4of6x4I4DKxq2RH1IDvdiZ2WtxefehW5JXiBZFg+VeTtPpkYEKNfDoErk9LZ8dChVbeS7nWxm6fhqYSpByDrl0qyOO91u1fGaggbPcnyTA9UGi4f/6sTOxw63Xcw9I5rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkVyQxiP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77012C4CEE7;
-	Mon, 13 Oct 2025 11:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760354578;
-	bh=KbCxcwDKL/GeB6jYxqFpthgYhe0x51XcSoROJKA1bcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PkVyQxiP6SBRCfwtjiU4btUhBaAZTplgo0MDDLbyVDzkfd8V1iKrD7pPpi91ZamHf
-	 tFBPp6bmt/2lX03lN44A/yuyi4y/o7yaTXJM5xEo+dTCkIQfwAAvYFHv7K57FUDRqr
-	 VL8IHfv6j97A0loxRRYuQKna9xhosd5+tbkpco6vKoD0kUISrA9xb8ajZZuYs3k+/z
-	 Fj9JoxY711s2d1dRv+7cbPbCA9hAVtfn5QstGAL9XowKfuHd45IV+tVARJQvfU/DBW
-	 iFlZPI3XbMkExg7yW2xoTa860bveQAB1r8gkBWug26qaKU4ploqTw68LO4WZqSSWdz
-	 VEDv8RUsma4PA==
-Date: Mon, 13 Oct 2025 12:22:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC 2/5] dt-bindings: pinctrl: add pic64gx "gpio2" pinmux
-Message-ID: <20251013-grouped-dictation-83e84fb989db@spud>
-References: <20250926-manpower-glacial-e9756c82b427@spud>
- <20250926-gilled-muppet-6ac08937cea6@spud>
- <CACRpkdYoECsAGwUno0b_nz-iBB=iwO0Js_6k4O5k+xhig2NYkg@mail.gmail.com>
- <20251001-grunge-unroll-d7a48294570a@spud>
- <CACRpkdYi_n0VcN78eTCty+rVvTnSPFa-pRGOw1LFziBd_2vwBw@mail.gmail.com>
+	s=arc-20240116; t=1760354592; c=relaxed/simple;
+	bh=bhuJegvTvAcQT0dEuoeIfFInmqmjZ1Q+isoUdA/Q6xA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=U8/ieVvO++VWdG/2vfpQ+ql99tO7d4NX90RIvarzRey0WZ3N3LLE7yO6KAQsKmIUXAB+mIp1UTXu4zghS6/NrQu9pTNfo03ejDNbj+hM1P/eUzSWx2TPomOvmrjAc1BIiKE5ghhMsqA21nkDP9d9UJFDV1pUdf/o4NcyLUPfsbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iu7JmbDX; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760354586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rg/q8gaLEXsqld9FivxIEfM5ipjG9i1m/rctrdOvWIE=;
+	b=iu7JmbDXS09ExiGoWBahy4+AbAU0q26cy0aGZUaC2VqCGiyu4+l+zkCpzaz4vICmLPDqhi
+	G9tafSk2uhs4kuSbF1JHpNTRTPpEtrcY4pPU9a2Y0JVor6puVfJq61dL9cWJWumsA1Hbni
+	7+dfViMzAyWk/xY4KMCmqKn3RCa2TKY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vtasDuPLUQ3We/is"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYi_n0VcN78eTCty+rVvTnSPFa-pRGOw1LFziBd_2vwBw@mail.gmail.com>
-
-
---vtasDuPLUQ3We/is
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] drivers/xen/xenbus: Replace deprecated strcpy in
+ xenbus_transaction_end
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <2cce7bee-af02-4850-b1a8-b7f2cf3f1efb@suse.com>
+Date: Mon, 13 Oct 2025 13:23:00 +0200
+Cc: Jan Beulich <jbeulich@suse.com>,
+ linux-hardening@vger.kernel.org,
+ xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Jason Andryuk <jason.andryuk@amd.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <EC8DD2E1-61F3-4882-8266-3F828377DA35@linux.dev>
+References: <20251012195514.39003-2-thorsten.blum@linux.dev>
+ <ebee3406-d515-4e29-9d7c-f54bdb143080@suse.com>
+ <65bad926-22fc-41da-b9c4-5857a002b377@suse.com>
+ <13cbd826-540e-4352-8e0d-ae0c9fbd2faa@suse.com>
+ <2cce7bee-af02-4850-b1a8-b7f2cf3f1efb@suse.com>
+To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 13, 2025 at 12:56:42PM +0200, Linus Walleij wrote:
-> On Wed, Oct 1, 2025 at 5:47=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
+On 13. Oct 2025, at 11:24, J=C3=BCrgen Gro=C3=9F wrote:
+> On 13.10.25 10:22, Jan Beulich wrote:
+>> On 13.10.2025 09:36, J=C3=BCrgen Gro=C3=9F wrote:
+>>> I would even go further and drop abortstr[] completely:
+>>>=20
+>>> diff --git a/drivers/xen/xenbus/xenbus_xs.c =
+b/drivers/xen/xenbus/xenbus_xs.c
+>>> index 528682bf0c7f..c891af7165f5 100644
+>>> --- a/drivers/xen/xenbus/xenbus_xs.c
+>>> +++ b/drivers/xen/xenbus/xenbus_xs.c
+>>> @@ -550,14 +550,8 @@ EXPORT_SYMBOL_GPL(xenbus_transaction_start);
+>>>    */
+>>>   int xenbus_transaction_end(struct xenbus_transaction t, int abort)
+>>>   {
+>>> -       char abortstr[2];
+>>> -
+>>> -       if (abort)
+>>> -               strcpy(abortstr, "F");
+>>> -       else
+>>> -               strcpy(abortstr, "T");
+>>> -
+>>> -       return xs_error(xs_single(t, XS_TRANSACTION_END, abortstr, =
+NULL));
+>>> +       return xs_error(xs_single(t, XS_TRANSACTION_END, abort ? "F" =
+: "T",
+>>> +                       NULL));
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(xenbus_transaction_end);
+>> Hmm, which xs_single() indeed takes a const char *, it then casts =
+away const-
+>> ness before handing to xs_talkv().
 >=20
-> > tbh, I found it hard to understand the "line" between using a pinmux
-> > property and where stuff should be described in groups or functions in a
-> > driver. What is that line?
->=20
-> There is no such line, basically what I like as pin control maintainer
-> is what exists in the documentation with groups and functions.
->=20
-> Then various driver maintainers have pushed me around since
-> day 1 because they think it is much more convenient to just
-> have some single value to poke into a register.
->=20
-> I have come to accept both because the discussions just
-> go on forever. I'm not a very stern person, "those are my
-> principles, if you don't like them, I have others".
+> Yes, the cast is needed as xs_talkv() can handle reads and writes. No =
+problem in
+> this case, as the string is only read by xs_talkv() (write type =
+operation).
 
-Right, I see. Currently I have 3 drivers, two being what are here. Both
-of those I have converted to use functions and groups. The third retains
-the pinmux property, mostly because of the number of functions that each
-pin can be routed due to being an FPGA. I'll send the first two in the
-coming day or two and see what to do about the third. It's got much more
-going on and no internal pressure to get it working, unlike these the
-first two that folks have expressed a need for.
+I'll submit a v2.
 
-> Essentially it is a question about what the device tree is for:
-> is it just for (outline) description and configuration of hardware
-> for a specific system, i.e. where everything that is not
-> system-specific should be encoded into the driver, or is it
-> for dumping all kind of various SoC-specific stuff into, without
-> abstraction. There is no clear line there either, and that is
-> part of the problem here.
+Thanks,
+Thorsten
 
-Now that I have some understanding about how this stuff works, I can
-start whinging about people using these pinmux properties if you want.
-I'm probably biased by my own laziness and not wanting to write out
-dozens and dozens of groups etc, but in cases where there's only two or
-three functions per pin, using functions/groups seems like the way to
-go..
-
---vtasDuPLUQ3We/is
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOzhCQAKCRB4tDGHoIJi
-0vJ6AP0Wvyxrd3vF1/OoRe5E5Nr3jSD9r6/aGd0S3T/CxCzbiAEAtRF+HCqd8SRp
-qUpKANswOri7Zhu502fUXfaYVvnxiwc=
-=KEDO
------END PGP SIGNATURE-----
-
---vtasDuPLUQ3We/is--
 
