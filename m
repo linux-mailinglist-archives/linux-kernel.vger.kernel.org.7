@@ -1,315 +1,234 @@
-Return-Path: <linux-kernel+bounces-851528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FFBBD6AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B98BD6AB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BA5B4E46C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206503E800F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D2A2FAC07;
-	Mon, 13 Oct 2025 22:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFC32E283A;
+	Mon, 13 Oct 2025 22:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVg5gHbF"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oz/OkYyA"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010021.outbound.protection.outlook.com [52.101.85.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DCF1FCF7C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760395863; cv=none; b=FeYKXTLPi0TJ7dA+RYAMnaUCrUa8igaKgGOpEpiLcK/Z1+xFVXMR+LKv8WJDr3J0K1Hdku8PoDwNwrFrjG3KY/vs+WUjByvas4hzhGwZyopoYKa3t6h9g6A7z+s8VLbY1+c3oDHS1jEj3Sr9PoVvo12OI7tSYZU4ZelmEDUU1MM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760395863; c=relaxed/simple;
-	bh=4hdMkBcIlxdNSHdJG1oVcukAr560whAOqOXRcMuQzJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ao/n873p3TFHu8vi8/W1600Al85fBpHlufaXoOI2ngH0xNjreY1QWlBJKyOOhdQglJqyDxA2mpBLjhy/3YEWv2oBW8cr+af8LMfRo/H22GTQZaHvMdSGiPXqQIAVuWlDU799prfb0gXb5xsM+ev5LvEvH4Ys4rTlxCrVR2nsV8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVg5gHbF; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee12807d97so3166725f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760395860; x=1761000660; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2x2QRbJMEe8ACU/qqjxgwqBfSWUAjEirSAkpltOyPQc=;
-        b=VVg5gHbFVCWrJ5jYEAIl9knwa9FpxaeUoNDJYs/zlJHR3L7pt7GgSbZECYzx9FftbH
-         swtXBY9LmMZMjlu4RG7Azody5MZyxQud0SXOf4eOJP5hqanF3bmncn9h1Z0zYIGJl+0s
-         rvhjiFcxvqG6RCtSvBclbn/tagzSWlNmg28nrKBokXTw0YHes+LNyu8lkLcKDeHAVMfc
-         EKxdee7kC73kkDgvwxMBaQFR2dfQkYWa17olIni3GwHcY9EY8UWz70TJvq60xMGlNiyh
-         Z3soMJagcFbgIKyFEs5Zz/j9wwM95/4uPzudF+zQkskobo6RXdk+AvboDW3a2zP42C2m
-         ugow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760395860; x=1761000660;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2x2QRbJMEe8ACU/qqjxgwqBfSWUAjEirSAkpltOyPQc=;
-        b=APAnCnfZYEym9J3yGC+Nl8SbkTFb0XGkH1tsF5epCOuzfsf3VgW3BO3kVGxcJRcTjK
-         rmYe9/QAXPo13y4pBMlouuQqD+yFt06IBv7hCbB+C7glIs9njXnSJEvB/yHpG1wUfbud
-         3WDoAZjgsBodUgWocXBatOn7grzdlGYIpwABtLNi/XKw2N1BSFYQTFAlXfFVP5EAa/85
-         MVNJaU57wuGO2cCavhN5+gzeLnTxRhqQlJzOXJ62smFZu9TpV7f+xcSZFatBkWf5cwhD
-         5vig3WwmpSXVWoxYEOkaRfBUul94Fs4GMmuLK2Rkxck70oR4RBQKyzQ2irZ6S6+LRl9b
-         OijQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmYplbdIHwRM8nBmQjsxz/QSG09phWoxQs1LmH8TXIARSccyxs9MID00kcbAiv9ZsGuKlW2BfQnx2HVP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFrSKsBkxCj3OPNeve1UtfOZkQvzIkF4lxRtQNkXjHMSGhJqZU
-	tHm/98Gr/w/Db3QLyjMqkwShd3ddnizPJxqFzD1Tx7cdL5dHX+Zzyx2rzcR0fCud
-X-Gm-Gg: ASbGnct4Pjl/KepAwTVntPLzMbFCel4+k/CyN2vUJNxhkMylwkHYadAFUWhx1O6h0zn
-	+WaYOZ6s1PgObWiUTQBLFOjmSKUcqqbbpCqzCRk9Wm9HLpaSwJDpqBJe4GDKsby9dzsNirCSIkq
-	wa24ArEquIX2SHFAevx8PiMGoIFaKbTOeGnPP30/AXB7Rc8K5sw0b2Nzd2kf0sEFGmt4b3LwJnA
-	JpAha1Qu80K6JSMNPI+TBbWybQ4zQn0A3tv/e7kQ9jJl90b1/H3mA5TTS/SYNQ6Du2oLH9DTj/k
-	EwXFF79B1QcrJd+ZGemj41p0nHbKdIIdVWn2DvyLFV4HkniOnhWoyMEiPQipS3FhJJm5DqLwCSG
-	4ePQIP2CTsVWb0VNpWeZcNxU//envcNVTkhFwwpXwj4xRVz1tmRoV4lo9U5FTUoFOmw==
-X-Google-Smtp-Source: AGHT+IErRlsWPPy1/nZGHMbk1L2NiQXNQO1g/VPjoAtC8k8CVey+6Orod80+zbOAqUKI3rvyy/D/cg==
-X-Received: by 2002:a05:6000:1887:b0:3ec:e226:c580 with SMTP id ffacd0b85a97d-4267b339754mr15017773f8f.60.1760395860139;
-        Mon, 13 Oct 2025 15:51:00 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf71dsm19756058f8f.29.2025.10.13.15.50.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 15:50:59 -0700 (PDT)
-Message-ID: <65e6c797-b878-4f0f-90ed-c2437d2becbe@gmail.com>
-Date: Tue, 14 Oct 2025 00:50:58 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506091FCF7C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760395918; cv=fail; b=qDg+BCxoAI6dzl/Bpy7MN/8gFBKKU2W/kE5m8o01A07NoNsfxNurZntyXTq19z/PWjy9G1VW3Kgd7RgggVFVq98Ode59InDdDQ+AA+NQhSPpKeZmMJugSzm1ksWMXnZ1mHB7N2ke+QNo6Gu8YMFx7ZHtLIIEroJa6G/Uy4FKYeg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760395918; c=relaxed/simple;
+	bh=eRsoUh7mMdcE6EBXoP8sMQMGBMKBdG56A/z6qKa1ssY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fQ50nWCfszMgRSl9hNwgq3zrFw8nABkbSFPjTC4RPTONzXnFMPZTLa4OsQdLipDfDxwnl88RvDKWaS8wM099HGWJ51h5xFVHv6uRmDEY9lRPi3V6cV1F1k9NEOzBPDH2TNCmyuqOyG//E4utj4c45GsgscoA6ePqxeKLR3jcFc0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oz/OkYyA; arc=fail smtp.client-ip=52.101.85.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L74jl/i5V7BDn5XvAt81O4pdRquG3IRMQMzESqYppQ5vzfZjCNEvqH4fPEQAhzHRGkzgb4a7yZ9le4PWOPL1Ai7JT9SVs9sgRh262LBRKgH5iP/gYSDpbGb95f3Y4FTxj1u83p1gfAu48RNTVooD0ZYsgydaxZaoHTI90U47fhMA7JOQWYwvKSZAiXLfYfsPGgbH05qXbq1CsX2H3P1mHLGjDXt9QWLlgPee5qFVekzcWFtHAe7+ssXy7vZPBAgd2bQ7DLdLrxarMH6soIwLhPftm5ARyMBSQjkGxM9bRLL0DZ9AV6sEYai12ihkX1x/gvpBQpmTQo4+X+cpC1u6vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vLnUUAZXjqj7jQN+44+goSNdl0+/B1/OrJDcUY6yfas=;
+ b=QeotAz9N/goPWGBr9wnxWl+sowV/eI6e8JK1JTZhxASIsbQEMQVvSq+acFQBBHCxT7MXyVjIfbvM3c+8S/pqitEw4nnldX8DMGa8lV9z/g4QTfaFFfDqOz4oqYkss6NJpyJ59b1p8DETmAnDLq8fFnuO0+EDB6zDBX8vCSkD+0AZ/6CuXryGm2lsvkImLJZKRaipCtnwM1GypAjuTQC0vbbI92s2LK2yMLQe+2i73DqvcSd52RsLwqWxUbZ08sF3YgH71pro2P6t5MHrthRzduJmlsfvCa2CTZ8ZErf+Y8dqmofB/I2By2d+MEqhVrI/V0G6YrOlSagwr5Ak+iPP2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vLnUUAZXjqj7jQN+44+goSNdl0+/B1/OrJDcUY6yfas=;
+ b=oz/OkYyAGg1GValrE/sKVYuXdJJUKdx+8xfKnJestFpmkO1/Pk0aF57M0UDsKYDOjAG3TZV5dkMbm1Rt3h8kVvk3Zifa7bmdai/iDefW4M5Jz9gJpb+1ZlpbgSSXr0CxJUheFjMiGW63D8jeWWnqwqJh9RUKeh13Gv1NmvOKv38QbvIU6LAM4Yd8W0QyDYs8kmAapGGTDOlxMjf+yyUvxXUAaZcCkjnlB5JZBK356nDu8DfX+/cKgXjGjWJvtUuLZBjxk9jf4FKbuQNR24HRb9AEgk1L4xjR/bUjK5YwFj2nA0NW3DbYwuYWGYyXZbTP8uu0cMu16V+uPclz4xaJcQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by SJ2PR12MB8652.namprd12.prod.outlook.com (2603:10b6:a03:53a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 22:51:53 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 22:51:53 +0000
+Message-ID: <4667dcfb-e02a-44ba-9cca-f197a5aebe4e@nvidia.com>
+Date: Tue, 14 Oct 2025 09:51:45 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v7 00/16] mm: support device-private THP
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20251001065707.920170-1-balbirs@nvidia.com>
+ <20251008201740.d9507f4807a73058d4da23a8@linux-foundation.org>
+ <a5992f11-5841-4bbf-b190-b5df41b68b0c@nvidia.com>
+ <aOePfeoDuRW+prFq@lstrano-desk.jf.intel.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <aOePfeoDuRW+prFq@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0139.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::24) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/7] HID: asus: listen to the asus-wmi brightness
- device instead of creating one
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20251013201535.6737-1-lkml@antheas.dev>
- <20251013201535.6737-5-lkml@antheas.dev>
- <e1e6ee09-ea29-4328-9eae-f2a4a23b3edc@gmail.com>
- <CAGwozwHP6ukxBRpOFU+XQL5gyNKu5f-HUJio-=F6rAGUmcm2tw@mail.gmail.com>
- <bb149ff1-5fbc-41ff-a4e8-51f6b8631b5e@gmail.com>
- <CAGwozwHogocd8FHn31tZY15-N_Kdaoy8cYqtdxte=H3Qioj_ug@mail.gmail.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <CAGwozwHogocd8FHn31tZY15-N_Kdaoy8cYqtdxte=H3Qioj_ug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|SJ2PR12MB8652:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61da0198-6ff9-444d-f03c-08de0aab1a53
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TXVMRVJNZjJjY3FUT2R0amtLV3F5NkEzamNpMjIzcUVTanZDOEYwZ1RkM0p0?=
+ =?utf-8?B?OGZVeXQ1YUtXQnc4RkliOVp4eVhUMWRGNHk2cnI2K0ZsZXIzMkJZY0RtVHpT?=
+ =?utf-8?B?Nm5JcVBrQVRTYW9oOElpRXBBekxZazVFV2dSaXhJVHVvc0ZMbDM3eGVWSzNC?=
+ =?utf-8?B?Qm5vb2Q0QTJBcFBPNjRZTjhPZ2tYcUY0MVNhSTdxK09iREJqN2t3Z05yY1ZQ?=
+ =?utf-8?B?Q1E2emJrNVJZT1NXaDhaaFkwTi93ZGV6NHhVMXZkYVFwSjI1WDFxUkdvTnJC?=
+ =?utf-8?B?VjRjeldhNEZ0dCtORHVZQUJycjFWU3JRUjk2ODRjMFZVQSt0b3UwYnVzNkhh?=
+ =?utf-8?B?dDVIMmJFOHBqZmJSclc1U0pUR1RDNHFURXpxN3ZEU1pYTEhmM3ZiWDZrc3g1?=
+ =?utf-8?B?UW0xaEhQWmkrSWMwdE85S1pyVDcxMld1a1FGRUQxbm9uTDFMb1NCODJJNUEz?=
+ =?utf-8?B?TytEeHMvRWVqM0dGU0JkQkh2ZDJYUldFLzdVM3NEbW1lUFFvYjYrT0xBdXBw?=
+ =?utf-8?B?NXF6ajh4SHhKaWpxaGdraDRSUUdQWk9jR1g5TytkOVZoN3lieVBSYm5jUlB0?=
+ =?utf-8?B?eUZzLzBibVVJN2hGd3FtRXljOEVaT2tpL25Eelhxa2JVa0Z2V0wxSzVEOGRW?=
+ =?utf-8?B?VDVtRE84ZmVjSnBzNjhLK1NqYktIaXdBNjhqL2hkd3Zma1VidmkwcDg3Vzds?=
+ =?utf-8?B?YjBrZlRGbEdGZk00bGQzTm5tSFB2TUsrdUNxbnBRcUNKbEF5RmRIRlU5aWI0?=
+ =?utf-8?B?ZzZ6TG11MVdMY3gxckN3TmlZbUI4dDIyOVZUVkJOZ0xLbHdwZ2NGaEYxSjNN?=
+ =?utf-8?B?UkpPcEsvRmozOUtpSXNnLzlQVjlNREtnRGVEYVVxb3dUZWQxZ3lneW5HdHE1?=
+ =?utf-8?B?cUUzREJpQWFldy9qR1h3TnR2TTAzMmM0MWkwbzNEV0pqWjVUVjMvVjFTRmMz?=
+ =?utf-8?B?R05hamhtRis1MWhPd1R4QjZCbjlHeEJSZ0ZSeGF0TXphSmI3c1BBQUpja1Nm?=
+ =?utf-8?B?VzJ6SEo4SG5vTVRTcXdiZGgvdHpPbndiam9RWXNOcFdydEZQZCs0VzJRMmg5?=
+ =?utf-8?B?cXNqVUtCOUxTM3d0WlV0UVhXb3BKRkc3YzZoN2dxV2ZEZDlyTzBRMUlxQkFN?=
+ =?utf-8?B?citlTEtpNWplUi8rMVk2UmJLOS9YS2IxZE1Wa0VxSzEvSmdhZ1FlMUhtMUlT?=
+ =?utf-8?B?Uk9rUWg0WUJqMmRQcnF2VGF6OUFRUWEySHQzVFF4MkhBcEJvNzBaYkFURjhh?=
+ =?utf-8?B?MFlpVjM2d25MU1liTUdLZFNXakZUNURKVXV1b0J1a0xsZnFnZEt2ZXcwMGRk?=
+ =?utf-8?B?ZW1jcGR2cVBSNExMNENpL2J3NEFOeWVzNmszMlA4UWVNTlFPSVYzM3BrYjh4?=
+ =?utf-8?B?dWJpNEQ1YmN2djhZVWpaQ1N4aW9ZdjBEcVVZMmZDOEQ0dU83VWNIWGxyQXBC?=
+ =?utf-8?B?bzlNNWo4a1pFVkN5R1h6K3NQRWdTZXpPWTFsOVczeGxSdXl1TVlyWEJ5VDVo?=
+ =?utf-8?B?WjArWlVNSklWbEk2UXB1U2o5MVUwL2tnUWRRMEtSVUxvLzhmUDlPajVFYXd4?=
+ =?utf-8?B?NDZXc3JVMHJlcFBqRUFaVmpYQm9EellkK2o1c1p3enJ0UmlDZEJGTFVVTkkv?=
+ =?utf-8?B?cWFRRG9IQU1xbWp6cE1ybWp2dDNucU1ZbWNrSlhIYkxCNDR3S2JoTXNLSVNp?=
+ =?utf-8?B?WTVqdlk1WUhDaTF5TDF0QklibnlYY3M1SmZ2eWY5U09IaE5ib2VRN3JzUHBl?=
+ =?utf-8?B?MCt0cTgrUTRHTXR3R0tTcWN5WjN0aDJoY1ZCdWdZSzRTSGU3QVVzY3Z3WU5Q?=
+ =?utf-8?B?OUxWNWtmb2NZS2xvdzR1bDk5UXZPVk1xc25EWTNGMjdQeFBBajI1a3JVeXZy?=
+ =?utf-8?B?ZE4xcS9NWkxYNFFtaFc2ZGtRZ0Z0ZjBydHhmRkJIalRNVUI3K2VaNitNSHNp?=
+ =?utf-8?B?ZFBtRDRvRDRmOVBmbGN3blQrQ2l6Uk9hTjNMTWx2T3A4TlFjTFRTYU43V1pB?=
+ =?utf-8?B?dUxkckJLc0xBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?KzczNURjRGptWSs3UEtEcFRQWmxuU29ueXJ0c0hrSVFlZjJJSkRMTDMraWR6?=
+ =?utf-8?B?QTRhU1hCUExhbDRZZ0dzV0NNZlcvVnlxL0Irc0hMRjNudkpFa1hraWF4cEdo?=
+ =?utf-8?B?T1lmcFd2bTJBSU5ock1ET3B5ZVlSMG9LSzZNME1vMjZxU1h6MWVJMzk0Nytr?=
+ =?utf-8?B?OGxMVmNyVE95cUFrM20ycnpKSitWM0ZGMTFPa3AyTmJHV3ZNUlNab2QxREc3?=
+ =?utf-8?B?NGZyRDd3WXBxMkhZd1dOeDQ0WFhjK1UyalZ2Y0R6U3J3WnpzNldlV3Biajhw?=
+ =?utf-8?B?RFk0U3hVVUdZRUFBRzlLcjhhZnZreVZ2ZHRDbW55TWpoOVh6R0FEeFJkczBj?=
+ =?utf-8?B?bW80M3pqaHhrSFA1TTRxMUdsZ3JKZnNHTFlRbi90ckFlVXhudDFCOTJBVGFS?=
+ =?utf-8?B?SmlveGU1RHo0a056YW8wZWJ2b3dFWjNBVGc4UzBLN0V6YkVBNklINm5lcktS?=
+ =?utf-8?B?THE1ZWtlQ254b1h5OHBHOEJETlhuclNGMVo4QjYrbkl5NXMvckRYRk54SVZ5?=
+ =?utf-8?B?eGI1SHJRMzhyNjY1S3ZMam1JYzVVWFhucUhLSlE0elgvNmpuSGNoV010ZWN3?=
+ =?utf-8?B?Wk9ycy8wdTBxL2xla3dSaGV6all1cUUvU0xOZDBoWDIwamoxY2dRbExDNnZX?=
+ =?utf-8?B?dGJ0eVFUdVdCQ3Z6bnIyaGcwUTVyMGk4anJEa01VNDZ4Vm1GOGpVSWJFOFo2?=
+ =?utf-8?B?TkF5S1RzaytQdGE5Z1JwTEJWK2hIejgwTlRIL29ZNnh6eU02Q2VsZm0yTCti?=
+ =?utf-8?B?cTRRdnM4dzlpek85R25Db2g2SlhxQWdmaTc3NXRHQjlxdjgyZHhobEM1b1Nn?=
+ =?utf-8?B?cmFNelZzQXUvUCs3ZGtRU0d1ZHQ1Nk5XT0gxT2ZiV3NtWXRxSmkrYmQ4alNo?=
+ =?utf-8?B?K2tZbGFHb0orZUlIOVl4LzVhb3hDTHNrY3JvZ0ZDT254d3ZEQnBueDZxWXBU?=
+ =?utf-8?B?Qjh1ZkFRcnNWM2srYUtoRmF6SExVK0hzSy9Lb09KNXRnb1loV2VaZmp3S3NN?=
+ =?utf-8?B?a3I0dzU1cVlPa1p5b1NHcFRZbmRma2ZESFFGbDNwaGdpNG5ZcGRmZHlQQUxX?=
+ =?utf-8?B?TlFXa1M2bTV4SkFYMWx1WmhSWGROSll4TGlUTEY2T3RRblZqcXU0LzZHYmhG?=
+ =?utf-8?B?M2JnZG91blJLUVRpWGxXVmpGTmZaSHlQM21FWXNEclNiSG0zdzkwQTJBSmNt?=
+ =?utf-8?B?UFN3ek5mRnpOMUxSa2RCNTZtS1JrZDg2MjNBNnVRd1h0V21WeVljZlRvYVdH?=
+ =?utf-8?B?Njc5Rzdra2pobGJ6U2FYaDZyYVFhcWppNzdjUzh5dXRaOVA5MEJqV2V1TzlR?=
+ =?utf-8?B?eGxvb2R3Q0xHamxxK0prVE5kMzhoODJMUWhEd2NDaW02RVRaYUdkRkZXVWxs?=
+ =?utf-8?B?UWJpMU1RejQyTTdpdWpiY2FPQ3U0clZ1UFh1bTFqd0gzYzM0TC9KamNLTkpr?=
+ =?utf-8?B?U3REc0xyczQ0N0N1VVgxRm1waGFhOE05cTZIbkFwWnhFVk9EUWI0Zk01bkkv?=
+ =?utf-8?B?cndDRFZFMzNzUktRWnQ0VC8vcXdmaEFzOUZjWGVCVzBvVTVDUU1HTGg3L2pi?=
+ =?utf-8?B?bEpjS0x3UGk5Y0JvQmxlTHR1L1pjM0JlYUNobVVrSDRqZCtQdVF1d2hrTVIx?=
+ =?utf-8?B?b1lyWExzdCtKRjBWZ0xQM09oWklYbElsUXhTVC9LMHFpOTZpNTRJOEZMcDg1?=
+ =?utf-8?B?SG1GYjBwSXU3Y25oekRISS9ZemphdEZESG1GeGRUdmhGODNlcVNVQzg4ZnJi?=
+ =?utf-8?B?NE90aDlZdEQ4Qkw4RXplUGJxQ2hFbU05aitSeVdIRExXV0NOaEVaSFhDQlVw?=
+ =?utf-8?B?WUhFRmkyRHBBYjYreWR6T092TWFCOGtsOVh1VjJrTlJIVm5CVVAzMTMzdzI5?=
+ =?utf-8?B?ZUhBcHRqdHVZelZWSGZpSWJHYTJBZUpXdWVFTUtMb0RVSnlRS3JSSmkxbGZ3?=
+ =?utf-8?B?UTVMMS9EVC9Qd3JROWZzQ3V1S0RPYm01RDh5RElzbmpTTXRkN0JUTUFOM3FX?=
+ =?utf-8?B?aVJVOWpCSzFMcmdoRkdjT3FrYnNqcnR4dUZiR1cydE4zUEtPNTZ6QXNwQVhG?=
+ =?utf-8?B?Y3l5eDd4RGpUZjlJRlg2MmNlYnRHazNyOHFDV1N3cW5aKzhTdnBHWjhBVXdY?=
+ =?utf-8?B?VWZGTHp0SWVWU21zWG91dEVUNzdJYWVvRDZWQ0xYQlFGdTdPb0tKcVhQaVlu?=
+ =?utf-8?Q?3mKgYAumCej1RwgAMyF+JgdbYtpmY2iwQ70YfIh0SBU9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61da0198-6ff9-444d-f03c-08de0aab1a53
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 22:51:53.2974
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Sabe1xHZxk9aa9OpgMOxW4z1TkD7XIqCqipUE8qz4aHf0rV12qzcern7F/+oUHHwnkBj6dq5FqgDz6fqv7eHbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8652
 
-
-On 10/14/25 00:18, Antheas Kapenekakis wrote:
-> On Tue, 14 Oct 2025 at 00:06, Denis Benato <benato.denis96@gmail.com> wrote:
+On 10/9/25 21:33, Matthew Brost wrote:
+> On Thu, Oct 09, 2025 at 02:26:30PM +1100, Balbir Singh wrote:
+>> On 10/9/25 14:17, Andrew Morton wrote:
+>>> On Wed,  1 Oct 2025 16:56:51 +1000 Balbir Singh <balbirs@nvidia.com> wrote:
+>>>
+>>>> This patch series introduces support for Transparent Huge Page
+>>>> (THP) migration in zone device-private memory. The implementation enables
+>>>> efficient migration of large folios between system memory and
+>>>> device-private memory
+>>>
+>>> Lots of chatter for the v6 series, but none for v7.  I hope that's a
+>>> good sign.
+>>>
 >>
->> On 10/13/25 23:57, Antheas Kapenekakis wrote:
->>> On Mon, 13 Oct 2025 at 23:44, Denis Benato <benato.denis96@gmail.com> wrote:
->>>> On 10/13/25 22:15, Antheas Kapenekakis wrote:
->>>>> Some ROG laptops expose multiple interfaces for controlling the
->>>>> keyboard/RGB brightness. This creates a name conflict under
->>>>> asus::kbd_brightness, where the second device ends up being
->>>>> named asus::kbd_brightness_1 and they are both broken.
->>>> Can you please reference a bug report and/or an analysis of why they ends
->>>> up being broken?
->>> You can reference the V1 description [1]
->>>
->>> [1] https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
->> oh okay thanks. I would suggest to keep relevant parts in successive revisions,
->> and most importantly repeat (a shorter description of) relevant parts on the proper
->> commit since commit messages will (hopefully) become part of the kernel,
->> because just reading messages of the current revision doesn't give the full picture
->> of the what and why,
-> It's true I cut out the introduction, perhaps I shouldn't have, but it
-> will get thrown away anyway. I think the commit body is detailed
-> enough though.
-I am aware the cover letter won't be part of the kernel, it's why I asked for the
-relevant context to be repeated in the appropriate commit message.
+>> I hope so too, I've tried to address the comments in v6.
+>>
+> 
+> Circling back to this series, we will itegrate and test this version.
+> 
 
-I don't think commit messages are detailed enough: a few more explanation
-lines would surely help a reader as messages are more centered on the "what" and
-not the "why".
+Look forward to your feedback
 
-Note: this comment of mine is not limited to this particular commit:
-look at how long the v1 cover letter is and how long commit messages are
-once combined. A lot that has been left out should really be included
-(personal opinion of mine, looking at this for the first time: it would have helped).
+>>>>
+>>>> HMM support for large folios, patches are already posted and in
+>>>> mm-unstable.
+>>>
+>>> Not any more.  Which series was this?
+>>
+>> Not a series, but a patch
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?id=10b9feee2d0dc81c44f7a9e69e7a894e33f8c4a1
+> 
+> I think this [1] means this patch is Linus's tree?
+> 
+> Matt
+> 
+> [1] https://github.com/torvalds/linux/commit/10b9feee2d0dc81c44f7a9e69e7a894e33f8c4a1 
+> 
 
-Thanks,
-Denis
-
-> I am looping you in late, but since you are taking over
-> Luke's series and you ended up moving the quirks this series removes
-> and earlier series did not, you will have some merge conflicts.
->
-> By the way, remember to sign off that series yourself as well, since
-> you are changing the commits.
->
-> Antheas
->
->
->> Regards,
->> Denis
->>>>> Therefore, register a listener to the asus-wmi brightness device
->>>>> instead of creating a new one.
->>>>>
->>>>> Reviewed-by: Luke D. Jones <luke@ljones.dev>
->>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
->>>>> ---
->>>>>  drivers/hid/hid-asus.c | 64 +++++++-----------------------------------
->>>>>  1 file changed, 10 insertions(+), 54 deletions(-)
->>>>>
->>>>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
->>>>> index a62559e3e064..0af19c8ef035 100644
->>>>> --- a/drivers/hid/hid-asus.c
->>>>> +++ b/drivers/hid/hid-asus.c
->>>>> @@ -102,7 +102,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->>>>>  #define TRKID_SGN       ((TRKID_MAX + 1) >> 1)
->>>>>
->>>>>  struct asus_kbd_leds {
->>>>> -     struct led_classdev cdev;
->>>>> +     struct asus_hid_listener listener;
->>>> It is my understanding from "register a listener .... instead of creating a new one"
->>>> that you are attempting to use the same listener among many devices... so why isn't
->>>> this a pointer? And more importantly: why do we have bool available, bool registered
->>>> instead of either one or the other being replaced by this field being possibly NULL?
->>> A listener is the handle that is passed to asus-wmi so that it can
->>> communicate with hid-asus. Since the flow of communication flows from
->>> asus-wmi -> hid-asus, the pointer is placed on asus-wmi.
->>>
->>> The boolean kbd_led_avail is used to signify whether the BIOS supports
->>> RGB commands. If not, we still want the common handler to be there to
->>> link multiple hid-asus devices together. At the same time, we need to
->>> skip calling the bios commands for brightness, and hold a value for
->>> the previous brightness outside the bios.
->>>
->>> The kbd_led_registered fixes the race condition that happens between
->>> hid-asus and asus-wmi. Specifically, it ensures that the rgb listener
->>> is only setup once, either once asus-wmi loads (if it supports RGB) or
->>> when the first hid device loads.
->>>
->>> Best,
->>> Antheas
->>>
->>>>>       struct hid_device *hdev;
->>>>>       struct work_struct work;
->>>>>       unsigned int brightness;
->>>>> @@ -495,11 +495,11 @@ static void asus_schedule_work(struct asus_kbd_leds *led)
->>>>>       spin_unlock_irqrestore(&led->lock, flags);
->>>>>  }
->>>>>
->>>>> -static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
->>>>> -                                enum led_brightness brightness)
->>>>> +static void asus_kbd_backlight_set(struct asus_hid_listener *listener,
->>>>> +                                int brightness)
->>>>>  {
->>>>> -     struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
->>>>> -                                              cdev);
->>>>> +     struct asus_kbd_leds *led = container_of(listener, struct asus_kbd_leds,
->>>>> +                                              listener);
->>>>>       unsigned long flags;
->>>>>
->>>>>       spin_lock_irqsave(&led->lock, flags);
->>>>> @@ -509,20 +509,6 @@ static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
->>>>>       asus_schedule_work(led);
->>>>>  }
->>>>>
->>>>> -static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
->>>>> -{
->>>>> -     struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
->>>>> -                                              cdev);
->>>>> -     enum led_brightness brightness;
->>>>> -     unsigned long flags;
->>>>> -
->>>>> -     spin_lock_irqsave(&led->lock, flags);
->>>>> -     brightness = led->brightness;
->>>>> -     spin_unlock_irqrestore(&led->lock, flags);
->>>>> -
->>>>> -     return brightness;
->>>>> -}
->>>>> -
->>>>>  static void asus_kbd_backlight_work(struct work_struct *work)
->>>>>  {
->>>>>       struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
->>>>> @@ -539,34 +525,6 @@ static void asus_kbd_backlight_work(struct work_struct *work)
->>>>>               hid_err(led->hdev, "Asus failed to set keyboard backlight: %d\n", ret);
->>>>>  }
->>>>>
->>>>> -/* WMI-based keyboard backlight LED control (via asus-wmi driver) takes
->>>>> - * precedence. We only activate HID-based backlight control when the
->>>>> - * WMI control is not available.
->>>>> - */
->>>>> -static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
->>>>> -{
->>>>> -     struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
->>>>> -     u32 value;
->>>>> -     int ret;
->>>>> -
->>>>> -     if (!IS_ENABLED(CONFIG_ASUS_WMI))
->>>>> -             return false;
->>>>> -
->>>>> -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
->>>>> -                     dmi_check_system(asus_use_hid_led_dmi_ids)) {
->>>>> -             hid_info(hdev, "using HID for asus::kbd_backlight\n");
->>>>> -             return false;
->>>>> -     }
->>>>> -
->>>>> -     ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
->>>>> -                                    ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
->>>>> -     hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
->>>>> -     if (ret)
->>>>> -             return false;
->>>>> -
->>>>> -     return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
->>>>> -}
->>>>> -
->>>>>  /*
->>>>>   * We don't care about any other part of the string except the version section.
->>>>>   * Example strings: FGA80100.RC72LA.312_T01, FGA80100.RC71LS.318_T01
->>>>> @@ -701,14 +659,11 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
->>>>>       drvdata->kbd_backlight->removed = false;
->>>>>       drvdata->kbd_backlight->brightness = 0;
->>>>>       drvdata->kbd_backlight->hdev = hdev;
->>>>> -     drvdata->kbd_backlight->cdev.name = "asus::kbd_backlight";
->>>>> -     drvdata->kbd_backlight->cdev.max_brightness = 3;
->>>>> -     drvdata->kbd_backlight->cdev.brightness_set = asus_kbd_backlight_set;
->>>>> -     drvdata->kbd_backlight->cdev.brightness_get = asus_kbd_backlight_get;
->>>>> +     drvdata->kbd_backlight->listener.brightness_set = asus_kbd_backlight_set;
->>>>>       INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_backlight_work);
->>>>>       spin_lock_init(&drvdata->kbd_backlight->lock);
->>>>>
->>>>> -     ret = devm_led_classdev_register(&hdev->dev, &drvdata->kbd_backlight->cdev);
->>>>> +     ret = asus_hid_register_listener(&drvdata->kbd_backlight->listener);
->>>>>       if (ret < 0) {
->>>>>               /* No need to have this still around */
->>>>>               devm_kfree(&hdev->dev, drvdata->kbd_backlight);
->>>>> @@ -1105,7 +1060,7 @@ static int __maybe_unused asus_resume(struct hid_device *hdev) {
->>>>>
->>>>>       if (drvdata->kbd_backlight) {
->>>>>               const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4,
->>>>> -                             drvdata->kbd_backlight->cdev.brightness };
->>>>> +                             drvdata->kbd_backlight->brightness };
->>>>>               ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
->>>>>               if (ret < 0) {
->>>>>                       hid_err(hdev, "Asus failed to set keyboard backlight: %d\n", ret);
->>>>> @@ -1241,7 +1196,6 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
->>>>>       }
->>>>>
->>>>>       if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
->>>>> -         !asus_kbd_wmi_led_control_present(hdev) &&
->>>>>           asus_kbd_register_leds(hdev))
->>>>>               hid_warn(hdev, "Failed to initialize backlight.\n");
->>>>>
->>>>> @@ -1282,6 +1236,8 @@ static void asus_remove(struct hid_device *hdev)
->>>>>       unsigned long flags;
->>>>>
->>>>>       if (drvdata->kbd_backlight) {
->>>>> +             asus_hid_unregister_listener(&drvdata->kbd_backlight->listener);
->>>>> +
->>>>>               spin_lock_irqsave(&drvdata->kbd_backlight->lock, flags);
->>>>>               drvdata->kbd_backlight->removed = true;
->>>>>               spin_unlock_irqrestore(&drvdata->kbd_backlight->lock, flags);
+Thanks!
+Balbir
 
