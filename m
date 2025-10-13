@@ -1,191 +1,140 @@
-Return-Path: <linux-kernel+bounces-850144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5C6BD209C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:25:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155BABD20CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D29CC4EE1E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:25:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09DD54EE62B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EFF2F3627;
-	Mon, 13 Oct 2025 08:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408382F362E;
+	Mon, 13 Oct 2025 08:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IfHjLIZR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P1jrCx+u"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBF42F2610
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C112EACF7;
+	Mon, 13 Oct 2025 08:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760343923; cv=none; b=VT2EO+GPCIS4SncWb0Mo+y5fMaGvrGOPWckqCNRIAIab6tmasug4cWQvMIKo6Px4kO24HXDrd+F49ic8BG+3tGmj9aguyZU+65sUdF6xoaAGZQoiOZ6+5kM1JFRDsb7/sTVtHe4lz+AYMPkhyjSDi0UUcmSk4WYErDjC7e41nhM=
+	t=1760343995; cv=none; b=C81j6Ej0rURADYYHzk83mIxqdFbM/J4GaF4fQr0VWfdl7EFHEmaURp/vnbPMPyrysgLLLHdgWo2+aH6hBfJhHTGz96fqHwwUIoAKIVKdMHrtb12mzLMKjBfnL/gBayxxaF9Q18AH3BJlYBc0oCqJxYo9jHE8Y62cOnXGx8oEo+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760343923; c=relaxed/simple;
-	bh=HEat7AkewEQ3u7PqhtZ4WEa9dj4GOCyAnBkiPOW5mTA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ham9rfsvTRI4nWRpba+Mn6BRJjchTpyqwBpei6nFE9uMSKHjVwE5Ym8/bG0lw2steATvOwVcKLJER67suXz6MIX1Pd8WCBr6cD07AIl6I3N+kUvCHNuGU7B8dpOj5TXfyrwizwXQhuPTf+hoWH9cO0Wf1EjMzlIZlJO90Dx9A/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IfHjLIZR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59D2nBuc029362
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:25:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cX1C6BYRcl11MPbTFCuqbjie5JWw/JDuuQ80Dzz7xis=; b=IfHjLIZRQpLCK2/E
-	bC9cw+hQ/OgSc6zCB6qBxCd5C0iDyduHmL2xVyfCKuMtmgl5Nf1pFz05ZSX14SRr
-	gBq4wUfNVs7U90wYEhyXZ/0Xc385R2oPE1NX2ZQHr36bGinDPUCXLYjU522SiMEC
-	5rkp9M9urh80zrUELxSE5gBp6twAxx1KGB2Rw6wJFKuhOzvwYlyRaZjydLEvbqYF
-	58H04Yy0qliiIEsWoJvAcuzYT7EPQic8YpUxjFgHuNeTTYVj1VUpy6ot25Shg+Mi
-	XBDijqPncfy4vcTg7ssLJowEiwR8IBaO6+d4un9r+v4qyM6EgTr/QD1+FzrmVvqg
-	HBRMYQ==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfm5busc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:25:19 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32ec69d22b2so9149237a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:25:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760343918; x=1760948718;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cX1C6BYRcl11MPbTFCuqbjie5JWw/JDuuQ80Dzz7xis=;
-        b=M/Y1HQjVNtDc0lr7ylnDV4+BcYC7W+w5iXPxlZmeYnvM6e4SnZAxjvmbxoh9KwM216
-         9OtbrKgXGunb5zYRmZH2pc/KW2t8PcvUQxOvZDH9meXmaxE0bzPjo3XWNVS5xkSL0l52
-         Y3zDUXjkCWp2/Cc2GqlDk3wsD0KXAjC8oS3MjfyzWKkVTDa/8799vpyKTCEZPge/8UFm
-         7CI1NUMc5B4hne/+vMJINk9NMBWb1J2ENYlIk1KZ+pro6jxWqxg9XDAcqMx66QhCiMqj
-         xo1A2HCXJ5QuvMlACUaIj/jcGDb1JL7sEOy0u1e7zw5LIn2kUEPkd7LV3yZNzbQNAqUw
-         Jyiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeLdRRhuj/HlnwZ/s684+mLyPIYa317hK4DNjhb6AKzaMdBTWO4ewpm0Zww0nw5JaA3WpGA6iKKlUucRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy03djIPiTqis0gzByvCAzv+aQaZ8QAP7rZuMPbBWt4jyTTtTx9
-	oKQsMx++ORvzqpKk7Xg5S/vzvHecC5N69KBhRysV2QsnrNf0edDUaqSA+t359aVZDVwJRrafHHw
-	5lM8ezDz4u8TIWFJ/MyGAf0gd28nWtWx8mHaEQuD34MrQ5FisrNC9uhgMwXhTQ1LrHAs=
-X-Gm-Gg: ASbGnctC4D2V8mvwCdCHWk2yCFZl8Mv9B/qHoQMvEEsHQFIwdBwSM8nZTcRWJWPcCRC
-	o2J9nqoyWamIjLBQupg37uB3ndu0fR1oBmmNtOKk1IhXLr/hsuPRuujy/Rlp9vNHYcWyqk4nBUA
-	QWUtkALWAWCp7DrL67rVDsVI3K3GX0m0Ky/T3Gh0SSNQSNy3CqxvRjhml76b71mmWetP5cMxmyg
-	kuCXkNer46xwCZZHl7emBIYI8RFGoL4ZKdJlAFBPHWSjYUJ33JtIt7teOshLmb+ZroliyenG+Ht
-	Z0nZIjr7B/Y8JHzLEdFSKfn69ERLyMx3T7HYu8kpOUUOgipgiTensuk7u0rrR28dTGx1XTEYj0F
-	rFGMChvi5NWJcWKpl8mfurdX69KJmCA==
-X-Received: by 2002:a17:90b:4a0b:b0:330:6f16:c4e0 with SMTP id 98e67ed59e1d1-33b5116a4b1mr29857497a91.12.1760343918346;
-        Mon, 13 Oct 2025 01:25:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFrkOMOMk67rmSiVsR6dlFd09MdgUDcMj+0J/ZFBTdTAe+wDZFQkg9mfmItRqpsDRlhZVXYqA==
-X-Received: by 2002:a17:90b:4a0b:b0:330:6f16:c4e0 with SMTP id 98e67ed59e1d1-33b5116a4b1mr29857469a91.12.1760343917891;
-        Mon, 13 Oct 2025 01:25:17 -0700 (PDT)
-Received: from [10.133.33.133] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61a3cbf2sm11436365a91.8.2025.10.13.01.25.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 01:25:17 -0700 (PDT)
-Message-ID: <99de75a9-cb2d-48e0-8a8a-c8345fbdf989@oss.qualcomm.com>
-Date: Mon, 13 Oct 2025 16:25:07 +0800
+	s=arc-20240116; t=1760343995; c=relaxed/simple;
+	bh=mhYbMUqo6ZsY2xdUH3I9/u+IkGuSpwABWXvCjwa48yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jasmdKiM3IO+IdWHmSNyDgIP84wO1RG9oFAg7FJrM3DV2NhpZbAx8mQoeO8Qq7nZuVjGL3B8vf/bISEHM83DIc5Maln+RSU+OLLLksoPchxAv+0/v00qMN7XELk7iLsQHHAeKEuP4sWHZW9eciwu8OcmfLtT6VW51q5RmMxh6X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P1jrCx+u; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2onQY5FvSXunJQp4XQbpmjw1bmWMDR7bKnWkiVs65Vs=; b=P1jrCx+uheHj/hJbkIbTIzHL7H
+	I6udKigyAEQLZTwd8MN28N6NsWzWXhmA5ZbVjtuyRNKl3bxrmkVAYFLgW/U2u675HyAneoft1dEuL
+	alxOCO24vFUepC7YJHE0kI4R5yzxiwmXf1LyZXJ8VGxWF1g13hX48IeDZAXu9VjHHzofcdfYERFui
+	qYSEPJlP4sncOP7WVVMUEc8I0MfL7g1aBPAHGD76XwXoe/FiwQuE1ZIw2Qjsf1QnLIA473kBynCRs
+	9M8hEyKjW1X1nFTgeIQK5YAvIi3hTBuqjmXctQFGpL7bpRLmNTa392/lI7K16xQiCJTJWqhzYelzj
+	R1UeeJ1g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8Dsz-000000026Gw-11YD;
+	Mon, 13 Oct 2025 08:26:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4733C300212; Mon, 13 Oct 2025 10:26:29 +0200 (CEST)
+Date: Mon, 13 Oct 2025 10:26:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [tip:x86/core 1/1] vmlinux.o: warning: objtool:
+ rcar_pcie_probe+0x13e: no-cfi indirect call!
+Message-ID: <20251013082629.GH4067720@noisy.programming.kicks-ass.net>
+References: <202510092124.O2IX0Jek-lkp@intel.com>
+ <20251010032001.GA3741500@ax162>
+ <20251010071032.GE4067720@noisy.programming.kicks-ass.net>
+ <20251010074446.GE4068168@noisy.programming.kicks-ass.net>
+ <20251010223012.GA3597090@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] add sysfs nodes to configure TPDA's registers
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-To: James Clark <james.clark@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
-References: <20250827105545.7140-1-jie.gan@oss.qualcomm.com>
- <49bf23dc-705e-45ab-a2e3-fbb798cd8e34@linaro.org>
- <77342c70-3b75-4ccb-ae3a-c0418511a33e@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <77342c70-3b75-4ccb-ae3a-c0418511a33e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: eFFGYUaivC-YJLeuq4ohtuYQGmHfPm48
-X-Proofpoint-ORIG-GUID: eFFGYUaivC-YJLeuq4ohtuYQGmHfPm48
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMCBTYWx0ZWRfX4n91Mvm3m3Pd
- jVSroLgg2P4jqmbVjEd6qCS8DRA+busVj3OWqkfXt95NS4RZXwrPmFHIQ/YxjcrIJGv1F6SJB4q
- ByppXgUS6AiZqoO5h2sskenKWEjcet6YBqjtcbHJ4EIrmx3NEopj0/I7+xtfrTsHflyzFNiI4cJ
- pXqtXcJsFnN3TPtcNTgOT4/x6vsj7d73rcUTtyi5ZfHzuOLYBdFmqHE/V++hZ026y4RCHwcu+3Q
- w4+0MmPQ+RKNJ8ia3H5cOKJh6r5W1M/OHHs3WMoqBwETPIY7pXNdQFuBp6uQkcuI+iuePqPCxhS
- iHS4eE75ssIaXmEOrUf7IhR5GrPTW0z2F7Ks534fG3aLvwtNas/A3kYv3EPeBV9rb94jguckiXt
- bOImDqkQUntBKbRqBr5g1ecSInDIDQ==
-X-Authority-Analysis: v=2.4 cv=V71wEOni c=1 sm=1 tr=0 ts=68ecb76f cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=KKAkSRfTAAAA:8 a=otdSkCFsg5a9Z_Vg604A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=rl5im9kqc5Lf4LNbBjHf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_03,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 spamscore=0 adultscore=0 suspectscore=0
- impostorscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110020
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010223012.GA3597090@ax162>
 
-
-
-On 9/15/2025 10:12 AM, Jie Gan wrote:
+On Fri, Oct 10, 2025 at 03:30:12PM -0700, Nathan Chancellor wrote:
+> On Fri, Oct 10, 2025 at 09:44:46AM +0200, Peter Zijlstra wrote:
+> > That's here... and that is indeed broken. Also note how it zeros r11
+> > right before calling it.
+> > 
+> > AFAICT this is:
+> > 
+> >         host->phy_init_fn = of_device_get_match_data(dev);
+> >         err = host->phy_init_fn(host);
+> > 
+> > Where it has decided that of_device_get_match_data() *will* return NULL
+> > and then helpfully emits (*NULL)(); or something like that. And then
 > 
+> Oh duh because it will :)
 > 
-> On 8/27/2025 7:59 PM, James Clark wrote:
->>
->>
->> On 27/08/2025 11:55 am, Jie Gan wrote:
->>> Patchset 1 introduces configuration of the cross-trigger registers with
->>> appropriate values to enable proper generation of cross-trigger packets.
->>>
->>> Patchset 2 introduces a logic to configure the TPDA_SYNCR register,
->>> which determines the frequency of ASYNC packet generation. These packets
->>> assist userspace tools in accurately identifying each valid packet.
->>>
->>> Patchset 3 introduces a sysfs node to initiate a flush request for the
->>> specific port, forcing the data to synchronize and be transmitted to the
->>> sink device.
->>>
->>> Changes in V3:
->>> 1. Optimizing codes according to James's comment.
->>> Link to V2 - https://lore.kernel.org/all/20250827042042.6786-1- 
->>> jie.gan@oss.qualcomm.com/
->>>
->>> Changes in V2:
->>> 1. Refactoring the code based on James's comment for optimization.
->>> Link to V1 - https://lore.kernel.org/all/20250826070150.5603-1- 
->>> jie.gan@oss.qualcomm.com/
->>>
->>> Tao Zhang (3):
->>>    coresight: tpda: add sysfs nodes for tpda cross-trigger configuration
->>>    coresight: tpda: add logic to configure TPDA_SYNCR register
->>>    coresight: tpda: add sysfs node to flush specific port
->>>
->>>   .../testing/sysfs-bus-coresight-devices-tpda  |  50 ++++
->>>   drivers/hwtracing/coresight/coresight-tpda.c  | 278 ++++++++++++++++++
->>>   drivers/hwtracing/coresight/coresight-tpda.h  |  33 ++-
->>>   3 files changed, 360 insertions(+), 1 deletion(-)
->>>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight- 
->>> devices-tpda
->>>
->>
->> Reviewed-by: James Clark <james.clark@linaro.org>
->>
+>   $ rg '^(# )?CONFIG_OF' .config
+>   1528:# CONFIG_OF is not set
 > 
-> Gentle ping.
-
-Hi Suzuki,
-
-James has reviewed the patch series. May I know whether you have any 
-comments about the patch series before get applied?
-
-Thanks,
-Jie
-
+> which means that of_device_get_match_data() is always NULL:
 > 
+>   static inline const void *of_device_get_match_data(const struct device *dev)
+>   {
+>       return NULL;
+>   }
 > 
+> > forgets to add CFI bits on for extra fun and games.
+> 
+> which means this is another instance of what Sami mentioned happening on
+> another report of a similar issue
+> 
+>   https://lore.kernel.org/CABCJKue1wCB6jBLYUc-fAEzpyQWHXwbk8R5GBaZCkCao0EQZPA@mail.gmail.com/
 
+Ah yes -- I had missed that :/
+
+> which does somewhat make sense because what's the point of setting up
+> the CFI call if you know nothing can actually make use of it since we
+> will crash when trying to indirectly call a NULL pointer?
+
+As Sami says, it would be really nice if clang would at least WARN about
+emitting an unconditional NULL call like that. I mean, it *knows* its
+going to crash and burn at that point, right?
+
+> Something like this would avoid this issue then.
+
+Yes, this seems reasonable -- even if the driver should perhaps
+mandate/depend on CONFIG_OF, making sure to behave when NULL does get
+returned is definitely a good thing!.
+
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+> Cheers,
+> Nathan
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+> index 213028052aa5..15514c9c1927 100644
+> --- a/drivers/pci/controller/pcie-rcar-host.c
+> +++ b/drivers/pci/controller/pcie-rcar-host.c
+> @@ -981,7 +981,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  		goto err_clk_disable;
+>  
+>  	host->phy_init_fn = of_device_get_match_data(dev);
+> -	err = host->phy_init_fn(host);
+> +	err = host->phy_init_fn ? host->phy_init_fn(host) : -ENODEV;
+>  	if (err) {
+>  		dev_err(dev, "failed to init PCIe PHY\n");
+>  		goto err_clk_disable;
 
