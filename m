@@ -1,225 +1,189 @@
-Return-Path: <linux-kernel+bounces-851033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFA4BD55C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:07:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27E8BD5617
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEE7C502ED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4FAE403ECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB332D3724;
-	Mon, 13 Oct 2025 16:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EF1296BBC;
+	Mon, 13 Oct 2025 16:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZSQu07P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hwb2GOTv"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681A12367D9;
-	Mon, 13 Oct 2025 16:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ED12C21D9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760373616; cv=none; b=EztdA2jvpZjbZ9y0xoIoO4fy+2Ec/dTEblHenUO8byh278hXQKB4NILZN1rnu4HvKT0/CL1Yi9lbk9+yTRx0UbNYcu7+XfBB7mLXLOe10X9FDh7i983+Z9raP2kFjCU+i2PUwvetweeSNUfhQp2WziEsCoed3cedlhnQ72SIdy0=
+	t=1760373687; cv=none; b=UBb6WSKFBLXMBAdjbUoxPtf1iv68/emQEA8pwtovNXDvQstTv81dB3COGngP34QvYoYtFdVrmapmbFNY2bjpgVLIfgC3i49T8VQsbXXO3ft14S9C+noz1/ig/QOaT53zitQOEXc6dcAhRCL89MqZ4KncPS+6ovRYgH/2xYt6ACo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760373616; c=relaxed/simple;
-	bh=hs5Dm6BPAEGHFTEY/NVYLFoUg8OkvqoPEabZITp2GSE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TVPbRPg5bueZ8AgnAHDvomQwRzZlnupjwY/kK7MoWf5J2MA+3s8q+EjgT0kFbPmkjrH1O5Utf67vPQuXQLCS2kbBM+c32pJTS2jpqbPGQrdDqo4oaqIw24X0qmx53/N84Wsb88+Lc4pwjbxvsgPkeYe83dbeq5X5rGpXcEFItdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZSQu07P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D77C4CEE7;
-	Mon, 13 Oct 2025 16:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760373616;
-	bh=hs5Dm6BPAEGHFTEY/NVYLFoUg8OkvqoPEabZITp2GSE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XZSQu07P4SgkBBZjCn0RGnl0R5rV5/5dNJSGZOUAAsLQYCfUrfnNS+2HXe4K3m8l/
-	 KspWTGFqpB6+C8D6h76oWfo9JXkqDf2a34ASBb98qAVwnmZ9Btt2ElduQT2WpPTwww
-	 kmiBHNzSKdUzad5WTPGTAhE4J8bGtJo1Iu5u+uJCq98zd4m34G+qLiBvGhsU7F+Csv
-	 HWvSoO80bQv/kATFT6eHFXH67KQXHE+9CuWPspkyUx+j4KM1t6j5TFunRpv9sPvTbQ
-	 9iKwbP2ZPelsuuF5j7/TZi2mOfSFBbkWV2a2oDkxTMJMYb1C8FClYtFZyuYVCnuH7T
-	 j0FoiJN2A1P0A==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Breno Leitao <leitao@debian.org>,  Changyuan Lyu
- <changyuanl@google.com>,  rppt@kernel.org,  akpm@linux-foundation.org,
-  linux-kernel@vger.kernel.org,  anthony.yznaga@oracle.com,  arnd@arndb.de,
-  ashish.kalra@amd.com,  benh@kernel.crashing.org,  bp@alien8.de,
-  catalin.marinas@arm.com,  corbet@lwn.net,  dave.hansen@linux.intel.com,
-  devicetree@vger.kernel.org,  dwmw2@infradead.org,  ebiederm@xmission.com,
-  graf@amazon.com,  hpa@zytor.com,  jgowans@amazon.com,
-  kexec@lists.infradead.org,  krzk@kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  luto@kernel.org,  mark.rutland@arm.com,
-  mingo@redhat.com,  pasha.tatashin@soleen.com,  pbonzini@redhat.com,
-  peterz@infradead.org,  robh@kernel.org,  rostedt@goodmis.org,
-  saravanak@google.com,  skinsburskii@linux.microsoft.com,
-  tglx@linutronix.de,  thomas.lendacky@amd.com,  will@kernel.org,
-  x86@kernel.org
-Subject: Re: [PATCH v8 01/17] memblock: add MEMBLOCK_RSRV_KERN flag
-In-Reply-To: <mafs0wm4yluej.fsf@kernel.org> (Pratyush Yadav's message of "Mon,
-	13 Oct 2025 16:59:32 +0200")
-References: <20250509074635.3187114-1-changyuanl@google.com>
-	<20250509074635.3187114-2-changyuanl@google.com>
-	<ef6wfr72set5wa5el3wbbu4yd5tnc4p2rhtjpb5kpmncv3xs5d@i3c5v3ciioi3>
-	<mafs0wm4yluej.fsf@kernel.org>
-Date: Mon, 13 Oct 2025 18:40:09 +0200
-Message-ID: <mafs0h5w2lpqu.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760373687; c=relaxed/simple;
+	bh=WPzi6r2qVvabEkimRUZFOxt9F2ZQWquwd2NrZTUXhmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YiM0S2MxuI3T/EMDN1xFra9L4tQwKg13zvNHQIp2LTaCkVytdesenBWnoecU7QKZsAzKCMCMEUUkJD0tNLryFTMzuFrPsezG9fDviM+aANBO25rNoioRfElRjTf1vsCHGJaOwYELk971x0QJmDRAMloMEq7ZQ50VHUJ7xj740Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hwb2GOTv; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DBmqLB016900;
+	Mon, 13 Oct 2025 16:41:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=s6zXXE
+	Tg6weOdUZ+i5Uep1lXgDbqfEnhCvMg8i/XkAA=; b=hwb2GOTvTj0BOKKX9XnyX5
+	g820o4l5JIeznhXKPjGBBa/MWr3YkWTqhLKd8zH1uYfv/OxqzbbcOG++3h9OoX4B
+	qqw0qWrGsBrWLzlXu6+I7/pKm6l3Bt/PCrU1+EozCl9WUR4HRiPD5r7WSGUAVPw2
+	/bcp6waKP4jiZcQnZzE4EdnjRVhfqNgismqq8lDcMKkAh4Nrda6OMI+hRtBA9+9e
+	CfEOFJoaS2O6ew0Tz3pj6FOiP3RPniwd8s9TandONmoaBjlquCjGi1zrGxwXsDPn
+	tOIwl+CzQaxR6eD3fNtW69dFUT3Lsd6mqkq1q1dhl1WTp1MVZRuBk/VDU1pkwE6A
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qcnr26mk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 16:41:11 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59DF4ZPV018397;
+	Mon, 13 Oct 2025 16:41:10 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49s3rf0eh6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 16:41:10 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59DGf8NE44171692
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 13 Oct 2025 16:41:09 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DE16220043;
+	Mon, 13 Oct 2025 16:41:08 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A8EEE20040;
+	Mon, 13 Oct 2025 16:41:06 +0000 (GMT)
+Received: from [9.124.217.163] (unknown [9.124.217.163])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 13 Oct 2025 16:41:06 +0000 (GMT)
+Message-ID: <e09fb1c2-cf74-47ff-af6c-671fe23c2e90@linux.ibm.com>
+Date: Mon, 13 Oct 2025 22:11:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg
+ when balance is not due
+To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Doug Nelson <doug.nelson@intel.com>,
+        Mohini Narkhede <mohini.narkhede@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        K Prateek Nayak <kprateek.nayak@amd.com>
+References: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
+ <20251013142638.GM3245006@noisy.programming.kicks-ass.net>
+ <49dba7ff-8be6-40cf-9aa7-b0a5cb2f77c3@intel.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <49dba7ff-8be6-40cf-9aa7-b0a5cb2f77c3@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=M5ZA6iws c=1 sm=1 tr=0 ts=68ed2ba7 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=gHXSL_-MfW6troZJZr4A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: VL-2fvfIKtx6TwUilS-AER6KNY-tWY_v
+X-Proofpoint-ORIG-GUID: VL-2fvfIKtx6TwUilS-AER6KNY-tWY_v
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEwMDE0MCBTYWx0ZWRfXxH8ZLznmo6E7
+ vhYlqRHdvdx+RfMFqiFBWPkOyEyeklob4DzOTzt6jHAuFEeu7SPDQCtnsmUWWrBXp9XO3eJX+Q+
+ Rhn0NMHEhgRRyd+lIrPhgMgl5LiUOReoiJ3cE/lP8nxEyhBYC+Hcg0xn4P9PFsoqGsU5exipGLK
+ Nr7MfluVJIB+1baHcj8GrZMzEXSrq2IFDOXR6woala5k/xheOfJ8GtZ0R/CLuxjG/FvBFOW7ykA
+ AwZKurPnFOUitTgMI6Pu/jm7gWdcOhXL5+RZjHwlZImTH9fM6WCVKD/4qG8yRenes+oJv5tE/aG
+ wPSqeIpZpVJWx6CBuBjJ75iXi2JPWcoqCZ309eUZ07QaOE7ST2d2BspoM+0Sv11qQXCxJNeyhQx
+ xWMy+sFlGOhlD2IZOI4rge3hiXWhww==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_06,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510100140
 
-On Mon, Oct 13 2025, Pratyush Yadav wrote:
 
-> On Fri, Oct 10 2025, Breno Leitao wrote:
->
->> Hello Chanyuan, Mike,
->>
->> On Fri, May 09, 2025 at 12:46:19AM -0700, Changyuan Lyu wrote:
->>> --- a/mm/memblock.c
->>> +++ b/mm/memblock.c
->>> @@ -492,7 +492,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
->>>  	 * needn't do it
->>>  	 */
->>>  	if (!use_slab)
->>> -		BUG_ON(memblock_reserve(addr, new_alloc_size));
->>> +		BUG_ON(memblock_reserve_kern(addr, new_alloc_size));
->>>  
->>>  	/* Update slab flag */
->>>  	*in_slab = use_slab;
->>> @@ -642,7 +642,7 @@ static int __init_memblock memblock_add_range(struct memblock_type *type,
->>>  #ifdef CONFIG_NUMA
->>>  			WARN_ON(nid != memblock_get_region_node(rgn));
->>>  #endif
->>> -			WARN_ON(flags != rgn->flags);
->>> +			WARN_ON(flags != MEMBLOCK_NONE && flags != rgn->flags);
->>
->> I am hitting some sporadic warnings at early boot on a production kernel
->> (6.16). Unfortunately this issue is not easily reproduce for me to test on
->> upstream.
->>
->> 	09:14:44  BIOS-provided physical RAM map:
->> 	09:14:44  BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usable
->> 	09:14:44  BIOS-e820: [mem 0x00000000000a0000-0x00000000000fffff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x0000000000100000-0x0000000064cb7fff] usable
->> 	09:14:44  BIOS-e820: [mem 0x0000000064cb8000-0x0000000064dc3fff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x0000000064dc4000-0x0000000065b13fff] usable
->> 	09:14:44  BIOS-e820: [mem 0x0000000065b14000-0x0000000065b61fff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x0000000065b62000-0x0000000065ed0fff] usable
->> 	09:14:44  BIOS-e820: [mem 0x0000000065ed1000-0x0000000065f2bfff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x0000000065f2c000-0x0000000066621fff] usable
->> 	09:14:44  BIOS-e820: [mem 0x0000000066622000-0x0000000066630fff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x0000000066631000-0x0000000068107fff] usable
->> 	09:14:44  BIOS-e820: [mem 0x0000000068108000-0x000000006819dfff] ACPI data
->> 	09:14:44  BIOS-e820: [mem 0x000000006819e000-0x000000006a48cfff] usable
->> 	09:14:44  BIOS-e820: [mem 0x000000006a48d000-0x000000006c58cfff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x000000006c58d000-0x000000006c5dcfff] ACPI data
->> 	09:14:44  BIOS-e820: [mem 0x000000006c5dd000-0x000000006cfdcfff] ACPI NVS
->> 	09:14:44  BIOS-e820: [mem 0x000000006cfdd000-0x000000006e9fcfff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x000000006e9fd000-0x000000006fffffff] usable
->> 	09:14:44  BIOS-e820: [mem 0x0000000070000000-0x000000008fffffff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x00000000fd000000-0x00000000fe7fffff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x00000000fed20000-0x00000000fed44fff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
->> 	09:14:44  BIOS-e820: [mem 0x0000000100000000-0x000000107fff655f] usable
->> 	09:14:44  BIOS-e820: [mem 0x000000107fff6560-0x000000107fff656f] type 128
->> 	09:14:44  BIOS-e820: [mem 0x000000107fff6570-0x000000107fffffff] usable
->> 	09:14:44  random: crng init done
->> 	09:14:44  ------------[ cut here ]------------
->> 	09:14:44 WARNING: CPU: 0 PID: 0 at mm/memblock.c:668 memblock_add_range (mm/memblock.c:668)
->> 	09:14:44  Modules linked in:
->> 	09:14:44  Tainted: [S]=CPU_OUT_OF_SPEC
->> 	09:14:44 RIP: 0010:memblock_add_range (mm/memblock.c:668)
->> 	09:14:44 Code: 28 80 3c 01 00 0f 84 04 fd ff ff 4c 89 ef e8 6c 77 09 00 e9 f7 fc ff ff 0f 0b 83 7c 24 1c 00 0f 85 9c fd ff ff e9 c5 fd ff ff <0f> 0b e9 be fd ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 6b fd
->> 	All code
->> 	========
->> 	0:    28 80 3c 01 00 0f        sub    %al,0xf00013c(%rax)
->> 	6:    84 04 fd ff ff 4c 89     test   %al,-0x76b30001(,%rdi,8)
->> 	d:    ef                       out    %eax,(%dx)
->> 	e:    e8 6c 77 09 00           call   0x9777f
->> 	13:    e9 f7 fc ff ff           jmp    0xfffffffffffffd0f
->> 	18:    0f 0b                    ud2
->> 	1a:    83 7c 24 1c 00           cmpl   $0x0,0x1c(%rsp)
->> 	1f:    0f 85 9c fd ff ff        jne    0xfffffffffffffdc1
->> 	25:    e9 c5 fd ff ff           jmp    0xfffffffffffffdef
->> 	2a:*    0f 0b                    ud2            <-- trapping instruction
->> 	2c:    e9 be fd ff ff           jmp    0xfffffffffffffdef
->> 	31:    44 89 f1                 mov    %r14d,%ecx
->> 	34:    80 e1 07                 and    $0x7,%cl
->> 	37:    80 c1 03                 add    $0x3,%cl
->> 	3a:    38 c1                    cmp    %al,%cl
->> 	3c:    0f                       .byte 0xf
->> 	3d:    8c 6b fd                 mov    %gs,-0x3(%rbx)
->>
->> 	Code starting with the faulting instruction
->> 	===========================================
->> 	0:    0f 0b                    ud2
->> 	2:    e9 be fd ff ff           jmp    0xfffffffffffffdc5
->> 	7:    44 89 f1                 mov    %r14d,%ecx
->> 	a:    80 e1 07                 and    $0x7,%cl
->> 	d:    80 c1 03                 add    $0x3,%cl
->> 	10:    38 c1                    cmp    %al,%cl
->> 	12:    0f                       .byte 0xf
->> 	13:    8c 6b fd                 mov    %gs,-0x3(%rbx)
->> 	09:14:44  RSP: 0000:ffffffff85e07d48 EFLAGS: 00010083 ORIG_RAX: 0000000000000000
->> 	09:14:44  RAX: 0000000000000020 RBX: 0000000000001c00 RCX: dffffc0000000000
->> 	09:14:44  RDX: 000000000009f000 RSI: 000000000009d000 RDI: ffffffff8685ebf8
->> 	09:14:44  RBP: 0000000000000002 R08: 0000000000000020 R09: 0000000000000000
->> 	09:14:44  R10: ffffffffff200570 R11: fffffbffffe400b2 R12: 000000000009d000
->> 	09:14:44  R13: 0000000000100000 R14: ffffffff8edf5ce4 R15: ffffffff8edf5ce0
->> 	09:14:44  FS:  0000000000000000(0000) GS:0000000000000000(0000) knlGS:0000000000000000
->> 	09:14:44  CR2: ffff888059e2dff8 CR3: 000000005bc1d000 CR4: 00000000000000b0
->> 	09:14:44  Call Trace:
->> 	09:14:44   <TASK>
->> 	09:14:44 ? __memblock_reserve (mm/memblock.c:936)
->> 	09:14:44 ? add_early_ima_buffer (arch/x86/kernel/setup.c:413)
->> 	09:14:44 ? parse_setup_data (arch/x86/kernel/setup.c:500)
->> 	09:14:44 ? setup_arch (arch/x86/kernel/setup.c:245 arch/x86/kernel/setup.c:958)
->> 	09:14:44 ? start_kernel (init/main.c:922)
->> 	09:14:44 ? x86_64_start_reservations (arch/x86/kernel/ebda.c:57)
->> 	09:14:44 ? x86_64_start_kernel (arch/x86/kernel/head64.c:231)
->> 	09:14:44 ? common_startup_64 (arch/x86/kernel/head_64.S:419)
->> 	09:14:44   </TASK>
->> 	....
->> 	Memory: 49640988K/66772816K available (54946K kernel code, 19058K rwdata, 22636K rodata, 2940K init, 120968K bss, 10650188K reserved, 6291456K cma-reserved)
->>
->> So, there is a memory override, and I am curious about it. Do you think it
->
-> Yeah, it seems IMA is reserving a region that overlaps a region reserved
-> by something else that doesn't use memblock_reserve_kern().
->
->> would be useful to expand this warning to dump more information about the
->> issue? (only compiled tested)
->>
->> 	if (flags != MEMBLOCK_NONE && flags != rgn->flags) {
->> 		pr_warn("memblock: Flag mismatch at region [%pa-%pa]\n",
->> 			&rgn->base, &rend);
->> 		pr_warn("  Existing region flags: %#x\n", rgn->flags);
->> 		pr_warn("  New range flags: %#x\n", flags);
->> 		pr_warn("  New range: [%pa-%pa]\n", &base, &end);
->> 		WARN_ON_ONCE(1);
->> 	}
->
-> I suppose this would be useful. I think enabling memblock debug prints
-> would also be helpful (using the "memblock=debug" commandline parameter)
-> if it doesn't impact your production environment too much.
 
-Actually, I think "memblock=debug" is going to be the more useful thing
-since it would also show what function allocated the overlapping range
-and the flags it was allocated with.
+On 10/13/25 10:02 PM, Chen, Yu C wrote:
+> On 10/13/2025 10:26 PM, Peter Zijlstra wrote:
+>> On Thu, Oct 02, 2025 at 04:00:12PM -0700, Tim Chen wrote:
+>>
+>>> During load balancing, balancing at the LLC level and above must be
+>>> serialized.
+>>
+>> I would argue the wording here, there is no *must*, they *are*. Per the
+>> current rules SD_NUMA and up get SD_SERIALIZE.
+>>
+>> This is a *very* old thing, done by Christoph Lameter back when he was
+>> at SGI. I'm not sure this default is still valid or not. Someone would
+>> have to investigate. An alternative would be moving it into
+>> node_reclaim_distance or somesuch.
+>>
+> 
+> Do you mean the following:
+> 
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 444bdfdab731..436c899d8da2 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -1697,11 +1697,16 @@ sd_init(struct sched_domain_topology_level *tl,
+>                  sd->cache_nice_tries = 2;
+> 
+>                  sd->flags &= ~SD_PREFER_SIBLING;
+> -               sd->flags |= SD_SERIALIZE;
+>                  if (sched_domains_numa_distance[tl->numa_level] > 
+> node_reclaim_distance) {
+>                          sd->flags &= ~(SD_BALANCE_EXEC |
+>                                         SD_BALANCE_FORK |
+>                                         SD_WAKE_AFFINE);
+> +                       /*
+> +                        * Nodes that are far away need to be serialized to
+> +                        * reduce the overhead of long-distance task 
+> migration
+> +                        * caused by load balancing.
+> +                        */
+> +                       sd->flags |= SD_SERIALIZE;
+>                  }
+> 
+> We can launch some tests to see if removing SD_SERIALIZE would
+> bring any impact.
+> 
+>>> On a 2-socket Granite Rapids system with sub-NUMA clustering enabled
+>>> and running OLTP workloads, 7.6% of CPU cycles were spent on cmpxchg
+>>> operations for `sched_balance_running`. In most cases, the attempt
+>>> aborts immediately after acquisition because the load balance time is
+>>> not yet due.
+>>
+>> So I'm not sure I understand the situation, @continue_balancing should
+>> limit this concurrency to however many groups are on this domain -- your
+>> granite thing with SNC on would have something like 6 groups?
+>>
+> 
+> My understanding is that, continue_balancing is set to false after
+> atomic_cmpxhg(sched_balance_running), so if sched_balance_domains()
+> is invoked by many CPUs in parallel, the atomic operation still compete?
+> 
 
-On my qemu VM with KVM, this results in around 70 prints from memblock.
-So it adds a bit of extra prints but nothing that should be too
-disrupting I think. Plus, only at boot so the worst thing you get is
-slightly slower boot times.
+ From what i could remember,
 
--- 
-Regards,
-Pratyush Yadav
+This mostly always happens at SMT after which continue_balancing = 0.
+Since multiple CPUs end up calling it (specially on busy system)
+it causes a lot cacheline bouncing. and ends up showing in perf profile.
+
 
