@@ -1,72 +1,74 @@
-Return-Path: <linux-kernel+bounces-850715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5943ABD39B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:39:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED655BD39DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A911896305
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251A73E1F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD903081D6;
-	Mon, 13 Oct 2025 14:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759C82749ED;
+	Mon, 13 Oct 2025 14:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VR7GsXkE"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010034.outbound.protection.outlook.com [52.101.46.34])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tmBwm/3V"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010002.outbound.protection.outlook.com [52.101.46.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88F626A0AF
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA075261B9C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.2
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366128; cv=fail; b=gyQV1etj3GexfteaVWhaXzPWSkIrblbWu5j7bi4+vG1LV406dfpxRjBX0PDpbR4EhkwvX/E/RNU4awwDLpVZKtVJ3dmgQYsrGg+W840umNf75phHY5POiLucGjzN2kzSRBQgluosRWqVRRkrmJ2e1DXm6e8xGeGfmhblEc0+qQc=
+	t=1760366122; cv=fail; b=nijBGgsFok2SIZp4ogD7/Dc5a9odIC2cww8YFIEXRi0MG/Vr5Z6pWFJmzk2aFHz0P3whdvOq01ubxnNC7mRps7b5cIZs0Rs6VScf0nYTezMPAnSm4gNRns3hP6+9F9XMY18CGS47XlGLIusp8woeNR+bqMCMXuUU0/c5u9ZE5/w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366128; c=relaxed/simple;
-	bh=n6F4QTqVp9J8A0CtdJUdmyBofxkompSnxyz7xacqd9I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PhnhangIAnoew0lPyj+4FCYS//d0CN9afoj8N8MVvfXivGnRaeDvShQ09udj3VFdnW3Z+dW5GaChfn7HIMIc4qLfvLDQ0hfEyYQqwFDpeF6D1PkpyfIqbNH5qzPoqimw4oHO+F4A9UjAonsEMwLBhGk/JLnB7RHOYF+FNZexnh0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VR7GsXkE; arc=fail smtp.client-ip=52.101.46.34
+	s=arc-20240116; t=1760366122; c=relaxed/simple;
+	bh=TLfzB99JOZOJ29uO0YP7DkX02c4QoKQtktNAKR5MKHQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W0VuHhYNAQ1OTvqrAoNfoEZl8wLQQFgK724/0CzGbh1FVrlMt1PiEr5LdNQ7aI6kl7txiOGqFTM6Ui4A2mhgYcdrfsLE/CK1rhopSDiMhqgCYxpNapmuDpMryXs3TCJV6/8yeQEs440xxtD0xmtu+ZlouWmaazIkll2PKdlog6c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tmBwm/3V; arc=fail smtp.client-ip=52.101.46.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MDbSkvMjXjJIx0Qi19otl9y+OIbwxAI2OJiny8Dg3j4YushxAO6pnou0jAnXGwPuYh87BxgGHE99p73C8K5qdRnheGX4YHkXq8AMAxby/xb0qoBS7AUIXQmJ4GK/lUOcL2yPP0SIBIVR/GXy9S+3j9yb3h99IQgeyVMwvjE/UY7Ku9dvaEdJBl5JgdZTW06Q8Z1KaD/dYbzBJeruiFFLz9sQ2ANu42yor2DuP4Hs/OFxpqHCDgNG+XAlfgMfO5En38IrVNUkISxgL5SxD32R1SbQ97rX0UTn3bwdsahIW9Bt8tM3lfAIUOomFXEjGObkTYx6YutVFnBhu8MUuYy6gw==
+ b=ApvlZwYEL+vV7lPy437Myg5XPE71ZicOvP391lbpfUmdaYNUI1WuLVoSvX2oIICI+HKG+6mSw63H/wXJ6zy5NbsOD0lKXP3WaSli1487SLQfl8TksNpMDv7zJB2P+9CTAvbl9+ExVayvEgjldi9NdT2+rrPCWxqEZW1I5R7GfVbbQA3CjMD31R2J7saRJWjMGeVJh0qtwORqMYgZzAcsdH1lCptLfh2AlDNcQ9B6HoTkILMrT5s29xtlRI3RtDV0S0H0pxS3J5/8surht4mmbpCWndLVlbdMGprU6y1KPUH5hMERvTIdyNIcP1b5SYberkFFrJrCYy85CPh5LPtZjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GxTLW5AP1iN0IHnQeEaSC/gpj6xTD2vied+LHOPAZmY=;
- b=wgJZndzVfiLZQr1pesvR8dPiEh68ccUUv1BA6JhrdUTIqL6w+ORk3Q2M3AxJT0xLevDRVuO7KO9fuPxrP2fj+cRKq9HZnlrWC7e6JAxAVEByD0RdqMTYm1+oOsEx1yb7G6faPpA5jQXVLAVtVepp7cghSajPs0wH+RgNuPTl1YSLCmz1bCZrbsJAIiDQwNN/91a3JGEUaHZsqQrnb/6s9ZDGnhZavZdYkMq97n1LS37UysLXc8rs7/Yen089XXQg6vxbFROOLzS5BtZyYSdbRnU7mFiZv7yi8wAGAiw/S/7v2WsFy6MgRDy1wQJLHnzgvYxrUK8HsamOAav5RN5dwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=temperror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none (0)
+ bh=YC4AQHPsZl3n4cnt7w3EZcP+dCeYOC4Met4ryNVaPPA=;
+ b=JvDXI35NkI5FUnNLHX6SgeF5Jl194+32moyT43B3MpqBQYkqmzOeY99K6/jhB5uaXmOpcD3RyRbMMGrxNDCX48xGtnslkLIh9Dn3kkLC5vA74bqqnKOnQ8hTt6qmg8JZ7UyzzBSbHDThXBY1YCDQzrjxDV1bhOG+/7CEeK/0HAlRMonSF5RN/UtWZRcBGhj3y2fsAt7yLLZ7WfGKLoMuQfcxvIZhYX+EAaqdVqyrwiaxt/RzJzsBOsK+3sHktEOcROkkIOjUf3MquVjv40h+OVg1mYEpaZvBFqDnzo3hrUXfZRCy9WnZy3J6SuzwDdYMWGTed1+lERHN12tg4JZ5IA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GxTLW5AP1iN0IHnQeEaSC/gpj6xTD2vied+LHOPAZmY=;
- b=VR7GsXkE/oYATPddVMrs+EZTmy1hfKWlXSXYaWOsoreKyVOGU4YxVX9iXCpgIpYEuKsX3POvwxLkSpym0wOiBQirVGXnDH0wp0EkxP53W8kZw8G12R77POkDMXwtsMr/nt3vxJLJwQ4h51oidk1gAQnkpffn4FNg52JFnML2Wv8=
-Received: from PH8PR02CA0045.namprd02.prod.outlook.com (2603:10b6:510:2da::33)
- by DM4PR12MB7574.namprd12.prod.outlook.com (2603:10b6:8:10e::9) with
+ bh=YC4AQHPsZl3n4cnt7w3EZcP+dCeYOC4Met4ryNVaPPA=;
+ b=tmBwm/3VbOmi6Zj32MPbERKZC7e9p+3ZgzxhRHkOo/G+7W8gTPHz4uMvAOJsJ0PoeVHYYk8fktFG9OWd5p1T+A7UU2wzfprYzxOA5TmsOYkGlxIYS9v1/WdAeFa8h4K53NEsw64L7eJI2DU1t6yWHqJtPdl1ckgl0Tx2AN3/xkQ=
+Received: from SA1P222CA0114.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c5::21)
+ by DS7PR12MB6005.namprd12.prod.outlook.com (2603:10b6:8:7c::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 14:35:19 +0000
-Received: from SN1PEPF0002BA50.namprd03.prod.outlook.com
- (2603:10b6:510:2da:cafe::6e) by PH8PR02CA0045.outlook.office365.com
- (2603:10b6:510:2da::33) with Microsoft SMTP Server (version=TLS1_3,
+ 2025 14:35:18 +0000
+Received: from SN1PEPF0002BA4B.namprd03.prod.outlook.com
+ (2603:10b6:806:3c5:cafe::af) by SA1P222CA0114.outlook.office365.com
+ (2603:10b6:806:3c5::21) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Mon,
- 13 Oct 2025 14:35:18 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=temperror action=none header.from=amd.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of amd.com: DNS Timeout)
+ 13 Oct 2025 14:35:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF0002BA50.mail.protection.outlook.com (10.167.242.73) with Microsoft
+ SN1PEPF0002BA4B.mail.protection.outlook.com (10.167.242.68) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:35:16 +0000
+ 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:35:17 +0000
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 13 Oct
- 2025 07:35:15 -0700
+ 2025 07:35:16 -0700
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -75,10 +77,12 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 00/56] Dynamic mitigations
-Date: Mon, 13 Oct 2025 09:33:48 -0500
-Message-ID: <20251013143444.3999-1-david.kaplan@amd.com>
+Subject: [RFC PATCH 01/56] Documentation/admin-guide: Add documentation
+Date: Mon, 13 Oct 2025 09:33:49 -0500
+Message-ID: <20251013143444.3999-2-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,291 +95,153 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA50:EE_|DM4PR12MB7574:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c31755f-da53-45d8-5495-08de0a65ba6a
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4B:EE_|DS7PR12MB6005:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51cc2e9d-dd8a-4999-0724-08de0a65badf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013;
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4nTyJF6wRVirIuYuK0v4wsB9k0aeX9hQbNqg/UjleJmK59aa+J13tlgmY+a6?=
- =?us-ascii?Q?UEkC1yAi43JUY6EAFinOW3dWUoYCWYa8kDWa/yqBOZtzrsbp/XL4c2Ow4w2L?=
- =?us-ascii?Q?yZJ3HQZrj6PvDSp2wZSBfr3YO1ZUebHJAYuC1Gtzi1M5ekNH2Aqj76B9TX5b?=
- =?us-ascii?Q?Bv/4X2FKzXG9zTXEEphFR6xFAdfquV2LKBz2oGyAUl/vls4rSJr0AFDhGdNH?=
- =?us-ascii?Q?HatYT140A9vtsNbGeAW7HbqSwN/rksMdILkBx/JHJ69bV+y2icG5Q8ukZHUt?=
- =?us-ascii?Q?bcJa4XndnU9V1Dt5JUwvS1dqkOtlw0MkQIHHubnUoYgbYotVNGS1DvWFGw6r?=
- =?us-ascii?Q?IYmfOej6QgKf1yZert5Fb//En0EXCiOczWsOh6kHrLMeBRexOUCB/MfiIWth?=
- =?us-ascii?Q?ZxJa//7ECbZHu8fPN9+jSY63lff/0Fs/nS78w/uM04rxuQEw0JN1PNihfEWs?=
- =?us-ascii?Q?uXzQVozrpo/zkZKnFDxBtX8XDkmpVPTRP8umF4Z5Xhbtn8zn/fVxlKw3j3w6?=
- =?us-ascii?Q?NkKx46OkWZdR6APlc36M7+qIbSP1HlBriAaNWc+I4c2XobxSK4E7OrMjybUf?=
- =?us-ascii?Q?ystIDut1HDu7ldcDSSUYuPRfo7qlBeV2dUATxj25ksblWiFx1/hWMXrwYQ7R?=
- =?us-ascii?Q?ASIjgkWOJm4r4wkWUWo1hqJWzRD+oMQScYT4w2P1nwDqc4UwwQoKT0xbolm/?=
- =?us-ascii?Q?bxtcUI784nTc9aYk+DaDqQtOfEACemSbdjvXAGcROXWLjI1eSpPIzYR9VgTm?=
- =?us-ascii?Q?TsyMOS0KGWhhKUQwwLmY0bfHTFjevC+ZuvcRox1z+T1gfb54EE5mDZxytDHZ?=
- =?us-ascii?Q?OXEURYMiu3bUU8NQY6tZWdZUIYcMVlYueD5/F+7Djb+26t/+Hl/ZEDzfZw0k?=
- =?us-ascii?Q?peXeI/M5jIv2h3XLSCMd0uknESQOjHpZa9dvFeSOQVyhafTuMgLswgOqJM3c?=
- =?us-ascii?Q?ldCHaQsR6DeNGmpozgnu3rMuubqWC8bOBussePB0wTeuxio0LI66CEKOPMSY?=
- =?us-ascii?Q?ZPEuo8ck0wOpil+m2ndBVct4QrOJZmVP/48w5XvVhq0jebIiJw1gQSPHkd8a?=
- =?us-ascii?Q?UCowB51r3Lz7BhZgfDRaJ+yESQN0eind24Maz4PtGR7f9b/D9dwwc/OXdANW?=
- =?us-ascii?Q?wri3jgh7SUvHQjvPL2oGnBzBLDfo4QsUc7qCcPolfAA20SztjfBsq6i3Tk2n?=
- =?us-ascii?Q?sOyjBuhDCqvcckufUkz8ykyVQH2F7C7FmJLbEH9gqWBU1UuQouqnzizxmpgF?=
- =?us-ascii?Q?u6Cac5PalCuk38QsbkZpX3LiCArKkSQ8EzQeEe7xGAEt77r8UpwNB2SOX8Zf?=
- =?us-ascii?Q?OvqUHkSLkkg6vqzjgeJ4OjU1EQbv1c6G6ajgvAY8FFhvkMOmXrAmkkaatCRU?=
- =?us-ascii?Q?O5IHqZfse/Chtz+8KHjjAMlVI5yfkIXrU2BYvojyb+PTilqfDN8n3AZZrBq6?=
- =?us-ascii?Q?wUb1YqSlEil1T5XOtnXWx7G4WRtD5lZtFzeBGbyAlvEjqESJMRoF9U9Nn/t4?=
- =?us-ascii?Q?jY7XUSxK8dKSI7AEszXXTxWavXiipOLbbbsLfAT4hLOc9X4jmWS7NlxpD8d+?=
- =?us-ascii?Q?eCyd8FYbwVdA4tOrPWs=3D?=
+	=?us-ascii?Q?Bm02ZPcWA+FB5HgDHBbHWQqKYpEUG5zSZTsqwt8tXxE9ed+dxwAcuepJG4Oc?=
+ =?us-ascii?Q?jsRamSKQGwi86qvOqXQ2KkTigSbH3Kwe5nGZ2pCc8HjK4Lstr80nNer0T/kI?=
+ =?us-ascii?Q?H0GahEgcoa+8Uoa+WwktOtSEGKA50o9ITQwev9cbcFibZ2+WMgXWnfdJpk+e?=
+ =?us-ascii?Q?OpIs9IZPtFjn6jLlzRAPtPEjcybLqXAliJI05yOP24NGohj4yk6LqEFhqp6K?=
+ =?us-ascii?Q?BWk3dmSmaLBKfEyt5qUp3aVBxnybgNzR7C38JTp02xqm1vDed1jYKDTYeKep?=
+ =?us-ascii?Q?SowqPIgokg/u5hs47VkGk5gdc9sRJB/59FJqix1zpWsHJIdGE25KEn9uJoZK?=
+ =?us-ascii?Q?1bxjEZkvXxdr4qS9k9lRPFMSzJY23sKw6QRG64bzlkXt7NcQCTe/4O76LFkW?=
+ =?us-ascii?Q?14saSoZrQZJVGby4Eoq2+NZadsXS+RcTHLuvMmAVY+c4bpquXPg8CViW4qv3?=
+ =?us-ascii?Q?GsJrn7SXbCYpNK9ICl7ncJU5ZzE2No1WmDNzjRMQ8DnH7BasoAzm2GsEOQvu?=
+ =?us-ascii?Q?qOfCnzR45clJW3+xjVoh3VlIFfycYBLwmXgZGblVPEW2EFJVtWZVSM0MnRBF?=
+ =?us-ascii?Q?P/C1z/N7jrOySQ0aVx/fF6GW5+VASnSeMHIOKVFeJm5FikaIaneEOsCf+g63?=
+ =?us-ascii?Q?mtIy5DmA+v7BZ0076wVr/kgeuqwWJRdRsKUpubi33bpdCt/YDkj13/iuntHi?=
+ =?us-ascii?Q?yUJIKZRF6ySKO5hrJL3+YI8lDJLuH9kffJ9+pLbYV4ijOc2LYq3nQ/46T7Ld?=
+ =?us-ascii?Q?NYskYT0JtI32CnsFzuSCcRZtNnxmxVY3N7Sh8Nj3xEb7D/hzNd31/1wWgBUP?=
+ =?us-ascii?Q?uABTbWiWCTOToppnjSnWf1SPGLoCncmWBkJm6Iw3lavToAP+MTFLCPKCyYx0?=
+ =?us-ascii?Q?KT0pl+RWsYdoneALfIA1a9FRwCb5SSlOSi6VK93y9/7Hl+L2ICYudyv12Ceu?=
+ =?us-ascii?Q?ehUHkeUzwdKCnqBgF5rrFVq++qhWZlgJ7R5icPzcWBCpG8uwf5jU8O+sjVY7?=
+ =?us-ascii?Q?Kv022r69kE522GbNSAG6t9Hwg6SleFZXsQXDkkGTZHXAi0Kzs/CzyLOmSkzP?=
+ =?us-ascii?Q?HNFsh4c20vWxP0es612liw6UJJeOL5glCVip7sqzPDYSZqQtqvCqNQAX1y/T?=
+ =?us-ascii?Q?PN/G30vCsL5pOIhJbGMDrWoHXzdAQRqzjPE+7/dCkdRMabQBSt4+5MPQXAUg?=
+ =?us-ascii?Q?GEspgRIdrenLYT4G8hskR0DXUbJ0iOpxHNP4jQSacAnCK09T8jcnA2i/LSNM?=
+ =?us-ascii?Q?qtzKNERmYFz7sDlHid4unWPsgo2wMRduIiGdta2fRcgyZZhm1crbuhCgMjFC?=
+ =?us-ascii?Q?eiqICNWkMtyfTL6VH+jxYFysn4Dmws2YrgipWa6totSesn+TYkuM3+8JgaDv?=
+ =?us-ascii?Q?/4ZxdH9h/DWCrG5lgsIfhcKI6Mfk9I5mmXS6rKw/3rAksCCbMFYeecONbc73?=
+ =?us-ascii?Q?U10OZ5wFSOn0h41J7JdPf81YRyhZFsr6ZGiVgYgi33DrDHdmlOuPIfEOkXcy?=
+ =?us-ascii?Q?HTrRjhJAlqvrXFg5gq1FyNUDH/kJxUJnRVMRUmv1q2O0cuuNxtv64+mHsMhy?=
+ =?us-ascii?Q?6MwnoomaZSkvjp0vsJw=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:35:16.8044
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:35:17.5707
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c31755f-da53-45d8-5495-08de0a65ba6a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51cc2e9d-dd8a-4999-0724-08de0a65badf
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA50.namprd03.prod.outlook.com
+	SN1PEPF0002BA4B.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7574
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6005
 
-Dynamic mitigations enables changing the kernel CPU security mitigations at
-runtime without a reboot/kexec.
+Add new documentation for the dynamic mitigation feature.
 
-Previously, mitigation choices had to be made on the kernel cmdline.  With
-this feature an administrator can select new mitigation choices by writing
-a sysfs file, after which the kernel will re-patch itself based on the new
-mitigations.
-
-As the performance cost of CPU mitigations can be significant, selecting
-the right set of mitigations is important to achieve the correct balance of
-performance/security.
-
-Use
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
-As described in the supplied documentation file, new mitigations are
-selected by writing cmdline options to a new sysfs file.  Only cmdline
-options related to mitigations are recognized via this interface.  All
-previous mitigation-related cmdline options are ignored and selections are
-done based on the new options.
-
-Examples:
-   echo "mitigations=off" > /sys/devices/system/cpu/mitigations
-   echo "spectre_v2=retpoline tsa=off" > /sys/devices/system/cpu/mitigations
-
-
-There are several use cases that will benefit from dynamic mitigations:
-
-Use Cases
----------
-1. Runtime Policy
-
-Some workflows rely on booting a generic kernel before customizing the system.
-cloud-init is a popular example of this where a VM is started typically with
-default settings and then is customized based on a customer-provided
-configuration file.
-
-As flows like this rely on configuring the system after boot, they currently
-cannot customize the mitigation policy.  With dynamic mitigations, this
-configuration information can be augmented to include security policy
-information.
-
-For example, a cloud VM which runs only trusted workloads likely does not
-need any CPU security mitigations applied.  But as this policy information
-is not known at boot time, the kernel will be booted with unnecessary
-mitigations enabled.  With dynamic mitigations, these mitigations can be
-disabled during boot after policy information is retrieved, improving
-performance.
-
-2. Mitigation Changes
-
-Sometimes there are needs to change the mitigation settings in light of new
-security findings.  For example, AMD-SB-1036 advised of a security issue
-with a spectre v2 mitigation and advised using a different one instead.
-
-With dynamic mitigations, such changes can be made without a reboot/kexec
-which minimizes disruption in environments which cannot easily tolerate
-such an event.
-
-3. Mitigation Testing
-
-Being able to quickly change between different mitigation settings without
-having to restart applications is beneficial when conducting mitigation
-development and testing.
-
-Note that some bugs have multiple mitigation options, which may have
-varying performance impacts.  Being able to quickly switch between them
-makes evaluating such options easier.
-
-
-Implementation Details
-----------------------
-Re-patching the kernel is expected to be a very rare operation and is done
-under very big hammers.  All tasks are put into the freezer and the
-re-patching is then done under the (new) stop_machine_nmi() routine.
-
-To re-patch the kernel, it is first reverted back to its compile-time
-state.  The original bytes from alternatives, retpolines, etc. are saved
-during boot so they can later be used to restore the original kernel image.
-After that, the kernel is patched based on the new feature flags.
-
-This simplifies the re-patch process as restoring the original kernel image
-is relatively straightforward.  In other words, instead of having to
-re-patch from mitigation A to mitigation B directly, we first restore the
-original image and then patch from that to mitigation B, similar to if the
-system had booted with mitigation B selected originally.
-
-
-Performance
------------
-Testing so far has demonstrated that re-patching takes ~50ms on an AMD EPYC
-7713 running a typical Ubuntu kernel with around 100 modules loaded.
-
-Guide to Patch Series
----------------------
-As this series is rather lengthy, this may help with understanding it:
-
-Patches 3-18 focus on "resetting" mitigations.  Every bug that may set feature
-flags, MSRs, static branches, etc. now has matching "reset" functions that will
-undo all these changes.  This is used at the beginning of the re-patch flow.
-
-Patches 20-22 move various functions and values out of the .init section.  Most
-of the existing mitigation logic was marked as __init and the mitigation
-settings as __ro_after_init but now these can be changed at runtime.  The
-__ro_after_init marking functioned as a defense-in-depth measure but is arguably
-of limited meaningful security value as an attacker who can modify kernel data
-can do a lot worse than change some speculation settings.  As re-patching
-requires being able to modify these settings, it was simplest to remove them
-from that section.
-
-Patches 23-27 involve linker and related modifications to keep alternative
-information around at runtime instead of free'ing it after boot.  This does
-result in slightly higher runtime memory consumption which is one reason why
-this feature is behind a Kconfig option.  On a typical kernel, this was measured
-at around 2MB of extra kernel memory usage.
-
-Patches 28-30 focus on the new stop_machine_nmi() which behaves like
-stop_machine() but runs the handler in NMI context, thus ensuring that even NMIs
-cannot interrupt the handler.  As dynamic mitigations involves re-patching
-functions used by NMI entry code, this is required for safety.
-
-Patches 31-40 focus on support for restoring the kernel text at runtime.  This
-involves saving the original kernel bytes when patched the first time and adding
-support to then restore those later.
-
-Patches 41-44 start building support for updating code, in particular module
-code at runtime.
-
-Patches 45-47 focus on support for the Indirect Target Selection mitigation
-which is particularly challenging because it requires runtime memory allocations
-and permission changes which are not possible in NMI context.  As a result, ITS
-memory is pre-allocated before entering NMI context.
-
-Patch 50 adds the complete function for resetting and re-patching the kernel.
-
-Patches 51-53 build the sysfs interface for re-patching and support for parsing
-the new options provided.
-
-Patches 54-56 add debugfs interfaces to values which are important for
-mitigations.  These are useful for userspace test utilities to be able to force
-a CPU to appear to be vulnerable or immune to certain bugs as well as being able
-to help verify if the kernel is correctly mitigating various vulnerabilities.
-
-David Kaplan (56):
-  Documentation/admin-guide: Add documentation
-  x86/Kconfig: Add CONFIG_DYNAMIC_MITIGATIONS
-  cpu: Reset global mitigations
-  x86/bugs: Reset spectre_v1 mitigations
-  x86/bugs: Reset spectre_v2 mitigations
-  x86/bugs: Reset retbleed mitigations
-  x86/bugs: Reset spectre_v2_user mitigations
-  x86/bugs: Reset SSB mitigations
-  x86/bugs: Reset L1TF mitigations
-  x86/bugs: Reset MDS mitigations
-  x86/bugs: Reset MMIO mitigations
-  x86/bugs: Reset SRBDS mitigations
-  x86/bugs: Reset SRSO mitigations
-  x86/bugs: Reset GDS mitigations
-  x86/bugs: Reset BHI mitigations
-  x86/bugs: Reset ITS mitigation
-  x86/bugs: Reset TSA mitigations
-  x86/bugs: Reset VMSCAPE mitigations
-  x86/bugs: Define bugs_smt_disable()
-  x86/bugs: Move bugs.c logic out of .init section
-  x86/callthunks: Move logic out of .init
-  cpu: Move mitigation logic out of .init
-  x86/vmlinux.lds: Move alternative sections
-  x86/vmlinux.lds: Move altinstr_aux conditionally
-  x86/vmlinux.lds: Define __init_alt_end
-  module: Save module ELF info
-  x86/mm: Conditionally free alternative sections
-  stop_machine: Add stop_machine_nmi()
-  x86/apic: Add self-NMI support
-  x86/nmi: Add support for stop_machine_nmi()
-  x86/alternative: Prepend nops with retpolines
-  x86/alternative: Add module param
-  x86/alternative: Avoid re-patching init code
-  x86/alternative: Save old bytes for alternatives
-  x86/alternative: Save old bytes for retpolines
-  x86/alternative: Do not recompute len on re-patch
-  x86/alternative: Reset alternatives
-  x86/callthunks: Reset callthunks
-  x86/sync_core: Add sync_core_nmi_safe()
-  x86/alternative: Use sync_core_nmi_safe()
-  static_call: Add update_all_static_calls()
-  module: Make memory writeable for re-patching
-  module: Update alternatives
-  x86/module: Update alternatives
-  x86/alternative: Use boot_cpu_has in ITS code
-  x86/alternative: Add ITS re-patching support
-  x86/module: Add ITS re-patch support for modules
-  x86/bugs: Move code for updating speculation MSRs
-  x86/fpu: Qualify warning in os_xsave
-  x86/alternative: Add re-patch support
-  cpu: Parse string of mitigation options
-  x86/bugs: Support parsing mitigation options
-  drivers/cpu: Re-patch mitigations through sysfs
-  x86/debug: Create debugfs interface to x86_capabilities
-  x86/debug: Show return thunk in debugfs
-  x86/debug: Show static branch config in debugfs
-
- .../ABI/testing/sysfs-devices-system-cpu      |   8 +
- .../hw-vuln/dynamic_mitigations.rst           |  75 ++
- Documentation/admin-guide/hw-vuln/index.rst   |   1 +
- arch/x86/Kconfig                              |  12 +
- arch/x86/entry/vdso/vma.c                     |   2 +-
- arch/x86/include/asm/alternative.h            |  51 +-
- arch/x86/include/asm/bugs.h                   |   4 +
- arch/x86/include/asm/module.h                 |  10 +
- arch/x86/include/asm/sync_core.h              |  14 +
- arch/x86/kernel/alternative.c                 | 497 ++++++++++++-
- arch/x86/kernel/apic/ipi.c                    |   7 +
- arch/x86/kernel/callthunks.c                  |  85 ++-
- arch/x86/kernel/cpu/bugs.c                    | 686 +++++++++++++-----
- arch/x86/kernel/cpu/common.c                  |  65 +-
- arch/x86/kernel/cpu/cpu.h                     |   4 -
- arch/x86/kernel/fpu/xstate.h                  |   2 +-
- arch/x86/kernel/module.c                      |  96 ++-
- arch/x86/kernel/nmi.c                         |   4 +
- arch/x86/kernel/static_call.c                 |   3 +-
- arch/x86/kernel/vmlinux.lds.S                 | 110 +--
- arch/x86/mm/init.c                            |  12 +-
- arch/x86/mm/mm_internal.h                     |   2 +
- arch/x86/tools/relocs.c                       |   1 +
- drivers/base/cpu.c                            | 113 +++
- include/linux/cpu.h                           |  10 +
- include/linux/module.h                        |  11 +
- include/linux/static_call.h                   |   2 +
- include/linux/stop_machine.h                  |  32 +
- kernel/cpu.c                                  |  62 +-
- kernel/module/main.c                          |  78 +-
- kernel/static_call_inline.c                   |  22 +
- kernel/stop_machine.c                         |  79 +-
- 32 files changed, 1876 insertions(+), 284 deletions(-)
+ .../hw-vuln/dynamic_mitigations.rst           | 75 +++++++++++++++++++
+ Documentation/admin-guide/hw-vuln/index.rst   |  1 +
+ 2 files changed, 76 insertions(+)
  create mode 100644 Documentation/admin-guide/hw-vuln/dynamic_mitigations.rst
 
-
-base-commit: a5652f0f2a69fadcfb2f687a11a737a57f15b28e
+diff --git a/Documentation/admin-guide/hw-vuln/dynamic_mitigations.rst b/Documentation/admin-guide/hw-vuln/dynamic_mitigations.rst
+new file mode 100644
+index 000000000000..9904e6ec9be5
+--- /dev/null
++++ b/Documentation/admin-guide/hw-vuln/dynamic_mitigations.rst
+@@ -0,0 +1,75 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++Dynamic Mitigations
++-------------------
++
++Dynamic mitigation support enables the re-configuration of CPU vulnerability
++mitigations through sysfs.  The file /sys/devices/system/cpu/mitigations
++contains the current set of mitigation-related options.  The file can be written
++to in order to make the kernel re-select and re-apply mitigations without a
++reboot or kexec.
++
++The data written to the file should be command line options related to
++mitigation controls (e.g., "mitigations=auto spectre_v2=retpoline mds=off").
++When the file is written, all previous selections related to mitigation controls
++are discarded and the new options are evaluated.  Any non-mitigation related
++options are ignored.
++
++Dynamic mitigations are available if the CONFIG_DYNAMIC_MITIGATIONS option is
++selected.
++
++Purpose
++-------
++
++Dynamic mitigations serve two primary purposes:
++
++Move Policy To Userspace
++^^^^^^^^^^^^^^^^^^^^^^^^
++
++Mitigation choices are related to the security policy and posture of the system.
++Most mitigations are only necessary on shared, multi-user systems if untrusted
++code may be run on the system, such as through untrusted userspace or untrusted
++virtual machines.  The kernel may not know how the system will be used on boot,
++and therefore must adopt a strong security posture for safety.
++
++With dynamic mitigations, userspace can re-select mitigations once the needs of
++the system can be determined and more policy information is available.
++
++Mitigation Testing
++^^^^^^^^^^^^^^^^^^
++
++Dynamic mitigation support makes it easy to toggle individual mitigations or
++choose between different mitigation options without the expense of a reboot or
++kexec.  This may be useful when evaluating the performance of various
++mitigation options.  It can also be useful for performing bug fixes without a
++reboot, in case a particular mitigation is undesired or buggy.
++
++Caveats
++-------
++
++There are a few limitations to dynamic mitigation support:
++
++Runtime Limitations
++^^^^^^^^^^^^^^^^^^^
++
++There are a few mitigations that cannot be toggled at runtime due to the way
++they are structured.  Specifically, kernel PTI (page table isolation) cannot be
++toggled because of the complexity of this mitigation.  Additionally, SMT cannot
++be disabled at runtime.  Therefore, if a bug mitigation requires disabling SMT,
++a warning message will be printed.
++
++BPF JIT
++^^^^^^^
++
++There is currently no way to recompile already JIT'd BPF programs.  This can
++present a security problem if moving from a less secure security posture to a
++more secure one.  It is recommended to either unload BPF programs prior to
++re-configuring mitigations, ensure that security settings only become less
++restrictive over time, or disable use of the BPF JIT.
++
++Performance
++-----------
++
++Re-configuring mitigations is done under the biggest of hammers.  All tasks are
++frozen, all cores are stopped, interrupts are masked, etc.  This may affect
++system responsiveness if lots of patching must be done.
+diff --git a/Documentation/admin-guide/hw-vuln/index.rst b/Documentation/admin-guide/hw-vuln/index.rst
+index 55d747511f83..44418bad5895 100644
+--- a/Documentation/admin-guide/hw-vuln/index.rst
++++ b/Documentation/admin-guide/hw-vuln/index.rst
+@@ -27,3 +27,4 @@ are configurable at compile, boot or run time.
+    old_microcode
+    indirect-target-selection
+    vmscape
++   dynamic_mitigations
 -- 
 2.34.1
 
