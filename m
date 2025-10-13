@@ -1,124 +1,104 @@
-Return-Path: <linux-kernel+bounces-851281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C622FBD603E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C79BD6044
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B33405EBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70DC18A49F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9072DAFDD;
-	Mon, 13 Oct 2025 19:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180812DAFC3;
+	Mon, 13 Oct 2025 19:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="tSMPaCM3"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4982E2D7385;
-	Mon, 13 Oct 2025 19:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kKbwpmBq"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3414D1CA84;
+	Mon, 13 Oct 2025 19:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760385314; cv=none; b=F9uhjpJ5WtAZY8im2oGs1G4XHpjiJTKD+2DC1S+LWIBaJtGu/9CHkZge5K6+5QRYyL07H8Yzm6m3xT/HBFgzkywtPLMBp7fSCwTTCML8dPRwdwn98m7/ZLXR6yRffpoPoeLBZXu1szOYUAX01QT9B4CxWcCfYmwtsVlX9H9XynQ=
+	t=1760385451; cv=none; b=FFD55rFTL81GcTGLnboyahhKCtVjPsTCIjLNcoauxN4fUUlRNlRoCBx1nXSXv7ipkIlzabsZFDG5JMAfxPcNihQGDmj7WU8U5Cc1G5EmGtsNd2QqAZGJ726ImlfC3OJ0ISEDZPX8zYOvoiyoXUWP67lysS8GMX68+enyIrgUCpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760385314; c=relaxed/simple;
-	bh=p04emB7EWJKdYHfPdfNWI5BlN1aHWFazFo2EChhEZhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4RGoAawFQUXINQlaUPi5fb/xzWOGECYVnaQP/teZSHghHV/fG64lGRuhEFelTeCQEyxjyKGRcFB22qjIRJY9okUiIgyN5YxdFp0F+RDSNaUxFsM686Dr2HPVg7wxbM4JpC6Rsy91VpmqZe/eCQ6Qm1RJn+KXrBgA2XcZ7VEVpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=tSMPaCM3; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 805B71A134E;
-	Mon, 13 Oct 2025 19:55:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 45DA66067B;
-	Mon, 13 Oct 2025 19:55:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 10BD9102F227A;
-	Mon, 13 Oct 2025 21:54:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760385305; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=ueA4Mw4ZvAdPduByR8LCFz7NV7MIajA8VN4BjDi+iYc=;
-	b=tSMPaCM3u/5AMWi6C2uaGeO7nteYc8EWKCbf8Atx+55xMokblB8D7uyqQUIN5UN0VCyf8M
-	92rSu2RHAMygLwiTzDHbfNr6o39la14ofppeSKWml+FP2LeSBi+tMVaA9t21CfewwODbPY
-	O2iuzUWMZ9m3sdCASDH/6F85ruQDAszHZA2BlFfDdR01oDoTOGJcZVTzMKsl+PR7xrtB/u
-	kCvU5b6eyw7dGzYrzu/ZYfz+585J2Rmp3YyycCPmvrqpkvXzI4JJICjnHtrTPDlVVxjYUD
-	8Lnbu5vdBtJDAqrcnk19G+o0IESLUGkvny+JXMAEGdeZnfZ8WdPwOeSuFhLf8w==
-Date: Mon, 13 Oct 2025 21:54:55 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
-	devicetree@vger.kernel.org, Carlos Song <carlos.song@nxp.com>,
-	Adrian Fluturel <fluturel.adrian@gmail.com>
-Subject: Re: [PATCH v5 0/5] i3c: Add basic HDR mode support
-Message-ID: <2025101319545551cfb399@mail.local>
-References: <20251007-i3c_ddr-v5-0-444184f7725e@nxp.com>
- <20251012180327.5d94dda2@jic23-huawei>
+	s=arc-20240116; t=1760385451; c=relaxed/simple;
+	bh=8WDz4ZbNB96LLcu6hjmzQIgU5ZCEzepUzwjbj0t2K7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NGlBrgPNBWbQg+p2bpsszU7otdakRf9jTZNXohuX0lWOwWqHVDmB0VqPC/FUY0z4YL3IX1pYSscEyg2w9kG/hmHbo+7ZGZMij28jl2QBPecsbF9TDwgkU9YOxBbqv2IvQ6A/NJ67ChmN+dcCL3mJEJzzQkBn0zEJ1VPKF2Ggo2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kKbwpmBq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.76.64.58] (unknown [20.97.9.18])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 29EB72065942;
+	Mon, 13 Oct 2025 12:57:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 29EB72065942
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760385449;
+	bh=ek2yDpktb2CguXy5Z7Ut0IRgqjH213ECc7iX3AVyaoE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kKbwpmBq8ediwHVma1Xlkr/fZOhaPU7S69kpbE8VgJ7TrIUX5/SwuH1zjytR4qBPi
+	 EpA9dAG3e00dQzSK2uLs0+UeiYE+zzsMoPhJUu8meRk0FrIomSSg0frM42lnnzadHk
+	 1COJ1qcGHCfvZiNhDcWQjgUj9WL/c/dSEqyP48Ng=
+Message-ID: <6270ca1e-b77a-4133-bd7a-6e01e65fd921@linux.microsoft.com>
+Date: Mon, 13 Oct 2025 14:57:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251012180327.5d94dda2@jic23-huawei>
-X-Last-TLS-Session-Version: TLSv1.3
-
-On 12/10/2025 18:03:27+0100, Jonathan Cameron wrote:
-> On Tue, 07 Oct 2025 16:06:12 -0400
-> Frank Li <Frank.Li@nxp.com> wrote:
-> 
-> > Add basic HDR mode support, only support private transfer, not support
-> > CCC command.
-> > 
-> > Update i3c framework API to allow pass down mode and extend driver callback
-> > function.
-> > 
-> > Implement HDR transfer in svc i3c master driver.
-> > 
-> > Simplifed HDR flow is (ref i3c spec line 5514) Figure 129
-> > 
-> > <--              SDR            ---> | <--- HDR
-> > START 0x7E RnW(0) ACK CCC(ENTHDR0) T   HDR-CMD(00-7f write, 80--ff read)
-> > 
-> >                                     ----> |  
-> > HDR-DATA HDR-CRC HDR-RESTART .... HDR-EXIT
-> > 
-> > Note: HDR-CMD is 16bit data, which included 7bit slave address and 8bit
-> > read/write command.
-> > 
-> > svc hardware can auto issue SDR part.
-> > 
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> Whilst there will probably have to be a v6 for the ACPI ID issue in patch 5,
-> I'd like to ask the question of how are we planning to merge this?
-> 
-> Maybe an immutable branch either in IIO or I3C trees that the other one picks up?
-> 
-> It's a new driver so could gamble on taking the IIO driver the I3C tree but even
-> then I'd like a topic / immutable branch in case any IIO wide refactors or similar
-> hit this cycle.
-> 
-
-I can definitively provide an immutable branch once this goes in or if
-you are more comfortable with this, I guess there is no urgency and we
-could apply this over two cycles, first the I3C part and then you can
-take the driver.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Add support for clean shutdown with MSHV
+To: Wei Liu <wei.liu@kernel.org>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
+ tglx@linutronix.de, mingo@redhat.com, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, arnd@arndb.de, anbelski@linux.microsoft.com
+References: <20251009160501.6356-1-prapal@linux.microsoft.com>
+ <aOg2hiWM4PZ8D1S5@skinsburskii.localdomain>
+ <20251013190546.GC3862989@liuwe-devbox-debian-v2.local>
+Content-Language: en-US
+From: Praveen K Paladugu <prapal@linux.microsoft.com>
+In-Reply-To: <20251013190546.GC3862989@liuwe-devbox-debian-v2.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+
+On 10/13/2025 2:05 PM, Wei Liu wrote:
+> On Thu, Oct 09, 2025 at 03:26:14PM -0700, Stanislav Kinsburskii wrote:
+>> On Thu, Oct 09, 2025 at 10:58:49AM -0500, Praveen K Paladugu wrote:
+>>> Add support for clean shutdown of the root partition when running on MSHV
+>>> hypervisor.
+>>>
+>>> Praveen K Paladugu (2):
+>>>    hyperv: Add definitions for MSHV sleep state configuration
+>>>    hyperv: Enable clean shutdown for root partition with MSHV
+>>>
+>>
+>> There is no need to split this logic to two patches: the first one
+>> doesn't make sense without the second one, so it would be better to
+>> squash them.
+>>
+> 
+> I would rather keep them separate. It is a bit easier to pick out only
+> the header changes that way.
+> 
+Ack.
+> Wei
+> 
+>> Thanks,
+>> Stanislav
+>>
+>>>   arch/x86/hyperv/hv_init.c      |   7 ++
+>>>   drivers/hv/hv_common.c         | 118 +++++++++++++++++++++++++++++++++
+>>>   include/asm-generic/mshyperv.h |   1 +
+>>>   include/hyperv/hvgdk_mini.h    |   4 +-
+>>>   include/hyperv/hvhdk_mini.h    |  33 +++++++++
+>>>   5 files changed, 162 insertions(+), 1 deletion(-)
+>>>
+>>> -- 
+>>> 2.51.0
+>>>
 
