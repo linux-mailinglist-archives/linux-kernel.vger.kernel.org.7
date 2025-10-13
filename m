@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-850476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2746ABD2EE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:13:24 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA15BD2EE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5F2189B750
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:13:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 497AB34B7DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AC326E714;
-	Mon, 13 Oct 2025 12:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9692526E6E6;
+	Mon, 13 Oct 2025 12:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOyWdX+U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ospcB8Q8"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650CC24468D;
-	Mon, 13 Oct 2025 12:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F88024468D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760357594; cv=none; b=OQHkrgIzx0K+NQypZe0zUxCbIxZ84oNkOch7ntWupsosSQtf8Gs4k1JnTE7iNKptproJm6qafEyOGTYe9ovUwk5v9e2vdlxgsYbWjv7GuO988IFGtrDA4BoxLQQSY7SW6NqrlYcLghpgUOdU/Az+/A8G1hksJMxDRMeilW9WGd0=
+	t=1760357682; cv=none; b=OZfmeXtL2/I4gmYvYkqJkRMoWXiBNDWrsUSu++vJinI62K/7uUrNXhWxVEbsthEz9Ro4O72eVAqHbyRrAG5WkIHWXQeI6a7ibwLzWPuf4wuUf8FrOs6tUTm5VRSodktswBvGNVeU3lXlxjmT3TychjGjCxT5LqwcZV/ZmjDOfQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760357594; c=relaxed/simple;
-	bh=Ve9/iWpbfn/kX74iNG2Ij6hQmnMR/JIdGPX40kr4Y6E=;
+	s=arc-20240116; t=1760357682; c=relaxed/simple;
+	bh=1RbHPJlhPLqgjzvb/EDMf7yGfucbDT8iGI9FAg7bwtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+jxA33WH6ih0XuphT3XVDJ5uUKzxqnvK2lgpniZED8MGVUur7va4D3yzSHpi0i3e8WGN3u5xjH2SIzp/QAbQBV4CJ5nzvxavVK2/5O8iGMHFcPtPi6gN01xmjOPZV3TVSV2DBh0j2SvqdYRN4wjFNUO8uIgP7rzVKgGcuTEHuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOyWdX+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1528C4CEE7;
-	Mon, 13 Oct 2025 12:13:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760357594;
-	bh=Ve9/iWpbfn/kX74iNG2Ij6hQmnMR/JIdGPX40kr4Y6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jOyWdX+U00ecIVdoFM2BjCh5Fz7HURlWY4AqFsk/7lfbDVHgBICtfA/PoODLzRP4O
-	 dD7+8DiiYmOWp3dBoZJZR9DV4S7fnR2KZ+yNTiJrK5mPvK1UgeUUuhAZS2KqwpHVy/
-	 XboQtny2cW9/xwPPiPLRU6XcJcDTPIzuauwFSYhbfD4g51CEXHxv4Lcb/GhdX/K7JM
-	 WJPAPCi2lmEA0i1kqEA8qZdgRTXMYcYIkQK2aLgAzl2VKYlZDGZRuSrPxyHt4xAPzY
-	 vlVMU/fn/1DGRRLgB2Vl13fKMyb/Yf2jY95IquhezkSU5gxK0OOpvL5CgC3l10kNtA
-	 +7YIxrhwnLKEg==
-Date: Mon, 13 Oct 2025 13:13:09 +0100
-From: Simon Horman <horms@kernel.org>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] can: add Transmitter Delay Compensation (TDC)
- documentation
-Message-ID: <aOzs1TjdaqZqNW8M@horms.kernel.org>
-References: <20251013-can-fd-doc-v2-0-5d53bdc8f2ad@kernel.org>
- <20251013-can-fd-doc-v2-2-5d53bdc8f2ad@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1t4vP7UELJQU92nyGrpJDVll0rDfKXMAhUZ8aGUm1RO80Og+7Na4cvirKptKVPlIFb0qL50vsoUUz3YjzUE06krQwu5XRVVqwamLUgEHhGznUTgW8Qnowk3dE+kOY7NBYdu8gpuIjrJ19PBrqEzO3Rr2rcc1MUgM25xRkgWBe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ospcB8Q8; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=W90OhjYoHyhhzA+BV0JTzFuzDM246+EyNiR3TbYO7Hc=; b=ospcB8Q8QJcC36IuI02UtjG+n8
+	IqODYJmAzr9SZklqukg5Cf4cBWMVIpJ5/ZhZu4iYPC33GHcWxeaZxG2sMInpBtQtF8mT3zlxznKMF
+	HPtZaje+Z9D/1FjLvCF0/w+QLuMbh/ADTbNIEGW8zGhO1PcXneXtTj2hdO1NPxgKivME=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v8HRb-00AmdT-OV; Mon, 13 Oct 2025 14:14:27 +0200
+Date: Mon, 13 Oct 2025 14:14:27 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alex Tran <alex.t.tran@gmail.com>
+Cc: alex@digriz.org.uk, sebastian.hesselbarth@gmail.com,
+	gregory.clement@bootlin.com, linux@armlinux.org.uk,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm: mach-orion5x: ts78xx: simplify support
+ configuration with table
+Message-ID: <e729b553-98bd-440d-a0e7-bd84448bd9d8@lunn.ch>
+References: <20251012235147.325532-1-alex.t.tran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,36 +59,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013-can-fd-doc-v2-2-5d53bdc8f2ad@kernel.org>
+In-Reply-To: <20251012235147.325532-1-alex.t.tran@gmail.com>
 
-On Mon, Oct 13, 2025 at 07:10:23PM +0900, Vincent Mailhol wrote:
-> Back in 2021, support for CAN TDC was added to the kernel in series [1]
-> and in iproute2 in series [2]. However, the documentation was never
-> updated.
-> 
-> Add a new sub-section under CAN-FD driver support to document how to
-> configure the TDC using the "ip tool".
-> 
-> [1] add the netlink interface for CAN-FD Transmitter Delay Compensation (TDC)
-> Link: https://lore.kernel.org/all/20210918095637.20108-1-mailhol.vincent@wanadoo.fr/
-> 
-> [2] iplink_can: cleaning, fixes and adding TDC support
-> Link: https://lore.kernel.org/all/20211103164428.692722-1-mailhol.vincent@wanadoo.fr/
-> 
-> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-> ---
-> Changes in v2:
-> 
->   - Fix below "make htmldocs" error:
-> 
->       can.rst:1484: ERROR: Unexpected indentation. [docutils]
+On Sun, Oct 12, 2025 at 04:51:47PM -0700, Alex Tran wrote:
+> Replace switch statement based configuration with a lookup table approach.
+> The table is iterated through matching the correct configuration instead of
+> setting the configuration on a case by case basis.
 
-Thanks, I confirmed that "make htmldocs" is happy now.
+Is there anything actually wrong with the current code?
 
-> 
->   - Change from "Bullet lists" to "Definition lists" format.
-> 
-> Link to v1: https://lore.kernel.org/all/20251012-can-fd-doc-v1-2-86cc7d130026@kernel.org/
+How did you test this?  Do you have a tx78xx?
 
-...
+The only changes made to this file in the last decade have been tree
+wide changes. So unless you have one of these machines and intend to
+add new features, i suggest you just leave this alone, it is just
+needles churn to an ancient platform.
+
+	Andrew
 
