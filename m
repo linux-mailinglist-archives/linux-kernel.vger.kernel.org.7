@@ -1,242 +1,280 @@
-Return-Path: <linux-kernel+bounces-850560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19009BD32EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4D2BD32BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B213C2424
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53DC3C68AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FBA2E2657;
-	Mon, 13 Oct 2025 13:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB99C28C874;
+	Mon, 13 Oct 2025 13:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kIQjON5U";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lG6vv7T0"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ctsMrDw9"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE37C2E1EE0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760361651; cv=fail; b=p5l1/j+19ZzGMnpJPlo9coAg1GP3InNAr0a30+WTmFn5TknQFMI6qVHDMoLtYt5InHHsm0dib/nkKME7F02bOmC9z/UUxkwMYxs9OZxLMqTY2dVtd4f/jzAVtpdNNLEmSkJizbHHKAbsCaqUjgYpMlOtRfwrWUiUQLt+Dfk5Y8U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760361651; c=relaxed/simple;
-	bh=QvqYO4iHXYNJN1IMgGPdN+E+AFhNYyYvqfvimPmU/MQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iocdtvw9DwNUCnGMOmP9dsV8QpJqptYubXAERQk/t+4SGj1UQtGsxJnU2+nSXKr944q8Ypd0YrgooQZMn0Q1JiRQ38O05PmWq3l2gMgmCOQOL9Vrsc9o/S8/G4hJ7eyHcIiKRY6AzyB/VDhK9LQyFMWKH+ZawQMjYr0iiQGO3ow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kIQjON5U; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lG6vv7T0; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DDC2UK003519;
-	Mon, 13 Oct 2025 13:19:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=QvqYO4iHXYNJN1IMgG
-	PdN+E+AFhNYyYvqfvimPmU/MQ=; b=kIQjON5UPhA2s1opk+QYKbp315G/5AgdVm
-	4gQzlauBcdFc7IUyLn3SLZohqfugu5YFq4qWihItXG425cWWQAfTOVL496jeQNmc
-	Yf7cLIKVvqBZi63N/DXmsRW4HPfjdUMshnHtOnnQWjSg0GbnDlAkSgNyaelBGsdP
-	nAYic0oKEHdpf79K/en2A+AsRkkVKmTMC/VfokPmw/Y9L9w1YqJ/vvUWIF1IRXj+
-	rCSotryKXCxFuZboEM3bb+e4wXXh+/9PFsc6T5oAbOnHW6qozzGBT0vYymQG4b0y
-	9hbsyXVRUBOmw4jXqcRk84NnDxO1jzo/rRB6YIn7evr4OBU9UvUA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49ra1q9aqy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Oct 2025 13:19:30 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59DBieG3037124;
-	Mon, 13 Oct 2025 13:19:29 GMT
-Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012011.outbound.protection.outlook.com [52.101.43.11])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp7jpm8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Oct 2025 13:19:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sLkxcjkKbRhMGHMwEFV9PGTLq2mpTEWJem+F8JSh67datoroeUyI9PY7Ne7JqN7V3XcCKNdikPbg+Z6TonuPgArqf1UIwvORJaV/4EBhxrt/74pHQXrWfJvvVfn6O0EEIVCu+CBt4t2QQ2s3Q5mn3zGWHK/LGRjMZWuoktEYtIgwiNk4M3WC8pt3o3wtam/3sFtjTCf2ue6Dia/cWL+irPJRGk/6mhdwxWT+1ubTLwUgypNUlJ2Vz1o18RBs7+zeMwf3Sd8CfGN0Lzof1zbzfjixYygiy0d6Y3zv7U38/k08VpeGHqL00LQSceQYfmg2PSrf5t+Eq8re/4LO+ks3+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QvqYO4iHXYNJN1IMgGPdN+E+AFhNYyYvqfvimPmU/MQ=;
- b=ya1szkagLroeJOKlN+BnKlyaI075V7qz49xzdTPLHMgXR83hcfHZjOm5PaKY3QkDarVEoTYQaE0v+HCy7ccSfJauAD2NcC0KXG0FMeFFHSDMQrVUSrxf5h+1wSkQwlhjzckI8c1KcYfz8+kqgqBMNK/fOpNWROrU9ODydpuV+0Qzt8BTv8aXBxiaxaIvlzKI+RTcloqT0sSoArfd4Unx3TAHG9EFczp9CtnOeyVlEz5g6Hcucbl6m65KswfvEytoxcbtClFIdtIczXNwGUdTIFICHZNkGJboF4qlWUIStmPRNZFI/pORGPQE3loRbeH/Q1SndjRZnm3Ax1PRULuqHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CBF2773F8
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760361587; cv=none; b=ZvCFALffgHtE35E/soXLBpq12HyJ7EWYttvo72Nn6Ai+K2E0LzHF8CrtyGEuMNmAxpX81bVf7RN2uv5gjcCZnx8YZJLavj0CqKj82hydQfPXoekmStiguVfOjb9pw4/1+GCTAj4xfbbbGEt7KOBKhQu2yqJBb9codg93y46klXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760361587; c=relaxed/simple;
+	bh=hmoG2D2uWmbK3ZnQ4PzumWQE5wxc1xo/v8u8S/CiP5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SCZc6hd83XGXreSo1EIwjUIs+Mz4feuQsqOJSIfSn/ykFrVRyawM1piyAWjosiQqnsBzX70VrmXB8FzI7S07OXmZaAoKx09ffMN2c3WWQeQJmyTiFNta4uHclhN//IHtalPLmuITygTkNZVYTbSYSldSuD4Q3FfrYPItXgYM2Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ctsMrDw9; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-87a092251eeso66797366d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:19:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QvqYO4iHXYNJN1IMgGPdN+E+AFhNYyYvqfvimPmU/MQ=;
- b=lG6vv7T0SbhkcR9I9XRil2oNrVz2Mn6prniu9PzEdPIHrPNLoDJ9LD9MTCkQyCZX3HSUKbzKOA85IbY8v24QftBsI1vnI8bosNEgJzTKYumN46VUep12WKOAR1g+8roq+Y3wI/XLQjfVB9YiAaCCe8hdAGBdAZlZknlYg93Uxmw=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by SJ0PR10MB5804.namprd10.prod.outlook.com (2603:10b6:a03:428::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 13:19:21 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 13:19:21 +0000
-Date: Mon, 13 Oct 2025 14:19:19 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: David Hildenbrand <david@redhat.com>, Ye Liu <ye.liu@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>, Ye Liu <liuye@kylinos.cn>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC RFC PATCH] mm: convert VM flags from macros to enum
-Message-ID: <bb9cd331-326f-4ddb-8848-60195e41f012@lucifer.local>
-References: <20251011093054.886460-1-ye.liu@linux.dev>
- <809f552d-3282-4746-ba49-066d2bd8d44f@lucifer.local>
- <7ca0960f-9d1a-4ba4-b074-a6502578b82e@redhat.com>
- <d619784b-b967-4795-aad9-6e79d4191b83@lucifer.local>
- <dfc18351-bb77-4099-bcdd-eb2bd4f1bea5@redhat.com>
- <fa2d7db5-688c-4d04-abcd-a60f79a6bb7a@lucifer.local>
- <71803dce-3fa6-494c-a4b1-55d98fc4aadb@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71803dce-3fa6-494c-a4b1-55d98fc4aadb@suse.cz>
-X-ClientProxiedBy: LO4P265CA0173.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:312::18) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+        d=google.com; s=20230601; t=1760361585; x=1760966385; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d/EEJZgh8MeXJ23MQLJxa+c7vgI4rPFQhWD8rPWK2IE=;
+        b=ctsMrDw9k4jxOspfqa3fxXRNwRqmn6sO79lirzntFS1y11LD4ltzTneZOpxlRYSswM
+         Adm5Wx8OZN6Vn4cSvK52hIYY0y34YogJHKZYd7UkNklEGsPTO/eD+WHw6JLjAZ1tfMt2
+         r6jG0K6f3LQQ6bl/gpw+gu+V1xy6kuiWDfEoaHRi40n0LD8EouPM6++OT4buFv2IjVqL
+         M9sNtUSgRWuKNPbb0apTSBJH5eryGqMLdVnRT/QW8JlvNb66pFImaDbb3fZc32JFmRwE
+         5H4zE0JLSsTKY38KcC7Extf9CKJBLxdO7sdz+ZndpqGUD7kDnh4T7nbwetN1CTBJ4BSW
+         toew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760361585; x=1760966385;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d/EEJZgh8MeXJ23MQLJxa+c7vgI4rPFQhWD8rPWK2IE=;
+        b=paAHrgr3mWpDJGCxesTscOc2tcQ5oOr/YZVie1N6k/pd87qgJJEhfII2FWrt9UlU8R
+         RUpt6UylCyDHGLTY/R2IO5yg3b/3m9ZypcBYq8CWyvrB59ONo1NdxgZ/YBbsnLrVm19e
+         irXQ7Zzz/pH2d7cCEbS9wpH5myVP27tawsOUv+p0QQWTQB4o/SmncbnVwLshHQU5fEAo
+         Tt+NaIC8R+0Ap9Sfxfk6t92dkMMGlxV0CFv/L0s6ynt9YI1UVIdFMy+zTXpkt+43MQbx
+         23pOGZGmWlViMTWHNk60UA8f3fiXGcnI2Y7tDj8FvkzXW8AsGb8t+HSM+mRjWZOvZDBe
+         i9gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw33uRSREfPZhyRXsnYZCrb0Y9/7jVFPRGeVVyjtMr4GJzGNY1zBK7yehXkQoyyxjgSNX7deG8j1YHrcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIQTuKLwJ/N6ghYgqm+Ykcw4/OZCi2m5aQrxcDE6sTY32r0uxJ
+	y1V52zvgTFOUApuezIMtC35Wd8H6piIpm3ltOEVYCDCcI2bdgao2P9nhNHgp+1ZlV9GaUAMRvGX
+	m2ZYPLVuo691aEjSC8PVTd7h8thhbeyn1bvnBcGtB
+X-Gm-Gg: ASbGncuTn7ZdDdQ+6OdgJxhVMxKR6+3zHtTNw6cVFQYE+upg17nHnDHZbx4xe6kN9Cu
+	sqGsDrkRVMox6IRu8/Ynf0zwmNw/FOIkC/3g0q8zwubk63njrpXavr8WafgTRlloMELjyXd/Cf1
+	+AA6I2SVWA9Mm8UZWRqu/y7+tf+MO/SnAmoMrW/1qzFciI4vZPLH9ZvqmlscjuKDgGd621lVcE9
+	g46nxTc5X1vFB8gwcYExFu4Pp5yvwPDbZJWFvMDEd6kUnM8LHRJo5z5iQ6RQeo7Fq6qzfsLxFNl
+X-Google-Smtp-Source: AGHT+IGFOFnbszcLV7TMKE9XA+0FyYK4F1vsUUOPmdJlwRqTEuUndJtsgO2G2uIU5eNIQtnZia+hsgk9/Kk1UcHHzcU=
+X-Received: by 2002:ac8:758e:0:b0:4d6:c73f:de88 with SMTP id
+ d75a77b69052e-4e6f396e281mr217487431cf.3.1760361584510; Mon, 13 Oct 2025
+ 06:19:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|SJ0PR10MB5804:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7688082-8999-43ca-6f7e-08de0a5b1ef5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4jCK3Y9VEj7RLPBELY0C6WzlBXWzCsgYK/9gUtvwp0vkkAyACik6hMGQFm42?=
- =?us-ascii?Q?zA1MKIP7HckC6HY3M/0h2MT1T5w0CyQA4b3q8ve73qMCIGOzCVzwOtXA2uyj?=
- =?us-ascii?Q?LTbHMPgD2hOORhKOCYRN4Rw9OjSwO/xiyla67rXyjQnoETlVGaQhHYy7P8FY?=
- =?us-ascii?Q?THNbkABfRPhYg2LO8N9J9O7KPeZBV3ek4dvJBo9pSu7Hr1HrChAsqU4GgMb4?=
- =?us-ascii?Q?kzPxICEktWn8LBysWttpTy0iVO8mgWlmTnrQ0KFOqR06gdXNEcQaCI14qZS0?=
- =?us-ascii?Q?Xh16tWzaJthGhphe0LP4wnPMi4Y/dE3gHuCqRi6QQawdh0w3XE9kA3AaFtXR?=
- =?us-ascii?Q?Vlabe/6eDc4813dKIVV/IYGkwmIg2rk56H/NlT9rrP6eCLC5Vd1NivKAP0uo?=
- =?us-ascii?Q?tiNhHgx4GIfxLz7BzebafJzAzYC3w1H49/oOrfjphMclGwe1Y6tnZL+aJg/h?=
- =?us-ascii?Q?iY4F2VpreYs/lO1lwB2sQ4uO58j9UUjC4lDoQXVTGMeMTioPPQdd33ZuZA5F?=
- =?us-ascii?Q?4CX0O4ZFigtEUqCFRPSKm3Ftooh4FJokOiT592dj93GoImf7/+Nrcdr6QigN?=
- =?us-ascii?Q?LUyGZZTIJ7SRetxo/oOCx4WpUnWWHMaWBFJS/K9bSlprj87aO+RFYWhGNLPg?=
- =?us-ascii?Q?9FChjsP5uyHqpJSTh3rRDj6DvmPwWIbnOwNK7UJjzF27X8TFMzq7BYyyk/wU?=
- =?us-ascii?Q?ngVnWHQ4gIACP8XHPzYg8G/EGg4Ffmh3yu7KYjubgBwQV+0X7MiFjRgPkarO?=
- =?us-ascii?Q?aMGFrtg1ZeXcuGI+pC3NVtOWdInbPSMclF+0kxt1qYMi2+yvt8dWdCfM/kc3?=
- =?us-ascii?Q?dmg78pTfCrtLxbJezIfmDBl60shQhzHFSLMMctKkhAFb0+WMhynWV3HvV+zp?=
- =?us-ascii?Q?2/cMr4Z5vNdZikJi6poosaBARTaSwnyObo9JythOaV6THZhQ904bIkCywZwc?=
- =?us-ascii?Q?3RWhITJfvjfTAK19CBMON2aQCxY2QPV7z55iz0+BtoxPcKua8GE4FOnftUPZ?=
- =?us-ascii?Q?KPRQ/89on6NA9RBQHJvBQycWTbgOM0yREPhOTl92dsNxxMeQfFARyTvouSer?=
- =?us-ascii?Q?/uXc+sOgrAQ1TJ4EjIoO/GjKYbPVorbo2BCGNV5uWIAhG+U0LYqtrdKZnEke?=
- =?us-ascii?Q?e8yXIUb0O7QbC3eaUbjrkG9BhEhbBLmf8WrhP7BIk5OXB+QHoY0FN5Uza1hR?=
- =?us-ascii?Q?fqh3GGlI+wrs+BfyXxnEc7SxLCNhk0srW/sbllqFfOLgO/r2LAFODPVXWz7A?=
- =?us-ascii?Q?MbP/E0awCgp02HnShTYBxMRKtoGs27jor619zZxEbZvbkdP6CuOE165iolJw?=
- =?us-ascii?Q?1OKF1gNZyXOnJXdMk+tEtFiDP4MMsYcv7nSkvC6foHULa4ew0/DCRgtLMrva?=
- =?us-ascii?Q?scznc6K/Q03oYAu0J9ao9Mttz34nRum5TYVYDjpGbR+aighgLeITxT032cLH?=
- =?us-ascii?Q?ph+ED1B6ihU0Y0knr0gXL3C+78feOzu2?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BMfW90M+xFI1xr42YaVEHnoQhpgl6w3fINVr3kMK9Nma+lxqwm+gI1K448EX?=
- =?us-ascii?Q?rolV71xipPY43o+U1hBDBK2zq3l5HGQdOqJ8cgUER3/Nt0D4QNoPf6Yl8msJ?=
- =?us-ascii?Q?Ukn1dth2eOHQ6H36SENkGKntVyb5nb5DiMw4E34GH0UkyrlE+/vRRqF9jywo?=
- =?us-ascii?Q?0FH5itLRUTEiFf3kWuLlDdVJsDE00QPLHWXlkpClcv3F20UQdR7qUzuBYSsy?=
- =?us-ascii?Q?AiZgxkGw1V9YaRQIj/YZqKng4FtnmYhhoO4lUKBaUve3JtN57A/tI6EyqSWY?=
- =?us-ascii?Q?doW2Gko1FFzD6gmbMeDEdebjdXeemaa730dP55j6mcEZt3ular+GO6HeL5f4?=
- =?us-ascii?Q?FTzv10Hd69gaMPBxTMDxmeiXh6e0um7ViaN3iSlmXoWOOgWv+F37wSfIaEDk?=
- =?us-ascii?Q?VqH5gRTjsIAiA+7iXrHoTC+14IB68yliHFH6E+0p9pdshr/MbXEgvcP505jg?=
- =?us-ascii?Q?xHnBE0MBS12jZF6ORvI9yfmUGV7hkM6AfveVj7IOfvoZzrKTSNezgJzkn8d4?=
- =?us-ascii?Q?aGgfHq/r2JdL/ecWExgvKhnkKA6At9rXy1Ly5aqiDurQpjjPzNnke3dCifR1?=
- =?us-ascii?Q?IPiGfNda82dNgF51HsCHtgEHci3zi7dNOl2lCpUYPuZkIicrG/EgjofLEwBf?=
- =?us-ascii?Q?9Su7P0mC63B7V1irOKhUzwntaJrR95GGeQxS+daKjYWSYgElgCaceD/SgWA8?=
- =?us-ascii?Q?4aCdMuV+cEF03caYYkNZjGJSM9QuCuhA/cCCHV2bP7zM9ZeOG4iaTs6t70YS?=
- =?us-ascii?Q?JDtoN8WYtIAz6GLi3YZKiUUeh9C99G5bHwfHYafSrRx/BpmBryMaLuW4su2A?=
- =?us-ascii?Q?UnsSpEixdvFmRjWf+wMx7BVCc5wWZXFh5+QNN0t5j6VuIZlotn2XP1gq30mW?=
- =?us-ascii?Q?9+mevYmX/M0EH/Vx4zF/OOG5z+wyWgJgV0iveVzqScYijr/Tta0KQ2WtrxIm?=
- =?us-ascii?Q?4KrdoGAO9TAYeRmi0qUHY2KyxEOzeilCPdfdn2lsjT39W45HshGxa4Ra8dyT?=
- =?us-ascii?Q?frc5NDQ9mRj+DKalWloy+WH+lpHTy/4zO971xbTt6nV+ESr3aZaYVeI/Vu27?=
- =?us-ascii?Q?Nxixe3hitcIy/HWoJuSKBFEduyXsAumvP49eQAOOwfKLUEqozPfP2ZgpsMOW?=
- =?us-ascii?Q?cHzCQ9d4yaE6LeKt99tZFQhvM3gJWOeKWApuZBY7SL1q4dmOrEv5VkJv+hWR?=
- =?us-ascii?Q?8iku03u95wYGHLKHQXnjpGDGf5ZjFeC1wu3XHM4daimJO9PF1FlvkQsUHyUM?=
- =?us-ascii?Q?hsDFIskeRQW4MZZb1Nms3AQq+Ivm+9WcML4XXAG4hV++JasqCKdvJnojvHht?=
- =?us-ascii?Q?2K45LCWfCPyLbrgqbGgbyK5I6v9glaEHkZte8fOyhKDUPjtpurNpgGhz4/Wx?=
- =?us-ascii?Q?kwAbCrkPyn3VGfUtrVv6u0htsJd/Aq9c0SaZp51LH+iHQK58JmdnBc6FnhiK?=
- =?us-ascii?Q?YIpevcPA/zArpVIjaJaCvlqyRdbYqlaOLqDrvKLru6BLo6ZRoYm4rPL/z3fp?=
- =?us-ascii?Q?sV8lxse4jETkneOFFywqiLQAfzvL8GvGd/ZE5JmcbSMTH3c6w6BOa2159Sl4?=
- =?us-ascii?Q?fwkcOycM9WABdgmg/VCPBHAYVVLrqSNUd3e9gqnhBpSahnvxegvWJ0RnrPAh?=
- =?us-ascii?Q?LQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Q+UUdKgyq12kZuBVQ/wT5ANbACICArgbi49yoG3nasK84HLOdNoR3ZC8wDYDrN8cmKp3SYrhN7K3LJQlv7AqjgCr3DLPXvukHmAZmQOvwsiQuacsuBs0FiIPeNXfUPl/67Z5tKnfOzJaP7f9tyaLytEUYqdYk8oF2jmzfZ1/6gW9qKsos0bHKRW2HgyHLFMMhtY6T7l6WhaS2xnmDGB/d8ffE+AanjUxXL7UHyWct4DgWa3n1EuIHUpYzgk2QA+6t7gv1Hz94Rss/wevPTf4/6tDBXzq1CCiTDATktc2i6zX6EOktumLiIFMrNP8CLV4UZnDn+bDD5A9Y1BJPo6+tFVz2rLUbUagQCsysQhVQVOtBSi6ryH05iFmoLzjehfSEPdGDJxMEFCPgRrYJxNH8ssYwwNFB85nB42pR5VthRHYvoBiMz2KlexJJVZTBlxXot0EuK4BRT+VeFD15hFhFgJJru+WsrlucU/7c1KFTApMvIQ9PGhqB+wjIdQV1jdplRySM5JZe919bkjnvugbnmnnXc6tS0vC3a2CX1DEvt/3wAY9+Q8LYMzrk+uYXIhRSkzKmB62Lg/Nqfxb2kMkRy0KgXM4pvY0d2SyYmz6Zns=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7688082-8999-43ca-6f7e-08de0a5b1ef5
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 13:19:21.1493
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kg4KeljGHHe6GNaGSRHf+tkk0Zx9H8NLnRQp9Tqv4t2sknr+/oZLmlwkAcbV91VGjvnsz7L8L10vSU1gkK0edlUhU5CwTKEiBadcc2/jL6E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5804
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=764 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510130059
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDA1MSBTYWx0ZWRfX0UipNDC72PY+
- IddYIbGLyhwdlHK9LpnlJW0SYeuCB9VlW++br+Ncz4e4jXQc60X3ARLTWHbiLQf0PpAh0JcbNG3
- PuyGWwTgfB398zxxWGf2qEEpIsHsidpvKQNDDeEzks0lvhK1PRMKlwDNTwDgB7wk9cr+v4fK8RX
- gH9KclUmU7Jiw04QTZQogCZk3FIXa0K6W10gDjtQCGCOUd6wjIy0ydFyEBmnZ/8QNdflcUq7JTS
- Z6Ev/k8hiV3nNpGDdS7s2oHiZRWFJ2dq6KsIw5ZQuDdQUcLbbKWMOuEI4shjX5sKQ+Lwk4PU5dI
- KihKOhoU4y6RRdURqUo1Rw/szpZ6SPnz/AMrTnKakTswX2tj9cKG7HNzLyy5wQpvxusuxJywYWi
- /siitwxHLkug4KRIdu/AZLt23Pqj/g==
-X-Proofpoint-GUID: mcoxf-8NGGRCLWn2Qb2IGENBTFtT3yFr
-X-Proofpoint-ORIG-GUID: mcoxf-8NGGRCLWn2Qb2IGENBTFtT3yFr
-X-Authority-Analysis: v=2.4 cv=GL0F0+NK c=1 sm=1 tr=0 ts=68ecfc62 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=f7RMMt1Z4ssCEtSHmpEA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+ <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com> <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
+ <3184c648-661b-4cf4-b7cf-bd44c381611d@infradead.org> <1cd7fb11-0569-4032-905c-f887f3e0dd4c@leemhuis.info>
+ <f2243a9b-e032-416b-aef8-958198ff3955@infradead.org> <CAMCVhVOm5xzN6pkX5cKMSHrMqvdCD_14+XuunAuJLENgLO1NqA@mail.gmail.com>
+ <04df1bb8-8409-4ece-a21c-4c71592eb852@infradead.org>
+In-Reply-To: <04df1bb8-8409-4ece-a21c-4c71592eb852@infradead.org>
+From: Jonathan Denose <jdenose@google.com>
+Date: Mon, 13 Oct 2025 08:19:33 -0500
+X-Gm-Features: AS18NWDz6WOml_kDvWWGqpzSlWYyUNjuwuF6ooBTtjwnBUyDba4AkLfjodlq7AE
+Message-ID: <CAMCVhVMO4y9P=Y3SWvY6BvA1sUK2o=Gn6Hk2UpaueNN=6CNHZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Angela Czubak <aczubak@google.com>, "Sean O'Brien" <seobrien@google.com>, 
+	Lucas GISSOT <lucas.gissot.pro@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 03:07:18PM +0200, Vlastimil Babka wrote:
-> On 10/13/25 14:57, Lorenzo Stoakes wrote:
-> > FOLL_* flags are an anonymous enum, enum fault_flag is not used as a type
-> > anywhere, nor is vm_fault_reason. So those are both kinda weird as to why we
-> > even name the type (they're in effect anonymous).
+On Fri, Oct 10, 2025 at 5:52=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+>
+>
+>
+> On 10/10/25 1:30 PM, Jonathan Denose wrote:
+> > Hi all,
 > >
-> > But also 'we do X in the kernel' doesn't mean doing X is right :)
+> > Thanks for looking into this.
+> >
+> > On Fri, Oct 10, 2025 at 1:55=E2=80=AFPM Randy Dunlap <rdunlap@infradead=
+.org> wrote:
+> >>
+> >> Hi,
+> >>
+> >> I think I found it... see below.
+> >>
+> >>
+> >> On 10/9/25 11:48 PM, Thorsten Leemhuis wrote:
+> >>> [Top-Posting for easier consumption]
+> >>>
+> >>> Mainly writing this mail to bring Lucas GISSOT in here, who reported =
+the
+> >>> same error yesterday here:
+> >>> https://lore.kernel.org/all/aOgvA8Jiofcnk2xb@ARSENIURE.localdomain/
+> >>>
+> >>> Lucas there suggested:
+> >>> """but it seems to me that the #if IS_ENABLED(CONFIG_HID_HAPTIC) in
+> >>> hid-haptic.h should be replaced by IS_BUILTIN(CONFIG_HID_HAPTIC) and
+> >>> Kconfig updated."""
+> >>>
+> >>> And Randy: Thx for the closer investigation! It explains some of the
+> >>> "that feels odd, am I holding this wrong" feeling I had when reportin=
+g this.
+> >>>
+> >>> Ciao, Thorsten
+> >>>
+> >>> On 10/10/25 06:50, Randy Dunlap wrote:
+> >>>> On 10/9/25 7:43 AM, Thorsten Leemhuis wrote:
+> >>>>> On 8/19/25 01:08, Jonathan Denose wrote:
+> >>>>>> From: Angela Czubak <aczubak@google.com>
+> >>>>>>
+> >>>>>> Define a new structure that contains simple haptic device configur=
+ation
+> >>>>>> as well as current state.
+> >>>>>> Add functions that recognize auto trigger and manual trigger repor=
+ts
+> >>>>>> as well as save their addresses.Hi,
+> >>>>>> Verify that the pressure unit is either grams or newtons.
+> >>>>>> Mark the input device as a haptic touchpad if the unit is correct =
+and
+> >>>>>> the reports are found.
+> >>>>>>  [...]
+> >>>>>> +config HID_HAPTIC
+> >>>>>> +  tristate "Haptic touchpad support"
+> >>>>>> +  default n
+> >>>>>> +  help
+> >>>>>> +  Support for touchpads with force sensors and haptic actuators i=
+nstead of a
+> >>>>>> +  traditional button.
+> >>>>>> +  Adds extra parsing and FF device for the hid multitouch driver.
+> >>>>>> +  It can be used for Elan 2703 haptic touchpad.
+> >>>>>> +
+> >>>>>> +  If unsure, say N.
+> >>>>>> +
+> >>>>>>  menu "Special HID drivers"
+> >>>>>
+> >>>>> I suspect this change is related to a build error I ran into today:
+> >>>>>
+> >>>>>   MODPOST Module.symvers
+> >>>>> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] u=
+ndefined!
+> >>>>> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-mul=
+titouch.ko] undefined!
+> >>>>> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-m=
+ultitouch.ko] undefined!
+> >>>>> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-mult=
+itouch.ko] undefined!
+> >>>>> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multito=
+uch.ko] undefined!
+> >>>>> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multi=
+touch.ko] undefined!
+> >>>>> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multit=
+ouch.ko] undefined!
+> >>>>> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147:=
+ Module.symvers] Error 1
+> >>>>>
+> >>>>> The config where this occurred had this:
+> >>>>>
+> >>>>> CONFIG_HID=3Dy
+> >>>>> CONFIG_HID_MULTITOUCH=3Dm
+> >>>>> CONFIG_HID_HAPTIC=3Dm
+> >>>>>
+> >>>>> Changing the latter to "CONFIG_HID_HAPTIC=3Dy" fixed the problem fo=
+r me.
+> >>>>
+> >>>> Sure, but that's just covering up the problem.
+> >>>>> First, I get this build error:
+> >>>>
+> >>>> ERROR: modpost: missing MODULE_LICENSE() in drivers/hid/hid-haptic.o
+> >>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ha=
+ptic.o
+> >>>>
+> >>
+> >> ISTM that tristate is incompatible with this newly added Makefile
+> >> line:
+> >>
+> >> +hid-$(CONFIG_HID_HAPTIC)       +=3D hid-haptic.o
+> >>
+> >> hid-* lists files that should be builtin, not loadable modules.
+> >> These should all be hid-y.  AFAIK, hid-m is not useful.
+> >> (A maintainer can correct me as needed.)
 >
-> I think the example to follow could be GFP flags. Nowadays there's an enum
-> below it, and a layer that adds (__force gfp_t), so you could do similar
-> thing with vm_flags_t.
+> More correctly, any .o that is listed as being built as part of
+> hid.o should is going to be controlled by CONFIG_HID and should
+> not its own have a Kconfig symbol at all.
 >
-> However I'm not sure how compatible is that with Lorenzo's plans.
+> E.g. here:
+>  hid-y                  :=3D hid-core.o hid-input.o hid-quirks.o
+> hid-core, hid-input, and hid-quirks don't have their own
+> Kconfig symbols.
+>
+>
+>
+> >> So adding a MODULE_LICENSE() and MODULE_DESCRIPTION() to
+> >> hid-haptic.c and changing drivers/hid/Makefile to use
+> >> obj-$(CONFIG_HID_HAPTIC_        +=3D hid-haptic.o
+> >>
+> >> fixes the build errors for me.
+> >>
+> >> Angela, Jonathan D., is there any reason that
+> >> hid-haptic needs to be builtin instead of a loadable
+> >> module?  It's no problem for hid-multitouch.ko to call
+> >> into hid-haptic.ko (both as loadable modules) as long as
+> >> hid-haptic.ko is loaded first.
+> >>
+> > As long as hid-multitouch.ko is able to call into hid-haptic.ko I
+> > don't see any issues, but is there a way to enforce that when
+> > CONFIG_HID_HAPTIC is enabled, hid-haptic.ko will be loaded before
+> > hid-multitouch.ko?
+>
+> I only know of two possibilities though there may be more.
+>
+> a. use request_module(true, "hid-haptic");
+>
+> This would probably be used in the hid core somewhere, afterthe device ma=
+tching is done.
+>
+> b. use udev. When a device that needs hid-multitouch is
+> discovered, have udev load both hid-haptic and hid-multitouch.
+>
+>
+> I see that hid-haptic.h is written so that it has stubs for
+> when CONFIG_HID_HAPTIC is not enabled. Can hid-multitouch
+> operate (in a reduced capacity) when HID_HAPTIC is not enabled?
+> So that they are separate modules and hid-multitouch is not
+> dependent on hid-haptic?
+>
+> There is probably a use case for hid-multitouch without having
+> hid-haptic loaded since hid-multitouch existed without having
+> hid-haptic around at all.
+>
+> It seems that you want both of them loaded. And then Lucas
+> has reported a build error when HID_HAPTIC=3Dm and
+> HID_MULTITOUCH=3Dy, so either (like Lucas said) HID_HAPTIC
+> should be bool, not tristate; or in Kconfig,
+> HID_MULTITOUCH should depend on HID_HAPTIC, which would not
+> allow the problem config that Lucas reported.
+> But that forces devices that want HID_MULTITOUCH to also
+> have HID_HAPTIC loaded, even though they may not need it.
+>
+The idea behind these patches was that hid-haptic would depend on
+hid-multitouch but not the other way around. I am fine changing
+HID_HAPTIC to bool. That's what I had it as initially, but I was asked
+to change it.
 
-That's defining bit values in an anonymous enum so isn't really comparable.
-
-But what it's doing, ultimately, in broad terms (other than the opaque bitmap
-type I'll be using for VMA flags) is what my changes will do.
-
-And yeah, trying to do duplicate that is not really a good use of time and will
-conflict with my work.
-
-Overall I think this change is generally unnecessary given that I'm about to
-radically alter how VMA flags are implemented, and actually will cause me
-problems.
-
-But as I said before, I'm happy to prioritise the change that specifies the
-flags based on the bit numbers, I actually have it ready more-or-less.
-
-Cheers, Lorenzo
+If everyone else is fine with that, I can send out a patch.
+> --
+> ~Randy
+>
+--=20
+Jonathan
 
