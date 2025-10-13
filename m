@@ -1,203 +1,259 @@
-Return-Path: <linux-kernel+bounces-850775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5F2BD3B73
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:54:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66087BD3AAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D4004F3E41
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE71C18A0010
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9EB308F3C;
-	Mon, 13 Oct 2025 14:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8ABC3090E6;
+	Mon, 13 Oct 2025 14:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VK+1EE4j";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="H+Z+hlMP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hkN0EgMX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FHAP454y"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fNXjZy5j"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011038.outbound.protection.outlook.com [52.101.70.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CCE308F1F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366685; cv=none; b=Wcre52BNAFNN2YHjxnhWgGJo1lnXIPaINkNj87LRhzAmzuAlFngDIrTNwJPvUrBKRy8MX/BV13vcJ5WrUlsG5+D21mSjNyETEn9prNGJQRhMZNXbqnrciudos1EcjDn0hzTjoQW6tcT/o2XRekguIcCgkDtN2yKojEgr5m1ilZk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366685; c=relaxed/simple;
-	bh=ywXpP59Lk88yCseXP50OE5LNKsf9iCO/d2MVzhXqhDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YL383e7FqrfdVTCs+eKr2mBos7VrUY3sgCFFkRQ4KbUuccHIMdTiGAgKKhlLquDibLw0LJ++9EMov02lhPFXw2IAPWWmX6mF3YHFO4S5y5zroxUxWpevY3MO7SaPbZK0uQFnp53gbRQACONFDVlYEafe7FTPQtSVIDuVdmHzH80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VK+1EE4j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=H+Z+hlMP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hkN0EgMX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FHAP454y; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9512521905;
-	Mon, 13 Oct 2025 14:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760366681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+B3cRhWFJTukv1G4BnYWSSIGt6ZCh6nUUGxVgo8uAQ=;
-	b=VK+1EE4j3M6zBqUyqwsfJPZ7wNYbNuR1eUYpArR9NC5nxT0JEYhfCqG3l/1UbRM8XVeAgD
-	OP0ejKQsBj5T8f9bIQnjWVkcKyFcX8n6r7VgwfemCk5Xer8TbVvXtU1PO6ufXcSm+jf7I7
-	0qcZxo/SElX6uWKsTJCbr/DdMo7uR+0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760366681;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+B3cRhWFJTukv1G4BnYWSSIGt6ZCh6nUUGxVgo8uAQ=;
-	b=H+Z+hlMPXqFqLSc2kVG/rLS0qhGuA8ExX3p3hiaPm4lBldtXUsA9IZ5fg0XElV5gpVt8mp
-	TA9WceHuz9oKuUCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hkN0EgMX;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=FHAP454y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760366680; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+B3cRhWFJTukv1G4BnYWSSIGt6ZCh6nUUGxVgo8uAQ=;
-	b=hkN0EgMXB8IgYv43vMMrxEPUrwlVUpg7/bsuVp035BGXrnqO2UTWc9/uGV0Y/B2ihoI0TF
-	UfiYAbs6vrdVLfBdsWUUqMvC/1w863h6ipglsyft76uCD275x9BlmpoHMSXnVNQB7Hb8/j
-	JNqGyyE8fu1nTh7W6JPQvPTs7IfIHT4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760366680;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+B3cRhWFJTukv1G4BnYWSSIGt6ZCh6nUUGxVgo8uAQ=;
-	b=FHAP454y4M6+ghCQIv03zw8w029neiqKz5sutpVNxnz92au7q04wTGUqqbMW0bPmU9qH0Q
-	yaMIuKKvyDU9IXAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1852A13874;
-	Mon, 13 Oct 2025 14:44:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jQVKNFcQ7Wh4KQAAD6G6ig
-	(envelope-from <ematsumiya@suse.de>); Mon, 13 Oct 2025 14:44:39 +0000
-Date: Mon, 13 Oct 2025 11:44:37 -0300
-From: Enzo Matsumiya <ematsumiya@suse.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-cifs@vger.kernel.org, Steve French <sfrench@samba.org>, 
-	samba-technical@lists.samba.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Bharath SM <bharathsm@microsoft.com>
-Subject: Re: [PATCH 0/8] smb: client: More crypto library conversions
-Message-ID: <ihoaj3ymhuesevdb7k2kg2a2axdkishrrrjr2teigelhkxmt4s@do2n6pkdmaas>
-References: <20251012015738.244315-1-ebiggers@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B8A308F11;
+	Mon, 13 Oct 2025 14:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760366690; cv=fail; b=GptYZ8GH2dnC7/H1KYIYZ8iuyAwBFe2VHaDHqU4DbegZdhv0OGQq+EUCDRIRdDMLff8KZcfnQCxn7wZsuH8WrY7NxWbcXoz2b4GV9yGovtUB6R5fUzRbVm9CViYjZUVfLDgy9EMmtZ28QNwAAZG7iZdKtMwi+p/PcuVGa3j/cbE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760366690; c=relaxed/simple;
+	bh=l9eQnTV9zA4RuUOeL03FfYaFU9ca4S4JNfxYyv/25wA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LjF69v10BtzOtKbfkc9/TVzFUgl9JRHSN8mvYBF+S+VoTGrL4AfmeHVAXWwyZvqyaeckR7nt+BD/YdMi/BOWV8JTTHwJ0PXaIiH5ZatZdlTuc/VOABydYCkj9LcqOCLH2Z4aoP4iiynWNkiVt5AR+vhg14EnfIl9ut9x6neIfLg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fNXjZy5j; arc=fail smtp.client-ip=52.101.70.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QNieYQBeaMo/b71d3fba8z5ci3s8j3MWKArfi3tbGE3gD0b8EktUjRqn890Au3y30cRD1ugdC3EX02WQZXWShkn1G+o6qCEQyuQxIOyU8I4KAHT7EAPGn9xY3qGUtQ8zUa4ZpqvA/AhXrNK2HhrFgBaCPOOQI8VN3QojG1eztrgtghKdBBVFPe8ZfbT23knm8E7rrwi7t4H3v0cNs1IqlPy7k6v1sYboFSjXIBmkC1WFQoR7PM8G35SNODAcdejC+MR+/yG1qKQ8ZJzVkszVn96mKs80PEyc5tKEA5RUj90iy6PaSbA60g6EDorSnhIB+VA/r9XPhC2tOmj8AGSp+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XfnJvV/JW4vNNhHwbRog+rZUQt4HSZqoZkMOUGsqSS8=;
+ b=VzoGf2ezyzfZbe2MB8caKV9VbH45T5YGJrJNgiRJFro6XuAHXM6+nxObwZUJqXLpvrKT5wEM3SNFu1dj9xVHYS8mETBeCr6h09s5hqxRA7RcwtUWrG385zZfJVm9+Yu2vxuYJMWsbth4DcNmvgSBMMVv/spmjqXpc9LvH+uFyE8TIP9k/1Z7hxLMp44DowikyHfhD6S5O/JVytbbYOjg+fJML383k/IfsnaYq0PJu2UxlipKzRVyLSQrZ7fgk5gxY00/igwwCQRmt6mB4FOpX4wd32s16S8Gnzv7EVLfbew+jyJyAdPU9sjNG/WrAVfvrWKFYv9xnuFTrBfE+0Mt5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XfnJvV/JW4vNNhHwbRog+rZUQt4HSZqoZkMOUGsqSS8=;
+ b=fNXjZy5jQwvKXDNVveWbiU6RlA/EULALTcdLcC2RcNSSi5U6gzTHm81o32ZbPKPbCqHJT5cy9btx+yhB3VnrsYqYgiJmZU5txslgNbUI1YSe5zr/CFvg33IQ99tc9fMat/eH2GYVSMtjdNSN9rHiHeVkMByL+MA7uCyQOTOdoYeiPoh/P8EggOQqa/LI2ptu/ll3I+ie3VbzSd4KmtLoK+nR/zj2U80Ih3WlVoFM+9YX9ly90bk/9MWPUmkju4Nflgr9mQ2aIn/UV9m0XuL6AyRQFavpq3vPzMSUr2Uh0BBtLeAZIOBWrIBkIQc6OPraEHCu2moUCe1GvTLB62x3Hg==
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by DU7PR04MB11090.eurprd04.prod.outlook.com (2603:10a6:10:5b0::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 14:44:43 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 14:44:43 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij
+	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng
+ Fan <peng.fan@nxp.com>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v3 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+Thread-Topic: [PATCH v3 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+Thread-Index: AQHcPE/p8HZNFd5djE+JoBVj7U1Crg==
+Date: Mon, 13 Oct 2025 14:44:43 +0000
+Message-ID:
+ <PAXPR04MB918524EAA74F72D64AE0ACA489EAA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+References: <20251009222716.394806-1-shenwei.wang@nxp.com>
+ <20251009222716.394806-4-shenwei.wang@nxp.com>
+ <eb99d9a8-eb96-445d-899a-6e1d9b6f6c69@lunn.ch>
+ <PAXPR04MB9185A829534963B22D1C49FD89EFA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <6025be80-7007-48bb-bdd1-c8198e951400@lunn.ch>
+In-Reply-To: <6025be80-7007-48bb-bdd1-c8198e951400@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|DU7PR04MB11090:EE_
+x-ms-office365-filtering-correlation-id: ad94c062-b5e5-4f4c-aef3-08de0a670c00
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|7416014|19092799006|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?hiJVi6Pmyzt7K9lhbXehxnr7gNWGj8oy26p0ITALR2RT0GT9GjG69NltTbJH?=
+ =?us-ascii?Q?H8oRC5BKxoTlhJB37QxL1vysJzP8uM2AjsX2Wnn9YkzO7uAke/VzmZYcpajj?=
+ =?us-ascii?Q?sJzZXj3s4i394//AP2KNHHyw5lswnsL1xgZ4r/GK171Z/mfBbzRvKqtve5wN?=
+ =?us-ascii?Q?qtdt4lr90T1NL6/48eDzOAWlqEdLd8COG+WOA15p+mZzeJhh2s6v8bFL4SNO?=
+ =?us-ascii?Q?sNM3Zq6N1sgn1SnJwtKC3347fY2uy2ZQs/O4oo3Ef3OMPEq+xB+UL6lFm3wt?=
+ =?us-ascii?Q?NjuQnx++PnO3T2wgCWG3viVyLkn0zFnNIRERndLzbGJv+MIoWftu/oz5vRP6?=
+ =?us-ascii?Q?O/MRaLhNkXhQ65fjI+pDFZFCK6X7D2ZuT2fpuBqFoWuAhnoIgdAv471rhrn2?=
+ =?us-ascii?Q?fXkMwBJP8GyChsf+w4M9/Kg4OlNhaL0gpk6blaO4V73P8hv8shwJPC315Aq9?=
+ =?us-ascii?Q?b0iAHKuHlOtR6dQpCuAEdJzEi3s+MnWRFxQVI/yuKS9L96sTo+WAaQ3Q/gzk?=
+ =?us-ascii?Q?JSvdQ1U5cljw9y+KQwqcf+KtaVtPpOeAPKaPyaEbJdmUfcpfmdwWJ6Z/YRHI?=
+ =?us-ascii?Q?N0yEjpwycH3nuM/hyKdKoS3thARb1KYTnJ5rV3oDQRAQL7Dl7Lf5GYPtsmEX?=
+ =?us-ascii?Q?4Rg8FSs88TqgW8ZN2klfXkKZIPRlvNZnecMJr7B4Bp2NekHQntkYlGfXk2gx?=
+ =?us-ascii?Q?2anvdK/xbEc/P3HmrWg+w3uEttfQNWSjZGszJFH0xUeCCC+PqVTuFhUw2bcg?=
+ =?us-ascii?Q?U370fvCPOI7ts3pSmMpKm+pG/yxoI1g6tdDCvnhKlLDUTzmUQCytteDY+UEW?=
+ =?us-ascii?Q?0gQaBAt0HDCZ8L4NYsYnhpRWmDlXHF8iOwLRySERHrjuB4tSU9DLV+AcsZxl?=
+ =?us-ascii?Q?Mcp2N5fkTExycYH4HAhucGT4woRUnIz2afqeTfkn4Sr9gRetVTgaAwoMZdRo?=
+ =?us-ascii?Q?PUCneofZK2tOZukc6ipUBXVe6/3y36gfftJ6yyI/k7HU4HIyjgoKnF0nVfPN?=
+ =?us-ascii?Q?fHVTPuL4QsiP11rFprQ3YFFAu/xkPMs8zWpvYxOfJc0CNwqhfJb4fkoKx5Ap?=
+ =?us-ascii?Q?lw8gPi3zouPQQcRVq+pVFofbOm+n51eYg/O+0xKWgNiFzvyN3zZKlRJKqBTg?=
+ =?us-ascii?Q?JV5gRhRGyBlxAQci8JwBrZhc5aENNI3dX3Mpl/VviR64ancfx7q8qtWTZLQn?=
+ =?us-ascii?Q?lUGWTMCk7zwLa8Sin/eKvEq4B6zBv6hvmOeIhDxCH5L80d4s+x+hqBP9B9ne?=
+ =?us-ascii?Q?6QVtPaXz+nmZlcjdJUuYkvbQ2mtAKszwqbL2qC0dY/xuzWXWNFKRNJ+fByv+?=
+ =?us-ascii?Q?prbZISp12+59k1t0jARit0EhbP0oa661HaCHcjyt3wXbKUyfHER+0+Gw9KFO?=
+ =?us-ascii?Q?pzF68XUXz/czxP3N3Cz2mSdvBdap7+WKY+j7uqQY0EgkCDgxlaad9bz/BtoH?=
+ =?us-ascii?Q?F7psVvQwXxUj2mCMV8ahvOvG+dj83yBHIYMMkRVhzHFTknGJ2ErwYpA0TQ16?=
+ =?us-ascii?Q?YwMty3woo9MR3NjsKu/qUu3BAp0EMfX2qnSp?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(19092799006)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?r1ZnffElCxA+5cMf9COllk0MJ0usxNQMIIbenaTuCFhOoWPQ5iODUzAsboix?=
+ =?us-ascii?Q?FLv70T9V+NL9KCryljXhM6zU6jfbXqbCwg6vxQdIm6sUOxICIZo7BhsMn0aO?=
+ =?us-ascii?Q?42sRyflcSl/J3ZLGhNr/sI4bEtU7plT2ShpZyTP4wme5RibJbq/1vgqlwvBL?=
+ =?us-ascii?Q?rkIanZTl3BW7QB1dNKP2xZI4pThEBcS7E8gb7HmeUpTH6jab3ja0fwLuSW7N?=
+ =?us-ascii?Q?DVZI+5F9tTss+61w1sZJTlvtD/w7QV6DrMx7PLjDpo2iCUds7mrI/Ph0sxAv?=
+ =?us-ascii?Q?qjx4Md6DMaGbvcIC/JOpn6ehEiw2mSPsu+XtL5CHE5oqCG25eWFYf0CA+BSW?=
+ =?us-ascii?Q?TleLodF9uDCe3nmXwzBvrsVZiqqcFKZy0nIXbP4e5uSIZAl7v/vdErfRukZ/?=
+ =?us-ascii?Q?HDDj04ZsDMu1ZYh9lSEgpWmO8Ctvi2OT7OazpPtYXVYyrYdA1bmvK6nZrXwx?=
+ =?us-ascii?Q?S7YPVYf/1nwblzI4BsLF/dQa47APSIP0TEzqNp04IEyJNwO0fyuEVl7FgEs0?=
+ =?us-ascii?Q?LD/XaqkYISBqPugiEUFKRUlHsxshhvvLdNr+27LZCg+UOFvTAEW17xMg7Uq9?=
+ =?us-ascii?Q?Kf2ecD6Sl/7KHoZ0s1I7IgjghmY1InFsklMutflsjzM61dKNXqbX/KdYjZBf?=
+ =?us-ascii?Q?0GKDEIxzW9/sSQKwTThsEi6cSoOHMTrkGc8h9yvi0HG9PZSjWbLfEycv6rSH?=
+ =?us-ascii?Q?fT5MpZJ+V0gbSKHWb7L95xR6g8q3rP+tldlXW1wcvrHBq6YvjKEbkF21vquD?=
+ =?us-ascii?Q?1Tr7TpcixpyVN15HWFXktEoEjfcui/aBLASBhT3uMyP76b+4o+m6/CUm5J+X?=
+ =?us-ascii?Q?2WRTbv/Cujcv27qzIwKZnPDT0iZ2uL8QaRzg2BF36rUmpRoS9z32wYFLn8Vy?=
+ =?us-ascii?Q?IG8+nNQNounYehNzGdwgO4FhqV/NDO5CEyc/uFAfwSK4rbo+TePhGcUsG+Ip?=
+ =?us-ascii?Q?fyB0Ok2U0oFVdW7BwfPuwLUvANi5kaSq0IIQixEi4/xWQfGZ9BkChftjnUKN?=
+ =?us-ascii?Q?iF+smQm6/oJE+uUh72hqfPRA5PEG+u++N4XQfWk/+YRzBMlfG3BW5LnqkOt4?=
+ =?us-ascii?Q?1Vn1LgAtANZIIT6eqMDf27p5+etE7ruc09Ze6xXCSkl6duyjw3nHJDtaUOd0?=
+ =?us-ascii?Q?Y2Zvodnle288ZKVY1zbVym1+9RosLcsU2EkI4LUIui0QnkMNudjtPHkHkyHr?=
+ =?us-ascii?Q?KTac6kapmgrIV1MwiAJyvuUd00baoSn9Yf3PTT9kAKA1+f7laXzTu/DpMeCQ?=
+ =?us-ascii?Q?A0ec0bo1+U6CLhYwNPJa7CKSGTD9sq6dLIKhQZndRAFRSg9yJmeiu3SlmTYX?=
+ =?us-ascii?Q?1LV39/VRfqgEIADZ0g1vN94kkhfkFC7gdKT7kIZ5TXAI8jc994qmLE9LOd33?=
+ =?us-ascii?Q?RkFDCTkAp1+mlejTvSETtZV4Dve0twKDPgTJGCAsIPX7h5iPOsHs2bfC9lxo?=
+ =?us-ascii?Q?j7TEqMTiHySzmp85soDEe7PzPkW1J8bizANlc1kO9LuDImWm1QJnLeUj9QMf?=
+ =?us-ascii?Q?oM8GGgjLqIxKypdLBOcKmKltMzr/i0g44gTeinK26nrsXRvXeK9mZqifC5FQ?=
+ =?us-ascii?Q?oK8nJBA4t4sscGOzHas=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251012015738.244315-1-ebiggers@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 9512521905
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,samba.org,lists.samba.org,manguebit.org,gmail.com,microsoft.com,talpey.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.01
-
-Hi Eric,
-
-On 10/11, Eric Biggers wrote:
->This series converts fs/smb/client/ to access SHA-512, HMAC-SHA256, MD5,
->and HMAC-MD5 using the library APIs instead of crypto_shash.
->
->This simplifies the code significantly.  It also slightly improves
->performance, as it eliminates unnecessary overhead.
->
->Tested with Samba with all SMB versions, with mfsymlinks in the mount
->options, 'server min protocol = NT1' and 'server signing = required' in
->smb.conf, and doing a simple file data and symlink verification test.
->That seems to cover all the modified code paths.
->
->However, with SMB 1.0 I get "CIFS: VFS: SMB signature verification
->returned error = -13", regardless of whether this series is applied or
->not.  Presumably, testing that case requires some other setting I
->couldn't find.
->
->Regardless, these are straightforward conversions and all the actual
->crypto is exactly the same as before, as far as I can tell.
-
-I think the overall series looks good and do a great cleanup.
-
-Just a minor nit about fips_enabled: since it's now being handled
-explicitly (rather than an error on cifs_alloc_hash() currently), I
-think it makes sense to move the check to mount code path when
-'sectype == NTLMv2' (I don't particularly care about SMB1, but
-something similar can be done for 'smb1 && sign' cases I guess).
-
->Eric Biggers (8):
->  smb: client: Use SHA-512 library for SMB3.1.1 preauth hash
->  smb: client: Use HMAC-SHA256 library for key generation
->  smb: client: Use HMAC-SHA256 library for SMB2 signature calculation
->  smb: client: Use MD5 library for M-F symlink hashing
->  smb: client: Use MD5 library for SMB1 signature calculation
->  smb: client: Use HMAC-MD5 library for NTLMv2
->  smb: client: Remove obsolete crypto_shash allocations
->  smb: client: Consolidate cmac(aes) shash allocation
->
-> fs/smb/client/Kconfig         |   7 +-
-> fs/smb/client/cifsencrypt.c   | 201 +++++++++++++---------------------
-> fs/smb/client/cifsfs.c        |   4 -
-> fs/smb/client/cifsglob.h      |   3 -
-> fs/smb/client/cifsproto.h     |  10 +-
-> fs/smb/client/link.c          |  31 +-----
-> fs/smb/client/sess.c          |   2 +-
-> fs/smb/client/smb2misc.c      |  53 ++-------
-> fs/smb/client/smb2proto.h     |   8 +-
-> fs/smb/client/smb2transport.c | 164 +++++----------------------
-> 10 files changed, 131 insertions(+), 352 deletions(-)
->
->
->base-commit: 67029a49db6c1f21106a1b5fcdd0ea234a6e0711
->-- 
->2.51.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad94c062-b5e5-4f4c-aef3-08de0a670c00
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Oct 2025 14:44:43.2030
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XbdZRHxLqre8pqbdOCHosgigWW80x+Ci63BeJgZVScJt7sc0qZcYZLrdarMExawryVLJrLTUVxtk+h8ztrJ/3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU7PR04MB11090
 
 
-Cheers,
 
-Enzo
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Friday, October 10, 2025 2:32 PM
+> To: Shenwei Wang <shenwei.wang@nxp.com>
+> Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
+> <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
+> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
+> Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>; Linus
+> Walleij <linus.walleij@linaro.org>; Bartosz Golaszewski <brgl@bgdev.pl>;
+> Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>; linux-
+> remoteproc@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.d=
+ev;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; dl-li=
+nux-imx
+> <linux-imx@nxp.com>
+> Subject: [EXT] Re: [PATCH v3 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO dri=
+ver
+> > The only platform-specific part is the message format exchanged between
+> Linux and the remote processors.
+> > As long as the remote processor follows the same message protocol, the =
+driver
+> should work as expected.
+> >
+> > Here's the layout of the message packets:
+> >
+> > +--------+--------+--------+--------+--------+----------------+--------=
++--------+----------
+> -----+---------------+
+> > |0x00    |0x01    |0x02    |0x03    |0x04    |0x05..0x09      |0x0A    =
+|0x0B    |0x0C
+> |0x0D           |
+> > |cate    |major   |minor   |type    |cmd     |reserved[5]     |pin_idx
+> |port_idx|out:{evt/rc/v} |in:{wkup/val}  |
+> > +--------+--------+--------+--------+--------+----------------+--------=
++--------+----------
+> -----+---------------+
+> >
+> > Cate (Category field ): can be GPIO /I2C/PMIC/AUDIO ... etc Major :
+> > Major version number
+> > Minor: Minor version number
+> > Type (Message Type): Can be SETUP / REPLY /NOTIFY for GPIO category
+> > Cmd (Command): Can be Input INIT / Output INIT / Input GET for GPIO
+> > category
+> > Pin_idx: The GPIO line index
+> > Port_idx: The GPIO controller index
+> >
+> > For Out packet:
+> >       if it is OUPUT INIT, the out field value is the gpio output level=
+.
+> >       If it is INPUT INIT, the out filed is 0.
+> >
+> > For In packet:
+> >       If it is a REPLY message, the out field is return code. 0 means s=
+uccess.
+> >       If it is a REPLY of INPUT GET, the in field is the value of GPIO =
+line level.
+> >       If it is an NOTIFY type of message, it simulates an interrupt eve=
+nt from the
+> remote processor.
+> >
+> > I can add above comments in the commit log or the beginning of the driv=
+er
+> source file.
+>=20
+> Maybe Documentation/admin-guide/gpio-rpmsg.rst would be better.  You shou=
+ld
+> also document how to handle features the device does not support. e.g. i =
+_think_
+> your hardware supports all 4 interrupt types. But maybe other hardware ne=
+eds to
+> return something meaning -EOPNOTSUP?
+>=20
+
+That should be one type of the error return code in the out field of REPLY =
+message.=20
+The return code of 0 means success, and the others are error codes.=20
+
+I will add a gpio-rpmsg.rst file in the next patches.=20
+
+Thanks,
+Shenwei
+
+>         Andrew
 
