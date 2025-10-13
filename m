@@ -1,166 +1,253 @@
-Return-Path: <linux-kernel+bounces-850538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56575BD321B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:05:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D29FBD321E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E18C63A6F72
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:05:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E5B0234BEEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF4F2EC568;
-	Mon, 13 Oct 2025 13:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AECD2E6CA5;
+	Mon, 13 Oct 2025 13:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dtBS/5TV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JzZ12+v7"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969A1261B9C;
-	Mon, 13 Oct 2025 13:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E455270ED7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760360699; cv=none; b=iFIo6Cp5VLsXhgd1d71SLTAWkQ0AUUfOQ9wG/MmcGPaxp64lsp7S6asWk2oiPN0vlV6adqWGNRozfyGhkis4pMef0N7PfV6OIsxcBki/IwxuFnEi7HEvgFNCxNhIY6cdjWqrcWkz13JqihBpYgoCfkZrBc1cb3bEtKsBXllPPTY=
+	t=1760360716; cv=none; b=XMFdaSF/wkYUBcrhtaPqcV5B9ERnKqVnZ13fXszAIxNrsnNMRCiMhOK84umvOjsgo8K9/hoV580XnGM8fJjyjxtZq4qylyYFPAL+JdqFyInnPujByH582SGeZDE8+o6lPVTFjBKG3hYNL1653oeCE/occaPiqm6eOSVb7SDTSF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760360699; c=relaxed/simple;
-	bh=Z31FwIulc8WU+gcD8GzAisYqYzH73HsiD11LIJzVDFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZX1t7G0HhVIVRPM089ScieV0vwy0306xhn82lM3dd1Ssf7i8nA8KIbKqQOYChjVnkmu4aOOu2Hb7SVa6AFILErash7CEWyKTIFdFm5UIRfXHYCs2fof3xlOSyJlCk1F1aiXTqXwqJaDNhYalvGoA6QTcQFDeO1aduzF+QKHTOcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dtBS/5TV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DAeg7g024965;
-	Mon, 13 Oct 2025 13:04:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u5mIcqwHkZGxdUu45ahV5aGvY4oLNJAusDI+4mcOJog=; b=dtBS/5TV2aNGPvtS
-	3c+1B97XQ5M5D9GiXRjinhrtGbJsGTtgbfz0XncuyhKNuZYTlsPmVMzqN1EYYyHh
-	9OLhl5gpLE+xi1VfE3cvNKnCCezqQzk2NOLvcdBTpL48GMKjpxB1dxeVepJyd+xb
-	sBVmcuk/8AYP7X6UVg/M9eMlhLcatRI6fdFeeAS6/UJJ9bf+52HpTLg44qw8IVp0
-	d5TAdy/2u4+1IWLhsNWm47WSxRfuM7Em5C5/HscGuizRjgyzmtoBMcd6QcvHxQQe
-	43UcmdQ65IcUmAM92pn/Yr2OHHOWmT1meHn6HLBF41anhQtxquZ/OgZ5wt7BT2LM
-	1GMbcQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa84p90-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Oct 2025 13:04:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59DD4o3c032493
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Oct 2025 13:04:50 GMT
-Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 13 Oct
- 2025 06:04:45 -0700
-Message-ID: <88220541-e344-443d-353c-be738437254e@quicinc.com>
-Date: Mon, 13 Oct 2025 18:34:42 +0530
+	s=arc-20240116; t=1760360716; c=relaxed/simple;
+	bh=OfBZdKCXLdXnDq8fdQ6ytW1UWFw/HC1A/Mu91/7QWi4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y+5vyf97fP8KrTa99Sa1PotDoGOfZccdE1yOxLgEa9qvGp2FN5ENc57Z84LNK2mPLNtL3aTkQo1UaV4wGHFZ4vcaKkIqkIND5omspDxiqP3+K33TC8izwc0LfonNUnanQh6XeQ+M0DD7x5kk3ryPCbglqb3IdNSwZpmakQwF6pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JzZ12+v7; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id B0F081A132F;
+	Mon, 13 Oct 2025 13:05:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 79D57606C6;
+	Mon, 13 Oct 2025 13:05:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DA468102F224D;
+	Mon, 13 Oct 2025 15:04:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760360707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=qxp3SOl/8cQ2/Ve+mDrdRsUEubzjiO7EQKOltPp8XlU=;
+	b=JzZ12+v7YOgnrn50SuxLuwOqkPODiUsStbxKYfCO95ARPi/hikoWycKWNFk4FqCtK+w/wS
+	dTxdxT5iqiGEmELiQJtPWAmXj9utndOVshnWHtJG7ybaVSsgqxBIhiahSELWrbjqPOO1F8
+	1hJnRdGVthjB/FEXBUfQJUIo1S51zeJOtm0xSfBHaM6Xrk4vP6yaz0PE+p+Hx3kEYhbOSY
+	AYnWWUt4Hy9mKmESSktAtOblcBdm4DPEkRCsxw68G1UzAw/PHT4/XHLrbZsXe+7OVcqL5O
+	YznbQCvKoHRMJKd5nTYQK+8g1pJI/881OZbjHxzX1SdXV1JAzBhObPZoJH1GnQ==
+From: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+Date: Mon, 13 Oct 2025 15:04:44 +0200
+Subject: [PATCH v5] mux: mmio: Add suspend and resume support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 1/4] dt-bindings: mmc: Add dll-hsr-list for HS400 and
- HS200 modes
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Rob Herring
-	<robh@kernel.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>,
-        <quic_pragalla@quicinc.com>, <quic_sayalil@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <kernel@oss.qualcomm.com>, Sachin Gupta <quic_sachgupt@quicinc.com>
-References: <20250929113515.26752-1-quic_rampraka@quicinc.com>
- <20250929113515.26752-2-quic_rampraka@quicinc.com>
- <20251006214830.GB625548-robh@kernel.org>
- <817f02aa-dfb8-a134-2fd4-fbdf8e8a714e@quicinc.com>
- <1d052b98-4dfd-4ee3-b46f-ac043b406d58@oss.qualcomm.com>
-From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-In-Reply-To: <1d052b98-4dfd-4ee3-b46f-ac043b406d58@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ff5d8oTEayibpIVhbQvK0FbTVxkqdv6z
-X-Proofpoint-ORIG-GUID: Ff5d8oTEayibpIVhbQvK0FbTVxkqdv6z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX/x8zUw4OyqgU
- jDFGVhaWOfDlodZStUtPDviW9+dWSyNFlmoi7Tn4+OFTRgQjmVCxQqYpA3wQ/fLaxblxMhx+jXV
- Fz9jVKJPhbNz84bWORPRZ0flSIWplKV53cj8f15Ln+M8U32VMwo5Lhb2AM1U9I7KywPkkozdyuB
- Q5WmT+MHGE1Z1gg6UHqlyWCKZOrMW8AVwE1hC0f7AdYUzJD2kyzDiBBnwMzNyVpLtJZu6aiFluK
- dF6/AjEw67+MXNF8OCDfj8Uikg0XIZ3pyPf+5sAHZDs2IeQL5KOxxiDdQj/M3NTbCE7Rx1jZ+CW
- kWCycwrWr6soa1ZaastG9wfeY1Bvc1tf830ufiYxrV3KxoqWGhNh3Xx+8CNvWPYzmLlLW6Rjdrm
- +DfXgaxUuebe0FVh8Y8XABeF8I41Xw==
-X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ecf8f3 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8
- a=NQjy_NEe_Y9d4xOi-4gA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
+Message-Id: <20251013-mux-mmio-resume-support-v5-1-de9467ceb2b2@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAOv47GgC/43OQW7DIBAF0KtErDsVhgHbWfUeVRZAxjVSMRbYV
+ qLIdy9EqqoqitrlH2be58YyJU+ZHQ83lmjz2cepBPVyYG400weBP5fMBBfIdSMhrBcIwUdIlNd
+ AkNd5jmkBHKQVRqKRwrBybU0msMlMbqz3WSSoo/o0Jxr85V76fip59HmJ6Xr/w9bU6d91WwMcU
+ AllB6XLsnmzMS6ffnp1MbCqbuKfkoAGqMNe8763XOKjJL8lxZG3zyVZJGe7zljH8WzbRwl/pFL
+ 3XMIilQUt2nbQmtNvad/3LydlRJW5AQAA
+X-Change-ID: 20240613-mux-mmio-resume-support-4f3b2a34a32a
+To: gregkh@linuxfoundation.org
+Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org, 
+ gregory.clement@bootlin.com, richard.genoud@bootlin.com, u-kumar1@ti.com, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>, 
+ "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
+The status of each mux is read during suspend and stored in the private
+memory of the mux_chip.
+Then the state is restored during the resume.
 
-On 10/7/2025 5:12 PM, Konrad Dybcio wrote:
-> On 10/7/25 1:16 PM, Ram Prakash Gupta wrote:
->> On 10/7/2025 3:18 AM, Rob Herring wrote:
->>> On Mon, Sep 29, 2025 at 05:05:12PM +0530, Ram Prakash Gupta wrote:
->>>> From: Sachin Gupta <quic_sachgupt@quicinc.com>
->>>>
->>>> Document the 'dll-hsr-list' property for MMC device tree bindings.
->>>> The 'dll-hsr-list' property defines the DLL configurations for HS400
->>>> and HS200 modes.
->>>>
->>>> QC SoCs can have 0 to 4 SDHCI instances, and each one may need
->>>> different tuning.
->>>>
->>>> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
->>>> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 5 +++++
->>>>  1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
->>>> index 22d1f50c3fd1..a60222473990 100644
->>>> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
->>>> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
->>>> @@ -137,6 +137,11 @@ properties:
->>>>      $ref: /schemas/types.yaml#/definitions/uint32
->>>>      description: platform specific settings for DLL_CONFIG reg.
->>>>  
->>>> +  qcom,dll-hsr-list:
->>> '-list' doesn't add anything.
->> list was used as there are 5 dll register, but '-list' can be
->> dropped, and it can be renamed to qcom,dll-hsr, I will update in
->> next patchset.
->>
->>> What is 'hsr'?
->> Hardware Settings Reference
-> Maybe "qcom,dll-presets" would be more clear?
->
-> Konrad
+Reviewed-by: Andrew Davis <afd@ti.com>
+Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
+---
+A fifth version of the series. Nothing fancy, I just rebased the series on
+v6.18-rc1 and updated my identity.
+---
+Changes in v5:
+- updated my identity to credit TI
+- rebased on v6.18-rc1
+- Link to v4: https://lore.kernel.org/r/20250609-mux-mmio-resume-support-v4-1-6096277f660e@bootlin.com
 
-sure, sounds good.
+Changes in v4:
+- rebased on v6.16-rc1
+- Link to v3: https://lore.kernel.org/r/20250407-mux-mmio-resume-support-v3-1-cb88abc04db7@bootlin.com
+
+Changes in v3:
+- rebased on v6.14-rc1.
+- Take Reviewed-by: Andrew Davis.
+- Link to v2: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com
+
+Changes in v2:
+- Remove all modifications done in the mux subsystem
+- Add a mux_mmio_set()
+- Read the status of muxes during suspend and store in the private memory
+  of the mux_chip.
+- Use this status to restore muxes during resume.
+- Link to v1: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com
+---
+ drivers/mux/mmio.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 73 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
+index 9993ce38a818de12237cd700e4c19359ea7f4c29..e4ddb1e619237dbb307677a20564eb08f62d11ab 100644
+--- a/drivers/mux/mmio.c
++++ b/drivers/mux/mmio.c
+@@ -15,11 +15,25 @@
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+ 
++struct mux_mmio {
++	struct regmap_field **fields;
++	unsigned int *hardware_states;
++};
++
++static int mux_mmio_get(struct mux_control *mux, int *state)
++{
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
++	unsigned int index = mux_control_get_index(mux);
++
++	return regmap_field_read(mux_mmio->fields[index], state);
++}
++
+ static int mux_mmio_set(struct mux_control *mux, int state)
+ {
+-	struct regmap_field **fields = mux_chip_priv(mux->chip);
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
++	unsigned int index = mux_control_get_index(mux);
+ 
+-	return regmap_field_write(fields[mux_control_get_index(mux)], state);
++	return regmap_field_write(mux_mmio->fields[index], state);
+ }
+ 
+ static const struct mux_control_ops mux_mmio_ops = {
+@@ -43,8 +57,8 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct regmap_field **fields;
+ 	struct mux_chip *mux_chip;
++	struct mux_mmio *mux_mmio;
+ 	struct regmap *regmap;
+ 	void __iomem *base;
+ 	int num_fields;
+@@ -80,12 +94,20 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ 	}
+ 	num_fields = ret / 2;
+ 
+-	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
+-				       sizeof(*fields));
++	mux_chip = devm_mux_chip_alloc(dev, num_fields, sizeof(struct mux_mmio));
+ 	if (IS_ERR(mux_chip))
+ 		return PTR_ERR(mux_chip);
+ 
+-	fields = mux_chip_priv(mux_chip);
++	mux_mmio = mux_chip_priv(mux_chip);
++
++	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
++	if (IS_ERR(mux_mmio->fields))
++		return PTR_ERR(mux_mmio->fields);
++
++	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
++						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
++	if (IS_ERR(mux_mmio->hardware_states))
++		return PTR_ERR(mux_mmio->hardware_states);
+ 
+ 	for (i = 0; i < num_fields; i++) {
+ 		struct mux_control *mux = &mux_chip->mux[i];
+@@ -115,9 +137,9 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ 			return -EINVAL;
+ 		}
+ 
+-		fields[i] = devm_regmap_field_alloc(dev, regmap, field);
+-		if (IS_ERR(fields[i])) {
+-			ret = PTR_ERR(fields[i]);
++		mux_mmio->fields[i] = devm_regmap_field_alloc(dev, regmap, field);
++		if (IS_ERR(mux_mmio->fields[i])) {
++			ret = PTR_ERR(mux_mmio->fields[i]);
+ 			dev_err(dev, "bitfield %d: failed to allocate: %d\n",
+ 				i, ret);
+ 			return ret;
+@@ -141,13 +163,55 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ 
+ 	mux_chip->ops = &mux_mmio_ops;
+ 
++	dev_set_drvdata(dev, mux_chip);
++
+ 	return devm_mux_chip_register(dev, mux_chip);
+ }
+ 
++static int mux_mmio_suspend_noirq(struct device *dev)
++{
++	struct mux_chip *mux_chip = dev_get_drvdata(dev);
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
++	unsigned int state;
++	int ret, i;
++
++	for (i = 0; i < mux_chip->controllers; i++) {
++		ret = mux_mmio_get(&mux_chip->mux[i], &state);
++		if (ret) {
++			dev_err(dev, "control %u: error saving mux: %d\n", i, ret);
++			return ret;
++		}
++
++		mux_mmio->hardware_states[i] = state;
++	}
++
++	return 0;
++}
++
++static int mux_mmio_resume_noirq(struct device *dev)
++{
++	struct mux_chip *mux_chip = dev_get_drvdata(dev);
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
++	int ret, i;
++
++	for (i = 0; i < mux_chip->controllers; i++) {
++		ret = mux_mmio_set(&mux_chip->mux[i], mux_mmio->hardware_states[i]);
++		if (ret) {
++			dev_err(dev, "control %u: error restoring mux: %d\n", i, ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, mux_mmio_suspend_noirq, mux_mmio_resume_noirq);
++
+ static struct platform_driver mux_mmio_driver = {
+ 	.driver = {
+ 		.name = "mmio-mux",
+ 		.of_match_table	= mux_mmio_dt_ids,
++		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
+ 	},
+ 	.probe = mux_mmio_probe,
+ };
+
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20240613-mux-mmio-resume-support-4f3b2a34a32a
+
+Best regards,
+-- 
+Thomas Richard (TI.com) <thomas.richard@bootlin.com>
 
 
