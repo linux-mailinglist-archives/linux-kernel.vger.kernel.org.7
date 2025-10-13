@@ -1,80 +1,87 @@
-Return-Path: <linux-kernel+bounces-850225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7462ABD249D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:27:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034E7BD24CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFF353A4E27
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:27:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7AB04ECEE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE52FD7B9;
-	Mon, 13 Oct 2025 09:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51802FD7DA;
+	Mon, 13 Oct 2025 09:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWZ/5+Sl"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XvzWtq70"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890662FD7BB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAFC1FDA89
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760347659; cv=none; b=GNqCCQocRoRzLa7nAO6I9oGtU62V3+2ngDYFt0Zxz/tTXJIJW0Hrd+ECmF0y4BZdjiMU7vQigcRHK+izOyMB85JWha7U0OJwE3CJVjgZ3Agq8tTAuf9dCuZwzt9oT+fUBB4pNn2whL49ZKrlVwnb5BOq/IeFzv/+a7xGv6+HvoU=
+	t=1760347797; cv=none; b=jr2iCCjr4fXEO+9vTrIVNYKjf4xT5lSdtb8TMjKbE7pqWSHpsCSJ04A+/rpD5bZZmZL+cqKtAOD9Xrhorshsfb0p/L+oZpdFRNDUhPyRXKRDUVDe4hqH5p5795WLWV3cZaLTxWoKR9oXV66tsBnTWtmKvkUarBBQvZIRBrYuWuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760347659; c=relaxed/simple;
-	bh=Vnu9qF1W+mtePyJT46244Xk0nYQav+1PFrImO+uiBpI=;
+	s=arc-20240116; t=1760347797; c=relaxed/simple;
+	bh=vP0PLgMT4WwbLdCQf3igzkCMShp8qEBYq3eJHshGHkQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eMdFf44JBlEVQ+QlwFVwYpX9vrOt1B97FSh2w4dn6P/ZREBAD9vIp5DJnyfUVpbO9mKQ0XfT1fvhK4L2VFl/T8owZWoknU5R42lZHmItSUQRW7yLES9jp8bs9q9ZJ0s1ixFCwwQGX3T+GMo3e3WIErwzkM9CbgZgZanvFYfH4TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWZ/5+Sl; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57f1b88354eso4476576e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:27:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760347656; x=1760952456; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TSTsG2geMiXZZ54sKPHqUYbwVwZADjPORMJscfDPZgg=;
-        b=jWZ/5+SljpEk8QizK6qM0TG2OT6docRYqUXFzt+x95jYvOnNrmmT7zioksz6h8wUEG
-         QJWTj/SExgnOGFXuyQiBZXsR73urnrb84UOTMd8t/GNhcUsfmUSeGGGkXQIs0X+o6CAh
-         NECFMEmve/PvMzAc5HpXqlitNn9BEbaMbDPb9rxE5SA5aAnCmkb6I+Lc04sPG7dJlz30
-         o6M5AygU50aC/Yr9rbBZnyfGujoZVyuF+57VMEPM687PTKWTz9pZLPVNmpLdsD4pd9e+
-         J9QFDE2plJzI5eOg9tU3z9QkKDyaI+pcJEzRADffESa6n9ENzDtNN0q/5wo1Q571lvnp
-         pWnA==
+	 In-Reply-To:Content-Type; b=rtx0FNyV0VMsQhwl2ZqYkmLJm4XJCJIGy5IDOIH6hHjmYlMAdnW0PYQSfQtihu0K78/dU7GtH+k8xkOmauVyNwEiitbC3p8raH4g13Qh8EmFAUbqx3fabNVZLjsnZhMfvj6sTEXE16IFCEd5cl58tvGxtsXl7glOeBZqxrzcjdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XvzWtq70; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59D2n58S010423
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:29:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4cquzd84x/mL+NX5HhV6P5OClJ1tqgADwhpjra3SGp8=; b=XvzWtq70PExzhEGL
+	y8gyMkojEIaqMXV0jj1wEdvnvJTuhTKAVpCRI+Cr5OyFEIjghWouwmK4N81YxDeV
+	Bd8W9kTk07aOewhrgL6Ss3X+8Wmp1719erMZeFXFaJ0gqqjJ9b7OtP1mndRt1227
+	9RxZTxnVheqWeHOijLcd45TMKz0RF9KIxkFwN1099c5MKpexYKAfHWefki8RKpzM
+	flrJKMPA9zFzzGE2KSM0hZm6dLn1kAUfe7HkTj42cwLF0/GRL6RxKvcPzUTYkwdr
+	t0h0LLDFyPPCDT9vL4/IK08CduY+9vyqdqTne1Vpn0cB6NV93/KPt3V2Lywsguj9
+	FVaANg==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0bv0t3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:29:54 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2699ed6d43dso80672625ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:29:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760347656; x=1760952456;
+        d=1e100.net; s=20230601; t=1760347794; x=1760952594;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TSTsG2geMiXZZ54sKPHqUYbwVwZADjPORMJscfDPZgg=;
-        b=pmzVMqM9aye9XlkqqS+GpOHh97AfrKR3iOGGPblNjIheyr8p1GDlHX/XhN0Lsq1gdX
-         brOyvNnQfaGFFhlU7FPI90dOEcUiWSdVDmcsEB9Z9OLHn2C4iFH07z5tfTQHe6HA45YC
-         FvLSnXqiXeK9dqeEtbrMnf36XMz7t6yL7gIiGlKypqtQPSm5D5Z4d45Y1CFOiNRP+5+n
-         yVi57hVB5brSPdwvsRV1CYzK+p2775z4RNnKyih7uuk13hLnJQCtuUDr2egZaeYGEpwX
-         TLQ3pZZwEf7yipywW2j+39GVu7vV8u3Nb5/H5xkEqLlQHsG2Tvi0XASSutpoVkqqGqX5
-         oTuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZofnhN6uLubf2tnV4WzLxpYLoBxC3MDS3S1MEqBtOVdhoHElC2oEOupP1AqmJM9HlsIyV6wMg2g64q+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSMCZ+EsV1it+fayTKe5Z8pwFrmQsAG094V7/jW4hvPNI7A0P2
-	OnUwHjdP1cFIyz+5kUcvYX9n3PmOP69Oo9QokGt03Y96YMH5NG2DC3V3
-X-Gm-Gg: ASbGncskSSZyrzLgzJWqw8sBDOlB8u1tVGmXlRjE8RLH5RqSOfZBFfCJo6qW4xioI3L
-	IC3m49AqrW85sEQqJVGkINHVGBU0OC93Uz9jzayLWMzYSH+Yk6YyfCMAgA+n6MsT+My3kjuJpbA
-	w1ONqNnooG8GaayR9gEW6FnTXFKADOzs+t0x3fCKuI8Y8g+6X/qbBUm0dM2DGI1Dy3yrVcHcYE6
-	Oe+FVD9IXWG3m4QZDi8cR3tsRBRtBdxk91fsFrXvFXgpyAi3mwqhI9AEjdWqA+jpKsZbgmHXrVs
-	IAkV2ttVkO88wbkAsfhKbVwjqyrDegbrNtLHm5OBFl2uhX1u+YE4K3q51dsDJ1C6Os+7DtwEtVH
-	g5zhSpIiR+tZ99rLwYbn+nQv76vL5HVxZxHQFTVf9bd1rEvDqSyCtwo4ZxoT0LxhKojKgr6yXQS
-	c0XnosOS2LeLrvBPLDjwi037feudFY+GJS/Q==
-X-Google-Smtp-Source: AGHT+IEqb5UWThw0zJL0ngTJbT7pv4o6411sYhb14KLtxUGEsvK5SpnsWbVBznfiz/L/V7BnIrIUsw==
-X-Received: by 2002:a05:6512:3b9a:b0:57f:6da2:6a1a with SMTP id 2adb3069b0e04-5906db01c1emr5500852e87.48.1760347655259;
-        Mon, 13 Oct 2025 02:27:35 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59088577c1bsm3920293e87.106.2025.10.13.02.27.34
+        bh=4cquzd84x/mL+NX5HhV6P5OClJ1tqgADwhpjra3SGp8=;
+        b=GaheZCIZ6Mb7Al5ONa7g6XNHIWwZ828K018Zsvvp8aRiWYyrx/i3o0qt3y5qenpSsE
+         a/YWN+yT/UJReRxrK4jJJqUYgPwJ4tfNcxSL3C2veSPzR9beBFt6RirAKDERJMgKwjxV
+         3ZJ1Oi/HgG6EdFZUc4FFMvspehRCTe5iqTJEFx4eshfvQPkegOrn9IGs0CN+CzzgzE6p
+         81EaPP8pJvHVb0vemX17sAlro54q8xCG65rfAxUouHbmR1A2bDvekQxuTCiyfbAnAOiH
+         v1v6GRSKjf1oxWu030fk+0Og/5SwqflQKluQs8EdjbjhLXo8/lXfSSepVnNpVKFIBKod
+         6HIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcLwbgCXF8CSXe5fF3oo/JXrG7FABXVJtDad9C7wpLgD1Kj2Vbakgt7I2IfPjd19Sa73460jjwq2WbgQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8lw7F3AxW6yAaxTYxkdmb/q46rFjk3vH9VNk+xkcUbQ9wvDMS
+	tp9VH88gLZXaRq9N4RByVRIgKw69vdOX6jTQXNJDHRMqXqnC1LxCW2wATWl1CTr6qSX4r0kFa2T
+	Zi8+erEtT6rzjIgCwdtJiI735SN6YNYcncbYbZvlVV3fS8Iw1h0rXf8i2ecAWNECL3dIlnLKxPV
+	o=
+X-Gm-Gg: ASbGncu1pk2jK+HukmGbwDKrM3I23tCXrWcsaLbGU/9X3Bfr6NlbSSAbr9LQ4JT5tzf
+	GpwAlsHA/+kfN8ySutvGPHNec3yy3LFQjGxwGtaA+AzjxNTqfRnZij8HOLQG24c1FSQNkb44/xA
+	2YarSR2/Vx/BCtOqu8WQBiFUbA913viV9v/QThsdDsDOWzb3dI84GNra60ZABUiaNTMSP+ikLnV
+	yDHqDBSsSCjLGv2JNlNunSxKV/wEKRLRs2Zq7YYlyuF+deAzXoQvlU+RakfJAIHGE7XHVB1Ei/5
+	SYwYS23lLDjaVp5pRFtePpLfkijL1jiLLehJCewY5rT7fPjZekSu0Hl/56U8QfwE
+X-Received: by 2002:a17:902:e550:b0:268:15f:8358 with SMTP id d9443c01a7336-29027402ca0mr255190325ad.42.1760347793648;
+        Mon, 13 Oct 2025 02:29:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6UhW3l3Ne3sRJ9hvwI6/6HGpjAZcOesXR6ipfc4QNItSwXOe+IG2CS2vgrhNw4PDOAOyXSw==
+X-Received: by 2002:a17:902:e550:b0:268:15f:8358 with SMTP id d9443c01a7336-29027402ca0mr255190105ad.42.1760347793167;
+        Mon, 13 Oct 2025 02:29:53 -0700 (PDT)
+Received: from [10.217.199.21] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f3de4asm128166335ad.92.2025.10.13.02.29.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 02:27:34 -0700 (PDT)
-Message-ID: <d2295506-bf70-4142-8537-0fdf9cb04a30@gmail.com>
-Date: Mon, 13 Oct 2025 12:27:33 +0300
+        Mon, 13 Oct 2025 02:29:52 -0700 (PDT)
+Message-ID: <7a62a8e4-9c67-4772-8687-9741a48e733e@oss.qualcomm.com>
+Date: Mon, 13 Oct 2025 14:59:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,79 +89,171 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 06/13] mfd: bd71828: Support ROHM BD72720
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Lee Jones <lee@kernel.org>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <cover.1759824376.git.mazziesaccount@gmail.com>
- <93142a80d90a0ac80b27090d0c83914675aad94d.1759824376.git.mazziesaccount@gmail.com>
- <20251009161847.GE2890766@google.com>
- <8ea507eb-f78c-4a16-882b-112e277fa1b6@gmail.com>
- <20251010150317.07bfdbe8@kemnade.info>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20251010150317.07bfdbe8@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 05/24] arm64: dts: qcom: glymur: Add cpu idle states
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-5-24b601bbecc0@oss.qualcomm.com>
+ <2055e6a8-dace-4ee9-a74b-0e3bf2d58fb7@oss.qualcomm.com>
+Content-Language: en-US
+From: "Maulik Shah (mkshah)" <maulik.shah@oss.qualcomm.com>
+In-Reply-To: <2055e6a8-dace-4ee9-a74b-0e3bf2d58fb7@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: k2kyT3xPQfcs5Rd5kK1bN4tKtFxFr3UU
+X-Proofpoint-ORIG-GUID: k2kyT3xPQfcs5Rd5kK1bN4tKtFxFr3UU
+X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68ecc692 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=49XlnRG1adklC0iOWOYA:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfX7ItV7vK/DwhK
+ QfWI0kLFvbIiUJTZL7mEP8yKIWnQex6HbCwy/gZ2uXj0d2Qg5SbqRCFpLu53dIxRshACTzX6BlO
+ j71KlHY0YEfNc59ze5BHbthm6J8fYPw9KCM8MgSldwPMgy9JRncpriDdXEoPNP493IiLWhq5BCN
+ LWZLB0YvNkmsPPj89z1Ou04YZav2lVOO1fndcINjkvxT/yVxaHIrIGTNe9Ydh7wylBCvMtyBsBS
+ rbPK+r4FOOa6ycjfa4ggb1jhR1lHjAcejn2q0U3ClzEdhSRG1FbBQrcWNVolHrW4JokPO/tzgjP
+ NwXR6DAWu1zioHA68R1Xvz6O6tUkFADblz/5pCKxVTb6lmmhQs88yWjvQmT7TaRUTg5XdCRrWjP
+ 2+W68EFfYWLg3GrShCPbDmlqqmoiRg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
 
-Hi Andreas!
 
-First of all, thanks for taking a look at this!
 
-On 10/10/2025 16:03, Andreas Kemnade wrote:
-> On Fri, 10 Oct 2025 15:09:07 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->>>> +static int bd72720_get_secondary_regmap(struct i2c_client *i2c,
->>>
->>> Does this 'secondary' have a specific purpose or a better name?
+On 9/25/2025 3:55 PM, Konrad Dybcio wrote:
+> On 9/25/25 8:32 AM, Pankaj Patil wrote:
+>> From: Maulik Shah <maulik.shah@oss.qualcomm.com>
 >>
->> I am not entirely sure. When I asked this from the designers they just
->> told me that they needed more than 255 registers so they added another
->> slave address... (I'm not sure what would have been wrong with using a
->> page register). So, I assume they just placed stuff that didn't fit in
->> first 255 register there. But yeah, it looks like most of the registers
->> there are related to the charger. So, perhaps it isn't completely
->> misleading to use "charger regmap"? The data-sheet seems to be just
->> using "Register map 1" and "Register map 2" in the tables listing these
->> registers. I kind of like using something which maps easily to the
->> data-sheet, but I really have no strong opinion on this.
+>> Add CPU power domains
 > 
-> just another idea: What about one regmap with custom functions covering
-> both these adresses? Maybe that could even be added to the regmap
-> functionality, maybe with a 0x100 offset for the second range.
-> That way the rest of the code only needs to real with one regmap
-> and properly defined registers.
+> The commit message could say something about what kind of states
+> are being added, what their impact on the running system is, etc..
 
-Interesting idea.
+This will be squashed with cpus node.
+> 
+> [...]
+> 
+>> +		idle-states {
+>> +			entry-method = "psci";
+>> +
+>> +			CLUSTER0_C4: cpu-sleep-0 {
+>> +				compatible = "arm,idle-state";
+>> +				idle-state-name = "ret";
+>> +				arm,psci-suspend-param = <0x00000004>;
+>> +				entry-latency-us = <180>;
+>> +				exit-latency-us = <320>;
+>> +				min-residency-us = <1000>;
+>> +			};
+>> +
+>> +			CLUSTER1_C4: cpu-sleep-1 {
+>> +				compatible = "arm,idle-state";
+>> +				idle-state-name = "ret";
+>> +				arm,psci-suspend-param = <0x00000004>;
+>> +				entry-latency-us = <180>;
+>> +				exit-latency-us = <320>;
+>> +				min-residency-us = <1000>;
+>> +			};
+>> +
+>> +			CLUSTER2_C4: cpu-sleep-2 {
+>> +				compatible = "arm,idle-state";
+>> +				idle-state-name = "ret";
+>> +				arm,psci-suspend-param = <0x00000004>;
+>> +				entry-latency-us = <180>;
+>> +				exit-latency-us = <320>;
+>> +				min-residency-us = <1000>;
+>> +			};
+> 
+> All three are identical (should they be?), just call it CPU_C4 and de-
+> duplicate it (unless the framework would read that as "all CPUs in the
+> system must sleep at the same time" which I don't know if it would)
 
-I suppose you mean something like implementing custom remap_read() and 
-regmap_write() - which would practically select the I2C adapter to use 
-based on the register address - and then doing same thing as the 
-regmap_i2c_smbus_i2c_write() / regmap_i2c_smbus_i2c_read() do?
+Updated to call cpu_c4, cluster_cl5 and domain_ss3 (inline with SM8750).
 
-I suppose this would mean duplicating the functionality provided by the 
-regmap_i2c_smbus_i2c_write() and the regmap_i2c_smbus_i2c_read(), which 
-are static. It'd also mean we'll lose the 1 to 1 mapping between the 
-register addresses in driver and addresses in the data-sheet. I agree 
-this wouldn't be such a huge thing if we used offset like 0x100 though.
+> 
+>> +
+>> +			cluster0_cl5: cluster-sleep-0 {
+>> +				compatible = "domain-idle-state";
+>> +				idle-state-name = "ret";
+>> +				arm,psci-suspend-param = <0x01000054>;
+>> +				entry-latency-us = <2000>;
+>> +				exit-latency-us = <2000>;
+>> +				min-residency-us = <9000>;
+>> +			};
+>> +
+>> +			cluster1_cl5: cluster-sleep-1 {
+>> +				compatible = "domain-idle-state";
+>> +				idle-state-name = "ret";
+>> +				arm,psci-suspend-param = <0x01000054>;
+>> +				entry-latency-us = <2000>;
+>> +				exit-latency-us = <2000>;
+>> +				min-residency-us = <9000>;
+>> +			};
+>> +
+>> +			cluster2_cl5: cluster-sleep-2 {
+>> +				compatible = "domain-idle-state";
+>> +				idle-state-name = "ret";
+>> +				arm,psci-suspend-param = <0x01000054>;
+>> +				entry-latency-us = <2000>;
+>> +				exit-latency-us = <2000>;
+>> +				min-residency-us = <9000>;
+>> +			};
+> 
+> ditto
 
-I am still leaning towards using two different regmaps though, as it 
-seems like a more 'standard' solution. I assume people are more familiar 
-with providing platform data to "MFD sub drivers" than custom regmaps 
-accessing different I2C slave addresses.
+Updated in next revision.
 
-But yeah, thanks for this suggestion! It opened up some completely new 
-paths in my brains! :)
+> 
+>> +
+>> +			APSS_OFF: cluster-ss3 {
+> 
+> labels must be lowercase
 
-Yours,
-	-- Matti
+Updated in next revision.
+
+> 
+>> +				compatible = "domain-idle-state";
+>> +				idle-state-name = "apps-pc";
+>> +				entry-latency-us = <2800>;
+>> +				exit-latency-us = <4400>;
+>> +				min-residency-us = <10150>;
+>> +				arm,psci-suspend-param = <0x0200C354>;
+> 
+> lowercase hex, please
+> 
+> also, this node oddly puts arm,psci-suspend-param at a different place,
+> please align it with the prvious ones
+
+Both updated in next revision.
+
+> 
+> [...]
+> 
+>> +		CLUSTER3_PD: power-domain-cpu-cluster3 {
+> 
+> "SYSTEM_PD"?
+
+Updated in next revision.
+
+>> +			#power-domain-cells = <0>;
+>> +			domain-idle-states = <&APSS_OFF>;
+> 
+> Does it make sense to include some shallower idle states?
+
+Shallower idle states for cluster (CL4) and system (SS1) did not give benefits for power/performance.
+
+Thanks,
+Maulik
+
+> 
+> Konrad
 
