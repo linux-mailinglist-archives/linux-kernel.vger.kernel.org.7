@@ -1,159 +1,171 @@
-Return-Path: <linux-kernel+bounces-850378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC78BD2A84
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:54:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4429ABD2AC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F4A189C427
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:55:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA2A14F0BC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC4530596B;
-	Mon, 13 Oct 2025 10:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607D430594F;
+	Mon, 13 Oct 2025 10:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FONJ52u6"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uv1CRgQH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A78730597B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B75A30215D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760352846; cv=none; b=r3NrffKXC1t6111oy94Qp0K0kDWPzQST5hAY7VbekgW3g27kFZcIBJxP6N8UtMFxqlGKrV/0iWOsndmfB7dKdxGYTaG7marXGN78t90ROJ47qshrsf7zPhmtB3pExYtAfMo6daRCBRHD7dKT43AvXE+2DOCfGB3hQ/4lEfxZRNE=
+	t=1760352900; cv=none; b=L7YDIUqulNHK9gsXlFvjrh0mfJC0jOJhQONfLAyquk1vzrCFKyBM9oJbxYEbOqTAWUfSAazTxZCYB5XsXXJer+dHAN8XMPJxtncWKNBy0TasHQNeWoNvNC3cXcpcYLrUGDvH1eQQWJyfE6SJd+sMCVIlCPxcnX10KRXtSl9sPu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760352846; c=relaxed/simple;
-	bh=fo2RqUTcyutivecZR8WGprOJS3KT913GtBs+zJ6Fcao=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gkZHmiEX7wFHB1hda3CO3Ib1XoaYbeafzhzThpeTAAJhTvz+zQumFLgdAIlU/m9EMBwQKxXDJ1ZKutJhhkjKuVnSR2E6YlFeG7lr5AIq9cH3OJeSGN5kK9JZztgXhLhWjN9KL8QYHI7ySJ5VgAA28yQcqBLD7qhjUGrlbSa6kU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FONJ52u6; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760352840; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=7av/l3Moeie30gOardFP+67jNH1eurZJ1Kd7+FIS0wc=;
-	b=FONJ52u6l5i+3n6ETv2fCb76eOTfv2Eeq2AZGzIliUYetOs4WuWa8UIFV3G/KkxSNDEGuZrMAwdf3nTXk4ybWGzi42cLA4De+3dkR4kOF8sA2LedTXbael/udibyEUtJLTgrfewwxFZRn93pIr8isF+oo4PfQ6Mqh3ZJisMe0sM=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wq2kNLH_1760352830 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 13 Oct 2025 18:53:58 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Luo Gengkun <luogengkun@huaweicloud.com>
-Cc: mingo@redhat.com,  peterz@infradead.org,  juri.lelli@redhat.com,
-  vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
-  rostedt@goodmis.org,  bsegall@google.com,  mgorman@suse.de,
-  vschneid@redhat.com,  huang.ying.caritas@gmail.com,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/topology: Fix memory leak in the error path of
- sched_init_numa
-In-Reply-To: <20251013041348.350886-1-luogengkun@huaweicloud.com> (Luo
-	Gengkun's message of "Mon, 13 Oct 2025 04:13:48 +0000")
-References: <20251013041348.350886-1-luogengkun@huaweicloud.com>
-Date: Mon, 13 Oct 2025 18:53:48 +0800
-Message-ID: <87ikgjt6mb.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760352900; c=relaxed/simple;
+	bh=hDtDBPq7mpQu59X1/KQKeSG4qGjdGKZLxJrvhsMtr8s=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JQ9aRvl7XWAcUtLwJi5jml+JqFAFahcQXbJnkUZ+xWF1J57H8dhK2RLBzjAtQV/6VwqEpfPqzmr6bnsGs8RhuC235G1RU9dGnfroZNqvPXHQzuGhceFwdRL7AiRpLH7R4gCBjv5MUSdrca+aqLShbSWzVIob7bhS4yXgnZ9BOgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uv1CRgQH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B25C4CEE7;
+	Mon, 13 Oct 2025 10:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760352900;
+	bh=hDtDBPq7mpQu59X1/KQKeSG4qGjdGKZLxJrvhsMtr8s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uv1CRgQHUG5FCeSMmKXhInPfYnrb1p1wekfU4umGXqr7isPVVwiPFyxcc7xmk9Kie
+	 gsWVRFinc1T3GBcTJnY3Ku6zRxwPviuItaPs2QgnczDleixks3ocMtO7S3DPUyjzFP
+	 gHtWsXZkZ9tL4hDYs1WKKbeee6PAwGDSF8oLpGEmqScG+he0WEzT6bt/Edh6eXG9iX
+	 k/Zbm6yIuQ/lxdInD30PuoKQ5YTKVrO/21+pmsuLa8CSfcF7eq7KWZwMH9NdB3wN8r
+	 ER8PmXbSaz+oZ26t2JCuIIk7L5qfbf1kg0RqRWltR+D6+rm2pN2R7ucQucD+6yesd9
+	 rE6u+6llNL+oQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v8GCf-0000000DU5W-12CP;
+	Mon, 13 Oct 2025 10:54:57 +0000
+Date: Mon, 13 Oct 2025 11:54:56 +0100
+Message-ID: <867bwzxe9r.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Peter Maydell <peter.maydell@linaro.org>
+Cc: salil.mehta@opnsrc.net,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	salil.mehta@huawei.com,
+	jonathan.cameron@huawei.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	mark.rutland@arm.com,
+	james.morse@arm.com,
+	sudeep.holla@arm.com,
+	lpieralisi@kernel.org,
+	jean-philippe@linaro.org,
+	tglx@linutronix.de,
+	oliver.upton@linux.dev,
+	richard.henderson@linaro.org,
+	andrew.jones@linux.dev,
+	mst@redhat.com,
+	david@redhat.com,
+	philmd@linaro.org,
+	ardb@kernel.org,
+	borntraeger@linux.ibm.com,
+	alex.bennee@linaro.org,
+	gustavo.romero@linaro.org,
+	npiggin@gmail.com,
+	linux@armlinux.org.uk,
+	karl.heubaum@oracle.com,
+	miguel.luis@oracle.com,
+	darren@os.amperecomputing.com,
+	ilkka@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com,
+	gankulkarni@os.amperecomputing.com,
+	wangyanan55@huawei.com,
+	wangzhou1@hisilicon.com,
+	linuxarm@huawei.com
+Subject: Re: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow lockless read when ready
+In-Reply-To: <CAFEAcA8=yhQ-ygoA-fqxzwg69OkdW2nBM0O9X3Lmww4eXuVMWA@mail.gmail.com>
+References: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
+	<86v7koxk1z.wl-maz@kernel.org>
+	<CAFEAcA8=yhQ-ygoA-fqxzwg69OkdW2nBM0O9X3Lmww4eXuVMWA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: peter.maydell@linaro.org, salil.mehta@opnsrc.net, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, salil.mehta@huawei.com, jonathan.cameron@huawei.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, james.morse@arm.com, sudeep.holla@arm.com, lpieralisi@kernel.org, jean-philippe@linaro.org, tglx@linutronix.de, oliver.upton@linux.dev, richard.henderson@linaro.org, andrew.jones@linux.dev, mst@redhat.com, david@redhat.com, philmd@linaro.org, ardb@kernel.org, borntraeger@linux.ibm.com, alex.bennee@linaro.org, gustavo.romero@linaro.org, npiggin@gmail.com, linux@armlinux.org.uk, karl.heubaum@oracle.com, miguel.luis@oracle.com, darren@os.amperecomputing.com, ilkka@os.amperecomputing.com, vishnu@os.amperecomputing.com, gankulkarni@os.amperecomputing.com, wangyanan55@huawei.com, wangzhou1@hisilicon.com, linuxarm@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Luo Gengkun <luogengkun@huaweicloud.com> writes:
+On Mon, 13 Oct 2025 09:42:58 +0100,
+Peter Maydell <peter.maydell@linaro.org> wrote:
+> 
+> On Thu, 9 Oct 2025 at 14:48, Marc Zyngier <maz@kernel.org> wrote:
+> >
+> > On Wed, 08 Oct 2025 21:19:55 +0100,
+> > salil.mehta@opnsrc.net wrote:
+> > >
+> > > From: Salil Mehta <salil.mehta@huawei.com>
+> > >
+> > > [A rough illustration of the problem and the probable solution]
+> > >
+> > > Userspace reads of ICC_CTLR_EL1 via KVM device attributes currently takes a slow
+> > > path that may acquire all vCPU locks. Under workloads that exercise userspace
+> > > PSCI CPU_ON flows or frequent vCPU resets, this can cause vCPU lock contention
+> > > in KVM and, in the worst cases, -EBUSY returns to userspace.
+> > >
+> > > When PSCI CPU_ON and CPU_OFF calls are handled entirely in KVM, these operations
+> > > are executed under KVM vCPU locks in the host kernel (EL1) and appear atomic to
+> > > other vCPU threads. In this context, system register accesses are serialized
+> > > under KVM vCPU locks, ensuring atomicity with respect to other vCPUs. After
+> > > SMCCC filtering was introduced, PSCI CPU_ON and CPU_OFF calls can now exit to
+> > > userspace (QEMU). During the handling of PSCI CPU_ON call in userspace, a
+> > > cpu_reset() is exerted which reads ICC_CTLR_EL1 through KVM device attribute
+> > > IOCTLs. To avoid transient inconsistency and -EBUSY errors, QEMU is forced to
+> > > pause all vCPUs before issuing these IOCTLs.
+> >
+> > I'm going to repeat in public what I already said in private.
+> >
+> > Why does QEMU need to know this? I don't see how this is related to
+> > PSCI, and outside of save/restore, there is no reason why QEMU should
+> > poke at this. If QEMU needs fixing, please fix QEMU.
+> 
+> I don't know the background here, but generally speaking,
+> when we do a CPU reset that includes writing all the CPU state
+> of the "this is freshly reset from userspace's point of view" vcpu
+> back to the kernel. More generally, userspace should be able to
+> read and write sysregs for a vcpu any time it likes, and not
+> arbitrarily get back -EBUSY. What does the kernel expect
+> userspace to do with an errno like that?
 
-> In sched_init_numa, masks are used to store memory, but the error path
-> returns directly without freeing the allocated memory.
-> To fix this, the freeing logic in sched_reset_numa can be extraced into a
-> new function, free_masks, which can be called on the error path.
+The main issue here is that GICv3 is modelled as a device, just like
+GICv2, and that all the sysregs that are relevant to the GIC have the
+same status as the MMIO registers: they can only be accessed when the
+vcpus are not running.
 
-Good catch!  Thanks!
+These sysregs are not visible through the normal ONE_REG API, and
+therefore not subjected to the "do whatever you want" rule.
 
-> Fixes: 0fb3978b0aac ("sched/numa: Fix NUMA topology for systems with CPU-less nodes")
-> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
-> ---
->  kernel/sched/topology.c | 33 +++++++++++++++++++++------------
->  1 file changed, 21 insertions(+), 12 deletions(-)
->
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 444bdfdab731..fd03bb6669f5 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1924,6 +1924,20 @@ static void init_numa_topology_type(int offline_node)
->  
->  #define NR_DISTANCE_VALUES (1 << DISTANCE_BITS)
->  
-> +static void free_masks(struct cpumask ***masks, int nr_levels)
+Should we have done something else when the GICv3 save/restore API was
+introduced and agreed upon with the QEMU people? Probably. Can we
+change it now? Probably not. The only thing we could relax is the
+scope of the lock when accessing a sysreg, so that we only mandate
+that the targeted vcpu is not running instead of the whole VM.
 
-The function name appears too general.  How about __sched_free_masks()?
+And finally, if you object to this API, why should we do for GICv5,
+which is so far implemented by following the exact same principles?
 
-> +{
-> +	int i, j;
-> +
-> +	for (i = 0; i < nr_levels && masks; i++) {
-> +		if (!masks[i])
-> +			continue;
-> +		for_each_node(j)
-> +			kfree(masks[i][j]);
-> +		kfree(masks[i]);
-> +	}
-> +	kfree(masks);
-> +}
-> +
->  void sched_init_numa(int offline_node)
->  {
->  	struct sched_domain_topology_level *tl;
-> @@ -2003,15 +2017,19 @@ void sched_init_numa(int offline_node)
->  	 */
->  	for (i = 0; i < nr_levels; i++) {
->  		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
-> -		if (!masks[i])
-> +		if (!masks[i]) {
-> +			free_masks(masks, nr_levels);
->  			return;
-> +		}
->  
->  		for_each_cpu_node_but(j, offline_node) {
->  			struct cpumask *mask = kzalloc(cpumask_size(), GFP_KERNEL);
->  			int k;
->  
-> -			if (!mask)
-> +			if (!mask) {
-> +				free_masks(masks, nr_levels);
->  				return;
-> +			}
->  
->  			masks[i][j] = mask;
->  
-> @@ -2079,18 +2097,9 @@ static void sched_reset_numa(void)
->  	masks = sched_domains_numa_masks;
->  	rcu_assign_pointer(sched_domains_numa_masks, NULL);
->  	if (distances || masks) {
-> -		int i, j;
-> -
->  		synchronize_rcu();
->  		kfree(distances);
-> -		for (i = 0; i < nr_levels && masks; i++) {
-> -			if (!masks[i])
-> -				continue;
-> -			for_each_node(j)
-> -				kfree(masks[i][j]);
-> -			kfree(masks[i]);
-> -		}
-> -		kfree(masks);
-> +		free_masks(masks, nr_levels);
->  	}
->  	if (sched_domain_topology_saved) {
->  		kfree(sched_domain_topology);
+Thanks,
 
-Otherwise, the patch LGTM.  Feel free to add my
+	M.
 
-Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
-
-in the future versions.
-
----
-Best Regards,
-Huang, Ying
+-- 
+Without deviation from the norm, progress is not possible.
 
