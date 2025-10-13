@@ -1,101 +1,153 @@
-Return-Path: <linux-kernel+bounces-850641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DE2BD35C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:11:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BACBD35C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CB8C4E9479
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52942189E540
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFE125DAFF;
-	Mon, 13 Oct 2025 14:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C2B25782D;
+	Mon, 13 Oct 2025 14:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjFswW5i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kJB7oFgP"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FB82550AD;
-	Mon, 13 Oct 2025 14:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36312226CFE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364692; cv=none; b=ixJOSoGpcJRiZCvodKIITg2EsQS8z1wdKvdTGWXf9Wq0WrzWp1DxtjD0uKfnhd0jkAADxoMS8wN2FTpzgqV7eMrSnJFMnOLhgbEgU6L4eLKpLy1Ha5UTmXIo7WXmXUiFLD7M3VPhS61wJKWmB4IuSt1zwKuOVxKg4cBl4ZG4CXY=
+	t=1760364766; cv=none; b=A34QtG/pBXkbVS3qH0aOxABMe06BA4Me4JKaRIs1yhby2ZkII8QqbWXnbZxli2ybgV6BeTDupRBiLW7n04d/iXulnpgrS5vZJBrISdQihdotH/d7vMr3JcE4ghMvWmk7zRGRNr5TYxImFpbL2EfQBzMUx87FoHRfyG7lAaY/t5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364692; c=relaxed/simple;
-	bh=nxQ28tCoDAYVRM2u6jhum88s35Y1NEBWirMRCb2KdBU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oIsMfJjtuA5Dos85gk/EscZyvc6kjJDoEQh0qrUfbieUofOMj31/KiOw9VcgzAJkVLvwOWkk5RKQ5sXiPv+IwjZirWM2rOmTjDG0j6svzJtnlLIEfLpngCm3p0xUE8sF2XPeNgZQupP5KjDJTxhNm7hoo4492XFt18A9V5sSrto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjFswW5i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C356BC4CEE7;
-	Mon, 13 Oct 2025 14:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760364692;
-	bh=nxQ28tCoDAYVRM2u6jhum88s35Y1NEBWirMRCb2KdBU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gjFswW5iWMuaXuXNZSwepvx/Tw05c2TF+RzCLdKG+l2r+f6NIgeS2+0Oq7wYZseYL
-	 2hQW0KFTo4yftt6kVXXDzCSD3FuiyaSo/A52seiWVp0dCV9dLOHFAmiTP++k7QNoXr
-	 mQSmyXSZbeh2E6RgAIrLEsBl4PXcqJgpFMnKmLqR+LcyXmDqcV0qeWu/LspgR+EeZa
-	 LVI4HReEGGNJVpZlGi5clsFqQbaUfZynZm33G58s8oCiAq1THwWniLjiy/+bEGXW10
-	 0llZ76JDjUcwmk6t4bAO72LbVJfE+yrvraylezYdQZdZUTJ4jvr2OANMT1jWW676k0
-	 fCbkTvaNAKXLw==
-From: Chuck Lever <cel@kernel.org>
-To: NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Brandon Adams <brandona@meta.com>,
-	linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] sunrpc: allocate a separate bvec array for socket sends
-Date: Mon, 13 Oct 2025 10:11:27 -0400
-Message-ID: <176036467863.12780.18195275495464376664.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251013-rq_bvec-v7-1-c032241efd89@kernel.org>
-References: <20251013-rq_bvec-v7-1-c032241efd89@kernel.org>
+	s=arc-20240116; t=1760364766; c=relaxed/simple;
+	bh=ZTDyULMOfbZgmpW/yDsvyDFXqzmJd2DHr2PiLwFI1k0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pOxg+X87xEiCvJ3wHnETvDvfSL1VDbFgn2Dt0kDArvvS+gicvojjSrpfOXFGwHtCofxkM3X1xl/4elhakF31OWx1y0cYYaIu+DrJtAa33DT6K5+OK2j6C7qR3Ssd3jNfUfZZv3M2ZCkgAZYYSIWnvhLOyTL4+TS7kT2/av0g1Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kJB7oFgP; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-335276a711cso10492396a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:12:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760364764; x=1760969564; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pW0LKbcmBjofa4oQYzdc8+pyp6zpYElMR+X+ZJF6fvU=;
+        b=kJB7oFgPchTE8Tqk5bw51k08SHeF4GD41gC0pKDOqwD4ETfkAgr1zh0JRLBSjpbab2
+         NZFluz2aHW7JUvcvOb4TZOJNEoSzxI3Y24ZeoSzdlCQ2zLONYKa5UjAibjIIMHfmfJq0
+         W+svM3r7b9kjVcajmgX8YeZI7pK75T6wZVZW52uDP9CqXrkHjTQy/cxWAnqJ9GP6VHT3
+         U0BCkZnbRsD4pCmwVqBw2RfEMANEEzA3R+aY3RDjSF46utSDjQt2dDxu124FNaNtIGiS
+         Tu49ZkTreYmFu3arLOyxRVzi12CfuV2LwvyHHzBBX+lqW6a4iP1fiAkOSu2+t1GGTTri
+         jV2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760364764; x=1760969564;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pW0LKbcmBjofa4oQYzdc8+pyp6zpYElMR+X+ZJF6fvU=;
+        b=qRuYOoMA+RCQp20d5QnjABkC9yiU2IqZn4h2nJgVqtwgKiKbiMmIf8ijnaFaUgwZFA
+         vremgCgHHTO3KpiD6LME7MMBPnLUB3Hx140p5sqEgHNDs9fRZeDYgsA236rXhxjsDZJC
+         pwAylAaytefM8Cw94uhi2rg/vi0ubnARq2+AJTfk8BICjC7mV8bHa5nOy3dXfMFNrR4w
+         Cf93xd2Gr1070jVu2Zjy+BGWfzms6guHO55Pi/7chg58pS66vvglGiWNmBrDOULZ6K+4
+         AO7uB/trbMnR4VEUYZ3x4t54LRiyCfza156uchXCBSfFDwv0+V/FhAX7UZ636PoP65e3
+         W42A==
+X-Forwarded-Encrypted: i=1; AJvYcCVYNqvA64+kXv9IJ4V6hO+OVxWUkxbEfCEf9kURywwRdFh8U5lohoX1GlQsscW1H0clKVt8nTsSQIQ5R/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTYMjKVryNQUE7QUMlS3gtrIcJLXcMdH7PWmHbDc5d12IL9MH5
+	Wlft0LOjVLh7sd7fSYc0BVFbf3ZN02S/Ms1L+cTDNEmSg+zBZ5DFTERkPgkVAguhHfbSqJ7EAnR
+	XycSEJA==
+X-Google-Smtp-Source: AGHT+IHYTAMsBdkqa6mQs+AQZHLUnwfl0jXB2dPP7CH/+/02DZm3RrW4t1q3AR17vjq1r+RaXhc3IjYohgw=
+X-Received: from pjur7.prod.google.com ([2002:a17:90a:d407:b0:32e:d03b:ade9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3b92:b0:32e:18fb:f05f
+ with SMTP id 98e67ed59e1d1-33b5138e2c8mr29389536a91.20.1760364764414; Mon, 13
+ Oct 2025 07:12:44 -0700 (PDT)
+Date: Mon, 13 Oct 2025 07:12:42 -0700
+In-Reply-To: <20251013060353.67326-3-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251013060353.67326-1-namjain@linux.microsoft.com> <20251013060353.67326-3-namjain@linux.microsoft.com>
+Message-ID: <aO0I2va2HQ6mA-u0@google.com>
+Subject: Re: [PATCH v8 2/2] Drivers: hv: Introduce mshv_vtl driver
+From: Sean Christopherson <seanjc@google.com>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Mukesh Rathor <mrathor@linux.microsoft.com>, 
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>, 
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Michael Kelley <mhklinux@outlook.com>, 
+	Christoph Hellwig <hch@infradead.org>, Saurabh Sengar <ssengar@linux.microsoft.com>, 
+	ALOK TIWARI <alok.a.tiwari@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Chuck Lever <chuck.lever@oracle.com>
+On Mon, Oct 13, 2025, Naman Jain wrote:
+> +static int mshv_vtl_ioctl_return_to_lower_vtl(void)
+> +{
+> +	preempt_disable();
+> +	for (;;) {
+> +		u32 cancel;
+> +		unsigned long irq_flags;
+> +		struct hv_vp_assist_page *hvp;
+> +		int ret;
+> +
+> +		local_irq_save(irq_flags);
+> +		cancel = READ_ONCE(mshv_vtl_this_run()->cancel);
+> +		if (cancel)
+> +			current_thread_info()->flags |= _TIF_SIGPENDING;
 
-On Mon, 13 Oct 2025 09:54:53 -0400, Jeff Layton wrote:
-> svc_tcp_sendmsg() calls xdr_buf_to_bvec() with the second slot of
-> rq_bvec as the start, but doesn't reduce the array length by one, which
-> could lead to an array overrun. Also, rq_bvec is always rq_maxpages in
-> length, which can be too short in some cases, since the TCP record
-> marker consumes a slot.
-> 
-> Fix both problems by adding a separate bvec array to the svc_sock that
-> is specifically for sending. For TCP, make this array one slot longer
-> than rq_maxpages, to account for the record marker. For UDP, only
-> allocate as large an array as we need since it's limited to 64k of
-> payload.
-> 
-> [...]
+There's no need to force SIGPENDING, this code can return directly if cancel is
+set[1].  And then you can wait to disable IRQs until after handling pending work,
+and thus avoid having to immediately re-enable IRQs[2].
 
-Applied to nfsd-testing, thanks!
+[1] https://lore.kernel.org/all/20250828000156.23389-3-seanjc@google.com
+[2] https://lore.kernel.org/all/20250828000156.23389-4-seanjc@google.com
 
-[1/1] sunrpc: allocate a separate bvec array for socket sends
-      commit: fcf522297252d21db162e141d49b2bb4f1c2b0c4
-
---
-Chuck Lever <chuck.lever@oracle.com>
+> +
+> +		if (unlikely(cancel) || __xfer_to_guest_mode_work_pending()) {
+> +			local_irq_restore(irq_flags);
+> +			preempt_enable();
+> +			ret = xfer_to_guest_mode_handle_work();
+> +			if (ret)
+> +				return ret;
+> +			preempt_disable();
+> +			continue;
+> +		}
+> +
+> +		mshv_vtl_return(&mshv_vtl_this_run()->cpu_context);
+> +		local_irq_restore(irq_flags);
+> +
+> +		hvp = hv_vp_assist_page[smp_processor_id()];
+> +		this_cpu_inc(num_vtl0_transitions);
+> +		switch (hvp->vtl_entry_reason) {
+> +		case MSHV_ENTRY_REASON_INTERRUPT:
+> +			if (!mshv_vsm_capabilities.intercept_page_available &&
+> +			    likely(!mshv_vtl_process_intercept()))
+> +				goto done;
+> +			break;
+> +
+> +		case MSHV_ENTRY_REASON_INTERCEPT:
+> +			WARN_ON(!mshv_vsm_capabilities.intercept_page_available);
+> +			memcpy(mshv_vtl_this_run()->exit_message, hvp->intercept_message,
+> +			       sizeof(hvp->intercept_message));
+> +			goto done;
+> +
+> +		default:
+> +			panic("unknown entry reason: %d", hvp->vtl_entry_reason);
+> +		}
+> +	}
+> +
+> +done:
+> +	preempt_enable();
+> +
+> +	return 0;
+> +}
 
