@@ -1,153 +1,147 @@
-Return-Path: <linux-kernel+bounces-851414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A23CBD6638
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2E4BD6641
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E4664F4641
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:40:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6711D4F26CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7632EF65C;
-	Mon, 13 Oct 2025 21:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF9F2EFD95;
+	Mon, 13 Oct 2025 21:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHFFebKj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NzOif5oy"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52AD246778;
-	Mon, 13 Oct 2025 21:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402512E9ED4
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391634; cv=none; b=dcsQ5iXL+g9xaZDRGrM/j08h/XMXZYpilOt7plz4OZ/bX8S8gCJAH4abXFP5XFr1LaphcKbCuv/c1Qz5nZF2ALBY0ker2oUZaz2pDD34U9zZe/9PgqKFKQ6olop2WkOVnGSUybcSbXAVqKQI1DyPEJoVgVdyCHTShvuKKSGuYDQ=
+	t=1760391720; cv=none; b=jwDDmZQQ8lGhVQS+o+BZUQtPr0TYsGNdMe4WIuldNZ3yhwoDfGD2XC1qmiq0jySdMYczA3wutoCkDiwchHnbnbhrkQRqHwABZIVHJ2zMWS8owGuCGpKPbLlmlQizs8EnRR4hD7MmNrV4boAEdMYEsKti5ksURH2qvAoFf3gBT20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391634; c=relaxed/simple;
-	bh=lSBBgblcFkXBDIkspp2NfyRR5bmbe73dKuE4WTS8jDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=d5dNi61uV6IerjR9QsknmRjkKBjZAfFXqia+80UQct8lWuujHcpJElVxr2IUYnixmNEMXNWOEv8HHPXEtgty5Z2usF/0nFyRfyxNVe2Wpfp4kEgqvOEla44BwubkVFK0fVS1OE+XYmCKD55q8vf43p/DzjN1MbeJ2BMG+AO70Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHFFebKj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36141C4CEE7;
-	Mon, 13 Oct 2025 21:40:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760391634;
-	bh=lSBBgblcFkXBDIkspp2NfyRR5bmbe73dKuE4WTS8jDQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bHFFebKjDxDGEhGMg8dyCjd/ziBHfpvK4q3BORNkHxy6RFK/HkSlHnxHNZaJcU+fv
-	 zgYNkeG2NOCR2WMjzuK10Vf/JLGyt3NSAxSKOUzzT0w5JTXWhTMH32B9e0gORUeeLa
-	 1B12+EA2ExEmvA5CComPNc2hUZJEl5zFi6c8BmDYcKkO8PvsZJvnDB/9hor3cQUOGU
-	 /QUyqn6Dvok+J5IxdL81O7iIDzDNtYNb4ulIBvHSzB54DBrMiFmeTWmaggQA1X05Jp
-	 C15zzfjFk3IQ5Xx8Mer/RaiJfA7uvnXQ2Osayog3FfNYUjEDiteOy940e15RnpuBah
-	 9q8TNLDolTX2g==
-Date: Mon, 13 Oct 2025 16:40:33 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-Cc: mani@kernel.org, kwilczynski@kernel.org, kishon@kernel.org,
-	bhelgaas@google.com, cassel@kernel.org, Frank.Li@nxp.com,
-	dlemoal@kernel.org, christian.bruel@foss.st.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: endpoint: pci-epf-test: Fix sleeping function
- being called from atomic context
-Message-ID: <20251013214033.GA865945@bhelgaas>
+	s=arc-20240116; t=1760391720; c=relaxed/simple;
+	bh=TDs9eZA6MaUUuDc1+8bQHqQ2laN3OgoREAcfscdplpo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sHKpiIU+t2/Qk4uUJAOjUr27GAG6OxmLme4ISL6Bbm+b2g6ADS58UwE61p6F7oeQTiGWcW+oVf4vY6gQgwqkJPYuphhfDgcKeOHBh6rnSh2jzYJ6CTi7+Se51w3X76Vegp1yIjYudzeH3C1Jc0ow0mHRSr7cloB3bYTJ9OqhAts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NzOif5oy; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33428befc08so19014442a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:41:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760391718; x=1760996518; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsVHXtQeXX4SM5ssgn2Mp7CjNDCTTOd3e+3GSKyAubs=;
+        b=NzOif5oyyWnbTG8b4DJb3PNERXhojZG7y5PulbwpJeL5quPSOuKWToe+A0qh1fs0Wb
+         bo7ESPr5jZ5n4EC0vqc4NM+UrMa5GonsMxqh4ZNTZejG9Mh4C/tXYPoXiaKvIeMkCn8n
+         GSi8QDG8lt3hB970jDHQhRmjTxdlEnO5ehpCfgfRbP5m9mH3lrWnXhXlF6E0XKcRk5JA
+         JJgsUbAgKFI8oomWVPLNfd/7pbLrRdlqpNhOtSUjStU4vlJoB62L7Z5glLrRaxAmyduc
+         CJxZaonRHwT0rdSnrtKGVyG0zIVuLbcl0ysJXfgsTdGWBlFBldvMV8oeBauwD7904ctX
+         J6gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760391718; x=1760996518;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsVHXtQeXX4SM5ssgn2Mp7CjNDCTTOd3e+3GSKyAubs=;
+        b=Yy7dWvFhF8fLhLWrqlehyPlOHKstZF5wsGUzw7le1sXfuMC0RCEqsZ/MwaMTjvCgxw
+         20HXidEQHL7KkHmbz7d06UctYrm4zG8bV0CACraOuVCOwIwHDJIHbQPsc1cs+ac74Dq3
+         Z2Qx7HVYED5E/VcHLhhw8E2fgf0K3E2STMvnGogxflNGuGEVD/XLE1+mrtzAye8am2k1
+         EPVnIF8ZT5MGy5Ew4THDIrLi10qElnZgCGMUw0z1Ij7elb7ic1Mf7Qx85hpqOFOu7d2N
+         eZHKbpKVnTEL5zejUhaP7o7hEvXV3uRQumX3ecgD0RvAo9R18Ce3zkEize6T2ROOkFKH
+         J3Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXU6XHTAoMSBYutVVSuH4KrEx7UxInp5WeEVkUx6rFnL2Owz/L7s6lIdIujdqrVEbwX3dUVax8B5I3dSRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPjCyyS4m0J1WmaZrh8q0vDGEJeSJXYuiEKgVzDUDgYDQe9UFu
+	xBbqy8cd8BvIQvSL1zIz6+W3FuzamBnkQshVOD1QtOsS3ROjV6bLl6z5C9P3m2Ys3uZZrepozkN
+	sndHyFg==
+X-Google-Smtp-Source: AGHT+IH2fqDIp928vMWgxWfpIsnJ48hBAEwmrvE8ezRIGFx8FjGO7z4ubS1MD0ziJ9dEj/roPyOIK06MTjo=
+X-Received: from pjvd23.prod.google.com ([2002:a17:90a:d997:b0:339:9a75:1b1e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3ec4:b0:32e:d16c:a8c6
+ with SMTP id 98e67ed59e1d1-33b5111bd79mr33316653a91.16.1760391718415; Mon, 13
+ Oct 2025 14:41:58 -0700 (PDT)
+Date: Mon, 13 Oct 2025 14:41:56 -0700
+In-Reply-To: <20251001145816.1414855-9-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930023809.7931-1-bhanuseshukumar@gmail.com>
+Mime-Version: 1.0
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-9-yosry.ahmed@linux.dev>
+Message-ID: <aO1yJHcKC85mo0PQ@google.com>
+Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
+ describe EPT entries
+From: Sean Christopherson <seanjc@google.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Sep 30, 2025 at 08:08:09AM +0530, Bhanu Seshu Kumar Valluri wrote:
-> When Root Complex(RC) triggers a Doorbell MSI interrupt to Endpoint(EP) it triggers a warning
-> in the EP. pci_endpoint kselftest target is compiled and used to run the Doorbell test in RC.
+On Wed, Oct 01, 2025, Yosry Ahmed wrote:
+> From: Yosry Ahmed <yosryahmed@google.com>
 > 
-> [  474.686193] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:271
-> [  474.710934] Call trace:
-> [  474.710995]  __might_resched+0x130/0x158
-> [  474.711011]  __might_sleep+0x70/0x88
-> [  474.711023]  mutex_lock+0x2c/0x80
-> [  474.711036]  pci_epc_get_msi+0x78/0xd8
-> [  474.711052]  pci_epf_test_raise_irq.isra.0+0x74/0x138
-> [  474.711063]  pci_epf_test_doorbell_handler+0x34/0x50
+> The assertions use 'hugepage' to describe a terminal EPT entry, but
+> 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
+> hugepage.
+
+Yes, it's more accurate, but also less precise.  I'm guessing the assert message
+and comment talked about hugepages because that's the type of mappings that
+caused problems at the time.
+
+Ah, actually, I bet the code was copy+pasted from virt_create_upper_pte(), in
+which case the assumptions about wanting to create a hupage are both accurate
+and precise.
+
+> The distincion will be useful in coming changes that will pass
+> the value around and 'leaf' is clearer than hugepage or page_size.
+
+What value?
+
+> Leave the EPT bit named page_size to keep it conforming to the manual.
 > 
-> The BUG arises because the EP's pci_epf_test_doorbell_handler is making an
-> indirect call to pci_epc_get_msi, which uses mutex inside, from interrupt context.
-> 
-> To fix the issue convert hard irq handler to a threaded irq handler to allow it
-> to call functions that can sleep during bottom half execution. Register threaded
-> irq handler with IRQF_ONESHOT to keep interrupt line disabled until the threaded
-> irq handler completes execution.
-> 
-> Fixes: eff0c286aa91 ("PCI: endpoint: pci-epf-test: Add doorbell test support")
-> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-
-Thanks for the fix!  It looks like you posted it during the v6.18
-merge window, so it was a little bit too late to be included in the
-v6.18 changes, but it looks like good v6.19 material.
-
-Can you please:
-
-  - Rebase to pci/main (v6.18-rc1)
-  - Add a space before each "("
-  - Remove the timestamps because they're unnecessary distraction
-  - Add "()" after function names in commit log
-  - s/irq/IRQ/
-  - Rewrap the commit log to fit in 75 columns
-  - Rewrap the code below to fit in 78 columns because most of the
-    rest of the file does
-  - Carry Niklas' Reviewed-by when you post the v3
-
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 > ---
->  Note : It is compiled and tested on TI am642 board.
+>  tools/testing/selftests/kvm/lib/x86/vmx.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
->  Change log. V1->V2: 
->   Trimmed Call trace to include only essential calls.
->   Used 12 digit commit ID in fixes tag.
->   Steps to reproduce the bug are removed from commit log.
->   Link to V1: https://lore.kernel.org/all/20250917161817.15776-1-bhanuseshukumar@gmail.com/
->  	
->  Warnings can be reproduced by following steps below.
->  *On EP side:
->  1. Configure the pci-epf-test function using steps given below
->    mount -t configfs none /sys/kernel/config
->    cd /sys/kernel/config/pci_ep/
->    mkdir functions/pci_epf_test/func1
->    echo 0x104c > functions/pci_epf_test/func1/vendorid
->    echo 0xb010 > functions/pci_epf_test/func1/deviceid
->    echo 32 > functions/pci_epf_test/func1/msi_interrupts
->    echo 2048 > functions/pci_epf_test/func1/msix_interrupts
->    ln -s functions/pci_epf_test/func1 controllers/f102000.pcie-ep/
->    echo 1 > controllers/f102000.pcie-ep/start
-> 
->  *On RC side:
->  1. Once EP side configuration is done do pci rescan.
->    echo 1 > /sys/bus/pci/rescan
->  2. Run Doorbell MSI test using pci_endpoint_test kselftest app.
->   ./pci_endpoint_test -r pcie_ep_doorbell.DOORBELL_TEST
->   Note: Kernel is compiled with CONFIG_DEBUG_KERNEL enabled.
-> 
->  drivers/pci/endpoint/functions/pci-epf-test.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index e091193bd8a8..c9e2eb930ad3 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -725,8 +725,8 @@ static void pci_epf_test_enable_doorbell(struct pci_epf_test *epf_test,
->  	if (bar < BAR_0)
->  		goto err_doorbell_cleanup;
->  
-> -	ret = request_irq(epf->db_msg[0].virq, pci_epf_test_doorbell_handler, 0,
-> -			  "pci-ep-test-doorbell", epf_test);
-> +	ret = request_threaded_irq(epf->db_msg[0].virq, NULL, pci_epf_test_doorbell_handler,
-> +				   IRQF_ONESHOT, "pci-ep-test-doorbell", epf_test);
->  	if (ret) {
->  		dev_err(&epf->dev,
->  			"Failed to request doorbell IRQ: %d\n",
+> diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> index 04c4b97bcd1e7..673756b27e903 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> @@ -380,15 +380,15 @@ static void nested_create_pte(struct kvm_vm *vm,
+>  			pte->address = vm_alloc_page_table(vm) >> vm->page_shift;
+>  	} else {
+>  		/*
+> -		 * Entry already present.  Assert that the caller doesn't want
+> -		 * a hugepage at this level, and that there isn't a hugepage at
+> -		 * this level.
+> +		 * Entry already present.  Assert that the caller doesn't want a
+> +		 * leaf entry at this level, and that there isn't a leaf entry
+> +		 * at this level.
+>  		 */
+>  		TEST_ASSERT(current_level != target_level,
+> -			    "Cannot create hugepage at level: %u, nested_paddr: 0x%lx",
+> +			    "Cannot create leaf entry at level: %u, nested_paddr: 0x%lx",
+>  			    current_level, nested_paddr);
+>  		TEST_ASSERT(!pte->page_size,
+> -			    "Cannot create page table at level: %u, nested_paddr: 0x%lx",
+> +			    "Leaf entry already exists at level: %u, nested_paddr: 0x%lx",
+
+This change is flat out wrong.  The existing PRESENT PTE _might_ be a 4KiB leaf
+entry, but it might also be an existing non-leaf page table.
+
+Instead of hacking on the nested code, can we instead tweak __virt_pg_map() to
+work with nested TDP?  At a glance, it's already quite close, e.g. "just" needs
+to be taught about EPT RWX bits and allow the call to pass in the root pointer.
+
+>  			    current_level, nested_paddr);
+>  	}
+>  }
 > -- 
-> 2.34.1
+> 2.51.0.618.g983fd99d29-goog
 > 
 
