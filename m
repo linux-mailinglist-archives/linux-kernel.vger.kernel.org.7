@@ -1,132 +1,131 @@
-Return-Path: <linux-kernel+bounces-850243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3364ABD255E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:41:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EBEBD2562
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FCC84E24B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:41:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7C534E1FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A25C2FE045;
-	Mon, 13 Oct 2025 09:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D219B26290;
+	Mon, 13 Oct 2025 09:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghOvtoQE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Xe7fN3zu"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9047A26290;
-	Mon, 13 Oct 2025 09:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A042FDC37
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348490; cv=none; b=QiN3+OhT52yrp8oaW5ThkS6WuYJPd21NHO645CF/0VTREOGpHsduISlVqDN44mAO0hjn4h8164En0KoT75189hZy4lLWOyunBfx4ZffTvl0maJvDzcKmLm8dMEjHr5OX+/d3AX1HIsgirwfCNK9A6PDTUmnEklVhex6DeqNgXaI=
+	t=1760348519; cv=none; b=RetehlbOiGrIdP46W+5GUa6k6IIzOjjd1L7kDCpbHx3hmnMe8rrxrviRt1KCp+XgZyA2ehAgixMKo3ChmYQxI4ngpTuUi3vd9fkMCWZBCc5yrJX4FXTvPXViDs3k4dMU/nyXwxqE9xqZ3jVfW0we9fXIXXaxVDg4Ioek5VM/O04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348490; c=relaxed/simple;
-	bh=JBGlttPgEcGlkaapqMF5MSjaQ9HOMIlfMMQ6JxCDE5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cEuvRexpzKfxKKN5VCta0Ng3WBdMMO7q9M3vAcjRx/sSVRR1fZAMkI33yBqy+sCqcQ0ZWCJkTiNAHC4nxsei8L9n1S5kSHPg/YX6DNyjmKzQH2DoXnb01aHam4GksroGsKn+ou0TS6R/5kPM5BshQB3Fg+fekO5dxChy2Kzl9oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghOvtoQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3123C4CEE7;
-	Mon, 13 Oct 2025 09:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760348490;
-	bh=JBGlttPgEcGlkaapqMF5MSjaQ9HOMIlfMMQ6JxCDE5g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ghOvtoQEypW4ImDFAnvNW097AJNEiEI/mn84ZnGrE7duaFTXttFY6ynUP93zxgcoN
-	 UVSCSBCgW6w5yEA15RO2jl1IKoot9Brls/zcCsAM/URqQE+M1fvIkglh516Nu6BhFF
-	 9qLJ+Nl/qjjbbJkx0ibduyp0LAOwDbWKaTboOc8LekZCPQN4oN28yCNe6tZJ+39u9a
-	 RJCI7tL0xK6TBhCQfiE8689ET2H3LItOVUqHvX6W6f2uVcILc6CisSIKQ3b+rsAVrN
-	 A+XRIVhG+HweZs2RCCu1hcWiwxX9J5nqBQuiz+Oi8ccvAnBefn8qfon8Xp4DnZ9Y8e
-	 tbq3D6U5syqFA==
-Message-ID: <4c974736-f257-42a5-9d39-801a579d9771@kernel.org>
-Date: Mon, 13 Oct 2025 11:41:25 +0200
+	s=arc-20240116; t=1760348519; c=relaxed/simple;
+	bh=7OS6r0QXUdcNugcyHhSXlvIAJ1AcOpyHg7bGDGAZEH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IuGXcdOqklOlR55F2ybRr8QkvpNh4U93jNGP9EPkCaZsd5WWEdzH3RijiM08B6TQSJACaIlH3VWx4qVy2BSsiLZis1wJRdYIFAKWqFvUJzg1LKND/uZ/4pW6rBEQMf8H4i/ManlTt6NFkPwCKLVi/mvGHQKzYtO/o4v2OyocLKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Xe7fN3zu; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-57e03279bfeso4997645e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760348516; x=1760953316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kzyn5HR4B+RyFj646ROarW3G5ceUJxiCmvsRF8Iv79k=;
+        b=Xe7fN3zuenFQemPe1dDbIEgxV4gatd567o8sEtWNzxmpS/WHeyhZVXnR6ML8/WPi4A
+         1Nf+JYOBMJE3HzPteaLRNsiqC6yOTXEp0if6yRl9iCKLYh4JyDBrFkjyWCVcVlub0fh6
+         XN8pLnTOc1QYTdpz3XVhTYoDinAO/pUoi+ED3i1qGHgVtgzUxPkaq2FdpTa+4DLmtOz5
+         6YgfgH9JdG9hg3dkklLTK38wMJKjpfgEJnhR5XktB4/VqkfVs9gSCJe0gj8WLSMz4SIt
+         ddbBhm7DmCt156KGorlPJ4uT7lJUaWsc+SZeZsPfl3kK3ctg4Cexrmj+KewGkZwAGmPv
+         f4QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760348516; x=1760953316;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kzyn5HR4B+RyFj646ROarW3G5ceUJxiCmvsRF8Iv79k=;
+        b=Et2W/btYsNyYu4LCC9bUYGXKRYPboJ1hIbFe6RknHmyPGAAy9u0SowcmaZOhqjYXL6
+         6lHkieSOiALv/a4RYav2t7bjqe6fr2c9bkLto0NnaQA7VHh4LIOJ2BHm9//7zlxCg6NE
+         fMRL3EyVtNzLwiHmq8iNBJ8dpV7Op4FD2FCUrOe3b+/fxJi1KlSD3dlv3MMEO2DX6Ct1
+         41/I9ZhKc4HHqyzJoS1VzGKPiFWVkhXXWzF35IizfqWp4cv0gM/+vQXskGsE/eSTiAT+
+         lP2J03QE6fLWPQAgRTQ8F7ur0ENoFAmN1rHC1JJRkYRK4CQaMpEOyPavr0oIfgFnDThk
+         66Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1JAco3/ECrYq48RbtL6/T3aRKy646By+JCnO6VcOoq05G7eN0W5WhJqXgRGfBvRqoEthjzyFsylD7mwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHE8fjp+Q5ZRvyFz1d0+mfH1IAwOifAYXytxcd+K/7shyZn36y
+	9w1QS0+xRD0KT88oa67QBHZz5jJmVJ7a67fGrxPjUEe8ZTZmoFrKifyfNJI0bFh0PO5Tm+W17pw
+	4Pk+4ZSIJxM/Fylgq2kAJF6/q5Gdqy4YSr9lf84cxlw==
+X-Gm-Gg: ASbGncuvya0yS8Q/Sdec8h5iNG6u9kJGkXKHW6qK6DqeRXiaaXOy/bq/ZJWzS+e4Imp
+	elTzD4nPkG6kn5qqRTHZ/CYdZSZKqH5PVmu3cG8EwTCnCRPZtL8kCC03AEq0g+KUEd6KK9X2T6D
+	W7h2CoRoANq8XvcPTHtT4jaHdFO6xfbrdYRQzxnU3ch0e7NSa/7cEoFwuxUzV31wSeQW/XKP+8+
+	yx60qrOIQD6Q+39bMUkGrwEGUgkBo3cjrGiSjWGjGekSNBEutKKJy2S+w==
+X-Google-Smtp-Source: AGHT+IEo2A2Q2VJMSBIH17uG06uyhaJ8OWT77uhilmx6FtBE+5N5iob0Ed/oF7xMbtYrws+KR2BR//E+D1FZ0z6K/go=
+X-Received: by 2002:a05:6512:224d:b0:57d:cdb4:5b94 with SMTP id
+ 2adb3069b0e04-5905e2024e5mr7442241e87.11.1760348515946; Mon, 13 Oct 2025
+ 02:41:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] Add support for Grinn GenioSBC-510/700 boards
-To: Mateusz Koza <mateusz.koza@grinn-global.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- marcin.czarnecki@grinn-global.com, b.bilas@grinn-global.com, andrew@lunn.ch,
- robh@kernel.org
-References: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251010105338.664564-1-vaibhavgupta40@gmail.com>
+ <202510110924.dUQeeRV6-lkp@intel.com> <20251011122612.4fa7c97a@barney> <aOpAO7j0Uyo6FPcu@gmail.com>
+In-Reply-To: <aOpAO7j0Uyo6FPcu@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 13 Oct 2025 11:41:43 +0200
+X-Gm-Features: AS18NWAxbYdqmNzUcHN6qByywYTVDrUPwmo1A34-f5zcgyydo35rhG25EAcst_4
+Message-ID: <CAMRc=Me2ABQUXVeHyfsDR-etyT9mdX-kqxfQDnh3msfZiS6ccQ@mail.gmail.com>
+Subject: Re: [PATCH v1] driver: gpio-bt8xx: use generic PCI PM
+To: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Cc: =?UTF-8?Q?Michael_B=C3=BCsch?= <mb@bues.ch>, 
+	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	Bjorn Helgaas <helgaas@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 09/09/25 18:30, Mateusz Koza ha scritto:
-> This patch series adds support for Grinn GenioSBC-510 and GenioSBC-700
-> boards based on MediaTek MT8370 and MT8390 SoCs, respectively. It
-> includes device tree files for both boards, updates to the device tree
-> bindings, and necessary modifications to the Makefile.
-> 
-> As far as I know, <angelogioacchino.delregno@collabora.com> has access
-> to the schematics for these boards, as we've shared them under NDA with
-> Collabora.
-> 
-> Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
-> ---
-> v2:	Fixed the subject prefixes,
-> 	Fixed alignment in dts files,
-> 	Added missing SPDX-License-Identifier,
-> 	Fixed the ordering in dt-bindings,
-> 	Dropped redundant info from commit messages,
-> 	Run checkpatch.pl on the patchset and fixed the issues,
-> 	as suggested by Krzysztof Kozlowski <krzk@kernel.org>.
-> 
-> v3:	Changed eth phy-mode to 'rgmii-id',
-> 	Changed eth mediatek,tx-delay-ps to 30,
-> 	as suggested by Andrew Lunn <andrew@lunn.ch>.
-> 
-> v4:	Removed the nodes that are not present in upstream,
-> 	as suggested by Louis-Alexis <angelogioacchino.delregno@collabora.com>.
-> 
-> 	Added default pinctrl to ssusb0,
-> 	Enabled the scp_cluster node,
-> 	as suggested by Bartosz Biłas <b.bilas@grinn-global.com>.
-> 
-> v5:	Did NOT move the chasis-type - Error: Properties must precede subnodes,
-> 	Swapped underscores to commas in regulator names,
-> 	Reordered properties (generic -> vendor -> status),
-> 	Dropped the firmware property from the scp_c0 node,
-> 	Added interrupts-extended to the pmic node,
-> 	Dropped the mt6359key handle,
-> 	Added blank spaces before the memory nodes,
-> 	as suggested by AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
-> 
-> Bartosz Bilas (1):
->    arm64: dts: mediatek: mt8370-grinn-genio-510-sbc: Add Grinn
->      GenioSBC-510
-> 
-> Mateusz Koza (3):
->    arm64: dts: mediatek: mt8390-genio-700-evk: Add Grinn GenioSBC-700
->    dt-bindings: arm: mediatek: Add grinn,genio-700-sbc
->    dt-bindings: arm: mediatek: Add grinn,genio-510-sbc
-> 
->   .../devicetree/bindings/arm/mediatek.yaml     |   2 +
->   arch/arm64/boot/dts/mediatek/Makefile         |   2 +
->   .../mediatek/mt8370-grinn-genio-510-sbc.dts   |  20 +
->   .../mediatek/mt8390-grinn-genio-700-sbc.dts   |  20 +
->   .../dts/mediatek/mt8390-grinn-genio-sbc.dtsi  | 538 ++++++++++++++++++
->   .../dts/mediatek/mt8390-grinn-genio-som.dtsi  | 210 +++++++
->   6 files changed, 792 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-700-sbc.dts
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-sbc.dtsi
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-som.dtsi
-> 
+On Sat, Oct 11, 2025 at 1:32=E2=80=AFPM Vaibhav Gupta <vaibhavgupta40@gmail=
+.com> wrote:
+>
+> On Sat, Oct 11, 2025 at 12:26:12PM +0200, Michael B=C3=BCsch wrote:
+> > On Sat, 11 Oct 2025 09:43:54 +0800
+> > kernel test robot <lkp@intel.com> wrote:
+> >
+> > > Hi Vaibhav,
+> > >
+> > > kernel test robot noticed the following build errors:
+> >
+> > >    drivers/gpio/gpio-bt8xx.c: In function 'bt8xxgpio_suspend':
+> > > >> drivers/gpio/gpio-bt8xx.c:233:19: error: 'struct bt8xxgpio' has no=
+ member named 'saved_outen'
+> > >      233 |                 bg->saved_outen =3D bgread(BT848_GPIO_OUT_=
+EN);
+> > >          |                   ^~
+> >
+> >
+> > It looks like the
+> > #ifdef CONFIG_PM
+> > must be removed from struct bt8xxgpio definition.
+> >
+> > --
+> > Michael B=C3=BCsch
+> > https://bues.ch/
+>
+> Hello Michael,
+>
+> Ah yes, this macro somehow got overlooked by me. I will send a v2.
+> Thanks for the review!
+>
+> Regards,
+> Vaibhav
 
-Patches 1, 3 applied to v6.18-next/dts64
+While at it: the subject should be: "gpio: bt8xx: ..."
 
-Thanks!
+Bart
 
