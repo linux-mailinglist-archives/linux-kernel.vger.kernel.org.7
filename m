@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-850561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39054BD32EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:23:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FF9BD3336
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C56E3C6A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:20:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E26783422A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE262FDC3C;
-	Mon, 13 Oct 2025 13:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="pi7OzHtW"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81F8306496;
+	Mon, 13 Oct 2025 13:27:13 +0000 (UTC)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242862EC568
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69BF253951
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760361654; cv=none; b=KOIQCdvhTVkX4QLEJ9wuUM2/JFxK116WhIH5hMNhnnPZuOOCPed5h8G7XrhpZsLN4lChrlrPBwP9VDGsp98al36/nJcF/hyXP+rMkLMiISdIp6qeupmNac+JSDKp6HUf26I9+4JK5pIzX4X65IDVFPNLj1ZGZDugK9lmhGx0fwI=
+	t=1760362033; cv=none; b=gspyFPvj0ukQ+qhkif9OsJWcP5KbFJnxrDM7x7GnuKjqf+4pTx3tOUFXrd/VCA7DVtya1sOpN2AdWeyQFa5fC8r4+7UAQEaX3XNDxfF8Yj47QfxM7G3nZInhiHCEOiedN1NgfFNAHKz/c0im3j0Dx46UmAHBgtW0VOmsQ/7OCxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760361654; c=relaxed/simple;
-	bh=TbzYZZ1HCYFgSXQCe6OEhHip5E+AXjykF95JWPhySJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mqyb97vnWSxROs03KuAKrKz+V5HuFAPjCq6RYc9qnpjorVj1wIfkN/wBOf+pb1KFEvu5vWbsL6BxvF/KVDrWAOmWZRYCHasyDxt1r9uJL2ncaEnKtyZqiKB+jJBKknvGFTPN1V0dnavCQU8X7GqdWWbrI4Bb/zvmcN2azEnUo7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=pi7OzHtW; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
-	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Go6dZDillkE7ZYEa8i+61rrCqPsVJA3sA1UCW5TWE8w=; b=pi7OzHtWaoPTtUbxjGhS4RJQSb
-	mf20QGptUwt7hzhoRvxnW9/CRC5cnAMX4etuBKdCVgsr2Vw1Hz/Q9U79r6p2TxLH9TDge88Wewe+m
-	hx0k4cZbdBi+GuHdnrHSl4bjVeTO4l1uXuAg+iXGngnb7JZKfGAGIoipKBoWMW3a1Hl4deuwu/VX+
-	pTMgydDbFtqZxfR/jYxlUPmcVthGt9XTH5GgrlIEoq/aTUSdWTCyH3FoujIYxC54uSE+XtVXBNeKG
-	Kn0KSJeeq80896B21Zp/6/QkoSdfeV8CUbQtyrnKwzelg1yT1MVOqAlVUwgoaSB38osjzssrKX7NC
-	hn5s1Qfg==;
-Received: from [122.175.9.182] (port=32887 helo=cypher.couthit.local)
-	by server.couthit.com with esmtpa (Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1v8ITn-00000004Tvv-2UOs;
-	Mon, 13 Oct 2025 09:20:48 -0400
-From: Parvathi Pudi <parvathi@couthit.com>
-To: linux@armlinux.org.uk,
-	ardb@kernel.org,
-	ebiggers@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	claudiu.beznea@tuxon.dev,
-	arnd@arndb.de,
-	geert+renesas@glider.be,
-	tiwai@suse.de,
-	lumag@kernel.org,
-	kory.maincent@bootlin.com,
-	parvathi@couthit.com,
-	kuninori.morimoto.gx@renesas.com,
-	Ryan.Wanner@microchip.com,
-	andre.draszik@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	twoerner@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	danishanwar@ti.com,
-	pratheesh@ti.com,
-	prajith@ti.com,
-	vigneshr@ti.com,
-	praneeth@ti.com,
-	srk@ti.com,
-	rogerq@ti.com,
-	krishna@couthit.com,
-	mohan@couthit.com,
-	pmohan@couthit.com,
-	basharath@couthit.com
-Subject: [PATCH] arm: multi_v7_defconfig: Enable TI_PRUSS and TI_PRUETH kernel modules
-Date: Mon, 13 Oct 2025 18:50:25 +0530
-Message-ID: <20251013132025.1436138-1-parvathi@couthit.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760362033; c=relaxed/simple;
+	bh=D8LshH7ESvIrUy8j/Fk3D+rOEXIz/uWX4WWc2z3BEZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HG301+E5P9+0kWjKG83BFj8UTH25numk7C6bsIBh8IxxpWrOsjpkKmhlydK37at2avt4XI3J+gBOvPs0TJr1WQdEoUDK1YgJvHcxHqTmlU/mZzXH18cEvPsX7KqUNFLE3gXBoQ6mfhwTJ4jRyiiUUewoxdfOu4sQgjvNSiyQMdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-856701dc22aso580410385a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:27:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760362027; x=1760966827;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2oxdO3Bk5ecvpkV6jyd+S5AlG2i51w7h4MzlILSgBbo=;
+        b=HeoXtVAp2IOOchlmKxn87YfNNsp5xxMQoNGMn+6yBLnLJS/Y0ZKTr3xA6Mb8PwEcbI
+         heQsOpkl86uX5i1izO4fFmAFlx7qW7ILgxY6dxD14wqjFW+aJDF7VnoLG5J9+H6PE3ed
+         lmii0GOsCPZR3S+PhhKt4oVav/6HCrOqhpAOXcnlv6mm/7S9yjAUK1Z+oHDgbTTxp+Bu
+         rpyF1EHgsnbrUNVLWB2TiZuc4HK8D4N5SGIQpIkfl0570Z+SS618Wu8lJR5FGpVquw0f
+         wmligR/VX2uxG+tdPLPVEp9lBH2AKFayPE2S7RJWR6Y/+RwfDZ+yPyL6qannNphmWPDZ
+         11mA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7fG2gv3gL0akSXJS2UsEhHksSjAo6qny+hJShe0rjns3+thYrPeDbtri9WSibxiaoI+yB1Lh5lB8b+Q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmB4n0QlmgQ5Tam/uyKdhBIA7+yoXmJnQ+jme8DM+rv5ahnC6d
+	y/CiPelwLgw9Fmq67LmmcOfIBeXSFNnFNQWB5xbosbiEyRytclxZuTD6VuQImZ4b
+X-Gm-Gg: ASbGncunGyJpffrupAz86FV2tvcHCaI7My+GRPsqR4/rrZvoljun2LytIRsKgbhkVUc
+	LwhqZ26hWSlbP7nKYWzOnfMzOthjM2JDqn6n3f+EYb76hvzXNiI51b7AleGeLebWzo7MUnIE0Wx
+	7J0ZGCu5pxsIsSCtLHdFXSYrImKOXD7r6tr5lIpBOiggrVqEhru1+rfRDRFwAQKUBUZyUzbTwZ2
+	oyp0MzoKdr85y36VDwc2pR7R5F/FD6LQoe5P5KfHPgFEF2NiggP3CGZoMyzti5lfr1DZMqn9Iyg
+	LgYixu0iogsQ54y06wJM24tnjdJo/XGLeHFQk1iinscd+hpPprGYIeAe8WoWjxi6nwqYG3jvzJw
+	34UgB7GEH8w7ES9rtBJREPSJxSD1c2vrLDQbSrMBg4w/iAK81I8Z9IzP0/JvZ7G6brzrOHyUdCI
+	EsAXEVnb0PXUs+KbbbY7JMiC6O
+X-Google-Smtp-Source: AGHT+IFgbL8d9eQofkelg5ALPPJFc3YsKvArRdHaGQd1RyVAgOsXzCuXSePZLGBWNcMkB2BirbgIEQ==
+X-Received: by 2002:ac8:4f54:0:b0:4e6:ebfd:5fde with SMTP id d75a77b69052e-4e6ebfd6015mr216387601cf.16.1760362027282;
+        Mon, 13 Oct 2025 06:27:07 -0700 (PDT)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com. [209.85.219.45])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e706dd31cfsm76285061cf.38.2025.10.13.06.27.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 06:27:07 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-78e4056623fso55027776d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:27:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXiWR1spJrv4wpKawyDWUiZrKP7kvB0+dCPRCfFe1C/4qIxT3bb8pi07STqIwOT6a7zJvpyvXXGIrq8vjc=@vger.kernel.org
+X-Received: by 2002:a05:6102:512a:b0:519:534a:6c20 with SMTP id
+ ada2fe7eead31-5d5e23afcd1mr7355705137.30.1760361665957; Mon, 13 Oct 2025
+ 06:21:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
-X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20251013094611.11745-1-johan@kernel.org> <20251013094611.11745-11-johan@kernel.org>
+In-Reply-To: <20251013094611.11745-11-johan@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Oct 2025 15:20:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU+PL2G=c-7JLiz7rT_KUAMr8Ex9NFEe6W6O1+VDkZcVA@mail.gmail.com>
+X-Gm-Features: AS18NWD_aF0UuxNWNIiOAjn-Ljc_smuXpxWxgz_2AkuWdIehm9OKuTVhty61zGA
+Message-ID: <CAMuHMdU+PL2G=c-7JLiz7rT_KUAMr8Ex9NFEe6W6O1+VDkZcVA@mail.gmail.com>
+Subject: Re: [PATCH 10/11] irqchip: Drop leftover brackets
+To: Johan Hovold <johan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Changhuang Liang <changhuang.liang@starfivetech.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The Programmable Real-time Unit and Industrial Communication Subsystem
-Megabit (ICSSM) is a microcontroller subsystem in TI SoCs such as
-AM57x, AM437x, and AM335x. It provides real-time processing
-capabilities for industrial communication and custom peripheral interfaces.
+On Mon, 13 Oct 2025 at 11:48, Johan Hovold <johan@kernel.org> wrote:
+> Drop some unnecessary brackets in platform_irqchip_probe() mistakenly
+> left by commit 9322d1915f9d ("irqchip: Plug a OF node reference leak in
+> platform_irqchip_probe()").
+>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-Currently, IDKs based on AM57x, AM437x, and AM335x use the ICSSM driver
-for PRU Ethernet functionality.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch enables TI_PRUSS and TI_PRUETH as kernel modules for AM57x,
-AM437x and AM335x SoCs.
+Gr{oetje,eeting}s,
 
-Reviewed-by: Mohan Reddy Putluru <pmohan@couthit.com>
-Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
----
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+                        Geert
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 12f706e2ded5..7f1fa9dd88c9 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -281,6 +281,8 @@ CONFIG_TI_CPSW_SWITCHDEV=y
- CONFIG_TI_CPTS=y
- CONFIG_TI_KEYSTONE_NETCP=y
- CONFIG_TI_KEYSTONE_NETCP_ETHSS=y
-+CONFIG_TI_PRUSS=m
-+CONFIG_TI_PRUETH=m
- CONFIG_XILINX_EMACLITE=y
- CONFIG_SFP=m
- CONFIG_BROADCOM_PHY=y
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
