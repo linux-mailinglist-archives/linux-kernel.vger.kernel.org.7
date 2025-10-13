@@ -1,175 +1,130 @@
-Return-Path: <linux-kernel+bounces-850799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BBC2BD4006
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:18:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB16BD3CDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41EAC401F7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEA118A0AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B59C2C2365;
-	Mon, 13 Oct 2025 14:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06EC309F13;
+	Mon, 13 Oct 2025 14:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNBnyf5m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q0nJDQEe"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B24D265CAD;
-	Mon, 13 Oct 2025 14:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E62309F02
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367111; cv=none; b=pTlwv2//0vg9AikVzkDjKEVKt6qMdlFgYjjBo6hVfOY+Wu7T91WjvAcKbIpNg3rIrJoeQprJHsqMlOP00bBRHSwKRbR+QFoehZvtjk0T7NgY66u5M6Z1vtvr8XRN0JV91JT8nT9QMQTMrT33x6g7cTsCcSjZzy1AMRs19HmpvOc=
+	t=1760367152; cv=none; b=eiMssqTszlfkLY4leLwvyPSCLzS6sOtt+eXtLpKDl780agUj86qVEgNtEvZzVeoGYvJ5fIsSjzjQKXnqqg3zt/z1N2qIR25oah8g13HzBzPmJrWD4bIpUNK1vmNm2QHB2bKxDhID1Lsa9eLfVVQRjUvhO0Xu7z4OZMIxOtklxOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367111; c=relaxed/simple;
-	bh=1f1R3hSRZT6UvLUu06F4HKhifFVAYk2MH31zzCMuaMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KETWBHSmre68VZZGYnK39ThiY4Peyv2eCuiHcNswdDZ6QSqp2aCJp6XW/bc1iTcg5f8HUaC6jRoM3Chs45jKaaoztKvsKyDbQ6TP1l0X6r3Ws78CSVuV/HC7zNOSki9G2OKUA90XmZhrdC8LDj9mQNR5xdmnsYQo/npoSKfPjE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNBnyf5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5808C113D0;
-	Mon, 13 Oct 2025 14:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760367111;
-	bh=1f1R3hSRZT6UvLUu06F4HKhifFVAYk2MH31zzCMuaMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SNBnyf5mQqInO6AKrseYPWAQUKjA7FwKTh0ngKwlfHCCDImzvVtQ7ZAKxefQkTBSq
-	 URAZHR47cIBC5F6FdoA++rPOEkvhrcqNSBdGwoPELMt23JLCayZaOaH7rtZ1uDjyUE
-	 IHbEIY+Z5g0jjr3s1g4LCK/kPDV+Vw5NCpoXMb8m4FoCjCANLcFaTXEp1xpBIu1bDi
-	 RNZYnDkvwNS5ZDuFmfbkbnXJDjVVVyCHTKfZ7KLRWT+6ME1i6KBa6lcojyTv1ayF6+
-	 VyRI57IJLFZjA5dZz1byAoXBK1YsA7WqEUP9Fhw+IEFoQoI3sjGxV69TqVpgfdn4+O
-	 fZWWUoxKrtT8Q==
-Date: Mon, 13 Oct 2025 15:51:47 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Ron Economos <re@w6rz.net>, bhelgaas@google.comk,
-	rishna.chundru@oss.qualcomm.com, mani@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv <linux-riscv@lists.infradead.org>
-Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
-Message-ID: <20251013-blatancy-husband-ed9872a46e25@spud>
-References: <eac81c57-1164-4d74-a1b4-6f353c577731@w6rz.net>
- <bc7f397c-1739-465e-b195-e1a41c34504d@oss.qualcomm.com>
+	s=arc-20240116; t=1760367152; c=relaxed/simple;
+	bh=ehKGfZgSjS6V9yj3+PS5sl4s+AURZPsv7Zg5nNIPtno=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NU+3IyJrd6sDPf3/fxob7L4exlj+gSlvA6ExbvbYnCDVXAyZS/vwbhjdXV2fXLHL1kx/7WW908FF6/TOGzfGm8Ir/nDLMiVFqYOpIDot3vZFQrKTf9dvCuSWxEd718WUzTADWtVnxKxkmFrxbFkDi7xutYg4OGoRSaaaVfW5ohw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q0nJDQEe; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-375ff2b3ba4so42739701fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:52:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1760367148; x=1760971948; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ndqybwsxO2QFLLjTy3qgkVgt9RREczDl4RIa/Rwx+w0=;
+        b=Q0nJDQEel5gc99GmRnr8ploVEESfqJQ8OACKI6pmhh95YW+rTgf3oaTt8WDzcuB0wd
+         WoounIzesA/9JcCYQsiZunWfi4RCBklLo7Oy1ptedEccHc7vmA2OzUFRvbJTw/GggbFK
+         1lUNjWqiMY/3XtfytAeKviMsm3mgHZWSO3Dlo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760367148; x=1760971948;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ndqybwsxO2QFLLjTy3qgkVgt9RREczDl4RIa/Rwx+w0=;
+        b=mS28ybr94uNHmmh3jYIhnOXb2G+ziZL8VbLFuu309u25CQX7j/2P7pjSH9gZxGB9Qs
+         YGXVVbzep6Dq1V6/qiGqYfy3FovR71YoN1NTXU4sNwGuw86nmWZZlWh1vQ/K6Auo2XO2
+         nRw963ZkH/bZjQXbYLN2XSTYV5ZNNORQ/su8CnZEWkHUfhPnZVff+dyQ1bsI6MqCOKy2
+         F+JmpES549HTJh47bgtJDKtP81NgxkVuaWtuUOPfF7c5RGMDJlJ8jMfs3RcHlu1JLDaW
+         8qCzE3uVEzonwf3R4dpEU3/2qUjQpUqfbO5grnZF6UsH0PY0cww9QMnsFvBu9U95/K0Z
+         vzfA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9L5+czebk5nKTHeVxfppTRVxpq+VKb7qXdh/UPQoYvxYtJXLsnWJTFbUB9HUybz87VEv1PpQqFw4vQtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/gMLrlMsqMBIpe/s7ztianVJEnBStyQROXunTSOlhYWwDM9tW
+	JMLyt5MZ028Fb/hBol7564N/+UlYs4OQrv3d+/htpnwVcy/sbUjReyopJTCsqj1QuQ==
+X-Gm-Gg: ASbGncv5Q15Yucr78C0PiqaGWHtO6mEy6USXHF0ySdAeszlZJGH20zWssc8QOUjdMU2
+	ohSX8vMJqgXQPgwIyC9N+rsGzd2W+frwydxhusYrArUNHbYcNwbRbjGSia5EWBX1PTU8GmeGmPB
+	ogCnMxYTai7bbIvcPzuYzBpfxOHY2uk3Tpz12oQVUmAgV4vyn/qa0aD7x1r0ZoydiCUcApQYMth
+	jGsjx/pIytrui7kpgwyIyH8wvdous/tbDiWcuMZZ+VWp/QSuuu+JiMiF1C3sHxaat5mrOsfkp+X
+	sY0/w7rdnGC5z+X9mZDOat0qQjJktVkdBDmGWR2WYQ/pj2EFirTB1Qo9orEwd/lbLQWCP9LHqJX
+	v1JPPstBSPv4d6Le/8LVuSNQrcDEcohz2RUEfCYb07TClcWiXscq3sZBBwGrWPUdTAakmM7MyRA
+	xTaunjA1uSI5f2DK4qnQ==
+X-Google-Smtp-Source: AGHT+IHv11J/UiQuXRPc53mXWiSRrpkDd1UzSDOJ4DL+ON/DEt7ZP7ZjRbXESDq57CD/XFRcpXXCtA==
+X-Received: by 2002:a2e:a582:0:b0:372:9bf0:aed6 with SMTP id 38308e7fff4ca-37609e64b6bmr49929971fa.25.1760367147927;
+        Mon, 13 Oct 2025 07:52:27 -0700 (PDT)
+Received: from ribalda.c.googlers.com (56.213.88.34.bc.googleusercontent.com. [34.88.213.56])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762e77b8a6sm31980121fa.10.2025.10.13.07.52.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 07:52:27 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 13 Oct 2025 14:52:20 +0000
+Subject: [PATCH] dt-bindings: media: fsl,imx6q-vdoa: Remove redundant quote
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Uueo13zjvdFAPZts"
-Content-Disposition: inline
-In-Reply-To: <bc7f397c-1739-465e-b195-e1a41c34504d@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251013-dts-v1-1-5731ed92684a@chromium.org>
+X-B4-Tracking: v=1; b=H4sIACMS7WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0Nj3ZSSYl0L4+RU8zTzJMtUUxMloMqCotS0zAqwKdGxtbUAwYGFfFU
+ AAAA=
+X-Change-ID: 20251013-dts-83ce7f7b9e54
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
+Latest dts-ci complains about this:
+./Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml:19:12: [error] string value is redundantly quoted with any quotes (quoted-strings)
 
---Uueo13zjvdFAPZts
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix it to make our CI happy.
 
-On Mon, Oct 13, 2025 at 01:49:39PM +0530, Krishna Chaitanya Chundru wrote:
->=20
->=20
-> On 10/13/2025 12:44 PM, Ron Economos wrote:
-> > The SiFive FU740 PCI driver fails on the HiFive Unmatched board with
-> > Linux 6.18-rc1. The error message is:
-> >=20
-> > [=A0=A0=A0 3.166624] fu740-pcie e00000000.pcie: host bridge
-> > /soc/pcie@e00000000 ranges:
-> > [=A0=A0=A0 3.166706] fu740-pcie e00000000.pcie:=A0=A0=A0=A0=A0=A0 IO
-> > 0x0060080000..0x006008ffff -> 0x0060080000
-> > [=A0=A0=A0 3.166767] fu740-pcie e00000000.pcie:=A0=A0=A0=A0=A0 MEM
-> > 0x0060090000..0x007fffffff -> 0x0060090000
-> > [=A0=A0=A0 3.166805] fu740-pcie e00000000.pcie:=A0=A0=A0=A0=A0 MEM
-> > 0x2000000000..0x3fffffffff -> 0x2000000000
-> > [=A0=A0=A0 3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
-> > 0xdf0000000-0xdffffffff] for [bus 00-ff]
-> > [=A0=A0=A0 3.579500] fu740-pcie e00000000.pcie: No iATU regions found
-> > [=A0=A0=A0 3.579552] fu740-pcie e00000000.pcie: Failed to configure iAT=
-U in
-> > ECAM mode
-> > [=A0=A0=A0 3.579655] fu740-pcie e00000000.pcie: probe with driver fu740=
--pcie
-> > failed with error -22
-> >=20
-> > The normal message (on Linux 6.17.2) is:
-> >=20
-> > [=A0=A0=A0 3.381487] fu740-pcie e00000000.pcie: host bridge
-> > /soc/pcie@e00000000 ranges:
-> > [=A0=A0=A0 3.381584] fu740-pcie e00000000.pcie:=A0=A0=A0=A0=A0=A0 IO
-> > 0x0060080000..0x006008ffff -> 0x0060080000
-> > [=A0=A0=A0 3.381682] fu740-pcie e00000000.pcie:=A0=A0=A0=A0=A0 MEM
-> > 0x0060090000..0x007fffffff -> 0x0060090000
-> > [=A0=A0=A0 3.381724] fu740-pcie e00000000.pcie:=A0=A0=A0=A0=A0 MEM
-> > 0x2000000000..0x3fffffffff -> 0x2000000000
-> > [=A0=A0=A0 3.484809] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8=
- ib,
-> > align 4K, limit 4096G
-> > [=A0=A0=A0 3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
-> > [=A0=A0=A0 3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-> > [=A0=A0=A0 3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-> > [=A0=A0=A0 3.988164] fu740-pcie e00000000.pcie: PCI host bridge to bus =
-0000:00
-> >=20
-> > Reverting the following commits solves the issue.
-> >=20
-> > 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc: Support ECAM
-> > mechanism by enabling iATU 'CFG Shift Feature'
-> >=20
-> > 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom: Prepare for the DWC
-> > ECAM enablement
-> >=20
-> > f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc: Prepare the driver
-> > for enabling ECAM mechanism using iATU 'CFG Shift Feature'
-> >=20
-> Hi Ron,
->=20
-> can you try with this change.
-> Looks like fu740-pcie driver has 256MB space of config space so dwc
-> driver is trying to enable ecam and seeing failures while enabling.
->=20
-> you can try two options 1 is to enable ecam if your hardware supports
-> it and other is to use native method like below.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> If you want to enable
-> ecam your config space should start with dbi address and should have
-> 256Mb aligned 256Mb memory of config space. Uf you want to enable ecam
-> and had this memory requirement fulfilled, try to change your devicetree
-> by starting config space with dbi start address and give it a try.
+diff --git a/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+index 511ac0d67a7f2360afe22b81d76644575081089b..988a5b3a62bdebeda6b922a986b9ac93d0933e51 100644
+--- a/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
++++ b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+@@ -16,7 +16,7 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: "fsl,imx6q-vdoa"
++    const: fsl,imx6q-vdoa
+ 
+   reg:
+     maxItems: 1
 
-If it worked before your changes, but now does not, I am not going to
-accept a dts change to make it work again FYI.
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251013-dts-83ce7f7b9e54
 
->=20
-> diff --git a/drivers/pci/controller/dwc/pcie-fu740.c
-> b/drivers/pci/controller/dwc/pcie-fu740.c
-> index 66367252032b..b5e0f016a580 100644
-> --- a/drivers/pci/controller/dwc/pcie-fu740.c
-> +++ b/drivers/pci/controller/dwc/pcie-fu740.c
-> @@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct platform_device
-> *pdev)
->=20
->         platform_set_drvdata(pdev, afp);
->=20
-> +       pci->pp.native_ecam =3D true;
-> +
->         return dw_pcie_host_init(&pci->pp);
->  }
->=20
-> - Krishna Chaitanya.
-> >=20
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
---Uueo13zjvdFAPZts
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO0SAwAKCRB4tDGHoIJi
-0tgOAP9RGYYbZuhXkwHit4qJoD31YDcFt5XTMP7JPekrluQ8+QD+PyxF3Fa/gUrf
-kXHMSjfsVuDMxC4EupjKVUMjGexKmA0=
-=nnJc
------END PGP SIGNATURE-----
-
---Uueo13zjvdFAPZts--
 
