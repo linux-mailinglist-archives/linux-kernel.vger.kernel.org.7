@@ -1,221 +1,116 @@
-Return-Path: <linux-kernel+bounces-851348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF03ABD6382
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:44:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EA9BD61B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B016C19A0A7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CE940636B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1379230DD14;
-	Mon, 13 Oct 2025 20:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254F5309F0C;
+	Mon, 13 Oct 2025 20:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNXB3QYp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0TGhUDG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4046830B52B;
-	Mon, 13 Oct 2025 20:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811B5309F0E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760387773; cv=none; b=gQCCDVuN8AlBew5eTV9o7AMJ0Wz16kYGXHSCwSz53DRTQeFtWtp5bUvghzTTarlzvsTLGv/ELTimOs6mlfsmtndpru1E9ZiXdCgJ5z8/oY5nbFNUz5DNuglSJLLbFLMG4FrwFQx75jTIURWw5Xff8+kvD4IJRhn9QJ5zZu/FdwY=
+	t=1760387564; cv=none; b=n7rbDCYDmj1ULSdPn4RWDDxVBJaOOasBfwc1ldPwRLFlGHDESkT9moyd8bbb/18R5WERukffK+3oLeKVuKRMTG5ZbvAoeRGK2IOWlaMj3F1dD7SJrnrPV2pvlhSgxdSwvWpnokEeGh1CzFQUeAHUCVc8sS58q+RhoZoEzdANif0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760387773; c=relaxed/simple;
-	bh=Jrc2SP9zuO/q8lVKXeMSZQ2TjjYp5fXU9+UkI2oxxh8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HoFZGWdCdS+K3Mu/wuTIxxSJAs7qthkVW7M58yBCvqiy+ztm0lrRk6QOzNycjYuDs014TgAgfap9NmYdUjdKlBMyFIF3Pn6hAQH7n44nTXAJFKVJaT8iTLgmmqmCuiJDcOcZHvYI3hARE4ePWx/SuH4nlsLifGu/4R3m0hl8KNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNXB3QYp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE06C4CEFE;
-	Mon, 13 Oct 2025 20:36:05 +0000 (UTC)
+	s=arc-20240116; t=1760387564; c=relaxed/simple;
+	bh=EQamDqz1jKPoQmI1VU+7+EDF4P83/GJiuJy793deQ/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UKewHkINYKD+MO9jIDUAM3T7o4vdGsMn+n6O95mDaVjnpUdCbZMsDS122Ybg/vvsByeD9x3xTe2n4a7ypElimB66yd3a9XsLO/CxZ04+lTnXvfnXRu92rKxO2n80fT1Y7lNYvbrGGlLj+aLgxFTscXrVpUNAznYx5cJAeB/AR+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0TGhUDG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0D2C2BCB0
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:32:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760387772;
-	bh=Jrc2SP9zuO/q8lVKXeMSZQ2TjjYp5fXU9+UkI2oxxh8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MNXB3QYpRdiFAXcP7KGkH3KNjLbcjQHAsJUVDtmk1f1HjTTwa3KUIDoyy0ULi5OFa
-	 G1hHGn/dxaQZ5Faqttp9F5o8lS4K3lzl0oO8h4XvBxDmB4CI1ocOlhB7mpTBWczRpe
-	 cbVl6Dc2oGcHw4ioesDHnycePL5mRzpUCYfbh5z7fE5bL75KqCXtrMmz/4W+3XrleP
-	 oMKdy9NKWu7KiOETV1Hlg3Uaq2OhxJGJs/UZbbod9e6FJHRwmIGt7Ub1FGi7gJ7Djf
-	 hDJsEwtgnaPJvOgCNXijznnVNxp9lEDzhx4vKFkdU9oGt6aKkRvBpZLinF55YVRxcr
-	 7ZyPgB0llmwOw==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Phil Auld <pauld@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Simon Horman <horms@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Waiman Long <longman@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	cgroups@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-pci@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 33/33] doc: Add housekeeping documentation
-Date: Mon, 13 Oct 2025 22:31:46 +0200
-Message-ID: <20251013203146.10162-34-frederic@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251013203146.10162-1-frederic@kernel.org>
-References: <20251013203146.10162-1-frederic@kernel.org>
+	s=k20201202; t=1760387564;
+	bh=EQamDqz1jKPoQmI1VU+7+EDF4P83/GJiuJy793deQ/E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=a0TGhUDGi+/iEdmyQcN7ciepwiJneRt84J2Q47Mg0Hfd4qYoV0nDT/VW7h0s2ry3Z
+	 UVV00W9Ei/GJlG+rdKc6ZlPYFwTl+/bCLj16ev+4AU8/JDhlDu/JcXQTbJYciVtIBJ
+	 cO3woUFa3/jybo72rgiF1rduIh3xpL/lHTEG4r7c4Fp9eLly+DErNgLe+27VBIJc1s
+	 zdn8viiPJ1iye98izFeQmaI6k6oIq38bCfMoNBM+78rD+g+zSlHLdR0LScRisdtrZs
+	 Paxcu7Y/ygZr5dqIHFp51TS2CjZ9WkewPvGMZvbHxkAdueG+YfnDLKCxr2gIievjdV
+	 W25v0hLI2v1eg==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57e36125e8aso1074993e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:32:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX5S2dvpbXYRFEswHgA8MUCYf8KD7OMbhv2m8rFH4CChZnvutpcT4OXCfKSdQG/8fXdJZadkX5pThGepvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx26emN12iBdeTlWNJv2xE0vLYIUNGOpB12v6FfoCxnt+7rnr53
+	DB9/SxZrsaKPGL6FusqptyXhQymXWI7QJOP6ARpFcjcgeDTGFNc8BEfXRR1xJxdLwJZWFR2eoZN
+	WL4EPbhj6PP4bflZAMBTnqom8rDo3wMcn1dpWQX2N
+X-Google-Smtp-Source: AGHT+IFm/qhJPRKGc+a+TWhUwJHmseKnmX3UsC7EjJHnIC1kG1AUHBMR9nLxzbY5e9K0EIzQFCLgbzgnfLD4YXcOdbY=
+X-Received: by 2002:a05:6512:3045:b0:58b:23e:253 with SMTP id
+ 2adb3069b0e04-5906db04028mr6538684e87.7.1760387562236; Mon, 13 Oct 2025
+ 13:32:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251013-getcpu_cache-v2-1-880fbfa3b7cc@linutronix.de>
+ <e95dc212-6fd3-43e3-aeb7-bf55917e0cd4@intel.com> <CALCETrV2W3cZEJ2yy7F-F9=e_8HLP84ZWrOJCzUYn_ASb0+M6A@mail.gmail.com>
+ <494caf29-8755-4bc6-a2c3-b9d0b3e9b78d@zytor.com>
+In-Reply-To: <494caf29-8755-4bc6-a2c3-b9d0b3e9b78d@zytor.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Mon, 13 Oct 2025 13:32:30 -0700
+X-Gmail-Original-Message-ID: <CALCETrVuW_MmksnkprK5Ljm-5RBSS=FUA8R8fgGMhZ3BxW15Sw@mail.gmail.com>
+X-Gm-Features: AS18NWDkjUWHXDVipeI6h9oFzsXdlHdU2eK-6BrfttbpUi-mL82DSNY6ulu9J34
+Message-ID: <CALCETrVuW_MmksnkprK5Ljm-5RBSS=FUA8R8fgGMhZ3BxW15Sw@mail.gmail.com>
+Subject: Re: [PATCH v2] vdso: Remove struct getcpu_cache
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Shuah Khan <shuah@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, 
+	linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- Documentation/cpu_isolation/housekeeping.rst | 111 +++++++++++++++++++
- 1 file changed, 111 insertions(+)
- create mode 100644 Documentation/cpu_isolation/housekeeping.rst
+On Mon, Oct 13, 2025 at 12:45=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wro=
+te:
+>
+> On 2025-10-13 10:14, Andy Lutomirski wrote:
+> >
+> > I don't actually remember whether the kernel ever used this.  It's
+> > possible that there are ancient kernels where passing a wild, non-null
+> > pointer would blow up.  But it's certainly safe to pass null, and it's
+> > certainly safe for the kernel to ignore the parameter.
+> >
+>
+> One could imagine an architecture which would have to execute an actual s=
+ystem
+> call wanting to use this, but on x86 it is pointless -- even the LSL tric=
+k is
+> much faster than a system call, and once you account for whatever hassle =
+you
+> would have to deal with do make the cache make sense (probably having a g=
+lobal
+> generation number and/or a timestamp to expire it) it well and truly make=
+s no
+> sense.
 
-diff --git a/Documentation/cpu_isolation/housekeeping.rst b/Documentation/cpu_isolation/housekeeping.rst
-new file mode 100644
-index 000000000000..e5417302774c
---- /dev/null
-+++ b/Documentation/cpu_isolation/housekeeping.rst
-@@ -0,0 +1,111 @@
-+======================================
-+Housekeeping
-+======================================
-+
-+
-+CPU Isolation moves away kernel work that may otherwise run on any CPU.
-+The purpose of its related features is to reduce the OS jitter that some
-+extreme workloads can't stand, such as in some DPDK usecases.
-+
-+The kernel work moved away by CPU isolation is commonly described as
-+"housekeeping" because it includes ground work that performs cleanups,
-+statistics maintainance and actions relying on them, memory release,
-+various deferrals etc...
-+
-+Sometimes housekeeping is just some unbound work (unbound workqueues,
-+unbound timers, ...) that gets easily assigned to non-isolated CPUs.
-+But sometimes housekeeping is tied to a specific CPU and requires
-+elaborated tricks to be offloaded to non-isolated CPUs (RCU_NOCB, remote
-+scheduler tick, etc...).
-+
-+Thus, a housekeeping CPU can be considered as the reverse of an isolated
-+CPU. It is simply a CPU that can execute housekeeping work. There must
-+always be at least one online housekeeping CPU at any time. The CPUs that
-+are not	isolated are automatically assigned as housekeeping.
-+
-+Housekeeping is currently divided in four features described
-+by the ``enum hk_type type``:
-+
-+1.	HK_TYPE_DOMAIN matches the work moved away by scheduler domain
-+	isolation performed through ``isolcpus=domain`` boot parameter or
-+	isolated cpuset partitions in cgroup v2. This includes scheduler
-+	load balancing, unbound workqueues and timers.
-+
-+2.	HK_TYPE_KERNEL_NOISE matches the work moved away by tick isolation
-+	performed through ``nohz_full=`` or ``isolcpus=nohz`` boot
-+	parameters. This includes remote scheduler tick, vmstat and lockup
-+	watchdog.
-+
-+3.	HK_TYPE_MANAGED_IRQ matches the IRQ handlers moved away by managed
-+	IRQ isolation performed through ``isolcpus=managed_irq``.
-+
-+4.	HK_TYPE_DOMAIN_BOOT matches the work moved away by scheduler domain
-+	isolation performed through ``isolcpus=domain`` only. It is similar
-+	to HK_TYPE_DOMAIN except it ignores the isolation performed by
-+	cpusets.
-+
-+
-+Housekeeping cpumasks
-+=================================
-+
-+Housekeeping cpumasks include the CPUs that can execute the work moved
-+away by the matching isolation feature. These cpumasks are returned by
-+the following function::
-+
-+	const struct cpumask *housekeeping_cpumask(enum hk_type type)
-+
-+By default, if neither ``nohz_full=``, nor ``isolcpus``, nor cpuset's
-+isolated partitions are used, which covers most usecases, this function
-+returns the cpu_possible_mask.
-+
-+Otherwise the function returns the cpumask complement of the isolation
-+feature. For example:
-+
-+With isolcpus=domain,7 the following will return a mask with all possible
-+CPUs except 7::
-+
-+	housekeeping_cpumask(HK_TYPE_DOMAIN)
-+
-+Similarly with nohz_full=5,6 the following will return a mask with all
-+possible CPUs except 5,6::
-+
-+	housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)
-+
-+
-+Synchronization against cpusets
-+=================================
-+
-+Cpuset can modify the HK_TYPE_DOMAIN housekeeping cpumask while creating,
-+modifying or deleting an isolated partition.
-+
-+The users of HK_TYPE_DOMAIN cpumask must then make sure to synchronize
-+properly against cpuset in order to make sure that:
-+
-+1.	The cpumask snapshot stays coherent.
-+
-+2.	No housekeeping work is queued on a newly made isolated CPU.
-+
-+3.	Pending housekeeping work that was queued to a non isolated
-+	CPU which just turned isolated through cpuset must be flushed
-+	before the related created/modified isolated partition is made
-+	available to userspace.
-+
-+This synchronization is maintained by an RCU based scheme. The cpuset update
-+side waits for an RCU grace period after updating the HK_TYPE_DOMAIN
-+cpumask and before flushing pending works. On the read side, care must be
-+taken to gather the housekeeping target election and the work enqueue within
-+the same RCU read side critical section.
-+
-+A typical layout example would look like this on the update side
-+(``housekeeping_update()``)::
-+
-+	rcu_assign_pointer(housekeeping_cpumasks[type], trial);
-+	synchronize_rcu();
-+	flush_workqueue(example_workqueue);
-+
-+And then on the read side::
-+
-+	rcu_read_lock();
-+	cpu = housekeeping_any_cpu(HK_TYPE_DOMAIN);
-+	queue_work_on(cpu, example_workqueue, work);
-+	rcu_read_unlock();
--- 
-2.51.0
+The global timestamp would just be some field in the vvar area, which
+we have plenty of anyway.
 
+But I agree, accelerating getcpu is pointless.  In any case, anything
+that historically thought it really really wanted accelerated getcpu
+can, and probably does, use rseq these days.
+
+--Andy
 
