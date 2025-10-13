@@ -1,192 +1,219 @@
-Return-Path: <linux-kernel+bounces-851548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCE7BD6BD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:29:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FB8BD6BD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 904D24E5CD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:29:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 051B04E1925
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346EA2D879F;
-	Mon, 13 Oct 2025 23:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B33E2EFD95;
+	Mon, 13 Oct 2025 23:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AA2rzImz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rwb+9i81"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D170296BBB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62912DAFDA
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760398168; cv=none; b=DD0vly/dfwc6IdUUwLsNplmvJ1foVgU6sJv976Cpr5wvxKeBr9eISTgNs9yhIHwf91Who7JgxB+OzKpz3F2S6zqBKS7o8G1zaJ3Ij0CowJiZfk3IQTLVZp/LwsmqVgWH+kIwMy15uhy+aY9FplGSZuxhi4r4xA4Gxi2QYg5EqJw=
+	t=1760398171; cv=none; b=n0XjoGQPtypyVWdhVvyiJbmZg530/i2Ke6DDEmEaLotIX+V0KuJa7LkDS/FTvS3mqpvYQqCQfwVd4/mtMIWOXGQnKyO1wPhOjmQ/33CB82QGCLj0jmX3/W17ryLOgIvgw977Bd2tIKMHQ+Vzm0cSuspYI8RGgMeselvWyLAI76M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760398168; c=relaxed/simple;
-	bh=SQ0gWNpV8fChoEYMNhzwQKlfjtJr3sfa5X67jWtrJdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=malTdwWtEfQsPgtsGQXLFiZTDv4aVz2FbKudgobdZVISpYwhamZhVXSYwAtLMhrJIQgf0AErQMalF07AGH4ZoDVAmlOdLlmYTlT+zKs0P5Al5fdJJi6nH2lVYrbYqwmHg3ebZWCsg9ox3K8ID8vEeduzapBJv/dPaNJJcEi9bDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AA2rzImz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 534C4C116D0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760398168;
-	bh=SQ0gWNpV8fChoEYMNhzwQKlfjtJr3sfa5X67jWtrJdY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AA2rzImzN90s32cp8e0uwxg8bh+IjSrBFwpjEddVpnqKHWTywbZioOr0J4+B2+ryR
-	 6Vj65aj4/Jbxu5yjl8Tf3filr+PibU/tnHSjELxYuuqqhhgicq0E5yOHhTRhY9GhCa
-	 //C/BizcUv+ovNYskkqnpPRn7qXYGMtMin76zujrPEvJsYEE2CAu1GZUx1XkGtDm7D
-	 rLlyd9sW1z+Ura6VViHuNKRkQqEf/6aU6qYqQ9loMmIZmUZpad8P+7l13LaYhnHco4
-	 swGL1cA6UGnaJbyJhluocGtxILsD0r89J/6htBaI/ycF9tu1yGeolAqfbhk3WUbTxq
-	 O/kaCYjnm3V3Q==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3f5e0e2bf7so882794766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:29:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWtTnG94d/mnSbUoLZXBUpshqcDIrDdHhbRiLZ0EnYg72x5oPuVnin3n2gIr2Wj8S34irlSe66HIn+Q0YU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLaPHILCRYAVN+QbmqTk7wnSDQ+DJYD/mX2MN0MU8+uhzgtMsU
-	6cItFVhp3MBdJ5sKOtly0g7eYlZIO7BYqFSgzZT7Fm0zE2CjyZcJ1VqeXzqEmxmW7M65br0FOxc
-	OqSfnh/v/qjXuuTRf4f63Q5TMK49iHe8=
-X-Google-Smtp-Source: AGHT+IGKMgfNlTuVRjrvwrgGu5wAUKAOzjA5+Qj4nhVCZNyzu4FakDZO2A4HdYX7LTuYYFd1tWuBIeotI0oHcIElStI=
-X-Received: by 2002:a17:907:971e:b0:b4c:1ad1:d08c with SMTP id
- a640c23a62f3a-b50aa393b8amr2537644866b.17.1760398166753; Mon, 13 Oct 2025
- 16:29:26 -0700 (PDT)
+	s=arc-20240116; t=1760398171; c=relaxed/simple;
+	bh=frCkNdHFg6gFZkpQ8R/gWpJUarl2/IhZnnqo+TVChx0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=f26US2p2rd4uVYJqfZ6I9jdlhPVS608dGqnkRa0fk2HcNh7ddRA5cLeuAyr1s7YWIUxFwH9APMEhgmLbPBtmJ+bck/6tZABBDG4lmGi6nJZ/Ohts3Dj2hcgmzYtais5y1zgV2mZvQxg5nhQBE/B4qWm/RN0etKz6NY7NA46p2JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rwb+9i81; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso13811364a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760398169; x=1761002969; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6I25W7llJFin8S8DJoBGT81mljmaC0FlyXWknURs3B0=;
+        b=Rwb+9i81VnZDtCrFV0FtXFZwwvGdAwcv6YunZV85Fnzf24I/VT9us3fHXxWf5fTB03
+         GccqCM0FZd30N7DgI3w9QrW7gbm5zTOTuhWAJ55MSFIq/YS4NNOLlrZie5DAev2pfqcc
+         12Azb9jLBey7Qevs39GlUHE5Ti4MMGDsECJ/xSr6Z5Vm4bDMHb0J7TGAeWG2ajEC6eve
+         sFmb4RDiYRMBNVc+RG9yeZByxX59XJaoWtbTqUW5/CslfcQCXXEbCARKsCluy8xRGDd1
+         CvdOof3nh8Byit1MN2bDkDRxXjer9r+318lj6QaNol/1eo+jBo+MUmt2+YcGELGCWwdR
+         PCFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760398169; x=1761002969;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6I25W7llJFin8S8DJoBGT81mljmaC0FlyXWknURs3B0=;
+        b=Qzk0+/D0XSeupeABYCMrBLJv2rdvqBR/xibVtb+N4lR1i1JASIB/Ksg6NmaeGuy9bR
+         zYmGIo14cDizZH2gG05IDc/8tgwvj2NSXJnnJA6y3YySI4O0HoudYxzih2Ym9QDR20yW
+         fpB6Q6unPBt3/Nrl3Q7HrlQXEPiO0G8/GFpQOB+sUQgP3vsSWKiOCKn5SIHSuqQeAPhQ
+         Z37uddZsE0Wec8iS/gh4qBj84FKDewVWSpPjjMZhteGz4ZaHwkV2O/PpQS9d5dA3jP70
+         tG9dKDHZvrZiaG3C70aQyMkyJCJub9iBBeJ/Z7fiMoxgkFoBmZv68kfIKTeYiIpDC0nc
+         0aSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrmKRosqnqrNQQfzZlQFTYTlC3YboCDQWR01Mnrc/cuIdbc8c0SDfbMGgVKUUTtLM/OX08KS7QsgAp9E8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9A4yjBqeKLLhF+kY//V/XwV68iuFrwRdi8wq+aSTqUEICcXhx
+	+2xcoZStHxaIrTOcI+10dniD5orxPwa+v6drxuA3po19BHQuQI1+I4f29a6VIZw8+t47nWUR4RZ
+	PJ+/DcA==
+X-Google-Smtp-Source: AGHT+IEiNPpbW/grCKFuHxlhV/+CCABZVtb58WuWOIKWZbzgQenU8nHFmCCMfdmsu0j9FdPxTq60YfDRtpU=
+X-Received: from pjza20.prod.google.com ([2002:a17:90a:e214:b0:329:7261:93b6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38d1:b0:32e:8c1e:1301
+ with SMTP id 98e67ed59e1d1-33b513eac36mr30623229a91.34.1760398168867; Mon, 13
+ Oct 2025 16:29:28 -0700 (PDT)
+Date: Mon, 13 Oct 2025 16:29:27 -0700
+In-Reply-To: <20251013125117.87739-1-fuqiang.wng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251013134708.1270704-1-aha310510@gmail.com> <20251013164625.nphymwx25fde5eyk@pali>
-In-Reply-To: <20251013164625.nphymwx25fde5eyk@pali>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 14 Oct 2025 08:29:14 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
-X-Gm-Features: AS18NWA2a1YxuJIOARSQtQYwyd5cLkP4zCGhLc1g0fsPOO2REg4pII5pSv2KDSU
-Message-ID: <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
-Subject: Re: [PATCH v3] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Jeongjun Park <aha310510@gmail.com>, Ethan Ferguson <ethan.ferguson@zetier.com>, 
-	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20251013125117.87739-1-fuqiang.wng@gmail.com>
+Message-ID: <aO2LV-ipewL59LC6@google.com>
+Subject: Re: [PATCH RESEND] avoid hv timer fallback to sw timer if delay
+ exceeds period
+From: Sean Christopherson <seanjc@google.com>
+To: fuqiang wang <fuqiang.wng@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yu chen <chen.yu@easystack.com>, 
+	dongxu zhang <dongxu.zhang@easystack.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Oct 14, 2025 at 1:46=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Monday 13 October 2025 22:47:08 Jeongjun Park wrote:
-> > Since the len argument value passed to exfat_ioctl_set_volume_label()
-> > from exfat_nls_to_utf16() is passed 1 too large, an out-of-bounds read
-> > occurs when dereferencing p_cstring in exfat_nls_to_ucs2() later.
-> >
-> > And because of the NLS_NAME_OVERLEN macro, another error occurs when
-> > creating a file with a period at the end using utf8 and other iocharset=
-s,
-> > so the NLS_NAME_OVERLEN macro should be removed and the len argument va=
-lue
-> > should be passed as FSLABEL_MAX - 1.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
-> > Fixes: 370e812b3ec1 ("exfat: add nls operations")
->
-> Fixes: line is for sure wrong as the affected
-> exfat_ioctl_set_volume_label function is not available in the mentioned
-> commit.
->
-> I guess it should be commit d01579d590f72d2d91405b708e96f6169f24775a.
->
-> Now I have looked at that commit and I think I finally understood what
-> was the issue. exfat_nls_to_utf16() function is written in a way that
-> it expects null-term string and its strlen as 3rd argument.
->
-> This was achieved for all code paths except the new one introduced in
-> that commit. "label" is declared as char label[FSLABEL_MAX]; so the
-> FSLABEL_MAX argument in exfat_nls_to_utf16() is effectively
-> sizeof(label). And here comes the problem, it should have been
-> strlen(label) (or rather strnlen(label, sizeof(label)-1) in case
-> userspace pass non-nul term string).
->
-> So the change below to FSLABEL_MAX - 1 effectively fix the overflow
-> problem. But not the usage of exfat_nls_to_utf16.
->
-> API of FS_IOC_SETFSLABEL is defined to always take nul-term string:
-> https://man7.org/linux/man-pages/man2/fs_ioc_setfslabel.2const.html
->
-> And size of buffer is not the length of nul-term string. We should
-> discard anything after nul-term byte.
->
-> So in my opinion exfat_ioctl_set_volume_label() should be fixed in a way
-> it would call exfat_nls_to_utf16() with 3rd argument passed as:
->
->   strnlen(label, sizeof(label) - 1)
->
-> or
->
->   strnlen(label, FSLABEL_MAX - 1)
->
-> Or personally I prefer to store this length into new variable (e.g.
-> label_len) and then passing it to exfat_nls_to_utf16() function.
-> For example:
->
->   ret =3D exfat_nls_to_utf16(sb, label, label_len, &uniname, &lossy);
-Right, I agree.
->
-> Adding Ethan to CC as author of the mentioned commit.
->
->
-> And about NLS_NAME_OVERLEN, it is being used by the
-> __exfat_resolve_path() function. So removal of the "setting" of
-> NLS_NAME_OVERLEN bit but still checking if the NLS_NAME_OVERLEN bit is
-> set is quite wrong.
-Right, The use of NLS_NAME_OVERLEN in __exfat_resolve_path() and
-in the header should also be removed.
->
->
-> Namjae, could you re-check my analysis? Just to be sure that I have not
-> misunderstood something. It is better to do proper analysis than having
-> incomplete or incorrect fix.
-Yes, I agree with your analysis.
-Thanks!
->
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> >  fs/exfat/file.c | 2 +-
-> >  fs/exfat/nls.c  | 3 ---
-> >  2 files changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> > index f246cf439588..7ce0fb6f2564 100644
-> > --- a/fs/exfat/file.c
-> > +++ b/fs/exfat/file.c
-> > @@ -521,7 +521,7 @@ static int exfat_ioctl_set_volume_label(struct supe=
-r_block *sb,
-> >
-> >       memset(&uniname, 0, sizeof(uniname));
-> >       if (label[0]) {
-> > -             ret =3D exfat_nls_to_utf16(sb, label, FSLABEL_MAX,
-> > +             ret =3D exfat_nls_to_utf16(sb, label, FSLABEL_MAX - 1,
-> >                                        &uniname, &lossy);
-> >               if (ret < 0)
-> >                       return ret;
-> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> > index 8243d94ceaf4..57db08a5271c 100644
-> > --- a/fs/exfat/nls.c
-> > +++ b/fs/exfat/nls.c
-> > @@ -616,9 +616,6 @@ static int exfat_nls_to_ucs2(struct super_block *sb=
-,
-> >               unilen++;
-> >       }
-> >
-> > -     if (p_cstring[i] !=3D '\0')
-> > -             lossy |=3D NLS_NAME_OVERLEN;
-> > -
-> >       *uniname =3D '\0';
-> >       p_uniname->name_len =3D unilen;
-> >       p_uniname->name_hash =3D exfat_calc_chksum16(upname, unilen << 1,=
- 0,
-> > --
+On Wed, Oct 01, 2025, fuqiang wang wrote:
+> When the guest uses the APIC periodic timer, if the delay exceeds the
+> period, the delta will be negative. 
+
+IIUC, by "delay" you mean the time it takes for KVM to get (back) to
+advance_periodic_target_expiration().  If that's correct, I think it would be
+clearer to word this as:
+
+  When the guest uses the APIC periodic timer, if the next period has already
+  expired, e.g. due to the period being smaller than the delay in processing
+  the timer, the delta will be negative.
+
+> nsec_to_cycles() may then convert this
+> delta into an absolute value larger than guest_l1_tsc, resulting in a
+> negative tscdeadline. Since the hv timer supports a maximum bit width of
+> cpu_preemption_timer_multi + 32, this causes the hv timer setup to fail and
+> switch to the sw timer.
+> 
+> Moreover, due to the commit 98c25ead5eda ("KVM: VMX: Move preemption timer
+> <=> hrtimer dance to common x86"), if the guest is using the sw timer
+> before blocking, it will continue to use the sw timer after being woken up,
+> and will not switch back to the hv timer until the relevant APIC timer
+> register is reprogrammed.  Since the periodic timer does not require
+> frequent APIC timer register programming, the guest may continue to use the
+> software timer for an extended period.
+> 
+> The reproduction steps and patch verification results at link [1].
+> 
+> [1]: https://github.com/cai-fuqiang/kernel_test/tree/master/period_timer_test
+> 
+> Fixes: 98c25ead5eda ("KVM: VMX: Move preemption timer <=> hrtimer dance to common x86")
+
+I'm pretty sure this should be:
+
+  Fixes: d8f2f498d9ed ("x86/kvm: fix LAPIC timer drift when guest uses periodic mode")
+
+because that's where the bug with tsdeadline (incorrectly) wrapping was introduced.
+The aforementioned commit exacerbated (and likely exposed?) the bug, but AFAICT
+that commit itself didn't introduce any bugs (related to this issue).
+
+> Signed-off-by: fuqiang wang <fuqiang.wng@gmail.com>
+> ---
+>  arch/x86/kvm/lapic.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index 5fc437341e03..afd349f4d933 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -2036,6 +2036,9 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+>  	u64 tscl = rdtsc();
+>  	ktime_t delta;
+>  
+> +	u64 delta_cycles_u;
+> +	u64 delta_cycles_s;
+> +
+>  	/*
+>  	 * Synchronize both deadlines to the same time source or
+>  	 * differences in the periods (caused by differences in the
+> @@ -2047,8 +2050,11 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+>  		ktime_add_ns(apic->lapic_timer.target_expiration,
+>  				apic->lapic_timer.period);
+>  	delta = ktime_sub(apic->lapic_timer.target_expiration, now);
+> +	delta_cycles_u = nsec_to_cycles(apic->vcpu, abs(delta));
+> +	delta_cycles_s = delta > 0 ? delta_cycles_u : -delta_cycles_u;
+> +
+>  	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
+> -		nsec_to_cycles(apic->vcpu, delta);
+> +		delta_cycles_s;
+
+This isn't quite correct either.  E.g. if delta is negative while L1 TSC is tiny,
+then subtracting the delta will incorrectly result the deadline wrapping too.
+Very, very, theoretically, L1 TSC could even be '0', e.g. due to a weird offset
+for L1, so I don't think subtracting is ever safe.  Heh, of course we're hosed
+in that case no matter what since KVM treats tscdeadline==0 as "not programmed".
+
+Anyways, can't we just skip adding negative value?  Whether or not the TSC deadline
+has expired is mostly a boolean value; for the vast majority of code it doesn't
+matter exactly when the timer expired.
+
+The only code that cares is __kvm_wait_lapic_expire(), and the only downside to
+setting tscdeadline=L1.TSC is that adjust_lapic_timer_advance() won't adjust as
+aggressively as it probably should.
+
+Ha!  That's essentially what update_target_expiration() already does:
+
+	now = ktime_get();
+	remaining = ktime_sub(apic->lapic_timer.target_expiration, now);
+	if (ktime_to_ns(remaining) < 0)
+		remaining = 0;
+
+E.g.
+
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 0ae7f913d782..2fb03a8a9ae9 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -2131,18 +2131,26 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+        ktime_t delta;
+ 
+        /*
+-        * Synchronize both deadlines to the same time source or
+-        * differences in the periods (caused by differences in the
+-        * underlying clocks or numerical approximation errors) will
+-        * cause the two to drift apart over time as the errors
+-        * accumulate.
++        * Use kernel time as the time source for both deadlines so that they
++        * stay synchronized.  Computing each deadline independently will cause
++        * the two deadlines to drift apart over time as differences in the
++        * periods accumulate, e.g. due to differences in the underlying clocks
++        * or numerical approximation errors.
+         */
+        apic->lapic_timer.target_expiration =
+                ktime_add_ns(apic->lapic_timer.target_expiration,
+                                apic->lapic_timer.period);
+        delta = ktime_sub(apic->lapic_timer.target_expiration, now);
+-       apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
+-               nsec_to_cycles(apic->vcpu, delta);
++
++       /*
++        * Don't adjust the TSC deadline if the next period has already expired,
++        * e.g. due to software overhead resulting in delays larger than the
++        * period.  Blindly adding a negative delta could cause the deadline to
++        * become excessively large due to the deadline being an unsigned value.
++        */
++       apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl);
++       if (delta > 0)
++               apic->lapic_timer.tscdeadline += nsec_to_cycles(apic->vcpu, delta);
+ }
+ 
+ static void start_sw_period(struct kvm_lapic *apic)
 
