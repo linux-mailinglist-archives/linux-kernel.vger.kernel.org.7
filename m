@@ -1,256 +1,136 @@
-Return-Path: <linux-kernel+bounces-849958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B24BD1759
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:29:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD554BD175C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B56AB4E958A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:29:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1B0F5347C18
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02282D5920;
-	Mon, 13 Oct 2025 05:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UMCD5NK8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BD22D47FF
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291002D5928;
+	Mon, 13 Oct 2025 05:29:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867742D540D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760333383; cv=none; b=qlLQg4MVvFS/jAIF1gUxu0pDPYlh84/WJmCDDUN9pRVv7r3a3ugKt5DRNRz2XhvNf4tXl4kbIdSQDiHGsAPCJbxWh19mZQWU0CyjamaVg1i6oZ7Oty84veH2OEmsaS/Hl+nHVTB30cvA2Gx+bn9l3AivvpIDwBY5AElZRi8iRTs=
+	t=1760333397; cv=none; b=TnKI/eFu/JXF+4ajm4yp4is3ahy1R7SIY36otz4eX2g1SgmmPcO8ebjMdeOCFI93bKShUZGzWQqaLYKmrdAr9nlkQzfuEOgR5zD+uXp6UL8UmJRAyqcLbTSZx9D5PJC+xSAotqAlLrAk9xbptdrodoVTo2Vxs5tvDdp81DUMxwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760333383; c=relaxed/simple;
-	bh=/SrM4iWBiCeTl/ERjU6eviZ9JjOQ6nLsu8UTiq9ILR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tHjNdeebCImNXXYzg5MBover89+w2CUy/NR8WnmIjnejHqdQSjNS4V5IbcQSmLDjI1a9nWi0qQqrqXf+WqpKfFg0Jl+NIx+LbTH9OA0vmilUP5wlBrgiE5z0Zqp4yhvghXPnJykNHmNtMN1iz28YmDavhUG+lOlA4dZduHo8vYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UMCD5NK8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760333380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kqo2ykAZEDr50CemvTt+UXIbTlPmHW0pXfnI+jeELFQ=;
-	b=UMCD5NK8SaqaCa/hQuBE0s1WL5IPS2vJv1Ap72DD3adX5C+Ak+r3ejvLl5efQyBsBLTdMJ
-	AhwvtTmvpMX18QHsSsY12breY/UhfbfF1H/1xy91lnTWS4bue8/RV7xZyVx39bDDEbmj6S
-	rafsumI7V2HXWj9wfjrJh3i5uv4o1Ts=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-131-IOaWYK7-OjChv3NgpSgxqw-1; Mon, 13 Oct 2025 01:29:39 -0400
-X-MC-Unique: IOaWYK7-OjChv3NgpSgxqw-1
-X-Mimecast-MFC-AGG-ID: IOaWYK7-OjChv3NgpSgxqw_1760333378
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32ec67fcb88so7395675a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 22:29:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760333378; x=1760938178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kqo2ykAZEDr50CemvTt+UXIbTlPmHW0pXfnI+jeELFQ=;
-        b=fdyak1h8Cp/lOnDgxPyrCZE73g2KHdm6rksIm7VClc8iJM17rzYB6roxOEgL0kDIjC
-         XEf+DXxeO9GOsBzj22ygz7I9itp9HpmrVobRAWeUk+LUXK19+ajzkBLgkKW/YxQuCoo9
-         ZNpAqoeEfr9VBH2KI3lScMImzCfB5u42xQZvmZnAuSM80LjGvOM/Fpa2Adel6tcSutPI
-         xhVMakK6KRX6P4bWiXcqAczNTwHuWp8XOczyvhpyhmPRFGvCdXJIdrqdWxbmmTJ22Mba
-         EGCvMDQPYRbVqdPHGLnbZleZN13fi7kpjMqPgznjsPfD/vty0p27SBCiC1MPQupumfIn
-         zR+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUUy+VKdXxFOU8gOVHyeGsOsolpPB0YSRRwTe066RQW3yYwZT/2yKscTM6h9dowH1mISYTx3Cb3CFks4Jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU6JymwklttDi4F172NwpajtnprUZPx2PBReVnQyQmkqkEIg4U
-	sel5w3MyKdevSaRxso8UHUYwb24HzzkRDTqiocueqFO06LqTHmAAk30yiB/h0Ys8E9MySNVbw9g
-	Koj1P2q3ajfMAE6cqaIm0cZwQmS4GH0ViP+22Mk8X3oIwfA8V//ayGPQBBY+3Nv+8MH5GmB4MIV
-	rkITRXLbkakbT3V8pd+xB3NMsd/kGmzkSls7r+30bZ
-X-Gm-Gg: ASbGncusHFvkFq6QSraRP+I8atsYTljuZ43hejwbWsHc+eAvmCixY6vBWAr3UuPJaO8
-	nN3hIrHsELZIoz+WgpfPz4/oYUPMSYHDwFBxVmmhpOuf8eXHaXNfckLHjiZlejKCcL/68Rh4ocu
-	W2nghAJ55KFci0XpVdEA==
-X-Received: by 2002:a17:90b:4d8c:b0:32e:9da9:3e60 with SMTP id 98e67ed59e1d1-33b513b4be4mr23985260a91.36.1760333378135;
-        Sun, 12 Oct 2025 22:29:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHehWnrGn7DuvJ/xSojls8MCxOSJWhG/ZI0Kv22UDdxDhSF5mF0LLfkXAAkQBSq7nVOxKn9BGX7Xu+k2Kj6giY=
-X-Received: by 2002:a17:90b:4d8c:b0:32e:9da9:3e60 with SMTP id
- 98e67ed59e1d1-33b513b4be4mr23985245a91.36.1760333377653; Sun, 12 Oct 2025
- 22:29:37 -0700 (PDT)
+	s=arc-20240116; t=1760333397; c=relaxed/simple;
+	bh=lRWnG0og5nQp7A0ZDN8ycgUjmNyIrIG/ToERsMwzvrw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KJKQSQKdN6+49JxILY7jxYi2z5tG5P9N0o20dZvtlUthhgFZlX8tvaf42lxLCnS5WRSQIwXOtwc1c6khFP+RxMvQkVIkv/dUe5e1tZj2GJkuHcZJFP/iwfmuWZ6xmumqxz6uV5rBCjOkt7yqPWoiZhn6VPmVFYVmO/1BzQ1f0ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0435D12FC;
+	Sun, 12 Oct 2025 22:29:47 -0700 (PDT)
+Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9986E3F6A8;
+	Sun, 12 Oct 2025 22:29:51 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH V6 0/3] arm64/sysreg: Clean up TCR_EL1 field macros
+Date: Mon, 13 Oct 2025 10:59:42 +0530
+Message-Id: <20251013052945.2197190-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68e96ebf.050a0220.91a22.0177.GAE@google.com> <CACGkMEtnrayDWKFdJ1P22QyCrZuDK0C2LihhOtvhUyTOKSp_HQ@mail.gmail.com>
-In-Reply-To: <CACGkMEtnrayDWKFdJ1P22QyCrZuDK0C2LihhOtvhUyTOKSp_HQ@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 13 Oct 2025 13:29:26 +0800
-X-Gm-Features: AS18NWDjkXzbfbcL9GnZvyYpjpGC9qt1RXSQFGkoxNNnNhgsMQJYKM2vjPwpQUQ
-Message-ID: <CACGkMEt0aJh1yAj+q1UNnXToLa_yGc9fT_HfeNptHsOQ7vXG+w@mail.gmail.com>
-Subject: Re: [syzbot] [virt?] upstream test error: KMSAN: use-after-free in vring_map_one_sg
-To: syzbot <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com>, 
-	Paolo Abeni <pabeni@redhat.com>
-Cc: eperezma@redhat.com, linux-kernel@vger.kernel.org, mst@redhat.com, 
-	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev, 
-	xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Adding Paolo.
+Currently TCR_EL1 field macros are sprinkled across the arm64 platform code
+including KVM implementation. Clean these up via updating required register
+filed definitions in tools sysreg format and then subsequently doing all
+necessary replacements. All required TCR_XXX macros have been moved from
+(asm/pgtable-hwdef.h) into KVM header (asm/kvm_arm.h) for their continued
+usage in KVM.
 
-On Sat, Oct 11, 2025 at 3:40=E2=80=AFPM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> #syz test
->
-> On Sat, Oct 11, 2025 at 4:38=E2=80=AFAM syzbot
-> <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com> wrote:
+The cleanup does not cause any functional change.
 
-Paolo, it looks like the GSO tunnel features will leave uninitialized
-vnet header field which trigger KMSAN warning.
+This applies on v6.18-rc1
 
-Please have a look at the patch (which has been tested by syzbot) or
-propose another one.
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: kvmarm@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-Thanks
+Changes in V6:
 
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    ba9dac987319 Merge tag 'libnvdimm-for-6.18' of git://gi=
-t.k..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D138581e2580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dad506767107=
-aacda
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dac856b8b866cc=
-a41352c
-> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7=
-976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/ce6a737acd38/d=
-isk-ba9dac98.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/d7053b626642/vmli=
-nux-ba9dac98.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/13f2d7e62179=
-/bzImage-ba9dac98.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com
-> >
-> > 8021q: adding VLAN 0 to HW filter on device bond0
-> > eql: remember to turn off Van-Jacobson compression on your slave device=
-s
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > BUG: KMSAN: use-after-free in vring_map_one_sg+0x290/0x7b0 drivers/virt=
-io/virtio_ring.c:401
-> >  vring_map_one_sg+0x290/0x7b0 drivers/virtio/virtio_ring.c:401
-> >  virtqueue_add_split drivers/virtio/virtio_ring.c:608 [inline]
-> >  virtqueue_add+0x32aa/0x6320 drivers/virtio/virtio_ring.c:2281
-> >  virtqueue_add_outbuf+0x89/0xa0 drivers/virtio/virtio_ring.c:2342
-> >  virtnet_add_outbuf drivers/net/virtio_net.c:574 [inline]
-> >  xmit_skb drivers/net/virtio_net.c:3343 [inline]
-> >  start_xmit+0x274d/0x4860 drivers/net/virtio_net.c:3367
-> >  __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
-> >  netdev_start_xmit include/linux/netdevice.h:5257 [inline]
-> >  xmit_one net/core/dev.c:3845 [inline]
-> >  dev_hard_start_xmit+0x22c/0xa30 net/core/dev.c:3861
-> >  sch_direct_xmit+0x3b2/0xcf0 net/sched/sch_generic.c:344
-> >  __dev_xmit_skb net/core/dev.c:4152 [inline]
-> >  __dev_queue_xmit+0x3588/0x5e60 net/core/dev.c:4729
-> >  dev_queue_xmit include/linux/netdevice.h:3365 [inline]
-> >  lapbeth_data_transmit+0x352/0x480 drivers/net/wan/lapbether.c:260
-> >  lapb_data_transmit+0x90/0xf0 net/lapb/lapb_iface.c:447
-> >  lapb_transmit_buffer+0x260/0x330 net/lapb/lapb_out.c:149
-> >  lapb_send_control+0x458/0x5b0 net/lapb/lapb_subr.c:251
-> >  lapb_establish_data_link+0xa6/0xd0 net/lapb/lapb_out.c:-1
-> >  lapb_device_event+0xb2a/0xbc0 net/lapb/lapb_iface.c:-1
-> >  notifier_call_chain kernel/notifier.c:85 [inline]
-> >  raw_notifier_call_chain+0xe0/0x410 kernel/notifier.c:453
-> >  call_netdevice_notifiers_info+0x1ac/0x2b0 net/core/dev.c:2229
-> >  call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
-> >  call_netdevice_notifiers net/core/dev.c:2281 [inline]
-> >  __dev_notify_flags+0x20d/0x3c0 net/core/dev.c:-1
-> >  netif_change_flags+0x162/0x1e0 net/core/dev.c:9705
-> >  dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
-> >  devinet_ioctl+0x1186/0x2500 net/ipv4/devinet.c:1199
-> >  inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1003
-> >  sock_do_ioctl+0x9c/0x480 net/socket.c:1254
-> >  sock_ioctl+0x70b/0xd60 net/socket.c:1375
-> >  vfs_ioctl fs/ioctl.c:51 [inline]
-> >  __do_sys_ioctl fs/ioctl.c:597 [inline]
-> >  __se_sys_ioctl+0x239/0x400 fs/ioctl.c:583
-> >  __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:583
-> >  x64_sys_call+0x1cbc/0x3e30 arch/x86/include/generated/asm/syscalls_64.=
-h:17
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > Uninit was created at:
-> >  slab_free_hook mm/slub.c:2440 [inline]
-> >  slab_free mm/slub.c:6566 [inline]
-> >  kmem_cache_free+0x2b0/0x1490 mm/slub.c:6676
-> >  skb_kfree_head net/core/skbuff.c:1046 [inline]
-> >  skb_free_head+0x13c/0x3a0 net/core/skbuff.c:1060
-> >  skb_release_data+0x9f7/0xac0 net/core/skbuff.c:1087
-> >  skb_release_all net/core/skbuff.c:1152 [inline]
-> >  __kfree_skb+0x6b/0x260 net/core/skbuff.c:1166
-> >  consume_skb+0x83/0x230 net/core/skbuff.c:1398
-> >  skb_free_datagram+0x1e/0x30 net/core/datagram.c:324
-> >  netlink_recvmsg+0xad1/0xfe0 net/netlink/af_netlink.c:1974
-> >  sock_recvmsg_nosec net/socket.c:1078 [inline]
-> >  sock_recvmsg+0x2dc/0x390 net/socket.c:1100
-> >  ____sys_recvmsg+0x193/0x610 net/socket.c:2850
-> >  ___sys_recvmsg+0x20b/0x850 net/socket.c:2892
-> >  __sys_recvmsg net/socket.c:2925 [inline]
-> >  __do_sys_recvmsg net/socket.c:2931 [inline]
-> >  __se_sys_recvmsg net/socket.c:2928 [inline]
-> >  __x64_sys_recvmsg+0x20e/0x3d0 net/socket.c:2928
-> >  x64_sys_call+0x35f0/0x3e30 arch/x86/include/generated/asm/syscalls_64.=
-h:48
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > Bytes 0-17 of 18 are uninitialized
-> > Memory access of size 18 starts at ffff88811a0f1000
-> >
-> > CPU: 1 UID: 0 PID: 5441 Comm: dhcpcd Not tainted syzkaller #0 PREEMPT(n=
-one)
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 08/18/2025
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
-> >
+- Added back definition for TCR_SH1_MASK as KVM on arm64 uses it now
+
+Changes in V5:
+
+https://lore.kernel.org/all/20250921005300.2535994-1-anshuman.khandual@arm.com/
+
+- Split tools header and KVM changes into separate patches per Will
+
+Changes in V4:
+
+https://lore.kernel.org/all/20250907123000.414181-1-anshuman.khandual@arm.com/
+
+- Dropped all unused TCR_XXX macros while moving into KVM header
+
+Changes in V3:
+
+https://lore.kernel.org/all/20250901072037.743380-1-anshuman.khandual@arm.com/
+
+- KVM TCR_XXX flags are expressed via TCR_EL1_XXX flags per Marc
+
+Changes in V2:
+
+https://lore.kernel.org/all/20250829060215.1086792-1-anshuman.khandual@arm.com/
+
+- Fixed ARM ARM version from 7.B to L.B
+- Changed UnsignedEnum into Enum per Mark
+- Dropped all TCR_EL1 replacements from KVM code
+- Moved existing TCR_XXX macros from (asm/pgtable-hwdef.h) into KVM header
+  (asm/kvm_arm.h) for their continued usage
+- Dropped patches 3 and 4 which could be done subsequently
+
+Changes in V1:
+
+https://lore.kernel.org/linux-arm-kernel/20250818045759.672408-1-anshuman.khandual@arm.com/
+
+Anshuman Khandual (3):
+  tools: header: arm64: Replace TCR_NFD[0|1] with TCR_EL1_NFD[0|1]
+  arm64/sysreg: Replace TCR_EL1 field macros
+  KVM: arm64: Move inside all required TCR_XXX macros
+
+ arch/arm64/include/asm/assembler.h     |  6 +-
+ arch/arm64/include/asm/cputype.h       |  2 +-
+ arch/arm64/include/asm/kvm_arm.h       | 45 ++++++++++++
+ arch/arm64/include/asm/mmu_context.h   |  4 +-
+ arch/arm64/include/asm/pgtable-hwdef.h | 98 +-------------------------
+ arch/arm64/include/asm/pgtable-prot.h  |  2 +-
+ arch/arm64/kernel/cpufeature.c         |  4 +-
+ arch/arm64/kernel/pi/map_kernel.c      |  8 +--
+ arch/arm64/kernel/vmcore_info.c        |  2 +-
+ arch/arm64/mm/proc.S                   | 36 ++++++----
+ tools/arch/arm64/include/asm/cputype.h |  2 +-
+ 11 files changed, 85 insertions(+), 124 deletions(-)
+
+-- 
+2.25.1
 
 
