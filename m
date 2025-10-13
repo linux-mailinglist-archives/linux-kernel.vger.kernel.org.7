@@ -1,204 +1,139 @@
-Return-Path: <linux-kernel+bounces-850165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C33DBD21F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:42:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5565BD21F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9561518981A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8BF1899361
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B242F90D4;
-	Mon, 13 Oct 2025 08:41:57 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA082F9DA2;
+	Mon, 13 Oct 2025 08:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ApqmZdBr"
+Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AE125A65A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D567A2F7459
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760344917; cv=none; b=Xv3QN0PLmfOM9uUn9LpseErYP2CJORDUxwz0Ovde90YzCHKaZWT09/gwRRgMfh1jFHf1b/RAKTLOfsOCh0rjgvW0hQ2XUGrGyDHGICEHmZ9+LWDWJ+iu6VYi9jIi3o2Zj6HqPVJFbrzH57ji51l4zFuMV+urfjqb6Pi2wdEseYQ=
+	t=1760344994; cv=none; b=QYlCeOYFz1DyjtCik1LgYtNkm4WvVxhH9nHy6eNTrqmp3rLbaaASMSOY1zMlsVV22xQ5+NvHXXhJThC31M6NsRc2tTGALc44waprtT5Wm5x2o2zV+i2SAHDrek1UYfL0Y3TiD6TJWKOudtU9fsTuIWrcfXs/QViXCLXFYI7izPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760344917; c=relaxed/simple;
-	bh=UEFOSh0xRz8cYbaVE1rSJZQXECRmazCUfCdPoIpjvgE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=chfWH1155I3+MPFGl4Rc/vb+GwoMGLOTo6oNKrPQSwfW2qlFK/CoSAZHsIms6MdPhI59M7C4IDYknUQLB1dzh80M0hZJYPkpGVnk1XIRTORuME/ycLVKA7fvAASbRXmC+zx1SWMXo2RLuRCp9cVqRJdyj9sD2vLBPF2cJNpcoMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v8E7n-0004vn-1X; Mon, 13 Oct 2025 10:41:47 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v8E7m-003M6K-0Q;
-	Mon, 13 Oct 2025 10:41:46 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v8E7m-000000004e4-0FhD;
-	Mon, 13 Oct 2025 10:41:46 +0200
-Message-ID: <bf59e192acc06c88f122578e40ee64e1cafe8152.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] dmaengine: dw-axi-dmac: add reset control support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Artem Shimko <a.shimko.dev@gmail.com>, Eugeniy Paltsev
-	 <Eugeniy.Paltsev@synopsys.com>, Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 13 Oct 2025 10:41:45 +0200
-In-Reply-To: <20251012100002.2959213-3-a.shimko.dev@gmail.com>
-References: <20251012100002.2959213-1-a.shimko.dev@gmail.com>
-	 <20251012100002.2959213-3-a.shimko.dev@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760344994; c=relaxed/simple;
+	bh=UooLLT2+k2eSFbtbDCcP/1aILrtCbHtbgr4qP1OaIew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XaU/GqRafqDTbjnxbbdOKNmwASMnOyMyFBVcAp/JgtDFDSONeN7f0uQC0Rhq4MarH3HRnGglk8TRqJ1U8f3RAjLTn68VqmrbbVVYvCKwqRiR5dsYQdV/4BSd0JWgyrrerhPuJjSHV/dtQv8QEiMuJ54nbScaOpfuDJPpoAfrU7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ApqmZdBr; arc=none smtp.client-ip=74.125.224.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-633c1b740c5so3873826d50.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:43:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760344990; x=1760949790; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UooLLT2+k2eSFbtbDCcP/1aILrtCbHtbgr4qP1OaIew=;
+        b=ApqmZdBrRMCqYFFLJ0nrf8XJTELhODe5nsTYeB2MzZxdemt0RMqMPpgdeHIfRuuiFp
+         6/AROojcie2DpRiqK/1Ik1JFJ+9uzoNpRZwTP2t1oV3lCbo67mIWtJ7+p6Lwvm7kIFK8
+         PEPwujPeBlagz2lZx8AH0BABJMn/zY//EXqKf0iig5mALHl33H1cvdFcGM5h946Tzk+a
+         z9PdpPA0Jg5AeofiaqEFWehBNy3wVnqwIE2ht7adlYOaZz6ASFsMM6CMm5kabwH/hIlg
+         nr/9UCi92g1coxQhtLocxnmXvYOwDdKvzldZh/deZLQSWtzNPg3sXbOI5jsCTA+nBLge
+         ooxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760344990; x=1760949790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UooLLT2+k2eSFbtbDCcP/1aILrtCbHtbgr4qP1OaIew=;
+        b=PWOqSuq+E4A4n1MOPahFAYf9JmaRoMLtvraO7uInjzFrJGwYRTTQuurOR522Pql5Q2
+         0wHp9WlY4VwuNq/ZbNc6D1dVMEs81l2K8H47kgu1J9bYuxi5UGq1zN39c+9KYo55ydlR
+         6MUVNYOx8+vy+uN+Dmz6w+rIjMWuTlEF8WLxKIwzYxAYOQMd+HKB4FbDHEcFCA8R/dAO
+         oEg9YZzIPTKDAmPDMgon/662K9Yh+UAJ373mL+cWJ0THIprMjARXAhqSTKxDUmUpyGGE
+         hkmdHGM8U2dQ/B1oM8SiNjvYZ6sD0TmsFXXvyrpz4Wrtqjp7mq9ZRSvNf2gfY1vaDjhd
+         wSiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdbBcJMTty6XbMHMoLQOmSrJQjdU9eYjtsKHL1xf0PGc8O6ajsdxjsSpf1O27dloozRjAYMTEnw42gzK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysqF//m/37P8wHM7c6nCdnozbGeKxVUJmRRMAZEfDdfcymUK8H
+	xVd+O1y6ZdM8of1RkCwQSnd+ytwksz/vcpRSalmhjUGPmKcc1wteya8THhOybAfj9opbjeaivCB
+	EsR99k0HRnNDaMxOJ9DVMs+uDbPQxrnOmUOQdTL2Zww==
+X-Gm-Gg: ASbGncsxnMwNGYh28cMzmyh6AYlcN0eP0ZEjVaNR/Ru/TP7msJFMXgAxH3Uj2OzdNdC
+	CYdoNbgnbvxYs4+JMshgAEr8N2GTc4eRK0qQS7ZSjuRrsZM/nysau5EvtR3vTMOUVkCoVpOn2nh
+	uo+JtpwRxkGWclhi4yDuRV6Am2CQFHkBxA1gkWFopPSqUzOyvuGT5AO43S/SV4hexy04SPxVH4V
+	FcoupK3d0ZOO5tZQZdP7J90NKxHq1WPfzkM+KTWBw==
+X-Google-Smtp-Source: AGHT+IE7uecq6exgG9yMGFshaWnygPzsY94kaUydCSOH4t9VdYDMHhDCY7COXeGCW6oHpXyDu6o1jQTLE+lL7DHhfJY=
+X-Received: by 2002:a05:690e:1518:b0:63c:f5a6:f2de with SMTP id
+ 956f58d0204a3-63cf5a709e0mr7250059d50.64.1760344989651; Mon, 13 Oct 2025
+ 01:43:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20251008201955.3919537-1-salil.mehta@opnsrc.net> <86v7koxk1z.wl-maz@kernel.org>
+In-Reply-To: <86v7koxk1z.wl-maz@kernel.org>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 13 Oct 2025 09:42:58 +0100
+X-Gm-Features: AS18NWBOHqaPdVaNAQm6HnqE3sDpKzQQpa3lWt1IHGAjwjcmIhabHOei0Ckzxt4
+Message-ID: <CAFEAcA8=yhQ-ygoA-fqxzwg69OkdW2nBM0O9X3Lmww4eXuVMWA@mail.gmail.com>
+Subject: Re: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow
+ lockless read when ready
+To: Marc Zyngier <maz@kernel.org>
+Cc: salil.mehta@opnsrc.net, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, salil.mehta@huawei.com, 
+	jonathan.cameron@huawei.com, will@kernel.org, catalin.marinas@arm.com, 
+	mark.rutland@arm.com, james.morse@arm.com, sudeep.holla@arm.com, 
+	lpieralisi@kernel.org, jean-philippe@linaro.org, tglx@linutronix.de, 
+	oliver.upton@linux.dev, richard.henderson@linaro.org, andrew.jones@linux.dev, 
+	mst@redhat.com, david@redhat.com, philmd@linaro.org, ardb@kernel.org, 
+	borntraeger@linux.ibm.com, alex.bennee@linaro.org, gustavo.romero@linaro.org, 
+	npiggin@gmail.com, linux@armlinux.org.uk, karl.heubaum@oracle.com, 
+	miguel.luis@oracle.com, darren@os.amperecomputing.com, 
+	ilkka@os.amperecomputing.com, vishnu@os.amperecomputing.com, 
+	gankulkarni@os.amperecomputing.com, wangyanan55@huawei.com, 
+	wangzhou1@hisilicon.com, linuxarm@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-On So, 2025-10-12 at 13:00 +0300, Artem Shimko wrote:
-> Add proper reset control handling to the AXI DMA driver to ensure
-> reliable initialization and power management. The driver now manages
-> resets during probe, remove, and system suspend/resume operations.
->=20
-> The implementation stores reset control in the chip structure and adds
-> reset assert/deassert calls at the appropriate points: resets are
-> deasserted during probe after clock acquisition, asserted during remove
-> and error cleanup, and properly managed during suspend/resume cycles.
-> Additionally, proper error handling is implemented for reset control
-> operations to ensure robust behavior.
->=20
-> This ensures the controller is properly reset during power transitions
-> and prevents potential issues with incomplete initialization.
->=20
-> Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
-> ---
->  .../dma/dw-axi-dmac/dw-axi-dmac-platform.c    | 41 ++++++++++++-------
->  drivers/dma/dw-axi-dmac/dw-axi-dmac.h         |  2 +
->  2 files changed, 28 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma=
-/dw-axi-dmac/dw-axi-dmac-platform.c
-> index 8b7cf3baf5d3..3f4dd2178498 100644
-> --- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-> +++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-> @@ -1321,6 +1321,9 @@ static int axi_dma_suspend(struct device *dev)
->  	axi_dma_irq_disable(chip);
->  	axi_dma_disable(chip);
-> =20
-> +	if (chip->has_resets)
-> +		reset_control_assert(chip->resets);
+On Thu, 9 Oct 2025 at 14:48, Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Wed, 08 Oct 2025 21:19:55 +0100,
+> salil.mehta@opnsrc.net wrote:
+> >
+> > From: Salil Mehta <salil.mehta@huawei.com>
+> >
+> > [A rough illustration of the problem and the probable solution]
+> >
+> > Userspace reads of ICC_CTLR_EL1 via KVM device attributes currently takes a slow
+> > path that may acquire all vCPU locks. Under workloads that exercise userspace
+> > PSCI CPU_ON flows or frequent vCPU resets, this can cause vCPU lock contention
+> > in KVM and, in the worst cases, -EBUSY returns to userspace.
+> >
+> > When PSCI CPU_ON and CPU_OFF calls are handled entirely in KVM, these operations
+> > are executed under KVM vCPU locks in the host kernel (EL1) and appear atomic to
+> > other vCPU threads. In this context, system register accesses are serialized
+> > under KVM vCPU locks, ensuring atomicity with respect to other vCPUs. After
+> > SMCCC filtering was introduced, PSCI CPU_ON and CPU_OFF calls can now exit to
+> > userspace (QEMU). During the handling of PSCI CPU_ON call in userspace, a
+> > cpu_reset() is exerted which reads ICC_CTLR_EL1 through KVM device attribute
+> > IOCTLs. To avoid transient inconsistency and -EBUSY errors, QEMU is forced to
+> > pause all vCPUs before issuing these IOCTLs.
+>
+> I'm going to repeat in public what I already said in private.
+>
+> Why does QEMU need to know this? I don't see how this is related to
+> PSCI, and outside of save/restore, there is no reason why QEMU should
+> poke at this. If QEMU needs fixing, please fix QEMU.
 
-reset_control_assert/deassert() handle NULL pointers, so you could drop
-the chip->has_resets flag and just
+I don't know the background here, but generally speaking,
+when we do a CPU reset that includes writing all the CPU state
+of the "this is freshly reset from userspace's point of view" vcpu
+back to the kernel. More generally, userspace should be able to
+read and write sysregs for a vcpu any time it likes, and not
+arbitrarily get back -EBUSY. What does the kernel expect
+userspace to do with an errno like that?
 
-	reset_control_assert(chip->resets);
-
-unconditionally.
-
-> +
->  	clk_disable_unprepare(chip->core_clk);
->  	clk_disable_unprepare(chip->cfgr_clk);
-> =20
-> @@ -1340,6 +1343,9 @@ static int axi_dma_resume(struct device *dev)
->  	if (ret < 0)
->  		return ret;
-> =20
-> +	if (chip->has_resets)
-> +		reset_control_deassert(chip->resets);
-> +
-
-Same as above.
-
->  	axi_dma_enable(chip);
->  	axi_dma_irq_enable(chip);
-> =20
-> @@ -1455,7 +1461,6 @@ static int dw_probe(struct platform_device *pdev)
->  	struct axi_dma_chip *chip;
->  	struct dw_axi_dma *dw;
->  	struct dw_axi_dma_hcfg *hdata;
-> -	struct reset_control *resets;
->  	unsigned int flags;
->  	u32 i;
->  	int ret;
-> @@ -1487,16 +1492,6 @@ static int dw_probe(struct platform_device *pdev)
->  			return PTR_ERR(chip->apb_regs);
->  	}
-> =20
-> -	if (flags & AXI_DMA_FLAG_HAS_RESETS) {
-> -		resets =3D devm_reset_control_array_get_exclusive(&pdev->dev);
-> -		if (IS_ERR(resets))
-> -			return PTR_ERR(resets);
-> -
-> -		ret =3D reset_control_deassert(resets);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
->  	chip->dw->hdata->use_cfg2 =3D !!(flags & AXI_DMA_FLAG_USE_CFG2);
-> =20
->  	chip->core_clk =3D devm_clk_get(chip->dev, "core-clk");
-> @@ -1507,18 +1502,31 @@ static int dw_probe(struct platform_device *pdev)
->  	if (IS_ERR(chip->cfgr_clk))
->  		return PTR_ERR(chip->cfgr_clk);
-> =20
-> +	chip->has_resets =3D !!(flags & AXI_DMA_FLAG_HAS_RESETS);
-> +	if (chip->has_resets) {
-> +		chip->resets =3D devm_reset_control_array_get_exclusive(&pdev->dev);
-> +		if (IS_ERR(chip->resets))
-> +			return PTR_ERR(chip->resets);
-> +
-> +		ret =3D reset_control_deassert(chip->resets);
-> +		if (ret)
-> +			return dev_err_probe(&pdev->dev, ret, "Failed to deassert resets\n");
-> +	}
-> +
-
-Why is this moved down here?
-
->  	ret =3D parse_device_properties(chip);
->  	if (ret)
-> -		return ret;
-> +		goto err_exit;
-> =20
->  	dw->chan =3D devm_kcalloc(chip->dev, hdata->nr_channels,
->  				sizeof(*dw->chan), GFP_KERNEL);
-> -	if (!dw->chan)
-> -		return -ENOMEM;
-> +	if (!dw->chan) {
-> +		ret =3D -ENOMEM;
-> +		goto err_exit;
-> +	}
-> =20
->  	ret =3D axi_req_irqs(pdev, chip);
->  	if (ret)
-> -		return ret;
-> +		goto err_exit;
-> =20
->  	INIT_LIST_HEAD(&dw->dma.channels);
->  	for (i =3D 0; i < hdata->nr_channels; i++) {
-> @@ -1605,6 +1613,9 @@ static int dw_probe(struct platform_device *pdev)
-> =20
->  err_pm_disable:
->  	pm_runtime_disable(chip->dev);
-> +err_exit:
-> +	if (chip->has_resets)
-> +		reset_control_assert(chip->resets);
-
-If it is ok to keep the module in reset, shouldn't the reset control be
-asserted on device remove() as well?
-
-regards
-Philipp
+-- PMM
 
