@@ -1,167 +1,154 @@
-Return-Path: <linux-kernel+bounces-851387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA44BD6547
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2A9BD6553
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 74A0A3505CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EA2418A5030
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF522D3A8A;
-	Mon, 13 Oct 2025 21:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A0429CB48;
+	Mon, 13 Oct 2025 21:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3kIUE1L"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kiyj9mpm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MVnuUtlf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA18296BDE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B7219E8;
+	Mon, 13 Oct 2025 21:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760389862; cv=none; b=rzPGV8FNyZJC/d5E0yhD7XWm2rxkUrplU4cGwCI1xeNA0IrVaByVTHOItcU7EeqykR2AyqEN9D8ENT41btHPNXZ5zlLTpBt/BwAp4TlNtaei7RY/W5gWtYpkIF6y/F27I0MtYaglvl72qpgx9U6fIqkwip3Z068q3/kabJdAaRc=
+	t=1760389960; cv=none; b=OwsW/i2HjQ338J4bVO+Gxi75ZI6rntsUGd3J70iY3iBZBVkdMLctdyeylyTHnUz99TN6Q6fm85N8iWVM3Tx3HAB1rbSATbPcFKUXZQH6fZelsFSZLGf3o4aDbv+NvNgGxt6rQKlbo81myC1cc4eSWSxrFpoFP36ngcU7iY8wemU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760389862; c=relaxed/simple;
-	bh=XRyQ8TvgonzZxSKeTWrQ9Nooy9DyVz1PgDZQ2fk4fok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRteVf2ePxKcsY5RY4smIx7f/PpLkaxESHUMIiMlnBsdJQTYYnM2d4LmDb//M2VKxB+JgWWpWYY7ajv8Rxg9H1NeekOF8HpoOA5dljiS9EwzqY02hsshGXcqxCqqyOX96mUr1jWpWrA1/AWfITT+z2yAD8/RAtAG7j9DPe4jY6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3kIUE1L; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2907948c1d2so2855835ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760389860; x=1760994660; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k8T7ajPfnJGCZaEQpmGY6bA7JB2Gwt9VaIoR3OH9oz4=;
-        b=I3kIUE1LBxVp7tQQ7mVMXqvgWJcA5YePrBBIIKqPeob8MN8mdfkj1I8uz1SYvvdWw/
-         FIBIJIzByURcLuGk4HrpIdZ/BxayxxPD/f0p1OG2xis22XHYV0uOSA92ToHxrg0iPTHH
-         fwCmIjs6xgnIvkt0IQVsmX6AKQBmQAssjBo0pqGRgtZRenR1VTR9gYy2wjJW5BsQ3Q7c
-         8pcsLHLWAX3lz2EdAeST7jLC0nznZ9LYJVVneE7mwiqqZqKgl+GpcMZRQtpT++A1hd92
-         a5mYD32YCm38gBoL5A8zMx0pda/fBWmS/zf1AKJc1tSxg6JuOuF3iEcRLbS1w7H6365+
-         e7iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760389860; x=1760994660;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k8T7ajPfnJGCZaEQpmGY6bA7JB2Gwt9VaIoR3OH9oz4=;
-        b=OpPFPg5yt/PWqlaoMKtQJUeFhcQpBhQ4Nsob0cFrlNaACFkKihMZFLJJ6SVCQS+dGj
-         W6SG09ppJrPc10FJgxoN1Rc7AnColoO08rfQ4Vqv24zHjnKWUFEYSzg8lN3hrPcS06ma
-         natpiVoO4WA0lvjEL1aytZyRgu86FPLoNrWtpHWzY2LBleiDotbV/Hkgh+ibyOdIvNJt
-         0L4xidkgCo77Yna0qV5QFbOif/JOPWQrMrjKAR2EGLjzPGyCm5jm7pYP62MHqcIQBDJg
-         c8Gz3er5qcfdPm0VDkB3OVxlgw1EwG3QQNOLlBajCjppjKl6a+HHpCe+9JJDufKWnol0
-         UTEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeqPUsUT30d5hnx14HdDnUeDlJskSCtdKYLqXr/zKiUgF8kr6/9PjpzyS4jONzr8+1DpO16daMbmlHlX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD+cpedWQTRddy+I3H6nnOQg/3JChYda9cTGWo9r2jn2g6YPXs
-	6fDWeyIc/EUqvqDgH8D809x9X26FPz4mRPSEF8Ayn0D/Zz6yvErLfodV
-X-Gm-Gg: ASbGnctme8Znc0CumsaC8Hmiu8r2NcaCLcesPCAxPcw6ckQf8m32LE33RfY8t4Ar9yA
-	9CLhhiWwC9u7wJTGW+bXOTXIO3pr5fY+xrKAf349KN4NoOJw7IDZ6Ug5n9afJjEbvuod0VAjnG7
-	3FwECmIP60vAgDTIBWiaPqHyuTkexqse6r0LAx4Yx8zRvtDuLvikSAa5SEdQPLQ31cncgR/ZBCj
-	szLGnZjym+8Re6UAdk4tWjTi7VeBu+YtCYHeFT17dfmVgEIyFEeHghR3/BIXW9uc2ATNpf+UuqO
-	H7OnsIPDg5/wfnKYU/FtHIa13sofO8l94xA4KuVQT0EJz5U8c3fXXmQD+mQHUb1bhYuNb+Elxu1
-	l/6BIRLHgibTJn4BTUUFZlUTiq5vyN0iGUlTLWRUFVbYAeaWFNSUT4uBVf2alEqJ510aPPvxwPr
-	daTxLxgHCSW/w7uprjYl1btqfs
-X-Google-Smtp-Source: AGHT+IGzrurCKDAHA2puwM3WJeIi/Do07flXwZ7TOycjcONtFRm0A/LHuoQuvrk5xFsQ3N0FJs9bEw==
-X-Received: by 2002:a17:903:3c68:b0:246:80b1:8c87 with SMTP id d9443c01a7336-290272dfb4fmr277119205ad.43.1760389860106;
-        Mon, 13 Oct 2025 14:11:00 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08912sm141650595ad.78.2025.10.13.14.10.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 14:10:59 -0700 (PDT)
-Date: Tue, 14 Oct 2025 05:10:57 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Jonathan Denose <jdenose@google.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Lucas GISSOT <lucas.gissot.pro@gmail.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: Kconfig: Fix build error from CONFIG_HID_HAPTIC
-Message-ID: <aO1q4coXPqU/K6KI@visitorckw-System-Product-Name>
-References: <20251013-hid-haptic-kconfig-fix-v1-1-b1ad90732625@google.com>
+	s=arc-20240116; t=1760389960; c=relaxed/simple;
+	bh=DCmFey32iTvvyMWOEHtXxQ9ym3WbxvdIyIpXYB2mx7k=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=oDJqewSfnck4lZcQ7cwaPCIIoJdcF7tuVNDi+5WsKOUdAIsCWhd5aum3DS644xpDdL91Txzep4n5CQzGT+4uE4473rxAYrYEoptVOfleW9VlUiArYTIdQEAWy4c/Nxs8ENyRxHfB4Nc/7Gy77WjIF3dvABdEDPjm68a2PXA35Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kiyj9mpm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVnuUtlf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 13 Oct 2025 21:12:36 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760389957;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=ie7Ds8B86MVRkqypNsfvaNXFVQ5eGbkxlCz6XVnQmCs=;
+	b=Kiyj9mpmNF0Kwf5eKfQAmTpxqZTze715sr+ukB538a2eVANBiBp5CfIF/gby0GINxjA8ZQ
+	KvpcZQkDP08eEh8O5MxETpxFuyXrGoJcCznbrQ/YEoFyeNnZnhVtU+QuNJXUwZC5PHXRRt
+	i98RuUy87pHgA62ENGVEEp5bxmdsa9T89IYTCsM90xvkWAstgQID9ppTPwGxZeXjCcM38I
+	6GrEu8uK4i6hNH9mUix6nPFHDeilKxF984OwjTJ4NvK+sw8yqNhtnpuAg/ZWyei/uEp84U
+	XYk/mmU2sl5dkk+B072zOKQQZWA3Zs7U6Ir1PpPmeHyVF62uDSTnI6GE0hhdbA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760389957;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=ie7Ds8B86MVRkqypNsfvaNXFVQ5eGbkxlCz6XVnQmCs=;
+	b=MVnuUtlfX8MH4xkLa5E+pKtn403oYbyFaO4mj1d9N6L7bn5+Vq4OJxTmgWsAmhZGiy2Eji
+	P9cwgdjQtTo0suDQ==
+From: "tip-bot2 for Andrew Cooper" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/entry] x86/fred: Fix 64bit identifier in fred_ss
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "Xin Li (Intel)" <xin@zytor.com>,
+ "H. Peter Anvin (Intel)" <hpa@zytor.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013-hid-haptic-kconfig-fix-v1-1-b1ad90732625@google.com>
+Message-ID: <176038995604.709179.16080488698468273330.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 08:54:57PM +0000, Jonathan Denose wrote:
-> Temporarily change CONFIG_HID_HAPTIC to be bool instead of tristate, until
-> we implement a permanent solution.
-> 
-> ---
+The following commit has been merged into the x86/entry branch of tip:
 
-The "---" line here will cause many tools used for applying patches,
-like git am, to discard the content below it [1].
+Commit-ID:     4ab13be5ed12f4954d1f46cc6298e1adb2d6681b
+Gitweb:        https://git.kernel.org/tip/4ab13be5ed12f4954d1f46cc6298e1adb2d=
+6681b
+Author:        Andrew Cooper <andrew.cooper3@citrix.com>
+AuthorDate:    Wed, 03 Sep 2025 00:01:17 +01:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Mon, 13 Oct 2025 14:05:42 -07:00
 
-Please don't add this line unless you don't want the following content
-to appear in the commit message.
+x86/fred: Fix 64bit identifier in fred_ss
 
-[1]: https://www.kernel.org/doc/html/v6.17/process/submitting-patches.html#commentary
+FRED can only be enabled in Long Mode.  This is the 64bit mode (as opposed to
+compatibility mode) identifier, rather than being something hard-wired at 1.
 
-Regards,
-Kuan-Wei
+No functional change.
 
-> Recently the CONFIG_HID_HAPTIC Kconfig option was reported as causing
-> the following build errors:
-> 
->   MODPOST Module.symvers
-> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
-> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
-> 
-> when the kernel is compiled with the following configuration:
-> 
-> CONFIG_HID=y
-> CONFIG_HID_MULTITOUCH=m
-> CONFIG_HID_HAPTIC=m
-> 
-> To resolve this, temporarily change the CONFIG_HID_HAPTIC option to be
-> bool, until we arrive at a permanent solution to enable CONFIG_HID_HAPTIC
-> to be tristate.
-> 
-> For a more detailed discussion, see [1].
-> 
-> [1]: https://lore.kernel.org/linux-input/auypydfkhx2eg7vp764way4batdilzc35inqda3exwzs3tk3ff@oagat6g46zto/
-> 
-> Signed-off-by: Jonathan Denose <jdenose@google.com>
-> ---
->  drivers/hid/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 5341aa79f387bd0e5a76266b5928d2c978dd81cf..04420a713be085c8871b4d35255fde4cafd8de0f 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -93,7 +93,7 @@ config HID_GENERIC
->  	If unsure, say Y.
->  
->  config HID_HAPTIC
-> -	tristate "Haptic touchpad support"
-> +	bool "Haptic touchpad support"
->  	default n
->  	help
->  	Support for touchpads with force sensors and haptic actuators instead of a
-> 
-> ---
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20251013-hid-haptic-kconfig-fix-634df2bdac1d
-> 
-> Best regards,
-> -- 
-> Jonathan Denose <jdenose@google.com>
-> 
+Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Xin Li (Intel) <xin@zytor.com>
+Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Acked-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+---
+ arch/x86/entry/entry_fred.c   | 4 ++--
+ arch/x86/include/asm/fred.h   | 2 +-
+ arch/x86/include/asm/ptrace.h | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/entry/entry_fred.c b/arch/x86/entry/entry_fred.c
+index f004a4d..94e626c 100644
+--- a/arch/x86/entry/entry_fred.c
++++ b/arch/x86/entry/entry_fred.c
+@@ -78,13 +78,13 @@ static noinstr void fred_intx(struct pt_regs *regs)
+ static __always_inline void fred_other(struct pt_regs *regs)
+ {
+ 	/* The compiler can fold these conditions into a single test */
+-	if (likely(regs->fred_ss.vector =3D=3D FRED_SYSCALL && regs->fred_ss.lm)) {
++	if (likely(regs->fred_ss.vector =3D=3D FRED_SYSCALL && regs->fred_ss.l)) {
+ 		regs->orig_ax =3D regs->ax;
+ 		regs->ax =3D -ENOSYS;
+ 		do_syscall_64(regs, regs->orig_ax);
+ 		return;
+ 	} else if (ia32_enabled() &&
+-		   likely(regs->fred_ss.vector =3D=3D FRED_SYSENTER && !regs->fred_ss.lm))=
+ {
++		   likely(regs->fred_ss.vector =3D=3D FRED_SYSENTER && !regs->fred_ss.l)) {
+ 		regs->orig_ax =3D regs->ax;
+ 		regs->ax =3D -ENOSYS;
+ 		do_fast_syscall_32(regs);
+diff --git a/arch/x86/include/asm/fred.h b/arch/x86/include/asm/fred.h
+index 12b34d5..2bb6567 100644
+--- a/arch/x86/include/asm/fred.h
++++ b/arch/x86/include/asm/fred.h
+@@ -79,7 +79,7 @@ static __always_inline void fred_entry_from_kvm(unsigned in=
+t type, unsigned int=20
+ 		.type   =3D type,
+ 		.vector =3D vector,
+ 		.nmi    =3D type =3D=3D EVENT_TYPE_NMI,
+-		.lm     =3D 1,
++		.l      =3D 1,
+ 	};
+=20
+ 	asm_fred_entry_from_kvm(ss);
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index 50f7546..37370c3 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -84,8 +84,8 @@ struct fred_ss {
+ 			:  4,
+ 		/* Event was incident to enclave execution */
+ 		enclave	:  1,
+-		/* CPU was in long mode */
+-		lm	:  1,
++		/* CPU was in 64-bit mode */
++		l	:  1,
+ 		/*
+ 		 * Nested exception during FRED delivery, not set
+ 		 * for #DF.
 
