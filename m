@@ -1,182 +1,84 @@
-Return-Path: <linux-kernel+bounces-851225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9AEBD5D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:59:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBD2BD5D21
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899653BF2A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31FF18A7854
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD6A2DA760;
-	Mon, 13 Oct 2025 18:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE5F2D8DB9;
+	Mon, 13 Oct 2025 19:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MiQOklbu"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EwV63GUE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DD62D9EF6
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C51DC997;
+	Mon, 13 Oct 2025 19:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760381958; cv=none; b=D+E9XwLjdWl6uJx05LXwgtrYQK6HAmaTjvIuE0OysXg75bks7rThVYBm4zj8S3bcNUDUtRwcJDsY16AMl1SH+m/zDhJhUX0iKCVUWESP41RVWpI2tFGfd3MLlbZJK/sTXI0DYt01Hiadvm5fqIoLqdUxxbouS0UyGvOPKe+YCeI=
+	t=1760382016; cv=none; b=PXKdlfDntp8XhlId6rsQi3txKaCEHoKzloxyXQ7Cwiv4+ZI4wG9bQE57hgkfLxn/SJsAX6iKXl4713SdbkRHy4vp+ikpgwswdqJQ7rXEUhpdSJG/Pa0H4ldiVhithWDij8xvJv3SxY17oDWH3srAqBq06iALlN+68/7SoA+mSrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760381958; c=relaxed/simple;
-	bh=4FjZOwY6iLfIUw1O3aAoof090jEORs2O09E0JM09G0s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H2NSjpurG1lZup/0f17unVWI773lP3wMoUToIjNDkJ1hui+qXg8VqQciGazoprhNkvq9Fk2TFt6pVUg1m4jiiC27ih9qs5KfzMBU5DWtoUKt/+CfSaRS66a5l4lk1ICmO/mNcEoVTEbOLX7ftLA83DNE3VbnRXNMkTGG2/xca+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MiQOklbu; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec69d22b2so9805355a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:59:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760381956; x=1760986756; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUhJwaTYTLlWJW6PvotT0NnhH894vpuEW0sON2hXEJ4=;
-        b=MiQOklbuBRewg0P6/TJXUb6SFeHmZ2zaX9lJWr3vgQYYO4opHmnAyECQNHHDOrS+Te
-         g1ZvDz03bj6c/OjybuMY8ZR6KeW4Mv3oTo4QVSKO9TNrpDVm40s6Mzo0N3+WZU8Skqh8
-         nrsSkIINSzSFbaXatoSImrOZOgIqk4992gqOXaDBeMOfUa+TULT1OCTBPeS7I+3tctmQ
-         3pMTppC1PGo3W8DTLdIFj6Z5gShrbD5VsqL74xF2UdcsXP+jO5Pxk5IhNBF0e9/Nvw6h
-         uueIfVmIhfYV+aRstH4xn9W08giGMUfK95gevjC0oip8qCAPNMH7UUnjep+t1/aq0y8Z
-         N3RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760381956; x=1760986756;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUhJwaTYTLlWJW6PvotT0NnhH894vpuEW0sON2hXEJ4=;
-        b=KpEB9+ggBWp0O3AVaIO+L2/uKv86j6hPbTorzwDP9hMTSvCQMYLHDsCLGeKxOfJrdH
-         3e+wUrrEMylZNcYMxMDloUg0N5avCgSsOTWj96ev1sKVZaAIpuyyapKAusSwtlVSsozC
-         WbxsdFvdcGyOotS7r2ZbRznQmSp3fcNKZm27U5G3yvHeabGHBNEgk1Fv248fuCT3n1Hq
-         6fBBtCCWfSzz7Iv2D0ZtWLPnnZ2YHg9kjb1O+6joRpFyAL4Loj6iu5RPmpX5aVk3sLVc
-         C5neqKyC5nsYr2CsaxnehLFFCn/zx9alGfbKxv79fVbSTagj4tN163P+OeQ8AFHBGrYD
-         T8zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsNbPQftN7tGlHkHbmHRG2qQ+/v0FEXXxa0CV5SimF+AB33CqguM8PXRl4bBtuCXiNCHzTE4cCw5ddkGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGuc/6P7dcvOG9x7v8q5MdDrG2TUi/vEGbG3zLoBhcq/enhq8x
-	Y+sRLkhrmIU3uZrKqmoqkBZ4UY4PGD1bevMjZrk2BiHKOPJwrsmPWboVTzgVpMPWkQf6QhtQF+q
-	WYd+ceGqeXHrhtg==
-X-Google-Smtp-Source: AGHT+IGwypBb0mDfdIn0W0YpuT1qvoN3uirrptacGmPUlbNvOoNVC+pU0bOpfORyj1duGVbXmE/Ph8TFfVXERw==
-X-Received: from pjuq15.prod.google.com ([2002:a17:90a:d38f:b0:32e:ae63:2947])
- (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1641:b0:330:4a1d:223c with SMTP id 98e67ed59e1d1-33b5116a6a6mr32151423a91.15.1760381955636;
- Mon, 13 Oct 2025 11:59:15 -0700 (PDT)
-Date: Mon, 13 Oct 2025 18:59:03 +0000
-In-Reply-To: <20251013185903.1372553-1-jiaqiyan@google.com>
+	s=arc-20240116; t=1760382016; c=relaxed/simple;
+	bh=5EIIo7xIsDMDbg95u7VVmjUkhvw9f+hecMwLewZqkD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I1aNIOmfY/JMm4Ji1X5AveRbys7n4AaWIyRNI5B92BMzSyvGt9hzVhTpO3tSQp4vsTiBle1apm2CVuAkeV6OMII5Qzp75LUNtgDsRdcvMamhgtvyxzaQHkD62frv4zYsEpkUGS8pYBGiuvCajien/LgD+vbhUk1aA8x81F0mVdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EwV63GUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF04C4CEE7;
+	Mon, 13 Oct 2025 19:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760382015;
+	bh=5EIIo7xIsDMDbg95u7VVmjUkhvw9f+hecMwLewZqkD8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EwV63GUEFW1HEtsvKGIOzNK4qzj/TyB/NWMKYKvpqiPLyVkDlN9ogl4t1xknVvBhy
+	 o3tzDmBPCoWfefJi4m+3sgWU6LGILX+Vc1QaB4LXZygEOxbxj68463xZaYo2aDAkfu
+	 uB1DvEt7DFwMXRV8jlfnUccWg7xpRNjC6gVkYH1hvFvHvmMDvK6GpqBZXBZbhVYhWx
+	 eJ3nXHaaB/zv4Wr5eB5eWAYM83WuTfMCLLUoDmTr6eoyQEMPdLm+cyUjM/W18cZUm5
+	 CVNdHHMJsAp4L5w9Y1RvprAhrW4Ao1z+4L1cA7ooAd2GBwIbs/1/Ti/bfOK3N5NfX8
+	 4/EK/jjL7hBQg==
+Date: Mon, 13 Oct 2025 19:00:14 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
+	tiala@microsoft.com, anirudh@anirudhrb.com,
+	paekkaladevi@linux.microsoft.com, skinsburskii@linux.microsoft.com,
+	mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com
+Subject: Re: [PATCH v5 0/5] mshv: Fixes for stats and vp state page mappings
+Message-ID: <20251013190014.GA3862989@liuwe-devbox-debian-v2.local>
+References: <1760133351-6643-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251013185903.1372553-1-jiaqiyan@google.com>
-X-Mailer: git-send-email 2.51.0.760.g7b8bcc2412-goog
-Message-ID: <20251013185903.1372553-4-jiaqiyan@google.com>
-Subject: [PATCH v4 3/3] Documentation: kvm: new UAPI for handling SEA
-From: Jiaqi Yan <jiaqiyan@google.com>
-To: maz@kernel.org, oliver.upton@linux.dev
-Cc: duenwen@google.com, rananta@google.com, jthoughton@google.com, 
-	vsethi@nvidia.com, jgg@nvidia.com, joey.gouly@arm.com, suzuki.poulose@arm.com, 
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, 
-	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Jiaqi Yan <jiaqiyan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1760133351-6643-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-Document the new userspace-visible features and APIs for handling
-synchronous external abort (SEA)
-- KVM_CAP_ARM_SEA_TO_USER: How userspace enables the new feature.
-- KVM_EXIT_ARM_SEA: exit userspace gets when it needs to handle SEA
-  and what userspace gets while taking the SEA.
+On Fri, Oct 10, 2025 at 02:55:46PM -0700, Nuno Das Neves wrote:
+> There are some differences in how L1VH partitions must map stats and vp
+> state pages, some of which are due to differences across hypervisor
+> versions. Detect and handle these cases.
+> 
+> Patch 1:
+> Fix for the logic of when to map the vp stats page for the root scheduler.
+> 
+> Patch 2-3:
+> Add HVCALL_GET_PARTITION_PROPERTY_EX and use it to query "vmm capabilities" on
+> module init.
+> 
+> Patches 4-5:
+> Check a feature bit in vmm capabilities, to take a new code path for mapping
+> stats and vp state pages. In this case, the stats and vp state pages must be
+> allocated by Linux, and a new hypercall HVCALL_MAP_VP_STATS_PAGE2 must be used
+> to map the stats page.
 
-Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
----
- Documentation/virt/kvm/api.rst | 61 ++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 6ae24c5ca5598..43bc2a1d78e01 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -7272,6 +7272,55 @@ exit, even without calls to ``KVM_ENABLE_CAP`` or similar.  In this case,
- it will enter with output fields already valid; in the common case, the
- ``unknown.ret`` field of the union will be ``TDVMCALL_STATUS_SUBFUNC_UNSUPPORTED``.
- Userspace need not do anything if it does not wish to support a TDVMCALL.
-+
-+::
-+		/* KVM_EXIT_ARM_SEA */
-+		struct {
-+  #define KVM_EXIT_ARM_SEA_FLAG_GPA_VALID   (1ULL << 0)
-+			__u64 flags;
-+			__u64 esr;
-+			__u64 gva;
-+			__u64 gpa;
-+		} arm_sea;
-+
-+Used on arm64 systems. When the VM capability KVM_CAP_ARM_SEA_TO_USER is
-+enabled, a VM exit is generated if guest causes a synchronous external abort
-+(SEA) and the host APEI fails to handle the SEA.
-+
-+Historically KVM handles SEA by first delegating the SEA to host APEI as there
-+is high chance that the SEA is caused by consuming uncorrected memory error.
-+However, not all platforms support SEA handling in APEI, and KVM's fallback
-+is to inject an asynchronous SError into the guest, which usually panics
-+guest kernel unpleasantly. As an alternative, userspace can participate into
-+the SEA handling by enabling KVM_CAP_ARM_SEA_TO_USER at VM creation, after
-+querying the capability. Once enabled, when KVM has to handle the guest
-+caused SEA, it returns to userspace with KVM_EXIT_ARM_SEA, with details
-+about the SEA available in 'arm_sea'.
-+
-+The 'esr' field holds the value of the exception syndrome register (ESR) while
-+KVM taking the SEA, which tells userspace the character of the current SEA,
-+such as its Exception Class, Synchronous Error Type, Fault Specific Code and
-+so on. For more details on ESR, check the Arm Architecture Registers
-+documentation.
-+
-+The following values are defined for the 'flags' field
-+
-+  - KVM_EXIT_ARM_SEA_FLAG_GPA_VALID -- the faulting guest physical address
-+    is valid and userspace can get its value in the 'gpa' field.
-+
-+Note userspace can tell whether the faulting guest virtual address is valid
-+from the FnV bit in 'esr' field. If FnV bit in 'esr' field is not set, the
-+'gva' field hols the valid faulting guest virtual address.
-+
-+Userspace needs to take actions to handle guest SEA synchronously, namely in
-+the same thread that runs KVM_RUN and receives KVM_EXIT_ARM_SEA. One of the
-+encouraged approaches is to utilize the KVM_SET_VCPU_EVENTS to inject the SEA
-+to the faulting VCPU. This way, the guest has the opportunity to keep running
-+and limit the blast radius of the SEA to the particular guest application that
-+caused the SEA. Userspace may also emulate the SEA to VM by itself using the
-+KVM_SET_ONE_REG API. In this case, it can use the valid values from 'gva' and
-+'gpa' fields to manipulate VCPU's registers (e.g. FAR_EL1, HPFAR_EL1).
-+
- ::
- 
- 		/* Fix the size of the union. */
-@@ -8689,6 +8738,18 @@ This capability indicate to the userspace whether a PFNMAP memory region
- can be safely mapped as cacheable. This relies on the presence of
- force write back (FWB) feature support on the hardware.
- 
-+7.45 KVM_CAP_ARM_SEA_TO_USER
-+----------------------------
-+
-+:Architecture: arm64
-+:Target: VM
-+:Parameters: none
-+:Returns: 0 on success, -EINVAL if unsupported.
-+
-+This capability, if KVM_CHECK_EXTENSION indicates that it is available, means
-+that KVM has an implementation that allows userspace to participate in handling
-+synchronous external abort caused by VM, by an exit of KVM_EXIT_ARM_SEA.
-+
- 8. Other capabilities.
- ======================
- 
--- 
-2.51.0.760.g7b8bcc2412-goog
-
+Applied to hyperv-next. Thanks.
 
