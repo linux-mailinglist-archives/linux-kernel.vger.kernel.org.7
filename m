@@ -1,364 +1,260 @@
-Return-Path: <linux-kernel+bounces-851186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C771BBD5B84
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:30:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BA8BD5B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EC264EED35
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:30:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DB944F1265
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968B021323C;
-	Mon, 13 Oct 2025 18:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0221A2D6E75;
+	Mon, 13 Oct 2025 18:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v/BfMoyN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EJD4haWl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v/BfMoyN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EJD4haWl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rqn9Ilqg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BBF292B4B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F31F2D6E44
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760380218; cv=none; b=gYJzSY+IoFm/BnlAmJnFG55OzrYMTMNy58A0lgQ4T9BNlG2Q9/sReALARSQE1T+EvF78Jwk/XblNiiyPlr1dENFy2FENbnWCONWPFOeYwgetkw4PI9NHg8x0ujVZZbZhRqfJvUatDll77ikHQx5s7djUtu2R7l+LNU2jr9fWDMk=
+	t=1760380222; cv=none; b=OBbLL5MFgTTEcBWdV6iygY2ed2POICcX2weAWwCdXi2ayRwtM0FnTwYvAizyRowxG2ePTbkt7eDb0z+caMLo8oWAJwB3qSKUi7RVT/5zmk6P1WenRda8+ShlgD3d9R2wzu36wSuYeIQCp0U5rWlTNKjhF+Bg1r3ZpipqONn0wvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760380218; c=relaxed/simple;
-	bh=IkNAXexDut1qf0EmtYqLNpzFEGTU7yU44exO3kSi3RQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qqGzNuBmmFW7kXWu8c1XxPNYoQVLcUDAk8DS2IE1c+2GgHMM605bKhzC4/xY8+P0xhKmzrdjHi5he8NgwCe7YXM4878MtOtauSEygGYqmMVpCVt+tLCwHX5Qd+iKpelujCRvx1iEDcju6Qf9iKCfVAALM8g/TccKEXCV6GLZES8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v/BfMoyN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EJD4haWl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v/BfMoyN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EJD4haWl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 68D291F393;
-	Mon, 13 Oct 2025 18:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760380214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eCORyVE8664QNw67kIxLlSqS7K6mwn4csjydy4owqs0=;
-	b=v/BfMoyNDRNDuZGCYnH+/tqK+u0nj83QSa39ZpyNVSj65vevA/GUDXF6YnzaBgh5o+l6nk
-	mZp9EBxCsS96CjzPiGqp5Ubk8X10sYVAy1S8VL3g8+zHyu6UHkQrItqAKOts3RWx/guv9X
-	8vqI0kefX0z3sT+VvXmM6tIfS86gMoI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760380214;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eCORyVE8664QNw67kIxLlSqS7K6mwn4csjydy4owqs0=;
-	b=EJD4haWl7bR71UAmKZvmtuez6jRUvd7ngtpn/qHmgijW+fgp3FIRsVrz8z04AKYfKMMGF7
-	AmbNU1NsMBHeOFDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="v/BfMoyN";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EJD4haWl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760380214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eCORyVE8664QNw67kIxLlSqS7K6mwn4csjydy4owqs0=;
-	b=v/BfMoyNDRNDuZGCYnH+/tqK+u0nj83QSa39ZpyNVSj65vevA/GUDXF6YnzaBgh5o+l6nk
-	mZp9EBxCsS96CjzPiGqp5Ubk8X10sYVAy1S8VL3g8+zHyu6UHkQrItqAKOts3RWx/guv9X
-	8vqI0kefX0z3sT+VvXmM6tIfS86gMoI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760380214;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eCORyVE8664QNw67kIxLlSqS7K6mwn4csjydy4owqs0=;
-	b=EJD4haWl7bR71UAmKZvmtuez6jRUvd7ngtpn/qHmgijW+fgp3FIRsVrz8z04AKYfKMMGF7
-	AmbNU1NsMBHeOFDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 39E9613874;
-	Mon, 13 Oct 2025 18:30:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IAy4DTZF7WiVBQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 13 Oct 2025 18:30:14 +0000
-Message-ID: <927bcdf7-1283-4ddd-bd5e-d2e399b26f7d@suse.cz>
-Date: Mon, 13 Oct 2025 20:30:13 +0200
+	s=arc-20240116; t=1760380222; c=relaxed/simple;
+	bh=DQQ6OBr2524+qZB672GSzrUccJmaXhbWsh5xplRUxZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHxHtpr6wQoFgh9Pg3zH8kkYuxcSoxWg7gnZ9GBjZ/54X3MHmKXKJYxgoE3IzZIBshyVIW9qeyjYnj9R9k4ip+i7hIcQFccoCvBOl7jdi/xRs82ctjlpJusEYwlmItWFeivz5hecE32VAQ+3ZTdNKxrrroESR27KgOdiCNmyIHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rqn9Ilqg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86168C4CEE7;
+	Mon, 13 Oct 2025 18:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760380221;
+	bh=DQQ6OBr2524+qZB672GSzrUccJmaXhbWsh5xplRUxZc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rqn9IlqgfeldlIBto2PijJ0hKPkB5Tz/7lpv+p+BEac8+AkDi6Xq7ORyv67/TGA3K
+	 d9Pu9seNioMricGO54V5H7i773NG1SfdgctmHcNuoOIx2pRQNSz6fscnrsPTBH5u6B
+	 ZmzTuP2KHJ4J+irZBd/UfOesMGjOLEozy03uQ2JhvQ8Rne2eEvaMZTI8s6yqpwsXlh
+	 plgxUb5Xy8/pmejhxQQ+1jbyB88INzOsP6mdtz3z4m89zEmUS1kyPD1LE0AZ/6tmSv
+	 3IAoBg+YaA27SH8y/sYJNBIV7dJ2acBaK+lkeggxxK76uCUNyl43Xv1d9q0Ps+mwV5
+	 COJTaTrsndliQ==
+Date: Mon, 13 Oct 2025 19:30:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Lucas Zampieri <lzampier@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Charles Mirabile <cmirabil@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <dramforever@live.com>, linux-riscv@lists.infradead.org,
+	Zhang Xincheng <zhangxincheng@ultrarisc.com>
+Subject: Re: [PATCH v2 3/3] irqchip/plic: add support for UltraRISC DP1000
+ PLIC
+Message-ID: <20251013-trimness-stainless-48343053f204@spud>
+References: <20251013111539.2206477-1-lzampier@redhat.com>
+ <20251013111539.2206477-4-lzampier@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer
- allocation
-Content-Language: en-US
-To: Barry Song <21cnbao@gmail.com>, netdev@vger.kernel.org,
- linux-mm@kvack.org, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
- Jonathan Corbet <corbet@lwn.net>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
- Yunsheng Lin <linyunsheng@huawei.com>, Huacai Zhou <zhouhuacai@oppo.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Harry Yoo <harry.yoo@oracle.com>, David Hildenbrand <david@redhat.com>,
- Matthew Wilcox <willy@infradead.org>,
- Roman Gushchin <roman.gushchin@linux.dev>
-References: <20251013101636.69220-1-21cnbao@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251013101636.69220-1-21cnbao@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 68D291F393
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org,kvack.org];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,oppo.com,lwn.net,google.com,redhat.com,davemloft.net,kernel.org,suse.com,cmpxchg.org,nvidia.com,huawei.com,gmail.com,oracle.com,infradead.org,linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLduzbn1medsdpg3i8igc4rk67)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.01
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fCaikIoT7Zs8h/ij"
+Content-Disposition: inline
+In-Reply-To: <20251013111539.2206477-4-lzampier@redhat.com>
 
-On 10/13/25 12:16, Barry Song wrote:
-> From: Barry Song <v-songbaohua@oppo.com>
-> 
-> On phones, we have observed significant phone heating when running apps
-> with high network bandwidth. This is caused by the network stack frequently
-> waking kswapd for order-3 allocations. As a result, memory reclamation becomes
-> constantly active, even though plenty of memory is still available for network
-> allocations which can fall back to order-0.
-> 
-> Commit ce27ec60648d ("net: add high_order_alloc_disable sysctl/static key")
-> introduced high_order_alloc_disable for the transmit (TX) path
-> (skb_page_frag_refill()) to mitigate some memory reclamation issues,
-> allowing the TX path to fall back to order-0 immediately, while leaving the
-> receive (RX) path (__page_frag_cache_refill()) unaffected. Users are
-> generally unaware of the sysctl and cannot easily adjust it for specific use
-> cases. Enabling high_order_alloc_disable also completely disables the
-> benefit of order-3 allocations. Additionally, the sysctl does not apply to the
-> RX path.
-> 
-> An alternative approach is to disable kswapd for these frequent
-> allocations and provide best-effort order-3 service for both TX and RX paths,
-> while removing the sysctl entirely.
-> 
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Kuniyuki Iwashima <kuniyu@google.com>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Willem de Bruijn <willemb@google.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Simon Horman <horms@kernel.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Brendan Jackman <jackmanb@google.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Yunsheng Lin <linyunsheng@huawei.com>
-> Cc: Huacai Zhou <zhouhuacai@oppo.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+
+--fCaikIoT7Zs8h/ij
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 13, 2025 at 12:15:38PM +0100, Lucas Zampieri wrote:
+> From: Charles Mirabile <cmirabil@redhat.com>
+>=20
+> Add a new compatible for the plic found in UltraRISC DP1000 with a quirk =
+to
+> work around a known hardware bug with IRQ claiming.
+>=20
+> When claiming an interrupt on the DP1000 PLIC all other interrupts must be
+> disabled before the claim register is accessed to prevent incorrect
+> handling of the interrupt.
+>=20
+> When the PLIC_QUIRK_CLAIM_REGISTER is present, during plic_handle_irq
+> the enable state of all interrupts is saved and then all interrupts
+> except for the first pending one are disabled before reading the claim
+> register. The interrupts are then restored before further processing of
+> the claimed interrupt continues.
+>=20
+> The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
+> SoCs using UR-CP100 cores, regardless of the specific SoC implementation.
+
+Why is that? I expect that you're doing that intentionally given the
+ultrarisc employee listed as a co-developer, but with only one SoC using
+this IP core it seems possible that this bug in the hardware could be
+fixed for other SoCs that are built using this IP core.
+Is there a plan to, for example, change the core version to UR-CP101
+when the bug is fixed?
+
+Thanks,
+Conor.
+
+> This has no impact on other platforms.
+>=20
+> Co-developed-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
+> Signed-off-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
+> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
 > ---
->  Documentation/admin-guide/sysctl/net.rst | 12 ------------
->  include/net/sock.h                       |  1 -
->  mm/page_frag_cache.c                     |  2 +-
->  net/core/sock.c                          |  8 ++------
->  net/core/sysctl_net_core.c               |  7 -------
->  5 files changed, 3 insertions(+), 27 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/sysctl/net.rst b/Documentation/admin-guide/sysctl/net.rst
-> index 2ef50828aff1..b903bbae239c 100644
-> --- a/Documentation/admin-guide/sysctl/net.rst
-> +++ b/Documentation/admin-guide/sysctl/net.rst
-> @@ -415,18 +415,6 @@ GRO has decided not to coalesce, it is placed on a per-NAPI list. This
->  list is then passed to the stack when the number of segments reaches the
->  gro_normal_batch limit.
->  
-> -high_order_alloc_disable
-> -------------------------
-> -
-> -By default the allocator for page frags tries to use high order pages (order-3
-> -on x86). While the default behavior gives good results in most cases, some users
-> -might have hit a contention in page allocations/freeing. This was especially
-> -true on older kernels (< 5.14) when high-order pages were not stored on per-cpu
-> -lists. This allows to opt-in for order-0 allocation instead but is now mostly of
-> -historical importance.
-> -
-> -Default: 0
-> -
->  2. /proc/sys/net/unix - Parameters for Unix domain sockets
->  ----------------------------------------------------------
->  
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index 60bcb13f045c..62306c1095d5 100644
-> --- a/include/net/sock.h
-> +++ b/include/net/sock.h
-> @@ -3011,7 +3011,6 @@ extern __u32 sysctl_wmem_default;
->  extern __u32 sysctl_rmem_default;
->  
->  #define SKB_FRAG_PAGE_ORDER	get_order(32768)
-> -DECLARE_STATIC_KEY_FALSE(net_high_order_alloc_disable_key);
->  
->  static inline int sk_get_wmem0(const struct sock *sk, const struct proto *proto)
->  {
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index d2423f30577e..dd36114dd16f 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -54,7 +54,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->  	gfp_t gfp = gfp_mask;
->  
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -	gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
-> +	gfp_mask = (gfp_mask & ~__GFP_RECLAIM) |  __GFP_COMP |
->  		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+>  drivers/irqchip/irq-sifive-plic.c | 83 ++++++++++++++++++++++++++++++-
+>  1 file changed, 82 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifi=
+ve-plic.c
+> index 9c4af7d58846..a7b51a925e96 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -49,6 +49,8 @@
+>  #define CONTEXT_ENABLE_BASE		0x2000
+>  #define     CONTEXT_ENABLE_SIZE		0x80
+>=20
+> +#define PENDING_BASE                    0x1000
+> +
+>  /*
+>   * Each hart context has a set of control registers associated with it. =
+ Right
+>   * now there's only two: a source priority threshold over which the hart=
+ will
+> @@ -63,6 +65,7 @@
+>  #define	PLIC_ENABLE_THRESHOLD		0
+>=20
+>  #define PLIC_QUIRK_EDGE_INTERRUPT	0
+> +#define PLIC_QUIRK_CLAIM_REGISTER	1
+>=20
+>  struct plic_priv {
+>  	struct fwnode_handle *fwnode;
+> @@ -367,6 +370,82 @@ static const struct irq_domain_ops plic_irqdomain_op=
+s =3D {
+>  	.free		=3D irq_domain_free_irqs_top,
+>  };
+>=20
+> +static bool dp1000_isolate_pending_irq(int nr_irq_groups, u32 ie[],
+> +				       void __iomem *pending,
+> +				       void __iomem *enable)
+> +{
+> +	u32 pending_irqs =3D 0;
+> +	int i, j;
+> +
+> +	/* Look for first pending interrupt */
+> +	for (i =3D 0; i < nr_irq_groups; i++) {
+> +		pending_irqs =3D ie[i] & readl(pending + i * sizeof(u32));
+> +		if (pending_irqs)
+> +			break;
+> +	}
+> +
+> +	if (!pending_irqs)
+> +		return false;
+> +
+> +	/* Disable all interrupts but the first pending one */
+> +	for (j =3D 0; j < nr_irq_groups; j++) {
+> +		u32 new_mask =3D 0;
+> +
+> +		if (j =3D=3D i)
+> +			/* Extract mask with lowest set bit */
+> +			new_mask =3D (pending_irqs & -pending_irqs);
+> +
+> +		writel(new_mask, enable + j * sizeof(u32));
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static irq_hw_number_t dp1000_get_hwirq(struct plic_handler *handler,
+> +					void __iomem *claim)
+> +{
+> +	void __iomem *enable =3D handler->enable_base;
+> +	void __iomem *pending =3D handler->priv->regs + PENDING_BASE;
+> +	int nr_irqs =3D handler->priv->nr_irqs;
+> +	int nr_irq_groups =3D DIV_ROUND_UP(nr_irqs, 32);
+> +	int i;
+> +	u32 ie[32] =3D { 0 };
+> +	irq_hw_number_t hwirq =3D 0;
+> +
+> +	raw_spin_lock(&handler->enable_lock);
+> +
+> +	/* Save current interrupt enable state */
+> +	for (i =3D 0; i < nr_irq_groups; i++)
+> +		ie[i] =3D readl(enable + i * sizeof(u32));
+> +
+> +	if (!dp1000_isolate_pending_irq(nr_irq_groups, ie, pending, enable))
+> +		goto out;
+> +
+> +	hwirq =3D readl(claim);
+> +
+> +	/* Restore previous state */
+> +	for (i =3D 0; i < nr_irq_groups; i++)
+> +		writel(ie[i], enable + i * sizeof(u32));
+> +out:
+> +	raw_spin_unlock(&handler->enable_lock);
+> +	return hwirq;
+> +}
+> +
+> +static irq_hw_number_t plic_get_hwirq(struct plic_handler *handler,
+> +				      void __iomem *claim)
+> +{
+> +	/*
+> +	 * Due to a hardware bug in the implementation of the claim register
+> +	 * in the UltraRISC DP1000 platform, other interrupts must be disabled
+> +	 * before reading the claim register and restored afterwards.
+> +	 */
+> +
+> +	if (test_bit(PLIC_QUIRK_CLAIM_REGISTER, &handler->priv->plic_quirks))
+> +		return dp1000_get_hwirq(handler, claim);
+> +
+> +	return readl(claim);
+> +}
+> +
+>  /*
+>   * Handling an interrupt is a two-step process: first you claim the inte=
+rrupt
+>   * by reading the claim register, then you complete the interrupt by wri=
+ting
+> @@ -384,7 +463,7 @@ static void plic_handle_irq(struct irq_desc *desc)
+>=20
+>  	chained_irq_enter(chip, desc);
+>=20
+> -	while ((hwirq =3D readl(claim))) {
+> +	while ((hwirq =3D plic_get_hwirq(handler, claim))) {
+>  		int err =3D generic_handle_domain_irq(handler->priv->irqdomain,
+>  						    hwirq);
+>  		if (unlikely(err)) {
+> @@ -432,6 +511,8 @@ static const struct of_device_id plic_match[] =3D {
+>  	  .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+>  	{ .compatible =3D "thead,c900-plic",
+>  	  .data =3D (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
+> +	{ .compatible =3D "ultrarisc,cp100-plic",
+> +	  .data =3D (const void *)BIT(PLIC_QUIRK_CLAIM_REGISTER) },
+>  	{}
+>  };
+>=20
+> --
+> 2.51.0
+>=20
 
-I'm a bit worried about proliferating "~__GFP_RECLAIM" allocations now that
-we introduced alloc_pages_nolock() and kmalloc_nolock() where it's
-interpreted as "cannot spin" - see gfpflags_allow_spinning(). Currently it's
-fine for the page allocator itself where we have a different entry point
-that uses ALLOC_TRYLOCK, but it can affect nested allocations of all kinds
-of debugging and accounting metadata (page_owner, memcg, alloc tags for slab
-objects etc). kmalloc_nolock() relies on gfpflags_allow_spinning() fully
+--fCaikIoT7Zs8h/ij
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I wonder if we should either:
+-----BEGIN PGP SIGNATURE-----
 
-1) sacrifice a new __GFP flag specifically for "!allow_spin" case to
-determine it precisely.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO1FOQAKCRB4tDGHoIJi
+0ivUAQD/Pb15fC2TzJvig9NwYEzMS6COdO2rFEosfel5YRSh/wEAjfmALZ82Zu5t
+ZRfxApD3LqaW+Tx/zWBhztMPJKaxtwI=
+=4Tzv
+-----END PGP SIGNATURE-----
 
-2) keep __GFP_KSWAPD_RECLAIM for allocations that remove it for purposes of
-not being disturbing (like proposed here), but that can in fact allow
-spinning. Instead, decide to not wake up kswapd by those when other
-information indicates it's an opportunistic allocation
-(~__GFP_DIRECT_RECLAIM, _GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC,
-order > 0...)
-
-3) something better?
-
-Vlastimil
-
->  	page = __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
->  			     numa_mem_id(), NULL);
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index dc03d4b5909a..1fa1e9177d86 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -3085,8 +3085,6 @@ static void sk_leave_memory_pressure(struct sock *sk)
->  	}
->  }
->  
-> -DEFINE_STATIC_KEY_FALSE(net_high_order_alloc_disable_key);
-> -
->  /**
->   * skb_page_frag_refill - check that a page_frag contains enough room
->   * @sz: minimum size of the fragment we want to get
-> @@ -3110,10 +3108,8 @@ bool skb_page_frag_refill(unsigned int sz, struct page_frag *pfrag, gfp_t gfp)
->  	}
->  
->  	pfrag->offset = 0;
-> -	if (SKB_FRAG_PAGE_ORDER &&
-> -	    !static_branch_unlikely(&net_high_order_alloc_disable_key)) {
-> -		/* Avoid direct reclaim but allow kswapd to wake */
-> -		pfrag->page = alloc_pages((gfp & ~__GFP_DIRECT_RECLAIM) |
-> +	if (SKB_FRAG_PAGE_ORDER) {
-> +		pfrag->page = alloc_pages((gfp & ~__GFP_RECLAIM) |
->  					  __GFP_COMP | __GFP_NOWARN |
->  					  __GFP_NORETRY,
->  					  SKB_FRAG_PAGE_ORDER);
-> diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
-> index 8cf04b57ade1..181f6532beb8 100644
-> --- a/net/core/sysctl_net_core.c
-> +++ b/net/core/sysctl_net_core.c
-> @@ -599,13 +599,6 @@ static struct ctl_table net_core_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_THREE,
->  	},
-> -	{
-> -		.procname	= "high_order_alloc_disable",
-> -		.data		= &net_high_order_alloc_disable_key.key,
-> -		.maxlen         = sizeof(net_high_order_alloc_disable_key),
-> -		.mode		= 0644,
-> -		.proc_handler	= proc_do_static_key,
-> -	},
->  	{
->  		.procname	= "gro_normal_batch",
->  		.data		= &net_hotdata.gro_normal_batch,
-
+--fCaikIoT7Zs8h/ij--
 
