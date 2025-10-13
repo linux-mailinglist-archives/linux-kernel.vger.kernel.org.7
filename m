@@ -1,60 +1,74 @@
-Return-Path: <linux-kernel+bounces-851059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CC5BD5689
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:14:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B598BD56C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B83E4F5758
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:01:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F352407F2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7342BE7DC;
-	Mon, 13 Oct 2025 17:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA8C2BEC57;
+	Mon, 13 Oct 2025 17:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gohuTDct"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="iBXdMhYq"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB602296BBA;
-	Mon, 13 Oct 2025 17:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1F5265CB2
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760374862; cv=none; b=EH+PIS4250gzRGXDoeMBR43b/Di6bqkJ9RwZ7hNUfV291fShfbZOYoZdPNaajKpSehzCCnb4lMOfwT8oyTLficPBh9q2WLW4n7GbMz3ExgRZRpLeA2F4wkTjyP75V/96BIVyXQfbsdcHd6uwAtCaNKXWH8clqvPP2Dhp7HBpdjA=
+	t=1760374916; cv=none; b=XdwFpkOV44rd3U7Lg+erMqSrBfa0P4q1NMip4IyBmDVp2R01rKGmBa1RhUdgzMMopg4ag0+o0jbRyeY/xhCQJt37FYJxDjEeVKdApDpKc/6eLdggZA2YpSU70PbpdiXNyGFrffo9oZWA/3EhHA9atTJ0ehMCp6quSW+ctbAE73E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760374862; c=relaxed/simple;
-	bh=4MFSAeuVpBQvqmqSjyK0yJwFQ/ROFaatrCdCEs5ayzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uxeJPjUZQUY+EgXE0/b2269LsROnsCxtnkKQc1j7zFB86Bc53muwV3I+tm3unhC3jBvN+xqK/NBJWdSQsQihEQ1OqgNlYG+O1JWuHVX9dLyp7i/TkdMYEaATeKehHJMdro6RJ+30Wss1eNh2JN/0wWW3kPp3yJa/25Rqfw+QP5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gohuTDct; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE13CC4CEE7;
-	Mon, 13 Oct 2025 17:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760374861;
-	bh=4MFSAeuVpBQvqmqSjyK0yJwFQ/ROFaatrCdCEs5ayzQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gohuTDctP/tRfmO3/xVb5WLeKnExyL5x1G4z8tKesogZC8d4hdxZOxFdM3cisefKt
-	 vuFy4URynmScK2I3YKULu+SyXWuni0UiHUVIb4AYDxdiTeh77KfNrJLztNYuozvdic
-	 XorxEJxxuoWF5RH3CI6IQrlUjn1Dp1HGPiCrJZlMUbSZ5e0aPDwTVpPIbb4FYW/oLy
-	 e+m4MrLz/8oMtb5f+zCEjKavwylklTtKXg/cz0NMIGXSdenHO+OIsAfNK6IGgTu/WA
-	 yC8jNan0AlVc551WRYrLXhrfL75zzx5R8z0zMVHrNVjV+zBq7C8gHQWbm22idgQSb0
-	 SI0Ys/E8n6F5A==
-Date: Mon, 13 Oct 2025 10:00:55 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yixun Lan <dlan@gentoo.org>,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, elder@riscstar.com,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Guodong Xu <guodong@riscstar.com>
-Subject: Re: [PATCH] dmaengine: mmp_pdma: fix DMA mask handling
-Message-ID: <20251013170055.GA3968340@ax162>
-References: <20250918-mmp-pdma-simplify-dma-addressing-v1-1-5c2be2b85696@riscstar.com>
- <20250930221001.GA66006@ax162>
+	s=arc-20240116; t=1760374916; c=relaxed/simple;
+	bh=yI5gthnF0tLE1kh41LiwdsRsimRp2mZa0vEaG2gzQjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KW/2X4+bNfkI54f3Qk1WVPBOW3724pqok69u+93rCrL45NzACcnOt7wbT+WQDeIcmxqF9junzVnlZ8eI4zs38cUe3062xWZayiDZPr3Z21dJ+HZAuedOoG6y+xNYQCohLPq3U673Aff3jYkvhDJnliC4/Hjn5zFI7vZf3qKwdck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=iBXdMhYq; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id C8BEE1038482
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:31:46 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in C8BEE1038482
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1760374906; bh=yI5gthnF0tLE1kh41LiwdsRsimRp2mZa0vEaG2gzQjg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iBXdMhYqtCL4al+LLO2EvNaxNqc2m6qzGzhjNQaRMO3dIz68IFqvpW68V6mOc2MPv
+	 o/4LTkPfvkEvOJWdnEuWFHVUsJlY3KSrD2SCgS5K7/QsQ7JIlMvFu7n5lWiTI0pnhw
+	 pUMAhaXjJPsFf6AYNyc1wJF15NEQrA+3SCbdLZSg=
+Received: (qmail 28716 invoked by uid 510); 13 Oct 2025 22:31:46 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.471035 secs; 13 Oct 2025 22:31:46 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 13 Oct 2025 22:31:43 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 73F61360077;
+	Mon, 13 Oct 2025 22:31:42 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 5739E1E8152E;
+	Mon, 13 Oct 2025 22:31:41 +0530 (IST)
+Date: Mon, 13 Oct 2025 22:31:35 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: jic23@kernel.org, dlechner@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
+	andy@kernel.org, marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
+	salah.triki@gmail.com
+Cc: skhan@linuxfoundation.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	akhileshpatilvnit@gmail.com
+Subject: [PATCH v2 0/2] iio: pressure: add driver and bindings for adp810
+Message-ID: <cover.1760374257.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,53 +77,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250930221001.GA66006@ax162>
 
-Hi Vinod,
+This patch series adds support for aosong adp810 differential pressure and
+temperature sensor driver in the IIO subsystem.
 
-On Tue, Sep 30, 2025 at 03:10:01PM -0700, Nathan Chancellor wrote:
-> On Thu, Sep 18, 2025 at 10:27:27PM +0800, Guodong Xu wrote:
-> > The driver's existing logic for setting the DMA mask for "marvell,pdma-1.0"
-> > was flawed. It incorrectly relied on pdev->dev->coherent_dma_mask instead
-> > of declaring the hardware's fixed addressing capability. A cleaner and
-> > more correct approach is to define the mask directly based on the hardware
-> > limitations.
-> > 
-> > The MMP/PXA PDMA controller is a 32-bit DMA engine. This is supported by
-> > datasheets and various dtsi files for PXA25x, PXA27x, PXA3xx, and MMP2,
-> > all of which are 32-bit systems.
-> > 
-> > This patch simplifies the driver's logic by replacing the 'u64 dma_mask'
-> > field with a simpler 'u32 dma_width' to store the addressing capability
-> > in bits. The complex if/else block in probe() is then replaced with a
-> > single, clear call to dma_set_mask_and_coherent(). This sets a fixed
-> > 32-bit DMA mask for "marvell,pdma-1.0" and a 64-bit mask for
-> > "spacemit,k1-pdma," matching each device's hardware capabilities.
-> > 
-> > Finally, this change also works around a specific build error encountered
-> > with clang-20 on x86_64 allyesconfig. The shift-count-overflow error is
-> > caused by a known clang compiler issue where the DMA_BIT_MASK(n) macro's
-> > ternary operator is not correctly evaluated in static initializers. By
-> > moving the macro's evaluation into the probe() function, the driver avoids
-> > this compiler bug.
-> > 
-> > Fixes: 5cfe585d8624 ("dmaengine: mmp_pdma: Add SpacemiT K1 PDMA support with 64-bit addressing")
-> > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> > Closes: https://lore.kernel.org/lkml/CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com
-> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Guodong Xu <guodong@riscstar.com>
-> 
-> Tested-by: Nathan Chancellor <nathan@kernel.org> # build
-> 
-> It would be great if this could be picked up before the 6.18 DMA pull
-> request so that I do not have to patch our CI to avoid this issue.
+Patch 1: Adds bindings for this hardware.
+Patch 2: Adds driver code with device tree support.
 
-This patch resolves a (bogus) clang warning that breaks the build with
--Werror. Can you please queue this for a future DMA fixes pull request?
-This has been available for almost a month and really should have made
-the original 6.18 pull request but I dropped the ball on pinging again
-before it went out since I was dealing with Kbuild this cycle.
+Overview of adp810:
+This is digital differential pressure and temperature sensor from aosong under
+the brand name of ASAIR. This sensor can measure pressure from -500 to +500Pa
+and temperature from -40 to +85 degree. It provides simple protocol to measure
+readings over I2C bus interface.
 
-Cheers,
-Nathan
+How to read from sensor (Protocol)?
+To read from sensor, i2c master needs to send measure command 0x372d to
+start the data acquisition. Then host/master should wait for minimum 10ms for data
+to be ready before reading. Post this delay i2c master can read 9 bytes of
+measurement data which includes - pressure(u16): crc(u8): temperature(u16): crc(u8)
+scale factor (u16): crc(8).
+Host/master can optionally verify crc for data integrity. Read sequence can be
+terminated anytime by sending NAK.
+
+Datasheet: https://aosong.com/userfiles/files/media/Datasheet%20ADP810-Digital.pdf
+
+Testing:
+Driver is tested on Texas Instruments am62x sk board by connecting sensor at i2c-2.
+Data communication is validated with i2c bus at 100KHz and 400KHz using logic analyzer.
+Sensor values are read using iio subsystem's sysfs interface.
+
+Changes in v2:
+- Wrapped yaml binding description to 80 lines.
+- Dropped block scalar ' | ' from binding description.
+- Carry forward Reviewed-by tag from Krzysztof on device tree binding.
+- Grammar and spelling fixes at multiple places.
+- Ordered makefile alphabetically.
+- Ordered include files alphabetically and used IWYU principle
+- Explicitly mentioned unit of measure latency macro in MS (milliseconds)
+- Added inline comments for explaining CRC8 polynomial for CRC calculation 
+- Used scoped_guard() for mutex for safe and clean lock handling.
+- Used resource managed mutex_init() -> devm_mutex_init()
+- Removed dead code in _probe() function.
+- Used __be16 and related helpers to handle big endian data processing.
+- Apply reverse xmas tree guideline while declaring local variables if possible.
+- Used parent device pointer in dev_err() calls.
+- Hardcode device name string in _probe() function for simplicity.
+- Made default return value of _probe() function to 0.
+- Rebased and retested driver on top of 6.18-rc1
+- Link to v1: https://lore.kernel.org/lkml/cover.1760184859.git.akhilesh@ee.iitb.ac.in/
+
+Looking forward for feedback and suggestions.
+
+Regards,
+Akhilesh
+
+Akhilesh Patil (2):
+  dt-bindings: iio: pressure: Add Aosong adp810
+  iio: pressure: adp810: Add driver for adp810 sensor
+
+ .../bindings/iio/pressure/aosong,adp810.yaml  |  46 ++++
+ MAINTAINERS                                   |   7 +
+ drivers/iio/pressure/Kconfig                  |  12 +
+ drivers/iio/pressure/Makefile                 |   8 +-
+ drivers/iio/pressure/adp810.c                 | 212 ++++++++++++++++++
+ 5 files changed, 281 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
+ create mode 100644 drivers/iio/pressure/adp810.c
+
+-- 
+2.34.1
+
 
