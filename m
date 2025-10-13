@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-850848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0681DBD4B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A65ABD4B6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B29D508AE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:24:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3FEB503DE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC453126C8;
-	Mon, 13 Oct 2025 15:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5431A30DD2B;
+	Mon, 13 Oct 2025 15:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="htJcGqaF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GrWvzsWH"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592DC30BF72;
-	Mon, 13 Oct 2025 15:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7D1307AF6
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760368241; cv=none; b=VAA6ZPQs/HC4NE2LhnyIPRZKb2I0azeISU3z4F3pmPjdBKrJshMFpKxC5hcMlHtgrGbbW4FscdXMOZjjXlDeLQppaW9Ld+1Ttq94xCDOnmjeSYhfaYrlahMH+OQJKWmay3NtvJs4AY1FapS8VA8Rc7KWhjTWgDtiNcrKYqw9wQI=
+	t=1760368450; cv=none; b=Oac0ySwt73zdaBillcCEh0KImkRO8WWbLj7CP8vauIL/42djP6Y8C18VBYFK1PHkNMqccK9KCnv6DdIB/Ca4Pf2IdJZcbVD2PBqRgQGqs03GfEWx0IBh6fgsWndawIqdR526KUlvKqyTzzLZjFmWtMKXHfwOPKsUteQfWajzq/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760368241; c=relaxed/simple;
-	bh=T6rkmZPK9y6R+KhcrUPhsT9aMA6EbLewStHqcb00su4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iCjpJtMrgHPQl7qi6/dRY0uigiLOG8sOX+zcaX78inMw6mdJUNGNP/eY6ybxYVHZl1Lv4x2B0TnpVB+P4zG6LaJnGrC6Ogj/E0isJ/t8AYCcHrioniqFU5l7hdYepF2fnRSYNGhOk85VmFevpArpogf7XYa1com5RSvoCqEKa+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=htJcGqaF; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760368239; x=1791904239;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=T6rkmZPK9y6R+KhcrUPhsT9aMA6EbLewStHqcb00su4=;
-  b=htJcGqaFMHiVnQ2jZmkoSS6Bf56c3j01bILEJ2ZAvbTOhIxuVJCaxcEA
-   b61TzDuC7HtSxIFsbFvBHeaL+uVCpAEMLlPR/Q98bitoKV/VcddZXwAcU
-   +1HXltSJOdkxqn+fr5y+WuKXuQYOWrhyFV4bhWZ3H3G7j4qinceM2bK+s
-   yygb53j2/UmY5a4+qArtWTSBfw9Mve2a/EZiYwyW/dVrYwM6PArvw/xc2
-   XBKgoWHTb0w4eqKjgStIZOgLQOFETK0K7XYKK7e4M3yyxe2tjLD//sFpS
-   oJxR9RZHPcAKj1m3cHlMVrKXsNK0YtbpFd3zqYiloRYMAdluG2LsTngsP
-   w==;
-X-CSE-ConnectionGUID: 8YOEVFqaRdiFcGXNCO4J8w==
-X-CSE-MsgGUID: MnFvRrpkRDyU/Sz7OKtt3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62546045"
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="62546045"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:10:38 -0700
-X-CSE-ConnectionGUID: KsL7c0fbTSmlIFJzzkaLcQ==
-X-CSE-MsgGUID: ctslHxUvSiOYZyiW2PB8rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="186915218"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.77])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:10:35 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hansg@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
- Kurt Borja <kuurtb@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Gal Hammer <galhammer@gmail.com>
-In-Reply-To: <20251013-sleep-fix-v2-1-1ad8bdb79585@gmail.com>
-References: <20251013-sleep-fix-v2-1-1ad8bdb79585@gmail.com>
-Subject: Re: [PATCH v2] platform/x86: alienware-wmi-wmax: Fix null pointer
- derefence in sleep handlers
-Message-Id: <176036823039.2473.15648931584117338012.b4-ty@linux.intel.com>
-Date: Mon, 13 Oct 2025 18:10:30 +0300
+	s=arc-20240116; t=1760368450; c=relaxed/simple;
+	bh=Z9RgNSg0rvUZJKtFBNjOQe0Or+bfCzh88xAj94wUZ7k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=BLnQ1xZF+HtOhXfUQeNZ8vjNh/pcjT212iOV+Jja6MOVvtSON1A711La3TEaXUh7yNMLTy5staqYEjiIdLVSeNq3XdlHbtJvoXBXKDCzdx8OgwltAVGUNaaHNTLdodMwOhJvw6wbFiAxWe/GqrLbYi1fA4sR0SK8wHTDMex6d5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GrWvzsWH; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-40fd1b17d2bso2611585f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:14:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760368446; x=1760973246; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NNmxwuDco5ze1SKSZ1OFoPdEieZ9GLx/Dr5DvgKSKBA=;
+        b=GrWvzsWHKH7+3kuHWKBXXjZemZIPPPVzFsuI8814GN1eGocFL7axNSZ+ovjQkgrTKt
+         CDAJaDv1CB5vcWlgRWYFG0KKGPigPDgXojmiXVu1fejKM88V2it/3o0YORPWDXx0NkF/
+         a5vOsiay1X6ivTn4VRBkP5CJQg/qvLvxex0mfVSPHOn8CbEnBeTXKssViDjCkLe/Nn54
+         aumqnCCIZ+cWxPfLhmsVOJRvRdVMWzykZ9WKZGLOREtn8zKjWT2B32uV65CIDs1ILFH7
+         yzcM0vadje+e/G078uOgMl+OH8nsZlbGoGj/PH0CNfcgNu3eHeW3ierQg2VYuufWx1KF
+         9KSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760368446; x=1760973246;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NNmxwuDco5ze1SKSZ1OFoPdEieZ9GLx/Dr5DvgKSKBA=;
+        b=dSkYvmCA5ZTN74jyi8WAbOLl4rsWbOXUfgS8WERcwe0SD10sYBQJPcrlbzhFO736+/
+         NnFwH6odg+RpnmLvrZs/zDHR60v2PwtlIWiOt6y4bFmiTXa5nyTUdL2eL7ZIikt1Zxhf
+         q9gPDS50unobT6HY4uupLDxiUKwA0eS6dZ+XZnW0k1ahGQ/VOXZqIOWQ8tffQvDLVlh+
+         0LIW42QfN5/LOJACLuE41kW8V/QPd3ngl1qpk24FLMutoGY2/rk07HRRTAW+9bEB3Bkv
+         VRMXP542r1/x7eP25CD/wmxsJXqi5DKJ7ZziknpziDHbMgawgand4QOY8iFgme5gGNY3
+         xtYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpXKmfkEHpuuvEGozrN2xRwtl8U3uVb1qfhBtLK6SNffsLlmL0/uJLogW7Y4HopHwRYaUdVup9v3mkZFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrEZ/yagBEF9KI+7E3cJukUttuLXTBfr+Z9GHjrgGaeH3yzd1H
+	rjL8l8RsvEoUTT3UJF26jfsxTDEl61bD73NulrZPb4hEe4Pf6mZUIrhV+TitWYin6b6B0yV21t7
+	Vfv8Pz5tOrs1XTw==
+X-Google-Smtp-Source: AGHT+IE3C8Nd20ZHePRqKGg22TTzUNGyTunUFc7gyL2zVKMFC2qRk5Zo3CNDYWy1lTTMLQtOrMQV+bypVbSMug==
+X-Received: from wrue9.prod.google.com ([2002:a5d:4e89:0:b0:40f:b976:8cba])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:178c:b0:3e7:5f26:f1e8 with SMTP id ffacd0b85a97d-42666ab3390mr15014702f8f.5.1760368445701;
+ Mon, 13 Oct 2025 08:14:05 -0700 (PDT)
+Date: Mon, 13 Oct 2025 15:13:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIADEX7WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0Nj3RzDkjTdktTiEl3DpNRUUxOD5NS0JBMloPqCotS0zAqwWdGxtbU ASHY8XFsAAAA=
+X-Change-Id: 20251013-l1tf-test-1bee540cefb4
+X-Mailer: b4 0.14.2
+Message-ID: <20251013-l1tf-test-v1-0-583fb664836d@google.com>
+Subject: [PATCH 0/2] KVM: x86: selftests: add L1TF exploit test
+From: Brendan Jackman <jackmanb@google.com>
+To: Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Sean Christopherson <seanjc@google.com>
+Cc: Alexandra Sandulescu <aesa@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-On Mon, 13 Oct 2025 00:26:26 -0500, Kurt Borja wrote:
+This has been tested on a Google Skylake platform. 
 
-> Initialize `awcc` with empty quirks to avoid a null pointer dereference
-> in sleep handlers for devices without the AWCC interface.
-> 
-> This also allows some code simplification in alienware_wmax_wmi_init().
-> 
-> 
+One potential issue with this test is that it fails (that is, the
+exploit succeeds) when using the conditional L1D flush, because the
+gadget is injected into the hypercall path which doesn't appear to
+include a flush. If this is unacceptable, we should discuss how to amend
+the test so that it can be used to evaluate the conditional flush logic
+as well. This would basically mean simulating some more complicated
+gadget where the "attacker" has found another way to steer the host
+kernel towards the target data, instead of just a simple hypercall.
 
+The reason this limitation is tolerable to me is my ulterior motive,
+i.e. because I am specifically interested in an end-to-end test for
+Address Space Isolation [0], which is abstracted from these details of the
+exploit.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+Based on kvm/next.
 
-The list of commits applied:
-[1/1] platform/x86: alienware-wmi-wmax: Fix null pointer derefence in sleep handlers
-      commit: 5ae9382ac3c56d044ed065d0ba6d8c42139a8f98
+[0] https://lore.kernel.org/all/20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com/T/#t
 
---
- i.
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+Alexandra Sandulescu (1):
+      KVM: x86: selftests: add an L1TF exploit test
+
+Brendan Jackman (1):
+      selftests: fix installing nested TEST_GEN_MODS_DIR
+
+ tools/testing/selftests/kvm/Makefile.kvm           |   7 +
+ tools/testing/selftests/kvm/x86/l1tf_test.c        | 633 +++++++++++++++++++++
+ tools/testing/selftests/kvm/x86/l1tf_test.sh       |  10 +
+ .../selftests/kvm/x86/test_modules/Makefile        |  10 +
+ .../kvm/x86/test_modules/l1tf_test_helper.c        |  92 +++
+ tools/testing/selftests/lib.mk                     |   2 +-
+ 6 files changed, 753 insertions(+), 1 deletion(-)
+---
+base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
+change-id: 20251013-l1tf-test-1bee540cefb4
+
+Best regards,
+-- 
+Brendan Jackman <jackmanb@google.com>
 
 
