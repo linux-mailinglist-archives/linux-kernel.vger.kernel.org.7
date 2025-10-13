@@ -1,178 +1,138 @@
-Return-Path: <linux-kernel+bounces-850421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F7FBD2BEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:15:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AB0BD2BFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76B8189D56E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEDAC1889CB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D97E242D6C;
-	Mon, 13 Oct 2025 11:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CE8221703;
+	Mon, 13 Oct 2025 11:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hrh5p/A3"
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PWGMWH2h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385602BD03
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A50222587
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760354149; cv=none; b=bEWepCQTA8pN8F23VgU8jYYM16UjrFqSgWkZ9vy63DWoalKiKjXth8YLRh1bKsEhsDWZolS/Jfg3LHBEZLCKqSuOMzoub+oSY7mai28mawtvRbtvhSklP005I/qvnPV4bwDz+B6WQd6346lU0mIxysYM0AyeA6IfDuF+j28/7KQ=
+	t=1760354160; cv=none; b=epzv/HkDC+r4grOhceCCrtTW9QOgEiwQuNJ+dp/e8dTzjIGwMdL3JgJ/hWhqONUmkEnDf1DD/8FPsrpW5G+6B1vFQ/WcYZWbbma+byKSlaaz5Nocv7fgEqbnuoiUR6YAO9d91ZS77PYstQgmOlAvSVOVUNwFafBL5x2O8N/cq9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760354149; c=relaxed/simple;
-	bh=5hp9zUHq0R5HWrspQN9QVS3q1lJNHb6OVnyXINT0IWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l8rH0pTpjbJ/4Z1a0LHKzYwxm58DoBOom4dctl4U57yv9zE1HrnITUd8bi+JXwQIHrDMOI3t+TKzzhh702lt7HHPRDkduEICTps7Tcf2s4ld/M/m7Ietdr/o+PumSu2wDniEEXQsT1EFZhIWhQAw+CvMhZnxpGKRHSvB2rtQy00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hrh5p/A3; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-633be3be1e6so6100359d50.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760354147; x=1760958947; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3RISinv/bCM0VNwzTFAkKuvG5MysA9cPKKTeSuSvPc=;
-        b=hrh5p/A35X0YskjPV8tyZs9aLQO7iYQDj3EPfqgtptC+Pc/1PoZIsPm1ajfDoUDvyL
-         PYWGxfl8Q05kuXv/2NMm98fM4ecLFB5ynM3IU91U3IPnp6N1K6+WrZkdXzLv6dnHeRJu
-         eC5cnNXNSYrWbqbK64YXWfEXIjTypyIVVAweGPcKG1L8aReBElmthjm841/ftuttkBFT
-         w8GIXzdUf0PYHIvwvUnlB+BjOhT8P57D6r7BeH8EJ9Y8hRoKCh4TNKGUj1BkNVdJKzqS
-         rbkwivOinGl/DagvGjdlzXdj0hIVySq8w46VN5v9lt2l5nO5GOk6bzSUI9mf2XSTPmSh
-         GXWQ==
+	s=arc-20240116; t=1760354160; c=relaxed/simple;
+	bh=6uTcdHxYS+9AhbbL5XzNRgen8py51uCv+FaWnKGhkkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RZGhqBedFVwTBavqdOsAoG8LPJQuikgzoVciwbH7p490ddwQFtaTyXLc6NIFfvQNrJkKRIbi3sin8ylj5A+xdBOoCAQxwPl3H+zBjYA5beobO4KJGR/WjV+N0obaexIe91E1MzTP/52+hGkDmXt15dwU+8rL1NlrMucBpOGOMmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PWGMWH2h; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760354157;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=61Utvg9LwLcHKeJsFrKrzFO3e/IAfbPbmM/8491Uo7k=;
+	b=PWGMWH2h+iBE0n5zi6pX8Ylf8gkIdyxewv8YJW1hjXD1TMQwb4UYOSq3dUarf22gyXoEC7
+	BLM8rHo4Bpz4MNCVzMdyHme5A3GHluG6LMTnebJr5d8AhCwsikq5+HS3ZTpHyJycJh0U43
+	ar6ByyZRbTDWW62ileYzSIl98PsSxpI=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-435-QA-vt4VCNvCMUEvdrCYjNg-1; Mon, 13 Oct 2025 07:15:56 -0400
+X-MC-Unique: QA-vt4VCNvCMUEvdrCYjNg-1
+X-Mimecast-MFC-AGG-ID: QA-vt4VCNvCMUEvdrCYjNg_1760354155
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aff0df4c4abso566270866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:15:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760354147; x=1760958947;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1760354155; x=1760958955;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e3RISinv/bCM0VNwzTFAkKuvG5MysA9cPKKTeSuSvPc=;
-        b=KQcsVRJtF8M0NCFbSd3DPt/3QybHs5NqMv4prPUgUj7eqIu4UUmX+SYYEd08NFXVrk
-         yQjYBQVwx9ltDeNumXtY6XiAsh7jhbhl6FBQFJcn4+u+a/wIr/ThEyVw9YV8GBLdZwZb
-         wsbAZe94ONzE+0JiFyMR8Z7e1zuZhKwVVgyZkVKJS1VcbcxFgSmLRotRHj7S3Qqeh6KD
-         6e8Kgmf8Qzu2OutwRmvKgfvv+JuXRBtQOI2FghtXl7WfTadz9jWm4MtQNh13IV8FXtLY
-         sZjNafIaLeHM81NikNtv0iatPJTAmdAtMDdfZlX59fRMHtduQ/kxXE7cYovd9yUFPmPT
-         KZrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXF5EupnkRkc0gV/smpChH8k/q4dD9qf2dbDQWQLOWSN0zwWubvBwJ9aLH6BYLiunfi8WLgHP7xuVBChgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEjLzs6P6/8V0iTR5EaTTkF6EC9vNbfwYawpxFSxC+HTfNO23H
-	iEbnrqX9j5emXmKYt8vSRi4KJ4xkKEFNCRJExotxLeRlEFCpErHG5msXzjPAt8GdlQ1SPHv6OP7
-	+cYotPbhMwhlJHmWces7aiZDCWJqqrskOdyG0cB0+MJJ4rMwOunOH
-X-Gm-Gg: ASbGnct/yCBsib3xNb+w0HIkZ8QH67Ijq6l8Y82acJH2+TaelbQl+oyddfaY5bohfMb
-	a9LqYwdu/C5dqkVoFqdqoIuSLvZW2hxfjNG1s4WxE1ijHkVjwtuA786Swu48Y02jjCeseUhPkK4
-	c/XvK9+32oM2giAbBAmNXxnU7zLc4UVFZcuIXXpUJwyxy1HNmpvFl1q9yE+TnqBdMVsarwbglQx
-	6Pzb9yq9wsYIGXx0U2xKVL0XeU3NJ8vskBkPD7oHXlxEQYJLKs/
-X-Google-Smtp-Source: AGHT+IHvEZE1RemEWZANjQdcYRJnmpKPuha5Rfx9EE12zd+TvLMKMu2rY0U/r/AG1D8YeV+4gOIdtjWRgw0qDfDMQ+4=
-X-Received: by 2002:a53:bc0e:0:b0:635:2bc3:cb6f with SMTP id
- 956f58d0204a3-63cbe0f580amr16932597d50.15.1760354147075; Mon, 13 Oct 2025
- 04:15:47 -0700 (PDT)
+        bh=61Utvg9LwLcHKeJsFrKrzFO3e/IAfbPbmM/8491Uo7k=;
+        b=kbd941C5Yo/ZfNrPvFpBP23g6BOwZde5JveTiz1UtBoZRLOHutvIDlxbt6mWd+OvJb
+         5YM+VMHZpIBxB1tagbyg4Fhezm8h5o3bkKo6macVMDqV18psjuKMwHLD4LdfglGHfwG4
+         35BH0xGvKW3h/IPhoOdn2S+r9+Xty1RjQOBohImkDc2eSVgwq3DsaggJ5Ne7D/Fy+Xdw
+         bZRm2Wghuk5GYQetnZeCPB5VbtLz2obAYydtK9MfwMYq3MIqrYUTNofl3efPGCe8cf4o
+         E+uT0HxLO9xDKfP8OtvT0kNEZPuHD3iXwUFcJU0gmFob0mHHBI8ewPl5fJfAsmYvAEM2
+         Ifcg==
+X-Gm-Message-State: AOJu0YwenDAHHVmRwkcNraWw3F0tik+Q4gHo61mls6UcxDV0QtqmbooZ
+	UDKEgiEeD9yiFmaYSSMBSTD/WGVaWlyQhwN8v9DsS3qSlvblkL6MPr1dfA/CsHSGbOx2Y0nMUQY
+	T4x8k0kb/srHoGA84LpAkltxNAWt8MVkqLcxr3eCL7Si6Gj4Gz6KANhd4SDlmx5tQHgoxYWa9Bu
+	/6E8A/vsZ6OawPOzk5xwsKXfNDdm14KRI+pz4JGzWc0k5bjwBxZWsh
+X-Gm-Gg: ASbGncsn3SgbglsepoXp30S64w0XhkBqedwVu1QtgXIC/1fUoLMsKuav44/W1gcnPUO
+	jcaIPUO14tz3j0xHZa6WXPH7nJUETfzc+RV9IH/gNEcu4se61DqYj0GXYRRzq7wapOhXRF11+Tx
+	Slu7e5CZL+RK+cGSDKGhWqLXNj6nmP4JgAabJbFMXo8n96CwGpJtu8ZTkfeuJVn+8Go6Lq9RmO0
+	ytZhrRl2HM+tJoSLqJ+tPJZwArk3lflFPxeGoVS+Y5NSCsY/cYrdtzHy2XxjEM5q5XjjIdorH8Z
+	fQX04WrSJCUvTgteoJL11Sgg2XEUXplmhUIcEAW/JJiH
+X-Received: by 2002:a17:907:25c6:b0:b3b:4e6:46e6 with SMTP id a640c23a62f3a-b50aa393beamr2047105566b.1.1760354155256;
+        Mon, 13 Oct 2025 04:15:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUqBMHoqhVV+uP7cey3LAt770FSA4Et8Avsavd59CQxq+OTW7LvyN55HaT1Bq0FyA9hJprYw==
+X-Received: by 2002:a17:907:25c6:b0:b3b:4e6:46e6 with SMTP id a640c23a62f3a-b50aa393beamr2047102566b.1.1760354154847;
+        Mon, 13 Oct 2025 04:15:54 -0700 (PDT)
+Received: from holism.Home ([2a06:5900:814a:ab00:c1c7:2e09:633d:e94e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cad8adsm917336966b.7.2025.10.13.04.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 04:15:54 -0700 (PDT)
+From: Lucas Zampieri <lzampier@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Lucas Zampieri <lzampier@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <dramforever@live.com>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2 0/3] Add UltraRISC DP1000 PLIC support
+Date: Mon, 13 Oct 2025 12:15:35 +0100
+Message-ID: <20251013111539.2206477-1-lzampier@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922-pm-v4-v4-0-ef48428e8fe0@nxp.com>
-In-Reply-To: <20250922-pm-v4-v4-0-ef48428e8fe0@nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 13 Oct 2025 13:15:11 +0200
-X-Gm-Features: AS18NWDCZqKnJMG4N6L-Bv935qiWkmNc8DmpQMLFdUi5NIh87a_dGMaIYkUOIBo
-Message-ID: <CAPDyKFrD9wJqu59HXJEnReCk0o74Ag+p987V6z53or0DxQiu0w@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] pmdomain: core: Introduce device_set_out_band_wakeup
- and use it in usb
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Peter Chen <peter.chen@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Xu Yang <xu.yang_2@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 22 Sept 2025 at 04:21, Peng Fan <peng.fan@nxp.com> wrote:
->
-> To i.MX95, USB2 and USB3 are in HSIOMIX domain, but there is always on logic
-> to make USB2 and USB3 has wakeup capability when HSIOMIX power domain
-> is in off state. So when in system-suspend state, USB2/USB3 could wakeup
-> the system even the USB2/USB3 HSIOMIX power domain is turned off. This
-> means USB2/USB3 has out-of-band wakeup capability to wakeup system from
-> suspended state.
->
-> Without this patchset, if USB2/USB3 are configured with wakeup enabled,
-> the HSIOMIX power domain will not be turned off. This leads to more
-> power consumed in system suspend state.
->
-> This patchset introduces device_set_out_band_wakeup and
-> device_out_band_wakeup two APIs to set out-of-band and query the flag.
-> In genpd_finish_suspend, there is a check, if out-of-band is set,
-> it will continue to turn off the power domain. In genpd resume flow,
-> there is a similar check to turn on the power domain.
->
-> Patch 1,2 introduces device_set_out_band_wakeup and
-> device_out_band_wakeup
-> Patch 3 and 4 are drivers changes to use device_out_band_wakeup
->
-> More old discussions:
-> https://lore.kernel.org/linux-pm/20250311083239.3336439-1-peng.fan@oss.nxp.com/
->
-> This is pick up of [1]
-> This V2 patchset
-> - includes usb driver changes to give people a full picture on how it is used.
-> - Rebased next-20250729 to resolve conflicts
->
-> [1]https://lore.kernel.org/linux-pm/20250311083239.3336439-1-peng.fan@oss.nxp.com/
->
-> Changes in v4:
-> - Split device_set_out_band_wakeup API and pmdomain changes into patch 1
->   and 2 and clear the flag in device_prepare (from Ulf)
-> - Add R-b in patch 2
-> - Move the call of device_set_out_band_wakeup to system suspend
->   callback in patch 3 and 4. (from Ulf)
-> - For patch 3,4, I still keep the Tags, since compared with V3, it is quite
->   small changes.
-> - Link to v3: https://lore.kernel.org/r/20250902-pm-v3-0-ffadbb454cdc@nxp.com
->
-> Changes in v3:
-> - Add a new patch from Xu Yang to detach power domain for ci hdrc
-> - Add A-b for patch 4
-> - Link to v2: https://lore.kernel.org/r/20250801-pm-v2-0-97c8fb2a433c@nxp.com
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Peng Fan (4):
->       PM: wakeup: Add out-of-band system wakeup support for devices
->       PM: domains: Allow power-off for out-of-band wakeup-capable devices
->       usb: chipidea: ci_hdrc_imx: Set out of band wakeup for i.MX95
->       usb: dwc3: imx8mp: Set out of band wakeup for i.MX95
->
-> Xu Yang (1):
->       usb: chipidea: core: detach power domain for ci_hdrc platform device
->
->  drivers/base/power/main.c          |  1 +
->  drivers/pmdomain/core.c            |  6 ++++--
->  drivers/usb/chipidea/ci_hdrc_imx.c | 11 ++++++++++-
->  drivers/usb/chipidea/core.c        |  3 +++
->  drivers/usb/dwc3/dwc3-imx8mp.c     |  9 +++++++--
->  include/linux/pm.h                 |  1 +
->  include/linux/pm_wakeup.h          | 17 +++++++++++++++++
->  include/linux/usb/chipidea.h       |  1 +
->  8 files changed, 44 insertions(+), 5 deletions(-)
-> ---
-> base-commit: 8f7f8b1b3f4c613dd886f53f768f82816b41eaa3
-> change-id: 20250919-pm-v4-1879568de500
->
-> Best regards,
-> --
-> Peng Fan <peng.fan@nxp.com>
->
+This series adds support for the PLIC implementation in the UltraRISC
+DP1000 SoC. The DP1000 PLIC claim register has a hardware bug where
+reading it while multiple interrupts are pending can return the wrong
+interrupt ID. The workaround temporarily disables all interrupts except
+the first pending one before reading the claim register, then restores
+the previous state.
 
-I have now queued this series (including the acked usb patches) via my
-pmdomain tree for next. Please let me know if it's preferred to route
-the usb patches via another tree, so I can share an immutable branch
-instead.
+The driver matches on "ultrarisc,cp100-plic" (CPU core compatible), allowing
+the quirk to apply to all SoCs using UR-CP100 cores (currently DP1000,
+potentially future SoCs).
 
-Kind regards
-Uffe
+Charles Mirabile (2):
+  dt-bindings: interrupt-controller: add UltraRISC DP1000 PLIC
+  irqchip/plic: add support for UltraRISC DP1000 PLIC
+
+Lucas Zampieri (1):
+  dt-bindings: vendor-prefixes: add UltraRISC
+
+Changes in v2:
+- 0002: Changed compatible string pattern to SoC+core: ultrarisc,dp1000-plic
+  with ultrarisc,cp100-plic fallback (suggested by Krzysztof and Vivian)
+- 0003: Driver now matches on ultrarisc,cp100-plic (core) instead of dp1000 (SoC)
+- All patches: Added submitter Signed-off-by to complete DCO chain
+
+ .../devicetree/bindings/vendor-prefixes.yaml      |  2 +
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |  3 +
+ drivers/irqchip/irq-sifive-plic.c                  | 83 ++++++++++++++++++-
+ 3 files changed, 87 insertions(+), 1 deletion(-)
+
+--
+2.51.0
+
 
