@@ -1,201 +1,121 @@
-Return-Path: <linux-kernel+bounces-850953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C78BD4C7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:08:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D115BD4E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA71188A0CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:09:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 813C54F82F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D4F30E848;
-	Mon, 13 Oct 2025 15:49:33 +0000 (UTC)
-Received: from konstriktor.siski.de (konstriktor.siski.de [5.9.99.39])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD8E224225
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.9.99.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8E0314D10;
+	Mon, 13 Oct 2025 15:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f5HycyPM"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40104314B81
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370571; cv=none; b=gWju5KgcQ0vfNdGC1Gk0qf734UA4pNAcOMTynQHDVSBEcQVs8fffOcbpPhKYWrQweAhUHNdfroEXZ2idQtoNOEyL+2u6PgXwZ8W+/HF0myBFtT3+/S2N7c9odsz/A4QToY5IEYqO9e7bl+p9tlnRLyox+AM6QbvFpOLjRDcMqnA=
+	t=1760370210; cv=none; b=RUkdAHSLXsKYKaw/h70wjhqyThI3WI8pBMkmIFFBHKRkJJbWpIgXwV7TlWfmxW+Yvos0/jLKe37CugMTIlRIp8QfhxKsZb4i/PcLOZkz5emgAR5M8KwCX8iPRsrEkrBkiJhlnHIVOCgdKtQqEgpTSzZFlC/mgMBSQ0v66oB5LqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370571; c=relaxed/simple;
-	bh=20lUfQyjBhpWg7jlnKA9FxsxLAEM0/vjdWanK5AVNio=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JXxrJl9Rjo7xwDjXisYdljSH8upMDgNr1FXt3YIAbvoIQfEWTrSohK7Sg733pXraTy8c/vKBTuggI12w5OaKlPmN8YLJ0DE9/8Uaa/ltSAvS39UUGEjbMLF1hS1T8QrV2/MF4jV0XdchLARci2a3ZwsEgWVRQoLnLXnv12ArVO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siski.de; spf=pass smtp.mailfrom=siski.de; arc=none smtp.client-ip=5.9.99.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siski.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siski.de
-Received: by konstriktor.siski.de (Postfix, from userid 3015)
-	id B739E32801E4; Mon, 13 Oct 2025 17:43:12 +0200 (CEST)
-Date: Mon, 13 Oct 2025 17:43:12 +0200
-From: Carsten Gross <carsten@siski.de>
-To: linux-kernel@vger.kernel.org
-Subject: Intel iavf: Queue count cannot be increased after iPXE boot in
- 6.12.48 (Debian trixie)
-Message-ID: <aO0eED8yVkgF3FI8@siski.de>
+	s=arc-20240116; t=1760370210; c=relaxed/simple;
+	bh=kIVPmCT9kaUq2YA1N7gOyA1JcTYZFNkXFcLBy2dOX+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YBOANK2v/98RTDF5EQOHKGy2KG+37JgrUZXbNNEFQmYM0IWpHdVveE2rLnxl7K5f6ksW0Ls7HQ2T7fFKGgbFdHhd7zat4CtvbXo++GBqOHjLyCtCfE3O5WdqcT2Gto4eddG/PIOv4ZljpLeF5XYBA+ZVZxCYhrRRLdVQQAXDayY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f5HycyPM; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-42d7d0c58f9so635095ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:43:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760370208; x=1760975008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GvE2QaubCaNe+b2bi3Ii9pwdFgyDED1xYIH2KKqTA4w=;
+        b=f5HycyPMTH8rgVXgmQyTiokCXEZEUXPC7ztFDYuZh5VzPNxNZeu2Rt563ptKcRa2Oi
+         iclOKSQ/2x29qvifa/uMyBvXW1XemFrAbEqgk82kkPxoYqgsZsc0sxFysITyih+38/JO
+         dW9xmyl383ZTkEkqxIzzaG1rw/qWB9ClSp947Dz21GpvD9vFJQowdo7dvR8C3LgteHbE
+         Y9JImsi4S5TSpk4goUl9dRFm43rf8xcapzv9+WQ3dWXX4LX2jPruekr+uNatluT3t9ry
+         ht4Y6Y/k6aKum3kd2Qjhmuqy72ssxE8YayuiRVd47O+XtSaaf7NmyjaEarlFVI5Znsak
+         yRgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760370208; x=1760975008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GvE2QaubCaNe+b2bi3Ii9pwdFgyDED1xYIH2KKqTA4w=;
+        b=JZdquEBIHumtxcHVlL5sft/ZLQVXu6v/NCDefu7BXan81qqdNQK8ZlApO/dPmmsUX8
+         SrZ6wz838IJDuvmFUmbqYt4F8iKjbypaCAKAv6bU0mEcm9wA7ukqJEsvopccwJDt0smw
+         3KJTPcCw9FCsOw8/2dZJ8fJ0kZ89+QCJhyCoVPFxRHTUfz7senCHi7gbz4QJI1VlQB+x
+         GgJPny/YIjppjp31P+S6Sba80ExAvabplmgJ3Fk0AJKXIwPWnLAUSZ9Shu2ZpfFqm/pM
+         bOBLeKkVBvfjQkzOBhgnq2xhc+V5okGamV3ATQUwkcnt9lruFY/MOJXdR59EZq8ZY/6A
+         TlSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkmLo2972omdfDla9iAUf5xCcCWjeBQ1G19mBLyQgTgmTPe3AcxAWPpUzh3WZkfXejjRRGtjSgjQJvlgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqwLExzA9+sXPkZqh6Wo/0qMeyuQCD/Rp0Ww5NP3E7yNtJvzkU
+	pllHBzLL3D3/oJStFkyqS/dDxMXqzI0P9r8KkfDYKQDT29n+nHedTaG9ARI5OiuJziyJ+iOGWSU
+	SC4a6FGq/QvyD+uiUi03J9lGZB8zW3LZmo4v7PlDh
+X-Gm-Gg: ASbGncv+QrXzukUFMlE1HJ6j+94yAgTawfNPQxpfv45nk6p9T2/sSt4j2aC/J16SgG5
+	nE1nFL5bDxIzdMOkMk3FXVn0G4s10J1So0fRv9eSLGZPmOMUQFqrZuFYgpkDiszUdyVGVYVjIEa
+	vhuTIxSEhDQ99Qmx8CsRsTim4Pxp+zNj6oqwaNsDz0alp7kDrRQmKj+ordtaNTpS2OBRHsHIbJH
+	OfibLkGQGrLRJ0lFGth+Leme49w5Stg/1ahQlpaySPsrDQH7b+J
+X-Google-Smtp-Source: AGHT+IGi9WTnaWtP/uIr7PgRC+0JilLcGDbVVnkS9tGZZgbSezgQwLrXzu3IZ+mvJsC1St6EdcqZZFWTwoYrtUBb1Hk=
+X-Received: by 2002:a05:622a:808d:b0:4e6:eaea:af3f with SMTP id
+ d75a77b69052e-4e6eaeaaf5dmr26573411cf.3.1760370207737; Mon, 13 Oct 2025
+ 08:43:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="I0mnNbF/GVMYYdj8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20251010011951.2136980-1-surenb@google.com> <20251010011951.2136980-2-surenb@google.com>
+ <aOyf5FxH8rXmCxLX@infradead.org>
+In-Reply-To: <aOyf5FxH8rXmCxLX@infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 13 Oct 2025 08:43:16 -0700
+X-Gm-Features: AS18NWAw--9GoJimKYZPU6XtnCpJ2t59ru9kAaQP92i8jW-vrfiHymNpWuM0LSo
+Message-ID: <CAJuCfpFs5aKv8E96YC_pasNjH6=eukTuS2X8f=nBGiiuE0Nwhg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] mm: implement cleancache
+To: Christoph Hellwig <hch@infradead.org>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com, 
+	peterx@redhat.com, sj@kernel.org, rppt@kernel.org, mhocko@suse.com, 
+	corbet@lwn.net, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, willy@infradead.org, m.szyprowski@samsung.com, 
+	robin.murphy@arm.com, hannes@cmpxchg.org, zhengqi.arch@bytedance.com, 
+	shakeel.butt@linux.dev, axelrasmussen@google.com, yuanchu@google.com, 
+	weixugc@google.com, minchan@kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	iommu@lists.linux.dev, Minchan Kim <minchan@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Oct 12, 2025 at 11:44=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
+>
+> Please don't add abstractions just because you can.  Just call directly
+> into your gcma code instead of adding a costly abstraction with a single
+> user.  That'll also make it much eaiser to review what GCMA actually
+> does.
 
---I0mnNbF/GVMYYdj8
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Are you suggesting to fold cleancache into GCMA? GCMA is the first
+backend donating its memory to the cleancache but other memory
+carveout owners can do that too. The next two on my list are MTE tag
+storage and memory reserved by kdump.
+Also note that the original GCMA proposal from 2015 [1] used both
+cleancache and frontswap to donate its memory. We don't have frontswap
+today, but this shows that it doesn't have to be a 1-to-1 relation
+between GCMA and cleancache.
+Thanks,
+Suren.
 
-Hello alltogether,
-
-I'm using an intel E810 card on a proxmox/qemu installation. The virtual
-functions (VF) from the E810 card are imported as PCI devices into
-virtual machines running inside kvm/qemu and are supported by the iavf
-driver. 
-
-The iavf driver should use as many interrupt queues as configured during
-startup of the hypervisor via
-/sys/class/pci_bus/0000:3b/device/0000:3b:01.1/sriov_vf_msix_count (this
-is set via udev for all the VF). The hypervisor system is running Debian trixie
-pve kernel 6.14.11-3 using the "ice" driver and all virtual machines are
-using Debian trixie standard kernel 6.12.48. The virtual machines are
-running with at least 4 cores.
-
-This works as expected as long as the virtual machines are not using
-iPXE boot (from iPXE.org). iPXE boot obviously uses a function to force
-the PF (physical function, i.e. the driver for the real hardware) to
-configure only one interrupt queue for the used VF. This can be seen in
-the kernel log of the hypervisor while iPXE boot is running.  This
-message is logged by the hypervisor if the virtual machine using VF 10
-is doing PXE boot.
-
-ice 0000:3b:00.0: VF 10 granted request of 1 queues.
-
-After this this VF number 10 only provides one interrupt queue for a
-linux virtual machine using debian trixie (Linux kernel 6.12.48) and
-this cannot be solved with tools like ethtool inside the VM. Even if the
-VF is later assigned to a different virtual without iPXE boot this "only
-one interrupt queue" stays active.
-
-I tracked this down to a patch from 2020:
-"[net-next,02/16] iavf: Enable support for up to 16 queues" that removed
-the possibility to increase the queue count via ethtool and just uses
-the queue count provided by the PF (but in my case that is configured to
-"1" by PXE boot that is running before the Linux kernel is started)
-
-I did a manual change (see attached patch, kind of reverts the above
-patch) the introduces the possibility to increase the interrupt queue
-count manually via ethtool inside the VM.  This worked, the MSI-X
-interrupts were established and I got 4 queues as I ordered via "ethtool
--L enp1s0 combined 4" and the MSI-X queues could be seen inside the VM.
-This was logged by the hypervisor:
-
-ice 0000:3b:00.0: VF 1 granted request of 4 queues.
-
-This means I've a working example that the functionality of
-increasing/setting the queue count is currently missing and how to fix
-it. Personally, I think to make it acceptable patch that does everything
-"right" automatically some additional work is necessary.  It would be
-great if someone could look into this. 
-
-I think it would be a good
-solution if the iavf driver could read the MSI-X interrupt count from
-the PCI info like this would be done with "real" hardware and configure
-this via the VIRTCHNL_OP_REQUEST_QUEUES message to the PF.
-
-Thank you very much.
-
-Regards,
-
-   Carsten Groß
-
--- 
-Carsten Gross            | http://www.siski.de/~carsten/
-
---I0mnNbF/GVMYYdj8
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="reverted-test-patch-iavf.diff"
-
-diff --git a/iavf_ethtool.c b/iavf_ethtool.c
-index 74a1e9f..cea2d82 100644
---- a/iavf_ethtool.c
-+++ b/iavf_ethtool.c
-@@ -1650,7 +1650,7 @@ static void iavf_get_channels(struct net_device *netdev,
- 	struct iavf_adapter *adapter = netdev_priv(netdev);
- 
- 	/* Report maximum channels */
--	ch->max_combined = adapter->vsi_res->num_queue_pairs;
-+	ch->max_combined = IAVF_MAX_REQ_QUEUES;
- 
- 	ch->max_other = NONQ_VECS;
- 	ch->other_count = NONQ_VECS;
-@@ -1683,7 +1683,7 @@ static int iavf_set_channels(struct net_device *netdev,
- 	/* All of these should have already been checked by ethtool before this
- 	 * even gets to us, but just to be sure.
- 	 */
--	if (num_req == 0 || num_req > adapter->vsi_res->num_queue_pairs)
-+	if (num_req <= 0 || num_req > IAVF_MAX_REQ_QUEUES) 
- 		return -EINVAL;
- 
- 	if (num_req == adapter->num_active_queues)
-@@ -1693,14 +1693,7 @@ static int iavf_set_channels(struct net_device *netdev,
- 		return -EINVAL;
- 
- 	adapter->num_req_queues = num_req;
--	adapter->flags |= IAVF_FLAG_REINIT_ITR_NEEDED;
--	iavf_schedule_reset(adapter, IAVF_FLAG_RESET_NEEDED);
--
--	ret = iavf_wait_for_reset(adapter);
--	if (ret)
--		netdev_warn(netdev, "Changing channel count timeout or interrupted waiting for reset");
--
--	return ret;
-+	return iavf_request_queues(adapter, num_req);
- }
- 
- /**
-diff --git a/iavf_virtchnl.c b/iavf_virtchnl.c
-index 7e810b6..fb3286d 100644
---- a/iavf_virtchnl.c
-+++ b/iavf_virtchnl.c
-@@ -426,6 +426,33 @@ void iavf_map_queues(struct iavf_adapter *adapter)
- 	kfree(vimi);
- }
- 
-+/**
-+ * iavf_request_queues
-+ * @adapter: adapter structure
-+ * @num: number of requested queues
-+ *
-+ * We get a default number of queues from the PF.  This enables us to request a
-+ * different number.  Returns 0 on success, negative on failure
-+ **/
-+int iavf_request_queues(struct iavf_adapter *adapter, int num)
-+{
-+	struct virtchnl_vf_res_request vfres;
-+
-+	if (adapter->current_op != VIRTCHNL_OP_UNKNOWN) {
-+		/* bail because we already have a command pending */
-+		dev_err(&adapter->pdev->dev, "Cannot request queues, command %d pending\n",
-+			adapter->current_op);
-+		return -EBUSY;
-+	}
-+
-+	vfres.num_queue_pairs = min_t(int, num, num_online_cpus());
-+
-+	adapter->current_op = VIRTCHNL_OP_REQUEST_QUEUES;
-+	adapter->flags |= IAVF_FLAG_REINIT_ITR_NEEDED;
-+	return iavf_send_pf_msg(adapter, VIRTCHNL_OP_REQUEST_QUEUES,
-+				(u8 *)&vfres, sizeof(vfres));
-+}
-+
- /**
-  * iavf_set_mac_addr_type - Set the correct request type from the filter type
-  * @virtchnl_ether_addr: pointer to requested list element
-
---I0mnNbF/GVMYYdj8--
+[1] https://lore.kernel.org/all/1424721263-25314-4-git-send-email-sj38.park=
+@gmail.com/
 
