@@ -1,239 +1,283 @@
-Return-Path: <linux-kernel+bounces-850489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E23BD2F62
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:28:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15946BD2F74
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87B93C53E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42993189DC06
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084AF270EBA;
-	Mon, 13 Oct 2025 12:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E996261B9C;
+	Mon, 13 Oct 2025 12:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LS35QxNN"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="nlDUCkSm"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E712327056D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A6A26E708
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760358515; cv=none; b=Ts7a5Hn8+koBTIOPbxw1XoR8ocWt32OAanAA4DoVbnbR4F8OgcMAO7TOypbc7QdTmR+jCc19AkVt00YR0lNMDVdJv5q9f4ZGi9ZIJYlyXo7pE+S8mbsmsOWbSsLDsCYb/8blmQBgFpNB52HuEjQSMP3WGa5J/jovkXSmtg2dysQ=
+	t=1760358591; cv=none; b=rONNRBJpnBCewY08t/BC1Orq02HX5XEjjwDXsTkwy6vo9ekQfjEfejXE1zHXbQBHbmnJiNwMFfH2ruZySH70pZs7UT9RHgrCz++LIIcI0rvzfZmDWBZGQ1qY34aybPjztoYcC8pWJgbWtw6lR6GjlcLoE5YlcVHNIe3cQnt44Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760358515; c=relaxed/simple;
-	bh=+vbyFrZcBnFsvtcYalRuaDry0I2W4DKDBtFCjWgAn4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YBEXg0B02O9OokbK+HU1v7mcUConxWmeS+IDJLUbltUYxgB2w/9nTXg7i2b7WGofEnIkp6hTTJ+mT3kcvzcY18+ajESjfyclV4LiPWKxKhNdS4QzbF6cTq9yHy6mMnqPm8u+oze4np0WYwEvS9tKFKOg2PdCe/7bo2pW8JsEOxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LS35QxNN; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32ed19ce5a3so3630551a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760358512; x=1760963312; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Hfyx/yKH/qoWr47V08+NxngS+OiO3dtYiWQ1I4tci4=;
-        b=LS35QxNNN7opFVYyh8O4P9rQdZ9CqGR3yVgFC7mjkECcxzHNUNKjXSiJ7ZSKU08l83
-         igDPm3dC6FFruydFC8u7gR4crJyetjjLEUfXNYDJrWgJcfWorYrrMngX/X40CuX/7Sd6
-         ylEMH9TPytKsYqQa3oAlekfumKxw77aNvZDbf2fiVG7Wj0T3lBTU5puof1vNvbLqsNKM
-         ni211UaKq7dJyuN4lahewAbzfNPvWFcD4wH2yx4C0rjFSO+90L+s4QnoRogRqBEXfJBY
-         hprX7gfP8zeUV8SYeYVXU72/fPOnrgrxFGaa7MT2rFN3QoyI99oWKR+q8MeYythMe6mj
-         wgZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760358512; x=1760963312;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Hfyx/yKH/qoWr47V08+NxngS+OiO3dtYiWQ1I4tci4=;
-        b=ktVm1SmSfN2afgLFlDcCjx5khGn7bgtSGubdnkIjNARM9prPmvouO+/c9ERabWYTPc
-         5sCbTdGH8RBfgaiLv891dpfDM/kinm2Ljyfb/uLaybs4xgmBTijJksvjhCUIJGzIBnid
-         GdCqcbOTNeESvVzec174dubms8bqEzSNvOtsDpNObGneGCADX7nYKrfhT66feM/xdm3A
-         xOdlQPWvnv0grktBw1MV+P0NuzngHpr+4muU2guHaOyTf2i2yUYdnzcU/GtOOAjuLIkU
-         srY02rK04DEncNvQNB+ZnFs5k1LZaP8mHgodMs2YBI0DykPw9F479V2aIr+nXPfkR3kc
-         HvLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWitoAA2tfjZJw44Lrp9S6fCaWy4jReZVGPe2DxqT3SsQnuRYrBv+mqs2jgu8YjMt3DQwksil+i2VLVqWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0HDuLsSH7ow82sdUasKNp+qoY4lF9pLOdctmQcs3p5nzUFsJJ
-	LQArbh0mYgYc21vSFTGBP7wL3lEJOda4KNpw7fcFoGZMHQDS2K72fWyaySc3s107o5EYGuj2ZFM
-	v/zPiC+wb1Kgt+N/r/07KaXbskKGgN6w=
-X-Gm-Gg: ASbGncuy0ISNBKBt8sbr9JLp//1ZiUrGkwSsM7ihq6eW0Fjj/nWzoOqGALcBHJaSc0K
-	XbGSXepXvuR21rdCf0GykGVMtGOxlPSnQTuXLfJ3FVidfPOkMX5jCO5PeF2Q5K/65YJmdj/hUuH
-	+MZBJU8G4uIG9DAUp3GIXKG9b0fXEakMPrWuxVFh5tkXduOjv8PzRdJf67yodwAPdLXb+Mhwx5S
-	Ad+CVpX1yrEU//Cumuy9NTD97sTW2EpG1bNLTn5IpaG403B+WoVJjrVqELZ
-X-Google-Smtp-Source: AGHT+IFDFAOFmZ461XoI5RW9YuCzah5zLExPQE6vCScxrqfd5twVWI97u4O0yepFXgRtTULwZnxCG8cuEBCFsRqZlPE=
-X-Received: by 2002:a17:90b:38cc:b0:32e:f1c:e778 with SMTP id
- 98e67ed59e1d1-33b51105f5dmr28620196a91.3.1760358511952; Mon, 13 Oct 2025
- 05:28:31 -0700 (PDT)
+	s=arc-20240116; t=1760358591; c=relaxed/simple;
+	bh=u5A2B4cxGHxuvX6wsICtQXWG0hhh2q6pv0dMsAd0ZV4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Tv+7BQ5cf2gxJIEdY5KR9mb0uDsWTmBc15QLiTQWBS835CxKH04ESHaT0Nlj7gTilHOOXHMnM3eAShIrP87LHfvFV2kiJCv3wnjdS+meQ7hy5eAAVqsYwPQINUqwQDrdUP8e+sDeCkcGtiJMsuyL7/vYvug8OOlbClY1P2qXZxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=nlDUCkSm; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id BECDC240103
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:29:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760358586; bh=BNrUhklJjD5L4z4ko/bJgHuU483gqT28YNlaAj8Gtpw=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=nlDUCkSmHUweVmW3NdeIsmj+Pwvycq6TB2wdfuP5yrVrq3lbc+pTucRltU5bbCCg2
+	 qTbPLAlpCgnwv2QsOn3Ix66NGMHu0CZHPviQ2IJo/dNZ/F4gBXWirOyaZ51bf5VON0
+	 fVUUOZ+nJmBNS6S7UD5z3lRBxS3nKVW7vkRpyM+naFzkJw0Op7O6Mg9M2IAcICqCeP
+	 +Gs/e1QGasvOnVUx0lg7ls5eG3uZdglxBaosWvYkyw0OxRB2aVLzKZSLIwgyM/4b2Q
+	 eJdZhUclJq/jVtoY/R4cRCRbe7ag9YZoYxGqSDEKtg6O5zjhW84XCsPRNyENSJDrPv
+	 WmLvG7ql5oVdw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4clc9j4lDfz6twv;
+	Mon, 13 Oct 2025 14:29:45 +0200 (CEST)
+Message-ID: <48eff111d66156fd0bd8eb2418570db4aa62f392.camel@posteo.de>
+Subject: Re: [PATCH v3 2/2] ata: Use ACPI methods to power on disks
+From: Markus Probst <markus.probst@posteo.de>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, "James E.J. Bottomley"
+	 <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen"
+	 <martin.petersen@oracle.com>, linux-ide@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 13 Oct 2025 12:29:46 +0000
+In-Reply-To: <aOy2Vy6AQNynzewo@ryzen>
+References: <20251010223817.729490-1-markus.probst@posteo.de>
+	 <20251010223817.729490-3-markus.probst@posteo.de> <aOy2Vy6AQNynzewo@ryzen>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759824376.git.mazziesaccount@gmail.com>
- <93142a80d90a0ac80b27090d0c83914675aad94d.1759824376.git.mazziesaccount@gmail.com>
- <20251009161847.GE2890766@google.com> <8ea507eb-f78c-4a16-882b-112e277fa1b6@gmail.com>
- <20251010144515.GI2988639@google.com>
-In-Reply-To: <20251010144515.GI2988639@google.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Mon, 13 Oct 2025 15:28:20 +0300
-X-Gm-Features: AS18NWD7Fn8K61uYpxry40G4lSMSR38Hgj7AfijgSk6lHd0n6-E_snhITV5UyEs
-Message-ID: <CANhJrGMEN0QRLoBzntVnaYgfFDyre=Yfw-dNdmi226p6pnpgHw@mail.gmail.com>
-Subject: Re: [RFC PATCH 06/13] mfd: bd71828: Support ROHM BD72720
-To: Lee Jones <lee@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Pavel Machek <pavel@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-pe 10.10.2025 klo 17.45 Lee Jones (lee@kernel.org) kirjoitti:
->
-> On Fri, 10 Oct 2025, Matti Vaittinen wrote:
->
-> > Hi deee Ho Lee,
-> >
-> > And Thanks for the review!
-> >
-> > On 09/10/2025 19:18, Lee Jones wrote:
-> > > On Tue, 07 Oct 2025, Matti Vaittinen wrote:
-> > >
-> > > > The ROHM BD72720 is a power management IC which continues the BD71828
-> > > > family of PMICs. Similarly to the BD71815 and BD71828, the BD72720
-> > > > integrates regulators, charger, RTC, clock gate and GPIOs.
-> > > >
-> > > > The main difference to the earlier PMICs is that the BD72720 has two
-> > > > different I2C slave addresses. In addition to the registers behind the
-> > > > 'main I2C address', most of the charger (and to some extent LED) control
-> > > > is done via registers behind a 'secondary I2C slave address', 0x4c.
-> > > >
-> > > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+On Mon, 2025-10-13 at 10:20 +0200, Niklas Cassel wrote:
+> On Fri, Oct 10, 2025 at 10:38:35PM +0000, Markus Probst wrote:
+> > Some embedded devices have the ability to control whether power is
+> > provided to the disks via the sata power connector or not. If power
+> > resources are defined on ata ports / devices in ACPI, we should try
+> > to set
+> > the power state to D0 before probing the disk to ensure that any
+> > power
+> > supply or power gate that may exist is providing power to the disk.
+> >=20
+> > An example for such devices would be newer synology nas devices.
+> > Every
+> > disk slot has its own sata power connector. Whether the connector
+> > is
+> > providing power is controlled via an gpio, which is *off by
+> > default*.
+> > Also the disk loses power on reboots.
+> >=20
+> > Add a new function, ata_acpi_dev_manage_restart(), that will be
+> > used to
+> > determine if a disk should be stopped before restarting the system.
+> > If a
+> > usable ACPI power resource has been found, it is assumed that the
+> > disk
+> > will lose power after a restart and should be stopped to avoid a
+> > power
+> > failure. Also add a new function, ata_acpi_port_set_power_state(),
+> > that
+> > will be used to power on the sata power connector if usable ACPI
+> > power
+> > resources on the associated ata port are found. It will be called
+> > right
+> > before probing the port, therefore the disk will be powered on just
+> > in
+> > time.
+>=20
+> s/sata/SATA/
+> s/nas/NAS/
+> s/ata/ATA/ (except for function names of course)
+>=20
+> Since this patch is basically doing two logical changes
+> 1) Calling ata_acpi_dev_manage_restart() on restart, which calls
+> acpi_bus_power_manageable() to disable power on shutdown.
+>=20
+> 2) Calling ata_acpi_port_set_power_state() during ata_port_probe(),
+> to enable power.
+>=20
+> Please also split this patch into two, so that we have one commit per
+> logical change. That would make things easier to understand, as your
+> commit message your just describe one behavior instead of two
+> completely
+> different behaviors.
+>=20
+>=20
+> Your commit message mentions that you want to spin down the disk on
+> restart to avoid "avoid a power failure".
+>=20
+> Is there a reason why you call acpi_bus_power_manageable() to spin
+> down
+> the disk instead of the regular function: ata_dev_power_set_standby()
+> which spins down the disk?
+I don't use acpi_bus_power_manageable() to spin down the disk. It just
+checks if there is a power resource present in acpi for the ata port /
+device. If thats the case, scsi should spin the disk down on
+SYSTEM_RESTART.
+>=20
+>=20
+> >=20
+> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > ---
+> > =C2=A0drivers/ata/libata-acpi.c | 71
+> > +++++++++++++++++++++++++++++++++++++++
+> > =C2=A0drivers/ata/libata-core.c |=C2=A0 2 ++
+> > =C2=A0drivers/ata/libata-scsi.c |=C2=A0 1 +
+> > =C2=A0drivers/ata/libata.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +++
+> > =C2=A04 files changed, 78 insertions(+)
+> >=20
+> > diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
+> > index f2140fc06ba0..4a72a98b922c 100644
+> > --- a/drivers/ata/libata-acpi.c
+> > +++ b/drivers/ata/libata-acpi.c
+> > @@ -245,6 +245,77 @@ void ata_acpi_bind_dev(struct ata_device *dev)
+> > =C2=A0				=C2=A0=C2=A0 ata_acpi_dev_uevent);
+> > =C2=A0}
+> > =C2=A0
+> > +/**
+> > + * ata_acpi_dev_manage_restart - if the disk should be stopped
+> > (spun down) on
+> > + * system restart.
+> > + * @dev: target ATA device
+> > + *
+> > + * RETURNS:
+> > + * 1 if the disk should be stopped, otherwise 0
+> > + */
+> > +bool ata_acpi_dev_manage_restart(struct ata_device *dev)
+> > +{
+> > +	// If the device is power manageable and we assume the
+> > disk loses power
+> > +	// on reboot.
+>=20
+> Please no C++ style comments.
+>=20
+> Also "If the device is power manageable and we assume"
+> should this not be
+> "If the device is power manageable, we assume"
+>=20
+> Because your commit message says:
+> "If a usable ACPI power resource has been found, it is assumed that
+> the disk
+> will lose power after a restart"
+>=20
+> so I think the word "and" here is wrong.
+>=20
+>=20
+> > +	if (dev->link->ap->flags & ATA_FLAG_ACPI_SATA) {
+> > +		if (!is_acpi_device_node(dev->tdev.fwnode))
+> > +			return 0;
+> > +		return acpi_bus_power_manageable(ACPI_HANDLE(&dev-
+> > >tdev));
+> > +	}
+> > +
+>=20
+> Please add a commend here explaining the difference between the
+> two cases, because you call either:
+> return acpi_bus_power_manageable(ACPI_HANDLE(&dev->tdev));
+> or
+> return acpi_bus_power_manageable(ACPI_HANDLE(&dev->link->ap->tdev));
+>=20
+> At least the difference is not obvious to me, from just looking at
+> this
+> function.
+if ATA_FLAG_ACPI_SATA is set, the acpi fwnode with the power resources
+is not set on the ata_port->tdev, but on the ata_device->tdev. See
+ata_acpi_bind_port (return if ATA_FLAG_ACPI_SATA is set) and
+ata_acpi_bind_dev (return if ATA_FLAG_ACPI_SATA is not set).
+I will add a comment for this.
 
-// snip
+Thanks
+- Markus Probst
 
-> > > > +
-> > > > +static struct regmap *bd72720_secondary_regmap;
-> > >
-> > > Dynamically allocate this and add it to .platform_data once it's
-> > > populated.
-> > >
-> >
-> > This can be done but I suppose it's unnecessary churn. This driver does not
-> > (at the moment) support more than one instance of the PMIC anyways. (The
-> > button data is not alloacted).
-> >
-> > This is not really a problem as typically there is only 1 of these PMICs to
-> > be controlled.
->
-> I'd take a few lines of extra code over a globally defined variable any
-> day of the week.
-
-Even though that'll require us to drop the const from the
-bd72720_mfd_cells MFD cell array? Which, in turn, will probably
-require us to drop the const from the MFD cell pointer in probe as
-well. Additionally, this will require us to skim through the MFD cell
-array in probe, so we locate the power cell, adding one more spot for
-errors. I think this is quite a cost just a princible of dropping a
-global, which is accessed from one function only. I'd definitely agree
-if it was driver data which gets used in a variety of functions, but
-here we really just need a memory location for a pointer so MFD can
-copy it when kicking the 'sub drivers'. Do you think you can still
-reconsider?
-
->
-> > // snip
-> >
-> > > > +/*
-> > > > + * The BD72720 is an odd beast in that it contains two separate sets of
-> > > > + * registers, both starting from address 0x0. The twist is that these "pages"
-> > > > + * are behind different I2C slave addresses. Most of the registers are behind
-> > > > + * a slave address 0x4b, which will be used as the "main" address for this
-> > > > + * device.
-> > > > + * Most of the charger related registers are located behind slave address 0x4c.
-> > > > + * It is tempting to push the dealing with the charger registers and the extra
-> > > > + * 0x4c device in power-supply driver - but perhaps it's better for the sake of
-> > > > + * the cleaner re-use to deal with setting up all of the regmaps here.
-> > > > + * Furthermore, the LED stuff may need access to both of these devices.
-> > > > + */
-> > > > +#define BD72720_SECONDARY_I2C_SLAVE 0x4c
-> > > > +static const struct regmap_range bd72720_volatile_ranges_4b[] = {
-> > > > + {
-> > > > +         /* RESETSRC1 and 2 are write '1' to clear */
-> > > > +         .range_min = BD72720_REG_RESETSRC_1,
-> > > > +         .range_max = BD72720_REG_RESETSRC_2,
-> > >
-> > > regmap_reg_range()?
-> >
-> > Ah, thanks. Out of the curiosity - do you know why this macro is written on
-> > lowercase?
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Mark Brown <broonie@linaro.org>
->
-> =:-)
-
-Yeah. I just thought that maybe you knew :)
-
->
-> > // snip
-> > > > +static int bd72720_set_type_config(unsigned int **buf, unsigned int type,
-> > > > +                            const struct regmap_irq *irq_data,
-> > > > +                            int idx, void *irq_drv_data)
-> > > > +{
-> > > > + const struct regmap_irq_type *t = &irq_data->type;
-> > > > +
-> > > > + /*
-> > > > +  * The regmap IRQ ecpects IRQ_TYPE_EDGE_BOTH to be written to register
-> > > > +  * as logical OR of the type_falling_val and type_rising_val. This is
-> > > > +  * not how the BD72720 implements this configuration, hence we need
-> > > > +  * to handle this specific case separately.
-> > > > +  */
-> > > > + if (type == IRQ_TYPE_EDGE_BOTH) {
-> > > > +         buf[0][idx] &= ~t->type_reg_mask;
-> > > > +         buf[0][idx] |= BD72720_GPIO_IRQ_TYPE_BOTH;
-> > > > +
-> > > > +         return 0;
-> > > > + }
-> > > > +
-> > > > + return regmap_irq_set_type_config_simple(buf, type, irq_data, idx,
-> > > > +                                          irq_drv_data);
-> > >
-> > > Use 100-chars to avoid these pointless wraps please.
-> >
-> > gnarl. I think we have discussed this before :)
-> > I would love to keep the lines short - closer to 80 chars - because that way
-> > I can fit 3 terminals on my screen. All the years spent staring at the
-> > monitor are taking their toll, and my vision isn't as good as it used to be.
-> > Frightening thing being that it seems I will only need to increase the font
-> > in the future :/
-> >
-> > Well, sure the lines can be split if you feel strongly about it - but I have
-> > a real reason (other than the usual - "they have always been like that") to
-> > try keep them short...
->
-> Welcome to the year 2000 when 32" monitors are super affordable.
-
-I know. But work rooms where I can fit larger table aren't. Not even
-in Finland which should have plenty of space. And my table is really
-packed.
-
-Yours,
-    -- Matti
-
--- 
-
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
-
-Discuss - Estimate - Plan - Report and finally accomplish this:
-void do_work(int time) __attribute__ ((const));
+>=20
+>=20
+> > +	if (!is_acpi_device_node(dev->link->ap->tdev.fwnode))
+> > +		return 0;
+> > +	return acpi_bus_power_manageable(ACPI_HANDLE(&dev->link-
+> > >ap->tdev));
+> > +}
+> > +
+> > +/**
+> > + * ata_acpi_port_set_power_state - set the power state of the ata
+> > port
+> > + * @ap: target ATA port
+> > + * @enable: power state to be set
+> > + *
+> > + * This function is called at the beginning of ata_port_probe.
+> > + */
+> > +void ata_acpi_port_set_power_state(struct ata_port *ap, bool
+> > enable)
+>=20
+> This function is never called with enable=3D=3Dfalse, so let's please
+> remove
+> this parameter and rename the function to something like
+> ata_acpi_port_enable_power() or similar.
+> If someone a future patch ever wants to refactor this to also handle
+> disable, then that patch can also create a parameter for this
+> function.
+> Otherwise we are just adding dead code.
+>=20
+>=20
+> Kind regards,
+> Niklas
 
