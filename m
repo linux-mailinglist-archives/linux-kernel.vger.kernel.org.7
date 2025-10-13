@@ -1,112 +1,75 @@
-Return-Path: <linux-kernel+bounces-851202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825D5BD5C0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:41:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F9BBD5C11
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2E91035155E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:41:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25B518A2B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F09296BDE;
-	Mon, 13 Oct 2025 18:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AD02D7810;
+	Mon, 13 Oct 2025 18:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w5tymBBf"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4JaRO0W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B46C2D7381
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FE72D73A8;
+	Mon, 13 Oct 2025 18:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760380897; cv=none; b=Ha6Ih40Qnav6ghQXKUPOTTP3t4TfxPf0y/6q0xSLxSHiLaJpPMJSlG/9fwscbPa+Kx6OW81gv/edvQ+S6Ire9a1jdlvfMOwYYPUSV5LjRpTD023GwVVKRoWxCQZyqBiik6CI2tvjIGceuTJHQTEBKFZJt+2O7N2IVqdifpQzNZo=
+	t=1760380897; cv=none; b=G5HNKilbyLI7zFWk1wXF92WtP9CcCyxLVaQK01nQJj6uBbNfLAGjQ4UA5UUPeJi0Uzuzesjr8oqC4j1xj0EZ5oviEaGvDqcO48q88unD8MqFYpbNinwZwS1CpVdjuAdK+5Bq2CHdTX0VJdrSy9hxNEhhJB/LzphTZVg8fGTlWiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760380897; c=relaxed/simple;
-	bh=iHfqM03svX+oQ66obSqo+eRScW0vFuqHkVSUnLn2398=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kdQ6m2TN9oc/pdvgl50cnODVwg8mHnZ9eovchcSyQZqsLn8BSMciQIxCE9iAv1rz8WMeYMiOpPuxrKjGtmXZyxvXPTOUSkD8YN1yMms3r8PJYkMZlIHOlhEhs44EA/18y2oMaAytQl8F08lPyJyDeBkdgjqYv6+23idGN7UEzWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w5tymBBf; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62fa84c6916so24699a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760380893; x=1760985693; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iHfqM03svX+oQ66obSqo+eRScW0vFuqHkVSUnLn2398=;
-        b=w5tymBBfENAAYOJbrpESjxEEnYBrFspQtO6lya2gBf0ylx1B/FqoOVOTBfPe60zayX
-         0SKhYlfkUNLx8u+t6licarE1ywGdVBZR7O+bh1gxRKs1qBedRKQNJlu0fosTBVnNHpES
-         4JcPwfqgSsCBa8Kd6laQYAScvPZCcJo4xWxmLjAPFatCGu0cK0RcvxgXtlRaN6sJYBw0
-         2CeqIfP6Q8tx6IU+WVXyYjLqsGR1qNlMEWYKhv3mdBlnDFPO1Ytt9mt8It+aW5A5MzQV
-         DuoV4Judew7/7WAKm6N/+fKPX/py4lBgetGfmucEj5Ttpz9/RJ+xNBW/8u8+alhYGIaG
-         CuJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760380893; x=1760985693;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iHfqM03svX+oQ66obSqo+eRScW0vFuqHkVSUnLn2398=;
-        b=KPg3Hf4ieg8XRoj9fpqaLEoHHu62IuJts5YmMhq4iYf2pu6424GiutHKmyQkjEQ4I5
-         B1CVkq24E3gErmuHG09Yoy65z9NvNjPCbOHQdaI5ksE6Bsn42kNEUHdTgTxHWl5jzaym
-         CW0jPfHCBREoUvv0sUK4Gp0FhEHJiKX1RHUbGgBrvAbiaS0MHrZaWdMcZ6zuFfR7DQNq
-         T+6v7FUAmpsHibCEpcUXnl2oULZyJkDp7Ajn1EyHWTgkMP21daVvTW7ryuP1Gv4as4rW
-         LjMzkgLiBIhlA1wQP3bykaGiEKKX5OeJFRcOkuk2RU3yWopQWYac/usIZzMShtFVopZ/
-         uR/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXqJpFDODpxa/rCtB2+FWwQCF0PlU5liIMr+NWZicU///pff2ycuHnFLFNfpfgC7vu3bEobtJEjLwP5bn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyynHDfO2QeM0gWkFwvDoS9Mt5feGfpwV0HVmO8x2l+6dxCuA4g
-	R0uqH5cms0eJOdz7GqPTDQkCMs7wlm0AmGv1lYCejDkyTvoSL+PbdFjleOubHzAjw2Br6lU9psT
-	pLA9kbM7IADvWnlnKPXzZkGAL2ntvF/+GlvrCnzso
-X-Gm-Gg: ASbGncuPYeaOrInciyhSjSOa1N5/+7rdBeal2+T0WMT0+MiklEZf7f38MbwWhqzzx2l
-	pJ4OyoNCMjqxnn+PJgxWNzjiAjdR49eyy8teT6m23esNjF9HmtZFWG2Udby4JY3pSOlstwQ4oJA
-	IkYSPc7vU1BXWbbj+ABAYUmCiA/iVToZZvkzld5mEQOIov/uUtbY4bACfU4bv6DiucC0GdxhS3/
-	9vY2cAAKJPMEfNIN6t6T1S2naps78a3RSCR7SbbK1I=
-X-Google-Smtp-Source: AGHT+IFbmLphFAx+O5iG90iX9HogRPWUiCByGZx68PKNe1ZloAu/b3Rao00A/sjzsen7DJqCgwzu5gI+Pcc4So+lDH8=
-X-Received: by 2002:aa7:c397:0:b0:634:38d4:410a with SMTP id
- 4fb4d7f45d1cf-639d51d0407mr545062a12.2.1760380893401; Mon, 13 Oct 2025
- 11:41:33 -0700 (PDT)
+	bh=i7Fg3wAXicb6TailRO+JhgEV6cD82vTHVe7redF22yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3KT/yKivpRPpC7xUI4qBieSmuwaF3Zibq9bKt174eJorC1QAiozcAu0/Th0LM6wfOjdEeCvZyhKk1pE1zwCo0vGKv+FbxVaKPUkmUNLba1DUJFOaXc333zJ6N683/+UMMEdVruvxrYD+DEHSNEvwWJhw2ghZC09FPWmmwvZegA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4JaRO0W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D07EAC4CEE7;
+	Mon, 13 Oct 2025 18:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760380896;
+	bh=i7Fg3wAXicb6TailRO+JhgEV6cD82vTHVe7redF22yo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s4JaRO0W2BOmg2HT4YwNno9dIIZ+AJTZlRvTGiHIgOaBI6Uf9ak81t1ZAYcrIP5Cy
+	 j1m4I+ipJ7NLy3jxZO91qAYZhA57gza7QMjnCjhoUbAy4tJAphquZxq+TeHU/EsB+B
+	 nO5xo9PK0fMbSaEP7F3NgEavpmtBrmWjy+S905infHGcLcxheuFoNjCHm52oZzo88D
+	 HltBX1RQI0lQvhQQCezKiIV5ZYJ3oYLYIUzgFEen16la+PoknpmT1Mwsqu3bgpRaeQ
+	 CSDELBjy9ybb0r9SRFW7isHC7a3k2XuBdEuA/LPItaUIl2AER4N8C8NepF1/TgwNor
+	 q+M1e2FtH1tWw==
+Date: Mon, 13 Oct 2025 08:41:36 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Exit early on hotplug
+ events during attach
+Message-ID: <aO1H4IjG5YnI3cwm@slm.duckdns.org>
+References: <20250904055716.87268-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-10-yosry.ahmed@linux.dev>
-In-Reply-To: <20251001145816.1414855-10-yosry.ahmed@linux.dev>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 13 Oct 2025 11:41:21 -0700
-X-Gm-Features: AS18NWCalgoEMzCEfvMZw9n2fvq5F7tQ5ti-oUsJw3mE6SvX8KE83Zr7Sx3VYNI
-Message-ID: <CALMp9eQacZ-hE3ePmWy2-ct1C56vs4FKR=HnFj8-=Tc3G3NVPQ@mail.gmail.com>
-Subject: Re: [PATCH 09/12] KVM: selftests: Move all PTE accesses into nested_create_pte()
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904055716.87268-1-arighi@nvidia.com>
 
-On Wed, Oct 1, 2025 at 8:05=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
-wrote:
->
-> From: Yosry Ahmed <yosryahmed@google.com>
->
-> In preparation for making the nested mapping functions work for NPT,
-> move all logic that directly accesses the PTE into nested_create_pte(),
-> as these accesses will be different for SVM.
->
-> Stop using struct eptPageTableEntry in the caller, instead pass a
-> uint64_t pointer (and add an assertion on the size to make sure it stays
-> correct).
->
-> Calculate whether or not an EPT entry is a leaf in __nested_pg_map(),
-> and return the address from nested_create_pte() to __nested_pg_map().
-> Also, set the access and dirty bits in nested_create_pte() for leaf
-> entries. This matches the current behavior and removes all direct
-> accesses to the EPT entry from __nested_pg_map().
->
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+On Thu, Sep 04, 2025 at 07:57:16AM +0200, Andrea Righi wrote:
+> There is no need to complete the entire scx initialization if a
+> scheduler is failing to be attached due to a hotplug event.
+> 
+> Exit early to avoid unnecessary work and simplify the attach flow.
+> 
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-Reviewed-by: Jim Mattson <jmattson@google.com>
+I applied this to the wrong branch and lost it in the pull request. Applying
+again to for-6.19. Sorry.
+
+-- 
+tejun
 
