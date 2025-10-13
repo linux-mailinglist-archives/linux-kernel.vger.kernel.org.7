@@ -1,153 +1,118 @@
-Return-Path: <linux-kernel+bounces-851306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF84BD6136
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F76BD6139
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE1C04EC67B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:27:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35773E0F46
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F48302750;
-	Mon, 13 Oct 2025 20:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8192E9ED2;
+	Mon, 13 Oct 2025 20:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X2zeda8o"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="AV9lNiYJ"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19222D46C6
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA922C1598
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760387236; cv=none; b=PjOL8oPZUxK1jkoSkjZEIQ9797IDN6maYrt67gN/MO5h4R3HLWoFb0H4DZ2JAcb587SMxZV/92UUCpt7ithoGdOxawlGUrYz+dYUx1kIincz8bdu102GtkmsbOUao9dtxem/fEeh1ia5P9wTiK32c28ECEfqoAB/IpzjnCUn2z8=
+	t=1760387352; cv=none; b=VUSl6eDtIfeixoZw5iP1fSILT7JWIlp9vi1r/4BV9iSnBQdr5vx2kzZlSZnb6YqdqgAwr3Z8gebZPJbBZ6R7KSbIGA/CF3sMEmA/yJbpjoMJu32cT3+80Pv4zdlQI4DMtDmxcjG/2OWHtyvvkWUmSPmeb9WKGyPmdVCflA7LHnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760387236; c=relaxed/simple;
-	bh=KU622TuPaRD2MQxn++PZ8PXYKTsWOl/F9uMV6E1/6x8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YaNyFq74UC60hie/WvxVw30PR+7CBeIhzierI7mqOCNUR3TyurEg2y4KgKK8pw5tEE83tS36TH/DaxVVcvsbTlkiqhOadFIN5gn4AWaMlgiBrnsldSzq1swWWy0hvv9JX2SUrjh0yTH8jfWv2fDaOYUjHwSyUxXtFFD9rhuJFc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X2zeda8o; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-816ac9f9507so718988485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:27:13 -0700 (PDT)
+	s=arc-20240116; t=1760387352; c=relaxed/simple;
+	bh=a5whaLNNw/2oDdU+xynqj3s5bjcsWv8y7KEZSCBcVAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W1WVyV9PZjKdCW3y1Hz4kiOfIfsN0T4/8MdLz6RXsBzRgfp3ovK9t/bDSv730QxDWmbf91UhZeMmgBXJT8QVPmWbC7XH6JO4hZxJNULz4LVs+GapfqQkMO/2kBwHSUOYSGk7RoV5APPJWWjXHfW2JnyHN73/csLWvPT3iyxNMZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=AV9lNiYJ; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-887764c2868so516440739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:29:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760387233; x=1760992033; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HlD9DtXQmkM+JhYn0iDf8SrXaOR+regmjV9sqHbrOfo=;
-        b=X2zeda8omZyfo1NgDGWyx1dhJ9fPGnppdYNNQ5QX8B0NkHAxLLvdJaCYa5y0MPdH0r
-         F+pT3aRqi5yJUGmWtWnXOIKKh1CFX4pm5foGmT99iFMTR0P/Q7d7aDY0H2saYIQI1gDG
-         tpdTMOeMRhZAaycmwtpDA4rEV8XOGZ/qlX9p0kP4s4Cslz4KDS8YpF+kfYrkaw8NnfVa
-         TaPZ2pjG5onRfuZNUAXgstBFj0wCljQVlg5p8380F7EkG+IDyHKqwrjnQM1VFCSsFs9c
-         6Xhzvi+UcsWqCE7+Z8ygmGTexyZUsIh+fTHLmcCUlpF51mraspZmwYR6G9omz1OPhQaU
-         LVRQ==
+        d=ventanamicro.com; s=google; t=1760387350; x=1760992150; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Lt6afCrReoA0JetcvxGjdIUfBcXG8UG+CLV9XrNIQkA=;
+        b=AV9lNiYJmYjvmNWzDKKnIFBKusIgvLRLsbFHvUeR7+7AgCyR2k3BNAu+lLZVUWbJnk
+         ZS0gANPrD8tVaWzJ48dQjcmaD+Ahe3O+NPTrW7PoDEgao07ADHmgLmooQ2ySAlKT5r5v
+         P0vfrEneV9pbZRJV/up2GyDYom9jKsgzv/mAj8x9YObbJQ75EHXic5P3noGREekt1xKu
+         LuXKlkeHnl3HGSvaWOd1d5kfE0XX34dprlADeF2WRFXLxVyd6pX9KEOK+dzSXBr7D1jC
+         fz+JGfmv1olp+GGxzARJr+IRakPImujAOwdApDhBhxscNnFBnlOyxaDmxQBH9+fMpeVr
+         A1Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760387233; x=1760992033;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HlD9DtXQmkM+JhYn0iDf8SrXaOR+regmjV9sqHbrOfo=;
-        b=K3ygAlMHD1UBuLc7mXa+NZ2JIo3IBeiJAlyyHVoU2vzLjgxRpJSqzPqEY7JjVvU26J
-         BnxY7NHuU883/uLMiqXp8eJeQT1+xtanhHNdR7GNC9lp+YB/LNe4CYswxQGecjIrXdWF
-         LrqsG4ooNbjVUYK5aseW8TiPSVYIrK4vp66wtw718ij6QWbTPHp/zoBNXa0Y7VKkf0W3
-         dkEg8pWP8aAt7WDuA/UnDKkV55ZOEYPDYNdiy3akmBlozjOoczpvObusxRTNLKfzivv0
-         VCSay3k23d7G6SzHyG1f9YGA7kf8jSsWqDDXi/aqC8s3ZNyKt+dBFaRN2sbxjwcSJJqa
-         zrmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgIg6f9+BEegiC2ak++JFkEWtAUckxM3NulfF6W+B2qHqu3fuWBR5eHra0pEBbVlGU+9/NMPLAhVXjUsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgNVcDNSnPv/QLBBFToPHT1u3IucyDDbeaa3SjHJNShSWHSVok
-	Qy94MY+maOeY0oiguEPNB61VIQlWUfzda7QVjsGqT+XGTwqWBMfqlxFcrbRLTk7EWXcaCNtphIF
-	0yM3KGB8Luu+mo2fyqVyW39LNTHIKqTA=
-X-Gm-Gg: ASbGncuEn18NhCemrw9Ht6TGYjl5KY3Nx3tadavFZ3byQ1Iju0oq0EPrmf6g8gPwr1b
-	Gv79Jloz8Az888s5jKdIaAOlvW39b8XJ6Mgje54SNwyfOazDMhCuTmk11QOdbXG2VJqLYpW8xvj
-	KbLPGb7tmqZtaGzX087/nQtjvreaDt6HJOZ/LT7hRvSHXGLzWH6xzZv894i4prn37LWImYWtRO8
-	LkZpPtR5qsTKUgZmIeyLxGTmX6IUmfLlHTmeAz5Jon5FV6cGIg73pqlPD+iakNfwZui
-X-Google-Smtp-Source: AGHT+IHZNzDVN6agCpPrO/1izdrx2SionIJFnZk7hW0l+PesIrTne546MtffhxsmTfyBcUvnloV59yHjTXtPoQj0VMs=
-X-Received: by 2002:a05:622a:996:b0:4e6:ecae:b83f with SMTP id
- d75a77b69052e-4e6ecaec1c4mr333015881cf.39.1760387232594; Mon, 13 Oct 2025
- 13:27:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760387350; x=1760992150;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lt6afCrReoA0JetcvxGjdIUfBcXG8UG+CLV9XrNIQkA=;
+        b=L5p/b4wKvClgika6XY1cLgflU7lbrYtvvrXZKOSizzey7BTO7FrROznnhZET7zt6zT
+         LC4qZ9aPDwjOnHrpMnu2MAOjV9Z615O+YPMo7ifq+/BQySUKc15hBDr20FK3qBSRq1OU
+         cGGBn/dvZZHMGwl73xnk/7qJi/Pw6nE1uHhpTegEifiU8GZ+sAHVsPsiKTxetHh0V1ED
+         kzin0UqLhb2DkfUFc9Yqan+9FTaODfLeYpVT0ASbhsIatBr+GIu3LrqqFR5XCGylWF/G
+         sqf/TJefDdph1GiLDKehSQuXoTOqOpuxzU0Vd7C3/QJ8ilegZ/d0wK9qLQPIbndpHl8l
+         u0HA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDlJ0IfqcldbxXLBBmUIYLCMMJeQfspaAxcAykLHkb74H+0NwAsSWJ0zRWZW/rh3mwtUk3hHN2OKHIUNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYGbICEeNpnp1QYhXVdcEiXaV+CybwA3+Ki6G312IV1BFlNQuC
+	J7n8fwVviB6tmv1Po6PvzuBNxO/vaamD/IGBG1ymE6ZsHs8zX/xkLIaYlkX/H7NoY4w=
+X-Gm-Gg: ASbGnctpOs3UWJDI7hsOM8EjS71wfiUu0tPyL+gZiDNGZu4r4p4iZk8LCja+p2nq3GZ
+	h0mTR/xc4HYZsqKiKnK5gbRW6picEPbCBwW3r9lUUrh2aozfBW9Cc/JClnYJtOSPM2ONE4JmQIT
+	aQXBKUqQ/R9OBV12YOoq9/LIH9l226U/X5p4zBxe+H9VNOFUwgu0WnzdZUDZe84Ka+BGUrCY/GB
+	e4M8nCL1WwWsWSV9iWVxm1jpix/f/5gr4hF+qJirKASZoBJ0smaUvH4YSOUAmo9ezK/MNXUljnK
+	f8JyNt2I7RgVULBWk2rSN4fEKah/ExrBLUKhViIWAPIYCw8d4WzVEOF4LGyKIdFgN4jroZbA9Mz
+	OThqy/9rvSDMwzb/ZUEE1KgqRPLryKaPreeK5WiQU78U=
+X-Google-Smtp-Source: AGHT+IFAEeOFIgQZsxlTo4ZFQ5S1ZlK+bDlxrvpTDcY38SUWGb8pL41ejoZdXoSRHGQSxWChB02oUg==
+X-Received: by 2002:a05:6602:6d14:b0:926:a24b:dce5 with SMTP id ca18e2360f4ac-93bd18a2e74mr2738341339f.8.1760387349638;
+        Mon, 13 Oct 2025 13:29:09 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e25a97830sm418857239f.23.2025.10.13.13.29.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 13:29:09 -0700 (PDT)
+Date: Mon, 13 Oct 2025 15:29:08 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <pjw@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Himanshu Chauhan <hchauhan@ventanamicro.com>, 
+	Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>, 
+	Atish Patra <atishp@atishpatra.org>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: Re: [PATCH v7 0/5] riscv: add support for SBI Supervisor Software
+ Events
+Message-ID: <20251013-c5eb76e005d982fa4c8ce2bc@orel>
+References: <20250908181717.1997461-1-cleger@rivosinc.com>
+ <86817f9a-c601-81e8-b95b-0f2396275f95@kernel.org>
+ <628d357c-f462-4dc8-92f2-99006b73e0c7@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com> <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
-In-Reply-To: <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 13 Oct 2025 13:27:01 -0700
-X-Gm-Features: AS18NWBpmt7G8mJLvyRGq_BVSs_ov0ThJXHiqkT3BmFkjrMzauVDQCOzZ0CpmUg
-Message-ID: <CAJnrk1ZCXcM4iDq5bN6YVK75Q4udJNytVe2OpF3DmZ_FpuR7nA@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Brian Foster <bfoster@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <628d357c-f462-4dc8-92f2-99006b73e0c7@rivosinc.com>
 
-On Mon, Oct 13, 2025 at 1:16=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
-wrote:
->
-> On 10/13/25 15:39, Miklos Szeredi wrote:
-> > On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> >> My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
-> >> similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
-> >> that it hasn't been invalidated.  If old_mtime is invalid or if
-> >> FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
-> >> cache is not invalidated.
-> >
-> > [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
-> > Link to complete thread:
-> > https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.=
-com/#r]
-> >
-> > In summary: auto_inval_data invalidates data cache even if the
-> > modification was done in a cache consistent manner (i.e. write
-> > through). This is not generally a consistency problem, because the
-> > backing file and the cache should be in sync.  The exception is when
-> > the writeback to the backing file hasn't yet finished and a getattr()
-> > call triggers invalidation (mtime change could be from a previous
-> > write), and the not yet written data is invalidated and replaced with
-> > stale data.
-> >
-> > The proposed fix was to exclude concurrent reads and writes to the same=
- region.
-> >
-> > But the real issue here is that mtime changes triggered by this client
-> > should not cause data to be invalidated.  It's not only racy, but it's
-> > fundamentally wrong.  Unfortunately this is hard to do this correctly.
-> > Best I can come up with is that any request that expects mtime to be
-> > modified returns the mtime after the request has completed.
-> >
-> > This would be much easier to implement in the fuse server: perform the
-> > "file changed remotely" check when serving a FUSE_GETATTR request and
-> > return a flag indicating whether the data needs to be invalidated or
-> > not.
->
-> For an intelligent server maybe, but let's say one uses
-> <libfuse>/example/passthrough*, in combination with some external writes
-> to the underlying file system outside of fuse. How would passthrough*
-> know about external changes?
->
-> The part I don't understand yet is why invalidate_inode_pages2() causes
-> an issue - it has folio_wait_writeback()?
->
+On Mon, Oct 13, 2025 at 08:53:01AM +0200, Clément Léger wrote:
+...
+>  I would have prefer a bit more reviews and testing before going through
+> since SSE can be quite intrusive at execution time (even though the
+> classic IRQ path should not be impacted, I expect mostly feedback/bugs
+> from the SSE handling path itself). We'll see in a few days if people
+> find such problems.
 
-This issue is for the writethrough path which doesn't use writeback.
+I've been planning to compare this series with the code we merged into
+kvm-unit-tests since the kvm-unit-tests series is where I put the effort
+into reviewing wrt the spec, etc. On a skim of this series I see several
+similarities with the kvm-unit-tests code so I should try to actually do
+that comparison exercise, but I'm not sure when I'll get the time...
 
 Thanks,
-Joanne
->
-> Thanks,
-> Bernd
->
+drew
 
