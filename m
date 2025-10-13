@@ -1,98 +1,104 @@
-Return-Path: <linux-kernel+bounces-850231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBE1BD24EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E781BD2443
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07DB3B7E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979693C43ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A98B2FD7D3;
-	Mon, 13 Oct 2025 09:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29FA2FD7A3;
+	Mon, 13 Oct 2025 09:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b="KWZmnklH"
-Received: from mail3.ecloud.global (mail3.ecloud.global [135.181.139.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W6437GWE"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6E22E7196
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=135.181.139.185
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760347985; cv=pass; b=cPlDwqMWddIpKnOB/Eu0UsNX5g7xxDXmFQ8/xSeZ+Jda4B9oBUjqYm40GqMyj4aSdsHICo9Bi54G7NKB5vqocPxkDd/P/C7guXARHXRhpCAzFiRy8Gq2qn/wmBi9rSoZh6GFJ1utYNzV0oMGiS/y9BHrt43irhsqU3Nfwxk2BPk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760347985; c=relaxed/simple;
-	bh=7e4oPSbyT6o1XKtkgDqQchHA30cNRFihW0o+KCSVfM0=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc; b=FKN5TGM99d2/ZYL+1YCm6gOX80+NxlRNYSVB7mMSJQtcXIT0+UxbBQ4ohwGpx30fHx0LsR2gCKh76AntJoUK2YW6Xi+T2Nznul76f5DguIURlxVnv0KQrPqFoz/5oDk0ykkWfXxy1NNmDWXN7o9gLoXi1LCwN92uf44OwULWaxM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io; spf=pass smtp.mailfrom=murena.io; dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b=KWZmnklH; arc=pass smtp.client-ip=135.181.139.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=murena.io
-Received: from authenticated-user (mail3.ecloud.global [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail3.ecloud.global (Postfix) with ESMTPSA id 3988688A3EC;
-	Mon, 13 Oct 2025 09:22:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io; s=mail3;
-	t=1760347320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7e4oPSbyT6o1XKtkgDqQchHA30cNRFihW0o+KCSVfM0=;
-	b=KWZmnklHrgb53JpNCiU46XtaJg4zhgannNk2NRAkhanaIXcUrRdg9OCwx5WFf20Un+jGUn
-	XwOFcrLl1QQF/qN+mwIy58sIwn1dhR8+jFcSVrP6CDRnCtugphqkfaDfNsGXyqJDb8+yKP
-	0TNR9KUDxj7vKZ3J6jgAsoE0ffjkPA0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io;
-	s=mail3; t=1760347320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7e4oPSbyT6o1XKtkgDqQchHA30cNRFihW0o+KCSVfM0=;
-	b=BrzcjlUU3iNXAcHY+ElA6LJFefQR08+H1hXRQJRcng3/dP2w6jWjScGktlBbof8nhH5oFC
-	0s2lgzMiVKywXlXNrUBwHgHnV1aXr1NlW//J1Z1SskROKnaKQSckQitmms4U3GQhD/vrNa
-	vkS+UDF0drWoxNoG8EkZLtWOnWeMgYU=
-ARC-Authentication-Results: i=1;
-	mail3.ecloud.global;
-	auth=pass smtp.mailfrom=craftfever@murena.io
-ARC-Seal: i=1; s=mail3; d=murena.io; t=1760347320; a=rsa-sha256; cv=none;
-	b=PwxP0AJIGQ/zfae6OZPyxKRCEAvpNf8EfcnkrLjQIBKFO2tS2RnKuNHcH5drsPOS9Z1VhZ
-	O7NVGyHPg8bPUnXFEb+uvNtlzDvXRUz/0yXFrSTpP5uJFD83/3kfXOcg9kbSZPUHwKwHjL
-	I40Fy8Kl5ivXS/7kQUO8jMXV5qtZAzg=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62D32FD1C5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760347348; cv=none; b=NovgrLtSMjsYjxTx1vKoj97U7t+B8sTUdoqMLJY8SoIv+hXR09g2mKc2k42FP1/XWuZS7zSlAPlDOlBkh9P9p2SzMIHo8WJTfOhjxW1HTxpBxbb15ePjiU9rOH7Cxyptw+k7XKLNQVdpLTF9z9Q/EW8uM5RLn/j3z5QGz4vAcxo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760347348; c=relaxed/simple;
+	bh=YcL+pfwHaciAhA+DIE3esJzDqXvZMrvSN+Utrx9QEv0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tW6Kmi0qw7VTxWwll5KkEOEsu77QVpoSyLlz/Y6Wf1rXYHUY89fmuLoeqv6ucYTjkNrZKnmegcI0IKjwKk1yIcaVE3O8prWFAjzKz3WIdzxyIuu3nsKVVT5t3zHO6nzsK9e77a2dQnoA/Fdyfa6dm86hAL9yHpR/GdJCeGua4jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W6437GWE; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42558f501adso3182884f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760347345; x=1760952145; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQVd9PQAMr1vRmq9PA7Kb7qWQrANWRTDb6YrEyD4+/0=;
+        b=W6437GWEvEw7fPLxJWpDAjGCreJ/JnP3hKC8alR22Tc8Lvm9D3Q+Gd5GoGikdDrUVA
+         D/BI09RpRIzAIJ9El+tyOAQ5pONtfWMQBDt260BcYnnf6+wLL8InKBYCP3XAJHgSOmbq
+         cxF/dJEM9pZdZ3voNssVPB82jZfrfNoglfKP6C3755Zyn1aVZdyWG9mOdqWTX4CgKIIr
+         /UbveKPyj/xI4GevQzsQJnJGQIqxi5M589qIM+qtpRNvsX563mxW3pTa8MVcwFGiwbe0
+         NE2BGQXzI04trz1YbK0HWP8cOULOuZFt050UuY8ziGjWlc13goz8IghTR0FF1p4PM2fF
+         Edgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760347345; x=1760952145;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQVd9PQAMr1vRmq9PA7Kb7qWQrANWRTDb6YrEyD4+/0=;
+        b=ThuJwXtplDJr6cY99ZQYvGmGtpRqU6xhdKGL4VyJ5ks3f56e67NEOwoiaOLtMqfJdE
+         MIGSubg7cmZnwtZk/EnMF4piCLs7QtngUSV6rsVOD3NHvlDEk4xaPIKZ56XFhUkJZJl3
+         EvFwF5M+DZUcXVeAuE/6ukqjLx7riuROsqk+S3vUoA/ff5jZu5v7JTZrOt3MXbbusUTk
+         UhZ/UGK4VzWcMrwXFYybfKC5r5yIjg1s++8BnDoOBEpBEIY5zfVNNC2e9O4ZiQy/3QtI
+         x6pWZjW/nBuwaj5TkWglfupNeKJEDN01LvZobjE0mRivVcVdHy5NieNxesJ/FZwtbLVm
+         BDLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZMjwWq/JyU9MkOgk4MuVbOSRJJHvgSQrAiD8MDqfTzkqZSpQ+sD/mvgveddaAVX4JVDvGAGzDZZSIQWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXurUqXF9RVXSJ3zBy+4jJ4KTmdIg/zvoixIdVzIS3ZMrUvXG+
+	H90UEKor53v8nYt7R862v5BgCwQqbCE5AQIx0bmwY19aJxkenTCVSGTzcSbBXLBaQnvEkpNjP01
+	yNoYvOU8MOdZz9C1rPQ==
+X-Google-Smtp-Source: AGHT+IFhyQPEWSetqelza7/DFTbXzpX+DQ4Q5PhuLc71xjCRewxMXg+EPLK2L6PIkVQZIbscZLpNoWZoH5pGl7Q=
+X-Received: from wrue9.prod.google.com ([2002:a5d:4e89:0:b0:40f:b976:8cba])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:22c7:b0:425:8546:6870 with SMTP id ffacd0b85a97d-42667177d60mr12376827f8f.21.1760347345039;
+ Mon, 13 Oct 2025 02:22:25 -0700 (PDT)
+Date: Mon, 13 Oct 2025 09:22:23 +0000
+In-Reply-To: <DDH1DE35H7L0.1Z2R655P701HR@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Mon, 13 Oct 2025 09:22:00 +0000
+Mime-Version: 1.0
+References: <20251012145221.172116-1-markus.probst@posteo.de>
+ <20251012145221.172116-2-markus.probst@posteo.de> <DDGHGF4XOJQG.2MVGBMPK0KUQE@kernel.org>
+ <e550b0862e9ea87e50688d1ec8f623638d170a3a.camel@posteo.de>
+ <DDGNXV9KS3RS.2WHS4OOYM6DOP@kernel.org> <2a31fcd045582382987c8c1da7c4b7d58a1dff61.camel@posteo.de>
+ <DDH1DE35H7L0.1Z2R655P701HR@kernel.org>
+Message-ID: <aOzEz23fWxHZbvdh@google.com>
+Subject: Re: [PATCH v4 1/2] rust: add basic Pin<Vec<T, A>> abstractions
+From: Alice Ryhl <aliceryhl@google.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Markus Probst <markus.probst@posteo.de>, Danilo Krummrich <dakr@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	bjorn3_gh@protonmail.com, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-From: craftfever@murena.io
-Message-ID: <020cf8de6e773bb78ba7614ef250129f11a63781@murena.io>
-TLS-Required: No
-Subject: [Regerssion] [KSM] KSM CPU overhead in 6.16+ kernel compared to
- <=6.15 versions ("folio_walk_start" kernel object overhead)
-To: akpm@linux-foundation.org, david@redhat.com, xu.xin16@zte.com.cn,
- chengming.zhou@linux.dev
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev
 
-I've posted about that problem already on bigzilla (#220599), but maintai=
-ners asked to post issues on maillist.
-The problem with freezes during KSM page scanning with certain processes =
-like Chromium with huge virtual memory size amount was fized in 6.17.1 co=
-mpared to 6.16.x/6.17, but problem with huge CPU overhead is present ther=
-e. Compared to Linux <=3D6.15, where the overhead is much lighter anad th=
-ere no much CPU consuming during KSM scanning, there is "folio_walk_start=
-" kernel object is present (which I reviewed with "perf top" command) tha=
-t is not present in versions <=3D6.15 during KSM work and which is in wor=
-k starting from Linux 6.16. This method very resource-consuming compared =
-to algorithm used in <=3D6.15 versions. Is there a kernel parameter to di=
-sable it or it needs more optimization?
+On Mon, Oct 13, 2025 at 10:03:19AM +0200, Benno Lossin wrote:
+> And `Vec::pin_init_slice` would have the following signature:
+> 
+>     fn pin_init_slice<T, I, E>(this: Vec<I>, flags: alloc::Flags) -> Result<Pin<Box<[T]>>>
+>     where
+>         I: PinInit<T, E>,
+>         Error: From<E>;
 
-I'm using MemoryKSM setting in systemd in user@.service for KSM process m=
-erging and it very light on <=3D6.15 ver., but CPU consuming on 6.16+ (6.=
-17.1 without freezes) due to reasons said above.
+We already have Box::pin_slice().
+
+Alice
 
