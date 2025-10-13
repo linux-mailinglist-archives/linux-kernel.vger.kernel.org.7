@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-849935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E479BD161D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:36:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CCDBD1620
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5904B4E3547
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:36:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456EE3BF457
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF61D2BE7DB;
-	Mon, 13 Oct 2025 04:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H0vKBEvu"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001F6232785
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F212BEFF3;
+	Mon, 13 Oct 2025 04:36:45 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB322BE7B2
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760330199; cv=none; b=KKaCmuupcoIc9x6eI9L2srID06e3awpp6AG+iBx1YneHk/tfgFtYNM86V4diLwjek13KZ4QpbE6IP15ksoSi0LeDDxFPAD/Lxc1GPnDoBlZB1hfxyZ09vUOGljiz0MWDDbZC9ohinHXDCbJHk62hfSGVOpnoFAlGtYla1v/jVt4=
+	t=1760330204; cv=none; b=tuHRU+pNyXzR2saC1K2bxewWAkTPHAJvA+OcjSyJEh5juqlIjPK+hSZFTu7BKHP6S8ZLv/+fTZ1LovGdAGTWBiMwFQjFFLRBlUmkej+VY6ixQTG8DlphHtMBB7JbJ9K0pZ6KLuYlOHwJpwBXcReQkfAUcDMN3GiT4yEFNxzW6lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760330199; c=relaxed/simple;
-	bh=7KA+d1gJCWsD4GhWE0t1thjF0Uz/53nXOVwpE+B05sY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nTwDLQFnlE3/e1mhaK6fEH8pVB4z4m7WTDtyB0wy6ju5/BIViOD1AKpfWC/3GVbVZs1rdjEOzCyzbYSybrTDnM229Isp1E9V5SIPZ/29Wxe23vPkP6oFVCwL8UkpqEt+V6bCY1B0EsoZla4h26u/fmnV56vHQ6g5UC/Hrvw1HQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H0vKBEvu; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59D4a3sA1177000;
-	Sun, 12 Oct 2025 23:36:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760330163;
-	bh=MR5ug0YxD7IGZ4Inwcalzi0VvEB2St2aBI6pB9aDRXg=;
-	h=From:To:CC:Subject:Date;
-	b=H0vKBEvuohPctSuZpezBFmfqQWJJcd8xr9Vg7c5rXnTAtuSpO4e5xwB872U5Fa+14
-	 ll+aA2VCrTfA224kSnFf3gfFX+j3KkjW2wRPHu45WqkaqluIKbK2mSIIYRdVe7gsFs
-	 sAEtkRxXdRZAqU7Ia7Ggv8pnVXdH8ueuHEQooLso=
-Received: from DFLE212.ent.ti.com (dfle212.ent.ti.com [10.64.6.70])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59D4a3ab2692860
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 12 Oct 2025 23:36:03 -0500
-Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE212.ent.ti.com
- (10.64.6.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 12 Oct
- 2025 23:36:03 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE211.ent.ti.com
- (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sun, 12 Oct 2025 23:36:03 -0500
-Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.169])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59D4Zxxx1215459;
-	Sun, 12 Oct 2025 23:36:00 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <13564923607@139.com>,
-        <13916275206@139.com>, Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v1] ALSA: hda/tas2781: Set tas2781_hda::tasdevice_priv::chip_id as TAS5825 in case of tas5825
-Date: Mon, 13 Oct 2025 12:35:55 +0800
-Message-ID: <20251013043555.1871-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1760330204; c=relaxed/simple;
+	bh=h8Fe6P63PQ7RaRnQU/Zy7yRzxH5ISIvleVFTbzMgXyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GV8hKMZWsChjKF80/DU5L56OYADal06UJEFHtlnh71RMh0a+uMhsYykGXxg55+TJZxw6qHW48kscq7WN9kSGVHMhumxInK0M3uNHgk1lje+VmTmW1jVsz8XfCywHmNn0vix1gkxztW05uH0Raqaxe9z4TwSvjZfuXJkS2p7XID8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-b4-68ec81d4371c
+Date: Mon, 13 Oct 2025 13:36:31 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Yunseong Kim <ysk@kzalloc.com>, Hillf Danton <hdanton@sina.com>,
+	akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
+ folio_wait_writeback()
+Message-ID: <20251013043631.GC6925@system.software.com>
+References: <20251002081612.53281-1-byungchul@sk.com>
+ <20251002220211.8009-1-hdanton@sina.com>
+ <20251003004828.GA75385@system.software.com>
+ <20251003005230.GB75385@system.software.com>
+ <3b66d603-543d-4616-92a5-9e6e32f116be@kzalloc.com>
+ <deb6c0a2-e166-4c91-9736-276c9f1741c9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <deb6c0a2-e166-4c91-9736-276c9f1741c9@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsXC9ZZnoe6VxjcZBtMP6FvMWb+GzeLr+l/M
+	Fgd+PmexuLxrDpvFvTX/WS3mfjG0+LJ6FZsDu8eaeWsYPTZ9msTusfD3C2aPEzN+s3i833eV
+	zWPSC3ePz5vkAtijuGxSUnMyy1KL9O0SuDL+Hd/EWPCUvWLlsqwGxm62LkZODgkBE4lvO1ew
+	w9jHrr8Gs1kEVCWOLJkNZrMJqEvcuPGTGcQWEdCQ2NS2Acjm4mAWuMQosXRtJ1hCWCBcYnr7
+	ORYQm1fAXGLFrjmMIEVCAsuZJL59f8YIkRCUODnzCVgRs4CWxI1/L5m6GDmAbGmJ5f84QMKc
+	AnYSm+9vB1ssKqAscWDbcSaQORICe9gkruy9DHWppMTBFTdYJjAKzEIydhaSsbMQxi5gZF7F
+	KJSZV5abmJljopdRmZdZoZecn7uJERjsy2r/RO9g/HQh+BCjAAejEg9vxu7XGUKsiWXFlbmH
+	GCU4mJVEeM2r32QI8aYkVlalFuXHF5XmpBYfYpTmYFES5zX6Vp4iJJCeWJKanZpakFoEk2Xi
+	4JRqYFzx91jHTpGov1Yf2c1bfbsnG0VdZap9vcRhxhmBHAsxVqPjHVMZF095zb+p4lWD4MW8
+	K+IT98fcVapa8OviSvuz3BnNf5X/KHOcDOK+b1T0gNnvjHbfS8U7y/mWOR5SOnpMZAvT5Kx+
+	qYNu/+5P3tZ1MO7PUQHOSrO2S6HaeefiTtg8jOG4M1GJpTgj0VCLuag4EQDaKre4cgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXC5WfdrHul8U2GwdHzShZz1q9hs/i6/hez
+	xYGfz1ksDs89yWpxedccNot7a/6zWsz9YmjxZfUqNgcOjzXz1jB6bPo0id1j4e8XzB4nZvxm
+	8Xi/7yqbx6QX7h6LX3xg8vi8SS6AI4rLJiU1J7MstUjfLoEr49/xTYwFT9krVi7LamDsZuti
+	5OSQEDCROHb9NTuIzSKgKnFkyWwwm01AXeLGjZ/MILaIgIbEprYNQDYXB7PAJUaJpWs7wRLC
+	AuES09vPsYDYvALmEit2zWEEKRISWM4k8e37M0aIhKDEyZlPwIqYBbQkbvx7ydTFyAFkS0ss
+	/8cBEuYUsJPYfH872GJRAWWJA9uOM01g5J2FpHsWku5ZCN0LGJlXMYpk5pXlJmbmmOoVZ2dU
+	5mVW6CXn525iBIbusto/E3cwfrnsfohRgINRiYc3Y/frDCHWxLLiytxDjBIczEoivObVbzKE
+	eFMSK6tSi/Lji0pzUosPMUpzsCiJ83qFpyYICaQnlqRmp6YWpBbBZJk4OKUaGA8vSl52Y6NP
+	j4nbeZczotd2zbWXuZVxm8snXlHkm80926W8F61z+HYeSpqWb76LbfNWg/9/NRJ2fltm4eax
+	/mSCyWcjsdwD25Kv8LXm3jkl8OrGXAGxMzrLpVh7ag7PvvOelyHqq8rR6De5myaYZaewlP2s
+	+5h49ee+w3sv5PX+viQcLhkhWKHEUpyRaKjFXFScCAA6FUjaWQIAAA==
+X-CFilter-Loop: Reflected
 
-The software reset for TAS5825 is different form other chips, as it will
-set as 0x11 instead of 0x1 during reset in the tasdevice_reset(). So set
-tas2781_hda::tasdevice_priv::chip_id as TAS5825, tasdevice_reset() can
-work correctly.
+On Tue, Oct 07, 2025 at 09:04:59AM +0200, David Hildenbrand wrote:
+> On 07.10.25 08:32, Yunseong Kim wrote:
+> > Hi Hillf,
+> > 
+> > Here are the syzlang and kernel log, and you can also find the gist snippet
+> > in the body of the first RFC mail:
+> > 
+> >   https://gist.github.com/kzall0c/a6091bb2fd536865ca9aabfd017a1fc5
+> > 
+> > I am reviewing this issue again on the v6.17, The issue is always reproducible,
+> > usually occurring within about 10k attempts with the 8 procs.
+> 
+> I can see a DEPT splat and I wonder what happens if DEPT is disabled.
+> 
+> Will the machine actually deadlock or is this just DEPT complaining (and
 
-Fixes: 7ceb69ca82b1 ("ASoC: tas2781: Add tas2118, tas2x20, tas5825 support")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
----
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 1 +
- 1 file changed, 1 insertion(+)
+Of course, it was an actual deadlock, not just DEPT splat.
 
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-index a126f04c3ed7..0357401a6023 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-@@ -669,6 +669,7 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
- 		 */
- 		device_name = "TXNW5825";
- 		hda_priv->hda_chip_id = HDA_TAS5825;
-+		tas_hda->priv->chip_id = TAS5825;
- 	} else {
- 		return -ENODEV;
- 	}
--- 
-2.43.0
+However, even though this patch resolved the acutal hang issue, it
+looked mismatched between the watchdog hang report and the DEPT report.
+We are now re-checking it using the reproducer.
 
+	Byungchul
+
+> probably getting something wrong)?
+> 
+> --
+> Cheers
+> 
+> David / dhildenb
 
