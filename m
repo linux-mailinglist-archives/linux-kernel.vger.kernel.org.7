@@ -1,60 +1,54 @@
-Return-Path: <linux-kernel+bounces-851401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16F2BD65C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:31:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7400BD65CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9715F4EEA57
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:31:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7A154EE989
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5C52DE1F0;
-	Mon, 13 Oct 2025 21:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2F12DE1E6;
+	Mon, 13 Oct 2025 21:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7zRxW/O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQ8AXQfr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C171EFFB7;
-	Mon, 13 Oct 2025 21:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBC2134BD;
+	Mon, 13 Oct 2025 21:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391068; cv=none; b=nWzyMNFI6eQNxY0sIpxxP0EBSHSjaoWfg60l+p5+DvmKZpZlGKW6C36idm5G2HGUffZZdHU2ZdtUliC1wjnidiZKrq3/FCgzUdr+/wZjUfHYPjybTIAcJCS3k++NbRjaBcwnQw7ZxR5fNUaU/3QdyY6BSLDHUhoCJimy131riZ8=
+	t=1760391077; cv=none; b=KIls3L1ulcaRXrCFXzNAsWesym0Zq6j6oYmA+82jprkpPE4wnx4M2APx0BNRQLKs+7oa2HNsqn5yFaHqWzDmZwqWhxZ80rZh2LyYqBYLS7eC/tQsn7hyokgFzfnmzJeS6e5mrFAigE7WccQ+Y6w+1q+ot1Xp+TUnlntGd+wcqt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391068; c=relaxed/simple;
-	bh=tm3f9QBVDbCyS+aclYeJleqzPEQAMHHJG+uDCCqQgJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oy+SGROprWg2gnI2kJxprD6Hr83NlLG9JKN/epdx6UA3RTa7/KSVLXv51YoEc94e2V8qBheSedUjJ7JDk+b/SEuZRaY0fsI+dBjYNl19i38PcVRJ1htt3rDqKYDTgRYaPkF1f2hXUuqC0NRRJCzYFo1BhcDCh7mAV3JHCi7S+Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7zRxW/O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E89C4CEE7;
-	Mon, 13 Oct 2025 21:31:07 +0000 (UTC)
+	s=arc-20240116; t=1760391077; c=relaxed/simple;
+	bh=CrWinxKED+CCWSwECbbyB6qKhfNCpqxMy3lPdpUdWaU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DY0fVdhffzw2+npeatsu4FkVnCMoSEJkLSiyiZowlSDmOXF7nLHujoG4vTVUMVt3ezuQaHRaOaq//oJFnJXQhdrWFDIfDbIYveya4XXvaeTkAXqcWJSnwvetGAbUdxHjKk5oVmHqmRBWmwZ3Pwb8zJl8EsXIKVGe96Vm2R9bano=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQ8AXQfr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0518DC4CEE7;
+	Mon, 13 Oct 2025 21:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760391067;
-	bh=tm3f9QBVDbCyS+aclYeJleqzPEQAMHHJG+uDCCqQgJ4=;
+	s=k20201202; t=1760391076;
+	bh=CrWinxKED+CCWSwECbbyB6qKhfNCpqxMy3lPdpUdWaU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=C7zRxW/OldpGB6bsfD/E8QfMMDozWGbpvrhvggrI6c16pX5nJxTeKG/l7I5jLnZ5A
-	 J7no10m9WIldGd2Nitpbb1L5TL9qRSiZK6+rLLJjmvN7nq9nlfhyiYrr50BOBrFPRM
-	 2SHf34MK8GLsHDtdMl/eVRyn6lSS7EOWHBd0/k0boegKSounp7DkKjQjR7Xz16bm29
-	 r8aChWUYAZKewzh7z2gb1yclPeiGFZsu3mLjftS5if+ERrktC88amEGljfI48nd+Re
-	 2gMkK1K2l6yzKWB8VByTV/Eps7ncrC619KJusYKsE6F3XsPdBizexLgd7R0y/UAMlv
-	 XzGVvNEELTFPA==
+	b=pQ8AXQfrUMz1ufS6fSWiFVWAsIaw/PGCSbdQWbgi+9jgXxlWNjYzHNH6hj4qxWVgE
+	 V/Ker9JbYB1u3hoAubbLgVeDawBiJkpP7on97fwxnoyZjuAuagTIhrDIhmoFVwFaDx
+	 VPyiuqLmUr4WhZoPDwuFivqj/qaxVpO/PTdxBd0i5QmfkInDJAliPXeRHiSkRHGV25
+	 6bhKr/mIbwqwxRLlu4GWrnPvj5pwIJ7lfyUQePsP47CwsjjR1XER+j2ReH4ThGVV3/
+	 j1jIrV32S31EFttvZWZogfLnaCRbh2Rm/Skm3HD+z1RDslDTogqcvJn7xBIyc9ZF9M
+	 5mgF+5Yp1nZUA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
+To: Jassi Brar <jassisinghbrar@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] dt-bindings: net: Convert amd,xgbe-seattle-v1a to DT schema
-Date: Mon, 13 Oct 2025 16:30:49 -0500
-Message-ID: <20251013213049.686797-2-robh@kernel.org>
+	Khuong Dinh <khuong@os.amperecomputing.com>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: mailbox: Convert apm,xgene-slimpro-mbox to DT schema
+Date: Mon, 13 Oct 2025 16:31:10 -0500
+Message-ID: <20251013213112.690055-1-robh@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,252 +58,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert amd,xgbe-seattle-v1a binding to DT schema format. It's a
+Convert APM X-Gene slimpro-mbox binding to DT schema format. It's a
 straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/net/amd,xgbe-seattle-v1a.yaml    | 147 ++++++++++++++++++
- .../devicetree/bindings/net/amd-xgbe.txt      |  76 ---------
- 2 files changed, 147 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml
- delete mode 100644 Documentation/devicetree/bindings/net/amd-xgbe.txt
+ .../mailbox/apm,xgene-slimpro-mbox.yaml       | 62 +++++++++++++++++++
+ .../mailbox/xgene-slimpro-mailbox.txt         | 35 -----------
+ 2 files changed, 62 insertions(+), 35 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/apm,xgene-slimpro-mbox.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mailbox/xgene-slimpro-mailbox.txt
 
-diff --git a/Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml b/Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml
+diff --git a/Documentation/devicetree/bindings/mailbox/apm,xgene-slimpro-mbox.yaml b/Documentation/devicetree/bindings/mailbox/apm,xgene-slimpro-mbox.yaml
 new file mode 100644
-index 000000000000..006add8b6410
+index 000000000000..815f08d61de8
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/net/amd,xgbe-seattle-v1a.yaml
-@@ -0,0 +1,147 @@
++++ b/Documentation/devicetree/bindings/mailbox/apm,xgene-slimpro-mbox.yaml
+@@ -0,0 +1,62 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/net/amd,xgbe-seattle-v1a.yaml#
++$id: http://devicetree.org/schemas/apm,xgene-slimpro-mbox.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: AMD XGBE Seattle v1a
++title: APM X-Gene SLIMpro mailbox
 +
 +maintainers:
-+  - Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
++  - Khuong Dinh <khuong@os.amperecomputing.com>
 +
-+allOf:
-+  - $ref: /schemas/net/ethernet-controller.yaml#
++description:
++  The APM X-Gene SLIMpro mailbox is used to communicate messages between
++  the ARM64 processors and the Cortex M3 (dubbed SLIMpro). It uses a simple
++  interrupt based door bell mechanism and can exchange simple messages using the
++  internal registers.
 +
 +properties:
 +  compatible:
-+    const: amd,xgbe-seattle-v1a
++    const: apm,xgene-slimpro-mbox
 +
 +  reg:
-+    items:
-+      - description: MAC registers
-+      - description: PCS registers
-+      - description: SerDes Rx/Tx registers
-+      - description: SerDes integration registers (1/2)
-+      - description: SerDes integration registers (2/2)
-+
-+  interrupts:
-+    description: Device interrupts. The first entry is the general device
-+      interrupt. If amd,per-channel-interrupt is specified, each DMA channel
-+      interrupt must be specified. The last entry is the PCS auto-negotiation
-+      interrupt.
-+    minItems: 2
-+    maxItems: 6
-+
-+  clocks:
-+    items:
-+      - description: DMA clock for the device
-+      - description: PTP clock for the device
-+
-+  clock-names:
-+    items:
-+      - const: dma_clk
-+      - const: ptp_clk
-+
-+  iommus:
 +    maxItems: 1
 +
-+  phy-mode: true
-+
-+  dma-coherent: true
-+
-+  amd,per-channel-interrupt:
-+    description: Indicates that Rx and Tx complete will generate a unique
-+      interrupt for each DMA channel.
-+    type: boolean
-+
-+  amd,speed-set:
-+    description: >
-+      Speed capabilities of the device.
-+        0 = 1GbE and 10GbE
-+        1 = 2.5GbE and 10GbE
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1]
-+
-+  amd,serdes-blwc:
-+    description: Baseline wandering correction enablement for each speed.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 3
-+    maxItems: 3
++  interrupts:
 +    items:
-+      enum: [0, 1]
++      - description: mailbox channel 0 doorbell
++      - description: mailbox channel 1 doorbell
++      - description: mailbox channel 2 doorbell
++      - description: mailbox channel 3 doorbell
++      - description: mailbox channel 4 doorbell
++      - description: mailbox channel 5 doorbell
++      - description: mailbox channel 6 doorbell
++      - description: mailbox channel 7 doorbell
 +
-+  amd,serdes-cdr-rate:
-+    description: CDR rate speed selection for each speed.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    items:
-+      - description: CDR rate for 1GbE
-+      - description: CDR rate for 2.5GbE
-+      - description: CDR rate for 10GbE
-+
-+  amd,serdes-pq-skew:
-+    description: PQ data sampling skew for each speed.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    items:
-+      - description: PQ skew for 1GbE
-+      - description: PQ skew for 2.5GbE
-+      - description: PQ skew for 10GbE
-+
-+  amd,serdes-tx-amp:
-+    description: TX amplitude boost for each speed.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    items:
-+      - description: TX amplitude for 1GbE
-+      - description: TX amplitude for 2.5GbE
-+      - description: TX amplitude for 10GbE
-+
-+  amd,serdes-dfe-tap-config:
-+    description: DFE taps available to run for each speed.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    items:
-+      - description: DFE taps available for 1GbE
-+      - description: DFE taps available for 2.5GbE
-+      - description: DFE taps available for 10GbE
-+
-+  amd,serdes-dfe-tap-enable:
-+    description: DFE taps to enable for each speed.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    items:
-+      - description: DFE taps to enable for 1GbE
-+      - description: DFE taps to enable for 2.5GbE
-+      - description: DFE taps to enable for 10GbE
++  '#mbox-cells':
++    description: Number of mailbox channel.
++    const: 1
 +
 +required:
 +  - compatible
 +  - reg
 +  - interrupts
-+  - clocks
-+  - clock-names
-+  - phy-mode
++  - '#mbox-cells'
 +
-+unevaluatedProperties: false
++additionalProperties: false
 +
 +examples:
 +  - |
-+    ethernet@e0700000 {
-+        compatible = "amd,xgbe-seattle-v1a";
-+        reg = <0xe0700000 0x80000>,
-+              <0xe0780000 0x80000>,
-+              <0xe1240800 0x00400>,
-+              <0xe1250000 0x00060>,
-+              <0xe1250080 0x00004>;
-+        interrupts = <0 325 4>,
-+                     <0 326 1>, <0 327 1>, <0 328 1>, <0 329 1>,
-+                     <0 323 4>;
-+        amd,per-channel-interrupt;
-+        clocks = <&xgbe_dma_clk>, <&xgbe_ptp_clk>;
-+        clock-names = "dma_clk", "ptp_clk";
-+        phy-mode = "xgmii";
-+        mac-address = [ 02 a1 a2 a3 a4 a5 ];
-+        amd,speed-set = <0>;
-+        amd,serdes-blwc = <1>, <1>, <0>;
-+        amd,serdes-cdr-rate = <2>, <2>, <7>;
-+        amd,serdes-pq-skew = <10>, <10>, <30>;
-+        amd,serdes-tx-amp = <15>, <15>, <10>;
-+        amd,serdes-dfe-tap-config = <3>, <3>, <1>;
-+        amd,serdes-dfe-tap-enable = <0>, <0>, <127>;
++    mailbox@10540000 {
++        compatible = "apm,xgene-slimpro-mbox";
++        reg = <0x10540000 0xa000>;
++        #mbox-cells = <1>;
++        interrupts = <0x0 0x0 0x4>,
++                     <0x0 0x1 0x4>,
++                     <0x0 0x2 0x4>,
++                     <0x0 0x3 0x4>,
++                     <0x0 0x4 0x4>,
++                     <0x0 0x5 0x4>,
++                     <0x0 0x6 0x4>,
++                     <0x0 0x7 0x4>;
 +    };
-diff --git a/Documentation/devicetree/bindings/net/amd-xgbe.txt b/Documentation/devicetree/bindings/net/amd-xgbe.txt
+diff --git a/Documentation/devicetree/bindings/mailbox/xgene-slimpro-mailbox.txt b/Documentation/devicetree/bindings/mailbox/xgene-slimpro-mailbox.txt
 deleted file mode 100644
-index 9c27dfcd1133..000000000000
---- a/Documentation/devicetree/bindings/net/amd-xgbe.txt
+index e46451bb242f..000000000000
+--- a/Documentation/devicetree/bindings/mailbox/xgene-slimpro-mailbox.txt
 +++ /dev/null
-@@ -1,76 +0,0 @@
--* AMD 10GbE driver (amd-xgbe)
+@@ -1,35 +0,0 @@
+-The APM X-Gene SLIMpro mailbox is used to communicate messages between
+-the ARM64 processors and the Cortex M3 (dubbed SLIMpro). It uses a simple
+-interrupt based door bell mechanism and can exchange simple messages using the
+-internal registers.
+-
+-There are total of 8 interrupts in this mailbox. Each used for an individual
+-door bell (or mailbox channel).
 -
 -Required properties:
--- compatible: Should be "amd,xgbe-seattle-v1a"
--- reg: Address and length of the register sets for the device
--   - MAC registers
--   - PCS registers
--   - SerDes Rx/Tx registers
--   - SerDes integration registers (1/2)
--   - SerDes integration registers (2/2)
--- interrupts: Should contain the amd-xgbe interrupt(s). The first interrupt
--  listed is required and is the general device interrupt. If the optional
--  amd,per-channel-interrupt property is specified, then one additional
--  interrupt for each DMA channel supported by the device should be specified.
--  The last interrupt listed should be the PCS auto-negotiation interrupt.
--- clocks:
--   - DMA clock for the amd-xgbe device (used for calculating the
--     correct Rx interrupt watchdog timer value on a DMA channel
--     for coalescing)
--   - PTP clock for the amd-xgbe device
--- clock-names: Should be the names of the clocks
--   - "dma_clk" for the DMA clock
--   - "ptp_clk" for the PTP clock
--- phy-mode: See ethernet.txt file in the same directory
+-- compatible:	Should be as "apm,xgene-slimpro-mbox".
 -
--Optional properties:
--- dma-coherent: Present if dma operations are coherent
--- amd,per-channel-interrupt: Indicates that Rx and Tx complete will generate
--  a unique interrupt for each DMA channel - this requires an additional
--  interrupt be configured for each DMA channel
--- amd,speed-set: Speed capabilities of the device
--    0 - 1GbE and 10GbE (default)
--    1 - 2.5GbE and 10GbE
+-- reg:		Contains the mailbox register address range.
 -
--The MAC address will be determined using the optional properties defined in
--ethernet.txt.
+-- interrupts:	8 interrupts must be from 0 to 7, interrupt 0 define the
+-		the interrupt for mailbox channel 0 and interrupt 1 for
+-		mailbox channel 1 and so likewise for the reminder.
 -
--The following optional properties are represented by an array with each
--value corresponding to a particular speed. The first array value represents
--the setting for the 1GbE speed, the second value for the 2.5GbE speed and
--the third value for the 10GbE speed.  All three values are required if the
--property is used.
--- amd,serdes-blwc: Baseline wandering correction enablement
--    0 - Off
--    1 - On
--- amd,serdes-cdr-rate: CDR rate speed selection
--- amd,serdes-pq-skew: PQ (data sampling) skew
--- amd,serdes-tx-amp: TX amplitude boost
--- amd,serdes-dfe-tap-config: DFE taps available to run
--- amd,serdes-dfe-tap-enable: DFE taps to enable
+-- #mbox-cells:	only one to specify the mailbox channel number.
 -
 -Example:
--	xgbe@e0700000 {
--		compatible = "amd,xgbe-seattle-v1a";
--		reg = <0 0xe0700000 0 0x80000>,
--		      <0 0xe0780000 0 0x80000>,
--		      <0 0xe1240800 0 0x00400>,
--		      <0 0xe1250000 0 0x00060>,
--		      <0 0xe1250080 0 0x00004>;
--		interrupt-parent = <&gic>;
--		interrupts = <0 325 4>,
--			     <0 326 1>, <0 327 1>, <0 328 1>, <0 329 1>,
--			     <0 323 4>;
--		amd,per-channel-interrupt;
--		clocks = <&xgbe_dma_clk>, <&xgbe_ptp_clk>;
--		clock-names = "dma_clk", "ptp_clk";
--		phy-mode = "xgmii";
--		mac-address = [ 02 a1 a2 a3 a4 a5 ];
--		amd,speed-set = <0>;
--		amd,serdes-blwc = <1>, <1>, <0>;
--		amd,serdes-cdr-rate = <2>, <2>, <7>;
--		amd,serdes-pq-skew = <10>, <10>, <30>;
--		amd,serdes-tx-amp = <15>, <15>, <10>;
--		amd,serdes-dfe-tap-config = <3>, <3>, <1>;
--		amd,serdes-dfe-tap-enable = <0>, <0>, <127>;
--	};
+-
+-Mailbox Node:
+-		mailbox: mailbox@10540000 {
+-			compatible = "apm,xgene-slimpro-mbox";
+-			reg = <0x0 0x10540000 0x0 0xa000>;
+-			#mbox-cells = <1>;
+-			interrupts =  	<0x0 0x0 0x4>,
+-					<0x0 0x1 0x4>,
+-					<0x0 0x2 0x4>,
+-					<0x0 0x3 0x4>,
+-					<0x0 0x4 0x4>,
+-					<0x0 0x5 0x4>,
+-					<0x0 0x6 0x4>,
+-					<0x0 0x7 0x4>,
+-		};
 -- 
 2.51.0
 
