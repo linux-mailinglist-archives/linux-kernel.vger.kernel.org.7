@@ -1,305 +1,143 @@
-Return-Path: <linux-kernel+bounces-849931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF23BD15AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:10:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9F3BD15DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7DF8A346EAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:10:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A4D5347811
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F36D281370;
-	Mon, 13 Oct 2025 04:10:26 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB571DE3B5;
-	Mon, 13 Oct 2025 04:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0EA1E9905;
+	Mon, 13 Oct 2025 04:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="OS5QkaqD"
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F104FBF0
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760328625; cv=none; b=E3Xr4Oc9P7KKNlJf7FtvdkHKm2oN/14zOkkd5QYMg2y505gCTFqqSUzB87a8eQzYNEWPq5hY4chrtpc5PoO1NamjRknHyonBc0IzY5BHSCus5CWCRUgv+xm08lB3Du5zkx6gvN5q3mGMVBo6WZDMrMXfqsyB52293/aTTelEV9g=
+	t=1760329004; cv=none; b=uWFk8K+Q6FAbqE6JnL3SktFYyo0nhRqtC1A8E3AdOBVX1v+Zt9SjKP/FtLmyju0DLjNFNiCwjqu+Axuq4pXmR92DT6aq8WKQKNYK8AW4M/F+ShqCQ6lkNh+EJpvzL7AGJRiQFzE+pUNrAwvI3rGvqQJS++J+U3FlnPWddhKnzYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760328625; c=relaxed/simple;
-	bh=NkvTVXXL+fACXOsmFZvvzCVbkAPreCuUfACe/tKiu5k=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WFl/auZ+PGS5mv1Kjn3A28AFA+wRNtfFXJdQ1g318GpGJZq6ECbDxzCnyUsLRY7zcuECqdUOB6hDu+L6YNL3dn2JgJh3Cq9fZ1DW147n4yNYLZER4rGEqa4jz278jBeyaKSicKuI3ZU+QpU4QuAxGicsyC+cQUJ+SpQDHZ8jjOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxVNCqe+xotHAVAA--.45647S3;
-	Mon, 13 Oct 2025 12:10:19 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJAxfcGke+xoJxXdAA--.41163S3;
-	Mon, 13 Oct 2025 12:10:14 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: KVM: Add AVEC support
-To: gaosong <gaosong@loongson.cn>, chenhuacai@kernel.org
-Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev, kernel@xen0n.name,
- linux-kernel@vger.kernel.org
-References: <20251010064858.2392927-1-gaosong@loongson.cn>
- <39779e6d-2f09-4ee9-e5e0-97fc09efbbf5@loongson.cn>
- <a2d41419-2268-c041-9858-9287056d7f31@loongson.cn>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <5e83f343-7da1-3235-d681-0d5b8816d1b9@loongson.cn>
-Date: Mon, 13 Oct 2025 12:07:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1760329004; c=relaxed/simple;
+	bh=8ja+TJqGvLeNIMgD9u2PTZoJCpyPPZQ22s1Q/sy/37g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d4JKTDXT8LSc1HeYHlzm1n3A8Hmof2RZIh0Fv0yVvbM658/VObP0SfEvGPrLpMVHdrYdhczRqbsTK8eHpjoQfjFI2LRikBXjnZMiwDic/eRrpz1GlDwNPElCnOnqYceBs0XFzDUPZhFYnVgQvE2SK1hhWdrhgn6MmLRRqnCwCpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=OS5QkaqD; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=LKAFH59CbQyepEzpm1HPlJx8KhoAqmWuzmeytifxrvM=;
+	b=OS5QkaqDosO3GrDu1jOEC4SD20IOt7dwm28/90MrTUxz62JvZp8saTOTXMcJogSh726P2MujG
+	rwwwpmFI4aZibjX7IiTpvXsCRqZgHPyIkLYX7t7IarMxNf35JRm6o87PNcm8ezjD4OnbJV7L+xQ
+	mkW6seR0ua2DnZc+2O4zRYo=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4clPDD6tkRz1cyQ3;
+	Mon, 13 Oct 2025 12:16:12 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id D84721A0171;
+	Mon, 13 Oct 2025 12:16:31 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 13 Oct 2025 12:16:31 +0800
+Message-ID: <62036acc-04f3-4dec-98c9-343def13d3c4@huawei.com>
+Date: Mon, 13 Oct 2025 12:16:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a2d41419-2268-c041-9858-9287056d7f31@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] erofs: fix crafted invalid cases for encoded extents
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, <linux-erofs@lists.ozlabs.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Robert Morris <rtm@mit.edu>, Robert
+ Morris <rtm@csail.mit.edu>
+References: <2cda3cc5-f837-4627-9587-051ed10839b9@linux.alibaba.com>
+ <20251012135925.158921-1-hsiangkao@linux.alibaba.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxfcGke+xoJxXdAA--.41163S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWfGw43tryrtr1kKrWfJr1fGrX_yoWDXw1Dpr
-	1kAFWDWrWrGrn7tr1UJFn0vryUXr18Kw17Jr1UtFy8Jr47Jr1Yqr40gryqgF1UJw48JF1I
-	yr15CrnrZFn8JwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjwZcUUUUU=
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20251012135925.158921-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 
 
 
-On 2025/10/13 上午11:18, gaosong wrote:
-> 在 2025/10/11 上午9:29, Bibo Mao 写道:
->>
->>
->> On 2025/10/10 下午2:48, Song Gao wrote:
->>> Add cpu_has_msgint() to check whether the host cpu supported avec,
->>> and restore/save CSR_MSGIS0-CSR_MSGIS3.
->>>
->>> Signed-off-by: Song Gao <gaosong@loongson.cn>
->>> ---
->>> Based-on: 
->>> https://patchew.org/linux/20250930093741.2734974-1-maobibo@loongson.cn/
->>> v2: fix build error.
->> It is not necessary based on this patch, you can base it on master 
->> branch. The later merged patch need based on previous version in general.
->>
-> Got it.
->>>
->>>   arch/loongarch/include/asm/kvm_host.h |  4 ++++
->>>   arch/loongarch/include/asm/kvm_vcpu.h |  1 +
->>>   arch/loongarch/include/uapi/asm/kvm.h |  1 +
->>>   arch/loongarch/kvm/interrupt.c        |  3 +++
->>>   arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
->>>   arch/loongarch/kvm/vm.c               |  4 ++++
->>>   6 files changed, 30 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/loongarch/include/asm/kvm_host.h 
->>> b/arch/loongarch/include/asm/kvm_host.h
->>> index 392480c9b958..446f1104d59d 100644
->>> --- a/arch/loongarch/include/asm/kvm_host.h
->>> +++ b/arch/loongarch/include/asm/kvm_host.h
->>> @@ -285,6 +285,10 @@ static inline bool kvm_guest_has_lbt(struct 
->>> kvm_vcpu_arch *arch)
->>>       return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | 
->>> CPUCFG2_MIPSBT);
->>>   }
->>>   +static inline bool cpu_has_msgint(void)
->>> +{
->>> +    return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
->>> +}
->>>   static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
->>>   {
->>>       return arch->cpucfg[6] & CPUCFG6_PMP;
->>> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h 
->>> b/arch/loongarch/include/asm/kvm_vcpu.h
->>> index f1efd7cfbc20..3784ab4ccdb5 100644
->>> --- a/arch/loongarch/include/asm/kvm_vcpu.h
->>> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
->>> @@ -15,6 +15,7 @@
->>>   #define CPU_PMU                (_ULCAST_(1) << 10)
->>>   #define CPU_TIMER            (_ULCAST_(1) << 11)
->>>   #define CPU_IPI                (_ULCAST_(1) << 12)
->>> +#define CPU_AVEC                        (_ULCAST_(1) << 14)
->>>     /* Controlled by 0x52 guest exception VIP aligned to estat bit 
->>> 5~12 */
->>>   #define CPU_IP0                (_ULCAST_(1))
->>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h 
->>> b/arch/loongarch/include/uapi/asm/kvm.h
->>> index 57ba1a563bb1..de6c3f18e40a 100644
->>> --- a/arch/loongarch/include/uapi/asm/kvm.h
->>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
->>> @@ -104,6 +104,7 @@ struct kvm_fpu {
->>>   #define  KVM_LOONGARCH_VM_FEAT_PV_IPI        6
->>>   #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME    7
->>>   #define  KVM_LOONGARCH_VM_FEAT_PTW        8
->>> +#define  KVM_LOONGARCH_VM_FEAT_MSGINT        9
->>>     /* Device Control API on vcpu fd */
->>>   #define KVM_LOONGARCH_VCPU_CPUCFG    0
->>> diff --git a/arch/loongarch/kvm/interrupt.c 
->>> b/arch/loongarch/kvm/interrupt.c
->>> index 8462083f0301..adc278fb3cb9 100644
->>> --- a/arch/loongarch/kvm/interrupt.c
->>> +++ b/arch/loongarch/kvm/interrupt.c
->>> @@ -21,6 +21,7 @@ static unsigned int 
->>> priority_to_irq[EXCCODE_INT_NUM] = {
->>>       [INT_HWI5]    = CPU_IP5,
->>>       [INT_HWI6]    = CPU_IP6,
->>>       [INT_HWI7]    = CPU_IP7,
->>> +    [INT_AVEC]    = CPU_AVEC,
->>>   };
->>>     static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int 
->>> priority)
->>> @@ -36,6 +37,7 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
->>> unsigned int priority)
->>>       case INT_IPI:
->>>       case INT_SWI0:
->>>       case INT_SWI1:
->>> +    case INT_AVEC:
->>>           set_gcsr_estat(irq);
->> Do we need cpu_has_msgint() here ? It is impossible that VMM inject 
->> INT_AVEC interrrupt on non-msgint machine such as 3C5000.
->>
-> yes we need , how about this?
+On 2025/10/12 21:59, Gao Xiang wrote:
+> Robert recently reported two corrupted images that can cause system
+> crashes, which are related to the new encoded extents introduced
+> in Linux 6.15:
 > 
-> @@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
-> unsigned int priority)
->          if (priority < EXCCODE_INT_NUM)
->                  irq = priority_to_irq[priority];
+>    - The first one [1] has plen != 0 (e.g. plen == 0x2000000) but
+>      (plen & Z_EROFS_EXTENT_PLEN_MASK) == 0. It is used to represent
+>      special extents such as sparse extents (!EROFS_MAP_MAPPED), but
+>      previously only plen == 0 was handled;
 > 
-> +        if (cpu_has_msgint() && (priority == INT_AVEC)) {
-> +                set_gcsr_estat(irq);
-> +                return 1;
-> +        }
-> +
->          switch (priority) {
->          case INT_TI:
->          case INT_IPI:
-This is workable. Another way is to add checking in irq inject root 
-source function kvm_vcpu_ioctl_interrupt(). Both works for me.
-
-BTW, I think that there should be modification with function 
-kvm_deliver_intr() also. max irq bit is *INT_IPI + 1* where there will 
-be problem with INT_AVEC. Should it be modified as *EXCCODE_INT_NUM*?
-
-void kvm_deliver_intr(struct kvm_vcpu *vcpu)
-{
-         unsigned int priority;
-         unsigned long *pending = &vcpu->arch.irq_pending;
-         unsigned long *pending_clr = &vcpu->arch.irq_clear;
-
-         for_each_set_bit(priority, pending_clr, INT_IPI + 1)
-                 kvm_irq_clear(vcpu, priority);
-
-         for_each_set_bit(priority, pending, INT_IPI + 1)
-                 kvm_irq_deliver(vcpu, priority);
-}
-
-Regards
-Bibo Mao
+>    - The second one [2] has pa 0xffffffffffdcffed and plen 0xb4000,
+>      then "cur [0xfffffffffffff000] += bvec.bv_len [0x1000]" in
+>      "} while ((cur += bvec.bv_len) < end);" wraps around, causing an
+>      out-of-bound access of pcl->compressed_bvecs[] in
+>      z_erofs_submit_queue().  EROFS only supports 48-bit physical block
+>      addresses (up to 1EiB for 4k blocks), so add a sanity check to
+>      enforce this.
 > 
-> Thanks.
-> Song Gao
-> 
-> 
->>>           break;
->>>   @@ -63,6 +65,7 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, 
->>> unsigned int priority)
->>>       case INT_IPI:
->>>       case INT_SWI0:
->>>       case INT_SWI1:
->>> +    case INT_AVEC:
->>>           clear_gcsr_estat(irq);
->> Ditto.
->>
->> The others look good to me.
->>
->> Regards
->> Bibo Mao
->>>           break;
->>>   diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->>> index 30e3b089a596..226c735155be 100644
->>> --- a/arch/loongarch/kvm/vcpu.c
->>> +++ b/arch/loongarch/kvm/vcpu.c
->>> @@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
->>>           *v = GENMASK(31, 0);
->>>           return 0;
->>>       case LOONGARCH_CPUCFG1:
->>> -        /* CPUCFG1_MSGINT is not supported by KVM */
->>> -        *v = GENMASK(25, 0);
->>> +        *v = GENMASK(26, 0);
->>>           return 0;
->>>       case LOONGARCH_CPUCFG2:
->>>           /* CPUCFG2 features unconditionally supported by KVM */
->>> @@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
->>>           return -EINVAL;
->>>         switch (id) {
->>> +    case LOONGARCH_CPUCFG1:
->>> +        if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
->>> +            return -EINVAL;
->>> +        return 0;
->>>       case LOONGARCH_CPUCFG2:
->>>           if (!(val & CPUCFG2_LLFTP))
->>>               /* Guests must have a constant timer */
->>> @@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu 
->>> *vcpu, int cpu)
->>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
->>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
->>> +    if (cpu_has_msgint()) {
->>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
->>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
->>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
->>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
->>> +    }
->>>         /* Restore Root.GINTC from unused Guest.GINTC register */
->>>       write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
->>> @@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu 
->>> *vcpu, int cpu)
->>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
->>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
->>> +    if (cpu_has_msgint()) {
->>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
->>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
->>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
->>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
->>> +    }
->>>         vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
->>>   diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
->>> index d8c813e2d72e..438885b6f2b1 100644
->>> --- a/arch/loongarch/kvm/vm.c
->>> +++ b/arch/loongarch/kvm/vm.c
->>> @@ -37,6 +37,9 @@ static void kvm_vm_init_features(struct kvm *kvm)
->>>           kvm->arch.support_features |= 
->>> BIT(KVM_LOONGARCH_VM_FEAT_PV_STEALTIME);
->>>       }
->>>   +    if (cpu_has_msgint())
->>> +        kvm->arch.support_features |= 
->>> BIT(KVM_LOONGARCH_VM_FEAT_MSGINT);
->>> +
->>>       val = read_csr_gcfg();
->>>       if (val & CSR_GCFG_GPMP)
->>>           kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_PMU);
->>> @@ -153,6 +156,7 @@ static int kvm_vm_feature_has_attr(struct kvm 
->>> *kvm, struct kvm_device_attr *attr
->>>       case KVM_LOONGARCH_VM_FEAT_PMU:
->>>       case KVM_LOONGARCH_VM_FEAT_PV_IPI:
->>>       case KVM_LOONGARCH_VM_FEAT_PV_STEALTIME:
->>> +        case KVM_LOONGARCH_VM_FEAT_MSGINT:
->>>           if (kvm_vm_support(&kvm->arch, attr->attr))
->>>               return 0;
->>>           return -ENXIO;
->>>
->>
-> 
+> Fixes: 1d191b4ca51d ("erofs: implement encoded extent metadata")
+> Reported-by: Robert Morris <rtm@csail.mit.edu>
+> Closes: https://lore.kernel.org/r/75022.1759355830@localhost
+> Closes: https://lore.kernel.org/r/80524.1760131149@localhost
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
+Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+
+Thanks,
+Hongbo
+
+> ---
+> v2:
+>   - `pend` should be converted to blocks and then be compared.
+> 
+>   fs/erofs/zmap.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+> index 798223e6da9c..87032f90fe84 100644
+> --- a/fs/erofs/zmap.c
+> +++ b/fs/erofs/zmap.c
+> @@ -596,7 +596,7 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+>   			vi->z_fragmentoff = map->m_plen;
+>   			if (recsz > offsetof(struct z_erofs_extent, pstart_lo))
+>   				vi->z_fragmentoff |= map->m_pa << 32;
+> -		} else if (map->m_plen) {
+> +		} else if (map->m_plen & Z_EROFS_EXTENT_PLEN_MASK) {
+>   			map->m_flags |= EROFS_MAP_MAPPED |
+>   				EROFS_MAP_FULL_MAPPED | EROFS_MAP_ENCODED;
+>   			fmt = map->m_plen >> Z_EROFS_EXTENT_PLEN_FMT_BIT;
+> @@ -715,6 +715,7 @@ static int z_erofs_map_sanity_check(struct inode *inode,
+>   				    struct erofs_map_blocks *map)
+>   {
+>   	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
+> +	u64 pend;
+>   
+>   	if (!(map->m_flags & EROFS_MAP_ENCODED))
+>   		return 0;
+> @@ -732,6 +733,10 @@ static int z_erofs_map_sanity_check(struct inode *inode,
+>   	if (unlikely(map->m_plen > Z_EROFS_PCLUSTER_MAX_SIZE ||
+>   		     map->m_llen > Z_EROFS_PCLUSTER_MAX_DSIZE))
+>   		return -EOPNOTSUPP;
+> +	/* Filesystems beyond 48-bit physical block addresses are invalid */
+> +	if (unlikely(check_add_overflow(map->m_pa, map->m_plen, &pend) ||
+> +		     (pend >> sbi->blkszbits) >= BIT_ULL(48)))
+> +		return -EFSCORRUPTED;
+>   	return 0;
+>   }
+>   
 
