@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-850803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62263BD3E94
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:10:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 964F7BD3FEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9DAC4F7C21
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:01:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFB23E5F47
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBD930BB85;
-	Mon, 13 Oct 2025 14:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EEF30BF53;
+	Mon, 13 Oct 2025 14:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/KBSFmk"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKHhUHDh"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5CF30AD1E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157A630B528
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367208; cv=none; b=tqqhBbqhqW4ykjWANdX3N063LiwfNL5KlEBwT4jo/CvoD1SjIetqskG4NxLtuPkL/tL9jrH74AiJbxtR1TcHabSfVOlncuiYnaOX+os3p662EYYnYgmcR7HaHKihtx7a3jfYTmZ/KTnmyqs8DwZqUVwSDyFrbT31UszDTvpqQXo=
+	t=1760367210; cv=none; b=jIp0zV/4NFhz5qq4M+Uv5BxdvhQVS4XM5TgagGGf5mPG31qB+rAKIOmCEbN97onkNIcmXgNskDYHeCOLZClSU2nOF4udx3v0OmiVWmVmpwps/NAhl9f/raAbKGF40wcPT59vtXelU1Oz8rHnNWebQ++doGe6GuRcW93MnDajvhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367208; c=relaxed/simple;
-	bh=w+9GYnLfpJPuENZN1hq4bylmO2y99fnzpTWEsZZvlXU=;
+	s=arc-20240116; t=1760367210; c=relaxed/simple;
+	bh=V84/46IQukuHpDWyvrt512XHRkAzrJ/kWpdifpQbKZc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GZx1zjiUpHg5nsCNJNv+ukA24I4A0OXvUC54Vkg2DycyHPNvWaTyYAXjFzC0qb1rtEA6US4KGmHBvx0oxyt25lOvMhonHDOspsj/ZpUaZOJ4qkf3N14bVkVCIL5Tzq133SPhH/JrpJocLlCjhaPkuLZt9FHP0GkBIJPylHLIwFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/KBSFmk; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=SvJyiCvClTeaLNFc2eWQK03EdfG5i8L8+e43U1JGWkx4ZQN1lvqvgghKXrDmjQ99KlEKw2Mp38NffF8Li3mRBCJPaZ3VxT41eZq+ebFws3nOEEWHkGHplU2Fp/1IRZP23RPTx6cGGz5lhrsLjODeuG6USs2828gjBz/WKy/cAMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eKHhUHDh; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so3633915f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:53:25 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e5980471eso23016475e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:53:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760367204; x=1760972004; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760367206; x=1760972006; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Intn0C5yI8uAf2z3e0yNoFGVnV8Ruh2Zw9BITbwKtgg=;
-        b=I/KBSFmkr823VYLJ9wwtqrnu7+aTcICtjpZOfR/GQ5E1yCUygyix9jp0J76TMiY+C5
-         yZd+9yDEdAH3g2i48cCgrqHH07RL2OdfWlSTn1ph8SQc6pOXb0XlHAaPIl/iuSFzDkFI
-         cP1sJvjmu7Lx/8FAkkh4d4aQtIJck7g1rH7T6IAQxb7/fw+t/UgWDLULE8p80tOzf/QL
-         nqZgWYDkJSrFZS4Q08d96Br4TJmIg3xi6HeuazjSD5K7g/NYlK626UE1X8NyF326HTyb
-         qTSolPWPXrGexUR0pupc0I9yObjTg5bpRzqQ1/3YV9P7pAMQvu7uDAEdBSm6VALAyfZS
-         crkQ==
+        bh=rEpNHAW5KcsbAUfQ5rP9CaFlyZXOHWCrIH1bgOMumdY=;
+        b=eKHhUHDhZ3qUqimSKGpQWDBl4QTiW3jHEZ3cXLa9/THQvlNV6wRu5d3bdcUQe5rJ3y
+         Ly5iwCDC5iw2MDYyi7cAX0ykX8WdLiDWnXNWVMRfgypYCbTazuckP6FFrOuVSAR912qQ
+         1jNHGtGTUU5AE9ztk5xsUZjcj4G+2yIIWuQ/BkwDhoNP302Z3u2bbuMx+M+VqQ3AuWGs
+         LMl7jotEBRF304CfSiaLdHZcMliZHjZnjBftRB96cw1wf+GCnU1lQG8onlpPkJjK5OMf
+         +4IoZEGwj7DuVOyLY/j0La1sKjyQniZtMgIkOTouaK5Qh7RiboyzOURHQXNL89Rk9E+p
+         pPJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760367204; x=1760972004;
+        d=1e100.net; s=20230601; t=1760367206; x=1760972006;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Intn0C5yI8uAf2z3e0yNoFGVnV8Ruh2Zw9BITbwKtgg=;
-        b=Nzn/bKRCaLPgD5PODu9pOMXQfFQELZnIy96vwzHow5GYUgnp4b1aOgGJEntB6o/QNX
-         U3n8qfXf2SHej4EOhnUqS45QMyK7km5QdsKCitbBfsCBe0ToCkbPZSmwnFb5UL3QbbZM
-         f9KKam1IeN0FbAbKLW2YatvVAR7X2MuAjYEil/CX6hxLmwPes9O5Ow/N/gU3cCfMPbLA
-         k9OsCuiqR9CD+gwGgrOJ58xgknsp1pRsST5ZJF8QRka+Iu0z0fB17DTDZPDp5m1Sb0i7
-         A4x1YAMh2E98Uys5u6e0WZKTfJjqDWxVm9rMkqzb+PQu9Hf7F1vi26Pmhsp5IYn/FpR6
-         sHIg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9sX7LstVbGve25sSDMkWyeExH2N2GKdr3j9VOn3yU6HfggSBRFQUCfClAD39wptUpmMZKXgHpHGiixwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1SfKCBTcMERj5Q3CRf6Bdf5grxAFC5nVLxcAoQ8ozjfN4prUN
-	wRRqLMz1zmp8RKhSaPxzus9an58XlrrNyBIphCKZ8MpO52SuOyKXykfT
-X-Gm-Gg: ASbGncsYc9kZAn9xO5oF+rXG5byDMkDUi5Og6SI3Uwwe5I6fDSP7uGlVjk0w0ZHHZSk
-	WoLAGowW3iaUgP54RlKz8TIW3XYYp9o/MJBz4115A0XLiV4weyMjlaUwPpaReZbuwRmuUqBiLGZ
-	GTIgzb1czYuoVYaACU3aleTCYK7QZHxhbcCKIxv8IhpbkGUEw8Y0WxeDA0pKeu6WhkFS8t/mmMT
-	zu1jIDJO7nOcg4AbXG0ul7SGLzAOnB1g22uP2Mcy+NnIbSWxEMEerwOLBlup8wnuTbvpS9Zo5il
-	KUNsETFFqL3F0HAgzJ1147McZ9OUoLTb3ZDHYyJAuEMT12l29GMRNDukK37YdRbY7C00yEDrx9I
-	//s+3BRfiEt0z5zKyvt5kZnlwtwCK05pH3zMg9k2ZAIbTXA==
-X-Google-Smtp-Source: AGHT+IGM5o9+wFkfIja0oLP61fEHz91/0NGcuhmPQVULbrd0ZLVSDTzb9zJ9+EqpQiODyKQcWi27WA==
-X-Received: by 2002:a05:6000:1863:b0:3f6:9c5a:e1ff with SMTP id ffacd0b85a97d-4266e7dfda8mr14321226f8f.39.1760367204244;
-        Mon, 13 Oct 2025 07:53:24 -0700 (PDT)
+        bh=rEpNHAW5KcsbAUfQ5rP9CaFlyZXOHWCrIH1bgOMumdY=;
+        b=K4AKDVAh0I0I5xQtxgH5/TK/FyUg6b25K/4nbcOjx+lvi2VeeaMkaj5ruJIkaoyqKu
+         bIyC09SWqXz7YzkiGGc2NUckAEqVEDjnUJwpCCksFvJgfGBB1UIY+8dsE3z3auHvOgy2
+         OZ/mmYic6ZRdZKR5gQqNRVACxYwZ817HxoIbwLeV+z9/ynZ0SzQhEkEphIhkriGqU5Lf
+         EuouR4obnDpnZnvLhFYsfqb1xR70IkaiFVaf1wXJvY0xDgkNIkP3He3F9icJR29cuLQN
+         OozK75UARZ2ygyn7vVjTcznmar572vehlrGNFqdbF4NtJ3qBqnL4D3EevLNgDT9gWzQ8
+         CokA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5cwJ79iukTx/u4R07m4IqedJeLipdxQXczhhSlqR3D4Tcpv03vL5ORLUSQEFPonZBD1DRJCHWhKPuER8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMNicuMUFf/drn6h3veUZIkcNu/koJ+tmHnEAbRaxSn2jZ6BbD
+	SK7DLESi/cmUTbbk0+VuUucO71HQqGpI/CX1d6VDST5073QRwFDZTpaD
+X-Gm-Gg: ASbGncuVrxwOu4WA55jUgz+mZ9/Hg7aIC2Y7n7wqNuw9S9148N5J5JSFxMr8eMDzMjQ
+	JoP9qXZr6MGUB7uY3aRlVjzVcVXDMKVGlFzEHXPA0KOh9U0JqNZEr+5fFd09w/HLMxtcTl/it/d
+	czuAmXMIWS6TUK7nPHpFXmlbjVkOMOfzHLxBNqZzbMdc2oniZItWgvuOn8SyXuPMDLrJExigt8C
+	8SDDGTCM6pVa8WrZ9Zgs3nOBKXEgTBuaR0ohne0fTeitUrYklSfuKi/vr7vlODX6+CCQMthakGw
+	osZ5Kk5vJatho2jOaL0oa4vwWr1el5+pZAitvqcekmtHT8ky65gGK/kH7zeZsW5wGCJEibWNDCE
+	nLq1Hdi6RJxLyoCFfz/dV2Op2
+X-Google-Smtp-Source: AGHT+IFzaDXO9su/SszejnjHzAL90Snp1i587mjZZwzGUhrRu24aIMznG8y+4vpCNDUyUpxQGWTYJw==
+X-Received: by 2002:a05:600c:4ed0:b0:46e:39e1:fc3c with SMTP id 5b1f17b1804b1-46fa9a8be52mr135053235e9.5.1760367206184;
+        Mon, 13 Oct 2025 07:53:26 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:eb09])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0e70sm18641085f8f.40.2025.10.13.07.53.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0e70sm18641085f8f.40.2025.10.13.07.53.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:53:23 -0700 (PDT)
+        Mon, 13 Oct 2025 07:53:25 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Andrew Lunn <andrew@lunn.ch>,
@@ -114,9 +114,9 @@ Cc: Andrew Lunn <andrew@lunn.ch>,
 	linux-doc@vger.kernel.org,
 	linux-rdma@vger.kernel.org,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH net-next v4 02/24] docs: ethtool: document that rx_buf_len must control payload lengths
-Date: Mon, 13 Oct 2025 15:54:04 +0100
-Message-ID: <e685eeccc2a46d8ebfde77209e505a77d14f7e8a.1760364551.git.asml.silence@gmail.com>
+Subject: [PATCH net-next v4 03/24] net: ethtool: report max value for rx-buf-len
+Date: Mon, 13 Oct 2025 15:54:05 +0100
+Message-ID: <a4d973e1eca37f1ff62a6b1388db5f6817e34beb.1760364551.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1760364551.git.asml.silence@gmail.com>
 References: <cover.1760364551.git.asml.silence@gmail.com>
@@ -130,47 +130,132 @@ Content-Transfer-Encoding: 8bit
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-Document the semantics of the rx_buf_len ethtool ring param.
-Clarify its meaning in case of HDS, where driver may have
-two separate buffer pools.
-
-The various zero-copy TCP Rx schemes suffer from memory management
-overhead. Specifically applications aren't too impressed with the
-number of 4kB buffers they have to juggle. Zero-copy TCP makes most
-sense with larger memory transfers so using 16kB or 32kB buffers
-(with the help of HW-GRO) feels more natural.
+Unlike most of our APIs the rx-buf-len param does not have an associated
+max value. In theory user could set this value pretty high, but in
+practice most NICs have limits due to the width of the length fields
+in the descriptors.
 
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Reviewed-by: Mina Almasry <almasrymina@google.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- Documentation/networking/ethtool-netlink.rst | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/netlink/specs/ethtool.yaml                  | 4 ++++
+ Documentation/networking/ethtool-netlink.rst              | 1 +
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c | 3 ++-
+ include/linux/ethtool.h                                   | 2 ++
+ include/uapi/linux/ethtool_netlink_generated.h            | 1 +
+ net/ethtool/rings.c                                       | 5 +++++
+ 6 files changed, 15 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
+index 6a0fb1974513..68e2b63ba970 100644
+--- a/Documentation/netlink/specs/ethtool.yaml
++++ b/Documentation/netlink/specs/ethtool.yaml
+@@ -452,6 +452,9 @@ attribute-sets:
+       -
+         name: hds-thresh-max
+         type: u32
++      -
++        name: rx-buf-len-max
++        type: u32
+ 
+   -
+     name: mm-stat
+@@ -2078,6 +2081,7 @@ operations:
+             - rx-jumbo
+             - tx
+             - rx-buf-len
++            - rx-buf-len-max
+             - tcp-data-split
+             - cqe-size
+             - tx-push
 diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index b270886c5f5d..392a359a9cab 100644
+index 392a359a9cab..d96a6292f37b 100644
 --- a/Documentation/networking/ethtool-netlink.rst
 +++ b/Documentation/networking/ethtool-netlink.rst
-@@ -966,7 +966,6 @@ Kernel checks that requested ring sizes do not exceed limits reported by
- driver. Driver may impose additional constraints and may not support all
- attributes.
+@@ -902,6 +902,7 @@ Kernel response contents:
+   ``ETHTOOL_A_RINGS_RX_JUMBO``              u32     size of RX jumbo ring
+   ``ETHTOOL_A_RINGS_TX``                    u32     size of TX ring
+   ``ETHTOOL_A_RINGS_RX_BUF_LEN``            u32     size of buffers on the ring
++  ``ETHTOOL_A_RINGS_RX_BUF_LEN_MAX``        u32     max size of rx buffers
+   ``ETHTOOL_A_RINGS_TCP_DATA_SPLIT``        u8      TCP header / data split
+   ``ETHTOOL_A_RINGS_CQE_SIZE``              u32     Size of TX/RX CQE
+   ``ETHTOOL_A_RINGS_TX_PUSH``               u8      flag of TX Push mode
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+index b90e23dc49de..19bcf52330d4 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+@@ -377,6 +377,7 @@ static void otx2_get_ringparam(struct net_device *netdev,
+ 	ring->tx_max_pending = Q_COUNT(Q_SIZE_MAX);
+ 	ring->tx_pending = qs->sqe_cnt ? qs->sqe_cnt : Q_COUNT(Q_SIZE_4K);
+ 	kernel_ring->rx_buf_len = pfvf->hw.rbuf_len;
++	kernel_ring->rx_buf_len_max = 32768;
+ 	kernel_ring->cqe_size = pfvf->hw.xqe_size;
+ }
  
--
- ``ETHTOOL_A_RINGS_CQE_SIZE`` specifies the completion queue event size.
- Completion queue events (CQE) are the events posted by NIC to indicate the
- completion status of a packet when the packet is sent (like send success or
-@@ -980,6 +979,11 @@ completion queue size can be adjusted in the driver if CQE size is modified.
- header / data split feature. If a received packet size is larger than this
- threshold value, header and data will be split.
+@@ -399,7 +400,7 @@ static int otx2_set_ringparam(struct net_device *netdev,
+ 	/* Hardware supports max size of 32k for a receive buffer
+ 	 * and 1536 is typical ethernet frame size.
+ 	 */
+-	if (rx_buf_len && (rx_buf_len < 1536 || rx_buf_len > 32768)) {
++	if (rx_buf_len && rx_buf_len < 1536) {
+ 		netdev_err(netdev,
+ 			   "Receive buffer range is 1536 - 32768");
+ 		return -EINVAL;
+diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
+index c2d8b4ec62eb..26ef5ffdc435 100644
+--- a/include/linux/ethtool.h
++++ b/include/linux/ethtool.h
+@@ -77,6 +77,7 @@ enum {
+ /**
+  * struct kernel_ethtool_ringparam - RX/TX ring configuration
+  * @rx_buf_len: Current length of buffers on the rx ring.
++ * @rx_buf_len_max: Max length of buffers on the rx ring.
+  * @tcp_data_split: Scatter packet headers and data to separate buffers
+  * @tx_push: The flag of tx push mode
+  * @rx_push: The flag of rx push mode
+@@ -89,6 +90,7 @@ enum {
+  */
+ struct kernel_ethtool_ringparam {
+ 	u32	rx_buf_len;
++	u32	rx_buf_len_max;
+ 	u8	tcp_data_split;
+ 	u8	tx_push;
+ 	u8	rx_push;
+diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
+index 0e8ac0d974e2..ae59d17bd7f2 100644
+--- a/include/uapi/linux/ethtool_netlink_generated.h
++++ b/include/uapi/linux/ethtool_netlink_generated.h
+@@ -192,6 +192,7 @@ enum {
+ 	ETHTOOL_A_RINGS_TX_PUSH_BUF_LEN_MAX,
+ 	ETHTOOL_A_RINGS_HDS_THRESH,
+ 	ETHTOOL_A_RINGS_HDS_THRESH_MAX,
++	ETHTOOL_A_RINGS_RX_BUF_LEN_MAX,
  
-+``ETHTOOL_A_RINGS_RX_BUF_LEN`` controls the size of the buffers driver
-+uses to receive packets. If the device uses different buffer pools for
-+headers and payload (due to HDS, HW-GRO etc.) this setting must
-+control the size of the payload buffers.
-+
- CHANNELS_GET
- ============
- 
+ 	__ETHTOOL_A_RINGS_CNT,
+ 	ETHTOOL_A_RINGS_MAX = (__ETHTOOL_A_RINGS_CNT - 1)
+diff --git a/net/ethtool/rings.c b/net/ethtool/rings.c
+index aeedd5ec6b8c..5e872ceab5dd 100644
+--- a/net/ethtool/rings.c
++++ b/net/ethtool/rings.c
+@@ -105,6 +105,9 @@ static int rings_fill_reply(struct sk_buff *skb,
+ 			  ringparam->tx_pending)))  ||
+ 	    (kr->rx_buf_len &&
+ 	     (nla_put_u32(skb, ETHTOOL_A_RINGS_RX_BUF_LEN, kr->rx_buf_len))) ||
++	    (kr->rx_buf_len_max &&
++	     (nla_put_u32(skb, ETHTOOL_A_RINGS_RX_BUF_LEN_MAX,
++			  kr->rx_buf_len_max))) ||
+ 	    (kr->tcp_data_split &&
+ 	     (nla_put_u8(skb, ETHTOOL_A_RINGS_TCP_DATA_SPLIT,
+ 			 kr->tcp_data_split))) ||
+@@ -281,6 +284,8 @@ ethnl_set_rings(struct ethnl_req_info *req_info, struct genl_info *info)
+ 		err_attr = tb[ETHTOOL_A_RINGS_TX];
+ 	else if (kernel_ringparam.hds_thresh > kernel_ringparam.hds_thresh_max)
+ 		err_attr = tb[ETHTOOL_A_RINGS_HDS_THRESH];
++	else if (kernel_ringparam.rx_buf_len > kernel_ringparam.rx_buf_len_max)
++		err_attr = tb[ETHTOOL_A_RINGS_RX_BUF_LEN];
+ 	else
+ 		err_attr = NULL;
+ 	if (err_attr) {
 -- 
 2.49.0
 
