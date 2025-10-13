@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-850196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513C4BD2366
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:11:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BCDDBD236C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5FF189594F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:11:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 244AA4E3440
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0392FBDF7;
-	Mon, 13 Oct 2025 09:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676FB2FB995;
+	Mon, 13 Oct 2025 09:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OQQ8sqAw"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nuDvZ2Ty";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t8Ov/3r0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198991BDCF
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535AB220F2A;
+	Mon, 13 Oct 2025 09:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760346691; cv=none; b=u5EBHIqSOrYQYCbkf+83zgmmnM24s3asfFlnXahpTP4Ne/qgfLuR1C/NltaUczdKACorc/uMDW3lEMCH+2EfFE+7pJN4IEFWS7p2Syw7U6BReBF8IVL/xChKCBpI7b0aY+zB4NF0+483nfAGa0d4OS1DolvyHCpUPOOUS4DWtM8=
+	t=1760346735; cv=none; b=ShPDL+r9g+yQGtM/unaTehdjyn1NBzYJU+07gbmkOTMosVJ1WKmqzFB6PG32HQeU0/DAXVaKgLn1BLXh02/Y41VxT7OE4EH8USpgY2IS5d3+GbfIdFu1Z7zhfiGd3bGTRKPPNxlfU1r/cQCFOOjyRIrFtat2uq7TkkjRJfLmGAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760346691; c=relaxed/simple;
-	bh=uJNxLJ/086HyRGzsvBDKMZVVvXvn/YC0pk3WMMZ34bI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KOJh4K582MjzVNm8/D75aNszbRi9j70didIkt7qwLG4KY03C533n7nWfhR7jp/yxxW8IwyxhApedjylArULODMXQuGaOwTf2tPPdJ+zx1IeZN68/di1SNpjrymGhHUJUS6s+6HG4+SxBSJy8IRgkyyTxp4CTzDnHAINkuL9NstQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OQQ8sqAw; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Nk
-	OZgNctD2RJ7iTrrRVTZr3l7fIBVXhtVsEHtUv3270=; b=OQQ8sqAwsjX4bVfv36
-	KCEuSAPOOlTET+V6dAqJHdAatGVu+DHqj4FY5nYjcjgOx3towd9aokNkCiOi03Pe
-	LVPL2NO9tPZc0uQWqXgb6TCoWZ85W4Y0HW/lytkgZxU+EDAruHLx6uRcG34GqYOI
-	u8L3s3UFu/BgBqR/f8EdM0N1s=
-Received: from ProDesk.. (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgAHwhHlwexoZeqRCA--.36811S2;
-	Mon, 13 Oct 2025 17:10:01 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: arnd@arndb.de,
-	bjorn.andersson@oss.qualcomm.com,
-	ebiggers@kernel.org,
-	geert+renesas@glider.be,
-	krzysztof.kozlowski@linaro.org,
-	kuninori.morimoto.gx@renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	nm@ti.com,
-	nfraprado@collabora.com,
-	quic_tdas@quicinc.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Andy Yan <andyshrk@163.com>
-Subject: [PATCH] arm64: defconfig: Enable Rockchip extensions for Synopsys DW DP
-Date: Mon, 13 Oct 2025 17:09:33 +0800
-Message-ID: <20251013090955.48832-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760346735; c=relaxed/simple;
+	bh=M8W+Wb/k76OFOUM9UgBamnEToea682kSXMrBJ0ukbFw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NyEIcLA6scVUcJRSAsPkjqo+Z71rVPw0AXLNW1km1/ri5k4N8NuqJiaygTuePSgKUlyxi5xI18scoq87JAX6tB0lHvuYPiMYHwN+TQBrYOnFWxrc2puAkNf5kiY9bURmm1XOq9Q3UecMetRJqWV5JBchlplkeq3ifMG+WfZvqTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nuDvZ2Ty; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t8Ov/3r0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760346729;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZK4MecEgmGNpR7Ho9yBfqoHrQQsss9GFbmPkcKt7iNQ=;
+	b=nuDvZ2TyCNnYAcZtz9wg4tgUhbFl8w0FIf1jjac9laG65TMfw5W/2/1hihWigSwU+gcVit
+	ABmzr1CRmy4+nhYIiwlfUnHPwbZJZK9GdMttJ8Y1SjPKZQlrSktgpoqLNbBL1AOKeFGzSB
+	hn8Xq8aiL3kpP9t26/OOSbtgQlscf8f/+cX8EymW2DyQPexOH1FRq0ffkqSjmkvtJvbUhT
+	JJw9eKMXDiNfrpruza1V02SJ8c18ZX9rJm4XDOC+DpSfOKPJPY+f5e+JupYXkAgf0NQ9Jh
+	VKbzJxCr0iTdxT1v0sL5+u7/a09Dz+2P1EUL8kYPZ9ZPtWvqrOxpj0lcXxVybQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760346729;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZK4MecEgmGNpR7Ho9yBfqoHrQQsss9GFbmPkcKt7iNQ=;
+	b=t8Ov/3r0E4Qgs26/n+znn8CLkr+N9h0d7WEftC4lZjgZtItnwm3EEQ0nwSyGixO/H9wWJi
+	8m/jheDAHrnlpUDg==
+Date: Mon, 13 Oct 2025 11:12:02 +0200
+Subject: [PATCH] compiler: remove ARCH_SEL()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgAHwhHlwexoZeqRCA--.36811S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF4fKF17JF13ZFyrtr4xZwb_yoWfJFg_Jr
-	n7Ww1kur4xCF9I93WF9a1rG34jk3WDW3WfGr17XFyDXF4Igr4Fv34kCFyUGw15Ca1jkayI
-	vFZ5AasrCr1jyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRiXTm7UUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEBblXmjswVMWJAAAsZ
+Message-Id: <20251013-arch-sel-v1-1-7eef9b22ceb0@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAGHC7GgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAwNL3cSi5Azd4tQc3SQLw+S0NEtzUwPTVCWg8oKi1LTMCrBR0bG1tQB
+ T/eppWgAAAA==
+X-Change-ID: 20251009-arch-sel-b81cff97505e
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-sparse@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760346727; l=1015;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=M8W+Wb/k76OFOUM9UgBamnEToea682kSXMrBJ0ukbFw=;
+ b=zOJlK3rirUFX63eCm18Ar6v8uhBK4Wifw8cnPKiGLy4eiT0y6vwXdEQ/Uy8CYOaYNAmiHLgbI
+ frRZCQCqZ3gCxOIfkiQypBTZtkAlXR9IGuRq0CtMKOqzQ14EFJfAOog
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Enable Rockchip specific extensions for Synopsys DesignWare DisplayPort
-driver. This is used to provide DisplayPort output support for many boards
-based on RK3588 SoC.
+It's last user was removed in commit 8ea815399c3f ("compiler: remove
+__ADDRESSABLE_ASM{_STR,}() again").
 
-Signed-off-by: Andy Yan <andyshrk@163.com>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
+ include/linux/compiler.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 5b45ea7dff3e50160afc37d22f61b9d2146e15d4..a9a2f8aae821311da253bf065c49b7c69aa3af17 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -269,12 +269,6 @@ static inline void *offset_to_ptr(const int *off)
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+-#ifdef CONFIG_64BIT
+-#define ARCH_SEL(a,b) a
+-#else
+-#define ARCH_SEL(a,b) b
+-#endif
+-
+ /*
+  * Force the compiler to emit 'sym' as a symbol, so that we can reference
+  * it from inline assembler. Necessary in case 'sym' could be inlined
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e3a2d37bd104..ddb148a987e3 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -913,6 +913,7 @@ CONFIG_DRM_ROCKCHIP=m
- CONFIG_ROCKCHIP_VOP2=y
- CONFIG_ROCKCHIP_ANALOGIX_DP=y
- CONFIG_ROCKCHIP_CDN_DP=y
-+CONFIG_ROCKCHIP_DW_DP=y
- CONFIG_ROCKCHIP_DW_HDMI=y
- CONFIG_ROCKCHIP_DW_HDMI_QP=y
- CONFIG_ROCKCHIP_DW_MIPI_DSI=y
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251009-arch-sel-b81cff97505e
+
+Best regards,
 -- 
-2.43.0
-
-base-commit: 2a82ce98ea069c84665caf5097e340b9c65d9e9f
-branch: master
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
