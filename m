@@ -1,196 +1,168 @@
-Return-Path: <linux-kernel+bounces-850980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7265BBD4DA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:14:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86E7BD55E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A011A18A11B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D4A5857DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A34C3101B6;
-	Mon, 13 Oct 2025 15:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5AF30C609;
+	Mon, 13 Oct 2025 15:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VjWOEHHS"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010000.outbound.protection.outlook.com [52.101.46.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aYAu7Gba"
+Received: from mail-pf1-f228.google.com (mail-pf1-f228.google.com [209.85.210.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C30305043;
-	Mon, 13 Oct 2025 15:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370993; cv=fail; b=B7ZubLRukj5pOMvXwFGptuUiwIcc/RH2rzWRQtUj9zV9v403xIjE1K/lJPo7o+dAHxqz+WIfIOhUftrAK91U5hDfFil0+ygcRenFoaVNhhOzh5AB7uv7rLq2z8DaCo4cbMPL9QPp0AmFD23aM+GpqI7Nx0bFlzrlwjjg6iRhTCI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370993; c=relaxed/simple;
-	bh=287gRLlLLxoq5HKytJNtlYQQuZZOdeMwWylmZ4VDVCc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NR2AUiJw9+XEeaSYbo/nqXT2esNSAZWCZtW+k2gV3WQDDqYxGx8fLfoPKY+009U8zzwi0Q/pjEIR3uGFiP0DJQriFtXBou3PJMkfTvwHUwlsCQ4KSMXk7Y5Xt6sPXfRwXEel3UHrml5Eus11fx0yrmiNTPUxfmeMSOfthG7DKUY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VjWOEHHS; arc=fail smtp.client-ip=52.101.46.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VIxtVGmDk0/vyItTTaxCsHWgwO7wlJ50wgoCMJfb0Ze7CAsZwQZopl0CU9+p9LBV5DcLBSx5adsuxJS4b6iry73Luan8cnwkvmQfAFeSZthgdQocXU6WfDgq7A4TNzpa8vPQWlNo2JF18pKPR73wBEnVxvPY5nlkX0/pigljeU2+1moJ57FW1gzAsM1I2opLIH7d4m0sF5fk5EMLtPDSkxMR/K/6ftaV4IMUFOnd73bhy+sMenKEwbSZtHWVudN9DGliZT5a1XrJ7PIpYhCXqgLLzE9gwZaUiv/ZWGlIN4LO43kHPV7v+t4GPOVm3Zd8HyzINTHBkiqNP2SrzGFagA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n698uOu8F4fZOlp0xPOas48X4hpJcpVm1dGwN5XqoxU=;
- b=Drxndtet29puxf0XrXytHiOu6/A9sgw0YrquDLIuvv4vAqcDE3bjjj2IoXQ0bRVcZzh5SsGPHDzjmT0yyeXkpNwQthG6Sz/9/IbhhaSeDm/eGMfYlIRBqU0kW/3LWp231XyieIMsMdWw365EgcX61IyPG2lnCV5kHNmE4JegYhU+WbylOyQd4Zxu862LT0qk9+QhWE8ul+foQ9p5ZtNI5TqQfcbjapG9xrB25i0GMMk0X8Lst3PH+z8xgsGOCNcPcLO7+FN1LO3T2wzoaLP/MBjoWNdbKyUDNMRMGxXQ82TAyNOeGBrAvBfhe+Bme8qSDr6yTEVJYVz1JjG69IKXtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n698uOu8F4fZOlp0xPOas48X4hpJcpVm1dGwN5XqoxU=;
- b=VjWOEHHSud0dW2MW6Zsxiae6pn/OZE8gNtI0u6MqmgGKRbR0eL+B7LRwTTTlzZt6C7M3X/mfOUT2JKzgOErZKgdQSmNmu/bJxcTD5hTYTeBMNTuQW/1sojlGgY0co7+FIxKoNd5h6Sm4B7Zo7UZ41Q0TZHKFoJs0MyAdrFFvCpysAuIvWaE349cpMfihmiWQLZM7ibA7kN1oX7sB2gDDrgN7sKN6+TrVSi54bZFkpDa8gaIvJGF5cJqUaRTiq1TKXEnsrX+cweG+k++HYUZkJTgMWqkWj8kNo+Z5tJo3P43R2Yvkmb4aiFL2G4yyEjoJo9wneD4vHHHsDLhQhcbfRA==
-Received: from PH7PR13CA0002.namprd13.prod.outlook.com (2603:10b6:510:174::6)
- by DS7PR12MB5790.namprd12.prod.outlook.com (2603:10b6:8:75::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 15:56:27 +0000
-Received: from SN1PEPF000252A4.namprd05.prod.outlook.com
- (2603:10b6:510:174:cafe::75) by PH7PR13CA0002.outlook.office365.com
- (2603:10b6:510:174::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.9 via Frontend Transport; Mon,
- 13 Oct 2025 15:56:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF000252A4.mail.protection.outlook.com (10.167.242.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 15:56:26 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 13 Oct
- 2025 08:56:10 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Oct
- 2025 08:56:09 -0700
-Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Mon, 13
- Oct 2025 08:56:09 -0700
-From: David Thompson <davthompson@nvidia.com>
-To: <hansg@kernel.org>, <ilpo.jarvinen@linux.intel.com>, <vadimp@nvidia.com>
-CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<davthompson@nvidia.com>, Shravan Kumar Ramani <shravankr@nvidia.com>
-Subject: [PATCH v2] platform/mellanox: mlxbf-pmc: add sysfs_attr_init() to count_clock init
-Date: Mon, 13 Oct 2025 15:56:05 +0000
-Message-ID: <20251013155605.3589770-1-davthompson@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFD62153E7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.228
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760370983; cv=none; b=eb07o9NJGx3k+Nc0xBQ/csKCZ0jwMjEUmdp2D+Uj53nSlMogvRI8jwiHUvwWbh0iIDjNfmhgOCVjhV2VXxgD7VS1tbA7e6ARZhbbq4oTmSSqPS4fv9BT8hSgyem3SPX7kOt5r8rnPlOb8szwyDp7dwIhMr3yj9pGMpwDaSFmDJU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760370983; c=relaxed/simple;
+	bh=pemIievJNNCJ1g5xdFFJ1javIILKcd6NEd/iXgi8QsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TyDbOIEkzgg90dLoYUltTZRqLtR3zKqjJHD//fufKEJtY6AyklvVeVdhOXg+wlU9QmtCw4zP6d/CmzHJnUkGCCYCtTRLag2KG9P21y/eATuXvQfdyDHLq9gK+skIdDZMNvu8g84PHB6/ffjFjlaBlTKEU1JdaF3Drcq1h5tpbvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aYAu7Gba; arc=none smtp.client-ip=209.85.210.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f228.google.com with SMTP id d2e1a72fcca58-78af743c232so3945281b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:56:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760370981; x=1760975781;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9U5cRT08Cc58tjcfZAhfVxmou6fbD5UUyDGJPQj/wOw=;
+        b=rEv6ETo4Gn6bp/F5jtm8Yb37BfURLfRlLFZMAt65ze7nBv46oSYK8B6qqgvddpzF71
+         brNi6exNXKq0PDfQ1q9uTB0AP+2ggaLIOMwV4zP2AM+ez66kcn2hheRVPJcKhfe61SuG
+         Y6AKi8onYEKCSJd8+LqvaAzOOTD5yLpHZ02SQEHrGxaWbS6xcr+6jeMHs3rgTmZW/ytJ
+         1AaKGaLD4sbrPv0hdyZLwaF/HusRIIoYld0JUSy2I6I3Ph5oOZCJN7EB3ubAzi5j6dNT
+         NPnGYWK6wCjXIjd9KnS9To2LtagoU3nrYO50611vz7SgPzTpHHhYA0mFww1umRC82HDF
+         6F6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXO5i29C/4hQmFwZDO1QX3sf/7tnKQSgDJ8kASPAKbwIFVk1xAFfaKJRI2yG3WE/xVvMdxdyxjd+hbZi1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAdTm3wzbmwO7zN5hycGJnc6vMiGHkTNmoddI20A+jxpcy8tfH
+	+ozq4bwOjqSXIGcZCD7tgbo4o9Nbdh2WgRvjMm9+PXBmDV5eDsZzK8XUJVZDzu8m4kHVO/k57Co
+	zAC+J7PFep06zqZROVOVD7E9TXxr6sthR1xmkvQY6Ayrb/K/pAfLsnJU/+rSPG+K6IPY8dY1gIl
+	eWqUNQ5mhxeQMxWOE9y4LQPnwKV1xKAE1gomPTpeVa5nRvcBqVhKVzHGfhRvx+Q3J5sYpFGyvad
+	DTGqsVj3wf9Cov6+SpaaDSF
+X-Gm-Gg: ASbGnctiHD6tybALXCpgsYrh7ngUsnzSyWQAAJ/2AKcpy9h0ql9s5yS/SrAmLbNmJH5
+	8HE68HoEeEt7iKuH6frZIQxM+dls9LPPzha63r8JGWmVkB3TSHNk7x8KLjPv5/qwTziVp3UGcXp
+	FKS+cySp2KYr4rzlF5cTeeX4N6ekc40wPOWaiOyq1ZRCeWtypTBLu9/4txwfeIM08jb0CoZLlWD
+	9HXHvdkGX7UgO0KyklnilH9fJK4kYBD32a2J9B5Jy/DuJ+rQQfDlKcxrrYaURF7x/WohcMm9lmN
+	vrU0Aw0BGsUSMulRFbUA9jOUnltv5F0R8l/v6zQ+N/YIjizuOcqu//dIQfpYr4SRfEWw51pnWta
+	K9gXLZH4Zau4Uj7FfTH+4hObpR1iJMpaXS7NnWX/wl3KaO92Y7YcI7MMgKptvR2t1EXVit0u8hD
+	xbeWBn
+X-Google-Smtp-Source: AGHT+IEzbMMCk7XFJ/fwZfPxwzPWIiku6cau5xsxgYRC1LEvLKI7EOPdG4F4xEvfjribCoyibqQkU06twlB8
+X-Received: by 2002:a05:6a20:1588:b0:249:3006:7573 with SMTP id adf61e73a8af0-32da81345f2mr27879831637.5.1760370980897;
+        Mon, 13 Oct 2025 08:56:20 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-15.dlp.protect.broadcom.com. [144.49.247.15])
+        by smtp-relay.gmail.com with ESMTPS id 41be03b00d2f7-b678df0fd68sm602214a12.11.2025.10.13.08.56.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Oct 2025 08:56:20 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3307af9b595so8085278a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:56:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1760370979; x=1760975779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9U5cRT08Cc58tjcfZAhfVxmou6fbD5UUyDGJPQj/wOw=;
+        b=aYAu7GbapWSGekXstZrLdAJ7lmUfTmtHUk5ZRCF2a6ZzxdSZDkG+VG06YaTYhD9fdQ
+         8N0sdKX1s6zp6HkbAVCpLgoHdJoyKGPOK1YVhA1fTInoGGZ488Oq4Ly141yJ+6y4yoWT
+         6W30pPoUkcSHjeK72StnaxUjqPb1+CY4FKpdQ=
+X-Forwarded-Encrypted: i=1; AJvYcCXA1lxTthLlVzBvvUWre2NIDr/1IPXibzyWLYCEcMMjfBd+lLq5mnhnDecfOdmzz05iNpdNvZ+Wd+F7y0I=@vger.kernel.org
+X-Received: by 2002:a17:90b:4f8e:b0:339:ef05:3575 with SMTP id 98e67ed59e1d1-33b513cd915mr31842492a91.26.1760370979089;
+        Mon, 13 Oct 2025 08:56:19 -0700 (PDT)
+X-Received: by 2002:a17:90b:4f8e:b0:339:ef05:3575 with SMTP id 98e67ed59e1d1-33b513cd915mr31842461a91.26.1760370978624;
+        Mon, 13 Oct 2025 08:56:18 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626bb72dsm12472857a91.14.2025.10.13.08.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 08:56:12 -0700 (PDT)
+Message-ID: <bf25d367-e98a-4475-b09a-55d6d47e428c@broadcom.com>
+Date: Mon, 13 Oct 2025 08:56:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A4:EE_|DS7PR12MB5790:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f2aebc8-5e9d-4b82-19d5-08de0a71110e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wwykGEbmFkKDK2KFl07H+ZUYoQT/X2JOVuxTEjBShHN2sbc8LN4rJAmqE/Kv?=
- =?us-ascii?Q?WTMZ6dbXlyOkELaScNebgC8FzlgDMw7nbwKms2Fq4trICAyHU4nwg9aPmqba?=
- =?us-ascii?Q?KEBX2C/wDIY8pXHB5SLAmHHozmfpWStR5ToU6LdkB7SLs0BmMMKNr5omYFTa?=
- =?us-ascii?Q?5V6Gr/8yUWqo0o73JpYvS59NxKIxqKyhPBvkV9Tk2ocpyQXITXDZ2pOGKDzi?=
- =?us-ascii?Q?OgDYcbaLvb1tu6esvsHJ/3DpW67++4dxY5PqyK7YsJHLTuAI63KZ3qCrVyE3?=
- =?us-ascii?Q?5lAu7RSznbo/ZtNxfdxqVNyR60PyipXFanLfFEUy9GAJ4z8WV36qpbqC0N1C?=
- =?us-ascii?Q?Fr+E9nTFTOdPQXeyNp0fJWpWMehBc9SLldjZvMQ3L3VVdb1QZnRTsO8faOIr?=
- =?us-ascii?Q?4YR5BrlaF6hMcwEo6ZHB5F1FVSQzM3Q1mENPY51vifYUtGlXxFJIJphRJRni?=
- =?us-ascii?Q?EIE+4TFoKEM0jde5JvRoaZhDBIyZvCuk3wmjyt7oZQCEOo15mrO8AhoPXRNR?=
- =?us-ascii?Q?OCnKUch7iVCtrsfknE+3fg2y15NZcr9KTnpqu5UhXPJFMyQXDxj5Tylzr5zq?=
- =?us-ascii?Q?2z1ssk6+2n2GQkFGviD3bXLGnS01ETrBAcxF4VYHQNmE6zjzY1MeWjr0uQs+?=
- =?us-ascii?Q?aIOyNwHIrqW8LQ0hXR2CaAzGkwOv9W6HPnLbLtQhROnrsNdHHdlsvevZBfJw?=
- =?us-ascii?Q?l27Z4b/+uKknuW5s5URVdnE59zElTGp3SiOWd1Uo6hsAX5/myWu+mJifXTHu?=
- =?us-ascii?Q?OTPqzUn3LOzmNNbV/jew1RtULbBOhk/YxWlEveqCfPQ4fizyDVb9D9TwFLWU?=
- =?us-ascii?Q?y6PO/bmIGT7ht4GEiod2qVkBk1EUc7Th9aZk1RLAelBmNkWhljKJ006CU5Gi?=
- =?us-ascii?Q?7OgY0oInQXqjlvpxaRwBOcO6+swW+k2eBBvqlOIzvqHem3S5LhsOKm5DRFB5?=
- =?us-ascii?Q?oEF9XbVR7InJWXI/8xUHsSohxbpV4/BnpUcI/GScG8GbOr3VM3FH+vJwMOPU?=
- =?us-ascii?Q?crRURGrPUR6hUNfxidvyk0UthtqYodVsvqU6OqYdO9uShpLBUTiP2aXWrKxS?=
- =?us-ascii?Q?MVVpHmjTE/pRSnRAtEhaks70tYdFIDnFoHJcBmDx+j/1RiZEFnd4DrSB28q8?=
- =?us-ascii?Q?cHgK57i1eMAMxZ+owJPJlmP+DbI/vy/WgStZwFLa2VzM5dZ9RK6VXs+OrxCA?=
- =?us-ascii?Q?qdGe5Mg+Sjq79a5V8puHAQYimigQvTjHUnfntCkdPVKdDTbL9RQalSGfAks5?=
- =?us-ascii?Q?Gp22hKv/t/IZBW0R44maGcM45nlM14XcNAgDPOFqX2zQ+GzhHjwjMaQxdqDG?=
- =?us-ascii?Q?6TJzVutzPTv3LFqiEbQNkDQ209EUhX96APnlxq2GiD1412btuFn70Ly3qOY8?=
- =?us-ascii?Q?WN8MZVwaCupe3PakhvsJL8JYr5JRnB3+I0L3N58QUeEnwYw+bjtnvyovn2Bw?=
- =?us-ascii?Q?ju13mpHz7C7o5CiCAIQP83sRCQ6jIv/cgfGyI/K8LQRPw9BPMByt1lX7pIyF?=
- =?us-ascii?Q?WqqA1hU52/n+BtVMaVFxGgyjLHJDiDPu1NBx+HBwpiCmCKEIqK1z8H1neRmI?=
- =?us-ascii?Q?GznrKXWkSlRtz2SQ4pQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 15:56:26.5489
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f2aebc8-5e9d-4b82-19d5-08de0a71110e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000252A4.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5790
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/11] irqchip/bcm2712-mip: Fix OF node reference
+ imbalance
+To: Johan Hovold <johan@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Changhuang Liang <changhuang.liang@starfivetech.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+ Stanimir Varbanov <svarbanov@suse.de>
+References: <20251013094611.11745-1-johan@kernel.org>
+ <20251013094611.11745-2-johan@kernel.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20251013094611.11745-2-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-The lock-related debug logic (CONFIG_LOCK_STAT) in the kernel is noting
-the following warning when the BlueField-3 SOC is booted:
+On 10/13/25 02:46, Johan Hovold wrote:
+> The init callback must not decrement the reference count of the provided
+> irqchip OF node.
+> 
+> This should not cause any trouble currently, but if the driver ever
+> starts probe deferring it could lead to warnings about reference
+> underflow and saturation.
+> 
+> Fixes: 32c6c054661a ("irqchip: Add Broadcom BCM2712 MSI-X interrupt controller")
+> Cc: Stanimir Varbanov <svarbanov@suse.de>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-[   10.231318] BUG: key ffff00008a3402a8 has not been registered!
-[   10.237249] ------------[ cut here ]------------
-[   10.241914] DEBUG_LOCKS_WARN_ON(1)
-[   10.241927] WARNING: CPU: 4 PID: 592 at kernel/locking/lockdep.c:4801 lockdep_init_map_type+0x1d4/0x2a0
-<snip>
-[   10.385415] Call trace:
-[   10.385417]  lockdep_init_map_type+0x1d4/0x2a0
-[   10.385423]  __kernfs_create_file+0x84/0x140
-[   10.385428]  sysfs_add_file_mode_ns+0xcc/0x1cc
-[   10.385431]  internal_create_group+0x110/0x3d4
-[   10.385434]  internal_create_groups.part.0+0x54/0xcc
-[   10.385436]  sysfs_create_groups+0x24/0x40
-[   10.385438]  device_add+0x6e8/0x93c
-[   10.444559]  device_register+0x28/0x40
-[   10.448299]  __hwmon_device_register+0x4b0/0x8a0
-[   10.452907]  devm_hwmon_device_register_with_groups+0x7c/0xe0
-[   10.458641]  mlxbf_pmc_probe+0x1e8/0x3e0 [mlxbf_pmc]
-[   10.463598]  platform_probe+0x70/0x110
-
-The mlxbf_pmc driver must call sysfs_attr_init() during the
-initialization of the "count_clock" data structure to avoid
-this warning.
-
-Fixes: 5efc800975d9 ("platform/mellanox: mlxbf-pmc: Add support for monitoring cycle count")
-Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
-Signed-off-by: David Thompson <davthompson@nvidia.com>
----
-v2: trimmed excess info from splat, fixed Tags section
----
- drivers/platform/mellanox/mlxbf-pmc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/platform/mellanox/mlxbf-pmc.c b/drivers/platform/mellanox/mlxbf-pmc.c
-index 4776013e0764..16a2fd9fdd9b 100644
---- a/drivers/platform/mellanox/mlxbf-pmc.c
-+++ b/drivers/platform/mellanox/mlxbf-pmc.c
-@@ -2015,6 +2015,7 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
- 	if (pmc->block[blk_num].type == MLXBF_PMC_TYPE_CRSPACE) {
- 		/* Program crspace counters to count clock cycles using "count_clock" sysfs */
- 		attr = &pmc->block[blk_num].attr_count_clock;
-+		sysfs_attr_init(&attr->dev_attr.attr);
- 		attr->dev_attr.attr.mode = 0644;
- 		attr->dev_attr.show = mlxbf_pmc_count_clock_show;
- 		attr->dev_attr.store = mlxbf_pmc_count_clock_store;
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.43.0
-
+Florian
 
