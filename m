@@ -1,238 +1,166 @@
-Return-Path: <linux-kernel+bounces-850537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D23DBD3206
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:01:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56575BD321B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320C93B36C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:01:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E18C63A6F72
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D46F261B9C;
-	Mon, 13 Oct 2025 13:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF4F2EC568;
+	Mon, 13 Oct 2025 13:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZUXheY5"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dtBS/5TV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777A819E82A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969A1261B9C;
+	Mon, 13 Oct 2025 13:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760360458; cv=none; b=o7D5wCg5vRfHDcaGrp22fqYNHYR+QcNg/eHUUewNZJAtUwKwvWHeSzG5yLlkq8uaxrk3cYKAgm/Uv1q53zbxZ2+CJgTY05eXV62AMozbp0fEQeEIHBovg9lwXimew9JhHYM9zyovMQTph4G3+N/+ypBhHJwTyA4Urrkg69XRQ34=
+	t=1760360699; cv=none; b=iFIo6Cp5VLsXhgd1d71SLTAWkQ0AUUfOQ9wG/MmcGPaxp64lsp7S6asWk2oiPN0vlV6adqWGNRozfyGhkis4pMef0N7PfV6OIsxcBki/IwxuFnEi7HEvgFNCxNhIY6cdjWqrcWkz13JqihBpYgoCfkZrBc1cb3bEtKsBXllPPTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760360458; c=relaxed/simple;
-	bh=i9iJGo0KJ+KjP0rOALL8y9Ze3unbPpntnRn8FZ5ZXLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=srnf9m6S6E+NxRPDOavhSfjUrkioy8A8PvXIPvMroYDOrUQrz7Kg2dWO/w+I6dYSW0ZQYp9bywh30cJs1OZPa8bMLoHxj2Dl95SXpfXh091kucnx6SSW7mvm5WxPGQV+AY282oQ43cy3Sd65tFAA3y14flWgxExNIXsyiDhGGFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZUXheY5; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-371e4858f74so49541651fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760360454; x=1760965254; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RwPM/Z5O0yHOLH9LwU+Zo7JSbbUS2MnSJ7z2h3tfSbk=;
-        b=GZUXheY5g16g+NcrpryYGGM/s9f9xN6ZFJVkK1cKl9cIZ6S7zhv6f0U38d1PRNqfO+
-         ihKAqQtBSRVcLRwwKK2L0iPgY16fracELTQznMg9Ws7AdgoJ8laNGfR0uOJEEjR6pbl+
-         n2Xvbcd3tMv6p4RZQg13Iqun1nOiKfVtXxToMw5bRRxdYALFy4HVS3Z4qUDoKNnSsvMf
-         O0SmaAdghKGRZDuV2vjT6XE6NDuoZDvoAsgSBtjGaIQuwHHMn+5BESZhG/nNqioqqSxf
-         iBQW64XUDL0babWe/AjkiQWL9WYAVivQa+pyPFTJ7I/3ycdXV2nKxUFYdq9kzpf5Zytg
-         JbVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760360454; x=1760965254;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RwPM/Z5O0yHOLH9LwU+Zo7JSbbUS2MnSJ7z2h3tfSbk=;
-        b=eXjhI7VJ/MI/IVwVmyxLI0yFal14cBvFt8bTk8PMoKEUWkxu3PQmcJYz+SJqTAucm5
-         lxjgdgnUdXHluEeVd/NqA3h0IM8AcrSldldEeZyfjMo7KbC1OXO7WCE/IwGHrdoLTGEQ
-         8AQdx5vWPi++xJm5rg93bE9Dz3pJRUC4O71XzxTc0q9GhImzFh91mbBJkyzhJRYrSB3L
-         +1OOnrVacC2ZH+rIqxmyjq2kKXYQIOXCoy0/EKINVwUpl8zIfYnH9LdyXPIaEcwN/wl6
-         BwYK6ohiCoTmP8NqP6kbseQ09OLLWutNhIQp3BGNB7W29+G/tfo5mTa8PRZbIBijFu9Z
-         LuXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnHLY3GcMTon3Ba6j+1O9HmMS1ps5kSTeAOSRV+cWekgnv6u+ilGTtEw1TxQEzsTev3BzTN7OPwZf8kuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq8h5GZ6sSzZMerM8KaTofcpU1nyi8xhw4qzGBIUr5p92bS3z6
-	1eDqfa8NL6dp9lnEm7jzWq7CiObRhF763apdKllwpZWlqfJwmQO7i1Ca
-X-Gm-Gg: ASbGncuEbP8NcpS/LeZx7fqpyi564SJ5OH5MXdOtnyMwbSh4OCocIz73HREAccKjCgl
-	Ud7QNJICHOz31TAaP/DRVZ3V6td2AMzGNgQgSYCYowzu5MmWumSg2Nz7hQGfCOHiK6ecB7vX5k3
-	OQgMV2jkNek5+iufuFuUzp58FHBbJcSA7Bxtw3JLL0sgEvqew4EDUlUH9sxAxfC6hM7CLb0/1K4
-	sKn4it4bT4zSRkQTPjZZgZK684Q4L62cYSmfJn0Yb9mSNi3h2pwjFlvZpXVmCD9eucxs6eB/7Xo
-	w2bO/ocEo93OiPGdUsdkw+EFZiUct+5SGs/t7YrMrLh3DGtnA2cV1kxrKHaUAhSH6JtNiDiJdys
-	oi5k2YgTRHkm63RblWfNbPHH98R8iFjOtxvd0jKGEpVp5X26i+J3nXWx51waiTb9bscTQzD71fb
-	hDBohkNjaQK6aolgkaXXy3FmZH2c7URsgyZA==
-X-Google-Smtp-Source: AGHT+IEaz0DBFlUyV6gGttivlYi+polxLg5u2E3jx0S0U111cfv9lqTIiGXjrdbkq2K8MBx4IO/Dbg==
-X-Received: by 2002:a2e:be27:0:b0:352:7dce:2e15 with SMTP id 38308e7fff4ca-375f50b8a2dmr76806371fa.5.1760360453227;
-        Mon, 13 Oct 2025 06:00:53 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762eb6a98esm31283941fa.59.2025.10.13.06.00.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 06:00:52 -0700 (PDT)
-Message-ID: <f2e6f0eb-b412-4cf6-8615-d669b8066393@gmail.com>
-Date: Mon, 13 Oct 2025 16:00:50 +0300
+	s=arc-20240116; t=1760360699; c=relaxed/simple;
+	bh=Z31FwIulc8WU+gcD8GzAisYqYzH73HsiD11LIJzVDFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZX1t7G0HhVIVRPM089ScieV0vwy0306xhn82lM3dd1Ssf7i8nA8KIbKqQOYChjVnkmu4aOOu2Hb7SVa6AFILErash7CEWyKTIFdFm5UIRfXHYCs2fof3xlOSyJlCk1F1aiXTqXwqJaDNhYalvGoA6QTcQFDeO1aduzF+QKHTOcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dtBS/5TV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DAeg7g024965;
+	Mon, 13 Oct 2025 13:04:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	u5mIcqwHkZGxdUu45ahV5aGvY4oLNJAusDI+4mcOJog=; b=dtBS/5TV2aNGPvtS
+	3c+1B97XQ5M5D9GiXRjinhrtGbJsGTtgbfz0XncuyhKNuZYTlsPmVMzqN1EYYyHh
+	9OLhl5gpLE+xi1VfE3cvNKnCCezqQzk2NOLvcdBTpL48GMKjpxB1dxeVepJyd+xb
+	sBVmcuk/8AYP7X6UVg/M9eMlhLcatRI6fdFeeAS6/UJJ9bf+52HpTLg44qw8IVp0
+	d5TAdy/2u4+1IWLhsNWm47WSxRfuM7Em5C5/HscGuizRjgyzmtoBMcd6QcvHxQQe
+	43UcmdQ65IcUmAM92pn/Yr2OHHOWmT1meHn6HLBF41anhQtxquZ/OgZ5wt7BT2LM
+	1GMbcQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa84p90-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 13:04:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59DD4o3c032493
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 13:04:50 GMT
+Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 13 Oct
+ 2025 06:04:45 -0700
+Message-ID: <88220541-e344-443d-353c-be738437254e@quicinc.com>
+Date: Mon, 13 Oct 2025 18:34:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 03/13] dt-bindings: power: supply: BD72720 managed
- battery
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <cover.1759824376.git.mazziesaccount@gmail.com>
- <19d537f9920cae5fa849b649e5bc42ba0b8e52f8.1759824376.git.mazziesaccount@gmail.com>
- <CACRpkdbHBQQnnTUrUzOrYxzQKCzDyy8aNK7w8OEFz-ic8ic1FQ@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CACRpkdbHBQQnnTUrUzOrYxzQKCzDyy8aNK7w8OEFz-ic8ic1FQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 1/4] dt-bindings: mmc: Add dll-hsr-list for HS400 and
+ HS200 modes
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Herring
+	<robh@kernel.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>,
+        <quic_pragalla@quicinc.com>, <quic_sayalil@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <kernel@oss.qualcomm.com>, Sachin Gupta <quic_sachgupt@quicinc.com>
+References: <20250929113515.26752-1-quic_rampraka@quicinc.com>
+ <20250929113515.26752-2-quic_rampraka@quicinc.com>
+ <20251006214830.GB625548-robh@kernel.org>
+ <817f02aa-dfb8-a134-2fd4-fbdf8e8a714e@quicinc.com>
+ <1d052b98-4dfd-4ee3-b46f-ac043b406d58@oss.qualcomm.com>
+From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+In-Reply-To: <1d052b98-4dfd-4ee3-b46f-ac043b406d58@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Ff5d8oTEayibpIVhbQvK0FbTVxkqdv6z
+X-Proofpoint-ORIG-GUID: Ff5d8oTEayibpIVhbQvK0FbTVxkqdv6z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX/x8zUw4OyqgU
+ jDFGVhaWOfDlodZStUtPDviW9+dWSyNFlmoi7Tn4+OFTRgQjmVCxQqYpA3wQ/fLaxblxMhx+jXV
+ Fz9jVKJPhbNz84bWORPRZ0flSIWplKV53cj8f15Ln+M8U32VMwo5Lhb2AM1U9I7KywPkkozdyuB
+ Q5WmT+MHGE1Z1gg6UHqlyWCKZOrMW8AVwE1hC0f7AdYUzJD2kyzDiBBnwMzNyVpLtJZu6aiFluK
+ dF6/AjEw67+MXNF8OCDfj8Uikg0XIZ3pyPf+5sAHZDs2IeQL5KOxxiDdQj/M3NTbCE7Rx1jZ+CW
+ kWCycwrWr6soa1ZaastG9wfeY1Bvc1tf830ufiYxrV3KxoqWGhNh3Xx+8CNvWPYzmLlLW6Rjdrm
+ +DfXgaxUuebe0FVh8Y8XABeF8I41Xw==
+X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ecf8f3 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8
+ a=NQjy_NEe_Y9d4xOi-4gA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
 
-On 13/10/2025 15:45, Linus Walleij wrote:
-> Hi Matti,
-> 
-> thanks for your patch!
-> 
-> On Tue, Oct 7, 2025 at 10:33 AM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> 
->> The BD72720 PMIC has a battery charger + coulomb counter block. These
->> can be used to manage charging of a lithium-ion battery and to do fuel
->> gauging.
+
+On 10/7/2025 5:12 PM, Konrad Dybcio wrote:
+> On 10/7/25 1:16 PM, Ram Prakash Gupta wrote:
+>> On 10/7/2025 3:18 AM, Rob Herring wrote:
+>>> On Mon, Sep 29, 2025 at 05:05:12PM +0530, Ram Prakash Gupta wrote:
+>>>> From: Sachin Gupta <quic_sachgupt@quicinc.com>
+>>>>
+>>>> Document the 'dll-hsr-list' property for MMC device tree bindings.
+>>>> The 'dll-hsr-list' property defines the DLL configurations for HS400
+>>>> and HS200 modes.
+>>>>
+>>>> QC SoCs can have 0 to 4 SDHCI instances, and each one may need
+>>>> different tuning.
+>>>>
+>>>> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+>>>> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 5 +++++
+>>>>  1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+>>>> index 22d1f50c3fd1..a60222473990 100644
+>>>> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+>>>> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+>>>> @@ -137,6 +137,11 @@ properties:
+>>>>      $ref: /schemas/types.yaml#/definitions/uint32
+>>>>      description: platform specific settings for DLL_CONFIG reg.
+>>>>  
+>>>> +  qcom,dll-hsr-list:
+>>> '-list' doesn't add anything.
+>> list was used as there are 5 dll register, but '-list' can be
+>> dropped, and it can be renamed to qcom,dll-hsr, I will update in
+>> next patchset.
 >>
->> ROHM has developed a so called "zero-correction" -algotihm to improve
-> 
-> algorithm?
+>>> What is 'hsr'?
+>> Hardware Settings Reference
+> Maybe "qcom,dll-presets" would be more clear?
+>
+> Konrad
 
-Indeed :)
-
-> 
->> the fuel-gauging accuracy close to the point where battery is depleted.
->> This relies on battery specific "VDR" tables, which are measured from
->> the battery, and which describe the voltage drop rate. More thorough
->> explanation about the "zero correction" and "VDR" parameters is here:
->> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohmeurope.com/
->>
->> Document the VDR zero-correction specific battery properties used by the
->> BD72720 and some other ROHM chargers.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
->> The parameters are describing the battery voltage drop rates - so they
->> are properties of the battery, not the charger. Thus they do not belong
->> in the charger node.
-> 
-> Right!
-> 
->> The right place for them is the battery node, which is described by the
->> generic "battery.yaml". I was not comfortable with adding these
->> properties to the generic battery.yaml because they are:
->>    - Meaningful only for those charger drivers which have the VDR
->>      algorithm implemented. (And even though the algorithm is not charger
->>      specific, AFAICS, it is currently only used by some ROHM PMIC
->>      drivers).
->>    - Technique of measuring the VDR tables for a battery is not widely
->>      known. AFAICS, only folks at ROHM are measuring those for some
->>      customer products. We do have those tables available for some of the
->>      products though (Kobo?).
-> 
-> It would be sad if we later on have to convert it to a standard property
-> because it turns out to be wider used than we know.
-> 
-> But I buy your reasoning!
-> 
->> +properties:
->> +  rohm,voltage-vdr-thresh-microvolt:
->> +    description: Threshold for starting the VDR correction
->> +
->> +  rohm,volt-drop-soc:
->> +    description: Table of capacity values matching the values in VDR tables.
->> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> 
-> Which unit is this? Seems to be capacity in % *10?
-
-Ah, right. Should've documented this! Thanks.
-
->> +  rohm,volt-drop-high-temp-microvolt:
->> +    description: VDR table for high temperature
->> +
->> +  rohm,volt-drop-normal-temp-microvolt:
->> +    description: VDR table for normal temperature
->> +
->> +  rohm,volt-drop-low-temp-microvolt:
->> +    description: VDR table for low temperature
->> +
->> +  rohm,volt-drop-very-low-temp-microvolt:
->> +    description: VDR table for very low temperature
-> 
-> Doesn't the four last properties require to be defined as uint32-array?
-
-I have been under impression that the "-microvolt" ending suffices, but 
-I may be wrong. At last the 'make dt_binding_check' didn't give me a shout.
-
-> 
->> +        rohm,volt-drop-soc = <1000 1000 950 900 850 800 750 700 650 600 550 500
->> +          450 400 350 300 250 200 150 100 50 00 (-50)>;
-> 
-> This one makes a lot of sense.
-> 
->> +        rohm,volt-drop-high-temp-microvolt =  <100 100 102 104 106 109 114 124
->> +          117 107 107 109 112 116 117 108 109 109 108 109 122 126 130>;
->> +
->> +        rohm,volt-drop-normal-temp-microvolt = <100 100 102 105 98 100 105 102
->> +          101 99 98 100 103 105 109 117 111 109 110 114 128 141 154>;
->> +
->> +        rohm,volt-drop-low-temp-microvolt = <100 100 98 107 112 114 118 118 112
->> +          108 108 110 111 113 117 123 131 144 157 181 220 283 399>;
->> +
->> +        rohm,volt-drop-very-low-temp-microvolt = <86 86 105 109 114 110 115 115
->> +          110 108 110 112 114 118 124 134 136 160 177 201 241 322 403>;
-> 
-> I would have expected something like this, to avoid the a bit fuzzy definitions
-> of high, normal, low and very low temperature either:
-> 
-> Provide an array of temperatures in millicentigrades (I just guessed
-> these temperatures, you will know the real ones!):
-> 
-> rohm,vold-drop-temperatures-millicelsius = <500, 250, 100, (-50)>;
-> rohm,volt-drop-microvolt-0 = <...>;
-> rohm,volt-drop-microvolt-1 = <...>;
-> rohm,volt-drop-microvolt-2 = <...>;
-> rohm,volt-drop-microvolt-3 = <...>;
-> 
-> Where each array correspond to the temperature, or if you wanna
-> go all-out custom:
-> 
-> rohm,volt-drop-50-celsius-microvolt = <...>;
-> (...)
-> 
-> So we get the actual temperature in there one way or the other.
-
-I agree. This is a good idea. I'll try one of these :)
-
-> 
->> +        rohm,voltage-vdr-thresh-microvolt = <4150000>;
-> 
-> This property seems to be missing from the bindings?
-
-I think it is the first binding in the file :)
-
-Yours,
-	-- Matti
+sure, sounds good.
 
 
