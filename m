@@ -1,168 +1,194 @@
-Return-Path: <linux-kernel+bounces-850188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB903BD230F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4B2BD2318
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC62E4EDBE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:01:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A51914EDD32
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93682F5304;
-	Mon, 13 Oct 2025 09:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C022F9DB2;
+	Mon, 13 Oct 2025 09:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LRNChaEk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H1oT1epM"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393902DC774
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDC223F429
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760346111; cv=none; b=gTNEl3aXF/YOgrEw5uw0h+pfXxdzYEEBgqMqkwkUAOjIz8G1jab2RwG6IEISb/CzhL6M+4w4L6xul9OZV8TRL6non++pn1jEnFejkp/tG9WhwPHjhoJOOofob2t4mbp9DVOpF/Hxq21MTt+VfDK+wBqfnHYuDIfprn6niWCjQ0E=
+	t=1760346202; cv=none; b=umfSlAMNwUN+QMePKJTjYWUBV0K0ZN3Qb8i4+Mdnx4dV0NJyFjblQOCRt1gqegln2IAI3DrSU6zU1199xwpb+j9Xyw7HqK4LbJ04D6HTwbikRklY4P0lN6DvrtqNxJKO7d0IpNlDnazdRoaQxdBgMtF5zuwHX2yESrWnSJNoCeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760346111; c=relaxed/simple;
-	bh=slW9f+6jo83HH3W/IVmtXnLD8fDwrW/rvHO5dpvBduw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W75wq6/nKxKDx6v7A0qdca5/D1AjGHzNXJcj1v9Em/4oGAw8RdkvNLIS4JSy7gs7E7lzUokZqa1Rd7eWVK/2+S72vLbgaS3gnV9P+hqhoEBkGsnMW1Osujh/swvSDcadRlWMShG2e68DmgIFO8USdw//zUn5R8bqr3C0FEtZDd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LRNChaEk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760346108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=slW9f+6jo83HH3W/IVmtXnLD8fDwrW/rvHO5dpvBduw=;
-	b=LRNChaEkOH4gO+riHWuBlbfxpmUV4sf86eiUjsOUdbRthxP2wNfvWebKrNykPGytXEOVgk
-	2MG+B9CZ2kWaxy8wPs5vGdg6vNiWLkIqsbO+KVZxapAl8arPyYgE3rgL8G09WaOIrqFQN2
-	p+GoqjssvTNh5SekV3/VmsL9sIj7ks0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-2-EUq_SSCzNHGxYoUIwckmuQ-1; Mon, 13 Oct 2025 05:01:45 -0400
-X-MC-Unique: EUq_SSCzNHGxYoUIwckmuQ-1
-X-Mimecast-MFC-AGG-ID: EUq_SSCzNHGxYoUIwckmuQ_1760346104
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e4335fa87so25365835e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:01:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760346104; x=1760950904;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=slW9f+6jo83HH3W/IVmtXnLD8fDwrW/rvHO5dpvBduw=;
-        b=Jv/scyKTO+j14TgxAK9UvRgcy0Xd/t1QS2+qqYaihLvrQ6iNeMAXhrQ+ahJDxl7miy
-         edqBJM1N/G2jbvXzo8IwOTNnc1aN6Ia/lEQ9J0WuKrg+70LXR1kJPfEtSyknFELEUuxC
-         yWbaGscNAfAHcF1ytEiOU5Ox31aCVTQNAusutbOmqsEEN2eHpZcrSRuCxKOr5kPYcJro
-         zvFkmmD1Ux/dZqc1cqTxK1+T/kq7xFDe6dc9h3xmYqN+r7IBMzBJNmnbFPCP07GSslYy
-         a3lGVA++fEuYRZeLECE9gY0KC/wfYPBjWtLqn95tZbIKlaQcqGZRI613QVVZXLgz5hFj
-         JGbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGCU1yHF2ciFKEhPcoXhp5UTLdREhqUU944qVCV7+CSbuspM+6yk8g5uNvsaAu3NUbeZK/nkgUay3na5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4UboNnwKsl6A1QP8qH8A/bCoNboHFXHtLmNRQQJ8lRH/k+UG9
-	L3e2R/aYseXYhe4/MXpoGFNU3MEtB+6BQK4TYYZzVf92+wjMr5BIX6IH9ZEEij6Bv0ROOCUDwIA
-	j8fx97IULrbYnwP6y6AMCfDmZOZnY3Stg7/AQrLt3+Cg+RROhkKXwHE5VtEV9hcEpKQ==
-X-Gm-Gg: ASbGncsfj28qMBOIW1Fg/fqsp17cBsPnyG1k8R5O9f+FWLyEHzEsOXS0lzkz4vYJctG
-	oBCB/kPC9D/HJMrEVoI/M0dK8diuCwGRz/AB+eU2d8GIop5tbP0X3PiRB3yPlHYY/NSsw+lwS/P
-	iPCO1ztLnodX39X/WZn/62jSYkft3alYmL/XFi1GU1pC3JCKaNRFocKXP7YxII5OyNd8dTCoZfs
-	aX9X4LX9OIgQQkPbokl5zSykelKc/acGRAr7C7ACZBnJuLRlrLiYgiYHcVojY8H/lFpcEyvVjOI
-	w+OxPaPLWYdbq623xpqTzE2yl2wtSDV8qSwTyoymCiT1oqsU0mQA7zzvLXOa2Coq9A==
-X-Received: by 2002:a05:600c:6287:b0:46f:b42e:e38d with SMTP id 5b1f17b1804b1-46fb42ee464mr79867345e9.40.1760346104341;
-        Mon, 13 Oct 2025 02:01:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFi4TnXgYYdjBVUjq86GGeHwVy5qMp+FkkvqLWd/AS5a6ihemSbK0g4AWx01zsxgSE58WEkw==
-X-Received: by 2002:a05:600c:6287:b0:46f:b42e:e38d with SMTP id 5b1f17b1804b1-46fb42ee464mr79867165e9.40.1760346103918;
-        Mon, 13 Oct 2025 02:01:43 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d447sm17679041f8f.9.2025.10.13.02.01.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 02:01:43 -0700 (PDT)
-Message-ID: <a7b1527165a6551ceb93282a307ec84f6621d73f.camel@redhat.com>
-Subject: Re: [PATCH v2 14/20] rv: Add sample hybrid monitors stall
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, Jonathan
- Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu	 <mhiramat@kernel.org>, linux-doc@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
- Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Date: Mon, 13 Oct 2025 11:01:41 +0200
-In-Reply-To: <87frbqygwh.fsf@yellow.woof>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
-	 <20250919140954.104920-15-gmonaco@redhat.com> <87frbqygwh.fsf@yellow.woof>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
- cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
- T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
- eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
- 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760346202; c=relaxed/simple;
+	bh=kr75SPLKu6ZEBAmXKmXbQq/exoBT8A8lBuyW5JGaozM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFCLXKLqWf01tNI/HeuohcY/fCZmoYxCj9si8v8KkPTyZ2bbvWI5Kkvq3/mshZkV6lBRI0zP/bQVnD6siavzAM4IQ6rYe8sYWyKc+TDfWoJs952vlPWVsVms3mpBekdp7bkaKV59TaLm2QaS7m9YJZ/mN/5klFxczQ9gJwQ/J8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H1oT1epM; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pmhpaQQgOS9ATeEGamVwWMEItrO2vHDmUypkgEAcNqo=; b=H1oT1epMnqv7KzkqxOzgslO0Oj
+	5XYp0y/VC1Uqoanj99/aLaG5w/jAknwsE+bTO9AG2eJK/DtQ6YLCtl3iwmadkCfJs7yoN7r+md5JX
+	dCHLSUscXHI17pKCUmGOmtDiCTWNA4aYxmH8eZxLahHQrz2Ld7t9RNWItDnj9cDbxiqAmFtX5lEP0
+	qR+rb3lDYIJxFBZqcF35Zrpr7ebKltL0zekL625pcNAOZvVAZIKevuRgP/tfSmkAGJzR0T7v8OsQg
+	b0a+GDpmHPRvAN2QrM0swdzlfXKvPbcFxFtKGq4yrLcNyveorpDTypqL/JXWP+HNCq6BptJkLWUHC
+	GU6Tx49g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8ESY-00000004DTr-0PAw;
+	Mon, 13 Oct 2025 09:03:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3266F300212; Mon, 13 Oct 2025 11:03:13 +0200 (CEST)
+Date: Mon, 13 Oct 2025 11:03:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+Message-ID: <20251013090313.GI4067720@noisy.programming.kicks-ass.net>
+References: <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
+ <20251009143748.GA2704@redhat.com>
+ <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
+ <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
+ <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
+ <20251009221242.GX3419281@noisy.programming.kicks-ass.net>
+ <CAHk-=whmjm0BbirO8HhT_TZQ2JJMs_FpTcT9SXXaA3NifW2a4w@mail.gmail.com>
+ <20251010080327.GF4067720@noisy.programming.kicks-ass.net>
+ <20251010122347.GA8798@redhat.com>
+ <20251010131439.GB8798@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010131439.GB8798@redhat.com>
 
-T24gRnJpLCAyMDI1LTEwLTEwIGF0IDE2OjIzICswMjAwLCBOYW0gQ2FvIHdyb3RlOgo+IEdhYnJp
-ZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPiB3cml0ZXM6Cj4gPiArLSBOYW1lOiBzdGFs
-bCAtIHdha2V1cCBpbiBwcmVlbXB0aXZlCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIF5eXl5eXl5eXl5eXl5eXl5eXl5eCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIGNvcHktcGFzdGUgbWlzdGFrZT8KCkRhbW4sIHJpZ2h0Li4KCj4gPiArLSBUeXBl
-OiBwZXItdGFzayBoeWJyaWQgYXV0b21hdG9uCj4gPiArLSBBdXRob3I6IEdhYnJpZWxlIE1vbmFj
-byA8Z21vbmFjb0ByZWRoYXQuY29tPgo+ID4gKwo+ID4gK0Rlc2NyaXB0aW9uCj4gPiArLS0tLS0t
-LS0tLS0KPiA+ICsKPiA+ICtUaGUgc3RhbGxlZCB0YXNrIChzdGFsbCkgbW9uaXRvciBpcyBhIHNh
-bXBsZSBwZXItdGFzayB0aW1lZCBtb25pdG9yIHRoYXQKPiA+IGNoZWNrcwo+ID4gK2lmIHRhc2tz
-IGFyZSBzY2hlZHVsZWQgd2l0aGluIGEgZGVmaW5lZCB0aHJlc2hvbGQgYWZ0ZXIgdGhleSBhcmUg
-cmVhZHk6Ogo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgfAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgfAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgdgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAjPT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSMKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgSMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkZXF1ZXVl
-ZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBIIDwrCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgICM9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-I8KgIHwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCB8Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCB8IHNjaGVkX3dha2V1cDtyZXNldChjbGspwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-fAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdsKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rwqAgfAo+ID4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIGVucXVldWVkwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCB8Cj4gPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgwqDCoCBjbGsgPCB0aHJlc2hv
-bGRfamlmZmllc8KgwqDCoMKgwqAgfMKgIHwKPiA+IHNjaGVkX3N3aXRjaF93YWl0Cj4gPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICstLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tK8KgIHwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IHNjaGVkX3N3aXRjaF9pbsKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiArwqDCoMKgIHNjaGVkX3N3aXRjaF9pbsKg
-wqDCoMKgIHbCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiArwqDCoMKgIHNjaGVkX3dha2V1cMKgwqDCoMKgwqAg
-Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rwqAgfAo+ID4gK8KgICstLS0tLS0t
-LS0tLS0tLS0tLS0gfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgfAo+ID4gK8KgIHzCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBydW5uaW5nwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIHwKPiA+ICvCoCArLS0tLS0tLS0tLS0tLS0tLS0+IHzC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgfCAtKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsKPiAKPiBJIHRoaW5rIHRo
-aXMgbW9uaXRvciBkb2VzIG5vdCBkZXRlY3QgaWYgYSB0YXNrIGdldCBwcmVlbXB0ZWQsIGJ1dCB0
-aGVuCj4gbmV2ZXIgZ2V0IHNjaGVkdWxlZCBhZ2Fpbj8KPiAKPiBUaGlzIHNhbXBsZSBtb25pdG9y
-IGRvZXMgbm90IGhhdmUgdG8gY292ZXIgZXZlcnl0aGluZyBvYnZpb3VzbHksIGJ1dCBJJ20KPiBj
-dXJpb3VzIGlmIEkgdW5kZXJzdGFuZCBpdCBjb3JyZWN0LgoKWWVzLCB0aGF0J3MgcmlnaHQuIEkg
-dGhpbmsgSSBjb3VsZCBjb3ZlciB0aGF0IHNjZW5hcmlvIGJ5IGp1c3QgZ29pbmcgYmFjayB0bwpl
-bnF1ZXVlZCBhbmQgcmVzZXR0aW5nIHdoZW4gcHJlZW1wdGVkLiBTaW5jZSBpdCdzIGEgc2ltcGxl
-IGNoYW5nZSwgaXQncyBwcm9iYWJseQpzb21ldGhpbmcgbWVhbmluZ2Z1bCB0byBkby4uCgpUaGFu
-a3MsCkdhYnJpZWxlCg==
+On Fri, Oct 10, 2025 at 03:14:39PM +0200, Oleg Nesterov wrote:
+> On 10/10, Oleg Nesterov wrote:
+> >
+> > On 10/10, Peter Zijlstra wrote:
+> > >
+> > > I reordered the code, it is happier now.
+> > >
+> > > Anyway, the below seems to generate decent code for
+> > > {-O2,-Os}x{gcc-14,clang-22}. Yay for optimizing compilers I suppose :-)
+> >
+> > Another approach which looks better than mine ;)
+> >
+> > Linus's version is simpler, but yours can handle break/return and
+> > the "only lockless" case, good.
+> >
+> > I leave this patch to you and Linus, he seems to like your code too.
+> >
+> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> >
+> >
+> > But... perhaps we should not "export" the _target names and instead
+> > add the additional defines, something like
+> >
+> > 	scoped_seqlock_read()
+> > 	scoped_seqlock_read_or_lock()
+> > 	scoped_seqlock_read_or_lock_irqsave()
+> >
+> > ?
+> 
+> And... perhaps we can simplify this code a little bit? I mean
+> 
+> 	enum ss_state {
+> 		ss_lockless	= 0,
+> 		ss_lock		= 1,
+> 		ss_lock_irqsave	= 2,
+> 		ss_done		= 4,
+> 	};
+> 
+> 	struct ss_tmp {
+> 		enum ss_state	state;
+> 		unsigned long	data;
+> 		seqlock_t	*lock;
+> 	};
+> 
+> 	static inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
+> 	{
+> 		if (sst->state & ss_lock)
+> 			spin_unlock(&sst->lock.lock);
+> 		if (sst->state & ss_lock_irqsave)
+> 			spin_unlock_irqrestore(&sst->lock.lock, sst->data);
+> 	}
+> 
+> 	static inline void
+> 	__scoped_seqlock_next(struct ss_tmp *sst, enum ss_state target)
+> 	{
+> 		switch (sst->state) {
+> 		case ss_lock:
+> 		case ss_lock_irqsave:
+> 			sst->state |= ss_done;
+> 			return;
+> 
+> 		case ss_lockless:
+> 			if (!read_seqretry(sst->lock, sst->data)) {
+> 				sst->state = ss_done;
+> 				return;
+> 			}
+> 			break;
+> 		}
+> 
+> 		switch (target) {
+> 		case ss_lock:
+> 			spin_lock(&sst->lock.lock);
+> 			sst->state = ss_lock;
+> 			return;
+> 
+> 		case ss_lock_irqsave:
+> 			spin_lock_irqsave(&sst->lock.lock, sst->data);
+> 			sst->state = ss_lock_irqsave;
+> 			return;
+> 
+> 		case ss_lockless:
+> 			sst->data = read_seqbegin(sst->lock);
+> 			return;
+> 		}
+> 	}
+> 
+> 	#define __scoped_seqlock_read(_seqlock, _target, _s)			\
+> 		for (struct ss_tmp _s __cleanup(__scoped_seqlock_cleanup) =				\
+> 		     { .state = ss_lockless, .data = read_seqbegin(_seqlock), .lock = __seqlock };	\
+> 		     !(_s.state & ss_done);								\
+> 		     __scoped_seqlock_next(&_s, _target))
+> 
+> 
+> (I removed __scoped_seqlock_invalid_target/__scoped_seqlock_bug to lessen the code).
+> 
+> Not sure this makes sense. Plus I didn't even try to compile this code and I have
+> no idea how this change can affect the code generation. But let me ask anyway...
+
+So GCC is clever enough to see through this scheme, but Clang gets
+confused and generates worse code. Specifically it emits the whole
+__scoped_seqlock_cleanup() sequence, testing both bits and both unlock
+options.
+
+Where previously it would only have to discover which field was written
+to and could delete all code for the unwritten field, it now has to
+track the state and discover ss_lock|ss_done is not possible while
+ss_lock_irqsave|ss_done is.
+
+So while that additional pointer might seem wasteful, it actually makes
+the state tracking easier and allows the compiler to more easily throw
+away stuff.
 
 
