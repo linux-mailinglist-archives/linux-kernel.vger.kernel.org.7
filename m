@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-849910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7FCBD149F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:00:05 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8B1BD13F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EFE34EC07A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:59:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1D7983479E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BC42EC08A;
-	Mon, 13 Oct 2025 02:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2ED2EDD71;
+	Mon, 13 Oct 2025 02:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b="PA3oWr99"
-Received: from mail-m49239.qiye.163.com (mail-m49239.qiye.163.com [45.254.49.239])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="AdWLh2Zx"
+Received: from mail-m19731101.qiye.163.com (mail-m19731101.qiye.163.com [220.197.31.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483C41F5423;
-	Mon, 13 Oct 2025 02:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879562EB878;
+	Mon, 13 Oct 2025 02:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760324337; cv=none; b=NR5RnLlRxT93NenIOX66fMa7qemmHKmsxgYvvsl5HgVU0pLtbsVKWxHWv/d/XF9UNxYwMzyac8ZTA8fLhyu/Y1P2ouWuKPDm8R/U8pybXVrU8Waus5vqq2dJk28fa95VP3gvOaVmVUeok0dgGTOA3vy+wt4vawSbe5GCmfnwdbc=
+	t=1760323514; cv=none; b=mJ0CovML1UvzQ0Es1NNFnl/tjm2eqDUHk7AI5UQAdpwB1CbkdARZ8qS1l6x62OU4AuL304sG5TluhVp/Yll2jRad3oyO0OAkPZfkb9jDg0K8nQ8+hLkFnsBWZGN8uSQlucGzn309/wIFk4nN5h69KuvqKSPafUvODDtxL67MQHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760324337; c=relaxed/simple;
-	bh=+fBv2yrefiEFXAlI1AFivC+r4twp4/wVeMPP1LYrxw0=;
+	s=arc-20240116; t=1760323514; c=relaxed/simple;
+	bh=j+eYq0ONyL/EDb4wrBYDsyUoircdy+3fCu305WH7zMQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kUVyBzSfMbmX/vws0DJeqeRXjX3nAFkWHKMJTv7KDmKun9w59K3SJZsi0kv2dZJka04zVRKDwrai9x+y/IC2njZOrK4RZUH10v6BGkIvoPMiwlWd3sXxtrUfAlrKH8rKvi43hz3TZpf8yfIIV8wJczgiiUqNtVanDk9gtsmgzpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn; spf=pass smtp.mailfrom=cqsoftware.com.cn; dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b=PA3oWr99; arc=none smtp.client-ip=45.254.49.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cqsoftware.com.cn
-Received: from [192.168.6.2] (unknown [1.193.57.161])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 25a706556;
-	Mon, 13 Oct 2025 10:43:27 +0800 (GMT+08:00)
-Message-ID: <0b898b79-8944-489d-a428-ed4b99ef9ba5@cqsoftware.com.cn>
-Date: Mon, 13 Oct 2025 10:43:29 +0800
+	 In-Reply-To:Content-Type; b=g4/7CgzPt+UG/gbia2Og/AEY1q9j5TAZOv5PnH3VjPVohdqg1rwo8ilLeQ2OQ+/vwKGhudDIsDivpivZG6/GGpLnwBxFL6rRUWLELB5SufaEYgs7AWLRZRsVdDJ/KUvfY7KT4a3xrCDX9WbP94Xg91MIVePFCrPDNPKzu/9nEso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=AdWLh2Zx; arc=none smtp.client-ip=220.197.31.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [127.0.0.1] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25a6fe6cd;
+	Mon, 13 Oct 2025 10:44:59 +0800 (GMT+08:00)
+Message-ID: <ca57d854-efd1-42b8-9c25-33b01aaf1065@rock-chips.com>
+Date: Mon, 13 Oct 2025 10:44:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,212 +42,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs/zh_CN: Add secrets coco Chinese translation
-To: Yanteng Si <si.yanteng@linux.dev>, alexs@kernel.org, corbet@lwn.net
-Cc: dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251010054905.602278-1-zhaoshuo@cqsoftware.com.cn>
- <677a2dc3-9838-4a79-9b7a-888a81c7d4e7@linux.dev>
-From: zhaoshuo <zhaoshuo@cqsoftware.com.cn>
-In-Reply-To: <677a2dc3-9838-4a79-9b7a-888a81c7d4e7@linux.dev>
+Subject: Re: [PATCH v5 6/8] drm/rockchip: cdn-dp: Add multiple bridges to
+ support PHY port selection
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251011033233.97-1-kernel@airkyi.com>
+ <20251011033233.97-7-kernel@airkyi.com>
+ <qzcdulyj2enho7l6vyvad7ln46zk2u4z7rnsjv2nv4tbw5j6jf@6oenbixoh3sp>
+ <08eb7560-c13e-462f-8110-d4ce5ccbd687@rock-chips.com>
+ <6hilafgpdbsppeeib75b5uamwf22kbu4likcp64ahb4u7zehhw@c3mtlzwx7qcp>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <6hilafgpdbsppeeib75b5uamwf22kbu4likcp64ahb4u7zehhw@c3mtlzwx7qcp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99db738f1409d0kunm79d5f0862c420c4
+X-HM-Tid: 0a99db74f55503abkunm46b4331dfb5aa5
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHh0ZVkhCQx8aQhlMS0tJTlYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKVUpCSFVOTFVKTUpZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSktLVU
-	pCS0tZBg++
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU9DT1ZLSh9DGB5DSU1PHRhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE
+	5VSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=PA3oWr99URB5mcQvYNod408+yk/bYhRM5gN0uNmwUAOyYpyl4ZK7wXDZha+0yYGe/NCRcvchutLDg4kRWe1no97PQ0bAOjmh22SuTkHg6j7dzHofXvdOzLrB+ctgcnVJTuoMDYc0yKU6q5MPKk8R3hj+F0D+MsTPAOgg8uV8yCg=; s=default; c=relaxed/relaxed; d=cqsoftware.com.cn; v=1;
-	bh=LwbRDWvJ8rnzZS5/DjFCqJU+R8XkNYf2iJhw1fEF2uo=;
+	b=AdWLh2ZxxKiOLp3FP40kGgGqVwvx1gdP7V9lKWIjP1uZ1bP1cVXxZBe7R674SimMp6W9XjTp3k1sL4Y4mC1b2Tjon4D2FK/n3+hxe4yewtMaYcMzx4TUe2PVgFCMh/I3Y2biNL2Oxw6oAAzt8A4GFeVT1kuJjMutM7t4ZkQC9pY=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=HvpR+5epSgdAGZf25SgOvURV9dCVLjxkFsGadPU1WfE=;
 	h=date:mime-version:subject:message-id:from;
 
+On 10/13/2025 10:11 AM, Dmitry Baryshkov wrote:
 
-在 2025/10/13 10:34, Yanteng Si 写道:
->
-> 在 2025/10/10 下午1:49, Shuo Zhao 写道:
->> Translate .../security/secrets/coco.rst into Chinese.
+> On Mon, Oct 13, 2025 at 09:26:06AM +0800, Chaoyi Chen wrote:
+>> On 10/12/2025 2:52 AM, Dmitry Baryshkov wrote:
 >>
->> Update the translation through commit d56b699d76d1
->> ("Documentation: Fix typos").
->>
->> Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
->> ---
->>   .../zh_CN/security/secrets/coco.rst           | 96 +++++++++++++++++++
->>   .../zh_CN/security/secrets/index.rst          |  9 +-
->>   2 files changed, 99 insertions(+), 6 deletions(-)
->>   create mode 100644 
->> Documentation/translations/zh_CN/security/secrets/coco.rst
->>
->> diff --git 
->> a/Documentation/translations/zh_CN/security/secrets/coco.rst 
->> b/Documentation/translations/zh_CN/security/secrets/coco.rst
->> new file mode 100644
->> index 000000000000..057a8fdf1e3b
->> --- /dev/null
->> +++ b/Documentation/translations/zh_CN/security/secrets/coco.rst
->> @@ -0,0 +1,96 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +.. include:: ../../disclaimer-zh_CN.rst
->> +
->> +:Original: Documentation/security/secrets/coco.rst
->> +
->> +:翻译:
->> +
->> + 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
->> +
->> +============
->> +机密计算密钥
->> +============
->> +
->> +本文档介绍了在EFI驱动程序和efi_secret内核模块中，机密计算密钥从固件
->> +到操作系统的注入处理流程。
->> +
->> +简介
->> +====
->> +
->> +机密计算硬件（如AMD SEV，Secure Encrypted Virtualization）允许虚拟机
->> +所有者将密钥注入虚拟机（VM）内存，且主机/虚拟机监控程序无法读取这些密
->> +钥。在SEV中，密钥注入需在虚拟机启动流程的早期阶段（客户机开始运行前）
->> +执行。
->> +
->> +efi_secret内核模块允许用户空间应用程序通过securityfs（安全文件系统）访
->> +问这些密钥。
->> +
->> +密钥数据流
->> +==========
->> +
->> +客户机固件可能会为密钥注入预留一块指定的内存区域，并将该区域的位置（基准 
->>
->> +客户机物理地址GPA和长度）在EFI配置表中，通过 
->> ``LINUX_EFI_COCO_SECRET_AREA_GUID``
->> +条目（对应的GUID值为 ``adf956ad-e98c-484c-ae11-b51c7d336447`` 
->> ）的形式发布。
->> +固件应将此内存区域标记为 ``EFI_RESERVED_TYPE`` 
->> ，因此内核不应将其用于自身用途。
->> +
->> +虚拟机启动过程中，虚拟机管理器可向该区域注入密钥。在AMD 
->> SEV和SEV-ES中，此
->> +操作通过 ``KVM_SEV_LAUNCH_SECRET`` 命令执行（参见 [sev]_ 
->> ）。注入的“客户机
->> +所有者密钥数据”应采用带GUID的密钥值表结构，其二进制格式在 
->> ``drivers/virt/
->> +coco/efi_secret/efi_secret.c`` 文件的EFI密钥区域结构部分中有详细描述。
->> +
->> +内核启动时，内核的EFI驱动程序将保存密钥区域位置（来自EFI配置表）到 
->> ``efi.coco_secret``
->> +字段。随后，它会检查密钥区域是否已填充：映射该区域并检查其内容是否以
->> +``EFI_SECRET_TABLE_HEADER_GUID`` （对应的GUID为 
->> ``1e74f542-71dd-4d66-963e-ef4287ff173b`` ）
->> +开头。如果密钥区域已填充，EFI驱动程序将自动加载efi_secret内核模块，并通过securityfs将密钥 
->>
->> +暴露给用户空间应用程序。efi_secret文件系统接口的详细信息请参考 
->> [secrets-coco-abi]_ 。
->> +
->> +
->> +应用使用示例
->> +============
->> +
->> +假设客户机需要对加密文件进行计算处理。客户机所有者通过密钥注入机制提供解密密钥 
->>
->> +（即密钥）。客户机应用程序从efi_secret文件系统读取该密钥，然后将文件解密到内存中， 
->>
->> +接着对内容进行需要的计算。
->> +
->> +在此示例中，主机无法从磁盘镜像中读取文件，因为文件是加密的；主机无法读取解密密钥， 
->>
->> +因为它是通过密钥注入机制（即安全通道）传递的；主机也无法读取内存中的解密内容，因为 
->>
->> +这是一个机密型（内存加密）客户机。
->> +
->> +以下是一个简单的示例，展示了在客户机中使用efi_secret模块的过程，在启动时注入了 
->>
->> +一个包含4个密钥的EFI密钥区域::
->> +
->> +        # ls -la /sys/kernel/security/secrets/coco
->> +        total 0
->> +        drwxr-xr-x 2 root root 0 Jun 28 11:54 .
->> +        drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
->> +        -r--r----- 1 root root 0 Jun 28 11:54 
->> 736870e5-84f0-4973-92ec-06879ce3da0b
->> +        -r--r----- 1 root root 0 Jun 28 11:54 
->> 83c83f7f-1356-4975-8b7e-d3a0b54312c6
->> +        -r--r----- 1 root root 0 Jun 28 11:54 
->> 9553f55d-3da2-43ee-ab5d-ff17f78864d2
->> +        -r--r----- 1 root root 0 Jun 28 11:54 
->> e6f5a162-d67f-4750-a67c-5d065f2a9910
->> +
->> +        # hd 
->> /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
->> +        00000000  74 68 65 73 65 2d 61 72  65 2d 74 68 65 2d 6b 61  
->> |these-are-the-ka|
->> +        00000010  74 61 2d 73 65 63 72 65  74 73 00 01 02 03 04 05  
->> |ta-secrets......|
->> +        00000020  06 07                                             
->> |..|
->> +        00000022
->> +
->> +        # rm 
->> /sys/kernel/security/secrets/coco/e6f5a162-d67f-4750-a67c-5d065f2a9910
->> +
->> +        # ls -la /sys/kernel/security/secrets/coco
->> +        total 0
->> +        drwxr-xr-x 2 root root 0 Jun 28 11:55 .
->> +        drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
->> +        -r--r----- 1 root root 0 Jun 28 11:54 
->> 736870e5-84f0-4973-92ec-06879ce3da0b
->> +        -r--r----- 1 root root 0 Jun 28 11:54 
->> 83c83f7f-1356-4975-8b7e-d3a0b54312c6
->> +        -r--r----- 1 root root 0 Jun 28 11:54 
->> 9553f55d-3da2-43ee-ab5d-ff17f78864d2
->> +
->> +
->> +参考文献
->> +========
->> +
->> +请参见 [sev-api-spec]_ 以获取有关SEV ``LAUNCH_SECRET`` 操作的更多信息。
->> +
->
->> +[sev] Documentation/virt/kvm/x86/amd-memory-encryption.rst
->> +[secrets-coco-abi] Documentation/ABI/testing/securityfs-secrets-coco
->> +[sev-api-spec] 
->> https://www.amd.com/system/files/TechDocs/55766_SEV-KM_API_Specification.pdf
->
-> sev_CN will not introduce build warning.
->
->
-> Thanks,
->
-> Yanteng
+>>> On Sat, Oct 11, 2025 at 11:32:31AM +0800, Chaoyi Chen wrote:
+>>>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>>>
+>>>> The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
+>>>> the CDN-DP can be switched to output to one of the PHYs. If both ports
+>>>> are plugged into DP, DP will select the first port for output.
+>>>>
+>>>> This patch adds support for multiple bridges, enabling users to flexibly
+>>>> select the output port. For each PHY port, a separate encoder and bridge
+>>>> are registered.
+>>>>
+>>>> The change is based on the DRM AUX HPD bridge, rather than the
+>>>> extcon approach. This requires the DT to correctly describe the
+>>>> connections between the first bridge in bridge chain and DP
+>>>> controller. For example, the bridge chain may be like this:
+>>>>
+>>>> PHY aux birdge -> fsa4480 analog audio switch bridge ->
+>>>> onnn,nb7vpq904m USB reminder bridge -> USB-C controller AUX HPD bridge
+>>>>
+>>>> In this case, the connection relationships among the PHY aux bridge
+>>>> and the DP contorller need to be described in DT.
+>>>>
+>>>> In addition, the cdn_dp_parse_hpd_bridge_dt() will parses it and
+>>>> determines whether to register one or two bridges.
+>>>>
+>>>> Since there is only one DP controller, only one of the PHY ports can
+>>>> output at a time. The key is how to switch between different PHYs,
+>>>> which is handled by cdn_dp_switch_port() and cdn_dp_enable().
+>>>>
+>>>> There are two cases:
+>>>>
+>>>> 1. Neither bridge is enabled. In this case, both bridges can
+>>>> independently read the EDID, and the PHY port may switch before
+>>>> reading the EDID.
+>>>>
+>>>> 2. One bridge is already enabled. In this case, other bridges are not
+>>>> allowed to read the EDID. So we will try to return the cached EDID.
+>>>>
+>>>> Since the scenario of two ports plug in at the same time is rare,
+>>>> I don't have a board which support two TypeC connector to test this.
+>>>> Therefore, I tested forced switching on a single PHY port, as well as
+>>>> output using a fake PHY port alongside a real PHY port.
+>>>>
+>>>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>>> ---
+>>>>
+>>>> +	/* One endpoint may correspond to one HPD bridge. */
+>>>> +	for_each_of_graph_port_endpoint(port, dp_ep) {
+>>>> +		struct device_node *phy_bridge_node __free(device_node) =
+>>>> +			of_graph_get_remote_port_parent(dp_ep);
+>>>> +
+>>>> +		bridge = of_drm_find_bridge(phy_bridge_node);
+>>>> +		if (!bridge) {
+>>>> +			ret = -EPROBE_DEFER;
+>>>> +			goto out;
+>>>> +		}
+>>>> +
+>>>> +		dp->hpd_bridge_valid = true;
+>>>> +		dp->hpd_bridge_list[count].bridge = bridge;
+>>>> +		dp->hpd_bridge_list[count].parent = dp;
+>>>> +		dp->hpd_bridge_list[count].id = count;
+>>> This looks misnamed. They are not necessarily HPD bridges. There can be
+>>> a random chain between your controller and the actual output / connector
+>>> /etc.
+>> Yes, and more precisely, this should be `pervious_bridge_list` . Will fix in v6.
+> I think the typical convention is around next_bridge, not previous.
 
-Ok.
+Oh, that's true.  Will fix this in v6.
 
 
-Thanks,
+>
+>
+-- 
+Best,
+Chaoyi
 
-ZhaoShuo
-
->
->> +
->> diff --git 
->> a/Documentation/translations/zh_CN/security/secrets/index.rst 
->> b/Documentation/translations/zh_CN/security/secrets/index.rst
->> index 5ea78713f10e..38464dcb2c3c 100644
->> --- a/Documentation/translations/zh_CN/security/secrets/index.rst
->> +++ b/Documentation/translations/zh_CN/security/secrets/index.rst
->> @@ -5,13 +5,10 @@
->>     :翻译:
->>   -=====================
->> +========
->>   密钥文档
->> -=====================
->> +========
->>     .. toctree::
->>   -
->> -TODOLIST:
->> -
->> -* coco
->> +   coco
->
->
 
