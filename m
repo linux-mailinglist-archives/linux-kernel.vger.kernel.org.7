@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-850288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93E3BD2670
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1188BD265E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6427A3A755D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A64B3A5543
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736622FF140;
-	Mon, 13 Oct 2025 09:56:54 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7542FE07F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E3A2FE05F;
+	Mon, 13 Oct 2025 09:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4i8Uarc"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC041946AA
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760349414; cv=none; b=EqG1Go8cH0KOGAGP9OWhujCnOeogPyPm922ea9U+VMK9+Eu60Eb3YWGvY4OhKCOgC9EtiKMRgD9aGP9IjG730/HuJ3WNFEqkUsU3+Sm4FP9XDZQ574cpNM2jub22UX7/JYNiREc5rH2esQB9J1IDk/9x7YdEXp0KT6AvZNpmNQQ=
+	t=1760349408; cv=none; b=hjbYN0vfFUSkljS6RmEQYtnlKKPIRUVfGaa4Nsd8RSCCiGVgiEzszw4l+PKMWRSLPhGVDADmMrRwZY/KXng8m3nuk5EiqFcAT5AWPUFSduk/ko39q4S5trUvg3awyKEdfufe8EY0gEgkdl7LCJocAuZabDodOl0B4usWFTK5ZYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760349414; c=relaxed/simple;
-	bh=Lcd30tOIJB5nURqEqHS62gmqBHYLvDLuvoLyUw03FEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=etn6PxX7WTnTXmA+5uBHjnNAkRQFJ3Jls4FQQ49VSlsERQ91xXoBt/1eZw92e8RSeA67gz3V7dfqxCM4eIGMRbEq4gIFdPY2mj8BmMmDJV3O4NjvGL3O3gNVW0iylhEljODSizEe7IqPsQ0gjPs6iqIzuYXq5eqQoMlypUm15I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.198])
-	by gateway (Coremail) with SMTP id _____8Cx5tDczOxodIsVAA--.46148S3;
-	Mon, 13 Oct 2025 17:56:44 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.198])
-	by front1 (Coremail) with SMTP id qMiowJDxcMLMzOxoloDdAA--.63721S2;
-	Mon, 13 Oct 2025 17:56:42 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Hannes Reinecke <hare@suse.de>,
-	John Garry <john.g.garry@oracle.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] mm: Remove the BOUNCE config option
-Date: Mon, 13 Oct 2025 17:56:20 +0800
-Message-ID: <20251013095620.1111061-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1760349408; c=relaxed/simple;
+	bh=EGmxIR9kKOSX51N1HxGcneN2hhaHwAGf1JsXcHdoHVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lEpJi2C7bw4pRem//f8OrdrqoEizZHaMFO5qTjSdd8ziMMylQBaJbLmXgU38F9AFV1kx1qJ8XTdBtxyRZJh6u+6KsjuLqupDsWWFjJHYlLIHRuHnTJeUqlnPVY82vYaI9swgRA/w/2o7Gh1Ims/LArQRwyUViw+3MsmNhn24BHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4i8Uarc; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b57d93ae3b0so2379048a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:56:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760349406; x=1760954206; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fJifNO/MlvLEol8h2cpUsahhKb87GytRbrPHmHhE5dM=;
+        b=H4i8Uarc6bjN2gVX5qLBjCa0nVGVJQckdrm56FA3S5nghxdBjfny01RXcuz0eA7Kp9
+         X/+QQmMZDkAI00aQCqkx/EuFp0AYIWHE5yHFAV2EOlKG7/EoTiUbR+AiA+1elktykWxR
+         iNq0Icotv2fpyg9xPsrjT6uutm1uHFZtZnu+5is3kXq61WCRmvIQCtBCO2ekcVw7B/dy
+         B5v/AzPQd3MhlKgB6alWIj9iYpcQOw+M1FMAZZLMlKp4av4DYBpmCURMpdGag7vljfLk
+         WgrBGl5vDVHISvG3qzBls1bhaD9GGsOAHUiXiyKWCOHgs1OJIqq/1amz7kAoYptIRNIQ
+         fmJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760349406; x=1760954206;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fJifNO/MlvLEol8h2cpUsahhKb87GytRbrPHmHhE5dM=;
+        b=o+KMR8rTgnVUjTWYKemvFeZsp/1KhCotoDERlWLeKlXMyG9i2NdAB2PxeTMWsr5GFV
+         a0bpoUH6dNhVAG4UgUuOP+OYPVkFBANxBrxetWg1j8hHdXv0zmkgFE19kojDXRS5M5SF
+         XDZ8Nw2cmgFRcuGKFu2uhW4oYgariSe9pScij9p3kvI8fEyFkInOf6KK4lwdZJwvhj+W
+         KuTJKFSPmD4nUrgrfSvuRL6SsBgLnN/Tu3wTkEKggdU/lDS6Rr2j/m7mTa4UV3QHWZmh
+         OnkRfa95WYuulKf36F63WNeRCnk4jOqr8V0hs1XG01kj/a3IUKenrUJk74zstUOZv9YB
+         0fJQ==
+X-Gm-Message-State: AOJu0YygnT5y0OphWD9cb3oJT09DIjl6JIQO/ssX5svn2w+c2xVqj6Gg
+	Q/FZx8nO2/jPgQv+EnfVvbis1qedTNExuUk2xlmReiFTSiJz1Pd1HdMEJv9hTodD
+X-Gm-Gg: ASbGncsgDl8VZ7gJHXGsT6GgRgOL9MkKbTb3kBU5W95L4vp0KDfXPrhc69wBnXRXnv9
+	k497yDYGUwNwZ8R8UU8jI6ma9eGCNzRZyxiJO06wHZC6sdj+mRkUEZoq9x429TtPTYvxa951dLR
+	8aFTeSTtBDQ7guTPNphYHtZVLICYpg4Mv8WkgEiSRqSWooZFwyaNN0Pwv1Dem+xoGlDYu3Ias2X
+	knFvocEPCOkCYhM4pfAzBcD1eAEQccNQaubaKuAGVtgfpKw9Do7hMDrvJntNcv9lwGrsA5Us9Fl
+	ewlNG7/Qzaakw5kvryl5gSKU/EVXR0rVeF5DH9sx3Re7EhVVn95ZzXhZeYmkZQXQeUFHrfZtQqO
+	/FRO2vqWVVBi2OimNaCKPaVJrxkTswNvGzZzpFNDHf2oAwhIJrYkM7Iw=
+X-Google-Smtp-Source: AGHT+IGzpC5rqfVmsWGMJXGyOLj84deaeSTSLGbIECeDpck55uHP7Se5TrOU8rzQ6Rt7w04+qGi3PQ==
+X-Received: by 2002:a17:903:903:b0:274:3db8:e755 with SMTP id d9443c01a7336-290272c0358mr237517515ad.30.1760349406411;
+        Mon, 13 Oct 2025 02:56:46 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f078aesm128287165ad.64.2025.10.13.02.56.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 02:56:45 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 3174B424BFFB; Mon, 13 Oct 2025 16:56:43 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Markus Heiser <markus.heiser@darmarit.de>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Silvio Fricke <silvio.fricke@gmail.com>
+Subject: [PATCH v2 0/2] Associative arrays documentation formatting cleanups
+Date: Mon, 13 Oct 2025 16:56:29 +0700
+Message-ID: <20251013095630.34235-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=708; i=bagasdotme@gmail.com; h=from:subject; bh=EGmxIR9kKOSX51N1HxGcneN2hhaHwAGf1JsXcHdoHVw=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlvzhTpTzz78X/QzmP7+U+2fnJteX7S43LshGkn3W/9+ aI/RUSbr6OUhUGMi0FWTJFlUiJf0+ldRiIX2tc6wsxhZQIZwsDFKQATuWPA8N9z7deAJX3GIv8c A77en772USUHx4czn1iz2xkEhGTuu51gZPjqqFoiGmv06vyp6M2LP+rNXiFc1tmbf0ti2cfzvWE X1ZkA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxcMLMzOxoloDdAA--.63721S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrurW3XFy7uFy7WFyrZF1rKrX_yoWfGwb_Ga
-	4v9F18G3W5ArW7C3ZI9rs5Aw4Dt3W8Wa4xK3W8tr4fX342q3Zagw17tFWrZF17Ca4DWrnx
-	Z3y0vryjyryvyosvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbfxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
 
-Commit eeadd68e2a5f6bfe0bf10 ("block: remove bounce buffering support")
-remove block/bounce.c but left the BOUNCE config option. Now this option
-has no users, so remove it.
+Hi,
 
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- mm/Kconfig | 9 ---------
- 1 file changed, 9 deletions(-)
+Here's two-patch formatting cleanup series for generic associative array
+implementation docs. The shortlog below should be self-explanatory.
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 0e26f4fc8717..e47321051d76 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -695,15 +695,6 @@ config PCP_BATCH_SCALE_MAX
- config PHYS_ADDR_T_64BIT
- 	def_bool 64BIT
- 
--config BOUNCE
--	bool "Enable bounce buffers"
--	default y
--	depends on BLOCK && MMU && HIGHMEM
--	help
--	  Enable bounce buffers for devices that cannot access the full range of
--	  memory available to the CPU. Enabled by default when HIGHMEM is
--	  selected, but you may say n to override this.
--
- config MMU_NOTIFIER
- 	bool
- 	select INTERVAL_TREE
+Enjoy!
+
+Changes since v1 [1]:
+
+  - Apply review trailers (Randy)
+
+[1]: https://lore.kernel.org/linux-doc/20250920024227.19474-2-bagasdotme@gmail.com/
+
+Bagas Sanjaya (2):
+  Documentation: assoc_array: Indent function explanation text
+  Documentation: assoc_array: Format internal tree layout tables
+
+ Documentation/core-api/assoc_array.rst | 196 +++++++++++++------------
+ 1 file changed, 103 insertions(+), 93 deletions(-)
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
-2.47.3
+An old man doll... just what I always wanted! - Clara
 
 
