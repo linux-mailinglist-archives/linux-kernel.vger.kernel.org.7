@@ -1,191 +1,189 @@
-Return-Path: <linux-kernel+bounces-850108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E28BD1E5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:58:13 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161F9BD1E62
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60A221898B80
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:58:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B21F83489C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903032EB5AF;
-	Mon, 13 Oct 2025 07:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80CB2E7F2F;
+	Mon, 13 Oct 2025 08:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vnW8zHPp"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DTgCzLUY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="A2YAIP6G";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DTgCzLUY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="A2YAIP6G"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B82D2E2DC4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AE934BA46
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760342283; cv=none; b=XziLSbXX+TiTYGBDmqkBQDVyU7wLdWVZ9Z9RJDuzL1hb+asT8zImKqH3orRtpeTAoZbMRNYCi2/ZMgxnC1dzaxJvaimYgl9iK+X2FEh0/b1NTD53wmQBOzU8cuCFwKwZWmqvGMiqKrxSwIj686ynB0qxuwq1siE4uYnV8QYflDs=
+	t=1760342431; cv=none; b=fy1cP41Q8ivJplKmhNEUz96kH81N1xpai1CHYE27qxqyG8pqH4mvCnwKCSpIkH3C+En/egCQ+yenb4pNMhcMeatRh/TmKCbzm4bnto9oAEmFrMrjnuN3fqX/3O2ZSmrB03Wal5trNJdZ5Dx3X6s5fhGJsSewxdyYmOkMZuI0biY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760342283; c=relaxed/simple;
-	bh=3E34g8to+7YP8tDavcynDJIlQYsxd692ze/8ljHsty4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hS1vmUgbQe/NkTUVzRuWlT0yBa8FXNgOmGJyxcZ5F+baVX8Z4EVF4o3LvK+WWk1X1vl8t91xIa1bIXL8fKNEvCEeO1HGxxslei2Cjqifn9xUNKGf3NF94geWHpCzvmCPDoNw/tJQYvJZoQMviI2jq3S4F8dortMad6/jKfB//oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--hhhuuu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vnW8zHPp; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--hhhuuu.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-27c62320f16so94066925ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 00:58:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760342280; x=1760947080; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iGu6dFYwE/2Nf8J+0985oWxkB/pnBGdxJtFkLo+v4g8=;
-        b=vnW8zHPp43s9xT8kwEpplM3MU4Y7XMaCsOaLoHzcccsOIl7oLW1g5X0j4/2pRP9/wh
-         PNlLJDLvNUnB2WxTNyl4htJU6Jz7koIzXnH79uph7HWNwPGIP1YQzrQV3HGxwOp6uEpi
-         dP88V69xof31OV0nY4l3FQlb8JW5u2An20Hl2bWWqHf/Zou9Gk8p93cGzuJ5b/JPkA4t
-         P0GCttyxO9Aw8rSgl9lOk340n1YWegIyc9oKBSVF77GjUzCat359tkmhM5cj5XLLiG3Q
-         DWOyBtgU7sA2GmKqO1hnmDpqLMIjskfk2sEC/1yrjgISVsvCAkZ9tP1niCJJFvVpZrNg
-         1KsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760342280; x=1760947080;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iGu6dFYwE/2Nf8J+0985oWxkB/pnBGdxJtFkLo+v4g8=;
-        b=E4J06BKUmqOhoNeERdbQ2bqFkcg1opPeF7Q/ajdWEywaskHdwNWSj7PAjkNcwediG8
-         wxd10/OylGwN4ntr4ZGLFpxaS7LrSkZRgVngu2pkj8scL2tjFCbQMBoNPJEJMLnpxXUI
-         2lptw5zHoAZOdK2qt1H03HqDG4vcOD1p6RZlQ0HYJInwXqU8vLEWPoq4quaBY261V0b8
-         ORkjxG0BvR/bBPwU5Bfd6NOUNWmInYFIKGNUWQD39CcLLa7db4rJfpTY7+ZXBMClXftv
-         K5sWLDqL96uxNDkuGQSQdXzUPYweCn7b+w4yoWHjtw1Gc5S3ZGjFbCNgOUaZcV688yjN
-         reTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWb+dzzmBKQhAuk9QDkNTdBl9SZOSCAlQEFFi0gntCxLZbYG4KAvEV9wk1IGmblNvs/uotMAnKQ3jU/5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKb5wcFwq61Teil94Mtt+l2RAcE+wsoVX9vGtY2LyrtR0gy9n1
-	qsS6st5jI1/V23ji9juLp/UZGgKVPn6o9ikKSayBM/FgSU7lHfEG1o1ADYeQyRcj19+S464WA3F
-	UDTRcXA==
-X-Google-Smtp-Source: AGHT+IHJ/pA9YA+/yrVB2YKyaQZ1ueZAHnptFV5pNWfOzlJvkkhQMMmsTQndiI2iKW3n9vHmx1cju8mAurg=
-X-Received: from plly16.prod.google.com ([2002:a17:902:7c90:b0:290:28e2:ce61])
- (user=hhhuuu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cec2:b0:256:2b13:5f11
- with SMTP id d9443c01a7336-290272e19bbmr311483875ad.40.1760342280491; Mon, 13
- Oct 2025 00:58:00 -0700 (PDT)
-Date: Mon, 13 Oct 2025 07:57:56 +0000
+	s=arc-20240116; t=1760342431; c=relaxed/simple;
+	bh=Mp38y6dJpiL63UJyrFnenakvqUylSUJIpM0Fja98ow0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0piEkXPqmZsWXwtmbdk9jPDmuDAZ3CyElqyWkDP6M+L6KhFYFeOiXvSLBk+HnFtOjldsLUIS/gRkOEUufk0YlwPppGP0z+t5ktASrZennBTaARFvLXCi5cn1nVG36y7kNV7MAHnFEIYVyELxjgJZE29HbNSaQJhDWfhHyG65Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DTgCzLUY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=A2YAIP6G; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DTgCzLUY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=A2YAIP6G; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B156621221;
+	Mon, 13 Oct 2025 08:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760342427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8t58zwnbBpGazmpfJwigZplemtrFKud6dUJScz2Wcb4=;
+	b=DTgCzLUY0ad8E5MyNbrkArk0eE/wvMEH12RuNqcAtldq7n1aIISIhF4rhVLK/BXvFxNWxv
+	+2c7Z2NMawHiyT8aQ+mdEekUeye61OKJTiNRcZcQ3sbIkqpulexnVZcalAGWkwb3so4qA6
+	dTXYim4ey1ywpKU8Pl8cYhT236rDqDM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760342427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8t58zwnbBpGazmpfJwigZplemtrFKud6dUJScz2Wcb4=;
+	b=A2YAIP6GqGRuraijN+d6sG5wlkWRahixq2bxKuvr+idEKO30rEGNHV9pl5Gy2ltlDrTMX1
+	cnlGPBGK61chaLAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1760342427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8t58zwnbBpGazmpfJwigZplemtrFKud6dUJScz2Wcb4=;
+	b=DTgCzLUY0ad8E5MyNbrkArk0eE/wvMEH12RuNqcAtldq7n1aIISIhF4rhVLK/BXvFxNWxv
+	+2c7Z2NMawHiyT8aQ+mdEekUeye61OKJTiNRcZcQ3sbIkqpulexnVZcalAGWkwb3so4qA6
+	dTXYim4ey1ywpKU8Pl8cYhT236rDqDM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1760342427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8t58zwnbBpGazmpfJwigZplemtrFKud6dUJScz2Wcb4=;
+	b=A2YAIP6GqGRuraijN+d6sG5wlkWRahixq2bxKuvr+idEKO30rEGNHV9pl5Gy2ltlDrTMX1
+	cnlGPBGK61chaLAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02ECC13874;
+	Mon, 13 Oct 2025 08:00:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nsRjOZqx7GijEQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 13 Oct 2025 08:00:26 +0000
+Date: Mon, 13 Oct 2025 10:00:21 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: muchun.song@linux.dev, david@redhat.com,
+	Andrew Morton <akpm@linux-foundation.org>, shakeel.butt@linux.dev,
+	linux-mm@kvack.org, hannes@cmpxchg.org, riel@surriel.com,
+	kas@kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v2 2/2] mm/hugetlb: allow overcommitting gigantic
+ hugepages
+Message-ID: <aOyxle8OJPMKlVWX@localhost.localdomain>
+References: <20251009172433.4158118-1-usamaarif642@gmail.com>
+ <20251009172433.4158118-2-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
-Message-ID: <20251013075756.2056211-1-hhhuuu@google.com>
-Subject: [PATCH] usb: gadget: udc: fix race condition in usb_del_gadget
-From: Jimmy Hu <hhhuuu@google.com>
-To: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
-Cc: badhri@google.com, hhhuuu@google.com, stern@rowland.harvard.edu, 
-	royluo@google.com, Thinh.Nguyen@synopsys.com, balbi@ti.com, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009172433.4158118-2-usamaarif642@gmail.com>
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.994];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,localhost.localdomain:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-A race condition during gadget teardown can lead to a use-after-free
-in usb_gadget_state_work(), as reported by KASAN:
+On Thu, Oct 09, 2025 at 06:24:31PM +0100, Usama Arif wrote:
+> Currently, gigantic hugepages cannot use the overcommit mechanism
+> (nr_overcommit_hugepages), forcing users to permanently reserve memory via
+> nr_hugepages even when pages might not be actively used.
+> 
+> The restriction was added in 2011 [1], which was before there was support
+> for reserving 1G hugepages at runtime.
+> Remove this blanket restriction on gigantic hugepage overcommit.
+> This will bring the same benefits to gigantic pages as hugepages:
+> 
+> - Memory is only taken out of regular use when actually needed
+> - Unused surplus pages can be returned to the system
+> - Better memory utilization, especially with CMA backing which can
+>   significantly increase the changes of hugepage allocation
+> 
+> Without this patch:
+> echo 3 > /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_overcommit_hugepages
+> bash: echo: write error: Invalid argument
+> 
+> With this patch:
+> echo 3 > /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_overcommit_hugepages
+> ./mmap_hugetlb_test
+> Successfully allocated huge pages at address: 0x7f9d40000000
+> 
+> cat mmap_hugetlb_test.c
+> ...
+>     unsigned long ALLOC_SIZE = 3 * (unsigned long) HUGE_PAGE_SIZE;
+>     addr = mmap(NULL,
+>                 ALLOC_SIZE, // 3GB
+>                 PROT_READ | PROT_WRITE,
+>                 MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_1GB,
+>                 -1,
+>                 0);
+> 
+>     if (addr == MAP_FAILED) {
+>         fprintf(stderr, "mmap failed: %s\n", strerror(errno));
+>         return 1;
+>     }
+>     printf("Successfully allocated huge pages at address: %p\n", addr);
+> ...
+> 
+> [1] https://git.zx2c4.com/linux-rng/commit/mm/hugetlb.c?id=adbe8726dc2a3805630d517270db17e3af86e526
+> 
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 
-  BUG: KASAN: invalid-access in sysfs_notify+0_x_2c/0_x_d0
-  Workqueue: events usb_gadget_state_work
+I guess nobody bothered to do this after we added support for 1GB hugepages because
+creating those at runtime is tricky, and in my experience, almost everybody reserves
+those at boot time.
+But I do not have objections to make them behave as normal hugepages:
 
-The fundamental race occurs because a concurrent event (e.g., an
-interrupt) can call usb_gadget_set_state() and schedule gadget->work
-at any time during the cleanup process in usb_del_gadget().
+Acked-by: Oscar Salvador <osalvador@suse.de>
 
-Commit 399a45e5237c ("usb: gadget: core: flush gadget workqueue after
-device removal") attempted to fix this by moving flush_work() to after
-device_del(). However, this does not fully solve the race, as a new
-work item can still be scheduled *after* flush_work() completes but
-before the gadget's memory is freed, leading to the same use-after-free.
-
-This patch fixes the race condition robustly by introducing a 'teardown'
-flag and a 'state_lock' spinlock to the usb_gadget struct. The flag is
-set during cleanup in usb_del_gadget() *before* calling flush_work() to
-prevent any new work from being scheduled once cleanup has commenced.
-The scheduling site, usb_gadget_set_state(), now checks this flag under
-the lock before queueing the work, thus safely closing the race window.
-
-Fixes: 5702f75375aa9 ("usb: gadget: udc-core: move sysfs_notify() to a workqueue")
-Signed-off-by: Jimmy Hu <hhhuuu@google.com>
-Cc: stable@vger.kernel.org
----
- drivers/usb/gadget/udc/core.c | 18 +++++++++++++++++-
- include/linux/usb/gadget.h    |  6 ++++++
- 2 files changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-index d709e24c1fd4..c4268b76d747 100644
---- a/drivers/usb/gadget/udc/core.c
-+++ b/drivers/usb/gadget/udc/core.c
-@@ -1123,8 +1123,13 @@ static void usb_gadget_state_work(struct work_struct *work)
- void usb_gadget_set_state(struct usb_gadget *gadget,
- 		enum usb_device_state state)
- {
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&gadget->state_lock, flags);
- 	gadget->state = state;
--	schedule_work(&gadget->work);
-+	if (!gadget->teardown)
-+		schedule_work(&gadget->work);
-+	spin_unlock_irqrestore(&gadget->state_lock, flags);
- }
- EXPORT_SYMBOL_GPL(usb_gadget_set_state);
  
-@@ -1357,6 +1362,9 @@ static void usb_udc_nop_release(struct device *dev)
- void usb_initialize_gadget(struct device *parent, struct usb_gadget *gadget,
- 		void (*release)(struct device *dev))
- {
-+	/* For race-free teardown */
-+	spin_lock_init(&gadget->state_lock);
-+	gadget->teardown = false;
- 	INIT_WORK(&gadget->work, usb_gadget_state_work);
- 	gadget->dev.parent = parent;
- 
-@@ -1531,6 +1539,7 @@ EXPORT_SYMBOL_GPL(usb_add_gadget_udc);
- void usb_del_gadget(struct usb_gadget *gadget)
- {
- 	struct usb_udc *udc = gadget->udc;
-+	unsigned long flags;
- 
- 	if (!udc)
- 		return;
-@@ -1544,6 +1553,13 @@ void usb_del_gadget(struct usb_gadget *gadget)
- 	kobject_uevent(&udc->dev.kobj, KOBJ_REMOVE);
- 	sysfs_remove_link(&udc->dev.kobj, "gadget");
- 	device_del(&gadget->dev);
-+	/*
-+	 * Set the teardown flag before flushing the work to prevent new work
-+	 * from being scheduled while we are cleaning up.
-+	 */
-+	spin_lock_irqsave(&gadget->state_lock, flags);
-+	gadget->teardown = true;
-+	spin_unlock_irqrestore(&gadget->state_lock, flags);
- 	flush_work(&gadget->work);
- 	ida_free(&gadget_id_numbers, gadget->id_number);
- 	cancel_work_sync(&udc->vbus_work);
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 0f28c5512fcb..8302aeaea82e 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -351,6 +351,9 @@ struct usb_gadget_ops {
-  *	can handle. The UDC must support this and all slower speeds and lower
-  *	number of lanes.
-  * @state: the state we are now (attached, suspended, configured, etc)
-+ * @state_lock: Spinlock protecting the `state` and `teardown` members.
-+ * @teardown: True if the device is undergoing teardown, used to prevent
-+ *	new work from being scheduled during cleanup.
-  * @name: Identifies the controller hardware type.  Used in diagnostics
-  *	and sometimes configuration.
-  * @dev: Driver model state for this abstract device.
-@@ -426,6 +429,9 @@ struct usb_gadget {
- 	enum usb_ssp_rate		max_ssp_rate;
- 
- 	enum usb_device_state		state;
-+	/* For race-free teardown and state management */
-+	spinlock_t			state_lock;
-+	bool				teardown;
- 	const char			*name;
- 	struct device			dev;
- 	unsigned			isoch_delay;
+
 -- 
-2.51.0.618.g983fd99d29-goog
-
+Oscar Salvador
+SUSE Labs
 
