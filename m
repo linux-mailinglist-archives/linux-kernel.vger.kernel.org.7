@@ -1,234 +1,186 @@
-Return-Path: <linux-kernel+bounces-850872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB1CBD4C13
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86903BD4E03
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FACA426F52
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D494803C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0507310635;
-	Mon, 13 Oct 2025 15:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCD531355A;
+	Mon, 13 Oct 2025 15:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1mwuIjG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRks+DWi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B6A30FF30;
-	Mon, 13 Oct 2025 15:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA848312823;
+	Mon, 13 Oct 2025 15:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369004; cv=none; b=GeuTT5lChQxV+HzcTX333tw70rJhrDHNoRtu3L5Rg0nfiGgsa5wQhN3kv+92L4AqyQYXsNc3VT1y4iGxLCmd0oRV4HXdxiy3Zf3IktVUKyD20wFiRG+XP5rWtxFVfUaf8DGyaBlrJIn5gXm3EJcZf8L0GIbb43k9BcutTGCe+mw=
+	t=1760369203; cv=none; b=mhsWM/Q5w5Lhg8f4sIOxI8XgByPqUa7mUkKdd/udjZPnG/UrJQolyeebRy70dEq9JVow6kmKNWFK7U4jK7T2QhAuiWZjZJdKGbl/018eHX6ZQMHMlJwQ76pTWLV36lJVSKcbzcDouDrIhSoRHvu8hPwna2+IGeSft3v32sK91To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369004; c=relaxed/simple;
-	bh=HrpU56u8pxLbc0g2WXKv8ddcf/Eh7MXMNWvvG37jNK4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sWakCjOnIO41j3GFUY3VG2lcNpWe6DZFZSHZReWuoYOn5UbrSnxc1XJmf46pZnmlGWrV+NzxZJH1o5V794OodDgTlI4sr5xPhYirtTLrCtQ76UlK6VB6psCmgV2c59pan04Wu0JNQgcAqg2/AjfZJmduWVg1GxruvJ9MglsZi4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1mwuIjG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 467E2C4CEE7;
-	Mon, 13 Oct 2025 15:23:14 +0000 (UTC)
+	s=arc-20240116; t=1760369203; c=relaxed/simple;
+	bh=/sqGzUlY70Md3kn/uqwkAy7zvckyzzhf3i23p85lfsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dOCvGc5QmLsYix6Mem40cc78sOirLZp/p5VZwaLXY7+x2VDbFcO76JspK7p9MC2J3NHa7q1oFHR/6wdx8swXugV15YxDTZeTsLU7na4keQcaKHEp+n+zl6POn22+7Dm9E5f6FjmCDcVSsS/z5DG3f7D2t4x9lSURsfwtfGzz6iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRks+DWi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C88C4CEE7;
+	Mon, 13 Oct 2025 15:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760369003;
-	bh=HrpU56u8pxLbc0g2WXKv8ddcf/Eh7MXMNWvvG37jNK4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=p1mwuIjGDqqsckgAZg28V4Tdmyj4Dd97sGqbbsa9lgNdyX/sRs42EfYMS3jIPWYV+
-	 nr7vxK2+169v0M8HySQ0uqBzWr5hAOg9GhkSMNabre2gX2OpTEehC8GXK0Effdu/Fa
-	 3qlF51k21MY8e6I51tFIoKonWMKzGJJTeSnhlkhcx9OTkxrj5xVP10uY7uempIhuyC
-	 whGSrPHmNuYmQhrwOqoM1Mm7g38uBzRluMba02MY4iX0Nqu/FbMRr67HApS8b0rMcl
-	 UOdvgHtogP3LzHWRJLxerRuaI1Yn22cFa8aVYGPDj1UhayuNHwJMC1NTcqr0MjEaca
-	 vUKwnxoP+7xhw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
-  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-In-Reply-To: <CA+CK2bB6F634HCw_N5z9E5r_LpbGJrucuFb_5fL4da5_W99e4Q@mail.gmail.com>
-	(Pasha Tatashin's message of "Thu, 9 Oct 2025 19:50:12 -0400")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-	<mafs0ms5zn0nm.fsf@kernel.org>
-	<CA+CK2bB6F634HCw_N5z9E5r_LpbGJrucuFb_5fL4da5_W99e4Q@mail.gmail.com>
-Date: Mon, 13 Oct 2025 17:23:13 +0200
-Message-ID: <mafs0o6qaltb2.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1760369203;
+	bh=/sqGzUlY70Md3kn/uqwkAy7zvckyzzhf3i23p85lfsQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IRks+DWi1WAtZfZO4IdGAt75DsITSMamDbEAFdfZYPrtzEgNBjUnPFlFQdVlW2eme
+	 bCe5WYUJahxlCezrgNA/V97lguT2tGgDGex42ykf7U8294Yuo+cPUh07NHKpS8eOvq
+	 qz2awlV1qvXCCo7UVeewt3Sn6yV9nlx4UHHFNw5+M2nWz5h37jrlcFm+wwumAiJgmE
+	 aRDsEH4O/nJZs0YKTzRkFNHX2Jo3jUhIgtI/lUiGINgbX4J+UnD1sGivrOYVCnsMAz
+	 2JA0D7zRhqi2g4AQ14sYToHYl4vYxJDocUvA9r+b34jXBBMx3+uOkreQ/+cfbh8umo
+	 xy5t3Z2knqK4w==
+From: Leon Romanovsky <leon@kernel.org>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>,
+	kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-pci@vger.kernel.org,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v5 2/9] PCI/P2PDMA: Simplify bus address mapping API
+Date: Mon, 13 Oct 2025 18:26:04 +0300
+Message-ID: <a228e188e45f40f0b4e754d37f5ea7f9d92bd0c2.1760368250.git.leon@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1760368250.git.leon@kernel.org>
+References: <cover.1760368250.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 09 2025, Pasha Tatashin wrote:
+From: Leon Romanovsky <leonro@nvidia.com>
 
-> On Thu, Oct 9, 2025 at 6:58=E2=80=AFPM Pratyush Yadav <pratyush@kernel.or=
-g> wrote:
->>
->> On Tue, Oct 07 2025, Pasha Tatashin wrote:
->>
->> > On Sun, Sep 28, 2025 at 9:03=E2=80=AFPM Pasha Tatashin
->> > <pasha.tatashin@soleen.com> wrote:
->> >>
->> [...]
->> > 4. New File-Lifecycle-Bound Global State
->> > ----------------------------------------
->> > A new mechanism for managing global state was proposed, designed to be
->> > tied to the lifecycle of the preserved files themselves. This would
->> > allow a file owner (e.g., the IOMMU subsystem) to save and retrieve
->> > global state that is only relevant when one or more of its FDs are
->> > being managed by LUO.
->>
->> Is this going to replace LUO subsystems? If yes, then why? The global
->> state will likely need to have its own lifecycle just like the FDs, and
->> subsystems are a simple and clean abstraction to control that. I get the
->> idea of only "activating" a subsystem when one or more of its FDs are
->> participating in LUO, but we can do that while keeping subsystems
->> around.
->
-> Thanks for the feedback. The FLB Global State is not replacing the LUO
-> subsystems. On the contrary, it's a higher-level abstraction that is
-> itself implemented as a LUO subsystem. The goal is to provide a
-> solution for a pattern that emerged during the PCI and IOMMU
-> discussions.
+Update the pci_p2pdma_bus_addr_map() function to take a direct pointer
+to the p2pdma_provider structure instead of the pci_p2pdma_map_state.
+This simplifies the API by removing the need for callers to extract
+the provider from the state structure.
 
-Okay, makes sense then. I thought we were removing the subsystems idea.
-I didn't follow the PCI and IOMMU discussions that closely.
+The change updates all callers across the kernel (block layer, IOMMU,
+DMA direct, and HMM) to pass the provider pointer directly, making
+the code more explicit and reducing unnecessary indirection. This
+also removes the runtime warning check since callers now have direct
+control over which provider they use.
 
-Side note: I see a dependency between subsystems forming. For example,
-the FLB subsystem probably wants to make sure all its dependent
-subsystems (like LUO files) go through their callbacks before getting
-its callback. Maybe in the current implementation doing it in any order
-works, but in general, if it manages data of other subsystems, it should
-be serialized after them.
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+---
+ block/blk-mq-dma.c         | 2 +-
+ drivers/iommu/dma-iommu.c  | 4 ++--
+ include/linux/pci-p2pdma.h | 7 +++----
+ kernel/dma/direct.c        | 4 ++--
+ mm/hmm.c                   | 2 +-
+ 5 files changed, 9 insertions(+), 10 deletions(-)
 
-Same with the hugetlb subsystem for example. On prepare or freeze time,
-it would probably be a good idea if the files callbacks finish first. I
-would imagine most subsystems would want to go after files.
+diff --git a/block/blk-mq-dma.c b/block/blk-mq-dma.c
+index 9495b78b6fd3..badef1d925b2 100644
+--- a/block/blk-mq-dma.c
++++ b/block/blk-mq-dma.c
+@@ -85,7 +85,7 @@ static inline bool blk_can_dma_map_iova(struct request *req,
+ 
+ static bool blk_dma_map_bus(struct blk_dma_iter *iter, struct phys_vec *vec)
+ {
+-	iter->addr = pci_p2pdma_bus_addr_map(&iter->p2pdma, vec->paddr);
++	iter->addr = pci_p2pdma_bus_addr_map(iter->p2pdma.mem, vec->paddr);
+ 	iter->len = vec->len;
+ 	return true;
+ }
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 7944a3af4545..e52d19d2e833 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -1439,8 +1439,8 @@ int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+ 			 * as a bus address, __finalise_sg() will copy the dma
+ 			 * address into the output segment.
+ 			 */
+-			s->dma_address = pci_p2pdma_bus_addr_map(&p2pdma_state,
+-						sg_phys(s));
++			s->dma_address = pci_p2pdma_bus_addr_map(
++				p2pdma_state.mem, sg_phys(s));
+ 			sg_dma_len(s) = sg->length;
+ 			sg_dma_mark_bus_address(s);
+ 			continue;
+diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+index 1400f3ad4299..9516ef97b17a 100644
+--- a/include/linux/pci-p2pdma.h
++++ b/include/linux/pci-p2pdma.h
+@@ -181,16 +181,15 @@ pci_p2pdma_state(struct pci_p2pdma_map_state *state, struct device *dev,
+ /**
+  * pci_p2pdma_bus_addr_map - Translate a physical address to a bus address
+  *			     for a PCI_P2PDMA_MAP_BUS_ADDR transfer.
+- * @state:	P2P state structure
++ * @provider:	P2P provider structure
+  * @paddr:	physical address to map
+  *
+  * Map a physically contiguous PCI_P2PDMA_MAP_BUS_ADDR transfer.
+  */
+ static inline dma_addr_t
+-pci_p2pdma_bus_addr_map(struct pci_p2pdma_map_state *state, phys_addr_t paddr)
++pci_p2pdma_bus_addr_map(struct p2pdma_provider *provider, phys_addr_t paddr)
+ {
+-	WARN_ON_ONCE(state->map != PCI_P2PDMA_MAP_BUS_ADDR);
+-	return paddr + state->mem->bus_offset;
++	return paddr + provider->bus_offset;
+ }
+ 
+ #endif /* _LINUX_PCI_P2P_H */
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 1f9ee9759426..d8b3dfc598b2 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -479,8 +479,8 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+ 			}
+ 			break;
+ 		case PCI_P2PDMA_MAP_BUS_ADDR:
+-			sg->dma_address = pci_p2pdma_bus_addr_map(&p2pdma_state,
+-					sg_phys(sg));
++			sg->dma_address = pci_p2pdma_bus_addr_map(
++				p2pdma_state.mem, sg_phys(sg));
+ 			sg_dma_mark_bus_address(sg);
+ 			continue;
+ 		default:
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 87562914670a..9bf0b831a029 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -811,7 +811,7 @@ dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
+ 		break;
+ 	case PCI_P2PDMA_MAP_BUS_ADDR:
+ 		pfns[idx] |= HMM_PFN_P2PDMA_BUS | HMM_PFN_DMA_MAPPED;
+-		return pci_p2pdma_bus_addr_map(p2pdma_state, paddr);
++		return pci_p2pdma_bus_addr_map(p2pdma_state->mem, paddr);
+ 	default:
+ 		return DMA_MAPPING_ERROR;
+ 	}
+-- 
+2.51.0
 
-With the current registration mechanism, the order depends on when the
-subsystem is registered, which is hard to control. Maybe we should have
-a global list of subsystems and can manually specify the order? Not sure
-if that is a good idea, just throwing it out there off the top of my
-head.
-
->
-> You can see the WIP implementation here, which shows it registering as
-> a subsystem named "luo-fh-states-v1-struct":
-> https://github.com/soleen/linux/commit/94e191aab6b355d83633718bc4a1d27dda=
-390001
->
-> The existing subsystem API is a low-level tool that provides for the
-> preservation of a raw 8-byte handle. It doesn't provide locking, nor
-> is it explicitly tied to the lifecycle of any higher-level object like
-> a file handler. The new API is designed to solve a more specific
-> problem: allowing global components (like IOMMU or PCI) to
-> automatically track when resources relevant to them are added to or
-> removed from preservation. If HugeTLB requires a subsystem, it can
-> still use it, but I suspect it might benefit from FLB Global State as
-> well.
-
-Hmm, right. Let me see how I can make use of it.
-
->
->> Here is how I imagine the proposed API would compare against subsystems
->> with hugetlb as an example (hugetlb support is still WIP, so I'm still
->> not clear on specifics, but this is how I imagine it will work):
->>
->> - Hugetlb subsystem needs to track its huge page pools and which pages
->>   are allocated and free. This is its global state. The pools get
->>   reconstructed after kexec. Post-kexec, the free pages are ready for
->>   allocation from other "regular" files and the pages used in LUO files
->>   are reserved.
->>
->> - Pre-kexec, when a hugetlb FD is preserved, it marks that as preserved
->>   in hugetlb's global data structure tracking this. This is runtime data
->>   (say xarray), and _not_ serialized data. Reason being, there are
->>   likely more FDs to come so no point in wasting time serializing just
->>   yet.
->>
->>   This can look something like:
->>
->>   hugetlb_luo_preserve_folio(folio, ...);
->>
->>   Nice and simple.
->>
->>   Compare this with the new proposed API:
->>
->>   liveupdate_fh_global_state_get(h, &hugetlb_data);
->>   // This will have update serialized state now.
->>   hugetlb_luo_preserve_folio(hugetlb_data, folio, ...);
->>   liveupdate_fh_global_state_put(h);
->>
->>   We do the same thing but in a very complicated way.
->>
->> - When the system-wide preserve happens, the hugetlb subsystem gets a
->>   callback to serialize. It converts its runtime global state to
->>   serialized state since now it knows no more FDs will be added.
->>
->>   With the new API, this doesn't need to be done since each FD prepare
->>   already updates serialized state.
->>
->> - If there are no hugetlb FDs, then the hugetlb subsystem doesn't put
->>   anything in LUO. This is same as new API.
->>
->> - If some hugetlb FDs are not restored after liveupdate and the finish
->>   event is triggered, the subsystem gets its finish() handler called and
->>   it can free things up.
->>
->>   I don't get how that would work with the new API.
->
-> The new API isn't more complicated; It codifies the common pattern of
-> "create on first use, destroy on last use" into a reusable helper,
-> saving each file handler from having to reinvent the same reference
-> counting and locking scheme. But, as you point out, subsystems provide
-> more control, specifically they handle full creation/free instead of
-> relying on file-handlers for that.
->
->> My point is, I see subsystems working perfectly fine here and I don't
->> get how the proposed API is any better.
->>
->> Am I missing something?
->
-> No, I don't think you are. Your analysis is correct that this is
-> achievable with subsystems. The goal of the new API is to make that
-> specific, common use case simpler.
-
-Right. Thanks for clarifying.
-
->
-> Pasha
-
---=20
-Regards,
-Pratyush Yadav
 
