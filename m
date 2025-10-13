@@ -1,126 +1,169 @@
-Return-Path: <linux-kernel+bounces-851299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AF3BD60FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:19:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5CBBD60BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0137418A7B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:19:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85E004EBE96
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DF42E9722;
-	Mon, 13 Oct 2025 20:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A28C2DC76E;
+	Mon, 13 Oct 2025 20:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="avtxVXlf"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="W3nCDC/F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xZDBaQRQ"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9745A2E7F0B;
-	Mon, 13 Oct 2025 20:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E667C23F40D;
+	Mon, 13 Oct 2025 20:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760386680; cv=none; b=mF+dkqtZZ4U41wnxzPDBR9F0q/s61SzJxvDpx4CYuPPgmlgRUvh9++R/N/vjLwqwwrniWaWoxCUZYAezVVurhrLpKy2FVMUi2JZw1aMR+YPjGQ2gipy39O03N8PF83yrzB7taWUrOM8s/f/NzDXqQLHQ6jx8dqK/sgthIcLBXTo=
+	t=1760386572; cv=none; b=l0K9WA8jK32vZK40S1ndQHYd3FDCWvf9rb4Ua5tLgd5aPE8cTKMHShedWuHvDZFLXv1s6YItE4JJicLjy5qzWTarUgGFu7bvHcedrTqP3rMWVOuG58WSFZDf5o+oj1dVNXI3AMljBrFr5aVPJPIVg6brzPKgAWfDYlJz2KALWow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760386680; c=relaxed/simple;
-	bh=0RooEeR2UKkdIrkm8tnD/PBHi/7wqKpn+sUQnp/RuFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CqDTDBLgDr1gqi1QGxplk4IHYS/qKUhW2HydVL46LL1/iYxGW8LDgy98KxxTuLSmIyOPMfkO1jbV0DJ0uDYxBQAkCo+lyWXMJDpg3i4kOna1v0BVKwjNdeig2QUqEIdTm+XuKvj0ixANW6P6qj3xxEvVG73pGD8s1cnpopIK72U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=avtxVXlf; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id A92F0C4CAD;
-	Mon, 13 Oct 2025 23:17:56 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 45797C4CA6;
-	Mon, 13 Oct 2025 23:17:56 +0300 (EEST)
-Received: from antheas-z13 (x5996a8de.customers.hiper-net.dk [89.150.168.222])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id F31141FDC0B;
-	Mon, 13 Oct 2025 23:17:53 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760386676;
-	bh=ObihDIJgc+e3sV164qzQ96xxkTKUky9SvhxpNXrsWIc=; h=From:To:Subject;
-	b=avtxVXlflyJbNr3+Ip6zdFxpT4n3ldDsyH2gpOjTM29pg4tBDdDkz5Dfgh6WuuVca
-	 QT2W1PIgKCgEEPv7Ebg+Qv55jVGRyxaYcLtoFdDM6/P+QD961aslw86GvaFY+Ax4vL
-	 O2vxVzzp/PPnP1sRZtAHonLcS+S48dtXVGSA+ytuj7FWZ9pQ+oWK8G1HbU/HywET5t
-	 CsivZY3oCCUzOuHFejaV+eQg0jEeV9EojxpjAl2yi99XjAK4Xtf6M5gHf6DVHWBlf2
-	 SyJyr43w1iwl9uvSRJQtTj0zkB6ksDFIv8xEhRi24IlB30ShCZNP+YwtO/AKmIrvJo
-	 AseT7WkwAhXgA==
-Authentication-Results: linux3247.grserver.gr;
-	spf=pass (sender IP is 89.150.168.222) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org,
-	linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Denis Benato <benato.denis96@gmail.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v6 7/7] HID: asus: add support for the asus-wmi brightness
- handler
-Date: Mon, 13 Oct 2025 22:15:35 +0200
-Message-ID: <20251013201535.6737-8-lkml@antheas.dev>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251013201535.6737-1-lkml@antheas.dev>
-References: <20251013201535.6737-1-lkml@antheas.dev>
+	s=arc-20240116; t=1760386572; c=relaxed/simple;
+	bh=O4Rm4wsUSGFW4OxvMCJHeNaHN1GvluA3ToulwTHb/tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a5QQOy3kykxYItT/Fxk7er5ikBhfLfEaz0FwRMAEcSfbDkq0Kt2yLR8r47rMR6aE8F4U4hzo+7xro6c2C9dJB/i0KEK+oXoASV4KRjdMG7qh++01Fr1odcbFmDhtd7KwpUnLIvD7U0fD8MGGp3O1bm8UZnG/FBqM1FcSo4YXlf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=W3nCDC/F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xZDBaQRQ; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id E9CFC7A042C;
+	Mon, 13 Oct 2025 16:16:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Mon, 13 Oct 2025 16:16:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760386566;
+	 x=1760472966; bh=/Chgvb5Vr9Np2OqJMeWaxCMBRL89Tjsn/P5EOfDuoeI=; b=
+	W3nCDC/FnOgFylJ8JCUCdYeLSY6UD/suLZEfg8qtLLxh9TMZ19GPy2b72MjPxhZq
+	8CdVNEVEl2DgdUK17ApCUcL7m37kmRs8Vh2tQGtERWC0C4QojaoLMjiGgaxQF5gE
+	KuqvPCxC7Jb2aKelFevwTRd6Sfq98fkcxXgGRnoRRvaH2mmktRotAW1sdk4ceKnC
+	KAzzQEd/XWu0nii+r0hb4lWQSyjHdnte0T0MSmGaCUKixJ+tRxCQ705wyeyI8UrR
+	VEmU7APEQJSngx5tefVwt5ZVH9NUW+2TZ+t4fnl+OcLVj7oMeFvYt5rmK62A82U1
+	HE2nffkht0odRyqstqCU8g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760386566; x=
+	1760472966; bh=/Chgvb5Vr9Np2OqJMeWaxCMBRL89Tjsn/P5EOfDuoeI=; b=x
+	ZDBaQRQDw3oGekGIOPiEJWjKQJXbfHPGrDy1skqky954IjFduPBez7FjeA4kXTbq
+	3fLmQ7FcBtbwmyFiUL/w0hIwMY4jIuZv1sLPkFzkFpJFHCJbiT7W76by8Tuj+HS0
+	V+dg99kQsA8AjfEMfCyijI2oo7T8syAQAPgrmiinxH5L3smvGsmea0l7WcmEpFor
+	smdeX2hvBESofDSQu8ZBb0/6g2WB8z/fIfpy7CyGCV8GDBg3m1Mbt59ENPKWQJu0
+	M8zL7Xtzvgi+FROdw9CRaIMRf/cmdCwtoA4vsOpdidXrlGrJyAKN//4UCaRhQu7E
+	2B7JZ8PP7Ilj3BXwPNC4A==
+X-ME-Sender: <xms:Bl7taIbtgnPLnXuFahUqjMWPQji76AKxk4oOIJWuAKQSXvRR7Ngb5A>
+    <xme:Bl7taMv1mt-nPr3MWrs5ryauAWwj5IJ7wkgQvbCe6nAF1kLLfxuWlZVbEHSTUfGMN
+    u7v4VeEWgnrG5ghICYNKpb2rs0Tfv67QgwPFDJSk5ItrjSSW-zU>
+X-ME-Received: <xmr:Bl7taKPYaHVifc6zqjKtAG088LfXclQYYqnTrE3QI2Jht82q-vKcqxPw4uzX8zDxvNoMmM1QjFbpH733fkrLmwLfT0n1nzI6vuOhRiv_DMGMWM1V4m3a>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudekheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeejgfeljeeuffehhfeukedvudfhteethedtheefjefhveduteehhfdttedv
+    keekveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
+    mhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmh
+    hikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehgihhvvghmvgdrghhulhhu
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrih
+    hlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopegsfhhoshhtvghrsehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:Bl7taD7Ous-nhhxQMmLRcLiqr9oURKNgc1JiaA-x_JRmx3AggR9xQQ>
+    <xmx:Bl7taAT7BTu_6O-JR2FxLeh9aXwtzSoz_dfAG39yyxNVVKFVmvA-aw>
+    <xmx:Bl7taAB9j19rg5yvcTQM4RpeeCHjdtA6CpuVSDe7w2VvzBJPfokxAg>
+    <xmx:Bl7taAEVqsFSdwJMDfrmbzzBYyHSDOpfhCGfudahXTXKZL_WcuAVYg>
+    <xmx:Bl7taHDzEocpQAqEB5Z54BP32xpRCeOFNScfY1dole57fjWMGknr5uzj>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 Oct 2025 16:16:05 -0400 (EDT)
+Message-ID: <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
+Date: Mon, 13 Oct 2025 22:16:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <176038667592.3397732.5599229002252934598@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Brian Foster <bfoster@redhat.com>
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If the asus-wmi brightness handler is available, send the
-keyboard brightness events to it instead of passing them
-to userspace. If it is not, fall back to sending them to it.
 
-Reviewed-by: Luke D. Jones <luke@ljones.dev>
-Tested-by: Luke D. Jones <luke@ljones.dev>
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/hid/hid-asus.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 0af19c8ef035..1f904bb66396 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -324,6 +324,17 @@ static int asus_event(struct hid_device *hdev, struct hid_field *field,
- 			 usage->hid & HID_USAGE);
- 	}
- 
-+	if (usage->type == EV_KEY && value) {
-+		switch (usage->code) {
-+		case KEY_KBDILLUMUP:
-+			return !asus_hid_event(ASUS_EV_BRTUP);
-+		case KEY_KBDILLUMDOWN:
-+			return !asus_hid_event(ASUS_EV_BRTDOWN);
-+		case KEY_KBDILLUMTOGGLE:
-+			return !asus_hid_event(ASUS_EV_BRTTOGGLE);
-+		}
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.51.0
+On 10/13/25 15:39, Miklos Szeredi wrote:
+> On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> 
+>> My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
+>> similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
+>> that it hasn't been invalidated.  If old_mtime is invalid or if
+>> FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
+>> cache is not invalidated.
+> 
+> [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
+> Link to complete thread:
+> https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.com/#r]
+> 
+> In summary: auto_inval_data invalidates data cache even if the
+> modification was done in a cache consistent manner (i.e. write
+> through). This is not generally a consistency problem, because the
+> backing file and the cache should be in sync.  The exception is when
+> the writeback to the backing file hasn't yet finished and a getattr()
+> call triggers invalidation (mtime change could be from a previous
+> write), and the not yet written data is invalidated and replaced with
+> stale data.
+> 
+> The proposed fix was to exclude concurrent reads and writes to the same region.
+> 
+> But the real issue here is that mtime changes triggered by this client
+> should not cause data to be invalidated.  It's not only racy, but it's
+> fundamentally wrong.  Unfortunately this is hard to do this correctly.
+> Best I can come up with is that any request that expects mtime to be
+> modified returns the mtime after the request has completed.
+> 
+> This would be much easier to implement in the fuse server: perform the
+> "file changed remotely" check when serving a FUSE_GETATTR request and
+> return a flag indicating whether the data needs to be invalidated or
+> not.
 
+For an intelligent server maybe, but let's say one uses
+<libfuse>/example/passthrough*, in combination with some external writes
+to the underlying file system outside of fuse. How would passthrough*
+know about external changes?
+
+The part I don't understand yet is why invalidate_inode_pages2() causes
+an issue - it has folio_wait_writeback()?
+
+
+Thanks,
+Bernd
+
+> 
+> Thoughts?
+> 
+> Thanks,
+> Miklos
 
 
