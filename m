@@ -1,255 +1,159 @@
-Return-Path: <linux-kernel+bounces-851157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9590BD5AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:16:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40837BD5AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CDD544ECDBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79DC40842E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88F2D3733;
-	Mon, 13 Oct 2025 18:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C500A2D3A6F;
+	Mon, 13 Oct 2025 18:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="MC17PZVE";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="fAJtDrU0"
-Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dunCf8cx"
+Received: from mail-yw1-f228.google.com (mail-yw1-f228.google.com [209.85.128.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F0C1E3DED;
-	Mon, 13 Oct 2025 18:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760379371; cv=fail; b=oQOGs5PZMiL7knBPx95HKxaEFRa8aDgA4QOrL/+sEvrIG5Wv36dZZeiPQVXHdGbm9xYbYP2633WOShCxak/zDsaG4dMSmwTlswXz47mF+uKFI5iN9FbFYjJATrAh4R70lDGc0FLZNDlFH+3Yo7HOq8vrfZYJ+gz0ICr/aUIuNKM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760379371; c=relaxed/simple;
-	bh=nwZiSYkIXP3fnmZHie/adJA8HCMTFsJeNSP8ic44dec=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nAHk2UQ/7m3IKnyETO0HGQVPMUgaAIUNin9ibFtJoKzNWkS8U2GrBjDw5w5yf4dzgW3ElxbzIVoXKuXct9RA5LThKvAJdbRiIb59rITauLakhV+clwXO+/1t1vzD2BvimLuLLV0qnbK+7lpOaW4hd/OfYjrVc1lNv8SkCndpJjU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=MC17PZVE; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=fAJtDrU0; arc=fail smtp.client-ip=148.163.151.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127837.ppops.net [127.0.0.1])
-	by mx0a-002c1b01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59DGTotL2277497;
-	Mon, 13 Oct 2025 11:16:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	proofpoint20171006; bh=rcG24v42ve7cOqHg2ZlQwJpBYbjtvtVkcFj250EsO
-	3Q=; b=MC17PZVEkZC2pK8Mwotk6p3BIIsbN2oGUl5YWDacvkUXtQ0D/64lMpJ9j
-	aeUNbMqpF4dxpaj6MD83mGLoEzONqZVLo5yi0M+uhx6Y9JXIlbT4AMuwYVQu9uH5
-	LtcVfGAqrBBEHdU82idQT9CQfOPP0ROuHIhgaC2l1KJdw6bz6T9lpJavB42CJ35i
-	O9d1ZjV/8dHXKNW0DV8uJdpemQfjdzt16bIqMyH0jneBj6BRY1HwJ9qBb3FIMdyh
-	TzscRSbnaCv8CHtqvtnpxeU608yMWixDV+R62WN2PbCeNlIO0WJY3hURsRzChJvp
-	c0ZWqK9P0ThBgkKkZCZ5uKb58VkDw==
-Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11020125.outbound.protection.outlook.com [52.101.61.125])
-	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 49s4y8g88w-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 13 Oct 2025 11:16:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fKWH4YErk11jIzVw9/wZ27ibJFVjXBg4qiSbwaCtydIJewYd3fwQoI5+RvHimrqhUPSXMjmd3b8TczPL/atmzlkxxH+Kews5ZwvlmGFB58x7Q7g0TaWZRDSplJXoHfE+VW3PpTGhDIVE9wpiFtyspMcCB+kbozvwK03zSylNIFXtYgik3vRBRTtjsqKDRUxooakHdc1SXkEP7Y0nev8W0ITHFU5DrPdrhOFYTh5qq8hlun4M6lsXQDrZMw0XXVVDGs9fYWfJFgN5Ye/KyoM1JYLRnXIueDVYqjNbtPUYDcYbR17Yaybh6B2TXXzWr/H9DHaSNiXKCuWvkGSTO5qr/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rcG24v42ve7cOqHg2ZlQwJpBYbjtvtVkcFj250EsO3Q=;
- b=alrQAFRPXp802ZegRere4zX2EhMaU5TTkFlzfTVT1MR6NyizH6ZZOXPyGhhFx0uM70m+KLCgXF1WPue3odYQqD8DTXcfzhnoH/9oVuSAqa0VS3dKtWC7Chdr0fxA81b8SV4lAEW2DLsE19CZuGLXz7Tn3n0Kt7QY7mcaMUX61KXE6UZhs2ekTjm3mheep8QZVht0n/0S/u9kOlr8ChScD+sKokVSWbV0fu6/Sb6tpkwPj+B8rVzSY3CIoh73l0mt2+jYhrZbPiyIuR9bPxV6Lhz1WqsJJKFSLl0e0E/3NVi1sQfJO1lcMsABKaG/MGlp04amsTOKLWUNPqpzjttAKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rcG24v42ve7cOqHg2ZlQwJpBYbjtvtVkcFj250EsO3Q=;
- b=fAJtDrU08ReMKGoEkeLaaJEOKaB6GbMYYAsOCE+Y3bRJkWjEFQtevb3WhuVvprNFWDEMCpBxaDSEfHgATqgvtm0tlFvX8IA+TtL6cgSmN5owjL/LW5lDvAnkpiFSVFvt6rRD1AgGGBLLgAGwbPNS81mHZUw+qdTXSQviCC1BbWxgH+eDHu6yqxaMg9HN5QUcr70+/yqFwfwuiZSqTjQbwqV8OmWZnIpqyU+y2/Be12iomH6zPRRTiHvsqnhC4Vq2RlrotdQxoVs/pTvM8o0dA1LBpzl+qNhbD0jOq53PfZKpIX3OR9pEy0V+tdvpE+I27V92QJUFzia/DdhRglSgRw==
-Received: from BYAPR02MB5016.namprd02.prod.outlook.com (2603:10b6:a03:69::27)
- by SJ0PR02MB7823.namprd02.prod.outlook.com (2603:10b6:a03:31a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 18:16:00 +0000
-Received: from BYAPR02MB5016.namprd02.prod.outlook.com
- ([fe80::c759:bef6:2ea6:d47a]) by BYAPR02MB5016.namprd02.prod.outlook.com
- ([fe80::c759:bef6:2ea6:d47a%5]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 18:15:59 +0000
-From: Vincent Liu <vincent.liu@nutanix.com>
-To: gregkh@linuxfoundation.org, dakr@kernel.org, linux-kernel@vger.kernel.org
-Cc: rafael@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        vincent.liu@nutanix.com
-Subject: [PATCH v2] driver core: Check drivers_autoprobe for all added devices
-Date: Mon, 13 Oct 2025 19:14:59 +0100
-Message-ID: <20251013181459.517736-1-vincent.liu@nutanix.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20251001151508.1684592-1-vincent.liu@nutanix.com>
-References: <20251001151508.1684592-1-vincent.liu@nutanix.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SA9PR03CA0002.namprd03.prod.outlook.com
- (2603:10b6:806:20::7) To BYAPR02MB5016.namprd02.prod.outlook.com
- (2603:10b6:a03:69::27)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A272D323E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.228
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760379316; cv=none; b=PElcIqEBQwktnC/wr9rPiypvBLrI/4RUDimAMDJrRAnaI4hZAV2lhusoTFrPUoOBfeTY1c8ldjaXXert2UpPwf2otn/wKS9NtPRHh20WTaQJf5JjYAn+cpDKqHhZQKz1TuT5VxXUMvzHgTyZUC3vb71zS12OXTliP6ydyQ0GNwA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760379316; c=relaxed/simple;
+	bh=NWRdMU9u7gR7m5+1dihsR8wN3vHaZ3K+2AlMbOkqqt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M6yCKUXyhP1oXC0OJb6o03zVe9A1j99a4Vj1iD/X2zFUNVx1YLD9cAvFAvH5l6Uzwxo19u4awtV4zvPoy7I+/M350LeHgKZ6r+m2BaWoUorU33Kx5ZKys3Lw2a0+aVzWVNhrzaUnquHNW38ZvFUABKEPXD5fstM4wkgH68sbYSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dunCf8cx; arc=none smtp.client-ip=209.85.128.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yw1-f228.google.com with SMTP id 00721157ae682-780fe73e337so50786377b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:15:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760379314; x=1760984114;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xFxXctdJJT+BzOc0txkC/Z5lJFQXl9VPAAzfx7IcY1Q=;
+        b=Bz1AnX2qQdWu4v10GSrHWcm3A/e7TuP341RJ6ddncU6vBD5Qm95ILSzmg97m5Esg5a
+         elJDykjwAXsU26t0VwmZTK0nUR7dkSEh0XcVqTZLr2dSfhAbyO4cE23nsnQGnVck5GqM
+         Bdz143MzUtHCoeLnmpa7Kwu8oZN2pYhxN1iMt41xNVo0IkINl9I1Ce81x1B5565zFWYz
+         okIlWXTwEdrSnqYMaYmwvO4/qgDl0Q0Zd9SLsPUKp4QhzvJ76H0+81p/B71epSLMyyTa
+         OJPTk4g/2gUN9aM4BPWAfzB/uUEn4RlZvvpsIqrhqjcSwC6zPBkU2JqlBYIYTFYaNI63
+         rMEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkb9UexucC87+Ei5mw43aEaSQgwjW+QQthd43FEgGuhIAHnX1wm1CBiywvJPYFhuUWBCUbrgxIp0qCyBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTaNNgJIcvyLz+4Xb/7DorTqaVV84jP17dK6J5WiaskyiT6Gkt
+	cuxPTrgPr15lQ98q7ds91g00HVgyB1Z9++l/TRWJP99auKSi5rc8FpJnf/L2T1DAg+YcnE3exyV
+	YOZCyzOgFKuhzGfb8Xb3WYBl83T+JU3ZsV02OJC/6SFJicpV8cAAXe5QboeeB4QMHHC55V4iek7
+	1jMRLTJizdeExUDGXQuuh8wKq+kb/SocefhbDf4tn6asLxaBhOtncKxk4iNm/jpsTQPz+USbPu6
+	P/g2RZ2PJMURJrvMSUtCYLX
+X-Gm-Gg: ASbGncuo8pGEEcYMeXYUVBNHZE/M3Hind5CBBt9qwLa0NPL1bz3VdBWJKzhj5M7i7X9
+	++n+/U68BxUq0e2lYI4rl3tkR+HnH7mptrpkSs/JT9r9evxkVJgibIEaV6kaugquBbvLp9REFrF
+	mQW6K/LLcBDF4jChIokJ2K32tIvtULOYyzhQ/Kex5j0wNy/HCdbbvVrEWkWeEMGTkLvAfwfvhCW
+	UiVqH5elDjpT7QErtcnP4SGYwAQi9tGVITmGIVgxflYYaizg4sUBQNzwvf9WfmVGtJiDaS6Heat
+	RWvQRyIxia6zKzP6gY5ejTRPZPNMFxG+DFkixNCRT89NIOpOpaa5WEl1csbfO5tIOYKgSUiVceF
+	39nZtqp8V6Vb1NFGaHkBsx6GswOQv70JgeDnM2UTKKlsu/g1bp1QsTCYOhseDjQPb7pG/eq7tWs
+	KyhdZtK20=
+X-Google-Smtp-Source: AGHT+IGSN7cAMFyj/Zf8klE1OgItKuYg+6OL1DGDWo3YTnuD9O+PJ1fbqAR03IxVwSonr8x3zAgH9vo2ZXDt
+X-Received: by 2002:a05:690c:6601:b0:781:315a:1851 with SMTP id 00721157ae682-781315a248dmr46969627b3.29.1760379313869;
+        Mon, 13 Oct 2025 11:15:13 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-78106d050f6sm6344717b3.3.2025.10.13.11.15.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Oct 2025 11:15:13 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-86df46fa013so2990383685a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:15:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1760379313; x=1760984113; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xFxXctdJJT+BzOc0txkC/Z5lJFQXl9VPAAzfx7IcY1Q=;
+        b=dunCf8cxyOm6vV9+IPO+6HeqP1SVZv6jvpVegkda5s2ZG9DsXuzBrLd+IRPO4+4nxl
+         SX1RyLx9M62KW9WRky1bvoyt5E6wbjPoIf/01d1tFbUgrU4NIUwJuCTCzg7qgLOREV+2
+         P/kjqAaLFJwtB/ZRi1NpMPUYpMGRaN4gEds1Y=
+X-Forwarded-Encrypted: i=1; AJvYcCV/fmhiEXKq7NPc7dHhL5WA0qbmVxf0hT6hfFnnaOnC/QwYRyzuCHlhvgRCznC9CbZV9Mdk+XYPscADrXE=@vger.kernel.org
+X-Received: by 2002:a05:620a:4505:b0:853:61ca:9e91 with SMTP id af79cd13be357-88350f57a08mr3101497285a.38.1760379312994;
+        Mon, 13 Oct 2025 11:15:12 -0700 (PDT)
+X-Received: by 2002:a05:620a:4505:b0:853:61ca:9e91 with SMTP id af79cd13be357-88350f57a08mr3101491585a.38.1760379312499;
+        Mon, 13 Oct 2025 11:15:12 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8849f9ad8dasm1034487385a.21.2025.10.13.11.15.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 11:15:10 -0700 (PDT)
+Message-ID: <e27dd085-c21e-4358-aaf3-d54eb1ffeea1@broadcom.com>
+Date: Mon, 13 Oct 2025 11:15:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR02MB5016:EE_|SJ0PR02MB7823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04577ffd-1fd2-4435-a8b0-08de0a848fd3
-x-proofpoint-crosstenant: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+jdXE6m+fTCYVIxgL2PYJ1pTMiYGm3YrHALPSO3GbXKIDLEiVsOZEiQHXY3q?=
- =?us-ascii?Q?aW2zpdcWQ2R/kq4s23ZRuWJsg2+WAZ4HFL/YRF80g8JFSHbCEyu7hmRGDQVh?=
- =?us-ascii?Q?30PHY0ydZ4hDYdGq3Ox4gp1FYSb4ZuyS8CIJiH1ieDMQ+oEYbfLxu7nwqY8W?=
- =?us-ascii?Q?N+xUIwNUmRnYuf/5fmh3999je1/Qir0fZ1rwrW9RPRH5ND1Ts0Up5Ghff/o7?=
- =?us-ascii?Q?fq9LdZDzqqxhlup+UpHMJ7nbPyrYK0fzkKK8kkdSAhCuj8O7g4En0pYqnllz?=
- =?us-ascii?Q?8Sw1eZiQRMcg4Z05Zb6JFDDJrwM8h5xB8Pt3kWgMLqMoFtAoViGj4tTulOvf?=
- =?us-ascii?Q?i0dy0itdt17I9IQCQphimJuQbSXz9pd5fVm+jCj/w76ldTeY38q4LV7RI8er?=
- =?us-ascii?Q?6QqSumepROdCdgdrlKgVBU4QLP22cHJg+49k8He5G92W90s24Rkd5woEmXhv?=
- =?us-ascii?Q?74FqfoLMxvmUjHJ4N0iCQonvMvw57UKhOBz3hYUY2WcTuaAkpV8KQAQmyNoO?=
- =?us-ascii?Q?Wup3S/M0iYMpr5ks5WX1RjDbyvLcrttB08wRclqvfO7rdZhXxmXaxwCd7ndc?=
- =?us-ascii?Q?Zb106muNCvk8CQWfD2vPDHWKNGXZXwKrPl+Ly6hPqbrkxwIMKUwuNmL3SFN/?=
- =?us-ascii?Q?XIoiv8pUZc2hYcye12Wr7TdcAKxAko1rm+gIfXClyOL4H668Xl2S7ZloV8e1?=
- =?us-ascii?Q?LTIOAThxWSjLbuRqRNlkSvCTW7FQF/iFcCvlNLqGOiN7XFbkLUeo22zSY6bF?=
- =?us-ascii?Q?wPbRSN6/wqfTr4ynFOJI1uC+wOexTtIscN5j12Stbw9MnJwekI/TBIRWHKa7?=
- =?us-ascii?Q?eilVBi9iqGsUXpA69AhgDD+D+edaYP6BuZmzGyYc/DRr7RhIMV+vN/CEowEu?=
- =?us-ascii?Q?z3xfuvLVLZ+1A9ZIf5v5aadrGQhjIjmjqYTuAgCTbl0J7v7n7SPNEoF3s5Bo?=
- =?us-ascii?Q?Gm8rCpEWtCiu4DAoKzathb3uGhW2DIj10FE5Cicdz9vWAeXwp1IngZLL9cCV?=
- =?us-ascii?Q?WimW6E0fsUVRyXGdSHDZUDbNHPUuCchuHHllowIb107uE8kG9m/u08JAFZxY?=
- =?us-ascii?Q?AoRdgm7Qu9HBdrmnrdF0SZObyPRSd/9JnFcnVRv+xHz0skluOjCarwRYTGEi?=
- =?us-ascii?Q?GTKWehzQR5CaoeMIECgz6OTjagG2wmYa4PALpAQwvb2zxaLjUqb1po9xj5nW?=
- =?us-ascii?Q?o8kiMbAqcMP7Nxtie/FCc7nn0eL2G7Mhy4jPt1/faxnmJb9dyrcVtUW2gfwt?=
- =?us-ascii?Q?2BX1OH31LzBcQx9NzzhW3erx1nPdMzCRLafFPShLJtufhvvYIm2V0Y2ngpyE?=
- =?us-ascii?Q?VOm3yWAiS1msaSHyTFzHo07XHZmZlK9K7GseKK4ivjprCW5anIsOQ1G+ZUlI?=
- =?us-ascii?Q?NSU+z7o/DMfte88DhECLE6ULgzMH4yafEKI19NqIVkm5K0Gs/ZDHToF5NA24?=
- =?us-ascii?Q?KkQZP2cIPR6hiGRw7pHvmlvQyrJ9SJ/BQj3tT5FSXhoKr7vkiunWYA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB5016.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3WSr7Fv3A9MsHHXIfPJo5y7V4wj2V7NBKSzfcjZU+9Ra7BB8+2BFw1dKFBgJ?=
- =?us-ascii?Q?6dSwnNYxNJ3dFGsnGZD70RGE+pgR/RGhf2HQNi+xSQwZXCaTeCKsTEYDxwvD?=
- =?us-ascii?Q?WuZIwwWIuyAYj7ZTlbLH7lAHGlpFHcbuPdRktCRyMglAPvMKfAr1i+bT1sE7?=
- =?us-ascii?Q?5smDkdfSCZd1WWQTu/hwhUiXUvqia/XxayyieB0fz6i5dJ0C5eHje5nZERMr?=
- =?us-ascii?Q?OTYJOrzsafuFbWIzsh6bvvaX4ri56Sjw0PbPapJ/gYo3KN60HuVMM83+YXZZ?=
- =?us-ascii?Q?e2a70PH29QbmsF1DJy0IkiKOpx9hVbsUOswfYTAS4mM5ROOF1cqLGUwSE5ol?=
- =?us-ascii?Q?wdQMPNcaYw+VZ+qZwbkjSGqToHmlbr7gFX60o/DEyXQIZw2w7ty78aDsW8YT?=
- =?us-ascii?Q?wlRFgsKz+Z5O8sgicAQ74Ia3xPR+X5xOaVxDyXXMCHqEZLoUQR+RviHOEZIE?=
- =?us-ascii?Q?AKHdsBv8GRQro/Ocqp7AFVyHua3r2a/fPgmjkTKXI2D9pJ0gKfaY0x1SAepp?=
- =?us-ascii?Q?36beFqgT399CbGn6jiCfPEcZQnWfJrlt9e8WIAQeKMgsn0pR/zB1D9GzKgTI?=
- =?us-ascii?Q?S/zDzc3VE/Ae9nfp9y7fkwOgs0Y2dVW/antA85sd/kpeaqRHxs0dXxFqx4R9?=
- =?us-ascii?Q?n5w/6EQJqlKlXrbvkPeli4VbVC5W8hYv333pjay9IGcHRoaz96xIiPm1H6V4?=
- =?us-ascii?Q?Irg5ePQMX9axSS48iEPmFlHEQ3olKuvqdJvMIUMTt87P7RBUmM0DoBx4xHxr?=
- =?us-ascii?Q?AVlGxU+acjFVUR2bqWmxdLa3cp4fP97UPCyTYV61dmaUumSKgp4NrNi6wwTj?=
- =?us-ascii?Q?ouI5JZZDPly2l4/tkz569OyiFc6kPqr7YjG9ZhPWXMlKxpG/VXiuk8i+0cg3?=
- =?us-ascii?Q?d6djR4cWDRYMLHoHX8ONwwuI1p9IVi+7a+3mAONbIsx3kobRysT0LN67xLTi?=
- =?us-ascii?Q?bQZCFLmwkJSez5oXJO1IiXIvZH0YLrw4MFqPBDNBD46ObjjjQLg/zTE9QPJH?=
- =?us-ascii?Q?3+H+2x5e6qFvkSubVML1iFMmPH3V0jagUAcdu/kRzrSd9y/PJaQYsVWKPf7+?=
- =?us-ascii?Q?EucziBq3uIga519A3x8xVs/JjEncUak/IP1VWQcFcw4yngTf1u9XLgKbimeH?=
- =?us-ascii?Q?7aVOnNADH0MkVu2ZFyEdiZH3onLtFVWnSshdzYS00a9WyAA3usZzHGa7n6Ir?=
- =?us-ascii?Q?I5Wt6kNJPwKTcI1dGV04I0UxsymNOWn4Pg1x4CTnyZEtoAuo9WZ+6gb417cg?=
- =?us-ascii?Q?1XE8G7L8aqqB+nEzEA2cdejTGwFqZLVlmTJMM/qoavQXDhV7WH4GfvRUhLlW?=
- =?us-ascii?Q?g/z7ZQ0UasVHqulHZ6cuJ9cNiudQ4SQmZ9gnYjzJkbDcoNV+1BHGm0hlrixv?=
- =?us-ascii?Q?T9uFZBdUKvzOUlYuTLCXbrV6Io7JNadRT5WbB/oYkl7O+IyZMw9LGUyOmvat?=
- =?us-ascii?Q?VRfkHqlaOT8WCMdA8A56OBLuCg05vjaVpz20K5j2xri0yp7Xz31v//FLiAXO?=
- =?us-ascii?Q?s7hccYd0H3GE71npKy+E45SRp6Up89e2hCWyXqKaXZdXmyfWuBTN78eve40Y?=
- =?us-ascii?Q?RP4byiqczrPusRaxfU9WK9T3xisds3jOo4FNJP9fWJJNeE9nFoKzDkN2eGTK?=
- =?us-ascii?Q?Dw=3D=3D?=
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04577ffd-1fd2-4435-a8b0-08de0a848fd3
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB5016.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 18:15:59.9500
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xjHcL6R4vRiGao6o09G95PmfK/yHF5TWExXgh1oDA1Lea99i5pix1XPG1tNJUFSFJibuhzDr58y89gejELTX+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB7823
-X-Proofpoint-ORIG-GUID: F0K0WvdStsjqeGAyOKpBUCAe21BHoeVV
-X-Proofpoint-GUID: F0K0WvdStsjqeGAyOKpBUCAe21BHoeVV
-X-Authority-Analysis: v=2.4 cv=U6+fzOru c=1 sm=1 tr=0 ts=68ed41e3 cx=c_pps
- a=J2I5gP+8VxcSyNNGd87E2w==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10 a=0kUYKlekyDsA:10 a=VwQbUJbxAAAA:8
- a=64Cc0HZtAAAA:8 a=vaUuHiGXbuiZ4sT5dA8A:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX4ytCxqVa5BRV
- RH41tel80xXVvG/RFodna/QOF5lOUv5PxMDQG9uHfJGE5zXODPfhGcv3/odR83u2qjaqx1hV7gS
- 4eUK+JytKuBmH5+dG+sv1tT6JpwmquGnkQGqX674C8IE1K+rhkTIIEUE6g3SrHsMYii665pcps+
- bY3k7ziSsxpM4Piw/Ju9RyqHCwHwBTvjekr9h5KRAZuJZ9EZW3OdqSLAfws+mIelyZiS23izhRD
- 7QKotq1edKUAhr9vOtgMaQt+oBVFyte37gD0u4SXl1VJvmSF9Ydzr5wMGXPYd8AfwHn8ulprsvh
- IQ5IM+SrSBF+PFyNYXzx39s5SkdsmNmkTjHFvnIcAWGnkhThckLjY/hR4wSPSVjNZkmVRvTPY9g
- R+x6KxzRW8o+6DJQUtZQRF78C/zWYw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_06,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: dsa: b53: implement port isolation support
+To: Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251013152834.100169-1-jonas.gorski@gmail.com>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20251013152834.100169-1-jonas.gorski@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-When a device is hot-plugged, the drivers_autoprobe sysfs attribute is
-not checked. This means that drivers_autoprobe is not working as
-intended, e.g. hot-plugged PCIe devices will still be autoprobed and
-bound to drivers even with drivers_autoprobe disabled.
+On 10/13/25 08:28, Jonas Gorski wrote:
+> Implement port isolation support via the Protected Ports register.
+> 
+> Protected ports can only communicate with unprotected ports, but not
+> with each other, matching the expected behaviour of isolated ports.
+> 
+> Tested on BCM963268BU.
+> 
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 
-Make sure all devices check drivers_autoprobe by pushing the
-drivers_autoprobe check into device_initial_probe. This will only
-affect devices on the PCI bus for now as device_initial_probe is only
-called by pci_bus_add_device and bus_probe_device (but bus_probe_device
-already checks for autoprobe). In particular for the PCI devices, only
-hot-plugged PCIe devices/VFs should be affected as the default value of
-pci/drivers_autoprobe remains 1 and can only be cleared from userland.
-
-Any future callers of device_initial_probe will respsect the
-drivers_autoprobe sysfs attribute, but this should be the intended
-purpose of drivers_autoprobe.
-
-Signed-off-by: Vincent Liu <vincent.liu@nutanix.com>
----
-v1->v2: Change commit subject to include driver core (no code change)
-	https://lore.kernel.org/20251001151508.1684592-1-vincent.liu@nutanix.com
----
- drivers/base/bus.c |  3 +--
- drivers/base/dd.c  | 10 +++++++++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 5e75e1bce551..320e155c6be7 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -533,8 +533,7 @@ void bus_probe_device(struct device *dev)
- 	if (!sp)
- 		return;
- 
--	if (sp->drivers_autoprobe)
--		device_initial_probe(dev);
-+	device_initial_probe(dev);
- 
- 	mutex_lock(&sp->mutex);
- 	list_for_each_entry(sif, &sp->interfaces, node)
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 13ab98e033ea..37fc57e44e54 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -1077,7 +1077,15 @@ EXPORT_SYMBOL_GPL(device_attach);
- 
- void device_initial_probe(struct device *dev)
- {
--	__device_attach(dev, true);
-+	struct subsys_private *sp = bus_to_subsys(dev->bus);
-+
-+	if (!sp)
-+		return;
-+
-+	if (sp->drivers_autoprobe)
-+		__device_attach(dev, true);
-+
-+	subsys_put(sp);
- }
- 
- /*
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.43.7
-
+Florian
 
