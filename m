@@ -1,188 +1,147 @@
-Return-Path: <linux-kernel+bounces-850985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446B8BD55C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:07:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D07EBD5518
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C524030BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:15:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D86F56677F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA55B257828;
-	Mon, 13 Oct 2025 15:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B7A27467D;
+	Mon, 13 Oct 2025 16:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iTUvBUFv"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDoq9TU9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F24D2AD32
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967A825D546;
+	Mon, 13 Oct 2025 16:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760371196; cv=none; b=p9LrcGw6cuwGR243YsV7p+3jFFywP2En/a7mL2nYFgE64K6mQnkRESmqdTHMCannIEDA+a4mVFJE6eyWUCq5Xu/UM6enlDz4bww86loVpPIXuWRRiAlIsZy4WWjUnowcHehn5cI2hK5pY24kF676y6yjL9PzUILriv4mcQvHaTw=
+	t=1760371729; cv=none; b=r2HIXCms2UVaxac0Tn9Ua1ZthtaOQGEjIyuSAYy8NEgmjDsN2xn8/R9IrjUSjXkdnt1u0LXvOtUAGVWaV8IKQOxOhJ1t/dVNb7Fwm596bKjlbtdEh/s1nqiFc5MIqfc8J9dShh6iHxXeN8CK3aE4F9YB9X2ET/g0CYw9OxmFv8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760371196; c=relaxed/simple;
-	bh=jESTcv3YFhUmlOUv44t8wTXwwkxRnt3JglffHaglMWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sHlztCVBT3YyGrne0BxQL47TMZNXs4i771W6OJZKBDzJc2fqZnMQYXHXyFgoGZVhyKg5eMnQRX1t92+eWckPVI7zh/MhvAcPj6WDpi0ooGXWCXa5QnMwJeLkqY7VXmJiKkPorz+mwaddsV+2EJhvNoXI/X7z9R5wgHFiS32R3Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iTUvBUFv; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 8E361C093B0;
-	Mon, 13 Oct 2025 15:59:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 663A66067B;
-	Mon, 13 Oct 2025 15:59:50 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F18D3102F2273;
-	Mon, 13 Oct 2025 17:59:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760371189; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=F9tnRL1o3FmzbH3rPOyKULKn/hk3zU9MNzUIZBbOh80=;
-	b=iTUvBUFvI/itbMlmJ0x0WrNzyi3QeiZvBxNdzyILfJ7IH3MWnWJYdtUDDzRm/s1Oe50Qsx
-	S50pmM6ZNqZ/t4QvTvRlAE5J968iQN3WpJ8KeQ7Sei/efTMN/EXd4tY9drQHat9TNT63LT
-	kJ1dQGrfmrjAuJJ+vZAX9+tkap3RpYHzUGZ/ia9xXCZch8QszvcJrPkyu1TE15dECyKWgF
-	igGuZWbbLVAo95qPbdNjUPGGTBhxylCrwmu3DL+6HkZFc/5pR+xyxrgq+U6odYq+7yaR3t
-	xJR/eJjTd9DVWPwo4sMzBwBIaRuZeK2fWtLndnSXGUsnJyQl9MZi6mBjU7SVBQ==
-Message-ID: <7293f682-7ba7-420c-9997-eec0d5cb09e1@bootlin.com>
-Date: Mon, 13 Oct 2025 17:59:31 +0200
+	s=arc-20240116; t=1760371729; c=relaxed/simple;
+	bh=Cx2ySqwhiSWfKIHSd5QaOPvH3hIGJdxoGvQgZVmjeec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e4kKQSzRgaj6yAc95mGRXzChRDaq4HiELFQyhIvGoGF+xH+FW6/n+qZxRNa6TvkE54IfqMGXpv4nz9SudkqWgvYvMMlocVmvMDjo0XY+2+5BjiUjlQhQaQPlOXP4PWxOIMlxNEB3auhhjhjAwRPwULbjhDbgczLSD1i4m5Z3+zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RDoq9TU9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760371728; x=1791907728;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Cx2ySqwhiSWfKIHSd5QaOPvH3hIGJdxoGvQgZVmjeec=;
+  b=RDoq9TU9/NXIHupMu934BdArYrd0unvxElOhN3FekHKHm44BXPWnUvEg
+   2Ptt/z/zX6Psb4rHchbn7DkJPhe2iGIhaNKml/J24Nd07FXEEpTukAnLe
+   0OVcuoyug5smWV8MAYsCs1Gf+AgfA7sCSLSO6yq0R3Mm0uRKPk7nASeku
+   A/mb4cht4KGcpEGj1AHS5yetIQv8EbECOc7mHCVTD3qmDk0/UOMozgWDj
+   I31ZQUDuLPN7DREtnG2+SM0iPAXKXjDeE1qBTPIFaAosiptHb90/29tIN
+   R3OvQ2MY8OEt0PBrxPKFGeO6Vor1EiXDOmAXXTgGSIIbt6ylXWkQ3RMPu
+   A==;
+X-CSE-ConnectionGUID: z04BLzTzSomegvg3p9cfTQ==
+X-CSE-MsgGUID: g8Okb3CTShSG4xv29rzYFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="73859888"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="73859888"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 09:08:47 -0700
+X-CSE-ConnectionGUID: CQePt4twSyu0zXP/jxJ66A==
+X-CSE-MsgGUID: bixiefRXQ1G8y6nrbKNFjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="182396858"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 13 Oct 2025 09:08:37 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8L3S-0001b8-2e;
+	Mon, 13 Oct 2025 16:07:07 +0000
+Date: Tue, 14 Oct 2025 00:00:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Peter Robinson <pbrobinson@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 4/8] phy: rockchip: phy-rockchip-typec: Add DRM AUX
+ bridge
+Message-ID: <202510132306.TKsFxaNn-lkp@intel.com>
+References: <20251011033233.97-5-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/15] arm64: dts: allwinner: h616: add NAND controller
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Wentao Liang <vulab@iscas.ac.cn>, Johan Hovold <johan@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251013152645.1119308-1-richard.genoud@bootlin.com>
- <20251013152645.1119308-16-richard.genoud@bootlin.com>
- <2800174.mvXUDI8C0e@jernej-laptop>
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Content-Language: en-US, fr
-Organization: Bootlin
-In-Reply-To: <2800174.mvXUDI8C0e@jernej-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011033233.97-5-kernel@airkyi.com>
 
-Le 13/10/2025 à 17:43, Jernej Škrabec a écrit :
-> Dne ponedeljek, 13. oktober 2025 ob 17:26:45 Srednjeevropski poletni čas je Richard Genoud napisal(a):
->> The H616 has a NAND controller quite similar to the A10/A23 ones, but
->> with some register differences, more clocks (for ECC and MBUS), more ECC
->> strengths, so this requires a new compatible string.
->>
->> Add the NAND controller node and pins in the device tree.
->>
->> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
->> ---
->>   .../arm64/boot/dts/allwinner/sun50i-h616.dtsi | 51 +++++++++++++++++++
->>   1 file changed, 51 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
->> index ceedae9e399b..bb53c6c63836 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi
->> @@ -304,6 +304,42 @@ mmc2_pins: mmc2-pins {
->>   				bias-pull-up;
->>   			};
->>   
->> +			/omit-if-no-ref/
->> +			nand_pins: nand-pins {
->> +				pins = "PC0", "PC1", "PC2", "PC5", "PC8", "PC9",
->> +				       "PC10", "PC11", "PC12", "PC13", "PC14",
->> +				       "PC15", "PC16";
->> +				function = "nand0";
->> +			};
->> +
->> +			/omit-if-no-ref/
->> +			nand_cs0_pin: nand-cs0-pin {
->> +				pins = "PC4";
->> +				function = "nand0";
->> +				bias-pull-up;
->> +			};
->> +
->> +			/omit-if-no-ref/
->> +			nand_cs1_pin: nand-cs1-pin {
->> +				pins = "PC3";
->> +				function = "nand0";
->> +				bias-pull-up;
->> +			};
->> +
->> +			/omit-if-no-ref/
->> +			nand_rb0_pin: nand-rb0-pin {
->> +				pins = "PC6";
->> +				function = "nand0";
->> +				bias-pull-up;
->> +			};
->> +
->> +			/omit-if-no-ref/
->> +			nand_rb1_pin: nand-rb1-pin {
->> +				pins = "PC7";
->> +				function = "nand0";
->> +				bias-pull-up;
->> +			};
->> +
->>   			/omit-if-no-ref/
->>   			spi0_pins: spi0-pins {
->>   				pins = "PC0", "PC2", "PC4";
->> @@ -377,6 +413,21 @@ iommu: iommu@30f0000 {
->>   			#iommu-cells = <1>;
->>   		};
->>   
->> +		nfc: nand-controller@4011000 {
->> +			compatible = "allwinner,sun50i-h616-nand-controller";
->> +			reg = <0x04011000 0x1000>;
->> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&ccu CLK_BUS_NAND>, <&ccu CLK_NAND0>,
->> +				<&ccu CLK_NAND1>, <&ccu CLK_MBUS_NAND>;
->> +			clock-names = "ahb", "mod", "ecc", "mbus";
->> +			resets = <&ccu RST_BUS_NAND>;
->> +			reset-names = "ahb";
->> +			dmas = <&dma 10>;
->> +			dma-names = "rxtx";
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +		};
-> 
-> Sorry, forgot to mention. This should be marked as disabled, as most of
-> the boards don't have NAND connected.
-arg! of course, I forgot that.
+Hi Chaoyi,
 
-Thanks!
+kernel test robot noticed the following build errors:
 
-> 
-> Best regards,
-> Jernej
-> 
->> +
->>   		mmc0: mmc@4020000 {
->>   			compatible = "allwinner,sun50i-h616-mmc",
->>   				     "allwinner,sun50i-a100-mmc";
->>
-> 
-> 
-> 
-> 
+[auto build test ERROR on usb/usb-testing]
+[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.18-rc1 next-20251013]
+[cannot apply to rockchip/for-next robh/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Chaoyi-Chen/usb-typec-Add-default-HPD-device-when-register-DisplayPort-altmode/20251011-113608
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+patch link:    https://lore.kernel.org/r/20251011033233.97-5-kernel%40airkyi.com
+patch subject: [PATCH v5 4/8] phy: rockchip: phy-rockchip-typec: Add DRM AUX bridge
+config: i386-buildonly-randconfig-003-20251011 (https://download.01.org/0day-ci/archive/20251013/202510132306.TKsFxaNn-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251013/202510132306.TKsFxaNn-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510132306.TKsFxaNn-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `udphy_orien_switch_unregister':
+   phy-rockchip-typec.c:(.text+0x89a): undefined reference to `typec_switch_unregister'
+   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_orien_sw_set':
+   phy-rockchip-typec.c:(.text+0x8b9): undefined reference to `typec_switch_get_drvdata'
+   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_typec_mux_unregister':
+   phy-rockchip-typec.c:(.text+0x93a): undefined reference to `typec_mux_unregister'
+   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_typec_mux_set':
+   phy-rockchip-typec.c:(.text+0x959): undefined reference to `typec_mux_get_drvdata'
+   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `tcphy_setup_typec_mux':
+>> phy-rockchip-typec.c:(.text+0xac3): undefined reference to `drm_aux_bridge_register'
+   ld: phy-rockchip-typec.c:(.text+0xae6): undefined reference to `typec_mux_register'
+   ld: drivers/phy/rockchip/phy-rockchip-typec.o: in function `rockchip_typec_phy_probe':
+   phy-rockchip-typec.c:(.text+0xf3f): undefined reference to `typec_switch_register'
 
 -- 
-Richard Genoud, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
