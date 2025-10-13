@@ -1,173 +1,187 @@
-Return-Path: <linux-kernel+bounces-851291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54874BD60B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7C6BD6115
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC0B3A9538
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F9618A7799
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E292DE6F5;
-	Mon, 13 Oct 2025 20:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB112EB5B7;
+	Mon, 13 Oct 2025 20:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ew4P43LD"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010023.outbound.protection.outlook.com [40.93.198.23])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="RL+1lKhm"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C663296BDE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760386438; cv=fail; b=n0PVEIr8ZVs7SNb0EImX3vpQOUHaIOzIvsgajF0uiavCaKDIEI4igcHTUMwZhjlLwo8QRkA5NiS0lP9hXZ50vX5mxcxcJkTP9IcOZhxWzZbahhUYqomDYAY0RZg/4ABeHeZXvvZHKBVN1IM0husI6oEASQwjHxdRWLrQC28f4GY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760386438; c=relaxed/simple;
-	bh=6g2HAXGh33wTzYgXNO0HvkbiQDQQ4oJ8T1k88Y96bkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=a6l39DRntINY8JX9CownbRzMq1VI4QXx8q18Z3b9pRwiJ6CFVyP+S7zioKCjeX4ObqrkDyAmIHOPvu75v/miWYJ/p9l1F+PdC70ij+p6dj4ZLoTaQgwg9t6N+ddD6aRXZzb1+m6nMb8htKQXwDvqcNE0M3QlRkWGPhvMBMFEN5w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ew4P43LD; arc=fail smtp.client-ip=40.93.198.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t0mv4OBa6R8CJoyqcfs8VHm3AFafYLqBMHRx6oTrURAVOpHskTms5w3Ro2fMiQZB0ynrZDCDjnpDaWLm1U3EfN6HuTVrn2NNI9EX7jfplR2hQmPHvJdtxZ3OqudNsx5W5P1P2DuOy+mSxnoQPXcJ2+Yzg3yaZKj5ZxDOoJjZP9vSyGygHk6M3+jx2eq0K5NxErltlNSSJP0nDouUIN3Zx/vU4AQ6Vu2AfHoHA2H0zRDccnht6j2fUHke24OGKxee4JU9hALpf1c3SO72odPmBg4TIEjQKPqNav9xLKqqNM+fDiFPKhs+Em3gcCYonhPacp1/nCcFvWMdsNdh6QCSkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QNPAQpxgFKRF37LsOG5hbvnHf8EzWhQczTEiVEromn8=;
- b=ZBMegG+9+xF36MNeXRHfs4vhFtMvE43amrnqI+d89jWz6DbT3BjJqZJQVccw8/7NbQdbCY0PJaNFdzP1UhFziSD3X5i4qySBrjUGnJ50IPlOa6BXk1pjKQGR2y478SBCmx/nz5r9ez303vQRI65eAquvsf/USmXcHNEChc6DUUIqb4gEuWBttmsgw8L6Tod2D6PBnM9kPZInGogJTTMjLdPTidxp2gCcA7SJazJjtesMLopK8hPIN9woJtWgf61vMdmH5S7/CrMobsP6XwTX47VRJXH4KNNNmkG2rtj1TRUOVvH1LVrGMNQhIfbSAS4G2AvJI1zxQLGioKMFYrbkJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QNPAQpxgFKRF37LsOG5hbvnHf8EzWhQczTEiVEromn8=;
- b=ew4P43LD9N+BMmhVdRCcsb5iUJY4ew7p1s+A0JV6vVxJZV+ePu7idou4AjMKkRzgU0bQR5N2Ql9DTDXrYoFShMmQbpv55AiQnxvy7sbQum6KKDtKZEB8usJa2gqVTlduqcSyTylyraWYfJjsQDkLFA9OnVHisQABh6mQEJKnmSfqzyCxNCKm6SuP/38lO2+ZSs7ld/pjQXje07PwoEUJrQfhd/5A+GCFah5ExhcUwUb/4m1sbpsZ6FgmCYsGnBjpeTCzVZ57Mm9L9S/fMSVGZ6WGse0w27IcIVzufS/Lt6Zs6AxvEozBfUk3E95imtBo0xenas5A4AScB8lfaLThiA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by LV8PR12MB9665.namprd12.prod.outlook.com (2603:10b6:408:297::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Mon, 13 Oct
- 2025 20:13:54 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 20:13:54 +0000
-Date: Mon, 13 Oct 2025 22:13:46 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Phil Auld <pauld@redhat.com>, Emil Tsalapatis <emil@etsalapatis.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] sched_ext: Allocate scx_kick_cpus_pnt_seqs lazily
- using kvzalloc()
-Message-ID: <aO1dempzw2uAWxrC@gpd4>
-References: <aOb3Hv0uPv9G7N33@slm.duckdns.org>
- <27ed885043e6dc3e9c2feb2e9a247658@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27ed885043e6dc3e9c2feb2e9a247658@kernel.org>
-X-ClientProxiedBy: MR1P264CA0050.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:3e::22) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBFC2D94A9;
+	Mon, 13 Oct 2025 20:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760387022; cv=none; b=f6LBqtOCFnxD1g5RsqlxtD0iF59dgZnZfRih3Elu5oS5UatZ7BZFcpESWkxb0qUTzHjqRRRXYraEipCJD20w5Mt/E6RoC6gCbK0u4KAmT1K7arYO2W7/8yFeAVAH4m12yunqn7gKvCybNvrVaSe/4xYoijTM83bXqlKEaovdF6Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760387022; c=relaxed/simple;
+	bh=A3Ymqe4PxFn583o+aAaAPj3qU3+4X72cbIfnRwyCYZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TXQShjrA7YOlpdC87rW7JfrUlQomUQdiRuK92JpGvaBE7s8vY/7xzpl/c4ED5cxJkhbmjP2UHTIstqbRm86uBncfpNpWt9Jyd/PeqMl4zODwMtWMQtxIy0QejGe8w3/yyAMmSZeYZscyct7vnShML3zenr9crE+VRQedMPConl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=RL+1lKhm; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 3E2E4C4CA2;
+	Mon, 13 Oct 2025 23:17:40 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 4F4F3C4CA9;
+	Mon, 13 Oct 2025 23:17:39 +0300 (EEST)
+Received: from antheas-z13 (x5996a8de.customers.hiper-net.dk [89.150.168.222])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 09AE11FDBBF;
+	Mon, 13 Oct 2025 23:17:36 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1760386659;
+	bh=j/OiZLjA0l0ekzdu2qeZVWmhmEiXayHMPlu3k0WwWpY=; h=From:To:Subject;
+	b=RL+1lKhmgASt11O/icU1SGEpPehJp2P9GYz1U0m7ODKcoKcynMndp8jyUEjn1h74O
+	 nDowWfdPohSkCsgWJX7j92Lpzq8iDoi2jhjq04FLiLuWQTL1c21Md35cEtIpnYHRpS
+	 ScVJOkRoDaWiE61w7vA4vnVxg9mcOhNdL4j1kyPWxFDK93JpyKxsTz4SVWZqNORvoS
+	 9fvZSERQ8JWhpDNQvmdEizp9f44aCrOMC37eeBPnRqwCzLFDMOQ2KgJlQCESeH/HuH
+	 FNuj5qU9leDwQ/FiOU95sBi9BNf0cGxypf4O1g8oEZxItjHYJuiE/cOrrCK+jsewaF
+	 veTSi65gsW0tw==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 89.150.168.222) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Denis Benato <benato.denis96@gmail.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v6 0/7] HID: asus: Fix ASUS ROG Laptop's Keyboard backlight
+ handling
+Date: Mon, 13 Oct 2025 22:15:28 +0200
+Message-ID: <20251013201535.6737-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|LV8PR12MB9665:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44198617-05f0-4e05-5183-08de0a950878
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Qsy/bnE6V4deMfcOzJfBIMkH/3IQ0BsRAyKpXh/IY3bKAPOY0a6tNYLPkmR6?=
- =?us-ascii?Q?VQ88MKzOkPvic8kOvGEZmt5ivtHqYBctk3lKdzUwY6L9jrq0a5+ZhJfkBC6R?=
- =?us-ascii?Q?f3k0gatRBRMiHtORtf7Dd4C/wGwXEmakbyo4LJzPB5vCjlDP1BnuMNt18g1A?=
- =?us-ascii?Q?2K48fFastplAYUehqSpo+zwyDBc2GYuHZR+Lq0W5GiKrORj6yRj17vbJrUui?=
- =?us-ascii?Q?O++sU9kc56uMs0uAhtqSN9Os+bQk2cuGej8S2cVLQEiyWv9L6ZUcRRyXzxZQ?=
- =?us-ascii?Q?iw4yDTRPKkGFPayRgrLPCdtA9sqFmL/+noCaacJdo5qURegzptfN5hZZ6agE?=
- =?us-ascii?Q?OVAQI6VuMmaNpeSOftMG9nKpqZSf4wTdPp6Gu3kRmiLb8usaXmfok4TfrvHi?=
- =?us-ascii?Q?oBg/pjiITAhVrStx/5nJVFmY1jnjwrTVhnfS7KfluoYM3E11DDIEECtj8yyw?=
- =?us-ascii?Q?IMvOCpyrcxnUvITqJ9Kn/bQVkqXQyoh2wYYWbPtgy1qSRNIfjE1ipTAND6fg?=
- =?us-ascii?Q?qck4NbQ3r2Id+pr1+D08OT2RidY4IoO4z2vVJ/WBud6TWn/ibhtUDEmTeFV1?=
- =?us-ascii?Q?XHSOI9gzF6V/weOSAdrpmXv78O2P6gqKXXtFw6xykDvsI10041i8pdma5tXW?=
- =?us-ascii?Q?7FGWbQ04Sy8fvuHAkXkCtydOZCgCuXFZcJqgH3WtUgRebokpf9T31uX998Py?=
- =?us-ascii?Q?A1ZVst+3xlWKQpH6DxeFwznmxmx1hTewvFjNmPGSUmSATqiitYtBmkzkDxWV?=
- =?us-ascii?Q?plUxSxRGKfH5OG1XILhRdhD9mZwSlH6AtPri01t4z/mbMIAQkvXexORC6Kca?=
- =?us-ascii?Q?Ds5F8m0ivp4RhutiwiwILwUjdZ5En7TACEAkCPbLQt3N0dNbJOcT1mYsBwPO?=
- =?us-ascii?Q?vvcrlH5hM71u6vrjqpaD6yxfXXyc4Zk+jKo6Vo8pB2anWHCMqyiccXpkQXAo?=
- =?us-ascii?Q?81lnBeCVcP8zmxN8OoLBRi+u/5YbJyGsbGyFGeiqEW26UU3WHYrtKTRfxBec?=
- =?us-ascii?Q?CsAQ65w1CjL6Kp+6mPxp6834d/sRCSlgHE+YF71teMw0pkNwluFTc2dIrJGC?=
- =?us-ascii?Q?VGj8voqrxoYJ/FYPLOdKJx+nOTL71cMfWM571yrxBnQ9/MlMbEO/ZZuRO4A3?=
- =?us-ascii?Q?83b69zGMYyLWNbYpccT1SN2zb2uKmiUPX323jtG2L28A9qii6RV2Ral8MCNv?=
- =?us-ascii?Q?68mZLeIZg1rJc8uUfbJIfrlgwpSlnRKTHCycwDI/s0CHA3wCOfOLty5AXqka?=
- =?us-ascii?Q?3fTpFawQBP/6LI7HYSFaCmOJEwqgzdJQcRoV6S8CqaJ78tpNP23rZdZWWva/?=
- =?us-ascii?Q?blcUTvrW4jt006qiOw9qcH6IYVyBf83z/BPllZzcPzWN0rpdbw5Pi99ipgqt?=
- =?us-ascii?Q?dRSxKOdjmWcSY6Ybmz14o2pbEJe7DoGiNhOBsazQoqgjrfz1LqfEJyHE47rm?=
- =?us-ascii?Q?L51AASVVVfzZorobGG+sz5mMMLOxQY9H?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wFpOCdfy+0+Bfz941yJ5g7e29Im7mrby6R4Sx9yJkp9hm3/iqOPdkY/obwoP?=
- =?us-ascii?Q?4guYG5hD7oTUN0qJ6+8m11j8gJbB3TOxzsajy5MxJPyMg6vZZeNZg5XSVsv/?=
- =?us-ascii?Q?IXy9im/PWn1J6VKGoQ0X9SmlEWvyolvxgBe4oitPfruoSqq17mz7rdRInSrK?=
- =?us-ascii?Q?rZd+T7RSKWvYXiuex05lkNbWGaXYPKvvvviIC6JfGmegcUk2klFQb1Z8/23V?=
- =?us-ascii?Q?5cAGRhG2nPE0bNMtyUgbh0ubnqwVWxlppUgrKE8BRvQB42cyNprjqfX7FGkI?=
- =?us-ascii?Q?o//iR8XjLblwCrI/IpnvpwFDJ67UcZbjj8K71MhcNBSXRbZuCAv2HazFerna?=
- =?us-ascii?Q?2ySQ9eYxgnx33muIsMcK+JNXAHh1mnvAfkudizMzoG31blSq9NpqUc9Cm7xZ?=
- =?us-ascii?Q?SxL9gfdLr6SsAdbIse3elYHwh3e9AQV6ch+j6T3D59W7KvwvqI+wZanlRK2W?=
- =?us-ascii?Q?orVhhZhVXAdNiHYIe2PFXjOQ1oKeQ0xHGL6jJUFNNOORsUgoelMf34js7cxr?=
- =?us-ascii?Q?FyoQZtXMkq/4kZqcFYDfTBVwBCHEoLkZ518JRpwNfFc88wvlCnhSk7+iOZOL?=
- =?us-ascii?Q?PHwJkP9xn7ri9Gcvi1Y+Fm700Dl6+6iLLK/MgBAc8HkzLGvDR91urBLJGACd?=
- =?us-ascii?Q?3mQmZW6DJnRGE0aT4DsI1MIvP2P2f5kVCECV7VUrR9EO+oUZ9yTDlMG6RbmO?=
- =?us-ascii?Q?lc562DVXbxnKpBSoABuzMSAyulGDizncoq3i8wlIOx2YMl06wAcbRk2xSy5h?=
- =?us-ascii?Q?4GnKdoJSJbdqBaTEHEmoN8enrDxUkPYBoDMwVuPh/iJlwUwSzvwpOpHQNzhL?=
- =?us-ascii?Q?rvj2hSpMRCYimkrHbHq172t3v640ON9w55N4DFiI+vvFa6r2waTX9Zi0x3wp?=
- =?us-ascii?Q?moAgl+7/gvqF2CBP2FIfKyOWWxKd+BlL7gR3C1Io2LeXirTw3ADx3ZPnJN0Y?=
- =?us-ascii?Q?av3i5yfdMDYwIOdtR0HpO+D2B7J4Md2SNgtb3zPTh0aiEMTHwki0EQuO1MkG?=
- =?us-ascii?Q?km3Dqidxn2XEK8iHMN5pOejiZn8tuWpoohdj+qq5hKJjUZCNSRR4MM/YGrqB?=
- =?us-ascii?Q?kyPd4qyjIH24BXi3WF16tmmt76mIMl9HP8Eh1Mtlf7uownYGmHOWohhJwuZM?=
- =?us-ascii?Q?yRj772LbAILUF8jvlGzDfpVp61IhbTdw7p1SYhLA8X0Rj/zS87/1LxaBCBPZ?=
- =?us-ascii?Q?cPVGb+BM8hNq5jBRB30qrF5sLitDPNRp7i+XK3AZNbOLtFr9HQoYLxsjoY2K?=
- =?us-ascii?Q?jObe4QQyzDz82OK/NlMyYUVvTwocRLF4yis8/QSr9mihpQa4T7n6czIWO/Ph?=
- =?us-ascii?Q?/QhETIziEs9/BJTES/qA0qe8sgz2bRiyhAn2YB1YZMuZWjUiaEHV4ncqRwWV?=
- =?us-ascii?Q?7kBZNku7WER7odEmrSMVlrbbzkYxxyDaKjLWC4CruJnK2sgZiu2Bx7B7i6yU?=
- =?us-ascii?Q?vKFEaecCzmKVysv6dnw2GQ1CZoiFhlv95c2T54Smox5UZw9a14sGUTzaGYLd?=
- =?us-ascii?Q?TEE/unrwIyr1Ae3NIPx26im+P8n3fTXxUSDRnKhbvhcW8YEfc3KeIeAslNEN?=
- =?us-ascii?Q?pqZrM9WmLrH4mUMDEFQd2vcJGfwFUlvnNpA2Z5SI?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44198617-05f0-4e05-5183-08de0a950878
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 20:13:54.4066
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wJ6KYWFBSZO1PJkeac6USavhBMBYp+soal66irceYe9n7Cf3hCmIzxWogqujmj7O3l4dQDG1JBEEsrolRdY2kA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9665
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <176038665894.3397295.14776036217802633959@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On Mon, Oct 13, 2025 at 08:44:26AM -1000, Tejun Heo wrote:
-> > Tejun Heo (1):
-> >   sched_ext: Allocate scx_kick_cpus_pnt_seqs lazily using kvzalloc()
-> 
-> Applied to sched_ext/for-6.18-fixes.
+This is a two part series which does the following:
+  - Clean-up init sequence
+  - Unify backlight handling to happen under asus-wmi so that all Aura
+    devices have synced brightness controls and the backlight button works
+    properly when it is on a USB laptop keyboard instead of one w/ WMI.
 
-Meh, too late. I just noticed a bug with this. I'll send a follow-up patch.
+For more context, see cover letter of V1. Since V5, I removed some patches
+to make this easier to merge.
 
--Andrea
+All comments with these patches had been addressed since V4.
 
-> 
-> Thanks.
-> 
-> --
-> tejun
+---
+V5: https://lore.kernel.org/all/20250325184601.10990-1-lkml@antheas.dev/
+V4: https://lore.kernel.org/lkml/20250324210151.6042-1-lkml@antheas.dev/
+V3: https://lore.kernel.org/lkml/20250322102804.418000-1-lkml@antheas.dev/
+V2: https://lore.kernel.org/all/20250320220924.5023-1-lkml@antheas.dev/
+V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
+
+Changes since V5:
+  - It's been a long time
+  - Remove addition of RGB as that had some comments I need to work on
+  - Remove folio patch (already merged)
+  - Remove legacy fix patch 11 from V4. There is a small chance that
+    without this patch, some old NKEY keyboards might not respond to
+    RGB commands according to Luke, but the kernel driver does not do
+    RGB currently. The 0x5d init is done by Armoury crate software in
+    Windows. If an issue is found, we can re-add it or just remove patches
+    1/2 before merging. However, init could use the cleanup.
+
+Changes since V4:
+  - Fix KConfig (reported by kernel robot)
+  - Fix Ilpo's nits, if I missed anything lmk
+
+Changes since V3:
+  - Add initializer for 0x5d for old NKEY keyboards until it is verified
+    that it is not needed for their media keys to function.
+  - Cover init in asus-wmi with spinlock as per Hans
+  - If asus-wmi registers WMI handler with brightness, init the brightness
+    in USB Asus keyboards, per Hans.
+  - Change hid handler name to asus-UNIQ:rgb:peripheral to match led class
+  - Fix oops when unregistering asus-wmi by moving unregister outside of
+    the spin lock (but after the asus reference is set to null)
+
+Changes since V2:
+  - Check lazy init succeds in asus-wmi before setting register variable
+  - make explicit check in asus_hid_register_listener for listener existing
+    to avoid re-init
+  - rename asus_brt to asus_hid in most places and harmonize everything
+  - switch to a spinlock instead of a mutex to avoid kernel ooops
+  - fixup hid device quirks to avoid multiple RGB devices while still exposing
+    all input vendor devices. This includes moving rgb init to probe
+    instead of the input_configured callbacks.
+  - Remove fan key (during retest it appears to be 0xae that is already
+    supported by hid-asus)
+  - Never unregister asus::kbd_backlight while asus-wmi is active, as that
+  - removes fds from userspace and breaks backlight functionality. All
+  - current mainline drivers do not support backlight hotplugging, so most
+    userspace software (e.g., KDE, UPower) is built with that assumption.
+    For the Ally, since it disconnects its controller during sleep, this
+    caused the backlight slider to not work in KDE.
+
+Changes since V1:
+  - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z13
+  - Fix ifdef else having an invalid signature (reported by kernel robot)
+  - Restore input arguments to init and keyboard function so they can
+    be re-used for RGB controls.
+  - Remove Z13 delay (it did not work to fix the touchpad) and replace it
+    with a HID_GROUP_GENERIC quirk to allow hid-multitouch to load. Squash
+    keyboard rename into it.
+  - Unregister brightness listener before removing work queue to avoid
+    a race condition causing corruption
+  - Remove spurious mutex unlock in asus_brt_event
+  - Place mutex lock in kbd_led_set after LED_UNREGISTERING check to avoid
+    relocking the mutex and causing a deadlock when unregistering leds
+  - Add extra check during unregistering to avoid calling unregister when
+    no led device is registered.
+  - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as it causes
+    the driver to create 4 RGB handlers per device. I also suspect some
+    extra events sneak through (KDE had the @@@@@@).
+
+Antheas Kapenekakis (7):
+  HID: asus: refactor init sequence per spec
+  HID: asus: prevent binding to all HID devices on ROG
+  platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
+  HID: asus: listen to the asus-wmi brightness device instead of
+    creating one
+  platform/x86: asus-wmi: remove unused keyboard backlight quirk
+  platform/x86: asus-wmi: add keyboard brightness event handler
+  HID: asus: add support for the asus-wmi brightness handler
+
+ drivers/hid/hid-asus.c                     | 235 +++++++++++----------
+ drivers/platform/x86/asus-wmi.c            | 157 ++++++++++++--
+ include/linux/platform_data/x86/asus-wmi.h |  69 +++---
+ 3 files changed, 291 insertions(+), 170 deletions(-)
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.51.0
+
+
 
