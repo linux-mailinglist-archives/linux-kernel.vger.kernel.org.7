@@ -1,214 +1,104 @@
-Return-Path: <linux-kernel+bounces-851272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1BEBD5FBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:42:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6EBBD5FF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF6854ED27E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D477C407907
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43202DA760;
-	Mon, 13 Oct 2025 19:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2422D9798;
+	Mon, 13 Oct 2025 19:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdGJrebm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="OIcplRen"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7F81D5141;
-	Mon, 13 Oct 2025 19:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B057155322;
+	Mon, 13 Oct 2025 19:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760384514; cv=none; b=oBPIN9b09y/mBFCcxkDTkrfOA8adB+pHz7Q/XCX66RH7ilsrDPjBH2FDvJelC/+1zUVDpT2U8VgCTIWUNmOm7Wl9lYLEhVFj2LL2rn0QC8cH01Al3fZy6fvjDngAtpiocQ0L0uh94oe9Qty3nS4PwcNY9LMLeOfnQu4iHAGwyVE=
+	t=1760384732; cv=none; b=Jq906uWRlV1kYCTZMLp9whEtTSPKSRV5RAWzvvy7Y91piPv9gugTXYIVUHq2m6825QoklcbCTk+IujbcCC7mwnGcwoaQ4gZfKoRd6jQ6RqU0ViJufb/NwKTCNwuPFnEqk5GPDIfooRIEYVZ0eZEy6hZwoGbx8M6Dg8UsRLwaUOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760384514; c=relaxed/simple;
-	bh=TN4iB2CJGrf00fYoivIs8F3mcv13g9G1yoNmREgyI0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oLqbcSo1oAFcFl16GYnxn/ncKu8zkSGl6RNtGjYRpAP2dAziQpHxUB30SCkAJCcgum/4nUxsXXxoZ3aRyq8dv2C7285mtmZHKw5kWKnA6vTgEawcy5vfIu0Xzi1kNrnmbJFG8aEZqFPjLXRuOtIM3NSWVr27ChrPooZs1KU/iEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdGJrebm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B55AC4CEE7;
-	Mon, 13 Oct 2025 19:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760384513;
-	bh=TN4iB2CJGrf00fYoivIs8F3mcv13g9G1yoNmREgyI0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GdGJrebmezTWKGSpgumj7LiBG9RZrMcJlphUgq6ShxzzH8Wcdd4IVA+ZISQJkCofy
-	 f0lHmzx9WsKVJrSMAX37Bw+O0ZyaDj+zCAJwT5TIqmn0bfI3ef3KSAfmnrlkMlXHK3
-	 w5srV80rWymr9pr0Er+zXtUlIu5KWpax8LmkN+GYBxsTvojJudop+mXd0wtq71oT7C
-	 tT66J0zzxPRlBln3a2hNMdGLuh9UjcYrt+fGnok7CuTLCQ9vGXKpjuR8lDwi+l7scs
-	 4rCL2gFUDSFe1qV2DasKvIhzy3lQQ9Gyx3CFbXPfMKYF8MrcvS7WQscWQHCoBmJY6k
-	 fJVQVSdpaXhFg==
-Date: Mon, 13 Oct 2025 20:41:49 +0100
-From: Conor Dooley <conor@kernel.org>
-To: dimitri.fedrau@liebherr.com
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: phy: add support for NXPs TJA1145
- CAN transceiver
-Message-ID: <20251013-supplier-edition-0ffc88286b5d@spud>
-References: <20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com>
- <20251013-tja1145-support-v3-1-4a9d245fe067@liebherr.com>
+	s=arc-20240116; t=1760384732; c=relaxed/simple;
+	bh=MY+YRUQKLtJYZJyEq96fgMk0w7vwxMzr5S0vyCUFB6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j0OcLAPG7lrlnfw6TFJWqNv4JE0CMFCH1dXwmiVzNmvRFQKpCycCYJNxneeEJRU37itw6Elz/DRirdbmc1i2Qunwv9ViP6b3XaEw4/V+fS3N+O+641T1cxJw1eWqD6GCwFYLeUG9Bz+8u4EaNm79nG1i504TmujJ1G9BNuLzbIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=OIcplRen; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:201e:bc0f:a7c6:ca8d] ([IPv6:2601:646:8081:9484:201e:bc0f:a7c6:ca8d])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59DJiSUF1442566
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 13 Oct 2025 12:44:32 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59DJiSUF1442566
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1760384682;
+	bh=1aJOeaPPB1LUMhLyvXF0SOu3n0ovMqgDmMOTUIZYXXs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OIcplRenwsuEFxrQG/i7vbTNL5ee01maFltEu/9+zMjTrqySBAieZqr/Jnicpqoey
+	 b2HHI6yIRprdPUAGYIWjF/kEanvHHWXiC6nPSVA5IqK35TSVZ+7IrLFGmq98r1j8DZ
+	 V5aeeP4aUdWPcHl9xR2EvzbOu0Jiq4U5iHSVyec1uPZV1rwgNuPSY0NPtjes+43aIl
+	 K+H3VHnCes599MCCY8JoDUtC3q84PpJfE6CcvcH+f08aBA9dJ3t2a/zXK+rcx8az32
+	 UvQcHsa4qPbKZ9DC6gaWyDpFxKVkpNfFVN7H2GKOXZ8fif9gO0qQ83SQs1WuiyNyu6
+	 EQ1aEfan++sog==
+Message-ID: <494caf29-8755-4bc6-a2c3-b9d0b3e9b78d@zytor.com>
+Date: Mon, 13 Oct 2025 12:44:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gDq1zSAoM2zKWAOI"
-Content-Disposition: inline
-In-Reply-To: <20251013-tja1145-support-v3-1-4a9d245fe067@liebherr.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] vdso: Remove struct getcpu_cache
+To: Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>
+Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan
+ <shuah@kernel.org>, loongarch@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-api@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <20251013-getcpu_cache-v2-1-880fbfa3b7cc@linutronix.de>
+ <e95dc212-6fd3-43e3-aeb7-bf55917e0cd4@intel.com>
+ <CALCETrV2W3cZEJ2yy7F-F9=e_8HLP84ZWrOJCzUYn_ASb0+M6A@mail.gmail.com>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <CALCETrV2W3cZEJ2yy7F-F9=e_8HLP84ZWrOJCzUYn_ASb0+M6A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2025-10-13 10:14, Andy Lutomirski wrote:
+> 
+> I don't actually remember whether the kernel ever used this.  It's
+> possible that there are ancient kernels where passing a wild, non-null
+> pointer would blow up.  But it's certainly safe to pass null, and it's
+> certainly safe for the kernel to ignore the parameter.
+> 
 
---gDq1zSAoM2zKWAOI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+One could imagine an architecture which would have to execute an actual system
+call wanting to use this, but on x86 it is pointless -- even the LSL trick is
+much faster than a system call, and once you account for whatever hassle you
+would have to deal with do make the cache make sense (probably having a global
+generation number and/or a timestamp to expire it) it well and truly makes no
+sense.
 
-On Mon, Oct 13, 2025 at 11:19:18AM +0200, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->=20
-> Adding documentation for NXPs TJA1145 CAN transceiver, which resides like
-> the ti,tcan104x-can.yaml in the same directory as other generic PHY
-> subsystem bindings. At the moment there is only support for simple PHYs
-> by using regulator bindings in combination with can-transceiver.yaml or
-> PHYs that implement the generic PHY subsystem like the NXP TJA1145.
->=20
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> ---
->  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++=
-++++++
->  1 file changed, 79 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml b=
-/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..3b81a2e1ead8452ed5fcf2021=
-f33d628d4e12346
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/nxp,tja1145-can.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TJA1145 CAN transceiver
-> +
-> +maintainers:
-> +  - Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,tja1145-can
+	-hpa
 
-I'd drop the -can here, since I don't think the device can be anything
-else?
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  spi-max-frequency:
-> +    maximum: 4000000
-> +
-> +  spi-cpha: true
-
-Is this optionally cpha or always? I'd mark it required if it is always
-needed for the device to function.
-
-> +
-> +  spi-cs-setup-delay-ns:
-> +    minimum: 50
-> +    default: 50
-> +
-> +  spi-cs-hold-delay-ns:
-> +    minimum: 50
-> +    default: 50
-> +
-> +  spi-cs-inactive-delay-ns:
-> +    minimum: 250
-> +    default: 250
-> +
-> +  vcc-supply:
-> +    description:
-> +      CAN transceiver supply voltage
-> +
-> +  vio-supply:
-> +    description:
-> +      Supply voltage for I/O level adaptor
-> +
-> +  vbat-supply:
-> +    description:
-> +      Battery supply voltage
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#phy-cells"
-> +
-> +unevaluatedProperties: false
-
-If the properties you've listed above from spi-peripheral-props are the
-only ones suitable for the device, I think additionalProperties: false
-is sufficient here.
-
-Cheers,
-Conor.
-
-pw-bot: changes-requested
-
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +        can-phy@0 {
-> +            compatible =3D "nxp,tja1145-can";
-> +            reg =3D <0>;
-> +            #phy-cells =3D <0>;
-> +            spi-max-frequency =3D <4000000>;
-> +            spi-cpha;
-> +            spi-cs-setup-delay-ns =3D <50>;
-> +            spi-cs-hold-delay-ns =3D <50>;
-> +            spi-cs-inactive-delay-ns =3D <250>;
-> +            vcc-supply =3D <&reg_5v0>;
-> +            vio-supply =3D <&reg_3v3>;
-> +            vbat-supply =3D <&reg_24v0>;
-> +        };
-> +    };
->=20
-> --=20
-> 2.39.5
->=20
->=20
-
---gDq1zSAoM2zKWAOI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO1V/QAKCRB4tDGHoIJi
-0h2TAPoCuPTog2pckMDH53JpNnuwMSfjkLpKZLkadls23rdiuwEAjRbEuCE6RjC1
-aOal4qmhslM7N0QDXfw58Aq3RHwJ7QA=
-=cLzX
------END PGP SIGNATURE-----
-
---gDq1zSAoM2zKWAOI--
 
