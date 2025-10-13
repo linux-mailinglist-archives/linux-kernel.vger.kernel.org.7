@@ -1,210 +1,193 @@
-Return-Path: <linux-kernel+bounces-851556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3C2BD6C1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:41:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD064BD6C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7AEA4F5E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:40:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C121884309
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B942ECD05;
-	Mon, 13 Oct 2025 23:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B09B2DBF5E;
+	Mon, 13 Oct 2025 23:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gc/KBPQ+"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hY0brkGM"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416D02C08B1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38072BE64D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760398846; cv=none; b=rbi78+ZPople1tG5zRRb1DU9WXCebQdjSmncIwBu5gR2mMljB9A+kwaaYG2ZvDfKBv5tX1RLTB5XREP5rpvl095RPRTLE40XtG5gplke6s+PQBIn7iEwbZ/jmKFH8d7NB7FmEppQZAPO89YIdmjjxQXXZ95JeAKmmHPhNVPjCPs=
+	t=1760398845; cv=none; b=gEOlqmQluB06MkcFhSGNlTBiX3sQOeU3ufFxY57TL4AXE6i4kF29ZhD1s4GvmvnhrL/cW1C8AUDt2chwce55Js4JvrVop5IAHIX3wYoHwoddnd9/C79K8GNVVBIQ6xRhKRu1FOnzwawEeQ+9ryp2WEJAgaysJZKGoj+lhz5R0x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760398846; c=relaxed/simple;
-	bh=FypXfhaUgPqWoAOB6zCB4Gei8T7WpXBIDD005BLqAxQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mBDbV7cFzcC+QJtKattLqzend3RpasW+shrvvVtPMkHFbnsd59tEwLyN5iz5sRXrrU9sSjMPTlMocbS9gO1WPOmVhm5err1o22BrvItGrHNxPRQNdulcrVyf4FEaIGQfRKCQC9OqS4gZCs1dHOH4GCbfHi1RDUUaPKmZPx5nAJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gc/KBPQ+; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3305c08d9f6so3809032a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:40:45 -0700 (PDT)
+	s=arc-20240116; t=1760398845; c=relaxed/simple;
+	bh=4HbQaiebifP/uaw3gh2CltXpgChOQ3y3FWMK/EHFhFU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kNwSA+xCbDa9+2hLPEcAtl5KEV9uysAb/ZKr7xM+xcktgPju88kAKHn+TFZTuyu0bvTbGHn8Y2W5l37gAw6lkzlKaR9XBQ/ecUfK8eZuE54BdSTLLGwGTFmcW+d4XqB7U7hbQ62LrMGCE5DHzjCurjQbn4+ML5+CdLmw+mh/01g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hY0brkGM; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339b704e2e3so9959777a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:40:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760398844; x=1761003644; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Np7BGfGSC5mSKSPzWqOH4qz0wb4n2bnrNejmqVPNiIo=;
-        b=gc/KBPQ+yQvTPS+BXaPtJBvogaLx+ad9NHcb4CzCp0c6ufqcdcWX1Dl8AH1Fc2rZ+8
-         t6hIHwusnF81iwrjGYA5Rt8bR9hdy/1c/CfeDMS9zYAOE7E91OcLzocmvAq6wdKokdPR
-         vJ1gBt0ekfNjPUeRY6z/+kjg/FApx1V3qi9cLhtpIr54Uq7p5p/oelmSciHBKbd4+OQB
-         hs0iAMNUDWnWrujtfopek8TjrjRxu/fKEinlQZEKIUIrDE9Pr/pxlnkTj8r++qxV5Z5V
-         ri4buVYBoQeEUccqaLNPpuoh5gRDOFLYnZ5GfVyeuruzBnebqTh+4qtW5LRcvuubiP9Q
-         G6aw==
+        d=google.com; s=20230601; t=1760398843; x=1761003643; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LuCv42knJSvWPGZCi6YRzjp9+rV6aRxcGwjs0sLZ3EQ=;
+        b=hY0brkGMKU+VjVHTBPoXCgRgNBQyExx2u+P69vWgUQzm+sXmKK/4JDygICy/yWY5z9
+         17AQUyCGiNOR9p+rv5GyBYokO8pQyKWwVvPAMfKYXDwNkb8xRbF4+4yUbsFzn8AlIYeJ
+         zUEL2ihnmYYh2X66/45nTIa6rIYH687NeyVBERPPjdM5zT3KG5Iad/GHn6Iui9o+DNMz
+         njztvKeX3GhYu0ErlWxBplSCVqGg5CXrDb9yBaRYAyNSlsZoyaf7C9X+vZiu/SoYBmf1
+         3IIkCKlwmxaJdvJknEJeZtRBG/gl5qBWYQ7fVyZDowF5v+pE+ATwDoDmShw5I0rcZJvC
+         TH6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760398844; x=1761003644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Np7BGfGSC5mSKSPzWqOH4qz0wb4n2bnrNejmqVPNiIo=;
-        b=eRA+OWF0HT6lpqDKQhqLVw5xemAO2AXkR6S5/DdzgMZT5hkoA0/GeRMWAD5vBpMFWA
-         zs7kFFsaAHMGVNHRGRl10AE0AJeis4qIXjHoNvuKG3UZAhZII5GLnZRqnadOPrbvFPAD
-         fjOvQFjb52N0hM+VwXx8JPhaxOLAo1qHVz9nSGoOIsykjELpf5uXFnq0umHKxc6p8/Mq
-         SCaf3R+4aJ2pwPGly3PI+io03L2hNQX4O6Hz2q/Q5RNJ/d/roRRSDxuqM6HhhEdcBv8t
-         redbZNXjj3s6CgsYDczHkPxJKoLQqpVw/K+f/XwQtF/r75bHS6maeGNpsXM3sfinLd83
-         qtvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXT/kAnis/N2KJYCaZCCsmuGOO2h1e8GAigN5k4mKXSI8Y/XpHJo383kF+x4acx9WLAQ+77niN6Pf3+nLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygdwW0AaHoGurOuu17kUTSNXOQLo7oy1aTs10huc3+eUSGn0P1
-	Om+SZ/iVPZ5kMqGFhF8yaoQ73K2gDNjeNYEJP8tUndHRDRAq4pBr0Sz4vdAp6Aa2hBsgP7q822x
-	I09M4J6jhWWEfYhXzMiQrNeH3pebVC/A=
-X-Gm-Gg: ASbGncsaVRLmS7qpc/wzWs3fK9msDwZqODYWzsvZ5k8McAQ+Yj9SylELq0oX0LQhITA
-	zj7+qOC86oIDdlr2pFYq5AUbcbc5MUIw2TRCSUhVEZuSD2ej8rmBZJ0vstGijpxD5ko9dnegLUm
-	SJ1CQWO0+dkL2tPjvnfr3+PanvRgW2FgWhtVLxkD8jNqalzbu8EMcSEC572m6bUlpMk7ERFsysX
-	64cZzVW47UMmZ8Iu/pFfHTBLNZlBsxIyfl7KZr+rA==
-X-Google-Smtp-Source: AGHT+IHvOT616NhfArx9bWlgX4KXCjMp7apJznSYFsC5Y+A/Q36E5xxCPaAJusL+mPs+XxbhFklnh19SRIOqEKvmGD8=
-X-Received: by 2002:a17:90b:4984:b0:32b:94a2:b0c4 with SMTP id
- 98e67ed59e1d1-339edac69f1mr36210878a91.16.1760398844625; Mon, 13 Oct 2025
- 16:40:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760398843; x=1761003643;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LuCv42knJSvWPGZCi6YRzjp9+rV6aRxcGwjs0sLZ3EQ=;
+        b=emlTcpdSojjqV4phN+6eSec2WZ4/iFf/+BzHTQDziac16nxCn0PBjqNfa1SeYJSNnC
+         W4CZZ/u16AFL/EOaCoybUdM5uXxRXJWpEygr1viy6WCWzLYXifA/x+bfY5rOFsnDo1ht
+         ZtPsrWXNnVZK7HLKpSe/KI/Usm1WRRdY8MxSc98qOBU4v3mm42m033KBCR4sO1QvBxoD
+         kAklSXJ6IZLodjhOtbeX/shZ9UY5i6Bwy7t/yN9N/n+nknJao5ad450es7Zm7jcTbtOG
+         F8wQXnwzYVqdZt+URa42miTak3XJnei6mt1NYkfbkTe+LEawlJKWpz21Wjb7N0jjIfJa
+         /EuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhFKa1rLPZ7mIbfKFYLiV8xS62fndK4Gv+z61y3OT59wEaY2/0UPcAAaCF2EIRIlT0l7NTHtNviAw/X50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2viT/ske4mzgROapi30FPycStLkmGTDg3hLelm6yVOZezeFP5
+	x42MFMxl1z/j6t0Vd+BOd0EZttrKtIUBIfU+IluKq+pJJY1i8kRcqPd9ATguhALWu0bcxKsjPP4
+	9hcE/FWSAOT8FFib7gXUM4fEiOA==
+X-Google-Smtp-Source: AGHT+IFYL56IzGe+nF5Cx8R9PEtLWE/QJbrRM1U7iHiwqprkpK6S2NIdeMU6jb8l3teFwOpZvQZ2zV9L5qDMdxuAhQ==
+X-Received: from pjup11.prod.google.com ([2002:a17:90a:d30b:b0:336:8f7c:2a8e])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:1a8a:b0:32e:8931:b59c with SMTP id 98e67ed59e1d1-33b5139a212mr31781862a91.27.1760398843072;
+ Mon, 13 Oct 2025 16:40:43 -0700 (PDT)
+Date: Mon, 13 Oct 2025 16:40:41 -0700
+In-Reply-To: <diqzy0ptspzl.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251013131537.1927035-1-dolinux.peng@gmail.com>
-In-Reply-To: <20251013131537.1927035-1-dolinux.peng@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 13 Oct 2025 16:40:30 -0700
-X-Gm-Features: AS18NWBZJP_Tc9TCJA3QgJjEAZrIjWVUOR-kNIw6mReq4Pob5m-LizRQGvqNn9k
-Message-ID: <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
- btf_find_by_name_kind lookup
-To: pengdonglin <dolinux.peng@gmail.com>
-Cc: andrii@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+ <aNxqYMqtBKll-TgV@google.com> <diqzbjmrt000.fsf@google.com>
+ <aN1bXOg3x0ZdTI1D@google.com> <diqz1pnmtg4h.fsf@google.com>
+ <aN3KfrWERpXsj3ld@google.com> <diqzy0ptspzl.fsf@google.com>
+Message-ID: <diqzjz0yfk06.fsf@google.com>
+Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
+ shareability to guard faulting
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 6:16=E2=80=AFAM pengdonglin <dolinux.peng@gmail.com=
-> wrote:
->
-> From: pengdonglin <pengdonglin@xiaomi.com>
->
-> Currently, when the funcgraph-args feature is in use, the
-> btf_find_by_name_kind function is invoked quite frequently. However,
-> this function only supports linear search. When the number of btf_type
-> entries to search through is large, such as in the vmlinux BTF which
-> contains over 80,000 named btf_types, it consumes a significant amount
-> of time.
->
-> This patch optimizes the btf_find_by_name_kind lookup by sorting BTF
-> types according to their names and kinds. Additionally, it modifies
-> the search direction. Now, it first searches the BTF and then its base.
+Ackerley Tng <ackerleytng@google.com> writes:
 
-Well, the latter is a meaningful change outside of sorting. Split it
-out and justify separately?
-
+> 
+> [...snip...]
+> 
+>>> >> > The kvm_memory_attributes structure is compatible, all that's needed AFAICT is a
+>>> >> > union to clarify it's a pgoff instead of an address when used for guest_memfd.
+>>> >> >
+>>> >> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>>> >> > index 52f6000ab020..e0d8255ac8d2 100644
+>>> >> > --- a/include/uapi/linux/kvm.h
+>>> >> > +++ b/include/uapi/linux/kvm.h
+>>> >> > @@ -1590,7 +1590,10 @@ struct kvm_stats_desc {
+>>> >> >  #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
+>>> >> >  
+>>> >> >  struct kvm_memory_attributes {
+>>> >> > -       __u64 address;
+>>> >> > +       union {
+>>> >> > +               __u64 address;
+>>> >> > +               __u64 offset;
+>>> >> > +       };
+>>> >> >         __u64 size;
+>>> >> >         __u64 attributes;
+>>> >> >         __u64 flags;
+>>> >> >
+>>> >> 
+>>> >> struct kvm_memory_attributes doesn't have room for reporting the offset
+>>> >> at which conversion failed (error_offset in the new struct). How do we
+>>> >> handle this? Do we reuse the flags field, or do we not report
+>>> >> error_offset?
+>>> >
+>>> > Write back at address/offset
+>>> 
+>>> I think it might be surprising to the userspace program, when it wants
+>>> to check the offset that it had requested and found that it changed due
+>>> to an error, or upon decoding the error, be unable to find the original
+>>> offset it had requested.
+>>
+>> It's a somewhat common pattern in the kernel.  Updating the offset+size is most
+>> often used with -EAGAIN to say "got this far, try the syscall again from this
+>> point".
+>>
 >
-> It should be noted that this change incurs some additional memory and
-> boot-time overhead. Therefore, the option is disabled by default.
+> TIL, thanks!
 >
-> Here is a test case:
->
->  # echo 1 > options/funcgraph-args
->  # echo function_graph > current_tracer
->
-> Before:
->  # time cat trace | wc -l
->  124176
->
->  real    0m16.154s
->  user    0m0.000s
->  sys     0m15.962s
->
-> After:
->  # time cat trace | wc -l
->  124176
->
->  real    0m0.948s
->  user    0m0.000s
->  sys     0m0.973s
->
-> An improvement of more than 20 times can be observed.
->
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: Song Liu <song@kernel.org>
-> Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
-> ---
->  include/linux/btf.h |   1 +
->  kernel/bpf/Kconfig  |  13 ++++
->  kernel/bpf/btf.c    | 160 +++++++++++++++++++++++++++++++++++++++++---
->  3 files changed, 165 insertions(+), 9 deletions(-)
->
+>>> Like,
+>>> 
+>>>     printf("Error during conversion from offset=%lx with size=%lx, at
+>>>            error_offset=%lx", attr.offset, attr.size, attr.error_offset)
+>>> 
+>>> would be nicer than 
+>>> 
+>>>     original_offset = attr.offset
+>>>     printf("Error during conversion from offset=%lx with size=%lx, at
+>>>            error_offset=%lx", original_offset, attr.size, attr.error_offset)
+>>>            
+>>> > (and update size too, which I probably forgot to do).
+>>> 
+>>> Why does size need to be updated? I think u64 for size is great, and
+>>> size is better than nr_pages since nr_pages differs on different
+>>> platforms based on PAGE_SIZE and also nr_pages introduces the question
+>>> of "was it hugetlb, or a native page size?".
+>>
+>> I meant update the number of bytes remaining when updating the offset so that
+>> userspace can redo the ioctl without having to update parameters.
+>>
 
-Just a few observations (if we decide to do the sorting of BTF by name
-in the kernel):
+Was working through this again, I think the attr.offset returned from
+the conversion ioctl is not the same as other syscalls where an updated
+offset+size indicates "got this far, try the syscall again from this
+point".
 
-- given we always know kind we are searching for, I'd sort by kind,
-then by name, it probably will be a touch faster because we'll be
-quickly skipping lots of elements clustered by kind we don't care
-about;
+For the conversion ioctl, -EAGAIN indicates that a some unexpected
+refcount was first found at offset error_offset, but does not imply that
+everything up till error_offset had been converted.
 
-- instead of having BPF_SORT_BTF_BY_NAME_KIND, we should probably just
-have a lazy sorting approach, and maybe employ a bit more
-sophisticated heuristic. E.g., not by number of BTF types (or at least
-not just by that), but by the total number of entries we had to skip
-to find something. For small BTFs we might not reach this budget ever.
-For vmlinux BTF we are almost definitely hitting it on
-first-second-third search. Once the condition is hit, allocate
-sorted_ids index, sort, remember. On subsequent searches use the
-index.
+This arises when we start to have hugepage support. To restructure
+hugepage-by-hugepage, we will iterate hugepage-wise and check for
+elevated refcounts.
 
-WDYT?
+Suppose we're converting 10 1G pages and on the 3rd hugepage, the 5th
+offset has an elevated refcount.
 
-[...]
+error_offset should be set to the 5th offset in the 3rd hugepage, but
+userspace should retry beginning at the offset of the 3rd hugepage with
+size 8G.
 
-> +static void btf_sort_by_name_kind(struct btf *btf)
-> +{
-> +       const struct btf_type *t;
-> +       struct btf_sorted_ids *sorted_ids;
-> +       const char *name;
-> +       u32 *ids;
-> +       u32 total, cnt =3D 0;
-> +       u32 i, j =3D 0;
-> +
-> +       total =3D btf_type_cnt(btf);
-> +       for (i =3D btf->start_id; i < total; i++) {
-> +               t =3D btf_type_by_id(btf, i);
-> +               name =3D btf_name_by_offset(btf, t->name_off);
-> +               if (str_is_empty(name))
-> +                       continue;
-> +               cnt++;
-> +       }
-> +
-> +       /* Use linear search when the number is below the threshold */
-> +       if (cnt < 8)
+If the offset returned to userspace is the 3rd hugepage, then we lose
+precision. The refcount at the 3rd hugepage could be fine and expected -
+it is the page at the 5th offset in the 3rd hugepage that is pinned and
+userspace should be unpin.
 
-kind of a random threshold, at least give it a name
+So perhaps the interface needs to be defined as
 
-> +               return;
-> +
-> +       sorted_ids =3D kvmalloc(struct_size(sorted_ids, ids, cnt), GFP_KE=
-RNEL);
-> +       if (!sorted_ids) {
-> +               pr_warn("Failed to allocate memory for sorted_ids\n");
-> +               return;
-> +       }
+If the error is -EAGAIN:
+   + offset: the offset to retry from
+   + size: the remaining size to retry
+   + error_offset: the offset where an unexpected refcount was found
 
-[...]
+>>> 
+>>> [...snip...]
+>>> 
 
