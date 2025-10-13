@@ -1,172 +1,204 @@
-Return-Path: <linux-kernel+bounces-851107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73089BD58F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:43:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E07BD5918
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B10FE3A5C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:40:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C8C04E3DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFAC306499;
-	Mon, 13 Oct 2025 17:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7980E281508;
+	Mon, 13 Oct 2025 17:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dzd3g9B5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7ERShdN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4A6238C0D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4E62459C9;
+	Mon, 13 Oct 2025 17:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760377236; cv=none; b=D1JcvZZOu1SI4lUsDJajYSsdh4EFJaq9e5DsY8eqvmhHyqju+1QSx5m+FbuIYUPbb4JxamJoU3LobMEXBIwHYPXTwNZTOqhggX4plBQTHDo70dprzBwaoHfBqZAysecJAFyl/83XVrlmazmOelAfwjhQLL3t+qzj+/7GET9xHF4=
+	t=1760377664; cv=none; b=D+TqEGeqeZiUKvXAHEsWd5mbjKKS33tNq1Hy5OBiiv3fG1t9+Rt3SqyE1RQbD62g0zvHkWu+/tpBOlqkUOYh2bcg/Xrge/UyZcRj7SpSvy+ryL2Nff8phxw4c1gADF5S65F6D2ut6fk/PteWRKCEdvj48KXg4KUJRrNZlh4bA8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760377236; c=relaxed/simple;
-	bh=U02xRO8TH94viZsdOoVmRmGMF1FSkVidF3pPj625Dnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVPK7T3X8v313qeIVGm4ioq4I3eOiqwGlL3AWB1sFld0aLwWhQgMfnZsTRuEOuFktD2LDu8O5A5eyVJo902ye3mWKqiHCFCY6PMbSeTEdVyWrVfwrV+TfhjwrSZR1OkZan6rvAfjAz6FURi1B3C2Oky8zTSEQ41xPYDTNsv+oWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dzd3g9B5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760377233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g4snZWujk+jRKVRcGEMqjAzW+5/JH8Xs+LhjE/dMhEU=;
-	b=dzd3g9B5PPLw5fgLhlrOLRJf7rTA9ZbfFwSprryTTCm7CzfOo9tUAeTrJHL6gFzlgBGTX+
-	t12VeIgU3ftL+g66pIGVOHHgWwczoifi3b84RUJiYH25Z6dM3L1wB/icAd1Faeyeyx6z+w
-	EKN72SwQZCpsUFD1AoOLwpSTUupRMhc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-2zdt_QmbNziLDO-MsmJqEg-1; Mon,
- 13 Oct 2025 13:40:31 -0400
-X-MC-Unique: 2zdt_QmbNziLDO-MsmJqEg-1
-X-Mimecast-MFC-AGG-ID: 2zdt_QmbNziLDO-MsmJqEg_1760377230
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2E80A1800343;
-	Mon, 13 Oct 2025 17:40:30 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.119])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0543D19560A2;
-	Mon, 13 Oct 2025 17:40:28 +0000 (UTC)
-Date: Mon, 13 Oct 2025 13:44:38 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bernd Schubert <bernd@bsbernd.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-Message-ID: <aO06hoYuvDGiCBc7@bfoster>
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+	s=arc-20240116; t=1760377664; c=relaxed/simple;
+	bh=4ulKO/nNlIiLicDqkZpPpvf0e+rycqGoPn+RZv+JvMw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c8vqpeH/NX4JaGWdDAAVfQl7Wgd4qLg+x8PMq5sa6mZ1WNDFaUcMpfwPIYtmwsVbPtp/NSnaV2LjDJOd8SiLjAYnGIzjzcyuQbj7CqxQy2cvJ9cYZN09+GHuyHCOKPalr29BmFLJpvx6qHfW1sSpf5aYMXMWW6tyMzn1Fjm9qzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7ERShdN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFB3C4CEE7;
+	Mon, 13 Oct 2025 17:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760377664;
+	bh=4ulKO/nNlIiLicDqkZpPpvf0e+rycqGoPn+RZv+JvMw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Q7ERShdNM6XntNbj6meJb2yfBnF8LsTnoPne937gDeIQk/nztBleaxW4aj8Z1tt51
+	 YzBjT2UBkT3oB9ZTz8hGPbiRfYlYrO+eudMq+L4XlaE3whyuDJfn31HiOBYPRBZyQ9
+	 2PHNH0M57krmaLf/okmumJAZERbgM/cq+TygqVs9qa9+QXMu5F2CUOuOcA9YgK3rmW
+	 bFLTrjHFj8qlloRwRzzuw20zphnUTrORgcwIYZDYXABO1oSpcg/OdI6FHzSkd7Cvj7
+	 KLkVw9rOne9ToM5mWJ/80RzmHProrzZXQSibvu7mt8CeSbQhKBozCWGt3pgcJSmMWi
+	 ZZ7hUL6ccqNoQ==
+From: Conor Dooley <conor@kernel.org>
+To: claudiu.beznea@tuxon.dev
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/9] Redo PolarFire SoC's mailbox/clock devicestrees and related code
+Date: Mon, 13 Oct 2025 18:45:32 +0100
+Message-ID: <20251013-album-bovine-faf9f5ebc5d4@spud>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6256; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=rkUkOvChnR2CrvTD3zqV7j5Mky8Pa7y5ASzMCn0aDOE=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBlvrfab2FgyGteEZEr3H2xaIKg4ITPE7VSL2tbnjvyP2 p92HfrTUcrCIMbFICumyJJ4u69Fav0flx3OPW9h5rAygQxh4OIUgIl86mJkWGO/v8royMt9Eg+U tjp/2X9rU67f/uCg6lleTzeU1RSbBDEyTD5c4cB25ulVlSk++aXtuf8yRBxCv087teGu6686Nr0 tzAA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 03:39:48PM +0200, Miklos Szeredi wrote:
-> On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> 
-> > My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
-> > similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
-> > that it hasn't been invalidated.  If old_mtime is invalid or if
-> > FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
-> > cache is not invalidated.
-> 
-> [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
-> Link to complete thread:
-> https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.com/#r]
-> 
-> In summary: auto_inval_data invalidates data cache even if the
-> modification was done in a cache consistent manner (i.e. write
-> through). This is not generally a consistency problem, because the
-> backing file and the cache should be in sync.  The exception is when
-> the writeback to the backing file hasn't yet finished and a getattr()
-> call triggers invalidation (mtime change could be from a previous
-> write), and the not yet written data is invalidated and replaced with
-> stale data.
-> 
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Heh, well that's an old one. ;) I'm probably not going to recall all the
-details, but from a quick look at the commits this was to facilitate
-support for glusterfs. The original fuse code did an inval across i_size
-changes and this patch updated that to try and accommodate overwrites by
-doing a similar thing for mtime differences.
+In v5 the only real change is that I removed the attempt at a common
+implementation of regmap-based divider/gate clocks. The series hasn't
+managed to receive feedback on my approach in 2025, despite sending
+several revisions and bumps, and it is blocking support for both new
+drivers (gpio interrupt support, pinctrl and hwmon off the top of my
+head) and a new platform so I have decided to strip out the attempt at
+making something common in exchange for something that can be merged
+through the clk-microchip tree without relying on feedback from the
+clock maintainers.
 
-If I follow the report correctly, we're basically producing an internal
-inconsistency between mtime and cache state that falsely presents as a
-remote change, so one of these attr change checks can race with a write
-in progress and invalidate cache. Do I have that right?
+Currently the driver uses the common gate and divider clocks, but the
+driver used to use its own custom clock types. Reprising this version of
+the code allows me to use regmap accessors in the driver without any
+wider impact, or attempting to create something that works for any other
+user. It has the advantage that it has already been tested in that prior
+for, and all that is done to the clock implementations is replacing
+readl()s and writel()s with their regmap equivalents.
 
-But still a few questions..
+Hopefully this change has made it possible to merge the series,
+Conor.
 
-1. Do we know where exactly the mtime update comes from? Is it the write
-in progress that updates the file mtime on the backend and creates the
-inconsistency?
+v5:
+- drop mfd patch applied by Lee
+- remove attempt at common regmap divider/gate clocks, and replace it
+  with a return to how the code used to look, before it started using
+  the non-regmap versions of the common divider/gate, with the
+  readl()/writel()s replaced by their regmap equivalents.
 
-2. Is it confirmed that auto_inval is the culprit here? It seems logical
-to me, but it can also be disabled dynamically so couldn't hurt to
-confirm that if there's a reproducer.
+v4:
+- unify both regmap clk implementations under one option
+- change map_offset to a u32, after Gabriel pointed out that u8 was
+  too restrictive.
+- remove locking from regmap portion of reset driver, relying on
+  inherent regmap lock
 
-3. I don't think we should be able to invalidate "dirty" folios like
-this. On a quick look though, it seems we don't mark folios dirty in
-this write path. Is that right?
+v3 changes:
+- drop simple-mfd (for now) from syscon node
 
-If so, I'm a little curious if that's more of a "no apparent need" thing
-since the writeback occurs right in that path vs. that is an actual
-wrong thing to do for some reason. Hm?
+v2 cover letter:
 
-If the former (and if there is simple confirmation of the auto inval
-thing), I'm at least a little curious if marking folios
-dirty/writeback/clean here would provide enough serialization against
-the inval to prevent this problem.
+Here's something that I've been mulling over for a while, since I
+started to understand how devicetree stuff was "meant" to be done.
+There'd been little reason to actually press forward with it, because it
+is fairly disruptive. I've finally opted to do it, because a user has
+come along with a hwmon driver that needs to access the same register
+region as the mailbox and the author is not keen on using the aux bus,
+and because I do not want the new pic64gx SoC that's based on PolarFire
+SoC to use bindings etc that I know to be incorrect.
 
-> The proposed fix was to exclude concurrent reads and writes to the same region.
-> 
-> But the real issue here is that mtime changes triggered by this client
-> should not cause data to be invalidated.  It's not only racy, but it's
-> fundamentally wrong.  Unfortunately this is hard to do this correctly.
-> Best I can come up with is that any request that expects mtime to be
-> modified returns the mtime after the request has completed.
-> 
+Given backwards compatibility needs to be maintained, this patch series
+isn't the prettiest thing I have ever written. The reset driver needs to
+retain support for the auxiliary bus, which looks a bit mess, but not
+much can be done there. The mailbox and clock drivers both have to have
+an "old probe" function to handle the old layout. Thankfully in the
+clock driver, regmap support can be used to identically
+handle both old and new devicetree formats - but using a regmap in the
+mailbox driver was only really possible for the new format, so the code
+there is unfortunately a bit of an if/else mess that I'm both not proud
+of, nor really sure is worth "improving".
 
-Agreed in general. IIUC, this is ultimately a heuristic that isn't
-guaranteed to necessarily get things right for the backing fs. ISTM that
-maybe fuse is trying too hard to handle the distributed case correctly
-where the backing fs should be the one to implement this sort of thing
-through exposed mechanisms. OTOH so long as the heuristic exists we
-should probably at least work to make it internally consistent.
+The series should be pretty splitable per subsystem, only the dts change
+has some sort of dependency, but I'll not be applying that till
+everything else is in Linus' tree, so that's not a big deal.
 
-> This would be much easier to implement in the fuse server: perform the
-> "file changed remotely" check when serving a FUSE_GETATTR request and
-> return a flag indicating whether the data needs to be invalidated or
-> not.
-> 
+I don't really want this stuff in stable, hence a lack of cc: stable
+anywhere here, since what's currently in the tree works fine for the
+currently supported hardware.
 
-Indeed something along those lines sounds more elegant long term, IMO.
+AFAIK, the only other project affected here is U-Boot, which I have
+already modified to support the new format.
 
-Brian
+I previously submitted this as an RFC, only to Lee and the dt list, in
+order to get some feedback on the syscon/mfd bindings:
+https://lore.kernel.org/all/20240815-shindig-bunny-fd42792d638a@spud/
+I'm not really going to bother with a proper changelog, since that was
+submitted with lots of WIP code to get answers to some questions. The
+main change was "removing" some of the child nodes of the syscons.
 
-> Thoughts?
-> 
-> Thanks,
-> Miklos
-> 
+And as a "real" series where discussion lead to me dropping use of the
+amlogic clk-regmap support:
+https://lore.kernel.org/linux-clk/20241002-private-unequal-33cfa6101338@spud/
+As a result of that, I've implemented what I think Stephen was asking
+for - but I'm not at all sure that it is..
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: pierre-henry.moussay@microchip.com
+CC: valentina.fernandezalanis@microchip.com
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>
+CC: linux-riscv@lists.infradead.org
+CC: linux-clk@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+
+Conor Dooley (9):
+  dt-bindings: soc: microchip: document the simple-mfd syscon on
+    PolarFire SoC
+  soc: microchip: add mfd drivers for two syscon regions on PolarFire
+    SoC
+  reset: mpfs: add non-auxiliary bus probing
+  dt-bindings: clk: microchip: mpfs: remove first reg region
+  clk: microchip: mpfs: use regmap for clocks
+  riscv: dts: microchip: fix mailbox description
+  riscv: dts: microchip: convert clock and reset to use syscon
+  MAINTAINERS: add new soc drivers to Microchip RISC-V entry
+  MAINTAINERS: rename Microchip RISC-V entry
+
+ .../bindings/clock/microchip,mpfs-clkcfg.yaml |  36 ++-
+ .../microchip,mpfs-mss-top-sysreg.yaml        |  47 ++++
+ MAINTAINERS                                   |   4 +-
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 ++-
+ drivers/clk/microchip/Kconfig                 |   2 +
+ drivers/clk/microchip/clk-mpfs.c              | 250 +++++++++++++++---
+ drivers/reset/reset-mpfs.c                    |  83 ++++--
+ drivers/soc/microchip/Kconfig                 |  13 +
+ drivers/soc/microchip/Makefile                |   1 +
+ drivers/soc/microchip/mpfs-control-scb.c      |  45 ++++
+ drivers/soc/microchip/mpfs-mss-top-sysreg.c   |  48 ++++
+ 11 files changed, 480 insertions(+), 83 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+ create mode 100644 drivers/soc/microchip/mpfs-control-scb.c
+ create mode 100644 drivers/soc/microchip/mpfs-mss-top-sysreg.c
+
+-- 
+2.51.0
 
 
