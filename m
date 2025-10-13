@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-850445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC800BD2D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7343FBD2D34
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469A0189D6FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A983B56D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44882638AF;
-	Mon, 13 Oct 2025 11:44:23 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA097265606;
+	Mon, 13 Oct 2025 11:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+r1K2Rb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7072566D2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8CD261B7F;
+	Mon, 13 Oct 2025 11:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760355863; cv=none; b=N1/Uk97v0CunNMKB7ap9ZPqO+zjN1EKGbgdlwO4HXO8YIho0iRYziN70QJwGeZ5KMkJcG2mwldDHhNiiPjBeiXEtRA3B+Pw7TwPnUcsvlAKTwjXJvx/wbKnaraFjZzQ+n5RWyYdzh3lzwFV7XcULTLKzSbjY6dh2WydQRXf7XIU=
+	t=1760355868; cv=none; b=KhBGZswCgROi18cutn5QMKpM5FXefZTEuHg2t31z9oHNKCpaP7HPVKfVsRkI+qkDnAa1TQXt7NjehZORVAZa0I+Ax86Apxz9s4kmlmGQfBoExoTSOSKna2SUpkhzfKx7com/dSvLV4Hj/17l7YheDgFolriS77CVJPd3CmFscvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760355863; c=relaxed/simple;
-	bh=8eC1BSK/uBIfeMwtMf/eRDAxHcCKFEYEtghB3gXrNbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/r0/56BDL09+FnToM1/vAon9M2PuGYc7JaedHzdNF6MGwUDJg+1XCYE3+Ch4aVRe6evxOXmdngdIVP1eoepECsHb4zDUQX7xBpiX1/kcS0GB8mGj9W2EleviMLUGJwmQOnASFYU8JjACzasEOTENhrpiQRfJHrALpGm7i4yJiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v8GyA-0004Pm-QG; Mon, 13 Oct 2025 13:44:02 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v8Gy9-003NPs-2b;
-	Mon, 13 Oct 2025 13:44:01 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 77709484B87;
-	Mon, 13 Oct 2025 11:44:01 +0000 (UTC)
-Date: Mon, 13 Oct 2025 13:44:00 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
-	linux-can@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
- transceiver
-Message-ID: <20251013-burrowing-elk-of-coffee-210990-mkl@pengutronix.de>
-References: <20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com>
- <20251013-tja1145-support-v3-2-4a9d245fe067@liebherr.com>
- <20251013-unyielding-turquoise-mamba-76a0ea-mkl@pengutronix.de>
- <20251013113605.GA177845@legfed1>
+	s=arc-20240116; t=1760355868; c=relaxed/simple;
+	bh=DHOZJDu5kEvHcvJDToMbreMDRdWVKLGK1lK3EyD6Tj8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=If1SOIlUKgAKafSppFYQSMXpj9u82aKSn0GoGR39xvygGfCPWf1xN99Dagwy5iwCF6Lf8Jwiv/DQMlbIRgGcqiDIqcXLd+tIv36tEOkQrkf+hAZeNjUIu/1mTWmwtnpqBEE1lVIm1FpeRHXU+LFYRcSafIuamfXOtoXzFS3veL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+r1K2Rb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88AE7C4CEE7;
+	Mon, 13 Oct 2025 11:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760355868;
+	bh=DHOZJDu5kEvHcvJDToMbreMDRdWVKLGK1lK3EyD6Tj8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=l+r1K2RbQ1OLk6srAKulKnuIxrz82MfDezjlZY2LajQFZrvRGZPxWqNaBNEooCV2k
+	 +vHDq6e+GhaMt1TSWe3os6GFcWMH/octN8D9qaTibhpGfcHaoRamLAEVSnFuEEjOXh
+	 flUX61o/YQIa1yTLHZk26eSOmUKV4p4hAx+Lgge27ixtLFZFZE+aMaJ5LzO6cA80QD
+	 ghzCgwOXmD633MCiny6IfgXHVfG0LlKS8uXTNi88rFow6gGECvIaJWMWGyPRij19vK
+	 xu/ju4SNBfkc83k8hVyv1t73CyUdqMwPWYSYV5oBbPc02xGddcJKpnZJ3Wrv2tKiar
+	 a0FuMSuNhktZA==
+From: Mattijs Korpershoek <mkorpershoek@kernel.org>
+Date: Mon, 13 Oct 2025 13:44:10 +0200
+Subject: [PATCH v3] spi: cadence-quadspi: Fix pm_runtime unbalance on dma
+ EPROBE_DEFER
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7p5ebwh66hrkwuao"
-Content-Disposition: inline
-In-Reply-To: <20251013113605.GA177845@legfed1>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251013-cadence-quadspi-fix-pm-runtime-v3-1-d65f18dade0d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAnm7GgC/43Nyw6CMBCF4VchXTumFwjgyvcwLnqZQqMUbIFoC
+ O9uYaUrXf6TyXcWEjE4jOSULSTg7KLrfQpxyIhupW8QnElNOOUFo7QCLQ16jfCYpImDA+ueMHQ
+ QJj+6DkHZytia0bwoS5KQIWD62Acu19Sti2MfXvvezLbr3/TMgIEQSqtcVUJyPN8weLwf+9CQz
+ Z75p1f/9HjyKmUsWp2LmvIvb13XN4AVKVMdAQAA
+X-Change-ID: 20251008-cadence-quadspi-fix-pm-runtime-bf8df9104577
+To: Mark Brown <broonie@kernel.org>, 
+ Khairul Anuar Romli <khairul.anuar.romli@altera.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mattijs Korpershoek <mkorpershoek@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2262;
+ i=mkorpershoek@kernel.org; h=from:subject:message-id;
+ bh=DHOZJDu5kEvHcvJDToMbreMDRdWVKLGK1lK3EyD6Tj8=;
+ b=owEBbQGS/pANAwAKARkNHbRmThk1AcsmYgBo7OYZzj+pWZd1pa0cGSlHXc2Toq9udOaGNcHL3
+ z6yujhQNDaJATMEAAEKAB0WIQQu6UKnth9qvlMTrQAZDR20Zk4ZNQUCaOzmGQAKCRAZDR20Zk4Z
+ NYGTCACjCqU14WZrOCzPaTAByZmo4JIPFVOMxfyiB5XRf3lnSITJU97B9s/5T2G1EXaFaxAuM0U
+ lNIbqngrQmUh6XAXvGKwPufWNEoHTFmv8e+Hp5Pddj5fGLcN0iN7Sg1r3bKNV8Ly/+CoAdpv5+S
+ McsuImiwDeq66mBNANnQDV/YngK6OesIZnmE6BvF1gyMXNK2z8fZ0+2qLUR3uZOPuCPp0YiEY3G
+ QeFSufzNrz+C3LwrTwQlRftXEawOuRUq/g44SrQhCkJndq67GFYhAS+OlRvKiW3pVyZnvcCVbJ3
+ PWdI8jZJ1v/RimUIwPzQ0cFLGx9iR6FONpmyMSDajnjIQbsU
+X-Developer-Key: i=mkorpershoek@kernel.org; a=openpgp;
+ fpr=8234A35B45C0D26B31C1A2DA570338B018144F28
 
+In csqspi_probe(), when cqspi_request_mmap_dma() returns -EPROBE_DEFER,
+we handle the error by jumping to probe_setup_failed.
+In that label, we call pm_runtime_disable(), even if we never called
+pm_runtime_enable() before.
 
---7p5ebwh66hrkwuao
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
- transceiver
-MIME-Version: 1.0
+Because of this, the driver cannot probe:
 
-On 13.10.2025 13:36:05, Dimitri Fedrau wrote:
-> Am Mon, Oct 13, 2025 at 11:51:51AM +0200 schrieb Marc Kleine-Budde:
-> > On 13.10.2025 11:19:19, Dimitri Fedrau via B4 Relay wrote:
-> > > Add basic driver support for NXPs TJA1145 CAN transceiver which bring=
-s the
-> > > PHY up/down by switching to normal/standby mode using SPI commands.
-> >=20
-> > The PHY supports standby and sleep mode. Does the PHY framework provide
-> > a way to configure this?
-> >=20
->=20
-> Didn't find anything related.
->=20
-> > Why do you put the transceiver into standby not in sleep mode?
-> >=20
-> Datasheet states:
->=20
-> Standby mode is the first-level power-saving mode of the TJA1145A,
-> featuring low current consumption. The transceiver is unable to transmit
-> or receive data in Standby mode, but the INH pin remains active so voltage
-> regulators controlled by this pin will be active.
->=20
-> Sleep mode is the second-level power saving mode of the TJA1145A. In Sleep
-> mode, the transceiver behaves as in Standby Mode with the exception that
-> pin INH is set to a high-ohmic state. Voltage regulators controlled by th=
-is
-> pin will be switched off, and the current into pin BAT will be reduced to=
- a
-> minimum.
->=20
-> I'm assuming that the sleep state would fit into some suspend,
-> power-off, ... scenario, because the INH pin maybe used to control
-> regulators.
+[    2.690018] cadence-qspi 47040000.spi: No Rx DMA available
+[    2.699735] spi-nor spi0.0: resume failed with -13
+[    2.699741] spi-nor: probe of spi0.0 failed with error -13
 
-That makes sense, and I think it depends heavily on the use case of the
-system. This can be implemented as soon as the need arises.
+Only call pm_runtime_disable() if it was enabled by adding a new
+label to handle spi_register_controller() failures.
 
-For the whole series:
+Fixes: b07f349d1864 ("spi: spi-cadence-quadspi: Fix pm runtime unbalance")
+Signed-off-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
+---
+This has been tested on a AM69 SK board.
+---
+Changes in v3:
+- Rebased on spi/for-6.18 (Dropped Dan's review since rebase was
+  non-trivial)
+- Link to v2: https://lore.kernel.org/r/20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org
 
-Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Changes in v2:
+- Updated message to use correct Fixes tag (Dan)
+- Link to v1: https://lore.kernel.org/r/20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org
+---
+ drivers/spi/spi-cadence-quadspi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-regards,
-Marc
+diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
+index 2ce4fc136a51ce3305e478c82da6b88ad542fc8c..4209578cb3426aad6707d0a46ddb78986c5eef7d 100644
+--- a/drivers/spi/spi-cadence-quadspi.c
++++ b/drivers/spi/spi-cadence-quadspi.c
+@@ -2002,15 +2002,17 @@ static int cqspi_probe(struct platform_device *pdev)
+ 	ret = spi_register_controller(host);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register SPI ctlr %d\n", ret);
+-		goto probe_setup_failed;
++		goto probe_ctrl_failed;
+ 	}
+ 
+ 	pm_runtime_put_autosuspend(dev);
+ 
+ 	return 0;
++
++probe_ctrl_failed:
++	pm_runtime_disable(dev);
+ probe_setup_failed:
+ 	cqspi_controller_enable(cqspi, 0);
+-	pm_runtime_disable(dev);
+ probe_reset_failed:
+ 	if (cqspi->is_jh7110)
+ 		cqspi_jh7110_disable_clk(pdev, cqspi);
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+---
+base-commit: 18a5f1af596e6ba22cd40ada449063041f3ce6d4
+change-id: 20251008-cadence-quadspi-fix-pm-runtime-bf8df9104577
 
---7p5ebwh66hrkwuao
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Mattijs Korpershoek <mkorpershoek@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjs5f0ACgkQDHRl3/mQ
-kZyjqggArjAF75JX1jsP6Oh6UDJKXTCUtRYB0X1u1QmOgNOCdkMtH44l59g81+nW
-5Vm1QYld8NkdmyPu3FugSdCDDxDnVFLX2v9Bwake5eRSHm9RSQFZ1hSblqVZQ0Bx
-ULlWXPZrS+QdhCmtdSAbi7iEbvZtxYcf9M/qjH8vRdpSJ+5BRZ/vIyfwMxJPJgms
-BM6jflWj7zTTFR9EM/9vwlnRc7Hrfe+woZ0BM7aYYjY8ibmWe9Xe6R5m6QQBtDUv
-5PILzA2mxoUkZ/LGXi0OgExuwZp+1LdrLRat+4ZsLTGQqSMHKypuwrB89Z0qMkIv
-/izuJx1+Sy5HQFcgLMVZYdkB9hOKpg==
-=tHfi
------END PGP SIGNATURE-----
-
---7p5ebwh66hrkwuao--
 
