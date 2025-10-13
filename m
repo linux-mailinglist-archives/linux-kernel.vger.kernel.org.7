@@ -1,96 +1,125 @@
-Return-Path: <linux-kernel+bounces-851382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8AABD6523
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:02:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5861FBD651A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2828E18A2D45
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A4D4209E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42562EBDE0;
-	Mon, 13 Oct 2025 21:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D96296BD2;
+	Mon, 13 Oct 2025 21:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="ph+PKv3F"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFOtIaYj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9314E1D88A4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A874225401;
 	Mon, 13 Oct 2025 21:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760389360; cv=none; b=j3goYUE1YAaY1YuC1TbArXRh/TvGR/czs+w3JrKxYGef4Mf6vAdqytRihf50Rwx2PohZj1nYcfp8wb976q+YJ+NnEBiUbuCVu9oDqOXhD6iQYrBGedFy2c/SN2Fia6BAlSd7laKHkmsYW8PQXP42VdanEUm10I4sYWrQltC4vtg=
+	t=1760389357; cv=none; b=ikLmuY+6UV7FHwFVH+EfX2PNASYjJFuw5uxvU8KGVj6ginj/08E7dUSixWcVwinBCQXCwchg2jK1Nbawc6fwiwDrlLAfBv5s4cdLatFUyMziGUx/QJhu4WBJYwEVCvuzLOIYSkod4+EWXjUluteU69FhJ9cPFfNamWTJCm8eCw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760389360; c=relaxed/simple;
-	bh=xOw+8rf7Uh7lk0P09CSU4b2NGtz9QYyBNMYwsaRgbWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q7DKRz231YhDw2gDgbi2yK4M7ita6uGBS75Jl2Dla3G+X58zobgV9bXz1G9cklCpVYMhqDeZH2Nj22YumuI5YGKLS1Jkf32ZpsFPqNN18+hw4JjS9qGN6PiKPz6TWhxrZmyUo+k+MNkNsuZM+Yndydzey/MjsDBzavZ3aTSBusg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=ph+PKv3F; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [10.50.4.39] (45-31-46-51.lightspeed.sndgca.sbcglobal.net [45.31.46.51])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4clqYK27cCz4Pdk;
-	Mon, 13 Oct 2025 17:02:27 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1760389350; bh=xOw+8rf7Uh7lk0P09CSU4b2NGtz9QYyBNMYwsaRgbWA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ph+PKv3FDXmPptWPX6iu36czKuB3qqyxN8Fyw18C5xVULNb6O33wQsgdOX8cG6F1X
-	 IO8lnbwqlWnay1qWDYG4r33kjoOiZYE5n7l13+9jI6GSkWgtbafY2L5j61f9V3g6hd
-	 NMLXvMmoiHYtPc/o7DGs85Uqfrm8Dc4JjLo4Yp80=
-Message-ID: <92c821fb-537a-40e6-98fc-616941b57778@panix.com>
-Date: Mon, 13 Oct 2025 14:02:26 -0700
+	s=arc-20240116; t=1760389357; c=relaxed/simple;
+	bh=rk47wc3bcYnjvI5ZSIYiPS5R2QOmXR2X8w20XM8e8xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DklzRhbP6Am08h9QfY6+YZV9NrCPteqCrun8+MOvIj4yWCTUCw3pI0ZH0iR7EI+T+6Z6e3oL1PCLFvzI9WjHO99iSfj7xmWXutPbLZAfKToKGuSYieUQl8zKuJUe2D1KG9sNDnALT3jyiXGXMWHTop2vCFzAZcHhrxw+z2ryXMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFOtIaYj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B311C4CEE7;
+	Mon, 13 Oct 2025 21:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760389357;
+	bh=rk47wc3bcYnjvI5ZSIYiPS5R2QOmXR2X8w20XM8e8xU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KFOtIaYjaaXNg5KasaQLZSoOrrI94uwnE+NVPCjVUTFRvwGBleqKqxHQD4+ppvPh+
+	 R7bBYtOU9MQU5gBjhWnUbVW4z9dlv9EL0NIqqmRk22UX4pQpjHJkjG8MFQXNwtYYV4
+	 vuVysnuAX0ZDiLxeFBGek+jRY/vdDi4M4vXp/0p4eyWKSyL8EmG2ZDZd/afazFtazR
+	 gGFxgtDlffeUqT97FDCmbwLWKSWt8bbNjne/l/+CSKHzh8UR2tsLuTgt/7wHs6BHkC
+	 k7zUSMvFGhsFp5iPv0YN4RQxC+oNj6EbJpl4h2ICgvZE0hl4yCU890itoJw/TqvA5n
+	 SWLuzj8VUv0fw==
+Date: Mon, 13 Oct 2025 16:02:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
+Message-ID: <20251013210236.GA864224@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] UCSI Power Supply Updates and Bug Fixes
-To: Jameson Thies <jthies@google.com>, heikki.krogerus@linux.intel.com,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org,
- gregkh@linuxfoundation.org, akuchynski@chromium.org,
- abhishekpandit@chromium.org, sebastian.reichel@collabora.com,
- linux-pm@vger.kernel.org, Kenneth C <kenny@panix.com>
-References: <20251007000007.3724229-1-jthies@google.com>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <20251007000007.3724229-1-jthies@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net>
 
+[+cc regressions]
 
-On 10/6/25 17:00, Jameson Thies wrote:
+On Mon, Oct 13, 2025 at 12:54:25PM -0700, Guenter Roeck wrote:
+> On Fri, Aug 29, 2025 at 04:10:52PM +0300, Ilpo Järvinen wrote:
+> > pci-legacy.c under MIPS has a copy of pci_enable_resources() named as
+> > pcibios_enable_resources(). Having own copy of same functionality could
+> > lead to inconsistencies in behavior, especially now as
+> > pci_enable_resources() and the bridge window resource flags behavior are
+> > going to be altered by upcoming changes.
+> > 
+> > The check for !r->start && r->end is already covered by the more generic
+> > checks done in pci_enable_resources().
+> > 
+> > Call pci_enable_resources() from MIPS's pcibios_enable_device() and remove
+> > pcibios_enable_resources().
+> > 
+> > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> > Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> 
+> This patch causes boot failures when trying to boot mips images from
+> ide drive in qemu. As far as I can see the interface no longer instantiates.
+> 
+> Reverting this patch fixes the problem. Bisect log attached for reference.
+> 
+> Guenter
+> 
+> ---
+> # bad: [3a8660878839faadb4f1a6dd72c3179c1df56787] Linux 6.18-rc1
+> # good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
+> git bisect start 'HEAD' 'v6.17'
+> # good: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
+> git bisect good 58809f614e0e3f4e12b489bddf680bfeb31c0a20
+> # good: [bed0653fe2aacb0ca8196075cffc9e7062e74927] Merge tag 'iommu-updates-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux
+> git bisect good bed0653fe2aacb0ca8196075cffc9e7062e74927
+> # good: [6a74422b9710e987c7d6b85a1ade7330b1e61626] Merge tag 'mips_6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
+> git bisect good 6a74422b9710e987c7d6b85a1ade7330b1e61626
+> # bad: [522ba450b56fff29f868b1552bdc2965f55de7ed] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+> git bisect bad 522ba450b56fff29f868b1552bdc2965f55de7ed
+> # bad: [256e3417065b2721f77bcd37331796b59483ef3b] Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+> git bisect bad 256e3417065b2721f77bcd37331796b59483ef3b
+> # bad: [2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92] Merge tag 'pci-v6.18-changes' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci
+> git bisect bad 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
+> # bad: [531abff0fa53bc3a2f7f69b2693386eb6bda96e5] Merge branch 'pci/controller/qcom'
+> git bisect bad 531abff0fa53bc3a2f7f69b2693386eb6bda96e5
+> # bad: [fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3] Merge branch 'pci/resource'
+> git bisect bad fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3
+> # good: [0bb65e32495e6235a069b60e787140da99e9c122] Merge branch 'pci/p2pdma'
+> git bisect good 0bb65e32495e6235a069b60e787140da99e9c122
+> # bad: [ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd] PCI: Use pbus_select_window_for_type() during IO window sizing
+> git bisect bad ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd
+> # bad: [2ee33aa14d3f2e92ba8ae80443f2cd9b575f08cb] PCI: Always claim bridge window before its setup
+> git bisect bad 2ee33aa14d3f2e92ba8ae80443f2cd9b575f08cb
+> # good: [2657a0c982239fecc41d0df5a69091ca4297647c] m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
+> git bisect good 2657a0c982239fecc41d0df5a69091ca4297647c
+> # bad: [ae81aad5c2e17fd1fafd930e75b81aedc837f705] MIPS: PCI: Use pci_enable_resources()
+> git bisect bad ae81aad5c2e17fd1fafd930e75b81aedc837f705
+> # good: [754babaaf33349d9ef27bb1ac6f5d9d5a503a2a6] sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
+> git bisect good 754babaaf33349d9ef27bb1ac6f5d9d5a503a2a6
+> # first bad commit: [ae81aad5c2e17fd1fafd930e75b81aedc837f705] MIPS: PCI: Use pci_enable_resources()
 
-> This series includes the following minor changes to power supply
-> handling by the UCSI driver.
-...
-> base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
-
-I wanted to let you know that on my Dell XPS-9320, this patchset ended 
-up spamming (i.e., hundreds) my dmesg with the following:
-
-power_supply ucsi-source-psy-USBC000:002: driver reporting unavailable 
-enum value 7
-
-... which I believe to be POWER_SUPPLY_USB_TYPE_PD_DRP .
-
-In my case it was coming from the call to 
-power_supply_show_enum_with_available() on/around line 380 in 
-.../drivers/power/supply/power_supply_sysfs.c ; I'd tried adding 
-POWER_SUPPLY_USB_TYPE_PD_DRP to con->psy_desc.usb_types in 
-ucsi_register_port_psy() in
-.../drivers/usb/typec/ucsi/psy.c thinking that may fix it with no success.
-
-LMK if you need any further info,
-
--Kenny
-
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
-
+#regzbot introduced: ae81aad5c2e1 ("MIPS: PCI: Use pci_enable_resources()")
 
