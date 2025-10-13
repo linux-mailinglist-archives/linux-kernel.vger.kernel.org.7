@@ -1,185 +1,234 @@
-Return-Path: <linux-kernel+bounces-850723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3F0BD3A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:43:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90AABD3A05
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36FED3C8043
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:39:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FF124F8D25
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FDA30BB8A;
-	Mon, 13 Oct 2025 14:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8549E26E70E;
+	Mon, 13 Oct 2025 14:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="stZ+7qGU"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012033.outbound.protection.outlook.com [52.101.53.33])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TJzZQnq7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B385530B510
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366136; cv=fail; b=oQnhGaNonYujtDLKAeBq7yUs68kESEO2FQmqUWdDGY5LA1QgeJYsH6k4vLL3WPrBu/qadQcapZy/vY8mCUNmfug5xev4puu9WUudo4PQZQE9usGv4K7EAuaAagb5XYjDseBxhLONUq+/Eme3W+rO/hGpWvpmOIv0mZhX8gSVvwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366136; c=relaxed/simple;
-	bh=sEtvcU0DRCOSwuleoGkjushw2H01oufeGvUZRSgilw0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dJ8+9rstECTYhPWnKfBmY++EXAMAEuc7jV7hmQBrXCmyGzT9rdYNSCn7nB04YNSYsy9z07jLau12XPMFGSFstRRXcosdItVcx608kXH69yvZok6H6KoIP8oTrw770Lv0xm2t2QOK/D4f681H5J70DyCK9gbc/Al4wLJqcF/fjE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=stZ+7qGU; arc=fail smtp.client-ip=52.101.53.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yAEm4/bllog+vM4INsM/Aebg+PKb8HRsGQp5aez7exXxeK4dU98ZEsWtsdM99sOmSoiXrux1bEg/UApZSNUIPZfbGJ//Cg8apVRJcH4pcMbqbMWaedZVGJF6QWmrIgwtlmB5aclZzueJCA2iBPgUKBOsxiRKdfjh4cC+waGFcAVl23WH5eEvWOz/MS/4QqOF4czOAd7MDZEgGeyx1HtnjA3cghL7pueu2yUqWn73OcrcHr1fsMutFmZn3knRk2CtnlwjBsx1+WWYZObXL2YWCBf1RL0HujRCAvkcJldaOLxeUsNnSF5ADfjLXLC7kQVOxQqyATLLCj60KYLtr9HcWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w/Cfn6toZoXSamzuDTopfmh8rqEUbQ+HmNa4nHNLHmo=;
- b=iaIEOH+m6IFN2+1ii+XiJrLjYiBZwhT2/KCXOsH97UzP9jShEX967z94Chxvl4rWS8krJwxlH13IOYiXBi4QxBnRBrLOcAu34byzZO+yko9rX1IE+MeG+ROTBBH+uhU+dg9BF31lu9aJKE+b0c6nJVc4qlOV4EzGpSacnYo7YXfPDRQOst2Zcs4czHYKlA6KqIesQGCBvY4VAtF8CBdVOL6ATrEKg3sNUCxyfqD2XgW/7+l0qjMjTPsb3b04k/XiljV+okkv0Id5IgmMlrTnJUmiOgKLGrY1G9cDJBa/urLXpnWXoFCZHEnCGd2tgAGV8toTIviqtOE7WE/nKlEYpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w/Cfn6toZoXSamzuDTopfmh8rqEUbQ+HmNa4nHNLHmo=;
- b=stZ+7qGUBOAG7hELBe8WazuS1oqEDb77BJQWadvzWT4ANO4m/WyLPs0mcHbeiQ+uGSZL7Vx+x8Wy+cPePwcnVG6iVSUDIK32J9CTv8+2Sxx2bqySPmi+K8JafJvsSQ8ytZuqsdwBMnhSsDq25wcFQ1RAPB3wamvRe/ArTmDHjT0=
-Received: from PH8PR02CA0051.namprd02.prod.outlook.com (2603:10b6:510:2da::21)
- by MW4PR12MB7285.namprd12.prod.outlook.com (2603:10b6:303:22e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 14:35:31 +0000
-Received: from SN1PEPF0002BA50.namprd03.prod.outlook.com
- (2603:10b6:510:2da:cafe::d6) by PH8PR02CA0051.outlook.office365.com
- (2603:10b6:510:2da::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Mon,
- 13 Oct 2025 14:35:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF0002BA50.mail.protection.outlook.com (10.167.242.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:35:30 +0000
-Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 13 Oct
- 2025 07:35:29 -0700
-From: David Kaplan <david.kaplan@amd.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
-	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
-CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
-	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 17/56] x86/bugs: Reset TSA mitigations
-Date: Mon, 13 Oct 2025 09:34:05 -0500
-Message-ID: <20251013143444.3999-18-david.kaplan@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1011274669
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760366053; cv=none; b=utl+mEx/AvQWqGMu8MJSWyKCLYIm13kjaJVS0Gb2/rQikR1Be1wcO9ICiyyS7OHQDH4lW64afwzxNq0BZvP8n4FKg2gXE5lSuCAsMyRClXNnClsK0UKe1qao17fiCMMsNo0m2cfl+NK8h2TJ4AqxzUHLzkM0AskYfh/lccxdwpY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760366053; c=relaxed/simple;
+	bh=+Xq9csTV5We6M8IuSeEgmXYhbbqrD0QRAT0qUJg4f5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVVX+CnkIG9/6WiLocpLWl5MaLoYsCiCa/kNYhTe4UhGebPk1dCuT/auDcoRlGra6/hE+RspkR78OyYqQN4XWJTkOmJB4ZJD8qiUd7l/vqSJk0mPwhzehMdH43fe3/IUSo1QbyAjgw0vBnnieElyfldeMx2/u5ucVpKInpW58+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TJzZQnq7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DB1v4h024083
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:34:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UnjM2iW4CXaWPsxTyAY4aMVtXNn2X/TlNCmubEZb6tU=; b=TJzZQnq7cyFpLFad
+	HZOosQoW1dz6Gfz7pgkTYO6/uzN7eA7tUD4BUGRV4+AWHmAA/tHXM8GrUC3NbKIb
+	spyp11FdPh+Lttl+aBnDkjosNPlRa0dT6MSOOI7L83mef3gcJ6xS/OJoHDAcMUbt
+	MQdhf4//d5kUoEL/5YtSpFs9bcaWgcZMgFdmAn05VKwzlO30IXfcgunWtq3CnePV
+	CX+ZGYrC047nrkEpsRo0ehfuH1o/bqdw8yR6rNzfLLjZDqxgcfGolP0uc/+6HZvU
+	Cw+TA6bIXvvLQibRhg/AAAJWuJePvpEBhsD1lSMpAFK8Hn+JFhBToUchZoubKL7R
+	2kNB8A==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa84yu4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:34:10 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-859df490f9dso1040104485a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:34:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760366049; x=1760970849;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UnjM2iW4CXaWPsxTyAY4aMVtXNn2X/TlNCmubEZb6tU=;
+        b=l53eNhsODtVdWKGxecuL3is6U9VSUreKxvRX3LFdh5MhKpLdZlnH9V8bXtqVXhci1Q
+         JhmvUmcHsQkxRmcfU8nqUyaQk9tzMww9Jy/v+biglbd4kWsCY+RRQBq3jl0QCMI+QLJP
+         /P/cGfC9lb+ZYQXwhyxAT1oRZ2wbi85Vg0ExiVuyPxGQHjvyElvzZMNzzrLYRBcs+Qto
+         1WwyY7HNtZY/ijRkWOaMmqNjFP6VEMHwWCJb1B0yq6MoPW2UXPBlR7vvVimOeqmNgPye
+         Mz71VrCmIkPGV1BBMRxKihgf0EUYv+wrPknyslOeZkqFyT2ohdMw3bKTCgoIl7jr0TmC
+         sMgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnuSjjYZ1iPTaSd5ySUwHEuvW6LuFM6B67jolbV5vBVdrRWzYMpaDPZSb7LXnPbpRpHW9Mq9Qe7FCtjYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygbJznuQl/Dt52N1dML1S/AjtsttBgUZbgbJTzs/sg1fILKQUN
+	oI1DI1PD5GrsUBz82/8bGJ3cllcRosxYn+65uxtMoCQcr4Q8PAT99rJ29mOKmnqqv1NsMcpXleC
+	fOGPMoJp2cj0CU2qpD09wpDTC0m6VAFb687Bfit3KYcsk7kj8LS4CpJJkOVpjkCdPgbE=
+X-Gm-Gg: ASbGnctd20qB/B1h/3oNBT11FDrwr4oa1FroIlPthet5BUMx06F3lJgRe+SrNEH61nY
+	a/D+jPC7QGcUeqC5Tv/jCysWD18Afy5zfhMyOCKvXDhkeJextsdzLlvC/vsgyiPhcj0y5aQJ/Y7
+	uWHHtEFNKEm46gDqKXdZv8udr+c3BIvc4EBfkCQrvc/hEEilRbraafl5CABu80VsFMxrfQWWjI7
+	Tc8pKTDp69H9a/eWqxLyFHN3aBE4r9NagJj9L31WHcgv8me+raWmu5QYXaOWNL1gMxM9zVHI8Rz
+	pWVZct5/+ePp6wGJGXiT0rcT/KrealYVLJ8xvVaS7AMn/XNsjjDF/iKrY7U8LSrQB7ZdG1cvSAq
+	e8UMhcXFggOGGg7yaQi3TlbSoumJ4oskF2d1YCLm5ARpiv+4Yc22G
+X-Received: by 2002:a05:622a:1190:b0:4da:256c:3d42 with SMTP id d75a77b69052e-4e6ead66d3bmr306583011cf.59.1760366049468;
+        Mon, 13 Oct 2025 07:34:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHsAa9RE0jQv7/KQ4V1BacvQuNOMhawZJVvcdaOp6lQ4V+xaBIvIkvcwLEkbpiulXd2rlgZyQ==
+X-Received: by 2002:a05:622a:1190:b0:4da:256c:3d42 with SMTP id d75a77b69052e-4e6ead66d3bmr306582221cf.59.1760366048780;
+        Mon, 13 Oct 2025 07:34:08 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5908856394bsm4179132e87.66.2025.10.13.07.34.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 07:34:08 -0700 (PDT)
+Date: Mon, 13 Oct 2025 17:34:06 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Junjie Cao <caojunjie650@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Antonino Maniscalco <antomani103@gmail.com>,
+        Jonathan Marek <jonathan@marek.ca>, Eugene Lepshy <fekz115@gmail.com>,
+        Jun Nie <jun.nie@linaro.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH 2/3] drm/msm/dsi: support DSC configurations with
+ slice_per_pkt > 1
+Message-ID: <3a2v2i5lximl6q7eidd5zhjoyckz2fvgv52rhjruiuyuc6v3a3@5kdqa2eypidt>
+References: <20251001135914.13754-1-caojunjie650@gmail.com>
+ <20251001135914.13754-3-caojunjie650@gmail.com>
+ <cwgn24f6tnmytd4omr2tul4e5jjin3ijji3ff3qkumqm2xe3t3@ntayu3m5kai3>
+ <CAK6c68jBwykcWZm3ckm3nwab-X9Are4rD-eauE4rXA2+XvuX1w@mail.gmail.com>
+ <9cafccd5-35d4-46c5-aa57-1b0b8ec116e8@oss.qualcomm.com>
+ <CAK6c68iV=n3BvMMa30FuehbMs7-U01s0saZnsYwPVoiyw0VTrg@mail.gmail.com>
+ <icj24ghckurcunjormsfhhscng4wfcxiyadl2z5xduitxxqqmp@iws3pssew5dx>
+ <CAK6c68hZq2o9YXxzd2dv5AXw5-UfKv_58MoUrQfGyfPiONArEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA50:EE_|MW4PR12MB7285:EE_
-X-MS-Office365-Filtering-Correlation-Id: f38cba48-8fd7-4729-95d6-08de0a65c2ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7BaIywARw9WZSPsKqrpB4PKGH0No8dgZGy7hUgS+Cm5vTdWA6HdLPDJ7saFF?=
- =?us-ascii?Q?tkhpfhyY+DMugSSFmu7WUqPFiVT9BT6G0nltnOWZP3vQypzLiSJxiVensIx7?=
- =?us-ascii?Q?PMrFq/Sza948sWTCPfsixQedavdO7fyxJdME0kEsPTV+jq9+gPl4Y/e5fy6O?=
- =?us-ascii?Q?InZrUcOS1kpWlVKg7EOIHqNZbjyXxSOCuz9mDg/pmTYZ2JOo/1Fb/c/6Ovzv?=
- =?us-ascii?Q?uMFlgdhuKNyVn+fKPOnrAPyEw8SqnKnqdc9UufPz7gkK8EgW05ljkoDGrteZ?=
- =?us-ascii?Q?khedh6qkaQqVxOdO6gPHC0cOIqgzzJwa8n+sSvMokA7q3eBPW4WO3Pdsb1f+?=
- =?us-ascii?Q?+Nzrr8n/UBRygi+3SJwZgQHGpveYLAgJMqespbDB20pzKCDjxIR4ByrnSk76?=
- =?us-ascii?Q?fjKWz3BEYeLSNcuT32MTh94sfehe4UHbf6oVumGKt6d3ClWhXqHx7yk/TjaJ?=
- =?us-ascii?Q?AvfIc5CYvw/KoXCEEOIhnwt5jcIjNoyNOyFeJ+ipUIejqyieL47DJgT7aQyN?=
- =?us-ascii?Q?MvNgCA4rkkNf2Kn51HoTa0svNKi1pbhR4z8xK3GaBRFa4RuWvY3jLfdVLZHs?=
- =?us-ascii?Q?8nb/IkCvrZdMnUPMDfhwe3UAvQG511u2q9UEPM1ieIzmiFL6LRi1YxOST+NC?=
- =?us-ascii?Q?7sgV03NDsdnKoBh+m5NvEnFYxl25faqEKdGtABE7y4sYkQozjrvS6JjvwTNQ?=
- =?us-ascii?Q?lExQORIHAx5GWbkxpGHOr0+jQ00p5CND1drjQsbGIzQLrm7fncj4DQJHgxoD?=
- =?us-ascii?Q?+NbxQZ0CFtyuUmu4bDVmkqGR6RhWXhkz/dHCF5Ko3cfu2FxrG92Srk15Cock?=
- =?us-ascii?Q?9x6svehpqH/Bn7TLRw0znNsbZjQ/sK0LsQIrMonFt3OuJH+CjQrkwSBAG2+W?=
- =?us-ascii?Q?/UyBnh0ZSDPyoqYCzdhC/Gn75CyYlPPctvK+LIpwOGH6QttM3ybR/zRGSCWv?=
- =?us-ascii?Q?Na2xxGdiYuP5CZKnb4xWd1zgeiP4ekPGe4xrxfOdZgpcALQeIjHJBFzJtc+S?=
- =?us-ascii?Q?4IrDW+7S+p+b6JoBY46/7LomeKKI4PHMRzjb4H47vEWOWWencOnGKA9XcvyF?=
- =?us-ascii?Q?XVItGJHw103KYcFdnSJKfCf4SBXUfY11kuU5ei7686A/Y0t2SLfGe6NgeBMx?=
- =?us-ascii?Q?nRmr9Sedds8ynaxJyi6MKj6nu9Jd9+p3KJvLYr3xeRaqwIbod+zBvgLmmlC0?=
- =?us-ascii?Q?fNx0JR66gLUi4+XxNOyh2CixYMvYYB8879Vo/vl9TZHAi/4K/dxgwKnmPj2z?=
- =?us-ascii?Q?GBPBRSOcAtzUZmp67b3Wwc0azsl0fw1W7+/XiR8tM/l41P20hg9xHq87XfAp?=
- =?us-ascii?Q?16XHqHZCA3D2gRkdnle4WH67kKlftrRNo8z92Uo+LYdywFNcxdeC/FzArw71?=
- =?us-ascii?Q?MaNG51VPf0+w3LAYgL8ywKUHb2jIQC3iajz5bJY+a+vJY6CtcxIvQK/ul/Az?=
- =?us-ascii?Q?ODbDmhZjQBNBp5qXo7qZ8kWvDAeWfXn5seaXay/soTZBLU3Eexl/uqOgEwLa?=
- =?us-ascii?Q?3K06fYyuUrTuMKZWaCWRlaqk3Lrn8gRgptjvWXXGXVTsugnQP8qrNN4LzxSo?=
- =?us-ascii?Q?VNZV9aUBaPX2RJ1VlhM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:35:30.6718
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f38cba48-8fd7-4729-95d6-08de0a65c2ae
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA50.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7285
+In-Reply-To: <CAK6c68hZq2o9YXxzd2dv5AXw5-UfKv_58MoUrQfGyfPiONArEg@mail.gmail.com>
+X-Proofpoint-GUID: jD9Qw1vHdlfd923lLP1Cazd48VyRmX7U
+X-Proofpoint-ORIG-GUID: jD9Qw1vHdlfd923lLP1Cazd48VyRmX7U
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX/jLBiqf0T7tK
+ a0zuvrBMsEVN61WCtalY1kGLVFsxhy7+q9Fz9qQTki+lS1l2L1sMpjRcDHB8Mb5SFRX+bekXjEN
+ +UuhoOhiF+KJawdlDVVm24jUJ3JrwpDFHIaNjhiS73dM1MVR7u/d3CzdiEWpTWAMtZJxLSgccPo
+ 18WuX61TKX4CbAIUCtU3/+YK1db251e+bRxK0yGwHKrZbNoFaEBVxNCSLTuel6JPHzDdGhGw66x
+ POiGmFXD5skt4gFjvKBfE3WjLaNojOzwxSKeaC3lBzhZpHC1MImg4SNmBF8nFHq/sFum9SZOzwO
+ exrKhDMECZZy/G5GDnWaKBfBsKl1uw1or73sxgqnMgmpLkyXbyJdg47mh+QGMe+pa0Ka47+yDgc
+ nJrH16/omFM8KfXJ9KGsZZvlOvzw4Q==
+X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ed0de2 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=RAbU-raeAAAA:8
+ a=pGLkceISAAAA:8 a=MZ1LVty5hXXzp8AwOaAA:9 a=lqcHg5cX4UMA:10 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
+ a=JiizpSU_mAIq9zsZDqn2:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
 
-Add function to reset TSA mitigations back to their boot-time defaults.
+On Mon, Oct 13, 2025 at 09:17:04PM +0800, Junjie Cao wrote:
+> Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> 于2025年10月13日周一 20:31写道：
+> > On Mon, Oct 13, 2025 at 07:04:43PM +0800, Junjie Cao wrote:
+> > > Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> 于2025年10月13日周一 17:39写道：
+> > > > On 13/10/2025 04:52, 曹俊杰 wrote:
+> > > > >  >Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com
+> > > > > <mailto:dmitry.baryshkov@oss.qualcomm.com>> 于2025年10月2日周四 10:04写道：
+> > > > >  >On Wed, Oct 01, 2025 at 09:59:13PM +0800, Junjie Cao wrote:
+> > > > >  >> From: Jun Nie <jun.nie@linaro.org <mailto:jun.nie@linaro.org>>
+> > > > >  >>
+> > > > >  >> Some panels support multiple slice to be sent in a single DSC
+> > > > > packet. And
+> > > > >  >> this feature is a must for specific panels, such as JDI LPM026M648C.
+> > > > > Add a
+> > > > >  >> dsc_slice_per_pkt member into struct mipi_dsi_device and support the
+> > > > >  >> feature in msm mdss driver.
+> > > > >  >>
+> > > > >  >> Co-developed-by: Jonathan Marek <jonathan@marek.ca
+> > > > > <mailto:jonathan@marek.ca>>
+> > > > >  >> Signed-off-by: Jonathan Marek <jonathan@marek.ca
+> > > > > <mailto:jonathan@marek.ca>>
+> > > > >  >> Signed-off-by: Jun Nie <jun.nie@linaro.org <mailto:jun.nie@linaro.org>>
+> > > > >  >> Signed-off-by: Junjie Cao <caojunjie650@gmail.com
+> > > > > <mailto:caojunjie650@gmail.com>>
+> > > > >  >> ---
+> > > > >  >>  drivers/gpu/drm/msm/dsi/dsi_host.c | 25 ++++++++++---------------
+> > > > >  >>  include/drm/drm_mipi_dsi.h         |  2 ++
+> > > > >  >>  2 files changed, 12 insertions(+), 15 deletions(-)
+> > > > >  >
+> > > > >  >Please extract the generic part, so that it can be merged through a
+> > > > >  >generic tree.
+> > > > >  >
+> > > > >
+> > > > > Sorry, I don't get it.  The generic part, generic tree? Do you mean
+> > > > > the drm tree? `slice_per_pkt >= 2` is seen on the panels of these
+> > > > > tablets that are equipped with qcom chips. I don't know if these
+> > > > > panels are used on other platforms, and if it is necessary to do it
+> > > > > in drm.
+> > > >
+> > > > There are two changes here:
+> > > > - MIPI DSI header change
+> > > > - msm DSI driver
+> > > >
+> > > > I've asked to split it to those two commits so that he change for
+> > > > drm_mipi_dsi.h is more obvious for reviewers and so that it can be
+> > > > merged through a drm-misc tree (or through drm-msm tree provided it gets
+> > > > a necessary ack).
+> > > >
+> > >
+> > > Thanks for your clear explanation.
+> > >
+> > > I don't mind to add the field separately. But should I submit it
+> > > with the panel driver together? Otherwise, this field is unused
+> > > for a while.
+> > >
+> > > However, as you mentioned, this is not a part of standard, neither
+> > > mipi dsi nor VESA DSC. Recently, only Qualcomm devices require it
+> > > to calculate parameters, then we use them to program registers. Why
+> > > don't we parse the field from devicetree?
+> >
+> > Because the value is uniquelly identified by the panel's compat string.
+> >
+> 
+> Yes, it is panel specified.
+> But can we set it for every panel like
+> 
+> &mdss_dsi0 {
+>     qcom,mdss-dsc-slice-per-pkt = <2>;
+> 
+>     status = "okay";
+> 
+>     panel: panel@0 {
+>         compatible = "foo,bar";
+>         reg = <0>;
+>     };
+> };
+> 
+> or moving the property to panel node? We access it from child node.
 
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
----
- arch/x86/kernel/cpu/bugs.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Why do you need it in DT if the panel driver can provide this
+information.
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index bf5de097e1a9..6a3e079a85fc 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1858,6 +1858,17 @@ static void __init tsa_apply_mitigation(void)
- 	}
- }
- 
-+#ifdef CONFIG_DYNAMIC_MITIGATIONS
-+static void tsa_reset_mitigation(void)
-+{
-+	setup_clear_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
-+	setup_clear_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF_VM);
-+	static_branch_disable(&cpu_buf_idle_clear);
-+	tsa_mitigation =
-+		IS_ENABLED(CONFIG_MITIGATION_TSA) ? TSA_MITIGATION_AUTO : TSA_MITIGATION_NONE;
-+}
-+#endif
-+
- #undef pr_fmt
- #define pr_fmt(fmt)     "Spectre V2 : " fmt
- 
-@@ -3978,5 +3989,6 @@ void arch_cpu_reset_mitigations(void)
- 	gds_reset_mitigation();
- 	bhi_reset_mitigation();
- 	its_reset_mitigation();
-+	tsa_reset_mitigation();
- }
- #endif
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
