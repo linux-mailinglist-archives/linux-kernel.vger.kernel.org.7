@@ -1,167 +1,132 @@
-Return-Path: <linux-kernel+bounces-849916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D65BD153F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:39:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5D5BD1542
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0C7189062E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16D9A3B2463
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C461993B9;
-	Mon, 13 Oct 2025 03:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BA4273D6D;
+	Mon, 13 Oct 2025 03:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cgQp3Qka"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="xs0QJcAM"
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6304F8248C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297041A8F97
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760326772; cv=none; b=pI7I8mDw5YAzS4UP5Z2aAUGCFhnf9tnHSxwZrfNYIFpv0kfyCIu+2tfSqnXxkbIAEO9VZ/W4jvJV8i3L03hm8t0o/e1wkGbCusAgm7FAzOA5kPUBgE3jigxeyjlZZJJ0OTEZDqtnV6GIwXgOpzKvDwsRF6bbn1831OW9wKsyuaM=
+	t=1760326776; cv=none; b=KrG1D2mJqx4pfQdMsFwK35LTxucnyO2OBKkvSGoNMzCEHH3PEDTbIGdiPhtSibRQI0FPVRu5UgJH/l6+Sjnw9/yImTC6etQ4N/a4pFHrGvvEY+n5Uw5NCZSn8G6qwHDMCV7Te2Z7U98E7/5nwnOrU8OR5ujhdktGytIIsc9VZDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760326772; c=relaxed/simple;
-	bh=owj08b0snyaJu7Z/ej7b3SQvC/kEJHb7oUnIpvI29uE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NvX7p6iXhqyaJlbcMLxlVTnIEJGP19+GzzECDO8s4mFxIKolie87fIacIBJWU2K/Fyy+cyNF3ywSVjqxcPzXH9DAqTsOIjDQ8SBwaKA9jN1QWlZJxox8PpQbnQJhOGSln8uyf1Wu2iwEBLk+kFR9bp5EsGQR6Hgbx/GASxp1+sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cgQp3Qka; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57a59124323so4068600e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 20:39:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1760326768; x=1760931568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sdYDMI1cPsHPTmJq6cygabE7rcNaTT2li88ZbEVvWJs=;
-        b=cgQp3Qka/x6i3AoSluKpRlBFHcEmQ4PC3P4x3yXBfxs/nhH6T1X83eN0zHxltby9gg
-         Bb5df5TyaEj8XLj/7glb8uOqrvK4RF6UMSpz5mrB5aiN/S0l0TwUTR/dyPETQdh/tCp9
-         zf7eFm7q7XgWXtKPlFwgepDsmMexHH9Z5nkdtMsQj02k5gIjWGC4nbgBaqbJR/k7tVgM
-         VSaQUwIFV70mAFddU1UqDA+4QqMCbwCbD0WynIZ3QWyHy959TLdAMYIXRQpwy6JSW9oX
-         gMuisz14TG5TUom6JtgI4561fsvEV4lcQjqDSClZevJq4E67To0J2lPFgP550+LBIAaq
-         rn5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760326768; x=1760931568;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sdYDMI1cPsHPTmJq6cygabE7rcNaTT2li88ZbEVvWJs=;
-        b=UbjHjKp2DTsY3OIemwOr5wZsVkiPdMn5xaVnSB3mkQ1ZRfzNBE8Tte6K4UJhCdTID0
-         SZ4pzptWW2m9jxBTMy8lPzNMZVzA7kGFLrxn3E/EtKfGNrWFvJr3yA85Gvv7pnp2POeL
-         UwT8DUS9vpkxcr0xAY4snwHt1faX7C6By1SRl0VSQSOPzNDMmaZKD2gh9FH0Q6cSUhP9
-         S4X1Mbrr3mCiBt1qW8A98UCOatn0t9T4LniimyHb0yLRpAcpZa1JX9VW9a8x7m16jFQQ
-         cAD9k5VLxU6dbhQkSgrpyHPOfeDWSB7vM84FXYqfWsxGZngmz8EKYCwDTTJULuLsdeJT
-         aV2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXjxLhNtdxcRx4UkrW2OwCjfvO9G6eniuPwY5s5TudjUVO76LH8gDbAuZSzs+88i4AowSTwv2POMOfaBO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS3dAP4+HjQ3/xX/nFyNHk9ehXWnG1sMBkS4te3HO/TH3ECuSS
-	+rajhSIzzZMiAypH4cOaym+28E/JyKH6zSAbHF/pqpyH3+AYmWl7uZMHXq1Xb9aPMljb8D0wGto
-	qpHw6oSBwVhoKGFcaAmSob8o380qhFFrYHK3alCQ8RA==
-X-Gm-Gg: ASbGncu4xolY6LXDXaurWj+uhKOE6N0y6Sk4WreK8+jn+0bnhcNvtWiTc2SCJHFPb/3
-	fBkHzVf7AXeogSvPP81QnMqSZjiQzARWOjad9lP3SykEF5/MJ6/33bzqJJPWRjjKoc1wAV2hz0U
-	hWhXy/tr0IrTio65b1+jmTC38V9OFRl6MFnOX29jd4UjXFNv7sYs0wo4JWOBWzjOytd60sf0BAZ
-	4xRfvMMzd8ci9uEy5ovsNxnM3N11unSqs6O
-X-Google-Smtp-Source: AGHT+IG90Qs1cuEh/SOfMtoLKRBVLNz8WEj78axMy76hDwp0zuW58bmlhJgm6WrlO/WHIWexRZc5ywYS+8FNmR+AxyI=
-X-Received: by 2002:a05:6512:6c6:b0:58b:274:d04 with SMTP id
- 2adb3069b0e04-5906dae5fdbmr6328127e87.42.1760326767858; Sun, 12 Oct 2025
- 20:39:27 -0700 (PDT)
+	s=arc-20240116; t=1760326776; c=relaxed/simple;
+	bh=O2YV4ohW9cBru5LgLZtGYiGSWe9rDLR2HftVazMD+ac=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=gZjJKYVq5QU1ozbhcWs8mAB9mwwXBG57EAfYZDyI6Zrc0Lw8F631jF+MqabJbaJU/rajU8Hv4lFan7hRegpqWGEYMdpYrArvNWEjUaVNUWYvDLrr2spps8Dr9fruFsGdFsAhan/vCHcAGwBXf+srFVscGbzHCarWBdPgTTHE7Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=xs0QJcAM; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=wzTCrnXaIrWRzmISflwP0SBUw+W5zP+wxm2ZCkd2RSo=;
+	b=xs0QJcAMosm2Eimlc9EiB/+C+H9Cjv8XRaOnA7czp0qrVcn1+8KL1uQBxMJgB8tcAOrfOAPqk
+	UxZO7BUPM1W84So+ZY6TymFi4mnirjos4T0VbdhtKR6jvK1046ZSzGSL+TdZAteG7rB6WDlyDo2
+	smeFfaD9BrIvUscwMjlx/HM=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4clNNz0F60z1T4Kj;
+	Mon, 13 Oct 2025 11:38:43 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 70FD6180064;
+	Mon, 13 Oct 2025 11:39:24 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 13 Oct 2025 11:39:24 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 13 Oct 2025 11:39:23 +0800
+Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory
+ failures
+To: Lance Yang <lance.yang@linux.dev>
+CC: Longlong Xia <xialonglong2025@163.com>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <wangkefeng.wang@huawei.com>,
+	<xu.xin16@zte.com.cn>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	Longlong Xia <xialonglong@kylinos.cn>, <david@redhat.com>
+References: <20251009070045.2011920-1-xialonglong2025@163.com>
+ <20251009070045.2011920-2-xialonglong2025@163.com>
+ <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
+ <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
+ <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
+ <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <839b72b8-55dc-4f4e-b1da-6f24ecf9446f@huawei.com>
+Date: Mon, 13 Oct 2025 11:39:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011155746.1558731-1-guoren@kernel.org> <CAK9=C2UrYg+sHsDqkmz7f7KnaREU7hXF4rbON002cnAti_pDXg@mail.gmail.com>
- <CAJF2gTR9VbOcBQOfF6Tqsp00289mypYExi2iGeKhwTu-iDS+aA@mail.gmail.com> <CAJF2gTRwW+0-nAvagfBf8U9vbUWocvCaNfYNVrCN+d2hYxdBYg@mail.gmail.com>
-In-Reply-To: <CAJF2gTRwW+0-nAvagfBf8U9vbUWocvCaNfYNVrCN+d2hYxdBYg@mail.gmail.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Mon, 13 Oct 2025 09:09:14 +0530
-X-Gm-Features: AS18NWAR5tMxamwivdBEhgrVec_x0u_27L-8bMr6wG6pbIHJBE2zcpGixkVg2YM
-Message-ID: <CAK9=C2XT1S=nb5LPVUJ=_2NtHjx1ABrwzjv2G_edYzFi46bA+Q@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Add pgprot_dmacoherent definition
-To: Guo Ren <guoren@kernel.org>
-Cc: samuel.holland@sifive.com, david@redhat.com, yongxuan.wang@sifive.com, 
-	cuiyunhui@bytedance.com, luxu.kernel@bytedance.com, paul.walmsley@sifive.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, palmer@dabbelt.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-On Mon, Oct 13, 2025 at 6:00=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote:
->
-> On Mon, Oct 13, 2025 at 7:50=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote=
-:
-> >
-> > On Sun, Oct 12, 2025 at 11:51=E2=80=AFPM Anup Patel <apatel@ventanamicr=
-o.com> wrote:
-> > >
-> > > On Sat, Oct 11, 2025 at 9:28=E2=80=AFPM <guoren@kernel.org> wrote:
-> > > >
-> > > > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> > > >
-> > > > RISC-V Svpbmt Standard Extension for Page-Based Memory Types
-> > > > defines three modes:
-> > > >
-> > > >  Mode | Value | Requested Memory Attributes
-> > > >  PMA  |   0   | None
-> > > >  NC   |   1   | Non-cacheable, idempotent, weakly-ordered (RVWMO),
-> > > >       |       | main memory
-> > > >  IO   |   2   | Non-cacheable, non-idempotent, strongly-ordered
-> > > >       |       | (I/O ordering), I/O
-> > > >
-> > > > The pgprot_dmacoherent default uses the IO memory attribute if ther=
-e
-> > > > is no asm definition, but IO is not for main memory according to
-> > > > Svpbmt rules.
-> > > >
-> > > > This commit corrects pgprot_dmacoherent with the NC memory attribut=
-e,
-> > > > which satisfies performance improvement and prevents using the IO
-> > > > attribute to access main memory.
-> > > >
-> > > > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
-> > >
-> > > I had sent the same patch on Aug 20 and you had provided
-> > > Tested-by to that patch.
-> > >
-> > > If you had concerns with my patch then you could have provided
-> > > comments but you choose to hijack it and change authorship.
-> > I didn't find your patch at first, so I sent it out. When I discovered
-> > your patch, I gave the Tested-by to yours.
-> > I've added the abandoned reply to this thread. Have you seen that [1]?
-> >
-> > [1] https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WME=
-GWrw9ERRLYYA@mail.gmail.com/
->
-> This patch is on Sat, Oct 11, 2025 [1]
-> Guo's Tested-by is on Sun, 12 Oct 2025 02:07:34 [2]
-> Abandon reply is on Sun, 12 Oct 2025 14:11:42 [3]
-> Gao's Tested-by is on Sun, 12 Oct 2025 18:00:36 [4]
->
-> [1]: https://lore.kernel.org/all/20251011155746.1558731-1-guoren@kernel.o=
-rg/
-> [2]: https://lore.kernel.org/linux-riscv/aOtR39pl5xjyYHn1@gmail.com/
-> [3]: https://lore.kernel.org/all/CAJF2gTRfLzrqHoYrexS55AT3sjn5VbbNKf2WMEG=
-Wrw9ERRLYYA@mail.gmail.com/
-> [4]: https://lore.kernel.org/linux-riscv/031395FE-C51C-45A7-85A3-CC4A25EB=
-6066@gmail.com/
->
-> I also asked Gao to notice your patch and give it the Tested-by tag.
-> That's why you got two Tested-by on Oct 12 after two months. So, your
-> reply, "but you choose to hijack it and change authorship," makes me
-> sad.
+On 2025/10/11 17:38, Lance Yang wrote:
+> 
+> 
+> On 2025/10/11 17:23, Miaohe Lin wrote:
+>> On 2025/10/11 15:52, Lance Yang wrote:
+>>> @Miaohe
+>>>
+>>> I'd like to raise a concern about a potential hardware failure :)
+>>
+>> Thanks for your thought.
+>>
+>>>
+>>> My tests show that if the shared zeropage (or huge zeropage) gets marked
+>>> with HWpoison, the kernel continues to install it for new mappings.
+>>> Surprisingly, it does not kill the accessing process ...
+>>
+>> Have you investigated the cause? If user space writes to shared zeropage,
+>> it will trigger COW and a new page will be installed. After that, reading
+>> the newly allocated page won't trigger memory error. In this scene, it does
+>> not kill the accessing process.
+> 
+> Not write just read :)
+> 
+>>
+>>>
+>>> The concern is, once the page is no longer zero-filled due to the hardware
+>>> failure, what will happen? Would this lead to silent data corruption for
+>>> applications that expect to read zeros?
+>>
+>> IMHO, once the page is no longer zero-filled due to the hardware failure, later
+>> any read will trigger memory error and memory_failure should handle that.
+> 
+> I've only tested injecting an error on the shared zeropage using corrupt-pfn:
+> 
+> echo $PFN > /sys/kernel/debug/hwpoison/corrupt-pfn
+> 
+> But no memory error was triggered on a subsequent read ...
 
-Please have better coordination among yourselves before
-sending out patches.
+It's because corrupt-pfn only provides a software error injection mechanism.
+If you want to trigger memory error on read, you need use hardware error injection
+mechanism e.g.APEI Error INJection [1].
 
-It makes me sad when people blindly send patches without
-noticing existing or on-going work. Sometimes it also happens
-that people are already working on things which they have
-announced in the appropriate RISE WG or RVI TG/SIG.
+[1] https://www.kernel.org/doc/html/v5.8/firmware-guide/acpi/apei/einj.html
 
---
-Anup
+Thanks.
+.
+
 
