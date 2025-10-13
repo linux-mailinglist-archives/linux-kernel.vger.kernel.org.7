@@ -1,344 +1,179 @@
-Return-Path: <linux-kernel+bounces-851156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C45ABD5AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:16:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB18BD5ABA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64F814EBE88
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD753189D186
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756C92D372A;
-	Mon, 13 Oct 2025 18:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FC52D3ED2;
+	Mon, 13 Oct 2025 18:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbKvMOeF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pR+LTfhs"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBCB22068D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECD82D323E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760379358; cv=none; b=JqTnGL4WLGJzlQwkC0q+5GDXl4FTS0GeJh9MVWIELjJLSh7jjqcFo2AECmFzlBpqycTG0h9MLSAbLPvLLhhh1/Z/p7a/1y8eZzwXSjYjsvbvbNlpJU0qGPTbCfDvK2yXr26KKffCfTlCdEaMHxrjnOhijmdvHuIcRShdY0gubIo=
+	t=1760379380; cv=none; b=J+czvwy6eCywv4tzPcU7FaR7areG7cw6wHFoDsq/MhSlcdCXKbmDSPFVJjCuB5Jo/WgI0aLO5vfI0aXFe1LBo1Fy/Td6X57ooSYWsSS6FhEmiISGJHHAygmsgzK23XJP5BDvaEGiBpv3N1ziBdL7QD8i727YXMGNcue4H2ggPYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760379358; c=relaxed/simple;
-	bh=39Bihwuyj0kswX1uR6OagctOFpu74iCGgBrVRRbmDJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HPn+boF+LzifVD8j4Nbb1v3SeNRWa8xXvd7v1VXWQ/u8nD3Ez+lColfg9pNIPOgRX2KANVMSr6i2eys7ZSAWSQqArMoNZagHcqfuo3Tr7ho+3TSvJyTERXp0IFjiUkMvwwpUNl/3Bex5qeO+yyvd1zcFxK9x65jNCRk5NdffDBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbKvMOeF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235E7C4CEFE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760379358;
-	bh=39Bihwuyj0kswX1uR6OagctOFpu74iCGgBrVRRbmDJU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CbKvMOeFdjf3dKxheZS4JSxqRH8xaV5zGjL/KG9n8tFQBKDL++OAQ5TE9xdHmYmrx
-	 6QZ+TdLmqPaQ2rQCG1TKJZodBJ5KTYwtp1jI5kv67241jTLS60mj2Cb5UR0oaVleg4
-	 n9UyF2VV36BHIduJv2m7rH1ibWRw2mBwVVYKOs54scJeO3NdPDkG6VONq8r66JilMu
-	 QBjz9S1wOOGFraKYCMFQYwYc26DC6jDlOlg8qqa7et59eiruMo7/h2/goJ909fR8ky
-	 ta+t8QQgj5Sw+CWdLy4eWvohwWTlYMV18DgMoiLo8qJhNZeWfXS0jouFBQaTrjslwJ
-	 iNDLW1UOn8zQw==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-43f88d33872so1747404b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:15:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXzA2z0xpivDCbzC97BWR7jOBw0Ki6Cme1vGP9Xju4ny0FdvDvsMVzqWAYOvDzyC6meUZkQ6nLn+1dmEHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0rgX+3ddpmf6mJME4fGq2KUzmZERJiSfOBt/98VYVv3+QINjp
-	cWw1EqW0kyYI/vr/q1pSgWyI9RzOlVVZt8kZZk8Nf7qBYp2on07LyFUOzJmOGoo4P1NdL7jyMaa
-	R2uPSrIj6cMDB9RvMxcy5ie82m5socX0=
-X-Google-Smtp-Source: AGHT+IHU3clNmooNydVRjInZF1BupdgXjUJnrtX4kBqj8XAYJvGTUDLXKHtexjaguf39DKVwmvsuV0hWZmyDHp8PmLE=
-X-Received: by 2002:a05:6808:120d:b0:439:a7bf:4b2 with SMTP id
- 5614622812f47-4417b3bef54mr9619078b6e.39.1760379357099; Mon, 13 Oct 2025
- 11:15:57 -0700 (PDT)
+	s=arc-20240116; t=1760379380; c=relaxed/simple;
+	bh=pvxznkq+hys8zJblp1ZOrrG5LoBUEn/OVvQS34+ip3s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TWlFw1R4SVsR+44t9a4JqdnMFLlAnaCoRARkNmT9JWIbrANK5syLztl+4rvqEL7kBbwHAvPPCAmvXrxiEQa0i2PnOdLXAyALiItvx4Y1EKvu4HoZqdwyA1Pm9H1ZrubUyT7zBQmN2632QIkiR5GaBu/acPsJ65b1AzEn549acp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pR+LTfhs; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-7810378d885so84009807b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760379377; x=1760984177; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0/qg8oAdK+icXcLp4Gfs1VZU8AuNfndJBKFEhRGQ/aM=;
+        b=pR+LTfhsxi1h9bcN9IniIPV3MfP4tKve7Qt4jA9gcAv8XTPNd2sQ09FyRMr/plVgIc
+         ZKxrdTjhAKYx+H/pf33ZEVu6MLSSXWLPW0vAPcuTRlqRN6qc0s6XICevrHJThJcakcvh
+         ptrERB0MNjkyYVQ2kz4v5QlhQ0N/FKsloeu6espROcALjsdw8ZnVjPY4EdFSymdkCBXr
+         IA29wt0BQU9W97vQ8V2a8jQY20DoqmuVLzhURQlMoI/fFVMqw2AFo4gJ7YBlv7JFDdAe
+         UY8aNCsLjKxIvJmZeCJT1Nw+FnB/IrXnQ6QW2lV8z6DG+DgV0q0tuy6FQgtZBbIDJRko
+         Nmwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760379377; x=1760984177;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0/qg8oAdK+icXcLp4Gfs1VZU8AuNfndJBKFEhRGQ/aM=;
+        b=KT4/sLRSl84sZg1HdkVcr0Ul03c/gw0qyP7pMwpg3vbUOqa+aJt0kteSidIRFG2R2w
+         UKYkb99MmhxWaVmMwN3MCdU7TEZXGYwjY6AvqsNSyKVNFrqTc0D0pOGt1UCIODyazYUc
+         l8dT8u0FvTN6OHRwkXkWk/jgHsBr1UxRZVbP6Ban+2NaF88M1Rno9jlR/YGv0IBZgDbC
+         7myJEBUXRPvqVACqTzzryF9J3xkIohfbiWsPxjMy3F4m+R5osYLKu65yUDuJ4Op8AgLZ
+         PyvNhpk3wcWoZ6tFhAIOpYYdiQ/rFKB/MpCPJRb/BiBB9iid+sBM5sGB8Y2p0EL7xJRq
+         wx6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVydfXb2k0zUTWfHEdmh2CyoA3k+Ff/kVZCUSFQxZZTUM7hcZ+u8CKcZWkAvq6fjRjr9cEpZq9FdtGewYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcJF8T8PEfQh7I1loKH3D0OYzXkQS5ePczQvcmMefX3EOIs0af
+	gPpJ2Ybk/oUq6QdvcYevaTPTJRBsC4WlzzWk0DYNDuarpXFN44CSC/koZAmOR9UaVaDA+7iUbyO
+	E9xzFC+U7cQ==
+X-Google-Smtp-Source: AGHT+IGmawFyWoNjo6JcSeaJjkr1v2ihHwbOqDATGMekNk/mLFvkC0XXAqSxtfJUXsgPuBCOL8tUfu61vrww
+X-Received: from ybbdu5.prod.google.com ([2002:a05:6902:2585:b0:eb8:8612:62c7])
+ (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:e0a:b0:781:64f:2b16
+ with SMTP id 00721157ae682-781064f3482mr191682757b3.56.1760379376990; Mon, 13
+ Oct 2025 11:16:16 -0700 (PDT)
+Date: Mon, 13 Oct 2025 18:15:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250911185314.2377124-1-wusamuel@google.com>
-In-Reply-To: <20250911185314.2377124-1-wusamuel@google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 13 Oct 2025 20:15:46 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hwgNt3+stLDpdVbrpDfomEaQ26KikUDFN2QjBpNMgbfQ@mail.gmail.com>
-X-Gm-Features: AS18NWCkAwMVs1H0ICC_862a4NLrQDCgYdqYvsqaQhxiR6nJbaEKMwBHVlwUbcg
-Message-ID: <CAJZ5v0hwgNt3+stLDpdVbrpDfomEaQ26KikUDFN2QjBpNMgbfQ@mail.gmail.com>
-Subject: Re: [PATCH v4] PM: Support aborting sleep during filesystem sync
-To: Samuel Wu <wusamuel@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
+Message-ID: <20251013181607.2745653-1-zecheng@google.com>
+Subject: [PATCH v4 0/9] perf tools: Some improvements on data type profiler
+From: Zecheng Li <zecheng@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Zecheng Li <zecheng@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 8:53=E2=80=AFPM Samuel Wu <wusamuel@google.com> wro=
-te:
->
-> At the start of suspend and hibernate, filesystems will sync to save the
-> current state of the device. However, the long tail of the filesystem
-> sync can take upwards of 25 seconds. If during this filesystem sync
-> there is some wakeup or abort signal, it will not be processed until the
-> sync is complete; from a user's perspective, this looks like the device
-> is unresponsive to any form of input.
->
-> This patch adds functionality to handle a sleep abort signal when in
-> the filesystem sync phase of suspend or hibernate. This topic was first
-> discussed specifically for suspend by Saravana Kannan at LPC 2024 [1],
-> where the general consensus was to allow filesystem sync on a parallel
-> thread. The same logic applies to both suspend and hibernate code paths.
->
-> There is extra care needed to account for back-to-back sleeps while
-> still maintaining functionality to immediately abort during the
-> filesystem sync stage.
->
-> This patch handles this by serializing the filesystem sync sequence with
-> an invariant; a subsequent sleep's filesystem sync operation will only
-> start when the previous sleep's filesystem sync has finished. While
-> waiting for the previous sleep's filesystem sync to finish, the
-> subsequent sleep will still abort early if a wakeup event is triggered,
-> solving the original issue of filesystem sync blocking abort.
->
-> [1]: https://lpc.events/event/18/contributions/1845/
->
-> Suggested-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Samuel Wu <wusamuel@google.com>
-> ---
-> Changes in v4:
-> - Removed patch 1/3 of v3 as it is already picked up on linux-pm
-> - Squashed patches 2/3 and 3/3 from v3 into this single patch
-> - Added abort during fs_sync functionality to hibernate in addition to su=
-spend
-> - Moved variables and functions for abort from power/suspend.c to power/m=
-ain.c
-> - Renamed suspend_fs_sync_with_abort() to pm_sleep_fs_sync()
-> - Renamed suspend_abort_fs_sync() to abort_sleep_during_fs_sync()
-> - v3 link: https://lore.kernel.org/all/20250821004237.2712312-1-wusamuel@=
-google.com/
->
-> Changes in v3:
-> - Split v2 patch into 3 patches
-> - Moved pm_wakeup_clear() outside of if(sync_on_suspend_enabled) conditio=
-n
-> - Updated documentation and comments within kernel/power/suspend.c
-> - v2 link: https://lore.kernel.org/all/20250812232126.1814253-1-wusamuel@=
-google.com/
->
-> Changes in v2:
-> - Added documentation for suspend_abort_fs_sync()
-> - Made suspend_fs_sync_lock and suspend_fs_sync_complete declaration stat=
-ic
-> - v1 link: https://lore.kernel.org/all/20250815004635.3684650-1-wusamuel@=
-google.com
->
->  drivers/base/power/wakeup.c |  8 +++++
->  include/linux/suspend.h     |  4 +++
->  kernel/power/hibernate.c    |  5 ++-
->  kernel/power/main.c         | 70 +++++++++++++++++++++++++++++++++++++
->  kernel/power/suspend.c      |  7 ++--
->  5 files changed, 91 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index d1283ff1080b..daf07ab7ac3f 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup_sou=
-rce *ws)
->
->         /* Increment the counter of events in progress. */
->         cec =3D atomic_inc_return(&combined_event_count);
-> +       /*
-> +        * wakeup_source_activate() aborts sleep only if events_check_ena=
-bled
-> +        * is set (see pm_wakeup_pending()). Similarly, abort sleep durin=
-g
-> +        * fs_sync only if events_check_enabled is set.
-> +        */
-> +       if (events_check_enabled)
-> +               abort_sleep_during_fs_sync();
->
->         trace_wakeup_source_activate(ws->name, cec);
->  }
-> @@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
->  void pm_system_wakeup(void)
->  {
->         atomic_inc(&pm_abort_suspend);
-> +       abort_sleep_during_fs_sync();
->         s2idle_wake();
->  }
->  EXPORT_SYMBOL_GPL(pm_system_wakeup);
-> diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-> index 317ae31e89b3..c961bdb00bb6 100644
-> --- a/include/linux/suspend.h
-> +++ b/include/linux/suspend.h
-> @@ -444,6 +444,8 @@ void restore_processor_state(void);
->  extern int register_pm_notifier(struct notifier_block *nb);
->  extern int unregister_pm_notifier(struct notifier_block *nb);
->  extern void ksys_sync_helper(void);
-> +extern void abort_sleep_during_fs_sync(void);
-> +extern int pm_sleep_fs_sync(void);
->  extern void pm_report_hw_sleep_time(u64 t);
->  extern void pm_report_max_hw_sleep(u64 t);
->  void pm_restrict_gfp_mask(void);
-> @@ -499,6 +501,8 @@ static inline void pm_restrict_gfp_mask(void) {}
->  static inline void pm_restore_gfp_mask(void) {}
->
->  static inline void ksys_sync_helper(void) {}
-> +static inline abort_sleep_during_fs_sync(void) {}
-> +static inline int pm_sleep_fs_sync(void) {}
->
->  #define pm_notifier(fn, pri)   do { (void)(fn); } while (0)
->
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index 2f66ab453823..651dcd768644 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -811,7 +811,10 @@ int hibernate(void)
->         if (error)
->                 goto Restore;
->
-> -       ksys_sync_helper();
-> +       error =3D pm_sleep_fs_sync();
-> +       if (error)
-> +               goto Restore;
-> +
->         if (filesystem_freeze_enabled)
->                 filesystems_freeze();
->
-> diff --git a/kernel/power/main.c b/kernel/power/main.c
-> index 3cf2d7e72567..38b1de295cfe 100644
-> --- a/kernel/power/main.c
-> +++ b/kernel/power/main.c
-> @@ -570,6 +570,76 @@ bool pm_sleep_transition_in_progress(void)
->  {
->         return pm_suspend_in_progress() || hibernation_in_progress();
->  }
-> +
-> +static bool pm_sleep_fs_sync_queued;
-> +static DEFINE_SPINLOCK(pm_sleep_fs_sync_lock);
-> +static DECLARE_COMPLETION(pm_sleep_fs_sync_complete);
-> +
-> +/**
-> + * abort_sleep_during_fs_sync - Abort fs_sync to abort sleep early
-> + *
-> + * This function aborts the fs_sync stage of suspend/hibernate so that
-> + * suspend/hibernate itself can be aborted early.
+Hi all,
 
-This changelog needs to be more precise IMV.
+I've identified several missing data type annotations within the perf
+tools when annotating the Linux kernel. This patch series improves the
+coverage and correctness of data type annotations.
 
-I'd actually call the function something like
-pm_stop_waiting_for_fs_sync() and I'd say in the changelog that the
-functions causes a suspend process to stop waiting on an fs sync in
-progress and continue so that it can be aborted before the fs sync is
-complete.
+Some patches from the previous version of this series were
+cherry-picked. This revision adds new improvements based on feedback and
+further development.
 
-> + */
-> +void abort_sleep_during_fs_sync(void)
-> +{
-> +       spin_lock(&pm_sleep_fs_sync_lock);
-> +       complete(&pm_sleep_fs_sync_complete);
-> +       spin_unlock(&pm_sleep_fs_sync_lock);
-> +}
-> +
-> +static void sync_filesystems_fn(struct work_struct *work)
-> +{
-> +       ksys_sync_helper();
-> +
-> +       spin_lock(&pm_sleep_fs_sync_lock);
-> +       pm_sleep_fs_sync_queued =3D false;
-> +       complete(&pm_sleep_fs_sync_complete);
-> +       spin_unlock(&pm_sleep_fs_sync_lock);
-> +}
-> +static DECLARE_WORK(sync_filesystems, sync_filesystems_fn);
-> +
-> +/**
-> + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
-> + *
-> + * Return 0 on successful file system sync, otherwise returns -EBUSY if =
-file
-> + * system sync was aborted.
-> + */
-> +int pm_sleep_fs_sync(void)
-> +{
-> +       bool need_pm_sleep_fs_sync_requeue;
-> +
-> +Start_fs_sync:
-> +       spin_lock(&pm_sleep_fs_sync_lock);
-> +       reinit_completion(&pm_sleep_fs_sync_complete);
-> +       /*
-> +        * Handle the case where a sleep immediately follows a previous s=
-leep
-> +        * that was aborted during fs_sync. In this case, wait for the pr=
-evious
-> +        * filesystem sync to finish. Then do another filesystem sync so =
-any
-> +        * subsequent filesystem changes are synced before sleeping.
+Here's a breakdown of the changes in this revision:
 
-Is the extra sync really necessary?
+Patch 1 skips annotations for LEA instructions in x86, as these do not
+involve memory access. It now returns NO_TYPE.
 
-Some files may still be updated after it is complete and before all
-tasks are frozen.
+Patches 2 implements the TSR_KIND_POINTER to represent registers holding
+memory addresses of the type. We are using the size of void* to get the
+pointer size. This could be improved to use an architecture dependent
+pointer size, but may require more work.
 
-> +        */
-> +       if (pm_sleep_fs_sync_queued) {
-> +               need_pm_sleep_fs_sync_requeue =3D true;
-> +       } else {
-> +               need_pm_sleep_fs_sync_requeue =3D false;
-> +               pm_sleep_fs_sync_queued =3D true;
-> +               schedule_work(&sync_filesystems);
-> +       }
-> +       spin_unlock(&pm_sleep_fs_sync_lock);
-> +
-> +       /*
-> +        * Completion is triggered by fs_sync finishing or an abort sleep
-> +        * signal, whichever comes first
-> +        */
-> +       wait_for_completion(&pm_sleep_fs_sync_complete);
-> +       if (pm_wakeup_pending())
-> +               return -EBUSY;
-> +       if (need_pm_sleep_fs_sync_requeue)
-> +               goto Start_fs_sync;
+Patches 3-5 implement a basic approach for register offset tracking that
+supports add, sub, and lea operations. The register state is invalidated
+when an unsupported arithmetic instruction is encountered. This revision
+uses TSR_KIND_POINTER to avoid finding the pointer type in DWARF and
+preserves the pointer offset information in the stack state.
 
-Wouldn't a do { .. } while () work here instead of the goto?
+Patches 6-8 split patch 8 from v2 with some minor improvements. It skips
+check_variable when the type is found directly by register, since
+sufficient checking is already performed in match_var_offset.
+check_variable lacks some DWARF information to correctly determine if a
+variable is valid. I also found it is able to find members for
+typedef'd types so I preserve them in match_var_offset.
 
-> +
-> +       return 0;
-> +}
-> +
->  #endif /* CONFIG_PM_SLEEP */
->
->  #ifdef CONFIG_PM_SLEEP_DEBUG
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index 4bb4686c1c08..c019a4396c1f 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -31,6 +31,7 @@
->  #include <linux/compiler.h>
->  #include <linux/moduleparam.h>
->  #include <linux/fs.h>
-> +#include <linux/workqueue.h>
->
->  #include "power.h"
->
-> @@ -588,14 +589,16 @@ static int enter_state(suspend_state_t state)
->         if (state =3D=3D PM_SUSPEND_TO_IDLE)
->                 s2idle_begin();
->
-> +       pm_wakeup_clear(0);
->         if (sync_on_suspend_enabled) {
->                 trace_suspend_resume(TPS("sync_filesystems"), 0, true);
-> -               ksys_sync_helper();
-> +               error =3D pm_sleep_fs_sync();
->                 trace_suspend_resume(TPS("sync_filesystems"), 0, false);
-> +               if (error)
-> +                       goto Unlock;
->         }
->
->         pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[s=
-tate]);
-> -       pm_wakeup_clear(0);
->         pm_suspend_clear_flags();
->         error =3D suspend_prepare(state);
->         if (error)
-> --
+Patch 9 implements support for DW_OP_piece. Currently, this is allowed
+in check_allowed_ops but is handled like other single location
+expressions. This patch splits any expression containing DW_OP_piece
+into multiple parts and handle them separately.
+
+I have tested each patch on a vmlinux and manually checked the results.
+After applying all patches, there are less missing or incorrect
+annotations. No obvious regressions were observed.
+
+v4:
+Merged patch in v3:
+perf annotate: Rename TSR_KIND_POINTER to TSR_KIND_PERCPU_POINTER
+
+Updated patches 1-5 based on the feedback from Namhyung.
+
+v3:
+https://lore.kernel.org/all/20250917195808.2514277-1-zecheng@google.com/
+Merged patches in v2:
+
+perf dwarf-aux: Use signed variable types in match_var_offset
+perf dwarf-aux: More accurate variable type match for breg
+perf dwarf-aux: Better variable collection for insn tracking
+perf dwarf-aux: Skip check_variable for die_find_variable_by_reg
+
+v2:
+https://lore.kernel.org/all/20250825195412.223077-1-zecheng@google.com/
+1. update the match_var_offset function signature to s64
+2. correct the comment for is_breg_access_indirect. Use simpler logic to
+match the expressions we support.
+3. add is_reg_var_addr to indicate whether a register holds an address
+of the variable. This defers the type dereference logic to
+update_var_state.
+4. invalidate register state for unsupported instructions.
+5. include two new patches related to improving data type profiler.
+
+v1:
+https://lore.kernel.org/linux-perf-users/20250725202809.1230085-1-zecheng@google.com/
+
+Zecheng Li (9):
+  perf annotate: Skip annotating data types to lea instructions
+  perf annotate: Track address registers via TSR_KIND_POINTER
+  perf annotate: Track arithmetic instructions on pointers
+  perf annotate: Save pointer offset in stack state
+  perf annotate: Invalidate register states for untracked instructions
+  perf dwarf-aux: Skip check_variable for die_find_variable_by_reg
+  perf dwarf-aux: Preserve typedefs in match_var_offset
+  perf annotate: Improve type comparison from different scopes
+  perf dwarf-aux: Support DW_OP_piece expressions
+
+ tools/perf/arch/x86/annotate/instructions.c | 183 +++++++++++++-
+ tools/perf/util/annotate-data.c             | 102 ++++++--
+ tools/perf/util/annotate-data.h             |  14 +-
+ tools/perf/util/annotate.c                  |  20 ++
+ tools/perf/util/dwarf-aux.c                 | 266 +++++++++++++++-----
+ tools/perf/util/dwarf-aux.h                 |   2 +-
+ 6 files changed, 493 insertions(+), 94 deletions(-)
+
+-- 
+2.51.0
+
 
