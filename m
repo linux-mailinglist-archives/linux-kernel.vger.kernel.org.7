@@ -1,105 +1,191 @@
-Return-Path: <linux-kernel+bounces-850361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE60BBD29F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:48:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4729FBD2976
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 642B04E78E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19EF3B82C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3406B3043C7;
-	Mon, 13 Oct 2025 10:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AB42FF17D;
+	Mon, 13 Oct 2025 10:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="C/IUQwJR"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMLNeca8"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC0D303CB0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11A12FB99E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760352508; cv=none; b=j/8dKL9nJXxc0VDTSwBjzTWDpek/pkCbD28YKELpfl9k9bz/T+oK5dayGBELvRsVmv0dS+Zs0jpnj5rVI78xhQ8Ezw0NRU7rFOUGNk313IFnv0Q15Y5SWexJ1HhKbtA0lUowDXBWmr6oBs5JKf2W4iHRnjVHQ5ukM7xZKM22uPc=
+	t=1760352111; cv=none; b=omJovuMWdsdFEuE5ShSrFIkwxB+TSsIGMnEzrRsyjZ4AbkNKjmaN9xSf3Jyh4rHUmNyoLfyTJeY8qpWuhct9CaJGs2gGhQtbifY8CFW4FzVVc2B61tktDLTbTVvibDuVdFMmGqNG4Kv1lNaSYT4UYH/eCKAUQ4LkU5CGKxINT9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760352508; c=relaxed/simple;
-	bh=fzbFR5HRnGrKHRndRJ8HHP3IHBABgYcit+jrA4C+kmQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YQe4BdHshbpowcvjvd9BsjLbMPWmseNGsALi6RSXULOgJUcVmwg8wkRY3Ed+yN4Ycb74zHf/GYl0JVO4brlz6ly/yRhTOEuuCANP9AWDgTFb2XoElJQQ/7bnA+9dXMRUs5r/MlvVsgQN/lE6Y4RZkwzDe2E7207X8m5mXcElnvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=C/IUQwJR; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1760352024;
-	bh=fzbFR5HRnGrKHRndRJ8HHP3IHBABgYcit+jrA4C+kmQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=C/IUQwJRljYYCG64In1mr1nBxn9Tmc/5hOpZiMh09bqkYMVVIFFirEqV+s66BiwcS
-	 /PZlG7UCuvio8IhpNmitlH2pvfLYu+7G3KxBZHxqATtPFcD+f1Jh0w84XMh4K6COw1
-	 SW+LaqUQkqMUtV1Isj6A3RRL/FzEElq3Vsf/0rI0=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 13 Oct 2025 12:40:21 +0200
-Subject: [PATCH 4/4] x86/um/vdso: Drop VDSO64-y from Makefile
+	s=arc-20240116; t=1760352111; c=relaxed/simple;
+	bh=YyN4Fy7cFjCuAQN9iofBCwnSheogXY7fB4MzJJ2Y+vU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFDq0ebhHFnDyiq6CzrFoEjZlgzNGEC7/ihlMZHrTdwVfrKlsJitI2V3S2MCgO/OwH+pMvvzjctiKy8+KT7R5sC1dPVwQcwGaK5FPFc2rnJl5snojHU62N8G8t9A6R0jbpe6areyj1THhFpRcWZrjaUVSq4fWq+gIBsCvK0wV+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMLNeca8; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b48d8deaef9so728749266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:41:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760352108; x=1760956908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mEjrZ5KI8ghZWNu9poLLDUVtxDcPQM62kH1Mxu75i/I=;
+        b=QMLNeca8qXj5XnmMR6N2GSLrQR9t5EqTCmtjLvxR3nZxlPn5fk0JwVgcRgszQ5yY7n
+         gHiXW4HJX40JRqfkhkwP1B/Z2irJm+V+pPztWm3b3kPWTbTiFLV8fSVTYI66lp0UvB9Z
+         +zvvpn9K3uRcstJh0KNnJSFtx1pqi8fYwRmupGkcMoSjQNlCoolW2Wf21Qzrijga3NZO
+         P3ymg3cfoAZIkOublcG02iUEitroFtzhPyk5GCgI7A7zTUH3pEDhSzSTVi2YZrHOwY0z
+         UaIPXXkX57IBKVVE8X2Vu48gAiocEF75unQzF4s0SNfR0GnnZpQeau+xdHNf1/2cCpZc
+         lRkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760352108; x=1760956908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mEjrZ5KI8ghZWNu9poLLDUVtxDcPQM62kH1Mxu75i/I=;
+        b=R17spSx1PpETUftBs7kTigU3mrziKVyJ38zALUFm9IV8fZWe1l7ieUzvsBbJFFFfgr
+         yYbuSt7Fc4O8E0+TWTNaFFyqaeoAAKJvdXj1zQQ6eRbvP6C7d3nMNxbkXTDeMYMNXQmG
+         Y5W6zki4JOZEnhS9IEuk0A6neDaSlHz7bEO+Ia487Jq72LJVccIhLjlrYzjtIR7QZszk
+         NZXXht0E/KHRZeI5+1SUvTCSpFxbK0ZYzEcJW8+Wfy5L+R9klF4wr2KAultCvbMfhXnI
+         Eqh1IXCyah5Wf7zwSpPWuDcG8PGj/15i99VmWX0RURrU+IcGqwolwP4Sys3l4XwDc5+0
+         HmSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWplMk5FFuHZPJ/JsQ4Sv6r0NnFsr5Khs1vqKN+1cmRPj0SodYkBhEWkuCHHohcdwM6XQmhq0WZ4MGSGIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEgUpOEoh2eCbsdppOfL/FvbGxM1FMg7mgn8NmAJ9Nj/vHnijm
+	55X0ThgtmidQMRitkh8H/X9V+86MvJUbHpwr8w2OlddkIStUv21c/jpevlVfXr5FFj0JACYYncl
+	XZolCZ814WEka+VE7SQ+1USLmcZmGPnw=
+X-Gm-Gg: ASbGncv2xtEN9c+Ckcyg2ksn92YCQCxEAAVT3ZcFtAGMvf4+DywvjNiLHuMhxYoSPY2
+	KvYL8tytTQfz54fXsaJfFnDQDCTjAUOdvU0sPlNKLyHVv0OTtp0QMTHdJcfplqIRVpbu2l9xTkV
+	n9rL+oz22k88bY6IDvYy/labgPONJVWiERLM8hHVqfsFMuyIjUemjw15k6UTP1d908hqOLKEIhm
+	pRQZqQvPF/EXTR+twhtbrIz+QSFf4Mw7DhfsKr80QMXdPKX2ZIXRImfwY9+yD6pQLFtqQ==
+X-Google-Smtp-Source: AGHT+IFYPmh1c36RwRLOo2uUUMUFucqAcao9E57aFUP92xiXGcbG+Q+UI4IibOC2MF1OpeyGkZNJn/CsiB4Jy+Wk1Ss=
+X-Received: by 2002:a17:907:2d0d:b0:b4e:f7cc:72f1 with SMTP id
+ a640c23a62f3a-b50aaba1161mr2094538666b.22.1760352107918; Mon, 13 Oct 2025
+ 03:41:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251013-uml-vdso-cleanup-v1-4-a079c7adcc69@weissschuh.net>
-References: <20251013-uml-vdso-cleanup-v1-0-a079c7adcc69@weissschuh.net>
-In-Reply-To: <20251013-uml-vdso-cleanup-v1-0-a079c7adcc69@weissschuh.net>
-To: Richard Weinberger <richard@nod.at>, 
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760352023; l=749;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=fzbFR5HRnGrKHRndRJ8HHP3IHBABgYcit+jrA4C+kmQ=;
- b=oTuqtMKWBTQHe1Og6mGe7pRgLqIMi3izMEb85Zh1vxzG84LlxI8l3H7Rp3s14EZTLfbcb5KzH
- H3XYP1eH6S6B3wX0SQEBZCcMsonIIQAMT74yuPXPlK5isdMR19SfGO3
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20251013072244.82591-1-adrian.hunter@intel.com> <20251013072244.82591-2-adrian.hunter@intel.com>
+In-Reply-To: <20251013072244.82591-2-adrian.hunter@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 13 Oct 2025 12:41:37 +0200
+X-Gm-Features: AS18NWCRzdhF5PXYFFrI1cBupLRzeVMrGtQlFrsQVhAfncRQxbPI-PhmAr5Ayyc
+Message-ID: <CAOQ4uxjvMRXWeQx+mAugwGLftCPRQKxUfx8dZj+Jqk-Y_YJDcQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND 1/3] perf/core: Fix address filter match with
+ backing files
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Edd Barrett <edd@theunixzoo.co.uk>, Laurence Tratt <laurie@tratt.net>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This symbol is unnecessary, remove it.
+On Mon, Oct 13, 2025 at 9:23=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
+>
+> It was reported that Intel PT address filters do not work in Docker
+> containers.  That relates to the use of overlayfs.
+>
+> overlayfs records the backing file in struct vm_area_struct vm_file,
+> instead of the user file that the user mmapped.  In order for an address
+> filter to match, it must compare to the user file inode.  There is an
+> existing helper file_user_inode() for that situation.
+>
+> Use file_user_inode() instead of file_inode() to get the inode for addres=
+s
+> filter matching.
+>
+> Example:
+>
+>   Setup:
+>
+>     # cd /root
+>     # mkdir test ; cd test ; mkdir lower upper work merged
+>     # cp `which cat` lower
+>     # mount -t overlay overlay -olowerdir=3Dlower,upperdir=3Dupper,workdi=
+r=3Dwork merged
+>     # perf record --buildid-mmap -e intel_pt//u --filter 'filter * @ /roo=
+t/test/merged/cat' -- /root/test/merged/cat /proc/self/maps
+>     ...
+>     55d61d246000-55d61d2e1000 r-xp 00018000 00:1a 3418                   =
+    /root/test/merged/cat
+>     ...
+>     [ perf record: Woken up 1 times to write data ]
+>     [ perf record: Captured and wrote 0.015 MB perf.data ]
+>     # perf buildid-cache --add /root/test/merged/cat
+>
+>   Before:
+>
+>     Address filter does not match so there are no control flow packets
+>
+>     # perf script --itrace=3De
+>     # perf script --itrace=3Db | wc -l
+>     0
+>     # perf script -D | grep 'TIP.PGE' | wc -l
+>     0
+>     #
+>
+>   After:
+>
+>     Address filter does match so there are control flow packets
+>
+>     # perf script --itrace=3De
+>     # perf script --itrace=3Db | wc -l
+>     235
+>     # perf script -D | grep 'TIP.PGE' | wc -l
+>     57
+>     #
+>
+> With respect to stable kernels, overlayfs mmap function ovl_mmap() was
+> added in v4.19 but file_user_inode() was not added until v6.8 and never
+> back-ported to stable kernels.  FMODE_BACKING that it depends on was adde=
+d
+> in v6.5.  This issue has gone largely unnoticed, so back-porting before
+> v6.8 is probably not worth it, so put 6.8 as the stable kernel prerequisi=
+te
+> version, although in practice the next long term kernel is 6.12.
+>
+> Reported-by: Edd Barrett <edd@theunixzoo.co.uk>
+> Closes: https://lore.kernel.org/linux-perf-users/aBCwoq7w8ohBRQCh@fremen.=
+lan
+> Cc: stable@vger.kernel.org # 6.8
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- arch/x86/um/vdso/Makefile | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-diff --git a/arch/x86/um/vdso/Makefile b/arch/x86/um/vdso/Makefile
-index 7478d11dacb7..8a7c8b37cb6e 100644
---- a/arch/x86/um/vdso/Makefile
-+++ b/arch/x86/um/vdso/Makefile
-@@ -3,16 +3,13 @@
- # Building vDSO images for x86.
- #
- 
--VDSO64-y		:= y
--
--vdso-install-$(VDSO64-y)	+= vdso.so
--
-+vdso-install-y += vdso.so
- 
- # files to link into the vdso
- vobjs-y := vdso-note.o um_vdso.o
- 
- # files to link into kernel
--obj-$(VDSO64-y)			+= vdso.o vma.o
-+obj-y += vdso.o vma.o
- 
- vobjs := $(foreach F,$(vobjs-y),$(obj)/$F)
- 
-
--- 
-2.51.0
-
+>  kernel/events/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 7541f6f85fcb..cd63ec84e386 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -9492,7 +9492,7 @@ static bool perf_addr_filter_match(struct perf_addr=
+_filter *filter,
+>         if (!filter->path.dentry)
+>                 return false;
+>
+> -       if (d_inode(filter->path.dentry) !=3D file_inode(file))
+> +       if (d_inode(filter->path.dentry) !=3D file_user_inode(file))
+>                 return false;
+>
+>         if (filter->offset > offset + size)
+> --
+> 2.48.1
+>
 
