@@ -1,150 +1,203 @@
-Return-Path: <linux-kernel+bounces-850637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4782BD359C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:07:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207B5BD3599
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89B83AB0DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:07:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A68189D37F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7CE256C6D;
-	Mon, 13 Oct 2025 14:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893962561A2;
+	Mon, 13 Oct 2025 14:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaL1Lc2O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MM6YjOnd"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E671C84A6;
-	Mon, 13 Oct 2025 14:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECB0233128
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364418; cv=none; b=SfjuymocayDfogZX0lcDM+sLKTNwA8pE1H8/BVrhDAQCG/F1z5F8HbytU9ULvoQjBaij9/5ClEWOK4RUgDkElxAFIj7m90bj9hNCu4ztOwj2uBKh+cidfzuNs/H7oLioVP+okwkFCp+D0HfNEHsYcSNMC4LdTPHEk+IbI0UmAn4=
+	t=1760364437; cv=none; b=d7e6ue3t7VO20dkZrvOgcsCG7KvD0cC11POtzkbZTAMv1JpZNjFymjawJXBHm/dDP2PF9/7zOOJ6olMqnKKVWxZhlpIinBhYat1XjO8kxs/SgINtpKcB+h1aSbpnt3oYqR92ZqLlvo1EfRAOD0l8Qa2iu9SxPcStFiOsoGJvTqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364418; c=relaxed/simple;
-	bh=L5mJoBb6ix5GBpByToQiDe5tqBFj7Zbr19ly3L1L3KI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cMIwTdumXXebpCUDzIXCtMYnRKEzuvCH1qZwcdKWxwkBC5rWuzqDbz17uCOnNR2puuWQvfFnUkNXkUiiXaooP4HXkKWAp5vWQvylhHP0n/A+/Hq4xffL2+S04uFIYrpwv2RtKezaGm1X9i8MG+46GEbSbyEPxSVz1/Gul6aY5TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaL1Lc2O; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760364418; x=1791900418;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=L5mJoBb6ix5GBpByToQiDe5tqBFj7Zbr19ly3L1L3KI=;
-  b=YaL1Lc2Omy7qI9scQjYqvVrPDt3IBuYgas97ODu3NZgxuPXDbBA/vBHI
-   yjtewhM4xrSAaTlTwetf6Kg5VjKyxdtIGyIxfqG4TSREnr2umxtr5WwD0
-   4gERmaDzqqtue/XyWPCdEWcx1Nzp6qCCciFH/NqzRBNVs4Eb+vDBrRatr
-   mvz/gq70YCjuyfbgTKiBVp2XqxqO90W0dw5WvGE+Fo054fdtFNBXRtj7Z
-   dmTw4dzxCxDS7nBd2TYj9bJ8SNpZXwJF6dd6FsQ8aaDyLjWaAaT6T/NVL
-   /cj1UbVeEHHA4UBZ4uX6JQTwBTUGwAo0CK6hRD5YQcLaNbJkmCbUBoVeH
-   g==;
-X-CSE-ConnectionGUID: 4dC+1mT+RsyRHFucUrQ2vg==
-X-CSE-MsgGUID: wcOO+dXLQluY58daM+MB+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="73946677"
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="73946677"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 07:06:57 -0700
-X-CSE-ConnectionGUID: uNRTtnxdRKStoMWW6widHg==
-X-CSE-MsgGUID: WCIV4fbYShWKbukyiTN2yA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="186691282"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.111.123]) ([10.125.111.123])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 07:06:57 -0700
-Message-ID: <e95dc212-6fd3-43e3-aeb7-bf55917e0cd4@intel.com>
-Date: Mon, 13 Oct 2025 07:06:55 -0700
+	s=arc-20240116; t=1760364437; c=relaxed/simple;
+	bh=il9BEy5z5fP/2XDjNY94SwIxeYHfSV12vEIzVfaLz4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AKSGImrWcVpqmaaGC2XWK2doMcrnsMUcduvf9TLYz2Rsw3Eu7ecVtcDnCNTp+6iyCTv0gFxEiVA1E3QZUlFcAPnCo9LRkmlGYBdrdfC6lEWSTT5NG5O3IsIci3YiehhC7QnV8Zo6WPeQj0UEsGvh/QPNL3Di78dpG/IG6+oXqac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MM6YjOnd; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-869ecba3bd2so644994885a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:07:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760364435; x=1760969235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B3fxFMnHvhHYZxkU89prvgFn6OmHBSMeJm9YGzPYMJU=;
+        b=MM6YjOndHEe2uGDPWFKgEvw9uMggMkjD7xKLU6C9TZYVi4rRwzH+RkljfTCysGrOiL
+         g1DEh5ZYSq7CJ2d49IuBzLy/IDvkB07FQ6h8rdjGuQeqOklCeE+e8uK6HS33kTS+xbBV
+         LqfPaN8rc4TT/tdWBhbvXPMtPMnJJN0yHjWfJWwkTkkoZl+uiTkc81aElRsz3CqoPdLZ
+         u3IMmSK+hHVzZrZWxX+kaM64TryKaKfGCX8pBpRhfNxKmc3bjSL7ZyYlhrhBsIaUqhRA
+         ZvFKoOXrc2QzsPSWvBwzUfL7yXeDQkhRxKKkU5Q2Qcmsb+hkMhiqnH7z1jeHaOdNQ83k
+         aH6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760364435; x=1760969235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B3fxFMnHvhHYZxkU89prvgFn6OmHBSMeJm9YGzPYMJU=;
+        b=hCtQyVSyq1X20LrS3e3UgOF7mjKSSkqa3PegxUoRy+FpGrqUld3b879p5J9zBYTo8Y
+         x0PX3BzcWtHTWAKZJGtjd+UzmshS5PuUDtHGewBG8l9ruXPAwsiUvSNgi0dOcSIhz3D7
+         q7hCmXRZuYJNi9Hh00e1FNdkbvPT6QcwpsAt0BAui4RgsMnraTS9mG9BHupxBLn7/dF/
+         BzHKFWMOKbZr46WZb0ccx2qxDkbQ7c55qPC0+Un/BuAXjaibCqLSSWm43Hmt69KaBHSw
+         AfTn58oSy/5jRVicHseLS3qp+Zg8b8l7CQ/HMBsKpApZXHzdLgaZmbUqv5Zpuby7zF/g
+         Cltg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6jtDByxhgphJZkWZtPm7VZa0edoZD4oyUFbgIhmJaz4zrorj6OdNgpIEdQpMiOvR4EOQdlkz/K+BkDm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWeGRUBIStIJ6haEgGZgOFEcJs+/qn3jp0kq+nafbGSrACQZm6
+	Ge5DwxenUtfoo3u2Lt5TevuAaD+hi7qhV+p2Xl6wptVYYzen1JVt1jux5pSQM+hf+jrButy0GOI
+	fbgSIEogB0o7FassTT1TAuXu85JZT1NY=
+X-Gm-Gg: ASbGnctdl5r9fHn5z7Ghv2aWuFOb7fIPLiUTj3IOCahqnWJpHqy0bUWNDq9ntg1NYwK
+	XbeSRPHJ4SaZeQdDTil6gfFBd7PuOWoPqaCutp6nip4QDBsKE2mhGKGp1hD7/mxbpc/Wm9WNYoQ
+	UpdWYg5jDomvaBywZ/yiIskl94zD4qojTHV0QDhdUrqYY/yPbiy42dBjwMcO6K/HWk8PFB8DbsK
+	nkBGIJqVYP/WPBH+9OsYO7GcNUJTtLG+Je7tw==
+X-Google-Smtp-Source: AGHT+IFJyxN0Hv1Y4GUd/peF3juYf0BASxuDUqSk2KfDDUExhxmcAVmPSatg4At2Xmntps9WxQl2SPNothq8SpuZzXY=
+X-Received: by 2002:a05:622a:4c6:b0:4b5:eb7b:2789 with SMTP id
+ d75a77b69052e-4e6ead4825emr307845311cf.49.1760364434713; Mon, 13 Oct 2025
+ 07:07:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] vdso: Remove struct getcpu_cache
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan <shuah@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-um@lists.infradead.org,
- linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251013-getcpu_cache-v2-1-880fbfa3b7cc@linutronix.de>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251013-getcpu_cache-v2-1-880fbfa3b7cc@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251009084416.45542-1-jjm2473@gmail.com> <20251009084416.45542-4-jjm2473@gmail.com>
+ <aOe_0EufouURu7R2@shell.armlinux.org.uk> <CAP_9mL4MfzagxiMD1VdOu=jBuN_XsOrvPQT=XTVgu2+G=+nD9A@mail.gmail.com>
+ <aOz1SzpzGLDQjiYQ@shell.armlinux.org.uk>
+In-Reply-To: <aOz1SzpzGLDQjiYQ@shell.armlinux.org.uk>
+From: Liangbin Lian <jjm2473@gmail.com>
+Date: Mon, 13 Oct 2025 22:07:02 +0800
+X-Gm-Features: AS18NWC2KWpOjrIZRCNJ-njN7lopgvdR9BZGhK7C99VWUiJOF3JdegyR1Tmc-SU
+Message-ID: <CAP_9mL6x=p169y026nNycZsHK6UMHqJ+o-M_k0MqnvpB2fPzJg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
+	quentin.schulz@cherry.de, kever.yang@rock-chips.com, naoki@radxa.com, 
+	honyuenkwun@gmail.com, inindev@gmail.com, ivan8215145640@gmail.com, 
+	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org, 
+	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org, 
+	jbx6244@gmail.com, andrew@lunn.ch, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/13/25 02:20, Thomas Weißschuh wrote:
-> -int __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused);
-> -int __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused)
-> +int __vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused);
-> +int __vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused)
->  {
->  	int cpu_id;
+Russell King (Oracle) <linux@armlinux.org.uk> =E4=BA=8E2025=E5=B9=B410=E6=
+=9C=8813=E6=97=A5=E5=91=A8=E4=B8=80 20:49=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Fri, Oct 10, 2025 at 11:20:08AM +0800, Liangbin Lian wrote:
+> > Russell King (Oracle) <linux@armlinux.org.uk> =E4=BA=8E2025=E5=B9=B410=
+=E6=9C=889=E6=97=A5=E5=91=A8=E5=9B=9B 21:59=E5=86=99=E9=81=93=EF=BC=9A
+> > >
+> > > On Thu, Oct 09, 2025 at 04:44:16PM +0800, Liangbin Lian wrote:
+> > > > +&gmac0 {
+> > > > +     phy-mode =3D "rgmii-id";
+> > > > +     clock_in_out =3D "input";
+> > > ...
+> > > > +&gmac1 {
+> > > > +     phy-mode =3D "rgmii-id";
+> > > > +     clock_in_out =3D "input";
+> > >
+> > > I am fine with what is being proposed here, but I think this
+> > > clock_in_out property needs fixing. The description for it is thus:
+> > >
+> > >   clock_in_out:
+> > >     description:
+> > >       For RGMII, it must be "input", means main clock(125MHz)
+> > >       is not sourced from SoC's PLL, but input from PHY.
+> > >       For RMII, "input" means PHY provides the reference clock(50MHz)=
+,
+> > >       "output" means GMAC provides the reference clock.
+> > >     $ref: /schemas/types.yaml#/definitions/string
+> > >     enum: [input, output]
+> > >     default: input
+> > >
+> > > The problems that I have here are:
+> > >
+> > > 1) the description states that the only possible value for this when =
+in
+> > >    RGMII mode is "input" which is reasonable, because it's due to the
+> > >    RGMII specification. The driver code is perfectly able to determin=
+e
+> > >    whether RGMII has been specified, and set bsp_priv->clock_input
+> > >    itself, relieving DT of this need.
+> > >
+> > > 2) bsp_priv->clock_input is only used in gmac_clk_enable() when calli=
+ng
+> > >    the SoC specific set_clock_selection() method. Only RK3528, RK3576=
+,
+> > >    and RK3588 populate this method. Every other SoC supported by this
+> > >    driver still requires the property:
+> ...
+> > >   clock_in_out:
+> > >     description:
+> > >       For RGMII, it must be "input"
+> >
+> > This description does not match the actual situation,
+> > there are many dts using 'output':
+> > https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockc=
+hip/rk3568-bpi-r2-pro.dts#L235
+> > https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockc=
+hip/rk3568-evb1-v10.dts#L241
+> > https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockc=
+hip/rk3568-fastrhino-r68s.dts#L33
+> > https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockc=
+hip/rk3568-nanopi-r5s.dts#L78
+>
+> For all of the above, whether it is "input" or "output" has no effect
+> as these are all rk3568, and rk3568 does not implement the
+> set_clock_selection() method.
+>
+> static const struct rk_gmac_ops rk3568_ops =3D {
+>         .set_phy_intf_sel =3D rk3568_set_phy_intf_sel,
+>         .set_to_rgmii =3D rk3568_set_to_rgmii,
+>         .set_to_rmii =3D rk3568_set_to_rmii,
+>         .set_speed =3D rk_set_clk_mac_speed,
+>         .regs_valid =3D true,
+>         .regs =3D {
+>                 0xfe2a0000, /* gmac0 */
+>                 0xfe010000, /* gmac1 */
+>                 0x0, /* sentinel */
+>         },
+> };
+>
+> I'm going to propose:
+>
+> 1) that the driver should only print an error if "clock_in_out" is
+> missing _and_ the SoC implements the required function.
+>
+> 2) that the driver should print a non-fatal error if this property is
+> specified in DT _and_ the SoC does not implement the function to
+> discourage its use.
+>
+> 3) [tr]x_delay should not print an error for non-RGMII phy interface
+> modes.
+>
+> I consider it a bug that a driver prints errors for properties that
+> have not been specified that it does not actually require. By doing
+> so, it encourages people to add useless properties to their DT
+> description that will never ever be used (e.g. because they are not
+> relevant for hardware the operating mode that the board is setup
+> for.)
+>
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
-It would ideally be nice to have a _bit_ more history on this about
-how it became unused any why there is such high confidence that
-userspace never tries to use it.
-
-Let's say someone comes along in a few years and wants to use this
-'unused' parameter. Could they?
+I will remove clock_in_out, its default value is 'input'.
+After removing it, there will only be an error log, which will not
+affect the function.
 
