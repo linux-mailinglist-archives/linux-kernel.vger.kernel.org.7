@@ -1,286 +1,210 @@
-Return-Path: <linux-kernel+bounces-850610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC179BD3489
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:50:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFF9BD34AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A00189D6DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:50:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6950F4E5E1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A64521D596;
-	Mon, 13 Oct 2025 13:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYFuwGe4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FD41E8332;
-	Mon, 13 Oct 2025 13:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760363391; cv=fail; b=Xd+9LmAxRj5CIX9dAadL2nLnnFT4Br3MMx1QRJFhuiieVjh1cPYvnVdiF3oHlIUmTalrQLPaTeIieXXNwOcOB3rsiAPRue12/RLE8yXEI26VkHwv+xZxrwRY70cwrydbjMavkK+oXqp6mHBL6t3rYv+Bb81QP+Fv7AnEt3JB2fc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760363391; c=relaxed/simple;
-	bh=iFIUZX3a3jeeq3u5npeZvqssTqP3uzJm6liLaeDhFYU=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=l87ppCs6w6tHdymKgIQlVuNx0kyk2mk70qgcEn2gjkdwQP+FUMPaCix+XXR4SvyXMRPvMTZ0661/5LfbS6UZWUvwK3v0OBEZecAVPfYJR9qxCJsHlc22SLoVOiMMS4mq2d3eZ2YOOXY041wo+b5Dlrg21X6nlAqYbi+LNfeb6TU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYFuwGe4; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760363389; x=1791899389;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=iFIUZX3a3jeeq3u5npeZvqssTqP3uzJm6liLaeDhFYU=;
-  b=JYFuwGe4EkCwolvcJXNCNi3wgXtyCTXTiFsV9yhFYyS7kOnJsf07pxxF
-   4qm7+aJfF+AtBJclEwpZWYG2t9HJlgSFCxyAJVxG5MXV7PyQDt1+1Vv/5
-   BVq72sbdFS7BXFLIcTW2Y+MuZyTmXdhb3w1Nl+uKCaCSgWfzDtNExqxca
-   3J7E0gRU5bLWUuhqQB2xtgSbaf5CLM6DqndAAr1ltkQwgFVbvVfJj48Db
-   v9OKXY+NRYs7OelakVnnhwmr79pVorohKEqdAYnNam6UKMm6M3gDN6wYz
-   totw/BBTOciOVxjGgiz/TQ+RKdAHEg7rSIO/d/6+9xNkqsHkEjYXcPgnJ
-   g==;
-X-CSE-ConnectionGUID: kcvG580+Sy6R3/qO6/P4Qw==
-X-CSE-MsgGUID: x0ieA/9SQRCEaYvBsF9qYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66155937"
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="66155937"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 06:49:48 -0700
-X-CSE-ConnectionGUID: xb/dtYZQRwqY8P1CmT8JKQ==
-X-CSE-MsgGUID: kgOhfws2TdGVqxA9pcLaXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="180746084"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 06:49:49 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 13 Oct 2025 06:49:47 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 13 Oct 2025 06:49:47 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.70)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 13 Oct 2025 06:49:47 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u20idHWBkABVVBngJwCwTg3fqGbJ318PqzSBU3JEPwxp15hxWAIl+21MM3pjharmqPKhyRi95VlksJ8CYGS9+41KHdHwunRVRkZaiviT9hbEYTBz9qJXGX2/8TNwGPYbTfJdbA883JI3AssulqzYYb+c7fkvCKFxoabiXTnTTw1fJtSS/2k93XBxFWY5Xjp+Q7iHtPQgs/oouZOhxpsdrRettxKSAFftq5rzBUYXAWulO+a2t0Ui/7SZ7Ziwfd4d+AjzEwo5qTBKFNdpvDTGepV7O4Zyjf960unMleKY+2Km1M2uPv/PXa78E4YoTpMNOWlSKaW6lcGnROEjJqnQvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2oJLyYC02tr9b+NmEAdHzR/MQchMSoQxwbWBefqTdJ4=;
- b=Gqy4tXScGhSLi7e+2XWq+UqXeiO3kj7RVfG5zhEMEuvJI7IhgWK+I6vZS0/V1XZPUzy1dYOzmGlSySnT7z+0xIyDAckRkJNlNTegPXhys16YAM5TsCxw76E5cX+08YOKR2kkGuAHmkn9F9wcFLdTb8tNKJMGw1PW4fXmkPnbjQuArpgu8Z198eXQzgODm03XzCc787lXC3G+XGznizcENT9IZ5YwJG2aGlX46xe8P2QK1cACgkdspSBXHIQVzC7kUYRf+15Qk1ZLEX+/xfdc4K+7s2gcUqLtQBmCfU+yojQjUaU11Ad1PJfg+dviwnhubbbBum3MU8v3l1VnDwvJ8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
- by BY1PR11MB7983.namprd11.prod.outlook.com (2603:10b6:a03:52b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 13:49:44 +0000
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 13:49:44 +0000
-Message-ID: <b16fcd12-784c-4201-ab42-42d1bb492da1@intel.com>
-Date: Mon, 13 Oct 2025 15:49:38 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/26] drm/xe/pf: Add wait helper for VF FLR
-To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
- Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
-	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
-	<kevin.tian@intel.com>, Shameer Kolothum
-	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, Matthew Brost
-	<matthew.brost@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, "Joonas
- Lahtinen" <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
-	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>
-References: <20251011193847.1836454-1-michal.winiarski@intel.com>
- <20251011193847.1836454-25-michal.winiarski@intel.com>
-Content-Language: en-US
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <20251011193847.1836454-25-michal.winiarski@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BE1P281CA0299.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:8a::7) To MN0PR11MB6011.namprd11.prod.outlook.com
- (2603:10b6:208:372::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4778F227B95;
+	Mon, 13 Oct 2025 13:52:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0091145B3F;
+	Mon, 13 Oct 2025 13:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760363564; cv=none; b=q3NtuSTPsX+N1fxyULH5JtjrpNAeI4NO2+WapSGft7k/42JqpWduxPUuGD+lLJKAtf3kYC7TFmLtK18JtxoOvQQAxabFthYlTZXbv6kaTnuycxzB7mk2+lRcQgoKROtuvy7U9Y+VEEkA8CNw+cZROYXm3KrTw+osX23iPka6ghg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760363564; c=relaxed/simple;
+	bh=1CzgZorPYTrcd+yHNzSzHuwWLiL9Qyg4O9tQOxehr4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TtaIPFawq4KHcBNLwYp60mANUWwWs+n43rC57ht/KEpGBsg865Ze7tqQ1Ew1QR2oLto23dptUQFIzNolKmyOH89Ni4aoAMQbGf47vMcu5uT17RORjAzBqHEum9tbNGor3yyrvWQmi9S+kYLizmTFNdR15fJx2bzLjgix5VyU7tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13310113E;
+	Mon, 13 Oct 2025 06:52:33 -0700 (PDT)
+Received: from [10.57.36.143] (unknown [10.57.36.143])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71DE43F738;
+	Mon, 13 Oct 2025 06:52:39 -0700 (PDT)
+Message-ID: <507225c7-5d10-4b92-a448-c44d545c8867@arm.com>
+Date: Mon, 13 Oct 2025 14:53:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|BY1PR11MB7983:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46d40b24-cac1-4c20-2c91-08de0a5f5dab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aEY2Z3JQcmdwdmdadHVwVDdUMTJJbGEyb3I3T215MmljU2ExVEx6ZnB0RmI5?=
- =?utf-8?B?SzZ1N1BOMkxIRUVsWnkxQStxc3d2ZDRKcGVjZFRSSUVPREpPUm81OW9PUXVZ?=
- =?utf-8?B?bHozeTFvSk02ZGhSV2tKVzBqSUs0L3VBWkpvdloyVCtWcmpzdy9tdjdmU0J6?=
- =?utf-8?B?ekg1c2dMQzdBUWtrS2ZiZkE1czJPcUw5TG02dnBrK3dOTXVmTm90Q1hXcjhB?=
- =?utf-8?B?bG00eldoT2VRbjd3ekRCZUdsM2dVc2MzKzRLK2JMd09JbVNwdGRLbCtBWExL?=
- =?utf-8?B?alo3WFROZjNLcVRuWWV0YmlMM0xzK09ndTBFVXFlemFiZWhpS0lDcTBMMlEz?=
- =?utf-8?B?ejhnYlpBSE5aUTQweUM3Q1JsU0tvaVRWMllHQVlKRE5wSzdESnBEMWRPRHZh?=
- =?utf-8?B?akhuUFlwSnZIaG55MDVtS05lbXJlRGladXdrYTdqQnRzWU5adUxOQXFEMUZF?=
- =?utf-8?B?MWl3VFIrUkFxZm5pVjgxQjB3cVEvd0RucGtqZzEzVHVUdWtkZlk4Z2NCZGg0?=
- =?utf-8?B?U2QwV28wMTcrTE0xcjkvUUNnUEhEbmFvci9BU3hJMjN1R0cydE9KVkUrS3JW?=
- =?utf-8?B?QkRxbHZzS08yRHdFcXZMTXlqb2pOMHRmSVAvSHMvYkVjcVAvSlBvK2w0eURM?=
- =?utf-8?B?WlRmQzJwN201YWxtYUlwSGpjMGF1WDZGWmMyZHZENnhNUERGTzUvUDRtNTJ0?=
- =?utf-8?B?aW8yUTRna1M2a2h2MzlNTnhVVzFNRHRtRERHbUh1cUF0b3NjT1UzWDdZWUJJ?=
- =?utf-8?B?ME5RZW4rUzNuYS9FSE94VFhJdlBqNFU0eUtpSHd4aGFTYTZvdmZ1VjNHR1NV?=
- =?utf-8?B?VStXc1ZhRVN4VHNzZFBPYjRxcU44Zm9GTHdWL2hSUFY3YmpveHVwZWdlSHBT?=
- =?utf-8?B?SmJFVXBTdktEMGxGRlk3L056YndtU1JicEl3MEVnOXBucEEzdnB3ekFSMEM2?=
- =?utf-8?B?bTJjUGp6cURwUTNINm5vNVdXUllabnJpdFBtTE0zR3Fxa3Y1bXBXckhkVUdE?=
- =?utf-8?B?MG85dlIzdGhXcS9McFZkeTFpMGtzRzNGZXZMbE9KdWl1Y0NaNG1OZFhnbEtM?=
- =?utf-8?B?MlJTK2J1N0UzMnVSRWl1N1FMMkpuMnduV0p4QU90enpSVHd1RjFwNjdGY3NX?=
- =?utf-8?B?MTZlTXcyUUw1ZzVOVTlWNnJ4bGg0cnJSeVg3WVFoSWt4WWRYb3dRcy9zU0Vu?=
- =?utf-8?B?NnVYWlJQUHgrK0Rnajh3Y1pqZlZ0MDdGbCtnV2lPdklYanVUcSt1R3ZnZFQw?=
- =?utf-8?B?YTVsUWtPRFlwNkJwcnVSU014di9EdGs4VkZ5bU5xcEhlVlhCbDNIQ0dDNklS?=
- =?utf-8?B?RHcvQ0N0ZmVVSmZLUzRMUjJrYVg3THA4NjdwOW92TThNRXdVZFdGK2FVNWRp?=
- =?utf-8?B?QzRyOExFZHFLeFRFWjUzRzFQYzhabkpBYkx3YTg5ZXBNd3FBbTZHYklYcGdi?=
- =?utf-8?B?ZFM3Yk93RVd5WFhsc21XQ2hEMnJJWWFUTThoRk5YOG93bU9yWE9abHp5VGh6?=
- =?utf-8?B?SVlUU1dzNUxtUEVBYWpDWUlScHNuNENsOWJmRkFlcmR1KzU3Z0FSb0x3MW05?=
- =?utf-8?B?MEUvZnQ2U1BvL2xDcStHd1dGeHF2TVM2M0xNemRLNzI5TG9wa2Y1djNOUjRy?=
- =?utf-8?B?dllGRWFaMDlnUXQrQXYycDZrVVhmdGwzRlBEbE1aTXlMRmZhb0VzYzBkdzV2?=
- =?utf-8?B?NHdUNllZR05FVFRoVEdPRUlQa256L21wbUxzaWR0TDhxdHBQbHAyNThlcjhO?=
- =?utf-8?B?UU9hVkcyT3M5dUt2T0w0UDVWZkFESTJMNWFXRUlVWHA3K2NYclVucGVBZFdX?=
- =?utf-8?B?bHNJZy95cGhoMGRFRHloWVdtc3pVRHR2cmM5emJKaHNCaUhRb3Z0RVFIT2xH?=
- =?utf-8?B?dWZRWVBpUWpORmw5VG1OdUlhN29xWndsSmFXTVlwVitpTHJRY0FYdkVROU5N?=
- =?utf-8?B?RmRiUkRSb0lTQnlFQzRKUHAyWWg5eTVVWXZ2aEg2SklpRm5QMzV1WkV5Y3lX?=
- =?utf-8?Q?Xhbq+thAk6Nb/Bk59jcliPrpCIC5b0=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OFZQZGpPV2JUbDI2RnFpNWMvOG4xZjVFTEpyNHJVckh1WGFQSi9aT0Z2VmR6?=
- =?utf-8?B?WFVwN3ZvWmI1UWJtMi9UK2ZTOGtPaHovcWtqM3B2eGQ2SFpQM0dyUitYTlhR?=
- =?utf-8?B?ZkZ5cXozZEdtYitVQnVzSnFWZTlBMEJPQjQyOVgwN3BKaXIvY3g2a3hLTjVr?=
- =?utf-8?B?elBQbVh2NHB3YzhBRllYNW5wOGdZTkFCVjJUWDlqYllISWdvZG5LcHlQVWI1?=
- =?utf-8?B?NGJFd0l2Z1laNlRzSVlYQzlGeWMyaldPMlJwWTYwYzZvcGhqdHFmUHJ4UEM2?=
- =?utf-8?B?Mm5aakRDdjdKdnByRDd2MXNwRFk2Vm1wMDhiWWhtVGpaakFPRmNnOWRmM2dW?=
- =?utf-8?B?YTQ2WlpTbU4zb0V2eStFZ1JyMWkyMCtwdFpyZzd1ZkNic1F2aVpIV0x2SU8r?=
- =?utf-8?B?SjF0ZFpzSlUvZ05LdzNnbzkyeGNxVW54MlE1ZjFjdkhkWEhVSHBFd0ZXb3Vq?=
- =?utf-8?B?US9zUjJoWURIUVJGaWMzRUk2dEkvWm55NnhEc3pqOFhjWlZENVdaSGtpVm0z?=
- =?utf-8?B?eUpQNUZ5RFdJOHYzRFZJYXRQbitYQXJvallYY28vcGFFbmoyZTgwNzdodWNm?=
- =?utf-8?B?Nm5tV245SVF0RWtDUlJlejJLZ0M4Uk0wRHQ3alRxVnRWOENJdlUyQWVOU2pV?=
- =?utf-8?B?ZGRTS2tBUUJ1dC95RUhUZVA5L0thK0R0NjVHZUxCSEl6NFU0dzc5dWI1eWJS?=
- =?utf-8?B?U1psUGxmQzJCVUt4THd5cTk0eUlQd25TZktsOUlqdXc5RmNBTlo3RU9xU0dD?=
- =?utf-8?B?THRqTXJSck91Mm01bGY4TE1xazhJVXBZN2M4OTFkaW1WVGU2YVdNMkdZZHYw?=
- =?utf-8?B?c2pENWY2aWsxcTAzT1hYd2czOXdJYVhSVTNQMk4relRvaXAveXV5a3NYTS9G?=
- =?utf-8?B?NERaQzRSVnRtMlBGUzFMMlhkMThvZWJYakI5WCtqK2FuTENHUXZ4aUdUMitV?=
- =?utf-8?B?am4zWFI4MEZFNVIzYnk1U3pFRGdqOWNHSTM1UGJ6dW1RV2hReENFL1Y5M3NW?=
- =?utf-8?B?cVgvSUpKR2pXNGc0SkZMOUhHS0tsayt3enFhWE1jaWxOVzZ2eXBaZkhrUjlI?=
- =?utf-8?B?REFzcnJ4cTR0cU15QTE1MC9tZWNkanBJbUwyOHBlQVdIWDdnUTlVbWJxcE00?=
- =?utf-8?B?L2pMRzlEdFliaE9idlhBaGluMWpqWTk0bFFWaVRTWGhubHBFdm4yYUVUWVdH?=
- =?utf-8?B?UHlpKzh3UFhkT25WZlBZY1Bkc0lXTWpidDZBNXVQdCtNTkZxSlJPem40RExw?=
- =?utf-8?B?RjdMMnBQT21mOGdwOFdmLzFFVWdFcXVqdENRa3ZLOXRna2hDSExvZEFWU1F6?=
- =?utf-8?B?UXhMcW44cittQXlGYjdUcXdoWXNiSmh1bWtZRFNtVDZjbGRGQXk1dENCSUZw?=
- =?utf-8?B?MDJ1Z1FINmkyNnl1cnZuME5NT3lmMkRQcnFtR2ROM0RHNXcyODNBdmlOVVcw?=
- =?utf-8?B?S3hVSlJZeC9uVXoyd1lnblFZU1MycUJIV05mdExPb2xRekRnZHc5ODRyNjBM?=
- =?utf-8?B?ZUdiTmcvN3F6Y21wY3NtaDIwREZSUkJYdGsyem9oRldUbE03N0trSTNJaVpP?=
- =?utf-8?B?MVFiRFRFc2FuQ1F6dGlZUysrK0dKYitmcDJqS1pEK0NhYjl2QXR4cHFqaG9Y?=
- =?utf-8?B?dkxDTkpFWVp6L0RnNXpDZ2syTjdHc0VYQzBlR1hvckpmeUlsRldrK1lzSWU0?=
- =?utf-8?B?LzgrRUtSR0NjeitYeG5NM08xNXprdGd6dVVaSDNubkQ4RHFDNDNZajcxMXNH?=
- =?utf-8?B?SEl2eDZhNDZYTktwcm90YThSYmFrcHgxdXZtUG5NU1BtNGQ3eXJnenBjRzJK?=
- =?utf-8?B?TXJWcmZMUisvWTY2bFBSdHlNdzRtbmVlREZyM2lwdEtsQ3RoMFFrUFFFV2JE?=
- =?utf-8?B?RDVDM0U3L0hjU1dldUlFcGpNNlR1cUZRNnFONjdOTHluVXEzc0NkSGZYTjRo?=
- =?utf-8?B?RHgrbE9Xa1hqUHRLZGRpeldsZXVrNDRybVU4Q1JycVlzS3ZrUFRqVXVXV1I3?=
- =?utf-8?B?RlRHSC9hTUhvS0JRbExuV0YyNmxuN2tZT3lPRzdzc1hGRWNrcnlvYTlhQ2R5?=
- =?utf-8?B?dERtekR6SUlSTUNIYUU5TDBmZnhrT3pXRWlVUjhIT2k5QXdhd3NvZmQ3R0RR?=
- =?utf-8?B?b2ZXc2x0SS9OVzhWdm9zT1EyMm0zdzh0Rlhia214UDBUSmNHckI1M0hyVnMv?=
- =?utf-8?B?b3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46d40b24-cac1-4c20-2c91-08de0a5f5dab
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 13:49:44.5079
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Uvfi2f5oTShC/XDkW0ivsyiMfrMwZQ1CHa5oo6U9gDUo0YIMujQ7thdM3bN9H6+fa38w0ZqYZhgLQF6wToy0qYtEEjmXj526oo7b2lRzbHI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB7983
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v4 05/10] PM: EM: Add a skeleton code for netlink
+ notification
+To: Changwoo Min <changwoo@igalia.com>
+Cc: christian.loehle@arm.com, tj@kernel.org, pavel@kernel.org,
+ len.brown@intel.com, rafael@kernel.org, kernel-dev@igalia.com,
+ linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250921031928.205869-1-changwoo@igalia.com>
+ <20250921031928.205869-6-changwoo@igalia.com>
+ <2be75031-e7a6-44e8-a096-945947d73631@arm.com>
+ <ad403e60-ad18-49ca-8557-a81329c9269f@igalia.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <ad403e60-ad18-49ca-8557-a81329c9269f@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-On 10/11/2025 9:38 PM, Michał Winiarski wrote:
-> VF FLR requires additional processing done by PF driver.
-> Add a helper to be used as part of VF driver .reset_done().
-
-this ".reset_done" part might require some explanation/update
-
+On 10/13/25 14:46, Changwoo Min wrote:
 > 
-> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
-> ---
->  drivers/gpu/drm/xe/xe_sriov_pf_control.c | 24 ++++++++++++++++++++++++
->  drivers/gpu/drm/xe/xe_sriov_pf_control.h |  1 +
->  2 files changed, 25 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_control.c b/drivers/gpu/drm/xe/xe_sriov_pf_control.c
-> index 10e1f18aa8b11..24845644f269e 100644
-> --- a/drivers/gpu/drm/xe/xe_sriov_pf_control.c
-> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_control.c
-> @@ -122,6 +122,30 @@ int xe_sriov_pf_control_reset_vf(struct xe_device *xe, unsigned int vfid)
->  	return result;
->  }
->  
-> +/**
-> + * xe_sriov_pf_control_wait_flr() - Wait for a VF reset (FLR) to complete.
-> + * @xe: the &xe_device
-> + * @vfid: the VF identifier
-> + *
-> + * This function is for PF only.
-> + *
-> + * Return: 0 on success or a negative error code on failure.
-> + */
-> +int xe_sriov_pf_control_wait_flr(struct xe_device *xe, unsigned int vfid)
-> +{
-> +	struct xe_gt *gt;
-> +	unsigned int id;
-> +	int result = 0;
-> +	int err;
-> +
-> +	for_each_gt(gt, xe, id) {
-> +		err = xe_gt_sriov_pf_control_wait_flr(gt, vfid);
-> +		result = result ? -EUCLEAN : err;
-> +	}
-> +
-> +	return result;
-> +}
+> On 10/7/25 00:44, Lukasz Luba wrote:
+>>
+>>
+>> On 9/21/25 04:19, Changwoo Min wrote:
+>>> Add a boilerplate code for netlink notification to register the new
+>>> protocol family. Also, initialize and register the netlink during 
+>>> booting.
+>>> The initialization is called at the postcore level, which is late enough
+>>> after the generic netlink is initialized.
+>>>
+>>> Finally, update MAINTAINERS to include new files.
+>>>
+>>> Signed-off-by: Changwoo Min <changwoo@igalia.com>
+>>> ---
+>>>   MAINTAINERS               |  2 +-
+>>>   kernel/power/Makefile     |  5 ++++-
+>>>   kernel/power/em_netlink.c | 35 +++++++++++++++++++++++++++++++++++
+>>>   kernel/power/em_netlink.h | 16 ++++++++++++++++
+>>>   4 files changed, 56 insertions(+), 2 deletions(-)
+>>>   create mode 100644 kernel/power/em_netlink.c
+>>>   create mode 100644 kernel/power/em_netlink.h
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 0992029d271d..ba528836eac1 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -9034,7 +9034,7 @@ F:    include/linux/energy_model.h
+>>>   F:    Documentation/power/energy-model.rst
+>>>   F:    Documentation/netlink/specs/em.yaml
+>>>   F:    include/uapi/linux/energy_model.h
+>>> -F:    kernel/power/em_netlink_autogen.*
+>>> +F:    kernel/power/em_netlink*.*
+>>>   EPAPR HYPERVISOR BYTE CHANNEL DEVICE DRIVER
+>>>   M:    Laurentiu Tudor <laurentiu.tudor@nxp.com>
+>>> diff --git a/kernel/power/Makefile b/kernel/power/Makefile
+>>> index 874ad834dc8d..284a760aade7 100644
+>>> --- a/kernel/power/Makefile
+>>> +++ b/kernel/power/Makefile
+>>> @@ -21,4 +21,7 @@ obj-$(CONFIG_PM_WAKELOCKS)    += wakelock.o
+>>>   obj-$(CONFIG_MAGIC_SYSRQ)    += poweroff.o
+>>> -obj-$(CONFIG_ENERGY_MODEL)    += energy_model.o
+>>> +obj-$(CONFIG_ENERGY_MODEL)    += em.o
+>>> +em-y                := energy_model.o
+>>> +em-$(CONFIG_NET)        += em_netlink_autogen.o em_netlink.o
+>>> +
+>>> diff --git a/kernel/power/em_netlink.c b/kernel/power/em_netlink.c
+>>> new file mode 100644
+>>> index 000000000000..f3fbfeff29a4
+>>> --- /dev/null
+>>> +++ b/kernel/power/em_netlink.c
+>>> @@ -0,0 +1,35 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + *
+>>> + * Generic netlink for energy model.
+>>> + *
+>>> + * Copyright (c) 2025 Valve Corporation.
+>>> + * Author: Changwoo Min <changwoo@igalia.com>
+>>> + */
+>>> +
+>>> +#define pr_fmt(fmt) "energy_model: " fmt
+>>> +
+>>> +#include <linux/energy_model.h>
+>>> +#include <net/sock.h>
+>>> +#include <net/genetlink.h>
+>>> +#include <uapi/linux/energy_model.h>
+>>> +
+>>> +#include "em_netlink.h"
+>>> +#include "em_netlink_autogen.h"
+>>> +
+>>> +int em_nl_get_pds_doit(struct sk_buff *skb, struct genl_info *info)
+>>> +{
+>>> +    return -EOPNOTSUPP;
+>>> +}
+>>> +
+>>> +int em_nl_get_pd_table_doit(struct sk_buff *skb, struct genl_info 
+>>> *info)
+>>> +{
+>>> +    return -EOPNOTSUPP;
+>>> +}
+>>> +
+>>> +static int __init em_netlink_init(void)
+>>> +{
+>>> +    return genl_register_family(&em_nl_family);
+>>> +}
+>>> +postcore_initcall(em_netlink_init);
+>>> +
+>>> diff --git a/kernel/power/em_netlink.h b/kernel/power/em_netlink.h
+>>> new file mode 100644
+>>> index 000000000000..acd186c92d6b
+>>> --- /dev/null
+>>> +++ b/kernel/power/em_netlink.h
+>>> @@ -0,0 +1,16 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + *
+>>> + * Generic netlink for energy model.
+>>> + *
+>>> + * Copyright (c) 2025 Valve Corporation.
+>>> + * Author: Changwoo Min <changwoo@igalia.com>
+>>> + */
+>>> +#ifndef _EM_NETLINK_H
+>>> +#define _EM_NETLINK_H
+>>> +
+>>> +#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_NET)
+>>> +#else
+>>> +#endif
+>>> +
+>>> +#endif /* _EM_NETLINK_H */
+>>
+>> Actually, those declarations of functions from patch 3/10 can
+>> live in this header. We would avoid creating more local headers
+>> in such case.
+> 
+>   That makes sense to me.
+> 
+>>
+>> Then the patch 3/10 would have to go after this patch when
+>> this header is introduced.
+>>
+>> Please ignore the comment in the patch 3/10 and try to
+>> use this header. It is also logically linked to the
+>> notifications, so belongs to such header IMHO.
+>>
+> 
+> Sure, after moving 3/10 after this, I will move the changes made in 3/10
+> to em_netlink.h. I will keep the implementation of
+> for_each_em_perf_domain() and em_perf_domain_get_by_id() in
+> energy_model.c since it it not ideal to expose em_pd_list_mutex, etc.
+> outside of energy_mode.c. And, this requires to include "em_netlink.h"
+> from energy_model.c.
+> 
 
-one might want to call this new wait function from within xe_sriov_pf_control_reset_vf() which does both trigger/wait
-but for me it works as is, so with commit message update
+Sounds good. These are only minor changes because it has nice shape
+already.
 
-Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+I was able to test it last weekend and it works on my setup now.
+I can see the messages coming in the user-space, so it should
+work as designed.
 
-> +
->  /**
->   * xe_sriov_pf_control_sync_flr() - Synchronize a VF FLR between all GTs.
->   * @xe: the &xe_device
-> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_control.h b/drivers/gpu/drm/xe/xe_sriov_pf_control.h
-> index 512fd21d87c1e..c8ea54768cfaa 100644
-> --- a/drivers/gpu/drm/xe/xe_sriov_pf_control.h
-> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_control.h
-> @@ -12,6 +12,7 @@ int xe_sriov_pf_control_pause_vf(struct xe_device *xe, unsigned int vfid);
->  int xe_sriov_pf_control_resume_vf(struct xe_device *xe, unsigned int vfid);
->  int xe_sriov_pf_control_stop_vf(struct xe_device *xe, unsigned int vfid);
->  int xe_sriov_pf_control_reset_vf(struct xe_device *xe, unsigned int vfid);
-> +int xe_sriov_pf_control_wait_flr(struct xe_device *xe, unsigned int vfid);
->  int xe_sriov_pf_control_sync_flr(struct xe_device *xe, unsigned int vfid);
->  int xe_sriov_pf_control_save_vf(struct xe_device *xe, unsigned int vfid);
->  int xe_sriov_pf_control_wait_save_vf(struct xe_device *xe, unsigned int vfid);
+Thank you Changwoo! Looking forward for your v5.
 
+Regards,
+Lukasz
 
