@@ -1,191 +1,133 @@
-Return-Path: <linux-kernel+bounces-850350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4729FBD2976
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:41:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D40BD297C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19EF3B82C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290F43B9E50
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AB42FF17D;
-	Mon, 13 Oct 2025 10:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMLNeca8"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2511A2FF650;
+	Mon, 13 Oct 2025 10:42:31 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11A12FB99E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064E92E7196
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760352111; cv=none; b=omJovuMWdsdFEuE5ShSrFIkwxB+TSsIGMnEzrRsyjZ4AbkNKjmaN9xSf3Jyh4rHUmNyoLfyTJeY8qpWuhct9CaJGs2gGhQtbifY8CFW4FzVVc2B61tktDLTbTVvibDuVdFMmGqNG4Kv1lNaSYT4UYH/eCKAUQ4LkU5CGKxINT9o=
+	t=1760352150; cv=none; b=a+14m3vTdlHX+fdfZrtU2CPr7nhewk4lmFLEhU27mxThFwkWVkTZKNAJPQnyoi/ygXrM3jNkLv2IVlfU8fABZ2GPIT4lkaWiDHqvgq2MxozhggRQrSg9gD0MS/VN6C09tr0ZsRfXEklIiQKBGFyviZKxyEWKsyZK5Lsdqvm+X40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760352111; c=relaxed/simple;
-	bh=YyN4Fy7cFjCuAQN9iofBCwnSheogXY7fB4MzJJ2Y+vU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFDq0ebhHFnDyiq6CzrFoEjZlgzNGEC7/ihlMZHrTdwVfrKlsJitI2V3S2MCgO/OwH+pMvvzjctiKy8+KT7R5sC1dPVwQcwGaK5FPFc2rnJl5snojHU62N8G8t9A6R0jbpe6areyj1THhFpRcWZrjaUVSq4fWq+gIBsCvK0wV+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMLNeca8; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b48d8deaef9so728749266b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760352108; x=1760956908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mEjrZ5KI8ghZWNu9poLLDUVtxDcPQM62kH1Mxu75i/I=;
-        b=QMLNeca8qXj5XnmMR6N2GSLrQR9t5EqTCmtjLvxR3nZxlPn5fk0JwVgcRgszQ5yY7n
-         gHiXW4HJX40JRqfkhkwP1B/Z2irJm+V+pPztWm3b3kPWTbTiFLV8fSVTYI66lp0UvB9Z
-         +zvvpn9K3uRcstJh0KNnJSFtx1pqi8fYwRmupGkcMoSjQNlCoolW2Wf21Qzrijga3NZO
-         P3ymg3cfoAZIkOublcG02iUEitroFtzhPyk5GCgI7A7zTUH3pEDhSzSTVi2YZrHOwY0z
-         UaIPXXkX57IBKVVE8X2Vu48gAiocEF75unQzF4s0SNfR0GnnZpQeau+xdHNf1/2cCpZc
-         lRkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760352108; x=1760956908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mEjrZ5KI8ghZWNu9poLLDUVtxDcPQM62kH1Mxu75i/I=;
-        b=R17spSx1PpETUftBs7kTigU3mrziKVyJ38zALUFm9IV8fZWe1l7ieUzvsBbJFFFfgr
-         yYbuSt7Fc4O8E0+TWTNaFFyqaeoAAKJvdXj1zQQ6eRbvP6C7d3nMNxbkXTDeMYMNXQmG
-         Y5W6zki4JOZEnhS9IEuk0A6neDaSlHz7bEO+Ia487Jq72LJVccIhLjlrYzjtIR7QZszk
-         NZXXht0E/KHRZeI5+1SUvTCSpFxbK0ZYzEcJW8+Wfy5L+R9klF4wr2KAultCvbMfhXnI
-         Eqh1IXCyah5Wf7zwSpPWuDcG8PGj/15i99VmWX0RURrU+IcGqwolwP4Sys3l4XwDc5+0
-         HmSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWplMk5FFuHZPJ/JsQ4Sv6r0NnFsr5Khs1vqKN+1cmRPj0SodYkBhEWkuCHHohcdwM6XQmhq0WZ4MGSGIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEgUpOEoh2eCbsdppOfL/FvbGxM1FMg7mgn8NmAJ9Nj/vHnijm
-	55X0ThgtmidQMRitkh8H/X9V+86MvJUbHpwr8w2OlddkIStUv21c/jpevlVfXr5FFj0JACYYncl
-	XZolCZ814WEka+VE7SQ+1USLmcZmGPnw=
-X-Gm-Gg: ASbGncv2xtEN9c+Ckcyg2ksn92YCQCxEAAVT3ZcFtAGMvf4+DywvjNiLHuMhxYoSPY2
-	KvYL8tytTQfz54fXsaJfFnDQDCTjAUOdvU0sPlNKLyHVv0OTtp0QMTHdJcfplqIRVpbu2l9xTkV
-	n9rL+oz22k88bY6IDvYy/labgPONJVWiERLM8hHVqfsFMuyIjUemjw15k6UTP1d908hqOLKEIhm
-	pRQZqQvPF/EXTR+twhtbrIz+QSFf4Mw7DhfsKr80QMXdPKX2ZIXRImfwY9+yD6pQLFtqQ==
-X-Google-Smtp-Source: AGHT+IFYPmh1c36RwRLOo2uUUMUFucqAcao9E57aFUP92xiXGcbG+Q+UI4IibOC2MF1OpeyGkZNJn/CsiB4Jy+Wk1Ss=
-X-Received: by 2002:a17:907:2d0d:b0:b4e:f7cc:72f1 with SMTP id
- a640c23a62f3a-b50aaba1161mr2094538666b.22.1760352107918; Mon, 13 Oct 2025
- 03:41:47 -0700 (PDT)
+	s=arc-20240116; t=1760352150; c=relaxed/simple;
+	bh=BpJFbfWDvD6mjWs3BqFAMJMM1vRPt+n/Mq7++RIMTNA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=taLDLpDs6+Dk4WcG1ka7Axq1SkkLz4ZZaT0cRUp41NLEOU6cF0uRsEShOaRh7+ZJSbk7koQ6xWKCmmJao0ubetcG8KSLEaSycEKhuU3VXX4CqIG3dHDCG588KpsouT6djxqCn8Qk/ojgvM2gmRHRCghWJoKY2BrSCxefoJwzWSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 59DAg0h2075147
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 13 Oct 2025 18:42:00 +0800 (+08)
+	(envelope-from randolph@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Mon, 13 Oct 2025
+ 18:42:00 +0800
+From: Randolph Lin <randolph@andestech.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
+        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
+        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+        <ben717@andestech.com>, <inochiama@gmail.com>,
+        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
+        <shradha.t@samsung.com>, <pjw@kernel.org>, <randolph.sklin@gmail.com>,
+        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
+Subject: [PATCH v7 0/5] Add support for Andes Qilai SoC PCIe controller
+Date: Mon, 13 Oct 2025 18:41:41 +0800
+Message-ID: <20251013104146.578319-1-randolph@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013072244.82591-1-adrian.hunter@intel.com> <20251013072244.82591-2-adrian.hunter@intel.com>
-In-Reply-To: <20251013072244.82591-2-adrian.hunter@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 13 Oct 2025 12:41:37 +0200
-X-Gm-Features: AS18NWCRzdhF5PXYFFrI1cBupLRzeVMrGtQlFrsQVhAfncRQxbPI-PhmAr5Ayyc
-Message-ID: <CAOQ4uxjvMRXWeQx+mAugwGLftCPRQKxUfx8dZj+Jqk-Y_YJDcQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/3] perf/core: Fix address filter match with
- backing files
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Edd Barrett <edd@theunixzoo.co.uk>, Laurence Tratt <laurie@tratt.net>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 59DAg0h2075147
 
-On Mon, Oct 13, 2025 at 9:23=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
-com> wrote:
->
-> It was reported that Intel PT address filters do not work in Docker
-> containers.  That relates to the use of overlayfs.
->
-> overlayfs records the backing file in struct vm_area_struct vm_file,
-> instead of the user file that the user mmapped.  In order for an address
-> filter to match, it must compare to the user file inode.  There is an
-> existing helper file_user_inode() for that situation.
->
-> Use file_user_inode() instead of file_inode() to get the inode for addres=
-s
-> filter matching.
->
-> Example:
->
->   Setup:
->
->     # cd /root
->     # mkdir test ; cd test ; mkdir lower upper work merged
->     # cp `which cat` lower
->     # mount -t overlay overlay -olowerdir=3Dlower,upperdir=3Dupper,workdi=
-r=3Dwork merged
->     # perf record --buildid-mmap -e intel_pt//u --filter 'filter * @ /roo=
-t/test/merged/cat' -- /root/test/merged/cat /proc/self/maps
->     ...
->     55d61d246000-55d61d2e1000 r-xp 00018000 00:1a 3418                   =
-    /root/test/merged/cat
->     ...
->     [ perf record: Woken up 1 times to write data ]
->     [ perf record: Captured and wrote 0.015 MB perf.data ]
->     # perf buildid-cache --add /root/test/merged/cat
->
->   Before:
->
->     Address filter does not match so there are no control flow packets
->
->     # perf script --itrace=3De
->     # perf script --itrace=3Db | wc -l
->     0
->     # perf script -D | grep 'TIP.PGE' | wc -l
->     0
->     #
->
->   After:
->
->     Address filter does match so there are control flow packets
->
->     # perf script --itrace=3De
->     # perf script --itrace=3Db | wc -l
->     235
->     # perf script -D | grep 'TIP.PGE' | wc -l
->     57
->     #
->
-> With respect to stable kernels, overlayfs mmap function ovl_mmap() was
-> added in v4.19 but file_user_inode() was not added until v6.8 and never
-> back-ported to stable kernels.  FMODE_BACKING that it depends on was adde=
-d
-> in v6.5.  This issue has gone largely unnoticed, so back-porting before
-> v6.8 is probably not worth it, so put 6.8 as the stable kernel prerequisi=
-te
-> version, although in practice the next long term kernel is 6.12.
->
-> Reported-by: Edd Barrett <edd@theunixzoo.co.uk>
-> Closes: https://lore.kernel.org/linux-perf-users/aBCwoq7w8ohBRQCh@fremen.=
-lan
-> Cc: stable@vger.kernel.org # 6.8
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
+Add support for Andes Qilai SoC PCIe controller
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+These patches introduce driver support for the PCIe controller on the
+Andes Qilai SoC.
 
->  kernel/events/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 7541f6f85fcb..cd63ec84e386 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9492,7 +9492,7 @@ static bool perf_addr_filter_match(struct perf_addr=
-_filter *filter,
->         if (!filter->path.dentry)
->                 return false;
->
-> -       if (d_inode(filter->path.dentry) !=3D file_inode(file))
-> +       if (d_inode(filter->path.dentry) !=3D file_user_inode(file))
->                 return false;
->
->         if (filter->offset > offset + size)
-> --
-> 2.48.1
->
+Signed-off-by: Randolph Lin <randolph@andestech.com>
+
+---
+Changes in v7:
+- Remove unnecessary nodes and property in DTS bindings
+
+---
+Changes in v6:
+- Fix typo in the logic for adjusting the number of OB/IB windows
+
+---
+Changes in v5:
+- Add support to adjust the number of OB/IB windows in the glue driver.
+- Fix the number of OB windows in the Qilai PCIe driver.
+- Remove meaningless properties from the device tree.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v4:
+- Add .post_init callback for enabling IOCP cache.  
+- Sort by vender name in Kconfig 
+- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v3:
+- Remove outbound ATU address range validation callback and logic.
+- Add logic to skip failed outbound iATU configuration and continue.
+- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v2:
+- Remove the patch that adds the dma-ranges property to the SoC node.
+- Add dma-ranges to the PCIe parent node bus node.
+- Refactor and rename outbound ATU address range validation callback and logic.
+- Use parent_bus_offset instead of cpu_addr_fixup().
+- Using PROBE_DEFAULT_STRATEGY as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+Randolph Lin (5):
+  PCI: dwc: Allow adjusting the number of ob/ib windows in glue driver
+  dt-bindings: PCI: Add Andes QiLai PCIe support
+  riscv: dts: andes: Add PCIe node into the QiLai SoC
+  PCI: andes: Add Andes QiLai SoC PCIe host driver support
+  MAINTAINERS: Add maintainers for Andes QiLai PCIe driver
+
+ .../bindings/pci/andestech,qilai-pcie.yaml    |  84 ++++++
+ MAINTAINERS                                   |   7 +
+ arch/riscv/boot/dts/andes/qilai.dtsi          | 106 ++++++++
+ drivers/pci/controller/dwc/Kconfig            |  13 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-andes-qilai.c | 240 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.c  |  12 +-
+ 7 files changed, 461 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-andes-qilai.c
+
+-- 
+2.34.1
+
 
