@@ -1,147 +1,250 @@
-Return-Path: <linux-kernel+bounces-851416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2E4BD6641
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:42:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E15BBD6653
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6711D4F26CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB39418A6B1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF9F2EFD95;
-	Mon, 13 Oct 2025 21:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5222F2F0C71;
+	Mon, 13 Oct 2025 21:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NzOif5oy"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0WXZx3t"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402512E9ED4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6AF2EF65F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391720; cv=none; b=jwDDmZQQ8lGhVQS+o+BZUQtPr0TYsGNdMe4WIuldNZ3yhwoDfGD2XC1qmiq0jySdMYczA3wutoCkDiwchHnbnbhrkQRqHwABZIVHJ2zMWS8owGuCGpKPbLlmlQizs8EnRR4hD7MmNrV4boAEdMYEsKti5ksURH2qvAoFf3gBT20=
+	t=1760391895; cv=none; b=QexuecQQlMACIMW4JZdGSdOC4NrwrhYLVdKkRxpGEHZSkNTxuK6GlmU87swOSR3vSPxpeFevCeqrng/8h7+hbXeTRfvZsFpWyiDd72FVReeZ7NZlmf6otJRqwnNyepTl/DGy6r+8QXw42pwMhl7xczKU/j07DiyxE/OHcv1vv9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391720; c=relaxed/simple;
-	bh=TDs9eZA6MaUUuDc1+8bQHqQ2laN3OgoREAcfscdplpo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sHKpiIU+t2/Qk4uUJAOjUr27GAG6OxmLme4ISL6Bbm+b2g6ADS58UwE61p6F7oeQTiGWcW+oVf4vY6gQgwqkJPYuphhfDgcKeOHBh6rnSh2jzYJ6CTi7+Se51w3X76Vegp1yIjYudzeH3C1Jc0ow0mHRSr7cloB3bYTJ9OqhAts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NzOif5oy; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33428befc08so19014442a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:41:58 -0700 (PDT)
+	s=arc-20240116; t=1760391895; c=relaxed/simple;
+	bh=4vc+Yp9zyzwBoqiAyGbKXROpeOTn1bgb1ufmkKPBa1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLU5oBg9Bg0nIvJWKXLodndVzq437h+hDjZQLJ6t2TBL4kvn2d+INKGw/XoZW+2aVFNosMuvU+n+/SVG8boznXnFbJ+cszwEwx0/NtPUQAK1RYO7E7DEwStimR2HZQMz5/tAy4p8Wlyz8827piY43FPxVUEY4eZrSHkKWwHKBKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0WXZx3t; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-421851bca51so3065802f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:44:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760391718; x=1760996518; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IsVHXtQeXX4SM5ssgn2Mp7CjNDCTTOd3e+3GSKyAubs=;
-        b=NzOif5oyyWnbTG8b4DJb3PNERXhojZG7y5PulbwpJeL5quPSOuKWToe+A0qh1fs0Wb
-         bo7ESPr5jZ5n4EC0vqc4NM+UrMa5GonsMxqh4ZNTZejG9Mh4C/tXYPoXiaKvIeMkCn8n
-         GSi8QDG8lt3hB970jDHQhRmjTxdlEnO5ehpCfgfRbP5m9mH3lrWnXhXlF6E0XKcRk5JA
-         JJgsUbAgKFI8oomWVPLNfd/7pbLrRdlqpNhOtSUjStU4vlJoB62L7Z5glLrRaxAmyduc
-         CJxZaonRHwT0rdSnrtKGVyG0zIVuLbcl0ysJXfgsTdGWBlFBldvMV8oeBauwD7904ctX
-         J6gQ==
+        d=gmail.com; s=20230601; t=1760391892; x=1760996692; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZP8w263msakWGHxrXKEh05EayNz8GO1pbOWkrj9kVlM=;
+        b=F0WXZx3tVo/u/c5MJVL9DuzTYu2wK5PrHvj++imorvfjs/pydokBZz+PpXs1W0o8iv
+         xaGtNKvRkfc5d+7Mc8XWKzwj4QeBxWr97x/faajajqSGXaiepgsUGr4qALjvVHwfCkO9
+         WL6K+Dc3mXpO5N+sOehNjlUV6aeclP7I/mYYJFfAtidHyEuCGMsf/LpkzKc+1czWmhFk
+         Y/0MO6nElkSHwKPYy+vN+3hAKh9gZAnqMBTf+RAna8Jfl4uC14/NywokD9x4RyAUREKw
+         Pl+wIF9Bx+Xhca3zcGoldw/kwwyoNvoT8p/wrxGZ4rALHslWk4ReVHkRRoBYLZ9xUBla
+         yIRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760391718; x=1760996518;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IsVHXtQeXX4SM5ssgn2Mp7CjNDCTTOd3e+3GSKyAubs=;
-        b=Yy7dWvFhF8fLhLWrqlehyPlOHKstZF5wsGUzw7le1sXfuMC0RCEqsZ/MwaMTjvCgxw
-         20HXidEQHL7KkHmbz7d06UctYrm4zG8bV0CACraOuVCOwIwHDJIHbQPsc1cs+ac74Dq3
-         Z2Qx7HVYED5E/VcHLhhw8E2fgf0K3E2STMvnGogxflNGuGEVD/XLE1+mrtzAye8am2k1
-         EPVnIF8ZT5MGy5Ew4THDIrLi10qElnZgCGMUw0z1Ij7elb7ic1Mf7Qx85hpqOFOu7d2N
-         eZHKbpKVnTEL5zejUhaP7o7hEvXV3uRQumX3ecgD0RvAo9R18Ce3zkEize6T2ROOkFKH
-         J3Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCXU6XHTAoMSBYutVVSuH4KrEx7UxInp5WeEVkUx6rFnL2Owz/L7s6lIdIujdqrVEbwX3dUVax8B5I3dSRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPjCyyS4m0J1WmaZrh8q0vDGEJeSJXYuiEKgVzDUDgYDQe9UFu
-	xBbqy8cd8BvIQvSL1zIz6+W3FuzamBnkQshVOD1QtOsS3ROjV6bLl6z5C9P3m2Ys3uZZrepozkN
-	sndHyFg==
-X-Google-Smtp-Source: AGHT+IH2fqDIp928vMWgxWfpIsnJ48hBAEwmrvE8ezRIGFx8FjGO7z4ubS1MD0ziJ9dEj/roPyOIK06MTjo=
-X-Received: from pjvd23.prod.google.com ([2002:a17:90a:d997:b0:339:9a75:1b1e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3ec4:b0:32e:d16c:a8c6
- with SMTP id 98e67ed59e1d1-33b5111bd79mr33316653a91.16.1760391718415; Mon, 13
- Oct 2025 14:41:58 -0700 (PDT)
-Date: Mon, 13 Oct 2025 14:41:56 -0700
-In-Reply-To: <20251001145816.1414855-9-yosry.ahmed@linux.dev>
+        d=1e100.net; s=20230601; t=1760391892; x=1760996692;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZP8w263msakWGHxrXKEh05EayNz8GO1pbOWkrj9kVlM=;
+        b=a18Huynuxbu042cdbteSFP5GBaCxOrU+/qZT5nAaqldC7b1mJmfNaM7FWpCNsCEjQe
+         uwTmikuMf2HDCu/GqFDxHPfe/aWtWgnStU2mHXY4G9mVoQnz4Pnt9Mexz7fJLA4vjpil
+         bnfeCNlyGSCtAb7d91dWvt8NzNVX5vuc4pvV/kVPlUhcChR3nrP17g7BV7v20qW1vMbv
+         Hlnf3+17Ru5VHysm+dGF0LutNhntYcqQfEGpxgu26Kgc8SHb/xsVuBSDEL4+1xhq7fi0
+         lIpwaHZB7/+2U+WQVqQ+FQJPRQwx/MgP8uYZlRcLUzYI7kyED+NDEhi4hdu9xznEs+cQ
+         kC4w==
+X-Gm-Message-State: AOJu0YzQdOGDfWmJ1GIcbsKfp0/rDU3f8oNyk6G2qZbvTyIdvkkaH0mO
+	crQOI8CcMOGEDIzqKraDm8PLPVY83OLzrNwIIaTw5873SwPS0ZHz8WMC
+X-Gm-Gg: ASbGnct1me2MRdAvRlmj7rcB/R3v5ov5cT/mYHc/pryBXrOV6Pz4kyvT5GyRSSBjjb9
+	p4S0eN8STH7MyiFnbLKKUyUlCwXZfjR0qNpYuVuHizv2lIUbK2HbrAXvTWnx8qgn3RsFrg04Cf7
+	L0ECik0M/xL1FMNY8pGoBC4lDDlR76I/EBaNzUtaGXINZXuYWSMid84LtxCSkFXr30Tgb/Bx12x
+	iVWvUcoFf3tYyMcwZoSPKhon534ztQ6gQ2ORULfQ02ZewxNf6ZcpeyJSLGkiVeYjCM3cPr5OcET
+	QD5XtEgUXZpaGT2nSVGetwliwpqBO3hvvce2RSPWHWYtT12oUTVU2eGtrBLe422SJELDvllPtAv
+	cWmQntlVEd+tyGC0uWfbjSnmsYBidRPhPdsndPqz4SyM3HnbnMDGnF/U=
+X-Google-Smtp-Source: AGHT+IFty42U39I5/GGfbVI4soxzCNVszxubO0wJifwJ4rQ9MB/OvSIgZERhDNSn3uJ0pvvDwFqOww==
+X-Received: by 2002:a05:6000:228a:b0:400:7e60:7ee0 with SMTP id ffacd0b85a97d-4265ef6785amr12332355f8f.0.1760391891611;
+        Mon, 13 Oct 2025 14:44:51 -0700 (PDT)
+Received: from [192.168.1.121] ([176.206.100.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb483bcf9sm211722515e9.6.2025.10.13.14.44.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 14:44:51 -0700 (PDT)
+Message-ID: <e1e6ee09-ea29-4328-9eae-f2a4a23b3edc@gmail.com>
+Date: Mon, 13 Oct 2025 23:44:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-9-yosry.ahmed@linux.dev>
-Message-ID: <aO1yJHcKC85mo0PQ@google.com>
-Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
- describe EPT entries
-From: Sean Christopherson <seanjc@google.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/7] HID: asus: listen to the asus-wmi brightness
+ device instead of creating one
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20251013201535.6737-1-lkml@antheas.dev>
+ <20251013201535.6737-5-lkml@antheas.dev>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <20251013201535.6737-5-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 01, 2025, Yosry Ahmed wrote:
-> From: Yosry Ahmed <yosryahmed@google.com>
-> 
-> The assertions use 'hugepage' to describe a terminal EPT entry, but
-> 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
-> hugepage.
 
-Yes, it's more accurate, but also less precise.  I'm guessing the assert message
-and comment talked about hugepages because that's the type of mappings that
-caused problems at the time.
-
-Ah, actually, I bet the code was copy+pasted from virt_create_upper_pte(), in
-which case the assumptions about wanting to create a hupage are both accurate
-and precise.
-
-> The distincion will be useful in coming changes that will pass
-> the value around and 'leaf' is clearer than hugepage or page_size.
-
-What value?
-
-> Leave the EPT bit named page_size to keep it conforming to the manual.
-> 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+On 10/13/25 22:15, Antheas Kapenekakis wrote:
+> Some ROG laptops expose multiple interfaces for controlling the
+> keyboard/RGB brightness. This creates a name conflict under
+> asus::kbd_brightness, where the second device ends up being
+> named asus::kbd_brightness_1 and they are both broken.
+Can you please reference a bug report and/or an analysis of why they ends
+up being broken?
+>
+> Therefore, register a listener to the asus-wmi brightness device
+> instead of creating a new one.
+>
+> Reviewed-by: Luke D. Jones <luke@ljones.dev>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 > ---
->  tools/testing/selftests/kvm/lib/x86/vmx.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> index 04c4b97bcd1e7..673756b27e903 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> @@ -380,15 +380,15 @@ static void nested_create_pte(struct kvm_vm *vm,
->  			pte->address = vm_alloc_page_table(vm) >> vm->page_shift;
->  	} else {
->  		/*
-> -		 * Entry already present.  Assert that the caller doesn't want
-> -		 * a hugepage at this level, and that there isn't a hugepage at
-> -		 * this level.
-> +		 * Entry already present.  Assert that the caller doesn't want a
-> +		 * leaf entry at this level, and that there isn't a leaf entry
-> +		 * at this level.
->  		 */
->  		TEST_ASSERT(current_level != target_level,
-> -			    "Cannot create hugepage at level: %u, nested_paddr: 0x%lx",
-> +			    "Cannot create leaf entry at level: %u, nested_paddr: 0x%lx",
->  			    current_level, nested_paddr);
->  		TEST_ASSERT(!pte->page_size,
-> -			    "Cannot create page table at level: %u, nested_paddr: 0x%lx",
-> +			    "Leaf entry already exists at level: %u, nested_paddr: 0x%lx",
-
-This change is flat out wrong.  The existing PRESENT PTE _might_ be a 4KiB leaf
-entry, but it might also be an existing non-leaf page table.
-
-Instead of hacking on the nested code, can we instead tweak __virt_pg_map() to
-work with nested TDP?  At a glance, it's already quite close, e.g. "just" needs
-to be taught about EPT RWX bits and allow the call to pass in the root pointer.
-
->  			    current_level, nested_paddr);
->  	}
+>  drivers/hid/hid-asus.c | 64 +++++++-----------------------------------
+>  1 file changed, 10 insertions(+), 54 deletions(-)
+>
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index a62559e3e064..0af19c8ef035 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -102,7 +102,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>  #define TRKID_SGN       ((TRKID_MAX + 1) >> 1)
+>  
+>  struct asus_kbd_leds {
+> -	struct led_classdev cdev;
+> +	struct asus_hid_listener listener;
+It is my understanding from "register a listener .... instead of creating a new one"
+that you are attempting to use the same listener among many devices... so why isn't
+this a pointer? And more importantly: why do we have bool available, bool registered
+instead of either one or the other being replaced by this field being possibly NULL?
+>  	struct hid_device *hdev;
+>  	struct work_struct work;
+>  	unsigned int brightness;
+> @@ -495,11 +495,11 @@ static void asus_schedule_work(struct asus_kbd_leds *led)
+>  	spin_unlock_irqrestore(&led->lock, flags);
 >  }
-> -- 
-> 2.51.0.618.g983fd99d29-goog
-> 
+>  
+> -static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
+> -				   enum led_brightness brightness)
+> +static void asus_kbd_backlight_set(struct asus_hid_listener *listener,
+> +				   int brightness)
+>  {
+> -	struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
+> -						 cdev);
+> +	struct asus_kbd_leds *led = container_of(listener, struct asus_kbd_leds,
+> +						 listener);
+>  	unsigned long flags;
+>  
+>  	spin_lock_irqsave(&led->lock, flags);
+> @@ -509,20 +509,6 @@ static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
+>  	asus_schedule_work(led);
+>  }
+>  
+> -static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
+> -{
+> -	struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
+> -						 cdev);
+> -	enum led_brightness brightness;
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&led->lock, flags);
+> -	brightness = led->brightness;
+> -	spin_unlock_irqrestore(&led->lock, flags);
+> -
+> -	return brightness;
+> -}
+> -
+>  static void asus_kbd_backlight_work(struct work_struct *work)
+>  {
+>  	struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
+> @@ -539,34 +525,6 @@ static void asus_kbd_backlight_work(struct work_struct *work)
+>  		hid_err(led->hdev, "Asus failed to set keyboard backlight: %d\n", ret);
+>  }
+>  
+> -/* WMI-based keyboard backlight LED control (via asus-wmi driver) takes
+> - * precedence. We only activate HID-based backlight control when the
+> - * WMI control is not available.
+> - */
+> -static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+> -{
+> -	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+> -	u32 value;
+> -	int ret;
+> -
+> -	if (!IS_ENABLED(CONFIG_ASUS_WMI))
+> -		return false;
+> -
+> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
+> -			dmi_check_system(asus_use_hid_led_dmi_ids)) {
+> -		hid_info(hdev, "using HID for asus::kbd_backlight\n");
+> -		return false;
+> -	}
+> -
+> -	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
+> -				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
+> -	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
+> -	if (ret)
+> -		return false;
+> -
+> -	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
+> -}
+> -
+>  /*
+>   * We don't care about any other part of the string except the version section.
+>   * Example strings: FGA80100.RC72LA.312_T01, FGA80100.RC71LS.318_T01
+> @@ -701,14 +659,11 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>  	drvdata->kbd_backlight->removed = false;
+>  	drvdata->kbd_backlight->brightness = 0;
+>  	drvdata->kbd_backlight->hdev = hdev;
+> -	drvdata->kbd_backlight->cdev.name = "asus::kbd_backlight";
+> -	drvdata->kbd_backlight->cdev.max_brightness = 3;
+> -	drvdata->kbd_backlight->cdev.brightness_set = asus_kbd_backlight_set;
+> -	drvdata->kbd_backlight->cdev.brightness_get = asus_kbd_backlight_get;
+> +	drvdata->kbd_backlight->listener.brightness_set = asus_kbd_backlight_set;
+>  	INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_backlight_work);
+>  	spin_lock_init(&drvdata->kbd_backlight->lock);
+>  
+> -	ret = devm_led_classdev_register(&hdev->dev, &drvdata->kbd_backlight->cdev);
+> +	ret = asus_hid_register_listener(&drvdata->kbd_backlight->listener);
+>  	if (ret < 0) {
+>  		/* No need to have this still around */
+>  		devm_kfree(&hdev->dev, drvdata->kbd_backlight);
+> @@ -1105,7 +1060,7 @@ static int __maybe_unused asus_resume(struct hid_device *hdev) {
+>  
+>  	if (drvdata->kbd_backlight) {
+>  		const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4,
+> -				drvdata->kbd_backlight->cdev.brightness };
+> +				drvdata->kbd_backlight->brightness };
+>  		ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
+>  		if (ret < 0) {
+>  			hid_err(hdev, "Asus failed to set keyboard backlight: %d\n", ret);
+> @@ -1241,7 +1196,6 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  	}
+>  
+>  	if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
+> -	    !asus_kbd_wmi_led_control_present(hdev) &&
+>  	    asus_kbd_register_leds(hdev))
+>  		hid_warn(hdev, "Failed to initialize backlight.\n");
+>  
+> @@ -1282,6 +1236,8 @@ static void asus_remove(struct hid_device *hdev)
+>  	unsigned long flags;
+>  
+>  	if (drvdata->kbd_backlight) {
+> +		asus_hid_unregister_listener(&drvdata->kbd_backlight->listener);
+> +
+>  		spin_lock_irqsave(&drvdata->kbd_backlight->lock, flags);
+>  		drvdata->kbd_backlight->removed = true;
+>  		spin_unlock_irqrestore(&drvdata->kbd_backlight->lock, flags);
 
