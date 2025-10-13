@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-850749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90044BD3B5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:54:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5782BD3AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E376F3C7DDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91AE93E4617
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD230EF62;
-	Mon, 13 Oct 2025 14:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC69F30E844;
+	Mon, 13 Oct 2025 14:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sRG9/sat"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011040.outbound.protection.outlook.com [40.93.194.40])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="n6SvTN+4"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012011.outbound.protection.outlook.com [40.93.195.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3670F309EE8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587AB309DB0
 	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.40
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366181; cv=fail; b=SuE4V2piuBH/nHXfXnJCTvN+tYFl48PoIVEJRk485jD6nNeLgAwpRWTAhiVnPBqZuFisKzBtqc9jMPdfN3oYcRxMv0yF7FEBvaNcrX5ax5pqOvNCSNH/EpInhu9Fn2RxOxuUBhxm/Q63saNM8tWW6aI5Gxf8uLq1i0gZqaycWPc=
+	t=1760366180; cv=fail; b=d65QVdl8PoKJ/qmevuyp4qcKrDVgNj0JMlBBh3QyfzBF2zPpdWnQX6oaOAiOE8br9zdet7q6mrPgT0l+mD/sfSwHxud4FV8E7dC58mZsvyjpc0MLt4YClnkbfnsRcFlZpmTPaHTvz0DFrsBNowb0+Tz1u+XinkUsSKFCciGUtCI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366181; c=relaxed/simple;
-	bh=eb/AkQOOVU7N9BBw2hoNmNgm6b1bj8UzkhTTC2O4sV0=;
+	s=arc-20240116; t=1760366180; c=relaxed/simple;
+	bh=lYTgf73XlbjBrrO49F6YeAXkxNrCVkLHakzGVmI5/xs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U6wyXYTm2kycHGF4PmCWZvfNzFnJ/rGfjr0+erjtIzhf5iwJLfEBf8PEpxt5+DeVZRYTjYwu1MEPETGw+knxUcfB9iYLmQTJ/ykzZAfPIK3CaVkwDiKBZiPn4+KXMwqk49HwcIJh98rKWsikh9kzOIxlmjlWCYDrNMgXfAGuFfM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sRG9/sat; arc=fail smtp.client-ip=40.93.194.40
+	 MIME-Version:Content-Type; b=acxPuOmNBjPxPsv9x9VUWGqJ8fksxI7A483EctDNCFY/IhRzNyPXVV5mB83pE9F5DOz2QN+iZcHIhxEvtx83xiTHvlBUgQp1qHLwqOP8LoPIS+15Ofa7pEk8UGBQJN2IUpfwA5lQqV0vjbmbuNavnUVpOWlz3Ef4EJghmdPV1y0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=n6SvTN+4; arc=fail smtp.client-ip=40.93.195.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vz0OlnSDUd4qXyzV2m7isbb450d5TPuAC8dQ/AxFqigO4ZptuV8p4UoPDFooud/vcBVVs2YdMJtJ6mt1OVUElczYMw5z3tofBkLfxunQI3baH4jLlZwpJ380yC/vkuEGgWQVM+ZmonJ54LnLsvayeglsM6iluqeugmfJ5L/owstNCQEpOBxlU4DF8e3cttHNhqibBNTJOyZM3aN9TyTuqNFL4mW15jeQBC80XL8TGF2uYmBQG/MKZU1FWCvqQGn8JSrOT9XzyAeRGUIb165xzulhiVI10FNlChyQEoMWAwYsPwvWHgErKmhDU6oGpNJL3asFktDVi/nH5KXLwBGjdw==
+ b=d9UY3xQrd82dXYdSFolheZj6HjbeK/eh3L+T2p6wtdcpDUOaMGsGdT9ASo31Njp/3748pB33gsVQoYyDMiMeM+1sZLvQbUJ5DZH9p+9Aabbj8buSyjKd2Ymz3h9nNgEJ3uP6oT9rreymZNxbjc8lpoSGPU5CVSN753OFjjAXuTWbV4/uNDTwXJT935ivPYNkQgyt/WavW7be5mwOUqZSSpYi+Ut5KHEVHGSXl3QOpDJNlC7UDzOv9C58YCqTFRmRgVZfueaOUPnNqzAUoxzBHgvxO5V7PYnoqksPkm/rm9eJwBa3CjGoeJwLK3H4uQRlDK6/kuctvpt4M+uJlPUZ4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KPy8hxQB9cDhLAr5qmwiob7XhkPkJue/DpywtPPJGos=;
- b=iiJN1a+KRL4iLxIBUZvsKtpwi0yT7Ys3TVCjIT1MeCyhnXUgiOlwpMOHg9D9ngqg7TjfBlN2LguTDCQt7kyuJ0G29nx5tx/Sbasg4TB16XdEL3HUdXurpGphp1qQ5P8bco2nKnD1ff+fyYSfK1pL+Lg84wPUi/v81nixc7rpQDpQx6JTtY1Hk1+V4XKa2Kc4i7mfsSN9/GbtUbdJj7EK7+eRBIwiEdBwYdzHLxdRlWf0hphOq7jRlidB4t5BRi0b/B+hhKB0+DTSI10+appUN1or5iy4SftsZgO5+nuOdYE/isInENOet3LyNH27zkAVzNIBROr3S5+wFcgczS3HkQ==
+ bh=JNwbeXHhiQdDD553vkAdG1r8VNb4QKRnPXyqfciNwvU=;
+ b=I+3UqQ8NFgNEJahoarm5vn5Yc+4VTL6LaWgby/8M13Ag/EAJzf8C2NP01YU6Z3nEjFlo7kkihGCYHb2QqImdXl2Xe3jc/LierxlYwMgQJtx0KmOYYGk66SNaD34hI8CUobPEnLxQ7RL5jaYkdsicmC8BpX+Iknq+j5XzJ6N/4K9Fvd0SLzpKfyKPQpNDJJSlfawgIUPQthgX3kjzDHhJZt89zUtM1js2L3zJTuOj89xq7j5qJiLRD1wZR7yg+hF6eoILLT7ZCH92D9YCgp6npVQMVsaLUlTg9R2XBQkjTGxx3CbXaNjmQ3R8XTAJVb+yi78JifzozN1fx2LGEzRq1g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KPy8hxQB9cDhLAr5qmwiob7XhkPkJue/DpywtPPJGos=;
- b=sRG9/sat8JIM0FlxYpJtl9gtBBBRMFSW4Ux96bcs4aAJsYqQaS/tsQk3UEOC080MItkxFM4AWpjmVa46Jb3CS69zdGlv5suAhtrySnpjlnhbQ49du04LV/Lm/Ir1oHNwFf/Ax32f6l8hH8SMW4qRHwUASuKGDoCSoHGpmz8pF/Y=
-Received: from BYAPR07CA0045.namprd07.prod.outlook.com (2603:10b6:a03:60::22)
- by CH3PR12MB7643.namprd12.prod.outlook.com (2603:10b6:610:152::19) with
+ bh=JNwbeXHhiQdDD553vkAdG1r8VNb4QKRnPXyqfciNwvU=;
+ b=n6SvTN+4Hm4tvmimPEsKRqJg3pUKqBZk0E8xDUjTm3aQLmG7UQ1xnF0RbMgzC+CkxQVCwZD/8qLtg4XmPojg5rR0g+X4nSh+R/fSoTDzJ0RzOIg3BmgkC3025g0CF0c5Lk8AzfBfkmKII0QxJOgeyPRCtuBfNuW0hkr0hisG1fs=
+Received: from MW4PR04CA0062.namprd04.prod.outlook.com (2603:10b6:303:6b::7)
+ by DM4PR12MB5770.namprd12.prod.outlook.com (2603:10b6:8:61::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 14:36:15 +0000
-Received: from MWH0EPF000989E9.namprd02.prod.outlook.com
- (2603:10b6:a03:60:cafe::81) by BYAPR07CA0045.outlook.office365.com
- (2603:10b6:a03:60::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
+ 2025 14:36:16 +0000
+Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
+ (2603:10b6:303:6b:cafe::db) by MW4PR04CA0062.outlook.office365.com
+ (2603:10b6:303:6b::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.11 via Frontend Transport; Mon,
  13 Oct 2025 14:36:15 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -62,7 +62,7 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000989E9.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ MWH0EPF000989E5.mail.protection.outlook.com (10.167.241.132) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:36:15 +0000
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
@@ -77,9 +77,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 39/56] x86/sync_core: Add sync_core_nmi_safe()
-Date: Mon, 13 Oct 2025 09:34:27 -0500
-Message-ID: <20251013143444.3999-40-david.kaplan@amd.com>
+Subject: [RFC PATCH 40/56] x86/alternative: Use sync_core_nmi_safe()
+Date: Mon, 13 Oct 2025 09:34:28 -0500
+Message-ID: <20251013143444.3999-41-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 References: <20251013143444.3999-1-david.kaplan@amd.com>
@@ -95,93 +95,79 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E9:EE_|CH3PR12MB7643:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64865510-9262-4dff-7f1e-08de0a65dd27
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|DM4PR12MB5770:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a79167d-bdbc-4a84-86a8-08de0a65dd7f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
+	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YSqI+/RZrmm9+az+Kv9CkApr2A87u9bbu/Oeu7Q5xUo2zD0jFhKprPpH+1uM?=
- =?us-ascii?Q?lbQJVNLFRcemlgZgvI2POsqDnGtcF4SRDX4emyJABtfBxJlmaR1w6k5CCsLm?=
- =?us-ascii?Q?AUSCTB48pGnuOn+uCcJv7GwDZ6RCcCuPhQHCahN8iOmDKqVcAh2BZi6rFk0L?=
- =?us-ascii?Q?n2Ssw+aIkkh9FQticvJCAYUTk7ho9swkhvDrCBSm/D6IDRLEYIE0LVUmnylf?=
- =?us-ascii?Q?66jdPXgzki6JxgewkAprCfnYsBK+GrWFGvzu8HtxUXKPEuVuMya1h7gG23NQ?=
- =?us-ascii?Q?MnonyNqKDC2VWqSKB2a0WuqTLa1dbLwsF3lcn6s7ZX2+eCDSm1VCE1FvfqzT?=
- =?us-ascii?Q?9tE7AZmYwYybKNadpjqivGieAxjwRqWOwOULfzkO0R7Zo/8rBLHNHYxZx/8P?=
- =?us-ascii?Q?I5B9yJGiEs9mAi8UGZsf3N1oN3uZtCjhAWq/RPNx9E3+KXheDTS030341KUw?=
- =?us-ascii?Q?469MCefW5hDIbs8vmhT2JOlhubLMzkow9zZMeuN5n/peaOOzvkbXsa4feOhA?=
- =?us-ascii?Q?zU4u8ddtT/m7NUD1L57Mq9SAOzco1c5QkcFYnkEO/GnYzvvdNFLTJMbP+X8K?=
- =?us-ascii?Q?EPPQC0VFffhrhYXtMeHVo3e3inDVaGZlvL6NmLxAUmx8eHsI2LsSuGDbmqWx?=
- =?us-ascii?Q?oPYBp/WEEAa/iCtHxRAxgnNYTl2f01klIuzny4Etnr2iJqV79U7svhQmQxvd?=
- =?us-ascii?Q?j7NqzbHnBkSuxycz3fS4pKuM5jLdolfnkZbjBponytjmprnUevEryZEtG4Yk?=
- =?us-ascii?Q?hqcjzLgxxX1FKLfJWwduXi15z0+gkusuqdJjzHV7jl+e8frDLn700RbCBMQq?=
- =?us-ascii?Q?O4Svc2/e6eBUdmXaVFNGFycRnvCbmJ5VyVQp6ptJRzrubiS5MeIfiqYBWTXL?=
- =?us-ascii?Q?fvKyS1LM8MnKx3joBxT86Ub7halQwXCsUysj3Jnub0rnOwWnSCQtqoKqugkE?=
- =?us-ascii?Q?ktkBn0H76sJc5PDdCYofjSwGK0n/ANlaqv7vvwCSoxhzi6TZYQuRA3AVZMQx?=
- =?us-ascii?Q?QLNDQ7Uvm19xXstuXm2CIJxwrZ5IYcV4FR8TjpHWIrMUZbGJHopgZz/E7gq+?=
- =?us-ascii?Q?BxcErOlxvd7kigCkjFSzsJgRGJUIKg70ekmEqoJzr7lc4dyWVbKXOTKuWSeo?=
- =?us-ascii?Q?wvDuDSEHnDRimndl7KTGOa1QK0zV7fzD5e6Zdrlf8Idt49kLroSFjl6DS8Ij?=
- =?us-ascii?Q?tXt1Y9G3vzS65N9LhIRwgffRBVMNPe+IDQEo9ZxcUfmUWyQpbHVl8JbjziHd?=
- =?us-ascii?Q?ojddILLJAeKDVYgsbWJA1nPzdk7IDdvk2/3y6ZUikU2U1EhzOEhF50tImUhw?=
- =?us-ascii?Q?NmhxlH2CsTumZJJOSG61iweD4po4jfUgyyfYwXTOp+LVkCUBEHdQ3vYr6bo2?=
- =?us-ascii?Q?JEcpgnzGulKbpD7GijwTRupcjxlY7YsCcBdF0t1we+IjETeuHTqJ2aBJMBpS?=
- =?us-ascii?Q?NcbHbsn9N6qoOV7JvY2vWIH5H924BQYsnyuX6DZ7fomR/iHS1su/pHBrLYY8?=
- =?us-ascii?Q?qY4cIR7ti9zvrd3ESn7jbPeNofi5aNSZfqUjDtsNOmfsLB2mnvZs5ygq/ANW?=
- =?us-ascii?Q?C9XHaCywAGEj7nxFqDU=3D?=
+	=?us-ascii?Q?G1bkjK502JsFSLio6x40HYQZoo2mKo9kluy9wnKJGf2/YgXLOPv9TXYIyp9G?=
+ =?us-ascii?Q?GlR2aMk9gRmhJ6fLsmFiMjVFa2sCx05Aj+RmmosQv0d3WCBkUh1P+eh153K6?=
+ =?us-ascii?Q?HWWSAhPYUE32NLP9lkbQGb84J/TZ82v8hxxkfgiYdSXFeM5Cq+uyOzs2zsAb?=
+ =?us-ascii?Q?gCSYglFcs0M8e3SqdhIfeSNqEskLatT8ayV22xyDqTW4RATgWySI4UvR19pq?=
+ =?us-ascii?Q?o3scSDne+H6We8fckIrop/de9E813hoB7DzIFgM9rdCGjp1qrLjmoZXEsPVY?=
+ =?us-ascii?Q?YYFMTIjd2sArMd8WZEvFNlmtsqL8R6RPAisOOD2tS1rqXLcRHYYXjIGgp1BY?=
+ =?us-ascii?Q?xFXrznmwNliZdSXVwqsKnhJ5wvqvBJhTDDXYR4W9C1fy4E6Ozg1I7qxQpDei?=
+ =?us-ascii?Q?Z0F4A1Cq0ZUL9hVhSZd4smDOCwE31G90tiMbZV1DJBP//0/1V+qbZHX8o+7o?=
+ =?us-ascii?Q?kwnNi4WFjWqP4A08ByT5PM+yLOzc05wPm8LtrnBIVdpIh3MM6LFXG+EyU637?=
+ =?us-ascii?Q?igSlr0cDCiXKq7qbEY1sv9pumMKolDN9VKPFHDvguZIKRlNXIBaz0W1R3zR/?=
+ =?us-ascii?Q?wAOdITV4kEQAIrgBkcLzA48neoZt5WoQjKGlFaHBU/1gT9EJyITm8xM7nPNk?=
+ =?us-ascii?Q?NzQp/z1eFLr76EIWE3/pA2JowaBh9wh8TANbA8xin9nhdSTABaNWN7z0HmZS?=
+ =?us-ascii?Q?INkp5nK7Ef5yv0d2KP3LUoCA6Xe+C4qKQjZ2F3/YNA1/AuwVM0oUJ6o5VPd8?=
+ =?us-ascii?Q?10c0W1rVrZAlkTxoF8R9XltRt8UZPO2arEIYAtMozPJ/sfnLKJSYmnPput3r?=
+ =?us-ascii?Q?jLi3pB7zTjzwcQhcnzWf+Q0/rLpeowAG1RnFEsqiLnnMZE/ivcYvT+syJ2GN?=
+ =?us-ascii?Q?L5My6inaTFRdNalqNy/5oyLwi32zm7VZGEaVBEctuJbPAw0QxejX1wf0v541?=
+ =?us-ascii?Q?pSxP63uLB3UC8xei0Y1L28kDsVy18VQJuxtBXBYPDruztk/9f6kVNykQoRMT?=
+ =?us-ascii?Q?FgQAVF6BoNTYdJRVEPxXFVudpz5qPmbRdk0Zzc5UtYUSqg+/PV8Cve9SCGRR?=
+ =?us-ascii?Q?UWjwdMVzjk2nfraUIFh9hS4k/6gTNerVAXEJP8+VT3DEa+kej6wRS9/iNozW?=
+ =?us-ascii?Q?OM++J5hgtwwaxDg7vGE3jwbVAH/l/iKkHMatXcwwXUuLAwwj+MYwBCiHL5pJ?=
+ =?us-ascii?Q?iS1m1AN79tH6LjTwdBW40sP7aH99RE+mKLmpgYbURC37AxiGsWkPUJQaeexb?=
+ =?us-ascii?Q?TEetfT0wIYAVe4SvKppO/3amkN1EW0w6BUAQZjWvQc5RPClaqhdbgCZQz78Z?=
+ =?us-ascii?Q?lgLDH+O9PKgqDHEOREbAsPn0vpW50C8lfrQZ0OsxIw+buFZtLww+m/+h2QhM?=
+ =?us-ascii?Q?DJTtQcY9p9RaIcRly/3vY2u/sKhf7k1YM8GFuX82AraQSeJ9VE76WYdiCf1q?=
+ =?us-ascii?Q?JRNQ5zuVauaWETdg7dqKFdC8fNTYtPcKooiYCFGlDUOqb0RhthA/2gzkqt5z?=
+ =?us-ascii?Q?EdBThvkXkxYcADz4X7zsRaHK/BkOZrSBXPvWEDhzKTdVbp8FrTwWW0vu5eII?=
+ =?us-ascii?Q?agva0W4/bwwqd+uYVI4=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:15.0119
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:15.4700
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64865510-9262-4dff-7f1e-08de0a65dd27
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a79167d-bdbc-4a84-86a8-08de0a65dd7f
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E9.namprd02.prod.outlook.com
+	MWH0EPF000989E5.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7643
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5770
 
-As noted in the existing comment, sync_core() is not NMI-safe due to the
-use of IRET.  sync_core_nmi_safe() uses MOV-CR2 which can be safely used in
-NMI context.  This is needed when modifying kernel code within an NMI
-handler.
-
-IRET was initially chosen because it works even under environments like Xen
-PV.  But Xen PV will not support CONFIG_DYNAMIC_MITIGATIONS and the need
-for NMI-based kernel patching.
+Re-patching is done under NMI context so the NMI-safe version of
+sync_core() must be used.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/include/asm/sync_core.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/x86/kernel/alternative.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/sync_core.h b/arch/x86/include/asm/sync_core.h
-index 96bda43538ee..f4e2f868d71a 100644
---- a/arch/x86/include/asm/sync_core.h
-+++ b/arch/x86/include/asm/sync_core.h
-@@ -88,6 +88,20 @@ static __always_inline void sync_core(void)
- 	iret_to_self();
- }
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index b67116ae883c..2d48d750d4d9 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -2585,7 +2585,11 @@ void __init_or_module text_poke_early(void *addr, const void *opcode,
+ 	} else {
+ 		local_irq_save(flags);
+ 		memcpy(addr, opcode, len);
+-		sync_core();
++		/* Re-patching occurs in NMI context so we can't do IRET. */
++		if (repatch_in_progress)
++			sync_core_nmi_safe();
++		else
++			sync_core();
+ 		local_irq_restore(flags);
  
-+/*
-+ * NMI safe version of sync_core()
-+ *
-+ * sync_core() may do iret_to_self() which will unmask NMI.
-+ * sync_core_nmi_safe() uses MOV-to-CR2 and is safe to use in NMI context.
-+ *
-+ * As noted in the comments above, this sequence may fault at CPL3 (i.e. Xen
-+ * PV).  Therefore it should only be used if outside of those environments.
-+ */
-+static inline void sync_core_nmi_safe(void)
-+{
-+	 native_read_cr2();
-+}
-+
- /*
-  * Ensure that a core serializing instruction is issued before returning
-  * to user-mode. x86 implements return to user-space through sysexit,
+ 		/*
 -- 
 2.34.1
 
