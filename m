@@ -1,169 +1,125 @@
-Return-Path: <linux-kernel+bounces-850391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C880BBD2AFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:02:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFB0BD2B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16FE1189C5A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:03:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20C4C4F0B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD67305E10;
-	Mon, 13 Oct 2025 11:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9422F305979;
+	Mon, 13 Oct 2025 11:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYHE+Ell"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cV0QrZYQ"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D66930597C;
-	Mon, 13 Oct 2025 11:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FEF305976
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760353309; cv=none; b=lszhDEz94mGNBLhgk5Lbra6dCxj9tOZ34j6RELY98qvYebjwqDVV1c6A4f0zyQtzL64pXUG3WhvQA/VB9f0UmRdnqFTw/Xka+3My+8BIeOWHbHrTfo4sLtj1xgnRPECFTTt6X9lcVJCbEIMZo1WfXYBv6l350Cxw3UrylsKXKnY=
+	t=1760353371; cv=none; b=kfFHgvLlxCOFa0Vl/SoOaZSK0uftiXnL7zo2vAtwShq3y1lk/CA3te2cIvJycia65lkslgh+/zimIFUvmL/Xfh08nVCu0j8FHCcPAIj1OXZZ4RBV3pT/T8ZtPbTvALJDYIFAzwQOO7GOGYJQ4BSylgOWolN+YO39nr/5IeEBlrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760353309; c=relaxed/simple;
-	bh=iJSBhGjVFS2FVaaRfzW2soMJOd6n5yz2PYztK0cwd4o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IMYPnauaL2dgAEhcJc5SKtJ0mXNqKq+YZROrTlQs9D3QTDBypfbXrW+iTq3bGLXUQnNJgglAICBUjevD9KW6ijAS7I7k3R/KQUFlNXhiQILHHHV5YEUA7x7XoLi123vkCNdn0blTVfvLJnyiikE8coGT5xpxGnQOQqApvJJFIP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYHE+Ell; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DBE6C4CEE7;
-	Mon, 13 Oct 2025 11:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760353308;
-	bh=iJSBhGjVFS2FVaaRfzW2soMJOd6n5yz2PYztK0cwd4o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qYHE+EllJhmRU+D56qVc+dAOrylJIHOKGzpINrZEig247PthLBHRyUI4i9k9kTQ4a
-	 xSGGd0UBCiv+NLrmrhB53L9QD63R11IoUn7917laDAhtS1g/lLloAR59PbYKAqBSVi
-	 8f6Y0OqTyhSQuai+GGiv/uYI+c8ea3NMX9AIQYaXf1Hg45gln+58dkvD6AmnepXEMl
-	 SWbxO6eD8sTcuXTf5n/UMpfK9mfUo87xCgcxjaKMb0SawmvScKWz/HBbl+L2oWxL9E
-	 o2C/3jVkRXLbA+t4sDZQ12zeSplEfdBOsE02bJo6ZX39XEotqyd2kt4OL4fTdvSgOB
-	 YV3cbGST/I72g==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Mon, 13 Oct 2025 13:01:36 +0200
-Subject: [PATCH v4 4/4] media: gc2145: Fix the RGB MBUS format
+	s=arc-20240116; t=1760353371; c=relaxed/simple;
+	bh=CKoGj0EfJSSSZnNc93o/3z1IhI5G7ANKF/pI/LrBGI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o6kTd7CZminaY3Oq/xOx0vSXTiucIYYljwSfL/4XAW3cTDf6PWgncHvKQKbje7Pu+f3ASapun1f8qH2ouBfHsauc87AStI1MRXLAyQRrPKb9W3ysMnLhbWh5Z2HjimqJIwz2IF0SRRthovx2KZMGf8QWeTmz4hbGvIP0dQr5Mv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cV0QrZYQ; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so4692032e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760353367; x=1760958167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7wVvrelX1rBOcw+ZepaH7C5yTmrA+Ts5kdb52LOjIc=;
+        b=cV0QrZYQfXByovhpSOsKHMNgMIlZRkruRBwT17Abq50b+ytRxcKgw+PjH2qQslyzro
+         kl4b8u7WPBtZb04369kXWwIvgE6K0bpkeB8fne1vX9b2jhOcSJPX4yBX+aDdVzxao+Pp
+         oiehWr87POc7cVHFWuhNmGU+zDJBl3qR26p9NHx6VPmkE6Q4LozamAlp6mJ6V6pNF9sP
+         te0m3HSGI9YB9iuFdi+VCik6/VySemSlCt3swj3DBkDhJCvBjDNmHarUtqXh2w7YX4/x
+         us14+U2GwqwejjWyHcHSfuN7AELeiJ8Wes5Twk2jEqbq2S58dTIOwBEi9WBlIJplZli3
+         5vRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760353367; x=1760958167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T7wVvrelX1rBOcw+ZepaH7C5yTmrA+Ts5kdb52LOjIc=;
+        b=q7kgyRejsVPS8juULJh4tdjPNXsditsorCAP+Pk05Cw1+8dJy7aHm7OMsG14dBNwoz
+         mHIrH8LWLTsmYaKLWE81sq9DYXw39ryVKbhiIJ9tTnEDn7BZPH420Ty38gIcRiSVTLZz
+         5IqQv8PWE/EOb7b19Wz9hcE/KrkrBpIqKSDxjxCkydqxtBmwmPeHCU68KjnV3gbUMsqv
+         XxQzxrfyHzzq0T80h6U82OjMVxxwk4sI1mpmGujxw2d17xC4uF3xdUBg6koeVgijdTVE
+         542DSHtZBcJtF1zschikqBquA2byOg1/5eHxPy1yQVq+scTh1WqTS5rSMBxru6PQ+sCo
+         dT3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVpFHI+5ZJaS9DLNTbibtpAFzAN3r1BFqLN4gxwkwMw6gwtRfAjz1GwfV34qaG+GomDmW7dEQg5O+jcRkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz6n8SLjQBprem6vlvwUmzvD3vcuImzEq6p/NWu4kX4wT4lCUh
+	muRk0oMuBEMID8iTD2tUS3zlDR+zBP4XDf2JtGDHtR9zCPVInjy9KSog1l5gTtR7duIs4CD7j6g
+	rHaf3Tfkx0ze63QpWdpiyADslWxxbAVWgwQa9uCiGqg==
+X-Gm-Gg: ASbGncv+JV6W54KAX2eW70LeyTSIa0QR1swmFWNHti7fOjS+z/CQpE8WLUTynrgk6ui
+	UhZkN+fbjYV/DL5NCBYR6SNDTLh0VQ0fn98sH4KeFmOF8oeHm60gnkscoN5ImZCp+Qq5Q4nGzfI
+	MGgIEnoZHsagUP8/K1DuT4abkeFOFoOoO4017tNbAswOXuKBPTWRCFt0eNwdLiTEFoPFs/KZg9U
+	ClKxv27i7TytBDt4hbGquOnt4phKQ==
+X-Google-Smtp-Source: AGHT+IE5w8+CFwr8uCG9h+7RoIC2CQYU/iHXde/XXvD4ftzJpLa+56fpca+R4z2uCP2WV6KK8wJ5ehq1lJGOlBMOm2k=
+X-Received: by 2002:a05:6512:3b8e:b0:576:f133:9288 with SMTP id
+ 2adb3069b0e04-5906daea903mr5757309e87.54.1760353366541; Mon, 13 Oct 2025
+ 04:02:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-csi-bgr-rgb-v4-4-55eab2caa69f@kernel.org>
-References: <20251013-csi-bgr-rgb-v4-0-55eab2caa69f@kernel.org>
-In-Reply-To: <20251013-csi-bgr-rgb-v4-0-55eab2caa69f@kernel.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Mats Randgaard <matrandg@cisco.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans Verkuil <hverkuil@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans Verkuil <hans.verkuil@cisco.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.2
+References: <20250926-manpower-glacial-e9756c82b427@spud> <20250926-unshackle-jury-79f701f97e94@spud>
+ <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
+ <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com> <20251001-backless-cattle-a98db634d7f0@spud>
+In-Reply-To: <20251001-backless-cattle-a98db634d7f0@spud>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 Oct 2025 13:02:35 +0200
+X-Gm-Features: AS18NWDldBKDLZmy6X2cYSIZCD5j-DgRpx4ZkxSimEcAB1Z5J3nwMyhaKn7ksvQ
+Message-ID: <CACRpkdaEsa5gSpGxWG8xudMePt12nZaZRCRrW5Bf5JQ0f1K9Zw@mail.gmail.com>
+Subject: Re: [RFC 3/5] pinctrl: add polarfire soc iomux0 pinmux driver
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The GalaxyCore GC2145 is an MIPI-CSI2 sensor. Among others, it support
-the MIPI-CSI2 RGB565 format, listed in the driver as
-MEDIA_BUS_FMT_RGB565_1X16.
+On Wed, Oct 1, 2025 at 5:45=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
 
-Most CSI2 receiver drivers then map MEDIA_BUS_FMT_RGB565_1X16 to
-V4L2_PIX_FMT_RGB565.
+> They're not actually package pins at all that are being configured here,
+> it's internal routing inside the FPGA. It does operate on a function
+> level, but I don't think there's a neat mapping to the pinctrl subsystem
+> which (AFAIU) considers functions to contain groups, which in turn
+> contain pins. I suppose it could be thought of that, for example, spi0
+> is actually a function containing 4 (or 5, don't ask - or do if you want
+> to read a rant about pointlessly confusing design) "pins" in 1 group.
+>
+> If I could just work in terms of functions only, and avoid groups or
+> pins at all, feels (to me ofc) like it'd maybe match the purpose of this
+> aspect of the hardware better.
 
-However, V4L2_PIX_FMT_RGB565 is defined as having its color components
-in the R, G and B order, from left to right. MIPI-CSI2 however defines
-the RGB565 format with blue first.
+What I would ask myself is whether the abstraction fits the bill,
+like if there is a natural set of functions in the silicon, then the code
+should reflect that.
 
-This essentially means that the R and B will be swapped compared to what
-V4L2_PIX_FMT_RGB565 defines.
+When it comes to those:
 
-The proper MBUS format would be BGR565, so let's use that.
++static const struct pinctrl_pin_desc mpfs_iomux0_pinctrl_pins[] =3D {
++       PINCTRL_PIN(0, "spi0"),
++       PINCTRL_PIN(1, "spi1"),
 
-Fixes: 03cc7fefbb09 ("media: i2c: gc2145: Galaxy Core GC2145 sensor support")
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/media/i2c/gc2145.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+At least be careful with the nouns used: are they really "pins"?
+Should they be described as "pins"?
 
-diff --git a/drivers/media/i2c/gc2145.c b/drivers/media/i2c/gc2145.c
-index b215963a2648b7423fc0ca42b300b6c586d2b994..3c179ccf19cd7ed016699d4de4eb81271c1e11ab 100644
---- a/drivers/media/i2c/gc2145.c
-+++ b/drivers/media/i2c/gc2145.c
-@@ -579,11 +579,11 @@ static const struct gc2145_format supported_formats[] = {
- 		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.datatype	= MIPI_CSI2_DT_YUV422_8B,
- 		.output_fmt	= 0x03,
- 	},
- 	{
--		.code		= MEDIA_BUS_FMT_RGB565_1X16,
-+		.code		= MEDIA_BUS_FMT_BGR565_1X16,
- 		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.datatype	= MIPI_CSI2_DT_RGB565,
- 		.output_fmt	= 0x06,
- 		.switch_bit	= true,
- 	},
-@@ -613,10 +613,25 @@ static const struct gc2145_format supported_formats[] = {
- 		.colorspace     = V4L2_COLORSPACE_RAW,
- 		.datatype       = MIPI_CSI2_DT_RAW8,
- 		.output_fmt     = 0x17,
- 		.row_col_switch = GC2145_SYNC_MODE_ROW_SWITCH,
- 	},
-+	{
-+	/*
-+	 * The driver was initially introduced with RGB565 support, but
-+	 * CSI really means BGR.
-+	 *
-+	 * Since we might have applications that would have hard-coded
-+	 * the RGB565, let's support both, with RGB being last to make
-+	 * sure it's only a last resort.
-+	 */
-+		.code		= MEDIA_BUS_FMT_RGB565_1X16,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
-+		.datatype	= MIPI_CSI2_DT_RGB565,
-+		.output_fmt	= 0x06,
-+		.switch_bit	= true,
-+	},
- };
- 
- struct gc2145_ctrls {
- 	struct v4l2_ctrl_handler handler;
- 	struct v4l2_ctrl *pixel_rate;
-@@ -658,12 +673,17 @@ static inline struct v4l2_subdev *gc2145_ctrl_to_sd(struct v4l2_ctrl *ctrl)
- }
- 
- static const struct gc2145_format *
- gc2145_get_format_code(struct gc2145 *gc2145, u32 code)
- {
-+	struct i2c_client *client = v4l2_get_subdevdata(&gc2145->sd);
- 	unsigned int i;
- 
-+	if (code == MEDIA_BUS_FMT_RGB565_1X16)
-+		dev_warn_once(&client->dev,
-+			      "RGB format isn't actually supported by the hardware. The application should be fixed to use BGR.");
-+
- 	for (i = 0; i < ARRAY_SIZE(supported_formats); i++) {
- 		if (supported_formats[i].code == code)
- 			break;
- 	}
- 
-@@ -696,11 +716,11 @@ static int gc2145_init_state(struct v4l2_subdev *sd,
- 	struct v4l2_rect *crop;
- 
- 	/* Initialize pad format */
- 	format = v4l2_subdev_state_get_format(state, 0);
- 	gc2145_update_pad_format(gc2145, &supported_modes[0], format,
--				 MEDIA_BUS_FMT_RGB565_1X16,
-+				 MEDIA_BUS_FMT_BGR565_1X16,
- 				 V4L2_COLORSPACE_SRGB);
- 
- 	/* Initialize crop rectangle. */
- 	crop = v4l2_subdev_state_get_crop(state, 0);
- 	*crop = supported_modes[0].crop;
+Maybe it is best to come up with some custom struct if not?
 
--- 
-2.51.0
-
+Yours,
+Linus Walleij
 
