@@ -1,415 +1,152 @@
-Return-Path: <linux-kernel+bounces-850544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A94CBD323F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E29BD3242
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B69954F0EDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:09:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 529894EF462
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A532E88BD;
-	Mon, 13 Oct 2025 13:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C972EBBB5;
+	Mon, 13 Oct 2025 13:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c2+I8Y+X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUBY8U68"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0386C23BD1D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009F251793
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760360994; cv=none; b=KlrbvHDhp6bg7xAHWtCz7Yy2pNo2BbmFTxWZJRXP9vnHGW1ITpNOe+nBEntNgbnl7RDyVLMe/X9Oj0LOpg9dcQxMucJw4d9O3HYjnE73GojyV4Tf+wkcIHxhYuueHvzJFwZ5MhpI3yqUt6ugAO3ECx6Nm4MHrU+gTrx4Er4Qb4s=
+	t=1760361007; cv=none; b=koXyh1n0LqWEUPJCKDadXVYCLETU4hJ0khBbGFA3evxLtzPeYXGem3JBsSG/U8EyYGz4zWglW/Muj2k1HgYq7c146CjHhIVbuDyTLanbhL5BRH8h+SsHRgy0nIXMYJnYa2rXosa5p8WSwUwYKoPHw4PY9imY0yptc4igbje+dEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760360994; c=relaxed/simple;
-	bh=P1cQOifQd28PNNvporwPCtacyHXv1fJkfQikLoUOgPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nk7L6POqb5og5N1kVe+netfuYjklITY4hP4be5+N9Q2p55prsrTv1LTTNbM817l3dRcmjvrZdq/juZJhjFSNJdlCRwgoYCg4EOJTtBNE5c1uc1OdtzBbGTNd32p2VmhZYAfmci9UklqIN3XmJssZd9i4eUF4T5xvOPeFX9HpZVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c2+I8Y+X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760360990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2sb9+tj/NdPdAHZt1L/fLKrYzPvINCloUN8HN7imzWw=;
-	b=c2+I8Y+XE9JFUawXg9glFM8msjHb0rnYMMQquPhUKCM5Ko86GCqp1/pJh/ppCVqQW1aVM8
-	Gv82g87Pd/wndBMUNNsiZj9USjHfMS0V7H8U6LJ/pcrYxyXxkZm4NzuinZyPu5YkXECIs4
-	7zRu1W1I8fNN5wC6jLfK+1N4DLixXck=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-gQ-1f6MuOCyQ2LC0MAcUlQ-1; Mon,
- 13 Oct 2025 09:09:48 -0400
-X-MC-Unique: gQ-1f6MuOCyQ2LC0MAcUlQ-1
-X-Mimecast-MFC-AGG-ID: gQ-1f6MuOCyQ2LC0MAcUlQ_1760360986
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 799DC1800371;
-	Mon, 13 Oct 2025 13:09:45 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.44.32.127])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 15F3030002CE;
-	Mon, 13 Oct 2025 13:09:41 +0000 (UTC)
-Date: Mon, 13 Oct 2025 09:09:37 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Christoph Lameter <cl@gentwo.org>
-Subject: Re: Boot fails with 59faa4da7cd4 and 3accabda4da1
-Message-ID: <20251013130937.GA488956@pauld.westford.csb>
-References: <20251010151116.GA436967@pauld.westford.csb>
- <CAHk-=wg1xK+Br=FJ5QipVhzCvq7uQVPt5Prze6HDhQQ=QD_BcQ@mail.gmail.com>
- <e4f2a3e3-649a-423b-9696-6406ef56340f@suse.cz>
- <20251010184259.GB436967@pauld.westford.csb>
- <b63f1f40-a8f5-4b54-b025-d8d1daf78c9b@suse.cz>
- <20251011002902.GA479718@pauld.westford.csb>
+	s=arc-20240116; t=1760361007; c=relaxed/simple;
+	bh=AUiRVZ7sMn1+4J7dgwP6Hsi8FiuzPSM5pFCcK2UnPBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GO2vcOpUusKgZVgopKqOzS4RKOYq4C3SxqrOnWLo4kwNEAxTL8IPDZbkyzJD/IjJMA0ElXltQxaR3kz/0UvDhWflMGShMvenmksnxGtrDdnI1unrGCC4CqK75bzVYywErVj1c+QOpy/7KMrLf1cO49qN5kkcgL39M6AY6w/7XaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUBY8U68; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-26c209802c0so40432205ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760361004; x=1760965804; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=eM8SzoY3Ga6SPnTiQ6Z/fETrx3sjrihdY4C9vGThuB8=;
+        b=HUBY8U68SFD7l/322Mqdk+uq9Pn/68+DU6mp9aw72vS7mgBX4ZFK4d9Ol5+QtqOQla
+         dsFnKYcTr1V2STY7ekUy/DFk1Gp25O02y1qaRamHqJI4XNSNzpeFjRyG/IaPrXyHiA70
+         pIVyabyUwYHgwX7Hyo8K/40gi4LCyV9wn55dO/0tTiFuaDSVRNmDQ3e5PWBUgMcTiARb
+         Lpai2cveNqr0wr7Ia94b2pKxl4vNZ1VmAseLbT/1Dl10Gp0pDKhgKxgplei/9EZTHNg1
+         9/QlPIF6jYjnq86MKHqaMg8wnuEAG39SBr9C9WZzIvBtUmSjT6+yMrtL3O9dZz5pFONB
+         D3zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760361004; x=1760965804;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eM8SzoY3Ga6SPnTiQ6Z/fETrx3sjrihdY4C9vGThuB8=;
+        b=J+LJ80yUgcKuvS350nGOoavKi9a7kT7b6ELCSV5SxcLO+K9Z/gTo+K6sJYKgLTG4i3
+         Z8LYKg8qSnBdzEPCLnETG2u3DPf28qEDoiZ/B7CJAKhV64OwXu0L5irLOxneDSxxOOD5
+         Sb9laDN4MUepimvSxrfnO//HIhEdq05rEhTDfWJieMmUiFtaS2i3nrnmYZ+tUpSsEGny
+         56sEY2OisZ3w5Gqkad5hkayziTu2yY/smnUzpeaBij1iKnvgi3ivIfnKVeumZbM8Vwk2
+         uhVEJeqeUHFxTwxAVIO9TEjTrsJFS4D6PMeagoJkLBr/m+n62iLA0E9zSnyHHbLak0sm
+         T8gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZW5yROCLGeMNhxacsr+bV8qMRLG2TuOmH96Ivy0I+1PA6CPYmNE8Ux+e2AVfLqv3NJU8KSm4RahpZdUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgKYQPqo9PVvLm5lt2dnovYEKy8abJh7XasXYyzhh2PQdpIhZV
+	mt5AcoDZxDF1xMbS8K1Fem0RO+HvKyOjLRUuvkYFmboDFtd638FR8EqZ
+X-Gm-Gg: ASbGncs6xSWQBZaANa//HB8R5Y/GeKEwz4xeGco7FeZQGgSTHVHpFRLjHpTIP+bQYft
+	9ylf903Y8Rey99ysiErU+5uAQh3Fiwcfn6CREvgaqldg3SiFOFgdiLr2cSsuoWLJn0yxkvBP4Z+
+	7WrVQffzOFnAeW0pb5E/juVapMGQFTBzVe2hlulBCzfnhuS+gtcqV3RYkmnlH5vYQwaTkAlDIJQ
+	2mPYuJQ815wYLy9SDWG/x0bkkEoMXLGcJXmyz2A9a3JpcO39of0Q+OY0Vdx5E2I7GuH7KvbF08O
+	2LhF1Dm7AU28VTSvGw+kvKbevjMGryatka3HsyNutJoW47xDQWO1GtT/B6B/gTozZvgEWaeJTzH
+	cSRlhuDdHTEXYMCL3iUaeA+Gs/F1FbU+aRR/rQ4+3EstF8xvtaEnEIc+ILx5QrxCT+OrRBsgOuf
+	8iIu6m4PzjXcujaizAw8mIr+qMgpM=
+X-Google-Smtp-Source: AGHT+IFIBnpgJRFRAaPk2BVssrOVcF2oXu12DR1cAuTUDGRGCwwUQHQKIvSdHF1KGnJkx6jFK6hxNw==
+X-Received: by 2002:a17:903:2ecd:b0:28e:cc41:b0df with SMTP id d9443c01a7336-2902741fb25mr227013765ad.61.1760361003606;
+        Mon, 13 Oct 2025 06:10:03 -0700 (PDT)
+Received: from ?IPV6:2405:201:8000:a149:4670:c55c:fe13:754d? ([2405:201:8000:a149:4670:c55c:fe13:754d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08de5sm134550965ad.83.2025.10.13.06.10.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 06:10:02 -0700 (PDT)
+Message-ID: <79cebb23-5232-49f1-a0ac-b401707c2b52@gmail.com>
+Date: Mon, 13 Oct 2025 18:39:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251011002902.GA479718@pauld.westford.csb>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lib/xz: remove dead IA-64 (Itanium) support code
+To: lasse.collin@tukaani.org
+Cc: skhan@linuxfoundation.org, khalid@kernel.org,
+ david.hunter.linux@gmail.com, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev
+References: <20251013115136.16773-1-spyjetfayed@gmail.com>
+Content-Language: en-US
+From: Ankan Biswas <spyjetfayed@gmail.com>
+Autocrypt: addr=spyjetfayed@gmail.com; keydata=
+ xsFNBGh86ToBEADO5CanwR3XsVLXKhPz04FG37/GvZj3gBoA3ezIB/M/wwGdx6ISqUzYDUsB
+ Id5LM/QxLWYdeiYyACQoMDYTojfOpG6bdZrGZ2nqTO/PY9tmY31UyEXg5lwZNGnZgV+Fs6LW
+ E5F1PrndB4fGw9SfyloUXOTiY9aVlbiTcnOpSiz+to4C6FYbCm4akLaD8I+O1WT3jR82M9SD
+ xl+WidzpR+hLV11UQEik4A+WybRnmWc5dSxw4hLHnhaRv47ScV8+M9/Rb42wgmGUF0l/Is4j
+ mcOAGqErKo5jvovJ4ztbbOc/3sFEC42+lQG8edUWbk3Mj5WW1l/4bWcMPKx3K07xBQKy9wkf
+ oL7zeIMsFyTv9/tQHYmW7iBdx7s/puUjcWZ9AT3HkZNdALHkPvyeNn9XrmT8hdFQnN2X5+AN
+ FztEsS5+FTdPgQhvA8jSH5klQjP7iKfFd6MSKJBgZYwEanhsUrJ646xiNYbkL8oSovwnZzrd
+ ZtJVCK2IrdLU7rR5u1mKZn2LoannfFWKIpgWyC//mh62i88zKYxer6mg//mmlvSNnl+A/aiK
+ xdVfBzMSOHp2T3XivtPF8MBP+lmkxeJJP3nlywzJ/V038q/SPZge8W0yaV+ihC7tX7j6b2D2
+ c3EvJCLGh7D+QbLykZ+FkbNF0l+BdnpghOykB+GSfg7mU5TavwARAQABzTlBbmthbiBCaXN3
+ YXMgKGVuY3lwdGVkIGxrbWwgbWFpbCkgPHNweWpldGZheWVkQGdtYWlsLmNvbT7CwZQEEwEK
+ AD4WIQTKUU3t0nYTlFBmzE6tmR8C+LrwuQUCaHzpOgIbAwUJA8JnAAULCQgHAgYVCgkICwIE
+ FgIDAQIeAQIXgAAKCRCtmR8C+LrwuVlkD/9oLaRXdTuYXcEaESvpzyF3NOGj6SJQZWBxbcIN
+ 1m6foBIK3Djqi872AIyzBll9o9iTsS7FMINgWyBqeXEel1HJCRA5zto8G9es8NhPXtpMVLdi
+ qmkoSQQrUYkD2Kqcwc3FxbG1xjCQ4YWxALl08Bi7fNP8EO2+bWM3vYU52qlQ/PQDagibW5+W
+ NnpUObsFTq1OqYJuUEyq3cQAB5c+2n59U77RJJrxIfPc1cl9l8jEuu1rZEZTQ0VlU2ZpuX6l
+ QJTdX5ypUAuHj9UQdwoCaKSOKdr9XEXzUfr9bHIdsEtFEhrhK35IXpfPSU8Vj5DucDcEG95W
+ Jiqd4l82YkIdvw7sRQOZh4hkzTewfiynbVd1R+IvMxASfqZj4u0E585z19wq0vbu7QT7TYni
+ F01FsRThWy1EPlr0HFbyv16VYf//IqZ7Y0xQDyH/ai37jez2fAKBMYp3Y1Zo2cZtOU94yBY1
+ veXb1g3fsZKyKC09S2Cqu8g8W7s0cL4Rdl/xwvxNq02Rgu9AFYxwaH0BqrzmbwB4XJTwlf92
+ UF+nv91lkeYcLqn70xoI4L2w0XQlAPSpk8Htcr1d5X7lGjcSLi9eH5snh3LzOArzCMg0Irn9
+ jrSUZIxkTiL5KI7O62v8Bv3hQIMPKVDESeAmkxRwnUzHt1nXOIn1ITI/7TvjQ57DLelYac7B
+ TQRofOk6ARAAuhD+a41EULe8fDIMuHn9c4JLSuJSkQZWxiNTkX1da4VrrMqmlC5D0Fnq5vLt
+ F93UWitTTEr32DJN/35ankfYDctDNaDG/9sV5qenC7a5cx9uoyOdlzpHHzktzgXRNZ1PYN5q
+ 92oRYY8hCsJLhMhF1nbeFinWM8x2mXMHoup/d4NhPDDNyPLkFv4+MgltLIww/DEmz8aiHDLh
+ oymdh8/2CZtqbW6qR0LEnGXAkM3CNTyTYpa5C4bYb9AHQyLNWBhH5tZ5QjohWMVF4FMiOwKz
+ IVRAcwvjPu7FgF2wNXTTQUhaBOiXf5FEpU0KGcf0oj1Qfp0GoBfLf8CtdH7EtLKKpQscLT3S
+ om+uQXi/6UAUIUVBadLbvDqNIPLxbTq9c1bmOzOWpz3VH2WBn8JxAADYNAszPOrFA2o5eCcx
+ fWb+Pk6CeLk0L9451psQgucIKhdZR8iDnlBoWSm4zj3DG/rWoELc1T6weRmJgVP2V9mY3Vw7
+ k1c1dSqgDsMIcQRRh9RZrp0NuJN/NiL4DN+tXyyk35Dqc39Sq0DNOkmUevH3UI8oOr1kwzw5
+ gKHdPiFQuRH06sM8tpGH8NMu0k2ipiTzySWTnsLmNpgmm/tE9I/Hd4Ni6c+pvzefPB4+z5Wm
+ ilI0z2c3xYeqIpRllIhBMYfq4ikmXmI3BLE7nm9J6PXBAiUAEQEAAcLBfAQYAQoAJhYhBMpR
+ Te3SdhOUUGbMTq2ZHwL4uvC5BQJofOk6AhsMBQkDwmcAAAoJEK2ZHwL4uvC51RoQAKd882H+
+ QGtSlq0It1lzRJXrUvrIMQS4oN1htY6WY7KHR2Et8JjVnoCBL4fsI2+duLnqu7IRFhZZQju7
+ BAloAVjdbSCVjugWfu27lzRCc9zlqAmhPYdYKma1oQkEHeqhmq/FL/0XLvEaPYt689HsJ/e4
+ 2OLt5TG8xFnhPAp7I/KaXV7WrUEvhP0a/pKcMKXzpmOwR0Cnn5Mlam+6yU3F4JPXovZEi0ge
+ 0J4k6IMvtTygVEzOgebDjDhFNpPkaX8SfgrpEjR5rXVLQZq3Pxd6XfBzIQC8Fx55DC+1V/w8
+ IixGOVlLYC04f8ZfZ4hS5JDJJDIfi1HH5vMEEk8m0G11MC7KhSC0LoXCWV7cGWTzoL//0D1i
+ h6WmBb2Is8SfvaZoSYzbTjDUoO7ZfyxNmpEbgOBuxYMH/LUkfJ1BGn0Pm2bARzaUXuS/GB2A
+ nIFlsrNpHHpc0+PpxRe8D0/O3Q4mVHrF+ujzFinuF9qTrJJ74ITAnP4VPt5iLd72+WL3qreg
+ zOgxRjMdaLwpmvzsN46V2yaAhccU52crVzB5ejy53pojylkCgwGqS+ri5lN71Z1spn+vPaNX
+ OOgFpMpgUPBst3lkB2SaANTxzGJe1LUliUKi3IHJzu+W2lQnQ1i9JIvFj55qbiw44n2WNGDv
+ TRpGew2ozniUMliyaLH9UH6/e9Us
+In-Reply-To: <20251013115136.16773-1-spyjetfayed@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hey all,
 
-On Fri, Oct 10, 2025 at 08:29:07PM -0400 Phil Auld wrote:
-> Hi Vlastimil,
-> 
-> On Sat, Oct 11, 2025 at 12:22:39AM +0200 Vlastimil Babka wrote:
-> > On 10/10/25 20:42, Phil Auld wrote:
-> > > On Fri, Oct 10, 2025 at 08:27:30PM +0200 Vlastimil Babka wrote:
-> > >> On 10/10/25 20:19, Linus Torvalds wrote:
-> > >> > On Fri, 10 Oct 2025 at 08:11, Phil Auld <pauld@redhat.com> wrote:
-> > >> >>
-> > >> >> After several days of failed boots I've gotten it down to these two
-> > >> >> commits.
-> > >> >>
-> > >> >> 59faa4da7cd4 maple_tree: use percpu sheaves for maple_node_cache
-> > >> >> 3accabda4da1 mm, vma: use percpu sheaves for vm_area_struct cache
-> > >> >>
-> > >> >> The first is such an early failure it's silent. With just 3acca I
-> > >> >> get :
-> > >> >>
-> > >> >> [    9.341152] BUG: kernel NULL pointer dereference, address: 0000000000000040
-> > >> >> [    9.348115] #PF: supervisor read access in kernel mode
-> > >> >> [    9.353264] #PF: error_code(0x0000) - not-present page
-> > >> >> [    9.358413] PGD 0 P4D 0
-> > >> >> [    9.360959] Oops: Oops: 0000 [#1] SMP NOPTI
-> > >> >> [    9.365154] CPU: 21 UID: 0 PID: 818 Comm: kworker/u398:0 Not tainted 6.17.0-rc3.slab+ #5 PREEMPT(voluntary)
-> > >> >> [    9.374982] Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.26.0 07/30/2025
-> > >> >> [    9.382641] RIP: 0010:__pcs_replace_empty_main+0x44/0x1d0
-> > >> >> [    9.388048] Code: ec 08 48 8b 46 10 48 8b 76 08 48 85 c0 74 0b 8b 48 18 85 c9 0f 85 e5 00 00 00 65 48 63 05 e4 ee 50 02 49 8b 84 c6 e0 00 00 00 <4c> 8b 68 40 4c 89 ef e8 b0 81 ff ff 48 89 c5 48 85 c0 74 1d 48 89
-> > >> > 
-> > >> > That decodes to
-> > >> > 
-> > >> >    0:           mov    0x10(%rsi),%rax
-> > >> >    4:           mov    0x8(%rsi),%rsi
-> > >> >    8:           test   %rax,%rax
-> > >> >    b:           je     0x18
-> > >> >    d:           mov    0x18(%rax),%ecx
-> > >> >   10:           test   %ecx,%ecx
-> > >> >   12:           jne    0xfd
-> > >> >   18:           movslq %gs:0x250eee4(%rip),%rax
-> > >> >   20:           mov    0xe0(%r14,%rax,8),%rax
-> > >> >   28:*          mov    0x40(%rax),%r13          <-- trapping instruction
-> > >> >   2c:           mov    %r13,%rdi
-> > >> >   2f:           call   0xffffffffffff81e4
-> > >> >   34:           mov    %rax,%rbp
-> > >> >   37:           test   %rax,%rax
-> > >> >   3a:           je     0x59
-> > >> > 
-> > >> > which is the code around that barn_replace_empty_sheaf() call.
-> > >> > 
-> > >> > In particular, the trapping instruction is from get_barn(), it's the "->barn" in
-> > >> > 
-> > >> >         return get_node(s, numa_mem_id())->barn;
-> > >> > 
-> > >> > so it looks like 'get_node()' is returning NULL here:
-> > >> > 
-> > >> >         return s->node[node];
-> > >> > 
-> > >> > That 0x250eee4(%rip) is from "get_node()" becoming
-> > >> > 
-> > >> >   18:           movslq  %gs:numa_node(%rip), %rax  # node
-> > >> >   20:           mov    0xe0(%r14,%rax,8),%rax # ->node[node]
-> > >> > 
-> > >> > instruction, and then that ->barn dereference is the trapping
-> > >> > instruction that tries to read node->barn:
-> > >> > 
-> > >> >   28:*          mov    0x40(%rax),%r13   # node->barn
-> > >> > 
-> > >> > but I did *not* look into why s->node[node] would be NULL.
-> > >> > 
-> > >> > Over to you Vlastimil,
-> > >> 
-> > >> Thanks, yeah will look ASAP. I suspect the "nodes with zero memory" is
-> > >> something that might not be handled well in general on x86. I know powerpc
-> > >> used to do these kind of setups first and they have some special handling,
-> > >> so numa_mem_id() would give you the closest node with memory in there and I
-> > >> suspect it's not happening here. CPU 21 is node 6 so it's one of those
-> > >> without memory. I'll see if I can simulate this with QEMU and what's the
-> > >> most sensible fix
-> > >>
-> > > 
-> > > Thanks for taking a look.  I thought the NPS4 thing might be playing a role.
-> > 
-> > From what I quickly found I understood that NPS4 is supposed to create extra
-> > numa nodes per socket (4 instead of 1) and interleave the memory between
-> > them. So it seems weird to me it would assign everything to one node and
-> > leave 3 others memoryless?
-> >
-> 
-> That I don't know. Someone from AMD might be able to help there. This system
-> has had its BIOS and other bits updated just a couple of months ago but
-> this numa layout has been there since I've been using the system (several
-> years now).
-> 
+Correcting the mailing-list again,  from linux-kernel-mentees@kernel.org 
+to linux-kernel-mentees@lists.linux.dev.
 
-Just to follow up here.  I think the issue is just that this machine
-is somewhat underprovisioned in the memory department.  It's got 32
-slots, with only 4 actually populated. I suspect if it was fully populated
-there'd be memory in every node.
-
-Thanks for the fix and getting it -rc1.
+Really sorry about this.
 
 
-Cheers,
-Phil
-
-
-
-> > > I'm happy to take any test/fix code you have for a spin on this system. 
-> >  
-> > Thanks. Here's a candidate fix in case you can test. I'll finalize it
-> > tomorrow. The slab performance won't be optimal on cpus on those memoryless
-> > nodes, that's why I'd like to figure out if it's a BIOS bug or not. If
-> > memoryless nodes are really intended we should look into initializing things
-> > so that numa_mem_id() works as expected and points to nearest populated
-> > node.
-> 
-> The below does the trick. It boots and I ran a suite of stress-ng tests
-> for sanity. Any performance it's getting now is better than it was when it
-> wouldn't boot :)
-> 
-> Tested-by: Phil Auld <pauld@redhat.com>
-> 
-> 
-> Cheers,
-> Phil
-> 
-> > 
-> > ----8<----
-> > From 097c6251882bf5537162d17b6726575288ba9715 Mon Sep 17 00:00:00 2001
-> > From: Vlastimil Babka <vbabka@suse.cz>
-> > Date: Sat, 11 Oct 2025 00:13:20 +0200
-> > Subject: [PATCH] slab: fix NULL pointer when trying to access barn
-> > 
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > ---
-> >  mm/slub.c | 60 +++++++++++++++++++++++++++++++++++++++++++------------
-> >  1 file changed, 47 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index 135c408e0515..bd3c2821e6c3 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -507,7 +507,12 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
-> >  /* Get the barn of the current cpu's memory node */
-> >  static inline struct node_barn *get_barn(struct kmem_cache *s)
-> >  {
-> > -	return get_node(s, numa_mem_id())->barn;
-> > +	struct kmem_cache_node *n = get_node(s, numa_mem_id());
-> > +
-> > +	if (!n)
-> > +		return NULL;
-> > +
-> > +	return n->barn;
-> >  }
-> >  
-> >  /*
-> > @@ -4982,6 +4987,10 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
-> >  	}
-> >  
-> >  	barn = get_barn(s);
-> > +	if (!barn) {
-> > +		local_unlock(&s->cpu_sheaves->lock);
-> > +		return NULL;
-> > +	}
-> >  
-> >  	full = barn_replace_empty_sheaf(barn, pcs->main);
-> >  
-> > @@ -5153,13 +5162,20 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
-> >  	if (unlikely(pcs->main->size == 0)) {
-> >  
-> >  		struct slab_sheaf *full;
-> > +		struct node_barn *barn;
-> >  
-> >  		if (pcs->spare && pcs->spare->size > 0) {
-> >  			swap(pcs->main, pcs->spare);
-> >  			goto do_alloc;
-> >  		}
-> >  
-> > -		full = barn_replace_empty_sheaf(get_barn(s), pcs->main);
-> > +		barn = get_barn(s);
-> > +		if (!barn) {
-> > +			local_unlock(&s->cpu_sheaves->lock);
-> > +			return allocated;
-> > +		}
-> > +
-> > +		full = barn_replace_empty_sheaf(barn, pcs->main);
-> >  
-> >  		if (full) {
-> >  			stat(s, BARN_GET);
-> > @@ -5314,6 +5330,7 @@ kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
-> >  {
-> >  	struct slub_percpu_sheaves *pcs;
-> >  	struct slab_sheaf *sheaf = NULL;
-> > +	struct node_barn *barn;
-> >  
-> >  	if (unlikely(size > s->sheaf_capacity)) {
-> >  
-> > @@ -5355,8 +5372,11 @@ kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
-> >  		pcs->spare = NULL;
-> >  		stat(s, SHEAF_PREFILL_FAST);
-> >  	} else {
-> > +		barn = get_barn(s);
-> > +
-> >  		stat(s, SHEAF_PREFILL_SLOW);
-> > -		sheaf = barn_get_full_or_empty_sheaf(get_barn(s));
-> > +		if (barn)
-> > +			sheaf = barn_get_full_or_empty_sheaf(barn);
-> >  		if (sheaf && sheaf->size)
-> >  			stat(s, BARN_GET);
-> >  		else
-> > @@ -5426,7 +5446,7 @@ void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
-> >  	 * If the barn has too many full sheaves or we fail to refill the sheaf,
-> >  	 * simply flush and free it.
-> >  	 */
-> > -	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES ||
-> > +	if (!barn || data_race(barn->nr_full) >= MAX_FULL_SHEAVES ||
-> >  	    refill_sheaf(s, sheaf, gfp)) {
-> >  		sheaf_flush_unused(s, sheaf);
-> >  		free_empty_sheaf(s, sheaf);
-> > @@ -5943,10 +5963,9 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
-> >   * put the full sheaf there.
-> >   */
-> >  static void __pcs_install_empty_sheaf(struct kmem_cache *s,
-> > -		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty)
-> > +		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty,
-> > +		struct node_barn *barn)
-> >  {
-> > -	struct node_barn *barn;
-> > -
-> >  	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
-> >  
-> >  	/* This is what we expect to find if nobody interrupted us. */
-> > @@ -5956,8 +5975,6 @@ static void __pcs_install_empty_sheaf(struct kmem_cache *s,
-> >  		return;
-> >  	}
-> >  
-> > -	barn = get_barn(s);
-> > -
-> >  	/*
-> >  	 * Unlikely because if the main sheaf had space, we would have just
-> >  	 * freed to it. Get rid of our empty sheaf.
-> > @@ -6002,6 +6019,11 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
-> >  	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
-> >  
-> >  	barn = get_barn(s);
-> > +	if (!barn) {
-> > +		local_unlock(&s->cpu_sheaves->lock);
-> > +		return NULL;
-> > +	}
-> > +
-> >  	put_fail = false;
-> >  
-> >  	if (!pcs->spare) {
-> > @@ -6084,7 +6106,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
-> >  	}
-> >  
-> >  	pcs = this_cpu_ptr(s->cpu_sheaves);
-> > -	__pcs_install_empty_sheaf(s, pcs, empty);
-> > +	__pcs_install_empty_sheaf(s, pcs, empty, barn);
-> >  
-> >  	return pcs;
-> >  }
-> > @@ -6121,8 +6143,9 @@ bool free_to_pcs(struct kmem_cache *s, void *object)
-> >  
-> >  static void rcu_free_sheaf(struct rcu_head *head)
-> >  {
-> > +	struct kmem_cache_node *n;
-> >  	struct slab_sheaf *sheaf;
-> > -	struct node_barn *barn;
-> > +	struct node_barn *barn = NULL;
-> >  	struct kmem_cache *s;
-> >  
-> >  	sheaf = container_of(head, struct slab_sheaf, rcu_head);
-> > @@ -6139,7 +6162,11 @@ static void rcu_free_sheaf(struct rcu_head *head)
-> >  	 */
-> >  	__rcu_free_sheaf_prepare(s, sheaf);
-> >  
-> > -	barn = get_node(s, sheaf->node)->barn;
-> > +	n = get_node(s, sheaf->node);
-> > +	if (!n)
-> > +		goto flush;
-> > +
-> > +	barn = n->barn;
-> >  
-> >  	/* due to slab_free_hook() */
-> >  	if (unlikely(sheaf->size == 0))
-> > @@ -6157,11 +6184,12 @@ static void rcu_free_sheaf(struct rcu_head *head)
-> >  		return;
-> >  	}
-> >  
-> > +flush:
-> >  	stat(s, BARN_PUT_FAIL);
-> >  	sheaf_flush_unused(s, sheaf);
-> >  
-> >  empty:
-> > -	if (data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES) {
-> > +	if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES) {
-> >  		barn_put_empty_sheaf(barn, sheaf);
-> >  		return;
-> >  	}
-> > @@ -6191,6 +6219,10 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
-> >  		}
-> >  
-> >  		barn = get_barn(s);
-> > +		if (!barn) {
-> > +			local_unlock(&s->cpu_sheaves->lock);
-> > +			goto fail;
-> > +		}
-> >  
-> >  		empty = barn_get_empty_sheaf(barn);
-> >  
-> > @@ -6304,6 +6336,8 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
-> >  		goto do_free;
-> >  
-> >  	barn = get_barn(s);
-> > +	if (!barn)
-> > +		goto no_empty;
-> >  
-> >  	if (!pcs->spare) {
-> >  		empty = barn_get_empty_sheaf(barn);
-> > -- 
-> > 2.51.0
-> > 
-> > 
-> 
-> -- 
-
--- 
-
+Thanks,
+Ankan
 
