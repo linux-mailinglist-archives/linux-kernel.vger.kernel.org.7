@@ -1,149 +1,232 @@
-Return-Path: <linux-kernel+bounces-851177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F64BD5B12
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:24:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E933ABD5B27
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5224C4ECA07
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:24:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 741F24EFA28
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9748A2D3EDB;
-	Mon, 13 Oct 2025 18:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD432D5934;
+	Mon, 13 Oct 2025 18:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hI9HSNrT"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tvMXstnU"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010012.outbound.protection.outlook.com [52.101.85.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CF126D4D4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760379833; cv=none; b=gxG9Ol5oms7EMkyuP8jp5xbVuWi7RG6OlmRbmIXxBqALCCOX+BGar0nV8r68er9kxFWr8I6hoK8VBCVlolSm8Mi+qXj9QoLEVYMVRyPok2WXI4dBKiDbYW76t3YYMPDsuJUo7dsse16+UtH5RYqV6POY2YRMafGOdGREXMfWJVE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760379833; c=relaxed/simple;
-	bh=oj3ymEY5ytiQnceXg4xjG/to1YEhk7x+D6HZVhrguMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mHV8yEtoAhIDRk4/eg+8vnBQV4vLv6PKqkjAN68gLeuBsWUERvi9r93woAiIMNnz7keCa1zgIuF35q5LCPmKpbK/KcgJsMBTTPBzvrX2+CA8q6m1+Tfo40gAD22oYLIp/RyZvgb6GceulSEyYZHOZWKGOKOtT08rjqlI47Dn9zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=hI9HSNrT; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-7957e2f6ba8so58856026d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:23:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1760379831; x=1760984631; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xGzGudAw74SkMnYY/UmMGm8N5SWqgNLK0B2d1FLukKw=;
-        b=hI9HSNrT38RxDJ73UvqPoo2ffnFKe3fAn2psM1ejqq63dkhaBf7Nfc/IUaNq2cLiSX
-         GI8kI6yJg6L9pxb97X372ssrMA8Ij2ImlfaeRzOD07bgkJfeLxBGXIsCNNcAL/mPNtX6
-         BXK7EXhJifEO6NsDV44ItBNJahHb8sofLpSYY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760379831; x=1760984631;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xGzGudAw74SkMnYY/UmMGm8N5SWqgNLK0B2d1FLukKw=;
-        b=Mf3YOBOxAkKJtE1+RH+otyPzJtpSV62I2p7WiEMXIId0p7c/tCpyf1oM+xS/gBDtiR
-         cVOADANAKHup+mQ3olVblKEepdQdXS9axISeOHSnqlAXxAwza5eEGOntspFg4605xgdQ
-         s5A23oCTb2FuGs5O0I6P3qIlILxPd5VeI1So4C5m93NQ3kXXOlDflrzcJCPaHCxfbakV
-         ySayaPyzCj6y8uB01BNM529o5js9/UHCk042gm93wF4ie8JyEkmYNW1s8HxMAAG+5AWc
-         6jvSH8aqTvth5vvlpPEzT8Bgly6jMPBuZ4Fdn+2PpWyMDhPpscB1Y8/TCQk/9l63gz6V
-         V+Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjuCozt/Xm6mKGr1YBmNn0t5AaUUBbmFFhk84EY8dDi5w/IzLLQxZwZqix2zQancUCTbuC2myV8aiPgUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqdE3yBE31oVJrGgMh24qrLQ/YLrRPzMQ9Np8E5uw6tCQXal6/
-	xBUnqL4vFzBhDujkq9vXOQN6wFjfqhy4htPplote/w17ueCGRPd8z679LpBnwnjFNwSWADgHTpx
-	9BKe3XYq/C4kj4nQ984atxO9ERxuRMF3l6cUEWwomuA==
-X-Gm-Gg: ASbGncsCXGNkdF5l5a2E54KY7KEyiqjBoDx85I2ouU0dZd5V8jt4/2oGWdJgcnIFu/X
-	n+E/6OYWFjjsgl7hYhpyXK+mxPWDkeRGjv5XkpopwdzWqueHbe9PeQEruL070EziG+OXyYe5lW1
-	dziTjXbhu7AJUkCaiZaFsxHljE7evFyUqXXV8KKkWUz0r8FESgtomANr3aksTFrVJ/zGYQ+DafK
-	/zNGILYiVc0wLtWeZs9ZtyadO8bZgj5cynIVPiySLvd4Gn02blM9zN+/0b7OTkxanL2LQ==
-X-Google-Smtp-Source: AGHT+IGtyJAi0aIbXMlZXRmaD4YedN5oSr1kFc/9MCeuFwFc9dxYNGFtJjQx0gzvRr7c9odz+OcqN5vYrxq28kaovu8=
-X-Received: by 2002:a05:6214:21ca:b0:810:e12a:48fd with SMTP id
- 6a1803df08f44-87b2104ef39mr334138546d6.7.1760379830919; Mon, 13 Oct 2025
- 11:23:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9A42D4B6D;
+	Mon, 13 Oct 2025 18:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760379950; cv=fail; b=kb16VEp0zIt+N9Ta1EEteCLSqMzWlePVbigwkI02LNEu1m8KU7htLCNIf54TEMfKxrMEUodBox+gfT9MeTWnh6wKbeTz5z2jmW30Fk4TdBabwMS9coid6lSXSY1A1lkgsSMnMOsDRTYRLM6QycZTvUZVvtQ8i3ggph05XgvSDk0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760379950; c=relaxed/simple;
+	bh=qFDyzMePWjTwadprEf9bg5ZEqPSMA5H/es2tHXv+EDk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NdnxE2W/DmmF3GuX+g5E/RcwkgWAM4k2/d8kzf5PVP0RScVnPo4Bpr4iGgFsvwDjWE6I5KHwcL8GXN1pTOzJm1CAVr8+TW31L5faxxI4JRUYLYi1tk5JVzjNOZsObV0GForI8e6dWa+5ZGqaGqZ4lurcc3ySHOjWKbca+EDNgeM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tvMXstnU; arc=fail smtp.client-ip=52.101.85.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uGtZsjCwuWnyoHkniyodCq69x4rS42HNglwHcVYwhtfNekZGgEMT2rU1Ei3ivnDo5w36fzMApt0P+V7kizpQOHUwtIvK2bfe3WIA4f1xvyA+NvENdKgst33bUBP1juIzmnF6jyUprbe8oG2FosmZMLLDEi4LKodR1rCpG87U/62J23LCoYSOig2ihYidJtpt2kMaO7LTOW2dZFz0d1reGKxPUhDh1XOPto83GlA/4SI5bZ4h26czn+irLYpNmJ51nN82bMXHl3Gw9cSYU3Gn/msm9hMiGtsbs6fGtgPUHMoFFg9s5cYvJ1zBlgFYcE6lfyoLwi/OxjChDba3c5m4OA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A/7y1yLOCXob2ZHuDkHM2q2kQPkRRspDSJ/TF/N5e3Q=;
+ b=hRGl7zxDFjCs9BV0A50ti1Y1pkXdfGMnhAtS9aTx+D6/K00JfGSf6bt7zpTgsYnv4tiMrhF5xnMI1x/JN5X/KzMMuiflIf6Y/Cx+QdvLMaN9SJ32l1m1qkUr9h+TVNmr0x/CRJYH7mk8mG8PoKHTscW6nVy05xQuDFAo1VRtPjxZSZcR4cdZ/w6p/NwwTJX20Lq6wlmTiYNKaEe8Ycga57DhrJQKKvb0AuR5vtygsenrBeQhA96xZLZ9T83Ly9cYU7wwH8tXew5E9HiA8kz2syDTzEBs2nig/q/lP2sfThZeoVy0wOIsR54JYvRNmWrugP+LNn0Ogg+Deilnbrgfeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A/7y1yLOCXob2ZHuDkHM2q2kQPkRRspDSJ/TF/N5e3Q=;
+ b=tvMXstnU4Czl8FnlEWG4e7aUo3F/X17PTPtC9pkdhpHavMUScylWC5EjKPu6Kn7PlDDplCAXraUdfHMa75vSJUy4UP5Key94lf+uFLlLQXJFnRRU8j8yILEtwKKdNeKJ7ZlPDXfpoLk8mnjJ/VMYCztNnY8ip+wxrewPgXM9OL8byAvEKbN4XvSFd/WDNO5R2kkqqQW3sReuwooG3aUYj8MEfzTK3Kw8AOjb7SHrih9CmKg1BxhNqSky56jYRVUTGYThl0UkS3N+hDIlG1z6IsdMFIdgpwIuuwV/xXzxQdDU+b5WbhkbKfGb6bgCxj9Ivgn+c7YYknuuhqi4eU+bDQ==
+Received: from BN0PR04CA0140.namprd04.prod.outlook.com (2603:10b6:408:ed::25)
+ by BY5PR12MB4322.namprd12.prod.outlook.com (2603:10b6:a03:20a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
+ 2025 18:25:42 +0000
+Received: from BN2PEPF000055DD.namprd21.prod.outlook.com
+ (2603:10b6:408:ed:cafe::24) by BN0PR04CA0140.outlook.office365.com
+ (2603:10b6:408:ed::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
+ 13 Oct 2025 18:25:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN2PEPF000055DD.mail.protection.outlook.com (10.167.245.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.0 via Frontend Transport; Mon, 13 Oct 2025 18:25:41 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 13 Oct
+ 2025 11:25:25 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 13 Oct 2025 11:25:25 -0700
+Received: from inno-thin-client (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Mon, 13 Oct 2025 11:25:19 -0700
+Date: Mon, 13 Oct 2025 21:25:18 +0300
+From: Zhi Wang <zhiw@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+CC: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
+	<kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+	<boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+	<lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+	<tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+	<ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+	<targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
+	<joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
+Subject: Re: [RFC 0/6] rust: pci: add config space read/write support
+Message-ID: <20251013212518.555a19ad.zhiw@nvidia.com>
+In-Reply-To: <DDHB2T3G9BUA.18YWV70J82Z01@kernel.org>
+References: <20251010080330.183559-1-zhiw@nvidia.com>
+	<DDHB2T3G9BUA.18YWV70J82Z01@kernel.org>
+Organization: NVIDIA
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com> <aO06hoYuvDGiCBc7@bfoster>
-In-Reply-To: <aO06hoYuvDGiCBc7@bfoster>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 13 Oct 2025 20:23:39 +0200
-X-Gm-Features: AS18NWC-pZdrDsA29gb42TTRpRA_B_lB_N06Y7ycMZ61PDW2_vb89CoarPolXmY
-Message-ID: <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Brian Foster <bfoster@redhat.com>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd@bsbernd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DD:EE_|BY5PR12MB4322:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ace9911-0dff-4b83-d67d-08de0a85eae3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?O/Vfn5VLgCbwR2QytBH5pumI3R+T0a8Zfe/D3YednzUFCSUlm40UbT9KocG0?=
+ =?us-ascii?Q?annMM3TEVBvI0ItdSXP45u0v6GMrPMoy1Afa/9rQASiZ5QSqAiA5Rbdl4Baq?=
+ =?us-ascii?Q?pB2N02wLYuQhSGMcoaNB2ZpoJtJlB8Dd6b1UbomWHiYB+sSn3XdfzcNAern0?=
+ =?us-ascii?Q?A8QYlv1JZAkVow0A3RFLHH2AOptyt8gjrZuU6/Go8BYxP0jNIuHIBUd4EQJh?=
+ =?us-ascii?Q?E0XqbvUQuEMKIHSDasehdLLQfQEN8HsmvhN+ZzbDTpRHMALbf/JXYc8Krugn?=
+ =?us-ascii?Q?nU1inz5Vakli8SsGhP0Sma/8CBrCTwIY0JYFSRPEGLmftiEOQ3QXMbIrhDAg?=
+ =?us-ascii?Q?K5zNFpZ0qhnojE6xPgR+j1YQYp6X5Jtf0c1VtncPTHzJK7MDMqKLKSsE7yXm?=
+ =?us-ascii?Q?o09jLYdkRM/K36Xd7TnBE7fgbbx15nfxUvk7SIxhHiTvZ4HPMVBcsV2PG/iM?=
+ =?us-ascii?Q?1hU8VjOX4yxTMGkNt7mlai00RuAcgvC4A4wts0WLDcyivLsuPRLUzFDoWL//?=
+ =?us-ascii?Q?d4U6jRIk9KwpmEmC+EcJNHyzMr1+s5mC1ofp8rzOEY+QZA0dP/Z7Uus3hXLT?=
+ =?us-ascii?Q?73jaDLZrgVI4s+KFiBwo9ECqpIxIvJ8WP1sr1si0p8HSSrRQ1cf9QZQfD6Q+?=
+ =?us-ascii?Q?QyWtYdj4WdVnqY84UNmtz3WsAjWgqHZKkc8Oo6YTyRMn++j/+OCsg5ZcvK/K?=
+ =?us-ascii?Q?7oa6QtYxRLfk04hFqNwgGSBJodIt0Zy70j74QdqBgr/4XXqNQptTmAsaDnk1?=
+ =?us-ascii?Q?q3gDDJL9HZrtggZuPeVjiVHV1YnlPhPDlGd36u5VVGNUSvSOtKWFkskxI+AC?=
+ =?us-ascii?Q?6nsBApOd//Dy7DNMC/z7K736qJK4/nUxkLPWvhDO9RPT2abbOyKA/paNtX4/?=
+ =?us-ascii?Q?hR+MQq+UKcH8OteCnvQA9nRsIIpxQEDmSAjGpWlW60NaIliS37GnrPzsYTa5?=
+ =?us-ascii?Q?vYZf1XuImrOOPUnvsKgyGth602hxwNJ9veSzlWzb8RglgROfbaklijo4qb6Y?=
+ =?us-ascii?Q?Cc1ABGVZLLIiDK3t6hulV17qA5eF7q1r8EHjHnxnWnVHGMQU/IN0S9/siYCE?=
+ =?us-ascii?Q?Kb++7v64b5F7LUV2mmJoaSQPgBRJ50mVKSAikEs9IzAS/r+paFwCOZq2FvDt?=
+ =?us-ascii?Q?w2y4O+NEVo+x6lqYxWSkBXiYr7/Am0XY3ugk57m8jjTDcTT6rMEr75tt6Mkc?=
+ =?us-ascii?Q?UOh6uVI2mPIA0K0Us7MUw0eSU2GWiW/MHovn9CI+Aw10g2Fd3ODKefv9+aDo?=
+ =?us-ascii?Q?NOXLQj+lHiitf2sc4U4CJRXOgRaD+V/8WGCIx4JFRHrOR4xN17ajfRcQpWiA?=
+ =?us-ascii?Q?zIQUtwv4x3PATnZAoF2t8wCmBphaqcAlwGr3psft3oUOScdacsKe4NY7+aI1?=
+ =?us-ascii?Q?ATT0loZurxsuT9crlHi8snpIJIoLAgNVUoBBzOjKGeIRFuGPlwqjQ0f12WOl?=
+ =?us-ascii?Q?i2X82WMbRwtJfDPgVKBUoD+tQsUe+Vufw5zNWvAuc4xTEJICj3WELajVJRM3?=
+ =?us-ascii?Q?3UhPfCYxFCWC8lwsuDDf/IpsK+XwCLFDW/UQuFxhBFd7fgsi+/FxTNWP3mKQ?=
+ =?us-ascii?Q?ofYSf9Juvz2x3LqJKdI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 18:25:41.9250
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ace9911-0dff-4b83-d67d-08de0a85eae3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055DD.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4322
 
-On Mon, 13 Oct 2025 at 19:40, Brian Foster <bfoster@redhat.com> wrote:
+On Mon, 13 Oct 2025 17:39:41 +0200
+"Danilo Krummrich" <dakr@kernel.org> wrote:
 
-> If I follow the report correctly, we're basically producing an internal
-> inconsistency between mtime and cache state that falsely presents as a
-> remote change, so one of these attr change checks can race with a write
-> in progress and invalidate cache. Do I have that right?
+> Hi Zhi,
+> 
+> (Cc: Alex, Joel, John, Markus)
+> 
+> On Fri Oct 10, 2025 at 10:03 AM CEST, Zhi Wang wrote:
+> > This ideas of this series are:
+> >
+> > - Factor out a common trait IoRegion for other accessors to share
+> > the same compiling/runtime check like before.  
+> 
+> Yes, this is something we want to have in general:
+> 
+> Currently, we have a single I/O backend (struct Io) which is used for
+> generic MMIO. However, we should make Io a trait instead and require
+> a new MMIO type to implement the trait, where the trait methods would
+> remain to be {try_}{read,write}{8,16,..}().
+> 
 
-Yes.
+I was considering the same when writing this series. The concern is
+mostly about having to change the drivers' MMIO code to adapt to the
+re-factor.
 
->
-> But still a few questions..
->
-> 1. Do we know where exactly the mtime update comes from? Is it the write
-> in progress that updates the file mtime on the backend and creates the
-> inconsistency?
+IMHO, if we are seeing the necessity of this re-factor, we should do it
+before it got more usage. This could be the part 1 of the next spin.
 
-It can be a previous write.  A write will set STATX_MTIME in
-fi->inval_mask, indicating that the value cached in i_mtime is
-invalid.  But the auto_inval code will ignore that and use  cached
-mtime to compare against the new value.
+and adding pci::Device<Bound>::config_space() could be part 2 and
+register! marco could be part 3.
 
-We could skip data invalidation if the cached value of mtime is not
-valid, but this could easily result in remote changes being missed.
+ditto
 
->
-> 2. Is it confirmed that auto_inval is the culprit here? It seems logical
-> to me, but it can also be disabled dynamically so couldn't hurt to
-> confirm that if there's a reproducer.
+> 
+> > The current kernel::Io MMIO read/write doesn't return a failure,
+> > because {read, write}{b, w, l}() are always successful. This is not
+> > true in pci_{read, write}_config{byte, word, dword}() because a PCI
+> > device can be disconnected from the bus. Thus a failure is
+> > returned.  
+> 
+> This is in fact also true for the PCI configuration space. The PCI
+> configuration space has a minimum size that is known at compile time.
+> All registers within this minimum size can be access in an infallible
+> way with the non try_*() methods.
+> 
+> The main idea behind the fallible and infallible accessors is that
+> you can assert a minimum expected size of an I/O backend (e.g. a PCI
+> bar). I.e. drivers know their minimum requirements of the size of the
+> I/O region. If the I/O backend can fulfill the request we can be sure
+> about the minimum size and hence accesses with offsets that are known
+> at compile time can be infallible (because we know the minimum
+> accepted size of the I/O backend at compile time as well).
+> 
 
-Yes, reproducer has auto_inval_data turned on (libfuse turns it on by default).
+For PCI configuration space. Standard configuration space should be
+readable and to access the extended configuration space, the MCFG
+should be enabled beforehand and the enabling is system-wide.
 
->
-> 3. I don't think we should be able to invalidate "dirty" folios like
-> this. On a quick look though, it seems we don't mark folios dirty in
-> this write path. Is that right?
+I think the size of standard configuration space falls in "falliable
+accessors", and the extended configuration space falls in "infalliable"
+parts
 
-Correct.
+But for the "infallible" part in PCI configuration space, the device
+can be disconnected from the PCI bus. E.g. unresponsive device. In that
+case, the current PCI core will mark the device as "disconnected" before
+they causes more problems and any access to the configuration space
+will fail with an error code. This can also happen on access to
+"infalliable" part.
 
->
-> If so, I'm a little curious if that's more of a "no apparent need" thing
-> since the writeback occurs right in that path vs. that is an actual
-> wrong thing to do for some reason. Hm?
+How should we handle this case in "infallible" accessors of PCI
+configuration space? Returning Result<> seems doesn't fit the concept
+of "infallible", but causing a rust panic seems overkill...
 
-Good question.  I think it's wrong, since dirtying the pages would
-allow the witeback code to pick them up, which would be messy.
-
-> Agreed in general. IIUC, this is ultimately a heuristic that isn't
-> guaranteed to necessarily get things right for the backing fs. ISTM that
-> maybe fuse is trying too hard to handle the distributed case correctly
-> where the backing fs should be the one to implement this sort of thing
-> through exposed mechanisms. OTOH so long as the heuristic exists we
-> should probably at least work to make it internally consistent.
-
-Yes, that's my problem.  How can we fix this without adding too much
-complexity and without breaking existing uses?
-
-Thanks,
-Miklos
+Z.
 
