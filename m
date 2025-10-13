@@ -1,332 +1,376 @@
-Return-Path: <linux-kernel+bounces-850025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2561BD1A5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:23:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1E7BD1A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0493B18978AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:24:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67F484ECDC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C688D2E424F;
-	Mon, 13 Oct 2025 06:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639072E7180;
+	Mon, 13 Oct 2025 06:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WP7xW64T"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010005.outbound.protection.outlook.com [52.101.56.5])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tsKZzBgw"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA352E9ED2;
-	Mon, 13 Oct 2025 06:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760336520; cv=fail; b=ilAw3y3rE38p1JZmr/1ugMPvNp7JHL8gzEIGE1LOEoXa3jZFT7+tfWAbYEJlFqtIBb/cA/TnsJ2p3r29/EOHgPQhUGTUfzuiiwxZkjjk8P+fLR9maQjcfWUdUMHZNvA3aCKaLqp/4UdTX5k9lZIvgkxokjBgRBYeMVBxjmjyNH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760336520; c=relaxed/simple;
-	bh=Z74UHgOJtNWLbgRWcCotc77iKUmvwgQZidOUg0ThphY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lQi2c+ZKxFs4a87y16NyPDJFtO2bqdgkSjdGw2Aj8ihfM2YrCjQylW02rqn9HUOJLSCosg0kxCL/rcXINQFvmxzww6RAQAao2HiM4EL+CNL8PZo2R0MlBBGo/kqpqlqNbM2BH9M5zeW0zVbu0w7H4AXlZyJskonDno4sGxEF57Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WP7xW64T; arc=fail smtp.client-ip=52.101.56.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D6qRumfPjKHFVHBhSIxBWYxHGLHpgivHgxCnUlG3IAU065abHUwb+D5HfgWB91v1TaN7BBfsEhck7soWu9lGEEGoPYeYarBZUMtjAV2Vtt4pEO7+l3JdMCMz4HbCmMbWVpa1861SN8l9MFd6TOEp6D89sAnQXMU7/aHCwjwTkti9BV0r+rQagGDF9tlDR+LHzLzDyjty9iw1L9lKQGoS0FpMWqXOrua1Hb5reQoY3fr9qUlOF4WxELPQXwlPL+JuCJNurG1VetgzqMYI7Pc3OwFezZDJgTyyMqf9nt9MpChpgAITq4RhB+ytBt9dBdhfIHrPN/rr3pCmLTmVd9xwwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HrsBoLXeh8/z2S2xIQFjHEKI1CrDNvW5IC0FLs0gUZA=;
- b=WMaoWHtYM1Jeu+fTsaG7L7Vo6+8YsVrG8i26nA3pi/K3jbLUEuitXCUov2YmI/wg8pS92vUPRXXIBDooaA/Zg9HS8vcNh2ya0Vkmetl222C+BmXWCJuihPm7aFDoQWFEomPG+YRGzDRUOjYdnNd3jrcTFq0Ct1h2Oj4fvSzYTH8fJCALHLo59qUXpU+AeKGH/GoDbZBBvvXHzQer8tKfRrHA9vTV+k3Y3EVcg8y6xiQ4XbaG9TCwVB6wHfv8inNpzyZEpAlf2qT+7zLnrJzQW8RkwKqP1unpn0Q94Xcivu2kOU8D5SPfNRJgkg/ZYyd+ud0+/b6ZmU4UhT890GDcHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HrsBoLXeh8/z2S2xIQFjHEKI1CrDNvW5IC0FLs0gUZA=;
- b=WP7xW64TNPIIYr9pNpXhEo0D8Wvlyu/oSShiEVbwJHFTfVajqcPR3aGZyyk0rufzzTUvY/mrf/A3U/6fdPj3VpnxBbUVA514SEREXA+ggzudxSaFsk8Cj6unLsvV0Ld1ecneW0SPmkIVdpfpvh8iPDVvD6iDFDaXu8nRbvwbqV3ShpSBjwU9bYW2K3aXEcC+JHMUqgzJi0l/+kHugYwbfRXuiQMa/5yLtJFZD0yJebZYAMqq3zOx5gZlNlTY2f5B4RQoOzxpHEm2W8juxIEKokSuhV/UdDaGUpN9PEuvVJ+4k+nGZxf6PJTKHjxfLOU5RFhe7Hf1whU5dcuw5DEjaQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- DS0PR12MB8218.namprd12.prod.outlook.com (2603:10b6:8:f2::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.13; Mon, 13 Oct 2025 06:21:55 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 06:21:55 +0000
-From: Alistair Popple <apopple@nvidia.com>
-To: rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dakr@kernel.org,
-	acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org,
-	Lyude Paul <lyude@redhat.com>
-Subject: [PATCH v5 14/14] nova-core: gsp: Boot GSP
-Date: Mon, 13 Oct 2025 17:20:40 +1100
-Message-ID: <20251013062041.1639529-15-apopple@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251013062041.1639529-1-apopple@nvidia.com>
-References: <20251013062041.1639529-1-apopple@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SY5PR01CA0022.ausprd01.prod.outlook.com
- (2603:10c6:10:1f9::14) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1AB2E2299;
+	Mon, 13 Oct 2025 06:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760336489; cv=none; b=c5fwrfD4uBEoLOCmXuRXdGIEYDo682QT8QGYKX37brWbI93O8nxHj1JQMZcFSDRKQT078ju0uOLLaNA9qG3BEXIT0HMEGVc++nz5IFwyj56eknXDpQNDtDFVkpp2WIv3doIhMWzrJo7JxHSgFsHJhR4gTARjYAhT6oGhLqpRXR4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760336489; c=relaxed/simple;
+	bh=780NLLiz415B4cv3pDlI8MxWiWsjr354tdA+jVlAGkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JtxrKbVDWUMkQcTLYkIO8mS0DNKtov+y0e6B1YWK+JpGpCO15x+TBjRrF2abYLmj60UEJVcn6lDy2lvOuq1kQpOshnd2OiIj/s6u98zX1VT+WnjsxWz28eYPb3yJ2M/cKNGsOMEQJETsRmeiOzPj+bvKfq3J6Ctr4Krz1OUTA+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tsKZzBgw; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59D6LCAJ757928;
+	Mon, 13 Oct 2025 01:21:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760336472;
+	bh=fBY5z944Lo62WVLzBqU3bUkUNEjxyWe8jeJ1LNGJb2w=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=tsKZzBgwnjYpTfWdPQiisvr2Tzh5nVQ5MPLU/ZhdS/gkQbEkaaWFtLlAsdTukw83D
+	 tnRRjkUGadKkV2T4aFg4vJ/j23gPN87sPnAX/aSf+ILq6qFv1jf4Ij8YJ/5NBAQOx9
+	 k6YyZlTqepZ/Y4O0ZHH8366jJZaFwwvLLJDM9CBI=
+Received: from DLEE203.ent.ti.com (dlee203.ent.ti.com [157.170.170.78])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59D6LB1Y3607212
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 13 Oct 2025 01:21:12 -0500
+Received: from DLEE207.ent.ti.com (157.170.170.95) by DLEE203.ent.ti.com
+ (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 13 Oct
+ 2025 01:21:11 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE207.ent.ti.com
+ (157.170.170.95) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 13 Oct 2025 01:21:11 -0500
+Received: from [10.24.68.198] (abhilash-hp.dhcp.ti.com [10.24.68.198])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59D6L7OV1349311;
+	Mon, 13 Oct 2025 01:21:07 -0500
+Message-ID: <7d183747-af9e-4607-8219-e89ddcb79654@ti.com>
+Date: Mon, 13 Oct 2025 11:51:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|DS0PR12MB8218:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5353eb66-d795-4840-817a-08de0a20ce81
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JYi4AmBp2YgV2zF+3UYiirGmQ1AjNSluQbXUgOYF3Lgz6GROasIY8lotn4q0?=
- =?us-ascii?Q?QbqRTGNVUuPOwGg6QC0vlLAshIHUS82rMN3/NpAEwpOSjLROT4QrQPF1UujO?=
- =?us-ascii?Q?a3eXehKn8ML5sSIbkQWsZ+kIraHP6hjRK1i7S6uYKOKcVaT8QWDhxVRIvKXA?=
- =?us-ascii?Q?3zbMGK0tSM/EvqSlfYY+E8PagpN5tvfMGhLCPKjFZOmc7bVhA5aei6r2F63b?=
- =?us-ascii?Q?7/lqvTiYsAqq4vabXwY3ooIvGt/KbUWSThjdF8JFfnAuBzeHC9KUC6vLmw0u?=
- =?us-ascii?Q?AEDGzrBwwa0O2WIPcsF1qu68AYX+0M0HprgAqHyX3ivJIN9t9Gg2BougBGXf?=
- =?us-ascii?Q?F+OopXkBmE93rULzC+8IRBXOFNm81k0PQ+Z/e0vAdBISp2umqlJgd2jIPKV8?=
- =?us-ascii?Q?yf8anBunzf9gbZ+0tzgu3JQAhJYZxP6r2rwYLREKRdFFcxlx6cIZ/ffyv+/0?=
- =?us-ascii?Q?wop0XVusp3sFdZQz5KJgMBiMVPg+WIKPosGW24ZzXw5ICcKcQopQ+/6Bjm8U?=
- =?us-ascii?Q?v7DGJmxA5IAhfzbLr2HVcRlGmc/ejI3zFbfD04mARM3/nRypaQhVVPPUxooH?=
- =?us-ascii?Q?BDQEXknPHQLvYnnOPv7rCu4tjo0DtQpUf/jCRn8pCYUjg0Ju6BPjRA/TykVS?=
- =?us-ascii?Q?8mg8iL2AlN+SOryVp3rZ1Z8y4XmgwTweEbZvd12SqGK7TpZS0cl4qbBrLg/C?=
- =?us-ascii?Q?lonidzl3koADaBPA5rjqa8Aej+1rPkNPOmI2UtqUPMYsyKhWEa7k4poAuIgs?=
- =?us-ascii?Q?ltl2lQ/04qNwCQ43BpO7iPaTbdVFYH4OuT67veeOtM8U5e/OPwpqGLRIkikh?=
- =?us-ascii?Q?yrh3YHNda/9bEllUzGKV7mPjr5NxzlxYyBVZc/A44Q73akCqBkt1mCemaRAH?=
- =?us-ascii?Q?Pw2unJFsuv4t1sHdVSoMBFwk5+omxFZ2ksZ9zqG07j5yoIDAsc3+OMFKvFcY?=
- =?us-ascii?Q?A+zNSET4Dr9+s/+S3wjy9862MMspTIWM+/JF/GVCygk5Zl7PIOnjr8Ncezo0?=
- =?us-ascii?Q?tlSSh8QSQ7H3msUBFX4y97qZcgRjbrfprbQ/zItD3Pj2+x/7d2FKgH/2mPDq?=
- =?us-ascii?Q?QwfMlivrajWaaVH8wcWEdi+InxDWgZRp+IQL5cd3kplIxSswWfmKJpwVb7CM?=
- =?us-ascii?Q?etMwAJBIZymg/ZF6chMnJVcZOpRHLO+uxNR+myEaGGe5GyJatw8JQKJfkEWD?=
- =?us-ascii?Q?hc88i8y2eDF06qeDb2lPpylxb+LxGpCPmOch1vn/tuBte3Atr+ZaGziNuBki?=
- =?us-ascii?Q?fOc1IOYidR0xrlDvgZFuRZ320qm9dQjuT/ViDU0GyjSCy6/ynbIFONxu23vu?=
- =?us-ascii?Q?3a/jvDD6cGUT/hP9cczubOcGH8K+1Bx43h7XTK0RIIPMaO48wocu99B0Z7GF?=
- =?us-ascii?Q?aoB71nPQt4IYqeK3fTjPCTWJjIOgLiPXxLWaz8AjVPGAmelp6+NJNEr0Zdab?=
- =?us-ascii?Q?FC+wYPhTDFX8jNxMKw0qq8C99+XXOIyh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AGFQ4FP73MSOi7dScUKpMrwW06I+fsMIonmD1SRpHLxovhFEnZakrjhXMgp6?=
- =?us-ascii?Q?A18PVY8mmmO062H4MiSCDcDnyLAoy3+1RUaFjIhTF/yfvQVwxSfPll5u3b7W?=
- =?us-ascii?Q?BAdVFY0qXpnasHhJdelhmKNtTR1dy81vavoxM9fKqOElVxvlyGbyFLreoM5q?=
- =?us-ascii?Q?TdFCWOYcK2dwG6B+0llQsdDmOQwK7s5fDZZ0NDO3bnH4Ii4zCjazgQEW9XRp?=
- =?us-ascii?Q?hYhOCFFG2TUK1NfsPM6E6U4Jkw8qslwj/t2aH7mwb9B5G12LG8kEtbQC/rHU?=
- =?us-ascii?Q?wINzFIAKSbsMxhBHwheIvQ5XeKF59AYYeXpqGAqu2vRpk3343iJpgibaAWAs?=
- =?us-ascii?Q?xJj+WNThy/JQTPqlsCZrUeixUA2StbOQOFUAoZtysGb5ogvIKImv0DnshbDC?=
- =?us-ascii?Q?Zh+FTVLsvX27yQrAxk9vWepMAtM/f8cuKFNfYvZRnp4wWUrsEtCWuxSQJmgM?=
- =?us-ascii?Q?HnXENZdoFT7YpMYj5ptj5M2WabV9jjYnqNuHD4hUJ4VILZUGRZa/MsZB/Md6?=
- =?us-ascii?Q?29Q8B9qv95ntznIsFQsKAPhIT2YSGmUrpESnPIsjmJmVASglUfifUSzhYh1e?=
- =?us-ascii?Q?1SIdceQW2+Kl+UwqOy4CzxbI7wC3u+sucEaVVdCLpOVCAn8ShC/RwW6Iwjb2?=
- =?us-ascii?Q?WAi/fFeZOmxTIAyaFj0V0oS9+KlINcMu2tztRQnH0RNBvvjmO7U73xtI28A5?=
- =?us-ascii?Q?YKzGtutZtSu/dbHUnOnTO+OJ0r9zwmpANLF7qYFtOStUMz2YxROkyKf1rPrz?=
- =?us-ascii?Q?eP65merR7znmfLOAaehGEsYLFVVwwj2IHidvOZCq7gxh9Z73a7zk5Y5u1JTe?=
- =?us-ascii?Q?ZXdVKa+AahGWeF5jtm41sRaROlTYtI83s9C/92Vs3EOhlWGGd13Dn9t9CcgM?=
- =?us-ascii?Q?mani8JcUj4Iq+aEol2tJUoSFQeVgdE0AQOyatrWQ0KmGk5CKqwP1cfL90Anf?=
- =?us-ascii?Q?+y+d/LUAUPWSXL2iFmJmN1FLPzLZBthvQD9k6McTFSrAiwFIucBDUjVGg7VL?=
- =?us-ascii?Q?hDpY6fEp+MaQdnPdgri+kuXmh/pzI3GIfqxQwJdl9Vn/0CVmKk+IKiJhoStb?=
- =?us-ascii?Q?9T/CAXsbzNuC19CahoCyEXIglWV8FUSY/mTRjn8/R6R0zDPaLZR4Bi//sOHJ?=
- =?us-ascii?Q?xTFi0r5cX9vO8HkRxasphp//w91ZhTHfBImnl27pH4YIWepmw0Tfla+S1lg8?=
- =?us-ascii?Q?1LBq2G4qX/54Fk/vSAKpphoLfxM9/hYFn4qRG4s1qBakCoBUO/ajLgfsX2oD?=
- =?us-ascii?Q?5heyGoz3nNokl0h6a5CIyFkcqCnLyFSivxelqYad7T4/+6ggOOz6xzi46aGT?=
- =?us-ascii?Q?4+ifrwQjwlNvBEi84OvhD+xL5mgZHhMrZTI5raydHx6KATsjB86eRiRkn/1V?=
- =?us-ascii?Q?TQTwFnDIJRcUP3IwR7dMEqeI6nmjoAbjr0n7CwN/pG2Kh2GjAtRCUx3Qr+wu?=
- =?us-ascii?Q?rZFpqjmhYJOjkeo8dJsnp3/Uv4tKY+ZHc13nddJhfKTZTkWrRWrGUI95Ekmk?=
- =?us-ascii?Q?2Sizwidr/g5KOcgedgUHORtfQZSX+3qhOWtYa/AvpqLm3HexdiasX8EhvTha?=
- =?us-ascii?Q?9ZD8FFc+Z+oCwrWxxLzzS8o6+eaJ2I8Ufbl0xRGH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5353eb66-d795-4840-817a-08de0a20ce81
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 06:21:55.6529
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gQ/EE5sEPfivTxPmT+Y1n3UxvcDy130DZasQ2j087q2q9YAFnSIhGWuhYB50v5V2Xo35IJSSNG+L36eoHor5gA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8218
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 4/5] dt-bindings: media: ti: vpe: Add support for Video
+ Input Port
+To: Krzysztof Kozlowski <krzk@kernel.org>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <hverkuil+cisco@kernel.org>
+CC: <sakari.ailus@linux.intel.com>, <bparrot@ti.com>,
+        <jai.luthra@ideasonboard.com>, <dale@farnsworth.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>,
+        Sukrut Bellary
+	<sbellary@baylibre.com>
+References: <20250909080718.1381758-1-y-abhilashchandra@ti.com>
+ <20250909080718.1381758-5-y-abhilashchandra@ti.com>
+ <56a961c4-d11b-448c-81a6-a3a970627dda@kernel.org>
+Content-Language: en-US
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <56a961c4-d11b-448c-81a6-a3a970627dda@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Boot the GSP to the RISC-V active state. Completing the boot requires
-running the CPU sequencer which will be added in a future commit.
+Hi Krzysztof,
+Apologies for the delay in response.
 
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
+On 09/09/25 14:06, Krzysztof Kozlowski wrote:
+> On 09/09/2025 10:07, Yemike Abhilash Chandra wrote:
+>> From: Dale Farnsworth <dale@farnsworth.org>
+>>
+>> Add device tree bindings for the Video Input Port. Video Input Port (VIP)
+>> can be found on devices such as DRA7xx and provides a parallel interface
+>> to a video source such as a sensor or TV decoder.
+>>
+>> Signed-off-by: Dale Farnsworth <dale@farnsworth.org>
+>> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+>> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+>> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+>> ---
+>> Change log:
+>> Changes in v3:
+>> - Remove redundant labels in bindings
+>> - Remove minItems in interrupts and mandate exactly 2 interrupts using items
+>> - Rename phandle from ti,vip-clk-polarity to ti,ctrl-module and explain why this is required by the device
+>> - Make the phandle verifiable instead of just descriptive
+>> - Drop entire sensor node from example DT
+>> - Fix ports hierarchy using appropriate references and descriptions
+>> - Use generic node names
+>> - Add two new properties ti,vip-pixel-mux and ti,vip-channels with appropriate types and descriptions
+>>
+>>   .../devicetree/bindings/media/ti,vip.yaml     | 178 ++++++++++++++++++
+>>   MAINTAINERS                                   |   1 +
+>>   2 files changed, 179 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/ti,vip.yaml b/Documentation/devicetree/bindings/media/ti,vip.yaml
+>> new file mode 100644
+>> index 000000000000..c0bce44725db
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/ti,vip.yaml
+>> @@ -0,0 +1,178 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +# Copyright (C) 2025 Texas Instruments Incorporated -  http://www.ti.com/
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/media/ti,vip.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Texas Instruments DRA7x VIDEO INPUT PORT (VIP).
+> 
+> Titles are not sentences.
+> 
+> Also, drop CAPS, WE DO NOT NEED TO EMPHASIZE THAT. It is a Video Input Port.
+> 
 
----
+I will fix this in v4.
 
-Changes for v4:
- - Switch wait_on to read_poll_timeout
+> 
+>> +
+>> +maintainers:
+>> +  - Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+>> +
+>> +description: |-
+>> +  Video Input Port (VIP) can be found on devices such as DRA7xx and
+>> +  provides the system interface and the processing capability to
+>> +  connect parallel image-sensor as well as BT.656/1120 capable encoder
+>> +  chip to DRA7x device.
+>> +
+>> +  Each VIP instance supports 2 independently configurable external
+>> +  video input capture slices (Slice 0 and Slice 1) each providing
+>> +  up to two video input ports (Port A and Port B).
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - ti,dra7-vip
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: The VIP main register region
+>> +      - description: Video Data Parser (PARSER) register region for Slice0
+>> +      - description: Color Space Conversion (CSC) register region for Slice0
+>> +      - description: Scaler (SC) register region for Slice0
+>> +      - description: Video Data Parser (PARSER) register region for Slice1
+>> +      - description: Color Space Conversion (CSC) register region for Slice1
+>> +      - description: Scaler (SC) register region for Slice1
+>> +      - description: Video Port Direct Memory Access (VPDMA) register region
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: vip
+>> +      - const: parser0
+>> +      - const: csc0
+>> +      - const: sc0
+>> +      - const: parser1
+>> +      - const: csc1
+>> +      - const: sc1
+>> +      - const: vpdma
+>> +
+>> +  interrupts:
+>> +    items:
+>> +      - description: IRQ index 0 is used for Slice0 interrupts
+>> +      - description: IRQ index 1 is used for Slice1 interrupts
+>> +
+>> +  ti,ctrl-module:
+>> +    description:
+>> +      Reference to the device control module that provides clock-edge
+>> +      inversion control for VIP ports. These controls allow the
+>> +      VIP to sample pixel data on the correct clock edge.
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    items:
+>> +      items:
+>> +        - description: phandle to device control module
+>> +        - description: offset to the CTRL_CORE_SMA_SW_1 register
+>> +        - description: Bit field to slice 0 port A
+>> +        - description: Bit field to slice 0 port B
+>> +        - description: Bit field to slice 1 port A
+>> +        - description: Bit field to slice 1 port B
+>> +    maxItems: 1
+>> +
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    patternProperties:
+>> +      '^port@[0-3]$':
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +        description: |
+>> +          Each VIP instance supports 2 independently configurable external video
+>> +          input capture slices (Slice 0 and Slice 1) each providing up to two video
+>> +          input ports (Port A and Port B). These ports represent the following
+>> +          port@0 -> Slice 0 Port A
+>> +          port@1 -> Slice 0 Port B
+>> +          port@2 -> Slice 1 Port A
+>> +          port@3 -> Slice 1 Port B
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            $ref: /schemas/media/video-interfaces.yaml#
+>> +            unevaluatedProperties: false
+>> +
+>> +            properties:
+>> +              bus-width:
+>> +                enum: [8, 16, 24]
+>> +                default: 8
+>> +
+>> +              ti,vip-pixel-mux:
+>> +                type: boolean
+>> +                description:
+>> +                  In BT656/1120 mode, this will enable pixel-muxing if
+>> +                  the number of channels is either 1, 2 or 4. If this
+>> +                  property is present then pixel-muxing is enabled
+>> +                  otherwise it will use line-muxing.
+> 
+> This feels like runtime choice.
+> 
+>> +
+>> +              ti,vip-channels:
+>> +                $ref: /schemas/types.yaml#/definitions/uint8-array
+>> +                minItems: 1
+>> +                maxItems: 16
+>> +                description:
+>> +                  In BT656/1120 mode, list of channel ids to be captured.
+>> +                  If the property is not present then 1 channel is assumed.
+> 
+> Also feels like runtime.
+> 
 
-Changes for v3:
- - Fixed minor nit from John
- - Added booter load error thanks to Timur's suggestion
+I will drop these in v4.
 
-Changes for v2:
- - Rebased on Alex's latest tree
----
- drivers/gpu/nova-core/falcon.rs         |  2 -
- drivers/gpu/nova-core/firmware/riscv.rs |  3 +-
- drivers/gpu/nova-core/gsp/boot.rs       | 63 ++++++++++++++++++++++++-
- 3 files changed, 63 insertions(+), 5 deletions(-)
+>> +
+>> +              remote-endpoint: true
+> 
+> Drop
+> 
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - interrupts
+>> +  - ti,ctrl-module
+>> +  - ports
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    vip1: video@48970000 {
+>> +        compatible = "ti,dra7-vip";
+>> +        reg = <0x48970000 0x114>,
+>> +              <0x48975500 0xD8>,
+>> +              <0x48975700 0x18>,
+>> +              <0x48975800 0x80>,
+>> +              <0x48975a00 0xD8>,
+>> +              <0x48975c00 0x18>,
+>> +              <0x48975d00 0x80>,
+> 
+> Are you really, REALLY sure these are separate address spaces? Some
+> people thing that gaps means address space finishes...
+> 
+> 
+> How does your datasheet define these?
+> 
 
-diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-index c871fd061987..98ad75b93ea2 100644
---- a/drivers/gpu/nova-core/falcon.rs
-+++ b/drivers/gpu/nova-core/falcon.rs
-@@ -510,14 +510,12 @@ pub(crate) fn signature_reg_fuse_version(
-     /// Check if the RISC-V core is active.
-     ///
-     /// Returns `true` if the RISC-V core is active, `false` otherwise.
--    #[expect(unused)]
-     pub(crate) fn is_riscv_active(&self, bar: &Bar0) -> bool {
-         let cpuctl = regs::NV_PRISCV_RISCV_CPUCTL::read(bar, &E::ID);
-         cpuctl.active_stat()
-     }
- 
-     /// Write the application version to the OS register.
--    #[expect(dead_code)]
-     pub(crate) fn write_os_version(&self, bar: &Bar0, app_version: u32) {
-         regs::NV_PFALCON_FALCON_OS::default()
-             .set_value(app_version)
-diff --git a/drivers/gpu/nova-core/firmware/riscv.rs b/drivers/gpu/nova-core/firmware/riscv.rs
-index 115b5f5355a1..98be14263366 100644
---- a/drivers/gpu/nova-core/firmware/riscv.rs
-+++ b/drivers/gpu/nova-core/firmware/riscv.rs
-@@ -52,7 +52,6 @@ fn new(bin_fw: &BinFirmware<'_>) -> Result<Self> {
- }
- 
- /// A parsed firmware for a RISC-V core, ready to be loaded and run.
--#[expect(unused)]
- pub(crate) struct RiscvFirmware {
-     /// Offset at which the code starts in the firmware image.
-     pub(crate) code_offset: u32,
-@@ -61,7 +60,7 @@ pub(crate) struct RiscvFirmware {
-     /// Offset at which the manifest starts in the firmware image.
-     pub(crate) manifest_offset: u32,
-     /// Application version.
--    app_version: u32,
-+    pub app_version: u32,
-     /// Device-mapped firmware image.
-     pub ucode: DmaObject,
- }
-diff --git a/drivers/gpu/nova-core/gsp/boot.rs b/drivers/gpu/nova-core/gsp/boot.rs
-index 0b306313ec53..649c758eda70 100644
---- a/drivers/gpu/nova-core/gsp/boot.rs
-+++ b/drivers/gpu/nova-core/gsp/boot.rs
-@@ -3,8 +3,10 @@
- use kernel::device;
- use kernel::dma::CoherentAllocation;
- use kernel::dma_write;
-+use kernel::io::poll::read_poll_timeout;
- use kernel::pci;
- use kernel::prelude::*;
-+use kernel::time::Delta;
- 
- use crate::driver::Bar0;
- use crate::falcon::{gsp::Gsp, sec2::Sec2, Falcon};
-@@ -127,7 +129,7 @@ pub(crate) fn boot(
- 
-         Self::run_fwsec_frts(dev, gsp_falcon, bar, &bios, &fb_layout)?;
- 
--        let _booter_loader = BooterFirmware::new(
-+        let booter_loader = BooterFirmware::new(
-             dev,
-             BooterKind::Loader,
-             chipset,
-@@ -143,6 +145,65 @@ pub(crate) fn boot(
-         set_system_info(&mut self.cmdq, pdev, bar)?;
-         build_registry(&mut self.cmdq, bar)?;
- 
-+        gsp_falcon.reset(bar)?;
-+        let libos_handle = self.libos.dma_handle();
-+        let (mbox0, mbox1) = gsp_falcon.boot(
-+            bar,
-+            Some(libos_handle as u32),
-+            Some((libos_handle >> 32) as u32),
-+        )?;
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "GSP MBOX0: {:#x}, MBOX1: {:#x}\n",
-+            mbox0,
-+            mbox1
-+        );
-+
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "Using SEC2 to load and run the booter_load firmware...\n"
-+        );
-+
-+        sec2_falcon.reset(bar)?;
-+        sec2_falcon.dma_load(bar, &booter_loader)?;
-+        let wpr_handle = wpr_meta.dma_handle();
-+        let (mbox0, mbox1) = sec2_falcon.boot(
-+            bar,
-+            Some(wpr_handle as u32),
-+            Some((wpr_handle >> 32) as u32),
-+        )?;
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "SEC2 MBOX0: {:#x}, MBOX1{:#x}\n",
-+            mbox0,
-+            mbox1
-+        );
-+
-+        if mbox0 != 0 {
-+            dev_err!(
-+                pdev.as_ref(),
-+                "Booter-load failed with error {:#x}\n",
-+                mbox0
-+            );
-+            return Err(ENODEV);
-+        }
-+
-+        gsp_falcon.write_os_version(bar, gsp_fw.bootloader.app_version);
-+
-+        // Poll for RISC-V to become active before running sequencer
-+        read_poll_timeout(
-+            || Ok(gsp_falcon.is_riscv_active(bar)),
-+            |val: &bool| *val,
-+            Delta::from_millis(10),
-+            Delta::from_secs(5),
-+        )?;
-+
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "RISC-V active? {}\n",
-+            gsp_falcon.is_riscv_active(bar),
-+        );
-+
-         Ok(())
-     }
- }
--- 
-2.50.1
+These are not separate address spaces. The datasheet defines them as a
+single address region: VIP1 (0x4897_0000 –> 0x4897_FFFF, 64 KiB).
 
+We created three common libraries sc.c (scalar), csc.c (color space 
+converter),
+and vpdma.c, which are used by both VPE and VIP drivers. The helper 
+functions
+in these libraries were originally written in a way that assumes sc0, csc0,
+sc1, and csc1 are separate address spaces. Since VPE has already been
+upstreamed using this approach. I have tried to use the same kind of 
+approach.
+But I now understand that, this might not be correct to define these as 
+separate
+address spaces.
+
+One solution would be to rewrite these helpers and update both VPE and
+VIP accordingly, but changing these helpers now may risk breaking backward
+compatibility for VPE.
+
+Alternatively, we could make the VIP driver standalone by avoiding the 
+use of these
+helpers. I was able to achieve this for csc.c and sc.c, but for vpdma.c, 
+I had to
+export a specific function from vpdma.c, since the VIP driver no longer 
+relies on the
+helpers provided by vpdma.c (In the previous approach the helper would 
+call this function)
+
+I request suggestions on how to proceed here.
+
+>> +              <0x4897d000 0x400>;
+>> +        reg-names = "vip",
+>> +                    "parser0",
+>> +                    "csc0",
+>> +                    "sc0",
+>> +                    "parser1",
+>> +                    "csc1",
+>> +                    "sc1",
+>> +                    "vpdma";
+>> +        interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH>,
+>> +                     <GIC_SPI 392 IRQ_TYPE_LEVEL_HIGH>;
+>> +        ti,ctrl-module = <&scm_conf 0x534 0x0 0x2 0x1 0x3>;
+>> +
+>> +        ports {
+>> +              #address-cells = <1>;
+>> +              #size-cells = <0>;
+>> +
+>> +              vin1a: port@0 {
+>> +                    reg = <0>;
+>> +
+>> +                    vin1a_ep: endpoint {
+>> +                           remote-endpoint = <&camera1>;
+>> +                           hsync-active = <1>;
+>> +                           vsync-active = <1>;
+>> +                           pclk-sample = <0>;
+>> +                           bus-width = <8>;
+> 
+> Make example complete, also other properties.
+> 
+>> +                    };
+>> +              };
+>> +              vin1b: port@1 {
+>> +                    reg = <1>;
+> 
+> Why no endpoints?
+> 
+
+Thanks, I will add endpoints and make example complete.
+
+>> +              };
+>> +              vin2a: port@2 {
+>> +                    reg = <2>;
+>> +              };
+>> +              vin2b: port@3 {
+>> +                    reg = <3>;
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+
+Thanks and Regards,
+Yemike Abhilash Chandra
 
