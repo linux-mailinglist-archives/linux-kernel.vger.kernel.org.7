@@ -1,146 +1,124 @@
-Return-Path: <linux-kernel+bounces-851074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668C6BD56B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB8BBD57A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250CD4028B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632E2406EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C16029D266;
-	Mon, 13 Oct 2025 17:09:33 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC49F2C0F78;
+	Mon, 13 Oct 2025 17:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHLQscY2"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521232C0F87
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8F42989A2
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760375370; cv=none; b=t+AQS7qLAy69YzCD3eGJR+ksYMDniOQqnznqd4W2cqHv7XT9xT9UIMlYqPlcZKcC9v6K60/EaVKgyN/kVO46MSjSY8c0mpu3oybas/n2HwS6uhIbyJj4TIdetKpe4q78QTS+Ca/9Wjk+9851KcnRqaTCFzjEroRwoXpEP9Fh6No=
+	t=1760375385; cv=none; b=tFQcJzzNlE8odSz9Z/Baa7RtwZsdXE/MeFmLqI7M9l43zxRBT3xw54jmIyOl124ino3rnSthQLDwma+jdJTkNH+mo4xVJnMwJnfJMVEPURCmGPcXdpZ8BJs9LQOQplGM9hE5UkK49EytDbEb7dmogDKJdZ+sYBXv924SFyJRpcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760375370; c=relaxed/simple;
-	bh=GcsJsmNR66TkTqTz1B+6YFyl+EAGJv7TFYbWgcNErZA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=efDN8uJRb0d3E6X+L0xmZdp9ZQP7VSHvKxeyzwmXPmY8M+QtY2Rz2oosKVfZwUNQ/wtBEfU1kF9XMKipJ0EPKsHBn+Lb1uLS+C1ljrGoo3LnOQ1sI/WJomEwpS0iSpmeJM4SuOp1Kg+JaBrQ26Ub0hrihF+8Qr2Sk1731VE2IHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1760375385; c=relaxed/simple;
+	bh=9u0qMy/Cq9gqm/KPJ3Ei6I8Bl+VxQM9WS7DtgkWaO50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uClStXrrPejmqelixm5VxPEHVM36KQi9iHtFvpGaB8m/Y83FD9TvrYc3QuEk0TRFKuLMfmZSfyIU5l47Zs6pnjr5pjHeMhbKe0yMS3Yihm2igc5gxSWC+hJIP32Z1+3PPtKI1TEp+O6oOUrmPuS1/ZvthOjWHyd0idfLmSQVxkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHLQscY2; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so808447466b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:09:26 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8572d7b2457so672256085a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760375382; x=1760980182; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zq9D0oiH0XGev2bvZJNS+y4TMnPelGliSASbJ0U8VMY=;
+        b=lHLQscY2jSPd6VKhZSx1pFzuEv7MuQQCCj9YK8FJYsrohv5LcFXGQAVcm0YlwU7cmA
+         KLzrnflWZNoAhnGC1Qa6lS8wWVQh5dVG0zrModFqiFKhsWhTc/Q3Nsu79ce9R2HRHrXg
+         29BGDk7lWrcN/IT0Pn1v8BZBnTNXjeKj4EpOxEdE1iNJxkJTbXK8Nq6xvgUdl6yAJQqt
+         ohBGRLG8353+97rIpQZMlmIJdHlgy0QSMkdf57NOBZAGbBj02X1sapKTJZvbmP4AH7aK
+         sC0UqviytEeVyxTt+yIR+AtQbUNoLq2zZZlrzNxx63piIlo/JZNKdddwYJ3RjzQu8s72
+         i4Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760375365; x=1760980165;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gzbk+4Totk/9NHbsfjmJ9rzLfO5PvmO39iyLAhqUy/w=;
-        b=QMvnMV+rTnIhpUaO3T8ZO3UphB7+FcpsIbgRZm2HfTuTfaxCo4xGjPTALwz2e6/p6x
-         QDCkX/4ZCIwuutCVQ/92i5WWXIUfzHENS+FS+K4WaxH3wLRgY8HGQT5LrTEHP+8gubo8
-         caZhVUxuv1Tqro3NrX0IQ0E6XSZHt6om2XoqDkuoirzrloy5puAGPDBKNlCg/iqQ3QG7
-         IB/I+fh3SN2iwtB0OBBaIOL5hCb/pdEYUx86ZMMYDLc7G/QTgZ19Rl+3DpdWcDxjTSNJ
-         Wby/AkiKd1sBV0ySfBRR9dVO6MuHhkL/GnW0GmgoT/JzNqrE2pHJezufRW5zc4dHWEV5
-         7U0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWDjqAds/WxpoKDYIB3SSeV8/3gRHmqHY08aw8TJJK2hoF4xgHPlHHQJkh6WM87sX9SqtJJd0GMTKtTtoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvLOeEMcp2I6/ntRRWRFXRDwSARA2IfvrJbFzxUi0I7c6uedKy
-	cksVXMxgOT3k/qweEscUSm/diQDn371WRdWP01RNCv6AuF+a1x5qeLJX
-X-Gm-Gg: ASbGncuM6zZNlSIbJKa1Qq9Iv1fv8uqL2bVeTI9jjLm4V6RaD7zfifHZyWEwrABolEL
-	aAqLdO0lMZ7skebYOTzKN4mXV+Z26MSkypCJwBlbw+qnuiqigeIIrskUjBxmUTv3QKI/1gzp4h/
-	z+S5qTiBX9EYYzQ+Ft/IY1Vt8BLiT0Z9TwzH4B263l/++3KUQHct0uCfqs4xaO5GclWevemRs6B
-	GMLM4Fw51fZ7C2mWrGuzwu3kKgYDfU+JJcDxuItKy9ksi22RTkNJYgTn+e9tNtB5VdG0oy5cbim
-	qFTh39Hbn5Xxzy3NXx50H8JE9iBNnmvPv23iyIPWgqdd9TX3QSGPPuRUaOfmocYtvxgRRJAmRQB
-	unS/tX9ZXQg2wljwPqvAE+Cor57uJ3CWp3/O4PbpAaYfie6c=
-X-Google-Smtp-Source: AGHT+IGt5kR5F8pvKrJpygfr2pjUntgvPJaB47lL0nD0FC9FyzJ3Jztqt6mIq5PEXkSvc0BpQWVJcw==
-X-Received: by 2002:a17:907:2da9:b0:b4f:e357:78f8 with SMTP id a640c23a62f3a-b50ac7eb031mr2337168066b.52.1760375364369;
-        Mon, 13 Oct 2025 10:09:24 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:72::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d61d04dfsm968072966b.22.2025.10.13.10.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 10:09:23 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 13 Oct 2025 10:09:22 -0700
-Subject: [PATCH net] netdevsim: set the carrier when the device goes up
+        d=1e100.net; s=20230601; t=1760375382; x=1760980182;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zq9D0oiH0XGev2bvZJNS+y4TMnPelGliSASbJ0U8VMY=;
+        b=tI58WXEaZGb8eGcAneyEOhiW8DmBj9USEd3TPWLFT7rTThvgEumEXU4pzae0tw2Yca
+         xyNOroL03gMxhcCgN0SaIBFCy7Hqe0LnJzd3pD4CHS/X/XzYf1FThQrckuaNVaeco+J7
+         n6SeMr04D9V6pxdc62VaCp6nGaVVshaoxC2iiqXGsKbpWVhHvThvTpsx9DxWsFfv+gx9
+         BQmJ/v9wGBrDAkFcN9WFu7nw8zJJtj7RMWYzWUglhJ+E0jVf8VeQlysSDFk/QSqnbxS7
+         7rzAkygPCmToOfQsl9e21BAVB7dlN8NMr5th/xMKI+VrrwtbEAhjN/8SxTREXBAVTzaZ
+         RVUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULYeRUxJx50ofx/zw9e4RWW+i1IvfFfJAWI1s5QEMIqFv/5V9h8B19Teomnbi3iXG/IKfZHa7SffRDO70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuRzcz4zriN11R+OoEoW/CHKTHcYiUyVTU8M5oiJ7SpoHWNuMV
+	n+1YDmTaexvi4QmNAr0CsCiP6Jd3ez9v6OmyKoxH4WpWZ0S6pGW0xHwi
+X-Gm-Gg: ASbGncs4jn0WoA/AzpKKwJLcRHwKpnxD0BdHwpcvXnJmlX7uxKpR4TeBshMc+/92IAv
+	LvbeJJBpzBAGyTn12gOz2m8Tki5KV4+ZjzlfLdFT/GL1OT7zrGdORSGnOyor4AvpoXkXm5K2fMt
+	k0PUKo2Dq/JKI6aXevo1Vdc01K5mZ2wNGlaozrMU4ISvVM++a4UXmf/5IrP1/ePvTjZNpCpVG6d
+	wVcsYG4w1ajOZiwEEiq7Y42KkTN3Vi901fPQaSvDZirR2G9b0f14fKoimOdP1d13WMf2wX8CMPy
+	BjtuTQ0Sr3gpsfmLmvpxuy09ynrtIp+LRionx/iP58qS1vQw36GaFC4IFiLaYi7qbKAYN5rwm6a
+	So95oijeR3A8sr69dDPtqbmCYSbtf42OIyqSfHoE3zj6oSIlPS1xMEjzhiThzYf/cMJ6C
+X-Google-Smtp-Source: AGHT+IH+yeZp4fthmE6bMZB75N7lU2V9amhOgMmYrKXlYcGZT8jtMuHVCUKmGe6PAoHqnGK3ukeXPA==
+X-Received: by 2002:a05:620a:1927:b0:87d:9a55:7566 with SMTP id af79cd13be357-8820cbc5160mr3723625285a.28.1760375382268;
+        Mon, 13 Oct 2025 10:09:42 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8849f3d862csm1029109385a.10.2025.10.13.10.09.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 10:09:41 -0700 (PDT)
+Message-ID: <8bf9a72e-759b-4c98-ab11-6c31461db7f6@gmail.com>
+Date: Mon, 13 Oct 2025 10:09:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 000/563] 6.17.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251013144411.274874080@linuxfoundation.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20251013144411.274874080@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-netdevsim_fix-v1-1-357b265dd9d0@debian.org>
-X-B4-Tracking: v=1; b=H4sIAEEy7WgC/x3MWwqAIBAF0K0M9ztBe1FuJSKsxpqPLDQiiPYed
- BZwHiSOwgmWHkS+JMkeYMlkhGl1YWElMywh13lltClU4HPmK8k2eLnV2LrGVboufeOREY7IXu7
- /6xD4RP++H+ng1TtkAAAA
-X-Change-ID: 20251013-netdevsim_fix-b9a8a5064f8f
-To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1356; i=leitao@debian.org;
- h=from:subject:message-id; bh=GcsJsmNR66TkTqTz1B+6YFyl+EAGJv7TFYbWgcNErZA=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo7TJDW761SlNjpZNmbozNyChyMxtw+94H7IFC4
- YVqbKWDUeCJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaO0yQwAKCRA1o5Of/Hh3
- bWtOEACdABdg97kR6gRbybCU2xqATK1KstssSfsOUrtyJ1FRnjIzSVX7e/gF7GVdfFmtyJzqD7t
- QO0+vcYxeGIW42+omO2ALE9lNopeK3EPhi/X5bvypiqLqSRaFBqNidiA2ZS4K4OZLDVBUrxoFRG
- slHsLHOqf0+GgDGvoF4WhM+4hNBsdn2UiTx77peuPME/QJsqkBtOAEars11h4sYYipFE01vOwTO
- u4wwHyeTRSu6oc2SsA4b8u0XRyejsQIRix75bJsjmnoRZoV68XqD7gmp3bbnzsBuvynq8ZF49Ez
- kNmx7KuK3GvVlRUjFpnd+pD/u9ZeK2aBawj11oTWKJne5j61Hwn4979RLM5zvfQ1iYTLgTVmwZV
- fJZWInQRX5+FDf/qhwDONGroVCpt4IoHcRZ75mDGKTHbFrJpEmtRbUu4+p6IXu7RzhToatBzUtj
- WmrKUiUYA4xIqKbjkkHWstGMfU/kK/CzXtWnmNJ5sRMuVhlrrmLQc8wO7FgWK8G6BhtJkELmn0Z
- ZCrlIxUAn16LKYT4IKCW0P+SDWnRodLAKfkwns7Zv/qDoxDNUaYXTfkNnjwSLOezO6Oa6doOEmF
- MNvYMWTCQhhJMrXs8diQ7oAW2z6FOaYMuOiLsrSEW0OqXZX5cIdEqkn46+yhgT7JxHbbD9Jl1hh
- J4ushMPWj2YQKIg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Bringing a linked netdevsim device down and then up causes communication
-failure because both interfaces lack carrier. Basically a ifdown/ifup on
-the interface make the link broken.
+On 10/13/25 07:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.3 release.
+> There are 563 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.3-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-When a device is brought up, if it has a peer and this peer device is
-UP, set both carriers to on.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 3762ec05a9fbda ("netdevsim: add NAPI support")
----
- drivers/net/netdevsim/netdev.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-index ebc3833e95b44..fa1d97885caaf 100644
---- a/drivers/net/netdevsim/netdev.c
-+++ b/drivers/net/netdevsim/netdev.c
-@@ -545,6 +545,7 @@ static void nsim_enable_napi(struct netdevsim *ns)
- static int nsim_open(struct net_device *dev)
- {
- 	struct netdevsim *ns = netdev_priv(dev);
-+	struct netdevsim *peer;
- 	int err;
- 
- 	netdev_assert_locked(dev);
-@@ -555,6 +556,12 @@ static int nsim_open(struct net_device *dev)
- 
- 	nsim_enable_napi(ns);
- 
-+	peer = rtnl_dereference(ns->peer);
-+	if (peer && netif_running(peer->netdev)) {
-+		netif_carrier_on(dev);
-+		netif_carrier_on(peer->netdev);
-+	}
-+
- 	return 0;
- }
- 
-
----
-base-commit: 0b4b77eff5f8cd9be062783a1c1e198d46d0a753
-change-id: 20251013-netdevsim_fix-b9a8a5064f8f
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
