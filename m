@@ -1,172 +1,135 @@
-Return-Path: <linux-kernel+bounces-850411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD96BD2B94
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:07:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE26BD2B76
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2202E189A33F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:08:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55AA21883E15
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFB33002BA;
-	Mon, 13 Oct 2025 11:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7163064A9;
+	Mon, 13 Oct 2025 11:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GipQZPs+"
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lU8uA0ly"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9B12FE06D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A8E30594F;
+	Mon, 13 Oct 2025 11:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760353575; cv=none; b=aULJSgdNay7hiXavNPzQqPjnb5N7GIPtT16gbICMiC2adP5qjzBD1ggZ2+Hvr7FRMhh2kAsahSkMev/R0xEnGiD2a3qOXP0+8LsG3sLURdsF3J6jKanRL64IVKVXrPbRyLoCCY3EBzVbQsSaJmQWKCMppupMwlLPZaBEhJYVUjo=
+	t=1760353503; cv=none; b=CsTK3upsgBbC5SK+NksIiJK6kbeohQFUVCsx9jywx2kZgZ77XMHZ14NIyCn6pna07EOTUbkpEZ8nMhdE20lugiLqvIHWAeYCczT1n9UKDWQqlQjjkiEPyMgKUEQ/vQFO/PdNCtHtLNyJxG3Qh6VhJJO5ogQo7rnd2WJGRYqJ6dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760353575; c=relaxed/simple;
-	bh=nsyszXpKt948oOKahE3XIckpOp3K0wFz9VjnpoVgmwQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u/Af263FpQoGGlcgRev2iW/3PJB+G4SMSeNK7g4+frgIciZWsCHHuYDQz0NZ4qaXw5tnE5yF9Fp43fiSFNWRQgwxZpSsA3CrIcY+1MqvhrgiCMe5oZjQruv2RkRLmhIkzXebM+ltsRel+uj46aL2vG13mLy1IxCsFyPW9STlowU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GipQZPs+; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-63b6dfd85d4so3782182a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760353570; x=1760958370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+aUxvhazo+fI5qnE1t9OWiNPdeUT1J2KZzqa5v9i4n4=;
-        b=GipQZPs+ZW1F1dXJO+PoBGjZiGv8mQ22pTroKDqs1RnYg+w4CFCVJwSRuqsGcDNBGm
-         itUmci8zVerEXiew+GQf4rFdKXpXayAquJZ7XoxHNR1QY0PlBpFkNuBfN4+dCCYzgOkL
-         PCsueQlJwCTRUTltYTTn9yQ00eQ5HBccsOYp8DjLDVvTmkyZs8PkoOqcSh4UWmGLbpYk
-         EYOyo7WJPl3SKvZa5Y7j0hQLYkdJnm4teB5FA5q24PnplY/maPL0ZhtGBIO/ek0D/a52
-         k7ZtSRXAPnlP35+t9SM9u7l3PNV+HfCrpkxrIiPwKVWpc0MGQclC5ytULvC1OPeNMJi3
-         W+iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760353570; x=1760958370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+aUxvhazo+fI5qnE1t9OWiNPdeUT1J2KZzqa5v9i4n4=;
-        b=vauuE3yDJmQWKWsZMkee2Lh4p+1286xeZOj+KPK9GGF9iMtvQWry9wMmZ5LENM/quk
-         VhnrRgw35S254qTv5vXV4XdQ5Ub25ud5qYTrqTptJjRTC7aNwgB2rcqqJaOCDb5pMutK
-         bi4oYnjTo3VpTxA8R3ugny2ooO1IyifK4GZzBbr+RLsaW5FRsbew7tEJZKGRGujFZI7X
-         CR9XElamq59uy5HaZUaSCO63CHYoJXp8foGfzfO2kW3GKsyzAg0/kiYdj5XfaQ40Moff
-         0zzt8dF+gvsQ6WQPo6J4pkU9LSv3Xo50/j5xkJxc/hjk0HVn0UVjhtZaSh+1VU7dg00w
-         AQmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU95oOORzVoi6pFPN3JEmrG8b8fcKCVREjzyIOaqHf22Edlk3lBpv1+XKs/WOaP9488rpo1cmOejsZB7uY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXc2XOltyjzyjVax25AClgMElxfLn0Nqt2tv2BRVzydcPQMD2K
-	TjRAdsn2fmgJy0GHXPYeZ3IGEhSDD01iSiZeRrmTtp3+cghto9wBhPzzPQ+U8Ha4cqjXD9ay3op
-	XRNJ2kaolAPtW+paXTXQ9orHNrrThBzU=
-X-Gm-Gg: ASbGncsiebOhGz8uChY6zfp2UCO7dBpDyztJH0w5Pw6qe0L6ZI188wUl427UvxyNt6+
-	BTWZedRSopxUokAcGM2jmv//Jlcx40OOq46bOZdcFxMMFNrcZeH8dgTak3LuyBiS72Rhwl8y/kM
-	DZjJ9L52/00XeFLFpMiLbIwdGZ73Cn1Cc6mkFUCIvOfZjPkpXo2+ezQaXc3AEz8G+jlF9Ny7r1o
-	7kr0Uqj6llxJOQiEwpU26WQ7A==
-X-Google-Smtp-Source: AGHT+IGKDAXHZdvVmAlgzfekl2q5ywgCmcwxWyGOCrVIW3K2IvCUoc7P8HxcJHgwR9akx4wiqqa3iRMeNlO7r8vGrAA=
-X-Received: by 2002:a05:6402:144e:b0:63a:294:b02a with SMTP id
- 4fb4d7f45d1cf-63a0294b35fmr13389237a12.13.1760353570084; Mon, 13 Oct 2025
- 04:06:10 -0700 (PDT)
+	s=arc-20240116; t=1760353503; c=relaxed/simple;
+	bh=aEBv73qgNri7ca0Pq0aqKkR21tCOcBeU+pRiNPqzNyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CPXlf67bzbX4TX5mruNl7HuytzId2Ajb1LggnFbxxrMj0LDYBOAsg0fmaZydUyPbUiG/y1Q9Ysmu2vceP+iKlVxj87+/Dw8Nj+58hl22G4p0x/EX1h0jQ7GkQMppwTCTpcJYr5VkJ4OP0vnyb/EfsMU8JMKi3DjWZlr7N+o7xMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lU8uA0ly; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hEJEPHH6+qRvStpKd5XdIHIdQOqqchEZEQhUF+w5fyA=; b=lU8uA0lyTraUTgk65p0zRKnUqO
+	x1k/hLjU0mqYDZy0/FCEtgTw+o7oCMsVpuegZ3MaXImIG3JEWBdR8XdX+Fp7A4IyCa1OPDpouVwAN
+	X9ZWh5/aUU9ewlTtyva44YC8D0fs1oJfPI51U98ACyNH9oUJYBKoddVMJeOvV4w6VIdItnGdC9yy5
+	XNNi2p0iBV/Bf8ackZ1qPYx0nD8LcnJ28hxp3VefD5B9rhh5LF6A2bnFWrZdgV6/EYZd1BsKAPqqV
+	UC7MXuXv8W3HSR0xGognmy5WjgMEEGHjc4HK17VO6ewSFv6HC0jfyKsk1pEQcEfbjurDcT66k7Oli
+	lv69tzog==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8GMD-00000004elR-2K9B;
+	Mon, 13 Oct 2025 11:04:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9BD25300325; Mon, 13 Oct 2025 13:04:49 +0200 (CEST)
+Date: Mon, 13 Oct 2025 13:04:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+	mingo@kernel.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: Re: [RFC][PATCH 2/3] sched: Add support to pick functions to take rf
+Message-ID: <20251013110449.GJ4067720@noisy.programming.kicks-ass.net>
+References: <20251006104652.630431579@infradead.org>
+ <20251006105453.648473106@infradead.org>
+ <CAKfTPtCC3QF5DBn0u2zpYgaCWcoP2nXcvyKMf-aGomoH08NPbA@mail.gmail.com>
+ <20251008135830.GW4067720@noisy.programming.kicks-ass.net>
+ <CAKfTPtDG9Fz8o1TVPe3w2eNA+Smhmq2utSA_c6X4GJJgt_dAJA@mail.gmail.com>
+ <aObK2MfxPyFcovwr@slm.duckdns.org>
+ <CAKfTPtApJuw=Ad8aX=p3VLvMojyoxVBVRbMG80ADXR-NVL0PTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001135914.13754-1-caojunjie650@gmail.com>
- <20251001135914.13754-3-caojunjie650@gmail.com> <cwgn24f6tnmytd4omr2tul4e5jjin3ijji3ff3qkumqm2xe3t3@ntayu3m5kai3>
- <CAK6c68jBwykcWZm3ckm3nwab-X9Are4rD-eauE4rXA2+XvuX1w@mail.gmail.com> <9cafccd5-35d4-46c5-aa57-1b0b8ec116e8@oss.qualcomm.com>
-In-Reply-To: <9cafccd5-35d4-46c5-aa57-1b0b8ec116e8@oss.qualcomm.com>
-From: Junjie Cao <caojunjie650@gmail.com>
-Date: Mon, 13 Oct 2025 19:04:43 +0800
-X-Gm-Features: AS18NWAHjO2WhOdNhja1yiGzTv7NF2-hQQdiny2sVnNEXy9aQKZ9xWdUII5sYvA
-Message-ID: <CAK6c68iV=n3BvMMa30FuehbMs7-U01s0saZnsYwPVoiyw0VTrg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/msm/dsi: support DSC configurations with
- slice_per_pkt > 1
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Antonino Maniscalco <antomani103@gmail.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Eugene Lepshy <fekz115@gmail.com>, Jun Nie <jun.nie@linaro.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtApJuw=Ad8aX=p3VLvMojyoxVBVRbMG80ADXR-NVL0PTw@mail.gmail.com>
 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> =E4=BA=8E2025=E5=B9=B4=
-10=E6=9C=8813=E6=97=A5=E5=91=A8=E4=B8=80 17:39=E5=86=99=E9=81=93=EF=BC=9A
-> On 13/10/2025 04:52, =E6=9B=B9=E4=BF=8A=E6=9D=B0 wrote:
-> >  >Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com
-> > <mailto:dmitry.baryshkov@oss.qualcomm.com>> =E4=BA=8E2025=E5=B9=B410=E6=
-=9C=882=E6=97=A5=E5=91=A8=E5=9B=9B 10:04=E5=86=99=E9=81=93=EF=BC=9A
-> >  >On Wed, Oct 01, 2025 at 09:59:13PM +0800, Junjie Cao wrote:
-> >  >> From: Jun Nie <jun.nie@linaro.org <mailto:jun.nie@linaro.org>>
-> >  >>
-> >  >> Some panels support multiple slice to be sent in a single DSC
-> > packet. And
-> >  >> this feature is a must for specific panels, such as JDI LPM026M648C=
-.
-> > Add a
-> >  >> dsc_slice_per_pkt member into struct mipi_dsi_device and support th=
-e
-> >  >> feature in msm mdss driver.
-> >  >>
-> >  >> Co-developed-by: Jonathan Marek <jonathan@marek.ca
-> > <mailto:jonathan@marek.ca>>
-> >  >> Signed-off-by: Jonathan Marek <jonathan@marek.ca
-> > <mailto:jonathan@marek.ca>>
-> >  >> Signed-off-by: Jun Nie <jun.nie@linaro.org <mailto:jun.nie@linaro.o=
-rg>>
-> >  >> Signed-off-by: Junjie Cao <caojunjie650@gmail.com
-> > <mailto:caojunjie650@gmail.com>>
-> >  >> ---
-> >  >>  drivers/gpu/drm/msm/dsi/dsi_host.c | 25 ++++++++++---------------
-> >  >>  include/drm/drm_mipi_dsi.h         |  2 ++
-> >  >>  2 files changed, 12 insertions(+), 15 deletions(-)
-> >  >
-> >  >Please extract the generic part, so that it can be merged through a
-> >  >generic tree.
-> >  >
+On Thu, Oct 09, 2025 at 09:17:44AM +0200, Vincent Guittot wrote:
+> On Wed, 8 Oct 2025 at 22:34, Tejun Heo <tj@kernel.org> wrote:
 > >
-> > Sorry, I don't get it.  The generic part, generic tree? Do you mean
-> > the drm tree? `slice_per_pkt >=3D 2` is seen on the panels of these
-> > tablets that are equipped with qcom chips. I don't know if these
-> > panels are used on other platforms, and if it is necessary to do it
-> > in drm.
->
-> There are two changes here:
-> - MIPI DSI header change
-> - msm DSI driver
->
-> I've asked to split it to those two commits so that he change for
-> drm_mipi_dsi.h is more obvious for reviewers and so that it can be
-> merged through a drm-misc tree (or through drm-msm tree provided it gets
-> a necessary ack).
->
+> > Hello,
+> >
+> > On Wed, Oct 08, 2025 at 05:22:42PM +0200, Vincent Guittot wrote:
+> > > On Wed, 8 Oct 2025 at 15:58, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > > On Wed, Oct 08, 2025 at 03:16:58PM +0200, Vincent Guittot wrote:
+> > > >
+> > > > > > +static struct task_struct *
+> > > > > > +fair_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
+> > > > > >  {
+> > > > > > -       return pick_next_task_fair(rq, prev, NULL);
+> > > > >
+> > > > > The special case of a NULL rf pointer is used to skip
+> > > > > sched_balance_newidle() at the end of pick_next_task_fair() in the
+> > > > > pick_next_task() slo path when prev_balance has already it. This means
+> > > > > that it will be called twice if prev is not a fair task.
+> > > >
+> > > > Oh right. I suppose we can simply remove balance_fair.
+> > >
+> > > That was the option that I also had in mind but this will change from
+> > > current behavior and I'm afraid that sched_ext people will complain.
+> > > Currently, if prev is sched_ext, we don't call higher class.balance()
+> > > which includes the fair class balance_fair->sched_balance_newidle.  If
+> > > we now always call sched_balance_newidle() at the end
+> > > pick_next_task_fair(), we will try to pull a fair task at each
+> > > schedule between sched_ext tasks
+> >
+> > If we pass in @prev into pick(), can't pick() decide whether to newidle
+> > balance or not based on that?
+> 
+> The problem is that with dl_server, you can has a prev of a lower prio
+> but still want to run a newidle balance :
+> -cfs task preempted by dl server
+> -cfs task migrates to another cpu
+> -we want to run newidle balance when cpu become idle
 
-Thanks for your clear explanation.
+Bah; so yeah, this new behaviour is better for indeed always calling
+newidle when it is needed, but you're also right that in case of ext
+this might not be ideal.
 
-I don't mind to add the field separately. But should I submit it
-with the panel driver together? Otherwise, this field is unused
-for a while.
+So I have a pile of newidle hacks here:
 
-However, as you mentioned, this is not a part of standard, neither
-mipi dsi nor VESA DSC. Recently, only Qualcomm devices require it
-to calculate parameters, then we use them to program registers. Why
-don't we parse the field from devicetree?
+  https://lkml.kernel.org/r/20251010170937.GG4067720@noisy.programming.kicks-ass.net
 
->
-> --
-> With best wishes
-> Dmitry
+and while I don't particularly like NI_SPARE (the has_spare_tasks thing
+is fickle); the idea seems to have some merit for this situation --
+where we know we'll not be having fair tasks at all.
 
-Regards,
-Junjie
+I mean, we can always do something like this to sched_balance_newidle():
+
+	if (scx_switched_all())
+		return 0;
+
+Not pretty, but should do the job.
 
