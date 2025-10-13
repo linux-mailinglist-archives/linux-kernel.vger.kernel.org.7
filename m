@@ -1,190 +1,163 @@
-Return-Path: <linux-kernel+bounces-851254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F560BD5F30
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD184BD5F36
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8361406D20
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:30:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35678406EFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81A11DE4CD;
-	Mon, 13 Oct 2025 19:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E1E2D46C6;
+	Mon, 13 Oct 2025 19:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="O2vYsUij"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011002.outbound.protection.outlook.com [52.101.62.2])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d5zf4TLA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7BE4C81
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760383819; cv=fail; b=vEzEMahsF1DOoh12Nnj7Uo5ILN1h66jrV3jJ8xm0zfFKurYZ3tKl175l051RTFr27wQakeAYuHeuetU0sMwon5pVDcxOSPK37j+SxSPoB+5Qak8C1s4svmo7AMhb5tBQ3ZtYWuO3wS+6KhJoDy52eFx8CoLq4nr53kca7vHzJgw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760383819; c=relaxed/simple;
-	bh=ASWAk33SDfAbxgrNsZ3D8hAbYF0zVR5PKj/F+NR/pkU=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=sy4iVmvuvfE+F3j8dkAXzE+4XYErcPesCR7Y9FqAqHDVPyRZ/juFvajjHfjqAUMOrlEs1+iAWPdvovZk3E1fTOUj5CuKdntCem28n4NjYJ/ApYlha/xM0ri9i8fLDrkhezA9iGFNQEHetRCZbBz1Z3VvpkC+3+TbnEBlah80osI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=O2vYsUij; arc=fail smtp.client-ip=52.101.62.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kY0tISMCwhLMlCkHFdcdApolwcLU7OVDJKUKytL7B/UCT5BmG27wHZlipsC3X21hO7V0ci+mea4s+gBw19ijv6IXCsWAJRr3B6hn58Qo+Bd+QmzhrQk+4KTRL9f0k7kTRRfSPLdd0r5AQelHzOlpnYUANKbhWQ9SkV09PXTsabWYwGRf4suflimwYqGRvE887PMbk2hI4+YXZs7qYFiSLct9dd2ltJY2g92M7/o8OTidDWYwNKIH3srrRglTPSKxm2PIUNsvvuOoRN4QmV5OybMddJxLrC0JZglIRLtSp9UJ72ecKoGUXOzH/4B4YHs+M4jmZZWMmGTquvbvRtMrSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LY3dzaBs4Zrdm7e7T5/Bbfyrc6aqaQ2ptgLMtrs7XJw=;
- b=WDEpG3iF82QPI5lqvwIoDBYIrHktUFdcQL/xcYfS0JJ8BMCZW+GIhJHbOF/gdY+YlHRGgXtUbNAskSJnhpyBhC3UQB98NzcR0QhWoDSwz7E7TrqaRDmwOW2GacAlyoqsAs3fyP5MxaMOpgSufcnEHZx2RPXnYiOHPYGEW11N0z7Hpjl4uDoD0bku/VsknYcpRvfLCwfjXV/oRLz9RxOZ/dLsvuutwmSGCXWkkf7eCXUUKzvdxcYJ1D0bjYv20onmxxKsDWvvHn52rk7LWj98tvqd0fEYMkJfVjDkKQv6n8m4kk8Jr4GM4n7pnrt66tTmhQ/iWCS2DLNW9OJDlhE9nA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LY3dzaBs4Zrdm7e7T5/Bbfyrc6aqaQ2ptgLMtrs7XJw=;
- b=O2vYsUijoGRTFfayeCTxpj+IbCZCH7onlEJx5OgXU20EqzKQrrH+QFoMhsYpU8c2v1KEq4IaTeg9G37cyHurQn5LmtKUxxEJtpgfnQo5A+m+Cvh6VdJ1oSQmVlnpO/48ai+I7Qk29ia9MeuoQlQvedgSsox9n3+L81K+lOaFpIgZYwWnWYqtjGWxQdZWGRU2kbiWHhw4nFCPfCRHKMLWx1ALFXsqz7tt/tbxamrUk+aZgB3bUsNr7x9blFK04Qf4vaSOp3yiHmhKJYnuh6uDojAbE+U1IXnHvY2Pzjgul6wpGJjQulTGa11LKE+r7W520kdEZaNYsCp64su1/KyfxQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by CY5PR12MB6408.namprd12.prod.outlook.com (2603:10b6:930:3b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 19:30:13 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 19:30:13 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.19] sched_ext: Fix build error in cgroup_set_idle()
-Date: Mon, 13 Oct 2025 21:30:03 +0200
-Message-ID: <20251013193003.36215-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MR1P264CA0144.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:51::8) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616032561A2
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760383850; cv=none; b=B5Ecj24MFB1KZI+ezgJ3IrKfIbfs2oj8m6CauVNgm29oJOWy2UAUBzNn2j9Up1dx5deg4+pjK8LjYmusLyZEzesKv2jUvfsT5vwpfG6yilhHgvOL/rbYfLY147G3mCMYVNg8FdenKAGEpFST2EiPJSoPzKlmCekPlOoWAvA3zv4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760383850; c=relaxed/simple;
+	bh=k8L9EYVq4ZcGBQxGjh4u5oQtIJQX+iDffThzcZuRlZw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Buoiv/OvmEOohxZvlVcFu6j4F44dFUNu64lQHQbzLTVfLYnSA0LTs7RhhUQ7FXMan+8Hjaz7/JUggUVY6aV+jCC4b4HQe0hC8NgazrygARdhfU0TL3OMJjJLs1kOMNHDx2nxpKJYSWPb90cYYAVA7AD14Iz+lRS5qRjJLSuDIZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d5zf4TLA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760383847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qpGSyBJC0SfDABFt4fi6cbT29UFiUUF23XI7uRytY/Y=;
+	b=d5zf4TLAOY3QfUmkjRZxVveSUvuSmRALcpjV2G/w3kacDze4BZyvr9dyNlK3hXiBcR2xX9
+	GoFUMW7JrTAvdnH4b4zBdza9E1iSDaUhSY5WM4lPds7/om6Lztjpwv6+GSnz1IMMvEW+NT
+	gopDfqxEPyOeeLJhari15h44TKAYOxE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-fPTpuas2NJ-EAciB-qVlCA-1; Mon,
+ 13 Oct 2025 15:30:42 -0400
+X-MC-Unique: fPTpuas2NJ-EAciB-qVlCA-1
+X-Mimecast-MFC-AGG-ID: fPTpuas2NJ-EAciB-qVlCA_1760383840
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA9781800576;
+	Mon, 13 Oct 2025 19:30:40 +0000 (UTC)
+Received: from mrout-thinkpadp16vgen1.punetw6.csb (unknown [10.74.80.9])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6CD851955F21;
+	Mon, 13 Oct 2025 19:30:35 +0000 (UTC)
+From: Malaya Kumar Rout <mrout@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: mrout@redhat.com,
+	lyude@redhat.com,
+	malayarout91@gmail.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] PM: console: Fix memory allocation error handling in pm_vt_switch_required()
+Date: Tue, 14 Oct 2025 01:00:27 +0530
+Message-ID: <20251013193028.89570-1-mrout@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CY5PR12MB6408:EE_
-X-MS-Office365-Filtering-Correlation-Id: 861c5a6e-db91-43f0-12b6-08de0a8eee68
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ypz0ipPlA0scb7wEzEk4AFiA4W8GE4xW+S0b2R3dPek7K9rZXtxMXc2gCWO5?=
- =?us-ascii?Q?XdnQiYgS6DMSNFUmoZZhBNkoaY/S1CLiSCVicPKBVBv3SlaYssoVdkCmqwYK?=
- =?us-ascii?Q?hDfz6YYSx7jvlw7+N7NzAO0B72PS33BBMdQrL1qfCtvGZbI58gTLoys8a0VP?=
- =?us-ascii?Q?ABCAb4FE5gvBq4XAqEA9pHooLFyqvS6ssR5KyBTwnpVTkxCRwqAs7ZAxUOz0?=
- =?us-ascii?Q?20Wh3S0c+hbRY9tU8X1xFX2cSgd7M3wdsnX5yrEu6nIiVSJVPlR5PgsZyGcf?=
- =?us-ascii?Q?xXU1KsBGqoHBKR0rpd6mSLGp6A2wxiTHlaDjiC7Pq8owoVD66p5n4UjPvJkb?=
- =?us-ascii?Q?skEOVCVhtWZk1xd/R6oB74hzVrcB5XbjKrymVOtGTX9AXKl0EWK4OZKBOiOu?=
- =?us-ascii?Q?x5NYWQ2Cnw68vlLwqvV5EQ1zvD26Ti8xaCcgflwOfMP6UKqKNtu3zbPb6Vwy?=
- =?us-ascii?Q?4AbKbttZ8S6CABMHk74o2B/VCQL/8EC8/0z4RPgEFauPrMPrHLQqqII9D1F7?=
- =?us-ascii?Q?BjM3NNoLHYRKuEOQfBl9BaY9TG5HpRrF0GEj7gza5EXbtjP4lmmgst5M4Fgz?=
- =?us-ascii?Q?OkvcBYkoK62vP+1tjKUobuQoFkOei4GlkK29vJKeJ3VKbgduVPefT/Mvj5pF?=
- =?us-ascii?Q?Ak+TQwN1AGhAlSa0Iiuc+VVTw2CZXuBDSVvpagoXlqnlMpfsqVANWmoyNFRo?=
- =?us-ascii?Q?1/rLyPaylm3H16y03QJGZp5IRBVd+H94MLnkRvqf1cyT9Q0A65Nygn6RLj2O?=
- =?us-ascii?Q?XLzh8crupQN8eW+djiWqRLN2ZzYcBFtr9Cjyk0qklBWIkIANQFGU9Jz8WbO4?=
- =?us-ascii?Q?DtJq0z0uMF/Z7z3QVRKb8XQyGEEmvhXEmV67QIYfCW02R7H64Qi012H+F4zD?=
- =?us-ascii?Q?RVYvZf2HQ75VgpmkeatftK8D7gAOl4KQRzSdL87/7L0bFaGRoJN6nWYlI2fk?=
- =?us-ascii?Q?O9ryarvBz+6m5qYjIrob4hLjVC1yrP5GjsUf36FqK/CinxNKSiuGOVWpo1dI?=
- =?us-ascii?Q?b9WUwNfKrotOB9u98x8JGL4sw3Hj7oUHhpZ+6/2p4gVqAYl1Gr4Jok1c5wk0?=
- =?us-ascii?Q?MgDwy8OrxUPfEYm1W73PAzeRvETq/4v1DGyr/UYDV1HZytTXvgOQHf6qUXzn?=
- =?us-ascii?Q?vMQYUftmculDOjedd6TX8bfnv5u4U+m24l+1tcWOs/yovv+IL1nEgTf8dwK9?=
- =?us-ascii?Q?22emMgagtq+Sj8MbSZtx7GTvWaEW9PgKBtdhfpXMQzZXAixSxQ8SOrmlsfoa?=
- =?us-ascii?Q?vqpHQBEfNnV2x0Jiwkg+B0bOb0ipm0F7CxMmDxNZVZLAn7MJaX6BdeCgQe1H?=
- =?us-ascii?Q?MNgoWrdCNUlLLb67HIaMGd9LO/I2ozzLhYvay2FXjuHounz0hAUquhi087kv?=
- =?us-ascii?Q?/BA6OZdaPK3OitxltKU2LjFgbewiczVZK/TnhLsi75j4GJgJ/WrmcI/JeGTm?=
- =?us-ascii?Q?dl516xcdwFd8eKbLXOqc5nQE6Aj4Rfzd?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DsHPEJ6ROuxnmflR4moLpkylf3ToWtr0554O1GTttptPly6WpOIvVIAMgWGx?=
- =?us-ascii?Q?Ir7TfCS8zDthqMo8TzdY27oqtySDYTLVV8ryQVey9/M8vft9rXAClSesZ3oO?=
- =?us-ascii?Q?HEz6+YuhP9UpnWlY4G9DHGs4FDjMidVKOhRa++vp9+FTrWCKN01JDIrHii97?=
- =?us-ascii?Q?66aFliF2Y63zDBUTlxAh2w5alj30MWfYk0POxZdhgncROdGhOnBdVavLZZ+M?=
- =?us-ascii?Q?7DAIRazb40wYtJ8bGTQhzCFPdVLJiIL1NDdZj1J/BfvzuZIAuntmTelMhAFg?=
- =?us-ascii?Q?XdiZ3b+/6eNAYTiNzMVACr4EcoQarv8v7eESlhP7uccy+dEOKgdVdprmFsW6?=
- =?us-ascii?Q?EpwtKSXNvnzPH/ARU569yrNYeCg4GYtXoVomvU2Sley01xVguJFcU2zrI5mu?=
- =?us-ascii?Q?j2nNdtRUWHTdF8HFinHQYZsKKqJO2iamFd3FO4Hf5ufjalBH0YLTOnN+0zYB?=
- =?us-ascii?Q?8vuRJMI3kFYiBb2mCIJEKlcT0FJtCtkXNxoM83alnMzmi18PnBMX6n6jrHmy?=
- =?us-ascii?Q?MNdUvIzGcGO50OdvULrT31xXEFhvPEZQhiOPT+rclTDbep4e+G1xkTa80lL8?=
- =?us-ascii?Q?b3xl8LJdj8rgTmcpvDniBuODBs3J/J5gHfVyScobWwnXvoT9Ibg/b570r/Nk?=
- =?us-ascii?Q?cqKYpJNCm8PFlzdaB036jTtfF8YzfzSqC993H2qYo/5DIoH0FLqgb7fWHURj?=
- =?us-ascii?Q?vZPhNCW2jcCF71c1hkZlpPOdKWOBp5ENjUFxsXxb5i1Jdh2w7Wngp4BGgUS/?=
- =?us-ascii?Q?1jJMv8L3UTULt3uRthlz+b3fXuhGJsYP+urClUlSzsxWK4Aiot6l0FVl5OkB?=
- =?us-ascii?Q?BBoQnFpTZgMLGsVQnBz4lwgkLgWqQXwNu8F8CS6ejVdVRrzkquAN08KtNTxT?=
- =?us-ascii?Q?qv53VvBYL1OVkNI7REsVqdilHii9+izITI2HyPCY/2EwrDVrqjmumr6jqkVO?=
- =?us-ascii?Q?y7XO7Im5nTG34Rv2O8/atlV2T4dxCwksAuip0lFWEAnEt97YqhQHHbePzVT8?=
- =?us-ascii?Q?98QSy5N0kYEJ/7N5jgeXnsPuWzUhg9HxjnryZwgvlM3kQ8t9pdIkFyXGAmE8?=
- =?us-ascii?Q?04JfuqdWZINgtnHH6u/O/TZzXktnF2QBovTKh+SSfQI01+a63SlffHn/ntXl?=
- =?us-ascii?Q?btxg9Kyb03bX93V9C6m6WfGsqq2WRkaON1t4mmSSSHLnww24eB7VrXeQoXMC?=
- =?us-ascii?Q?osoypZqTbSe6HmbT5qtzfkfE2gqZJKLnScpmuKwSec+vlziWfQnARcjBl52O?=
- =?us-ascii?Q?TrcVGw5v08KRaYG/dVYamSOn8LJtPyXf5eSHXjK9Ti+rzPMy/5rrUbebCXSf?=
- =?us-ascii?Q?XQuYKciD7PAjRvklYzJ0KVSwml3LHLn48gmVKiKMlxfvJHw56epXBHCp4N3U?=
- =?us-ascii?Q?GAikt2j0U8Snb+Xa9mdvnaH/WuO1uk7q4UzrKYa7nRkNg1QKMK+iW1de1elj?=
- =?us-ascii?Q?OYOtCH+H1CVCfPGXM6Jr/48ZoHSHofUMM76bPEecScoIQr6rtNOc+kxFbFrQ?=
- =?us-ascii?Q?Kh0dexr0waiDyZLTggYhGSon0yg4nbnfmeEXzFAKVjM5RLU0hONzuQPEAe5l?=
- =?us-ascii?Q?Mqgm0A04y/aX3SN4puwg/ACt2NQNS/rBA7nHll/y?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 861c5a6e-db91-43f0-12b6-08de0a8eee68
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 19:30:13.6867
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MUXfv5u2huritO6S+MweqtNx5yCJgaaxld6EFhyWU/Cn1Pw+vUF1noTbSnEvamGhR8JyjXqYImes3c8QyBcYVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6408
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Commit a5bd6ba30b336 ("sched_ext: Use cgroup_lock/unlock() to
-synchronize against cgroup operations") renamed scx_cgroup_rwsem to
-scx_cgroup_ops_rwsem.
+  The pm_vt_switch_required() function fails silently when memory
+  allocation fails, offering no indication to callers that the operation
+  was unsuccessful. This behavior prevents drivers from handling allocation
+  errors correctly or implementing retry mechanisms. By ensuring that
+  failures are reported back to the caller, drivers can make informed
+  decisions, improve robustness, and avoid unexpected behavior during
+  critical power management operations.
 
-Update cgroup_set_idle() accordingly to fix the resulting build error.
+  Change the function signature to return an integer error code and modify
+  the implementation to return -ENOMEM when kmalloc() fails. Update both
+  the function declaration and the inline stub in include/linux/pm.h to
+  maintain consistency across CONFIG_VT_CONSOLE_SLEEP configurations.
 
-Fixes: d579dc6eb4fd0 ("sched/ext: Implement cgroup_set_idle() callback")
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
+  The function now returns:
+  - 0 on success (including when updating existing entries)
+  - -ENOMEM when memory allocation fails
+
+  This change improves error reporting without breaking existing callers,
+  as the current callers in drivers/video/fbdev/core/fbmem.c already
+  ignore the return value, making this a backward-compatible improvement.
+
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Malaya Kumar Rout <mrout@redhat.com>
 ---
- kernel/sched/ext.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/pm.h     | 5 +++--
+ kernel/power/console.c | 8 ++++++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 228f4faef7670..430749ce46ab3 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3217,7 +3217,7 @@ void scx_group_set_idle(struct task_group *tg, bool idle)
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index cc7b2dc28574..a72e42eec130 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -25,11 +25,12 @@ extern void (*pm_power_off)(void);
+ 
+ struct device; /* we have a circular dep with device.h */
+ #ifdef CONFIG_VT_CONSOLE_SLEEP
+-extern void pm_vt_switch_required(struct device *dev, bool required);
++extern int pm_vt_switch_required(struct device *dev, bool required);
+ extern void pm_vt_switch_unregister(struct device *dev);
+ #else
+-static inline void pm_vt_switch_required(struct device *dev, bool required)
++static inline int pm_vt_switch_required(struct device *dev, bool required)
  {
- 	struct scx_sched *sch = scx_root;
- 
--	percpu_down_read(&scx_cgroup_rwsem);
-+	percpu_down_read(&scx_cgroup_ops_rwsem);
- 
- 	if (scx_cgroup_enabled && SCX_HAS_OP(sch, cgroup_set_idle))
- 		SCX_CALL_OP(sch, SCX_KF_UNLOCKED, cgroup_set_idle, NULL,
-@@ -3226,7 +3226,7 @@ void scx_group_set_idle(struct task_group *tg, bool idle)
- 	/* Update the task group's idle state */
- 	tg->scx.idle = idle;
- 
--	percpu_up_read(&scx_cgroup_rwsem);
-+	percpu_up_read(&scx_cgroup_ops_rwsem);
++	return 0;
  }
+ static inline void pm_vt_switch_unregister(struct device *dev)
+ {
+diff --git a/kernel/power/console.c b/kernel/power/console.c
+index 19c48aa5355d..a906a0ac0f9b 100644
+--- a/kernel/power/console.c
++++ b/kernel/power/console.c
+@@ -44,9 +44,10 @@ static LIST_HEAD(pm_vt_switch_list);
+  * no_console_suspend argument has been passed on the command line, VT
+  * switches will occur.
+  */
+-void pm_vt_switch_required(struct device *dev, bool required)
++int pm_vt_switch_required(struct device *dev, bool required)
+ {
+ 	struct pm_vt_switch *entry, *tmp;
++	int ret = 0;
  
- void scx_group_set_bandwidth(struct task_group *tg,
+ 	mutex_lock(&vt_switch_mutex);
+ 	list_for_each_entry(tmp, &pm_vt_switch_list, head) {
+@@ -58,8 +59,10 @@ void pm_vt_switch_required(struct device *dev, bool required)
+ 	}
+ 
+ 	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
+-	if (!entry)
++	if (!entry) {
++		ret = -ENOMEM;
+ 		goto out;
++		}
+ 
+ 	entry->required = required;
+ 	entry->dev = dev;
+@@ -67,6 +70,7 @@ void pm_vt_switch_required(struct device *dev, bool required)
+ 	list_add(&entry->head, &pm_vt_switch_list);
+ out:
+ 	mutex_unlock(&vt_switch_mutex);
++	return ret;
+ }
+ EXPORT_SYMBOL(pm_vt_switch_required);
+ 
 -- 
 2.51.0
 
