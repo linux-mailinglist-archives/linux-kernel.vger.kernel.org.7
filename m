@@ -1,185 +1,135 @@
-Return-Path: <linux-kernel+bounces-851533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBFFBD6AE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:58:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D47E1BD6AE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A77188E649
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:59:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAD6C4F3488
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD602FF15B;
-	Mon, 13 Oct 2025 22:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yUq3hIxc"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E56B2571A5
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3C829D275;
+	Mon, 13 Oct 2025 23:00:38 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5786B2940B;
+	Mon, 13 Oct 2025 23:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760396314; cv=none; b=f/qFz5r9/NhMum2JHpe7WOLynEub7swEWHDABM9D0MCTqzlfcWSnekDtH4CaJNC9ZyedoUmfHSjHani0MAsmxIXxDE8cOLXiydUHo9bV+oL4dDa4rK6nQipFGaKsa4w/vdyqLPr15XigizhSqj2FyyxiDwrIlffP+DnKL8vQfh4=
+	t=1760396438; cv=none; b=JUhOgYgUp4v9vp05+tZSTdiJFBXAq/uH2rDRj6z608jg4UoFdTWsT6YQqJJJXSZcMlOQ1S7bzr+h4JaU+Tb0f981ET7c9GvoPNBR6odKn8Ss0MytV5EFofDNe9eau+HQfTfa8Nn6xKCgD99z9WqUkP6/l9NHEeTybkqOSf8gsgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760396314; c=relaxed/simple;
-	bh=OBVPRVnolJIYZ4plwt7wa568FRg7nOQAvuHQFosWrn4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VGaqBA4WxvzgbG+fatDZaQ56m6rCgK2jR+WMoqpVwp3oCHpXFj9/5EP8lv57vY+/p5H+bv4UQPmWtiXGkboOK5j7Vgl/O/1iyXC2p5EJyt++7kVCYPErB5IzF0N798vX5gV0Q+uXrdWsfYiC65VR4W+nzn+RwHmRzqzJlKAf/Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yUq3hIxc; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-286a252bfbfso212133615ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760396312; x=1761001112; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jgg62F8lpJy3ysdGrDIadd5P5qmpoZpUB7Kr6b42Svo=;
-        b=yUq3hIxcW0rZIS2qbIfdjGT+PEHHGTqAML104zNunFWgDW6C/6QLq0cijycuLDYaKs
-         OKjkmNk3WpMCTuXKEm75/vd/FTjjnJ2a47OQnVNfQY/qTsMCLSmHQk/8L8Aj/iba4o9F
-         g2CJZHHSIvCOHRWEcDXjw1wUT078zu/BuhqfQnC9MJj4mdD3726LXE0p6FyOW+eDTNP3
-         ETCOHkUhCPkD99H2ej0vmrBi/twT0BlCevYJVd6b/8hHRhUFtP7DdaRu2GvnD9vd77KD
-         1cy+U3AfKNB75aSBDrDf2AzoXJbwnwXtkDQ9CihQ+76ZnwCAd0MIndDc+YU+SwgliGdb
-         j+fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760396312; x=1761001112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jgg62F8lpJy3ysdGrDIadd5P5qmpoZpUB7Kr6b42Svo=;
-        b=ng7hMfwJxDxxVd62KTJtKvtLbQeamVoGKr6U3LoA34I8i/5PB52WP5s59o0JCvaYto
-         L3B1RaXK+mmhFlnfma3EvToS0cXiM7U02wPBJ5SmFtBLBxk5Kws4ipOCC9/vGbGB4/5Q
-         MaoTgp+EcteYWzsTA8xBT/Fe2qtO+QUOVVAkM99mmAn5eIYfzOm8vEAIlkK2/Cp4nZnZ
-         kIkIg2TlRA8RgeO17k9IlCVfh781gX6Txiq3dp0Wd5wFzuedyA04jFjY0kErbWyhf1wT
-         QG+KahGl/L70oL84Fp6KaE8eJrd6VSRzX6G8ali1QRYQ/1ZuMSGZ1E25ciF2722bWfF9
-         KHFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRXj1J2b5dm1tNQ1xo06g5Xum8xO6TkxXC/LukWs95qx4sqAyqsbEZkIAuSzzefNgPCfvKJ6wuMlIxZUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzisjwqLl+PgSgYvmzvLkOfggD9h5cNyO7zuejFr19nulOlBPds
-	0xhwtrwK3oDwasm3kIBc7tHr1zkenq6z/pTlMTnbo311lTJ0htqJn8gMJFRx9V6uU+IhIEfKqty
-	cbWeR+g==
-X-Google-Smtp-Source: AGHT+IFVRSBXCaOg47V3LlEe/hW3xpOG/xZ18xP0dbIvEMR36+z9CDUWRAyHNBZRkitDhAucFbqnHLvEJGU=
-X-Received: from pjxu8.prod.google.com ([2002:a17:90a:db48:b0:32e:b34b:92eb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d60f:b0:269:ba61:222e
- with SMTP id d9443c01a7336-29027303330mr287660585ad.53.1760396311667; Mon, 13
- Oct 2025 15:58:31 -0700 (PDT)
-Date: Mon, 13 Oct 2025 15:58:30 -0700
-In-Reply-To: <ivkoh7hdl7fcp5fmehmf3kv6ebqitozunbricyed5tkt7z3ngr@qvmaytpzrskw>
+	s=arc-20240116; t=1760396438; c=relaxed/simple;
+	bh=EPKuwdJexlHb1O0c9HGWbRR5IYHP7Xw+ry5A6PSboGw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bRy0W9hwVwTgMllhAMLDRymO5iLWbsn4vJVHTRAEINcPwo3l3Hve9UqmcYehmoD34CabtP7I8Npdngn0h6oZxV+enQRrXqK3hiYH1bfvdZRfQTuonMhxZAqhPjwz5sFxNVnHQO5LQYAT8Uq7Y9k1AhHcN+CWqy18JH81XuuVQ2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 7DDCA92009C; Tue, 14 Oct 2025 01:00:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 76F2E92009B;
+	Tue, 14 Oct 2025 00:00:27 +0100 (BST)
+Date: Tue, 14 Oct 2025 00:00:27 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+cc: Guenter Roeck <linux@roeck-us.net>, 
+    =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
+In-Reply-To: <aO1sWdliSd03a2WC@alpha.franken.de>
+Message-ID: <alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk>
+References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com> <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com> <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net> <aO1sWdliSd03a2WC@alpha.franken.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251001145816.1414855-1-yosry.ahmed@linux.dev>
- <20251001145816.1414855-9-yosry.ahmed@linux.dev> <aO1yJHcKC85mo0PQ@google.com>
- <ivkoh7hdl7fcp5fmehmf3kv6ebqitozunbricyed5tkt7z3ngr@qvmaytpzrskw>
-Message-ID: <aO2EFiOHSuvmHvq_@google.com>
-Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
- describe EPT entries
-From: Sean Christopherson <seanjc@google.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Oct 13, 2025, Yosry Ahmed wrote:
-> On Mon, Oct 13, 2025 at 02:41:56PM -0700, Sean Christopherson wrote:
-> > On Wed, Oct 01, 2025, Yosry Ahmed wrote:
-> > > From: Yosry Ahmed <yosryahmed@google.com>
-> > > 
-> > > The assertions use 'hugepage' to describe a terminal EPT entry, but
-> > > 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
-> > > hugepage.
+On Mon, 13 Oct 2025, Thomas Bogendoerfer wrote:
+
+> > This patch causes boot failures when trying to boot mips images from
+> > ide drive in qemu. As far as I can see the interface no longer instantiates.
 > > 
-> > Yes, it's more accurate, but also less precise.  I'm guessing the assert message
-> > and comment talked about hugepages because that's the type of mappings that
-> > caused problems at the time.
+> > Reverting this patch fixes the problem. Bisect log attached for reference.
 > 
-> Given that it refers to PG_LEVEL_4K entries too, I wouldn't call it less
-> precise. All callers actually create 4K mappings so it is never actually
-> a hugepage in the current context :D
-
-nested_identity_map_1g()?
-
-> > Ah, actually, I bet the code was copy+pasted from virt_create_upper_pte(), in
-> > which case the assumptions about wanting to create a hupage are both accurate
-> > and precise.
-> > 
-> > > The distincion will be useful in coming changes that will pass
-> > > the value around and 'leaf' is clearer than hugepage or page_size.
-> > 
-> > What value?
+> Patch below fixes my qemu malta setup. Now I'm wondering, why this is
+> needed. It was added with commit
 > 
-> 'leaf'. The following changes will pass 'leaf' in as a boolean instead
-> of checking 'current_level == target_level' here. So passing in
-> 'hugepage' would be inaccurate, and 'page_size' is not as clear (but
-> still works).
+> aa0980b80908 ("Fixes for system controllers for Atlas/Malta core cards.")
 > 
-> > 
-> > > Leave the EPT bit named page_size to keep it conforming to the manual.
-> > > 
-> > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > > ---
-> > >  tools/testing/selftests/kvm/lib/x86/vmx.c | 10 +++++-----
-> > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > index 04c4b97bcd1e7..673756b27e903 100644
-> > > --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > @@ -380,15 +380,15 @@ static void nested_create_pte(struct kvm_vm *vm,
-> > >  			pte->address = vm_alloc_page_table(vm) >> vm->page_shift;
-> > >  	} else {
-> > >  		/*
-> > > -		 * Entry already present.  Assert that the caller doesn't want
-> > > -		 * a hugepage at this level, and that there isn't a hugepage at
-> > > -		 * this level.
-> > > +		 * Entry already present.  Assert that the caller doesn't want a
-> > > +		 * leaf entry at this level, and that there isn't a leaf entry
-> > > +		 * at this level.
-> > >  		 */
-> > >  		TEST_ASSERT(current_level != target_level,
-> > > -			    "Cannot create hugepage at level: %u, nested_paddr: 0x%lx",
-> > > +			    "Cannot create leaf entry at level: %u, nested_paddr: 0x%lx",
-> > >  			    current_level, nested_paddr);
-> > >  		TEST_ASSERT(!pte->page_size,
-> > > -			    "Cannot create page table at level: %u, nested_paddr: 0x%lx",
-> > > +			    "Leaf entry already exists at level: %u, nested_paddr: 0x%lx",
-> > 
-> > This change is flat out wrong.  The existing PRESENT PTE _might_ be a 4KiB leaf
-> > entry, but it might also be an existing non-leaf page table.
-> 
-> Hmm if pte->page_size is true then it has to be a leaf page table,
-> right?
+> Maciej, do you remember why this is needed ?
 
-No, because bit 7 is ignored by hardware for 4KiB entries.  I.e. it can be 0 or
-1 depending on the whims of software.  Ugh, this code uses bit 7 to flag leaf
-entries.  That's lovely.
+ I do.  The reason is preventing PCI port I/O mappings below 0x100, which 
+interferes badly with how the PIIX4 decodes port I/O cycles.  That did 
+happen in the field, wreaking havoc and prompting my change.
 
-> If it's an existing non-leaf page table we shouldn't fail,
+ By the look of the code it would definitely trigger for the Bonito64 
+system controller, which has a fixed port I/O target address range and, 
+depending on the settings left by the firmware, it might also trigger for 
+the Galileo GT64120A and SOC-it 101 system controllers, which have 
+variable port I/O target address ranges.
 
-Ah, right, current_level can never be less than target_level because the first
-assert will fail on iteration-1.
+ Here's an example map of Malta port I/O resources (SOC-it 101 variant):
 
-> the assertion here is when we try to override a leaf page table IIUC.
->
-> > Instead of hacking on the nested code, can we instead tweak __virt_pg_map() to
-> > work with nested TDP?  At a glance, it's already quite close, e.g. "just" needs
-> > to be taught about EPT RWX bits and allow the call to pass in the root pointer.
-> 
-> That would be ideal, I'll take a look. In case I don't have time for
-> that unification, can this be a follow-up change?
+00000000-0000001f : dma1
+00000020-00000021 : pic1
+00000040-0000005f : timer
+00000060-0000006f : keyboard
+00000070-00000077 : rtc0
+00000080-0000008f : dma page reg
+000000a0-000000a1 : pic2
+000000c0-000000df : dma2
+00000170-00000177 : ata_piix
+000001f0-000001f7 : ata_piix
+000002f8-000002ff : serial
+00000376-00000376 : ata_piix
+00000378-0000037a : parport0
+0000037b-0000037f : parport0
+000003f6-000003f6 : ata_piix
+000003f8-000003ff : serial
+00001000-00ffffff : MSC PCI I/O
+  00001000-0000103f : 0000:00:0a.3
+  00001040-0000105f : 0000:00:0a.2
+    00001040-0000105f : uhci_hcd
+  00001060-0000107f : 0000:00:0b.0
+    00001060-0000107f : pcnet32_probe_pci
+  00001080-000010ff : 0000:00:12.0
+    00001080-000010ff : defxx
+  00001100-0000110f : 0000:00:0a.3
+  00001400-000014ff : 0000:00:13.0
+  00001800-0000180f : 0000:00:0a.1
+    00001800-0000180f : ata_piix
 
-Part of me wants to be nice and say "yes", but most of me wants to say "no".
+As you can see there are holes in the map below 0x100, so e.g. if the bus 
+master IDE I/O space registers (claimed last in the list by `ata_piix') 
+were assigned to 00000030-0000003f, then all hell would break loose.  It 
+is exactly the mapping that happened in the absence of the code piece in 
+question IIRC.
 
-Struct overlays for PTEs suck.  At best, they generate poor code and obfuscate
-simple logic (e.g. vm->page_size vs pte->page_size is a confusion that simply
-should not be possible).  At worst, they lead to hard-to-debug issues like the
-one that led to commit f18b4aebe107 ("kvm: selftests: do not use bitfields larger
-than 32-bits for PTEs").
+ The choice of 0x1000 as the lower boundary IIRC has something to do with 
+alignment; I think the decoding base has to be a multiple of 0x1000 and 
+given that the ACPI resource is decoded by a non-standard BAR at 0x40 in 
+the configuration space (set up by `malta_piix_func3_base_fixup' BTW) we 
+just need to match its setting.
 
-eptPageTableEntry obviously isn't your fault, but nptPageTableEntry is. :-D
-And I suspect the hardest part of unificiation will be adding the globals to
-deal with variable bit positions that are currently being handled by the struct
-overlays.
+ Can you please check what the port I/O map looks like with your setup 
+with and without your patch applied?
+
+ NB there is still something fishy with the setup of SOC-it 101's PCI 
+decoding windows, which is why I have forced `defxx' with a patch to use 
+port I/O, as reported above.  The driver uses MMIO unconditionally on PCI 
+systems nowadays, but using MMIO prevents it from working with the SOC-it 
+101 system controller and I yet need to debug it.  Conversely MMIO used to 
+work just fine with the Galileo GT64120A system controller while I still 
+had one operational.
+
+ HTH,
+
+  Maciej
 
