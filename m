@@ -1,117 +1,172 @@
-Return-Path: <linux-kernel+bounces-851016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA6DBD5044
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:27:24 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3D7BD5098
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2463B18A30E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:27:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABEDA34D66D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D345230D35;
-	Mon, 13 Oct 2025 16:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IqxS7dqH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB35223DC1;
-	Mon, 13 Oct 2025 16:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C5E25A2B4;
+	Mon, 13 Oct 2025 16:29:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7F1226CFE;
+	Mon, 13 Oct 2025 16:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760372830; cv=none; b=kXiHjV2p7u46Z+3iA3z4/L7zOfm5euBQQnF/I2ZUQtcwR8NEx0JAg3rYerElMN6Y6NSCQsAgP32ApryWq7RK7HfE321Djp/xr7vW3BFB9lvIat0T/L6VwrQp/dmALPwyA0SuZPCS9PimEpmzmYpiqGAk66i/cdM1IDjA/cxfi9E=
+	t=1760372963; cv=none; b=tdKJ1iGuJudIcd/FL2e1QemhV5KD+hzN/VDZOf4Ivzkmn1mFucvF9HyQQtIEynAmNdwUH2HCuCfUq1Uyi0UxlLS76v+uhzA7bTwSKmex7rfkaYQfS8iDSkbfTnpy418Ev7FJLZVL4oU6B+7wrILxQ62HRaeMLXULYoQeVwB009g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760372830; c=relaxed/simple;
-	bh=9qS09/oL1ZW/4+fX9C/TuDIUBMfU9E9dZdPEuUhgxh0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s9vr8V6YIYlj31cowi0ip6ylbV5CMUels0D1IoXHwnGMdR7g6QLgSH5Yz1WAWz0jIBFptLq09bsjZnTAiQTYxuTA8Xw5EMFw9yeWCbMD5mQklYMiirIYi2sFfeWnxW6uh2AtMyOAuPUoH+iD5RQ+cBEhc+UCU/KTTuo7eNAJcXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IqxS7dqH; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760372829; x=1791908829;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9qS09/oL1ZW/4+fX9C/TuDIUBMfU9E9dZdPEuUhgxh0=;
-  b=IqxS7dqHFaXjOjiq8V6RR0tr5HcDr0f3Gp5wLgHm5Tzy15TV7yiHaxCc
-   VUNjMvacojz3avI3CR1vchdHjBw6oCFO92iDspSEdIRwX3zHMBjnAZzlB
-   +o3brd9ADGaUrqDzahFP6fUqyl1Iy1+/vNK5y29b5d2FBRhlmHRBXEQbK
-   02O2c97FfbYBEIAU29PYrsWxR+wwzRIASPssw+Sz6jEphhuIYx6937Ucv
-   gbNjQQqxzODVU3q2yyIc22rpDOtTGVU2sbb6Ki7k93SUFxiZvWH4Cbjc3
-   uaZ8fEfo5sn1u7Qhfm7wV70MqS9SQWUcQ5nAJQ3TC5xFRzlRqawbRRqwf
-   Q==;
-X-CSE-ConnectionGUID: 5qpq3Bo5RDqFA7faGUD6uQ==
-X-CSE-MsgGUID: hBiYqKicTnKU27qE3xh67w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62409335"
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="62409335"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 09:26:59 -0700
-X-CSE-ConnectionGUID: Ie2DvTwKTU67H+OMSUMQug==
-X-CSE-MsgGUID: FmJ/hBHIQ8mf9ipCEpV7wA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="205331726"
-Received: from lucas-s2600cw.jf.intel.com ([10.54.55.69])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 09:26:58 -0700
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH 2/2] module: Simplify warning on positive returns from module_init()
-Date: Mon, 13 Oct 2025 09:26:24 -0700
-Message-ID: <20251013-module-warn-ret-v1-2-ab65b41af01f@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com>
-References: <20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com>
+	s=arc-20240116; t=1760372963; c=relaxed/simple;
+	bh=JGb0RNZsz4c9Vqe8/pPlU1/B31S1U7K/MACGfqfsVCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hB5CO7GhnvxQ2MhmQ2Q8U1wB/+YbT/RLYUke/FvK6uhgN0mypq2/1n/KYoKbTlAkMj7MH+BwZ9XmQ8uutPRcPI+BE6aJFKwxCZJSOozv9s0qcinJiiS/6cSbYv7HcezGgISx0ToElzWHAIsHPcjj/Zj8sAI+zw2OL26oTTYgTJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 594C0113E;
+	Mon, 13 Oct 2025 09:29:12 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25ED93F738;
+	Mon, 13 Oct 2025 09:29:15 -0700 (PDT)
+Message-ID: <8c75d1a5-42f8-4adf-a1b1-74aa668b1a30@arm.com>
+Date: Mon, 13 Oct 2025 17:29:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-bd47d
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 24/29] arm_mpam: Track bandwidth counter state for
+ overflow and power management
+To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-25-james.morse@arm.com>
+ <53eddf53-a610-4420-9021-658fdf31aebe@arm.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <53eddf53-a610-4420-9021-658fdf31aebe@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-It should now be rare to trigger this warning - it doesn't need to be so
-verbose. Make it follow the usual style in the module loading code.
+Hi Ben,
 
-For the same reason, drop the dump_stack().
+On 12/09/2025 16:55, Ben Horgan wrote:
+> On 9/10/25 21:43, James Morse wrote:
+>> Bandwidth counters need to run continuously to correctly reflect the
+>> bandwidth.
+>>
+>> The value read may be lower than the previous value read in the case
+>> of overflow and when the hardware is reset due to CPU hotplug.
+>>
+>> Add struct mbwu_state to track the bandwidth counter to allow overflow
+>> and power management to be handled.
 
-Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
-Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
----
- kernel/module/main.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> index 1543c33c5d6a..eeb62ed94520 100644
+>> --- a/drivers/resctrl/mpam_devices.c
+>> +++ b/drivers/resctrl/mpam_devices.c
+>> @@ -990,20 +992,32 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+>>  		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+>>  		mpam_write_monsel_reg(msc, MBWU, 0);
+>>  		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+>> +
+>> +		mbwu_state = &m->ris->mbwu_state[m->ctx->mon];
+>> +		if (mbwu_state)
+>> +			mbwu_state->prev_val = 0;
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 74ff87b13c517..31c54bf6df4b2 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -3045,13 +3045,9 @@ static noinline int do_init_module(struct module *mod)
- 		}
- 		goto fail_free_freeinit;
- 	}
--	if (ret > 0) {
--		pr_warn("%s: '%s'->init suspiciously returned %d, it should "
--			"follow 0/-E convention\n"
--			"%s: loading module anyway...\n",
--			__func__, mod->name, ret, __func__);
--		dump_stack();
--	}
-+	if (ret > 0)
-+		pr_warn("%s: init suspiciously returned %d, it should follow 0/-E convention\n",
-+			mod->name, ret);
- 
- 	/* Now it's a first class citizen! */
- 	mod->state = MODULE_STATE_LIVE;
+> What's the if condition doing here?
 
--- 
-2.51.0
+Yes, that looks like cruft....
+It took the address of an array element - how could it be null?!
 
+
+> The below could make more sense but I don't think you can get here if
+> the allocation fails.
+
+Heh ... only because __allocate_component_cfg() has lost the error value.
+Without the outer/inner locking stuff, its feasible for  __allocate_component_cfg() to
+return the error value directly.
+
+With that fixed, and ignoring a bogus ctx->mon value - I agree you can't get a case where
+this needs checking.
+
+
+I think this was originally testing if the array had been allocated, and its been folded
+wrongly at some point in the past. I assume I kept those bogus tests around as I saw it
+blow up with nonsense num_mbwu_mon - which is something I'll retest.
+
+
+>> +
+>>  		break;
+>>  	default:
+>>  		return;
+>>  	}
+>>  }
+
+>> @@ -2106,6 +2227,35 @@ static int __allocate_component_cfg(struct mpam_component *comp)
+>>  		return -ENOMEM;
+>>  	init_garbage(comp->cfg);
+>>  
+>> +	list_for_each_entry(vmsc, &comp->vmsc, comp_list) {
+>> +		if (!vmsc->props.num_mbwu_mon)
+>> +			continue;
+>> +
+>> +		msc = vmsc->msc;
+>> +		list_for_each_entry(ris, &vmsc->ris, vmsc_list) {
+>> +			if (!ris->props.num_mbwu_mon)
+>> +				continue;
+>> +
+>> +			mbwu_state = kcalloc(ris->props.num_mbwu_mon,
+>> +					     sizeof(*ris->mbwu_state),
+>> +					     GFP_KERNEL);
+>> +			if (!mbwu_state) {
+>> +				__destroy_component_cfg(comp);
+>> +				err = -ENOMEM;
+>> +				break;
+>> +			}
+>> +
+>> +			if (mpam_mon_sel_lock(msc)) {
+>> +				init_garbage(mbwu_state);
+>> +				ris->mbwu_state = mbwu_state;
+>> +				mpam_mon_sel_unlock(msc);
+>> +			}
+> 
+> The if statement is confusing now that mpam_mon_sel_lock()
+> unconditionally returns true.
+
+Sure, but this and the __must_check means all the paths that use this must be able to
+return an error.
+
+This is a churn-or-not trade-off for the inclusion of the firmware-backed support.
+I'd prefer it to be hard to add code-paths that are going to create a lot of work when
+that comes - especially as folk are promising platforms that need this in the coming months.
+
+
+
+Thanks,
+
+James
 
