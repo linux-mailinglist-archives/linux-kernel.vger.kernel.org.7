@@ -1,87 +1,165 @@
-Return-Path: <linux-kernel+bounces-850034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A313BD1AD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:28:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62726BD1AEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B395B3A3FB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:28:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35C6C4E6CA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409D92DE717;
-	Mon, 13 Oct 2025 06:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986E92DF6F4;
+	Mon, 13 Oct 2025 06:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="czIlbdGL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J7VZgV76"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WojJ90OZ"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB442DD60F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFC134BA46;
+	Mon, 13 Oct 2025 06:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760336885; cv=none; b=GIbHbuxLUfN4MN6lBJHhroDyNYQ8wZ+LZp1+V5j4r5JgAZ3RfEtMsAmStpdLT1foldMs6i/hAg6YRwf2leIGtlwTwAUXT7QlMPgza5W9eVfpStAW64aaUjSJfeC4af9+ubeFC5kUokwSvNui8P2zmuQTpK4K58fGjgJ3pqVVSqw=
+	t=1760337117; cv=none; b=hP6e2jmISFZnBTgTofkmNFDmW5Jj20CW1y+e5GRTsZg9ifIbfwj5P/kLrC9EipIAZj6vCXyv7evy38nVWBND4YaEBM49PIStMDp2l8G5/WH094Fp7qunCkiqyfrok72T5HI6E3/L0H9/1G/8V0S1tZbulDPexWLSBD5DJdfDVjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760336885; c=relaxed/simple;
-	bh=RxVn2GQXUIB4qbHlA2Cb2iDd9E2/HPk15jFxklapqb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQjtKoVI4M9uI5NyJWyqI9XeN+DZF0j7A5o8Atq1JS3b3RJoaB7B0XyF+YnQ37rXmngj2NhWRsr4mFbHoUaAsT/3wnbNzU3iaHP4EVpOksxypJxSA3an7aXLA2XMiZZjIEKimkH+m/4MM2tubQF4ZozgKxTtNdsNa24cewiiJBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=czIlbdGL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J7VZgV76; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 13 Oct 2025 08:27:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760336876;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+lWtQFv2S+aF9dYafZDwwatkx8KiFcCSvwTyPK3+vM=;
-	b=czIlbdGLytDRKDs6vAw1zqCbwJNmJ7KQpCPt8XVR8wulBg4k96MFqm8Lt+Jaya3k6EMsK1
-	uEPXyCP4ME0Ov3QUlD93hqxyRTK39SYQd5ag3rOHnRQ5e76fipBK+wfeYWIYq8UoSYb64j
-	JXlieO4zvxkNab2qcrli8wYGIDeeSLQHdlnUAsi9gsWww2sL8mUCaChrI4eqM7qhyk2BUy
-	2cFVq48vtzBiTZrc/pOzXjGAN8n4a1Zz9e4anSGgb292FTCXoz8psDLaTQJgdKLV9mYg19
-	BHg1zPs14f3ApM7RI/60S8BetJ+1u740fQt2Zodz1KmxGFukrgx2mnCgKrQx8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760336876;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+lWtQFv2S+aF9dYafZDwwatkx8KiFcCSvwTyPK3+vM=;
-	b=J7VZgV76qYt6owRDosLVULkFKlKlRzfR8GYsIaVHlsPn5foBNC0b7Cgk0M1btbaoK4gQLz
-	QY3RW4+Mlc29vZBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Ryo Takakura <ryotkkr98@gmail.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, clrkwllms@kernel.org,
-	rostedt@goodmis.org, leitao@debian.org, mark.rutland@arm.com,
-	ardb@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] arm64: use SOFTIRQ_ON_OWN_STACK for enabling softirq
- stack
-Message-ID: <20251013062754.6GDxEVID@linutronix.de>
-References: <20251013013508.74677-1-ryotkkr98@gmail.com>
+	s=arc-20240116; t=1760337117; c=relaxed/simple;
+	bh=7RTRckvGIAosXW1+ZC+A3KnR+M5s09eAlnkaWEsJUnM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C3m8igyLEopPOmNjLJ7zJ17TiiHQzbL8ADGYI7j5nPXPxq1MLgEMRbiN4d0XtI/KptxESjYKlP7bpi0TOXhxzzXHpoDfEjzJlkZn9xwIDmic+Mh+07TGb7vJ9nSlun9Xr3YAHKRqln3nW6dbEEaH6AV9S9k2GK8zOWFvuK/j2xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=WojJ90OZ; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 4d12cb78a7fe11f08d9e1119e76e3a28-20251013
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zC07w80GvXeFMdo5HvJjX18kMmXIYryOs3kZSDvhMnE=;
+	b=WojJ90OZJyY7gKwUE9++0j+Z9h5Ce2BUBdhJg9k581HiKq/WPO2OQ5UAotaFUaG2mmmvrb6kTFKeCOoMRBaKBHYGPni7NDsrPfGDf7AMNp5JgipO6J2YDM3Y2hUt9E8xNRj2FmjtgpKSJ03MhHkRQy4rIRyKn7PZW78gY5E0QdA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:3700f11e-2716-4f0c-b0f1-16c93d595744,IP:0,UR
+	L:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:100
+X-CID-META: VersionHash:a9d874c,CLOUDID:a934fd50-c509-4cf3-8dc0-fcdaad49a6d3,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:3|15|5
+	0,EDM:-3,IP:nil,URL:99|1,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI
+	:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 4d12cb78a7fe11f08d9e1119e76e3a28-20251013
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <jjian.zhou@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 156023309; Mon, 13 Oct 2025 14:31:50 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 13 Oct 2025 14:31:46 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Mon, 13 Oct 2025 14:31:46 +0800
+From: Jjian Zhou <jjian.zhou@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Jjian Zhou
+	<Jjian.Zhou@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jjian Zhou
+	<jjian.zhou@mediatek.com>
+Subject: [PATCH v9 0/2] add VCP mailbox driver
+Date: Mon, 13 Oct 2025 14:31:34 +0800
+Message-ID: <20251013063146.17919-1-jjian.zhou@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251013013508.74677-1-ryotkkr98@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On 2025-10-13 01:35:08 [+0000], Ryo Takakura wrote:
-> For those architectures with HAVE_SOFTIRQ_ON_OWN_STACK use
-> their dedicated softirq stack when !PREEMPT_RT. This condition
-> is ensured by SOFTIRQ_ON_OWN_STACK.
-> 
-> Let arm64 use SOFTIRQ_ON_OWN_STACK as well to select its
-> usage of the stack.
-> 
-> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+Hi everyone,
 
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+This is v9 of my VCP mailbox driver.
 
-Sebastian
+Changes since v9:
+- Add "Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>"
+
+Changes since v8:
+- Rebase onto next-20251008 and fixed build breaks.
+
+Changes since v7:
+- mtk-vcp-mailbox.c:
+  - Change type u32 to u16.
+  - Change BIT(ipi_info->index) to if.
+  - Put the platform_set_drvdata between "of_device_get_match_data"
+    and "platform_get_irq".
+- mtk-vcp-mailbox.h
+  - Modify the definition to MTK_VCP_MBOX_SLOT_MAX_SIZE.
+
+Changes since v6:
+- mtk-vcp-mailbox.c:
+  - Replace mtk_vcp_mbox_priv with mtk_vcp_mbox.
+  - Move mbox_controller to the first member.
+  - Define "struct mbox_chan chan"; Remove allocate one during the probe.
+  - Remove API get_mtk_vcp_mbox_priv.
+  - Pass the private data since there's only one mailbox.
+  - Modify mtk_vcp_mbox_xlate "return &mbox->chans[0]".
+
+Changes since v5:
+- binding:
+  - Patch 1 fix 'make dt_binding_check' errors.
+  - Link to v5
+    https://patchwork.kernel.org/project/linux-mediatek/patch/20250822021217.1598-2-jjian.zhou@mediatek.com/
+
+Changes since v4:
+- binding:
+  - Match the binding file name and compatible.
+- mtk-vcp-mailbox.c:
+  - Drop 'dev_dbg(dev, "MTK VCP mailbox initialized\n")'.
+- Since the reviewer hopes to combine the VCP IPC driver and
+  the VCP driver for a unified review, the original three patches
+  have been split into two parts: the VCP mailbox driver and
+  the binding remain together, while the VCP IPC driver is merged
+  with the VCP driver and submitted as one.
+- Link to v4
+  https://lore.kernel.org/all/20250820094545.23821-1-jjian.zhou@mediatek.com/
+
+Changes since v3:
+- binding:
+  - Remove unused lable '|' and 'vcp_mailbox0'.
+- Link to v3
+  https://lore.kernel.org/all/20250317110331.2776-1-jjian.zhou@mediatek.com/
+
+Changes since v1:
+- Link to v1
+  https://lore.kernel.org/all/20250305082047.15746-1-jjian.zhou@mediatek.com/
+
+In the v2 version, there is ongoing discussion about whether the VCP's
+IPC should use mailbox or rpmsg. To prevent the discussion records
+from being lost, the previous discussion link is attached.
+https://lore.kernel.org/all/CAGXv+5FXqZb_v2dQNgCKbFpJrLhbVk3f0sWrrMCVk3jaWwoBqA@mail.gmail.com/
+
+
+Jjian Zhou (2):
+  dt-bindings: mailbox: mediatek,mt8196-vcp-mbox: add mtk vcp-mbox
+    document
+  mailbox: mediatek: Add mtk-vcp-mailbox driver
+
+ .../mailbox/mediatek,mt8196-vcp-mbox.yaml     |  49 +++++
+ drivers/mailbox/Kconfig                       |   9 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/mtk-vcp-mailbox.c             | 170 ++++++++++++++++++
+ include/linux/mailbox/mtk-vcp-mailbox.h       |  32 ++++
+ 5 files changed, 262 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/mediatek,mt8196-vcp-mbox.yaml
+ create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
+ create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
+
+--
+2.46.0
+
 
