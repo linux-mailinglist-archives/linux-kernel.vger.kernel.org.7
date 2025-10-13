@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-850254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D1ABD25B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:46:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3364ABD255E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 72971349D97
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:46:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FCC84E24B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148502459FE;
-	Mon, 13 Oct 2025 09:46:26 +0000 (UTC)
-Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A25C2FE045;
+	Mon, 13 Oct 2025 09:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghOvtoQE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2A7199BC;
-	Mon, 13 Oct 2025 09:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9047A26290;
+	Mon, 13 Oct 2025 09:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348785; cv=none; b=ZKCgohd1xL19kixfG5QrAAQTQsAlE+fPxOdf1iFUPhDTxRMP+H1UWUTHFowl8+eaEd4jdqGZ66gGJOlEJRg41uDsCb0lpjWJ0Q61j5AnQgJdQH6yzkvE1n539nqqttWeoL1rynpELkW2uVhK6N/26cr2gSnyxHEs6qhikkyW2WA=
+	t=1760348490; cv=none; b=QiN3+OhT52yrp8oaW5ThkS6WuYJPd21NHO645CF/0VTREOGpHsduISlVqDN44mAO0hjn4h8164En0KoT75189hZy4lLWOyunBfx4ZffTvl0maJvDzcKmLm8dMEjHr5OX+/d3AX1HIsgirwfCNK9A6PDTUmnEklVhex6DeqNgXaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348785; c=relaxed/simple;
-	bh=h823Jn7znHP8KA7iEsFvYpJbceJefEHuZ7L/AHM4m44=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=E0/jSMM/Yziq3F3+pCWpOmtexpBCaeRfy/2tox6FCiOt3egpCD++PEsFtKIVfnCYIRSdoH6XMssHHcCKXLpmqjEqlE9Q+sWw/kEmsgKADRWTnSrg5ituAAbDnA6AS/OUSje2Xw4q2AR5xTHlGAYDRjF+zQGrR3NT5hkSCa/UbhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-	by mail-out.m-online.net (Postfix) with ESMTP id 4clXQm0fRsz1r5T4;
-	Mon, 13 Oct 2025 11:40:47 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
-	by mail.m-online.net (Postfix) with ESMTP id 4clXQl0TLcz1qqlS;
-	Mon, 13 Oct 2025 11:40:47 +0200 (CEST)
-X-Virus-Scanned: amavis at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
- by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
- with ESMTP id 96rRaL0Kr7Gj; Mon, 13 Oct 2025 11:40:37 +0200 (CEST)
-X-Auth-Info: TXi3Ra51dtUNS+v1oT8VzPM2f29+Ppei3QKG18ckJuVai8AeeR6PaC9Ckxly1rws
-Received: from igel.home (aftr-82-135-83-44.dynamic.mnet-online.de [82.135.83.44])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.mnet-online.de (Postfix) with ESMTPSA;
-	Mon, 13 Oct 2025 11:40:37 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-	id 631152C19F8; Mon, 13 Oct 2025 11:40:37 +0200 (CEST)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org,  linux-efi@vger.kernel.org,
-  x86@kernel.org,  Ard Biesheuvel <ardb@kernel.org>,  Borislav Petkov
- <bp@alien8.de>,  Ingo Molnar <mingo@kernel.org>,  Kevin Loughlin
- <kevinloughlin@google.com>,  Tom Lendacky <thomas.lendacky@amd.com>,  Josh
- Poimboeuf <jpoimboe@kernel.org>,  Peter Zijlstra <peterz@infradead.org>,
-  Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v7 15/22] objtool: Add action to check for absence of
- absolute relocations
-In-Reply-To: <20250828102202.1849035-39-ardb+git@google.com> (Ard Biesheuvel's
-	message of "Thu, 28 Aug 2025 12:22:18 +0200")
-References: <20250828102202.1849035-24-ardb+git@google.com>
-	<20250828102202.1849035-39-ardb+git@google.com>
-Date: Mon, 13 Oct 2025 11:40:37 +0200
-Message-ID: <87cy6rf8bu.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760348490; c=relaxed/simple;
+	bh=JBGlttPgEcGlkaapqMF5MSjaQ9HOMIlfMMQ6JxCDE5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cEuvRexpzKfxKKN5VCta0Ng3WBdMMO7q9M3vAcjRx/sSVRR1fZAMkI33yBqy+sCqcQ0ZWCJkTiNAHC4nxsei8L9n1S5kSHPg/YX6DNyjmKzQH2DoXnb01aHam4GksroGsKn+ou0TS6R/5kPM5BshQB3Fg+fekO5dxChy2Kzl9oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghOvtoQE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3123C4CEE7;
+	Mon, 13 Oct 2025 09:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760348490;
+	bh=JBGlttPgEcGlkaapqMF5MSjaQ9HOMIlfMMQ6JxCDE5g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ghOvtoQEypW4ImDFAnvNW097AJNEiEI/mn84ZnGrE7duaFTXttFY6ynUP93zxgcoN
+	 UVSCSBCgW6w5yEA15RO2jl1IKoot9Brls/zcCsAM/URqQE+M1fvIkglh516Nu6BhFF
+	 9qLJ+Nl/qjjbbJkx0ibduyp0LAOwDbWKaTboOc8LekZCPQN4oN28yCNe6tZJ+39u9a
+	 RJCI7tL0xK6TBhCQfiE8689ET2H3LItOVUqHvX6W6f2uVcILc6CisSIKQ3b+rsAVrN
+	 A+XRIVhG+HweZs2RCCu1hcWiwxX9J5nqBQuiz+Oi8ccvAnBefn8qfon8Xp4DnZ9Y8e
+	 tbq3D6U5syqFA==
+Message-ID: <4c974736-f257-42a5-9d39-801a579d9771@kernel.org>
+Date: Mon, 13 Oct 2025 11:41:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] Add support for Grinn GenioSBC-510/700 boards
+To: Mateusz Koza <mateusz.koza@grinn-global.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ marcin.czarnecki@grinn-global.com, b.bilas@grinn-global.com, andrew@lunn.ch,
+ robh@kernel.org
+References: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Aug 28 2025, Ard Biesheuvel wrote:
+Il 09/09/25 18:30, Mateusz Koza ha scritto:
+> This patch series adds support for Grinn GenioSBC-510 and GenioSBC-700
+> boards based on MediaTek MT8370 and MT8390 SoCs, respectively. It
+> includes device tree files for both boards, updates to the device tree
+> bindings, and necessary modifications to the Makefile.
+> 
+> As far as I know, <angelogioacchino.delregno@collabora.com> has access
+> to the schematics for these boards, as we've shared them under NDA with
+> Collabora.
+> 
+> Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
+> ---
+> v2:	Fixed the subject prefixes,
+> 	Fixed alignment in dts files,
+> 	Added missing SPDX-License-Identifier,
+> 	Fixed the ordering in dt-bindings,
+> 	Dropped redundant info from commit messages,
+> 	Run checkpatch.pl on the patchset and fixed the issues,
+> 	as suggested by Krzysztof Kozlowski <krzk@kernel.org>.
+> 
+> v3:	Changed eth phy-mode to 'rgmii-id',
+> 	Changed eth mediatek,tx-delay-ps to 30,
+> 	as suggested by Andrew Lunn <andrew@lunn.ch>.
+> 
+> v4:	Removed the nodes that are not present in upstream,
+> 	as suggested by Louis-Alexis <angelogioacchino.delregno@collabora.com>.
+> 
+> 	Added default pinctrl to ssusb0,
+> 	Enabled the scp_cluster node,
+> 	as suggested by Bartosz Biłas <b.bilas@grinn-global.com>.
+> 
+> v5:	Did NOT move the chasis-type - Error: Properties must precede subnodes,
+> 	Swapped underscores to commas in regulator names,
+> 	Reordered properties (generic -> vendor -> status),
+> 	Dropped the firmware property from the scp_c0 node,
+> 	Added interrupts-extended to the pmic node,
+> 	Dropped the mt6359key handle,
+> 	Added blank spaces before the memory nodes,
+> 	as suggested by AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+> 
+> Bartosz Bilas (1):
+>    arm64: dts: mediatek: mt8370-grinn-genio-510-sbc: Add Grinn
+>      GenioSBC-510
+> 
+> Mateusz Koza (3):
+>    arm64: dts: mediatek: mt8390-genio-700-evk: Add Grinn GenioSBC-700
+>    dt-bindings: arm: mediatek: Add grinn,genio-700-sbc
+>    dt-bindings: arm: mediatek: Add grinn,genio-510-sbc
+> 
+>   .../devicetree/bindings/arm/mediatek.yaml     |   2 +
+>   arch/arm64/boot/dts/mediatek/Makefile         |   2 +
+>   .../mediatek/mt8370-grinn-genio-510-sbc.dts   |  20 +
+>   .../mediatek/mt8390-grinn-genio-700-sbc.dts   |  20 +
+>   .../dts/mediatek/mt8390-grinn-genio-sbc.dtsi  | 538 ++++++++++++++++++
+>   .../dts/mediatek/mt8390-grinn-genio-som.dtsi  | 210 +++++++
+>   6 files changed, 792 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-700-sbc.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-sbc.dtsi
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-som.dtsi
+> 
 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 79eab61cd944..aeefc749e237 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -4686,6 +4686,47 @@ static void disas_warned_funcs(struct objtool_file *file)
->  		disas_funcs(funcs);
->  }
->  
-> +__weak bool arch_absolute_reloc(struct elf *elf, struct reloc *reloc)
-> +{
-> +	unsigned int type = reloc_type(reloc);
-> +	size_t sz = elf_addr_size(elf);
-> +
-> +	return (sz == 8) ? (type == R_ABS64) : (type == R_ABS32);
-> +}
-> +
-> +static int check_abs_references(struct objtool_file *file)
-> +{
-> +	struct section *sec;
-> +	struct reloc *reloc;
-> +	int ret = 0;
-> +
-> +	for_each_sec(file, sec) {
-> +		/* absolute references in non-loadable sections are fine */
-> +		if (!(sec->sh.sh_flags & SHF_ALLOC))
-> +			continue;
-> +
-> +		/* section must have an associated .rela section */
-> +		if (!sec->rsec)
-> +			continue;
-> +
-> +		/*
-> +		 * Special case for compiler generated metadata that is not
-> +		 * consumed until after boot.
-> +		 */
-> +		if (!strcmp(sec->name, "__patchable_function_entries"))
-> +			continue;
-> +
-> +		for_each_reloc(sec->rsec, reloc) {
-> +			if (arch_absolute_reloc(file->elf, reloc)) {
-> +				WARN("section %s has absolute relocation at offset 0x%lx",
-> +				     sec->name, reloc_offset(reloc));
+Patches 1, 3 applied to v6.18-next/dts64
 
-This is wrong for a 32-bit host:
-
-In file included from check.c:16:
-check.c: In function ‘check_abs_references’:
-/home/andreas/src/linux/linux-6.18-rc1/tools/objtool/include/objtool/warn.h:47:3: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 7 has type ‘u64’ {aka ‘long long unsigned int’} [-Werror=format=]
-   47 |   "%s%s%s: objtool" extra ": " format "\n",  \
-      |   ^~~~~~~~~~~~~~~~~
-/home/andreas/src/linux/linux-6.18-rc1/tools/objtool/include/objtool/warn.h:54:2: note: in expansion of macro ‘___WARN’
-   54 |  ___WARN(severity, "", format, ##__VA_ARGS__)
-      |  ^~~~~~~
-/home/andreas/src/linux/linux-6.18-rc1/tools/objtool/include/objtool/warn.h:74:27: note: in expansion of macro ‘__WARN’
-   74 | #define WARN(format, ...) __WARN(WARN_STR, format, ##__VA_ARGS__)
-      |                           ^~~~~~
-check.c:4713:5: note: in expansion of macro ‘WARN’
- 4713 |     WARN("section %s has absolute relocation at offset 0x%lx",
-      |     ^~~~
-cc1: all warnings being treated as errors
-
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+Thanks!
 
