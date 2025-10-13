@@ -1,151 +1,140 @@
-Return-Path: <linux-kernel+bounces-851351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C03BD6397
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:45:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160F8BD63EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D86DD19A0BF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:45:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50C694F7822
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EE930BBA2;
-	Mon, 13 Oct 2025 20:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UxSNtELP"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69C230AAD7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A1C30B509;
+	Mon, 13 Oct 2025 20:42:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051A309EEE;
+	Mon, 13 Oct 2025 20:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760388091; cv=none; b=t7DByzeNswQxo56JYFKCh+IRJs+CvY0a8E0QGfd+OuYztpCnlwvTM4GnndBXoZqZeBWl0voIOMvRSBvl58KnbJcsUOjCbkTx2Fcpfz0P/kjM/EJ485wtofbyJY8c57/+9ERzEiFFPsYYG2lRHT+tB5mPOeL9GgCBO9ZY3K+NVQw=
+	t=1760388178; cv=none; b=mPHOQPMj248gduoP2gxMhh64mszspme9fLuAFnMOysNllgGi6jzKsw8eQIVXharmDEN/yfHh1hw15/X7Ji+r1LW1KHjJk13Hrj64+6xdSB8lnRYIJn8XyNKXoLcWoiJJIOM7vtoPxPhPpsY6pG7ORF7UzvlGU9j+oX/mIQyRlKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760388091; c=relaxed/simple;
-	bh=GsSWfFlXkBsxiUZoCz6mvqXlZhLEzpwSFRwMJKX6ek4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t2HWrk1Qdfj5SsI+RdS6b+GoYZL+bOwWUX9KCPcNnci9Bo1gYXVN1V1dw5iyhGk8h9Zb4lhAPk6tP2gOcHGNbPLMuhl1bWdglA+i9nKKLuW9mu1KrAWdCnLQfGAeaTnvzvqQ912xoP5/gLS02ur6p9tArrflbz4hnv2oovsW9Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UxSNtELP; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b403bb7843eso995640766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:41:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760388088; x=1760992888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wCLtlY+GpSdapckAq80Uoda7FwoX2xkIrZqjiQg1jTI=;
-        b=UxSNtELP/KctQLvknOMJ1+RLheRIKAsMqeuMzsPGnNHZOkQlhZhuccp7kF1IQ4pBXE
-         y5kfnrMAXMCt/nZw9DzPEgvAkoPmxmrjF+O/NQc64D0CahamIUAucqFk+BIJ+i1DAXan
-         lz9+mfdjiaMTFtHqWUvhsJW2obb0oB7iAMGYK8luUbrr8F927b0EVY1En53yGR3gxXhJ
-         RaDfMGVARLqWxMN5LsuSMkSyVc/xHS9OH1iql0sdq2hegd+015elbsSDOt4w8GebaOpr
-         ITWTFtG/UducX4UVpZxOhHDurzf8sy/mcfPAZCc+VaN77UP55zNI0IKCR8roYM8GZ/LT
-         wqQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760388088; x=1760992888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wCLtlY+GpSdapckAq80Uoda7FwoX2xkIrZqjiQg1jTI=;
-        b=GMo4Zh6/IRI8nTyYUEgMD1Uc/8iXQrHnxk7oGpGElZQ3XNddCFx7Z8JmmQaKN7bKtA
-         cUI42yVhuIB7C0o1+2elTW/ohyRUh6Jh+83bXr+nxcgzfUIfNlxAbwLLEZaMqWQspZ7G
-         oUtligYvjEqUsSJcV8JM21y9na5Lf4GOY5n17a+KcYsxAihSDNXmQsn/OjEVgDRLIhe9
-         D0TV9BGB+e+mYEsueO6DCOxRzP6YYKKJkeX0ZqmDbjCFRmwO4r0af8y9hzE1Zxm/RbTU
-         ZCLpnkOrKDwWtCIbb/wO9G281v7vEAM+cJEE4wYdXor0y2zlvC039AdbL8cl8wriKxnQ
-         VyzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLSr193zqnviDTIxZw5sGx6Fw/36rYie3Pq0uxMItzppid6fk4WiaYqQoneVUh65nBCCeEpgybay3izt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1rerDU2XD/L9mY4aK4h0mMqllx7p9oE3nBYUzjjHqS+xPcfB3
-	i2lSzUtFSdKXyybsEne4zayzCm14JciWBOCRqxB1gFdQVi4KKznA0Wl8
-X-Gm-Gg: ASbGncvxXezuEhjWCSP8hjPlxW5+hGRATboROPx6JQ0EbeJ2cGHPlODMJfGRFmCpF+Y
-	XAguHgIl2jcKhzkSOFnWHAieKJtuYx7PfTDBMOJuDs1YbeSln1mRwyZCSSGfsgT6m4Jx6TjAq4Z
-	hdaYu/xQybkzq5TxG800vZnMiqN0sLpK5FB9basv5YOvifqwUWHAYWy3PpIsBcW1eTfHwBtMPfU
-	k1/lcOpUVdhQL5El95TLOFclIAtop3pNcgOSN3JZrsFaAK0de6JEh5W8CECWYFr9v75LCSCyTPf
-	5HQO1tnpLZH2s3NM8Bhz3pjJZ7JVs3vkIJ3m5Px2izs8FbNgXmmU2Eyh/7uZMe4GdMkZFMlgfU3
-	ZmY3FfY1V0LEaYrOVq4vgjMt9Vk5hCQ==
-X-Google-Smtp-Source: AGHT+IFrDpANwGND6n4Bq/nSFTErKeDAVitiuC4/ag/cLsjoNuy/l3zpqrheKMdvIEEFGo6yIOFj0w==
-X-Received: by 2002:a17:907:7e88:b0:b3f:b7ca:26ca with SMTP id a640c23a62f3a-b50aaa96b30mr2242003166b.21.1760388087782;
-        Mon, 13 Oct 2025 13:41:27 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12b9dsm1000097266b.45.2025.10.13.13.41.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 13:41:27 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 13 Oct 2025 22:41:19 +0200
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, irogers@google.com,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next RFC 0/2] Pass external callchain entry to
- get_perf_callchain
-Message-ID: <aO1j747N7pkBTBAb@krava>
-References: <20251013174721.2681091-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1760388178; c=relaxed/simple;
+	bh=xKtQgJRsuX5tKVTVViYkngB+tljb7gYCso27qJYidUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jRsotlBTjMno6AnkLEhotCkrxE6rsEnpen5GN4wA578CO/7zHQd4tZvOhk/2vsehR4Si5RTeW+6s62x/EHVYNy9Bu1cah4gaaVTrCmKTpcjYrUI0SpOcPMBYtnNsbW+M9DXHEwjhui2876orZnYPgiZCr78wMnJGQO8Mc0F5Twg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CCE71063;
+	Mon, 13 Oct 2025 13:42:47 -0700 (PDT)
+Received: from [192.168.20.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F12F3F738;
+	Mon, 13 Oct 2025 13:42:50 -0700 (PDT)
+Message-ID: <ef4c0cbc-bf5e-4e55-b495-8bafa8a84c32@arm.com>
+Date: Mon, 13 Oct 2025 15:42:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013174721.2681091-1-chen.dylane@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
+ device
+To: Jason Gunthorpe <jgg@ziepe.ca>, dan.j.williams@intel.com
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, linux-coco@lists.linux.dev,
+ kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+ Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>,
+ Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+ Steven Price <steven.price@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+References: <yq5aqzxy9ij1.fsf@kernel.org> <20250730113827.000032b8@huawei.com>
+ <20250730132333.00006fbf@huawei.com>
+ <2025073035-bulginess-rematch-b92e@gregkh>
+ <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
+ <20251010135922.GC3833649@ziepe.ca>
+ <4a7d84b2-2ec4-4773-a2d5-7b63d5c683cf@arm.com>
+ <20251010153046.GF3833649@ziepe.ca>
+ <f6cf20f6-0f19-4814-b917-4f92dad39648@arm.com>
+ <68e953f484464_1992810065@dwillia2-mobl4.notmuch>
+ <20251010223444.GA3938986@ziepe.ca>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20251010223444.GA3938986@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 01:47:19AM +0800, Tao Chen wrote:
-> Background
-> ==========
-> Alexei noted we should use preempt_disable to protect get_perf_callchain
-> in bpf stackmap.
-> https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
-> 
-> A previous patch was submitted to attempt fixing this issue. And Andrii
-> suggested teach get_perf_callchain to let us pass that buffer directly to
-> avoid that unnecessary copy.
-> https://lore.kernel.org/bpf/20250926153952.1661146-1-chen.dylane@linux.dev
-> 
-> Proposed Solution
-> =================
-> Add external perf_callchain_entry parameter for get_perf_callchain to
-> allow us to use external buffer from BPF side. The biggest advantage is
-> that it can reduce unnecessary copies.
-> 
-> Todo
-> ====
-> If the above changes are reasonable, it seems that get_callchain_entry_for_task
-> could also use an external perf_callchain_entry.
-> 
-> But I'm not sure if this modification is appropriate. After all, the
-> implementation of get_callchain_entry in the perf subsystem seems much more
-> complex than directly using an external buffer.
-> 
-> Comments and suggestions are always welcome.
-> 
-> Tao Chen (2):
->   perf: Use extern perf_callchain_entry for get_perf_callchain
->   bpf: Pass external callchain entry to get_perf_callchain
+Hi,
 
-hi,
-I can't get this applied on bpf-next/master, what do I miss?
+On 10/10/25 5:34 PM, Jason Gunthorpe wrote:
+> On Fri, Oct 10, 2025 at 11:44:04AM -0700, dan.j.williams@intel.com wrote:
+>> Jeremy Linton wrote:
+>>> On 10/10/25 10:30 AM, Jason Gunthorpe wrote:
+>>>> On Fri, Oct 10, 2025 at 10:28:36AM -0500, Jeremy Linton wrote:
+>>>>
+>>>>>> So you could use auxiliary_device, you'd consider SMC itself to be the
+>>>>>> shared HW block and all the auxiliary drivers are per-subsystem
+>>>>>> aspects of that shared SMC interface. It is not a terrible fit for
+>>>>>> what it was intended for at least.
+>>>>>
+>>>>> Turns out that changing any of this, will at the moment break systemd's
+>>>>> confidential vm detection, because they wanted the earliest indicator the
+>>>>> guest was capable and that turned out to be this platform device.
+>>>>
+>>>> Having systemd detect a software created platform device sounds
+>>>> compltely crazy, don't do that. Make a proper sysfs uapi for such a
+>>>> general idea please.
+>>>
+>>> Yes, I agree, its just at the time the statment was around what is the
+>>> most reliable early indicator, and since there isn't a hwcap or anything
+>>> that ended up being the choice, as disgusting as it is.
+>>>
+>>> Presumably once all this works out the sysfs/api surface will be more
+>>> 'defined'
+>>
+>> It has definition today.
+>>
+>> All guest-side TSM drivers currently call tsm_report_register(), that
+>> establishes /sys/kernel/config/tsm/report which is the common cross-arch
+>> transport for retrieving CVM launch attestation reports.
+> 
+> I suspect this ins't a TSM question but an existing question if any of
+> the underlying CC frameworks are enabled.
+> 
+> It is this stuff:
+> 
+> https://github.com/systemd/systemd/blob/main/src/basic/confidential-virt.c
+> https://github.com/systemd/systemd/commit/2572bf6a39b6c548acef07fd25f461c5a88560af
+> 
+>    Like the s390 detection logic, the sysfs path being checked is not labeled
+>    as ABI, and may change in the future. It was chosen because its
+>    directly tied to the kernel's detection of the realm service interface
+>    rather to the Trusted Security Module (TSM) which is what is being
+>    triggered by the device entry.
+> 
+> Maybe a /sys/firmware/smc/rsi file might be appropriate?
 
-thanks,
-jirka
+Except that you can see from the code that this problem is being solved 
+in a hw platform dependent way for 4+ platforms now.
 
+Ideally the sysfs node would be common across all those hw platforms and 
+reflect the vm capabilities so the code doesn't' need #ifdef's. Meaning 
+it shouldn't have the smc/rsi arm'ism in the name, and maybe shouldn't 
+be in /sys/firmware
+
+
+Thanks,
 
 > 
->  include/linux/perf_event.h |  5 +++--
->  kernel/bpf/stackmap.c      | 19 +++++++++++--------
->  kernel/events/callchain.c  | 18 ++++++++++++------
->  kernel/events/core.c       |  2 +-
->  4 files changed, 27 insertions(+), 17 deletions(-)
+> Given how small a deployed fooprint ARM CCA has right now (ie none) it
+> would be good to fix this ASAP so it doesn't become entrenched.
 > 
-> -- 
-> 2.48.1
-> 
+> Jason
+
 
