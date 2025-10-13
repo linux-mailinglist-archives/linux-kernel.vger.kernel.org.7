@@ -1,110 +1,130 @@
-Return-Path: <linux-kernel+bounces-849936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CCDBD1620
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:36:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5290BD162C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456EE3BF457
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC913BF6A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F212BEFF3;
-	Mon, 13 Oct 2025 04:36:45 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB322BE7B2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF642BEC55;
+	Mon, 13 Oct 2025 04:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6nsm/dH"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2452BE7BE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 04:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760330204; cv=none; b=tuHRU+pNyXzR2saC1K2bxewWAkTPHAJvA+OcjSyJEh5juqlIjPK+hSZFTu7BKHP6S8ZLv/+fTZ1LovGdAGTWBiMwFQjFFLRBlUmkej+VY6ixQTG8DlphHtMBB7JbJ9K0pZ6KLuYlOHwJpwBXcReQkfAUcDMN3GiT4yEFNxzW6lI=
+	t=1760330299; cv=none; b=jPT+mkB+QZPcsiTtzDREZ4EkFs3o1j2wEkCzcta0V8EI09/MlER4D9Y1nDBRn5JI6gJVXiJYtXH8Ip0SYsZrJwSCxLF6twFCAOATrbcbhkWkhQ6Oc4qE1dD8+XxX976vqHU5ZbV5sX6LTxlAAYRcNet94JxQP1p0bcgD7/hkSeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760330204; c=relaxed/simple;
-	bh=h8Fe6P63PQ7RaRnQU/Zy7yRzxH5ISIvleVFTbzMgXyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GV8hKMZWsChjKF80/DU5L56OYADal06UJEFHtlnh71RMh0a+uMhsYykGXxg55+TJZxw6qHW48kscq7WN9kSGVHMhumxInK0M3uNHgk1lje+VmTmW1jVsz8XfCywHmNn0vix1gkxztW05uH0Raqaxe9z4TwSvjZfuXJkS2p7XID8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-b4-68ec81d4371c
-Date: Mon, 13 Oct 2025 13:36:31 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Yunseong Kim <ysk@kzalloc.com>, Hillf Danton <hdanton@sina.com>,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
- folio_wait_writeback()
-Message-ID: <20251013043631.GC6925@system.software.com>
-References: <20251002081612.53281-1-byungchul@sk.com>
- <20251002220211.8009-1-hdanton@sina.com>
- <20251003004828.GA75385@system.software.com>
- <20251003005230.GB75385@system.software.com>
- <3b66d603-543d-4616-92a5-9e6e32f116be@kzalloc.com>
- <deb6c0a2-e166-4c91-9736-276c9f1741c9@redhat.com>
+	s=arc-20240116; t=1760330299; c=relaxed/simple;
+	bh=u8oK9s5aByPzbWDSJU0MuNHc93b7ngPnC+4lAT7yplE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bbIaS5jBx7K95mLp0yMYz6h35IL8QpWTCesuaG2oL1pW/yeE/nBLZIHbpw1hrRaPnGSaA+dsVDUojMnfbfszStgWYHY9dalW8H62SCe9kVga3KOSEz12hNVzTY9CgXQh+JmXiUzF+0ohvlbsSXQJU3iEAbk8gnXpzaVokJGLf88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6nsm/dH; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32f3fa6412dso535830a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 21:38:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760330297; x=1760935097; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/jQ7mGdL6AjL3n52++SuIetPTh8rjsnTvNAsGSM8T6g=;
+        b=G6nsm/dHRc3RliYiPUISlXZw/eRg+0suGV7k3dLPkSwZ2NjxmjxvWq3fnWHieXY8ah
+         ZrQjSraFE8Qw/pLX4ccGEjBD4oYXBMusISYjB3CwAPBpuLcnTj+MHHQUU46DCoy5KGE/
+         EGx37dN9FqPoB4/gLoB2+CXjng6gI3Z+AoRMyWdCjHkwVojrH0Y7syea7JHYIWDxxUzX
+         yEEW4mGNaj2EYcyH/CsQ9/rMyqReT8JDfuQz6z1w1gs/OMupEFWSm/4cO/GmmDIjqgfo
+         Cwbgs04yO2Dv5YBbUajCQIWMFcFb2TbLTp4SwHzwEZyNELFbRH5JStrJZqYSeCHRIQ7X
+         KbxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760330297; x=1760935097;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/jQ7mGdL6AjL3n52++SuIetPTh8rjsnTvNAsGSM8T6g=;
+        b=aWTF7r6fYU9TcWSq07OgGev8XpXhg7T1T2Z40PtnZCWMRjuyN7jbAmwQSb+cxRdijf
+         h2yGGfKIdABVDEccQt5OdqY29luUaxIBs+euekatCrGHy08hImtOfe60mORSKLNcONEa
+         mS3ebyIUfwX/y8tuzImS0PY5TdCoT0KwjmuC3vaEtHdUWNVNh3YHwkNBtB+gZCUdBWKw
+         v90A4LzRlVEP668bSA3PQHSTdnfG5ud/VQgmXLoTCcOvZbZMY2aHSOrhhfAXiS38TTwe
+         IcJmCBeQBAVIue4Z8DCN872rjjlfgW8mZxRR6CC5b/5zsruIbOBB5hsxz0JVF06/Bil1
+         NMwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZBnqNpVv1Er98ouhaw5OnI7iO5Qn2YYaM+Hew/gxLDJnMUpf0rtW4MFO8MyDJOy66mP0SaUHvhtzYgWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY96msI+wVkdHcpdBUxyH/UYxWnSMS8RlvFpbM8SQQUltu8O3Q
+	nE06IeXdECIREBFWX6wuzCBBpupmihePg4ZN/BdsmHvZa/+PPt4iwiXa
+X-Gm-Gg: ASbGncuFjx9mzO1TejqyuEF52uJJCAV/hVmj3O2iY4e4XFEgjEkKTP8tpAERbm0Flp+
+	Lh1b+CMVlmfEBM/9vp6K/TgzBdPaz6Ox+AoyQyfF/89aOc8dDPa95yG3twW2PaX2Oeb2OjXQxz+
+	ChnhlmqqNqt+ucqYVIXasg76F9tZgFa//kgcr51C3iAxbdm3HRcXDqQVrICS5esjMUltBGLa5F+
+	Zcz2iJsH3F8HBT0k+DqFcCgdTNzc04EdtIo+LdAhUsWKueJtHqUJrgDbJSgA//BTrQet/O7XacJ
+	cW1PMBl/J7UmwPDI5qUq3lZtpz7eLLNHDlyUm+A1IG2txhO90qdvuf8HZma6UEzhKRaCi8dixCI
+	p7uIyiBf/XfqIrjJk8FYUvXwESASSsJYzys71GQ==
+X-Google-Smtp-Source: AGHT+IECDsp7UtBNbkAMUan55y1XQuX+ULfYaKfSidXHic/wkkfkYOISn2UHW8fXUSR6MSLEloK7xQ==
+X-Received: by 2002:a17:903:24f:b0:26b:1871:1f70 with SMTP id d9443c01a7336-2902727f94amr119251795ad.5.1760330297305;
+        Sun, 12 Oct 2025 21:38:17 -0700 (PDT)
+Received: from localhost ([104.249.174.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f070basm120833025ad.77.2025.10.12.21.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Oct 2025 21:38:16 -0700 (PDT)
+From: Ben Guo <benx.guo@gmail.com>
+To: si.yanteng@linux.dev
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	alexs@kernel.org,
+	aliceryhl@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	corbet@lwn.net,
+	dakr@kernel.org,
+	dzm91@hust.edu.cn,
+	gary@garyguo.net,
+	hust-os-kernel-patches@googlegroups.com,
+	justinstitt@google.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	lossin@kernel.org,
+	morbo@google.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu
+Subject: Re: [PATCH v2] docs/zh_CN: Add translation of rust/testing.rst
+Date: Mon, 13 Oct 2025 04:38:10 +0000
+Message-ID: <20251013043812.13186-1-benx.guo@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251003074939.465517-1-benx.guo@gmail.com>
+References: <20251003074939.465517-1-benx.guo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <deb6c0a2-e166-4c91-9736-276c9f1741c9@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsXC9ZZnoe6VxjcZBtMP6FvMWb+GzeLr+l/M
-	Fgd+PmexuLxrDpvFvTX/WS3mfjG0+LJ6FZsDu8eaeWsYPTZ9msTusfD3C2aPEzN+s3i833eV
-	zWPSC3ePz5vkAtijuGxSUnMyy1KL9O0SuDL+Hd/EWPCUvWLlsqwGxm62LkZODgkBE4lvO1ew
-	w9jHrr8Gs1kEVCWOLJkNZrMJqEvcuPGTGcQWEdCQ2NS2Acjm4mAWuMQosXRtJ1hCWCBcYnr7
-	ORYQm1fAXGLFrjmMIEVCAsuZJL59f8YIkRCUODnzCVgRs4CWxI1/L5m6GDmAbGmJ5f84QMKc
-	AnYSm+9vB1ssKqAscWDbcSaQORICe9gkruy9DHWppMTBFTdYJjAKzEIydhaSsbMQxi5gZF7F
-	KJSZV5abmJljopdRmZdZoZecn7uJERjsy2r/RO9g/HQh+BCjAAejEg9vxu7XGUKsiWXFlbmH
-	GCU4mJVEeM2r32QI8aYkVlalFuXHF5XmpBYfYpTmYFES5zX6Vp4iJJCeWJKanZpakFoEk2Xi
-	4JRqYFzx91jHTpGov1Yf2c1bfbsnG0VdZap9vcRhxhmBHAsxVqPjHVMZF095zb+p4lWD4MW8
-	K+IT98fcVapa8OviSvuz3BnNf5X/KHOcDOK+b1T0gNnvjHbfS8U7y/mWOR5SOnpMZAvT5Kx+
-	qYNu/+5P3tZ1MO7PUQHOSrO2S6HaeefiTtg8jOG4M1GJpTgj0VCLuag4EQDaKre4cgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXC5WfdrHul8U2GwdHzShZz1q9hs/i6/hez
-	xYGfz1ksDs89yWpxedccNot7a/6zWsz9YmjxZfUqNgcOjzXz1jB6bPo0id1j4e8XzB4nZvxm
-	8Xi/7yqbx6QX7h6LX3xg8vi8SS6AI4rLJiU1J7MstUjfLoEr49/xTYwFT9krVi7LamDsZuti
-	5OSQEDCROHb9NTuIzSKgKnFkyWwwm01AXeLGjZ/MILaIgIbEprYNQDYXB7PAJUaJpWs7wRLC
-	AuES09vPsYDYvALmEit2zWEEKRISWM4k8e37M0aIhKDEyZlPwIqYBbQkbvx7ydTFyAFkS0ss
-	/8cBEuYUsJPYfH872GJRAWWJA9uOM01g5J2FpHsWku5ZCN0LGJlXMYpk5pXlJmbmmOoVZ2dU
-	5mVW6CXn525iBIbusto/E3cwfrnsfohRgINRiYc3Y/frDCHWxLLiytxDjBIczEoivObVbzKE
-	eFMSK6tSi/Lji0pzUosPMUpzsCiJ83qFpyYICaQnlqRmp6YWpBbBZJk4OKUaGA8vSl52Y6NP
-	j4nbeZczotd2zbWXuZVxm8snXlHkm80926W8F61z+HYeSpqWb76LbfNWg/9/NRJ2fltm4eax
-	/mSCyWcjsdwD25Kv8LXm3jkl8OrGXAGxMzrLpVh7ag7PvvOelyHqq8rR6De5myaYZaewlP2s
-	+5h49ee+w3sv5PX+viQcLhkhWKHEUpyRaKjFXFScCAA6FUjaWQIAAA==
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 07, 2025 at 09:04:59AM +0200, David Hildenbrand wrote:
-> On 07.10.25 08:32, Yunseong Kim wrote:
-> > Hi Hillf,
-> > 
-> > Here are the syzlang and kernel log, and you can also find the gist snippet
-> > in the body of the first RFC mail:
-> > 
-> >   https://gist.github.com/kzall0c/a6091bb2fd536865ca9aabfd017a1fc5
-> > 
-> > I am reviewing this issue again on the v6.17, The issue is always reproducible,
-> > usually occurring within about 10k attempts with the 8 procs.
-> 
-> I can see a DEPT splat and I wonder what happens if DEPT is disabled.
-> 
-> Will the machine actually deadlock or is this just DEPT complaining (and
+Hi Yanteng,
 
-Of course, it was an actual deadlock, not just DEPT splat.
+I’d like to confirm the expected use of the In-Reply-To header for versioned patches.
 
-However, even though this patch resolved the acutal hang issue, it
-looked mismatched between the watchdog hang report and the DEPT report.
-We are now re-checking it using the reproducer.
+In my case:
+  [PATCH]    ->  Message-ID: <20250929163531.376092-1-benx.guo@gmail.com>
+  [PATCH v2] ->  Message-ID: <20251003074939.465517-1-benx.guo@gmail.com>
+  [PATCH v2] -> In-Reply-To: <20250929163531.376092-1-benx.guo@gmail.com>
 
-	Byungchul
+That means the v2 patch points back to the v1 message ID.
 
-> probably getting something wrong)?
-> 
-> --
-> Cheers
-> 
-> David / dhildenb
+Could you please confirm whether I should start a new thread for [PATCH v2], or if there’s something wrong with how I used the In-Reply-To header?  
+Thanks for helping clarify this.
+
+Thanks,
+Ben Guo
 
