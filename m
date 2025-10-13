@@ -1,179 +1,193 @@
-Return-Path: <linux-kernel+bounces-850781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F03CBD3ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:50:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B715CBD3AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6A618A0109
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBF61885E38
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29149309F17;
-	Mon, 13 Oct 2025 14:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0E62D0607;
+	Mon, 13 Oct 2025 14:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVwmz/PI"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKGV3p7A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3C82727E2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29E6211290;
+	Mon, 13 Oct 2025 14:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366834; cv=none; b=K8q29Q5K87bntpaXh0EpOjHADJmBcPnWZHmxt/73pe7RDu0LlLJW0+KBKHFJQfnj9rYCTpuotg/yhBK0mX4L9q3G+H9PjMueNmZfZ39K2kIxPW2IW7ClOcKBTuBB9e2yfAhqCtoCOBoXO2Hcz9c5vAB4DsfejBK2JmgCR0DufoM=
+	t=1760366896; cv=none; b=CSU2HVB91Qyp1U5UQpOtSLlURnIC7NTjTRSQ3YhttUEnOK/dZ5qp1uV78lRyDfmhkvhfD8uWd0pDfS+CvPrKeuWj+kNxpIDU44fk/qHNmxUfgCvWYZUSIlkew2o6ATK8u79yFZeS6t3ckC6BnKdJigwHNbCYsFZXtYZtHgglWCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366834; c=relaxed/simple;
-	bh=HGnrC3Y56b3intNHIfOuk135OVxYsXA8hRsU+xpw0as=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cuJsZeG8s1tS/0zUN7ZkeccON9RA0lj5rKZ4yUCxFC8bA9OMhltVnxVYRkuxuqsfBNYed1zoAxBlBlF8UbumHAZGMYDF8pMipXP5G2+AP1csGqumoXVojwMRLRiLw7uGrcbg9pdpyYELlP/no4Ixokqq1E+jn0GAcD0sLcFv+Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVwmz/PI; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78125ed4052so5106123b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760366832; x=1760971632; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=iM5/e4UJAfJvXPy0LZcn9NuDbnYMTsJJoi6JFRNlh9k=;
-        b=OVwmz/PIscX80IXYNsaJkVtqIyZRNdqL81N0mCCvryk9L0rCePoiPjmeUie11Gy6Z7
-         g2sf6gjPFdbSbzcejc4jcVUdiWaHOkmMqT7XTG/q90m9cchzJqYDAjtUnp3pOlbqGLOs
-         Wwp/LPpUKLXZGPiHVbr2XxYrwzRcLDNHhv884z0+Es6pkyD0k0py7IXDgy0cDeGkWNtj
-         5kK805X13BFxoQVzCsMdJbkrXwVdlBrT3hmTrC6vx7A5HkTHikEJLOjiz8iH9G6ywVJm
-         2OEZjFlqnc40QogLTkHUE4ySuNv4evX+ARZNrNDNOITABHOiCppFJODs8mCVhVFOaGCv
-         MShg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760366832; x=1760971632;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iM5/e4UJAfJvXPy0LZcn9NuDbnYMTsJJoi6JFRNlh9k=;
-        b=aYADq41K1E9450ZS1g6rU1tLnDZLj1VM/vzLlGtB5nkJXaOf9vhT7yGCngu1yGdqMU
-         4iDWFmcURJpQj91+7WHbqIMoZNm8H9jMHNAA73Drf+QKZWf1rHVEDJ6RhgDyTbYb6uYm
-         0wBOjT5igclwcRlFZGxRgQ8gPVm5jKwXaTm0ppQv2MPO1COHuDs1STmzQKlDpYSXUU//
-         0ULFCk3AuCoZwRGEMD3yTLRY9z/dCDFogfuVM48LPMtyv8XNZuwJa8K8wY3TYs0DxOvB
-         +zo3ohTWlG4QuIT+yCez3FrbzxxngGZkuklLvLR17cmytDUwiKzCzbHDmaCY9sbPZNrG
-         8ALw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhYbkpivRinag9USJwAGaKvSx5+3xeiXMD4IasCfVdrmGAN8fE+dbAc9RdD1F1yV9l8I6PWoWwi9TBIaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSp1HoSqBPXrg1ltJwPJov55J5o0DHqPp0s/RlXMUUBwQuZvdT
-	ZCa9G3ljKD5VY7UcwH434CKXqk5sGvWZoxxNSSzmriOxUy5fWHa+unES
-X-Gm-Gg: ASbGnct3VPmTPBGTdypjymLfpzoSBeeEJdpL7C66KQ6WwxNORr8ovbJZJE5NUNA+Lu3
-	5d13EWIDjeZ7ugK1zBxNNjaDQVW03Gq12j8a+0EcuPc/XQLoEAThP2IWaIAfTm2KAooSvMcfdp5
-	CUzznjH8xdxwqjN37V7DxesMDP5iRuulENli9omfax1LhCqF19P7bHa55PJ7lu5S4PZeNnJE/GX
-	CuXjZksb5eqdbjBOM1Po9GPAcN7lcIINuUi4QXGMbh6ZTS5AjoLhluXZHUXA+EeZ6irzPzxL1vD
-	C5iTtDgC2LmFJAZiGEhOxu8k+OF52rJoyq45nqBRiJMXUJcwY/AKUoBSmhEPP9XNnxatx3VBCHO
-	TtXE7wcz1J+TuIPlgLRRybAGWbBCmvGa9fkrfBvDNS+i3QULhUD76Z9gq9oTYXKS4Hp33GbJTkj
-	tHPTCPLKeJmC6jhx8mPNJxg1R4
-X-Google-Smtp-Source: AGHT+IHPU/97MoKvW8vBm9Jrran+thU7TIazvVrMY0e9wgshgLyIvIk5asZAEFCjkaqXX2avBELD4Q==
-X-Received: by 2002:a05:6a20:7fa3:b0:331:e662:c97e with SMTP id adf61e73a8af0-331e662cccbmr6834583637.37.1760366831737;
-        Mon, 13 Oct 2025 07:47:11 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09ace5sm11950521b3a.53.2025.10.13.07.47.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 07:47:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f1f5362b-16ef-4699-bec5-986de2116d83@roeck-us.net>
-Date: Mon, 13 Oct 2025 07:47:09 -0700
+	s=arc-20240116; t=1760366896; c=relaxed/simple;
+	bh=jWgRdOclHfQbfaaf9W2P4KkHZdNwhBqzpIGWPibgK3c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hae2wJ7NDRafYQh8LIA0b8jwu8oAFbGvk6fzN7MHeaBBcZ6mWA0a1h0kqfODEjc4eXWKKAaB9xHYrAAgbxbRxzCKJrKN2Xubd5fiWDKHF1i6xN9nUMYPP1m+yQfgX3FiYfssj/PTO5K/zIhI6pyxfYbh7KNQABhg3o8+/mmG9xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKGV3p7A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB088C4CEE7;
+	Mon, 13 Oct 2025 14:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760366896;
+	bh=jWgRdOclHfQbfaaf9W2P4KkHZdNwhBqzpIGWPibgK3c=;
+	h=From:Subject:Date:To:Cc:From;
+	b=lKGV3p7AwvrM7OJT7hOATJJT/UQN+kJq3n5xXj6pTbNb/aPqxIKhMOTBAMtYBveMU
+	 TgVOAT3NRJ2aqglav+lGus1drXMm5aA7AevvrCajbMeOZRo73m8fEM85t6G9zOnC47
+	 bkXLvwRG4lqnGBYomaZtBBEvED6bhbRwQKQzmgMFrnyZCIApHKZO4f7D6WeL8G25Rg
+	 c78aaDpyifmo5QKKLtVuHnMGcM83XQC/oy/41mkt0StfUpPOcU04WD37SJs+QTiVDz
+	 BHIRDvjN4HiU4B7Taa7rtLbx8UC+3WZc2Bx3pqHcQkG8pBWPz6ckrC0p8kFu8F2RJB
+	 G42YDsjvFASow==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 00/13] vfs: recall-only directory delegations for knfsd
+Date: Mon, 13 Oct 2025 10:47:58 -0400
+Message-Id: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: (peci/dimmtemp) add Intel Emerald Rapids
- platform support
-To: Ivan Mikhaylov <fr0st61te@gmail.com>, Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Iwona Winiarska <iwona.winiarska@intel.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-References: <20251006215321.5036-1-fr0st61te@gmail.com>
- <20251006215321.5036-3-fr0st61te@gmail.com>
- <0ede72a9-4555-4e4d-959d-3a505b6598ee@molgen.mpg.de>
- <9badd4e53ddb6166d0aa196da978bd70f61642de.camel@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAmgrMyQFCSbODQkACgkQyx8mb86fmYGcWRAA
- oRwrk7V8fULqnGGpBIjp7pvR187Yzx+lhMGUHuM5H56TFEqeVwCMLWB2x1YRolYbY4MEFlQg
- VUFcfeW0OknSr1s6wtrtQm0gdkolM8OcCL9ptTHOg1mmXa4YpW8QJiL0AVtbpE9BroeWGl9v
- 2TGILPm9mVp+GmMQgkNeCS7Jonq5f5pDUGumAMguWzMFEg+Imt9wr2YA7aGen7KPSqJeQPpj
- onPKhu7O/KJKkuC50ylxizHzmGx+IUSmOZxN950pZUFvVZH9CwhAAl+NYUtcF5ry/uSYG2U7
- DCvpzqOryJRemKN63qt1bjF6cltsXwxjKOw6CvdjJYA3n6xCWLuJ6yk6CAy1Ukh545NhgBAs
- rGGVkl6TUBi0ixL3EF3RWLa9IMDcHN32r7OBhw6vbul8HqyTFZWY2ksTvlTl+qG3zV6AJuzT
- WdXmbcKN+TdhO5XlxVlbZoCm7ViBj1+PvIFQZCnLAhqSd/DJlhaq8fFXx1dCUPgQDcD+wo65
- qulV/NijfU8bzFfEPgYP/3LP+BSAyFs33y/mdP8kbMxSCjnLEhimQMrSSo/To1Gxp5C97fw5
- 3m1CaMILGKCmfI1B8iA8zd8ib7t1Rg0qCwcAnvsM36SkrID32GfFbv873bNskJCHAISK3Xkz
- qo7IYZmjk/IJGbsiGzxUhvicwkgKE9r7a1rOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAmgrMyQFCSbODQkACgkQyx8mb86fmYHlgg/9
- H5JeDmB4jsreE9Bn621wZk7NMzxy9STxiVKSh8Mq4pb+IDu1RU2iLyetCY1TiJlcxnE362kj
- njrfAdqyPteHM+LU59NtEbGwrfcXdQoh4XdMuPA5ADetPLma3YiRa3VsVkLwpnR7ilgwQw6u
- dycEaOxQ7LUXCs0JaGVVP25Z2hMkHBwx6BlW6EZLNgzGI2rswSZ7SKcsBd1IRHVf0miwIFYy
- j/UEfAFNW+tbtKPNn3xZTLs3quQN7GdYLh+J0XxITpBZaFOpwEKV+VS36pSLnNl0T5wm0E/y
- scPJ0OVY7ly5Vm1nnoH4licaU5Y1nSkFR/j2douI5P7Cj687WuNMC6CcFd6j72kRfxklOqXw
- zvy+2NEcXyziiLXp84130yxAKXfluax9sZhhrhKT6VrD45S6N3HxJpXQ/RY/EX35neH2/F7B
- RgSloce2+zWfpELyS1qRkCUTt1tlGV2p+y2BPfXzrHn2vxvbhEn1QpQ6t+85FKN8YEhJEygJ
- F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
- FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <9badd4e53ddb6166d0aa196da978bd70f61642de.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB4R7WgC/x3MMQqAMAxA0atIZgNNi6BeRRzUpjUgVVIQoXh3i
+ +Mb/i+QWYUzjE0B5VuynKmC2ga2fUmRUXw1WGM7MuTQi6LngyPqid4EpqG3brUENbmUgzz/bpr
+ f9wMsflGqXgAAAA==
+X-Change-ID: 20251013-dir-deleg-ro-d0fe19823b21
+To: Miklos Szeredi <miklos@szeredi.hu>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Chuck Lever <chuck.lever@oracle.com>, 
+ Alexander Aring <alex.aring@gmail.com>, 
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+ Bharath SM <bharathsm@microsoft.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
+ NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
+ Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein <amir73il@gmail.com>, 
+ Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+ ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+ linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4011; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=jWgRdOclHfQbfaaf9W2P4KkHZdNwhBqzpIGWPibgK3c=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo7REpbSXN3G6FhVhF7XoUUMttobFKJ1BVSzBKY
+ aCDKYuY4e2JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaO0RKQAKCRAADmhBGVaC
+ FdWwEADB1fG+r8Su4S75zX1urKLYXefEdzK/4m7dqrLwtnMwVrkRljoJZTmFyjRp1sLur6cTdfm
+ BefXgRYtzswymnNoi9hw19fh/D0zWJ5o/nJetdEaseeMqb9pwOuflLudHalhJIQ+G3evmWazi1F
+ ZJJzDF9WiQchXF9Ezx56oZQTJpcxdXIdtE9VRLz//IFzRwAGlHttrOpnW8iKq7jaouBEwFQ7pLj
+ l5aF/xUAMxIKotGm0r1pOf6BFMLZd6n3e1NZJTPllLvT1bvpa/w9EW1ABO4SgzvFmPTl5Yj7OVi
+ eXYM2I9HeykVe3h9cW0z0jRIkSuJGZC5Cmvvlpg6PFHQXBJqbHuIKQb4wMMCxoebTZJVBanLuIc
+ SkSncW7lEH8Z56zqAJHNFSN7ApLT6xo8Cljcbk2ZpciKJcoWjXjCFIat62ASVUwAhpT2V1rIMZl
+ DvINrGLx1hl1stODptoSPvW8f+P4UbeRI5UAYRDYsV38WJPYwrCJlFbdXnY8SaxH+YSslvABTVh
+ xG1M9pPAgwZDe+2SN3/krfrgncKX9UujZrJBaIkuJS8YFJMG6+R4LcajTSrQvdyOSj+7+TTB+vx
+ a1jxuVEnA/cOqUmxrGC5B64PWdoG+UQEmYMFp2gg38R7C0Yls2PcT9yGsdlWTcUXohOHPoWsR8L
+ IIbHtLPojiFcNXg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 10/13/25 04:44, Ivan Mikhaylov wrote:
-> On Tue, 2025-10-07 at 10:26 +0200, Paul Menzel wrote:
->> Dear Ivan,
->>
->>
->> Thank you for your patch.
->>
->> Am 06.10.25 um 23:53 schrieb Ivan Mikhaylov:
->>> Extend the functionality of hwmon (peci/dimmtemp) for Emerald
->>> Rapids
->>> platform.
->>>
->>> The patch has been tested on a 5S system with 16 DIMMs installed.
->>
->> What is 5S? 5 sockets? (Probably not.)
-> 
-> Paul, thank your for review and sorry for late reply.
-> 5S - Intel 5 Series/5th Gen
-> 
->>
->>> Verified read of DIMM temperature thresholds & temperature.
->>
->> Also paste the output?
->>
-...
-> Guenter, I saw that you already applied other two patches, need I
-> resubmit series with updated info of commit for this one or just this
-> one?
+At the fall NFS Bakeathon last week, the NFS client and server
+maintainers had a discussion about how to merge support for directory
+delegations. We decided to start with just merging support for simple,
+recallable-only directory delegation support, for a number of reasons:
 
-No. While that information is valuable as comment, I don't see value
-of having it in the commit log.
+1/ RFC8881 has some gaps in coverage that we are hoping to have
+addressed in RFC8881bis. In particular, it's written such that CB_NOTIFY
+callbacks require directory position information. That will be hard to
+do properly under Linux, so we're planning to extend the spec to allow
+that information to be omitted.
 
-Guenter
+2/ client-side support for CB_NOTIFY still lags a bit. The client side
+is tricky, as it involves heuristics about when to request a delegation.
+
+3/ we have some early indication that simple, recallable-only
+delegations can help performance in some cases. Anna mentioned seeing a
+multi-minute speedup in xfstests runs with them enabled. This needs more
+investigation, but it's promising and seems like enough justification to
+merge support.
+
+This patchset is quite similar to the set I initially posted back in
+early 2024 [1]. We've merged some GET_DIR_DELEGATION handling patches
+since then, but the VFS layer support is basically the same.
+
+One thing that I want to make clear is that with this patchset, userspace
+can request a read lease on a directory that will be recalled on
+conflicting accesses. I saw no reason to prevent this, and I think it may
+be something useful for applications like Samba.
+
+As always, users can disable leases altogether via the fs.leases-enable
+sysctl if this is an issue, but I wanted to point this out in case
+anyone sees footguns here.
+
+It would be great if we could get into linux-next soon so that it can be
+merged for v6.19. Christian, could you pick up the vfs/filelock patches,
+and Chuck pick up the nfsd patches?
+
+Thanks!
+
+[1]: https://lore.kernel.org/all/20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org/
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (13):
+      filelock: push the S_ISREG check down to ->setlease handlers
+      filelock: add a lm_may_setlease lease_manager callback
+      vfs: add try_break_deleg calls for parents to vfs_{link,rename,unlink}
+      vfs: allow mkdir to wait for delegation break on parent
+      vfs: allow rmdir to wait for delegation break on parent
+      vfs: break parent dir delegations in open(..., O_CREAT) codepath
+      vfs: make vfs_create break delegations on parent directory
+      vfs: make vfs_mknod break delegations on parent directory
+      filelock: lift the ban on directory leases in generic_setlease
+      nfsd: allow filecache to hold S_IFDIR files
+      nfsd: allow DELEGRETURN on directories
+      nfsd: check for delegation conflicts vs. the same client
+      nfsd: wire up GET_DIR_DELEGATION handling
+
+ drivers/base/devtmpfs.c  |   6 +-
+ fs/cachefiles/namei.c    |   2 +-
+ fs/ecryptfs/inode.c      |   6 +-
+ fs/fuse/dir.c            |   1 +
+ fs/init.c                |   4 +-
+ fs/locks.c               |  17 ++++-
+ fs/namei.c               | 163 ++++++++++++++++++++++++++++++++++-------------
+ fs/nfs/nfs4file.c        |   2 +
+ fs/nfsd/filecache.c      |  50 +++++++++++----
+ fs/nfsd/filecache.h      |   2 +
+ fs/nfsd/nfs4proc.c       |  21 +++++-
+ fs/nfsd/nfs4recover.c    |   6 +-
+ fs/nfsd/nfs4state.c      | 114 ++++++++++++++++++++++++++++++++-
+ fs/nfsd/state.h          |   5 ++
+ fs/nfsd/vfs.c            |  11 ++--
+ fs/nfsd/vfs.h            |   2 +-
+ fs/overlayfs/overlayfs.h |   6 +-
+ fs/smb/client/cifsfs.c   |   3 +
+ fs/smb/server/vfs.c      |   6 +-
+ fs/xfs/scrub/orphanage.c |   2 +-
+ include/linux/filelock.h |  14 ++++
+ include/linux/fs.h       |   9 +--
+ net/unix/af_unix.c       |   2 +-
+ 23 files changed, 363 insertions(+), 91 deletions(-)
+---
+base-commit: 2c40814eb5ae104d3f898fd8b705ecad114105b5
+change-id: 20251013-dir-deleg-ro-d0fe19823b21
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
