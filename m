@@ -1,61 +1,54 @@
-Return-Path: <linux-kernel+bounces-850097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B2ABD1D68
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:37:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6196DBD1E95
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2061898915
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:38:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 029BE4ED127
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2BA2E8DFA;
-	Mon, 13 Oct 2025 07:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="wpD7FE8Y"
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8CD27BF6C;
-	Mon, 13 Oct 2025 07:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5284F2EB85B;
+	Mon, 13 Oct 2025 08:03:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0772EB5CF
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760341054; cv=none; b=f2X0SMZTGlmVXWeH0BdP7Zw9BLvdJ3w1z5zThP8s8Eu4phIYjjbaKXU68rGunmLluA9FiJaeMylF3kuZyCuDOqvuYzWkLSxN2Cn06xzZoD8iEuwsNxSmkuNCp+VC1pW56xsLC4UQpHs1XjJJKvlQYlvrDZcK1jYOMbzyxoMyf7k=
+	t=1760342584; cv=none; b=QfpRbrTFQE9UpE+U7WKFmassCCltXfTE0UrE1kRtleqQUtIL1MfdoLR3Xef/HDafuTBvZHrVOvBi/05EfBnZy7b1Sst3adOXOoK8NWLrHUohlq2hyBehNk3kMvZ2z/9mI3JioY72C5/6PUnlZQ//kUldpjZRII1J7RTCdyzK2Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760341054; c=relaxed/simple;
-	bh=Ga+qOkS7SIjz/ub6snCjlz+yMTYuLoApdIVfxTfpaAM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bnGpSf4EGqAhpMGRQ0hhyFcoz8tO/jffQSJSRpY+OR7W5yXqe0Gm3Yl2CEJEcF8jN/XcK4512zy7PQccdkOTAT8+wu4M6jZ4xmTmKs7mfOt5dnextWjuVETKtH8e1LhfhOHHJb6sWf6s40g/bXsHBTgfIA0Ykhqr6QSnDi47eJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=wpD7FE8Y; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=2P7UD8Fnfu8+8RYTF/YIlrkjqnC4Y7kmFuUDRyS3S4E=;
-	b=wpD7FE8YoPzFhkqSLKHqEYZ887cUOqSw4+XyO+2zvynVcSFaPOPyHP+yy5ZXZwW8WuZHzaDlY
-	BWNHuu6RNUYdKp4cuitcKzyjAkmlpOM/WyvsXAbdg2QXX+y69etjb2UxNOVnTO29RCHPOusckOE
-	a7Abp8+cFA2pLMNZO+sfLFI=
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4clTh01qkTzmV66;
-	Mon, 13 Oct 2025 15:37:04 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3F6EF1400F4;
-	Mon, 13 Oct 2025 15:37:23 +0800 (CST)
-Received: from huawei.com (10.50.85.128) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 13 Oct
- 2025 15:37:22 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <shuah@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>,
-	<zhangchangzhong@huawei.com>, <wangliang74@huawei.com>
-Subject: [PATCH net repost] selftests: net: check jq command is supported
-Date: Mon, 13 Oct 2025 16:00:39 +0800
-Message-ID: <20251013080039.3035898-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760342584; c=relaxed/simple;
+	bh=gnGSvgyDLVQuEFjMaO53vFu4pCihGel2u56YRK8b2ho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OSwBhyEhhtxVFQjRqN2fZ9RsnC393+AZMuqx8h/pWgsVXUD5kb4g6+qL0nu66mf7uwITswGt6fHVWC/0aBrnHvMMIQLsHLDKXG/P7l9+gDcyommobNJhCe5n040T9yjxpHa5Vc+zpdbuPu8FGrZGA6lZ2uNAeDYNDTiqAwYlmxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7E9712FC;
+	Mon, 13 Oct 2025 01:02:51 -0700 (PDT)
+Received: from a079125.blr.arm.com (a079125.arm.com [10.164.21.37])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 93C713F738;
+	Mon, 13 Oct 2025 01:02:55 -0700 (PDT)
+From: Linu Cherian <linu.cherian@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Linu Cherian <linu.cherian@arm.com>
+Subject: [PATCH v2 0/2] arm64/mm: prevent panic on -ENOMEM in arch_add_memory()
+Date: Mon, 13 Oct 2025 13:32:18 +0530
+Message-ID: <20251013080220.2027757-1-linu.cherian@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,65 +56,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500016.china.huawei.com (7.185.36.197)
 
-The jq command is used in vlan_bridge_binding.sh, if it is not supported,
-the test will spam the following log.
+arch_add_memory() acts as a means to hotplug memory into a system. It
+invokes __create_pgd_mapping() which further unwinds to call
+pgtable_alloc(). Initially, this path was only invoked during early boot
+and therefore it made sense to BUG_ON() in case pgtable_alloc() failed.
+Now however, we risk running into a kernel crash if we try to hotplug
+memory into a system that is already extremely tight on available
+memory. This is undesirable and hence __create_pgd_mapping() and it's
+helpers are reworked to be able to propagate the error from
+pgtable_alloc() allowing the system to fail gracefully.
 
-  # ./vlan_bridge_binding.sh: line 51: jq: command not found
-  # ./vlan_bridge_binding.sh: line 51: jq: command not found
-  # ./vlan_bridge_binding.sh: line 51: jq: command not found
-  # ./vlan_bridge_binding.sh: line 51: jq: command not found
-  # ./vlan_bridge_binding.sh: line 51: jq: command not found
-  # TEST: Test bridge_binding on->off when lower down                   [FAIL]
-  #       Got operstate of , expected 0
+Keeping in mind that it is still essential to BUG_ON()/panic if
+pgtable_alloc() encounters failure at the time of boot, a wrapper is
+created around __create_pgd_mapping() which is designed to panic() if
+it encounters a non-zero return value. This wrapper is then invoked from
+the init functions instead of __create_pgd_mapping(), thereby keeping the
+original functionality intact.
 
-The rtnetlink.sh has the same problem. It makes sense to check if jq is
-installed before running these tests. After this patch, the
-vlan_bridge_binding.sh skipped if jq is not supported:
+This theoretical bug was identified by Ryan Roberts<ryan.roberts@arm.com>
+as a part of code review of the following series[1].
 
-  # timeout set to 3600
-  # selftests: net: vlan_bridge_binding.sh
-  # TEST: jq not installed                                              [SKIP]
+[1] https://lore.kernel.org/linux-arm-kernel/20250304222018.615808-4-yang@os.amperecomputing.com/
 
-Fixes: dca12e9ab760 ("selftests: net: Add a VLAN bridge binding selftest")
-Fixes: 6a414fd77f61 ("selftests: rtnetlink: Add an address proto test")
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
-Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
----
- tools/testing/selftests/net/rtnetlink.sh           | 2 ++
- tools/testing/selftests/net/vlan_bridge_binding.sh | 2 ++
- 2 files changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/selftests/net/rtnetlink.sh
-index dbf77513f617..163a084d525d 100755
---- a/tools/testing/selftests/net/rtnetlink.sh
-+++ b/tools/testing/selftests/net/rtnetlink.sh
-@@ -1466,6 +1466,8 @@ usage: ${0##*/} OPTS
- EOF
- }
- 
-+require_command jq
-+
- #check for needed privileges
- if [ "$(id -u)" -ne 0 ];then
- 	end_test "SKIP: Need root privileges"
-diff --git a/tools/testing/selftests/net/vlan_bridge_binding.sh b/tools/testing/selftests/net/vlan_bridge_binding.sh
-index db481af9b6b3..e8c02c64e03a 100755
---- a/tools/testing/selftests/net/vlan_bridge_binding.sh
-+++ b/tools/testing/selftests/net/vlan_bridge_binding.sh
-@@ -249,6 +249,8 @@ test_binding_toggle_off_when_upper_down()
- 	do_test_binding_off : "on->off when upper down"
- }
- 
-+require_command jq
-+
- trap defer_scopes_cleanup EXIT
- setup_prepare
- tests_run
+Changelog
+
+v2:
+* With cleanup merged as part of, "arm64: mm: Move KPTI helpers to mmu.c"
+  changes in patch 2(v1) got much simplified and squashed to patch 1 itself.
+* Patch 2 now does a trivial renaming for better readability 
+* Make use of INVALID_PHYS_ADDR for error checks instead of 0.  
+* Do early function return where we do not have any
+  common cleanup in return path
+* Remove redundant variable initialization
+* Changed BUG_ON to panic
+* Renamed ___create_pgd_mapping to early_create_pgd_mapping  
+
+This series is now rebased to linux-6.18-rc1.
+
+I will be taking the stewardship for this patch series, as Chaitanya
+has left Arm.
+
+Thanks,
+Linu Cherian.
+
+Chaitanya S Prakash (1):
+  arm64/mm: Allow __create_pgd_mapping() to propagate pgtable_alloc()
+    errors
+
+Linu Cherian (1):
+  arm64/mm: Rename try_pgd_pgtable_alloc_init_mm
+
+ arch/arm64/mm/mmu.c | 208 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 132 insertions(+), 76 deletions(-)
+
 -- 
-2.34.1
+2.43.0
 
 
