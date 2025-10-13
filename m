@@ -1,219 +1,109 @@
-Return-Path: <linux-kernel+bounces-851549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FB8BD6BD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCBCBD6BDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 051B04E1925
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:29:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1033A71CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B33E2EFD95;
-	Mon, 13 Oct 2025 23:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFF82BF00A;
+	Mon, 13 Oct 2025 23:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rwb+9i81"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uph6FHzP"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62912DAFDA
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6511715E5BB
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760398171; cv=none; b=n0XjoGQPtypyVWdhVvyiJbmZg530/i2Ke6DDEmEaLotIX+V0KuJa7LkDS/FTvS3mqpvYQqCQfwVd4/mtMIWOXGQnKyO1wPhOjmQ/33CB82QGCLj0jmX3/W17ryLOgIvgw977Bd2tIKMHQ+Vzm0cSuspYI8RGgMeselvWyLAI76M=
+	t=1760398245; cv=none; b=XoiR1c3GEvQLNUx0RiMFcN/s8m0o+bVUKSpWuqIplIn6bg+JvofW7+qwsKIIKXjy0WrvMeMCKKHBM9ail8MhI1CEH3oIQYslmJH2SdbTYyZ9qAdcQzyT27RIdNR8xc4UsK5b4vnI/ZttLxM3Z3DITLGmIWv5jh8FYUFcfsqgYAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760398171; c=relaxed/simple;
-	bh=frCkNdHFg6gFZkpQ8R/gWpJUarl2/IhZnnqo+TVChx0=;
+	s=arc-20240116; t=1760398245; c=relaxed/simple;
+	bh=f1t956JBV+YwJMh+YwrrZfOciYvg7blVAnIMvPKNYWY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=f26US2p2rd4uVYJqfZ6I9jdlhPVS608dGqnkRa0fk2HcNh7ddRA5cLeuAyr1s7YWIUxFwH9APMEhgmLbPBtmJ+bck/6tZABBDG4lmGi6nJZ/Ohts3Dj2hcgmzYtais5y1zgV2mZvQxg5nhQBE/B4qWm/RN0etKz6NY7NA46p2JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rwb+9i81; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=C6k8655Vs6VHNTsdzSwYQRAggJmD1z8D/WpVTLaLRAFF2g6oreNsUkUTZtTBQvopYaeqzmwlG9e3JocX1BwdNgUFJScHN8VJM0yfogDvEBAzkcyY7tDJjVT4b7DjbgW6Cqm/5u3RFKqNoL9DzNFi7fhs+Xq22mVrukRQJ5xxZS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uph6FHzP; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso13811364a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:29:29 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-330a4d5c4efso8550676a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760398169; x=1761002969; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6I25W7llJFin8S8DJoBGT81mljmaC0FlyXWknURs3B0=;
-        b=Rwb+9i81VnZDtCrFV0FtXFZwwvGdAwcv6YunZV85Fnzf24I/VT9us3fHXxWf5fTB03
-         GccqCM0FZd30N7DgI3w9QrW7gbm5zTOTuhWAJ55MSFIq/YS4NNOLlrZie5DAev2pfqcc
-         12Azb9jLBey7Qevs39GlUHE5Ti4MMGDsECJ/xSr6Z5Vm4bDMHb0J7TGAeWG2ajEC6eve
-         sFmb4RDiYRMBNVc+RG9yeZByxX59XJaoWtbTqUW5/CslfcQCXXEbCARKsCluy8xRGDd1
-         CvdOof3nh8Byit1MN2bDkDRxXjer9r+318lj6QaNol/1eo+jBo+MUmt2+YcGELGCWwdR
-         PCFA==
+        d=google.com; s=20230601; t=1760398243; x=1761003043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=08aB01K3QlDxNQ6Di+ZC0Fy9ecw0hHQXKJJoqFOXoow=;
+        b=Uph6FHzPc/b+vglLfbjZCr6KjDJ2zmgxbDJayKIw5OqT1WmL19SVwuCjuYq0HNn6BK
+         eGHUGRKOGrc3kO420C0+fBZn5s0tZD4i7FFSatS0ltUBQL49XOYorDGQ72acddkim8ip
+         ce9ryTKim646cxrT9G6WKmhhg27Yw80v5+MmCwvJn4UmTls+T0oR3x6lFHcYt4UsQ1ov
+         p4iQwEKTzteS69d7HrWbRdLOrUv9b+zBiIulj7OwgZOSLu641FsfS+Jf6jNc0W5iMrFh
+         uKY14V5JLNw3eXSYTg1dbdm9NXVP7/645gmStX4/0wQJeOgXZnO2gOO0GUvOfApmHlu1
+         J2WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760398169; x=1761002969;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6I25W7llJFin8S8DJoBGT81mljmaC0FlyXWknURs3B0=;
-        b=Qzk0+/D0XSeupeABYCMrBLJv2rdvqBR/xibVtb+N4lR1i1JASIB/Ksg6NmaeGuy9bR
-         zYmGIo14cDizZH2gG05IDc/8tgwvj2NSXJnnJA6y3YySI4O0HoudYxzih2Ym9QDR20yW
-         fpB6Q6unPBt3/Nrl3Q7HrlQXEPiO0G8/GFpQOB+sUQgP3vsSWKiOCKn5SIHSuqQeAPhQ
-         Z37uddZsE0Wec8iS/gh4qBj84FKDewVWSpPjjMZhteGz4ZaHwkV2O/PpQS9d5dA3jP70
-         tG9dKDHZvrZiaG3C70aQyMkyJCJub9iBBeJ/Z7fiMoxgkFoBmZv68kfIKTeYiIpDC0nc
-         0aSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrmKRosqnqrNQQfzZlQFTYTlC3YboCDQWR01Mnrc/cuIdbc8c0SDfbMGgVKUUTtLM/OX08KS7QsgAp9E8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9A4yjBqeKLLhF+kY//V/XwV68iuFrwRdi8wq+aSTqUEICcXhx
-	+2xcoZStHxaIrTOcI+10dniD5orxPwa+v6drxuA3po19BHQuQI1+I4f29a6VIZw8+t47nWUR4RZ
-	PJ+/DcA==
-X-Google-Smtp-Source: AGHT+IEiNPpbW/grCKFuHxlhV/+CCABZVtb58WuWOIKWZbzgQenU8nHFmCCMfdmsu0j9FdPxTq60YfDRtpU=
-X-Received: from pjza20.prod.google.com ([2002:a17:90a:e214:b0:329:7261:93b6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38d1:b0:32e:8c1e:1301
- with SMTP id 98e67ed59e1d1-33b513eac36mr30623229a91.34.1760398168867; Mon, 13
- Oct 2025 16:29:28 -0700 (PDT)
-Date: Mon, 13 Oct 2025 16:29:27 -0700
-In-Reply-To: <20251013125117.87739-1-fuqiang.wng@gmail.com>
+        d=1e100.net; s=20230601; t=1760398243; x=1761003043;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=08aB01K3QlDxNQ6Di+ZC0Fy9ecw0hHQXKJJoqFOXoow=;
+        b=BmmztHTLgMqs3rudn+fbHb/qymb5GANa0Tk8MtiY0LDCnYumc/7WHx8KXPcPZZeinq
+         4mOYLEQXWWZp/m3PADcfOdloLy6FSO17HCkHBdO37IAuRMRUOaUaakkxZWz/Vk9uWUo1
+         KqiaJoa1XKwFZy9tfqK8h2AuqKl6qY52Qh+At1WwDEwy2A6V6MzYDaV3VDH2eASmd+Qq
+         BlpavG/nW5wJOe+riKaxTIuTlvFQ+iikRPSPfiIOdbCZgJdczooPpC2tASB4c09mhSdE
+         ZVLiijQnEkG4whe+yHEMxXwhhdlrM4IKV9C6PFuDGCVSUXBRTaa+QQ98u2o09fu5QcXH
+         fbUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEsQbfcA2259XLhw1uzCJplQj2hJj/jlfLFQbg6zOeONmOuzv4mgpvcN4lU/In2y3GLW+DrKUkoLzCFcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcx9sbShX/Rcf273dO1FYQk1w1V2QVyo6n77mTR1eim+K1WjXL
+	D1mtuxcVd2WVpYvcJEhDzuX6rI6Fsak1Nqn4xLCU4qbysjXWmUf+Fu+wycOj6k+Xul31IcwR7np
+	xvOv39A==
+X-Google-Smtp-Source: AGHT+IHs68Jiesyq8CVwopkosF1NFYrZ8tVJ5yK1fRCuny9H+M0GlqQ+GEI/HXfswBxaNk8YEghSh7Wv9pM=
+X-Received: from pjbgl20.prod.google.com ([2002:a17:90b:1214:b0:330:acc9:302c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a87:b0:339:f09b:d36f
+ with SMTP id 98e67ed59e1d1-33b513a1e0fmr28253894a91.28.1760398243550; Mon, 13
+ Oct 2025 16:30:43 -0700 (PDT)
+Date: Mon, 13 Oct 2025 16:30:42 -0700
+In-Reply-To: <CALMp9eQN9b-EkysBHDj127p2s4m9jnicjMd+9GKWdFfaxBToQg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251013125117.87739-1-fuqiang.wng@gmail.com>
-Message-ID: <aO2LV-ipewL59LC6@google.com>
-Subject: Re: [PATCH RESEND] avoid hv timer fallback to sw timer if delay
- exceeds period
+References: <20250922162935.621409-1-jmattson@google.com> <aO11A4mzwqLzeXN9@google.com>
+ <CALMp9eQN9b-EkysBHDj127p2s4m9jnicjMd+9GKWdFfaxBToQg@mail.gmail.com>
+Message-ID: <aO2LomPuqvvRF5l-@google.com>
+Subject: Re: [PATCH 0/2] KVM: SVM: Aggressively clear vmcb02 clean bits
 From: Sean Christopherson <seanjc@google.com>
-To: fuqiang wang <fuqiang.wng@gmail.com>
+To: Jim Mattson <jmattson@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yu chen <chen.yu@easystack.com>, 
-	dongxu zhang <dongxu.zhang@easystack.com>
-Content-Type: text/plain; charset="us-ascii"
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 01, 2025, fuqiang wang wrote:
-> When the guest uses the APIC periodic timer, if the delay exceeds the
-> period, the delta will be negative. 
+On Mon, Oct 13, 2025, Jim Mattson wrote:
+> On Mon, Oct 13, 2025 at 2:54=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> >
+> > On Mon, Sep 22, 2025, Jim Mattson wrote:
+> > > It is unlikely that L1 will toggle the MSR intercept bit in vmcb02,
+> > > or that L1 will change its own IA32_PAT MSR. However, if it does,
+> > > the affected fields in vmcb02 should not be marked clean.
+> > >
+> > > An alternative approach would be to implement a set of mutators for
+> > > vmcb02 fields, and to clear the associated clean bit whenever a field
+> > > is modified.
+> >
+> > Any reason not to tag these for stable@?  I can't think of any meaningf=
+ul
+> > downsides, so erring on the side of caution seems prudent.
+>=20
+> SGTM. Do you want a new version?
 
-IIUC, by "delay" you mean the time it takes for KVM to get (back) to
-advance_periodic_target_expiration().  If that's correct, I think it would be
-clearer to word this as:
-
-  When the guest uses the APIC periodic timer, if the next period has already
-  expired, e.g. due to the period being smaller than the delay in processing
-  the timer, the delta will be negative.
-
-> nsec_to_cycles() may then convert this
-> delta into an absolute value larger than guest_l1_tsc, resulting in a
-> negative tscdeadline. Since the hv timer supports a maximum bit width of
-> cpu_preemption_timer_multi + 32, this causes the hv timer setup to fail and
-> switch to the sw timer.
-> 
-> Moreover, due to the commit 98c25ead5eda ("KVM: VMX: Move preemption timer
-> <=> hrtimer dance to common x86"), if the guest is using the sw timer
-> before blocking, it will continue to use the sw timer after being woken up,
-> and will not switch back to the hv timer until the relevant APIC timer
-> register is reprogrammed.  Since the periodic timer does not require
-> frequent APIC timer register programming, the guest may continue to use the
-> software timer for an extended period.
-> 
-> The reproduction steps and patch verification results at link [1].
-> 
-> [1]: https://github.com/cai-fuqiang/kernel_test/tree/master/period_timer_test
-> 
-> Fixes: 98c25ead5eda ("KVM: VMX: Move preemption timer <=> hrtimer dance to common x86")
-
-I'm pretty sure this should be:
-
-  Fixes: d8f2f498d9ed ("x86/kvm: fix LAPIC timer drift when guest uses periodic mode")
-
-because that's where the bug with tsdeadline (incorrectly) wrapping was introduced.
-The aforementioned commit exacerbated (and likely exposed?) the bug, but AFAICT
-that commit itself didn't introduce any bugs (related to this issue).
-
-> Signed-off-by: fuqiang wang <fuqiang.wng@gmail.com>
-> ---
->  arch/x86/kvm/lapic.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 5fc437341e03..afd349f4d933 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -2036,6 +2036,9 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
->  	u64 tscl = rdtsc();
->  	ktime_t delta;
->  
-> +	u64 delta_cycles_u;
-> +	u64 delta_cycles_s;
-> +
->  	/*
->  	 * Synchronize both deadlines to the same time source or
->  	 * differences in the periods (caused by differences in the
-> @@ -2047,8 +2050,11 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
->  		ktime_add_ns(apic->lapic_timer.target_expiration,
->  				apic->lapic_timer.period);
->  	delta = ktime_sub(apic->lapic_timer.target_expiration, now);
-> +	delta_cycles_u = nsec_to_cycles(apic->vcpu, abs(delta));
-> +	delta_cycles_s = delta > 0 ? delta_cycles_u : -delta_cycles_u;
-> +
->  	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
-> -		nsec_to_cycles(apic->vcpu, delta);
-> +		delta_cycles_s;
-
-This isn't quite correct either.  E.g. if delta is negative while L1 TSC is tiny,
-then subtracting the delta will incorrectly result the deadline wrapping too.
-Very, very, theoretically, L1 TSC could even be '0', e.g. due to a weird offset
-for L1, so I don't think subtracting is ever safe.  Heh, of course we're hosed
-in that case no matter what since KVM treats tscdeadline==0 as "not programmed".
-
-Anyways, can't we just skip adding negative value?  Whether or not the TSC deadline
-has expired is mostly a boolean value; for the vast majority of code it doesn't
-matter exactly when the timer expired.
-
-The only code that cares is __kvm_wait_lapic_expire(), and the only downside to
-setting tscdeadline=L1.TSC is that adjust_lapic_timer_advance() won't adjust as
-aggressively as it probably should.
-
-Ha!  That's essentially what update_target_expiration() already does:
-
-	now = ktime_get();
-	remaining = ktime_sub(apic->lapic_timer.target_expiration, now);
-	if (ktime_to_ns(remaining) < 0)
-		remaining = 0;
-
-E.g.
-
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 0ae7f913d782..2fb03a8a9ae9 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2131,18 +2131,26 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
-        ktime_t delta;
- 
-        /*
--        * Synchronize both deadlines to the same time source or
--        * differences in the periods (caused by differences in the
--        * underlying clocks or numerical approximation errors) will
--        * cause the two to drift apart over time as the errors
--        * accumulate.
-+        * Use kernel time as the time source for both deadlines so that they
-+        * stay synchronized.  Computing each deadline independently will cause
-+        * the two deadlines to drift apart over time as differences in the
-+        * periods accumulate, e.g. due to differences in the underlying clocks
-+        * or numerical approximation errors.
-         */
-        apic->lapic_timer.target_expiration =
-                ktime_add_ns(apic->lapic_timer.target_expiration,
-                                apic->lapic_timer.period);
-        delta = ktime_sub(apic->lapic_timer.target_expiration, now);
--       apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
--               nsec_to_cycles(apic->vcpu, delta);
-+
-+       /*
-+        * Don't adjust the TSC deadline if the next period has already expired,
-+        * e.g. due to software overhead resulting in delays larger than the
-+        * period.  Blindly adding a negative delta could cause the deadline to
-+        * become excessively large due to the deadline being an unsigned value.
-+        */
-+       apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl);
-+       if (delta > 0)
-+               apic->lapic_timer.tscdeadline += nsec_to_cycles(apic->vcpu, delta);
- }
- 
- static void start_sw_period(struct kvm_lapic *apic)
+Good gravy, no.  :-)
 
