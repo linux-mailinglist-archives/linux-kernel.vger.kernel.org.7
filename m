@@ -1,256 +1,484 @@
-Return-Path: <linux-kernel+bounces-851408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96306BD6603
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:34:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE639BD6608
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B14844F417A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029131899F98
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD07525DAFF;
-	Mon, 13 Oct 2025 21:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A998C2EFDBA;
+	Mon, 13 Oct 2025 21:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w9IDYxM3"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SzZZMr1P"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011000.outbound.protection.outlook.com [40.93.194.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546D01547D2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391237; cv=none; b=Lv4hyNz7jrw+/AKQj1v1CY4Lf7jLALMYCSCVWRrqvSd5zHpiQLQ5PrgiUPV387CtS4cVjvqLvpnNdckzNABQmhjcXllWg+r4NkkOmJ3sDwo3AQc31EEbfeWnxl1Fku214AknK6lstqIFLpghWlTMw40lBMXKQVbxIUR7/1RHz+g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391237; c=relaxed/simple;
-	bh=S+5UlcHEjrBWuJv6UsmXBiz2G9IdfwGhUo8ykHoxZRg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CSqICTIixyvI3GlbJ2/n53RoL77wdIUxIoXJL3KSticd5iGt2L0w1UdK2GpwaIY+IsaGK0usSKDVJwAAfkbgE+u8hpcg1O1hsKIoLdbgLHvkHTjwVciyoxzPlhENhie3eo1G5r8bTtq4DLvbBbUvcZAlGeoBK8usB4iBA4j5wHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w9IDYxM3; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-65033a46e9dso587839eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760391233; x=1760996033; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wW9QX+M1STMhGWj50E44m+hCJQ0pzaTa4Qn7Dm6RkUY=;
-        b=w9IDYxM38dMuOT10Bdm9Cn8YBxJN9Dj2Hl77V3dy9I+/ENXtHfq3iiskAcgdUaH8V4
-         ec8Z3jDZPWXs2OTbnj7xZk1L0aW3GJfZHGOORLPNKHeoFl5aFf8wUvDlF7P/Hyehqe8G
-         SACx/e2tl87zpBCKnolPWGhRSHjtA6zS7HfkuAc0SCI0dVPbDtOWaizA9UxAQm9qwyPb
-         gQ395m0xeWq9fB/Fji99iuFtZkD5aEMUVKtO8aNQHocmPxuvHLYh0tRlf3GvtLenFyAt
-         k8Rh7uDq+e8+rp6k1+JylJ3HEU4+E/GHjHpU9va+N33pS9FgZ5nYeqGScsvbE+Peh0yL
-         GC+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760391233; x=1760996033;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wW9QX+M1STMhGWj50E44m+hCJQ0pzaTa4Qn7Dm6RkUY=;
-        b=vQ2XV0xhdMQKMkZI0QYFP5J8i6yS/rOhwaOZ0NGUIw/H6z21YvXW7Nl59zRui3SZ5j
-         fmg3X0bdWTX5JC3MhPxTIkHqJKKQhsqocU/HPv1+dr0og8r4fc4goPUT3ib+QtH6en6L
-         m6Lj93S8pGjJ3ar5KcfAVNoQXy+RLKf9xBS+qXO1mfhBhJveAS4wOEElNyoEkv/kEPlf
-         W659bO6Z6HAlN2VpO5Uk0zwPBtgKF5xjus326/GEMkAYMQHExfsW1D1kdZoXGv+nmd9q
-         iJ+7EE1itFrtsHezbC09Z0/XHJWZkJj1muQEuaijGqc59b8DNgO/tdfcPzuGCgtlD0xR
-         Xajg==
-X-Gm-Message-State: AOJu0YyJF99udauqwe6vZrglcOCnA8yrrKRNAPSIiyYV4AWKnteBKaVf
-	eguMsCvBLApHXu73rGOEpL/XzGpfAbrjXPFU+x6U1E3i/xiEdn2W8OiAZ/Gr6PLfTbs=
-X-Gm-Gg: ASbGncs4wGaCs9jyCCwFnQbvqtbLOlonnjdpteOhTg8/EZDofXZpItIVkiK/JV2LxA6
-	rlO1I930wtQYxs+m7wf29Nqo4IvqN23jn9I+QohpvFkghZ2Dj1gtURjMIR5AW7rWxiKESAFSHKL
-	Lh9r0v3q0m9wEeXqVdr/WfllXSW1bQrk7r8iI6xNLRt1J3tGaPnkbNxy1LWx+j/I/fTIfZ5v9sE
-	jp3pm9UyiOctcwOEurFyIhL+0O0vNra1ZZkPOQbFSmLMZP/LU3XANIbKzv5aRX+miz6MU6u/+X7
-	jKi4QSaVvkMMB4EubdwGwSyqog3aH41cpi07n7yvqGIvsAL+j3MKpIB7NUOKH3tMTfwRB1n/J4Y
-	umyJRY0Q9OFxMkyjmXe0Cn/CAPYgC+kvHDeGZPN9qpSvQQg==
-X-Google-Smtp-Source: AGHT+IGpkPrBBYATqeDfySRA0sSXDVmAkWnG7OPAV+n75UM1ORhPMaGBH1JoStYGZGaemJfMqa34CA==
-X-Received: by 2002:a05:6870:3233:b0:319:bcee:df41 with SMTP id 586e51a60fabf-3c0f81eb379mr12307392fac.32.1760391233100;
-        Mon, 13 Oct 2025 14:33:53 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:500:9bbe:7008:41b0:ed6e])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3c8c8eecb2bsm3927676fac.20.2025.10.13.14.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 14:33:52 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 13 Oct 2025 16:33:43 -0500
-Subject: [PATCH] iio: test: fixed-point: new kunit test
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A222DC766
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760391239; cv=fail; b=gSzPlVrtBaw0P4Z0gHW7/Srxoa21lYIUjtb6fZPYabV0rEOMWmV3BDNyui/1NUAOuqk2X7nZl4GSKHbutCJB/y5SoTTIMfz13Ge0UP8kmouBcHp/MPiLoV1EpH/idB5i0OPJvUwSAzvgbL7DP/zws4Cm8NXaj4E7i8Z6NnNkjrc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760391239; c=relaxed/simple;
+	bh=zpWDrIHM6cLjaZFLbeMR/FZapvoXozHp1u31yvul/MQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=l5M9zw5q3N/tjoJLq1yxbr+w/BYbP/YoV6a66usAqihbrsTTbqR40c4MrBv5rCmQICR2S5kpk0kQU3v4kZ2E6pxcfKZW2EjOqDtVtQcqcvIB1dkEjsuSWlwRVaPWXAXCK0ULENzSsOBNBR/iN+s6jFF+wHOhaqDZpgGbRFCgJ+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SzZZMr1P; arc=fail smtp.client-ip=40.93.194.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YacswlqWhBC/tYcOptkTC2bE1FVuIc3nbNpmNyW4jXI12h67dTpMiabapDkG2hldCZ3743MpzXZNdMXQZj9ypbZYVTAV5Y1q3YKM3KvpPw2BDKpIASJs4RSqRu06/x57SyNXKbAIt8smqVzd37lF5wFpxxe5TyXvT18Qy+nwMj5syhW1qtnOLCQIMgs7bAq9aajT+sVlvu3Xx6k+/LEXmYbz8rqWVyqgjjL2dkNA1RXwLmThykwtCRgvDlbkLLDe1TRy6m5cMN4sT4qW4r4jt9CBpFywRtgqccuLhaCjXtOm0vsulKp5n2lXhfU1MlwVkEiqDw1v6FpKLmgjaqONaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9lguWPV3Et/w9wBwLE3d0lE00H+Ddgn2ulZ9JL350jM=;
+ b=ZLH1Y5EpBjIbVto+YbEDzYPN4H/JdugKRUskCW5CSAWQaWfNFrF/jc8uO1rrwrVSRUYVuHH2GntHgVqF65PLWJKPFOfm5Pn4OpQwSLIF7Be6abvN/P+2fLuqqTdT9seF5D6hH8cf0W7ARQLtVCKe9QpBm3tB4hHYj/JlkhMfCbxzTlGD4prWWdOrvHXxeFviHMt3d5GL9rV4LFJd4tpbsUe8p2fcHwAr50KtsRlhy3JuXfTzQpKph7vfRVR/JJ6l96o0YFciMcg1EpNJiDgD9vRjOu7wrNaoY7RM3UdI4YAeP2FDBoG1s/MqW/XRKMgujVtqAl+HITisEuEOx+GvXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9lguWPV3Et/w9wBwLE3d0lE00H+Ddgn2ulZ9JL350jM=;
+ b=SzZZMr1PS4+g8NSEYGm97n1hKeV7GpJRahENhcRiFbsyH/0wSrH42kNfgo79Mm4VGlvc3B6NfIdbCmxuw54RSMMjFe0F3mUrrVkfPMPA/tI3OAbmbeOzb69wsL7bBJHFHQ/Rk7hXV/0rLALo3hb4qxg8OTt+YbXI3CtNEaD8iAiPuHw9RLirfGgAL2FNXYjnBMIwXS7nkm0eKXs2xdRSzh1GfvN7NWRB8+0wZQnImO2W4qrYmn7dWO+7aeP+G4LIxUE70Gq3V5n58g2J7Gl5zqMioXbhreydhlgVrf+VVKSJP9ZprFtgJ0/B4+mhrKCupQ+IgD2VpbAhdxcFxP8/xQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by CY5PR12MB6202.namprd12.prod.outlook.com (2603:10b6:930:25::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
+ 2025 21:33:53 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 21:33:53 +0000
+Message-ID: <7213aa5c-7129-4a3f-acbf-ab922f0f6cac@nvidia.com>
+Date: Tue, 14 Oct 2025 08:33:45 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v7 11/16] mm/migrate_device: add THP splitting during migration
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mm@kvack.org, akpm@linux-foundation.org,
+ David Hildenbrand <david@redhat.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20251001065707.920170-1-balbirs@nvidia.com>
+ <20251001065707.920170-12-balbirs@nvidia.com>
+ <FB8D8651-639F-4882-9868-7FA0A8B62397@nvidia.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <FB8D8651-639F-4882-9868-7FA0A8B62397@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR11CA0065.namprd11.prod.outlook.com
+ (2603:10b6:a03:80::42) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIADZw7WgC/xWNwQqDMBAFf0X23IVESbH9ldKDmte6FDaSjW1B/
- HfjcWCY2ciQBUb3ZqOMr5gkreAvDU3zoG+wxMrUujZ45x2LJC6wYvySPyIvSbSw4sefVaVwGFz
- sMPpbfw1UK0vGKZ6Hx3PfD+tW4KFxAAAA
-X-Change-ID: 20251010-iio-tests-fixed-point-new-kunit-5a0d3eb19865
-To: Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5245; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=S+5UlcHEjrBWuJv6UsmXBiz2G9IdfwGhUo8ykHoxZRg=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBo7XA4VugKvnWZr4GhOB/sTmHYgLcH+oGWz+U66
- 5TDllZMgi6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaO1wOAAKCRDCzCAB/wGP
- wANIB/wKj9RIo9Lat7YTU71Z/8xS7cGismxmPzr+48um2+ur5rxJmJP2FnkjNfyobHBX9hFXTtU
- 7ZxiUAbJWC9llbhzmo5v9MkerS1eqQyQo6cwfHhuVdm1sVAQE3Im0MsEQPYcSifG2yMQb6pjBcD
- vR/r8ogyiinSPumaSEqPxKI0sJGsJe6fxrOq5VLJe/VqC5Kag1GDg61faMy1uvnXOoozZwMaA1d
- 9BaadTdKS+3hd1V053jCnM0Uqc4DsYheUypTdJi67EYGiZNKPfgeHGGWRWoVpSRCh3ta+SmHvm0
- 4arWflFQ8jLOxngmIaE9OStkje7tr6Dnf+rjcWefPRnlpFYo
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|CY5PR12MB6202:EE_
+X-MS-Office365-Filtering-Correlation-Id: a50615ae-a995-4931-4ba2-08de0aa034c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|10070799003|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OTZsd3I3RDhZTVY0U1g5elFILzlsWUlxTnc4RjhOb0haS0N2dzhLZWN5S1Zk?=
+ =?utf-8?B?V3d4TFIwakNqYkZtOGlxZWd4UHhkTjYvMEZLL01oZUpIeDlOaTFlM0JPclhU?=
+ =?utf-8?B?aW9OZHhRcXMzYTJmeUZRSjJjN1AxMU51cHlMQ2JpYU9xc2hXUElRUGM3eGhV?=
+ =?utf-8?B?THg5YnROajlPNG90S2hmcVBkMmh0d1FaTWwvWEMvVlZTY3lsSzZaYkxuSmRZ?=
+ =?utf-8?B?K3lZMGk5US9EUHhtSTVqaXVOdHQ5dG9sSDNpZ3YwUEgzUnRxd1hNM3lnSUtn?=
+ =?utf-8?B?ZlRMdVMzZjVaclhxbEM3MnZWRTVRK0gyUVN4WXpobkdUQXZxcFZJeExBSUNm?=
+ =?utf-8?B?ejByak1GMVN6azlKUEJMVHR6dTEyalA2UCtpMzBybnhDeU9jNzJPekk2T1BE?=
+ =?utf-8?B?TFhPYXhvM2N5cVZGd1NMWlZVVnVkbFArV1A2cTc2SzZJclRmYlk0cXlETmFY?=
+ =?utf-8?B?REh3NnNXbHZUTWNjcWppOVVaUEtPb0M5eFJRaDZUcm5IcnpnK1VmVHNaVjQ4?=
+ =?utf-8?B?Um1uV202dmF5TUF0ckgxb2JCTFpJYTh4aDk1NkFiVi9YaXRVQkp6cGVRWXNH?=
+ =?utf-8?B?bWJkdjE1RDRmV2R1Q1kzNWhqMitkbzMvanRGRmNsMlhQUHBObk1TQVh4eDls?=
+ =?utf-8?B?d2l5UDhRbmp0KzBab1g1a0V4YmJsdFhhVHVGK0lkZzdYR0FzZU4zWXEwRExx?=
+ =?utf-8?B?TmJ6bzBMNWxlQWQ3c3MwZ0xQYXJlMkJhNStzdmNRdE1XRGphanB3cy9aM08x?=
+ =?utf-8?B?MHJPTHJGOHNXY2FRTlhRbUZMQ2JkYitYU0VRa0ludndBbXNOTmpqOHRRd3Nu?=
+ =?utf-8?B?NDhjdTJDMWoxemRDWG1xNGxia3puMG01S3BaM3hySkcrZVdYMkgzVmFjSCtr?=
+ =?utf-8?B?MFJIUmpMQ3lFSDVNMHdqbzdtVTlTTUxPMWJqdXNNYTNvUmRjQkV1SEVRaWFE?=
+ =?utf-8?B?MkpKR2RWQkVEeThoVHhEN0hLenFOdVNJWHF6L0llNG1jaTNKVW9GMG85Tmxm?=
+ =?utf-8?B?Y1dla0FIaUdHQ0E2TTZSa2pIazhxQjVLSUVzYU5GR1E3V0RpV01VdTNhKzJu?=
+ =?utf-8?B?cktnRmt0eW9TYm1pSzdpenA3cHNzR1djYlNQcldaZzhRUzVTMUZWUmYzbTZ4?=
+ =?utf-8?B?bkZFd0pNUXRzVGRyamlMT1JpTGNiRVU4d2JWU1JuNGZsYUpiR29rQW9TaWhP?=
+ =?utf-8?B?MDQ1MUR0d2dJZnlMWWRjaDN0WmJRcWxYQmVqTUV2K3hIMHRaSSsvN05VQkdO?=
+ =?utf-8?B?MmRoV0ozSGlRNlZZQ1VXcWJvMGM0M0hlUEN1Sncxai9GVDBuNTY5ajBETGhP?=
+ =?utf-8?B?Vzd1YnlkME90YXZ0L3gwTzFXM3Jna2xQUklPUDFKQUFuaGtWc1BydEpnV00y?=
+ =?utf-8?B?b2FxVzl2M0Z6bnF5NTV6S0kvUTV3UlZVMHR4aW5RY0FnSGx5TnY0VjVmeTM5?=
+ =?utf-8?B?b2oyL0QzYzh1LzBDdHEvQVduMEVlbk1Md1RvN01ETWxLWTVSbEFzUk40ckRn?=
+ =?utf-8?B?Zm9jTklCb21GT0hRMG1Bb003NTNWZW55L3lDKzQ4V0lQS2M1MmNnUXJZdWF4?=
+ =?utf-8?B?d0N1ekR1TjJINmRLVmdzZ1VueTF6OFZTcTNFLzU1czRnaGxXcll0cTNEc29t?=
+ =?utf-8?B?c3FOUnBmRzdiTFg1TUEyRWhHOUNsZTUyazRtRi8vUEFySi8vQ3ZLc21vYkdU?=
+ =?utf-8?B?WWFSMEVqZVhyTitHbEtUTm05bzR3Z1k2V3U4RDlwejRCc3IrczA5QnY0TE1I?=
+ =?utf-8?B?K3hKRFh5bS83Mlo1L2lXZGNaTFI2blBIVnpyQ1dSdjJrREtXK3ZRdlFzQTZB?=
+ =?utf-8?B?QWc3V0FvUEE1SDFOTGhCbDRwODNmUmpwdmNGR3l3T2JKRC9POGc5ZjlpQ3dE?=
+ =?utf-8?B?M3RBK0tGL0NUQXc4SW5uOGZEL1NzWnphRWd6OXhUTHlXSzJPbzBROHMvdTJV?=
+ =?utf-8?Q?j02HZvDIjBTgqDBu8HUrdcCKaTB5HoK7?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(10070799003)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ekpab3dKVHdWc2x1a1czaFVvMmFBRGJGOUdkcmQ4SDBHYml6Q0VWdFpSSUxJ?=
+ =?utf-8?B?Uk9uVUd5ZXZPOFFmYkhwSVp3VnVISUFERDVqNG1WYklZZGZwNGRVRDhLd1pR?=
+ =?utf-8?B?Z00yVnFzY0s1ellpeEd1cHN1YmNQRWF2YU85dzZLbkpUWU1CcGFTYTl6MVVN?=
+ =?utf-8?B?SDY0NmlHN2ZzYWs4djNZanpaQ3cvc1R3MGh5bWd5NThRSmxHL2xoSXpxODVW?=
+ =?utf-8?B?TXNsZ0tPYll0aWQweFJpa1VPQ0IvV2VQVTM0ZEZlOHgvWm1VdWthT0hFRHZ4?=
+ =?utf-8?B?N1pwMWk5dkc5UDdCWHE5VmRmOWYyYWI0c2c5Kzc4RldBMDBRM1AyeUpiUXlJ?=
+ =?utf-8?B?WmZkdSsrT1BSSGNCMjN3TnlzZHRTYlVLQjRwVXZnMUZsRGlGR1N1di9OUDEz?=
+ =?utf-8?B?Ujc2clNxbGtaWUk5Z3V2andtQUdNWG5jOXFtT0Nkd1pjc1VOS3BjY1pIV3p2?=
+ =?utf-8?B?b3g1ZnRnaWI4aDZkcytSTHMvVWxPbjYzakxzQUU4T1c2dFFQQWFlU0RaWDJI?=
+ =?utf-8?B?aVhhMnBNZFUvSXJFN1JGNWpRK2RqVWxiR2k3NS9ldzZRY1NGMldzY2hPQ0xM?=
+ =?utf-8?B?M0o2ajRDRDNQVHBSdzJtOXZIUHNOR2FDOUwrK2VNRlBjR011Q21jbjRTTVBQ?=
+ =?utf-8?B?M3FoM1k1UkY2c0t4UHZ5d0pJQTFUWVVBa2dhNWxTL2p5MGRoODI4NjFmbWJh?=
+ =?utf-8?B?TWJIeFBTUVVRWXIxdGg5eTNHYXdJelFCOStCcDNpbWVFV0ZTRHlmeFZPNmJB?=
+ =?utf-8?B?T1Q1OXk4Q2pWWksrblc3alBQN2VZQWtmQ2xzaTVDRndxWUgyME83NjZxQjFz?=
+ =?utf-8?B?S3ZzR3lRZkhHTlVWMHJkdmR2YnBIc0pmemg4RFhhL1RjSm50WU03NWQ0WE5V?=
+ =?utf-8?B?cWI5NlRCM2RsOS9YWHNsb3BUUnd4NTRGRmRaMElhK21vc1dPOTRXQWNlWktR?=
+ =?utf-8?B?UFpUYWlQUDk0TUhleGhEaTUxZ1YxL0xjK2ZZaXVsUUpUTWZOVEhhNCtuR1dk?=
+ =?utf-8?B?dDhkS0hCOUwyL3l6UVYyb2ZaUVBqSkJEaEY5dFZqNVdVSlRXVkc5aDAyMGhs?=
+ =?utf-8?B?Q2g4RzBQZlloSWozbTI1djdEbVJ5TnBQVFN0djRSTGxGTTBqa0Zxc1ZJWkVt?=
+ =?utf-8?B?eHFSQVRxRDE2Skpja1plUFFBY3I0QkNpd1czOFpBOE92Qnc4dnhydjhxb2da?=
+ =?utf-8?B?ay9TUmIxUmRiTWJabmJBeURTemQ1aGNIOHF2Sm8reGhLcjdaK0daWVZDVlNr?=
+ =?utf-8?B?TDFtTVRPdENqSzdnS1dWcXJnTlV1cVlwZzcxU2NQNU4vdVUrUkZIN2VOSElH?=
+ =?utf-8?B?UXBUT2hUa2todi9wUmRzaFdkUmZtSDk5NWh5MU4xY0cyOTBiSXVvQk5wTnNO?=
+ =?utf-8?B?enFoL01mWnV0YXFPanBCRHBRd1lHRlk1YUVZVmFxRm42U3FkS3VoQWJsYUMx?=
+ =?utf-8?B?WVBPZzY0dGtidVdLUUUxb3FGczB2TXBBakREZjJ2SFdHOFQ5NmxUWFR3a2RB?=
+ =?utf-8?B?WEN1ZXBYMFJLbmUzcXRnazZudC92NmdjcHJXUjlhM3ExVWxHdUJkVTlFditK?=
+ =?utf-8?B?T3dhaHVoTlR3QTlPT2s2cTgwS1QydkRZY0hHeU8yaWhKWFF4MlNQWXBNOWxn?=
+ =?utf-8?B?c1hISUsrZFJYZWR6L3JWZytpV2xQWVNqQXFrdDdhei9UYnh2b3BrN1g1NmZN?=
+ =?utf-8?B?YzlhdG1EdmpoYmpNRFV6bStySnc3OTNXZlFsVmhjcE5BcmNiSEJpWW0xUmhF?=
+ =?utf-8?B?SHhtRjdaL0FyMTNocUNEN3FDNmlLZUVXbXRKL0dJVVdZRXpHQ1hwK09lUjE4?=
+ =?utf-8?B?UUJpbWJZWEl1RnB0T1ZxWDdPS04yUjB3K0ZEZEpveFRiNnlkMXBNQVBCOURm?=
+ =?utf-8?B?M1h5aCtyWXFCK1ZiblVnL1VpK0pVL0ZQUXY3ZnFlK0luQjlZc0lVcGNHejJ3?=
+ =?utf-8?B?VWJtc1IrYU5LMmd0cWFYNy9LZ0tKQ2c0VXpyQkgzbGVxOWo4c2VWMjJnQUdW?=
+ =?utf-8?B?RnA5VmZSS0dQUXpVTUdMNThZUWN4UDV3TUdRbW44dW1nR04rOFRvV053a1Ra?=
+ =?utf-8?B?bVNsUXJVWjFmYzdReHFxK0M2MjN0MERnZzBSSVovWU1iSUduQmVERVRvL1F0?=
+ =?utf-8?B?RXprQlpoREsxa255ZVpuL3JpNCsrNlgrS05PNGFhS1F1cC9YK250TTZ4Y21a?=
+ =?utf-8?Q?UjnqnWRaIPOyADkKvR+QfjAjaFNHcNEmFH6xO0bbttRr?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a50615ae-a995-4931-4ba2-08de0aa034c1
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 21:33:53.2812
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QwD+P7q6QC9YzE2Ac3iy7arVLrBs49C4TgySyXY4kYK019Fg9yM/OrLih1DgS8rj/tB0IeOJAlGw5V04+dMdAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6202
 
-Add a kunit test for iio_str_to_fixpoint(). This function has an
-unintuitive API so this is helpful to see how to use it and shows the
-various edge cases.
+On 10/14/25 08:17, Zi Yan wrote:
+> On 1 Oct 2025, at 2:57, Balbir Singh wrote:
+> 
+>> Implement migrate_vma_split_pages() to handle THP splitting during the
+>> migration process when destination cannot allocate compound pages.
+>>
+>> This addresses the common scenario where migrate_vma_setup() succeeds with
+>> MIGRATE_PFN_COMPOUND pages, but the destination device cannot allocate
+>> large pages during the migration phase.
+>>
+>> Key changes:
+>> - migrate_vma_split_pages(): Split already-isolated pages during migration
+>> - Enhanced folio_split() and __split_unmapped_folio() with isolated
+>>   parameter to avoid redundant unmap/remap operations
+>>
+>> This provides a fallback mechansim to ensure migration succeeds even when
+>> large page allocation fails at the destination.
+>>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> Cc: Rakie Kim <rakie.kim@sk.com>
+>> Cc: Byungchul Park <byungchul@sk.com>
+>> Cc: Gregory Price <gourry@gourry.net>
+>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Lyude Paul <lyude@redhat.com>
+>> Cc: Danilo Krummrich <dakr@kernel.org>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>> Cc: Matthew Brost <matthew.brost@intel.com>
+>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>
+>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>> ---
+>>  include/linux/huge_mm.h | 11 +++++-
+>>  lib/test_hmm.c          |  9 +++++
+>>  mm/huge_memory.c        | 46 ++++++++++++----------
+>>  mm/migrate_device.c     | 85 +++++++++++++++++++++++++++++++++++------
+>>  4 files changed, 117 insertions(+), 34 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 2d669be7f1c8..a166be872628 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -365,8 +365,8 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
+>>  		vm_flags_t vm_flags);
+>>
+>>  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
+>> -int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>> -		unsigned int new_order);
+>> +int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>> +		unsigned int new_order, bool unmapped);
+>>  int min_order_for_split(struct folio *folio);
+>>  int split_folio_to_list(struct folio *folio, struct list_head *list);
+>>  bool uniform_split_supported(struct folio *folio, unsigned int new_order,
+>> @@ -375,6 +375,13 @@ bool non_uniform_split_supported(struct folio *folio, unsigned int new_order,
+>>  		bool warns);
+>>  int folio_split(struct folio *folio, unsigned int new_order, struct page *page,
+>>  		struct list_head *list);
+>> +
+>> +static inline int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>> +		unsigned int new_order)
+>> +{
+>> +	return __split_huge_page_to_list_to_order(page, list, new_order, false);
+>> +}
+>> +
+>>  /*
+>>   * try_folio_split - try to split a @folio at @page using non uniform split.
+>>   * @folio: folio to be split
+>> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+>> index 46fa9e200db8..df429670633e 100644
+>> --- a/lib/test_hmm.c
+>> +++ b/lib/test_hmm.c
+>> @@ -1612,6 +1612,15 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+>>  	order = folio_order(page_folio(vmf->page));
+>>  	nr = 1 << order;
+>>
+>> +	/*
+>> +	 * When folios are partially mapped, we can't rely on the folio
+>> +	 * order of vmf->page as the folio might not be fully split yet
+>> +	 */
+>> +	if (vmf->pte) {
+>> +		order = 0;
+>> +		nr = 1;
+>> +	}
+>> +
+>>  	/*
+>>  	 * Consider a per-cpu cache of src and dst pfns, but with
+>>  	 * large number of cpus that might not scale well.
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 8c95a658b3ec..022b0729f826 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -3463,15 +3463,6 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>>  		new_folio->mapping = folio->mapping;
+>>  		new_folio->index = folio->index + i;
+>>
+>> -		/*
+>> -		 * page->private should not be set in tail pages. Fix up and warn once
+>> -		 * if private is unexpectedly set.
+>> -		 */
+>> -		if (unlikely(new_folio->private)) {
+>> -			VM_WARN_ON_ONCE_PAGE(true, new_head);
+>> -			new_folio->private = NULL;
+>> -		}
+>> -
+>>  		if (folio_test_swapcache(folio))
+>>  			new_folio->swap.val = folio->swap.val + i;
+>>
+>> @@ -3700,6 +3691,7 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
+>>   * @lock_at: a page within @folio to be left locked to caller
+>>   * @list: after-split folios will be put on it if non NULL
+>>   * @uniform_split: perform uniform split or not (non-uniform split)
+>> + * @unmapped: The pages are already unmapped, they are migration entries.
+>>   *
+>>   * It calls __split_unmapped_folio() to perform uniform and non-uniform split.
+>>   * It is in charge of checking whether the split is supported or not and
+>> @@ -3715,7 +3707,7 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
+>>   */
+>>  static int __folio_split(struct folio *folio, unsigned int new_order,
+>>  		struct page *split_at, struct page *lock_at,
+>> -		struct list_head *list, bool uniform_split)
+>> +		struct list_head *list, bool uniform_split, bool unmapped)
+>>  {
+>>  	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+>>  	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+>> @@ -3765,13 +3757,15 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>>  		 * is taken to serialise against parallel split or collapse
+>>  		 * operations.
+>>  		 */
+>> -		anon_vma = folio_get_anon_vma(folio);
+>> -		if (!anon_vma) {
+>> -			ret = -EBUSY;
+>> -			goto out;
+>> +		if (!unmapped) {
+>> +			anon_vma = folio_get_anon_vma(folio);
+>> +			if (!anon_vma) {
+>> +				ret = -EBUSY;
+>> +				goto out;
+>> +			}
+>> +			anon_vma_lock_write(anon_vma);
+>>  		}
+>>  		mapping = NULL;
+>> -		anon_vma_lock_write(anon_vma);
+>>  	} else {
+>>  		unsigned int min_order;
+>>  		gfp_t gfp;
+>> @@ -3838,7 +3832,8 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>>  		goto out_unlock;
+>>  	}
+>>
+>> -	unmap_folio(folio);
+>> +	if (!unmapped)
+>> +		unmap_folio(folio);
+>>
+>>  	/* block interrupt reentry in xa_lock and spinlock */
+>>  	local_irq_disable();
+>> @@ -3925,10 +3920,13 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>>
+>>  			next = folio_next(new_folio);
+>>
+>> +			zone_device_private_split_cb(folio, new_folio);
+>> +
+>>  			expected_refs = folio_expected_ref_count(new_folio) + 1;
+>>  			folio_ref_unfreeze(new_folio, expected_refs);
+>>
+>> -			lru_add_split_folio(folio, new_folio, lruvec, list);
+>> +			if (!unmapped)
+>> +				lru_add_split_folio(folio, new_folio, lruvec, list);
+>>
+>>  			/*
+>>  			 * Anonymous folio with swap cache.
+>> @@ -3959,6 +3957,8 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>>  			__filemap_remove_folio(new_folio, NULL);
+>>  			folio_put_refs(new_folio, nr_pages);
+>>  		}
+>> +
+>> +		zone_device_private_split_cb(folio, NULL);
+>>  		/*
+>>  		 * Unfreeze @folio only after all page cache entries, which
+>>  		 * used to point to it, have been updated with new folios.
+>> @@ -3982,6 +3982,9 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>>
+>>  	local_irq_enable();
+>>
+>> +	if (unmapped)
+>> +		return ret;
+>> +
+>>  	if (nr_shmem_dropped)
+>>  		shmem_uncharge(mapping->host, nr_shmem_dropped);
+>>
+>> @@ -4072,12 +4075,13 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>>   * Returns -EINVAL when trying to split to an order that is incompatible
+>>   * with the folio. Splitting to order 0 is compatible with all folios.
+>>   */
+>> -int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>> -				     unsigned int new_order)
+>> +int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>> +				     unsigned int new_order, bool unmapped)
+>>  {
+>>  	struct folio *folio = page_folio(page);
+>>
+>> -	return __folio_split(folio, new_order, &folio->page, page, list, true);
+>> +	return __folio_split(folio, new_order, &folio->page, page, list, true,
+>> +				unmapped);
+>>  }
+>>
+>>  /*
+>> @@ -4106,7 +4110,7 @@ int folio_split(struct folio *folio, unsigned int new_order,
+>>  		struct page *split_at, struct list_head *list)
+>>  {
+>>  	return __folio_split(folio, new_order, split_at, &folio->page, list,
+>> -			false);
+>> +			false, false);
+>>  }
+>>
+>>  int min_order_for_split(struct folio *folio)
+>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+>> index 4156fd6190d2..fa42d2ebd024 100644
+>> --- a/mm/migrate_device.c
+>> +++ b/mm/migrate_device.c
+>> @@ -306,6 +306,23 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>  			    pgmap->owner != migrate->pgmap_owner)
+>>  				goto next;
+>>
+>> +			folio = page_folio(page);
+>> +			if (folio_test_large(folio)) {
+>> +				int ret;
+>> +
+>> +				pte_unmap_unlock(ptep, ptl);
+>> +				ret = migrate_vma_split_folio(folio,
+>> +							  migrate->fault_page);
+>> +
+>> +				if (ret) {
+>> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
+>> +					goto next;
+>> +				}
+>> +
+>> +				addr = start;
+>> +				goto again;
+>> +			}
+>> +
+>>  			mpfn = migrate_pfn(page_to_pfn(page)) |
+>>  					MIGRATE_PFN_MIGRATE;
+>>  			if (is_writable_device_private_entry(entry))
+>> @@ -880,6 +897,29 @@ static int migrate_vma_insert_huge_pmd_page(struct migrate_vma *migrate,
+>>  		src[i] &= ~MIGRATE_PFN_MIGRATE;
+>>  	return 0;
+>>  }
+>> +
+>> +static int migrate_vma_split_unmapped_folio(struct migrate_vma *migrate,
+>> +					    unsigned long idx, unsigned long addr,
+>> +					    struct folio *folio)
+>> +{
+>> +	unsigned long i;
+>> +	unsigned long pfn;
+>> +	unsigned long flags;
+>> +	int ret = 0;
+>> +
+>> +	folio_get(folio);
+>> +	split_huge_pmd_address(migrate->vma, addr, true);
+>> +	ret = __split_huge_page_to_list_to_order(folio_page(folio, 0), NULL,
+>> +							0, true);
+> 
+> Why not just call __split_unmapped_folio() here? Then, you do not need to add
+> a new unmapped parameter in __folio_split().
+> 
+> 
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-When reviewing [1], I noticed that iio_str_to_fixpoint() has an odd API
-which lead me to find the bug in [2]. To make sure I was understanding
-the API correctly, I wrote a KUnit test for it. So here it is.
+The benefit comes from the ref count checks and freeze/unfreeze (common code) in
+__folio_split() and also from the callbacks that are to be made to the drivers on
+folio split. These paths are required for both mapped and unmapped folios.
 
-[1]: https://lore.kernel.org/linux-iio/20251009173609.992452-3-flavra@baylibre.com/
-[2]: https://lore.kernel.org/linux-iio/20251010-iio-adc-ad7280a-fix-ad7280_store_balance_timer-v1-1-e11746735192@baylibre.com/
----
-Discussion unrelated to the patch:
+Otherwise we'd have to replicate that logic and checks again for unmapped folios
+and handle post split processing again.
 
-I'm also a little tempted to introduce a new function that is a bit
-easier to use. Many callers of iio_str_to_fixpoint_s64() are doing
-something like int_part * 1000 + fract_part and ignoring the possibility
-of negative values which require special handling.
+[...]
 
-static int iio_str_to_fixpoint_s64(const char *str, u32 decimal_places, s64 *value)
-{
-	int int_part, fract_part;
-	int ret;
-
-	ret = iio_str_to_fixpoint(str, int_pow(10, decimal_places - 1),
-				  &int_part, &fract_part);
-	if (ret)
-		return ret;
-
-	*value = (s64)int_part * int_pow(10, decimal_places) +
-		 (int_part < 0 ? -1 : 1) * fract_part;
-
-	return 0;
-}
----
- drivers/iio/test/Kconfig                | 13 ++++++++
- drivers/iio/test/Makefile               |  1 +
- drivers/iio/test/iio-test-fixed-point.c | 58 +++++++++++++++++++++++++++++++++
- 3 files changed, 72 insertions(+)
-
-diff --git a/drivers/iio/test/Kconfig b/drivers/iio/test/Kconfig
-index 6e65e929791ca247df9ac993fddbb4da557d5dfa..d210067ea59199d342b15bf373e724d0aa2c55a0 100644
---- a/drivers/iio/test/Kconfig
-+++ b/drivers/iio/test/Kconfig
-@@ -4,6 +4,19 @@
- #
- 
- # Keep in alphabetical order
-+
-+config IIO_FIXED_POINT_KUNIT_TEST
-+	tristate "Test IIO fixedpoint functions" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Build unit tests for the IIO fixed-point code.
-+
-+	  For more information on KUnit and unit tests in general, please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-+
- config IIO_GTS_KUNIT_TEST
- 	tristate "Test IIO gain-time-scale helpers" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
-diff --git a/drivers/iio/test/Makefile b/drivers/iio/test/Makefile
-index 0c846bc21acda5a487b3a6977a8e9feaef20159a..a580e78b0fe00adc65f8f9df80023d6d738d11f7 100644
---- a/drivers/iio/test/Makefile
-+++ b/drivers/iio/test/Makefile
-@@ -4,6 +4,7 @@
- #
- 
- # Keep in alphabetical order
-+obj-$(CONFIG_IIO_FIXED_POINT_KUNIT_TEST) += iio-test-fixed-point.o
- obj-$(CONFIG_IIO_RESCALE_KUNIT_TEST) += iio-test-rescale.o
- obj-$(CONFIG_IIO_FORMAT_KUNIT_TEST) += iio-test-format.o
- obj-$(CONFIG_IIO_GTS_KUNIT_TEST) += iio-test-gts.o
-diff --git a/drivers/iio/test/iio-test-fixed-point.c b/drivers/iio/test/iio-test-fixed-point.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..edfed5434af2391a31d206fda2be0455a9e5e443
---- /dev/null
-+++ b/drivers/iio/test/iio-test-fixed-point.c
-@@ -0,0 +1,58 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Unit tests for IIO fixed-point functions
-+ *
-+ * Copyright (c) 2025 BayLibre, SAS
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/iio/iio.h>
-+#include <linux/math.h>
-+#include <linux/types.h>
-+
-+static void iio_test_iio_str_to_fixed_point(struct kunit *test)
-+{
-+	int int_part, fract_part;
-+	int ret;
-+
-+	/* Positive value > 1 */
-+	ret = iio_str_to_fixpoint("1.234", 100, &int_part, &fract_part);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, 1234);
-+
-+	/* Truncates rather than rounding closest. */
-+	ret = iio_str_to_fixpoint("1.234567", 100, &int_part, &fract_part);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, 1234);
-+
-+	/* Positive value < 1 */
-+	ret = iio_str_to_fixpoint("0.001", 100, &int_part, &fract_part);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, 1);
-+
-+	/* Negative value > -1 */
-+	ret = iio_str_to_fixpoint("-0.001", 100, &int_part, &fract_part);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, int_part * 1000 + fract_part, -1);
-+
-+	/* Negative value < -1 */
-+	ret = iio_str_to_fixpoint("-1.001", 100, &int_part, &fract_part);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	/* The fractional part is subtracted rather than added in this case! */
-+	KUNIT_EXPECT_EQ(test, int_part * 1000 - fract_part, -1001);
-+}
-+
-+static const struct kunit_case iio_fixed_point_test_cases[] = {
-+	KUNIT_CASE(iio_test_iio_str_to_fixed_point),
-+	{ }
-+};
-+
-+static struct kunit_suite iio_fixed_point_test_suite = {
-+	.name = "iio-fixed-point",
-+	.test_cases = iio_fixed_point_test_cases,
-+};
-+kunit_test_suite(iio_fixed_point_test_suite);
-+
-+MODULE_AUTHOR("David Lechner <dlechner@baylibre.com>");
-+MODULE_DESCRIPTION("Test IIO fixed-point functions");
-+MODULE_LICENSE("GPL");
-
----
-base-commit: a9682f53c2d1678b93a123cdaa260e955430bc5c
-change-id: 20251010-iio-tests-fixed-point-new-kunit-5a0d3eb19865
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+Thanks,
+Balbir
 
