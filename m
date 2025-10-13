@@ -1,182 +1,263 @@
-Return-Path: <linux-kernel+bounces-850071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D701BD1C4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:23:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB5BBD1C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E20944EBBA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A02561897F5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2FD2E8E13;
-	Mon, 13 Oct 2025 07:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD6E2E8894;
+	Mon, 13 Oct 2025 07:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aFxJ3RYe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YaV9Kput"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7842E7F20;
-	Mon, 13 Oct 2025 07:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9E127F01E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760340201; cv=none; b=oO163c+lz0fmXS2K6saip4JFF5pK3B09Tsl6ALDNCGjlNv8f/kKQoSHBd2OzbPCy7x9/1BJnVoup3gRlxeoRxVHymXZJUKezH7pKS6LB5q0zpgB/nkyzh0Kiesr6TyOgSs2OMIiyE7enPy0AK5HBimJBI9dN2rbKGuQbfnrrJZw=
+	t=1760340258; cv=none; b=JxI4BpxRcNywv0gQZa/xjoY3QjBWAz+sBgtc1LVuGFdWeW1JUia/HNj23D11iBvtG4daxit9Kq1broFkGxIQdY4yEHOnaqpAltUYIK3VwAwPT+FPZIjVsZBQdCw2VbXkVJPnnMiTjiDd7h9fI6XSeTmez94tb8HBGzWOwc6/Mso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760340201; c=relaxed/simple;
-	bh=5rYjsN5XeOyunE3PUJZcaBEskdY9kWOsawHLMQzQslQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tcw+R9bVVn+JuDtAAYC/1xAuXObijz2hKFn3nA2NkFOtBdUAohoDK2OXTWrody7OKCwdSWpBuE1tOnMgRMtx4oGlIJbZsabvCkoiVrCLwG0g0t9fTxiZvRPrBs3ZE6m6ooZ86GJ7Ls9bDZn3VYWOoNF5/cvsmk/kJmilVqa3LZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aFxJ3RYe; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760340199; x=1791876199;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5rYjsN5XeOyunE3PUJZcaBEskdY9kWOsawHLMQzQslQ=;
-  b=aFxJ3RYe+JpT5PtCZtf6A9mVVwtUh5ZANsotILAgPvpMU6p0616N/Q02
-   6zxN0sHx2AKlGVQrFOakLQqvXkcy/UU1gKoFXtlgA/mHeI1ojzBkaBV9Y
-   xILGsCvXABfbkQXJGpPGt79T/JiZeQSqlXLiNs/htLyNMxbp9UkkaBuWV
-   trl0Cy7uG4Yq/VtC5p4aYIsCgoY20a3a0llGGLKvZkDoM9vKosdLB0+W9
-   sUC25eUvqCgT71JF4Mhy+2RNt1oZigZ5p2sLs+nQd+GBdS0/kmGDYl8th
-   M0IzI70Hp9Q8jNbIw51dVPoGexTBlteNqmDvNNcUpQqBSIVkxVgAWAeC6
-   Q==;
-X-CSE-ConnectionGUID: /9bP2/SCRkuJPy31QpY77g==
-X-CSE-MsgGUID: ICFwt8cUQn6RehtxnrBHSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="61510111"
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="61510111"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 00:23:16 -0700
-X-CSE-ConnectionGUID: LxgLBrP8Q4Wrhw0ocGu1Ow==
-X-CSE-MsgGUID: c65J513iRO+SljnR4gx7tQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="185790523"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.244.25])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 00:23:11 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Rogers <irogers@google.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Edd Barrett <edd@theunixzoo.co.uk>,
-	Laurence Tratt <laurie@tratt.net>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH RESEND 3/3] perf/core: Fix MMAP2 event device with backing files
-Date: Mon, 13 Oct 2025 10:22:44 +0300
-Message-ID: <20251013072244.82591-4-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251013072244.82591-1-adrian.hunter@intel.com>
-References: <20251013072244.82591-1-adrian.hunter@intel.com>
+	s=arc-20240116; t=1760340258; c=relaxed/simple;
+	bh=UP4UcMcf1M/aB8HA2sSVPaLwr/P3zIFFPlbXEK7uKAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XrChxuf8mEniZTNbszgYEZeQXsEIBlXmkD2AX9Ckg2CFo4vVwYKhX3KyD/SXHKf1xSNMStSdlazYwgMdcMeqgNS/k0MVdoEWN0sd1Wr4DgNwxfKkFuzcqt4pT6Lek/gp4cbBdrZM6nXyU5jHwyFLClQAYiqrK2MV4Q6gGGJ8Vxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YaV9Kput; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <df9a3e22-caca-4298-b7d8-5334ce5446a0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760340243;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UTwHrwesb3gXBh5bL8coyxDbz9vOysract+Yrr0Kj7w=;
+	b=YaV9KputqEfryJZ9woWyM5/zhH/ZA62+Oem+AOEj/cH7gRxqqEL0LqKj3ErwRVjyutjVBA
+	dzSGzbLKxmWPuyJr8VMAR1Yznm3r9wVlHX1nx7J0hKMaY6GaWUqCUC8RoLGRFlct5r2tcj
+	YvZAQeGaCyIIMBtI+NGjFdYdUBD3cdc=
+Date: Mon, 13 Oct 2025 15:23:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 0/4] reparent the THP split queue
+To: Zi Yan <ziy@nvidia.com>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ david@redhat.com, lorenzo.stoakes@oracle.com, harry.yoo@oracle.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ lance.yang@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Qi Zheng <zhengqi.arch@bytedance.com>
+References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
+ <925E0247-2976-4D85-A8AA-E8C92C64CED4@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <925E0247-2976-4D85-A8AA-E8C92C64CED4@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Some file systems like FUSE-based ones or overlayfs may record the backing
-file in struct vm_area_struct vm_file, instead of the user file that the
-user mmapped.
+Hi Zi,
 
-That causes perf to misreport the device major/minor numbers of the file
-system of the file, and the generation of the file, and potentially other
-inode details.  There is an existing helper file_user_inode() for that
-situation.
+On 10/11/25 12:25 AM, Zi Yan wrote:
+> On 3 Oct 2025, at 12:53, Qi Zheng wrote:
 
-Use file_user_inode() instead of file_inode() to get the inode for MMAP2
-events.
+[snip]
 
-Example:
+>>
+> 
+> Hi Qi,
+> 
+> I got CPU soft locks when run "echo 3 | sudo tee /proc/sys/vm/drop_caches"
+> with today's mm-new on a freshly booted system. Reverting Patch 3 (and Patch 4)
+> of your patchset solves the issue.
+> 
+> My config file is attached. My kernel relevant kernel parameters are:
+> "cgroup_no_v1=all transparent_hugepage=always thp_shmem=2M:always".
+> The machine is a 8GB 8-core x86_64 VM.
+> 
+> The kernel log:
+> 
+> [   36.441539] watchdog: BUG: soft lockup - CPU#0 stuck for 26s! [tee:810]
+> [   36.441549] Modules linked in:
+> [   36.441566] CPU: 0 UID: 0 PID: 810 Comm: tee Not tainted 6.17.0-mm-everything-2024-01-29-07-19-no-mglru+ #526 PREEMPT(voluntary)
+> [   36.441570] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
+> [   36.441574] RIP: 0010:_raw_spin_unlock_irqrestore+0x19/0x40
 
-  Setup:
+It seems that the softlockup is not caused by lock contention. I have
+also seen the following stack locally:
 
-    # cd /root
-    # mkdir test ; cd test ; mkdir lower upper work merged
-    # cp `which cat` lower
-    # mount -t overlay overlay -olowerdir=lower,upperdir=upper,workdir=work merged
-    # perf record -e cycles:u -- /root/test/merged/cat /proc/self/maps
-    ...
-    55b2c91d0000-55b2c926b000 r-xp 00018000 00:1a 3419                       /root/test/merged/cat
-    ...
-    [ perf record: Woken up 1 times to write data ]
-    [ perf record: Captured and wrote 0.004 MB perf.data (5 samples) ]
-    #
-    # stat /root/test/merged/cat
-      File: /root/test/merged/cat
-      Size: 1127792         Blocks: 2208       IO Block: 4096   regular file
-    Device: 0,26    Inode: 3419        Links: 1
-    Access: (0755/-rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-    Access: 2025-09-08 12:23:59.453309624 +0000
-    Modify: 2025-09-08 12:23:59.454309624 +0000
-    Change: 2025-09-08 12:23:59.454309624 +0000
-     Birth: 2025-09-08 12:23:59.453309624 +0000
+[14819.914867][    C2] watchdog: BUG: soft lockup - CPU#2 stuck for 49s! 
+[kswapd0:202]
+[14819.914873][    C2] Modules linked in:
+[14819.914877][    C2] CPU: 2 UID: 0 PID: 202 Comm: kswapd0 Tainted: G 
+           L      6.1
+[14819.914880][    C2] Tainted: [L]=SOFTLOCKUP
+[14819.914881][    C2] Hardware name: QEMU Standard PC (i440FX + PIIX, 
+1996), BIOS 1.12.0-1 04
+[14819.914883][    C2] RIP: 0010:folios_put_refs+0x34/0x210
+[14819.914889][    C2] Code: 57 41 56 49 89 fe 41 55 41 54 55 53 48 83 
+ec 18 65 48 8b 05 36 51
+[14819.914891][    C2] RSP: 0000:ffffc900039db8e8 EFLAGS: 00000246
+[14819.914893][    C2] RAX: 0000000000000000 RBX: ffff888109e64330 RCX: 
+ffffffff82848bb8
+[14819.914895][    C2] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 
+ffffc900039db960
+[14819.914896][    C2] RBP: ffff888109e642a0 R08: ffff888100403058 R09: 
+ffff888100402fe8
+[14819.914897][    C2] R10: 0000000000000000 R11: ffffffff82711328 R12: 
+ffff888109e64328
+[14819.914898][    C2] R13: ffffc900039dbb30 R14: ffffc900039db960 R15: 
+ffffc900039dbb30
+[14819.914916][    C2] FS:  0000000000000000(0000) 
+GS:ffff888332ad7000(0000) knlGS:00000000000
+[14819.914918][    C2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[14819.914919][    C2] CR2: 00007f8d211b3000 CR3: 000000010833c000 CR4: 
+00000000000006f0
+[14819.914921][    C2] Call Trace:
+[14819.914923][    C2]  <TASK>
+[14819.914927][    C2]  deferred_split_scan+0x30d/0x420
+[14819.914934][    C2]  do_shrink_slab+0x105/0x350
+[14819.914937][    C2]  shrink_slab+0x2fa/0x3f0
+[14819.914939][    C2]  ? try_to_shrink_lruvec+0x1a6/0x270
+[14819.914944][    C2]  shrink_one+0x11d/0x1b0
+[14819.914947][    C2]  shrink_node+0x9a4/0xb90
+[14819.914952][    C2]  balance_pgdat+0x548/0x910
+[14819.914955][    C2]  ? __sched_fork+0x160/0x180
+[14819.914964][    C2]  ? __timer_delete_sync+0x2b/0x40
+[14819.914970][    C2]  kswapd+0x1b9/0x320
+[14819.914973][    C2]  ? __pfx_autoremove_wake_function+0x10/0x10
+[14819.914978][    C2]  ? __pfx_kswapd+0x10/0x10
+[14819.914981][    C2]  kthread+0xfd/0x250
+[14819.914984][    C2]  ? finish_task_switch+0x90/0x270
+[14819.914987][    C2]  ? __pfx_kthread+0x10/0x10
+[14819.914989][    C2]  ? __pfx_kthread+0x10/0x10
+[14819.914991][    C2]  ret_from_fork+0x170/0x190
+[14819.914995][    C2]  ? __pfx_kthread+0x10/0x10
+[14819.914996][    C2]  ret_from_fork_asm+0x1a/0x30
+[14819.915002][    C2]  </TASK>
 
-  Before:
+It seems that the reason is that deferred_split_scan() has been executed
+for too long.
 
-    Device reported 00:02 differs from stat output and /proc/self/maps
+Could you please help test the following changes? I applied them locally
+and no softlockup occurred.
 
-    # perf script --show-mmap-events | grep /root/test/merged/cat
-             cat     377 [-01]   243.078558: PERF_RECORD_MMAP2 377/377: [0x55b2c91d0000(0x9b000) @ 0x18000 00:02 3419 2068525940]: r-xp /root/test/merged/cat
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index b5eea2091cdf6..5353c7bd2c9af 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -4286,8 +4286,10 @@ static unsigned long deferred_split_scan(struct 
+shrinker *shrink,
+         }
+         folios_put(&fbatch);
 
-  After:
+-       if (sc->nr_to_scan)
++       if (sc->nr_to_scan) {
++               cond_resched();
+                 goto retry;
++       }
 
-    Device reported 00:1a is the same as stat output and /proc/self/maps
+         /*
+          * Stop shrinker if we didn't split any page, but the queue is 
+empty.
 
-    # perf script --show-mmap-events | grep /root/test/merged/cat
-             cat     362 [-01]   127.755167: PERF_RECORD_MMAP2 362/362: [0x55ba6e781000(0x9b000) @ 0x18000 00:1a 3419 0]: r-xp /root/test/merged/cat
+Thanks,
+Qi
 
-With respect to stable kernels, overlayfs mmap function ovl_mmap() was
-added in v4.19 but file_user_inode() was not added until v6.8 and never
-back-ported to stable kernels.  FMODE_BACKING that it depends on was added
-in v6.5.  This issue has gone largely unnoticed, so back-porting before
-v6.8 is probably not worth it, so put 6.8 as the stable kernel prerequisite
-version, although in practice the next long term kernel is 6.12.
-
-Cc: stable@vger.kernel.org # 6.8
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- kernel/events/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7b5c2373a8d7..177e57c1a362 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9403,7 +9403,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 		flags |= MAP_HUGETLB;
- 
- 	if (file) {
--		struct inode *inode;
-+		const struct inode *inode;
- 		dev_t dev;
- 
- 		buf = kmalloc(PATH_MAX, GFP_KERNEL);
-@@ -9421,7 +9421,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 			name = "//toolong";
- 			goto cpy_name;
- 		}
--		inode = file_inode(vma->vm_file);
-+		inode = file_user_inode(vma->vm_file);
- 		dev = inode->i_sb->s_dev;
- 		ino = inode->i_ino;
- 		gen = inode->i_generation;
--- 
-2.48.1
+> [   36.441592] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
+> [   36.441594] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
+> [   36.441598] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
+> [   36.441601] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
+> [   36.441602] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
+> [   36.441603] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
+> [   36.441604] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
+> [   36.441606] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
+> [   36.441607] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   36.441608] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
+> [   36.441614] Call Trace:
+> [   36.441616]  <TASK>
+> [   36.441619]  deferred_split_scan+0x1e0/0x480
+> [   36.441627]  ? _raw_spin_unlock_irqrestore+0xe/0x40
+> [   36.441630]  ? kvfree_rcu_queue_batch+0x96/0x1c0
+> [   36.441634]  ? do_raw_spin_unlock+0x46/0xd0
+> [   36.441639]  ? kfree_rcu_monitor+0x1da/0x2c0
+> [   36.441641]  ? list_lru_count_one+0x47/0x90
+> [   36.441644]  do_shrink_slab+0x153/0x360
+> [   36.441649]  shrink_slab+0xd3/0x390
+> [   36.441652]  drop_slab+0x7d/0x130
+> [   36.441655]  drop_caches_sysctl_handler+0x98/0xb0
+> [   36.441660]  proc_sys_call_handler+0x1c7/0x2c0
+> [   36.441664]  vfs_write+0x221/0x450
+> [   36.441669]  ksys_write+0x6c/0xe0
+> [   36.441672]  do_syscall_64+0x50/0x200
+> [   36.441675]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   36.441678] RIP: 0033:0x7f7fe36e7687
+> [   36.441685] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+> [   36.441686] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> [   36.441688] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
+> [   36.441689] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
+> [   36.441690] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
+> [   36.441691] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+> [   36.441692] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
+> [   36.441694]  </TASK>
+> [   64.441531] watchdog: BUG: soft lockup - CPU#0 stuck for 53s! [tee:810]
+> [   64.441537] Modules linked in:
+> [   64.441545] CPU: 0 UID: 0 PID: 810 Comm: tee Tainted: G             L      6.17.0-mm-everything-2024-01-29-07-19-no-mglru+ #526 PREEMPT(voluntary)
+> [   64.441548] Tainted: [L]=SOFTLOCKUP
+> [   64.441552] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
+> [   64.441555] RIP: 0010:_raw_spin_unlock_irqrestore+0x19/0x40
+> [   64.441565] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
+> [   64.441566] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
+> [   64.441568] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
+> [   64.441570] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
+> [   64.441571] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
+> [   64.441572] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
+> [   64.441573] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
+> [   64.441574] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
+> [   64.441576] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   64.441577] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
+> [   64.441581] Call Trace:
+> [   64.441583]  <TASK>
+> [   64.441591]  deferred_split_scan+0x1e0/0x480
+> [   64.441598]  ? _raw_spin_unlock_irqrestore+0xe/0x40
+> [   64.441599]  ? kvfree_rcu_queue_batch+0x96/0x1c0
+> [   64.441603]  ? do_raw_spin_unlock+0x46/0xd0
+> [   64.441607]  ? kfree_rcu_monitor+0x1da/0x2c0
+> [   64.441610]  ? list_lru_count_one+0x47/0x90
+> [   64.441613]  do_shrink_slab+0x153/0x360
+> [   64.441618]  shrink_slab+0xd3/0x390
+> [   64.441621]  drop_slab+0x7d/0x130
+> [   64.441624]  drop_caches_sysctl_handler+0x98/0xb0
+> [   64.441629]  proc_sys_call_handler+0x1c7/0x2c0
+> [   64.441632]  vfs_write+0x221/0x450
+> [   64.441638]  ksys_write+0x6c/0xe0
+> [   64.441641]  do_syscall_64+0x50/0x200
+> [   64.441645]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   64.441648] RIP: 0033:0x7f7fe36e7687
+> [   64.441654] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+> [   64.441656] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> [   64.441658] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
+> [   64.441659] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
+> [   64.441660] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
+> [   64.441661] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+> [   64.441662] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
+> [   64.441663]  </TASK>
+> 
+> 
+> 
+> --
+> Best Regards,
+> Yan, Zi
 
 
