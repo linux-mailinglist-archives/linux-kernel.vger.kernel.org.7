@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-850925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09985BD4C0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:06:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A401DBD50AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9FD406829
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:57:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7603F547128
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8443B30C62A;
-	Mon, 13 Oct 2025 15:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5568314B7C;
+	Mon, 13 Oct 2025 15:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGCxTKF9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tukaani.org header.i=@tukaani.org header.b="FdRB8NYq"
+Received: from mailscanner05.zoner.fi (mailscanner05.zoner.fi [5.44.246.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BFE21D596
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9B53081C7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.44.246.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369827; cv=none; b=AG39k3vYCtwfb3B/vh11LrLhxsULfXoleD1JtAPXXnxcwW7CE78c0w5qvP2QHMphsKDEkexsdEQRa0siFQveDNMaCNhqKhu9L7JwpjaSj6o2Jzq1G4vFCs2LD2NDDIaMGSIvxVZwm9Bs9GIHTmQZgWnPyY5VQ6NIz9pmQoqPzXA=
+	t=1760370208; cv=none; b=YXuWShedG7yeLVtxzaTAWaqM+2GoL0SnJglLU8TKMwy8BO7rlOGzJKqsQgjeF9V7WLcYkTgKcOGh0HJkLNToJHPpWDm8cD9yDN4kYlGrdcN7yKEy52VjCR/zj3EhuFNIXVXkd7RUoDbwqrKevKZBIIFaH4uuHLnG8whB+3ISpSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369827; c=relaxed/simple;
-	bh=8MuQzutAvgwfH6ItFe+rC1moIpLkDvivEcHg0hxd8z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZvrqbu+CWVEB+619YqJOqiozTAWNOnnd0xgzDZXV8TV5KyjVwB+gfQLzXWnJNM4dpfAVUfe1T29BMLW8TozNZ4WRbYYHyCy9udNrlDq55lYAl9c5jqkVEh+oC5m570GWZctl7oG7UeEprnxlMlXe7xmWEBO2X/ZXXWvQvPgxYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGCxTKF9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C0CC4CEE7;
-	Mon, 13 Oct 2025 15:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760369826;
-	bh=8MuQzutAvgwfH6ItFe+rC1moIpLkDvivEcHg0hxd8z0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TGCxTKF9sRtyTYYBDlS0XIbddg6xnMMPTRb/3nG9ACaZKKHbDb+M9KnqM/sAJT+je
-	 ANrj3aWMUXXw/uggCf1NEIYLKMwqfLXqjna/vtIMRwdUkOUHBNdd1mSdKrjJvMerGw
-	 e7Z1989tuhKSTkipcQpb/vuIZK2WOwlWIGOUdcq2CuYDcc+OLzUJe/lN5twOpSBuNP
-	 LUgy1F6O2CXZASfyHpZ6ttsinDIJUHPK4SaSo/y/F9slapi/XDv81VID9+bwfWWcDg
-	 h4VTRBGXqaxBHRh6K8SvuQ1kikLEU2NxCwxJptsE/f+GGw5QqgN0rLL3A/UM2J/pz1
-	 mUjFbxi27xovw==
-Message-ID: <35819fb2-637a-4ba9-8652-0ca05951c5bb@kernel.org>
-Date: Mon, 13 Oct 2025 10:37:05 -0500
+	s=arc-20240116; t=1760370208; c=relaxed/simple;
+	bh=4uBeaNecPaRo+HlRhltZmFREEiEWTHXnbloQYeG4v/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dVg7iUVZD3QhOC7EzU1Yo8R/iLwZiju/YByum9O6yuw56xnAe+NMHerlgicS6SHqKVLWzPw49HNwoouUwpSCEtdPteg6gkZ7Cp0f+o9d8kLYo13y4aAYRK1eZZmOQgiNDodFCxc/2Fr3L9qSpFp/zIDIx1Gw6GH2WpA+FVTuduM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; dkim=pass (2048-bit key) header.d=tukaani.org header.i=@tukaani.org header.b=FdRB8NYq; arc=none smtp.client-ip=5.44.246.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tukaani.org
+Received: from www25.zoner.fi (www25.zoner.fi [84.34.147.45])
+	by mailscanner05.zoner.fi (Postfix) with ESMTPS id 73F3720C1D;
+	Mon, 13 Oct 2025 18:38:01 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tukaani.org
+	; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:
+	Content-Description; bh=smqYrcBk5xx37VdH50G3Vir93uIEQ2AsNGlBAIn75vI=; b=FdRB8
+	NYqMkhR9HGNMWT+ipVZSRBHTAeFISM41aY0TvJiJowE6yi23MS6GbioSLQXEodpHz7kTqi9H++EH5
+	o5SbqPJ0Ufs9DqNltRYmHZvdm/Ijm3+wEDDLBY3v3Tv3FMGEUAJnQcECW1xCc2JDV40jR0Mu7K4yZ
+	bqxsohGBv1DlVXfle52OoPflDyI/g9Q0YGbgBhEjYcEj8eE2uRodICYB3dZIpHi/TVz6SThb3LrJm
+	v0Kb/BxKNC2mDfRApUx1DQuzU79tbEHnk+dY3I557vg1T07FehaijHoULKwXHT0CywgTs0pBYfxzE
+	bWwIHJB2SY4xp7/OEJapEbqGtT2Lg==;
+Received: from mail.zoner.fi ([84.34.147.244])
+	by www25.zoner.fi with esmtp (Exim 4.98.2)
+	(envelope-from <lasse.collin@tukaani.org>)
+	id 1v8Kcd-0000000Cxwf-2LKT;
+	Mon, 13 Oct 2025 18:38:01 +0300
+Date: Mon, 13 Oct 2025 18:38:00 +0300
+From: Lasse Collin <lasse.collin@tukaani.org>
+To: Ankan Biswas <spyjetfayed@gmail.com>
+Cc: skhan@linuxfoundation.org, khalid@kernel.org,
+ david.hunter.linux@gmail.com, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev, Phillip Lougher
+ <phillip@squashfs.org.uk>
+Subject: Re: [PATCH] lib/xz: remove dead IA-64 (Itanium) support code
+Message-ID: <20251013183800.7af293f5.lasse.collin@tukaani.org>
+In-Reply-To: <79cebb23-5232-49f1-a0ac-b401707c2b52@gmail.com>
+References: <20251013115136.16773-1-spyjetfayed@gmail.com>
+	<79cebb23-5232-49f1-a0ac-b401707c2b52@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/CPU/AMD: Prevent reset reasons from being retained
- among boots
-To: Rong Zhang <i@rong.moe>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
- linux-kernel@vger.kernel.org
-References: <20251010165959.49737-1-i@rong.moe>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20251010165959.49737-1-i@rong.moe>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 10/10/25 11:59 AM, Rong Zhang wrote:
-> The S5_RESET_STATUS register is parsed on boot and printed to kmsg.
-> However, this could sometimes be misleading and lead to users wasting a
-> lot of time on meaningless debugging for two reasons:
+On 2025-10-13 Ankan Biswas wrote:
+> Support for the IA-64 (Itanium) architecture was removed in
+> commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture").
 > 
-> * Some bits are never cleared by hardware. It's the software's
-> responsibility to clear them as per the Processor Programming Reference
-> (see Link:).
-> 
-> * Some rare hardware-initiated platform resets do not update the
-> register at all.
-> 
-> In both cases, a previous reboot could leave its trace in the register,
-> resulting in users seeing unrelated reboot reasons while debugging
-> random reboots afterward.
-> 
-> Clearing all reason bits solves the issue. Since all reason bits are
-> write-1-to-clear and we must preserve all other bits, this is done by
-> writing the read value back to the register.
-> 
-> Fixes: ab8131028710 ("x86/CPU/AMD: Print the reason for the last reset")
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537#attach_303991
-> Signed-off-by: Rong Zhang <i@rong.moe>
+> This patch drops the IA-64 specific decompression code from
+> lib/xz, which was conditionally compiled with the now-obsolete
+> CONFIG_XZ_DEC_IA64 option.
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+The commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
+unconditionally disabled the IA-64 filter, which effectively dropped
+support for mounting Squashfs file systems that use XZ with the IA-64
+filter. I wasn't Cc'ed when it was committed because I wasn't in
+MAINTAINERS back then. If I had been, I might have commented that the
+commits [1] and [2] and the discussion [3] showed that keeping filters
+available for non-native archs can be desirable. But now that time has
+passed and no one has complained about the lack of IA-64 filter, it
+seems fine to remove it completely from Linux.
 
-> ---
-> Changes in v2:
-> - Remove a debug message (suggested by Borislav Petkov)
-> - No longer mention this behavior in the documentation
-> - Link to v1: https://lore.kernel.org/r/20250913144245.23237-1-i@rong.moe/
-> ---
->   arch/x86/kernel/cpu/amd.c | 16 ++++++++++++++--
->   1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-> index 5398db4dedb4a..ccaa51ce63f6e 100644
-> --- a/arch/x86/kernel/cpu/amd.c
-> +++ b/arch/x86/kernel/cpu/amd.c
-> @@ -1355,11 +1355,23 @@ static __init int print_s5_reset_status_mmio(void)
->   		return 0;
->   
->   	value = ioread32(addr);
-> -	iounmap(addr);
->   
->   	/* Value with "all bits set" is an error response and should be ignored. */
-> -	if (value == U32_MAX)
-> +	if (value == U32_MAX) {
-> +		iounmap(addr);
->   		return 0;
-> +	}
-> +
-> +	/*
-> +	 * Clear all reason bits so they won't be retained if the next reset
-> +	 * does not update the register. Besides, some bits are never cleared by
-> +	 * hardware so it's software's responsibility to clear them.
-> +	 *
-> +	 * Writing the value back effectively clears all reason bits as they are
-> +	 * write-1-to-clear.
-> +	 */
-> +	iowrite32(value, addr);
-> +	iounmap(addr);
->   
->   	for (i = 0; i < ARRAY_SIZE(s5_reset_reason_txt); i++) {
->   		if (!(value & BIT(i)))
-> 
-> base-commit: 7d24c651ce163bc04e7683ec75bf976b6ff042e2
+I won't remove the IA-64 filter from the upstream version of
+xz_dec_bcj.c, so this change will make those files diverge a little
+more. That's unfortunate, but they already differ by a tiny amount
+anyway.
 
+xz_private.h line 106 checks if XZ_DEC_IA64 is defined. That line
+should be removed too. With that change:
+
+    Acked-by: Lasse Collin <lasse.collin@tukaani.org>
+
+[1] 5dc49c75a26b ("decompressors: make the default XZ_DEC_* config
+    match the selected architecture")
+[2] bf4d064d89ae ("lib/xz: enable all filters by default in Kconfig")
+[3] https://lore.kernel.org/lkml/20140228230017.GE14970@merlin.infradead.org/T/
+
+-- 
+Lasse Collin
 
