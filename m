@@ -1,153 +1,108 @@
-Return-Path: <linux-kernel+bounces-851485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A27DBD69C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:27:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 402D5BD69D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76BDD4E5BEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:27:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9862418A252A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEB32FCC04;
-	Mon, 13 Oct 2025 22:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4631A2FE066;
+	Mon, 13 Oct 2025 22:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GISJlyzW"
-Received: from mail-il1-f228.google.com (mail-il1-f228.google.com [209.85.166.228])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LckEC/Dp"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A46246778
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122412701DC
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760394419; cv=none; b=qu5R+FLJgn6CehpdKK04EDPI+lSm4MwW8wsopeDYkq1y9UoQ2OyRif7fqMthsuLBK4yCxEzsf9fPzlyDX0E92/ipgfB4NqOTyWe9ToXaLyFddJ2tsOcZ77h28nt2oQ23JtMvvyNhRdVO5SDSfqs3DkHLkiDO/oSpZPB6WcKQsb4=
+	t=1760394689; cv=none; b=bhpY/m7HJOENjHEEzrLXBC7bbrN/hpaMEVlsPAsfVS6QrYVmZtm4QDqum94YVYUrfzhuYnpwvuu37sRcrHerfteVNH0bfBXYqa2ukmdGKN8YTXQ+lfl3Thq2FDruyPZUPo6f2+ouuc1tRKYTmn3dEYorBXVlHfWv2p8bi2Ii99Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760394419; c=relaxed/simple;
-	bh=45jw27UOqcaEEgXA2Om8nunCMYD9TzVJ5Sapx94fZyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mPJ4PfDDL5L9ZAFCAfee7IA74ie9LPLWGQLNFivlk10PueLq7Bq0RqhSsxzxfs9zjhXMJT0BLoWXPRHJTG/iCzWUDiJb0xfpaTs8ird5J5NePf3gRv4/e8wWa2r5RxgsdhbhyTqWk6vnT/Qb5JpZwHDGj4KK7t4Iq9W5UNh6MT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GISJlyzW; arc=none smtp.client-ip=209.85.166.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-il1-f228.google.com with SMTP id e9e14a558f8ab-42f95010871so17360305ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:26:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760394417; x=1760999217;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b845DlXd9K6jDMVlYO3LVzHUkLALRMHXbWD2uYSJcu4=;
-        b=qtNvgNp7xHCX1UZGlDjqRfRmIVvrnP9WfWAJA7E4meP6Lv6EWmgE8d5NhGaK2VQpDc
-         8Gt+vC2F0D8FqZKD7enqCoC1gFcnlsDMmMiCJBnS6pRBVFxsPtaRcLdRJl+TNyrCn6uq
-         gPpqdkFZhtDCIXdS59XTapkd7DxgU2gFBHBsqNsm4wsjxIIPQ/d/xmNrJd25GWIik+n7
-         l4Uk3+vNA2gzAKXUnURodnFcg+rNZ/Iu4g4cte0RqBlckafuDv1WyUd25QoPhBGOc8xI
-         Cb/I3dZGCQc4Ulm3FhbYIzQMgaghn1vdFd8ImChZQ2jAybevkNAJXhOwny+DlrBBFXpj
-         D8Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAAbsCC81z0zrlrHS/azywrTuWcL3vjMmGXX+YmFPT3D5+yfb84OB5+PYYiIO1ExJcjYDMD8xZbCYjlfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4IdxCbRDPXos1DY3rSqD5z7CJPLEv6dci8BzMcdnLtywjfG4o
-	58fV6RDM/IJZUf8J5+1IE77nvHHzOwAvw8ZWNNx3163ONbjnIgYy7kMrvUODyxjwXryNeXE1wY5
-	QFFnA4Le1nohm3Dml7Jpdp/0fS9zHaF7PfYR5bqsdFNPp3HlL0QPKU4Y3A+oyn9/vKrAAxqy4Un
-	riJ6zsF8W5BxUIQ86ETywN188Eq+OTHjl1Bcz2baZFdOfvMgwKT9QbvowyQCz3o1IkhXpyptCfM
-	6YgJWLvDy37tgxvono0XDE0
-X-Gm-Gg: ASbGnctvosVixlTJCK/aBDp3kK/LxmW2xoJGxq5pcUbNG3L7vfhZh6UxtgTQOHlEaAB
-	OOChyxDPnsjPu3QtXbFXqc0u7M1xKMyYDA4rUR4e3XYVgrOl/U7dbZ0cmXJq0SX1qKPXchJa89/
-	101rL2gD4Au8woHiyvsH2xaz63IuMRAA4fHy5KqSlSY2sbMESsadEKbJDgEegjGNuxRvgT4saGN
-	gzFHHO1axXB5XuGLGRCTq2ShY5qvQs+fPcs37v+EbT2ekX3kL0bJHfGQtqsB4K7Os4uOlSAF13A
-	iaYBMm/t8Lmt4b/BQ23aLntpq3LDb6PiiHqXBFmUi4cls2Gk7b4XjxNEJMWwkWGCNQUYQYvoft6
-	HI7vQ+W3kYatykWvPHJ+zOfU1nCkf71d0IdhaHd1VpZY13P4dPWIams21SxRBNySuMu05bAUmqI
-	8qb7mH
-X-Google-Smtp-Source: AGHT+IEm+4rSlhmcOPowPeB9Xn3QO/CHlLSd5AjGxwVtgBKhgOZzNloEHAAUyge/jqEiYyAOic8Og+chORuO
-X-Received: by 2002:a05:6e02:148d:b0:42f:9708:168f with SMTP id e9e14a558f8ab-42f9708183emr164948785ab.16.1760394416883;
-        Mon, 13 Oct 2025 15:26:56 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
-        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-58f71469aeesm923364173.25.2025.10.13.15.26.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Oct 2025 15:26:56 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-88375754e8aso1973175185a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:26:56 -0700 (PDT)
+	s=arc-20240116; t=1760394689; c=relaxed/simple;
+	bh=+ySgBYKp5sgJmpYv5oyU08u88544UwIMJoZQjMVM5Cw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hxNm7Je8ZdQmzklgp7pLkJbw79odYychQVfYXetcbZl3TvzjMc2IpxltIMlf1XQqeV/l3Nmfz8NG6W3ID9WPYd9B9V8NmdsXdLyk1jJATVnXjDlxL+bLOK8HgCClDrnG7sFcAK9JY/c7ogKAnVFBWvyvlPEqApt/69XOVFVA/VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LckEC/Dp; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so25270a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1760394414; x=1760999214; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=b845DlXd9K6jDMVlYO3LVzHUkLALRMHXbWD2uYSJcu4=;
-        b=GISJlyzWB3pKJBlLK+54Ne+YQ4rgEKFZFdRZnDQtfDTrhL0q1PQJ8/e0e1bg7Qtf66
-         tpGctiKgCTMa7Geyze43eQr3ACOQOhRRfyNgvTNGBs0aDFdlBVTmPatQp4RepiHIXS5O
-         neZ7+WTEchab9ccIAeoYGw15qg4zpkKCNORA0=
-X-Forwarded-Encrypted: i=1; AJvYcCU3WoELOVUoltzjcOkSAbGQNLJKnoIVjqBL+VIJWJZgy8ykimL/SrSPmLQ9477eoerbmIQ5mTTe3bukINA=@vger.kernel.org
-X-Received: by 2002:a05:620a:7085:b0:858:f75a:c922 with SMTP id af79cd13be357-883502b7b36mr3412901985a.6.1760394414534;
-        Mon, 13 Oct 2025 15:26:54 -0700 (PDT)
-X-Received: by 2002:a05:620a:7085:b0:858:f75a:c922 with SMTP id af79cd13be357-883502b7b36mr3412900285a.6.1760394414168;
-        Mon, 13 Oct 2025 15:26:54 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8849fe858a4sm1060309485a.26.2025.10.13.15.26.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 15:26:52 -0700 (PDT)
-Message-ID: <865e5488-ca67-4d1c-b846-4f7defbac4aa@broadcom.com>
-Date: Mon, 13 Oct 2025 15:26:50 -0700
+        d=google.com; s=20230601; t=1760394686; x=1760999486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YcR8QYF3LC3OedvBD3xFc4hECJtuzfDK+Smhc5CK5JA=;
+        b=LckEC/DpZUdn3iSxlOAC+5XPRPkUHjC4nlO2Ou0FXFBbQxNWE/58BPjVWkfEnTvo9N
+         tgOpuX4/FfcCRKBmvz0FfC2OcvqtqdpVTusX/gdLEFZSDKOi6auvEVscac6/cdW63Lz4
+         9mG8nu0U3fqdwb22G9TeJLeKH0ws1oFvjz15wtGib1koWlQwUZiDIoEmwfYSVgf1eWvr
+         cjb1WqqMqzD4H7CgxcTFs+KOgwFqs9XjYOhQNd4gpHQ0Xixn96LoqB3pUVQJ5Ta3V43W
+         Pfqv7WGM7RTL52L891/Y6lQXrBDtUQxikcIXRQNsyXlXAU5+GrVo51MfAJyryjRYlJZ8
+         vIrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760394686; x=1760999486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YcR8QYF3LC3OedvBD3xFc4hECJtuzfDK+Smhc5CK5JA=;
+        b=oYJECAmwwJfKBvPiOX6JrtzbaqKe3pZ1HveBZ31SqkLvTK71yowZxUe17mRZ6oAsJT
+         LHCh+nU/tEfZd1zxM9aANns/CBIABkjaqSi5W8Gcny8SO59jUH7VTcRYRqVdC78pHA2W
+         X/w/qYfiLYacbbvrTYEGhlRzoYOJ09QKpRQnmrlOS0wmawKknAS9QXOYfVtCqB++Lqfi
+         hmu34WQaCZBGkuXPEVAnG7kBwqUxGKDJcLfO2BiHeikRHOqZLl+LF2OtIiSHdatqIdPn
+         VOab7vN8/mgnXjRtyMYTU8DW8+UZL3yridSdfeF/fI1MeQBHZ/wTwwoPTkW3OqQxbLK+
+         Gb0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWsVBjGOJC897kBgyYpBK1VIl4TjWIwojcrp8MXmlk7w24YfwwGr7aKVnLh2fOF573iuiUlFqQg470cb/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSBaPPCDCkOswq5vqKToTQnpl7k5DNWGfJ/bzQVdSHHBNpcDYr
+	8HB3jWAkGgyN43Tg/2ZboWGnyHU2JHGp3OWLz9qwy3eR6gbXpUhoU+HL8p0wV49QJxGGhG4pIq2
+	ugtpBfiXUZQxZko0JEeIyeLhRGUpfhfEl6LCG469B
+X-Gm-Gg: ASbGncvNd9a7vQCcZBr4xlVIiv5fqN1Ep0WdJ7t8ua50Br5jUkqlQC0wo/aLHvm65En
+	pHVciFreqPPiiSCkr7i0d4US8ZV/izUlSfi3JVQ5cudhGcuF0u7d6B7JcgEs1Lb+CQzobkHdwDW
+	hDrcgHvrN8DO47pISg4IMrTAUkDuP/Fa+L5CqmlO7XnTq61rxLpb3Uj8lhrR3GozdZPMNfGDrWs
+	7ZNrU4krRKWuRuSbzWRUeYfjd+KWCjjQU0UayXWeRw=
+X-Google-Smtp-Source: AGHT+IHmNmEO8UjVvewqClbQGgSN+TsvobxIhiIwo9csw6fcanDJv8mEWMQbIpvQc5+JpEPlcVIyIMZhpv/3rMzG93k=
+X-Received: by 2002:aa7:d889:0:b0:634:90ba:2361 with SMTP id
+ 4fb4d7f45d1cf-639d52e9f0emr650243a12.7.1760394686126; Mon, 13 Oct 2025
+ 15:31:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] irqchip: Enable compile testing of Broadcom drivers
-To: Johan Hovold <johan@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-kernel@vger.kernel.org
-References: <20251013095027.12102-1-johan@kernel.org>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251013095027.12102-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+References: <20250922162935.621409-1-jmattson@google.com> <aO11A4mzwqLzeXN9@google.com>
+In-Reply-To: <aO11A4mzwqLzeXN9@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 13 Oct 2025 15:31:14 -0700
+X-Gm-Features: AS18NWCUVfXmqLoMJQM4_72eVGSE-rWiwIwZWPFi4AijdWXJ2AtP924z8ut-JgM
+Message-ID: <CALMp9eQN9b-EkysBHDj127p2s4m9jnicjMd+9GKWdFfaxBToQg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] KVM: SVM: Aggressively clear vmcb02 clean bits
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/13/25 02:50, Johan Hovold wrote:
-> There seems to be nothing preventing the Broadcom drivers from being
-> compile tested so enable that for wider build coverage.
-> 
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+On Mon, Oct 13, 2025 at 2:54=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Mon, Sep 22, 2025, Jim Mattson wrote:
+> > It is unlikely that L1 will toggle the MSR intercept bit in vmcb02,
+> > or that L1 will change its own IA32_PAT MSR. However, if it does,
+> > the affected fields in vmcb02 should not be marked clean.
+> >
+> > An alternative approach would be to implement a set of mutators for
+> > vmcb02 fields, and to clear the associated clean bit whenever a field
+> > is modified.
+>
+> Any reason not to tag these for stable@?  I can't think of any meaningful
+> downsides, so erring on the side of caution seems prudent.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+SGTM. Do you want a new version?
 
