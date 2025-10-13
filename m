@@ -1,61 +1,67 @@
-Return-Path: <linux-kernel+bounces-850444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEACBD2D10
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC800BD2D2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01D00189B7E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469A0189D6FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A1B2638B2;
-	Mon, 13 Oct 2025 11:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoMYs93T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44882638AF;
+	Mon, 13 Oct 2025 11:44:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030CE25F797;
-	Mon, 13 Oct 2025 11:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7072566D2
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760355763; cv=none; b=lLIvdPUf3r5MkNS4m+Wm0TSYjMCwGiI5/xT8SnGjVMz7DRLPhlNlFDAPIj2i4UiflA3iyuU532Z6Tc4IkZwqiz7zw+uJ5LwhLRH5dOefqfpuj9x0Ovcd6lAOmKYcGUCjm0pc7AUJstAfNa2yrfZ4aE5ot7T5MdCEUpxHxmtz1DM=
+	t=1760355863; cv=none; b=N1/Uk97v0CunNMKB7ap9ZPqO+zjN1EKGbgdlwO4HXO8YIho0iRYziN70QJwGeZ5KMkJcG2mwldDHhNiiPjBeiXEtRA3B+Pw7TwPnUcsvlAKTwjXJvx/wbKnaraFjZzQ+n5RWyYdzh3lzwFV7XcULTLKzSbjY6dh2WydQRXf7XIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760355763; c=relaxed/simple;
-	bh=EHX8Ouxhv6vacj9UYTYHUFbPtj67z1YVK5PC+R0fmc8=;
+	s=arc-20240116; t=1760355863; c=relaxed/simple;
+	bh=8eC1BSK/uBIfeMwtMf/eRDAxHcCKFEYEtghB3gXrNbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TqFLW1MniqvETZZSPn43dPM5uf+s0t+IaQ01fiBU7z4J0EErHZxpx1NWvknjLtODV1ZNmCqODcLnOgBusk3h55Lehi4i4eTtTWZ0iAlZsG5K6YVwrtSen4mU/KveEoTUqePux9gFHd8BtmFHJHCXUldjmKVNyybGxh2Oei5y6/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoMYs93T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B878C4CEE7;
-	Mon, 13 Oct 2025 11:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760355762;
-	bh=EHX8Ouxhv6vacj9UYTYHUFbPtj67z1YVK5PC+R0fmc8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YoMYs93T8XE9MobBc0gGAmdh/5k/qBpR2XB8srD7ZyOgth5EWPTM9UQ92BZW7EFyb
-	 nLufVs9sGJk2oWj1WZXsm+1o3/qsEjvCcMur/sdwM9KiAr1dxMBF3f9m3xSUomtDj4
-	 L+H22PhT8guhXyWw7XvRr95nCCpwpG0uiKsVLWqw64c3Fqy/Ra7P2KbkJgO1PRMvVG
-	 A3/rYwa17RA1L4Fj/a3B2bOORmcg2i4zzjEXOkLK72zkq7XZkXzPBgfEUJu5mKTtbE
-	 ixhYAw51EjyUOm0/9ZpaTG2WylyS+2Pthsseb57nNk7YkiyPUKzj4TUI+5GZ1KV5V4
-	 yCawrOcIUQJCg==
-Date: Mon, 13 Oct 2025 12:42:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC 3/5] pinctrl: add polarfire soc iomux0 pinmux driver
-Message-ID: <20251013-spoiling-halogen-4e56c4bc83dd@spud>
-References: <20250926-manpower-glacial-e9756c82b427@spud>
- <20250926-unshackle-jury-79f701f97e94@spud>
- <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
- <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com>
- <20251001-backless-cattle-a98db634d7f0@spud>
- <CACRpkdaEsa5gSpGxWG8xudMePt12nZaZRCRrW5Bf5JQ0f1K9Zw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/r0/56BDL09+FnToM1/vAon9M2PuGYc7JaedHzdNF6MGwUDJg+1XCYE3+Ch4aVRe6evxOXmdngdIVP1eoepECsHb4zDUQX7xBpiX1/kcS0GB8mGj9W2EleviMLUGJwmQOnASFYU8JjACzasEOTENhrpiQRfJHrALpGm7i4yJiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v8GyA-0004Pm-QG; Mon, 13 Oct 2025 13:44:02 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v8Gy9-003NPs-2b;
+	Mon, 13 Oct 2025 13:44:01 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 77709484B87;
+	Mon, 13 Oct 2025 11:44:01 +0000 (UTC)
+Date: Mon, 13 Oct 2025 13:44:00 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+	linux-can@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
+ transceiver
+Message-ID: <20251013-burrowing-elk-of-coffee-210990-mkl@pengutronix.de>
+References: <20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com>
+ <20251013-tja1145-support-v3-2-4a9d245fe067@liebherr.com>
+ <20251013-unyielding-turquoise-mamba-76a0ea-mkl@pengutronix.de>
+ <20251013113605.GA177845@legfed1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,75 +69,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m6y+SUB0zgaLbOTz"
+	protocol="application/pgp-signature"; boundary="7p5ebwh66hrkwuao"
 Content-Disposition: inline
-In-Reply-To: <CACRpkdaEsa5gSpGxWG8xudMePt12nZaZRCRrW5Bf5JQ0f1K9Zw@mail.gmail.com>
+In-Reply-To: <20251013113605.GA177845@legfed1>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
---m6y+SUB0zgaLbOTz
-Content-Type: text/plain; charset=utf-8
+--7p5ebwh66hrkwuao
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
+ transceiver
+MIME-Version: 1.0
 
-On Mon, Oct 13, 2025 at 01:02:35PM +0200, Linus Walleij wrote:
-> On Wed, Oct 1, 2025 at 5:45=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
+On 13.10.2025 13:36:05, Dimitri Fedrau wrote:
+> Am Mon, Oct 13, 2025 at 11:51:51AM +0200 schrieb Marc Kleine-Budde:
+> > On 13.10.2025 11:19:19, Dimitri Fedrau via B4 Relay wrote:
+> > > Add basic driver support for NXPs TJA1145 CAN transceiver which bring=
+s the
+> > > PHY up/down by switching to normal/standby mode using SPI commands.
+> >=20
+> > The PHY supports standby and sleep mode. Does the PHY framework provide
+> > a way to configure this?
+> >=20
 >=20
-> > They're not actually package pins at all that are being configured here,
-> > it's internal routing inside the FPGA. It does operate on a function
-> > level, but I don't think there's a neat mapping to the pinctrl subsystem
-> > which (AFAIU) considers functions to contain groups, which in turn
-> > contain pins. I suppose it could be thought of that, for example, spi0
-> > is actually a function containing 4 (or 5, don't ask - or do if you want
-> > to read a rant about pointlessly confusing design) "pins" in 1 group.
-> >
-> > If I could just work in terms of functions only, and avoid groups or
-> > pins at all, feels (to me ofc) like it'd maybe match the purpose of this
-> > aspect of the hardware better.
+> Didn't find anything related.
 >=20
-> What I would ask myself is whether the abstraction fits the bill,
-> like if there is a natural set of functions in the silicon, then the code
-> should reflect that.
+> > Why do you put the transceiver into standby not in sleep mode?
+> >=20
+> Datasheet states:
 >=20
-> When it comes to those:
+> Standby mode is the first-level power-saving mode of the TJA1145A,
+> featuring low current consumption. The transceiver is unable to transmit
+> or receive data in Standby mode, but the INH pin remains active so voltage
+> regulators controlled by this pin will be active.
 >=20
-> +static const struct pinctrl_pin_desc mpfs_iomux0_pinctrl_pins[] =3D {
-> +       PINCTRL_PIN(0, "spi0"),
-> +       PINCTRL_PIN(1, "spi1"),
+> Sleep mode is the second-level power saving mode of the TJA1145A. In Sleep
+> mode, the transceiver behaves as in Standby Mode with the exception that
+> pin INH is set to a high-ohmic state. Voltage regulators controlled by th=
+is
+> pin will be switched off, and the current into pin BAT will be reduced to=
+ a
+> minimum.
 >=20
-> At least be careful with the nouns used: are they really "pins"?
-> Should they be described as "pins"?
+> I'm assuming that the sleep state would fit into some suspend,
+> power-off, ... scenario, because the INH pin maybe used to control
+> regulators.
 
-I think that my choices if talking to someone outside of the context of
-the structure of the pinctrl subsystem would be functions (for what's in
-the driver as pins) and routings (instead of groups). pinctrl's function
-doesn't really do very much in this context, although the devicetree
-function and groups I think actually work fairly well: "function ABC is
-assigned to pin 1".
-Regarding nouns, I think it depends on how far you go with that...
+That makes sense, and I think it depends heavily on the use case of the
+system. This can be implemented as soon as the need arises.
 
-> Maybe it is best to come up with some custom struct if not?
+For the whole series:
 
-=2E..because taking that to an extreme means forsaking a lot (all) of the
-common pinctrl infrastructure, no? If it's just choosing more apt names
-for variables/functions in the driver or redefining PINCTRL_PIN to be
-something more suitably named, then sure. But if I have to avoid using
-pinctrl_pin_desc et al, am I going to lose out on a bunch of useful
-common code?
+Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-I'll send my v2 on tomorrow probably, and we can talk about what exact
-changes should be made there?
+regards,
+Marc
 
---m6y+SUB0zgaLbOTz
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--7p5ebwh66hrkwuao
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOzlrgAKCRB4tDGHoIJi
-0gl6AQDUprsE9xfbXid6+gKxP+o0m+3sf3HuFO1j+Fi/WfUNygEApFremBSDWnol
-Y2O5ZDHqqfBoT6vzkG1bVxy2Z6XJXwU=
-=R3pF
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjs5f0ACgkQDHRl3/mQ
+kZyjqggArjAF75JX1jsP6Oh6UDJKXTCUtRYB0X1u1QmOgNOCdkMtH44l59g81+nW
+5Vm1QYld8NkdmyPu3FugSdCDDxDnVFLX2v9Bwake5eRSHm9RSQFZ1hSblqVZQ0Bx
+ULlWXPZrS+QdhCmtdSAbi7iEbvZtxYcf9M/qjH8vRdpSJ+5BRZ/vIyfwMxJPJgms
+BM6jflWj7zTTFR9EM/9vwlnRc7Hrfe+woZ0BM7aYYjY8ibmWe9Xe6R5m6QQBtDUv
+5PILzA2mxoUkZ/LGXi0OgExuwZp+1LdrLRat+4ZsLTGQqSMHKypuwrB89Z0qMkIv
+/izuJx1+Sy5HQFcgLMVZYdkB9hOKpg==
+=tHfi
 -----END PGP SIGNATURE-----
 
---m6y+SUB0zgaLbOTz--
+--7p5ebwh66hrkwuao--
 
