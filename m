@@ -1,133 +1,158 @@
-Return-Path: <linux-kernel+bounces-851379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C05BD6508
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:00:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DE1BD650E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915EF420097
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212DB189DCC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3C52EE5FD;
-	Mon, 13 Oct 2025 21:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D6726FA57;
+	Mon, 13 Oct 2025 21:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t59nrPVL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MxBZT0+D"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5cLszBM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EC62571A5;
-	Mon, 13 Oct 2025 21:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0970BEADC;
+	Mon, 13 Oct 2025 21:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760389234; cv=none; b=nC/rNFUmXRZOCSa/zw4NEOFJosvddvqPOfwEpG+ib1Pr6vl95W2Qg+zkNxL/X+NGlZAHoGTkcuUC68yGBGAK70F1vhpYYwpIk4AyOawAqNCbuSVlsSWueWSPxgcRLun6HA2qbbGZcyY3KSDoEu1h50FsgCx4ZCW4ZT0F4N9Jw/g=
+	t=1760389278; cv=none; b=Ni2jDlAUcENO51HEM8z5NmWalxFqALnJW/lsPuHhhSzMohgzVZ1eNpJIHW2Je8TARy5i4l4YOhSLHp4lG2glsi+cx6nvah+Xddyz4GDa7MHYlvE6Ea+IHGTko8dmQhiQK4dgD2BZCWoNxl0KCFDZ1QZOMoQzXwUVJR9hTqqbWKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760389234; c=relaxed/simple;
-	bh=yLw39X9C42bfFbLTXGU21nPEpgd+DYuZn5uYirK4gTY=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=dWDR355NJE8cCnEXMI8/n4nn8Az/SvL4j/gG80whvv5f7dVXj65hz+vBIA2lEsYag4vQeUxea6eJmQ9xd1/620mKKDv8nFEp8T/WmtlfLu0YDCh0jFlGdTDa+WVm1wDqnneNIiab5j9Df9frQpNvD1qErU4npBOR1B6cyW8tShc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t59nrPVL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MxBZT0+D; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 13 Oct 2025 21:00:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760389229;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=R24TJO4afjKKCWHFfvG5FnAjeh2pGX1RZRyT3wsG1l0=;
-	b=t59nrPVLKe5OAy35lq5efVblCtUAGzxcrQ0SYrzUKnaJiCe8X/aWm3urEw55lcac/99CBy
-	odclafEEW9R2xfL/m80inH6Uw8+61zPn57rnbxRVwKNasndjJYXi/rlE4Y+tIZAgURV75R
-	f1JBvlo5RZIP32GB3zCcKUvQZw3hUoNJ8PF+9XApJgIdaZuuATCRAZ3oNiYtfPdFnqw70t
-	rSXnXOdqdNzTApqVaL8663yfPHwIPUx2k5/UoElO3NAbJcuVplI84arRQDXCNYnEavmrwF
-	Bl1iwshdidnDbnc1cHc5hUXJgBdHn96Eq28FuInOUoImbMcGWwK8UO+YgXEmeQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760389229;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=R24TJO4afjKKCWHFfvG5FnAjeh2pGX1RZRyT3wsG1l0=;
-	b=MxBZT0+D7GlQf7y1hP5u5OHpt7rwvvvdtssgZe2FDbZ5QRdcxDwM2l+32b+GDbwaCypwfl
-	xS9V/XSFAQgWjwBA==
-From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/mm: Fix overflow in __cpa_addr()
-Cc: syzbot+afec6555eef563c66c97@syzkaller.appspotmail.com,
- Rik van Riel <riel@surriel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Kiryl Shutsemau <kas@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1760389278; c=relaxed/simple;
+	bh=TGVwh+FVew/+FpJJ2EdB6m/QyvlMzl0yen5xz3HGn/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GXRLvNuq2Pl3nNj7WdhpgA4JiEahMnDtcUuQgVDlX1nfE0SExnFnek5Pnwt9DPndYPphmnGBAr9Z/HuApkP60ya6atXFuLMM67YC2sp2HhZlrYsQQWRlwoBhvqPVFHyqg3mrr5RXFYfUw7IAl38sFsS6UfCMapMO17HYTlLfPfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5cLszBM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AF4C4CEE7;
+	Mon, 13 Oct 2025 21:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760389277;
+	bh=TGVwh+FVew/+FpJJ2EdB6m/QyvlMzl0yen5xz3HGn/g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=D5cLszBMrTo8qExi1Oir6bZ5++fJauged/epDqNgQGFI/AOnOHahvbR+jE2QibKCV
+	 ve56Ib86lxveshkzKUrZJ5slksjFqlc+dprFuZF/7sIdfC3LC/75B57u+lNldAA310
+	 DuckZCENOFyVWSCo0BzinI6+voDqGXrjdlSqjUnS0X/u8HAWrGbvHKwbVW1bgIydLm
+	 jcHkzaNO7Q5gnZmV11ktagitcxZsrWB2JclKTbTLxBmqPuCfrl5oMzqG7tliKaCazd
+	 OMgVT3Z3FdMkJhSS2xfyxwBNjfD2CyDL9gc8f67Tb/8Bm7JtzQqwbF/32gpT0Q+4xS
+	 Csn3VHRUIxl+A==
+Date: Mon, 13 Oct 2025 16:01:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Val Packett <val@packett.cool>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Guenter Roeck <linux@roeck-us.net>, regressions@lists.linux.dev
+Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
+Message-ID: <20251013210116.GA864145@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176038922777.709179.9638250242820548802.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
 
-The following commit has been merged into the x86/urgent branch of tip:
+[+cc Guenter, regressions]
 
-Commit-ID:     f25785f9b088ed65089dd0d0034da52858417839
-Gitweb:        https://git.kernel.org/tip/f25785f9b088ed65089dd0d0034da528584=
-17839
-Author:        Rik van Riel <riel@surriel.com>
-AuthorDate:    Sun, 05 Oct 2025 23:48:05 -04:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Mon, 13 Oct 2025 13:55:48 -07:00
+On Mon, Oct 06, 2025 at 05:00:25AM -0300, Val Packett wrote:
+> On 9/24/25 10:42 AM, Ilpo Järvinen wrote:
+> > Bridge windows are read twice from PCI Config Space, the first read is
+> > made from pci_read_bridge_windows() which does not setup the device's
+> > resources. It causes problems down the road as child resources of the
+> > bridge cannot check whether they reside within the bridge window or
+> > not.
+> > 
+> > Setup the bridge windows already in pci_read_bridge_windows().
+> > 
+> > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> 
+> Looks like this change has broken the WiFi (but not NVMe) on my Snapdragon
+> X1E laptop (Latitude 7455):
+> 
+> qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
+> pci_bus 0004:00: root bus resource [bus 00-ff]
+> pci_bus 0004:00: root bus resource [io  0x100000-0x1fffff] (bus address
+> [0x0000-0xfffff])
+> pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
+> pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
+> pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
+> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+> pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
+> pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]:
+> assigned
+> pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
+> pci 0004:00:00.0: bridge window [io  0x100000-0x100fff]: assigned
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
+> pci 0004:00:00.0:   bridge window [mem 0x7c300000-0x7c3fffff]
+> pci 0004:00:00.0:   bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]
+> pci_bus 0004:00: resource 4 [io  0x100000-0x1fffff]
+> pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
+> pci_bus 0004:01: resource 0 [io  0x100000-0x100fff]
+> pci_bus 0004:01: resource 1 [mem 0x7c300000-0x7c3fffff]
+> pci_bus 0004:01: resource 2 [mem 0x7c400000-0x7c4fffff 64bit pref]
+> pcieport 0004:00:00.0: PME: Signaling with IRQ 186
+> pcieport 0004:00:00.0: AER: enabled with IRQ 186
+> pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
+> pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
+> pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: can't assign; no space
+> pci 0004:01:00.0: BAR 0 [mem size 0x00200000 64bit]: failed to assign
+> ath12k_pci 0004:01:00.0: BAR 0 [??? 0x00000000 flags 0x20000000]: can't
+> assign; bogus alignment
+> ath12k_pci 0004:01:00.0: failed to assign pci resource: -22
+> ath12k_pci 0004:01:00.0: failed to claim device: -22
+> ath12k_pci 0004:01:00.0: probe with driver ath12k_pci failed with error -22
+> 
+> 
+> For comparison, with this change reverted it works again:
+> 
+> qcom-pcie 1c08000.pci: PCI host bridge to bus 0004:00
+> pci_bus 0004:00: root bus resource [bus 00-ff]
+> pci_bus 0004:00: root bus resource [io  0x0000-0xfffff]
+> pci_bus 0004:00: root bus resource [mem 0x7c300000-0x7dffffff]
+> pci 0004:00:00.0: [17cb:0111] type 01 class 0x060400 PCIe Root Port
+> pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> pci 0004:00:00.0:   bridge window [io  0x0000-0x0fff]
+> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+> pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+> pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:00:00.0: BAR 0 [mem 0x7c300000-0x7c300fff]: assigned
+> pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> pci_bus 0004:00: resource 4 [io  0x0000-0xfffff]
+> pci_bus 0004:00: resource 5 [mem 0x7c300000-0x7dffffff]
+> pcieport 0004:00:00.0: PME: Signaling with IRQ 195
+> pcieport 0004:00:00.0: AER: enabled with IRQ 195
+> pci 0004:01:00.0: [17cb:1107] type 00 class 0x028000 PCIe Endpoint
+> pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
+> pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
+> pci 0004:01:00.0: ASPM: DT platform, enabling L0s-up L0s-dw L1 ASPM-L1.1
+> ASPM-L1.2 PCI-PM-L1.1 PCI-PM-L1.2
+> pci 0004:01:00.0: ASPM: DT platform, enabling ClockPM
+> pcieport 0004:00:00.0: bridge window [mem 0x7c400000-0x7c5fffff]: assigned
+> pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
+> ath12k_pci 0004:01:00.0: BAR 0 [mem 0x7c400000-0x7c5fffff 64bit]: assigned
+> ath12k_pci 0004:01:00.0: enabling device (0000 -> 0002)
+> ath12k_pci 0004:01:00.0: MSI vectors: 16
+> ath12k_pci 0004:01:00.0: Hardware name: wcn7850 hw2.0
 
-x86/mm: Fix overflow in __cpa_addr()
-
-The change to have cpa_flush() call flush_kernel_pages() introduced
-a bug where __cpa_addr() can access an address one larger than the
-largest one in the cpa->pages array.
-
-KASAN reports the issue like this:
-
-BUG: KASAN: slab-out-of-bounds in __cpa_addr arch/x86/mm/pat/set_memory.c:309=
- [inline]
-BUG: KASAN: slab-out-of-bounds in __cpa_addr+0x1d3/0x220 arch/x86/mm/pat/set_=
-memory.c:306
-Read of size 8 at addr ffff88801f75e8f8 by task syz.0.17/5978
-
-This bug could cause cpa_flush() to not properly flush memory,
-which somehow never showed any symptoms in my tests, possibly
-because cpa_flush() is called so rarely, but could potentially
-cause issues for other people.
-
-Fix the issue by directly calculating the flush end address
-from the start address.
-
-Fixes: 86e6815b316e ("x86/mm: Change cpa_flush() to call flush_kernel_range()=
- directly")
-Reported-by: syzbot+afec6555eef563c66c97@syzkaller.appspotmail.com
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kiryl Shutsemau <kas@kernel.org>
-Link: https://lore.kernel.org/all/68e2ff90.050a0220.2c17c1.0038.GAE@google.co=
-m/
----
- arch/x86/mm/pat/set_memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index d2d54b8..9709818 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -446,7 +446,7 @@ static void cpa_flush(struct cpa_data *cpa, int cache)
- 	}
-=20
- 	start =3D fix_addr(__cpa_addr(cpa, 0));
--	end =3D   fix_addr(__cpa_addr(cpa, cpa->numpages));
-+	end =3D   start + cpa->numpages * PAGE_SIZE;
- 	if (cpa->force_flush_all)
- 		end =3D TLB_FLUSH_ALL;
-=20
+#regzbot introduced: a43ac325c7cb ("PCI: Set up bridge resources earlier")
 
