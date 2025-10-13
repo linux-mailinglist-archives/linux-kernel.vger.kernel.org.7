@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-851509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49A7BD6A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:37:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1D8BD6A1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 327B84E5A22
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:37:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094DF188ECA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC65030E852;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136CD30E844;
 	Mon, 13 Oct 2025 22:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LaU1sWJt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l2hRAgZc"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFEB30DD2B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ABE3090C9
 	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760394856; cv=none; b=FjX+4BT7IWm8Njzkbco7trVHCXMidK+EZGZmdOXdu3iptsHnzpw+Den9FgZhvFmTw0zas2ZUt1CG3O3bY0qniQqFdyVFYtqLcebxOtU9UcxZnO7OW3JbztfPZ+PA7nDq0EoP+hUZcv70luLVJ58G376tz4LUj1mkZDelDHSsMfM=
+	t=1760394856; cv=none; b=lI7w1XiwfWJo6jJdLdmh9cFSuUBbK3IurOhu+f/vccLmIib4z1aStVk1fEw52hHFeka067APYzhzPN8EiL0Qetny4tzU6ljfKRGskgMtW0er3QOd4WBu/8Pmd5kbkJLM9p8am7cw28SWKE0TqirNneJrFkHFB7h3sVrnXHMPlNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760394856; c=relaxed/simple;
-	bh=tFgvA6nQK/kEl92p0apikoHu3NYvQAPYawomIGedmNg=;
+	bh=tkKjneMjkAKhQ2DMKRriXTuPPq69NgdK6JOt5IQgoK0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fTRRXGxVuzr83neSPjG7yhRY6q6u3cjoVekguI0ruOtC3oeB/EhiUXaKTQCJwcX5BNVjwIJMsYZrv2LjHwpve70ZdYDB5C+qQy3IJ4l7ZIflsEMQretcVzOozkPvC6uy1OxtJ+FquLtoHeOMRCXV3yGBxbTcrV1ty+5DRum+BIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LaU1sWJt; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=BNQ/H3pHUtX/Cz7LrJHFLqcg/X1WmfphMtdqgXyRCmZ36cX4XfedRQRAIOvopb0vEGkQ7tyly3khWt4RuPGgl7bqM8ep4JvGzVPoEVSKKTSTJFSznO1Ob5Nb0DGe92cVTbFNSSQMf0UnKYDjgDjshYlewd/VXvgC0VuVW3PAVB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l2hRAgZc; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1760394854; x=1791930854;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=tFgvA6nQK/kEl92p0apikoHu3NYvQAPYawomIGedmNg=;
-  b=LaU1sWJtTaWXaKs1zQxwQrbDUg3RTn3+EGi6X6Wd5ERayxQZMjSmcn1k
-   2E/p+dTOghBsfwZVBdXh60+hVFFMMKZwM5SX2bm+svA8Kv/NPOn5NhSIc
-   VYqNRtmLp7VuSDBQQ55hQwwC8jmEcKsCHRp/90IlZCbXSA+DZ4G0+IziO
-   1XS/F9kM9qRHRaqwMTRd9k8Rsg+jF6pwzV/BzSOtVantT9AgkLTlL/wz4
-   XFw9ohw3yOlSj+CTu3XrdWkft2CeZTTgz+BpinckgAxF1P8aKSamMolHp
-   vtx9gicEa7Nd3wYtH8BCenFxl7JePgQjRt/6tSi1aj41Pz5ANVRwANAig
-   w==;
-X-CSE-ConnectionGUID: Ka5D31nxRKysQLFFnFp1WQ==
-X-CSE-MsgGUID: R1XXoLVzRfOE3HFufRCDmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="85168875"
+  bh=tkKjneMjkAKhQ2DMKRriXTuPPq69NgdK6JOt5IQgoK0=;
+  b=l2hRAgZcf2p9cig0Gwjrd+IdqitAIEBmCS5Xe2N3kvOarEEIfXDfw+u0
+   yku6ULVjgLem+dtxq6bXJobWatzLlqbpvEpBdGtXfGYgUW6pK7g7r1Sxp
+   UsG70XxFbLIx6t6dqoZOu3Xa/evrnT12W0c1NDdq0sCSznrgFbbFtiIp1
+   tVS1TUHw4urSElmm+BBXImwPlnzM0pDTfqfW/bdPjiOdmtFr9V7t8XttL
+   IhoLMgofNlvchGwkY0Ojwn3t+s2QuFdbRnoI2/DxZurkyU5dUwhcEBTMe
+   9/jazBqt9AhLFoRmuwJNBI1qrgwaUeVqWQScnk2u9cfiBBRyGrogjUOVp
+   A==;
+X-CSE-ConnectionGUID: /yeDZa6WTbGAQC0v7BzAKg==
+X-CSE-MsgGUID: Fs5dzlt8Ro+DYvCRBjUzgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="85168885"
 X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; 
-   d="scan'208";a="85168875"
+   d="scan'208";a="85168885"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
   by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 15:34:02 -0700
-X-CSE-ConnectionGUID: t60+F4BUQQCliyvPWSbggg==
-X-CSE-MsgGUID: d+KxhRPRQbi6anUtiKJvEQ==
+X-CSE-ConnectionGUID: GejNULltT5iMJLJ2b3l8BQ==
+X-CSE-MsgGUID: P4fsl1GlS0eRsMdCQFPjWQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; 
-   d="scan'208";a="182145310"
+   d="scan'208";a="182145313"
 Received: from sramkris-mobl1.amr.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.222.79])
   by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 15:34:02 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -71,9 +71,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v12 19/31] x86/resctrl: Read telemetry events
-Date: Mon, 13 Oct 2025 15:33:33 -0700
-Message-ID: <20251013223348.103390-20-tony.luck@intel.com>
+Subject: [PATCH v12 20/31] fs/resctrl: Refactor mkdir_mondata_subdir()
+Date: Mon, 13 Oct 2025 15:33:34 -0700
+Message-ID: <20251013223348.103390-21-tony.luck@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251013223348.103390-1-tony.luck@intel.com>
 References: <20251013223348.103390-1-tony.luck@intel.com>
@@ -85,180 +85,150 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Telemetry events are enabled during the first mount of the resctrl
-file system.
+mkdir_mondata_subdir() is unreasonably complicated because of the support for
+Sub-NUMA Cluster (SNC) mode.
 
-Mark telemetry regions that did not pass the sanity checks by
-clearing their MMIO address fields so that they will not be
-used when reading events.
+Split out the SNC code into a helper function to make it easier to add support
+for a new telemetry resource.
 
-Introduce intel_aet_read_event() to read telemetry events for resource
-RDT_RESOURCE_PERF_PKG. There may be multiple aggregators tracking each
-package, so scan all of them and add up all counters. Aggregators may
-return an invalid data indication if they have received no records for
-a given RMID. Return success to the user if one or more aggregators
-provide valid data.
-
-Resctrl now uses readq() so depends on X86_64. Update Kconfig.
-
+Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/internal.h  |  7 ++++
- arch/x86/kernel/cpu/resctrl/intel_aet.c | 48 +++++++++++++++++++++++++
- arch/x86/kernel/cpu/resctrl/monitor.c   |  3 ++
- fs/resctrl/monitor.c                    | 14 ++++++++
- arch/x86/Kconfig                        |  2 +-
- 5 files changed, 73 insertions(+), 1 deletion(-)
+ fs/resctrl/rdtgroup.c | 83 +++++++++++++++++++++++++++----------------
+ 1 file changed, 52 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 886261a82b81..97616c81682b 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -220,9 +220,16 @@ void resctrl_arch_mbm_cntr_assign_set_one(struct rdt_resource *r);
- #ifdef CONFIG_X86_CPU_RESCTRL_INTEL_AET
- bool intel_aet_get_events(void);
- void __exit intel_aet_exit(void);
-+int intel_aet_read_event(int domid, u32 rmid, enum resctrl_event_id evtid,
-+			 void *arch_priv, u64 *val);
- #else
- static inline bool intel_aet_get_events(void) { return false; }
- static inline void __exit intel_aet_exit(void) { }
-+static inline int intel_aet_read_event(int domid, u32 rmid, enum resctrl_event_id evtid,
-+				       void *arch_priv, u64 *val)
-+{
-+	return -EINVAL;
-+}
- #endif
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index c9d2cc1fd8bf..b7eaa4388768 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -3196,22 +3196,16 @@ static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
  
- #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
-diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-index a500b5d384fb..003b6426c8bd 100644
---- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
-+++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-@@ -12,13 +12,17 @@
- #define pr_fmt(fmt)   "resctrl: " fmt
+ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_domain_hdr *hdr,
+ 			     struct rdt_resource *r, struct rdtgroup *prgrp,
+-			     bool do_sum)
++			     int domid, bool do_sum)
+ {
+ 	struct rmid_read rr = {0};
+-	struct rdt_l3_mon_domain *d;
+ 	struct mon_data *priv;
+ 	struct mon_evt *mevt;
+-	int ret, domid;
+-
+-	if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+-		return -EINVAL;
++	int ret;
  
- #include <linux/array_size.h>
-+#include <linux/bits.h>
- #include <linux/cleanup.h>
- #include <linux/compiler_types.h>
-+#include <linux/container_of.h>
- #include <linux/cpu.h>
- #include <linux/err.h>
-+#include <linux/errno.h>
- #include <linux/init.h>
- #include <linux/intel_pmt_features.h>
- #include <linux/intel_vsec.h>
-+#include <linux/io.h>
- #include <linux/overflow.h>
- #include <linux/printk.h>
- #include <linux/resctrl.h>
-@@ -230,3 +234,47 @@ void __exit intel_aet_exit(void)
- 		(*peg)->pfg = NULL;
- 	}
+-	d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+ 	for_each_mon_event(mevt) {
+ 		if (mevt->rid != r->rid || !mevt->enabled)
+ 			continue;
+-		domid = do_sum ? d->ci_id : d->hdr.id;
+ 		priv = mon_get_kn_priv(r->rid, domid, mevt, do_sum);
+ 		if (WARN_ON_ONCE(!priv))
+ 			return -EINVAL;
+@@ -3227,24 +3221,20 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_domain_hdr *hdr,
+ 	return 0;
  }
-+
-+#define DATA_VALID	BIT_ULL(63)
-+#define DATA_BITS	GENMASK_ULL(62, 0)
-+
-+/*
-+ * Read counter for an event on a domain (summing all aggregators
-+ * on the domain). If an aggregator hasn't received any data for a
-+ * specific RMID, the MMIO read indicates that data is not valid.
-+ * Return success if at least one aggregator has valid data.
-+ */
-+int intel_aet_read_event(int domid, u32 rmid, enum resctrl_event_id eventid,
-+			 void *arch_priv, u64 *val)
-+{
-+	struct pmt_event *pevt = arch_priv;
-+	struct event_group *e;
-+	bool valid = false;
-+	u64 evtcount;
-+	void *pevt0;
-+	u32 idx;
-+
-+	pevt0 = pevt - pevt->idx;
-+	e = container_of(pevt0, struct event_group, evts);
-+	idx = rmid * e->num_events;
-+	idx += pevt->idx;
-+
-+	if (idx * sizeof(u64) + sizeof(u64) > e->mmio_size) {
-+		pr_warn_once("MMIO index %u out of range\n", idx);
-+		return -EIO;
-+	}
-+
-+	for (int i = 0; i < e->pfg->count; i++) {
-+		if (!e->pfg->regions[i].addr)
-+			continue;
-+		if (e->pfg->regions[i].plat_info.package_id != domid)
-+			continue;
-+		evtcount = readq(e->pfg->regions[i].addr + idx * sizeof(u64));
-+		if (!(evtcount & DATA_VALID))
-+			continue;
-+		*val += evtcount & DATA_BITS;
-+		valid = true;
-+	}
-+
-+	return valid ? 0 : -EINVAL;
-+}
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 5565a8752266..6804b83934e8 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -252,6 +252,9 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_domain_hdr *hdr,
  
- 	resctrl_arch_rmid_read_context_check();
+-static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+-				struct rdt_domain_hdr *hdr,
+-				struct rdt_resource *r, struct rdtgroup *prgrp)
++static int mkdir_mondata_subdir_snc(struct kernfs_node *parent_kn,
++				    struct rdt_domain_hdr *hdr,
++				    struct rdt_resource *r, struct rdtgroup *prgrp)
+ {
+ 	struct kernfs_node *kn, *ckn;
+ 	struct rdt_l3_mon_domain *d;
+ 	char name[32];
+-	bool snc_mode;
+ 	int ret = 0;
  
-+	if (r->rid == RDT_RESOURCE_PERF_PKG)
-+		return intel_aet_read_event(hdr->id, rmid, eventid, arch_priv, val);
-+
+-	lockdep_assert_held(&rdtgroup_mutex);
+-
  	if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
  		return -EINVAL;
  
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index faaa2851c5c2..84a0cbe90748 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -526,12 +526,26 @@ static bool cpu_on_correct_domain(struct rmid_read *rr)
- 
- static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
- {
-+	u64 tval = 0;
-+
- 	if (!cpu_on_correct_domain(rr))
- 		return -EINVAL;
- 
- 	switch (rr->r->rid) {
- 	case RDT_RESOURCE_L3:
- 		return __l3_mon_event_count(rdtgrp, rr);
-+
-+	case RDT_RESOURCE_PERF_PKG:
-+		rr->err = resctrl_arch_rmid_read(rr->r, rr->hdr, rdtgrp->closid,
-+						 rdtgrp->mon.rmid, rr->evt->evtid,
-+						 rr->evt->arch_priv,
-+						 &tval, rr->arch_mon_ctx);
-+		if (rr->err)
-+			return rr->err;
-+
-+		rr->val += tval;
-+
-+		return 0;
- 	default:
- 		return -EINVAL;
+ 	d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+-	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
+-	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci_id : d->hdr.id);
++	sprintf(name, "mon_%s_%02d", r->name, d->ci_id);
+ 	kn = kernfs_find_and_get(parent_kn, name);
+ 	if (kn) {
+ 		/*
+@@ -3260,27 +3250,58 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+ 		ret = rdtgroup_kn_set_ugid(kn);
+ 		if (ret)
+ 			goto out_destroy;
+-		ret = mon_add_all_files(kn, hdr, r, prgrp, snc_mode);
++		ret = mon_add_all_files(kn, hdr, r, prgrp, d->ci_id, true);
+ 		if (ret)
+ 			goto out_destroy;
  	}
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index da5775056ec8..60ace4427ede 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -538,7 +538,7 @@ config X86_CPU_RESCTRL
  
- config X86_CPU_RESCTRL_INTEL_AET
- 	bool "Intel Application Energy Telemetry"
--	depends on X86_CPU_RESCTRL && CPU_SUP_INTEL && INTEL_PMT_TELEMETRY=y && INTEL_TPMI=y
-+	depends on X86_64 && X86_CPU_RESCTRL && CPU_SUP_INTEL && INTEL_PMT_TELEMETRY=y && INTEL_TPMI=y
- 	help
- 	  Enable per-RMID telemetry events in resctrl.
+-	if (snc_mode) {
+-		sprintf(name, "mon_sub_%s_%02d", r->name, hdr->id);
+-		ckn = kernfs_create_dir(kn, name, parent_kn->mode, prgrp);
+-		if (IS_ERR(ckn)) {
+-			ret = -EINVAL;
+-			goto out_destroy;
+-		}
++	sprintf(name, "mon_sub_%s_%02d", r->name, hdr->id);
++	ckn = kernfs_create_dir(kn, name, parent_kn->mode, prgrp);
++	if (IS_ERR(ckn)) {
++		ret = -EINVAL;
++		goto out_destroy;
++	}
  
+-		ret = rdtgroup_kn_set_ugid(ckn);
+-		if (ret)
+-			goto out_destroy;
++	ret = rdtgroup_kn_set_ugid(ckn);
++	if (ret)
++		goto out_destroy;
+ 
+-		ret = mon_add_all_files(ckn, hdr, r, prgrp, false);
+-		if (ret)
+-			goto out_destroy;
+-	}
++	ret = mon_add_all_files(ckn, hdr, r, prgrp, hdr->id, false);
++	if (ret)
++		goto out_destroy;
++
++	kernfs_activate(kn);
++	return 0;
++
++out_destroy:
++	kernfs_remove(kn);
++	return ret;
++}
++
++static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
++				struct rdt_domain_hdr *hdr,
++				struct rdt_resource *r, struct rdtgroup *prgrp)
++{
++	struct kernfs_node *kn;
++	char name[32];
++	int ret = 0;
++
++	lockdep_assert_held(&rdtgroup_mutex);
++
++	if (r->mon_scope == RESCTRL_L3_NODE)
++		return mkdir_mondata_subdir_snc(parent_kn, hdr, r, prgrp);
++
++	sprintf(name, "mon_%s_%02d", r->name, hdr->id);
++	kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
++	if (IS_ERR(kn))
++		return PTR_ERR(kn);
++
++	ret = rdtgroup_kn_set_ugid(kn);
++	if (ret)
++		goto out_destroy;
++	ret = mon_add_all_files(kn, hdr, r, prgrp, hdr->id, false);
++	if (ret)
++		goto out_destroy;
+ 
+ 	kernfs_activate(kn);
+ 	return 0;
 -- 
 2.51.0
 
