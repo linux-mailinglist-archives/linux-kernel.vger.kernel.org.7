@@ -1,323 +1,114 @@
-Return-Path: <linux-kernel+bounces-850207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DDABD23E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5ADBD23EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5960D3C2975
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9033C3F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1DB2FD7CA;
-	Mon, 13 Oct 2025 09:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3582FD1DA;
+	Mon, 13 Oct 2025 09:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRUfjMKy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YSSTSHrY"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1902FD1BC;
-	Mon, 13 Oct 2025 09:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288192FD1CE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760347170; cv=none; b=frr6bJUsrgRM1/OorkDGPrq4fcGoRo+Bi2FK5M48cMNOcg5MMG2nmtXVCGER4GeqQZEVqhD22T6gSAL+iKryXC7Xr2jfU5u26/cSpWZiHo9Pr/BWI4y4XT1e5I4wYElwpVauEPAUALxbYMjDwhwFeCW+8mzzPBkZBMCUPCTgufw=
+	t=1760347176; cv=none; b=uHaX4jN1q4dItOEYK4RGJ0QN7wgLbbjph6xBqoJHaetq66gFIvcFEDrIt3jgDNiyisTG776mqmCu4trg9fQKKy0goM9wf9wZuDn7vNxb/Koi044SRwkqVRZpovsI1xNvaKa7rvv1Yk8tkE2w5jubDLXpgFBe2Jqmnlk+bGL+YKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760347170; c=relaxed/simple;
-	bh=uNFGhoAGgykNoPJ8CNQn5LZshPohZnbUoD3NSbz5JRM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oCT2I2zl/FsjQClZ/tMmAWyD7eEibnRvj8n5nIex3hdspfUxlgbvihs5id/QUuh2ah55LlwewmugrOCUf7NaVsAFLyTZS9zUz9ih25ZX00jy2GEg3+IYDNtcIQoNq3iGBjScwsCIRbpfs5O3Fvjkr2fG1iTq0QH2gWckp3PD4BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRUfjMKy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 429ACC4CEF8;
-	Mon, 13 Oct 2025 09:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760347170;
-	bh=uNFGhoAGgykNoPJ8CNQn5LZshPohZnbUoD3NSbz5JRM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lRUfjMKytE1MB89vYpfQKHKZw2Ezmx4uBSYdfouwFxm/1P5eUKZg2HUnJOw1EahRg
-	 +KfnPlFMRkqYrhEABogsubC94xYUkZd97OjPT7gZp62BoeZF7vah8/8/hgTjsIRbNa
-	 bV2JIkdBnwgn0yihA2CjtnavIsUbosSN59aAU6b5YqKeYC9TdUr5LhQm1od6gNQRFq
-	 J0Hd0PvC+K1G91VHABSRvmP6m6mYb4m4HfB+jWmLbjGPgIDg7Ikzr2Pv2D9/VTkixS
-	 MkJFA2CiSMUtblqZV7k0cZYSf2zaAL0zlbvVKWMnaWabM/Kqdya/NusK+n409Z6ZKU
-	 0uCs8OyILZO1Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33213CCA476;
-	Mon, 13 Oct 2025 09:19:30 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Mon, 13 Oct 2025 11:19:19 +0200
-Subject: [PATCH v3 2/2] phy: add basic support for NXPs TJA1145 CAN
- transceiver
+	s=arc-20240116; t=1760347176; c=relaxed/simple;
+	bh=7e11H1Sl1fNF6/Pen2WxGe/Xr1qM6aJthuzJAA0/Mog=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JRfhQPdqXGpwrWJkYAUaVn91Hg5BPwLX0sDso85EgL99zB3oHZvED2T//G3Nchty4W//O8Yt92CMXwhpbTJopcdqS2VwJ2+V+tlkEgZaytnzSJbRss3xsbKdv7Sg3WqUTQDoiG4ft9fg6zWeokwP99Pi4JTeob8dciqt5UTGUWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YSSTSHrY; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e36f9c651so26048085e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760347173; x=1760951973; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q8mp6Sl5lpIMsBMcZe0Dwu/oRU1yIEVK7dE0nvjB0QA=;
+        b=YSSTSHrY3NH96/uSeY/MlaR/nwwhMmGarHJY3Ud8u6STJkkEN7tJ+Zk5EK3BHfeKQ6
+         RPy8McdCnU4jLi4HI8XVD3mqY0aJtlUB0TDKRUbm9tp6kQQG3+poAYe83c6ZDwc6/KtL
+         zlRRU9qrPof16XFru+DmWM2xp7cgm2sRyREbSsF+eDjeeiiildFkdleGT45Z4ME5A+qw
+         QgIumFCdMXsznSL9cn+QzvZlTwrWG4/OdoKLcYG0uaUPFWR8D6QWf+PJxXaJabWJp6Z1
+         yNUjs9Er60uo2acZDRVbL98qgzKw4uY8wgTmd8PVjA9DxzH2lH8+wTlG2NLBFr2GqneV
+         GEDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760347173; x=1760951973;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q8mp6Sl5lpIMsBMcZe0Dwu/oRU1yIEVK7dE0nvjB0QA=;
+        b=iDUR8ok0DXnC5xlUGjCpxZNFFHazaCGVL8r7Vnwf16k/5sXzxToSX2qohaIZ8qvbHx
+         ihRViA1cDcon1kjjNqFxPJUcxRSQXTt+UEPtoT/ByyIlFlcc2yb3+zBZqpBlm88buIVC
+         cywmYYTYYxEapB3BHwoxwrneZYOll//Mk+6ENwQ5zQr7hebhwRSBEKaybczfppYRNxIM
+         gxuur8jgVqKo6T7oOys+pSwy5uWP92NzOOqb/JAisEHUJpTgaGNV6MdVFl6Npy/wMGFp
+         6SIdc1Yo13i/ZOF4JUHI0B1CYFGbAKEt2sdbw8G2f0GviCPzlIGAsdGg5OqzdTxgUcNw
+         Yf6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVP8pioD9q3NVGT2lvlUK28dfek0/lRX2D1IhzriaKaopyvq3AjuyVeFn4jtbidpJOXuv+21+zoanI/M0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLWUKQFEQWqXTGH1W576EnldQMPkwEatwj/bFqvwpoiYsiqSvH
+	4CgNKxfi2B+kd5X9bgToZ40KhPPJyPW5Tvyj+XR+3QC54sRWLSJT5u1/jj9QVKgwf5RpioxemXv
+	Y7CMiwJogUWiH5D8eSQ==
+X-Google-Smtp-Source: AGHT+IGyE1/ItkqoGr313xqMor1adj+/d0l73A5B2xL0EAcjYPfGXqLNzPt25q8he9xrFaEgiN5RRjL9JA9wkiQ=
+X-Received: from wmcn14.prod.google.com ([2002:a05:600c:c0ce:b0:46e:2897:9c17])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:83ce:b0:46e:394b:49b7 with SMTP id 5b1f17b1804b1-46fa9b16597mr144514005e9.37.1760347173573;
+ Mon, 13 Oct 2025 02:19:33 -0700 (PDT)
+Date: Mon, 13 Oct 2025 09:19:32 +0000
+In-Reply-To: <20251012213230.1139674-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20251012213230.1139674-1-ojeda@kernel.org>
+Message-ID: <aOzEJAdNHatrW_Gz@google.com>
+Subject: Re: [PATCH] rust_binder: clean Clippy `mem-replace-with-default` warning
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <christian@brauner.io>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-tja1145-support-v3-2-4a9d245fe067@liebherr.com>
-References: <20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com>
-In-Reply-To: <20251013-tja1145-support-v3-0-4a9d245fe067@liebherr.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760347168; l=7265;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=m4QiREHDlNRu4w4+aKlLV9DdljRQB5Dfw10oKYtH/Oc=;
- b=G08KFMJnckl9HbiuGU1DW/NNgr892iIRjXj7cOB28r5Ii4/cxIf4UgH9pikn8f6AVcekJGyi3
- m9THSlhXx+WBuAzAgRPhZfnBBGydOI+VZGi8vqCaa+f5yz3PFDKQiKd
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Sun, Oct 12, 2025 at 11:32:30PM +0200, Miguel Ojeda wrote:
+> Starting with Rust 1.87.0, Clippy reports:
+> 
+>       CLIPPY     drivers/android/binder/rust_binder_main.o
+>     error: replacing a value of type `T` with `T::default()` is better expressed using `core::mem::take`
+>        --> drivers/android/binder/node.rs:690:32
+>         |
+>     690 |             _unused_capacity = mem::replace(&mut inner.freeze_list, KVVec::new());
+>         |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `core::mem::take(&mut inner.freeze_list)`
+>         |
+>         = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#mem_replace_with_default
+>         = note: `-D clippy::mem-replace-with-default` implied by `-D warnings`
+>         = help: to override `-D warnings` add `#[allow(clippy::mem_replace_with_default)]`
+> 
+> Thus clean it up as suggested.
+> 
+> Fixes: eafedbc7c050 ("rust_binder: add Rust Binder driver")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Add basic driver support for NXPs TJA1145 CAN transceiver which brings the
-PHY up/down by switching to normal/standby mode using SPI commands.
+Thanks. I guess I never got around to making use of commit 47d8101924b5
+("rust: vec: impl Default for Vec with any allocator").
 
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- drivers/phy/Kconfig           |  10 +++
- drivers/phy/Makefile          |   1 +
- drivers/phy/phy-nxp-tja1145.c | 185 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 196 insertions(+)
-
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 678dd0452f0aa0597773433f04d2a9ba77474d2a..2f2c8f29cce2beb20c584adfe8acfe23de14e128 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -101,6 +101,16 @@ config PHY_NXP_PTN3222
- 	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
- 	  Speed and High Speed.
- 
-+config PHY_NXP_TJA1145
-+	tristate "NXP TJA1145 CAN transceiver PHY"
-+	select GENERIC_PHY
-+	select REGMAP_SPI
-+	depends on SPI
-+	help
-+	  This option enables support for NXPs TJA1145 CAN transceiver as a PHY.
-+	  This driver provides function for putting the transceiver in various
-+	  functional modes using SPI commands.
-+
- source "drivers/phy/allwinner/Kconfig"
- source "drivers/phy/amlogic/Kconfig"
- source "drivers/phy/broadcom/Kconfig"
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index bfb27fb5a494283d7fd05dd670ebd1b12df8b1a1..48eac644d1e2b20f986f80de95b40c26d080358b 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
- obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
- obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
- obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
-+obj-$(CONFIG_PHY_NXP_TJA1145)		+= phy-nxp-tja1145.o
- obj-y					+= allwinner/	\
- 					   amlogic/	\
- 					   broadcom/	\
-diff --git a/drivers/phy/phy-nxp-tja1145.c b/drivers/phy/phy-nxp-tja1145.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4d3aa5bfcd88d5755fa37e0d42bfa8293dee2155
---- /dev/null
-+++ b/drivers/phy/phy-nxp-tja1145.c
-@@ -0,0 +1,185 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 Liebherr-Electronics and Drives GmbH
-+ */
-+#include <linux/bitfield.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/phy/phy.h>
-+#include <linux/spi/spi.h>
-+
-+#define TJA1145_MODE_CTRL		0x01
-+#define TJA1145_MODE_CTRL_MC		GENMASK(2, 0)
-+#define TJA1145_MODE_CRTL_STBY		BIT(2)
-+#define TJA1145_MODE_CRTL_NORMAL	TJA1145_MODE_CTRL_MC
-+
-+#define TJA1145_CAN_CTRL		0x20
-+#define TJA1145_CAN_CTRL_CMC		GENMASK(1, 0)
-+#define TJA1145_CAN_CTRL_ACTIVE		BIT(1)
-+
-+#define TJA1145_IDENT			0x7e
-+#define TJA1145_IDENT_TJA1145T		0x70
-+
-+#define TJA1145_SPI_READ_BIT		BIT(0)
-+#define TJA1145T_MAX_BITRATE		1000000
-+
-+static int tja1145_phy_power_on(struct phy *phy)
-+{
-+	struct regmap *map = phy_get_drvdata(phy);
-+	int ret;
-+
-+	/*
-+	 * Switch operating mode to normal which is the active operating mode.
-+	 * In this mode, the device is fully operational.
-+	 */
-+	ret = regmap_update_bits(map, TJA1145_MODE_CTRL, TJA1145_MODE_CTRL_MC,
-+				 TJA1145_MODE_CRTL_NORMAL);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Switch to CAN operating mode active where the PHY can transmit and
-+	 * receive data.
-+	 */
-+	return regmap_update_bits(map, TJA1145_CAN_CTRL, TJA1145_CAN_CTRL_CMC,
-+				  TJA1145_CAN_CTRL_ACTIVE);
-+}
-+
-+static int tja1145_phy_power_off(struct phy *phy)
-+{
-+	struct regmap *map = phy_get_drvdata(phy);
-+
-+	/*
-+	 * Switch to operating mode standby, the PHY is unable to transmit or
-+	 * receive data in standby mode.
-+	 */
-+	return regmap_update_bits(map, TJA1145_MODE_CTRL, TJA1145_MODE_CTRL_MC,
-+				  TJA1145_MODE_CRTL_STBY);
-+}
-+
-+static const struct phy_ops tja1145_phy_ops = {
-+	.power_on = tja1145_phy_power_on,
-+	.power_off = tja1145_phy_power_off,
-+};
-+
-+static const struct regmap_range tja1145_wr_holes_ranges[] = {
-+	regmap_reg_range(0x00, 0x00),
-+	regmap_reg_range(0x02, 0x03),
-+	regmap_reg_range(0x05, 0x05),
-+	regmap_reg_range(0x0b, 0x1f),
-+	regmap_reg_range(0x21, 0x22),
-+	regmap_reg_range(0x24, 0x25),
-+	regmap_reg_range(0x30, 0x4b),
-+	regmap_reg_range(0x4d, 0x60),
-+	regmap_reg_range(0x62, 0x62),
-+	regmap_reg_range(0x65, 0x67),
-+	regmap_reg_range(0x70, 0xff),
-+};
-+
-+static const struct regmap_access_table tja1145_wr_table = {
-+	.no_ranges = tja1145_wr_holes_ranges,
-+	.n_no_ranges = ARRAY_SIZE(tja1145_wr_holes_ranges),
-+};
-+
-+static const struct regmap_range tja1145_rd_holes_ranges[] = {
-+	regmap_reg_range(0x00, 0x00),
-+	regmap_reg_range(0x02, 0x02),
-+	regmap_reg_range(0x05, 0x05),
-+	regmap_reg_range(0x0b, 0x1f),
-+	regmap_reg_range(0x21, 0x21),
-+	regmap_reg_range(0x24, 0x25),
-+	regmap_reg_range(0x30, 0x4a),
-+	regmap_reg_range(0x4d, 0x5f),
-+	regmap_reg_range(0x62, 0x62),
-+	regmap_reg_range(0x65, 0x67),
-+	regmap_reg_range(0x70, 0x7d),
-+	regmap_reg_range(0x7f, 0xff),
-+};
-+
-+static const struct regmap_access_table tja1145_rd_table = {
-+	.no_ranges = tja1145_rd_holes_ranges,
-+	.n_no_ranges = ARRAY_SIZE(tja1145_rd_holes_ranges),
-+};
-+
-+
-+static const struct regmap_config tja1145_regmap_config = {
-+	.reg_bits = 8,
-+	.reg_shift = -1,
-+	.val_bits = 8,
-+	.wr_table = &tja1145_wr_table,
-+	.rd_table = &tja1145_rd_table,
-+	.read_flag_mask = TJA1145_SPI_READ_BIT,
-+	.max_register = TJA1145_IDENT,
-+};
-+
-+static int tja1145_check_ident(struct device *dev, struct regmap *map)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(map, TJA1145_IDENT, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val != TJA1145_IDENT_TJA1145T) {
-+		dev_err(dev, "Expected device id: 0x%02x, got: 0x%02x\n",
-+			TJA1145_IDENT_TJA1145T, val);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tja1145_probe(struct spi_device *spi)
-+{
-+	struct phy_provider *phy_provider;
-+	struct device *dev = &spi->dev;
-+	struct regmap *map;
-+	struct phy *phy;
-+	int ret;
-+
-+	map = devm_regmap_init_spi(spi, &tja1145_regmap_config);
-+	if (IS_ERR(map))
-+		return dev_err_probe(dev, PTR_ERR(map), "failed to init regmap\n");
-+
-+	ret = tja1145_check_ident(dev, map);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to identify device\n");
-+
-+	phy = devm_phy_create(dev, dev->of_node, &tja1145_phy_ops);
-+	if (IS_ERR(phy))
-+		return dev_err_probe(dev, PTR_ERR(phy), "failed to create PHY\n");
-+
-+	phy->attrs.max_link_rate = TJA1145T_MAX_BITRATE;
-+	phy_set_drvdata(phy, map);
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static const struct spi_device_id tja1145_spi_id[] = {
-+	{ "tja1145" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, tja1145_spi_id);
-+
-+static const struct of_device_id tja1145_of_match[] = {
-+	{ .compatible = "nxp,tja1145-can" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tja1145_of_match);
-+
-+static struct spi_driver tja1145_driver = {
-+	.driver = {
-+		.name = "tja1145",
-+		.of_match_table = tja1145_of_match,
-+	},
-+	.probe = tja1145_probe,
-+	.id_table = tja1145_spi_id,
-+};
-+module_spi_driver(tja1145_driver);
-+
-+MODULE_DESCRIPTION("NXP TJA1145 CAN transceiver PHY driver");
-+MODULE_AUTHOR("Dimitri Fedrau <dimitri.fedrau@liebherr.com>");
-+MODULE_LICENSE("GPL");
-
--- 
-2.39.5
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
 
