@@ -1,109 +1,194 @@
-Return-Path: <linux-kernel+bounces-851550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCBCBD6BDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:30:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52725BD6BE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1033A71CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:30:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8D1B0351456
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFF82BF00A;
-	Mon, 13 Oct 2025 23:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450152BE64D;
+	Mon, 13 Oct 2025 23:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uph6FHzP"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyB4aOO1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6511715E5BB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A6C1E9B37;
+	Mon, 13 Oct 2025 23:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760398245; cv=none; b=XoiR1c3GEvQLNUx0RiMFcN/s8m0o+bVUKSpWuqIplIn6bg+JvofW7+qwsKIIKXjy0WrvMeMCKKHBM9ail8MhI1CEH3oIQYslmJH2SdbTYyZ9qAdcQzyT27RIdNR8xc4UsK5b4vnI/ZttLxM3Z3DITLGmIWv5jh8FYUFcfsqgYAI=
+	t=1760398350; cv=none; b=SRG8KZ7BAZS21l8LTYymygNGqi1ckoMPUb0L34cK+Rt3osXwFYvyj5uiF8hi/nwfCLNR44oWLtMg3yzQEXXulVnMJWRfMewJEgWSgGMVYe/Q05LE6VFRCVOktddaQV+rF1fj4xmNdZONxwNnTAXi5f33L6EgN6wLtYtsxiv7hjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760398245; c=relaxed/simple;
-	bh=f1t956JBV+YwJMh+YwrrZfOciYvg7blVAnIMvPKNYWY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C6k8655Vs6VHNTsdzSwYQRAggJmD1z8D/WpVTLaLRAFF2g6oreNsUkUTZtTBQvopYaeqzmwlG9e3JocX1BwdNgUFJScHN8VJM0yfogDvEBAzkcyY7tDJjVT4b7DjbgW6Cqm/5u3RFKqNoL9DzNFi7fhs+Xq22mVrukRQJ5xxZS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uph6FHzP; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-330a4d5c4efso8550676a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760398243; x=1761003043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=08aB01K3QlDxNQ6Di+ZC0Fy9ecw0hHQXKJJoqFOXoow=;
-        b=Uph6FHzPc/b+vglLfbjZCr6KjDJ2zmgxbDJayKIw5OqT1WmL19SVwuCjuYq0HNn6BK
-         eGHUGRKOGrc3kO420C0+fBZn5s0tZD4i7FFSatS0ltUBQL49XOYorDGQ72acddkim8ip
-         ce9ryTKim646cxrT9G6WKmhhg27Yw80v5+MmCwvJn4UmTls+T0oR3x6lFHcYt4UsQ1ov
-         p4iQwEKTzteS69d7HrWbRdLOrUv9b+zBiIulj7OwgZOSLu641FsfS+Jf6jNc0W5iMrFh
-         uKY14V5JLNw3eXSYTg1dbdm9NXVP7/645gmStX4/0wQJeOgXZnO2gOO0GUvOfApmHlu1
-         J2WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760398243; x=1761003043;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=08aB01K3QlDxNQ6Di+ZC0Fy9ecw0hHQXKJJoqFOXoow=;
-        b=BmmztHTLgMqs3rudn+fbHb/qymb5GANa0Tk8MtiY0LDCnYumc/7WHx8KXPcPZZeinq
-         4mOYLEQXWWZp/m3PADcfOdloLy6FSO17HCkHBdO37IAuRMRUOaUaakkxZWz/Vk9uWUo1
-         KqiaJoa1XKwFZy9tfqK8h2AuqKl6qY52Qh+At1WwDEwy2A6V6MzYDaV3VDH2eASmd+Qq
-         BlpavG/nW5wJOe+riKaxTIuTlvFQ+iikRPSPfiIOdbCZgJdczooPpC2tASB4c09mhSdE
-         ZVLiijQnEkG4whe+yHEMxXwhhdlrM4IKV9C6PFuDGCVSUXBRTaa+QQ98u2o09fu5QcXH
-         fbUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEsQbfcA2259XLhw1uzCJplQj2hJj/jlfLFQbg6zOeONmOuzv4mgpvcN4lU/In2y3GLW+DrKUkoLzCFcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcx9sbShX/Rcf273dO1FYQk1w1V2QVyo6n77mTR1eim+K1WjXL
-	D1mtuxcVd2WVpYvcJEhDzuX6rI6Fsak1Nqn4xLCU4qbysjXWmUf+Fu+wycOj6k+Xul31IcwR7np
-	xvOv39A==
-X-Google-Smtp-Source: AGHT+IHs68Jiesyq8CVwopkosF1NFYrZ8tVJ5yK1fRCuny9H+M0GlqQ+GEI/HXfswBxaNk8YEghSh7Wv9pM=
-X-Received: from pjbgl20.prod.google.com ([2002:a17:90b:1214:b0:330:acc9:302c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a87:b0:339:f09b:d36f
- with SMTP id 98e67ed59e1d1-33b513a1e0fmr28253894a91.28.1760398243550; Mon, 13
- Oct 2025 16:30:43 -0700 (PDT)
-Date: Mon, 13 Oct 2025 16:30:42 -0700
-In-Reply-To: <CALMp9eQN9b-EkysBHDj127p2s4m9jnicjMd+9GKWdFfaxBToQg@mail.gmail.com>
+	s=arc-20240116; t=1760398350; c=relaxed/simple;
+	bh=Z4efOZyEHCh6Exj2wHYZNtvp31AUQB0CfE6zHpapMqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VmSIgL1iVfs2G6qxjcCtC+B+A5FD8KeQwh30Qw2oXciTok9mw7wZtTPKPLyvjEdXQYrCWhAghS2SVv3lbCxSGmYDHFJZhnow+otKi/wzc6qUKoWoddguTyEchlnbgpwElcVjoEAjw5IDH6yOZQoroV5qWw7r1FuRMLJ/FVSgmT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyB4aOO1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26DBEC4CEE7;
+	Mon, 13 Oct 2025 23:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760398350;
+	bh=Z4efOZyEHCh6Exj2wHYZNtvp31AUQB0CfE6zHpapMqc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NyB4aOO1DeSxLdysn6eQHpFjqdJUaFy8joQJlicmS6VIM6hYJbX+z9x3FeXK1mnZD
+	 U1dlq2t1hJyObka9kHojJH6G5hkMiM18wbgHYe5a7dlq5Cb4Vmgy8VO5Y/mfz5OcJ1
+	 qb4BfPIcoWU1ERshkKVPpS3hASfQI3/QE6cWjRtOz3SVgUJbaxGZtCTRl60DIvScJO
+	 QQVvOwPbj8BsXdocPwgNZl8km4b5GqiIQk6tEy5HqhnWtHA9kNmlhnrnI4yUtGFDsL
+	 kL3SMrVEIdxXdz3c2sYawaSE5+e00QJN91voP+o8sL3TrGOkvulh3Pwmd5ZJBW8QzP
+	 Vdw/j5gS38ppA==
+Date: Mon, 13 Oct 2025 16:32:29 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>, Pavel Reichl <preichl@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: [PATCH 1/2] xfs: quietly ignore deprecated mount options
+Message-ID: <20251013233229.GR6188@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250922162935.621409-1-jmattson@google.com> <aO11A4mzwqLzeXN9@google.com>
- <CALMp9eQN9b-EkysBHDj127p2s4m9jnicjMd+9GKWdFfaxBToQg@mail.gmail.com>
-Message-ID: <aO2LomPuqvvRF5l-@google.com>
-Subject: Re: [PATCH 0/2] KVM: SVM: Aggressively clear vmcb02 clean bits
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Oct 13, 2025, Jim Mattson wrote:
-> On Mon, Oct 13, 2025 at 2:54=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Mon, Sep 22, 2025, Jim Mattson wrote:
-> > > It is unlikely that L1 will toggle the MSR intercept bit in vmcb02,
-> > > or that L1 will change its own IA32_PAT MSR. However, if it does,
-> > > the affected fields in vmcb02 should not be marked clean.
-> > >
-> > > An alternative approach would be to implement a set of mutators for
-> > > vmcb02 fields, and to clear the associated clean bit whenever a field
-> > > is modified.
-> >
-> > Any reason not to tag these for stable@?  I can't think of any meaningf=
-ul
-> > downsides, so erring on the side of caution seems prudent.
->=20
-> SGTM. Do you want a new version?
+From: Darrick J. Wong <djwong@kernel.org>
 
-Good gravy, no.  :-)
+Apparently we can never deprecate mount options in this project, because
+it will invariably turn out that some foolish userspace depends on some
+behavior and break.  From Oleksandr Natalenko:
+
+> In v6.18, the attr2 XFS mount option is removed. This may silently
+> break system boot if the attr2 option is still present in /etc/fstab
+> for rootfs.
+>
+> Consider Arch Linux that is being set up from scratch with / being
+> formatted as XFS. The genfstab command that is used to generate
+> /etc/fstab produces something like this by default:
+>
+> /dev/sda2 on / type xfs (rw,relatime,attr2,discard,inode64,logbufs=8,logbsize=32k,noquota)
+>
+> Once the system is set up and rebooted, there's no deprecation warning
+> seen in the kernel log:
+>
+> # cat /proc/cmdline
+> root=UUID=77b42de2-397e-47ee-a1ef-4dfd430e47e9 rootflags=discard rd.luks.options=discard quiet
+>
+> # dmesg | grep -i xfs
+> [    2.409818] SGI XFS with ACLs, security attributes, realtime, scrub, repair, quota, no debug enabled
+> [    2.415341] XFS (sda2): Mounting V5 Filesystem 77b42de2-397e-47ee-a1ef-4dfd430e47e9
+> [    2.442546] XFS (sda2): Ending clean mount
+>
+> Although as per the deprecation intention, it should be there.
+>
+> Vlastimil (in Cc) suggests this is because xfs_fs_warn_deprecated()
+> doesn't produce any warning by design if the XFS FS is set to be
+> rootfs and gets remounted read-write during boot. This imposes two
+> problems:
+>
+> 1) a user doesn't see the deprecation warning; and
+> 2) with v6.18 kernel, the read-write remount fails because of unknown
+>    attr2 option rendering system unusable:
+>
+> systemd[1]: Switching root.
+> systemd-remount-fs[225]: /usr/bin/mount for / exited with exit status 32.
+>
+> # mount -o rw /
+> mount: /: fsconfig() failed: xfs: Unknown parameter 'attr2'.
+>
+> Thorsten (in Cc) suggested reporting this as a user-visible regression.
+>
+> From my PoV, although the deprecation is in place for 5 years already,
+> it may not be visible enough as the warning is not emitted for rootfs.
+> Considering the amount of systems set up with XFS on /, this may
+> impose a mass problem for users.
+>
+> Vlastimil suggested making attr2 option a complete noop instead of
+> removing it.
+
+IOWs, the initrd mounts the root fs with (I assume) no mount options,
+and mount -a remounts with whatever options are in fstab.  However,
+XFS doesn't complain about deprecated mount options during a remount, so
+technically speaking we were not warning all users in all combinations
+that they were heading for a cliff.
+
+Gotcha!!
+
+Now, how did 'attr2' get slurped up on so many systems?  The old code
+would put that in /proc/mounts if the filesystem happened to be in attr2
+mode, even if user hadn't mounted with any such option.  IOWs, this is
+because someone thought it would be a good idea to advertise system
+state via /proc/mounts.
+
+The easy way to fix this is to reintroduce the four mount options but
+map them to a no-op option that ignores them, and hope that nobody's
+depending on attr2 to appear in /proc/mounts.  (Hint: use the fsgeometry
+ioctl).
+
+Lessons learned:
+
+ 1. Don't expose system state via /proc/mounts; the only strings that
+    ought to be there are options *explicitly* provided by the user.
+ 2. Never tidy, it's not worth the stress and irritation.
+
+Reported-by: oleksandr@natalenko.name
+Reported-by: vbabka@suse.cz
+Cc: <stable@vger.kernel.org> # v6.18-rc1
+Fixes: b9a176e54162f8 ("xfs: remove deprecated mount options")
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ fs/xfs/xfs_super.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index e85a156dc17d16..e1df41991fccc3 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -102,7 +102,7 @@ static const struct constant_table dax_param_enums[] = {
+  * Table driven mount option parser.
+  */
+ enum {
+-	Opt_logbufs, Opt_logbsize, Opt_logdev, Opt_rtdev,
++	Opt_quietlyignore, Opt_logbufs, Opt_logbsize, Opt_logdev, Opt_rtdev,
+ 	Opt_wsync, Opt_noalign, Opt_swalloc, Opt_sunit, Opt_swidth, Opt_nouuid,
+ 	Opt_grpid, Opt_nogrpid, Opt_bsdgroups, Opt_sysvgroups,
+ 	Opt_allocsize, Opt_norecovery, Opt_inode64, Opt_inode32,
+@@ -115,6 +115,14 @@ enum {
+ };
+ 
+ static const struct fs_parameter_spec xfs_fs_parameters[] = {
++	/*
++	 * These mount options were advertised in /proc/mounts even if the
++	 * filesystem had not been mounted with that option.  Quietly ignore
++	 * them to avoid breaking scripts that captured /proc/mounts.
++	 */
++	fsparam_flag("attr",		Opt_quietlyignore),
++	fsparam_flag("noattr2",		Opt_quietlyignore),
++
+ 	fsparam_u32("logbufs",		Opt_logbufs),
+ 	fsparam_string("logbsize",	Opt_logbsize),
+ 	fsparam_string("logdev",	Opt_logdev),
+@@ -1408,6 +1416,8 @@ xfs_fs_parse_param(
+ 		return opt;
+ 
+ 	switch (opt) {
++	case Opt_quietlyignore:
++		return 0;
+ 	case Opt_logbufs:
+ 		parsing_mp->m_logbufs = result.uint_32;
+ 		return 0;
+@@ -1528,7 +1538,6 @@ xfs_fs_parse_param(
+ 		xfs_mount_set_dax_mode(parsing_mp, result.uint_32);
+ 		return 0;
+ #endif
+-	/* Following mount options will be removed in September 2025 */
+ 	case Opt_max_open_zones:
+ 		parsing_mp->m_max_open_zones = result.uint_32;
+ 		return 0;
 
