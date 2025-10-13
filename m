@@ -1,148 +1,183 @@
-Return-Path: <linux-kernel+bounces-850939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254C4BD53B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:51:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03CEBD5203
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29928506174
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:02:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 091F8542964
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA9631DD91;
-	Mon, 13 Oct 2025 15:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49603115B8;
+	Mon, 13 Oct 2025 15:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wSTb07DZ"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkvy2/y7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343B631C595
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16931311594;
+	Mon, 13 Oct 2025 15:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370000; cv=none; b=qktFaw3NugOfAnwLJ3NybX80JoD+2feU/qKm9sCy05ohMDKmUEe98tIcyRDaV+FSAG9ypWiyNeXt4AjVUdHwx/F9/wAEYfAvePoXaUyv0CMIzIgH9/mYxm2jrB9uqnWQFZyzAh1Tyd27xZRSiUs+is0Sn34NxOt9dCWVBD5zBcQ=
+	t=1760369988; cv=none; b=giTGbkyx6D+7i7uyrI9oxgBopMbRXXPTluEjHrWjKH/KRCKcOmIm1a7bgNEysjzQ2ODN2+9Nl0mD7F21LmsdyZHExGymZ6xfF+ubTiBf5dZw+BHoS27e5lw6sWbdWaKSbRb5SyQI3pduV1q5+MBl09/AaSAM3iDiUczLzBMTL3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370000; c=relaxed/simple;
-	bh=qWYTuEu4IG9GCT7DjS/hH5Ft/AQYcQO5Boog+C14wCc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=W9VbNlJgKMTKOK9lJbTmnw73baz1/+At/XOMHjxrBRXGnbSjo2n/jukM0UZd5WnXoqyFA/m35MQ6hs6JRlICffPyOkuqXwsTOj6urDm4E/QCucJts13wbvggLPAZjS75ndmmWbxVpO6LZjxcMXnQVtsmXdNdT5qKZVtYXT9NkKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wSTb07DZ; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3f42b54d159so4768122f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760369996; x=1760974796; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EWqoEOZl6L4UgifcuVH8Vvw1RztpD/4r7yVFa1CMC6A=;
-        b=wSTb07DZc1jMbUWpnaVe7yVdz6j3xUJ1419LXaEz6dFZd5WxEEo12pnpzqy8Gcu2VE
-         XZcCAkEBdNgt7PN5jszViZ9yhurTzR/wZkbmmSVUUMhIHXyMP7kNp4EvuCSkwUzxSnJI
-         +woNVO2taJvhNZQWQmZyGDGqQzy/5Pvcb2e96ieSn38Ch879Un/jMx4LaFvA7Vs9Bw8E
-         yM4XJxOUZCMGfMk6X/BZo1aurOlcCKQdP6h/HSMzHi+WU943VQUFMX5WLEoO9/T00A6g
-         82s7KTgl7q4Fttk5O7713NbiGLvPLNOIxGQt8qMpZtPF2bx/H0m8AiJ3fxjRVjomy/8D
-         r/RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760369996; x=1760974796;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EWqoEOZl6L4UgifcuVH8Vvw1RztpD/4r7yVFa1CMC6A=;
-        b=AVokfYnc7Eva7Y6DKvoKnzUdm6du6QSPojalfdRJ5T5DZL/2c74xwR/MH4PcgoUTWw
-         EbQvGRVFXuRRDcHg25KBK+BnO1lpLySJlPGYv742EDgypFaTh9MDTwr2QZCeDb9vwR1v
-         TdSd+SOd5GOCuKJr+UXBldz7icAFaGMVGeVNbJRjtdMeBJKqeCTKQm7p+T8md849XSoT
-         jP0ntMv66KzJmLTRmaTcPZWvNJF6FG80mIyilqlfjW7C4uE+07t8J3f43HzWRGafA6nB
-         8w4x1DAlxspc4Sa3q3Q0nw9ixySgti3dkEv04l9Eyf6WEWirNBwsPl/ryj+sKDy4dc/8
-         DmQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZo0cWQPkzUs13GZYA09jqUnl8xZhF+y+Lh7ntE0fdd4tS7LQIALmc4R2WSgXwVAvdIoM3k1KN7PSNMLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8WULBf3pu27os8Kbn1M7S5vpFnAHXR7dOylh5Rayqf0B2r8/s
-	J4+kuMbHDEbJgGbIbYUI9mN3Lt3wRxFzMzC0pD1qX3miiyehspjmWAdE3s78RcdYXc3hGUI8Mah
-	XQvVxX4+WMEwnWVCjkA==
-X-Google-Smtp-Source: AGHT+IHLek4r1lwro3GQIO4ppkzexXFiEHQSVL/Za4DDoRCAzgIf53fcpusHRbOINss/Tpngpku8rgJ4Go3IiS4=
-X-Received: from wrpk16.prod.google.com ([2002:adf:f5d0:0:b0:3fc:7d28:6438])
- (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:4901:b0:426:d51c:4d71 with SMTP id ffacd0b85a97d-426d51c4e7emr6015254f8f.8.1760369996504;
- Mon, 13 Oct 2025 08:39:56 -0700 (PDT)
-Date: Mon, 13 Oct 2025 15:39:18 +0000
-In-Reply-To: <20251013153918.2206045-1-sidnayyar@google.com>
+	s=arc-20240116; t=1760369988; c=relaxed/simple;
+	bh=XRgqPt8ELkRS40SVE58RMNMVvTbxBt/VeZAjuuaA3M4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=FmJqzba4BYYzUx7otuYfCeZ12ZFMajwefIFfP8VictpjxqovJmkxNKKchwAkpJAB7ymkeXHV8NY81ktyH+jNXUxHV78FxdCM0xLWhLAQ6G+oM5uRg1lz5OY56LB8xhAlOu3+OQKr2XpDT3UfcwCGhafAzqkzCNjI0nhj7Bw66+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkvy2/y7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA0CC4CEFE;
+	Mon, 13 Oct 2025 15:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760369987;
+	bh=XRgqPt8ELkRS40SVE58RMNMVvTbxBt/VeZAjuuaA3M4=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=mkvy2/y7vTOu187LZixltm3qHwr20EFGugwcNe8cFE/WaTTzns28FHi1uDurmW3uI
+	 tANDFvmfF/wPxnM+OiyWJtEdhG9Bc99EcD9nPqachN3H22ONjtZFCXdf4xrTnQTX7C
+	 O61Ph3BOUT2H4/bv9FZEIq9ySW0bMhY8OGu8EbfI+VgS07tOZdiX5YvmD45RCKHFCD
+	 XR/CQE0n3Hsfu3sxcvkhu+pnzkZHr19kZ3vRZYkmzGxT9R8tF1jhgoQPvX913XQ5Bh
+	 i7rgGSlfyPl3l+TVUIT+rIFPCIfaTtChT7tuTspP0j1aMlWwvHoZpI3cKQ/bPADwFi
+	 tRkSz4rqInUEg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251013153918.2206045-1-sidnayyar@google.com>
-X-Mailer: git-send-email 2.51.0.740.g6adb054d12-goog
-Message-ID: <20251013153918.2206045-11-sidnayyar@google.com>
-Subject: [PATCH v2 10/10] module loader: enforce symbol import protection
-From: Siddharth Nayyar <sidnayyar@google.com>
-To: petr.pavlu@suse.com
-Cc: arnd@arndb.de, linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	mcgrof@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
-	samitolvanen@google.com, sidnayyar@google.com, maennich@google.com, 
-	gprocida@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 13 Oct 2025 17:39:41 +0200
+Message-Id: <DDHB2T3G9BUA.18YWV70J82Z01@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [RFC 0/6] rust: pci: add config space read/write support
+Cc: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+ <ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+ <targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
+ <joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
+To: "Zhi Wang" <zhiw@nvidia.com>
+References: <20251010080330.183559-1-zhiw@nvidia.com>
+In-Reply-To: <20251010080330.183559-1-zhiw@nvidia.com>
 
-The module loader will reject unsigned modules from loading if such a
-module attempts to import a symbol which has the import protection bit
-set in the kflagstab entry for the symbol.
+Hi Zhi,
 
-Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
----
- kernel/module/internal.h |  1 +
- kernel/module/main.c     | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+(Cc: Alex, Joel, John, Markus)
 
-diff --git a/kernel/module/internal.h b/kernel/module/internal.h
-index 061161cc79d9..98faaf8900aa 100644
---- a/kernel/module/internal.h
-+++ b/kernel/module/internal.h
-@@ -108,6 +108,7 @@ struct find_symbol_arg {
- 	const u32 *crc;
- 	const struct kernel_symbol *sym;
- 	enum mod_license license;
-+	bool is_protected;
- };
- 
- /* modules using other modules */
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index f5f9872dc070..c27df62a68f5 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -380,6 +380,7 @@ static bool find_exported_symbol_in_section(const struct symsearch *syms,
- 	fsa->crc = symversion(syms->crcs, sym - syms->start);
- 	fsa->sym = sym;
- 	fsa->license = (sym_flags & KSYM_FLAG_GPL_ONLY) ? GPL_ONLY : NOT_GPL_ONLY;
-+	fsa->is_protected = sym_flags & KSYM_FLAG_PROTECTED;
- 
- 	return true;
- }
-@@ -1267,6 +1268,13 @@ static const struct kernel_symbol *resolve_symbol(struct module *mod,
- 		goto getname;
- 	}
- 
-+	if (fsa.is_protected && !mod->sig_ok) {
-+		pr_warn("%s: Cannot use protected symbol %s\n",
-+			mod->name, name);
-+		fsa.sym = ERR_PTR(-EACCES);
-+		goto getname;
-+	}
-+
- 	err = ref_module(mod, fsa.owner);
- 	if (err) {
- 		fsa.sym = ERR_PTR(err);
-@@ -1550,7 +1558,7 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
- 				break;
- 
- 			ret = PTR_ERR(ksym) ?: -ENOENT;
--			pr_warn("%s: Unknown symbol %s (err %d)\n",
-+			pr_warn("%s: Unresolved symbol %s (err %d)\n",
- 				mod->name, name, ret);
- 			break;
- 
--- 
-2.51.0.740.g6adb054d12-goog
+On Fri Oct 10, 2025 at 10:03 AM CEST, Zhi Wang wrote:
+> This ideas of this series are:
+>
+> - Factor out a common trait IoRegion for other accessors to share the
+>   same compiling/runtime check like before.
 
+Yes, this is something we want to have in general:
+
+Currently, we have a single I/O backend (struct Io) which is used for gener=
+ic
+MMIO. However, we should make Io a trait instead and require a new MMIO typ=
+e to
+implement the trait, where the trait methods would remain to be
+{try_}{read,write}{8,16,..}().
+
+We need the same thing for other I/O backends, such as I2C, etc.
+
+@Markus: Most of the design aspects for the PCI configuration space below s=
+hould
+apply to I2C I/O accessors as well.
+
+>   In detail:
+>
+>   * `struct ConfigSpace<SIZE>` wrapping a `pdev: ARef<Device>`.
+
+There are two cases:
+
+  (1) I/O backends that embedd a dedicated device resource. For instance, a
+      pci::Bar embedds an iomapped pointer that must be wrapped with Devres=
+ to
+      ensure it can't outlive the driver being bound to its corresponding
+      device.
+
+      In this case we have a method pci::Device<Bound>::iomap_region(), whi=
+ch
+      returns a Devres<pci::Bar>.
+
+  (2) I/O backends that don't need to embedd a dedicated device resource be=
+cause
+      the resource is already attached to the device itself. This is the ca=
+se
+      with the PCI configuration space; drivers don't need to create their =
+own
+      mapping, but can access it directly through the device.
+
+      For this case we want a method pci::Device<Bound>::config_space() tha=
+t
+      returns a ConfigSpace<'a>, where 'a is the lifetime of the
+      &'a Device<Bound> given to config_space().
+
+      This ensures that the ConfigSpace structure still serves as I/O backe=
+nd
+      for the types generated by the register!() macro, but at the same tim=
+e
+      can't outlife the scope of the bound device.
+
+      (Drivers shouldn't be able to write the PCI configuration space of a
+      device they're not bound to.)
+
+Besides that, we should also use the register!() macro to create the common
+configuration space register types in the PCI core for driver to use.
+
+Of course, there is no need to (re-)implement the following one, but it's a
+good example:
+
+	register!(PCI_CONFIG_ID @ 0x0 {
+	    31:16   device_id ?=3D> pci::DeviceId, "Device ID";
+	    15:0    vendor_id ?=3D> pci::VendorId, "Vendor ID";
+	});
+
+	// Assume we have a `&pci::Device<Bound>`, e.g. from probe().
+	let pdev: &pci::Device<Bound> =3D ...;
+
+	// Grab the configuration space I/O backend; lives as long as `pdev`.
+	let config_space =3D pdev.config_space();
+
+	// Read the first standard register of the configuration space header.
+	let id =3D PCI_CONFIG_ID::read(config_space);
+
+	// `id.vendor()` returns a `pci::Vendor`. Since it implements `Display`
+	// the `dev_info()` call prints the actual vendor string.
+	dev_info!(pdev.as_ref(), "VendorId=3D{}\n", id.vendor());
+
+> Open:
+>
+> The current kernel::Io MMIO read/write doesn't return a failure, because
+> {read, write}{b, w, l}() are always successful. This is not true in
+> pci_{read, write}_config{byte, word, dword}() because a PCI device
+> can be disconnected from the bus. Thus a failure is returned.
+
+This is in fact also true for the PCI configuration space. The PCI configur=
+ation
+space has a minimum size that is known at compile time. All registers withi=
+n
+this minimum size can be access in an infallible way with the non try_*()
+methods.
+
+The main idea behind the fallible and infallible accessors is that you can
+assert a minimum expected size of an I/O backend (e.g. a PCI bar). I.e. dri=
+vers
+know their minimum requirements of the size of the I/O region. If the I/O
+backend can fulfill the request we can be sure about the minimum size and h=
+ence
+accesses with offsets that are known at compile time can be infallible (bec=
+ause
+we know the minimum accepted size of the I/O backend at compile time as wel=
+l).
+
+Accesses with offsets that are not known at compile time still remain falli=
+ble
+of course. That's why we have both, e.g. write32() and try_write32().
 
