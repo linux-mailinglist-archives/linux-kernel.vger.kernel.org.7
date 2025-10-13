@@ -1,99 +1,132 @@
-Return-Path: <linux-kernel+bounces-851479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88DADBD6997
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42863BD69A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C4804EDE49
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:19:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEDD84E0EBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B344B2E7F22;
-	Mon, 13 Oct 2025 22:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00022EFDBA;
+	Mon, 13 Oct 2025 22:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A7NJ53oa"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MrOsC5OA"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5112E2840
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915B72FDC29
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760393973; cv=none; b=EUkv2whK1sbwvWZMmlsy18hm+UmUBu4tFkpYHxJJois3Hq8a7qPCWN5m3ju1GLwD1UquN0xTHVvfRbsLBEFV5hFCpB8y5g2z8NuTtWiRFAE0mrt1Dn0gqFqA50aqRP19ZzOjSz1wqRBkm3OXC+Hc/mvE+aeiFQN9mc7VwtgE4Dg=
+	t=1760394082; cv=none; b=KzBEhApWK9loFNPVnuwKQIKJOXLCv6rwyJ76ieTTiXZGQ4nHZRyAY5o6vPPZmuAhUBiW6FjJsZPEJPnBJIOCxqENZrc+dNrqpMPl3OocwxY2NhSSGgTYHMdOWE0Q6IhgHIo/3dCj+yjL8DhJIXyj+hPwGf0CoOPC+v04em90YTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760393973; c=relaxed/simple;
-	bh=ma9v2xT7M3ivg4AIw/Z8J0gsYemmtAoP3TBU7awWAzE=;
+	s=arc-20240116; t=1760394082; c=relaxed/simple;
+	bh=U0b2FYuoZRm8Pxjx9RsW+UXje4fkTM4H5iZ/bJSnheg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EilRl/qN9y3BGQeR9mJ+G3bi9xMChk1tZ8/OsNgFjuGf2uu4/zy/rPLit3SEZVqFkkSGb1gZruhNzYu28mCxVg2ed1+LiRp4IPkN/V51wNXJIdtaQJzcvnnFvWv1sxWkpjTZ5NUsgyMLHKbD+xAlUv7qBw4ZEKmke3+UEsQWyEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A7NJ53oa; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-58b027beea6so15020e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:19:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=KcFkEgCbCkqXRnhN1+ebTz77+1i0ZmvmGJOlUc5TGRqVSlMAR9fh0NUzBqRutpV2zOAQHGHBpf9Zs298aJlzuMipf8xYcq+UKucSn92C0ZD3gscJUVSaVtFdWg/D1lKasf0mGfXQA2oaiso1KKK+P1dAxTTRZ3//uWVEWwg8Ezc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MrOsC5OA; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3322e63602eso6298054a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760393970; x=1760998770; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ma9v2xT7M3ivg4AIw/Z8J0gsYemmtAoP3TBU7awWAzE=;
-        b=A7NJ53oaSoGYZu2GQl27mmFOiGs/n1f11Y0cAlHR6loozIyT3bZqCTjccakbndqiiv
-         9gSYS4Z5fC8xfUOHfVOSmcoTEKAPj9BIqZ5mtPlf/MiurlCpNT17ecKwrWBhyHZlmGoo
-         TrazH/sgDqkkDRKCKfmpN5U3e/2MfHQVg2aGyOqFE65yzM/BKbLIdmvvdozjnrVKBdEw
-         8zwpTx9rp7ylDCJ+6Rekc0lHqSjX//4klnN11iTSNQIXif5I2qjEUN34cue0LhShxqGz
-         fde8pgv0lfCO7F46bGT+dHxipuzAZ1my8A+5mCLn7pnPP6HArCE3dYqd6RMVGwTS47CV
-         dlgQ==
+        d=paul-moore.com; s=google; t=1760394078; x=1760998878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7QrVvuzGQFvU0hfzvyeDbWGCHPSfPo8gC4N1w4Q3nkM=;
+        b=MrOsC5OAzJ9IRIPCe2MDCDZflQ8K3EN6TvxFg7ODB44iqeYyJnyghqdlXvsmZDWe81
+         uoma5nCK41up70cN272rGONwApj8becxErZze51Bw/H4tAgmHvS7/X8Rlq/y35BCb+eM
+         QN6SBJUl+fUkdBJQjqZKqUk9esZVpiepRm1zBRNOASnU/boPWVgdKub6T8fMh15HOLRj
+         wb+tWmfdZ3bv+fnzgH4XrXgi1a9uI4/onnkwhB5VPUzsoe6Prdi6flsr9cri1UNdFeXW
+         4/S2nIHfGAArwTAzLmDcSmcsJihezWZ/RtX1uC16lpsVGqlywPpCdcVUNoXI0YSWYe0o
+         ocAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760393970; x=1760998770;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ma9v2xT7M3ivg4AIw/Z8J0gsYemmtAoP3TBU7awWAzE=;
-        b=BI9rb7B7ePJiXkOsMClTPqCjDNdcOo7nLyz6sgNeyDenDQpgrgyG9PSZlqHdEZ7D/g
-         uswIBi5s+S47yD2cr+kHPgHvdk/tIf/ESzjVrrD8ohbcB02SlAaeJIma1h1KtQ7h7PYq
-         umHWywJklio/YjK0c/48i4St1PoLL3Mp+5tQEJHFR6JWxi0gu3GEPLls1j5l5NwcrziO
-         c/1NJ6tPEZuKypX2playqCs9m1uJgbBWUcbW2ybrw+RwrcXsgTWwf3rRN6jOllXeH+Ls
-         pBqGLjTDoMY0ZKoiQcrHGcx0laIlONnzyey0y3KXnpxjM3TuSHHu6Yo5IBTLPhgee5Pf
-         25pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqMj8ikTAWrk+c8JkbHk48fwa+KfLR43TC56TDEt9qXpjGVrphUD5RSsCybKC0CIMsNH5gmcv8feOm0YY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCCb96JsZNv+YFmg6TNPjnAN7VGa0UmpALmpuQrMOisuStqDve
-	eCy/Wbm6EBhP07MbOSQJQjX6Y/jh/GlrRHKQYUY8hp1sElFkcouSEf5bpOeJCZXi6RML3rTUmW/
-	2/+3A+kJmKlP+6KwwkFWLHVCPhAf2mVWUJywCyeoS
-X-Gm-Gg: ASbGnctLlomUosgxrHZSRxf6clipM1tMo2icUwMH30bmSZRXV2ZfrQnvTY+m7qLLSVC
-	1M0f4XuChAub1/eqHwQJrUk/+wePj7NJoWgeUVBYJ4bRgHVTQA1RJQ8fiL5vpTEpSyavXic5t5S
-	TBV/J7/HPp561umoD4loYMyVcWT5jKcLJ85tvrk/mBzg/ICZCe5PyEJeUJMq6nI4IKH/4UJhuhy
-	ZSEFUrCe8tdvpIcWdpfR49KZj9YA9ScEmW233W65ISyOlG920dTiVWPQzdN
-X-Google-Smtp-Source: AGHT+IH2agZQNsxWmqsBYnl3fXe55usQuh642aHhP3MFbn8LGlt2Pg0yylueB2iKG4HwW6byAodCaeXty6oXUuFgH0c=
-X-Received: by 2002:a19:5203:0:b0:57b:43e0:ab17 with SMTP id
- 2adb3069b0e04-5906e606842mr1391493e87.7.1760393969505; Mon, 13 Oct 2025
- 15:19:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760394078; x=1760998878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7QrVvuzGQFvU0hfzvyeDbWGCHPSfPo8gC4N1w4Q3nkM=;
+        b=YzS8U4X+3efaVLdA8CLSM9uDaaTfNIpM3eFx2UVfwhlBndNggYKV1jK4pXyX1tEz5t
+         Oh5/P2vrdbEKD4i2eppQqcTDAeSNEtz5p12qg/comQCf1Zp18uTsT0emU3v2f1zxFGgN
+         tp/RML+Ma8KtAXfU3qCmN+SE0aXYW70ysp/VRISKw9zKKKamlSWjzUzRec3vHd6wT8cW
+         Y+aZs6uB7dMAf6DaU/aMC7d3KJFH0ZCk6Xz+U6DlIJPF5aBOFRjpwqG4bKWB6ZzpAeKc
+         wE8HzcpXsUhpMmZIPYZJGAFoa95Shv9xeo8m1j5vienp6AB+yg+bfGdfYfUucuyiDaLZ
+         +TuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGddcUBWfIwhmvr0s/16Bwc2+9Sye2zcQmbyOh2p0oennQvGK3mB8pIfXq4tQLUpLmGXgnOb+2OJZiOGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt4V7CNo6tJnK4C7L3jRXExZoQyxml0x26URCccNWxMhHxnDoU
+	3xVLwze6C1gpKBOyALnMbDLMny9ilLLzXSMmTXaUQJ53qaMdpxqHATz4wHIZGb1HCbrDTiHIGAL
+	xyNZN48EXmVbkdW491+gxOjh8eCmBh7R4ppDoRN9s
+X-Gm-Gg: ASbGncsTENXPuQLJ6jeJohNjgyzVP11TG4kfuKelDD2J8U9pVPovgkEqGyCstZ+cTqN
+	wzL8jtHa8gaa1C/CoXw6p6op9ao5xeKM3i4KKTLvHB98odpSrQTOzH5p/fWSSz4zI8wHYeDAibU
+	/QjchHqmwq0yrP5sL8OeL7Mq1eTfD7yrDBjknDSO1ml00y3f8U8E+Dei4+9UqojZFQqenMmTImu
+	dh7elYQmv5jhjeKplCap6gmGd+v9Bo8+PsS
+X-Google-Smtp-Source: AGHT+IGJj6wfIA3JgS5ivMxkaZ5cevk68TDvGU+RjQzOwOxB3VAdgwaSKuY91BI4oP64o4zu3+KGLQrIUftJOPtxttI=
+X-Received: by 2002:a17:90b:4a52:b0:332:84c1:31de with SMTP id
+ 98e67ed59e1d1-33b513ced6emr28514559a91.25.1760394078550; Mon, 13 Oct 2025
+ 15:21:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918020434.1612137-1-tweek@google.com> <CAHC9VhSbWJ-8tj5BxSTxznGO8zraKRSE31a+tqdfMHB53ef-MQ@mail.gmail.com>
- <CAEjxPJ5GidA9oT_fbKRe_nH1J3mER0ggM-dBW=Nuo765JDuQKg@mail.gmail.com>
- <CAHC9VhS2TU2GWgfUOHerbfjyxb5QZMSMqLdQirjSdkUohR7opg@mail.gmail.com> <CAHC9VhTSRkP=jNw8bLRx5em6MnX9HTywBqXGsJCBPQ9MKJym=g@mail.gmail.com>
-In-Reply-To: <CAHC9VhTSRkP=jNw8bLRx5em6MnX9HTywBqXGsJCBPQ9MKJym=g@mail.gmail.com>
-From: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Date: Tue, 14 Oct 2025 09:19:11 +1100
-X-Gm-Features: AS18NWA7D3oTpokkkAvP9qlsJ0ghTq_pG4HjoY0XIByf3fPOLCDdAvWcwYRjfTI
-Message-ID: <CA+zpnLcUSO5Oum8iq1S_wdhkx+1xhehpTRtxBuaabQVHt-koLA@mail.gmail.com>
-Subject: Re: [PATCH v3] memfd,selinux: call security_inode_init_security_anon
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, 
-	James Morris <jmorris@namei.org>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Isaac Manjarres <isaacmanjarres@google.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-mm@kvack.org
+References: <20251001215643.31465-1-casey@schaufler-ca.com>
+ <20251001215643.31465-3-casey@schaufler-ca.com> <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
+ <ec89959d-c3a0-403d-bfb0-7405639eb0cf@schaufler-ca.com> <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
+ <01879779-d529-40f2-8693-257cc598dcd7@schaufler-ca.com>
+In-Reply-To: <01879779-d529-40f2-8693-257cc598dcd7@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 13 Oct 2025 18:21:06 -0400
+X-Gm-Features: AS18NWDHyfSLp4xj_ujKY48qVsLCMXrHD6EmUTyrztEFvgCIwupjgZrcRdxU_X0
+Message-ID: <CAHC9VhSBxhiTvxPpHHqZJygDTTuMWOPFpQcoMSsvZD6Bueg0ZQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->
-> ... and the patch is now in selinux/dev, thanks everyone!
+On Fri, Oct 10, 2025 at 5:11=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 10/10/2025 12:53 PM, Stephen Smalley wrote:
+> > On Fri, Oct 10, 2025 at 11:09=E2=80=AFAM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
+> >> On 10/9/2025 11:53 AM, Stephen Smalley wrote:
+> >>> On Wed, Oct 1, 2025 at 5:56=E2=80=AFPM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
 
-Great! Thanks again Paul, Stephen and Hugh for the reviews and help to
-land this work.
+...
+
+> > But some security modules may not function correctly (or at all) if
+> > secmark and/or netlabel are silently disabled on them, and the end
+> > user needs a better way to express intent.
+
+This is the point I was trying to make in patch 1/2 with secmarks, but
+Stephen has captured the idea much better in the sentence above.  To
+be clear, the argument applies to both secmarks and NetLabel.
+
+> I'm open to suggestions. Would boot options lsm.secmark and lsm.netlabel
+> be sufficient to address your concern?
+
+No.  Please no.  We already have two LSM initialization related
+command line parameters, and one of them is pretty broken and very
+confusing in the new world of multiple LSMs (as an aside, does someone
+want to kick off the work to deprecate "security=3D?").  Maybe we have
+to go this route eventually, but let's keep it simple for right now; I
+don't want to add a lot of user-visible APIs for something that is
+pretty niche.
+
+If you absolutely can't live with the "first one gets it" approach,
+look at the no/wants/must idea in my patch 1/2 comments.  It would
+require work in the individual LSMs to support it, but I'd rather try
+that route first.
+
+--=20
+paul-moore.com
 
