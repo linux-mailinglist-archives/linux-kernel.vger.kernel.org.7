@@ -1,278 +1,157 @@
-Return-Path: <linux-kernel+bounces-850115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB317BD1EA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A6CBD2470
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 873F6348D6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5D03BD39D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657B12EBB98;
-	Mon, 13 Oct 2025 08:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPdDqU93"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312772FD7C3;
+	Mon, 13 Oct 2025 09:23:43 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFB42EB5DE;
-	Mon, 13 Oct 2025 08:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E340C2F28EF;
+	Mon, 13 Oct 2025 09:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760342605; cv=none; b=oluZb7QUx5XoPc4k3P9N1ytOn3NySpEVmp/Hp64IOcQrHFL6AgWrImlZRvkzM0ZgD2VljlYL/v10GuNsiNHA5yW9s1SyOiyZjrF9+Ci21q9NY2fYzw6126JuRK1zzcVpRVn6C8ztNPDzC3i1MBLUnvwffxQRwkC7m+NNGaau/u8=
+	t=1760347422; cv=none; b=Hi19Jr/6tU5DvzbbykTcnsWut45MqSA6LgNSQuiVIFP4y9u1ztOzFq1R+2R8saRQpCqWM9vqwxJ3N6PXXnssSSxHzHWEGDqnhLX2/4FmSAQyzZo3AVsTQmw2ih3kcj6oZuDrKR6RxRTa3Utp3AV7vpYGV9BJihm4CUA8DpxHeH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760342605; c=relaxed/simple;
-	bh=ISWExC7c0gJhdjKh1DPstfuLbXdo32wmETxjLgp8ZEI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=R3qwRUs+uTRrWc/a6BHEt+aUqrDNynC2jFVNQObp151n/u7Khw2pdL80ntFIRnghc8yredpIFAz3NZWOD/STmwidrR6HDhvOkzSJKgQS6xSgkb2VZFP392x32KSf9/OLm5RQj85LI27WRmd9DffYc5bObIfedeeILunLbvqYSHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPdDqU93; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D47CC4CEE7;
-	Mon, 13 Oct 2025 08:03:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760342605;
-	bh=ISWExC7c0gJhdjKh1DPstfuLbXdo32wmETxjLgp8ZEI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=IPdDqU93073rsE9vYZBYQbpyqGXzgcIpqxtOdjbcrjxUPOuzfJK7j10HS2D1MCa5t
-	 ZCc+euuF56yqBB0I8ewzluqRw1Yx1Ohck8x1oT1vVhJIzwD3DLhVSycHvzeGcbuyVh
-	 94UwD3VseQYs6yZ2VWSezmxhkXjFc+PeUaq8wBd21AK6HpogawnaAns2+JMAYEn57l
-	 gpJqgQbemVdVTeAp0Aks3f48+Ql26Zv45Hr4Dtxz4G5zba7++sgg7HVd+9M8rqKDjp
-	 NVdt6jgYClmt2C/PADywSFvdIqboQ5A2MlDs+D187vVYlFZu9O6IcKtgvi0LzQ6zLf
-	 XF2Wpyhw8LB6Q==
+	s=arc-20240116; t=1760347422; c=relaxed/simple;
+	bh=XU5ZmPKC8+pr2IZ7+FXw3w0ys0RSsYms3cTEpv3ws6Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QuB9pqa0CqkStIo4Twh7XbRni/EUN8+r2WlYIvlpBGFpyb++MuvMw9KFBZ1Mw3BtYZ4nH6WG4CJL6DjLuhyZK/GUpa9QJ2XmmVsk1H+pPNPyAKDNwLhb5oYl3jSlF/8G3zYIZaCGBz/NICohnUtsIXvtXX+dbDR15CJ1s5p87fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [116.25.94.88])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25b01d132;
+	Mon, 13 Oct 2025 15:01:11 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jjm2473@gmail.com
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: Re: [PATCH v5 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
+Date: Mon, 13 Oct 2025 15:00:36 +0800
+Message-Id: <20251013070036.66901-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251009084416.45542-4-jjm2473@gmail.com>
+References: <20251009084416.45542-4-jjm2473@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 13 Oct 2025 10:03:19 +0200
-Message-Id: <DDH1DE35H7L0.1Z2R655P701HR@kernel.org>
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
- <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Uladzislau
- Rezki" <urezki@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
- <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] rust: add basic Pin<Vec<T, A>> abstractions
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Markus Probst" <markus.probst@posteo.de>, "Danilo Krummrich"
- <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Lee Jones" <lee@kernel.org>, "Pavel Machek"
- <pavel@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20251012145221.172116-1-markus.probst@posteo.de>
- <20251012145221.172116-2-markus.probst@posteo.de>
- <DDGHGF4XOJQG.2MVGBMPK0KUQE@kernel.org>
- <e550b0862e9ea87e50688d1ec8f623638d170a3a.camel@posteo.de>
- <DDGNXV9KS3RS.2WHS4OOYM6DOP@kernel.org>
- <2a31fcd045582382987c8c1da7c4b7d58a1dff61.camel@posteo.de>
-In-Reply-To: <2a31fcd045582382987c8c1da7c4b7d58a1dff61.camel@posteo.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99dc5f845b03a2kunm65153ab079944d
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGE5IVhpJSkJNS0JITE4dH1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSk1VSU5VQk9VQ0NZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVUtZBg
+	++
 
-On Mon Oct 13, 2025 at 12:11 AM CEST, Markus Probst wrote:
-> On Sun, 2025-10-12 at 23:31 +0200, Benno Lossin wrote:
->> On Sun Oct 12, 2025 at 6:57 PM CEST, Markus Probst wrote:
->> > From what I can tell, there is no way to get a `Pin<&mut Vec<T,
->> > A>>`
->> > from a `&mut Pin<Vec<T, A>>`. We can only get `Pin<&mut [T]>` which
->> > is
->> > not usable in our case.
->>=20
->> Hmm yeah that's true.
->>=20
->> > If there is way, without the extension trait or an extra struct, I
->> > would be happy to implement it.
->>=20
->> So I tried to look for the usage site of this and I found this usage
->> in
->> your v1:
->>=20
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 let mut l=
-eds =3D KPinnedVec::with_capacity(
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 Atmega1608LedAddress::VALUES.len() *
->> Atmega1608LedId::VALUES.len(),
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 GFP_KERNEL,
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 )?;
->> =C2=A0=C2=A0=C2=A0 +
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 let mut i=
- =3D 0;
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for addr =
-in Atmega1608LedAddress::VALUES {
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 let mode_lock =3D Arc::pin_init(new_mutex!(()),
->> GFP_KERNEL)?;
->> =C2=A0=C2=A0=C2=A0 +
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 for id in Atmega1608LedId::VALUES {
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 let Some(child) =3D
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
->> fwnode.get_child_by_name(&CString::try_from_fmt(fmt!("led@{i}"))?)
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else {
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue;
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->> =C2=A0=C2=A0=C2=A0 +
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 let client =3D ARef::clone(&client)=
-;
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 let mode_lock =3D Arc::clone(&mode_=
-lock);
->> =C2=A0=C2=A0=C2=A0 +
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 leds.push_pin_init(LedClassDev::new=
-(
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Some(idev),
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 None,
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LedInitData=
-::new().fwnode(&child),
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Atmega1608L=
-ed {
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 addr,
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 id,
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 client,
->> =C2=A0=C2=A0=C2=A0 +
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 mode_lock,
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ))?;
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i +=3D 1;
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Ok(KBox::=
-new(Self { client, leds }, GFP_KERNEL)?.into())
->>=20
->> And I think using `Vec` for this is just wrong. `Vec` is a data
->> structure that supports growing and shrinking the allocation. But you
->> just need a fixed size buffer that holds all your data. Do you think
->> that `Pin<Box<[LedClassDev]>>` would suffice if it had proper support
->> from pin-init?
-> As you can see in v1, the number of leds (or vec entries) depends on
-> the fwnode (see the continue statement there). I don't think that
-> counts as fixed size. `Pin<KBox<[Option<LedClassDev>]>>` could
-> potentially be used instead of `Pin<KVec<LedClassDev>>` in my scenario,
-> but that would require an extra byte of allocation for the max leds of
-> 24 each and the code would look more ugly. At the point I use Option in
-> the slice, its basically an unoptimized Vec (instead of storing the
-> length, it stores if an item in the buffer is present or not).
+Hi,
 
-You can just make the length of the slice be the desired length? (also,
-`i` is never incremented in the `continue` case, so it will act like a
-`break`?)
+> +	regulator-vdd0v95-25glan {
+> +		compatible = "regulator-fixed";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pwr_25g_pin>;
+> +		enable-active-high;
+> +		gpio = <&gpio3 RK_PB1 GPIO_ACTIVE_HIGH>;
+> +		regulator-name = "vdd0v95_25glan";
+> +		regulator-min-microvolt = <950000>;
+> +		regulator-max-microvolt = <950000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
 
-One option that we have would be storing the initializers in a vec:
+The property order should be consistent with other nodes.
 
-    fn probe(
-        pdev: &I2cClient<kernel::device::Core>,
-        _id_info: Option<&Self::IdInfo>,
-    ) -> Result<Pin<KBox<Self>>> {
-        let idev =3D pdev.as_ref();
-   =20
-        let Some(fwnode) =3D idev.fwnode() else {
-            return Err(EINVAL);
-        };
-   =20
-        let client: ARef<I2cClient> =3D pdev.into();
-   =20
-        client
-            .write_byte_data(1, 0)
-            .inspect_err(|err| dev_err!(idev, "unable to remove led mask: {=
-err:?}\n"))?;
-   =20
-        let mut led_init =3D KVec::new();
-   =20
-        let mut i =3D 0;
-        for addr in Atmega1608LedAddress::VALUES {
-            let mode_lock =3D Arc::pin_init(new_mutex!(()), GFP_KERNEL)?;
-   =20
-            for id in Atmega1608LedId::VALUES {
-                let Some(child) =3D
-                    fwnode.get_child_by_name(&CString::try_from_fmt(fmt!("l=
-ed@{i}"))?)
-                else {
-                    continue;
-                };
-   =20
-                let client =3D ARef::clone(&client);
-                let mode_lock =3D Arc::clone(&mode_lock);
-   =20
-                led_init.push(LedClassDev::new(
-                    Some(idev),
-                    None,
-                    LedInitData::new().fwnode(&child),
-                    Atmega1608Led {
-                        addr,
-                        id,
-                        client,
-                        mode_lock,
-                    },
-                ))?;
-                i +=3D 1;
-            }
-        }
-        let leds =3D Vec::pin_init_slice(led_init, GFP_KERNEL)?;
-        Ok(KBox::new(Self { client, leds }, GFP_KERNEL)?.into())
-    }
+> +		vin-supply = <&vcc3v3_sys>;
+> +	};
+> +
+> +	vcc3v3_nvme: regulator-vcc3v3-nvme {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc3v3_nvme";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		enable-active-high;
+> +		gpio = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
+> +		vin-supply = <&dc_12v>;
 
-And `Vec::pin_init_slice` would have the following signature:
+Same here, keep alphabetical order.
 
-    fn pin_init_slice<T, I, E>(this: Vec<I>, flags: alloc::Flags) -> Result=
-<Pin<Box<[T]>>>
-    where
-        I: PinInit<T, E>,
-        Error: From<E>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcc3v3_nvme_en>;
+> +	};
 
----
-Cheers,
-Benno
+> +		status_led: led-status {
+> +			gpios = <&gpio2 RK_PD7 GPIO_ACTIVE_HIGH>;
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_STATUS;
+> +			label = "green:status";
 
->
->>=20
->> Also, please don't top-post [1] and take a look at your mail client
->> configuration, it puts lots of extra `> ` at the end which looks
->> pretty
->> strange [2].
-> Yes, I did notice that. It is not present when writing a reply, but
-> after it got sent for some reason (most replies, not all). It is GNOME
-> Evolution in its default settings basically. My distro ships a 4 months
-> outdated version (3.56.2), which shouldn't be too old, but I will
-> investiage.
->
-> Thanks
-> - Markus Probst
->>=20
->> [1]:
->> https://docs.kernel.org/process/submitting-patches.html#use-trimmed-inte=
-rleaved-replies-in-email-discussions
->> [2]:
->> https://lore.kernel.org/all/e550b0862e9ea87e50688d1ec8f623638d170a3a.cam=
-el@posteo.de
->>=20
->> ---
->> Cheers,
->> Benno
+The "label" property is deprecated.
+
+> +&pcie2x1 {
+> +	reset-gpios = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
+
+vpcie3v3-supply is missing.
+
+> +	status = "okay";
+> +};
+
+> +&pcie3x1 {
+> +	num-lanes = <1>;
+> +	reset-gpios = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
+
+vpcie3v3-supply is missing.
+
+> +	status = "okay";
+> +};
+
+> +&sdmmc0 {
+> +	max-frequency = <150000000>;
+
+max-frequency has been defined in rk356x-base.dtsi
+
+> +	no-sdio;
+> +	no-mmc;
+
+no-mmc and cap-mmc-highspeed are mutually exclusive.
+
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+
+> +/* Micro SD card slot is not populated */
+> +/* Wifi module is not populated */
+
+Why would you define them if they aren't on the board?
+
+> +&sdmmc2 {
+> +	max-frequency = <150000000>;
+
+max-frequency has been defined in rk356x-base.dtsi
+
+> +	bus-width = <4>;
+> +	disable-wp;
+
+disable-wp does not work with sdio
+
+> +&usb2phy0_otg {
+
+phy-supply is missing.
+
+> +	status = "okay";
+> +};
 
