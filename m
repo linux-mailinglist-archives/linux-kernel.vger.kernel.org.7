@@ -1,212 +1,219 @@
-Return-Path: <linux-kernel+bounces-850512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8756BD3064
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:42:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327B3BD3086
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E743AB324
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:42:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA81A34BCA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7EC2690E7;
-	Mon, 13 Oct 2025 12:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E7627146B;
+	Mon, 13 Oct 2025 12:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZEqYQJN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aHP6RLDw"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55237251793
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2187E25A2C9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760359328; cv=none; b=tz7S0iG+qncXP9s1jgT6yuuq3vrED2WPFs0LLXvvCNdFHyf429ZWVLqScAl2mPZajFyHuc2NoO4AsFSFV0/0n1o1Fdv6apPmMg/LHgmoBnjNtmrWVVjOYLO1RPF9HoTEZtVWuSw3FXtfdqT0+CU29FXvUhbQInn6t7tyIC47o8k=
+	t=1760359567; cv=none; b=i/xIgrLBqfS4zYIk5+litfpUoPXzv7Ec6XkTPbCsfWmWvr97vkHtR+ezpnz8A5t2maFF+vahNxZ7nFp8d+Pp8zABZrmmkankQRGRv2JBi0pyXE2GfK0hVvtRveDecbcCXOZMCfzKHcI7xQF8Ui8WN7Ggk3k/lp9THyoGv3T7DxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760359328; c=relaxed/simple;
-	bh=UtC3ud1uDkWBT2eatRa4V31cwvWr8x1KM9nA7kHeLro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MMWQcpGfDzrTs62AQ0w9vy7SGMQ/xkPmn2pLoCisnZy3ZaGsDPEIReOINfqpYdap4lJkot//IMeishigBdLODmm6TtEFfkJzQMwpx4zTpET5qjqzK8Spu7WJ/01QhVanESP4pH7eOuoL5PoAHq001hVR+91sEwHBrlxG8JJa2wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZEqYQJN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760359326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GV6V42eNmRofCKO2ajQk2DVZzbVn5SWQi1G7vlqlVt0=;
-	b=ZZEqYQJNQ6FjdK4Wim0LyLBoWClRZV6vx/OwTuvB5GRgw0wzhWvOBU7lL4sV0TOVqjaIy7
-	GJdimnjK0KaGG1fzAPZEjk6//pVcVs3QOah0F0SJMta471ag9ZqeguThmrtNnUww+hllqh
-	avd8COkEPwtibiRi8Mooqz+EHj2mq+0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-aBchuzNVNpOSjXOyZp5WIw-1; Mon, 13 Oct 2025 08:42:04 -0400
-X-MC-Unique: aBchuzNVNpOSjXOyZp5WIw-1
-X-Mimecast-MFC-AGG-ID: aBchuzNVNpOSjXOyZp5WIw_1760359323
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e3ed6540fso27881515e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:42:04 -0700 (PDT)
+	s=arc-20240116; t=1760359567; c=relaxed/simple;
+	bh=JpkIi/+vhaU0BNI9/P+j1qfp8E4UfRVJu5ZcRjrM5jA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kWSygoBtB8uFnvpz24vH0GImGMZ1MYyQyMkXZWesbqlWTrK1YvIn4ogu0vjG+6cPjyuiZlapdtAL6HSVmqtR3X8h9CWuMXzGJOqPFoFQge7bJ+hoB5oURA8Hnfs7ZjdirDmInPmHIPPdu1as12/28t098YwWFdRGzujWySypOzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aHP6RLDw; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3637d6e9923so37251061fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760359562; x=1760964362; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yr0CAioySbg+winRW7SfP2+jGITybsbqsD8lEteT+kw=;
+        b=aHP6RLDwb0UG2uPMFu+XHDG3kF+N7eCxd/Ka/asDGgCNbHTIKKuXZSEMQW63BQP5+J
+         3Fm3A8yjdNcygmUxPD0dxoBPCRBFCkdQHaIHUNd4JKIu+KlodAf2i8fNXSdsx5WDnfUQ
+         ibmWCNbjVfzi9LjChJ/HBXACzVLhWJH7YUypITyzjf0ewOmsgJ1zqTN8R9EHXOK83hvD
+         QmEMqLweAgmok12WakNdVjOBQA6AzLEZsHo21wM1PmKh9XgpqQ5RjHHgH7vp5z1TaZDQ
+         rWTBZfkyh3L4Spo0aXEFXaJTzAY8C1DU3xjrjlpMIs4U5bxeHGSh+dxJj+9aIbcz2kr6
+         XNVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760359323; x=1760964123;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GV6V42eNmRofCKO2ajQk2DVZzbVn5SWQi1G7vlqlVt0=;
-        b=oClYIFpcqbVgHONvEV8ZMA+3hVyhBWvAIP9kAwmvSYrb0WsTXUAwQ9D/dFckdZTnJn
-         ztKJ88SziV0dzUmKzI8lUZ4cBgIggm4xz2UnEnQNgDmNfk5HREYeP1BgOm7m8vVLmDvv
-         rshSLPIC3kQIw4VwlaP26vfURyTUHeUVIIV4Y7UTXj5/tA7ltf3Bo6rggAFWN7liPG5s
-         L8ThH07ocohCuYDzrm1vBH7+iE7MGDoaNQ64lvspbZKJ0e/nO/G+siXfr0b2R4ETBFfi
-         dX1Qpofuozs+lAC6Vskb7Ar+4OzTJqsdrMMKl9AvF4wHwlrt/EFaMkc9YSp4RofQe7H5
-         p18g==
-X-Forwarded-Encrypted: i=1; AJvYcCVN6y7Qe4jjod8X5GDaSXHg1kC5wIRMcM8OkPWyjE+a5D2ExZ5nlgTlBC0pYzuitmylDa6GbeLIdNPFSpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU209M8c6bmQEm5wy2ekBtebUEafxzseh9UQJ8rAphxRQ8Khda
-	70NWEgDQERQX6gvvk0h/lqj9sMnXfu7BqL5HcGWQlxCR1Ju71m6dVpD8QN6zjgbV59WXY9PR7Bf
-	74d2oM0gs3P0I6TrtjONYZIXnsv14MwksRy8w6FO4WISL2FPQaveLBpoNmOs3rdSBFQ==
-X-Gm-Gg: ASbGncvLBp5kAkGpl+Y7Tv7J7mhjIZAE5lM8DaZWNrcq5O0AC4l+0AINmzIZ1j0sPES
-	Uqpky4EdYc+w895aEI7qXXP04dN9AXUUVEWLr7CfOyQW7tYWA/sGzWBAYGeFLD9TBcOlJZb/BUX
-	LG1MC6cO0KBU3uLT4wCMILDf2rPiNzOkYooZ2zQJaDKMJcFefQjBHIzJGU71HUZkT3jYDCM+nbn
-	xLY/d7Qfxh7zwgQ+w26j8yN551BaOQAElK+AdzGTMzwNYPKOL4spEl1OLdtBLRjA2EnzqSALGYl
-	XsoqgYNWRNFp8UhEfINs4jLToLxUkx7tLm2QTDG1lVPrim1FxKHkBxFEUybdwQQHu8FSTDkQeA4
-	nA1o=
-X-Received: by 2002:a05:600c:674a:b0:45c:b6d3:a11d with SMTP id 5b1f17b1804b1-46fa9e8dc8bmr158955105e9.1.1760359323081;
-        Mon, 13 Oct 2025 05:42:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHauSt6ruiV5Kk8L/+gHwRrp8105EYALDJNBUwgBgUbnyLWlMo37UXqi0DKsbi3Tl2D4kwzpA==
-X-Received: by 2002:a05:600c:674a:b0:45c:b6d3:a11d with SMTP id 5b1f17b1804b1-46fa9e8dc8bmr158954865e9.1.1760359322699;
-        Mon, 13 Oct 2025 05:42:02 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc78559c8sm29186175e9.4.2025.10.13.05.41.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 05:42:02 -0700 (PDT)
-Message-ID: <7176597b-006f-40ad-9421-860d80d7e696@redhat.com>
-Date: Mon, 13 Oct 2025 14:41:59 +0200
+        d=1e100.net; s=20230601; t=1760359562; x=1760964362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yr0CAioySbg+winRW7SfP2+jGITybsbqsD8lEteT+kw=;
+        b=sUDuOzskiLaGJYkspn6I1k1zP+VSh/8f/ULi6+9SlL115IiaV6zsbzy/nVedKEd4aA
+         XXegc3DdqY3xJKLoOLhX67iEkLjc5Ug36e5OuUVdCq3z4mU0ZkqaHcXGzGnP+bYHii/C
+         Xv2JMuXUzz6LgC3YAM/9co/QAyWsznAVUhnz78gmVHoei/9qYuypEJPmynD0GBtexOi0
+         sOF5U4I7x9J8Rx/jhnFlZXGW2GYQbGxmrn2wzO58oQuGIoKdP03kYliz4x5ai4qkvhK7
+         xXCgf4hoz35mnysRcBCHbqxaZuMJDe5jL4vLoNJcQjkwEzf4xN3+pHGVRueCpzre1SZ2
+         +jGA==
+X-Forwarded-Encrypted: i=1; AJvYcCX67mJUIyacF51idycyEP4Jo8bZdyE6YHi8Jiv7G1GCIjkyW6jiqfTSqKG28MOn6owGkArCcgS8yt9+xCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOUPzTmu8ejd2oYFM8CTyuGNIBYy3coQaJHXvShoYG5PxxvNUY
+	spxPS+GRZC9v31W1JArg4sGqCt15CrBgLvzyJWuxDbgQOhTgW6C915DVw3g7Vtbv8khA9YFa1UR
+	kiyGD0ckDSXSBGH0g2+aIqyfSQuh/MrQbWVKB1hf0bg==
+X-Gm-Gg: ASbGncs32l13zcC908Dg+r3Vzkkxt1Nv4OVlgN91ta2t4UupbN4KUpXrqXnKaL7k7yo
+	yDvsBuqTAElrJt6BeFZniszX/y3JQSO7bjv23KpC3J268MC9AVgDe/BpaOAp2xtByy2d0kTwC8t
+	2CgDfp3l2q53+3Bbd+IKGCQPxR1OLCC3elzEkCA1VdxcLDDq1sMipKob1zVwqunZkD2FCmPTbID
+	D+v3iFFt976UbIEqMeQbBSneGQi/2jVNFCH5zNE
+X-Google-Smtp-Source: AGHT+IECEgvwWZ6twWsaItTnYS8HV/K8Xbz+foZN6OXGOnnvuhf5OIE7J2dBzITkBTeCj2Oicn8ol15+IVgCGD9o8F8=
+X-Received: by 2002:a2e:9a10:0:b0:36a:a401:628a with SMTP id
+ 38308e7fff4ca-37609cf85d9mr54890731fa.6.1760359562017; Mon, 13 Oct 2025
+ 05:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
- order selection
-To: Yafang Shao <laoar.shao@gmail.com>, Tejun Heo <tj@kernel.org>,
- Michal Hocko <mhocko@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Zi Yan <ziy@nvidia.com>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>, baolin.wang@linux.alibaba.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, usamaarif642@gmail.com,
- gutierrez.asier@huawei-partners.com, Matthew Wilcox <willy@infradead.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Amery Hung <ameryhung@gmail.com>,
- David Rientjes <rientjes@google.com>, Jonathan Corbet <corbet@lwn.net>,
- 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>,
- lance.yang@linux.dev, Randy Dunlap <rdunlap@infradead.org>,
- bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20250930055826.9810-1-laoar.shao@gmail.com>
- <20250930055826.9810-4-laoar.shao@gmail.com>
- <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
- <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com>
- <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
- <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com>
- <CALOAHbD_tRSyx1LXKfFrUriH6BcRS6Hw9N1=KddCJpgXH8vZug@mail.gmail.com>
- <96AE1C18-3833-4EB8-9145-202517331DF5@nvidia.com>
- <f743cfcd-2467-42c5-9a3c-3dceb6ff7aa8@redhat.com>
- <CALOAHbAY9sjG-M=nwWRdbp3_m2cx_YJCb7DToaXn-kHNV+A5Zg@mail.gmail.com>
- <129379f6-18c7-4d10-8241-8c6c5596d6d5@redhat.com>
- <CALOAHbD8ko104PEFHPYjvnhKL50XTtpbHL_ehTLCCwSX0HG3-A@mail.gmail.com>
- <3577f7fd-429a-49c5-973b-38174a67be15@redhat.com>
- <CALOAHbAeS2HzQN96UZNOCuME098=GvXBUh1P4UwUJr0U-bB5EQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CALOAHbAeS2HzQN96UZNOCuME098=GvXBUh1P4UwUJr0U-bB5EQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1759824376.git.mazziesaccount@gmail.com> <19d537f9920cae5fa849b649e5bc42ba0b8e52f8.1759824376.git.mazziesaccount@gmail.com>
+In-Reply-To: <19d537f9920cae5fa849b649e5bc42ba0b8e52f8.1759824376.git.mazziesaccount@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 Oct 2025 14:45:50 +0200
+X-Gm-Features: AS18NWBXkMvQX4UMEqrcFAQn-COI9GhJKLnUY40gmxEPa8GpJstGMsxg8s5ctP8
+Message-ID: <CACRpkdbHBQQnnTUrUzOrYxzQKCzDyy8aNK7w8OEFz-ic8ic1FQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/13] dt-bindings: power: supply: BD72720 managed battery
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->> I came to the same conclusion. At least it's a valid start.
->>
->> Maybe we would later want a global fallback BPF-THP prog if none was
->> enabled for a specific MM.
-> 
-> good idea. We can fallback to the global model when attaching pid 1.
-> 
->>
->> But I would expect to start with a per MM way of doing it, it gives you
->> way more flexibility in the long run.
-> 
-> THP, such as shmem and file-backed THP, are shareable across multiple
-> processes and cgroups. If we allow different BPF-THP policies to be
-> applied to these shared resources, it could lead to policy
-> inconsistencies.
+Hi Matti,
 
-Sure, but nothing new about that (e.g., VM_HUGEPAGE, VM_NOHUGEPAGE, 
-PR_GET_THP_DISABLE).
+thanks for your patch!
 
-I'd expect that we focus on anon THP as the first step either way.
+On Tue, Oct 7, 2025 at 10:33=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-Skimming over this series, anon memory seems to be the main focus.
+> The BD72720 PMIC has a battery charger + coulomb counter block. These
+> can be used to manage charging of a lithium-ion battery and to do fuel
+> gauging.
+>
+> ROHM has developed a so called "zero-correction" -algotihm to improve
 
-> This would ultimately recreate a long-standing issue
-> in memcg, which still lacks a robust solution for this problem [0].
-> 
-> This suggests that applying SCOPED policies to SHAREABLE memory may be
-> fundamentally flawed ;-)
+algorithm?
 
-Yeah, shared memory is usually more tricky: see mempolicy handling for 
-shmem. There, the policy is much rather glued to a file than to a process.
+> the fuel-gauging accuracy close to the point where battery is depleted.
+> This relies on battery specific "VDR" tables, which are measured from
+> the battery, and which describe the voltage drop rate. More thorough
+> explanation about the "zero correction" and "VDR" parameters is here:
+> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohme=
+urope.com/
+>
+> Document the VDR zero-correction specific battery properties used by the
+> BD72720 and some other ROHM chargers.
+>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
--- 
-Cheers
+> The parameters are describing the battery voltage drop rates - so they
+> are properties of the battery, not the charger. Thus they do not belong
+> in the charger node.
 
-David / dhildenb
+Right!
 
+> The right place for them is the battery node, which is described by the
+> generic "battery.yaml". I was not comfortable with adding these
+> properties to the generic battery.yaml because they are:
+>   - Meaningful only for those charger drivers which have the VDR
+>     algorithm implemented. (And even though the algorithm is not charger
+>     specific, AFAICS, it is currently only used by some ROHM PMIC
+>     drivers).
+>   - Technique of measuring the VDR tables for a battery is not widely
+>     known. AFAICS, only folks at ROHM are measuring those for some
+>     customer products. We do have those tables available for some of the
+>     products though (Kobo?).
+
+It would be sad if we later on have to convert it to a standard property
+because it turns out to be wider used than we know.
+
+But I buy your reasoning!
+
+> +properties:
+> +  rohm,voltage-vdr-thresh-microvolt:
+> +    description: Threshold for starting the VDR correction
+> +
+> +  rohm,volt-drop-soc:
+> +    description: Table of capacity values matching the values in VDR tab=
+les.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+
+Which unit is this? Seems to be capacity in % *10?
+
+> +  rohm,volt-drop-high-temp-microvolt:
+> +    description: VDR table for high temperature
+> +
+> +  rohm,volt-drop-normal-temp-microvolt:
+> +    description: VDR table for normal temperature
+> +
+> +  rohm,volt-drop-low-temp-microvolt:
+> +    description: VDR table for low temperature
+> +
+> +  rohm,volt-drop-very-low-temp-microvolt:
+> +    description: VDR table for very low temperature
+
+Doesn't the four last properties require to be defined as uint32-array?
+
+> +        rohm,volt-drop-soc =3D <1000 1000 950 900 850 800 750 700 650 60=
+0 550 500
+> +          450 400 350 300 250 200 150 100 50 00 (-50)>;
+
+This one makes a lot of sense.
+
+> +        rohm,volt-drop-high-temp-microvolt =3D  <100 100 102 104 106 109=
+ 114 124
+> +          117 107 107 109 112 116 117 108 109 109 108 109 122 126 130>;
+> +
+> +        rohm,volt-drop-normal-temp-microvolt =3D <100 100 102 105 98 100=
+ 105 102
+> +          101 99 98 100 103 105 109 117 111 109 110 114 128 141 154>;
+> +
+> +        rohm,volt-drop-low-temp-microvolt =3D <100 100 98 107 112 114 11=
+8 118 112
+> +          108 108 110 111 113 117 123 131 144 157 181 220 283 399>;
+> +
+> +        rohm,volt-drop-very-low-temp-microvolt =3D <86 86 105 109 114 11=
+0 115 115
+> +          110 108 110 112 114 118 124 134 136 160 177 201 241 322 403>;
+
+I would have expected something like this, to avoid the a bit fuzzy definit=
+ions
+of high, normal, low and very low temperature either:
+
+Provide an array of temperatures in millicentigrades (I just guessed
+these temperatures, you will know the real ones!):
+
+rohm,vold-drop-temperatures-millicelsius =3D <500, 250, 100, (-50)>;
+rohm,volt-drop-microvolt-0 =3D <...>;
+rohm,volt-drop-microvolt-1 =3D <...>;
+rohm,volt-drop-microvolt-2 =3D <...>;
+rohm,volt-drop-microvolt-3 =3D <...>;
+
+Where each array correspond to the temperature, or if you wanna
+go all-out custom:
+
+rohm,volt-drop-50-celsius-microvolt =3D <...>;
+(...)
+
+So we get the actual temperature in there one way or the other.
+
+> +        rohm,voltage-vdr-thresh-microvolt =3D <4150000>;
+
+This property seems to be missing from the bindings?
+
+Yours,
+Linus Walleij
 
