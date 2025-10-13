@@ -1,140 +1,97 @@
-Return-Path: <linux-kernel+bounces-851352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160F8BD63EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:48:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21991BD64A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50C694F7822
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64743E864E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A1C30B509;
-	Mon, 13 Oct 2025 20:42:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051A309EEE;
-	Mon, 13 Oct 2025 20:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F972F1FC8;
+	Mon, 13 Oct 2025 20:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tukaani.org header.i=@tukaani.org header.b="OZUYWJ2D"
+Received: from mailscanner09.zoner.fi (mailscanner09.zoner.fi [5.44.246.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7942D978B
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.44.246.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760388178; cv=none; b=mPHOQPMj248gduoP2gxMhh64mszspme9fLuAFnMOysNllgGi6jzKsw8eQIVXharmDEN/yfHh1hw15/X7Ji+r1LW1KHjJk13Hrj64+6xdSB8lnRYIJn8XyNKXoLcWoiJJIOM7vtoPxPhPpsY6pG7ORF7UzvlGU9j+oX/mIQyRlKI=
+	t=1760388811; cv=none; b=JoeUB9bWlAggvE0BtNHZeAbjPEze54ogtLpAAR1EFX+sMREhDtv3q/JU9XDspVh/u2BUeYLkdTtEfdf0CWYm0PqnFVZoauaEIBI97pw3KAyc1Ud+J7x/GEvAM7ZgjUyBq4gsDctlOMHQcyyX/Ca+jNvrKXq8qLe0tIQlE6GfG/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760388178; c=relaxed/simple;
-	bh=xKtQgJRsuX5tKVTVViYkngB+tljb7gYCso27qJYidUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jRsotlBTjMno6AnkLEhotCkrxE6rsEnpen5GN4wA578CO/7zHQd4tZvOhk/2vsehR4Si5RTeW+6s62x/EHVYNy9Bu1cah4gaaVTrCmKTpcjYrUI0SpOcPMBYtnNsbW+M9DXHEwjhui2876orZnYPgiZCr78wMnJGQO8Mc0F5Twg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CCE71063;
-	Mon, 13 Oct 2025 13:42:47 -0700 (PDT)
-Received: from [192.168.20.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F12F3F738;
-	Mon, 13 Oct 2025 13:42:50 -0700 (PDT)
-Message-ID: <ef4c0cbc-bf5e-4e55-b495-8bafa8a84c32@arm.com>
-Date: Mon, 13 Oct 2025 15:42:50 -0500
+	s=arc-20240116; t=1760388811; c=relaxed/simple;
+	bh=wmrcLpdHbAolQNtyHpMNdAFBYE+XjtDnmy0JpcEEGb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KP/IzHucaW7Qrde1Z9p814D97P3PBzucvtp0FepMI4IPnSraTzC47seO6p7Vgzw0o50i1D6xXBN+XHsLwqu4wQzHbLyBOP3Q6go77CAFKKNQix/KA/WGA0HDmLXDmBNKFTw0ddupHHw/UnViw+EvdkPbEFjm5m2KKAGINOaaK6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; dkim=pass (2048-bit key) header.d=tukaani.org header.i=@tukaani.org header.b=OZUYWJ2D; arc=none smtp.client-ip=5.44.246.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tukaani.org
+Received: from www25.zoner.fi (www25.zoner.fi [84.34.147.45])
+	by mailscanner09.zoner.fi (Postfix) with ESMTPS id 03EDC21240;
+	Mon, 13 Oct 2025 23:44:08 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tukaani.org
+	; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID:
+	Content-Description; bh=uZpQDcJ5hYuqJt+/UmDpHd8wg36xNPNAPWkG9K9j3Vg=; b=OZUYW
+	J2D/TnPVNS9YZPJlWDkzhlQdy526+QSpmzfBSopNkmyJ8kgXXQbWKgDbeZJ5NqMVv6Vc8KIu3ZrVo
+	5hYguIR1LglAHPWdbogb66/lMDOQPYPNYl3N3z3IPCoVt1unLn4UNSKB3GA4jU+k+FXX4XynFxbXw
+	dCYdSTv8sb0rCPSNkxuBfM+k8ADcZ35k7sXLTmyTmZU73azeFTUeOJf/wT5x0+rLdo4kGVr03qepA
+	hfI85o/lkedFxZB3GGIv58oQr5QiG1edVeeuq9NQw3K6mX2OI/p+Ki/DpjGy/JMBW6ycBry6gSlme
+	+co7SXK+vWt20FegqjBP1uR0xNN2w==;
+Received: from mail.zoner.fi ([84.34.147.244])
+	by www25.zoner.fi with esmtp (Exim 4.98.2)
+	(envelope-from <lasse.collin@tukaani.org>)
+	id 1v8POs-0000000F3mM-0NXz;
+	Mon, 13 Oct 2025 23:44:07 +0300
+Date: Mon, 13 Oct 2025 23:44:07 +0300
+From: Lasse Collin <lasse.collin@tukaani.org>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>, Ankan Biswas
+ <spyjetfayed@gmail.com>
+Cc: skhan@linuxfoundation.org, khalid@kernel.org,
+ david.hunter.linux@gmail.com, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v2] lib/xz: remove dead IA-64 (Itanium) support code
+Message-ID: <20251013234407.11e70f22.lasse.collin@tukaani.org>
+In-Reply-To: <aO1gOckA14Ed/26F@visitorckw-System-Product-Name>
+References: <20251013173446.8692-1-spyjetfayed@gmail.com>
+	<aO1gOckA14Ed/26F@visitorckw-System-Product-Name>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
- device
-To: Jason Gunthorpe <jgg@ziepe.ca>, dan.j.williams@intel.com
-Cc: Greg KH <gregkh@linuxfoundation.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, linux-coco@lists.linux.dev,
- kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
- Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>,
- Suzuki K Poulose <Suzuki.Poulose@arm.com>,
- Steven Price <steven.price@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-References: <yq5aqzxy9ij1.fsf@kernel.org> <20250730113827.000032b8@huawei.com>
- <20250730132333.00006fbf@huawei.com>
- <2025073035-bulginess-rematch-b92e@gregkh>
- <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
- <20251010135922.GC3833649@ziepe.ca>
- <4a7d84b2-2ec4-4773-a2d5-7b63d5c683cf@arm.com>
- <20251010153046.GF3833649@ziepe.ca>
- <f6cf20f6-0f19-4814-b917-4f92dad39648@arm.com>
- <68e953f484464_1992810065@dwillia2-mobl4.notmuch>
- <20251010223444.GA3938986@ziepe.ca>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <20251010223444.GA3938986@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 10/10/25 5:34 PM, Jason Gunthorpe wrote:
-> On Fri, Oct 10, 2025 at 11:44:04AM -0700, dan.j.williams@intel.com wrote:
->> Jeremy Linton wrote:
->>> On 10/10/25 10:30 AM, Jason Gunthorpe wrote:
->>>> On Fri, Oct 10, 2025 at 10:28:36AM -0500, Jeremy Linton wrote:
->>>>
->>>>>> So you could use auxiliary_device, you'd consider SMC itself to be the
->>>>>> shared HW block and all the auxiliary drivers are per-subsystem
->>>>>> aspects of that shared SMC interface. It is not a terrible fit for
->>>>>> what it was intended for at least.
->>>>>
->>>>> Turns out that changing any of this, will at the moment break systemd's
->>>>> confidential vm detection, because they wanted the earliest indicator the
->>>>> guest was capable and that turned out to be this platform device.
->>>>
->>>> Having systemd detect a software created platform device sounds
->>>> compltely crazy, don't do that. Make a proper sysfs uapi for such a
->>>> general idea please.
->>>
->>> Yes, I agree, its just at the time the statment was around what is the
->>> most reliable early indicator, and since there isn't a hwcap or anything
->>> that ended up being the choice, as disgusting as it is.
->>>
->>> Presumably once all this works out the sysfs/api surface will be more
->>> 'defined'
->>
->> It has definition today.
->>
->> All guest-side TSM drivers currently call tsm_report_register(), that
->> establishes /sys/kernel/config/tsm/report which is the common cross-arch
->> transport for retrieving CVM launch attestation reports.
+On 2025-10-14 Kuan-Wei Chiu wrote:
+> On Mon, Oct 13, 2025 at 11:01:58PM +0530, Ankan Biswas wrote:
+> > Note that the upstream version of xz_dec_bcj.c still retains support
+> > for the IA-64 BCJ filter.  
 > 
-> I suspect this ins't a TSM question but an existing question if any of
-> the underlying CC frameworks are enabled.
-> 
-> It is this stuff:
-> 
-> https://github.com/systemd/systemd/blob/main/src/basic/confidential-virt.c
-> https://github.com/systemd/systemd/commit/2572bf6a39b6c548acef07fd25f461c5a88560af
-> 
->    Like the s390 detection logic, the sysfs path being checked is not labeled
->    as ABI, and may change in the future. It was chosen because its
->    directly tied to the kernel's detection of the realm service interface
->    rather to the Trusted Security Module (TSM) which is what is being
->    triggered by the device entry.
-> 
-> Maybe a /sys/firmware/smc/rsi file might be appropriate?
+> Not sure if it's necessary to mention this, but I guess it's fine.
 
-Except that you can see from the code that this problem is being solved 
-in a hw platform dependent way for 4+ platforms now.
+Information about upstream version isn't needed in Linux commit log, so
+that sentence could be omitted.
 
-Ideally the sysfs node would be common across all those hw platforms and 
-reflect the vm capabilities so the code doesn't' need #ifdef's. Meaning 
-it shouldn't have the smc/rsi arm'ism in the name, and maybe shouldn't 
-be in /sys/firmware
+> I'm not quite sure what you changed in v2 compared to v1.
 
+It added the second hunk to the diff of xz_private.h.
 
-Thanks,
+> Lasse,
+> Since this change is located under lib/, I assume it will be routed
+> through Andrew's tree?
+> If that's the case, then perhaps we should also Cc Andrew.
 
-> 
-> Given how small a deployed fooprint ARM CCA has right now (ie none) it
-> would be good to fix this ASAP so it doesn't become entrenched.
-> 
-> Jason
+Yes, putting him into the To field and others as Cc should make the
+patch go forward. Sorry that I didn't notice and comment this myself
+earlier.
 
+-- 
+Lasse Collin
 
