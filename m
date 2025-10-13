@@ -1,143 +1,90 @@
-Return-Path: <linux-kernel+bounces-851368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28C2BD64B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:55:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E16BD64AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0AC18A6B68
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58A5418A6863
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184BD2D3A6D;
-	Mon, 13 Oct 2025 20:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C382D978B;
+	Mon, 13 Oct 2025 20:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gvuPO2Re"
-Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5G5vHFP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB68E224F3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EB634BA34;
+	Mon, 13 Oct 2025 20:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760388943; cv=none; b=ML7SCbuarRKGoX6/4z4aaqO170G99KRgFFjh2J4+dAWAiQk0sBzJZtE6Yd32e3xT9hQyP7IhwsObCjPWhdXGiiPcoJr/F5C7cJYUMyy0JVzh/6MYOnxgmsTShEsXkk0h4Z8mrbWuAWyB2XfNU8D2fstUCdUpRfX+fG6bJtTSvvg=
+	t=1760388932; cv=none; b=X7qalSSv16kYak2apv/GKQbxKQbSolcQrRfbY1TpH2XRkfTKoYSkogMn+Brfda3qzbzV2VA5+bpDQW6H6yAH8Fdst7uYh0tRBDVHBAtU4mHWL4ONDTUWqYmddUHsN5yjh5OLUX1K7+U+lvATOoqrktHxKFaCSSWrTo1umE5V6bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760388943; c=relaxed/simple;
-	bh=g5aeWjEsyrEgtXYmT9bLZgoNYfmNd7RVniAPQYIhaqU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TMi3sb4KHJLLjwiGEU8/YLDRAFtDt0Tuv72o6RBXut0jSlYpM2bcWOnZOclba15hDdqkL3SwDOvxHIg9bSSNdXAi1l3E5xhwUcRJx6CaBKCZLzKbvBj1KWnkiytI1+yginQI9HKN0HA/69YcHf53QS09tOEPCHzNSaUJbHJuAF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gvuPO2Re; arc=none smtp.client-ip=209.85.166.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-42fa528658fso7712285ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:55:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760388941; x=1760993741; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n2VkMZvVeagPungxdvXSEeNR4Y/36U6V3Y2qAoJc2LE=;
-        b=gvuPO2ReOeqXobhJqHkJWoAeoB/mIK2uPhtqm0v34xB24+1yxOTSnqiKR7/EzJtJ5p
-         ucFUC0plDsS/dpGNEBoFdgUkynR1EIVJy6xdDF943wLqu6sU2naKrwI3CYLfPUbw+zYT
-         qpwiowL74I4aiY/L1lzdd7X2VdGQT2e6wMtI6oqRZn2EQNZtSIxAtkvJ1WC5egwmllPR
-         V+6PUANBQOnOL9PP3IzXIcaHLEpz6DK3c7YQSXjmhlwZ+Cqr+SZVkGnForXqo6XXtQJP
-         +3vXnUASREQbLBKhsizBLeU9GgGbkeWWxdyjXuGC7KdOBZsOu4AVD49oprRviY5b/Hun
-         14Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760388941; x=1760993741;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n2VkMZvVeagPungxdvXSEeNR4Y/36U6V3Y2qAoJc2LE=;
-        b=D6DefxWIiM9VL9wAf7TSV2sYiJ5YqRUbQKi+hMObatYWd+l4GKLIcCS+iaGoLUmO27
-         f9KD8xRZzNvZBsr/IiDbsIRqwwwLdfbI7dRH0GO7lkj77vdmwVrdIQpIgc48fUOM8DPL
-         CUR6Mu44EUI4AuI16DxwEHGV7IVLKwQZiocNReqhfPLV1oMoXsChkr9CGR0TQHtC/pP+
-         MfSN6zoEL/EXXtq8GKT+Bc2GCDewQ5fktbs9sy78/x38m9unz2W7i+pA8MmYtzFwbwIU
-         XCZlrxLqTRAxkaQjkDRVHJrJDg/p/Z79wnuFbp7atfJhsmiilOZbrAVkifH0UxLiMB+R
-         iEeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWc2lk0EIWY6qBreghsIiiIBF1K1LQ23E66Dw5Oxb8GDuuMYLREda52foYIyvbR05ma+74CdI1SiTUW/Xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI77+efHXMAdfv2eaNp0ZltB9eAp7pQKj6ry6W0ALvweqpw9tV
-	pV6rc2oYWNVbDSl6gMgvi+YI5Yt/eXWmBi1+8xMZz0D0WshbKCuBU/aUFVMkQpK7momAhu4NxQx
-	xdGF0SM5NwA==
-X-Google-Smtp-Source: AGHT+IFzT35HVcIiSr0TCH6YF669Y1WMCSqZlPkuDacbU/ha+9HSwmUUwPGAawwWvCgwzzHXwduN3fJZgkT3
-X-Received: from ilvk5.prod.google.com ([2002:a05:6e02:1a85:b0:425:c6a0:25a8])
- (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:4509:20b0:42f:9b79:f8cd
- with SMTP id e9e14a558f8ab-42f9b79fcebmr135607215ab.16.1760388941161; Mon, 13
- Oct 2025 13:55:41 -0700 (PDT)
-Date: Mon, 13 Oct 2025 20:54:57 +0000
+	s=arc-20240116; t=1760388932; c=relaxed/simple;
+	bh=IvZ5qPiJg4nsDInLimGBW6RVw9VdP4KCLc7lgSkyw10=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lNTj+8d8qGXGqm/q23KfBGYZanv2l6dDqyBQQc6o+ey8GPAtijHiYWBIJnnxhdg2jOL7WWezgIO2NKUIEQ/KjQo/lyqDhVrfvxzNL8iWZUzdQ82fr2K1gEfydnvTvfQM9qamIBiindX9sQxcO7rPInq/y0SOQfbJXUNougB6zUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5G5vHFP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F502C4CEF8;
+	Mon, 13 Oct 2025 20:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760388932;
+	bh=IvZ5qPiJg4nsDInLimGBW6RVw9VdP4KCLc7lgSkyw10=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=T5G5vHFPwfAcHGzeDU91/NjU01oUDsKPTDIGWz+CamLMXtBTA5Iq/VDCzC86z8O5G
+	 79eKJ6WSDySyqA8FnEkp2QPNZr7rAiG7sbf74nRlQJ5IplElaiw5Q0NsA/uaYME0vr
+	 h6NW3fvu/dXA20Ydzib4rccOLFEHYe84IsaxZaqmMNzrkeW1+YZ/oKcsUbIpJ5zJEE
+	 xMdeP7LroxWj7ZUKYcplqw2BTHjfY6HEkSu9khTaioRfgwN379LKCoKsUa+hsdlxYS
+	 0S98arvkgF7hwNRckqPnF49sJlU/u8Ah7tQAqz4nWY5EsbF2hGH7RAxyh7fLJkNhdr
+	 ozG+/vvFuNj1w==
+Date: Mon, 13 Oct 2025 15:55:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Mario Limonciello (AMD)" <superm1@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	Daniel Dadap <ddadap@nvidia.com>, regressions@lists.linux.dev
+Subject: Re: [PATCH v10 2/4] PCI/VGA: Replace vga_is_firmware_default() with
+ a screen info check
+Message-ID: <20251013205531.GA863704@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIACBn7WgC/x2MywqAIBAAfyX23ILa49CvRAdzV10CC40Ion9PO
- s7AzAOFs3CBqXkg8yVF9lRBtw24aFNgFKoMRplBK91hFMJoj1Mcbm5PXgJ6uXHsevJmJes0QY2 PzFX/43l53w8+vguDaAAAAA==
-X-Change-Id: 20251013-hid-haptic-kconfig-fix-634df2bdac1d
-X-Mailer: b4 0.14.2
-Message-ID: <20251013-hid-haptic-kconfig-fix-v1-1-b1ad90732625@google.com>
-Subject: [PATCH] HID: Kconfig: Fix build error from CONFIG_HID_HAPTIC
-From: Jonathan Denose <jdenose@google.com>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>, Randy Dunlap <rdunlap@infradead.org>, 
-	Lucas GISSOT <lucas.gissot.pro@gmail.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jonathan Denose <jdenose@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251012182302.GA3412@sol>
 
-Temporarily change CONFIG_HID_HAPTIC to be bool instead of tristate, until
-we implement a permanent solution.
+[+cc regressions]
 
----
-Recently the CONFIG_HID_HAPTIC Kconfig option was reported as causing
-the following build errors:
+On Sun, Oct 12, 2025 at 11:23:02AM -0700, Eric Biggers wrote:
+> On Mon, Aug 11, 2025 at 11:26:04AM -0500, Mario Limonciello (AMD) wrote:
+> > vga_is_firmware_default() checks firmware resources to find the owner
+> > framebuffer resources to find the firmware PCI device.  This is an
+> > open coded implementation of screen_info_pci_dev().  Switch to using
+> > screen_info_pci_dev() instead.
+> > 
+> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> 
+> I'm getting a black screen on boot on mainline, and it bisected to this
+> commit.  Reverting this commit fixed it.
 
-  MODPOST Module.symvers
-ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
-ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
-ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
-ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
-ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
-ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
-make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
-
-when the kernel is compiled with the following configuration:
-
-CONFIG_HID=y
-CONFIG_HID_MULTITOUCH=m
-CONFIG_HID_HAPTIC=m
-
-To resolve this, temporarily change the CONFIG_HID_HAPTIC option to be
-bool, until we arrive at a permanent solution to enable CONFIG_HID_HAPTIC
-to be tristate.
-
-For a more detailed discussion, see [1].
-
-[1]: https://lore.kernel.org/linux-input/auypydfkhx2eg7vp764way4batdilzc35inqda3exwzs3tk3ff@oagat6g46zto/
-
-Signed-off-by: Jonathan Denose <jdenose@google.com>
----
- drivers/hid/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 5341aa79f387bd0e5a76266b5928d2c978dd81cf..04420a713be085c8871b4d35255fde4cafd8de0f 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -93,7 +93,7 @@ config HID_GENERIC
- 	If unsure, say Y.
- 
- config HID_HAPTIC
--	tristate "Haptic touchpad support"
-+	bool "Haptic touchpad support"
- 	default n
- 	help
- 	Support for touchpads with force sensors and haptic actuators instead of a
-
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251013-hid-haptic-kconfig-fix-634df2bdac1d
-
-Best regards,
--- 
-Jonathan Denose <jdenose@google.com>
-
+#regzbot introduced: 337bf13aa9dd ("PCI/VGA: Replace vga_is_firmware_default() with a screen info check")
+#regzbot link: https://lore.kernel.org/r/20251013154441.1000875-1-superm1@kernel.org
 
