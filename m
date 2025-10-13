@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-850365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC2EBD29FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:48:50 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248F5BD29F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F0B44F02B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:48:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C30513448CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2C43043B5;
-	Mon, 13 Oct 2025 10:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FFE303CAA;
+	Mon, 13 Oct 2025 10:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="J6mngZ5l"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="pTjoi4kk"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A24D302179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6F72FDC41
 	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760352510; cv=none; b=vC7DZuKKLcrwd5lxSqVVAUXcWNSFKqKIuG1XNx+13FoGr994Otymhzc8I5IyNpI37ejPAMunvtbdeyYX7Ir+0IVtbbEsWid/HGnd3SLKX5Xj8gcr2Rz9gSsgOyfNx0zGsUBiOhG0ydF0gNtyKOjAQdCpWPtKRbON/A5BYJw3aek=
+	t=1760352508; cv=none; b=gHiojChMZj3nCPLBg2r44jD737b14avuLvtm2e8RXWUtyz7FqWLU2NnZesEMIP5opY8KyfamnEkugpAGNG4qGu70gt67nXgaP1fH4uKaF+akh0uR+KTW2DVhh6DWt3G99AROjiB8fIBrJdQK+yGPam63xdLBdNTESCG2BgaI8wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760352510; c=relaxed/simple;
-	bh=1LVkRx8kRsF68/oifLyumQVqZEvOwQPq1xNG3PoVF1A=;
+	s=arc-20240116; t=1760352508; c=relaxed/simple;
+	bh=1LBGK3TkrPoW63QLWYmeLol3aNiWj2Xkcr6MKYmW53w=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZlQCucnwsAtzsypxY0PwDxkWR9uNdPxJ16wuMwP8ldF4OJDI5PLZOTrPmoWeIRwAFH+uWJtF/mzAzO+o1fcNujS2VUUZ/pjQC8sQz/poa+95q0uRlJA+6M1zqoQ7H6Ol2I9/j9JoccQYnItewKlBS0SOn1kN3GwUTLZPMagABEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=J6mngZ5l; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=q5Hyp2kwp9FUM5fWdASvZg8zcpnKLsLBwnPX63t4fTi/Op4IdfMtXNUuwGItcJITSfrEa9fd3C/+mO0zvagXz0xQXHIA7sYchrjxRRaTs5FuT0fvoohGZmUNObDqvqBd0GEtQV8KwL09xvfX7AGPBIFqFV1FoMgPuiBNyxBAGtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=pTjoi4kk; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1760352024;
-	bh=1LVkRx8kRsF68/oifLyumQVqZEvOwQPq1xNG3PoVF1A=;
+	bh=1LBGK3TkrPoW63QLWYmeLol3aNiWj2Xkcr6MKYmW53w=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=J6mngZ5lrtIRvMVqQUBJixn0amS1NZH/0oIVAzVy8lRtWUVPuqh7z7s3OcWJ3FVTm
-	 /NXElh7G6j6Hzijz7uaA7kKOXcT2GH4xTamjNhd0JQp3oyEJFyIj8ZbHb0XvOhQzPo
-	 mSDPSaY/361xM+3FffvLTOMVnzgLNnznjVNnj2go=
+	b=pTjoi4kk9KMK8YhfuDbvKy/w8317zuHva+xyx2B0jEZuCR9YB/UW+sL00F92mSFeD
+	 GmVQdZ0h5YCxnD+1UZVrskky1mqiQSrmV74y897v86iSxwzGeAR19m6TwALBbLZpwx
+	 fhCYQDk0m0uGc7WNeR0f3dL9HB3VVNZZsDJgMjvI=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 13 Oct 2025 12:40:18 +0200
-Subject: [PATCH 1/4] x86/um/vdso: Fix prototype of clock_gettime()
+Date: Mon, 13 Oct 2025 12:40:19 +0200
+Subject: [PATCH 2/4] x86/um/vdso: Use prototypes from generic vDSO headers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,7 +48,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251013-uml-vdso-cleanup-v1-1-a079c7adcc69@weissschuh.net>
+Message-Id: <20251013-uml-vdso-cleanup-v1-2-a079c7adcc69@weissschuh.net>
 References: <20251013-uml-vdso-cleanup-v1-0-a079c7adcc69@weissschuh.net>
 In-Reply-To: <20251013-uml-vdso-cleanup-v1-0-a079c7adcc69@weissschuh.net>
 To: Richard Weinberger <richard@nod.at>, 
@@ -60,54 +60,42 @@ To: Richard Weinberger <richard@nod.at>,
 Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760352023; l=1689;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760352023; l=1093;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=1LVkRx8kRsF68/oifLyumQVqZEvOwQPq1xNG3PoVF1A=;
- b=6UzajuXf5P86gem69w6a2djFM4jes8KR7Z+AzzHnTw4uM+roZNNIk2t1Jq+8CO6OVy0pS/y+F
- PC1ENOK3eoBBrpWRQyQSH5h8EA2YJElWI2s0v3x8dePl7ZxczNQsnBN
+ bh=1LBGK3TkrPoW63QLWYmeLol3aNiWj2Xkcr6MKYmW53w=;
+ b=MsrwrxDOXOU/dVReY9Htl3GJq1AC/ZpJPqTe1SC8mLKREvu7kOV34WL64CxKeKIs5+9fkTc2Y
+ 2nmIHBraG5fCGhikb0qvbXJ6rE8PCShGHBl+CbPbUqbiraEzJ8Z2iwu
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The clock_gettime() system call takes a pointer to
-'struct __kernel_timespec', not 'struct __kernel_old_timespec'.
-Right now this is not an issue as the vDSO never works with the
-actual struct but only passes it through to the kernel.
-
-Fix the prototype for consistency with the system call.
+The generic vDSO library provides a convenient header for the vDSO
+function prototypes, use it.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- arch/x86/um/vdso/um_vdso.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/um/vdso/um_vdso.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/arch/x86/um/vdso/um_vdso.c b/arch/x86/um/vdso/um_vdso.c
-index cbae2584124f..5cadcc04d422 100644
+index 5cadcc04d422..02d41fdb5655 100644
 --- a/arch/x86/um/vdso/um_vdso.c
 +++ b/arch/x86/um/vdso/um_vdso.c
-@@ -14,12 +14,12 @@
+@@ -9,14 +9,12 @@
+ /* Disable profiling for userspace code */
+ #define DISABLE_BRANCH_PROFILING
+ 
++#include <vdso/gettime.h>
+ #include <linux/time.h>
+ #include <linux/getcpu.h>
  #include <asm/unistd.h>
  
  /* workaround for -Wmissing-prototypes warnings */
--int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts);
-+int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts);
- int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz);
- __kernel_old_time_t __vdso_time(__kernel_old_time_t *t);
+-int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts);
+-int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz);
+-__kernel_old_time_t __vdso_time(__kernel_old_time_t *t);
  long __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused);
  
--int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
-+int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
- {
- 	long ret;
- 
-@@ -30,7 +30,7 @@ int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
- 
- 	return ret;
- }
--int clock_gettime(clockid_t, struct __kernel_old_timespec *)
-+int clock_gettime(clockid_t, struct __kernel_timespec *)
- 	__attribute__((weak, alias("__vdso_clock_gettime")));
- 
- int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+ int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
 
 -- 
 2.51.0
